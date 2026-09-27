@@ -109,15 +109,22 @@ class _OutilsEnseignementState extends State<OutilsEnseignement> {
             spacing: fixe ? AppSpacing.md : AppSpacing.sm,
             children: <Widget>[
               for (final OutilEnseignement o in OutilEnseignement.values)
+                // Des minimums et non des tailles fixes : a 200 %, la tuile
+                // grandit avec son icone et son libelle (W-144).
                 if (fixe)
-                  SizedBox.fromSize(
-                    size: MesuresOutils.tuileDesktop,
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minWidth: MesuresOutils.tuileDesktop.width,
+                      minHeight: MesuresOutils.tuileDesktop.height,
+                    ),
                     child: tuile(o),
                   )
                 else
                   Expanded(
-                    child: SizedBox(
-                      height: MesuresOutils.hauteurCompacte,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minHeight: MesuresOutils.hauteurCompacte,
+                      ),
                       child: tuile(o),
                     ),
                   ),
@@ -154,8 +161,10 @@ class _OutilsEnseignementState extends State<OutilsEnseignement> {
                 children: <Widget>[
                   for (final OutilEnseignement o in OutilEnseignement.values)
                     Expanded(
-                      child: SizedBox(
-                        height: MesuresOutils.tuileDesktop.height,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: MesuresOutils.tuileDesktop.height,
+                        ),
                         child: tuile(o),
                       ),
                     ),
@@ -169,15 +178,23 @@ class _OutilsEnseignementState extends State<OutilsEnseignement> {
           ),
         ),
       ),
+      // La colonne s'elargit avec le facteur de texte, borne a 200 % (W-144).
       FormeOutils.colonne => SizedBox(
-        width: MesuresOutils.colonne,
+        width:
+            MesuresOutils.colonne *
+            MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 2.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: AppSpacing.sm,
           children: <Widget>[
             for (final OutilEnseignement o in OutilEnseignement.values)
-              SizedBox(height: MesuresOutils.colonne, child: tuile(o)),
+              ConstrainedBox(
+                constraints: const BoxConstraints(
+                  minHeight: MesuresOutils.colonne,
+                ),
+                child: tuile(o),
+              ),
           ],
         ),
       ),
@@ -208,7 +225,8 @@ class _Tuile extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final String libelle = _libelle(outil);
-    return Semantics(
+    final bool agrandi = MediaQuery.textScalerOf(context).scale(1) > 1.3;
+    final Widget tuile = Semantics(
       selected: actif,
       child: Pressable(
         onPress: onPress,
@@ -231,20 +249,30 @@ class _Tuile extends StatelessWidget {
                       .asIconTheme(size: AppSpacing.xxl),
                   child: Icon(_icone(outil).resoudre(selectionne: actif)),
                 ),
-                Ecart.vXs,
-                Text(
-                  libelle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: palette.inkStrong.applyTo(
-                    Theme.of(context).textTheme.labelSmall ?? const TextStyle(),
+                // Texte agrandi (DESIGN-GOV, 200 %) : l'icone seule, le
+                // libelle en infobulle et pour le lecteur d'ecran, plutot
+                // qu'un mot tronque.
+                if (!agrandi) ...<Widget>[
+                  Ecart.vXs,
+                  Text(
+                    libelle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: palette.inkStrong.applyTo(
+                      Theme.of(context).textTheme.labelSmall ??
+                          const TextStyle(),
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),
         ),
       ),
     );
+    // Le lecteur d'ecran lit deja le libelle par `Pressable`.
+    return agrandi
+        ? Tooltip(message: libelle, excludeFromSemantics: true, child: tuile)
+        : tuile;
   }
 }

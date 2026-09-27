@@ -165,12 +165,13 @@ void main() {
     ) async {
       await _monterGuidee(tester, taille.value);
       final List<Size> tailles = <Size>[
-        for (final Element e in find
-            .descendant(
-              of: find.byType(DockSeance),
-              matching: find.byKey(const ValueKey<String>('disque-appel')),
-            )
-            .evaluate())
+        for (final Element e
+            in find
+                .descendant(
+                  of: find.byType(DockSeance),
+                  matching: find.byKey(const ValueKey<String>('disque-appel')),
+                )
+                .evaluate())
           (e.renderObject! as RenderBox).size,
       ];
       expect(tailles, hasLength(4));
@@ -253,7 +254,7 @@ void main() {
     });
   }
 
-  testWidgets('guidee web etroit : encadre a cote de la vignette, carte '
+  testWidgets('guidee web etroit : support sans encadre vide, carte '
       'ajustee au contenu', (WidgetTester tester) async {
     await _monterGuidee(tester, const Size(640, 1000));
     final Rect video = tester.getRect(
@@ -262,18 +263,15 @@ void main() {
     final Rect support = tester.getRect(
       find.byKey(const ValueKey<String>('zone-support')),
     );
-    final Rect encadre = tester.getRect(
-      find.byKey(const ValueKey<String>('encadre-support')),
-    );
     final Rect dock = tester.getRect(
       find.byKey(const ValueKey<String>('dock-seance')),
     );
     // Environ 41 % de la largeur du support (image), rapport garde.
     expect(video.width / support.width, closeTo(0.41, 0.03));
     expect(video.width / video.height, closeTo(MesuresVignette.ratio, 0.01));
-    // L'encadre se range a cote de la vignette, sans la toucher.
-    expect(encadre.right, lessThanOrEqualTo(video.left));
-    expect(encadre.overlaps(video), isFalse);
+    // Le support de demonstration n'a plus d'encadre (E16, EN-RC lot 6) :
+    // sans texte, aucune pastille vide n'est dessinee.
+    expect(find.byKey(const ValueKey<String>('encadre-support')), findsNothing);
     // Un espace separe la carte du dock.
     expect(dock.top - support.bottom, greaterThan(40));
   });
@@ -289,10 +287,7 @@ void main() {
     ]..sort((Rect a, Rect b) => a.left.compareTo(b.left));
     expect(disques.length, 4);
     for (int i = 1; i < disques.length; i++) {
-      expect(
-        disques[i].center.dx - disques[i - 1].center.dx,
-        closeTo(130, 8),
-      );
+      expect(disques[i].center.dx - disques[i - 1].center.dx, closeTo(130, 8));
     }
     final Rect dock = tester.getRect(
       find.byKey(const ValueKey<String>('dock-seance')),

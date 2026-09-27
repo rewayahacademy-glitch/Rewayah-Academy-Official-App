@@ -139,21 +139,27 @@ void main() {
 
     test('jamais « Votre parent » ni « Ton parent »', () {
       for (final String s in _textes(r)) {
-        expect(s, isNot(contains('parent')));
+        expect(
+          s,
+          isNot(anyOf(contains('Votre parent'), contains('Ton parent'))),
+        );
       }
     });
 
-    test('jamais « Mariam » comme compte : le sien, SA Sayyida Amina', () {
+    test('jamais « Mariam » comme compte : le sien, SI Sayyid Ibrahim', () {
       for (final EtatDemoSalle e in EtatDemoSalle.values) {
-        expect(_vue(r, e).compte.nom, 'Sayyida Amina');
-        expect(_vue(r, e).compte.initiales, 'SA');
+        expect(_vue(r, e).compte.nom, 'Sayyid Ibrahim');
+        expect(_vue(r, e).compte.initiales, 'SI');
       }
     });
 
-    test('jamais Agrandir au dock ; Micro, Camera, Reseau, Quitter', () {
+    test('jamais Agrandir au dock ; dock compact EN-10', () {
       expect(_vue(r).commandesDock, <CommandeDock>[
+        CommandeDock.supports,
         CommandeDock.micro,
         CommandeDock.camera,
+        CommandeDock.partager,
+        CommandeDock.outils,
         CommandeDock.reseau,
         CommandeDock.quitter,
       ]);
@@ -221,11 +227,11 @@ void main() {
       });
     }
 
-    test('enseignant : toujours « Tuteur de {prenom} observe. »', () {
+    test('enseignant : toujours « Un parent observe cette séance » (EN-9)', () {
       final VueSeance v = _vue(RoleSeance.enseignant).copyWith(
         visite: const VisiteSeance(prenomEnfant: 'Yusuf', concerneMoi: false),
       );
-      expect(v.texteNotice, 'Tuteur de Yusuf observe.');
+      expect(v.texteNotice, 'Un parent observe cette séance');
       expect(v.pointClignote, isTrue);
     });
 
@@ -286,7 +292,7 @@ void main() {
       expect(_vue(RoleSeance.enseignant).titre, 'Séance en direct');
       expect(
         _vue(RoleSeance.eleve).ligneEtat,
-        'Classe An-Nour · Sayyida Amina',
+        'Classe An-Nour · Sayyid Ibrahim',
       );
     });
 

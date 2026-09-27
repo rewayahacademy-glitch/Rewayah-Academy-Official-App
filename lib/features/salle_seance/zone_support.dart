@@ -358,6 +358,8 @@ class _Contenu extends StatelessWidget {
       fraction: fraction,
       epaisseur: serre && !large ? AppSpacing.sm : AppSpacing.md,
     );
+    // Sans texte, pas d'encadre : jamais une pastille vide (E16, EN-RC).
+    final bool avecEncadre = support.encadre.trim().isNotEmpty;
     final Widget encadre = DecoratedBox(
       key: const ValueKey<String>('encadre-support'),
       decoration: palette.washAccent.decoration(
@@ -429,8 +431,7 @@ class _Contenu extends StatelessWidget {
           ligneFine,
           Ecart.vMd,
           ligne(0.94),
-          Ecart.vLg,
-          encadre,
+          if (avecEncadre) ...<Widget>[Ecart.vLg, encadre],
           Ecart.vLg,
           ligneFine,
         ],
@@ -492,8 +493,7 @@ class _Contenu extends StatelessWidget {
         ],
         if (!encadreACote) ...<Widget>[
           autourEncadre,
-          encadre,
-          autourEncadre,
+          if (avecEncadre) ...<Widget>[encadre, autourEncadre],
           ligne(0.6),
         ],
         if (serre) Ecart.vMd else Ecart.vLg,
@@ -502,17 +502,30 @@ class _Contenu extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: ecartPoint),
             child: Row(
               children: <Widget>[
-                SizedBox.square(
-                  dimension: pastillePoint,
+                // Un minimum et non une taille fixe : a 200 %, la pastille
+                // grandit avec son chiffre au lieu de le rogner.
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minWidth: pastillePoint,
+                    minHeight: pastillePoint,
+                  ),
                   child: DecoratedBox(
                     decoration: palette.washAccent.decoration(
                       borderRadius: AppRadius.arrondiFull,
                     ),
                     child: Center(
-                      child: Text(
-                        '${i + 1}',
-                        style: palette.washAccent.applyTo(
-                          theme.textTheme.titleSmall ?? const TextStyle(),
+                      widthFactor: 1,
+                      heightFactor: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xs,
+                        ),
+                        child: Text(
+                          '${i + 1}',
+                          textAlign: TextAlign.center,
+                          style: palette.washAccent.applyTo(
+                            theme.textTheme.titleSmall ?? const TextStyle(),
+                          ),
                         ),
                       ),
                     ),

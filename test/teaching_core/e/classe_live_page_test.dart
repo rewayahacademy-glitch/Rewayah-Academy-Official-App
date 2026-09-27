@@ -160,8 +160,8 @@ void main() {
       expect(find.text('support presente'), findsOneWidget);
       // Le compteur derive du roster (I-6) : deux connectes sur trois.
       expect(compteur(2, 3), findsOneWidget);
-      expect(find.text('Amina'), findsNothing);
-      await ouvrirEleves(tester);
+      // EN-9 : sur bureau, le panneau Eleves est ouvert d'office a droite
+      // du support, sans passer par le bouton.
       expect(find.text('Amina'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
@@ -647,7 +647,8 @@ void main() {
         await tester.tap(find.text('Amina'));
         await tester.pumpAndSettle();
       }
-      await tester.tap(find.text(t.tc.classe.action.reciter));
+      // EN-9 : l'action s'intitule « Faire réciter » dans la salle.
+      await tester.tap(find.text(t.salle.seance.faireReciter));
       await tester.pumpAndSettle();
 
       expect(find.text('support presente'), findsOneWidget);
@@ -680,12 +681,9 @@ void main() {
       // Le flux est demande pour CETTE seance, et l'en-tete porte ce qu'il
       // rend : c'est le cablage qui manquait, pas le composant.
       expect(banc0.annonces.demandes, <String>[seance]);
-      // La notice de visite de la salle unique (I-2) : « Tuteur de Amina
-      // observe. », a la place du texte de la mention.
-      expect(
-        find.text(t.salle.seance.tuteurDeObserve(prenom: 'Amina')),
-        findsOneWidget,
-      );
+      // La notice de visite de la salle unique (I-2, EN-9) : « Un parent
+      // observe cette séance », a la place du texte de la mention.
+      expect(find.text(t.salle.seance.unParentObserve), findsOneWidget);
     });
 
     testWidgets('l eleve ne lit pas les annonces, et ne les demande meme pas', (

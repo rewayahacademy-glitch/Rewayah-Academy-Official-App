@@ -54,10 +54,29 @@ void main() {
     ),
   ];
 
+  // EN-9 : sur bureau, le panneau Eleves est ouvert d'office. La fiche
+  // depliee et ses actions dependent de l'hote (fiches et actions de
+  // `/tc/classe` ; aucune dans `/salle` avant BR-1) : non comparees.
   /// Les textes visibles, tries : l'ordre de lecture n'est pas compare.
   List<String> textes(WidgetTester tester) =>
       tester
-          .widgetList<Text>(find.byType(Text))
+          .widgetList<Text>(
+            find.byWidgetPredicate(
+              (Widget w) =>
+                  w is Text &&
+                  find
+                      .ancestor(
+                        of: find.byWidget(w),
+                        matching: find.byWidgetPredicate(
+                          (Widget a) =>
+                              a.key == const ValueKey<String>('fiche-eleve') ||
+                              a.runtimeType.toString() == '_ActionsEleve',
+                        ),
+                      )
+                      .evaluate()
+                      .isEmpty,
+            ),
+          )
           .map((Text t) => t.data ?? t.textSpan?.toPlainText() ?? '')
           .where((String s) => s.trim().isNotEmpty)
           .toList()
@@ -154,10 +173,7 @@ void main() {
         classeLive,
         contains(t.salle.seance.compteurEleves(connectes: 1, inscrits: 2)),
       );
-      expect(
-        classeLive,
-        contains(t.salle.seance.tuteurDeObserve(prenom: 'Mariam')),
-      );
+      expect(classeLive, contains(t.salle.seance.unParentObserve));
       expect(
         classeLive.where((String s) => s.toLowerCase().contains('absent')),
         isEmpty,

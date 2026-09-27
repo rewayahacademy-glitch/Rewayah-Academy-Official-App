@@ -5,8 +5,12 @@
 // support) sont des contenus de demonstration, pas des libelles d'interface.
 
 import '../../core/tc_bibliotheque/library_resource.dart';
+import '../../core/tc_classe/roster_classe_vm.dart';
+import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
+import '../salle_seance/depuis_salle.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/vue_seance.dart';
+import 'enseignant_demo.dart';
 
 /// Les etats montrables de la salle de demonstration.
 enum EtatDemoSalle {
@@ -19,8 +23,11 @@ enum EtatDemoSalle {
   /// L'enseignante n'a rien partage.
   rienPartage,
 
-  /// Panneau Eleves ouvert (enseignant).
+  /// Panneau Eleves ouvert (enseignant), avec la file de recitation.
   eleves,
+
+  /// Appel discret recu (eleve) : « {titre et nom} vous appelle » (EN-9).
+  appel,
 
   /// Panneau Supports ouvert (enseignant).
   supports,
@@ -61,8 +68,14 @@ enum EtatDemoSalle {
 /// Les donnees exactes de la demonstration.
 abstract final class DonneesSeanceDemo {
   static const String classe = 'Classe An-Nour';
-  static const String enseignante = 'Sayyida Amina';
-  static const String initialesEnseignante = 'SA';
+
+  /// L'enseignant de la salle, le meme que sur Aujourd'hui et l'Espace
+  /// Classe (E16) : « Sayyid Ibrahim » par defaut, pour tous les roles.
+  static String enseignantPour(TitreEnseignant titre) =>
+      DonneesEnseignantDemo.nomAffiche(titre);
+
+  /// Le nom par defaut, « Sayyid Ibrahim ».
+  static final String enseignante = enseignantPour(TitreEnseignant.sayyid);
 
   /// L'identifiant fictif de la Classe An-Nour (rail enseignant).
   static const String groupeDemo = 'demo-an-nour';
@@ -77,13 +90,13 @@ abstract final class DonneesSeanceDemo {
         // L'intitule « Niveau » est celui de la fiche : la valeur seule ici.
         niveau: '1',
         objectifActuel: 'Chapitre 1 (les bonnes manières)',
-        derniereSeance: '24 sept. 2026',
+        derniereSeance: '21 sept. 2026',
         aReprendre: 'Pages 24 à 26',
         presenceRecente: '3 séances cette semaine',
         travailActuel: 'Écoute de la récitation',
       ),
     ),
-    // Fiches fictives de Yusuf et Aicha : leurs lignes (repliees sur les
+    // Fiches fictives de Yusuf et Aïcha : leurs lignes (repliees sur les
     // images) se deplient donc vraiment en demonstration.
     EleveSeance(
       prenom: 'Yusuf',
@@ -91,7 +104,7 @@ abstract final class DonneesSeanceDemo {
       fiche: FicheEleveSeance(
         niveau: '1',
         objectifActuel: 'Chapitre 1 (les bonnes manières)',
-        derniereSeance: '24 sept. 2026',
+        derniereSeance: '21 sept. 2026',
         aReprendre: 'Pages 20 à 23',
         presenceRecente: '2 séances cette semaine',
         travailActuel: 'Lecture du chapitre',
@@ -103,7 +116,7 @@ abstract final class DonneesSeanceDemo {
       fiche: FicheEleveSeance(
         niveau: '1',
         objectifActuel: 'Chapitre 1 (les bonnes manières)',
-        derniereSeance: '24 sept. 2026',
+        derniereSeance: '21 sept. 2026',
         aReprendre: 'Pages 24 à 26',
         presenceRecente: '3 séances cette semaine',
         travailActuel: 'Écoute de la récitation',
@@ -114,7 +127,8 @@ abstract final class DonneesSeanceDemo {
   static const SupportSeance support = SupportSeance(
     chapitre: 'Chapitre 1',
     titre: 'Les bonnes manières en classe',
-    encadre: 'Être attentif aux explications du professeur.',
+    // Pas d'encadre : « le professeur » n'est jamais montre a l'eleve (E16).
+    encadre: '',
     points: <String>[
       'Écouter avec calme.',
       'Poser des questions poliment.',
@@ -186,8 +200,14 @@ abstract final class DonneesSeanceDemo {
     ),
   ];
 
+  /// La file de recitation de la demonstration (EN-9).
+  static const FileRecitation recitation = FileRecitation(
+    actif: 'Mariam',
+    suivants: <String>['Yusuf', 'Aïcha'],
+  );
+
   static const FinSeance fin = FinSeance(
-    heureFin: '15:16',
+    heureFin: '18:45',
     cahierACompleter: true,
   );
 
@@ -197,13 +217,18 @@ abstract final class DonneesSeanceDemo {
   /// l'enseignant montre « La seance se poursuit. » comme l'image CLV-06.
   /// La vue eleve de la meme visite garde l'horloge en cours, comme CLV-04
   /// (l'eleve n'affiche la suite que depassee, sans duree restante).
-  static VueSeance vue(RoleSeance role, EtatDemoSalle etat) {
+  static VueSeance vue(
+    RoleSeance role,
+    EtatDemoSalle etat, {
+    TitreEnseignant titre = TitreEnseignant.sayyid,
+  }) {
     final bool enseignant = role == RoleSeance.enseignant;
+    final String nom = enseignantPour(titre);
     return VueSeance(
       role: role,
       nomClasse: classe,
-      nomEnseignant: enseignante,
-      initialesEnseignant: initialesEnseignante,
+      nomEnseignant: nom,
+      initialesEnseignant: DepuisSalle.initiales(nom),
       prenomEleve: enseignant ? null : eleveCourant,
       horloge:
           (etat == EtatDemoSalle.visite && enseignant) ||
@@ -216,6 +241,12 @@ abstract final class DonneesSeanceDemo {
       visite: etat == EtatDemoSalle.visite
           ? const VisiteSeance(prenomEnfant: eleveCourant, concerneMoi: true)
           : null,
+      // La file de recitation (EN-9) : Mariam recite, Yusuf et Aïcha a
+      // suivre. Des prenoms seulement (cles de demonstration).
+      recitation: enseignant && etat == EtatDemoSalle.eleves
+          ? recitation
+          : FileRecitation.vide,
+      appelRecu: !enseignant && etat == EtatDemoSalle.appel,
       support: etat == EtatDemoSalle.rienPartage ? null : support,
       cameraEnseignantActive: true,
       groupeId: groupeDemo,

@@ -6,10 +6,12 @@
 // `/tc/classe` ou depuis la demonstration (`lib/features/demo/seance_demo.dart`).
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart' show StringCharacters;
 
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
+import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../salle/vue_salle.dart';
 
@@ -119,7 +121,12 @@ class EleveSeance {
     required this.statut,
     this.fiche,
     this.id,
+    this.cleAvatar,
   });
+
+  /// La cle de sa photo (E5, K-44), `null` sans photo : les initiales en
+  /// repli. Nulle en demonstration, qui n'a aucune photo stockee.
+  final String? cleAvatar;
 
   /// L'identifiant d'academie (`/tc/classe`) : les actions de la fiche
   /// (rappel, recitation) visent un inscrit par lui, jamais par son prenom.
@@ -157,8 +164,12 @@ class SupportSeance {
     required this.points,
     required this.page,
     required this.pages,
+    this.ressourceId,
   });
 
+  /// La ressource partagee (`supportActifId`) quand on la connait : deux
+  /// ressources sans description restent distinctes (UX_REVIEW_04 n. 17 f).
+  final String? ressourceId;
   final String chapitre;
   final String titre;
   final String encadre;
@@ -230,10 +241,28 @@ class FinSeance {
 }
 
 /// Le panneau ouvert a cote du support (enseignant seulement).
-enum PanneauOuvert { aucun, eleves, supports }
+enum PanneauOuvert {
+  aucun,
+  eleves,
+  supports,
+
+  /// EN-10 : le selecteur de ressources (04 §19).
+  ressources,
+}
 
 /// Une commande du dock, par role (I-4).
-enum CommandeDock { micro, camera, agrandir, reseau, quitter }
+enum CommandeDock {
+  micro,
+  camera,
+  agrandir,
+  reseau,
+  quitter,
+
+  /// EN-10 : le Teaching Dock compact de l'enseignant.
+  supports,
+  partager,
+  outils,
+}
 
 /// Un compte affiche en haut a droite : celui de la personne devant l'ecran.
 @immutable
@@ -257,6 +286,8 @@ class VueSeance {
     this.connexion = ConnexionSeance.enLigne,
     this.enregistrementConfirme = true,
     this.visite,
+    this.recitation = FileRecitation.vide,
+    this.appelRecu = false,
     this.support,
     this.cameraEnseignantActive = true,
     this.cameraAutorisee = true,
@@ -287,7 +318,8 @@ class VueSeance {
   static const bool optionQ3 = false;
 
   /// Q4 : « Le tuteur de {prenom} observe la seance. » (non : texte de la
-  /// spec, « Tuteur de {prenom} observe. »).
+  /// spec, « Tuteur de {prenom} observe. »). Sans effet depuis EN-RC : la
+  /// notice de l'enseignant est « Un parent observe cette seance » (EN-9).
   static const bool optionQ4 = false;
 
   /// Q5 : guidee, texte court « Le cours est enregistre. » (non : texte
@@ -324,6 +356,14 @@ class VueSeance {
   final bool enregistrementConfirme;
 
   final VisiteSeance? visite;
+
+  /// La file de recitation (EN-9) : identifiants d'academie, ou prenoms en
+  /// demonstration (`cleEleveSeance`). Aucun minuteur par eleve ni
+  /// evaluation (E8, E9).
+  final FileRecitation recitation;
+
+  /// L'enseignant vient d'appeler discretement cet eleve (EN-9, E16).
+  final bool appelRecu;
 
   /// `null` : rien n'est partage.
   final SupportSeance? support;
@@ -492,11 +532,22 @@ class VueSeance {
       ? CompteSeance(nom: nomEnseignant, initiales: initialesEnseignant)
       : CompteSeance(
           nom: prenomEleve!,
-          initiales: prenomEleve!.substring(0, 1).toUpperCase(),
+          // Un grapheme entier (lettre arabe avec haraka) ; vide sans prenom.
+          initiales: prenomEleve!.characters.isEmpty
+              ? ''
+              : prenomEleve!.characters.first.toUpperCase(),
         );
 
   /// Guidee : ni theme, ni cloche, ni reglages, ni menu de compte.
   bool get voitReglagesEnTete => !_guidee;
+
+  // --- Appel discret (EN-9, E16) ---
+
+  /// Ce que voit l'eleve appele : le titre et le nom de l'enseignant viennent
+  /// des donnees (« Sayyid Ibrahim vous appelle »), jamais « Le professeur ».
+  String? get texteAppel => !_enseignant && appelRecu && !estFinie
+      ? t.salle.seance.vousAppelle(nom: nomEnseignant)
+      : null;
 
   // --- Mention et notice (I-1, I-2) ---
 
@@ -521,10 +572,9 @@ class VueSeance {
     return switch (role) {
       RoleSeance.eleve => t.salle.seance.votreParentObserve,
       RoleSeance.guidee => t.salle.seance.tonParentObserve,
-      RoleSeance.enseignant =>
-        optionQ4
-            ? t.salle.seance.leTuteurDeObserve(prenom: visite!.prenomEnfant)
-            : t.salle.seance.tuteurDeObserve(prenom: visite!.prenomEnfant),
+      // Vague Enseignant : « Un parent observe cette seance », sans prenom
+      // (02_DECOUPAGE, detail EN-9 ; choix provisoire consigne au directeur).
+      RoleSeance.enseignant => t.salle.seance.unParentObserve,
     };
   }
 
@@ -599,9 +649,14 @@ class VueSeance {
   /// Le dock, dans l'ordre (I-4). Agrandir n'existe que si un support est
   /// partage : sans support, il n'y a rien a agrandir.
   List<CommandeDock> get commandesDock => switch (role) {
+    // EN-10 (maquettes planche 3, 04 §18.3) : barre compacte Supports,
+    // Micro, Camera, Partager, « Ouvrir les outils d'enseignement ».
     RoleSeance.enseignant => const <CommandeDock>[
+      CommandeDock.supports,
       CommandeDock.micro,
       CommandeDock.camera,
+      CommandeDock.partager,
+      CommandeDock.outils,
       CommandeDock.reseau,
       CommandeDock.quitter,
     ],
@@ -621,6 +676,8 @@ class VueSeance {
     ConnexionSeance? connexion,
     VisiteSeance? visite,
     bool sansVisite = false,
+    FileRecitation? recitation,
+    bool? appelRecu,
     SupportSeance? support,
     bool sansSupport = false,
     bool? enregistrementConfirme,
@@ -640,6 +697,8 @@ class VueSeance {
     enregistrementConfirme:
         enregistrementConfirme ?? this.enregistrementConfirme,
     visite: sansVisite ? null : visite ?? this.visite,
+    recitation: recitation ?? this.recitation,
+    appelRecu: appelRecu ?? this.appelRecu,
     support: sansSupport ? null : support ?? this.support,
     cameraEnseignantActive: cameraEnseignantActive,
     cameraAutorisee: cameraAutorisee ?? this.cameraAutorisee,

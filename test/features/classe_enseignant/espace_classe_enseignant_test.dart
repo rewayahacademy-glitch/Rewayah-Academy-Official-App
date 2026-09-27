@@ -80,7 +80,7 @@ void main() {
         ),
         findsNothing,
       );
-      expect(find.textContaining('Cours dans'), findsOneWidget);
+      expect(find.textContaining(RegExp(r'^Dans \d')), findsOneWidget);
     });
   });
 
@@ -114,9 +114,10 @@ void main() {
     });
   });
 
-  testWidgets('ordre : identite, seance, preparation, eleves, supports', (
-    WidgetTester tester,
-  ) async {
+  // EN-3 : la Classe (seance, preparation, progression, ressources) puis les
+  // eleves ; sur bureau, deux colonnes (planche 2, rectification 5).
+  testWidgets('ordre : identite, seance, preparation, progression, '
+      'ressources, eleves', (WidgetTester tester) async {
     await avecLargeur(tester, largeurMobile, () async {
       await _poser(tester, EtatDemoClasse.aVenir);
       double haut(Finder f) => tester.getTopLeft(f.first).dy;
@@ -125,39 +126,43 @@ void main() {
       final double preparation = haut(
         find.text(t.enseignant.ficheGroupe.preparationTitre),
       );
+      final double progression = haut(
+        find.text(t.enseignant.ficheGroupe.progressionTitre),
+      );
+      final double ressources = haut(
+        find.text(t.enseignant.ficheGroupe.ressourcesTitre),
+      );
       final double eleves = haut(
         find.text(t.enseignant.ficheGroupe.elevesTitre),
       );
-      final double supports = haut(
-        find.text(t.enseignant.ficheGroupe.supportsTitre),
-      );
       expect(identite, lessThan(seance));
       expect(seance, lessThan(preparation));
-      expect(preparation, lessThan(eleves));
-      expect(eleves, lessThan(supports));
+      expect(preparation, lessThan(progression));
+      expect(progression, lessThan(ressources));
+      expect(ressources, lessThan(eleves));
       // Sans onglets.
       expect(find.byType(TabBar), findsNothing);
     });
   });
 
-  testWidgets('bureau : [seance | A preparer] puis [Eleves | Supports]', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('bureau : [la Classe | les eleves]', (WidgetTester tester) async {
     await avecLargeur(tester, 1440, () async {
       await _poser(tester, EtatDemoClasse.aVenir);
       final Offset seance = tester.getTopLeft(find.byType(CarteSession));
       final Offset preparation = tester.getTopLeft(
         find.text(t.enseignant.ficheGroupe.preparationTitre),
       );
+      final Offset ressources = tester.getTopLeft(
+        find.text(t.enseignant.ficheGroupe.ressourcesTitre),
+      );
       final Offset eleves = tester.getTopLeft(
         find.text(t.enseignant.ficheGroupe.elevesTitre),
       );
-      final Offset supports = tester.getTopLeft(
-        find.text(t.enseignant.ficheGroupe.supportsTitre),
-      );
-      expect(preparation.dx, greaterThan(seance.dx));
-      expect(supports.dx, greaterThan(eleves.dx));
-      expect(eleves.dy, greaterThan(seance.dy));
+      // La Classe au debut, en une colonne ; les eleves a la fin, en haut.
+      expect(preparation.dx, seance.dx);
+      expect(ressources.dx, seance.dx);
+      expect(eleves.dx, greaterThan(seance.dx));
+      expect(eleves.dy, lessThan(preparation.dy));
     });
   });
 
@@ -196,20 +201,31 @@ void main() {
           find.descendant(of: groupe, matching: find.text(e.prenom)),
           findsOneWidget,
         );
-        // Une seule ligne secondaire « niveau · reprise », puis le dernier
-        // point dessous, dans la meme legende.
+        // Une seule ligne secondaire « niveau · reprise » ; le dernier point
+        // reste dans la fiche eleve (K-42 style §4).
         final String reprise = t.enseignant.ficheGroupe.repriseEleve(
           page: e.pageReprise,
-        );
-        final String point = t.enseignant.ficheGroupe.dernierPoint(
-          texte: e.dernierPoint,
         );
         expect(
           find.descendant(
             of: groupe,
-            matching: find.text('${e.niveau} · $reprise\n$point'),
+            matching: find.text('${e.niveau} · $reprise'),
           ),
-          findsOneWidget,
+          findsNWidgets(
+            DonneesClasseDemo.eleves
+                .where(
+                  (EleveProjectionDemo x) =>
+                      x.niveau == e.niveau && x.pageReprise == e.pageReprise,
+                )
+                .length,
+          ),
+        );
+        expect(
+          find.descendant(
+            of: groupe,
+            matching: find.textContaining(e.dernierPoint),
+          ),
+          findsNothing,
         );
       }
       // Aucune carte par eleve.
@@ -255,10 +271,10 @@ void main() {
     await avecLargeur(tester, largeurMobile, () async {
       await _poser(tester, EtatDemoClasse.aVenir);
       // Plus de titre d'ecran « Fiche du groupe ».
-      expect(find.text(t.enseignant.ficheGroupe.titre), findsNothing);
+      expect(find.text('Fiche du groupe'), findsNothing);
       final Finder titre = find.text(DonneesClasseDemo.classe);
       expect(titre, findsOneWidget);
-      final Finder retour = find.text(t.enseignant.ficheGroupe.retour);
+      final Finder retour = find.text(t.commun.retour);
       expect(
         tester.getTopLeft(retour).dy,
         lessThan(tester.getTopLeft(titre).dy),
@@ -302,8 +318,8 @@ void main() {
       );
       // Aucune tuile « places libres » pleine largeur.
       expect(find.byType(StatTile), findsNothing);
-      expect(find.text(t.enseignant.ficheGroupe.placesLibres), findsNothing);
-      expect(find.text(t.enseignant.ficheGroupe.placesLibresUn), findsNothing);
+      expect(find.text('places libres'), findsNothing);
+      expect(find.text('place libre'), findsNothing);
     });
   });
 

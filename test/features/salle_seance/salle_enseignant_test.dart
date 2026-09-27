@@ -90,14 +90,18 @@ void main() {
           'sans debordement', (WidgetTester tester) async {
         await _monter(tester, taille.value, mode: mode);
         expect(tester.takeException(), isNull);
-        expect(find.text('Tuteur de Mariam observe.'), findsOneWidget);
+        expect(find.text('Un parent observe cette séance'), findsOneWidget);
         expect(
           find.text('Classe An-Nour · La séance se poursuit.'),
           findsOneWidget,
         );
         expect(find.text('Votre parent observe la séance.'), findsNothing);
         expect(find.text('Ton parent observe la séance.'), findsNothing);
-        expect(find.text('Mariam'), findsNothing);
+        // EN-9 : sur bureau, le panneau Eleves est ouvert d'office a droite.
+        expect(
+          find.text('Mariam'),
+          taille.key == 'desktop' ? findsWidgets : findsNothing,
+        );
         expect(find.textContaining('Foyer'), findsNothing);
         expect(find.text('Agrandir'), findsNothing);
         expect(_cle('bouton-agrandir'), findsNothing);
@@ -124,7 +128,8 @@ void main() {
           find.text('Zoom local, sans effet sur les autres'),
           findsNothing,
         );
-        expect(_cle('rail-seance'), desktop ? findsOneWidget : findsNothing);
+        // EN-9 : sans barre de navigation, meme sur bureau.
+        expect(_cle('rail-seance'), findsNothing);
         expect(
           _cle('separateur-dock'),
           desktop ? findsOneWidget : findsNothing,
@@ -195,21 +200,22 @@ void main() {
     WidgetTester tester,
   ) async {
     await _monter(tester, _tailles['desktop']!);
+    // EN-9 : la salle de l'enseignant est sans barre de navigation.
     for (final String entree in <String>[
       'Journée',
       'Classes',
       'Ressources',
       'Profil',
     ]) {
-      expect(find.text(entree), findsOneWidget);
+      expect(find.text(entree), findsNothing);
     }
-    // Le seul « Séance en direct » est le titre, pas une entree du rail.
+    // Le seul « Séance en direct » est le titre.
     expect(find.text('Séance en direct'), findsOneWidget);
-    expect(find.text('Sayyida Amina'), findsWidgets);
-    expect(find.text('SA'), findsOneWidget);
+    expect(find.text('Sayyid Ibrahim'), findsWidgets);
+    expect(find.text('SI'), findsOneWidget);
   });
 
-  testWidgets('rail : la sortie passe par la confirmation de Quitter', (
+  testWidgets('EN-9 : aucune barre, meme avec un rappel de navigation', (
     WidgetTester tester,
   ) async {
     String? route;
@@ -229,17 +235,11 @@ void main() {
       ),
     );
     await tester.pump();
-    await tester.tap(find.text('Journée'));
-    await _attendre(tester);
+    // EN-9 : meme avec un rappel de navigation, la salle n'a pas de barre ;
+    // on n'en sort que par Quitter (confirmation, puis cahier).
+    expect(_cle('rail-seance'), findsNothing);
+    expect(find.text('Journée'), findsNothing);
     expect(route, isNull);
-    expect(find.text('Quitter et ouvrir le cahier'), findsOneWidget);
-    expect(
-      find.text('Vous passerez ensuite au cahier de transmission.'),
-      findsOneWidget,
-    );
-    await tester.tap(find.text('Quitter et ouvrir le cahier'));
-    await _attendre(tester);
-    expect(route, '/enseignant/journee');
   });
 
   testWidgets('Quitter (dock) : « Quitter et ouvrir le cahier »', (
@@ -308,7 +308,7 @@ void main() {
       final Rect cadre = tester.getRect(vignette);
       final Rect nom = tester.getRect(_cle('nom-video'));
       expect(
-        find.descendant(of: vignette, matching: find.text('Sayyida Amina')),
+        find.descendant(of: vignette, matching: find.text('Sayyid Ibrahim')),
         findsOneWidget,
       );
       expect(cadre.contains(nom.topLeft), isTrue);

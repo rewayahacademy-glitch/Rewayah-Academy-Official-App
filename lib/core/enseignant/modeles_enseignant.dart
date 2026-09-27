@@ -263,8 +263,7 @@ class GroupeEnseignant {
   final DateTime creeLe;
 
   /// Les places encore libres. Jamais negatif.
-  int get placesLibres =>
-      seuilMax - nbMembres < 0 ? 0 : seuilMax - nbMembres;
+  int get placesLibres => seuilMax - nbMembres < 0 ? 0 : seuilMax - nbMembres;
 
   /// Vrai quand le groupe est au plafond.
   bool get complet => nbMembres >= seuilMax;
@@ -395,6 +394,8 @@ class ParticipantBrouillon {
     this.derniereTraceLe,
     this.position,
     this.unite,
+    this.devoirPrecedent,
+    this.suspensionPermise = true,
   });
 
   /// Lit une ligne du tableau `participants`.
@@ -408,9 +409,8 @@ class ParticipantBrouillon {
           riwaya: json['riwaya'] as String?,
         ),
         presence: EtatPresence.depuisSql(json['presence'] as String?),
-        entreLe: DateTime.tryParse(
-          json['entre_le'] as String? ?? '',
-        )?.toLocal(),
+        entreLe: DateTime.tryParse(json['entre_le'] as String? ?? '')
+            ?.toLocal(),
         derniereTraceLe: DateTime.tryParse(
           json['derniere_trace_le'] as String? ?? '',
         )?.toLocal(),
@@ -421,7 +421,18 @@ class ParticipantBrouillon {
         unite: UniteCurriculum.depuisJson(
           json['unite_curriculum'] as Map<String, dynamic>?,
         ),
+        devoirPrecedent: json['devoir_precedent'] as String?,
+        suspensionPermise: json['suspension_permise'] as bool? ?? true,
       );
+
+  /// Le devoir donne a la seance precedente, tel que le systeme l'a garde
+  /// (doc 04 §20.1, « travail precedent »). Nul s'il n'y en avait pas.
+  final String? devoirPrecedent;
+
+  /// Vrai quand la logique academique permet de proposer « Suspendre le
+  /// nouveau » pour cet eleve (doc 04 §20.4). Vrai par defaut tant que le
+  /// serveur ne le dit pas (BR-1).
+  final bool suspensionPermise;
 
   /// L'eleve.
   final MembreSeance membre;
@@ -603,7 +614,7 @@ class DecisionEleve {
     this.pointPhonetique,
     this.objectifPersonnel,
     this.travailMaison,
-    this.nouveauSuspendu = false,
+    this.suite = SuiteEleve.continuer,
   });
 
   /// L'eleve concerne.
@@ -624,8 +635,12 @@ class DecisionEleve {
   /// Le travail maison, ajuste a partir de la suggestion du systeme.
   final String? travailMaison;
 
+  /// La suite pedagogique choisie pour cet eleve (doc 04 §20.4). « Continuer »
+  /// par defaut.
+  final SuiteEleve suite;
+
   /// Vrai quand l'enseignant suspend le nouveau contenu pour cet eleve.
-  final bool nouveauSuspendu;
+  bool get nouveauSuspendu => suite == SuiteEleve.suspendreNouveau;
 
   /// Ce qui part dans `lesson_reports.content`.
   Map<String, dynamic> versJson() => <String, dynamic>{
@@ -635,8 +650,22 @@ class DecisionEleve {
     if (pointPhonetique != null) 'point_phonetique': pointPhonetique,
     if (objectifPersonnel != null) 'objectif_personnel': objectifPersonnel,
     if (travailMaison != null) 'travail_maison': travailMaison,
+    if (suite != SuiteEleve.continuer) 'suite': suite.name,
     if (nouveauSuspendu) 'nouveau_suspendu': true,
   };
+}
+
+/// Les actions pedagogiques du cahier pour un eleve (doc 04 §20.4) :
+/// « Continuer », « Renforcer », « Suspendre le nouveau ».
+enum SuiteEleve {
+  /// L'etat par defaut, fourni par le curriculum.
+  continuer,
+
+  /// L'eleve revoit ce qui est en cours avant d'avancer.
+  renforcer,
+
+  /// La revision continue, rien de nouveau n'est ajoute.
+  suspendreNouveau,
 }
 
 /// Le cahier tel qu'il part au serveur.
@@ -652,6 +681,7 @@ class CahierARendre {
     required this.seanceId,
     required this.decisions,
     this.noteGroupe,
+    this.positionReprise,
   });
 
   /// La seance concernee.
@@ -664,12 +694,19 @@ class CahierARendre {
   /// interdit tout rapport narratif obligatoire.
   final String? noteGroupe;
 
+  /// Ou la Classe s'est arretee : la position de reprise d'un remplacant,
+  /// obligatoire a la validation (K-45, point 2). Le contrat serveur la
+  /// recevra a BR-1.
+  final String? positionReprise;
+
   /// Le contenu serialise, tel qu'il sera ecrit dans `lesson_reports.content`.
   Map<String, dynamic> versJson() => <String, dynamic>{
     'version': 1,
     'session_id': seanceId,
     if (noteGroupe != null && noteGroupe!.trim().isNotEmpty)
       'note_groupe': noteGroupe!.trim(),
+    if (positionReprise != null && positionReprise!.trim().isNotEmpty)
+      'position_reprise': positionReprise!.trim(),
     'eleves': <Map<String, dynamic>>[
       for (final DecisionEleve d in decisions) d.versJson(),
     ],

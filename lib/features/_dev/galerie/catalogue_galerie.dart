@@ -47,6 +47,7 @@ import '../../../core/widgets/page_parcours.dart';
 import '../../../core/widgets/page_shell.dart';
 import '../../../core/widgets/permanent_notice.dart';
 import '../../../core/widgets/pin_pad.dart';
+import '../../../core/widgets/point_rappel.dart';
 import '../../../core/widgets/pressable.dart';
 import '../../../core/widgets/rosace_verset.dart';
 import '../../../core/widgets/schedule_option.dart';
@@ -1244,6 +1245,26 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             ),
             child: const Text('Le corps de l etape.'),
           ),
+        ),
+      ),
+    ],
+  ),
+  // EN-3 : le rappel des cahiers non valides (K-45). Il pulse trois fois
+  // puis reste fixe ; fixe d'emblee quand les animations sont reduites.
+  EntreeGalerie(
+    nom: 'PointRappel',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'pulse trois fois puis reste fixe',
+        (BuildContext _) =>
+            const PointRappel(libelle: 'Un cahier reste a valider'),
+      ),
+      EtatGalerie(
+        'fixe d emblee',
+        (BuildContext _) => const PointRappel(
+          libelle: 'Un cahier reste a valider',
+          battements: 0,
         ),
       ),
     ],

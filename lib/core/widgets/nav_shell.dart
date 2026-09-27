@@ -119,18 +119,23 @@ List<Destination> destinationsPour({
         enPied: true,
       ),
     ],
-    // **Exactement trois destinations**, et pas quatre : le gel d'architecture
-    // du role Enseignant l'impose (`TEACHER_PARALLEL_BASELINE.md` §3.1). La
-    // quatrieme etait « Compte », et c'etait un doublon : « Compte » et
-    // « Profil » repondaient a la meme question, *moi*. `ENS-05` porte
-    // desormais l'identite professionnelle, le contrat, le statut **et**
-    // l'acces aux parametres reellement personnels, deconnexion comprise ; il
-    // n'y a donc plus rien a atteindre par une destination de plus.
+    // **Aujourd'hui, Classes, Disponibilites, Profil**, dans cet ordre et sur
+    // tous les formats (regle E10). ADR-027 et ses trois destinations sont
+    // remplaces par la decision du directeur du 26/09/2026 : Classes devient
+    // une destination de premier niveau. « Compte » ne revient pas : `ENS-05`
+    // (Profil) porte toujours l'acces aux parametres, deconnexion comprise.
+    // L'ordre de cette liste est celui des branches de la coquille enseignant
+    // dans `app_router.dart` : les deux doivent rester d'accord.
     AppRole.teacher => <Destination>[
       Destination(
         libelle: t.nav.enseignant.journee,
         icone: AppIcons.journee,
         chemin: Routes.enseignantJournee,
+      ),
+      Destination(
+        libelle: t.nav.enseignant.classes,
+        icone: AppIcons.classes,
+        chemin: Routes.enseignantClasses,
       ),
       Destination(
         libelle: t.nav.enseignant.creneaux,

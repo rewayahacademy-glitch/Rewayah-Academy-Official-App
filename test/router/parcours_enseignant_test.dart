@@ -21,6 +21,7 @@ import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/bienvenue_enseignant/bienvenue_page.dart';
 import 'package:rewayah_academy/features/cahier/cahier_page.dart';
 import 'package:rewayah_academy/features/creneaux/creneaux_page.dart';
+import 'package:rewayah_academy/features/enseignant_classes/mes_classes_page.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_groupe_page.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 import 'package:rewayah_academy/features/profil_enseignant/profil_enseignant_page.dart';
@@ -118,6 +119,7 @@ void main() {
       Routes.enseignantProfil: ProfilEnseignantPage,
       Routes.enseignantCreneaux: CreneauxPage,
       Routes.enseignantJournee: JourneePage,
+      Routes.enseignantClasses: MesClassesPage,
       Routes.groupePour('groupe-1'): FicheGroupePage,
       Routes.revuePour('groupe-1'): RevueGroupePage,
       Routes.cahierPour('seance-1'): CahierPage,
@@ -160,22 +162,23 @@ void main() {
   });
 
   group('Les cinq poses ne sont pas des destinations', () {
-    testWidgets('la barre de l enseignant en tient exactement trois', (
+    testWidgets('la barre de l enseignant en tient exactement quatre', (
       WidgetTester tester,
     ) async {
       await monter(tester, Routes.enseignantJournee);
 
-      // Trois libelles de destination, et le quatrieme ne doit pas revenir :
-      // « Compte » et « Profil » repondaient a la meme question (ADR-027), et
-      // sur telephone le quatrieme onglet serait le seul chemin de deconnexion.
+      // Quatre destinations, dans l'ordre E10 : Aujourd'hui, Classes,
+      // Disponibilites, Profil (decision du directeur du 26/09/2026, qui
+      // remplace ADR-027). « Compte » ne revient pas : Profil le porte.
       // A cette largeur (tablette), le rail est replie mais garde ses
       // libelles visibles, comme avant le chantier Tuteur V1 : le rail a
       // icones seules est reserve au tuteur (revue phase 0, jetons D2).
       final NavShell coquille = tester.widget<NavShell>(find.byType(NavShell));
-      expect(coquille.destinations, hasLength(3));
+      expect(coquille.destinations, hasLength(4));
       expect(coquille.libellesDansLeRail, isTrue);
       for (final String libelle in <String>[
         t.nav.enseignant.journee,
+        t.nav.enseignant.classes,
         t.nav.enseignant.creneaux,
         t.nav.enseignant.profil,
       ]) {
@@ -186,6 +189,43 @@ void main() {
           ),
           findsOneWidget,
           reason: libelle,
+        );
+      }
+    });
+
+    testWidgets('chacune des quatre destinations se tape depuis la coquille', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await monter(tester, Routes.enseignantJournee);
+
+      // Depuis la VRAIE coquille enseignant, on tape chaque destination dans
+      // l'ordre E10 : la branche doit s'ouvrir sur son chemin et sa page.
+      final Map<String, (String, Type)> destinations = <String, (String, Type)>{
+        t.nav.enseignant.classes: (Routes.enseignantClasses, MesClassesPage),
+        t.nav.enseignant.creneaux: (Routes.enseignantCreneaux, CreneauxPage),
+        t.nav.enseignant.profil: (
+          Routes.enseignantProfil,
+          ProfilEnseignantPage,
+        ),
+        t.nav.enseignant.journee: (Routes.enseignantJournee, JourneePage),
+      };
+      for (final MapEntry<String, (String, Type)> d in destinations.entries) {
+        await tester.tap(
+          find.descendant(
+            of: find.byKey(NavShell.railKey),
+            matching: find.text(d.key),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(routeur.state.matchedLocation, d.value.$1, reason: d.key);
+        expect(find.byType(d.value.$2), findsOneWidget, reason: d.key);
+        final NavShell coquille = tester.widget<NavShell>(
+          find.byType(NavShell),
+        );
+        expect(
+          coquille.destinations[coquille.indexActif!].chemin,
+          d.value.$1,
+          reason: 'destination active pour ${d.key}',
         );
       }
     });

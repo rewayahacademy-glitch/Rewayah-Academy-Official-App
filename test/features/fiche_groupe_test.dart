@@ -14,10 +14,14 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
+import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/stat_tile.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_groupe_page.dart';
+import 'package:rewayah_academy/features/fiche_groupe/preparation_seance.dart';
+import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
+import 'package:rewayah_academy/features/tc_espace_groupe/emplacements_groupe.dart';
 
 import '../support/harnais.dart';
 
@@ -143,7 +147,7 @@ void main() {
       // CL-4.4b : le nom de la Classe EST le titre ; plus de « Fiche du
       // groupe ».
       expect(find.text('Perles du Coran'), findsOneWidget);
-      expect(find.text(t.enseignant.ficheGroupe.titre), findsNothing);
+      expect(find.text('Fiche du groupe'), findsNothing);
       // Le type de groupe, information pedagogique (revue CL-4.R, m7) : les
       // libelles de public existent deja sous `admin.groupes.*`, aucune cle
       // jumelle n'a ete creee.
@@ -333,8 +337,8 @@ void main() {
       expect(pastille, findsOneWidget);
       expect(tester.widget<StatusPill>(pastille).ton, TonEtat.neutre);
       expect(find.byType(StatTile), findsNothing);
-      expect(find.text(t.enseignant.ficheGroupe.placesLibres), findsNothing);
-      expect(find.text(t.enseignant.ficheGroupe.placesLibresUn), findsNothing);
+      expect(find.text('places libres'), findsNothing);
+      expect(find.text('place libre'), findsNothing);
     });
 
     testWidgets('un groupe complet le dit par le ton de sa pastille', (
@@ -416,10 +420,44 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text(t.enseignant.ficheGroupe.retour));
+      await tester.tap(find.text(t.commun.retour));
       await tester.pumpAndSettle();
 
       expect(find.text('journee'), findsOneWidget);
+    });
+
+    // R1 : ouvert par-dessus un ecran, le Retour y ramene (branche `pop`).
+    testWidgets('ouverte par-dessus, le retour ramene a l ecran precedent', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: '/precedent',
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/precedent',
+              builder: (BuildContext contexte, GoRouterState _) => TextButton(
+                onPressed: () =>
+                    GoRouter.of(contexte).push(Routes.groupePour(_groupeId)),
+                child: const Text('precedent'),
+              ),
+            ),
+            ..._routes(),
+          ],
+          surcharges: _surcharges(_avec()),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('precedent'));
+      await tester.pumpAndSettle();
+      expect(find.byType(FicheGroupePage), findsOneWidget);
+
+      await tester.tap(find.text(t.commun.retour));
+      await tester.pumpAndSettle();
+
+      expect(find.text('precedent'), findsOneWidget);
+      expect(find.byType(FicheGroupePage), findsNothing);
+      expect(find.text('journee'), findsNothing);
     });
 
     testWidgets('la revue courte du groupe s ouvre depuis la fiche', (
@@ -494,6 +532,146 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('ENS-07 perfectionne (EN-3)', () {
+    List<Override> avecProjections(
+      FauxServiceEnseignant enseignant,
+    ) => <Override>[
+      ..._surcharges(enseignant),
+      projectionElevesProvider(_groupeId).overrideWith(
+        (Ref _) => const <String, ProjectionEleve>{
+          'e1': ProjectionEleve(indicateur: IndicateurEleve.aRenforcer),
+          'e2': ProjectionEleve(indicateur: IndicateurEleve.regulier),
+        },
+      ),
+      progressionGroupeProvider(_groupeId).overrideWith(
+        (Ref _) =>
+            const ProgressionCompacte(chapitre: 'Chapitre 2', fraction: 0.4),
+      ),
+    ];
+    final List<MembreSeance> deux = <MembreSeance>[
+      membreDeTest(),
+      membreDeTest(studentId: 'e2', identifiant: 'RA-0002', prenom: 'Idris'),
+    ];
+
+    testWidgets('l indicateur par eleve est masque (decision EN-RC)', (
+      WidgetTester tester,
+    ) async {
+      _fenetreHaute(tester);
+      await tester.pumpWidget(
+        hote(
+          const FicheGroupePage(groupeId: _groupeId),
+          surcharges: avecProjections(_avec(membres: deux)),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Ses mots n'ont pas de source : le directeur les choisira (§13.4).
+      expect(
+        find.text(t.enseignant.ficheGroupe.indicateurARenforcer),
+        findsNothing,
+      );
+      expect(
+        find.text(t.enseignant.ficheGroupe.indicateurRegulier),
+        findsNothing,
+      );
+      // La progression de la classe tient une ligne, valeur ecrite.
+      expect(
+        find.text(t.enseignant.ficheGroupe.progressionTitre),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          t.classe.entree.progressionValeur(
+            chapitre: 'Chapitre 2',
+            pourcentage: 40,
+          ),
+        ),
+        findsOneWidget,
+      );
+      // La photo de l'eleve, initiales en repli (E5, K-44).
+      expect(find.byType(PhotoEleve), findsNWidgets(2));
+    });
+
+    testWidgets(
+      'toute la ligne d un eleve passe par le point d entree unique',
+      (WidgetTester tester) async {
+        _fenetreHaute(tester);
+        final List<String> ouverts = <String>[];
+        await tester.pumpWidget(
+          hote(
+            FicheGroupePage(groupeId: _groupeId, onOuvrirEleve: ouverts.add),
+            surcharges: avecProjections(_avec(membres: deux)),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Un appui sur l'identifiant, pas sur le prenom : c'est toute la
+        // ligne.
+        await tester.tap(find.text('RA-0002'));
+        await tester.pumpAndSettle();
+        expect(ouverts, <String>['e2']);
+      },
+    );
+
+    // UX_REVIEW_04 n. 12 b : a 1200, le panneau ferme rend le focus a la
+    // ligne de l'eleve.
+    testWidgets('le panneau ferme, le focus revient a la ligne', (
+      WidgetTester tester,
+    ) async {
+      _fenetreHaute(tester);
+      await tester.pumpWidget(
+        hote(
+          FicheGroupePage(groupeId: _groupeId, onOuvrirEleve: (String _) {}),
+          surcharges: avecProjections(_avec(membres: deux)),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('RA-0002'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey<String>('panneau-e2')), findsOneWidget);
+
+      await tester.tap(find.text(t.enseignant.eleve.retour));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey<String>('panneau-e2')), findsNothing);
+
+      final BuildContext? focus = FocusManager.instance.primaryFocus?.context;
+      expect(focus, isNotNull);
+      expect(
+        find.descendant(
+          of: find.byElementPredicate((Element e) => e == focus),
+          matching: find.text('RA-0002'),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('sans point d entree, la ligne ne promet rien', (
+      WidgetTester tester,
+    ) async {
+      _fenetreHaute(tester);
+      await tester.pumpWidget(
+        hote(
+          const FicheGroupePage(groupeId: _groupeId),
+          surcharges: avecProjections(_avec(membres: deux)),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Aucune ligne d'eleve ne se presse tant qu'ENS-11 n'existe pas.
+      expect(
+        find.descendant(
+          of: find.ancestor(
+            of: find.text('Idris'),
+            matching: find.byType(GroupeReglages),
+          ),
+          matching: find.byType(Pressable),
+        ),
+        findsNothing,
+      );
     });
   });
 }

@@ -152,9 +152,9 @@ void main() {
         for (final String texte in <String>[
           'Séance terminée',
           'Le cahier est prêt avec les informations de la séance.',
-          'Sayyida Amina',
+          'Sayyid Ibrahim',
           'Fin',
-          '15:16',
+          '18:45',
           '2 élèves connectés',
           'sur 3 inscrits',
           'Cahier de séance',
@@ -286,10 +286,7 @@ void main() {
           AnnonceObservation(libelle: 'x', prenomEnfant: 'Mariam'),
         ],
       );
-      expect(
-        vue?.texteNotice,
-        t.salle.seance.tuteurDeObserve(prenom: 'Mariam'),
-      );
+      expect(vue?.texteNotice, t.salle.seance.unParentObserve);
     });
 
     test('l eleve non observe ne lit rien', () {

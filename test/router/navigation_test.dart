@@ -105,12 +105,12 @@ void main() {
           Routes.tuteurSuivi,
           Routes.tuteurCompte,
         ],
-        // L'enseignant a TROIS destinations, pas quatre, et c'est un contrat
-        // du protocole du role Enseignant : « Compte » et « Profil »
-        // repondaient a la meme question (`TEACHER_PARALLEL_BASELINE.md`
-        // §3.1, ADR-027).
+        // L'enseignant a QUATRE destinations, dans l'ordre E10 : Aujourd'hui,
+        // Classes, Disponibilites, Profil (decision du directeur du
+        // 26/09/2026, qui remplace ADR-027). « Compte » ne revient pas.
         AppRole.teacher: <String>[
           Routes.enseignantJournee,
+          Routes.enseignantClasses,
           Routes.enseignantCreneaux,
           Routes.enseignantProfil,
         ],

@@ -24,6 +24,8 @@ class ActionsSeance {
     this.onReseau,
     this.onEleves,
     this.onSupports,
+    this.onPartager,
+    this.onOutilsEnseignement,
     this.onOutil,
     this.onPagePrecedente,
     this.onPageSuivante,
@@ -86,6 +88,13 @@ class ActionsSeance {
   final VoidCallback? onReseau;
   final VoidCallback? onEleves;
   final VoidCallback? onSupports;
+
+  /// EN-10 : « Partager » du Teaching Dock compact. Nul : pas de bouton.
+  final VoidCallback? onPartager;
+
+  /// EN-10 : « Ouvrir les outils d'enseignement » (le Teaching Dock de
+  /// `tc_dock`). Nul : pas de bouton.
+  final VoidCallback? onOutilsEnseignement;
   final ValueChanged<OutilEnseignement>? onOutil;
   final VoidCallback? onPagePrecedente;
   final VoidCallback? onPageSuivante;

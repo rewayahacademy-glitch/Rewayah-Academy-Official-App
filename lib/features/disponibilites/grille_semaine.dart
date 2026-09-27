@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_metriques.dart';
@@ -97,7 +98,10 @@ class GrilleSemaine extends StatelessWidget {
               children: <Widget>[
                 SizedBox(
                   width: metriques.cibleTactile,
-                  child: Text('${heure}h', style: textes.bodySmall),
+                  child: Text(
+                    t.enseignant.creneaux.heure(heure: heure),
+                    style: textes.bodySmall,
+                  ),
                 ),
                 for (int jour = 1; jour <= 7; jour++)
                   Expanded(
@@ -170,6 +174,25 @@ class _Case extends StatelessWidget {
     );
   }
 
+  /// Le contenu d'une case : une coche au centre quand elle est posee.
+  ///
+  /// La teinte seule distinguait mal une case posee d'une case vide en theme
+  /// sombre (WCAG 1.4.1 et 1.4.11) : la coche porte l'etat sans dependre de
+  /// la couleur. Elle est muette, le libelle semantique dit deja l'etat.
+  Widget _contenu(AppPalette palette, AppMetriques metriques) => SizedBox(
+    height: metriques.cibleTactile,
+    child: posee
+        ? Center(
+            child: ExcludeSemantics(
+              child: IconTheme(
+                data: palette.inkAccent.asIconTheme(size: AppSpacing.lg),
+                child: Icon(AppIcons.succes.repos),
+              ),
+            ),
+          )
+        : null,
+  );
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -177,13 +200,21 @@ class _Case extends StatelessWidget {
     final String jourLong = t.disponibilites.joursLongs[jour - 1];
 
     if (!actif) {
-      return DecoratedBox(
-        decoration: _decoration(
-          palette,
-          metriques,
-          const EtatPression(actif: false),
+      // Inerte (hors ligne, envoi en cours), la grille reste consultable : un
+      // lecteur d'ecran lit toujours le jour, l'heure et l'etat (coche ou
+      // non), sans promettre un geste qui ne repond pas (recette EN-12).
+      return Semantics(
+        enabled: false,
+        checked: posee,
+        label: '$jourLong ${t.enseignant.creneaux.heure(heure: heure)}',
+        child: DecoratedBox(
+          decoration: _decoration(
+            palette,
+            metriques,
+            const EtatPression(actif: false),
+          ),
+          child: _contenu(palette, metriques),
         ),
-        child: SizedBox(height: metriques.cibleTactile),
       );
     }
 
@@ -195,8 +226,8 @@ class _Case extends StatelessWidget {
         unawaited(HapticFeedback.selectionClick());
         onBasculer(Creneau(jour: jour, heure: heure, fuseau: fuseau), posee);
       },
-      // Le libelle dit l'etat ET ce que le geste fera : une case vide et une
-      // case pleine ne se distinguent que par la couleur, ce qui ne suffit pas.
+      // Le libelle dit l'etat ET ce que le geste fera ; a l'ecran, la coche
+      // distingue la case posee sans s'en remettre a la couleur.
       libelleSemantique: posee
           ? t.disponibilites.cellulePosee(jour: jourLong, heure: '$heure')
           : t.disponibilites.celluleLibre(jour: jourLong, heure: '$heure'),
@@ -204,7 +235,7 @@ class _Case extends StatelessWidget {
       arrondiFocus: metriques.arrondiInterieur,
       constructeur: (BuildContext _, EtatPression etat) => DecoratedBox(
         decoration: _decoration(palette, metriques, etat),
-        child: SizedBox(height: metriques.cibleTactile),
+        child: _contenu(palette, metriques),
       ),
     );
   }

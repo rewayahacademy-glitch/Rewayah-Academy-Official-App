@@ -31,11 +31,15 @@ class RepereDemonstration extends StatelessWidget {
         textDirection: sens,
         layoutDirection: sens,
         color: Theme.of(context).colorScheme.tertiary,
-        textStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onTertiary,
-          fontSize: 10,
-          fontWeight: FontWeight.w700,
-        ),
+        // La police du theme (K-42 : captures lisibles) : un `TextStyle` nu
+        // retombait sur la police de test et le ruban se peignait en blocs.
+        textStyle: (Theme.of(context).textTheme.labelSmall ??
+                const TextStyle())
+            .copyWith(
+              color: Theme.of(context).colorScheme.onTertiary,
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+            ),
         child: child ?? const SizedBox.shrink(),
       ),
     );

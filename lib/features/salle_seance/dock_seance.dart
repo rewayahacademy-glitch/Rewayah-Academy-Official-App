@@ -4,6 +4,8 @@
 // libelle dessous. Quitter est un disque plein d'alerte et passe toujours par
 // une confirmation.
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../core/domain/enums.dart';
@@ -19,6 +21,7 @@ import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/pressable.dart';
 import 'actions_seance.dart';
 import 'feuille_micro_bloque.dart';
+import 'libelles_salle_b.dart';
 import 'vue_seance.dart';
 
 /// Le fond d'un [BoutonAppel].
@@ -86,6 +89,19 @@ double _tailleIconeAppel(BuildContext context) =>
 /// clair (blanc), prise au jeton et non ecrite en dur.
 final Color _encreClaire = AppPalette.claire().surfaceAlert.onBackground;
 
+/// EN-12 (UX_REVIEW_04 n° 17 d, K-42) : le dock etroit trop serre (390,
+/// 768 a sept boutons) ou le texte agrandi. Les boutons y passent en icone
+/// seule, le libelle reste lu par le lecteur d'ecran, et le disque tient
+/// sa case moins un ecart, sans descendre sous la cible tactile.
+class _DockEtroit extends InheritedWidget {
+  const _DockEtroit({required this.diametre, required super.child});
+
+  final double diametre;
+
+  @override
+  bool updateShouldNotify(_DockEtroit ancien) => ancien.diametre != diametre;
+}
+
 /// Un bouton du dock : cercle, icone, libelle dessous.
 class BoutonAppel extends StatelessWidget {
   const BoutonAppel({
@@ -96,12 +112,16 @@ class BoutonAppel extends StatelessWidget {
     this.fond = FondBoutonAppel.surface,
     this.actif = true,
     this.focusNode,
+    this.selectionne,
     super.key,
   });
 
   /// Le noeud de focus du bouton : la salle y rend le focus a la fermeture
   /// d'une feuille ouverte par ce bouton (micro bloque, W2 2.4.3).
   final FocusNode? focusNode;
+
+  /// EN-10 : Supports dit « selectionne » quand son panneau est ouvert.
+  final bool? selectionne;
 
   final IconData icone;
   final String libelle;
@@ -119,7 +139,10 @@ class BoutonAppel extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final ThemeData theme = Theme.of(context);
-    final double diametre = diametreBoutonAppel(context);
+    final _DockEtroit? etroit = context
+        .dependOnInheritedWidgetOfExactType<_DockEtroit>();
+    final bool iconeSeule = etroit != null;
+    final double diametre = etroit?.diametre ?? diametreBoutonAppel(context);
     final double tailleIcone = _tailleIconeAppel(context);
     final BoxDecoration disque = !actif
         ? palette.surfaceRaised.decoration(
@@ -167,7 +190,7 @@ class BoutonAppel extends StatelessWidget {
               size: tailleIcone,
             ),
           };
-    return Pressable(
+    final Widget pressable = Pressable(
       onPress: onPress,
       actif: actif,
       focusNode: focusNode,
@@ -186,18 +209,31 @@ class BoutonAppel extends StatelessWidget {
               ),
             ),
           ),
-          Ecart.vXs,
-          Text(
-            libelle,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: (actif ? palette.inkStrong : palette.inkMuted).applyTo(
-              theme.textTheme.labelMedium ?? const TextStyle(),
+          if (!iconeSeule) ...<Widget>[
+            Ecart.vXs,
+            Text(
+              libelle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: (actif ? palette.inkStrong : palette.inkMuted).applyTo(
+                theme.textTheme.labelMedium ?? const TextStyle(),
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );
+    // Doc 04 §28 et §33 n. 13 : en icone seule, le libelle reste visible en
+    // infobulle (comme `nav_shell`), deja lu par `Pressable`.
+    final Widget bouton = iconeSeule
+        ? Tooltip(
+            message: libelleSemantique ?? libelle,
+            excludeFromSemantics: true,
+            child: pressable,
+          )
+        : pressable;
+    final bool? choisi = selectionne;
+    return choisi == null ? bouton : Semantics(selected: choisi, child: bouton);
   }
 }
 
@@ -212,6 +248,7 @@ class DockSeance extends StatelessWidget {
     this.microOuvert = true,
     this.cameraAllumee = true,
     this.agrandi = false,
+    this.focusSupports,
     super.key,
   });
 
@@ -222,6 +259,9 @@ class DockSeance extends StatelessWidget {
 
   /// Le support occupe l'ecran : le bouton devient « Reduire ».
   final bool agrandi;
+
+  /// EN-10 : le focus rendu a Supports a la fermeture de son panneau.
+  final FocusNode? focusSupports;
 
   Widget? _bouton(BuildContext context, CommandeDock commande) {
     // Guidee (Q1) : « Parler » et « Camera » en disques pleins.
@@ -268,6 +308,38 @@ class DockSeance extends StatelessWidget {
           libelle: t.salle.seance.reseau,
           fond: FondBoutonAppel.reseau,
           onPress: reseau,
+        );
+      case CommandeDock.supports:
+        final VoidCallback? supports = actions.onSupports;
+        if (supports == null) return null;
+        return BoutonAppel(
+          key: const ValueKey<String>('bouton-supports'),
+          focusNode: focusSupports,
+          selectionne:
+              vue.panneau == PanneauOuvert.supports ||
+              vue.panneau == PanneauOuvert.ressources,
+          icone: AppIcons.supports.repos,
+          libelle: t.salle.seance.supports,
+          onPress: supports,
+        );
+      case CommandeDock.partager:
+        final VoidCallback? partager = actions.onPartager;
+        if (partager == null) return null;
+        return BoutonAppel(
+          key: const ValueKey<String>('dock-partager'),
+          icone: AppIcons.flecheAction.repos,
+          libelle: LibellesSalleB.partager,
+          onPress: partager,
+        );
+      case CommandeDock.outils:
+        final VoidCallback? outils = actions.onOutilsEnseignement;
+        if (outils == null) return null;
+        return BoutonAppel(
+          key: const ValueKey<String>('dock-outils'),
+          icone: AppIcons.stylet.repos,
+          libelle: t.salle.seance.outils.titre,
+          libelleSemantique: LibellesSalleB.ouvrirOutils,
+          onPress: outils,
         );
       case CommandeDock.quitter:
         final VoidCallback? quitter = actions.onQuitter;
@@ -352,13 +424,51 @@ class DockSeance extends StatelessWidget {
             horizontal: AppSpacing.sm,
             vertical: AppSpacing.md,
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            // Chaque bouton prend une part egale : un libelle trop large
-            // (texte agrandi, 320px) s'ellipse au lieu de deborder la ligne.
-            children: <Widget>[
-              for (final Widget bouton in boutons) Expanded(child: bouton),
-            ],
+          child: LayoutBuilder(
+            builder: (BuildContext contexte, BoxConstraints contraintes) {
+              final Widget rangee = Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                // Chaque bouton prend une part egale.
+                children: <Widget>[
+                  for (final Widget bouton in boutons) Expanded(child: bouton),
+                ],
+              );
+              if (boutons.isEmpty) return rangee;
+              final double diametre = diametreBoutonAppel(contexte);
+              final double parCase = contraintes.maxWidth / boutons.length;
+              final bool serre = parCase < diametre + AppSpacing.sm;
+              final bool texteAgrandi =
+                  MediaQuery.textScalerOf(contexte).scale(1) > 1;
+              if (!serre && !texteAgrandi) return rangee;
+              // EN-12 (17 d) : icone seule, libelle lu ; disque a la case
+              // moins un ecart, jamais sous la cible tactile.
+              final double cible = AppMetriques.of(contexte).cibleTactile;
+              // UX_REVIEW_04 n. 17 d, WCAG 1.4.10 : quand la part egale
+              // tombe sous la cible (320), les boutons ne se partagent plus
+              // la largeur ; ils passent sur deux lignes, en cases fixes, et
+              // chaque disque garde la cible tactile.
+              if (parCase < cible + AppSpacing.xs) {
+                return _DockEtroit(
+                  diametre: cible,
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    runSpacing: AppSpacing.sm,
+                    children: <Widget>[
+                      for (final Widget bouton in boutons)
+                        SizedBox(
+                          width: cible + AppSpacing.xs,
+                          child: Center(child: bouton),
+                        ),
+                    ],
+                  ),
+                );
+              }
+              final double reduit = math.max(
+                math.min(diametre, parCase - AppSpacing.xs),
+                cible,
+              );
+              return _DockEtroit(diametre: reduit, child: rangee);
+            },
           ),
         ),
       );

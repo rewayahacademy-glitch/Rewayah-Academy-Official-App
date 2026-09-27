@@ -126,6 +126,8 @@ class EmplacementEntree {
           forme: FormeEntree.ligne,
           libelle: imminent
               ? t.classe.entree.coursImminent
+              : role == RoleEntree.enseignant
+              ? _dansEnseignant(reste)
               : t.classe.entree.coursDans(duree: duree),
           annonce: t.classe.entree.annonce.aVenir,
           avisDst: dst,
@@ -291,4 +293,17 @@ class EmplacementEntree {
           avant: notice.heureAvantRendue,
           apres: notice.heureApresRendue,
         );
+}
+
+/// La ligne de contexte de l'enseignant, au format d'E11 : « Dans 1 h 24 »
+/// (ENSEIGNANT-2026-09-26, E11), et non « Cours dans 1 h 24 ».
+String _dansEnseignant(Duration reste) {
+  final int minutes = reste.inMinutes;
+  if (minutes < Duration.minutesPerHour) {
+    return t.enseignant.journee.minuteurMinutes(minutes: minutes);
+  }
+  return t.enseignant.journee.minuteurHeures(
+    heures: minutes ~/ Duration.minutesPerHour,
+    minutes: (minutes % Duration.minutesPerHour).toString().padLeft(2, '0'),
+  );
 }

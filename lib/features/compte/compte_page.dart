@@ -22,6 +22,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
+import '../salle_seance/libelles_salle_b.dart';
 
 /// Le portail commun du compte, accessible depuis tous les roles actifs.
 ///
@@ -274,6 +275,18 @@ class ReglagesComptePage extends ConsumerWidget {
             controle: Switch.adaptive(
               value: preferences.effetsReduits,
               onChanged: controleur.effets,
+            ),
+          ),
+          // EN-KB (E19) : les raccourcis d'une seule lettre sont
+          // desactivables (WCAG 2.1.4). Preference locale, sans serveur.
+          SettingRow(
+            key: const ValueKey<String>('reglage-raccourcis-salle'),
+            title: LibellesSalleB.raccourcisTitre,
+            description: LibellesSalleB.raccourcisDetail,
+            icon: AppIcons.reglages,
+            controle: Switch.adaptive(
+              value: preferences.raccourcisSalle,
+              onChanged: controleur.raccourcisSalle,
             ),
           ),
           AppCard(

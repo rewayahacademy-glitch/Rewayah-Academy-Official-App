@@ -99,11 +99,11 @@ class _PresenceCorrectionPanneauState
             ],
           ),
         ),
-        const SizedBox(height: AppSpacing.lg),
-        Text(
-          widget.libelles.journalisation,
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
+        if (widget.libelles.journalisation
+            case final String rappel) ...<Widget>[
+          const SizedBox(height: AppSpacing.lg),
+          Text(rappel, style: Theme.of(context).textTheme.bodyMedium),
+        ],
         if (etat != _EtatMutation.repos) ...<Widget>[
           const SizedBox(height: AppSpacing.lg),
           _EtatMutationVue(etat: etat, libelles: widget.libelles),

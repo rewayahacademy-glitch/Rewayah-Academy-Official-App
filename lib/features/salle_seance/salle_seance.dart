@@ -4,13 +4,17 @@
 // sans barre d'application (I-8). Dispositions par `Gabarit` : compacte
 // (< 600), moyenne (600-1199), large (>= 1200).
 
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/preferences/preferences_locales.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
@@ -28,7 +32,7 @@ import 'outils_enseignement.dart';
 import 'panneau_eleves.dart';
 import 'panneau_seance.dart';
 import 'panneau_supports.dart';
-import 'rail_seance.dart';
+import 'selecteur_ressources.dart';
 import 'vue_seance.dart';
 import 'zone_support.dart';
 
@@ -59,6 +63,7 @@ class SalleSeance extends StatelessWidget {
     required this.actions,
     this.local = const EtatLocalSeance(),
     this.contenuSupport,
+    this.raccourcisClavier,
     super.key,
   });
 
@@ -66,10 +71,39 @@ class SalleSeance extends StatelessWidget {
   final ActionsSeance actions;
   final EtatLocalSeance local;
 
+  /// EN-KB (E19) : les raccourcis M, V, R, B de la salle enseignant sur
+  /// bureau. `null` : la preference locale de `/compte/reglages` quand un
+  /// `ProviderScope` l'entoure, sinon inactifs.
+  final bool? raccourcisClavier;
+
   /// Le rendu reel du support partage (Classe Live :
   /// `ContexteClasseLive.support`). `null` : la salle rend elle-meme
   /// `vue.support` (demonstration).
   final Widget? contenuSupport;
+
+  /// Construit la salle enseignant avec l'etat des raccourcis : la valeur
+  /// explicite, sinon la preference locale (suivie), sinon inactifs (salle
+  /// montee sans `ProviderScope`, comme dans les tests d'ecran).
+  Widget _avecPreferenceRaccourcis(
+    BuildContext context,
+    Widget Function(bool raccourcis) construire,
+  ) {
+    final bool? explicite = raccourcisClavier;
+    if (explicite != null) return construire(explicite);
+    if (context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() ==
+        null) {
+      return construire(false);
+    }
+    return Consumer(
+      builder: (BuildContext _, WidgetRef ref, Widget? _) => construire(
+        ref.watch(
+          preferencesLocalesProvider.select(
+            (PreferencesLocales p) => p.raccourcisSalle,
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,12 +121,16 @@ class SalleSeance extends StatelessWidget {
         color: palette.surfaceCanvas.background,
         child: SafeArea(
           bottom: !feuilleOuverte,
-          child: _FocusPanneaux(
-            vue: vue,
-            actions: actions,
-            local: local,
-            gabarit: gabarit,
-            contenuSupport: contenuSupport,
+          child: _avecPreferenceRaccourcis(
+            context,
+            (bool raccourcis) => _FocusPanneaux(
+              vue: vue,
+              actions: actions,
+              local: local,
+              gabarit: gabarit,
+              contenuSupport: contenuSupport,
+              raccourcis: raccourcis,
+            ),
           ),
         ),
       );
@@ -125,6 +163,7 @@ class SalleSeance extends StatelessWidget {
                 gouttiere: gouttiere,
                 espaceApres: large ? AppSpacing.lg : 0,
               ),
+              ?_appel(vue, gouttiere),
               if (!large) Ecart.vLg,
             ],
             Expanded(
@@ -171,6 +210,7 @@ class _FocusPanneaux extends StatefulWidget {
     required this.local,
     required this.gabarit,
     this.contenuSupport,
+    this.raccourcis = false,
   });
 
   final VueSeance vue;
@@ -179,6 +219,9 @@ class _FocusPanneaux extends StatefulWidget {
   final Gabarit gabarit;
   final Widget? contenuSupport;
 
+  /// EN-KB : les raccourcis M, V, R, B sont permis (preference locale).
+  final bool raccourcis;
+
   @override
   State<_FocusPanneaux> createState() => _FocusPanneauxState();
 }
@@ -186,16 +229,46 @@ class _FocusPanneaux extends StatefulWidget {
 class _FocusPanneauxState extends State<_FocusPanneaux> {
   final FocusNode _focusEleves = FocusNode(debugLabel: 'bouton-eleves');
   final FocusNode _focusSupports = FocusNode(debugLabel: 'bouton-supports');
+  // Hors de l'ordre Tab : la zone n'est pas interactive (UX_REVIEW_04 n. 17 f) ;
+  // `requestFocus` y pose toujours le focus.
+  final FocusNode _focusSupport = FocusNode(
+    debugLabel: 'support',
+    skipTraversal: true,
+  );
+
+  /// EN-12 (micro), decision du directeur du 27/09 : l'etat du micro obtenu
+  /// (« Micro ouvert » ou « Micro coupe »), montre brievement et lu par le
+  /// lecteur d'ecran, que le geste vienne du dock ou de la touche M.
+  String? _retourMicro;
 
   @override
   void didUpdateWidget(_FocusPanneaux ancien) {
     super.didUpdateWidget(ancien);
+    if (ancien.local.microOuvert != widget.local.microOuvert) {
+      _retourMicro = widget.local.microOuvert
+          ? t.salle.microOuvert
+          : t.salle.microCoupe;
+      // Lu une seule fois : le bandeau visible est exclu des semantiques.
+      _annoncer(_retourMicro!);
+    }
     final PanneauOuvert avant = ancien.vue.panneau;
     if (avant == PanneauOuvert.aucun ||
         widget.vue.panneau != PanneauOuvert.aucun) {
       return;
     }
-    final FocusNode bouton = avant == PanneauOuvert.eleves
+    // Une ressource choisie (EN-10) : le focus va au nouveau support, pas
+    // au bouton Supports (UX_REVIEW_04 n° 17 f).
+    // Le signal est la ressource choisie quand on la connait, sinon l'objet.
+    final String? avantId = ancien.vue.support?.ressourceId;
+    final String? apresId = widget.vue.support?.ressourceId;
+    final bool supportChange =
+        widget.vue.support != null &&
+        (avantId != null && apresId != null
+            ? avantId != apresId
+            : !identical(ancien.vue.support, widget.vue.support));
+    final FocusNode bouton = supportChange
+        ? _focusSupport
+        : avant == PanneauOuvert.eleves
         ? _focusEleves
         : _focusSupports;
     // Le bouton est remonte au cadre suivant (telephone, web etroit).
@@ -208,6 +281,7 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
   void dispose() {
     _focusEleves.dispose();
     _focusSupports.dispose();
+    _focusSupport.dispose();
     super.dispose();
   }
 
@@ -217,30 +291,219 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
         widget.actions.onEleves?.call();
       case PanneauOuvert.supports:
         widget.actions.onSupports?.call();
+      case PanneauOuvert.ressources:
+        widget.actions.onBibliotheque?.call();
       case PanneauOuvert.aucun:
         break;
     }
   }
 
+  /// Vrai quand un champ de texte tient le focus : aucune lettre n'est
+  /// alors un raccourci (E19, jamais pendant une saisie).
+  static bool _saisieEnCours() {
+    final BuildContext? focus = FocusManager.instance.primaryFocus?.context;
+    if (focus == null) return false;
+    return focus.widget is EditableText ||
+        focus.findAncestorWidgetOfExactType<EditableText>() != null;
+  }
+
+  /// Le raccourci peut-il agir maintenant ? Salle enseignant sur bureau,
+  /// preference active, hors saisie, et le bouton correspondant existe.
+  bool _permis(RaccourciSalle raccourci) {
+    final VueSeance vue = widget.vue;
+    final ActionsSeance actions = widget.actions;
+    if (!widget.raccourcis ||
+        widget.gabarit != Gabarit.desktop ||
+        vue.role != RoleSeance.enseignant ||
+        _saisieEnCours()) {
+      return false;
+    }
+    final PanneauOuvert panneau = vue.panneau;
+    return switch (raccourci) {
+      // Micro bloque : le bouton ouvre une feuille ; la lettre ne fait rien.
+      RaccourciSalle.micro =>
+        actions.onMicro != null &&
+            vue.commandesPublicationActives &&
+            !vue.microBloque,
+      // E19 : V ne fait que couper la camera, jamais l'allumer.
+      RaccourciSalle.camera =>
+        actions.onCamera != null &&
+            vue.commandesPublicationActives &&
+            widget.local.cameraAllumee,
+      // Sur bureau, le panneau Eleves est deja la quand rien d'autre n'est
+      // ouvert : R le ramene depuis Supports ou le selecteur.
+      RaccourciSalle.eleves =>
+        vue.voitBoutonsPanneaux &&
+            actions.onEleves != null &&
+            (panneau == PanneauOuvert.supports ||
+                panneau == PanneauOuvert.ressources),
+      RaccourciSalle.bibliotheque =>
+        vue.voitBoutonsPanneaux &&
+            actions.onBibliotheque != null &&
+            panneau != PanneauOuvert.ressources,
+    };
+  }
+
+  void _executer(RaccourciSalle raccourci) {
+    final ActionsSeance actions = widget.actions;
+    switch (raccourci) {
+      case RaccourciSalle.micro:
+        // L'annonce de l'etat obtenu (ouvert ou coupe) suit le changement
+        // d'etat du micro (`didUpdateWidget`), comme pour le dock.
+        actions.onMicro?.call();
+      case RaccourciSalle.camera:
+        actions.onCamera?.call();
+        _annoncer(t.salle.cameraCoupee);
+      case RaccourciSalle.eleves:
+        actions.onEleves?.call();
+      case RaccourciSalle.bibliotheque:
+        actions.onBibliotheque?.call();
+    }
+  }
+
+  /// La hauteur du retour du micro : au-dessus du dock et de ses libelles,
+  /// et, hors bureau, au-dessus de la rangee d'outils posee sur le dock.
+  double _hauteurRetourMicro(BuildContext context) {
+    final double dessusDock =
+        diametreBoutonAppel(context) + AppSpacing.respiration;
+    return widget.gabarit == Gabarit.desktop
+        ? dessusDock
+        : dessusDock + AppSpacing.respiration + AppSpacing.lg;
+  }
+
+  void _annoncer(String message) {
+    unawaited(
+      SemanticsService.sendAnnouncement(
+        View.of(context),
+        message,
+        Directionality.of(context),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // EN-9 : sur bureau, le panneau Eleves est ouvert d'office (a droite du
+    // support), jamais derriere le bouton « Eleves ».
+    final VueSeance vue =
+        widget.gabarit == Gabarit.desktop &&
+            widget.vue.voitBoutonsPanneaux &&
+            widget.vue.panneau == PanneauOuvert.aucun
+        ? widget.vue.copyWith(panneau: PanneauOuvert.eleves)
+        : widget.vue;
     final bool ouvert =
         widget.vue.voitBoutonsPanneaux &&
         widget.vue.panneau != PanneauOuvert.aucun;
-    return CallbackShortcuts(
-      bindings: <ShortcutActivator, VoidCallback>{
-        if (ouvert) const SingleActivator(LogicalKeyboardKey.escape): _fermer,
+    // EN-KB (E19) : les lettres sont posees sur le sous-arbre de la salle,
+    // jamais globales ; l'action refuse (et laisse passer la touche) hors
+    // bureau, preference coupee, ou pendant une saisie.
+    return Shortcuts(
+      shortcuts: const <ShortcutActivator, Intent>{
+        SingleActivator(LogicalKeyboardKey.keyM): IntentRaccourciSalle(
+          RaccourciSalle.micro,
+        ),
+        SingleActivator(LogicalKeyboardKey.keyV): IntentRaccourciSalle(
+          RaccourciSalle.camera,
+        ),
+        SingleActivator(LogicalKeyboardKey.keyR): IntentRaccourciSalle(
+          RaccourciSalle.eleves,
+        ),
+        SingleActivator(LogicalKeyboardKey.keyB): IntentRaccourciSalle(
+          RaccourciSalle.bibliotheque,
+        ),
       },
-      child: _SalleEnseignant(
-        vue: widget.vue,
-        actions: widget.actions,
-        local: widget.local,
-        gabarit: widget.gabarit,
-        contenuSupport: widget.contenuSupport,
-        focusEleves: _focusEleves,
-        focusSupports: _focusSupports,
+      child: Actions(
+        actions: <Type, Action<Intent>>{
+          IntentRaccourciSalle: _ActionRaccourciSalle(
+            permis: _permis,
+            executer: _executer,
+          ),
+        },
+        child: CallbackShortcuts(
+          bindings: <ShortcutActivator, VoidCallback>{
+            if (ouvert)
+              const SingleActivator(LogicalKeyboardKey.escape): _fermer,
+          },
+          child: Stack(
+            children: <Widget>[
+              Positioned.fill(
+                child: _SalleEnseignant(
+                  vue: vue,
+                  actions: widget.actions,
+                  local: widget.local,
+                  gabarit: widget.gabarit,
+                  contenuSupport: widget.contenuSupport,
+                  focusEleves: _focusEleves,
+                  focusSupports: _focusSupports,
+                  focusSupport: _focusSupport,
+                ),
+              ),
+              // Le retour du micro : discret, au-dessus du dock, sans
+              // fenetre ni geste ; il ne retient aucun toucher.
+              PositionedDirectional(
+                start: 0,
+                end: 0,
+                bottom: _hauteurRetourMicro(context),
+                child: IgnorePointer(
+                  child: ExcludeSemantics(
+                    // Centre et a la largeur du texte : une etiquette
+                    // breve, pas un bandeau d'une rive a l'autre.
+                    child: Center(
+                      child: IntrinsicWidth(
+                        child: LocalFeedback(
+                          key: const ValueKey<String>('retour-micro'),
+                          message: _retourMicro,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
+  }
+}
+
+/// Les raccourcis clavier de la salle enseignant (E19, EN-KB).
+enum RaccourciSalle {
+  /// M : bascule le micro.
+  micro,
+
+  /// V : coupe la camera, ne l'allume jamais.
+  camera,
+
+  /// R : le panneau Eleves (roster).
+  eleves,
+
+  /// B : le selecteur de ressources (bibliotheque, EN-10).
+  bibliotheque,
+}
+
+/// L'intention d'un raccourci de la salle.
+class IntentRaccourciSalle extends Intent {
+  const IntentRaccourciSalle(this.raccourci);
+
+  final RaccourciSalle raccourci;
+}
+
+/// L'action des raccourcis : desactivee, elle laisse la touche au reste de
+/// l'application (un champ de texte la recoit alors normalement).
+class _ActionRaccourciSalle extends Action<IntentRaccourciSalle> {
+  _ActionRaccourciSalle({required this.permis, required this.executer});
+
+  final bool Function(RaccourciSalle raccourci) permis;
+  final void Function(RaccourciSalle raccourci) executer;
+
+  @override
+  bool isEnabled(IntentRaccourciSalle intent) => permis(intent.raccourci);
+
+  @override
+  Object? invoke(IntentRaccourciSalle intent) {
+    executer(intent.raccourci);
+    return null;
   }
 }
 
@@ -255,6 +518,7 @@ class _SalleEnseignant extends StatelessWidget {
     required this.gabarit,
     required this.focusEleves,
     required this.focusSupports,
+    required this.focusSupport,
     this.contenuSupport,
   });
 
@@ -268,17 +532,23 @@ class _SalleEnseignant extends StatelessWidget {
   final FocusNode focusEleves;
   final FocusNode focusSupports;
 
+  /// Le noeud du support : il recoit le focus apres le choix d'une ressource.
+  final FocusNode focusSupport;
+
   @override
   Widget build(BuildContext context) {
     const double gouttiere = AppPage.gouttiereMobile;
     final bool outils = vue.voitOutils && actions.onOutil != null;
     // Telephone et desktop : le support partage la hauteur avec les boutons
     // et les outils, il se resserre pour montrer la diapositive entiere.
-    final Widget support = ZoneSupport(
-      vue: vue,
-      zoom: local.zoom,
-      serre: true,
-      contenu: contenuSupport,
+    final Widget support = Focus(
+      focusNode: focusSupport,
+      child: ZoneSupport(
+        vue: vue,
+        zoom: local.zoom,
+        serre: true,
+        contenu: contenuSupport,
+      ),
     );
     final Widget? boutons = _BoutonsPanneaux.ou(
       vue,
@@ -368,6 +638,7 @@ class _SalleEnseignant extends StatelessWidget {
                     actions: actions,
                     microOuvert: local.microOuvert,
                     cameraAllumee: local.cameraAllumee,
+                    focusSupports: focusSupports,
                   ),
                   Expanded(
                     child: Align(
@@ -454,6 +725,7 @@ class _SalleEnseignant extends StatelessWidget {
                 actions: actions,
                 microOuvert: local.microOuvert,
                 cameraAllumee: local.cameraAllumee,
+                focusSupports: focusSupports,
               ),
             ),
           ],
@@ -461,18 +733,9 @@ class _SalleEnseignant extends StatelessWidget {
     }
   }
 
-  /// Desktop : le rail enseignant a gauche, s'il a un rappel.
-  Widget _avecRail(Widget contenu) {
-    final ValueChanged<String>? naviguer = actions.onNaviguer;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        if (vue.voitRail(gabarit) && naviguer != null)
-          RailSeance(onNaviguer: naviguer, groupeId: vue.groupeId),
-        Expanded(child: contenu),
-      ],
-    );
-  }
+  /// EN-9 : la salle de l'enseignant n'a pas de barre de navigation, meme
+  /// sur bureau (le rail reste a la fin de seance, `FinSeanceEnseignant`).
+  Widget _avecRail(Widget contenu) => contenu;
 
   /// Le panneau ouvert, ou `null`. Enseignant seulement : ce widget n'est
   /// construit que pour `RoleSeance.enseignant`, et la vue le confirme.
@@ -482,15 +745,29 @@ class _SalleEnseignant extends StatelessWidget {
     final Widget? panneau = switch (vue.panneau) {
       PanneauOuvert.aucun => null,
       PanneauOuvert.eleves => PanneauSeance(
-        titre: t.salle.seance.eleves,
-        onFermer: actions.onEleves,
+        // Sur bureau, le bouton « Eleves 1/3 » s'efface devant le panneau
+        // ouvert (K-42, style 3) : le compteur passe dans son en-tete.
+        titre: forme == FormePanneau.colonne
+            ? vue.compteurEleves ?? t.salle.seance.eleves
+            : t.salle.seance.eleves,
+        // EN-9 : sur bureau, le panneau Eleves reste ouvert a droite du
+        // support ; il ne se ferme pas.
+        onFermer: forme == FormePanneau.colonne ? null : actions.onEleves,
         forme: forme,
-        // Image CLV-07 desktop : menu « … » et colonne ajustee a la liste.
-        enMenu: true,
+        enMenu: forme != FormePanneau.colonne,
         ajusteAuContenu: true,
         enfant: PanneauEleves(
           eleves: vue.eleves,
           actions: actions,
+          // Sur bureau, le panneau droit montre toujours « File de
+          // recitation » (maquettes enseignant, EN-9) ; ailleurs, file au
+          // repos : pas de bloc, le panneau reste celui de CLV-07.
+          recitation:
+              forme == FormePanneau.colonne ||
+                  vue.recitation.enCours ||
+                  vue.recitation.suivants.isNotEmpty
+              ? vue.recitation
+              : null,
           large: forme == FormePanneau.colonne,
           serre: forme == FormePanneau.feuille,
         ),
@@ -504,6 +781,15 @@ class _SalleEnseignant extends StatelessWidget {
           actions: actions,
           forme: forme,
         ),
+      ),
+      // EN-10 : le selecteur de ressources (04 §19), ouvert par « Voir toute
+      // la bibliotheque » et par la Bibliotheque du Teaching Dock ; feuille
+      // sur mobile, panneau sur bureau. La salle reste ouverte.
+      PanneauOuvert.ressources => PanneauSeance(
+        titre: t.salle.seance.supports,
+        onFermer: actions.onBibliotheque,
+        forme: forme,
+        enfant: SelecteurRessources(supports: vue.supports, actions: actions),
       ),
     };
     if (panneau == null) return null;
@@ -536,14 +822,6 @@ class _SalleEnseignant extends StatelessWidget {
       focusEleves: focusEleves,
       focusSupports: focusSupports,
     );
-    final Widget? carteOutils = outils
-        // Images CLV-07 et CLV-08 : aucun outil selectionne.
-        ? OutilsEnseignement(
-            onOutil: actions.onOutil,
-            forme: FormeOutils.carte,
-            initial: null,
-          )
-        : null;
     final Widget? pagination = page != null && vue.voitPaginationActive(gabarit)
         ? PaginationSupport(
             page: page.page,
@@ -557,6 +835,7 @@ class _SalleEnseignant extends StatelessWidget {
       actions: actions,
       microOuvert: local.microOuvert,
       cameraAllumee: local.cameraAllumee,
+      focusSupports: focusSupports,
     );
     final Widget? zoom = vue.voitZoomLocal(gabarit)
         ? ZoomLocal(
@@ -624,6 +903,9 @@ class _SalleEnseignant extends StatelessWidget {
         ],
       );
     }
+    // EN-9 (salle A, bureau) : deux volets seulement. A gauche, la rangee
+    // d'outils puis le support ; a droite, les boutons Eleves et Supports
+    // puis le panneau Eleves et la file de recitation, ouverts d'office.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -636,20 +918,32 @@ class _SalleEnseignant extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                SizedBox(width: largeurColonneSeance, child: panneau),
-                Ecart.hMd,
-                Expanded(child: support),
-                Ecart.hMd,
-                SizedBox(
-                  width: largeurColonneDroiteSeance,
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      ?boutons,
-                      if (carteOutils != null) ...<Widget>[
-                        Ecart.vLg,
-                        carteOutils,
+                      if (outils) ...<Widget>[
+                        Align(
+                          alignment: AlignmentDirectional.centerStart,
+                          child: OutilsEnseignement(
+                            onOutil: actions.onOutil,
+                            forme: FormeOutils.rangee,
+                          ),
+                        ),
+                        Ecart.vMd,
                       ],
+                      Expanded(child: support),
+                    ],
+                  ),
+                ),
+                Ecart.hMd,
+                SizedBox(
+                  width: largeurColonneSeance,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      if (boutons != null) ...<Widget>[boutons, Ecart.vMd],
+                      Expanded(child: panneau),
                     ],
                   ),
                 ),
@@ -657,20 +951,18 @@ class _SalleEnseignant extends StatelessWidget {
             ),
           ),
         ),
-        // La barre basse part juste apres le bas du panneau (image : ≈ 580
-        // a 1440 de large), la ou la colonne elargie laisse sa place.
+        // La barre basse sous le support seulement.
         Padding(
           padding: const EdgeInsetsDirectional.fromSTEB(
-            gouttiere + largeurPanneauSeance,
-            AppSpacing.xl,
             gouttiere,
+            AppSpacing.xl,
+            gouttiere + largeurColonneSeance + AppSpacing.md,
             AppSpacing.lg,
           ),
           // Pres du bas du gabarit desktop (1200 a 1400), la rangee se
           // reduit d'un bloc plutot que de deborder, comme sur CLV-08.
           child: FittedBox(
             fit: BoxFit.scaleDown,
-            alignment: AlignmentDirectional.centerStart,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               spacing: AppSpacing.md,
@@ -716,6 +1008,7 @@ class _SalleEnseignant extends StatelessWidget {
               actions: actions,
               microOuvert: local.microOuvert,
               cameraAllumee: local.cameraAllumee,
+              focusSupports: focusSupports,
             ),
           ),
         ),
@@ -791,11 +1084,19 @@ class _BoutonsPanneaux extends StatelessWidget {
   }) {
     final String? compteur = vue.compteurEleves;
     if (!vue.voitBoutonsPanneaux || compteur == null) return null;
-    if (actions.onEleves == null && actions.onSupports == null) return null;
+    if (actions.onEleves == null) return null;
+    // Bureau, panneau Eleves ouvert : il dit deja l'etat et le compteur (son
+    // en-tete), le bouton ne le repete pas (K-42, style 3). R et Echap
+    // restent.
+    if (gabarit == Gabarit.desktop && vue.panneau == PanneauOuvert.eleves) {
+      return null;
+    }
     return _BoutonsPanneaux(
       compteur: compteur,
       onEleves: actions.onEleves,
-      onSupports: actions.onSupports,
+      // EN-10 : Supports passe dans le Teaching Dock compact (maquettes,
+      // planche 3) ; un seul bouton Supports dans la salle.
+      onSupports: null,
       etire: etire ?? gabarit != Gabarit.desktop,
       panneau: vue.panneau,
       focusEleves: focusEleves,
@@ -1154,4 +1455,43 @@ class _BlocEchec extends StatelessWidget {
       actionsContratB: true,
     );
   }
+}
+
+/// L'appel discret recu par l'eleve (EN-9, E16) : une ligne d'etat annoncee
+/// poliment (region vivante), sans fenetre, sans son ni focus vole.
+Widget? _appel(VueSeance vue, double gouttiere) {
+  final String? texte = vue.texteAppel;
+  if (texte == null) return null;
+  return Padding(
+    key: const ValueKey<String>('appel-discret'),
+    padding: EdgeInsetsDirectional.fromSTEB(
+      gouttiere,
+      AppSpacing.sm,
+      gouttiere,
+      0,
+    ),
+    child: Builder(
+      builder: (BuildContext context) {
+        final AppPalette palette = AppPalette.of(context);
+        return Semantics(
+          liveRegion: true,
+          child: DecoratedBox(
+            decoration: palette.surfaceOverlay.decoration(
+              borderRadius: AppRadius.arrondiMd,
+              side: palette.borderHairline.asBorderSide(),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              child: Text(
+                texte,
+                style: palette.inkStrong.applyTo(
+                  Theme.of(context).textTheme.bodyLarge ?? const TextStyle(),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    ),
+  );
 }
