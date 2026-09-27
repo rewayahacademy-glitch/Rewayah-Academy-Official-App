@@ -78,7 +78,12 @@ void main() {
       );
       // Rien a faire, donc aucun bouton : proposer une action serait inviter a
       // inventer un probleme.
-      expect(find.byType(ActionPrincipale), findsNothing);
+      // Seul le retour de l'Espace Classe (decision EN-RC).
+      expect(find.byType(ActionPrincipale), findsOneWidget);
+      expect(
+        find.widgetWithText(ActionPrincipale, t.commun.retour),
+        findsOneWidget,
+      );
       expect(find.text(t.commun.reessayer), findsNothing);
       // Et surtout : aucune carte, aucune colonne, aucun tiret en attendant.
       expect(find.byType(AppCard), findsNothing);
@@ -86,17 +91,18 @@ void main() {
       expect(find.text('-'), findsNothing);
     });
 
-    testWidgets('elle ne resume pas le groupe : ce travail est celui d ENS-07', (
-      WidgetTester tester,
-    ) async {
-      await _monter(tester, service: _service());
-      await tester.pumpAndSettle();
+    testWidgets(
+      'elle ne resume pas le groupe : ce travail est celui d ENS-07',
+      (WidgetTester tester) async {
+        await _monter(tester, service: _service());
+        await tester.pumpAndSettle();
 
-      // Aucun prenom de membre n'apparait : la revue parle d'anomalies, pas
-      // d'effectif.
-      expect(find.text('Khadija'), findsNothing);
-      expect(find.text('Bilal'), findsNothing);
-    });
+        // Aucun prenom de membre n'apparait : la revue parle d'anomalies, pas
+        // d'effectif.
+        expect(find.text('Khadija'), findsNothing);
+        expect(find.text('Bilal'), findsNothing);
+      },
+    );
   });
 
   group('ENS-08 : les anomalies, quand la source en rendra', () {
@@ -131,7 +137,12 @@ void main() {
       );
       // L'enseignant signale, l'academie tranche : aucune action de decision
       // n'est rendue, meme pas grisee.
-      expect(find.byType(ActionPrincipale), findsNothing);
+      // Seul le retour de l'Espace Classe (decision EN-RC).
+      expect(find.byType(ActionPrincipale), findsOneWidget);
+      expect(
+        find.widgetWithText(ActionPrincipale, t.commun.retour),
+        findsOneWidget,
+      );
       expect(find.text(t.enseignant.revue.pasDeDecision), findsOneWidget);
     });
 
@@ -187,10 +198,11 @@ void main() {
       // Ce qui a une echeance passe devant ce qui attend une decision, et a
       // egalite l'ordre est alphabetique : il ne depend jamais de l'ordre dans
       // lequel la source a rendu ses lignes.
-      expect(
-        retenues.map((AnomalieRevue a) => a.eleve),
-        <String>['Aisha', 'Zayd', 'Bilal'],
-      );
+      expect(retenues.map((AnomalieRevue a) => a.eleve), <String>[
+        'Aisha',
+        'Zayd',
+        'Bilal',
+      ]);
     });
   });
 

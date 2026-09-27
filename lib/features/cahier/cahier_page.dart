@@ -998,7 +998,6 @@ PresenceCorrectionLibelles libellesCorrectionCahier() =>
       succes: t.enseignant.cahier.exceptionSucces,
       erreur: t.enseignant.cahier.exceptionErreur,
       horsLigne: t.enseignant.cahier.exceptionHorsLigne,
-      journalisation: t.enseignant.cahier.exceptionJournalisation,
     );
 
 /// Ce que l'ecran dit une fois le cahier parti (doc 04 §20.7 et §20.8).

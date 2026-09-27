@@ -296,7 +296,8 @@ abstract final class DonneesEnseignantDemo {
       niveau: 2,
       langue: 'Arabe',
       prochaineSeance: DateTime(2026, 9, 29, 18),
-      remplacement: true,
+      // Pas de pastille « Remplacement » tant que l'offre d'Al-Fatiha, en
+      // Alerte utile, n'est pas acceptee (recette EN-12, decision EN-RC).
       eleves: <EleveEnseignantDemo>[
         _eleve('demo-eleve-ilyas', 'Ilyas', 'Page 31'),
         _eleve('demo-eleve-hana', 'Hana', 'Page 28', photo: false),

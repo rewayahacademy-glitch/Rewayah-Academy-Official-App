@@ -434,7 +434,7 @@ void main() {
 
       expect(find.text(t.enseignant.journee.maJournee), findsOneWidget);
       expect(
-        find.text(t.enseignant.journee.ligneCours(prenom: 'la Classe Al-Badr')),
+        find.text(t.enseignant.journee.classeNommee(classe: 'Al-Badr')),
         findsOneWidget,
       );
       expect(find.text(t.enseignant.journee.lignePause), findsOneWidget);

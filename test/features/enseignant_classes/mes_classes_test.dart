@@ -107,10 +107,11 @@ void main() {
       final double y2 = tester.getTopLeft(find.text('Al-Fatiha')).dy;
       final double y4 = tester.getTopLeft(find.text('Al-Ikhlas')).dy;
       expect(y1 < y2 && y2 < y4, isTrue);
-      // « Remplacement » : une pastille de mot, une seule fois (E12).
+      // Pas de pastille « Remplacement » : l'offre d'Al-Fatiha n'est pas
+      // encore acceptee (decision EN-RC).
       expect(
         find.widgetWithText(StatusPill, t.enseignant.classes.remplacement),
-        findsOneWidget,
+        findsNothing,
       );
       // Le point de rappel du cahier d'Al-Badr, et lui seul (K-45).
       expect(find.byType(PointRappel), findsOneWidget);

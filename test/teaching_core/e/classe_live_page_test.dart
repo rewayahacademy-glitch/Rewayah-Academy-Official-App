@@ -681,12 +681,9 @@ void main() {
       // Le flux est demande pour CETTE seance, et l'en-tete porte ce qu'il
       // rend : c'est le cablage qui manquait, pas le composant.
       expect(banc0.annonces.demandes, <String>[seance]);
-      // La notice de visite de la salle unique (I-2) : « Tuteur de Amina
-      // observe. », a la place du texte de la mention.
-      expect(
-        find.text(t.salle.seance.tuteurDeObserve(prenom: 'Amina')),
-        findsOneWidget,
-      );
+      // La notice de visite de la salle unique (I-2, EN-9) : « Un parent
+      // observe cette séance », a la place du texte de la mention.
+      expect(find.text(t.salle.seance.unParentObserve), findsOneWidget);
     });
 
     testWidgets('l eleve ne lit pas les annonces, et ne les demande meme pas', (

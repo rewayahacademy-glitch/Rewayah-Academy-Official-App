@@ -884,7 +884,7 @@ class _Squelette extends StatelessWidget {
 }
 
 /// La seance d'enseignant, vue comme la `Seance` que la journee partagee sait
-/// lire. `elevePrenom` porte « la Classe An-Nour » et `eleveIdentifiant`
+/// lire. `elevePrenom` porte « Classe An-Nour » et `eleveIdentifiant`
 /// l'effectif, ce que `TimelineRow` doit dire d'une seance de Classe.
 ///
 /// `ponytail:` dette assumee (champ de modele partage employe pour un

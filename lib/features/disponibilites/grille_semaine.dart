@@ -98,7 +98,10 @@ class GrilleSemaine extends StatelessWidget {
               children: <Widget>[
                 SizedBox(
                   width: metriques.cibleTactile,
-                  child: Text('${heure}h', style: textes.bodySmall),
+                  child: Text(
+                    t.enseignant.creneaux.heure(heure: heure),
+                    style: textes.bodySmall,
+                  ),
                 ),
                 for (int jour = 1; jour <= 7; jour++)
                   Expanded(
@@ -197,13 +200,21 @@ class _Case extends StatelessWidget {
     final String jourLong = t.disponibilites.joursLongs[jour - 1];
 
     if (!actif) {
-      return DecoratedBox(
-        decoration: _decoration(
-          palette,
-          metriques,
-          const EtatPression(actif: false),
+      // Inerte (hors ligne, envoi en cours), la grille reste consultable : un
+      // lecteur d'ecran lit toujours le jour, l'heure et l'etat (coche ou
+      // non), sans promettre un geste qui ne repond pas (recette EN-12).
+      return Semantics(
+        enabled: false,
+        checked: posee,
+        label: '$jourLong ${t.enseignant.creneaux.heure(heure: heure)}',
+        child: DecoratedBox(
+          decoration: _decoration(
+            palette,
+            metriques,
+            const EtatPression(actif: false),
+          ),
+          child: _contenu(palette, metriques),
         ),
-        child: _contenu(palette, metriques),
       );
     }
 

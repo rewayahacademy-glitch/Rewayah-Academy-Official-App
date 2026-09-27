@@ -139,7 +139,10 @@ void main() {
 
     test('jamais « Votre parent » ni « Ton parent »', () {
       for (final String s in _textes(r)) {
-        expect(s, isNot(contains('parent')));
+        expect(
+          s,
+          isNot(anyOf(contains('Votre parent'), contains('Ton parent'))),
+        );
       }
     });
 
@@ -224,11 +227,11 @@ void main() {
       });
     }
 
-    test('enseignant : toujours « Tuteur de {prenom} observe. »', () {
+    test('enseignant : toujours « Un parent observe cette séance » (EN-9)', () {
       final VueSeance v = _vue(RoleSeance.enseignant).copyWith(
         visite: const VisiteSeance(prenomEnfant: 'Yusuf', concerneMoi: false),
       );
-      expect(v.texteNotice, 'Tuteur de Yusuf observe.');
+      expect(v.texteNotice, 'Un parent observe cette séance');
       expect(v.pointClignote, isTrue);
     });
 

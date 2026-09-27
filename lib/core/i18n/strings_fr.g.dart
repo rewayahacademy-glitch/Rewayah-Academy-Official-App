@@ -2651,6 +2651,9 @@ class Traductions$salle$seance$fr {
 	/// fr: 'Tuteur de {prenom} observe.'
 	String tuteurDeObserve({required Object prenom}) => 'Tuteur de ${prenom} observe.';
 
+	/// fr: 'Un parent observe cette séance'
+	String get unParentObserve => 'Un parent observe cette séance';
+
 	/// fr: 'Le tuteur de {prenom} observe la séance.'
 	String leTuteurDeObserve({required Object prenom}) => 'Le tuteur de ${prenom} observe la séance.';
 
@@ -7712,8 +7715,8 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Sans réseau, la salle ne peut pas s'ouvrir. Reconnectez-vous pour lancer le cours.'
 	String get lancerHorsLigne => 'Sans réseau, la salle ne peut pas s\'ouvrir. Reconnectez-vous pour lancer le cours.';
 
-	/// fr: 'Une partie de la journée n'a pas pu être lue : prières, pauses ou rapports peuvent manquer.'
-	String get erreurPartielle => 'Une partie de la journée n\'a pas pu être lue : prières, pauses ou rapports peuvent manquer.';
+	/// fr: 'Une partie de la journée n'a pas pu être lue : prières ou pauses peuvent manquer.'
+	String get erreurPartielle => 'Une partie de la journée n\'a pas pu être lue : prières ou pauses peuvent manquer.';
 
 	/// fr: '{eleve} n'est pas entré en salle.'
 	String absenceDetectee({required Object eleve}) => '${eleve} n\'est pas entré en salle.';
@@ -7781,8 +7784,8 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Classe'
 	String get classe => 'Classe';
 
-	/// fr: 'la Classe {classe}'
-	String classeNommee({required Object classe}) => 'la Classe ${classe}';
+	/// fr: 'Classe {classe}'
+	String classeNommee({required Object classe}) => 'Classe ${classe}';
 
 	/// fr: 'Préparer la séance'
 	String get preparerSeance => 'Préparer la séance';
@@ -7877,8 +7880,8 @@ class Traductions$enseignant$salle$fr {
 	/// fr: 'Le texte du Coran n'est pas installé'
 	String get corpusAbsent => 'Le texte du Coran n\'est pas installé';
 
-	/// fr: 'Le corpus n'a pas été importé dans cet environnement. Il n'y a rien à présenter.'
-	String get corpusAbsentDetail => 'Le corpus n\'a pas été importé dans cet environnement. Il n\'y a rien à présenter.';
+	/// fr: 'Il n'y a rien à présenter.'
+	String get corpusAbsentDetail => 'Il n\'y a rien à présenter.';
 
 	/// fr: 'Ce verset n'a pas pu être situé dans le mushaf. Rien n'a été envoyé à votre Classe.'
 	String get echecPresentation => 'Ce verset n\'a pas pu être situé dans le mushaf. Rien n\'a été envoyé à votre Classe.';
@@ -8048,8 +8051,8 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Motif'
 	String get exceptionMotif => 'Motif';
 
-	/// fr: 'Le motif est obligatoire : il reste au dossier de la séance.'
-	String get exceptionMotifRequis => 'Le motif est obligatoire : il reste au dossier de la séance.';
+	/// fr: 'Le motif est obligatoire.'
+	String get exceptionMotifRequis => 'Le motif est obligatoire.';
 
 	/// fr: 'Enregistrement…'
 	String get exceptionEnCours => 'Enregistrement…';
@@ -8062,9 +8065,6 @@ class Traductions$enseignant$cahier$fr {
 
 	/// fr: 'Sans réseau, une exception ne peut pas être confirmée. Le cahier, lui, part quand même.'
 	String get exceptionHorsLigne => 'Sans réseau, une exception ne peut pas être confirmée. Le cahier, lui, part quand même.';
-
-	/// fr: 'Votre décision et son motif sont consignés dans le cahier, avec votre nom.'
-	String get exceptionJournalisation => 'Votre décision et son motif sont consignés dans le cahier, avec votre nom.';
 
 	/// fr: 'À valider'
 	String get aValider => 'À valider';
@@ -8183,8 +8183,8 @@ class Traductions$enseignant$profil$fr {
 	/// fr: 'Statut non disponible'
 	String get statutInconnu => 'Statut non disponible';
 
-	/// fr: 'Nous n'avons pas pu lire votre statut. Il n'est pas supposé pour autant.'
-	String get statutInconnuDetail => 'Nous n\'avons pas pu lire votre statut. Il n\'est pas supposé pour autant.';
+	/// fr: 'Nous n'avons pas pu lire votre statut.'
+	String get statutInconnuDetail => 'Nous n\'avons pas pu lire votre statut.';
 
 	/// fr: 'Ce statut vient de changer. Rouvrez l'application pour que votre accès suive.'
 	String get statutDivergent => 'Ce statut vient de changer. Rouvrez l\'application pour que votre accès suive.';
@@ -8225,8 +8225,8 @@ class Traductions$enseignant$profil$fr {
 	/// fr: 'Vos contrats n'ont pas pu être lus.'
 	String get contratErreur => 'Vos contrats n\'ont pas pu être lus.';
 
-	/// fr: 'Ces pièces sont en lecture seule : un contrat qui s'édite depuis l'écran de la personne qu'il engage n'est plus un contrat.'
-	String get contratLectureSeule => 'Ces pièces sont en lecture seule : un contrat qui s\'édite depuis l\'écran de la personne qu\'il engage n\'est plus un contrat.';
+	/// fr: 'Ces pièces sont en lecture seule.'
+	String get contratLectureSeule => 'Ces pièces sont en lecture seule.';
 
 	/// fr: 'Mes réglages'
 	String get personnel => 'Mes réglages';
@@ -8494,6 +8494,9 @@ class Traductions$enseignant$revue$fr {
 
 	/// fr: 'Revue de la Classe'
 	String get titre => 'Revue de la Classe';
+
+	/// fr: 'Revue de la Classe {classe}'
+	String titreClasse({required Object classe}) => 'Revue de la Classe ${classe}';
 
 	/// fr: 'Rien ne demande votre attention.'
 	String get aucuneAnomalie => 'Rien ne demande votre attention.';
@@ -12886,6 +12889,7 @@ extension on Traductions {
 			'salle.seance.votreParentObserve' => 'Votre parent observe la séance.',
 			'salle.seance.tonParentObserve' => 'Ton parent observe la séance.',
 			'salle.seance.tuteurDeObserve' => ({required Object prenom}) => 'Tuteur de ${prenom} observe.',
+			'salle.seance.unParentObserve' => 'Un parent observe cette séance',
 			'salle.seance.leTuteurDeObserve' => ({required Object prenom}) => 'Le tuteur de ${prenom} observe la séance.',
 			'salle.seance.mentionEtNotice' => ({required Object mention, required Object notice}) => '${mention} ${notice}',
 			'salle.seance.retour' => 'Retour',
@@ -13219,9 +13223,9 @@ extension on Traductions {
 			'consentement.comment.ecouter' => 'Vous entendez l\'enseignant et les élèves qui prennent la parole, y compris votre enfant.',
 			'consentement.comment.sansMicro' => 'Votre micro et votre caméra restent désactivés pendant la visite.',
 			'consentement.comment.valeursIndisponibles' => 'Le nombre de visites et leur durée s\'affichent depuis la classe de votre enfant, selon les règles de sa classe.',
-			'consentement.comment.fermee' => 'Les visites d\'observation ne sont pas ouvertes pour cette classe.',
 			_ => null,
 		} ?? switch (path) {
+			'consentement.comment.fermee' => 'Les visites d\'observation ne sont pas ouvertes pour cette classe.',
 			'consentement.compte.intro' => 'L\'académie a ajouté à ses conditions un paragraphe sur les visites des parents. Rien n\'est considéré comme accepté tant que vous ne l\'avez pas fait.',
 			'consentement.compte.accepteLe' => ({required Object date}) => 'Vous avez accepté ces modalités le ${date}.',
 			'consentement.compte.merci' => 'Merci, votre accord est enregistré.',
@@ -13733,9 +13737,9 @@ extension on Traductions {
 			'admin.attribution.attendJours' => ({required Object jours}) => 'Attend depuis ${jours} jours',
 			'admin.attribution.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
 			'admin.attribution.heuresProposees' => ({required Object nombre}) => '${nombre} heures proposées',
-			'admin.attribution.heureProposee' => '1 heure proposée',
 			_ => null,
 		} ?? switch (path) {
+			'admin.attribution.heureProposee' => '1 heure proposée',
 			'admin.attribution.sansHeure' => 'Aucune heure proposée',
 			'admin.attribution.sansHeureDetail' => 'Tant que la famille n\'a posé aucun créneau, personne ne peut lui donner d\'enseignant, pas même vous. Le geste est chez elle, sur ses disponibilités.',
 			'admin.attribution.changerEleve' => 'Choisir un autre élève',
@@ -14247,9 +14251,9 @@ extension on Traductions {
 			'agent.jetonExemple' => 'rag_...',
 			'agent.entrer' => 'Ouvrir l\'application',
 			'agent.ouverture' => 'Ouverture',
-			'agent.refus' => 'Jeton refusé',
 			_ => null,
 		} ?? switch (path) {
+			'agent.refus' => 'Jeton refusé',
 			'agent.refusDetail' => 'Ce jeton est inconnu, révoqué ou expiré. Demandez-en un nouveau à l\'académie.',
 			'agent.indisponible' => 'Service indisponible',
 			'agent.indisponibleDetail' => 'L\'ouverture de session n\'a pas répondu. Réessayez dans un instant.',
@@ -14761,9 +14765,9 @@ extension on Traductions {
 			'tuteur.accueil.seanceNonTenue' => 'Cette séance n\'a pas pu se tenir.',
 			'tuteur.accueil.horaireIncertain' => 'Ouverture de la salle non confirmée pour l\'instant',
 			'tuteur.accueil.pastilleAnnulee' => 'Annulée',
-			'tuteur.accueil.pastilleNonTenue' => 'Non tenue',
 			_ => null,
 		} ?? switch (path) {
+			'tuteur.accueil.pastilleNonTenue' => 'Non tenue',
 			'tuteur.accueil.pastilleTerminee' => 'Terminée',
 			'tuteur.accueil.aucuneSeance' => 'Aucune séance planifiée',
 			'tuteur.accueil.aucuneSeanceDetail' => ({required Object prenom}) => 'La prochaine séance de ${prenom} apparaîtra ici dès qu\'elle sera programmée.',
@@ -15142,7 +15146,7 @@ extension on Traductions {
 			'enseignant.journee.preflightSansMicro' => 'Aucun micro n\'est détecté. Branchez-en un pour lancer le cours.',
 			'enseignant.journee.preflightIndisponible' => 'La vérification du matériel n\'a pas abouti. Réessayez avant de lancer le cours.',
 			'enseignant.journee.lancerHorsLigne' => 'Sans réseau, la salle ne peut pas s\'ouvrir. Reconnectez-vous pour lancer le cours.',
-			'enseignant.journee.erreurPartielle' => 'Une partie de la journée n\'a pas pu être lue : prières, pauses ou rapports peuvent manquer.',
+			'enseignant.journee.erreurPartielle' => 'Une partie de la journée n\'a pas pu être lue : prières ou pauses peuvent manquer.',
 			'enseignant.journee.absenceDetectee' => ({required Object eleve}) => '${eleve} n\'est pas entré en salle.',
 			'enseignant.journee.coupureDetectee' => ({required Object eleve}) => '${eleve} a perdu la connexion.',
 			'enseignant.journee.autresAbsences' => ({required Object nombre}) => 'et ${nombre} autres élèves.',
@@ -15165,7 +15169,7 @@ extension on Traductions {
 			'enseignant.journee.heure' => 'Heure',
 			'enseignant.journee.eleves' => 'Élèves',
 			'enseignant.journee.classe' => 'Classe',
-			'enseignant.journee.classeNommee' => ({required Object classe}) => 'la Classe ${classe}',
+			'enseignant.journee.classeNommee' => ({required Object classe}) => 'Classe ${classe}',
 			'enseignant.journee.preparerSeance' => 'Préparer la séance',
 			'enseignant.journee.preparerSeanceLecteur' => ({required Object classe}) => 'Préparer la séance ${classe}',
 			'enseignant.journee.finaliserCahier' => 'Finaliser le cahier',
@@ -15208,7 +15212,7 @@ extension on Traductions {
 			'enseignant.salle.pageIndisponible' => 'Cette page n\'a pas pu être lue',
 			'enseignant.salle.pageIndisponibleDetail' => 'Le texte n\'est pas arrivé jusqu\'ici. Votre Classe voit toujours la page présentée.',
 			'enseignant.salle.corpusAbsent' => 'Le texte du Coran n\'est pas installé',
-			'enseignant.salle.corpusAbsentDetail' => 'Le corpus n\'a pas été importé dans cet environnement. Il n\'y a rien à présenter.',
+			'enseignant.salle.corpusAbsentDetail' => 'Il n\'y a rien à présenter.',
 			'enseignant.salle.echecPresentation' => 'Ce verset n\'a pas pu être situé dans le mushaf. Rien n\'a été envoyé à votre Classe.',
 			'enseignant.salle.sansDroitPresentation' => 'Votre accès à cette séance ne permet pas de présenter un contenu.',
 			'enseignant.cahier.titre' => 'Cahier de séance',
@@ -15262,12 +15266,11 @@ extension on Traductions {
 			'enseignant.cahier.exceptionExcuser' => 'Excuser l\'absence',
 			'enseignant.cahier.exceptionConfirmation' => 'Confirmer l\'exception',
 			'enseignant.cahier.exceptionMotif' => 'Motif',
-			'enseignant.cahier.exceptionMotifRequis' => 'Le motif est obligatoire : il reste au dossier de la séance.',
+			'enseignant.cahier.exceptionMotifRequis' => 'Le motif est obligatoire.',
 			'enseignant.cahier.exceptionEnCours' => 'Enregistrement…',
 			'enseignant.cahier.exceptionSucces' => 'Exception consignée. Elle partira avec le cahier.',
 			'enseignant.cahier.exceptionErreur' => 'L\'exception n\'a pas pu être consignée.',
 			'enseignant.cahier.exceptionHorsLigne' => 'Sans réseau, une exception ne peut pas être confirmée. Le cahier, lui, part quand même.',
-			'enseignant.cahier.exceptionJournalisation' => 'Votre décision et son motif sont consignés dans le cahier, avec votre nom.',
 			'enseignant.cahier.aValider' => 'À valider',
 			'enseignant.cahier.statutPresents' => ({required Object nombre}) => 'Présents ${nombre}',
 			'enseignant.cahier.statutAbsents' => ({required Object nombre}) => 'Absents ${nombre}',
@@ -15306,7 +15309,7 @@ extension on Traductions {
 			'enseignant.profil.statutSuspendu' => 'Compte suspendu',
 			'enseignant.profil.statutSuspenduDetail' => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.',
 			'enseignant.profil.statutInconnu' => 'Statut non disponible',
-			'enseignant.profil.statutInconnuDetail' => 'Nous n\'avons pas pu lire votre statut. Il n\'est pas supposé pour autant.',
+			'enseignant.profil.statutInconnuDetail' => 'Nous n\'avons pas pu lire votre statut.',
 			'enseignant.profil.statutDivergent' => 'Ce statut vient de changer. Rouvrez l\'application pour que votre accès suive.',
 			'enseignant.profil.verification' => 'Vérification du dossier',
 			'enseignant.profil.verificationEnAttente' => 'En attente',
@@ -15320,7 +15323,7 @@ extension on Traductions {
 			'enseignant.profil.contratAucun' => 'Aucun contrat enregistré',
 			'enseignant.profil.contratAucunDetail' => 'Votre dossier n\'est pas encore passé par la signature.',
 			'enseignant.profil.contratErreur' => 'Vos contrats n\'ont pas pu être lus.',
-			'enseignant.profil.contratLectureSeule' => 'Ces pièces sont en lecture seule : un contrat qui s\'édite depuis l\'écran de la personne qu\'il engage n\'est plus un contrat.',
+			'enseignant.profil.contratLectureSeule' => 'Ces pièces sont en lecture seule.',
 			'enseignant.profil.personnel' => 'Mes réglages',
 			'enseignant.profil.deconnexionQuestion' => 'Se déconnecter de cet appareil ?',
 			'enseignant.profil.deconnexionConfirmer' => 'Me déconnecter maintenant',
@@ -15401,6 +15404,7 @@ extension on Traductions {
 			'enseignant.ficheGroupe.indicateurARenforcer' => 'À renforcer',
 			'enseignant.ficheGroupe.indicateurAbsence' => 'Absence récente',
 			'enseignant.revue.titre' => 'Revue de la Classe',
+			'enseignant.revue.titreClasse' => ({required Object classe}) => 'Revue de la Classe ${classe}',
 			'enseignant.revue.aucuneAnomalie' => 'Rien ne demande votre attention.',
 			'enseignant.revue.erreur' => 'La revue n\'a pas pu être lue.',
 			'enseignant.revue.erreurDetail' => 'Cette Classe n\'est peut-être pas la vôtre, ou la lecture a échoué.',
@@ -15789,9 +15793,9 @@ extension on Traductions {
 			'tc.observation.refus.seanceNonActive' => 'La séance n\'est pas en cours.',
 			'tc.observation.refus.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
 			'tc.observation.refus.indisponible' => 'L\'observation n\'est pas disponible pour le moment.',
-			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
 			'tc.observation.visite.titre' => 'Observation en cours',
 			'tc.observation.visite.quitter' => 'Quitter',
 			'tc.observation.visite.supportIndisponible' => 'Le support partagé par l\'enseignant s\'affiche ici.',

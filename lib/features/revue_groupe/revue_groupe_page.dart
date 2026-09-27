@@ -11,6 +11,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../fiche_groupe/fiche_groupe_page.dart' show SortieEspaceClasse;
 import 'anomalies_revue.dart';
 
 /// `ENS-08` : la revue courte d'un groupe.
@@ -50,11 +51,39 @@ class RevueGroupePage extends ConsumerWidget {
       anomaliesGroupeProvider(groupeId),
     );
 
+    // Le nom de la Classe dans le titre (recette EN-12, decision EN-RC) : sans
+    // lui, « Revue de la Classe » ne dit pas laquelle. Tant que la liste des
+    // Classes n'est pas lue, le titre d'origine.
+    final String? nom = ref
+        .watch(groupesEnseignantProvider)
+        .value
+        ?.where((GroupeEnseignant g) => g.id == groupeId)
+        .map((GroupeEnseignant g) => g.libelle.trim())
+        .where((String l) => l.isNotEmpty)
+        .firstOrNull;
+    final String titre = nom == null
+        ? t.enseignant.revue.titre
+        : t.enseignant.revue.titreClasse(classe: nom);
+
+    // Le meme retour que l'Espace Classe, en haut et au bord de debut ; le
+    // titre suit, comme le nom de la Classe dans l'Espace Classe.
     return PageShell(
-      titre: t.enseignant.revue.titre,
+      entete: const SortieEspaceClasse(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[_corps(ref, membres: membres, anomalies: lues)],
+        children: <Widget>[
+          Semantics(
+            header: true,
+            child: Text(
+              titre,
+              style:
+                  Theme.of(context).textTheme.headlineLarge ??
+                  const TextStyle(),
+            ),
+          ),
+          Ecart.vXxl,
+          _corps(ref, membres: membres, anomalies: lues),
+        ],
       ),
     );
   }

@@ -90,7 +90,7 @@ void main() {
           'sans debordement', (WidgetTester tester) async {
         await _monter(tester, taille.value, mode: mode);
         expect(tester.takeException(), isNull);
-        expect(find.text('Tuteur de Mariam observe.'), findsOneWidget);
+        expect(find.text('Un parent observe cette séance'), findsOneWidget);
         expect(
           find.text('Classe An-Nour · La séance se poursuit.'),
           findsOneWidget,

@@ -86,7 +86,13 @@ AppIcon _icone(SorteEntree sorte) => switch (sorte) {
 };
 
 /// Le libelle d'une entree, selon sa sorte.
+///
+/// Une seance de Classe (sans eleve unique, `eleveId` vide) porte deja son
+/// nom, « Classe An-Nour » : il est dit seul, sans « Cours avec la »
+/// (recette EN-12, decision EN-RC).
 String _libelle(EntreeJournee entree) => switch (entree.sorte) {
+  SorteEntree.cours when entree.seance?.eleveId.isEmpty ?? false =>
+    entree.seance!.elevePrenom,
   SorteEntree.cours => t.enseignant.journee.ligneCours(
     prenom: entree.seance?.elevePrenom ?? '',
   ),

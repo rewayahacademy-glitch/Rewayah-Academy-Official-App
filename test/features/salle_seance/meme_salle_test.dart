@@ -173,10 +173,7 @@ void main() {
         classeLive,
         contains(t.salle.seance.compteurEleves(connectes: 1, inscrits: 2)),
       );
-      expect(
-        classeLive,
-        contains(t.salle.seance.tuteurDeObserve(prenom: 'Mariam')),
-      );
+      expect(classeLive, contains(t.salle.seance.unParentObserve));
       expect(
         classeLive.where((String s) => s.toLowerCase().contains('absent')),
         isEmpty,

@@ -522,7 +522,7 @@ void main() {
       membreDeTest(studentId: 'e2', identifiant: 'RA-0002', prenom: 'Idris'),
     ];
 
-    testWidgets('un indicateur par eleve : un point et un mot', (
+    testWidgets('l indicateur par eleve est masque (decision EN-RC)', (
       WidgetTester tester,
     ) async {
       _fenetreHaute(tester);
@@ -534,13 +534,14 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      // Ses mots n'ont pas de source : le directeur les choisira (§13.4).
       expect(
         find.text(t.enseignant.ficheGroupe.indicateurARenforcer),
-        findsOneWidget,
+        findsNothing,
       );
       expect(
         find.text(t.enseignant.ficheGroupe.indicateurRegulier),
-        findsOneWidget,
+        findsNothing,
       );
       // La progression de la classe tient une ligne, valeur ecrite.
       expect(
@@ -573,10 +574,9 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        // Un appui sur l'indicateur, pas sur le prenom : c'est toute la ligne.
-        await tester.tap(
-          find.text(t.enseignant.ficheGroupe.indicateurRegulier),
-        );
+        // Un appui sur l'identifiant, pas sur le prenom : c'est toute la
+        // ligne.
+        await tester.tap(find.text('RA-0002'));
         await tester.pumpAndSettle();
         expect(ouverts, <String>['e2']);
       },

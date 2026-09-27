@@ -286,10 +286,7 @@ void main() {
           AnnonceObservation(libelle: 'x', prenomEnfant: 'Mariam'),
         ],
       );
-      expect(
-        vue?.texteNotice,
-        t.salle.seance.tuteurDeObserve(prenom: 'Mariam'),
-      );
+      expect(vue?.texteNotice, t.salle.seance.unParentObserve);
     });
 
     test('l eleve non observe ne lit rien', () {

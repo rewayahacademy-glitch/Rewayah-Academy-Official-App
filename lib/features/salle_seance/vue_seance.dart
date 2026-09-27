@@ -309,7 +309,8 @@ class VueSeance {
   static const bool optionQ3 = false;
 
   /// Q4 : « Le tuteur de {prenom} observe la seance. » (non : texte de la
-  /// spec, « Tuteur de {prenom} observe. »).
+  /// spec, « Tuteur de {prenom} observe. »). Sans effet depuis EN-RC : la
+  /// notice de l'enseignant est « Un parent observe cette seance » (EN-9).
   static const bool optionQ4 = false;
 
   /// Q5 : guidee, texte court « Le cours est enregistre. » (non : texte
@@ -562,10 +563,9 @@ class VueSeance {
     return switch (role) {
       RoleSeance.eleve => t.salle.seance.votreParentObserve,
       RoleSeance.guidee => t.salle.seance.tonParentObserve,
-      RoleSeance.enseignant =>
-        optionQ4
-            ? t.salle.seance.leTuteurDeObserve(prenom: visite!.prenomEnfant)
-            : t.salle.seance.tuteurDeObserve(prenom: visite!.prenomEnfant),
+      // Vague Enseignant : « Un parent observe cette seance », sans prenom
+      // (02_DECOUPAGE, detail EN-9 ; choix provisoire consigne au directeur).
+      RoleSeance.enseignant => t.salle.seance.unParentObserve,
     };
   }
 

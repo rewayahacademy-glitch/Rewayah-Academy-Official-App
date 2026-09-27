@@ -24,7 +24,6 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/groupe_reglages.dart';
-import '../../core/widgets/status_pill.dart';
 import '../foyer/photo_eleve.dart';
 import 'preparation_seance.dart';
 
@@ -170,13 +169,8 @@ class FicheEleveEnseignant extends StatelessWidget {
               icone: AppIcons.journee,
               libelle: t.enseignant.eleve.presence,
               legende: texte(p?.presenceRecente),
-              marque: switch (p?.indicateur) {
-                IndicateurEleve.absence => StatusPill(
-                  libelle: t.enseignant.ficheGroupe.indicateurAbsence,
-                  ton: TonEtat.neutre,
-                ),
-                _ => null,
-              },
+              // Indicateur masque (decision EN-RC) : ses mots n'ont pas de
+              // source, le directeur les choisira (spec 04 §13.4).
             ),
             LigneRubrique(
               icone: AppIcons.livreOuvert,

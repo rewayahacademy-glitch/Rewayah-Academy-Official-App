@@ -172,7 +172,7 @@ void main() {
 
       // 5 heures est hors de la plage 6 h - 21 h : sans cette regle, la case
       // serait invisible, donc impossible a retirer.
-      expect(find.text('5h'), findsOneWidget);
+      expect(find.text('5 h'), findsOneWidget);
       expect(
         find.bySemanticsLabel(
           t.disponibilites.cellulePosee(jour: 'mercredi', heure: '5'),

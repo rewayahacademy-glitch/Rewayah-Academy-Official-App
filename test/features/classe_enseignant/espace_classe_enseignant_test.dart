@@ -80,7 +80,7 @@ void main() {
         ),
         findsNothing,
       );
-      expect(find.textContaining('Cours dans'), findsOneWidget);
+      expect(find.textContaining(RegExp(r'^Dans \d')), findsOneWidget);
     });
   });
 

@@ -46,7 +46,7 @@ void main() {
     ];
     expect(noms, <String>['An-Nour', 'Al-Fatiha', 'Al-Badr', 'Al-Ikhlas']);
     expect(DonneesEnseignantDemo.classes.first.eleves, hasLength(4));
-    expect(DonneesEnseignantDemo.classes[1].remplacement, isTrue);
+    expect(DonneesEnseignantDemo.classes[1].remplacement, isFalse);
     expect(DonneesEnseignantDemo.classes.last.prochaineSeance, isNull);
     for (final SeanceEnseignant s in DonneesEnseignantDemo.seances(
       EtatDemoEnseignant.nominal,

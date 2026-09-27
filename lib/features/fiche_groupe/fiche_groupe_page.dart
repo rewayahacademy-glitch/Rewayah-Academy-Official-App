@@ -100,7 +100,7 @@ class FicheGroupePage extends ConsumerWidget {
     // visible et en haut, au bord de debut : cet ecran n'a pas de barre de
     // navigation pour le porter.
     return PageShell(
-      entete: const _Sortie(),
+      entete: const SortieEspaceClasse(),
       child: _Corps(
         groupeId: groupeId,
         onPreparer: onPreparer,
@@ -110,9 +110,11 @@ class FicheGroupePage extends ConsumerWidget {
   }
 }
 
-/// Le retour vers la Journee, au bord de debut (contrat B).
-class _Sortie extends StatelessWidget {
-  const _Sortie();
+/// Le retour vers la Journee, au bord de debut (contrat B). La revue de la
+/// Classe le reprend tel quel (EN-RC).
+class SortieEspaceClasse extends StatelessWidget {
+  /// Cree le retour.
+  const SortieEspaceClasse({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -744,11 +746,11 @@ class _Membres extends StatelessWidget {
 
 /// Un eleve, une ligne : sa photo (`PhotoEleve`, initiales en repli ; E5,
 /// K-44), son prenom en titre, puis une seule ligne secondaire « niveau ·
-/// reprise ». En fin de ligne, son indicateur :
-/// un point **et** un mot (`StatusPill`), jamais la couleur seule. En texte
-/// neutre : rien de ce que R15 interdit, le modele n'en porte pas.
+/// reprise ». L'indicateur de fin de ligne est masque (EN-RC) tant que le
+/// directeur n'en a pas choisi les mots. En texte neutre : rien de ce que R15
+/// interdit, le modele n'en porte pas.
 ///
-/// L'identifiant immuable reste lisible, discret, avant l'indicateur.
+/// L'identifiant immuable reste lisible, discret, en fin de ligne.
 ///
 /// Avec [onOuvrirEleve], **toute la ligne** est une seule cible, lue d'un bloc,
 /// sans icone d'action concurrente (UX_REVIEW_04 n° 9 d). Sans lui, la ligne
@@ -787,21 +789,9 @@ LigneRubrique _ligneMembre(
         ? null
         : membre.identifiantImmuable,
     legende: legende.isEmpty ? null : legende,
-    marque: switch (projection?.indicateur) {
-      null => null,
-      IndicateurEleve.regulier => StatusPill(
-        libelle: t.enseignant.ficheGroupe.indicateurRegulier,
-        ton: TonEtat.succes,
-      ),
-      IndicateurEleve.aRenforcer => StatusPill(
-        libelle: t.enseignant.ficheGroupe.indicateurARenforcer,
-        ton: TonEtat.avertissement,
-      ),
-      IndicateurEleve.absence => StatusPill(
-        libelle: t.enseignant.ficheGroupe.indicateurAbsence,
-        ton: TonEtat.neutre,
-      ),
-    },
+    // Indicateur masque (decision EN-RC) : ses mots n'ont pas de source. Le
+    // modele `IndicateurEleve` reste ; le directeur choisira les mots d'un
+    // indicateur de preparation (spec 04 §13.4).
     onPress: onOuvrirEleve == null
         ? null
         : () => onOuvrirEleve(membre.studentId),

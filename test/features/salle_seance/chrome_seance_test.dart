@@ -208,8 +208,8 @@ void main() {
     expect(find.text('Sayyid Ibrahim'), findsOneWidget);
     expect(find.text('SI'), findsOneWidget);
     expect(find.text('Mariam'), findsNothing);
-    expect(find.text('Tuteur de Mariam observe.'), findsOneWidget);
-    expect(find.textContaining('parent'), findsNothing);
+    expect(find.text('Un parent observe cette séance'), findsOneWidget);
+    expect(find.textContaining('Votre parent'), findsNothing);
   });
 
   testWidgets('telephone : rien a droite hormis « En ligne »', (
