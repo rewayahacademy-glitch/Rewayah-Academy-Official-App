@@ -407,6 +407,8 @@ void main() {
         );
         expect(find.byKey(MissionIndisponible.cle), findsOneWidget);
         expect(find.text(t.controleur.controle.indisponible), findsOneWidget);
+        // Titre et action seuls (C7) : pas la phrase generique au masculin.
+        expect(find.text(t.commun.etats.ressourceExpiree.phrase), findsNothing);
         expect(find.text('Classe An-Nour'), findsNothing);
         expect(find.byKey(CompteRenduControlePage.plusTardKey), findsNothing);
         await tester.tap(find.text(t.controleur.compteRendu.revenir));

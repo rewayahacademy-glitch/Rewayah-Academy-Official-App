@@ -12,6 +12,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/page_etat.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/ecran_resultat.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
@@ -66,12 +68,22 @@ class MissionIndisponible extends StatelessWidget {
   /// La cle de l'etat.
   static const Key cle = ValueKey<String>('controle-mission-indisponible');
 
+  // Le titre et l'action seuls (C7, P-CTR-08) : la phrase par defaut de la
+  // nature (« Il a ete retire… ») ne s'accorde pas avec « mission », et le
+  // document n'en prevoit aucune. Meme icone, meme ton que la nature.
   @override
-  Widget build(BuildContext context) => PageEtat(
+  Widget build(BuildContext context) => PageShell(
     key: cle,
-    nature: NatureEtat.ressourceExpiree,
-    titre: t.controleur.controle.indisponible,
-    libelleAction: t.controleur.compteRendu.revenir,
-    onAction: onRevenir,
+    child: Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.xxl),
+      child: EcranResultat(
+        icone: EtatSysteme.iconePar(NatureEtat.ressourceExpiree),
+        ton: EtatSysteme.tonPar(NatureEtat.ressourceExpiree),
+        titre: t.controleur.controle.indisponible,
+        libelleAction: t.controleur.compteRendu.revenir,
+        onAction: onRevenir,
+        focusAction: true,
+      ),
+    ),
   );
 }
