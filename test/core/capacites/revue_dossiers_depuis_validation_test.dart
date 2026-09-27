@@ -298,12 +298,55 @@ void main() {
       port.decider(
         dossierId: 'p1',
         revisionAttendue: 0,
-        decision: DecisionDossier.valider,
+        decision: DecisionDossier.refuser,
         commandeId: 'c',
         verificationsFaites: <String>{},
+        motif: 'Motif fictif',
       ),
-      throwsA(isA<CapaciteIndisponible>()),
+      throwsA(
+        isA<CapaciteIndisponible>().having(
+          (CapaciteIndisponible e) => e.dependance,
+          'dependance',
+          'AD-BR-06',
+        ),
+      ),
     );
+  });
+
+  // AD-RC m2 : la validation reste fermee en production jusqu'a BR-1, par
+  // l'adaptateur lui-meme et non par le seul bouton de l'ecran.
+  test('valider : AD-BR-02, sans lecture de file ni appel RPC', () async {
+    int lectures = 0;
+    int appels = 0;
+    final RevueDossiersDepuisValidation port = RevueDossiersDepuisValidation(
+      () async {
+        lectures++;
+        return <DossierAValider>[_d('p1')];
+      },
+      deciderExistant: ({
+        required String documentId,
+        required bool approuve,
+        String? motif,
+      }) async => appels++,
+    );
+    await expectLater(
+      port.decider(
+        dossierId: 'p1',
+        revisionAttendue: 0,
+        decision: DecisionDossier.valider,
+        commandeId: 'c',
+        verificationsFaites: verificationsRevue.toSet(),
+      ),
+      throwsA(
+        isA<CapaciteIndisponible>().having(
+          (CapaciteIndisponible e) => e.dependance,
+          'dependance',
+          'AD-BR-02',
+        ),
+      ),
+    );
+    expect(appels, 0);
+    expect(lectures, 0);
   });
 
   group('AD-8 : decision sur decider_dossier existant', () {

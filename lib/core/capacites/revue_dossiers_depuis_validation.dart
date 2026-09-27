@@ -311,6 +311,12 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
     required Set<String> verificationsFaites,
     String? motif,
   }) async {
+    // AD-RC m2 : la validation reste fermee en production jusqu'a BR-1
+    // (aucune consequence connue, AD-BR-02). Refusee ici meme, avant toute
+    // lecture ou RPC, pour ne pas dependre du seul bouton desactive.
+    if (decision == DecisionDossier.valider) {
+      throw const CapaciteIndisponible('AD-BR-02');
+    }
     final DeciderExistant? rpc = deciderExistant;
     if (rpc == null) {
       throw const CapaciteIndisponible('AD-BR-06');
