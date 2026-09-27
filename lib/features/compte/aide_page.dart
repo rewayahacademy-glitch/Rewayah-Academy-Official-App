@@ -23,7 +23,11 @@ import 'donnees_compte.dart';
 /// canal, son adresse s'affiche telle que l'academie la publie.
 class AideComptePage extends ConsumerWidget {
   /// Cree la page.
-  const AideComptePage({super.key});
+  const AideComptePage({super.key, this.onRetour});
+
+  /// Le retour de l'en-tete ; par defaut, le Compte du tuteur. « Mon
+  /// espace » de l'eleve adulte (EA-4) y passe son propre retour.
+  final VoidCallback? onRetour;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,7 +36,7 @@ class AideComptePage extends ConsumerWidget {
 
     return PageShell(
       titre: t.compte.tuteur.pageAide.titre,
-      onRetour: () => GoRouter.of(context).go(Routes.tuteurCompte),
+      onRetour: onRetour ?? () => GoRouter.of(context).go(Routes.tuteurCompte),
       child: ColonneSousPage(
         child: erreur is CapaciteIndisponible
             ? EtatSysteme(

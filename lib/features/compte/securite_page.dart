@@ -23,7 +23,11 @@ import 'donnees_compte.dart';
 /// phrase le dit. La deconnexion a une seule place, au pied de Mon compte.
 class SecuriteComptePage extends ConsumerWidget {
   /// Cree la page.
-  const SecuriteComptePage({super.key});
+  const SecuriteComptePage({super.key, this.onRetour});
+
+  /// Le retour de l'en-tete ; par defaut, le Compte du tuteur. « Mon
+  /// espace » de l'eleve adulte (EA-4) y passe son propre retour.
+  final VoidCallback? onRetour;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,7 +39,7 @@ class SecuriteComptePage extends ConsumerWidget {
     return PageShell(
       titre: t.compte.tuteur.pageSecurite.titre,
       sousTitre: t.compte.tuteur.pageSecurite.sousTitre,
-      onRetour: () => GoRouter.of(context).go(Routes.tuteurCompte),
+      onRetour: onRetour ?? () => GoRouter.of(context).go(Routes.tuteurCompte),
       child: ColonneSousPage(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -13,9 +13,11 @@
 // role reel reste lu du jeton. Aucun appel serveur (K-28).
 //
 // L'Accueil (EA-2), Ma classe (EA-3) et Mon espace (EA-4) sont les vrais
-// ecrans ; « Paiements » de Mon espace ouvre la vraie page des paiements du
-// Compte. Coran et Forfait famille restent PROVISOIRES (Forfait famille :
-// EA-8 et EA-11).
+// ecrans ; chaque rubrique de Mon espace ouvre la vraie sous-page du Compte
+// (informations, paiements, securite, preferences et apparence, aide,
+// informations legales), avec un retour vers Mon espace ; « Mes accords » et
+// « Cours et acces », sans source, disent qu'ils sont indisponibles. Coran et
+// Forfait famille restent PROVISOIRES (Forfait famille : EA-8 et EA-11).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,11 +25,14 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
 import '../../core/appairage/service_appairage.dart' show EleveDuFoyer;
+import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/config/env.dart';
 import '../../core/domain/enums.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/planning/service_planning.dart' show monFuseauProvider;
+import '../../core/profil/service_acceptations.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
@@ -38,7 +43,14 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
 import '../accueil_adulte/accueil_adulte_page.dart';
+import '../compte/aide_page.dart';
+import '../compte/apparence_page.dart';
+import '../compte/donnees_compte.dart' show identiteTitulaireProvider;
+import '../compte/informations_legales_page.dart';
+import '../compte/informations_page.dart';
 import '../compte/paiements_page.dart';
+import '../compte/preferences_page.dart';
+import '../compte/securite_page.dart';
 import '../foyer/foyer_page.dart';
 import '../ma_classe_adulte/ma_classe_adulte_page.dart';
 import '../mon_espace_adulte/mon_espace_adulte_page.dart';
@@ -72,7 +84,43 @@ enum EcranDemoAdulte {
 
   /// Paiements, ouverts depuis Mon espace (EA-4).
   paiements,
+
+  /// Mes informations, ouvertes depuis Mon espace (EA-4).
+  informations,
+
+  /// Cours et acces, ouverts depuis Mon espace (EA-4).
+  coursAcces,
+
+  /// Mes accords, ouverts depuis Mon espace (EA-4).
+  accords,
+
+  /// Connexion et securite, ouvertes depuis Mon espace (EA-4).
+  securite,
+
+  /// Preferences, ouvertes depuis Mon espace (EA-4).
+  preferences,
+
+  /// Apparence, ouverte depuis les Preferences (EA-4).
+  apparence,
+
+  /// Aide et contact, ouverts depuis Mon espace (EA-4).
+  aide,
+
+  /// Informations legales, ouvertes depuis Mon espace (EA-4).
+  informationsLegales,
 }
+
+/// L'ecran de la demonstration qu'ouvre une rubrique de Mon espace.
+EcranDemoAdulte ecranDeRubrique(RubriqueMonEspace r) => switch (r) {
+  RubriqueMonEspace.informations => EcranDemoAdulte.informations,
+  RubriqueMonEspace.coursAcces => EcranDemoAdulte.coursAcces,
+  RubriqueMonEspace.paiements => EcranDemoAdulte.paiements,
+  RubriqueMonEspace.accords => EcranDemoAdulte.accords,
+  RubriqueMonEspace.securite => EcranDemoAdulte.securite,
+  RubriqueMonEspace.preferences => EcranDemoAdulte.preferences,
+  RubriqueMonEspace.aide => EcranDemoAdulte.aide,
+  RubriqueMonEspace.informationsLegales => EcranDemoAdulte.informationsLegales,
+};
 
 /// Les routes de la demonstration adulte : AUCUNE en production.
 List<RouteBase> routesDemoAdulte(String environnement) {
@@ -136,6 +184,14 @@ String libelleEcranDemoAdulte(EcranDemoAdulte ecran) => switch (ecran) {
   EcranDemoAdulte.forfaitFamille => t.adulte.famille.forfaitFamille,
   EcranDemoAdulte.maFamille => t.adulte.famille.maFamille,
   EcranDemoAdulte.paiements => t.adulte.monEspace.paiements,
+  EcranDemoAdulte.informations => t.adulte.monEspace.informations,
+  EcranDemoAdulte.coursAcces => t.adulte.monEspace.coursAcces,
+  EcranDemoAdulte.accords => t.adulte.monEspace.accords,
+  EcranDemoAdulte.securite => t.compte.tuteur.securite.titre,
+  EcranDemoAdulte.preferences => t.compte.tuteur.preferences,
+  EcranDemoAdulte.apparence => t.compte.tuteur.pagePreferences.apparence,
+  EcranDemoAdulte.aide => t.compte.tuteur.aide.ligne,
+  EcranDemoAdulte.informationsLegales => t.compte.tuteur.aide.legal,
 };
 
 /// Le libelle d'une situation (doc section 18).
@@ -341,11 +397,11 @@ class CoquilleAdulteDemo extends StatelessWidget {
     if (ecran == EcranDemoAdulte.maFamille) return _foyer(context);
     final List<Destination> destinations = destinationsEleveAdulte();
     // Les pages ouvertes depuis Mon espace gardent sa destination allumee.
-    final int actif = switch (ecran) {
-      EcranDemoAdulte.forfaitFamille ||
-      EcranDemoAdulte.paiements => EcranDemoAdulte.monEspace.index,
-      _ => ecran.index,
-    };
+    final bool depuisMonEspace = ecran.index >= EcranDemoAdulte.monEspace.index;
+    final int actif = depuisMonEspace
+        ? EcranDemoAdulte.monEspace.index
+        : ecran.index;
+    void versMonEspace() => context.go(_adresse(EcranDemoAdulte.monEspace));
     return ProviderScope(
       key: ValueKey<String>(_adresse(ecran)),
       overrides: <Override>[
@@ -367,13 +423,29 @@ class CoquilleAdulteDemo extends StatelessWidget {
             maClasseAdulteProvider.overrideWith((Ref _) async => classe),
         ] else ...<Override>[
           horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
-          // Mon espace lit l'identite et la ligne famille de la personne qui
-          // regarde (EA-4). Les paiements gardent leur fournisseur reel
-          // (indisponible, DB-CPT-03) : aucun paiement invente.
-          if (ecran == EcranDemoAdulte.monEspace)
+          // Mon espace et ses pages lisent l'identite de la personne qui
+          // regarde par le port du Compte, et sa ligne famille (EA-4). Les
+          // paiements et l'aide gardent leur fournisseur reel (indisponible,
+          // DB-CPT-03 et DB-CPT-07) ; le fuseau et les textes acceptes, qui
+          // partiraient vers le serveur, sont indisponibles : rien d'invente.
+          if (depuisMonEspace) ...<Override>[
+            identiteTitulaireProvider.overrideWith(
+              (Ref _) async => DonneesAdulteDemo.identite(genre, vue),
+            ),
             monEspaceAdulteProvider.overrideWith(
               (Ref _) async => DonneesAdulteDemo.monEspace(etat, genre, vue),
             ),
+            monFuseauProvider.overrideWith(
+              (Ref _) => Future<String>.error(
+                const CapaciteIndisponible('demonstration'),
+              ),
+            ),
+            acceptationsProvider.overrideWith(
+              (Ref _) => Future<List<Acceptation>>.error(
+                const CapaciteIndisponible('demonstration'),
+              ),
+            ),
+          ],
         ],
       ],
       child: RepereDemonstration(
@@ -409,14 +481,12 @@ class CoquilleAdulteDemo extends StatelessWidget {
               titre: t.adulte.nav.coran,
               phrase: t.adulte.provisoire.coran,
             ),
-            // Seuls « Paiements » et la ligne famille ont leur page dans la
-            // demonstration ; les autres rubriques restent sans effet.
+            // Chaque rubrique ouvre la VRAIE sous-page du Compte, retour vers
+            // Mon espace (sans fork) ; « Mes accords » et « Cours et acces »,
+            // qui n'ont aucune source, disent qu'ils sont indisponibles.
             EcranDemoAdulte.monEspace => MonEspaceAdultePage(
-              onOuvrir: (RubriqueMonEspace r) {
-                if (r == RubriqueMonEspace.paiements) {
-                  context.go(_adresse(EcranDemoAdulte.paiements));
-                }
-              },
+              onOuvrir: (RubriqueMonEspace r) =>
+                  context.go(_adresse(ecranDeRubrique(r))),
               onFamille: (LigneFamilleAdulte ligne) => context.go(
                 _adresse(
                   ligne == LigneFamilleAdulte.forfaitFamille
@@ -426,12 +496,37 @@ class CoquilleAdulteDemo extends StatelessWidget {
               ),
             ),
             EcranDemoAdulte.paiements => PaiementsComptePage(
-              onRetour: () => context.go(_adresse(EcranDemoAdulte.monEspace)),
+              onRetour: versMonEspace,
             ),
+            EcranDemoAdulte.informations => InformationsComptePage(
+              onRetour: versMonEspace,
+            ),
+            EcranDemoAdulte.coursAcces => RubriqueIndisponibleAdultePage(
+              rubrique: RubriqueMonEspace.coursAcces,
+              onRetour: versMonEspace,
+            ),
+            EcranDemoAdulte.accords => RubriqueIndisponibleAdultePage(
+              rubrique: RubriqueMonEspace.accords,
+              onRetour: versMonEspace,
+            ),
+            EcranDemoAdulte.securite => SecuriteComptePage(
+              onRetour: versMonEspace,
+            ),
+            EcranDemoAdulte.preferences => PreferencesComptePage(
+              onRetour: versMonEspace,
+              onApparence: () =>
+                  context.go(_adresse(EcranDemoAdulte.apparence)),
+            ),
+            EcranDemoAdulte.apparence => ApparenceComptePage(
+              onRetour: () => context.go(_adresse(EcranDemoAdulte.preferences)),
+            ),
+            EcranDemoAdulte.aide => AideComptePage(onRetour: versMonEspace),
+            EcranDemoAdulte.informationsLegales =>
+              InformationsLegalesComptePage(onRetour: versMonEspace),
             EcranDemoAdulte.forfaitFamille => _PageProvisoire(
               titre: t.adulte.famille.forfaitFamille,
               phrase: t.adulte.provisoire.forfaitFamille,
-              onRetour: () => context.go(_adresse(EcranDemoAdulte.monEspace)),
+              onRetour: versMonEspace,
             ),
             EcranDemoAdulte.maFamille => const SizedBox.shrink(),
           },

@@ -15,12 +15,21 @@
 //
 // Rectifications (00_MAQUETTES 1.3, C) : ni pastille « Nouveau », ni
 // engrenage (les Preferences n'ont qu'une place, la ligne), ni
-// « Abonnements » (il n'y a pas d'abonnement, F9).
+// « Abonnements » (il n'y a pas d'abonnement, F9) ; aucune pastille « Compte
+// valide » pour l'etat normal (E12) : la carte n'en porte une que pour une
+// exception (`pastilleEtatNormal: false`). « A propos » de la planche devient
+// « Informations legales », la page existante du Compte (textes acceptes, leur
+// version et leur date) : aucune page « A propos » n'existe, et une rubrique
+// ne se cree pas sans contenu rendu (rien d'invente).
 //
-// Le seul provider propre a l'ecran, [monEspaceAdulteProvider], n'a aucune
-// source serveur (EA-BR-07) : il rend `CapaciteIndisponible`, la
-// demonstration le surcharge (K-28). Les rubriques restent en place quand
-// l'identite manque : elles ne dependent pas d'elle.
+// L'identite est lue par le port existant, `identiteTitulaireProvider`
+// (« l'identite de la personne connectee », lot E) : branche en production le
+// jour ou ce port l'est. Le seul provider propre a l'ecran,
+// [monEspaceAdulteProvider], ne porte que ce que ce port n'a pas (la ligne
+// famille et la cle de la photo) et n'a aucune source serveur (EA-BR-07) : il
+// rend `CapaciteIndisponible`, la demonstration le surcharge (K-28). Les deux
+// lectures sont independantes : une panne de l'une ne masque pas l'autre, et
+// les rubriques restent en place dans tous les cas.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,11 +42,14 @@ import '../../core/mouvement/apparition_douce.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
+import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../compte/carte_rubriques.dart' show ColonneSousPage;
 import '../compte/compte_tuteur_page.dart'
     show CarteDeconnexion, CarteIdentiteCompte;
+import '../compte/donnees_compte.dart' show identiteTitulaireProvider;
 import '../foyer/photo_eleve.dart';
 
 /// La ligne famille de Mon espace (UX_REVIEW_07 ligne 5 a) : jamais deux a
@@ -80,28 +92,23 @@ enum RubriqueMonEspace {
   informationsLegales,
 }
 
-/// Ce que Mon espace lit, en une fois.
+/// Ce que Mon espace lit en plus de l'identite (`identiteTitulaireProvider`).
 @immutable
 class MonEspaceAdulteVM {
   /// Cree la vue.
-  const MonEspaceAdulteVM({
-    required this.identite,
-    this.cleAvatar,
-    this.ligneFamille,
-  });
+  const MonEspaceAdulteVM({this.cleAvatar, this.ligneFamille});
 
-  /// L'identite de la personne connectee.
-  final IdentiteTitulaire identite;
-
-  /// La cle de sa photo, `null` sans photo (initiales en repli).
+  /// La cle de la photo de la personne connectee, `null` sans photo
+  /// (initiales en repli).
   final String? cleAvatar;
 
   /// La ligne famille rendue ; `null` : aucune ligne.
   final LigneFamilleAdulte? ligneFamille;
 }
 
-/// Mon espace de l'eleve adulte. **Aucune source serveur a ce jour**
-/// (EA-BR-07) : `CapaciteIndisponible`, que `BlocAsynchrone` dit comme tel.
+/// La ligne famille et la photo de Mon espace. **Aucune source serveur a ce
+/// jour** (EA-BR-07) : `CapaciteIndisponible`, et alors aucune ligne famille,
+/// les initiales en repli.
 final FutureProvider<MonEspaceAdulteVM> monEspaceAdulteProvider =
     FutureProvider<MonEspaceAdulteVM>(
       (Ref _) => Future<MonEspaceAdulteVM>.error(
@@ -128,11 +135,12 @@ class MonEspaceAdultePage extends ConsumerWidget {
     final AsyncValue<MonEspaceAdulteVM> lecture = ref.watch(
       monEspaceAdulteProvider,
     );
+    final MonEspaceAdulteVM? vue = lecture.hasValue && !lecture.hasError
+        ? lecture.requireValue
+        : null;
     final bool large = AppGabarit.de(context).estLarge;
     final double ecart = large ? AppSpacing.lg : AppSpacing.md;
-    final LigneFamilleAdulte? famille = lecture.hasValue && !lecture.hasError
-        ? lecture.requireValue.ligneFamille
-        : null;
+    final LigneFamilleAdulte? famille = vue?.ligneFamille;
 
     LigneRubrique rubrique(
       RubriqueMonEspace r,
@@ -148,17 +156,18 @@ class MonEspaceAdultePage extends ConsumerWidget {
       onPress: onOuvrir == null ? null : () => onOuvrir!(r),
     );
 
-    final Widget identite = BlocAsynchrone<MonEspaceAdulteVM>(
-      valeur: lecture,
+    final Widget identite = BlocAsynchrone<IdentiteTitulaire>(
+      valeur: ref.watch(identiteTitulaireProvider),
       squelette: const Skeleton(hauteur: AppSpacing.respiration * 2),
-      onReessayer: () => ref.invalidate(monEspaceAdulteProvider),
-      construire: (MonEspaceAdulteVM vue) => CarteIdentiteCompte(
-        identite: vue.identite,
+      onReessayer: () => ref.invalidate(identiteTitulaireProvider),
+      construire: (IdentiteTitulaire lue) => CarteIdentiteCompte(
+        identite: lue,
         large: large,
         role: t.adulte.monEspace.role,
+        pastilleEtatNormal: false,
         photo: (double diametre) => PhotoEleve(
-          prenom: vue.identite.prenom,
-          cleAvatar: vue.cleAvatar,
+          prenom: lue.prenom,
+          cleAvatar: vue?.cleAvatar,
           diametre: diametre,
         ),
       ),
@@ -288,6 +297,53 @@ class MonEspaceAdultePage extends ConsumerWidget {
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+/// La page d'une rubrique de Mon espace qui n'a encore aucune source :
+/// « Mes accords » (EA-BR-08) et « Cours et acces » (EA-BR-09). Aucun ecran
+/// neuf : l'en-tete de sous-page du Compte (`PageShell`, `ColonneSousPage`)
+/// et l'etat systeme « indisponible », comme la page des paiements sans
+/// service. Rien n'est promis ni invente.
+class RubriqueIndisponibleAdultePage extends StatelessWidget {
+  /// Cree la page.
+  const RubriqueIndisponibleAdultePage({
+    required this.rubrique,
+    this.onRetour,
+    super.key,
+  }) : assert(
+         rubrique == RubriqueMonEspace.accords ||
+             rubrique == RubriqueMonEspace.coursAcces,
+         'Seules Mes accords et Cours et acces sont sans page.',
+       );
+
+  /// La rubrique : `accords` ou `coursAcces`.
+  final RubriqueMonEspace rubrique;
+
+  /// Le retour vers Mon espace.
+  final VoidCallback? onRetour;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool accords = rubrique == RubriqueMonEspace.accords;
+    return PageShell(
+      titre: accords
+          ? t.adulte.monEspace.accords
+          : t.adulte.monEspace.coursAcces,
+      onRetour: onRetour,
+      child: ColonneSousPage(
+        child: EtatSysteme(
+          nature: NatureEtat.indisponible,
+          titre: accords
+              ? t.adulte.monEspace.pageAccords.indisponibleTitre
+              : t.adulte.monEspace.pageCoursAcces.indisponibleTitre,
+          phrase: accords
+              ? t.adulte.monEspace.pageAccords.indisponiblePhrase
+              : t.adulte.monEspace.pageCoursAcces.indisponiblePhrase,
+          dependance: accords ? 'EA-BR-08' : 'EA-BR-09',
+        ),
       ),
     );
   }

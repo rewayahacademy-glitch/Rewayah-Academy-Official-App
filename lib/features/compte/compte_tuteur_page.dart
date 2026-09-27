@@ -265,8 +265,14 @@ class CarteIdentiteCompte extends StatelessWidget {
     required this.large,
     this.role,
     this.photo,
+    this.pastilleEtatNormal = true,
     super.key,
   });
+
+  /// Vrai (defaut, Compte du tuteur) : la pastille dit aussi l'etat normal
+  /// (« Compte valide »). Faux (Mon espace de l'eleve adulte, E12) : la
+  /// pastille n'apparait que pour une exception (« Profil a completer »).
+  final bool pastilleEtatNormal;
 
   /// L'identite lue.
   final IdentiteTitulaire identite;
@@ -288,9 +294,9 @@ class CarteIdentiteCompte extends StatelessWidget {
     final double diametre = large
         ? AppSpacing.section * 2
         : AppSpacing.respiration;
-    final ({String libelle, bool valide})? statut = statutAffiche(
-      identite.statut,
-    );
+    final ({String libelle, bool valide})? lu = statutAffiche(identite.statut);
+    final ({String libelle, bool valide})? statut =
+        lu != null && lu.valide && !pastilleEtatNormal ? null : lu;
 
     return SurfaceCarte(
       child: Padding(

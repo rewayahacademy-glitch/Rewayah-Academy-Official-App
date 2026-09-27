@@ -17,9 +17,16 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/compte/aide_page.dart';
+import 'package:rewayah_academy/features/compte/apparence_page.dart';
 import 'package:rewayah_academy/features/compte/carte_rubriques.dart';
 import 'package:rewayah_academy/features/compte/compte_tuteur_page.dart';
+import 'package:rewayah_academy/features/compte/donnees_compte.dart';
+import 'package:rewayah_academy/features/compte/informations_legales_page.dart';
+import 'package:rewayah_academy/features/compte/informations_page.dart';
 import 'package:rewayah_academy/features/compte/paiements_page.dart';
+import 'package:rewayah_academy/features/compte/preferences_page.dart';
+import 'package:rewayah_academy/features/compte/securite_page.dart';
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
@@ -105,6 +112,10 @@ void main() {
       ),
       findsOneWidget,
     );
+    // Aucune pastille pour l'etat normal (E12) : ni « Compte valide » ni
+    // « Actif ».
+    expect(find.text(t.compte.tuteur.identite.statutValide), findsNothing);
+    expect(find.text('Actif'), findsNothing);
     // « Mon compte » : les six rubriques, dont Mes accords et Paiements.
     for (final RubriqueMonEspace r in <RubriqueMonEspace>[
       RubriqueMonEspace.informations,
@@ -237,14 +248,83 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('chaque rubrique ouvre sa page depuis la coquille, retour a '
+      'Mon espace : Mes accords indisponible, Preferences puis Apparence', (
+    WidgetTester tester,
+  ) async {
+    taille(tester, const Size(390, 844));
+    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.monEspace));
+
+    Future<void> ouvrir(String libelle) async {
+      await voir(tester, find.text(libelle));
+      await tester.tap(find.text(libelle));
+      await tester.pumpAndSettle();
+      expect(find.byType(MonEspaceAdultePage), findsNothing, reason: libelle);
+      expect(
+        tester.widget<NavShell>(find.byType(NavShell)).indexActif,
+        3,
+        reason: libelle,
+      );
+    }
+
+    Future<void> revenir() async {
+      await tester.tap(find.byType(DisqueRetour));
+      await tester.pumpAndSettle();
+    }
+
+    // « Mes accords » : aucune source, une page qui le dit (EA-BR-08).
+    await ouvrir(t.adulte.monEspace.accords);
+    expect(find.byType(RubriqueIndisponibleAdultePage), findsOneWidget);
+    expect(
+      find.text(t.adulte.monEspace.pageAccords.indisponibleTitre),
+      findsOneWidget,
+    );
+    await revenir();
+    expect(find.byType(MonEspaceAdultePage), findsOneWidget);
+
+    // « Preferences » : la vraie page du Compte, puis son Apparence.
+    await ouvrir(t.compte.tuteur.preferences);
+    expect(find.byType(PreferencesComptePage), findsOneWidget);
+    await tester.tap(find.text(t.compte.tuteur.pagePreferences.apparence));
+    await tester.pumpAndSettle();
+    expect(find.byType(ApparenceComptePage), findsOneWidget);
+    await revenir();
+    expect(find.byType(PreferencesComptePage), findsOneWidget);
+    await revenir();
+    expect(find.byType(MonEspaceAdultePage), findsOneWidget);
+
+    // Les autres rubriques : chacune sa page, chacune revient.
+    for (final (String libelle, Type page) in <(String, Type)>[
+      (t.adulte.monEspace.informations, InformationsComptePage),
+      (t.adulte.monEspace.coursAcces, RubriqueIndisponibleAdultePage),
+      (t.compte.tuteur.securite.titre, SecuriteComptePage),
+      (t.compte.tuteur.aide.ligne, AideComptePage),
+      (t.compte.tuteur.aide.legal, InformationsLegalesComptePage),
+    ]) {
+      await ouvrir(libelle);
+      expect(find.byType(page), findsOneWidget, reason: libelle);
+      await revenir();
+      expect(find.byType(MonEspaceAdultePage), findsOneWidget, reason: libelle);
+    }
+    // Mes informations lit la meme identite que la carte, rien d'invente.
+    await ouvrir(t.adulte.monEspace.informations);
+    expect(find.text('Mamadou'), findsOneWidget);
+    expect(find.text('Diallo'), findsOneWidget);
+  });
+
   testWidgets('chargement : le squelette de l\'identite, rubriques en place', (
     WidgetTester tester,
   ) async {
-    final Completer<MonEspaceAdulteVM> jamais = Completer<MonEspaceAdulteVM>();
+    final Completer<IdentiteTitulaire> jamais = Completer<IdentiteTitulaire>();
     await tester.pumpWidget(
       app(
         overrides: <Override>[
-          monEspaceAdulteProvider.overrideWith((Ref _) => jamais.future),
+          identiteTitulaireProvider.overrideWith((Ref _) => jamais.future),
+          monEspaceAdulteProvider.overrideWith(
+            (Ref _) async => const MonEspaceAdulteVM(
+              ligneFamille: LigneFamilleAdulte.ajouterMaFamille,
+            ),
+          ),
         ],
         child: const MonEspaceAdultePage(),
       ),
@@ -253,18 +333,24 @@ void main() {
     expect(find.byType(Skeleton), findsWidgets);
     expect(find.byType(CarteIdentiteCompte), findsNothing);
     expect(find.text(t.adulte.monEspace.monCompte), findsOneWidget);
-    expect(ligneFamille, findsNothing);
+    // La ligne famille ne depend pas de l'identite.
+    expect(ligneFamille, findsOneWidget);
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets('erreur : « Reessayer », aucune ligne famille inventee', (
+  testWidgets('identite en erreur : « Reessayer », la ligne famille reste', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
       app(
         overrides: <Override>[
+          identiteTitulaireProvider.overrideWith(
+            (Ref _) => Future<IdentiteTitulaire>.error(StateError('reseau')),
+          ),
           monEspaceAdulteProvider.overrideWith(
-            (Ref _) => Future<MonEspaceAdulteVM>.error(StateError('reseau')),
+            (Ref _) async => const MonEspaceAdulteVM(
+              ligneFamille: LigneFamilleAdulte.ajouterMaFamille,
+            ),
           ),
         ],
         child: const MonEspaceAdultePage(),
@@ -273,14 +359,46 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(t.commun.reessayer), findsWidgets);
     expect(find.byType(CarteIdentiteCompte), findsNothing);
-    expect(ligneFamille, findsNothing);
+    expect(dansFamille(t.adulte.famille.ajouter), findsOneWidget);
     expect(find.text(t.adulte.monEspace.monCompte), findsOneWidget);
   });
 
-  testWidgets('sans source serveur : indisponible, sans « Reessayer »', (
-    WidgetTester tester,
-  ) async {
-    await tester.pumpWidget(app(child: const MonEspaceAdultePage()));
+  testWidgets('ligne famille en erreur : l\'identite reste, aucune ligne '
+      'famille inventee', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      app(
+        overrides: <Override>[
+          identiteTitulaireProvider.overrideWith(
+            (Ref _) async => DonneesAdulteDemo.identite(
+              GenreTitulaireDemo.homme,
+              VueDemoAdulte.titulaire,
+            ),
+          ),
+          monEspaceAdulteProvider.overrideWith(
+            (Ref _) => Future<MonEspaceAdulteVM>.error(StateError('reseau')),
+          ),
+        ],
+        child: const MonEspaceAdultePage(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Mamadou Diallo'), findsOneWidget);
+    expect(ligneFamille, findsNothing);
+  });
+
+  testWidgets('sans source serveur : le port d\'identite dit indisponible, '
+      'sans « Reessayer »', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      app(
+        overrides: <Override>[
+          // Le port de production, sans la session : `IdentiteTitulaireIndisponible`.
+          identiteTitulaireProvider.overrideWith(
+            (Ref ref) => ref.watch(portIdentiteTitulaireProvider).lire(),
+          ),
+        ],
+        child: const MonEspaceAdultePage(),
+      ),
+    );
     await tester.pumpAndSettle();
     expect(find.text(t.commun.etats.indisponible.titre), findsOneWidget);
     expect(find.text(t.commun.reessayer), findsNothing);
@@ -293,14 +411,15 @@ void main() {
     await tester.pumpWidget(
       app(
         overrides: <Override>[
-          monEspaceAdulteProvider.overrideWith(
-            (Ref _) async => const MonEspaceAdulteVM(
-              identite: IdentiteTitulaire(
-                prenom: 'Awa',
-                nom: 'Ba',
-                methodeConnexion: MethodeConnexion.inconnue,
-              ),
+          identiteTitulaireProvider.overrideWith(
+            (Ref _) async => const IdentiteTitulaire(
+              prenom: 'Awa',
+              nom: 'Ba',
+              methodeConnexion: MethodeConnexion.inconnue,
             ),
+          ),
+          monEspaceAdulteProvider.overrideWith(
+            (Ref _) async => const MonEspaceAdulteVM(),
           ),
         ],
         child: const MonEspaceAdultePage(),
@@ -309,6 +428,35 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Awa Ba'), findsOneWidget);
     expect(ligneFamille, findsNothing);
+  });
+
+  testWidgets('pastille : seulement pour une exception (E12)', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      app(
+        overrides: <Override>[
+          identiteTitulaireProvider.overrideWith(
+            (Ref _) async => const IdentiteTitulaire(
+              prenom: 'Awa',
+              nom: 'Ba',
+              methodeConnexion: MethodeConnexion.lienCourriel,
+              statut: AccountStatus.provisionalActive,
+            ),
+          ),
+          monEspaceAdulteProvider.overrideWith(
+            (Ref _) async => const MonEspaceAdulteVM(),
+          ),
+        ],
+        child: const MonEspaceAdultePage(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.text(t.compte.tuteur.identite.statutProvisoire),
+      findsOneWidget,
+    );
+    expect(find.text(t.compte.tuteur.identite.statutValide), findsNothing);
   });
 
   test('la ligne famille suit la situation et la vue, jamais deux', () {
@@ -330,11 +478,10 @@ void main() {
     );
     // Le second adulte d'une titulaire est Mamadou.
     expect(
-      DonneesAdulteDemo.monEspace(
-        EtatDemoAdulte.conjointActif,
+      DonneesAdulteDemo.identite(
         GenreTitulaireDemo.femme,
         VueDemoAdulte.secondAdulte,
-      ).identite.prenom,
+      ).prenom,
       'Mamadou',
     );
   });

@@ -30,7 +30,11 @@ import 'donnees_compte.dart';
 /// est l'ecran du lot A : il n'est pas repris ici.
 class InformationsLegalesComptePage extends ConsumerWidget {
   /// Cree la page.
-  const InformationsLegalesComptePage({super.key});
+  const InformationsLegalesComptePage({super.key, this.onRetour});
+
+  /// Le retour de l'en-tete ; par defaut, le Compte du tuteur. « Mon
+  /// espace » de l'eleve adulte (EA-4) y passe son propre retour.
+  final VoidCallback? onRetour;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -42,7 +46,7 @@ class InformationsLegalesComptePage extends ConsumerWidget {
 
     return PageShell(
       titre: t.compte.tuteur.pageLegal.titre,
-      onRetour: () => GoRouter.of(context).go(Routes.tuteurCompte),
+      onRetour: onRetour ?? () => GoRouter.of(context).go(Routes.tuteurCompte),
       child: ColonneSousPage(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

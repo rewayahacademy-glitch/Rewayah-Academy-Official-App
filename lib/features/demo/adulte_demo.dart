@@ -299,7 +299,9 @@ abstract final class DonneesAdulteDemo {
           ],
         );
 
-  /// Le nom de famille du foyer, porte par les deux adultes.
+  /// Le nom de famille du foyer, porte par les deux adultes. 00_MAQUETTES
+  /// section 3 nomme le foyer Diallo sans donner le nom de la conjointe : le
+  /// lui donner aussi est un CHOIX DE DEMONSTRATION, note dans cette section.
   static const String nomFamille = 'Diallo';
 
   /// L'adresse de connexion fictive de la personne qui regarde, sur le
@@ -307,22 +309,26 @@ abstract final class DonneesAdulteDemo {
   static String courrielVue(GenreTitulaireDemo genre, VueDemoAdulte vue) =>
       '${prenomVue(genre, vue).toLowerCase()}.diallo@example.com';
 
-  /// Mon espace de la personne qui regarde (EA-4) : son identite, sans
-  /// photo livree (initiales en repli, E5), et sa ligne famille.
+  /// L'identite de la personne qui regarde, telle que le port du Compte la
+  /// rendrait (`identiteTitulaireProvider`, EA-4).
+  static IdentiteTitulaire identite(
+    GenreTitulaireDemo genre,
+    VueDemoAdulte vue,
+  ) => IdentiteTitulaire(
+    prenom: prenomVue(genre, vue),
+    nom: nomFamille,
+    courriel: courrielVue(genre, vue),
+    methodeConnexion: MethodeConnexion.lienCourriel,
+    statut: AccountStatus.active,
+  );
+
+  /// Mon espace de la personne qui regarde (EA-4) : sa ligne famille, sans
+  /// photo livree (initiales en repli, E5).
   static MonEspaceAdulteVM monEspace(
     EtatDemoAdulte etat,
     GenreTitulaireDemo genre,
     VueDemoAdulte vue,
-  ) => MonEspaceAdulteVM(
-    identite: IdentiteTitulaire(
-      prenom: prenomVue(genre, vue),
-      nom: nomFamille,
-      courriel: courrielVue(genre, vue),
-      methodeConnexion: MethodeConnexion.lienCourriel,
-      statut: AccountStatus.active,
-    ),
-    ligneFamille: ligneFamille(etat, vue),
-  );
+  ) => MonEspaceAdulteVM(ligneFamille: ligneFamille(etat, vue));
 
   /// La ligne famille de Mon espace pour cet etat et cette vue.
   static LigneFamilleDemo ligneFamille(EtatDemoAdulte etat, VueDemoAdulte vue) {

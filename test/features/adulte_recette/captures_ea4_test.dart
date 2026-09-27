@@ -113,49 +113,74 @@ void main() {
       }
     }
 
+    // Le texte a 200 % sur la variante la plus longue : adulte seul,
+    // « Ajouter ma famille » et sa phrase (comme le test de widget).
     testWidgets('ea4_mon_espace_390_light_200pc', (WidgetTester tester) async {
       await _capturer(
         tester,
         'ea4_mon_espace_390_light_200pc',
-        adresseDemoAdulte(EcranDemoAdulte.monEspace),
+        adresseDemoAdulte(
+          EcranDemoAdulte.monEspace,
+          etat: EtatDemoAdulte.adulteSeul,
+        ),
         const Size(390, 844),
         echelle: 2,
         pleineHauteur: true,
       );
     });
 
-    // Adulte seul : « Ajouter ma famille » et sa phrase.
-    testWidgets('ea4_mon_espace_390_light_adulte_seul', (
-      WidgetTester tester,
-    ) async {
-      await _capturer(
-        tester,
-        'ea4_mon_espace_390_light_adulte_seul',
+    // Adulte seul (« Ajouter ma famille » et sa phrase) et second adulte
+    // (« Forfait famille »), clair et sombre.
+    for (final (String nom, String adresse) in <(String, String)>[
+      (
+        'adulte_seul',
         adresseDemoAdulte(
           EcranDemoAdulte.monEspace,
           etat: EtatDemoAdulte.adulteSeul,
         ),
-        const Size(390, 844),
-        pleineHauteur: true,
-      );
-    });
-
-    // Second adulte : « Forfait famille ».
-    testWidgets('ea4_mon_espace_390_light_conjoint', (
-      WidgetTester tester,
-    ) async {
-      await _capturer(
-        tester,
-        'ea4_mon_espace_390_light_conjoint',
+      ),
+      (
+        'conjoint',
         adresseDemoAdulte(
           EcranDemoAdulte.monEspace,
           vue: VueDemoAdulte.secondAdulte,
         ),
-        const Size(390, 844),
-        pleineHauteur: true,
-      );
-    });
+      ),
+    ]) {
+      for (final ThemeMode mode in <ThemeMode>[
+        ThemeMode.light,
+        ThemeMode.dark,
+      ]) {
+        final String fichier = 'ea4_mon_espace_390_${mode.name}_$nom';
+        testWidgets(fichier, (WidgetTester tester) async {
+          await _capturer(
+            tester,
+            fichier,
+            adresse,
+            const Size(390, 844),
+            mode: mode,
+            pleineHauteur: true,
+          );
+        });
+      }
+    }
 
+    // Les rubriques ouvertes depuis Mon espace : « Mes accords » (sans
+    // source, indisponible) et « Preferences » (la vraie page du Compte).
+    for (final EcranDemoAdulte ecran in <EcranDemoAdulte>[
+      EcranDemoAdulte.accords,
+      EcranDemoAdulte.preferences,
+    ]) {
+      final String fichier = 'ea4_${ecran.name}_390_light';
+      testWidgets(fichier, (WidgetTester tester) async {
+        await _capturer(
+          tester,
+          fichier,
+          adresseDemoAdulte(ecran),
+          const Size(390, 844),
+        );
+      });
+    }
     // « Paiements » : la vraie page, indisponible, rien d'invente.
     testWidgets('ea4_paiements_390_light', (WidgetTester tester) async {
       await _capturer(

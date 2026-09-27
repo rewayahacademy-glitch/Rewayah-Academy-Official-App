@@ -8914,6 +8914,9 @@ class Traductions$adulte$monEspace$fr {
 
 	/// fr: 'Méthode et adresse de connexion'
 	String get securiteLegende => 'Méthode et adresse de connexion';
+
+	late final Traductions$adulte$monEspace$pageAccords$fr pageAccords = Traductions$adulte$monEspace$pageAccords$fr.internal(_root);
+	late final Traductions$adulte$monEspace$pageCoursAcces$fr pageCoursAcces = Traductions$adulte$monEspace$pageCoursAcces$fr.internal(_root);
 }
 
 // Path: adulte.provisoire
@@ -12504,6 +12507,36 @@ class Traductions$tc$parcours$postCours$fr {
 
 	/// fr: 'Cours clôturé.'
 	String get envoye => 'Cours clôturé.';
+}
+
+// Path: adulte.monEspace.pageAccords
+class Traductions$adulte$monEspace$pageAccords$fr {
+	Traductions$adulte$monEspace$pageAccords$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vos accords ne sont pas encore consultables'
+	String get indisponibleTitre => 'Vos accords ne sont pas encore consultables';
+
+	/// fr: 'Accepter, refuser ou retirer chacun de vos accords n'est pas encore possible dans l'application. Aucun accord ne vous est demandé ici.'
+	String get indisponiblePhrase => 'Accepter, refuser ou retirer chacun de vos accords n\'est pas encore possible dans l\'application. Aucun accord ne vous est demandé ici.';
+}
+
+// Path: adulte.monEspace.pageCoursAcces
+class Traductions$adulte$monEspace$pageCoursAcces$fr {
+	Traductions$adulte$monEspace$pageCoursAcces$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Cours et accès pas encore consultables'
+	String get indisponibleTitre => 'Cours et accès pas encore consultables';
+
+	/// fr: 'Le détail de vos cours, de vos séances et de votre accès n'est pas encore disponible dans l'application.'
+	String get indisponiblePhrase => 'Le détail de vos cours, de vos séances et de votre accès n\'est pas encore disponible dans l\'application.';
 }
 
 // Path: adulte.demo.etats
@@ -16261,6 +16294,10 @@ extension on Traductions {
 			'adulte.monEspace.accords' => 'Mes accords',
 			'adulte.monEspace.accordsLegende' => 'Accepter, refuser ou retirer chacun de vos accords',
 			'adulte.monEspace.securiteLegende' => 'Méthode et adresse de connexion',
+			'adulte.monEspace.pageAccords.indisponibleTitre' => 'Vos accords ne sont pas encore consultables',
+			'adulte.monEspace.pageAccords.indisponiblePhrase' => 'Accepter, refuser ou retirer chacun de vos accords n\'est pas encore possible dans l\'application. Aucun accord ne vous est demandé ici.',
+			'adulte.monEspace.pageCoursAcces.indisponibleTitre' => 'Cours et accès pas encore consultables',
+			'adulte.monEspace.pageCoursAcces.indisponiblePhrase' => 'Le détail de vos cours, de vos séances et de votre accès n\'est pas encore disponible dans l\'application.',
 			'adulte.provisoire.coran' => 'Le Coran de votre espace élève s\'affichera ici.',
 			'adulte.provisoire.forfaitFamille' => 'La page de votre forfait famille arrivera dans une prochaine étape.',
 			'adulte.famille.ajouter' => 'Ajouter ma famille',

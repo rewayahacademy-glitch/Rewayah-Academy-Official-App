@@ -3872,7 +3872,15 @@
       "paiementsLegende": "Historique et reçus de mes paiements",
       "accords": "Mes accords",
       "accordsLegende": "Accepter, refuser ou retirer chacun de vos accords",
-      "securiteLegende": "Méthode et adresse de connexion"
+      "securiteLegende": "Méthode et adresse de connexion",
+      "pageAccords": {
+        "indisponibleTitre": "Vos accords ne sont pas encore consultables",
+        "indisponiblePhrase": "Accepter, refuser ou retirer chacun de vos accords n'est pas encore possible dans l'application. Aucun accord ne vous est demandé ici."
+      },
+      "pageCoursAcces": {
+        "indisponibleTitre": "Cours et accès pas encore consultables",
+        "indisponiblePhrase": "Le détail de vos cours, de vos séances et de votre accès n'est pas encore disponible dans l'application."
+      }
     },
     "provisoire": {
       "coran": "Le Coran de votre espace élève s'affichera ici.",

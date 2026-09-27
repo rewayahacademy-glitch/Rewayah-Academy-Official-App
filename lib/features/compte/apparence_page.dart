@@ -27,7 +27,11 @@ import 'preferences_page.dart';
 /// vrai : animations et taille du texte suivent l'appareil.
 class ApparenceComptePage extends ConsumerWidget {
   /// Cree la page.
-  const ApparenceComptePage({super.key});
+  const ApparenceComptePage({super.key, this.onRetour});
+
+  /// Le retour de l'en-tete ; par defaut, les Preferences du tuteur. « Mon
+  /// espace » de l'eleve adulte (EA-4) y passe son propre retour.
+  final VoidCallback? onRetour;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,7 +44,9 @@ class ApparenceComptePage extends ConsumerWidget {
     return PageShell(
       titre: t.compte.tuteur.pageApparence.titre,
       sousTitre: t.compte.tuteur.pageApparence.sousTitre,
-      onRetour: () => GoRouter.of(context).go(Routes.tuteurComptePreferences),
+      onRetour:
+          onRetour ??
+          () => GoRouter.of(context).go(Routes.tuteurComptePreferences),
       child: ColonneSousPage(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
