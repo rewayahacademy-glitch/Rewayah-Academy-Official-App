@@ -45,6 +45,7 @@ class AccueilAccessibilite extends StatelessWidget {
     required this.onVoirClasse,
     required this.onCoran,
     required this.onAide,
+    required this.tutoiement,
     super.key,
     this.onRejoindre,
     this.onTache,
@@ -55,6 +56,10 @@ class AccueilAccessibilite extends StatelessWidget {
 
   /// La Classe et sa prochaine seance, avec au plus trois actions.
   final GroupHomeVM espace;
+
+  /// Vrai pour l'eleve mineur : l'Accueil le tutoie (« Ton heure ») ; un
+  /// adulte est vouvoye (MA4). Suit l'age legal, jamais la presentation.
+  final bool tutoiement;
 
   /// « Voir ma classe » : le bouton quand on ne peut pas encore entrer.
   final VoidCallback onVoirClasse;
@@ -111,6 +116,7 @@ class AccueilAccessibilite extends StatelessWidget {
         CarteSession(
           espace: espace,
           onRejoindre: onRejoindre,
+          tutoiement: tutoiement,
           identite: _IdentiteClasse(identite: espace.identite),
           actionHorsEntree: mobile
               ? voirClasse
@@ -205,6 +211,9 @@ class _IdentiteClasse extends StatelessWidget {
           PhotoEnseignant(
             enseignant: identite.enseignant,
             diametre: AppMetriques.of(context).cibleTactile,
+            // Un eleve ne voit jamais d'avertissement pour une photo
+            // manquante : les initiales en repli (MA-3).
+            repliInitiales: true,
           ),
           Ecart.hLg,
           Expanded(

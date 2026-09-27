@@ -785,6 +785,7 @@ class Traductions$accessibilite$fr {
 	// Translations
 	late final Traductions$accessibilite$demo$fr demo = Traductions$accessibilite$demo$fr.internal(_root);
 	late final Traductions$accessibilite$accueil$fr accueil = Traductions$accessibilite$accueil$fr.internal(_root);
+	late final Traductions$accessibilite$tutoiement$fr tutoiement = Traductions$accessibilite$tutoiement$fr.internal(_root);
 }
 
 // Path: accuse
@@ -3022,6 +3023,33 @@ class Traductions$accessibilite$accueil$fr {
 
 	/// fr: 'Besoin d'aide ?'
 	String get aide => 'Besoin d\'aide ?';
+}
+
+// Path: accessibilite.tutoiement
+class Traductions$accessibilite$tutoiement$fr {
+	Traductions$accessibilite$tutoiement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ton heure'
+	String get tonHeure => 'Ton heure';
+
+	/// fr: 'Ce temps d'attente ne compte pas dans ta présence.'
+	String get attenteDetail => 'Ce temps d\'attente ne compte pas dans ta présence.';
+
+	/// fr: 'Tu es dans la salle. La séance commence dans {duree}.'
+	String attente({required Object duree}) => 'Tu es dans la salle. La séance commence dans ${duree}.';
+
+	/// fr: 'Tu es dans la salle. La séance commence dans moins d'une minute.'
+	String get attenteImminent => 'Tu es dans la salle. La séance commence dans moins d\'une minute.';
+
+	/// fr: 'Tu es dans la salle'
+	String get annonceAttente => 'Tu es dans la salle';
+
+	/// fr: 'Tu es hors ligne. La séance nécessite une connexion.'
+	String get horsLigne => 'Tu es hors ligne. La séance nécessite une connexion.';
 }
 
 // Path: consentement.texte
@@ -13298,17 +13326,23 @@ extension on Traductions {
 			'accessibilite.accueil.lireCoran' => 'Lire le Coran',
 			'accessibilite.accueil.lireCoranDetail' => 'Accéder au Mushaf',
 			'accessibilite.accueil.aide' => 'Besoin d\'aide ?',
+			'accessibilite.tutoiement.tonHeure' => 'Ton heure',
+			'accessibilite.tutoiement.attenteDetail' => 'Ce temps d\'attente ne compte pas dans ta présence.',
+			'accessibilite.tutoiement.attente' => ({required Object duree}) => 'Tu es dans la salle. La séance commence dans ${duree}.',
+			'accessibilite.tutoiement.attenteImminent' => 'Tu es dans la salle. La séance commence dans moins d\'une minute.',
+			'accessibilite.tutoiement.annonceAttente' => 'Tu es dans la salle',
+			'accessibilite.tutoiement.horsLigne' => 'Tu es hors ligne. La séance nécessite une connexion.',
 			'accuse.titre' => 'À savoir avant de commencer',
 			'accuse.compris' => 'J\'ai compris',
 			'consentement.titre' => 'Consentements',
+			_ => null,
+		} ?? switch (path) {
 			'consentement.texte.titre' => 'Les visites des parents',
 			'consentement.texte.quiResponsable' => 'Les parents des élèves présents peuvent observer brièvement la séance.',
 			'consentement.texte.quiResponsableDetail' => 'Ils entendent l\'enseignant et les élèves qui prennent la parole, y compris votre enfant. Leur micro et leur caméra restent désactivés : ils ne peuvent ni parler, ni écrire, ni apparaître à l\'écran.',
 			'consentement.texte.quiAdulte' => 'Les parents des autres élèves présents peuvent observer brièvement la séance.',
 			'consentement.texte.quiAdulteDetail' => 'Ils entendent l\'enseignant et les élèves qui prennent la parole, y compris vous. Leur micro et leur caméra restent désactivés : ils ne peuvent ni parler, ni écrire, ni apparaître à l\'écran.',
 			'consentement.texte.pourquoi' => 'Pour suivre l\'apprentissage sans interrompre la classe.',
-			_ => null,
-		} ?? switch (path) {
 			'consentement.texte.pourquoiDetail' => 'Un parent vient voir si son enfant participe, puis repart. La salle rappelle en permanence qu\'une visite est possible.',
 			'consentement.texte.limites' => 'Des visites courtes, en nombre limité.',
 			'consentement.texte.limitesDetail' => 'Chaque parent a un petit nombre de visites par séance, fixé par l\'académie et rappelé dans « Comment ça marche ? ». Une visite quittée avant la fin compte comme une visite.',
@@ -13815,14 +13849,14 @@ extension on Traductions {
 			'admin.demandes.clore' => 'Revenir à la règle de la plateforme',
 			'admin.demandes.historique' => 'Surcharges closes',
 			'admin.demandes.historiqueLigne' => ({required Object valeur, required Object debut, required Object fin}) => '${valeur}, du ${debut} au ${fin}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.demandes.historiqueMotifs' => ({required Object motif, required Object cloture}) => 'Posée : ${motif}. Close : ${cloture}.',
 			'admin.demandes.poserTitre' => ({required Object regle, required Object prenom}) => '${regle}, pour ${prenom}',
 			'admin.demandes.cloreTitre' => ({required Object prenom}) => 'Clore la surcharge de ${prenom}',
 			'admin.demandes.poserMotif' => 'Pourquoi ce changement ?',
 			'admin.demandes.poserMotifRequis' => 'Une règle sans motif ne se relit pas six mois plus tard.',
 			'admin.demandes.poserEnvoyer' => 'Poser la règle',
-			_ => null,
-		} ?? switch (path) {
 			'admin.demandes.cloreEnvoyer' => 'Clore la surcharge',
 			'admin.demandes.erreur' => ({required Object message}) => 'L\'opération n\'a pas abouti : ${message}',
 			'admin.attribution.titre' => 'Attribution',
@@ -14329,14 +14363,14 @@ extension on Traductions {
 			'admin.agents.etatActif' => 'Actif',
 			'admin.agents.etatRevoque' => 'Révoqué',
 			'admin.agents.etatExpire' => 'Expiré',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.jamaisServi' => 'Jamais utilisé',
 			'admin.agents.usage' => ({required Object nombre, required Object quand}) => '${nombre} fois, la dernière ${quand}',
 			'admin.agents.revoquer' => 'Révoquer',
 			'admin.agents.revoquerTitre' => 'Révoquer ce jeton ?',
 			'admin.agents.revoquerDetail' => 'L\'agent perdra l\'accès à sa requête suivante. C\'est définitif : un jeton révoqué ne se réactive pas.',
 			'admin.agents.revoquerConfirmer' => 'Révoquer',
-			_ => null,
-		} ?? switch (path) {
 			'admin.agents.annuler' => 'Annuler',
 			'admin.agents.revoque' => 'Jeton révoqué',
 			'admin.agents.erreurRevocation' => 'La révocation n\'a pas abouti. Réessayez.',
@@ -14843,14 +14877,14 @@ extension on Traductions {
 			'eleve.suivi.cours' => 'Cours de Coran',
 			'eleve.suivi.moi' => 'Ma présence',
 			'eleve.suivi.aujourdhui' => ({required Object heure}) => 'Aujourd\'hui, ${heure}',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.suivi.hier' => ({required Object heure}) => 'Hier, ${heure}',
 			'eleve.suivi.date' => ({required Object date, required Object heure}) => '${date}, ${heure}',
 			'eleve.suivi.annule' => 'Cours annulé',
 			'eleve.suivi.nonTenu' => 'Cours non tenu',
 			'eleve.suivi.vide' => 'Aucun cours pour l\'instant',
 			'eleve.suivi.videDetail' => 'Vos cours s\'afficheront ici, du plus récent au plus ancien, avec votre présence.',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.suivi.erreur' => 'Le suivi n\'a pas pu être lu. Réessayez dans un instant.',
 			'eleve.suivi.tronquee' => ({required Object nombre}) => 'Les ${nombre} cours les plus récents sont affichés.',
 			'eleve.suivi.fin' => ({required Object nombre}) => '${nombre} cours au suivi.',
@@ -15357,14 +15391,14 @@ extension on Traductions {
 			'enseignant.cahier.suite' => 'La suite pour cet élève',
 			'enseignant.cahier.suiteContinuer' => 'Continuer',
 			'enseignant.cahier.suiteRenforcer' => 'Renforcer',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.suspendreNouveau' => 'Suspendre le nouveau',
 			'enseignant.cahier.devoirPrecedent' => ({required Object devoir}) => 'Devoir précédent : ${devoir}',
 			'enseignant.cahier.devoirPlage' => ({required Object sourate, required Object debut, required Object fin}) => 'Réviser la sourate ${sourate}, versets ${debut} à ${fin}.',
 			'enseignant.cahier.suspendreNouveauDetail' => 'La révision continue, rien de nouveau n\'est ajouté pour cet élève.',
 			'enseignant.cahier.position' => ({required Object sourate, required Object verset}) => 'Lecture : sourate ${sourate}, verset ${verset}',
 			'enseignant.cahier.makhrajSinSad' => 'Sîn / Sâd (س / ص)',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.makhrajTaTah' => 'Tâ / Tâ emphatique (ت / ط)',
 			'enseignant.cahier.makhrajDhalZay' => 'Dhâl / Zây (ذ / ز)',
 			'enseignant.cahier.makhrajHaHah' => 'Hâ / Hâ\' (ه / ح)',
@@ -15871,14 +15905,14 @@ extension on Traductions {
 			'tc.observation.disponibilite.presence' => 'L\'observation s\'ouvre dès que la présence de votre enfant est confirmée.',
 			'tc.observation.disponibilite.visiteOuverteTitre' => 'Une visite est déjà ouverte',
 			'tc.observation.disponibilite.visiteOuverte' => 'Une de vos visites est encore ouverte pour cette séance, sur cet appareil ou sur un autre. Elle compte parmi vos visites.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.disponibilite.fermeeTitre' => 'Observation pas encore ouverte',
 			'tc.observation.disponibilite.fermee' => 'L\'observation des séances par les parents n\'est pas encore ouverte. Elle sera proposée ici dès son ouverture.',
 			'tc.observation.disponibilite.reseauTitre' => 'Vérification impossible',
 			'tc.observation.disponibilite.reseau' => 'La disponibilité de l\'observation n\'a pas pu être vérifiée. Aucune visite n\'a commencé.',
 			'tc.observation.disponibilite.capaciteTitre' => 'Observation indisponible',
 			'tc.observation.disponibilite.capacite' => 'L\'observation n\'est pas disponible pour le moment.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.connexion.titre' => 'Connexion et vérification',
 			'tc.observation.connexion.phrase' => 'Vos visites restantes sont vérifiées. La visite commence dès que l\'entrée est acceptée, connexion vidéo comprise.',
 			'tc.observation.connexion.enCours' => 'Connexion et vérification en cours',

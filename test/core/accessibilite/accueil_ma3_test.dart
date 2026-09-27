@@ -12,13 +12,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/accueil_eleve/accueil_accessibilite.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dart';
+import 'package:rewayah_academy/features/tc_mes_groupes/photo_enseignant.dart';
 
 import '../../router/support_routeur.dart' show stabiliser;
 
@@ -119,9 +123,7 @@ void main() {
       eleve: EleveDemoAccessibilite.idriss,
       moment: MomentDemoAccessibilite.apres,
     );
-    await tester.tap(
-      _dans(NavShell.barreBasseKey, t.nav.eleve.accueil),
-    );
+    await tester.tap(_dans(NavShell.barreBasseKey, t.nav.eleve.accueil));
     await stabiliser(tester);
     expect(
       find.text(t.accessibilite.accueil.salutation(prenom: 'Idriss')),
@@ -138,13 +140,81 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  for (final EleveDemoAccessibilite eleve in EleveDemoAccessibilite.values) {
+    testWidgets(
+      '${eleve.name} : initiales de l enseignant, jamais d avertissement ; '
+      'tutoiement selon l age',
+      (WidgetTester tester) async {
+        await _monter(tester, const Size(390, 844), eleve: eleve);
+        await tester.tap(_dans(NavShell.barreBasseKey, t.nav.eleve.accueil));
+        await stabiliser(tester);
+        final Finder accueil = find.byType(AccueilAccessibilite);
+        // La photo de la demonstration manque : les initiales en repli.
+        final Finder photo = find.descendant(
+          of: accueil,
+          matching: find.byType(PhotoEnseignant),
+        );
+        expect(photo, findsOneWidget);
+        expect(
+          find.descendant(of: photo, matching: find.byType(AvatarTile)),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: accueil,
+            matching: find.byIcon(AppIcons.avertissement.repos),
+          ),
+          findsNothing,
+        );
+        expect(
+          find.bySemanticsLabel(LibellesGroupe.photoManquante),
+          findsNothing,
+        );
+        // Mariam, mineure : « Ton heure » ; Idriss, adulte : « Votre heure ».
+        final bool mineur = DonneesAccessibiliteDemo.mineur(eleve);
+        expect(
+          find.descendant(
+            of: accueil,
+            matching: find.text(t.accessibilite.tutoiement.tonHeure),
+          ),
+          mineur ? findsOneWidget : findsNothing,
+        );
+        expect(
+          find.descendant(
+            of: accueil,
+            matching: find.text(LibellesGroupe.votreHeure),
+          ),
+          mineur ? findsNothing : findsOneWidget,
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
+
+  testWidgets('cote enseignant : la photo manquante reste un etat explicite', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      TranslationProvider(
+        child: MaterialApp(
+          theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+          home: PhotoEnseignant(
+            enseignant: DonneesAccessibiliteDemo.espaceAccueil(
+              MomentDemoAccessibilite.avant,
+            ).identite.enseignant,
+          ),
+        ),
+      ),
+    );
+    expect(find.byType(AvatarTile), findsNothing);
+    expect(find.byIcon(AppIcons.avertissement.repos), findsOneWidget);
+  });
+
   testWidgets('bureau a 200 % : une seule colonne, rien ne deborde', (
     WidgetTester tester,
   ) async {
     await _monter(tester, const Size(1440, 900), echelle: 2);
-    await tester.tap(
-      _dans(NavShell.barreLateraleKey, t.nav.eleve.accueil),
-    );
+    await tester.tap(_dans(NavShell.barreLateraleKey, t.nav.eleve.accueil));
     await stabiliser(tester);
     expect(find.byType(AccueilAccessibilite), findsOneWidget);
     expect(find.byKey(AccueilAccessibilite.cleDeuxColonnes), findsNothing);
@@ -175,6 +245,7 @@ void main() {
               onRejoindre: () => rejoint = true,
               onCoran: () {},
               onAide: () {},
+              tutoiement: true,
             ),
           ),
         ),

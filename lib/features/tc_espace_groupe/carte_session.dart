@@ -39,7 +39,13 @@ class CarteSession extends StatefulWidget {
     this.lectureEchouee = false,
     this.identite,
     this.actionHorsEntree,
+    this.tutoiement = false,
   });
+
+  /// Vrai pour l'eleve mineur en Mode Accessibilite (MA4) : « Ton heure »,
+  /// « Tu es dans la salle ». Faux partout ailleurs : un adulte, un tuteur ou
+  /// un enseignant est vouvoye.
+  final bool tutoiement;
 
   /// L'identite de la Classe posee au-dessus des heures (Accueil du Mode
   /// Accessibilite, MA-3) ; nulle dans l'Espace Classe, qui la porte deja.
@@ -127,6 +133,7 @@ class _CarteSessionState extends State<CarteSession> {
           espace.role != RoleEspaceGroupe.tuteur &&
           horloge.sessionId == null &&
           occurrence.sessionId == null,
+      tutoiement: widget.tutoiement,
     );
     final TextTheme textes = Theme.of(context).textTheme;
 
@@ -147,14 +154,12 @@ class _CarteSessionState extends State<CarteSession> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          if (widget.identite != null) ...<Widget>[
-            widget.identite!,
-            Ecart.vLg,
-          ],
+          if (widget.identite != null) ...<Widget>[widget.identite!, Ecart.vLg],
           HeuresSeance(
             libelleContrepartie: _libelleContrepartie(espace),
             horloge: horloge,
             duree: occurrence.duree,
+            tutoiement: widget.tutoiement,
           ),
           if (emplacement.avisDst != null) ...<Widget>[
             Ecart.vMd,
@@ -170,7 +175,9 @@ class _CarteSessionState extends State<CarteSession> {
           if (horloge.phase == PhaseSeance.attenteAvantT0) ...<Widget>[
             Ecart.vMd,
             Text(
-              LibellesGroupe.attenteAvantDebutDetail,
+              widget.tutoiement
+                  ? t.accessibilite.tutoiement.attenteDetail
+                  : LibellesGroupe.attenteAvantDebutDetail,
               style: AppPalette.of(context).inkMuted
                   .applyTo(textes.bodySmall ?? const TextStyle()),
             ),
@@ -207,7 +214,11 @@ class HeuresSeance extends StatelessWidget {
     required this.horloge,
     required this.duree,
     super.key,
+    this.tutoiement = false,
   });
+
+  /// Vrai pour l'eleve mineur en Mode Accessibilite : « Ton heure ».
+  final bool tutoiement;
 
   /// « Chez Sayyida Amina » ou « Heure du groupe ».
   final String libelleContrepartie;
@@ -225,7 +236,9 @@ class HeuresSeance extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         _LigneHorloge(
-          libelle: LibellesGroupe.votreHeure,
+          libelle: tutoiement
+              ? t.accessibilite.tutoiement.tonHeure
+              : LibellesGroupe.votreHeure,
           horloge: horloge.horlogeUtilisateur,
         ),
         if (horloge.horlogeContrepartie != null) ...<Widget>[

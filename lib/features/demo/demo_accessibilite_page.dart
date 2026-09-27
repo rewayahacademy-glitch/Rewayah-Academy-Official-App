@@ -223,6 +223,7 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
                 ? AccueilAccessibilite(
                     key: const ValueKey<String>('demo-accueil'),
                     prenom: DonneesAccessibiliteDemo.prenom(widget.eleve),
+                    tutoiement: DonneesAccessibiliteDemo.mineur(widget.eleve),
                     espace: DonneesAccessibiliteDemo.espaceAccueil(
                       widget.moment,
                     ),
