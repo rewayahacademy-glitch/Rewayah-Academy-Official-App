@@ -1,13 +1,21 @@
 name: CI
 
 on:
+  # `ui/**` depuis le 28/09/2026 (decision D2) : les PR des postes vers leur
+  # branche `ui/*` n'etaient jamais controlees, et 36 violations de jetons
+  # s'y sont accumulees sans que personne ne les voie. GitHub lit ce fichier
+  # sur la branche de BASE : il ne sert a une branche `ui/*` qu'une fois
+  # present dans cette branche.
   pull_request:
-    branches: [main]
+    branches: [main, 'ui/**']
   workflow_dispatch:
 
 jobs:
   migrate-check:
     name: Migrations applicables (Postgres 17)
+    # Le SQL et les fonctions Edge ne sont controles que vers `main` : les
+    # branches `ui/*` ne touchent pas `supabase/`.
+    if: github.event_name != 'pull_request' || github.base_ref == 'main'
     runs-on: ubuntu-latest
     container: postgres:17-alpine
     services:
@@ -181,6 +189,9 @@ jobs:
 
   edge-r2:
     name: Fonctions Edge -- stockage R2 (Deno)
+    # Le SQL et les fonctions Edge ne sont controles que vers `main` : les
+    # branches `ui/*` ne touchent pas `supabase/`.
+    if: github.event_name != 'pull_request' || github.base_ref == 'main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -291,5 +302,15 @@ jobs:
       # absence d'onTap nu, zero emoji, API de PermanentNotice, routeur unique.
       - name: Verifie les invariants de l'etape 2
         run: dart run tool/verifier_jetons.dart
+
+      # Libelle sans source, bouton grise, message d'echec reseau qui affirme
+      # un non-envoi : les trois defauts que chaque revue du 27/09 retrouve.
+      # Avertissement seulement pour commencer (decision D2) : le job reste
+      # vert, les violations se lisent dans le journal de cette etape.
+      # tool/revue_socle.txt fige l'existant de main (4a7aa2b).
+      - name: Verifie les defauts de revue (avertissement)
+        if: matrix.target == 'web'
+        continue-on-error: true
+        run: dart run tool/verifier_revue.dart --detail
 
       - run: flutter build ${{ matrix.target }}
