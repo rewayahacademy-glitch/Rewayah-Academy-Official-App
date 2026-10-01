@@ -10,6 +10,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/appairage/service_appairage.dart'
+    show EleveDuFoyer;
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
@@ -36,6 +38,8 @@ import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/formulaire_profil_eleve.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
+import 'package:rewayah_academy/features/foyer/place_adulte.dart';
+import 'package:rewayah_academy/features/ma_classe_adulte/ma_classe_adulte_page.dart';
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
 void main() {
@@ -222,11 +226,17 @@ void main() {
         vue: VueDemoAdulte.secondAdulte,
       ),
     );
+    // Une seule entree vers les paiements : pas de « Paiements » personnels
+    // a cote des paiements du foyer (revue d'EA-4c).
+    expect(find.text(t.adulte.monEspace.paiements), findsNothing);
     await voir(tester, dansFamille(t.adulte.famille.paiementsFoyer));
     await tester.tap(dansFamille(t.adulte.famille.paiementsFoyer));
     await tester.pumpAndSettle();
     expect(find.byType(PaiementsComptePage), findsOneWidget);
     expect(find.byType(FoyerPage), findsNothing);
+    // La page d'arrivee porte le nom de la ligne tapee.
+    expect(find.text(t.adulte.famille.paiementsFoyer), findsWidgets);
+    expect(find.text(t.compte.tuteur.pagePaiements.titre), findsNothing);
     final NavShell coquille = tester.widget<NavShell>(find.byType(NavShell));
     expect(coquille.destinations.map((d) => d.libelle), <String>[
       t.adulte.nav.accueil,
@@ -249,24 +259,34 @@ void main() {
     expect(find.text(t.adulte.famille.paiementsFoyer), findsNothing);
   });
 
-  // F6, F7 (revue du 27/09, majeur 1) : pour CHACUN des 25 etats, le second
-  // adulte, rattache ou non, ne voit jamais les enfants du titulaire, ni par
-  // sa ligne famille ni par une adresse de l'espace foyer.
-  for (final EtatDemoAdulte etat in EtatDemoAdulte.values) {
-    testWidgets('confidentialite, ${etat.name} : le second adulte ne voit '
-        'jamais les enfants', (WidgetTester tester) async {
+  // F6, F7 (revue du 27/09, majeur 1) : pour CHACUN des 25 etats, et pour
+  // les deux variantes (titulaire homme, second adulte Mariama ; titulaire
+  // femme, second adulte Mamadou), le second adulte, rattache ou non, ne
+  // voit jamais les enfants du titulaire, ni par sa ligne famille ni par une
+  // adresse de l'espace foyer.
+  for (final (GenreTitulaireDemo genre, EtatDemoAdulte etat)
+      in <(GenreTitulaireDemo, EtatDemoAdulte)>[
+        for (final GenreTitulaireDemo g in GenreTitulaireDemo.values)
+          for (final EtatDemoAdulte e in EtatDemoAdulte.values) (g, e),
+      ]) {
+    testWidgets('confidentialite, titulaire ${genre.name}, ${etat.name} : le '
+        'second adulte ne voit jamais les enfants', (
+      WidgetTester tester,
+    ) async {
       taille(tester, const Size(390, 844));
       final GoRouter routeur = await monterCoquille(
         tester,
         adresseDemoAdulte(
           EcranDemoAdulte.monEspace,
           etat: etat,
+          genre: genre,
           vue: VueDemoAdulte.secondAdulte,
         ),
       );
-      // Les ecrans de l'espace foyer, et les prenoms des enfants Diallo (la
-      // Classe An-Nour de la demonstration a aussi une eleve « Aicha » :
-      // l'Accueil et Ma classe ne sont donc controles que par Oumar).
+      // Les ecrans de l'espace foyer, et les enfants Diallo par leur
+      // identifiant (DEMO-D1, DEMO-D2) partout ; par leur prenom hors de
+      // l'Accueil et de Ma classe (la Classe An-Nour de la demonstration a
+      // aussi une eleve « Aicha »).
       void aucunEnfant(String ou, {bool classe = false}) {
         for (final Type page in <Type>[
           FoyerPage,
@@ -276,8 +296,32 @@ void main() {
         ]) {
           expect(find.byType(page), findsNothing, reason: '$ou, $page');
         }
-        if (!classe) expect(find.text('Aïcha'), findsNothing, reason: ou);
-        expect(find.text('Oumar'), findsNothing, reason: ou);
+        for (final EleveDuFoyer e in DonneesAdulteDemo.enfants) {
+          expect(
+            find.textContaining(e.identifiantImmuable),
+            findsNothing,
+            reason: '$ou, ${e.identifiantImmuable}',
+          );
+          if (!classe) {
+            expect(find.text(e.prenom), findsNothing, reason: ou);
+          }
+        }
+        // Ma classe : aucun participant n'est un enfant du foyer, controle
+        // par son identifiant, pas par son prenom.
+        final Finder classeAdulte = find.byType(MaClasseAdultePage);
+        if (classeAdulte.evaluate().isNotEmpty) {
+          final AsyncValue<MaClasseAdulteVM> lue = ProviderScope.containerOf(
+            tester.element(classeAdulte),
+          ).read(maClasseAdulteProvider);
+          final Iterable<String> ids = lue.hasValue && !lue.hasError
+              ? lue.requireValue.participants.map(
+                  (ParticipantClasseAdulte p) => p.id,
+                )
+              : const <String>[];
+          for (final EleveDuFoyer e in DonneesAdulteDemo.enfants) {
+            expect(ids, isNot(contains(e.id)), reason: '$ou, ${e.id}');
+          }
+        }
       }
 
       aucunEnfant('Mon espace');
@@ -304,6 +348,7 @@ void main() {
           adresseDemoAdulte(
             ecran,
             etat: etat,
+            genre: genre,
             vue: VueDemoAdulte.secondAdulte,
             eleve: DonneesAdulteDemo.aichaId,
           ),
@@ -578,16 +623,49 @@ void main() {
     expect(ligneFamille, findsNothing);
   });
 
-  testWidgets('hors ligne : l\'echec se dit hors ligne, avec « Reessayer »', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('hors ligne : un seul etat, un seul « Reessayer » qui relit '
+      'les deux lectures (K-42)', (WidgetTester tester) async {
+    int identites = 0;
+    int familles = 0;
     await tester.pumpWidget(
       app(
         horsLigne: true,
         overrides: <Override>[
-          identiteTitulaireProvider.overrideWith(
-            (Ref _) => Future<IdentiteTitulaire>.error(StateError('reseau')),
-          ),
+          identiteTitulaireProvider.overrideWith((Ref _) {
+            identites++;
+            return Future<IdentiteTitulaire>.error(StateError('reseau'));
+          }),
+          monEspaceAdulteProvider.overrideWith((Ref _) {
+            familles++;
+            return Future<MonEspaceAdulteVM>.error(StateError('reseau'));
+          }),
+        ],
+        child: const MonEspaceAdultePage(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byKey(MonEspaceAdultePage.horsLigneKey), findsOneWidget);
+    expect(find.text(t.commun.etats.horsLigne.titre), findsOneWidget);
+    expect(find.text(t.commun.etats.echecServeur.titre), findsNothing);
+    final Finder reessayer = find.text(t.commun.reessayer);
+    expect(reessayer, findsOneWidget);
+    // La ligne famille, en echec elle aussi, garde sa forme sans bouton.
+    expect(dansBloc(find.byType(Skeleton)), findsOneWidget);
+    // Les rubriques restent en place.
+    expect(find.text(t.adulte.monEspace.monCompte), findsOneWidget);
+    await tester.tap(reessayer);
+    await tester.pumpAndSettle();
+    expect(identites, 2);
+    expect(familles, 2);
+  });
+
+  testWidgets('hors ligne, seule la ligne famille en echec : l\'etat unique '
+      'est a sa place', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      app(
+        horsLigne: true,
+        overrides: <Override>[
+          ...identiteMamadou,
           monEspaceAdulteProvider.overrideWith(
             (Ref _) => Future<MonEspaceAdulteVM>.error(StateError('reseau')),
           ),
@@ -596,11 +674,12 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text(t.commun.etats.horsLigne.titre), findsNWidgets(2));
-    expect(find.text(t.commun.etats.echecServeur.titre), findsNothing);
-    expect(dansBloc(find.text(t.commun.etats.horsLigne.titre)), findsOneWidget);
-    // Les rubriques restent en place.
-    expect(find.text(t.adulte.monEspace.monCompte), findsOneWidget);
+    expect(find.text('Mamadou Diallo'), findsOneWidget);
+    expect(
+      dansBloc(find.byKey(MonEspaceAdultePage.horsLigneKey)),
+      findsOneWidget,
+    );
+    expect(find.text(t.commun.reessayer), findsOneWidget);
   });
 
   testWidgets('hors ligne, ligne deja lue : elle reste', (
@@ -775,6 +854,55 @@ void main() {
       expect(
         DonneesAdulteDemo.ligneFamille(etat, VueDemoAdulte.secondAdulte),
         LigneFamilleAdulte.ajouterMaFamille,
+        reason: etat.name,
+      );
+    }
+    // Revue d'EA-4c : aucune ligne pour le second adulte qui a deja accepte
+    // (validation en attente ou refusee, section 10.4), qui devient titulaire
+    // (reprise validee, section 12.6), ou qui est deja ailleurs (section 11) :
+    // jamais « Ajouter ma famille », qui pousserait a une double appartenance.
+    for (final EtatDemoAdulte etat in <EtatDemoAdulte>[
+      EtatDemoAdulte.validationEnAttente,
+      EtatDemoAdulte.validationRefusee,
+      EtatDemoAdulte.repriseValidee,
+      EtatDemoAdulte.dejaDansUnAutreFoyer,
+    ]) {
+      expect(
+        DonneesAdulteDemo.ligneFamille(etat, VueDemoAdulte.secondAdulte),
+        isNull,
+        reason: etat.name,
+      );
+    }
+    // Le titulaire qui a invite un adulte deja ailleurs garde « Ma famille »
+    // et ses enfants ; sa place dit l'invitation envoyee, neutre (F4).
+    expect(
+      DonneesAdulteDemo.ligneFamille(
+        EtatDemoAdulte.dejaDansUnAutreFoyer,
+        VueDemoAdulte.titulaire,
+      ),
+      LigneFamilleAdulte.maFamille,
+    );
+    expect(
+      DonneesAdulteDemo.place(
+        EtatDemoAdulte.dejaDansUnAutreFoyer,
+        GenreTitulaireDemo.homme,
+      ),
+      isA<InvitationEnvoyee>(),
+    );
+    expect(
+      ecranPermisDemoAdulte(
+        EcranDemoAdulte.maFamille,
+        EtatDemoAdulte.dejaDansUnAutreFoyer,
+        VueDemoAdulte.titulaire,
+      ),
+      EcranDemoAdulte.maFamille,
+    );
+    // Seul l'adulte seul, vu comme titulaire, se voit proposer une famille.
+    for (final EtatDemoAdulte etat in EtatDemoAdulte.values) {
+      expect(
+        DonneesAdulteDemo.ligneFamille(etat, VueDemoAdulte.titulaire) ==
+            LigneFamilleAdulte.ajouterMaFamille,
+        etat == EtatDemoAdulte.adulteSeul,
         reason: etat.name,
       );
     }

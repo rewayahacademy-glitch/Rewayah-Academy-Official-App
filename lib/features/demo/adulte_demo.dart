@@ -161,12 +161,12 @@ abstract final class DonneesAdulteDemo {
     ),
   ];
 
-  /// Vrai si, dans cet etat, la personne a un foyer (titulaire ou second
-  /// adulte). Seuls l'adulte seul et l'adulte deja ailleurs n'en ont pas ici.
-  static bool aUnFoyer(EtatDemoAdulte etat) => switch (etat) {
-    EtatDemoAdulte.adulteSeul || EtatDemoAdulte.dejaDansUnAutreFoyer => false,
-    _ => true,
-  };
+  /// Vrai si, dans cet etat, le titulaire a un foyer. Seul l'adulte seul n'en
+  /// a pas. Dans le cas 21 (l'adulte invite est deja dans un autre foyer), le
+  /// titulaire qui a invite garde son foyer et ses enfants (revue d'EA-4c) :
+  /// c'est l'invite qui ne peut pas le rejoindre (doc section 11).
+  static bool aUnFoyer(EtatDemoAdulte etat) =>
+      etat != EtatDemoAdulte.adulteSeul;
 
   /// Vrai si le second adulte est encore rattache au foyer dans cet etat :
   /// ce qui ouvre sa vue (`&vue=conjoint`).
@@ -270,7 +270,11 @@ abstract final class DonneesAdulteDemo {
       return PlaceOccupee(prenomSecondAdulte(genre));
     }
     return switch (etat) {
-      EtatDemoAdulte.invitationEnAttente => invitationEnvoyee(genre),
+      // Cas 21 : la reponse a l'invitation reste neutre pour le titulaire
+      // (F4) ; il ne sait pas que l'invite est deja ailleurs, sa place dit
+      // l'invitation envoyee (EA-BR-17).
+      EtatDemoAdulte.invitationEnAttente ||
+      EtatDemoAdulte.dejaDansUnAutreFoyer => invitationEnvoyee(genre),
       EtatDemoAdulte.invitationExpiree => const PlaceDisponible(
         precedente: FinInvitation.expiree,
       ),
@@ -398,6 +402,17 @@ abstract final class DonneesAdulteDemo {
   /// un adulte autonome (spec sections 4 et 7.1) : « Ajouter ma famille ».
   /// Celui qui appartient deja a un autre foyer (section 11) n'a ici aucune
   /// ligne : la demonstration n'a pas cet autre foyer, rien n'est invente.
+  ///
+  /// Revue d'EA-4c, aucune ligne non plus pour le second adulte :
+  /// - pendant la validation administrative, en attente ou refusee : il a
+  ///   deja accepte l'invitation (section 10.4) ; lui proposer de creer une
+  ///   famille pousserait a une double appartenance (section 11) ;
+  /// - apres une reprise validee : il devient titulaire du foyer (section
+  ///   12.6), pas un adulte a qui proposer une famille (un seul forfait
+  ///   actif, section 11). La demonstration ne modelise pas la succession :
+  ///   aucune ligne plutot qu'une ligne fausse.
+  /// CHOIX PROVISOIRE, jusqu'a ce que le serveur rende la ligne de ces
+  /// situations (EA-BR-17).
   static LigneFamilleDemo? ligneFamille(
     EtatDemoAdulte etat,
     VueDemoAdulte vue,
@@ -408,7 +423,12 @@ abstract final class DonneesAdulteDemo {
           : LigneFamilleDemo.ajouterMaFamille;
     }
     if (secondAdultePresent(etat)) return LigneFamilleDemo.forfaitFamille;
-    if (etat == EtatDemoAdulte.dejaDansUnAutreFoyer) return null;
-    return LigneFamilleDemo.ajouterMaFamille;
+    return switch (etat) {
+      EtatDemoAdulte.dejaDansUnAutreFoyer ||
+      EtatDemoAdulte.validationEnAttente ||
+      EtatDemoAdulte.validationRefusee ||
+      EtatDemoAdulte.repriseValidee => null,
+      _ => LigneFamilleDemo.ajouterMaFamille,
+    };
   }
 }

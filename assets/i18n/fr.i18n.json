@@ -3897,7 +3897,7 @@
       "titulaire": "Titulaire du foyer",
       "paiementsFoyer": "Paiements du foyer",
       "indisponibleTitre": "La rubrique famille n'est pas encore disponible",
-      "indisponiblePhrase": "Votre famille ou votre forfait famille s'affichera ici dès que l'application pourra le lire.",
+      "indisponiblePhrase": "Votre famille ou votre forfait famille s'affichera ici dès qu'il sera disponible.",
       "place": {
         "ajouterConjointe": "Ajouter une conjointe",
         "ajouterConjoint": "Ajouter un conjoint",

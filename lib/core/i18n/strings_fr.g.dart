@@ -8973,8 +8973,8 @@ class Traductions$adulte$famille$fr {
 	/// fr: 'La rubrique famille n'est pas encore disponible'
 	String get indisponibleTitre => 'La rubrique famille n\'est pas encore disponible';
 
-	/// fr: 'Votre famille ou votre forfait famille s'affichera ici dès que l'application pourra le lire.'
-	String get indisponiblePhrase => 'Votre famille ou votre forfait famille s\'affichera ici dès que l\'application pourra le lire.';
+	/// fr: 'Votre famille ou votre forfait famille s'affichera ici dès qu'il sera disponible.'
+	String get indisponiblePhrase => 'Votre famille ou votre forfait famille s\'affichera ici dès qu\'il sera disponible.';
 
 	late final Traductions$adulte$famille$place$fr place = Traductions$adulte$famille$place$fr.internal(_root);
 }
@@ -16493,7 +16493,7 @@ extension on Traductions {
 			'adulte.famille.titulaire' => 'Titulaire du foyer',
 			'adulte.famille.paiementsFoyer' => 'Paiements du foyer',
 			'adulte.famille.indisponibleTitre' => 'La rubrique famille n\'est pas encore disponible',
-			'adulte.famille.indisponiblePhrase' => 'Votre famille ou votre forfait famille s\'affichera ici dès que l\'application pourra le lire.',
+			'adulte.famille.indisponiblePhrase' => 'Votre famille ou votre forfait famille s\'affichera ici dès qu\'il sera disponible.',
 			'adulte.famille.place.ajouterConjointe' => 'Ajouter une conjointe',
 			'adulte.famille.place.ajouterConjoint' => 'Ajouter un conjoint',
 			'adulte.famille.place.inviterConjointe' => 'Invitez votre conjointe à rejoindre Rewayah avec son propre compte.',

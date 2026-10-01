@@ -44,6 +44,10 @@
 //   Cours et acces, EA-BR-08 et 09) ; les legendes ne promettent plus une
 //   action que la page dit impossible, et ne melangent plus « mes » et
 //   « vos » ;
+// - (revue d'EA-4c) une seule entree vers les paiements : le second adulte
+//   rattache n'a que « Paiements du foyer », la page d'arrivee porte ce
+//   titre ; hors ligne se dit une seule fois (bandeau et un seul etat, un
+//   seul « Reessayer » qui relit les deux lectures, K-42) ;
 // - sur bureau, la ligne famille suit « Mon compte » dans la colonne de debut
 //   (l'ordre du telephone) et la colonne de fin commence par le titre « Aide
 //   et support », a la hauteur du titre « Mon compte ».
@@ -160,6 +164,9 @@ class MonEspaceAdultePage extends ConsumerWidget {
   /// ou la ligne elle-meme.
   static const Key blocFamilleKey = Key('adulte.monEspace.famille.bloc');
 
+  /// La cle de l'unique etat « hors ligne » de la page.
+  static const Key horsLigneKey = Key('adulte.monEspace.horsLigne');
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AsyncValue<MonEspaceAdulteVM> lecture = ref.watch(
@@ -208,11 +215,25 @@ class MonEspaceAdultePage extends ConsumerWidget {
     final AsyncValue<IdentiteTitulaire> identiteLue = ref.watch(
       identiteTitulaireProvider,
     );
-    final Widget identite = echecHorsLigne(identiteLue)
-        ? EtatSysteme(
-            nature: NatureEtat.horsLigne,
-            onAction: () => ref.invalidate(identiteTitulaireProvider),
-          )
+    // Hors ligne se dit UNE fois (K-42, comme le Foyer) : le bandeau de
+    // `PageShell` et un seul etat, a la place du premier bloc en echec, dont
+    // l'unique « Reessayer » relit les deux lectures. L'autre bloc en echec
+    // garde son squelette, sans bouton.
+    final bool identiteHorsLigne = echecHorsLigne(identiteLue);
+    final bool familleHorsLigne = echecHorsLigne(lecture);
+    void relireTout() {
+      ref
+        ..invalidate(identiteTitulaireProvider)
+        ..invalidate(monEspaceAdulteProvider);
+    }
+
+    Widget horsLigneUnique() => EtatSysteme(
+      key: horsLigneKey,
+      nature: NatureEtat.horsLigne,
+      onAction: relireTout,
+    );
+    final Widget identite = identiteHorsLigne
+        ? horsLigneUnique()
         : BlocAsynchrone<IdentiteTitulaire>(
             valeur: identiteLue,
             squelette: const Skeleton(hauteur: AppSpacing.respiration * 2),
@@ -244,16 +265,23 @@ class MonEspaceAdultePage extends ConsumerWidget {
           RubriqueMonEspace.coursAcces,
           AppIcons.classes,
           t.adulte.monEspace.coursAcces,
+          // `coursAccesLegende` : libelle provisoire, lexique D4.
           legende: t.adulte.monEspace.coursAccesLegende,
           valeur: t.compte.nonDisponible,
         ),
-        rubrique(
-          RubriqueMonEspace.paiements,
-          AppIcons.finance,
-          t.adulte.monEspace.paiements,
-          legende: t.adulte.monEspace.paiementsLegende,
-          valeur: paiementsValeur,
-        ),
+        // Une seule entree vers les paiements (revue EA-4c) : le second
+        // adulte rattache n'a pas de paiement propre lisible, il a ceux du
+        // foyer (E3), sous « Forfait famille ». Tant que la ligne famille
+        // n'est pas lue, la rubrique reste.
+        if (vue?.ligneFamille != LigneFamilleAdulte.forfaitFamille)
+          rubrique(
+            RubriqueMonEspace.paiements,
+            AppIcons.finance,
+            t.adulte.monEspace.paiements,
+            // `paiementsLegende` : libelle provisoire, lexique D4.
+            legende: t.adulte.monEspace.paiementsLegende,
+            valeur: paiementsValeur,
+          ),
         // Aucune source (EA-BR-08) : la page d'arrivee le dit toujours.
         rubrique(
           RubriqueMonEspace.accords,
@@ -328,11 +356,10 @@ class MonEspaceAdultePage extends ConsumerWidget {
                     phrase: t.adulte.famille.indisponiblePhrase,
                     dependance: erreurFamille.dependance,
                   )
-                : echecHorsLigne(lecture)
-                ? EtatSysteme(
-                    nature: NatureEtat.horsLigne,
-                    onAction: () => ref.invalidate(monEspaceAdulteProvider),
-                  )
+                : familleHorsLigne
+                ? (identiteHorsLigne
+                      ? const Skeleton.liste(lignes: 1)
+                      : horsLigneUnique())
                 : BlocAsynchrone<MonEspaceAdulteVM>(
                     valeur: lecture,
                     squelette: const Skeleton.liste(lignes: 1),

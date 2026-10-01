@@ -675,6 +675,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
             // Le second adulte rattache : les paiements du foyer, la meme
             // page que le titulaire (E3, EA-BR-16), retour vers Mon espace.
             EcranDemoAdulte.paiementsFoyer => PaiementsComptePage(
+              titre: t.adulte.famille.paiementsFoyer,
               onRetour: versMonEspace,
             ),
             EcranDemoAdulte.maFamille ||
@@ -753,6 +754,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
 
     final Widget page = switch (vu) {
       EcranDemoAdulte.paiementsFoyer => PaiementsComptePage(
+        titre: t.adulte.famille.paiementsFoyer,
         onRetour: versMaFamille,
       ),
       EcranDemoAdulte.inviterConjoint => InviterConjointPage(
