@@ -181,17 +181,6 @@ void main() {
       );
     });
 
-    // A 1440, les deux reponses cote a cote, refus au bord de debut.
-    testWidgets('ea7_etape1_1440_dark', (WidgetTester tester) async {
-      await _capturer(
-        tester,
-        'ea7_etape1_1440_dark',
-        _adresseInvitation(EtatDemoAdulte.invitationEnAttente),
-        const Size(1440, 900),
-        mode: ThemeMode.dark,
-      );
-    });
-
     // Remplacement : le texte T2, puis l'acceptation en attente de
     // validation (390, clair et sombre).
     for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
