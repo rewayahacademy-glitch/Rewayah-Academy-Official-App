@@ -19,6 +19,7 @@ import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
@@ -468,6 +469,40 @@ void main() {
     expect(find.byType(FoyerPage), findsNothing);
   });
 
+  testWidgets('« Faire une nouvelle demande » sur bureau : compacte au bord '
+      'de debut, jamais sur toute la colonne (EA-5c)', (
+    WidgetTester tester,
+  ) async {
+    taille(tester, const Size(1440, 900));
+    await monterCoquille(
+      tester,
+      adresseDemoAdulte(
+        EcranDemoAdulte.maFamille,
+        etat: EtatDemoAdulte.validationRefusee,
+      ),
+    );
+    final Finder bouton = find.byKey(nouvelleDemandeKey);
+    final Finder ligne = find.byKey(lignePlaceAdulteKey);
+    expect(
+      tester.getSize(bouton).width,
+      lessThan(tester.getSize(ligne).width * 0.8),
+    );
+    expect(tester.getTopLeft(bouton).dx, tester.getTopLeft(ligne).dx);
+  });
+
+  testWidgets('« A propos du forfait famille » sur bureau : le texte garde '
+      'la largeur de lecture (K-42, EA-5c)', (WidgetTester tester) async {
+    taille(tester, const Size(1440, 900));
+    await monterCoquille(
+      tester,
+      adresseDemoAdulte(EcranDemoAdulte.aProposForfait),
+    );
+    expect(
+      tester.getSize(find.text(t.adulte.famille.aProposForfaitPhrase)).width,
+      lessThanOrEqualTo(AppPage.largeurLecture),
+    );
+  });
+
   testWidgets('« A propos du forfait famille » : le texte du document, puis '
       'retour a Ma famille (E6)', (WidgetTester tester) async {
     taille(tester, const Size(390, 844));
@@ -497,7 +532,12 @@ void main() {
       'existante, retour a Ma famille (E6)', (WidgetTester tester) async {
     taille(tester, const Size(390, 844));
     await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
+    // Les deux liens du pied ne se touchent pas (EA-5c).
     await tester.ensureVisible(find.byKey(FoyerPage.monProfilKey));
+    expect(
+      tester.getBottomLeft(find.byKey(aProposForfaitKey)).dy,
+      lessThan(tester.getTopLeft(find.byKey(FoyerPage.monProfilKey)).dy),
+    );
     await tester.tap(find.byKey(FoyerPage.monProfilKey));
     await tester.pumpAndSettle();
     expect(find.byType(CreerMonProfilIndisponible), findsOneWidget);
@@ -506,6 +546,43 @@ void main() {
     await tester.tap(find.byType(DisqueRetour));
     await tester.pumpAndSettle();
     expect(find.byType(FoyerPage), findsOneWidget);
+  });
+
+  testWidgets('« Creer mon profil eleve » de l\'adulte : le texte affiche '
+      'parle a un adulte deja eleve, retour « Revenir a Ma famille » (EA-5c)', (
+    WidgetTester tester,
+  ) async {
+    taille(tester, const Size(390, 844));
+    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
+    await tester.ensureVisible(find.byKey(FoyerPage.monProfilKey));
+    await tester.tap(find.byKey(FoyerPage.monProfilKey));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Pas encore disponible'), findsOneWidget);
+    expect(
+      find.text(
+        "La création d'un profil élève séparé n'est pas encore disponible. "
+        "Vos cours et Ma famille restent tels qu'ils sont.",
+      ),
+      findsOneWidget,
+    );
+    // Jamais le texte du tuteur : ni « compte de tuteur », ni cours a
+    // commencer, ni « Retour au foyer ».
+    expect(find.textContaining('tuteur'), findsNothing);
+    expect(find.text(t.foyer.monProfil.indisponiblePhrase), findsNothing);
+    expect(find.text('Retour au foyer'), findsNothing);
+    expect(
+      find.textContaining(RegExp('admin', caseSensitive: false)),
+      findsNothing,
+    );
+
+    final Finder retour = find.text('Revenir à Ma famille');
+    expect(retour, findsOneWidget);
+    await tester.ensureVisible(retour);
+    await tester.tap(retour);
+    await tester.pumpAndSettle();
+    expect(find.byType(FoyerPage), findsOneWidget);
+    expect(find.byType(CreerMonProfilIndisponible), findsNothing);
   });
 
   testWidgets('creer un profil en demonstration : la page dit que rien n\'est '

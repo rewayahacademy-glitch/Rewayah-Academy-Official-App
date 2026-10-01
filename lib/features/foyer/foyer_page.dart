@@ -217,14 +217,21 @@ class FoyerPage extends ConsumerWidget {
               if (placePermetNouvelleDemande(adulte.place) &&
                   nouvelleDemande != null) ...<Widget>[
                 Ecart.vMd,
+                // Compact au bord de debut. `IntrinsicWidth` : sans lui,
+                // `ActionPrincipale` s'etire a toute la colonne meme avec
+                // `pleineLargeur: false` (son `Container.alignment`, motif
+                // deja contourne ainsi ailleurs) ; borne par la colonne, le
+                // libelle passe a la ligne a 200 %.
                 Align(
                   alignment: AlignmentDirectional.centerStart,
-                  child: ActionPrincipale(
-                    key: nouvelleDemandeKey,
-                    libelle: t.adulte.famille.place.nouvelleDemande,
-                    niveau: NiveauAction.secondaire,
-                    pleineLargeur: false,
-                    onPress: nouvelleDemande,
+                  child: IntrinsicWidth(
+                    child: ActionPrincipale(
+                      key: nouvelleDemandeKey,
+                      libelle: t.adulte.famille.place.nouvelleDemande,
+                      niveau: NiveauAction.secondaire,
+                      pleineLargeur: false,
+                      onPress: nouvelleDemande,
+                    ),
                   ),
                 ),
               ],
@@ -267,10 +274,11 @@ class FoyerPage extends ConsumerWidget {
         // Garde pour le titulaire adulte aussi (planche 2.3 G, decision E6).
         // Le serveur ne dit pas encore s'il a deja son profil eleve, ni ne
         // sait le creer (DB-FOY-01, EA-BR-19) : la page dit qu'elle est
-        // indisponible. « A propos du forfait famille » le precede, en lien
+        // indisponible, avec les textes de l'adulte quand l'appelant les
+        // demande (`CreerMonProfilIndisponible.titulaireAdulte`). « A propos du forfait famille » le precede, en lien
         // d'information au pied de la page (planche 2.1 P, decision E6).
         Ecart.vXxl,
-        if (adulte != null)
+        if (adulte != null) ...<Widget>[
           Align(
             alignment: AlignmentDirectional.centerStart,
             child: LienFleche(
@@ -279,6 +287,9 @@ class FoyerPage extends ConsumerWidget {
               onPress: () => _aProposForfait(context),
             ),
           ),
+          // Deux liens, deux cibles : jamais colles, meme a 200 %.
+          Ecart.vSm,
+        ],
         Align(
           alignment: AlignmentDirectional.centerStart,
           child: LienFleche(

@@ -175,7 +175,7 @@ class InviterConjointPage extends ConsumerStatefulWidget {
   /// Le champ adresse.
   static const Key courrielKey = Key('invitation.courriel');
 
-  /// « Verifier l'invitation » (etape 1).
+  /// « Continuer » (etape 1, decision E4 ; corrige en EA-5c).
   static const Key verifierKey = Key('invitation.verifier');
 
   /// « Modifier » (etape 2).

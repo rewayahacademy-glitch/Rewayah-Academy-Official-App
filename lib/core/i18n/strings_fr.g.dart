@@ -8982,6 +8982,12 @@ class Traductions$adulte$famille$fr {
 	/// fr: 'En démonstration, rien n'est envoyé. Ma famille reste telle qu'elle était.'
 	String get profilNonCreePhrase => 'En démonstration, rien n\'est envoyé. Ma famille reste telle qu\'elle était.';
 
+	/// fr: 'Pas encore disponible'
+	String get monProfilIndisponibleTitre => 'Pas encore disponible';
+
+	/// fr: 'La création d'un profil élève séparé n'est pas encore disponible. Vos cours et Ma famille restent tels qu'ils sont.'
+	String get monProfilIndisponiblePhrase => 'La création d\'un profil élève séparé n\'est pas encore disponible. Vos cours et Ma famille restent tels qu\'ils sont.';
+
 	/// fr: 'La rubrique famille n'est pas encore disponible'
 	String get indisponibleTitre => 'La rubrique famille n\'est pas encore disponible';
 
@@ -9035,8 +9041,8 @@ class Traductions$adulte$invitation$fr {
 	/// fr: 'Vérifiez l'adresse e-mail : elle doit ressembler à nom@exemple.com.'
 	String get courrielInvalide => 'Vérifiez l\'adresse e-mail : elle doit ressembler à nom@exemple.com.';
 
-	/// fr: 'Vérifier l'invitation'
-	String get verifier => 'Vérifier l\'invitation';
+	/// fr: 'Continuer'
+	String get verifier => 'Continuer';
 
 	/// fr: 'Vérifier et envoyer'
 	String get verifierTitre => 'Vérifier et envoyer';
@@ -16503,6 +16509,8 @@ extension on Traductions {
 			'adulte.famille.aProposForfaitPhrase' => 'Le forfait famille comprend un titulaire, un conjoint ou une conjointe adulte, et les enfants ou adolescents sous la responsabilité du titulaire. Chaque adulte conserve son propre compte.',
 			'adulte.famille.profilNonCreeTitre' => 'Démonstration : aucun profil n\'a été créé',
 			'adulte.famille.profilNonCreePhrase' => 'En démonstration, rien n\'est envoyé. Ma famille reste telle qu\'elle était.',
+			'adulte.famille.monProfilIndisponibleTitre' => 'Pas encore disponible',
+			'adulte.famille.monProfilIndisponiblePhrase' => 'La création d\'un profil élève séparé n\'est pas encore disponible. Vos cours et Ma famille restent tels qu\'ils sont.',
 			'adulte.famille.indisponibleTitre' => 'La rubrique famille n\'est pas encore disponible',
 			'adulte.famille.indisponiblePhrase' => 'Votre famille ou votre forfait famille s\'affichera ici dès qu\'il sera disponible.',
 			'adulte.famille.place.ajouterConjointe' => 'Ajouter une conjointe',
@@ -16531,7 +16539,7 @@ extension on Traductions {
 			'adulte.invitation.prenomRequis' => 'Indiquez son prénom.',
 			'adulte.invitation.courrielRequis' => 'Indiquez son adresse e-mail.',
 			'adulte.invitation.courrielInvalide' => 'Vérifiez l\'adresse e-mail : elle doit ressembler à nom@exemple.com.',
-			'adulte.invitation.verifier' => 'Vérifier l\'invitation',
+			'adulte.invitation.verifier' => 'Continuer',
 			'adulte.invitation.verifierTitre' => 'Vérifier et envoyer',
 			'adulte.invitation.verifierPhrase' => 'Relisez ces informations. L\'invitation partira à cette adresse.',
 			'adulte.invitation.nonRenseigne' => 'Non renseigné',

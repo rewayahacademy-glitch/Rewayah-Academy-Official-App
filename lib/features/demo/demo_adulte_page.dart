@@ -827,6 +827,8 @@ class CoquilleAdulteDemo extends StatelessWidget {
             key: const ValueKey<String>('demo-profil-non-cree'),
             nature: NatureEtat.indisponible,
             portee: PorteeEtat.page,
+            // Titre et phrase sans source (spec, planche) : libelle
+            // provisoire, lexique D4.
             titre: t.adulte.famille.profilNonCreeTitre,
             phrase: t.adulte.famille.profilNonCreePhrase,
             libelleAction: t.adulte.invitation.revenirMaFamille,
@@ -838,8 +840,11 @@ class CoquilleAdulteDemo extends StatelessWidget {
       EcranDemoAdulte.aProposForfait => AProposForfaitFamillePage(
         onRetour: versMaFamille,
       ),
+      // Mamadou suit deja les cours : la page lui parle en adulte, jamais du
+      // « compte de tuteur » (EA-5c, EA-BR-19).
       EcranDemoAdulte.creerMonProfil => CreerMonProfilIndisponible(
         onRetour: versMaFamille,
+        titulaireAdulte: true,
       ),
       EcranDemoAdulte.ficheEleve => FicheElevePage(
         eleveId: eleve ?? DonneesAdulteDemo.aichaId,

@@ -3898,6 +3898,8 @@
       "aProposForfaitPhrase": "Le forfait famille comprend un titulaire, un conjoint ou une conjointe adulte, et les enfants ou adolescents sous la responsabilité du titulaire. Chaque adulte conserve son propre compte.",
       "profilNonCreeTitre": "Démonstration : aucun profil n'a été créé",
       "profilNonCreePhrase": "En démonstration, rien n'est envoyé. Ma famille reste telle qu'elle était.",
+      "monProfilIndisponibleTitre": "Pas encore disponible",
+      "monProfilIndisponiblePhrase": "La création d'un profil élève séparé n'est pas encore disponible. Vos cours et Ma famille restent tels qu'ils sont.",
       "indisponibleTitre": "La rubrique famille n'est pas encore disponible",
       "indisponiblePhrase": "Votre famille ou votre forfait famille s'affichera ici dès qu'il sera disponible.",
       "place": {
@@ -3930,7 +3932,7 @@
         "prenomRequis": "Indiquez son prénom.",
         "courrielRequis": "Indiquez son adresse e-mail.",
         "courrielInvalide": "Vérifiez l'adresse e-mail : elle doit ressembler à nom@exemple.com.",
-        "verifier": "Vérifier l'invitation",
+        "verifier": "Continuer",
         "verifierTitre": "Vérifier et envoyer",
         "verifierPhrase": "Relisez ces informations. L'invitation partira à cette adresse.",
         "nonRenseigne": "Non renseigné",

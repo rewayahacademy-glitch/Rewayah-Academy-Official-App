@@ -243,10 +243,17 @@ class AProposForfaitFamillePage extends StatelessWidget {
     return PageShell(
       titre: t.adulte.famille.aProposForfait,
       onRetour: onRetour,
-      child: Text(
-        t.adulte.famille.aProposForfaitPhrase,
-        style: palette.inkStrong.applyTo(
-          Theme.of(context).textTheme.bodyLarge ?? const TextStyle(),
+      // Largeur de lecture (K-42) : jamais une ligne de 1100 en bureau.
+      child: Align(
+        alignment: AlignmentDirectional.topStart,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: AppPage.largeurLecture),
+          child: Text(
+            t.adulte.famille.aProposForfaitPhrase,
+            style: palette.inkStrong.applyTo(
+              Theme.of(context).textTheme.bodyLarge ?? const TextStyle(),
+            ),
+          ),
         ),
       ),
     );
