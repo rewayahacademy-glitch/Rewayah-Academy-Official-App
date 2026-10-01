@@ -20,12 +20,22 @@ import '../../core/widgets/page_shell.dart';
 /// une action qui ramenent au Foyer. Aucune impasse.
 class CreerMonProfilIndisponible extends StatelessWidget {
   /// Cree la page.
-  const CreerMonProfilIndisponible({super.key});
+  const CreerMonProfilIndisponible({super.key, this.onRetour});
+
+  /// Le retour ; par defaut, le Foyer par son adresse. La demonstration de
+  /// l'eleve adulte y ramene a Ma famille dans sa coquille (EA-5c).
+  final VoidCallback? onRetour;
 
   /// Toujours vers le Foyer, par son adresse : un `pop` garderait la requete
   /// `?pour=moi` dans l'adresse du Foyer (mesure en test).
-  void _retour(BuildContext context) =>
+  void _retour(BuildContext context) {
+    final VoidCallback? propre = onRetour;
+    if (propre != null) {
+      propre();
+    } else {
       GoRouter.of(context).go(Routes.tuteurFoyer);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

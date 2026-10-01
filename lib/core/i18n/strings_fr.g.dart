@@ -8964,11 +8964,23 @@ class Traductions$adulte$famille$fr {
 	/// fr: 'Revenir à Mon espace'
 	String get retourMonEspace => 'Revenir à Mon espace';
 
-	/// fr: 'Titulaire du foyer'
-	String get titulaire => 'Titulaire du foyer';
+	/// fr: 'Vous êtes titulaire du foyer'
+	String get titulaire => 'Vous êtes titulaire du foyer';
 
 	/// fr: 'Paiements du foyer'
 	String get paiementsFoyer => 'Paiements du foyer';
+
+	/// fr: 'À propos du forfait famille'
+	String get aProposForfait => 'À propos du forfait famille';
+
+	/// fr: 'Le forfait famille comprend un titulaire, un conjoint ou une conjointe adulte, et les enfants ou adolescents sous la responsabilité du titulaire. Chaque adulte conserve son propre compte.'
+	String get aProposForfaitPhrase => 'Le forfait famille comprend un titulaire, un conjoint ou une conjointe adulte, et les enfants ou adolescents sous la responsabilité du titulaire. Chaque adulte conserve son propre compte.';
+
+	/// fr: 'Démonstration : aucun profil n'a été créé'
+	String get profilNonCreeTitre => 'Démonstration : aucun profil n\'a été créé';
+
+	/// fr: 'En démonstration, rien n'est envoyé. Ma famille reste telle qu'elle était.'
+	String get profilNonCreePhrase => 'En démonstration, rien n\'est envoyé. Ma famille reste telle qu\'elle était.';
 
 	/// fr: 'La rubrique famille n'est pas encore disponible'
 	String get indisponibleTitre => 'La rubrique famille n\'est pas encore disponible';
@@ -9044,11 +9056,11 @@ class Traductions$adulte$invitation$fr {
 	/// fr: 'Vous êtes hors ligne. L'invitation pourra partir quand la connexion reviendra.'
 	String get horsLigne => 'Vous êtes hors ligne. L\'invitation pourra partir quand la connexion reviendra.';
 
-	/// fr: 'L'invitation n'est pas partie'
-	String get echecTitre => 'L\'invitation n\'est pas partie';
+	/// fr: 'L'envoi de l'invitation n'a pas été confirmé'
+	String get echecTitre => 'L\'envoi de l\'invitation n\'a pas été confirmé';
 
-	/// fr: 'La connexion a été interrompue. Vos informations sont conservées : vous pouvez réessayer.'
-	String get echecPhrase => 'La connexion a été interrompue. Vos informations sont conservées : vous pouvez réessayer.';
+	/// fr: 'La connexion a été interrompue. Vos informations sont conservées. Vérifiez avant de réessayer.'
+	String get echecPhrase => 'La connexion a été interrompue. Vos informations sont conservées. Vérifiez avant de réessayer.';
 
 	/// fr: 'Cette invitation ne peut pas être envoyée'
 	String get refusTitre => 'Cette invitation ne peut pas être envoyée';
@@ -9086,11 +9098,11 @@ class Traductions$adulte$invitation$fr {
 	/// fr: 'Garder l'invitation'
 	String get garder => 'Garder l\'invitation';
 
-	/// fr: 'L'invitation n'a pas été annulée'
-	String get annulationEchecTitre => 'L\'invitation n\'a pas été annulée';
+	/// fr: 'L'annulation n'a pas été confirmée'
+	String get annulationEchecTitre => 'L\'annulation n\'a pas été confirmée';
 
-	/// fr: 'La connexion a été interrompue. L'invitation est toujours envoyée : vous pouvez réessayer.'
-	String get annulationEchecPhrase => 'La connexion a été interrompue. L\'invitation est toujours envoyée : vous pouvez réessayer.';
+	/// fr: 'La connexion a été interrompue. Vérifiez avant de réessayer.'
+	String get annulationEchecPhrase => 'La connexion a été interrompue. Vérifiez avant de réessayer.';
 }
 
 // Path: adulte.demo
@@ -9772,12 +9784,6 @@ class Traductions$foyer$ajout$pourQui$fr {
 
 	/// fr: 'Possible dès que votre dossier est validé.'
 	String get enfantAttente => 'Possible dès que votre dossier est validé.';
-
-	/// fr: 'Un proche adulte'
-	String get procheTitre => 'Un proche adulte';
-
-	/// fr: 'Pas encore possible : un adulte aura son propre profil et donnera lui-même son accord.'
-	String get procheDescription => 'Pas encore possible : un adulte aura son propre profil et donnera lui-même son accord.';
 
 	/// fr: 'Moi-même'
 	String get moiTitre => 'Moi-même';
@@ -12697,17 +12703,20 @@ class Traductions$adulte$famille$place$fr {
 	/// fr: 'Invitation envoyée'
 	String get invitationEnvoyee => 'Invitation envoyée';
 
-	/// fr: 'Ma conjointe · {prenom}'
-	String maConjointe({required Object prenom}) => 'Ma conjointe · ${prenom}';
+	/// fr: '{prenom}, votre conjointe'
+	String maConjointe({required Object prenom}) => '${prenom}, votre conjointe';
 
-	/// fr: 'Mon conjoint · {prenom}'
-	String monConjoint({required Object prenom}) => 'Mon conjoint · ${prenom}';
+	/// fr: '{prenom}, votre conjoint'
+	String monConjoint({required Object prenom}) => '${prenom}, votre conjoint';
 
 	/// fr: 'En attente de validation administrative'
 	String get validationEnAttente => 'En attente de validation administrative';
 
-	/// fr: 'Demande refusée par l'administration'
-	String get validationRefusee => 'Demande refusée par l\'administration';
+	/// fr: 'Validation refusée par la direction'
+	String get validationRefusee => 'Validation refusée par la direction';
+
+	/// fr: 'Faire une nouvelle demande'
+	String get nouvelleDemande => 'Faire une nouvelle demande';
 
 	/// fr: 'Nouvelle invitation possible à partir du {date}'
 	String nouvelleInvitation({required Object date}) => 'Nouvelle invitation possible à partir du ${date}';
@@ -13884,8 +13893,6 @@ extension on Traductions {
 			'foyer.ajout.pourQui.enfantTitre' => 'Un enfant ou un mineur',
 			'foyer.ajout.pourQui.enfantDescription' => 'Un profil rattaché à votre foyer, que vous gérez pour lui.',
 			'foyer.ajout.pourQui.enfantAttente' => 'Possible dès que votre dossier est validé.',
-			'foyer.ajout.pourQui.procheTitre' => 'Un proche adulte',
-			'foyer.ajout.pourQui.procheDescription' => 'Pas encore possible : un adulte aura son propre profil et donnera lui-même son accord.',
 			'foyer.ajout.pourQui.moiTitre' => 'Moi-même',
 			'foyer.ajout.pourQui.moiDescription' => 'Pas encore possible : suivre vous-même les cours avec votre propre profil élève sera proposé prochainement.',
 			'foyer.ajout.identite.question' => 'Qui est l\'élève ?',
@@ -14251,10 +14258,10 @@ extension on Traductions {
 			'admin.attribution.attendJours' => ({required Object jours}) => 'Attend depuis ${jours} jours',
 			'admin.attribution.niveau' => ({required Object niveau}) => 'Niveau ${niveau}',
 			'admin.attribution.heuresProposees' => ({required Object nombre}) => '${nombre} heures proposées',
-			_ => null,
-		} ?? switch (path) {
 			'admin.attribution.heureProposee' => '1 heure proposée',
 			'admin.attribution.sansHeure' => 'Aucune heure proposée',
+			_ => null,
+		} ?? switch (path) {
 			'admin.attribution.sansHeureDetail' => 'Tant que la famille n\'a posé aucun créneau, personne ne peut lui donner d\'enseignant, pas même vous. Le geste est chez elle, sur ses disponibilités.',
 			'admin.attribution.changerEleve' => 'Choisir un autre élève',
 			'admin.attribution.choisirEleve' => 'Choisissez un élève',
@@ -14765,10 +14772,10 @@ extension on Traductions {
 			'agent.jetonExemple' => 'rag_...',
 			'agent.entrer' => 'Ouvrir l\'application',
 			'agent.ouverture' => 'Ouverture',
-			_ => null,
-		} ?? switch (path) {
 			'agent.refus' => 'Jeton refusé',
 			'agent.refusDetail' => 'Ce jeton est inconnu, révoqué ou expiré. Demandez-en un nouveau à l\'académie.',
+			_ => null,
+		} ?? switch (path) {
 			'agent.indisponible' => 'Service indisponible',
 			'agent.indisponibleDetail' => 'L\'ouverture de session n\'a pas répondu. Réessayez dans un instant.',
 			'agent.reessayer' => 'Réessayer',
@@ -15279,10 +15286,10 @@ extension on Traductions {
 			'tuteur.accueil.seanceNonTenue' => 'Cette séance n\'a pas pu se tenir.',
 			'tuteur.accueil.horaireIncertain' => 'Ouverture de la salle non confirmée pour l\'instant',
 			'tuteur.accueil.pastilleAnnulee' => 'Annulée',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.pastilleNonTenue' => 'Non tenue',
 			'tuteur.accueil.pastilleTerminee' => 'Terminée',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.aucuneSeance' => 'Aucune séance planifiée',
 			'tuteur.accueil.aucuneSeanceDetail' => ({required Object prenom}) => 'La prochaine séance de ${prenom} apparaîtra ici dès qu\'elle sera programmée.',
 			'tuteur.accueil.seanceIllisible' => 'La prochaine séance n\'a pas pu être lue.',
@@ -15793,10 +15800,10 @@ extension on Traductions {
 			'enseignant.cahier.statutPresents' => ({required Object nombre}) => 'Présents ${nombre}',
 			'enseignant.cahier.statutAbsents' => ({required Object nombre}) => 'Absents ${nombre}',
 			'enseignant.cahier.statutEnRetard' => ({required Object nombre}) => 'En retard ${nombre}',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.performance' => 'Performance',
 			'enseignant.cahier.faiblesses' => 'Faiblesses',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.reprise' => 'Où la Classe s\'est arrêtée',
 			'enseignant.cahier.repriseDetail' => 'C\'est la position de reprise d\'un remplaçant.',
 			'enseignant.cahier.repriseProposee' => ({required Object sourate, required Object verset}) => 'Sourate ${sourate}, verset ${verset}',
@@ -16307,10 +16314,10 @@ extension on Traductions {
 			'tc.observation.refus.lienTuteur' => 'Vous n\'êtes rattaché à aucun élève de cette séance.',
 			'tc.observation.refus.seanceNonActive' => 'La séance n\'est pas en cours.',
 			'tc.observation.refus.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.refus.indisponible' => 'L\'observation n\'est pas disponible pour le moment.',
 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.visite.titre' => 'Observation en cours',
 			'tc.observation.visite.quitter' => 'Quitter',
 			'tc.observation.visite.supportIndisponible' => 'Le support partagé par l\'enseignant s\'affiche ici.',
@@ -16490,8 +16497,12 @@ extension on Traductions {
 			'adulte.famille.maFamille' => 'Ma famille',
 			'adulte.famille.forfaitFamille' => 'Forfait famille',
 			'adulte.famille.retourMonEspace' => 'Revenir à Mon espace',
-			'adulte.famille.titulaire' => 'Titulaire du foyer',
+			'adulte.famille.titulaire' => 'Vous êtes titulaire du foyer',
 			'adulte.famille.paiementsFoyer' => 'Paiements du foyer',
+			'adulte.famille.aProposForfait' => 'À propos du forfait famille',
+			'adulte.famille.aProposForfaitPhrase' => 'Le forfait famille comprend un titulaire, un conjoint ou une conjointe adulte, et les enfants ou adolescents sous la responsabilité du titulaire. Chaque adulte conserve son propre compte.',
+			'adulte.famille.profilNonCreeTitre' => 'Démonstration : aucun profil n\'a été créé',
+			'adulte.famille.profilNonCreePhrase' => 'En démonstration, rien n\'est envoyé. Ma famille reste telle qu\'elle était.',
 			'adulte.famille.indisponibleTitre' => 'La rubrique famille n\'est pas encore disponible',
 			'adulte.famille.indisponiblePhrase' => 'Votre famille ou votre forfait famille s\'affichera ici dès qu\'il sera disponible.',
 			'adulte.famille.place.ajouterConjointe' => 'Ajouter une conjointe',
@@ -16499,10 +16510,11 @@ extension on Traductions {
 			'adulte.famille.place.inviterConjointe' => 'Invitez votre conjointe à rejoindre Rewayah avec son propre compte.',
 			'adulte.famille.place.inviterConjoint' => 'Invitez votre conjoint à rejoindre Rewayah avec son propre compte.',
 			'adulte.famille.place.invitationEnvoyee' => 'Invitation envoyée',
-			'adulte.famille.place.maConjointe' => ({required Object prenom}) => 'Ma conjointe · ${prenom}',
-			'adulte.famille.place.monConjoint' => ({required Object prenom}) => 'Mon conjoint · ${prenom}',
+			'adulte.famille.place.maConjointe' => ({required Object prenom}) => '${prenom}, votre conjointe',
+			'adulte.famille.place.monConjoint' => ({required Object prenom}) => '${prenom}, votre conjoint',
 			'adulte.famille.place.validationEnAttente' => 'En attente de validation administrative',
-			'adulte.famille.place.validationRefusee' => 'Demande refusée par l\'administration',
+			'adulte.famille.place.validationRefusee' => 'Validation refusée par la direction',
+			'adulte.famille.place.nouvelleDemande' => 'Faire une nouvelle demande',
 			'adulte.famille.place.nouvelleInvitation' => ({required Object date}) => 'Nouvelle invitation possible à partir du ${date}',
 			'adulte.famille.place.envoyeeA' => ({required Object courriel}) => 'Envoyée à ${courriel}',
 			'adulte.famille.place.expiree' => 'L\'invitation précédente a expiré. Vous pouvez en envoyer une nouvelle.',
@@ -16526,8 +16538,8 @@ extension on Traductions {
 			'adulte.invitation.modifier' => 'Modifier',
 			'adulte.invitation.envoyer' => 'Envoyer l\'invitation',
 			'adulte.invitation.horsLigne' => 'Vous êtes hors ligne. L\'invitation pourra partir quand la connexion reviendra.',
-			'adulte.invitation.echecTitre' => 'L\'invitation n\'est pas partie',
-			'adulte.invitation.echecPhrase' => 'La connexion a été interrompue. Vos informations sont conservées : vous pouvez réessayer.',
+			'adulte.invitation.echecTitre' => 'L\'envoi de l\'invitation n\'a pas été confirmé',
+			'adulte.invitation.echecPhrase' => 'La connexion a été interrompue. Vos informations sont conservées. Vérifiez avant de réessayer.',
 			'adulte.invitation.refusTitre' => 'Cette invitation ne peut pas être envoyée',
 			'adulte.invitation.refusPhrase' => 'Revenez à Ma famille pour voir l\'état de la place.',
 			'adulte.invitation.envoyeeTitre' => 'Invitation envoyée',
@@ -16540,8 +16552,8 @@ extension on Traductions {
 			'adulte.invitation.annulerHorsLigne' => 'Vous êtes hors ligne. L\'invitation pourra être annulée quand la connexion reviendra.',
 			'adulte.invitation.annulerConsequence' => 'L\'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.',
 			'adulte.invitation.garder' => 'Garder l\'invitation',
-			'adulte.invitation.annulationEchecTitre' => 'L\'invitation n\'a pas été annulée',
-			'adulte.invitation.annulationEchecPhrase' => 'La connexion a été interrompue. L\'invitation est toujours envoyée : vous pouvez réessayer.',
+			'adulte.invitation.annulationEchecTitre' => 'L\'annulation n\'a pas été confirmée',
+			'adulte.invitation.annulationEchecPhrase' => 'La connexion a été interrompue. Vérifiez avant de réessayer.',
 			'adulte.demo.titre' => 'Démonstration de l\'élève adulte',
 			'adulte.demo.mention' => 'Les données sont fictives et rien n\'est envoyé.',
 			'adulte.demo.intro' => 'Choisissez un écran, puis une situation du foyer Diallo.',

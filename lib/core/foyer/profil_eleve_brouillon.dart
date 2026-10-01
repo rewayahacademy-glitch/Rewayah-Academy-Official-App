@@ -2,16 +2,15 @@ import 'package:flutter/foundation.dart';
 
 /// Pour qui le profil eleve est cree.
 ///
-/// Les trois choix sont **montres** a l'ecran, un seul est creable
+/// Les deux choix sont **montres** a l'ecran, un seul est creable
 /// aujourd'hui : le serveur ne sait creer qu'un profil `minor` rattache au
-/// foyer. Un proche adulte (DB-FOY-02) et le titulaire lui-meme (DB-FOY-01)
-/// restent visibles et expliques, jamais simules par un profil d'enfant.
+/// foyer. Le titulaire lui-meme (DB-FOY-01) reste visible et explique, jamais
+/// simule par un profil d'enfant. « Un proche adulte » n'existe plus : un
+/// adulte n'est jamais un profil gere, il a son propre compte (F2, doc
+/// foyer famille section 22.9, EA-5c).
 enum PourQui {
   /// Un enfant ou un mineur du foyer. Seul choix creable aujourd'hui.
   enfantOuMineur,
-
-  /// Un adulte proche, eleve a part entiere. Indisponible (DB-FOY-02).
-  procheAdulte,
 
   /// Le titulaire du compte lui-meme. Indisponible (DB-FOY-01).
   moiMeme,

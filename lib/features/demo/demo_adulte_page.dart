@@ -42,6 +42,7 @@ import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
@@ -57,6 +58,7 @@ import '../compte/informations_page.dart';
 import '../compte/paiements_page.dart';
 import '../compte/preferences_page.dart';
 import '../compte/securite_page.dart';
+import '../foyer/creer_mon_profil_indisponible.dart';
 import '../foyer/fiche_eleve_page.dart';
 import '../foyer/formulaire_profil_eleve.dart';
 import '../foyer/foyer_page.dart';
@@ -146,6 +148,17 @@ enum EcranDemoAdulte {
 
   /// L'invitation envoyee, ouverte depuis sa ligne de Ma famille (EA-6).
   invitationEnvoyee,
+
+  /// « A propos du forfait famille », ouvert depuis Ma famille (EA-5c, E6).
+  aProposForfait,
+
+  /// « Creer mon profil eleve », ouvert depuis Ma famille : la page
+  /// indisponible existante (DB-FOY-01, EA-BR-19).
+  creerMonProfil,
+
+  /// Apres « Creer le profil » en demonstration : rien n'a ete cree, et la
+  /// page le dit (EA-5c).
+  profilNonCree,
 }
 
 /// Les ecrans de l'espace foyer (coquille du tuteur), reserves au titulaire
@@ -159,6 +172,9 @@ const Set<EcranDemoAdulte> _ecransFoyer = <EcranDemoAdulte>{
   EcranDemoAdulte.appareils,
   EcranDemoAdulte.inviterConjoint,
   EcranDemoAdulte.invitationEnvoyee,
+  EcranDemoAdulte.aProposForfait,
+  EcranDemoAdulte.creerMonProfil,
+  EcranDemoAdulte.profilNonCree,
 };
 
 /// Les situations « pendant une mutation » du doc section 18 (22, 23) : la
@@ -196,14 +212,18 @@ EcranDemoAdulte ecranPermisDemoAdulte(
   }
   // L'invitation suit l'etat de la place : jamais un formulaire d'invitation
   // sur une place occupee ou en delai (F17, R4), jamais le detail d'une
-  // invitation qui n'existe pas. Sinon, Ma famille dit l'etat.
+  // invitation qui n'existe pas. Sinon, Ma famille dit l'etat. Apres un
+  // refus de validation, « Faire une nouvelle demande » relance l'invitation
+  // (E5, doc section 10.3).
   final EtatPlaceAdulte place = DonneesAdulteDemo.place(
     etat,
     GenreTitulaireDemo.homme,
   );
   final bool permis = switch (ecran) {
     EcranDemoAdulte.inviterConjoint =>
-      place is PlaceDisponible || _mutation(etat),
+      place is PlaceDisponible ||
+          placePermetNouvelleDemande(place) ||
+          _mutation(etat),
     EcranDemoAdulte.invitationEnvoyee =>
       place is InvitationEnvoyee || _mutation(etat),
     _ => true,
@@ -305,6 +325,9 @@ String libelleEcranDemoAdulte(EcranDemoAdulte ecran) => switch (ecran) {
   EcranDemoAdulte.ajouterMaFamille => t.adulte.famille.ajouter,
   EcranDemoAdulte.inviterConjoint => t.adulte.invitation.envoyer,
   EcranDemoAdulte.invitationEnvoyee => t.adulte.famille.place.invitationEnvoyee,
+  EcranDemoAdulte.aProposForfait => t.adulte.famille.aProposForfait,
+  EcranDemoAdulte.creerMonProfil => t.foyer.creerMonProfil,
+  EcranDemoAdulte.profilNonCree => t.adulte.famille.profilNonCreeTitre,
 };
 
 /// Le libelle d'une situation (doc section 18).
@@ -684,7 +707,10 @@ class CoquilleAdulteDemo extends StatelessWidget {
             EcranDemoAdulte.ficheEleve ||
             EcranDemoAdulte.appareils ||
             EcranDemoAdulte.inviterConjoint ||
-            EcranDemoAdulte.invitationEnvoyee => const SizedBox.shrink(),
+            EcranDemoAdulte.invitationEnvoyee ||
+            EcranDemoAdulte.aProposForfait ||
+            EcranDemoAdulte.creerMonProfil ||
+            EcranDemoAdulte.profilNonCree => const SizedBox.shrink(),
           },
         ),
       ),
@@ -726,11 +752,20 @@ class CoquilleAdulteDemo extends StatelessWidget {
         context.go(_adresse(EcranDemoAdulte.ficheEleve, eleve: id));
     // Les chemins du tuteur, ramenes aux ecrans de la demonstration.
     void allerFoyer(String chemin) {
-      final String p = Uri.parse(chemin).path;
+      final Uri uri = Uri.parse(chemin);
+      final String p = uri.path;
       if (p == Routes.tuteurFoyer) {
         versMaFamille();
       } else if (p == Routes.tuteurAjouterEnfant) {
-        context.go(_adresse(EcranDemoAdulte.ajouterProfil));
+        // `?pour=moi` : « Creer mon profil eleve », jamais le formulaire d'un
+        // enfant.
+        context.go(
+          _adresse(
+            uri.queryParameters['pour'] == 'moi'
+                ? EcranDemoAdulte.creerMonProfil
+                : EcranDemoAdulte.ajouterProfil,
+          ),
+        );
       } else if (p == Routes.tuteurFoyerAppareils) {
         context.go(_adresse(EcranDemoAdulte.appareils));
       } else if (p.startsWith('${Routes.tuteurFoyer}/')) {
@@ -775,10 +810,36 @@ class CoquilleAdulteDemo extends StatelessWidget {
         phrase: t.adulte.provisoire.placeAdulte,
         onRetour: versMaFamille,
       ),
+      // En demonstration, rien n'est envoye : apres « Creer le profil », une
+      // page le dit, au lieu d'un retour muet a Ma famille (EA-5c).
       EcranDemoAdulte.ajouterProfil => FormulaireProfilEleve(
         onAbandon: versMaFamille,
         onVoirFoyer: versMaFamille,
-        onCree: (String? id) => id == null ? versMaFamille() : versFiche(id),
+        onCree: (String? _) =>
+            context.go(_adresse(EcranDemoAdulte.profilNonCree)),
+      ),
+      EcranDemoAdulte.profilNonCree => PageShell(
+        titre: t.foyer.ajouterProfil,
+        onRetour: versMaFamille,
+        child: Padding(
+          padding: const EdgeInsets.only(top: AppSpacing.xxl),
+          child: EtatSysteme(
+            key: const ValueKey<String>('demo-profil-non-cree'),
+            nature: NatureEtat.indisponible,
+            portee: PorteeEtat.page,
+            titre: t.adulte.famille.profilNonCreeTitre,
+            phrase: t.adulte.famille.profilNonCreePhrase,
+            libelleAction: t.adulte.invitation.revenirMaFamille,
+            onAction: versMaFamille,
+            dependance: 'demonstration',
+          ),
+        ),
+      ),
+      EcranDemoAdulte.aProposForfait => AProposForfaitFamillePage(
+        onRetour: versMaFamille,
+      ),
+      EcranDemoAdulte.creerMonProfil => CreerMonProfilIndisponible(
+        onRetour: versMaFamille,
       ),
       EcranDemoAdulte.ficheEleve => FicheElevePage(
         eleveId: eleve ?? DonneesAdulteDemo.aichaId,
@@ -824,6 +885,12 @@ class CoquilleAdulteDemo extends StatelessWidget {
                 ),
                 onPaiementsFoyer: () =>
                     context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
+                onAProposForfait: () =>
+                    context.go(_adresse(EcranDemoAdulte.aProposForfait)),
+                // Validation refusee : la nouvelle demande relance
+                // l'invitation (E5, EA-BR-18).
+                onNouvelleDemande: () =>
+                    context.go(_adresse(EcranDemoAdulte.inviterConjoint)),
               ),
             ),
           ],
@@ -885,7 +952,8 @@ class CoquilleAdulteDemo extends StatelessWidget {
 
 /// La creation d'un profil eleve en demonstration : les memes regles
 /// d'ecran que l'adaptateur reel (seul « Un enfant ou un mineur », compte
-/// actif), et rien n'est envoye (K-28). Le formulaire revient a Ma famille.
+/// actif), et rien n'est envoye (K-28). Le formulaire ouvre ensuite une page
+/// qui dit que rien n'a ete cree (`profilNonCree`).
 class _CreationProfilDemo implements PortCreationProfilEleve {
   const _CreationProfilDemo();
 

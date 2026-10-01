@@ -203,11 +203,9 @@ void main() {
         await _monter(tester, appairage: _AppairageCreant());
         await _ouvrirAjout(tester);
 
-        expect(find.text(t.foyer.ajout.pourQui.procheTitre), findsNothing);
-        expect(
-          find.text(t.foyer.ajout.pourQui.procheDescription),
-          findsNothing,
-        );
+        // Les cles « procheTitre » et « procheDescription » sont retirees de
+        // l'i18n (EA-5c) : le texte ne peut plus revenir a l'ecran.
+        expect(find.text('Un proche adulte'), findsNothing);
         expect(find.text(t.foyer.ajout.pourQui.moiTitre), findsOneWidget);
         expect(find.text(t.foyer.ajout.pourQui.moiDescription), findsOne);
         expect(find.text(t.foyer.ajout.pourQui.indisponible), findsOneWidget);

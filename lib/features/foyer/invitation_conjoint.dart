@@ -98,7 +98,8 @@ final class AnnulationFaite extends ResultatAnnulation {
   const AnnulationFaite();
 }
 
-/// La connexion a coupe : l'invitation est toujours envoyee.
+/// La connexion a coupe : l'annulation n'est pas confirmee, l'ecran ne dit
+/// que cela (decision D5), jamais « pas annulee ».
 final class AnnulationEchecReseau extends ResultatAnnulation {
   /// Cree la reponse.
   const AnnulationEchecReseau();

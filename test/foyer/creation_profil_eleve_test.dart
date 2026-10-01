@@ -97,12 +97,7 @@ void main() {
         port.peutCreer(PourQui.enfantOuMineur, porte: PorteAcces.actif),
         isTrue,
       );
-      for (final PourQui choix in <PourQui>[
-        PourQui.procheAdulte,
-        PourQui.moiMeme,
-      ]) {
-        expect(port.peutCreer(choix, porte: PorteAcces.actif), isFalse);
-      }
+      expect(port.peutCreer(PourQui.moiMeme, porte: PorteAcces.actif), isFalse);
       for (final PorteAcces porte in PorteAcces.values.where(
         (PorteAcces p) => p != PorteAcces.actif,
       )) {
@@ -148,7 +143,7 @@ void main() {
         );
 
         final ResultatCreationProfil adulte = await port.creer(
-          _complet.copyWith(pourQui: PourQui.procheAdulte),
+          _complet.copyWith(pourQui: PourQui.moiMeme),
         );
         final ResultatCreationProfil trop = await port.creer(
           _complet.copyWith(age: 40),
