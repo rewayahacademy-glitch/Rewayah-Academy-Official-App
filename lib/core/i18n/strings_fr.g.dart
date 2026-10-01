@@ -9005,6 +9005,12 @@ class Traductions$adulte$invitation$fr {
 
 	// Translations
 
+	/// fr: 'Inviter ma conjointe'
+	String get titreElle => 'Inviter ma conjointe';
+
+	/// fr: 'Inviter mon conjoint'
+	String get titreLui => 'Inviter mon conjoint';
+
 	/// fr: 'Un compte personnel pour elle'
 	String get enteteElle => 'Un compte personnel pour elle';
 
@@ -9029,8 +9035,11 @@ class Traductions$adulte$invitation$fr {
 	/// fr: 'Adresse e-mail'
 	String get courriel => 'Adresse e-mail';
 
-	/// fr: 'Nous l'utiliserons seulement pour lui envoyer cette invitation.'
-	String get courrielAide => 'Nous l\'utiliserons seulement pour lui envoyer cette invitation.';
+	/// fr: 'L'adresse e-mail sera utilisée pour envoyer à votre conjointe l'invitation à rejoindre Rewayah.'
+	String get courrielAideElle => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjointe l\'invitation à rejoindre Rewayah.';
+
+	/// fr: 'L'adresse e-mail sera utilisée pour envoyer à votre conjoint l'invitation à rejoindre Rewayah.'
+	String get courrielAideLui => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjoint l\'invitation à rejoindre Rewayah.';
 
 	/// fr: 'Indiquez son prénom.'
 	String get prenomRequis => 'Indiquez son prénom.';
@@ -9059,20 +9068,20 @@ class Traductions$adulte$invitation$fr {
 	/// fr: 'Envoyer l'invitation'
 	String get envoyer => 'Envoyer l\'invitation';
 
-	/// fr: 'Vous êtes hors ligne. L'invitation pourra partir quand la connexion reviendra.'
-	String get horsLigne => 'Vous êtes hors ligne. L\'invitation pourra partir quand la connexion reviendra.';
+	/// fr: 'Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez envoyer l'invitation vous-même quand la connexion sera revenue.'
+	String get horsLigne => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez envoyer l\'invitation vous-même quand la connexion sera revenue.';
 
-	/// fr: 'L'envoi de l'invitation n'a pas été confirmé'
-	String get echecTitre => 'L\'envoi de l\'invitation n\'a pas été confirmé';
+	/// fr: 'L'envoi n'a pas été confirmé.'
+	String get echecTitre => 'L\'envoi n\'a pas été confirmé.';
 
-	/// fr: 'La connexion a été interrompue. Vos informations sont conservées. Vérifiez avant de réessayer.'
-	String get echecPhrase => 'La connexion a été interrompue. Vos informations sont conservées. Vérifiez avant de réessayer.';
+	/// fr: 'Vérifiez avant de réessayer. Vos informations sont conservées.'
+	String get echecPhrase => 'Vérifiez avant de réessayer. Vos informations sont conservées.';
 
 	/// fr: 'Cette invitation ne peut pas être envoyée'
 	String get refusTitre => 'Cette invitation ne peut pas être envoyée';
 
-	/// fr: 'Revenez à Ma famille pour voir l'état de la place.'
-	String get refusPhrase => 'Revenez à Ma famille pour voir l\'état de la place.';
+	/// fr: 'Ma famille indique l'état actuel de la place.'
+	String get refusPhrase => 'Ma famille indique l\'état actuel de la place.';
 
 	/// fr: 'Invitation envoyée'
 	String get envoyeeTitre => 'Invitation envoyée';
@@ -9095,8 +9104,8 @@ class Traductions$adulte$invitation$fr {
 	/// fr: 'Annuler cette invitation ?'
 	String get annulerQuestionSansPrenom => 'Annuler cette invitation ?';
 
-	/// fr: 'Vous êtes hors ligne. L'invitation pourra être annulée quand la connexion reviendra.'
-	String get annulerHorsLigne => 'Vous êtes hors ligne. L\'invitation pourra être annulée quand la connexion reviendra.';
+	/// fr: 'Vous êtes hors ligne. Rien n'est annulé. Vous pourrez annuler l'invitation vous-même quand la connexion sera revenue.'
+	String get annulerHorsLigne => 'Vous êtes hors ligne. Rien n\'est annulé. Vous pourrez annuler l\'invitation vous-même quand la connexion sera revenue.';
 
 	/// fr: 'L'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.'
 	String get annulerConsequence => 'L\'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.';
@@ -9104,11 +9113,11 @@ class Traductions$adulte$invitation$fr {
 	/// fr: 'Garder l'invitation'
 	String get garder => 'Garder l\'invitation';
 
-	/// fr: 'L'annulation n'a pas été confirmée'
-	String get annulationEchecTitre => 'L\'annulation n\'a pas été confirmée';
+	/// fr: 'L'annulation n'a pas été confirmée.'
+	String get annulationEchecTitre => 'L\'annulation n\'a pas été confirmée.';
 
-	/// fr: 'La connexion a été interrompue. Vérifiez avant de réessayer.'
-	String get annulationEchecPhrase => 'La connexion a été interrompue. Vérifiez avant de réessayer.';
+	/// fr: 'Vérifiez avant de réessayer.'
+	String get annulationEchecPhrase => 'Vérifiez avant de réessayer.';
 }
 
 // Path: adulte.demo
@@ -16527,6 +16536,8 @@ extension on Traductions {
 			'adulte.famille.place.envoyeeA' => ({required Object courriel}) => 'Envoyée à ${courriel}',
 			'adulte.famille.place.expiree' => 'L\'invitation précédente a expiré. Vous pouvez en envoyer une nouvelle.',
 			'adulte.famille.place.annulee' => 'L\'invitation a été annulée et ne peut plus être acceptée. Vous pouvez en envoyer une nouvelle.',
+			'adulte.invitation.titreElle' => 'Inviter ma conjointe',
+			'adulte.invitation.titreLui' => 'Inviter mon conjoint',
 			'adulte.invitation.enteteElle' => 'Un compte personnel pour elle',
 			'adulte.invitation.enteteLui' => 'Un compte personnel pour lui',
 			'adulte.invitation.phraseElle' => 'Votre conjointe utilisera son propre compte. Elle ne pourra pas gérer votre foyer ni les profils élèves que vous avez créés.',
@@ -16535,7 +16546,8 @@ extension on Traductions {
 			'adulte.invitation.nom' => 'Nom',
 			'adulte.invitation.nomAide' => 'Facultatif.',
 			'adulte.invitation.courriel' => 'Adresse e-mail',
-			'adulte.invitation.courrielAide' => 'Nous l\'utiliserons seulement pour lui envoyer cette invitation.',
+			'adulte.invitation.courrielAideElle' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjointe l\'invitation à rejoindre Rewayah.',
+			'adulte.invitation.courrielAideLui' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjoint l\'invitation à rejoindre Rewayah.',
 			'adulte.invitation.prenomRequis' => 'Indiquez son prénom.',
 			'adulte.invitation.courrielRequis' => 'Indiquez son adresse e-mail.',
 			'adulte.invitation.courrielInvalide' => 'Vérifiez l\'adresse e-mail : elle doit ressembler à nom@exemple.com.',
@@ -16545,11 +16557,11 @@ extension on Traductions {
 			'adulte.invitation.nonRenseigne' => 'Non renseigné',
 			'adulte.invitation.modifier' => 'Modifier',
 			'adulte.invitation.envoyer' => 'Envoyer l\'invitation',
-			'adulte.invitation.horsLigne' => 'Vous êtes hors ligne. L\'invitation pourra partir quand la connexion reviendra.',
-			'adulte.invitation.echecTitre' => 'L\'envoi de l\'invitation n\'a pas été confirmé',
-			'adulte.invitation.echecPhrase' => 'La connexion a été interrompue. Vos informations sont conservées. Vérifiez avant de réessayer.',
+			'adulte.invitation.horsLigne' => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez envoyer l\'invitation vous-même quand la connexion sera revenue.',
+			'adulte.invitation.echecTitre' => 'L\'envoi n\'a pas été confirmé.',
+			'adulte.invitation.echecPhrase' => 'Vérifiez avant de réessayer. Vos informations sont conservées.',
 			'adulte.invitation.refusTitre' => 'Cette invitation ne peut pas être envoyée',
-			'adulte.invitation.refusPhrase' => 'Revenez à Ma famille pour voir l\'état de la place.',
+			'adulte.invitation.refusPhrase' => 'Ma famille indique l\'état actuel de la place.',
 			'adulte.invitation.envoyeeTitre' => 'Invitation envoyée',
 			'adulte.invitation.envoyeePhrase' => ({required Object courriel}) => 'L\'invitation est partie vers ${courriel}.',
 			'adulte.invitation.revenirMaFamille' => 'Revenir à Ma famille',
@@ -16557,11 +16569,11 @@ extension on Traductions {
 			'adulte.invitation.annuler' => 'Annuler l\'invitation',
 			'adulte.invitation.annulerQuestion' => ({required Object prenom}) => 'Annuler l\'invitation de ${prenom} ?',
 			'adulte.invitation.annulerQuestionSansPrenom' => 'Annuler cette invitation ?',
-			'adulte.invitation.annulerHorsLigne' => 'Vous êtes hors ligne. L\'invitation pourra être annulée quand la connexion reviendra.',
+			'adulte.invitation.annulerHorsLigne' => 'Vous êtes hors ligne. Rien n\'est annulé. Vous pourrez annuler l\'invitation vous-même quand la connexion sera revenue.',
 			'adulte.invitation.annulerConsequence' => 'L\'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.',
 			'adulte.invitation.garder' => 'Garder l\'invitation',
-			'adulte.invitation.annulationEchecTitre' => 'L\'annulation n\'a pas été confirmée',
-			'adulte.invitation.annulationEchecPhrase' => 'La connexion a été interrompue. Vérifiez avant de réessayer.',
+			'adulte.invitation.annulationEchecTitre' => 'L\'annulation n\'a pas été confirmée.',
+			'adulte.invitation.annulationEchecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.demo.titre' => 'Démonstration de l\'élève adulte',
 			'adulte.demo.mention' => 'Les données sont fictives et rien n\'est envoyé.',
 			'adulte.demo.intro' => 'Choisissez un écran, puis une situation du foyer Diallo.',

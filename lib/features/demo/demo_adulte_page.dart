@@ -34,6 +34,7 @@ import '../../core/foyer/profil_eleve_brouillon.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/mouvement/mouvement.dart';
 import '../../core/planning/service_planning.dart' show monFuseauProvider;
 import '../../core/profil/service_acceptations.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -975,6 +976,12 @@ class _CreationProfilDemo implements PortCreationProfilEleve {
 /// reseau » rend la coupure ; « Double soumission » repond apres une latence
 /// SIMULEE, qui laisse voir le bouton en attente et le second appui ignore
 /// (ce n'est pas un delai du produit, F17).
+///
+/// Reponse tardive apres annulation (doc section 5.2, EA-6c) : apres
+/// `annuler()`, la demonstration fait arriver l'acceptation de l'invitee ;
+/// Ma famille lit alors la place que le serveur de demonstration rend apres
+/// cette acceptation (`DonneesAdulteDemo.acceptationRecue`, situation
+/// « Invitation annulee ») : personne n'est rattache (EA-BR-15).
 class _InvitationDemo implements PortInvitationConjoint {
   const _InvitationDemo(this.etat);
 
@@ -1002,8 +1009,9 @@ class _InvitationDemo implements PortInvitationConjoint {
   );
 }
 
-/// La latence reseau simulee de la situation « Double soumission ».
-const Duration latenceSimulee = Duration(milliseconds: 800);
+/// La latence reseau simulee de la situation « Double soumission » : le
+/// jeton de mouvement le plus long (EA-6c), assez pour voir l'attente.
+const Duration latenceSimulee = Mouvement.maximum;
 
 /// Une page provisoire : son titre et une phrase qui dit ce qui viendra.
 class _PageProvisoire extends StatelessWidget {

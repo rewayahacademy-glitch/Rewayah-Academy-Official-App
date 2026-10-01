@@ -4,7 +4,15 @@
 // section 5.2 cote titulaire : en preparation (etape 2), envoyee, expiree et
 // annulee (sur la ligne de Ma famille, F21), erreur reseau, double envoi,
 // reponse tardive apres annulation (le serveur ne rattache personne, la
-// ligne reste « annulee »).
+// ligne reste « annulee » ; la demonstration fait arriver cette acceptation
+// tardive, `DonneesAdulteDemo.acceptationRecue`, EA-6c).
+//
+// Textes (EA-6c) : le titre « Inviter ma conjointe / mon conjoint » et les
+// boutons « Continuer » puis « Envoyer l'invitation » suivent la decision
+// E4 ; l'en-tete, sa phrase et l'aide de l'adresse viennent de la planche
+// 2.2 et du doc section 19 ; les echecs reseau suivent D5 mot pour mot.
+// Les autres libelles n'ont aucune source (spec, planche) : chacun est
+// marque « libelle provisoire, lexique D4 » la ou il est lu.
 //
 // Rien de recree (K-51) : `PageEtape` et sa rangee d'etape, `ActionPrincipale`,
 // `EtatSysteme`, `ConfirmDestructive`, `LigneCleValeur`, `PageShell`.
@@ -193,6 +201,15 @@ class InviterConjointPage extends ConsumerStatefulWidget {
   /// « Revenir a Ma famille » apres l'envoi.
   static const Key revenirKey = Key('invitation.revenir');
 
+  /// Le titre de l'etape 2, qui prend le focus a son apparition.
+  static const Key focusEtape2Key = Key('invitation.focusEtape2');
+
+  /// L'echec d'un envoi, qui prend le focus a son apparition.
+  static const Key focusEchecKey = Key('invitation.focusEchec');
+
+  /// Le resultat « Invitation envoyee », qui prend le focus.
+  static const Key focusResultatKey = Key('invitation.focusResultat');
+
   @override
   ConsumerState<InviterConjointPage> createState() =>
       _InviterConjointPageState();
@@ -319,9 +336,11 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
           _echec = _Echec.reseau;
       }
     });
-    // Ma famille relira la place : « Invitation envoyee », jamais un
-    // rattachement (E7).
-    if (_partie) ref.invalidate(foyerTitulaireProvider);
+    // Ma famille relira la place : « Invitation envoyee » apres l'envoi,
+    // jamais un rattachement (E7) ; son etat reel apres un refus.
+    if (_partie || _echec == _Echec.refus) {
+      ref.invalidate(foyerTitulaireProvider);
+    }
   }
 
   @override
@@ -330,7 +349,9 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
     if (_partie) {
       return PageShell(
         titre: t.adulte.invitation.envoyeeTitre,
+        // Le contenu part du bord du titre de la page (1440 compris).
         child: _Colonne(
+          auBordDeDebut: true,
           child: _Resultat(
             courriel: _courriel.text.trim(),
             onRevenir: widget.onTerminee,
@@ -362,9 +383,10 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         _Titre(
+          // Decision E4 : « Inviter ma conjointe / Inviter mon conjoint ».
           titre: f
-              ? t.adulte.famille.place.ajouterConjointe
-              : t.adulte.famille.place.ajouterConjoint,
+              ? t.adulte.invitation.titreElle
+              : t.adulte.invitation.titreLui,
           sousTitre: f
               ? t.adulte.invitation.enteteElle
               : t.adulte.invitation.enteteLui,
@@ -379,6 +401,7 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
           onChanged: _modifie,
           textCapitalization: TextCapitalization.words,
           textInputAction: TextInputAction.next,
+          // Erreurs de saisie : libelles provisoires, lexique D4.
           decoration: InputDecoration(
             labelText: t.adulte.invitation.prenom,
             errorText: _erreurPrenom,
@@ -392,6 +415,7 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
           onChanged: _modifie,
           textCapitalization: TextCapitalization.words,
           textInputAction: TextInputAction.next,
+          // « Facultatif. » : libelle provisoire, lexique D4 (Q7).
           decoration: InputDecoration(
             labelText: t.adulte.invitation.nom,
             helperText: t.adulte.invitation.nomAide,
@@ -408,9 +432,12 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
           textInputAction: TextInputAction.done,
           autofillHints: const <String>[AutofillHints.email],
           onSubmitted: (String _) => _verifier(),
+          // L'aide de la planche 2.2, accordee au genre de la place.
           decoration: InputDecoration(
             labelText: t.adulte.invitation.courriel,
-            helperText: t.adulte.invitation.courrielAide,
+            helperText: f
+                ? t.adulte.invitation.courrielAideElle
+                : t.adulte.invitation.courrielAideLui,
             helperMaxLines: 3,
             errorText: _erreurCourriel,
             errorMaxLines: 3,
@@ -433,15 +460,21 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
   Widget _pageVerification(BuildContext context, bool horsLigne) {
     final String nom = _nom.text.trim();
     final Widget? etat = switch (_echec) {
+      // D5 : l'ecran ne dit que ce qu'il sait, l'envoi n'est pas confirme.
       _Echec.reseau => EtatSysteme(
         nature: NatureEtat.echecServeur,
         titre: t.adulte.invitation.echecTitre,
         phrase: t.adulte.invitation.echecPhrase,
       ),
+      // Refus neutre (F4) : une action, revenir a Ma famille qui dit l'etat
+      // reel de la place ; « Envoyer » ne reste pas actif. Titre et phrase :
+      // libelles provisoires, lexique D4.
       _Echec.refus => EtatSysteme(
         nature: NatureEtat.accesRefuse,
         titre: t.adulte.invitation.refusTitre,
         phrase: t.adulte.invitation.refusPhrase,
+        libelleAction: t.adulte.invitation.revenirMaFamille,
+        onAction: widget.onAbandon,
       ),
       _Echec.indisponible => const EtatSysteme(
         nature: NatureEtat.indisponible,
@@ -452,9 +485,14 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        _Titre(
-          titre: t.adulte.invitation.verifierTitre,
-          phrase: t.adulte.invitation.verifierPhrase,
+        // « Verifier et envoyer » (planche 2.2, UX_REVIEW_07 ligne 9) ; sa
+        // phrase et « Non renseigne » : libelles provisoires, lexique D4.
+        _FocusALApparition(
+          key: InviterConjointPage.focusEtape2Key,
+          child: _Titre(
+            titre: t.adulte.invitation.verifierTitre,
+            phrase: t.adulte.invitation.verifierPhrase,
+          ),
         ),
         Ecart.vXxl,
         _Carte(
@@ -474,7 +512,14 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
             ),
           ],
         ),
-        if (etat != null) ...<Widget>[Ecart.vLg, etat],
+        if (etat != null) ...<Widget>[
+          Ecart.vLg,
+          _FocusALApparition(
+            key: InviterConjointPage.focusEchecKey,
+            child: etat,
+          ),
+        ],
+        // Hors ligne : rien ne part tout seul. Libelle provisoire, lexique D4.
         if (horsLigne) ...<Widget>[
           Ecart.vLg,
           _Note(texte: t.adulte.invitation.horsLigne),
@@ -491,7 +536,10 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
           principale: ActionPrincipale(
             key: InviterConjointPage.envoyerKey,
             libelle: t.adulte.invitation.envoyer,
-            onPress: horsLigne || _echec == _Echec.indisponible
+            onPress:
+                horsLigne ||
+                    _echec == _Echec.indisponible ||
+                    _echec == _Echec.refus
                 ? null
                 : () => unawaited(_envoyer()),
             enCours: _envoi,
@@ -586,10 +634,14 @@ class _InvitationEnvoyeePageState extends ConsumerState<InvitationEnvoyeePage> {
     return PageShell(
       titre: t.adulte.famille.place.invitationEnvoyee,
       onRetour: widget.onRetour,
+      // Le contenu part du bord du titre de la page, aussi a 1440 (EA-6c).
       child: _Colonne(
+        auBordDeDebut: true,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            // Phrase, question, consequence et « Garder l'invitation » :
+            // libelles provisoires, lexique D4.
             _Note(texte: t.adulte.invitation.detailPhrase, attenuee: true),
             if (invitation.prenom != null ||
                 invitation.courriel != null) ...<Widget>[
@@ -609,12 +661,16 @@ class _InvitationEnvoyeePageState extends ConsumerState<InvitationEnvoyeePage> {
                 ],
               ),
             ],
+            // D5 : l'annulation n'est pas confirmee, rien de plus.
             if (_echec == _Echec.reseau) ...<Widget>[
               Ecart.vLg,
-              EtatSysteme(
-                nature: NatureEtat.echecServeur,
-                titre: t.adulte.invitation.annulationEchecTitre,
-                phrase: t.adulte.invitation.annulationEchecPhrase,
+              _FocusALApparition(
+                key: InviterConjointPage.focusEchecKey,
+                child: EtatSysteme(
+                  nature: NatureEtat.echecServeur,
+                  titre: t.adulte.invitation.annulationEchecTitre,
+                  phrase: t.adulte.invitation.annulationEchecPhrase,
+                ),
               ),
             ] else if (_echec == _Echec.indisponible) ...<Widget>[
               Ecart.vLg,
@@ -623,6 +679,7 @@ class _InvitationEnvoyeePageState extends ConsumerState<InvitationEnvoyeePage> {
                 dependance: 'EA-BR-15',
               ),
             ],
+            // Rien ne s'annule tout seul. Libelle provisoire, lexique D4.
             if (horsLigne) ...<Widget>[
               Ecart.vLg,
               _Note(texte: t.adulte.invitation.annulerHorsLigne),
@@ -660,11 +717,15 @@ class _Resultat extends StatelessWidget {
     key: InviterConjointPage.envoyeeKey,
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: <Widget>[
-      Semantics(
-        liveRegion: true,
-        child: _Note(
-          texte: t.adulte.invitation.envoyeePhrase(courriel: courriel),
-          attenuee: true,
+      // La phrase du resultat : libelle provisoire, lexique D4.
+      _FocusALApparition(
+        key: InviterConjointPage.focusResultatKey,
+        child: Semantics(
+          liveRegion: true,
+          child: _Note(
+            texte: t.adulte.invitation.envoyeePhrase(courriel: courriel),
+            attenuee: true,
+          ),
         ),
       ),
       Ecart.vLg,
@@ -805,18 +866,57 @@ class _Actions extends StatelessWidget {
   );
 }
 
-/// La colonne bornee a la largeur de dialogue, centree (contrat D) : pleine
-/// largeur sur telephone, jamais etiree sur bureau.
+/// La colonne bornee a la largeur de dialogue (contrat D) : pleine largeur
+/// sur telephone, jamais etiree sur bureau. Centree sous la rangee d'etape ;
+/// au bord de debut sous le titre d'un `PageShell`, pour que le contenu parte
+/// du meme bord que le titre (EA-6c).
 class _Colonne extends StatelessWidget {
-  const _Colonne({required this.child});
+  const _Colonne({required this.child, this.auBordDeDebut = false});
+
+  final Widget child;
+  final bool auBordDeDebut;
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget borne = ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: AppPage.largeurDialogue),
+      child: child,
+    );
+    return auBordDeDebut
+        ? Align(alignment: AlignmentDirectional.topStart, child: borne)
+        : Center(child: borne);
+  }
+}
+
+/// Prend le focus a son apparition (EA-6c) : le titre de l'etape 2, un echec
+/// ou le resultat sont lus d'abord, au clavier comme au lecteur d'ecran.
+class _FocusALApparition extends StatefulWidget {
+  const _FocusALApparition({required this.child, super.key});
 
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => Center(
-    child: ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: AppPage.largeurDialogue),
-      child: child,
-    ),
-  );
+  State<_FocusALApparition> createState() => _FocusALApparitionState();
+}
+
+class _FocusALApparitionState extends State<_FocusALApparition> {
+  final FocusNode _noeud = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted) _noeud.requestFocus();
+    });
+  }
+
+  @override
+  void dispose() {
+    _noeud.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      Focus(focusNode: _noeud, child: widget.child);
 }

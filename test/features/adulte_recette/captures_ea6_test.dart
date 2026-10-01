@@ -11,10 +11,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
@@ -215,5 +217,94 @@ void main() {
         );
       });
     }
+
+    // Refus neutre et hors ligne (EA-6c) : la demonstration ne rend ni l'un
+    // ni l'autre sur sa route (sa coquille fixe la connexion), la page
+    // reelle est donc montee seule avec le port et la connexion surcharges.
+    for (final (String nom, bool horsLigne) in <(String, bool)>[
+      ('refus', false),
+      ('hors_ligne', true),
+    ]) {
+      for (final ThemeMode mode in <ThemeMode>[
+        ThemeMode.light,
+        ThemeMode.dark,
+      ]) {
+        final String fichier = 'ea6_inviter_conjoint_390_${mode.name}_$nom';
+        testWidgets(fichier, (WidgetTester tester) async {
+          fixerVueCapture(tester, const Size(390, 844), 1);
+          await tester.pumpWidget(
+            ProviderScope(
+              overrides: <Override>[
+                horsLigneProvider.overrideWith(
+                  (Ref _) => Stream<bool>.value(horsLigne),
+                ),
+                portInvitationConjointProvider.overrideWithValue(
+                  const _PortRefus(),
+                ),
+              ],
+              child: TranslationProvider(
+                child: RepaintBoundary(
+                  key: cadreCapture,
+                  child: MaterialApp(
+                    debugShowCheckedModeBanner: false,
+                    theme: AppTheme.pour(
+                      InterfaceMode.standard,
+                      Brightness.light,
+                    ),
+                    darkTheme: AppTheme.pour(
+                      InterfaceMode.standard,
+                      Brightness.dark,
+                    ),
+                    themeMode: mode,
+                    locale: AppLocale.fr.flutterLocale,
+                    supportedLocales: AppLocaleUtils.supportedLocales,
+                    localizationsDelegates:
+                        GlobalMaterialLocalizations.delegates,
+                    home: InviterConjointPage(
+                      placeFeminine: true,
+                      onAbandon: () {},
+                      onTerminee: () {},
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+          await stabiliser(tester);
+          await tester.enterText(
+            find.byKey(InviterConjointPage.prenomKey),
+            'Mariama',
+          );
+          await tester.enterText(
+            find.byKey(InviterConjointPage.courrielKey),
+            'mariama@example.com',
+          );
+          await tester.pump();
+          await tester.tap(find.byKey(InviterConjointPage.verifierKey));
+          await tester.pumpAndSettle();
+          if (!horsLigne) {
+            await tester.ensureVisible(
+              find.byKey(InviterConjointPage.envoyerKey),
+            );
+            await tester.tap(find.byKey(InviterConjointPage.envoyerKey));
+            await tester.pumpAndSettle();
+          }
+          await stabiliser(tester);
+          debugPrint('PNG ${await capturer(tester, fichier)}');
+        });
+      }
+    }
   });
+}
+
+/// Un serveur qui refuse l'invitation, sans dire pourquoi (F4).
+class _PortRefus implements PortInvitationConjoint {
+  const _PortRefus();
+
+  @override
+  Future<ResultatInvitation> envoyer(InvitationConjoint _) async =>
+      const InvitationRefusee();
+
+  @override
+  Future<ResultatAnnulation> annuler() async => const AnnulationFaite();
 }

@@ -158,6 +158,11 @@ bool placeActionnable(EtatPlaceAdulte place) =>
 
 /// La legende de la ligne de la place : l'invitation a envoyer, la fin de la
 /// precedente, ou l'adresse de celle qui attend (F21).
+///
+/// « Invitez votre conjointe a rejoindre Rewayah avec son propre compte »
+/// vient de la planche 2.1 ; « Envoyee a {courriel} », la fin expiree et la
+/// fin annulee n'ont aucune source (spec, planche) : libelles provisoires,
+/// lexique D4 (EA-6c).
 String? legendePlace(FoyerTitulaireVM vue) => switch (vue.place) {
   PlaceDisponible(precedente: FinInvitation.expiree) =>
     t.adulte.famille.place.expiree,

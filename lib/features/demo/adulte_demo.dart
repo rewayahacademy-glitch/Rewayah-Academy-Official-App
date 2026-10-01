@@ -278,14 +278,28 @@ abstract final class DonneesAdulteDemo {
       EtatDemoAdulte.invitationExpiree => const PlaceDisponible(
         precedente: FinInvitation.expiree,
       ),
-      EtatDemoAdulte.invitationAnnulee => const PlaceDisponible(
-        precedente: FinInvitation.annulee,
+      // Reponse tardive apres annulation (doc section 5.2, EA-6c) : la
+      // demonstration fait arriver l'acceptation de l'invitee APRES
+      // l'annulation ; le serveur de demonstration ne rattache personne.
+      EtatDemoAdulte.invitationAnnulee => acceptationRecue(
+        const PlaceDisponible(precedente: FinInvitation.annulee),
+        prenomSecondAdulte(genre),
       ),
       EtatDemoAdulte.validationEnAttente => const ValidationEnAttente(),
       EtatDemoAdulte.validationRefusee => const ValidationRefusee(),
       _ => const PlaceDisponible(),
     };
   }
+
+  /// Le serveur de demonstration recoit l'acceptation de [prenom] (EA-BR-15) :
+  /// seule une invitation encore envoyee rattache le second adulte ; une
+  /// acceptation qui arrive apres l'annulation ou l'expiration (reponse
+  /// tardive, doc section 5.2) ne rattache personne et la place reste telle
+  /// quelle (EA-6c).
+  static EtatPlaceAdulte acceptationRecue(
+    EtatPlaceAdulte place,
+    String prenom,
+  ) => place is InvitationEnvoyee ? PlaceOccupee(prenom) : place;
 
   /// L'invitation envoyee au second adulte (EA-6, EA-BR-15) : le prenom et
   /// l'adresse fictive (RFC 2606) que le titulaire a saisis.
