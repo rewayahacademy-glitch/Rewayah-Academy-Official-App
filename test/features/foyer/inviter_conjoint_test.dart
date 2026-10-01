@@ -7,6 +7,8 @@
 // envoi, reponse tardive apres annulation, hors ligne, indisponible.
 
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -627,6 +629,35 @@ void main() {
       );
     });
 
+    testWidgets('hors ligne a l\'annulation : "Annuler" attend, dit '
+        'pourquoi (EA-6c)', (WidgetTester tester) async {
+      taille(tester, const Size(390, 844));
+      await tester.pumpWidget(
+        _page(
+          horsLigne: true,
+          child: InvitationEnvoyeePage(
+            invitation: DonneesAdulteDemo.invitationEnvoyee(
+              GenreTitulaireDemo.homme,
+            ),
+            onRetour: () {},
+            onAnnulee: () {},
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(find.text(t.adulte.invitation.annulerHorsLigne), findsOneWidget);
+      // Rien ne s'annule tout seul au retour de la connexion.
+      expect(find.textContaining('annulera'), findsNothing);
+      expect(
+        tester
+            .widget<ActionPrincipale>(
+              find.byKey(InvitationEnvoyeePage.annulerKey),
+            )
+            .onPress,
+        isNull,
+      );
+    });
+
     testWidgets('sans source serveur (EA-BR-15) : indisponible, jamais '
         '« envoyee »', (WidgetTester tester) async {
       taille(tester, const Size(390, 844));
@@ -722,6 +753,32 @@ void main() {
       await tester.pump();
       expect(quitte, isTrue);
     });
+  });
+
+  test('E5/K-53.6 : aucun mot "admin" dans les textes adulte.* et foyer.*', () {
+    final Map<String, dynamic> lexique = jsonDecode(
+      File('assets/i18n/fr.i18n.json').readAsStringSync(),
+    ) as Map<String, dynamic>;
+    final RegExp motAdmin = RegExp(r'\badmin\b', caseSensitive: false);
+    final List<String> fautifs = <String>[];
+    void parcourir(String chemin, dynamic valeur) {
+      if (valeur is String) {
+        if (motAdmin.hasMatch(valeur)) fautifs.add('$chemin: "$valeur"');
+      } else if (valeur is Map<String, dynamic>) {
+        valeur.forEach((String cle, dynamic v) => parcourir('$chemin.$cle', v));
+      } else if (valeur is List<dynamic>) {
+        for (final (int i, dynamic v) in valeur.indexed) {
+          parcourir('$chemin[$i]', v);
+        }
+      }
+    }
+
+    for (final String racine in <String>['adulte', 'foyer']) {
+      if (lexique[racine] case final Map<String, dynamic> section) {
+        parcourir(racine, section);
+      }
+    }
+    expect(fautifs, isEmpty, reason: fautifs.join('\n'));
   });
 }
 
