@@ -30,6 +30,23 @@
 // rend `CapaciteIndisponible`, la demonstration le surcharge (K-28). Les deux
 // lectures sont independantes : une panne de l'une ne masque pas l'autre, et
 // les rubriques restent en place dans tous les cas.
+//
+// Corrections EA-4c (revue du 27/09) :
+// - la ligne famille passe par `BlocAsynchrone` : squelette pendant la
+//   lecture, erreur avec « Reessayer », indisponible dit comme tel ; elle ne
+//   disparait plus en silence ; sans reseau, un echec se dit « hors ligne »
+//   (meme regle que le Foyer) ;
+// - le second adulte rattache voit, sous « Forfait famille », les
+//   « Paiements du foyer » (decision E3, spec section 7.1) : la meme page que
+//   le titulaire, jamais le Foyer ni les enfants (F6, F7) ;
+// - « Non disponible » n'est plus pose en dur : il suit la source de la page
+//   d'arrivee (paiements, aide), ou l'absence de toute source (Mes accords,
+//   Cours et acces, EA-BR-08 et 09) ; les legendes ne promettent plus une
+//   action que la page dit impossible, et ne melangent plus « mes » et
+//   « vos » ;
+// - sur bureau, la ligne famille suit « Mon compte » dans la colonne de debut
+//   (l'ordre du telephone) et la colonne de fin commence par le titre « Aide
+//   et support », a la hauteur du titre « Mon compte ».
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,6 +56,7 @@ import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
@@ -49,7 +67,11 @@ import '../../core/widgets/skeleton.dart';
 import '../compte/carte_rubriques.dart' show ColonneSousPage;
 import '../compte/compte_tuteur_page.dart'
     show CarteDeconnexion, CarteIdentiteCompte;
-import '../compte/donnees_compte.dart' show identiteTitulaireProvider;
+import '../compte/donnees_compte.dart'
+    show
+        canalSupportProvider,
+        identiteTitulaireProvider,
+        paiementsFoyerProvider;
 import '../foyer/photo_eleve.dart';
 
 /// La ligne famille de Mon espace (UX_REVIEW_07 ligne 5 a) : jamais deux a
@@ -90,6 +112,10 @@ enum RubriqueMonEspace {
 
   /// Informations legales.
   informationsLegales,
+
+  /// Paiements du foyer, sous « Forfait famille » : le second adulte
+  /// rattache seulement (decision E3).
+  paiementsFoyer,
 }
 
 /// Ce que Mon espace lit en plus de l'identite (`identiteTitulaireProvider`).
@@ -127,8 +153,12 @@ class MonEspaceAdultePage extends ConsumerWidget {
   /// Ouvre la ligne famille.
   final void Function(LigneFamilleAdulte ligne)? onFamille;
 
-  /// La cle de la ligne famille.
+  /// La cle de la ligne famille (le groupe rendu, jamais son etat).
   static const Key ligneFamilleKey = Key('adulte.monEspace.famille');
+
+  /// La cle du bloc de la ligne famille : squelette, erreur, indisponible
+  /// ou la ligne elle-meme.
+  static const Key blocFamilleKey = Key('adulte.monEspace.famille.bloc');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -138,9 +168,22 @@ class MonEspaceAdultePage extends ConsumerWidget {
     final MonEspaceAdulteVM? vue = lecture.hasValue && !lecture.hasError
         ? lecture.requireValue
         : null;
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final bool large = AppGabarit.de(context).estLarge;
     final double ecart = large ? AppSpacing.lg : AppSpacing.md;
-    final LigneFamilleAdulte? famille = vue?.ligneFamille;
+
+    // « Non disponible » suit la source de la page d'arrivee : les paiements
+    // (DB-CPT-03) et l'aide (DB-CPT-07) le disent tant que leur port est
+    // indisponible ou sans canal, jamais en dur.
+    final String? paiementsValeur = _indisponible(
+      ref.watch(paiementsFoyerProvider),
+    );
+    final AsyncValue<Object?> canal = ref.watch(canalSupportProvider);
+    final String? aideValeur =
+        _indisponible(canal) ??
+        (canal.hasValue && !canal.hasError && canal.requireValue == null
+            ? t.compte.nonDisponible
+            : null);
 
     LigneRubrique rubrique(
       RubriqueMonEspace r,
@@ -156,22 +199,36 @@ class MonEspaceAdultePage extends ConsumerWidget {
       onPress: onOuvrir == null ? null : () => onOuvrir!(r),
     );
 
-    final Widget identite = BlocAsynchrone<IdentiteTitulaire>(
-      valeur: ref.watch(identiteTitulaireProvider),
-      squelette: const Skeleton(hauteur: AppSpacing.respiration * 2),
-      onReessayer: () => ref.invalidate(identiteTitulaireProvider),
-      construire: (IdentiteTitulaire lue) => CarteIdentiteCompte(
-        identite: lue,
-        large: large,
-        role: t.adulte.monEspace.role,
-        pastilleEtatNormal: false,
-        photo: (double diametre) => PhotoEleve(
-          prenom: lue.prenom,
-          cleAvatar: vue?.cleAvatar,
-          diametre: diametre,
-        ),
-      ),
+    // Sans reseau, un echec se dit « hors ligne », pas « le serveur n'a pas
+    // repondu » (meme regle que le Foyer) ; une capacite absente reste dite
+    // indisponible, hors ligne ou non.
+    bool echecHorsLigne(AsyncValue<Object?> v) =>
+        horsLigne && v.hasError && v.error is! CapaciteIndisponible;
+
+    final AsyncValue<IdentiteTitulaire> identiteLue = ref.watch(
+      identiteTitulaireProvider,
     );
+    final Widget identite = echecHorsLigne(identiteLue)
+        ? EtatSysteme(
+            nature: NatureEtat.horsLigne,
+            onAction: () => ref.invalidate(identiteTitulaireProvider),
+          )
+        : BlocAsynchrone<IdentiteTitulaire>(
+            valeur: identiteLue,
+            squelette: const Skeleton(hauteur: AppSpacing.respiration * 2),
+            onReessayer: () => ref.invalidate(identiteTitulaireProvider),
+            construire: (IdentiteTitulaire lue) => CarteIdentiteCompte(
+              identite: lue,
+              large: large,
+              role: t.adulte.monEspace.role,
+              pastilleEtatNormal: false,
+              photo: (double diametre) => PhotoEleve(
+                prenom: lue.prenom,
+                cleAvatar: vue?.cleAvatar,
+                diametre: diametre,
+              ),
+            ),
+          );
 
     final Widget compte = GroupeReglages(
       titre: t.adulte.monEspace.monCompte,
@@ -182,23 +239,29 @@ class MonEspaceAdultePage extends ConsumerWidget {
           t.adulte.monEspace.informations,
           legende: t.compte.tuteur.informations.resume,
         ),
+        // Aucune source (EA-BR-09) : la page d'arrivee le dit toujours.
         rubrique(
           RubriqueMonEspace.coursAcces,
           AppIcons.classes,
           t.adulte.monEspace.coursAcces,
           legende: t.adulte.monEspace.coursAccesLegende,
+          valeur: t.compte.nonDisponible,
         ),
         rubrique(
           RubriqueMonEspace.paiements,
           AppIcons.finance,
           t.adulte.monEspace.paiements,
           legende: t.adulte.monEspace.paiementsLegende,
+          valeur: paiementsValeur,
         ),
+        // Aucune source (EA-BR-08) : la page d'arrivee le dit toujours.
         rubrique(
           RubriqueMonEspace.accords,
           AppIcons.controleQualite,
           t.adulte.monEspace.accords,
+          // `accordsLegende` : libelle provisoire, lexique D4.
           legende: t.adulte.monEspace.accordsLegende,
+          valeur: t.compte.nonDisponible,
         ),
         rubrique(
           RubriqueMonEspace.securite,
@@ -215,30 +278,69 @@ class MonEspaceAdultePage extends ConsumerWidget {
       ],
     );
 
-    final Widget? ligneFamille = famille == null
+    Widget groupeFamille(LigneFamilleAdulte famille) => KeyedSubtree(
+      key: ligneFamilleKey,
+      child: GroupeReglages(
+        lignes: <LigneRubrique>[
+          LigneRubrique(
+            icone: AppIcons.foyer,
+            libelle: switch (famille) {
+              LigneFamilleAdulte.ajouterMaFamille => t.adulte.famille.ajouter,
+              LigneFamilleAdulte.maFamille => t.adulte.famille.maFamille,
+              LigneFamilleAdulte.forfaitFamille =>
+                t.adulte.famille.forfaitFamille,
+            },
+            // Une seule ligne secondaire, sous « Ajouter ma famille »
+            // seulement : la 1re phrase du doc section 19 (ligne 5 b).
+            legende: famille == LigneFamilleAdulte.ajouterMaFamille
+                ? t.adulte.famille.ajouterLegende
+                : null,
+            onPress: onFamille == null ? null : () => onFamille!(famille),
+          ),
+          // Le second adulte rattache voit les paiements du foyer (E3, spec
+          // section 7.1), sans en etre le gestionnaire : la page des
+          // paiements, jamais le Foyer ni les enfants (F6, F7). Source
+          // serveur : EA-BR-16.
+          if (famille == LigneFamilleAdulte.forfaitFamille)
+            rubrique(
+              RubriqueMonEspace.paiementsFoyer,
+              AppIcons.finance,
+              t.adulte.famille.paiementsFoyer,
+              valeur: paiementsValeur,
+            ),
+        ],
+      ),
+    );
+
+    // La ligne famille : absente seulement quand la lecture a abouti sans
+    // ligne (la situation n'en rend aucune) ; sinon son etat se dit.
+    final bool sansLigne = vue != null && vue.ligneFamille == null;
+    final Object? erreurFamille = lecture.hasError ? lecture.error : null;
+    final Widget? famille = sansLigne
         ? null
         : KeyedSubtree(
-            key: ligneFamilleKey,
-            child: GroupeReglages(
-              lignes: <LigneRubrique>[
-                LigneRubrique(
-                  icone: AppIcons.foyer,
-                  libelle: switch (famille) {
-                    LigneFamilleAdulte.ajouterMaFamille =>
-                      t.adulte.famille.ajouter,
-                    LigneFamilleAdulte.maFamille => t.adulte.famille.maFamille,
-                    LigneFamilleAdulte.forfaitFamille =>
-                      t.adulte.famille.forfaitFamille,
-                  },
-                  // Une seule ligne secondaire, sous « Ajouter ma famille »
-                  // seulement : la 1re phrase du doc section 19 (ligne 5 b).
-                  legende: famille == LigneFamilleAdulte.ajouterMaFamille
-                      ? t.adulte.famille.ajouterLegende
-                      : null,
-                  onPress: onFamille == null ? null : () => onFamille!(famille),
-                ),
-              ],
-            ),
+            key: blocFamilleKey,
+            // Titre et phrase : libelle provisoire, lexique D4.
+            child: erreurFamille is CapaciteIndisponible
+                ? EtatSysteme(
+                    nature: NatureEtat.indisponible,
+                    titre: t.adulte.famille.indisponibleTitre,
+                    phrase: t.adulte.famille.indisponiblePhrase,
+                    dependance: erreurFamille.dependance,
+                  )
+                : echecHorsLigne(lecture)
+                ? EtatSysteme(
+                    nature: NatureEtat.horsLigne,
+                    onAction: () => ref.invalidate(monEspaceAdulteProvider),
+                  )
+                : BlocAsynchrone<MonEspaceAdulteVM>(
+                    valeur: lecture,
+                    squelette: const Skeleton.liste(lignes: 1),
+                    onReessayer: () => ref.invalidate(monEspaceAdulteProvider),
+                    construire: (MonEspaceAdulteVM v) => v.ligneFamille == null
+                        ? const SizedBox.shrink()
+                        : groupeFamille(v.ligneFamille!),
+                  ),
           );
 
     final Widget aide = GroupeReglages(
@@ -248,7 +350,7 @@ class MonEspaceAdultePage extends ConsumerWidget {
           RubriqueMonEspace.aide,
           AppIcons.lecon,
           t.compte.tuteur.aide.ligne,
-          valeur: t.compte.nonDisponible,
+          valeur: aideValeur,
         ),
         rubrique(
           RubriqueMonEspace.informationsLegales,
@@ -275,7 +377,10 @@ class MonEspaceAdultePage extends ConsumerWidget {
         builder: (BuildContext _, BoxConstraints contraintes) {
           final bool deuxColonnes =
               contraintes.maxWidth >= AppGabarit.seuilEtendu;
-          final List<Widget> droite = <Widget>[?ligneFamille, aide];
+          // L'ordre du telephone, lu colonne par colonne : Mon compte puis la
+          // ligne famille au debut, l'aide a la fin. Chaque colonne commence
+          // par un titre de groupe : leurs surfaces partent a la meme hauteur.
+          final List<Widget> debut = <Widget>[compte, ?famille];
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -285,13 +390,13 @@ class MonEspaceAdultePage extends ConsumerWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Expanded(flex: 11, child: pile(<Widget>[compte])),
+                    Expanded(flex: 11, child: pile(debut)),
                     SizedBox(width: ecart),
-                    Expanded(flex: 10, child: pile(droite)),
+                    Expanded(flex: 10, child: pile(<Widget>[aide])),
                   ],
                 )
               else
-                pile(<Widget>[compte, ...droite]),
+                pile(<Widget>[...debut, aide]),
               SizedBox(height: ecart * 2),
               const CarteDeconnexion(),
             ],
@@ -300,6 +405,12 @@ class MonEspaceAdultePage extends ConsumerWidget {
       ),
     );
   }
+
+  /// « Non disponible » quand la source dit qu'elle n'existe pas encore.
+  static String? _indisponible(AsyncValue<Object?> v) =>
+      v.hasError && v.error is CapaciteIndisponible
+      ? t.compte.nonDisponible
+      : null;
 }
 
 /// La page d'une rubrique de Mon espace qui n'a encore aucune source :

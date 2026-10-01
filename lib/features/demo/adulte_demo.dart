@@ -387,12 +387,28 @@ abstract final class DonneesAdulteDemo {
     VueDemoAdulte vue,
   ) => MonEspaceAdulteVM(ligneFamille: ligneFamille(etat, vue));
 
-  /// La ligne famille de Mon espace pour cet etat et cette vue.
-  static LigneFamilleDemo ligneFamille(EtatDemoAdulte etat, VueDemoAdulte vue) {
-    if (!aUnFoyer(etat)) return LigneFamilleDemo.ajouterMaFamille;
-    if (vue == VueDemoAdulte.secondAdulte && secondAdultePresent(etat)) {
-      return LigneFamilleDemo.forfaitFamille;
+  /// La ligne famille de Mon espace pour cet etat et cette vue, ou `null`
+  /// pour aucune ligne.
+  ///
+  /// EA-4c (revue du 27/09, F6, F7) : « Ma famille », qui ouvre le Foyer du
+  /// titulaire et ses enfants, n'est rendue QU'AU titulaire. Le second adulte
+  /// rattache voit « Forfait famille », son espace, jamais les enfants. Le
+  /// second adulte qui n'est pas (ou plus) rattache (invitation pas encore
+  /// acceptee, depart, retrait, delai, validation en attente ou refusee) est
+  /// un adulte autonome (spec sections 4 et 7.1) : « Ajouter ma famille ».
+  /// Celui qui appartient deja a un autre foyer (section 11) n'a ici aucune
+  /// ligne : la demonstration n'a pas cet autre foyer, rien n'est invente.
+  static LigneFamilleDemo? ligneFamille(
+    EtatDemoAdulte etat,
+    VueDemoAdulte vue,
+  ) {
+    if (vue == VueDemoAdulte.titulaire) {
+      return aUnFoyer(etat)
+          ? LigneFamilleDemo.maFamille
+          : LigneFamilleDemo.ajouterMaFamille;
     }
-    return LigneFamilleDemo.maFamille;
+    if (secondAdultePresent(etat)) return LigneFamilleDemo.forfaitFamille;
+    if (etat == EtatDemoAdulte.dejaDansUnAutreFoyer) return null;
+    return LigneFamilleDemo.ajouterMaFamille;
   }
 }

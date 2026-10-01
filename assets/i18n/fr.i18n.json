@@ -3867,11 +3867,11 @@
       "monCompte": "Mon compte",
       "informations": "Mes informations",
       "coursAcces": "Cours et accès",
-      "coursAccesLegende": "Ma classe, mes séances et mon accès",
+      "coursAccesLegende": "Classe, séances et accès",
       "paiements": "Paiements",
-      "paiementsLegende": "Historique et reçus de mes paiements",
+      "paiementsLegende": "Historique et reçus",
       "accords": "Mes accords",
-      "accordsLegende": "Accepter, refuser ou retirer chacun de vos accords",
+      "accordsLegende": "Accords donnés à l'académie",
       "securiteLegende": "Méthode et adresse de connexion",
       "pageAccords": {
         "indisponibleTitre": "Vos accords ne sont pas encore consultables",
@@ -3896,6 +3896,8 @@
       "retourMonEspace": "Revenir à Mon espace",
       "titulaire": "Titulaire du foyer",
       "paiementsFoyer": "Paiements du foyer",
+      "indisponibleTitre": "La rubrique famille n'est pas encore disponible",
+      "indisponiblePhrase": "Votre famille ou votre forfait famille s'affichera ici dès que l'application pourra le lire.",
       "place": {
         "ajouterConjointe": "Ajouter une conjointe",
         "ajouterConjoint": "Ajouter un conjoint",

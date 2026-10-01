@@ -8898,20 +8898,20 @@ class Traductions$adulte$monEspace$fr {
 	/// fr: 'Cours et accès'
 	String get coursAcces => 'Cours et accès';
 
-	/// fr: 'Ma classe, mes séances et mon accès'
-	String get coursAccesLegende => 'Ma classe, mes séances et mon accès';
+	/// fr: 'Classe, séances et accès'
+	String get coursAccesLegende => 'Classe, séances et accès';
 
 	/// fr: 'Paiements'
 	String get paiements => 'Paiements';
 
-	/// fr: 'Historique et reçus de mes paiements'
-	String get paiementsLegende => 'Historique et reçus de mes paiements';
+	/// fr: 'Historique et reçus'
+	String get paiementsLegende => 'Historique et reçus';
 
 	/// fr: 'Mes accords'
 	String get accords => 'Mes accords';
 
-	/// fr: 'Accepter, refuser ou retirer chacun de vos accords'
-	String get accordsLegende => 'Accepter, refuser ou retirer chacun de vos accords';
+	/// fr: 'Accords donnés à l'académie'
+	String get accordsLegende => 'Accords donnés à l\'académie';
 
 	/// fr: 'Méthode et adresse de connexion'
 	String get securiteLegende => 'Méthode et adresse de connexion';
@@ -8969,6 +8969,12 @@ class Traductions$adulte$famille$fr {
 
 	/// fr: 'Paiements du foyer'
 	String get paiementsFoyer => 'Paiements du foyer';
+
+	/// fr: 'La rubrique famille n'est pas encore disponible'
+	String get indisponibleTitre => 'La rubrique famille n\'est pas encore disponible';
+
+	/// fr: 'Votre famille ou votre forfait famille s'affichera ici dès que l'application pourra le lire.'
+	String get indisponiblePhrase => 'Votre famille ou votre forfait famille s\'affichera ici dès que l\'application pourra le lire.';
 
 	late final Traductions$adulte$famille$place$fr place = Traductions$adulte$famille$place$fr.internal(_root);
 }
@@ -16465,11 +16471,11 @@ extension on Traductions {
 			'adulte.monEspace.monCompte' => 'Mon compte',
 			'adulte.monEspace.informations' => 'Mes informations',
 			'adulte.monEspace.coursAcces' => 'Cours et accès',
-			'adulte.monEspace.coursAccesLegende' => 'Ma classe, mes séances et mon accès',
+			'adulte.monEspace.coursAccesLegende' => 'Classe, séances et accès',
 			'adulte.monEspace.paiements' => 'Paiements',
-			'adulte.monEspace.paiementsLegende' => 'Historique et reçus de mes paiements',
+			'adulte.monEspace.paiementsLegende' => 'Historique et reçus',
 			'adulte.monEspace.accords' => 'Mes accords',
-			'adulte.monEspace.accordsLegende' => 'Accepter, refuser ou retirer chacun de vos accords',
+			'adulte.monEspace.accordsLegende' => 'Accords donnés à l\'académie',
 			'adulte.monEspace.securiteLegende' => 'Méthode et adresse de connexion',
 			'adulte.monEspace.pageAccords.indisponibleTitre' => 'Vos accords ne sont pas encore consultables',
 			'adulte.monEspace.pageAccords.indisponiblePhrase' => 'Accepter, refuser ou retirer chacun de vos accords n\'est pas encore possible dans l\'application. Aucun accord ne vous est demandé ici.',
@@ -16486,6 +16492,8 @@ extension on Traductions {
 			'adulte.famille.retourMonEspace' => 'Revenir à Mon espace',
 			'adulte.famille.titulaire' => 'Titulaire du foyer',
 			'adulte.famille.paiementsFoyer' => 'Paiements du foyer',
+			'adulte.famille.indisponibleTitre' => 'La rubrique famille n\'est pas encore disponible',
+			'adulte.famille.indisponiblePhrase' => 'Votre famille ou votre forfait famille s\'affichera ici dès que l\'application pourra le lire.',
 			'adulte.famille.place.ajouterConjointe' => 'Ajouter une conjointe',
 			'adulte.famille.place.ajouterConjoint' => 'Ajouter un conjoint',
 			'adulte.famille.place.inviterConjointe' => 'Invitez votre conjointe à rejoindre Rewayah avec son propre compte.',

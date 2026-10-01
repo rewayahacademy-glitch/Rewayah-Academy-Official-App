@@ -169,18 +169,30 @@ bool _mutation(EtatDemoAdulte etat) =>
     etat == EtatDemoAdulte.doubleSoumission;
 
 /// L'ecran que la personne a le droit de voir : l'espace foyer n'est qu'au
-/// titulaire d'un foyer. Le second adulte arrive sur « Forfait famille »,
-/// l'adulte sans foyer sur « Ajouter ma famille », comme sa ligne de Mon
-/// espace (F6, F7) : jamais les donnees d'un role qui n'y a pas droit.
+/// titulaire d'un foyer. La regle est celle de la ligne famille de Mon
+/// espace (`DonneesAdulteDemo.ligneFamille`, EA-4c) : seul « Ma famille »
+/// ouvre le Foyer. Le second adulte rattache arrive sur « Forfait famille »,
+/// ou sur les paiements du foyer, rendus dans SA coquille (E3) ; l'adulte
+/// sans foyer, ou le second adulte qui n'est pas rattache, sur « Ajouter ma
+/// famille » ; sans ligne, sur Mon espace (F6, F7) : jamais les donnees d'un
+/// role qui n'y a pas droit, jamais les enfants.
 EcranDemoAdulte ecranPermisDemoAdulte(
   EcranDemoAdulte ecran,
   EtatDemoAdulte etat,
   VueDemoAdulte vue,
 ) {
   if (!_ecransFoyer.contains(ecran)) return ecran;
-  if (vue == VueDemoAdulte.secondAdulte) return EcranDemoAdulte.forfaitFamille;
-  if (!DonneesAdulteDemo.aUnFoyer(etat)) {
-    return EcranDemoAdulte.ajouterMaFamille;
+  switch (DonneesAdulteDemo.ligneFamille(etat, vue)) {
+    case LigneFamilleAdulte.maFamille:
+      break;
+    case LigneFamilleAdulte.forfaitFamille:
+      return ecran == EcranDemoAdulte.paiementsFoyer
+          ? EcranDemoAdulte.paiementsFoyer
+          : EcranDemoAdulte.forfaitFamille;
+    case LigneFamilleAdulte.ajouterMaFamille:
+      return EcranDemoAdulte.ajouterMaFamille;
+    case null:
+      return EcranDemoAdulte.monEspace;
   }
   // L'invitation suit l'etat de la place : jamais un formulaire d'invitation
   // sur une place occupee ou en delai (F17, R4), jamais le detail d'une
@@ -209,6 +221,7 @@ EcranDemoAdulte ecranDeRubrique(RubriqueMonEspace r) => switch (r) {
   RubriqueMonEspace.preferences => EcranDemoAdulte.preferences,
   RubriqueMonEspace.aide => EcranDemoAdulte.aide,
   RubriqueMonEspace.informationsLegales => EcranDemoAdulte.informationsLegales,
+  RubriqueMonEspace.paiementsFoyer => EcranDemoAdulte.paiementsFoyer,
 };
 
 /// Les routes de la demonstration adulte : AUCUNE en production.
@@ -511,7 +524,9 @@ class CoquilleAdulteDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final EcranDemoAdulte vu = ecranPermisDemoAdulte(ecran, etat, vue);
-    if (_ecransFoyer.contains(vu)) {
+    // La coquille du tuteur et le Foyer : au titulaire seulement. Les
+    // paiements du foyer du second adulte restent dans sa coquille (E3).
+    if (_ecransFoyer.contains(vu) && vue == VueDemoAdulte.titulaire) {
       return _foyer(context, vu);
     }
     final List<Destination> destinations = destinationsEleveAdulte();
@@ -657,8 +672,12 @@ class CoquilleAdulteDemo extends StatelessWidget {
               phrase: t.adulte.provisoire.ajouterMaFamille,
               onRetour: versMonEspace,
             ),
+            // Le second adulte rattache : les paiements du foyer, la meme
+            // page que le titulaire (E3, EA-BR-16), retour vers Mon espace.
+            EcranDemoAdulte.paiementsFoyer => PaiementsComptePage(
+              onRetour: versMonEspace,
+            ),
             EcranDemoAdulte.maFamille ||
-            EcranDemoAdulte.paiementsFoyer ||
             EcranDemoAdulte.placeAdulte ||
             EcranDemoAdulte.ajouterProfil ||
             EcranDemoAdulte.ficheEleve ||
