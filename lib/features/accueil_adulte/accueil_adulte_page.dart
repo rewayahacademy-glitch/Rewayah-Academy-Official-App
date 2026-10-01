@@ -20,9 +20,10 @@
 // entre les mots a 200 %.
 //
 // Reportes, dits ici : « Voir mon historique » de « Mon parcours »
-// (00_MAQUETTES 1.1, P) attend l'historique d'EA-3 ; la cloche n'ouvre rien
-// tant que le centre de notifications de l'eleve adulte n'existe pas (EA-8 ;
-// `NotificationsPage` lit les notifications du tuteur).
+// (00_MAQUETTES 1.1, P) attend l'historique d'EA-3. La cloche ouvre ce que
+// la coquille lui donne : en demonstration, le `NotificationsPage` existant,
+// ou se trouve l'invitation recue par le second adulte (EA-7) ; le centre de
+// notifications de l'eleve adulte reste a EA-8.
 //
 // Le seul provider propre a l'ecran, [accueilAdulteProvider], n'a aucune
 // source serveur : il rend `CapaciteIndisponible` (EA-BR-04), la
@@ -153,6 +154,12 @@ class AccueilAdultePage extends ConsumerWidget {
         : null;
     return PageShell(
       entete: entete,
+      // Sans lecture de l'accueil (indisponible, echec), la cloche reste :
+      // le centre de notifications ne depend pas de cette lecture (EA-7,
+      // l'invitation recue s'y trouve).
+      actionsEntete: entete == null && onNotifications != null
+          ? <Widget>[ClocheNotifications(onPress: onNotifications)]
+          : const <Widget>[],
       child: BlocAsynchrone<AccueilAdulteVM>(
         valeur: lecture,
         squelette: const SqueletteGroupe(),

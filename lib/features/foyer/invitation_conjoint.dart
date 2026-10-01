@@ -37,12 +37,18 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/skeleton.dart';
 import 'place_adulte.dart';
+
+// Le cote du second adulte (EA-7) partage les briques privees de cette page
+// (titre, note, actions, colonne, focus a l'apparition) : rien de recree.
+part 'acceptation_invitation.dart';
 
 /// Ce que le titulaire envoie : le prenom et l'adresse (obligatoires), le nom
 /// (facultatif, Q7), et une cle d'idempotence tiree une fois par saisie, que

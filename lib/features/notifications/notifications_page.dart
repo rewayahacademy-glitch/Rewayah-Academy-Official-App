@@ -35,7 +35,11 @@ import '../suivi_foyer/filtres_historique.dart';
 /// destination interne, deja validee par le port, ou rien.
 class NotificationsPage extends ConsumerWidget {
   /// Cree la page.
-  const NotificationsPage({super.key});
+  const NotificationsPage({super.key, this.onRetour});
+
+  /// Le retour ; par defaut, l'Accueil du tuteur. L'eleve adulte revient a
+  /// son propre Accueil (EA-7), sans fork de la page.
+  final VoidCallback? onRetour;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -44,7 +48,7 @@ class NotificationsPage extends ConsumerWidget {
     );
     return PageShell(
       titre: t.notifications.titre,
-      onRetour: () => GoRouter.of(context).go(Routes.tuteurAccueil),
+      onRetour: onRetour ?? () => GoRouter.of(context).go(Routes.tuteurAccueil),
       child: ColonneHistorique(
         child: valeur.error is CapaciteIndisponible
             ? EtatSysteme(

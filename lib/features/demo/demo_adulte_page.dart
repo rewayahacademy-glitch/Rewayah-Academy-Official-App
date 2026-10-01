@@ -3,7 +3,7 @@
 //
 // Sans parametre : les liens vers les ecrans, les situations et les variantes.
 // Avec `ecran` (accueil, maClasse, coran, monEspace, forfaitFamille,
-// maFamille), `etat` (un des 25 cas du doc section 18), `titulaire=femme` et
+// maFamille, notifications, invitationRecue, invitationSansCompte...), `etat` (un des 25 cas du doc section 18), `titulaire=femme` et
 // `vue=conjoint` : la VRAIE coquille (`NavShell`) a quatre destinations,
 // Accueil, Ma classe, Coran, Mon espace (UX_REVIEW_07 ligne 1, choix
 // provisoire Q2 : deux coquilles). « Ma famille » ouvre la coquille du tuteur
@@ -27,6 +27,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/appairage/service_appairage.dart'
     show AppareilAppaire, EleveDuFoyer;
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/capacites/port_notifications.dart';
 import '../../core/config/env.dart';
 import '../../core/domain/enums.dart';
 import '../../core/foyer/port_creation_profil_eleve.dart';
@@ -67,6 +68,7 @@ import '../foyer/invitation_conjoint.dart';
 import '../foyer/place_adulte.dart';
 import '../ma_classe_adulte/ma_classe_adulte_page.dart';
 import '../mon_espace_adulte/mon_espace_adulte_page.dart';
+import '../notifications/notifications_page.dart';
 import 'adulte_demo.dart';
 import 'classe_demo.dart';
 import 'demo_classe_page.dart'
@@ -160,7 +162,25 @@ enum EcranDemoAdulte {
   /// Apres « Creer le profil » en demonstration : rien n'a ete cree, et la
   /// page le dit (EA-5c).
   profilNonCree,
+
+  /// Les notifications, ouvertes par la cloche de l'Accueil (EA-7) : le
+  /// `NotificationsPage` existant.
+  notifications,
+
+  /// L'invitation recue par le second adulte, ouverte depuis sa notification
+  /// (EA-7), dans son propre compte.
+  invitationRecue,
+
+  /// L'invitation ouverte sans compte (lien du message, EA-7) : hors de
+  /// toute coquille, vers la connexion existante.
+  invitationSansCompte,
 }
+
+/// Les ecrans ranges sous l'Accueil : la cloche y mene (EA-7).
+const Set<EcranDemoAdulte> _ecransSousAccueil = <EcranDemoAdulte>{
+  EcranDemoAdulte.notifications,
+  EcranDemoAdulte.invitationRecue,
+};
 
 /// Les ecrans de l'espace foyer (coquille du tuteur), reserves au titulaire
 /// d'un foyer (F6, F7).
@@ -198,6 +218,15 @@ EcranDemoAdulte ecranPermisDemoAdulte(
   EtatDemoAdulte etat,
   VueDemoAdulte vue,
 ) {
+  // L'invitation recue n'existe que pour le second adulte, et seulement
+  // dans une situation qui en a une (EA-7) : jamais pour le titulaire.
+  if (ecran == EcranDemoAdulte.invitationRecue) {
+    return vue == VueDemoAdulte.secondAdulte &&
+            DonneesAdulteDemo.invitationRecue(etat, GenreTitulaireDemo.homme) !=
+                null
+        ? ecran
+        : EcranDemoAdulte.monEspace;
+  }
   if (!_ecransFoyer.contains(ecran)) return ecran;
   switch (DonneesAdulteDemo.ligneFamille(etat, vue)) {
     case LigneFamilleAdulte.maFamille:
@@ -329,6 +358,9 @@ String libelleEcranDemoAdulte(EcranDemoAdulte ecran) => switch (ecran) {
   EcranDemoAdulte.aProposForfait => t.adulte.famille.aProposForfait,
   EcranDemoAdulte.creerMonProfil => t.foyer.creerMonProfil,
   EcranDemoAdulte.profilNonCree => t.adulte.famille.profilNonCreeTitre,
+  EcranDemoAdulte.notifications => t.notifications.titre,
+  EcranDemoAdulte.invitationRecue => t.adulte.acceptation.sansCompteTitre,
+  EcranDemoAdulte.invitationSansCompte => t.adulte.demo.invitationSansCompte,
 };
 
 /// Le libelle d'une situation (doc section 18).
@@ -481,6 +513,29 @@ class DemoAdultePage extends StatelessWidget {
               ),
             ),
           ),
+          // EA-7 : l'invitation recue dans le compte du second adulte, par la
+          // cloche de son Accueil ; puis l'invitation ouverte sans compte.
+          LienFleche(
+            key: const ValueKey<String>('lien-invitation-recue'),
+            libelle: femme
+                ? t.adulte.demo.invitationRecueConjoint
+                : t.adulte.demo.invitationRecueConjointe,
+            onPress: () => context.go(
+              adresseDemoAdulte(
+                EcranDemoAdulte.accueil,
+                etat: EtatDemoAdulte.invitationEnAttente,
+                genre: genre,
+                vue: VueDemoAdulte.secondAdulte,
+              ),
+            ),
+          ),
+          LienFleche(
+            key: const ValueKey<String>('lien-invitation-sans-compte'),
+            libelle: t.adulte.demo.invitationSansCompte,
+            onPress: () => context.go(
+              adresseDemoAdulte(EcranDemoAdulte.invitationSansCompte),
+            ),
+          ),
           Ecart.vXxl,
           titre(t.adulte.demo.situations),
           Ecart.vMd,
@@ -548,18 +603,39 @@ class CoquilleAdulteDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final EcranDemoAdulte vu = ecranPermisDemoAdulte(ecran, etat, vue);
+    // Sans compte, aucune coquille : la page renvoie vers la connexion
+    // existante, qui cree le compte, sans la modifier (EA-7).
+    if (vu == EcranDemoAdulte.invitationSansCompte) {
+      return RepereDemonstration(
+        child: InvitationSansComptePage(
+          onContinuer: () => context.go(Routes.connexion),
+        ),
+      );
+    }
     // La coquille du tuteur et le Foyer : au titulaire seulement. Les
     // paiements du foyer du second adulte restent dans sa coquille (E3).
     if (_ecransFoyer.contains(vu) && vue == VueDemoAdulte.titulaire) {
       return _foyer(context, vu);
     }
     final List<Destination> destinations = destinationsEleveAdulte();
-    // Les pages ouvertes depuis Mon espace gardent sa destination allumee.
-    final bool depuisMonEspace = vu.index >= EcranDemoAdulte.monEspace.index;
-    final int actif = depuisMonEspace
+    // Les pages ouvertes depuis Mon espace gardent sa destination allumee ;
+    // celles de la cloche, l'Accueil.
+    final bool sousAccueil = _ecransSousAccueil.contains(vu);
+    final bool depuisMonEspace =
+        !sousAccueil && vu.index >= EcranDemoAdulte.monEspace.index;
+    final int actif = sousAccueil
+        ? EcranDemoAdulte.accueil.index
+        : depuisMonEspace
         ? EcranDemoAdulte.monEspace.index
         : vu.index;
     void versMonEspace() => context.go(_adresse(EcranDemoAdulte.monEspace));
+    void versNotifications() =>
+        context.go(_adresse(EcranDemoAdulte.notifications));
+    // L'invitation recue par le second adulte, et sa notification (EA-7,
+    // EA-BR-20) : jamais pour le titulaire.
+    final EtatInvitationRecue? invitation = vue == VueDemoAdulte.secondAdulte
+        ? DonneesAdulteDemo.invitationRecue(etat, genre)
+        : null;
     return ProviderScope(
       key: ValueKey<String>(_adresse(vu)),
       overrides: <Override>[
@@ -584,6 +660,30 @@ class CoquilleAdulteDemo extends StatelessWidget {
             maClasseAdulteProvider.overrideWith((Ref _) async => classe),
         ] else ...<Override>[
           horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
+          // La cloche du second adulte : sa notification d'invitation, puis
+          // l'invitation et sa reponse, ou rien n'est envoye (EA-7, K-28).
+          // Sans invitation, les fournisseurs reels restent (indisponibles,
+          // DB-CPT-04 et EA-BR-20).
+          if (sousAccueil && invitation != null) ...<Override>[
+            notificationsTuteurProvider.overrideWith(
+              (Ref _) async => <NotificationTuteur>[
+                NotificationTuteur(
+                  id: 'demo-invitation-forfait',
+                  // Phrase de T3 (UX_REVIEW_07), sans « sur Rewayah
+                  // Academy » : libelle provisoire, lexique D4.
+                  titre: t.adulte.acceptation.notification(
+                    prenom: DonneesAdulteDemo.prenomTitulaire(genre),
+                  ),
+                  date: DonneesAdulteDemo.dateInvitation,
+                  destination: _adresse(EcranDemoAdulte.invitationRecue),
+                ),
+              ],
+            ),
+            invitationRecueProvider.overrideWith((Ref _) async => invitation),
+            portReponseInvitationProvider.overrideWithValue(
+              _ReponseInvitationDemo(etat, genre),
+            ),
+          ],
           // Mon espace et ses pages lisent l'identite de la personne qui
           // regarde par le port du Compte, et sa ligne famille (EA-4). Les
           // paiements et l'aide gardent leur fournisseur reel (indisponible,
@@ -622,11 +722,12 @@ class CoquilleAdulteDemo extends StatelessWidget {
             if (cible != null) context.go(_adresse(cible));
           },
           child: switch (vu) {
-            // La cloche reste sans destination jusqu'a EA-8 (centre de
-            // notifications de l'eleve adulte) ; « Voir tout » ouvre Ma
+            // La cloche ouvre les notifications existantes (EA-7 ; le centre
+            // de l'eleve adulte reste a EA-8) ; « Voir tout » ouvre Ma
             // classe, dont le « Voir tout » ouvre la Bibliotheque de la
             // Classe, avec toutes ses ressources (EA-3).
             EcranDemoAdulte.accueil => AccueilAdultePage(
+              onNotifications: versNotifications,
               onRejoindre: (_) => context.go(
                 adressePreparationEleveDemo(PreparationEleveDemo.pret),
               ),
@@ -702,6 +803,26 @@ class CoquilleAdulteDemo extends StatelessWidget {
               titre: t.adulte.famille.paiementsFoyer,
               onRetour: versMonEspace,
             ),
+            // La cloche ouvre le centre de notifications existant (sans
+            // fork), retour a l'Accueil (EA-7).
+            EcranDemoAdulte.notifications => NotificationsPage(
+              onRetour: () => context.go(_adresse(EcranDemoAdulte.accueil)),
+            ),
+            // Apres la reponse, Mon espace dans la situation rendue : le
+            // second adulte rattache, ou en attente de validation.
+            EcranDemoAdulte.invitationRecue => InvitationRecuePage(
+              onRetour: versNotifications,
+              onMonEspace: (EtatInvitationRecue suite) => context.go(
+                adresseDemoAdulte(
+                  EcranDemoAdulte.monEspace,
+                  etat: DonneesAdulteDemo.apresReponse(etat, suite),
+                  genre: genre,
+                  vue: vue,
+                  seance: seance,
+                ),
+              ),
+            ),
+            EcranDemoAdulte.invitationSansCompte ||
             EcranDemoAdulte.maFamille ||
             EcranDemoAdulte.placeAdulte ||
             EcranDemoAdulte.ajouterProfil ||
@@ -1007,6 +1128,34 @@ class _InvitationDemo implements PortInvitationConjoint {
     const AnnulationFaite(),
     const AnnulationEchecReseau(),
   );
+}
+
+/// La reponse du second adulte en demonstration (EA-7, EA-BR-20) : rien
+/// n'est envoye (K-28). « Erreur reseau » rend la coupure (D5) ; « Double
+/// soumission » repond apres la meme latence simulee que l'invitation ; sinon
+/// l'etat que le serveur de demonstration rend (`acceptationDe`), ou le refus
+/// enregistre.
+class _ReponseInvitationDemo implements PortReponseInvitation {
+  const _ReponseInvitationDemo(this.etat, this.genre);
+
+  final EtatDemoAdulte etat;
+  final GenreTitulaireDemo genre;
+
+  Future<ResultatReponseInvitation> _repondre(EtatInvitationRecue suite) async {
+    if (etat == EtatDemoAdulte.erreurReseau) return const ReponseEchecReseau();
+    if (etat == EtatDemoAdulte.doubleSoumission) {
+      await Future<void>.delayed(latenceSimulee);
+    }
+    return ReponseRecue(suite);
+  }
+
+  @override
+  Future<ResultatReponseInvitation> accepter({required String cle}) =>
+      _repondre(DonneesAdulteDemo.acceptationDe(etat, genre));
+
+  @override
+  Future<ResultatReponseInvitation> refuser({required String cle}) =>
+      _repondre(const InvitationRefuseeParVous());
 }
 
 /// La latence reseau simulee de la situation « Double soumission » : le

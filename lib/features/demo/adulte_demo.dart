@@ -11,6 +11,7 @@ import '../../core/domain/enums.dart';
 import '../../core/planning/service_planning.dart' show Seance;
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../accueil_adulte/accueil_adulte_page.dart';
+import '../foyer/invitation_conjoint.dart';
 import '../foyer/place_adulte.dart';
 import '../ma_classe_adulte/ma_classe_adulte_page.dart';
 import '../mon_espace_adulte/mon_espace_adulte_page.dart';
@@ -300,6 +301,68 @@ abstract final class DonneesAdulteDemo {
     EtatPlaceAdulte place,
     String prenom,
   ) => place is InvitationEnvoyee ? PlaceOccupee(prenom) : place;
+
+  /// La date de l'invitation recue par le second adulte (EA-7), une donnee
+  /// de demonstration rendue telle quelle.
+  static final DateTime dateInvitation = DateTime.utc(2026, 9, 26, 16);
+
+  /// L'invitation que le second adulte lit dans son propre compte (EA-7,
+  /// EA-BR-20), ou `null` quand cette situation n'en a pas.
+  ///
+  /// - en attente : a repondre ; annulee : la page lue AVANT l'annulation,
+  ///   l'acceptation arrive trop tard (reponse tardive, doc section 5.2) ;
+  ///   erreur reseau et double envoi : la reponse elle-meme ;
+  /// - nouvelle demande apres le delai : un remplacement, le texte T2 ;
+  /// - deja dans un autre foyer : la forme neutre (F4, doc section 11) ;
+  /// - expiree : plus valable ;
+  /// - validation en attente : deja acceptee, l'attente seule (section 10.4).
+  static EtatInvitationRecue? invitationRecue(
+    EtatDemoAdulte etat,
+    GenreTitulaireDemo genre,
+  ) {
+    InvitationARepondre aRepondre({bool validation = false}) =>
+        InvitationARepondre(
+          prenomTitulaire: prenomTitulaire(genre),
+          titulaireFeminin: genre == GenreTitulaireDemo.femme,
+          validationRequise: validation,
+        );
+    return switch (etat) {
+      EtatDemoAdulte.invitationEnAttente ||
+      EtatDemoAdulte.invitationAnnulee ||
+      EtatDemoAdulte.erreurReseau ||
+      EtatDemoAdulte.doubleSoumission => aRepondre(),
+      EtatDemoAdulte.nouvelleDemande => aRepondre(validation: true),
+      EtatDemoAdulte.dejaDansUnAutreFoyer => const InvitationNonAcceptable(),
+      EtatDemoAdulte.invitationExpiree => const InvitationPerimee(),
+      EtatDemoAdulte.validationEnAttente => const InvitationEnValidation(),
+      _ => null,
+    };
+  }
+
+  /// Ce que le serveur de demonstration rend a une acceptation (EA-BR-20) :
+  /// l'attente de validation pour un remplacement, rien pour une invitation
+  /// annulee entre-temps (personne n'est rattache), la forme neutre pour un
+  /// compte deja ailleurs, sinon le rattachement.
+  static EtatInvitationRecue acceptationDe(
+    EtatDemoAdulte etat,
+    GenreTitulaireDemo genre,
+  ) => switch (etat) {
+    EtatDemoAdulte.nouvelleDemande => const InvitationEnValidation(),
+    EtatDemoAdulte.invitationAnnulee => const InvitationPerimee(),
+    EtatDemoAdulte.dejaDansUnAutreFoyer => const InvitationNonAcceptable(),
+    _ => InvitationAcceptee(prenomTitulaire(genre)),
+  };
+
+  /// La situation que Mon espace lit apres la reponse : le second adulte
+  /// rattache, ou en attente de validation ; sinon rien ne change.
+  static EtatDemoAdulte apresReponse(
+    EtatDemoAdulte etat,
+    EtatInvitationRecue suite,
+  ) => switch (suite) {
+    InvitationAcceptee() => EtatDemoAdulte.conjointActif,
+    InvitationEnValidation() => EtatDemoAdulte.validationEnAttente,
+    _ => etat,
+  };
 
   /// L'invitation envoyee au second adulte (EA-6, EA-BR-15) : le prenom et
   /// l'adresse fictive (RFC 2606) que le titulaire a saisis.

@@ -2285,6 +2285,7 @@ class Traductions$adulte$fr {
 	late final Traductions$adulte$provisoire$fr provisoire = Traductions$adulte$provisoire$fr.internal(_root);
 	late final Traductions$adulte$famille$fr famille = Traductions$adulte$famille$fr.internal(_root);
 	late final Traductions$adulte$invitation$fr invitation = Traductions$adulte$invitation$fr.internal(_root);
+	late final Traductions$adulte$acceptation$fr acceptation = Traductions$adulte$acceptation$fr.internal(_root);
 	late final Traductions$adulte$demo$fr demo = Traductions$adulte$demo$fr.internal(_root);
 }
 
@@ -9120,6 +9121,129 @@ class Traductions$adulte$invitation$fr {
 	String get annulationEchecPhrase => 'Vérifiez avant de réessayer.';
 }
 
+// Path: adulte.acceptation
+class Traductions$adulte$acceptation$fr {
+	Traductions$adulte$acceptation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{prenom} vous invite à rejoindre son forfait famille.'
+	String notification({required Object prenom}) => '${prenom} vous invite à rejoindre son forfait famille.';
+
+	/// fr: 'Rejoindre le forfait famille de {prenom}'
+	String titre({required Object prenom}) => 'Rejoindre le forfait famille de ${prenom}';
+
+	/// fr: 'Ce que nous faisons'
+	String get faisonsTitre => 'Ce que nous faisons';
+
+	/// fr: '{prenom} vous invite dans son forfait famille. Si vous acceptez, votre compte est rattaché à son foyer. Votre compte reste le vôtre. Rien n'est fusionné.'
+	String faisons({required Object prenom}) => '${prenom} vous invite dans son forfait famille. Si vous acceptez, votre compte est rattaché à son foyer. Votre compte reste le vôtre. Rien n\'est fusionné.';
+
+	/// fr: 'Pourquoi'
+	String get pourquoiTitre => 'Pourquoi';
+
+	/// fr: '{prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, elle doit voir votre solde.'
+	String pourquoiElle({required Object prenom}) => '${prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, elle doit voir votre solde.';
+
+	/// fr: '{prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, il doit voir votre solde.'
+	String pourquoiLui({required Object prenom}) => '${prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, il doit voir votre solde.';
+
+	/// fr: 'Ce que {prenom} verra'
+	String verraTitre({required Object prenom}) => 'Ce que ${prenom} verra';
+
+	/// fr: 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L'offre qui vous concerne. L'état de votre accès, s'il empêche de payer. Elle saura aussi si vous quittez le forfait famille.'
+	String get verraElle => 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L\'offre qui vous concerne. L\'état de votre accès, s\'il empêche de payer. Elle saura aussi si vous quittez le forfait famille.';
+
+	/// fr: 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L'offre qui vous concerne. L'état de votre accès, s'il empêche de payer. Il saura aussi si vous quittez le forfait famille.'
+	String get verraLui => 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L\'offre qui vous concerne. L\'état de votre accès, s\'il empêche de payer. Il saura aussi si vous quittez le forfait famille.';
+
+	/// fr: 'Ce que {prenom} ne verra pas'
+	String verraPasTitre({required Object prenom}) => 'Ce que ${prenom} ne verra pas';
+
+	/// fr: 'Votre Classe. Votre niveau. Vos séances et votre présence. Vos progrès. Vos messages. Vos notifications. Vos moyens de paiement personnels. Vos pièces d'identité.'
+	String get verraPas => 'Votre Classe. Votre niveau. Vos séances et votre présence. Vos progrès. Vos messages. Vos notifications. Vos moyens de paiement personnels. Vos pièces d\'identité.';
+
+	/// fr: 'Ce que vous ne verrez pas'
+	String get vousTitre => 'Ce que vous ne verrez pas';
+
+	/// fr: 'Les cours, les progrès et les messages de {prenom} et des enfants du foyer. Vous ne pourrez pas ajouter d'enfant, inviter quelqu'un ni modifier le foyer.'
+	String vous({required Object prenom}) => 'Les cours, les progrès et les messages de ${prenom} et des enfants du foyer. Vous ne pourrez pas ajouter d\'enfant, inviter quelqu\'un ni modifier le foyer.';
+
+	/// fr: 'Qui d'autre voit'
+	String get autresTitre => 'Qui d\'autre voit';
+
+	/// fr: 'Votre enseignant ne voit rien de votre foyer. L'équipe de l'académie voit le rattachement, pour le gérer et, si nécessaire, le valider.'
+	String get autres => 'Votre enseignant ne voit rien de votre foyer. L\'équipe de l\'académie voit le rattachement, pour le gérer et, si nécessaire, le valider.';
+
+	/// fr: 'Combien de temps'
+	String get dureeTitre => 'Combien de temps';
+
+	/// fr: 'Le rattachement dure jusqu'à ce que vous quittiez le forfait famille, ou que {prenom} y mette fin.'
+	String duree({required Object prenom}) => 'Le rattachement dure jusqu\'à ce que vous quittiez le forfait famille, ou que ${prenom} y mette fin.';
+
+	/// fr: 'Nous gardons la trace du rattachement {duree}.'
+	String conservation({required Object duree}) => 'Nous gardons la trace du rattachement ${duree}.';
+
+	/// fr: 'Comment partir'
+	String get partirTitre => 'Comment partir';
+
+	/// fr: 'Dans Mon espace, Forfait famille, Quitter le forfait famille. Vous n'avez pas besoin de son accord. Votre compte, vos cours, votre historique et votre solde restent disponibles.'
+	String get partir => 'Dans Mon espace, Forfait famille, Quitter le forfait famille. Vous n\'avez pas besoin de son accord. Votre compte, vos cours, votre historique et votre solde restent disponibles.';
+
+	/// fr: 'Si vous refusez'
+	String get refusTitre => 'Si vous refusez';
+
+	/// fr: 'Rien ne change pour votre compte, vos cours ni votre solde.'
+	String get refus => 'Rien ne change pour votre compte, vos cours ni votre solde.';
+
+	/// fr: 'Ce rattachement doit être validé par l'administration de l'académie. En attendant, votre compte et vos cours fonctionnent normalement.'
+	String get validation => 'Ce rattachement doit être validé par l\'administration de l\'académie. En attendant, votre compte et vos cours fonctionnent normalement.';
+
+	/// fr: 'Refuser l'invitation'
+	String get refuser => 'Refuser l\'invitation';
+
+	/// fr: 'Accepter l'invitation'
+	String get accepter => 'Accepter l\'invitation';
+
+	/// fr: 'Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez répondre vous-même quand la connexion sera revenue.'
+	String get horsLigne => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez répondre vous-même quand la connexion sera revenue.';
+
+	/// fr: 'L'acceptation n'a pas été confirmée.'
+	String get acceptationEchecTitre => 'L\'acceptation n\'a pas été confirmée.';
+
+	/// fr: 'Le refus n'a pas été confirmé.'
+	String get refusEchecTitre => 'Le refus n\'a pas été confirmé.';
+
+	/// fr: 'Vérifiez avant de réessayer.'
+	String get echecPhrase => 'Vérifiez avant de réessayer.';
+
+	/// fr: 'Vous avez rejoint le forfait famille de {prenom}.'
+	String rejoint({required Object prenom}) => 'Vous avez rejoint le forfait famille de ${prenom}.';
+
+	/// fr: 'Invitation refusée'
+	String get refuseeTitre => 'Invitation refusée';
+
+	/// fr: 'Ce compte ne peut pas rejoindre ce forfait actuellement.'
+	String get impossible => 'Ce compte ne peut pas rejoindre ce forfait actuellement.';
+
+	/// fr: 'Cette invitation n'est plus valable.'
+	String get perimee => 'Cette invitation n\'est plus valable.';
+
+	/// fr: 'Aller à Mon espace'
+	String get monEspace => 'Aller à Mon espace';
+
+	/// fr: 'Invitation au forfait famille'
+	String get sansCompteTitre => 'Invitation au forfait famille';
+
+	/// fr: 'Pour répondre, connectez-vous à votre compte, ou créez-en un. Vous lirez alors ce que la personne qui vous invite verra et ne verra pas avant de décider.'
+	String get sansCompte => 'Pour répondre, connectez-vous à votre compte, ou créez-en un. Vous lirez alors ce que la personne qui vous invite verra et ne verra pas avant de décider.';
+
+	/// fr: 'Me connecter ou créer mon compte'
+	String get sansCompteAction => 'Me connecter ou créer mon compte';
+}
+
 // Path: adulte.demo
 class Traductions$adulte$demo$fr {
 	Traductions$adulte$demo$fr.internal(this._root);
@@ -9154,6 +9278,15 @@ class Traductions$adulte$demo$fr {
 
 	/// fr: 'Mon espace vu par le conjoint, second adulte du foyer.'
 	String get vueConjoint => 'Mon espace vu par le conjoint, second adulte du foyer.';
+
+	/// fr: 'L'invitation reçue par la conjointe, dans son propre compte.'
+	String get invitationRecueConjointe => 'L\'invitation reçue par la conjointe, dans son propre compte.';
+
+	/// fr: 'L'invitation reçue par le conjoint, dans son propre compte.'
+	String get invitationRecueConjoint => 'L\'invitation reçue par le conjoint, dans son propre compte.';
+
+	/// fr: 'L'invitation ouverte sans compte.'
+	String get invitationSansCompte => 'L\'invitation ouverte sans compte.';
 
 	late final Traductions$adulte$demo$etats$fr etats = Traductions$adulte$demo$etats$fr.internal(_root);
 }
@@ -16574,6 +16707,44 @@ extension on Traductions {
 			'adulte.invitation.garder' => 'Garder l\'invitation',
 			'adulte.invitation.annulationEchecTitre' => 'L\'annulation n\'a pas été confirmée.',
 			'adulte.invitation.annulationEchecPhrase' => 'Vérifiez avant de réessayer.',
+			'adulte.acceptation.notification' => ({required Object prenom}) => '${prenom} vous invite à rejoindre son forfait famille.',
+			'adulte.acceptation.titre' => ({required Object prenom}) => 'Rejoindre le forfait famille de ${prenom}',
+			'adulte.acceptation.faisonsTitre' => 'Ce que nous faisons',
+			'adulte.acceptation.faisons' => ({required Object prenom}) => '${prenom} vous invite dans son forfait famille. Si vous acceptez, votre compte est rattaché à son foyer. Votre compte reste le vôtre. Rien n\'est fusionné.',
+			'adulte.acceptation.pourquoiTitre' => 'Pourquoi',
+			'adulte.acceptation.pourquoiElle' => ({required Object prenom}) => '${prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, elle doit voir votre solde.',
+			'adulte.acceptation.pourquoiLui' => ({required Object prenom}) => '${prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, il doit voir votre solde.',
+			'adulte.acceptation.verraTitre' => ({required Object prenom}) => 'Ce que ${prenom} verra',
+			'adulte.acceptation.verraElle' => 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L\'offre qui vous concerne. L\'état de votre accès, s\'il empêche de payer. Elle saura aussi si vous quittez le forfait famille.',
+			'adulte.acceptation.verraLui' => 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L\'offre qui vous concerne. L\'état de votre accès, s\'il empêche de payer. Il saura aussi si vous quittez le forfait famille.',
+			'adulte.acceptation.verraPasTitre' => ({required Object prenom}) => 'Ce que ${prenom} ne verra pas',
+			'adulte.acceptation.verraPas' => 'Votre Classe. Votre niveau. Vos séances et votre présence. Vos progrès. Vos messages. Vos notifications. Vos moyens de paiement personnels. Vos pièces d\'identité.',
+			'adulte.acceptation.vousTitre' => 'Ce que vous ne verrez pas',
+			'adulte.acceptation.vous' => ({required Object prenom}) => 'Les cours, les progrès et les messages de ${prenom} et des enfants du foyer. Vous ne pourrez pas ajouter d\'enfant, inviter quelqu\'un ni modifier le foyer.',
+			'adulte.acceptation.autresTitre' => 'Qui d\'autre voit',
+			'adulte.acceptation.autres' => 'Votre enseignant ne voit rien de votre foyer. L\'équipe de l\'académie voit le rattachement, pour le gérer et, si nécessaire, le valider.',
+			'adulte.acceptation.dureeTitre' => 'Combien de temps',
+			'adulte.acceptation.duree' => ({required Object prenom}) => 'Le rattachement dure jusqu\'à ce que vous quittiez le forfait famille, ou que ${prenom} y mette fin.',
+			'adulte.acceptation.conservation' => ({required Object duree}) => 'Nous gardons la trace du rattachement ${duree}.',
+			'adulte.acceptation.partirTitre' => 'Comment partir',
+			'adulte.acceptation.partir' => 'Dans Mon espace, Forfait famille, Quitter le forfait famille. Vous n\'avez pas besoin de son accord. Votre compte, vos cours, votre historique et votre solde restent disponibles.',
+			'adulte.acceptation.refusTitre' => 'Si vous refusez',
+			'adulte.acceptation.refus' => 'Rien ne change pour votre compte, vos cours ni votre solde.',
+			'adulte.acceptation.validation' => 'Ce rattachement doit être validé par l\'administration de l\'académie. En attendant, votre compte et vos cours fonctionnent normalement.',
+			'adulte.acceptation.refuser' => 'Refuser l\'invitation',
+			'adulte.acceptation.accepter' => 'Accepter l\'invitation',
+			'adulte.acceptation.horsLigne' => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez répondre vous-même quand la connexion sera revenue.',
+			'adulte.acceptation.acceptationEchecTitre' => 'L\'acceptation n\'a pas été confirmée.',
+			'adulte.acceptation.refusEchecTitre' => 'Le refus n\'a pas été confirmé.',
+			'adulte.acceptation.echecPhrase' => 'Vérifiez avant de réessayer.',
+			'adulte.acceptation.rejoint' => ({required Object prenom}) => 'Vous avez rejoint le forfait famille de ${prenom}.',
+			'adulte.acceptation.refuseeTitre' => 'Invitation refusée',
+			'adulte.acceptation.impossible' => 'Ce compte ne peut pas rejoindre ce forfait actuellement.',
+			'adulte.acceptation.perimee' => 'Cette invitation n\'est plus valable.',
+			'adulte.acceptation.monEspace' => 'Aller à Mon espace',
+			'adulte.acceptation.sansCompteTitre' => 'Invitation au forfait famille',
+			'adulte.acceptation.sansCompte' => 'Pour répondre, connectez-vous à votre compte, ou créez-en un. Vous lirez alors ce que la personne qui vous invite verra et ne verra pas avant de décider.',
+			'adulte.acceptation.sansCompteAction' => 'Me connecter ou créer mon compte',
 			'adulte.demo.titre' => 'Démonstration de l\'élève adulte',
 			'adulte.demo.mention' => 'Les données sont fictives et rien n\'est envoyé.',
 			'adulte.demo.intro' => 'Choisissez un écran, puis une situation du foyer Diallo.',
@@ -16583,6 +16754,9 @@ extension on Traductions {
 			'adulte.demo.titulaireFemme' => 'La titulaire est une femme, son conjoint est le second adulte.',
 			'adulte.demo.vueConjointe' => 'Mon espace vu par la conjointe, second adulte du foyer.',
 			'adulte.demo.vueConjoint' => 'Mon espace vu par le conjoint, second adulte du foyer.',
+			'adulte.demo.invitationRecueConjointe' => 'L\'invitation reçue par la conjointe, dans son propre compte.',
+			'adulte.demo.invitationRecueConjoint' => 'L\'invitation reçue par le conjoint, dans son propre compte.',
+			'adulte.demo.invitationSansCompte' => 'L\'invitation ouverte sans compte.',
 			'adulte.demo.etats.adulteSeul' => 'L\'adulte est seul, sans foyer.',
 			'adulte.demo.etats.titulaireSansConjoint' => 'Le foyer n\'a pas de second adulte.',
 			'adulte.demo.etats.invitationEnAttente' => 'L\'invitation du second adulte est en attente.',
