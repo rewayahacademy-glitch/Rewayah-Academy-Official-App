@@ -979,33 +979,17 @@ class _Bandeaux extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // CT-3 : chez le controleur, la mention permanente rejoint le registre
-    // doux de son rappel (`washWarning`). `PermanentNotice` reste intacte et
-    // sans parametre (ADR-011) ; son encre discrete, faite pour une surface
-    // claire, se perdait sur le fond de la salle. Les autres roles gardent leur
-    // rendu jusqu'a l'harmonisation HU-1.
+    // CTRL-SALLE-1 (revue du directeur) : la mention « Cours enregistre,
+    // visite de controle possible » s'adresse aux participants (enseignant,
+    // eleves), jamais au controleur, qui EST la visite. Il ne garde que son
+    // propre rappel, en registre doux (`washWarning`). `PermanentNotice` reste
+    // intacte et sans parametre (ADR-011) : c'est le choix de la rendre ou non
+    // qui se fait ici, par role, jamais une variante de son texte.
     if (vue.role == RoleSalle.controleur) {
-      return DecoratedBox(
-        decoration: AppPalette.of(context).washWarning.decoration(),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            _Rappel(
-              texte: t.salle.bandeauControle,
-              ton: TonEtat.avertissement,
-              icone: AppIcons.controleQualite,
-            ),
-            const Padding(
-              padding: EdgeInsetsDirectional.only(
-                start: AppSpacing.lg,
-                end: AppSpacing.lg,
-                bottom: AppSpacing.md,
-              ),
-              child: PermanentNotice(),
-            ),
-          ],
-        ),
+      return _Rappel(
+        texte: t.salle.bandeauControle,
+        ton: TonEtat.avertissement,
+        icone: AppIcons.controleQualite,
       );
     }
     return Column(

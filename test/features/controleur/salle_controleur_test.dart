@@ -58,9 +58,10 @@ void main() {
     expect(find.text(t.salle.visiteControle.titre), findsOneWidget);
     expect(find.text(t.etat.enDirect), findsOneWidget);
     expect(find.text(t.salle.quitter), findsOneWidget);
-    // Le rappel existant et le bandeau permanent, gardes.
+    // Le rappel du controleur, garde ; la mention « visite de controle
+    // possible », pour les participants seulement (CTRL-SALLE-1).
     expect(find.text(t.salle.bandeauControle), findsOneWidget);
-    expect(find.text(t.salle.bandeauPermanent), findsOneWidget);
+    expect(find.text(t.salle.bandeauPermanent), findsNothing);
     // Les deux commandes.
     expect(_parSens(t.salle.visiteControle.couperSon), findsOneWidget);
     expect(_parSens(t.salle.visiteControle.agrandir), findsOneWidget);
@@ -82,8 +83,16 @@ void main() {
       expect(find.text(interdit), findsNothing, reason: interdit);
       expect(_parSens('^$interdit\$'), findsNothing, reason: interdit);
     }
-    expect(find.textContaining(RegExp('lever la main|main lev', caseSensitive: false)), findsNothing);
-    expect(find.textContaining(RegExp('discussion|chat', caseSensitive: false)), findsNothing);
+    expect(
+      find.textContaining(
+        RegExp('lever la main|main lev', caseSensitive: false),
+      ),
+      findsNothing,
+    );
+    expect(
+      find.textContaining(RegExp('discussion|chat', caseSensitive: false)),
+      findsNothing,
+    );
     // Pas de duree de presence (LIVE-CHRONO-01).
     expect(find.textContaining(RegExp(r'\d+ ?min')), findsNothing);
 
@@ -119,9 +128,6 @@ void main() {
     // La visite part a l'arrivee (CT-4) : sa reponse simulee arrive ensuite.
     await tester.pump(const Duration(milliseconds: 500));
     await tester.pumpAndSettle();
-    expect(
-      find.text(t.controleur.compteRendu.visiteTransmise),
-      findsOneWidget,
-    );
+    expect(find.text(t.controleur.compteRendu.visiteTransmise), findsOneWidget);
   });
 }
