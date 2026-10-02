@@ -12,6 +12,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/point_rappel.dart';
 import '../../core/widgets/raccourci_tactile.dart';
 import '../tc_mes_groupes/photo_enseignant.dart';
 
@@ -263,12 +264,29 @@ class _EditeurPhotoPubliqueState extends ConsumerState<EditeurPhotoPublique> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(
-                    t.enseignant.photo.aide,
-                    style: palette.inkStrong.applyTo(
-                      textes.bodyLarge ?? const TextStyle(),
-                    ),
+                  // KYC-PHOTO-1 : la photo est obligatoire, le point rouge
+                  // partage le dit (fixe, sans pulsation).
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Flexible(
+                        child: Text(
+                          t.enseignant.photo.aide,
+                          style: palette.inkStrong.applyTo(
+                            textes.bodyLarge ?? const TextStyle(),
+                          ),
+                        ),
+                      ),
+                      Ecart.hXs,
+                      PointRappel(
+                        key: const ValueKey<String>('photo-obligatoire'),
+                        libelle: t.enseignant.photo.obligatoireLecteur,
+                        battements: 0,
+                      ),
+                    ],
                   ),
+                  Ecart.vSm,
+                  Text(t.enseignant.photo.voile, style: attenue),
                   Ecart.vSm,
                   Text(t.enseignant.photo.notice, style: attenue),
                 ],

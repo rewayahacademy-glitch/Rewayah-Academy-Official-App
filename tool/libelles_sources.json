@@ -53,5 +53,9 @@
   "enseignant.cahier.suite": "commentaire du directeur, revue du 01-02/10, etape LIB-OBJ-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
   "enseignant.journee.erreurPartielle": "commentaire du directeur, revue du 01-02/10, etape LIB-ERR-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
   "admin.tableau.foyers": "commentaire du directeur, revue du 01-02/10, etape FOYER-ADMIN-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
-  "admin.tableau.aTraiterPortee": "commentaire du directeur, revue du 01-02/10, etape FOYER-ADMIN-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)"
+  "admin.tableau.aTraiterPortee": "commentaire du directeur, revue du 01-02/10, etape FOYER-ADMIN-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
+  "kyc.confidentialite": "commentaire du directeur, revue du 01-02/10, etape KYC-PHOTO-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
+  "enseignant.photo.aide": "commentaire du directeur, revue du 01-02/10, etape KYC-PHOTO-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
+  "enseignant.photo.obligatoireLecteur": "commentaire du directeur, revue du 01-02/10, etape KYC-PHOTO-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
+  "enseignant.photo.voile": "commentaire du directeur, revue du 01-02/10, etape KYC-PHOTO-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)"
 }

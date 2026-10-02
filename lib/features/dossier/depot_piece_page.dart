@@ -134,7 +134,9 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
           // jamais un bouton plein (K-56, PHOTO-LIEN-1). "Envoyer" reste l'unique
           // bouton plein.
           LienFleche(
-            libelle: _piece == null ? t.kyc.choisirFichier : t.kyc.fichierChoisi,
+            libelle: _piece == null
+                ? t.kyc.choisirFichier
+                : t.kyc.fichierChoisi,
             onPress: _type == null ? null : () => unawaited(_choisir()),
           ),
           Ecart.vMd,
@@ -157,6 +159,9 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
                 Text(t.kyc.titre, style: textes.headlineSmall),
                 Ecart.vMd,
                 Text(t.kyc.intro, style: textes.bodyMedium),
+                // KYC-PHOTO-1 : jamais publique, la direction seule.
+                Ecart.vSm,
+                Text(t.kyc.confidentialite, style: textes.bodyMedium),
                 Ecart.vXxl,
                 Text(t.kyc.typeQuestion, style: textes.titleMedium),
                 Ecart.vMd,

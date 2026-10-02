@@ -738,6 +738,7 @@
   "kyc": {
     "titre": "Votre pièce d'identité",
     "intro": "Une photo lisible suffit. Elle est conservée le temps de la vérification, puis effacée.",
+    "confidentialite": "Votre pièce d'identité se dépose telle quelle : elle n'est jamais publique, seule la direction la consulte, et elle est exigée par la réglementation sur la protection de l'enfance.",
     "typeQuestion": "Quelle pièce déposez-vous ?",
     "carteIdentite": "Carte d'identité",
     "passeport": "Passeport",
@@ -3000,7 +3001,9 @@
     },
     "photo": {
       "titre": "Photo professionnelle",
-      "aide": "Cette photo peut être visible par les élèves et les familles de vos Classes.",
+      "aide": "Votre photo est obligatoire : les familles ne confient pas leurs enfants à un inconnu sur internet. Elle est visible des familles de vos élèves.",
+      "obligatoireLecteur": "Photo obligatoire",
+      "voile": "Si vous portez le voile intégral, votre photo de profil peut vous montrer voilée.",
       "notice": "N'utilisez pas votre pièce d'identité.",
       "choisir": "Choisir une photo",
       "utiliser": "Utiliser cette photo",

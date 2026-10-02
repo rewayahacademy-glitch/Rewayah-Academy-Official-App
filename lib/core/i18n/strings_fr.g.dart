@@ -892,6 +892,9 @@ class Traductions$kyc$fr {
 	/// fr: 'Une photo lisible suffit. Elle est conservée le temps de la vérification, puis effacée.'
 	String get intro => 'Une photo lisible suffit. Elle est conservée le temps de la vérification, puis effacée.';
 
+	/// fr: 'Votre pièce d'identité se dépose telle quelle : elle n'est jamais publique, seule la direction la consulte, et elle est exigée par la réglementation sur la protection de l'enfance.'
+	String get confidentialite => 'Votre pièce d\'identité se dépose telle quelle : elle n\'est jamais publique, seule la direction la consulte, et elle est exigée par la réglementation sur la protection de l\'enfance.';
+
 	/// fr: 'Quelle pièce déposez-vous ?'
 	String get typeQuestion => 'Quelle pièce déposez-vous ?';
 
@@ -8267,8 +8270,14 @@ class Traductions$enseignant$photo$fr {
 	/// fr: 'Photo professionnelle'
 	String get titre => 'Photo professionnelle';
 
-	/// fr: 'Cette photo peut être visible par les élèves et les familles de vos Classes.'
-	String get aide => 'Cette photo peut être visible par les élèves et les familles de vos Classes.';
+	/// fr: 'Votre photo est obligatoire : les familles ne confient pas leurs enfants à un inconnu sur internet. Elle est visible des familles de vos élèves.'
+	String get aide => 'Votre photo est obligatoire : les familles ne confient pas leurs enfants à un inconnu sur internet. Elle est visible des familles de vos élèves.';
+
+	/// fr: 'Photo obligatoire'
+	String get obligatoireLecteur => 'Photo obligatoire';
+
+	/// fr: 'Si vous portez le voile intégral, votre photo de profil peut vous montrer voilée.'
+	String get voile => 'Si vous portez le voile intégral, votre photo de profil peut vous montrer voilée.';
 
 	/// fr: 'N'utilisez pas votre pièce d'identité.'
 	String get notice => 'N\'utilisez pas votre pièce d\'identité.';
@@ -14903,6 +14912,7 @@ extension on Traductions {
 			'consentement.compte.inviteAction' => 'Lire',
 			'kyc.titre' => 'Votre pièce d\'identité',
 			'kyc.intro' => 'Une photo lisible suffit. Elle est conservée le temps de la vérification, puis effacée.',
+			'kyc.confidentialite' => 'Votre pièce d\'identité se dépose telle quelle : elle n\'est jamais publique, seule la direction la consulte, et elle est exigée par la réglementation sur la protection de l\'enfance.',
 			'kyc.typeQuestion' => 'Quelle pièce déposez-vous ?',
 			'kyc.carteIdentite' => 'Carte d\'identité',
 			'kyc.passeport' => 'Passeport',
@@ -15339,9 +15349,9 @@ extension on Traductions {
 			'dossiers.revue.typeDossier' => 'Type de dossier',
 			'dossiers.revue.dateDepot' => 'Date de dépôt',
 			'dossiers.revue.etatDossier' => 'État du dossier',
-			'dossiers.revue.dateIndisponible' => 'Date de dépôt indisponible',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.revue.dateIndisponible' => 'Date de dépôt indisponible',
 			'dossiers.revue.pasPret' => 'Ce dossier n\'est pas encore prêt à être validé.',
 			'dossiers.revue.erreurChargement' => 'Impossible de charger ce dossier.',
 			'dossiers.revue.pieceIndisponible' => 'La consultation de la pièce est indisponible pour le moment.',
@@ -15853,9 +15863,9 @@ extension on Traductions {
 			'admin.journal.evtObservationControleur' => 'Visite de contrôle commencée',
 			'admin.journal.evtJetonVideo' => 'Entrée en salle autorisée',
 			'admin.journal.vide' => 'Aucun événement enregistré',
-			'admin.journal.videDetail' => 'Chaque lecture de dossier, chaque décision et chaque attribution viendra s\'inscrire ici.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.journal.videDetail' => 'Chaque lecture de dossier, chaque décision et chaque attribution viendra s\'inscrire ici.',
 			'admin.journal.videFiltre' => 'Aucun événement ne correspond',
 			'admin.journal.videFiltreDetail' => 'Élargissez la période, ou relâchez un filtre.',
 			'admin.journal.effacerFiltres' => 'Effacer les filtres',
@@ -16367,9 +16377,9 @@ extension on Traductions {
 			'historique.segments.seances' => 'Séances',
 			'historique.segments.observations' => 'Observations',
 			'historique.moisCourts.0' => 'janv.',
-			'historique.moisCourts.1' => 'févr.',
 			_ => null,
 		} ?? switch (path) {
+			'historique.moisCourts.1' => 'févr.',
 			'historique.moisCourts.2' => 'mars',
 			'historique.moisCourts.3' => 'avr.',
 			'historique.moisCourts.4' => 'mai',
@@ -16873,17 +16883,19 @@ extension on Traductions {
 			'enseignant.bienvenue.versAttente' => 'Voir mon dossier',
 			'enseignant.bienvenue.erreur' => 'Votre profil n\'a pas pu être lu. Réessayez dans un instant.',
 			'enseignant.photo.titre' => 'Photo professionnelle',
-			'enseignant.photo.aide' => 'Cette photo peut être visible par les élèves et les familles de vos Classes.',
+			'enseignant.photo.aide' => 'Votre photo est obligatoire : les familles ne confient pas leurs enfants à un inconnu sur internet. Elle est visible des familles de vos élèves.',
+			'enseignant.photo.obligatoireLecteur' => 'Photo obligatoire',
+			'enseignant.photo.voile' => 'Si vous portez le voile intégral, votre photo de profil peut vous montrer voilée.',
 			'enseignant.photo.notice' => 'N\'utilisez pas votre pièce d\'identité.',
 			'enseignant.photo.choisir' => 'Choisir une photo',
 			'enseignant.photo.utiliser' => 'Utiliser cette photo',
 			'enseignant.photo.remplacer' => 'Remplacer la photo',
 			'enseignant.photo.autre' => 'Choisir une autre photo',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.photo.changer' => 'Changer la photo',
 			'enseignant.photo.alternatif' => 'Votre photo publique',
 			'enseignant.photo.succes' => 'La photo est enregistrée.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.photo.echec' => 'La photo n\'a pas pu être envoyée. Rien n\'a changé sur le profil.',
 			'enseignant.photo.selectionEchec' => 'La photo n\'a pas pu être ouverte. Vérifiez l\'accès aux photos de l\'appareil, puis réessayez.',
 			'enseignant.photo.horsLigne' => 'Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.',
@@ -17393,11 +17405,11 @@ extension on Traductions {
 			'tc.groupe.emplacement.nonBrancheDetail' => 'Ce contenu sera rattaché à cet espace prochainement.',
 			'tc.bibliotheque.titre' => 'Bibliothèque',
 			'tc.bibliotheque.rechercheIndication' => 'Titre, niveau, sourate ou page',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.rechercheLibelle' => 'Rechercher un support',
 			'tc.bibliotheque.effacerRecherche' => 'Tout afficher',
 			'tc.bibliotheque.filtre.type' => 'Type',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.filtre.disponibilite' => 'Disponibilité',
 			'tc.bibliotheque.sections.continuer' => 'Continuer',
 			'tc.bibliotheque.sections.pourCeGroupe' => 'Pour cette Classe',
@@ -17907,11 +17919,11 @@ extension on Traductions {
 			'adulte.invitation.annulationEchecPhrase' => 'La connexion a été interrompue. L\'invitation est toujours envoyée : vous pouvez réessayer.',
 			'adulte.demo.titre' => 'Démonstration de l\'élève adulte',
 			'adulte.demo.mention' => 'Les données sont fictives et rien n\'est envoyé.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.intro' => 'Choisissez un écran, puis une situation du foyer Diallo.',
 			'adulte.demo.ecrans' => 'Les écrans',
 			'adulte.demo.situations' => 'Les situations du foyer',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.variantes' => 'Les variantes',
 			'adulte.demo.titulaireFemme' => 'La titulaire est une femme, son conjoint est le second adulte.',
 			'adulte.demo.vueConjointe' => 'Mon espace vu par la conjointe, second adulte du foyer.',
