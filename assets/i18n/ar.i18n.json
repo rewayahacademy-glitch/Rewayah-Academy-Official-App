@@ -74,6 +74,16 @@
     }
   },
   "enseignant": {
+    "journee": {
+      "derniereSeance": "آخر حصة",
+      "rejoindreSalle": "الدخول إلى القاعة",
+      "rejoindreSalleLecteur": "الدخول إلى قاعة الفصل {classe}",
+      "remplirCahier": "تعبئة دفتر المتابعة",
+      "remplirCahierLecteur": "تعبئة دفتر المتابعة للفصل {classe}",
+      "cahierObligatoire": "إلزامي: يُعبَّأ دفتر {classe} في نهاية كل حصة.",
+      "voirCahier": "عرض دفتر {classe}",
+      "voirCahierLecteur": "عرض دفتر المتابعة للفصل {classe}"
+    },
     "ficheGroupe": {
       "elevesTitre": "الطلاب",
       "preparationTitre": "للتحضير",
