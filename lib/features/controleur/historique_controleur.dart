@@ -35,6 +35,7 @@ class ComplementRapport {
     required this.date,
     required this.texte,
     this.motif,
+    this.auteur,
   });
 
   /// Date et heure de l'ajout.
@@ -45,6 +46,11 @@ class ComplementRapport {
 
   /// Le motif, facultatif.
   final String? motif;
+
+  /// Nom d'affichage de l'auteur, fixe par le serveur (BR-CT-14), jamais
+  /// saisi par l'application. Nul : le controleur connecte (« Vous »).
+  /// Revue CT-R m4.
+  final String? auteur;
 }
 
 /// Un rapport de mission, en lecture.

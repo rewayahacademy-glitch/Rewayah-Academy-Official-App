@@ -471,9 +471,11 @@ class _DetailRapport extends StatelessWidget {
                 else
                   for (final ComplementRapport c in r.complements)
                     LigneCleValeur(
-                      cle: h.dateHeure(
+                      // Revue CT-R m4 : qui l'a ecrit, a cote de la date.
+                      cle: h.dateHeureAuteur(
                         date: dateDeLAppareil(c.date),
                         heure: heureDeLAppareil(c.date),
+                        auteur: c.auteur ?? t.controleur.echanges.auteurVous,
                       ),
                       valeur: c.texte,
                       complement: c.motif == null

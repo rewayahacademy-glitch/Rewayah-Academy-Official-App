@@ -8618,6 +8618,9 @@ class Traductions$controleur$historique$fr {
 	/// fr: '{date}, {heure}'
 	String dateHeure({required Object date, required Object heure}) => '${date}, ${heure}';
 
+	/// fr: '{date}, {heure} · {auteur}'
+	String dateHeureAuteur({required Object date, required Object heure, required Object auteur}) => '${date}, ${heure} · ${auteur}';
+
 	/// fr: '{date}, {classe}, {enseignant}, {duree}, {statut}'
 	String ligne({required Object date, required Object classe, required Object enseignant, required Object duree, required Object statut}) => '${date}, ${classe}, ${enseignant}, ${duree}, ${statut}';
 
@@ -16066,6 +16069,7 @@ extension on Traductions {
 			'controleur.historique.duree' => ({required Object minutes}) => '${minutes} min observées',
 			'controleur.historique.meta' => ({required Object heure, required Object duree}) => '${heure} · ${duree}',
 			'controleur.historique.dateHeure' => ({required Object date, required Object heure}) => '${date}, ${heure}',
+			'controleur.historique.dateHeureAuteur' => ({required Object date, required Object heure, required Object auteur}) => '${date}, ${heure} · ${auteur}',
 			'controleur.historique.ligne' => ({required Object date, required Object classe, required Object enseignant, required Object duree, required Object statut}) => '${date}, ${classe}, ${enseignant}, ${duree}, ${statut}',
 			'controleur.historique.vide' => 'Aucun contrôle pour le moment.',
 			'controleur.historique.videFiltres' => 'Aucun contrôle ne correspond à ces filtres.',
@@ -16422,9 +16426,9 @@ extension on Traductions {
 			'tc.outils.portee.temporaire' => 'Le temps d\'expliquer',
 			'tc.outils.portee.seance' => 'Jusqu\'à la fin du cours',
 			'tc.outils.portee.enregistree' => 'Enregistrer',
-			'tc.outils.portee.aide' => 'Combien de temps garder ces annotations ?',
 			_ => null,
 		} ?? switch (path) {
+			'tc.outils.portee.aide' => 'Combien de temps garder ces annotations ?',
 			'tc.outils.marquer.titre' => 'Marquer ce passage',
 			'tc.outils.marquer.aide' => 'Choisissez ce que ce passage demande.',
 			'tc.outils.marquer.retirer' => 'Retirer le marqueur',

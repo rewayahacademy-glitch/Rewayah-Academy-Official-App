@@ -3150,6 +3150,7 @@
       "duree": "{minutes} min observées",
       "meta": "{heure} · {duree}",
       "dateHeure": "{date}, {heure}",
+      "dateHeureAuteur": "{date}, {heure} · {auteur}",
       "ligne": "{date}, {classe}, {enseignant}, {duree}, {statut}",
       "vide": "Aucun contrôle pour le moment.",
       "videFiltres": "Aucun contrôle ne correspond à ces filtres.",

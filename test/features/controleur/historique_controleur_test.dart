@@ -405,6 +405,11 @@ void main() {
     expect(find.text(h.motif(motif: c.correction)), findsOneWidget);
     expect(find.text(h.complementAjoute), findsOneWidget);
     expect(find.text(h.sansComplement), findsNothing);
+    // Revue CT-R m4 : l'auteur suit la date ; sans nom du serveur, « Vous ».
+    expect(
+      find.textContaining(' · ${t.controleur.echanges.auteurVous}'),
+      findsOneWidget,
+    );
     // La liste porte aussi le nouveau statut.
     await tester.tap(find.byType(DisqueRetour));
     await tester.pumpAndSettle();
