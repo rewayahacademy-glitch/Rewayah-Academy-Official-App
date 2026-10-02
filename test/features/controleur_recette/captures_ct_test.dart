@@ -12,6 +12,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/features/compte/espaces_compte.dart';
+import 'package:rewayah_academy/features/controleur/complement_rapport_page.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.dart';
 import 'package:rewayah_academy/features/controleur/historique_controleur_page.dart';
@@ -542,4 +543,82 @@ void main() {
       }
     },
   );
+
+  group('Capture : CT-8, CTR-03B Complement', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    Future<void> toucher(WidgetTester tester, Finder cible) async {
+      await tester.ensureVisible(cible);
+      await tester.pumpAndSettle();
+      await tester.tap(cible);
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
+    }
+
+    Future<void> motif(WidgetTester tester) async {
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
+      await toucher(
+        tester,
+        find.byKey(HistoriqueControleurPage.ligneKey('demo-rapport-0921')),
+      );
+      await toucher(tester, find.byKey(HistoriqueControleurPage.complementKey));
+      await toucher(
+        tester,
+        find.byKey(ComplementRapportPage.cleMotif(MotifComplement.precision)),
+      );
+    }
+
+    Future<void> texte(WidgetTester tester) async {
+      await motif(tester);
+      await toucher(tester, find.text(t.commun.continuer).last);
+      await tester.enterText(
+        find.byKey(ComplementRapportPage.texteKey),
+        'La connexion de la Classe a été coupée deux minutes.',
+      );
+      await tester.pump();
+    }
+
+    Future<void> recapitulatif(WidgetTester tester) async {
+      await texte(tester);
+      await toucher(tester, find.text(t.commun.continuer).last);
+    }
+
+    Future<void> ajoute(WidgetTester tester) async {
+      await recapitulatif(tester);
+      await toucher(tester, find.text(t.controleur.complement.envoyer).last);
+      await toucher(tester, find.text(t.controleur.complement.revenir).last);
+    }
+
+    for (final (String l, Size taille) in <(String, Size)>[
+      ('390', const Size(390, 844)),
+      ('768', const Size(768, 1000)),
+      ('1440', const Size(1440, 900)),
+    ]) {
+      for (final ThemeMode mode in <ThemeMode>[
+        ThemeMode.light,
+        ThemeMode.dark,
+      ]) {
+        final String s = '${l}_${mode.name}';
+        for (final (String nom, Future<void> Function(WidgetTester) avant)
+            in <(String, Future<void> Function(WidgetTester))>[
+              ('motif', motif),
+              ('texte', texte),
+              ('recapitulatif', recapitulatif),
+              ('ajoute', ajoute),
+            ]) {
+          testWidgets('ct8_complement_${nom}_$s', (WidgetTester tester) async {
+            await _capturerRoute(
+              tester,
+              'ct8_complement_${nom}_$s',
+              adresseDemoControleur(EcranDemoControleur.historique),
+              taille,
+              mode: mode,
+              avant: avant,
+            );
+          });
+        }
+      }
+    }
+  });
 }

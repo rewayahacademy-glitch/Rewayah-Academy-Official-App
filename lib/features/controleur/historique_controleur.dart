@@ -107,12 +107,43 @@ class RapportControle {
 
   /// Les complements, du plus ancien au plus recent.
   final List<ComplementRapport> complements;
+
+  /// Une NOUVELLE vue du rapport avec [c] ajoute a la fin et le statut
+  /// « Complement ajoute » (CT-8). Le rapport d'origine n'est jamais
+  /// modifie (C10) : aucun champ n'est reecrit, la liste est recopiee.
+  RapportControle avecComplement(ComplementRapport c) => RapportControle(
+    id: id,
+    missionId: missionId,
+    classe: classe,
+    enseignant: enseignant,
+    debut: debut,
+    dureeObservee: dureeObservee,
+    statut: StatutRapport.complementAjoute,
+    faits: faits,
+    choix: choix,
+    observation: observation,
+    eleve: eleve,
+    presents: presents,
+    complements: List<ComplementRapport>.unmodifiable(<ComplementRapport>[
+      ...complements,
+      c,
+    ]),
+  );
 }
 
 /// Le port de l'Historique.
 abstract interface class PortHistorique {
   /// Les rapports du controleur, du plus recent au plus ancien.
   Future<List<RapportControle>> rapports();
+
+  /// Ajoute un complement au rapport [rapportId] (CTR-03B, P-CTR-07) : seuls
+  /// le contenu et le motif facultatif partent, jamais le rapport. Rend le
+  /// complement date par le serveur ; leve une erreur sans confirmation.
+  Future<ComplementRapport> ajouterComplement(
+    String rapportId, {
+    required String texte,
+    String? motif,
+  });
 }
 
 /// Le port par defaut, sans serveur : tout echoue, rien n'est simule.
@@ -123,6 +154,13 @@ class HistoriqueIndisponible implements PortHistorique {
   @override
   Future<List<RapportControle>> rapports() async =>
       throw StateError('Aucun serveur branche (BR-1).');
+
+  @override
+  Future<ComplementRapport> ajouterComplement(
+    String rapportId, {
+    required String texte,
+    String? motif,
+  }) async => throw StateError('Aucun serveur branche (BR-1).');
 }
 
 /// Le port de l'Historique : neutre par defaut, remplace en demonstration.

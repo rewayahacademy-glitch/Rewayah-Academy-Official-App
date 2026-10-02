@@ -9,7 +9,7 @@
 //
 // Le detail est en lecture seule (C10) : Mission, Faits automatiques,
 // Observation du Controleur, Complements, Echanges Admin. « Ajouter un
-// complement » est le seul bouton principal (page provisoire jusqu'a CT-8) ;
+// complement » est le seul bouton principal (parcours CT-8, `ComplementRapportPage`) ;
 // « Ecrire a l'administration » est un lien vers le fil de la mission. Un
 // rapport « A terminer » n'a pas de detail : la ligne reprend le compte rendu.
 //
@@ -42,6 +42,7 @@ import '../suivi_foyer/composants_historique.dart'
     show CarteLignes, ColonneHistorique, LigneHistorique;
 import '../suivi_foyer/filtres_historique.dart'
     show FiltresHistorique, PeriodeHistorique;
+import 'complement_rapport_page.dart';
 import 'compte_rendu_controle.dart';
 import 'compte_rendu_controle_page.dart' show LignesFaitsVisite;
 import 'historique_controleur.dart';
@@ -100,6 +101,7 @@ class _HistoriqueControleurPageState
   AsyncValue<List<RapportControle>> _liste =
       const AsyncValue<List<RapportControle>>.loading();
   RapportControle? _ouvert;
+  bool _enComplement = false;
   FiltresHistorique<StatutRapport> _filtres =
       const FiltresHistorique<StatutRapport>();
 
@@ -132,13 +134,33 @@ class _HistoriqueControleurPageState
     setState(() => _ouvert = r);
   }
 
+  // La nouvelle vue remplace l'ancienne a l'ecran ; le rapport d'origine
+  // n'est pas modifie (C10).
+  void _complementAjoute(RapportControle maj) => setState(() {
+    _ouvert = maj;
+    _enComplement = false;
+    _liste = _liste.whenData(
+      (List<RapportControle> l) => <RapportControle>[
+        for (final RapportControle x in l) x.id == maj.id ? maj : x,
+      ],
+    );
+  });
+
   @override
   Widget build(BuildContext context) {
     final RapportControle? r = _ouvert;
+    if (r != null && _enComplement) {
+      return ComplementRapportPage(
+        rapport: r,
+        onRetour: () => setState(() => _enComplement = false),
+        onTermine: _complementAjoute,
+      );
+    }
     if (r != null) {
       return _DetailRapport(
         rapport: r,
         onRetour: () => setState(() => _ouvert = null),
+        onComplement: () => setState(() => _enComplement = true),
         onEcrireAdmin:
             widget.onEcrireAdmin ??
             (String _) => GoRouter.of(context).go(Routes.controleurEchanges),
@@ -292,26 +314,14 @@ class _DetailRapport extends StatelessWidget {
   const _DetailRapport({
     required this.rapport,
     required this.onRetour,
+    required this.onComplement,
     required this.onEcrireAdmin,
   });
 
   final RapportControle rapport;
   final VoidCallback onRetour;
+  final VoidCallback onComplement;
   final ValueChanged<String> onEcrireAdmin;
-
-  void _complement(BuildContext context) => Navigator.of(context).push(
-    MaterialPageRoute<void>(
-      builder: (BuildContext contexte) => PageShell(
-        titre: t.controleur.historique.ajouterComplement,
-        onRetour: () => Navigator.of(contexte).pop(),
-        child: EmptyState(
-          message: t.controleur.historique.provisoire,
-          icone: AppIcons.historique,
-          registre: RegistreVide.subi,
-        ),
-      ),
-    ),
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -433,7 +443,7 @@ class _DetailRapport extends StatelessWidget {
                 key: HistoriqueControleurPage.complementKey,
                 libelle: h.ajouterComplement,
                 pleineLargeur: false,
-                onPress: () => _complement(context),
+                onPress: onComplement,
               ),
             ),
             entre,
