@@ -292,4 +292,13 @@ jobs:
       - name: Verifie les invariants de l'etape 2
         run: dart run tool/verifier_jetons.dart
 
+      # Revue directeur 01-02/10/2026 (K-54 a K-59) : cartes collees, bouton
+      # recompose, libelle ambigu, mot interne, erreur sans action. Le socle
+      # (tool/revue_socle.txt) fige l'existant ; il ne peut que diminuer.
+      - name: Verifie les regles de la revue du directeur
+        if: matrix.target == 'web'
+        run: >-
+          dart run tool/verifier_revue.dart --detail
+          --regle=cartes-collees,bouton-recompose,libelle-ambigu,mot-interne,erreur-sans-action
+
       - run: flutter build ${{ matrix.target }}
