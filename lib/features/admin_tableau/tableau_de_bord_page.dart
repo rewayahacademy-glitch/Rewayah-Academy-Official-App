@@ -151,6 +151,20 @@ class TableauDeBordPage extends ConsumerWidget {
     // la seconde changerait seule.
     final DateTime maintenant = horloge();
 
+    // BENTO-1 : les trois plus anciens dossiers, en apercu dans la grande
+    // tuile. Memes donnees que la file ci-dessous, aucun appel de plus.
+    final List<DossierAValider> plusAnciens =
+        RevueDossiersDepuisValidation.enseignantsSeulement(
+          dossiers.value ?? const <DossierAValider>[],
+        ).toList()..sort(
+          (DossierAValider a, DossierAValider b) =>
+              a.deposeLe.compareTo(b.deposeLe),
+        );
+    final List<String> apercu = <String>[
+      for (final DossierAValider d in plusAnciens.take(3))
+        '${d.libelleCourt} · ${_anciennete(maintenant, d.deposeLe)}',
+    ];
+
     return PageShell(
       titre: t.admin.tableau.titre,
       child: Column(
@@ -159,7 +173,7 @@ class TableauDeBordPage extends ConsumerWidget {
           // 1. LES SIX COMPTEURS. Ils sont rendus des que la lecture aboutit,
           // zeros compris.
           if (indicateurs.hasValue)
-            _Compteurs(indicateurs: indicateurs.requireValue)
+            _Compteurs(indicateurs: indicateurs.requireValue, apercu: apercu)
           else if (indicateurs.hasError)
             Text(
               t.admin.tableau.compteursErreur,
@@ -192,15 +206,7 @@ class TableauDeBordPage extends ConsumerWidget {
                   // La nouveaute se dit en jours, jamais en heures : une ligne
                   // deposee ce matin et une deposee la veille se lisent d'un
                   // coup d'oeil, et le tri se verifie a l'oeil.
-                  anciennete: switch (maintenant
-                      .difference(ligne.depuis)
-                      .inDays) {
-                    <= 0 => t.admin.tableau.attenteAujourdhui,
-                    1 => t.admin.tableau.attenteUnJour,
-                    _ => t.admin.tableau.attenteJours(
-                      jours: '${maintenant.difference(ligne.depuis).inDays}',
-                    ),
-                  },
+                  anciennete: _anciennete(maintenant, ligne.depuis),
                   onPress: () =>
                       GoRouter.of(context)
                           .go(ligne.destination, extra: ligne.extra),
@@ -281,9 +287,12 @@ class TableauDeBordPage extends ConsumerWidget {
 /// aucune fonction Securite/Personnes reelle a filtrer : une tuile sans
 /// [onPress] est un rapport, jamais un bouton grise.
 class _Compteurs extends StatelessWidget {
-  const _Compteurs({required this.indicateurs});
+  const _Compteurs({required this.indicateurs, this.apercu = const <String>[]});
 
   final IndicateursAdmin indicateurs;
+
+  /// Les plus anciens dossiers, nom et delai, pour la grande tuile.
+  final List<String> apercu;
 
   @override
   @override
@@ -300,6 +309,7 @@ class _Compteurs extends StatelessWidget {
             valeur: indicateurs.dossiersEnAttente,
             libelle: t.admin.tableau.dossiers,
             detail: t.admin.tableau.dossiersDetail,
+            apercu: apercu,
             enLigne: true,
             onPress: () =>
                 GoRouter.of(context).go(Routes.adminPersonnesDossiers),
@@ -379,6 +389,7 @@ class _TuileCompteur extends StatelessWidget {
     this.detail,
     this.onPress,
     this.enLigne = false,
+    this.apercu = const <String>[],
   });
 
   final int valeur;
@@ -388,6 +399,10 @@ class _TuileCompteur extends StatelessWidget {
 
   /// Vrai pour la tuile large : son chiffre est plus grand.
   final bool enLigne;
+
+  /// Un apercu de la file, montre seulement quand la tuile a la place
+  /// (grande tuile, au moins une ligne et demie de grille).
+  final List<String> apercu;
 
   @override
   Widget build(BuildContext context) {
@@ -434,10 +449,35 @@ class _TuileCompteur extends StatelessWidget {
       // Le chiffre en haut, ce qu'il compte en bas : la tuile est remplie
       // quelle que soit sa forme. En une colonne (texte agrandi), la hauteur
       // est libre et les deux se suivent.
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[chiffre, Ecart.vXs, texte],
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints c) {
+          final bool place =
+              apercu.isNotEmpty &&
+              c.hasBoundedHeight &&
+              c.maxHeight >= GrilleBento.hauteurLigne * 1.5;
+          return ContenuTuileBento(
+            children: <Widget>[
+              chiffre,
+              if (place)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    for (final String ligne in apercu) ...<Widget>[
+                      TexteSansCoupure(
+                        ligne,
+                        style: paire.applyTo(
+                          textes.bodyMedium ?? const TextStyle(),
+                        ),
+                      ),
+                      Ecart.vXs,
+                    ],
+                  ],
+                ),
+              Ecart.vXs,
+              texte,
+            ],
+          );
+        },
       ),
     );
   }
@@ -455,33 +495,54 @@ class _TuileDouble extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final AppColorPair paire = palette.surfaceRaised;
-    Widget moitie((int, String) c) => Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Text(
-            '${c.$1}',
-            style: AppTypography.tabulaire(
-              paire.applyTo(textes.headlineMedium ?? const TextStyle()),
-            ),
-          ),
-          Ecart.vXs,
-          TexteSansCoupure(
-            c.$2,
-            style: paire.applyTo(textes.labelMedium ?? const TextStyle()),
-          ),
-        ],
+    Widget chiffre(int v) => Expanded(
+      child: Text(
+        '$v',
+        style: AppTypography.tabulaire(
+          paire.applyTo(textes.headlineMedium ?? const TextStyle()),
+        ),
+      ),
+    );
+    Widget libelle(String l) => Expanded(
+      child: TexteSansCoupure(
+        l,
+        style: paire.applyTo(textes.labelMedium ?? const TextStyle()),
       ),
     );
     return AppCard(
       surface: paire,
       marge: AppSpacing.lg,
       libelleSemantique: '${gauche.$1} ${gauche.$2}, ${droite.$1} ${droite.$2}',
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[moitie(gauche), Ecart.hLg, moitie(droite)],
+      // Les chiffres en haut, leurs libelles en bas, chacun sous le sien.
+      child: ContenuTuileBento(
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              chiffre(gauche.$1),
+              Ecart.hLg,
+              chiffre(droite.$1),
+            ],
+          ),
+          Ecart.vXs,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              libelle(gauche.$2),
+              Ecart.hLg,
+              libelle(droite.$2),
+            ],
+          ),
+        ],
       ),
     );
   }
 }
+
+/// Depuis quand une ligne attend, dit en jours, jamais en heures : une ligne
+/// deposee ce matin et une deposee la veille se lisent d'un coup d'oeil.
+String _anciennete(DateTime maintenant, DateTime depuis) =>
+    switch (maintenant.difference(depuis).inDays) {
+      <= 0 => t.admin.tableau.attenteAujourdhui,
+      1 => t.admin.tableau.attenteUnJour,
+      final int jours => t.admin.tableau.attenteJours(jours: '$jours'),
+    };

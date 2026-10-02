@@ -299,3 +299,41 @@ class GrilleBento extends StatelessWidget {
     );
   }
 }
+
+/// Le contenu d'une tuile de [GrilleBento] : il remplit la hauteur de la
+/// tuile (le chiffre en haut, le libelle en bas) et **ne deborde jamais**.
+///
+/// Dans une tuile de hauteur fixe, une colonne trop haute (police tres large,
+/// libelle long) est reduite d'un bloc juste assez pour tenir, sans ellipse ni
+/// mot coupe. En une colonne de hauteur libre (texte agrandi), elle garde sa
+/// taille naturelle.
+class ContenuTuileBento extends StatelessWidget {
+  /// Cree le contenu.
+  const ContenuTuileBento({required this.children, super.key});
+
+  /// Les lignes du contenu, de haut en bas.
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (BuildContext context, BoxConstraints c) {
+      final Widget colonne = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: children,
+      );
+      if (!c.hasBoundedHeight || !c.hasBoundedWidth) return colonne;
+      return FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: AlignmentDirectional.topStart,
+        child: SizedBox(
+          width: c.maxWidth,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: c.maxHeight),
+            child: colonne,
+          ),
+        ),
+      );
+    },
+  );
+}
