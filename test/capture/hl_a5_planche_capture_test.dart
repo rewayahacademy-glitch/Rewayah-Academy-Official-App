@@ -33,6 +33,7 @@ import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
 import '../support/harnais.dart';
+import '../support/selecteur_section.dart';
 import 'outil_capture.dart';
 
 Future<void> _stabiliser(WidgetTester tester) async {
@@ -299,11 +300,7 @@ void main() {
           fixerVueCapture(tester, taille, _densite(tailleNom));
           await _monter(tester, mode.key, _admin(_etat()), Routes.admin);
           await _domaine(tester, AdminDomaine.configuration);
-          await tester.ensureVisible(
-            find.text(t.admin.politiqueRevueKyc.titre),
-          );
-          await _stabiliser(tester);
-          await tester.tap(find.text(t.admin.politiqueRevueKyc.titre));
+          await choisirSection(tester, t.admin.politiqueRevueKyc.titre);
           await _stabiliser(tester);
           expect(find.byType(Switch), findsOneWidget);
           debugPrint(

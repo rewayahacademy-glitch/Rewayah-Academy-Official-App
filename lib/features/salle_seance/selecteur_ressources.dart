@@ -13,7 +13,9 @@ import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/pressable.dart';
+import '../../core/widgets/selecteur_section.dart';
 import 'actions_seance.dart';
 import 'libelles_salle_b.dart';
 import 'vue_seance.dart';
@@ -91,18 +93,16 @@ class _SelecteurRessourcesState extends State<SelecteurRessources> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: <Widget>[
+          // Trois sections exclusives : controle segmente, ou menu si les
+          // libelles ne tiennent pas (ONGLETS-1).
+          SelecteurSection<OngletRessources>(
+            libelle: t.tc.bibliotheque.sections.groupe,
+            valeur: _onglet,
+            sections: <Segment<OngletRessources>>[
               for (final OngletRessources o in OngletRessources.values)
-                ChoiceChip(
-                  key: ValueKey<String>('onglet-${o.name}'),
-                  label: Text(_libelle(o)),
-                  selected: _onglet == o && _recherche.trim().isEmpty,
-                  onSelected: (_) => _choisirOnglet(o),
-                ),
+                Segment<OngletRessources>(valeur: o, libelle: _libelle(o)),
             ],
+            onChange: _choisirOnglet,
           ),
           const SizedBox(height: AppSpacing.md),
           TextField(

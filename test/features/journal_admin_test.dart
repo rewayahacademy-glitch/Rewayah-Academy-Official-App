@@ -12,6 +12,7 @@ import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_journal/journal_page.dart';
 
 import '../support/harnais.dart';
+import '../support/selecteur_section.dart';
 
 /// Une fenetre haute, et large ou etroite selon ce qu'on mesure.
 ///
@@ -126,11 +127,8 @@ void main() {
     ) async {
       _fenetre(tester);
       await _monter(tester, service: FauxServiceJournal());
-      expect(find.widgetWithText(Tab, t.admin.journal.titre), findsOneWidget);
-      expect(
-        find.widgetWithText(Tab, t.admin.observations.titre),
-        findsOneWidget,
-      );
+      expect(sectionVisible(t.admin.journal.titre), findsOneWidget);
+      expect(sectionVisible(t.admin.observations.titre), findsOneWidget);
     });
 
     testWidgets('la chaine intacte se dit en tete, avant les entrees', (

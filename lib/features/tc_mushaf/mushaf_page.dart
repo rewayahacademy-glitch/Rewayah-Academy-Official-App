@@ -15,8 +15,9 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/filter_pill.dart';
+import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/page_immersive.dart';
+import '../../core/widgets/selecteur_section.dart';
 import 'navigation_coran_feuille.dart';
 import 'vue_focus_classe.dart';
 import 'vue_page_mushaf.dart';
@@ -151,8 +152,7 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
         vue: vue,
         mode: etat.mode,
         zoom: etat.zoomLocal,
-        onPage: (int p) =>
-            _allerA(p, origine: OrigineNavigation.personnelle),
+        onPage: (int p) => _allerA(p, origine: OrigineNavigation.personnelle),
         onZoom: (double delta) {
           ref.read(lectureCoranProvider.notifier).zoomer(delta);
           _planifierEnregistrement();
@@ -225,7 +225,8 @@ class _Entete extends ConsumerWidget {
               page: '${vue?.numero ?? 1}',
               total: '${vue?.nombrePages ?? pagesMushafMedine}',
             ),
-            if (vue?.juzNumero != null) t.eleve.coran.juz(juz: '${vue!.juzNumero}'),
+            if (vue?.juzNumero != null)
+              t.eleve.coran.juz(juz: '${vue!.juzNumero}'),
           ].join(' . '),
           style: palette.inkMuted.applyTo(
             AppTypography.tabulaire(textes.bodySmall ?? const TextStyle()),
@@ -246,28 +247,20 @@ class _ChoixMode extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Semantics(
-      label: t.tc.coran.modes.choisir,
-      // Trois pastilles qui passeraient a la ligne sur un ecran de 320 points
-      // mangeraient la hauteur du texte. Le choix de rendu est un chrome : il
-      // defile, il ne repousse pas le contenu.
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: <Widget>[
-            for (final ModeRenduCoran candidat in ModeRenduCoran.values) ...[
-              FilterPill(
-                libelle: _libelle(candidat),
-                retenue: candidat == mode,
-                onPress: () => ref
-                    .read(lectureCoranProvider.notifier)
-                    .changerMode(candidat),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-            ],
-          ],
-        ),
-      ),
+    // Trois rendus exclusifs : un controle segmente (ou un menu quand les
+    // libelles ne tiennent pas), jamais une rangee qui defile (ONGLETS-1).
+    return SelecteurSection<ModeRenduCoran>(
+      libelle: t.tc.coran.modes.choisir,
+      valeur: mode,
+      sections: <Segment<ModeRenduCoran>>[
+        for (final ModeRenduCoran candidat in ModeRenduCoran.values)
+          Segment<ModeRenduCoran>(
+            valeur: candidat,
+            libelle: _libelle(candidat),
+          ),
+      ],
+      onChange: (ModeRenduCoran candidat) =>
+          ref.read(lectureCoranProvider.notifier).changerMode(candidat),
     );
   }
 
@@ -401,9 +394,7 @@ class _Attribution extends StatelessWidget {
         '${t.eleve.coran.edition} . ${t.eleve.coran.source} . '
         '${t.eleve.coran.sourceLien}',
         textAlign: TextAlign.center,
-        style: palette.inkFaint.applyTo(
-          textes.labelSmall ?? const TextStyle(),
-        ),
+        style: palette.inkFaint.applyTo(textes.labelSmall ?? const TextStyle()),
       ),
     );
   }

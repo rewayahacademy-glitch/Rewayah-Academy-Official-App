@@ -42,6 +42,7 @@ import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
 import '../capture/outil_capture.dart';
+import '../support/selecteur_section.dart';
 
 // RESTES AD-11 (defauts prouves, non corriges dans le temps imparti, voir
 // pilotage 05_recette/AD/AD-11.md) : ces cas restent ecrits et sautes, pour
@@ -82,12 +83,10 @@ import '../capture/outil_capture.dart';
 // reduite comme une image sous 240 de large (400 %) ; le banc retire le
 // clavier simule meme si le cas echoue (plus de cascade).
 // Le banc joue aussi les cas sautes avec --dart-define=TOUT=true.
-const Set<String> _restes = <String>{
-  'AD-9_politique 320x640',
-  'AD-9_politique 1280x1024_400pc',
-  'AD-9_politique 390x844_200pc',
-  'Tab AD-9_politique 320x640 : focus jamais masque',
-};
+// ONGLETS-1 (02/10/2026) : `SelecteurSection` remplace la barre d'onglets ; les
+// quatre cas de la politique (320, 400 %, 390/200 %, Tab a 320) passent, le
+// libelle long devient une entree de menu au lieu d'un onglet coupe.
+const Set<String> _restes = <String>{};
 
 void _test(String nom, WidgetTesterCallback corps) => testWidgets(
   nom,
@@ -291,7 +290,8 @@ Future<void> _validation(WidgetTester tester) async {
 
 Future<void> _politique(WidgetTester tester) async {
   await _domaine(tester, AdminDomaine.configuration);
-  await _toucher(tester, find.text(t.admin.politiqueRevueKyc.titre).first);
+  await choisirSection(tester, t.admin.politiqueRevueKyc.titre);
+  await _stab(tester);
   expect(find.text(t.admin.politiqueRevueKyc.libelle), findsOneWidget);
 }
 
@@ -326,20 +326,8 @@ double _largeur(WidgetTester tester) =>
 double _hauteur(WidgetTester tester) =>
     tester.view.physicalSize.height / tester.view.devicePixelRatio;
 
-bool _dansOnglets(WidgetTester tester, Element e) {
-  bool dedans = false;
-  e.visitAncestorElements((Element a) {
-    if (a.widget is TabBar) {
-      dedans = true;
-      return false;
-    }
-    return true;
-  });
-  return dedans;
-}
-
-/// 1. Reflow : aucun debordement, aucun defilement horizontal (hors barre
-/// d'onglets, motif standard de sous-navigation), toute action dans la
+/// 1. Reflow : aucun debordement, aucun defilement horizontal (plus aucune
+/// exception : ONGLETS-1 a remplace la barre d'onglets), toute action dans la
 /// largeur.
 void _verifierReflow(WidgetTester tester, String ecran) {
   expect(tester.takeException(), isNull, reason: '$ecran : debordement');
@@ -347,7 +335,6 @@ void _verifierReflow(WidgetTester tester, String ecran) {
     final ScrollableState etat =
         (s as StatefulElement).state as ScrollableState;
     if (etat.position.axis != Axis.horizontal) continue;
-    if (_dansOnglets(tester, s)) continue;
     expect(
       etat.position.maxScrollExtent,
       lessThanOrEqualTo(0.5),
@@ -356,7 +343,6 @@ void _verifierReflow(WidgetTester tester, String ecran) {
   }
   final double l = _largeur(tester);
   for (final Element a in _actions().evaluate()) {
-    if (_dansOnglets(tester, a)) continue;
     final RenderObject? ro = a.renderObject;
     if (ro is! RenderBox || !ro.hasSize || !ro.attached) continue;
     final Rect r = MatrixUtils.transformRect(
