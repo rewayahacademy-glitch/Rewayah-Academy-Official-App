@@ -172,6 +172,43 @@ void main() {
     }
   });
 
+  // VIDEO-TUILE-1 / SUPERPOS-1 : dans la galerie de l'eleve, chaque tuile
+  // reste a 16 px des bords et finit 8 px au moins au-dessus du bandeau et
+  // des commandes du bas. (Chez l'enseignant, sur telephone, la scene vit
+  // dans la colonne qui defile : elle ne passe sous rien par construction.)
+  group('VIDEO-TUILE-1 : galerie eleve, rien sous le bandeau', () {
+    for (final double largeur in <double>[320, 390]) {
+      testWidgets('student, $largeur px', (WidgetTester tester) async {
+        await _monter(tester, 'student', largeur, 1);
+        expect(tester.takeException(), isNull);
+        final double bas = tester
+            .getRect(find.byKey(PageImmersive.contenuKey))
+            .bottom;
+        final Finder cercles = find.byKey(
+          const ValueKey<String>('tuile-sans-image-cercle'),
+        );
+        expect(cercles, findsWidgets);
+        for (final Element cercle in cercles.evaluate()) {
+          final Rect tuile = tester.getRect(
+            find
+                .ancestor(
+                  of: find.byWidget(cercle.widget),
+                  matching: find.byType(ClipRRect),
+                )
+                .first,
+          );
+          expect(tuile.left, greaterThanOrEqualTo(16 - 0.5));
+          expect(tuile.right, lessThanOrEqualTo(largeur - 16 + 0.5));
+          expect(
+            tuile.bottom,
+            lessThanOrEqualTo(bas - 8),
+            reason: 'tuile $tuile sous le bandeau ($bas)',
+          );
+        }
+      });
+    }
+  });
+
   group('SALLE-200-1 : captures 390 px, texte x2', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
     for (final String role in <String>['student', 'teacher']) {

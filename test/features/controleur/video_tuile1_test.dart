@@ -1,6 +1,7 @@
 // VIDEO-TUILE-1 (revue du directeur du 02/10/2026) : dans la salle du
 // controleur, a 320 et 390 px,
 // - chaque tuile video reste entiere dans l'ecran, a 16 px du bord ;
+// - chaque tuile finit 8 px au moins au-dessus du bandeau (SUPERPOS-1) ;
 // - une tuile sans image pose le nom centre sous le cercle (a 1 px pres),
 //   sans etiquette en bas a gauche ni « Sans image » ecrit.
 
@@ -12,6 +13,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/page_immersive.dart';
 import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
 
 const Key _cercle = ValueKey<String>('tuile-sans-image-cercle');
@@ -53,6 +55,9 @@ void main() {
       expect(cercles, isNotEmpty);
       expect(noms.length, cercles.length);
       expect(find.text('Sans image'), findsNothing);
+      final double bandeau = tester
+          .getRect(find.byKey(PageImmersive.contenuKey))
+          .bottom;
 
       for (int i = 0; i < cercles.length; i++) {
         final Rect rond = tester.getRect(find.byWidget(cercles[i].widget));
@@ -81,6 +86,14 @@ void main() {
           tuile.right,
           lessThanOrEqualTo(largeur - 16 + 0.5),
           reason: 'tuile $tuile trop pres du bord droit',
+        );
+        // SUPERPOS-1 : la tuile finit au-dessus du bandeau « Visite de
+        // controle » (qui commence au bas de la zone de contenu), 8 px au
+        // moins.
+        expect(
+          tuile.bottom,
+          lessThanOrEqualTo(bandeau - 8),
+          reason: 'tuile $tuile sous le bandeau ($bandeau)',
         );
         expect(tuile.inflate(0.5).contains(nom.topLeft), isTrue);
         expect(tuile.inflate(0.5).contains(nom.bottomRight), isTrue);

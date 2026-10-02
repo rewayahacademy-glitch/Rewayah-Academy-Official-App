@@ -8,6 +8,7 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
@@ -352,7 +353,12 @@ void main() {
         find.byKey(const ValueKey<String>('fin-seance-enseignant')),
         findsOneWidget,
       );
-      await tester.tap(find.text('Ouvrir le cahier de transmission'));
+      // Le libelle vient de la cle i18n de l'ecran de fin, jamais en dur ;
+      // l'action est sous le bilan, on l'amene a l'ecran avant de toucher.
+      final Finder cahier = find.text(t.salle.fin.enseignant.ouvrirCahier);
+      await tester.ensureVisible(cahier);
+      await tester.pumpAndSettle();
+      await tester.tap(cahier);
       expect(_sorties, 1);
     });
   });

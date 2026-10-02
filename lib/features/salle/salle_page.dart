@@ -1451,10 +1451,14 @@ class _Scene extends StatelessWidget {
     };
 
     // VIDEO-TUILE-1 : aucune tuile ne touche le bord de l'ecran -- la
-    // gouttiere mobile (16 px) de chaque cote, jamais moins.
+    // gouttiere mobile (16 px) de chaque cote -- ni ne passe sous le bandeau
+    // ou les commandes du bas : 16 px d'ecart dessous (SUPERPOS-1).
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.lg,
+        0,
+        AppSpacing.lg,
+        AppSpacing.lg,
       ),
       child: _pile(distants, moi),
     );
@@ -1536,10 +1540,13 @@ class _Galerie extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {
+        // La hauteur est arrondie vers le bas : une fraction de point en trop
+        // ferait deborder la derniere rangee et rognerait ses coins.
         final double largeur =
             (contraintes.maxWidth - _ecart * (colonnes - 1)) / colonnes;
         final double disponible =
-            (contraintes.maxHeight - _ecart * (lignes - 1)) / lignes;
+            ((contraintes.maxHeight - _ecart * (lignes - 1)) / lignes)
+                .floorToDouble();
         final double hauteur = disponible < _hauteurPlancher
             ? _hauteurPlancher
             : disponible;
