@@ -9574,6 +9574,9 @@ class Traductions$adulte$demo$fr {
 	/// fr: 'L'invitation ouverte sans compte.'
 	String get invitationSansCompte => 'L\'invitation ouverte sans compte.';
 
+	/// fr: 'Le réseau est coupé : l'Accueil et Ma classe hors ligne.'
+	String get reseauCoupe => 'Le réseau est coupé : l\'Accueil et Ma classe hors ligne.';
+
 	late final Traductions$adulte$demo$etats$fr etats = Traductions$adulte$demo$etats$fr.internal(_root);
 }
 
@@ -17308,6 +17311,7 @@ extension on Traductions {
 			'adulte.demo.invitationRecueConjointe' => 'L\'invitation reçue par la conjointe, dans son propre compte.',
 			'adulte.demo.invitationRecueConjoint' => 'L\'invitation reçue par le conjoint, dans son propre compte.',
 			'adulte.demo.invitationSansCompte' => 'L\'invitation ouverte sans compte.',
+			'adulte.demo.reseauCoupe' => 'Le réseau est coupé : l\'Accueil et Ma classe hors ligne.',
 			'adulte.demo.etats.adulteSeul' => 'L\'adulte est seul, sans foyer.',
 			'adulte.demo.etats.titulaireSansConjoint' => 'Le foyer n\'a pas de second adulte.',
 			'adulte.demo.etats.invitationEnAttente' => 'L\'invitation du second adulte est en attente.',

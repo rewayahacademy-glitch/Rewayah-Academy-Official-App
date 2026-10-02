@@ -4144,6 +4144,7 @@
       "invitationRecueConjointe": "L'invitation reçue par la conjointe, dans son propre compte.",
       "invitationRecueConjoint": "L'invitation reçue par le conjoint, dans son propre compte.",
       "invitationSansCompte": "L'invitation ouverte sans compte.",
+      "reseauCoupe": "Le réseau est coupé : l'Accueil et Ma classe hors ligne.",
       "etats": {
         "adulteSeul": "L'adulte est seul, sans foyer.",
         "titulaireSansConjoint": "Le foyer n'a pas de second adulte.",

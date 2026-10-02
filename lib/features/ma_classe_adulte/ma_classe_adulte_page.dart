@@ -28,12 +28,14 @@ import 'package:go_router/go_router.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
@@ -133,35 +135,49 @@ class MaClasseAdultePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<MaClasseAdulteVM> classe = ref.watch(
+      maClasseAdulteProvider,
+    );
+    void relire() => ref.invalidate(maClasseAdulteProvider);
+    // Sans reseau, un echec se dit « hors ligne », comme les soldes du foyer
+    // et Mon espace ; une capacite absente reste dite indisponible.
+    final Object? erreur = classe.hasError ? classe.error : null;
+    final bool echecHorsLigne =
+        erreur != null &&
+        erreur is! CapaciteIndisponible &&
+        (ref.watch(horsLigneProvider).value ?? false);
     return PageShell(
       titre: t.adulte.nav.maClasse,
-      child: BlocAsynchrone<MaClasseAdulteVM>(
-        valeur: ref.watch(maClasseAdulteProvider),
-        squelette: const SqueletteGroupe(),
-        onReessayer: () => ref.invalidate(maClasseAdulteProvider),
-        construire: (MaClasseAdulteVM vue) {
-          final String? groupeId = vue.groupeId;
-          // Sans Classe : un etat subi, rien a faire ici.
-          if (groupeId == null) {
-            return EmptyState(
-              message: t.adulte.accueil.aucuneClasse,
-              invitation: t.adulte.maClasse.aucuneClasseDetail,
-              icone: AppIcons.cours,
-              registre: RegistreVide.subi,
-            );
-          }
-          return LecteurGroupe(
-            groupeId: groupeId,
-            construire: (BuildContext _, LectureGroupe lecture) => _Sections(
-              vue: vue,
-              groupeId: groupeId,
-              lecture: lecture,
-              onRejoindre: onRejoindre,
-              onVoirRessources: onVoirRessources,
+      child: echecHorsLigne
+          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire)
+          : BlocAsynchrone<MaClasseAdulteVM>(
+              valeur: classe,
+              squelette: const SqueletteGroupe(),
+              onReessayer: relire,
+              construire: (MaClasseAdulteVM vue) {
+                final String? groupeId = vue.groupeId;
+                // Sans Classe : un etat subi, rien a faire ici.
+                if (groupeId == null) {
+                  return EmptyState(
+                    message: t.adulte.accueil.aucuneClasse,
+                    invitation: t.adulte.maClasse.aucuneClasseDetail,
+                    icone: AppIcons.cours,
+                    registre: RegistreVide.subi,
+                  );
+                }
+                return LecteurGroupe(
+                  groupeId: groupeId,
+                  construire: (BuildContext _, LectureGroupe lecture) =>
+                      _Sections(
+                        vue: vue,
+                        groupeId: groupeId,
+                        lecture: lecture,
+                        onRejoindre: onRejoindre,
+                        onVoirRessources: onVoirRessources,
+                      ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }

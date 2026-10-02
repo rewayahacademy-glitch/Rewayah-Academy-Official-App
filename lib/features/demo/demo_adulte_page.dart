@@ -351,6 +351,7 @@ List<RouteBase> routesDemoAdulte(String environnement) {
               _lire(EtatDemoClasse.values, p['seance']) ??
               EtatDemoClasse.aVenir,
           eleve: p['eleve'],
+          reseauCoupe: p['reseau'] == 'coupe',
         );
       },
     ),
@@ -372,6 +373,7 @@ String adresseDemoAdulte(
   VueDemoAdulte vue = VueDemoAdulte.titulaire,
   EtatDemoClasse seance = EtatDemoClasse.aVenir,
   String? eleve,
+  bool reseauCoupe = false,
 }) => Uri(
   path: Routes.demoAdulte,
   queryParameters: <String, String>{
@@ -381,6 +383,7 @@ String adresseDemoAdulte(
     if (vue == VueDemoAdulte.secondAdulte) 'vue': 'conjoint',
     if (seance != EtatDemoClasse.aVenir) 'seance': seance.name,
     'eleve': ?eleve,
+    if (reseauCoupe) 'reseau': 'coupe',
   },
 ).toString();
 
@@ -497,6 +500,10 @@ class _ServiceAuthDemo implements ServiceAuth {
   Future<void> deconnexion() async => _quitter();
 }
 
+/// L'echec de lecture de la demonstration quand le reseau est coupe
+/// (`reseau=coupe`, revue EA-R M5) : rien n'est appele.
+final StateError _reseauCoupe = StateError('reseau coupe (demonstration)');
+
 /// La page : la liste des ecrans, ou la coquille sur l'ecran choisi.
 class DemoAdultePage extends StatelessWidget {
   /// Cree la page.
@@ -507,6 +514,7 @@ class DemoAdultePage extends StatelessWidget {
     this.vue = VueDemoAdulte.titulaire,
     this.seance = EtatDemoClasse.aVenir,
     this.eleve,
+    this.reseauCoupe = false,
     super.key,
   });
 
@@ -515,6 +523,9 @@ class DemoAdultePage extends StatelessWidget {
 
   /// L'enfant dont la fiche est ouverte (`ficheEleve`).
   final String? eleve;
+
+  /// `reseau=coupe` : l'appareil est hors ligne (revue EA-R M5).
+  final bool reseauCoupe;
 
   /// L'ecran choisi, ou nul pour la liste.
   final EcranDemoAdulte? ecran;
@@ -539,6 +550,7 @@ class DemoAdultePage extends StatelessWidget {
         vue: vue,
         seance: seance,
         eleve: eleve,
+        reseauCoupe: reseauCoupe,
       );
     }
     final AppPalette palette = AppPalette.of(context);
@@ -629,6 +641,15 @@ class DemoAdultePage extends StatelessWidget {
               adresseDemoAdulte(EcranDemoAdulte.invitationSansCompte),
             ),
           ),
+          // Revue EA-R M5 : le reseau coupe, l'Accueil et Ma classe disent
+          // « hors ligne ».
+          LienFleche(
+            key: const ValueKey<String>('lien-reseau-coupe'),
+            libelle: t.adulte.demo.reseauCoupe,
+            onPress: () => context.go(
+              adresseDemoAdulte(EcranDemoAdulte.accueil, reseauCoupe: true),
+            ),
+          ),
           Ecart.vXxl,
           titre(t.adulte.demo.situations),
           Ecart.vMd,
@@ -658,11 +679,17 @@ class CoquilleAdulteDemo extends StatelessWidget {
     this.seance = EtatDemoClasse.aVenir,
     this.environnement = Env.environnement,
     this.eleve,
+    this.reseauCoupe = false,
     super.key,
   });
 
   /// La situation de la prochaine seance (Accueil).
   final EtatDemoClasse seance;
+
+  /// `reseau=coupe` : l'appareil est hors ligne, et les lectures de
+  /// l'Accueil et de Ma classe echouent (revue EA-R M5). Sans lui, rien ne
+  /// change.
+  final bool reseauCoupe;
 
   /// L'enfant dont la fiche est ouverte (`ficheEleve`) ; par defaut le
   /// premier enfant du foyer.
@@ -691,6 +718,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
     vue: vue,
     seance: seance,
     eleve: eleve,
+    reseauCoupe: reseauCoupe,
   );
 
   @override
@@ -731,6 +759,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
         genre: genre,
         vue: vue,
         seance: seance,
+        reseauCoupe: reseauCoupe,
       ),
     );
     // L'invitation recue par le second adulte, et sa notification (EA-7,
@@ -751,6 +780,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
         genre: genre,
         vue: vue,
         seance: seance,
+        reseauCoupe: reseauCoupe,
       ),
     );
     // La suite d'une demande de reprise, dans la cloche de la personne
@@ -768,24 +798,40 @@ class CoquilleAdulteDemo extends StatelessWidget {
         ),
         // L'Accueil lit la Classe An-Nour de la demonstration de Classe
         // (seance, reseau, travail, supports), plus sa propre vue.
+        // Reseau coupe (revue EA-R M5) : la seance de la Classe se lit hors
+        // ligne (`horsLigneProvider` vrai) et la lecture de la page echoue.
         if (vu == EcranDemoAdulte.accueil) ...<Override>[
-          ...surchargesEleveDemo(seance),
+          ...surchargesEleveDemo(
+            reseauCoupe ? EtatDemoClasse.horsLigne : seance,
+          ),
           // Le second adulte est eleve d'une autre Classe, que la
           // demonstration n'a pas : le fournisseur reel reste (indisponible),
           // jamais la Classe An-Nour du titulaire (EA-BR-13).
-          if (DonneesAdulteDemo.accueil(genre, vue)
+          if (reseauCoupe)
+            accueilAdulteProvider.overrideWith(
+              (Ref _) => Future<AccueilAdulteVM>.error(_reseauCoupe),
+            )
+          else if (DonneesAdulteDemo.accueil(genre, vue)
               case final AccueilAdulteVM accueil)
             accueilAdulteProvider.overrideWith((Ref _) async => accueil),
         ] else if (vu == EcranDemoAdulte.maClasse) ...<Override>[
           // Ma classe lit la meme Classe An-Nour, plus sa propre vue (EA-3).
-          ...surchargesEleveDemo(seance),
+          ...surchargesEleveDemo(
+            reseauCoupe ? EtatDemoClasse.horsLigne : seance,
+          ),
           // Le second adulte est eleve d'une autre Classe, que la
           // demonstration n'a pas : le fournisseur reel reste (indisponible).
-          if (DonneesAdulteDemo.maClasse(genre, vue)
+          if (reseauCoupe)
+            maClasseAdulteProvider.overrideWith(
+              (Ref _) => Future<MaClasseAdulteVM>.error(_reseauCoupe),
+            )
+          else if (DonneesAdulteDemo.maClasse(genre, vue)
               case final MaClasseAdulteVM classe)
             maClasseAdulteProvider.overrideWith((Ref _) async => classe),
         ] else ...<Override>[
-          horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
+          horsLigneProvider.overrideWith(
+            (Ref _) => Stream<bool>.value(reseauCoupe),
+          ),
           // La cloche du second adulte : sa notification d'invitation, puis
           // l'invitation et sa reponse, ou rien n'est envoye (EA-7, K-28).
           // Sans invitation, les fournisseurs reels restent (indisponibles,
@@ -987,6 +1033,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
                   genre: genre,
                   vue: vue,
                   seance: seance,
+                  reseauCoupe: reseauCoupe,
                 ),
               ),
             ),
@@ -1101,6 +1148,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
         genre: genre,
         vue: vue,
         seance: seance,
+        reseauCoupe: reseauCoupe,
       ),
     );
     final EtatPlaceAdulte place = titulaire.place;
@@ -1191,6 +1239,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
             genre: genre,
             vue: vue,
             seance: seance,
+            reseauCoupe: reseauCoupe,
           ),
         ),
       ),
@@ -1281,7 +1330,9 @@ class CoquilleAdulteDemo extends StatelessWidget {
           (Ref _) async =>
               (eleves: enfants, appareils: const <AppareilAppaire>[]),
         ),
-        horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
+        horsLigneProvider.overrideWith(
+          (Ref _) => Stream<bool>.value(reseauCoupe),
+        ),
         // Le formulaire d'ajout : la porte du titulaire (compte actif) et une
         // creation de demonstration, qui n'envoie rien (K-28).
         porteAjoutProfilProvider.overrideWithValue(PorteAcces.actif),
