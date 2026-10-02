@@ -73,11 +73,11 @@ void main() {
     expect(find.text('Renforcer'), findsOneWidget);
     expect(find.text('Suspendre le nouveau'), findsOneWidget);
 
-    // Performance et faiblesses : emplacements prets, rien d'affiche.
+    // Performance et faiblesses (EN-7c) : l'echelle du directeur est la.
     expect(_cle('cahier-emplacement-performance'), findsOneWidget);
     expect(_cle('cahier-emplacement-faiblesses'), findsOneWidget);
-    expect(find.text(t.enseignant.cahier.performance), findsNothing);
-    expect(find.text(t.enseignant.cahier.faiblesses), findsNothing);
+    expect(find.text(t.enseignant.cahier.performance), findsOneWidget);
+    expect(find.text(t.enseignant.cahier.faiblesses), findsOneWidget);
 
     await _toucher(tester, _cle('cahier-suite-renforcer'));
     await _toucher(tester, find.text(t.enseignant.cahier.ajusterValider));

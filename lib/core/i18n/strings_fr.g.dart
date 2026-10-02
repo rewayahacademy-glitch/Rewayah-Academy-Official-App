@@ -8693,8 +8693,8 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Réessayez, ou déposez le cahier de transmission sans le constat.'
 	String get erreurDetail => 'Réessayez, ou déposez le cahier de transmission sans le constat.';
 
-	/// fr: 'Le cahier de transmission n'a pas pu être enregistré. Réessayez.'
-	String get echecEnvoi => 'Le cahier de transmission n\'a pas pu être enregistré. Réessayez.';
+	/// fr: 'L'envoi n'a pas été confirmé. Vérifiez avant de réessayer.'
+	String get echecEnvoi => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.';
 
 	/// fr: 'Le cahier de transmission de cette séance est déjà déposé.'
 	String get dejaDepose => 'Le cahier de transmission de cette séance est déjà déposé.';
@@ -8833,6 +8833,66 @@ class Traductions$enseignant$cahier$fr {
 
 	/// fr: 'Faiblesses'
 	String get faiblesses => 'Faiblesses';
+
+	/// fr: 'À revoir'
+	String get niveauARevoir => 'À revoir';
+
+	/// fr: 'En progrès'
+	String get niveauEnProgres => 'En progrès';
+
+	/// fr: 'Acquis'
+	String get niveauAcquis => 'Acquis';
+
+	/// fr: 'Maîtrisé'
+	String get niveauMaitrise => 'Maîtrisé';
+
+	/// fr: 'Makharij'
+	String get faiblesseMakharij => 'Makharij';
+
+	/// fr: 'Madd'
+	String get faiblesseMadd => 'Madd';
+
+	/// fr: 'Ghunna'
+	String get faiblesseGhunna => 'Ghunna';
+
+	/// fr: 'Waqf'
+	String get faiblesseWaqf => 'Waqf';
+
+	/// fr: 'Fluidité'
+	String get faiblesseFluidite => 'Fluidité';
+
+	/// fr: 'Mémorisation'
+	String get faiblesseMemorisation => 'Mémorisation';
+
+	/// fr: 'La leçon est à reprendre à la prochaine séance.'
+	String get niveauARevoirDetail => 'La leçon est à reprendre à la prochaine séance.';
+
+	/// fr: 'L'élève avance, quelques erreurs restent.'
+	String get niveauEnProgresDetail => 'L\'élève avance, quelques erreurs restent.';
+
+	/// fr: 'La leçon est sue, avec peu d'erreurs.'
+	String get niveauAcquisDetail => 'La leçon est sue, avec peu d\'erreurs.';
+
+	/// fr: 'La leçon est sue sans erreur, l'élève peut avancer.'
+	String get niveauMaitriseDetail => 'La leçon est sue sans erreur, l\'élève peut avancer.';
+
+	/// fr: 'La prononciation des lettres.'
+	String get faiblesseMakharijDetail => 'La prononciation des lettres.';
+
+	/// fr: 'Les allongements.'
+	String get faiblesseMaddDetail => 'Les allongements.';
+
+	/// fr: 'Le son nasal.'
+	String get faiblesseGhunnaDetail => 'Le son nasal.';
+
+	/// fr: 'Les arrêts.'
+	String get faiblesseWaqfDetail => 'Les arrêts.';
+
+	/// fr: 'La lecture sans hésitation.'
+	String get faiblesseFluiditeDetail => 'La lecture sans hésitation.';
+
+	/// fr: 'La récitation de mémoire.'
+	String get faiblesseMemorisationDetail => 'La récitation de mémoire.';
 
 	/// fr: 'Où la Classe s'est arrêtée'
 	String get reprise => 'Où la Classe s\'est arrêtée';
@@ -9214,15 +9274,6 @@ class Traductions$enseignant$ficheGroupe$fr {
 
 	/// fr: 'Progression de la Classe'
 	String get progressionTitre => 'Progression de la Classe';
-
-	/// fr: 'Présence régulière'
-	String get indicateurRegulier => 'Présence régulière';
-
-	/// fr: 'À renforcer'
-	String get indicateurARenforcer => 'À renforcer';
-
-	/// fr: 'Absence récente'
-	String get indicateurAbsence => 'Absence récente';
 }
 
 // Path: enseignant.revue
@@ -17038,7 +17089,7 @@ extension on Traductions {
 			'enseignant.cahier.videDetail' => 'Aucune présence et aucun événement n\'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier de transmission.',
 			'enseignant.cahier.erreur' => 'Le constat n\'a pas pu être lu.',
 			'enseignant.cahier.erreurDetail' => 'Réessayez, ou déposez le cahier de transmission sans le constat.',
-			'enseignant.cahier.echecEnvoi' => 'Le cahier de transmission n\'a pas pu être enregistré. Réessayez.',
+			'enseignant.cahier.echecEnvoi' => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.',
 			'enseignant.cahier.dejaDepose' => 'Le cahier de transmission de cette séance est déjà déposé.',
 			'enseignant.cahier.dejaDeposeDetail' => 'Un cahier de transmission ne se dépose qu\'une fois, et il ne se supprime pas d\'ici.',
 			'enseignant.cahier.depose' => 'Cahier de transmission enregistré',
@@ -17085,6 +17136,26 @@ extension on Traductions {
 			'enseignant.cahier.statutEnRetard' => ({required Object nombre}) => 'En retard ${nombre}',
 			'enseignant.cahier.performance' => 'Performance',
 			'enseignant.cahier.faiblesses' => 'Faiblesses',
+			'enseignant.cahier.niveauARevoir' => 'À revoir',
+			'enseignant.cahier.niveauEnProgres' => 'En progrès',
+			'enseignant.cahier.niveauAcquis' => 'Acquis',
+			'enseignant.cahier.niveauMaitrise' => 'Maîtrisé',
+			'enseignant.cahier.faiblesseMakharij' => 'Makharij',
+			'enseignant.cahier.faiblesseMadd' => 'Madd',
+			'enseignant.cahier.faiblesseGhunna' => 'Ghunna',
+			'enseignant.cahier.faiblesseWaqf' => 'Waqf',
+			'enseignant.cahier.faiblesseFluidite' => 'Fluidité',
+			'enseignant.cahier.faiblesseMemorisation' => 'Mémorisation',
+			'enseignant.cahier.niveauARevoirDetail' => 'La leçon est à reprendre à la prochaine séance.',
+			'enseignant.cahier.niveauEnProgresDetail' => 'L\'élève avance, quelques erreurs restent.',
+			'enseignant.cahier.niveauAcquisDetail' => 'La leçon est sue, avec peu d\'erreurs.',
+			'enseignant.cahier.niveauMaitriseDetail' => 'La leçon est sue sans erreur, l\'élève peut avancer.',
+			'enseignant.cahier.faiblesseMakharijDetail' => 'La prononciation des lettres.',
+			'enseignant.cahier.faiblesseMaddDetail' => 'Les allongements.',
+			'enseignant.cahier.faiblesseGhunnaDetail' => 'Le son nasal.',
+			'enseignant.cahier.faiblesseWaqfDetail' => 'Les arrêts.',
+			'enseignant.cahier.faiblesseFluiditeDetail' => 'La lecture sans hésitation.',
+			'enseignant.cahier.faiblesseMemorisationDetail' => 'La récitation de mémoire.',
 			'enseignant.cahier.reprise' => 'Où la Classe s\'est arrêtée',
 			'enseignant.cahier.repriseDetail' => 'C\'est la position de reprise d\'un remplaçant.',
 			'enseignant.cahier.repriseProposee' => ({required Object sourate, required Object verset}) => 'Sourate ${sourate}, verset ${verset}',
@@ -17203,9 +17274,6 @@ extension on Traductions {
 			'enseignant.ficheGroupe.chargementClasse' => 'Chargement de la Classe.',
 			'enseignant.ficheGroupe.ressourcesTitre' => 'Ressources récentes',
 			'enseignant.ficheGroupe.progressionTitre' => 'Progression de la Classe',
-			'enseignant.ficheGroupe.indicateurRegulier' => 'Présence régulière',
-			'enseignant.ficheGroupe.indicateurARenforcer' => 'À renforcer',
-			'enseignant.ficheGroupe.indicateurAbsence' => 'Absence récente',
 			'enseignant.revue.titre' => 'Revue de la Classe',
 			'enseignant.revue.titreClasse' => ({required Object classe}) => 'Revue de la Classe ${classe}',
 			'enseignant.revue.aucuneAnomalie' => 'Rien ne demande votre attention.',
@@ -17394,6 +17462,8 @@ extension on Traductions {
 			'tc.groupe.horloges.chezEnseignant' => ({required Object nomme}) => 'Chez ${nomme}',
 			'tc.groupe.horloges.heureGroupe' => 'Heure de la classe',
 			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '${heure} ${ville}',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.dst.j30' => 'Changement d\'heure dans un mois',
 			'tc.groupe.dst.j7' => 'Changement d\'heure la semaine prochaine',
 			'tc.groupe.dst.j1' => 'Changement d\'heure demain',
@@ -17411,8 +17481,6 @@ extension on Traductions {
 			'tc.groupe.espace.introuvableDetail' => 'Elle a peut-être été clôturée, ou elle concerne un autre profil.',
 			'tc.groupe.emplacement.nonBranche' => 'Bientôt disponible',
 			'tc.groupe.emplacement.nonBrancheDetail' => 'Ce contenu sera rattaché à cet espace prochainement.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.titre' => 'Bibliothèque',
 			'tc.bibliotheque.rechercheIndication' => 'Titre, niveau, sourate ou page',
 			'tc.bibliotheque.rechercheLibelle' => 'Rechercher un support',
@@ -17908,6 +17976,8 @@ extension on Traductions {
 			'adulte.invitation.nonRenseigne' => 'Non renseigné',
 			'adulte.invitation.modifier' => 'Modifier',
 			'adulte.invitation.envoyer' => 'Envoyer l\'invitation',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.horsLigne' => 'Vous êtes hors ligne. L\'invitation pourra partir quand la connexion reviendra.',
 			'adulte.invitation.echecTitre' => 'L\'invitation n\'est pas partie',
 			'adulte.invitation.echecPhrase' => 'La connexion a été interrompue. Vos informations sont conservées : vous pouvez réessayer.',
@@ -17925,8 +17995,6 @@ extension on Traductions {
 			'adulte.invitation.garder' => 'Garder l\'invitation',
 			'adulte.invitation.annulationEchecTitre' => 'L\'invitation n\'a pas été annulée',
 			'adulte.invitation.annulationEchecPhrase' => 'La connexion a été interrompue. L\'invitation est toujours envoyée : vous pouvez réessayer.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.titre' => 'Démonstration de l\'élève adulte',
 			'adulte.demo.mention' => 'Les données sont fictives et rien n\'est envoyé.',
 			'adulte.demo.intro' => 'Choisissez un écran, puis une situation du foyer Diallo.',

@@ -44,7 +44,6 @@ class ProjectionEleve {
     this.pageReprise,
     this.dernierPoint,
     this.cleAvatar,
-    this.indicateur,
     this.objectif,
     this.presenceRecente,
   });
@@ -64,24 +63,6 @@ class ProjectionEleve {
   /// La cle de la photo de l'eleve, ou nul : les initiales en repli (E5,
   /// K-44). La photo est visible de son enseignant.
   final String? cleAvatar;
-
-  /// L'indicateur de l'eleve, decide par le serveur (E6), jamais calcule ici.
-  /// Nul : aucun indicateur n'est montre.
-  final IndicateurEleve? indicateur;
-}
-
-/// L'indicateur d'un eleve dans sa Classe : un point **et** un mot, jamais la
-/// couleur seule (UX_REVIEW_04 n° 9). Aucun jugement : « A renforcer » est le
-/// lexique du role (E17), jamais « Eleve problematique ».
-enum IndicateurEleve {
-  /// Presence reguliere, rien a signaler.
-  regulier,
-
-  /// Un point pedagogique a reprendre.
-  aRenforcer,
-
-  /// Absent a une seance recente.
-  absence,
 }
 
 /// La preparation de la prochaine seance d'un groupe. **`null` = non

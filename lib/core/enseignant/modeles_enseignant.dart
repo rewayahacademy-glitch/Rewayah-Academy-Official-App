@@ -396,6 +396,8 @@ class ParticipantBrouillon {
     this.unite,
     this.devoirPrecedent,
     this.suspensionPermise = true,
+    this.performancePrecedente,
+    this.faiblessesPrecedentes = const <FaiblesseRecitation>{},
   });
 
   /// Lit une ligne du tableau `participants`.
@@ -423,7 +425,20 @@ class ParticipantBrouillon {
         ),
         devoirPrecedent: json['devoir_precedent'] as String?,
         suspensionPermise: json['suspension_permise'] as bool? ?? true,
+        performancePrecedente: NiveauPerformance.depuisNom(
+          json['performance_precedente'] as String?,
+        ),
+        faiblessesPrecedentes: FaiblesseRecitation.depuisNoms(
+          json['faiblesses_precedentes'] as List<Object?>?,
+        ),
       );
+
+  /// Le niveau retenu a la seance precedente (N1, directeur 27/09), pour
+  /// preremplir le cahier. Nul s'il n'y en avait pas.
+  final NiveauPerformance? performancePrecedente;
+
+  /// Les faiblesses cochees a la seance precedente, pour preremplir le cahier.
+  final Set<FaiblesseRecitation> faiblessesPrecedentes;
 
   /// Le devoir donne a la seance precedente, tel que le systeme l'a garde
   /// (doc 04 §20.1, « travail precedent »). Nul s'il n'y en avait pas.
@@ -615,7 +630,25 @@ class DecisionEleve {
     this.objectifPersonnel,
     this.travailMaison,
     this.suite = SuiteEleve.continuer,
+    this.performance,
+    this.faiblesses = const <FaiblesseRecitation>{},
   });
+
+  /// La decision de depart d'un eleve : la performance et les faiblesses de
+  /// la seance precedente, reprises telles quelles (N1, cahier en moins de
+  /// 45 s). L'enseignant les confirme en validant, ou les change.
+  factory DecisionEleve.preremplie(ParticipantBrouillon participant) =>
+      DecisionEleve(
+        studentId: participant.membre.studentId,
+        performance: participant.performancePrecedente,
+        faiblesses: participant.faiblessesPrecedentes,
+      );
+
+  /// L'echelle de performance, choix unique (N1, directeur 27/09).
+  final NiveauPerformance? performance;
+
+  /// Les faiblesses constatees, choix multiple (N1, directeur 27/09).
+  final Set<FaiblesseRecitation> faiblesses;
 
   /// L'eleve concerne.
   final String studentId;
@@ -652,7 +685,64 @@ class DecisionEleve {
     if (travailMaison != null) 'travail_maison': travailMaison,
     if (suite != SuiteEleve.continuer) 'suite': suite.name,
     if (nouveauSuspendu) 'nouveau_suspendu': true,
+    if (performance case final NiveauPerformance p) 'performance': p.name,
+    if (faiblesses.isNotEmpty)
+      'faiblesses': <String>[
+        for (final FaiblesseRecitation f in FaiblesseRecitation.values)
+          if (faiblesses.contains(f)) f.name,
+      ],
   };
+}
+
+/// L'echelle de performance du cahier, choix unique (N1, directeur 27/09).
+enum NiveauPerformance {
+  /// A revoir.
+  aRevoir,
+
+  /// En progres.
+  enProgres,
+
+  /// Acquis.
+  acquis,
+
+  /// Maitrise.
+  maitrise;
+
+  /// Lit un nom serialise ; nul s'il est absent ou inconnu.
+  static NiveauPerformance? depuisNom(String? nom) {
+    for (final NiveauPerformance n in values) {
+      if (n.name == nom) return n;
+    }
+    return null;
+  }
+}
+
+/// Les faiblesses du cahier, choix multiple (N1, directeur 27/09).
+enum FaiblesseRecitation {
+  /// Makharij.
+  makharij,
+
+  /// Madd.
+  madd,
+
+  /// Ghunna.
+  ghunna,
+
+  /// Waqf.
+  waqf,
+
+  /// Fluidite.
+  fluidite,
+
+  /// Memorisation.
+  memorisation;
+
+  /// Lit une liste de noms serialises ; les noms inconnus sont ignores.
+  static Set<FaiblesseRecitation> depuisNoms(List<Object?>? noms) =>
+      <FaiblesseRecitation>{
+        for (final FaiblesseRecitation f in values)
+          if (noms?.contains(f.name) ?? false) f,
+      };
 }
 
 /// Les actions pedagogiques du cahier pour un eleve (doc 04 §20.4) :

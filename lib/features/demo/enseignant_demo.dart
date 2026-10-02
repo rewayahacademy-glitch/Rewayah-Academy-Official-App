@@ -596,6 +596,12 @@ abstract final class DonneesEnseignantDemo {
         debut: '1',
         fin: '11',
       ),
+      // EN-7c (N1) : l'evaluation de la seance precedente, que le cahier
+      // reprend telle quelle pour un cahier en moins de 45 s.
+      performancePrecedente: lu ? NiveauPerformance.enProgres : null,
+      faiblessesPrecedentes: lu
+          ? const <FaiblesseRecitation>{FaiblesseRecitation.madd}
+          : const <FaiblesseRecitation>{},
     );
     return BrouillonCahier(
       seanceId: cahierDemoSeanceId,

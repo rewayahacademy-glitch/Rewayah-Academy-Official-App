@@ -372,7 +372,7 @@ class _CahierState extends ConsumerState<_Cahier> {
       constructeur: (BuildContext _) => _FeuilleAjuster(
         participant: participant,
         brouillon: brouillon,
-        decision: _decisions[eleveId] ?? DecisionEleve(studentId: eleveId),
+        decision: _decisions[eleveId] ?? DecisionEleve.preremplie(participant),
       ),
     );
     if (decision == null || !mounted) {
@@ -403,8 +403,7 @@ class _CahierState extends ConsumerState<_Cahier> {
       seanceId: widget.seanceId,
       decisions: <DecisionEleve>[
         for (final ParticipantBrouillon p in vue.participants)
-          _decisions[p.membre.studentId] ??
-              DecisionEleve(studentId: p.membre.studentId),
+          _decisions[p.membre.studentId] ?? DecisionEleve.preremplie(p),
       ],
       positionReprise: _reprise.text.trim(),
     );
@@ -580,6 +579,7 @@ class _Constat extends StatelessWidget {
     );
     final DecisionEleve? d = decisions[p.membre.studentId];
     final String? devoir = d?.travailMaison;
+    final NiveauPerformance? niveau = d?.performance;
     final String? legende = d != null && !d.confirme
         ? t.enseignant.cahier.exceptionConsignee
         // K-45 : ce qui est consigne se relit avant de valider (EN-7).
@@ -589,6 +589,8 @@ class _Constat extends StatelessWidget {
         ? t.enseignant.cahier.suiteRenforcer
         : d?.suite == SuiteEleve.suspendreNouveau
         ? t.enseignant.cahier.suspendreNouveau
+        : niveau != null
+        ? libelleNiveau(niveau)
         : devoir != null
         ? '${t.enseignant.cahier.travailMaison(eleve: p.membre.libelle)} : $devoir'
         : p.unite?.nomHumain;
@@ -875,6 +877,12 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
   late String? _motifException = widget.decision.motifException;
   late String? _phonetique = widget.decision.pointPhonetique;
   late SuiteEleve _suite = widget.decision.suite;
+  late NiveauPerformance? _performance = widget.decision.performance;
+  late Set<FaiblesseRecitation> _faiblesses = widget.decision.faiblesses;
+
+  /// Vrai quand le devoir arrive avec une suggestion a ajuster.
+  late final bool _suggestionDevoir =
+      widget.decision.travailMaison?.trim().isNotEmpty ?? false;
 
   @override
   void dispose() {
@@ -899,9 +907,9 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
       children: <Widget>[
         // EN-12 (K-42, regle 4) : le detail de l'eleve, sorti de la ligne
         // du cahier, se lit ici.
-        Text(participant.membre.identifiantImmuable, style: discret),
+        // L'identifiant de l'eleve n'est pas repete ici : le panneau de
+        // presence, plus bas, le porte deja (EN-7c, une seule occurrence).
         if (unite != null) ...<Widget>[
-          Ecart.vSm,
           // Le nom humain seul fait titre ; le code technique reste un
           // sous-texte discret.
           Text(unite.nomHumain, style: textes.bodyMedium),
@@ -927,18 +935,52 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
             style: textes.bodyMedium,
           ),
         ],
-        // Performance et faiblesses (K-45, point 3) : ni le doc 04 §20 ni la
-        // planche 4 ne donnent d'echelle ni de mots. Les emplacements sont
-        // prets, et ne rendent rien tant que l'echelle n'est pas fournie.
+        // Performance et faiblesses (K-45 point 3, N1 du directeur 27/09) :
+        // preremplies depuis la seance precedente, l'enseignant les confirme
+        // ou les change d'un geste.
         EmplacementEvaluation(
           key: const ValueKey<String>('cahier-emplacement-performance'),
           titre: t.enseignant.cahier.performance,
-          onChange: (String? _) {},
+          echelle: <OptionChoix>[
+            for (final NiveauPerformance n in NiveauPerformance.values)
+              OptionChoix(
+                valeur: n.name,
+                libelle: libelleNiveau(n),
+                // K-58 : une ligne courte dit quand choisir ce niveau.
+                description: detailNiveau(n),
+                cle: ValueKey<String>('cahier-performance-${n.name}'),
+              ),
+          ],
+          valeursInitiales: <String>{
+            if (_performance case final NiveauPerformance p) p.name,
+          },
+          onChange: (Set<String> valeurs) => setState(
+            () => _performance = NiveauPerformance.depuisNom(
+              valeurs.isEmpty ? null : valeurs.first,
+            ),
+          ),
         ),
         EmplacementEvaluation(
           key: const ValueKey<String>('cahier-emplacement-faiblesses'),
           titre: t.enseignant.cahier.faiblesses,
-          onChange: (String? _) {},
+          selectionMultiple: true,
+          echelle: <OptionChoix>[
+            for (final FaiblesseRecitation f in FaiblesseRecitation.values)
+              OptionChoix(
+                valeur: f.name,
+                libelle: libelleFaiblesse(f),
+                description: detailFaiblesse(f),
+                cle: ValueKey<String>('cahier-faiblesse-${f.name}'),
+              ),
+          ],
+          valeursInitiales: <String>{
+            for (final FaiblesseRecitation f in _faiblesses) f.name,
+          },
+          onChange: (Set<String> valeurs) => setState(
+            () => _faiblesses = FaiblesseRecitation.depuisNoms(
+              valeurs.toList(growable: false),
+            ),
+          ),
         ),
         Ecart.vSection,
         // Doc 04 §20.4 : « Continuer » par defaut, « Renforcer », et
@@ -1044,8 +1086,16 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
           t.enseignant.cahier.travailMaison(eleve: participant.membre.libelle),
           style: textes.titleSmall,
         ),
-        Ecart.vXs,
-        Text(t.enseignant.cahier.travailMaisonDetail, style: discret),
+        // « Ajustez la suggestion » seulement quand une suggestion existe
+        // (EN-7c) : sur un champ vide, la phrase ne decrirait rien.
+        if (_suggestionDevoir) ...<Widget>[
+          Ecart.vXs,
+          Text(
+            t.enseignant.cahier.travailMaisonDetail,
+            key: const ValueKey<String>('cahier-devoir-suggestion'),
+            style: discret,
+          ),
+        ],
         Ecart.vMd,
         TextField(
           controller: _travail,
@@ -1134,10 +1184,49 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
         objectifPersonnel: objectif.isEmpty ? null : objectif,
         travailMaison: travail.isEmpty ? null : travail,
         suite: _suite,
+        performance: _performance,
+        faiblesses: _faiblesses,
       ),
     );
   }
 }
+
+/// Le libelle d'un niveau de l'echelle de performance (N1).
+String libelleNiveau(NiveauPerformance niveau) => switch (niveau) {
+  NiveauPerformance.aRevoir => t.enseignant.cahier.niveauARevoir,
+  NiveauPerformance.enProgres => t.enseignant.cahier.niveauEnProgres,
+  NiveauPerformance.acquis => t.enseignant.cahier.niveauAcquis,
+  NiveauPerformance.maitrise => t.enseignant.cahier.niveauMaitrise,
+};
+
+/// Le libelle d'une faiblesse (N1).
+String libelleFaiblesse(FaiblesseRecitation faiblesse) => switch (faiblesse) {
+  FaiblesseRecitation.makharij => t.enseignant.cahier.faiblesseMakharij,
+  FaiblesseRecitation.madd => t.enseignant.cahier.faiblesseMadd,
+  FaiblesseRecitation.ghunna => t.enseignant.cahier.faiblesseGhunna,
+  FaiblesseRecitation.waqf => t.enseignant.cahier.faiblesseWaqf,
+  FaiblesseRecitation.fluidite => t.enseignant.cahier.faiblesseFluidite,
+  FaiblesseRecitation.memorisation => t.enseignant.cahier.faiblesseMemorisation,
+};
+
+/// La ligne courte d'un niveau (K-58) : quand le choisir.
+String detailNiveau(NiveauPerformance niveau) => switch (niveau) {
+  NiveauPerformance.aRevoir => t.enseignant.cahier.niveauARevoirDetail,
+  NiveauPerformance.enProgres => t.enseignant.cahier.niveauEnProgresDetail,
+  NiveauPerformance.acquis => t.enseignant.cahier.niveauAcquisDetail,
+  NiveauPerformance.maitrise => t.enseignant.cahier.niveauMaitriseDetail,
+};
+
+/// La ligne courte d'une faiblesse (K-58) : ce qu'elle designe.
+String detailFaiblesse(FaiblesseRecitation faiblesse) => switch (faiblesse) {
+  FaiblesseRecitation.makharij => t.enseignant.cahier.faiblesseMakharijDetail,
+  FaiblesseRecitation.madd => t.enseignant.cahier.faiblesseMaddDetail,
+  FaiblesseRecitation.ghunna => t.enseignant.cahier.faiblesseGhunnaDetail,
+  FaiblesseRecitation.waqf => t.enseignant.cahier.faiblesseWaqfDetail,
+  FaiblesseRecitation.fluidite => t.enseignant.cahier.faiblesseFluiditeDetail,
+  FaiblesseRecitation.memorisation =>
+    t.enseignant.cahier.faiblesseMemorisationDetail,
+};
 
 /// L'adaptateur du panneau de correction, cote cahier.
 ///
