@@ -3814,23 +3814,23 @@ class Traductions$ficheEleve$interface$fr {
 	/// fr: 'Interface'
 	String get titre => 'Interface';
 
-	/// fr: 'Comment Rewayah s'affiche sur l'appareil de {prenom}.'
-	String intro({required Object prenom}) => 'Comment Rewayah s\'affiche sur l\'appareil de ${prenom}.';
+	/// fr: 'Choisissez comment Rewayah s'affiche sur l'appareil de {prenom}. Vous pourrez changer ce choix à tout moment.'
+	String intro({required Object prenom}) => 'Choisissez comment Rewayah s\'affiche sur l\'appareil de ${prenom}. Vous pourrez changer ce choix à tout moment.';
 
-	/// fr: 'Interface guidée'
-	String get guidee => 'Interface guidée';
+	/// fr: 'Mode Accessibilité'
+	String get guidee => 'Mode Accessibilité';
 
-	/// fr: 'Des écrans simplifiés, de grands boutons, une chose à la fois.'
-	String get guideeDescription => 'Des écrans simplifiés, de grands boutons, une chose à la fois.';
+	/// fr: 'Une interface simplifiée et adaptée pour un apprentissage plus serein : grands boutons, une chose à la fois.'
+	String get guideeDescription => 'Une interface simplifiée et adaptée pour un apprentissage plus serein : grands boutons, une chose à la fois.';
 
-	/// fr: 'Interface standard'
-	String get standard => 'Interface standard';
+	/// fr: 'Présentation standard'
+	String get standard => 'Présentation standard';
 
-	/// fr: 'L'affichage habituel de Rewayah.'
-	String get standardDescription => 'L\'affichage habituel de Rewayah.';
+	/// fr: 'Toutes les rubriques de Rewayah, pour un usage habituel.'
+	String get standardDescription => 'Toutes les rubriques de Rewayah, pour un usage habituel.';
 
-	/// fr: 'Vous choisissez ce réglage. Au départ, il a été fixé selon l'âge indiqué à la création du profil.'
-	String get politique => 'Vous choisissez ce réglage. Au départ, il a été fixé selon l\'âge indiqué à la création du profil.';
+	/// fr: 'Vous choisissez ce réglage. Aucune raison n'est demandée, et l'enseignant voit seulement le nom du mode.'
+	String get politique => 'Vous choisissez ce réglage. Aucune raison n\'est demandée, et l\'enseignant voit seulement le nom du mode.';
 
 	/// fr: 'Le changement s'applique à la prochaine ouverture de Rewayah sur l'appareil de {prenom}.'
 	String application({required Object prenom}) => 'Le changement s\'applique à la prochaine ouverture de Rewayah sur l\'appareil de ${prenom}.';
@@ -3841,11 +3841,11 @@ class Traductions$ficheEleve$interface$fr {
 	/// fr: 'Enregistrement en cours'
 	String get enCours => 'Enregistrement en cours';
 
-	/// fr: 'Le changement n'a pas été enregistré. Réessayez.'
-	String get echec => 'Le changement n\'a pas été enregistré. Réessayez.';
+	/// fr: 'Le changement n'a pas été enregistré : la connexion avec Rewayah a échoué. Vérifiez votre connexion, puis touchez de nouveau votre choix.'
+	String get echec => 'Le changement n\'a pas été enregistré : la connexion avec Rewayah a échoué. Vérifiez votre connexion, puis touchez de nouveau votre choix.';
 
-	/// fr: 'Vous êtes hors ligne. L'interface pourra être changée quand la connexion reviendra.'
-	String get horsLigne => 'Vous êtes hors ligne. L\'interface pourra être changée quand la connexion reviendra.';
+	/// fr: 'Vous êtes hors ligne. La présentation pourra être changée quand la connexion reviendra.'
+	String get horsLigne => 'Vous êtes hors ligne. La présentation pourra être changée quand la connexion reviendra.';
 }
 
 // Path: ficheEleve.camera
@@ -11498,8 +11498,8 @@ class Traductions$tc$classe$fiche$fr {
 	/// fr: 'Travail actuel'
 	String get travailActuel => 'Travail actuel';
 
-	/// fr: 'Interface guidée'
-	String get interfaceGuidee => 'Interface guidée';
+	/// fr: 'Mode Accessibilité'
+	String get interfaceGuidee => 'Mode Accessibilité';
 
 	/// fr: 'Suivi pédagogique indisponible'
 	String get sansPedagogie => 'Suivi pédagogique indisponible';
@@ -13736,17 +13736,17 @@ extension on Traductions {
 			'ficheEleve.inscription.classeEchec' => 'La classe n\'a pas pu être lue.',
 			'ficheEleve.inscription.relireClasse' => 'Relire la classe',
 			'ficheEleve.interface.titre' => 'Interface',
-			'ficheEleve.interface.intro' => ({required Object prenom}) => 'Comment Rewayah s\'affiche sur l\'appareil de ${prenom}.',
-			'ficheEleve.interface.guidee' => 'Interface guidée',
-			'ficheEleve.interface.guideeDescription' => 'Des écrans simplifiés, de grands boutons, une chose à la fois.',
-			'ficheEleve.interface.standard' => 'Interface standard',
-			'ficheEleve.interface.standardDescription' => 'L\'affichage habituel de Rewayah.',
-			'ficheEleve.interface.politique' => 'Vous choisissez ce réglage. Au départ, il a été fixé selon l\'âge indiqué à la création du profil.',
+			'ficheEleve.interface.intro' => ({required Object prenom}) => 'Choisissez comment Rewayah s\'affiche sur l\'appareil de ${prenom}. Vous pourrez changer ce choix à tout moment.',
+			'ficheEleve.interface.guidee' => 'Mode Accessibilité',
+			'ficheEleve.interface.guideeDescription' => 'Une interface simplifiée et adaptée pour un apprentissage plus serein : grands boutons, une chose à la fois.',
+			'ficheEleve.interface.standard' => 'Présentation standard',
+			'ficheEleve.interface.standardDescription' => 'Toutes les rubriques de Rewayah, pour un usage habituel.',
+			'ficheEleve.interface.politique' => 'Vous choisissez ce réglage. Aucune raison n\'est demandée, et l\'enseignant voit seulement le nom du mode.',
 			'ficheEleve.interface.application' => ({required Object prenom}) => 'Le changement s\'applique à la prochaine ouverture de Rewayah sur l\'appareil de ${prenom}.',
 			'ficheEleve.interface.demandeEleve' => 'La demande de changement par l\'élève lui-même n\'est pas encore proposée.',
 			'ficheEleve.interface.enCours' => 'Enregistrement en cours',
-			'ficheEleve.interface.echec' => 'Le changement n\'a pas été enregistré. Réessayez.',
-			'ficheEleve.interface.horsLigne' => 'Vous êtes hors ligne. L\'interface pourra être changée quand la connexion reviendra.',
+			'ficheEleve.interface.echec' => 'Le changement n\'a pas été enregistré : la connexion avec Rewayah a échoué. Vérifiez votre connexion, puis touchez de nouveau votre choix.',
+			'ficheEleve.interface.horsLigne' => 'Vous êtes hors ligne. La présentation pourra être changée quand la connexion reviendra.',
 			'ficheEleve.camera.titre' => 'Caméra en cours',
 			'ficheEleve.camera.ligne' => 'Caméra pendant les séances',
 			'ficheEleve.camera.autorisee' => ({required Object prenom}) => '${prenom} peut allumer sa caméra pendant les séances.',
@@ -15943,7 +15943,7 @@ extension on Traductions {
 			'tc.classe.fiche.presenceRecente' => 'Présence récente',
 			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => '${presences} / ${total} cours',
 			'tc.classe.fiche.travailActuel' => 'Travail actuel',
-			'tc.classe.fiche.interfaceGuidee' => 'Interface guidée',
+			'tc.classe.fiche.interfaceGuidee' => 'Mode Accessibilité',
 			'tc.classe.fiche.sansPedagogie' => 'Suivi pédagogique indisponible',
 			'tc.classe.fiche.sansPedagogieDetail' => 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l\'enseignant.',
 			'tc.classe.action.rappel' => 'Rappel discret',

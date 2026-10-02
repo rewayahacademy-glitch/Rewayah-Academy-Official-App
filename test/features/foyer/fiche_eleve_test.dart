@@ -666,6 +666,56 @@ void main() {
       expect(find.text(t.ficheEleve.interface.standard), findsOneWidget);
     });
 
+    testWidgets('MA-9 : depuis la coquille du tuteur, la page dit « Mode '
+        'Accessibilité » et « Présentation standard », sans age ; toucher la '
+        'carte hors de son titre ecrit le choix', (WidgetTester tester) async {
+      final _AppairagePilote appairage = _foyerA();
+      await _monter(tester, appairage: appairage);
+      await _ouvrirFicheA1(tester);
+      // La fiche annonce l'etat actuel avec le nouveau terme (K-57).
+      expect(find.text('Mode Accessibilité'), findsOneWidget);
+      await _ouvrirLigne(tester, t.ficheEleve.lignes.interface);
+
+      // Phrase de contexte en tete, puis une ligne « quand / consequence »
+      // par option (K-58).
+      expect(
+        find.textContaining('Choisissez comment Rewayah s\'affiche'),
+        findsOneWidget,
+      );
+      expect(find.text('Mode Accessibilité'), findsOneWidget);
+      expect(find.text('Présentation standard'), findsOneWidget);
+      expect(
+        find.text(t.ficheEleve.interface.guideeDescription),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.ficheEleve.interface.standardDescription),
+        findsOneWidget,
+      );
+      // Ni age, ni ancien terme, ni raison.
+      for (final String texte in _textesVisibles(tester)) {
+        final String bas = texte.toLowerCase();
+        for (final String interdit in <String>[
+          'âge',
+          ' ans',
+          'interface guidée',
+          'interface standard',
+          'handicap',
+          'diagnostic',
+        ]) {
+          expect(bas.contains(interdit), isFalse, reason: '« $texte »');
+        }
+      }
+      _verifierVocabulaire(tester);
+
+      // La carte entiere se presse : on touche sa description.
+      await _toucher(
+        tester,
+        find.text(t.ficheEleve.interface.standardDescription),
+      );
+      expect(appairage.reglagesEcrits.single.mode, InterfaceMode.standard);
+    });
+
     testWidgets('echec d ecriture : phrase d erreur, aucun changement '
         'affiche', (WidgetTester tester) async {
       final _AppairagePilote appairage = _foyerA()

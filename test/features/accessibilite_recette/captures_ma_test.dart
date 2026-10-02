@@ -5,22 +5,36 @@
 // `captures_en_test.dart`. Sortie en un sous-dossier par ecran.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/coran/service_coran.dart'
     show PositionLecture;
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
+import 'package:rewayah_academy/core/router/app_router.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_coran/corpus_service_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/layout_lignes_indisponible.dart';
 import 'package:rewayah_academy/core/tc_coran/navigation_coran.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
+import 'package:rewayah_academy/features/foyer/foyer_page.dart';
+import 'package:rewayah_academy/features/tc_classe_live/fiche_seance.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../fixtures/tuteur/foyers.dart';
+import '../../router/support_routeur.dart' hide stabiliser;
+import '../../support/harnais.dart';
 import '../../teaching_core/c/faux/faux_corpus_coran.dart';
 import '../../teaching_core/c/goldens/corpus_reference.dart';
+import '../../teaching_core/e/faux/faux_classe.dart';
+import '../../teaching_core/e/support/hote_classe.dart';
 
 const List<(String, Size)> _tailles = <(String, Size)>[
   ('390', Size(390, 1900)),
@@ -539,4 +553,105 @@ void main() {
       );
     });
   });
+
+  // -------------------------------------------------------------------
+  // MA-9 : la page « Interface » du tuteur (vrai routeur, coquille
+  // tuteur) et la fiche de seance de l'enseignant (libelle neutre, Q6).
+  // -------------------------------------------------------------------
+  group('Capture MA-9 : tuteur et enseignant', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String l, Size taille) in <(String, Size)>[
+      ('390', const Size(390, 1100)),
+      ('1440', const Size(1440, 900)),
+    ]) {
+      for (final ThemeMode mode in _themes) {
+        testWidgets('interface_${l}_${mode.name}', (WidgetTester tester) async {
+          fixerVueCapture(tester, taille, 1);
+          await tester.pumpWidget(_appTuteur(mode));
+          await stabiliser(tester);
+          _routeurMa9.go(
+            Routes.ficheEleveSousPage(FoyersFictifs.a1.id, 'interface'),
+          );
+          await stabiliser(tester);
+          debugPrint(
+            'PNG ${await capturer(tester, 'ma9/ma9_interface_tuteur_${l}_${mode.name}')}',
+          );
+        });
+        testWidgets('fiche_seance_${l}_${mode.name}', (
+          WidgetTester tester,
+        ) async {
+          fixerVueCapture(tester, taille, 1);
+          await tester.pumpWidget(
+            hoteCapture(
+              const Scaffold(
+                body: Align(
+                  alignment: Alignment.topCenter,
+                  child: SizedBox(
+                    width: 420,
+                    child: Padding(
+                      padding: EdgeInsets.all(24),
+                      child: FicheSeance(
+                        eleve: TeacherStudentProjection(
+                          firstName: 'Ilyas',
+                          academyId: 'RA-CD0044',
+                          liveStatus: EtatPresenceProjete.present,
+                          interfaceGuidee: true,
+                          level: 'Debutant',
+                        ),
+                        sessionId: 's1',
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              themeMode: mode,
+              surcharges: surchargesClasse(
+                moteur: FauxMoteurClasse(),
+                video: FauxServiceVideoClasse(),
+                preVol: FauxPreVolClasse(),
+                rappel: FauxRappelDiscret(),
+              ),
+            ),
+          );
+          await stabiliser(tester);
+          debugPrint(
+            'PNG ${await capturer(tester, 'ma9/ma9_fiche_seance_${l}_${mode.name}')}',
+          );
+        });
+      }
+    }
+  });
 }
+
+late GoRouter _routeurMa9;
+
+/// L'application du tuteur sur le vrai routeur (coquille comprise).
+Widget _appTuteur(ThemeMode mode) => ProviderScope(
+  overrides: <Override>[
+    ...surchargesRouteur(
+      FausseSourceSession(sessionActive(AppRole.guardian)),
+      appairage: FauxServiceAppairage()..elevesRendus = FoyersFictifs.foyerA,
+    ),
+    horlogeFoyerProvider.overrideWithValue(() => DateTime(2026, 9, 24, 12)),
+  ],
+  child: TranslationProvider(
+    child: RepaintBoundary(
+      key: cadreCapture,
+      child: Consumer(
+        builder: (BuildContext context, WidgetRef ref, Widget? _) {
+          _routeurMa9 = ref.read(routeurProvider);
+          return MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+            darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+            themeMode: mode,
+            locale: TranslationProvider.of(context).flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            routerConfig: _routeurMa9,
+          );
+        },
+      ),
+    ),
+  ),
+);

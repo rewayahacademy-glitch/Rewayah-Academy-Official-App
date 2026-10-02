@@ -1000,17 +1000,17 @@
     },
     "interface": {
       "titre": "Interface",
-      "intro": "Comment Rewayah s'affiche sur l'appareil de {prenom}.",
-      "guidee": "Interface guidée",
-      "guideeDescription": "Des écrans simplifiés, de grands boutons, une chose à la fois.",
-      "standard": "Interface standard",
-      "standardDescription": "L'affichage habituel de Rewayah.",
-      "politique": "Vous choisissez ce réglage. Au départ, il a été fixé selon l'âge indiqué à la création du profil.",
+      "intro": "Choisissez comment Rewayah s'affiche sur l'appareil de {prenom}. Vous pourrez changer ce choix à tout moment.",
+      "guidee": "Mode Accessibilité",
+      "guideeDescription": "Une interface simplifiée et adaptée pour un apprentissage plus serein : grands boutons, une chose à la fois.",
+      "standard": "Présentation standard",
+      "standardDescription": "Toutes les rubriques de Rewayah, pour un usage habituel.",
+      "politique": "Vous choisissez ce réglage. Aucune raison n'est demandée, et l'enseignant voit seulement le nom du mode.",
       "application": "Le changement s'applique à la prochaine ouverture de Rewayah sur l'appareil de {prenom}.",
       "demandeEleve": "La demande de changement par l'élève lui-même n'est pas encore proposée.",
       "enCours": "Enregistrement en cours",
-      "echec": "Le changement n'a pas été enregistré. Réessayez.",
-      "horsLigne": "Vous êtes hors ligne. L'interface pourra être changée quand la connexion reviendra."
+      "echec": "Le changement n'a pas été enregistré : la connexion avec Rewayah a échoué. Vérifiez votre connexion, puis touchez de nouveau votre choix.",
+      "horsLigne": "Vous êtes hors ligne. La présentation pourra être changée quand la connexion reviendra."
     },
     "camera": {
       "titre": "Caméra en cours",
@@ -3545,7 +3545,7 @@
         "presenceRecente": "Présence récente",
         "assiduite": "{presences} / {total} cours",
         "travailActuel": "Travail actuel",
-        "interfaceGuidee": "Interface guidée",
+        "interfaceGuidee": "Mode Accessibilité",
         "sansPedagogie": "Suivi pédagogique indisponible",
         "sansPedagogieDetail": "Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l'enseignant."
       },
