@@ -2286,6 +2286,7 @@ class Traductions$adulte$fr {
 	late final Traductions$adulte$famille$fr famille = Traductions$adulte$famille$fr.internal(_root);
 	late final Traductions$adulte$invitation$fr invitation = Traductions$adulte$invitation$fr.internal(_root);
 	late final Traductions$adulte$acceptation$fr acceptation = Traductions$adulte$acceptation$fr.internal(_root);
+	late final Traductions$adulte$sortie$fr sortie = Traductions$adulte$sortie$fr.internal(_root);
 	late final Traductions$adulte$demo$fr demo = Traductions$adulte$demo$fr.internal(_root);
 }
 
@@ -8932,14 +8933,8 @@ class Traductions$adulte$provisoire$fr {
 	/// fr: 'Le Coran de votre espace élève s'affichera ici.'
 	String get coran => 'Le Coran de votre espace élève s\'affichera ici.';
 
-	/// fr: 'La page de votre forfait famille arrivera dans une prochaine étape.'
-	String get forfaitFamille => 'La page de votre forfait famille arrivera dans une prochaine étape.';
-
 	/// fr: 'L'ajout de votre famille arrivera dans une prochaine étape.'
 	String get ajouterMaFamille => 'L\'ajout de votre famille arrivera dans une prochaine étape.';
-
-	/// fr: 'Le détail de cette place arrivera dans une prochaine étape.'
-	String get placeAdulte => 'Le détail de cette place arrivera dans une prochaine étape.';
 }
 
 // Path: adulte.famille
@@ -9248,6 +9243,93 @@ class Traductions$adulte$acceptation$fr {
 
 	/// fr: 'Me connecter ou créer mon compte'
 	String get sansCompteAction => 'Me connecter ou créer mon compte';
+}
+
+// Path: adulte.sortie
+class Traductions$adulte$sortie$fr {
+	Traductions$adulte$sortie$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Retirer ma conjointe'
+	String get retirerElle => 'Retirer ma conjointe';
+
+	/// fr: 'Retirer mon conjoint'
+	String get retirerLui => 'Retirer mon conjoint';
+
+	/// fr: 'Retirer ma conjointe ?'
+	String get retirerQuestionElle => 'Retirer ma conjointe ?';
+
+	/// fr: 'Retirer mon conjoint ?'
+	String get retirerQuestionLui => 'Retirer mon conjoint ?';
+
+	/// fr: 'Son compte, ses cours, son historique et son solde ne seront pas supprimés.'
+	String get retirerConsequence => 'Son compte, ses cours, son historique et son solde ne seront pas supprimés.';
+
+	/// fr: '{prenom} fait partie de votre forfait famille, avec son propre compte.'
+	String placePhrase({required Object prenom}) => '${prenom} fait partie de votre forfait famille, avec son propre compte.';
+
+	/// fr: 'Quitter le forfait famille'
+	String get quitter => 'Quitter le forfait famille';
+
+	/// fr: 'Quitter le forfait famille ?'
+	String get quitterQuestion => 'Quitter le forfait famille ?';
+
+	/// fr: 'Quitter le forfait'
+	String get quitterConfirmer => 'Quitter le forfait';
+
+	/// fr: 'Votre compte, vos cours, votre historique et votre solde restent disponibles. Le rattachement au forfait famille prendra fin.'
+	String get quitterConsequence => 'Votre compte, vos cours, votre historique et votre solde restent disponibles. Le rattachement au forfait famille prendra fin.';
+
+	/// fr: 'Vous faites partie du forfait famille de {prenom}.'
+	String forfaitPhrase({required Object prenom}) => 'Vous faites partie du forfait famille de ${prenom}.';
+
+	/// fr: 'Le rattachement au forfait famille a pris fin'
+	String get resultatTitre => 'Le rattachement au forfait famille a pris fin';
+
+	/// fr: 'Son compte, ses cours, son historique et son solde restent disponibles.'
+	String get resultatTitulaire => 'Son compte, ses cours, son historique et son solde restent disponibles.';
+
+	/// fr: 'Votre compte, vos cours, votre historique et votre solde restent disponibles.'
+	String get resultatSecondAdulte => 'Votre compte, vos cours, votre historique et votre solde restent disponibles.';
+
+	/// fr: 'Compris'
+	String get compris => 'Compris';
+
+	/// fr: 'Le retrait n'a pas été confirmé.'
+	String get retraitEchecTitre => 'Le retrait n\'a pas été confirmé.';
+
+	/// fr: 'Le départ n'a pas été confirmé.'
+	String get departEchecTitre => 'Le départ n\'a pas été confirmé.';
+
+	/// fr: 'Vérifiez avant de réessayer.'
+	String get echecPhrase => 'Vérifiez avant de réessayer.';
+
+	/// fr: 'Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez réessayer vous-même quand la connexion sera revenue.'
+	String get horsLigne => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez réessayer vous-même quand la connexion sera revenue.';
+
+	/// fr: '{prenom} a quitté votre forfait famille.'
+	String notificationQuitte({required Object prenom}) => '${prenom} a quitté votre forfait famille.';
+
+	/// fr: 'Vous avez été retirée du forfait famille de {prenom}.'
+	String notificationRetiree({required Object prenom}) => 'Vous avez été retirée du forfait famille de ${prenom}.';
+
+	/// fr: 'Vous avez été retiré du forfait famille de {prenom}.'
+	String notificationRetire({required Object prenom}) => 'Vous avez été retiré du forfait famille de ${prenom}.';
+
+	/// fr: 'Nouvelle invitation indisponible'
+	String get delaiTitre => 'Nouvelle invitation indisponible';
+
+	/// fr: 'Une nouvelle demande pourra être déposée à partir du {date}. Elle devra ensuite être validée par l'administration.'
+	String delaiPhrase({required Object date}) => 'Une nouvelle demande pourra être déposée à partir du ${date}. Elle devra ensuite être validée par l\'administration.';
+
+	/// fr: 'Pourquoi cette attente ?'
+	String get pourquoi => 'Pourquoi cette attente ?';
+
+	/// fr: 'Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants.'
+	String get pourquoiPhrase => 'Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants.';
 }
 
 // Path: adulte.demo
@@ -16643,9 +16725,7 @@ extension on Traductions {
 			'adulte.monEspace.pageCoursAcces.indisponibleTitre' => 'Cours et accès pas encore consultables',
 			'adulte.monEspace.pageCoursAcces.indisponiblePhrase' => 'Le détail de vos cours, de vos séances et de votre accès n\'est pas encore disponible dans l\'application.',
 			'adulte.provisoire.coran' => 'Le Coran de votre espace élève s\'affichera ici.',
-			'adulte.provisoire.forfaitFamille' => 'La page de votre forfait famille arrivera dans une prochaine étape.',
 			'adulte.provisoire.ajouterMaFamille' => 'L\'ajout de votre famille arrivera dans une prochaine étape.',
-			'adulte.provisoire.placeAdulte' => 'Le détail de cette place arrivera dans une prochaine étape.',
 			'adulte.famille.ajouter' => 'Ajouter ma famille',
 			'adulte.famille.ajouterLegende' => 'Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.',
 			'adulte.famille.maFamille' => 'Ma famille',
@@ -16753,6 +16833,32 @@ extension on Traductions {
 			'adulte.acceptation.sansCompteTitre' => 'Invitation au forfait famille',
 			'adulte.acceptation.sansCompte' => 'Pour répondre, connectez-vous à votre compte, ou créez-en un. Vous lirez alors ce que la personne qui vous invite verra et ne verra pas avant de décider.',
 			'adulte.acceptation.sansCompteAction' => 'Me connecter ou créer mon compte',
+			'adulte.sortie.retirerElle' => 'Retirer ma conjointe',
+			'adulte.sortie.retirerLui' => 'Retirer mon conjoint',
+			'adulte.sortie.retirerQuestionElle' => 'Retirer ma conjointe ?',
+			'adulte.sortie.retirerQuestionLui' => 'Retirer mon conjoint ?',
+			'adulte.sortie.retirerConsequence' => 'Son compte, ses cours, son historique et son solde ne seront pas supprimés.',
+			'adulte.sortie.placePhrase' => ({required Object prenom}) => '${prenom} fait partie de votre forfait famille, avec son propre compte.',
+			'adulte.sortie.quitter' => 'Quitter le forfait famille',
+			'adulte.sortie.quitterQuestion' => 'Quitter le forfait famille ?',
+			'adulte.sortie.quitterConfirmer' => 'Quitter le forfait',
+			'adulte.sortie.quitterConsequence' => 'Votre compte, vos cours, votre historique et votre solde restent disponibles. Le rattachement au forfait famille prendra fin.',
+			'adulte.sortie.forfaitPhrase' => ({required Object prenom}) => 'Vous faites partie du forfait famille de ${prenom}.',
+			'adulte.sortie.resultatTitre' => 'Le rattachement au forfait famille a pris fin',
+			'adulte.sortie.resultatTitulaire' => 'Son compte, ses cours, son historique et son solde restent disponibles.',
+			'adulte.sortie.resultatSecondAdulte' => 'Votre compte, vos cours, votre historique et votre solde restent disponibles.',
+			'adulte.sortie.compris' => 'Compris',
+			'adulte.sortie.retraitEchecTitre' => 'Le retrait n\'a pas été confirmé.',
+			'adulte.sortie.departEchecTitre' => 'Le départ n\'a pas été confirmé.',
+			'adulte.sortie.echecPhrase' => 'Vérifiez avant de réessayer.',
+			'adulte.sortie.horsLigne' => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez réessayer vous-même quand la connexion sera revenue.',
+			'adulte.sortie.notificationQuitte' => ({required Object prenom}) => '${prenom} a quitté votre forfait famille.',
+			'adulte.sortie.notificationRetiree' => ({required Object prenom}) => 'Vous avez été retirée du forfait famille de ${prenom}.',
+			'adulte.sortie.notificationRetire' => ({required Object prenom}) => 'Vous avez été retiré du forfait famille de ${prenom}.',
+			'adulte.sortie.delaiTitre' => 'Nouvelle invitation indisponible',
+			'adulte.sortie.delaiPhrase' => ({required Object date}) => 'Une nouvelle demande pourra être déposée à partir du ${date}. Elle devra ensuite être validée par l\'administration.',
+			'adulte.sortie.pourquoi' => 'Pourquoi cette attente ?',
+			'adulte.sortie.pourquoiPhrase' => 'Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants.',
 			'adulte.demo.titre' => 'Démonstration de l\'élève adulte',
 			'adulte.demo.mention' => 'Les données sont fictives et rien n\'est envoyé.',
 			'adulte.demo.intro' => 'Choisissez un écran, puis une situation du foyer Diallo.',

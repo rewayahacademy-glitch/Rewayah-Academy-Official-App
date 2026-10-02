@@ -324,7 +324,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(FoyerPage), findsNothing, reason: ecran.name);
       expect(
-        find.text(t.adulte.provisoire.forfaitFamille),
+        find.byType(ForfaitFamillePage),
         findsOneWidget,
         reason: ecran.name,
       );
@@ -399,7 +399,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(FoyerPage), findsOneWidget);
 
-    // La place adulte : une page provisoire honnete, retour a Ma famille.
+    // La place adulte : la page du retrait (EA-8), retour a Ma famille.
     final Finder placeLigne = find.descendant(
       of: find.byKey(lignePlaceAdulteKey),
       matching: find.text(
@@ -409,7 +409,7 @@ void main() {
     await tester.ensureVisible(placeLigne);
     await tester.tap(placeLigne);
     await tester.pumpAndSettle();
-    expect(find.text(t.adulte.provisoire.placeAdulte), findsOneWidget);
+    expect(find.byType(PlaceConjointPage), findsOneWidget);
     await tester.tap(find.byType(DisqueRetour));
     await tester.pumpAndSettle();
     expect(find.byType(FoyerPage), findsOneWidget);
@@ -918,7 +918,9 @@ void main() {
       place: DelaiEnCours(DateTime.utc(2026, 12, 18)),
     );
     expect(libellePlace(delai), contains('18 décembre 2026'));
-    expect(placeActionnable(delai.place), isFalse);
+    // La ligne du delai ouvre son detail, jamais une invitation (EA-8).
+    expect(placeActionnable(delai.place), isTrue);
+    expect(placeActionnable(const ValidationEnAttente()), isFalse);
     expect(placeActionnable(const PlaceDisponible()), isTrue);
   });
 }

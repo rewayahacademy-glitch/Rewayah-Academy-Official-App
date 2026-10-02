@@ -8,6 +8,7 @@
 import '../../core/appairage/service_appairage.dart' show EleveDuFoyer;
 import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart' show Seance;
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../accueil_adulte/accueil_adulte_page.dart';
@@ -373,6 +374,34 @@ abstract final class DonneesAdulteDemo {
     InvitationPerimee() => EtatDemoAdulte.invitationExpiree,
     _ => etat,
   };
+
+  /// La date de la notification d'un depart (EA-8), une donnee de
+  /// demonstration rendue telle quelle.
+  static final DateTime dateDepart = DateTime.utc(2026, 9, 28, 9);
+
+  /// La notification d'un depart, visible dans le centre de notifications de
+  /// l'AUTRE adulte (F16, doc section 9.3, EA-BR-21), ou `null` :
+  /// - le second adulte a quitte : le titulaire en est informe ;
+  /// - le titulaire l'a retire : le second adulte en est informe, accorde a
+  ///   son genre (« retiree », « retire »).
+  /// Celui qui agit lit le resultat de son geste, pas une notification.
+  static String? notificationDepart(
+    EtatDemoAdulte etat,
+    GenreTitulaireDemo genre,
+    VueDemoAdulte vue,
+  ) => switch ((etat, vue)) {
+    (EtatDemoAdulte.conjointQuitte, VueDemoAdulte.titulaire) =>
+      t.adulte.sortie.notificationQuitte(prenom: prenomSecondAdulte(genre)),
+    (EtatDemoAdulte.conjointRetire, VueDemoAdulte.secondAdulte) =>
+      genre == GenreTitulaireDemo.homme
+          ? t.adulte.sortie.notificationRetiree(prenom: prenomTitulaire(genre))
+          : t.adulte.sortie.notificationRetire(prenom: prenomTitulaire(genre)),
+    _ => null,
+  };
+
+  /// La page Forfait famille du second adulte rattache (EA-8, EA-BR-22).
+  static ForfaitFamilleVM forfaitFamille(GenreTitulaireDemo genre) =>
+      ForfaitFamilleVM(prenomTitulaire: prenomTitulaire(genre));
 
   /// L'invitation envoyee au second adulte (EA-6, EA-BR-15) : le prenom et
   /// l'adresse fictive (RFC 2606) que le titulaire a saisis.

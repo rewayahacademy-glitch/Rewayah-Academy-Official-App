@@ -16,8 +16,15 @@
 // ecrans ; chaque rubrique de Mon espace ouvre la vraie sous-page du Compte
 // (informations, paiements, securite, preferences et apparence, aide,
 // informations legales), avec un retour vers Mon espace ; « Mes accords » et
-// « Cours et acces », sans source, disent qu'ils sont indisponibles. Coran et
-// Forfait famille restent PROVISOIRES (Forfait famille : EA-8 et EA-11).
+// « Cours et acces », sans source, disent qu'ils sont indisponibles. Forfait
+// famille porte « Quitter le forfait famille » (EA-8 ; la demande de reprise
+// viendra avec EA-11). Coran reste PROVISOIRE.
+//
+// EA-8 : la place occupee de Ma famille porte « Retirer ma conjointe » ou
+// « Retirer mon conjoint », la place en delai ouvre « Nouvelle invitation
+// indisponible » ; apres un depart, la cloche de l'Accueil de l'AUTRE adulte
+// ouvre le centre de notifications existant avec la notification du doc
+// section 9.3 (F16).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -91,7 +98,8 @@ enum EcranDemoAdulte {
   /// Mon espace (EA-4).
   monEspace,
 
-  /// Forfait famille, ouvert depuis Mon espace par le second adulte (EA-4).
+  /// Forfait famille, ouvert depuis Mon espace par le second adulte (EA-4),
+  /// avec « Quitter le forfait famille » (EA-8).
   forfaitFamille,
 
   /// Ma famille : la coquille du tuteur sur le Foyer (EA-5).
@@ -128,8 +136,9 @@ enum EcranDemoAdulte {
   /// vient avec EA-9).
   paiementsFoyer,
 
-  /// La place adulte occupee, ouverte depuis sa ligne de Ma famille :
-  /// provisoire (EA-8).
+  /// La place adulte, ouverte depuis sa ligne de Ma famille (EA-8) : occupee,
+  /// « Retirer ma conjointe » ; en delai, « Nouvelle invitation
+  /// indisponible ».
   placeAdulte,
 
   /// Le formulaire d'ajout d'un profil eleve, ouvert depuis Ma famille.
@@ -227,6 +236,13 @@ EcranDemoAdulte ecranPermisDemoAdulte(
         ? ecran
         : EcranDemoAdulte.monEspace;
   }
+  // Forfait famille n'est qu'au second adulte rattache (EA-4c, EA-8).
+  if (ecran == EcranDemoAdulte.forfaitFamille) {
+    return DonneesAdulteDemo.ligneFamille(etat, vue) ==
+            LigneFamilleAdulte.forfaitFamille
+        ? ecran
+        : EcranDemoAdulte.monEspace;
+  }
   if (!_ecransFoyer.contains(ecran)) return ecran;
   switch (DonneesAdulteDemo.ligneFamille(etat, vue)) {
     case LigneFamilleAdulte.maFamille:
@@ -256,6 +272,9 @@ EcranDemoAdulte ecranPermisDemoAdulte(
           _mutation(etat),
     EcranDemoAdulte.invitationEnvoyee =>
       place is InvitationEnvoyee || _mutation(etat),
+    // La place occupee (retrait) ou en delai (son detail), EA-8.
+    EcranDemoAdulte.placeAdulte =>
+      place is PlaceOccupee || place is DelaiEnCours,
     _ => true,
   };
   return permis ? ecran : EcranDemoAdulte.maFamille;
@@ -645,6 +664,21 @@ class CoquilleAdulteDemo extends StatelessWidget {
     final EtatInvitationRecue? invitation = vue == VueDemoAdulte.secondAdulte
         ? DonneesAdulteDemo.invitationRecue(etat, genre)
         : null;
+    // Apres un depart, la notification de l'AUTRE adulte (F16, EA-8).
+    final String? depart = DonneesAdulteDemo.notificationDepart(
+      etat,
+      genre,
+      vue,
+    );
+    void versMonEspaceDans(EtatDemoAdulte suite) => context.go(
+      adresseDemoAdulte(
+        EcranDemoAdulte.monEspace,
+        etat: suite,
+        genre: genre,
+        vue: vue,
+        seance: seance,
+      ),
+    );
     return ProviderScope(
       key: ValueKey<String>(_adresse(vu)),
       overrides: <Override>[
@@ -693,6 +727,23 @@ class CoquilleAdulteDemo extends StatelessWidget {
               _ReponseInvitationDemo(etat, genre),
             ),
           ],
+          // La notification d'un depart, dans le centre de l'autre adulte,
+          // sans push (doc section 9.3, F16, EA-BR-21). Celle du titulaire
+          // ouvre Ma famille, ou la ligne de la place dit deja l'etat
+          // (UX_REVIEW_07 ligne 12 c) ; celle du second adulte n'ouvre rien.
+          if (sousAccueil && depart != null)
+            notificationsTuteurProvider.overrideWith(
+              (Ref _) async => <NotificationTuteur>[
+                NotificationTuteur(
+                  id: 'demo-depart-forfait',
+                  titre: depart,
+                  date: DonneesAdulteDemo.dateDepart,
+                  destination: vue == VueDemoAdulte.titulaire
+                      ? _adresse(EcranDemoAdulte.maFamille)
+                      : null,
+                ),
+              ],
+            ),
           // Mon espace et ses pages lisent l'identite de la personne qui
           // regarde par le port du Compte, et sa ligne famille (EA-4). Les
           // paiements et l'aide gardent leur fournisseur reel (indisponible,
@@ -715,6 +766,14 @@ class CoquilleAdulteDemo extends StatelessWidget {
                 const CapaciteIndisponible('demonstration'),
               ),
             ),
+            // Forfait famille du second adulte rattache (EA-8, EA-BR-22) et
+            // sa sortie, ou rien n'est envoye (EA-BR-21, K-28).
+            if (vu == EcranDemoAdulte.forfaitFamille) ...<Override>[
+              forfaitFamilleProvider.overrideWith(
+                (Ref _) async => DonneesAdulteDemo.forfaitFamille(genre),
+              ),
+              portSortieForfaitProvider.overrideWithValue(_SortieDemo(etat)),
+            ],
           ],
         ],
       ],
@@ -731,8 +790,8 @@ class CoquilleAdulteDemo extends StatelessWidget {
             if (cible != null) context.go(_adresse(cible));
           },
           child: switch (vu) {
-            // La cloche ouvre les notifications existantes (EA-7 ; le centre
-            // de l'eleve adulte reste a EA-8) ; « Voir tout » ouvre Ma
+            // La cloche ouvre le centre de notifications existant (EA-7,
+            // EA-8, sans fork) ; « Voir tout » ouvre Ma
             // classe, dont le « Voir tout » ouvre la Bibliotheque de la
             // Classe, avec toutes ses ressources (EA-3).
             EcranDemoAdulte.accueil => AccueilAdultePage(
@@ -796,10 +855,11 @@ class CoquilleAdulteDemo extends StatelessWidget {
             EcranDemoAdulte.aide => AideComptePage(onRetour: versMonEspace),
             EcranDemoAdulte.informationsLegales =>
               InformationsLegalesComptePage(onRetour: versMonEspace),
-            EcranDemoAdulte.forfaitFamille => _PageProvisoire(
-              titre: t.adulte.famille.forfaitFamille,
-              phrase: t.adulte.provisoire.forfaitFamille,
+            // Apres « Compris », Mon espace relu : le second adulte n'est
+            // plus rattache (« Ajouter ma famille »).
+            EcranDemoAdulte.forfaitFamille => ForfaitFamillePage(
               onRetour: versMonEspace,
+              onCompris: () => versMonEspaceDans(EtatDemoAdulte.conjointQuitte),
             ),
             EcranDemoAdulte.ajouterMaFamille => _PageProvisoire(
               titre: t.adulte.famille.ajouter,
@@ -931,11 +991,22 @@ class CoquilleAdulteDemo extends StatelessWidget {
         onRetour: versMaFamille,
         onAnnulee: () => versMaFamilleApres(EtatDemoAdulte.invitationAnnulee),
       ),
-      EcranDemoAdulte.placeAdulte => _PageProvisoire(
-        titre: libellePlace(titulaire),
-        phrase: t.adulte.provisoire.placeAdulte,
-        onRetour: versMaFamille,
-      ),
+      // La place (EA-8) : occupee, le retrait, puis Ma famille relue dans
+      // la situation que le serveur rendrait (le delai et sa date) ; en
+      // delai, son detail. `ecranPermisDemoAdulte` n'ouvre que ces deux cas.
+      EcranDemoAdulte.placeAdulte => switch (place) {
+        DelaiEnCours(:final DateTime possibleLe) => DelaiPlacePage(
+          possibleLe: possibleLe,
+          onRetour: versMaFamille,
+        ),
+        PlaceOccupee(:final String prenom) => PlaceConjointPage(
+          placeFeminine: titulaire.placeFeminine,
+          prenom: prenom,
+          onRetour: versMaFamille,
+          onCompris: () => versMaFamilleApres(EtatDemoAdulte.conjointRetire),
+        ),
+        _ => const SizedBox.shrink(),
+      },
       // En demonstration, rien n'est envoye : apres « Creer le profil », une
       // page le dit, au lieu d'un retour muet a Ma famille (EA-5c).
       EcranDemoAdulte.ajouterProfil => FormulaireProfilEleve(
@@ -1060,6 +1131,8 @@ class CoquilleAdulteDemo extends StatelessWidget {
         foyerTitulaireProvider.overrideWith((Ref _) async => titulaire),
         // L'invitation (EA-6, EA-BR-15) : rien n'est envoye (K-28).
         portInvitationConjointProvider.overrideWithValue(_InvitationDemo(etat)),
+        // Le retrait du second adulte (EA-8, EA-BR-21) : rien n'est envoye.
+        portSortieForfaitProvider.overrideWithValue(_SortieDemo(etat)),
       ],
       child: RepereDemonstration(
         child: NavShell(
@@ -1160,6 +1233,36 @@ class _ReponseInvitationDemo implements PortReponseInvitation {
   @override
   Future<ResultatReponseInvitation> refuser({required String cle}) =>
       _repondre(const InvitationRefuseeParVous());
+}
+
+/// La sortie en demonstration (EA-8, EA-BR-21) : rien n'est envoye (K-28).
+/// « Erreur reseau » rend la coupure (D5) ; « Double soumission » repond
+/// apres la meme latence simulee ; sinon le rattachement a pris fin, avec la
+/// date de delai que le serveur de demonstration rend apres un retrait, la
+/// meme que Ma famille lira ensuite (`finDelaiPour`, F17).
+class _SortieDemo implements PortSortieForfait {
+  const _SortieDemo(this.etat);
+
+  final EtatDemoAdulte etat;
+
+  Future<ResultatSortie> _repondre() async {
+    if (etat == EtatDemoAdulte.erreurReseau) return const SortieEchecReseau();
+    if (etat == EtatDemoAdulte.doubleSoumission) {
+      await Future<void>.delayed(latenceSimulee);
+    }
+    return SortieFaite(
+      nouvelleDemandeLe: DonneesAdulteDemo.finDelaiPour(
+        EtatDemoAdulte.conjointRetire,
+      ),
+    );
+  }
+
+  @override
+  Future<ResultatSortie> retirerSecondAdulte({required String cle}) =>
+      _repondre();
+
+  @override
+  Future<ResultatSortie> quitterForfait({required String cle}) => _repondre();
 }
 
 /// La latence reseau simulee de la situation « Double soumission » : le

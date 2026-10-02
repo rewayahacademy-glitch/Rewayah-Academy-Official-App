@@ -3882,9 +3882,7 @@
     },
     "provisoire": {
       "coran": "Le Coran de votre espace élève s'affichera ici.",
-      "forfaitFamille": "La page de votre forfait famille arrivera dans une prochaine étape.",
-      "ajouterMaFamille": "L'ajout de votre famille arrivera dans une prochaine étape.",
-      "placeAdulte": "Le détail de cette place arrivera dans une prochaine étape."
+      "ajouterMaFamille": "L'ajout de votre famille arrivera dans une prochaine étape."
     },
     "famille": {
       "ajouter": "Ajouter ma famille",
@@ -4000,6 +3998,34 @@
       "sansCompteTitre": "Invitation au forfait famille",
       "sansCompte": "Pour répondre, connectez-vous à votre compte, ou créez-en un. Vous lirez alors ce que la personne qui vous invite verra et ne verra pas avant de décider.",
       "sansCompteAction": "Me connecter ou créer mon compte"
+    },
+    "sortie": {
+      "retirerElle": "Retirer ma conjointe",
+      "retirerLui": "Retirer mon conjoint",
+      "retirerQuestionElle": "Retirer ma conjointe ?",
+      "retirerQuestionLui": "Retirer mon conjoint ?",
+      "retirerConsequence": "Son compte, ses cours, son historique et son solde ne seront pas supprimés.",
+      "placePhrase": "{prenom} fait partie de votre forfait famille, avec son propre compte.",
+      "quitter": "Quitter le forfait famille",
+      "quitterQuestion": "Quitter le forfait famille ?",
+      "quitterConfirmer": "Quitter le forfait",
+      "quitterConsequence": "Votre compte, vos cours, votre historique et votre solde restent disponibles. Le rattachement au forfait famille prendra fin.",
+      "forfaitPhrase": "Vous faites partie du forfait famille de {prenom}.",
+      "resultatTitre": "Le rattachement au forfait famille a pris fin",
+      "resultatTitulaire": "Son compte, ses cours, son historique et son solde restent disponibles.",
+      "resultatSecondAdulte": "Votre compte, vos cours, votre historique et votre solde restent disponibles.",
+      "compris": "Compris",
+      "retraitEchecTitre": "Le retrait n'a pas été confirmé.",
+      "departEchecTitre": "Le départ n'a pas été confirmé.",
+      "echecPhrase": "Vérifiez avant de réessayer.",
+      "horsLigne": "Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez réessayer vous-même quand la connexion sera revenue.",
+      "notificationQuitte": "{prenom} a quitté votre forfait famille.",
+      "notificationRetiree": "Vous avez été retirée du forfait famille de {prenom}.",
+      "notificationRetire": "Vous avez été retiré du forfait famille de {prenom}.",
+      "delaiTitre": "Nouvelle invitation indisponible",
+      "delaiPhrase": "Une nouvelle demande pourra être déposée à partir du {date}. Elle devra ensuite être validée par l'administration.",
+      "pourquoi": "Pourquoi cette attente ?",
+      "pourquoiPhrase": "Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants."
     },
     "demo": {
       "titre": "Démonstration de l'élève adulte",

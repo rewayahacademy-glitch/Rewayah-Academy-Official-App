@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
+import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 
 void main() {
   test('/demo/adulte absente en production, presente ailleurs', () {
@@ -193,7 +194,7 @@ void main() {
     await tester.ensureVisible(find.text(t.adulte.famille.forfaitFamille));
     await tester.tap(find.text(t.adulte.famille.forfaitFamille));
     await tester.pumpAndSettle();
-    expect(find.text(t.adulte.provisoire.forfaitFamille), findsOneWidget);
+    expect(find.byType(ForfaitFamillePage), findsOneWidget);
     expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 3);
   });
 }

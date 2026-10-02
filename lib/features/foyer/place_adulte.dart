@@ -148,13 +148,16 @@ bool placePermetNouvelleDemande(EtatPlaceAdulte place) =>
     place is ValidationRefusee;
 
 /// Vrai quand la ligne de la place est une action : inviter quand la place
-/// est libre, ouvrir l'invitation envoyee (pour l'annuler, EA-6) ou la place
-/// occupee. Les autres etats se lisent sur la ligne, sans bouton qui
-/// echouerait (F17, R4) ; leur detail vient avec EA-8.
+/// est libre, ouvrir l'invitation envoyee (pour l'annuler, EA-6), la place
+/// occupee (pour retirer le second adulte, EA-8) ou le detail du delai
+/// (« Nouvelle invitation indisponible », planche 3.3, EA-8), qui ne propose
+/// aucune invitation (F17, R4). La validation, en attente ou refusee, se lit
+/// sur la ligne seule (UX_REVIEW_07 ligne 13 d).
 bool placeActionnable(EtatPlaceAdulte place) =>
     place is PlaceDisponible ||
     place is InvitationEnvoyee ||
-    place is PlaceOccupee;
+    place is PlaceOccupee ||
+    place is DelaiEnCours;
 
 /// La legende de la ligne de la place : l'invitation a envoyer, la fin de la
 /// precedente, ou l'adresse de celle qui attend (F21).

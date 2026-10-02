@@ -37,6 +37,7 @@ import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/formulaire_profil_eleve.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
+import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 import 'package:rewayah_academy/features/foyer/place_adulte.dart';
 import 'package:rewayah_academy/features/ma_classe_adulte/ma_classe_adulte_page.dart';
@@ -210,7 +211,7 @@ void main() {
     expect(find.textContaining('reprise'), findsNothing);
     await tester.tap(dansFamille(t.adulte.famille.forfaitFamille));
     await tester.pumpAndSettle();
-    expect(find.text(t.adulte.provisoire.forfaitFamille), findsOneWidget);
+    expect(find.byType(ForfaitFamillePage), findsOneWidget);
     expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 3);
   });
 
