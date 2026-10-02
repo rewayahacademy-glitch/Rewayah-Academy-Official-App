@@ -83,6 +83,7 @@ class _Traductions$enseignant$ar extends Traductions$enseignant$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$enseignant$journee$ar journee = _Traductions$enseignant$journee$ar._(_root);
 	@override late final _Traductions$enseignant$ficheGroupe$ar ficheGroupe = _Traductions$enseignant$ficheGroupe$ar._(_root);
 }
 
@@ -107,8 +108,6 @@ class _Traductions$classe$entree$ar extends Traductions$classe$entree$fr {
 	@override String get coursImminent => 'الدرس بعد أقل من دقيقة';
 	@override String get rejoindre => 'انضمام';
 	@override String rejoindreLecteur({required Object classe}) => 'الانضمام إلى حصة ${classe}';
-	@override String get preparer => 'تحضير الدخول';
-	@override String preparerLecteur({required Object classe}) => 'تحضير الدخول إلى حصة ${classe}';
 	@override String salleOuverte({required Object duree}) => 'القاعة مفتوحة. تبدأ الحصة بعد ${duree}.';
 	@override String get salleOuverteImminent => 'القاعة مفتوحة. تبدأ الحصة بعد أقل من دقيقة.';
 	@override String get preparation => 'التحضير جارٍ';
@@ -181,6 +180,23 @@ class _Traductions$eleve$suivi$ar extends Traductions$eleve$suivi$fr {
 	@override String get finUn => 'درس واحد في المتابعة.';
 }
 
+// Path: enseignant.journee
+class _Traductions$enseignant$journee$ar extends Traductions$enseignant$journee$fr {
+	_Traductions$enseignant$journee$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get derniereSeance => 'آخر حصة';
+	@override String get rejoindreSalle => 'الدخول إلى القاعة';
+	@override String rejoindreSalleLecteur({required Object classe}) => 'الدخول إلى قاعة الفصل ${classe}';
+	@override String get remplirCahier => 'تعبئة دفتر المتابعة';
+	@override String remplirCahierLecteur({required Object classe}) => 'تعبئة دفتر المتابعة للفصل ${classe}';
+	@override String cahierObligatoire({required Object classe}) => 'إلزامي: يُعبَّأ دفتر ${classe} في نهاية كل حصة.';
+	@override String voirCahier({required Object classe}) => 'عرض دفتر ${classe}';
+	@override String voirCahierLecteur({required Object classe}) => 'عرض دفتر المتابعة للفصل ${classe}';
+}
+
 // Path: enseignant.ficheGroupe
 class _Traductions$enseignant$ficheGroupe$ar extends Traductions$enseignant$ficheGroupe$fr {
 	_Traductions$enseignant$ficheGroupe$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -245,8 +261,6 @@ extension on TraductionsAr {
 			'classe.entree.coursImminent' => 'الدرس بعد أقل من دقيقة',
 			'classe.entree.rejoindre' => 'انضمام',
 			'classe.entree.rejoindreLecteur' => ({required Object classe}) => 'الانضمام إلى حصة ${classe}',
-			'classe.entree.preparer' => 'تحضير الدخول',
-			'classe.entree.preparerLecteur' => ({required Object classe}) => 'تحضير الدخول إلى حصة ${classe}',
 			'classe.entree.salleOuverte' => ({required Object duree}) => 'القاعة مفتوحة. تبدأ الحصة بعد ${duree}.',
 			'classe.entree.salleOuverteImminent' => 'القاعة مفتوحة. تبدأ الحصة بعد أقل من دقيقة.',
 			'classe.entree.preparation' => 'التحضير جارٍ',
@@ -301,6 +315,14 @@ extension on TraductionsAr {
 			'eleve.suivi.tronquee' => ({required Object nombre}) => 'تظهر أحدث ${nombre} دروس.',
 			'eleve.suivi.fin' => ({required Object nombre}) => 'عدد الدروس في المتابعة: ${nombre}.',
 			'eleve.suivi.finUn' => 'درس واحد في المتابعة.',
+			'enseignant.journee.derniereSeance' => 'آخر حصة',
+			'enseignant.journee.rejoindreSalle' => 'الدخول إلى القاعة',
+			'enseignant.journee.rejoindreSalleLecteur' => ({required Object classe}) => 'الدخول إلى قاعة الفصل ${classe}',
+			'enseignant.journee.remplirCahier' => 'تعبئة دفتر المتابعة',
+			'enseignant.journee.remplirCahierLecteur' => ({required Object classe}) => 'تعبئة دفتر المتابعة للفصل ${classe}',
+			'enseignant.journee.cahierObligatoire' => ({required Object classe}) => 'إلزامي: يُعبَّأ دفتر ${classe} في نهاية كل حصة.',
+			'enseignant.journee.voirCahier' => ({required Object classe}) => 'عرض دفتر ${classe}',
+			'enseignant.journee.voirCahierLecteur' => ({required Object classe}) => 'عرض دفتر المتابعة للفصل ${classe}',
 			'enseignant.ficheGroupe.elevesTitre' => 'الطلاب',
 			'enseignant.ficheGroupe.preparationTitre' => 'للتحضير',
 			'enseignant.ficheGroupe.supportPrevu' => 'المادة المقررة',
