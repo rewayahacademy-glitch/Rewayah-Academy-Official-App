@@ -117,6 +117,7 @@ void main(List<String> arguments) {
     'libelle-ambigu',
     'mot-interne',
     'erreur-sans-action',
+    'nav-recomposee',
   };
   final String? filtre = arguments
       .where((String a) => a.startsWith('--regle='))
@@ -167,6 +168,9 @@ void main(List<String> arguments) {
   }
   if (regles.contains('bouton-recompose')) {
     violations.addAll(_boutonsRecomposes());
+  }
+  if (regles.contains('nav-recomposee')) {
+    violations.addAll(_navigationsRecomposees());
   }
   if (regles.contains('libelle-ambigu')) {
     for (final MapEntry<String, String> e in fr.entries) {
@@ -339,6 +343,37 @@ String _sansCommentaires(File f) => f
 
 int _ligneDe(String texte, int index) =>
     '\n'.allMatches(texte.substring(0, index)).length + 1;
+
+/// MA-NAV-1 : une barre de navigation n'existe que dans les deux coquilles du
+/// core (`NavShell`, `AdminShell`), ou le Mode Accessibilite la presente
+/// (cibles de 72, libelle visible, etat actif a trois signaux). Une barre
+/// recomposee ailleurs ne suivrait pas la presentation.
+List<Violation> _navigationsRecomposees() {
+  final List<Violation> v = <Violation>[];
+  final RegExp nav = RegExp(
+    r'(NavigationBar|NavigationRail|NavigationDrawer|BottomNavigationBar|'
+    r'BottomAppBar|CupertinoTabBar)s*[(.]',
+  );
+  for (final File f in Directory(
+    'lib',
+  ).listSync(recursive: true).whereType<File>()) {
+    final String chemin = f.path.replaceAll(r'\', '/');
+    if (!chemin.endsWith('.dart') ||
+        chemin.endsWith('.g.dart') ||
+        chemin.contains('_dev') ||
+        chemin.endsWith('lib/core/widgets/nav_shell.dart') ||
+        chemin.endsWith('lib/core/widgets/admin_shell.dart')) {
+      continue;
+    }
+    final String t = _sansCommentaires(f);
+    for (final RegExpMatch m in nav.allMatches(t)) {
+      v.add(
+        Violation(chemin, _ligneDe(t, m.start), 'nav-recomposee', m.group(0)!),
+      );
+    }
+  }
+  return v;
+}
 
 /// L'index de la parenthese fermante qui correspond a l'ouvrante a [debut].
 /// Les chaines simples sont sautees ; -1 si le fichier est mal equilibre.

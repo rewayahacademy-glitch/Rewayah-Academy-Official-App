@@ -344,7 +344,13 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
       tutoiement: DonneesAccessibiliteDemo.mineur(widget.eleve),
       onRejoindre: entrer,
     );
+    // MA-NAV-1 : la barre montre les destinations du Mode Accessibilite ;
+    // les index de la demonstration restent ceux de la liste complete.
     final List<Destination> destinations = destinationsPour(
+      role: AppRole.student,
+      mode: InterfaceMode.standard,
+    );
+    final List<Destination> visibles = destinationsPour(
       role: AppRole.student,
       mode: DonneesAccessibiliteDemo.presentation,
     );
@@ -355,8 +361,12 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
         : widget.moment == MomentDemoAccessibilite.pendant
         ? classe
         : NavShell(
-            destinations: destinations,
-            indexActif: _index,
+            destinations: visibles,
+            indexActif: indexDansBarre(
+              visibles: visibles,
+              completes: destinations,
+              indexComplet: _index,
+            ),
             libellesDansLeRail: true,
             onAller: (String chemin) {
               final int i = destinations.indexWhere(

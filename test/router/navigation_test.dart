@@ -80,15 +80,20 @@ String _lieu(GoRouter routeur) => lieu(routeur);
 
 void main() {
   group('destinationsPour : une barre par role, jamais plus de quatre', () {
-    // MA-2 (27/09/2026) remplace l'ancienne regle « aucune destination en
-    // mode enfant » : les memes quatre dans les deux presentations (Q1).
-    test('un eleve a les memes destinations dans les deux presentations', () {
-      List<String> chemins(InterfaceMode mode) =>
-          destinationsPour(role: AppRole.student, mode: mode)
-              .map((Destination d) => d.chemin)
-              .toList();
-      expect(chemins(InterfaceMode.enfant), hasLength(4));
-      expect(chemins(InterfaceMode.enfant), chemins(InterfaceMode.standard));
+    // MA-2 (27/09/2026) remplaçait « aucune destination en mode enfant » par
+    // les memes quatre ; MA-NAV-1 (02/10/2026, demande du directeur) les
+    // reduit aux essentielles en Mode Accessibilite, sur les memes routes.
+    test('un eleve a moins de destinations en Mode Accessibilite', () {
+      List<String> chemins(InterfaceMode mode) => destinationsPour(
+        role: AppRole.student,
+        mode: mode,
+      ).map((Destination d) => d.chemin).toList();
+      expect(chemins(InterfaceMode.enfant), hasLength(3));
+      expect(chemins(InterfaceMode.standard), hasLength(4));
+      expect(
+        chemins(InterfaceMode.standard),
+        containsAll(chemins(InterfaceMode.enfant)),
+      );
     });
 
     test('les chemins des destinations sont exactement ceux du role', () {

@@ -60,6 +60,7 @@ Textes complets : consignes K-54 à K-59 du tableau ; table des preuves : `docs/
 
 Règles équivalentes, déduites des remarques du directeur :
 
+- **Le Mode Accessibilité adapte aussi la navigation (MA-NAV-1).** Même arborescence et mêmes routes (routeur unique), seule la présentation de `NavShell` change : moins de destinations (celles qui ne sont pas `essentielle: false`, atteintes sinon par un bloc de l'écran), icônes de 32 et libellés plus grands, libellé **toujours** visible sous l'icône (le rail replié aussi), cibles de 72 et espacées, encre forte au repos, contour franc. Destination active à trois signaux : fond plein, icône pleine, libellé en gras, jamais la couleur seule. Valeurs lues dans `AppMetriques` (`estEnfant`, `cibleTactile`, `arrondi`). Les branches du routeur se lisent sur `destinationsPour(mode: standard)`, l'index actif de la barre se recalcule par `indexDansBarre`. Jamais de barre recomposée hors du core. Contrôle : `nav-recomposee`, test `test/widgets/nav_shell_accessibilite_test.dart` (320 px, 800 px, 1440 px, texte ×2, clair et sombre, RTL).
 - **Aucun élément ne recouvre un contenu à lire** (bouton flottant, bandeau, pastille). Test : `verifierSansChevauchement`, à 320 px et en texte ×2.
 - **Hiérarchie de titres stricte** : un titre d'écran, des titres de section, jamais deux niveaux au même rang ni un saut de niveau.
 - **Un état ne se signale jamais par la couleur seule** (en direct, annulée, actif / inactif) : texte ou icône en plus de la couleur.

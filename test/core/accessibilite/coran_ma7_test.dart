@@ -104,16 +104,24 @@ void main() {
           ),
         );
         await stabiliser(tester);
+        // MA-NAV-1 : le Coran n'est plus dans la barre du Mode Accessibilite ;
+        // on y va par l'Accueil (« Lire le Coran »), sur la meme route.
         await tester.tap(
           find.descendant(
             of: find.byKey(NavShell.barreBasseKey),
-            matching: find.text(t.nav.eleve.coran),
+            matching: find.text(t.nav.eleve.accueil),
           ),
         );
         await stabiliser(tester);
+        final Finder lire = find.text(t.accessibilite.accueil.lireCoran);
+        await tester.ensureVisible(lire);
+        await tester.pump();
+        await tester.tap(lire);
+        await stabiliser(tester);
+        // Aucune destination de la barre n'est surlignee sur le Coran.
         expect(
           tester.widget<NavShell>(find.byType(NavShell)).indexActif,
-          EcranAccessibiliteDemo.indexCoran,
+          isNull,
         );
         // Une seule action dominante ; la demonstration ne connait aucune
         // position : « Ouvrir le Coran ».

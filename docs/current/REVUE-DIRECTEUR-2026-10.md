@@ -16,6 +16,7 @@ Principe : corriger la cause (composant partagé de `lib/core`), recenser tous l
 | Hiérarchie de titres stricte | déduite | `EnteteDePage`, `SectionHeader` | revue d'écran | |
 | État jamais par la couleur seule | déduite | `StatusPill` | revue d'écran | |
 | Alerte urgente en tête | déduite | | revue d'écran | |
+| Navigation du Mode Accessibilité : moins de destinations, libellé visible, cibles de 72, actif à trois signaux, mêmes routes | MA-NAV-1 | `NavShell` | `nav-recomposee` | `nav_shell_accessibilite_test.dart` |
 | Libellé sans ambiguïté (qui, quoi) | déduite | | `libelle-ambigu` | |
 | Aucun mot interne chez le client | déduite | | `mot-interne` | |
 
@@ -34,5 +35,20 @@ Avant correction, par contrôle (`dart run tool/verifier_revue.dart --regle=<nom
 | `affirmation-reseau` | 10 (6 dans le socle hérité de `main`) | |
 | `libelle-sans-source` | 1377 (1023 dans le socle hérité de `main`) | |
 | `verifier_jetons` | 36 | |
+| `nav-recomposee` (MA-NAV-1, barres hors des coquilles du core) | 0 | 0 |
+
+### MA-NAV-1 : barre de navigation du Mode Accessibilité
+
+| Mesure | Avant | Après |
+|---|---|---|
+| Destinations de l'élève dans la barre (Mode Accessibilité) | 4 | 3 (Accueil, Ma classe, Mon espace ; le Coran reste atteint par le bloc permanent de l'Accueil) |
+| Présentations de la barre basse | 1 (standard dans les deux modes) | 2 (standard, guide) |
+| Hauteur d'un onglet (guide) | environ 64 | 72 au moins |
+| Icône (guide) | 24 | 32 |
+| Libellé du rail replié (guide) | infobulle ou 12 pt borné | toujours visible, 14 pt, trois lignes |
+| Signaux de l'onglet actif | 3 (encre d'accent, icône pleine, soulignement de 3) | 3 dont un fond plein (fond, icône pleine, gras) |
+| Barres de navigation recomposées hors du core | 0 | 0 (contrôle `nav-recomposee`) |
+
+Barres vérifiées : barre basse, rail, barre latérale de `NavShell` (tous rôles) ; `AdminShell` (rôle adulte, hors Mode Accessibilité, déjà lié à `AppMetriques.cibleTactile`).
 
 Limites connues des contrôles (heuristiques de texte) : `cartes-collees` ne voit que des appels voisins dans une liste `children` sans `spacing:` (pas les `ListView.builder` sans séparateur) ; `bouton-recompose` ne voit que les boutons Material, `InkWell`, `GestureDetector` et un `Pressable` qui peint lui-même fond arrondi et `Text`. Ce que ces contrôles ne voient pas se mesure par les tests de géométrie et par les captures à 320 px et 1440 px.
