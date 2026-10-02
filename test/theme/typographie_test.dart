@@ -156,7 +156,10 @@ void main() {
     });
 
     test('la variante enfant est explicite, le document Coran reste isole', () {
-      expect(AppTypography.enfant.titleLarge!.fontSize, 32);
+      // HIER-1 : titleLarge (28) passe sous headlineSmall (32) ; les deux
+      // valaient 32 (un titre d'ecran et un nom a la meme taille).
+      expect(AppTypography.enfant.titleLarge!.fontSize, 28);
+      expect(AppTypography.enfant.headlineSmall!.fontSize, 32);
       expect(AppTypography.enfant.bodyLarge!.fontSize, 20);
       expect(
         AppTypography.enfant.headlineSmall!.fontFamily,

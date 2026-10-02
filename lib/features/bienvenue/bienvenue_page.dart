@@ -103,7 +103,9 @@ class _Promesse extends StatelessWidget {
         Text(
           t.bienvenue.accroche,
           key: const ValueKey<String>('bienvenue-accroche'),
-          style: bureau ? textes.displaySmall : textes.headlineMedium,
+          // Un titre d'ecran, jamais `displaySmall` (valeurs chiffrees) : il
+          // reste strictement plus grand que le mot-marque (HIER-1).
+          style: bureau ? textes.headlineLarge : textes.headlineMedium,
         ),
         Ecart.vMd,
         Text(

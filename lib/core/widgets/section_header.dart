@@ -42,7 +42,10 @@ class SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final TextStyle styleTitre = textes.headlineSmall ?? const TextStyle();
+    // Un titre de SECTION : `titleLarge`, un cran sous le titre d'ecran
+    // (`headline*`). Avant, `headlineSmall` valait le titre d'`EntetePage` sur
+    // telephone : titre d'ecran et titre de section a la meme taille (HIER-1).
+    final TextStyle styleTitre = textes.titleLarge ?? const TextStyle();
 
     final bool actionSousTitre =
         MediaQuery.textScalerOf(context).scale(16) > 16 ||
