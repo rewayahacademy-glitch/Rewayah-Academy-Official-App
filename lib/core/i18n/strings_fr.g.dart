@@ -3060,6 +3060,15 @@ class Traductions$accessibilite$coran$fr {
 
 	/// fr: 'Retour à l'entrée du Coran'
 	String get retour => 'Retour à l\'entrée du Coran';
+
+	/// fr: 'Le texte du Coran n'est pas chargé dans la démonstration'
+	String get demoSansTexte => 'Le texte du Coran n\'est pas chargé dans la démonstration';
+
+	/// fr: 'Ce n'est pas une panne : la démonstration ne contient pas le texte. Tu n'as rien à faire. Dans l'application, le Coran s'ouvre ici, à ta page, et tes réglages de lecture restent enregistrés.'
+	String get demoSansTexteDetail => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte. Tu n\'as rien à faire. Dans l\'application, le Coran s\'ouvre ici, à ta page, et tes réglages de lecture restent enregistrés.';
+
+	/// fr: 'Ce n'est pas une panne : la démonstration ne contient pas le texte. Vous n'avez rien à faire. Dans l'application, le Coran s'ouvre ici, à votre page, et vos réglages de lecture restent enregistrés.'
+	String get demoSansTexteDetailVous => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte. Vous n\'avez rien à faire. Dans l\'application, le Coran s\'ouvre ici, à votre page, et vos réglages de lecture restent enregistrés.';
 }
 
 // Path: accessibilite.maClasse
@@ -13446,9 +13455,12 @@ extension on Traductions {
 			'accessibilite.coran.reprendreDetailVous' => ({required Object page}) => 'Vous en étiez page ${page}.',
 			'accessibilite.coran.lectureGrande' => 'Le Coran s\'ouvre en lecture agrandie, verset par verset.',
 			'accessibilite.coran.retour' => 'Retour à l\'entrée du Coran',
-			'accessibilite.maClasse.titre' => 'Ma classe',
+			'accessibilite.coran.demoSansTexte' => 'Le texte du Coran n\'est pas chargé dans la démonstration',
 			_ => null,
 		} ?? switch (path) {
+			'accessibilite.coran.demoSansTexteDetail' => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte. Tu n\'as rien à faire. Dans l\'application, le Coran s\'ouvre ici, à ta page, et tes réglages de lecture restent enregistrés.',
+			'accessibilite.coran.demoSansTexteDetailVous' => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte. Vous n\'avez rien à faire. Dans l\'application, le Coran s\'ouvre ici, à votre page, et vos réglages de lecture restent enregistrés.',
+			'accessibilite.maClasse.titre' => 'Ma classe',
 			'accessibilite.maClasse.suivi' => 'Mon suivi',
 			'accessibilite.maClasse.suiviDetail' => 'Les séances passées et la présence',
 			'accessibilite.tutoiement.tonHeure' => 'Ton heure',
@@ -13958,11 +13970,11 @@ extension on Traductions {
 			'admin.demandes.reclame' => 'Ce qui est demandé',
 			'admin.demandes.reclameReaffectation' => ({required Object prenom}) => 'Changer l\'enseignant de ${prenom}',
 			'admin.demandes.reclamePlafond' => ({required Object valeur}) => 'Porter le plafond à ${valeur} élèves',
+			_ => null,
+		} ?? switch (path) {
 			'admin.demandes.reclameRegle' => ({required Object regle, required Object valeur}) => 'Porter ${regle} à ${valeur} min',
 			'admin.demandes.reclameRegleSansValeur' => ({required Object regle}) => 'Revoir ${regle}',
 			'admin.demandes.motifDemande' => 'Motif invoqué',
-			_ => null,
-		} ?? switch (path) {
 			'admin.demandes.verdict' => 'Décision',
 			'admin.demandes.accorder' => 'Accorder',
 			'admin.demandes.refuser' => 'Refuser',
@@ -14472,11 +14484,11 @@ extension on Traductions {
 			'admin.agents.identiteVisible' => 'Visibles',
 			'admin.agents.identiteVisibleDetail' => 'L\'agent lit les prénoms, comme la personne observée les voit.',
 			'admin.agents.pourra' => 'Pourra',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.pourraDetail' => 'Ouvrir l\'application, naviguer, et lire tout ce que cette personne lit.',
 			'admin.agents.nePourraPas' => 'Ne pourra pas',
 			'admin.agents.nePourraPasDetail' => 'Écrire quoi que ce soit, voir une pièce d\'identité, un appareil, le journal d\'audit, ni sortir du périmètre de cette personne.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.agents.emissionEnCours' => 'Émission',
 			'admin.agents.emis' => 'Jeton émis',
 			'admin.agents.emisDetail' => 'Remettez ce lien à l\'agent. Il n\'apparaîtra plus : ni cet écran ni la base ne peuvent le retrouver.',
@@ -14986,11 +14998,11 @@ extension on Traductions {
 			'eleve.coran.page' => ({required Object page, required Object total}) => 'Page ${page} sur ${total}',
 			'eleve.coran.juz' => ({required Object juz}) => 'Juz ${juz}',
 			'eleve.coran.mecquoise' => 'Révélée à La Mecque',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.coran.medinoise' => 'Révélée à Médine',
 			'eleve.coran.reprendre' => 'Reprendre ta lecture',
 			'eleve.coran.reprendreDetail' => ({required Object page}) => 'Tu en étais page ${page}',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.coran.chargement' => 'Le texte arrive',
 			'eleve.coran.indisponible' => 'Le texte n\'a pas pu être chargé',
 			'eleve.coran.indisponibleDetail' => 'Dès que le réseau revient, ta page se rouvre ici.',
@@ -15500,11 +15512,11 @@ extension on Traductions {
 			'enseignant.cahier.valider' => 'Valider le cahier',
 			'enseignant.cahier.validerTout' => 'Tout est conforme, valider',
 			'enseignant.cahier.validerSansConstat' => 'Déposer sans le constat',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.retourJournee' => 'Retour à ma journée',
 			'enseignant.cahier.vide' => 'Le constat n\'a pas pu être déduit',
 			'enseignant.cahier.videDetail' => 'Aucune présence et aucun événement n\'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.erreur' => 'Le constat n\'a pas pu être lu.',
 			'enseignant.cahier.erreurDetail' => 'Réessayez, ou déposez le cahier sans le constat.',
 			'enseignant.cahier.echecEnvoi' => 'Le cahier n\'a pas pu être enregistré. Réessayez.',
@@ -16014,11 +16026,11 @@ extension on Traductions {
 			'tc.observation.explication.ecourtee' => 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.',
 			'tc.observation.explication.sansIntervenir' => 'Pour préserver la concentration, vous observez sans intervenir.',
 			'tc.observation.explication.informes' => 'Votre enfant et son enseignant sont informés.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.explication.observer' => 'Observer maintenant',
 			'tc.observation.explication.pasMaintenant' => 'Pas maintenant',
 			'tc.observation.explication.restanteUne' => ({required Object restantes, required Object max}) => '${restantes}/${max} visite restante pour cette séance',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.explication.restantes' => ({required Object restantes, required Object max}) => '${restantes}/${max} visites restantes pour cette séance',
 			'tc.observation.explication.aucuneRestante' => 'Aucune visite restante pour cette séance',
 			'tc.observation.disponibilite.visitesEpuiseesTitre' => 'Aucune visite restante pour cette séance',

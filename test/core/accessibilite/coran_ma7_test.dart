@@ -5,6 +5,7 @@
 // arrete(e) » quand le port la connait, tutoiement selon l'age.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -20,12 +21,13 @@ import 'package:rewayah_academy/core/tc_coran/layout_lignes_indisponible.dart';
 import 'package:rewayah_academy/core/tc_coran/navigation_coran.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/features/accueil_eleve/coran_accessibilite.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
-import 'package:rewayah_academy/features/tc_mushaf/mushaf_page.dart';
 import 'package:rewayah_academy/features/tc_mushaf/vue_page_mushaf.dart';
 import 'package:rewayah_academy/features/tc_mushaf/vue_verset_agrandi.dart';
 
+import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart' show stabiliser;
 import '../../teaching_core/c/faux/faux_corpus_coran.dart';
 import '../../teaching_core/c/goldens/corpus_reference.dart';
@@ -55,7 +57,11 @@ Future<void> _taille(WidgetTester tester, Size taille) async {
 
 void main() {
   late CorpusReference reference;
-  setUpAll(() => reference = CorpusReference.charger());
+  setUpAll(() async {
+    // Les vraies polices : la mesure des mots coupes en depend.
+    await chargerPolicesDuDepot();
+    reference = CorpusReference.charger();
+  });
 
   List<Override> corpus({PositionLecture? personnelle}) => <Override>[
     portCorpusCoranProvider.overrideWithValue(FauxCorpusCoran(reference)),
@@ -133,17 +139,22 @@ void main() {
         expect(find.text(t.accessibilite.accueil.aide), findsOneWidget);
         await tester.tap(action);
         await poser(tester);
-        expect(find.byType(MushafPage), findsOneWidget);
+        // Revue MA-7 (3) : sans corpus hors serveur, la demonstration dit la
+        // vraie cause (texte non charge dans la demonstration), sans faux
+        // motif reseau ni « Reessayer » qui ne peut pas aboutir.
         expect(
-          find.byType(VueVersetAgrandi),
-          grande ? findsOneWidget : findsNothing,
+          find.byKey(const ValueKey<String>('coran-ma-demo-sans-texte')),
+          findsOneWidget,
         );
+        expect(find.text(t.accessibilite.coran.demoSansTexte), findsOneWidget);
+        // Mariam est mineure : tutoiement (A4 = a).
         expect(
-          find.byType(VuePageMushaf),
-          grande ? findsNothing : findsOneWidget,
+          find.text(t.accessibilite.coran.demoSansTexteDetail),
+          findsOneWidget,
         );
-        // Sans corpus hors serveur, le lecteur dit honnetement son etat.
-        expect(find.text(t.eleve.coran.indisponible), findsWidgets);
+        expect(find.text(t.eleve.coran.indisponibleDetail), findsNothing);
+        expect(find.text(t.eleve.coran.reessayer), findsNothing);
+        expect(find.byType(LecteurCoranAccessibilite), findsNothing);
         // Retour a l'entree.
         await tester.tap(find.text(t.accessibilite.coran.retour));
         await poser(tester);
@@ -193,12 +204,109 @@ void main() {
       await tester.tap(find.byKey(_principale));
       await poser(tester);
       final ProviderContainer c = ProviderScope.containerOf(
-        tester.element(find.byType(MushafPage)),
+        tester.element(find.byType(LecteurCoranAccessibilite)),
       );
       expect(c.read(lectureCoranProvider).page, page);
       expect(find.text(t.eleve.coran.pageSuivante), findsOneWidget);
       expect(find.text(t.eleve.coran.pagePrecedente), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
+  }
+
+  // Revue MA-7 (1) et (2) : commandes de page flechees, jamais coupees en
+  // plein mot, visibles sans defilement a 390 et a 1440 ; a 200 % elles
+  // restent atteignables.
+  for (final (Size taille, double echelle) cas in <(Size, double)>[
+    (const Size(390, 844), 1),
+    (const Size(1440, 900), 1),
+    (const Size(390, 844), 2),
+  ]) {
+    for (final bool grande in <bool>[false, true]) {
+      testWidgets(
+        'commandes de page : ${cas.$1.width.toInt()} px, texte x${cas.$2}, '
+        'grand texte = $grande',
+        (WidgetTester tester) async {
+          await _taille(tester, cas.$1);
+          final ProviderContainer racine = ProviderContainer();
+          addTearDown(racine.dispose);
+          racine
+              .read(preferencesLocalesProvider.notifier)
+              .lectureGrande(grande);
+          tester.platformDispatcher.textScaleFactorTestValue = cas.$2;
+          addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+          await tester.pumpWidget(
+            _hote(
+              EcranAccessibiliteDemo(
+                eleve: EleveDemoAccessibilite.mariam,
+                destinationInitiale: EcranAccessibiliteDemo.indexCoran,
+                surchargesCoran: corpus(
+                  personnelle: PositionLecture(
+                    page: reference.pages.last.numero,
+                    sourate: 1,
+                    verset: 1,
+                  ),
+                ),
+              ),
+              racine: racine,
+            ),
+          );
+          await poser(tester);
+          await tester.tap(find.byKey(_principale));
+          await poser(tester);
+          expect(find.byType(LecteurCoranAccessibilite), findsOneWidget);
+          expect(
+            find.byType(VueVersetAgrandi),
+            grande ? findsOneWidget : findsNothing,
+          );
+          expect(
+            find.byType(VuePageMushaf),
+            grande ? findsNothing : findsOneWidget,
+          );
+          final double bas = tester.view.physicalSize.height;
+          for (final String cle in <String>[
+            'coran-ma-page-precedente',
+            'coran-ma-page-suivante',
+          ]) {
+            final Finder bouton = find.byKey(ValueKey<String>(cle));
+            expect(bouton, findsOneWidget);
+            if (cas.$2 == 1) {
+              // Visible sans defilement.
+              expect(tester.getRect(bouton).bottom, lessThanOrEqualTo(bas));
+            } else {
+              await tester.ensureVisible(bouton);
+              await tester.pump();
+              expect(tester.getRect(bouton).bottom, lessThanOrEqualTo(bas));
+            }
+            // Une fleche directionnelle dans chaque bouton (a texte tres
+            // agrandi sur ecran etroit, elle peut ceder sa place au mot).
+            if (cas.$2 == 1) {
+              expect(
+                find.descendant(of: bouton, matching: find.byType(Icon)),
+                findsOneWidget,
+              );
+            }
+            // Aucun mot coupe : chaque libelle tient sur une ligne par mot,
+            // donc au plus autant de lignes que de mots.
+            final Finder libelle = find.descendant(
+              of: bouton,
+              matching: find.byType(Text),
+            );
+            final RenderParagraph rendu = tester.renderObject(libelle);
+            final String texte = rendu.text.toPlainText();
+            final int mots = texte.split(' ').length;
+            final TextPainter peintre = TextPainter(
+              text: rendu.text,
+              textDirection: rendu.textDirection,
+              textScaler: rendu.textScaler,
+              textAlign: rendu.textAlign,
+            )..layout(maxWidth: rendu.size.width);
+            final int lignes = peintre.computeLineMetrics().length;
+            peintre.dispose();
+            expect(lignes, lessThanOrEqualTo(mots), reason: texte);
+          }
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
   }
 }

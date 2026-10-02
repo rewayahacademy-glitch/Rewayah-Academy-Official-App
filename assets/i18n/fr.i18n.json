@@ -630,7 +630,10 @@
       "reprendreDetail": "Tu en étais page {page}.",
       "reprendreDetailVous": "Vous en étiez page {page}.",
       "lectureGrande": "Le Coran s'ouvre en lecture agrandie, verset par verset.",
-      "retour": "Retour à l'entrée du Coran"
+      "retour": "Retour à l'entrée du Coran",
+      "demoSansTexte": "Le texte du Coran n'est pas chargé dans la démonstration",
+      "demoSansTexteDetail": "Ce n'est pas une panne : la démonstration ne contient pas le texte. Tu n'as rien à faire. Dans l'application, le Coran s'ouvre ici, à ta page, et tes réglages de lecture restent enregistrés.",
+      "demoSansTexteDetailVous": "Ce n'est pas une panne : la démonstration ne contient pas le texte. Vous n'avez rien à faire. Dans l'application, le Coran s'ouvre ici, à votre page, et vos réglages de lecture restent enregistrés."
     },
     "maClasse": {
       "titre": "Ma classe",

@@ -451,6 +451,9 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
                             widget.eleve,
                           ),
                           lectureGrande: grande,
+                          // Sans surcharge, aucun texte du Coran n'est
+                          // charge : l'ecran le dit (revue MA-7, K-59).
+                          demonstration: widget.surchargesCoran == null,
                           onAide: () =>
                               _aller(EcranAccessibiliteDemo.indexMonEspace),
                         ),

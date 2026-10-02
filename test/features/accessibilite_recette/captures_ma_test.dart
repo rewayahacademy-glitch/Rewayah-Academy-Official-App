@@ -28,6 +28,14 @@ const List<(String, Size)> _tailles = <(String, Size)>[
   ('1440', Size(1440, 1100)),
 ];
 
+/// MA-7 (revue) : le lecteur se juge a la hauteur reelle d'un ecran, pas
+/// sur une planche allongee : les commandes doivent y etre visibles.
+const List<(String, Size)> _ecransReels = <(String, Size)>[
+  ('390', Size(390, 844)),
+  ('768', Size(768, 1024)),
+  ('1440', Size(1440, 900)),
+];
+
 const List<ThemeMode> _themes = <ThemeMode>[ThemeMode.light, ThemeMode.dark];
 
 /// Monte [ecran] en Mode Accessibilite et ecrit son PNG ; [echelle] simule le
@@ -403,7 +411,7 @@ void main() {
       debugPrint('PNG ${await capturer(tester, fichier)}');
     }
 
-    for (final (String l, Size taille) in _tailles) {
+    for (final (String l, Size taille) in _ecransReels) {
       for (final ThemeMode mode in _themes) {
         testWidgets('coran_${l}_${mode.name}', (WidgetTester tester) async {
           await _capturer(
@@ -428,12 +436,32 @@ void main() {
         const Size(390, 1900),
       );
     });
+    // Revue MA-7 (3) : la demonstration sans texte du Coran dit la vraie
+    // cause, sans « Reessayer » (Idriss, adulte : vouvoiement).
+    testWidgets('coran_demo_sans_texte_390_light', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma7/ma7_coran_demo_sans_texte_idriss_390_light',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.idriss,
+          destinationInitiale: EcranAccessibiliteDemo.indexCoran,
+        ),
+        const Size(390, 844),
+      );
+      await tester.tap(
+        find.byKey(const ValueKey<String>('coran-ma-principale')),
+      );
+      await stabiliser(tester);
+      debugPrint(
+        'PNG ${await capturer(tester, 'ma7/ma7_coran_demo_sans_texte_lecteur_idriss_390_light')}',
+      );
+    });
     testWidgets('coran_390_light_texte200', (WidgetTester tester) async {
       await _capturer(
         tester,
         'ma7/ma7_coran_mariam_390_light_texte200',
         ecran(EleveDemoAccessibilite.mariam),
-        const Size(390, 1900),
+        const Size(390, 844),
         echelle: 2,
       );
       await ouvrir(tester, 'ma7/ma7_coran_lecteur_mariam_390_light_texte200');
