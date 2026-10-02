@@ -38,6 +38,13 @@ final FutureProvider<List<PaiementFoyer>> paiementsFoyerProvider =
       (Ref ref) => ref.watch(portPaiementsFoyerProvider).historique(),
     );
 
+/// Les soldes des beneficiaires du foyer, pour le titulaire (EA-9 ;
+/// indisponibles tant qu'EA-BR-23 manque).
+final FutureProvider<SoldesFoyer> soldesFoyerProvider =
+    FutureProvider<SoldesFoyer>(
+      (Ref ref) => ref.watch(portPaiementsFoyerProvider).soldes(),
+    );
+
 /// Le canal d'aide de l'academie (indisponible tant que DB-CPT-07 manque).
 final FutureProvider<CanalSupport?> canalSupportProvider =
     FutureProvider<CanalSupport?>(

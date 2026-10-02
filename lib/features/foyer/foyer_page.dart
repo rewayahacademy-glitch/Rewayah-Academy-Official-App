@@ -28,6 +28,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../compte/compte_tuteur_page.dart' show CarteIdentiteCompte;
 import '../compte/donnees_compte.dart' show identiteTitulaireProvider;
+import '../compte/soldes_foyer.dart';
 import 'ligne_membre.dart';
 import 'photo_eleve.dart';
 import 'place_adulte.dart';
@@ -79,6 +80,7 @@ class FoyerPage extends ConsumerWidget {
     this.onAller,
     this.onPlaceAdulte,
     this.onPaiementsFoyer,
+    this.onRecharger,
     this.onAProposForfait,
     this.onNouvelleDemande,
   });
@@ -92,6 +94,10 @@ class FoyerPage extends ConsumerWidget {
 
   /// Ouvre les paiements du foyer (EA-9).
   final VoidCallback? onPaiementsFoyer;
+
+  /// Ouvre la recharge depuis la section des soldes, sur bureau (EA-9,
+  /// planche 6 ; la recharge vient avec EA-10).
+  final VoidCallback? onRecharger;
 
   /// Ouvre « A propos du forfait famille » ; par defaut, la page est poussee
   /// sur le navigateur.
@@ -244,13 +250,27 @@ class FoyerPage extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        // Sur bureau, la colonne droite porte la section « Paiements du
+        // foyer » elle-meme (planche 6, UX_REVIEW_07 ligne 7 a) : les soldes
+        // et son seul bouton « Recharger » (un bouton dominant par colonne),
+        // puis l'historique en une ligne. Sur telephone, une ligne vers la
+        // page des paiements du foyer (EA-9).
+        if (adulte != null && bureau) ...<Widget>[
+          SoldesFoyerSection(
+            titre: t.adulte.famille.paiementsFoyer,
+            onRecharger: onRecharger,
+          ),
+          Ecart.vXl,
+        ],
         if (adulte != null) ...<Widget>[
           GroupeReglages(
             key: paiementsFoyerKey,
             lignes: <LigneRubrique>[
               LigneRubrique(
                 icone: AppIcons.finance,
-                libelle: t.adulte.famille.paiementsFoyer,
+                libelle: bureau
+                    ? t.adulte.paiements.historique
+                    : t.adulte.famille.paiementsFoyer,
                 onPress: onPaiementsFoyer,
               ),
             ],

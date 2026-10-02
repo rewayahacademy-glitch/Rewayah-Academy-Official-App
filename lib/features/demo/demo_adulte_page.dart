@@ -61,7 +61,8 @@ import '../appareils/liste_appareils_eleve.dart'
     show donneesAppareilsFoyerProvider;
 import '../compte/aide_page.dart';
 import '../compte/apparence_page.dart';
-import '../compte/donnees_compte.dart' show identiteTitulaireProvider;
+import '../compte/donnees_compte.dart'
+    show identiteTitulaireProvider, soldesFoyerProvider;
 import '../compte/informations_legales_page.dart';
 import '../compte/informations_page.dart';
 import '../compte/paiements_page.dart';
@@ -132,9 +133,13 @@ enum EcranDemoAdulte {
   /// Informations legales, ouvertes depuis Mon espace (EA-4).
   informationsLegales,
 
-  /// Paiements du foyer, ouverts depuis Ma famille (EA-5 ; la page du foyer
-  /// vient avec EA-9).
+  /// Paiements du foyer, ouverts depuis Ma famille (EA-5) : les soldes, le
+  /// bouton « Recharger » et l'historique pour le titulaire (EA-9).
   paiementsFoyer,
+
+  /// La recharge, ouverte par « Recharger » (EA-9) : provisoire jusqu'a
+  /// EA-10.
+  recharge,
 
   /// La place adulte, ouverte depuis sa ligne de Ma famille (EA-8) : occupee,
   /// « Retirer ma conjointe » ; en delai, « Nouvelle invitation
@@ -196,6 +201,7 @@ const Set<EcranDemoAdulte> _ecransSousAccueil = <EcranDemoAdulte>{
 const Set<EcranDemoAdulte> _ecransFoyer = <EcranDemoAdulte>{
   EcranDemoAdulte.maFamille,
   EcranDemoAdulte.paiementsFoyer,
+  EcranDemoAdulte.recharge,
   EcranDemoAdulte.placeAdulte,
   EcranDemoAdulte.ajouterProfil,
   EcranDemoAdulte.ficheEleve,
@@ -367,6 +373,7 @@ String libelleEcranDemoAdulte(EcranDemoAdulte ecran) => switch (ecran) {
   EcranDemoAdulte.aide => t.compte.tuteur.aide.ligne,
   EcranDemoAdulte.informationsLegales => t.compte.tuteur.aide.legal,
   EcranDemoAdulte.paiementsFoyer => t.adulte.famille.paiementsFoyer,
+  EcranDemoAdulte.recharge => t.adulte.paiements.recharger,
   EcranDemoAdulte.placeAdulte => t.adulte.famille.forfaitFamille,
   EcranDemoAdulte.ajouterProfil => t.foyer.ajouterProfil,
   EcranDemoAdulte.ficheEleve => t.ficheEleve.titreRepli,
@@ -887,6 +894,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
               onRetourApresReponse: versMonEspaceApres,
             ),
             EcranDemoAdulte.invitationSansCompte ||
+            EcranDemoAdulte.recharge ||
             EcranDemoAdulte.maFamille ||
             EcranDemoAdulte.placeAdulte ||
             EcranDemoAdulte.ajouterProfil ||
@@ -934,6 +942,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
       genre,
     );
     void versMaFamille() => context.go(_adresse(EcranDemoAdulte.maFamille));
+    void versRecharge() => context.go(_adresse(EcranDemoAdulte.recharge));
     void versFiche(String id) =>
         context.go(_adresse(EcranDemoAdulte.ficheEleve, eleve: id));
     // Les chemins du tuteur, ramenes aux ecrans de la demonstration.
@@ -974,9 +983,20 @@ class CoquilleAdulteDemo extends StatelessWidget {
     final EtatPlaceAdulte place = titulaire.place;
 
     final Widget page = switch (vu) {
+      // Le titulaire : les soldes de ses beneficiaires, « Recharger » et
+      // l'historique (EA-9, EA-BR-23).
       EcranDemoAdulte.paiementsFoyer => PaiementsComptePage(
         titre: t.adulte.famille.paiementsFoyer,
         onRetour: versMaFamille,
+        soldes: true,
+        onRecharger: versRecharge,
+      ),
+      // La recharge viendra avec EA-10 : une page provisoire, rien n'est
+      // paye ni simule (F13).
+      EcranDemoAdulte.recharge => _PageProvisoire(
+        titre: t.adulte.paiements.recharger,
+        phrase: t.adulte.provisoire.recharge,
+        onRetour: () => context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
       ),
       EcranDemoAdulte.inviterConjoint => InviterConjointPage(
         placeFeminine: titulaire.placeFeminine,
@@ -1087,6 +1107,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
                 ),
                 onPaiementsFoyer: () =>
                     context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
+                onRecharger: versRecharge,
                 onAProposForfait: () =>
                     context.go(_adresse(EcranDemoAdulte.aProposForfait)),
                 // Validation refusee : la nouvelle demande relance
@@ -1129,6 +1150,10 @@ class CoquilleAdulteDemo extends StatelessWidget {
               DonneesAdulteDemo.identite(genre, VueDemoAdulte.titulaire),
         ),
         foyerTitulaireProvider.overrideWith((Ref _) async => titulaire),
+        // Les soldes du foyer (EA-9, EA-BR-23), au titulaire seulement (F7).
+        soldesFoyerProvider.overrideWith(
+          (Ref _) async => DonneesAdulteDemo.soldes(etat, genre),
+        ),
         // L'invitation (EA-6, EA-BR-15) : rien n'est envoye (K-28).
         portInvitationConjointProvider.overrideWithValue(_InvitationDemo(etat)),
         // Le retrait du second adulte (EA-8, EA-BR-21) : rien n'est envoye.

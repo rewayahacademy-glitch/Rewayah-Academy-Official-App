@@ -90,13 +90,22 @@ class FauxAccesFoyer implements PortAccesFoyer {
 /// Les paiements, en memoire.
 class FauxPaiementsFoyer implements PortPaiementsFoyer {
   /// Cree le faux.
-  FauxPaiementsFoyer({this.paiements = const <PaiementFoyer>[]});
+  FauxPaiementsFoyer({
+    this.paiements = const <PaiementFoyer>[],
+    this.lesSoldes = const SoldesFoyer(beneficiaires: <SoldeBeneficiaire>[]),
+  });
 
   /// Les paiements rendus.
   List<PaiementFoyer> paiements;
 
+  /// Les soldes rendus (EA-9).
+  SoldesFoyer lesSoldes;
+
   @override
   Future<List<PaiementFoyer>> historique() async => paiements;
+
+  @override
+  Future<SoldesFoyer> soldes() async => lesSoldes;
 
   @override
   Future<PaiementFoyer?> detail(String id) async {

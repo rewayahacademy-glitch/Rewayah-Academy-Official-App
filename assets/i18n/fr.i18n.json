@@ -3882,7 +3882,20 @@
     },
     "provisoire": {
       "coran": "Le Coran de votre espace élève s'affichera ici.",
-      "ajouterMaFamille": "L'ajout de votre famille arrivera dans une prochaine étape."
+      "ajouterMaFamille": "L'ajout de votre famille arrivera dans une prochaine étape.",
+      "recharge": "La recharge des soldes arrivera dans une prochaine étape."
+    },
+    "paiements": {
+      "beneficiaires": "Bénéficiaires",
+      "recharger": "Recharger",
+      "recapitulatif": "Récapitulatif du foyer : {valeur}. Chaque solde reste celui de son bénéficiaire.",
+      "bientotEpuise": "Bientôt épuisé",
+      "inactif": "Inactif",
+      "historique": "Historique des paiements",
+      "soldesIndisponiblesTitre": "Soldes pas encore consultables",
+      "soldesIndisponiblesPhrase": "Le solde de chaque bénéficiaire n'est pas encore disponible dans l'application. Aucune recharge n'est possible ici pour l'instant.",
+      "aucunBeneficiaireTitre": "Aucun bénéficiaire",
+      "aucunBeneficiairePhrase": "Aucun profil élève de votre foyer n'a de solde à recharger pour l'instant."
     },
     "famille": {
       "ajouter": "Ajouter ma famille",

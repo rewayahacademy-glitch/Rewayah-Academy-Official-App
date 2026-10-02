@@ -2283,6 +2283,7 @@ class Traductions$adulte$fr {
 	late final Traductions$adulte$maClasse$fr maClasse = Traductions$adulte$maClasse$fr.internal(_root);
 	late final Traductions$adulte$monEspace$fr monEspace = Traductions$adulte$monEspace$fr.internal(_root);
 	late final Traductions$adulte$provisoire$fr provisoire = Traductions$adulte$provisoire$fr.internal(_root);
+	late final Traductions$adulte$paiements$fr paiements = Traductions$adulte$paiements$fr.internal(_root);
 	late final Traductions$adulte$famille$fr famille = Traductions$adulte$famille$fr.internal(_root);
 	late final Traductions$adulte$invitation$fr invitation = Traductions$adulte$invitation$fr.internal(_root);
 	late final Traductions$adulte$acceptation$fr acceptation = Traductions$adulte$acceptation$fr.internal(_root);
@@ -8935,6 +8936,48 @@ class Traductions$adulte$provisoire$fr {
 
 	/// fr: 'L'ajout de votre famille arrivera dans une prochaine étape.'
 	String get ajouterMaFamille => 'L\'ajout de votre famille arrivera dans une prochaine étape.';
+
+	/// fr: 'La recharge des soldes arrivera dans une prochaine étape.'
+	String get recharge => 'La recharge des soldes arrivera dans une prochaine étape.';
+}
+
+// Path: adulte.paiements
+class Traductions$adulte$paiements$fr {
+	Traductions$adulte$paiements$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Bénéficiaires'
+	String get beneficiaires => 'Bénéficiaires';
+
+	/// fr: 'Recharger'
+	String get recharger => 'Recharger';
+
+	/// fr: 'Récapitulatif du foyer : {valeur}. Chaque solde reste celui de son bénéficiaire.'
+	String recapitulatif({required Object valeur}) => 'Récapitulatif du foyer : ${valeur}. Chaque solde reste celui de son bénéficiaire.';
+
+	/// fr: 'Bientôt épuisé'
+	String get bientotEpuise => 'Bientôt épuisé';
+
+	/// fr: 'Inactif'
+	String get inactif => 'Inactif';
+
+	/// fr: 'Historique des paiements'
+	String get historique => 'Historique des paiements';
+
+	/// fr: 'Soldes pas encore consultables'
+	String get soldesIndisponiblesTitre => 'Soldes pas encore consultables';
+
+	/// fr: 'Le solde de chaque bénéficiaire n'est pas encore disponible dans l'application. Aucune recharge n'est possible ici pour l'instant.'
+	String get soldesIndisponiblesPhrase => 'Le solde de chaque bénéficiaire n\'est pas encore disponible dans l\'application. Aucune recharge n\'est possible ici pour l\'instant.';
+
+	/// fr: 'Aucun bénéficiaire'
+	String get aucunBeneficiaireTitre => 'Aucun bénéficiaire';
+
+	/// fr: 'Aucun profil élève de votre foyer n'a de solde à recharger pour l'instant.'
+	String get aucunBeneficiairePhrase => 'Aucun profil élève de votre foyer n\'a de solde à recharger pour l\'instant.';
 }
 
 // Path: adulte.famille
@@ -16726,6 +16769,17 @@ extension on Traductions {
 			'adulte.monEspace.pageCoursAcces.indisponiblePhrase' => 'Le détail de vos cours, de vos séances et de votre accès n\'est pas encore disponible dans l\'application.',
 			'adulte.provisoire.coran' => 'Le Coran de votre espace élève s\'affichera ici.',
 			'adulte.provisoire.ajouterMaFamille' => 'L\'ajout de votre famille arrivera dans une prochaine étape.',
+			'adulte.provisoire.recharge' => 'La recharge des soldes arrivera dans une prochaine étape.',
+			'adulte.paiements.beneficiaires' => 'Bénéficiaires',
+			'adulte.paiements.recharger' => 'Recharger',
+			'adulte.paiements.recapitulatif' => ({required Object valeur}) => 'Récapitulatif du foyer : ${valeur}. Chaque solde reste celui de son bénéficiaire.',
+			'adulte.paiements.bientotEpuise' => 'Bientôt épuisé',
+			'adulte.paiements.inactif' => 'Inactif',
+			'adulte.paiements.historique' => 'Historique des paiements',
+			'adulte.paiements.soldesIndisponiblesTitre' => 'Soldes pas encore consultables',
+			'adulte.paiements.soldesIndisponiblesPhrase' => 'Le solde de chaque bénéficiaire n\'est pas encore disponible dans l\'application. Aucune recharge n\'est possible ici pour l\'instant.',
+			'adulte.paiements.aucunBeneficiaireTitre' => 'Aucun bénéficiaire',
+			'adulte.paiements.aucunBeneficiairePhrase' => 'Aucun profil élève de votre foyer n\'a de solde à recharger pour l\'instant.',
 			'adulte.famille.ajouter' => 'Ajouter ma famille',
 			'adulte.famille.ajouterLegende' => 'Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.',
 			'adulte.famille.maFamille' => 'Ma famille',

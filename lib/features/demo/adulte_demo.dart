@@ -1,12 +1,15 @@
 // Donnees de demonstration de l'eleve adulte (EA-1b) : le foyer Diallo de
 // 16_eleves_adultes/V/00_MAQUETTES section 3, ses variantes (titulaire femme,
 // vue du second adulte) et un etat nomme pour chacun des 25 cas du doc
-// section 18. Aucune valeur economique : ni solde, ni offre, ni remise, ni
-// taux (F12). Les dates de fin de delai sont des DONNEES, jamais un calcul
-// (F17). Aucun appel serveur (K-28) : chaque besoin est une ligne d'EA-BR.md.
+// section 18. Aucune valeur economique : ni offre, ni remise, ni taux, ni
+// devise (F12) ; les soldes (EA-9) sont des libelles de demonstration rendus
+// tels quels (decision E2). Les dates de fin de delai sont des DONNEES,
+// jamais un calcul (F17). Aucun appel serveur (K-28) : chaque besoin est
+// une ligne d'EA-BR.md.
 
 import '../../core/appairage/service_appairage.dart' show EleveDuFoyer;
 import '../../core/capacites/port_identite_titulaire.dart';
+import '../../core/capacites/port_paiements_foyer.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart' show Seance;
@@ -421,6 +424,49 @@ abstract final class DonneesAdulteDemo {
     placeFeminine: genre == GenreTitulaireDemo.homme,
     place: place(etat, genre),
   );
+
+  /// Les soldes du foyer vus par le titulaire (EA-9, EA-BR-23), tels que le
+  /// serveur de demonstration les rendrait : le titulaire, le second adulte
+  /// seulement s'il est rattache (ses initiales, aucune photo ni Classe, Q4,
+  /// F6), puis les enfants.
+  ///
+  /// Les libelles reprennent les valeurs de la planche 4.1 (« 120 unités »),
+  /// sans taux ni devise (decision E2, Q9) ; l'exception « Bientôt épuisé »
+  /// est RENDUE par la demonstration, jamais deduite d'un seuil (F12). Le
+  /// recapitulatif est une phrase rendue, ecrite ici pour chaque cas, jamais
+  /// additionnee dans Flutter (F9). Oumar n'a pas la pastille « Inactif » de
+  /// la planche : son acces, dans Ma famille, est sans echeance, et la
+  /// demonstration ne se contredit pas d'un ecran a l'autre.
+  static SoldesFoyer soldes(EtatDemoAdulte etat, GenreTitulaireDemo genre) {
+    final bool second = secondAdultePresent(etat);
+    return SoldesFoyer(
+      beneficiaires: <SoldeBeneficiaire>[
+        SoldeBeneficiaire(
+          id: idTitulaire(genre),
+          prenom: prenomTitulaire(genre),
+          soldeRendu: '120 unités',
+        ),
+        if (second)
+          SoldeBeneficiaire(
+            id: genre == GenreTitulaireDemo.homme ? mariamaId : mamadouId,
+            prenom: prenomSecondAdulte(genre),
+            soldeRendu: '80 unités',
+          ),
+        const SoldeBeneficiaire(
+          id: aichaId,
+          prenom: 'Aïcha',
+          soldeRendu: '15 unités',
+          exception: ExceptionSolde.bientotEpuise,
+        ),
+        const SoldeBeneficiaire(
+          id: oumarId,
+          prenom: 'Oumar',
+          soldeRendu: '0 unité',
+        ),
+      ],
+      recapitulatif: second ? '215 unités au total' : '135 unités au total',
+    );
+  }
 
   /// « A propos de cette classe », tel que le serveur le rendrait.
   static const String aProposClasse =
