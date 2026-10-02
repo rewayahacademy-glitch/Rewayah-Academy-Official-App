@@ -100,6 +100,12 @@ const List<String> composantsDuCatalogue = <String>[
   // manifeste visuel section 3.4 et contrat K5), sans cle i18n nouvelle.
   'EcranResultat',
   'LienFleche',
+  // Revue du directeur 01-02/10 (K-54) : les boutons que les ecrans peignaient
+  // eux-memes, rendus au core. Voir lib/CLAUDE.md, « Interdits d'interface ».
+  'BoutonOutil',
+  'BoutonIcone',
+  'BoutonCommande',
+  'RaccourciTactile',
   'LigneCleValeur',
   'GroupeReglages',
   'ControleSegmente',

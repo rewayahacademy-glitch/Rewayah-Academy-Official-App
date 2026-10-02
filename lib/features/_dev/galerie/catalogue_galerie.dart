@@ -23,6 +23,9 @@ import '../../../core/widgets/audio_label.dart';
 import '../../../core/widgets/avatar_tile.dart';
 import '../../../core/widgets/bandeau_observation.dart';
 import '../../../core/widgets/bento_tile.dart';
+import '../../../core/widgets/bouton_commande.dart';
+import '../../../core/widgets/bouton_icone.dart';
+import '../../../core/widgets/bouton_outil.dart';
 import '../../../core/widgets/child_card.dart';
 import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/confirm_destructive.dart';
@@ -50,6 +53,7 @@ import '../../../core/widgets/permanent_notice.dart';
 import '../../../core/widgets/pin_pad.dart';
 import '../../../core/widgets/point_rappel.dart';
 import '../../../core/widgets/pressable.dart';
+import '../../../core/widgets/raccourci_tactile.dart';
 import '../../../core/widgets/rosace_verset.dart';
 import '../../../core/widgets/schedule_option.dart';
 import '../../../core/widgets/section_header.dart';
@@ -1888,6 +1892,164 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             libelle: 'Détails de la séance',
             onPress: _rien,
             fleche: false,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'BoutonOutil',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'nu, avec libelle',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.topStart,
+          child: BoutonOutil(
+            icone: AppIcons.crayon,
+            libelle: 'Crayon',
+            avecLibelle: true,
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'retenu',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.topStart,
+          child: BoutonOutil(
+            icone: AppIcons.crayon,
+            libelle: 'Crayon',
+            avecLibelle: true,
+            retenu: true,
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'tuile',
+        (BuildContext _) => SizedBox(
+          width: AppSpacing.respiration + AppSpacing.xxxl,
+          height: AppSpacing.respiration + AppSpacing.lg,
+          child: BoutonOutil(
+            icone: AppIcons.crayon,
+            libelle: 'Crayon',
+            avecLibelle: true,
+            forme: FormeBoutonOutil.tuile,
+            onPress: _rien,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'BoutonIcone',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'cercle',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.topStart,
+          child: BoutonIcone(
+            icone: AppIcons.zoomPlus,
+            libelle: 'Agrandir',
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'carre',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.topStart,
+          child: BoutonIcone(
+            icone: AppIcons.crayon,
+            libelle: 'Modifier',
+            forme: FormeBoutonIcone.carre,
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'inerte',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.topStart,
+          child: BoutonIcone(
+            icone: AppIcons.zoomPlus,
+            libelle: 'Agrandir',
+            onPress: null,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'BoutonCommande',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'surface',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.topStart,
+          child: BoutonCommande(
+            icone: AppIcons.micro.repos,
+            libelle: 'Micro',
+            diametre: 56,
+            tailleIcone: 24,
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'alerte',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.topStart,
+          child: BoutonCommande(
+            icone: AppIcons.sortie.repos,
+            libelle: 'Quitter',
+            diametre: 56,
+            tailleIcone: 24,
+            fond: FondCommande.alerte,
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'inerte',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.topStart,
+          child: BoutonCommande(
+            icone: AppIcons.camera.repos,
+            libelle: 'Camera',
+            diametre: 56,
+            tailleIcone: 24,
+            actif: false,
+            onPress: _rien,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'RaccourciTactile',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'photo',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: RaccourciTactile(
+            onPress: _rien,
+            child: AvatarTile(prenom: 'Yasmine', diametre: 72),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'sans action',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: RaccourciTactile(
+            onPress: null,
+            child: AvatarTile(prenom: 'Yasmine', diametre: 72),
           ),
         ),
       ),
