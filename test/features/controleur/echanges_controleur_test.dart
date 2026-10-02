@@ -276,12 +276,17 @@ void main() {
       final String? id = connu ? mission.id : null;
       expect(mission.id, isNotNull);
       final GoRouter routeur = GoRouter(
-        initialLocation: Routes.controleurCompteRendu,
+        initialLocation: adresseCompteRendu(
+          Routes.controleurCompteRendu,
+          mission.seanceId,
+        ),
         routes: <RouteBase>[
           GoRoute(
             path: Routes.controleurCompteRendu,
-            builder: (BuildContext _, GoRouterState _) =>
-                const CompteRenduControlePage(),
+            builder: (BuildContext _, GoRouterState etat) =>
+                CompteRenduControlePage(
+                  seanceId: etat.uri.queryParameters['seance'],
+                ),
           ),
           // Le meme constructeur que `app_router.dart`.
           GoRoute(
@@ -307,6 +312,17 @@ void main() {
                 finPrevue: mission.finPrevue,
                 etat: mission.etat,
               ),
+            ),
+            // La visite, copiee a l'entree en salle (revue CT-R B1).
+            visitesObserveesProvider.overrideWith(
+              () => VisitesObservees(<String, CompteRenduEnSuspens>{
+                mission.seanceId: CompteRenduEnSuspens(
+                  seanceId: mission.seanceId,
+                  classe: mission.classe,
+                  debut: mission.debut,
+                  missionId: id,
+                ),
+              }),
             ),
             envoiCompteRenduProvider.overrideWithValue(
               const EnvoiCompteRenduDemo(),

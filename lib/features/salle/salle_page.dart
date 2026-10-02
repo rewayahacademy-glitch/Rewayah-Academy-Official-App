@@ -36,6 +36,7 @@ import '../../core/widgets/permanent_notice.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/status_pill.dart';
+import '../controleur/compte_rendu_controle.dart' show adresseCompteRendu;
 import '../fiche_groupe/preparation_seance.dart';
 import '../salle_enseignant/panneau_enseignant.dart';
 import '../salle_seance/actions_seance.dart';
@@ -324,7 +325,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (!mounted) {
       return;
     }
-    GoRouter.of(context).go(widget.cheminCompteRenduControle);
+    // La visite voyage par l'adresse (`?seance=`) : le compte rendu porte
+    // sur CETTE seance, jamais sur la mission courante (revue CT-R B1).
+    GoRouter.of(
+      context,
+    ).go(adresseCompteRendu(widget.cheminCompteRenduControle, widget.seanceId));
   }
 
   /// **L'invariant du catalogue est tenu** : la sortie de `ENS-03` mene a

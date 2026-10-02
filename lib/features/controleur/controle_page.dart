@@ -45,8 +45,14 @@ class ControleControleurPage extends ConsumerWidget {
   /// demonstration la redirige vers sa salle fictive (CT-3).
   final void Function(MissionControle mission)? onCommencer;
 
-  /// Le retour au compte rendu a terminer ; par defaut, sa route (CT-4).
-  final VoidCallback? onReprendreCompteRendu;
+  /// Le retour au compte rendu a terminer de la seance donnee ; par defaut,
+  /// sa route avec `?seance=` (CT-4, revue CT-R B1).
+  final ValueChanged<String>? onReprendreCompteRendu;
+
+  /// La cle de « Reprendre » pour la visite [seanceId] ; la plus recente
+  /// garde [reprendreKey].
+  static Key cleReprendre(String seanceId) =>
+      ValueKey<String>('ctr01-reprendre-$seanceId');
 
   /// La cle du bouton d'entree.
   static const Key commencerKey = ValueKey<String>('ctr01-commencer');
@@ -63,8 +69,10 @@ class ControleControleurPage extends ConsumerWidget {
       missionControleProvider,
     );
     final Widget corps = switch (mission) {
-      AsyncData<MissionControle?>(:final MissionControle? value) =>
-        _Mission(mission: value, onCommencer: onCommencer),
+      AsyncData<MissionControle?>(:final MissionControle? value) => _Mission(
+        mission: value,
+        onCommencer: onCommencer,
+      ),
       AsyncError<MissionControle?>() => EtatSysteme(
         nature: NatureEtat.echecServeur,
         phrase: t.controleur.controle.erreur,
@@ -76,9 +84,14 @@ class ControleControleurPage extends ConsumerWidget {
       ),
     };
     // Le compte rendu commence et non envoye (CT-4, doc 08 CTR-01).
-    final CompteRenduEnSuspens? aTerminer = ref.watch(
-      compteRenduATerminerProvider,
-    );
+    // Chaque visite a terminer garde son bloc, la plus recente d'abord :
+    // aucune n'en remplace une autre (revue CT-R B1).
+    final List<CompteRenduEnSuspens> aTerminer = ref
+        .watch(compteRenduATerminerProvider)
+        .values
+        .toList()
+        .reversed
+        .toList();
     return PageShell(
       titre: t.controleur.controle.titre,
       child: Align(
@@ -91,15 +104,25 @@ class ControleControleurPage extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 corps,
-                if (aTerminer != null) ...<Widget>[
-                  Ecart.vXxl,
+                for (final (int i, CompteRenduEnSuspens v)
+                    in aTerminer.indexed) ...<Widget>[
+                  if (i == 0) Ecart.vXxl else Ecart.vLg,
                   _BlocATerminer(
-                    visite: aTerminer,
-                    onReprendre:
-                        onReprendreCompteRendu ??
-                        () => GoRouter.of(
-                          context,
-                        ).go(Routes.controleurCompteRendu),
+                    visite: v,
+                    cle: i == 0 ? reprendreKey : cleReprendre(v.seanceId),
+                    onReprendre: () {
+                      final ValueChanged<String>? f = onReprendreCompteRendu;
+                      if (f != null) {
+                        f(v.seanceId);
+                      } else {
+                        GoRouter.of(context).go(
+                          adresseCompteRendu(
+                            Routes.controleurCompteRendu,
+                            v.seanceId,
+                          ),
+                        );
+                      }
+                    },
                   ),
                 ],
               ],
@@ -113,9 +136,14 @@ class ControleControleurPage extends ConsumerWidget {
 
 /// « Compte rendu a terminer » : la visite dont la reponse n'est pas partie.
 class _BlocATerminer extends StatelessWidget {
-  const _BlocATerminer({required this.visite, required this.onReprendre});
+  const _BlocATerminer({
+    required this.visite,
+    required this.cle,
+    required this.onReprendre,
+  });
 
   final CompteRenduEnSuspens visite;
+  final Key cle;
   final VoidCallback onReprendre;
 
   @override
@@ -151,12 +179,12 @@ class _BlocATerminer extends StatelessWidget {
           // La visite part sans attendre la reponse (C2) : son etat reste
           // visible ici apres « Plus tard ».
           Ecart.vMd,
-          const LigneTransmissionVisite(),
+          LigneTransmissionVisite(seanceId: visite.seanceId),
           Ecart.vLg,
           Align(
             alignment: AlignmentDirectional.centerEnd,
             child: ActionPrincipale(
-              key: ControleControleurPage.reprendreKey,
+              key: cle,
               libelle: t.controleur.compteRendu.reprendre,
               niveau: NiveauAction.secondaire,
               pleineLargeur: false,
@@ -294,9 +322,17 @@ class _CarteMission extends StatelessWidget {
                         key: ControleControleurPage.commencerKey,
                         libelle: t.controleur.controle.commencer,
                         pleineLargeur: compact,
-                        onPress: () => onCommencer == null
-                            ? _commencer(context)
-                            : onCommencer!(mission),
+                        onPress: () {
+                          // La visite est copiee a l'entree : apres la
+                          // seance, le compte rendu la retrouve par sa
+                          // seance, meme si la mission courante a change
+                          // (revue CT-R B1).
+                          ProviderScope.containerOf(context, listen: false)
+                              .read(visitesObserveesProvider.notifier)
+                              .noter(CompteRenduEnSuspens.deMission(mission));
+                          final void Function(MissionControle)? f = onCommencer;
+                          f == null ? _commencer(context) : f(mission);
+                        },
                       ),
                     )
                   : Align(

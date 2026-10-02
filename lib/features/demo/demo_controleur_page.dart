@@ -111,20 +111,27 @@ List<RouteBase> routesDemoControleur(String environnement) {
             faitsVisiteProvider.overrideWith(
               (Ref _) async => faitsVisiteDemoControleur(),
             ),
+            ..._visitesDemo(),
           ],
           child: RepereDemonstration(
             child: GardeControle(
               child: CompteRenduControlePage(
+                seanceId: _seanceDemo(etat),
                 onRevenir: () => contexte.go(
                   adresseDemoControleur(
                     EcranDemoControleur.controle,
                     espaces: espaces.vers(principal: false),
                   ),
                 ),
-                onObservation: (ChoixCompteRendu choix) => contexte.go(
-                  adresseObservation(cheminDemoObservationControleur, choix),
-                ),
-                onEcrireAdmin: () =>
+                onObservation: (ChoixCompteRendu choix, String seance) =>
+                    contexte.go(
+                      adresseObservation(
+                        cheminDemoObservationControleur,
+                        choix,
+                        seanceId: seance,
+                      ),
+                    ),
+                onEcrireAdmin: (String? _) =>
                     contexte.go(adresseFilMissionDemoControleur()),
               ),
             ),
@@ -142,18 +149,47 @@ List<RouteBase> routesDemoControleur(String environnement) {
           rosterControleProvider.overrideWith(
             (Ref _) async => rosterDemoControleur(),
           ),
+          ..._visitesDemo(),
         ],
         child: RepereDemonstration(
           child: ObservationControlePage(
+            seanceId: _seanceDemo(etat),
             choix: choixObservationDepuis(etat.uri.queryParameters, etat.extra),
-            onRetour: () => contexte.go(cheminDemoCompteRenduControleur),
+            onRetour: () => contexte.go(
+              adresseCompteRendu(
+                cheminDemoCompteRenduControleur,
+                _seanceDemo(etat),
+              ),
+            ),
             onRevenir: () => contexte.go(
               adresseDemoControleur(EcranDemoControleur.controle),
             ),
-            onEcrireAdmin: () => contexte.go(adresseFilMissionDemoControleur()),
+            onEcrireAdmin: (String? _) =>
+                contexte.go(adresseFilMissionDemoControleur()),
           ),
         ),
       ),
+    ),
+  ];
+}
+
+/// La visite de demonstration : la mission en direct, copiee a l'entree en
+/// salle (revue CT-R B1).
+CompteRenduEnSuspens visiteDemoControleur() => CompteRenduEnSuspens.deMission(
+  missionDemoControleur(EtatDemoControleur.enDirect)!,
+);
+
+/// La seance de l'adresse, sinon celle de la visite de demonstration (liens
+/// directs de la liste de demonstration).
+String _seanceDemo(GoRouterState etat) =>
+    etat.uri.queryParameters['seance'] ?? visiteDemoControleur().seanceId;
+
+/// La visite de demonstration, toujours connue des ecrans du compte rendu.
+List<Override> _visitesDemo() {
+  final CompteRenduEnSuspens v = visiteDemoControleur();
+  return <Override>[
+    visitesObserveesProvider.overrideWith(
+      () => VisitesObservees(<String, CompteRenduEnSuspens>{v.seanceId: v}),
     ),
   ];
 }
@@ -194,12 +230,14 @@ class EnvoiCompteRenduDemo implements EnvoiCompteRendu {
       Future<void>.delayed(const Duration(milliseconds: 400));
 
   @override
-  Future<void> envoyer(ChoixCompteRendu choix) =>
+  Future<void> envoyer(String seanceId, ChoixCompteRendu choix) =>
       Future<void>.delayed(const Duration(milliseconds: 400));
 
   @override
-  Future<void> envoyerObservation(ObservationControle observation) =>
-      Future<void>.delayed(const Duration(milliseconds: 400));
+  Future<void> envoyerObservation(
+    String seanceId,
+    ObservationControle observation,
+  ) => Future<void>.delayed(const Duration(milliseconds: 400));
 }
 
 /// La salle du controleur en demonstration.
@@ -714,24 +752,22 @@ class CoquilleControleurDemo extends StatelessWidget {
                       emisA: DateTime.now(),
                     ),
                   ),
-                  onReprendreCompteRendu: () => context.go(
-                    Uri(
-                      path: cheminDemoCompteRenduControleur,
-                      queryParameters: espaces.parametres.isEmpty
-                          ? null
-                          : espaces.parametres,
-                    ).toString(),
+                  onReprendreCompteRendu: (String seance) => context.go(
+                    adresseCompteRendu(
+                      cheminDemoCompteRenduControleur,
+                      seance,
+                      autres: espaces.parametres,
+                    ),
                   ),
                 ),
                 EcranDemoControleur.historique => HistoriqueControleurPage(
                   maintenant: DonneesControleurDemo.maintenant,
-                  onReprendreCompteRendu: () => context.go(
-                    Uri(
-                      path: cheminDemoCompteRenduControleur,
-                      queryParameters: espaces.parametres.isEmpty
-                          ? null
-                          : espaces.parametres,
-                    ).toString(),
+                  onReprendreCompteRendu: (String seance) => context.go(
+                    adresseCompteRendu(
+                      cheminDemoCompteRenduControleur,
+                      seance,
+                      autres: espaces.parametres,
+                    ),
                   ),
                   onEcrireAdmin: (String mission) => context.go(
                     adresseDemoControleur(

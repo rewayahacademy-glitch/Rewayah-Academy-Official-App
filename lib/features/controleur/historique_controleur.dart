@@ -59,6 +59,7 @@ class RapportControle {
     required this.debut,
     required this.dureeObservee,
     required this.statut,
+    this.seanceId,
     this.faits,
     this.choix,
     this.observation,
@@ -72,6 +73,10 @@ class RapportControle {
 
   /// La mission d'origine : son fil d'echanges (P-CTR-06).
   final String missionId;
+
+  /// La seance observee : la reprise d'un compte rendu « A terminer » rouvre
+  /// CETTE visite (revue CT-R B1). Nulle si le serveur ne la donne pas.
+  final String? seanceId;
 
   /// La Classe observee.
   final String classe;
@@ -114,6 +119,7 @@ class RapportControle {
   RapportControle avecComplement(ComplementRapport c) => RapportControle(
     id: id,
     missionId: missionId,
+    seanceId: seanceId,
     classe: classe,
     enseignant: enseignant,
     debut: debut,

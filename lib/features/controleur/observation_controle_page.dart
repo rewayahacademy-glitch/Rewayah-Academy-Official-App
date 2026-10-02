@@ -24,12 +24,12 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/ecran_resultat.dart';
+import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_parcours.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
 import 'compte_rendu_controle.dart';
-import 'mission_controle.dart';
 import 'observation_controle.dart';
 
 enum _Etape { nature, domaine, personne, texte, recapitulatif, envoye }
@@ -39,11 +39,16 @@ class ObservationControlePage extends ConsumerStatefulWidget {
   /// Cree la page.
   const ObservationControlePage({
     super.key,
+    this.seanceId,
     this.choix = ChoixCompteRendu.ajouterObservation,
     this.onRetour,
     this.onRevenir,
     this.onEcrireAdmin,
   });
+
+  /// La visite dont on complete le rapport (`?seance=`, revue CT-R B1) ;
+  /// inconnue : le message generique (C7), jamais la mission courante.
+  final String? seanceId;
 
   /// L'entree choisie sur le compte rendu : observation ou point important.
   final ChoixCompteRendu choix;
@@ -55,8 +60,9 @@ class ObservationControlePage extends ConsumerStatefulWidget {
   /// Le retour au Controle apres l'envoi ; par defaut, sa destination.
   final VoidCallback? onRevenir;
 
-  /// La discussion avec l'administration (CTR-04) ; par defaut, Echanges.
-  final VoidCallback? onEcrireAdmin;
+  /// La discussion avec l'administration (CTR-04) sur la mission de la
+  /// visite (nulle si inconnue) ; par defaut, son fil dans Echanges.
+  final void Function(String? missionId)? onEcrireAdmin;
 
   /// La cle d'une carte de nature.
   static Key cleNature(NatureObservation n) =>
@@ -119,6 +125,12 @@ class _ObservationControlePageState
   bool _enCours = false;
   bool _echec = false;
 
+  /// La visite, retrouvee par sa seance ; nulle si inconnue.
+  late final CompteRenduEnSuspens? _visite = visiteDeSeance(
+    ref,
+    widget.seanceId,
+  );
+
   bool get _important => widget.choix == ChoixCompteRendu.pointImportant;
 
   bool get _texteRequis =>
@@ -140,7 +152,9 @@ class _ObservationControlePageState
       case _Etape.nature:
         final VoidCallback? f = widget.onRetour;
         if (f == null) {
-          GoRouter.of(context).go(Routes.controleurCompteRendu);
+          GoRouter.of(context).go(
+            adresseCompteRendu(Routes.controleurCompteRendu, widget.seanceId),
+          );
         } else {
           f();
         }
@@ -169,7 +183,12 @@ class _ObservationControlePageState
     final NatureObservation? nature = _nature;
     final DomaineObservation? domaine = _domaine;
     final PersonneConcernee? personne = _personne;
-    if (_enCours || nature == null || domaine == null || personne == null) {
+    final CompteRenduEnSuspens? visite = _visite;
+    if (_enCours ||
+        visite == null ||
+        nature == null ||
+        domaine == null ||
+        personne == null) {
       return;
     }
     // Garde-fou : un texte obligatoire vide ne part jamais.
@@ -188,6 +207,7 @@ class _ObservationControlePageState
       await ref
           .read(envoiCompteRenduProvider)
           .envoyerObservation(
+            visite.seanceId,
             ObservationControle(
               important: _important,
               nature: nature,
@@ -200,7 +220,7 @@ class _ObservationControlePageState
             ),
           );
       if (!mounted) return;
-      ref.read(compteRenduATerminerProvider.notifier).terminer();
+      ref.read(compteRenduATerminerProvider.notifier).terminer(visite.seanceId);
       setState(() {
         _enCours = false;
         _etape = _Etape.envoye;
@@ -232,16 +252,28 @@ class _ObservationControlePageState
                 widget.onRevenir ??
                 () => GoRouter.of(context).go(Routes.controleur),
             libelleSecondaire: t.controleur.compteRendu.ecrireAdmin,
-            onSecondaire:
-                widget.onEcrireAdmin ??
-                // Le fil de CETTE mission (P-CTR-06), la liste si son
-                // identifiant n'est pas connu.
-                () => GoRouter.of(context).go(
-                  Routes.controleurEcrireAdmin(
-                    ref.read(missionControleProvider).value?.id,
-                  ),
-                ),
+            // Le fil de la mission de CETTE visite (P-CTR-06), la liste si
+            // son identifiant n'est pas connu ; jamais la mission courante.
+            onSecondaire: () => widget.onEcrireAdmin == null
+                ? GoRouter.of(context)
+                      .go(Routes.controleurEcrireAdmin(_visite?.missionId))
+                : widget.onEcrireAdmin!(_visite?.missionId),
           ),
+        ),
+      );
+    }
+    if (_visite == null) {
+      // Seance inconnue (rechargement, lien direct) : le message generique,
+      // jamais une autre mission (C7, revue CT-R B1).
+      return PageShell(
+        titre: t.controleur.compteRendu.titre,
+        child: EmptyState(
+          message: t.controleur.controle.indisponible,
+          registre: RegistreVide.subi,
+          libelleAction: t.controleur.compteRendu.revenir,
+          onAction:
+              widget.onRevenir ??
+              () => GoRouter.of(context).go(Routes.controleur),
         ),
       );
     }

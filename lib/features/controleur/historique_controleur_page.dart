@@ -76,8 +76,9 @@ class HistoriqueControleurPage extends ConsumerStatefulWidget {
   /// L'instant de reference du filtre Periode (maintenant par defaut).
   final DateTime? maintenant;
 
-  /// Reprendre un compte rendu « A terminer » ; par defaut, la route CTR-03.
-  final VoidCallback? onReprendreCompteRendu;
+  /// Reprendre le compte rendu « A terminer » de la seance donnee ; par
+  /// defaut, la route CTR-03 avec `?seance=` (revue CT-R B1).
+  final ValueChanged<String>? onReprendreCompteRendu;
 
   /// Ouvrir le fil de la mission ; par defaut, la destination Echanges.
   final ValueChanged<String>? onEcrireAdmin;
@@ -127,8 +128,29 @@ class _HistoriqueControleurPageState
 
   void _ouvrir(RapportControle r) {
     if (r.statut == StatutRapport.aTerminer) {
-      (widget.onReprendreCompteRendu ??
-          () => GoRouter.of(context).go(Routes.controleurCompteRendu))();
+      // La reprise ouvre CETTE visite (revue CT-R B1) : le rapport, deja
+      // transmis par le serveur, la decrit.
+      final String? seance = r.seanceId;
+      if (seance != null) {
+        ref
+            .read(compteRenduATerminerProvider.notifier)
+            .ouvrir(
+              CompteRenduEnSuspens(
+                seanceId: seance,
+                classe: r.classe,
+                debut: r.debut,
+                missionId: r.missionId,
+                transmission: TransmissionVisite.transmise,
+              ),
+            );
+      }
+      final ValueChanged<String>? f = widget.onReprendreCompteRendu;
+      if (f != null && seance != null) {
+        f(seance);
+      } else {
+        GoRouter.of(context)
+            .go(adresseCompteRendu(Routes.controleurCompteRendu, seance));
+      }
       return;
     }
     setState(() => _ouvert = r);

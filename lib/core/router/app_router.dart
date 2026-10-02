@@ -1106,8 +1106,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // coquille (UX_REVIEW_08 n° 1 c). CT-4.
       GoRoute(
         path: Routes.controleurCompteRendu,
-        builder: (BuildContext _, GoRouterState _) =>
-            const GardeControle(child: CompteRenduControlePage()),
+        builder: (BuildContext _, GoRouterState etat) => GardeControle(
+          // La visite par l'adresse (`?seance=`, revue CT-R B1).
+          child: CompteRenduControlePage(
+            seanceId: etat.uri.queryParameters['seance'],
+          ),
+        ),
       ),
       // CTR-03A, l'observation structuree (CT-5) : « Ajouter une
       // observation » ou « Signaler un point important », porte par
@@ -1116,6 +1120,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.controleurObservation,
         builder: (BuildContext _, GoRouterState etat) => GardeControle(
           child: ObservationControlePage(
+            seanceId: etat.uri.queryParameters['seance'],
             choix: choixObservationDepuis(etat.uri.queryParameters, etat.extra),
           ),
         ),

@@ -100,6 +100,7 @@ class HistoriqueDemo implements PortHistorique {
       _ => RapportControle(
         id: r.id,
         missionId: r.missionId,
+        seanceId: 'demo-seance-${r.id}',
         classe: r.classe,
         enseignant: enseignant,
         debut: r.date,
