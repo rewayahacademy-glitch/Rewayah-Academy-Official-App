@@ -600,6 +600,110 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
+  // Revue EA-R, M2 (F7) : la rubrique « Paiements » personnelle n'existe
+  // qu'une fois la ligne famille lue, et hors forfait famille ; jamais par
+  // defaut puis masquee.
+  testWidgets('M2 : ligne famille en chargement puis en erreur, aucune '
+      'rubrique « Paiements » personnelle', (WidgetTester tester) async {
+    final Completer<MonEspaceAdulteVM> attente = Completer<MonEspaceAdulteVM>();
+    await tester.pumpWidget(
+      app(
+        overrides: <Override>[
+          ...identiteMamadou,
+          monEspaceAdulteProvider.overrideWith((Ref _) => attente.future),
+        ],
+        child: const MonEspaceAdultePage(),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 250));
+    expect(find.text(t.adulte.monEspace.monCompte), findsOneWidget);
+    expect(find.text(t.adulte.monEspace.paiements), findsNothing);
+    expect(find.text(t.adulte.famille.paiementsFoyer), findsNothing);
+    attente.completeError(StateError('reseau'));
+    await tester.pumpAndSettle();
+    expect(dansBloc(find.text(t.commun.reessayer)), findsOneWidget);
+    expect(find.text(t.adulte.monEspace.paiements), findsNothing);
+    expect(find.text(t.adulte.famille.paiementsFoyer), findsNothing);
+  });
+
+  testWidgets('M2 : ligne famille sans source ou hors ligne, aucune rubrique '
+      '« Paiements » personnelle', (WidgetTester tester) async {
+    for (final (bool horsLigne, Object erreur) in <(bool, Object)>[
+      (false, const CapaciteIndisponible('mon_espace_eleve_adulte')),
+      (true, StateError('reseau')),
+    ]) {
+      await tester.pumpWidget(
+        app(
+          horsLigne: horsLigne,
+          overrides: <Override>[
+            ...identiteMamadou,
+            monEspaceAdulteProvider.overrideWith(
+              (Ref _) => Future<MonEspaceAdulteVM>.error(erreur),
+            ),
+          ],
+          child: const MonEspaceAdultePage(),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.text(t.adulte.monEspace.paiements),
+        findsNothing,
+        reason: '$erreur',
+      );
+      await tester.pumpWidget(const SizedBox.shrink());
+    }
+  });
+
+  testWidgets('M2 : second adulte rattache, donnee lue : « Paiements du '
+      'foyer » present (E3 = b, K-53.8), pas de « Paiements » personnels', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      app(
+        overrides: <Override>[
+          ...identiteMamadou,
+          monEspaceAdulteProvider.overrideWith(
+            (Ref _) async => const MonEspaceAdulteVM(
+              ligneFamille: LigneFamilleAdulte.forfaitFamille,
+            ),
+          ),
+        ],
+        child: const MonEspaceAdultePage(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await voir(tester, dansFamille(t.adulte.famille.paiementsFoyer));
+    expect(dansFamille(t.adulte.famille.paiementsFoyer), findsOneWidget);
+    expect(find.text(t.adulte.monEspace.paiements), findsNothing);
+  });
+
+  for (final LigneFamilleAdulte? ligne in <LigneFamilleAdulte?>[
+    null,
+    LigneFamilleAdulte.ajouterMaFamille,
+    LigneFamilleAdulte.maFamille,
+  ]) {
+    testWidgets('M2 : adulte seul ou titulaire (${ligne?.name}), donnee lue : '
+        '« Paiements » personnels, jamais « Paiements du foyer »', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        app(
+          overrides: <Override>[
+            ...identiteMamadou,
+            monEspaceAdulteProvider.overrideWith(
+              (Ref _) async => MonEspaceAdulteVM(ligneFamille: ligne),
+            ),
+          ],
+          child: const MonEspaceAdultePage(),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await voir(tester, find.text(t.adulte.monEspace.paiements));
+      expect(find.text(t.adulte.monEspace.paiements), findsOneWidget);
+      expect(find.text(t.adulte.famille.paiementsFoyer), findsNothing);
+    });
+  }
+
   testWidgets('ligne famille sans source : indisponible, dit comme tel, '
       'sans « Reessayer »', (WidgetTester tester) async {
     await tester.pumpWidget(

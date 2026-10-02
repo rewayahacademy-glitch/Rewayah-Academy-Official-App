@@ -38,6 +38,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/appairage/service_appairage.dart'
     show AppareilAppaire, EleveDuFoyer;
+import '../../core/auth/service_auth.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_notifications.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
@@ -449,7 +450,15 @@ List<Destination> destinationsEleveAdulte() => <Destination>[
 ];
 
 /// La session de demonstration : un adulte resolu, sans source serveur.
+///
+/// « Se deconnecter » la ferme localement (`fermerDemo` rend vrai) : la carte
+/// n'atteint jamais le service d'authentification, et [_quitter] ramene a la
+/// liste de la demonstration (K-28, F24, revue EA-R M6).
 class _SessionAdulteDemo extends SessionControleur {
+  _SessionAdulteDemo(this._quitter);
+
+  final VoidCallback _quitter;
+
   @override
   SessionState build() => const SessionState(
     resolue: true,
@@ -458,6 +467,34 @@ class _SessionAdulteDemo extends SessionControleur {
     accountStatus: AccountStatus.active,
     lectureProfil: LectureProfil.presente,
   );
+
+  @override
+  bool fermerDemo() {
+    _quitter();
+    return true;
+  }
+}
+
+/// Le service d'authentification de la demonstration, surcharge dans les
+/// deux coquilles (adulte et tuteur) : rien ne part vers le serveur, meme si
+/// une page l'appelait sans passer par `fermerDemo` (K-28, revue EA-R M6).
+/// La deconnexion ramene a la liste de la demonstration.
+class _ServiceAuthDemo implements ServiceAuth {
+  const _ServiceAuthDemo(this._quitter);
+
+  final VoidCallback _quitter;
+
+  @override
+  Future<void> envoyerLienCourriel(String courriel) async {}
+
+  @override
+  Future<void> connexionMotDePasse(String courriel, String motDePasse) async {}
+
+  @override
+  Future<void> connexionGoogle() async {}
+
+  @override
+  Future<void> deconnexion() async => _quitter();
 }
 
 /// La page : la liste des ecrans, ou la coquille sur l'ecran choisi.
@@ -723,7 +760,12 @@ class CoquilleAdulteDemo extends StatelessWidget {
     return ProviderScope(
       key: ValueKey<String>(_adresse(vu)),
       overrides: <Override>[
-        sessionProvider.overrideWith(_SessionAdulteDemo.new),
+        sessionProvider.overrideWith(
+          () => _SessionAdulteDemo(() => context.go(Routes.demoAdulte)),
+        ),
+        serviceAuthProvider.overrideWithValue(
+          _ServiceAuthDemo(() => context.go(Routes.demoAdulte)),
+        ),
         // L'Accueil lit la Classe An-Nour de la demonstration de Classe
         // (seance, reseau, travail, supports), plus sa propre vue.
         if (vu == EcranDemoAdulte.accueil) ...<Override>[
@@ -1224,6 +1266,10 @@ class CoquilleAdulteDemo extends StatelessWidget {
       key: ValueKey<String>(_adresse(vu, eleve: eleve)),
       overrides: <Override>[
         ...surchargesDemoTuteur(environnement: environnement, eleves: enfants),
+        // Aucune deconnexion reelle depuis la demonstration (revue EA-R M6).
+        serviceAuthProvider.overrideWithValue(
+          _ServiceAuthDemo(() => context.go(Routes.demoAdulte)),
+        ),
         // Sous un ProviderScope imbrique, un provider derive non surcharge se
         // resoudrait dans le conteneur racine, sans les eleves Diallo.
         profilsElevesFoyerProvider.overrideWith(

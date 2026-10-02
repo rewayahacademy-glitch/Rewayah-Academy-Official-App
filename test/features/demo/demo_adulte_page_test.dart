@@ -5,8 +5,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/redirection.dart';
@@ -14,10 +16,13 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/features/compte/compte_tuteur_page.dart'
+    show CarteDeconnexion;
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
+import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
 void main() {
   test('/demo/adulte absente en production, presente ailleurs', () {
@@ -197,4 +202,78 @@ void main() {
     expect(find.byType(ForfaitFamillePage), findsOneWidget);
     expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 3);
   });
+
+  // Revue EA-R, M6 (K-28, F24) : « Se deconnecter » depuis la vraie route
+  // ne touche jamais au service d'authentification de l'application.
+  for (final VueDemoAdulte vue in VueDemoAdulte.values) {
+    testWidgets('Se deconnecter (${vue.name}) : aucun appel au service '
+        'reel, retour a la liste de la demonstration', (
+      WidgetTester tester,
+    ) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final _ServiceAuthEspion espion = _ServiceAuthEspion();
+      final GoRouter routeur = GoRouter(
+        initialLocation: adresseDemoAdulte(EcranDemoAdulte.monEspace, vue: vue),
+        routes: routesDemoAdulte('dev'),
+      );
+      addTearDown(routeur.dispose);
+      await tester.pumpWidget(
+        ProviderScope(
+          // Le service de l'application, a la racine : il ne doit jamais
+          // etre atteint.
+          overrides: <Override>[serviceAuthProvider.overrideWithValue(espion)],
+          child: TranslationProvider(
+            child: MaterialApp.router(
+              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              locale: AppLocale.fr.flutterLocale,
+              supportedLocales: AppLocaleUtils.supportedLocales,
+              localizationsDelegates: GlobalMaterialLocalizations.delegates,
+              routerConfig: routeur,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final Finder carte = find.byType(CarteDeconnexion);
+      await tester.scrollUntilVisible(
+        carte,
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.tap(carte);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.compte.tuteur.deconnexion.confirmer).last);
+      await tester.pumpAndSettle();
+      expect(espion.appels, 0);
+      // Rendu ensuite : la liste de la demonstration, sans coquille.
+      expect(find.byType(MonEspaceAdultePage), findsNothing);
+      expect(find.byType(NavShell), findsNothing);
+      expect(
+        find.byKey(const ValueKey<String>('lien-ecran-accueil')),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    });
+  }
+}
+
+/// Le service d'authentification de l'application, espionne : chaque appel
+/// compte, aucun ne part.
+class _ServiceAuthEspion implements ServiceAuth {
+  int appels = 0;
+
+  @override
+  Future<void> envoyerLienCourriel(String courriel) async => appels++;
+
+  @override
+  Future<void> connexionMotDePasse(String courriel, String motDePasse) async =>
+      appels++;
+
+  @override
+  Future<void> connexionGoogle() async => appels++;
+
+  @override
+  Future<void> deconnexion() async => appels++;
 }

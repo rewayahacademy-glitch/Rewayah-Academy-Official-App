@@ -48,6 +48,9 @@
 //   rattache n'a que « Paiements du foyer », la page d'arrivee porte ce
 //   titre ; hors ligne se dit une seule fois (bandeau et un seul etat, un
 //   seul « Reessayer » qui relit les deux lectures, K-42) ;
+// - (revue EA-R, M2) la rubrique « Paiements » personnelle n'est rendue
+//   qu'une fois la ligne famille lue, et hors forfait famille : jamais par
+//   defaut puis masquee (F7) ;
 // - sur bureau, la ligne famille suit « Mon compte » dans la colonne de debut
 //   (l'ordre du telephone) et la colonne de fin commence par le titre « Aide
 //   et support », a la hauteur du titre « Mon compte ».
@@ -271,9 +274,12 @@ class MonEspaceAdultePage extends ConsumerWidget {
         ),
         // Une seule entree vers les paiements (revue EA-4c) : le second
         // adulte rattache n'a pas de paiement propre lisible, il a ceux du
-        // foyer (E3), sous « Forfait famille ». Tant que la ligne famille
-        // n'est pas lue, la rubrique reste.
-        if (vue?.ligneFamille != LigneFamilleAdulte.forfaitFamille)
+        // foyer (E3 = b, K-53.8), sous « Forfait famille ». Permission par
+        // l'absence (F7, revue EA-R M2) : tant que la ligne famille n'est pas
+        // lue (chargement, erreur, indisponible), la rubrique n'existe pas ;
+        // elle n'apparait qu'une fois la donnee lue et hors forfait famille.
+        if (vue != null &&
+            vue.ligneFamille != LigneFamilleAdulte.forfaitFamille)
           rubrique(
             RubriqueMonEspace.paiements,
             AppIcons.finance,
