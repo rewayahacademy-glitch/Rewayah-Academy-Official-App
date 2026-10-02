@@ -27,3 +27,13 @@ Les choix ci-dessous sont donc **définitifs pour le travail en cours**. Le dire
 | Question | Choix | Raison |
 |---|---|---|
 | Définitions des faiblesses (EN-7c) | **Gardées** telles qu'écrites en EN-7c. | Aucun commentaire du directeur. Elles restent modifiables par le lexique. |
+
+## Corrections de la revue du directeur (fiche `docs/current/REPRISE-CORRECTIONS-REVUE.md`, branche corrections/revue-directeur-2026-10)
+
+| Question | Choix | Raison |
+|---|---|---|
+| MA-NAV-1 : retirer le Coran de la barre élève en Mode Accessibilité ? | **Non, le Coran reste** : Accueil, Ma classe, Coran, Mon espace (comme `ui/accessibilite-v1`, MA-2). | Dans une académie de Coran, c'est une destination essentielle. Quatre destinations restent dans la limite de la demande (« les essentielles seulement »). |
+| Au-delà de 130 % de texte, le mot d'état des bascules de la salle disparaît : accepter ? | **Non** : le mot d'état reste (il peut passer sous le libellé). | Un état ne doit jamais être dit seulement par la couleur ou la forme (WCAG 1.4.1). |
+| Galerie vidéo de la salle : écart de 8 entre les tuiles ? | **Oui, 8**. | Ce sont des tuiles vidéo d'une même grille, pas des cartes de contenu. K-55 vise les cartes. |
+| Configuration : menu ou 4 segments ? | **4 segments** quand ils tiennent sur la largeur, menu en dessous. | Les choix visibles d'un coup d'œil valent mieux qu'un menu caché (ONGLETS-1). |
+| REMPL-1 : offre de remplacement visible aux seuls enseignants du bon genre ? | **Oui**. | Recommandation de la fiche ; cohérent avec la politique de genre déjà appliquée côté serveur (AD-BR). |
