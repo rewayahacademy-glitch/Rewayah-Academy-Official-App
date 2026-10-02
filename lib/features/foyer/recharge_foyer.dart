@@ -116,6 +116,14 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
 
   bool get _occupe => _verifEnCours || _paiementEnCours;
 
+  /// La reponse d'un paiement est perdue (D5) : il est peut-etre passe. Les
+  /// choix ne se modifient plus et la cle reste la meme ; seule une nouvelle
+  /// tentative (meme cle) ou le retour aux paiements du foyer, ou l'on
+  /// verifie, reste possible : jamais un second paiement sous une autre cle.
+  /// Une recharge rouverte plus tard tire une autre cle : seul le serveur
+  /// peut alors reconnaitre le paiement en suspens (EA-BR-26).
+  bool get _paiementIncertain => _echecPaiement == _EchecRecharge.reseau;
+
   List<ChoixRecharge> _choix(List<BeneficiaireRecharge> liste) =>
       <ChoixRecharge>[
         for (final BeneficiaireRecharge b in liste)
@@ -199,6 +207,12 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
 
   void _retour() {
     if (_occupe) return;
+    if (_verification && _paiementIncertain) {
+      // Paiement non confirme (D5) : pas de retour aux choix, qui tirerait
+      // une autre cle ; le retour mene la ou l'on verifie.
+      widget.onTerminee();
+      return;
+    }
     if (_verification) {
       // Retour sans perte : les cases et les offres restent (W-337).
       setState(() {
@@ -359,57 +373,49 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
           ],
         ),
         Ecart.vSm,
-        GroupeReglages(
-          lignes: <LigneRubrique>[
-            for (final BeneficiaireRecharge b in liste)
-              LigneRubrique(
-                meneur: PhotoEleve(
-                  prenom: b.prenom,
-                  cleAvatar: b.cleAvatar,
-                  diametre: AppSpacing.section,
-                ),
-                libelle: b.prenom,
-                // Le solde tel que rendu (E2), sans Classe (F6).
-                valeur: b.soldeRendu,
-                controle: Checkbox(
-                  key: RechargeFoyerPage.caseDe(b.id),
-                  value: _selection.contains(b.id),
-                  // Sans libelle propre : la ligne entiere (prenom, solde,
-                  // case) est lue d'un bloc par `GroupeReglages`.
-                  onChanged: _occupe
-                      ? null
-                      : (bool? coche) => _basculer(b.id, coche ?? false),
-                ),
-              ),
-          ],
-        ),
-        // Une offre par beneficiaire coche, lue telle que rendue ; aucune
-        // n'est choisie d'avance (F11, ligne 15 a).
-        for (final BeneficiaireRecharge b in liste)
-          if (_selection.contains(b.id)) ...<Widget>[
-            Ecart.vXxl,
-            // « Offre pour {prenom} » : libelle provisoire, lexique D4.
-            titre(t.adulte.recharge.offrePour(prenom: b.prenom)),
-            Ecart.vSm,
-            ChoiceCardGroup(
-              key: ValueKey<String>('recharge.offres.${b.id}'),
-              autoriserSaisieLibre: false,
-              valeurInitiale: switch (_offres[b.id]) {
-                final String offre => ReponseChoix(valeurs: <String>{offre}),
-                null => null,
-              },
-              options: <OptionChoix>[
-                for (final OffreRecharge o in b.offres)
-                  OptionChoix(
-                    cle: RechargeFoyerPage.offreDe(b.id, o.id),
-                    valeur: o.id,
-                    libelle: o.libelle,
-                    description: o.detail,
+        // L'offre de chaque beneficiaire coche JUSTE SOUS sa ligne (UX_REVIEW_07
+        // ligne 15 a, planche 4.2). `GroupeReglages` (partage, K-51) n'a pas
+        // de place sous une ligne : le groupe se coupe apres chaque ligne
+        // cochee, ses offres suivent, puis le groupe reprend (harmonisation
+        // notee au tableau).
+        for (final (int i, List<BeneficiaireRecharge> troncon) in _troncons(
+          liste,
+        ).indexed) ...<Widget>[
+          if (i > 0) Ecart.vLg,
+          GroupeReglages(
+            lignes: <LigneRubrique>[
+              for (final BeneficiaireRecharge b in troncon)
+                LigneRubrique(
+                  meneur: PhotoEleve(
+                    prenom: b.prenom,
+                    cleAvatar: b.cleAvatar,
+                    diametre: AppSpacing.section,
                   ),
-              ],
-              onChange: (ReponseChoix r) => _choisirOffre(b.id, r),
-            ),
+                  libelle: b.prenom,
+                  // Le solde tel que rendu (E2), sans Classe (F6).
+                  valeur: b.soldeRendu,
+                  controle: Checkbox(
+                    key: RechargeFoyerPage.caseDe(b.id),
+                    value: _selection.contains(b.id),
+                    // Sans libelle propre : la ligne entiere (prenom, solde,
+                    // case) est lue d'un bloc par `GroupeReglages`.
+                    onChanged: _occupe
+                        ? null
+                        : (bool? coche) => _basculer(b.id, coche ?? false),
+                  ),
+                ),
+            ],
+          ),
+          // Une offre par beneficiaire coche, lue telle que rendue ; aucune
+          // n'est choisie d'avance (F11, ligne 15 a).
+          if (_selection.contains(troncon.last.id)) ...<Widget>[
+            Ecart.vMd,
+            // « Offre pour {prenom} » : libelle provisoire, lexique D4.
+            titre(t.adulte.recharge.offrePour(prenom: troncon.last.prenom)),
+            Ecart.vSm,
+            _offresDe(troncon.last),
           ],
+        ],
         if (_echecVerif case final _EchecRecharge echec) ...<Widget>[
           Ecart.vLg,
           _FocusALApparition(
@@ -460,6 +466,38 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
       ],
     );
   }
+
+  /// La liste coupee apres chaque beneficiaire coche : chaque troncon finit
+  /// par une ligne cochee (ses offres suivent) ou par la fin de la liste.
+  List<List<BeneficiaireRecharge>> _troncons(List<BeneficiaireRecharge> liste) {
+    final List<List<BeneficiaireRecharge>> troncons =
+        <List<BeneficiaireRecharge>>[<BeneficiaireRecharge>[]];
+    for (final BeneficiaireRecharge b in liste) {
+      troncons.last.add(b);
+      if (_selection.contains(b.id)) troncons.add(<BeneficiaireRecharge>[]);
+    }
+    if (troncons.last.isEmpty) troncons.removeLast();
+    return troncons;
+  }
+
+  Widget _offresDe(BeneficiaireRecharge b) => ChoiceCardGroup(
+    key: ValueKey<String>('recharge.offres.${b.id}'),
+    autoriserSaisieLibre: false,
+    valeurInitiale: switch (_offres[b.id]) {
+      final String offre => ReponseChoix(valeurs: <String>{offre}),
+      null => null,
+    },
+    options: <OptionChoix>[
+      for (final OffreRecharge o in b.offres)
+        OptionChoix(
+          cle: RechargeFoyerPage.offreDe(b.id, o.id),
+          valeur: o.id,
+          libelle: o.libelle,
+          description: o.detail,
+        ),
+    ],
+    onChange: (ReponseChoix r) => _choisirOffre(b.id, r),
+  );
 
   Widget _pageVerification(
     BuildContext context,
@@ -572,7 +610,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
                     cle: t.adulte.recharge.statut,
                     valeur: l.statut,
                   ),
-                  if (!arrete)
+                  if (!arrete && !_paiementIncertain)
                     Align(
                       alignment: AlignmentDirectional.centerEnd,
                       child: LienFleche(
@@ -603,7 +641,9 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
           Ecart.vLg,
           _FocusALApparition(key: RechargeFoyerPage.focusEtatKey, child: etat),
         ],
-        // Hors ligne : rien n'est paye. Libelle provisoire, lexique D4.
+        // Hors ligne : pourquoi « Payer » attend, sans jamais dire que rien
+        // n'est paye (D5 : apres une coupure, l'ecran ne le sait pas).
+        // Libelle provisoire, lexique D4.
         if (horsLigne && !arrete) ...<Widget>[
           Ecart.vLg,
           _Note(texte: t.adulte.recharge.horsLignePayer),

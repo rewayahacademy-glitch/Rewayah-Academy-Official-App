@@ -1,7 +1,9 @@
 // EA-10 : les captures de la recharge du foyer (planches 4.2 et 4.3), depuis
 // la VRAIE route /demo/adulte (`adresseDemoAdulte`), comme
 // `captures_ea9_test.dart` : 390x844, 768x1024 et 1440x900, clair et sombre,
-// plus le texte a 200 % en 390. Etape 1 (choix) et etape 2 (verification).
+// plus le texte a 200 % en 390. Etape 1 (vide, puis deux beneficiaires coches
+// et leurs offres), etape 2 (deux beneficiaires), l'etat apres « Payer » et
+// le paiement non confirme (D5).
 //
 // Fichier propre a l'agent : ne pas confondre avec `captures_ea_test.dart`
 // (poste B, ne pas modifier) ni avec les fichiers des agents precedents
@@ -78,7 +80,9 @@ Future<void> _taper(WidgetTester tester, Finder f) async {
   await tester.pumpAndSettle();
 }
 
-Future<void> _jusquALEtape2(WidgetTester tester) async {
+/// Etape 1 avec deux beneficiaires coches et leurs offres sous leur ligne :
+/// Mamadou a choisi l'offre B, Aicha pas encore (les deux etats des cartes).
+Future<void> _deuxCoches(WidgetTester tester) async {
   await _taper(
     tester,
     find.byKey(RechargeFoyerPage.caseDe(DonneesAdulteDemo.mamadouId)),
@@ -86,10 +90,51 @@ Future<void> _jusquALEtape2(WidgetTester tester) async {
   await _taper(
     tester,
     find.byKey(
-      RechargeFoyerPage.offreDe(DonneesAdulteDemo.mamadouId, 'demo-offre-b'),
+      RechargeFoyerPage.offreDe(
+        DonneesAdulteDemo.mamadouId,
+        DonneesAdulteDemo.offreB,
+      ),
+    ),
+  );
+  await _taper(
+    tester,
+    find.byKey(RechargeFoyerPage.caseDe(DonneesAdulteDemo.aichaId)),
+  );
+  // La capture part du haut de la page.
+  await tester.ensureVisible(find.text(t.adulte.recharge.titre));
+  await tester.pumpAndSettle();
+}
+
+/// A 200 %, la ligne de Mamadou en haut de l'ecran, ses offres dessous.
+Future<void> _deuxCochesAgrandi(WidgetTester tester) async {
+  await _deuxCoches(tester);
+  await tester.ensureVisible(
+    find.text(t.adulte.recharge.offrePour(prenom: 'Mamadou')),
+  );
+  await tester.pumpAndSettle();
+}
+
+/// Deux beneficiaires et leurs offres, puis l'etape 2 : le recapitulatif
+/// separe de plusieurs beneficiaires.
+Future<void> _jusquALEtape2(WidgetTester tester) async {
+  await _deuxCoches(tester);
+  await _taper(
+    tester,
+    find.byKey(
+      RechargeFoyerPage.offreDe(
+        DonneesAdulteDemo.aichaId,
+        DonneesAdulteDemo.offreA,
+      ),
     ),
   );
   await _taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
+}
+
+/// L'etape 2, puis « Payer » : l'etat honnete (ou, selon l'etat de la
+/// demonstration, le paiement non confirme de D5).
+Future<void> _apresPayer(WidgetTester tester) async {
+  await _jusquALEtape2(tester);
+  await _taper(tester, find.byKey(RechargeFoyerPage.payerKey));
 }
 
 void main() {
@@ -154,7 +199,7 @@ void main() {
       }
     }
 
-    // Le texte a 200 % sur l'etape 2, en 390.
+    // Le texte a 200 % sur l'etape 2, en 390 : deux beneficiaires.
     testWidgets('ea10_etape2_390_light_200pc', (WidgetTester tester) async {
       await _capturer(
         tester,
@@ -163,6 +208,56 @@ void main() {
         const Size(390, 844),
         echelle: 2,
         avant: _jusquALEtape2,
+      );
+    });
+
+    // Etape 1, deux beneficiaires coches et leurs offres sous leur ligne :
+    // 390 clair et sombre, puis 200 %.
+    for (final (String fichier, ThemeMode mode, double echelle)
+        in <(String, ThemeMode, double)>[
+          ('ea10_etape1_choix_390_light', ThemeMode.light, 1),
+          ('ea10_etape1_choix_390_dark', ThemeMode.dark, 1),
+          ('ea10_etape1_choix_390_light_200pc', ThemeMode.light, 2),
+        ]) {
+      testWidgets(fichier, (WidgetTester tester) async {
+        await _capturer(
+          tester,
+          fichier,
+          _adresseRecharge,
+          const Size(390, 844),
+          mode: mode,
+          echelle: echelle,
+          avant: echelle > 1 ? _deuxCochesAgrandi : _deuxCoches,
+        );
+      });
+    }
+
+    // L'etat final apres « Payer » (F13) : 390 clair et sombre.
+    for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
+      final String fichier = 'ea10_paiement_390_${mode.name}';
+      testWidgets(fichier, (WidgetTester tester) async {
+        await _capturer(
+          tester,
+          fichier,
+          _adresseRecharge,
+          const Size(390, 844),
+          mode: mode,
+          avant: _apresPayer,
+        );
+      });
+    }
+
+    // Le paiement non confirme (D5), sans Modifier : 390 clair.
+    testWidgets('ea10_d5_390_light', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ea10_d5_390_light',
+        adresseDemoAdulte(
+          EcranDemoAdulte.recharge,
+          etat: EtatDemoAdulte.erreurReseau,
+        ),
+        const Size(390, 844),
+        avant: _apresPayer,
       );
     });
   });

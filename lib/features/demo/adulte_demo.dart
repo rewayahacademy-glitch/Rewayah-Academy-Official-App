@@ -470,31 +470,46 @@ abstract final class DonneesAdulteDemo {
     );
   }
 
-  /// Les offres de recharge de la demonstration (EA-10, EA-BR-24), avec ce
-  /// que le serveur de demonstration en sait : le montant en centimes, qui ne
-  /// sort jamais de ce fichier. Les libelles reprennent les valeurs de la
-  /// planche 4.3 (« 5,00 € », « 60 unités ») : des valeurs de demonstration,
-  /// ni taux ni formule (F12, 00_MAQUETTES section 3). Aucune remise n'est
+  /// L'identifiant de l'offre A de la demonstration.
+  static const String offreA = 'demo-offre-a';
+
+  /// L'identifiant de l'offre B de la demonstration.
+  static const String offreB = 'demo-offre-b';
+
+  /// Les offres de recharge de la demonstration (EA-10, EA-BR-24). Le prix
+  /// reprend la planche 4.3 (« 5,00 € ») ; le solde attribue est un libelle
+  /// de demonstration MARQUE comme tel, sans quantite d'unites : l'unite du
+  /// solde n'est pas fixee (doc section 20.3, 00_MAQUETTES 4.1 C3) et une
+  /// quantite a cote d'un prix ramenerait le taux retire (4.2 C2, E2). Ni
+  /// taux ni formule (F12, 00_MAQUETTES section 3). Aucune remise n'est
   /// rendue : la planche la calcule (10 %), le doc ne la fixe pas (section 20).
-  static const List<({OffreRecharge offre, int centimes})> _offresRecharge =
-      <({OffreRecharge offre, int centimes})>[
-        (
-          offre: OffreRecharge(
-            id: 'demo-offre-a',
-            libelle: '5,00 €',
-            detail: '60 unités',
-          ),
-          centimes: 500,
-        ),
-        (
-          offre: OffreRecharge(
-            id: 'demo-offre-b',
-            libelle: '10,00 €',
-            detail: '120 unités',
-          ),
-          centimes: 1000,
-        ),
-      ];
+  static const List<OffreRecharge> _offresRecharge = <OffreRecharge>[
+    OffreRecharge(
+      id: offreA,
+      libelle: '5,00 €',
+      detail: 'Solde de démonstration A',
+    ),
+    OffreRecharge(
+      id: offreB,
+      libelle: '10,00 €',
+      detail: 'Solde de démonstration B',
+    ),
+  ];
+
+  /// Le total que le serveur de demonstration arrete, une DONNEE fixee
+  /// d'avance pour chaque combinaison possible (le nombre d'offres A et B
+  /// choisies, quatre beneficiaires au plus), jamais une addition.
+  static String _totalRecharge(int a, int b) => switch ((a, b)) {
+    (1, 0) => '5,00 €',
+    (0, 1) || (2, 0) => '10,00 €',
+    (1, 1) || (3, 0) => '15,00 €',
+    (0, 2) || (2, 1) || (4, 0) => '20,00 €',
+    (1, 2) || (3, 1) => '25,00 €',
+    (0, 3) || (2, 2) => '30,00 €',
+    (1, 3) => '35,00 €',
+    (0, 4) => '40,00 €',
+    _ => throw StateError('combinaison absente de la demonstration'),
+  };
 
   /// Le statut de l'attribution avant le paiement, tel que le serveur de
   /// demonstration le rend (F11).
@@ -513,18 +528,15 @@ abstract final class DonneesAdulteDemo {
         prenom: s.prenom,
         cleAvatar: s.cleAvatar,
         soldeRendu: s.soldeRendu,
-        offres: <OffreRecharge>[
-          for (final ({OffreRecharge offre, int centimes}) o in _offresRecharge)
-            o.offre,
-        ],
+        offres: _offresRecharge,
       ),
   ];
 
   /// Le recapitulatif que le SERVEUR de demonstration arrete pour ces choix
   /// (EA-10, EA-BR-24) : une ligne par beneficiaire choisi, dans l'ordre des
-  /// beneficiaires, et le total. Le total est arrete ici, cote serveur de
-  /// demonstration ; l'ecran l'affiche tel quel, il n'additionne jamais
-  /// rien (F12).
+  /// beneficiaires, et le total. Le total est une donnee fixee d'avance par
+  /// le serveur de demonstration ; l'ecran l'affiche tel quel, il
+  /// n'additionne jamais rien (F12).
   static RecapitulatifRecharge recapitulatifRecharge(
     EtatDemoAdulte etat,
     GenreTitulaireDemo genre,
@@ -533,34 +545,30 @@ abstract final class DonneesAdulteDemo {
     final Map<String, String> offreDe = <String, String>{
       for (final ChoixRecharge c in choix) c.beneficiaireId: c.offreId,
     };
-    final List<LigneRecapitulatif> lignes = <LigneRecapitulatif>[];
-    int centimes = 0;
-    for (final BeneficiaireRecharge b in beneficiairesRecharge(etat, genre)) {
-      final String? offreId = offreDe[b.id];
-      if (offreId == null) continue;
-      final ({OffreRecharge offre, int centimes}) o = _offresRecharge
-          .firstWhere(
-            (({OffreRecharge offre, int centimes}) o) => o.offre.id == offreId,
-          );
-      centimes += o.centimes;
-      lignes.add(
-        LigneRecapitulatif(
-          beneficiaireId: b.id,
-          prenom: b.prenom,
-          cleAvatar: b.cleAvatar,
-          montantPaye: o.offre.libelle,
-          soldeAttribue: o.offre.detail ?? '',
-          statut: statutAvantPaiement,
-        ),
-      );
-    }
-    final String euros = '${centimes ~/ 100}';
-    final String cents = '${centimes % 100}'.padLeft(2, '0');
+    final Map<String, OffreRecharge> offreParId = <String, OffreRecharge>{
+      for (final OffreRecharge o in _offresRecharge) o.id: o,
+    };
+    final List<LigneRecapitulatif> lignes = <LigneRecapitulatif>[
+      for (final BeneficiaireRecharge b in beneficiairesRecharge(etat, genre))
+        if (offreDe[b.id] case final String offreId)
+          if (offreParId[offreId] case final OffreRecharge o)
+            LigneRecapitulatif(
+              beneficiaireId: b.id,
+              prenom: b.prenom,
+              cleAvatar: b.cleAvatar,
+              montantPaye: o.libelle,
+              soldeAttribue: o.detail ?? '',
+              statut: statutAvantPaiement,
+            ),
+    ];
+    final Iterable<String> offres = offreDe.values;
     return RecapitulatifRecharge(
       id: 'demo-recapitulatif',
       lignes: lignes,
-      // Redige comme les libelles des offres (« 15,00 € »).
-      total: '$euros,$cents €',
+      total: _totalRecharge(
+        offres.where((String o) => o == offreA).length,
+        offres.where((String o) => o == offreB).length,
+      ),
     );
   }
 

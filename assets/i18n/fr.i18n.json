@@ -3907,7 +3907,7 @@
       "modifier": "Modifier",
       "total": "Total à payer",
       "payer": "Payer {montant}",
-      "horsLignePayer": "Vous êtes hors ligne. Rien n'est payé. Vous pourrez payer vous-même quand la connexion sera revenue.",
+      "horsLignePayer": "Vous êtes hors ligne. Vous pourrez payer quand la connexion sera revenue.",
       "paiementEchecTitre": "Le paiement n'a pas été confirmé.",
       "paiementEchecPhrase": "Vérifiez avant de réessayer.",
       "paiementIndisponibleTitre": "Paiement pas encore disponible",

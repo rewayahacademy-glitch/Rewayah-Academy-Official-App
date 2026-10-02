@@ -9013,8 +9013,8 @@ class Traductions$adulte$recharge$fr {
 	/// fr: 'Payer {montant}'
 	String payer({required Object montant}) => 'Payer ${montant}';
 
-	/// fr: 'Vous êtes hors ligne. Rien n'est payé. Vous pourrez payer vous-même quand la connexion sera revenue.'
-	String get horsLignePayer => 'Vous êtes hors ligne. Rien n\'est payé. Vous pourrez payer vous-même quand la connexion sera revenue.';
+	/// fr: 'Vous êtes hors ligne. Vous pourrez payer quand la connexion sera revenue.'
+	String get horsLignePayer => 'Vous êtes hors ligne. Vous pourrez payer quand la connexion sera revenue.';
 
 	/// fr: 'Le paiement n'a pas été confirmé.'
 	String get paiementEchecTitre => 'Le paiement n\'a pas été confirmé.';
@@ -16882,7 +16882,7 @@ extension on Traductions {
 			'adulte.recharge.modifier' => 'Modifier',
 			'adulte.recharge.total' => 'Total à payer',
 			'adulte.recharge.payer' => ({required Object montant}) => 'Payer ${montant}',
-			'adulte.recharge.horsLignePayer' => 'Vous êtes hors ligne. Rien n\'est payé. Vous pourrez payer vous-même quand la connexion sera revenue.',
+			'adulte.recharge.horsLignePayer' => 'Vous êtes hors ligne. Vous pourrez payer quand la connexion sera revenue.',
 			'adulte.recharge.paiementEchecTitre' => 'Le paiement n\'a pas été confirmé.',
 			'adulte.recharge.paiementEchecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.recharge.paiementIndisponibleTitre' => 'Paiement pas encore disponible',

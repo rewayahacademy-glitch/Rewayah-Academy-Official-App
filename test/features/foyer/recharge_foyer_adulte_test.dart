@@ -183,10 +183,27 @@ void main() {
       find.text(t.adulte.recharge.offrePour(prenom: 'Mamadou')),
       findsOneWidget,
     );
-    // Les offres telles que rendues (planche 4.3), sans « Autre ».
+    // Les offres telles que rendues (planche 4.3), sans « Autre » ; aucune
+    // quantite d'unites a cote d'un prix, donc aucun taux (4.1 C3, 4.2 C2).
     expect(find.text('5,00 €'), findsOneWidget);
     expect(find.text('10,00 €'), findsOneWidget);
-    expect(find.text('120 unités'), findsNWidgets(2));
+    expect(find.text('Solde de démonstration A'), findsOneWidget);
+    expect(find.text('Solde de démonstration B'), findsOneWidget);
+    expect(find.text('120 unités'), findsOneWidget);
+    // Les offres de Mamadou juste sous SA ligne (ligne 15 a) : avant la
+    // ligne suivante.
+    expect(
+      tester.getTopLeft(find.byType(ChoiceCardGroup)).dy,
+      greaterThan(
+        tester.getBottomLeft(find.byKey(RechargeFoyerPage.caseDe(_mamadou))).dy,
+      ),
+    );
+    expect(
+      tester.getBottomLeft(find.byType(ChoiceCardGroup)).dy,
+      lessThan(
+        tester.getTopLeft(find.byKey(RechargeFoyerPage.caseDe(_mariama))).dy,
+      ),
+    );
     expect(find.text(t.choix.autre), findsNothing);
     expect(find.text(t.adulte.recharge.raisonOffre), findsOneWidget);
     expect(bouton(tester, RechargeFoyerPage.verifierKey).onPress, isNull);
@@ -209,8 +226,8 @@ void main() {
     // paye, solde attribue, statut ; aucune remise rendue, aucune ligne.
     for (final (String id, String prenom, String montant, String solde)
         in <(String, String, String, String)>[
-          (_mamadou, 'Mamadou', '10,00 €', '120 unités'),
-          (_aicha, 'Aïcha', '5,00 €', '60 unités'),
+          (_mamadou, 'Mamadou', '10,00 €', 'Solde de démonstration B'),
+          (_aicha, 'Aïcha', '5,00 €', 'Solde de démonstration A'),
         ]) {
       final Key ligne = RechargeFoyerPage.ligneDe(id);
       expect(dans(ligne, find.text(prenom)), findsOneWidget);
@@ -313,6 +330,32 @@ void main() {
     }
     expect(find.byType(ChoiceCardGroup), findsNWidgets(4));
     expect(find.text(t.adulte.recharge.toutDeselectionner), findsOneWidget);
+    // Chaque groupe d'offres juste sous la ligne qu'il concerne, avant la
+    // suivante (ligne 15 a).
+    final List<String> ordre = <String>[_mamadou, _mariama, _aicha, _oumar];
+    for (int i = 0; i < ordre.length; i++) {
+      final Finder offres = find.byKey(
+        ValueKey<String>('recharge.offres.${ordre[i]}'),
+      );
+      expect(
+        tester.getTopLeft(offres).dy,
+        greaterThan(
+          tester
+              .getBottomLeft(find.byKey(RechargeFoyerPage.caseDe(ordre[i])))
+              .dy,
+        ),
+      );
+      if (i + 1 < ordre.length) {
+        expect(
+          tester.getBottomLeft(offres).dy,
+          lessThan(
+            tester
+                .getTopLeft(find.byKey(RechargeFoyerPage.caseDe(ordre[i + 1])))
+                .dy,
+          ),
+        );
+      }
+    }
     // Rien n'est reparti : sans offre pour chacun, le bouton attend.
     expect(bouton(tester, RechargeFoyerPage.verifierKey).onPress, isNull);
     for (final String id in <String>[_mamadou, _mariama, _aicha, _oumar]) {
@@ -365,7 +408,14 @@ void main() {
     expect(find.textContaining("n'a pas été payé"), findsNothing);
     expect(find.textContaining("n'est pas parti"), findsNothing);
     expect(bouton(tester, RechargeFoyerPage.payerKey).onPress, isNotNull);
+    // Les choix ne se modifient plus : une autre cle pourrait payer deux fois.
+    expect(find.byKey(RechargeFoyerPage.modifierDe(_oumar)), findsNothing);
     rienDInvente();
+    // Le retour mene aux paiements du foyer, ou l'on verifie.
+    await tester.tap(find.byType(DisqueRetour));
+    await tester.pumpAndSettle();
+    expect(find.byType(PaiementsComptePage), findsOneWidget);
+    expect(find.byType(RechargeFoyerPage), findsNothing);
   });
 
   testWidgets('double soumission de la demonstration : le bouton attend, '
@@ -603,6 +653,50 @@ void main() {
       port.reponse.completeError(StateError('coupure'));
       await tester.pumpAndSettle();
       expect(find.text(t.adulte.recharge.paiementEchecTitre), findsOneWidget);
+      port.paiementSuspendu = false;
+      await taper(tester, find.byKey(RechargeFoyerPage.payerKey));
+      expect(port.cles, hasLength(2));
+      expect(port.cles.toSet(), hasLength(1));
+    });
+
+    testWidgets('coupure au paiement avec perte du reseau : D5 seul, jamais '
+        '« Rien n\'est payé » ; ni Modifier ni retour aux choix, meme cle', (
+      WidgetTester tester,
+    ) async {
+      final StreamController<bool> reseau = StreamController<bool>();
+      addTearDown(reseau.close);
+      final _Port port = _Port(liste: exemple, paiementSuspendu: true);
+      bool termine = false;
+      await monter(
+        tester,
+        port: port,
+        horsLigne: reseau.stream,
+        onTerminee: () => termine = true,
+      );
+      reseau.add(false);
+      await tester.pumpAndSettle();
+      await jusquAuRecapitulatif(tester);
+      await tester.tap(find.byKey(RechargeFoyerPage.payerKey));
+      await tester.pump();
+      // Le reseau tombe pendant le paiement, et l'appel echoue avec lui.
+      reseau.add(true);
+      port.reponse.completeError(StateError('coupure'));
+      await tester.pumpAndSettle();
+      expect(find.text(t.adulte.recharge.paiementEchecTitre), findsOneWidget);
+      expect(find.text(t.adulte.recharge.paiementEchecPhrase), findsOneWidget);
+      expect(find.text(t.adulte.recharge.horsLignePayer), findsOneWidget);
+      expect(find.textContaining("Rien n'est payé"), findsNothing);
+      expect(find.textContaining("n'a pas été payé"), findsNothing);
+      expect(bouton(tester, RechargeFoyerPage.payerKey).onPress, isNull);
+      expect(find.byKey(RechargeFoyerPage.modifierDe('b1')), findsNothing);
+      // Le retour ne rouvre pas les choix : il mene aux paiements du foyer.
+      await tester.tap(find.byType(DisqueRetour));
+      await tester.pumpAndSettle();
+      expect(termine, isTrue);
+      expect(find.text(t.adulte.recharge.paiementEchecTitre), findsOneWidget);
+      // Le reseau revient : la nouvelle tentative reprend la meme cle.
+      reseau.add(false);
+      await tester.pumpAndSettle();
       port.paiementSuspendu = false;
       await taper(tester, find.byKey(RechargeFoyerPage.payerKey));
       expect(port.cles, hasLength(2));
