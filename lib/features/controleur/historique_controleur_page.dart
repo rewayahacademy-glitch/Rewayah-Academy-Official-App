@@ -80,7 +80,8 @@ class HistoriqueControleurPage extends ConsumerStatefulWidget {
   /// defaut, la route CTR-03 avec `?seance=` (revue CT-R B1).
   final ValueChanged<String>? onReprendreCompteRendu;
 
-  /// Ouvrir le fil de la mission ; par defaut, la destination Echanges.
+  /// Ouvrir le fil de la mission ; par defaut, ce fil dans Echanges
+  /// (`?mission=`, C17, revue CT-R M2), jamais la liste seule.
   final ValueChanged<String>? onEcrireAdmin;
 
   /// La ligne d'un rapport.
@@ -185,7 +186,8 @@ class _HistoriqueControleurPageState
         onComplement: () => setState(() => _enComplement = true),
         onEcrireAdmin:
             widget.onEcrireAdmin ??
-            (String _) => GoRouter.of(context).go(Routes.controleurEchanges),
+            (String mission) =>
+                GoRouter.of(context).go(Routes.controleurEcrireAdmin(mission)),
       );
     }
     final h = t.controleur.historique;

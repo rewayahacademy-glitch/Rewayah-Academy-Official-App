@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart'
     show DisqueRetour;
@@ -95,6 +96,30 @@ final RapportControle _parent = RapportControle(
     ComplementRapport(date: DateTime(2026, 9, 24, 18), texte: 'Premier.'),
   ],
 );
+
+/// Un rapport envoye d'aujourd'hui, dans le filtre Periode par defaut.
+class _PortDuJour implements PortHistorique {
+  @override
+  Future<List<RapportControle>> rapports() async => <RapportControle>[
+    RapportControle(
+      id: 'rapport-du-jour',
+      missionId: 'mission-du-jour',
+      classe: 'Al-Badr',
+      enseignant: 'Sayyid Karim',
+      debut: DateTime.now().subtract(const Duration(hours: 1)),
+      dureeObservee: const Duration(minutes: 20),
+      statut: StatutRapport.envoye,
+      choix: ChoixCompteRendu.rienASignaler,
+    ),
+  ];
+
+  @override
+  Future<ComplementRapport> ajouterComplement(
+    String rapportId, {
+    required String texte,
+    String? motif,
+  }) async => ComplementRapport(date: DateTime.now(), texte: texte);
+}
 
 /// Un port temoin : il note ce qui part et confirme.
 class _PortTemoin implements PortHistorique {
@@ -437,5 +462,59 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(t.controleur.historique.vide), findsNothing);
     expect(find.text(t.controleur.historique.envoye), findsNothing);
+  });
+
+  // Revue CT-R M2 : par la VRAIE route (sans surcharge, comme
+  // `app_router.dart`), « Ecrire a l'administration » ouvre le fil de la
+  // mission (`?mission=`), jamais la liste seule.
+  testWidgets('route reelle : Ecrire a l administration ouvre le fil', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(1000, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final GoRouter routeur = GoRouter(
+      initialLocation: Routes.controleurHistorique,
+      routes: <RouteBase>[
+        GoRoute(
+          path: Routes.controleurHistorique,
+          builder: (BuildContext _, GoRouterState _) =>
+              const HistoriqueControleurPage(),
+        ),
+        GoRoute(
+          path: Routes.controleurEchanges,
+          builder: (BuildContext _, GoRouterState etat) =>
+              Text('fil:${etat.uri.queryParameters['mission']}'),
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [portHistoriqueProvider.overrideWithValue(_PortDuJour())],
+        child: TranslationProvider(
+          child: MaterialApp.router(
+            theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+            locale: AppLocale.fr.flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            routerConfig: routeur,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final Finder ligne = find.byKey(
+      HistoriqueControleurPage.ligneKey('rapport-du-jour'),
+    );
+    await tester.ensureVisible(ligne);
+    await tester.pumpAndSettle();
+    await tester.tap(ligne);
+    await tester.pumpAndSettle();
+    final Finder ecrire = find.byKey(HistoriqueControleurPage.ecrireAdminKey);
+    await tester.ensureVisible(ecrire);
+    await tester.pumpAndSettle();
+    await tester.tap(ecrire);
+    await tester.pumpAndSettle();
+    expect(find.text('fil:mission-du-jour'), findsOneWidget);
   });
 }
