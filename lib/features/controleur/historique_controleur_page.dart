@@ -383,8 +383,11 @@ class _DetailRapport extends StatelessWidget {
                 LigneCleValeur(cle: h.cleEnseignant, valeur: r.enseignant),
                 LigneCleValeur(
                   cle: h.cleDate,
-                  valeur:
-                      '${dateDeLAppareil(r.debut)}, ${heureDeLAppareil(r.debut)}',
+                  // Ordre et virgule traduisibles (revue CT-R m9).
+                  valeur: h.dateHeure(
+                    date: dateDeLAppareil(r.debut),
+                    heure: heureDeLAppareil(r.debut),
+                  ),
                   chiffres: true,
                 ),
                 LigneCleValeur(
@@ -450,8 +453,10 @@ class _DetailRapport extends StatelessWidget {
                 else
                   for (final ComplementRapport c in r.complements)
                     LigneCleValeur(
-                      cle:
-                          '${dateDeLAppareil(c.date)}, ${heureDeLAppareil(c.date)}',
+                      cle: h.dateHeure(
+                        date: dateDeLAppareil(c.date),
+                        heure: heureDeLAppareil(c.date),
+                      ),
                       valeur: c.texte,
                       complement: c.motif == null
                           ? null

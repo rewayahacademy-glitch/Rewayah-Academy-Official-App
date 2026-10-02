@@ -152,8 +152,11 @@ class _EchangesControleurPageState
                     AuteurEchange.administration => e.auteurAdmin,
                   },
                   texte: m.texte,
-                  horodatage:
-                      '${dateDeLAppareil(m.date)}, ${heureDeLAppareil(m.date)}',
+                  // Meme cle que l'Historique (revue CT-R m9).
+                  horodatage: t.controleur.historique.dateHeure(
+                    date: dateDeLAppareil(m.date),
+                    heure: heureDeLAppareil(m.date),
+                  ),
                   deSoi: m.auteur == AuteurEchange.controleur,
                 ),
             ],
