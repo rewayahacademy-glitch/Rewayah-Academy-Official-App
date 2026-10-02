@@ -476,6 +476,9 @@ class _LecteurCoranAccessibiliteEtat
               _ => const VuePageMushaf(),
             },
             commandes: commandes,
+            // Finition MA-CMD-1 : la barre du bas s'efface avec les
+            // commandes et revient a la meme touche.
+            effacerBarreBasse: true,
           ),
         ),
         if (vue != null && vue.aDuTexte)
@@ -485,16 +488,76 @@ class _LecteurCoranAccessibiliteEtat
               horizontal: gabarit.gouttiere,
               vertical: AppSpacing.xs,
             ),
-            child: Text(
-              '${t.eleve.coran.edition} . ${t.eleve.coran.source} . '
-              '${t.eleve.coran.sourceLien}',
-              textAlign: TextAlign.center,
+            child: AttributionCoranCompacte(
+              texte:
+                  '${t.eleve.coran.edition} . ${t.eleve.coran.source} . '
+                  '${t.eleve.coran.sourceLien}',
               style: palette.inkFaint.applyTo(
                 textes.labelSmall ?? const TextStyle(),
               ),
             ),
           ),
       ],
+    );
+  }
+}
+
+/// L'attribution Tanzil du lecteur, **toujours affichee en entier** (la
+/// licence demande que la source soit clairement indiquee) mais tenue sur
+/// [lignesMax] lignes au plus : quand le texte agrandi par l'utilisateur la
+/// ferait deborder, son echelle descend, par pas, jusqu'a la taille de base
+/// au minimum (jamais en dessous). Si meme la taille de base ne tient pas,
+/// le texte passe a la ligne autant qu'il le faut : il n'est jamais coupe
+/// ni masque. Finition MA-CMD-1 (02/10/2026) : a 200 %, quatre lignes
+/// prenaient au Coran une hauteur dont il a besoin.
+class AttributionCoranCompacte extends StatelessWidget {
+  /// Cree l'attribution.
+  const AttributionCoranCompacte({
+    required this.texte,
+    required this.style,
+    super.key,
+  });
+
+  /// Le texte complet de l'attribution.
+  final String texte;
+
+  /// Le style de base (avant l'echelle de texte de l'utilisateur).
+  final TextStyle style;
+
+  /// Le nombre de lignes vise.
+  static const int lignesMax = 2;
+
+  /// Le pas de reduction de l'echelle.
+  static const double _pas = 0.05;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextScaler echelleUtilisateur = MediaQuery.textScalerOf(context);
+    final TextDirection sens = Directionality.of(context);
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) {
+        final double base = style.fontSize ?? 14;
+        final double facteurUtilisateur = echelleUtilisateur.scale(base) / base;
+        double facteur = facteurUtilisateur;
+        while (facteur > 1) {
+          final TextPainter mesure = TextPainter(
+            text: TextSpan(text: texte, style: style),
+            textAlign: TextAlign.center,
+            textDirection: sens,
+            textScaler: TextScaler.linear(facteur),
+            maxLines: lignesMax,
+          )..layout(maxWidth: contraintes.maxWidth);
+          final bool tient = !mesure.didExceedMaxLines;
+          mesure.dispose();
+          if (tient) break;
+          facteur = (facteur - _pas).clamp(1, facteurUtilisateur);
+        }
+        return MediaQuery.withClampedTextScaling(
+          maxScaleFactor: facteur < 1 ? 1 : facteur,
+          minScaleFactor: 0,
+          child: Text(texte, textAlign: TextAlign.center, style: style),
+        );
+      },
     );
   }
 }

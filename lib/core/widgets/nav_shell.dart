@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../accessibilite/effacement_barre_basse.dart';
 import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
@@ -396,31 +397,12 @@ class NavShell extends StatelessWidget {
       if (masquerBarreBasse) {
         return child;
       }
-      final AppPalette palette = AppPalette.of(context);
-      return ColoredBox(
-        // Le fond de page passe sous la barre flottante et autour d'elle.
-        color: palette.surfaceCanvas.background,
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: MediaQuery.removePadding(
-                context: context,
-                removeBottom: true,
-                child: child,
-              ),
-            ),
-            MediaQuery.removePadding(
-              context: context,
-              removeTop: true,
-              child: _BarreFlottante(
-                guide: guide(context),
-                destinations: destinations,
-                indexActif: indexActif,
-                onAller: onAller,
-              ),
-            ),
-          ],
-        ),
+      return _CoquilleBarreBasse(
+        guide: guide(context),
+        destinations: destinations,
+        indexActif: indexActif,
+        onAller: onAller,
+        child: child,
       );
     }
 
@@ -434,6 +416,87 @@ class NavShell extends StatelessWidget {
       libellesDansLeRail: libellesDansLeRail,
       guide: guide(context),
       child: child,
+    );
+  }
+}
+
+/// Le contenu et la barre basse flottante, sur telephone.
+///
+/// MA-CMD-1 (finition, 02/10/2026) : la coquille pose un
+/// [ControleurBarreBasse] ; pendant la lecture du Coran en Mode
+/// Accessibilite, `CommandesMasquables(effacerBarreBasse: true)` y signale
+/// que ses commandes se sont masquees, et la barre s'efface avec elles pour
+/// rendre sa hauteur au Coran. Elle revient a la meme touche, et des que le
+/// lecteur se ferme. Aucun autre ecran ne la pilote : partout ailleurs elle
+/// reste ou elle est.
+class _CoquilleBarreBasse extends StatefulWidget {
+  const _CoquilleBarreBasse({
+    required this.guide,
+    required this.destinations,
+    required this.indexActif,
+    required this.onAller,
+    required this.child,
+  });
+
+  final bool guide;
+  final List<Destination> destinations;
+  final int? indexActif;
+  final void Function(String chemin) onAller;
+  final Widget child;
+
+  @override
+  State<_CoquilleBarreBasse> createState() => _CoquilleBarreBasseEtat();
+}
+
+class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
+  final ControleurBarreBasse _controleur = ControleurBarreBasse();
+
+  @override
+  void dispose() {
+    _controleur.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    // Le contenu garde son identite quand la barre s'efface : seul son
+    // encart bas change.
+    final Widget contenu = EffacementBarreBasse(
+      controleur: _controleur,
+      child: widget.child,
+    );
+    return ColoredBox(
+      // Le fond de page passe sous la barre flottante et autour d'elle.
+      color: palette.surfaceCanvas.background,
+      child: ValueListenableBuilder<bool>(
+        valueListenable: _controleur,
+        child: contenu,
+        builder: (BuildContext context, bool effacee, Widget? contenu) {
+          return Column(
+            children: <Widget>[
+              Expanded(
+                child: MediaQuery.removePadding(
+                  context: context,
+                  removeBottom: !effacee,
+                  child: contenu!,
+                ),
+              ),
+              if (!effacee)
+                MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  child: _BarreFlottante(
+                    guide: widget.guide,
+                    destinations: widget.destinations,
+                    indexActif: widget.indexActif,
+                    onAller: widget.onAller,
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
     );
   }
 }

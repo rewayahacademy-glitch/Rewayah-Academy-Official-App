@@ -5,6 +5,7 @@
 // arrete(e) » quand le port la connait, tutoiement selon l'age.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -381,6 +382,123 @@ void main() {
       }
       expect(tester.takeException(), isNull);
     });
+  }
+
+  // MA-CMD-1 (finition, directeur 02/10/2026 : « le support partage n'a plus
+  // de place pour s'afficher ») : a 390 px et texte x2, la barre du bas
+  // s'efface avec les commandes pendant la lecture ; le Coran garde alors au
+  // moins 75 % de l'ecran ; une touche fait revenir commandes et barre ;
+  // l'attribution Tanzil tient sur deux lignes au plus, en entier ; le
+  // chevron de l'en-tete reste atteignable et la barre revient a la sortie.
+  // Avec le lecteur d'ecran, rien ne se masque.
+  for (final bool grande in <bool>[true, false]) {
+    for (final bool lecteurEcran in <bool>[false, true]) {
+      testWidgets('MA-CMD-1 finition : 390, x2, grand texte = $grande, '
+          'lecteur d ecran = $lecteurEcran : barre et commandes s effacent '
+          'ensemble', (WidgetTester tester) async {
+        await _taille(tester, const Size(390, 844));
+        final ProviderContainer racine = ProviderContainer();
+        addTearDown(racine.dispose);
+        racine.read(preferencesLocalesProvider.notifier).lectureGrande(grande);
+        tester.platformDispatcher.textScaleFactorTestValue = 2;
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+        if (lecteurEcran) {
+          tester.platformDispatcher.accessibilityFeaturesTestValue =
+              const FakeAccessibilityFeatures(accessibleNavigation: true);
+          addTearDown(
+            tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
+          );
+        }
+        await tester.pumpWidget(
+          _hote(
+            EcranAccessibiliteDemo(
+              eleve: EleveDemoAccessibilite.mariam,
+              destinationInitiale: EcranAccessibiliteDemo.indexCoran,
+              surchargesCoran: corpus(
+                personnelle: PositionLecture(
+                  page: reference.pages.first.numero,
+                  sourate: 1,
+                  verset: 1,
+                ),
+              ),
+            ),
+            racine: racine,
+          ),
+        );
+        await poser(tester);
+        // L'entree du Coran garde la barre.
+        expect(find.byKey(NavShell.barreBasseKey), findsOneWidget);
+        await tester.tap(find.byKey(_principale));
+        await poser(tester);
+        expect(find.byType(LecteurCoranAccessibilite), findsOneWidget);
+        expect(find.byKey(NavShell.barreBasseKey), findsOneWidget);
+
+        // L'attribution : en entier, sur deux lignes au plus.
+        final RenderParagraph attribution = tester
+            .renderObject<RenderParagraph>(
+              find.descendant(
+                of: find.byKey(LecteurCoranAccessibilite.attributionKey),
+                matching: find.byType(RichText),
+              ),
+            );
+        final TextPainter mesure = TextPainter(
+          text: attribution.text,
+          textScaler: attribution.textScaler,
+          textDirection: attribution.textDirection,
+          textAlign: attribution.textAlign,
+        )..layout(maxWidth: attribution.size.width);
+        final int lignes = mesure.computeLineMetrics().length;
+        mesure.dispose();
+        expect(lignes, lessThanOrEqualTo(2));
+        expect(attribution.text.toPlainText(), contains('tanzil.net'));
+        expect(attribution.text.toPlainText(), contains('Tanzil Project'));
+        expect(attribution.textScaler.scale(10), greaterThanOrEqualTo(10));
+
+        await tester.pump(CommandesMasquables.delaiParDefaut);
+        await tester.pump(const Duration(seconds: 1));
+        if (lecteurEcran) {
+          // Lecteur d'ecran : commandes et barre restent.
+          expect(find.byKey(NavShell.barreBasseKey), findsOneWidget);
+          expect(tester.takeException(), isNull);
+          return;
+        }
+        // Commandes masquees : la barre s'efface avec elles.
+        expect(find.byKey(NavShell.barreBasseKey), findsNothing);
+        final double coran = tester
+            .getSize(find.byType(CommandesMasquables))
+            .height;
+        expect(
+          coran,
+          greaterThanOrEqualTo(844 * 0.75),
+          reason: 'Coran $coran sur 844',
+        );
+        // Une touche sur le Coran : commandes et barre reviennent.
+        await tester.tapAt(const Offset(195, 400));
+        await tester.pump(const Duration(milliseconds: 500));
+        expect(find.byKey(NavShell.barreBasseKey), findsOneWidget);
+        expect(
+          tester
+              .widget<AnimatedOpacity>(
+                find.ancestor(
+                  of: find.byKey(CommandesMasquables.commandesKey),
+                  matching: find.byType(AnimatedOpacity),
+                ),
+              )
+              .opacity,
+          1,
+        );
+        // Masquees de nouveau, le chevron de l'en-tete reste la ; la sortie
+        // rend la barre.
+        await tester.pump(CommandesMasquables.delaiParDefaut);
+        await tester.pump(const Duration(seconds: 1));
+        expect(find.byKey(NavShell.barreBasseKey), findsNothing);
+        await tester.tap(find.byTooltip(t.accessibilite.coran.retour));
+        await poser(tester);
+        expect(find.byKey(_principale), findsOneWidget);
+        expect(find.byKey(NavShell.barreBasseKey), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+    }
   }
 
   // Revue MA-7 (1) et (2) : commandes de page flechees, jamais coupees en

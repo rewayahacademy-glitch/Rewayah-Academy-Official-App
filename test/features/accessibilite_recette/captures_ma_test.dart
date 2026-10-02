@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/accessibilite/commandes_masquables.dart';
 import 'package:rewayah_academy/core/coran/service_coran.dart'
     show PositionLecture;
 import 'package:rewayah_academy/core/domain/enums.dart';
@@ -458,6 +459,21 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
       debugPrint('PNG ${await capturer(tester, fichier)}');
+      // Finition MA-CMD-1 : commandes masquees, la barre du bas s'efface
+      // avec elles ; la part de l'ecran laissee au Coran est relevee.
+      await tester.pump(CommandesMasquables.delaiParDefaut);
+      await tester.pump(const Duration(seconds: 1));
+      final double ecranHauteur =
+          tester.view.physicalSize.height / tester.view.devicePixelRatio;
+      final double coran = tester
+          .getSize(find.byType(CommandesMasquables))
+          .height;
+      debugPrint(
+        'CORAN $fichier masque : ${coran.toStringAsFixed(0)} / '
+        '${ecranHauteur.toStringAsFixed(0)} = '
+        '${(coran / ecranHauteur * 100).toStringAsFixed(1)} %',
+      );
+      debugPrint('PNG ${await capturer(tester, '${fichier}_masque')}');
     }
 
     for (final (String l, Size taille) in _ecransReels) {

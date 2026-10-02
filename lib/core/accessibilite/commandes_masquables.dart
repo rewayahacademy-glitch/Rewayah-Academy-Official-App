@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import '../mouvement/mouvement.dart';
+import 'effacement_barre_basse.dart';
 
 /// MA-CMD-1 (02/10/2026, commentaires du directeur sur la planche MA) : en
 /// Mode Accessibilite, les commandes de la salle et du lecteur du Coran sont
@@ -16,13 +18,22 @@ import '../mouvement/mouvement.dart';
 /// (`MediaQuery.accessibleNavigation`) ou l'acces clavier
 /// (`FocusHighlightMode.traditional`) est actif : aucun geste cache pour
 /// Quitter.
+///
+/// Avec [effacerBarreBasse] (lecteur du Coran, finition de MA-CMD-1), la
+/// barre du bas de `NavShell` s'efface et revient avec elles.
 class CommandesMasquables extends StatefulWidget {
   const CommandesMasquables({
     required this.contenu,
     required this.commandes,
     this.delai = delaiParDefaut,
+    this.effacerBarreBasse = false,
     super.key,
   });
+
+  /// Vrai : la barre du bas de `NavShell` suit les commandes (effacee quand
+  /// elles se masquent, revenue a la meme touche, toujours visible avec
+  /// lecteur d'ecran ou clavier).
+  final bool effacerBarreBasse;
 
   /// Le contenu qui garde l'ecran.
   final Widget contenu;
@@ -47,6 +58,12 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
   bool _visibles = true;
   Timer? _minuteur;
 
+  /// Le controleur de la barre du bas, s'il est pilote.
+  ControleurBarreBasse? _barre;
+
+  /// Le dernier etat signale a la barre (evite les signaux repetes).
+  bool _barreEffacee = false;
+
   @override
   void initState() {
     super.initState();
@@ -55,10 +72,52 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final ControleurBarreBasse? barre = widget.effacerBarreBasse
+        ? EffacementBarreBasse.de(context)
+        : null;
+    if (!identical(barre, _barre)) {
+      _signalerDiffere(_barre, effacee: false);
+      _barre = barre;
+      _barreEffacee = false;
+    }
+    // Lecteur d'ecran active pendant que tout est masque : tout revient.
+    if (!_visibles && _toujoursVisibles(context)) {
+      _visibles = true;
+      _synchroniserBarre(differe: true);
+    }
+  }
+
+  @override
   void dispose() {
     _minuteur?.cancel();
     FocusManager.instance.removeHighlightModeListener(_surModeFocus);
+    // La barre revient quand le lecteur se ferme ; differe : l'arbre est
+    // verrouille pendant la fermeture.
+    _signalerDiffere(_barre, effacee: false);
     super.dispose();
+  }
+
+  void _signalerDiffere(ControleurBarreBasse? barre, {required bool effacee}) {
+    if (barre == null) return;
+    SchedulerBinding.instance.addPostFrameCallback(
+      (Duration _) => barre.signaler(effacee: effacee),
+    );
+  }
+
+  /// Aligne la barre du bas sur les commandes.
+  void _synchroniserBarre({bool differe = false}) {
+    final ControleurBarreBasse? barre = _barre;
+    if (barre == null) return;
+    final bool effacee = !_visibles;
+    if (effacee == _barreEffacee) return;
+    _barreEffacee = effacee;
+    if (differe) {
+      _signalerDiffere(barre, effacee: effacee);
+    } else {
+      barre.signaler(effacee: effacee);
+    }
   }
 
   bool get _clavier =>
@@ -76,11 +135,13 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
     _minuteur = Timer(widget.delai, () {
       if (!mounted || _toujoursVisibles(context)) return;
       setState(() => _visibles = false);
+      _synchroniserBarre();
     });
   }
 
   void _montrer() {
     if (!_visibles) setState(() => _visibles = true);
+    _synchroniserBarre();
     _armer();
   }
 
