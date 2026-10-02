@@ -8,7 +8,7 @@ dans `docs/archive/2026-09-pre-remise-a-plat/design/` (référence, pas une règ
 
 Les composants partagés (`Pressable`, `BentoTile`, `AvatarTile`, `AudioLabel`,
 `PermanentNotice`, `PinPad`, `EmptyState`, `OfflineBanner`, `ChoiceCardGroup`,
-`ActionPrincipale`) sont les seuls points d'entrée de leur fonction : on les améliore, on
+`ActionPrincipale`, `PastilleEtatSeance`) sont les seuls points d'entrée de leur fonction : on les améliore, on
 n'en recrée pas un qui ferait la même chose.
 
 ## 🧊 Règles gelées du directeur, DESIGN-GOV-2026-09-26 (obligatoires avant tout nouveau lot visuel)
@@ -63,6 +63,7 @@ Règles équivalentes, déduites des remarques du directeur :
 - **Aucun élément ne recouvre un contenu à lire** (bouton flottant, bandeau, pastille). Test : `verifierSansChevauchement`, à 320 px et en texte ×2.
 - **Hiérarchie de titres stricte** : un titre d'écran, des titres de section, jamais deux niveaux au même rang ni un saut de niveau.
 - **Un état ne se signale jamais par la couleur seule** (en direct, annulée, actif / inactif) : texte ou icône en plus de la couleur.
+- **« En direct » et « Annulée » ne se posent qu'avec `PastilleEtatSeance`** (ON-AIR-1, ANNUL-VIS-1), jamais avec une `StatusPill` ou un point posé à la main, tous rôles. « En direct » : point qui bat doucement (`AppMouvement.pulsationDirect`, 1,5 s, 3 battements puis point fixe, WCAG 2.2.2 ; fixe d'emblée si « réduire les animations »). « Annulée » : pastille `washAlert` et icône d'annulation, heure barrée (`TexteHeureSeance`), carte atténuée par `surfaceCarteSeance` (jamais une opacité), pourquoi et suite sur une ligne (`LigneRaisonSeance`). Contrôle : `etat-seance-pastille`, test `test/core/widgets/pastille_etat_seance_test.dart` (contraste mesuré, 320 px, texte ×2).
 - **Une alerte urgente va toujours en tête** de l'écran, avant tout autre bloc.
 - **Aucun libellé ambigu** : il dit « qui » et « quoi » (« Cahier de séance de Yasmine », pas « Cahier » ; « Déclarer l'absence de… », pas « Déclarer une absence »). Contrôle : `libelle-ambigu`.
 - **Un client ne voit jamais un mot technique ou interne** : « admin » (on dit la direction), « foyer » chez la direction. Contrôle : `mot-interne`.

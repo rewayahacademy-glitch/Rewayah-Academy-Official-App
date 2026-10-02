@@ -117,6 +117,7 @@ void main(List<String> arguments) {
     'libelle-ambigu',
     'mot-interne',
     'erreur-sans-action',
+    'etat-seance-pastille',
   };
   final String? filtre = arguments
       .where((String a) => a.startsWith('--regle='))
@@ -167,6 +168,9 @@ void main(List<String> arguments) {
   }
   if (regles.contains('bouton-recompose')) {
     violations.addAll(_boutonsRecomposes());
+  }
+  if (regles.contains('etat-seance-pastille')) {
+    violations.addAll(_pastillesDEtatPosees());
   }
   if (regles.contains('libelle-ambigu')) {
     for (final MapEntry<String, String> e in fr.entries) {
@@ -392,6 +396,53 @@ int _appelParent(String t, int index) {
     }
   }
   return -1;
+}
+
+/// Les mots d'etat de seance que seule `PastilleEtatSeance` peut poser :
+/// « En direct » et « Annulee » (ON-AIR-1, ANNUL-VIS-1).
+final RegExp _motEtatSeance = RegExp(
+  r'etat\.enDirect|LibellesGroupe\.enDirect|visite\.enDirect|\bv\.enDirect|'
+  r'etat\.annule\b|etat\.seanceAnnulee|pastilleAnnulee|barre\.titre',
+);
+
+/// ON-AIR-1 et ANNUL-VIS-1 : une `StatusPill` qui porte le mot « En direct »
+/// ou « Annulee » est un composant d'etat de seance recompose a la main. Le
+/// seul composant autorise est `PastilleEtatSeance` (lib/core/widgets).
+List<Violation> _pastillesDEtatPosees() {
+  final List<Violation> v = <Violation>[];
+  final RegExp debut = RegExp(r'(?<![\w.])StatusPill\s*\(');
+  final Iterable<File> sources =
+      <Directory>[Directory('lib/features'), Directory('lib/core/widgets')]
+          .expand((Directory d) => d.listSync(recursive: true))
+          .whereType<File>()
+          .where(
+            (File f) =>
+                f.path.endsWith('.dart') &&
+                !f.path.endsWith('.g.dart') &&
+                !f.path.contains('_dev') &&
+                !f.path.endsWith('pastille_etat_seance.dart'),
+          );
+  for (final File f in sources) {
+    final String t = _sansCommentaires(f);
+    for (final RegExpMatch m in debut.allMatches(t)) {
+      final int ferme = _fermante(t, m.end - 1);
+      if (ferme < 0) {
+        continue;
+      }
+      final String appel = t.substring(m.start, ferme + 1);
+      if (_motEtatSeance.hasMatch(appel)) {
+        v.add(
+          Violation(
+            f.path,
+            _ligneDe(t, m.start),
+            'etat-seance-pastille',
+            appel.replaceAll(RegExp(r'\s+'), ' '),
+          ),
+        );
+      }
+    }
+  }
+  return v;
 }
 
 /// K-55 : deux cartes du core consecutives, sans rien entre elles (ni
