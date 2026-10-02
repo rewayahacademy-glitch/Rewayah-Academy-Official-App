@@ -34,13 +34,12 @@ import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
-import '../../core/theme/app_elevation.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
-import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
+import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/choice_card_group.dart';
@@ -375,15 +374,12 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
   Widget build(BuildContext context) {
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     if (_partie) {
+      // Le titre est celui de l'ecran resultat (M4) : la coquille n'en porte
+      // pas, pour qu'il ne soit pas dit deux fois.
       return PageShell(
-        titre: t.adulte.invitation.envoyeeTitre,
-        // Le contenu part du bord du titre de la page (1440 compris).
-        child: _Colonne(
-          auBordDeDebut: true,
-          child: _Resultat(
-            courriel: _courriel.text.trim(),
-            onRevenir: widget.onTerminee,
-          ),
+        child: _Resultat(
+          courriel: _courriel.text.trim(),
+          onRevenir: widget.onTerminee,
         ),
       );
     }
@@ -733,7 +729,9 @@ class _InvitationEnvoyeePageState extends ConsumerState<InvitationEnvoyeePage> {
   }
 }
 
-/// Le resultat de l'envoi : ce que la reponse dit, et seulement cela (E7).
+/// Le resultat de l'envoi : ce que la reponse dit, et seulement cela (E7),
+/// dans la grammaire partagee `EcranResultat` (M4), comme la sortie (EA-8) :
+/// aucune coche, aucun « succes », le ton neutre.
 class _Resultat extends StatelessWidget {
   const _Resultat({required this.courriel, required this.onRevenir});
 
@@ -741,31 +739,24 @@ class _Resultat extends StatelessWidget {
   final VoidCallback onRevenir;
 
   @override
-  Widget build(BuildContext context) => Column(
+  Widget build(BuildContext context) => KeyedSubtree(
     key: InviterConjointPage.envoyeeKey,
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: <Widget>[
-      // La phrase du resultat : libelle provisoire, lexique D4.
-      _FocusALApparition(
-        key: InviterConjointPage.focusResultatKey,
-        child: Semantics(
-          liveRegion: true,
-          child: _Note(
-            texte: t.adulte.invitation.envoyeePhrase(courriel: courriel),
-            attenuee: true,
-          ),
+    child: _FocusALApparition(
+      key: InviterConjointPage.focusResultatKey,
+      child: Semantics(
+        liveRegion: true,
+        // La phrase du resultat : libelle provisoire, lexique D4.
+        child: EcranResultat(
+          icone: AppIcons.foyer,
+          ton: TonEtat.neutre,
+          titre: t.adulte.invitation.envoyeeTitre,
+          phrase: t.adulte.invitation.envoyeePhrase(courriel: courriel),
+          libelleAction: t.adulte.invitation.revenirMaFamille,
+          onAction: onRevenir,
+          cleAction: InviterConjointPage.revenirKey,
         ),
       ),
-      Ecart.vLg,
-      _Actions(
-        principale: ActionPrincipale(
-          key: InviterConjointPage.revenirKey,
-          libelle: t.adulte.invitation.revenirMaFamille,
-          onPress: onRevenir,
-          pleineLargeur: false,
-        ),
-      ),
-    ],
+    ),
   );
 }
 
@@ -838,40 +829,35 @@ class _Note extends StatelessWidget {
   }
 }
 
-/// Un groupe de lignes cle-valeur sur une seule surface (K-42 point 4).
+/// Un groupe de lignes sur une seule surface (K-42 point 4) : la surface est
+/// `AppCard`, seul point d'entree d'une surface (M4) ; `_Carte` ne fait que
+/// poser les lignes en colonne, sans decoration propre.
 class _Carte extends StatelessWidget {
   const _Carte({required this.lignes, super.key});
 
   final List<Widget> lignes;
 
   @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    return DecoratedBox(
-      decoration: AppElevation.avecFilet(
-        surface: palette.surfaceRaised,
-        filet: palette.contourCarte,
-        ombre: palette.ombre,
-        arrondi: AppRadius.arrondiMd,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.sm,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: lignes,
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => AppCard(
+    marge: AppSpacing.lg,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: lignes,
+    ),
+  );
 }
 
 /// Les actions d'une etape, dans le flux, 16 sous leur objet (contrat A) :
 /// groupees au bord de fin, la sortie avant la poursuite (contrat B), comme
 /// `EtatSysteme(actionsContratB: true)`.
+///
+/// HU-1 : la rangee contrat B d'`EtatSysteme` est privee (`_Bloc`) et ne se
+/// rend que sous un titre et une phrase d'etat, avec des cles et des niveaux
+/// fixes (secondaire, tertiaire) : elle ne peut pas porter les boutons d'une
+/// etape (cles publiques, principal, destructif). Aucun composant partage
+/// n'expose cette rangee seule ; a extraire en HU-1, sans la recopier ici
+/// davantage.
 class _Actions extends StatelessWidget {
   const _Actions({required this.principale, this.secondaire});
 

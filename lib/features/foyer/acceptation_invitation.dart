@@ -540,51 +540,38 @@ class _PageEtatInvitation extends StatelessWidget {
       InvitationRefuseeParVous(:final DateTime? enregistreeLe) => enregistreeLe,
       _ => null,
     };
-    final Widget note = Semantics(
-      liveRegion: apresReponse,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          _Note(texte: phrase, attenuee: true),
-          if (enregistreeLe != null) ...<Widget>[
-            Ecart.vXs,
-            _Note(
-              key: InvitationRecuePage.recuKey,
-              texte: a.recu(date: dateLongue(enregistreeLe)),
-              attenuee: true,
-            ),
-          ],
-        ],
-      ),
-    );
-    return PageShell(
-      titre: titre,
-      onRetour: onRetour,
-      child: _Colonne(
-        auBordDeDebut: true,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            if (apresReponse)
-              _FocusALApparition(
-                key: InvitationRecuePage.focusResultatKey,
-                child: note,
-              )
-            else
-              note,
-            Ecart.vLg,
-            _Actions(
-              // Libelle provisoire, lexique D4.
-              principale: ActionPrincipale(
-                key: InvitationRecuePage.monEspaceKey,
-                libelle: a.monEspace,
-                onPress: () => onMonEspace(etat),
-                pleineLargeur: false,
-              ),
-            ),
-          ],
+    // La grammaire partagee `EcranResultat` (M4), comme la sortie (EA-8) :
+    // ton neutre, aucune coche. Le recu date est son encart ; la cle
+    // `recuKey` marque le resultat qui le porte (l'encart n'a pas de cle).
+    final Widget resultat = KeyedSubtree(
+      key: enregistreeLe == null ? null : InvitationRecuePage.recuKey,
+      child: Semantics(
+        liveRegion: apresReponse,
+        child: EcranResultat(
+          icone: AppIcons.foyer,
+          ton: TonEtat.neutre,
+          titre: titre,
+          phrase: phrase,
+          encart: enregistreeLe == null
+              ? null
+              : a.recu(date: dateLongue(enregistreeLe)),
+          // Libelle provisoire, lexique D4.
+          libelleAction: a.monEspace,
+          onAction: () => onMonEspace(etat),
+          cleAction: InvitationRecuePage.monEspaceKey,
         ),
       ),
+    );
+    // Le titre est celui de l'ecran resultat : la coquille ne garde que le
+    // disque retour, pour qu'il ne soit pas dit deux fois.
+    return PageShell(
+      onRetour: onRetour,
+      child: apresReponse
+          ? _FocusALApparition(
+              key: InvitationRecuePage.focusResultatKey,
+              child: resultat,
+            )
+          : resultat,
     );
   }
 }

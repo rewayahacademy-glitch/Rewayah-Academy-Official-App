@@ -400,7 +400,8 @@ class _RepriseFoyerPageState extends ConsumerState<RepriseFoyerPage> {
 }
 
 /// Une liste de lecture groupee sur une seule surface (K-42 point 4), sous
-/// son titre : `_Carte` de l'invitation, des lignes de texte sans action.
+/// son titre : `_Carte` de l'invitation (une `AppCard`, M4), des lignes de
+/// texte sans action.
 /// `GroupeReglages` exige une icone par rubrique : ces lignes n'en sont pas.
 class _ListeGroupee extends StatelessWidget {
   const _ListeGroupee({required this.titre, required this.lignes});

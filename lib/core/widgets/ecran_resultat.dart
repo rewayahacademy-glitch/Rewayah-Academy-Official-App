@@ -43,7 +43,12 @@ class EcranResultat extends StatelessWidget {
     this.libelleSecondaire,
     this.onSecondaire,
     this.focusAction = false,
+    this.cleAction,
   });
+
+  /// La cle de l'action dominante, pour qu'un ecran metier garde la cle
+  /// publique de son bouton (tests, captures). Facultative.
+  final Key? cleAction;
 
   /// Vrai pour poser le focus clavier sur l'action dominante a l'ouverture
   /// (ecran qui remplace la page sans geste, ex. acces retire en salle).
@@ -165,6 +170,7 @@ class EcranResultat extends StatelessWidget {
             if (avecAction) ...<Widget>[
               Ecart.vXxl,
               ActionPrincipale(
+                key: cleAction,
                 libelle: libelleAction!,
                 onPress: onAction,
                 enCours: actionEnCours,
