@@ -25,8 +25,10 @@ import 'libelles_bibliotheque.dart';
 /// [position] est non nulle quand la recherche portait un repere -- « 2:255 »,
 /// « 40 » -- et que la ressource l'accepte : on ouvre alors directement au bon
 /// endroit plutot qu'au debut.
-typedef ChoixRessource =
-    void Function(LibraryResource ressource, ContentPosition? position);
+typedef ChoixRessource = void Function(
+  LibraryResource ressource,
+  ContentPosition? position,
+);
 
 /// La Bibliotheque, **la seule**.
 ///
@@ -156,40 +158,40 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
           ),
         ),
         Ecart.vMd,
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: <Widget>[
-              for (final TypeRessource type in TypeRessource.values) ...<Widget>[
-                FilterPill(
-                  libelle: libelleTypeRessource(type),
-                  retenue: _filtre.types?.contains(type) ?? false,
-                  onPress: () => _basculerType(type),
-                ),
-                Ecart.hSm,
-              ],
-              MenuFiltre<EtatOffline>(
-                libelle: t.tc.bibliotheque.filtre.disponibilite,
-                valeur: _filtre.etatOffline,
-                entrees: <EntreeFiltre<EtatOffline>>[
-                  EntreeFiltre<EtatOffline>(
-                    valeur: null,
-                    libelle: t.tc.bibliotheque.effacerRecherche,
-                  ),
-                  for (final EtatOffline e in EtatOffline.values)
-                    EntreeFiltre<EtatOffline>(
-                      valeur: e,
-                      libelle: libelleOffline(e),
-                    ),
-                ],
-                onChoix: (EtatOffline? valeur) => setState(() {
-                  _filtre = valeur == null
-                      ? _filtre.avec(relacher: const <String>{'etatOffline'})
-                      : _filtre.avec(etatOffline: valeur);
-                }),
+        // Une rangee qui defile cache des filtres hors de la vue (ONGLETS-1) :
+        // les pastilles passent a la ligne, tout est visible.
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: <Widget>[
+            for (final TypeRessource type in TypeRessource.values)
+              FilterPill(
+                libelle: libelleTypeRessource(type),
+                retenue: _filtre.types?.contains(type) ?? false,
+                onPress: () => _basculerType(type),
               ),
-            ],
-          ),
+            MenuFiltre<EtatOffline>(
+              libelle: t.tc.bibliotheque.filtre.disponibilite,
+              valeur: _filtre.etatOffline,
+              entrees: <EntreeFiltre<EtatOffline>>[
+                EntreeFiltre<EtatOffline>(
+                  valeur: null,
+                  libelle: t.tc.bibliotheque.effacerRecherche,
+                ),
+                for (final EtatOffline e in EtatOffline.values)
+                  EntreeFiltre<EtatOffline>(
+                    valeur: e,
+                    libelle: libelleOffline(e),
+                  ),
+              ],
+              onChoix: (EtatOffline? valeur) => setState(() {
+                _filtre = valeur == null
+                    ? _filtre.avec(relacher: const <String>{'etatOffline'})
+                    : _filtre.avec(etatOffline: valeur);
+              }),
+            ),
+          ],
         ),
         Ecart.vLg,
       ],

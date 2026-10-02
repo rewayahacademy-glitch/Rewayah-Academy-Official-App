@@ -22,6 +22,7 @@ import 'package:rewayah_academy/features/admin_observations/annuaire_observation
 import '../../fixtures/tuteur/faux_observation.dart';
 import '../../router/support_routeur.dart';
 import '../../support/harnais.dart';
+import '../../support/selecteur_section.dart';
 
 /// Une ligne de visite a une date fixe (heure locale).
 Map<String, dynamic> visiteAdmin({
@@ -245,6 +246,6 @@ Future<GoRouter> monterAdmin(
 
 /// Touche l'onglet [libelle] de la sous-navigation de Securite et audit.
 Future<void> toucherOnglet(WidgetTester tester, String libelle) async {
-  await tester.tap(find.widgetWithText(Tab, libelle));
+  await choisirSection(tester, libelle);
   await stabiliser(tester);
 }

@@ -119,6 +119,7 @@ void main(List<String> arguments) {
     'selecteur-theme-recompose',
     'avatar-recompose',
     'avatar-taille',
+    'onglets-defilants',
   };
   final String? filtre = arguments
       .where((String a) => a.startsWith('--regle='))
@@ -166,6 +167,9 @@ void main(List<String> arguments) {
   }
   if (regles.contains('cartes-collees')) {
     violations.addAll(_cartesCollees());
+  }
+  if (regles.contains('onglets-defilants')) {
+    violations.addAll(_ongletsDefilants());
   }
   if (regles.contains('bouton-recompose')) {
     violations.addAll(_boutonsRecomposes());
@@ -349,6 +353,68 @@ Iterable<File> _sourcesFeatures() =>
         .where((File f) => f.path.endsWith('.dart'))
         .where((File f) => !f.path.endsWith('.g.dart'))
         .where((File f) => !f.path.contains('_dev'));
+
+/// Tout le code de l'application, hors galerie de developpement.
+Iterable<File> _sourcesLib() =>
+    Directory('lib')
+        .listSync(recursive: true)
+        .whereType<File>()
+        .where((File f) => f.path.endsWith('.dart'))
+        .where((File f) => !f.path.endsWith('.g.dart'))
+        .where((File f) => !f.path.contains('_dev'));
+
+/// Ce qui fait ressembler une rangee de sections a des diapositives : une
+/// barre d'onglets qui defile, ou une rangee horizontale qui defile et porte
+/// des pastilles, des puces ou des onglets (ONGLETS-1, revue du 01/10 :
+/// `SelecteurSection` est le seul composant de changement de section).
+final RegExp _barreOnglets = RegExp(
+  r'\bTabBar(?:\.secondary)?\s*\(|isScrollable\s*:\s*true',
+);
+
+/// Un defilement horizontal.
+final RegExp _defilementHorizontal = RegExp(
+  r'scrollDirection\s*:\s*(?:vertical\s*\?[^:]+:\s*)?Axis\.horizontal',
+);
+
+/// Ce qu'une rangee de sections porte.
+final RegExp _contenuSections = RegExp(
+  r'\b(?:FilterPill|ChoiceChip|FilterChip|SegmentedButton|ControleSegmente|'
+  r'Tab)\s*[(<]',
+);
+
+List<Violation> _ongletsDefilants() {
+  final List<Violation> v = <Violation>[];
+  for (final File f in _sourcesLib()) {
+    final String texte = _sansCommentaires(f);
+    for (final RegExpMatch m in _barreOnglets.allMatches(texte)) {
+      v.add(
+        Violation(
+          f.path,
+          _ligneDe(texte, m.start),
+          'onglets-defilants',
+          m.group(0)!,
+        ),
+      );
+    }
+    for (final RegExpMatch m in _defilementHorizontal.allMatches(texte)) {
+      final String fenetre = texte.substring(
+        m.end,
+        (m.end + 1500).clamp(0, texte.length),
+      );
+      if (_contenuSections.hasMatch(fenetre)) {
+        v.add(
+          Violation(
+            f.path,
+            _ligneDe(texte, m.start),
+            'onglets-defilants',
+            'rangee horizontale qui defile avec pastilles ou onglets',
+          ),
+        );
+      }
+    }
+  }
+  return v;
+}
 
 String _sansCommentaires(File f) => f
     .readAsLinesSync()

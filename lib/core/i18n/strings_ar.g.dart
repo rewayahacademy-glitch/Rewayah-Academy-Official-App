@@ -39,12 +39,23 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	TraductionsAr $copyWith({TranslationMetadata<AppLocale, Traductions>? meta}) => TraductionsAr(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Traductions$commun$ar commun = _Traductions$commun$ar._(_root);
 	@override late final _Traductions$classe$ar classe = _Traductions$classe$ar._(_root);
 	@override late final _Traductions$salle$ar salle = _Traductions$salle$ar._(_root);
 	@override late final _Traductions$eleve$ar eleve = _Traductions$eleve$ar._(_root);
 	@override late final _Traductions$enseignant$ar enseignant = _Traductions$enseignant$ar._(_root);
 	@override late final _Traductions$compte$ar compte = _Traductions$compte$ar._(_root);
 	@override late final _Traductions$tc$ar tc = _Traductions$tc$ar._(_root);
+}
+
+// Path: commun
+class _Traductions$commun$ar extends Traductions$commun$fr {
+	_Traductions$commun$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$commun$sections$ar sections = _Traductions$commun$sections$ar._(_root);
 }
 
 // Path: classe
@@ -114,7 +125,18 @@ class _Traductions$tc$ar extends Traductions$tc$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$tc$bibliotheque$ar bibliotheque = _Traductions$tc$bibliotheque$ar._(_root);
 	@override late final _Traductions$tc$groupe$ar groupe = _Traductions$tc$groupe$ar._(_root);
+}
+
+// Path: commun.sections
+class _Traductions$commun$sections$ar extends Traductions$commun$sections$fr {
+	_Traductions$commun$sections$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get page => 'أقسام الصفحة';
 }
 
 // Path: classe.entree
@@ -221,6 +243,16 @@ class _Traductions$enseignant$ficheGroupe$ar extends Traductions$enseignant$fich
 	@override String get chargementClasse => 'جارٍ تحميل الفصل.';
 }
 
+// Path: tc.bibliotheque
+class _Traductions$tc$bibliotheque$ar extends Traductions$tc$bibliotheque$fr {
+	_Traductions$tc$bibliotheque$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$tc$bibliotheque$sections$ar sections = _Traductions$tc$bibliotheque$sections$ar._(_root);
+}
+
 // Path: tc.groupe
 class _Traductions$tc$groupe$ar extends Traductions$tc$groupe$fr {
 	_Traductions$tc$groupe$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -243,6 +275,16 @@ class _Traductions$classe$entree$annonce$ar extends Traductions$classe$entree$an
 	@override String get attente => 'أنت في القاعة';
 }
 
+// Path: tc.bibliotheque.sections
+class _Traductions$tc$bibliotheque$sections$ar extends Traductions$tc$bibliotheque$sections$fr {
+	_Traductions$tc$bibliotheque$sections$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get groupe => 'المواد المعروضة';
+}
+
 // Path: tc.groupe.enseignant
 class _Traductions$tc$groupe$enseignant$ar extends Traductions$tc$groupe$enseignant$fr {
 	_Traductions$tc$groupe$enseignant$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -262,6 +304,7 @@ class _Traductions$tc$groupe$enseignant$ar extends Traductions$tc$groupe$enseign
 extension on TraductionsAr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'commun.sections.page' => 'أقسام الصفحة',
 			'classe.entree.coursDans' => ({required Object duree}) => 'الدرس بعد ${duree}',
 			'classe.entree.coursImminent' => 'الدرس بعد أقل من دقيقة',
 			'classe.entree.rejoindre' => 'انضمام',
@@ -343,6 +386,7 @@ extension on TraductionsAr {
 			'compte.themeClairDetail' => 'خلفية فاتحة مهما كان إعداد جهازك',
 			'compte.themeSombre' => 'داكن',
 			'compte.themeSombreDetail' => 'خلفية داكنة مهما كان إعداد جهازك',
+			'tc.bibliotheque.sections.groupe' => 'المواد المعروضة',
 			'tc.groupe.enseignant.sayyid' => 'سيد',
 			'tc.groupe.enseignant.sayyida' => 'سيدة',
 			_ => null,

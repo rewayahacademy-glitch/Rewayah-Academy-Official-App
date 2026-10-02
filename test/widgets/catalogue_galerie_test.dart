@@ -105,6 +105,9 @@ const List<String> composantsDuCatalogue = <String>[
   'MenuFiltre',
   'SelecteurNiveauProgramme',
   'SousNavigationDomaine',
+  // ONGLETS-1 (revue du directeur, 01/10/2026) : le selecteur de section
+  // unique, qui remplace les rangees d'onglets et de pilules qui defilent.
+  'SelecteurSection',
   // Les composants partages du chantier Tuteur V1 (phase 0c1 du 24/09/2026,
   // manifeste visuel section 3.4 et contrat K5), sans cle i18n nouvelle.
   'EcranResultat',

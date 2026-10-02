@@ -17,6 +17,7 @@ import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 import 'package:rewayah_academy/features/tc_dock/teaching_dock.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/selecteur_section.dart';
 
 Future<void> _monter(WidgetTester tester, Size taille) async {
   fixerVueCapture(tester, taille, 1);
@@ -125,21 +126,23 @@ void main() {
         expect(tester.takeException(), isNull);
         expect(find.byType(SelecteurRessources), findsOneWidget);
         expect(find.text(t.tc.bibliotheque.sections.recents), findsOneWidget);
-        expect(find.text(LibellesSalleB.cetteClasse), findsOneWidget);
-        expect(
-          find.text(t.tc.bibliotheque.sections.tousLesSupports),
-          findsOneWidget,
-        );
+        // Les trois sections sont un seul selecteur (segmente, ou menu quand
+        // les libelles ne tiennent pas) : jamais une rangee qui defile. Les
+        // deux autres sont atteintes par `choisirSection` plus bas.
+        expect(selecteurSection, findsOneWidget);
         // Recents : les supports ouverts recemment.
         expect(find.text('Fiche de mémorisation'), findsOneWidget);
         expect(find.text('Bibliothèque An-Nour'), findsNothing);
         // Cette Classe.
-        await tester.tap(_cle('onglet-cetteClasse'));
+        await choisirSection(tester, LibellesSalleB.cetteClasse);
         await tester.pump();
         expect(find.text('Bibliothèque An-Nour'), findsOneWidget);
         expect(find.text('Fiche de mémorisation'), findsNothing);
         // Tous les supports.
-        await tester.tap(_cle('onglet-tous'));
+        await choisirSection(
+          tester,
+          t.tc.bibliotheque.sections.tousLesSupports,
+        );
         await tester.pump();
         expect(find.text('Bibliothèque An-Nour'), findsOneWidget);
         expect(find.text('Fiche de mémorisation'), findsOneWidget);

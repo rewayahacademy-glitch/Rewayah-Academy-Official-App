@@ -29,6 +29,7 @@ import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 import 'package:rewayah_academy/features/demo/services_admin_demo.dart';
 
 import '../../support/harnais.dart';
+import '../../support/selecteur_section.dart';
 
 Future<void> _stabiliser(WidgetTester tester) async {
   for (int i = 0; i < 8; i++) {
@@ -136,10 +137,8 @@ Future<void> _domaine(WidgetTester tester, AdminDomaine domaine) async {
 
 Future<void> _ouvrirReglage(WidgetTester tester) async {
   await _domaine(tester, AdminDomaine.configuration);
-  // Onglet de fin d'une TabBar defilante : l'amener a l'ecran d'abord.
-  await tester.ensureVisible(find.text(t.admin.politiqueRevueKyc.titre));
-  await _stabiliser(tester);
-  await tester.tap(find.text(t.admin.politiqueRevueKyc.titre));
+  // La section de fin : segment ou entree du menu selon la largeur.
+  await choisirSection(tester, t.admin.politiqueRevueKyc.titre);
   await _stabiliser(tester);
 }
 

@@ -21,6 +21,7 @@ import 'package:rewayah_academy/features/suivi_foyer/composants_historique.dart'
 
 import '../../fixtures/tuteur/faux_observation.dart';
 import '../../router/support_routeur.dart';
+import '../../support/selecteur_section.dart';
 import 'support_admin_observations.dart';
 
 Finder get _champ => find.descendant(
@@ -55,7 +56,7 @@ void main() {
           annuaire: annuaire,
         );
         expect(find.byType(JournalPage), findsOneWidget);
-        expect(find.widgetWithText(Tab, t.admin.journal.titre), findsOneWidget);
+        expect(sectionVisible(t.admin.journal.titre), findsOneWidget);
 
         await toucherOnglet(tester, t.admin.observations.titre);
 

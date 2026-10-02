@@ -64,6 +64,7 @@ import '../../../core/widgets/rosace_verset.dart';
 import '../../../core/widgets/schedule_option.dart';
 import '../../../core/widgets/section_header.dart';
 import '../../../core/widgets/selecteur_niveau_programme.dart';
+import '../../../core/widgets/selecteur_section.dart';
 import '../../../core/widgets/selecteur_theme.dart';
 import '../../../core/widgets/setting_row.dart';
 import '../../../core/widgets/signal_row.dart';
@@ -1770,54 +1771,76 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
   EntreeGalerie(
     nom: 'SousNavigationDomaine',
     // Structure : c'est un chrome de page, ni un controle qu'on presse ni une
-    // zone de donnees. Le `TabBar` porte lui-meme ses etats d'interaction.
+    // zone de donnees. Il n'est plus une rangee d'onglets qui defile : il pose
+    // `SelecteurSection` (segmente, en ligne ou menu selon la place).
     famille: FamilleComposant.structure,
     etats: <EtatGalerie>[
-      // Mesure, pas supposition : le `TabBar` se rend sans ancetre `Material`,
-      // contrairement au `PopupMenuButton` des deux menus plus bas. Aucune
-      // enveloppe ici. `GoRouter` n'est appele que dans `onTap`, jamais dans
-      // `build` : une demo isolee ne le declenche pas, donc pas de routeur non
-      // plus.
+      // `_SousMaterial` : sur telephone, cinq onglets deviennent un menu, et
+      // le `PopupMenuButton` leve « No Material widget found. » sans ancetre
+      // `Material`. `GoRouter` n'est appele que dans `onChange`, jamais dans
+      // `build` : une demo isolee ne le declenche pas, donc pas de routeur.
       //
       // Les onglets sont les vrais, pris dans `admin_domaine.dart` : une
       // galerie qui inventerait ses libelles ne montrerait pas la vraie
-      // longueur des mots, et c'est justement ce qui fait deborder un
-      // `TabBar`.
-      //
-      // **Une cle par etat, et elle est necessaire** : le composant construit
-      // son `TabController` dans un `late final`, sans `didUpdateWidget`.
-      // Comme la galerie rejoue ses etats l'un apres l'autre au meme endroit
-      // de l'arbre, Flutter reutilise le `State` et le controleur garde la
-      // longueur du precedent -- « Controller's length property (5) does not
-      // match the number of tabs (3) ». La cle force une instance neuve par
-      // etat, ce qui est de toute facon ce que la galerie veut dire. Le trou
-      // est reel mais reste theorique en production, ou chaque ecran monte le
-      // sien et ne change jamais sa liste d'onglets en place ; le combler
-      // demanderait un `didUpdateWidget`, hors du perimetre de ce lot.
+      // longueur des mots, et c'est justement ce qui decide de la bascule.
       EtatGalerie(
         'cinq onglets, le premier actif',
-        (BuildContext _) => SousNavigationDomaine(
-          key: const ValueKey<String>('sous-nav-premier'),
-          onglets: ongletsPedagogie(),
-          indexActif: 0,
+        (BuildContext _) => _SousMaterial(
+          child: SousNavigationDomaine(
+            onglets: ongletsPedagogie(),
+            indexActif: 0,
+          ),
         ),
       ),
-      // Le dernier actif : l'indicateur se pose hors du premier ecran, et le
-      // `TabBar` scrollable doit s'y porter tout seul.
+      // Le dernier actif : le menu (telephone) ou la piste (grand ecran) dit
+      // la section courante sans qu'il faille rien faire defiler.
       EtatGalerie(
         'cinq onglets, le dernier actif',
-        (BuildContext _) => SousNavigationDomaine(
-          key: const ValueKey<String>('sous-nav-dernier'),
-          onglets: ongletsPedagogie(),
-          indexActif: 4,
+        (BuildContext _) => _SousMaterial(
+          child: SousNavigationDomaine(
+            onglets: ongletsPedagogie(),
+            indexActif: 4,
+          ),
         ),
       ),
       EtatGalerie(
         'trois onglets',
-        (BuildContext _) => SousNavigationDomaine(
-          key: const ValueKey<String>('sous-nav-trois'),
-          onglets: ongletsConfiguration(),
-          indexActif: 1,
+        (BuildContext _) => _SousMaterial(
+          child: SousNavigationDomaine(
+            onglets: ongletsConfiguration(),
+            indexActif: 1,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'SelecteurSection',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      // Quatre sections courtes : controle segmente, tout visible.
+      EtatGalerie(
+        'quatre sections courtes',
+        (BuildContext _) => const _SousMaterial(
+          child: SelecteurSection<String>(
+            libelle: 'Sections de la page',
+            valeur: 'suivi',
+            sections: _sectionsCourtes,
+            onChange: _segmentIgnore,
+          ),
+        ),
+      ),
+      // Sept sections longues : la page est chargee, le menu prend le relais
+      // (jamais une rangee qui defile).
+      EtatGalerie(
+        'sept sections, la quatrieme choisie',
+        (BuildContext _) => const _SousMaterial(
+          child: SelecteurSection<String>(
+            libelle: 'Sections de la page',
+            valeur: 'bulletins',
+            sections: _sectionsLongues,
+            onChange: _segmentIgnore,
+          ),
         ),
       ),
     ],
@@ -2319,6 +2342,25 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
     ],
   ),
   ...entreesEtatsTuteur(),
+];
+
+/// Quatre sections courtes, pour le selecteur de section de la galerie.
+const List<Segment<String>> _sectionsCourtes = <Segment<String>>[
+  Segment<String>(valeur: 'suivi', libelle: 'Suivi'),
+  Segment<String>(valeur: 'notes', libelle: 'Notes'),
+  Segment<String>(valeur: 'bilan', libelle: 'Bilan'),
+  Segment<String>(valeur: 'plan', libelle: 'Plan'),
+];
+
+/// Sept sections, la limite haute d'une page : le menu prend le relais.
+const List<Segment<String>> _sectionsLongues = <Segment<String>>[
+  Segment<String>(valeur: 'accueil', libelle: 'Accueil'),
+  Segment<String>(valeur: 'presences', libelle: 'Présences'),
+  Segment<String>(valeur: 'cahiers', libelle: 'Cahiers de séance'),
+  Segment<String>(valeur: 'bulletins', libelle: 'Bulletins'),
+  Segment<String>(valeur: 'paiements', libelle: 'Paiements'),
+  Segment<String>(valeur: 'messages', libelle: 'Messages'),
+  Segment<String>(valeur: 'reglages', libelle: 'Réglages'),
 ];
 
 /// Les deux segments de l'Historique, pour la galerie.

@@ -28,6 +28,7 @@ import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
+import '../support/selecteur_section.dart';
 import 'outil_capture.dart';
 
 Future<void> _stabiliser(WidgetTester tester) async {
@@ -163,9 +164,7 @@ Future<void> _domaine(WidgetTester tester, AdminDomaine domaine) async {
 
 Future<void> _ouvrirReglage(WidgetTester tester) async {
   await _domaine(tester, AdminDomaine.configuration);
-  await tester.ensureVisible(find.text(t.admin.politiqueRevueKyc.titre));
-  await _stabiliser(tester);
-  await tester.tap(find.text(t.admin.politiqueRevueKyc.titre));
+  await choisirSection(tester, t.admin.politiqueRevueKyc.titre);
   await _stabiliser(tester);
 }
 

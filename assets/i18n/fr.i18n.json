@@ -124,6 +124,9 @@
         "décembre"
       ],
       "jourDate": "{jour} {numero} {mois}"
+    },
+    "sections": {
+      "page": "Sections de la page"
     }
   },
   "reseau": {
@@ -3579,6 +3582,7 @@
       "sections": {
         "continuer": "Continuer",
         "pourCeGroupe": "Pour cette Classe",
+        "groupe": "Supports à afficher",
         "recents": "Récents",
         "tousLesSupports": "Tous les supports",
         "resultats": "Résultats"

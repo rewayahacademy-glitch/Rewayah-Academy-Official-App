@@ -2,5 +2,7 @@
   "compte.themeContexte": "phrase de contexte K-58 ajoutee par la relecture, a valider par le directeur",
   "compte.themeClairDetail": "commentaire du directeur 01-02/10, etape THEME-SW-1",
   "compte.themeSombreDetail": "commentaire du directeur 01-02/10, etape THEME-SW-1",
-  "salle.cameraAllumee": "commentaire du directeur 01-02/10, etape ETATS-BTN-1 : mot d'etat sous l'icone de la bascule camera (Camera allumee / Camera eteinte)"
+  "salle.cameraAllumee": "commentaire du directeur 01-02/10, etape ETATS-BTN-1 : mot d'etat sous l'icone de la bascule camera (Camera allumee / Camera eteinte)",
+  "commun.sections.page": "commentaire du directeur 01-02/10, etape ONGLETS-1",
+  "tc.bibliotheque.sections.groupe": "commentaire du directeur 01-02/10, etape ONGLETS-1"
 }

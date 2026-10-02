@@ -129,6 +129,7 @@ class Traductions$commun$fr {
 	late final Traductions$commun$theme$fr theme = Traductions$commun$theme$fr.internal(_root);
 	late final Traductions$commun$demarrage$fr demarrage = Traductions$commun$demarrage$fr.internal(_root);
 	late final Traductions$commun$dates$fr dates = Traductions$commun$dates$fr.internal(_root);
+	late final Traductions$commun$sections$fr sections = Traductions$commun$sections$fr.internal(_root);
 }
 
 // Path: reseau
@@ -2530,6 +2531,18 @@ class Traductions$commun$dates$fr {
 
 	/// fr: '{jour} {numero} {mois}'
 	String jourDate({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}';
+}
+
+// Path: commun.sections
+class Traductions$commun$sections$fr {
+	Traductions$commun$sections$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sections de la page'
+	String get page => 'Sections de la page';
 }
 
 // Path: salle.preparation
@@ -11961,6 +11974,9 @@ class Traductions$tc$bibliotheque$sections$fr {
 	/// fr: 'Pour cette Classe'
 	String get pourCeGroupe => 'Pour cette Classe';
 
+	/// fr: 'Supports à afficher'
+	String get groupe => 'Supports à afficher';
+
 	/// fr: 'Récents'
 	String get recents => 'Récents';
 
@@ -14321,6 +14337,7 @@ extension on Traductions {
 			'commun.dates.mois.10' => 'novembre',
 			'commun.dates.mois.11' => 'décembre',
 			'commun.dates.jourDate' => ({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}',
+			'commun.sections.page' => 'Sections de la page',
 			'reseau.horsLigne' => 'Pas de réseau. Tout reste consultable, l\'envoi attendra.',
 			'reseau.enAttenteEnvoi' => 'Sera envoyé dès le retour du réseau',
 			'reseau.retabli' => 'Réseau rétabli',
@@ -14755,9 +14772,9 @@ extension on Traductions {
 			'accessibilite.demo.titre' => 'Démonstration du Mode Accessibilité',
 			'accessibilite.demo.mention' => 'Données fictives, aucun envoi.',
 			'accessibilite.demo.intro' => 'Choisissez un élève et un moment de la séance.',
-			'accessibilite.demo.eleveMineure' => 'Mariam, élève mineure',
 			_ => null,
 		} ?? switch (path) {
+			'accessibilite.demo.eleveMineure' => 'Mariam, élève mineure',
 			'accessibilite.demo.eleveAdulte' => 'Idriss, élève adulte',
 			'accessibilite.demo.etatAvant' => 'Avant la séance',
 			'accessibilite.demo.etatFenetre' => 'Juste avant la séance, l\'entrée est ouverte',
@@ -15269,9 +15286,9 @@ extension on Traductions {
 			'dossiers.revue.etats.chargement' => 'Chargement du dossier…',
 			'dossiers.revue.etats.horsLigne' => 'Vous êtes hors ligne. Aucune décision ne peut être envoyée.',
 			'dossiers.revue.etats.accesPerdu' => 'Vous n’avez plus accès à ce dossier.',
-			'dossiers.revue.etats.retourDossiers' => 'Retour aux dossiers',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.revue.etats.retourDossiers' => 'Retour aux dossiers',
 			'dossiers.revue.etats.verificationsIncompletes' => 'Terminez les vérifications requises.',
 			'dossiers.revue.etats.accordManquant' => 'Un accord requis manque à ce dossier.',
 			'dossiers.revue.etats.decisionIndisponible' => 'La décision est indisponible pour le moment.',
@@ -15783,9 +15800,9 @@ extension on Traductions {
 			'admin.journal.erreurSuite' => 'Les entrées plus anciennes n\'ont pas pu être lues.',
 			'admin.journal.chargerSuite' => 'Charger les entrées plus anciennes',
 			'admin.journal.fin' => 'Vous êtes remonté jusqu\'à la première entrée du journal.',
-			'admin.journal.evenements.observationEntree' => 'Visite d\'observation commencée',
 			_ => null,
 		} ?? switch (path) {
+			'admin.journal.evenements.observationEntree' => 'Visite d\'observation commencée',
 			'admin.journal.evenements.observationSortie' => 'Visite d\'observation terminée',
 			'admin.journal.evenements.observationPolitiqueGroupeModifiee' => 'Règles d\'observation de la classe modifiées',
 			'admin.observations.titre' => 'Observations',
@@ -16297,9 +16314,9 @@ extension on Traductions {
 			'historique.moisCourts.6' => 'juil.',
 			'historique.moisCourts.7' => 'août',
 			'historique.moisCourts.8' => 'sept.',
-			'historique.moisCourts.9' => 'oct.',
 			_ => null,
 		} ?? switch (path) {
+			'historique.moisCourts.9' => 'oct.',
 			'historique.moisCourts.10' => 'nov.',
 			'historique.moisCourts.11' => 'déc.',
 			'historique.dateCourte' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
@@ -16811,9 +16828,9 @@ extension on Traductions {
 			'enseignant.photo.horsLigne' => 'Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.',
 			'enseignant.journee.lancer' => 'Lancer le cours',
 			'enseignant.journee.preflight' => 'Vérifier avant le cours',
-			'enseignant.journee.titre' => 'Aujourd\'hui',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.journee.titre' => 'Aujourd\'hui',
 			'enseignant.journee.prochainCours' => 'Prochain cours',
 			'enseignant.journee.coursEnCours' => 'Séance en direct',
 			'enseignant.journee.minuteurHeures' => ({required Object heures, required Object minutes}) => 'Dans ${heures} h ${minutes}',
@@ -17310,6 +17327,7 @@ extension on Traductions {
 			'tc.bibliotheque.filtre.disponibilite' => 'Disponibilité',
 			'tc.bibliotheque.sections.continuer' => 'Continuer',
 			'tc.bibliotheque.sections.pourCeGroupe' => 'Pour cette Classe',
+			'tc.bibliotheque.sections.groupe' => 'Supports à afficher',
 			'tc.bibliotheque.sections.recents' => 'Récents',
 			'tc.bibliotheque.sections.tousLesSupports' => 'Tous les supports',
 			'tc.bibliotheque.sections.resultats' => 'Résultats',
@@ -17324,10 +17342,10 @@ extension on Traductions {
 			'tc.bibliotheque.offline.aTelecharger' => 'À télécharger',
 			'tc.bibliotheque.offline.enCours' => 'Téléchargement',
 			'tc.bibliotheque.offline.enCache' => 'En cache',
-			'tc.bibliotheque.offline.telecharge' => 'Téléchargé',
-			'tc.bibliotheque.offline.indisponible' => 'Hors ligne indisponible',
 			_ => null,
 		} ?? switch (path) {
+			'tc.bibliotheque.offline.telecharge' => 'Téléchargé',
+			'tc.bibliotheque.offline.indisponible' => 'Hors ligne indisponible',
 			'tc.bibliotheque.type.quran' => 'Coran',
 			'tc.bibliotheque.type.texteStructure' => 'Texte',
 			'tc.bibliotheque.type.pdf' => 'PDF',
@@ -17838,10 +17856,10 @@ extension on Traductions {
 			'adulte.demo.etats.validationRefusee' => 'La validation administrative a été refusée.',
 			'adulte.demo.etats.secondDepart' => 'Le second adulte est parti pour la deuxième fois.',
 			'adulte.demo.etats.delai120' => 'Un délai de 120 jours est en cours.',
-			'adulte.demo.etats.departsSuivants' => 'Après le troisième départ, le délai reste de 120 jours.',
-			'adulte.demo.etats.repriseDemandee' => 'Une demande de reprise du foyer a été déposée.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.demo.etats.departsSuivants' => 'Après le troisième départ, le délai reste de 120 jours.',
+			'adulte.demo.etats.repriseDemandee' => 'Une demande de reprise du foyer a été déposée.',
 			'adulte.demo.etats.repriseRefuseeParTitulaire' => 'La demande de reprise a été refusée par le titulaire.',
 			'adulte.demo.etats.repriseSansReponse' => 'Après 30 jours sans réponse, la demande attend l\'administration.',
 			'adulte.demo.etats.repriseValidee' => 'La reprise du foyer a été validée.',

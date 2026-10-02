@@ -1,4 +1,9 @@
 {
+  "commun": {
+    "sections": {
+      "page": "أقسام الصفحة"
+    }
+  },
   "classe": {
     "entree": {
       "coursDans": "الدرس بعد {duree}",
@@ -101,6 +106,11 @@
     "themeSombreDetail": "خلفية داكنة مهما كان إعداد جهازك"
   },
   "tc": {
+    "bibliotheque": {
+      "sections": {
+        "groupe": "المواد المعروضة"
+      }
+    },
     "groupe": {
       "enseignant": {
         "sayyid": "سيد",
