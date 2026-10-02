@@ -229,7 +229,7 @@ void main() {
         await tester.tap(_dans(_dock, 'Quitter'));
         await stabiliser(tester);
         final String confirmer = role == RoleSeance.enseignant
-            ? 'Quitter et ouvrir le cahier'
+            ? 'Quitter et ouvrir le cahier de transmission'
             : 'Quitter';
         await tester.tap(find.text(confirmer).last);
         await stabiliser(tester);

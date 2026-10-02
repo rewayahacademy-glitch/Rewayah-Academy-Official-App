@@ -253,7 +253,7 @@ void main() {
       await tester.tap(_sortie);
       await stabiliser(tester);
       expect(find.text('Quitter la séance ?'), findsOneWidget);
-      await tester.tap(find.text('Quitter et ouvrir le cahier'));
+      await tester.tap(find.text('Quitter et ouvrir le cahier de transmission'));
       await stabiliser(tester);
       expect(journal.quitter, 1);
     });

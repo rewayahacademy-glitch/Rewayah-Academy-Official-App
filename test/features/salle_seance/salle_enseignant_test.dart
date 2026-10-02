@@ -248,7 +248,7 @@ void main() {
     await _monter(tester, _tailles['mobile']!);
     await tester.tap(find.text('Quitter'));
     await _attendre(tester);
-    expect(find.text('Quitter et ouvrir le cahier'), findsOneWidget);
+    expect(find.text('Quitter et ouvrir le cahier de transmission'), findsOneWidget);
     // Spec CLV-06, textes exacts : « Rester », jamais « Annuler ».
     expect(find.text('Rester'), findsOneWidget);
     expect(find.text('Annuler'), findsNothing);
