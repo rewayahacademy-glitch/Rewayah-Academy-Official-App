@@ -1903,7 +1903,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
     etats: <EtatGalerie>[
       EtatGalerie(
         'nu, avec libelle',
-        (BuildContext _) => Align(
+        (BuildContext _) => const Align(
           alignment: AlignmentDirectional.topStart,
           child: BoutonOutil(
             icone: AppIcons.crayon,
@@ -1915,7 +1915,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       ),
       EtatGalerie(
         'retenu',
-        (BuildContext _) => Align(
+        (BuildContext _) => const Align(
           alignment: AlignmentDirectional.topStart,
           child: BoutonOutil(
             icone: AppIcons.crayon,
@@ -1928,7 +1928,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       ),
       EtatGalerie(
         'tuile',
-        (BuildContext _) => SizedBox(
+        (BuildContext _) => const SizedBox(
           width: AppSpacing.respiration + AppSpacing.xxxl,
           height: AppSpacing.respiration + AppSpacing.lg,
           child: BoutonOutil(
@@ -1948,7 +1948,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
     etats: <EtatGalerie>[
       EtatGalerie(
         'cercle',
-        (BuildContext _) => Align(
+        (BuildContext _) => const Align(
           alignment: AlignmentDirectional.topStart,
           child: BoutonIcone(
             icone: AppIcons.zoomPlus,
@@ -1959,7 +1959,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       ),
       EtatGalerie(
         'carre',
-        (BuildContext _) => Align(
+        (BuildContext _) => const Align(
           alignment: AlignmentDirectional.topStart,
           child: BoutonIcone(
             icone: AppIcons.crayon,
@@ -1971,7 +1971,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       ),
       EtatGalerie(
         'inerte',
-        (BuildContext _) => Align(
+        (BuildContext _) => const Align(
           alignment: AlignmentDirectional.topStart,
           child: BoutonIcone(
             icone: AppIcons.zoomPlus,

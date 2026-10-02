@@ -33,7 +33,7 @@ Avant correction, par contrôle (`dart run tool/verifier_revue.dart --regle=<nom
 | `bouton-grise` | 73 (53 dans le socle hérité de `main`) | |
 | `affirmation-reseau` | 10 (6 dans le socle hérité de `main`) | |
 | `libelle-sans-source` | 1377 (1023 dans le socle hérité de `main`) | |
-| `verifier_jetons` | 36 | |
+| `verifier_jetons` | 36 | 35 |
 
 Limites connues des contrôles (heuristiques de texte) : `cartes-collees` ne voit que des appels voisins dans une liste `children` sans `spacing:` (pas les `ListView.builder` sans séparateur) ; `bouton-recompose` ne voit que les boutons Material, `InkWell`, `GestureDetector` et un `Pressable` qui peint lui-même fond arrondi et `Text`. Ce que ces contrôles ne voient pas se mesure par les tests de géométrie et par les captures à 320 px et 1440 px.
 
@@ -99,3 +99,7 @@ Inventaire (`ActionPrincipale` lus dans `lib/features`, commentaires exclus) :
 Les 14 fichiers restants (dont `feuille_micro_bloque`, dont le niveau dépend d'une condition) ont été relus un à un : leurs boutons pleins sont dans des branches exclusives (`if / else`, `switch`, états successifs d'un parcours) ou dans des feuilles distinctes de la page qui les ouvre ; aucun n'est visible avec un autre. Ils sont figés dans le socle de `plein-multiple` avec leur nombre.
 
 Contrôles ajoutés : `plein-multiple` (`tool/verifier_revue.dart`) et `verifierUnSeulBoutonPlein` (`test/support/garde_interface.dart`). Limite : le contrôle de source lit le texte, il ne sépare pas des branches exclusives de boutons simultanés ; seul le test de rendu voit ce que l'écran montre ensemble, d'où la garde à poser dans le test de chaque écran nouveau ou modifié.
+
+### Preuves visuelles
+
+`docs/current/captures/l1-boutons/` : `avant_*` (base `ad0e2c6`) et `apres_*` (cette branche), mêmes écrans, 320 et 1440 px, produits par `test/capture/l1_boutons_capture_test.dart` (`CAPTURE_DIR`, `CAPTURE_PREFIXE`) : préparation de l'enseignant (« Tester la caméra »), photo professionnelle (« Choisir une photo »), boutons du core (pilule étirée, bouton compact, lien, bouton secondaire). Les écrans de la salle (dock, outils, tuiles) ne sont pas capturés : leur preuve est la mesure de géométrie de `test/core/garde_interface_test.dart` (335 cas).

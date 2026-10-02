@@ -338,7 +338,7 @@ void main() {
             children: <Widget>[
               ActionPrincipale(libelle: longLibelle, onPress: () {}),
               FilterPill(libelle: longLibelle, onPress: () {}),
-              StatusPill(libelle: longLibelle, ton: TonEtat.neutre),
+              const StatusPill(libelle: longLibelle, ton: TonEtat.neutre),
             ],
           ),
           echelleTexte: 2,

@@ -12,7 +12,6 @@ import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/features/salle/preparation_enseignant.dart';
-import 'package:rewayah_academy/features/salle/vue_salle.dart';
 
 import '../../support/garde_interface.dart';
 
