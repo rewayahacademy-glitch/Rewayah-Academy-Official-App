@@ -623,9 +623,12 @@ class _EnFin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[child],
+    // `Align` et non `Row` : une rangee donne une largeur sans borne a son
+    // enfant, un libelle long (texte agrandi) deborderait de la carte. Ici le
+    // bouton garde sa largeur naturelle, borne par celle de la carte (K-54).
+    return Align(
+      alignment: AlignmentDirectional.centerEnd,
+      child: IntrinsicWidth(child: child),
     );
   }
 }

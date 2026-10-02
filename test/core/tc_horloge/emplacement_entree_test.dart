@@ -65,7 +65,7 @@ void main() {
           );
         }
         final EmplacementEntree ens = a(m, role: RoleEntree.enseignant);
-        expect(ens.libelle, "Préparer l'entrée");
+        expect(ens.libelle, 'Rejoindre la salle');
         expect(ens.forme, FormeEntree.bouton);
       },
     );
