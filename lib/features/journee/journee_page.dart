@@ -231,9 +231,11 @@ class _Corps extends ConsumerWidget {
     final List<String> alertes = <String>[
       if (dominant != null && dominant.enCoursA(maintenant))
         ..._alertesPresence(ref, dominant),
-      if (reglages.hasError || pause.hasError || retards.hasError)
-        t.enseignant.journee.erreurPartielle,
     ];
+    // LIB-ERR-1 : l'echec partiel dit ce qui manque, que les seances sont a
+    // jour, et se relance d'un bouton.
+    final bool partielle =
+        reglages.hasError || pause.hasError || retards.hasError;
 
     // ENS-13B : les offres arrivent en Alerte utile ; une offre acceptee et
     // confirmee par le serveur devient la carte « Remplacement » (EN-8).
@@ -276,12 +278,26 @@ class _Corps extends ConsumerWidget {
               enFile:
                   ref.watch(cahiersEnFileProvider).value ?? const <String>{},
             ),
-      alertes: alertes.isEmpty && offres.isEmpty && annulee == null
+      alertes:
+          alertes.isEmpty && offres.isEmpty && annulee == null && !partielle
           ? null
           : _AlertesUtiles(
               alertes: alertes,
               offres: offres,
               coursAnnule: annulee,
+              onReessayerPartiel: partielle
+                  ? () {
+                      ref
+                        ..invalidate(reglagesPriereProvider(monId))
+                        ..invalidate(
+                          valeurRegleProvider((
+                            profilId: monId,
+                            cle: CleRegle.pauseEntreCours,
+                          )),
+                        )
+                        ..invalidate(cahiersEnRetardProvider);
+                    }
+                  : null,
             ),
     );
   }
@@ -1003,7 +1019,12 @@ class _AlertesUtiles extends ConsumerWidget {
     required this.alertes,
     this.offres = const <OffreRemplacement>[],
     this.coursAnnule,
+    this.onReessayerPartiel,
   });
+
+  /// Relance des lectures secondaires (prieres, pauses, cahiers en retard)
+  /// quand elles ont echoue, ou `null` si tout a ete lu (LIB-ERR-1).
+  final VoidCallback? onReessayerPartiel;
 
   /// Le cours annule du jour : une carte attenuee avant toute autre alerte,
   /// avec la pastille « Annulee », l'horaire barre et la ligne « pourquoi »
@@ -1056,6 +1077,31 @@ class _AlertesUtiles extends ConsumerWidget {
                 LigneRubrique(icone: AppIcons.avertissement, libelle: alerte),
             ],
           ),
+        if (onReessayerPartiel != null) ...<Widget>[
+          if (coursAnnule != null || alertes.isNotEmpty || offres.isNotEmpty)
+            Ecart.vLg,
+          Text(
+            t.enseignant.journee.erreurPartielle,
+            key: const ValueKey<String>('journee-erreur-partielle'),
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          // Le bouton se pose 16 sous le contenu qu'il confirme (R20).
+          Ecart.vLg,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: IntrinsicWidth(
+              child: ActionPrincipale(
+                key: const ValueKey<String>(
+                  'journee-erreur-partielle-reessayer',
+                ),
+                libelle: t.commun.reessayer,
+                niveau: NiveauAction.secondaire,
+                pleineLargeur: false,
+                onPress: onReessayerPartiel,
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }

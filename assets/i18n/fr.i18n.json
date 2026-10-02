@@ -3046,7 +3046,7 @@
       "preflightSansMicro": "Aucun micro n'est détecté. Branchez-en un pour lancer le cours.",
       "preflightIndisponible": "La vérification du matériel n'a pas abouti. Réessayez avant de lancer le cours.",
       "lancerHorsLigne": "Sans réseau, la salle ne peut pas s'ouvrir. Reconnectez-vous pour lancer le cours.",
-      "erreurPartielle": "Une partie de la journée n'a pas pu être lue : prières ou pauses peuvent manquer.",
+      "erreurPartielle": "Les horaires de prière et vos pauses n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.",
       "absenceDetectee": "{eleve} n'est pas entré en salle.",
       "coupureDetectee": "{eleve} a perdu la connexion.",
       "autresAbsences": "et {nombre} autres élèves.",

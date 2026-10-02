@@ -76,7 +76,6 @@ erreur-sans-action|assets/i18n/fr.i18n.json|dossiers.revue.erreurChargement : Im
 erreur-sans-action|assets/i18n/fr.i18n.json|dossiers.validation.erreur : Le dossier n'a pas pu être validé.
 erreur-sans-action|assets/i18n/fr.i18n.json|dossiers.visionneuse.erreur : La pièce ne peut pas être affichée.
 erreur-sans-action|assets/i18n/fr.i18n.json|enseignant.cahier.erreur : Le constat n'a pas pu être lu.
-erreur-sans-action|assets/i18n/fr.i18n.json|enseignant.journee.erreurPartielle : Une partie de la journée n'a pas pu être lue : prières ou pauses peuvent manquer.
 erreur-sans-action|assets/i18n/fr.i18n.json|enseignant.revue.erreur : La revue n'a pas pu être lue.
 erreur-sans-action|assets/i18n/fr.i18n.json|enseignant.revue.erreurDetail : Cette Classe n'est peut-être pas la vôtre, ou la lecture a échoué.
 erreur-sans-action|assets/i18n/fr.i18n.json|parcours.erreurChargement : Le questionnaire n'a pas pu s'afficher

@@ -101,7 +101,9 @@ final RegExp _phraseAction = RegExp(
   r'cliquez|essayez|renvoy|prévenez|prevenez|signalez|consultez|passez|'
   r'demandez|recommenc|reprendre|plus tard|indiquez|entrez|renseignez|'
   r'précisez|precisez|sélectionnez|selectionnez|corrigez|activez|'
-  r'autorisez|acceptez|accordez|rendez-vous|voir |voyez',
+  r'autorisez|acceptez|accordez|rendez-vous|voir |voyez|'
+  // LIB-ERR-1 : « vous pouvez les lancer normalement » dit quoi faire.
+  r'lancer|lancez',
   caseSensitive: false,
 );
 
