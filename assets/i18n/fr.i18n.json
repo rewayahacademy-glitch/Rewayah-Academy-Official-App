@@ -667,7 +667,7 @@
       "demanderDetail": "Demande à ton tuteur de passer à la présentation standard.",
       "demandeEnCours": "Ta demande est en cours d'envoi.",
       "demandeEnvoyee": "Ta demande a été envoyée à ton tuteur.",
-      "demandeNonConfirmee": "L'envoi n'a pas été confirmé, sans doute à cause de la connexion. Vérifie ta connexion, puis touche la ligne pour réessayer."
+      "demandeNonConfirmee": "L'envoi n'a pas été confirmé, sans doute à cause de la connexion. Vérifie ta connexion, puis touche la ligne pour réessayer. Rien n'a changé en attendant : ta présentation reste la même."
     }
   },
   "accuse": {

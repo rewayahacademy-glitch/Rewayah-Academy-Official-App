@@ -155,6 +155,23 @@ void main() {
         }
       }
     }
+
+    for (final EleveDemoAccessibilite eleve in EleveDemoAccessibilite.values) {
+      testWidgets('Apres la seance, ${eleve.name} : Tab et Maj+Tab, chaque '
+          'cible au moins 48', (WidgetTester tester) async {
+        await _taille(tester, const Size(390, 844));
+        await tester.pumpWidget(
+          _hote(
+            EcranAccessibiliteDemo(
+              eleve: eleve,
+              moment: MomentDemoAccessibilite.apres,
+            ),
+          ),
+        );
+        await stabiliser(tester);
+        expect(await _parcourir(tester, 'apres'), greaterThanOrEqualTo(2));
+      });
+    }
   });
 
   group('MA-11 clavier et cibles : preparation et salle', () {

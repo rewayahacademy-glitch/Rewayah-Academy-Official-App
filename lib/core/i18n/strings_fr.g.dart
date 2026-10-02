@@ -3181,8 +3181,8 @@ class Traductions$accessibilite$monEspace$fr {
 	/// fr: 'Ta demande a été envoyée à ton tuteur.'
 	String get demandeEnvoyee => 'Ta demande a été envoyée à ton tuteur.';
 
-	/// fr: 'L'envoi n'a pas été confirmé, sans doute à cause de la connexion. Vérifie ta connexion, puis touche la ligne pour réessayer.'
-	String get demandeNonConfirmee => 'L\'envoi n\'a pas été confirmé, sans doute à cause de la connexion. Vérifie ta connexion, puis touche la ligne pour réessayer.';
+	/// fr: 'L'envoi n'a pas été confirmé, sans doute à cause de la connexion. Vérifie ta connexion, puis touche la ligne pour réessayer. Rien n'a changé en attendant : ta présentation reste la même.'
+	String get demandeNonConfirmee => 'L\'envoi n\'a pas été confirmé, sans doute à cause de la connexion. Vérifie ta connexion, puis touche la ligne pour réessayer. Rien n\'a changé en attendant : ta présentation reste la même.';
 }
 
 // Path: consentement.texte
@@ -13497,7 +13497,7 @@ extension on Traductions {
 			'accessibilite.monEspace.demanderDetail' => 'Demande à ton tuteur de passer à la présentation standard.',
 			'accessibilite.monEspace.demandeEnCours' => 'Ta demande est en cours d\'envoi.',
 			'accessibilite.monEspace.demandeEnvoyee' => 'Ta demande a été envoyée à ton tuteur.',
-			'accessibilite.monEspace.demandeNonConfirmee' => 'L\'envoi n\'a pas été confirmé, sans doute à cause de la connexion. Vérifie ta connexion, puis touche la ligne pour réessayer.',
+			'accessibilite.monEspace.demandeNonConfirmee' => 'L\'envoi n\'a pas été confirmé, sans doute à cause de la connexion. Vérifie ta connexion, puis touche la ligne pour réessayer. Rien n\'a changé en attendant : ta présentation reste la même.',
 			'accuse.titre' => 'À savoir avant de commencer',
 			'accuse.compris' => 'J\'ai compris',
 			'consentement.titre' => 'Consentements',
