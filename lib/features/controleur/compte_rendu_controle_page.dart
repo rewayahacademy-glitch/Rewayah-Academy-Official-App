@@ -344,7 +344,9 @@ class _CompteRenduControlePageState
                       ? Padding(
                           padding: const EdgeInsets.only(top: AppSpacing.md),
                           child: Text(
-                            t.controleur.compteRendu.echec,
+                            // Seul « Rien a signaler » envoie depuis cet
+                            // ecran : aucun texte a garder (revue CT-R m1).
+                            t.controleur.compteRendu.echecRien,
                             textAlign: TextAlign.end,
                             style: palette.inkStrong.applyTo(
                               textes.bodyMedium ?? const TextStyle(),

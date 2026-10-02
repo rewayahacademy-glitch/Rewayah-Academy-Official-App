@@ -428,7 +428,12 @@ void main() {
     await tester.tap(find.byKey(CompteRenduControlePage.actionKey));
     await tester.pumpAndSettle();
     expect(find.text(r.envoyeTitre), findsNothing);
-    expect(find.text(r.echec), findsOneWidget);
+    // Revue CT-R m1 : message propre a « Rien a signaler », qui n'a pas de
+    // texte ; il dit « non confirme » (D5) et ce qui reste fiable (K-59).
+    expect(find.text(r.echecRien), findsOneWidget);
+    expect(find.text(r.echec), findsNothing);
+    expect(r.echecRien, contains("n'est pas confirmé"));
+    expect(r.echecRien, isNot(contains('texte')));
     // Le choix est garde : le bouton reste la.
     expect(find.text(r.envoyer), findsOneWidget);
   });
