@@ -124,18 +124,32 @@ class _MonEspaceAccessibiliteEtat extends State<MonEspaceAccessibilite> {
           AppCard(
             key: const ValueKey<String>('mon-espace-identite'),
             dominante: true,
-            child: Row(
-              children: <Widget>[
-                AvatarTile(prenom: widget.prenom),
-                Ecart.hXl,
-                Expanded(
-                  child: Text(
-                    widget.prenom,
-                    style: Theme.of(context).textTheme.headlineSmall,
+            // MA15 : a texte agrandi, l'avatar passe au-dessus du prenom, qui
+            // prend toute la largeur (aucun mot coupe).
+            child: MediaQuery.textScalerOf(context).scale(1) > 1.3
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      AvatarTile(prenom: widget.prenom),
+                      Ecart.vMd,
+                      Text(
+                        widget.prenom,
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                    ],
+                  )
+                : Row(
+                    children: <Widget>[
+                      AvatarTile(prenom: widget.prenom),
+                      Ecart.hXl,
+                      Expanded(
+                        child: Text(
+                          widget.prenom,
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
           ),
           Ecart.vSection,
           // L'etat de la demande est annonce quand il change (region vive).

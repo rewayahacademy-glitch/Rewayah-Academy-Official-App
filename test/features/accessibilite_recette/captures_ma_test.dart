@@ -587,6 +587,21 @@ void main() {
         echelle: 2,
       );
     });
+    // MA-RC (B1) : la hauteur reelle d'un telephone, la tete defile.
+    testWidgets('mon_espace_390x844_light_texte200', (
+      WidgetTester tester,
+    ) async {
+      await _capturer(
+        tester,
+        'ma8/marc_mon_espace_mariam_390x844_light_texte200',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+          destinationInitiale: EcranAccessibiliteDemo.indexMonEspace,
+        ),
+        const Size(390, 844),
+        echelle: 2,
+      );
+    });
   });
 
   // -------------------------------------------------------------------
