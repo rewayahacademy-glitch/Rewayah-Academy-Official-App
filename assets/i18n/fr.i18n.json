@@ -1357,7 +1357,7 @@
     "tableau": {
       "titre": "Centre de commande",
       "dossiers": "Dossiers à valider",
-      "foyers": "Foyers sans enseignant",
+      "foyers": "Élèves sans enseignant",
       "rapports": "Cahiers manquants",
       "incidents": "Incidents (24 h)",
       "comptes": "Accès échus",
@@ -1366,7 +1366,7 @@
       "aTraiter": "À traiter en premier",
       "aTraiterAucun": "Rien à traiter",
       "aTraiterAucunDetail": "Les dossiers déposés et les demandes des familles et des enseignants apparaîtront ici, le plus ancien en premier.",
-      "aTraiterPortee": "Les foyers sans enseignant s'attribuent depuis leur compteur. Les trois derniers se règlent ailleurs : ils n'ont pas encore d'écran d'action.",
+      "aTraiterPortee": "Les élèves sans enseignant s'attribuent depuis leur compteur, qui mène à la page Attribution. Les trois derniers se règlent ailleurs : ils n'ont pas encore d'écran d'action.",
       "outils": "Outils",
       "outilsComptes": "Comptes",
       "outilsComptesDetail": "Toutes les personnes inscrites, celles qui attendent une décision en premier. Y compris celles qui n'ont pas encore déposé de pièce.",

@@ -51,5 +51,7 @@
   "enseignant.cahier.objectifDetail": "commentaire du directeur, revue du 01-02/10, etape LIB-OBJ-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
   "enseignant.cahier.travailMaison": "commentaire du directeur, revue du 01-02/10, etape LIB-OBJ-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
   "enseignant.cahier.suite": "commentaire du directeur, revue du 01-02/10, etape LIB-OBJ-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
-  "enseignant.journee.erreurPartielle": "commentaire du directeur, revue du 01-02/10, etape LIB-ERR-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)"
+  "enseignant.journee.erreurPartielle": "commentaire du directeur, revue du 01-02/10, etape LIB-ERR-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
+  "admin.tableau.foyers": "commentaire du directeur, revue du 01-02/10, etape FOYER-ADMIN-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
+  "admin.tableau.aTraiterPortee": "commentaire du directeur, revue du 01-02/10, etape FOYER-ADMIN-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)"
 }

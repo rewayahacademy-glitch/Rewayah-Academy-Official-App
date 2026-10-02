@@ -4622,8 +4622,8 @@ class Traductions$admin$tableau$fr {
 	/// fr: 'Dossiers à valider'
 	String get dossiers => 'Dossiers à valider';
 
-	/// fr: 'Foyers sans enseignant'
-	String get foyers => 'Foyers sans enseignant';
+	/// fr: 'Élèves sans enseignant'
+	String get foyers => 'Élèves sans enseignant';
 
 	/// fr: 'Cahiers manquants'
 	String get rapports => 'Cahiers manquants';
@@ -4649,8 +4649,8 @@ class Traductions$admin$tableau$fr {
 	/// fr: 'Les dossiers déposés et les demandes des familles et des enseignants apparaîtront ici, le plus ancien en premier.'
 	String get aTraiterAucunDetail => 'Les dossiers déposés et les demandes des familles et des enseignants apparaîtront ici, le plus ancien en premier.';
 
-	/// fr: 'Les foyers sans enseignant s'attribuent depuis leur compteur. Les trois derniers se règlent ailleurs : ils n'ont pas encore d'écran d'action.'
-	String get aTraiterPortee => 'Les foyers sans enseignant s\'attribuent depuis leur compteur. Les trois derniers se règlent ailleurs : ils n\'ont pas encore d\'écran d\'action.';
+	/// fr: 'Les élèves sans enseignant s'attribuent depuis leur compteur, qui mène à la page Attribution. Les trois derniers se règlent ailleurs : ils n'ont pas encore d'écran d'action.'
+	String get aTraiterPortee => 'Les élèves sans enseignant s\'attribuent depuis leur compteur, qui mène à la page Attribution. Les trois derniers se règlent ailleurs : ils n\'ont pas encore d\'écran d\'action.';
 
 	/// fr: 'Outils'
 	String get outils => 'Outils';
@@ -15411,7 +15411,7 @@ extension on Traductions {
 			'dossiers.decision.nomComplet' => ({required Object prenom, required Object nom}) => '${prenom} ${nom}',
 			'admin.tableau.titre' => 'Centre de commande',
 			'admin.tableau.dossiers' => 'Dossiers à valider',
-			'admin.tableau.foyers' => 'Foyers sans enseignant',
+			'admin.tableau.foyers' => 'Élèves sans enseignant',
 			'admin.tableau.rapports' => 'Cahiers manquants',
 			'admin.tableau.incidents' => 'Incidents (24 h)',
 			'admin.tableau.comptes' => 'Accès échus',
@@ -15420,7 +15420,7 @@ extension on Traductions {
 			'admin.tableau.aTraiter' => 'À traiter en premier',
 			'admin.tableau.aTraiterAucun' => 'Rien à traiter',
 			'admin.tableau.aTraiterAucunDetail' => 'Les dossiers déposés et les demandes des familles et des enseignants apparaîtront ici, le plus ancien en premier.',
-			'admin.tableau.aTraiterPortee' => 'Les foyers sans enseignant s\'attribuent depuis leur compteur. Les trois derniers se règlent ailleurs : ils n\'ont pas encore d\'écran d\'action.',
+			'admin.tableau.aTraiterPortee' => 'Les élèves sans enseignant s\'attribuent depuis leur compteur, qui mène à la page Attribution. Les trois derniers se règlent ailleurs : ils n\'ont pas encore d\'écran d\'action.',
 			'admin.tableau.outils' => 'Outils',
 			'admin.tableau.outilsComptes' => 'Comptes',
 			'admin.tableau.outilsComptesDetail' => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Y compris celles qui n\'ont pas encore déposé de pièce.',
