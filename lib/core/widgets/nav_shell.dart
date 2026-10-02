@@ -397,11 +397,17 @@ class NavShell extends StatelessWidget {
 
   /// Echelle de texte maximale des libelles de la barre du Mode Accessibilite.
   ///
-  /// Le theme du guide part deja de 20 pt (`AppTypography.enfant`), plus que
-  /// le libelle standard a son plafond (12 x 1,5 = 18 pt) : un onglet de 92 de
-  /// large ne porte pas un mot de plus de 20 pt sans le couper. Le plafond est
-  /// donc 1,0 ; le lecteur d'ecran lit toujours le libelle entier.
-  static const double echelleTexteMaxGuide = 1;
+  /// Plafond de 1,3 : le theme du guide part deja de 20 pt, et a 1,5 un mot de
+  /// sept lettres se coupe dans un onglet de 320. Un texte regle a x2 par
+  /// l'utilisateur grandit bien dans la barre. Le libelle passe a la ligne
+  /// sans ellipse (la barre grandit avec lui) et le lecteur d'ecran le lit
+  /// toujours en entier.
+  static const double echelleTexteMaxGuide = 1.3;
+
+  /// Epaisseur du contour franc de la barre du Mode Accessibilite (le filet de
+  /// carte standard fait 1) : le seul trait plus epais du composant, nomme ici
+  /// pour ne pas etre un chiffre litteral au milieu du dessin.
+  static const double epaisseurContourGuide = 2;
 
   @override
   Widget build(BuildContext context) {
@@ -511,7 +517,9 @@ class _BarreFlottante extends StatelessWidget {
                 // de carte, pour que la barre se detache du fond.
                 border: Border.fromBorderSide(
                   guide
-                      ? palette.borderStrong.asBorderSide(width: 2)
+                      ? palette.borderStrong.asBorderSide(
+                          width: NavShell.epaisseurContourGuide,
+                        )
                       : palette.contourCarte.asBorderSide(),
                 ),
                 boxShadow: AppElevation.niveau1(palette.ombre),
@@ -523,7 +531,7 @@ class _BarreFlottante extends StatelessWidget {
                       : NavShell.hauteurBarre,
                 ),
                 // Guide : la hauteur de la barre suit le libelle, qui passe a la
-                // ligne (trois au plus), plafonne par `echelleTexteMaxGuide`.
+                // ligne sans ellipse, plafonne par `echelleTexteMaxGuide`.
                 child: guide
                     ? Padding(
                         padding: const EdgeInsets.symmetric(
@@ -711,8 +719,6 @@ class _OngletBarreGuide extends StatelessWidget {
                     Ecart.vXs,
                     Text(
                       destination.libelle,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.center,
                       style: AppTypography.graisse(
                         textes.labelLarge ?? const TextStyle(),
@@ -1176,8 +1182,6 @@ class _ItemColonne extends StatelessWidget {
                           maxScaleFactor: NavShell.echelleTexteMaxGuide,
                           child: Text(
                             destination.libelle,
-                            maxLines: 3,
-                            overflow: TextOverflow.ellipsis,
                             textAlign: TextAlign.center,
                             style: AppTypography.graisse(
                               textes.labelLarge ?? const TextStyle(),

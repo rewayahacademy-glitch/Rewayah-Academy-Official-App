@@ -344,16 +344,21 @@ String _sansCommentaires(File f) => f
 int _ligneDe(String texte, int index) =>
     '\n'.allMatches(texte.substring(0, index)).length + 1;
 
+/// Le motif d'une barre recomposee : le nom du widget, des blancs eventuels
+/// (espaces, retour a la ligne), puis `(` ou `.`. Expose pour le test qui
+/// prouve la detection (`\s*` lit des blancs, `s*` ne lisait que des « s »).
+final RegExp motifNavRecomposee = RegExp(
+  r'(NavigationBar|NavigationRail|NavigationDrawer|BottomNavigationBar|'
+  r'BottomAppBar|CupertinoTabBar)\s*[(.]',
+);
+
 /// MA-NAV-1 : une barre de navigation n'existe que dans les deux coquilles du
 /// core (`NavShell`, `AdminShell`), ou le Mode Accessibilite la presente
 /// (cibles de 72, libelle visible, etat actif a trois signaux). Une barre
 /// recomposee ailleurs ne suivrait pas la presentation.
 List<Violation> _navigationsRecomposees() {
   final List<Violation> v = <Violation>[];
-  final RegExp nav = RegExp(
-    r'(NavigationBar|NavigationRail|NavigationDrawer|BottomNavigationBar|'
-    r'BottomAppBar|CupertinoTabBar)s*[(.]',
-  );
+  final RegExp nav = motifNavRecomposee;
   for (final File f in Directory(
     'lib',
   ).listSync(recursive: true).whereType<File>()) {

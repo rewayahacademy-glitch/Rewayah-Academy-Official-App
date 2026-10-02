@@ -52,3 +52,11 @@ Avant correction, par contrôle (`dart run tool/verifier_revue.dart --regle=<nom
 Barres vérifiées : barre basse, rail, barre latérale de `NavShell` (tous rôles) ; `AdminShell` (rôle adulte, hors Mode Accessibilité, déjà lié à `AppMetriques.cibleTactile`).
 
 Limites connues des contrôles (heuristiques de texte) : `cartes-collees` ne voit que des appels voisins dans une liste `children` sans `spacing:` (pas les `ListView.builder` sans séparateur) ; `bouton-recompose` ne voit que les boutons Material, `InkWell`, `GestureDetector` et un `Pressable` qui peint lui-même fond arrondi et `Text`. Ce que ces contrôles ne voient pas se mesure par les tests de géométrie et par les captures à 320 px et 1440 px.
+
+## MA-NAV-1, corrections de relecture
+
+- Contrôle `nav-recomposee` : le motif lit maintenant les blancs (`\s*`) ; test `test/tool/verifier_revue_nav_test.dart`.
+- Contour du guide : constante nommée `NavShell.epaisseurContourGuide`.
+- Texte agrandi : plafond du guide relevé de 1,0 à 1,3 (`echelleTexteMaxGuide`), libellés sans ellipse ; test arabe à 320, ×2, RTL.
+- Preuve visuelle : `docs/current/captures/MA-NAV-1/` (`avant` = ad0e2c6, `apres` ; élève, clair/sombre, 320, 320 ×2, tablette, bureau ; harnais `test/capture/ma_nav1_capture_test.dart`).
+- À trancher par le directeur : le Coran n'est plus dans la barre de l'élève en Mode Accessibilité (accès par le bloc Coran de l'Accueil) ; confirmer qu'aucun autre écran n'exige un accès direct. Le plafond 1,3 est un choix de conception.

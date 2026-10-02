@@ -244,12 +244,56 @@ void main() {
         );
         // Aucun libelle n'est tronque par des points de suspension, meme avec
         // la police de test (Ahem, un em par lettre, bien plus large que les
-        // vraies polices) : le libelle passe a la ligne, trois au plus.
+        // vraies polices) : le libelle passe a la ligne, sans limite de lignes.
         expect(p.didExceedMaxLines, isFalse, reason: x.libelle);
-        // Plafond du guide : le texte n'est pas agrandi au-dela de 1,0.
-        expect(p.textScaler.scale(10), 10, reason: x.libelle);
+        // Le texte regle a x2 grandit dans la barre, jusqu'au plafond de 1,3.
+        expect(p.textScaler.scale(10), closeTo(13, 0.001), reason: x.libelle);
+        expect(p.maxLines, isNull, reason: x.libelle);
+        expect(p.overflow, isNot(TextOverflow.ellipsis), reason: x.libelle);
       }
     });
+
+    testWidgets(
+      'libelles longs en arabe, 320, x2, RTL : entiers, sans ellipse',
+      (WidgetTester tester) async {
+        final List<Destination> base = _eleve(InterfaceMode.enfant);
+        const List<String> longs = <String>[
+          'الصفحة الرئيسية للمتعلم',
+          'فصلي الدراسي المباشر',
+          'تلاوة القرآن الكريم وحفظه',
+          'مساحتي الخاصة بي',
+        ];
+        final List<Destination> d = <Destination>[
+          for (int i = 0; i < base.length; i++)
+            Destination(
+              libelle: longs[i % longs.length],
+              icone: base[i].icone,
+              chemin: base[i].chemin,
+            ),
+        ];
+        await _monter(
+          tester,
+          mode: InterfaceMode.enfant,
+          destinations: d,
+          indexActif: 0,
+          direction: TextDirection.rtl,
+          echelle: 2,
+        );
+        expect(tester.takeException(), isNull);
+        for (final Destination x in d) {
+          final RenderParagraph p = tester.renderObject<RenderParagraph>(
+            find.text(x.libelle),
+          );
+          expect(p.didExceedMaxLines, isFalse, reason: x.libelle);
+          expect(p.overflow, isNot(TextOverflow.ellipsis), reason: x.libelle);
+          // Le texte entier est mis en page : sa hauteur tient dans l'onglet.
+          final double hauteurOnglet = tester
+              .getSize(_onglet(x.libelle))
+              .height;
+          expect(p.size.height, lessThanOrEqualTo(hauteurOnglet));
+        }
+      },
+    );
 
     testWidgets('plus grande et plus haute que la barre standard', (
       WidgetTester tester,
