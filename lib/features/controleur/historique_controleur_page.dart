@@ -169,8 +169,26 @@ class _HistoriqueControleurPageState
     );
   });
 
+  // Revue CT-R m3 : le Detail et le Complement sont des etats internes ; le
+  // retour systeme (Android, navigateur) ferme d'abord le complement, puis le
+  // detail, au lieu de quitter l'Historique.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => PopScope(
+    canPop: _ouvert == null,
+    onPopInvokedWithResult: (bool fait, Object? _) {
+      if (fait) return;
+      setState(() {
+        if (_enComplement) {
+          _enComplement = false;
+        } else {
+          _ouvert = null;
+        }
+      });
+    },
+    child: _corps(context),
+  );
+
+  Widget _corps(BuildContext context) {
     final RapportControle? r = _ouvert;
     if (r != null && _enComplement) {
       return ComplementRapportPage(

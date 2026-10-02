@@ -325,6 +325,36 @@ void main() {
     expect(find.text(h.resultats(n: 1)), findsOneWidget);
   });
 
+  testWidgets('retour systeme : complement, puis detail, puis liste (m3)', (
+    WidgetTester tester,
+  ) async {
+    final c = t.controleur.complement;
+    await _monter(
+      tester,
+      adresseDemoControleur(EcranDemoControleur.historique),
+      taille: const Size(390, 844),
+    );
+    await _attendre(tester);
+    final Finder ligne = find.byKey(
+      HistoriqueControleurPage.ligneKey('demo-rapport-0921'),
+    );
+    await _toucher(tester, ligne);
+    await _toucher(tester, find.byKey(HistoriqueControleurPage.complementKey));
+    expect(find.text(c.bandeau), findsOneWidget);
+
+    // Retour systeme : le complement se ferme, le detail revient.
+    await tester.binding.handlePopRoute();
+    await _attendre(tester);
+    expect(find.text(c.bandeau), findsNothing);
+    expect(find.byKey(HistoriqueControleurPage.complementKey), findsOneWidget);
+
+    // Deuxieme retour : le detail se ferme, la liste revient.
+    await tester.binding.handlePopRoute();
+    await _attendre(tester);
+    expect(find.byKey(HistoriqueControleurPage.complementKey), findsNothing);
+    expect(ligne, findsOneWidget);
+  });
+
   testWidgets('CTR-03B : complement envoye, visible dans le detail', (
     WidgetTester tester,
   ) async {
