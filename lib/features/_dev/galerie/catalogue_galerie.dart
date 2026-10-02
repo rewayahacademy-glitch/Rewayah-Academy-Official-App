@@ -15,6 +15,7 @@ import '../../../core/session/session_state.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/admin_shell.dart';
 import '../../../core/widgets/app_bottom_sheet.dart';
@@ -54,6 +55,7 @@ import '../../../core/widgets/rosace_verset.dart';
 import '../../../core/widgets/schedule_option.dart';
 import '../../../core/widgets/section_header.dart';
 import '../../../core/widgets/selecteur_niveau_programme.dart';
+import '../../../core/widgets/selecteur_theme.dart';
 import '../../../core/widgets/setting_row.dart';
 import '../../../core/widgets/signal_row.dart';
 import '../../../core/widgets/skeleton.dart';
@@ -1993,6 +1995,22 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         ),
       ),
     ],
+  ),
+  EntreeGalerie(
+    nom: 'SelecteurTheme',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'systeme choisi, theme clair',
+        (BuildContext _) => const SelecteurTheme(),
+      ),
+      EtatGalerie(
+        'systeme choisi, theme sombre',
+        (BuildContext _) => Theme(
+          data: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+          child: const SelecteurTheme(),
+        ),
+      ),    ],
   ),
   ...entreesEtatsTuteur(),
 ];

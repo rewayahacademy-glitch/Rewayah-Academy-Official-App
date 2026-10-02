@@ -87,6 +87,14 @@
       "chargementClasse": "جارٍ تحميل الفصل."
     }
   },
+  "compte": {
+    "themeSysteme": "النظام",
+    "themeSystemeDetail": "يتبع إعداد جهازك",
+    "themeClair": "فاتح",
+    "themeClairDetail": "خلفية فاتحة مهما كان إعداد جهازك",
+    "themeSombre": "داكن",
+    "themeSombreDetail": "خلفية داكنة مهما كان إعداد جهازك"
+  },
   "tc": {
     "groupe": {
       "enseignant": {
