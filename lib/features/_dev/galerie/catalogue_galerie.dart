@@ -54,6 +54,7 @@ import '../../../core/widgets/page_etape.dart';
 import '../../../core/widgets/page_immersive.dart';
 import '../../../core/widgets/page_parcours.dart';
 import '../../../core/widgets/page_shell.dart';
+import '../../../core/widgets/pastille_etat_seance.dart';
 import '../../../core/widgets/permanent_notice.dart';
 import '../../../core/widgets/pile_cartes.dart';
 import '../../../core/widgets/pin_pad.dart';
@@ -1353,6 +1354,35 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         (BuildContext _) => const PointRappel(
           libelle: 'Un cahier reste a valider',
           battements: 0,
+        ),
+      ),
+    ],
+  ),
+  // ON-AIR-1, ANNUL-VIS-1 : « En direct » et « Annulee », partout.
+  EntreeGalerie(
+    nom: 'PastilleEtatSeance',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'en direct : le point bat trois fois puis reste fixe',
+        (BuildContext _) =>
+            const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
+      ),
+      EtatGalerie(
+        'annulee : icone d annulation, heure barree, raison',
+        (BuildContext _) => const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            PastilleEtatSeance(etat: EtatPastilleSeance.annulee),
+            Ecart.vSm,
+            TexteHeureSeance(heure: '10:00 - 11:00', annulee: true),
+            Ecart.vXs,
+            LigneRaisonSeance(
+              raison: 'Aucun remplacant trouve',
+              suite: 'seance non facturee',
+            ),
+          ],
         ),
       ),
     ],

@@ -40,6 +40,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 
 	// Translations
 	@override late final _Traductions$commun$ar commun = _Traductions$commun$ar._(_root);
+	@override late final _Traductions$etat$ar etat = _Traductions$etat$ar._(_root);
 	@override late final _Traductions$classe$ar classe = _Traductions$classe$ar._(_root);
 	@override late final _Traductions$salle$ar salle = _Traductions$salle$ar._(_root);
 	@override late final _Traductions$eleve$ar eleve = _Traductions$eleve$ar._(_root);
@@ -56,6 +57,22 @@ class _Traductions$commun$ar extends Traductions$commun$fr {
 
 	// Translations
 	@override late final _Traductions$commun$sections$ar sections = _Traductions$commun$sections$ar._(_root);
+}
+
+// Path: etat
+class _Traductions$etat$ar extends Traductions$etat$fr {
+	_Traductions$etat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get enDirect => 'مباشر';
+	@override String get seanceAnnulee => 'ملغاة';
+	@override String annuleeValeur({required Object valeur}) => 'ملغاة : ${valeur}';
+	@override String get motifNonCommunique => 'السبب غير متوفر';
+	@override String get aucunRemplacantTrouve => 'لم يُعثر على بديل';
+	@override String get seanceNonFacturee => 'الحصة غير مفوترة';
+	@override String raisonEtSuite({required Object raison, required Object suite}) => '${raison} · ${suite}';
 }
 
 // Path: classe
@@ -305,6 +322,13 @@ extension on TraductionsAr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
 			'commun.sections.page' => 'أقسام الصفحة',
+			'etat.enDirect' => 'مباشر',
+			'etat.seanceAnnulee' => 'ملغاة',
+			'etat.annuleeValeur' => ({required Object valeur}) => 'ملغاة : ${valeur}',
+			'etat.motifNonCommunique' => 'السبب غير متوفر',
+			'etat.aucunRemplacantTrouve' => 'لم يُعثر على بديل',
+			'etat.seanceNonFacturee' => 'الحصة غير مفوترة',
+			'etat.raisonEtSuite' => ({required Object raison, required Object suite}) => '${raison} · ${suite}',
 			'classe.entree.coursDans' => ({required Object duree}) => 'الدرس بعد ${duree}',
 			'classe.entree.coursImminent' => 'الدرس بعد أقل من دقيقة',
 			'classe.entree.rejoindre' => 'انضمام',

@@ -141,7 +141,13 @@
     "annule": "Annulé",
     "enAttente": "En attente",
     "enRetard": "En retard",
-    "termine": "Terminé"
+    "termine": "Terminé",
+    "seanceAnnulee": "Annulée",
+    "annuleeValeur": "Annulée : {valeur}",
+    "motifNonCommunique": "Motif non communiqué",
+    "aucunRemplacantTrouve": "Aucun remplaçant trouvé",
+    "seanceNonFacturee": "séance non facturée",
+    "raisonEtSuite": "{raison} · {suite}"
   },
   "destructif": {
     "irreversible": "Cette action ne peut pas être annulée."

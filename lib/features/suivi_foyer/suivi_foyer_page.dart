@@ -287,6 +287,7 @@ class _Liste extends ConsumerWidget {
       sousTitre: enseignantAffiche(l.seance, classe),
       statut: statut,
       ton: statutDe(l).ton,
+      annulee: statutDe(l) == StatutHistorique.annule,
       semantique: t.historique.seances.ouvrir(
         date: dateLongueHistorique(l.seance.debut),
         classe: nom,

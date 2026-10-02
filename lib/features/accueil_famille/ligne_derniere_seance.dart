@@ -11,6 +11,7 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/ligne_presence.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
@@ -91,11 +92,13 @@ class LigneDerniereSeance extends StatelessWidget {
           runSpacing: AppSpacing.sm,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: <Widget>[
-            Text(
-              t.tuteur.accueil.dateEtDuree(
+            // Une seance annulee : date barree et attenuee (ANNUL-VIS-1).
+            TexteHeureSeance(
+              heure: t.tuteur.accueil.dateEtDuree(
                 date: affichage.date,
                 duree: affichage.duree,
               ),
+              annulee: affichage.etatPastille == EtatPastilleSeance.annulee,
               style: discret,
             ),
             ?_pastille(seance, affichage),
@@ -125,7 +128,7 @@ class LigneDerniereSeance extends StatelessWidget {
   /// La pastille : le statut d'une seance qui n'a pas eu lieu, sinon la
   /// presence de l'eleve par la table unique de `LignePresence`.
   Widget? _pastille(SeanceFamille seance, AffichageSeance affichage) {
-    final ({String libelle, TonEtat ton})? statut = affichage.pastille;
+    final Widget? statut = affichage.widgetPastille;
     final bool pasTenue = switch (affichage.etat) {
       EtatSeanceFamille.annulee ||
       EtatSeanceFamille.annuleeTardive ||
@@ -134,7 +137,7 @@ class LigneDerniereSeance extends StatelessWidget {
       _ => false,
     };
     if (pasTenue && statut != null) {
-      return StatusPill(libelle: statut.libelle, ton: statut.ton);
+      return statut;
     }
     final AsyncValue<PresenceParticipant?>? lue = presence;
     if (lue == null || lue.isLoading && !lue.hasValue) {

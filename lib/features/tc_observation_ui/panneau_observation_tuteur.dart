@@ -8,6 +8,7 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/avatar_nom.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/status_pill.dart';
 import 'barre_commandes_observation.dart';
 import 'compteur_visite.dart';
@@ -321,8 +322,12 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
       return StatusPill(libelle: v.videoCoupee, ton: TonEtat.alerte);
     }
     return switch (widget.etatSalle) {
-      EtatSalle.connecte || EtatSalle.retabli || EtatSalle.instable =>
-        StatusPill(libelle: v.enDirect, ton: TonEtat.succes),
+      EtatSalle.connecte ||
+      EtatSalle.retabli ||
+      EtatSalle.instable => PastilleEtatSeance(
+        etat: EtatPastilleSeance.enDirect,
+        libelle: v.enDirect,
+      ),
       EtatSalle.reconnexion => StatusPill(
         libelle: v.reconnexion,
         ton: TonEtat.avertissement,

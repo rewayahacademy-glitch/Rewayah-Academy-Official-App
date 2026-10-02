@@ -178,6 +178,24 @@ class Traductions$etat$fr {
 
 	/// fr: 'Terminé'
 	String get termine => 'Terminé';
+
+	/// fr: 'Annulée'
+	String get seanceAnnulee => 'Annulée';
+
+	/// fr: 'Annulée : {valeur}'
+	String annuleeValeur({required Object valeur}) => 'Annulée : ${valeur}';
+
+	/// fr: 'Motif non communiqué'
+	String get motifNonCommunique => 'Motif non communiqué';
+
+	/// fr: 'Aucun remplaçant trouvé'
+	String get aucunRemplacantTrouve => 'Aucun remplaçant trouvé';
+
+	/// fr: 'séance non facturée'
+	String get seanceNonFacturee => 'séance non facturée';
+
+	/// fr: '{raison} · {suite}'
+	String raisonEtSuite({required Object raison, required Object suite}) => '${raison} · ${suite}';
 }
 
 // Path: destructif
@@ -14348,6 +14366,12 @@ extension on Traductions {
 			'etat.enAttente' => 'En attente',
 			'etat.enRetard' => 'En retard',
 			'etat.termine' => 'Terminé',
+			'etat.seanceAnnulee' => 'Annulée',
+			'etat.annuleeValeur' => ({required Object valeur}) => 'Annulée : ${valeur}',
+			'etat.motifNonCommunique' => 'Motif non communiqué',
+			'etat.aucunRemplacantTrouve' => 'Aucun remplaçant trouvé',
+			'etat.seanceNonFacturee' => 'séance non facturée',
+			'etat.raisonEtSuite' => ({required Object raison, required Object suite}) => '${raison} · ${suite}',
 			'destructif.irreversible' => 'Cette action ne peut pas être annulée.',
 			'salle.preparation.titre' => 'Préparer l\'entrée dans la classe',
 			'salle.preparation.retour' => 'Retour à la Classe',
@@ -14766,14 +14790,14 @@ extension on Traductions {
 			'contrat.lireTexte' => 'Lire le texte complet',
 			'contrat.accepter' => 'J\'ai lu et j\'accepte',
 			'contrat.accepteLe' => ({required Object date}) => 'Accepté le ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'contrat.erreur' => 'La signature n\'a pas abouti. Réessayez dans un instant.',
 			'contrat.horsLigne' => 'Vous êtes hors ligne. Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.',
 			'contrat.caseRequise' => 'Cochez la case pour continuer.',
 			'accessibilite.demo.titre' => 'Démonstration du Mode Accessibilité',
 			'accessibilite.demo.mention' => 'Données fictives, aucun envoi.',
 			'accessibilite.demo.intro' => 'Choisissez un élève et un moment de la séance.',
-			_ => null,
-		} ?? switch (path) {
 			'accessibilite.demo.eleveMineure' => 'Mariam, élève mineure',
 			'accessibilite.demo.eleveAdulte' => 'Idriss, élève adulte',
 			'accessibilite.demo.etatAvant' => 'Avant la séance',
@@ -15280,14 +15304,14 @@ extension on Traductions {
 			'dossiers.revue.dateDepot' => 'Date de dépôt',
 			'dossiers.revue.etatDossier' => 'État du dossier',
 			'dossiers.revue.dateIndisponible' => 'Date de dépôt indisponible',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.revue.pasPret' => 'Ce dossier n\'est pas encore prêt à être validé.',
 			'dossiers.revue.erreurChargement' => 'Impossible de charger ce dossier.',
 			'dossiers.revue.pieceIndisponible' => 'La consultation de la pièce est indisponible pour le moment.',
 			'dossiers.revue.etats.chargement' => 'Chargement du dossier…',
 			'dossiers.revue.etats.horsLigne' => 'Vous êtes hors ligne. Aucune décision ne peut être envoyée.',
 			'dossiers.revue.etats.accesPerdu' => 'Vous n’avez plus accès à ce dossier.',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.revue.etats.retourDossiers' => 'Retour aux dossiers',
 			'dossiers.revue.etats.verificationsIncompletes' => 'Terminez les vérifications requises.',
 			'dossiers.revue.etats.accordManquant' => 'Un accord requis manque à ce dossier.',
@@ -15794,14 +15818,14 @@ extension on Traductions {
 			'admin.journal.vide' => 'Aucun événement enregistré',
 			'admin.journal.videDetail' => 'Chaque lecture de dossier, chaque décision et chaque attribution viendra s\'inscrire ici.',
 			'admin.journal.videFiltre' => 'Aucun événement ne correspond',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.videFiltreDetail' => 'Élargissez la période, ou relâchez un filtre.',
 			'admin.journal.effacerFiltres' => 'Effacer les filtres',
 			'admin.journal.erreur' => 'Le journal n\'a pas pu être lu. Réessayez dans un instant.',
 			'admin.journal.erreurSuite' => 'Les entrées plus anciennes n\'ont pas pu être lues.',
 			'admin.journal.chargerSuite' => 'Charger les entrées plus anciennes',
 			'admin.journal.fin' => 'Vous êtes remonté jusqu\'à la première entrée du journal.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.evenements.observationEntree' => 'Visite d\'observation commencée',
 			'admin.journal.evenements.observationSortie' => 'Visite d\'observation terminée',
 			'admin.journal.evenements.observationPolitiqueGroupeModifiee' => 'Règles d\'observation de la classe modifiées',
@@ -16308,14 +16332,14 @@ extension on Traductions {
 			'historique.moisCourts.0' => 'janv.',
 			'historique.moisCourts.1' => 'févr.',
 			'historique.moisCourts.2' => 'mars',
+			_ => null,
+		} ?? switch (path) {
 			'historique.moisCourts.3' => 'avr.',
 			'historique.moisCourts.4' => 'mai',
 			'historique.moisCourts.5' => 'juin',
 			'historique.moisCourts.6' => 'juil.',
 			'historique.moisCourts.7' => 'août',
 			'historique.moisCourts.8' => 'sept.',
-			_ => null,
-		} ?? switch (path) {
 			'historique.moisCourts.9' => 'oct.',
 			'historique.moisCourts.10' => 'nov.',
 			'historique.moisCourts.11' => 'déc.',
@@ -16822,14 +16846,14 @@ extension on Traductions {
 			'enseignant.photo.autre' => 'Choisir une autre photo',
 			'enseignant.photo.changer' => 'Changer la photo',
 			'enseignant.photo.alternatif' => 'Votre photo publique',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.photo.succes' => 'La photo est enregistrée.',
 			'enseignant.photo.echec' => 'La photo n\'a pas pu être envoyée. Rien n\'a changé sur le profil.',
 			'enseignant.photo.selectionEchec' => 'La photo n\'a pas pu être ouverte. Vérifiez l\'accès aux photos de l\'appareil, puis réessayez.',
 			'enseignant.photo.horsLigne' => 'Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.',
 			'enseignant.journee.lancer' => 'Lancer le cours',
 			'enseignant.journee.preflight' => 'Vérifier avant le cours',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.journee.titre' => 'Aujourd\'hui',
 			'enseignant.journee.prochainCours' => 'Prochain cours',
 			'enseignant.journee.coursEnCours' => 'Séance en direct',
@@ -17336,14 +17360,14 @@ extension on Traductions {
 			'tc.bibliotheque.aucunResultat.message' => 'Aucun support ne correspond',
 			'tc.bibliotheque.aucunResultat.invitation' => 'Essayez un autre mot, ou relâchez les filtres.',
 			'tc.bibliotheque.indisponible.message' => 'La bibliothèque est momentanément indisponible',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.indisponible.action' => 'Réessayer',
 			'tc.bibliotheque.introuvable.message' => 'Ce support ne vous est pas ouvert',
 			'tc.bibliotheque.introuvable.invitation' => 'Il a peut-être été retiré, ou il est réservé à un autre groupe. Votre enseignant peut vous le rouvrir.',
 			'tc.bibliotheque.offline.aTelecharger' => 'À télécharger',
 			'tc.bibliotheque.offline.enCours' => 'Téléchargement',
 			'tc.bibliotheque.offline.enCache' => 'En cache',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.offline.telecharge' => 'Téléchargé',
 			'tc.bibliotheque.offline.indisponible' => 'Hors ligne indisponible',
 			'tc.bibliotheque.type.quran' => 'Coran',
@@ -17850,14 +17874,14 @@ extension on Traductions {
 			'adulte.demo.etats.conjointActif' => 'Le second adulte fait partie du foyer.',
 			'adulte.demo.etats.conjointQuitte' => 'Le second adulte a quitté le foyer.',
 			'adulte.demo.etats.conjointRetire' => 'Le second adulte a été retiré du foyer.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.etats.delai60' => 'Un délai de 60 jours est en cours.',
 			'adulte.demo.etats.nouvelleDemande' => 'Une nouvelle invitation est possible après le délai de 60 jours.',
 			'adulte.demo.etats.validationEnAttente' => 'La validation administrative est en attente.',
 			'adulte.demo.etats.validationRefusee' => 'La validation administrative a été refusée.',
 			'adulte.demo.etats.secondDepart' => 'Le second adulte est parti pour la deuxième fois.',
 			'adulte.demo.etats.delai120' => 'Un délai de 120 jours est en cours.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.etats.departsSuivants' => 'Après le troisième départ, le délai reste de 120 jours.',
 			'adulte.demo.etats.repriseDemandee' => 'Une demande de reprise du foyer a été déposée.',
 			'adulte.demo.etats.repriseRefuseeParTitulaire' => 'La demande de reprise a été refusée par le titulaire.',

@@ -26,6 +26,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/status_pill.dart';
 
 /// Le libelle d'un etat d'absence, mot pour mot du doc 04 §17.2.
@@ -61,11 +62,20 @@ class PastilleAbsence extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Semantics(
     liveRegion: true,
-    child: StatusPill(
-      key: const ValueKey<String>('journee-etat-absence'),
-      libelle: libelleEtatAbsence(etat),
-      ton: tonEtatAbsence(etat),
-    ),
+    // « Seance annulee » est un etat de seance : la pastille partagee, avec
+    // l'icone d'annulation (ANNUL-VIS-1). Les autres etats sont ceux de
+    // l'absence.
+    child: etat == EtatAbsence.seanceAnnulee
+        ? PastilleEtatSeance(
+            key: const ValueKey<String>('journee-etat-absence'),
+            etat: EtatPastilleSeance.annulee,
+            libelle: libelleEtatAbsence(etat),
+          )
+        : StatusPill(
+            key: const ValueKey<String>('journee-etat-absence'),
+            libelle: libelleEtatAbsence(etat),
+            ton: tonEtatAbsence(etat),
+          ),
   );
 }
 

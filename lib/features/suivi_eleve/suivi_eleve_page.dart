@@ -15,6 +15,7 @@ import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/skeleton.dart';
 import '../suivi_foyer/vue_suivi_foyer.dart';
 
@@ -216,6 +217,15 @@ List<ColonneDonnees<LigneSuivi>> _colonnesSuiviEleve({
               nom: t.eleve.suivi.moi,
               vue: ligne.presence,
               afficherConsolide: false,
+            )
+          : ligne.sort == SortDuCours.annule
+          // Une seance annulee se reconnait d'un coup d'oeil (ANNUL-VIS-1).
+          ? Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: PastilleEtatSeance(
+                etat: EtatPastilleSeance.annulee,
+                libelle: _libelleEtat(ligne),
+              ),
             )
           : Text(
               _libelleEtat(ligne),

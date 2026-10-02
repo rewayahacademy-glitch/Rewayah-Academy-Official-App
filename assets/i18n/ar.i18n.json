@@ -4,6 +4,15 @@
       "page": "أقسام الصفحة"
     }
   },
+  "etat": {
+    "enDirect": "مباشر",
+    "seanceAnnulee": "ملغاة",
+    "annuleeValeur": "ملغاة : {valeur}",
+    "motifNonCommunique": "السبب غير متوفر",
+    "aucunRemplacantTrouve": "لم يُعثر على بديل",
+    "seanceNonFacturee": "الحصة غير مفوترة",
+    "raisonEtSuite": "{raison} · {suite}"
+  },
   "classe": {
     "entree": {
       "coursDans": "الدرس بعد {duree}",

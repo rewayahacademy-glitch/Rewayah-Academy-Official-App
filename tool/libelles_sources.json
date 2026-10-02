@@ -4,5 +4,8 @@
   "compte.themeSombreDetail": "commentaire du directeur 01-02/10, etape THEME-SW-1",
   "salle.cameraAllumee": "commentaire du directeur 01-02/10, etape ETATS-BTN-1 : mot d'etat sous l'icone de la bascule camera (Camera allumee / Camera eteinte)",
   "commun.sections.page": "commentaire du directeur 01-02/10, etape ONGLETS-1",
-  "tc.bibliotheque.sections.groupe": "commentaire du directeur 01-02/10, etape ONGLETS-1"
+  "tc.bibliotheque.sections.groupe": "commentaire du directeur 01-02/10, etape ONGLETS-1",
+  "etat.seanceAnnulee": "commentaire du directeur 01-02/10, etape ANNUL-VIS-1 : pastille « Annulée » sur la couleur d'erreur, icône d'annulation",
+  "etat.heureAnnulee": "commentaire du directeur 01-02/10, etape ANNUL-VIS-1 : heure barrée, annoncée au lecteur d'écran",
+  "etat.raisonEtSuite": "commentaire du directeur 01-02/10, etape ANNUL-VIS-1 : une ligne dit pourquoi et la suite"
 }

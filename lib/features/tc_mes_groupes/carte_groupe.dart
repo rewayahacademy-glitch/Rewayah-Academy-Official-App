@@ -11,6 +11,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_nom.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/status_pill.dart';
 import 'photo_enseignant.dart';
 
@@ -253,6 +254,12 @@ class _ProchaineSeance extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          // Une seance en cours se reconnait au premier coup d'oeil
+          // (ON-AIR-1) ; la ligne d'etat garde le temps restant.
+          if (horloge.enDirect) ...<Widget>[
+            const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
+            Ecart.vSm,
+          ],
           Text(
             LibellesGroupe.prochainCours,
             style: palette.inkMuted.applyTo(

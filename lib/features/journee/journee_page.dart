@@ -59,6 +59,7 @@ import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_typography.dart';
 import '../../core/video/pre_vol.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
@@ -67,10 +68,10 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/point_rappel.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
-import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/timeline_row.dart';
 import '../tc_espace_groupe/carte_session.dart' show EmplacementEntreeVue;
 import 'absence_remplacement_vue.dart';
@@ -225,8 +226,6 @@ class _Corps extends ConsumerWidget {
 
     // Les alertes utiles : ce qui change ce que l'enseignant fait aujourd'hui.
     final List<String> alertes = <String>[
-      if (annulee != null)
-        t.enseignant.journee.coursAnnule(heure: _hhmm(annulee.debut)),
       if (dominant != null && dominant.enCoursA(maintenant))
         ..._alertesPresence(ref, dominant),
       if (reglages.hasError || pause.hasError || retards.hasError)
@@ -267,9 +266,13 @@ class _Corps extends ConsumerWidget {
               enFile:
                   ref.watch(cahiersEnFileProvider).value ?? const <String>{},
             ),
-      alertes: alertes.isEmpty && offres.isEmpty
+      alertes: alertes.isEmpty && offres.isEmpty && annulee == null
           ? null
-          : _AlertesUtiles(alertes: alertes, offres: offres),
+          : _AlertesUtiles(
+              alertes: alertes,
+              offres: offres,
+              coursAnnule: annulee,
+            ),
     );
   }
 }
@@ -496,6 +499,12 @@ class _CarteProchaineSeance extends ConsumerWidget {
       ),
       sessionId: cours.id,
     );
+    // Une seance annulee (par le serveur, ou parce que l'absence declaree n'a
+    // trouve aucun remplacant) : surface enfoncee, horaire barre, et la ligne
+    // qui dit pourquoi (ANNUL-VIS-1).
+    final bool seanceAnnulee =
+        absence == EtatAbsence.seanceAnnulee ||
+        cours.statut == StatutSeance.annulee;
     final EmplacementEntree emplacement = emplacementJournee(
       EmplacementEntree.pour(
         role: RoleEntree.enseignant,
@@ -520,6 +529,9 @@ class _CarteProchaineSeance extends ConsumerWidget {
         Ecart.vSm,
         AppCard(
           dominante: true,
+          surface: seanceAnnulee
+              ? surfaceCarteSeance(palette, annulee: true)
+              : null,
           entete: Row(
             children: <Widget>[
               Expanded(
@@ -533,7 +545,7 @@ class _CarteProchaineSeance extends ConsumerWidget {
                 ),
               ),
               if (enCours)
-                StatusPill(libelle: t.etat.enDirect, ton: TonEtat.succes),
+                const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
             ],
           ),
           child: Column(
@@ -545,6 +557,17 @@ class _CarteProchaineSeance extends ConsumerWidget {
                 Align(
                   alignment: AlignmentDirectional.centerStart,
                   child: PastilleAbsence(etat: absence),
+                ),
+                Ecart.vMd,
+              ],
+              if (seanceAnnulee) ...<Widget>[
+                LigneRaisonSeance(
+                  raison: absence == EtatAbsence.seanceAnnulee
+                      ? t.etat.aucunRemplacantTrouve
+                      : t.etat.motifNonCommunique,
+                  suite: absence == EtatAbsence.seanceAnnulee
+                      ? t.etat.seanceNonFacturee
+                      : null,
                 ),
                 Ecart.vMd,
               ],
@@ -566,6 +589,7 @@ class _CarteProchaineSeance extends ConsumerWidget {
                   fin: _hhmm(cours.fin),
                 ),
                 chiffres: true,
+                annulee: seanceAnnulee,
               ),
               Ecart.vSm,
               LigneCleValeur(
@@ -788,8 +812,9 @@ class _ATerminer extends ConsumerWidget {
 
 /// Les cahiers « A terminer », du plus ancien au plus recent (§11.4).
 List<CahierEnRetard> trierCahiersATerminer(List<CahierEnRetard> cahiers) =>
-    List<CahierEnRetard>.of(cahiers)
-      ..sort((CahierEnRetard a, CahierEnRetard b) => a.debut.compareTo(b.debut));
+    List<CahierEnRetard>.of(
+      cahiers,
+    )..sort((CahierEnRetard a, CahierEnRetard b) => a.debut.compareTo(b.debut));
 
 /// La liste complete « A terminer », ouverte par « Voir tout » (§11.4).
 class _ListeATerminer extends ConsumerWidget {
@@ -829,38 +854,38 @@ class _LignesATerminer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return GroupeReglages(
-          lignes: <LigneRubrique>[
-            for (final CahierEnRetard cahier in cahiers)
-              LigneRubrique(
-                icone: AppIcons.cahier,
-                libelle: t.enseignant.journee.cahierLigne(
-                  classe: deDevant(_nomClasse(cahier.groupeLibelle)),
-                ),
-                // Doc 04 §20.8 : valide hors ligne, le cahier reste ici
-                // « En attente d'envoi » jusqu'a la confirmation du serveur ;
-                // l'appui ouvre cet etat, pas le formulaire (§33 n. 14).
-                legende: enFile.contains(cahier.seanceId)
-                    ? t.enseignant.cahier.enFileTitre
-                    : t.enseignant.journee.cahierDetail(
-                        jour: t.commun.dates.jours[cahier.debut.weekday - 1]
-                            .toLowerCase(),
-                        numero: '${cahier.debut.day}',
-                        mois: t.commun.dates.mois[cahier.debut.month - 1],
-                        heure: _hhmm(cahier.debut),
-                      ),
-                onPress: () async {
-                  // `push` et non `go` : au retour, la file se relit et la
-                  // ligne disparait d'elle-meme.
-                  await GoRouter.of(context)
-                      .push<void>(Routes.cahierPour(cahier.seanceId));
-                  if (context.mounted) {
-                    ref.invalidate(cahiersEnRetardProvider);
-                    ref.invalidate(seancesEnseignantProvider);
-                    ref.invalidate(cahiersEnFileProvider);
-                  }
-                },
-              ),
-          ],
+      lignes: <LigneRubrique>[
+        for (final CahierEnRetard cahier in cahiers)
+          LigneRubrique(
+            icone: AppIcons.cahier,
+            libelle: t.enseignant.journee.cahierLigne(
+              classe: deDevant(_nomClasse(cahier.groupeLibelle)),
+            ),
+            // Doc 04 §20.8 : valide hors ligne, le cahier reste ici
+            // « En attente d'envoi » jusqu'a la confirmation du serveur ;
+            // l'appui ouvre cet etat, pas le formulaire (§33 n. 14).
+            legende: enFile.contains(cahier.seanceId)
+                ? t.enseignant.cahier.enFileTitre
+                : t.enseignant.journee.cahierDetail(
+                    jour: t.commun.dates.jours[cahier.debut.weekday - 1]
+                        .toLowerCase(),
+                    numero: '${cahier.debut.day}',
+                    mois: t.commun.dates.mois[cahier.debut.month - 1],
+                    heure: _hhmm(cahier.debut),
+                  ),
+            onPress: () async {
+              // `push` et non `go` : au retour, la file se relit et la
+              // ligne disparait d'elle-meme.
+              await GoRouter.of(context)
+                  .push<void>(Routes.cahierPour(cahier.seanceId));
+              if (context.mounted) {
+                ref.invalidate(cahiersEnRetardProvider);
+                ref.invalidate(seancesEnseignantProvider);
+                ref.invalidate(cahiersEnFileProvider);
+              }
+            },
+          ),
+      ],
     );
   }
 }
@@ -871,8 +896,13 @@ class _AlertesUtiles extends ConsumerWidget {
   const _AlertesUtiles({
     required this.alertes,
     this.offres = const <OffreRemplacement>[],
+    this.coursAnnule,
   });
 
+  /// Le cours annule du jour : une carte attenuee avant toute autre alerte,
+  /// avec la pastille « Annulee », l'horaire barre et la ligne « pourquoi »
+  /// (ANNUL-VIS-1).
+  final Seance? coursAnnule;
   final List<String> alertes;
   final List<OffreRemplacement> offres;
 
@@ -884,38 +914,87 @@ class _AlertesUtiles extends ConsumerWidget {
       children: <Widget>[
         SectionHeader(titre: t.enseignant.journee.alertesUtiles),
         Ecart.vSm,
-        GroupeReglages(
-          lignes: <LigneRubrique>[
-            for (final OffreRemplacement offre in offres)
-              LigneRubrique(
-                icone: AppIcons.cours,
-                libelle: t.enseignant.journee.remplacement.titre,
-                legende:
-                    '${offre.classe} · ${dateLisible(offre.debut)} · '
-                    '${_hhmm(offre.debut)}',
-                onPress: port == null
-                    ? null
-                    : () async {
-                        final bool confirme = await ouvrirFeuilleRemplacement(
-                          context,
-                          port: port,
-                          offre: offre,
-                          date: dateLisible(offre.debut),
-                        );
-                        // La carte n'apparait que sur la confirmation du
-                        // serveur (E7).
-                        if (confirme) {
-                          ref
-                              .read(remplacementsConfirmesProvider.notifier)
-                              .confirmer(offre);
-                        }
-                      },
-              ),
-            for (final String alerte in alertes)
-              LigneRubrique(icone: AppIcons.avertissement, libelle: alerte),
-          ],
-        ),
+        if (coursAnnule != null) ...<Widget>[
+          _CarteCoursAnnule(cours: coursAnnule!),
+          if (alertes.isNotEmpty || offres.isNotEmpty) Ecart.vMd,
+        ],
+        if (alertes.isNotEmpty || offres.isNotEmpty)
+          GroupeReglages(
+            lignes: <LigneRubrique>[
+              for (final OffreRemplacement offre in offres)
+                LigneRubrique(
+                  icone: AppIcons.cours,
+                  libelle: t.enseignant.journee.remplacement.titre,
+                  legende:
+                      '${offre.classe} · ${dateLisible(offre.debut)} · '
+                      '${_hhmm(offre.debut)}',
+                  onPress: port == null
+                      ? null
+                      : () async {
+                          final bool confirme = await ouvrirFeuilleRemplacement(
+                            context,
+                            port: port,
+                            offre: offre,
+                            date: dateLisible(offre.debut),
+                          );
+                          // La carte n'apparait que sur la confirmation du
+                          // serveur (E7).
+                          if (confirme) {
+                            ref
+                                .read(remplacementsConfirmesProvider.notifier)
+                                .confirmer(offre);
+                          }
+                        },
+                ),
+              for (final String alerte in alertes)
+                LigneRubrique(icone: AppIcons.avertissement, libelle: alerte),
+            ],
+          ),
       ],
+    );
+  }
+}
+
+/// Le cours annule du jour : la surface enfoncee (jamais une opacite), la
+/// pastille « Annulee », l'horaire barre et la ligne qui dit pourquoi.
+///
+/// Le serveur ne rend pas encore le motif de l'annulation : la ligne le dit
+/// (« Motif non communique ») plutot que d'en inventer un. La suite (« seance
+/// non facturee », remplacant) viendra avec la donnee (BR-1).
+class _CarteCoursAnnule extends StatelessWidget {
+  const _CarteCoursAnnule({required this.cours});
+
+  final Seance cours;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AppPalette palette = AppPalette.of(context);
+    return AppCard(
+      key: const ValueKey<String>('journee-cours-annule'),
+      surface: surfaceCarteSeance(palette, annulee: true),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          const PastilleEtatSeance(etat: EtatPastilleSeance.annulee),
+          Ecart.vMd,
+          TexteHeureSeance(
+            heure: t.enseignant.journee.plage(
+              debut: _hhmm(cours.debut),
+              fin: _hhmm(cours.fin),
+            ),
+            annulee: true,
+            style: AppTypography.tabulaire(
+              palette.inkStrong.applyTo(
+                textes.titleMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+          Ecart.vXs,
+          LigneRaisonSeance(raison: t.etat.motifNonCommunique),
+        ],
+      ),
     );
   }
 }

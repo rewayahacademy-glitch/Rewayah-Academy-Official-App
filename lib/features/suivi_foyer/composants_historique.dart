@@ -16,6 +16,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/menu_filtre.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/status_pill.dart';
@@ -289,7 +290,12 @@ class LigneHistorique extends StatelessWidget {
     required this.semantique,
     required this.onPress,
     super.key,
+    this.annulee = false,
   });
+
+  /// Vrai quand la seance est annulee : pastille « Annulee » et horaire barre
+  /// (ANNUL-VIS-1).
+  final bool annulee;
 
   /// La date, en gras.
   final String date;
@@ -343,7 +349,11 @@ class LigneHistorique extends StatelessWidget {
       children: <Widget>[
         Text(date, style: fort),
         Ecart.vXs,
-        Text(meta, style: AppTypography.tabulaire(doux)),
+        TexteHeureSeance(
+          heure: meta,
+          annulee: annulee,
+          style: AppTypography.tabulaire(doux),
+        ),
       ],
     );
     final Widget blocClasse = Column(
@@ -355,7 +365,9 @@ class LigneHistorique extends StatelessWidget {
         Text(sousTitre, style: doux),
       ],
     );
-    final Widget pastille = StatusPill(libelle: statut, ton: ton);
+    final Widget pastille = annulee
+        ? PastilleEtatSeance(etat: EtatPastilleSeance.annulee, libelle: statut)
+        : StatusPill(libelle: statut, ton: ton);
     final Widget chevron = IconTheme(
       data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
       child: Icon(AppIcons.chevron.repos),

@@ -18,6 +18,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/ligne_presence.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
@@ -114,8 +115,21 @@ class CarteSeanceClasse extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AppPalette palette = AppPalette.of(context);
+    final SeanceFamille? lue = seance.value;
+    // Une seance annulee attenue la carte par sa surface (ANNUL-VIS-1).
+    final bool annulee =
+        lue != null &&
+        AffichageSeance.depuis(
+              lue,
+              maintenantServeurUtc: maintenantServeurUtc,
+            ).etatPastille ==
+            EtatPastilleSeance.annulee;
     return AppCard(
-      surface: compact ? palette.surfaceRaised : palette.surfaceMiseEnAvant,
+      surface: annulee
+          ? surfaceCarteSeance(palette, annulee: true)
+          : compact
+          ? palette.surfaceRaised
+          : palette.surfaceMiseEnAvant,
       marge: compact ? AppSpacing.lg : AppSpacing.xxl,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -197,9 +211,14 @@ class CarteSeanceClasse extends ConsumerWidget {
         droite: bandeau.droite,
         ton: bandeau.ton,
         compact: compact,
+        etat: affichage.etatPastille,
       ),
       Ecart.vLg,
-      _Heures(affichage: affichage, compact: compact),
+      _Heures(
+        affichage: affichage,
+        compact: compact,
+        annulee: affichage.etatPastille == EtatPastilleSeance.annulee,
+      ),
       if (affichage.heureClasse != null) ...<Widget>[
         Ecart.vSm,
         Text(affichage.heureClasse!, style: discret),
@@ -276,8 +295,11 @@ class _Bandeau extends StatelessWidget {
     required this.droite,
     required this.ton,
     required this.compact,
+    this.etat,
   });
 
+  /// L'etat de seance a reconnaitre d'un coup d'oeil, ou `null`.
+  final EtatPastilleSeance? etat;
   final String gauche;
   final String? droite;
   final TonEtat ton;
@@ -288,6 +310,47 @@ class _Bandeau extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final AppColorPair paire = palette.paireDe(ton);
+    final EtatPastilleSeance? seance = etat;
+    if (seance != null) {
+      // « En direct » et « Annulee » : le composant partage, jamais un point
+      // de couleur et un mot posés a la main (ON-AIR-1, ANNUL-VIS-1).
+      final bool annulee = seance == EtatPastilleSeance.annulee;
+      return MergeSemantics(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.xs,
+              children: <Widget>[
+                // Annulee : le mot de la pastille, puis la raison dessous.
+                PastilleEtatSeance(
+                  etat: seance,
+                  libelle: annulee ? null : gauche,
+                ),
+                if (droite != null)
+                  Text(
+                    droite!,
+                    style: palette.inkMuted.applyTo(
+                      AppTypography.tabulaire(
+                        (compact ? textes.bodySmall : textes.bodyMedium) ??
+                            const TextStyle(),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            if (annulee) ...<Widget>[
+              Ecart.vSm,
+              LigneRaisonSeance(raison: gauche),
+            ],
+          ],
+        ),
+      );
+    }
     final BoxDecoration point = switch (ton) {
       TonEtat.succes => palette.pointsStatut.succes.pastille(),
       TonEtat.avertissement => palette.pointsStatut.attention.pastille(),
@@ -358,8 +421,14 @@ class _Bandeau extends StatelessWidget {
 /// fuseau du foyer ; sans horloge serveur, celle de l'appareil, **dite comme
 /// telle** (jamais un fuseau devine).
 class _Heures extends StatelessWidget {
-  const _Heures({required this.affichage, required this.compact});
+  const _Heures({
+    required this.affichage,
+    required this.compact,
+    this.annulee = false,
+  });
 
+  /// Vrai quand la seance est annulee : l'heure est barree.
+  final bool annulee;
   final AffichageSeance affichage;
   final bool compact;
 
@@ -382,6 +451,7 @@ class _Heures extends StatelessWidget {
                     ),
               complement: affichage.ville == null ? affichage.fuseau : null,
               compact: compact,
+              annulee: annulee,
             ),
           ),
           Expanded(
@@ -422,8 +492,11 @@ class _Colonne extends StatelessWidget {
     required this.valeur,
     required this.compact,
     this.complement,
+    this.annulee = false,
   });
 
+  /// Vrai quand la valeur est l'heure d'une seance annulee : barree.
+  final bool annulee;
   final AppIcon icone;
   final String libelle;
   final String valeur;
@@ -467,8 +540,9 @@ class _Colonne extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text(libelle, style: discret),
-                Text(
-                  valeur,
+                TexteHeureSeance(
+                  heure: valeur,
+                  annulee: annulee,
                   style: AppTypography.tabulaire(
                     palette.inkStrong.applyTo(
                       (compact ? textes.titleMedium : textes.titleLarge) ??

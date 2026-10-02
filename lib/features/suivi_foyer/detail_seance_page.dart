@@ -15,6 +15,7 @@ import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../compte/carte_rubriques.dart';
@@ -158,7 +159,8 @@ class _Contenu extends ConsumerWidget {
       ),
     );
 
-    Widget carte(List<Widget> lignes) => SurfaceCarte(
+    Widget carte(List<Widget> lignes, {bool annulee = false}) => SurfaceCarte(
+      surface: annulee ? surfaceCarteSeance(palette, annulee: true) : null,
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.lg,
@@ -182,6 +184,7 @@ class _Contenu extends ConsumerWidget {
             cle: t.historique.seance.horaire,
             valeur: plageHoraire(seance.debut, seance.fin),
             chiffres: true,
+            annulee: statut == StatutHistorique.annule,
           ),
           LigneCleValeur(
             cle: t.historique.seance.dureePrevue,
@@ -196,17 +199,19 @@ class _Contenu extends ConsumerWidget {
             cle: t.historique.seance.enseignant,
             valeur: enseignantAffiche(seance, classe),
           ),
-        ]),
+        ], annulee: statut == StatutHistorique.annule),
         Ecart.vXl,
         titreBloc(t.historique.seance.blocPresence(prenom: seance.elevePrenom)),
         carte(<Widget>[
           LigneCleValeur(
             cle: t.historique.seance.presence,
             valeur: '',
-            complement: StatusPill(
-              libelle: libelleStatut(ligne),
-              ton: statut.ton,
-            ),
+            complement: statut == StatutHistorique.annule
+                ? PastilleEtatSeance(
+                    etat: EtatPastilleSeance.annulee,
+                    libelle: libelleStatut(ligne),
+                  )
+                : StatusPill(libelle: libelleStatut(ligne), ton: statut.ton),
           ),
           if (arrivee != null)
             LigneCleValeur(

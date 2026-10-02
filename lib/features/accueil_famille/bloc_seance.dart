@@ -10,6 +10,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/status_pill.dart';
 
@@ -109,6 +110,21 @@ class AffichageSeance {
     EtatSeanceFamille.reportee => t.tuteur.accueil.seanceNonTenue,
     EtatSeanceFamille.horaireIncertain => t.tuteur.accueil.horaireIncertain,
   };
+
+  /// L'etat de seance a reconnaitre d'un coup d'oeil (en direct, annulee), ou
+  /// `null`. Ces deux etats se montrent par [PastilleEtatSeance] et jamais
+  /// par une `StatusPill` seule (ON-AIR-1, ANNUL-VIS-1).
+  EtatPastilleSeance? get etatPastille => etatPastilleDe(etat);
+
+  /// La pastille a afficher pour cet etat : [PastilleEtatSeance] pour « En
+  /// direct » et « Annulee », la `StatusPill` de [pastille] pour les autres,
+  /// `null` quand l'etat n'en porte pas.
+  Widget? get widgetPastille {
+    final EtatPastilleSeance? seance = etatPastille;
+    if (seance != null) return PastilleEtatSeance(etat: seance);
+    final ({String libelle, TonEtat ton})? p = pastille;
+    return p == null ? null : StatusPill(libelle: p.libelle, ton: p.ton);
+  }
 
   /// La pastille d'etat, ou `null` quand l'etat n'en porte pas (a venir,
   /// horaire incertain : une pastille n'y dirait rien de sur).

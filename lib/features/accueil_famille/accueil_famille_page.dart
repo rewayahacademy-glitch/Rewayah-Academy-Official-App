@@ -23,6 +23,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
 import '../parcours_offres/bloc_parcours.dart';
@@ -400,6 +401,8 @@ class _Contenu extends ConsumerWidget {
       etat: affichage.etatCourt,
       urlPhoto: photo,
       point: affichage.point,
+      enDirect: affichage.etatPastille == EtatPastilleSeance.enDirect,
+      annulee: affichage.etatPastille == EtatPastilleSeance.annulee,
     );
   }
 }

@@ -59,7 +59,19 @@ extension PaireDeTonEtat on AppPalette {
 /// (`01-systeme-visuel.md` section 3).
 class StatusPill extends StatelessWidget {
   /// Cree une pilule d'etat.
-  const StatusPill({required this.libelle, required this.ton, super.key});
+  const StatusPill({
+    required this.libelle,
+    required this.ton,
+    super.key,
+    this.marqueur,
+  });
+
+  /// Ce qui remplace le disque de statut, ou `null` pour le disque du ton.
+  ///
+  /// Reserve a `PastilleEtatSeance` (point qui pulse, icone d'annulation) :
+  /// le marqueur prend la place du disque, sur [diametrePastille] de large
+  /// au plus, sans changer la mise en page de la pilule.
+  final Widget? marqueur;
 
   /// Le mot qui nomme l'etat. Court : deux mots au plus.
   final String libelle;
@@ -91,10 +103,11 @@ class StatusPill extends StatelessWidget {
           // (K-54).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            SizedBox.square(
-              dimension: diametrePastille,
-              child: DecoratedBox(decoration: pastille),
-            ),
+            marqueur ??
+                SizedBox.square(
+                  dimension: diametrePastille,
+                  child: DecoratedBox(decoration: pastille),
+                ),
             Ecart.hSm,
             Flexible(
               child: Text(
