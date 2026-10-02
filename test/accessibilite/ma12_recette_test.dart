@@ -20,7 +20,9 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/features/compte/compte_page.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/interface_page.dart';
@@ -161,7 +163,12 @@ List<String> _actionsSansLibelle(SemanticsNode racine) {
         d.label.trim().isNotEmpty ||
         d.value.trim().isNotEmpty ||
         d.tooltip.trim().isNotEmpty;
-    if (d.hasAction(SemanticsAction.tap) && !nomme && !n.isInvisible) {
+    // Un noeud fusionne dans son parent (MergeSemantics) est annonce par
+    // lui : c est le parent, qui porte le libelle, qui compte.
+    if (d.hasAction(SemanticsAction.tap) &&
+        !nomme &&
+        !n.isInvisible &&
+        !n.isMergedIntoParent) {
       manque.add('${n.id} ${n.rect}');
     }
     n.visitChildren((SemanticsNode c) {
@@ -179,16 +186,6 @@ void _fixer(WidgetTester tester, Size taille) {
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
 }
-
-/// Defauts trouves par la recette MA-12, a corriger a MA-RC (ne pas masquer :
-/// retirer l'entree quand le defaut est corrige).
-const String _defautLibelleControle =
-    'Defaut MA-12 : Mon espace, le controle natif (Switch ou Radio) de '
-    'SettingRow (setting_row.dart, controle) est un noeud tactile sans '
-    'libelle : le lecteur d ecran lit une case sans nom';
-
-String? _sautLibelle(String ecran) =>
-    ecran == 'Mon espace' ? _defautLibelleControle : null;
 
 void _matrice() {
   for (final EleveDemoAccessibilite eleve in EleveDemoAccessibilite.values) {
@@ -255,7 +252,7 @@ void _matrice() {
             reason: 'action sans libelle sur ${ecran.nom}',
           );
           poignee.dispose();
-        }, skip: _sautLibelle(ecran.nom) != null);
+        });
       });
     }
   }
@@ -263,6 +260,37 @@ void _matrice() {
 
 void main() {
   _matrice();
+
+  // MA-RC (B2) : la page Reglages commune a tous les roles, en presentation
+  // standard : chaque interrupteur et chaque rond de choix porte un nom.
+  testWidgets('MA-RC Reglages (presentation standard) : chaque action porte '
+      'un libelle', (WidgetTester tester) async {
+    _fixer(tester, const Size(390, 844));
+    final SemanticsHandle poignee = tester.ensureSemantics();
+    await tester.pumpWidget(
+      hote(
+        const ReglagesComptePage(),
+        surcharges: <Override>[
+          sourceSessionProvider.overrideWithValue(FausseSourceSession()),
+        ],
+      ),
+    );
+    await stabiliser(tester);
+    final SemanticsNode racine = tester.getSemantics(
+      find.byType(ReglagesComptePage),
+    );
+    expect(_actionsSansLibelle(racine), isEmpty);
+    // Un seul noeud : le libelle de la ligne ET l'etat de l'interrupteur.
+    final SemanticsData animations = tester
+        .getSemantics(
+          find.bySemanticsLabel(RegExp(RegExp.escape(t.compte.animations))),
+        )
+        .getSemanticsData();
+    // ignore: deprecated_member_use
+    expect(animations.hasFlag(SemanticsFlag.hasToggledState), isTrue);
+    expect(animations.hasAction(SemanticsAction.tap), isTrue);
+    poignee.dispose();
+  });
 
   group('MA-12 page Interface du tuteur : clavier et cibles', () {
     for (final Size taille in <Size>[

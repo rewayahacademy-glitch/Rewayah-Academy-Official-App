@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../icons/app_icons.dart';
+import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -36,10 +37,15 @@ class SettingRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
     final active = enabled && onPress != null;
-    return Pressable.selon(
+    // Une ligne qui porte un controle natif (interrupteur, rond de choix) sans
+    // se presser elle-meme : libelle, description et etat du controle forment
+    // un seul noeud pour le lecteur d'ecran, en un seul arret (WCAG 4.1.2).
+    // Le libelle vient alors des textes de la ligne, sans doublon.
+    final bool fusion = controle != null && onPress == null;
+    final Widget ligne = Pressable.selon(
       onPress: active ? onPress : null,
       actif: enabled,
-      libelleSemantique: title,
+      libelleSemantique: fusion ? null : title,
       respecterCibleTactile: false,
       arrondiFocus: AppRadius.arrondiMd,
       constructeur: (context, etat) => Container(
@@ -65,6 +71,42 @@ class SettingRow extends StatelessWidget {
             final TextStyle styleSecondaire = palette.inkMuted.applyTo(
               Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
             );
+            final Widget icone = IconTheme(
+              data: palette.inkMuted.asIconTheme(size: AppSpacing.xxl),
+              child: Icon(icon.repos),
+            );
+            // Texte agrandi avec un controle : la ligne passe en colonne
+            // (icone et titre, puis description et valeur pleine largeur,
+            // puis le controle en fin) ; aucun mot n'est comprime ni coupe.
+            if (controle != null &&
+                MediaQuery.textScalerOf(context).scale(1) > 1.3) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      icone,
+                      Ecart.hMd,
+                      Expanded(child: Text(title, style: styleTitre)),
+                    ],
+                  ),
+                  if (description != null) ...<Widget>[
+                    Ecart.vXs,
+                    Text(description!, style: styleSecondaire),
+                  ],
+                  if (value != null) ...<Widget>[
+                    Ecart.vXs,
+                    Text(value!, style: styleSecondaire),
+                  ],
+                  Ecart.vXs,
+                  Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: controle,
+                  ),
+                ],
+              );
+            }
             final bool dessous =
                 value != null &&
                 _valeurDoitPasserDessous(
@@ -75,10 +117,7 @@ class SettingRow extends StatelessWidget {
                 );
             return Row(
               children: <Widget>[
-                IconTheme(
-                  data: palette.inkMuted.asIconTheme(size: AppSpacing.xxl),
-                  child: Icon(icon.repos),
-                ),
+                icone,
                 Ecart.hMd,
                 Expanded(
                   child: Column(
@@ -121,6 +160,7 @@ class SettingRow extends StatelessWidget {
         ),
       ),
     );
+    return fusion ? MergeSemantics(child: ligne) : ligne;
   }
 
   /// Vrai quand la valeur, en fin de ligne, ne laisserait pas au texte de
@@ -132,8 +172,7 @@ class SettingRow extends StatelessWidget {
     TextStyle styleSecondaire,
   ) {
     final TextScaler echelle = MediaQuery.textScalerOf(context);
-    // Un controle de largeur inconnue (pas a pas) : la valeur passe dessous.
-    if (echelle.scale(1) > 1.3 || controle != null) return true;
+    if (echelle.scale(1) > 1.3) return true;
     double mesure(String texte, TextStyle style) {
       final TextPainter p = TextPainter(
         text: TextSpan(text: texte, style: style),
@@ -151,10 +190,18 @@ class SettingRow extends StatelessWidget {
       return m;
     }
 
-    // Icone, ecarts, controle ou chevron (le padding est deja retire).
+    // Icone, ecarts, controle ou chevron (le padding est deja retire). Le
+    // controle ne se mesure pas avant d'etre pose : on lui reserve deux
+    // cibles tactiles, la largeur d'un pas a pas (le plus large en usage).
     final double reserve =
         AppSpacing.xxl +
         AppSpacing.md * 2 +
+        (controle != null
+            ? AppSpacing.sm +
+                  (Theme.of(context).extension<AppMetriques>()?.cibleTactile ??
+                          AppTouchTarget.standard) *
+                      2
+            : 0) +
         (onPress != null ? AppSpacing.sm + AppSpacing.xl : 0);
     final double gauche = largeur - reserve - mesure(value!, styleSecondaire);
     final double titre = motLong(title, styleTitre);
