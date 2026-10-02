@@ -526,7 +526,6 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         dependance: 'EA-BR-25',
         libelleAction: t.adulte.recharge.revenirPaiements,
         onAction: widget.onTerminee,
-        actionsContratB: true,
       ),
       // L'etat que le serveur redige, tel quel (EA-BR-25).
       (null, final String rendu) => Semantics(

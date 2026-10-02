@@ -125,8 +125,10 @@ void main() {
     expect(find.byKey(InvitationRecuePage.accepterKey), findsNothing);
     expect(find.textContaining('rejoint'), findsNothing);
 
-    // Le retour lit la situation d'apres : le foyer sans second adulte.
-    await _taper(tester, find.byType(DisqueRetour).first);
+    // Etat final : pas de retour vers l'invitation repondue ; « Aller a Mon
+    // espace » lit la situation d'apres : le foyer sans second adulte.
+    expect(find.byType(DisqueRetour), findsNothing);
+    await _taper(tester, find.byKey(InvitationRecuePage.monEspaceKey));
     expect(find.byType(MonEspaceAdultePage), findsOneWidget);
     expect(
       routeur.routerDelegate.currentConfiguration.uri.queryParameters['etat'],

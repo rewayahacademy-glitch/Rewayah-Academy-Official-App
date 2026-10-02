@@ -9332,7 +9332,7 @@ class Traductions$adulte$acceptation$fr {
 	String get refusTitre => 'Si vous refusez';
 
 	/// fr: 'Rien ne change pour votre compte, vos cours ni votre solde.'
-	String get refus => 'Rien ne change pour votre compte, vos cours ni votre solde.';
+	String get refus => 'Rien ne change pour votre compte, vos cours ni votre solde.';
 
 	/// fr: 'Ce rattachement doit être validé par l'administration de l'académie. En attendant, votre compte et vos cours fonctionnent normalement.'
 	String get validation => 'Ce rattachement doit être validé par l\'administration de l\'académie. En attendant, votre compte et vos cours fonctionnent normalement.';
@@ -9354,6 +9354,9 @@ class Traductions$adulte$acceptation$fr {
 
 	/// fr: 'Vérifiez avant de réessayer.'
 	String get echecPhrase => 'Vérifiez avant de réessayer.';
+
+	/// fr: 'Invitation acceptée'
+	String get accepteeTitre => 'Invitation acceptée';
 
 	/// fr: 'Vous avez rejoint le forfait famille de {prenom}.'
 	String rejoint({required Object prenom}) => 'Vous avez rejoint le forfait famille de ${prenom}.';
@@ -17279,7 +17282,7 @@ extension on Traductions {
 			'adulte.acceptation.partirTitre' => 'Comment partir',
 			'adulte.acceptation.partir' => 'Dans Mon espace, Forfait famille, Quitter le forfait famille. Vous n\'avez pas besoin de son accord. Votre compte, vos cours, votre historique et votre solde restent disponibles.',
 			'adulte.acceptation.refusTitre' => 'Si vous refusez',
-			'adulte.acceptation.refus' => 'Rien ne change pour votre compte, vos cours ni votre solde.',
+			'adulte.acceptation.refus' => 'Rien ne change pour votre compte, vos cours ni votre solde.',
 			'adulte.acceptation.validation' => 'Ce rattachement doit être validé par l\'administration de l\'académie. En attendant, votre compte et vos cours fonctionnent normalement.',
 			'adulte.acceptation.refuser' => 'Refuser l\'invitation',
 			'adulte.acceptation.accepter' => 'Accepter l\'invitation',
@@ -17287,6 +17290,7 @@ extension on Traductions {
 			'adulte.acceptation.acceptationEchecTitre' => 'L\'acceptation n\'a pas été confirmée.',
 			'adulte.acceptation.refusEchecTitre' => 'Le refus n\'a pas été confirmé.',
 			'adulte.acceptation.echecPhrase' => 'Vérifiez avant de réessayer.',
+			'adulte.acceptation.accepteeTitre' => 'Invitation acceptée',
 			'adulte.acceptation.rejoint' => ({required Object prenom}) => 'Vous avez rejoint le forfait famille de ${prenom}.',
 			'adulte.acceptation.refuseeTitre' => 'Invitation refusée',
 			'adulte.acceptation.impossible' => 'Ce compte ne peut pas rejoindre ce forfait actuellement.',

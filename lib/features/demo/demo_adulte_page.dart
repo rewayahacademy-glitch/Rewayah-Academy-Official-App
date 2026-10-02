@@ -1077,20 +1077,38 @@ class CoquilleAdulteDemo extends StatelessWidget {
             // l'invitation suit le genre de la personne qui regarde (doc
             // section 2). Les actions ouvrent les vrais ecrans du Foyer pour
             // l'adulte seul ; le second adulte qui n'est plus rattache n'a
-            // pas encore de foyer de demonstration a lui (EA-BR-17) : la page
-            // l'explique, sans action.
-            EcranDemoAdulte.ajouterMaFamille => AjouterMaFamillePage(
-              placeFeminine:
-                  (genre == GenreTitulaireDemo.homme) ==
-                  (vue == VueDemoAdulte.titulaire),
-              onRetour: versMonEspace,
-              onInscrireEnfant: vue == VueDemoAdulte.titulaire
-                  ? () => context.go(_adresse(EcranDemoAdulte.ajouterProfil))
-                  : null,
-              onInviter: vue == VueDemoAdulte.titulaire
-                  ? () => context.go(_adresse(EcranDemoAdulte.inviterConjoint))
-                  : null,
-            ),
+            // pas encore de foyer de demonstration a lui (EA-BR-17) : un etat
+            // honnete « pas encore disponible » et son retour, jamais la
+            // phrase du doc qui promet des actions absentes.
+            EcranDemoAdulte.ajouterMaFamille =>
+              vue == VueDemoAdulte.titulaire
+                  ? AjouterMaFamillePage(
+                      placeFeminine: genre == GenreTitulaireDemo.homme,
+                      onRetour: versMonEspace,
+                      onInscrireEnfant: () =>
+                          context.go(_adresse(EcranDemoAdulte.ajouterProfil)),
+                      onInviter: () =>
+                          context.go(_adresse(EcranDemoAdulte.inviterConjoint)),
+                    )
+                  : PageShell(
+                      titre: t.adulte.famille.ajouter,
+                      onRetour: versMonEspace,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: AppSpacing.xxl),
+                        child: EtatSysteme(
+                          key: const ValueKey<String>(
+                            'demo-ajouter-famille-indisponible',
+                          ),
+                          nature: NatureEtat.indisponible,
+                          portee: PorteeEtat.page,
+                          titre: t.adulte.famille.indisponibleTitre,
+                          phrase: t.adulte.famille.indisponiblePhrase,
+                          libelleAction: t.adulte.famille.retourMonEspace,
+                          onAction: versMonEspace,
+                          dependance: 'EA-BR-17',
+                        ),
+                      ),
+                    ),
             // Le second adulte rattache : les paiements du foyer, la meme
             // page que le titulaire (E3, EA-BR-16), retour vers Mon espace.
             EcranDemoAdulte.paiementsFoyer => PaiementsComptePage(

@@ -11,7 +11,7 @@
 // le genre enregistre du titulaire) ouvre `InviterConjointPage`.
 //
 // Briques de la page d'invitation, partagees par `part` (rien de recopie) :
-// `_Note`, `_Colonne`, `_Actions` (contrat B : la sortie avant la poursuite,
+// `_Note`, `_Colonne`, `_Carte`, `_Actions` (contrat B : la sortie avant la poursuite,
 // groupees au bord de fin).
 
 part of 'invitation_conjoint.dart';
@@ -59,15 +59,17 @@ class AjouterMaFamillePage extends StatelessWidget {
     return PageShell(
       titre: t.adulte.famille.ajouter,
       onRetour: onRetour,
+      // L'explication et ses actions groupees sur une carte, comme les autres
+      // ecrans du Foyer (K-42 point 4).
       child: _Colonne(
         auBordDeDebut: true,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
+        child: _Carte(
+          lignes: <Widget>[
             // Doc section 4, mot pour mot : l'espace eleve reste inchange.
             _Note(texte: t.adulte.famille.ajouterPhrase, attenuee: true),
             if (inscrire != null) ...<Widget>[
-              Ecart.vXxl,
+              // Contrat A : 16 sous l'objet.
+              Ecart.vLg,
               _Actions(
                 secondaire: inviter == null
                     ? null

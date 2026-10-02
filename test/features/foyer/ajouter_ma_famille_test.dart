@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
@@ -155,6 +156,118 @@ void main() {
     expect(find.byType(FormulaireProfilEleve), findsOneWidget);
     await taper(tester, find.byType(DisqueRetour).first);
     expect(find.byType(AjouterMaFamillePage), findsOneWidget);
+  });
+
+  testWidgets('adulte seul : Inscrire un enfant jusqu\'au resultat, puis Mon '
+      'espace ; aucun foyer cree', (WidgetTester tester) async {
+    taille(tester, const Size(390, 844));
+    final GoRouter routeur = await monter(
+      tester,
+      adresseDemoAdulte(
+        EcranDemoAdulte.monEspace,
+        etat: EtatDemoAdulte.adulteSeul,
+      ),
+    );
+    await taper(tester, find.text(t.adulte.famille.ajouter));
+    await taper(tester, find.byKey(AjouterMaFamillePage.inscrireEnfantKey));
+    expect(find.byType(FormulaireProfilEleve), findsOneWidget);
+    await taper(tester, find.text(t.foyer.ajout.pourQui.enfantTitre));
+    await taper(tester, find.byKey(FormulaireProfilEleve.actionKey));
+    await tester.enterText(
+      find.byKey(FormulaireProfilEleve.prenomKey),
+      'Yusuf',
+    );
+    await tester.enterText(find.byKey(FormulaireProfilEleve.nomKey), 'Diallo');
+    await tester.enterText(find.byKey(FormulaireProfilEleve.ageKey), '8');
+    await tester.pumpAndSettle();
+    await taper(tester, find.byKey(FormulaireProfilEleve.actionKey));
+
+    expect(
+      find.byKey(const ValueKey<String>('demo-profil-non-cree')),
+      findsOneWidget,
+    );
+    expect(find.text(t.adulte.famille.profilNonCreePhraseSeul), findsOneWidget);
+    expect(find.text(t.adulte.famille.profilNonCreePhrase), findsNothing);
+    final Finder retour = find.text(t.adulte.famille.retourMonEspace);
+    expect(retour, findsOneWidget);
+    expect(find.text(t.adulte.invitation.revenirMaFamille), findsNothing);
+
+    await taper(tester, retour);
+    expect(find.byType(MonEspaceAdultePage), findsOneWidget);
+    expect(find.text(t.adulte.famille.ajouter), findsOneWidget);
+    expect(find.text('Yusuf'), findsNothing);
+    // Aucun foyer cree : la demonstration n'envoie rien.
+    expect(
+      routeur.routerDelegate.currentConfiguration.uri.queryParameters
+          .containsKey('foyer'),
+      isFalse,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
+  for (final EtatDemoAdulte etat in <EtatDemoAdulte>[
+    EtatDemoAdulte.conjointQuitte,
+    EtatDemoAdulte.conjointRetire,
+  ]) {
+    testWidgets('second adulte non rattache (${etat.name}) : un etat honnete '
+        'et son retour, jamais une phrase qui promet une action absente', (
+      WidgetTester tester,
+    ) async {
+      taille(tester, const Size(390, 844));
+      await monter(
+        tester,
+        adresseDemoAdulte(
+          EcranDemoAdulte.monEspace,
+          etat: etat,
+          vue: VueDemoAdulte.secondAdulte,
+        ),
+      );
+      await taper(tester, find.text(t.adulte.famille.ajouter));
+      expect(find.byType(AjouterMaFamillePage), findsNothing);
+      expect(find.text(t.adulte.famille.ajouterPhrase), findsNothing);
+      expect(
+        find.byKey(const ValueKey<String>('demo-ajouter-famille-indisponible')),
+        findsOneWidget,
+      );
+      expect(find.text(t.adulte.famille.indisponibleTitre), findsOneWidget);
+      await taper(tester, find.text(t.adulte.famille.retourMonEspace));
+      expect(find.byType(MonEspaceAdultePage), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('390 : les deux actions empilees a la meme largeur, calees au '
+      'bord de fin, la sortie avant la poursuite', (WidgetTester tester) async {
+    taille(tester, const Size(390, 844));
+    await monter(
+      tester,
+      adresseDemoAdulte(
+        EcranDemoAdulte.ajouterMaFamille,
+        etat: EtatDemoAdulte.adulteSeul,
+      ),
+    );
+    final Rect inscrire = tester.getRect(
+      find.byKey(AjouterMaFamillePage.inscrireEnfantKey),
+    );
+    final Rect inviter = tester.getRect(
+      find.byKey(AjouterMaFamillePage.inviterKey),
+    );
+    final Rect phrase = tester.getRect(
+      find.text(t.adulte.famille.ajouterPhrase),
+    );
+    expect(inviter.bottom, lessThanOrEqualTo(inscrire.top));
+    expect(inviter.width, closeTo(inscrire.width, 0.5));
+    expect(inviter.right, closeTo(inscrire.right, 0.5));
+    expect(inscrire.right, closeTo(phrase.right, 1));
+    // Les actions sont dans la carte, sous la phrase (police de test : la
+    // rangee sur une ligne est couverte par rangee_actions_test.dart).
+    expect(
+      find.ancestor(
+        of: find.byKey(AjouterMaFamillePage.inscrireEnfantKey),
+        matching: find.byType(AppCard),
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('la fleche revient a Mon espace', (WidgetTester tester) async {

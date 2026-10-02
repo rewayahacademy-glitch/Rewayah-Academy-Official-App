@@ -519,8 +519,10 @@ class _PageEtatInvitation extends StatelessWidget {
     // EA-PL : une icone par etat, pour le lire sans le texte (directeur,
     // 02/10). Le ton reste neutre (E7) : l'icone distingue, pas la couleur.
     final (String titre, String phrase, AppIcon icone) = switch (etat) {
+      // « Invitation acceptee » : libelle provisoire, lexique D4 (le doc ne
+      // donne que la phrase, UX_REVIEW_07 ligne 10 d).
       InvitationAcceptee(:final String prenomTitulaire) => (
-        t.adulte.famille.forfaitFamille,
+        a.accepteeTitre,
         a.rejoint(prenom: prenomTitulaire),
         AppIcons.invitationAcceptee,
       ),
@@ -581,9 +583,14 @@ class _PageEtatInvitation extends StatelessWidget {
       ),
     );
     // Le titre est celui de l'ecran resultat : la coquille ne garde que le
-    // disque retour, pour qu'il ne soit pas dit deux fois.
+    // disque retour, pour qu'il ne soit pas dit deux fois. Les etats finaux
+    // (acceptee, refusee) n'ont pas de retour, comme « Invitation envoyee » :
+    // il ramenerait a une invitation deja repondue ; seul « Aller a Mon
+    // espace » reste.
+    final bool finale =
+        etat is InvitationAcceptee || etat is InvitationRefuseeParVous;
     return PageShell(
-      onRetour: onRetour,
+      onRetour: finale ? null : onRetour,
       child: apresReponse
           ? _FocusALApparition(
               key: InvitationRecuePage.focusResultatKey,

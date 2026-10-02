@@ -1452,7 +1452,6 @@ class _BlocEchec extends StatelessWidget {
               cahier: vue.quitterOuvreCahier,
             )
           : null,
-      actionsContratB: true,
     );
   }
 }

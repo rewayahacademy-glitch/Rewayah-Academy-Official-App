@@ -1,4 +1,7 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
@@ -352,4 +355,167 @@ class _Peinture {
   final Color? fond;
   final TextStyle Function(TextStyle base) encre;
   final BorderSide? filet;
+}
+
+/// La rangee d'actions du contrat B (DESIGN-GOV-2026-09-26 section 4 bis.2) :
+/// la sortie avant la poursuite, groupees au bord de fin, chacune a la
+/// largeur de son libelle, 8 entre les deux.
+///
+/// Quand la rangee ne tient pas sur une ligne, les actions s'empilent dans
+/// le meme ordre, **a la meme largeur** (celle du plus long libelle, bornee a
+/// la place offerte), le groupe toujours cale au bord de fin : jamais une
+/// colonne en escalier (HU-1, EA-PL).
+///
+/// Extraite de `EtatSysteme` et de l'invitation du Foyer (HU-1) : une seule
+/// rangee, jamais recopiee. Elle vit ici, avec les actions qu'elle range.
+class RangeeActions extends MultiChildRenderObjectWidget {
+  /// Cree la rangee ; [children] dans l'ordre de lecture du contrat B.
+  const RangeeActions({required super.children, super.key});
+
+  @override
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenduRangeeActions(Directionality.of(context));
+
+  @override
+  void updateRenderObject(BuildContext context, RenderObject renderObject) {
+    (renderObject as _RenduRangeeActions).sens = Directionality.of(context);
+  }
+}
+
+class _DonneesRangee extends ContainerBoxParentData<RenderBox> {}
+
+class _RenduRangeeActions extends RenderBox
+    with
+        ContainerRenderObjectMixin<RenderBox, _DonneesRangee>,
+        RenderBoxContainerDefaultsMixin<RenderBox, _DonneesRangee> {
+  _RenduRangeeActions(this._sens);
+
+  static const double _ecart = AppSpacing.sm;
+
+  TextDirection _sens;
+  set sens(TextDirection valeur) {
+    if (valeur == _sens) return;
+    _sens = valeur;
+    markNeedsLayout();
+  }
+
+  @override
+  void setupParentData(RenderBox child) {
+    if (child.parentData is! _DonneesRangee) {
+      child.parentData = _DonneesRangee();
+    }
+  }
+
+  List<RenderBox> get _enfants {
+    final List<RenderBox> liste = <RenderBox>[];
+    RenderBox? enfant = firstChild;
+    while (enfant != null) {
+      liste.add(enfant);
+      enfant = childAfter(enfant);
+    }
+    return liste;
+  }
+
+  /// Les largeurs naturelles, bornees a la place offerte.
+  List<double> _largeurs(double max) => <double>[
+    for (final RenderBox e in _enfants)
+      math.min(e.getMaxIntrinsicWidth(double.infinity), max),
+  ];
+
+  double _somme(List<double> l) =>
+      l.fold<double>(0, (double a, double b) => a + b) +
+      _ecart * math.max(0, l.length - 1);
+
+  @override
+  double computeMinIntrinsicWidth(double height) => _enfants.fold<double>(
+    0,
+    (double m, RenderBox e) => math.max(m, e.getMinIntrinsicWidth(height)),
+  );
+
+  @override
+  double computeMaxIntrinsicWidth(double height) =>
+      _somme(_largeurs(double.infinity));
+
+  @override
+  double computeMinIntrinsicHeight(double width) =>
+      _mesure(BoxConstraints(maxWidth: width), seche: true).height;
+
+  @override
+  double computeMaxIntrinsicHeight(double width) =>
+      computeMinIntrinsicHeight(width);
+
+  @override
+  Size computeDryLayout(BoxConstraints constraints) =>
+      _mesure(constraints, seche: true);
+
+  @override
+  void performLayout() {
+    size = _mesure(constraints, seche: false);
+  }
+
+  /// Une ligne si tout tient, sinon une colonne de meme largeur ; le groupe
+  /// au bord de fin. [seche] : mesure sans poser les enfants.
+  Size _mesure(BoxConstraints c, {required bool seche}) {
+    final List<RenderBox> enfants = _enfants;
+    if (enfants.isEmpty) return c.smallest;
+    final double max = c.maxWidth;
+    final List<double> largeurs = _largeurs(max);
+    final double ligne = _somme(largeurs);
+    final bool enLigne = ligne <= max;
+    final double groupe = enLigne ? ligne : largeurs.fold<double>(0, math.max);
+    final double largeur = max.isFinite ? max : groupe;
+    // Le bord de fin : a droite en LTR, a gauche en RTL.
+    final bool rtl = _sens == TextDirection.rtl;
+    double x(double depuisDebut, double w) =>
+        rtl ? groupe - depuisDebut - w : largeur - groupe + depuisDebut;
+
+    final List<Size> tailles = <Size>[
+      for (int i = 0; i < enfants.length; i++)
+        () {
+          // Hauteur libre, comme dans un `Wrap` : le bouton garde la sienne.
+          final BoxConstraints ce = BoxConstraints.tightFor(
+            width: enLigne ? largeurs[i] : groupe,
+          );
+          if (seche) return enfants[i].getDryLayout(ce);
+          enfants[i].layout(ce, parentUsesSize: true);
+          return enfants[i].size;
+        }(),
+    ];
+
+    double hauteur = 0;
+    if (enLigne) {
+      for (final Size t in tailles) {
+        hauteur = math.max(hauteur, t.height);
+      }
+      if (!seche) {
+        double debut = 0;
+        for (int i = 0; i < enfants.length; i++) {
+          (enfants[i].parentData! as _DonneesRangee).offset = Offset(
+            x(debut, tailles[i].width),
+            (hauteur - tailles[i].height) / 2,
+          );
+          debut += tailles[i].width + _ecart;
+        }
+      }
+    } else {
+      for (int i = 0; i < enfants.length; i++) {
+        if (!seche) {
+          (enfants[i].parentData! as _DonneesRangee).offset = Offset(
+            x(0, groupe),
+            hauteur,
+          );
+        }
+        hauteur += tailles[i].height + (i < enfants.length - 1 ? _ecart : 0);
+      }
+    }
+    return c.constrain(Size(largeur, hauteur));
+  }
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) =>
+      defaultHitTestChildren(result, position: position);
+
+  @override
+  void paint(PaintingContext context, Offset offset) =>
+      defaultPaint(context, offset);
 }

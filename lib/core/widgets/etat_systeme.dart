@@ -90,15 +90,7 @@ class EtatSysteme extends StatelessWidget {
     this.libelleSecondaire,
     this.onSecondaire,
     this.dependance,
-    this.actionsContratB = false,
   });
-
-  /// Sans effet depuis l'harmonisation HU-1 (EA-PL) : tous les blocs rendent
-  /// leurs actions selon les contrats A et B (DESIGN-GOV-2026-09-26
-  /// §4 bis.1-2) : 16 sous l'objet, groupe aligne au bord trailing, a la
-  /// largeur de ses libelles, sortie ([onSecondaire]) puis poursuite
-  /// ([onAction]) en LTR, 8 entre les deux. Garde pour les appels existants.
-  final bool actionsContratB;
 
   /// La nature de l'etat.
   final NatureEtat nature;
@@ -396,45 +388,30 @@ class _Bloc extends StatelessWidget {
                     // de son libelle, au bord de fin, jamais toute la carte.
                     if (avecAction || avecSecondaire) ...<Widget>[
                       Ecart.vLg,
-                      SizedBox(
-                        width: double.infinity,
-                        child: Wrap(
-                          alignment: WrapAlignment.end,
-                          spacing: AppSpacing.sm,
-                          runSpacing: AppSpacing.sm,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          // `IntrinsicWidth` : dans un `Wrap`, le bouton
-                          // centre son libelle sur toute la largeur offerte ;
-                          // le groupe du contrat B garde la largeur du
-                          // libelle.
-                          children: <Widget>[
-                            if (avecSecondaire)
-                              IntrinsicWidth(
-                                child: ActionPrincipale(
-                                  key: const ValueKey<String>(
-                                    'etat-systeme-secondaire',
-                                  ),
-                                  libelle: libelleSecondaire!,
-                                  onPress: onSecondaire,
-                                  niveau: NiveauAction.tertiaire,
-                                  pleineLargeur: false,
-                                ),
+                      RangeeActions(
+                        children: <Widget>[
+                          if (avecSecondaire)
+                            ActionPrincipale(
+                              key: const ValueKey<String>(
+                                'etat-systeme-secondaire',
                               ),
-                            if (avecAction)
-                              IntrinsicWidth(
-                                child: ActionPrincipale(
-                                  key: const ValueKey<String>(
-                                    'etat-systeme-action',
-                                  ),
-                                  libelle: libelleAction!,
-                                  onPress: onAction,
-                                  enCours: actionEnCours,
-                                  niveau: NiveauAction.secondaire,
-                                  pleineLargeur: false,
-                                ),
+                              libelle: libelleSecondaire!,
+                              onPress: onSecondaire,
+                              niveau: NiveauAction.tertiaire,
+                              pleineLargeur: false,
+                            ),
+                          if (avecAction)
+                            ActionPrincipale(
+                              key: const ValueKey<String>(
+                                'etat-systeme-action',
                               ),
-                          ],
-                        ),
+                              libelle: libelleAction!,
+                              onPress: onAction,
+                              enCours: actionEnCours,
+                              niveau: NiveauAction.secondaire,
+                              pleineLargeur: false,
+                            ),
+                        ],
                       ),
                     ],
                   ],

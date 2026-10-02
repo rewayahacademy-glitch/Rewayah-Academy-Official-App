@@ -858,14 +858,8 @@ class _Carte extends StatelessWidget {
 
 /// Les actions d'une etape, dans le flux, 16 sous leur objet (contrat A) :
 /// groupees au bord de fin, la sortie avant la poursuite (contrat B), comme
-/// `EtatSysteme(actionsContratB: true)`.
-///
-/// HU-1 : la rangee contrat B d'`EtatSysteme` est privee (`_Bloc`) et ne se
-/// rend que sous un titre et une phrase d'etat, avec des cles et des niveaux
-/// fixes (secondaire, tertiaire) : elle ne peut pas porter les boutons d'une
-/// etape (cles publiques, principal, destructif). Aucun composant partage
-/// n'expose cette rangee seule ; a extraire en HU-1, sans la recopier ici
-/// davantage.
+/// `EtatSysteme` (contrat B, seule disposition depuis HU-1) : la meme
+/// `RangeeActions`, empilee a largeur egale quand elle ne tient pas.
 class _Actions extends StatelessWidget {
   const _Actions({required this.principale, this.secondaire});
 
@@ -873,18 +867,8 @@ class _Actions extends StatelessWidget {
   final Widget? secondaire;
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-    width: double.infinity,
-    child: Wrap(
-      alignment: WrapAlignment.end,
-      spacing: AppSpacing.sm,
-      runSpacing: AppSpacing.sm,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: <Widget>[
-        if (secondaire case final Widget s) IntrinsicWidth(child: s),
-        IntrinsicWidth(child: principale),
-      ],
-    ),
+  Widget build(BuildContext context) => RangeeActions(
+    children: <Widget>[if (secondaire case final Widget s) s, principale],
   );
 }
 

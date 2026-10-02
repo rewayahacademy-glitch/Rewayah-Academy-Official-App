@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -92,6 +94,30 @@ class OfflineBanner extends ConsumerWidget {
   }
 }
 
+/// Une emprise au coin de fin, au-dessus de l'application (le repere
+/// « Démonstration » de l'apercu) : le bandeau de pleine largeur garde son
+/// texte hors de cette emprise, sans que les ecrans le sachent.
+class ReserveCoinFin extends InheritedWidget {
+  /// Reserve [largeur] au coin superieur de fin pour [child].
+  const ReserveCoinFin({
+    required this.largeur,
+    required super.child,
+    super.key,
+  });
+
+  /// La largeur reservee, depuis le bord de fin.
+  final double largeur;
+
+  /// La reserve en vigueur, 0 sans repere.
+  static double de(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<ReserveCoinFin>()?.largeur ??
+      0;
+
+  @override
+  bool updateShouldNotify(ReserveCoinFin oldWidget) =>
+      largeur != oldWidget.largeur;
+}
+
 /// Le rendu commun des deux constructeurs.
 class _Bandeau extends StatelessWidget {
   const _Bandeau({
@@ -130,10 +156,16 @@ class _Bandeau extends StatelessWidget {
                 color: paire.background,
                 border: Border(bottom: palette.borderStrong.asBorderSide()),
               ),
+        // Pleine largeur, en tete : le texte s'arrete avant l'emprise du coin
+        // de fin (repere de l'apercu), jamais masque.
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.md,
+          padding: EdgeInsetsDirectional.only(
+            start: AppSpacing.lg,
+            end: encadre
+                ? AppSpacing.lg
+                : math.max(AppSpacing.lg, ReserveCoinFin.de(context)),
+            top: AppSpacing.md,
+            bottom: AppSpacing.md,
           ),
           child: Row(
             children: <Widget>[

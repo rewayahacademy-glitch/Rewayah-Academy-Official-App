@@ -242,6 +242,8 @@ void main() {
     );
 
     await taper(tester, find.byKey(InvitationRecuePage.accepterKey));
+    // Le titre dit ce qui vient de se passer, comme « Invitation refusee ».
+    expect(find.text(a.accepteeTitre), findsOneWidget);
     expect(find.text(a.rejoint(prenom: 'Mamadou')), findsOneWidget);
     expect(find.byKey(InvitationRecuePage.accepterKey), findsNothing);
     // La demonstration ne rend aucune date : aucun recu date invente.
@@ -686,8 +688,11 @@ void main() {
       );
       await taper(tester, find.byKey(cle));
       expect(find.byKey(InvitationRecuePage.accepterKey), findsNothing);
+      // Etat final : aucun retour vers l'invitation repondue, un seul bouton
+      // (comme « Invitation envoyee »).
+      expect(find.byType(DisqueRetour), findsNothing);
 
-      await taper(tester, find.byType(DisqueRetour).first);
+      await taper(tester, find.byKey(InvitationRecuePage.monEspaceKey));
       expect(find.byType(MonEspaceAdultePage), findsOneWidget);
       expect(
         routeur.routerDelegate.currentConfiguration.uri.queryParameters['etat'],
