@@ -4,6 +4,7 @@ import '../theme/app_gabarit.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_typography.dart';
+import 'pastille_etat_seance.dart';
 
 /// Une ligne « cle : valeur » de fiche de detail : « Horaire : 18:00 (heure
 /// de Paris) », « Presence : En cours de verification » (detail de seance et
@@ -24,6 +25,7 @@ class LigneCleValeur extends StatelessWidget {
     super.key,
     this.complement,
     this.chiffres = false,
+    this.annulee = false,
   });
 
   /// Ce que la valeur designe : « Horaire », « Duree », « Presence ».
@@ -38,6 +40,10 @@ class LigneCleValeur extends StatelessWidget {
   /// Vrai pour une valeur faite de chiffres (horaire, duree, code) : chiffres
   /// tabulaires, qui ne dansent pas d'une ligne a l'autre.
   final bool chiffres;
+
+  /// Vrai quand la valeur est l'horaire d'une seance annulee : barree et
+  /// attenuee, annoncee « Annulee : ... » (ANNUL-VIS-1).
+  final bool annulee;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +63,10 @@ class LigneCleValeur extends StatelessWidget {
       runSpacing: AppSpacing.xs,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: <Widget>[
-        Text(valeur, style: styleValeur),
+        if (annulee)
+          TexteHeureSeance(heure: valeur, annulee: true, style: styleValeur)
+        else
+          Text(valeur, style: styleValeur),
         ?complement,
       ],
     );

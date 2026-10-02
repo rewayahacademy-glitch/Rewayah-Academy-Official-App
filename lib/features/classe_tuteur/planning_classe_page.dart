@@ -282,6 +282,8 @@ class _Ligne extends StatelessWidget {
                               duree: affichage.duree,
                             ),
                       annulee: annulee,
+                      // Une seule annonce « Annulee » par carte : la date.
+                      annoncer: false,
                       style: AppTypography.tabulaire(
                         palette.inkMuted.applyTo(
                           (large ? textes.bodyLarge : textes.bodyMedium) ??

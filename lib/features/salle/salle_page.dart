@@ -684,7 +684,7 @@ class _Entete extends StatelessWidget {
       );
     }
 
-    final (String, TonEtat) etatDuLien = _etatDuLien(vue);
+    final _EtatLien etatDuLien = _etatDuLien(vue);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -786,6 +786,11 @@ String? _attenteDe(VueSalle vue) => switch (vue.phase) {
   PhaseSalle.refus => null,
 };
 
+/// L'etat du lien : le mot, le ton et, quand l'etat du lien est celui d'une
+/// seance qui se deroule, **l'etat de seance qu'il represente** (le type,
+/// jamais une comparaison de mots traduits).
+typedef _EtatLien = (String, TonEtat, EtatPastilleSeance?);
+
 /// L'etat du lien, en mot et en ton.
 ///
 /// **Chaque etat porte son mot** (invariant J7) : une pastille jaune sans
@@ -793,28 +798,39 @@ String? _attenteDe(VueSalle vue) => switch (vue.phase) {
 /// tout a qui ecoute l'ecran. Les cinq etats du protocole sont donc cinq
 /// libelles, et « instable » reprend le mot que la qualite du lien emploie
 /// deja plutot que d'en inventer un jumeau.
-(String, TonEtat) _etatDuLien(VueSalle vue) => switch (vue.phase) {
-  PhaseSalle.reconnexion => (t.salle.reconnexionCourt, TonEtat.avertissement),
+_EtatLien _etatDuLien(VueSalle vue) => switch (vue.phase) {
+  PhaseSalle.reconnexion => (
+    t.salle.reconnexionCourt,
+    TonEtat.avertissement,
+    null,
+  ),
   PhaseSalle.instable => (
     vue.qualite == QualiteLien.perdue
         ? t.salle.lienPerdu
         : t.salle.lienMediocre,
     TonEtat.avertissement,
+    null,
   ),
-  PhaseSalle.retabli => (t.reseau.retabli, TonEtat.succes),
+  PhaseSalle.retabli => (t.reseau.retabli, TonEtat.succes, null),
   PhaseSalle.enSalle ||
   PhaseSalle.materiel ||
   PhaseSalle.ouverture ||
   PhaseSalle.connexion ||
-  PhaseSalle.refus => (t.etat.enDirect, TonEtat.succes),
+  PhaseSalle.refus => (
+    t.etat.enDirect,
+    TonEtat.succes,
+    EtatPastilleSeance.enDirect,
+  ),
 };
 
 /// La pastille de l'etat du lien : « En direct » passe par le composant
 /// partage d'etat de seance (ON-AIR-1), les autres etats par `StatusPill`.
-Widget _pastilleDuLien((String, TonEtat) etat) =>
-    etat.$1 == t.etat.enDirect && etat.$2 == TonEtat.succes
-    ? const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect)
-    : StatusPill(libelle: etat.$1, ton: etat.$2);
+Widget _pastilleDuLien(_EtatLien etat) {
+  final EtatPastilleSeance? seance = etat.$3;
+  return seance == null
+      ? StatusPill(libelle: etat.$1, ton: etat.$2)
+      : PastilleEtatSeance(etat: seance);
+}
 
 /// CTR-02 : la zone haute du controleur, visible de lui seul.
 ///
@@ -837,7 +853,7 @@ class _EnteteControle extends StatelessWidget {
     // ecrase le `DefaultTextStyle` de la coquille et disparait sur le fond.
     final AppColorPair salle = AppPalette.of(context).surfaceInverse;
     final String? attente = _attenteDe(vue);
-    final (String, TonEtat) lien = _etatDuLien(vue);
+    final _EtatLien lien = _etatDuLien(vue);
 
     return Row(
       children: <Widget>[

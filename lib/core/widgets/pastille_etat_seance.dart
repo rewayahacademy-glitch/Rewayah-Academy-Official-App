@@ -105,12 +105,6 @@ class PointDirect extends StatefulWidget {
 
 class _PointDirectState extends State<PointDirect>
     with SingleTickerProviderStateMixin {
-  /// Rayon maximal du halo, en multiple du diametre du point.
-  static const double _ampleurHalo = 1.2;
-
-  /// Opacite maximale du halo.
-  static const double _opaciteHalo = 0.45;
-
   late final AnimationController _cycle = AnimationController(
     vsync: this,
     duration: AppMouvement.pulsationDirect,
@@ -176,9 +170,9 @@ class _PointDirectState extends State<PointDirect>
                 math.min(1, _cycle.value),
               );
               return Opacity(
-                opacity: _opaciteHalo * (1 - avance),
+                opacity: AppMouvement.opaciteHaloDirect * (1 - avance),
                 child: Transform.scale(
-                  scale: 1 + _ampleurHalo * avance,
+                  scale: 1 + AppMouvement.ampleurHaloDirect * avance,
                   child: halo,
                 ),
               );
@@ -220,6 +214,51 @@ class _IconeAnnulation extends StatelessWidget {
   }
 }
 
+/// Le marqueur d'une seance annulee quand il n'y a pas la place d'une
+/// pastille (le coin d'un avatar du selecteur de profils) : un disque de la
+/// paire d'alerte et l'icone d'annulation. **L'icone remplace le point**, elle
+/// ne se pose pas a cote : le mot « Annulee » est dit juste dessous par
+/// l'ecran qui l'emploie.
+class PointAnnulation extends StatelessWidget {
+  /// Cree le marqueur. [cerclage] pose un anneau de la couleur du fond.
+  const PointAnnulation({super.key, this.cerclage});
+
+  /// Diametre du disque.
+  static const double diametre = AppSpacing.xl;
+
+  /// La couleur de l'anneau, ou `null` sans anneau.
+  final AppColorPair? cerclage;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppColorPair paire = AppPalette.of(context).washAlert;
+    final AppColorPair? anneau = cerclage;
+    return SizedBox.square(
+      key: const ValueKey<String>('point-annulation'),
+      dimension: diametre,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: paire.background,
+          border: anneau == null
+              ? null
+              : Border.fromBorderSide(
+                  BorderSide(
+                    color: anneau.background,
+                    width: AppSpacing.xs / 2,
+                  ),
+                ),
+        ),
+        child: Icon(
+          AppIcons.interdit.actif,
+          size: AppSpacing.md,
+          color: paire.onBackground,
+        ),
+      ),
+    );
+  }
+}
+
 /// La paire de surface d'une carte de seance : la surface elevee, ou la
 /// surface enfoncee quand la seance est annulee.
 ///
@@ -234,7 +273,10 @@ AppColorPair surfaceCarteSeance(AppPalette palette, {required bool annulee}) =>
 /// sans changer sa taille ni sa police.
 ///
 /// Le trait ne se lit pas a l'oreille : le lecteur d'ecran annonce
-/// « Prevue a 10:00 » pour une heure barree.
+/// « Annulee : {valeur} », une formule neutre qui vaut pour une heure, une
+/// plage ou une date (le composant ne sait pas laquelle il porte). Quand
+/// plusieurs valeurs d'une meme carte sont barrees, **une seule** porte
+/// l'annonce ([annoncer]) : les autres se lisent telles quelles.
 class TexteHeureSeance extends StatelessWidget {
   /// Cree l'heure.
   const TexteHeureSeance({
@@ -244,9 +286,11 @@ class TexteHeureSeance extends StatelessWidget {
     this.style,
     this.maxLines,
     this.overflow,
+    this.annoncer = true,
   });
 
-  /// L'heure ou la plage, deja rendue (« 10:00 », « 10:00 - 11:00 »).
+  /// La valeur : une heure, une plage ou une date, deja rendue (« 10:00 »,
+  /// « 10:00 - 11:00 », « Lundi 28 sept. »).
   final String heure;
 
   /// Vrai quand la seance est annulee.
@@ -261,6 +305,11 @@ class TexteHeureSeance extends StatelessWidget {
   /// Debordement.
   final TextOverflow? overflow;
 
+  /// Vrai (par defaut) pour que cette valeur annonce « Annulee : ... » au
+  /// lecteur d'ecran. Faux pour la seconde valeur barree d'une meme carte,
+  /// afin que la carte ne dise « Annulee » qu'une fois.
+  final bool annoncer;
+
   @override
   Widget build(BuildContext context) {
     final TextStyle base = style ?? DefaultTextStyle.of(context).style;
@@ -274,10 +323,17 @@ class TexteHeureSeance extends StatelessWidget {
           decoration: TextDecoration.lineThrough,
           decorationColor: palette.inkMuted.applyTo(base).color,
         );
+    final Text texte = Text(
+      heure,
+      style: barre,
+      maxLines: maxLines,
+      overflow: overflow,
+    );
+    if (!annoncer) return texte;
     return Semantics(
-      label: t.etat.heureAnnulee(heure: heure),
+      label: t.etat.annuleeValeur(valeur: heure),
       excludeSemantics: true,
-      child: Text(heure, style: barre, maxLines: maxLines, overflow: overflow),
+      child: texte,
     );
   }
 }

@@ -4,7 +4,10 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/seance_famille/seance_famille.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
+import 'package:rewayah_academy/core/widgets/child_card.dart';
+import 'package:rewayah_academy/core/widgets/ligne_cle_valeur.dart';
 import 'package:rewayah_academy/core/widgets/pastille_etat_seance.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_profils.dart';
 
 import '../../support/hote_theme.dart';
 import '../../theme/support/contraste.dart';
@@ -144,10 +147,137 @@ void main() {
         isNot(TextDecoration.lineThrough),
       );
       expect(
-        find.bySemanticsLabel(t.etat.heureAnnulee(heure: '10:00')),
+        find.bySemanticsLabel(t.etat.annuleeValeur(valeur: '10:00')),
         findsOneWidget,
       );
       poignee.dispose();
+    });
+
+    testWidgets('une date seule est annoncee « Annulee : date », jamais '
+        '« Prevue a »', (WidgetTester tester) async {
+      final SemanticsHandle poignee = tester.ensureSemantics();
+      await tester.pumpWidget(
+        _hote(const TexteHeureSeance(heure: 'Lundi 28 sept.', annulee: true)),
+      );
+      expect(find.bySemanticsLabel('Annulée : Lundi 28 sept.'), findsOneWidget);
+      expect(find.bySemanticsLabel(RegExp('Prévue')), findsNothing);
+      poignee.dispose();
+    });
+
+    testWidgets('deux valeurs barrees d\'une carte : une seule annonce', (
+      WidgetTester tester,
+    ) async {
+      final SemanticsHandle poignee = tester.ensureSemantics();
+      await tester.pumpWidget(
+        _hote(
+          const Column(
+            children: <Widget>[
+              TexteHeureSeance(heure: 'Lundi 28 sept.', annulee: true),
+              TexteHeureSeance(
+                heure: '10:00 - 11:00',
+                annulee: true,
+                annoncer: false,
+              ),
+            ],
+          ),
+        ),
+      );
+      expect(find.bySemanticsLabel(RegExp('^Annulée')), findsOneWidget);
+      // La seconde reste barree et se lit telle quelle.
+      expect(
+        tester.widget<Text>(find.text('10:00 - 11:00')).style!.decoration,
+        TextDecoration.lineThrough,
+      );
+      expect(find.bySemanticsLabel('10:00 - 11:00'), findsOneWidget);
+      poignee.dispose();
+    });
+
+    testWidgets('LigneCleValeur annulee : horaire barre, annonce neutre', (
+      WidgetTester tester,
+    ) async {
+      final SemanticsHandle poignee = tester.ensureSemantics();
+      await tester.pumpWidget(
+        _hote(
+          const LigneCleValeur(
+            cle: 'Horaire',
+            valeur: '10:00 - 11:00',
+            chiffres: true,
+            annulee: true,
+          ),
+        ),
+      );
+      expect(
+        tester.widget<Text>(find.text('10:00 - 11:00')).style!.decoration,
+        TextDecoration.lineThrough,
+      );
+      expect(
+        find.bySemanticsLabel(RegExp('Annulée : 10:00 - 11:00')),
+        findsOneWidget,
+      );
+      poignee.dispose();
+    });
+
+    testWidgets('carte famille annulee : pastille, surface enfoncee, '
+        'pourquoi et suite sur une ligne', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        _hote(
+          const ChildCard(
+            prenom: 'Amina',
+            etat: EnfantSeanceAnnulee(
+              motif: 'Aucun remplaçant trouvé',
+              propose: 'séance non facturée',
+            ),
+          ),
+        ),
+      );
+      expect(find.text(t.etat.seanceAnnulee), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('pastille-annulee-icone')),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Aucun remplaçant trouvé · séance non facturée'),
+        findsOneWidget,
+      );
+      final BuildContext contexte = tester.element(find.byType(ChildCard));
+      expect(
+        tester.widgetList<AppCard>(find.byType(AppCard)).first.surface,
+        AppPalette.of(contexte).surfaceSunken,
+      );
+    });
+
+    testWidgets('le selecteur de profils : une seance annulee montre '
+        'l\'icone d\'annulation a la place du point', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        _hote(
+          SelecteurProfils(
+            profils: const <ProfilSelectionnable>[
+              ProfilSelectionnable(
+                id: 'a',
+                prenom: 'Amina',
+                etat: 'Annulée',
+                point: PointStatut.alerte,
+                annulee: true,
+              ),
+              ProfilSelectionnable(
+                id: 'b',
+                prenom: 'Ali',
+                etat: 'En séance',
+                point: PointStatut.succes,
+              ),
+            ],
+            selectionId: 'a',
+            onSelection: (String _) {},
+          ),
+        ),
+      );
+      expect(
+        find.byKey(const ValueKey<String>('point-annulation')),
+        findsOneWidget,
+      );
+      expect(find.text('Annulée'), findsOneWidget);
     });
 
     testWidgets('la ligne dit pourquoi et la suite, quand elle existe', (

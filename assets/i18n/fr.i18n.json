@@ -140,7 +140,10 @@
     "enRetard": "En retard",
     "termine": "Terminé",
     "seanceAnnulee": "Annulée",
-    "heureAnnulee": "Prévue à {heure}",
+    "annuleeValeur": "Annulée : {valeur}",
+    "motifNonCommunique": "Motif non communiqué",
+    "aucunRemplacantTrouve": "Aucun remplaçant trouvé",
+    "seanceNonFacturee": "séance non facturée",
     "raisonEtSuite": "{raison} · {suite}"
   },
   "destructif": {

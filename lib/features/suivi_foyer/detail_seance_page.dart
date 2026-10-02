@@ -159,7 +159,8 @@ class _Contenu extends ConsumerWidget {
       ),
     );
 
-    Widget carte(List<Widget> lignes) => SurfaceCarte(
+    Widget carte(List<Widget> lignes, {bool annulee = false}) => SurfaceCarte(
+      surface: annulee ? surfaceCarteSeance(palette, annulee: true) : null,
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.lg,
@@ -183,6 +184,7 @@ class _Contenu extends ConsumerWidget {
             cle: t.historique.seance.horaire,
             valeur: plageHoraire(seance.debut, seance.fin),
             chiffres: true,
+            annulee: statut == StatutHistorique.annule,
           ),
           LigneCleValeur(
             cle: t.historique.seance.dureePrevue,
@@ -197,7 +199,7 @@ class _Contenu extends ConsumerWidget {
             cle: t.historique.seance.enseignant,
             valeur: enseignantAffiche(seance, classe),
           ),
-        ]),
+        ], annulee: statut == StatutHistorique.annule),
         Ecart.vXl,
         titreBloc(t.historique.seance.blocPresence(prenom: seance.elevePrenom)),
         carte(<Widget>[

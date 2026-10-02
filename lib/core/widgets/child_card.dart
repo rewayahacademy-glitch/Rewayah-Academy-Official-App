@@ -273,8 +273,8 @@ class ChildCard extends StatelessWidget {
         Ecart.vSm,
         const PastilleEtatSeance(etat: EtatPastilleSeance.annulee),
         Ecart.vXs,
-        Text(e.motif, style: style),
-        Text(e.propose, style: style),
+        // Le pourquoi et la suite, sur une ligne (ANNUL-VIS-1).
+        LigneRaisonSeance(raison: e.motif, suite: e.propose),
       ],
     };
   }

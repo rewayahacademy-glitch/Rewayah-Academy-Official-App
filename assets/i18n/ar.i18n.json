@@ -2,7 +2,10 @@
   "etat": {
     "enDirect": "مباشر",
     "seanceAnnulee": "ملغاة",
-    "heureAnnulee": "كانت مقررة في {heure}",
+    "annuleeValeur": "ملغاة : {valeur}",
+    "motifNonCommunique": "السبب غير متوفر",
+    "aucunRemplacantTrouve": "لم يُعثر على بديل",
+    "seanceNonFacturee": "الحصة غير مفوترة",
     "raisonEtSuite": "{raison} · {suite}"
   },
   "classe": {

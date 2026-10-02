@@ -402,6 +402,7 @@ class _Contenu extends ConsumerWidget {
       urlPhoto: photo,
       point: affichage.point,
       enDirect: affichage.etatPastille == EtatPastilleSeance.enDirect,
+      annulee: affichage.etatPastille == EtatPastilleSeance.annulee,
     );
   }
 }

@@ -168,6 +168,12 @@ class _CarteSessionState extends State<CarteSession> {
             tutoiement: widget.tutoiement,
             annulee: emplacement.etat == EtatEntree.annulee,
           ),
+          // Une seance annulee dit pourquoi. Le serveur ne rend pas encore le
+          // motif : la ligne le dit, elle n'en invente pas (BR-1).
+          if (emplacement.etat == EtatEntree.annulee) ...<Widget>[
+            Ecart.vMd,
+            LigneRaisonSeance(raison: t.etat.motifNonCommunique),
+          ],
           if (emplacement.avisDst != null) ...<Widget>[
             Ecart.vMd,
             NoticeChangementHeure(texte: emplacement.avisDst!),
@@ -259,6 +265,8 @@ class HeuresSeance extends StatelessWidget {
             libelle: libelleContrepartie,
             horloge: horloge.horlogeContrepartie!,
             annulee: annulee,
+            // Une seule annonce « Annulee » par carte : la premiere heure.
+            annoncer: false,
           ),
         ],
         Ecart.vSm,
@@ -553,17 +561,20 @@ class _LigneHorloge extends StatelessWidget {
     required this.libelle,
     required this.horloge,
     this.annulee = false,
+    this.annoncer = true,
   });
 
   final String libelle;
   final HorlogeAffichee horloge;
   final bool annulee;
+  final bool annoncer;
 
   @override
   Widget build(BuildContext context) {
     return _LigneValeur(
       libelle: libelle,
       annulee: annulee,
+      annoncer: annoncer,
       valeur: LibellesGroupe.heureEtVille(
         heure: horloge.heureLocaleRendue,
         ville: horloge.libelleVille,
@@ -579,10 +590,14 @@ class _LigneValeur extends StatelessWidget {
     required this.libelle,
     required this.valeur,
     this.annulee = false,
+    this.annoncer = true,
   });
 
   final String libelle;
   final String valeur;
+
+  /// Faux pour la seconde heure barree de la carte (une seule annonce).
+  final bool annoncer;
 
   /// Vrai quand la valeur est l'heure d'une seance annulee : barree.
   final bool annulee;
@@ -606,6 +621,7 @@ class _LigneValeur extends StatelessWidget {
           TexteHeureSeance(
             heure: valeur,
             annulee: annulee,
+            annoncer: annoncer,
             // Une heure : chiffres tabulaires (revue phase 0, jetons D4).
             style: AppTypography.tabulaire(
               textes.titleSmall ?? const TextStyle(),

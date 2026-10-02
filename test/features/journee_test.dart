@@ -23,6 +23,8 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
+import 'package:rewayah_academy/core/widgets/app_card.dart';
+import 'package:rewayah_academy/core/widgets/pastille_etat_seance.dart';
 import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
@@ -169,6 +171,44 @@ Future<void> _ouvrir(
 }
 
 void main() {
+  group('ANNUL-VIS-1 : le cours annule du jour', () {
+    testWidgets('pastille, horaire barre, pourquoi, surface enfoncee', (
+      WidgetTester tester,
+    ) async {
+      await _ouvrir(
+        tester,
+        enseignant: FauxServiceEnseignant()
+          ..seancesRendues = <SeanceEnseignant>[
+            _anNour(statut: StatutSeance.annulee),
+          ],
+      );
+      final Finder carte = find.byKey(
+        const ValueKey<String>('journee-cours-annule'),
+      );
+      expect(carte, findsOneWidget);
+      expect(
+        find.descendant(of: carte, matching: find.text(t.etat.seanceAnnulee)),
+        findsOneWidget,
+      );
+      final TexteHeureSeance heure = tester.widget<TexteHeureSeance>(
+        find.descendant(of: carte, matching: find.byType(TexteHeureSeance)),
+      );
+      expect(heure.annulee, isTrue);
+      final Text texte = tester.widget<Text>(
+        find.descendant(of: carte, matching: find.text(heure.heure)),
+      );
+      expect(texte.style!.decoration, TextDecoration.lineThrough);
+      expect(
+        find.descendant(
+          of: carte,
+          matching: find.text(t.etat.motifNonCommunique),
+        ),
+        findsOneWidget,
+      );
+      expect(tester.widget<AppCard>(carte).surface, isNotNull);
+    });
+  });
+
   group('ENS-02 : les etats de l ecran', () {
     testWidgets('chargement : un squelette, puis le contenu', (
       WidgetTester tester,

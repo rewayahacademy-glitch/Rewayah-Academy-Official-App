@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
+import 'package:rewayah_academy/core/widgets/pastille_etat_seance.dart';
 import 'package:rewayah_academy/core/widgets/stat_tile.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/demo/classe_demo.dart';
@@ -66,6 +67,49 @@ Finder get _preparer =>
     find.widgetWithText(ActionPrincipale, t.classe.entree.preparer);
 
 void main() {
+  testWidgets('seance annulee : pastille, heures barrees, pourquoi, carte '
+      'attenuee, une seule annonce', (WidgetTester tester) async {
+    final SemanticsHandle poignee = tester.ensureSemantics();
+    await avecLargeur(tester, largeurMobile, () async {
+      await _poser(tester, EtatDemoClasse.annulee);
+      final Finder carte = find.byType(CarteSession);
+      expect(carte, findsOneWidget);
+      expect(
+        find.descendant(
+          of: carte,
+          matching: find.byKey(
+            const ValueKey<String>('pastille-annulee-icone'),
+          ),
+        ),
+        findsOneWidget,
+      );
+      final List<TexteHeureSeance> heures = tester
+          .widgetList<TexteHeureSeance>(
+            find.descendant(of: carte, matching: find.byType(TexteHeureSeance)),
+          )
+          .toList();
+      // Les heures sont barrees (la duree, elle, ne l'est pas) ; une seule
+      // annonce « Annulee : ... » pour la carte.
+      final List<TexteHeureSeance> barrees = heures
+          .where((TexteHeureSeance h) => h.annulee)
+          .toList();
+      expect(barrees.length, greaterThanOrEqualTo(1));
+      expect(barrees.where((TexteHeureSeance h) => h.annoncer), hasLength(1));
+      expect(
+        find.descendant(
+          of: carte,
+          matching: find.text(t.etat.motifNonCommunique),
+        ),
+        findsOneWidget,
+      );
+      final AppCard fond = tester.widget<AppCard>(
+        find.descendant(of: carte, matching: find.byType(AppCard)).first,
+      );
+      expect(fond.surface, isNotNull);
+    });
+    poignee.dispose();
+  });
+
   testWidgets('avant l ouverture : aucun bouton dans la carte de seance', (
     WidgetTester tester,
   ) async {

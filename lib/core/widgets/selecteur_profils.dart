@@ -41,7 +41,12 @@ class ProfilSelectionnable {
     this.urlPhoto,
     this.point,
     this.enDirect = false,
+    this.annulee = false,
   });
+
+  /// Vrai quand la seance du profil est annulee : l'icone d'annulation
+  /// remplace le point (ANNUL-VIS-1). Le mot est dans [etat].
+  final bool annulee;
 
   /// Vrai quand la seance du profil est en direct : le point bat doucement
   /// (le meme point que la pastille « En direct », ON-AIR-1).
@@ -218,7 +223,9 @@ class _Item extends StatelessWidget {
                     PositionedDirectional(
                       end: AppSpacing.xs,
                       bottom: AppSpacing.xs,
-                      child: profil.enDirect
+                      child: profil.annulee
+                          ? PointAnnulation(cerclage: palette.surfaceCanvas)
+                          : profil.enDirect
                           ? PointDirect(
                               diametre: SelecteurProfils.diametrePoint,
                               cerclage: palette.surfaceCanvas,

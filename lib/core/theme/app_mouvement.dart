@@ -66,6 +66,14 @@ abstract final class AppMouvement {
   /// direct » reste, le point reste, seul le battement s'arrete.
   static const int battementsDirect = 3;
 
+  /// Rayon maximal du halo du point « En direct », en multiple du diametre du
+  /// point (ON-AIR-1). Le halo grossit de 1 a 1 + cette valeur en s'effacant.
+  static const double ampleurHaloDirect = 1.2;
+
+  /// Opacite de depart du halo du point « En direct », avant qu'il s'efface.
+  /// Posee sur le halo seul, jamais sur le texte.
+  static const double opaciteHaloDirect = 0.45;
+
   /// Temps d'affichage d'un retour local, avant sa disparition.
   static const Duration retourLocalMaintien = Duration(seconds: 3);
 

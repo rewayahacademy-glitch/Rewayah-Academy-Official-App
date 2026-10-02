@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/icons/app_icons.dart';
+import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_elevation.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
@@ -147,10 +148,14 @@ class CarteRubriques extends StatelessWidget {
 /// rayon `md`, sans ombre (maquettes V3). Memes jetons que `GroupeReglages`.
 class SurfaceCarte extends StatelessWidget {
   /// Cree la surface.
-  const SurfaceCarte({required this.child, super.key});
+  const SurfaceCarte({required this.child, super.key, this.surface});
 
   /// Le contenu.
   final Widget child;
+
+  /// La paire de la surface, ou `null` pour la surface elevee. Une seance
+  /// annulee prend la surface enfoncee (`surfaceCarteSeance`).
+  final AppColorPair? surface;
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +171,7 @@ class SurfaceCarte extends StatelessWidget {
       ),
       child: DecoratedBox(
         decoration: AppElevation.avecFilet(
-          surface: palette.surfaceRaised,
+          surface: surface ?? palette.surfaceRaised,
           filet: palette.contourCarte,
           ombre: palette.ombre,
           arrondi: AppRadius.arrondiMd,
