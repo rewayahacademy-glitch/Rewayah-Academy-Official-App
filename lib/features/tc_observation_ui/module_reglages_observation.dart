@@ -6,6 +6,7 @@ import '../../core/tc_observation/guardian_observation_policy.dart';
 import '../../core/tc_observation/libelles_observation.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/section_header.dart';
@@ -126,6 +127,7 @@ class _ModuleReglagesObservationEtat extends State<ModuleReglagesObservation> {
             ),
             icon: AppIcons.foyer,
             value: uniteVisitesObservation(_etat.maxVisites),
+            largeurControle: _Pas.largeur(context),
             controle: _Pas(
               onMoins: () => _changer(_etat.deplacerVisites(-1)),
               onPlus: () => _changer(_etat.deplacerVisites(1)),
@@ -142,6 +144,7 @@ class _ModuleReglagesObservationEtat extends State<ModuleReglagesObservation> {
             value: t.tc.observation.reglages.uniteSecondes(
               n: _etat.tempsTotal.inSeconds,
             ),
+            largeurControle: _Pas.largeur(context),
             controle: _Pas(
               onMoins: () => _changer(_etat.deplacerTemps(-1)),
               onPlus: () => _changer(_etat.deplacerTemps(1)),
@@ -168,6 +171,7 @@ class _ModuleReglagesObservationEtat extends State<ModuleReglagesObservation> {
             value: t.tc.observation.reglages.uniteSecondes(
               n: _etat.plafondEffectif.inSeconds,
             ),
+            largeurControle: _Pas.largeur(context),
             controle: _Pas(
               onMoins: () => _changer(_etat.deplacerPlafond(-1)),
               onPlus: () => _changer(_etat.deplacerPlafond(1)),
@@ -216,6 +220,33 @@ class _Pas extends StatelessWidget {
 
   final VoidCallback onMoins;
   final VoidCallback onPlus;
+
+  /// La largeur du pas a pas (deux actions tertiaires et leur ecart) : la
+  /// ligne garde alors sa valeur en fin de ligne quand tout y tient.
+  static double largeur(BuildContext context) {
+    final TextStyle style = AppTypography.graisse(
+      Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
+      FontWeight.w700,
+    );
+    double mesure(String libelle) {
+      final TextPainter p = TextPainter(
+        text: TextSpan(text: libelle, style: style),
+        textDirection: Directionality.of(context),
+        textScaler: MediaQuery.textScalerOf(context),
+        maxLines: 1,
+      )..layout();
+      final double l = p.width;
+      p.dispose();
+      return l;
+    }
+
+    // Marge de 2 par action : l'arrondi des glyphes.
+    return mesure(t.tc.observation.reglages.diminuer) +
+        mesure(t.tc.observation.reglages.augmenter) +
+        AppSpacing.xl * 4 +
+        AppSpacing.sm +
+        4;
+  }
 
   @override
   Widget build(BuildContext context) => Row(

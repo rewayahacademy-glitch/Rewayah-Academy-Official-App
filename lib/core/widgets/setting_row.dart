@@ -5,6 +5,7 @@ import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'pressable.dart';
+import 'texte_sans_coupure.dart';
 
 /// A grouped settings line. It contains presentation only: no profile write,
 /// provider, or navigation contract is coupled to this primitive.
@@ -18,6 +19,7 @@ class SettingRow extends StatelessWidget {
     this.controle,
     this.onPress,
     this.enabled = true,
+    this.largeurControle,
   });
 
   final String title;
@@ -31,6 +33,13 @@ class SettingRow extends StatelessWidget {
   final AppIcon icon;
   final VoidCallback? onPress;
   final bool enabled;
+
+  /// La largeur connue du [controle], quand l'ecran peut la donner.
+  ///
+  /// Nulle (defaut) : une ligne a valeur et controle met la valeur sous le
+  /// libelle. Donnee : la valeur reste en fin de ligne tant que libelle,
+  /// valeur et controle y tiennent sans couper un mot.
+  final double? largeurControle;
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +79,12 @@ class SettingRow extends StatelessWidget {
             final TextStyle styleSecondaire = palette.inkMuted.applyTo(
               Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
             );
+            // Texte agrandi : aucun mot n'est coupe au milieu (« autom /
+            // atiquement ») ; a l'echelle 1, un simple texte, sans mesure.
+            final bool agrandi = MediaQuery.textScalerOf(context).scale(1) > 1;
+            Widget texte(String s, TextStyle style) => agrandi
+                ? TexteSansCoupure(s, style: style)
+                : Text(s, style: style);
             final Widget icone = IconTheme(
               data: palette.inkMuted.asIconTheme(size: AppSpacing.xxl),
               child: Icon(icon.repos),
@@ -87,16 +102,16 @@ class SettingRow extends StatelessWidget {
                     children: <Widget>[
                       icone,
                       Ecart.hMd,
-                      Expanded(child: Text(title, style: styleTitre)),
+                      Expanded(child: texte(title, styleTitre)),
                     ],
                   ),
                   if (description != null) ...<Widget>[
                     Ecart.vXs,
-                    Text(description!, style: styleSecondaire),
+                    texte(description!, styleSecondaire),
                   ],
                   if (value != null) ...<Widget>[
                     Ecart.vXs,
-                    Text(value!, style: styleSecondaire),
+                    texte(value!, styleSecondaire),
                   ],
                   Ecart.vXs,
                   Align(
@@ -123,16 +138,16 @@ class SettingRow extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(title, style: styleTitre),
+                      texte(title, styleTitre),
                       if (description != null) ...<Widget>[
                         Ecart.vXs,
-                        Text(description!, style: styleSecondaire),
+                        texte(description!, styleSecondaire),
                       ],
                       // Etroit ou texte agrandi : la valeur passe sous le
                       // libelle au lieu de comprimer la colonne de gauche.
                       if (dessous) ...<Widget>[
                         Ecart.vXs,
-                        Text(value!, style: styleSecondaire),
+                        texte(value!, styleSecondaire),
                       ],
                     ],
                   ),
@@ -172,7 +187,8 @@ class SettingRow extends StatelessWidget {
   ) {
     final TextScaler echelle = MediaQuery.textScalerOf(context);
     // Un controle de largeur inconnue (pas a pas) : la valeur passe dessous.
-    if (echelle.scale(1) > 1.3 || controle != null) return true;
+    if (echelle.scale(1) > 1.3) return true;
+    if (controle != null && largeurControle == null) return true;
     double mesure(String texte, TextStyle style) {
       final TextPainter p = TextPainter(
         text: TextSpan(text: texte, style: style),
@@ -194,7 +210,8 @@ class SettingRow extends StatelessWidget {
     final double reserve =
         AppSpacing.xxl +
         AppSpacing.md * 2 +
-        (onPress != null ? AppSpacing.sm + AppSpacing.xl : 0);
+        (onPress != null ? AppSpacing.sm + AppSpacing.xl : 0) +
+        (controle != null ? AppSpacing.sm + largeurControle! : 0);
     final double gauche = largeur - reserve - mesure(value!, styleSecondaire);
     final double titre = motLong(title, styleTitre);
     final double desc = motLong(description, styleSecondaire);

@@ -4,6 +4,7 @@ import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_typography.dart';
 import 'action_principale.dart';
+import 'texte_sans_coupure.dart';
 
 /// Le titre d'une section, son compteur et son action tertiaire.
 ///
@@ -51,7 +52,14 @@ class SectionHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Flexible(
-          child: Text(titre, style: palette.surfaceCanvas.applyTo(styleTitre)),
+          // Texte agrandi : le titre ne coupe jamais un mot (« Accessibilit
+          // / e ») ; a l'echelle 1, un simple texte, sans mesure.
+          child: MediaQuery.textScalerOf(context).scale(1) > 1
+              ? TexteSansCoupure(
+                  titre,
+                  style: palette.surfaceCanvas.applyTo(styleTitre),
+                )
+              : Text(titre, style: palette.surfaceCanvas.applyTo(styleTitre)),
         ),
         if (compteur != null) ...<Widget>[
           Ecart.hSm,
