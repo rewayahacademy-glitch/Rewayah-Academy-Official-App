@@ -22,6 +22,7 @@ import '../../core/mouvement/apparition_douce.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/ecran_resultat.dart';
 import '../../core/widgets/empty_state.dart';
@@ -81,6 +82,11 @@ class ObservationControlePage extends ConsumerStatefulWidget {
 
   /// La cle du champ de texte.
   static const Key texteKey = ValueKey<String>('ctr03a-texte');
+
+  /// La cle de « Reessayer » quand la liste des eleves n'est pas recue.
+  static const Key reessayerRosterKey = ValueKey<String>(
+    'ctr03a-roster-reessayer',
+  );
 
   /// Le libelle d'une nature.
   static String libelleNature(NatureObservation n) => switch (n) {
@@ -399,8 +405,12 @@ class _ObservationControlePageState
   );
 
   Widget _personneEtRoster() {
-    final List<EleveRoster> roster =
-        ref.watch(rosterControleProvider).value ?? const <EleveRoster>[];
+    final AsyncValue<List<EleveRoster>> etatRoster = ref.watch(
+      rosterControleProvider,
+    );
+    final List<EleveRoster> roster = etatRoster.hasError
+        ? const <EleveRoster>[]
+        : etatRoster.value ?? const <EleveRoster>[];
     final o = t.controleur.observation;
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
@@ -432,17 +442,48 @@ class _ObservationControlePageState
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
+                // Revue CT-R m2 : chargement, erreur (avec « Reessayer ») et
+                // liste vide sont trois etats distincts (K-59).
                 Semantics(
-                  header: true,
+                  header: roster.isNotEmpty,
+                  liveRegion: roster.isEmpty,
                   child: Text(
-                    roster.isEmpty
-                        ? t.controleur.observation.rosterIndisponible
-                        : t.controleur.observation.questionEleve,
-                    style: palette.inkStrong.applyTo(
-                      textes.titleMedium ?? const TextStyle(),
-                    ),
+                    switch (etatRoster) {
+                      AsyncValue<List<EleveRoster>>(
+                        isLoading: true,
+                        hasValue: false,
+                      ) =>
+                        o.rosterChargement,
+                      AsyncValue<List<EleveRoster>>(hasError: true) =>
+                        o.rosterIndisponible,
+                      AsyncValue<List<EleveRoster>>(hasValue: false) =>
+                        o.rosterChargement,
+                      _ when roster.isEmpty => o.rosterVide,
+                      _ => o.questionEleve,
+                    },
+                    style:
+                        (roster.isEmpty ? palette.inkMuted : palette.inkStrong)
+                            .applyTo(
+                              (roster.isEmpty
+                                      ? textes.bodyMedium
+                                      : textes.titleMedium) ??
+                                  const TextStyle(),
+                            ),
                   ),
                 ),
+                if (etatRoster.hasError && !etatRoster.isLoading) ...<Widget>[
+                  Ecart.vMd,
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: ActionPrincipale(
+                      key: ObservationControlePage.reessayerRosterKey,
+                      libelle: t.commun.reessayer,
+                      niveau: NiveauAction.secondaire,
+                      pleineLargeur: false,
+                      onPress: () => ref.invalidate(rosterControleProvider),
+                    ),
+                  ),
+                ],
                 if (roster.isNotEmpty) ...<Widget>[
                   Ecart.vMd,
                   ChoiceCardGroup(

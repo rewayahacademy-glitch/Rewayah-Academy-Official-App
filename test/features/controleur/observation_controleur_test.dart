@@ -231,6 +231,76 @@ void main() {
     await tester.pumpAndSettle();
   });
 
+  testWidgets('Liste des eleves non recue : le dire, puis Reessayer', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final CompteRenduEnSuspens visite = CompteRenduEnSuspens(
+      seanceId: 'seance-A',
+      classe: 'Classe Al-Fajr',
+      debut: DateTime(2026, 9, 28, 16),
+    );
+    int appels = 0;
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: <Override>[
+          visitesObserveesProvider.overrideWith(
+            () => VisitesObservees(<String, CompteRenduEnSuspens>{
+              visite.seanceId: visite,
+            }),
+          ),
+          rosterControleProvider.overrideWith((Ref _) async {
+            appels++;
+            if (appels == 1) throw StateError('connexion coupee');
+            return const <EleveRoster>[EleveRoster(id: 'e1', prenom: 'Amina')];
+          }),
+        ],
+        child: TranslationProvider(
+          child: MaterialApp(
+            theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+            locale: AppLocale.fr.flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            home: ObservationControlePage(seanceId: visite.seanceId),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await _toucher(
+      tester,
+      find.byKey(
+        ObservationControlePage.cleNature(NatureObservation.pointPositif),
+      ),
+    );
+    await _toucher(tester, _bouton(t.commun.continuer));
+    await _toucher(
+      tester,
+      find.byKey(
+        ObservationControlePage.cleDomaine(DomaineObservation.interaction),
+      ),
+    );
+    await _toucher(tester, _bouton(t.commun.continuer));
+    await _toucher(
+      tester,
+      find.byKey(
+        ObservationControlePage.clePersonne(PersonneConcernee.elevePrecis),
+      ),
+    );
+    expect(find.text(o.rosterIndisponible), findsOneWidget);
+    expect(find.text(o.rosterVide), findsNothing);
+    await _toucher(
+      tester,
+      find.byKey(ObservationControlePage.reessayerRosterKey),
+    );
+    expect(appels, 2);
+    expect(find.text(o.rosterIndisponible), findsNothing);
+    expect(find.text(o.questionEleve), findsOneWidget);
+    expect(find.byKey(ObservationControlePage.cleEleve('e1')), findsOneWidget);
+  });
+
   testWidgets('Sans serveur, l envoi echoue et la saisie reste', (
     WidgetTester tester,
   ) async {
@@ -284,7 +354,13 @@ void main() {
         ObservationControlePage.clePersonne(PersonneConcernee.elevePrecis),
       ),
     );
-    expect(find.text(o.rosterIndisponible), findsOneWidget);
+    // Liste recue mais vide : un etat distinct de l'erreur (revue CT-R m2).
+    expect(find.text(o.rosterVide), findsOneWidget);
+    expect(find.text(o.rosterIndisponible), findsNothing);
+    expect(
+      find.byKey(ObservationControlePage.reessayerRosterKey),
+      findsNothing,
+    );
     await _toucher(
       tester,
       find.byKey(
