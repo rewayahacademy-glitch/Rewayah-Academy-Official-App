@@ -23,6 +23,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../foyer/photo_eleve.dart';
 import 'preparation_seance.dart';
@@ -120,31 +121,28 @@ class FicheEleveEnseignant extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            Semantics(
-              image: true,
-              label: t.enseignant.eleve.photo(prenom: eleve.prenom),
-              child: ExcludeSemantics(
-                child: PhotoEleve(
-                  prenom: eleve.prenom,
-                  cleAvatar: p?.cleAvatar,
-                  diametre: AppSpacing.respiration + AppSpacing.lg,
-                ),
+        // AVATAR-1 : couple avatar + texte du composant partage. Le prenom est
+        // deja le titre (K-42 §5) : seul l'identifiant Academie accompagne la
+        // photo, centre verticalement sur le cercle.
+        AvatarNom.enLigne(
+          prenom: eleve.prenom,
+          nom: t.enseignant.eleve.identifiant(id: membre.identifiantImmuable),
+          diametre: AppAvatar.grand,
+          ecart: AppSpacing.lg,
+          styleNom: palette.inkMuted.applyTo(
+            textes.bodyMedium ?? const TextStyle(),
+          ),
+          avatar: Semantics(
+            image: true,
+            label: t.enseignant.eleve.photo(prenom: eleve.prenom),
+            child: ExcludeSemantics(
+              child: PhotoEleve(
+                prenom: eleve.prenom,
+                cleAvatar: p?.cleAvatar,
+                diametre: AppAvatar.grand,
               ),
             ),
-            Ecart.hLg,
-            // Le prenom est deja le titre (K-42 §5) : seul l'identifiant
-            // Academie accompagne la photo.
-            Expanded(
-              child: Text(
-                t.enseignant.eleve.identifiant(id: membre.identifiantImmuable),
-                style: palette.inkMuted.applyTo(
-                  textes.bodyMedium ?? const TextStyle(),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
         Ecart.vXl,
         GroupeReglages(

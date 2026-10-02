@@ -16,7 +16,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
@@ -234,43 +234,32 @@ class _Enseignant extends StatelessWidget {
       cours: classe.nomCours,
       niveau: classe.niveauHumain,
     );
+    // AVATAR-1 : le nom de la classe est le titre ; l'enseignant est un couple
+    // avatar + nom du composant partage, avec au plus une ligne de role (le
+    // parcours).
     return MergeSemantics(
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          AvatarTile(
-            prenom: classe.enseignant.nomAffichage,
-            diametre: SelecteurProfils.diametreLarge,
+          Text(
+            classe.libelle,
+            style: palette.inkStrong.applyTo(
+              (compact ? textes.titleMedium : textes.titleLarge) ??
+                  const TextStyle(),
+            ),
           ),
-          Ecart.hLg,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  classe.libelle,
-                  style: palette.inkStrong.applyTo(
-                    (compact ? textes.titleMedium : textes.titleLarge) ??
-                        const TextStyle(),
-                  ),
-                ),
-                Ecart.vXs,
-                Text(
-                  LibellesGroupe.enseignantNomme(classe.enseignant),
-                  style: palette.inkMuted.applyTo(
-                    textes.bodyLarge ?? const TextStyle(),
-                  ),
-                ),
-                if (parcours.isNotEmpty) ...<Widget>[
-                  Ecart.vXs,
-                  Text(
-                    parcours,
-                    style: palette.inkMuted.applyTo(
-                      textes.bodySmall ?? const TextStyle(),
-                    ),
-                  ),
-                ],
-              ],
+          Ecart.vSm,
+          AvatarNom.enLigne(
+            prenom: classe.enseignant.nomAffichage,
+            nom: LibellesGroupe.enseignantNomme(classe.enseignant),
+            role: parcours.isEmpty ? null : parcours,
+            diametre: SelecteurProfils.diametreLarge,
+            styleNom: palette.inkMuted.applyTo(
+              textes.bodyLarge ?? const TextStyle(),
+            ),
+            styleRole: palette.inkMuted.applyTo(
+              textes.bodySmall ?? const TextStyle(),
             ),
           ),
         ],

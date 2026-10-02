@@ -15,6 +15,7 @@ import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
@@ -388,38 +389,24 @@ class _Entete extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final String? ligneClasse = classe;
     return SurfaceFiche(
-      child: Row(
-        children: <Widget>[
-          PhotoEleve(
-            prenom: profil.prenom,
-            cleAvatar: profil.cleAvatar,
-            diametre: AppSpacing.respiration + AppSpacing.sm,
-          ),
-          Ecart.hLg,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  profil.prenom,
-                  style: palette.inkStrong.applyTo(
-                    textes.titleLarge ?? const TextStyle(),
-                  ),
-                ),
-                if (ligneClasse != null) ...<Widget>[
-                  Ecart.vXs,
-                  Text(
-                    ligneClasse,
-                    style: palette.inkMuted.applyTo(
-                      textes.bodyMedium ?? const TextStyle(),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ],
+      // AVATAR-1 : couple avatar + nom du composant partage, nom et une
+      // ligne de role (la classe).
+      child: AvatarNom.enLigne(
+        prenom: profil.prenom,
+        role: ligneClasse,
+        diametre: AppAvatar.grand,
+        ecart: AppSpacing.lg,
+        avatar: PhotoEleve(
+          prenom: profil.prenom,
+          cleAvatar: profil.cleAvatar,
+          diametre: AppAvatar.grand,
+        ),
+        styleNom: palette.inkStrong.applyTo(
+          textes.titleLarge ?? const TextStyle(),
+        ),
+        styleRole: palette.inkMuted.applyTo(
+          textes.bodyMedium ?? const TextStyle(),
+        ),
       ),
     );
   }

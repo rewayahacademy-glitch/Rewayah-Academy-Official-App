@@ -4,7 +4,6 @@ import '../../core/icons/app_icons.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_color_pair.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_tile.dart';
@@ -64,9 +63,8 @@ class PhotoEnseignant extends StatelessWidget {
     }
 
     final AppPalette palette = AppPalette.of(context);
-    final AppMetriques metriques = AppMetriques.of(context);
     final AppColorPair paire = palette.washWarning;
-    final double taille = diametre ?? metriques.cibleTactile * 2;
+    final double taille = diametre ?? AppAvatar.moyen;
 
     // Un etat, donc un libelle : une pastille de couleur seule serait un defaut
     // d'accessibilite (invariant J7). Le libelle complet est porte par la

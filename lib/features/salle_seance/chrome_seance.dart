@@ -10,6 +10,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/bascule_theme.dart';
 import '../../core/widgets/entete_page.dart';
 import '../../core/widgets/pressable.dart';
@@ -492,40 +493,20 @@ class _Identite extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final ThemeData theme = Theme.of(context);
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        SizedBox.square(
-          dimension: AppSpacing.titreEcran,
-          child: DecoratedBox(
-            decoration: palette.washAccent.decoration(
-              borderRadius: AppRadius.arrondiFull,
-            ),
-            child: Center(
-              child: Text(
-                compte.initiales,
-                style: palette.washAccent.applyTo(
-                  theme.textTheme.titleMedium ?? const TextStyle(),
-                ),
-              ),
-            ),
-          ),
-        ),
-        Ecart.hMd,
-        Text(
-          compte.nom,
-          style: palette.inkStrong.applyTo(
-            theme.textTheme.titleSmall ?? const TextStyle(),
-          ),
-        ),
-        if (menu) ...<Widget>[
-          Ecart.hSm,
-          IconTheme(
-            data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
-            child: Icon(AppIcons.menuDeroulant.repos),
-          ),
-        ],
-      ],
+    // AVATAR-1 : le meme couple avatar + nom que partout (plus de cercle
+    // d'initiales maison), le nom centre verticalement sur le cercle.
+    return AvatarNom.enLigne(
+      prenom: compte.nom,
+      ajuste: true,
+      styleNom: palette.inkStrong.applyTo(
+        theme.textTheme.titleSmall ?? const TextStyle(),
+      ),
+      fin: menu
+          ? IconTheme(
+              data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
+              child: Icon(AppIcons.menuDeroulant.repos),
+            )
+          : null,
     );
   }
 }

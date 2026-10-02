@@ -12,12 +12,11 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pin_pad.dart';
@@ -587,28 +586,19 @@ class _CarteProfil extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppMetriques metriques = AppMetriques.of(context);
-
     return AppCard(
       key: EleveConnexionPage.carteKey(profil.id),
       onPress: onPress,
       libelleSemantique: t.eleveConnexion.profils.profilLibelle(
         prenom: profil.prenom,
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          AvatarTile(
-            prenom: profil.prenom,
-            diametre: metriques.cibleTactile * 2,
-          ),
-          Ecart.vMd,
-          Text(
-            profil.prenom,
-            textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-        ],
+      // AVATAR-1 : avatar centre, prenom centre dessous sur le meme axe.
+      child: Center(
+        child: AvatarNom.vertical(
+          prenom: profil.prenom,
+          diametre: AppAvatar.grand,
+          styleNom: Theme.of(context).textTheme.titleLarge,
+        ),
       ),
     );
   }
@@ -656,9 +646,11 @@ class _Pave extends StatelessWidget {
       children: <Widget>[
         if (profil != null)
           Center(
-            child: AvatarTile(
+            // AVATAR-1 : avatar centre, prenom centre dessous.
+            child: AvatarNom.vertical(
               prenom: profil!.prenom,
-              diametre: AppMetriques.of(context).cibleTactile * 1.5,
+              diametre: AppAvatar.grand,
+              styleNom: Theme.of(context).textTheme.titleMedium,
             ),
           ),
         // En saisie, le pave porte deja sa consigne parlee (« Entre ton

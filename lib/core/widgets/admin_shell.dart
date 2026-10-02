@@ -12,7 +12,7 @@ import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'app_bottom_sheet.dart';
-import 'avatar_tile.dart';
+import 'avatar_nom.dart';
 import 'bascule_theme.dart';
 import 'page_shell.dart';
 import 'pressable.dart';
@@ -302,28 +302,15 @@ class _PiedUtilisateur extends StatelessWidget {
         child: ExcludeSemantics(
           child: Padding(
             padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Row(
-              children: <Widget>[
-                AvatarTile(prenom: nom, diametre: AppTouchTarget.standard),
-                Ecart.hMd,
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      // AD-11 (1.4.4) : jamais coupes a 200 %, ils passent
-                      // a la ligne.
-                      Text(nom, style: textes.titleSmall),
-                      Text(
-                        role,
-                        style: palette.inkMuted.applyTo(
-                          textes.bodySmall ?? const TextStyle(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+            // AD-11 (1.4.4) : nom et role jamais coupes a 200 %, ils passent
+            // a la ligne. AVATAR-1 : couple avatar + nom du composant partage.
+            child: AvatarNom.enLigne(
+              prenom: nom,
+              role: role,
+              styleNom: textes.titleSmall,
+              styleRole: palette.inkMuted.applyTo(
+                textes.bodySmall ?? const TextStyle(),
+              ),
             ),
           ),
         ),

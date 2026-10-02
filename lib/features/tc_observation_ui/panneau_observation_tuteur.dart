@@ -7,7 +7,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/video_session_provider.dart';
-import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/status_pill.dart';
 import 'barre_commandes_observation.dart';
 import 'compteur_visite.dart';
@@ -436,32 +436,32 @@ class _Vignette extends StatelessWidget {
         ? SizedBox.expand(child: image)
         : ColoredBox(
             color: palette.surfaceSunken.background,
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  if (p != null)
-                    ExcludeSemantics(
-                      child: AvatarTile(prenom: p.nom, diametre: 44),
-                    ),
-                  Ecart.vXs,
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.sm,
-                    ),
-                    child: Text(
-                      p == null ? v.pasEncoreLa : v.cameraFermee,
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: palette.inkMuted.applyTo(
-                        textes.bodySmall ?? const TextStyle(),
+            // AVATAR-1 : le petit cercle du composant partage, contenu dans la
+            // vignette ; la legende est l'unique ligne de texte.
+            child: p == null
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.sm,
+                      ),
+                      child: Text(
+                        v.pasEncoreLa,
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: palette.inkMuted.applyTo(
+                          textes.bodySmall ?? const TextStyle(),
+                        ),
                       ),
                     ),
+                  )
+                : AvatarSansImage(
+                    prenom: p.nom,
+                    legende: v.cameraFermee,
+                    styleLegende: palette.inkMuted.applyTo(
+                      textes.bodySmall ?? const TextStyle(),
+                    ),
                   ),
-                ],
-              ),
-            ),
           );
 
     // Une vignette est un cadre video de taille fixe : son texte grossit

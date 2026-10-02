@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/avatar_nom.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
@@ -158,9 +159,28 @@ void main() {
         ),
       ),
     );
+    // AVATAR-1 : la photo est a cote du nom de l'enseignant (couple partage
+    // `AvatarNom`), qui est centre verticalement sur le cercle ; le titre de la
+    // Classe, le cours et le niveau sont au-dessus.
     final Finder photo = find.byType(PhotoEnseignant);
-    final Finder nom = find.text(DonneesAccessibiliteDemo.classe);
-    expect(tester.getTopLeft(photo).dy, closeTo(tester.getTopLeft(nom).dy, 24));
-    expect(tester.getTopRight(photo).dx, lessThan(tester.getTopLeft(nom).dx));
+    final Finder couple = find.byType(AvatarNom);
+    expect(couple, findsOneWidget);
+    final Finder nomEnseignant = find
+        .descendant(of: couple, matching: find.byType(Text))
+        .first;
+    expect(
+      tester.getTopRight(photo).dx,
+      lessThan(tester.getTopLeft(nomEnseignant).dx),
+    );
+    expect(
+      (tester.getRect(photo).center.dy -
+              tester.getRect(nomEnseignant).center.dy)
+          .abs(),
+      lessThanOrEqualTo(2),
+    );
+    expect(
+      tester.getTopLeft(find.text(DonneesAccessibiliteDemo.classe)).dy,
+      lessThan(tester.getTopLeft(photo).dy),
+    );
   });
 }

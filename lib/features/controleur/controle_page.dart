@@ -12,7 +12,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
@@ -246,25 +246,15 @@ class _CarteMission extends StatelessWidget {
           Ecart.vSm,
           Text(mission.classe, style: fort),
           Ecart.vLg,
-          Row(
-            children: <Widget>[
-              AvatarTile(prenom: mission.enseignant, diametre: 40),
-              Ecart.hMd,
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      mission.enseignant,
-                      style: palette.inkStrong.applyTo(
-                        textes.titleMedium ?? const TextStyle(),
-                      ),
-                    ),
-                    Text(details, style: doux),
-                  ],
-                ),
-              ),
-            ],
+          // AVATAR-1 : l'enseignant est un couple avatar + nom du composant
+          // partage, avec au plus une ligne de role (horaire, duree, effectif).
+          AvatarNom.enLigne(
+            prenom: mission.enseignant,
+            role: details,
+            styleNom: palette.inkStrong.applyTo(
+              textes.titleMedium ?? const TextStyle(),
+            ),
+            styleRole: doux,
           ),
           Ecart.vLg,
           Row(

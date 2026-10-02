@@ -19,6 +19,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/groupe_reglages.dart';
@@ -594,7 +595,7 @@ class _Constat extends StatelessWidget {
       meneur: PhotoEleve(
         prenom: p.membre.libelle,
         cleAvatar: projections[p.membre.studentId]?.cleAvatar,
-        diametre: AppSpacing.section,
+        diametre: AppAvatar.petit,
       ),
       libelle: p.membre.libelle,
       legende: legende,

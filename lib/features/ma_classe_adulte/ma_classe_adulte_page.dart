@@ -32,6 +32,7 @@ import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/avatar_tile.dart' show AppAvatar;
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/groupe_reglages.dart';
@@ -129,7 +130,7 @@ class MaClasseAdultePage extends ConsumerWidget {
   /// Le diametre des photos des participants : la valeur des eleves de la
   /// fiche du groupe (`fiche_groupe_page.dart`, `diametre: 40`), que cet
   /// ecran ne modifie pas (K-51).
-  static const double diametrePhoto = 40;
+  static const double diametrePhoto = AppAvatar.petit;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

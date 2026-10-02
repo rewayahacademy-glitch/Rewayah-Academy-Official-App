@@ -25,7 +25,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/ecran_resultat.dart';
 import '../../core/widgets/etat_systeme.dart';
@@ -401,42 +401,30 @@ class CarteClasseOuverte extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           MergeSemantics(
-            child: Row(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                // Photo publique de l'enseignant quand l'hote saura la
-                // resoudre (DB-CRS-09), sinon son initiale.
-                ExcludeSemantics(
-                  child: AvatarTile(
-                    prenom: classe.enseignant.prenom,
-                    diametre: AppSpacing.xxxl + AppSpacing.md,
+                Text(
+                  classe.libelle,
+                  style: palette.inkStrong.applyTo(
+                    (large ? textes.titleLarge : textes.titleMedium) ??
+                        const TextStyle(),
                   ),
                 ),
-                Ecart.hLg,
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text(
-                        classe.libelle,
-                        style: palette.inkStrong.applyTo(
-                          (large ? textes.titleLarge : textes.titleMedium) ??
-                              const TextStyle(),
-                        ),
-                      ),
-                      Ecart.vXs,
-                      Text(
-                        enseignantCatalogue(classe.enseignant),
-                        style: discret,
-                      ),
-                      if (parcoursCatalogue(classe) case final String parcours
-                          when parcours.isNotEmpty) ...<Widget>[
-                        Ecart.vXs,
-                        Text(parcours, style: discret),
-                      ],
-                    ],
-                  ),
+                Ecart.vSm,
+                // Photo publique de l'enseignant quand l'hote saura la
+                // resoudre (DB-CRS-09), sinon son initiale. AVATAR-1 : couple
+                // avatar + nom du composant partage, au plus une ligne de role.
+                AvatarNom.enLigne(
+                  prenom: classe.enseignant.prenom,
+                  nom: enseignantCatalogue(classe.enseignant),
+                  role: switch (parcoursCatalogue(classe)) {
+                    final String p when p.isNotEmpty => p,
+                    _ => null,
+                  },
+                  styleNom: discret,
+                  styleRole: discret,
                 ),
               ],
             ),

@@ -21,7 +21,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import 'ligne_membre.dart' show dateEcheance;
@@ -194,7 +193,7 @@ LigneRubrique lignePlaceAdulte(FoyerTitulaireVM vue, {VoidCallback? onPress}) {
     },
     // Le second adulte : ses initiales, jamais sa photo (Q4).
     meneur: place is PlaceOccupee
-        ? AvatarTile(prenom: place.prenom, diametre: AppSpacing.section)
+        ? AvatarTile(prenom: place.prenom, diametre: AppAvatar.moyen)
         : null,
     libelle: libellePlace(vue),
     legende: legendePlace(vue),

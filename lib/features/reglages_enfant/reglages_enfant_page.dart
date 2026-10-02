@@ -15,6 +15,7 @@ import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/carte_lignes.dart';
@@ -119,12 +120,12 @@ class _CarteEnfant extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              _Photo(enfant: enfant),
-              Ecart.hMd,
-              Expanded(child: Text(enfant.prenom, style: textes.titleLarge)),
-            ],
+          // AVATAR-1 : couple avatar + prenom du composant partage.
+          AvatarNom.enLigne(
+            prenom: enfant.prenom,
+            diametre: AppAvatar.grand,
+            avatar: _Photo(enfant: enfant),
+            styleNom: textes.titleLarge,
           ),
           Ecart.vMd,
           // Photo, camera et interface : un renvoi vers la fiche, leur seule
@@ -172,7 +173,7 @@ class _Photo extends ConsumerWidget {
     return AvatarTile(
       prenom: enfant.prenom,
       urlSignee: url,
-      diametre: AppSpacing.xxxl * 2,
+      diametre: AppAvatar.grand,
     );
   }
 }

@@ -12,7 +12,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
 import 'bloc_seance.dart';
@@ -144,38 +144,28 @@ class _Identite extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
-    return Row(
+    // AVATAR-1 : l'eleve est un couple avatar + prenom du composant partage
+    // (prenom centre sur le cercle) ; la classe et l'enseignant se lisent
+    // dessous, ils ne sont pas le texte de l'avatar.
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        ExcludeSemantics(
-          child: AvatarTile(
+        Semantics(
+          header: true,
+          child: AvatarNom.enLigne(
             prenom: profil.prenom,
             urlSignee: urlPhotoEleve,
             diametre: compact
                 ? SelecteurProfils.diametreMobile
                 : SelecteurProfils.diametreLarge,
+            styleNom: palette.inkStrong.applyTo(
+              textes.titleLarge ?? const TextStyle(),
+            ),
           ),
         ),
-        Ecart.hLg,
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Semantics(
-                header: true,
-                child: Text(
-                  profil.prenom,
-                  style: palette.inkStrong.applyTo(
-                    textes.titleLarge ?? const TextStyle(),
-                  ),
-                ),
-              ),
-              Ecart.vXs,
-              ..._classe(context, palette, textes),
-            ],
-          ),
-        ),
+        Ecart.vSm,
+        ..._classe(context, palette, textes),
       ],
     );
   }
@@ -226,26 +216,18 @@ class _Identite extends StatelessWidget {
         ),
       ),
       Ecart.vSm,
+      // Photo publique de l'enseignant quand l'hote sait la resoudre
+      // (DB-CRS-09), sinon son initiale : jamais le portrait de l'eleve a sa
+      // place.
       MergeSemantics(
-        child: Row(
-          children: <Widget>[
-            // Photo publique de l'enseignant quand l'hote sait la resoudre
-            // (DB-CRS-09), sinon son initiale : jamais le portrait de
-            // l'eleve a sa place.
-            AvatarTile(
-              prenom: c.enseignant.nomAffichage,
-              diametre: AppSpacing.xxxl,
-            ),
-            Ecart.hSm,
-            Expanded(
-              child: Text(
-                LibellesGroupe.enseignantNomme(c.enseignant),
-                style: palette.inkMuted.applyTo(
-                  textes.bodyLarge ?? const TextStyle(),
-                ),
-              ),
-            ),
-          ],
+        child: AvatarNom.enLigne(
+          prenom: c.enseignant.nomAffichage,
+          nom: LibellesGroupe.enseignantNomme(c.enseignant),
+          diametre: AppAvatar.petit,
+          ecart: AppSpacing.sm,
+          styleNom: palette.inkMuted.applyTo(
+            textes.bodyLarge ?? const TextStyle(),
+          ),
         ),
       ),
       if (parcours.isNotEmpty) ...<Widget>[

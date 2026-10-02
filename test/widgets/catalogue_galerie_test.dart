@@ -37,6 +37,7 @@ const List<String> composantsDuCatalogue = <String>[
   'Pressable',
   'BentoTile',
   'AvatarTile',
+  'AvatarNom',
   'AudioLabel',
   'PermanentNotice',
   'PinPad',

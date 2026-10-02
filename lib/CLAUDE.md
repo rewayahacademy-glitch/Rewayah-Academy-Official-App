@@ -6,7 +6,7 @@ lire la ligne du MVP qui le concerne dans `docs/current/06_SPEC_FONCTIONNELLE_MV
 Pour retrouver un écran ou un composant déjà construit, le catalogue historique est
 dans `docs/archive/2026-09-pre-remise-a-plat/design/` (référence, pas une règle).
 
-Les composants partagés (`Pressable`, `BentoTile`, `AvatarTile`, `AudioLabel`,
+Les composants partagés (`Pressable`, `BentoTile`, `AvatarTile`, `AvatarNom`, `AudioLabel`,
 `PermanentNotice`, `PinPad`, `EmptyState`, `OfflineBanner`, `ChoiceCardGroup`,
 `ActionPrincipale`, `LienFleche`, `FilterPill`, `BoutonOutil`, `BoutonIcone`, `CommandeSalle`, `RaccourciTactile`) sont les seuls points d'entrée de leur fonction : on les améliore, on
 `ActionPrincipale`, `PileCartes`, `CarteGroupee`, `CarteLignes`) sont les seuls points d'entrée de leur fonction : on les améliore, on
@@ -89,6 +89,8 @@ Règles équivalentes, déduites des remarques du directeur :
 - **Un client ne voit jamais un mot technique ou interne** : « admin » (on dit la direction), « foyer » chez la direction. Contrôle : `mot-interne`.
 - **« Classe », jamais « groupe »** dans un texte visible.
 - Tout nouveau libellé est déclaré dans `tool/libelles_sources.json` avec le commentaire du directeur comme source.
+- **Avatar (AVATAR-1).** L'avatar est un **petit cercle** dont la taille vient des jetons (`AppAvatar.petit` 32, `moyen` 48 par défaut, `grand` 64). Tout couple avatar + nom passe par `AvatarNom` (`lib/core/widgets/avatar_nom.dart`), jamais recomposé dans un écran : en disposition **verticale**, l'avatar est centré dans son bloc et le nom centré dessous, sur le même axe ; en disposition **en ligne**, le nom (et au plus une ligne de rôle) est centré verticalement sur le cercle. Texte réduit au strict nécessaire : un nom, une ligne de rôle. **Jamais de carré ni de fond carré derrière l'avatar** : le cercle reste seul ; le futur bandeau de couleur du foyer (FOY-COUL-1) se pose sur la carte, pas sur l'avatar. Dans un cadre vidéo sans image (salle, classe live, vignette), `AvatarSansImage` contient le cercle dans son cadre. Contrôles : `avatar-recompose`, `avatar-taille` ; tests `test/core/widgets/avatar_nom_test.dart` (`verifierMemeAxe`, `verifierAlignes`, `verifierContenu`).
+- **La mention « Cours enregistré, visite de contrôle possible » s'adresse aux participants** (enseignant, élèves) : elle n'est pas rendue au contrôleur lui-même, qui garde son propre rappel.
 
 Les contrôles tournent dans `dart run tool/verifier_revue.dart` et dans la CI ; leur socle (`tool/revue_socle.txt`) fige l'existant et ne peut que diminuer.
 
