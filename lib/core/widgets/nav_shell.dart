@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
@@ -706,7 +707,13 @@ class _OngletBarreGuide extends StatelessWidget {
             child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: metriques.cibleTactile),
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                // MA-NAV-1 : 4 au moins de chaque cote du libelle, qui ne
+                // touche jamais le bord de sa pastille ; il reduit au besoin
+                // son echelle (jamais sous 1) au lieu de couper un mot.
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.xs,
+                  vertical: AppSpacing.sm,
+                ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -717,7 +724,7 @@ class _OngletBarreGuide extends StatelessWidget {
                       ),
                     ),
                     Ecart.vXs,
-                    Text(
+                    TexteSansCoupure(
                       destination.libelle,
                       textAlign: TextAlign.center,
                       style: AppTypography.graisse(

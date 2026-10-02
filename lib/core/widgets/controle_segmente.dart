@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
@@ -146,8 +147,11 @@ class _Segment<T> extends StatelessWidget {
                   ),
             child: Center(
               child: Padding(
+                // THEME-SW-1 : marge laterale de 4 (et non 12) pour que
+                // « Systeme » tienne a 320 ; le libelle reduit au besoin son
+                // echelle (jamais sous 1) au lieu d'etre coupe.
                 padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
+                  horizontal: AppSpacing.xs,
                   vertical: AppSpacing.sm,
                 ),
                 child: Column(
@@ -168,7 +172,7 @@ class _Segment<T> extends StatelessWidget {
                       ),
                       Ecart.vXs,
                     ],
-                    Text(
+                    TexteSansCoupure(
                       segment.libelle,
                       textAlign: TextAlign.center,
                       style: selectionne

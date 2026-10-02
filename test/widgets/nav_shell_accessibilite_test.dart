@@ -246,8 +246,14 @@ void main() {
         // la police de test (Ahem, un em par lettre, bien plus large que les
         // vraies polices) : le libelle passe a la ligne, sans limite de lignes.
         expect(p.didExceedMaxLines, isFalse, reason: x.libelle);
-        // Le texte regle a x2 grandit dans la barre, jusqu'au plafond de 1,3.
-        expect(p.textScaler.scale(10), closeTo(13, 0.001), reason: x.libelle);
+        // Le texte regle a x2 grandit dans la barre, jusqu'au plafond de 1,3 ;
+        // il ne recule (jamais sous 1) que si le mot le plus long ne tiendrait
+        // pas sur une ligne (MA-NAV-1, TexteSansCoupure).
+        expect(
+          p.textScaler.scale(10),
+          inInclusiveRange(10, 13.001),
+          reason: x.libelle,
+        );
         expect(p.maxLines, isNull, reason: x.libelle);
         expect(p.overflow, isNot(TextOverflow.ellipsis), reason: x.libelle);
       }
