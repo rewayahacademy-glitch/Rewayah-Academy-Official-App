@@ -542,8 +542,8 @@ void main() {
       ..._surcharges(enseignant),
       projectionElevesProvider(_groupeId).overrideWith(
         (Ref _) => const <String, ProjectionEleve>{
-          'e1': ProjectionEleve(indicateur: IndicateurEleve.aRenforcer),
-          'e2': ProjectionEleve(indicateur: IndicateurEleve.regulier),
+          'e1': ProjectionEleve(pageReprise: 'Page 6'),
+          'e2': ProjectionEleve(pageReprise: 'Page 8'),
         },
       ),
       progressionGroupeProvider(_groupeId).overrideWith(
@@ -556,7 +556,7 @@ void main() {
       membreDeTest(studentId: 'e2', identifiant: 'RA-0002', prenom: 'Idris'),
     ];
 
-    testWidgets('l indicateur par eleve est masque (decision EN-RC)', (
+    testWidgets('aucun indicateur par eleve (N2, EN-IND)', (
       WidgetTester tester,
     ) async {
       _fenetreHaute(tester);
@@ -568,15 +568,14 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Ses mots n'ont pas de source : le directeur les choisira (§13.4).
-      expect(
-        find.text(t.enseignant.ficheGroupe.indicateurARenforcer),
-        findsNothing,
-      );
-      expect(
-        find.text(t.enseignant.ficheGroupe.indicateurRegulier),
-        findsNothing,
-      );
+      // N2 du directeur (27/09) : l'indicateur invente est retire.
+      for (final String mot in <String>[
+        'Présence régulière',
+        'À renforcer',
+        'Absence récente',
+      ]) {
+        expect(find.text(mot), findsNothing);
+      }
       // La progression de la classe tient une ligne, valeur ecrite.
       expect(
         find.text(t.enseignant.ficheGroupe.progressionTitre),

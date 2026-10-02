@@ -746,9 +746,8 @@ class _Membres extends StatelessWidget {
 
 /// Un eleve, une ligne : sa photo (`PhotoEleve`, initiales en repli ; E5,
 /// K-44), son prenom en titre, puis une seule ligne secondaire « niveau ·
-/// reprise ». L'indicateur de fin de ligne est masque (EN-RC) tant que le
-/// directeur n'en a pas choisi les mots. En texte neutre : rien de ce que R15
-/// interdit, le modele n'en porte pas.
+/// reprise ». Aucun indicateur par eleve (N2 du directeur, 27/09, EN-IND). En
+/// texte neutre : rien de ce que R15 interdit, le modele n'en porte pas.
 ///
 /// L'identifiant immuable reste lisible, discret, en fin de ligne.
 ///
@@ -789,9 +788,6 @@ LigneRubrique _ligneMembre(
         ? null
         : membre.identifiantImmuable,
     legende: legende.isEmpty ? null : legende,
-    // Indicateur masque (decision EN-RC) : ses mots n'ont pas de source. Le
-    // modele `IndicateurEleve` reste ; le directeur choisira les mots d'un
-    // indicateur de preparation (spec 04 §13.4).
     onPress: onOuvrirEleve == null
         ? null
         : () => onOuvrirEleve(membre.studentId),

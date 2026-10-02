@@ -163,8 +163,6 @@ class FicheEleveEnseignant extends StatelessWidget {
               icone: AppIcons.journee,
               libelle: t.enseignant.eleve.presence,
               legende: texte(p?.presenceRecente),
-              // Indicateur masque (decision EN-RC) : ses mots n'ont pas de
-              // source, le directeur les choisira (spec 04 §13.4).
             ),
             LigneRubrique(
               icone: AppIcons.livreOuvert,

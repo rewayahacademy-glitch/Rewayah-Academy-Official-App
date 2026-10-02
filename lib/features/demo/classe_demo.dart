@@ -14,7 +14,6 @@ import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_horloge/emplacement_entree.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_parcours/port_travail_a_venir.dart';
-import '../fiche_groupe/preparation_seance.dart' show IndicateurEleve;
 import '../tc_espace_groupe/emplacements_groupe.dart' show ProgressionCompacte;
 
 /// Un eleve vu par l'enseignant : projection pedagogique seulement.
@@ -28,7 +27,6 @@ class EleveProjectionDemo {
     required this.dernierPoint,
     required this.presenceRecente,
     required this.objectif,
-    this.indicateur = IndicateurEleve.regulier,
   });
 
   /// Objectif en cours, en texte neutre (fiche ENS-11, EN-4).
@@ -37,9 +35,6 @@ class EleveProjectionDemo {
   /// Prenom. La photo s'affiche chez l'enseignant (E5, K-44) ; aucune photo
   /// de demonstration n'est livree, les initiales tiennent donc lieu.
   final String prenom;
-
-  /// L'indicateur de l'eleve (EN-3), un point et un mot.
-  final IndicateurEleve indicateur;
 
   /// Niveau.
   final String niveau;
@@ -156,7 +151,6 @@ abstract final class DonneesClasseDemo {
       dernierPoint: 'Reprendre les voyelles longues',
       presenceRecente: '2 séances sur les 3 dernières',
       objectif: 'Maîtriser les voyelles longues',
-      indicateur: IndicateurEleve.absence,
     ),
     EleveProjectionDemo(
       prenom: 'Aïcha',
@@ -165,7 +159,6 @@ abstract final class DonneesClasseDemo {
       dernierPoint: 'Arrêts en fin de verset',
       presenceRecente: '3 séances sur les 3 dernières',
       objectif: 'Respecter les arrêts',
-      indicateur: IndicateurEleve.aRenforcer,
     ),
   ];
 
