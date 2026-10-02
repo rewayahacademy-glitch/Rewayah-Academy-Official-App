@@ -54,10 +54,10 @@ Références sur `ui/eleves-adultes-v1` @ 5629693 sauf mention « admin » (`ui/
 | Accès par profil | `lib/core/capacites/port_acces_foyer.dart:7` `EtatAccesAffiche`, `:39` `AccesBeneficiaire` | Base de FI-9a. |
 | Fiche élève et sous-pages | `lib/features/foyer/fiche_eleve_page.dart:241` `FicheElevePage`, `:35` `PageFiche` ; `Routes.ficheEleveSousPage` ; sous-pages `lib/features/foyer/fiche/` (`informations_page.dart:19`, `inscription_page.dart:33`, `interface_page.dart:31`, `camera_page.dart:29`, `acces_page.dart:27`) ; routes `app_router.dart:527-575` | Les lignes Classe, Interface, Caméra, Accès de la maquette 06 existent déjà. |
 | `ProfileIdentityAvatar` (photo ou initiale) | `lib/features/foyer/photo_eleve.dart:20` `PhotoEleve` | Le bandeau s'ajoute autour, sans recopier la photo. `AvatarNom` existe sur `corrections/revue-directeur-2026-10` (`lib/core/widgets/avatar_nom.dart`, AVATAR-1) mais pas dans notre base : ligne « Harmonisation » à HU-1. |
-| Accent d'identité stable | `lib/core/theme/app_palette.dart:306` `teintesIdentite` (32 paires vérifiées AA, décision D-18), `:309` `teinteGroupe(index)` | Aucune couleur nouvelle (K-37) : la clé `profileAccentKey` est un index stable rendu par les données, jamais la position dans la liste. Le guide §3.8 point 2 demande justement de réutiliser l'existant. |
+| Accent d'identité stable | `lib/core/theme/app_palette.dart:306` `teintesIdentite` (32 paires vérifiées AA, décision D-18), `:309` `teinteGroupe(index)` | Aucune couleur nouvelle (K-37) : la clé `profileAccentKey` est un index stable rendu par les données, jamais la position dans la liste. Le guide §3.8 point 2 demande justement de réutiliser l'existant. **Contredit par la revue FI-1a : voir §4 bis, X-1.** |
 | `GroupedCard` | `lib/core/widgets/groupe_reglages.dart:81` `GroupeReglages`, `:13` `LigneRubrique` | Un rectangle, lignes à filets (K-55 b). |
 | `FinancialStatusChip`, `FinancedPeriodBadge` | `lib/core/widgets/status_pill.dart:60` `StatusPill` | Point + texte, jamais la couleur seule. |
-| `AttentionBanner` | `lib/core/widgets/permanent_notice.dart:28` `PermanentNotice` | Bandeau « Accès à régulariser » (maquette 07). |
+| `AttentionBanner` | `lib/core/widgets/permanent_notice.dart:28` `PermanentNotice` | Bandeau « Accès à régulariser » (maquette 07). **Contredit par la revue FI-1a : voir §4 bis, X-2.** |
 | `FinanceLineItem`, détail de mensualité, reçu | `lib/core/widgets/ligne_cle_valeur.dart:19` `LigneCleValeur` | Montant à droite, chiffres tabulaires à ajouter par paramètre si absent (demande d'évolution, pas de copie). |
 | `MoneySummaryCard` | `lib/core/widgets/stat_tile.dart:22` `StatTile`, `app_card.dart:28` `AppCard` | K-42 : pas de tuile de chiffre pour une donnée secondaire. |
 | Action principale, rangée d'actions | `lib/core/widgets/action_principale.dart:52` `ActionPrincipale`, `:371` `RangeeActions` | K-54, K-56. |
@@ -72,6 +72,82 @@ Références sur `ui/eleves-adultes-v1` @ 5629693 sauf mention « admin » (`ui/
 | Rôle comptable | admin `lib/core/domain/enums.dart:14` `AppRole.accountant` ; `routes.dart:450` `/comptable` ; `app_router.dart:1020-1024` (affiche `ComptePage`) | Même source Finance, permissions adaptées (§4). Hors lot : ligne « À faire plus tard ». |
 
 **Ce qui n'existe nulle part** : surface « Revenus » de l'enseignant ; vue globale Finance ; politiques commerciales ; mouvements par profil ; moyens de paiement ; les huit états de paiement ; période financée, essai n/2, manque à financer dans les données.
+
+## 4 bis. Report de la revue UX FI-1a (03/10/2026)
+
+Source : `17_finance/UX_REVIEW_08_FINANCE.md` (ci-dessous « revue », avec le numéro de ligne du fichier). Ce report n'efface rien de ce qui précède : quand la revue contredit une ligne de ce fichier ou de `02_DECOUPAGE.md`, la contradiction est écrite en X-n, **sans être tranchée**. Le découpage de chaque correction en étapes est dans `02_DECOUPAGE.md`, section « Report de la revue FI-1a ».
+
+### A. Ce que la revue décide (résumé, une ligne par écran)
+
+| Écran | Décision de la revue | Où dans la revue |
+|---|---|---|
+| Foyer mobile (maquette 03) | Adapter. Un seul bouton plein « Recharger plusieurs profils » ; « + Recharger » de l'en-tête, chevron des cartes et « Gérer tous les enfants » refusés ; « Ajouter un profil élève » en secondaire ; cartes d'enfants à la place de la liste « Profils élèves » et de `SoldesFoyerSection`. | revue:69 |
+| Foyer bureau 1440 (maquette 05) | Adapter. Rangée de synthèse en 4 blocs ; cartes en colonnes ; « Recharger » d'Ibrahim secondaire ; « Vue financière du foyer » gardée (Q-FI-8) ; panneau « Actions rapides » refusé, « Gérer les accès » refusé. | revue:70, revue:92 |
+| Fiche Finances mobile (maquette 02) | Adapter. Deux segments « Général » et « Finances » par `ControleSegmente`, chacun une route ; « Apprentissage » non affiché ; aucune valeur de la maquette ; aucune ligne de remise non rendue. | revue:71, revue:87 |
+| Fiche Finances bureau (maquette 06) | Adapter. Trois colonnes ; colonne d'identité = groupe existant « Paramètres de l'élève » ; pastille de période répétée et phrase de recharge refusées ; « Télécharger le reçu » seulement si rendu. | revue:72 |
+| Mouvements et reçu | Adapter. Liste à 390, tableau à 1440 ; signe + texte ; « Recharge manuelle » refusé ; aucune suppression. | revue:73 |
+| Recharge mobile (maquette 04) | Adapter. Une seule page (remplace les deux étapes d'EA-10) ; stepper avec champ lisible ; total arrêté par le serveur, relecture sur place ; chevrons des moyens et « Paiement sécurisé et chiffré » refusés. | revue:74 |
+| Recharge bureau (maquette 07) | Adapter. Trois colonnes ; « Recharger plusieurs profils » en tête refusé ; titre « Recharge » ; bandeau gardé, bouton « Ajouter {prénom} à la recharge », croix refusée. | revue:75 |
+| États du paiement (maquette 01) | Adapter. Huit états avec leur texte ; éclat, confettis et « ! » refusés. | revue:76 |
+| Accès, essai, impayé | Garder. Textes du guide ; `EmplacementEntree` non modifié ; côté enfant, montant et cause jamais chargés. | revue:77 |
+| Élève adulte | Adapter. Ses finances = la fiche Finances de son seul profil ; une seule surface. | revue:78 |
+| Enseignant, Revenus (maquette 08) | Adapter. Écran de l'espace Enseignant, ouvert depuis le Profil ; « Revenus estimés » ; « Détail par classe » ; « À propos des anciennes primes » refusé. | revue:79, revue:88 |
+| Finance, Vue globale (maquette 09) | Adapter. AdminShell réel ; 7 indicateurs ; un graphique par notion ; catégories inventées refusées. | revue:80 |
+| Politiques commerciales (maquette 10) | Adapter. `/admin/finance/politiques` ; « Publier la version » seul bouton plein ; menu « … » et sélecteur de mois refusés ; « Classes » au lieu de « Groupes ». | revue:81, revue:91 |
+| Compte > Paiements | Adapter. Raccourci vers `/tuteur/foyer` ; historique gardé comme cible de « Voir tout » ; `SoldesFoyerSection` retirée de ses deux poses ; second adulte inchangé. | revue:82 |
+
+Autres apports de la revue :
+- **Données par rôle** (leçon 15) : le second adulte et l'enfant ne reçoivent jamais solde, mensualité, manque ni recharge, même en chargement ou en erreur (revue:96-106).
+- **19 écarts avec les écrans Élèves adultes** (E-1 à E-19), appliqués dans la vague Finance sans rouvrir EA (revue:110-133).
+- **Lexique du rôle** avec la source de chaque texte ; les textes « proposé par un agent » sont à valider (revue:164-310).
+
+### B. Corrections de la revue à ce fichier (C-1 à C-6)
+
+| N° | Correction (revue) | Ligne de ce fichier concernée | Statut ici |
+|---|---|---|---|
+| C-1 | `AttentionBanner` ne peut pas reposer sur `PermanentNotice` (mention de la salle, sans paramètre) ; proposition : `AppCard` + `StatusPill` + `ProfileIdentityAvatar` + `ActionPrincipale` (revue:147). | §4, ligne `AttentionBanner` | Contradiction X-2, non tranchée. |
+| C-2 | L'enseignant n'a pas de « Compte » mais un « Profil » (revue:148). | `02_DECOUPAGE.md` FI-1a, FI-10 | Contradiction X-3, non tranchée. |
+| C-3 | K-53 n'est pas dans `DECISIONS_DELEGUEES_2026-10-02.md` ; ses points sont relevés dans `YAADEN_RULES.md:52`, `:55` et `05_recette/EA/REVUE_EA-R.md:9` (revue:149). | Aucune ligne de ce fichier ne cite ce document. | Noté. |
+| C-4 | `StatusPill` : deux mots au plus ; « Essai : 1/2 », la phrase longue va sur la ligne de la carte (revue:150). | §7 FI4 (« Essai : n/2 ») | Compatible, rien à changer. |
+| C-5 | Ton de la pastille d'essai choisi en FI-3b, jamais proche d'un accent de profil ; sinon ligne TH-2 (revue:151). | — | Reporté en FI-3b. |
+| C-6 | Accent de profil = `teinteGroupe` : ne pas suivre tel quel (RISQUE, TH-2) ; « Compte > Paiements devient un raccourci » précisé par la ligne 14 de la revue (revue:152). | §4, ligne « Accent d'identité stable » ; §5 RISQUE ; §4, ligne Historique des paiements | Contradictions X-1 et X-6, non tranchées. |
+
+### C. Choix pris la nuit du 2 au 3 octobre
+
+**Choix pris en l'absence du directeur, à confirmer.** Source : `QUESTIONS_NUIT_2026-10-03.md:19-26` ; pour Q-FI-8 et Q-FI-9, ce fichier renvoie au document, d'où le choix est recopié (revue:333-334). Aucun n'est une décision du directeur tant qu'il n'a pas répondu.
+
+| N° | Question | Choix pris (à confirmer) | Source |
+|---|---|---|---|
+| Q-FI-1 | Contenu de l'onglet « Apprentissage » (maquette 02) | Non affiché : deux onglets, Général et Finances. | QUESTIONS_NUIT:19 ; revue:71 b, revue:326 |
+| Q-FI-2 | Foyer : « Recharger plusieurs profils » seul bouton plein, « Ajouter un profil élève » en second | Oui (guide §5.1). | QUESTIONS_NUIT:20 ; revue:69 c, revue:327 |
+| Q-FI-3 | Bureau : retirer le panneau « Actions rapides » | Retiré, place aux dernières transactions. | QUESTIONS_NUIT:21 ; revue:70 f, revue:328 |
+| Q-FI-4 | « Paiement sécurisé et chiffré » | Retiré pour cette vague. | QUESTIONS_NUIT:22 ; revue:74 g, revue:329 |
+| Q-FI-5 | Nom de la page : « Recharge » ou « Paiement du foyer » | « Recharge » partout. | QUESTIONS_NUIT:23 ; revue:75 c, revue:330 |
+| Q-FI-6 | Bandeau « Accès à régulariser » sans croix | Sans croix. | QUESTIONS_NUIT:24 ; revue:75 d, revue:331 |
+| Q-FI-7 | Garder les compteurs du Foyer retirés par la vague Élèves adultes | Gardés (guide §5.1). Voir X-11. | QUESTIONS_NUIT:25 ; revue:125 (E-12), revue:332 |
+| Q-FI-8 | « Vue financière du foyer » répète le total et le montant à payer | Gardée telle que la maquette 05, même libellé qu'en tête ; rien n'est remplacé sans réponse. | QUESTIONS_NUIT:26 ; revue:70 d, revue:333 |
+| Q-FI-9 | Petits éléments retirés : « + Recharger » de l'en-tête mobile, chevrons des cartes d'enfants, « Gérer tous les enfants », chevrons des moyens de paiement, sélecteur de mois des politiques | Retirés ; chaque action reste à un seul endroit. | QUESTIONS_NUIT:26 ; revue:334 |
+
+Hors de la liste de la nuit : **Q-FI-10** (revenus de l'enseignant ouverts depuis le Profil, revue:335) n'apparaît pas dans `QUESTIONS_NUIT_2026-10-03.md` ; c'est une recommandation de la revue, non posée au directeur à ce jour. **Q1** (trois maquettes absentes) est dite réglée par la revue (revue:137, revue:336) mais reste ouverte dans `QUESTIONS.md:5` et au tableau (`A-q-FI-1`, QUESTIONS_NUIT:28) : voir X-4. **Q2** (« business plan ») reste ouverte.
+
+### D. Contradictions non tranchées
+
+Chaque ligne met côte à côte ce que dit un document et ce que dit la revue. Rien n'est tranché ici : le directeur (ou l'orchestrateur pour ce qui relève de sa décision) choisit.
+
+| N° | Document | Revue | Étapes touchées |
+|---|---|---|---|
+| X-1 | Accent de profil pris dans `teintesIdentite` par `teinteGroupe(index)` : `00_REPRISE.md` §4 (ligne « Accent d'identité stable ») et §5 RISQUE (« on prend les 32 teintes d'identité existantes ») ; `02_DECOUPAGE.md` FI-2 (« bandeau d'accent depuis `teintesIdentite` par clé stable »). | Ne pas réutiliser `teinteGroupe` tel quel (ces teintes sont l'identité des classes et des couvertures) ; TH-2 tranche entre jetons d'accent distincts ou règle écrite ; « jusque-là, FI-2 ne pose aucune teinte de profil » (revue:19, revue:152). | FI-2, ligne TH-2 |
+| X-2 | `AttentionBanner` sur `PermanentNotice` : `00_REPRISE.md` §4 ; `02_DECOUPAGE.md` FI-3b. | `PermanentNotice` est la mention de la salle, sans paramètre ; assembler `AppCard` + `StatusPill` + `ProfileIdentityAvatar` + `ActionPrincipale` (revue:59, revue:147). | FI-3b |
+| X-3 | Revenus de l'enseignant ouverts « depuis le Compte » : `02_DECOUPAGE.md` FI-1a et FI-10 ; `ECARTS_MAQUETTES_08_10.md` B1. | L'enseignant n'a pas de Compte mais un Profil (`nav_shell.dart:150-152` sur corrections) ; ligne « Revenus estimés » du Profil, après « Contrat » ; à revérifier sur `ui/enseignant-v1` (revue:88, revue:148). Q-FI-10 non posée (voir C). | FI-10 |
+| X-4 | Maquettes Enseignant, Vue globale, Politiques absentes : `00_REPRISE.md` §1 (« pas de maquette fournie »), §2, §5 BLOCAGE ; `02_DECOUPAGE.md` FI-10, FI-11a, FI-11b « Attend Q1 » ; `QUESTIONS.md:5` ouverte. | Maquettes 08 à 10 reçues le 02/10 ; « FI-10, FI-11a et FI-11b n'attendent plus » (revue:7, revue:137, revue:336). | FI-10, FI-11a, FI-11b (statut « Attend Q1 » non retiré ici) |
+| X-5 | FI-5 contient le panneau « Actions rapides » et dit « "Gérer les accès" selon FI-1a » (`02_DECOUPAGE.md` FI-5). | Panneau « Actions rapides » refusé, « Gérer les accès » refusé (revue:70 f, revue:92) ; choix de nuit Q-FI-3, à confirmer. | FI-5 |
+| X-6 | Compte > Paiements mène à la recharge : `02_DECOUPAGE.md` FI-7 (« Compte > Paiements y mène » ; test « ouvrent le même écran ») ; `00_REPRISE.md` §4 et FI7 (« raccourci vers la surface canonique », sans cible nommée). | Compte > Paiements = raccourci vers `/tuteur/foyer` ; `/tuteur/compte/paiements` redirige vers le Foyer ; l'historique devient la cible de « Voir tout » (revue:82 a, b). | FI-4, FI-5, FI-7 |
+| X-7 | « Retouche de `FoyerPage` et `SoldesFoyerSection` » : `02_DECOUPAGE.md` FI-4 ; `00_REPRISE.md` §4 (ligne Foyer). | `SoldesFoyerSection` retirée de ses deux poses (`foyer_page.dart:260-266`, `paiements_page.dart:116`), remplacée par les cartes d'enfants (revue:82 c, revue:316). | FI-4 |
+| X-8 | Élève adulte : « depuis Mon espace > Paiements (`PaiementsComptePage` en vue personnelle) » : `02_DECOUPAGE.md` FI-9b. | `PaiementsComptePage` n'est plus une destination à part pour lui : son historique devient la section historique de la fiche Finances de son profil (revue:78 a, b). | FI-9b |
+| X-9 | « Pas de confettis hors `lib/core/mouvement` (K-12, 150-300 ms) » : `02_DECOUPAGE.md` FI-8. | Aucune animation de réussite, aucun confetti (contrat E ; revue:76 c, revue:162). | FI-8 |
+| X-10 | « par groupe » (FI-10) et famille « groupes » (FI-11b) : `02_DECOUPAGE.md`. | « classe », jamais « groupe » (CLASSE-FORM-1, `ECARTS_MAQUETTES_08_10` A6) : « Détail par classe », famille « Classes » (revue:79 e, revue:81 f, revue:283). | FI-10, FI-11b |
+| X-11 | « K-42 : pas de tuile de chiffre pour une donnée secondaire » (`00_REPRISE.md` §4, ligne `MoneySummaryCard`) ; compteurs refusés en Élèves adultes (UX_REVIEW_07 n° 6 c, n° 7 c, cités revue:125). | Compteurs gardés (guide §5.1, E-12) ; choix de nuit Q-FI-7, à confirmer. | FI-4, FI-5 |
+| X-12 | « "Voir tout" ouvre les mouvements » : `02_DECOUPAGE.md` FI-5. | « Voir tout » ouvre l'historique du foyer (`PaiementsComptePage` sans soldes) (revue:70 e, revue:82 b). | FI-5, FI-6b |
 
 ## 5. Devoir de regard (guide §12)
 
