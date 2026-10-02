@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/icons/app_icons.dart';
+import '../../core/theme/app_contour.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
@@ -57,7 +58,7 @@ class BoutonOutil extends StatelessWidget {
     // Doc 04 §28 et §33 n. 13 : sans libelle visible, ou quand l'agrandissement
     // du texte le coupe, une infobulle le montre (comme `nav_shell`).
     final bool libelleVisible =
-        avecLibelle && MediaQuery.textScalerOf(context).scale(1) <= 1.3;
+        avecLibelle && MediaQuery.textScalerOf(context).scale(1) <= AppContour.seuilTexteAgrandi;
     final Widget bouton = Pressable(
       libelleSemantique: libelle,
       arrondiFocus: AppRadius.arrondiSm,
@@ -71,7 +72,14 @@ class BoutonOutil extends StatelessWidget {
               ? palette.surfaceInverse.decoration(
                   borderRadius: AppRadius.arrondiSm,
                 )
-              : const BoxDecoration(),
+              : BoxDecoration(
+                  // Inactif : contour seul (ETATS-BTN-1), comme la bascule
+                  // de salle ; le plein contraste est reserve a l'outil arme.
+                  borderRadius: AppRadius.arrondiSm,
+                  border: Border.fromBorderSide(
+                    palette.borderStrong.asBorderSide(width: AppContour.fort),
+                  ),
+                ),
           child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.sm,

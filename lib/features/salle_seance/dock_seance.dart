@@ -194,6 +194,9 @@ class DockSeance extends StatelessWidget {
         return BoutonAppel(
           key: const ValueKey<String>('bouton-agrandir'),
           icone: (agrandi ? AppIcons.reduire : AppIcons.agrandir).repos,
+          // Bascule a deux etats comme micro et camera (ETATS-BTN-1) : plein
+          // quand le support occupe l'ecran, contour seul sinon, mot d'etat.
+          bascule: agrandi,
           libelle: agrandi ? t.salle.seance.reduire : t.salle.seance.agrandir,
           onPress: agrandir,
         );

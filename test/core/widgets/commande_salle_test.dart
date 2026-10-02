@@ -285,4 +285,40 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.text(t.salle.microOuvert), findsOneWidget);
   });
+
+  group('bascule inerte (hors salle, reconnexion)', () {
+    for (final bool allumee in <bool>[true, false]) {
+      testWidgets(
+        'inerte et ${allumee ? 'active' : 'inactive'} : etat encore lisible',
+        (WidgetTester tester) async {
+          fixerVue(tester, const Size(1440, 900));
+          await tester.pumpWidget(
+            hoteTheme(
+              CommandeSalle(
+                key: _micro,
+                icone: (allumee ? AppIcons.micro : AppIcons.microCoupe).repos,
+                libelle: allumee ? t.salle.microOuvert : t.salle.microCoupe,
+                bascule: allumee,
+                onPress: null,
+              ),
+              defilant: false,
+            ),
+          );
+          final BoxDecoration d = _decoration(tester, _micro);
+          // Plein (surface neutre) quand actif, contour seul quand inactif :
+          // le disque garde sa forme, seule l'encre s'attenue.
+          if (allumee) {
+            expect(d.color, isNotNull);
+          } else {
+            expect(d.color, isNull);
+            expect((d.border! as Border).top.width, 2);
+          }
+          expect(_icone(tester, _micro),
+              (allumee ? AppIcons.micro : AppIcons.microCoupe).repos);
+          expect(_mot(tester, _micro),
+              allumee ? t.salle.microOuvert : t.salle.microCoupe);
+        },
+      );
+    }
+  });
 }

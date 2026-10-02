@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 
 import '../domain/enums.dart';
 import '../theme/app_color_pair.dart';
+import '../theme/app_contour.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
@@ -43,15 +44,6 @@ enum FondCommande {
   reseau,
 }
 
-/// L'epaisseur du contour d'une bascule inactive : deux points, comme
-/// l'anneau de focus, pour que le contour se voie sur un telephone d'entree de
-/// gamme.
-const double _epaisseurContour = 2;
-
-/// L'echelle de texte au-dela de laquelle le mot d'etat d'une bascule d'une
-/// rangee compacte cede la place a l'infobulle.
-const double _echelleMotEtat = 1.3;
-
 /// Le diametre commun des commandes d'une rangee : la cible tactile du mode
 /// d'interface, plus un palier, pour tenir la taille des images (≈ 56 en
 /// standard). En Interface guidee, la cible tactile du mode enfant elle-meme
@@ -66,7 +58,7 @@ double diametreCommandeSalle(BuildContext context) {
 /// Vrai tant que le texte n'est pas tres agrandi : le mot d'etat d'une bascule
 /// se montre. Au-dela, il passe en infobulle (voir [CommandeSalleCompacte]).
 bool motEtatVisible(BuildContext context) =>
-    MediaQuery.textScalerOf(context).scale(1) <= _echelleMotEtat;
+    MediaQuery.textScalerOf(context).scale(1) <= AppContour.seuilTexteAgrandi;
 
 /// La largeur d'une case de rangee pour une commande : une bascule porte un
 /// mot d'etat de deux mots, donc deux cibles ; les autres, une cible et un
@@ -182,7 +174,18 @@ class CommandeSalle extends StatelessWidget {
 
     final BoxDecoration disque;
     final IconThemeData encre;
-    if (!repondre) {
+    if (!repondre && estBascule && !allumee) {
+      // Bascule inactive et inerte : le contour seul reste, l'encre s'attenue.
+      disque = BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.fromBorderSide(
+          palette.borderResting.asBorderSide(width: AppContour.fort),
+        ),
+      );
+      encre = palette.inkMuted.asIconTheme(size: tailleIcone);
+    } else if (!repondre) {
+      // Commande inerte, ou bascule active et inerte : le disque plein reste
+      // (surface neutre), seule l'encre s'attenue. L'etat se lit donc encore.
       disque = palette.surfaceRaised.decoration(
         borderRadius: AppRadius.arrondiFull,
         side: palette.borderResting.asBorderSide(),
@@ -193,7 +196,7 @@ class CommandeSalle extends StatelessWidget {
       disque = BoxDecoration(
         shape: BoxShape.circle,
         border: Border.fromBorderSide(
-          palette.borderStrong.asBorderSide(width: _epaisseurContour),
+          palette.borderStrong.asBorderSide(width: AppContour.fort),
         ),
       );
       encre = palette.inkStrong.asIconTheme(size: tailleIcone);

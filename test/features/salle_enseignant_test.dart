@@ -485,10 +485,15 @@ void main() {
         findsOneWidget,
       );
 
-      // Et la commande ne part pas dans le vide : elle n'est pas rendue (ni
-      // grisee, ni pressable) tant que le lien ne porte pas.
-      expect(_fleche('nav-suivant'), findsNothing);
-      expect(_fleche('nav-precedent'), findsNothing);
+      // Et la commande ne part pas dans le vide : commande momentanement
+      // inactive (pas une borne), les deux fleches RESTENT, inertes et
+      // attenuees, au lieu de disparaitre sans explication. Un appui ne
+      // presente rien.
+      expect(_fleche('nav-suivant'), findsOneWidget);
+      expect(_fleche('nav-precedent'), findsOneWidget);
+      await tester.tap(_fleche('nav-suivant'), warnIfMissed: false);
+      await tester.tap(_fleche('nav-precedent'), warnIfMissed: false);
+      await tester.pumpAndSettle();
       expect(moteur.contenusPresentesDemandes, isEmpty);
     });
 

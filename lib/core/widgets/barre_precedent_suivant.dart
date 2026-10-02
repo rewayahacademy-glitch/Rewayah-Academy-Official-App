@@ -36,6 +36,7 @@ class BarrePrecedentSuivant extends StatelessWidget {
     this.onPrecedent,
     this.onSuivant,
     this.etendue = true,
+    this.actives = true,
     super.key,
   });
 
@@ -63,6 +64,12 @@ class BarrePrecedentSuivant extends StatelessWidget {
   /// Faux : la barre se resserre autour de son contenu (pastille de la salle).
   final bool etendue;
 
+  /// Faux : la commande est momentanement inactive (reconnexion, envoi en
+  /// cours). Une fleche qui a un rappel reste PRESENTE, inerte et attenuee : la
+  /// barre ne change pas de forme sans explication. C'est different de la borne
+  /// atteinte (rappel nul), ou la fleche disparait.
+  final bool actives;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -89,6 +96,7 @@ class BarrePrecedentSuivant extends StatelessWidget {
           cle: const ValueKey<String>('nav-precedent'),
           libelle: libellePrecedent,
           onPress: onPrecedent,
+          actives: actives,
           versLeDebut: true,
           cote: cible,
         ),
@@ -108,6 +116,7 @@ class BarrePrecedentSuivant extends StatelessWidget {
           cle: const ValueKey<String>('nav-suivant'),
           libelle: libelleSuivant,
           onPress: onSuivant,
+          actives: actives,
           versLeDebut: false,
           cote: cible,
         ),
@@ -124,6 +133,7 @@ class _Fleche extends StatelessWidget {
     required this.onPress,
     required this.versLeDebut,
     required this.cote,
+    required this.actives,
   });
 
   final Key cle;
@@ -131,6 +141,7 @@ class _Fleche extends StatelessWidget {
   final VoidCallback? onPress;
   final bool versLeDebut;
   final double cote;
+  final bool actives;
 
   @override
   Widget build(BuildContext context) {
@@ -146,6 +157,7 @@ class _Fleche extends StatelessWidget {
     final bool retourne = versLeDebut != arabe;
     return Pressable(
       onPress: action,
+      actif: actives,
       libelleSemantique: libelle,
       arrondiFocus: AppRadius.arrondiFull,
       child: SizedBox.square(
@@ -158,7 +170,8 @@ class _Fleche extends StatelessWidget {
           ),
           child: Center(
             child: IconTheme(
-              data: palette.inkStrong.asIconTheme(size: AppSpacing.xxl),
+              data: (actives ? palette.inkStrong : palette.inkMuted)
+                  .asIconTheme(size: AppSpacing.xxl),
               child: Transform.flip(
                 flipX: retourne,
                 child: Icon(AppIcons.suivant.repos),

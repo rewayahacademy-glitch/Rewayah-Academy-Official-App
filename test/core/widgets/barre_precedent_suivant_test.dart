@@ -20,8 +20,10 @@ Widget _barre({
   required List<int> appels,
   int pages = 604,
   bool etendue = true,
+  bool actives = true,
 }) => BarrePrecedentSuivant(
   etendue: etendue,
+  actives: actives,
   position: '$page / $pages',
   positionSemantique: 'Page $page sur $pages',
   libellePrecedent: 'Verset précédent',
@@ -213,6 +215,45 @@ void main() {
     expect(
       (tester.getCenter(find.byKey(_pos)).dx - barre.center.dx).abs(),
       lessThanOrEqualTo(1),
+    );
+  });
+
+  group('commande momentanement inactive', () {
+    testWidgets(
+      'actives faux : les deux fleches restent, inertes ; a la borne, '
+      'la fleche disparait quand meme',
+      (WidgetTester tester) async {
+        fixerVue(tester, const Size(390, 844));
+        final List<int> appels = <int>[];
+        await tester.pumpWidget(
+          hoteTheme(
+            _barre(page: 12, appels: appels, actives: false),
+            defilant: false,
+          ),
+        );
+        expect(find.byKey(_prec), findsOneWidget);
+        expect(find.byKey(_suiv), findsOneWidget);
+        await tester.tap(find.byKey(_prec), warnIfMissed: false);
+        await tester.tap(find.byKey(_suiv), warnIfMissed: false);
+        expect(appels, isEmpty);
+
+        // Premiere page : la borne reste une borne, meme inactive.
+        await tester.pumpWidget(
+          hoteTheme(
+            _barre(page: 1, appels: appels, actives: false),
+            defilant: false,
+          ),
+        );
+        expect(find.byKey(_prec), findsNothing);
+        expect(find.byKey(_suiv), findsOneWidget);
+
+        // Reactivee : l'appui aboutit.
+        await tester.pumpWidget(
+          hoteTheme(_barre(page: 12, appels: appels), defilant: false),
+        );
+        await tester.tap(find.byKey(_suiv));
+        expect(appels, <int>[1]);
+      },
     );
   });
 }

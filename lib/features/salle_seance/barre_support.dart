@@ -11,6 +11,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/barre_precedent_suivant.dart';
+import '../../core/widgets/commande_salle.dart';
 import '../../core/widgets/pressable.dart';
 
 /// Le cadre commun des pastilles de la barre : surface surelevee, filet.
@@ -173,15 +174,17 @@ class ZoomLocal extends StatelessWidget {
         ),
         if (agrandir != null) ...<Widget>[
           Ecart.hMd,
-          DecoratedBox(
-            decoration: _cadre(palette),
-            child: _IconeBarre(
-              icone: agrandi ? AppIcons.reduire : AppIcons.agrandir,
-              libelle: agrandi
-                  ? t.salle.seance.reduire
-                  : t.salle.seance.agrandir,
-              onPress: agrandir,
-            ),
+          // Meme bascule que dans le dock (ETATS-BTN-1) : un seul composant,
+          // donc le meme rendu a trois signaux (disque plein ou contour,
+          // icone reduire / agrandir, mot d'etat).
+          CommandeSalle(
+            key: const ValueKey<String>('bouton-agrandir-barre'),
+            icone: (agrandi ? AppIcons.reduire : AppIcons.agrandir).repos,
+            libelle: agrandi
+                ? t.salle.seance.reduire
+                : t.salle.seance.agrandir,
+            bascule: agrandi,
+            onPress: agrandir,
           ),
         ],
       ],

@@ -457,8 +457,7 @@ class _Commandes extends StatelessWidget {
     final int? apres = vue.pageSuivante;
 
     // NAV-FLECHES-1 : fleche, page presentee, fleche, a toutes les largeurs.
-    // Une fleche qui ne peut pas aboutir (premiere ou derniere page, lien qui
-    // ne porte plus) n'est pas rendue.
+    // Premiere ou derniere page : la fleche n'est pas rendue.
     final int page = vue.contenu?.page ?? 1;
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -472,12 +471,12 @@ class _Commandes extends StatelessWidget {
           ),
           libellePrecedent: t.enseignant.salle.precedente,
           libelleSuivant: t.enseignant.salle.suivante,
-          onPrecedent: actives && avant != null
-              ? () => onPresenter(avant)
-              : null,
-          onSuivant: actives && apres != null
-              ? () => onPresenter(apres)
-              : null,
+          // Borne atteinte : rappel nul, la fleche disparait. Commande
+          // momentanement inactive (reconnexion, envoi en cours) : la fleche
+          // reste, inerte et attenuee, au lieu de disparaitre sans explication.
+          actives: actives,
+          onPrecedent: avant != null ? () => onPresenter(avant) : null,
+          onSuivant: apres != null ? () => onPresenter(apres) : null,
         ),
         Ecart.vSm,
         ActionPrincipale(
