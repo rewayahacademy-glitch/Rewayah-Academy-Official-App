@@ -346,7 +346,7 @@ class _Liste extends ConsumerWidget {
                   ),
                   Ecart.vMd,
                   for (int i = 0; i < classes.length; i++) ...<Widget>[
-                    if (i > 0) Ecart.vMd,
+                    if (i > 0) Ecart.vLg,
                     ElementEchelonne(
                       index: i,
                       child: CarteClasseOuverte(

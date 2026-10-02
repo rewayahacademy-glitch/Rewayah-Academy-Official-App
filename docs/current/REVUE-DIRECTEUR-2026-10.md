@@ -35,7 +35,7 @@ Avant correction, par contrôle (`dart run tool/verifier_revue.dart --regle=<nom
 | `libelle-sans-source` | 1377 (1023 dans le socle hérité de `main`) | |
 | `verifier_jetons` | 36 | |
 
-Limites connues des contrôles (heuristiques de texte) : `cartes-collees` lit le code (`tool/revue_cartes.dart`) : cartes voisines, boucles `for` et `.map`, variables et méthodes qui rendent une carte, widgets dérivés, listes nommées posées dans `children:`, `ListView.builder` et `.separated`, boîtes peintes à la main ; il ne voit pas une carte construite par un appel dynamique ni un `GridView` de widgets variables (les tuiles vidéo de la salle, à 8, en font partie : ce sont des tuiles de présence) ; `bouton-recompose` ne voit que les boutons Material, `InkWell`, `GestureDetector` et un `Pressable` qui peint lui-même fond arrondi et `Text`. Ce que ces contrôles ne voient pas se mesure par les tests de géométrie et par les captures à 320 px et 1440 px.
+Limites connues des contrôles (heuristiques de texte) : `cartes-collees` lit le code (`tool/revue_cartes.dart`, qui reconnaît aussi `ElementEchelonne`, les `itemBuilder` à plusieurs `return`, les `child` ternaires, les séparateurs conditionnels, les éléments `if` facultatifs et les boîtes peintes par `.decoration(` nommées `Carte...`, et ne baisse plus à 8 le minimum d'une liste `separated`) : cartes voisines, boucles `for` et `.map`, variables et méthodes qui rendent une carte, widgets dérivés, listes nommées posées dans `children:`, `ListView.builder` et `.separated`, boîtes peintes à la main ; il ne voit pas une carte construite par un appel dynamique ni un `GridView` de widgets variables (les cadres vidéo de la salle, à 8, en font partie : flux média plein cadre, sans marge ni action, donc pas des cartes ; le panneau d'élèves de la salle, lui, passe à 16) ; `bouton-recompose` ne voit que les boutons Material, `InkWell`, `GestureDetector` et un `Pressable` qui peint lui-même fond arrondi et `Text`. Ce que ces contrôles ne voient pas se mesure par les tests de géométrie et par les captures à 320 px et 1440 px.
 
 ## Lot l1-cartes : CARTES-ECART-1 (K-55) et HIER-1
 
@@ -53,6 +53,17 @@ Branche `corrections/l1-cartes`, base `corrections/revue-directeur-2026-10` ad0e
 | Socle `cartes-collees` | 5 lignes | 0 |
 
 Composants créés : `PileCartes` (cartes indépendantes, 16 au moins, assertion), `CarteGroupee` (une carte, sections à filet `FiletCarte`), `CarteLignes` (une carte de lignes `SettingRow` et `ConfigLigne...`, rendues à plat via `LigneDansCarte`). `GroupeReglages` reste le composant des rubriques à icône. Écrans convertis : réglages et portail du compte, profil personnel, profil enfant, hub Compte tuteur (`espaces_compte`), réglages de l'enfant, réglages d'observation, trois pages de configuration de la direction, tableau de bord de la direction, attribution, demandes, offres de parcours, avant et après cours, navigation du Coran. `ChoiceCardGroup` passe de 12 à 16.
+
+**Relecture CARTES-ECART-1 (exhaustivité).** Le détecteur laissait passer des piles à moins de 16 : `ElementEchelonne` n'était pas une enveloppe reconnue, les listes `separated` abaissaient le minimum à 8, un `build` à variables avant le `return` n'était pas dérivé, un `child` ternaire, un `itemBuilder` à plusieurs `return`, un séparateur conditionnel, une carte suivie d'un `if` et une boîte peinte par `.decoration(` n'étaient pas vus. Détecteur corrigé, un test par angle mort (`test/tool/revue_cartes_test.dart`), dépôt relevé de nouveau : 5 cas avant correction, 0 après.
+
+| Écran | Avant | Après | Garde de géométrie |
+|---|---|---|---|
+| Bibliothèque de ressources (`surface_bibliotheque.dart`) | 12 | 16 | `bibliotheque_page_test.dart`, 320 et 1440 px |
+| Attribution, enseignants proposés (`attribution_page.dart`) | 8 | 16 | `attribution_admin_test.dart`, 700 et 1400 px |
+| Catalogue de classes (`catalogue_classes_page.dart`) | 12 | 16 | `catalogue_classes_test.dart`, 320 et 1440 px |
+| Profils de connexion élève (`eleve_connexion_page.dart`) | 12 en colonnes et en rangées | 16 | `eleve_connexion_test.dart`, 320 et 1440 px |
+| Panneau d'élèves de la salle (`panneau_eleves.dart`) | 4 ou 8 | 16 | `panneau_eleves_test.dart`, trois gabarits |
+| Galerie vidéo de la salle | 8 | 8 (non carte : flux média plein cadre, sans marge ni titre ni action) | |
 
 **HIER-1.** Un niveau de texte par rôle, chaque niveau strictement plus grand que le suivant (`lib/core/theme/app_typography.dart`).
 

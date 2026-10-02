@@ -11,6 +11,8 @@ import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_attribution/attribution_page.dart';
 
+import '../support/garde_interface.dart';
+
 import '../support/harnais.dart';
 
 /// Une fenetre large et haute.
@@ -80,6 +82,46 @@ Future<void> _monter(
 }
 
 void main() {
+  group('ADM-05 : cartes separees de 16 (K-55)', () {
+    for (final double largeur in <double>[700, 1400]) {
+      testWidgets('les enseignants proposes ne se collent pas a $largeur px', (
+        WidgetTester tester,
+      ) async {
+        _fenetre(tester, largeur: largeur);
+        final FauxServiceAttribution service = FauxServiceAttribution()
+          ..foyers = <FoyerEnAttente>[_eleve()]
+          ..enseignants['e1'] = <EnseignantCandidat>[
+            _enseignant(communs: <Creneau>[_creneau(2, 17)]),
+            _enseignant(
+              id: 't2',
+              prenom: 'Ibrahim',
+              communs: <Creneau>[_creneau(2, 17)],
+            ),
+            _enseignant(
+              id: 't3',
+              prenom: 'Awa',
+              communs: <Creneau>[_creneau(2, 17)],
+            ),
+          ];
+
+        await _monter(tester, service: service, admin: FauxServiceAdmin());
+        await tester.tap(find.text('Yacine'));
+        await tester.pumpAndSettle();
+        // Le choix d'un enseignant insere la confirmation entre deux cartes :
+        // le cas le plus serre, avec la liste sans choix.
+        verifierAucuneCarteCollee(tester, estCarte: (Widget w) => w is AppCard);
+        await tester.tap(find.text('Omar Sow'));
+        await tester.pumpAndSettle();
+
+        final int n = verifierAucuneCarteCollee(
+          tester,
+          estCarte: (Widget w) => w is AppCard,
+        );
+        expect(n, greaterThanOrEqualTo(4));
+      });
+    }
+  });
+
   group('ADM-05 : deux listes, et un geste qui ne ment pas', () {
     testWidgets(
       'l\'eleve sans creneau reste dans la file, et ne se choisit pas',

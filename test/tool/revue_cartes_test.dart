@@ -225,6 +225,191 @@ Column(children: <Widget>[
     });
   });
 
+  group('angles morts corriges (CARTES-ECART-1, relecture)', () {
+    test('un separateur de 12 entre deux AppCard est un defaut', () {
+      expect(
+        _cas('''
+SliverList.separated(
+  itemCount: 3,
+  separatorBuilder: (BuildContext _, int _) => Ecart.vMd,
+  itemBuilder: (BuildContext c, int i) => AppCard(child: Text('x')),
+)'''),
+        <String>['AppCard n°1 (ecart 12)'],
+      );
+    });
+
+    test('un separateur de 8 entre deux cartes derivees est un defaut', () {
+      const String derivee = '''
+class CarteRessource extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => AppCard(child: Text('x'));
+}
+''';
+      expect(
+        _cas('''
+$derivee
+SliverList.separated(
+  itemCount: 3,
+  separatorBuilder: (BuildContext _, int _) => Ecart.vSm,
+  itemBuilder: (BuildContext c, int i) => CarteRessource(),
+)'''),
+        <String>['CarteRessource n°1 (ecart 8)'],
+      );
+    });
+
+    test('un separateur de 16 ou une pastille de choix a 8 passent', () {
+      expect(
+        _cas('''
+ListView.separated(
+  itemCount: 3,
+  separatorBuilder: (BuildContext _, int _) => Ecart.vLg,
+  itemBuilder: (BuildContext c, int i) => AppCard(child: Text('x')),
+)'''),
+        isEmpty,
+      );
+      expect(
+        _cas('''
+ListView.separated(
+  itemCount: 3,
+  separatorBuilder: (BuildContext _, int _) => Ecart.vSm,
+  itemBuilder: (BuildContext c, int i) =>
+      AppCard(marge: AppSpacing.sm, child: Text('x')),
+)'''),
+        isEmpty,
+      );
+    });
+
+    test('une carte enveloppee dans ElementEchelonne est reconnue', () {
+      expect(
+        _cas('''
+Column(children: <Widget>[
+  for (int i = 0; i < n; i++) ...<Widget>[
+    if (i > 0) Ecart.vMd,
+    ElementEchelonne(index: i, child: AppCard(child: Text('x'))),
+  ],
+])'''),
+        <String>['AppCard n°1 (ecart 12)'],
+      );
+    });
+
+    test('un build qui prepare des variables avant le return est derive', () {
+      const String derivee = '''
+class CarteClasseOuverte extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final a = 1;
+    final b = 2;
+    final c = 'un texte assez long pour depasser les sept cents caracteres, ' * 1;
+    // ................................................................................
+    // ................................................................................
+    // ................................................................................
+    // ................................................................................
+    // ................................................................................
+    // ................................................................................
+    // ................................................................................
+    // ................................................................................
+    // ................................................................................
+    return AppCard(child: Text('x'));
+  }
+}
+''';
+      expect(cartesDerivees(<String>[derivee]), contains('CarteClasseOuverte'));
+    });
+
+    test('un padding du bas de 8 sous une carte suivie d\'un if', () {
+      expect(
+        _cas('''
+Column(children: <Widget>[
+  for (final c in cs) ...<Widget>[
+    Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: AppCard(child: Text('x')),
+    ),
+    if (c.choisi) Text('confirmation'),
+  ],
+])'''),
+        <String>['AppCard n°1 (ecart 8)'],
+      );
+    });
+
+    test('une rangee de cartes separee de 12 par un ternaire dans child', () {
+      expect(
+        _cas('''
+Row(children: <Widget>[
+  for (int j = 0; j < 2; j++) ...<Widget>[
+    if (j > 0) Ecart.hMd,
+    Expanded(
+      child: j < rangee.length
+          ? AppCard(child: Text('x'))
+          : const SizedBox.shrink(),
+    ),
+  ],
+])'''),
+        <String>['AppCard n°1 (ecart 12)'],
+      );
+    });
+
+    test(
+      'un separateur conditionnel est mesure par sa branche la plus mince',
+      () {
+        expect(
+          _cas('''
+ListView.separated(
+  itemCount: 3,
+  separatorBuilder: (BuildContext _, int _) =>
+      serre ? Ecart.vXs : Ecart.vSm,
+  itemBuilder: (BuildContext c, int i) => AppCard(child: Text('x')),
+)'''),
+          <String>['AppCard n°1 (ecart 4)'],
+        );
+      },
+    );
+
+    test('un itemBuilder a plusieurs return est lu en entier', () {
+      expect(
+        _cas('''
+ListView.separated(
+  itemCount: 3,
+  separatorBuilder: (BuildContext _, int _) => Ecart.vSm,
+  itemBuilder: (BuildContext c, int i) {
+    if (i == 0) {
+      return Text('tete');
+    }
+    return AppCard(child: Text('x'));
+  },
+)'''),
+        <String>['AppCard n°1 (ecart 8)'],
+      );
+    });
+
+    test('une boite peinte par le helper de palette, nommee carte', () {
+      const String derivee = '''
+class _CarteEleve extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: palette.surfaceOverlay.decoration(
+        borderRadius: AppRadius.arrondiMd,
+        side: palette.borderHairline.asBorderSide(),
+      ),
+      child: Text('x'),
+    );
+  }
+}
+''';
+      expect(
+        _cas('''
+$derivee
+ListView.separated(
+  itemCount: 3,
+  separatorBuilder: (BuildContext _, int _) => Ecart.vSm,
+  itemBuilder: (BuildContext c, int i) => _CarteEleve(),
+)'''),
+        <String>['_CarteEleve n°1 (ecart 8)'],
+      );
+    });
+  });
+
   test('le depot ne contient aucune carte collee', () {
     final List<String> cas = <String>[
       for (final CasCollage c in tousLesCas())

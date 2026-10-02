@@ -549,7 +549,7 @@ class _Candidats extends StatelessWidget {
       children: <Widget>[
         for (final EnseignantCandidat candidat in candidats) ...<Widget>[
           Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            padding: const EdgeInsets.only(bottom: AppSpacing.lg),
             child: _CarteEnseignant(
               candidat: candidat,
               selectionne: candidat.id == enseignantChoisi,

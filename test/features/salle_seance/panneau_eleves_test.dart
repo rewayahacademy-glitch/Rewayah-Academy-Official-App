@@ -16,6 +16,7 @@ import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/garde_interface.dart';
 
 void _rien() {}
 void _outil(OutilEnseignement _) {}
@@ -340,9 +341,8 @@ void main() {
       testWidgets('desktop, panneau ${panneau.name} : le titre du support '
           'tient sur deux lignes', (WidgetTester tester) async {
         fixerVueCapture(tester, _tailles['desktop']!, 1);
-        final VueSeance vue = _vue(
-          RoleSeance.enseignant,
-        ).copyWith(panneau: panneau);
+        final VueSeance vue = _vue(RoleSeance.enseignant)
+            .copyWith(panneau: panneau);
         await tester.pumpWidget(
           hoteCapture(SalleSeance(vue: vue, actions: _complet)),
         );
@@ -362,16 +362,39 @@ void main() {
       });
     }
 
-    testWidgets('telephone : les trois inscrits tiennent entiers', (
+    testWidgets('telephone : les inscrits commencent tous a l ecran', (
       WidgetTester tester,
     ) async {
+      // K-55 : 16 entre deux fiches (au lieu de 4) ; la liste defile, le
+      // dernier inscrit peut donc finir sous le bord, mais il commence a
+      // l'ecran et les precedents tiennent entiers.
       await _monter(tester, _tailles['mobile']!);
-      for (final EleveSeance e in _vue(RoleSeance.enseignant).eleves) {
+      final List<EleveSeance> eleves = _vue(RoleSeance.enseignant).eleves;
+      for (int i = 0; i < eleves.length; i++) {
         final Rect r = tester.getRect(
-          find.byKey(ValueKey<String>('eleve-${e.prenom}')),
+          find.byKey(ValueKey<String>('eleve-${eleves[i].prenom}')),
         );
-        expect(r.bottom, lessThanOrEqualTo(844), reason: e.prenom);
+        expect(r.top, lessThan(844), reason: eleves[i].prenom);
+        if (i < eleves.length - 1) {
+          expect(r.bottom, lessThanOrEqualTo(844), reason: eleves[i].prenom);
+        }
       }
     });
+  });
+
+  group('Panneau Eleves : cartes separees de 16 (K-55)', () {
+    for (final MapEntry<String, Size> taille in _tailles.entries) {
+      testWidgets('les fiches des inscrits ne se collent pas '
+          '(${taille.key})', (WidgetTester tester) async {
+        await _monter(tester, taille.value);
+        // Une liste paresseuse ne construit que ce qui est a l'ecran : on
+        // mesure les fiches presentes.
+        final int n = verifierEcartEntre(tester, <Finder>[
+          for (final EleveSeance e in _vue(RoleSeance.enseignant).eleves)
+            find.byKey(ValueKey<String>('eleve-${e.prenom}')),
+        ]);
+        expect(n, greaterThanOrEqualTo(2));
+      });
+    }
   });
 }

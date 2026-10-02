@@ -285,7 +285,7 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
     ),
     SliverList.separated(
       itemCount: section.ressources.length,
-      separatorBuilder: (BuildContext _, int _) => Ecart.vMd,
+      separatorBuilder: (BuildContext _, int _) => Ecart.vLg,
       itemBuilder: (BuildContext contexte, int index) {
         final LibraryResource r = section.ressources[index];
         return _carte(

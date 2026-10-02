@@ -96,6 +96,8 @@ const Set<String> _enveloppes = <String>{
   'RepaintBoundary',
   'Focus',
   'FocusTraversalGroup',
+  'ElementEchelonne',
+  'ApparitionDouce',
 };
 
 /// Les parents ou deux cartes voisines se touchent.
@@ -142,7 +144,23 @@ class _Element {
     this.apres = 0,
     this.espace,
     this.minimum = ecartMinimumCartes,
+    this.peutManquer = false,
   });
+
+  /// Vrai quand l'element est pose sous condition (`if`) : il peut manquer.
+  final bool peutManquer;
+
+  /// Le meme element, marque comme pouvant manquer.
+  _Element facultatif() => _Element(
+    carte: carte,
+    nom: nom,
+    index: index,
+    avant: avant,
+    apres: apres,
+    espace: espace,
+    minimum: minimum,
+    peutManquer: true,
+  );
 
   /// Vrai quand l'element est une carte.
   final bool carte;
@@ -182,10 +200,10 @@ final RegExp _corpsRendu = RegExp(
   r'^\s*(?:async\s*)?(?:=>|\{[\s\S]*?\breturn)\s+',
 );
 
-/// Les 700 caracteres qui suivent [index] : assez pour trouver la premiere
+/// Les 3000 caracteres qui suivent [index] : assez pour trouver la premiere
 /// expression rendue, sans lire tout le fichier.
 String _debut(String t, int index) =>
-    t.substring(index, index + 700 > t.length ? t.length : index + 700);
+    t.substring(index, index + 3000 > t.length ? t.length : index + 3000);
 
 /// Les noms des widgets d'ecran dont `build` rend une carte, deduits de
 /// [textes] (le texte de tous les fichiers du dossier concerne).
@@ -223,7 +241,8 @@ Set<String> cartesDerivees(Iterable<String> textes) {
         continue;
       }
       final _Carte? rendue = _carte(c.$2.trimLeft(), cartes, _Axe.les2);
-      if (rendue != null && rendue.minimum > ecartMinimumBoites) {
+      if (rendue != null &&
+          (rendue.minimum > ecartMinimumBoites || _nomDeCarte(c.$1))) {
         cartes.add(c.$1);
         change = true;
       }
@@ -269,7 +288,8 @@ Set<String> _avecLocales(String t, Set<String> cartes) {
           ? null
           : _carte(suite.substring(corps.end), sortie, _Axe.les2);
       // Une boite peinte (barre de squelette, pastille) n'est pas une carte.
-      if (rendue != null && rendue.minimum > ecartMinimumBoites) {
+      if (rendue != null &&
+          (rendue.minimum > ecartMinimumBoites || _nomDeCarte(m.group(1)!))) {
         sortie.add(m.group(1)!);
         change = true;
       }
@@ -303,7 +323,7 @@ List<CasCollage> cartesColleesDans(
     cas.add(CasCollage(chemin, _ligneDe(t, index), '$nom n°$rang ($mesure)'));
   }
 
-  void verifier(List<_Element> suite, _Parent p) {
+  void verifierSuite(List<_Element> suite, _Parent p) {
     for (int j = 0; j < suite.length; j++) {
       if (!suite[j].carte) {
         continue;
@@ -326,6 +346,14 @@ List<CasCollage> cartesColleesDans(
       if (ecart < minimum) {
         signaler(suite[j].index, suite[j].nom, ecart);
       }
+    }
+  }
+
+  void verifier(List<_Element> complete, _Parent p) {
+    // Deux passes : avec tout, puis sans les elements qui peuvent manquer.
+    verifierSuite(complete, p);
+    if (complete.any((_Element e) => e.peutManquer)) {
+      verifierSuite(complete.where((_Element e) => !e.peutManquer).toList(), p);
     }
   }
 
@@ -368,43 +396,43 @@ List<CasCollage> cartesColleesDans(
       continue;
     }
     final String corps = appel.substring(builder);
-    final int retour = corps.indexOf(RegExp(r'(?:=>|return)\s*'));
-    if (retour < 0) {
-      continue;
+    // Toutes les expressions rendues par le builder (`=> x`, chaque
+    // `return x`) : la premiere qui est une carte donne la carte de la liste.
+    _Carte? c;
+    int retour = -1;
+    for (final RegExpMatch r in RegExp(
+      r'(?:=>|\breturn\b)\s*',
+    ).allMatches(corps)) {
+      final _Carte? essai = _carte(corps.substring(r.end), connues, _Axe.les2);
+      if (essai != null) {
+        c = essai;
+        retour = r.start;
+        break;
+      }
     }
-    final String expression = corps
-        .substring(retour)
-        .replaceFirst(RegExp(r'^(?:=>|return)\s*'), '');
-    final _Carte? c = _carte(expression, connues, _Axe.les2);
     if (c == null) {
       continue;
     }
     double ecart = c.avant + c.apres;
-    double minimum = c.minimum;
+    final double minimum = c.minimum;
     if (m.group(1) == 'GridView') {
       final double a = _valeurNommee(appel, 'mainAxisSpacing') ?? 0;
       final double b = _valeurNommee(appel, 'crossAxisSpacing') ?? 0;
       ecart = a < b ? a : b;
     }
     if (m.group(2) == 'separated') {
-      // Une liste dense a separateur : 8 au moins entre deux lignes.
       final RegExpMatch? s = RegExp(
         r'separatorBuilder\s*:[^=]*=>\s*([^;]*?)(?:,\s*itemBuilder|,\s*itemCount|\)\s*,?\s*$)',
         dotAll: true,
       ).firstMatch(appel);
-      final double? e = s == null
-          ? null
-          : _espace(
-              s.group(1)!.trim().replaceAll(RegExp(r'\s+'), ' '),
-              _Axe.vertical,
-            );
+      final String? brut = s?.group(1)!.trim().replaceAll(RegExp(r'\s+'), ' ');
+      final double? e = brut == null ? null : _espaceSepare(brut);
       if (e == null) {
         continue;
       }
+      // Le minimum est celui de la carte (16, ou 8 pour une pastille de choix
+      // a marge reduite) : il n'est jamais abaisse ici.
       ecart = e + c.avant + c.apres;
-      minimum = minimum < ecartMinimumPastilles
-          ? minimum
-          : ecartMinimumPastilles;
     }
     if (ecart < minimum) {
       signaler(ouvre + builder + retour, c.nom, ecart);
@@ -546,7 +574,20 @@ List<_Element> _element(
     final String reste = t.substring(fermeCondition + 1, fin);
     final int sinon = _indexSinon(reste);
     if (sinon < 0) {
-      return _element(t, fermeCondition + 1, fin, cartes, axe);
+      // Un element qui n'est ni carte ni espace, pose sous condition, peut
+      // etre absent : deux cartes de part et d'autre se touchent alors.
+      return <_Element>[
+        for (final _Element e in _element(
+          t,
+          fermeCondition + 1,
+          fin,
+          cartes,
+          axe,
+        ))
+          e.carte || e.espace != null || reste.trimLeft().startsWith('...')
+              ? e
+              : e.facultatif(),
+      ];
     }
     final int finA = fermeCondition + 1 + sinon;
     return <_Element>[
@@ -699,6 +740,13 @@ _Carte? _carte(String e, Set<String> cartes, _Axe axe) {
   if (RegExp(r'^\w+$').hasMatch(nu) && cartes.contains(nu)) {
     return _Carte(nu, 0, 0, ecartMinimumCartes);
   }
+  // `condition ? Carte(...) : SizedBox.shrink()` : la branche vraie rend la
+  // carte (la condition est du texte sans appel, `a < b`, `x != null`).
+  final RegExpMatch? ternaire = RegExp(r'^[\w.\[\]<>=!&|\s]+?\?\s+')
+      .firstMatch(nu);
+  if (ternaire != null) {
+    return _carte(nu.substring(ternaire.end), cartes, axe);
+  }
   final RegExpMatch? m = RegExp(
     r'^(?:const\s+|new\s+)?([A-Za-z_]\w*)(?:\.\w+)?\s*(?:<[^>(]*>)?\s*\(',
   ).firstMatch(e);
@@ -751,18 +799,23 @@ _Carte? _carte(String e, Set<String> cartes, _Axe axe) {
       return null;
     }
     final String arguments = e.substring(ouvre + 1, ferme);
+    // Soit `BoxDecoration(...)`, soit le helper de palette `.decoration(...)`
+    // (`palette.surfaceOverlay.decoration(borderRadius:, side:)`).
+    final RegExpMatch? helper = RegExp(r'\.decoration\(').firstMatch(arguments);
     final int deco = arguments.indexOf('BoxDecoration(');
-    if (deco < 0) {
+    if (deco < 0 && helper == null) {
       return null;
     }
-    final int finDeco = _fermante(arguments, deco + 13);
+    final int debutPeinture = deco >= 0 ? deco : helper!.start;
+    final int ouvrePeinture = deco >= 0 ? deco + 13 : helper!.end - 1;
+    final int finDeco = _fermante(arguments, ouvrePeinture);
     if (finDeco < 0) {
       return null;
     }
-    final String peinture = arguments.substring(deco, finDeco);
+    final String peinture = arguments.substring(debutPeinture, finDeco);
     if (!peinture.contains('BoxShape.circle') &&
         peinture.contains('borderRadius') &&
-        RegExp(r'\b(?:color|border)\s*:').hasMatch(peinture)) {
+        RegExp(r'\b(?:color|border|side)\s*:').hasMatch(peinture)) {
       return _Carte(nom, 0, 0, ecartMinimumBoites);
     }
   }
@@ -965,4 +1018,29 @@ List<CasCollage> tousLesCas() {
     cas.addAll(cartesColleesDans(e.key, e.value, cartes: cartes));
   }
   return cas;
+}
+
+/// Un widget ou une methode dont le nom dit « carte » (`_CarteEleve`,
+/// `_carte`) qui peint une boite avec fond, filet et rayon est une carte : le
+/// nom engage, la boite peinte n'est plus une simple pastille.
+bool _nomDeCarte(String nom) => RegExp(r'^_?[Cc]arte[A-Z_]?').hasMatch(nom);
+
+/// L'espace que pose un separateur : `Ecart.vLg`, ou `cond ? a : b` (le plus
+/// petit des deux gouverne : un seul chemin trop mince suffit a coller).
+double? _espaceSepare(String texte) {
+  final String masque = _masquerNiveaux(texte);
+  final int q = masque.indexOf(RegExp(r'(?<![?])\?(?![?.])'));
+  if (q < 0) {
+    return _espace(texte, _Axe.vertical);
+  }
+  final int deuxPoints = masque.indexOf(':', q);
+  if (deuxPoints < 0) {
+    return null;
+  }
+  final double? a = _espaceSepare(texte.substring(q + 1, deuxPoints).trim());
+  final double? b = _espaceSepare(texte.substring(deuxPoints + 1).trim());
+  if (a == null || b == null) {
+    return null;
+  }
+  return a < b ? a : b;
 }

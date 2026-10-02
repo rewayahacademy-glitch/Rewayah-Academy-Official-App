@@ -54,6 +54,44 @@ void verifierBoutonCentre(WidgetTester tester, Finder bouton, String libelle) {
   );
 }
 
+/// Les cartes trouvees par [cartes] (une par finder, la premiere) sont toutes
+/// separees d'au moins [minimum], cote a cote comme l'une sous l'autre (K-55).
+/// Sert quand la carte est dans une carte plus grande, ou quand son type est
+/// prive : on la designe par son contenu. Retourne le nombre de cartes mesurees.
+int verifierEcartEntre(
+  WidgetTester tester,
+  List<Finder> cartes, {
+  double minimum = 16,
+}) {
+  final List<Rect> cadres = <Rect>[
+    for (final Finder f in cartes)
+      if (f.evaluate().isNotEmpty) tester.getRect(f.first),
+  ];
+  for (int i = 0; i < cadres.length; i++) {
+    for (int j = i + 1; j < cadres.length; j++) {
+      final Rect a = cadres[i];
+      final Rect b = cadres[j];
+      final double recouvreX =
+          (a.right < b.right ? a.right : b.right) -
+          (a.left > b.left ? a.left : b.left);
+      final double recouvreY =
+          (a.bottom < b.bottom ? a.bottom : b.bottom) -
+          (a.top > b.top ? a.top : b.top);
+      final double ecart = recouvreX > toleranceGarde
+          ? (a.top < b.top ? b.top - a.bottom : a.top - b.bottom)
+          : recouvreY > toleranceGarde
+          ? (a.left < b.left ? b.left - a.right : a.left - b.right)
+          : double.infinity;
+      expect(
+        ecart,
+        greaterThanOrEqualTo(minimum - toleranceGarde),
+        reason: 'cartes collees : $a et $b ne sont separees que de $ecart',
+      );
+    }
+  }
+  return cadres.length;
+}
+
 /// L'ecart vertical entre deux cartes consecutives vaut au moins [minimum]
 /// (K-55 : jamais de cartes collees). [cartes] est trie de haut en bas.
 void verifierEcartCartes(

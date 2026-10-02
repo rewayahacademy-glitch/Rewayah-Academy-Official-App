@@ -119,8 +119,7 @@ class _PanneauElevesState extends State<PanneauEleves> {
         bottom: AppSpacing.md + MediaQuery.paddingOf(context).bottom,
       ),
       itemCount: widget.eleves.length + tete,
-      separatorBuilder: (BuildContext _, int _) =>
-          widget.serre ? Ecart.vXs : Ecart.vSm,
+      separatorBuilder: (BuildContext _, int _) => Ecart.vLg,
       itemBuilder: (BuildContext _, int index) {
         if (file != null && index == 0) {
           return FileRecitationSeance(file: file, eleves: widget.eleves);
