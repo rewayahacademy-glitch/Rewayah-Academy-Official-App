@@ -8723,20 +8723,20 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Point de prononciation noté'
 	String get pointPhonetiqueNote => 'Point de prononciation noté';
 
-	/// fr: 'Objectif personnel'
-	String get objectif => 'Objectif personnel';
+	/// fr: 'Objectif de {eleve}'
+	String objectif({required Object eleve}) => 'Objectif de ${eleve}';
 
-	/// fr: 'Il s'inscrit dans le programme de l'académie, qui ne se modifie pas d'ici.'
-	String get objectifDetail => 'Il s\'inscrit dans le programme de l\'académie, qui ne se modifie pas d\'ici.';
+	/// fr: 'Ce que {eleve} doit atteindre, dans le cadre du programme de l'académie.'
+	String objectifDetail({required Object eleve}) => 'Ce que ${eleve} doit atteindre, dans le cadre du programme de l\'académie.';
 
-	/// fr: 'Devoir à faire'
-	String get travailMaison => 'Devoir à faire';
+	/// fr: 'Devoir de {eleve}'
+	String travailMaison({required Object eleve}) => 'Devoir de ${eleve}';
 
 	/// fr: 'Ajustez la suggestion, ou laissez-la telle quelle.'
 	String get travailMaisonDetail => 'Ajustez la suggestion, ou laissez-la telle quelle.';
 
-	/// fr: 'La suite pour cet élève'
-	String get suite => 'La suite pour cet élève';
+	/// fr: 'La suite pour {eleve}'
+	String suite({required Object eleve}) => 'La suite pour ${eleve}';
 
 	/// fr: 'Continuer'
 	String get suiteContinuer => 'Continuer';
@@ -17033,11 +17033,11 @@ extension on Traductions {
 			'enseignant.cahier.pointPhonetique' => 'Point de prononciation',
 			'enseignant.cahier.pointPhonetiqueDetail' => 'Une paire, pas un bilan. Laissez vide s\'il n\'y a rien à dire.',
 			'enseignant.cahier.pointPhonetiqueNote' => 'Point de prononciation noté',
-			'enseignant.cahier.objectif' => 'Objectif personnel',
-			'enseignant.cahier.objectifDetail' => 'Il s\'inscrit dans le programme de l\'académie, qui ne se modifie pas d\'ici.',
-			'enseignant.cahier.travailMaison' => 'Devoir à faire',
+			'enseignant.cahier.objectif' => ({required Object eleve}) => 'Objectif de ${eleve}',
+			'enseignant.cahier.objectifDetail' => ({required Object eleve}) => 'Ce que ${eleve} doit atteindre, dans le cadre du programme de l\'académie.',
+			'enseignant.cahier.travailMaison' => ({required Object eleve}) => 'Devoir de ${eleve}',
 			'enseignant.cahier.travailMaisonDetail' => 'Ajustez la suggestion, ou laissez-la telle quelle.',
-			'enseignant.cahier.suite' => 'La suite pour cet élève',
+			'enseignant.cahier.suite' => ({required Object eleve}) => 'La suite pour ${eleve}',
 			'enseignant.cahier.suiteContinuer' => 'Continuer',
 			'enseignant.cahier.suiteRenforcer' => 'Renforcer',
 			'enseignant.cahier.suspendreNouveau' => 'Suspendre le nouveau',

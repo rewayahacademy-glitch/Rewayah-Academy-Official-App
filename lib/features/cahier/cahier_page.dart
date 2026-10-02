@@ -590,7 +590,7 @@ class _Constat extends StatelessWidget {
         : d?.suite == SuiteEleve.suspendreNouveau
         ? t.enseignant.cahier.suspendreNouveau
         : devoir != null
-        ? '${t.enseignant.cahier.travailMaison} : $devoir'
+        ? '${t.enseignant.cahier.travailMaison(eleve: p.membre.libelle)} : $devoir'
         : p.unite?.nomHumain;
     return LigneRubrique(
       // La photo s'affiche chez l'enseignant (E5, K-44) ; les initiales en
@@ -944,7 +944,10 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
         // Doc 04 §20.4 : « Continuer » par defaut, « Renforcer », et
         // « Suspendre le nouveau » seulement si la logique academique le
         // permet.
-        Text(t.enseignant.cahier.suite, style: textes.titleSmall),
+        Text(
+          t.enseignant.cahier.suite(eleve: participant.membre.libelle),
+          style: textes.titleSmall,
+        ),
         Ecart.vMd,
         ChoiceCardGroup(
           key: const ValueKey<String>('cahier-suite'),
@@ -1011,23 +1014,36 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
           onChange: _choisirPhonetique,
         ),
         Ecart.vSection,
-        Text(t.enseignant.cahier.objectif, style: textes.titleSmall),
+        Text(
+          t.enseignant.cahier.objectif(eleve: participant.membre.libelle),
+          style: textes.titleSmall,
+        ),
         Ecart.vXs,
         // La marge autorisee d'un objectif personnel n'existe pas encore comme
         // regle : `CleRegle` ne porte que quatre cles, toutes en minutes ou en
         // nombre d'eleves. L'ecran ne borne donc rien avec une constante
         // inventee ; il dit ce qui encadre l'objectif
         // (`CONTRACT_REQUEST_C.md`).
-        Text(t.enseignant.cahier.objectifDetail, style: discret),
+        Text(
+          t.enseignant.cahier.objectifDetail(eleve: participant.membre.libelle),
+          style: discret,
+        ),
         Ecart.vMd,
         TextField(
           controller: _objectif,
           maxLines: 2,
           textInputAction: TextInputAction.newline,
-          decoration: InputDecoration(labelText: t.enseignant.cahier.objectif),
+          decoration: InputDecoration(
+            labelText: t.enseignant.cahier.objectif(
+              eleve: participant.membre.libelle,
+            ),
+          ),
         ),
         Ecart.vXl,
-        Text(t.enseignant.cahier.travailMaison, style: textes.titleSmall),
+        Text(
+          t.enseignant.cahier.travailMaison(eleve: participant.membre.libelle),
+          style: textes.titleSmall,
+        ),
         Ecart.vXs,
         Text(t.enseignant.cahier.travailMaisonDetail, style: discret),
         Ecart.vMd,
@@ -1036,7 +1052,9 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
           maxLines: 2,
           textInputAction: TextInputAction.newline,
           decoration: InputDecoration(
-            labelText: t.enseignant.cahier.travailMaison,
+            labelText: t.enseignant.cahier.travailMaison(
+              eleve: participant.membre.libelle,
+            ),
           ),
         ),
         Ecart.vSection,

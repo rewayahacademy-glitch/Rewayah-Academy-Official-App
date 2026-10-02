@@ -46,5 +46,9 @@
   "enseignant.cahier.enFileDetailHorsLigne": "commentaire du directeur, revue du 01-02/10, etape LIB-CAHIER-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
   "enseignant.cahier.exceptionSucces": "commentaire du directeur, revue du 01-02/10, etape LIB-CAHIER-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
   "enseignant.cahier.exceptionHorsLigne": "commentaire du directeur, revue du 01-02/10, etape LIB-CAHIER-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
-  "enseignant.cahier.corriger": "commentaire du directeur, revue du 01-02/10, etape LIB-CAHIER-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)"
+  "enseignant.cahier.corriger": "commentaire du directeur, revue du 01-02/10, etape LIB-CAHIER-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
+  "enseignant.cahier.objectif": "commentaire du directeur, revue du 01-02/10, etape LIB-OBJ-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
+  "enseignant.cahier.objectifDetail": "commentaire du directeur, revue du 01-02/10, etape LIB-OBJ-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
+  "enseignant.cahier.travailMaison": "commentaire du directeur, revue du 01-02/10, etape LIB-OBJ-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
+  "enseignant.cahier.suite": "commentaire du directeur, revue du 01-02/10, etape LIB-OBJ-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)"
 }
