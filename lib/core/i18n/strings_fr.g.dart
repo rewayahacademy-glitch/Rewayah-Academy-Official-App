@@ -7693,12 +7693,6 @@ class Traductions$classe$entree$fr {
 	/// fr: 'Rejoindre la séance de {classe}'
 	String rejoindreLecteur({required Object classe}) => 'Rejoindre la séance de ${classe}';
 
-	/// fr: 'Préparer l'entrée'
-	String get preparer => 'Préparer l\'entrée';
-
-	/// fr: 'Préparer l'entrée de la séance de {classe}'
-	String preparerLecteur({required Object classe}) => 'Préparer l\'entrée de la séance de ${classe}';
-
 	/// fr: 'La salle est ouverte. La séance commence dans {duree}.'
 	String salleOuverte({required Object duree}) => 'La salle est ouverte. La séance commence dans ${duree}.';
 
@@ -8489,11 +8483,29 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Préparer la séance {classe}'
 	String preparerSeanceLecteur({required Object classe}) => 'Préparer la séance ${classe}';
 
-	/// fr: 'Finaliser le cahier'
-	String get finaliserCahier => 'Finaliser le cahier';
+	/// fr: 'Dernière séance'
+	String get derniereSeance => 'Dernière séance';
 
-	/// fr: 'Finaliser le cahier {classe}'
-	String finaliserCahierLecteur({required Object classe}) => 'Finaliser le cahier ${classe}';
+	/// fr: 'Rejoindre la salle'
+	String get rejoindreSalle => 'Rejoindre la salle';
+
+	/// fr: 'Rejoindre la salle de la Classe {classe}'
+	String rejoindreSalleLecteur({required Object classe}) => 'Rejoindre la salle de la Classe ${classe}';
+
+	/// fr: 'Remplir le cahier de transmission'
+	String get remplirCahier => 'Remplir le cahier de transmission';
+
+	/// fr: 'Remplir le cahier de transmission de la Classe {classe}'
+	String remplirCahierLecteur({required Object classe}) => 'Remplir le cahier de transmission de la Classe ${classe}';
+
+	/// fr: 'Obligatoire : le cahier {classe} se remplit à la fin de chaque séance.'
+	String cahierObligatoire({required Object classe}) => 'Obligatoire : le cahier ${classe} se remplit à la fin de chaque séance.';
+
+	/// fr: 'Voir le cahier {classe}'
+	String voirCahier({required Object classe}) => 'Voir le cahier ${classe}';
+
+	/// fr: 'Voir le cahier de transmission de la Classe {classe}'
+	String voirCahierLecteur({required Object classe}) => 'Voir le cahier de transmission de la Classe ${classe}';
 
 	/// fr: 'Voir la Classe'
 	String get voirClasse => 'Voir la Classe';
@@ -16614,8 +16626,6 @@ extension on Traductions {
 			'classe.entree.coursImminent' => 'Cours dans moins d\'une minute',
 			'classe.entree.rejoindre' => 'Rejoindre',
 			'classe.entree.rejoindreLecteur' => ({required Object classe}) => 'Rejoindre la séance de ${classe}',
-			'classe.entree.preparer' => 'Préparer l\'entrée',
-			'classe.entree.preparerLecteur' => ({required Object classe}) => 'Préparer l\'entrée de la séance de ${classe}',
 			'classe.entree.salleOuverte' => ({required Object duree}) => 'La salle est ouverte. La séance commence dans ${duree}.',
 			'classe.entree.salleOuverteImminent' => 'La salle est ouverte. La séance commence dans moins d\'une minute.',
 			'classe.entree.preparation' => 'Préparation en cours',
@@ -16846,10 +16856,10 @@ extension on Traductions {
 			'enseignant.photo.autre' => 'Choisir une autre photo',
 			'enseignant.photo.changer' => 'Changer la photo',
 			'enseignant.photo.alternatif' => 'Votre photo publique',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.photo.succes' => 'La photo est enregistrée.',
 			'enseignant.photo.echec' => 'La photo n\'a pas pu être envoyée. Rien n\'a changé sur le profil.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.photo.selectionEchec' => 'La photo n\'a pas pu être ouverte. Vérifiez l\'accès aux photos de l\'appareil, puis réessayez.',
 			'enseignant.photo.horsLigne' => 'Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.',
 			'enseignant.journee.lancer' => 'Lancer le cours',
@@ -16910,8 +16920,14 @@ extension on Traductions {
 			'enseignant.journee.classeNommee' => ({required Object classe}) => 'Classe ${classe}',
 			'enseignant.journee.preparerSeance' => 'Préparer la séance',
 			'enseignant.journee.preparerSeanceLecteur' => ({required Object classe}) => 'Préparer la séance ${classe}',
-			'enseignant.journee.finaliserCahier' => 'Finaliser le cahier',
-			'enseignant.journee.finaliserCahierLecteur' => ({required Object classe}) => 'Finaliser le cahier ${classe}',
+			'enseignant.journee.derniereSeance' => 'Dernière séance',
+			'enseignant.journee.rejoindreSalle' => 'Rejoindre la salle',
+			'enseignant.journee.rejoindreSalleLecteur' => ({required Object classe}) => 'Rejoindre la salle de la Classe ${classe}',
+			'enseignant.journee.remplirCahier' => 'Remplir le cahier de transmission',
+			'enseignant.journee.remplirCahierLecteur' => ({required Object classe}) => 'Remplir le cahier de transmission de la Classe ${classe}',
+			'enseignant.journee.cahierObligatoire' => ({required Object classe}) => 'Obligatoire : le cahier ${classe} se remplit à la fin de chaque séance.',
+			'enseignant.journee.voirCahier' => ({required Object classe}) => 'Voir le cahier ${classe}',
+			'enseignant.journee.voirCahierLecteur' => ({required Object classe}) => 'Voir le cahier de transmission de la Classe ${classe}',
 			'enseignant.journee.voirClasse' => 'Voir la Classe',
 			'enseignant.journee.voirClasseLecteur' => ({required Object classe}) => 'Voir la Classe ${classe}',
 			'enseignant.journee.aucuneSeance' => 'Aucune séance à venir',
@@ -17356,12 +17372,12 @@ extension on Traductions {
 			'tc.bibliotheque.sections.tousLesSupports' => 'Tous les supports',
 			'tc.bibliotheque.sections.resultats' => 'Résultats',
 			'tc.bibliotheque.vide.message' => 'Aucun support publié pour le moment',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.vide.invitation' => 'Vos enseignants déposeront ici les supports de vos cours.',
 			'tc.bibliotheque.aucunResultat.message' => 'Aucun support ne correspond',
 			'tc.bibliotheque.aucunResultat.invitation' => 'Essayez un autre mot, ou relâchez les filtres.',
 			'tc.bibliotheque.indisponible.message' => 'La bibliothèque est momentanément indisponible',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.indisponible.action' => 'Réessayer',
 			'tc.bibliotheque.introuvable.message' => 'Ce support ne vous est pas ouvert',
 			'tc.bibliotheque.introuvable.invitation' => 'Il a peut-être été retiré, ou il est réservé à un autre groupe. Votre enseignant peut vous le rouvrir.',
@@ -17870,12 +17886,12 @@ extension on Traductions {
 			'adulte.demo.etats.titulaireSansConjoint' => 'Le foyer n\'a pas de second adulte.',
 			'adulte.demo.etats.invitationEnAttente' => 'L\'invitation du second adulte est en attente.',
 			'adulte.demo.etats.invitationExpiree' => 'L\'invitation du second adulte a expiré.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.etats.invitationAnnulee' => 'L\'invitation du second adulte a été annulée.',
 			'adulte.demo.etats.conjointActif' => 'Le second adulte fait partie du foyer.',
 			'adulte.demo.etats.conjointQuitte' => 'Le second adulte a quitté le foyer.',
 			'adulte.demo.etats.conjointRetire' => 'Le second adulte a été retiré du foyer.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.etats.delai60' => 'Un délai de 60 jours est en cours.',
 			'adulte.demo.etats.nouvelleDemande' => 'Une nouvelle invitation est possible après le délai de 60 jours.',
 			'adulte.demo.etats.validationEnAttente' => 'La validation administrative est en attente.',

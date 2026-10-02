@@ -1,11 +1,13 @@
 // ENS-02 Aujourd'hui (EN-2) : carte « Prochaine seance » (E11), « Ma
 // journee », « A terminer » (K-45), « Alertes utiles », une ou deux colonnes.
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/enseignant/absence_remplacement.dart';
+import 'package:rewayah_academy/core/enseignant/cta_seance.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/elision.dart';
@@ -18,17 +20,21 @@ import 'package:rewayah_academy/core/priere/reglages_priere.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/router/billet_salle.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/pastille_etat_seance.dart';
 import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 
+import '../support/garde_interface.dart';
 import '../support/harnais.dart';
 
 const String _monId = 't1';
@@ -83,6 +89,7 @@ List<Override> _surcharges({
   FauxServicePresence? presence,
   FauxServiceReseau? reseau,
   DateTime? maintenant,
+  DateTime Function()? horloge,
 }) => <Override>[
   sourceSessionProvider.overrideWithValue(
     FausseSourceSession(_sessionEnseignant),
@@ -96,8 +103,34 @@ List<Override> _surcharges({
   servicePreVolProvider.overrideWithValue(FauxServicePreVol()),
   servicePresenceProvider.overrideWithValue(presence ?? FauxServicePresence()),
   serviceReseauProvider.overrideWithValue(reseau ?? FauxServiceReseau()),
-  maintenantJourneeProvider.overrideWithValue(() => maintenant ?? _m),
+  maintenantJourneeProvider.overrideWithValue(
+    horloge ?? () => maintenant ?? _m,
+  ),
 ];
+
+/// La page dans le vrai theme clair ou sombre, a une echelle de texte donnee.
+Widget _hoteCarte({
+  required Brightness luminosite,
+  required double echelleTexte,
+  required List<Override> surcharges,
+}) => ProviderScope(
+  overrides: surcharges,
+  child: TranslationProvider(
+    child: MaterialApp(
+      theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+      darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+      themeMode: luminosite == Brightness.dark
+          ? ThemeMode.dark
+          : ThemeMode.light,
+      builder: (BuildContext context, Widget? app) => MediaQuery(
+        data: MediaQuery.of(context)
+            .copyWith(textScaler: TextScaler.linear(echelleTexte)),
+        child: app!,
+      ),
+      home: const JourneePage(),
+    ),
+  ),
+);
 
 void _fenetre(WidgetTester tester, Size taille) {
   tester.view.physicalSize = taille;
@@ -130,6 +163,15 @@ List<RouteBase> _routes() => <RouteBase>[
   GoRoute(
     path: Routes.enseignantJournee,
     builder: (BuildContext _, GoRouterState _) => const JourneePage(),
+  ),
+  GoRoute(
+    path: Routes.salle,
+    builder: (BuildContext _, GoRouterState etat) {
+      final BilletSalle? billet = etat.extra as BilletSalle?;
+      return Text(
+        'salle:${billet?.sessionId}:${billet?.preparation}:${billet?.groupeId}',
+      );
+    },
   ),
   GoRoute(
     path: '/enseignant/groupe/:groupeId',
@@ -308,10 +350,10 @@ void main() {
           ..seancesRendues = <SeanceEnseignant>[_anNour()],
       );
       expect(find.text(t.enseignant.journee.preparerSeance), findsOneWidget);
-      expect(find.text(t.classe.entree.preparer), findsNothing);
+      expect(find.text("Préparer l'entrée"), findsNothing);
     });
 
-    testWidgets('fenetre ouverte : Preparer l entree (CL-4)', (
+    testWidgets('fenetre ouverte : Rejoindre la salle (CTA-FIN-1)', (
       WidgetTester tester,
     ) async {
       await _ouvrir(
@@ -320,7 +362,8 @@ void main() {
         enseignant: FauxServiceEnseignant()
           ..seancesRendues = <SeanceEnseignant>[_anNour()],
       );
-      expect(find.text(t.classe.entree.preparer), findsOneWidget);
+      expect(find.text(t.enseignant.journee.rejoindreSalle), findsOneWidget);
+      expect(find.text("Préparer l'entrée"), findsNothing);
       expect(find.text(t.enseignant.journee.preparerSeance), findsNothing);
     });
 
@@ -365,49 +408,85 @@ void main() {
       annonce: 'annonce',
     );
 
-    test('a venir : Preparer la seance, la ligne devient le contexte', () {
-      final EmplacementEntree e = emplacementJournee(
-        ligne(EtatEntree.aVenir),
-        nomClasse: 'An-Nour',
-        cahierAFinaliser: false,
-      );
-      expect(e.estBouton, isTrue);
-      expect(e.libelle, t.enseignant.journee.preparerSeance);
-      expect(e.detail, 'contexte');
-      expect(e.annonce, 'annonce');
-    });
+    EmplacementEntree pour(
+      EtatEntree etat,
+      EtatCtaSeance cta, {
+      EtatAbsence? absence,
+    }) => emplacementJournee(
+      ligne(etat),
+      nomClasse: 'An-Nour',
+      cta: cta,
+      absence: absence,
+    );
 
-    test('terminee, cahier non depose : Finaliser le cahier', () {
-      final EmplacementEntree e = emplacementJournee(
-        ligne(EtatEntree.terminee),
-        nomClasse: 'An-Nour',
-        cahierAFinaliser: true,
-      );
-      expect(e.libelle, t.enseignant.journee.finaliserCahier);
-    });
-
-    test('terminee et deposee, ou annulee : Voir la Classe', () {
-      for (final EtatEntree etat in <EtatEntree>[
-        EtatEntree.terminee,
-        EtatEntree.annulee,
-      ]) {
-        expect(
-          emplacementJournee(
-            ligne(etat),
-            nomClasse: 'An-Nour',
-            cahierAFinaliser: false,
-          ).libelle,
-          t.enseignant.journee.voirClasse,
+    test(
+      'avant l heure : Preparer la seance, la ligne devient le contexte',
+      () {
+        final EmplacementEntree e = pour(
+          EtatEntree.aVenir,
+          EtatCtaSeance.preparer,
         );
-      }
+        expect(e.estBouton, isTrue);
+        expect(e.libelle, t.enseignant.journee.preparerSeance);
+        expect(e.detail, 'contexte');
+        expect(e.annonce, 'annonce');
+      },
+    );
+
+    test(
+      'pendant le creneau : Rejoindre la salle, jamais Preparer l entree',
+      () {
+        for (final EtatEntree etat in <EtatEntree>[
+          EtatEntree.fenetreOuverte,
+          EtatEntree.attente,
+          EtatEntree.enDirect,
+        ]) {
+          final EmplacementEntree e = pour(etat, EtatCtaSeance.rejoindre);
+          expect(e.estBouton, isTrue);
+          expect(e.libelle, t.enseignant.journee.rejoindreSalle);
+          expect(e.libelle, isNot("Préparer l'entrée"));
+          expect(e.libelleLecteur, contains('An-Nour'));
+        }
+      },
+    );
+
+    test(
+      'temps ecoule, cahier non depose : Remplir le cahier, obligatoire',
+      () {
+        final EmplacementEntree e = pour(
+          EtatEntree.terminee,
+          EtatCtaSeance.remplirCahier,
+        );
+        expect(e.estBouton, isTrue);
+        expect(e.libelle, t.enseignant.journee.remplirCahier);
+        expect(
+          e.detail,
+          t.enseignant.journee.cahierObligatoire(classe: "d'An-Nour"),
+        );
+        expect(e.libelleLecteur, contains('An-Nour'));
+      },
+    );
+
+    test('cahier depose : une ligne seule, le lien est rendu par la carte', () {
+      final EmplacementEntree e = pour(
+        EtatEntree.terminee,
+        EtatCtaSeance.voirCahier,
+      );
+      expect(e.estBouton, isFalse);
+    });
+
+    test('annulee : Voir la Classe', () {
+      expect(
+        pour(EtatEntree.annulee, EtatCtaSeance.voirClasse).libelle,
+        t.enseignant.journee.voirClasse,
+      );
     });
 
     test('absence declaree : Voir la Classe, sauf demande annulee', () {
       for (final EtatAbsence absence in EtatAbsence.values) {
-        final EmplacementEntree e = emplacementJournee(
-          ligne(EtatEntree.aVenir),
-          nomClasse: 'An-Nour',
-          cahierAFinaliser: false,
+        final EmplacementEntree e = pour(
+          EtatEntree.aVenir,
+          EtatCtaSeance.preparer,
           absence: absence,
         );
         expect(
@@ -419,10 +498,22 @@ void main() {
       }
     });
 
+    test('jamais de bouton grise : chaque etat porte un libelle plein', () {
+      for (final EtatCtaSeance cta in EtatCtaSeance.values) {
+        final EmplacementEntree e = pour(EtatEntree.aVenir, cta);
+        expect(e.libelle, isNotEmpty);
+        expect(e.reessayer, isFalse);
+      }
+    });
+
     test('preparation et reessai restent tels quels (jamais grise)', () {
       final EmplacementEntree prep = ligne(EtatEntree.preparation);
       expect(
-        emplacementJournee(prep, nomClasse: 'x', cahierAFinaliser: true),
+        emplacementJournee(
+          prep,
+          nomClasse: 'x',
+          cta: EtatCtaSeance.remplirCahier,
+        ),
         same(prep),
       );
       const EmplacementEntree reessai = EmplacementEntree(
@@ -434,10 +525,290 @@ void main() {
         reessayer: true,
       );
       expect(
-        emplacementJournee(reessai, nomClasse: 'x', cahierAFinaliser: true),
+        emplacementJournee(
+          reessai,
+          nomClasse: 'x',
+          cta: EtatCtaSeance.remplirCahier,
+        ),
         same(reessai),
       );
     });
+  });
+
+  group('CTA-FIN-1 : le bouton de la carte selon le moment', () {
+    // La seance An-Nour : 17 h 30 a 18 h 15 ; la salle ouvre a 17 h 20.
+    Future<void> carte(
+      WidgetTester tester,
+      DateTime maintenant, {
+      StatutSeance statut = StatutSeance.planifiee,
+      bool depose = false,
+      Size taille = const Size(390, 2400),
+      double texte = 1,
+      Brightness theme = Brightness.light,
+    }) async {
+      _fenetre(tester, taille);
+      await tester.pumpWidget(
+        _hoteCarte(
+          luminosite: theme,
+          echelleTexte: texte,
+          surcharges: _surcharges(
+            maintenant: maintenant,
+            enseignant: FauxServiceEnseignant()
+              ..seancesRendues = <SeanceEnseignant>[
+                seanceDeTest(
+                  id: 'an-nour',
+                  debut: DateTime(2026, 9, 28, 17, 30),
+                  statut: statut,
+                  nbParticipants: 4,
+                  cahierDepose: depose,
+                  groupeId: 'g-an-nour',
+                  groupeLibelle: 'An-Nour',
+                ),
+              ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    final Finder pastille = find.text(t.etat.enDirect);
+
+    testWidgets('avant l heure : Preparer la seance, sans pastille', (
+      WidgetTester tester,
+    ) async {
+      await carte(tester, DateTime(2026, 9, 28, 16));
+      expect(find.text(t.enseignant.journee.preparerSeance), findsOneWidget);
+      expect(find.text(t.enseignant.journee.rejoindreSalle), findsNothing);
+      expect(pastille, findsNothing);
+    });
+
+    testWidgets('pendant le creneau : Rejoindre la salle et En direct', (
+      WidgetTester tester,
+    ) async {
+      await carte(
+        tester,
+        DateTime(2026, 9, 28, 17, 40),
+        statut: StatutSeance.enCours,
+      );
+      expect(find.text(t.enseignant.journee.rejoindreSalle), findsOneWidget);
+      expect(find.text(t.enseignant.journee.preparerSeance), findsNothing);
+      expect(find.text("Préparer l'entrée"), findsNothing);
+      expect(pastille, findsOneWidget);
+    });
+
+    testWidgets('un cours qui deborde garde Rejoindre la salle', (
+      WidgetTester tester,
+    ) async {
+      await carte(
+        tester,
+        DateTime(2026, 9, 28, 18, 50),
+        statut: StatutSeance.enCours,
+      );
+      expect(find.text(t.enseignant.journee.rejoindreSalle), findsOneWidget);
+      expect(find.text(t.enseignant.journee.remplirCahier), findsNothing);
+      expect(pastille, findsOneWidget);
+    });
+
+    testWidgets('temps ecoule, cahier non depose : Remplir le cahier', (
+      WidgetTester tester,
+    ) async {
+      await carte(
+        tester,
+        DateTime(2026, 9, 28, 18, 40),
+        statut: StatutSeance.terminee,
+      );
+      expect(find.text(t.enseignant.journee.remplirCahier), findsOneWidget);
+      expect(
+        find.text(t.enseignant.journee.cahierObligatoire(classe: "d'An-Nour")),
+        findsOneWidget,
+      );
+      expect(find.text(t.enseignant.journee.rejoindreSalle), findsNothing);
+      expect(pastille, findsNothing);
+    });
+
+    testWidgets('Rejoindre la salle ouvre la salle par son pre-vol', (
+      WidgetTester tester,
+    ) async {
+      _fenetre(tester, const Size(390, 2400));
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: Routes.enseignantJournee,
+          routes: _routes(),
+          surcharges: _surcharges(
+            maintenant: DateTime(2026, 9, 28, 17, 40),
+            enseignant: FauxServiceEnseignant()
+              ..seancesRendues = <SeanceEnseignant>[
+                _anNour(statut: StatutSeance.enCours),
+              ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.enseignant.journee.rejoindreSalle));
+      await tester.pumpAndSettle();
+      expect(find.text('salle:an-nour:true:g-an-nour'), findsOneWidget);
+    });
+
+    testWidgets('Remplir le cahier ouvre le cahier de la seance', (
+      WidgetTester tester,
+    ) async {
+      _fenetre(tester, const Size(390, 2400));
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: Routes.enseignantJournee,
+          routes: _routes(),
+          surcharges: _surcharges(
+            maintenant: DateTime(2026, 9, 28, 18, 40),
+            enseignant: FauxServiceEnseignant()
+              ..seancesRendues = <SeanceEnseignant>[
+                _anNour(statut: StatutSeance.terminee),
+              ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.enseignant.journee.remplirCahier));
+      await tester.pumpAndSettle();
+      expect(find.text('cahier:an-nour'), findsOneWidget);
+    });
+
+    testWidgets('cahier depose : Voir le cahier en lien, sans bouton plein', (
+      WidgetTester tester,
+    ) async {
+      await carte(
+        tester,
+        DateTime(2026, 9, 28, 18, 40),
+        statut: StatutSeance.terminee,
+        depose: true,
+      );
+      final Finder lien = find.byKey(
+        const ValueKey<String>('journee-voir-cahier'),
+      );
+      expect(lien, findsOneWidget);
+      expect(
+        find.text(t.enseignant.journee.voirCahier(classe: "d'An-Nour")),
+        findsOneWidget,
+      );
+      expect(find.text(t.enseignant.journee.remplirCahier), findsNothing);
+      expect(find.text(t.enseignant.journee.rejoindreSalle), findsNothing);
+      expect(find.byType(ActionPrincipale), findsNothing);
+    });
+
+    testWidgets('Voir le cahier ouvre le cahier de la seance', (
+      WidgetTester tester,
+    ) async {
+      _fenetre(tester, const Size(390, 2400));
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: Routes.enseignantJournee,
+          routes: _routes(),
+          surcharges: _surcharges(
+            maintenant: DateTime(2026, 9, 28, 18, 40),
+            enseignant: FauxServiceEnseignant()
+              ..seancesRendues = <SeanceEnseignant>[
+                seanceDeTest(
+                  id: 'an-nour',
+                  debut: DateTime(2026, 9, 28, 17, 30),
+                  statut: StatutSeance.terminee,
+                  cahierDepose: true,
+                  groupeId: 'g-an-nour',
+                  groupeLibelle: 'An-Nour',
+                ),
+              ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey<String>('journee-voir-cahier')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('cahier:an-nour'), findsOneWidget);
+    });
+
+    testWidgets('l etat se rafraichit a la minute : la salle ouvre', (
+      WidgetTester tester,
+    ) async {
+      DateTime maintenant = DateTime(2026, 9, 28, 17, 19);
+      _fenetre(tester, const Size(390, 2400));
+      await tester.pumpWidget(
+        hote(
+          const JourneePage(),
+          surcharges: _surcharges(
+            horloge: () => maintenant,
+            enseignant: FauxServiceEnseignant()
+              ..seancesRendues = <SeanceEnseignant>[_anNour()],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(t.enseignant.journee.preparerSeance), findsOneWidget);
+      maintenant = DateTime(2026, 9, 28, 17, 21);
+      await tester.pump(const Duration(minutes: 1));
+      await tester.pumpAndSettle();
+      expect(find.text(t.enseignant.journee.rejoindreSalle), findsOneWidget);
+      expect(find.text(t.enseignant.journee.preparerSeance), findsNothing);
+    });
+
+    final List<(String, Size, double, Brightness)>
+    vues = <(String, Size, double, Brightness)>[
+      ('320 px, texte x1, clair', const Size(320, 2400), 1, Brightness.light),
+      ('320 px, texte x2, clair', const Size(320, 2400), 2, Brightness.light),
+      ('320 px, texte x2, sombre', const Size(320, 2400), 2, Brightness.dark),
+      ('1440 px, texte x1, clair', const Size(1440, 1000), 1, Brightness.light),
+      ('1440 px, texte x2, sombre', const Size(1440, 1000), 2, Brightness.dark),
+    ];
+    final List<(String, DateTime, StatutSeance, String)> moments =
+        <(String, DateTime, StatutSeance, String)>[
+          (
+            'avant l heure',
+            DateTime(2026, 9, 28, 16),
+            StatutSeance.planifiee,
+            t.enseignant.journee.preparerSeance,
+          ),
+          (
+            'pendant le creneau',
+            DateTime(2026, 9, 28, 17, 40),
+            StatutSeance.enCours,
+            t.enseignant.journee.rejoindreSalle,
+          ),
+          (
+            'temps ecoule',
+            DateTime(2026, 9, 28, 18, 40),
+            StatutSeance.terminee,
+            t.enseignant.journee.remplirCahier,
+          ),
+        ];
+    for (final (String, Size, double, Brightness) vue in vues) {
+      for (final (String, DateTime, StatutSeance, String) moment in moments) {
+        testWidgets(
+          'le bouton reste centre et dans l ecran, ${moment.$1} : ${vue.$1}',
+          (WidgetTester tester) async {
+            await carte(
+              tester,
+              moment.$2,
+              statut: moment.$3,
+              taille: vue.$2,
+              texte: vue.$3,
+              theme: vue.$4,
+            );
+            verifierBoutonCentre(
+              tester,
+              find.byType(ActionPrincipale).first,
+              moment.$4,
+            );
+            final Object? exception = tester.takeException();
+            expect(
+              exception,
+              isNull,
+              reason: exception is FlutterError
+                  ? exception.toStringDeep()
+                  : '$exception',
+            );
+          },
+        );
+      }
+    }
   });
 
   group('ENS-02 : Ma journee', () {

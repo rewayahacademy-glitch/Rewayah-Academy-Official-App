@@ -64,7 +64,7 @@ Future<void> _poser(WidgetTester tester, EtatDemoClasse etat) async {
 }
 
 Finder get _preparer =>
-    find.widgetWithText(ActionPrincipale, t.classe.entree.preparer);
+    find.widgetWithText(ActionPrincipale, t.enseignant.journee.rejoindreSalle);
 
 void main() {
   testWidgets('seance annulee : pastille, heures barrees, pourquoi, carte '

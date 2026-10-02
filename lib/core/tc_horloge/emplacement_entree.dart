@@ -12,7 +12,7 @@ enum RoleEntree {
   /// Eleve en Interface guidee.
   eleveGuide,
 
-  /// Enseignant : son bouton mene toujours a la preparation.
+  /// Enseignant : « Rejoindre la salle » (CTA-FIN-1), par la preparation.
   enseignant,
 }
 
@@ -283,10 +283,10 @@ class EmplacementEntree {
       etat: etat,
       forme: FormeEntree.bouton,
       libelle: enseignant
-          ? t.classe.entree.preparer
+          ? t.enseignant.journee.rejoindreSalle
           : t.classe.entree.rejoindre,
       libelleLecteur: enseignant
-          ? t.classe.entree.preparerLecteur(classe: nomClasse)
+          ? t.enseignant.journee.rejoindreSalleLecteur(classe: nomClasse)
           : t.classe.entree.rejoindreLecteur(classe: nomClasse),
       detail: detail,
       annonce: annonce,

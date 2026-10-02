@@ -19,6 +19,7 @@ Principe : corriger la cause (composant partagé de `lib/core`), recenser tous l
 | Bascule de la salle : trois signaux (disque plein ou contour, icône, mot d'état), actions lourdes confirmées | ETATS-BTN-1 (K-54, K-56) | `CommandeSalle` | `bascule-sans-etat` | `commande_salle_test.dart` |
 | Navigation précédent / suivant : flèche, position, flèche, la flèche disparaît aux bornes, miroir RTL | NAV-FLECHES-1 (K-54, K-56) | `BarrePrecedentSuivant` | `nav-a-libelle` | `barre_precedent_suivant_test.dart` |
 | Jamais de rangée de sections qui défile (segmenté jusqu'à 4 sur téléphone, menu au-delà, en ligne si ça tient) | ONGLETS-1 | `SelecteurSection` (`ControleSegmente`, `MenuFiltre`) | `onglets-defilants` | `selecteur_section_test.dart` |
+| Bouton principal d'une séance selon son moment, jamais grisé | CTA-FIN-1 | `ctaSeance`, `EmplacementEntree`, `LienFleche` | `bouton-grise` | `test/core/enseignant/cta_seance_test.dart`, `test/features/journee_test.dart` |
 | Aucun élément ne recouvre un contenu | déduite | | | `verifierSansChevauchement` |
 | Hiérarchie de titres stricte : titre d'écran > titre de section > nom / titre de carte > corps, marque sous le titre | déduite (HIER-1) | `AppTypography`, `EntetePage`, `PageShell`, `SectionHeader`, `MarquePage` | `test/theme/hierarchie_titres_test.dart` | `verifierHierarchie` |
 | État jamais par la couleur seule | déduite | `StatusPill` | revue d'écran | |
@@ -341,3 +342,20 @@ Limites connues des contrôles (heuristiques de texte) : `cartes-collees` ne voi
 - Texte agrandi : plafond du guide relevé de 1,0 à 1,3 (`echelleTexteMaxGuide`), libellés sans ellipse ; test arabe à 320, ×2, RTL.
 - Preuve visuelle : `docs/current/captures/MA-NAV-1/` (`avant` = ad0e2c6, `apres` ; élève, clair/sombre, 320, 320 ×2, tablette, bureau ; harnais `test/capture/ma_nav1_capture_test.dart`).
 - À trancher par le directeur : le Coran n'est plus dans la barre de l'élève en Mode Accessibilité (accès par le bloc Coran de l'Accueil) ; confirmer qu'aucun autre écran n'exige un accès direct. Le plafond 1,3 est un choix de conception.
+## CTA-FIN-1 : le bouton principal d'une séance selon son moment (02/10/2026)
+
+Demande du directeur (commentaire du 01/10) : le bouton d'une séance n'est jamais désactivé, il change de sens.
+
+| Moment | Bouton | Avant la correction |
+|---|---|---|
+| Avant l'ouverture de la salle | « Préparer la séance » | idem |
+| Salle ouverte, jusqu'à la fin et au-delà tant que la salle est ouverte | « Rejoindre la salle » (+ pastille « En direct » dès l'heure de début) | « Préparer l'entrée » |
+| Temps écoulé, cahier non déposé | « Remplir le cahier de transmission » + rappel « Obligatoire » | carte absente (« Aucune séance à venir »), cahier seulement dans « À terminer » |
+| Cahier déposé | « Voir le cahier » en lien discret | carte absente |
+| Séance annulée ou absence déclarée | « Voir la Classe » | idem |
+
+Cause corrigée dans le composant partagé : `lib/core/enseignant/cta_seance.dart` (fonctions pures `ctaSeance` et `seanceDeLaCarte`, fenêtre d'accès et grâce lues de la base, jamais redéclarées), `EmplacementEntree` (libellé enseignant unique pour la Journée et la fiche de la Classe), `EmplacementEntreeVue` (un bouton de bureau ne déborde plus de sa carte en texte agrandi).
+
+Chiffres (avant, après) : états du bouton de la carte « Prochaine séance » de l'enseignant, 4 libellés dont 1 hors des moments demandés, puis 5 états tous nommés ; libellés différents pour la même action « entrer en salle » côté enseignant, 2 (« Préparer l'entrée » en Classe, rien en Journée pendant le cours) puis 1 (« Rejoindre la salle ») ; débordements mesurés à 320 px en texte ×2 sur la carte de séance, 1 (en-tête nom et pastille) puis 0 ; débordements mesurés à 1440 px en texte ×2 (bouton « Remplir le cahier de transmission »), 1 puis 0 ; tests de transitions, 0 puis 20 (unitaires) et 25 (widget).
+
+Recensé, non repris ici (autre lot) : le bouton « Rejoindre » de l'élève hors ligne reste présent et inerte (`accueil_eleve_page.dart`, décision documentée dans le code), compté par `bouton-grise`.

@@ -7,5 +7,13 @@
   "tc.bibliotheque.sections.groupe": "commentaire du directeur 01-02/10, etape ONGLETS-1",
   "etat.seanceAnnulee": "commentaire du directeur 01-02/10, etape ANNUL-VIS-1 : pastille « Annulée » sur la couleur d'erreur, icône d'annulation",
   "etat.heureAnnulee": "commentaire du directeur 01-02/10, etape ANNUL-VIS-1 : heure barrée, annoncée au lecteur d'écran",
-  "etat.raisonEtSuite": "commentaire du directeur 01-02/10, etape ANNUL-VIS-1 : une ligne dit pourquoi et la suite"
+  "etat.raisonEtSuite": "commentaire du directeur 01-02/10, etape ANNUL-VIS-1 : une ligne dit pourquoi et la suite",
+  "enseignant.journee.derniereSeance": "commentaire du directeur 01-02/10, etape CTA-FIN-1",
+  "enseignant.journee.rejoindreSalle": "commentaire du directeur 01-02/10, etape CTA-FIN-1",
+  "enseignant.journee.rejoindreSalleLecteur": "commentaire du directeur 01-02/10, etape CTA-FIN-1",
+  "enseignant.journee.remplirCahier": "commentaire du directeur 01-02/10, etape CTA-FIN-1",
+  "enseignant.journee.remplirCahierLecteur": "commentaire du directeur 01-02/10, etape CTA-FIN-1",
+  "enseignant.journee.cahierObligatoire": "commentaire du directeur 01-02/10, etape CTA-FIN-1",
+  "enseignant.journee.voirCahier": "commentaire du directeur 01-02/10, etape CTA-FIN-1",
+  "enseignant.journee.voirCahierLecteur": "commentaire du directeur 01-02/10, etape CTA-FIN-1"
 }

@@ -38,6 +38,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/controle/service_controle.dart' show graceApresFin;
 import '../../core/domain/enums.dart';
 import '../../core/enseignant/absence_remplacement.dart';
+import '../../core/enseignant/cta_seance.dart';
 import '../../core/enseignant/depot_cahiers.dart' show cahiersEnFileProvider;
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
@@ -51,6 +52,7 @@ import '../../core/priere/reglages_priere.dart';
 import '../../core/priere/service_priere.dart';
 import '../../core/regles/service_regles.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
@@ -247,7 +249,14 @@ class _Corps extends ConsumerWidget {
 
     return _Composition(
       prochaine: _CarteProchaineSeance(
-        seance: dominant,
+        // CTA-FIN-1 : la seance dont le bouton agit maintenant (salle ouverte,
+        // cahier manquant, a venir, cahier depose), pas seulement la suivante.
+        seance: seanceDeLaCarte(
+          toutes,
+          maintenant,
+          fenetreAcces: seuilOuvertureSalle,
+          graceApresFin: graceApresFin,
+        ),
         maintenant: maintenant,
       ),
       remplacements: <Widget>[
@@ -385,56 +394,85 @@ class _Composition extends StatelessWidget {
 
 /// E11 : l'emplacement de la carte « Prochaine seance », depuis celui de CL-4.
 ///
-/// Ce que CL-4 montre en bouton (« Preparer l'entree », avec son decompte) et
-/// ce qui propose « Reessayer » restent tels quels. Aux etats ou CL-4 ne pose
-/// qu'une ligne, la ligne devient le contexte calme et un seul bouton suit :
-/// - avant la fenetre : « Preparer la seance » ;
-/// - apres la seance, cahier non depose : « Finaliser le cahier » ;
-/// - sinon (annulee, terminee et deposee) : « Voir la Classe ».
+/// **CTA-FIN-1 : le bouton ne se grise jamais, il change de sens** selon
+/// [cta] (calcule par `ctaSeance`, `lib/core/enseignant/cta_seance.dart`) :
+/// - avant l'heure : « Preparer la seance » ;
+/// - pendant le creneau, et tant que la salle est ouverte : « Rejoindre la
+///   salle » ;
+/// - temps ecoule, cahier non depose : « Remplir le cahier de transmission »,
+///   avec le rappel qu'il est obligatoire ;
+/// - cahier depose : une ligne seule ; « Voir le cahier » est un lien discret
+///   que la carte pose sous la ligne (K-56, un seul bouton plein) ;
+/// - seance annulee ou absence declaree : « Voir la Classe ».
 ///
-/// Pendant le pre-vol (`preparation`), la ligne seule : l'enseignant est deja
-/// en train de faire le geste. Jamais de bouton grise.
+/// Ce que CL-4 propose en « Reessayer » (hors ligne, lecture) et la ligne de
+/// preparation restent tels quels : sans information fiable, on ne propose pas
+/// d'entrer.
 EmplacementEntree emplacementJournee(
   EmplacementEntree base, {
   required String nomClasse,
-  required bool cahierAFinaliser,
+  required EtatCtaSeance cta,
   EtatAbsence? absence,
 }) {
   // ENS-13 : une absence declaree (hors « Demande annulee », ou l'enseignant
   // assure de nouveau la seance) ne laisse que « Voir la Classe » (E11, doc 04
   // §17.1 et §17.2).
   final bool absent = absence != null && absence != EtatAbsence.demandeAnnulee;
-  if (base.reessayer ||
-      base.etat == EtatEntree.preparation ||
-      (base.estBouton && !absent)) {
+  if (base.reessayer || base.etat == EtatEntree.preparation) {
     return base;
   }
-  final (String libelle, String lecteur) = switch (base.etat) {
-    _ when absent => (
-      t.enseignant.journee.voirClasse,
-      t.enseignant.journee.voirClasseLecteur(classe: nomClasse),
-    ),
-    EtatEntree.aVenir => (
+  // Le contexte calme au-dessus du bouton : la phrase d'etat de CL-4, qu'elle
+  // etait une ligne ou deja un bouton.
+  final String? contexte = base.estBouton ? base.detail : base.libelle;
+  final EtatCtaSeance voulu = absent ? EtatCtaSeance.voirClasse : cta;
+  final (String libelle, String lecteur, String? detail) = switch (voulu) {
+    EtatCtaSeance.preparer => (
       t.enseignant.journee.preparerSeance,
       t.enseignant.journee.preparerSeanceLecteur(classe: deDevant(nomClasse)),
+      contexte,
     ),
-    EtatEntree.terminee when cahierAFinaliser => (
-      t.enseignant.journee.finaliserCahier,
-      t.enseignant.journee.finaliserCahierLecteur(classe: deDevant(nomClasse)),
+    EtatCtaSeance.rejoindre => (
+      t.enseignant.journee.rejoindreSalle,
+      t.enseignant.journee.rejoindreSalleLecteur(classe: nomClasse),
+      contexte,
     ),
-    _ => (
+    EtatCtaSeance.remplirCahier => (
+      t.enseignant.journee.remplirCahier,
+      t.enseignant.journee.remplirCahierLecteur(classe: nomClasse),
+      t.enseignant.journee.cahierObligatoire(classe: deDevant(nomClasse)),
+    ),
+    EtatCtaSeance.voirCahier => (
+      t.enseignant.journee.voirCahier(classe: deDevant(nomClasse)),
+      t.enseignant.journee.voirCahierLecteur(classe: nomClasse),
+      null,
+    ),
+    EtatCtaSeance.voirClasse => (
       t.enseignant.journee.voirClasse,
       t.enseignant.journee.voirClasseLecteur(classe: nomClasse),
+      contexte,
     ),
   };
+  if (voulu == EtatCtaSeance.voirCahier) {
+    // Une ligne seule : le lien « Voir le cahier » est rendu par la carte.
+    return EmplacementEntree(
+      role: base.role,
+      etat: EtatEntree.terminee,
+      forme: FormeEntree.ligne,
+      libelle: t.classe.entree.terminee,
+      libelleLecteur: lecteur,
+      annonce: t.classe.entree.terminee,
+      avisDst: base.avisDst,
+    );
+  }
   return EmplacementEntree(
     role: base.role,
-    etat: base.etat,
+    etat: voulu == EtatCtaSeance.remplirCahier
+        ? EtatEntree.terminee
+        : base.etat,
     forme: FormeEntree.bouton,
     libelle: libelle,
     libelleLecteur: lecteur,
-    // Un bouton de CL-4 remplace porte deja son contexte dans `detail`.
-    detail: base.estBouton ? base.detail : base.libelle,
+    detail: detail,
     annonce: base.annonce,
     avisDst: base.avisDst,
   );
@@ -473,7 +511,16 @@ class _CarteProchaineSeance extends ConsumerWidget {
       );
     }
 
-    final bool enCours = cours.enCoursA(maintenant);
+    final CtaSeance cta = ctaDeSeance(
+      cours,
+      maintenant,
+      fenetreAcces: seuilOuvertureSalle,
+      graceApresFin: graceApresFin,
+    );
+    final bool enCours = cta.enDirect;
+    final bool terminee =
+        cta.etat == EtatCtaSeance.remplirCahier ||
+        cta.etat == EtatCtaSeance.voirCahier;
     final String nom = _nomClasse(cours.groupeLibelle);
     final DeclarationAbsence? declaration = ref.watch(
       declarationAbsenceProvider,
@@ -498,6 +545,7 @@ class _CarteProchaineSeance extends ConsumerWidget {
         dateLocaleRendue: dateLisible(cours.debut),
       ),
       sessionId: cours.id,
+      seanceOuverte: salleOuverteSelon(cours.statut),
     );
     // Une seance annulee (par le serveur, ou parce que l'absence declaree n'a
     // trouve aucun remplacant) : surface enfoncee, horaire barre, et la ligne
@@ -514,7 +562,7 @@ class _CarteProchaineSeance extends ConsumerWidget {
         horsLigne: horsLigne,
       ),
       nomClasse: nom,
-      cahierAFinaliser: !cours.cahierDepose,
+      cta: cta.etat,
       absence: absence,
     );
 
@@ -524,6 +572,8 @@ class _CarteProchaineSeance extends ConsumerWidget {
         SectionHeader(
           titre: enCours
               ? t.enseignant.journee.coursEnCours
+              : terminee
+              ? t.enseignant.journee.derniereSeance
               : t.enseignant.journee.prochaineSeance,
         ),
         Ecart.vSm,
@@ -532,16 +582,20 @@ class _CarteProchaineSeance extends ConsumerWidget {
           surface: seanceAnnulee
               ? surfaceCarteSeance(palette, annulee: true)
               : null,
-          entete: Row(
+          // La pastille passe sous le nom quand elle ne tient pas a cote : a
+          // 320 px et en texte x2, rien ne deborde (K-54).
+          entete: Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
             children: <Widget>[
-              Expanded(
-                child: Semantics(
-                  header: true,
-                  child: Text(
-                    nom,
-                    key: const ValueKey<String>('journee-carte-classe'),
-                    style: textes.titleLarge ?? const TextStyle(),
-                  ),
+              Semantics(
+                header: true,
+                child: Text(
+                  nom,
+                  key: const ValueKey<String>('journee-carte-classe'),
+                  style: textes.titleLarge ?? const TextStyle(),
                 ),
               ),
               if (enCours)
@@ -612,6 +666,26 @@ class _CarteProchaineSeance extends ConsumerWidget {
                 onEntrer: () => _agir(context, ref, cours, emplacement),
                 onReessayer: () => ref.invalidate(seancesEnseignantProvider),
               ),
+              // CTA-FIN-1 : cahier depose, « Voir le cahier » est un lien
+              // discret, jamais un bouton plein (K-56).
+              if (cta.etat == EtatCtaSeance.voirCahier &&
+                  !emplacement.reessayer &&
+                  absence == null) ...<Widget>[
+                Ecart.vSm,
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: LienFleche(
+                    key: const ValueKey<String>('journee-voir-cahier'),
+                    libelle: t.enseignant.journee.voirCahier(
+                      classe: deDevant(nom),
+                    ),
+                    onPress: () => unawaited(
+                      GoRouter.of(context)
+                          .push<void>(Routes.cahierPour(cours.id)),
+                    ),
+                  ),
+                ),
+              ],
               // ENS-13 : l'absence s'ouvre depuis sa seance (E3), une fois,
               // avant la seance. Ensuite, l'etat rendu par le serveur reste
               // lisible sur la pastille (doc 04 §17.2).
@@ -665,7 +739,7 @@ class _CarteProchaineSeance extends ConsumerWidget {
     EmplacementEntree emplacement,
   ) async {
     final GoRouter routeur = GoRouter.of(context);
-    if (emplacement.libelle == t.enseignant.journee.finaliserCahier) {
+    if (emplacement.libelle == t.enseignant.journee.remplirCahier) {
       await routeur.push<void>(Routes.cahierPour(cours.id));
       if (context.mounted) {
         ref.invalidate(cahiersEnRetardProvider);
@@ -676,6 +750,21 @@ class _CarteProchaineSeance extends ConsumerWidget {
     final String? idGroupe = cours.groupeId;
     if (idGroupe == null) {
       routeur.go(Routes.enseignantClasses);
+      return;
+    }
+    if (emplacement.libelle == t.enseignant.journee.rejoindreSalle) {
+      // « Rejoindre la salle » mene a la salle, par son pre-vol : meme chemin
+      // que le bouton de la fiche de la Classe, un seul geste (CTA-FIN-1).
+      routeur.go(
+        Routes.salle,
+        // Le billet passe par `extra`, jamais par l'URL (ADR-005).
+        extra: BilletSalle(
+          sessionId: cours.id,
+          emisA: DateTime.now(),
+          preparation: true,
+          groupeId: idGroupe,
+        ),
+      );
       return;
     }
     // `push` : le retour de l'Espace Classe se referme sur Aujourd'hui (R1).

@@ -81,6 +81,6 @@ void main() {
     await tester.pump();
     // CL-4.4 : le VRAI ecran enseignant, et son bouton.
     expect(find.byType(FicheGroupePage), findsOneWidget);
-    expect(find.text("Préparer l'entrée"), findsOneWidget);
+    expect(find.text('Rejoindre la salle'), findsOneWidget);
   });
 }
