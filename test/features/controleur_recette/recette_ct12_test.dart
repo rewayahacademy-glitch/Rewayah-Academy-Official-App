@@ -157,7 +157,7 @@ void main() {
       expect(Directionality.of(contexte), TextDirection.rtl);
       // Le titre de la mission se range a droite de l'ecran.
       final Rect titre = tester.getRect(
-        find.text(t.controleur.controle.mission),
+        find.text(t.controleur.controle.missionEnDirect),
       );
       _barreRetournee(tester);
       expect(titre.width, greaterThan(0));

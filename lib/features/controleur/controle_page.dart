@@ -269,7 +269,14 @@ class _CarteMission extends StatelessWidget {
         children: <Widget>[
           Semantics(
             header: true,
-            child: Text(t.controleur.controle.mission, style: doux),
+            // Decision du directeur C1 = a (27/09) : « Mission en cours »
+            // pendant le direct, « Votre prochaine mission » sinon.
+            child: Text(
+              _enDirect
+                  ? t.controleur.controle.missionEnDirect
+                  : t.controleur.controle.mission,
+              style: doux,
+            ),
           ),
           Ecart.vSm,
           Text(mission.classe, style: fort),

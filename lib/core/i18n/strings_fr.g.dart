@@ -9209,6 +9209,9 @@ class Traductions$controleur$controle$fr {
 	/// fr: 'Votre prochaine mission'
 	String get mission => 'Votre prochaine mission';
 
+	/// fr: 'Mission en cours'
+	String get missionEnDirect => 'Mission en cours';
+
 	/// fr: 'Commencer le contrôle'
 	String get commencer => 'Commencer le contrôle';
 
@@ -9224,8 +9227,8 @@ class Traductions$controleur$controle$fr {
 	/// fr: 'Le contrôle s'ouvrira dès que la séance sera en direct.'
 	String get attente => 'Le contrôle s\'ouvrira dès que la séance sera en direct.';
 
-	/// fr: 'Visite en mode incognito : votre présence n'est pas annoncée à l'enseignant.'
-	String get incognito => 'Visite en mode incognito : votre présence n\'est pas annoncée à l\'enseignant.';
+	/// fr: 'Votre présence n'est pas annoncée en temps réel.'
+	String get incognito => 'Votre présence n\'est pas annoncée en temps réel.';
 
 	/// fr: '{debut} à {fin}'
 	String horaire({required Object debut, required Object fin}) => '${debut} à ${fin}';
@@ -16239,12 +16242,13 @@ extension on Traductions {
 			'controleur.acces.revenir' => 'Revenir à mon espace',
 			'controleur.controle.titre' => 'Contrôle',
 			'controleur.controle.mission' => 'Votre prochaine mission',
+			'controleur.controle.missionEnDirect' => 'Mission en cours',
 			'controleur.controle.commencer' => 'Commencer le contrôle',
 			'controleur.controle.vide' => 'Aucun contrôle n\'est à réaliser pour le moment.',
 			'controleur.controle.videAide' => 'Rewayah vous proposera une mission lorsqu\'une séance compatible sera disponible.',
 			'controleur.controle.indisponible' => 'Cette mission n\'est plus disponible.',
 			'controleur.controle.attente' => 'Le contrôle s\'ouvrira dès que la séance sera en direct.',
-			'controleur.controle.incognito' => 'Visite en mode incognito : votre présence n\'est pas annoncée à l\'enseignant.',
+			'controleur.controle.incognito' => 'Votre présence n\'est pas annoncée en temps réel.',
 			'controleur.controle.horaire' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'controleur.controle.duree' => ({required Object minutes}) => '${minutes} min prévues',
 			'controleur.controle.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève', other: '${n} élèves', ), 
@@ -16419,9 +16423,9 @@ extension on Traductions {
 			'tc.outils.portee.seance' => 'Jusqu\'à la fin du cours',
 			'tc.outils.portee.enregistree' => 'Enregistrer',
 			'tc.outils.portee.aide' => 'Combien de temps garder ces annotations ?',
-			'tc.outils.marquer.titre' => 'Marquer ce passage',
 			_ => null,
 		} ?? switch (path) {
+			'tc.outils.marquer.titre' => 'Marquer ce passage',
 			'tc.outils.marquer.aide' => 'Choisissez ce que ce passage demande.',
 			'tc.outils.marquer.retirer' => 'Retirer le marqueur',
 			'tc.outils.revision.titre' => 'À préparer',

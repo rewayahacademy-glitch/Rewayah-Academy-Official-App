@@ -3340,12 +3340,13 @@
     "controle": {
       "titre": "Contrôle",
       "mission": "Votre prochaine mission",
+      "missionEnDirect": "Mission en cours",
       "commencer": "Commencer le contrôle",
       "vide": "Aucun contrôle n'est à réaliser pour le moment.",
       "videAide": "Rewayah vous proposera une mission lorsqu'une séance compatible sera disponible.",
       "indisponible": "Cette mission n'est plus disponible.",
       "attente": "Le contrôle s'ouvrira dès que la séance sera en direct.",
-      "incognito": "Visite en mode incognito : votre présence n'est pas annoncée à l'enseignant.",
+      "incognito": "Votre présence n'est pas annoncée en temps réel.",
       "horaire": "{debut} à {fin}",
       "duree": "{minutes} min prévues",
       "eleves": {
