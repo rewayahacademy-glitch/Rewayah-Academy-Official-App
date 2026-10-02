@@ -221,8 +221,10 @@ class _Corps extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       r.title,
+                      // Le titre de la ressource : un cran sous le titre d'ecran
+                      // de la page (HIER-1), jamais a la meme taille.
                       style: palette.surfaceRaised.applyTo(
-                        textes.headlineSmall ?? const TextStyle(),
+                        textes.titleLarge ?? const TextStyle(),
                       ),
                     ),
                     Ecart.vXs,

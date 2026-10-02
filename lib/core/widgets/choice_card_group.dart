@@ -184,13 +184,13 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
         ],
         if (widget.coteACote)
           Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.md),
+            padding: const EdgeInsets.only(bottom: AppSpacing.lg),
             child: IntrinsicHeight(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   for (int i = 0; i < widget.options.length; i++) ...<Widget>[
-                    if (i > 0) Ecart.hMd,
+                    if (i > 0) Ecart.hLg,
                     Expanded(
                       child: _carteOption(widget.options[i], verticale: true),
                     ),
@@ -202,7 +202,7 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
         else
           for (final OptionChoix option in widget.options)
             Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.md),
+              padding: const EdgeInsets.only(bottom: AppSpacing.lg),
               child: _carteOption(option, verticale: false),
             ),
         if (widget.autoriserSaisieLibre)

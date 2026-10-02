@@ -11,9 +11,11 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/features/eleve_connexion/eleve_connexion_page.dart';
 import 'package:rewayah_academy/features/eleve_connexion/saisie_code_page.dart';
 
+import '../support/garde_interface.dart';
 import '../support/harnais.dart';
 
 /// Une base locale qui refuse de s'ouvrir.
@@ -38,6 +40,25 @@ class _ProfilsConnus implements ProfilsLocaux {
   @override
   Future<List<ProfilLocal>> lister() async => const <ProfilLocal>[
     ProfilLocal(id: 'p1', prenom: 'Aminata', identifiantImmuable: 'i1'),
+  ];
+
+  @override
+  Future<void> enregistrer(ProfilLocal profil) async {}
+
+  @override
+  Future<void> oublier(String profilId) async {}
+}
+
+/// Une base locale qui connait cinq personnes : trois rangees de deux, la
+/// derniere a moitie vide.
+class _ProfilsPlusieurs implements ProfilsLocaux {
+  @override
+  Future<List<ProfilLocal>> lister() async => const <ProfilLocal>[
+    ProfilLocal(id: 'p1', prenom: 'Aminata', identifiantImmuable: 'i1'),
+    ProfilLocal(id: 'p2', prenom: 'Moussa', identifiantImmuable: 'i2'),
+    ProfilLocal(id: 'p3', prenom: 'Yacine', identifiantImmuable: 'i3'),
+    ProfilLocal(id: 'p4', prenom: 'Awa', identifiantImmuable: 'i4'),
+    ProfilLocal(id: 'p5', prenom: 'Omar', identifiantImmuable: 'i5'),
   ];
 
   @override
@@ -102,6 +123,49 @@ String _lieu(GoRouter routeur) =>
     routeur.routerDelegate.currentConfiguration.uri.path;
 
 void main() {
+  group('ELV-01 : profils separes de 16 (K-55)', () {
+    for (final double largeur in <double>[320, 1440]) {
+      testWidgets('les cartes de profil ne se collent pas a $largeur px', (
+        WidgetTester tester,
+      ) async {
+        tester.view.physicalSize = Size(largeur, 4000);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        await _monter(tester, _ProfilsPlusieurs());
+
+        // A 1440 px la page pose les profils dans une carte plus large : on
+        // designe chaque carte de profil par le prenom qu'elle porte.
+        final int n = verifierEcartEntre(tester, <Finder>[
+          for (final String prenom in <String>[
+            'Aminata',
+            'Moussa',
+            'Yacine',
+            'Awa',
+            'Omar',
+          ])
+            find
+                .ancestor(of: find.text(prenom), matching: find.byType(AppCard))
+                .first,
+        ]);
+        expect(n, 5);
+        // La carte designee est bien celle du profil, pas la carte englobante.
+        expect(
+          tester
+              .getSize(
+                find
+                    .ancestor(
+                      of: find.text('Aminata'),
+                      matching: find.byType(AppCard),
+                    )
+                    .first,
+              )
+              .width,
+          lessThan(largeur * 0.75),
+        );
+      });
+    }
+  });
+
   group('ELV-01 : l entree de l eleve', () {
     testWidgets('une base locale indisponible mene a la saisie du code', (
       WidgetTester tester,

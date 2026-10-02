@@ -331,7 +331,7 @@ class FeuilleRegles extends ConsumerWidget {
         Ecart.vMd,
         for (final RegleProfil regle in lignes)
           Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            padding: const EdgeInsets.only(bottom: AppSpacing.lg),
             child: _LigneRegle(
               regle: regle,
               profilId: profilId,

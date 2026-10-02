@@ -740,8 +740,10 @@ class _ATerminer extends ConsumerWidget {
                 header: true,
                 child: Text(
                   t.enseignant.journee.aTerminer,
+                  // Un titre de section : `titleLarge`, comme `SectionHeader` ; la
+                  // page porte son titre d'ecran au rang `headline*` (HIER-1).
                   style: palette.surfaceCanvas.applyTo(
-                    textes.headlineSmall ?? const TextStyle(),
+                    textes.titleLarge ?? const TextStyle(),
                   ),
                 ),
               ),

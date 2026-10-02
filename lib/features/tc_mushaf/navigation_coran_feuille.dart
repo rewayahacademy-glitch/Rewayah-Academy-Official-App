@@ -116,7 +116,7 @@ class _FeuilleNavigationCoranEtat
                 Navigator.of(context).pop();
               },
             ),
-            const SizedBox(height: AppSpacing.sm),
+            const SizedBox(height: AppSpacing.lg),
           ],
       ],
     );

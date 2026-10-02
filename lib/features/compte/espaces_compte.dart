@@ -30,6 +30,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
+import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/setting_row.dart';
@@ -314,17 +315,21 @@ class SelecteurEspaces extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        for (final EspaceTravail espace in espaces.disponibles)
-          SettingRow(
-            key: cleEspace(espace),
-            title: libelleEspace(espace),
-            description: _detailEspace(espace),
-            value: espace == espaces.actif ? t.compte.actif : null,
-            icon: _iconeEspace(espace),
-            onPress: espaces.peutRejoindre(espace)
-                ? () => rejoindre(espace)
-                : null,
-          ),
+        CarteLignes(
+          lignes: <Widget>[
+            for (final EspaceTravail espace in espaces.disponibles)
+              SettingRow(
+                key: cleEspace(espace),
+                title: libelleEspace(espace),
+                description: _detailEspace(espace),
+                value: espace == espaces.actif ? t.compte.actif : null,
+                icon: _iconeEspace(espace),
+                onPress: espaces.peutRejoindre(espace)
+                    ? () => rejoindre(espace)
+                    : null,
+              ),
+          ],
+        ),
         if (espaces.retenuParMission) ...<Widget>[
           Ecart.vSm,
           Semantics(

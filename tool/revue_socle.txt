@@ -57,11 +57,6 @@ bouton-grise|lib/features/tc_mushaf/mushaf_page.dart|onPress: precedente == null
 bouton-grise|lib/features/tc_mushaf/mushaf_page.dart|onPress: suivante == null ? null : () => onPage(suivante)
 bouton-grise|lib/features/tc_observation_ui/choix_entree_observation.dart|onPress: options.observationPossible ? onEntrer : null
 bouton-grise|lib/features/tc_observation_ui/module_reglages_observation.dart|onPress: _etat.valide ? () => widget.onEnregistrer( _etat.appliquerA(widget.politiqueAcademie), ) : null
-cartes-collees|lib/features\admin_tableau\tableau_de_bord_page.dart|StatTile n°1
-cartes-collees|lib/features\admin_tableau\tableau_de_bord_page.dart|StatTile n°2
-cartes-collees|lib/features\admin_tableau\tableau_de_bord_page.dart|StatTile n°3
-cartes-collees|lib/features\admin_tableau\tableau_de_bord_page.dart|StatTile n°4
-cartes-collees|lib/features\admin_tableau\tableau_de_bord_page.dart|StatTile n°5
 erreur-sans-action|assets/i18n/fr.i18n.json|admin.agents.erreur : La liste des jetons n'a pas pu être lue.
 erreur-sans-action|assets/i18n/fr.i18n.json|admin.attribution.erreur : L'attribution n'a pas abouti : {message}
 erreur-sans-action|assets/i18n/fr.i18n.json|admin.conservationDonnees.erreurEcriture : L'enregistrement n'a pas abouti : {message}

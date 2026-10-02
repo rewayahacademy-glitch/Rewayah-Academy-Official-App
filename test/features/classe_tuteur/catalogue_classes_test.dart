@@ -24,6 +24,7 @@ import 'package:rewayah_academy/core/seance_famille/seance_famille.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
@@ -35,6 +36,7 @@ import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
 
 import '../../fixtures/tuteur/faux_classes_foyer.dart';
 import '../../router/support_routeur.dart';
+import '../../support/garde_interface.dart';
 import 'support_classe.dart';
 
 final _c = t.classe.pageCatalogue;
@@ -123,6 +125,28 @@ FauxClassesFoyer _classesFoyer() => FauxClassesFoyer(
 );
 
 void main() {
+  group('Catalogue : cartes separees de 16 (K-55)', () {
+    for (final double largeur in <double>[320, 1440]) {
+      testWidgets('les classes proposees ne se collent pas a $largeur px', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          depart: _catalogueA2,
+          catalogue: FauxCatalogueClasses(),
+          taille: Size(largeur, 4000),
+        );
+        expect(find.byType(CarteClasseOuverte), findsNWidgets(3));
+
+        final int n = verifierAucuneCarteCollee(
+          tester,
+          estCarte: (Widget w) => w is AppCard || w is CarteClasseOuverte,
+        );
+        expect(n, greaterThanOrEqualTo(3));
+      });
+    }
+  });
+
   group('Catalogue : parcours touches depuis la barre de navigation', () {
     testWidgets('choisir une classe ouverte, confirmer, puis « Voir la '
         'classe » ouvre la classe de l eleve', (WidgetTester tester) async {

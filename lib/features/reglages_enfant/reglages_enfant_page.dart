@@ -17,6 +17,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/bento_tile.dart';
+import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/groupe_reglages.dart';
@@ -60,23 +61,27 @@ class ReglagesEnfantPage extends ConsumerWidget {
           Text(t.reglagesEnfant.intro, style: textes.bodySmall),
           Ecart.vXl,
           SectionHeader(titre: t.compte.titre),
-          SettingRow(
-            title: t.compte.profil,
-            description: t.compte.profilDetail,
-            icon: AppIcons.profil,
-            onPress: () => context.push(Routes.compteProfil),
-          ),
-          SettingRow(
-            title: t.compte.profils,
-            description: t.compte.profilsDetail,
-            icon: AppIcons.foyer,
-            onPress: () => context.push(Routes.compteProfils),
-          ),
-          SettingRow(
-            title: t.compte.reglages,
-            description: t.compte.reglagesDetail,
-            icon: AppIcons.reglages,
-            onPress: () => context.push(Routes.compteReglages),
+          CarteLignes(
+            lignes: <Widget>[
+              SettingRow(
+                title: t.compte.profil,
+                description: t.compte.profilDetail,
+                icon: AppIcons.profil,
+                onPress: () => context.push(Routes.compteProfil),
+              ),
+              SettingRow(
+                title: t.compte.profils,
+                description: t.compte.profilsDetail,
+                icon: AppIcons.foyer,
+                onPress: () => context.push(Routes.compteProfils),
+              ),
+              SettingRow(
+                title: t.compte.reglages,
+                description: t.compte.reglagesDetail,
+                icon: AppIcons.reglages,
+                onPress: () => context.push(Routes.compteReglages),
+              ),
+            ],
           ),
           Ecart.vXl,
           if (enfants.hasValue && foyer.isEmpty)

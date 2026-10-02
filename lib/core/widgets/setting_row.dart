@@ -4,6 +4,7 @@ import '../icons/app_icons.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
+import 'carte_lignes.dart';
 import 'pressable.dart';
 
 /// A grouped settings line. It contains presentation only: no profile write,
@@ -36,12 +37,15 @@ class SettingRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = AppPalette.of(context);
     final active = enabled && onPress != null;
+    // Dans une [CarteLignes], la surface est celle de la carte : la ligne se
+    // rend a plat, sans fond ni rayon ni filet propres (K-55).
+    final bool aPlat = LigneDansCarte.de(context);
     return Pressable.selon(
       onPress: active ? onPress : null,
       actif: enabled,
       libelleSemantique: title,
       respecterCibleTactile: false,
-      arrondiFocus: AppRadius.arrondiMd,
+      arrondiFocus: aPlat ? AppRadius.arrondiSm : AppRadius.arrondiMd,
       constructeur: (context, etat) => Container(
         constraints: const BoxConstraints(minHeight: AppPage.hauteurReglage),
         padding: const EdgeInsetsDirectional.symmetric(
@@ -55,8 +59,10 @@ class SettingRow extends StatelessWidget {
                   palette.surfaceRaised.background,
                 )
               : palette.surfaceRaised.background,
-          borderRadius: AppRadius.arrondiMd,
-          border: Border(bottom: palette.contourCarte.asBorderSide()),
+          borderRadius: aPlat ? null : AppRadius.arrondiMd,
+          border: aPlat
+              ? null
+              : Border(bottom: palette.contourCarte.asBorderSide()),
         ),
         child: Row(
           children: <Widget>[

@@ -15,6 +15,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'revue_cartes.dart';
+
 /// Une violation : ou, quelle regle, quoi.
 class Violation {
   /// Cree une violation.
@@ -102,10 +104,6 @@ final RegExp _phraseAction = RegExp(
   r'autorisez|acceptez|accordez|rendez-vous|voir |voyez',
   caseSensitive: false,
 );
-
-/// Les cartes du core : deux appels voisins sans espace entre eux sont des
-/// cartes collees (K-55).
-const String _cartes = r'AppCard|BentoTile|ChildCard|StatTile';
 
 void main(List<String> arguments) {
   final Set<String> regles = <String>{
@@ -389,61 +387,19 @@ int _finChaine(String t, int debut) {
   return -1;
 }
 
-/// L'index de la parenthese ouvrante de l'appel qui contient [index] (on
-/// saute les crochets et accolades : `Column(children: [ ... ])`).
-int _appelParent(String t, int index) {
-  int profondeur = 0;
-  for (int i = index - 1; i >= 0; i--) {
-    final String c = t[i];
-    if (c == ')' || c == ']' || c == '}') {
-      profondeur++;
-    } else if (c == '(' || c == '[' || c == '{') {
-      if (profondeur > 0) {
-        profondeur--;
-      } else if (c == '(') {
-        return i;
-      }
-    }
-  }
-  return -1;
-}
-
-/// K-55 : deux cartes du core consecutives, sans rien entre elles (ni
-/// `Ecart`, ni `SizedBox`, ni separateur), dans un parent sans `spacing:`.
-/// Un `GroupeReglages` ou une carte unique a lignes fines reste permis.
-List<Violation> _cartesCollees() {
-  final List<Violation> v = <Violation>[];
-  final RegExp debut = RegExp('(?<![\\w.])(?:$_cartes)\\s*\\(');
-  final RegExp suite = RegExp('^\\s*,\\s*(?:const\\s+)?(?:$_cartes)\\s*\\(');
-  for (final File f in _sourcesFeatures()) {
-    final String t = _sansCommentaires(f);
-    int rang = 0;
-    for (final RegExpMatch m in debut.allMatches(t)) {
-      final int ouvre = m.end - 1;
-      final int ferme = _fermante(t, ouvre);
-      if (ferme < 0 || !suite.hasMatch(t.substring(ferme + 1))) {
-        continue;
-      }
-      final int parent = _appelParent(t, m.start);
-      final int finParent = parent < 0 ? -1 : _fermante(t, parent);
-      if (finParent > 0 &&
-          t.substring(parent, finParent).contains('spacing:')) {
-        continue;
-      }
-      v.add(
-        Violation(
-          f.path,
-          _ligneDe(t, m.start),
-          'cartes-collees',
-          // L'ordre dans le fichier distingue les cas : la signature du
-          // socle ne contient pas la ligne.
-          '${t.substring(m.start, ouvre).trim()} n°${++rang}',
-        ),
-      );
-    }
-  }
-  return v;
-}
+/// K-55 : des cartes qui se touchent (detecteur dans `revue_cartes.dart`) :
+/// deux cartes voisines, une boucle de cartes, un `ListView.builder` de
+/// cartes, une carte derivee, une boite peinte a la main, le tout sans
+/// `spacing:` ni separateur. `PileCartes` et `CarteGroupee` sont la parade.
+List<Violation> _cartesCollees() => <Violation>[
+  for (final CasCollage c in tousLesCas())
+    Violation(
+      c.chemin.replaceAll(r'\', '/'),
+      c.ligne,
+      'cartes-collees',
+      c.extrait,
+    ),
+];
 
 /// Les composants du core qui peignent eux-memes leur fond : un `Pressable`
 /// qui en contient un n'est pas un bouton recompose.

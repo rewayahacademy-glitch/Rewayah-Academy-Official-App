@@ -92,6 +92,22 @@ abstract final class AppFontAxis {
 /// | `display*` | Plus Jakarta Sans tabulaire | dans ce produit, `display*` ne porte que des valeurs fortes (compte a rebours, `StatTile`, heure « 13:45 », monogramme) ; un titre de 36 px prend `headlineLarge` |
 /// | [chiffre] | Plus Jakarta Sans tabulaire | horaires, codes, PIN, chronometre, initiales |
 ///
+/// **Hierarchie de titres stricte** (HIER-1, revue du directeur du 01/10 :
+/// « un nom et un titre ne doivent jamais avoir la meme taille »). Un niveau
+/// de texte par role, et chaque niveau plus grand que le suivant, dans les
+/// deux echelles :
+///
+/// | Role | Style | Composant |
+/// |---|---|---|
+/// | titre d'ecran | `headlineLarge` / `headlineMedium` / `headlineSmall` | `PageShell`, `EntetePage`, `AppBottomSheet` |
+/// | titre de section | `titleLarge` | `SectionHeader` |
+/// | mot-marque | `titleLarge` | `MarquePage` : toujours plus petit qu'un titre d'ecran |
+/// | nom, titre de carte | `titleMedium`, `titleSmall` | cartes, lignes |
+/// | corps | `body*` | |
+///
+/// Un titre d'ecran ne se pose jamais au rang d'un titre de section, ni la
+/// marque au rang d'un titre d'ecran. Garde : `test/theme/hierarchie_titres_test.dart`.
+///
 /// Graisses : titres de page (`headline*`) a 700 (manifeste visuel, section
 /// 3.3), titres de section et de carte (`title*`) a 600, corps a 400,
 /// libelles et boutons a 500-600, valeurs fortes a 700.
@@ -113,9 +129,19 @@ abstract final class AppTypography {
   static final TextTheme standard = _construire();
 
   /// Echelle du mode enfant, environ 20 pour cent plus grande.
+  ///
+  /// **Hierarchie stricte** (HIER-1, revue du directeur du 01/10) : chaque
+  /// niveau de titre est plus grand que le suivant, et aucun titre n'est plus
+  /// petit que le corps. Avant, `headlineSmall` et `titleLarge` valaient tous
+  /// deux 32 (le titre d'ecran et le nom d'une carte a la meme taille) et
+  /// `titleMedium` (18) passait sous le corps (20). Le test
+  /// `test/theme/hierarchie_titres_test.dart` verrouille l'ordre.
   static final TextTheme enfant = standard.copyWith(
+    headlineMedium: _titre(34, 42 / 34, FontWeight.w700),
     headlineSmall: _titre(32, 40 / 32, FontWeight.w700),
-    titleLarge: _titre(32, 40 / 32, FontWeight.w600),
+    titleLarge: _titre(28, 36 / 28, FontWeight.w600),
+    titleMedium: _titre(22, 30 / 22, FontWeight.w600),
+    titleSmall: _titre(20, 28 / 20, FontWeight.w600),
     bodyLarge: _corps(20, 28 / 20, FontWeight.w400),
     bodyMedium: _corps(20, 28 / 20, FontWeight.w400),
     labelLarge: _corps(20, 28 / 20, FontWeight.w600),

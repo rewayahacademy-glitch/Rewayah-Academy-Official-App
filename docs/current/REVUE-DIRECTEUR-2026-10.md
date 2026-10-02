@@ -10,13 +10,16 @@ Principe : corriger la cause (composant partagé de `lib/core`), recenser tous l
 | Contenu de bouton centré, sans débordement | K-54 | `ActionPrincipale`, `LienFleche`, `FilterPill`, `BoutonOutil`, `BoutonIcone`, `BoutonCommande`, `MenuActions` | `bouton-recompose` (4 formes) | `verifierBoutonCentre`, `verifierContenuCentre`, `verifierLibelleCentreLigneALigne` |
 | Jamais de cartes collées (cartes séparées, ou une carte à lignes fines) | K-55 | `AppCard`, `Ecart`, `GroupeReglages` | `cartes-collees` | `verifierEcartCartes` |
 | Un seul bouton plein par écran, secondaires en lien flèche | K-56 | `ActionPrincipale`, `LienFleche`, `RaccourciTactile` | `plein-multiple`, `bouton-grise` (alias `bouton-desactive`) | `verifierUnSeulBoutonPlein` |
+| Contenu de bouton centré, sans débordement | K-54 | `ActionPrincipale` | `bouton-recompose` | `verifierBoutonCentre` |
+| Jamais de cartes collées (cartes séparées de 16 au moins, ou une carte à lignes fines) | K-55 | `PileCartes`, `CarteGroupee`, `CarteLignes`, `GroupeReglages`, `AppCard`, `Ecart` | `cartes-collees` (`tool/revue_cartes.dart`, `test/tool/revue_cartes_test.dart`) | `verifierEcartCartes`, `verifierAucuneCarteCollee` (`test/core/cartes_collees_test.dart`) |
+| Un seul bouton plein par écran, secondaires en lien flèche | K-56 | `ActionPrincipale`, `LienFleche` | `bouton-grise` (alias `bouton-desactive`) | revue d'écran |
 | Formulaires déduit > choisi > saisi | K-57 | `ChoiceCardGroup` | revue de fiche (FORM-AUTO-1) | |
 | Tout choix : contexte, quand, conséquence, carte entière cliquable | K-58 | `ChoiceCardGroup` | revue de fiche | |
 | Message d'erreur : cause et action | K-59 | `EtatSysteme`, `BlocAsynchrone` | `erreur-sans-action`, `affirmation-reseau` | |
 | Bascule de la salle : trois signaux (disque plein ou contour, icône, mot d'état), actions lourdes confirmées | ETATS-BTN-1 (K-54, K-56) | `CommandeSalle` | `bascule-sans-etat` | `commande_salle_test.dart` |
 | Navigation précédent / suivant : flèche, position, flèche, la flèche disparaît aux bornes, miroir RTL | NAV-FLECHES-1 (K-54, K-56) | `BarrePrecedentSuivant` | `nav-a-libelle` | `barre_precedent_suivant_test.dart` |
 | Aucun élément ne recouvre un contenu | déduite | | | `verifierSansChevauchement` |
-| Hiérarchie de titres stricte | déduite | `EnteteDePage`, `SectionHeader` | revue d'écran | |
+| Hiérarchie de titres stricte : titre d'écran > titre de section > nom / titre de carte > corps, marque sous le titre | déduite (HIER-1) | `AppTypography`, `EntetePage`, `PageShell`, `SectionHeader`, `MarquePage` | `test/theme/hierarchie_titres_test.dart` | `verifierHierarchie` |
 | État jamais par la couleur seule | déduite | `StatusPill` | revue d'écran | |
 | Alerte urgente en tête | déduite | | revue d'écran | |
 | Libellé sans ambiguïté (qui, quoi) | déduite | | `libelle-ambigu` | |
@@ -30,6 +33,8 @@ Avant correction, par contrôle (`dart run tool/verifier_revue.dart --regle=<nom
 |---|---|---|
 | `cartes-collees` | 5 | |
 | `bouton-recompose` | 2 (19 avec les quatre formes que le contrôle voit désormais) | 0 |
+| `cartes-collees` | 5 (ancienne règle) ; 46 (règle étendue, même base) | 0 |
+| `bouton-recompose` | 2 | |
 | `libelle-ambigu` | 5 | |
 | `mot-interne` | 4 | |
 | `erreur-sans-action` | 27 | |
@@ -139,3 +144,50 @@ Limites : aucune action « couper le micro de toute la classe » n'existe dans l
 ### Décision à valider par le directeur : mot d'état au-delà de 130 % de texte
 
 Dans une rangée compacte et au-delà de 130 % d'échelle de texte, le mot d'état d'une bascule passe en infobulle et dans la voix du lecteur d'écran. Il ne reste alors que deux signaux visibles (disque plein ou contour, icône), plus le mot parlé : « jamais la couleur seule » reste vrai, mais les trois signaux cumulés visibles ne tiennent pas. Cause mesurée : à 200 % sur 390 px, deux lignes de mot par commande ne tiennent plus dans la hauteur du téléphone (`salle_secours_test`, aucun débordement exigé). Choix provisoire consigné, sans blocage : dégradation acceptée sur ce seul palier, mot toujours lu à voix haute et en infobulle. Alternative à arbitrer : une rangée de commandes sur deux lignes à ce palier, au prix d'un dock plus haut. Aucune modification de l'exigence n'a été faite ; décision à dater par le directeur.
+Limites connues des contrôles (heuristiques de texte) : `cartes-collees` lit le code (`tool/revue_cartes.dart`, qui reconnaît aussi `ElementEchelonne`, les `itemBuilder` à plusieurs `return`, les `child` ternaires, les séparateurs conditionnels, les éléments `if` facultatifs et les boîtes peintes par `.decoration(` nommées `Carte...`, et ne baisse plus à 8 le minimum d'une liste `separated`) : cartes voisines, boucles `for` et `.map`, variables et méthodes qui rendent une carte, widgets dérivés, listes nommées posées dans `children:`, `ListView.builder` et `.separated`, boîtes peintes à la main ; il ne voit pas une carte construite par un appel dynamique ni un `GridView` de widgets variables (les cadres vidéo de la salle, à 8, en font partie : flux média plein cadre, sans marge ni action, donc pas des cartes ; le panneau d'élèves de la salle, lui, passe à 16) ; `bouton-recompose` ne voit que les boutons Material, `InkWell`, `GestureDetector` et un `Pressable` qui peint lui-même fond arrondi et `Text`. Ce que ces contrôles ne voient pas se mesure par les tests de géométrie et par les captures à 320 px et 1440 px.
+
+## Lot l1-cartes : CARTES-ECART-1 (K-55) et HIER-1
+
+Branche `corrections/l1-cartes`, base `corrections/revue-directeur-2026-10` ad0e2c6. Cause commune : le contrôle d'origine ne voyait que 5 appels `StatTile` (tous dans une liste posée dans un `Wrap` à 12) ; les cartes collées du directeur étaient ailleurs, dans des piles de `SettingRow` sans écart et des listes à 4, 8 ou 12.
+
+**CARTES-ECART-1 (K-55).** Écart minimal fixé à 16 (`Ecart.vLg`, celui des écrans du tuteur), 8 pour des pastilles de choix, jamais 0, 4, 8 ou 12 entre deux cartes de contenu.
+
+| Mesure | Avant | Après |
+|---|---|---|
+| Cas vus par le détecteur étendu (`cartes-collees`) | 46 | 0 |
+| dont cartes collées (écart 0) | 31 | 0 |
+| dont cartes à écart insuffisant (4, 8, 12) | 15 | 0 |
+| Fichiers concernés | 16 (15 écrans, 1 composant du core : `ChoiceCardGroup`) | 0 ; `SettingRow` gagne le rendu à plat |
+| Tests de géométrie sur écrans réels (320 et 1440 px, texte ×1 et ×2, clair et sombre) | 5 échecs sur 5 (tableau de bord, réglages, compte, profil, `ChoiceCardGroup`) | 0 échec |
+| Socle `cartes-collees` | 5 lignes | 0 |
+
+Composants créés : `PileCartes` (cartes indépendantes, 16 au moins, assertion), `CarteGroupee` (une carte, sections à filet `FiletCarte`), `CarteLignes` (une carte de lignes `SettingRow` et `ConfigLigne...`, rendues à plat via `LigneDansCarte`). `GroupeReglages` reste le composant des rubriques à icône. Écrans convertis : réglages et portail du compte, profil personnel, profil enfant, hub Compte tuteur (`espaces_compte`), réglages de l'enfant, réglages d'observation, trois pages de configuration de la direction, tableau de bord de la direction, attribution, demandes, offres de parcours, avant et après cours, navigation du Coran. `ChoiceCardGroup` passe de 12 à 16.
+
+**Relecture CARTES-ECART-1 (exhaustivité).** Le détecteur laissait passer des piles à moins de 16 : `ElementEchelonne` n'était pas une enveloppe reconnue, les listes `separated` abaissaient le minimum à 8, un `build` à variables avant le `return` n'était pas dérivé, un `child` ternaire, un `itemBuilder` à plusieurs `return`, un séparateur conditionnel, une carte suivie d'un `if` et une boîte peinte par `.decoration(` n'étaient pas vus. Détecteur corrigé, un test par angle mort (`test/tool/revue_cartes_test.dart`), dépôt relevé de nouveau : 5 cas avant correction, 0 après.
+
+| Écran | Avant | Après | Garde de géométrie |
+|---|---|---|---|
+| Bibliothèque de ressources (`surface_bibliotheque.dart`) | 12 | 16 | `bibliotheque_page_test.dart`, 320 et 1440 px |
+| Attribution, enseignants proposés (`attribution_page.dart`) | 8 | 16 | `attribution_admin_test.dart`, 700 et 1400 px |
+| Catalogue de classes (`catalogue_classes_page.dart`) | 12 | 16 | `catalogue_classes_test.dart`, 320 et 1440 px |
+| Profils de connexion élève (`eleve_connexion_page.dart`) | 12 en colonnes et en rangées | 16 | `eleve_connexion_test.dart`, 320 et 1440 px |
+| Panneau d'élèves de la salle (`panneau_eleves.dart`) | 4 ou 8 | 16 | `panneau_eleves_test.dart`, trois gabarits |
+| Galerie vidéo de la salle | 8 | 8 (non carte : flux média plein cadre, sans marge ni titre ni action) | |
+
+**HIER-1.** Un niveau de texte par rôle, chaque niveau strictement plus grand que le suivant (`lib/core/theme/app_typography.dart`).
+
+| Défaut | Avant | Après |
+|---|---|---|
+| Accueil public, 320 px : marque / titre | 36 / 32 (la marque dépassait le titre) | 22 / 32 |
+| Accueil public, 1440 px : marque / titre | 36 / 36 (même taille) | 22 / 36 |
+| Connexion, récupération, attente, dépôt de pièce, démarrage (`MarquePage`, 6 emplacements) | marque 36 | marque 22 |
+| `SectionHeader` (49 emplacements hors galerie) / titre d'`EntetePage` sur téléphone | 28 / 28 | 22 / 28 |
+| Échelle enfant : `headlineSmall` / `titleLarge` | 32 / 32 | 32 / 28 |
+| Échelle enfant : `headlineMedium` / `headlineSmall` | 32 / 32 | 34 / 32 |
+| Échelle enfant : `titleMedium` / corps | 18 / 20 (titre sous le corps) | 22 / 20 |
+| Titres de section et de ressource posés en `headlineSmall` sous un titre d'écran de même rang | 2 (Journée « À terminer », détail de ressource) | 0 |
+| `test/theme/hierarchie_titres_test.dart` sur la base | 8 échecs sur 14 | 0 échec |
+
+Règle écrite : `lib/CLAUDE.md`, « Hiérarchie de titres stricte » ; garde : `verifierHierarchie` (`test/support/garde_interface.dart`).
+
+Captures avant et après, 320 px et 1440 px : `docs/current/captures/l1-cartes/avant` et `apres` (réglages du compte, tableau de bord de la direction, accueil public).

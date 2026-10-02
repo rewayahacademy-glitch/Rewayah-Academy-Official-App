@@ -27,6 +27,8 @@ import '../../../core/widgets/barre_precedent_suivant.dart';
 import '../../../core/widgets/bento_tile.dart';
 import '../../../core/widgets/bouton_icone.dart';
 import '../../../core/widgets/bouton_outil.dart';
+import '../../../core/widgets/carte_groupee.dart';
+import '../../../core/widgets/carte_lignes.dart';
 import '../../../core/widgets/child_card.dart';
 import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/commande_salle.dart';
@@ -52,6 +54,7 @@ import '../../../core/widgets/page_immersive.dart';
 import '../../../core/widgets/page_parcours.dart';
 import '../../../core/widgets/page_shell.dart';
 import '../../../core/widgets/permanent_notice.dart';
+import '../../../core/widgets/pile_cartes.dart';
 import '../../../core/widgets/pin_pad.dart';
 import '../../../core/widgets/point_rappel.dart';
 import '../../../core/widgets/pressable.dart';
@@ -1347,6 +1350,90 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         (BuildContext _) => const Directionality(
           textDirection: TextDirection.rtl,
           child: MarquePage(),
+        ),
+      ),
+    ],
+  ),
+
+  // --- K-55 : jamais de cartes collees (revue du directeur du 01/10) -------
+  EntreeGalerie(
+    nom: 'PileCartes',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'trois cartes, 16 entre chacune',
+        (BuildContext _) => const PileCartes(
+          children: <Widget>[
+            AppCard(child: Text('Premier contenu')),
+            AppCard(child: Text('Deuxieme contenu')),
+            AppCard(child: Text('Troisieme contenu')),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'cote a cote, meme ecart',
+        (BuildContext _) => const PileCartes(
+          axe: Axis.horizontal,
+          alignement: CrossAxisAlignment.start,
+          children: <Widget>[
+            Flexible(child: AppCard(child: Text('Gauche'))),
+            Flexible(child: AppCard(child: Text('Droite'))),
+          ],
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'CarteGroupee',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'deux sections, un filet',
+        (BuildContext _) => const CarteGroupee(
+          sections: <Widget>[
+            Text('Preparation de la seance'),
+            Text('Derniere seance'),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'trois sections, marge reduite',
+        (BuildContext _) => const CarteGroupee(
+          marge: AppSpacing.lg,
+          sections: <Widget>[Text('Un'), Text('Deux'), Text('Trois')],
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'CarteLignes',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'trois lignes a plat',
+        (BuildContext _) => const CarteLignes(
+          lignes: <Widget>[
+            SettingRow(title: 'Profil', icon: AppIcons.profil, onPress: _rien),
+            SettingRow(
+              title: 'Reglages',
+              icon: AppIcons.reglages,
+              onPress: _rien,
+            ),
+            SettingRow(title: 'Appareils', icon: AppIcons.appareil),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'une ligne a valeur',
+        (BuildContext _) => const CarteLignes(
+          lignes: <Widget>[
+            SettingRow(
+              title: 'Langue',
+              description: 'La langue affichee',
+              value: 'Francais',
+              icon: AppIcons.reglages,
+            ),
+          ],
         ),
       ),
     ],

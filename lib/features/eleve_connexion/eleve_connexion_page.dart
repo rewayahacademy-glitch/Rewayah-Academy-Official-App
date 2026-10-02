@@ -526,7 +526,7 @@ class _ChoixProfil extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               for (int j = 0; j < colonnes; j++) ...<Widget>[
-                if (j > 0) Ecart.hMd,
+                if (j > 0) Ecart.hLg,
                 Expanded(
                   child: j < rangee.length
                       ? _CarteProfil(
@@ -553,7 +553,7 @@ class _ChoixProfil extends StatelessWidget {
         ),
         Ecart.vXxl,
         for (int i = 0; i < rangees.length; i++) ...<Widget>[
-          if (i > 0) Ecart.vMd,
+          if (i > 0) Ecart.vLg,
           rangees[i],
         ],
         if (message != null) ...<Widget>[Ecart.vXl, _Message(message!)],

@@ -48,6 +48,10 @@ const List<String> composantsDuCatalogue = <String>[
   'PageParcours',
   // Section 2 : ce que la refonte a produit en chemin, hors liste d'origine.
   'MarquePage',
+  // K-55 (revue du directeur du 01/10) : jamais de cartes collees.
+  'PileCartes',
+  'CarteGroupee',
+  'CarteLignes',
   // Section 2 : le P1 que le lot R3 produit.
   'TimelineRow',
   // Section 2 : les deux que le lot ADM-04 produit. `DataCollection` etait au
