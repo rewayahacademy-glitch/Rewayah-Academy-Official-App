@@ -22,14 +22,15 @@ import '../../core/mouvement/apparition_douce.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/ecran_resultat.dart';
+import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_parcours.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
 import 'compte_rendu_controle.dart';
-import 'mission_controle.dart';
 import 'observation_controle.dart';
 
 enum _Etape { nature, domaine, personne, texte, recapitulatif, envoye }
@@ -39,11 +40,16 @@ class ObservationControlePage extends ConsumerStatefulWidget {
   /// Cree la page.
   const ObservationControlePage({
     super.key,
+    this.seanceId,
     this.choix = ChoixCompteRendu.ajouterObservation,
     this.onRetour,
     this.onRevenir,
     this.onEcrireAdmin,
   });
+
+  /// La visite dont on complete le rapport (`?seance=`, revue CT-R B1) ;
+  /// inconnue : le message generique (C7), jamais la mission courante.
+  final String? seanceId;
 
   /// L'entree choisie sur le compte rendu : observation ou point important.
   final ChoixCompteRendu choix;
@@ -55,8 +61,9 @@ class ObservationControlePage extends ConsumerStatefulWidget {
   /// Le retour au Controle apres l'envoi ; par defaut, sa destination.
   final VoidCallback? onRevenir;
 
-  /// La discussion avec l'administration (CTR-04) ; par defaut, Echanges.
-  final VoidCallback? onEcrireAdmin;
+  /// La discussion avec l'administration (CTR-04) sur la mission de la
+  /// visite (nulle si inconnue) ; par defaut, son fil dans Echanges.
+  final void Function(String? missionId)? onEcrireAdmin;
 
   /// La cle d'une carte de nature.
   static Key cleNature(NatureObservation n) =>
@@ -75,6 +82,11 @@ class ObservationControlePage extends ConsumerStatefulWidget {
 
   /// La cle du champ de texte.
   static const Key texteKey = ValueKey<String>('ctr03a-texte');
+
+  /// La cle de « Reessayer » quand la liste des eleves n'est pas recue.
+  static const Key reessayerRosterKey = ValueKey<String>(
+    'ctr03a-roster-reessayer',
+  );
 
   /// Le libelle d'une nature.
   static String libelleNature(NatureObservation n) => switch (n) {
@@ -119,6 +131,12 @@ class _ObservationControlePageState
   bool _enCours = false;
   bool _echec = false;
 
+  /// La visite, retrouvee par sa seance ; nulle si inconnue.
+  late final CompteRenduEnSuspens? _visite = visiteDeSeance(
+    ref,
+    widget.seanceId,
+  );
+
   bool get _important => widget.choix == ChoixCompteRendu.pointImportant;
 
   bool get _texteRequis =>
@@ -140,7 +158,9 @@ class _ObservationControlePageState
       case _Etape.nature:
         final VoidCallback? f = widget.onRetour;
         if (f == null) {
-          GoRouter.of(context).go(Routes.controleurCompteRendu);
+          GoRouter.of(context).go(
+            adresseCompteRendu(Routes.controleurCompteRendu, widget.seanceId),
+          );
         } else {
           f();
         }
@@ -169,7 +189,12 @@ class _ObservationControlePageState
     final NatureObservation? nature = _nature;
     final DomaineObservation? domaine = _domaine;
     final PersonneConcernee? personne = _personne;
-    if (_enCours || nature == null || domaine == null || personne == null) {
+    final CompteRenduEnSuspens? visite = _visite;
+    if (_enCours ||
+        visite == null ||
+        nature == null ||
+        domaine == null ||
+        personne == null) {
       return;
     }
     // Garde-fou : un texte obligatoire vide ne part jamais.
@@ -188,6 +213,7 @@ class _ObservationControlePageState
       await ref
           .read(envoiCompteRenduProvider)
           .envoyerObservation(
+            visite.seanceId,
             ObservationControle(
               important: _important,
               nature: nature,
@@ -200,7 +226,7 @@ class _ObservationControlePageState
             ),
           );
       if (!mounted) return;
-      ref.read(compteRenduATerminerProvider.notifier).terminer();
+      ref.read(compteRenduATerminerProvider.notifier).terminer(visite.seanceId);
       setState(() {
         _enCours = false;
         _etape = _Etape.envoye;
@@ -232,16 +258,28 @@ class _ObservationControlePageState
                 widget.onRevenir ??
                 () => GoRouter.of(context).go(Routes.controleur),
             libelleSecondaire: t.controleur.compteRendu.ecrireAdmin,
-            onSecondaire:
-                widget.onEcrireAdmin ??
-                // Le fil de CETTE mission (P-CTR-06), la liste si son
-                // identifiant n'est pas connu.
-                () => GoRouter.of(context).go(
-                  Routes.controleurEcrireAdmin(
-                    ref.read(missionControleProvider).value?.id,
-                  ),
-                ),
+            // Le fil de la mission de CETTE visite (P-CTR-06), la liste si
+            // son identifiant n'est pas connu ; jamais la mission courante.
+            onSecondaire: () => widget.onEcrireAdmin == null
+                ? GoRouter.of(context)
+                      .go(Routes.controleurEcrireAdmin(_visite?.missionId))
+                : widget.onEcrireAdmin!(_visite?.missionId),
           ),
+        ),
+      );
+    }
+    if (_visite == null) {
+      // Seance inconnue (rechargement, lien direct) : le message generique,
+      // jamais une autre mission (C7, revue CT-R B1).
+      return PageShell(
+        titre: t.controleur.compteRendu.titre,
+        child: EmptyState(
+          message: t.controleur.controle.indisponible,
+          registre: RegistreVide.subi,
+          libelleAction: t.controleur.compteRendu.revenir,
+          onAction:
+              widget.onRevenir ??
+              () => GoRouter.of(context).go(Routes.controleur),
         ),
       );
     }
@@ -255,7 +293,9 @@ class _ObservationControlePageState
     switch (_etape) {
       case _Etape.nature:
         question = o.questionNature;
-        explication = _important ? o.important : null;
+        // Phrase de contexte et lignes « quand · consequence » (K-58) :
+        // libelles provisoires (D4), proposes par un agent.
+        explication = _important ? o.important : o.contexteNature;
         corps = _cartes<NatureObservation>(
           NatureObservation.values,
           _nature,
@@ -270,20 +310,36 @@ class _ObservationControlePageState
             NatureObservation.aSuivre => AppIcons.noter,
             NatureObservation.interventionAdmin => AppIcons.signaler,
           },
+          description: (NatureObservation n) => switch (n) {
+            NatureObservation.pointPositif => o.pointPositifAide,
+            NatureObservation.aSuivre => o.aSuivreAide,
+            NatureObservation.interventionAdmin => o.interventionAdminAide,
+          },
         );
         if (_nature != null) action = () => _aller(_Etape.domaine);
       case _Etape.domaine:
         question = o.questionDomaine;
+        explication = o.contexteDomaine;
         corps = _cartes<DomaineObservation>(
           DomaineObservation.values,
           _domaine,
           ObservationControlePage.libelleDomaine,
           ObservationControlePage.cleDomaine,
           (DomaineObservation d) => setState(() => _domaine = d),
+          // Une ligne « quand » par domaine, sans consequence inventee (D4).
+          description: (DomaineObservation d) => switch (d) {
+            DomaineObservation.pedagogie => o.pedagogieAide,
+            DomaineObservation.interaction => o.interactionAide,
+            DomaineObservation.gestionClasse => o.gestionClasseAide,
+            DomaineObservation.respectCadre => o.respectCadreAide,
+            DomaineObservation.climat => o.climatAide,
+            DomaineObservation.autre => o.autreAide,
+          },
         );
         if (_domaine != null) action = () => _aller(_Etape.personne);
       case _Etape.personne:
         question = o.questionPersonne;
+        explication = o.contextePersonne;
         corps = _personneEtRoster();
         final bool pret =
             _personne != null &&
@@ -325,6 +381,7 @@ class _ObservationControlePageState
     Key Function(E) cle,
     void Function(E) onChoix, {
     AppIcon Function(E)? icone,
+    String Function(E)? description,
   }) => ChoiceCardGroup(
     key: ValueKey<Type>(E),
     autoriserSaisieLibre: false,
@@ -337,6 +394,7 @@ class _ObservationControlePageState
           cle: cle(v),
           valeur: v.name,
           libelle: libelle(v),
+          description: description?.call(v),
           icone: icone?.call(v),
         ),
     ],
@@ -347,8 +405,13 @@ class _ObservationControlePageState
   );
 
   Widget _personneEtRoster() {
-    final List<EleveRoster> roster =
-        ref.watch(rosterControleProvider).value ?? const <EleveRoster>[];
+    final AsyncValue<List<EleveRoster>> etatRoster = ref.watch(
+      rosterControleProvider,
+    );
+    final List<EleveRoster> roster = etatRoster.hasError
+        ? const <EleveRoster>[]
+        : etatRoster.value ?? const <EleveRoster>[];
+    final o = t.controleur.observation;
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final String? eleve = _eleveId;
@@ -365,6 +428,12 @@ class _ObservationControlePageState
             _personne = p;
             if (p != PersonneConcernee.elevePrecis) _eleveId = null;
           }),
+          description: (PersonneConcernee p) => switch (p) {
+            PersonneConcernee.enseignant => o.enseignantAide,
+            PersonneConcernee.classeEntiere => o.classeEntiereAide,
+            PersonneConcernee.elevePrecis => o.elevePrecisAide,
+            PersonneConcernee.aucun => o.aucunAide,
+          },
         ),
         if (_personne == PersonneConcernee.elevePrecis) ...<Widget>[
           Ecart.vXl,
@@ -373,17 +442,48 @@ class _ObservationControlePageState
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
+                // Revue CT-R m2 : chargement, erreur (avec « Reessayer ») et
+                // liste vide sont trois etats distincts (K-59).
                 Semantics(
-                  header: true,
+                  header: roster.isNotEmpty,
+                  liveRegion: roster.isEmpty,
                   child: Text(
-                    roster.isEmpty
-                        ? t.controleur.observation.rosterIndisponible
-                        : t.controleur.observation.questionEleve,
-                    style: palette.inkStrong.applyTo(
-                      textes.titleMedium ?? const TextStyle(),
-                    ),
+                    switch (etatRoster) {
+                      AsyncValue<List<EleveRoster>>(
+                        isLoading: true,
+                        hasValue: false,
+                      ) =>
+                        o.rosterChargement,
+                      AsyncValue<List<EleveRoster>>(hasError: true) =>
+                        o.rosterIndisponible,
+                      AsyncValue<List<EleveRoster>>(hasValue: false) =>
+                        o.rosterChargement,
+                      _ when roster.isEmpty => o.rosterVide,
+                      _ => o.questionEleve,
+                    },
+                    style:
+                        (roster.isEmpty ? palette.inkMuted : palette.inkStrong)
+                            .applyTo(
+                              (roster.isEmpty
+                                      ? textes.bodyMedium
+                                      : textes.titleMedium) ??
+                                  const TextStyle(),
+                            ),
                   ),
                 ),
+                if (etatRoster.hasError && !etatRoster.isLoading) ...<Widget>[
+                  Ecart.vMd,
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: ActionPrincipale(
+                      key: ObservationControlePage.reessayerRosterKey,
+                      libelle: t.commun.reessayer,
+                      niveau: NiveauAction.secondaire,
+                      pleineLargeur: false,
+                      onPress: () => ref.invalidate(rosterControleProvider),
+                    ),
+                  ),
+                ],
                 if (roster.isNotEmpty) ...<Widget>[
                   Ecart.vMd,
                   ChoiceCardGroup(

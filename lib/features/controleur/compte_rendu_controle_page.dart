@@ -32,13 +32,13 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/ecran_resultat.dart';
+import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
 import '../accueil_famille/bloc_seance.dart' show heureDeLAppareil;
 import 'compte_rendu_controle.dart';
-import 'mission_controle.dart';
 
 enum _Etape { choix, envoye }
 
@@ -47,19 +47,27 @@ class CompteRenduControlePage extends ConsumerStatefulWidget {
   /// Cree la page.
   const CompteRenduControlePage({
     super.key,
+    this.seanceId,
     this.onRevenir,
     this.onObservation,
     this.onEcrireAdmin,
   });
 
+  /// La visite qui sort de la salle (`?seance=`, revue CT-R B1) : le compte
+  /// rendu, sa transmission et son envoi portent sur ELLE, jamais sur la
+  /// mission courante. Inconnue : le message generique (C7).
+  final String? seanceId;
+
   /// Le retour au controle ; par defaut, la destination Controle.
   final VoidCallback? onRevenir;
 
-  /// L'entree du parcours d'observation (CTR-03A) ; par defaut, sa route.
-  final void Function(ChoixCompteRendu choix)? onObservation;
+  /// L'entree du parcours d'observation (CTR-03A) pour la visite
+  /// [seanceId] ; par defaut, sa route.
+  final void Function(ChoixCompteRendu choix, String seanceId)? onObservation;
 
-  /// La discussion avec l'administration (CTR-04) ; par defaut, Echanges.
-  final VoidCallback? onEcrireAdmin;
+  /// La discussion avec l'administration (CTR-04) sur la mission de la
+  /// visite (nulle si inconnue) ; par defaut, son fil dans Echanges.
+  final void Function(String? missionId)? onEcrireAdmin;
 
   /// La cle de la carte d'un choix.
   static Key cleChoix(ChoixCompteRendu choix) =>
@@ -86,6 +94,9 @@ class _CompteRenduControlePageState
   bool _enCours = false;
   bool _echec = false;
 
+  /// La visite, retrouvee par sa seance ; nulle si inconnue.
+  CompteRenduEnSuspens? _visite;
+
   @override
   void initState() {
     super.initState();
@@ -93,19 +104,17 @@ class _CompteRenduControlePageState
     // terminer » (doc 08 CTR-01) ; en memoire seulement (C12).
     // La visite et ses faits partent aussitot a l'administration (C2), sans
     // attendre la reponse du controleur : « Plus tard » ne la retient pas.
-    ref.read(missionControleProvider.future).then((MissionControle? m) {
-      if (!mounted || m == null || _etape == _Etape.envoye) return;
-      ref
-          .read(compteRenduATerminerProvider.notifier)
-          .ouvrir(
-            CompteRenduEnSuspens(
-              seanceId: m.seanceId,
-              classe: m.classe,
-              debut: m.debut,
-            ),
-          );
-      unawaited(transmettreVisiteATerminer(ref));
-    }, onError: (Object _) {});
+    // La visite vient de sa seance, jamais de `missionControleProvider` :
+    // apres la seance, la mission courante est vide ou deja la suivante
+    // (revue CT-R B1).
+    final CompteRenduEnSuspens? v = visiteDeSeance(ref, widget.seanceId);
+    _visite = v;
+    if (v == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (!mounted || _etape == _Etape.envoye) return;
+      ref.read(compteRenduATerminerProvider.notifier).ouvrir(v);
+      unawaited(transmettreVisiteATerminer(ref, v.seanceId));
+    });
   }
 
   void _revenir() => widget.onRevenir == null
@@ -114,14 +123,21 @@ class _CompteRenduControlePageState
 
   Future<void> _agir() async {
     final ChoixCompteRendu? choix = _choix;
-    if (choix == null || _enCours) return;
+    final CompteRenduEnSuspens? visite = _visite;
+    if (choix == null || visite == null || _enCours) return;
     if (choix != ChoixCompteRendu.rienASignaler) {
-      final void Function(ChoixCompteRendu)? f = widget.onObservation;
+      final void Function(ChoixCompteRendu, String)? f = widget.onObservation;
+      final String seance = visite.seanceId;
       if (f == null) {
-        GoRouter.of(context)
-            .go(adresseObservation(Routes.controleurObservation, choix));
+        GoRouter.of(context).go(
+          adresseObservation(
+            Routes.controleurObservation,
+            choix,
+            seanceId: seance,
+          ),
+        );
       } else {
-        f(choix);
+        f(choix, seance);
       }
       return;
     }
@@ -130,9 +146,9 @@ class _CompteRenduControlePageState
       _echec = false;
     });
     try {
-      await ref.read(envoiCompteRenduProvider).envoyer(choix);
+      await ref.read(envoiCompteRenduProvider).envoyer(visite.seanceId, choix);
       if (!mounted) return;
-      ref.read(compteRenduATerminerProvider.notifier).terminer();
+      ref.read(compteRenduATerminerProvider.notifier).terminer(visite.seanceId);
       setState(() {
         _enCours = false;
         _etape = _Etape.envoye;
@@ -148,17 +164,28 @@ class _CompteRenduControlePageState
 
   @override
   Widget build(BuildContext context) {
-    final MissionControle? mission = ref.watch(missionControleProvider).value;
-    final String? sousTitre = mission == null
-        ? null
-        : t.controleur.compteRendu.sousTitre(
-            classe: mission.classe,
-            heure: heureDeLAppareil(mission.debut),
-          );
+    final CompteRenduEnSuspens? visite = _visite;
+    if (visite == null) {
+      // Seance inconnue (rechargement, lien direct) : le message generique,
+      // jamais une autre mission (C7, revue CT-R B1).
+      return PageShell(
+        titre: t.controleur.compteRendu.titre,
+        child: EmptyState(
+          message: t.controleur.controle.indisponible,
+          registre: RegistreVide.subi,
+          libelleAction: t.controleur.compteRendu.revenir,
+          onAction: _revenir,
+        ),
+      );
+    }
+    final String sousTitre = t.controleur.compteRendu.sousTitre(
+      classe: visite.classe,
+      heure: heureDeLAppareil(visite.debut),
+    );
 
     // Une mission devenue indisponible (seance finie) ne bloque pas le
-    // compte rendu : il se termine apres la sortie (C1). P-CTR-08 ne garde
-    // que l'entree en mission ; l'acces retire, lui, est garde par
+    // compte rendu : il se termine apres la sortie (C1), sur la visite
+    // copiee a l'entree en salle. L'acces retire, lui, est garde par
     // GardeControle (C7).
 
     if (_etape == _Etape.envoye) {
@@ -174,13 +201,12 @@ class _CompteRenduControlePageState
             libelleAction: t.controleur.compteRendu.revenir,
             onAction: _revenir,
             libelleSecondaire: t.controleur.compteRendu.ecrireAdmin,
-            onSecondaire:
-                widget.onEcrireAdmin ??
-                // Le fil de CETTE mission (P-CTR-06), la liste si son
-                // identifiant n'est pas connu.
-                () =>
-                    GoRouter.of(context)
-                        .go(Routes.controleurEcrireAdmin(mission?.id)),
+            // Le fil de la mission de CETTE visite (P-CTR-06), la liste si
+            // son identifiant n'est pas connu ; jamais la mission courante.
+            onSecondaire: () => widget.onEcrireAdmin == null
+                ? GoRouter.of(context)
+                      .go(Routes.controleurEcrireAdmin(visite.missionId))
+                : widget.onEcrireAdmin!(visite.missionId),
           ),
         ),
       );
@@ -211,7 +237,7 @@ class _CompteRenduControlePageState
               children: <Widget>[
                 const _FaitsAutomatiques(),
                 Ecart.vMd,
-                const LigneTransmissionVisite(),
+                LigneTransmissionVisite(seanceId: visite.seanceId),
                 Ecart.vXxl,
                 Semantics(
                   header: true,
@@ -222,6 +248,11 @@ class _CompteRenduControlePageState
                     ),
                   ),
                 ),
+                Ecart.vSm,
+                // Phrase de contexte et lignes « quand · consequence » sous
+                // chaque option (K-58) : libelles provisoires (D4), proposes
+                // par un agent, a valider par le directeur.
+                Text(t.controleur.compteRendu.contexte, style: doux),
                 Ecart.vLg,
                 ChoiceCardGroup(
                   autoriserSaisieLibre: false,
@@ -237,6 +268,14 @@ class _CompteRenduControlePageState
                             t.controleur.compteRendu.ajouterObservation,
                           ChoixCompteRendu.pointImportant =>
                             t.controleur.compteRendu.pointImportant,
+                        },
+                        description: switch (c) {
+                          ChoixCompteRendu.rienASignaler =>
+                            t.controleur.compteRendu.rienASignalerAide,
+                          ChoixCompteRendu.ajouterObservation =>
+                            t.controleur.compteRendu.ajouterObservationAide,
+                          ChoixCompteRendu.pointImportant =>
+                            t.controleur.compteRendu.pointImportantAide,
                         },
                         icone: switch (c) {
                           ChoixCompteRendu.rienASignaler => AppIcons.succes,
@@ -305,7 +344,9 @@ class _CompteRenduControlePageState
                       ? Padding(
                           padding: const EdgeInsets.only(top: AppSpacing.md),
                           child: Text(
-                            t.controleur.compteRendu.echec,
+                            // Seul « Rien a signaler » envoie depuis cet
+                            // ecran : aucun texte a garder (revue CT-R m1).
+                            t.controleur.compteRendu.echecRien,
                             textAlign: TextAlign.end,
                             style: palette.inkStrong.applyTo(
                               textes.bodyMedium ?? const TextStyle(),
@@ -366,7 +407,10 @@ class _Actions extends StatelessWidget {
 /// transmise, avec un nouvel essai.
 class LigneTransmissionVisite extends ConsumerWidget {
   /// Cree la ligne.
-  const LigneTransmissionVisite({super.key});
+  const LigneTransmissionVisite({required this.seanceId, super.key});
+
+  /// La visite dont la transmission est dite.
+  final String seanceId;
 
   /// La cle de « Reessayer ».
   static const Key reessayerKey = ValueKey<String>('ctr03-visite-reessayer');
@@ -375,7 +419,7 @@ class LigneTransmissionVisite extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final CompteRenduEnSuspens? visite = ref.watch(
       compteRenduATerminerProvider,
-    );
+    )[seanceId];
     final TransmissionVisite? etat = visite?.transmission;
     if (etat == null) return const SizedBox.shrink();
     final AppPalette palette = AppPalette.of(context);
@@ -421,7 +465,8 @@ class LigneTransmissionVisite extends ConsumerWidget {
                 libelle: t.commun.reessayer,
                 niveau: NiveauAction.secondaire,
                 pleineLargeur: false,
-                onPress: () => unawaited(transmettreVisiteATerminer(ref)),
+                onPress: () =>
+                    unawaited(transmettreVisiteATerminer(ref, seanceId)),
               ),
             ),
           ],
@@ -508,7 +553,7 @@ class _FaitsAutomatiquesState extends ConsumerState<_FaitsAutomatiques> {
                     child: switch (faits) {
                       AsyncData<FaitsVisite?>(:final FaitsVisite? value)
                           when value != null =>
-                        _Lignes(faits: value),
+                        LignesFaitsVisite(faits: value),
                       AsyncData<FaitsVisite?>() ||
                       AsyncError<FaitsVisite?>() => Text(
                         t.controleur.compteRendu.faitsAbsents,
@@ -527,8 +572,13 @@ class _FaitsAutomatiquesState extends ConsumerState<_FaitsAutomatiques> {
   }
 }
 
-class _Lignes extends StatelessWidget {
-  const _Lignes({required this.faits});
+/// Les faits automatiques d'une visite en lignes cle-valeur (CTR-03, et le
+/// detail CTR-06 de l'Historique, CT-7).
+class LignesFaitsVisite extends StatelessWidget {
+  /// Cree les lignes.
+  const LignesFaitsVisite({required this.faits, super.key});
+
+  /// Les faits.
 
   final FaitsVisite faits;
 

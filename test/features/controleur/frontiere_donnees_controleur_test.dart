@@ -34,9 +34,11 @@ import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/features/compte/espaces_compte.dart';
+import 'package:rewayah_academy/features/controleur/complement_rapport_page.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.dart';
 import 'package:rewayah_academy/features/controleur/echanges_controleur.dart';
+import 'package:rewayah_academy/features/controleur/historique_controleur_page.dart';
 import 'package:rewayah_academy/features/controleur/mission_controle.dart';
 import 'package:rewayah_academy/features/controleur/observation_controle.dart';
 import 'package:rewayah_academy/features/controleur/observation_controle_page.dart';
@@ -367,6 +369,31 @@ Future<void> _observationEnvoyee(WidgetTester tester) async {
   await _toucher(tester, find.text(t.controleur.compteRendu.envoyer).last);
 }
 
+Future<void> _complementMotif(WidgetTester tester) async {
+  await _toucher(
+    tester,
+    find.byKey(HistoriqueControleurPage.ligneKey('demo-rapport-0921')),
+  );
+  await _toucher(tester, find.byKey(HistoriqueControleurPage.complementKey));
+}
+
+Future<void> _complementRecapitulatif(WidgetTester tester) async {
+  await _complementMotif(tester);
+  await _continuer(tester);
+  await tester.enterText(
+    find.byKey(ComplementRapportPage.texteKey),
+    'La connexion de la Classe a été coupée deux minutes.',
+  );
+  await tester.pump();
+  await _continuer(tester);
+}
+
+Future<void> _complementAjoute(WidgetTester tester) async {
+  await _complementRecapitulatif(tester);
+  await _toucher(tester, find.text(t.controleur.complement.envoyer).last);
+  await _toucher(tester, find.text(t.controleur.complement.revenir).last);
+}
+
 /// Tous les ecrans atteignables de la demonstration controleur.
 List<_Ecran> _ecrans() => <_Ecran>[
   ('liste', Routes.demoControleur, null, null),
@@ -436,6 +463,28 @@ List<_Ecran> _ecrans() => <_Ecran>[
     ChoixCompteRendu.pointImportant,
     null,
   ),
+  // L'Historique (CTR-05) et le Detail d'un controle (CTR-06) : un rapport
+  // avec observation et complement, un rapport « Rien a signaler ».
+  for (final String id in <String>['demo-rapport-0924', 'demo-rapport-0921'])
+    (
+      'historique-detail-$id',
+      adresseDemoControleur(EcranDemoControleur.historique),
+      null,
+      (WidgetTester tester) =>
+          _toucher(tester, find.byKey(HistoriqueControleurPage.ligneKey(id))),
+    ),
+  // Le complement (CTR-03B) : motif, recapitulatif, puis le detail enrichi.
+  for (final (String nom, _Geste geste) in <(String, _Geste)>[
+    ('motif', _complementMotif),
+    ('recapitulatif', _complementRecapitulatif),
+    ('ajoute', _complementAjoute),
+  ])
+    (
+      'complement-$nom',
+      adresseDemoControleur(EcranDemoControleur.historique),
+      null,
+      geste,
+    ),
   // Le fil d'echanges (CTR-04).
   (
     'fil-al-badr',
@@ -484,6 +533,10 @@ void main() {
           }
           if (nom == 'salle' || nom == 'observation-recapitulatif') {
             expect(tout, contains(_prenoms.first), reason: nom);
+          }
+          if (nom == 'complement-ajoute') {
+            expect(tout, contains('coupée deux minutes'));
+            expect(tout, contains(t.controleur.historique.complementAjoute));
           }
           if (nom == 'fil-mission-envoye') {
             expect(tout, contains('Une question sur cette visite.'));

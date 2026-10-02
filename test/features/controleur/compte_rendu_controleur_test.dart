@@ -12,7 +12,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/features/accueil_famille/bloc_seance.dart'
+    show heureDeLAppareil;
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.dart';
 import 'package:rewayah_academy/features/controleur/controle_page.dart';
@@ -33,10 +36,106 @@ class _PortEchecPuisSucces implements EnvoiCompteRendu {
   }
 
   @override
-  Future<void> envoyer(ChoixCompteRendu choix) async {}
+  Future<void> envoyer(String seanceId, ChoixCompteRendu choix) async {}
 
   @override
-  Future<void> envoyerObservation(ObservationControle observation) async {}
+  Future<void> envoyerObservation(
+    String seanceId,
+    ObservationControle observation,
+  ) async {}
+}
+
+/// Note chaque appel, avec la seance visee (revue CT-R B1).
+class _PortTemoin implements EnvoiCompteRendu {
+  final List<String> transmises = <String>[];
+  final List<(String, ChoixCompteRendu)> envois =
+      <(String, ChoixCompteRendu)>[];
+
+  @override
+  Future<void> transmettreVisite(String seanceId) async =>
+      transmises.add(seanceId);
+
+  @override
+  Future<void> envoyer(String seanceId, ChoixCompteRendu choix) async =>
+      envois.add((seanceId, choix));
+
+  @override
+  Future<void> envoyerObservation(
+    String seanceId,
+    ObservationControle observation,
+  ) async {}
+}
+
+/// La visite A, copiee a l'entree en salle.
+final CompteRenduEnSuspens _visiteA = CompteRenduEnSuspens(
+  seanceId: 'seance-A',
+  classe: 'Classe Al-Fajr',
+  debut: DateTime(2026, 9, 28, 16),
+  missionId: 'mission-A',
+);
+
+/// Une autre mission, proposee par le serveur apres la seance A.
+MissionControle _missionB() {
+  final MissionControle m = missionDemoControleur(EtatDemoControleur.enDirect)!;
+  return MissionControle(
+    id: 'mission-B',
+    seanceId: 'seance-B',
+    classe: 'Classe Al-Qamar',
+    enseignant: m.enseignant,
+    nombreEleves: m.nombreEleves,
+    debut: DateTime(2026, 9, 28, 19),
+    finPrevue: DateTime(2026, 9, 28, 19, 45),
+    etat: EtatMissionControle.enDirect,
+  );
+}
+
+/// Le compte rendu par sa route reelle (`?seance=`), la mission courante
+/// remplacee par [mission].
+Future<void> _monterRouteReelle(
+  WidgetTester tester, {
+  required EnvoiCompteRendu port,
+  required MissionControle? mission,
+  required String seance,
+}) async {
+  tester.view.physicalSize = const Size(1280, 900);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+  final GoRouter routeur = GoRouter(
+    initialLocation: adresseCompteRendu(Routes.controleurCompteRendu, seance),
+    routes: <RouteBase>[
+      // Le meme constructeur que `app_router.dart`.
+      GoRoute(
+        path: Routes.controleurCompteRendu,
+        builder: (BuildContext _, GoRouterState etat) =>
+            CompteRenduControlePage(
+              seanceId: etat.uri.queryParameters['seance'],
+            ),
+      ),
+    ],
+  );
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: <Override>[
+        missionControleProvider.overrideWith((Ref _) async => mission),
+        visitesObserveesProvider.overrideWith(
+          () => VisitesObservees(<String, CompteRenduEnSuspens>{
+            _visiteA.seanceId: _visiteA,
+          }),
+        ),
+        envoiCompteRenduProvider.overrideWithValue(port),
+      ],
+      child: TranslationProvider(
+        child: MaterialApp.router(
+          theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+          locale: AppLocale.fr.flutterLocale,
+          supportedLocales: AppLocaleUtils.supportedLocales,
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
+          routerConfig: routeur,
+        ),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
 }
 
 Future<void> _monter(
@@ -150,7 +249,10 @@ void main() {
     expect(find.text(r.visiteEnCours), findsOneWidget);
     expect(find.text(r.visiteTransmise), findsNothing);
 
-    // « Plus tard » tout de suite : la transmission n'est pas retenue.
+    // « Plus tard » tout de suite : la transmission n'est pas retenue. Les
+    // lignes d'aide (K-58) allongent la page : on fait defiler jusqu'au
+    // bouton, comme l'utilisateur.
+    await tester.ensureVisible(find.byKey(CompteRenduControlePage.plusTardKey));
     await tester.tap(find.byKey(CompteRenduControlePage.plusTardKey));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
@@ -177,9 +279,10 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: <Override>[
-            missionControleProvider.overrideWith(
-              (Ref _) async =>
-                  missionDemoControleur(EtatDemoControleur.enDirect),
+            visitesObserveesProvider.overrideWith(
+              () => VisitesObservees(<String, CompteRenduEnSuspens>{
+                _visiteA.seanceId: _visiteA,
+              }),
             ),
             envoiCompteRenduProvider.overrideWithValue(port),
           ],
@@ -189,7 +292,7 @@ void main() {
               locale: AppLocale.fr.flutterLocale,
               supportedLocales: AppLocaleUtils.supportedLocales,
               localizationsDelegates: GlobalMaterialLocalizations.delegates,
-              home: const CompteRenduControlePage(),
+              home: CompteRenduControlePage(seanceId: _visiteA.seanceId),
             ),
           ),
         ),
@@ -263,6 +366,8 @@ void main() {
     await _jusquAuCompteRendu(tester);
     final r = t.controleur.compteRendu;
 
+    await tester.ensureVisible(find.byKey(CompteRenduControlePage.plusTardKey));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(CompteRenduControlePage.plusTardKey));
     await tester.pump(const Duration(milliseconds: 500));
     await tester.pumpAndSettle();
@@ -281,6 +386,8 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text(r.notice), findsNothing);
+    await tester.ensureVisible(find.byKey(CompteRenduControlePage.actionKey));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(CompteRenduControlePage.actionKey));
     await tester.pumpAndSettle();
     expect(find.byType(ObservationControlePage), findsOneWidget);
@@ -289,18 +396,30 @@ void main() {
   testWidgets('Sans serveur, l envoi echoue et le dit', (
     WidgetTester tester,
   ) async {
-    await _monter(
-      tester,
-      GoRouter(
-        routes: <RouteBase>[
-          GoRoute(
-            path: '/',
-            builder: (BuildContext _, GoRouterState _) =>
-                const CompteRenduControlePage(),
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: <Override>[
+          visitesObserveesProvider.overrideWith(
+            () => VisitesObservees(<String, CompteRenduEnSuspens>{
+              _visiteA.seanceId: _visiteA,
+            }),
           ),
         ],
+        child: TranslationProvider(
+          child: MaterialApp(
+            theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+            locale: AppLocale.fr.flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            home: CompteRenduControlePage(seanceId: _visiteA.seanceId),
+          ),
+        ),
       ),
     );
+    await tester.pumpAndSettle();
     final r = t.controleur.compteRendu;
     await tester.tap(
       find.byKey(
@@ -308,11 +427,176 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(CompteRenduControlePage.actionKey));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(CompteRenduControlePage.actionKey));
     await tester.pumpAndSettle();
     expect(find.text(r.envoyeTitre), findsNothing);
-    expect(find.text(r.echec), findsOneWidget);
+    // Revue CT-R m1 : message propre a « Rien a signaler », qui n'a pas de
+    // texte ; il dit « non confirme » (D5) et ce qui reste fiable (K-59).
+    expect(find.text(r.echecRien), findsOneWidget);
+    expect(find.text(r.echec), findsNothing);
+    expect(r.echecRien, contains("n'est pas confirmé"));
+    expect(r.echecRien, isNot(contains('texte')));
     // Le choix est garde : le bouton reste la.
     expect(find.text(r.envoyer), findsOneWidget);
+  });
+
+  // Revue CT-R B1 : le compte rendu suit la visite qui sort de la salle,
+  // jamais la mission courante.
+  for (final (String cas, MissionControle? Function() mission)
+      in <(String, MissionControle? Function())>[
+        ('la mission courante est devenue une autre', _missionB),
+        ('la mission courante est vide', () => null),
+      ]) {
+    testWidgets('Sortie de la seance A, $cas : A est transmise et envoyee', (
+      WidgetTester tester,
+    ) async {
+      final _PortTemoin port = _PortTemoin();
+      await _monterRouteReelle(
+        tester,
+        port: port,
+        mission: mission(),
+        seance: _visiteA.seanceId,
+      );
+      final r = t.controleur.compteRendu;
+      expect(port.transmises, <String>[_visiteA.seanceId]);
+      expect(
+        find.text(
+          r.sousTitre(
+            classe: _visiteA.classe,
+            heure: heureDeLAppareil(_visiteA.debut),
+          ),
+        ),
+        findsWidgets,
+      );
+      expect(find.textContaining('Al-Qamar'), findsNothing);
+      await tester.tap(
+        find.byKey(
+          CompteRenduControlePage.cleChoix(ChoixCompteRendu.rienASignaler),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byKey(CompteRenduControlePage.actionKey));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(CompteRenduControlePage.actionKey));
+      await tester.pumpAndSettle();
+      expect(port.envois, <(String, ChoixCompteRendu)>[
+        (_visiteA.seanceId, ChoixCompteRendu.rienASignaler),
+      ]);
+      expect(find.text(r.envoyeTitre), findsOneWidget);
+    });
+  }
+
+  testWidgets('Seance inconnue : le message generique, aucune transmission', (
+    WidgetTester tester,
+  ) async {
+    final _PortTemoin port = _PortTemoin();
+    await _monterRouteReelle(
+      tester,
+      port: port,
+      mission: _missionB(),
+      seance: 'seance-inconnue',
+    );
+    expect(find.text(t.controleur.controle.indisponible), findsOneWidget);
+    expect(port.transmises, isEmpty);
+    expect(find.textContaining('Al-Qamar'), findsNothing);
+  });
+
+  test('Deux visites a terminer coexistent ; terminer en retire une', () {
+    final ProviderContainer c = ProviderContainer();
+    addTearDown(c.dispose);
+    final CompteRenduATerminer suivi = c.read(
+      compteRenduATerminerProvider.notifier,
+    );
+    final CompteRenduEnSuspens b = CompteRenduEnSuspens.deMission(_missionB());
+    suivi
+      ..ouvrir(_visiteA)
+      ..ouvrir(b)
+      ..ouvrir(_visiteA.avec(TransmissionVisite.echec));
+    expect(c.read(compteRenduATerminerProvider).keys, <String>[
+      _visiteA.seanceId,
+      b.seanceId,
+    ]);
+    // Rouvrir A ne remplace pas son etat.
+    expect(
+      c.read(compteRenduATerminerProvider)[_visiteA.seanceId]!.transmission,
+      isNull,
+    );
+    suivi.terminer(_visiteA.seanceId);
+    expect(c.read(compteRenduATerminerProvider).keys, <String>[b.seanceId]);
+  });
+
+  testWidgets('Deux visites a terminer : la reprise ouvre la bonne', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(1280, 1400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final _PortTemoin port = _PortTemoin();
+    final CompteRenduEnSuspens b = CompteRenduEnSuspens.deMission(_missionB());
+    final ProviderContainer c = ProviderContainer(
+      overrides: <Override>[
+        missionControleProvider.overrideWith((Ref _) async => null),
+        envoiCompteRenduProvider.overrideWithValue(port),
+      ],
+    );
+    addTearDown(c.dispose);
+    c.read(compteRenduATerminerProvider.notifier)
+      ..ouvrir(_visiteA)
+      ..ouvrir(b);
+    final GoRouter routeur = GoRouter(
+      initialLocation: Routes.controleur,
+      routes: <RouteBase>[
+        GoRoute(
+          path: Routes.controleur,
+          builder: (BuildContext _, GoRouterState _) =>
+              const ControleControleurPage(),
+        ),
+        GoRoute(
+          path: Routes.controleurCompteRendu,
+          builder: (BuildContext _, GoRouterState etat) =>
+              CompteRenduControlePage(
+                seanceId: etat.uri.queryParameters['seance'],
+              ),
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: c,
+        child: TranslationProvider(
+          child: MaterialApp.router(
+            theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+            locale: AppLocale.fr.flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            routerConfig: routeur,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final r = t.controleur.compteRendu;
+    // Les deux blocs, la plus recente (B) d'abord.
+    expect(find.text(r.aTerminer), findsNWidgets(2));
+    final Finder repriseA = find.byKey(
+      ControleControleurPage.cleReprendre(_visiteA.seanceId),
+    );
+    await tester.ensureVisible(repriseA);
+    await tester.pumpAndSettle();
+    await tester.tap(repriseA);
+    await tester.pumpAndSettle();
+    expect(find.byType(CompteRenduControlePage), findsOneWidget);
+    expect(
+      find.text(
+        r.sousTitre(
+          classe: _visiteA.classe,
+          heure: heureDeLAppareil(_visiteA.debut),
+        ),
+      ),
+      findsWidgets,
+    );
+    expect(port.transmises, <String>[_visiteA.seanceId]);
   });
 }

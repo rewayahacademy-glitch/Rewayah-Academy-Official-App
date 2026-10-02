@@ -43,6 +43,7 @@ import '../controleur/controle_page.dart';
 import '../controleur/echanges_controleur.dart';
 import '../controleur/echanges_controleur_page.dart';
 import '../controleur/garde_controle.dart';
+import '../controleur/historique_controleur.dart';
 import '../controleur/historique_controleur_page.dart';
 import '../controleur/mission_controle.dart';
 import '../controleur/observation_controle.dart';
@@ -50,6 +51,7 @@ import '../controleur/observation_controle_page.dart';
 import '../salle/salle_page.dart';
 import 'controleur_demo.dart';
 import 'espaces_controleur_demo.dart';
+import 'historique_controleur_demo.dart';
 import 'mode_demonstration.dart';
 import 'repere_demonstration.dart';
 import 'salle_controleur_demo.dart';
@@ -109,20 +111,27 @@ List<RouteBase> routesDemoControleur(String environnement) {
             faitsVisiteProvider.overrideWith(
               (Ref _) async => faitsVisiteDemoControleur(),
             ),
+            ..._visitesDemo(),
           ],
           child: RepereDemonstration(
             child: GardeControle(
               child: CompteRenduControlePage(
+                seanceId: _seanceDemo(etat),
                 onRevenir: () => contexte.go(
                   adresseDemoControleur(
                     EcranDemoControleur.controle,
                     espaces: espaces.vers(principal: false),
                   ),
                 ),
-                onObservation: (ChoixCompteRendu choix) => contexte.go(
-                  adresseObservation(cheminDemoObservationControleur, choix),
-                ),
-                onEcrireAdmin: () =>
+                onObservation: (ChoixCompteRendu choix, String seance) =>
+                    contexte.go(
+                      adresseObservation(
+                        cheminDemoObservationControleur,
+                        choix,
+                        seanceId: seance,
+                      ),
+                    ),
+                onEcrireAdmin: (String? _) =>
                     contexte.go(adresseFilMissionDemoControleur()),
               ),
             ),
@@ -140,18 +149,47 @@ List<RouteBase> routesDemoControleur(String environnement) {
           rosterControleProvider.overrideWith(
             (Ref _) async => rosterDemoControleur(),
           ),
+          ..._visitesDemo(),
         ],
         child: RepereDemonstration(
           child: ObservationControlePage(
+            seanceId: _seanceDemo(etat),
             choix: choixObservationDepuis(etat.uri.queryParameters, etat.extra),
-            onRetour: () => contexte.go(cheminDemoCompteRenduControleur),
+            onRetour: () => contexte.go(
+              adresseCompteRendu(
+                cheminDemoCompteRenduControleur,
+                _seanceDemo(etat),
+              ),
+            ),
             onRevenir: () => contexte.go(
               adresseDemoControleur(EcranDemoControleur.controle),
             ),
-            onEcrireAdmin: () => contexte.go(adresseFilMissionDemoControleur()),
+            onEcrireAdmin: (String? _) =>
+                contexte.go(adresseFilMissionDemoControleur()),
           ),
         ),
       ),
+    ),
+  ];
+}
+
+/// La visite de demonstration : la mission en direct, copiee a l'entree en
+/// salle (revue CT-R B1).
+CompteRenduEnSuspens visiteDemoControleur() => CompteRenduEnSuspens.deMission(
+  missionDemoControleur(EtatDemoControleur.enDirect)!,
+);
+
+/// La seance de l'adresse, sinon celle de la visite de demonstration (liens
+/// directs de la liste de demonstration).
+String _seanceDemo(GoRouterState etat) =>
+    etat.uri.queryParameters['seance'] ?? visiteDemoControleur().seanceId;
+
+/// La visite de demonstration, toujours connue des ecrans du compte rendu.
+List<Override> _visitesDemo() {
+  final CompteRenduEnSuspens v = visiteDemoControleur();
+  return <Override>[
+    visitesObserveesProvider.overrideWith(
+      () => VisitesObservees(<String, CompteRenduEnSuspens>{v.seanceId: v}),
     ),
   ];
 }
@@ -192,12 +230,14 @@ class EnvoiCompteRenduDemo implements EnvoiCompteRendu {
       Future<void>.delayed(const Duration(milliseconds: 400));
 
   @override
-  Future<void> envoyer(ChoixCompteRendu choix) =>
+  Future<void> envoyer(String seanceId, ChoixCompteRendu choix) =>
       Future<void>.delayed(const Duration(milliseconds: 400));
 
   @override
-  Future<void> envoyerObservation(ObservationControle observation) =>
-      Future<void>.delayed(const Duration(milliseconds: 400));
+  Future<void> envoyerObservation(
+    String seanceId,
+    ObservationControle observation,
+  ) => Future<void>.delayed(const Duration(milliseconds: 400));
 }
 
 /// La salle du controleur en demonstration.
@@ -334,14 +374,23 @@ class EchangesDemo implements PortEchanges {
     final MissionControleurDemo? m = DonneesControleurDemo.mission(
       EtatDemoControleur.enDirect,
     );
-    if (m == null || m.id != missionId) {
-      throw StateError('Mission inconnue de la demonstration.');
-    }
+    // Une mission passee de l'Historique (CT-7) a aussi son fil canonique.
+    final RapportControleurDemo? r = DonneesControleurDemo.rapports
+        .where((RapportControleurDemo r) => r.missionId == missionId)
+        .firstOrNull;
+    final (String classe, DateTime debut) = switch ((m, r)) {
+      (final MissionControleurDemo m, _) when m.id == missionId => (
+        m.classe,
+        m.debut,
+      ),
+      (_, final RapportControleurDemo r) => (r.classe, r.date),
+      _ => throw StateError('Mission inconnue de la demonstration.'),
+    };
     final FilEchange nouveau = FilEchange(
       id: 'demo-fil-$missionId',
       missionId: missionId,
-      classe: m.classe,
-      debutMission: m.debut,
+      classe: classe,
+      debutMission: debut,
       etat: EtatFilEchange.enAttente,
       messages: const <MessageEchange>[],
     );
@@ -435,6 +484,8 @@ List<Override> surchargesCoquilleControleurDemo(
   envoiCompteRenduProvider.overrideWithValue(const EnvoiCompteRenduDemo()),
   // Echanges simules (CT-6) : fils en memoire, envoi sans serveur.
   portEchangesProvider.overrideWith((Ref _) => EchangesDemo()),
+  // Historique simule (CT-7) : rapports en memoire, aucun serveur.
+  portHistoriqueProvider.overrideWithValue(const HistoriqueDemo()),
 ];
 
 /// La mission de demonstration de [etat], dans le modele de CTR-01.
@@ -703,17 +754,32 @@ class CoquilleControleurDemo extends StatelessWidget {
                       emisA: DateTime.now(),
                     ),
                   ),
-                  onReprendreCompteRendu: () => context.go(
-                    Uri(
-                      path: cheminDemoCompteRenduControleur,
-                      queryParameters: espaces.parametres.isEmpty
-                          ? null
-                          : espaces.parametres,
-                    ).toString(),
+                  onReprendreCompteRendu: (String seance) => context.go(
+                    adresseCompteRendu(
+                      cheminDemoCompteRenduControleur,
+                      seance,
+                      autres: espaces.parametres,
+                    ),
                   ),
                 ),
-                EcranDemoControleur.historique =>
-                  const HistoriqueControleurPage(),
+                EcranDemoControleur.historique => HistoriqueControleurPage(
+                  maintenant: DonneesControleurDemo.maintenant,
+                  onReprendreCompteRendu: (String seance) => context.go(
+                    adresseCompteRendu(
+                      cheminDemoCompteRenduControleur,
+                      seance,
+                      autres: espaces.parametres,
+                    ),
+                  ),
+                  onEcrireAdmin: (String mission) => context.go(
+                    adresseDemoControleur(
+                      EcranDemoControleur.echanges,
+                      etat: etat,
+                      fil: mission,
+                      espaces: espaces,
+                    ),
+                  ),
+                ),
                 EcranDemoControleur.echanges => EchangesControleurPage(
                   key: ValueKey<String?>(fil),
                   missionOuverte: fil,
