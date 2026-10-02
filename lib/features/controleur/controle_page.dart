@@ -52,6 +52,9 @@ class ControleControleurPage extends ConsumerWidget {
   /// La cle du bouton d'entree.
   static const Key commencerKey = ValueKey<String>('ctr01-commencer');
 
+  /// La cle du message « Un controle est deja en cours » (CTRL-SALLE-1).
+  static const Key dejaControleeKey = ValueKey<String>('ctr01-deja-controlee');
+
   /// La cle de « Reprendre le compte rendu ».
   static const Key reprendreKey = ValueKey<String>('ctr01-reprendre');
 
@@ -100,9 +103,9 @@ class ControleControleurPage extends ConsumerWidget {
                     visite: aTerminer,
                     onReprendre:
                         onReprendreCompteRendu ??
-                        () => GoRouter.of(
-                          context,
-                        ).go(Routes.controleurCompteRendu),
+                        () =>
+                            GoRouter.of(context)
+                                .go(Routes.controleurCompteRendu),
                   ),
                 ],
               ],
@@ -208,6 +211,9 @@ class _CarteMission extends StatelessWidget {
 
   bool get _enDirect => mission.etat == EtatMissionControle.enDirect;
 
+  /// CTRL-SALLE-1 : la seance est en direct, mais deja controlee.
+  bool get _dejaControlee => mission.etat == EtatMissionControle.dejaControlee;
+
   void _commencer(BuildContext context) => GoRouter.of(context).go(
     Routes.salle,
     // Le billet passe par `extra`, jamais par l'URL (ADR-005) ; le serveur
@@ -252,7 +258,7 @@ class _CarteMission extends StatelessWidget {
               ),
               // La seance en direct se reconnait au premier coup d'oeil
               // (ON-AIR-1) : le meme composant que partout ailleurs.
-              if (_enDirect) ...<Widget>[
+              if (_enDirect || _dejaControlee) ...<Widget>[
                 Ecart.hSm,
                 const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
               ],
@@ -303,6 +309,29 @@ class _CarteMission extends StatelessWidget {
                             ? _commencer(context)
                             : onCommencer!(mission),
                       ),
+                    )
+                  // CTRL-SALLE-1 : un seul controle a la fois par Classe. Jamais
+                  // de bouton grise (K-56) : ce qui se passe, et quoi faire
+                  // (K-59). Le serveur refuse de toute facon le second
+                  // controle (BR-1).
+                  : _dejaControlee
+                  ? Column(
+                      key: ControleControleurPage.dejaControleeKey,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Text(
+                          t.controleur.controle.dejaEnCours,
+                          style: palette.inkStrong.applyTo(
+                            textes.bodyMedium ?? const TextStyle(),
+                          ),
+                        ),
+                        Ecart.vXs,
+                        Text(
+                          t.controleur.controle.dejaEnCoursAide,
+                          style: doux,
+                        ),
+                      ],
                     )
                   : Align(
                       alignment: AlignmentDirectional.centerStart,

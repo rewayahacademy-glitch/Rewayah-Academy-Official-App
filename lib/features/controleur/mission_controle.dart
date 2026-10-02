@@ -19,6 +19,12 @@ enum EtatMissionControle {
   /// La seance est en direct : « Commencer le controle » (C1, C14).
   enDirect,
 
+  /// La seance est en direct, mais un autre controle y est deja en cours
+  /// (CTRL-SALLE-1) : un seul controle a la fois par Classe. Aucun bouton
+  /// d'entree, un message qui dit quoi faire (K-59). Le refus atomique du
+  /// second controle reste au serveur (BR-1, `14_controleur/CT-BR.md`).
+  dejaControlee,
+
   /// Seance annulee, autorisation revoquee, salle fermee (P-CTR-08).
   indisponible,
 }

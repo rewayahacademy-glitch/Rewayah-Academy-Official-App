@@ -15,6 +15,7 @@ import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
+import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/indicateur_observation.dart';
 
@@ -245,32 +246,34 @@ void main() {
       }
     });
 
-    testWidgets('le bandeau permanent est la pour les quatre roles', (
-      WidgetTester tester,
-    ) async {
-      // ADR-011 : la meme ligne, inchangee, quel que soit le role et que la
-      // visite de controle ait lieu ou non.
-      for (final String role in <String>[
-        'teacher',
-        'student',
-        'guardian_observer',
-        'masked_controller',
-      ]) {
-        await _monterSalle(
-          tester,
-          surcharges: _surcharges(
-            video: FauxServiceVideo(acces0: _acces(role)),
-            moteur: FauxMoteurSalle(),
-            preVol: FauxServicePreVol(),
-          ),
-        );
-        expect(
-          find.text(t.salle.bandeauPermanent),
-          findsOneWidget,
-          reason: role,
-        );
-      }
-    });
+    testWidgets(
+      'le bandeau permanent est la pour les trois roles participants',
+      (WidgetTester tester) async {
+        // ADR-011 : la meme ligne, inchangee, quel que soit le role et que la
+        // visite de controle ait lieu ou non. CTRL-SALLE-1 : elle s'adresse aux
+        // participants ; le controleur, qui EST la visite, ne la voit pas
+        // (teste dans le groupe de l'invisibilite du controleur).
+        for (final String role in <String>[
+          'teacher',
+          'student',
+          'guardian_observer',
+        ]) {
+          await _monterSalle(
+            tester,
+            surcharges: _surcharges(
+              video: FauxServiceVideo(acces0: _acces(role)),
+              moteur: FauxMoteurSalle(),
+              preVol: FauxServicePreVol(),
+            ),
+          );
+          expect(
+            find.text(t.salle.bandeauPermanent),
+            findsOneWidget,
+            reason: role,
+          );
+        }
+      },
+    );
   });
 
   group('Les commandes suivent le jeton, jamais le mode d interface', () {
@@ -380,10 +383,12 @@ void main() {
         ),
       );
 
-      // Deux bandeaux distincts : celui de l'ADR-011, identique pour tous, et
-      // le rappel d'invisibilite, qui ne vit que sur cet ecran-la.
+      // CTRL-SALLE-1 : le rappel d'invisibilite, qui ne vit que sur cet
+      // ecran-la ; la mention de l'ADR-011 s'adresse aux participants, jamais
+      // au controleur lui-meme.
       expect(find.text(t.salle.bandeauControle), findsOneWidget);
-      expect(find.text(t.salle.bandeauPermanent), findsOneWidget);
+      expect(find.text(t.salle.bandeauPermanent), findsNothing);
+      expect(find.byType(PermanentNotice), findsNothing);
     });
 
     testWidgets('il lit deux personnes, et ne s y trouve pas', (
