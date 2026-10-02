@@ -53,6 +53,8 @@ const List<String> composantsDuCatalogue = <String>[
   'PileCartes',
   'CarteGroupee',
   'CarteLignes',
+  // BENTO-1 (02/10) : la grille partagee des tableaux de bord.
+  'GrilleBento',
   // Section 2 : le P1 que le lot R3 produit.
   'TimelineRow',
   // Section 2 : les deux que le lot ADM-04 produit. `DataCollection` etait au

@@ -40,6 +40,7 @@ import '../../../core/widgets/ecran_resultat.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/fil_discussion.dart';
 import '../../../core/widgets/filter_pill.dart';
+import '../../../core/widgets/grille_bento.dart';
 import '../../../core/widgets/groupe_reglages.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
@@ -217,6 +218,35 @@ final List<EntreeJournee> _entreesJournee = <EntreeJournee>[
 /// justement ce qui casse un rail.
 List<Destination> _destinationsExemple() =>
     destinationsPour(role: AppRole.guardian, mode: InterfaceMode.standard);
+
+/// Un compteur dans sa tuile Bento : le chiffre en haut, ce qu'il compte en
+/// bas, comme au Centre de commande.
+Widget _tuileBento(int valeur, String libelle) => AppCard(
+  marge: AppSpacing.lg,
+  libelleSemantique: '$valeur $libelle',
+  child: ContenuTuileBento(children: <Widget>[Text('$valeur'), Text(libelle)]),
+);
+
+/// Les quatre tuiles de tete du Centre de commande, avec leurs vrais libelles.
+List<TuileBento> _tuilesBentoPrincipales() => <TuileBento>[
+  TuileBento(
+    etendue: EtendueBento.large,
+    etendueLarge: EtendueBento.grande,
+    child: _tuileBento(5, t.admin.tableau.dossiers),
+  ),
+  TuileBento(
+    etendue: EtendueBento.haute,
+    child: _tuileBento(3, t.admin.tableau.demandes),
+  ),
+  TuileBento(
+    etendue: EtendueBento.carree,
+    child: _tuileBento(17, t.admin.tableau.foyers),
+  ),
+  TuileBento(
+    etendue: EtendueBento.carree,
+    child: _tuileBento(0, t.admin.tableau.rapports),
+  ),
+];
 
 /// Hauteur allouee a un composant qui prend toute une page.
 const double _hauteurPage = AppSpacing.respiration * 6;
@@ -1491,6 +1521,52 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             ),
           ],
         ),
+      ),
+    ],
+  ),
+
+  // --- BENTO-1 : la grille des tableaux de bord ----------------------------
+  // La composition du Centre de commande (tableau_de_bord_page.dart) : une
+  // tuile large qui devient grande sur quatre colonnes, une haute, deux carres,
+  // puis les deux compteurs calmes regroupes ou separes.
+  EntreeGalerie(
+    nom: 'GrilleBento',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'centre de commande, compteurs calmes regroupes',
+        (BuildContext _) => GrilleBento(
+          tuiles: <TuileBento>[
+            ..._tuilesBentoPrincipales(),
+            TuileBento(
+              etendue: EtendueBento.large,
+              etendueLarge: const EtendueBento(4, 1),
+              child: _tuileBento(0, t.admin.tableau.incidents),
+            ),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'centre de commande, compteurs separes',
+        (BuildContext _) => GrilleBento(
+          tuiles: <TuileBento>[
+            ..._tuilesBentoPrincipales(),
+            TuileBento(
+              etendue: EtendueBento.carree,
+              etendueLarge: EtendueBento.large,
+              child: _tuileBento(2, t.admin.tableau.incidents),
+            ),
+            TuileBento(
+              etendue: EtendueBento.carree,
+              etendueLarge: EtendueBento.large,
+              child: _tuileBento(1, t.admin.tableau.comptes),
+            ),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'aucune tuile',
+        (BuildContext _) => const GrilleBento(tuiles: <TuileBento>[]),
       ),
     ],
   ),
