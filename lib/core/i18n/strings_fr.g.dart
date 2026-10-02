@@ -2283,6 +2283,7 @@ class Traductions$adulte$fr {
 	late final Traductions$adulte$maClasse$fr maClasse = Traductions$adulte$maClasse$fr.internal(_root);
 	late final Traductions$adulte$monEspace$fr monEspace = Traductions$adulte$monEspace$fr.internal(_root);
 	late final Traductions$adulte$provisoire$fr provisoire = Traductions$adulte$provisoire$fr.internal(_root);
+	late final Traductions$adulte$recharge$fr recharge = Traductions$adulte$recharge$fr.internal(_root);
 	late final Traductions$adulte$paiements$fr paiements = Traductions$adulte$paiements$fr.internal(_root);
 	late final Traductions$adulte$famille$fr famille = Traductions$adulte$famille$fr.internal(_root);
 	late final Traductions$adulte$invitation$fr invitation = Traductions$adulte$invitation$fr.internal(_root);
@@ -8936,9 +8937,99 @@ class Traductions$adulte$provisoire$fr {
 
 	/// fr: 'L'ajout de votre famille arrivera dans une prochaine étape.'
 	String get ajouterMaFamille => 'L\'ajout de votre famille arrivera dans une prochaine étape.';
+}
 
-	/// fr: 'La recharge des soldes arrivera dans une prochaine étape.'
-	String get recharge => 'La recharge des soldes arrivera dans une prochaine étape.';
+// Path: adulte.recharge
+class Traductions$adulte$recharge$fr {
+	Traductions$adulte$recharge$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nouvelle recharge'
+	String get titre => 'Nouvelle recharge';
+
+	/// fr: 'Sélectionnez un ou plusieurs bénéficiaires, puis choisissez une offre pour chacun.'
+	String get phrase => 'Sélectionnez un ou plusieurs bénéficiaires, puis choisissez une offre pour chacun.';
+
+	/// fr: 'Tout sélectionner'
+	String get toutSelectionner => 'Tout sélectionner';
+
+	/// fr: 'Tout désélectionner'
+	String get toutDeselectionner => 'Tout désélectionner';
+
+	/// fr: 'Offre pour {prenom}'
+	String offrePour({required Object prenom}) => 'Offre pour ${prenom}';
+
+	/// fr: 'Vérifier la recharge'
+	String get verifier => 'Vérifier la recharge';
+
+	/// fr: 'Sélectionnez au moins un bénéficiaire pour continuer.'
+	String get raisonAucun => 'Sélectionnez au moins un bénéficiaire pour continuer.';
+
+	/// fr: 'Choisissez une offre pour chaque bénéficiaire sélectionné.'
+	String get raisonOffre => 'Choisissez une offre pour chaque bénéficiaire sélectionné.';
+
+	/// fr: 'Vous êtes hors ligne. Vous pourrez vérifier la recharge quand la connexion sera revenue.'
+	String get horsLigneVerifier => 'Vous êtes hors ligne. Vous pourrez vérifier la recharge quand la connexion sera revenue.';
+
+	/// fr: 'Recharge pas encore disponible'
+	String get indisponibleTitre => 'Recharge pas encore disponible';
+
+	/// fr: 'Les offres de recharge ne sont pas encore disponibles dans l'application. Aucun paiement n'est possible ici pour l'instant.'
+	String get indisponiblePhrase => 'Les offres de recharge ne sont pas encore disponibles dans l\'application. Aucun paiement n\'est possible ici pour l\'instant.';
+
+	/// fr: 'La vérification n'a pas abouti.'
+	String get verificationEchecTitre => 'La vérification n\'a pas abouti.';
+
+	/// fr: 'Vos choix sont conservés. Vous pouvez réessayer.'
+	String get verificationEchecPhrase => 'Vos choix sont conservés. Vous pouvez réessayer.';
+
+	/// fr: 'Vérifier la recharge'
+	String get verifierTitre => 'Vérifier la recharge';
+
+	/// fr: 'Vérifiez les détails avant de procéder au paiement.'
+	String get verifierPhrase => 'Vérifiez les détails avant de procéder au paiement.';
+
+	/// fr: 'Récapitulatif par bénéficiaire'
+	String get recapitulatif => 'Récapitulatif par bénéficiaire';
+
+	/// fr: 'Montant payé'
+	String get montantPaye => 'Montant payé';
+
+	/// fr: 'Solde attribué'
+	String get soldeAttribue => 'Solde attribué';
+
+	/// fr: 'Statut de l'attribution'
+	String get statut => 'Statut de l\'attribution';
+
+	/// fr: 'Modifier'
+	String get modifier => 'Modifier';
+
+	/// fr: 'Total à payer'
+	String get total => 'Total à payer';
+
+	/// fr: 'Payer {montant}'
+	String payer({required Object montant}) => 'Payer ${montant}';
+
+	/// fr: 'Vous êtes hors ligne. Rien n'est payé. Vous pourrez payer vous-même quand la connexion sera revenue.'
+	String get horsLignePayer => 'Vous êtes hors ligne. Rien n\'est payé. Vous pourrez payer vous-même quand la connexion sera revenue.';
+
+	/// fr: 'Le paiement n'a pas été confirmé.'
+	String get paiementEchecTitre => 'Le paiement n\'a pas été confirmé.';
+
+	/// fr: 'Vérifiez avant de réessayer.'
+	String get paiementEchecPhrase => 'Vérifiez avant de réessayer.';
+
+	/// fr: 'Paiement pas encore disponible'
+	String get paiementIndisponibleTitre => 'Paiement pas encore disponible';
+
+	/// fr: 'Aucun paiement n'a été effectué. Le paiement en ligne n'est pas encore ouvert dans l'application.'
+	String get paiementIndisponiblePhrase => 'Aucun paiement n\'a été effectué. Le paiement en ligne n\'est pas encore ouvert dans l\'application.';
+
+	/// fr: 'Revenir aux paiements du foyer'
+	String get revenirPaiements => 'Revenir aux paiements du foyer';
 }
 
 // Path: adulte.paiements
@@ -16769,7 +16860,34 @@ extension on Traductions {
 			'adulte.monEspace.pageCoursAcces.indisponiblePhrase' => 'Le détail de vos cours, de vos séances et de votre accès n\'est pas encore disponible dans l\'application.',
 			'adulte.provisoire.coran' => 'Le Coran de votre espace élève s\'affichera ici.',
 			'adulte.provisoire.ajouterMaFamille' => 'L\'ajout de votre famille arrivera dans une prochaine étape.',
-			'adulte.provisoire.recharge' => 'La recharge des soldes arrivera dans une prochaine étape.',
+			'adulte.recharge.titre' => 'Nouvelle recharge',
+			'adulte.recharge.phrase' => 'Sélectionnez un ou plusieurs bénéficiaires, puis choisissez une offre pour chacun.',
+			'adulte.recharge.toutSelectionner' => 'Tout sélectionner',
+			'adulte.recharge.toutDeselectionner' => 'Tout désélectionner',
+			'adulte.recharge.offrePour' => ({required Object prenom}) => 'Offre pour ${prenom}',
+			'adulte.recharge.verifier' => 'Vérifier la recharge',
+			'adulte.recharge.raisonAucun' => 'Sélectionnez au moins un bénéficiaire pour continuer.',
+			'adulte.recharge.raisonOffre' => 'Choisissez une offre pour chaque bénéficiaire sélectionné.',
+			'adulte.recharge.horsLigneVerifier' => 'Vous êtes hors ligne. Vous pourrez vérifier la recharge quand la connexion sera revenue.',
+			'adulte.recharge.indisponibleTitre' => 'Recharge pas encore disponible',
+			'adulte.recharge.indisponiblePhrase' => 'Les offres de recharge ne sont pas encore disponibles dans l\'application. Aucun paiement n\'est possible ici pour l\'instant.',
+			'adulte.recharge.verificationEchecTitre' => 'La vérification n\'a pas abouti.',
+			'adulte.recharge.verificationEchecPhrase' => 'Vos choix sont conservés. Vous pouvez réessayer.',
+			'adulte.recharge.verifierTitre' => 'Vérifier la recharge',
+			'adulte.recharge.verifierPhrase' => 'Vérifiez les détails avant de procéder au paiement.',
+			'adulte.recharge.recapitulatif' => 'Récapitulatif par bénéficiaire',
+			'adulte.recharge.montantPaye' => 'Montant payé',
+			'adulte.recharge.soldeAttribue' => 'Solde attribué',
+			'adulte.recharge.statut' => 'Statut de l\'attribution',
+			'adulte.recharge.modifier' => 'Modifier',
+			'adulte.recharge.total' => 'Total à payer',
+			'adulte.recharge.payer' => ({required Object montant}) => 'Payer ${montant}',
+			'adulte.recharge.horsLignePayer' => 'Vous êtes hors ligne. Rien n\'est payé. Vous pourrez payer vous-même quand la connexion sera revenue.',
+			'adulte.recharge.paiementEchecTitre' => 'Le paiement n\'a pas été confirmé.',
+			'adulte.recharge.paiementEchecPhrase' => 'Vérifiez avant de réessayer.',
+			'adulte.recharge.paiementIndisponibleTitre' => 'Paiement pas encore disponible',
+			'adulte.recharge.paiementIndisponiblePhrase' => 'Aucun paiement n\'a été effectué. Le paiement en ligne n\'est pas encore ouvert dans l\'application.',
+			'adulte.recharge.revenirPaiements' => 'Revenir aux paiements du foyer',
 			'adulte.paiements.beneficiaires' => 'Bénéficiaires',
 			'adulte.paiements.recharger' => 'Recharger',
 			'adulte.paiements.recapitulatif' => ({required Object valeur}) => 'Récapitulatif du foyer : ${valeur}. Chaque solde reste celui de son bénéficiaire.',

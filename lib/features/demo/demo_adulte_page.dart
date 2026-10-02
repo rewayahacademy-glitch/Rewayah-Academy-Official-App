@@ -35,6 +35,7 @@ import '../../core/appairage/service_appairage.dart'
     show AppareilAppaire, EleveDuFoyer;
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_notifications.dart';
+import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/config/env.dart';
 import '../../core/domain/enums.dart';
 import '../../core/foyer/port_creation_profil_eleve.dart';
@@ -137,8 +138,8 @@ enum EcranDemoAdulte {
   /// bouton « Recharger » et l'historique pour le titulaire (EA-9).
   paiementsFoyer,
 
-  /// La recharge, ouverte par « Recharger » (EA-9) : provisoire jusqu'a
-  /// EA-10.
+  /// La recharge, ouverte par « Recharger » (EA-9) : beneficiaires, offres,
+  /// verification et paiement (EA-10).
   recharge,
 
   /// La place adulte, ouverte depuis sa ligne de Ma famille (EA-8) : occupee,
@@ -991,12 +992,12 @@ class CoquilleAdulteDemo extends StatelessWidget {
         soldes: true,
         onRecharger: versRecharge,
       ),
-      // La recharge viendra avec EA-10 : une page provisoire, rien n'est
-      // paye ni simule (F13).
-      EcranDemoAdulte.recharge => _PageProvisoire(
-        titre: t.adulte.paiements.recharger,
-        phrase: t.adulte.provisoire.recharge,
-        onRetour: () => context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
+      // La recharge (EA-10, EA-BR-24 et 25) : les beneficiaires et leurs
+      // offres, la verification, puis un etat honnete, jamais un paiement
+      // reussi (F13). Rien n'est paye.
+      EcranDemoAdulte.recharge => RechargeFoyerPage(
+        onAbandon: () => context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
+        onTerminee: () => context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
       ),
       EcranDemoAdulte.inviterConjoint => InviterConjointPage(
         placeFeminine: titulaire.placeFeminine,
@@ -1158,6 +1159,14 @@ class CoquilleAdulteDemo extends StatelessWidget {
         portInvitationConjointProvider.overrideWithValue(_InvitationDemo(etat)),
         // Le retrait du second adulte (EA-8, EA-BR-21) : rien n'est envoye.
         portSortieForfaitProvider.overrideWithValue(_SortieDemo(etat)),
+        // La recharge (EA-10, EA-BR-24 et 25), au titulaire seulement (F7) :
+        // rien n'est paye.
+        portRechargeFoyerProvider.overrideWithValue(_RechargeDemo(etat, genre)),
+        // Derive du port : sans surcharge ici, il se resoudrait dans le
+        // conteneur racine, sur le port reel (indisponible).
+        beneficiairesRechargeProvider.overrideWith(
+          (Ref _) => _RechargeDemo(etat, genre).beneficiaires(),
+        ),
       ],
       child: RepereDemonstration(
         child: NavShell(
@@ -1288,6 +1297,41 @@ class _SortieDemo implements PortSortieForfait {
 
   @override
   Future<ResultatSortie> quitterForfait({required String cle}) => _repondre();
+}
+
+/// La recharge en demonstration (EA-10) : les beneficiaires et leurs offres,
+/// et le recapitulatif que le serveur de demonstration arrete (EA-BR-24).
+/// Le paiement n'est jamais fait (F13, EA-BR-25) : il rend l'etat honnete
+/// (`CapaciteIndisponible`, aucun prestataire, doc section 20.8) ; « Erreur
+/// reseau » rend la coupure (D5) ; « Double soumission » repond apres la
+/// meme latence simulee. Rien n'est envoye (K-28).
+class _RechargeDemo implements PortRechargeFoyer {
+  const _RechargeDemo(this.etat, this.genre);
+
+  final EtatDemoAdulte etat;
+  final GenreTitulaireDemo genre;
+
+  @override
+  Future<List<BeneficiaireRecharge>> beneficiaires() async =>
+      DonneesAdulteDemo.beneficiairesRecharge(etat, genre);
+
+  @override
+  Future<RecapitulatifRecharge> verifier(List<ChoixRecharge> choix) async =>
+      DonneesAdulteDemo.recapitulatifRecharge(etat, genre, choix);
+
+  @override
+  Future<String> payer({
+    required String recapitulatifId,
+    required String cle,
+  }) async {
+    if (etat == EtatDemoAdulte.erreurReseau) {
+      throw StateError('coupure simulee');
+    }
+    if (etat == EtatDemoAdulte.doubleSoumission) {
+      await Future<void>.delayed(latenceSimulee);
+    }
+    throw const CapaciteIndisponible('EA-BR-25');
+  }
 }
 
 /// La latence reseau simulee de la situation « Double soumission » : le

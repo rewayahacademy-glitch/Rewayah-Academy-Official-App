@@ -35,6 +35,8 @@ import 'package:rewayah_academy/features/compte/soldes_foyer.dart';
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
+import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart'
+    show RechargeFoyerPage;
 import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 import 'package:rewayah_academy/features/foyer/place_adulte.dart';
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
@@ -201,12 +203,11 @@ void main() {
     );
     rienDInvente();
 
-    // « Recharger » ouvre la recharge (provisoire jusqu'a EA-10), retour aux
-    // paiements du foyer.
+    // « Recharger » ouvre la recharge (EA-10), retour aux paiements du foyer.
     await tester.ensureVisible(recharger);
     await tester.tap(recharger);
     await tester.pumpAndSettle();
-    expect(find.text(t.adulte.provisoire.recharge), findsOneWidget);
+    expect(find.byType(RechargeFoyerPage), findsOneWidget);
     await tester.tap(find.byType(DisqueRetour));
     await tester.pumpAndSettle();
     expect(find.byType(PaiementsComptePage), findsOneWidget);
@@ -275,7 +276,7 @@ void main() {
         vue: VueDemoAdulte.secondAdulte,
       ),
     );
-    expect(find.text(t.adulte.provisoire.recharge), findsNothing);
+    expect(find.byType(RechargeFoyerPage), findsNothing);
   });
 
   testWidgets('bureau : la colonne droite de Ma famille porte les soldes et '
@@ -318,7 +319,7 @@ void main() {
 
     await tester.tap(find.byKey(SoldesFoyerSection.rechargerKey));
     await tester.pumpAndSettle();
-    expect(find.text(t.adulte.provisoire.recharge), findsOneWidget);
+    expect(find.byType(RechargeFoyerPage), findsOneWidget);
 
     await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
     await tester.tap(find.text(t.adulte.paiements.historique));

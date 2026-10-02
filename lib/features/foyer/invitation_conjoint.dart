@@ -30,6 +30,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -42,9 +43,11 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
+import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/ecran_resultat.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_etape.dart';
@@ -53,6 +56,7 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
 import '../compte/donnees_compte.dart' show dateLongue;
 import 'ligne_membre.dart' show dateEcheance;
+import 'photo_eleve.dart';
 import 'place_adulte.dart';
 
 // Le cote du second adulte (EA-7) partage les briques privees de cette page
@@ -61,6 +65,9 @@ part 'acceptation_invitation.dart';
 
 // La sortie et le delai (EA-8) aussi.
 part 'sortie_forfait.dart';
+
+// La recharge du foyer (EA-10) aussi.
+part 'recharge_foyer.dart';
 
 /// Ce que le titulaire envoie : le prenom et l'adresse (obligatoires), le nom
 /// (facultatif, Q7), et une cle d'idempotence tiree une fois par saisie, que
