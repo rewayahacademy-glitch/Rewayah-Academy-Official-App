@@ -3995,6 +3995,8 @@
       "impossible": "Ce compte ne peut pas rejoindre ce forfait actuellement.",
       "perimee": "Cette invitation n'est plus valable.",
       "monEspace": "Aller à Mon espace",
+      "recu": "Réponse enregistrée le {date}.",
+      "titreNeutre": "Invitation au forfait famille",
       "sansCompteTitre": "Invitation au forfait famille",
       "sansCompte": "Pour répondre, connectez-vous à votre compte, ou créez-en un. Vous lirez alors ce que la personne qui vous invite verra et ne verra pas avant de décider.",
       "sansCompteAction": "Me connecter ou créer mon compte"

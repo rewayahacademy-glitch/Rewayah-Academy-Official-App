@@ -1,8 +1,9 @@
 // EA-7 : les captures de l'invitation recue par le second adulte, depuis la
 // VRAIE route /demo/adulte (`adresseDemoAdulte`, `vue=conjoint`), comme
 // `captures_ea6_test.dart` : 390x844, 768x1024 et 1440x900, clair et sombre,
-// plus le texte a 200 % en 390, sur les notifications et l'etape 1 (« a
-// repondre ») ; puis chaque situation rendue, 390 clair et sombre, pour
+// plus le texte a 200 % en 390, sur les notifications, l'etape 1 (« a
+// repondre ») et ses deux reponses (la page defilee jusqu'aux boutons) ;
+// puis chaque situation rendue, 390 clair et sombre, pour
 // verifier qu'aucune n'a de debordement ni de texte coupe. Jamais sans
 // `CAPTURE_DIR` (voir test/capture/LISEZ-MOI.md).
 //
@@ -162,6 +163,63 @@ void main() {
         echelle: 2,
       );
     });
+
+    // Les deux reponses, sans taper (revue EA-7) : la page defile jusqu'a
+    // « Accepter l'invitation ». L'une sous l'autre sur telephone, cote a
+    // cote a 1440, « Refuser » au bord de debut ; meme poids (derogation
+    // Q5) ; « Accepter » lisible en entier au-dessus de la barre a 390.
+    Future<void> versBoutons(WidgetTester tester) =>
+        tester.ensureVisible(find.byKey(InvitationRecuePage.accepterKey));
+    for (final (String l, Size taille) in <(String, Size)>[
+      ('390', const Size(390, 844)),
+      ('768', const Size(768, 1024)),
+      ('1440', const Size(1440, 900)),
+    ]) {
+      for (final ThemeMode mode in <ThemeMode>[
+        ThemeMode.light,
+        ThemeMode.dark,
+      ]) {
+        final String fichier = 'ea7_boutons_${l}_${mode.name}';
+        testWidgets(fichier, (WidgetTester tester) async {
+          await _capturer(
+            tester,
+            fichier,
+            _adresseInvitation(EtatDemoAdulte.invitationEnAttente),
+            taille,
+            mode: mode,
+            avant: versBoutons,
+          );
+        });
+      }
+    }
+
+    // Les deux reponses a 200 %, en 390.
+    testWidgets('ea7_boutons_390_light_200pc', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ea7_boutons_390_light_200pc',
+        _adresseInvitation(EtatDemoAdulte.invitationEnAttente),
+        const Size(390, 844),
+        echelle: 2,
+        avant: versBoutons,
+      );
+    });
+
+    // Remplacement : jusqu'aux deux reponses, 390, clair et sombre.
+    for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
+      testWidgets('ea7_remplacement_boutons_390_${mode.name}', (
+        WidgetTester tester,
+      ) async {
+        await _capturer(
+          tester,
+          'ea7_remplacement_boutons_390_${mode.name}',
+          _adresseInvitation(EtatDemoAdulte.nouvelleDemande),
+          const Size(390, 844),
+          mode: mode,
+          avant: versBoutons,
+        );
+      });
+    }
 
     // Titulaire femme : « elle doit voir », « Elle saura aussi » (390,
     // clair).

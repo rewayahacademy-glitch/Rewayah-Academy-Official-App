@@ -353,14 +353,24 @@ abstract final class DonneesAdulteDemo {
     _ => InvitationAcceptee(prenomTitulaire(genre)),
   };
 
-  /// La situation que Mon espace lit apres la reponse : le second adulte
-  /// rattache, ou en attente de validation ; sinon rien ne change.
+  /// La situation que Mon espace (et toute page rouverte ensuite) lit apres
+  /// la reponse, jamais l'invitation « a repondre » d'avant (revue EA-7) :
+  /// - acceptee : le second adulte rattache ; remplacement : en attente de
+  ///   validation ;
+  /// - refusee : l'invitation n'existe plus, la place du titulaire est libre
+  ///   (« Le foyer n'a pas de second adulte ») ;
+  /// - reponse tardive : l'invitation n'est plus valable, comme une
+  ///   invitation expiree (la demonstration n'a qu'une situation qui la
+  ///   rende ainsi au second adulte) ;
+  /// - forme neutre : rien ne change.
   static EtatDemoAdulte apresReponse(
     EtatDemoAdulte etat,
     EtatInvitationRecue suite,
   ) => switch (suite) {
     InvitationAcceptee() => EtatDemoAdulte.conjointActif,
     InvitationEnValidation() => EtatDemoAdulte.validationEnAttente,
+    InvitationRefuseeParVous() => EtatDemoAdulte.titulaireSansConjoint,
+    InvitationPerimee() => EtatDemoAdulte.invitationExpiree,
     _ => etat,
   };
 

@@ -59,10 +59,14 @@ final class InvitationARepondre extends EtatInvitationRecue {
 /// La personne a rejoint le forfait famille : son compte est rattache.
 final class InvitationAcceptee extends EtatInvitationRecue {
   /// Cree l'etat.
-  const InvitationAcceptee(this.prenomTitulaire);
+  const InvitationAcceptee(this.prenomTitulaire, {this.enregistreeLe});
 
   /// Le prenom du titulaire.
   final String prenomTitulaire;
+
+  /// La date du choix, rendue par le serveur (recu date, charte 09 section
+  /// 3, EA-BR-20). `null` : aucune date n'est montree, aucune n'est inventee.
+  final DateTime? enregistreeLe;
 }
 
 /// L'invitation est acceptee et le rattachement attend la validation de
@@ -75,7 +79,11 @@ final class InvitationEnValidation extends EtatInvitationRecue {
 /// La personne a refuse l'invitation : rien ne change pour son compte.
 final class InvitationRefuseeParVous extends EtatInvitationRecue {
   /// Cree l'etat.
-  const InvitationRefuseeParVous();
+  const InvitationRefuseeParVous({this.enregistreeLe});
+
+  /// La date du choix, rendue par le serveur (recu date, charte 09 section
+  /// 3, EA-BR-20). `null` : aucune date n'est montree, aucune n'est inventee.
+  final DateTime? enregistreeLe;
 }
 
 /// Le compte ne peut pas rejoindre ce forfait : inéligible, ou deja membre ou
@@ -162,11 +170,17 @@ class InvitationRecuePage extends ConsumerStatefulWidget {
   const InvitationRecuePage({
     required this.onRetour,
     required this.onMonEspace,
+    this.onRetourApresReponse,
     super.key,
   });
 
   /// Retour a la page d'ou vient la personne (les notifications).
   final VoidCallback onRetour;
+
+  /// Le retour une fois la reponse rendue, avec l'etat rendu : la page d'ou
+  /// vient la personne doit alors lire ce nouvel etat, jamais l'invitation
+  /// « a repondre » d'avant. Par defaut, [onRetour].
+  final void Function(EtatInvitationRecue etat)? onRetourApresReponse;
 
   /// « Aller a Mon espace », avec l'etat rendu apres la reponse.
   final void Function(EtatInvitationRecue etat) onMonEspace;
@@ -188,6 +202,9 @@ class InvitationRecuePage extends ConsumerStatefulWidget {
 
   /// L'echec d'une reponse, qui prend le focus.
   static const Key focusEchecKey = Key('acceptation.focusEchec');
+
+  /// Le recu date du choix, quand le serveur rend la date.
+  static const Key recuKey = Key('acceptation.recu');
 
   @override
   ConsumerState<InvitationRecuePage> createState() =>
@@ -242,20 +259,31 @@ class _InvitationRecuePageState extends ConsumerState<InvitationRecuePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_resultat case final EtatInvitationRecue etat) {
-      return _PageEtatInvitation(
-        etat: etat,
-        apresReponse: true,
-        onRetour: widget.onRetour,
-        onMonEspace: widget.onMonEspace,
-      );
+    switch (_resultat) {
+      // Repli : si le serveur rendait encore l'invitation « a repondre »
+      // apres une reponse, la page de reponse reste, jamais un etat vide.
+      case final InvitationARepondre invitation:
+        return _pageReponse(context, invitation);
+      case final EtatInvitationRecue etat:
+        final void Function(EtatInvitationRecue)? apres =
+            widget.onRetourApresReponse;
+        return _PageEtatInvitation(
+          etat: etat,
+          apresReponse: true,
+          onRetour: apres == null ? widget.onRetour : () => apres(etat),
+          onMonEspace: widget.onMonEspace,
+        );
+      case null:
+        break;
     }
     final AsyncValue<EtatInvitationRecue> lecture = ref.watch(
       invitationRecueProvider,
     );
+    // « Invitation au forfait famille », titre des etats neutres : libelle
+    // provisoire, lexique D4.
     if (lecture.error is CapaciteIndisponible) {
       return PageShell(
-        titre: t.adulte.acceptation.sansCompteTitre,
+        titre: t.adulte.acceptation.titreNeutre,
         onRetour: widget.onRetour,
         child: const EtatSysteme(
           nature: NatureEtat.indisponible,
@@ -271,7 +299,7 @@ class _InvitationRecuePageState extends ConsumerState<InvitationRecuePage> {
         onMonEspace: widget.onMonEspace,
       ),
       null => PageShell(
-        titre: t.adulte.acceptation.sansCompteTitre,
+        titre: t.adulte.acceptation.titreNeutre,
         onRetour: widget.onRetour,
         child: BlocAsynchrone<EtatInvitationRecue>(
           valeur: lecture,
@@ -289,6 +317,11 @@ class _InvitationRecuePageState extends ConsumerState<InvitationRecuePage> {
     final bool f = invitation.titulaireFeminin;
     final a = t.adulte.acceptation;
     final bool bloque = horsLigne || _indisponible;
+    // L'ecart entre sections du contrat A d'UX_REVIEW_07 : 24 sur telephone,
+    // 32 a partir du gabarit tablette.
+    final Widget ecartSection = AppGabarit.de(context).estLarge
+        ? Ecart.vXxxl
+        : Ecart.vXxl;
     // Le texte T1 d'UX_REVIEW_07, section par section (a valider, Q1).
     final List<(String, String)> sections = <(String, String)>[
       (a.faisonsTitre, a.faisons(prenom: p)),
@@ -336,13 +369,21 @@ class _InvitationRecuePageState extends ConsumerState<InvitationRecuePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             _TitreSection(titre: a.titre(prenom: p), principal: true),
-            // Remplacement : le texte T2 s'ajoute au T1 (UX_REVIEW_07).
+            // Remplacement : le texte T2 s'ajoute au T1 (UX_REVIEW_07). C'est
+            // l'information la plus importante du remplacement : au moins la
+            // taille du corps de T1, en encre forte, lue dans l'ordre de la
+            // page (pas d'annonce a l'ouverture).
             if (invitation.validationRequise) ...<Widget>[
               Ecart.vLg,
-              _Note(texte: a.validation),
+              Text(
+                a.validation,
+                style: AppPalette.of(context).inkStrong.applyTo(
+                  Theme.of(context).textTheme.bodyLarge ?? const TextStyle(),
+                ),
+              ),
             ],
             for (final (String titre, String texte) in sections) ...<Widget>[
-              Ecart.vXxl,
+              ecartSection,
               _TitreSection(titre: titre),
               Ecart.vXs,
               _Note(texte: texte, attenuee: true),
@@ -483,13 +524,38 @@ class _PageEtatInvitation extends StatelessWidget {
         a.validation,
       ),
       InvitationRefuseeParVous() => (a.refuseeTitre, a.refus),
-      InvitationNonAcceptable() => (a.sansCompteTitre, a.impossible),
-      InvitationPerimee() => (a.sansCompteTitre, a.perimee),
-      InvitationARepondre() => (a.sansCompteTitre, a.sansCompteTitre),
+      InvitationNonAcceptable() => (a.titreNeutre, a.impossible),
+      InvitationPerimee() => (a.titreNeutre, a.perimee),
+      // Impossible : `InvitationRecuePage` rend la page de reponse pour cet
+      // etat, a la lecture comme apres une reponse.
+      InvitationARepondre() => throw StateError(
+        'InvitationARepondre se rend par la page de reponse.',
+      ),
+    };
+    // Le recu date du choix (charte 09 section 3), seulement si le serveur
+    // rend la date (EA-BR-20) : aucune date inventee. Libelle provisoire,
+    // lexique D4.
+    final DateTime? enregistreeLe = switch (etat) {
+      InvitationAcceptee(:final DateTime? enregistreeLe) => enregistreeLe,
+      InvitationRefuseeParVous(:final DateTime? enregistreeLe) => enregistreeLe,
+      _ => null,
     };
     final Widget note = Semantics(
       liveRegion: apresReponse,
-      child: _Note(texte: phrase, attenuee: true),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _Note(texte: phrase, attenuee: true),
+          if (enregistreeLe != null) ...<Widget>[
+            Ecart.vXs,
+            _Note(
+              key: InvitationRecuePage.recuKey,
+              texte: a.recu(date: dateLongue(enregistreeLe)),
+              attenuee: true,
+            ),
+          ],
+        ],
+      ),
     );
     return PageShell(
       titre: titre,

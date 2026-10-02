@@ -9234,6 +9234,12 @@ class Traductions$adulte$acceptation$fr {
 	/// fr: 'Aller à Mon espace'
 	String get monEspace => 'Aller à Mon espace';
 
+	/// fr: 'Réponse enregistrée le {date}.'
+	String recu({required Object date}) => 'Réponse enregistrée le ${date}.';
+
+	/// fr: 'Invitation au forfait famille'
+	String get titreNeutre => 'Invitation au forfait famille';
+
 	/// fr: 'Invitation au forfait famille'
 	String get sansCompteTitre => 'Invitation au forfait famille';
 
@@ -16742,6 +16748,8 @@ extension on Traductions {
 			'adulte.acceptation.impossible' => 'Ce compte ne peut pas rejoindre ce forfait actuellement.',
 			'adulte.acceptation.perimee' => 'Cette invitation n\'est plus valable.',
 			'adulte.acceptation.monEspace' => 'Aller à Mon espace',
+			'adulte.acceptation.recu' => ({required Object date}) => 'Réponse enregistrée le ${date}.',
+			'adulte.acceptation.titreNeutre' => 'Invitation au forfait famille',
 			'adulte.acceptation.sansCompteTitre' => 'Invitation au forfait famille',
 			'adulte.acceptation.sansCompte' => 'Pour répondre, connectez-vous à votre compte, ou créez-en un. Vous lirez alors ce que la personne qui vous invite verra et ne verra pas avant de décider.',
 			'adulte.acceptation.sansCompteAction' => 'Me connecter ou créer mon compte',

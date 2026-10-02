@@ -33,6 +33,7 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_elevation.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -44,6 +45,7 @@ import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../compte/donnees_compte.dart' show dateLongue;
 import 'place_adulte.dart';
 
 // Le cote du second adulte (EA-7) partage les briques privees de cette page
@@ -794,7 +796,7 @@ class _Titre extends StatelessWidget {
 
 /// Une phrase d'etat ou de precision, annoncee a son apparition.
 class _Note extends StatelessWidget {
-  const _Note({required this.texte, this.attenuee = false});
+  const _Note({required this.texte, this.attenuee = false, super.key});
 
   final String texte;
   final bool attenuee;

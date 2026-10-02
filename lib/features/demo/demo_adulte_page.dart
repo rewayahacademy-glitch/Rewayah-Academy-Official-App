@@ -359,7 +359,7 @@ String libelleEcranDemoAdulte(EcranDemoAdulte ecran) => switch (ecran) {
   EcranDemoAdulte.creerMonProfil => t.foyer.creerMonProfil,
   EcranDemoAdulte.profilNonCree => t.adulte.famille.profilNonCreeTitre,
   EcranDemoAdulte.notifications => t.notifications.titre,
-  EcranDemoAdulte.invitationRecue => t.adulte.acceptation.sansCompteTitre,
+  EcranDemoAdulte.invitationRecue => t.adulte.acceptation.titreNeutre,
   EcranDemoAdulte.invitationSansCompte => t.adulte.demo.invitationSansCompte,
 };
 
@@ -631,6 +631,15 @@ class CoquilleAdulteDemo extends StatelessWidget {
     void versMonEspace() => context.go(_adresse(EcranDemoAdulte.monEspace));
     void versNotifications() =>
         context.go(_adresse(EcranDemoAdulte.notifications));
+    void versMonEspaceApres(EtatInvitationRecue suite) => context.go(
+      adresseDemoAdulte(
+        EcranDemoAdulte.monEspace,
+        etat: DonneesAdulteDemo.apresReponse(etat, suite),
+        genre: genre,
+        vue: vue,
+        seance: seance,
+      ),
+    );
     // L'invitation recue par le second adulte, et sa notification (EA-7,
     // EA-BR-20) : jamais pour le titulaire.
     final EtatInvitationRecue? invitation = vue == VueDemoAdulte.secondAdulte
@@ -809,18 +818,13 @@ class CoquilleAdulteDemo extends StatelessWidget {
               onRetour: () => context.go(_adresse(EcranDemoAdulte.accueil)),
             ),
             // Apres la reponse, Mon espace dans la situation rendue : le
-            // second adulte rattache, ou en attente de validation.
+            // second adulte rattache, ou en attente de validation. Le retour
+            // y mene aussi : les notifications de l'etat de depart
+            // rouvriraient l'invitation « a repondre », un etat faux.
             EcranDemoAdulte.invitationRecue => InvitationRecuePage(
               onRetour: versNotifications,
-              onMonEspace: (EtatInvitationRecue suite) => context.go(
-                adresseDemoAdulte(
-                  EcranDemoAdulte.monEspace,
-                  etat: DonneesAdulteDemo.apresReponse(etat, suite),
-                  genre: genre,
-                  vue: vue,
-                  seance: seance,
-                ),
-              ),
+              onMonEspace: versMonEspaceApres,
+              onRetourApresReponse: versMonEspaceApres,
             ),
             EcranDemoAdulte.invitationSansCompte ||
             EcranDemoAdulte.maFamille ||

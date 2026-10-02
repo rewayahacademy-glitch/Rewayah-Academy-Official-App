@@ -26,11 +26,28 @@ import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/page_etape.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/compte/donnees_compte.dart'
+    show dateLongue;
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
+
+/// Un serveur qui rend [etat], avec sa date, a toute reponse.
+class _ReponseDatee implements PortReponseInvitation {
+  const _ReponseDatee(this.etat);
+
+  final EtatInvitationRecue etat;
+
+  @override
+  Future<ResultatReponseInvitation> accepter({required String cle}) async =>
+      ReponseRecue(etat);
+
+  @override
+  Future<ResultatReponseInvitation> refuser({required String cle}) async =>
+      ReponseRecue(etat);
+}
 
 void main() {
   void taille(WidgetTester tester, Size s) {
@@ -207,6 +224,8 @@ void main() {
     await taper(tester, find.byKey(InvitationRecuePage.accepterKey));
     expect(find.text(a.rejoint(prenom: 'Mamadou')), findsOneWidget);
     expect(find.byKey(InvitationRecuePage.accepterKey), findsNothing);
+    // La demonstration ne rend aucune date : aucun recu date invente.
+    expect(find.byKey(InvitationRecuePage.recuKey), findsNothing);
 
     await taper(tester, find.byKey(InvitationRecuePage.monEspaceKey));
     expect(find.byType(MonEspaceAdultePage), findsOneWidget);
@@ -287,6 +306,27 @@ void main() {
       ),
     );
     expect(find.text(t.adulte.acceptation.validation), findsOneWidget);
+    // T2 au moins a la taille du corps de T1, sans annonce a l'ouverture.
+    final double corps = tester
+        .widget<Text>(find.text(t.adulte.acceptation.refus))
+        .style!
+        .fontSize!;
+    expect(
+      tester
+          .widget<Text>(find.text(t.adulte.acceptation.validation))
+          .style!
+          .fontSize,
+      greaterThanOrEqualTo(corps),
+    );
+    expect(
+      find.ancestor(
+        of: find.text(t.adulte.acceptation.validation),
+        matching: find.byWidgetPredicate(
+          (Widget w) => w is Semantics && (w.properties.liveRegion ?? false),
+        ),
+      ),
+      findsNothing,
+    );
     await taper(tester, find.byKey(InvitationRecuePage.accepterKey));
     expect(
       find.text(t.adulte.famille.place.validationEnAttente),
@@ -509,6 +549,134 @@ void main() {
     );
     expect(etat.nature, NatureEtat.indisponible);
     expect(etat.dependance, 'EA-BR-20');
+  });
+
+  // Revue EA-7 : apres une reponse, le retour ne ramene jamais a
+  // l'invitation « a repondre » ; ni la cloche ni l'adresse ne la rouvrent.
+  for (final (String nom, Key cle, EtatDemoAdulte apres)
+      in <(String, Key, EtatDemoAdulte)>[
+        (
+          'accepter',
+          InvitationRecuePage.accepterKey,
+          EtatDemoAdulte.conjointActif,
+        ),
+        (
+          'refuser',
+          InvitationRecuePage.refuserKey,
+          EtatDemoAdulte.titulaireSansConjoint,
+        ),
+      ]) {
+    testWidgets('$nom, revenir, rouvrir : aucun bouton de reponse', (
+      WidgetTester tester,
+    ) async {
+      taille(tester, const Size(390, 844));
+      final GoRouter routeur = await monterCoquille(
+        tester,
+        adresse(
+          EtatDemoAdulte.invitationEnAttente,
+          ecran: EcranDemoAdulte.invitationRecue,
+        ),
+      );
+      await taper(tester, find.byKey(cle));
+      expect(find.byKey(InvitationRecuePage.accepterKey), findsNothing);
+
+      await taper(tester, find.byType(DisqueRetour).first);
+      expect(find.byType(MonEspaceAdultePage), findsOneWidget);
+      expect(
+        routeur.routerDelegate.currentConfiguration.uri.queryParameters['etat'],
+        apres.name,
+      );
+
+      // Par la cloche : plus de notification d'invitation a rouvrir.
+      await taper(tester, find.text(t.adulte.nav.accueil).first);
+      await taper(tester, find.byType(ClocheNotifications).first);
+      expect(
+        find.byKey(
+          const ValueKey<String>('notification-demo-invitation-forfait'),
+        ),
+        findsNothing,
+      );
+
+      // Par l'adresse : l'invitation de cette situation n'a plus de reponse.
+      routeur.go(adresse(apres, ecran: EcranDemoAdulte.invitationRecue));
+      await tester.pumpAndSettle();
+      expect(find.byKey(InvitationRecuePage.accepterKey), findsNothing);
+      expect(find.byKey(InvitationRecuePage.refuserKey), findsNothing);
+    });
+  }
+
+  testWidgets('reponse tardive, revenir, rouvrir : « plus valable », sans '
+      'reponse', (WidgetTester tester) async {
+    taille(tester, const Size(390, 844));
+    final GoRouter routeur = await monterCoquille(
+      tester,
+      adresse(
+        EtatDemoAdulte.invitationAnnulee,
+        ecran: EcranDemoAdulte.invitationRecue,
+      ),
+    );
+    await taper(tester, find.byKey(InvitationRecuePage.accepterKey));
+    await taper(tester, find.byType(DisqueRetour).first);
+    final String etat = routeur
+        .routerDelegate
+        .currentConfiguration
+        .uri
+        .queryParameters['etat']!;
+    routeur.go(
+      adresse(
+        EtatDemoAdulte.values.byName(etat),
+        ecran: EcranDemoAdulte.invitationRecue,
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text(t.adulte.acceptation.perimee), findsOneWidget);
+    expect(find.byKey(InvitationRecuePage.accepterKey), findsNothing);
+  });
+
+  testWidgets('recu date : montre seulement la date rendue par le serveur', (
+    WidgetTester tester,
+  ) async {
+    taille(tester, const Size(390, 844));
+    final DateTime le = DateTime(2026, 9, 27, 10);
+    await monterPage(
+      tester,
+      surcharges: <Override>[
+        horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
+        invitationRecueProvider.overrideWith(
+          (Ref _) async => const InvitationARepondre(
+            prenomTitulaire: 'Mamadou',
+            titulaireFeminin: false,
+          ),
+        ),
+        portReponseInvitationProvider.overrideWithValue(
+          _ReponseDatee(InvitationRefuseeParVous(enregistreeLe: le)),
+        ),
+      ],
+    );
+    await tester.pumpAndSettle();
+    await taper(tester, find.byKey(InvitationRecuePage.refuserKey));
+    expect(find.text(t.adulte.acceptation.refuseeTitre), findsOneWidget);
+    expect(
+      find.text(t.adulte.acceptation.recu(date: dateLongue(le))),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('a 1440, 32 entre les sections du texte T1 (contrat A)', (
+    WidgetTester tester,
+  ) async {
+    taille(tester, const Size(1440, 900));
+    await monterCoquille(
+      tester,
+      adresse(
+        EtatDemoAdulte.invitationEnAttente,
+        ecran: EcranDemoAdulte.invitationRecue,
+      ),
+    );
+    final a = t.adulte.acceptation;
+    final double basTexte = tester.getBottomLeft(find.text(a.partir)).dy;
+    final double hautTitre = tester.getTopLeft(find.text(a.refusTitre)).dy;
+    expect(hautTitre - basTexte, 32);
   });
 
   testWidgets('le titulaire n\'ouvre jamais l\'invitation recue', (
