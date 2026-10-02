@@ -3832,14 +3832,14 @@ class Traductions$ficheEleve$interface$fr {
 	/// fr: 'Mode Accessibilité'
 	String get guidee => 'Mode Accessibilité';
 
-	/// fr: 'Une interface simplifiée et adaptée pour un apprentissage plus serein : grands boutons, une chose à la fois.'
-	String get guideeDescription => 'Une interface simplifiée et adaptée pour un apprentissage plus serein : grands boutons, une chose à la fois.';
+	/// fr: 'Quand {prenom} préfère des écrans aérés : textes plus grands, une action à la fois. Mêmes rubriques et mêmes droits.'
+	String guideeDescription({required Object prenom}) => 'Quand ${prenom} préfère des écrans aérés : textes plus grands, une action à la fois. Mêmes rubriques et mêmes droits.';
 
 	/// fr: 'Présentation standard'
 	String get standard => 'Présentation standard';
 
-	/// fr: 'Toutes les rubriques de Rewayah, pour un usage habituel.'
-	String get standardDescription => 'Toutes les rubriques de Rewayah, pour un usage habituel.';
+	/// fr: 'Quand {prenom} est à l'aise avec des écrans plus denses : plus d'informations par écran. Mêmes rubriques et mêmes droits.'
+	String standardDescription({required Object prenom}) => 'Quand ${prenom} est à l\'aise avec des écrans plus denses : plus d\'informations par écran. Mêmes rubriques et mêmes droits.';
 
 	/// fr: 'Vous choisissez ce réglage. Aucune raison n'est demandée, et l'enseignant voit seulement le nom du mode.'
 	String get politique => 'Vous choisissez ce réglage. Aucune raison n\'est demandée, et l\'enseignant voit seulement le nom du mode.';
@@ -13754,9 +13754,9 @@ extension on Traductions {
 			'ficheEleve.interface.titre' => 'Interface',
 			'ficheEleve.interface.intro' => ({required Object prenom}) => 'Choisissez comment Rewayah s\'affiche sur l\'appareil de ${prenom}. Vous pourrez changer ce choix à tout moment.',
 			'ficheEleve.interface.guidee' => 'Mode Accessibilité',
-			'ficheEleve.interface.guideeDescription' => 'Une interface simplifiée et adaptée pour un apprentissage plus serein : grands boutons, une chose à la fois.',
+			'ficheEleve.interface.guideeDescription' => ({required Object prenom}) => 'Quand ${prenom} préfère des écrans aérés : textes plus grands, une action à la fois. Mêmes rubriques et mêmes droits.',
 			'ficheEleve.interface.standard' => 'Présentation standard',
-			'ficheEleve.interface.standardDescription' => 'Toutes les rubriques de Rewayah, pour un usage habituel.',
+			'ficheEleve.interface.standardDescription' => ({required Object prenom}) => 'Quand ${prenom} est à l\'aise avec des écrans plus denses : plus d\'informations par écran. Mêmes rubriques et mêmes droits.',
 			'ficheEleve.interface.politique' => 'Vous choisissez ce réglage. Aucune raison n\'est demandée, et l\'enseignant voit seulement le nom du mode.',
 			'ficheEleve.interface.application' => ({required Object prenom}) => 'Le changement s\'applique à la prochaine ouverture de Rewayah sur l\'appareil de ${prenom}.',
 			'ficheEleve.interface.demandeEleve' => 'La demande de changement par l\'élève lui-même n\'est pas encore proposée.',

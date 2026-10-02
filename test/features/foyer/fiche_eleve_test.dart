@@ -684,13 +684,13 @@ void main() {
       );
       expect(find.text('Mode Accessibilité'), findsOneWidget);
       expect(find.text('Présentation standard'), findsOneWidget);
+      expect(find.textContaining('préfère des écrans aérés'), findsOneWidget);
+      expect(find.textContaining('plus denses'), findsOneWidget);
+      // MA2 : memes rubriques et memes droits dans les deux presentations.
+      expect(find.textContaining('Toutes les rubriques'), findsNothing);
       expect(
-        find.text(t.ficheEleve.interface.guideeDescription),
-        findsOneWidget,
-      );
-      expect(
-        find.text(t.ficheEleve.interface.standardDescription),
-        findsOneWidget,
+        find.textContaining('Mêmes rubriques et mêmes droits'),
+        findsNWidgets(2),
       );
       // Ni age, ni ancien terme, ni raison.
       for (final String texte in _textesVisibles(tester)) {
@@ -709,10 +709,7 @@ void main() {
       _verifierVocabulaire(tester);
 
       // La carte entiere se presse : on touche sa description.
-      await _toucher(
-        tester,
-        find.text(t.ficheEleve.interface.standardDescription),
-      );
+      await _toucher(tester, find.textContaining('plus denses'));
       expect(appairage.reglagesEcrits.single.mode, InterfaceMode.standard);
     });
 
