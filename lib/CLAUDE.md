@@ -58,6 +58,8 @@ Textes complets : consignes K-54 à K-59 du tableau ; table des preuves : `docs/
 - **K-58 Tout choix s'explique.** Chaque option dit quand la choisir et sa conséquence ; une conséquence irréversible se dit avant le choix ; l'écran commence par une phrase de contexte ; quand l'option est une carte, **toute la carte** est cliquable et l'état choisi se voit sur toute la carte.
 - **K-59 Tout message d'échec ou de données incomplètes** dit ce qui manque, la cause probable en mots simples, et quoi faire maintenant (D5 : « non confirmé », jamais « non envoyé »). Contrôle : `erreur-sans-action`.
 
+- **ONGLETS-1 Jamais de rangée de sections qui défile.** Changer de section passe par `SelecteurSection` (`lib/core/widgets/selecteur_section.dart`), seul composant autorisé : jusqu'à 4 sections sur téléphone = contrôle segmenté, tout visible ; 5 et plus = menu déroulant qui affiche la section courante et liste tout au toucher ; tablette et ordinateur = en ligne tant que ça tient (7 sections au plus) ; plus de 7 = la page est à signaler, jamais découpée en silence. La bascule est automatique (nombre, largeur, texte agrandi). Interdits : `TabBar`, `isScrollable: true`, rangée horizontale qui défile avec pastilles ou puces. Contrôle : `onglets-defilants`, test `test/core/widgets/selecteur_section_test.dart`.
+
 Règles équivalentes, déduites des remarques du directeur :
 
 - **Aucun élément ne recouvre un contenu à lire** (bouton flottant, bandeau, pastille). Test : `verifierSansChevauchement`, à 320 px et en texte ×2.
