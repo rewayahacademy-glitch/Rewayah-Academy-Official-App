@@ -547,18 +547,35 @@ class _EnfantResume extends StatelessWidget {
   final EleveDuFoyer enfant;
 
   @override
-  // AVATAR-1 : nom et une seule ligne de role (le mode) ; l'identifiant se lit
-  // dans la fiche, pas sur l'avatar.
-  Widget build(BuildContext context) => AvatarNom.enLigne(
-    prenom: enfant.prenom,
-    role: enfant.mode == InterfaceMode.enfant
-        ? t.compte.modeEnfant
-        : t.compte.modeStandard,
-    ecart: AppSpacing.xl,
-    styleNom: Theme.of(context).textTheme.titleLarge,
-    styleRole: Theme.of(context).textTheme.bodyMedium,
-    fin: Icon(AppIcons.chevron.repos),
-  );
+  // AVATAR-1 : couple du composant partage, nom centre sur le cercle. Les deux
+  // lignes d'origine sont gardees (identifiant immuable, mode) : l'identifiant
+  // est une donnee que le tuteur lit ici, la fiche AVATAR-1 ne l'a pas retiree.
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    return AvatarNom.enLigne(
+      prenom: enfant.prenom,
+      ecart: AppSpacing.xl,
+      styleNom: textes.titleLarge,
+      roleWidget: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(
+            t.compte.identifiantEnfant(identifiant: enfant.identifiantImmuable),
+            style: textes.bodyMedium,
+          ),
+          Ecart.vXs,
+          Text(
+            enfant.mode == InterfaceMode.enfant
+                ? t.compte.modeEnfant
+                : t.compte.modeStandard,
+            style: textes.bodyMedium,
+          ),
+        ],
+      ),
+      fin: Icon(AppIcons.chevron.repos),
+    );
+  }
 }
 
 class _DetailEnfant extends StatelessWidget {

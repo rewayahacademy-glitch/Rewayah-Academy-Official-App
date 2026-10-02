@@ -578,75 +578,102 @@ class IdentiteGroupe extends StatelessWidget {
     // cercle couperait le nom au milieu d'un mot : la pile lui rend la
     // largeur entiere (MA-4).
     final bool pile = enPile || MediaQuery.textScalerOf(context).scale(1) >= 2;
-    final Widget texte = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
+    final Widget titre = Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            LisereGroupe(jeton: groupe.couleurJeton),
-            Ecart.hSm,
-            Expanded(
-              // En pile seulement (Mode Accessibilite ou 200 %), a
-              // l'affichage : le trait d'union insecable (U+2011) garde
-              // « An-Nour » entier (MA-4). Rendu standard inchange.
-              child: Text(
-                pile ? groupe.libelle.replaceAll('-', '‑') : groupe.libelle,
-                style: textes.headlineSmall ?? const TextStyle(),
-              ),
-            ),
-          ],
-        ),
-        // CLV-02 : le nom de la Classe, puis le cours et le niveau,
-        // puis l'enseignant.
-        if (coursEtNiveau.isNotEmpty) ...<Widget>[
-          Ecart.vXs,
-          Text(
-            coursEtNiveau,
-            style: palette.inkMuted.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
+        LisereGroupe(jeton: groupe.couleurJeton),
+        Ecart.hSm,
+        Expanded(
+          // En pile seulement (Mode Accessibilite ou 200 %), a l'affichage :
+          // le trait d'union insecable (U+2011) garde « An-Nour » entier
+          // (MA-4). Rendu standard inchange.
+          child: Text(
+            pile ? groupe.libelle.replaceAll('-', '‑') : groupe.libelle,
+            style: textes.headlineSmall ?? const TextStyle(),
           ),
-        ],
-        Ecart.vSm,
-        // AVATAR-1 : couple avatar + nom du composant partage, nom centre
-        // verticalement sur le cercle, au plus une ligne de role (le rendez-vous
-        // hebdomadaire, cote enseignant). A 200 %, le nom passe a la ligne a
-        // cote du cercle : plus de pile a part (MA-4).
-        AvatarNom.enLigne(
-          prenom: groupe.enseignant.nomAffichage,
-          nom: LibellesGroupe.enseignantNomme(groupe.enseignant),
-          role: (discrete != null && discrete.isNotEmpty) ? discrete : null,
-          diametre: AppAvatar.grand,
-          ecart: AppSpacing.lg,
-          avatar: photo,
-          styleNom: textes.titleSmall,
-          styleRole: palette.inkMuted.applyTo(
-            textes.bodySmall ?? const TextStyle(),
-          ),
-        ),
-        Ecart.vSm,
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: <Widget>[
-            StatusPill(
-              libelle: LibellesGroupe.capacitePhrase(
-                membres: groupe.nombreMembres,
-                seuil: groupe.seuilMax,
-              ),
-              ton: groupe.complet ? TonEtat.avertissement : TonEtat.neutre,
-            ),
-            if (!repliInitiales && groupe.enseignant.photoManquante)
-              StatusPill(
-                libelle: LibellesGroupe.photoManquante,
-                ton: TonEtat.avertissement,
-              ),
-          ],
         ),
       ],
     );
+    final Widget cours = Text(
+      coursEtNiveau,
+      style: palette.inkMuted.applyTo(textes.bodySmall ?? const TextStyle()),
+    );
+    final Widget pastilles = Wrap(
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.sm,
+      children: <Widget>[
+        StatusPill(
+          libelle: LibellesGroupe.capacitePhrase(
+            membres: groupe.nombreMembres,
+            seuil: groupe.seuilMax,
+          ),
+          ton: groupe.complet ? TonEtat.avertissement : TonEtat.neutre,
+        ),
+        if (!repliInitiales && groupe.enseignant.photoManquante)
+          StatusPill(
+            libelle: LibellesGroupe.photoManquante,
+            ton: TonEtat.avertissement,
+          ),
+      ],
+    );
+    final String nomEnseignant = LibellesGroupe.enseignantNomme(
+      groupe.enseignant,
+    );
+    final String? role = (discrete != null && discrete.isNotEmpty)
+        ? discrete
+        : null;
+    final TextStyle styleRole = palette.inkMuted.applyTo(
+      textes.bodySmall ?? const TextStyle(),
+    );
+    // AVATAR-1 : le couple photo + nom de l'enseignant est celui du composant
+    // partage. En pile (MA-4), la photo est au-dessus de tout le texte, son nom
+    // centre dessous sur le meme axe ; sinon, le nom est centre verticalement
+    // sur le cercle, sous le titre, le cours et le niveau (CLV-02).
+    final Widget texte = pile
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: AvatarNom.vertical(
+                  prenom: groupe.enseignant.nomAffichage,
+                  nom: nomEnseignant,
+                  role: role,
+                  diametre: AppAvatar.grand,
+                  avatar: photo,
+                  styleNom: textes.titleSmall,
+                  styleRole: styleRole,
+                ),
+              ),
+              Ecart.vMd,
+              titre,
+              if (coursEtNiveau.isNotEmpty) ...<Widget>[Ecart.vXs, cours],
+              Ecart.vSm,
+              pastilles,
+            ],
+          )
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              titre,
+              if (coursEtNiveau.isNotEmpty) ...<Widget>[Ecart.vXs, cours],
+              Ecart.vSm,
+              AvatarNom.enLigne(
+                prenom: groupe.enseignant.nomAffichage,
+                nom: nomEnseignant,
+                role: role,
+                diametre: AppAvatar.grand,
+                ecart: AppSpacing.lg,
+                avatar: photo,
+                styleNom: textes.titleSmall,
+                styleRole: styleRole,
+              ),
+              Ecart.vSm,
+              pastilles,
+            ],
+          );
     return MergeSemantics(child: texte);
   }
 }
