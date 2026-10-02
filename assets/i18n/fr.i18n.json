@@ -3205,7 +3205,7 @@
       "faitsReplies": "Faits automatiques, repliés",
       "faitsDeplies": "Faits automatiques, dépliés",
       "faitsChargement": "Lecture des faits de la visite en cours.",
-      "faitsAbsents": "Les faits de la visite ne sont pas encore disponibles.",
+      "faitsAbsents": "Les faits de la visite ne sont pas encore reçus : la séance vient de se terminer ou la connexion a été coupée. Vous pouvez répondre sans eux ; ils seront joints au rapport dès leur réception.",
       "cleHoraire": "Heure prévue",
       "horaire": "{debut} à {fin}",
       "cleDebutReel": "Début réel",
@@ -3223,13 +3223,13 @@
       "envoyer": "Envoyer le compte rendu",
       "plusTard": "Plus tard",
       "notice": "Ce compte rendu est transmis automatiquement à l'administration.",
-      "echec": "L'envoi n'a pas été confirmé. Vérifiez avant de réessayer.",
+      "echec": "L'envoi n'est pas confirmé : la connexion ou le serveur n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.",
       "envoyeTitre": "Compte rendu envoyé",
       "envoyePhrase": "Il est transmis à l'administration. Pour y revenir, ouvrez-le dans l'Historique et choisissez « Ajouter un complément ».",
       "ecrireAdmin": "Écrire à l'administration",
       "visiteEnCours": "Transmission de la visite à l'administration en cours.",
       "visiteTransmise": "La visite et ses faits sont transmis à l'administration.",
-      "visiteEchec": "La visite n'a pas encore pu être transmise à l'administration.",
+      "visiteEchec": "La transmission de la visite n'est pas confirmée : la connexion ou le serveur n'a pas répondu. Réessayez ; les faits de la visite restent enregistrés sur le serveur.",
       "aTerminer": "Compte rendu à terminer",
       "reprendre": "Reprendre le compte rendu"
     },
@@ -3238,7 +3238,7 @@
       "questionNature": "Quelle est la nature de votre observation ?",
       "pointPositif": "Point positif",
       "aSuivre": "À suivre",
-      "interventionAdmin": "Intervention Admin souhaitée",
+      "interventionAdmin": "Intervention de l'administration souhaitée",
       "questionDomaine": "Quel domaine concerne-t-elle ?",
       "pedagogie": "Pédagogie",
       "interaction": "Interaction avec les élèves",
@@ -3252,7 +3252,7 @@
       "elevePrecis": "Élève précis",
       "aucun": "Aucun participant précis",
       "questionEleve": "Choisissez l'élève dans la liste de la Classe.",
-      "rosterIndisponible": "La liste des élèves n'est pas disponible pour le moment.",
+      "rosterIndisponible": "La liste des élèves présents n'est pas encore reçue, sans doute à cause de la connexion. Revenez à l'étape précédente pour choisir « Classe entière » ou « Aucun participant précis », ou réessayez dans un instant.",
       "questionTexte": "Qu'avez-vous observé ?",
       "texteObligatoire": "Votre texte est nécessaire pour cette observation.",
       "texteFacultatif": "Ce texte est facultatif.",
@@ -3265,7 +3265,7 @@
       "clePersonne": "Personne concernée",
       "cleTexte": "Remarque",
       "sansTexte": "Aucun texte",
-      "echec": "L'envoi n'a pas été confirmé. Vérifiez avant de réessayer."
+      "echec": "L'envoi n'est pas confirmé : la connexion ou le serveur n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration."
     },
     "echanges": {
       "titre": "Échanges",
@@ -3286,7 +3286,7 @@
       "champVide": "Écrivez un message pour pouvoir l'envoyer.",
       "enCours": "Envoi en cours.",
       "envoye": "Envoyé.",
-      "echec": "L'envoi n'a pas été confirmé. Vérifiez avant de réessayer.",
+      "echec": "L'envoi n'est pas confirmé : la connexion ou le serveur n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.",
       "reessayer": "Réessayer",
       "nouveauMessage": "Nouveau message de {auteur} : {texte}"
     },
@@ -3329,7 +3329,7 @@
         "other": "{n} élèves"
       },
       "chargement": "Lecture de votre mission en cours.",
-      "erreur": "Votre mission n'a pas pu être lue. Réessayez dans un instant."
+      "erreur": "Votre mission n'a pas pu être lue, sans doute à cause de la connexion ou d'un service momentanément indisponible. Réessayez dans un instant."
     }
   },
   "aConstruire": {

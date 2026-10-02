@@ -8789,8 +8789,8 @@ class Traductions$controleur$compteRendu$fr {
 	/// fr: 'Lecture des faits de la visite en cours.'
 	String get faitsChargement => 'Lecture des faits de la visite en cours.';
 
-	/// fr: 'Les faits de la visite ne sont pas encore disponibles.'
-	String get faitsAbsents => 'Les faits de la visite ne sont pas encore disponibles.';
+	/// fr: 'Les faits de la visite ne sont pas encore reçus : la séance vient de se terminer ou la connexion a été coupée. Vous pouvez répondre sans eux ; ils seront joints au rapport dès leur réception.'
+	String get faitsAbsents => 'Les faits de la visite ne sont pas encore reçus : la séance vient de se terminer ou la connexion a été coupée. Vous pouvez répondre sans eux ; ils seront joints au rapport dès leur réception.';
 
 	/// fr: 'Heure prévue'
 	String get cleHoraire => 'Heure prévue';
@@ -8843,8 +8843,8 @@ class Traductions$controleur$compteRendu$fr {
 	/// fr: 'Ce compte rendu est transmis automatiquement à l'administration.'
 	String get notice => 'Ce compte rendu est transmis automatiquement à l\'administration.';
 
-	/// fr: 'L'envoi n'a pas été confirmé. Vérifiez avant de réessayer.'
-	String get echec => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.';
+	/// fr: 'L'envoi n'est pas confirmé : la connexion ou le serveur n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
+	String get echec => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
 
 	/// fr: 'Compte rendu envoyé'
 	String get envoyeTitre => 'Compte rendu envoyé';
@@ -8861,8 +8861,8 @@ class Traductions$controleur$compteRendu$fr {
 	/// fr: 'La visite et ses faits sont transmis à l'administration.'
 	String get visiteTransmise => 'La visite et ses faits sont transmis à l\'administration.';
 
-	/// fr: 'La visite n'a pas encore pu être transmise à l'administration.'
-	String get visiteEchec => 'La visite n\'a pas encore pu être transmise à l\'administration.';
+	/// fr: 'La transmission de la visite n'est pas confirmée : la connexion ou le serveur n'a pas répondu. Réessayez ; les faits de la visite restent enregistrés sur le serveur.'
+	String get visiteEchec => 'La transmission de la visite n\'est pas confirmée : la connexion ou le serveur n\'a pas répondu. Réessayez ; les faits de la visite restent enregistrés sur le serveur.';
 
 	/// fr: 'Compte rendu à terminer'
 	String get aTerminer => 'Compte rendu à terminer';
@@ -8891,8 +8891,8 @@ class Traductions$controleur$observation$fr {
 	/// fr: 'À suivre'
 	String get aSuivre => 'À suivre';
 
-	/// fr: 'Intervention Admin souhaitée'
-	String get interventionAdmin => 'Intervention Admin souhaitée';
+	/// fr: 'Intervention de l'administration souhaitée'
+	String get interventionAdmin => 'Intervention de l\'administration souhaitée';
 
 	/// fr: 'Quel domaine concerne-t-elle ?'
 	String get questionDomaine => 'Quel domaine concerne-t-elle ?';
@@ -8933,8 +8933,8 @@ class Traductions$controleur$observation$fr {
 	/// fr: 'Choisissez l'élève dans la liste de la Classe.'
 	String get questionEleve => 'Choisissez l\'élève dans la liste de la Classe.';
 
-	/// fr: 'La liste des élèves n'est pas disponible pour le moment.'
-	String get rosterIndisponible => 'La liste des élèves n\'est pas disponible pour le moment.';
+	/// fr: 'La liste des élèves présents n'est pas encore reçue, sans doute à cause de la connexion. Revenez à l'étape précédente pour choisir « Classe entière » ou « Aucun participant précis », ou réessayez dans un instant.'
+	String get rosterIndisponible => 'La liste des élèves présents n\'est pas encore reçue, sans doute à cause de la connexion. Revenez à l\'étape précédente pour choisir « Classe entière » ou « Aucun participant précis », ou réessayez dans un instant.';
 
 	/// fr: 'Qu'avez-vous observé ?'
 	String get questionTexte => 'Qu\'avez-vous observé ?';
@@ -8972,8 +8972,8 @@ class Traductions$controleur$observation$fr {
 	/// fr: 'Aucun texte'
 	String get sansTexte => 'Aucun texte';
 
-	/// fr: 'L'envoi n'a pas été confirmé. Vérifiez avant de réessayer.'
-	String get echec => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.';
+	/// fr: 'L'envoi n'est pas confirmé : la connexion ou le serveur n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
+	String get echec => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
 }
 
 // Path: controleur.echanges
@@ -9038,8 +9038,8 @@ class Traductions$controleur$echanges$fr {
 	/// fr: 'Envoyé.'
 	String get envoye => 'Envoyé.';
 
-	/// fr: 'L'envoi n'a pas été confirmé. Vérifiez avant de réessayer.'
-	String get echec => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.';
+	/// fr: 'L'envoi n'est pas confirmé : la connexion ou le serveur n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
+	String get echec => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
 
 	/// fr: 'Réessayer'
 	String get reessayer => 'Réessayer';
@@ -9170,8 +9170,8 @@ class Traductions$controleur$controle$fr {
 	/// fr: 'Lecture de votre mission en cours.'
 	String get chargement => 'Lecture de votre mission en cours.';
 
-	/// fr: 'Votre mission n'a pas pu être lue. Réessayez dans un instant.'
-	String get erreur => 'Votre mission n\'a pas pu être lue. Réessayez dans un instant.';
+	/// fr: 'Votre mission n'a pas pu être lue, sans doute à cause de la connexion ou d'un service momentanément indisponible. Réessayez dans un instant.'
+	String get erreur => 'Votre mission n\'a pas pu être lue, sans doute à cause de la connexion ou d\'un service momentanément indisponible. Réessayez dans un instant.';
 }
 
 // Path: tc.groupe
@@ -16042,7 +16042,7 @@ extension on Traductions {
 			'controleur.compteRendu.faitsReplies' => 'Faits automatiques, repliés',
 			'controleur.compteRendu.faitsDeplies' => 'Faits automatiques, dépliés',
 			'controleur.compteRendu.faitsChargement' => 'Lecture des faits de la visite en cours.',
-			'controleur.compteRendu.faitsAbsents' => 'Les faits de la visite ne sont pas encore disponibles.',
+			'controleur.compteRendu.faitsAbsents' => 'Les faits de la visite ne sont pas encore reçus : la séance vient de se terminer ou la connexion a été coupée. Vous pouvez répondre sans eux ; ils seront joints au rapport dès leur réception.',
 			'controleur.compteRendu.cleHoraire' => 'Heure prévue',
 			'controleur.compteRendu.horaire' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'controleur.compteRendu.cleDebutReel' => 'Début réel',
@@ -16060,20 +16060,20 @@ extension on Traductions {
 			'controleur.compteRendu.envoyer' => 'Envoyer le compte rendu',
 			'controleur.compteRendu.plusTard' => 'Plus tard',
 			'controleur.compteRendu.notice' => 'Ce compte rendu est transmis automatiquement à l\'administration.',
-			'controleur.compteRendu.echec' => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.',
+			'controleur.compteRendu.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.compteRendu.envoyeTitre' => 'Compte rendu envoyé',
 			'controleur.compteRendu.envoyePhrase' => 'Il est transmis à l\'administration. Pour y revenir, ouvrez-le dans l\'Historique et choisissez « Ajouter un complément ».',
 			'controleur.compteRendu.ecrireAdmin' => 'Écrire à l\'administration',
 			'controleur.compteRendu.visiteEnCours' => 'Transmission de la visite à l\'administration en cours.',
 			'controleur.compteRendu.visiteTransmise' => 'La visite et ses faits sont transmis à l\'administration.',
-			'controleur.compteRendu.visiteEchec' => 'La visite n\'a pas encore pu être transmise à l\'administration.',
+			'controleur.compteRendu.visiteEchec' => 'La transmission de la visite n\'est pas confirmée : la connexion ou le serveur n\'a pas répondu. Réessayez ; les faits de la visite restent enregistrés sur le serveur.',
 			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
 			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
 			'controleur.observation.important' => 'Vous signalez un point important : votre texte sera demandé.',
 			'controleur.observation.questionNature' => 'Quelle est la nature de votre observation ?',
 			'controleur.observation.pointPositif' => 'Point positif',
 			'controleur.observation.aSuivre' => 'À suivre',
-			'controleur.observation.interventionAdmin' => 'Intervention Admin souhaitée',
+			'controleur.observation.interventionAdmin' => 'Intervention de l\'administration souhaitée',
 			'controleur.observation.questionDomaine' => 'Quel domaine concerne-t-elle ?',
 			'controleur.observation.pedagogie' => 'Pédagogie',
 			'controleur.observation.interaction' => 'Interaction avec les élèves',
@@ -16087,7 +16087,7 @@ extension on Traductions {
 			'controleur.observation.elevePrecis' => 'Élève précis',
 			'controleur.observation.aucun' => 'Aucun participant précis',
 			'controleur.observation.questionEleve' => 'Choisissez l\'élève dans la liste de la Classe.',
-			'controleur.observation.rosterIndisponible' => 'La liste des élèves n\'est pas disponible pour le moment.',
+			'controleur.observation.rosterIndisponible' => 'La liste des élèves présents n\'est pas encore reçue, sans doute à cause de la connexion. Revenez à l\'étape précédente pour choisir « Classe entière » ou « Aucun participant précis », ou réessayez dans un instant.',
 			'controleur.observation.questionTexte' => 'Qu\'avez-vous observé ?',
 			'controleur.observation.texteObligatoire' => 'Votre texte est nécessaire pour cette observation.',
 			'controleur.observation.texteFacultatif' => 'Ce texte est facultatif.',
@@ -16100,7 +16100,7 @@ extension on Traductions {
 			'controleur.observation.clePersonne' => 'Personne concernée',
 			'controleur.observation.cleTexte' => 'Remarque',
 			'controleur.observation.sansTexte' => 'Aucun texte',
-			'controleur.observation.echec' => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.',
+			'controleur.observation.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.titre' => 'Échanges',
 			'controleur.echanges.titreFil' => ({required Object classe, required Object date}) => '${classe} · ${date}',
 			'controleur.echanges.derniereActivite' => ({required Object date}) => 'Dernière activité : ${date}',
@@ -16119,7 +16119,7 @@ extension on Traductions {
 			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
 			'controleur.echanges.enCours' => 'Envoi en cours.',
 			'controleur.echanges.envoye' => 'Envoyé.',
-			'controleur.echanges.echec' => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.',
+			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.reessayer' => 'Réessayer',
 			'controleur.echanges.nouveauMessage' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
 			'controleur.demo.titre' => 'Démonstration contrôleur',
@@ -16153,7 +16153,7 @@ extension on Traductions {
 			'controleur.controle.duree' => ({required Object minutes}) => '${minutes} min prévues',
 			'controleur.controle.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève', other: '${n} élèves', ), 
 			'controleur.controle.chargement' => 'Lecture de votre mission en cours.',
-			'controleur.controle.erreur' => 'Votre mission n\'a pas pu être lue. Réessayez dans un instant.',
+			'controleur.controle.erreur' => 'Votre mission n\'a pas pu être lue, sans doute à cause de la connexion ou d\'un service momentanément indisponible. Réessayez dans un instant.',
 			'aConstruire.titre' => 'Écran à construire',
 			'aConstruire.detail' => 'Cet écran arrive à l\'étape 3.',
 			'galerie.titre' => 'Galerie des composants',
