@@ -507,8 +507,9 @@ void main() {
     final Set<String> parcourus = <String>{
       for (final _Ecran e in _ecrans()) e.$1,
     };
-    // 16 liens ecran x situation, 8 liens d'espaces.
-    expect(liens, hasLength(24));
+    // 20 liens ecran x situation (cinq situations depuis CTRL-SALLE-1),
+    // 8 liens d'espaces.
+    expect(liens, hasLength(28));
     expect(parcourus.containsAll(liens), isTrue, reason: '$liens');
   });
 

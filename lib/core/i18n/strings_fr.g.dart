@@ -9572,6 +9572,9 @@ class Traductions$controleur$demo$fr {
 	/// fr: 'Mission indisponible'
 	String get etatIndisponible => 'Mission indisponible';
 
+	/// fr: 'Classe déjà contrôlée'
+	String get etatDejaControlee => 'Classe déjà contrôlée';
+
 	/// fr: 'Espaces et accès'
 	String get espaces => 'Espaces et accès';
 
@@ -9646,6 +9649,12 @@ class Traductions$controleur$controle$fr {
 
 	/// fr: 'Le contrôle s'ouvrira dès que la séance sera en direct.'
 	String get attente => 'Le contrôle s\'ouvrira dès que la séance sera en direct.';
+
+	/// fr: 'Un contrôle est déjà en cours dans cette classe.'
+	String get dejaEnCours => 'Un contrôle est déjà en cours dans cette classe.';
+
+	/// fr: 'Un seul contrôle à la fois par classe. Choisissez une autre séance, ou revenez plus tard : vous pourrez commencer quand ce contrôle sera terminé.'
+	String get dejaEnCoursAide => 'Un seul contrôle à la fois par classe. Choisissez une autre séance, ou revenez plus tard : vous pourrez commencer quand ce contrôle sera terminé.';
 
 	/// fr: 'Visite en mode incognito : votre présence n'est pas annoncée à l'enseignant.'
 	String get incognito => 'Visite en mode incognito : votre présence n\'est pas annoncée à l\'enseignant.';
@@ -17264,6 +17273,7 @@ extension on Traductions {
 			'controleur.demo.etatPasEncoreEnDirect' => 'Séance pas encore en direct',
 			'controleur.demo.etatEnDirect' => 'Séance en direct',
 			'controleur.demo.etatIndisponible' => 'Mission indisponible',
+			'controleur.demo.etatDejaControlee' => 'Classe déjà contrôlée',
 			'controleur.demo.espaces' => 'Espaces et accès',
 			'controleur.demo.espacesIntro' => 'Le même compte, plusieurs espaces : Enseignant ou Admin passent en Contrôle par Compte, puis Espaces.',
 			'controleur.demo.enseignantControle' => 'Enseignant-Contrôleur, espace Contrôle',
@@ -17283,6 +17293,8 @@ extension on Traductions {
 			'controleur.controle.videAide' => 'Rewayah vous proposera une mission lorsqu\'une séance compatible sera disponible.',
 			'controleur.controle.indisponible' => 'Cette mission n\'est plus disponible.',
 			'controleur.controle.attente' => 'Le contrôle s\'ouvrira dès que la séance sera en direct.',
+			'controleur.controle.dejaEnCours' => 'Un contrôle est déjà en cours dans cette classe.',
+			'controleur.controle.dejaEnCoursAide' => 'Un seul contrôle à la fois par classe. Choisissez une autre séance, ou revenez plus tard : vous pourrez commencer quand ce contrôle sera terminé.',
 			'controleur.controle.incognito' => 'Visite en mode incognito : votre présence n\'est pas annoncée à l\'enseignant.',
 			'controleur.controle.horaire' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'controleur.controle.duree' => ({required Object minutes}) => '${minutes} min prévues',
@@ -17369,11 +17381,11 @@ extension on Traductions {
 			'tc.bibliotheque.sections.pourCeGroupe' => 'Pour cette Classe',
 			'tc.bibliotheque.sections.groupe' => 'Supports à afficher',
 			'tc.bibliotheque.sections.recents' => 'Récents',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.sections.tousLesSupports' => 'Tous les supports',
 			'tc.bibliotheque.sections.resultats' => 'Résultats',
 			'tc.bibliotheque.vide.message' => 'Aucun support publié pour le moment',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.vide.invitation' => 'Vos enseignants déposeront ici les supports de vos cours.',
 			'tc.bibliotheque.aucunResultat.message' => 'Aucun support ne correspond',
 			'tc.bibliotheque.aucunResultat.invitation' => 'Essayez un autre mot, ou relâchez les filtres.',
@@ -17883,11 +17895,11 @@ extension on Traductions {
 			'adulte.demo.vueConjointe' => 'Mon espace vu par la conjointe, second adulte du foyer.',
 			'adulte.demo.vueConjoint' => 'Mon espace vu par le conjoint, second adulte du foyer.',
 			'adulte.demo.etats.adulteSeul' => 'L\'adulte est seul, sans foyer.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.etats.titulaireSansConjoint' => 'Le foyer n\'a pas de second adulte.',
 			'adulte.demo.etats.invitationEnAttente' => 'L\'invitation du second adulte est en attente.',
 			'adulte.demo.etats.invitationExpiree' => 'L\'invitation du second adulte a expiré.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.etats.invitationAnnulee' => 'L\'invitation du second adulte a été annulée.',
 			'adulte.demo.etats.conjointActif' => 'Le second adulte fait partie du foyer.',
 			'adulte.demo.etats.conjointQuitte' => 'Le second adulte a quitté le foyer.',

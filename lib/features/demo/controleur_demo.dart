@@ -48,6 +48,10 @@ enum EtatDemoControleur {
   /// La seance est en direct : « Commencer le controle » (C1, C14).
   enDirect,
 
+  /// La seance est en direct, mais un autre controleur l'observe deja
+  /// (CTRL-SALLE-1) : un seul controle a la fois par Classe.
+  dejaControlee,
+
   /// La mission a ete retiree ou la seance annulee (P-CTR-08).
   indisponible,
 }
@@ -96,6 +100,9 @@ enum EtatMissionDemo {
 
   /// Seance en direct : le controle peut commencer.
   enDirect,
+
+  /// Seance en direct, deja controlee par un autre controleur.
+  dejaControlee,
 
   /// Mission retiree ou seance annulee.
   indisponible,
@@ -365,6 +372,7 @@ abstract final class DonneesControleurDemo {
     EtatDemoControleur.aucune => null,
     EtatDemoControleur.pasEncoreEnDirect => _mission(EtatMissionDemo.prevue),
     EtatDemoControleur.enDirect => _mission(EtatMissionDemo.enDirect),
+    EtatDemoControleur.dejaControlee => _mission(EtatMissionDemo.dejaControlee),
     EtatDemoControleur.indisponible => _mission(EtatMissionDemo.indisponible),
   };
 

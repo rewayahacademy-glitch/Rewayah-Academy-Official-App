@@ -388,6 +388,7 @@ String libelleEtatDemoControleur(EtatDemoControleur etat) => switch (etat) {
   EtatDemoControleur.pasEncoreEnDirect =>
     t.controleur.demo.etatPasEncoreEnDirect,
   EtatDemoControleur.enDirect => t.controleur.demo.etatEnDirect,
+  EtatDemoControleur.dejaControlee => t.controleur.demo.etatDejaControlee,
   EtatDemoControleur.indisponible => t.controleur.demo.etatIndisponible,
 };
 
@@ -455,6 +456,7 @@ MissionControle? missionDemoControleur(EtatDemoControleur etat) {
     etat: switch (m.etat) {
       EtatMissionDemo.prevue => EtatMissionControle.prevue,
       EtatMissionDemo.enDirect => EtatMissionControle.enDirect,
+      EtatMissionDemo.dejaControlee => EtatMissionControle.dejaControlee,
       EtatMissionDemo.indisponible => EtatMissionControle.indisponible,
     },
   );
