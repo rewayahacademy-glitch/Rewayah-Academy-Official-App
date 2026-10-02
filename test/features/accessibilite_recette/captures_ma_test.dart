@@ -62,8 +62,12 @@ Future<void> _capturer(
   ThemeMode mode = ThemeMode.light,
   double echelle = 1,
   bool reduit = false,
+  bool rtl = false,
 }) async {
   fixerVueCapture(tester, taille, 1);
+  if (rtl) {
+    ecran = Directionality(textDirection: TextDirection.rtl, child: ecran);
+  }
   await tester.pumpWidget(
     hoteCapture(
       reduit
@@ -84,6 +88,37 @@ Future<void> _capturer(
 }
 
 void main() {
+  // MA-12 : l'ecriture de droite a gauche (structure, texte reste francais).
+  group('Capture MA-12 : RTL', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    const Map<String, EcranAccessibiliteDemo> ecrans =
+        <String, EcranAccessibiliteDemo>{
+          'accueil_mariam': EcranAccessibiliteDemo(
+            eleve: EleveDemoAccessibilite.mariam,
+          ),
+          'ma_classe_idriss': EcranAccessibiliteDemo(
+            eleve: EleveDemoAccessibilite.idriss,
+            destinationInitiale: EcranAccessibiliteDemo.indexMaClasse,
+          ),
+          'salle_mariam': EcranAccessibiliteDemo(
+            eleve: EleveDemoAccessibilite.mariam,
+            moment: MomentDemoAccessibilite.fenetre,
+            etapeInitiale: EtapeDemoAccessibilite.salle,
+          ),
+        };
+    for (final MapEntry<String, EcranAccessibiliteDemo> e in ecrans.entries) {
+      testWidgets('rtl_${e.key}', (WidgetTester tester) async {
+        await _capturer(
+          tester,
+          'ma12/ma12_rtl_${e.key}_390_light',
+          e.value,
+          const Size(390, 844),
+          rtl: true,
+        );
+      });
+    }
+  });
+
   // -------------------------------------------------------------------
   // Socle (MA-1b) : la liste de la demonstration et l'ecran de Mariam.
   // -------------------------------------------------------------------
