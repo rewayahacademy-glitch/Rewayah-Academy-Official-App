@@ -11,9 +11,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
+import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
@@ -235,6 +238,61 @@ void main() {
       expect(find.text(t.classe.entree.rejoindre), findsNothing);
     },
   );
+
+  bool estHorsLigne(Widget w) =>
+      w is EtatSysteme && w.nature == NatureEtat.horsLigne;
+
+  testWidgets('reseau coupe (revue EA-R M5) : depuis la liste de la vraie '
+      'route, l\'Accueil dit « hors ligne », la cloche reste', (
+    WidgetTester tester,
+  ) async {
+    taille(tester, const Size(390, 844));
+    await monterCoquille(tester, Routes.demoAdulte);
+    final Finder lien = find.byKey(const ValueKey<String>('lien-reseau-coupe'));
+    expect(find.text(t.adulte.demo.reseauCoupe), findsOneWidget);
+    await tester.ensureVisible(lien);
+    await tester.tap(lien);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AccueilAdultePage), findsOneWidget);
+    expect(find.byWidgetPredicate(estHorsLigne), findsOneWidget);
+    expect(find.text(t.commun.etats.horsLigne.titre), findsOneWidget);
+    expect(find.text(t.commun.etats.echecServeur.titre), findsNothing);
+    expect(find.byType(CarteSession), findsNothing);
+    expect(find.byType(ClocheNotifications), findsOneWidget);
+  });
+
+  testWidgets('sans « reseau=coupe » : l\'Accueil est inchange, aucun etat '
+      'hors ligne', (WidgetTester tester) async {
+    taille(tester, const Size(390, 844));
+    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.accueil));
+    expect(
+      adresseDemoAdulte(EcranDemoAdulte.accueil),
+      isNot(contains('reseau')),
+    );
+    expect(find.byWidgetPredicate(estHorsLigne), findsNothing);
+    expect(
+      find.text(t.adulte.accueil.salutation(prenom: 'Mamadou')),
+      findsOneWidget,
+    );
+    expect(find.byType(CarteSession), findsOneWidget);
+  });
+
+  testWidgets('hors ligne et capacite absente : reste indisponible', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      app(
+        overrides: <Override>[
+          horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
+        ],
+        child: const AccueilAdultePage(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text(t.commun.etats.indisponible.titre), findsOneWidget);
+    expect(find.byWidgetPredicate(estHorsLigne), findsNothing);
+  });
 
   testWidgets('chargement : le squelette de la carte de seance', (
     WidgetTester tester,

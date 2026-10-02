@@ -11,10 +11,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/mouvement/mouvement.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/theme/app_delais.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/bascule_theme.dart';
 import 'package:rewayah_academy/core/widgets/bloc_asynchrone.dart';
@@ -125,6 +127,111 @@ void main() {
       await verifierCibles(tester);
       semantique.dispose();
     });
+
+    // EA-PL : « trop large, trop etire ». La carte garde la largeur de
+    // lecture, au bord de debut ; « Reessayer » a la largeur de son libelle,
+    // au bord de fin de la carte, en bureau comme sur telephone.
+    for (final (String nom, Size vue) in <(String, Size)>[
+      ('1440', vueBureau),
+      ('390', vueMobile),
+    ]) {
+      for (final TextDirection sens in TextDirection.values) {
+        testWidgets('bloc borne et Reessayer au bord de fin, $nom, $sens', (
+          WidgetTester tester,
+        ) async {
+          fixerVue(tester, vue);
+          await tester.pumpWidget(
+            hoteTheme(
+              Directionality(
+                textDirection: sens,
+                child: Column(
+                  key: const Key('colonne'),
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    EtatSysteme(nature: NatureEtat.horsLigne, onAction: () {}),
+                  ],
+                ),
+              ),
+            ),
+          );
+          final Finder carte = find.descendant(
+            of: find.byType(EtatSysteme),
+            matching: find.byType(DecoratedBox),
+          );
+          final Rect cadre = tester.getRect(carte.first);
+          expect(cadre.width, lessThanOrEqualTo(AppPage.largeurLecture));
+          final Rect ecran = tester.getRect(find.byKey(const Key('colonne')));
+          if (sens == TextDirection.ltr) {
+            expect(cadre.left, ecran.left);
+          } else {
+            expect(cadre.right, ecran.right);
+          }
+          final Rect bouton = tester.getRect(
+            find.byKey(const ValueKey<String>('etat-systeme-action')),
+          );
+          // Jamais toute la colonne de texte de la carte (marges, medaillon
+          // et son ecart retires).
+          final double colonneTexte =
+              cadre.width -
+              AppSpacing.lg * 2 -
+              AppSpacing.section -
+              AppSpacing.md;
+          expect(bouton.width, lessThan(colonneTexte));
+          final double bordFin = sens == TextDirection.ltr
+              ? cadre.right - bouton.right
+              : bouton.left - cadre.left;
+          expect(bordFin, AppSpacing.lg);
+        });
+      }
+    }
+
+    // EA-PL : titre, phrase et encart centres, dans un bloc borne.
+    for (final (String nom, Size vue) in <(String, Size)>[
+      ('390', vueMobile),
+      ('1440', vueBureau),
+    ]) {
+      testWidgets('EcranResultat : textes centres et bloc borne, $nom', (
+        WidgetTester tester,
+      ) async {
+        fixerVue(tester, vue);
+        await tester.pumpWidget(
+          hoteTheme(
+            EcranResultat(
+              icone: AppIcons.invitationEnvoyee,
+              titre: 'Invitation envoyée',
+              phrase: "L'invitation est partie vers mariama@example.com.",
+              encart: 'Réponse enregistrée le 2 octobre.',
+              libelleAction: 'Revenir à Ma famille',
+              onAction: () {},
+            ),
+          ),
+        );
+        for (final String texte in <String>[
+          'Invitation envoyée',
+          "L'invitation est partie vers mariama@example.com.",
+          'Réponse enregistrée le 2 octobre.',
+        ]) {
+          expect(
+            tester.widget<Text>(find.text(texte)).textAlign,
+            TextAlign.center,
+            reason: texte,
+          );
+          // Le texte est centre dans la colonne de l'ecran.
+          final Rect r = tester.getRect(find.text(texte));
+          final Rect bloc = tester.getRect(find.byType(EcranResultat));
+          expect(r.center.dx, closeTo(bloc.center.dx, 1), reason: texte);
+        }
+        final Rect colonne = tester.getRect(
+          find
+              .descendant(
+                of: find.byType(EcranResultat),
+                matching: find.byType(Column),
+              )
+              .first,
+        );
+        expect(colonne.width, lessThanOrEqualTo(AppPage.largeurEtatVide));
+      });
+    }
 
     for (final Brightness luminosite in Brightness.values) {
       testWidgets('texte a 200 %, $luminosite, bloc et page', (

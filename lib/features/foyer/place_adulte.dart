@@ -21,8 +21,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/page_shell.dart';
 import 'ligne_membre.dart' show dateEcheance;
 
 /// L'etat de la place adulte du foyer, tel que le serveur le rend (F21).
@@ -68,10 +71,15 @@ final class InvitationEnvoyee extends EtatPlaceAdulte {
 /// La place est occupee par le second adulte, dont seul le prenom est rendu.
 final class PlaceOccupee extends EtatPlaceAdulte {
   /// Cree l'etat.
-  const PlaceOccupee(this.prenom);
+  const PlaceOccupee(this.prenom, {this.repriseARepondre = false});
 
   /// Le prenom du second adulte.
   final String prenom;
+
+  /// Vrai quand une demande de reprise du foyer attend la reponse du
+  /// titulaire (EA-11, EA-BR-28) : la ligne le dit et ouvre la decision
+  /// (UX_REVIEW_07 ligne 18 d), sans rien dire du demandeur (Q11).
+  final bool repriseARepondre;
 }
 
 /// Un rattachement attend la validation de l'administration (F17).
@@ -80,7 +88,9 @@ final class ValidationEnAttente extends EtatPlaceAdulte {
   const ValidationEnAttente();
 }
 
-/// L'administration a refuse le rattachement : aucun compte a rebours (F17).
+/// La direction a refuse le rattachement : aucun compte a rebours (F17). Une
+/// nouvelle demande reste possible (doc section 10.3, decision E5) : elle
+/// relance l'invitation (EA-6, EA-BR-18).
 final class ValidationRefusee extends EtatPlaceAdulte {
   /// Cree l'etat.
   const ValidationRefusee();
@@ -133,17 +143,34 @@ const Key lignePlaceAdulteKey = Key('foyer.placeAdulte');
 /// La cle de la ligne « Paiements du foyer ».
 const Key paiementsFoyerKey = Key('foyer.paiementsFoyer');
 
+/// La cle du bouton « Faire une nouvelle demande » (validation refusee, E5).
+const Key nouvelleDemandeKey = Key('foyer.nouvelleDemande');
+
+/// Vrai quand la place permet une nouvelle demande : la direction a refuse
+/// la validation (doc section 10.3, decision E5). La demande relance
+/// l'invitation ; le serveur garde le delai tel quel (EA-BR-18).
+bool placePermetNouvelleDemande(EtatPlaceAdulte place) =>
+    place is ValidationRefusee;
+
 /// Vrai quand la ligne de la place est une action : inviter quand la place
-/// est libre, ouvrir l'invitation envoyee (pour l'annuler, EA-6) ou la place
-/// occupee. Les autres etats se lisent sur la ligne, sans bouton qui
-/// echouerait (F17, R4) ; leur detail vient avec EA-8.
+/// est libre, ouvrir l'invitation envoyee (pour l'annuler, EA-6), la place
+/// occupee (pour retirer le second adulte, EA-8) ou le detail du delai
+/// (« Nouvelle invitation indisponible », planche 3.3, EA-8), qui ne propose
+/// aucune invitation (F17, R4). La validation, en attente ou refusee, se lit
+/// sur la ligne seule (UX_REVIEW_07 ligne 13 d).
 bool placeActionnable(EtatPlaceAdulte place) =>
     place is PlaceDisponible ||
     place is InvitationEnvoyee ||
-    place is PlaceOccupee;
+    place is PlaceOccupee ||
+    place is DelaiEnCours;
 
 /// La legende de la ligne de la place : l'invitation a envoyer, la fin de la
 /// precedente, ou l'adresse de celle qui attend (F21).
+///
+/// « Invitez votre conjointe a rejoindre Rewayah avec son propre compte »
+/// vient de la planche 2.1 ; « Envoyee a {courriel} », la fin expiree et la
+/// fin annulee n'ont aucune source (spec, planche) : libelles provisoires,
+/// lexique D4 (EA-6c).
 String? legendePlace(FoyerTitulaireVM vue) => switch (vue.place) {
   PlaceDisponible(precedente: FinInvitation.expiree) =>
     t.adulte.famille.place.expiree,
@@ -156,10 +183,17 @@ String? legendePlace(FoyerTitulaireVM vue) => switch (vue.place) {
   InvitationEnvoyee(:final String courriel?) => t.adulte.famille.place.envoyeeA(
     courriel: courriel,
   ),
+  // Libelle provisoire, lexique D4 (d'apres le doc section 12.2).
+  PlaceOccupee(repriseARepondre: true) => t.adulte.reprise.titulaire.ligne,
   _ => null,
 };
 
 /// Le libelle de la ligne de la place, selon l'etat et le genre (F3, F21).
+///
+/// Chaque libelle est une phrase entiere, prenom en parametre, jamais deux
+/// morceaux joints par un point median (K-41) : « {prenom}, votre
+/// conjointe » est un libelle provisoire, lexique D4. « Validation refusee
+/// par la direction » suit la decision E5 (jamais le mot « admin », K-53.6).
 String libellePlace(FoyerTitulaireVM vue) {
   final bool f = vue.placeFeminine;
   return switch (vue.place) {
@@ -189,7 +223,10 @@ LigneRubrique lignePlaceAdulte(FoyerTitulaireVM vue, {VoidCallback? onPress}) {
       PlaceOccupee() => null,
 
       DelaiEnCours() || ValidationEnAttente() => AppIcons.horloge,
-      InvitationEnvoyee() || ValidationRefusee() => AppIcons.foyer,
+      // EA-PL : une icone par etat, comme les ecrans resultat de
+      // l'invitation (directeur, 02/10).
+      InvitationEnvoyee() => AppIcons.invitationEnvoyee,
+      ValidationRefusee() => AppIcons.interdit,
     },
     // Le second adulte : ses initiales, jamais sa photo (Q4).
     meneur: place is PlaceOccupee
@@ -199,4 +236,44 @@ LigneRubrique lignePlaceAdulte(FoyerTitulaireVM vue, {VoidCallback? onPress}) {
     legende: legendePlace(vue),
     onPress: placeActionnable(place) ? onPress : null,
   );
+}
+
+/// La cle de la ligne « A propos du forfait famille ».
+const Key aProposForfaitKey = Key('foyer.aProposForfait');
+
+/// « A propos du forfait famille » (planche 2.1 P, decision E6) : une page
+/// d'information, sans action.
+///
+/// Le texte est celui du document du directeur, mot pour mot
+/// (`specs/07_eleves_adultes/REWAYAH_DECISIONS_FOYER_FAMILLE_V1.md`,
+/// section 3, « Explication secondaire possible ») : rien d'invente, aucun
+/// prix, aucune remise (F12, doc section 8).
+class AProposForfaitFamillePage extends StatelessWidget {
+  /// Cree la page.
+  const AProposForfaitFamillePage({required this.onRetour, super.key});
+
+  /// Revient a Ma famille.
+  final VoidCallback onRetour;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    return PageShell(
+      titre: t.adulte.famille.aProposForfait,
+      onRetour: onRetour,
+      // Largeur de lecture (K-42) : jamais une ligne de 1100 en bureau.
+      child: Align(
+        alignment: AlignmentDirectional.topStart,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: AppPage.largeurLecture),
+          child: Text(
+            t.adulte.famille.aProposForfaitPhrase,
+            style: palette.inkStrong.applyTo(
+              Theme.of(context).textTheme.bodyLarge ?? const TextStyle(),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

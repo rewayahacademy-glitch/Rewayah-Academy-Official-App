@@ -3,12 +3,20 @@
 // Un bandeau d'angle, pose par `RewayahApp.builder`, pour qu'aucune capture de
 // l'apercu ne passe pour la production.
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
+import '../../core/widgets/offline_banner.dart' show ReserveCoinFin;
 
 /// Le libelle du repere, traduit (K-41) : `commun.demonstration.repere`.
 String get libelleRepereDemonstration => t.commun.demonstration.repere;
+
+/// L'emprise du ruban le long du bord superieur, depuis le coin de fin : la
+/// geometrie du `Banner` de Flutter (bas du ruban a 40 du coin, a 45 degres),
+/// soit 40 x racine de 2. Le bandeau hors ligne garde son texte en deca.
+const double empriseRepereDemonstration = 40 * math.sqrt2;
 
 /// Coiffe [child] d'un bandeau d'angle « Démonstration ».
 class RepereDemonstration extends StatelessWidget {
@@ -34,7 +42,7 @@ class RepereDemonstration extends StatelessWidget {
         color: Theme.of(context).colorScheme.tertiary,
         // La famille vient du theme : un `TextStyle` nu laisse le bandeau
         // (peint, hors `DefaultTextStyle`) sans police, donc illisible
-        // (revue AD-S). Couleurs inchangees.
+        // (revue AD-S, K-42). Couleurs inchangees.
         textStyle: (Theme.of(context).textTheme.labelSmall ?? const TextStyle())
             .copyWith(
               color: Theme.of(context).colorScheme.onTertiary,
@@ -45,7 +53,10 @@ class RepereDemonstration extends StatelessWidget {
               // interlettrage et en 9, le mot y tient en entier.
               letterSpacing: 0,
             ),
-        child: child ?? const SizedBox.shrink(),
+        child: ReserveCoinFin(
+          largeur: empriseRepereDemonstration,
+          child: child ?? const SizedBox.shrink(),
+        ),
       ),
     );
   }

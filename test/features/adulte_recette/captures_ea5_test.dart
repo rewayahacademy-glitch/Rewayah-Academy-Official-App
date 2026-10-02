@@ -151,6 +151,17 @@ void main() {
           etat: EtatDemoAdulte.delai60,
         ),
       ),
+      // EA-5c : refus de validation (E5), « A propos du forfait famille »
+      // (E6) et la creation de demonstration qui dit que rien n'est cree.
+      (
+        'validation_refusee',
+        adresseDemoAdulte(
+          EcranDemoAdulte.maFamille,
+          etat: EtatDemoAdulte.validationRefusee,
+        ),
+      ),
+      ('a_propos_forfait', adresseDemoAdulte(EcranDemoAdulte.aProposForfait)),
+      ('profil_non_cree', adresseDemoAdulte(EcranDemoAdulte.profilNonCree)),
     ]) {
       for (final ThemeMode mode in <ThemeMode>[
         ThemeMode.light,

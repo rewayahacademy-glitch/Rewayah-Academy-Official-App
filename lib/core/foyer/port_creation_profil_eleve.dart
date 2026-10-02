@@ -55,8 +55,7 @@ enum MotifRefusCreation {
 abstract interface class PortCreationProfilEleve {
   /// Vrai quand ce choix est creable pour un compte a cette porte.
   ///
-  /// Faux pour [PourQui.procheAdulte] (DB-FOY-02) et [PourQui.moiMeme]
-  /// (DB-FOY-01), et pour tout compte qui n'est pas [PorteAcces.actif]
+  /// Faux pour [PourQui.moiMeme] (DB-FOY-01), et pour tout compte qui n'est pas [PorteAcces.actif]
   /// (DB-ADM-04). **Une commodite d'ecran** : le serveur refait le controle.
   bool peutCreer(PourQui pourQui, {required PorteAcces porte});
 

@@ -2375,8 +2375,13 @@ class Traductions$adulte$fr {
 	late final Traductions$adulte$maClasse$fr maClasse = Traductions$adulte$maClasse$fr.internal(_root);
 	late final Traductions$adulte$monEspace$fr monEspace = Traductions$adulte$monEspace$fr.internal(_root);
 	late final Traductions$adulte$provisoire$fr provisoire = Traductions$adulte$provisoire$fr.internal(_root);
+	late final Traductions$adulte$recharge$fr recharge = Traductions$adulte$recharge$fr.internal(_root);
+	late final Traductions$adulte$paiements$fr paiements = Traductions$adulte$paiements$fr.internal(_root);
 	late final Traductions$adulte$famille$fr famille = Traductions$adulte$famille$fr.internal(_root);
 	late final Traductions$adulte$invitation$fr invitation = Traductions$adulte$invitation$fr.internal(_root);
+	late final Traductions$adulte$acceptation$fr acceptation = Traductions$adulte$acceptation$fr.internal(_root);
+	late final Traductions$adulte$sortie$fr sortie = Traductions$adulte$sortie$fr.internal(_root);
+	late final Traductions$adulte$reprise$fr reprise = Traductions$adulte$reprise$fr.internal(_root);
 	late final Traductions$adulte$demo$fr demo = Traductions$adulte$demo$fr.internal(_root);
 }
 
@@ -10255,20 +10260,20 @@ class Traductions$adulte$monEspace$fr {
 	/// fr: 'Cours et accès'
 	String get coursAcces => 'Cours et accès';
 
-	/// fr: 'Ma classe, mes séances et mon accès'
-	String get coursAccesLegende => 'Ma classe, mes séances et mon accès';
+	/// fr: 'Classe, séances et accès'
+	String get coursAccesLegende => 'Classe, séances et accès';
 
 	/// fr: 'Paiements'
 	String get paiements => 'Paiements';
 
-	/// fr: 'Historique et reçus de mes paiements'
-	String get paiementsLegende => 'Historique et reçus de mes paiements';
+	/// fr: 'Historique et reçus'
+	String get paiementsLegende => 'Historique et reçus';
 
 	/// fr: 'Mes accords'
 	String get accords => 'Mes accords';
 
-	/// fr: 'Accepter, refuser ou retirer chacun de vos accords'
-	String get accordsLegende => 'Accepter, refuser ou retirer chacun de vos accords';
+	/// fr: 'Accords donnés à l'académie'
+	String get accordsLegende => 'Accords donnés à l\'académie';
 
 	/// fr: 'Méthode et adresse de connexion'
 	String get securiteLegende => 'Méthode et adresse de connexion';
@@ -10287,15 +10292,138 @@ class Traductions$adulte$provisoire$fr {
 
 	/// fr: 'Le Coran de votre espace élève s'affichera ici.'
 	String get coran => 'Le Coran de votre espace élève s\'affichera ici.';
+}
 
-	/// fr: 'La page de votre forfait famille arrivera dans une prochaine étape.'
-	String get forfaitFamille => 'La page de votre forfait famille arrivera dans une prochaine étape.';
+// Path: adulte.recharge
+class Traductions$adulte$recharge$fr {
+	Traductions$adulte$recharge$fr.internal(this._root);
 
-	/// fr: 'L'ajout de votre famille arrivera dans une prochaine étape.'
-	String get ajouterMaFamille => 'L\'ajout de votre famille arrivera dans une prochaine étape.';
+	final Traductions _root; // ignore: unused_field
 
-	/// fr: 'Le détail de cette place arrivera dans une prochaine étape.'
-	String get placeAdulte => 'Le détail de cette place arrivera dans une prochaine étape.';
+	// Translations
+
+	/// fr: 'Nouvelle recharge'
+	String get titre => 'Nouvelle recharge';
+
+	/// fr: 'Sélectionnez un ou plusieurs bénéficiaires, puis choisissez une offre pour chacun.'
+	String get phrase => 'Sélectionnez un ou plusieurs bénéficiaires, puis choisissez une offre pour chacun.';
+
+	/// fr: 'Tout sélectionner'
+	String get toutSelectionner => 'Tout sélectionner';
+
+	/// fr: 'Tout désélectionner'
+	String get toutDeselectionner => 'Tout désélectionner';
+
+	/// fr: 'Offre pour {prenom}'
+	String offrePour({required Object prenom}) => 'Offre pour ${prenom}';
+
+	/// fr: 'Vérifier la recharge'
+	String get verifier => 'Vérifier la recharge';
+
+	/// fr: 'Sélectionnez au moins un bénéficiaire pour continuer.'
+	String get raisonAucun => 'Sélectionnez au moins un bénéficiaire pour continuer.';
+
+	/// fr: 'Choisissez une offre pour chaque bénéficiaire sélectionné.'
+	String get raisonOffre => 'Choisissez une offre pour chaque bénéficiaire sélectionné.';
+
+	/// fr: 'Vous êtes hors ligne. Vous pourrez vérifier la recharge quand la connexion sera revenue.'
+	String get horsLigneVerifier => 'Vous êtes hors ligne. Vous pourrez vérifier la recharge quand la connexion sera revenue.';
+
+	/// fr: 'Recharge pas encore disponible'
+	String get indisponibleTitre => 'Recharge pas encore disponible';
+
+	/// fr: 'Les offres de recharge ne sont pas encore disponibles dans l'application. Aucun paiement n'est possible ici pour l'instant.'
+	String get indisponiblePhrase => 'Les offres de recharge ne sont pas encore disponibles dans l\'application. Aucun paiement n\'est possible ici pour l\'instant.';
+
+	/// fr: 'La vérification n'a pas abouti.'
+	String get verificationEchecTitre => 'La vérification n\'a pas abouti.';
+
+	/// fr: 'Vos choix sont conservés. Vous pouvez réessayer.'
+	String get verificationEchecPhrase => 'Vos choix sont conservés. Vous pouvez réessayer.';
+
+	/// fr: 'Vérifier la recharge'
+	String get verifierTitre => 'Vérifier la recharge';
+
+	/// fr: 'Vérifiez les détails avant de procéder au paiement.'
+	String get verifierPhrase => 'Vérifiez les détails avant de procéder au paiement.';
+
+	/// fr: 'Récapitulatif par bénéficiaire'
+	String get recapitulatif => 'Récapitulatif par bénéficiaire';
+
+	/// fr: 'Montant payé'
+	String get montantPaye => 'Montant payé';
+
+	/// fr: 'Solde attribué'
+	String get soldeAttribue => 'Solde attribué';
+
+	/// fr: 'Statut de l'attribution'
+	String get statut => 'Statut de l\'attribution';
+
+	/// fr: 'Modifier'
+	String get modifier => 'Modifier';
+
+	/// fr: 'Total à payer'
+	String get total => 'Total à payer';
+
+	/// fr: 'Payer {montant}'
+	String payer({required Object montant}) => 'Payer ${montant}';
+
+	/// fr: 'Vous êtes hors ligne. Vous pourrez payer quand la connexion sera revenue.'
+	String get horsLignePayer => 'Vous êtes hors ligne. Vous pourrez payer quand la connexion sera revenue.';
+
+	/// fr: 'Le paiement n'a pas été confirmé.'
+	String get paiementEchecTitre => 'Le paiement n\'a pas été confirmé.';
+
+	/// fr: 'Vérifiez avant de réessayer.'
+	String get paiementEchecPhrase => 'Vérifiez avant de réessayer.';
+
+	/// fr: 'Paiement pas encore disponible'
+	String get paiementIndisponibleTitre => 'Paiement pas encore disponible';
+
+	/// fr: 'Aucun paiement n'a été effectué. Le paiement en ligne n'est pas encore ouvert dans l'application.'
+	String get paiementIndisponiblePhrase => 'Aucun paiement n\'a été effectué. Le paiement en ligne n\'est pas encore ouvert dans l\'application.';
+
+	/// fr: 'Revenir aux paiements du foyer'
+	String get revenirPaiements => 'Revenir aux paiements du foyer';
+}
+
+// Path: adulte.paiements
+class Traductions$adulte$paiements$fr {
+	Traductions$adulte$paiements$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Bénéficiaires'
+	String get beneficiaires => 'Bénéficiaires';
+
+	/// fr: 'Recharger'
+	String get recharger => 'Recharger';
+
+	/// fr: 'Récapitulatif du foyer : {valeur}. Chaque solde reste celui de son bénéficiaire.'
+	String recapitulatif({required Object valeur}) => 'Récapitulatif du foyer : ${valeur}. Chaque solde reste celui de son bénéficiaire.';
+
+	/// fr: 'Bientôt épuisé'
+	String get bientotEpuise => 'Bientôt épuisé';
+
+	/// fr: 'Inactif'
+	String get inactif => 'Inactif';
+
+	/// fr: 'Historique des paiements'
+	String get historique => 'Historique des paiements';
+
+	/// fr: 'Soldes pas encore consultables'
+	String get soldesIndisponiblesTitre => 'Soldes pas encore consultables';
+
+	/// fr: 'Le solde de chaque bénéficiaire n'est pas encore disponible dans l'application. Aucune recharge n'est possible ici pour l'instant.'
+	String get soldesIndisponiblesPhrase => 'Le solde de chaque bénéficiaire n\'est pas encore disponible dans l\'application. Aucune recharge n\'est possible ici pour l\'instant.';
+
+	/// fr: 'Aucun bénéficiaire'
+	String get aucunBeneficiaireTitre => 'Aucun bénéficiaire';
+
+	/// fr: 'Aucun profil élève de votre foyer n'a de solde à recharger pour l'instant.'
+	String get aucunBeneficiairePhrase => 'Aucun profil élève de votre foyer n\'a de solde à recharger pour l\'instant.';
 }
 
 // Path: adulte.famille
@@ -10312,6 +10440,12 @@ class Traductions$adulte$famille$fr {
 	/// fr: 'Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.'
 	String get ajouterLegende => 'Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.';
 
+	/// fr: 'Vous pouvez ajouter vos enfants et inviter un conjoint ou une conjointe à rejoindre votre forfait famille. Votre espace élève reste inchangé.'
+	String get ajouterPhrase => 'Vous pouvez ajouter vos enfants et inviter un conjoint ou une conjointe à rejoindre votre forfait famille. Votre espace élève reste inchangé.';
+
+	/// fr: 'Inscrire un enfant'
+	String get inscrireEnfant => 'Inscrire un enfant';
+
 	/// fr: 'Ma famille'
 	String get maFamille => 'Ma famille';
 
@@ -10321,11 +10455,38 @@ class Traductions$adulte$famille$fr {
 	/// fr: 'Revenir à Mon espace'
 	String get retourMonEspace => 'Revenir à Mon espace';
 
-	/// fr: 'Titulaire du foyer'
-	String get titulaire => 'Titulaire du foyer';
+	/// fr: 'Vous êtes titulaire du foyer'
+	String get titulaire => 'Vous êtes titulaire du foyer';
 
 	/// fr: 'Paiements du foyer'
 	String get paiementsFoyer => 'Paiements du foyer';
+
+	/// fr: 'À propos du forfait famille'
+	String get aProposForfait => 'À propos du forfait famille';
+
+	/// fr: 'Le forfait famille comprend un titulaire, un conjoint ou une conjointe adulte, et les enfants ou adolescents sous la responsabilité du titulaire. Chaque adulte conserve son propre compte.'
+	String get aProposForfaitPhrase => 'Le forfait famille comprend un titulaire, un conjoint ou une conjointe adulte, et les enfants ou adolescents sous la responsabilité du titulaire. Chaque adulte conserve son propre compte.';
+
+	/// fr: 'Démonstration : aucun profil n'a été créé'
+	String get profilNonCreeTitre => 'Démonstration : aucun profil n\'a été créé';
+
+	/// fr: 'En démonstration, rien n'est envoyé. Ma famille reste telle qu'elle était.'
+	String get profilNonCreePhrase => 'En démonstration, rien n\'est envoyé. Ma famille reste telle qu\'elle était.';
+
+	/// fr: 'En démonstration, rien n'est envoyé. Votre espace élève reste tel qu'il était.'
+	String get profilNonCreePhraseSeul => 'En démonstration, rien n\'est envoyé. Votre espace élève reste tel qu\'il était.';
+
+	/// fr: 'Pas encore disponible'
+	String get monProfilIndisponibleTitre => 'Pas encore disponible';
+
+	/// fr: 'La création d'un profil élève séparé n'est pas encore disponible. Vos cours et Ma famille restent tels qu'ils sont.'
+	String get monProfilIndisponiblePhrase => 'La création d\'un profil élève séparé n\'est pas encore disponible. Vos cours et Ma famille restent tels qu\'ils sont.';
+
+	/// fr: 'La rubrique famille n'est pas encore disponible'
+	String get indisponibleTitre => 'La rubrique famille n\'est pas encore disponible';
+
+	/// fr: 'Votre famille ou votre forfait famille s'affichera ici dès qu'il sera disponible.'
+	String get indisponiblePhrase => 'Votre famille ou votre forfait famille s\'affichera ici dès qu\'il sera disponible.';
 
 	late final Traductions$adulte$famille$place$fr place = Traductions$adulte$famille$place$fr.internal(_root);
 }
@@ -10337,6 +10498,12 @@ class Traductions$adulte$invitation$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+
+	/// fr: 'Inviter ma conjointe'
+	String get titreElle => 'Inviter ma conjointe';
+
+	/// fr: 'Inviter mon conjoint'
+	String get titreLui => 'Inviter mon conjoint';
 
 	/// fr: 'Un compte personnel pour elle'
 	String get enteteElle => 'Un compte personnel pour elle';
@@ -10362,8 +10529,11 @@ class Traductions$adulte$invitation$fr {
 	/// fr: 'Adresse e-mail'
 	String get courriel => 'Adresse e-mail';
 
-	/// fr: 'Nous l'utiliserons seulement pour lui envoyer cette invitation.'
-	String get courrielAide => 'Nous l\'utiliserons seulement pour lui envoyer cette invitation.';
+	/// fr: 'L'adresse e-mail sera utilisée pour envoyer à votre conjointe l'invitation à rejoindre Rewayah.'
+	String get courrielAideElle => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjointe l\'invitation à rejoindre Rewayah.';
+
+	/// fr: 'L'adresse e-mail sera utilisée pour envoyer à votre conjoint l'invitation à rejoindre Rewayah.'
+	String get courrielAideLui => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjoint l\'invitation à rejoindre Rewayah.';
 
 	/// fr: 'Indiquez son prénom.'
 	String get prenomRequis => 'Indiquez son prénom.';
@@ -10374,8 +10544,8 @@ class Traductions$adulte$invitation$fr {
 	/// fr: 'Vérifiez l'adresse e-mail : elle doit ressembler à nom@exemple.com.'
 	String get courrielInvalide => 'Vérifiez l\'adresse e-mail : elle doit ressembler à nom@exemple.com.';
 
-	/// fr: 'Vérifier l'invitation'
-	String get verifier => 'Vérifier l\'invitation';
+	/// fr: 'Continuer'
+	String get verifier => 'Continuer';
 
 	/// fr: 'Vérifier et envoyer'
 	String get verifierTitre => 'Vérifier et envoyer';
@@ -10392,20 +10562,20 @@ class Traductions$adulte$invitation$fr {
 	/// fr: 'Envoyer l'invitation'
 	String get envoyer => 'Envoyer l\'invitation';
 
-	/// fr: 'Vous êtes hors ligne. L'invitation pourra partir quand la connexion reviendra.'
-	String get horsLigne => 'Vous êtes hors ligne. L\'invitation pourra partir quand la connexion reviendra.';
+	/// fr: 'Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez envoyer l'invitation vous-même quand la connexion sera revenue.'
+	String get horsLigne => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez envoyer l\'invitation vous-même quand la connexion sera revenue.';
 
-	/// fr: 'L'invitation n'est pas partie'
-	String get echecTitre => 'L\'invitation n\'est pas partie';
+	/// fr: 'L'envoi n'a pas été confirmé.'
+	String get echecTitre => 'L\'envoi n\'a pas été confirmé.';
 
-	/// fr: 'La connexion a été interrompue. Vos informations sont conservées : vous pouvez réessayer.'
-	String get echecPhrase => 'La connexion a été interrompue. Vos informations sont conservées : vous pouvez réessayer.';
+	/// fr: 'Vérifiez avant de réessayer. Vos informations sont conservées.'
+	String get echecPhrase => 'Vérifiez avant de réessayer. Vos informations sont conservées.';
 
 	/// fr: 'Cette invitation ne peut pas être envoyée'
 	String get refusTitre => 'Cette invitation ne peut pas être envoyée';
 
-	/// fr: 'Revenez à Ma famille pour voir l'état de la place.'
-	String get refusPhrase => 'Revenez à Ma famille pour voir l\'état de la place.';
+	/// fr: 'Ma famille indique l'état actuel de la place.'
+	String get refusPhrase => 'Ma famille indique l\'état actuel de la place.';
 
 	/// fr: 'Invitation envoyée'
 	String get envoyeeTitre => 'Invitation envoyée';
@@ -10428,8 +10598,8 @@ class Traductions$adulte$invitation$fr {
 	/// fr: 'Annuler cette invitation ?'
 	String get annulerQuestionSansPrenom => 'Annuler cette invitation ?';
 
-	/// fr: 'Vous êtes hors ligne. L'invitation pourra être annulée quand la connexion reviendra.'
-	String get annulerHorsLigne => 'Vous êtes hors ligne. L\'invitation pourra être annulée quand la connexion reviendra.';
+	/// fr: 'Vous êtes hors ligne. Rien n'est annulé. Vous pourrez annuler l'invitation vous-même quand la connexion sera revenue.'
+	String get annulerHorsLigne => 'Vous êtes hors ligne. Rien n\'est annulé. Vous pourrez annuler l\'invitation vous-même quand la connexion sera revenue.';
 
 	/// fr: 'L'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.'
 	String get annulerConsequence => 'L\'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.';
@@ -10437,11 +10607,293 @@ class Traductions$adulte$invitation$fr {
 	/// fr: 'Garder l'invitation'
 	String get garder => 'Garder l\'invitation';
 
-	/// fr: 'L'invitation n'a pas été annulée'
-	String get annulationEchecTitre => 'L\'invitation n\'a pas été annulée';
+	/// fr: 'L'annulation n'a pas été confirmée.'
+	String get annulationEchecTitre => 'L\'annulation n\'a pas été confirmée.';
 
-	/// fr: 'La connexion a été interrompue. L'invitation est toujours envoyée : vous pouvez réessayer.'
-	String get annulationEchecPhrase => 'La connexion a été interrompue. L\'invitation est toujours envoyée : vous pouvez réessayer.';
+	/// fr: 'Vérifiez avant de réessayer.'
+	String get annulationEchecPhrase => 'Vérifiez avant de réessayer.';
+}
+
+// Path: adulte.acceptation
+class Traductions$adulte$acceptation$fr {
+	Traductions$adulte$acceptation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{prenom} vous invite à rejoindre son forfait famille.'
+	String notification({required Object prenom}) => '${prenom} vous invite à rejoindre son forfait famille.';
+
+	/// fr: 'Rejoindre le forfait famille de {prenom}'
+	String titre({required Object prenom}) => 'Rejoindre le forfait famille de ${prenom}';
+
+	/// fr: 'Ce que nous faisons'
+	String get faisonsTitre => 'Ce que nous faisons';
+
+	/// fr: '{prenom} vous invite dans son forfait famille. Si vous acceptez, votre compte est rattaché à son foyer. Votre compte reste le vôtre. Rien n'est fusionné.'
+	String faisons({required Object prenom}) => '${prenom} vous invite dans son forfait famille. Si vous acceptez, votre compte est rattaché à son foyer. Votre compte reste le vôtre. Rien n\'est fusionné.';
+
+	/// fr: 'Pourquoi'
+	String get pourquoiTitre => 'Pourquoi';
+
+	/// fr: '{prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, elle doit voir votre solde.'
+	String pourquoiElle({required Object prenom}) => '${prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, elle doit voir votre solde.';
+
+	/// fr: '{prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, il doit voir votre solde.'
+	String pourquoiLui({required Object prenom}) => '${prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, il doit voir votre solde.';
+
+	/// fr: 'Ce que {prenom} verra'
+	String verraTitre({required Object prenom}) => 'Ce que ${prenom} verra';
+
+	/// fr: 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L'offre qui vous concerne. L'état de votre accès, s'il empêche de payer. Elle saura aussi si vous quittez le forfait famille.'
+	String get verraElle => 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L\'offre qui vous concerne. L\'état de votre accès, s\'il empêche de payer. Elle saura aussi si vous quittez le forfait famille.';
+
+	/// fr: 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L'offre qui vous concerne. L'état de votre accès, s'il empêche de payer. Il saura aussi si vous quittez le forfait famille.'
+	String get verraLui => 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L\'offre qui vous concerne. L\'état de votre accès, s\'il empêche de payer. Il saura aussi si vous quittez le forfait famille.';
+
+	/// fr: 'Ce que {prenom} ne verra pas'
+	String verraPasTitre({required Object prenom}) => 'Ce que ${prenom} ne verra pas';
+
+	/// fr: 'Votre Classe. Votre niveau. Vos séances et votre présence. Vos progrès. Vos messages. Vos notifications. Vos moyens de paiement personnels. Vos pièces d'identité.'
+	String get verraPas => 'Votre Classe. Votre niveau. Vos séances et votre présence. Vos progrès. Vos messages. Vos notifications. Vos moyens de paiement personnels. Vos pièces d\'identité.';
+
+	/// fr: 'Ce que vous ne verrez pas'
+	String get vousTitre => 'Ce que vous ne verrez pas';
+
+	/// fr: 'Les cours, les progrès et les messages de {prenom} et des enfants du foyer. Vous ne pourrez pas ajouter d'enfant, inviter quelqu'un ni modifier le foyer.'
+	String vous({required Object prenom}) => 'Les cours, les progrès et les messages de ${prenom} et des enfants du foyer. Vous ne pourrez pas ajouter d\'enfant, inviter quelqu\'un ni modifier le foyer.';
+
+	/// fr: 'Qui d'autre voit'
+	String get autresTitre => 'Qui d\'autre voit';
+
+	/// fr: 'Votre enseignant ne voit rien de votre foyer. L'équipe de l'académie voit le rattachement, pour le gérer et, si nécessaire, le valider.'
+	String get autres => 'Votre enseignant ne voit rien de votre foyer. L\'équipe de l\'académie voit le rattachement, pour le gérer et, si nécessaire, le valider.';
+
+	/// fr: 'Combien de temps'
+	String get dureeTitre => 'Combien de temps';
+
+	/// fr: 'Le rattachement dure jusqu'à ce que vous quittiez le forfait famille, ou que {prenom} y mette fin.'
+	String duree({required Object prenom}) => 'Le rattachement dure jusqu\'à ce que vous quittiez le forfait famille, ou que ${prenom} y mette fin.';
+
+	/// fr: 'Nous gardons la trace du rattachement {duree}.'
+	String conservation({required Object duree}) => 'Nous gardons la trace du rattachement ${duree}.';
+
+	/// fr: 'Comment partir'
+	String get partirTitre => 'Comment partir';
+
+	/// fr: 'Dans Mon espace, Forfait famille, Quitter le forfait famille. Vous n'avez pas besoin de son accord. Votre compte, vos cours, votre historique et votre solde restent disponibles.'
+	String get partir => 'Dans Mon espace, Forfait famille, Quitter le forfait famille. Vous n\'avez pas besoin de son accord. Votre compte, vos cours, votre historique et votre solde restent disponibles.';
+
+	/// fr: 'Si vous refusez'
+	String get refusTitre => 'Si vous refusez';
+
+	/// fr: 'Rien ne change pour votre compte, vos cours ni votre solde.'
+	String get refus => 'Rien ne change pour votre compte, vos cours ni votre solde.';
+
+	/// fr: 'Ce rattachement doit être validé par l'administration de l'académie. En attendant, votre compte et vos cours fonctionnent normalement.'
+	String get validation => 'Ce rattachement doit être validé par l\'administration de l\'académie. En attendant, votre compte et vos cours fonctionnent normalement.';
+
+	/// fr: 'Refuser l'invitation'
+	String get refuser => 'Refuser l\'invitation';
+
+	/// fr: 'Accepter l'invitation'
+	String get accepter => 'Accepter l\'invitation';
+
+	/// fr: 'Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez répondre vous-même quand la connexion sera revenue.'
+	String get horsLigne => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez répondre vous-même quand la connexion sera revenue.';
+
+	/// fr: 'L'acceptation n'a pas été confirmée.'
+	String get acceptationEchecTitre => 'L\'acceptation n\'a pas été confirmée.';
+
+	/// fr: 'Le refus n'a pas été confirmé.'
+	String get refusEchecTitre => 'Le refus n\'a pas été confirmé.';
+
+	/// fr: 'Vérifiez avant de réessayer.'
+	String get echecPhrase => 'Vérifiez avant de réessayer.';
+
+	/// fr: 'Invitation acceptée'
+	String get accepteeTitre => 'Invitation acceptée';
+
+	/// fr: 'Vous avez rejoint le forfait famille de {prenom}.'
+	String rejoint({required Object prenom}) => 'Vous avez rejoint le forfait famille de ${prenom}.';
+
+	/// fr: 'Invitation refusée'
+	String get refuseeTitre => 'Invitation refusée';
+
+	/// fr: 'Ce compte ne peut pas rejoindre ce forfait actuellement.'
+	String get impossible => 'Ce compte ne peut pas rejoindre ce forfait actuellement.';
+
+	/// fr: 'Cette invitation n'est plus valable.'
+	String get perimee => 'Cette invitation n\'est plus valable.';
+
+	/// fr: 'Aller à Mon espace'
+	String get monEspace => 'Aller à Mon espace';
+
+	/// fr: 'Réponse enregistrée le {date}.'
+	String recu({required Object date}) => 'Réponse enregistrée le ${date}.';
+
+	/// fr: 'Invitation au forfait famille'
+	String get titreNeutre => 'Invitation au forfait famille';
+
+	/// fr: 'Invitation au forfait famille'
+	String get sansCompteTitre => 'Invitation au forfait famille';
+
+	/// fr: 'Pour répondre, connectez-vous à votre compte, ou créez-en un. Vous lirez alors ce que la personne qui vous invite verra et ne verra pas avant de décider.'
+	String get sansCompte => 'Pour répondre, connectez-vous à votre compte, ou créez-en un. Vous lirez alors ce que la personne qui vous invite verra et ne verra pas avant de décider.';
+
+	/// fr: 'Me connecter ou créer mon compte'
+	String get sansCompteAction => 'Me connecter ou créer mon compte';
+}
+
+// Path: adulte.sortie
+class Traductions$adulte$sortie$fr {
+	Traductions$adulte$sortie$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Retirer ma conjointe'
+	String get retirerElle => 'Retirer ma conjointe';
+
+	/// fr: 'Retirer mon conjoint'
+	String get retirerLui => 'Retirer mon conjoint';
+
+	/// fr: 'Retirer ma conjointe ?'
+	String get retirerQuestionElle => 'Retirer ma conjointe ?';
+
+	/// fr: 'Retirer mon conjoint ?'
+	String get retirerQuestionLui => 'Retirer mon conjoint ?';
+
+	/// fr: 'Son compte, ses cours, son historique et son solde ne seront pas supprimés.'
+	String get retirerConsequence => 'Son compte, ses cours, son historique et son solde ne seront pas supprimés.';
+
+	/// fr: '{prenom} fait partie de votre forfait famille, avec son propre compte.'
+	String placePhrase({required Object prenom}) => '${prenom} fait partie de votre forfait famille, avec son propre compte.';
+
+	/// fr: 'Quitter le forfait famille'
+	String get quitter => 'Quitter le forfait famille';
+
+	/// fr: 'Quitter le forfait famille ?'
+	String get quitterQuestion => 'Quitter le forfait famille ?';
+
+	/// fr: 'Quitter le forfait'
+	String get quitterConfirmer => 'Quitter le forfait';
+
+	/// fr: 'Votre compte, vos cours, votre historique et votre solde restent disponibles. Le rattachement au forfait famille prendra fin.'
+	String get quitterConsequence => 'Votre compte, vos cours, votre historique et votre solde restent disponibles. Le rattachement au forfait famille prendra fin.';
+
+	/// fr: 'Vous faites partie du forfait famille de {prenom}.'
+	String forfaitPhrase({required Object prenom}) => 'Vous faites partie du forfait famille de ${prenom}.';
+
+	/// fr: 'Le rattachement au forfait famille a pris fin'
+	String get resultatTitre => 'Le rattachement au forfait famille a pris fin';
+
+	/// fr: 'Son compte, ses cours, son historique et son solde restent disponibles.'
+	String get resultatTitulaire => 'Son compte, ses cours, son historique et son solde restent disponibles.';
+
+	/// fr: 'Votre compte, vos cours, votre historique et votre solde restent disponibles.'
+	String get resultatSecondAdulte => 'Votre compte, vos cours, votre historique et votre solde restent disponibles.';
+
+	/// fr: 'Compris'
+	String get compris => 'Compris';
+
+	/// fr: 'Le retrait n'a pas été confirmé.'
+	String get retraitEchecTitre => 'Le retrait n\'a pas été confirmé.';
+
+	/// fr: 'Le départ n'a pas été confirmé.'
+	String get departEchecTitre => 'Le départ n\'a pas été confirmé.';
+
+	/// fr: 'Vérifiez avant de réessayer.'
+	String get echecPhrase => 'Vérifiez avant de réessayer.';
+
+	/// fr: 'Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez réessayer vous-même quand la connexion sera revenue.'
+	String get horsLigne => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez réessayer vous-même quand la connexion sera revenue.';
+
+	/// fr: '{prenom} a quitté votre forfait famille.'
+	String notificationQuitte({required Object prenom}) => '${prenom} a quitté votre forfait famille.';
+
+	/// fr: 'Vous avez été retirée du forfait famille de {prenom}.'
+	String notificationRetiree({required Object prenom}) => 'Vous avez été retirée du forfait famille de ${prenom}.';
+
+	/// fr: 'Vous avez été retiré du forfait famille de {prenom}.'
+	String notificationRetire({required Object prenom}) => 'Vous avez été retiré du forfait famille de ${prenom}.';
+
+	/// fr: 'Nouvelle invitation indisponible'
+	String get delaiTitre => 'Nouvelle invitation indisponible';
+
+	/// fr: 'Une nouvelle demande pourra être déposée à partir du {date}. Elle devra ensuite être validée par l'administration.'
+	String delaiPhrase({required Object date}) => 'Une nouvelle demande pourra être déposée à partir du ${date}. Elle devra ensuite être validée par l\'administration.';
+
+	/// fr: 'Pourquoi cette attente ?'
+	String get pourquoi => 'Pourquoi cette attente ?';
+
+	/// fr: 'Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants.'
+	String get pourquoiPhrase => 'Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants.';
+}
+
+// Path: adulte.reprise
+class Traductions$adulte$reprise$fr {
+	Traductions$adulte$reprise$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demande de reprise du foyer'
+	String get titre => 'Demande de reprise du foyer';
+
+	/// fr: 'Utilisez cette démarche si le titulaire du foyer est décédé. La demande sera signalée au compte concerné et examinée par l'administration.'
+	String get explication => 'Utilisez cette démarche si le titulaire du foyer est décédé. La demande sera signalée au compte concerné et examinée par l\'administration.';
+
+	/// fr: 'Ce qui sera repris'
+	String get reprisTitre => 'Ce qui sera repris';
+
+	late final Traductions$adulte$reprise$repris$fr repris = Traductions$adulte$reprise$repris$fr.internal(_root);
+
+	/// fr: 'Ce qui n'est jamais repris'
+	String get jamaisTitre => 'Ce qui n\'est jamais repris';
+
+	late final Traductions$adulte$reprise$jamais$fr jamais = Traductions$adulte$reprise$jamais$fr.internal(_root);
+
+	/// fr: 'Il s'agit d'une succession de titularité du foyer, pas d'une prise de contrôle du compte personnel.'
+	String get succession => 'Il s\'agit d\'une succession de titularité du foyer, pas d\'une prise de contrôle du compte personnel.';
+
+	/// fr: 'Déposer la demande'
+	String get deposer => 'Déposer la demande';
+
+	/// fr: 'Déposer cette demande ?'
+	String get deposerQuestion => 'Déposer cette demande ?';
+
+	/// fr: 'Le titulaire du foyer en sera informé et pourra la refuser. L'administration examinera ensuite la demande et décidera.'
+	String get deposerConsequence => 'Le titulaire du foyer en sera informé et pourra la refuser. L\'administration examinera ensuite la demande et décidera.';
+
+	/// fr: 'Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.'
+	String get horsLigne => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.';
+
+	/// fr: 'La demande n'a pas été confirmée.'
+	String get depotEchecTitre => 'La demande n\'a pas été confirmée.';
+
+	/// fr: 'Vérifiez avant de réessayer.'
+	String get echecPhrase => 'Vérifiez avant de réessayer.';
+
+	/// fr: 'Motif'
+	String get motif => 'Motif';
+
+	/// fr: 'Décès déclaré du titulaire'
+	String get motifDeces => 'Décès déclaré du titulaire';
+
+	/// fr: 'Déposée le'
+	String get deposeeLe => 'Déposée le';
+
+	/// fr: 'État'
+	String get etat => 'État';
+
+	late final Traductions$adulte$reprise$etats$fr etats = Traductions$adulte$reprise$etats$fr.internal(_root);
+	late final Traductions$adulte$reprise$phrases$fr phrases = Traductions$adulte$reprise$phrases$fr.internal(_root);
+	late final Traductions$adulte$reprise$titulaire$fr titulaire = Traductions$adulte$reprise$titulaire$fr.internal(_root);
+	late final Traductions$adulte$reprise$notifications$fr notifications = Traductions$adulte$reprise$notifications$fr.internal(_root);
 }
 
 // Path: adulte.demo
@@ -10479,6 +10931,19 @@ class Traductions$adulte$demo$fr {
 	/// fr: 'Mon espace vu par le conjoint, second adulte du foyer.'
 	String get vueConjoint => 'Mon espace vu par le conjoint, second adulte du foyer.';
 
+	/// fr: 'L'invitation reçue par la conjointe, dans son propre compte.'
+	String get invitationRecueConjointe => 'L\'invitation reçue par la conjointe, dans son propre compte.';
+
+	/// fr: 'L'invitation reçue par le conjoint, dans son propre compte.'
+	String get invitationRecueConjoint => 'L\'invitation reçue par le conjoint, dans son propre compte.';
+
+	/// fr: 'L'invitation ouverte sans compte.'
+	String get invitationSansCompte => 'L\'invitation ouverte sans compte.';
+
+	/// fr: 'Le réseau est coupé : l'Accueil et Ma classe hors ligne.'
+	String get reseauCoupe => 'Le réseau est coupé : l\'Accueil et Ma classe hors ligne.';
+
+	late final Traductions$adulte$demo$donnees$fr donnees = Traductions$adulte$demo$donnees$fr.internal(_root);
 	late final Traductions$adulte$demo$etats$fr etats = Traductions$adulte$demo$etats$fr.internal(_root);
 }
 
@@ -11123,12 +11588,6 @@ class Traductions$foyer$ajout$pourQui$fr {
 
 	/// fr: 'Possible dès que votre accès est ouvert.'
 	String get enfantAttente => 'Possible dès que votre accès est ouvert.';
-
-	/// fr: 'Un proche adulte'
-	String get procheTitre => 'Un proche adulte';
-
-	/// fr: 'Pas encore possible : un adulte aura son propre profil et donnera lui-même son accord.'
-	String get procheDescription => 'Pas encore possible : un adulte aura son propre profil et donnera lui-même son accord.';
 
 	/// fr: 'Moi-même'
 	String get moiTitre => 'Moi-même';
@@ -14093,17 +14552,20 @@ class Traductions$adulte$famille$place$fr {
 	/// fr: 'Invitation envoyée'
 	String get invitationEnvoyee => 'Invitation envoyée';
 
-	/// fr: 'Ma conjointe · {prenom}'
-	String maConjointe({required Object prenom}) => 'Ma conjointe · ${prenom}';
+	/// fr: '{prenom}, votre conjointe'
+	String maConjointe({required Object prenom}) => '${prenom}, votre conjointe';
 
-	/// fr: 'Mon conjoint · {prenom}'
-	String monConjoint({required Object prenom}) => 'Mon conjoint · ${prenom}';
+	/// fr: '{prenom}, votre conjoint'
+	String monConjoint({required Object prenom}) => '${prenom}, votre conjoint';
 
 	/// fr: 'En attente de validation administrative'
 	String get validationEnAttente => 'En attente de validation administrative';
 
-	/// fr: 'Demande refusée par l'administration'
-	String get validationRefusee => 'Demande refusée par l\'administration';
+	/// fr: 'Validation refusée par la direction'
+	String get validationRefusee => 'Validation refusée par la direction';
+
+	/// fr: 'Faire une nouvelle demande'
+	String get nouvelleDemande => 'Faire une nouvelle demande';
 
 	/// fr: 'Nouvelle invitation possible à partir du {date}'
 	String nouvelleInvitation({required Object date}) => 'Nouvelle invitation possible à partir du ${date}';
@@ -14116,6 +14578,222 @@ class Traductions$adulte$famille$place$fr {
 
 	/// fr: 'L'invitation a été annulée et ne peut plus être acceptée. Vous pouvez en envoyer une nouvelle.'
 	String get annulee => 'L\'invitation a été annulée et ne peut plus être acceptée. Vous pouvez en envoyer une nouvelle.';
+}
+
+// Path: adulte.reprise.repris
+class Traductions$adulte$reprise$repris$fr {
+	Traductions$adulte$reprise$repris$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les profils mineurs existants'
+	String get profils => 'Les profils mineurs existants';
+
+	/// fr: 'La composition future du foyer selon les règles actives'
+	String get composition => 'La composition future du foyer selon les règles actives';
+
+	/// fr: 'Les paiements futurs du foyer'
+	String get paiements => 'Les paiements futurs du foyer';
+
+	/// fr: 'Les parcours Tuteur attachés aux mineurs'
+	String get parcours => 'Les parcours Tuteur attachés aux mineurs';
+}
+
+// Path: adulte.reprise.jamais
+class Traductions$adulte$reprise$jamais$fr {
+	Traductions$adulte$reprise$jamais$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les identifiants de connexion du titulaire'
+	String get identifiants => 'Les identifiants de connexion du titulaire';
+
+	/// fr: 'Ses messages privés'
+	String get messages => 'Ses messages privés';
+
+	/// fr: 'Ses conversations'
+	String get conversations => 'Ses conversations';
+
+	/// fr: 'Son historique pédagogique personnel'
+	String get historique => 'Son historique pédagogique personnel';
+
+	/// fr: 'Ses moyens de paiement enregistrés'
+	String get moyensPaiement => 'Ses moyens de paiement enregistrés';
+
+	/// fr: 'Ses pièces d'identité'
+	String get pieces => 'Ses pièces d\'identité';
+
+	/// fr: 'Ses données privées sans rapport avec la gestion du foyer'
+	String get donnees => 'Ses données privées sans rapport avec la gestion du foyer';
+}
+
+// Path: adulte.reprise.etats
+class Traductions$adulte$reprise$etats$fr {
+	Traductions$adulte$reprise$etats$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Déposée'
+	String get deposee => 'Déposée';
+
+	/// fr: 'Refusée par le titulaire'
+	String get refuseeParTitulaire => 'Refusée par le titulaire';
+
+	/// fr: 'En attente de l'administration'
+	String get attenteAdministration => 'En attente de l\'administration';
+
+	/// fr: 'Validée'
+	String get validee => 'Validée';
+
+	/// fr: 'Refusée'
+	String get refusee => 'Refusée';
+}
+
+// Path: adulte.reprise.phrases
+class Traductions$adulte$reprise$phrases$fr {
+	Traductions$adulte$reprise$phrases$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le titulaire du foyer en a été informé. L'administration examinera la demande.'
+	String get deposee => 'Le titulaire du foyer en a été informé. L\'administration examinera la demande.';
+
+	/// fr: 'Sans réponse du titulaire, l'administration pourra l'examiner à partir du {date}.'
+	String examenLe({required Object date}) => 'Sans réponse du titulaire, l\'administration pourra l\'examiner à partir du ${date}.';
+
+	/// fr: 'Le titulaire du foyer a refusé cette demande. L'administration en est informée. Aucune permission du foyer n'est transférée.'
+	String get refuseeParTitulaire => 'Le titulaire du foyer a refusé cette demande. L\'administration en est informée. Aucune permission du foyer n\'est transférée.';
+
+	/// fr: 'Le titulaire n'a pas répondu. Rien n'est transféré automatiquement : l'administration doit encore examiner la demande.'
+	String get attenteAdministration => 'Le titulaire n\'a pas répondu. Rien n\'est transféré automatiquement : l\'administration doit encore examiner la demande.';
+
+	/// fr: 'L'administration a validé la demande. Vous êtes désormais titulaire du foyer.'
+	String get validee => 'L\'administration a validé la demande. Vous êtes désormais titulaire du foyer.';
+
+	/// fr: 'L'administration a refusé la demande. Aucune permission du foyer n'est transférée.'
+	String get refusee => 'L\'administration a refusé la demande. Aucune permission du foyer n\'est transférée.';
+}
+
+// Path: adulte.reprise.titulaire
+class Traductions$adulte$reprise$titulaire$fr {
+	Traductions$adulte$reprise$titulaire$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Une demande de reprise de votre foyer a été déposée en indiquant votre décès.'
+	String get notification => 'Une demande de reprise de votre foyer a été déposée en indiquant votre décès.';
+
+	/// fr: 'Si cette demande est erronée, refusez-la.'
+	String get consigne => 'Si cette demande est erronée, refusez-la.';
+
+	/// fr: 'Refuser la demande'
+	String get refuser => 'Refuser la demande';
+
+	/// fr: 'Une demande de reprise de votre foyer a été déposée.'
+	String get ligne => 'Une demande de reprise de votre foyer a été déposée.';
+
+	/// fr: 'Le refus n'a pas été confirmé.'
+	String get refusEchecTitre => 'Le refus n\'a pas été confirmé.';
+
+	/// fr: 'Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez refuser la demande vous-même quand la connexion sera revenue.'
+	String get horsLigne => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez refuser la demande vous-même quand la connexion sera revenue.';
+
+	/// fr: 'Vous avez refusé cette demande. L'administration en est informée. Aucune permission de votre foyer n'est transférée.'
+	String get refusee => 'Vous avez refusé cette demande. L\'administration en est informée. Aucune permission de votre foyer n\'est transférée.';
+}
+
+// Path: adulte.reprise.notifications
+class Traductions$adulte$reprise$notifications$fr {
+	Traductions$adulte$reprise$notifications$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le titulaire du foyer a refusé votre demande de reprise du foyer.'
+	String get refuseeParTitulaire => 'Le titulaire du foyer a refusé votre demande de reprise du foyer.';
+
+	/// fr: 'Votre demande de reprise du foyer est en attente de l'administration.'
+	String get attenteAdministration => 'Votre demande de reprise du foyer est en attente de l\'administration.';
+
+	/// fr: 'Votre demande de reprise du foyer a été validée.'
+	String get validee => 'Votre demande de reprise du foyer a été validée.';
+
+	/// fr: 'Votre demande de reprise du foyer a été refusée.'
+	String get refusee => 'Votre demande de reprise du foyer a été refusée.';
+}
+
+// Path: adulte.demo.donnees
+class Traductions$adulte$demo$donnees$fr {
+	Traductions$adulte$demo$donnees$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Solde de démonstration 1'
+	String get soldeTitulaire => 'Solde de démonstration 1';
+
+	/// fr: 'Solde de démonstration 2'
+	String get soldeSecondAdulte => 'Solde de démonstration 2';
+
+	/// fr: 'Solde de démonstration 3'
+	String get soldeAicha => 'Solde de démonstration 3';
+
+	/// fr: 'Solde de démonstration 4'
+	String get soldeOumar => 'Solde de démonstration 4';
+
+	/// fr: 'Total de démonstration A'
+	String get totalAvecSecondAdulte => 'Total de démonstration A';
+
+	/// fr: 'Total de démonstration B'
+	String get totalSansSecondAdulte => 'Total de démonstration B';
+
+	/// fr: '5,00 € (démonstration)'
+	String get prixOffreA => '5,00 € (démonstration)';
+
+	/// fr: '10,00 € (démonstration)'
+	String get prixOffreB => '10,00 € (démonstration)';
+
+	/// fr: 'Solde de démonstration A'
+	String get detailOffreA => 'Solde de démonstration A';
+
+	/// fr: 'Solde de démonstration B'
+	String get detailOffreB => 'Solde de démonstration B';
+
+	/// fr: '5,00 € (démonstration)'
+	String get totalRecharge5 => '5,00 € (démonstration)';
+
+	/// fr: '10,00 € (démonstration)'
+	String get totalRecharge10 => '10,00 € (démonstration)';
+
+	/// fr: '15,00 € (démonstration)'
+	String get totalRecharge15 => '15,00 € (démonstration)';
+
+	/// fr: '20,00 € (démonstration)'
+	String get totalRecharge20 => '20,00 € (démonstration)';
+
+	/// fr: '25,00 € (démonstration)'
+	String get totalRecharge25 => '25,00 € (démonstration)';
+
+	/// fr: '30,00 € (démonstration)'
+	String get totalRecharge30 => '30,00 € (démonstration)';
+
+	/// fr: '35,00 € (démonstration)'
+	String get totalRecharge35 => '35,00 € (démonstration)';
+
+	/// fr: '40,00 € (démonstration)'
+	String get totalRecharge40 => '40,00 € (démonstration)';
 }
 
 // Path: adulte.demo.etats
@@ -14150,11 +14828,11 @@ class Traductions$adulte$demo$etats$fr {
 	/// fr: 'Le second adulte a été retiré du foyer.'
 	String get conjointRetire => 'Le second adulte a été retiré du foyer.';
 
-	/// fr: 'Un délai de 60 jours est en cours.'
-	String get delai60 => 'Un délai de 60 jours est en cours.';
+	/// fr: 'Un premier délai est en cours.'
+	String get delai60 => 'Un premier délai est en cours.';
 
-	/// fr: 'Une nouvelle invitation est possible après le délai de 60 jours.'
-	String get nouvelleDemande => 'Une nouvelle invitation est possible après le délai de 60 jours.';
+	/// fr: 'Une nouvelle invitation est possible après le premier délai.'
+	String get nouvelleDemande => 'Une nouvelle invitation est possible après le premier délai.';
 
 	/// fr: 'La validation administrative est en attente.'
 	String get validationEnAttente => 'La validation administrative est en attente.';
@@ -14165,11 +14843,11 @@ class Traductions$adulte$demo$etats$fr {
 	/// fr: 'Le second adulte est parti pour la deuxième fois.'
 	String get secondDepart => 'Le second adulte est parti pour la deuxième fois.';
 
-	/// fr: 'Un délai de 120 jours est en cours.'
-	String get delai120 => 'Un délai de 120 jours est en cours.';
+	/// fr: 'Un délai suivant, plus long, est en cours.'
+	String get delai120 => 'Un délai suivant, plus long, est en cours.';
 
-	/// fr: 'Après le troisième départ, le délai reste de 120 jours.'
-	String get departsSuivants => 'Après le troisième départ, le délai reste de 120 jours.';
+	/// fr: 'Après le troisième départ, le délai suivant s'applique toujours.'
+	String get departsSuivants => 'Après le troisième départ, le délai suivant s\'applique toujours.';
 
 	/// fr: 'Une demande de reprise du foyer a été déposée.'
 	String get repriseDemandee => 'Une demande de reprise du foyer a été déposée.';
@@ -14177,8 +14855,8 @@ class Traductions$adulte$demo$etats$fr {
 	/// fr: 'La demande de reprise a été refusée par le titulaire.'
 	String get repriseRefuseeParTitulaire => 'La demande de reprise a été refusée par le titulaire.';
 
-	/// fr: 'Après 30 jours sans réponse, la demande attend l'administration.'
-	String get repriseSansReponse => 'Après 30 jours sans réponse, la demande attend l\'administration.';
+	/// fr: 'Sans réponse dans le délai, la demande attend l'administration.'
+	String get repriseSansReponse => 'Sans réponse dans le délai, la demande attend l\'administration.';
 
 	/// fr: 'La reprise du foyer a été validée.'
 	String get repriseValidee => 'La reprise du foyer a été validée.';
@@ -14198,8 +14876,8 @@ class Traductions$adulte$demo$etats$fr {
 	/// fr: 'La notification n'a pas pu partir sur le téléphone, elle reste visible dans l'application.'
 	String get notificationDansLApplication => 'La notification n\'a pas pu partir sur le téléphone, elle reste visible dans l\'application.';
 
-	/// fr: 'Un élève devenu adulte garde toutes ses données.'
-	String get emancipation => 'Un élève devenu adulte garde toutes ses données.';
+	/// fr: 'Émancipation d'un élève devenu adulte : non construite dans cette vague.'
+	String get emancipation => 'Émancipation d\'un élève devenu adulte : non construite dans cette vague.';
 }
 
 // Path: salle.preparation.eleve.guidee
@@ -15344,8 +16022,6 @@ extension on Traductions {
 			'foyer.ajout.pourQui.enfantTitre' => 'Un enfant ou un mineur',
 			'foyer.ajout.pourQui.enfantDescription' => 'Un profil rattaché à votre foyer, que vous gérez pour lui.',
 			'foyer.ajout.pourQui.enfantAttente' => 'Possible dès que votre accès est ouvert.',
-			'foyer.ajout.pourQui.procheTitre' => 'Un proche adulte',
-			'foyer.ajout.pourQui.procheDescription' => 'Pas encore possible : un adulte aura son propre profil et donnera lui-même son accord.',
 			'foyer.ajout.pourQui.moiTitre' => 'Moi-même',
 			'foyer.ajout.pourQui.moiDescription' => 'Pas encore possible : suivre vous-même les cours avec votre propre profil élève sera proposé prochainement.',
 			'foyer.ajout.identite.question' => 'Qui est l\'élève ?',
@@ -15647,10 +16323,10 @@ extension on Traductions {
 			'dossiers.revue.typeDossier' => 'Type de dossier',
 			'dossiers.revue.dateDepot' => 'Date de dépôt',
 			'dossiers.revue.etatDossier' => 'État du dossier',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.revue.dateIndisponible' => 'Date de dépôt indisponible',
 			'dossiers.revue.pasPret' => 'Ce dossier n\'est pas encore prêt à être validé.',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.revue.erreurChargement' => 'Impossible de charger ce dossier.',
 			'dossiers.revue.pieceIndisponible' => 'La consultation de la pièce est indisponible pour le moment.',
 			'dossiers.revue.etats.chargement' => 'Chargement du dossier…',
@@ -16161,10 +16837,10 @@ extension on Traductions {
 			'admin.journal.evtAgentJetonRevoque' => 'Accès d\'agent IA révoqué',
 			'admin.journal.evtAgentSessionOuverte' => 'Session d\'agent IA ouverte',
 			'admin.journal.evtObservationControleur' => 'Visite de contrôle commencée',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.evtJetonVideo' => 'Entrée en salle autorisée',
 			'admin.journal.vide' => 'Aucun événement enregistré',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.videDetail' => 'Chaque lecture de dossier, chaque décision et chaque attribution viendra s\'inscrire ici.',
 			'admin.journal.videFiltre' => 'Aucun événement ne correspond',
 			'admin.journal.videFiltreDetail' => 'Élargissez la période, ou relâchez un filtre.',
@@ -16675,10 +17351,10 @@ extension on Traductions {
 			'historique.titre' => 'Historique',
 			'historique.detailSeance' => 'Détail de la séance',
 			'historique.segments.seances' => 'Séances',
-			_ => null,
-		} ?? switch (path) {
 			'historique.segments.observations' => 'Observations',
 			'historique.moisCourts.0' => 'janv.',
+			_ => null,
+		} ?? switch (path) {
 			'historique.moisCourts.1' => 'févr.',
 			'historique.moisCourts.2' => 'mars',
 			'historique.moisCourts.3' => 'avr.',
@@ -17189,10 +17865,10 @@ extension on Traductions {
 			'enseignant.photo.notice' => 'N\'utilisez pas votre pièce d\'identité.',
 			'enseignant.photo.choisir' => 'Choisir une photo',
 			'enseignant.photo.utiliser' => 'Utiliser cette photo',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.photo.remplacer' => 'Remplacer la photo',
 			'enseignant.photo.autre' => 'Choisir une autre photo',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.photo.changer' => 'Changer la photo',
 			'enseignant.photo.alternatif' => 'Votre photo publique',
 			'enseignant.photo.succes' => 'La photo est enregistrée.',
@@ -17703,10 +18379,10 @@ extension on Traductions {
 			'controleur.demo.espacesIntro' => 'Le même compte, plusieurs espaces : Enseignant ou Admin passent en Contrôle par Compte, puis Espaces.',
 			'controleur.demo.enseignantControle' => 'Enseignant-Contrôleur, espace Contrôle',
 			'controleur.demo.enseignantPrincipal' => 'Enseignant-Contrôleur, espace Enseignant',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.demo.adminControle' => 'Admin-Contrôleur, espace Contrôle',
 			'controleur.demo.adminPrincipal' => 'Admin-Contrôleur, espace Admin',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.demo.missionEnCours' => 'Visite en cours, retour à l\'espace principal',
 			'controleur.demo.accesRevoque' => 'Accès révoqué pendant la navigation',
 			'controleur.demo.sansCapacite' => 'Enseignant sans capacité Contrôle',
@@ -18217,10 +18893,10 @@ extension on Traductions {
 			'tc.parcours.postCours.reprise' => 'Reprise proposée',
 			'tc.parcours.postCours.repriseInconnue' => 'Aucune position de reprise connue pour cette séance.',
 			'tc.parcours.postCours.travail' => 'Travail proposé',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.postCours.travailAucun' => 'Aucun travail proposé pour l\'instant.',
 			'tc.parcours.postCours.valider' => 'Valider',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.postCours.enFile' => 'Enregistré. Il partira dès le retour du réseau.',
 			'tc.parcours.postCours.envoye' => 'Cours clôturé.',
 			'adulte.nav.accueil' => 'Accueil',
@@ -18244,40 +18920,89 @@ extension on Traductions {
 			'adulte.monEspace.monCompte' => 'Mon compte',
 			'adulte.monEspace.informations' => 'Mes informations',
 			'adulte.monEspace.coursAcces' => 'Cours et accès',
-			'adulte.monEspace.coursAccesLegende' => 'Ma classe, mes séances et mon accès',
+			'adulte.monEspace.coursAccesLegende' => 'Classe, séances et accès',
 			'adulte.monEspace.paiements' => 'Paiements',
-			'adulte.monEspace.paiementsLegende' => 'Historique et reçus de mes paiements',
+			'adulte.monEspace.paiementsLegende' => 'Historique et reçus',
 			'adulte.monEspace.accords' => 'Mes accords',
-			'adulte.monEspace.accordsLegende' => 'Accepter, refuser ou retirer chacun de vos accords',
+			'adulte.monEspace.accordsLegende' => 'Accords donnés à l\'académie',
 			'adulte.monEspace.securiteLegende' => 'Méthode et adresse de connexion',
 			'adulte.monEspace.pageAccords.indisponibleTitre' => 'Vos accords ne sont pas encore consultables',
 			'adulte.monEspace.pageAccords.indisponiblePhrase' => 'Accepter, refuser ou retirer chacun de vos accords n\'est pas encore possible dans l\'application. Aucun accord ne vous est demandé ici.',
 			'adulte.monEspace.pageCoursAcces.indisponibleTitre' => 'Cours et accès pas encore consultables',
 			'adulte.monEspace.pageCoursAcces.indisponiblePhrase' => 'Le détail de vos cours, de vos séances et de votre accès n\'est pas encore disponible dans l\'application.',
 			'adulte.provisoire.coran' => 'Le Coran de votre espace élève s\'affichera ici.',
-			'adulte.provisoire.forfaitFamille' => 'La page de votre forfait famille arrivera dans une prochaine étape.',
-			'adulte.provisoire.ajouterMaFamille' => 'L\'ajout de votre famille arrivera dans une prochaine étape.',
-			'adulte.provisoire.placeAdulte' => 'Le détail de cette place arrivera dans une prochaine étape.',
+			'adulte.recharge.titre' => 'Nouvelle recharge',
+			'adulte.recharge.phrase' => 'Sélectionnez un ou plusieurs bénéficiaires, puis choisissez une offre pour chacun.',
+			'adulte.recharge.toutSelectionner' => 'Tout sélectionner',
+			'adulte.recharge.toutDeselectionner' => 'Tout désélectionner',
+			'adulte.recharge.offrePour' => ({required Object prenom}) => 'Offre pour ${prenom}',
+			'adulte.recharge.verifier' => 'Vérifier la recharge',
+			'adulte.recharge.raisonAucun' => 'Sélectionnez au moins un bénéficiaire pour continuer.',
+			'adulte.recharge.raisonOffre' => 'Choisissez une offre pour chaque bénéficiaire sélectionné.',
+			'adulte.recharge.horsLigneVerifier' => 'Vous êtes hors ligne. Vous pourrez vérifier la recharge quand la connexion sera revenue.',
+			'adulte.recharge.indisponibleTitre' => 'Recharge pas encore disponible',
+			'adulte.recharge.indisponiblePhrase' => 'Les offres de recharge ne sont pas encore disponibles dans l\'application. Aucun paiement n\'est possible ici pour l\'instant.',
+			'adulte.recharge.verificationEchecTitre' => 'La vérification n\'a pas abouti.',
+			'adulte.recharge.verificationEchecPhrase' => 'Vos choix sont conservés. Vous pouvez réessayer.',
+			'adulte.recharge.verifierTitre' => 'Vérifier la recharge',
+			'adulte.recharge.verifierPhrase' => 'Vérifiez les détails avant de procéder au paiement.',
+			'adulte.recharge.recapitulatif' => 'Récapitulatif par bénéficiaire',
+			'adulte.recharge.montantPaye' => 'Montant payé',
+			'adulte.recharge.soldeAttribue' => 'Solde attribué',
+			'adulte.recharge.statut' => 'Statut de l\'attribution',
+			'adulte.recharge.modifier' => 'Modifier',
+			'adulte.recharge.total' => 'Total à payer',
+			'adulte.recharge.payer' => ({required Object montant}) => 'Payer ${montant}',
+			'adulte.recharge.horsLignePayer' => 'Vous êtes hors ligne. Vous pourrez payer quand la connexion sera revenue.',
+			'adulte.recharge.paiementEchecTitre' => 'Le paiement n\'a pas été confirmé.',
+			'adulte.recharge.paiementEchecPhrase' => 'Vérifiez avant de réessayer.',
+			'adulte.recharge.paiementIndisponibleTitre' => 'Paiement pas encore disponible',
+			'adulte.recharge.paiementIndisponiblePhrase' => 'Aucun paiement n\'a été effectué. Le paiement en ligne n\'est pas encore ouvert dans l\'application.',
+			'adulte.recharge.revenirPaiements' => 'Revenir aux paiements du foyer',
+			'adulte.paiements.beneficiaires' => 'Bénéficiaires',
+			'adulte.paiements.recharger' => 'Recharger',
+			'adulte.paiements.recapitulatif' => ({required Object valeur}) => 'Récapitulatif du foyer : ${valeur}. Chaque solde reste celui de son bénéficiaire.',
+			'adulte.paiements.bientotEpuise' => 'Bientôt épuisé',
+			'adulte.paiements.inactif' => 'Inactif',
+			'adulte.paiements.historique' => 'Historique des paiements',
+			'adulte.paiements.soldesIndisponiblesTitre' => 'Soldes pas encore consultables',
+			'adulte.paiements.soldesIndisponiblesPhrase' => 'Le solde de chaque bénéficiaire n\'est pas encore disponible dans l\'application. Aucune recharge n\'est possible ici pour l\'instant.',
+			'adulte.paiements.aucunBeneficiaireTitre' => 'Aucun bénéficiaire',
+			'adulte.paiements.aucunBeneficiairePhrase' => 'Aucun profil élève de votre foyer n\'a de solde à recharger pour l\'instant.',
 			'adulte.famille.ajouter' => 'Ajouter ma famille',
 			'adulte.famille.ajouterLegende' => 'Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.',
+			'adulte.famille.ajouterPhrase' => 'Vous pouvez ajouter vos enfants et inviter un conjoint ou une conjointe à rejoindre votre forfait famille. Votre espace élève reste inchangé.',
+			'adulte.famille.inscrireEnfant' => 'Inscrire un enfant',
 			'adulte.famille.maFamille' => 'Ma famille',
 			'adulte.famille.forfaitFamille' => 'Forfait famille',
 			'adulte.famille.retourMonEspace' => 'Revenir à Mon espace',
-			'adulte.famille.titulaire' => 'Titulaire du foyer',
+			'adulte.famille.titulaire' => 'Vous êtes titulaire du foyer',
 			'adulte.famille.paiementsFoyer' => 'Paiements du foyer',
+			'adulte.famille.aProposForfait' => 'À propos du forfait famille',
+			'adulte.famille.aProposForfaitPhrase' => 'Le forfait famille comprend un titulaire, un conjoint ou une conjointe adulte, et les enfants ou adolescents sous la responsabilité du titulaire. Chaque adulte conserve son propre compte.',
+			'adulte.famille.profilNonCreeTitre' => 'Démonstration : aucun profil n\'a été créé',
+			'adulte.famille.profilNonCreePhrase' => 'En démonstration, rien n\'est envoyé. Ma famille reste telle qu\'elle était.',
+			'adulte.famille.profilNonCreePhraseSeul' => 'En démonstration, rien n\'est envoyé. Votre espace élève reste tel qu\'il était.',
+			'adulte.famille.monProfilIndisponibleTitre' => 'Pas encore disponible',
+			'adulte.famille.monProfilIndisponiblePhrase' => 'La création d\'un profil élève séparé n\'est pas encore disponible. Vos cours et Ma famille restent tels qu\'ils sont.',
+			'adulte.famille.indisponibleTitre' => 'La rubrique famille n\'est pas encore disponible',
+			'adulte.famille.indisponiblePhrase' => 'Votre famille ou votre forfait famille s\'affichera ici dès qu\'il sera disponible.',
 			'adulte.famille.place.ajouterConjointe' => 'Ajouter une conjointe',
 			'adulte.famille.place.ajouterConjoint' => 'Ajouter un conjoint',
 			'adulte.famille.place.inviterConjointe' => 'Invitez votre conjointe à rejoindre Rewayah avec son propre compte.',
 			'adulte.famille.place.inviterConjoint' => 'Invitez votre conjoint à rejoindre Rewayah avec son propre compte.',
 			'adulte.famille.place.invitationEnvoyee' => 'Invitation envoyée',
-			'adulte.famille.place.maConjointe' => ({required Object prenom}) => 'Ma conjointe · ${prenom}',
-			'adulte.famille.place.monConjoint' => ({required Object prenom}) => 'Mon conjoint · ${prenom}',
+			'adulte.famille.place.maConjointe' => ({required Object prenom}) => '${prenom}, votre conjointe',
+			'adulte.famille.place.monConjoint' => ({required Object prenom}) => '${prenom}, votre conjoint',
 			'adulte.famille.place.validationEnAttente' => 'En attente de validation administrative',
-			'adulte.famille.place.validationRefusee' => 'Demande refusée par l\'administration',
+			'adulte.famille.place.validationRefusee' => 'Validation refusée par la direction',
+			'adulte.famille.place.nouvelleDemande' => 'Faire une nouvelle demande',
 			'adulte.famille.place.nouvelleInvitation' => ({required Object date}) => 'Nouvelle invitation possible à partir du ${date}',
 			'adulte.famille.place.envoyeeA' => ({required Object courriel}) => 'Envoyée à ${courriel}',
 			'adulte.famille.place.expiree' => 'L\'invitation précédente a expiré. Vous pouvez en envoyer une nouvelle.',
 			'adulte.famille.place.annulee' => 'L\'invitation a été annulée et ne peut plus être acceptée. Vous pouvez en envoyer une nouvelle.',
+			'adulte.invitation.titreElle' => 'Inviter ma conjointe',
+			'adulte.invitation.titreLui' => 'Inviter mon conjoint',
 			'adulte.invitation.enteteElle' => 'Un compte personnel pour elle',
 			'adulte.invitation.enteteLui' => 'Un compte personnel pour lui',
 			'adulte.invitation.phraseElle' => 'Votre conjointe utilisera son propre compte. Elle ne pourra pas gérer votre foyer ni les profils élèves que vous avez créés.',
@@ -18286,21 +19011,22 @@ extension on Traductions {
 			'adulte.invitation.nom' => 'Nom',
 			'adulte.invitation.nomAide' => 'Facultatif.',
 			'adulte.invitation.courriel' => 'Adresse e-mail',
-			'adulte.invitation.courrielAide' => 'Nous l\'utiliserons seulement pour lui envoyer cette invitation.',
+			'adulte.invitation.courrielAideElle' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjointe l\'invitation à rejoindre Rewayah.',
+			'adulte.invitation.courrielAideLui' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjoint l\'invitation à rejoindre Rewayah.',
 			'adulte.invitation.prenomRequis' => 'Indiquez son prénom.',
 			'adulte.invitation.courrielRequis' => 'Indiquez son adresse e-mail.',
 			'adulte.invitation.courrielInvalide' => 'Vérifiez l\'adresse e-mail : elle doit ressembler à nom@exemple.com.',
-			'adulte.invitation.verifier' => 'Vérifier l\'invitation',
+			'adulte.invitation.verifier' => 'Continuer',
 			'adulte.invitation.verifierTitre' => 'Vérifier et envoyer',
 			'adulte.invitation.verifierPhrase' => 'Relisez ces informations. L\'invitation partira à cette adresse.',
 			'adulte.invitation.nonRenseigne' => 'Non renseigné',
 			'adulte.invitation.modifier' => 'Modifier',
 			'adulte.invitation.envoyer' => 'Envoyer l\'invitation',
-			'adulte.invitation.horsLigne' => 'Vous êtes hors ligne. L\'invitation pourra partir quand la connexion reviendra.',
-			'adulte.invitation.echecTitre' => 'L\'invitation n\'est pas partie',
-			'adulte.invitation.echecPhrase' => 'La connexion a été interrompue. Vos informations sont conservées : vous pouvez réessayer.',
+			'adulte.invitation.horsLigne' => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez envoyer l\'invitation vous-même quand la connexion sera revenue.',
+			'adulte.invitation.echecTitre' => 'L\'envoi n\'a pas été confirmé.',
+			'adulte.invitation.echecPhrase' => 'Vérifiez avant de réessayer. Vos informations sont conservées.',
 			'adulte.invitation.refusTitre' => 'Cette invitation ne peut pas être envoyée',
-			'adulte.invitation.refusPhrase' => 'Revenez à Ma famille pour voir l\'état de la place.',
+			'adulte.invitation.refusPhrase' => 'Ma famille indique l\'état actuel de la place.',
 			'adulte.invitation.envoyeeTitre' => 'Invitation envoyée',
 			'adulte.invitation.envoyeePhrase' => ({required Object courriel}) => 'L\'invitation est partie vers ${courriel}.',
 			'adulte.invitation.revenirMaFamille' => 'Revenir à Ma famille',
@@ -18308,11 +19034,126 @@ extension on Traductions {
 			'adulte.invitation.annuler' => 'Annuler l\'invitation',
 			'adulte.invitation.annulerQuestion' => ({required Object prenom}) => 'Annuler l\'invitation de ${prenom} ?',
 			'adulte.invitation.annulerQuestionSansPrenom' => 'Annuler cette invitation ?',
-			'adulte.invitation.annulerHorsLigne' => 'Vous êtes hors ligne. L\'invitation pourra être annulée quand la connexion reviendra.',
+			'adulte.invitation.annulerHorsLigne' => 'Vous êtes hors ligne. Rien n\'est annulé. Vous pourrez annuler l\'invitation vous-même quand la connexion sera revenue.',
 			'adulte.invitation.annulerConsequence' => 'L\'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.',
 			'adulte.invitation.garder' => 'Garder l\'invitation',
-			'adulte.invitation.annulationEchecTitre' => 'L\'invitation n\'a pas été annulée',
-			'adulte.invitation.annulationEchecPhrase' => 'La connexion a été interrompue. L\'invitation est toujours envoyée : vous pouvez réessayer.',
+			'adulte.invitation.annulationEchecTitre' => 'L\'annulation n\'a pas été confirmée.',
+			'adulte.invitation.annulationEchecPhrase' => 'Vérifiez avant de réessayer.',
+			'adulte.acceptation.notification' => ({required Object prenom}) => '${prenom} vous invite à rejoindre son forfait famille.',
+			'adulte.acceptation.titre' => ({required Object prenom}) => 'Rejoindre le forfait famille de ${prenom}',
+			'adulte.acceptation.faisonsTitre' => 'Ce que nous faisons',
+			'adulte.acceptation.faisons' => ({required Object prenom}) => '${prenom} vous invite dans son forfait famille. Si vous acceptez, votre compte est rattaché à son foyer. Votre compte reste le vôtre. Rien n\'est fusionné.',
+			'adulte.acceptation.pourquoiTitre' => 'Pourquoi',
+			'adulte.acceptation.pourquoiElle' => ({required Object prenom}) => '${prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, elle doit voir votre solde.',
+			'adulte.acceptation.pourquoiLui' => ({required Object prenom}) => '${prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, il doit voir votre solde.',
+			'adulte.acceptation.verraTitre' => ({required Object prenom}) => 'Ce que ${prenom} verra',
+			'adulte.acceptation.verraElle' => 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L\'offre qui vous concerne. L\'état de votre accès, s\'il empêche de payer. Elle saura aussi si vous quittez le forfait famille.',
+			'adulte.acceptation.verraLui' => 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L\'offre qui vous concerne. L\'état de votre accès, s\'il empêche de payer. Il saura aussi si vous quittez le forfait famille.',
+			'adulte.acceptation.verraPasTitre' => ({required Object prenom}) => 'Ce que ${prenom} ne verra pas',
+			'adulte.acceptation.verraPas' => 'Votre Classe. Votre niveau. Vos séances et votre présence. Vos progrès. Vos messages. Vos notifications. Vos moyens de paiement personnels. Vos pièces d\'identité.',
+			'adulte.acceptation.vousTitre' => 'Ce que vous ne verrez pas',
+			'adulte.acceptation.vous' => ({required Object prenom}) => 'Les cours, les progrès et les messages de ${prenom} et des enfants du foyer. Vous ne pourrez pas ajouter d\'enfant, inviter quelqu\'un ni modifier le foyer.',
+			'adulte.acceptation.autresTitre' => 'Qui d\'autre voit',
+			'adulte.acceptation.autres' => 'Votre enseignant ne voit rien de votre foyer. L\'équipe de l\'académie voit le rattachement, pour le gérer et, si nécessaire, le valider.',
+			'adulte.acceptation.dureeTitre' => 'Combien de temps',
+			'adulte.acceptation.duree' => ({required Object prenom}) => 'Le rattachement dure jusqu\'à ce que vous quittiez le forfait famille, ou que ${prenom} y mette fin.',
+			'adulte.acceptation.conservation' => ({required Object duree}) => 'Nous gardons la trace du rattachement ${duree}.',
+			'adulte.acceptation.partirTitre' => 'Comment partir',
+			'adulte.acceptation.partir' => 'Dans Mon espace, Forfait famille, Quitter le forfait famille. Vous n\'avez pas besoin de son accord. Votre compte, vos cours, votre historique et votre solde restent disponibles.',
+			'adulte.acceptation.refusTitre' => 'Si vous refusez',
+			'adulte.acceptation.refus' => 'Rien ne change pour votre compte, vos cours ni votre solde.',
+			'adulte.acceptation.validation' => 'Ce rattachement doit être validé par l\'administration de l\'académie. En attendant, votre compte et vos cours fonctionnent normalement.',
+			'adulte.acceptation.refuser' => 'Refuser l\'invitation',
+			'adulte.acceptation.accepter' => 'Accepter l\'invitation',
+			'adulte.acceptation.horsLigne' => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez répondre vous-même quand la connexion sera revenue.',
+			'adulte.acceptation.acceptationEchecTitre' => 'L\'acceptation n\'a pas été confirmée.',
+			'adulte.acceptation.refusEchecTitre' => 'Le refus n\'a pas été confirmé.',
+			'adulte.acceptation.echecPhrase' => 'Vérifiez avant de réessayer.',
+			'adulte.acceptation.accepteeTitre' => 'Invitation acceptée',
+			'adulte.acceptation.rejoint' => ({required Object prenom}) => 'Vous avez rejoint le forfait famille de ${prenom}.',
+			'adulte.acceptation.refuseeTitre' => 'Invitation refusée',
+			'adulte.acceptation.impossible' => 'Ce compte ne peut pas rejoindre ce forfait actuellement.',
+			'adulte.acceptation.perimee' => 'Cette invitation n\'est plus valable.',
+			'adulte.acceptation.monEspace' => 'Aller à Mon espace',
+			'adulte.acceptation.recu' => ({required Object date}) => 'Réponse enregistrée le ${date}.',
+			'adulte.acceptation.titreNeutre' => 'Invitation au forfait famille',
+			'adulte.acceptation.sansCompteTitre' => 'Invitation au forfait famille',
+			'adulte.acceptation.sansCompte' => 'Pour répondre, connectez-vous à votre compte, ou créez-en un. Vous lirez alors ce que la personne qui vous invite verra et ne verra pas avant de décider.',
+			'adulte.acceptation.sansCompteAction' => 'Me connecter ou créer mon compte',
+			'adulte.sortie.retirerElle' => 'Retirer ma conjointe',
+			'adulte.sortie.retirerLui' => 'Retirer mon conjoint',
+			'adulte.sortie.retirerQuestionElle' => 'Retirer ma conjointe ?',
+			'adulte.sortie.retirerQuestionLui' => 'Retirer mon conjoint ?',
+			'adulte.sortie.retirerConsequence' => 'Son compte, ses cours, son historique et son solde ne seront pas supprimés.',
+			'adulte.sortie.placePhrase' => ({required Object prenom}) => '${prenom} fait partie de votre forfait famille, avec son propre compte.',
+			'adulte.sortie.quitter' => 'Quitter le forfait famille',
+			'adulte.sortie.quitterQuestion' => 'Quitter le forfait famille ?',
+			'adulte.sortie.quitterConfirmer' => 'Quitter le forfait',
+			'adulte.sortie.quitterConsequence' => 'Votre compte, vos cours, votre historique et votre solde restent disponibles. Le rattachement au forfait famille prendra fin.',
+			'adulte.sortie.forfaitPhrase' => ({required Object prenom}) => 'Vous faites partie du forfait famille de ${prenom}.',
+			'adulte.sortie.resultatTitre' => 'Le rattachement au forfait famille a pris fin',
+			'adulte.sortie.resultatTitulaire' => 'Son compte, ses cours, son historique et son solde restent disponibles.',
+			'adulte.sortie.resultatSecondAdulte' => 'Votre compte, vos cours, votre historique et votre solde restent disponibles.',
+			'adulte.sortie.compris' => 'Compris',
+			'adulte.sortie.retraitEchecTitre' => 'Le retrait n\'a pas été confirmé.',
+			'adulte.sortie.departEchecTitre' => 'Le départ n\'a pas été confirmé.',
+			'adulte.sortie.echecPhrase' => 'Vérifiez avant de réessayer.',
+			'adulte.sortie.horsLigne' => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez réessayer vous-même quand la connexion sera revenue.',
+			'adulte.sortie.notificationQuitte' => ({required Object prenom}) => '${prenom} a quitté votre forfait famille.',
+			'adulte.sortie.notificationRetiree' => ({required Object prenom}) => 'Vous avez été retirée du forfait famille de ${prenom}.',
+			'adulte.sortie.notificationRetire' => ({required Object prenom}) => 'Vous avez été retiré du forfait famille de ${prenom}.',
+			'adulte.sortie.delaiTitre' => 'Nouvelle invitation indisponible',
+			'adulte.sortie.delaiPhrase' => ({required Object date}) => 'Une nouvelle demande pourra être déposée à partir du ${date}. Elle devra ensuite être validée par l\'administration.',
+			'adulte.sortie.pourquoi' => 'Pourquoi cette attente ?',
+			'adulte.sortie.pourquoiPhrase' => 'Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants.',
+			'adulte.reprise.titre' => 'Demande de reprise du foyer',
+			'adulte.reprise.explication' => 'Utilisez cette démarche si le titulaire du foyer est décédé. La demande sera signalée au compte concerné et examinée par l\'administration.',
+			'adulte.reprise.reprisTitre' => 'Ce qui sera repris',
+			'adulte.reprise.repris.profils' => 'Les profils mineurs existants',
+			'adulte.reprise.repris.composition' => 'La composition future du foyer selon les règles actives',
+			'adulte.reprise.repris.paiements' => 'Les paiements futurs du foyer',
+			'adulte.reprise.repris.parcours' => 'Les parcours Tuteur attachés aux mineurs',
+			'adulte.reprise.jamaisTitre' => 'Ce qui n\'est jamais repris',
+			'adulte.reprise.jamais.identifiants' => 'Les identifiants de connexion du titulaire',
+			'adulte.reprise.jamais.messages' => 'Ses messages privés',
+			'adulte.reprise.jamais.conversations' => 'Ses conversations',
+			'adulte.reprise.jamais.historique' => 'Son historique pédagogique personnel',
+			'adulte.reprise.jamais.moyensPaiement' => 'Ses moyens de paiement enregistrés',
+			'adulte.reprise.jamais.pieces' => 'Ses pièces d\'identité',
+			'adulte.reprise.jamais.donnees' => 'Ses données privées sans rapport avec la gestion du foyer',
+			'adulte.reprise.succession' => 'Il s\'agit d\'une succession de titularité du foyer, pas d\'une prise de contrôle du compte personnel.',
+			'adulte.reprise.deposer' => 'Déposer la demande',
+			'adulte.reprise.deposerQuestion' => 'Déposer cette demande ?',
+			'adulte.reprise.deposerConsequence' => 'Le titulaire du foyer en sera informé et pourra la refuser. L\'administration examinera ensuite la demande et décidera.',
+			'adulte.reprise.horsLigne' => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.',
+			'adulte.reprise.depotEchecTitre' => 'La demande n\'a pas été confirmée.',
+			'adulte.reprise.echecPhrase' => 'Vérifiez avant de réessayer.',
+			'adulte.reprise.motif' => 'Motif',
+			'adulte.reprise.motifDeces' => 'Décès déclaré du titulaire',
+			'adulte.reprise.deposeeLe' => 'Déposée le',
+			'adulte.reprise.etat' => 'État',
+			'adulte.reprise.etats.deposee' => 'Déposée',
+			'adulte.reprise.etats.refuseeParTitulaire' => 'Refusée par le titulaire',
+			'adulte.reprise.etats.attenteAdministration' => 'En attente de l\'administration',
+			'adulte.reprise.etats.validee' => 'Validée',
+			'adulte.reprise.etats.refusee' => 'Refusée',
+			'adulte.reprise.phrases.deposee' => 'Le titulaire du foyer en a été informé. L\'administration examinera la demande.',
+			'adulte.reprise.phrases.examenLe' => ({required Object date}) => 'Sans réponse du titulaire, l\'administration pourra l\'examiner à partir du ${date}.',
+			'adulte.reprise.phrases.refuseeParTitulaire' => 'Le titulaire du foyer a refusé cette demande. L\'administration en est informée. Aucune permission du foyer n\'est transférée.',
+			'adulte.reprise.phrases.attenteAdministration' => 'Le titulaire n\'a pas répondu. Rien n\'est transféré automatiquement : l\'administration doit encore examiner la demande.',
+			'adulte.reprise.phrases.validee' => 'L\'administration a validé la demande. Vous êtes désormais titulaire du foyer.',
+			'adulte.reprise.phrases.refusee' => 'L\'administration a refusé la demande. Aucune permission du foyer n\'est transférée.',
+			'adulte.reprise.titulaire.notification' => 'Une demande de reprise de votre foyer a été déposée en indiquant votre décès.',
+			'adulte.reprise.titulaire.consigne' => 'Si cette demande est erronée, refusez-la.',
+			'adulte.reprise.titulaire.refuser' => 'Refuser la demande',
+			'adulte.reprise.titulaire.ligne' => 'Une demande de reprise de votre foyer a été déposée.',
+			'adulte.reprise.titulaire.refusEchecTitre' => 'Le refus n\'a pas été confirmé.',
+			'adulte.reprise.titulaire.horsLigne' => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez refuser la demande vous-même quand la connexion sera revenue.',
+			'adulte.reprise.titulaire.refusee' => 'Vous avez refusé cette demande. L\'administration en est informée. Aucune permission de votre foyer n\'est transférée.',
+			'adulte.reprise.notifications.refuseeParTitulaire' => 'Le titulaire du foyer a refusé votre demande de reprise du foyer.',
+			'adulte.reprise.notifications.attenteAdministration' => 'Votre demande de reprise du foyer est en attente de l\'administration.',
+			'adulte.reprise.notifications.validee' => 'Votre demande de reprise du foyer a été validée.',
+			'adulte.reprise.notifications.refusee' => 'Votre demande de reprise du foyer a été refusée.',
 			'adulte.demo.titre' => 'Démonstration de l\'élève adulte',
 			'adulte.demo.mention' => 'Les données sont fictives et rien n\'est envoyé.',
 			'adulte.demo.intro' => 'Choisissez un écran, puis une situation du foyer Diallo.',
@@ -18322,6 +19163,28 @@ extension on Traductions {
 			'adulte.demo.titulaireFemme' => 'La titulaire est une femme, son conjoint est le second adulte.',
 			'adulte.demo.vueConjointe' => 'Mon espace vu par la conjointe, second adulte du foyer.',
 			'adulte.demo.vueConjoint' => 'Mon espace vu par le conjoint, second adulte du foyer.',
+			'adulte.demo.invitationRecueConjointe' => 'L\'invitation reçue par la conjointe, dans son propre compte.',
+			'adulte.demo.invitationRecueConjoint' => 'L\'invitation reçue par le conjoint, dans son propre compte.',
+			'adulte.demo.invitationSansCompte' => 'L\'invitation ouverte sans compte.',
+			'adulte.demo.reseauCoupe' => 'Le réseau est coupé : l\'Accueil et Ma classe hors ligne.',
+			'adulte.demo.donnees.soldeTitulaire' => 'Solde de démonstration 1',
+			'adulte.demo.donnees.soldeSecondAdulte' => 'Solde de démonstration 2',
+			'adulte.demo.donnees.soldeAicha' => 'Solde de démonstration 3',
+			'adulte.demo.donnees.soldeOumar' => 'Solde de démonstration 4',
+			'adulte.demo.donnees.totalAvecSecondAdulte' => 'Total de démonstration A',
+			'adulte.demo.donnees.totalSansSecondAdulte' => 'Total de démonstration B',
+			'adulte.demo.donnees.prixOffreA' => '5,00 € (démonstration)',
+			'adulte.demo.donnees.prixOffreB' => '10,00 € (démonstration)',
+			'adulte.demo.donnees.detailOffreA' => 'Solde de démonstration A',
+			'adulte.demo.donnees.detailOffreB' => 'Solde de démonstration B',
+			'adulte.demo.donnees.totalRecharge5' => '5,00 € (démonstration)',
+			'adulte.demo.donnees.totalRecharge10' => '10,00 € (démonstration)',
+			'adulte.demo.donnees.totalRecharge15' => '15,00 € (démonstration)',
+			'adulte.demo.donnees.totalRecharge20' => '20,00 € (démonstration)',
+			'adulte.demo.donnees.totalRecharge25' => '25,00 € (démonstration)',
+			'adulte.demo.donnees.totalRecharge30' => '30,00 € (démonstration)',
+			'adulte.demo.donnees.totalRecharge35' => '35,00 € (démonstration)',
+			'adulte.demo.donnees.totalRecharge40' => '40,00 € (démonstration)',
 			'adulte.demo.etats.adulteSeul' => 'L\'adulte est seul, sans foyer.',
 			'adulte.demo.etats.titulaireSansConjoint' => 'Le foyer n\'a pas de second adulte.',
 			'adulte.demo.etats.invitationEnAttente' => 'L\'invitation du second adulte est en attente.',
@@ -18330,23 +19193,23 @@ extension on Traductions {
 			'adulte.demo.etats.conjointActif' => 'Le second adulte fait partie du foyer.',
 			'adulte.demo.etats.conjointQuitte' => 'Le second adulte a quitté le foyer.',
 			'adulte.demo.etats.conjointRetire' => 'Le second adulte a été retiré du foyer.',
-			'adulte.demo.etats.delai60' => 'Un délai de 60 jours est en cours.',
-			'adulte.demo.etats.nouvelleDemande' => 'Une nouvelle invitation est possible après le délai de 60 jours.',
+			'adulte.demo.etats.delai60' => 'Un premier délai est en cours.',
+			'adulte.demo.etats.nouvelleDemande' => 'Une nouvelle invitation est possible après le premier délai.',
 			'adulte.demo.etats.validationEnAttente' => 'La validation administrative est en attente.',
 			'adulte.demo.etats.validationRefusee' => 'La validation administrative a été refusée.',
 			'adulte.demo.etats.secondDepart' => 'Le second adulte est parti pour la deuxième fois.',
-			'adulte.demo.etats.delai120' => 'Un délai de 120 jours est en cours.',
-			'adulte.demo.etats.departsSuivants' => 'Après le troisième départ, le délai reste de 120 jours.',
+			'adulte.demo.etats.delai120' => 'Un délai suivant, plus long, est en cours.',
+			'adulte.demo.etats.departsSuivants' => 'Après le troisième départ, le délai suivant s\'applique toujours.',
 			'adulte.demo.etats.repriseDemandee' => 'Une demande de reprise du foyer a été déposée.',
 			'adulte.demo.etats.repriseRefuseeParTitulaire' => 'La demande de reprise a été refusée par le titulaire.',
-			'adulte.demo.etats.repriseSansReponse' => 'Après 30 jours sans réponse, la demande attend l\'administration.',
+			'adulte.demo.etats.repriseSansReponse' => 'Sans réponse dans le délai, la demande attend l\'administration.',
 			'adulte.demo.etats.repriseValidee' => 'La reprise du foyer a été validée.',
 			'adulte.demo.etats.repriseRefusee' => 'La reprise du foyer a été refusée.',
 			'adulte.demo.etats.dejaDansUnAutreFoyer' => 'L\'adulte invité fait déjà partie d\'un autre foyer.',
 			'adulte.demo.etats.erreurReseau' => 'Le réseau a coupé pendant une action.',
 			'adulte.demo.etats.doubleSoumission' => 'La même action a été envoyée deux fois.',
 			'adulte.demo.etats.notificationDansLApplication' => 'La notification n\'a pas pu partir sur le téléphone, elle reste visible dans l\'application.',
-			'adulte.demo.etats.emancipation' => 'Un élève devenu adulte garde toutes ses données.',
+			'adulte.demo.etats.emancipation' => 'Émancipation d\'un élève devenu adulte : non construite dans cette vague.',
 			_ => null,
 		};
 	}

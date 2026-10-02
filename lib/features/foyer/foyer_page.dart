@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
@@ -26,6 +28,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../compte/compte_tuteur_page.dart' show CarteIdentiteCompte;
 import '../compte/donnees_compte.dart' show identiteTitulaireProvider;
+import '../compte/soldes_foyer.dart';
 import 'ligne_membre.dart';
 import 'photo_eleve.dart';
 import 'place_adulte.dart';
@@ -59,12 +62,17 @@ final FutureProviderFamily<List<ClasseFoyer>, String> classesMembreProvider =
 /// du lot D, et l'option discrete « Creer mon profil eleve ». Aucun compteur
 /// decoratif. Sur bureau (a partir de 1200), deux colonnes comme le Compte.
 ///
-/// **Ma famille du titulaire adulte** (EA-5) : quand [foyerTitulaireProvider]
-/// rend une valeur, la meme page devient « Ma famille » : la carte du
-/// titulaire en tete, la ligne de la place adulte (F21), les profils eleves,
-/// puis « Paiements du foyer » avec les appareils. « Creer mon profil eleve »
-/// disparait alors : le titulaire adulte a deja le sien. Sans valeur (le cas
-/// du tuteur aujourd'hui, EA-BR-14), rien ne change.
+/// **Ma famille du titulaire adulte** (EA-5, EA-5c) : quand
+/// [foyerTitulaireProvider] rend une valeur, la meme page devient « Ma
+/// famille » : la carte du titulaire EN TETE, y compris sur telephone
+/// (planches 3.1 et 6, decision E6), le groupe « Forfait famille » (la ligne
+/// de la place adulte, F21, et, apres un refus, « Faire une nouvelle
+/// demande », E5), les profils eleves, « Ajouter un profil eleve » sous eux
+/// sur telephone (planche 3.1), puis « Paiements du foyer », les appareils,
+/// et au pied « A propos du forfait famille » (planche 2.1) et « Creer mon
+/// profil eleve » (garde, planche 2.3 G, decision E6 ; il ouvre la page
+/// indisponible existante, DB-FOY-01, EA-BR-19). Sans valeur (le cas du tuteur
+/// aujourd'hui, EA-BR-14), rien ne change.
 class FoyerPage extends ConsumerWidget {
   /// Cree la page.
   const FoyerPage({
@@ -72,6 +80,9 @@ class FoyerPage extends ConsumerWidget {
     this.onAller,
     this.onPlaceAdulte,
     this.onPaiementsFoyer,
+    this.onRecharger,
+    this.onAProposForfait,
+    this.onNouvelleDemande,
   });
 
   /// Ouvre un chemin du Foyer (ajout, fiche, appareils) ; par defaut, le
@@ -83,6 +94,18 @@ class FoyerPage extends ConsumerWidget {
 
   /// Ouvre les paiements du foyer (EA-9).
   final VoidCallback? onPaiementsFoyer;
+
+  /// Ouvre la recharge depuis la section des soldes, sur bureau (EA-9,
+  /// planche 6 ; la recharge vient avec EA-10).
+  final VoidCallback? onRecharger;
+
+  /// Ouvre « A propos du forfait famille » ; par defaut, la page est poussee
+  /// sur le navigateur.
+  final VoidCallback? onAProposForfait;
+
+  /// Relance l'invitation apres un refus de validation (E5, doc section
+  /// 10.3). Sans lui, le bouton n'est pas pose.
+  final VoidCallback? onNouvelleDemande;
 
   /// La carte du titulaire.
   static const Key titulaireKey = Key('foyer.titulaire');
@@ -104,6 +127,23 @@ class FoyerPage extends ConsumerWidget {
 
   /// La phrase qui dit que l'inscription en cours ne se lit pas.
   static const Key inscriptionIllisibleKey = Key('foyer.inscriptionIllisible');
+
+  void _aProposForfait(BuildContext context) {
+    final VoidCallback? propre = onAProposForfait;
+    if (propre != null) {
+      propre();
+      return;
+    }
+    unawaited(
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (BuildContext page) => AProposForfaitFamillePage(
+            onRetour: () => Navigator.of(page).pop(),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -141,10 +181,27 @@ class FoyerPage extends ConsumerWidget {
         ? null
         : lectureAdulte.requireValue;
 
+    // L'action d'ajout tient a droite du titre sur bureau. En dessous de
+    // 1200, le titre, la bascule de theme, la cloche et le libelle complet
+    // ne tiennent pas toujours sur une ligne (358 sur telephone) : pour le
+    // tuteur, elle passe juste sous le titre, hors de la zone defilante ; pour
+    // le titulaire adulte, sous les profils eleves, apres la carte du
+    // titulaire qui reste en tete (planche 3.1, decision E6). Une seule
+    // action, un seul endroit. CTA dominant « libelle + fleche » (03, section
+    // 3 point 3).
+    final Widget ajouter = ActionPrincipale(
+      key: ajouterKey,
+      libelle: t.foyer.ajouterProfil,
+      fleche: true,
+      pleineLargeur: AppGabarit.de(context) == Gabarit.mobile,
+      onPress: () => aller(Routes.tuteurAjouterEnfant),
+    );
+
     final Widget profils = KeyedSubtree(
       key: membresKey,
       child: _Membres(aller),
     );
+    final VoidCallback? nouvelleDemande = onNouvelleDemande;
     final Widget membres = adulte == null
         ? profils
         : Column(
@@ -160,21 +217,62 @@ class FoyerPage extends ConsumerWidget {
                   lignePlaceAdulte(adulte, onPress: onPlaceAdulte),
                 ],
               ),
+              // Validation refusee : une nouvelle demande, action secondaire
+              // juste sous sa ligne d'etat (le seul bouton dominant reste
+              // « Ajouter un profil eleve »).
+              if (placePermetNouvelleDemande(adulte.place) &&
+                  nouvelleDemande != null) ...<Widget>[
+                Ecart.vLg,
+                // Compact au bord de fin : l'action qui poursuit (contrat B,
+                // revue EA-R m1). `IntrinsicWidth` : sans lui,
+                // `ActionPrincipale` s'etire a toute la colonne meme avec
+                // `pleineLargeur: false` (son `Container.alignment`, motif
+                // deja contourne ainsi ailleurs) ; borne par la colonne, le
+                // libelle passe a la ligne a 200 %.
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: IntrinsicWidth(
+                    child: ActionPrincipale(
+                      key: nouvelleDemandeKey,
+                      libelle: t.adulte.famille.place.nouvelleDemande,
+                      niveau: NiveauAction.secondaire,
+                      pleineLargeur: false,
+                      onPress: nouvelleDemande,
+                    ),
+                  ),
+                ),
+              ],
               Ecart.vSection,
               profils,
+              // 16 entre les profils et leur action (contrat A, revue EA-R m2).
+              if (!bureau) ...<Widget>[Ecart.vLg, ajouter],
             ],
           );
     final Widget annexes = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        // Sur bureau, la colonne droite porte la section « Paiements du
+        // foyer » elle-meme (planche 6, UX_REVIEW_07 ligne 7 a) : les soldes
+        // et son seul bouton « Recharger » (un bouton dominant par colonne),
+        // puis l'historique en une ligne. Sur telephone, une ligne vers la
+        // page des paiements du foyer (EA-9).
+        if (adulte != null && bureau) ...<Widget>[
+          SoldesFoyerSection(
+            titre: t.adulte.famille.paiementsFoyer,
+            onRecharger: onRecharger,
+          ),
+          Ecart.vXl,
+        ],
         if (adulte != null) ...<Widget>[
           GroupeReglages(
             key: paiementsFoyerKey,
             lignes: <LigneRubrique>[
               LigneRubrique(
                 icone: AppIcons.finance,
-                libelle: t.adulte.famille.paiementsFoyer,
+                libelle: bureau
+                    ? t.adulte.paiements.historique
+                    : t.adulte.famille.paiementsFoyer,
                 onPress: onPaiementsFoyer,
               ),
             ],
@@ -195,36 +293,34 @@ class FoyerPage extends ConsumerWidget {
             ],
           ),
         ),
-        // Le titulaire adulte est deja eleve : pas de « Creer mon profil ».
-        // Ecart avec 00_MAQUETTES 2.3 G (qui le garde) et lien « A propos du
-        // forfait famille » (2.1 P) reporte : question posee au directeur
-        // dans le releve d'EA-5.
-        if (adulte == null) ...<Widget>[
-          Ecart.vXxl,
+        // Garde pour le titulaire adulte aussi (planche 2.3 G, decision E6).
+        // Le serveur ne dit pas encore s'il a deja son profil eleve, ni ne
+        // sait le creer (DB-FOY-01, EA-BR-19) : la page dit qu'elle est
+        // indisponible, avec les textes de l'adulte quand l'appelant les
+        // demande (`CreerMonProfilIndisponible.titulaireAdulte`). « A propos du forfait famille » le precede, en lien
+        // d'information au pied de la page (planche 2.1 P, decision E6).
+        Ecart.vXxl,
+        if (adulte != null) ...<Widget>[
           Align(
             alignment: AlignmentDirectional.centerStart,
             child: LienFleche(
-              key: monProfilKey,
-              libelle: t.foyer.creerMonProfil,
-              onPress: () => aller(Routes.tuteurAjouterPourMoi),
+              key: aProposForfaitKey,
+              libelle: t.adulte.famille.aProposForfait,
+              onPress: () => _aProposForfait(context),
             ),
           ),
+          // Deux liens, deux cibles : jamais colles, meme a 200 %.
+          Ecart.vSm,
         ],
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: LienFleche(
+            key: monProfilKey,
+            libelle: t.foyer.creerMonProfil,
+            onPress: () => aller(Routes.tuteurAjouterPourMoi),
+          ),
+        ),
       ],
-    );
-
-    // L'action d'ajout tient a droite du titre sur bureau. En dessous de
-    // 1200, le titre, la bascule de theme, la cloche et le libelle complet
-    // ne tiennent pas toujours sur une ligne (358 sur telephone) : elle passe
-    // juste sous le titre, hors de la zone defilante, toujours visible. Une
-    // seule action, un seul endroit. CTA dominant « libelle + fleche »
-    // (03, section 3 point 3).
-    final Widget ajouter = ActionPrincipale(
-      key: ajouterKey,
-      libelle: t.foyer.ajouterProfil,
-      fleche: true,
-      pleineLargeur: AppGabarit.de(context) == Gabarit.mobile,
-      onPress: () => aller(Routes.tuteurAjouterEnfant),
     );
 
     return PageShell(
@@ -233,7 +329,7 @@ class FoyerPage extends ConsumerWidget {
       titre: adulte == null ? t.foyer.titre : t.adulte.famille.maFamille,
       sousTitre: adulte == null ? t.foyer.sousTitre : null,
       actionsEntete: <Widget>[if (bureau) ajouter],
-      entete: bureau
+      entete: bureau || adulte != null
           ? null
           : Align(alignment: AlignmentDirectional.centerStart, child: ajouter),
       child: bureau
@@ -390,29 +486,42 @@ class _ListeMembres extends ConsumerWidget {
 }
 
 /// La carte du titulaire adulte : la carte d'identite du Compte, reprise
-/// telle quelle (K-51), son role « Titulaire du foyer » et sa photo
-/// (`PhotoEleve`, K-44). Aucune pastille pour l'etat normal (E12).
+/// telle quelle (K-51), son role dit en une phrase entiere (« Vous etes
+/// titulaire du foyer », K-41 ; libelle provisoire, lexique D4) et sa photo
+/// (`PhotoEleve`, K-44). Aucune pastille pour l'etat normal (E12). Sa
+/// lecture a ses propres etats : squelette, erreur avec « Reessayer », et,
+/// sans reseau, « hors ligne » dit comme tel, comme les profils eleves.
 class _CarteTitulaire extends ConsumerWidget {
   const _CarteTitulaire(this.vue);
 
   final FoyerTitulaireVM vue;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) =>
-      BlocAsynchrone<IdentiteTitulaire>(
-        valeur: ref.watch(identiteTitulaireProvider),
-        squelette: const Skeleton(hauteur: AppSpacing.respiration * 2),
-        onReessayer: () => ref.invalidate(identiteTitulaireProvider),
-        construire: (IdentiteTitulaire lue) => CarteIdentiteCompte(
-          identite: lue,
-          large: AppGabarit.de(context).estLarge,
-          role: t.adulte.famille.titulaire,
-          pastilleEtatNormal: false,
-          photo: (double diametre) => PhotoEleve(
-            prenom: lue.prenom,
-            cleAvatar: vue.cleAvatar,
-            diametre: diametre,
-          ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<IdentiteTitulaire> identite = ref.watch(
+      identiteTitulaireProvider,
+    );
+    void relire() => ref.invalidate(identiteTitulaireProvider);
+    if ((ref.watch(horsLigneProvider).value ?? false) &&
+        identite.hasError &&
+        identite.error is! CapaciteIndisponible) {
+      return EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire);
+    }
+    return BlocAsynchrone<IdentiteTitulaire>(
+      valeur: identite,
+      squelette: const Skeleton(hauteur: AppSpacing.respiration * 2),
+      onReessayer: relire,
+      construire: (IdentiteTitulaire lue) => CarteIdentiteCompte(
+        identite: lue,
+        large: AppGabarit.de(context).estLarge,
+        role: t.adulte.famille.titulaire,
+        pastilleEtatNormal: false,
+        photo: (double diametre) => PhotoEleve(
+          prenom: lue.prenom,
+          cleAvatar: vue.cleAvatar,
+          diametre: diametre,
         ),
-      );
+      ),
+    );
+  }
 }

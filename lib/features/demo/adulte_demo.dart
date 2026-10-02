@@ -1,16 +1,23 @@
 // Donnees de demonstration de l'eleve adulte (EA-1b) : le foyer Diallo de
 // 16_eleves_adultes/V/00_MAQUETTES section 3, ses variantes (titulaire femme,
 // vue du second adulte) et un etat nomme pour chacun des 25 cas du doc
-// section 18. Aucune valeur economique : ni solde, ni offre, ni remise, ni
-// taux (F12). Les dates de fin de delai sont des DONNEES, jamais un calcul
-// (F17). Aucun appel serveur (K-28) : chaque besoin est une ligne d'EA-BR.md.
+// section 18. Aucune valeur economique calculee par l'ecran : ni taux, ni
+// remise (F12) ; les soldes (EA-9) sont des libelles de demonstration rendus
+// tels quels (decision E2), les offres et le recapitulatif de la recharge
+// (EA-10) aussi, arretes par le serveur de demonstration. Les dates de fin de delai sont des DONNEES,
+// jamais un calcul (F17). Aucun appel serveur (K-28) : chaque besoin est
+// une ligne d'EA-BR.md.
 
 import '../../core/appairage/service_appairage.dart' show EleveDuFoyer;
 import '../../core/capacites/port_identite_titulaire.dart';
+import '../../core/capacites/port_paiements_foyer.dart';
+import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart' show Seance;
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../accueil_adulte/accueil_adulte_page.dart';
+import '../foyer/invitation_conjoint.dart';
 import '../foyer/place_adulte.dart';
 import '../ma_classe_adulte/ma_classe_adulte_page.dart';
 import '../mon_espace_adulte/mon_espace_adulte_page.dart';
@@ -90,7 +97,8 @@ enum EtatDemoAdulte {
   /// 24. Notification non delivrable en push, visible dans l'application.
   notificationDansLApplication,
 
-  /// 25. Emancipation d'un eleve devenu adulte, sans perte de donnees.
+  /// 25. Emancipation d'un eleve devenu adulte : non construite dans cette
+  /// vague (F19), le selecteur le dit sans rien affirmer (revue EA-R m7).
   emancipation,
 }
 
@@ -161,12 +169,12 @@ abstract final class DonneesAdulteDemo {
     ),
   ];
 
-  /// Vrai si, dans cet etat, la personne a un foyer (titulaire ou second
-  /// adulte). Seuls l'adulte seul et l'adulte deja ailleurs n'en ont pas ici.
-  static bool aUnFoyer(EtatDemoAdulte etat) => switch (etat) {
-    EtatDemoAdulte.adulteSeul || EtatDemoAdulte.dejaDansUnAutreFoyer => false,
-    _ => true,
-  };
+  /// Vrai si, dans cet etat, le titulaire a un foyer. Seul l'adulte seul n'en
+  /// a pas. Dans le cas 21 (l'adulte invite est deja dans un autre foyer), le
+  /// titulaire qui a invite garde son foyer et ses enfants (revue d'EA-4c) :
+  /// c'est l'invite qui ne peut pas le rejoindre (doc section 11).
+  static bool aUnFoyer(EtatDemoAdulte etat) =>
+      etat != EtatDemoAdulte.adulteSeul;
 
   /// Vrai si le second adulte est encore rattache au foyer dans cet etat :
   /// ce qui ouvre sa vue (`&vue=conjoint`).
@@ -257,9 +265,13 @@ abstract final class DonneesAdulteDemo {
           dernieresSeances: dernieresSeances(),
         );
 
-  /// Les enfants que Ma famille montre : aucun sans foyer.
-  static List<EleveDuFoyer> enfantsPour(EtatDemoAdulte etat) =>
-      aUnFoyer(etat) ? enfants : const <EleveDuFoyer>[];
+  /// Les enfants que Ma famille montre : aucun sans foyer, aucun non plus
+  /// dans le foyer que l'adulte seul vient d'ouvrir par « Ajouter ma
+  /// famille » ([foyerNouveau], EA-PL) : rien n'est invente.
+  static List<EleveDuFoyer> enfantsPour(
+    EtatDemoAdulte etat, {
+    bool foyerNouveau = false,
+  }) => aUnFoyer(etat) && !foyerNouveau ? enfants : const <EleveDuFoyer>[];
 
   /// L'etat de la place adulte vu par le titulaire (F21, EA-5, EA-BR-14).
   /// Une invitation expiree ou annulee rend la place libre, sans delai (F5).
@@ -267,21 +279,217 @@ abstract final class DonneesAdulteDemo {
     final DateTime? fin = finDelaiPour(etat);
     if (fin != null) return DelaiEnCours(fin);
     if (secondAdultePresent(etat)) {
-      return PlaceOccupee(prenomSecondAdulte(genre));
+      return PlaceOccupee(
+        prenomSecondAdulte(genre),
+        repriseARepondre: repriseTitulaire(etat) is RepriseARefuser,
+      );
     }
     return switch (etat) {
-      EtatDemoAdulte.invitationEnAttente => invitationEnvoyee(genre),
+      // Cas 21 : la reponse a l'invitation reste neutre pour le titulaire
+      // (F4) ; il ne sait pas que l'invite est deja ailleurs, sa place dit
+      // l'invitation envoyee (EA-BR-17).
+      EtatDemoAdulte.invitationEnAttente ||
+      EtatDemoAdulte.dejaDansUnAutreFoyer => invitationEnvoyee(genre),
       EtatDemoAdulte.invitationExpiree => const PlaceDisponible(
         precedente: FinInvitation.expiree,
       ),
-      EtatDemoAdulte.invitationAnnulee => const PlaceDisponible(
-        precedente: FinInvitation.annulee,
+      // Reponse tardive apres annulation (doc section 5.2, EA-6c) : la
+      // demonstration fait arriver l'acceptation de l'invitee APRES
+      // l'annulation ; le serveur de demonstration ne rattache personne.
+      EtatDemoAdulte.invitationAnnulee => acceptationRecue(
+        const PlaceDisponible(precedente: FinInvitation.annulee),
+        prenomSecondAdulte(genre),
       ),
       EtatDemoAdulte.validationEnAttente => const ValidationEnAttente(),
       EtatDemoAdulte.validationRefusee => const ValidationRefusee(),
       _ => const PlaceDisponible(),
     };
   }
+
+  /// Le serveur de demonstration recoit l'acceptation de [prenom] (EA-BR-15) :
+  /// seule une invitation encore envoyee rattache le second adulte ; une
+  /// acceptation qui arrive apres l'annulation ou l'expiration (reponse
+  /// tardive, doc section 5.2) ne rattache personne et la place reste telle
+  /// quelle (EA-6c).
+  static EtatPlaceAdulte acceptationRecue(
+    EtatPlaceAdulte place,
+    String prenom,
+  ) => place is InvitationEnvoyee ? PlaceOccupee(prenom) : place;
+
+  /// La date de l'invitation recue par le second adulte (EA-7), une donnee
+  /// de demonstration rendue telle quelle.
+  static final DateTime dateInvitation = DateTime.utc(2026, 9, 26, 16);
+
+  /// L'invitation que le second adulte lit dans son propre compte (EA-7,
+  /// EA-BR-20), ou `null` quand cette situation n'en a pas.
+  ///
+  /// - en attente : a repondre ; annulee : la page lue AVANT l'annulation,
+  ///   l'acceptation arrive trop tard (reponse tardive, doc section 5.2) ;
+  ///   erreur reseau et double envoi : la reponse elle-meme ;
+  /// - nouvelle demande apres le delai : un remplacement, le texte T2 ;
+  /// - deja dans un autre foyer : la forme neutre (F4, doc section 11) ;
+  /// - expiree : plus valable ;
+  /// - validation en attente : deja acceptee, l'attente seule (section 10.4).
+  static EtatInvitationRecue? invitationRecue(
+    EtatDemoAdulte etat,
+    GenreTitulaireDemo genre,
+  ) {
+    InvitationARepondre aRepondre({bool validation = false}) =>
+        InvitationARepondre(
+          prenomTitulaire: prenomTitulaire(genre),
+          titulaireFeminin: genre == GenreTitulaireDemo.femme,
+          validationRequise: validation,
+        );
+    return switch (etat) {
+      EtatDemoAdulte.invitationEnAttente ||
+      EtatDemoAdulte.invitationAnnulee ||
+      EtatDemoAdulte.erreurReseau ||
+      EtatDemoAdulte.doubleSoumission => aRepondre(),
+      EtatDemoAdulte.nouvelleDemande => aRepondre(validation: true),
+      EtatDemoAdulte.dejaDansUnAutreFoyer => const InvitationNonAcceptable(),
+      EtatDemoAdulte.invitationExpiree => const InvitationPerimee(),
+      EtatDemoAdulte.validationEnAttente => const InvitationEnValidation(),
+      _ => null,
+    };
+  }
+
+  /// Ce que le serveur de demonstration rend a une acceptation (EA-BR-20) :
+  /// l'attente de validation pour un remplacement, rien pour une invitation
+  /// annulee entre-temps (personne n'est rattache), la forme neutre pour un
+  /// compte deja ailleurs, sinon le rattachement.
+  static EtatInvitationRecue acceptationDe(
+    EtatDemoAdulte etat,
+    GenreTitulaireDemo genre,
+  ) => switch (etat) {
+    EtatDemoAdulte.nouvelleDemande => const InvitationEnValidation(),
+    EtatDemoAdulte.invitationAnnulee => const InvitationPerimee(),
+    EtatDemoAdulte.dejaDansUnAutreFoyer => const InvitationNonAcceptable(),
+    _ => InvitationAcceptee(prenomTitulaire(genre)),
+  };
+
+  /// La situation que Mon espace (et toute page rouverte ensuite) lit apres
+  /// la reponse, jamais l'invitation « a repondre » d'avant (revue EA-7) :
+  /// - acceptee : le second adulte rattache ; remplacement : en attente de
+  ///   validation ;
+  /// - refusee : l'invitation n'existe plus, la place du titulaire est libre
+  ///   (« Le foyer n'a pas de second adulte ») ;
+  /// - reponse tardive : l'invitation n'est plus valable, comme une
+  ///   invitation expiree (la demonstration n'a qu'une situation qui la
+  ///   rende ainsi au second adulte) ;
+  /// - forme neutre : rien ne change.
+  static EtatDemoAdulte apresReponse(
+    EtatDemoAdulte etat,
+    EtatInvitationRecue suite,
+  ) => switch (suite) {
+    InvitationAcceptee() => EtatDemoAdulte.conjointActif,
+    InvitationEnValidation() => EtatDemoAdulte.validationEnAttente,
+    InvitationRefuseeParVous() => EtatDemoAdulte.titulaireSansConjoint,
+    InvitationPerimee() => EtatDemoAdulte.invitationExpiree,
+    _ => etat,
+  };
+
+  /// La date de la notification d'un depart (EA-8), une donnee de
+  /// demonstration rendue telle quelle.
+  static final DateTime dateDepart = DateTime.utc(2026, 9, 28, 9);
+
+  /// La notification d'un depart, visible dans le centre de notifications de
+  /// l'AUTRE adulte (F16, doc section 9.3, EA-BR-21), ou `null` :
+  /// - le second adulte a quitte : le titulaire en est informe ;
+  /// - le titulaire l'a retire : le second adulte en est informe, accorde a
+  ///   son genre (« retiree », « retire »).
+  /// Celui qui agit lit le resultat de son geste, pas une notification.
+  static String? notificationDepart(
+    EtatDemoAdulte etat,
+    GenreTitulaireDemo genre,
+    VueDemoAdulte vue,
+  ) => switch ((etat, vue)) {
+    (EtatDemoAdulte.conjointQuitte, VueDemoAdulte.titulaire) =>
+      t.adulte.sortie.notificationQuitte(prenom: prenomSecondAdulte(genre)),
+    (EtatDemoAdulte.conjointRetire, VueDemoAdulte.secondAdulte) =>
+      genre == GenreTitulaireDemo.homme
+          ? t.adulte.sortie.notificationRetiree(prenom: prenomTitulaire(genre))
+          : t.adulte.sortie.notificationRetire(prenom: prenomTitulaire(genre)),
+    _ => null,
+  };
+
+  /// La date du depot de la demande de reprise (EA-11), une donnee de
+  /// demonstration rendue telle quelle.
+  static final DateTime dateDepotReprise = DateTime.utc(2026, 9, 29, 10);
+
+  /// La date a partir de laquelle l'administration peut examiner la demande
+  /// sans reponse du titulaire (doc section 12.3) : une DONNEE rendue par le
+  /// serveur de demonstration, jamais un calcul (F17).
+  static final DateTime examenRepriseLe = DateTime.utc(2026, 10, 29);
+
+  /// La date des notifications qui suivent la demande (EA-11), une donnee de
+  /// demonstration rendue telle quelle.
+  static final DateTime dateSuiteReprise = DateTime.utc(2026, 10, 30, 9);
+
+  /// La demande de reprise que le second adulte lit (EA-11, EA-BR-27) :
+  /// aucune tant que la situation n'en a pas, sinon le statut rendu (doc
+  /// section 18, cas 16 a 20).
+  static EtatReprise reprise(EtatDemoAdulte etat) {
+    RepriseDemande demande(StatutReprise statut) => RepriseDemande(
+      statut: statut,
+      deposeeLe: dateDepotReprise,
+      examenPossibleLe: statut == StatutReprise.deposee
+          ? examenRepriseLe
+          : null,
+    );
+    return switch (etat) {
+      EtatDemoAdulte.repriseDemandee => demande(StatutReprise.deposee),
+      EtatDemoAdulte.repriseRefuseeParTitulaire => demande(
+        StatutReprise.refuseeParTitulaire,
+      ),
+      EtatDemoAdulte.repriseSansReponse => demande(
+        StatutReprise.attenteAdministration,
+      ),
+      EtatDemoAdulte.repriseValidee => demande(StatutReprise.validee),
+      EtatDemoAdulte.repriseRefusee => demande(StatutReprise.refusee),
+      _ => const RepriseAucune(),
+    };
+  }
+
+  /// La demande de reprise que le titulaire lit (EA-11, EA-BR-28), ou `null`
+  /// quand il n'y en a aucune pour lui. CHOIX DE DEMONSTRATION : apres 30
+  /// jours sans reponse, le refus reste possible (rien n'est transfere, doc
+  /// section 12.3) ; c'est le serveur qui le dira (EA-BR-28). Apres la
+  /// decision de l'administration, la demonstration ne modelise pas la
+  /// succession cote titulaire (EA-BR-17).
+  static DemandeRepriseRecue? repriseTitulaire(EtatDemoAdulte etat) =>
+      switch (etat) {
+        EtatDemoAdulte.repriseDemandee ||
+        EtatDemoAdulte.repriseSansReponse => const RepriseARefuser(),
+        EtatDemoAdulte.repriseRefuseeParTitulaire =>
+          const RepriseRefuseeParVous(),
+        _ => null,
+      };
+
+  /// La notification d'une demande de reprise (EA-11), ou `null` :
+  /// - le titulaire : le texte du doc section 12.2 (sans le nom du
+  ///   demandeur, Q11) ;
+  /// - le second adulte : chaque suite de sa demande (libelles provisoires,
+  ///   lexique D4).
+  static String? notificationReprise(EtatDemoAdulte etat, VueDemoAdulte vue) {
+    final n = t.adulte.reprise.notifications;
+    return switch ((etat, vue)) {
+      (
+        EtatDemoAdulte.repriseDemandee || EtatDemoAdulte.repriseSansReponse,
+        VueDemoAdulte.titulaire,
+      ) =>
+        t.adulte.reprise.titulaire.notification,
+      (_, VueDemoAdulte.titulaire) => null,
+      (EtatDemoAdulte.repriseRefuseeParTitulaire, _) => n.refuseeParTitulaire,
+      (EtatDemoAdulte.repriseSansReponse, _) => n.attenteAdministration,
+      (EtatDemoAdulte.repriseValidee, _) => n.validee,
+      (EtatDemoAdulte.repriseRefusee, _) => n.refusee,
+      _ => null,
+    };
+  }
+
+  /// La page Forfait famille du second adulte rattache (EA-8, EA-BR-22).
+  static ForfaitFamilleVM forfaitFamille(GenreTitulaireDemo genre) =>
+      ForfaitFamilleVM(prenomTitulaire: prenomTitulaire(genre));
 
   /// L'invitation envoyee au second adulte (EA-6, EA-BR-15) : le prenom et
   /// l'adresse fictive (RFC 2606) que le titulaire a saisis.
@@ -301,6 +509,189 @@ abstract final class DonneesAdulteDemo {
     placeFeminine: genre == GenreTitulaireDemo.homme,
     place: place(etat, genre),
   );
+
+  /// Les soldes du foyer vus par le titulaire (EA-9, EA-BR-23), tels que le
+  /// serveur de demonstration les rendrait : le titulaire, le second adulte
+  /// seulement s'il est rattache (ses initiales, aucune photo ni Classe, Q4,
+  /// F6), puis les enfants.
+  ///
+  /// Les libelles sont des libelles de demonstration MARQUES comme tels, sans
+  /// quantite ni unite (decision E2 = c, revue EA-R m3 et m17) : l'unite du
+  /// solde n'est pas fixee (Q9, doc section 20.3), comme pour la recharge ;
+  /// l'exception « Bientôt épuisé »
+  /// est RENDUE par la demonstration, jamais deduite d'un seuil (F12). Le
+  /// recapitulatif est une phrase rendue, ecrite ici pour chaque cas, jamais
+  /// additionnee dans Flutter (F9). Oumar n'a pas la pastille « Inactif » de
+  /// la planche : son acces, dans Ma famille, est sans echeance, et la
+  /// demonstration ne se contredit pas d'un ecran a l'autre.
+  ///
+  /// Le foyer que l'adulte seul vient d'ouvrir ([foyerNouveau], EA-PL) n'a
+  /// que le titulaire : ni second adulte rattache, ni enfant.
+  static SoldesFoyer soldes(
+    EtatDemoAdulte etat,
+    GenreTitulaireDemo genre, {
+    bool foyerNouveau = false,
+  }) {
+    final bool second = secondAdultePresent(etat);
+    final d = t.adulte.demo.donnees;
+    if (foyerNouveau) {
+      return SoldesFoyer(
+        beneficiaires: <SoldeBeneficiaire>[
+          SoldeBeneficiaire(
+            id: idTitulaire(genre),
+            prenom: prenomTitulaire(genre),
+            soldeRendu: d.soldeTitulaire,
+          ),
+        ],
+        recapitulatif: d.totalSansSecondAdulte,
+      );
+    }
+    return SoldesFoyer(
+      beneficiaires: <SoldeBeneficiaire>[
+        SoldeBeneficiaire(
+          id: idTitulaire(genre),
+          prenom: prenomTitulaire(genre),
+          soldeRendu: d.soldeTitulaire,
+        ),
+        if (second)
+          SoldeBeneficiaire(
+            id: genre == GenreTitulaireDemo.homme ? mariamaId : mamadouId,
+            prenom: prenomSecondAdulte(genre),
+            soldeRendu: d.soldeSecondAdulte,
+          ),
+        SoldeBeneficiaire(
+          id: aichaId,
+          prenom: 'Aïcha',
+          soldeRendu: d.soldeAicha,
+          exception: ExceptionSolde.bientotEpuise,
+        ),
+        SoldeBeneficiaire(
+          id: oumarId,
+          prenom: 'Oumar',
+          soldeRendu: d.soldeOumar,
+        ),
+      ],
+      recapitulatif: second ? d.totalAvecSecondAdulte : d.totalSansSecondAdulte,
+    );
+  }
+
+  /// L'identifiant de l'offre A de la demonstration.
+  static const String offreA = 'demo-offre-a';
+
+  /// L'identifiant de l'offre B de la demonstration.
+  static const String offreB = 'demo-offre-b';
+
+  /// Les offres de recharge de la demonstration (EA-10, EA-BR-24). Le prix
+  /// reprend la planche 4.3 (« 5,00 € »), MARQUE « (démonstration) » (F12,
+  /// revue EA-R m4) ; le solde attribue est un libelle
+  /// de demonstration MARQUE comme tel, sans quantite d'unites : l'unite du
+  /// solde n'est pas fixee (doc section 20.3, 00_MAQUETTES 4.1 C3) et une
+  /// quantite a cote d'un prix ramenerait le taux retire (4.2 C2, E2). Ni
+  /// taux ni formule (F12, 00_MAQUETTES section 3). Aucune remise n'est
+  /// rendue : la planche la calcule (10 %), le doc ne la fixe pas (section 20).
+  static List<OffreRecharge> get _offresRecharge => <OffreRecharge>[
+    OffreRecharge(
+      id: offreA,
+      libelle: t.adulte.demo.donnees.prixOffreA,
+      detail: t.adulte.demo.donnees.detailOffreA,
+    ),
+    OffreRecharge(
+      id: offreB,
+      libelle: t.adulte.demo.donnees.prixOffreB,
+      detail: t.adulte.demo.donnees.detailOffreB,
+    ),
+  ];
+
+  /// Le total que le serveur de demonstration arrete, une DONNEE fixee
+  /// d'avance pour chaque combinaison possible (le nombre d'offres A et B
+  /// choisies, quatre beneficiaires au plus), jamais une addition. Chaque
+  /// total est MARQUE « (démonstration) » comme les prix (F12, relecture
+  /// EA-RC de m4).
+  static String _totalRecharge(int a, int b) {
+    final d = t.adulte.demo.donnees;
+    return switch ((a, b)) {
+      (1, 0) => d.totalRecharge5,
+      (0, 1) || (2, 0) => d.totalRecharge10,
+      (1, 1) || (3, 0) => d.totalRecharge15,
+      (0, 2) || (2, 1) || (4, 0) => d.totalRecharge20,
+      (1, 2) || (3, 1) => d.totalRecharge25,
+      (0, 3) || (2, 2) => d.totalRecharge30,
+      (1, 3) => d.totalRecharge35,
+      (0, 4) => d.totalRecharge40,
+      _ => throw StateError('combinaison absente de la demonstration'),
+    };
+  }
+
+  /// Le statut de l'attribution avant le paiement, tel que le serveur de
+  /// demonstration le rend (F11).
+  static const String statutAvantPaiement = 'En attente du paiement';
+
+  /// Les beneficiaires de la recharge (EA-10, EA-BR-24) : ceux des soldes
+  /// (EA-9), dans le meme ordre, chacun avec les offres que le serveur rend
+  /// pour lui.
+  static List<BeneficiaireRecharge> beneficiairesRecharge(
+    EtatDemoAdulte etat,
+    GenreTitulaireDemo genre, {
+    bool foyerNouveau = false,
+  }) => <BeneficiaireRecharge>[
+    for (final SoldeBeneficiaire s in soldes(
+      etat,
+      genre,
+      foyerNouveau: foyerNouveau,
+    ).beneficiaires)
+      BeneficiaireRecharge(
+        id: s.id,
+        prenom: s.prenom,
+        cleAvatar: s.cleAvatar,
+        soldeRendu: s.soldeRendu,
+        offres: _offresRecharge,
+      ),
+  ];
+
+  /// Le recapitulatif que le SERVEUR de demonstration arrete pour ces choix
+  /// (EA-10, EA-BR-24) : une ligne par beneficiaire choisi, dans l'ordre des
+  /// beneficiaires, et le total. Le total est une donnee fixee d'avance par
+  /// le serveur de demonstration ; l'ecran l'affiche tel quel, il
+  /// n'additionne jamais rien (F12).
+  static RecapitulatifRecharge recapitulatifRecharge(
+    EtatDemoAdulte etat,
+    GenreTitulaireDemo genre,
+    List<ChoixRecharge> choix, {
+    bool foyerNouveau = false,
+  }) {
+    final Map<String, String> offreDe = <String, String>{
+      for (final ChoixRecharge c in choix) c.beneficiaireId: c.offreId,
+    };
+    final Map<String, OffreRecharge> offreParId = <String, OffreRecharge>{
+      for (final OffreRecharge o in _offresRecharge) o.id: o,
+    };
+    final List<LigneRecapitulatif> lignes = <LigneRecapitulatif>[
+      for (final BeneficiaireRecharge b in beneficiairesRecharge(
+        etat,
+        genre,
+        foyerNouveau: foyerNouveau,
+      ))
+        if (offreDe[b.id] case final String offreId)
+          if (offreParId[offreId] case final OffreRecharge o)
+            LigneRecapitulatif(
+              beneficiaireId: b.id,
+              prenom: b.prenom,
+              cleAvatar: b.cleAvatar,
+              montantPaye: o.libelle,
+              soldeAttribue: o.detail ?? '',
+              statut: statutAvantPaiement,
+            ),
+    ];
+    final Iterable<String> offres = offreDe.values;
+    return RecapitulatifRecharge(
+      id: 'demo-recapitulatif',
+      lignes: lignes,
+      total: _totalRecharge(
+        offres.where((String o) => o == offreA).length,
+        offres.where((String o) => o == offreB).length,
+      ),
+    );
+  }
 
   /// « A propos de cette classe », tel que le serveur le rendrait.
   static const String aProposClasse =
@@ -387,12 +778,44 @@ abstract final class DonneesAdulteDemo {
     VueDemoAdulte vue,
   ) => MonEspaceAdulteVM(ligneFamille: ligneFamille(etat, vue));
 
-  /// La ligne famille de Mon espace pour cet etat et cette vue.
-  static LigneFamilleDemo ligneFamille(EtatDemoAdulte etat, VueDemoAdulte vue) {
-    if (!aUnFoyer(etat)) return LigneFamilleDemo.ajouterMaFamille;
-    if (vue == VueDemoAdulte.secondAdulte && secondAdultePresent(etat)) {
-      return LigneFamilleDemo.forfaitFamille;
+  /// La ligne famille de Mon espace pour cet etat et cette vue, ou `null`
+  /// pour aucune ligne.
+  ///
+  /// EA-4c (revue du 27/09, F6, F7) : « Ma famille », qui ouvre le Foyer du
+  /// titulaire et ses enfants, n'est rendue QU'AU titulaire. Le second adulte
+  /// rattache voit « Forfait famille », son espace, jamais les enfants. Le
+  /// second adulte qui n'est pas (ou plus) rattache (invitation pas encore
+  /// acceptee, depart, retrait, delai, validation en attente ou refusee) est
+  /// un adulte autonome (spec sections 4 et 7.1) : « Ajouter ma famille ».
+  /// Celui qui appartient deja a un autre foyer (section 11) n'a ici aucune
+  /// ligne : la demonstration n'a pas cet autre foyer, rien n'est invente.
+  ///
+  /// Revue d'EA-4c, aucune ligne non plus pour le second adulte :
+  /// - pendant la validation administrative, en attente ou refusee : il a
+  ///   deja accepte l'invitation (section 10.4) ; lui proposer de creer une
+  ///   famille pousserait a une double appartenance (section 11) ;
+  /// - apres une reprise validee : il devient titulaire du foyer (section
+  ///   12.6), pas un adulte a qui proposer une famille (un seul forfait
+  ///   actif, section 11). La demonstration ne modelise pas la succession :
+  ///   aucune ligne plutot qu'une ligne fausse.
+  /// CHOIX PROVISOIRE, jusqu'a ce que le serveur rende la ligne de ces
+  /// situations (EA-BR-17).
+  static LigneFamilleDemo? ligneFamille(
+    EtatDemoAdulte etat,
+    VueDemoAdulte vue,
+  ) {
+    if (vue == VueDemoAdulte.titulaire) {
+      return aUnFoyer(etat)
+          ? LigneFamilleDemo.maFamille
+          : LigneFamilleDemo.ajouterMaFamille;
     }
-    return LigneFamilleDemo.maFamille;
+    if (secondAdultePresent(etat)) return LigneFamilleDemo.forfaitFamille;
+    return switch (etat) {
+      EtatDemoAdulte.dejaDansUnAutreFoyer ||
+      EtatDemoAdulte.validationEnAttente ||
+      EtatDemoAdulte.validationRefusee ||
+      EtatDemoAdulte.repriseValidee => null,
+      _ => LigneFamilleDemo.ajouterMaFamille,
+    };
   }
 }

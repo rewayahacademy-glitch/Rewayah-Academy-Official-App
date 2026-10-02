@@ -20,9 +20,10 @@
 // entre les mots a 200 %.
 //
 // Reportes, dits ici : « Voir mon historique » de « Mon parcours »
-// (00_MAQUETTES 1.1, P) attend l'historique d'EA-3 ; la cloche n'ouvre rien
-// tant que le centre de notifications de l'eleve adulte n'existe pas (EA-8 ;
-// `NotificationsPage` lit les notifications du tuteur).
+// (00_MAQUETTES 1.1, P) attend l'historique d'EA-3. La cloche ouvre ce que
+// la coquille lui donne : en demonstration, le `NotificationsPage` existant,
+// ou se trouve l'invitation recue par le second adulte (EA-7) ; le centre de
+// notifications de l'eleve adulte reste a EA-8.
 //
 // Le seul provider propre a l'ecran, [accueilAdulteProvider], n'a aucune
 // source serveur : il rend `CapaciteIndisponible` (EA-BR-04), la
@@ -35,6 +36,7 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/theme/app_spacing.dart';
@@ -42,6 +44,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/entete_page.dart';
+import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
@@ -142,6 +145,14 @@ class AccueilAdultePage extends ConsumerWidget {
       accueilAdulteProvider,
     );
     final AccueilAdulteVM? vue = lecture.value;
+    void relire() => ref.invalidate(accueilAdulteProvider);
+    // Sans reseau, un echec se dit « hors ligne », comme les soldes du foyer
+    // et Mon espace ; une capacite absente reste dite indisponible.
+    final Object? erreur = lecture.hasError ? lecture.error : null;
+    final bool echecHorsLigne =
+        erreur != null &&
+        erreur is! CapaciteIndisponible &&
+        (ref.watch(horsLigneProvider).value ?? false);
     // Pendant le chargement, l'en-tete garde sa place : une ligne de
     // squelette pour la salutation, et la cloche deja posee.
     final Widget? entete = vue != null || lecture.isLoading
@@ -153,16 +164,24 @@ class AccueilAdultePage extends ConsumerWidget {
         : null;
     return PageShell(
       entete: entete,
-      child: BlocAsynchrone<AccueilAdulteVM>(
-        valeur: lecture,
-        squelette: const SqueletteGroupe(),
-        onReessayer: () => ref.invalidate(accueilAdulteProvider),
-        construire: (AccueilAdulteVM vue) => _Corps(
-          vue: vue,
-          onRejoindre: onRejoindre,
-          onVoirRessources: onVoirRessources,
-        ),
-      ),
+      // Sans lecture de l'accueil (indisponible, echec), la cloche reste :
+      // le centre de notifications ne depend pas de cette lecture (EA-7,
+      // l'invitation recue s'y trouve).
+      actionsEntete: entete == null && onNotifications != null
+          ? <Widget>[ClocheNotifications(onPress: onNotifications)]
+          : const <Widget>[],
+      child: echecHorsLigne
+          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire)
+          : BlocAsynchrone<AccueilAdulteVM>(
+              valeur: lecture,
+              squelette: const SqueletteGroupe(),
+              onReessayer: relire,
+              construire: (AccueilAdulteVM vue) => _Corps(
+                vue: vue,
+                onRejoindre: onRejoindre,
+                onVoirRessources: onVoirRessources,
+              ),
+            ),
     );
   }
 }

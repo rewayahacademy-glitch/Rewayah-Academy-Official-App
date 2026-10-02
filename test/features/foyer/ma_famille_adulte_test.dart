@@ -8,15 +8,18 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show SemanticsNode;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
+import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
@@ -31,9 +34,11 @@ import 'package:rewayah_academy/features/compte/paiements_page.dart';
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/demo/classe_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
+import 'package:rewayah_academy/features/foyer/creer_mon_profil_indisponible.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/formulaire_profil_eleve.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
+import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 import 'package:rewayah_academy/features/foyer/ligne_membre.dart';
 import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 import 'package:rewayah_academy/features/foyer/place_adulte.dart';
@@ -119,7 +124,7 @@ void main() {
       find.descendant(of: carte, matching: find.byType(PhotoEleve)),
       findsOneWidget,
     );
-    // La place : « Ma conjointe · Mariama », ses initiales, rien d'autre.
+    // La place : « Mariama, votre conjointe », ses initiales, rien d'autre.
     expect(
       placeDit(tester, t.adulte.famille.place.maConjointe(prenom: 'Mariama')),
       isTrue,
@@ -153,8 +158,38 @@ void main() {
     // Un seul bouton dominant : « Ajouter un profil eleve ».
     expect(find.byType(ActionPrincipale), findsOneWidget);
     expect(find.text(t.foyer.ajouterProfil), findsOneWidget);
-    // Le titulaire adulte est deja eleve : pas de « Creer mon profil ».
-    expect(find.byKey(FoyerPage.monProfilKey), findsNothing);
+    // Sur telephone, la carte du titulaire EN TETE, puis la place, les
+    // profils, et seulement ensuite « Ajouter un profil eleve » (planche 3.1,
+    // E6).
+    double haut(Finder f) => tester.getTopLeft(f).dy;
+    expect(haut(carte), lessThan(haut(find.byKey(lignePlaceAdulteKey))));
+    expect(
+      haut(find.byKey(lignePlaceAdulteKey)),
+      lessThan(haut(find.byKey(FoyerPage.membresKey))),
+    );
+    expect(
+      haut(find.byKey(FoyerPage.membresKey)),
+      lessThan(haut(find.byKey(FoyerPage.ajouterKey))),
+    );
+    // « Creer mon profil eleve » garde (planche 2.3 G, E6) et « A propos du
+    // forfait famille » au pied de la page (planche 2.1).
+    expect(find.byKey(FoyerPage.monProfilKey), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(aProposForfaitKey),
+        matching: find.text(t.adulte.famille.aProposForfait),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      haut(find.byKey(aProposForfaitKey)),
+      lessThan(haut(find.byKey(FoyerPage.monProfilKey))),
+    );
+    // Jamais le mot « admin » (K-53.6).
+    expect(
+      find.textContaining(RegExp('admin', caseSensitive: false)),
+      findsNothing,
+    );
 
     // « Paiements du foyer » ouvre la page des paiements, retour a Ma famille.
     final Finder paiements = find.descendant(
@@ -277,7 +312,7 @@ void main() {
     );
     // Adulte seul : « Ajouter ma famille », comme sa ligne de Mon espace.
     expect(find.byType(FoyerPage), findsNothing);
-    expect(find.text(t.adulte.provisoire.ajouterMaFamille), findsOneWidget);
+    expect(find.byType(AjouterMaFamillePage), findsOneWidget);
     expect(find.text(t.adulte.famille.titulaire), findsNothing);
     // Second adulte : « Forfait famille », sans enfants ni place.
     for (final EcranDemoAdulte ecran in <EcranDemoAdulte>[
@@ -289,7 +324,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(FoyerPage), findsNothing, reason: ecran.name);
       expect(
-        find.text(t.adulte.provisoire.forfaitFamille),
+        find.byType(ForfaitFamillePage),
         findsOneWidget,
         reason: ecran.name,
       );
@@ -317,11 +352,13 @@ void main() {
 
     // « Ajouter un profil eleve » : le formulaire commun, sans proche adulte.
     await versMaFamille();
+    await tester.ensureVisible(find.byKey(FoyerPage.ajouterKey));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(FoyerPage.ajouterKey));
     await tester.pumpAndSettle();
     expect(find.byType(FormulaireProfilEleve), findsOneWidget);
     expect(find.text(t.foyer.ajout.pourQui.enfantTitre), findsOneWidget);
-    expect(find.text(t.foyer.ajout.pourQui.procheTitre), findsNothing);
+    expect(find.text('Un proche adulte'), findsNothing);
     expect(find.byKey(FormulaireProfilEleve.porteIllisibleKey), findsNothing);
     // Quitter le formulaire ramene a Ma famille.
     await tester.tap(find.byType(DisqueRetour));
@@ -362,7 +399,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(FoyerPage), findsOneWidget);
 
-    // La place adulte : une page provisoire honnete, retour a Ma famille.
+    // La place adulte : la page du retrait (EA-8), retour a Ma famille.
     final Finder placeLigne = find.descendant(
       of: find.byKey(lignePlaceAdulteKey),
       matching: find.text(
@@ -372,10 +409,261 @@ void main() {
     await tester.ensureVisible(placeLigne);
     await tester.tap(placeLigne);
     await tester.pumpAndSettle();
-    expect(find.text(t.adulte.provisoire.placeAdulte), findsOneWidget);
+    expect(find.byType(PlaceConjointPage), findsOneWidget);
     await tester.tap(find.byType(DisqueRetour));
     await tester.pumpAndSettle();
     expect(find.byType(FoyerPage), findsOneWidget);
+  });
+
+  testWidgets('validation refusee : « Validation refusee par la direction » '
+      'et « Faire une nouvelle demande » relance l\'invitation (E5)', (
+    WidgetTester tester,
+  ) async {
+    taille(tester, const Size(390, 844));
+    final GoRouter routeur = await monterCoquille(
+      tester,
+      adresseDemoAdulte(EcranDemoAdulte.maFamille),
+    );
+    // Hors refus, aucun bouton de nouvelle demande.
+    for (final EtatDemoAdulte etat in <EtatDemoAdulte>[
+      EtatDemoAdulte.conjointActif,
+      EtatDemoAdulte.validationEnAttente,
+      EtatDemoAdulte.delai60,
+    ]) {
+      routeur.go(adresseDemoAdulte(EcranDemoAdulte.maFamille, etat: etat));
+      await tester.pumpAndSettle();
+      expect(find.byKey(nouvelleDemandeKey), findsNothing, reason: etat.name);
+    }
+    routeur.go(
+      adresseDemoAdulte(
+        EcranDemoAdulte.maFamille,
+        etat: EtatDemoAdulte.validationRefusee,
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(placeDit(tester, 'Validation refusée par la direction'), isTrue);
+    expect(
+      find.textContaining(RegExp('admin', caseSensitive: false)),
+      findsNothing,
+    );
+    // Un bouton secondaire : le seul dominant reste « Ajouter un profil ».
+    final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
+      find.byKey(nouvelleDemandeKey),
+    );
+    expect(bouton.libelle, t.adulte.famille.place.nouvelleDemande);
+    expect(bouton.niveau, NiveauAction.secondaire);
+    // Juste sous sa ligne d'etat, avant les profils.
+    final double yBouton = tester.getTopLeft(find.byKey(nouvelleDemandeKey)).dy;
+    expect(
+      tester.getBottomLeft(find.byKey(lignePlaceAdulteKey)).dy,
+      lessThan(yBouton),
+    );
+    expect(
+      yBouton,
+      lessThan(tester.getTopLeft(find.byKey(FoyerPage.membresKey)).dy),
+    );
+    await tester.ensureVisible(find.byKey(nouvelleDemandeKey));
+    await tester.tap(find.byKey(nouvelleDemandeKey));
+    await tester.pumpAndSettle();
+    expect(find.byType(InviterConjointPage), findsOneWidget);
+    expect(find.byType(FoyerPage), findsNothing);
+  });
+
+  testWidgets('telephone : 16 entre les profils et « Ajouter un profil '
+      'eleve » (contrat A, revue EA-R m2)', (WidgetTester tester) async {
+    taille(tester, const Size(390, 844));
+    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
+    expect(
+      tester.getTopLeft(find.byKey(FoyerPage.ajouterKey)).dy -
+          tester.getBottomLeft(find.byKey(FoyerPage.membresKey)).dy,
+      AppSpacing.lg,
+    );
+  });
+
+  testWidgets('« Faire une nouvelle demande » sur bureau : compacte au bord '
+      'de fin, jamais sur toute la colonne (EA-5c, revue EA-R m1)', (
+    WidgetTester tester,
+  ) async {
+    taille(tester, const Size(1440, 900));
+    await monterCoquille(
+      tester,
+      adresseDemoAdulte(
+        EcranDemoAdulte.maFamille,
+        etat: EtatDemoAdulte.validationRefusee,
+      ),
+    );
+    final Finder bouton = find.byKey(nouvelleDemandeKey);
+    final Finder ligne = find.byKey(lignePlaceAdulteKey);
+    expect(
+      tester.getSize(bouton).width,
+      lessThan(tester.getSize(ligne).width * 0.8),
+    );
+    expect(tester.getTopRight(bouton).dx, tester.getTopRight(ligne).dx);
+    // 16 au-dessus du bouton (Ecart.vLg, revue EA-R m1).
+    expect(
+      tester.getTopLeft(bouton).dy - tester.getBottomLeft(ligne).dy,
+      AppSpacing.lg,
+    );
+  });
+
+  testWidgets('« A propos du forfait famille » sur bureau : le texte garde '
+      'la largeur de lecture (K-42, EA-5c)', (WidgetTester tester) async {
+    taille(tester, const Size(1440, 900));
+    await monterCoquille(
+      tester,
+      adresseDemoAdulte(EcranDemoAdulte.aProposForfait),
+    );
+    expect(
+      tester.getSize(find.text(t.adulte.famille.aProposForfaitPhrase)).width,
+      lessThanOrEqualTo(AppPage.largeurLecture),
+    );
+  });
+
+  testWidgets('« A propos du forfait famille » : le texte du document, puis '
+      'retour a Ma famille (E6)', (WidgetTester tester) async {
+    taille(tester, const Size(390, 844));
+    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
+    final Finder lien = find.byKey(aProposForfaitKey);
+    await tester.ensureVisible(lien);
+    await tester.tap(lien);
+    await tester.pumpAndSettle();
+    expect(find.byType(AProposForfaitFamillePage), findsOneWidget);
+    expect(
+      find.text(
+        'Le forfait famille comprend un titulaire, un conjoint ou une '
+        'conjointe adulte, et les enfants ou adolescents sous la '
+        'responsabilité du titulaire. Chaque adulte conserve son propre '
+        'compte.',
+      ),
+      findsOneWidget,
+    );
+    // Aucun prix ni remise (F12).
+    expect(find.textContaining(RegExp(r'[€%]')), findsNothing);
+    await tester.tap(find.byType(DisqueRetour));
+    await tester.pumpAndSettle();
+    expect(find.byType(FoyerPage), findsOneWidget);
+  });
+
+  testWidgets('« Creer mon profil eleve » garde : la page indisponible '
+      'existante, retour a Ma famille (E6)', (WidgetTester tester) async {
+    taille(tester, const Size(390, 844));
+    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
+    // Les deux liens du pied ne se touchent pas (EA-5c).
+    await tester.ensureVisible(find.byKey(FoyerPage.monProfilKey));
+    expect(
+      tester.getBottomLeft(find.byKey(aProposForfaitKey)).dy,
+      lessThan(tester.getTopLeft(find.byKey(FoyerPage.monProfilKey)).dy),
+    );
+    await tester.tap(find.byKey(FoyerPage.monProfilKey));
+    await tester.pumpAndSettle();
+    expect(find.byType(CreerMonProfilIndisponible), findsOneWidget);
+    // Jamais le formulaire d'un enfant.
+    expect(find.byType(FormulaireProfilEleve), findsNothing);
+    await tester.tap(find.byType(DisqueRetour));
+    await tester.pumpAndSettle();
+    expect(find.byType(FoyerPage), findsOneWidget);
+  });
+
+  testWidgets('« Creer mon profil eleve » de l\'adulte : le texte affiche '
+      'parle a un adulte deja eleve, retour « Revenir a Ma famille » (EA-5c)', (
+    WidgetTester tester,
+  ) async {
+    taille(tester, const Size(390, 844));
+    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
+    await tester.ensureVisible(find.byKey(FoyerPage.monProfilKey));
+    await tester.tap(find.byKey(FoyerPage.monProfilKey));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Pas encore disponible'), findsOneWidget);
+    expect(
+      find.text(
+        "La création d'un profil élève séparé n'est pas encore disponible. "
+        "Vos cours et Ma famille restent tels qu'ils sont.",
+      ),
+      findsOneWidget,
+    );
+    // Jamais le texte du tuteur : ni « compte de tuteur », ni cours a
+    // commencer, ni « Retour au foyer ».
+    expect(find.textContaining('tuteur'), findsNothing);
+    expect(find.text(t.foyer.monProfil.indisponiblePhrase), findsNothing);
+    expect(find.text('Retour au foyer'), findsNothing);
+    expect(
+      find.textContaining(RegExp('admin', caseSensitive: false)),
+      findsNothing,
+    );
+
+    final Finder retour = find.text('Revenir à Ma famille');
+    expect(retour, findsOneWidget);
+    await tester.ensureVisible(retour);
+    await tester.tap(retour);
+    await tester.pumpAndSettle();
+    expect(find.byType(FoyerPage), findsOneWidget);
+    expect(find.byType(CreerMonProfilIndisponible), findsNothing);
+  });
+
+  testWidgets('creer un profil en demonstration : la page dit que rien n\'est '
+      'cree, puis Ma famille', (WidgetTester tester) async {
+    taille(tester, const Size(390, 844));
+    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
+    Future<void> toucher(Finder f) async {
+      await tester.ensureVisible(f);
+      await tester.pumpAndSettle();
+      await tester.tap(f);
+      await tester.pumpAndSettle();
+    }
+
+    await toucher(find.byKey(FoyerPage.ajouterKey));
+    await toucher(find.text(t.foyer.ajout.pourQui.enfantTitre));
+    await toucher(find.byKey(FormulaireProfilEleve.actionKey));
+    await tester.enterText(
+      find.byKey(FormulaireProfilEleve.prenomKey),
+      'Yusuf',
+    );
+    await tester.enterText(find.byKey(FormulaireProfilEleve.nomKey), 'Diallo');
+    await tester.enterText(find.byKey(FormulaireProfilEleve.ageKey), '8');
+    await tester.pumpAndSettle();
+    await toucher(find.byKey(FormulaireProfilEleve.actionKey));
+
+    expect(
+      find.byKey(const ValueKey<String>('demo-profil-non-cree')),
+      findsOneWidget,
+    );
+    expect(find.text(t.adulte.famille.profilNonCreeTitre), findsOneWidget);
+    expect(find.byType(FoyerPage), findsNothing);
+    await toucher(find.text(t.adulte.invitation.revenirMaFamille));
+    expect(find.byType(FoyerPage), findsOneWidget);
+    // Ma famille est inchangee : toujours deux enfants, aucun Yusuf.
+    expect(find.text('Yusuf'), findsNothing);
+  });
+
+  testWidgets('semantique de la ligne de la place adulte : une phrase lue, '
+      'bouton seulement quand elle agit', (WidgetTester tester) async {
+    final SemanticsHandle semantique = tester.ensureSemantics();
+    taille(tester, const Size(390, 844));
+    final GoRouter routeur = await monterCoquille(
+      tester,
+      adresseDemoAdulte(EcranDemoAdulte.maFamille),
+    );
+    final String occupee = t.adulte.famille.place.maConjointe(
+      prenom: 'Mariama',
+    );
+    expect(occupee, 'Mariama, votre conjointe');
+    final SemanticsNode actionnable = tester.getSemantics(find.text(occupee));
+    expect(actionnable.label, contains(occupee));
+    expect(actionnable, isSemantics(isButton: true));
+
+    routeur.go(
+      adresseDemoAdulte(
+        EcranDemoAdulte.maFamille,
+        etat: EtatDemoAdulte.validationEnAttente,
+      ),
+    );
+    await tester.pumpAndSettle();
+    final String attente = t.adulte.famille.place.validationEnAttente;
+    final SemanticsNode etat = tester.getSemantics(find.text(attente));
+    expect(etat.label, contains(attente));
+    expect(etat, isNot(isSemantics(isButton: true)));
+    semantique.dispose();
   });
 
   testWidgets('les destinations de la coquille du tuteur reagissent toutes', (
@@ -437,6 +725,7 @@ void main() {
       WidgetTester tester, {
       required Future<List<EleveDuFoyer>> Function() eleves,
       bool horsLigne = false,
+      Future<IdentiteTitulaire> Function()? identite,
     }) async {
       taille(tester, const Size(390, 844));
       await tester.pumpWidget(
@@ -444,10 +733,14 @@ void main() {
           overrides: <Override>[
             foyerTitulaireProvider.overrideWith((Ref _) async => vue),
             identiteTitulaireProvider.overrideWith(
-              (Ref _) async => DonneesAdulteDemo.identite(
-                GenreTitulaireDemo.homme,
-                VueDemoAdulte.titulaire,
-              ),
+              (Ref _) =>
+                  identite?.call() ??
+                  Future<IdentiteTitulaire>.value(
+                    DonneesAdulteDemo.identite(
+                      GenreTitulaireDemo.homme,
+                      VueDemoAdulte.titulaire,
+                    ),
+                  ),
             ),
             elevesDuFoyerProvider.overrideWith((Ref _) => eleves()),
             horsLigneProvider.overrideWith(
@@ -494,6 +787,47 @@ void main() {
         ),
         findsOneWidget,
       );
+      expect(placeDit(tester, t.adulte.famille.place.ajouterConjointe), isTrue);
+    });
+
+    testWidgets('vide : « Aucun profil eleve », la carte, la place et '
+        '« Ajouter un profil eleve » restent', (WidgetTester tester) async {
+      await monterPage(tester, eleves: () async => const <EleveDuFoyer>[]);
+      await tester.pumpAndSettle();
+      expect(
+        find.descendant(
+          of: find.byKey(FoyerPage.membresKey),
+          matching: find.byWidgetPredicate(
+            (Widget w) =>
+                w is EtatSysteme && w.nature == NatureEtat.aucunResultat,
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(t.foyer.vide.titre), findsOneWidget);
+      expect(find.byKey(FoyerPage.titulaireKey), findsOneWidget);
+      expect(placeDit(tester, t.adulte.famille.place.ajouterConjointe), isTrue);
+      expect(find.byKey(FoyerPage.ajouterKey), findsOneWidget);
+    });
+
+    testWidgets('carte du titulaire hors ligne : dite comme telle, avec '
+        'Reessayer ; la place reste lisible', (WidgetTester tester) async {
+      await monterPage(
+        tester,
+        eleves: () async => const <EleveDuFoyer>[],
+        horsLigne: true,
+        identite: () => Future<IdentiteTitulaire>.error(Exception('reseau')),
+      );
+      await tester.pumpAndSettle();
+      final Finder hl = find.descendant(
+        of: find.byKey(FoyerPage.titulaireKey),
+        matching: find.byWidgetPredicate(
+          (Widget w) => w is EtatSysteme && w.nature == NatureEtat.horsLigne,
+        ),
+      );
+      expect(hl, findsOneWidget);
+      expect(tester.widget<EtatSysteme>(hl).onAction, isNotNull);
+      expect(find.byType(CarteIdentiteCompte), findsNothing);
       expect(placeDit(tester, t.adulte.famille.place.ajouterConjointe), isTrue);
     });
 
@@ -600,7 +934,9 @@ void main() {
       place: DelaiEnCours(DateTime.utc(2026, 12, 18)),
     );
     expect(libellePlace(delai), contains('18 décembre 2026'));
-    expect(placeActionnable(delai.place), isFalse);
+    // La ligne du delai ouvre son detail, jamais une invitation (EA-8).
+    expect(placeActionnable(delai.place), isTrue);
+    expect(placeActionnable(const ValidationEnAttente()), isFalse);
     expect(placeActionnable(const PlaceDisponible()), isTrue);
   });
 }

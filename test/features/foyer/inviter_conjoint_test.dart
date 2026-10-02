@@ -7,6 +7,8 @@
 // envoi, reponse tardive apres annulation, hors ligne, indisponible.
 
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -16,9 +18,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
+import 'package:rewayah_academy/core/widgets/ecran_resultat.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/page_etape.dart';
@@ -104,6 +109,16 @@ void main() {
     await tester.pump();
   }
 
+  // Vrai quand le noeud pose sous [cle] a le focus (EA-6c).
+  bool aLeFocus(WidgetTester tester, Key cle) => tester
+      .widget<Focus>(
+        find
+            .descendant(of: find.byKey(cle), matching: find.byType(Focus))
+            .first,
+      )
+      .focusNode!
+      .hasFocus;
+
   Future<void> taper(WidgetTester tester, Key cle) async {
     await tester.ensureVisible(find.byKey(cle));
     await tester.tap(find.byKey(cle));
@@ -133,12 +148,21 @@ void main() {
     await tester.pumpAndSettle();
     await taperPlace(tester, t.adulte.famille.place.ajouterConjointe);
 
-    // Etape 1 : titre et en-tete selon le genre (F3), texte du doc section 19.
+    // Etape 1 : titre (E4) et en-tete selon le genre (F3), texte du doc
+    // section 19, aide de l'adresse de la planche 2.2 accordee au genre.
     expect(find.byType(InviterConjointPage), findsOneWidget);
     expect(find.byType(FoyerPage), findsNothing);
-    expect(find.text(t.adulte.famille.place.ajouterConjointe), findsOneWidget);
+    expect(find.text(t.adulte.invitation.titreElle), findsOneWidget);
     expect(find.text(t.adulte.invitation.enteteElle), findsOneWidget);
     expect(find.text(t.adulte.invitation.phraseElle), findsOneWidget);
+    expect(find.text(t.adulte.invitation.courrielAideElle), findsOneWidget);
+    // E4 : « Continuer » a l'etape 1.
+    expect(
+      tester
+          .widget<ActionPrincipale>(find.byKey(InviterConjointPage.verifierKey))
+          .libelle,
+      'Continuer',
+    );
     expect(find.text(t.commun.etape.sur(n: 1, total: 2)), findsOneWidget);
     // Aucune notice « Une seule conjointe peut etre lie(e) » (F21).
     expect(find.textContaining('lié(e)'), findsNothing);
@@ -160,9 +184,17 @@ void main() {
     await saisir(tester, nom: 'Diallo');
     await taper(tester, InviterConjointPage.verifierKey);
 
-    // Etape 2 : « Verifier et envoyer », le recapitulatif.
+    // Etape 2 : « Verifier et envoyer », le recapitulatif ; son titre prend
+    // le focus ; E4 : « Envoyer l'invitation ».
     expect(find.text(t.adulte.invitation.verifierTitre), findsOneWidget);
     expect(find.text(t.commun.etape.sur(n: 2, total: 2)), findsOneWidget);
+    expect(aLeFocus(tester, InviterConjointPage.focusEtape2Key), isTrue);
+    expect(
+      tester
+          .widget<ActionPrincipale>(find.byKey(InviterConjointPage.envoyerKey))
+          .libelle,
+      "Envoyer l'invitation",
+    );
     final Finder recap = find.byKey(InviterConjointPage.recapitulatifKey);
     for (final String valeur in <String>[
       'Mariama',
@@ -190,6 +222,11 @@ void main() {
     // Envoi : le resultat suit la reponse (E7), jamais un rattachement.
     await taper(tester, InviterConjointPage.envoyerKey);
     expect(find.byKey(InviterConjointPage.envoyeeKey), findsOneWidget);
+    // EA-PL : l'envoi a son icone, distincte des etats de la reponse.
+    expect(
+      tester.widget<EcranResultat>(find.byType(EcranResultat)).icone,
+      AppIcons.invitationEnvoyee,
+    );
     expect(find.text(t.adulte.invitation.envoyeeTitre), findsWidgets);
     expect(
       find.text(
@@ -198,6 +235,7 @@ void main() {
       findsOneWidget,
     );
     expect(find.textContaining('rejoint'), findsNothing);
+    expect(aLeFocus(tester, InviterConjointPage.focusResultatKey), isTrue);
 
     // Retour a Ma famille : la ligne dit « Invitation envoyee ».
     await taper(tester, InviterConjointPage.revenirKey);
@@ -222,10 +260,12 @@ void main() {
       ),
     );
     await taperPlace(tester, t.adulte.famille.place.ajouterConjoint);
-    expect(find.text(t.adulte.famille.place.ajouterConjoint), findsOneWidget);
+    expect(find.text(t.adulte.invitation.titreLui), findsOneWidget);
     expect(find.text(t.adulte.invitation.enteteLui), findsOneWidget);
     expect(find.text(t.adulte.invitation.phraseLui), findsOneWidget);
+    expect(find.text(t.adulte.invitation.courrielAideLui), findsOneWidget);
     expect(find.text(t.adulte.invitation.enteteElle), findsNothing);
+    expect(find.text(t.adulte.invitation.courrielAideElle), findsNothing);
   });
 
   testWidgets('adresse mal formee : erreur de format seulement, a la sortie '
@@ -267,7 +307,18 @@ void main() {
     await saisir(tester);
     await taper(tester, InviterConjointPage.verifierKey);
     await taper(tester, InviterConjointPage.envoyerKey);
-    expect(find.text(t.adulte.invitation.echecTitre), findsOneWidget);
+    // D5 mot pour mot : jamais « pas partie », « pas envoyee ».
+    expect(find.text("L'envoi n'a pas été confirmé."), findsOneWidget);
+    expect(
+      find.text(
+        'Vérifiez avant de réessayer. Vos informations sont '
+        'conservées.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.textContaining('pas partie'), findsNothing);
+    expect(find.textContaining('pas été envoy'), findsNothing);
+    expect(aLeFocus(tester, InviterConjointPage.focusEchecKey), isTrue);
     expect(find.byKey(InviterConjointPage.envoyeeKey), findsNothing);
     expect(
       find.descendant(
@@ -398,10 +449,55 @@ void main() {
     expect(find.byType(FoyerPage), findsOneWidget);
     expect(placeDit(tester, t.adulte.famille.place.ajouterConjointe), isTrue);
     expect(placeDit(tester, t.adulte.famille.place.annulee), isTrue);
-    // Reponse tardive apres annulation : personne n'est rattache.
+  });
+
+  testWidgets('reponse tardive apres annulation : l\'acceptation de Mariama '
+      'arrive apres l\'annulation, personne n\'est rattache', (
+    WidgetTester tester,
+  ) async {
+    // Le serveur de demonstration rattache bien sur une invitation encore
+    // envoyee : la simulation PEUT rattacher, le cas tardif est reel.
+    expect(
+      DonneesAdulteDemo.acceptationRecue(
+        DonneesAdulteDemo.invitationEnvoyee(GenreTitulaireDemo.homme),
+        'Mariama',
+      ),
+      isA<PlaceOccupee>(),
+    );
+    // Apres l'annulation, la meme acceptation ne rattache personne.
+    final EtatPlaceAdulte apres = DonneesAdulteDemo.place(
+      EtatDemoAdulte.invitationAnnulee,
+      GenreTitulaireDemo.homme,
+    );
+    expect(apres, isA<PlaceDisponible>());
+    expect((apres as PlaceDisponible).precedente, FinInvitation.annulee);
+
+    // Parcours complet : annuler, puis Ma famille lit la place rendue apres
+    // l'acceptation tardive. Echoue des que quelqu'un est rattache.
+    taille(tester, const Size(390, 844));
+    await monterCoquille(
+      tester,
+      adresseDemoAdulte(
+        EcranDemoAdulte.invitationEnvoyee,
+        etat: EtatDemoAdulte.invitationEnAttente,
+      ),
+    );
+    await taper(tester, InvitationEnvoyeePage.annulerKey);
+    await tester.tap(confirmerAnnulation());
+    await tester.pumpAndSettle();
+    expect(find.byType(FoyerPage), findsOneWidget);
+    expect(placeDit(tester, t.adulte.famille.place.annulee), isTrue);
+    expect(placeDit(tester, t.adulte.famille.place.ajouterConjointe), isTrue);
     expect(
       placeDit(tester, t.adulte.famille.place.maConjointe(prenom: 'Mariama')),
       isFalse,
+    );
+    expect(
+      find.descendant(
+        of: find.byKey(lignePlaceAdulteKey),
+        matching: find.byType(AvatarTile),
+      ),
+      findsNothing,
     );
   });
 
@@ -420,7 +516,30 @@ void main() {
     await tester.tap(confirmerAnnulation());
     await tester.pumpAndSettle();
     expect(find.byType(InvitationEnvoyeePage), findsOneWidget);
-    expect(find.text(t.adulte.invitation.annulationEchecTitre), findsOneWidget);
+    // D5 mot pour mot : jamais « pas annulee », « toujours envoyee ».
+    expect(find.text("L'annulation n'a pas été confirmée."), findsOneWidget);
+    expect(find.text('Vérifiez avant de réessayer.'), findsOneWidget);
+    expect(find.textContaining('pas été annul'), findsNothing);
+    expect(find.textContaining('toujours envoy'), findsNothing);
+    expect(aLeFocus(tester, InviterConjointPage.focusEchecKey), isTrue);
+  });
+
+  testWidgets('detail a 1440 : le contenu part du bord de la tete de page', (
+    WidgetTester tester,
+  ) async {
+    taille(tester, const Size(1440, 900));
+    await monterCoquille(
+      tester,
+      adresseDemoAdulte(
+        EcranDemoAdulte.invitationEnvoyee,
+        etat: EtatDemoAdulte.invitationEnAttente,
+      ),
+    );
+    final double tete = tester.getTopLeft(find.byType(DisqueRetour)).dx;
+    final double contenu = tester
+        .getTopLeft(find.text(t.adulte.invitation.detailPhrase))
+        .dx;
+    expect((contenu - tete).abs(), lessThanOrEqualTo(1));
   });
 
   testWidgets('expiree et annulee : place libre, sans delai, fin dite sur la '
@@ -491,9 +610,15 @@ void main() {
       WidgetTester tester,
     ) async {
       taille(tester, const Size(390, 844));
+      // Un port espion : « Rien n'est envoyé » doit etre vrai (revue EA-R
+      // m13), aucun appel ne part hors ligne.
+      final _PortCompteur port = _PortCompteur();
       await tester.pumpWidget(
         _page(
           horsLigne: true,
+          overrides: <Override>[
+            portInvitationConjointProvider.overrideWithValue(port),
+          ],
           child: InviterConjointPage(
             placeFeminine: true,
             onAbandon: () {},
@@ -505,6 +630,8 @@ void main() {
       await saisir(tester);
       await taper(tester, InviterConjointPage.verifierKey);
       expect(find.text(t.adulte.invitation.horsLigne), findsOneWidget);
+      // Rien ne part tout seul au retour de la connexion.
+      expect(find.textContaining('pourra partir'), findsNothing);
       expect(
         tester
             .widget<ActionPrincipale>(
@@ -513,6 +640,129 @@ void main() {
             .onPress,
         isNull,
       );
+      await tester.ensureVisible(find.byKey(InviterConjointPage.envoyerKey));
+      await tester.tap(
+        find.byKey(InviterConjointPage.envoyerKey),
+        warnIfMissed: false,
+      );
+      await tester.pump();
+      expect(port.envois, 0);
+    });
+
+    testWidgets('le reseau coupe sur la page de verification : le '
+        'gestionnaire d\'envoi n\'appelle rien (revue EA-R m13)', (
+      WidgetTester tester,
+    ) async {
+      taille(tester, const Size(390, 844));
+      final _PortCompteur port = _PortCompteur();
+      final StreamController<bool> reseau = StreamController<bool>();
+      addTearDown(reseau.close);
+      reseau.add(false);
+      await tester.pumpWidget(
+        _page(
+          reseau: reseau.stream,
+          overrides: <Override>[
+            portInvitationConjointProvider.overrideWithValue(port),
+          ],
+          child: InviterConjointPage(
+            placeFeminine: true,
+            onAbandon: () {},
+            onTerminee: () {},
+          ),
+        ),
+      );
+      await tester.pump();
+      await saisir(tester);
+      await taper(tester, InviterConjointPage.verifierKey);
+      // En ligne : le gestionnaire d'envoi est branche ; on le garde.
+      final VoidCallback? envoyer = tester
+          .widget<ActionPrincipale>(find.byKey(InviterConjointPage.envoyerKey))
+          .onPress;
+      expect(envoyer, isNotNull);
+      reseau.add(true);
+      await tester.pumpAndSettle();
+      expect(find.text(t.adulte.invitation.horsLigne), findsOneWidget);
+      // Le gestionnaire lui-meme, appele hors ligne : rien ne part.
+      envoyer!();
+      await tester.pump();
+      expect(port.envois, 0);
+    });
+
+    testWidgets('le reseau coupe pendant la confirmation d\'annulation : '
+        'rien n\'est annule (revue EA-R m13)', (WidgetTester tester) async {
+      taille(tester, const Size(390, 844));
+      final _PortCompteur port = _PortCompteur();
+      final StreamController<bool> reseau = StreamController<bool>();
+      addTearDown(reseau.close);
+      reseau.add(false);
+      await tester.pumpWidget(
+        _page(
+          reseau: reseau.stream,
+          overrides: <Override>[
+            portInvitationConjointProvider.overrideWithValue(port),
+          ],
+          child: InvitationEnvoyeePage(
+            invitation: DonneesAdulteDemo.invitationEnvoyee(
+              GenreTitulaireDemo.homme,
+            ),
+            onRetour: () {},
+            onAnnulee: () {},
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await taper(tester, InvitationEnvoyeePage.annulerKey);
+      final Finder confirmer = find
+          .widgetWithText(ActionPrincipale, t.adulte.invitation.annuler)
+          .last;
+      expect(confirmer, findsOneWidget);
+      reseau.add(true);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(confirmer);
+      await tester.tap(confirmer);
+      await tester.pumpAndSettle();
+      expect(port.annulations, 0);
+    });
+
+    testWidgets('hors ligne a l\'annulation : "Annuler" attend, dit '
+        'pourquoi (EA-6c)', (WidgetTester tester) async {
+      taille(tester, const Size(390, 844));
+      final _PortCompteur port = _PortCompteur();
+      await tester.pumpWidget(
+        _page(
+          horsLigne: true,
+          overrides: <Override>[
+            portInvitationConjointProvider.overrideWithValue(port),
+          ],
+          child: InvitationEnvoyeePage(
+            invitation: DonneesAdulteDemo.invitationEnvoyee(
+              GenreTitulaireDemo.homme,
+            ),
+            onRetour: () {},
+            onAnnulee: () {},
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(find.text(t.adulte.invitation.annulerHorsLigne), findsOneWidget);
+      // Rien ne s'annule tout seul au retour de la connexion.
+      expect(find.textContaining('annulera'), findsNothing);
+      expect(
+        tester
+            .widget<ActionPrincipale>(
+              find.byKey(InvitationEnvoyeePage.annulerKey),
+            )
+            .onPress,
+        isNull,
+      );
+      // « Rien n'est annulé » est vrai : aucun appel (revue EA-R m13).
+      await tester.ensureVisible(find.byKey(InvitationEnvoyeePage.annulerKey));
+      await tester.tap(
+        find.byKey(InvitationEnvoyeePage.annulerKey),
+        warnIfMissed: false,
+      );
+      await tester.pumpAndSettle();
+      expect(port.annulations, 0);
     });
 
     testWidgets('sans source serveur (EA-BR-15) : indisponible, jamais '
@@ -546,6 +796,7 @@ void main() {
       taille(tester, const Size(390, 844));
       final _PortCompteur port = _PortCompteur()
         ..reponse.complete(const InvitationRefusee());
+      bool quitte = false;
       await tester.pumpWidget(
         _page(
           overrides: <Override>[
@@ -553,7 +804,7 @@ void main() {
           ],
           child: InviterConjointPage(
             placeFeminine: true,
-            onAbandon: () {},
+            onAbandon: () => quitte = true,
             onTerminee: () {},
           ),
         ),
@@ -564,6 +815,25 @@ void main() {
       await taper(tester, InviterConjointPage.envoyerKey);
       expect(find.text(t.adulte.invitation.refusTitre), findsOneWidget);
       expect(find.textContaining('compte'), findsNothing);
+      expect(aLeFocus(tester, InviterConjointPage.focusEchecKey), isTrue);
+      // « Envoyer » n'est plus actif ; l'action est de revenir a Ma famille.
+      expect(
+        tester
+            .widget<ActionPrincipale>(
+              find.byKey(InviterConjointPage.envoyerKey),
+            )
+            .onPress,
+        isNull,
+      );
+      final Finder revenir = find.descendant(
+        of: find.byType(EtatSysteme),
+        matching: find.text(t.adulte.invitation.revenirMaFamille),
+      );
+      expect(revenir, findsOneWidget);
+      await tester.ensureVisible(revenir);
+      await tester.tap(revenir);
+      await tester.pump();
+      expect(quitte, isTrue);
     });
 
     testWidgets('retour de l\'etape 1 : quitte ; bureau : colonne bornee', (
@@ -591,6 +861,32 @@ void main() {
       expect(quitte, isTrue);
     });
   });
+
+  test('E5/K-53.6 : aucun mot "admin" dans les textes adulte.* et foyer.*', () {
+    final Map<String, dynamic> lexique = jsonDecode(
+      File('assets/i18n/fr.i18n.json').readAsStringSync(),
+    ) as Map<String, dynamic>;
+    final RegExp motAdmin = RegExp(r'\badmin\b', caseSensitive: false);
+    final List<String> fautifs = <String>[];
+    void parcourir(String chemin, dynamic valeur) {
+      if (valeur is String) {
+        if (motAdmin.hasMatch(valeur)) fautifs.add('$chemin: "$valeur"');
+      } else if (valeur is Map<String, dynamic>) {
+        valeur.forEach((String cle, dynamic v) => parcourir('$chemin.$cle', v));
+      } else if (valeur is List<dynamic>) {
+        for (final (int i, dynamic v) in valeur.indexed) {
+          parcourir('$chemin[$i]', v);
+        }
+      }
+    }
+
+    for (final String racine in <String>['adulte', 'foyer']) {
+      if (lexique[racine] case final Map<String, dynamic> section) {
+        parcourir(racine, section);
+      }
+    }
+    expect(fautifs, isEmpty, reason: fautifs.join('\n'));
+  });
 }
 
 /// Un port qui compte les envois et repond quand le test le decide.
@@ -604,17 +900,25 @@ class _PortCompteur implements PortInvitationConjoint {
     return reponse.future;
   }
 
+  int annulations = 0;
+
   @override
-  Future<ResultatAnnulation> annuler() async => const AnnulationFaite();
+  Future<ResultatAnnulation> annuler() async {
+    annulations++;
+    return const AnnulationFaite();
+  }
 }
 
 Widget _page({
   required Widget child,
   List<Override> overrides = const <Override>[],
   bool horsLigne = false,
+  Stream<bool>? reseau,
 }) => ProviderScope(
   overrides: <Override>[
-    horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(horsLigne)),
+    horsLigneProvider.overrideWith(
+      (Ref _) => reseau ?? Stream<bool>.value(horsLigne),
+    ),
     ...overrides,
   ],
   child: TranslationProvider(

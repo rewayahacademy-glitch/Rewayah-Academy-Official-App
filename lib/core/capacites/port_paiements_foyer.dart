@@ -40,6 +40,65 @@ class PaiementFoyer {
   final bool justificatifDisponible;
 }
 
+/// Une exception sur le solde d'un beneficiaire, quand le serveur la rend
+/// (F12) : jamais deduite d'un seuil dans Flutter. L'etat normal n'en a pas
+/// (E12) : aucune pastille « Actif ».
+enum ExceptionSolde {
+  /// Le serveur dit que le solde sera bientot epuise.
+  bientotEpuise,
+
+  /// Le serveur dit que l'acces du beneficiaire est inactif.
+  inactif,
+}
+
+/// Le solde d'un beneficiaire autorise, tel que le serveur le rend (F9, F10,
+/// EA-BR-23).
+///
+/// **Aucun calcul** : le solde arrive deja redige ([soldeRendu]), sans taux
+/// ni devise ajoutes par Flutter (decision E2, Q9). Rien d'autre sur le
+/// beneficiaire : ni Classe, ni niveau, ni seance (F6, doc section 7.3).
+@immutable
+class SoldeBeneficiaire {
+  /// Cree un solde.
+  const SoldeBeneficiaire({
+    required this.id,
+    required this.prenom,
+    required this.soldeRendu,
+    this.cleAvatar,
+    this.exception,
+  });
+
+  /// L'identifiant du profil eleve.
+  final String id;
+
+  /// Le prenom du beneficiaire.
+  final String prenom;
+
+  /// La cle de sa photo, `null` sans photo ou quand le serveur ne la rend
+  /// pas (le second adulte, Q4) : les initiales.
+  final String? cleAvatar;
+
+  /// Le solde, deja redige par le serveur, affiche tel quel.
+  final String soldeRendu;
+
+  /// L'exception que le serveur rend, `null` pour l'etat normal.
+  final ExceptionSolde? exception;
+}
+
+/// Les soldes du foyer vus par le titulaire (EA-BR-23).
+@immutable
+class SoldesFoyer {
+  /// Cree la vue.
+  const SoldesFoyer({required this.beneficiaires, this.recapitulatif});
+
+  /// Une ligne par beneficiaire autorise, dans l'ordre rendu.
+  final List<SoldeBeneficiaire> beneficiaires;
+
+  /// Le recapitulatif du foyer, deja redige par le serveur, ou `null`.
+  /// Jamais additionne dans Flutter, jamais une somme a depenser (F9).
+  final String? recapitulatif;
+}
+
 /// Les paiements du foyer (contrat K6).
 abstract interface class PortPaiementsFoyer {
   /// L'historique des paiements.
@@ -47,6 +106,10 @@ abstract interface class PortPaiementsFoyer {
 
   /// Un paiement precis.
   Future<PaiementFoyer?> detail(String id);
+
+  /// Les soldes des beneficiaires autorises, pour le titulaire seulement
+  /// (EA-BR-23).
+  Future<SoldesFoyer> soldes();
 }
 
 /// Les paiements tant qu'aucune source n'existe : une page, une phrase, aucun
@@ -64,6 +127,10 @@ class PaiementsFoyerIndisponible implements PortPaiementsFoyer {
   @override
   Future<PaiementFoyer?> detail(String id) =>
       Future<PaiementFoyer?>.error(const CapaciteIndisponible('DB-CPT-03'));
+
+  @override
+  Future<SoldesFoyer> soldes() =>
+      Future<SoldesFoyer>.error(const CapaciteIndisponible('EA-BR-23'));
 }
 
 /// Les paiements employes par l'application.
