@@ -8658,6 +8658,9 @@ class Traductions$controleur$historique$fr {
 	/// fr: 'Aucun complément.'
 	String get sansComplement => 'Aucun complément.';
 
+	/// fr: 'Les faits de cette visite ne sont pas encore reçus : la séance vient de se terminer ou la connexion a été coupée. Ils s'afficheront ici dès leur réception. Le reste du rapport reste fiable.'
+	String get faitsIndisponibles => 'Les faits de cette visite ne sont pas encore reçus : la séance vient de se terminer ou la connexion a été coupée. Ils s\'afficheront ici dès leur réception. Le reste du rapport reste fiable.';
+
 	/// fr: 'Motif : {motif}'
 	String motif({required Object motif}) => 'Motif : ${motif}';
 
@@ -15865,6 +15868,7 @@ extension on Traductions {
 			'controleur.historique.cleElevesPresents' => 'Présents',
 			'controleur.historique.cleReponse' => 'Réponse',
 			'controleur.historique.sansComplement' => 'Aucun complément.',
+			'controleur.historique.faitsIndisponibles' => 'Les faits de cette visite ne sont pas encore reçus : la séance vient de se terminer ou la connexion a été coupée. Ils s\'afficheront ici dès leur réception. Le reste du rapport reste fiable.',
 			'controleur.historique.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'controleur.historique.ajouterComplement' => 'Ajouter un complément',
 			'controleur.compteRendu.titre' => 'Compte rendu',
@@ -16207,9 +16211,9 @@ extension on Traductions {
 			'tc.classe.recitation.titre' => 'Récitation',
 			'tc.classe.recitation.actif' => ({required Object prenom}) => '${prenom} récite',
 			'tc.classe.recitation.pastille' => 'Récite',
-			'tc.classe.recitation.suivants' => 'Ensuite',
 			_ => null,
 		} ?? switch (path) {
+			'tc.classe.recitation.suivants' => 'Ensuite',
 			'tc.classe.recitation.personne' => 'Personne ne récite',
 			'tc.classe.recitation.arreter' => 'Arrêter la récitation',
 			'tc.classe.support.aucun' => 'Aucun support présenté',

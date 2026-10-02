@@ -3164,6 +3164,7 @@
       "cleElevesPresents": "Présents",
       "cleReponse": "Réponse",
       "sansComplement": "Aucun complément.",
+      "faitsIndisponibles": "Les faits de cette visite ne sont pas encore reçus : la séance vient de se terminer ou la connexion a été coupée. Ils s'afficheront ici dès leur réception. Le reste du rapport reste fiable.",
       "motif": "Motif : {motif}",
       "ajouterComplement": "Ajouter un complément"
     },

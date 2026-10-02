@@ -365,7 +365,7 @@ class _DetailRapport extends StatelessWidget {
               titre: t.controleur.compteRendu.faits,
               enfants: <Widget>[
                 if (faits == null)
-                  Text(t.controleur.compteRendu.faitsAbsents, style: doux)
+                  Text(h.faitsIndisponibles, style: doux)
                 else
                   LignesFaitsVisite(faits: faits),
                 if (r.presents.isNotEmpty)
