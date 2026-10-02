@@ -37,3 +37,6 @@ Les choix ci-dessous sont donc **définitifs pour le travail en cours**. Le dire
 | Galerie vidéo de la salle : écart de 8 entre les tuiles ? | **Oui, 8**. | Ce sont des tuiles vidéo d'une même grille, pas des cartes de contenu. K-55 vise les cartes. |
 | Configuration : menu ou 4 segments ? | **4 segments** quand ils tiennent sur la largeur, menu en dessous. | Les choix visibles d'un coup d'œil valent mieux qu'un menu caché (ONGLETS-1). |
 | REMPL-1 : offre de remplacement visible aux seuls enseignants du bon genre ? | **Oui**. | Recommandation de la fiche ; cohérent avec la politique de genre déjà appliquée côté serveur (AD-BR). |
+| Lot 3 : libellés proposés (LIB-ABS-1, LIB-CAHIER-1, LIB-OBJ-1, LIB-ERR-1, FOYER-ADMIN-1, KYC-PHOTO-1) | **Adoptés tels que proposés** dans les fiches du tableau. | Ils répondent mot pour mot aux remarques du directeur. |
+| Pièce d'identité (KYC) : le contrôleur peut-il la lire (règle serveur actuelle) ? | **Non** : seule la direction la lit. Migration au branchement (KYC-LECTURE-1). | Minimisation : le contrôleur n'en a pas besoin, et le texte validé dit « seule la direction la consulte ». |
+| Salle : contraste du support partagé sur fond sombre | **Reporté à TH-2 / HU-1** (CONTRASTE-SUPPORT-1). | Les couleurs sont figées (K-37). |
