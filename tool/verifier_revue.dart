@@ -117,6 +117,8 @@ void main(List<String> arguments) {
     'libelle-ambigu',
     'mot-interne',
     'erreur-sans-action',
+    'nav-a-libelle',
+    'bascule-sans-etat',
   };
   final String? filtre = arguments
       .where((String a) => a.startsWith('--regle='))
@@ -167,6 +169,12 @@ void main(List<String> arguments) {
   }
   if (regles.contains('bouton-recompose')) {
     violations.addAll(_boutonsRecomposes());
+  }
+  if (regles.contains('nav-a-libelle')) {
+    violations.addAll(_navigationsALibelle());
+  }
+  if (regles.contains('bascule-sans-etat')) {
+    violations.addAll(_basculesSansEtat());
   }
   if (regles.contains('libelle-ambigu')) {
     for (final MapEntry<String, String> e in fr.entries) {
@@ -470,6 +478,70 @@ List<Violation> _boutonsRecomposes() {
             _ligneDe(t, m.start),
             'bouton-recompose',
             'Pressable avec fond et libelle peints dans l\'ecran',
+          ),
+        );
+      }
+    }
+  }
+  return v;
+}
+
+/// NAV-FLECHES-1 : une navigation precedent / suivant faite de boutons a
+/// libelle (`ActionPrincipale`) au lieu de `BarrePrecedentSuivant` (fleche,
+/// position, fleche, la fleche disparait aux bornes).
+List<Violation> _navigationsALibelle() {
+  final List<Violation> v = <Violation>[];
+  final RegExp appel = RegExp(r'(?<![\w.])ActionPrincipale\s*\(');
+  final RegExp libelle = RegExp(
+    r'libelle:\s*t\.[\w.]*\b(?:page)?(?:Precedent|Suivant|precedent|suivant)e?\b',
+  );
+  for (final File f in _sourcesFeatures()) {
+    final String t = _sansCommentaires(f);
+    for (final RegExpMatch m in appel.allMatches(t)) {
+      final int ferme = _fermante(t, m.end - 1);
+      if (ferme < 0) {
+        continue;
+      }
+      final RegExpMatch? l = libelle.firstMatch(t.substring(m.start, ferme));
+      if (l != null) {
+        v.add(
+          Violation(
+            f.path,
+            _ligneDe(t, m.start),
+            'nav-a-libelle',
+            'ActionPrincipale ${l.group(0)}',
+          ),
+        );
+      }
+    }
+  }
+  return v;
+}
+
+/// ETATS-BTN-1 : une commande de la salle dont l'icone dit un micro ou une
+/// camera doit declarer son etat (`bascule:`), sans quoi le disque plein ou
+/// en contour et le mot d'etat ne suivent pas.
+List<Violation> _basculesSansEtat() {
+  final List<Violation> v = <Violation>[];
+  final RegExp appel = RegExp(r'(?<![\w.])(?:CommandeSalle|BoutonAppel)\s*\(');
+  final RegExp icone = RegExp(
+    r'AppIcons\.(?:micro|microCoupe|camera|cameraCoupee)\b',
+  );
+  for (final File f in _sourcesFeatures()) {
+    final String t = _sansCommentaires(f);
+    for (final RegExpMatch m in appel.allMatches(t)) {
+      final int ferme = _fermante(t, m.end - 1);
+      if (ferme < 0) {
+        continue;
+      }
+      final String corps = t.substring(m.start, ferme);
+      if (icone.hasMatch(corps) && !corps.contains('bascule:')) {
+        v.add(
+          Violation(
+            f.path,
+            _ligneDe(t, m.start),
+            'bascule-sans-etat',
+            'commande micro ou camera sans bascule:',
           ),
         );
       }
