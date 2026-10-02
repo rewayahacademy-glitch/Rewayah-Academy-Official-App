@@ -331,20 +331,25 @@ class ReglagesComptePage extends ConsumerWidget {
             icon: AppIcons.reglages,
             enabled: false,
           ),
-          SettingRow(
-            title: t.compte.arabe,
-            description: t.compte.arabeDetail,
-            value: t.compte.nonDisponible,
-            icon: AppIcons.reglages,
-            enabled: false,
-          ),
-          SettingRow(
-            title: t.compte.fuseau,
-            description: t.compte.fuseauDetail,
-            value: t.compte.nonDisponible,
-            icon: AppIcons.reglages,
-            enabled: false,
-          ),
+          // MA-RC (MA7, K-42) : en Mode Accessibilite, les lignes inactives
+          // (sans effet pour l'eleve) ne sont pas affichees ; les rubriques
+          // et les droits restent les memes.
+          if (!modeAccessibilite) ...<Widget>[
+            SettingRow(
+              title: t.compte.arabe,
+              description: t.compte.arabeDetail,
+              value: t.compte.nonDisponible,
+              icon: AppIcons.reglages,
+              enabled: false,
+            ),
+            SettingRow(
+              title: t.compte.fuseau,
+              description: t.compte.fuseauDetail,
+              value: t.compte.nonDisponible,
+              icon: AppIcons.reglages,
+              enabled: false,
+            ),
+          ],
           Ecart.vSection,
           SectionHeader(titre: t.compte.notifications),
           SettingRow(
@@ -356,15 +361,16 @@ class ReglagesComptePage extends ConsumerWidget {
               onChanged: controleur.notificationsCours,
             ),
           ),
-          SettingRow(
-            title: t.compte.notificationsFoyer,
-            description: t.compte.notificationsFoyerDetail,
-            icon: AppIcons.foyer,
-            controle: Switch.adaptive(
-              value: preferences.notificationsFoyer,
-              onChanged: controleur.notificationsFoyer,
+          if (!modeAccessibilite)
+            SettingRow(
+              title: t.compte.notificationsFoyer,
+              description: t.compte.notificationsFoyerDetail,
+              icon: AppIcons.foyer,
+              controle: Switch.adaptive(
+                value: preferences.notificationsFoyer,
+                onChanged: controleur.notificationsFoyer,
+              ),
             ),
-          ),
           Text(t.compte.notificationsEtat),
           Ecart.vSection,
           SectionHeader(titre: t.compte.coursDonnees),
@@ -387,21 +393,23 @@ class ReglagesComptePage extends ConsumerWidget {
             ),
           ),
           Ecart.vSection,
-          SettingRow(
-            title: t.compte.appareils,
-            description: t.compte.appareilsDetail,
-            icon: AppIcons.appareil,
-            onPress: foyerDisponible
-                ? () => context.push(Routes.tuteurFoyer)
-                : null,
-            enabled: foyerDisponible,
-          ),
-          SettingRow(
-            title: t.compte.confidentialite,
-            description: t.compte.confidentialiteDetail,
-            icon: AppIcons.controleQualite,
-            enabled: false,
-          ),
+          if (!modeAccessibilite || foyerDisponible)
+            SettingRow(
+              title: t.compte.appareils,
+              description: t.compte.appareilsDetail,
+              icon: AppIcons.appareil,
+              onPress: foyerDisponible
+                  ? () => context.push(Routes.tuteurFoyer)
+                  : null,
+              enabled: foyerDisponible,
+            ),
+          if (!modeAccessibilite)
+            SettingRow(
+              title: t.compte.confidentialite,
+              description: t.compte.confidentialiteDetail,
+              icon: AppIcons.controleQualite,
+              enabled: false,
+            ),
           if (apres case final Widget bloc) ...<Widget>[Ecart.vSection, bloc],
         ],
       ),
