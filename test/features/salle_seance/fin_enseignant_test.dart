@@ -151,7 +151,7 @@ void main() {
         expect(tester.takeException(), isNull);
         for (final String texte in <String>[
           'Séance terminée',
-          'Le cahier est prêt avec les informations de la séance.',
+          'Le cahier de transmission est prêt avec les informations de la séance.',
           'Sayyid Ibrahim',
           'Fin',
           '18:45',
