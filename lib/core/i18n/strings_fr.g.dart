@@ -4625,6 +4625,12 @@ class Traductions$admin$tableau$fr {
 	/// fr: 'Dossiers à valider'
 	String get dossiers => 'Dossiers à valider';
 
+	/// fr: 'Ouvrir la file, le plus ancien en premier.'
+	String get dossiersDetail => 'Ouvrir la file, le plus ancien en premier.';
+
+	/// fr: 'Familles et enseignants attendent une réponse.'
+	String get demandesDetail => 'Familles et enseignants attendent une réponse.';
+
 	/// fr: 'Élèves sans enseignant'
 	String get foyers => 'Élèves sans enseignant';
 
@@ -15421,6 +15427,8 @@ extension on Traductions {
 			'dossiers.decision.nomComplet' => ({required Object prenom, required Object nom}) => '${prenom} ${nom}',
 			'admin.tableau.titre' => 'Centre de commande',
 			'admin.tableau.dossiers' => 'Dossiers à valider',
+			'admin.tableau.dossiersDetail' => 'Ouvrir la file, le plus ancien en premier.',
+			'admin.tableau.demandesDetail' => 'Familles et enseignants attendent une réponse.',
 			'admin.tableau.foyers' => 'Élèves sans enseignant',
 			'admin.tableau.rapports' => 'Cahiers manquants',
 			'admin.tableau.incidents' => 'Incidents (24 h)',
@@ -15861,10 +15869,10 @@ extension on Traductions {
 			'admin.journal.evtAgentJetonRevoque' => 'Accès d\'agent IA révoqué',
 			'admin.journal.evtAgentSessionOuverte' => 'Session d\'agent IA ouverte',
 			'admin.journal.evtObservationControleur' => 'Visite de contrôle commencée',
-			'admin.journal.evtJetonVideo' => 'Entrée en salle autorisée',
-			'admin.journal.vide' => 'Aucun événement enregistré',
 			_ => null,
 		} ?? switch (path) {
+			'admin.journal.evtJetonVideo' => 'Entrée en salle autorisée',
+			'admin.journal.vide' => 'Aucun événement enregistré',
 			'admin.journal.videDetail' => 'Chaque lecture de dossier, chaque décision et chaque attribution viendra s\'inscrire ici.',
 			'admin.journal.videFiltre' => 'Aucun événement ne correspond',
 			'admin.journal.videFiltreDetail' => 'Élargissez la période, ou relâchez un filtre.',
@@ -16375,10 +16383,10 @@ extension on Traductions {
 			'historique.titre' => 'Historique',
 			'historique.detailSeance' => 'Détail de la séance',
 			'historique.segments.seances' => 'Séances',
-			'historique.segments.observations' => 'Observations',
-			'historique.moisCourts.0' => 'janv.',
 			_ => null,
 		} ?? switch (path) {
+			'historique.segments.observations' => 'Observations',
+			'historique.moisCourts.0' => 'janv.',
 			'historique.moisCourts.1' => 'févr.',
 			'historique.moisCourts.2' => 'mars',
 			'historique.moisCourts.3' => 'avr.',
@@ -16889,10 +16897,10 @@ extension on Traductions {
 			'enseignant.photo.notice' => 'N\'utilisez pas votre pièce d\'identité.',
 			'enseignant.photo.choisir' => 'Choisir une photo',
 			'enseignant.photo.utiliser' => 'Utiliser cette photo',
-			'enseignant.photo.remplacer' => 'Remplacer la photo',
-			'enseignant.photo.autre' => 'Choisir une autre photo',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.photo.remplacer' => 'Remplacer la photo',
+			'enseignant.photo.autre' => 'Choisir une autre photo',
 			'enseignant.photo.changer' => 'Changer la photo',
 			'enseignant.photo.alternatif' => 'Votre photo publique',
 			'enseignant.photo.succes' => 'La photo est enregistrée.',
@@ -17403,10 +17411,10 @@ extension on Traductions {
 			'tc.groupe.espace.introuvableDetail' => 'Elle a peut-être été clôturée, ou elle concerne un autre profil.',
 			'tc.groupe.emplacement.nonBranche' => 'Bientôt disponible',
 			'tc.groupe.emplacement.nonBrancheDetail' => 'Ce contenu sera rattaché à cet espace prochainement.',
-			'tc.bibliotheque.titre' => 'Bibliothèque',
-			'tc.bibliotheque.rechercheIndication' => 'Titre, niveau, sourate ou page',
 			_ => null,
 		} ?? switch (path) {
+			'tc.bibliotheque.titre' => 'Bibliothèque',
+			'tc.bibliotheque.rechercheIndication' => 'Titre, niveau, sourate ou page',
 			'tc.bibliotheque.rechercheLibelle' => 'Rechercher un support',
 			'tc.bibliotheque.effacerRecherche' => 'Tout afficher',
 			'tc.bibliotheque.filtre.type' => 'Type',
@@ -17917,10 +17925,10 @@ extension on Traductions {
 			'adulte.invitation.garder' => 'Garder l\'invitation',
 			'adulte.invitation.annulationEchecTitre' => 'L\'invitation n\'a pas été annulée',
 			'adulte.invitation.annulationEchecPhrase' => 'La connexion a été interrompue. L\'invitation est toujours envoyée : vous pouvez réessayer.',
-			'adulte.demo.titre' => 'Démonstration de l\'élève adulte',
-			'adulte.demo.mention' => 'Les données sont fictives et rien n\'est envoyé.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.demo.titre' => 'Démonstration de l\'élève adulte',
+			'adulte.demo.mention' => 'Les données sont fictives et rien n\'est envoyé.',
 			'adulte.demo.intro' => 'Choisissez un écran, puis une situation du foyer Diallo.',
 			'adulte.demo.ecrans' => 'Les écrans',
 			'adulte.demo.situations' => 'Les situations du foyer',

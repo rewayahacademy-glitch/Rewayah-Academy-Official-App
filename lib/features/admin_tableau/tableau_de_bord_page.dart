@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/service_admin.dart';
 import '../../core/capacites/revue_dossiers_depuis_validation.dart';
 import '../../core/domain/enums.dart';
@@ -10,16 +11,18 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/matching/service_matching.dart';
 import '../../core/router/routes.dart';
-import '../../core/theme/app_gabarit.dart';
+import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_typography.dart';
+import '../../core/widgets/app_card.dart';
 import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/signal_row.dart';
 import '../../core/widgets/skeleton.dart';
-import '../../core/widgets/stat_tile.dart';
 
 /// Une ligne de la liste « a traiter en premier ».
 ///
@@ -148,6 +151,20 @@ class TableauDeBordPage extends ConsumerWidget {
     // la seconde changerait seule.
     final DateTime maintenant = horloge();
 
+    // BENTO-1 : les trois plus anciens dossiers, en apercu dans la grande
+    // tuile. Memes donnees que la file ci-dessous, aucun appel de plus.
+    final List<DossierAValider> plusAnciens =
+        RevueDossiersDepuisValidation.enseignantsSeulement(
+          dossiers.value ?? const <DossierAValider>[],
+        ).toList()..sort(
+          (DossierAValider a, DossierAValider b) =>
+              a.deposeLe.compareTo(b.deposeLe),
+        );
+    final List<String> apercu = <String>[
+      for (final DossierAValider d in plusAnciens.take(3))
+        '${d.libelleCourt} · ${_anciennete(maintenant, d.deposeLe)}',
+    ];
+
     return PageShell(
       titre: t.admin.tableau.titre,
       child: Column(
@@ -156,7 +173,7 @@ class TableauDeBordPage extends ConsumerWidget {
           // 1. LES SIX COMPTEURS. Ils sont rendus des que la lecture aboutit,
           // zeros compris.
           if (indicateurs.hasValue)
-            _Compteurs(indicateurs: indicateurs.requireValue)
+            _Compteurs(indicateurs: indicateurs.requireValue, apercu: apercu)
           else if (indicateurs.hasError)
             Text(
               t.admin.tableau.compteursErreur,
@@ -189,15 +206,7 @@ class TableauDeBordPage extends ConsumerWidget {
                   // La nouveaute se dit en jours, jamais en heures : une ligne
                   // deposee ce matin et une deposee la veille se lisent d'un
                   // coup d'oeil, et le tri se verifie a l'oeil.
-                  anciennete: switch (maintenant
-                      .difference(ligne.depuis)
-                      .inDays) {
-                    <= 0 => t.admin.tableau.attenteAujourdhui,
-                    1 => t.admin.tableau.attenteUnJour,
-                    _ => t.admin.tableau.attenteJours(
-                      jours: '${maintenant.difference(ligne.depuis).inDays}',
-                    ),
-                  },
+                  anciennete: _anciennete(maintenant, ligne.depuis),
                   onPress: () =>
                       GoRouter.of(context)
                           .go(ligne.destination, extra: ligne.extra),
@@ -260,7 +269,14 @@ class TableauDeBordPage extends ConsumerWidget {
   }
 }
 
-/// Les six compteurs, en deux colonnes.
+/// Les six compteurs, en grille Bento (BENTO-1).
+///
+/// **Jamais un damier.** La taille d'une tuile suit l'urgence de ce qu'elle
+/// compte : « Dossiers a valider » est la grande tuile large, avec la phrase
+/// d'action ; « Demandes a trancher » la tuile haute ; les deux suivants des
+/// carres ; « Incidents (24 h) » et « Acces echus », quand ils valent zero
+/// tous les deux, partagent une seule tuile large en bas, chaque chiffre
+/// gardant son libelle.
 ///
 /// Quatre portent vers un ecran d'action (dossiers, demandes, attribution,
 /// rapports manquants) : un chiffre qui mene a sa file se charge d'un coup de
@@ -271,77 +287,262 @@ class TableauDeBordPage extends ConsumerWidget {
 /// aucune fonction Securite/Personnes reelle a filtrer : une tuile sans
 /// [onPress] est un rapport, jamais un bouton grise.
 class _Compteurs extends StatelessWidget {
-  const _Compteurs({required this.indicateurs});
+  const _Compteurs({required this.indicateurs, this.apercu = const <String>[]});
 
   final IndicateursAdmin indicateurs;
 
+  /// Les plus anciens dossiers, nom et delai, pour la grande tuile.
+  final List<String> apercu;
+
+  @override
   @override
   Widget build(BuildContext context) {
-    final List<StatTile> tuiles = <StatTile>[
-      StatTile(
-        valeur: indicateurs.dossiersEnAttente,
-        libelle: t.admin.tableau.dossiers,
-        onPress: () => GoRouter.of(context).go(Routes.adminPersonnesDossiers),
-      ),
-      StatTile(
-        valeur: indicateurs.demandesEnAttente,
-        libelle: t.admin.tableau.demandes,
-        onPress: () => GoRouter.of(context).go(Routes.adminOperationsDemandes),
-      ),
-      StatTile(
-        valeur: indicateurs.foyersSansEnseignant,
-        libelle: t.admin.tableau.foyers,
-        onPress: () =>
-            GoRouter.of(context).go(Routes.adminOperationsAttributions),
-      ),
-      StatTile(
-        valeur: indicateurs.rapportsManquants,
-        libelle: t.admin.tableau.rapports,
-        // Branche le 19 septembre 2026 (mission Securite/Direction/Accueil) :
-        // Pedagogie > Qualite (ADM-14) existe depuis la nuit precedente et
-        // affiche deja le groupe « Rapport manquant » ouvert par defaut. Le
-        // compteur restait mort depuis la toute premiere migration -- voir
-        // le commentaire de tete de fichier de `qualite_page.dart`.
-        onPress: () => GoRouter.of(context).go(Routes.adminPedagogieQualite),
-      ),
-      StatTile(
-        valeur: indicateurs.incidents24h,
-        libelle: t.admin.tableau.incidents,
-      ),
-      StatTile(
-        valeur: indicateurs.comptesEchus,
-        libelle: t.admin.tableau.comptes,
-      ),
-    ];
-
-    // Le nombre de colonnes vient du gabarit, jamais d'une largeur comparee
-    // ici : `05-regles-responsive.md` section 3 demande « grille de deux » en
-    // tablette et « grille de quatre chiffres » en desktop.
-    //
-    // Avant ce correctif, le diviseur etait **2 a toutes les largeurs**. A
-    // 1366 px, les six compteurs devenaient donc six rectangles etires sur une
-    // demi-page, ce que la section 2 du meme document interdit en une phrase :
-    // « Ne pas agrandir l'application mobile. Reorganiser. »
-    final int colonnes = switch (AppGabarit.de(context)) {
-      Gabarit.mobile || Gabarit.tablette => 2,
-      Gabarit.desktop => 4,
-    };
-
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints contraintes) {
-        // La largeur derive de l'echelle et du nombre de colonnes, elle n'est
-        // jamais posee telle quelle.
-        final double colonne =
-            (contraintes.maxWidth - AppSpacing.lg * (colonnes - 1)) / colonnes;
-        return Wrap(
-          spacing: AppSpacing.lg,
-          runSpacing: AppSpacing.lg,
-          children: <Widget>[
-            for (final StatTile tuile in tuiles)
-              SizedBox(width: colonne, child: tuile),
-          ],
-        );
-      },
+    final bool calmes =
+        indicateurs.incidents24h == 0 && indicateurs.comptesEchus == 0;
+    return GrilleBento(
+      tuiles: <TuileBento>[
+        // Le plus urgent : la grande tuile, avec ce qu'un tap y fait.
+        TuileBento(
+          etendue: EtendueBento.large,
+          etendueLarge: EtendueBento.grande,
+          child: _TuileCompteur(
+            valeur: indicateurs.dossiersEnAttente,
+            libelle: t.admin.tableau.dossiers,
+            detail: t.admin.tableau.dossiersDetail,
+            apercu: apercu,
+            enLigne: true,
+            onPress: () =>
+                GoRouter.of(context).go(Routes.adminPersonnesDossiers),
+          ),
+        ),
+        TuileBento(
+          etendue: EtendueBento.haute,
+          child: _TuileCompteur(
+            valeur: indicateurs.demandesEnAttente,
+            libelle: t.admin.tableau.demandes,
+            detail: t.admin.tableau.demandesDetail,
+            onPress: () =>
+                GoRouter.of(context).go(Routes.adminOperationsDemandes),
+          ),
+        ),
+        TuileBento(
+          etendue: EtendueBento.carree,
+          child: _TuileCompteur(
+            valeur: indicateurs.foyersSansEnseignant,
+            libelle: t.admin.tableau.foyers,
+            onPress: () =>
+                GoRouter.of(context).go(Routes.adminOperationsAttributions),
+          ),
+        ),
+        TuileBento(
+          etendue: EtendueBento.carree,
+          child: _TuileCompteur(
+            valeur: indicateurs.rapportsManquants,
+            libelle: t.admin.tableau.rapports,
+            // Branche le 19 septembre 2026 : Pedagogie > Qualite (ADM-14)
+            // affiche le groupe « Rapport manquant » ouvert par defaut.
+            onPress: () =>
+                GoRouter.of(context).go(Routes.adminPedagogieQualite),
+          ),
+        ),
+        // Incidents et acces echus n'ont encore aucun ecran a filtrer : une
+        // tuile sans appui est un rapport, jamais un bouton grise. A zero
+        // tous les deux, ils partagent une seule tuile large.
+        if (calmes)
+          TuileBento(
+            etendue: EtendueBento.large,
+            etendueLarge: const EtendueBento(4, 1),
+            child: _TuileDouble(
+              gauche: (indicateurs.incidents24h, t.admin.tableau.incidents),
+              droite: (indicateurs.comptesEchus, t.admin.tableau.comptes),
+            ),
+          )
+        else ...<TuileBento>[
+          TuileBento(
+            etendue: EtendueBento.carree,
+            etendueLarge: EtendueBento.large,
+            child: _TuileCompteur(
+              valeur: indicateurs.incidents24h,
+              libelle: t.admin.tableau.incidents,
+            ),
+          ),
+          TuileBento(
+            etendue: EtendueBento.carree,
+            etendueLarge: EtendueBento.large,
+            child: _TuileCompteur(
+              valeur: indicateurs.comptesEchus,
+              libelle: t.admin.tableau.comptes,
+            ),
+          ),
+        ],
+      ],
     );
   }
 }
+
+/// Un compteur dans sa tuile : le chiffre, ce qu'il compte, et, pour les
+/// plus urgents, ce qu'un tap y fait.
+class _TuileCompteur extends StatelessWidget {
+  const _TuileCompteur({
+    required this.valeur,
+    required this.libelle,
+    this.detail,
+    this.onPress,
+    this.enLigne = false,
+    this.apercu = const <String>[],
+  });
+
+  final int valeur;
+  final String libelle;
+  final String? detail;
+  final VoidCallback? onPress;
+
+  /// Vrai pour la tuile large : son chiffre est plus grand.
+  final bool enLigne;
+
+  /// Un apercu de la file, montre seulement quand la tuile a la place
+  /// (grande tuile, au moins une ligne et demie de grille).
+  final List<String> apercu;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AppColorPair paire = palette.surfaceRaised;
+    final Widget chiffre = Text(
+      '$valeur',
+      style: AppTypography.tabulaire(
+        // Le chiffre de la tuile large domine ; dans un carre, il laisse
+        // au libelle la place de ses deux lignes.
+        paire.applyTo(
+          (enLigne ? textes.displayMedium : textes.headlineLarge) ??
+              const TextStyle(),
+        ),
+      ),
+    );
+    final Widget texte = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        TexteSansCoupure(
+          libelle,
+          style: paire.applyTo(
+            (detail == null ? textes.labelMedium : textes.labelLarge) ??
+                const TextStyle(),
+          ),
+        ),
+        if (detail != null) ...<Widget>[
+          Ecart.vXs,
+          TexteSansCoupure(
+            detail!,
+            style: paire.applyTo(textes.bodySmall ?? const TextStyle()),
+          ),
+        ],
+      ],
+    );
+    return AppCard(
+      surface: paire,
+      marge: AppSpacing.lg,
+      onPress: onPress,
+      // Le libelle lu tient le chiffre ET ce qu'il compte.
+      libelleSemantique: '$valeur $libelle',
+      // Le chiffre en haut, ce qu'il compte en bas : la tuile est remplie
+      // quelle que soit sa forme. En une colonne (texte agrandi), la hauteur
+      // est libre et les deux se suivent.
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints c) {
+          final bool place =
+              apercu.isNotEmpty &&
+              c.hasBoundedHeight &&
+              c.maxHeight >= GrilleBento.hauteurLigne * 1.5;
+          return ContenuTuileBento(
+            children: <Widget>[
+              chiffre,
+              if (place)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    for (final String ligne in apercu) ...<Widget>[
+                      TexteSansCoupure(
+                        ligne,
+                        style: paire.applyTo(
+                          textes.bodyMedium ?? const TextStyle(),
+                        ),
+                      ),
+                      Ecart.vXs,
+                    ],
+                  ],
+                ),
+              Ecart.vXs,
+              texte,
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// Deux compteurs calmes dans une seule tuile large, chacun avec son libelle.
+class _TuileDouble extends StatelessWidget {
+  const _TuileDouble({required this.gauche, required this.droite});
+
+  final (int, String) gauche;
+  final (int, String) droite;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AppColorPair paire = palette.surfaceRaised;
+    Widget chiffre(int v) => Expanded(
+      child: Text(
+        '$v',
+        style: AppTypography.tabulaire(
+          paire.applyTo(textes.headlineMedium ?? const TextStyle()),
+        ),
+      ),
+    );
+    Widget libelle(String l) => Expanded(
+      child: TexteSansCoupure(
+        l,
+        style: paire.applyTo(textes.labelMedium ?? const TextStyle()),
+      ),
+    );
+    return AppCard(
+      surface: paire,
+      marge: AppSpacing.lg,
+      libelleSemantique: '${gauche.$1} ${gauche.$2}, ${droite.$1} ${droite.$2}',
+      // Les chiffres en haut, leurs libelles en bas, chacun sous le sien.
+      child: ContenuTuileBento(
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              chiffre(gauche.$1),
+              Ecart.hLg,
+              chiffre(droite.$1),
+            ],
+          ),
+          Ecart.vXs,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              libelle(gauche.$2),
+              Ecart.hLg,
+              libelle(droite.$2),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Depuis quand une ligne attend, dit en jours, jamais en heures : une ligne
+/// deposee ce matin et une deposee la veille se lisent d'un coup d'oeil.
+String _anciennete(DateTime maintenant, DateTime depuis) =>
+    switch (maintenant.difference(depuis).inDays) {
+      <= 0 => t.admin.tableau.attenteAujourdhui,
+      1 => t.admin.tableau.attenteUnJour,
+      final int jours => t.admin.tableau.attenteJours(jours: '$jours'),
+    };
