@@ -1,0 +1,147 @@
+{
+  "vague": "Élèves adultes — captures de recette (EA-12b)",
+  "branche": "ui/eleves-adultes-v1",
+  "dernier_commit": "510acbb",
+  "note_commit": "510acbb est le commit de ui/eleves-adultes-v1 (base 298ba34, elle-même sur 43e0682, poussée) qui ajoute test/features/adulte_recette/captures_ea12_test.dart (50 tests, 50 réussis, 0 échec) et produit les 50 PNG listés ici dans build/captures/ea-12, copiés ensuite dans 16_eleves_adultes/captures/ea12.",
+  "note_captures": "Chaque capture a été produite par ce commit (flutter test ... --reporter expanded, sous flutter-verrou.ps1, CAPTURE_DIR=build/captures/ea-12) puis copiée telle quelle ; aucun chemin n'est inventé. Les écrans déjà couverts par les commits EA-2 à EA-11 (ex. 00_REPRISE.md, 02_DECOUPAGE.md) ne sont PAS repris ici : cette planche ne liste que les captures nouvelles d'EA-12b, qui comblent cinq trous connus (voir 05_recette/EA/RAPPORT.md, section « Captures »). Au moins 8 PNG de cette liste ont été ouverts et relus par l'agent avant publication (voir RAPPORT.md) ; aucun défaut visuel n'y a été constaté.",
+  "ecrans": [
+    {
+      "id": "ea10_recharge_hors_ligne",
+      "titre": "La recharge du foyer, étape 1, hors ligne (trou EA-10 : jamais capturé, la route de démonstration force horsLigne=false)",
+      "gabarit": "RechargeFoyerPage, étape 1 (montée directement avec hoteCapture, horsLigneProvider forcé à vrai, port en échec)",
+      "composants_partages": ["PageEtape", "EtatSysteme", "OfflineBanner"],
+      "captures": [
+        "ea12_recharge_hors_ligne_390_light.png",
+        "ea12_recharge_hors_ligne_390_dark.png",
+        "ea12_recharge_hors_ligne_768_light.png",
+        "ea12_recharge_hors_ligne_768_dark.png",
+        "ea12_recharge_hors_ligne_1440_light.png",
+        "ea12_recharge_hors_ligne_1440_dark.png",
+        "ea12_recharge_hors_ligne_390_light_200pc.png"
+      ]
+    },
+    {
+      "id": "ea8_forfait_lien_reprise",
+      "titre": "Forfait famille (second adulte), avec le lien tertiaire « Demande de reprise du foyer » rendu visible par défilement (trou EA-8 : le lien existe depuis EA-11, jamais mis en évidence dans une capture)",
+      "gabarit": "ForfaitFamillePage, défilée jusqu'à ForfaitFamillePage.repriseKey",
+      "composants_partages": ["PageShell", "ActionPrincipale", "LienFleche"],
+      "captures": [
+        "ea12_forfait_lien_reprise_390_light.png",
+        "ea12_forfait_lien_reprise_390_dark.png",
+        "ea12_forfait_lien_reprise_768_light.png",
+        "ea12_forfait_lien_reprise_768_dark.png",
+        "ea12_forfait_lien_reprise_1440_light.png",
+        "ea12_forfait_lien_reprise_1440_dark.png",
+        "ea12_forfait_lien_reprise_390_light_200pc.png"
+      ]
+    },
+    {
+      "id": "ea4_mon_espace_adulte_seul",
+      "titre": "Mon espace, adulte seul (trou EA-4 : seul 390 existait, 768 et 1440 manquaient)",
+      "gabarit": "MonEspaceAdultePage, ligne famille « Ajouter ma famille »",
+      "composants_partages": ["PageShell", "GroupeReglages", "LienFleche"],
+      "captures": [
+        "ea12_mon_espace_adulte_seul_768_light.png",
+        "ea12_mon_espace_adulte_seul_768_dark.png",
+        "ea12_mon_espace_adulte_seul_1440_light.png",
+        "ea12_mon_espace_adulte_seul_1440_dark.png"
+      ]
+    },
+    {
+      "id": "ea7_invitation_recue_acceptee",
+      "titre": "Invitation reçue, acceptée (trou EA-7 : seul 390 existait)",
+      "gabarit": "InvitationRecuePage, après InvitationRecuePage.accepterKey",
+      "composants_partages": ["PageEtape", "ActionPrincipale", "EtatSysteme"],
+      "captures": [
+        "ea12_invitation_acceptee_768_light.png",
+        "ea12_invitation_acceptee_768_dark.png",
+        "ea12_invitation_acceptee_1440_light.png",
+        "ea12_invitation_acceptee_1440_dark.png"
+      ]
+    },
+    {
+      "id": "ea7_invitation_recue_refusee",
+      "titre": "Invitation reçue, refusée (trou EA-7 : seul 390 existait)",
+      "gabarit": "InvitationRecuePage, après InvitationRecuePage.refuserKey",
+      "composants_partages": ["PageEtape", "ActionPrincipale", "EtatSysteme"],
+      "captures": [
+        "ea12_invitation_refusee_768_light.png",
+        "ea12_invitation_refusee_768_dark.png",
+        "ea12_invitation_refusee_1440_light.png",
+        "ea12_invitation_refusee_1440_dark.png"
+      ]
+    },
+    {
+      "id": "ea7_invitation_recue_echec_reseau",
+      "titre": "Invitation reçue, erreur réseau à l'acceptation, D5 (trou EA-7 : seul 390 existait)",
+      "gabarit": "InvitationRecuePage, état erreurReseau, après InvitationRecuePage.accepterKey",
+      "composants_partages": ["PageEtape", "ActionPrincipale", "EtatSysteme"],
+      "captures": [
+        "ea12_invitation_echec_reseau_768_light.png",
+        "ea12_invitation_echec_reseau_768_dark.png",
+        "ea12_invitation_echec_reseau_1440_light.png",
+        "ea12_invitation_echec_reseau_1440_dark.png"
+      ]
+    },
+    {
+      "id": "ea11_reprise_etat_deposee",
+      "titre": "Reprise du foyer, état « déposée » (trou EA-11 : seul 390 existait)",
+      "gabarit": "RepriseFoyerPage, second adulte, après RepriseFoyerPage.deposerKey puis confirmation",
+      "composants_partages": ["PageShell", "ConfirmDestructive", "ActionPrincipale"],
+      "captures": [
+        "ea12_reprise_etat_deposee_768_light.png",
+        "ea12_reprise_etat_deposee_768_dark.png",
+        "ea12_reprise_etat_deposee_1440_light.png",
+        "ea12_reprise_etat_deposee_1440_dark.png"
+      ]
+    },
+    {
+      "id": "ea11_reprise_etat_refusee_par_titulaire",
+      "titre": "Reprise du foyer, état « refusée par le titulaire » (trou EA-11 : seul 390 existait)",
+      "gabarit": "RepriseFoyerPage, second adulte, état repriseRefuseeParTitulaire",
+      "composants_partages": ["PageShell"],
+      "captures": [
+        "ea12_reprise_etat_refusee_par_titulaire_768_light.png",
+        "ea12_reprise_etat_refusee_par_titulaire_768_dark.png",
+        "ea12_reprise_etat_refusee_par_titulaire_1440_light.png",
+        "ea12_reprise_etat_refusee_par_titulaire_1440_dark.png"
+      ]
+    },
+    {
+      "id": "ea11_reprise_etat_attente_administration",
+      "titre": "Reprise du foyer, état « en attente de l'administration », jour 30 sans réponse (trou EA-11 : seul 390 existait)",
+      "gabarit": "RepriseFoyerPage, second adulte, état repriseSansReponse",
+      "composants_partages": ["PageShell"],
+      "captures": [
+        "ea12_reprise_etat_attente_administration_768_light.png",
+        "ea12_reprise_etat_attente_administration_768_dark.png",
+        "ea12_reprise_etat_attente_administration_1440_light.png",
+        "ea12_reprise_etat_attente_administration_1440_dark.png"
+      ]
+    },
+    {
+      "id": "ea11_reprise_etat_validee",
+      "titre": "Reprise du foyer, état « validée » (trou EA-11 : seul 390 existait)",
+      "gabarit": "RepriseFoyerPage, second adulte, état repriseValidee",
+      "composants_partages": ["PageShell", "LigneCleValeur"],
+      "captures": [
+        "ea12_reprise_etat_validee_768_light.png",
+        "ea12_reprise_etat_validee_768_dark.png",
+        "ea12_reprise_etat_validee_1440_light.png",
+        "ea12_reprise_etat_validee_1440_dark.png"
+      ]
+    },
+    {
+      "id": "ea11_reprise_etat_refusee",
+      "titre": "Reprise du foyer, état « refusée » par l'administration (trou EA-11 : seul 390 existait)",
+      "gabarit": "RepriseFoyerPage, second adulte, état repriseRefusee",
+      "composants_partages": ["PageShell", "LigneCleValeur"],
+      "captures": [
+        "ea12_reprise_etat_refusee_768_light.png",
+        "ea12_reprise_etat_refusee_768_dark.png",
+        "ea12_reprise_etat_refusee_1440_light.png",
+        "ea12_reprise_etat_refusee_1440_dark.png"
+      ]
+    }
+  ]
+}
