@@ -16,6 +16,7 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
+import 'package:rewayah_academy/features/salle_seance/dock_seance.dart';
 
 import '../../router/support_routeur.dart' show stabiliser;
 
@@ -114,6 +115,34 @@ void main() {
             const ValueKey<String>('vignette-support-pile'),
           );
           if (echelle >= 2) {
+            // MA-RC (M1, MA9, MA20) : a 200 %, jamais une icone seule ; chaque
+            // commande du dock garde son libelle visible dessous.
+            final Finder dock = find.byKey(
+              const ValueKey<String>('dock-seance'),
+            );
+            final Finder boutonsDock = find.descendant(
+              of: dock,
+              matching: find.byType(BoutonAppel),
+            );
+            expect(boutonsDock, findsWidgets);
+            for (int i = 0; i < boutonsDock.evaluate().length; i++) {
+              expect(
+                find.descendant(
+                  of: boutonsDock.at(i),
+                  matching: find.byType(Text),
+                ),
+                findsOneWidget,
+              );
+            }
+            for (final String libelle in <String>[
+              t.salle.quitter,
+              t.salle.seance.parler,
+            ]) {
+              expect(
+                find.descendant(of: dock, matching: find.text(libelle)),
+                findsOneWidget,
+              );
+            }
             expect(pile, findsOneWidget);
             final Finder chapitre = find.textContaining('Chapitre');
             expect(chapitre, findsWidgets);

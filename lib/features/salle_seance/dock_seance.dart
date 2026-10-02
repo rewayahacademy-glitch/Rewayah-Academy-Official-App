@@ -102,6 +102,21 @@ class _DockEtroit extends InheritedWidget {
   bool updateShouldNotify(_DockEtroit ancien) => ancien.diametre != diametre;
 }
 
+/// MA9, MA20 : en Mode Accessibilite, a texte agrandi, le dock etroit
+/// garde un libelle visible sous chaque commande (deux commandes par ligne),
+/// sur deux lignes au plus, passant a la ligne entre les mots. Jamais une
+/// icone seule. Hors Mode Accessibilite, EN-12 s'applique inchange.
+class _DockLibelles extends InheritedWidget {
+  const _DockLibelles({required this.diametre, required super.child});
+
+  /// MA10 : 56, le haut de la plage des boutons majeurs quand la
+  /// composition ne permet pas plus (deux rangees de libelles sur telephone).
+  final double diametre;
+
+  @override
+  bool updateShouldNotify(_DockLibelles ancien) => ancien.diametre != diametre;
+}
+
 /// Un bouton du dock : cercle, icone, libelle dessous.
 class BoutonAppel extends StatelessWidget {
   const BoutonAppel({
@@ -142,7 +157,11 @@ class BoutonAppel extends StatelessWidget {
     final _DockEtroit? etroit = context
         .dependOnInheritedWidgetOfExactType<_DockEtroit>();
     final bool iconeSeule = etroit != null;
-    final double diametre = etroit?.diametre ?? diametreBoutonAppel(context);
+    final _DockLibelles? libelles = context
+        .dependOnInheritedWidgetOfExactType<_DockLibelles>();
+    final bool libelleLong = libelles != null;
+    final double diametre =
+        etroit?.diametre ?? libelles?.diametre ?? diametreBoutonAppel(context);
     final double tailleIcone = _tailleIconeAppel(context);
     final BoxDecoration disque = !actif
         ? palette.surfaceRaised.decoration(
@@ -213,8 +232,12 @@ class BoutonAppel extends StatelessWidget {
             Ecart.vXs,
             Text(
               libelle,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+              maxLines: libelleLong ? 2 : 1,
+              softWrap: libelleLong,
+              textAlign: libelleLong ? TextAlign.center : null,
+              overflow: libelleLong
+                  ? TextOverflow.visible
+                  : TextOverflow.ellipsis,
               style: (actif ? palette.inkStrong : palette.inkMuted).applyTo(
                 theme.textTheme.labelMedium ?? const TextStyle(),
               ),
@@ -440,6 +463,29 @@ class DockSeance extends StatelessWidget {
               final bool texteAgrandi =
                   MediaQuery.textScalerOf(contexte).scale(1) > 1;
               if (!serre && !texteAgrandi) return rangee;
+              // MA9, MA20 : Mode Accessibilite a texte agrandi, deux
+              // commandes par ligne, libelle visible sous chaque disque.
+              if (texteAgrandi &&
+                  AppMetriques.of(contexte).mode == InterfaceMode.enfant) {
+                final double largeurCase = contraintes.maxWidth / 2;
+                return _DockLibelles(
+                  diametre: math.min(
+                    diametre,
+                    AppTouchTarget.standard + AppSpacing.sm,
+                  ),
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    runSpacing: AppSpacing.md,
+                    children: <Widget>[
+                      for (final Widget bouton in boutons)
+                        SizedBox(
+                          width: largeurCase,
+                          child: Center(child: bouton),
+                        ),
+                    ],
+                  ),
+                );
+              }
               // EN-12 (17 d) : icone seule, libelle lu ; disque a la case
               // moins un ecart, jamais sous la cible tactile.
               final double cible = AppMetriques.of(contexte).cibleTactile;
