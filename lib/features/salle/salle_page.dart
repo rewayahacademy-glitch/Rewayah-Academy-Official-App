@@ -29,6 +29,7 @@ import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/avatar_nom.dart';
+import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/commande_salle.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/lien_fleche.dart';
@@ -686,6 +687,67 @@ class _Entete extends StatelessWidget {
 
     final _EtatLien etatDuLien = _etatDuLien(vue);
 
+    // SALLE-200-1 : texte agrandi au-dela du seuil, l'en-tete se resserre en
+    // une seule rangee qui passe a la ligne au lieu de s'empiler (pastille du
+    // lien, ma presence, lien vers la liste) : le support garde la hauteur.
+    if (!motEtatVisible(context)) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: <Widget>[
+              _pastilleDuLien(etatDuLien),
+              if (vue.lienADire && vue.phase != PhaseSalle.instable)
+                Text(
+                  vue.qualite == QualiteLien.perdue
+                      ? t.salle.lienPerdu
+                      : t.salle.lienMediocre,
+                  style: _encreSalle(
+                    context,
+                    textes.labelMedium,
+                    active: encreAccessible,
+                  ),
+                ),
+              // Ma presence en pastille seule : « Votre presence » est lu avec
+              // l'etat, et la pastille porte deja le mot de l'etat (J7).
+              if (mienne case final VuePresence etat)
+                MergeSemantics(
+                  child: Semantics(
+                    label: t.presence.mienne,
+                    child: StatusPill(
+                      libelle: LignePresence.libelle(etat.etat),
+                      ton: etat.ton,
+                    ),
+                  ),
+                ),
+              if (onVoirPresence != null)
+                LienFleche(
+                  libelle: t.presence.titre,
+                  libelleSemantique: t.presence.voir,
+                  onPress: onVoirPresence,
+                  fleche: false,
+                  encre: encreAccessible
+                      ? AppPalette.of(context).surfaceInverse.applyTo
+                      : null,
+                ),
+            ],
+          ),
+          if (monTuteurObserve) ...<Widget>[
+            Ecart.vSm,
+            const IndicateurObservationEnfant(visible: true),
+          ],
+          if (annonces.isNotEmpty) ...<Widget>[
+            Ecart.vSm,
+            IndicateurObservation(annonces: annonces),
+          ],
+        ],
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -852,6 +914,41 @@ class _EnteteControle extends StatelessWidget {
     final String? attente = _attenteDe(vue);
     final _EtatLien lien = _etatDuLien(vue);
 
+    // SALLE-200-1 : texte agrandi au-dela du seuil, la zone haute tient sur
+    // une ligne : l'etat du lien, puis « Quitter » en icone seule (nom lu et
+    // infobulle), toujours au bord de fin. Le titre reste annonce comme
+    // en-tete au lecteur d'ecran ; le rappel du controleur, au-dessus des
+    // commandes, dit deja la visite en toutes lettres.
+    if (!motEtatVisible(context)) {
+      return Row(
+        children: <Widget>[
+          Semantics(header: true, label: t.salle.visiteControle.titre),
+          Expanded(
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: Semantics(
+                liveRegion: true,
+                child: attente != null
+                    ? Text(
+                        attente,
+                        style: salle.applyTo(
+                          textes.labelLarge ?? const TextStyle(),
+                        ),
+                      )
+                    : _pastilleDuLien(lien),
+              ),
+            ),
+          ),
+          Ecart.hMd,
+          BoutonIcone(
+            icone: AppIcons.sortie,
+            libelle: t.salle.quitter,
+            onPress: onQuitter,
+          ),
+        ],
+      );
+    }
+
     return Row(
       children: <Widget>[
         Expanded(
@@ -914,34 +1011,36 @@ class _CommandesControle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        _Commande(
-          icone: AppIcons.libelleAudio,
-          libelle: sonRecu
-              ? t.salle.visiteControle.sonRecu
-              : t.salle.visiteControle.sonCoupe,
-          acte: sonRecu
-              ? t.salle.visiteControle.couperSon
-              : t.salle.visiteControle.retablirSon,
-          bascule: sonRecu,
-          onPress: onSon,
-          encreDuRegistre: true,
-        ),
-        _Commande(
-          icone: agrandi ? AppIcons.reduire : AppIcons.agrandir,
-          libelle: agrandi
-              ? t.tc.observation.visite.reduire
-              : t.tc.observation.visite.agrandir,
-          acte: agrandi
-              ? t.salle.visiteControle.reduire
-              : t.salle.visiteControle.agrandir,
-          bascule: agrandi,
-          onPress: onAgrandir,
-          encreDuRegistre: true,
-        ),
-      ],
+    return _RangeeCompacte(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          _Commande(
+            icone: AppIcons.libelleAudio,
+            libelle: sonRecu
+                ? t.salle.visiteControle.sonRecu
+                : t.salle.visiteControle.sonCoupe,
+            acte: sonRecu
+                ? t.salle.visiteControle.couperSon
+                : t.salle.visiteControle.retablirSon,
+            bascule: sonRecu,
+            onPress: onSon,
+            encreDuRegistre: true,
+          ),
+          _Commande(
+            icone: agrandi ? AppIcons.reduire : AppIcons.agrandir,
+            libelle: agrandi
+                ? t.tc.observation.visite.reduire
+                : t.tc.observation.visite.agrandir,
+            acte: agrandi
+                ? t.salle.visiteControle.reduire
+                : t.salle.visiteControle.agrandir,
+            bascule: agrandi,
+            onPress: onAgrandir,
+            encreDuRegistre: true,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1035,6 +1134,41 @@ class _Rappel extends StatelessWidget {
       TonEtat.neutre || TonEtat.succes || TonEtat.alerte => palette.washAccent,
     };
     final TextTheme textes = Theme.of(context).textTheme;
+
+    // SALLE-200-1 : texte tres agrandi, le rappel propre a qui observe
+    // (controleur, tuteur) se replie sur son icone, dans sa bande douce : la
+    // phrase entiere est lue par le lecteur d'ecran et montree d'une touche
+    // en infobulle. Le bandeau permanent, lui, reste toujours en toutes
+    // lettres.
+    if (!motEtatVisible(context)) {
+      return DecoratedBox(
+        decoration: paire.decoration(),
+        child: Semantics(
+          label: texte,
+          excludeSemantics: true,
+          child: Tooltip(
+            message: texte,
+            triggerMode: TooltipTriggerMode.tap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.md,
+              ),
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: IconTheme(
+                  data: IconThemeData(
+                    color: paire.onBackground,
+                    size: AppSpacing.xl,
+                  ),
+                  child: Icon(icone.repos),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
 
     return DecoratedBox(
       decoration: paire.decoration(),
@@ -1577,8 +1711,10 @@ class _Seul extends StatelessWidget {
       ),
     };
 
+    // SALLE-200-1 : la phrase d'attente defile plutot que de deborder quand
+    // le texte est agrandi sur un petit ecran.
     return Center(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.xxl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1788,40 +1924,64 @@ class _Commandes extends StatelessWidget {
     // instable ou un retour de coupure ne ferme pas un micro.
     final bool enSalle = vue.dansLaSalle;
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        // Un controle que le jeton refuse n'est PAS rendu, et n'est jamais
-        // grise : un bouton visible mais inactif invite a appuyer dessus, son
-        // absence ne pose pas la question.
-        if (vue.peutParler)
+    return _RangeeCompacte(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          // Un controle que le jeton refuse n'est PAS rendu, et n'est jamais
+          // grise : un bouton visible mais inactif invite a appuyer dessus, son
+          // absence ne pose pas la question.
+          if (vue.peutParler)
+            _Commande(
+              encreDuRegistre: encreAccessible,
+              icone: microOuvert ? AppIcons.micro : AppIcons.microCoupe,
+              libelle: microOuvert ? t.salle.microOuvert : t.salle.microCoupe,
+              acte: microOuvert ? t.salle.fermerMicro : t.salle.ouvrirMicro,
+              bascule: microOuvert,
+              onPress: enSalle ? () => unawaited(onMicro(microOuvert)) : null,
+            ),
+          if (vue.peutMontrer)
+            _Commande(
+              encreDuRegistre: encreAccessible,
+              icone: cameraOuverte ? AppIcons.camera : AppIcons.cameraCoupee,
+              libelle: cameraOuverte
+                  ? t.salle.cameraAllumee
+                  : t.salle.cameraCoupee,
+              acte: cameraOuverte ? t.salle.fermerCamera : t.salle.ouvrirCamera,
+              bascule: cameraOuverte,
+              onPress: enSalle
+                  ? () => unawaited(onCamera(cameraOuverte))
+                  : null,
+            ),
           _Commande(
             encreDuRegistre: encreAccessible,
-            icone: microOuvert ? AppIcons.micro : AppIcons.microCoupe,
-            libelle: microOuvert ? t.salle.microOuvert : t.salle.microCoupe,
-            acte: microOuvert ? t.salle.fermerMicro : t.salle.ouvrirMicro,
-            bascule: microOuvert,
-            onPress: enSalle ? () => unawaited(onMicro(microOuvert)) : null,
+            icone: AppIcons.sortie,
+            libelle: t.salle.quitter,
+            acte: t.salle.quitterLeCours,
+            onPress: () => unawaited(onQuitter()),
           ),
-        if (vue.peutMontrer)
-          _Commande(
-            encreDuRegistre: encreAccessible,
-            icone: cameraOuverte ? AppIcons.camera : AppIcons.cameraCoupee,
-            libelle: cameraOuverte
-                ? t.salle.cameraAllumee
-                : t.salle.cameraCoupee,
-            acte: cameraOuverte ? t.salle.fermerCamera : t.salle.ouvrirCamera,
-            bascule: cameraOuverte,
-            onPress: enSalle ? () => unawaited(onCamera(cameraOuverte)) : null,
-          ),
-        _Commande(
-          encreDuRegistre: encreAccessible,
-          icone: AppIcons.sortie,
-          libelle: t.salle.quitter,
-          acte: t.salle.quitterLeCours,
-          onPress: () => unawaited(onQuitter()),
-        ),
-      ],
+        ],
+      ),
+    );
+  }
+}
+
+/// SALLE-200-1 (revue du directeur, constat CTRL-SALLE-1) : texte agrandi
+/// au-dela du seuil, les commandes de la salle passent en icones seules,
+/// compactes, a la cible tactile (le nom reste lu et montre en infobulle,
+/// [CommandeSalle]). Elles laissent la hauteur au support partage. A x1 et
+/// jusqu'au seuil, rien ne change.
+class _RangeeCompacte extends StatelessWidget {
+  const _RangeeCompacte({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (motEtatVisible(context)) return child;
+    return CommandeSalleCompacte(
+      diametre: AppMetriques.of(context).cibleTactile,
+      child: child,
     );
   }
 }
