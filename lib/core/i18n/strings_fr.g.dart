@@ -3043,11 +3043,11 @@ class Traductions$accessibilite$coran$fr {
 	/// fr: 'Ouvrir le Coran'
 	String get ouvrir => 'Ouvrir le Coran';
 
-	/// fr: 'Reprendre là où tu t'es arrêté(e)'
-	String get reprendre => 'Reprendre là où tu t\'es arrêté(e)';
+	/// fr: 'Reprendre à ta dernière page'
+	String get reprendre => 'Reprendre à ta dernière page';
 
-	/// fr: 'Reprendre là où vous vous êtes arrêté(e)'
-	String get reprendreVous => 'Reprendre là où vous vous êtes arrêté(e)';
+	/// fr: 'Reprendre à votre dernière page'
+	String get reprendreVous => 'Reprendre à votre dernière page';
 
 	/// fr: 'Tu en étais page {page}.'
 	String reprendreDetail({required Object page}) => 'Tu en étais page ${page}.';
@@ -3853,8 +3853,8 @@ class Traductions$ficheEleve$interface$fr {
 	/// fr: 'Enregistrement en cours'
 	String get enCours => 'Enregistrement en cours';
 
-	/// fr: 'Le changement n'a pas été enregistré : la connexion avec Rewayah a échoué. Vérifiez votre connexion, puis touchez de nouveau votre choix.'
-	String get echec => 'Le changement n\'a pas été enregistré : la connexion avec Rewayah a échoué. Vérifiez votre connexion, puis touchez de nouveau votre choix.';
+	/// fr: 'Le changement n'a pas été enregistré, probablement à cause d'une coupure de connexion avec Rewayah. Vérifiez votre connexion, puis touchez de nouveau votre choix. La présentation actuelle de {prenom} reste inchangée sur son appareil.'
+	String echec({required Object prenom}) => 'Le changement n\'a pas été enregistré, probablement à cause d\'une coupure de connexion avec Rewayah. Vérifiez votre connexion, puis touchez de nouveau votre choix. La présentation actuelle de ${prenom} reste inchangée sur son appareil.';
 
 	/// fr: 'Vous êtes hors ligne. La présentation pourra être changée quand la connexion reviendra.'
 	String get horsLigne => 'Vous êtes hors ligne. La présentation pourra être changée quand la connexion reviendra.';
@@ -13461,8 +13461,8 @@ extension on Traductions {
 			'accessibilite.accueil.lireCoranDetail' => 'Accéder au Mushaf',
 			'accessibilite.accueil.aide' => 'Besoin d\'aide ?',
 			'accessibilite.coran.ouvrir' => 'Ouvrir le Coran',
-			'accessibilite.coran.reprendre' => 'Reprendre là où tu t\'es arrêté(e)',
-			'accessibilite.coran.reprendreVous' => 'Reprendre là où vous vous êtes arrêté(e)',
+			'accessibilite.coran.reprendre' => 'Reprendre à ta dernière page',
+			'accessibilite.coran.reprendreVous' => 'Reprendre à votre dernière page',
 			'accessibilite.coran.reprendreDetail' => ({required Object page}) => 'Tu en étais page ${page}.',
 			'accessibilite.coran.reprendreDetailVous' => ({required Object page}) => 'Vous en étiez page ${page}.',
 			'accessibilite.coran.repriseRecherche' => 'Recherche de ta dernière page…',
@@ -13761,7 +13761,7 @@ extension on Traductions {
 			'ficheEleve.interface.application' => ({required Object prenom}) => 'Le changement s\'applique à la prochaine ouverture de Rewayah sur l\'appareil de ${prenom}.',
 			'ficheEleve.interface.demandeEleve' => 'La demande de changement par l\'élève lui-même n\'est pas encore proposée.',
 			'ficheEleve.interface.enCours' => 'Enregistrement en cours',
-			'ficheEleve.interface.echec' => 'Le changement n\'a pas été enregistré : la connexion avec Rewayah a échoué. Vérifiez votre connexion, puis touchez de nouveau votre choix.',
+			'ficheEleve.interface.echec' => ({required Object prenom}) => 'Le changement n\'a pas été enregistré, probablement à cause d\'une coupure de connexion avec Rewayah. Vérifiez votre connexion, puis touchez de nouveau votre choix. La présentation actuelle de ${prenom} reste inchangée sur son appareil.',
 			'ficheEleve.interface.horsLigne' => 'Vous êtes hors ligne. La présentation pourra être changée quand la connexion reviendra.',
 			'ficheEleve.camera.titre' => 'Caméra en cours',
 			'ficheEleve.camera.ligne' => 'Caméra pendant les séances',

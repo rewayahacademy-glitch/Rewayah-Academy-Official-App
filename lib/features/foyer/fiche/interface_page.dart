@@ -165,7 +165,7 @@ class _ChoixInterfaceState extends ConsumerState<_ChoixInterface> {
               child: Text(
                 _enCours
                     ? t.ficheEleve.interface.enCours
-                    : t.ficheEleve.interface.echec,
+                    : t.ficheEleve.interface.echec(prenom: profil.prenom),
                 style: (_echec ? palette.inkAlert : palette.inkMuted).applyTo(
                   textes.bodyMedium ?? const TextStyle(),
                 ),

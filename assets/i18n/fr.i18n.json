@@ -625,8 +625,8 @@
     },
     "coran": {
       "ouvrir": "Ouvrir le Coran",
-      "reprendre": "Reprendre là où tu t'es arrêté(e)",
-      "reprendreVous": "Reprendre là où vous vous êtes arrêté(e)",
+      "reprendre": "Reprendre à ta dernière page",
+      "reprendreVous": "Reprendre à votre dernière page",
       "reprendreDetail": "Tu en étais page {page}.",
       "reprendreDetailVous": "Vous en étiez page {page}.",
       "repriseRecherche": "Recherche de ta dernière page…",
@@ -1013,7 +1013,7 @@
       "application": "Le changement s'applique à la prochaine ouverture de Rewayah sur l'appareil de {prenom}.",
       "demandeEleve": "La demande de changement par l'élève lui-même n'est pas encore proposée.",
       "enCours": "Enregistrement en cours",
-      "echec": "Le changement n'a pas été enregistré : la connexion avec Rewayah a échoué. Vérifiez votre connexion, puis touchez de nouveau votre choix.",
+      "echec": "Le changement n'a pas été enregistré, probablement à cause d'une coupure de connexion avec Rewayah. Vérifiez votre connexion, puis touchez de nouveau votre choix. La présentation actuelle de {prenom} reste inchangée sur son appareil.",
       "horsLigne": "Vous êtes hors ligne. La présentation pourra être changée quand la connexion reviendra."
     },
     "camera": {
