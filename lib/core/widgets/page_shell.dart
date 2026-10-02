@@ -174,6 +174,13 @@ class PageShell extends StatelessWidget {
           )
         : child;
 
+    // A texte agrandi (au-dela de 130 %), la tete (titre sur plusieurs lignes,
+    // phrase d'introduction) peut prendre toute la hauteur d'un telephone et
+    // ne laisser aucune place a la zone qui defile (MA15) : elle defile alors
+    // avec le contenu. En taille normale, rien ne change.
+    final bool teteDefile =
+        defilante && MediaQuery.textScalerOf(context).scale(1) > 1.3;
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -183,17 +190,24 @@ class PageShell extends StatelessWidget {
             Expanded(
               child: _Colonne(
                 gouttiere: gabarit.gouttiere,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    ...tete,
-                    Expanded(
-                      child: defilante
-                          ? SingleChildScrollView(child: corps)
-                          : corps,
-                    ),
-                  ],
-                ),
+                child: teteDefile
+                    ? SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[...tete, corps],
+                        ),
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          ...tete,
+                          Expanded(
+                            child: defilante
+                                ? SingleChildScrollView(child: corps)
+                                : corps,
+                          ),
+                        ],
+                      ),
               ),
             ),
             if (actions != null)

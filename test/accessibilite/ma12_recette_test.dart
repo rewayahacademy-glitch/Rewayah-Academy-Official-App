@@ -182,17 +182,11 @@ void _fixer(WidgetTester tester, Size taille) {
 
 /// Defauts trouves par la recette MA-12, a corriger a MA-RC (ne pas masquer :
 /// retirer l'entree quand le defaut est corrige).
-const String _defautDebordement200 =
-    'Defaut MA-12 : Mon espace, 390 x 844 a 200 %, la tete de PageShell '
-    '(page_shell.dart:186) deborde de 147 px : la zone defilante n a plus '
-    'de hauteur';
 const String _defautLibelleControle =
     'Defaut MA-12 : Mon espace, le controle natif (Switch ou Radio) de '
     'SettingRow (setting_row.dart, controle) est un noeud tactile sans '
     'libelle : le lecteur d ecran lit une case sans nom';
 
-String? _sautDebordement(String ecran) =>
-    ecran == 'Mon espace' ? _defautDebordement200 : null;
 String? _sautLibelle(String ecran) =>
     ecran == 'Mon espace' ? _defautLibelleControle : null;
 
@@ -235,7 +229,6 @@ void _matrice() {
               await stabiliser(tester);
               expect(tester.takeException(), isNull);
             },
-            skip: taille.width == 390 && _sautDebordement(ecran.nom) != null,
           );
         }
         testWidgets('RTL structurel (390 px) : ni exception ni debordement', (
