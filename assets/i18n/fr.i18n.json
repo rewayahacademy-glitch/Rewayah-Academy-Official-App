@@ -1738,6 +1738,7 @@
       "niveauxSur": "{nombre} niveaux",
       "creerVersion": "Créer une version",
       "creerVersionVide": "Créer une version vide",
+      "enregistrerVersion": "Enregistrer la version",
       "creerVersionDepuisPubliee": "Créer une nouvelle version à partir de celle-ci",
       "creerVersionErreur": "La création n'a pas abouti : {message}",
       "niveauxTitre": "Niveaux",

@@ -362,7 +362,7 @@ void _ouvrirCreationVersion(
         : t.admin.programmes.creerVersionDepuisPubliee,
     constructeur: (BuildContext contexte) => _FeuilleAction(
       detail: source == null ? null : t.admin.programmes.versionNumero(numero: '${source.numeroVersion}'),
-      libelleEnvoyer: t.admin.programmes.creerVersion,
+      libelleEnvoyer: t.admin.programmes.enregistrerVersion,
       onEnvoyer: () => ref
           .read(serviceProgrammeProvider)
           .creerVersion(versionSourceId: source?.id),
