@@ -25,6 +25,9 @@ et continué. Chaque ligne dit la question et le choix pris. Répondre « d'acco
 | Q-FI-7 | Garder les compteurs du Foyer retirés par la vague Élèves adultes ? | Les garder (guide §5.1). |
 | Q-FI-8, Q-FI-9 | Voir le document (répétition « Paiements du mois », refus faits sans question). | Choix écrits dans le document. |
 
+| Q-FI-10 | Revenus de l'enseignant : on les ouvre depuis le Profil (revue) ou depuis le Compte (découpage) ? | Pas tranché ; recommandation : depuis le Profil, comme la revue. |
+| X-1 à X-12 | Douze points où la revue Finance contredit le plan Finance (teinte de profil, confettis, « groupe » ou « classe », etc.). | Rien n'est tranché : liste dans `17_finance/00_REPRISE.md` §4 bis D, chaque point avec les deux versions. |
+
 Toujours en attente (déjà posées) : les 3 maquettes Finance manquantes (A-q-FI-1), le business plan (A-q-FI-2).
 
 ## Supports du tableau (TB-1a, 18_supports_tableau/UX_REVIEW_TB.md)
