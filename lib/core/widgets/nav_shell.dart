@@ -10,6 +10,7 @@ import '../router/routes.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_gabarit.dart';
+import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -25,6 +26,7 @@ class Destination {
     required this.icone,
     required this.chemin,
     this.enPied = false,
+    this.essentielle = true,
   });
 
   /// Le libelle affiche et lu.
@@ -43,6 +45,14 @@ class Destination {
   /// L'ordre de la barre basse ne change pas : elle y reste a sa place dans la
   /// liste. Seule la colonne laterale la separe des autres.
   final bool enPied;
+
+  /// Faux quand la destination n'est **pas essentielle** : le Mode
+  /// Accessibilite (`InterfaceMode.enfant`) ne la met pas dans la barre
+  /// (MA-NAV-1). Elle reste une route de la meme arborescence, atteinte par
+  /// un autre chemin de l'ecran (l'Accueil de l'eleve porte un bloc Coran
+  /// permanent). Vrai par defaut : seule une destination qui a un autre acces
+  /// peut passer a faux, sinon un ecran n'aurait plus d'entree.
+  final bool essentielle;
 }
 
 /// Les destinations de premier niveau d'un role, dans l'ordre de la barre.
@@ -59,6 +69,15 @@ class Destination {
 /// depuis Ma classe), Mon espace a `/compte`. Le parametre [mode] reste pour
 /// les autres roles et la signature ; il ne change plus rien a l'eleve.
 ///
+/// **MA-NAV-1 (02/10/2026), qui remplace les quatre destinations des deux
+/// presentations de MA-2** (demande explicite du directeur, plus recente) : en
+/// Mode Accessibilite la barre ne garde que les destinations
+/// [Destination.essentielle]. L'arborescence et les routes ne changent pas :
+/// seule la liste montree est plus courte. Pour retrouver la branche du
+/// routeur d'une destination, on lit la liste **complete**
+/// (`destinationsPour(mode: InterfaceMode.standard)`), jamais l'index de la
+/// liste courte ([indexDansBarre]).
+///
 /// Le comptable n'a pas de coquille : une destination unique ne monte pas une
 /// barre. Le controleur en a une a quatre destinations depuis le 27/09/2026
 /// (C13).
@@ -66,7 +85,7 @@ List<Destination> destinationsPour({
   required AppRole role,
   required InterfaceMode mode,
 }) {
-  final List<Destination> destinations = switch (role) {
+  final List<Destination> completes = switch (role) {
     // L'ordre est celui des branches de la coquille eleve dans
     // `app_router.dart` (Accueil, Ma classe, Coran) : les deux doivent rester
     // d'accord. Mon espace n'a pas de branche, il se rejoint par `go`.
@@ -85,6 +104,9 @@ List<Destination> destinationsPour({
         libelle: t.nav.eleve.coran,
         icone: AppIcons.coran,
         chemin: Routes.eleveCoran,
+        // MA-NAV-1 : hors de la barre du Mode Accessibilite, atteint par le
+        // bloc Coran permanent de l'Accueil.
+        essentielle: false,
       ),
       Destination(
         libelle: t.nav.eleve.monEspace,
@@ -191,12 +213,40 @@ List<Destination> destinationsPour({
     AppRole.accountant || AppRole.admin => const <Destination>[],
   };
 
+  final List<Destination> destinations = mode == InterfaceMode.enfant
+      ? completes.where((Destination d) => d.essentielle).toList()
+      : completes;
+
   assert(
     destinations.length <= NavShell.maxDestinations,
     'Aucun role n a plus de ${NavShell.maxDestinations} destinations de '
     'premier niveau (03-architecture-information.md section 5).',
   );
   return destinations;
+}
+
+/// L'index, dans la liste montree [visibles], de la destination qui porte
+/// l'index [indexComplet] de la liste [completes] (celle des branches du
+/// routeur).
+///
+/// Nul quand cette destination n'est pas dans la barre (Coran en Mode
+/// Accessibilite) : aucune destination n'est alors surlignee, comme sur un
+/// ecran secondaire. En presentation standard les deux listes sont
+/// identiques et l'index ne change pas.
+int? indexDansBarre({
+  required List<Destination> visibles,
+  required List<Destination> completes,
+  required int? indexComplet,
+}) {
+  if (indexComplet == null ||
+      indexComplet < 0 ||
+      indexComplet >= completes.length) {
+    return null;
+  }
+  final int index = visibles.indexWhere(
+    (Destination d) => d.chemin == completes[indexComplet].chemin,
+  );
+  return index == -1 ? null : index;
 }
 
 /// Les entrees secondaires d'un role : les ecrans hors barre qu'un pied de
@@ -334,10 +384,30 @@ class NavShell extends StatelessWidget {
   /// Epaisseur du soulignement de la destination active de la barre basse.
   static const double epaisseurSoulignement = 3;
 
+  /// Vrai quand la presentation courante est le Mode Accessibilite (guide) :
+  /// lu dans le theme (`AppMetriques`), jamais passe en parametre d'ecran
+  /// (MA-NAV-1).
+  static bool guide(BuildContext context) =>
+      Theme.of(context).extension<AppMetriques>()?.estEnfant ?? false;
+
   /// Echelle de texte maximale des libelles de la barre basse : au-dela, un
   /// libelle de quatre onglets ne tient plus dans sa colonne. Le libelle
   /// reste lu en entier par le lecteur d'ecran.
   static const double echelleTexteMaxBarre = 1.5;
+
+  /// Echelle de texte maximale des libelles de la barre du Mode Accessibilite.
+  ///
+  /// Plafond de 1,3 : le theme du guide part deja de 20 pt, et a 1,5 un mot de
+  /// sept lettres se coupe dans un onglet de 320. Un texte regle a x2 par
+  /// l'utilisateur grandit bien dans la barre. Le libelle passe a la ligne
+  /// sans ellipse (la barre grandit avec lui) et le lecteur d'ecran le lit
+  /// toujours en entier.
+  static const double echelleTexteMaxGuide = 1.3;
+
+  /// Epaisseur du contour franc de la barre du Mode Accessibilite (le filet de
+  /// carte standard fait 1) : le seul trait plus epais du composant, nomme ici
+  /// pour ne pas etre un chiffre litteral au milieu du dessin.
+  static const double epaisseurContourGuide = 2;
 
   @override
   Widget build(BuildContext context) {
@@ -370,6 +440,7 @@ class NavShell extends StatelessWidget {
               context: context,
               removeTop: true,
               child: _BarreFlottante(
+                guide: guide(context),
                 destinations: destinations,
                 indexActif: indexActif,
                 onAller: onAller,
@@ -388,6 +459,7 @@ class NavShell extends StatelessWidget {
       secondaires: secondaires,
       onAllerSecondaire: onAllerSecondaire,
       libellesDansLeRail: libellesDansLeRail,
+      guide: guide(context),
       child: child,
     );
   }
@@ -401,11 +473,15 @@ class NavShell extends StatelessWidget {
 /// couleur seule : l'etat « selectionne » est aussi annonce.
 class _BarreFlottante extends StatelessWidget {
   const _BarreFlottante({
+    required this.guide,
     required this.destinations,
     required this.indexActif,
     required this.onAller,
   });
 
+  /// Mode Accessibilite : barre plus haute, onglets plus larges et espaces,
+  /// libelles toujours visibles, contraste renforce (MA-NAV-1).
+  final bool guide;
   final List<Destination> destinations;
   final int? indexActif;
   final void Function(String chemin) onAller;
@@ -413,6 +489,7 @@ class _BarreFlottante extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    final AppMetriques metriques = _metriques(context);
 
     return KeyedSubtree(
       key: NavShell.barreBasseKey,
@@ -420,10 +497,12 @@ class _BarreFlottante extends StatelessWidget {
         top: false,
         minimum: const EdgeInsets.only(bottom: AppSpacing.md),
         child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(
-            AppSpacing.md,
+          // Guide : marges laterales de 8 au lieu de 12, pour que les libelles
+          // agrandis gardent leur largeur.
+          padding: EdgeInsetsDirectional.fromSTEB(
+            guide ? AppSpacing.sm : AppSpacing.md,
             AppSpacing.sm,
-            AppSpacing.md,
+            guide ? AppSpacing.sm : AppSpacing.md,
             0,
           ),
           child: Semantics(
@@ -433,31 +512,72 @@ class _BarreFlottante extends StatelessWidget {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 color: palette.surfaceRaised.background,
-                borderRadius: AppRadius.arrondiMd,
+                borderRadius: guide ? metriques.arrondi : AppRadius.arrondiMd,
+                // Guide : contour franc (`borderStrong`) a la place du filet
+                // de carte, pour que la barre se detache du fond.
                 border: Border.fromBorderSide(
-                  palette.contourCarte.asBorderSide(),
+                  guide
+                      ? palette.borderStrong.asBorderSide(
+                          width: NavShell.epaisseurContourGuide,
+                        )
+                      : palette.contourCarte.asBorderSide(),
                 ),
                 boxShadow: AppElevation.niveau1(palette.ombre),
               ),
               child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  minHeight: NavShell.hauteurBarre,
+                constraints: BoxConstraints(
+                  minHeight: guide
+                      ? metriques.cibleTactile + AppSpacing.xl
+                      : NavShell.hauteurBarre,
                 ),
-                child: MediaQuery.withClampedTextScaling(
-                  maxScaleFactor: NavShell.echelleTexteMaxBarre,
-                  child: Row(
-                    children: <Widget>[
-                      for (int i = 0; i < destinations.length; i++)
-                        Expanded(
-                          child: _OngletBarre(
-                            destination: destinations[i],
-                            actif: i == indexActif,
-                            onAller: onAller,
+                // Guide : la hauteur de la barre suit le libelle, qui passe a la
+                // ligne sans ellipse, plafonne par `echelleTexteMaxGuide`.
+                child: guide
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.xs,
+                          vertical: AppSpacing.sm,
+                        ),
+                        child: MediaQuery.withClampedTextScaling(
+                          maxScaleFactor: NavShell.echelleTexteMaxGuide,
+                          child: IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: <Widget>[
+                                for (
+                                  int i = 0;
+                                  i < destinations.length;
+                                  i++
+                                ) ...<Widget>[
+                                  if (i > 0) Ecart.hSm,
+                                  Expanded(
+                                    child: _OngletBarreGuide(
+                                      destination: destinations[i],
+                                      actif: i == indexActif,
+                                      onAller: onAller,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
                           ),
                         ),
-                    ],
-                  ),
-                ),
+                      )
+                    : MediaQuery.withClampedTextScaling(
+                        maxScaleFactor: NavShell.echelleTexteMaxBarre,
+                        child: Row(
+                          children: <Widget>[
+                            for (int i = 0; i < destinations.length; i++)
+                              Expanded(
+                                child: _OngletBarre(
+                                  destination: destinations[i],
+                                  actif: i == indexActif,
+                                  onAller: onAller,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
               ),
             ),
           ),
@@ -540,6 +660,82 @@ class _OngletBarre extends StatelessWidget {
   }
 }
 
+/// Un onglet de la barre basse du Mode Accessibilite (MA-NAV-1).
+///
+/// Memes destinations et memes routes que [_OngletBarre] ; seule la
+/// presentation change : cible de `cibleTactile` (72) au moins, icone de 32,
+/// libelle de corps toujours visible sous l'icone (jusqu'a trois lignes, sans
+/// plafond de texte), encre forte au repos.
+///
+/// **Destination active, trois signaux** (jamais la couleur seule) : fond plein
+/// `surfacePrimary`, icone pleine, libelle en gras sur l'encre posee sur ce
+/// fond.
+class _OngletBarreGuide extends StatelessWidget {
+  const _OngletBarreGuide({
+    required this.destination,
+    required this.actif,
+    required this.onAller,
+  });
+
+  final Destination destination;
+  final bool actif;
+  final void Function(String chemin) onAller;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final AppMetriques metriques = _metriques(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final Color encre = actif
+        ? palette.surfacePrimary.onBackground
+        : palette.inkStrong.asBorderSide().color;
+
+    return Semantics(
+      container: true,
+      selected: actif,
+      child: Pressable(
+        onPress: () => onAller(destination.chemin),
+        libelleSemantique: destination.libelle,
+        arrondiFocus: metriques.arrondiInterieur,
+        child: ExcludeSemantics(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: actif ? palette.surfacePrimary.background : null,
+              borderRadius: metriques.arrondiInterieur,
+            ),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: metriques.cibleTactile),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    IconTheme(
+                      data: IconThemeData(color: encre, size: AppSpacing.xxxl),
+                      child: Icon(
+                        destination.icone.resoudre(selectionne: actif),
+                      ),
+                    ),
+                    Ecart.vXs,
+                    Text(
+                      destination.libelle,
+                      textAlign: TextAlign.center,
+                      style: AppTypography.graisse(
+                        textes.labelLarge ?? const TextStyle(),
+                        actif ? FontWeight.w700 : FontWeight.w600,
+                      ).copyWith(color: encre),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// Le soulignement de l'onglet actif : il s'etire depuis son centre quand
 /// l'onglet devient actif (P2-16), une seule fois. Plein d'emblee quand les
 /// animations sont reduites.
@@ -587,6 +783,7 @@ class _AvecColonne extends ConsumerWidget {
     required this.secondaires,
     required this.onAllerSecondaire,
     required this.libellesDansLeRail,
+    required this.guide,
     required this.child,
   });
 
@@ -597,6 +794,7 @@ class _AvecColonne extends ConsumerWidget {
   final List<Destination> secondaires;
   final void Function(String chemin)? onAllerSecondaire;
   final bool libellesDansLeRail;
+  final bool guide;
   final Widget child;
 
   @override
@@ -609,7 +807,9 @@ class _AvecColonne extends ConsumerWidget {
       children: <Widget>[
         _Colonne(
           repliee: repliee,
-          libellesDansLeRail: libellesDansLeRail,
+          // Guide : le nom reste toujours visible, meme sur le rail replie.
+          libellesDansLeRail: libellesDansLeRail || guide,
+          guide: guide,
           destinations: destinations,
           indexActif: indexActif,
           onAller: onAller,
@@ -638,6 +838,7 @@ class _Colonne extends StatelessWidget {
   const _Colonne({
     required this.repliee,
     required this.libellesDansLeRail,
+    required this.guide,
     required this.destinations,
     required this.indexActif,
     required this.onAller,
@@ -648,6 +849,7 @@ class _Colonne extends StatelessWidget {
 
   final bool repliee;
   final bool libellesDansLeRail;
+  final bool guide;
   final List<Destination> destinations;
   final int? indexActif;
   final void Function(String chemin) onAller;
@@ -665,6 +867,7 @@ class _Colonne extends StatelessWidget {
           actif: actif,
           repliee: repliee,
           libelleSousIcone: libellesDansLeRail,
+          guide: guide,
           onPress: () =>
               entree ? onAllerSecondaire?.call(d.chemin) : onAller(d.chemin),
         );
@@ -693,7 +896,13 @@ class _Colonne extends StatelessWidget {
 
     return SizedBox(
       key: repliee ? NavShell.railKey : NavShell.barreLateraleKey,
-      width: repliee ? AppGabarit.largeurRail : AppGabarit.largeurBarreLaterale,
+      // Guide : le rail est plus large (96) pour que le libelle, toujours
+      // visible, tienne sous l'icone.
+      width: repliee
+          ? (guide
+                ? AppGabarit.largeurRail + AppSpacing.lg
+                : AppGabarit.largeurRail)
+          : AppGabarit.largeurBarreLaterale,
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: palette.surfaceRaised.background,
@@ -843,6 +1052,7 @@ class _ItemColonne extends StatelessWidget {
     required this.actif,
     required this.repliee,
     required this.libelleSousIcone,
+    required this.guide,
     required this.onPress,
   });
 
@@ -853,6 +1063,10 @@ class _ItemColonne extends StatelessWidget {
   /// Replie, le nom reste visible sous l'icone (eleve, enseignant), au lieu
   /// de l'infobulle seule (tuteur). Sans effet quand la colonne est depliee.
   final bool libelleSousIcone;
+
+  /// Mode Accessibilite : cible de 72, icone de 32, fond plein a l'etat actif
+  /// dans les deux themes, encre forte au repos (MA-NAV-1).
+  final bool guide;
   final VoidCallback onPress;
 
   @override
@@ -861,33 +1075,44 @@ class _ItemColonne extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final bool sombre = palette.estSombre;
 
+    final AppMetriques metriques = _metriques(context);
+    // Guide : fond plein et encre posee dessus dans les deux themes ; au repos
+    // l'icone prend l'encre forte comme le libelle (contraste renforce).
     final Color? fond = !actif
         ? null
+        : guide
+        ? palette.surfacePrimary.background
         : sombre
         ? palette.surfacePrimary.background
         : palette.washAccent.background;
     final Color couleurIcone = !actif
-        ? palette.inkMuted.asBorderSide().color
-        : sombre
+        ? (guide ? palette.inkStrong : palette.inkMuted).asBorderSide().color
+        : guide || sombre
         ? palette.surfacePrimary.onBackground
         : palette.inkAccent.asBorderSide().color;
     final Color couleurLibelle = !actif
         ? palette.inkStrong.asBorderSide().color
-        : sombre
+        : guide || sombre
         ? palette.surfacePrimary.onBackground
         : palette.inkAccent.asBorderSide().color;
 
     final Widget icone = IconTheme(
-      data: IconThemeData(color: couleurIcone, size: AppSpacing.xxl),
+      data: IconThemeData(
+        color: couleurIcone,
+        size: guide ? AppSpacing.xxxl : AppSpacing.xxl,
+      ),
       child: Icon(destination.icone.resoudre(selectionne: actif)),
     );
 
     final Widget pastille = DecoratedBox(
-      decoration: BoxDecoration(color: fond, borderRadius: AppRadius.arrondiSm),
+      decoration: BoxDecoration(
+        color: fond,
+        borderRadius: guide ? metriques.arrondiInterieur : AppRadius.arrondiSm,
+      ),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(
-          minHeight: AppTouchTarget.standard,
-          minWidth: AppTouchTarget.standard,
+        constraints: BoxConstraints(
+          minHeight: metriques.cibleTactile,
+          minWidth: metriques.cibleTactile,
         ),
         child: repliee
             ? Center(child: icone)
@@ -905,7 +1130,9 @@ class _ItemColonne extends StatelessWidget {
                         destination.libelle,
                         style: AppTypography.graisse(
                           textes.bodyLarge ?? const TextStyle(),
-                          actif ? FontWeight.w600 : FontWeight.w500,
+                          actif
+                              ? (guide ? FontWeight.w700 : FontWeight.w600)
+                              : (guide ? FontWeight.w600 : FontWeight.w500),
                         ).copyWith(color: couleurLibelle),
                       ),
                     ),
@@ -914,6 +1141,64 @@ class _ItemColonne extends StatelessWidget {
               ),
       ),
     );
+
+    if (repliee && libelleSousIcone && guide) {
+      // Rail du Mode Accessibilite : l'item entier est le bloc plein de l'etat
+      // actif (icone, libelle), cible de 72 au moins, libelle jusqu'a trois
+      // lignes et sans plafond de texte.
+      return Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.xs,
+          vertical: AppSpacing.xs,
+        ),
+        child: Semantics(
+          container: true,
+          selected: actif,
+          child: Pressable(
+            onPress: onPress,
+            libelleSemantique: destination.libelle,
+            arrondiFocus: metriques.arrondiInterieur,
+            child: ExcludeSemantics(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: fond,
+                  borderRadius: metriques.arrondiInterieur,
+                ),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: metriques.cibleTactile,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.xs,
+                      vertical: AppSpacing.sm,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        icone,
+                        Ecart.vXs,
+                        MediaQuery.withClampedTextScaling(
+                          maxScaleFactor: NavShell.echelleTexteMaxGuide,
+                          child: Text(
+                            destination.libelle,
+                            textAlign: TextAlign.center,
+                            style: AppTypography.graisse(
+                              textes.labelLarge ?? const TextStyle(),
+                              actif ? FontWeight.w700 : FontWeight.w600,
+                            ).copyWith(color: couleurLibelle),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
 
     if (repliee && libelleSousIcone) {
       // Le rail a libelles : pastille d'icone, puis le nom en dessous, dans
@@ -975,7 +1260,7 @@ class _ItemColonne extends StatelessWidget {
       child: Pressable(
         onPress: onPress,
         libelleSemantique: destination.libelle,
-        arrondiFocus: AppRadius.arrondiSm,
+        arrondiFocus: guide ? metriques.arrondiInterieur : AppRadius.arrondiSm,
         child: ExcludeSemantics(child: pastille),
       ),
     );
@@ -983,7 +1268,7 @@ class _ItemColonne extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: repliee ? AppSpacing.lg : AppSpacing.md,
-        vertical: AppSpacing.xs,
+        vertical: guide ? AppSpacing.sm : AppSpacing.xs,
       ),
       child: repliee
           ? Tooltip(message: destination.libelle, child: pressable)
@@ -991,3 +1276,9 @@ class _ItemColonne extends StatelessWidget {
     );
   }
 }
+
+/// Les mesures du theme, ou celles du mode standard quand le theme n'en porte
+/// pas (un test qui monte la coquille sans `AppTheme`).
+AppMetriques _metriques(BuildContext context) =>
+    Theme.of(context).extension<AppMetriques>() ??
+    AppMetriques.pour(InterfaceMode.standard);

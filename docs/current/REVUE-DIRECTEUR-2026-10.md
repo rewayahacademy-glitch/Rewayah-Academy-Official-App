@@ -24,6 +24,7 @@ Principe : corriger la cause (composant partagé de `lib/core`), recenser tous l
 | État jamais par la couleur seule | déduite | `StatusPill` | revue d'écran | |
 | « En direct » et « Annulée » reconnaissables d'un coup d'œil, partout | ON-AIR-1, ANNUL-VIS-1 | `PastilleEtatSeance`, `TexteHeureSeance`, `LigneRaisonSeance`, `surfaceCarteSeance` | `etat-seance-pastille` | `test/core/widgets/pastille_etat_seance_test.dart` |
 | Alerte urgente en tête | déduite | | revue d'écran | |
+| Navigation du Mode Accessibilité : moins de destinations, libellé visible, cibles de 72, actif à trois signaux, mêmes routes | MA-NAV-1 | `NavShell` | `nav-recomposee` | `nav_shell_accessibilite_test.dart` |
 | Libellé sans ambiguïté (qui, quoi) | déduite | | `libelle-ambigu` | |
 | Aucun mot interne chez le client | déduite | | `mot-interne` | |
 | Avatar : petit cercle (jetons `AppAvatar`), centré avec son nom sur le même axe, jamais de carré derrière, une ligne de rôle au plus (AVATAR-1) | 01-02/10 | `AvatarNom`, `AvatarSansImage`, `AvatarTile` | `avatar-recompose`, `avatar-taille` | `verifierMemeAxe`, `verifierAlignes`, `verifierContenu` |
@@ -315,3 +316,28 @@ Chiffres :
 **Exceptions justifiées, à valider par le directeur** : la carte « Prochaine séance » de la journée enseignant ne montre jamais une séance annulée (`prochainCours` l'écarte) : le cas est porté par la carte du cours annulé du jour. L'horaire du détail de séance du suivi du foyer est barré mais la carte n'a pas de ligne « pourquoi » (la phrase « La séance a été annulée. » reste, sans motif en donnée).
 
 **ON-AIR-1 reste partiellement faite.** Livré : la pastille « En direct » partout, avec son battement borné. Non livré : la notification « Votre classe est ouverte : rejoignez-la » (une par séance, délai mesuré), le bandeau si l'application est ouverte, le lien profond vers la salle, et la mise à jour en temps réel. Tout cela dépend de BR-1 (serveur, notifications, canal temps réel) ; l'étape ne doit pas passer en « fait » avant.
+| `nav-recomposee` (MA-NAV-1, barres hors des coquilles du core) | 0 | 0 |
+
+### MA-NAV-1 : barre de navigation du Mode Accessibilité
+
+| Mesure | Avant | Après |
+|---|---|---|
+| Destinations de l'élève dans la barre (Mode Accessibilité) | 4 | 3 (Accueil, Ma classe, Mon espace ; le Coran reste atteint par le bloc permanent de l'Accueil) |
+| Présentations de la barre basse | 1 (standard dans les deux modes) | 2 (standard, guide) |
+| Hauteur d'un onglet (guide) | environ 64 | 72 au moins |
+| Icône (guide) | 24 | 32 |
+| Libellé du rail replié (guide) | infobulle ou 12 pt borné | toujours visible, 14 pt, trois lignes |
+| Signaux de l'onglet actif | 3 (encre d'accent, icône pleine, soulignement de 3) | 3 dont un fond plein (fond, icône pleine, gras) |
+| Barres de navigation recomposées hors du core | 0 | 0 (contrôle `nav-recomposee`) |
+
+Barres vérifiées : barre basse, rail, barre latérale de `NavShell` (tous rôles) ; `AdminShell` (rôle adulte, hors Mode Accessibilité, déjà lié à `AppMetriques.cibleTactile`).
+
+Limites connues des contrôles (heuristiques de texte) : `cartes-collees` ne voit que des appels voisins dans une liste `children` sans `spacing:` (pas les `ListView.builder` sans séparateur) ; `bouton-recompose` ne voit que les boutons Material, `InkWell`, `GestureDetector` et un `Pressable` qui peint lui-même fond arrondi et `Text`. Ce que ces contrôles ne voient pas se mesure par les tests de géométrie et par les captures à 320 px et 1440 px.
+
+## MA-NAV-1, corrections de relecture
+
+- Contrôle `nav-recomposee` : le motif lit maintenant les blancs (`\s*`) ; test `test/tool/verifier_revue_nav_test.dart`.
+- Contour du guide : constante nommée `NavShell.epaisseurContourGuide`.
+- Texte agrandi : plafond du guide relevé de 1,0 à 1,3 (`echelleTexteMaxGuide`), libellés sans ellipse ; test arabe à 320, ×2, RTL.
+- Preuve visuelle : `docs/current/captures/MA-NAV-1/` (`avant` = ad0e2c6, `apres` ; élève, clair/sombre, 320, 320 ×2, tablette, bureau ; harnais `test/capture/ma_nav1_capture_test.dart`).
+- À trancher par le directeur : le Coran n'est plus dans la barre de l'élève en Mode Accessibilité (accès par le bloc Coran de l'Accueil) ; confirmer qu'aucun autre écran n'exige un accès direct. Le plafond 1,3 est un choix de conception.

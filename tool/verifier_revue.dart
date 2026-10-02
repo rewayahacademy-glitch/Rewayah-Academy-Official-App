@@ -116,6 +116,7 @@ void main(List<String> arguments) {
     'libelle-ambigu',
     'mot-interne',
     'erreur-sans-action',
+    'nav-recomposee',
     'etat-seance-pastille',
     'selecteur-theme-recompose',
     'avatar-recompose',
@@ -193,6 +194,9 @@ void main(List<String> arguments) {
   }
   if (regles.contains('etat-seance-pastille')) {
     violations.addAll(_pastillesDEtatPosees());
+  }
+  if (regles.contains('nav-recomposee')) {
+    violations.addAll(_navigationsRecomposees());
   }
   if (regles.contains('libelle-ambigu')) {
     for (final MapEntry<String, String> e in fr.entries) {
@@ -1030,6 +1034,42 @@ List<Violation> _pastillesDEtatPosees() {
           ),
         );
       }
+    }
+  }
+  return v;
+}
+
+/// Le motif d'une barre recomposee : le nom du widget, des blancs eventuels
+/// (espaces, retour a la ligne), puis `(` ou `.`. Expose pour le test qui
+/// prouve la detection (`\s*` lit des blancs, `s*` ne lisait que des « s »).
+final RegExp motifNavRecomposee = RegExp(
+  r'(NavigationBar|NavigationRail|NavigationDrawer|BottomNavigationBar|'
+  r'BottomAppBar|CupertinoTabBar)\s*[(.]',
+);
+
+/// MA-NAV-1 : une barre de navigation n'existe que dans les deux coquilles du
+/// core (`NavShell`, `AdminShell`), ou le Mode Accessibilite la presente
+/// (cibles de 72, libelle visible, etat actif a trois signaux). Une barre
+/// recomposee ailleurs ne suivrait pas la presentation.
+List<Violation> _navigationsRecomposees() {
+  final List<Violation> v = <Violation>[];
+  final RegExp nav = motifNavRecomposee;
+  for (final File f in Directory(
+    'lib',
+  ).listSync(recursive: true).whereType<File>()) {
+    final String chemin = f.path.replaceAll(r'\', '/');
+    if (!chemin.endsWith('.dart') ||
+        chemin.endsWith('.g.dart') ||
+        chemin.contains('_dev') ||
+        chemin.endsWith('lib/core/widgets/nav_shell.dart') ||
+        chemin.endsWith('lib/core/widgets/admin_shell.dart')) {
+      continue;
+    }
+    final String t = _sansCommentaires(f);
+    for (final RegExpMatch m in nav.allMatches(t)) {
+      v.add(
+        Violation(chemin, _ligneDe(t, m.start), 'nav-recomposee', m.group(0)!),
+      );
     }
   }
   return v;

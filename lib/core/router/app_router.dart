@@ -1359,16 +1359,25 @@ class _CoquilleNavigation extends ConsumerWidget {
     final InterfaceMode mode = ref.watch(
       sessionProvider.select((SessionState s) => s.interfaceMode),
     );
+    // MA-NAV-1 : la barre du Mode Accessibilite montre moins de destinations,
+    // mais l'arborescence est la meme. Les branches du routeur se lisent donc
+    // sur la liste COMPLETE ; la barre ne recoit que les destinations
+    // essentielles, et son index actif est recalcule dessus.
     final List<Destination> destinations = destinationsPour(
       role: role,
-      mode: mode,
+      mode: InterfaceMode.standard,
     );
+    final List<Destination> visibles = destinationsPour(role: role, mode: mode);
 
     final Widget coquille = NavShell(
-      destinations: destinations,
-      indexActif: navigationShell.currentIndex < destinations.length
-          ? navigationShell.currentIndex
-          : null,
+      destinations: visibles,
+      indexActif: indexDansBarre(
+        visibles: visibles,
+        completes: destinations,
+        indexComplet: navigationShell.currentIndex < destinations.length
+            ? navigationShell.currentIndex
+            : null,
+      ),
       masquerBarreBasse: Routes.estTacheFocalisee(chemin),
       // Le rail replie a icones seules est la maquette du tuteur ; l'eleve et
       // l'enseignant gardent leurs libelles visibles sur tablette, comme avant
