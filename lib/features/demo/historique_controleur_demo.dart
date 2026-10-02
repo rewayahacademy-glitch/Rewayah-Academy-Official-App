@@ -1,6 +1,7 @@
 // L'Historique du controleur en demonstration (CT-7) : les trois rapports de
 // `DonneesControleurDemo.rapports`, completes de leurs faits, observation et
-// complements, en memoire. Rien ne part (K-28).
+// complements, en memoire. L'ajout d'un complement (CT-8) est simule : rien
+// ne part (K-28).
 
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
@@ -21,6 +22,17 @@ class HistoriqueDemo implements PortHistorique {
       for (final RapportControleurDemo r in DonneesControleurDemo.rapports)
         _rapport(r),
     ];
+  }
+
+  /// Le complement de demonstration (CT-8) : date de l'instant, rien ne part.
+  @override
+  Future<ComplementRapport> ajouterComplement(
+    String rapportId, {
+    required String texte,
+    String? motif,
+  }) async {
+    await Future<void>.delayed(const Duration(milliseconds: 400));
+    return ComplementRapport(date: DateTime.now(), texte: texte, motif: motif);
   }
 
   static RapportControle _rapport(RapportControleurDemo r) {
