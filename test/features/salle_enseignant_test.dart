@@ -8,7 +8,6 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
-import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/page_immersive.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/salle_enseignant/panneau_enseignant.dart';
@@ -199,6 +198,9 @@ Future<void> _monter(
   await tester.pumpAndSettle();
 }
 
+/// Une fleche (ou la position) de la barre precedent / suivant.
+Finder _fleche(String cle) => find.byKey(ValueKey<String>(cle));
+
 void main() {
   group('La vue de presentation, sans monter d ecran', () {
     test('les sept etats du moteur donnent six phases distinctes', () {
@@ -340,7 +342,8 @@ void main() {
       // La cle existante, jamais une jumelle.
       expect(find.text(t.salle.ouvrirCoran), findsOneWidget);
       // Aucune commande de page tant qu'aucune page n'est ouverte.
-      expect(find.text(t.enseignant.salle.suivante), findsNothing);
+      expect(_fleche('nav-suivant'), findsNothing);
+      expect(_fleche('nav-precedent'), findsNothing);
     });
 
     testWidgets('hors de la salle, l etat vide ne propose rien et le dit', (
@@ -437,11 +440,16 @@ void main() {
       moteur.publierContenu(_contenu());
       await tester.pumpAndSettle();
 
-      // Visibles dans le flux, pas derriere un menu.
-      expect(find.text(t.enseignant.salle.precedente), findsOneWidget);
-      expect(find.text(t.enseignant.salle.suivante), findsOneWidget);
+      // Visibles dans le flux, pas derriere un menu : deux fleches rondes de
+      // part et d'autre de la page presentee (NAV-FLECHES-1), les verbes
+      // entiers lus par le lecteur d'ecran.
+      expect(_fleche('nav-precedent'), findsOneWidget);
+      expect(_fleche('nav-suivant'), findsOneWidget);
+      expect(find.bySemanticsLabel(t.enseignant.salle.precedente), findsOneWidget);
+      expect(find.bySemanticsLabel(t.enseignant.salle.suivante), findsOneWidget);
+      expect(find.text(t.salle.seance.page(page: 42, pages: 604)), findsOneWidget);
 
-      await tester.tap(find.text(t.enseignant.salle.suivante));
+      await tester.tap(_fleche('nav-suivant'));
       await tester.pumpAndSettle();
 
       expect(moteur.contenusPresentesDemandes.length, 1);
@@ -477,19 +485,10 @@ void main() {
         findsOneWidget,
       );
 
-      // Et la commande ne part pas dans le vide : elle est inerte, pas grisee
-      // par-dessus un geste qui aurait quand meme publie.
-      expect(
-        tester
-            .widget<ActionPrincipale>(
-              find.widgetWithText(
-                ActionPrincipale,
-                t.enseignant.salle.suivante,
-              ),
-            )
-            .onPress,
-        isNull,
-      );
+      // Et la commande ne part pas dans le vide : elle n'est pas rendue (ni
+      // grisee, ni pressable) tant que le lien ne porte pas.
+      expect(_fleche('nav-suivant'), findsNothing);
+      expect(_fleche('nav-precedent'), findsNothing);
       expect(moteur.contenusPresentesDemandes, isEmpty);
     });
 
@@ -513,7 +512,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(t.reseau.retabli), findsOneWidget);
-      await tester.tap(find.text(t.enseignant.salle.suivante));
+      await tester.tap(_fleche('nav-suivant'));
       await tester.pumpAndSettle();
       expect(moteur.contenusPresentesDemandes.length, 1);
     });
@@ -718,11 +717,11 @@ void main() {
         // c'est ainsi que le defaut de la vignette du controleur avait ete
         // mesure, et c'est la meme mesure ici.
         expect(tester.takeException(), isNull, reason: '$echelle');
-        expect(find.text(t.enseignant.salle.suivante), findsOneWidget);
+        expect(_fleche('nav-suivant'), findsOneWidget);
       }
     });
 
-    testWidgets('sur grand gabarit, les deux verbes tiennent cote a cote', (
+    testWidgets('sur grand gabarit, les deux fleches encadrent la page', (
       WidgetTester tester,
     ) async {
       final FauxMoteurSalle moteur = FauxMoteurSalle();
@@ -736,16 +735,14 @@ void main() {
       moteur.publierContenu(_contenu());
       await tester.pumpAndSettle();
 
-      // `[RESPONSIVE]` Les deux verbes entiers, sur une seule rangee : ce que
-      // 390 points ne permettent pas.
-      final Offset precedente = tester.getCenter(
-        find.text(t.enseignant.salle.precedente),
-      );
-      final Offset suivante = tester.getCenter(
-        find.text(t.enseignant.salle.suivante),
-      );
+      // `[RESPONSIVE]` Fleche, page, fleche, sur une seule rangee, la page au
+      // centre (NAV-FLECHES-1).
+      final Offset precedente = tester.getCenter(_fleche('nav-precedent'));
+      final Offset suivante = tester.getCenter(_fleche('nav-suivant'));
+      final Offset position = tester.getCenter(_fleche('nav-position'));
       expect(precedente.dy, suivante.dy);
-      expect(precedente.dx, lessThan(suivante.dx));
+      expect(precedente.dx, lessThan(position.dx));
+      expect(position.dx, lessThan(suivante.dx));
       expect(tester.takeException(), isNull);
     });
   });

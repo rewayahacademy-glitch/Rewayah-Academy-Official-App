@@ -207,9 +207,10 @@ void main() {
           EtatDemoSalle.reconnexion,
           journal: journal,
         );
+        // Le nom lu de la commande, et le mot d'etat affiche (ETATS-BTN-1).
         final String micro = role == RoleSeance.guidee ? 'Parler' : 'Micro';
-        expect(_dans(_dock, micro), findsOneWidget);
-        await tester.tap(_dans(_dock, micro), warnIfMissed: false);
+        expect(_dans(_dock, 'Micro ouvert'), findsOneWidget);
+        await tester.tap(_dans(_dock, 'Micro ouvert'), warnIfMissed: false);
         await tester.pump();
         expect(journal.micro, 0);
         expect(
@@ -219,8 +220,8 @@ void main() {
           findsOneWidget,
         );
         if (vue.cameraAutorisee) {
-          expect(_dans(_dock, 'Caméra'), findsOneWidget);
-          await tester.tap(_dans(_dock, 'Caméra'), warnIfMissed: false);
+          expect(_dans(_dock, 'Caméra allumée'), findsOneWidget);
+          await tester.tap(_dans(_dock, 'Caméra allumée'), warnIfMissed: false);
           await tester.pump();
           expect(journal.camera, 0);
         }
@@ -246,8 +247,8 @@ void main() {
         EtatDemoSalle.reseauFaible,
         journal: journal,
       );
-      await tester.tap(_dans(_dock, 'Micro'));
-      await tester.tap(_dans(_dock, 'Caméra'));
+      await tester.tap(_dans(_dock, 'Micro ouvert'));
+      await tester.tap(_dans(_dock, 'Caméra allumée'));
       await tester.pump();
       expect(journal.micro, 1);
       expect(journal.camera, 1);

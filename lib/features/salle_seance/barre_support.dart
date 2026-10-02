@@ -10,6 +10,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/barre_precedent_suivant.dart';
 import '../../core/widgets/pressable.dart';
 
 /// Le cadre commun des pastilles de la barre : surface surelevee, filet.
@@ -51,8 +52,9 @@ class IndicateurPage extends StatelessWidget {
   }
 }
 
-/// Pagination active de l'enseignant, desktop : ‹ 1 / 12 ›. Elle change la
-/// page de tous (I-5) ; une fleche sans rappel n'est pas rendue.
+/// Pagination active de l'enseignant, desktop : ‹ 1 / 12 ›, par
+/// [BarrePrecedentSuivant]. Elle change la page de tous (I-5) ; une fleche sans
+/// rappel, ou au bout du support, n'est pas rendue.
 class PaginationSupport extends StatelessWidget {
   const PaginationSupport({
     required this.page,
@@ -70,6 +72,7 @@ class PaginationSupport extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    // Aux bornes la fleche disparait (NAV-FLECHES-1), elle n'est pas grisee.
     final VoidCallback? precedente = page > 1 ? onPrecedente : null;
     final VoidCallback? suivante = page < pages ? onSuivante : null;
     return DecoratedBox(
@@ -80,34 +83,17 @@ class PaginationSupport extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            _IconeBarre(
-              icone: AppIcons.chevron,
-              libelle: t.salle.seance.pagePrecedente,
-              onPress: precedente,
-              retourne: true,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-              child: Semantics(
-                label: t.salle.seance.pageSemantique(page: page, pages: pages),
-                excludeSemantics: true,
-                child: Text(
-                  t.salle.seance.page(page: page, pages: pages),
-                  style: palette.inkStrong.applyTo(
-                    Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
-                  ),
-                ),
-              ),
-            ),
-            _IconeBarre(
-              icone: AppIcons.chevron,
-              libelle: t.salle.seance.pageSuivante,
-              onPress: suivante,
-            ),
-          ],
+        child: BarrePrecedentSuivant(
+          etendue: false,
+          position: t.salle.seance.page(page: page, pages: pages),
+          positionSemantique: t.salle.seance.pageSemantique(
+            page: page,
+            pages: pages,
+          ),
+          libellePrecedent: t.salle.seance.pagePrecedente,
+          libelleSuivant: t.salle.seance.pageSuivante,
+          onPrecedent: precedente,
+          onSuivant: suivante,
         ),
       ),
     );
@@ -208,15 +194,11 @@ class _IconeBarre extends StatelessWidget {
     required this.icone,
     required this.libelle,
     required this.onPress,
-    this.retourne = false,
   });
 
   final AppIcon icone;
   final String libelle;
   final VoidCallback? onPress;
-
-  /// Le chevron ‹ : [AppIcons.chevron] retourne.
-  final bool retourne;
 
   @override
   Widget build(BuildContext context) {
@@ -230,7 +212,7 @@ class _IconeBarre extends StatelessWidget {
           data:
               (action == null ? palette.inkFaint : palette.inkStrong)
                   .asIconTheme(size: AppSpacing.xxl),
-          child: Transform.flip(flipX: retourne, child: Icon(icone.repos)),
+          child: Icon(icone.repos),
         ),
       ),
     );

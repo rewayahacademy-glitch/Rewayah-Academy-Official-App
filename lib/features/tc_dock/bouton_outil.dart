@@ -14,8 +14,10 @@ import '../../core/widgets/pressable.dart';
 /// points en interface guidee, 48 ailleurs. Le bouton ne pose donc aucune
 /// dimension lui-meme, et ne peut pas devenir plus petit que la regle.
 ///
-/// L'etat retenu se lit **deux fois** : la graisse de l'icone change **et** un
-/// aplat doux apparait. Jamais la couleur seule (invariant J7).
+/// ETATS-BTN-1 : l'etat retenu se lit **trois fois** : un aplat plein et
+/// contraste (`surfaceInverse`) contre l'absence de fond, la graisse de l'icone
+/// qui change, et le mot sous l'icone quand la place le permet. Jamais la
+/// couleur seule (invariant J7).
 class BoutonOutil extends StatelessWidget {
   /// Cree un bouton d'outil.
   const BoutonOutil({
@@ -66,7 +68,7 @@ class BoutonOutil extends StatelessWidget {
       child: ExcludeSemantics(
         child: DecoratedBox(
           decoration: retenu
-              ? palette.washAccent.decoration(
+              ? palette.surfaceInverse.decoration(
                   borderRadius: AppRadius.arrondiSm,
                 )
               : const BoxDecoration(),
@@ -80,8 +82,12 @@ class BoutonOutil extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 IconTheme(
-                  data: (retenu ? palette.inkAccent : palette.inkStrong)
-                      .asIconTheme(size: tailleIcone),
+                  data: (retenu
+                          ? IconThemeData(
+                              color: palette.surfaceInverse.onBackground,
+                              size: tailleIcone,
+                            )
+                          : palette.inkStrong.asIconTheme(size: tailleIcone)),
                   child: Icon(icone.resoudre(selectionne: retenu)),
                 ),
                 if (avecLibelle) ...<Widget>[
@@ -90,8 +96,13 @@ class BoutonOutil extends StatelessWidget {
                     libelle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: (retenu ? palette.inkAccent : palette.inkMuted)
-                        .applyTo(textes.labelSmall ?? const TextStyle()),
+                    style: retenu
+                        ? palette.surfaceInverse.applyTo(
+                            textes.labelSmall ?? const TextStyle(),
+                          )
+                        : palette.inkMuted.applyTo(
+                            textes.labelSmall ?? const TextStyle(),
+                          ),
                   ),
                 ],
               ],

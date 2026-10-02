@@ -149,14 +149,16 @@ void main() {
           expect(find.byKey(ValueKey<String>(cle)), findsNothing, reason: cle);
         }
         for (final String bouton in <String>[
-          'Parler',
-          'Caméra',
+          // ETATS-BTN-1 : le mot d'etat des deux bascules.
+          'Micro ouvert',
+          'Caméra allumée',
           'Agrandir',
           'Quitter',
         ]) {
           expect(find.text(bouton), findsOneWidget, reason: bouton);
         }
         expect(find.text('Micro'), findsNothing);
+        expect(find.text('Parler'), findsNothing);
       });
     }
 
@@ -193,8 +195,9 @@ void main() {
         EtatDemoSalle.visite,
       ).copyWith(cameraAutorisee: false),
     );
-    expect(find.text('Caméra'), findsNothing);
-    expect(find.text('Parler'), findsOneWidget);
+    expect(find.text('Caméra allumée'), findsNothing);
+    expect(find.text('Caméra éteinte'), findsNothing);
+    expect(find.text('Micro ouvert'), findsOneWidget);
   });
 
   testWidgets('guidee : le point reste fixe pendant la visite', (

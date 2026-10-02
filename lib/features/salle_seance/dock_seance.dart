@@ -8,7 +8,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_color_pair.dart';
@@ -17,8 +16,8 @@ import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/commande_salle.dart';
 import '../../core/widgets/confirm_destructive.dart';
-import '../../core/widgets/pressable.dart';
 import 'actions_seance.dart';
 import 'feuille_micro_bloque.dart';
 import 'libelles_salle_b.dart';
@@ -67,42 +66,18 @@ Future<void> confirmerQuitterSeance(
   if (confirme) quitter();
 }
 
-/// Le diametre commun des boutons d'appel : la cible tactile du mode
-/// d'interface, plus un palier, pour tenir la taille des images (≈ 56 en
-/// standard). Tous les cercles d'un dock ont ce diametre.
-/// En Interface guidee, le diametre est la cible tactile du mode enfant
-/// elle-meme (Q1, S CLV-05 : 72).
-double diametreBoutonAppel(BuildContext context) {
-  final AppMetriques metriques = AppMetriques.of(context);
-  return metriques.mode == InterfaceMode.enfant
-      ? metriques.cibleTactile
-      : metriques.cibleTactile + AppSpacing.sm;
-}
+/// Le diametre commun des boutons d'appel : celui des commandes rondes du
+/// core ([diametreCommandeSalle]). Tous les cercles d'un dock l'ont.
+double diametreBoutonAppel(BuildContext context) =>
+    diametreCommandeSalle(context);
 
-/// La taille de l'icone dans le disque : plus grande en guidee (images).
-double _tailleIconeAppel(BuildContext context) =>
-    AppMetriques.of(context).mode == InterfaceMode.enfant
-    ? AppSpacing.xxxl
-    : AppSpacing.xxl;
-
-/// L'encre claire fixe de Quitter : l'encre de la paire d'alerte du theme
-/// clair (blanc), prise au jeton et non ecrite en dur.
-final Color _encreClaire = AppPalette.claire().surfaceAlert.onBackground;
-
-/// EN-12 (UX_REVIEW_04 n° 17 d, K-42) : le dock etroit trop serre (390,
-/// 768 a sept boutons) ou le texte agrandi. Les boutons y passent en icone
-/// seule, le libelle reste lu par le lecteur d'ecran, et le disque tient
-/// sa case moins un ecart, sans descendre sous la cible tactile.
-class _DockEtroit extends InheritedWidget {
-  const _DockEtroit({required this.diametre, required super.child});
-
-  final double diametre;
-
-  @override
-  bool updateShouldNotify(_DockEtroit ancien) => ancien.diametre != diametre;
-}
-
-/// Un bouton du dock : cercle, icone, libelle dessous.
+/// Un bouton du dock : cercle, icone, libelle dessous. Le dessin vit dans
+/// [CommandeSalle] (core), partage avec la salle ; ce widget n'ajoute que la
+/// correspondance des fonds du dock.
+///
+/// [bascule] renseigne : c'est une bascule (Micro, Camera), son etat se lit
+/// par le disque (plein / contour), l'icone et le mot d'etat [libelle]
+/// (ETATS-BTN-1).
 class BoutonAppel extends StatelessWidget {
   const BoutonAppel({
     required this.icone,
@@ -111,6 +86,7 @@ class BoutonAppel extends StatelessWidget {
     this.libelleSemantique,
     this.fond = FondBoutonAppel.surface,
     this.actif = true,
+    this.bascule,
     this.focusNode,
     this.selectionne,
     super.key,
@@ -130,111 +106,30 @@ class BoutonAppel extends StatelessWidget {
   final FondBoutonAppel fond;
 
   /// Faux : le bouton reste rendu mais ne repond pas (Micro et Camera
-  /// pendant la reconnexion, lot CL-7, UX_REVIEW U1). Aucune transparence :
-  /// le disque passe au fond neutre et l'encre `inkMuted` dit l'attente,
-  /// comme le bouton inerte d'`ActionPrincipale`.
+  /// pendant la reconnexion, lot CL-7, UX_REVIEW U1).
   final bool actif;
 
+  /// `null` : bouton ordinaire. Sinon l'etat de la bascule (vrai : active).
+  final bool? bascule;
+
   @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final ThemeData theme = Theme.of(context);
-    final _DockEtroit? etroit = context
-        .dependOnInheritedWidgetOfExactType<_DockEtroit>();
-    final bool iconeSeule = etroit != null;
-    final double diametre = etroit?.diametre ?? diametreBoutonAppel(context);
-    final double tailleIcone = _tailleIconeAppel(context);
-    final BoxDecoration disque = !actif
-        ? palette.surfaceRaised.decoration(
-            borderRadius: AppRadius.arrondiFull,
-            side: palette.borderResting.asBorderSide(),
-          )
-        : switch (fond) {
-            FondBoutonAppel.surface ||
-            FondBoutonAppel.reseau => palette.surfaceOverlay.decoration(
-              borderRadius: AppRadius.arrondiFull,
-              side: palette.borderHairline.asBorderSide(),
-            ),
-            FondBoutonAppel.alerte => palette.pointsStatut.alerte.pastille(),
-            FondBoutonAppel.succes => palette.surfaceSuccess.decoration(
-              borderRadius: AppRadius.arrondiFull,
-            ),
-            FondBoutonAppel.primaire => palette.surfacePrimary.decoration(
-              borderRadius: AppRadius.arrondiFull,
-            ),
-          };
-    final IconThemeData encre = !actif
-        ? palette.inkMuted.asIconTheme(size: tailleIcone)
-        : switch (fond) {
-            FondBoutonAppel.surface => palette.inkStrong.asIconTheme(
-              size: tailleIcone,
-            ),
-            // Encre claire fixe, dans les deux themes (images : combine blanc sur
-            // disque rouge). Le disque est un point d'alerte, pas la paire
-            // `surfaceAlert` : son encre sombre en theme sombre tombait sous 2:1
-            // sur le rouge vif. Le blanc tient 4,1:1 (clair) et 3,3:1 (sombre),
-            // au-dessus du seuil de 3:1 d'un element graphique (WCAG 1.4.11).
-            FondBoutonAppel.alerte => IconThemeData(
-              color: _encreClaire,
-              size: tailleIcone,
-            ),
-            FondBoutonAppel.reseau => palette.inkSuccess.asIconTheme(
-              size: tailleIcone,
-            ),
-            FondBoutonAppel.succes => IconThemeData(
-              color: palette.surfaceSuccess.onBackground,
-              size: tailleIcone,
-            ),
-            FondBoutonAppel.primaire => IconThemeData(
-              color: palette.surfacePrimary.onBackground,
-              size: tailleIcone,
-            ),
-          };
-    final Widget pressable = Pressable(
-      onPress: onPress,
-      actif: actif,
-      focusNode: focusNode,
-      libelleSemantique: libelleSemantique ?? libelle,
-      arrondiFocus: AppRadius.arrondiMd,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          SizedBox.square(
-            key: const ValueKey<String>('disque-appel'),
-            dimension: diametre,
-            child: DecoratedBox(
-              decoration: disque,
-              child: Center(
-                child: IconTheme(data: encre, child: Icon(icone)),
-              ),
-            ),
-          ),
-          if (!iconeSeule) ...<Widget>[
-            Ecart.vXs,
-            Text(
-              libelle,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: (actif ? palette.inkStrong : palette.inkMuted).applyTo(
-                theme.textTheme.labelMedium ?? const TextStyle(),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-    // Doc 04 §28 et §33 n. 13 : en icone seule, le libelle reste visible en
-    // infobulle (comme `nav_shell`), deja lu par `Pressable`.
-    final Widget bouton = iconeSeule
-        ? Tooltip(
-            message: libelleSemantique ?? libelle,
-            excludeFromSemantics: true,
-            child: pressable,
-          )
-        : pressable;
-    final bool? choisi = selectionne;
-    return choisi == null ? bouton : Semantics(selected: choisi, child: bouton);
-  }
+  Widget build(BuildContext context) => CommandeSalle(
+    icone: icone,
+    libelle: libelle,
+    libelleSemantique: libelleSemantique,
+    onPress: onPress,
+    actif: actif,
+    bascule: bascule,
+    focusNode: focusNode,
+    selectionne: selectionne,
+    fond: switch (fond) {
+      FondBoutonAppel.surface => FondCommande.surface,
+      FondBoutonAppel.alerte => FondCommande.alerte,
+      FondBoutonAppel.succes => FondCommande.succes,
+      FondBoutonAppel.primaire => FondCommande.primaire,
+      FondBoutonAppel.reseau => FondCommande.reseau,
+    },
+  );
 }
 
 /// Le dock : les commandes de [VueSeance.commandesDock], dans l'ordre.
@@ -282,7 +177,10 @@ class DockSeance extends StatelessWidget {
         return BoutonAppel(
           icone:
               (cameraAllumee ? AppIcons.camera : AppIcons.cameraCoupee).actif,
-          libelle: t.salle.camera,
+          bascule: cameraAllumee,
+          // Le mot d'etat sous l'icone (ETATS-BTN-1) ; la reconnexion garde
+          // le nom de la commande, qu'elle dit indisponible.
+          libelle: cameraAllumee ? t.salle.cameraAllumee : t.salle.cameraCoupee,
           libelleSemantique:
               vue.libelleIndisponible(t.salle.camera) ??
               (cameraAllumee ? t.salle.fermerCamera : t.salle.ouvrirCamera),
@@ -367,17 +265,26 @@ class DockSeance extends StatelessWidget {
     final Widget? statutCamera = texteCamera == null
         ? null
         : StatutCameraInterdite(texte: texteCamera);
-    final List<Widget> boutons = <Widget>[
-      for (final CommandeDock commande in vue.commandesDock) ...<Widget>[
-        // Enseignant desktop (image CLV-06) : un filet vertical avant Quitter.
-        if (large &&
-            commande == CommandeDock.quitter &&
-            vue.quitterOuvreCahier &&
-            actions.onQuitter != null)
-          _Separateur(hauteur: diametreBoutonAppel(context)),
-        ?_bouton(context, commande),
-      ],
-    ];
+    final List<Widget> boutons = <Widget>[];
+    // Une bascule (Micro, Camera) porte son mot d'etat : sa case est plus
+    // large que celle d'une commande ordinaire (ETATS-BTN-1).
+    final List<bool> bascules = <bool>[];
+    for (final CommandeDock commande in vue.commandesDock) {
+      // Enseignant desktop (image CLV-06) : un filet vertical avant Quitter.
+      if (large &&
+          commande == CommandeDock.quitter &&
+          vue.quitterOuvreCahier &&
+          actions.onQuitter != null) {
+        boutons.add(_Separateur(hauteur: diametreBoutonAppel(context)));
+        bascules.add(false);
+      }
+      final Widget? bouton = _bouton(context, commande);
+      if (bouton == null) continue;
+      boutons.add(bouton);
+      bascules.add(
+        commande == CommandeDock.micro || commande == CommandeDock.camera,
+      );
+    }
     final AppColorPair fond = palette.surfaceRaised;
     final BoxDecoration cadre = fond.decoration(
       borderRadius: AppRadius.arrondiLg,
@@ -428,9 +335,11 @@ class DockSeance extends StatelessWidget {
             builder: (BuildContext contexte, BoxConstraints contraintes) {
               final Widget rangee = Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                // Chaque bouton prend une part egale.
+                // Chaque bouton prend une part egale ; le mot d'etat d'une
+                // bascule passe a la ligne dans sa part.
                 children: <Widget>[
-                  for (final Widget bouton in boutons) Expanded(child: bouton),
+                  for (int i = 0; i < boutons.length; i++)
+                    Expanded(child: boutons[i]),
                 ],
               );
               if (boutons.isEmpty) return rangee;
@@ -448,16 +357,18 @@ class DockSeance extends StatelessWidget {
               // la largeur ; ils passent sur deux lignes, en cases fixes, et
               // chaque disque garde la cible tactile.
               if (parCase < cible + AppSpacing.xs) {
-                return _DockEtroit(
+                return CommandeSalleCompacte(
                   diametre: cible,
                   child: Wrap(
                     alignment: WrapAlignment.center,
                     runSpacing: AppSpacing.sm,
                     children: <Widget>[
-                      for (final Widget bouton in boutons)
+                      for (int i = 0; i < boutons.length; i++)
                         SizedBox(
-                          width: cible + AppSpacing.xs,
-                          child: Center(child: bouton),
+                          width: bascules[i]
+                              ? largeurCaseCommande(contexte, bascule: true)
+                              : cible + AppSpacing.xs,
+                          child: Center(child: boutons[i]),
                         ),
                     ],
                   ),
@@ -467,7 +378,7 @@ class DockSeance extends StatelessWidget {
                 math.min(diametre, parCase - AppSpacing.xs),
                 cible,
               );
-              return _DockEtroit(diametre: reduit, child: rangee);
+              return CommandeSalleCompacte(diametre: reduit, child: rangee);
             },
           ),
         ),
@@ -566,16 +477,21 @@ class _BoutonMicroState extends State<_BoutonMicro> {
     final bool colore = vue.dockColore;
     // Bloque : jamais montre ouvert (P09.6).
     final bool ouvert = widget.microOuvert && !vue.microBloque;
-    final String libelle = colore ? t.salle.seance.parler : t.salle.micro;
+    // Le mot d'etat (ETATS-BTN-1) : « Micro ouvert » / « Micro coupe », en
+    // standard comme en guidee ; le nom de la commande (« Micro », « Parler »
+    // en guidee) reste dit par l'indisponibilite (reconnexion) et par l'acte
+    // lu.
+    final String libelle = ouvert ? t.salle.microOuvert : t.salle.microCoupe;
     return BoutonAppel(
       key: const ValueKey<String>('bouton-micro'),
       focusNode: _focus,
       icone: colore
           ? (ouvert ? AppIcons.micro : AppIcons.microCoupe).actif
           : (ouvert ? AppIcons.micro : AppIcons.microCoupe).repos,
+      bascule: ouvert,
       libelle: libelle,
       libelleSemantique:
-          vue.libelleIndisponible(libelle) ??
+          vue.libelleIndisponible(colore ? t.salle.seance.parler : t.salle.micro) ??
           (ouvert ? t.salle.fermerMicro : t.salle.ouvrirMicro),
       actif: vue.commandesPublicationActives,
       fond: colore ? FondBoutonAppel.succes : FondBoutonAppel.surface,

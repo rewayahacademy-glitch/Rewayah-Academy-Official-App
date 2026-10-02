@@ -101,8 +101,10 @@ void main() {
             find.byKey(const ValueKey<String>('pagination-support')),
             findsNothing,
           );
-          expect(find.text('Micro'), findsOneWidget);
-          expect(find.text('Caméra'), findsOneWidget);
+          // ETATS-BTN-1 : le mot d'etat des deux bascules, micro ouvert et
+          // camera allumee par defaut.
+          expect(find.text('Micro ouvert'), findsOneWidget);
+          expect(find.text('Caméra allumée'), findsOneWidget);
           // Sans support, rien a agrandir.
           expect(
             find.text('Agrandir'),

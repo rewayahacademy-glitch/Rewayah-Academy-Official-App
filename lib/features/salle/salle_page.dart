@@ -21,7 +21,6 @@ import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
-import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/livekit_session_provider.dart';
 import '../../core/video/pre_vol.dart';
@@ -30,6 +29,7 @@ import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/commande_salle.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/page_immersive.dart';
@@ -904,19 +904,19 @@ class _CommandesControle extends StatelessWidget {
           acte: sonRecu
               ? t.salle.visiteControle.couperSon
               : t.salle.visiteControle.retablirSon,
-          actif: sonRecu,
+          bascule: sonRecu,
           onPress: onSon,
           encreDuRegistre: true,
         ),
         _Commande(
-          icone: AppIcons.agrandir,
+          icone: agrandi ? AppIcons.reduire : AppIcons.agrandir,
           libelle: agrandi
               ? t.tc.observation.visite.reduire
               : t.tc.observation.visite.agrandir,
           acte: agrandi
               ? t.salle.visiteControle.reduire
               : t.salle.visiteControle.agrandir,
-          actif: agrandi,
+          bascule: agrandi,
           onPress: onAgrandir,
           encreDuRegistre: true,
         ),
@@ -1804,18 +1804,20 @@ class _Commandes extends StatelessWidget {
           _Commande(
             encreDuRegistre: encreAccessible,
             icone: microOuvert ? AppIcons.micro : AppIcons.microCoupe,
-            libelle: t.salle.micro,
+            libelle: microOuvert ? t.salle.microOuvert : t.salle.microCoupe,
             acte: microOuvert ? t.salle.fermerMicro : t.salle.ouvrirMicro,
-            actif: microOuvert,
+            bascule: microOuvert,
             onPress: enSalle ? () => unawaited(onMicro(microOuvert)) : null,
           ),
         if (vue.peutMontrer)
           _Commande(
             encreDuRegistre: encreAccessible,
             icone: cameraOuverte ? AppIcons.camera : AppIcons.cameraCoupee,
-            libelle: t.salle.camera,
+            libelle: cameraOuverte
+                ? t.salle.cameraAllumee
+                : t.salle.cameraCoupee,
             acte: cameraOuverte ? t.salle.fermerCamera : t.salle.ouvrirCamera,
-            actif: cameraOuverte,
+            bascule: cameraOuverte,
             onPress: enSalle ? () => unawaited(onCamera(cameraOuverte)) : null,
           ),
         _Commande(
@@ -1823,7 +1825,6 @@ class _Commandes extends StatelessWidget {
           icone: AppIcons.sortie,
           libelle: t.salle.quitter,
           acte: t.salle.quitterLeCours,
-          actif: false,
           onPress: () => unawaited(onQuitter()),
         ),
       ],
@@ -1831,35 +1832,36 @@ class _Commandes extends StatelessWidget {
   }
 }
 
-/// Une commande : un cercle, une icone, un mot court, et l'acte pour qui ecoute.
+/// Une commande de la salle : [CommandeSalle] (core), le meme composant que le
+/// dock de la seance. Un disque, une icone, un mot, et l'acte pour qui ecoute.
 ///
-/// Deux libelles, et ils ne disent pas la meme chose. **Le mot visible est
-/// court** (« Micro ») parce que trois libelles complets cote a cote ne tiennent
-/// pas sur 390 points, et qu'un libelle tronque ne vaut rien. **Le libelle parle
-/// dit l'ACTE** (« Ouvrir le micro »), parce qu'un bouton se lit par ce qu'il
-/// declenche, jamais par l'etat ou il se trouve.
+/// Deux libelles, et ils ne disent pas la meme chose. **Le mot visible dit
+/// l'ETAT** d'une bascule (« Micro ouvert » / « Micro coupe ») ou le nom d'une
+/// commande ordinaire (« Quitter ») ; **le libelle parle dit l'ACTE** (« Fermer
+/// le micro »), parce qu'un bouton se lit par ce qu'il declenche.
 ///
-/// L'etat, lui, se lit par la FORME : l'icone change, et le cercle se remplit.
-/// Jamais par la couleur seule -- pas plus pour la sortie, que la regle de la
-/// zone pleine unique interdit de peindre en aplat rouge, et qui se distingue
-/// donc par son mot et sa place.
+/// ETATS-BTN-1 : l'etat d'une bascule se lit par trois signaux cumules, jamais
+/// par la couleur seule : le disque (plein actif, contour seul inactif),
+/// l'icone (micro / micro barre) et le mot d'etat.
 class _Commande extends StatelessWidget {
   const _Commande({
     required this.icone,
     required this.libelle,
     required this.acte,
-    required this.actif,
     required this.onPress,
+    this.bascule,
     this.encreDuRegistre = false,
   });
 
   final AppIcon icone;
   final String libelle;
   final String acte;
-  final bool actif;
+
+  /// `null` : commande ordinaire (Quitter). Sinon l'etat de la bascule.
+  final bool? bascule;
   final VoidCallback? onPress;
 
-  /// Le mot sous le cercle prend l'encre de la paire du registre `salle`
+  /// Le mot sous le disque prend l'encre de la paire du registre `salle`
   /// (`surfaceInverse`), lisible sur le fond de la salle en clair comme en
   /// sombre. Reserve aux commandes du controleur (CT-3) et a l'eleve en Mode
   /// Accessibilite (MA-5) : les autres roles gardent leur rendu (HU-1).
@@ -1867,53 +1869,17 @@ class _Commande extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final AppMetriques metriques = AppMetriques.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    final AppColorPair ouverte = palette.surfaceRaised;
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-      child: Pressable(
-        onPress: onPress,
+      child: CommandeSalle(
+        icone: icone.resoudre(selectionne: bascule ?? false),
+        libelle: libelle,
         libelleSemantique: acte,
-        arrondiFocus: AppRadius.arrondiFull,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            SizedBox.square(
-              dimension: metriques.cibleTactile,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: actif ? ouverte.background : null,
-                  border: actif
-                      ? null
-                      : Border.fromBorderSide(
-                          palette.borderStrong.asBorderSide(),
-                        ),
-                ),
-                child: Center(
-                  child: Icon(
-                    icone.resoudre(selectionne: actif),
-                    color: actif ? ouverte.onBackground : null,
-                  ),
-                ),
-              ),
-            ),
-            Ecart.vXs,
-            Text(
-              libelle,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: _encreSalle(
-                context,
-                textes.labelSmall,
-                active: encreDuRegistre,
-              ),
-            ),
-          ],
-        ),
+        bascule: bascule,
+        onPress: onPress,
+        encreLibelle: encreDuRegistre
+            ? AppPalette.of(context).surfaceInverse
+            : null,
       ),
     );
   }

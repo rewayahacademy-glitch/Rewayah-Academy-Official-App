@@ -15,6 +15,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/barre_precedent_suivant.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/page_immersive.dart';
 import 'navigation_coran_feuille.dart';
@@ -486,32 +487,28 @@ class _Commandes extends StatelessWidget {
               ],
             ),
           ),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: ActionPrincipale(
-                libelle: t.eleve.coran.pagePrecedente,
-                niveau: NiveauAction.secondaire,
-                onPress: precedente == null ? null : () => onPage(precedente),
-              ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: ActionPrincipale(
-                libelle: t.tc.coran.navigation.ouvrir,
-                niveau: NiveauAction.tertiaire,
-                onPress: onNavigation,
-              ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: ActionPrincipale(
-                libelle: t.eleve.coran.pageSuivante,
-                niveau: NiveauAction.secondaire,
-                onPress: suivante == null ? null : () => onPage(suivante),
-              ),
-            ),
-          ],
+        // NAV-FLECHES-1 : fleche, position, fleche ; aux bornes la fleche
+        // disparait. Le choix d'une page ou d'une sourate reste dessous, un
+        // lien discret.
+        BarrePrecedentSuivant(
+          position: t.salle.seance.page(
+            page: vue?.numero ?? 1,
+            pages: vue?.nombrePages ?? pagesMushafMedine,
+          ),
+          positionSemantique: t.salle.seance.pageSemantique(
+            page: vue?.numero ?? 1,
+            pages: vue?.nombrePages ?? pagesMushafMedine,
+          ),
+          libellePrecedent: t.eleve.coran.pagePrecedente,
+          libelleSuivant: t.eleve.coran.pageSuivante,
+          onPrecedent: precedente == null ? null : () => onPage(precedente),
+          onSuivant: suivante == null ? null : () => onPage(suivante),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        ActionPrincipale(
+          libelle: t.tc.coran.navigation.ouvrir,
+          niveau: NiveauAction.tertiaire,
+          onPress: onNavigation,
         ),
       ],
     );
