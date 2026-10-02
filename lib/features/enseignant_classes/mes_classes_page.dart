@@ -257,19 +257,30 @@ LigneRubrique _ligne(ClasseListee l, VoidCallback? onPress) {
     icone: AppIcons.classes,
     legende: '$contexte\n$quand',
     onPress: onPress,
+    // Wrap, jamais Row : le mot « Cahier de transmission a valider »
+    // (LIB-CAHIER-1) passe a la ligne et la pastille passe sous lui, au lieu
+    // de deborder a 320 px ou a 200 % (lecon 8, K-41.6). En fin de ligne,
+    // `LigneRubrique` ne borne pas la marque : la borne vient d'ici.
+    // ponytail: borne fixe ; si d'autres marques longues apparaissent,
+    // `LigneRubrique` devra mesurer sa marque elle-meme.
     marque: marques.isEmpty
         ? null
-        : Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              for (final (int i, Widget m) in marques.indexed) ...<Widget>[
-                if (i > 0) Ecart.hSm,
-                m,
-              ],
-            ],
+        : ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: _largeurMarqueMax),
+            child: Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.xs,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: marques,
+            ),
           ),
   );
 }
+
+/// La largeur au-dela de laquelle les marques d'une ligne passent a la ligne :
+/// en fin de ligne, elle laisse au nom de la Classe au moins le tiers d'une
+/// ligne de 320 px.
+const double _largeurMarqueMax = 200;
 
 /// Le rappel d'un cahier non valide (K-45) : le point **et** le mot
 /// « Cahier a valider », jamais la couleur seule (WCAG 1.4.1, relecture

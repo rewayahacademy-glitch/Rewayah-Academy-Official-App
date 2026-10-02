@@ -1,9 +1,12 @@
 // EN-3 : ENS-09 Mes Classes, sur les donnees de demonstration (K-35).
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
+import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
 import 'package:rewayah_academy/core/widgets/point_rappel.dart';
@@ -11,6 +14,8 @@ import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
 import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 import 'package:rewayah_academy/features/enseignant_classes/mes_classes_page.dart';
+import 'package:rewayah_academy/features/journee/journee_page.dart'
+    show maintenantJourneeProvider;
 
 import '../../support/harnais.dart';
 
@@ -138,6 +143,73 @@ void main() {
       expect(find.text(t.enseignant.classes.vide), findsOneWidget);
       expect(find.text(t.enseignant.classes.videDetail), findsOneWidget);
     });
+  });
+
+  // Lecon 8 (K-41.6) : le mot « Cahier de transmission a valider » (LIB-CAHIER-1)
+  // et la pastille « Remplacement » sur la meme ligne, de 320 px au bureau,
+  // texte a 100 % puis a 200 % : rien ne deborde, rien n'est coupe.
+  group('ENS-09 : les marques passent a la ligne', () {
+    final GroupeEnseignant badr = DonneesEnseignantDemo.groupes().firstWhere(
+      (GroupeEnseignant g) => g.libelle == 'Al-Badr',
+    );
+    for (final double largeur in <double>[320, 390, 600, 1280]) {
+      for (final double echelle in <double>[1, 2]) {
+        testWidgets('a $largeur px, texte a ${(echelle * 100).round()} %', (
+          WidgetTester tester,
+        ) async {
+          _fenetre(tester, Size(largeur, 1600));
+          tester.platformDispatcher.textScaleFactorTestValue = echelle;
+          addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+          await tester.pumpWidget(
+            hote(
+              const MesClassesPage(),
+              surcharges: <Override>[
+                maintenantJourneeProvider.overrideWithValue(
+                  () => DonneesEnseignantDemo.maintenant,
+                ),
+                groupesEnseignantProvider.overrideWith(
+                  (Ref _) async => DonneesEnseignantDemo.groupes(),
+                ),
+                seancesEnseignantProvider.overrideWith(
+                  (Ref _) async =>
+                      DonneesEnseignantDemo.seances(EtatDemoEnseignant.nominal),
+                ),
+                cahiersEnRetardProvider.overrideWith(
+                  (Ref _) async => DonneesEnseignantDemo.cahiersEnRetard(
+                    EtatDemoEnseignant.nominal,
+                  ),
+                ),
+                detailsClassesProvider.overrideWithValue(<String, DetailClasse>{
+                  badr.id: const DetailClasse(
+                    niveau: 2,
+                    langue: 'Français',
+                    remplacement: true,
+                  ),
+                }),
+              ],
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          expect(tester.takeException(), isNull);
+          // Le mot entier, lisible, a cote du point, et la pastille.
+          final Finder mot = find.text(t.enseignant.classes.cahierAValider);
+          expect(mot, findsOneWidget);
+          expect(
+            find.widgetWithText(StatusPill, t.enseignant.classes.remplacement),
+            findsOneWidget,
+          );
+          // Ni coupe ni ellipse : le texte tient dans l'ecran.
+          final Text texte = tester.widget<Text>(mot);
+          expect(texte.overflow, isNot(TextOverflow.ellipsis));
+          expect(tester.getRect(mot).right, lessThanOrEqualTo(largeur));
+          expect(
+            tester.getRect(find.byType(StatusPill)).right,
+            lessThanOrEqualTo(largeur),
+          );
+        });
+      }
+    }
   });
 
   group('PointRappel', () {
