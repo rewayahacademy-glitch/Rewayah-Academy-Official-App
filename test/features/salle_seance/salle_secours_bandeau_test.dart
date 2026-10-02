@@ -10,6 +10,7 @@ import 'package:rewayah_academy/core/widgets/local_feedback.dart';
 import 'package:rewayah_academy/core/widgets/offline_banner.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/dock_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
@@ -107,6 +108,16 @@ Future<VueSeance> _monter(
 
 Finder _dans(Finder parent, String texte) =>
     find.descendant(of: parent, matching: find.text(texte));
+
+/// Le bouton du dock nomme [libelle]. MA-CMD-1 : la salle guidee pose ses
+/// commandes en icones seules (nom lu et montre en infobulle) ; on cherche
+/// donc le bouton, pas un texte.
+Finder _boutonDock(String libelle) => find.descendant(
+  of: _dock,
+  matching: find.byWidgetPredicate(
+    (Widget w) => w is BoutonAppel && w.libelle == libelle,
+  ),
+);
 
 final Finder _dock = find.byKey(const ValueKey<String>('dock-seance'));
 final Finder _bandeau = find.byKey(const ValueKey<String>('bandeau-secours'));
@@ -208,8 +219,8 @@ void main() {
           journal: journal,
         );
         final String micro = role == RoleSeance.guidee ? 'Parler' : 'Micro';
-        expect(_dans(_dock, micro), findsOneWidget);
-        await tester.tap(_dans(_dock, micro), warnIfMissed: false);
+        expect(_boutonDock(micro), findsOneWidget);
+        await tester.tap(_boutonDock(micro), warnIfMissed: false);
         await tester.pump();
         expect(journal.micro, 0);
         expect(
@@ -219,13 +230,13 @@ void main() {
           findsOneWidget,
         );
         if (vue.cameraAutorisee) {
-          expect(_dans(_dock, 'Caméra'), findsOneWidget);
-          await tester.tap(_dans(_dock, 'Caméra'), warnIfMissed: false);
+          expect(_boutonDock('Caméra'), findsOneWidget);
+          await tester.tap(_boutonDock('Caméra'), warnIfMissed: false);
           await tester.pump();
           expect(journal.camera, 0);
         }
 
-        await tester.tap(_dans(_dock, 'Quitter'));
+        await tester.tap(_boutonDock('Quitter'));
         await stabiliser(tester);
         final String confirmer = role == RoleSeance.enseignant
             ? 'Quitter et ouvrir le cahier'

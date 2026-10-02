@@ -142,6 +142,9 @@ void main() {
       findsNothing,
     );
     expect(tester.widget<Switch>(bascule).value, isTrue);
+    // MA-CMD-1 : la barre du bas du mode (onglets de 72) prend plus de
+    // hauteur ; la bascule peut passer sous la ligne de flottaison.
+    await _vers(tester, bascule);
     await tester.tap(bascule);
     await stabiliser(tester);
     expect(tester.widget<Switch>(bascule).value, isFalse);

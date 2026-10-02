@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'pressable.dart';
-import 'texte_sans_coupure.dart';
 
 /// A grouped settings line. It contains presentation only: no profile write,
 /// provider, or navigation contract is coupled to this primitive.
