@@ -333,7 +333,7 @@ abstract final class Routes {
 
   /// Controle (CTR-01), premiere des quatre destinations du controleur (C13,
   /// document 08 du 27/09/2026, qui remplace « une seule destination, sans
-  /// barre »). Encore le planning global jusqu'a sa refonte en CT-2.
+  /// barre »). Une seule carte de mission, jamais de planning (CT-2, C3).
   static const String controleur = '/controleur';
 
   /// Historique (CTR-05), deuxieme destination. Page provisoire jusqu'a CT-7.
@@ -342,6 +342,19 @@ abstract final class Routes {
   /// Echanges (CTR-04), troisieme destination : fils par mission (CT-6).
   /// La quatrieme, Compte, est `/compte`, partage par tous les roles.
   static const String controleurEchanges = '/controleur/echanges';
+
+  /// Le fil de la mission [missionId] dans les Echanges (« Ecrire a
+  /// l'administration », P-CTR-06) : le meme ecran, ouvert sur ce fil.
+  static String controleurEchangesMission(String missionId) => Uri(
+    path: controleurEchanges,
+    queryParameters: <String, String>{'mission': missionId},
+  ).toString();
+
+  /// Ou mene « Ecrire a l'administration » : le fil de la mission quand son
+  /// identifiant est connu, la liste des Echanges sinon.
+  static String controleurEcrireAdmin(String? missionId) => missionId == null
+      ? controleurEchanges
+      : controleurEchangesMission(missionId);
 
   /// Compte rendu (CTR-03), la sortie de la salle d'observation (P-CTR-03
   /// point 12). Tache focalisee, hors coquille (CT-4).

@@ -2007,6 +2007,7 @@
     "confidentialiteDetail": "Bientôt disponible",
     "espaces": "Espaces",
     "espacesDetail": "Les espaces auxquels votre compte donne accès",
+    "espacesMissionEnCours": "Pour revenir à votre espace principal, quittez d'abord la mission en cours.",
     "habilitation": "Habilité",
     "deconnexion": "Se déconnecter",
     "deconnexionDetail": "Mettre fin à la session sur cet appareil",
@@ -3269,7 +3270,21 @@
       "etatAucune": "Aucune mission",
       "etatPasEncoreEnDirect": "Séance pas encore en direct",
       "etatEnDirect": "Séance en direct",
-      "etatIndisponible": "Mission indisponible"
+      "etatIndisponible": "Mission indisponible",
+      "espaces": "Espaces et accès",
+      "espacesIntro": "Le même compte, plusieurs espaces : Enseignant ou Admin passent en Contrôle par Compte, puis Espaces.",
+      "enseignantControle": "Enseignant-Contrôleur, espace Contrôle",
+      "enseignantPrincipal": "Enseignant-Contrôleur, espace Enseignant",
+      "adminControle": "Admin-Contrôleur, espace Contrôle",
+      "adminPrincipal": "Admin-Contrôleur, espace Admin",
+      "missionEnCours": "Mission en cours, retour à l'espace principal",
+      "accesRevoque": "Accès révoqué pendant la navigation",
+      "sansCapacite": "Enseignant sans capacité Contrôle",
+      "compteRenduIndisponible": "Compte rendu, mission devenue indisponible"
+    },
+    "acces": {
+      "revoque": "Votre accès au contrôle n'est plus actif.",
+      "revenir": "Revenir à mon espace"
     },
     "controle": {
       "titre": "Contrôle",
@@ -3282,7 +3297,10 @@
       "incognito": "Visite en mode incognito : votre présence n'est pas annoncée à l'enseignant.",
       "horaire": "{debut} à {fin}",
       "duree": "{minutes} min prévues",
-      "eleves": "{nombre} élèves",
+      "eleves": {
+        "one": "{n} élève",
+        "other": "{n} élèves"
+      },
       "chargement": "Lecture de votre mission en cours.",
       "erreur": "Votre mission n'a pas pu être lue. Réessayez dans un instant."
     }

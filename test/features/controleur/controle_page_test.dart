@@ -162,4 +162,11 @@ void main() {
       EtatMissionControle.indisponible,
     );
   });
+  // Revue CT-2 : « 1 eleves » ; en francais, 0 et 1 sont au singulier.
+  test('le nombre d eleves s accorde', () {
+    final e = t.controleur.controle;
+    expect(e.eleves(n: 0), '0 élève');
+    expect(e.eleves(n: 1), '1 élève');
+    expect(e.eleves(n: 3), '3 élèves');
+  });
 }

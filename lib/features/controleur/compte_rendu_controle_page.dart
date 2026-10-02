@@ -34,6 +34,7 @@ import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/ecran_resultat.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pressable.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
 import '../accueil_famille/bloc_seance.dart' show heureDeLAppareil;
 import 'compte_rendu_controle.dart';
@@ -117,7 +118,8 @@ class _CompteRenduControlePageState
     if (choix != ChoixCompteRendu.rienASignaler) {
       final void Function(ChoixCompteRendu)? f = widget.onObservation;
       if (f == null) {
-        GoRouter.of(context).go(Routes.controleurObservation, extra: choix);
+        GoRouter.of(context)
+            .go(adresseObservation(Routes.controleurObservation, choix));
       } else {
         f(choix);
       }
@@ -154,6 +156,11 @@ class _CompteRenduControlePageState
             heure: heureDeLAppareil(mission.debut),
           );
 
+    // Une mission devenue indisponible (seance finie) ne bloque pas le
+    // compte rendu : il se termine apres la sortie (C1). P-CTR-08 ne garde
+    // que l'entree en mission ; l'acces retire, lui, est garde par
+    // GardeControle (C7).
+
     if (_etape == _Etape.envoye) {
       return PageShell(
         titre: t.controleur.compteRendu.titre,
@@ -169,7 +176,11 @@ class _CompteRenduControlePageState
             libelleSecondaire: t.controleur.compteRendu.ecrireAdmin,
             onSecondaire:
                 widget.onEcrireAdmin ??
-                () => GoRouter.of(context).go(Routes.controleurEchanges),
+                // Le fil de CETTE mission (P-CTR-06), la liste si son
+                // identifiant n'est pas connu.
+                () =>
+                    GoRouter.of(context)
+                        .go(Routes.controleurEcrireAdmin(mission?.id)),
           ),
         ),
       );
@@ -448,38 +459,40 @@ class _FaitsAutomatiquesState extends ConsumerState<_FaitsAutomatiques> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          // Pressable, jamais un onTap nu : bouton, focus et libelle lu ;
+          // l'etat deplie reste annonce.
           Semantics(
-            button: true,
             expanded: _deplie,
-            label: _deplie
-                ? t.controleur.compteRendu.faitsDeplies
-                : t.controleur.compteRendu.faitsReplies,
-            excludeSemantics: true,
-            child: InkWell(
-              onTap: () => setState(() => _deplie = !_deplie),
-              borderRadius: BorderRadius.circular(AppSpacing.sm),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(minHeight: 48),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Text(
-                        t.controleur.compteRendu.faits,
-                        style: palette.inkStrong.applyTo(
-                          textes.titleMedium ?? const TextStyle(),
+            child: Pressable(
+              onPress: () => setState(() => _deplie = !_deplie),
+              libelleSemantique: _deplie
+                  ? t.controleur.compteRendu.faitsDeplies
+                  : t.controleur.compteRendu.faitsReplies,
+              arrondiFocus: BorderRadius.circular(AppSpacing.sm),
+              child: ExcludeSemantics(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 48),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                          t.controleur.compteRendu.faits,
+                          style: palette.inkStrong.applyTo(
+                            textes.titleMedium ?? const TextStyle(),
+                          ),
                         ),
                       ),
-                    ),
-                    AnimatedRotation(
-                      turns: _deplie ? 0.25 : 0,
-                      duration: Mouvement.duree(context, Mouvement.court),
-                      curve: Mouvement.entree,
-                      child: IconTheme(
-                        data: palette.inkMuted.asIconTheme(size: 20),
-                        child: Icon(AppIcons.chevron.resoudre()),
+                      AnimatedRotation(
+                        turns: _deplie ? 0.25 : 0,
+                        duration: Mouvement.duree(context, Mouvement.court),
+                        curve: Mouvement.entree,
+                        child: IconTheme(
+                          data: palette.inkMuted.asIconTheme(size: 20),
+                          child: Icon(AppIcons.chevron.resoudre()),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

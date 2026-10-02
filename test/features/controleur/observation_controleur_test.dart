@@ -285,4 +285,62 @@ void main() {
     expect(find.text('Accueil chaleureux des eleves.'), findsOneWidget);
     expect(find.text(t.controleur.compteRendu.envoyer), findsOneWidget);
   });
+  // Revue CT-5 : le choix est porte par l'adresse, un rechargement de la PWA
+  // ou un lien direct (sans `extra`) garde le « point important ».
+  test('le choix se lit dans l adresse, puis dans extra', () {
+    for (final ChoixCompteRendu c in ChoixCompteRendu.values) {
+      final Uri u = Uri.parse(adresseObservation('/x', c));
+      expect(choixObservationDepuis(u.queryParameters, null), c);
+    }
+    expect(
+      choixObservationDepuis(const <String, String>{}, null),
+      ChoixCompteRendu.ajouterObservation,
+    );
+    expect(
+      choixObservationDepuis(
+        const <String, String>{},
+        ChoixCompteRendu.pointImportant,
+      ),
+      ChoixCompteRendu.pointImportant,
+    );
+    expect(
+      choixObservationDepuis(const <String, String>{'choix': 'inconnu'}, null),
+      ChoixCompteRendu.ajouterObservation,
+    );
+  });
+
+  testWidgets('Point important par un lien direct, sans extra', (
+    WidgetTester tester,
+  ) async {
+    await _monter(
+      tester,
+      GoRouter(
+        initialLocation: adresseObservation(
+          cheminDemoObservationControleur,
+          ChoixCompteRendu.pointImportant,
+        ),
+        routes: routesDemoControleur('dev'),
+      ),
+    );
+    final ObservationControlePage page = tester.widget(
+      find.byType(ObservationControlePage),
+    );
+    expect(page.choix, ChoixCompteRendu.pointImportant);
+    expect(find.text(o.important), findsOneWidget);
+  });
+
+  testWidgets('depuis le compte rendu, l adresse porte le choix', (
+    WidgetTester tester,
+  ) async {
+    await _jusquALObservation(tester, ChoixCompteRendu.pointImportant);
+    final GoRouter routeur = GoRouter.of(
+      tester.element(find.byType(ObservationControlePage)),
+    );
+    expect(
+      routeur.state.uri.queryParameters['choix'],
+      ChoixCompteRendu.pointImportant.name,
+    );
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pumpAndSettle();
+  });
 }

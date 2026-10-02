@@ -10,13 +10,13 @@
 
 import 'package:flutter/material.dart';
 
-import '../icons/app_icons.dart';
 import '../mouvement/apparition_douce.dart';
 import '../mouvement/mouvement.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
+import 'action_principale.dart';
 
 /// Un message deja connu du fil (lu depuis le serveur ou la demonstration).
 @immutable
@@ -335,12 +335,11 @@ class _Bulle extends StatelessWidget {
             Ecart.vXs,
             Align(
               alignment: AlignmentDirectional.centerStart,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  minimumSize: const Size(0, AppTouchTarget.standard),
-                ),
-                onPressed: onReessayer,
-                child: Text(libelleReessayer!),
+              child: ActionPrincipale(
+                libelle: libelleReessayer!,
+                onPress: onReessayer,
+                niveau: NiveauAction.tertiaire,
+                pleineLargeur: false,
               ),
             ),
           ],
@@ -408,24 +407,14 @@ class _Saisie extends StatelessWidget {
             ),
           ),
           Ecart.hSm,
-          Semantics(
-            button: true,
-            enabled: !vide,
-            label: textes.envoyer,
-            excludeSemantics: true,
-            onTap: vide ? null : onEnvoyer,
-            child: IconButton.filled(
-              key: FilDiscussion.envoyerKey,
-              tooltip: textes.envoyer,
-              constraints: const BoxConstraints(
-                minWidth: AppPage.hauteurBouton,
-                minHeight: AppPage.hauteurBouton,
-              ),
-              onPressed: vide ? null : onEnvoyer,
-              // Couleurs du bouton plein du theme, actif et inactif.
-              iconSize: AppSpacing.xxl,
-              icon: Icon(AppIcons.envoyerMessage.resoudre()),
-            ),
+          // Une action se nomme, elle ne s'illustre pas : « Envoyer » en
+          // toutes lettres, inerte (et dit comme tel) tant que le champ est
+          // vide ; la raison est ecrite sous le champ.
+          ActionPrincipale(
+            key: FilDiscussion.envoyerKey,
+            libelle: textes.envoyer,
+            onPress: vide ? null : onEnvoyer,
+            pleineLargeur: false,
           ),
         ],
       ),

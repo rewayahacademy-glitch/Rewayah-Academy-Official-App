@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
+import 'package:rewayah_academy/features/compte/espaces_compte.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.dart';
 import 'package:rewayah_academy/features/controleur/historique_controleur_page.dart';
@@ -18,6 +19,7 @@ import 'package:rewayah_academy/features/controleur/observation_controle.dart';
 import 'package:rewayah_academy/features/controleur/observation_controle_page.dart';
 import 'package:rewayah_academy/features/demo/controleur_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
+import 'package:rewayah_academy/features/demo/espaces_controleur_demo.dart';
 
 import '../../capture/outil_capture.dart';
 
@@ -399,6 +401,96 @@ void main() {
       }
     }
   });
+  group(
+    'Capture : CT-9, espaces et etats transverses',
+    skip: sautSansCapture,
+    () {
+      setUpAll(chargerPolicesDuDepot);
+      const SituationEspacesDemo enseignant = SituationEspacesDemo(
+        profil: ProfilDemoControleur.enseignant,
+      );
+      Future<void> rien(WidgetTester tester) async {}
+      Future<void> feuille(WidgetTester tester) async {
+        await tester.tap(find.byKey(RaccourciEspaces.cle));
+        await tester.pumpAndSettle();
+      }
+
+      for (final (String l, Size taille) in <(String, Size)>[
+        ('390', const Size(390, 844)),
+        ('1440', const Size(1440, 900)),
+      ]) {
+        for (final ThemeMode mode in <ThemeMode>[
+          ThemeMode.light,
+          ThemeMode.dark,
+        ]) {
+          final String s = '${l}_${mode.name}';
+          for (final (
+                String nom,
+                String route,
+                Future<void> Function(WidgetTester) avant,
+              )
+              in <(String, String, Future<void> Function(WidgetTester))>[
+                (
+                  'controle_raccourci',
+                  adresseDemoControleur(
+                    EcranDemoControleur.controle,
+                    espaces: enseignant,
+                  ),
+                  rien,
+                ),
+                (
+                  'feuille_espaces',
+                  adresseDemoControleur(
+                    EcranDemoControleur.controle,
+                    espaces: enseignant,
+                  ),
+                  feuille,
+                ),
+                (
+                  'compte_mission_en_cours',
+                  adresseDemoControleur(
+                    EcranDemoControleur.compte,
+                    espaces: enseignant.enMission(),
+                  ),
+                  rien,
+                ),
+                (
+                  'acces_revoque',
+                  adresseDemoControleur(
+                    EcranDemoControleur.historique,
+                    espaces: const SituationEspacesDemo(
+                      profil: ProfilDemoControleur.enseignant,
+                      acces: AccesDemoControleur.revoque,
+                    ),
+                  ),
+                  rien,
+                ),
+                (
+                  'compte_rendu_indisponible',
+                  Uri(
+                    path: cheminDemoCompteRenduControleur,
+                    queryParameters: <String, String>{
+                      'etat': EtatDemoControleur.indisponible.name,
+                    },
+                  ).toString(),
+                  rien,
+                ),
+              ]) {
+            testWidgets('ct9_${nom}_$s', (WidgetTester tester) async {
+              await _capturerRoute(
+                tester,
+                'ct9_${nom}_$s',
+                route,
+                taille,
+                mode: mode,
+                avant: avant,
+              );
+            });
+          }
+        }
+      }
+    },
+  );
 
   group(
     'Capture : CT-7, CTR-05 Historique et CTR-06 Detail',

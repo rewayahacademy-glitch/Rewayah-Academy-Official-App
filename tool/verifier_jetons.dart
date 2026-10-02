@@ -272,9 +272,12 @@ final RegExp _emoji = RegExp(
 /// directionnelles dans les ecrans, or elles echappaient au controle
 /// d'espacement. Chaque marge reprise au lot R serait donc sortie de l'echelle
 /// sans que rien ne le dise.
+///
+/// Le `SizedBox` est pris seul : `FractionallySizedBox` porte une fraction
+/// (`widthFactor: 0.86`), pas un ecart, et tombait a tort dans ce controle.
 final RegExp _appelEspacement = RegExp(
   r'(?:EdgeInsets(?:Directional)?'
-  r'\.(?:all|symmetric|only|fromLTRB|fromSTEB)|SizedBox)\(',
+  r'\.(?:all|symmetric|only|fromLTRB|fromSTEB)|(?<![A-Za-z0-9_])SizedBox)\(',
 );
 
 /// Un argument dont la valeur est **entierement** un nombre litteral.

@@ -229,7 +229,7 @@ class _CarteMission extends StatelessWidget {
         fin: heureDeLAppareil(mission.finPrevue),
       ),
       t.controleur.controle.duree(minutes: mission.dureePrevue.inMinutes),
-      t.controleur.controle.eleves(nombre: mission.nombreEleves),
+      t.controleur.controle.eleves(n: mission.nombreEleves),
     ].join(' · ');
 
     return AppCard(
