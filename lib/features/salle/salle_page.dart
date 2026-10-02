@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/mode_accessibilite.dart';
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -1449,6 +1450,17 @@ class _Scene extends StatelessWidget {
       _ => null,
     };
 
+    // VIDEO-TUILE-1 : aucune tuile ne touche le bord de l'ecran -- la
+    // gouttiere mobile (16 px) de chaque cote, jamais moins.
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg,
+      ),
+      child: _pile(distants, moi),
+    );
+  }
+
+  Widget _pile(List<ParticipantSalle> distants, ParticipantSalle? moi) {
     return Stack(
       children: <Widget>[
         Positioned.fill(
@@ -1497,6 +1509,9 @@ class _Galerie extends StatelessWidget {
   /// La hauteur en dessous de laquelle une tuile ne montre plus rien d'utile.
   static const double _hauteurPlancher = AppSpacing.respiration * 2;
 
+  /// L'ecart entre deux tuiles (K-55, VIDEO-TUILE-1) : 16 px.
+  static const double _ecart = AppSpacing.lg;
+
   @override
   Widget build(BuildContext context) {
     // Un seul distant : il occupe tout, exactement comme avant le pivot. C'est
@@ -1522,17 +1537,17 @@ class _Galerie extends StatelessWidget {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {
         final double largeur =
-            (contraintes.maxWidth - AppSpacing.sm * (colonnes - 1)) / colonnes;
+            (contraintes.maxWidth - _ecart * (colonnes - 1)) / colonnes;
         final double disponible =
-            (contraintes.maxHeight - AppSpacing.sm * (lignes - 1)) / lignes;
+            (contraintes.maxHeight - _ecart * (lignes - 1)) / lignes;
         final double hauteur = disponible < _hauteurPlancher
             ? _hauteurPlancher
             : disponible;
 
         return GridView.count(
           crossAxisCount: colonnes,
-          mainAxisSpacing: AppSpacing.sm,
-          crossAxisSpacing: AppSpacing.sm,
+          mainAxisSpacing: _ecart,
+          crossAxisSpacing: _ecart,
           childAspectRatio: largeur / hauteur,
           // Tant que tout tient, la galerie ne defile pas : un geste vertical
           // dans une salle doit rester sans effet, sous peine de faire croire
@@ -1600,46 +1615,47 @@ class _Cadre extends ConsumerWidget {
         borderRadius: metriques.arrondi,
         child: Stack(
           children: <Widget>[
+            // VIDEO-TUILE-1 : sans image, le cercle et le nom centre dessous,
+            // ensemble au centre ; l'etiquette du bas n'existe qu'au-dessus
+            // d'une video reelle.
             Positioned.fill(
-              child:
-                  image ??
-                  _SansImage(nom: participant.nom, avecLegende: !compact),
+              child: image ?? _SansImage(participant: participant, nom: nom),
             ),
-            PositionedDirectional(
-              start: AppSpacing.sm,
-              bottom: AppSpacing.sm,
-              end: AppSpacing.sm,
-              // Une seule lecture pour les technologies d'assistance : le nom,
-              // puis ce qui manque. Trois elements separes feraient trois
-              // annonces pour une personne.
-              child: MergeSemantics(
-                child: Row(
-                  children: <Widget>[
-                    if (!participant.micro)
-                      IconTheme(
-                        data: IconThemeData(
-                          color: palette.surfaceSunken.onBackground,
-                          size: AppSpacing.xl,
+            if (image != null)
+              PositionedDirectional(
+                start: AppSpacing.sm,
+                bottom: AppSpacing.sm,
+                end: AppSpacing.sm,
+                // Une seule lecture pour les technologies d'assistance : le nom,
+                // puis ce qui manque. Trois elements separes feraient trois
+                // annonces pour une personne.
+                child: MergeSemantics(
+                  child: Row(
+                    children: <Widget>[
+                      if (!participant.micro)
+                        IconTheme(
+                          data: IconThemeData(
+                            color: palette.surfaceSunken.onBackground,
+                            size: AppSpacing.xl,
+                          ),
+                          child: Icon(
+                            AppIcons.microCoupe.repos,
+                            semanticLabel: t.salle.microCoupe,
+                          ),
                         ),
-                        child: Icon(
-                          AppIcons.microCoupe.repos,
-                          semanticLabel: t.salle.microCoupe,
+                      if (!participant.micro) Ecart.hXs,
+                      Flexible(
+                        child: TexteSansCoupure(
+                          nom,
+                          style: palette.surfaceSunken.applyTo(
+                            textes.labelMedium ?? const TextStyle(),
+                          ),
                         ),
                       ),
-                    if (!participant.micro) Ecart.hXs,
-                    Flexible(
-                      child: Text(
-                        nom,
-                        overflow: TextOverflow.ellipsis,
-                        style: palette.surfaceSunken.applyTo(
-                          textes.labelMedium ?? const TextStyle(),
-                        ),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),
@@ -1647,35 +1663,30 @@ class _Cadre extends ConsumerWidget {
   }
 }
 
-/// Ce qui occupe un cadre sans image.
+/// Ce qui occupe un cadre sans image : la tuile partagee (VIDEO-TUILE-1).
 ///
-/// **La legende cede avant l'avatar, et pas l'inverse.** Dans un cadre court,
-/// l'avatar porte deja le prenom et le cadre porte deja le nom en bas : la
-/// phrase « Sans image » y serait la troisieme fois qu'on dit la meme chose, et
-/// c'est elle qui debordait. Elle reste annoncee aux technologies d'assistance,
-/// pour qui rien ne se voit.
+/// « Sans image » ne s'ecrit plus : le cercle le dit. Il reste annonce aux
+/// technologies d'assistance, pour qui rien ne se voit.
 class _SansImage extends StatelessWidget {
-  const _SansImage({required this.nom, this.avecLegende = true});
+  const _SansImage({required this.participant, required this.nom});
 
+  final ParticipantSalle participant;
+
+  /// Le nom affiche (« Vous » pour soi).
   final String nom;
-
-  /// Vrai quand le cadre a la place d'ecrire « Sans image » sous l'avatar.
-  final bool avecLegende;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-
-    // AVATAR-1 / CTRL-SALLE-1 : un petit cercle, contenu dans son cadre.
-    return Semantics(
-      label: avecLegende ? null : t.salle.sansImage,
-      child: AvatarSansImage(
-        prenom: nom,
-        legende: avecLegende ? t.salle.sansImage : null,
-        styleLegende: palette.surfaceSunken.applyTo(
-          textes.labelSmall ?? const TextStyle(),
-        ),
+    return TuileSansImage(
+      prenom: participant.nom,
+      nom: nom,
+      libelleSansImage: t.salle.sansImage,
+      libelleMicroCoupe: participant.micro ? null : t.salle.microCoupe,
+      couleurIcone: palette.surfaceSunken.onBackground,
+      styleNom: palette.surfaceSunken.applyTo(
+        textes.labelMedium ?? const TextStyle(),
       ),
     );
   }

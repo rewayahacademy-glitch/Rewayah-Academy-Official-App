@@ -212,7 +212,8 @@ void main() {
     // Le seul « Séance en direct » est le titre.
     expect(find.text('Séance en direct'), findsOneWidget);
     expect(find.text('Sayyid Ibrahim'), findsWidgets);
-    expect(find.text('SI'), findsOneWidget);
+    // VIDEO-TUILE-1 : l'en-tete et le cercle de la vignette sans image.
+    expect(find.text('SI'), findsNWidgets(2));
   });
 
   testWidgets('EN-9 : aucune barre, meme avec un rappel de navigation', (
@@ -248,7 +249,10 @@ void main() {
     await _monter(tester, _tailles['mobile']!);
     await tester.tap(find.text('Quitter'));
     await _attendre(tester);
-    expect(find.text('Quitter et ouvrir le cahier de transmission'), findsOneWidget);
+    expect(
+      find.text('Quitter et ouvrir le cahier de transmission'),
+      findsOneWidget,
+    );
     // Spec CLV-06, textes exacts : « Rester », jamais « Annuler ».
     expect(find.text('Rester'), findsOneWidget);
     expect(find.text('Annuler'), findsNothing);
@@ -306,7 +310,7 @@ void main() {
       await monterReel(tester, 'mobile');
       final Finder vignette = _cle('vignette-video');
       final Rect cadre = tester.getRect(vignette);
-      final Rect nom = tester.getRect(_cle('nom-video'));
+      final Rect nom = tester.getRect(_cle('tuile-sans-image-nom'));
       expect(
         find.descendant(of: vignette, matching: find.text('Sayyid Ibrahim')),
         findsOneWidget,

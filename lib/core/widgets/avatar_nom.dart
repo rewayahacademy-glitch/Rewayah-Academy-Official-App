@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
+import '../icons/app_icons.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
 import 'avatar_tile.dart';
@@ -244,8 +246,155 @@ class AvatarNom extends StatelessWidget {
   }
 }
 
-/// Ce qui occupe un cadre video sans image (salle, classe live, vignette
-/// d'observation) : un petit cercle, centre dans la zone libre du cadre, avec au
+/// **La tuile video sans image** : le seul rendu d'un cadre video dont la
+/// camera ne publie pas (salle de seance, salle du controleur, classe live,
+/// vignette de l'enseignant). VIDEO-TUILE-1, revue du directeur du 02/10/2026 :
+/// « le nom est colle a gauche de l'avatar au lieu du centre ».
+///
+/// - le petit cercle ([AppAvatar.moyen]) et le nom **centre juste dessous**,
+///   ensemble au centre de la tuile, sur le meme axe vertical ;
+/// - le cadre ne pose plus d'etiquette de nom en bas a gauche dans ce cas ;
+/// - le micro coupe ([libelleMicroCoupe]) se pose a cote du nom ; un
+///   emplacement vide de meme largeur lui fait face, pour que le nom reste
+///   centre sur le cercle ;
+/// - « Sans image » ne s'ecrit pas : le cercle le dit deja. Le lecteur d'ecran
+///   le garde dans la semantique ([libelleSansImage]) ;
+/// - rien ne deborde : le nom passe a la ligne entre deux mots, jamais au
+///   milieu d'un mot ([TexteSansCoupure]) ni avec des points de suspension, et
+///   le bloc se reduit ([FittedBox]) quand la tuile est trop courte, a 200 %
+///   de texte comme a six visages ;
+/// - [coin] (barres de reseau) reste dans le coin bas de fin de la tuile.
+class TuileSansImage extends StatelessWidget {
+  /// Cree la tuile.
+  const TuileSansImage({
+    required this.prenom,
+    required this.nom,
+    super.key,
+    this.libelleSansImage,
+    this.libelleMicroCoupe,
+    this.styleNom,
+    this.couleurIcone,
+    this.coin,
+  });
+
+  /// Le prenom, source des initiales du cercle.
+  final String prenom;
+
+  /// Le nom affiche sous le cercle (« Sayyid Ibrahim », « Vous »).
+  final String nom;
+
+  /// Ce que le lecteur d'ecran ajoute au nom (« Sans image »).
+  final String? libelleSansImage;
+
+  /// Le libelle du micro coupe ; `null` quand le micro est ouvert.
+  final String? libelleMicroCoupe;
+
+  /// Le style du nom, dans l'encre du registre de la tuile.
+  final TextStyle? styleNom;
+
+  /// La couleur de l'icone de micro coupe.
+  final Color? couleurIcone;
+
+  /// Un indicateur pose dans le coin bas de fin (signal reseau).
+  final Widget? coin;
+
+  /// La taille de l'icone de micro, et de l'emplacement qui lui fait face.
+  static const double _icone = AppSpacing.lg;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle style = styleNom ?? textes.labelMedium ?? const TextStyle();
+    final bool microCoupe = libelleMicroCoupe != null;
+
+    final Widget bloc = LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints contraintes) => Padding(
+        padding: const EdgeInsets.all(AppSpacing.sm),
+        child: Center(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: contraintes.hasBoundedWidth
+                    ? (contraintes.maxWidth - 2 * AppSpacing.sm).clamp(
+                        0,
+                        double.infinity,
+                      )
+                    : double.infinity,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  ExcludeSemantics(
+                    child: AvatarTile(
+                      key: const ValueKey<String>('tuile-sans-image-cercle'),
+                      prenom: prenom,
+                      diametre: AppAvatar.moyen,
+                    ),
+                  ),
+                  Ecart.vXs,
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      if (microCoupe) ...<Widget>[
+                        Icon(
+                          AppIcons.microCoupe.repos,
+                          size: _icone,
+                          color: couleurIcone ?? style.color,
+                        ),
+                        Ecart.hXs,
+                      ],
+                      Flexible(
+                        child: TexteSansCoupure(
+                          nom,
+                          key: const ValueKey<String>('tuile-sans-image-nom'),
+                          textAlign: TextAlign.center,
+                          style: style,
+                        ),
+                      ),
+                      // L'emplacement qui fait face au micro : le nom reste
+                      // centre sur le cercle.
+                      if (microCoupe) ...<Widget>[
+                        Ecart.hXs,
+                        const SizedBox(width: _icone),
+                      ],
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    return Semantics(
+      container: true,
+      label: <String>[
+        nom,
+        if (libelleMicroCoupe case final String micro) micro,
+        if (libelleSansImage case final String sans) sans,
+      ].join(', '),
+      child: ExcludeSemantics(
+        child: Stack(
+          children: <Widget>[
+            Positioned.fill(child: bloc),
+            if (coin case final Widget indicateur)
+              PositionedDirectional(
+                end: AppSpacing.sm,
+                bottom: AppSpacing.sm,
+                child: indicateur,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Ce qui occupe un cadre video sans image (vignette d'observation) : un petit
+/// cercle, centre dans la zone libre du cadre, avec au
 /// plus une ligne de legende dessous.
 ///
 /// Le cadre pose son propre nom en bas ([reserveBas] laisse la place a cette

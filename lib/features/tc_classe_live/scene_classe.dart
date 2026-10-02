@@ -143,42 +143,43 @@ class _Cadre extends ConsumerWidget {
         borderRadius: metriques.arrondi,
         child: Stack(
           children: <Widget>[
+            // VIDEO-TUILE-1 : sans image, la tuile partagee (cercle et nom
+            // centre dessous) ; l'etiquette du bas reste sur une video reelle.
             Positioned.fill(
-              child:
-                  image ??
-                  _SansImage(nom: participant.nom, avecLegende: !compact),
+              child: image ?? _SansImage(participant: participant),
             ),
-            PositionedDirectional(
-              start: AppSpacing.sm,
-              bottom: AppSpacing.sm,
-              end: AppSpacing.sm,
-              // Une seule lecture pour les technologies d'assistance : le nom,
-              // puis ce qui manque.
-              child: MergeSemantics(
-                child: Row(
-                  children: <Widget>[
-                    Flexible(
-                      child: Text(
-                        participant.nom,
-                        overflow: TextOverflow.ellipsis,
-                        style: palette.surfaceSunken.applyTo(
-                          textes.labelMedium ?? const TextStyle(),
+            if (image != null)
+              PositionedDirectional(
+                start: AppSpacing.sm,
+                bottom: AppSpacing.sm,
+                end: AppSpacing.sm,
+                // Une seule lecture pour les technologies d'assistance : le nom,
+                // puis ce qui manque.
+                child: MergeSemantics(
+                  child: Row(
+                    children: <Widget>[
+                      Flexible(
+                        child: Text(
+                          participant.nom,
+                          overflow: TextOverflow.ellipsis,
+                          style: palette.surfaceSunken.applyTo(
+                            textes.labelMedium ?? const TextStyle(),
+                          ),
                         ),
                       ),
-                    ),
-                    if (!participant.micro) ...<Widget>[
-                      Ecart.hXs,
-                      Text(
-                        t.tc.classe.commandes.microCoupe,
-                        style: palette.surfaceSunken.applyTo(
-                          textes.labelSmall ?? const TextStyle(),
+                      if (!participant.micro) ...<Widget>[
+                        Ecart.hXs,
+                        Text(
+                          t.tc.classe.commandes.microCoupe,
+                          style: palette.surfaceSunken.applyTo(
+                            textes.labelSmall ?? const TextStyle(),
+                          ),
                         ),
-                      ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),
@@ -186,27 +187,26 @@ class _Cadre extends ConsumerWidget {
   }
 }
 
-/// Ce qui occupe un cadre sans image.
+/// Ce qui occupe un cadre sans image : la tuile partagee (VIDEO-TUILE-1).
 class _SansImage extends StatelessWidget {
-  const _SansImage({required this.nom, required this.avecLegende});
+  const _SansImage({required this.participant});
 
-  final String nom;
-  final bool avecLegende;
+  final ParticipantSalle participant;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-
-    // AVATAR-1 : le petit cercle du composant partage, contenu dans son cadre.
-    return Semantics(
-      label: avecLegende ? null : t.tc.classe.scene.sansImage,
-      child: AvatarSansImage(
-        prenom: nom,
-        legende: avecLegende ? t.tc.classe.scene.sansImage : null,
-        styleLegende: palette.surfaceSunken.applyTo(
-          textes.labelSmall ?? const TextStyle(),
-        ),
+    return TuileSansImage(
+      prenom: participant.nom,
+      nom: participant.nom,
+      libelleSansImage: t.tc.classe.scene.sansImage,
+      libelleMicroCoupe: participant.micro
+          ? null
+          : t.tc.classe.commandes.microCoupe,
+      couleurIcone: palette.surfaceSunken.onBackground,
+      styleNom: palette.surfaceSunken.applyTo(
+        textes.labelMedium ?? const TextStyle(),
       ),
     );
   }

@@ -6,11 +6,11 @@
 import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
-import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/avatar_nom.dart';
 import 'vue_seance.dart';
 
 /// Les mesures de la vignette, par gabarit.
@@ -83,8 +83,9 @@ abstract final class MesuresVignette {
 
 /// La video de l'enseignante en petite vignette.
 ///
-/// Etiquette du nom en bas a gauche ; barres de signal seulement pour
-/// l'enseignant ([VueSeance.voitSignalVideo]).
+/// Sans image : la tuile partagee [TuileSansImage], cercle et nom centre
+/// dessous (VIDEO-TUILE-1) ; barres de signal seulement pour l'enseignant
+/// ([VueSeance.voitSignalVideo]).
 class VignetteVideo extends StatelessWidget {
   const VignetteVideo({required this.vue, required this.largeur, super.key});
 
@@ -111,75 +112,24 @@ class VignetteVideo extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: AppRadius.arrondiMd,
-              child: Stack(
-                fit: StackFit.expand,
-                children: <Widget>[
-                  // L'aplat qui tient lieu d'image : la silhouette sur un
-                  // fond d'accent, cadree en `cover`, jamais deformee.
-                  DecoratedBox(
-                    decoration: palette.surfaceActionDouce.decoration(),
-                    child: FittedBox(
-                      fit: BoxFit.cover,
-                      child: Padding(
-                        padding: const EdgeInsets.all(AppSpacing.md),
-                        child: IconTheme(
-                          data: IconThemeData(
-                            color: palette.surfaceActionDouce.onBackground,
-                            size: AppSpacing.titreEcran,
-                          ),
-                          child: Icon(AppIcons.avatarSansPhoto.actif),
-                        ),
-                      ),
-                    ),
+              // VIDEO-TUILE-1 : la tuile partagee -- le petit cercle et le
+              // nom centre dessous, ensemble au centre, sur l'aplat qui tient
+              // lieu d'image ; le signal reste dans le coin bas.
+              child: DecoratedBox(
+                decoration: palette.surfaceActionDouce.decoration(),
+                child: TuileSansImage(
+                  prenom: vue.nomEnseignant,
+                  nom: vue.nomEnseignant,
+                  styleNom: palette.surfaceActionDouce.applyTo(
+                    theme.textTheme.labelSmall ?? const TextStyle(),
                   ),
-                  PositionedDirectional(
-                    start: _retraitEtiquette,
-                    bottom: _retraitEtiquette,
-                    end: _retraitEtiquette,
-                    // L'etiquette prend sa largeur, le signal va au bout.
-                    // Le nom s'ecrit en entier (images : « Sayyida Amina ») :
-                    // dans la vignette etroite, il se resserre au besoin
-                    // plutot que de se couper.
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Flexible(
-                          child: DecoratedBox(
-                            decoration: palette.surfaceInverse.decoration(
-                              borderRadius: AppRadius.arrondiXs,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: _retraitEtiquette,
-                                vertical: AppSpacing.xs,
-                              ),
-                              child: FittedBox(
-                                key: const ValueKey<String>('nom-video'),
-                                fit: BoxFit.scaleDown,
-                                alignment: AlignmentDirectional.centerStart,
-                                child: Text(
-                                  vue.nomEnseignant,
-                                  maxLines: 1,
-                                  style: palette.surfaceInverse.applyTo(
-                                    theme.textTheme.labelSmall ??
-                                        const TextStyle(),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        if (vue.voitSignalVideo) ...<Widget>[
-                          Ecart.hXs,
-                          _Signal(
-                            key: const ValueKey<String>('signal-video'),
-                            barres: vue.signalEnseignant,
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ],
+                  coin: vue.voitSignalVideo
+                      ? _Signal(
+                          key: const ValueKey<String>('signal-video'),
+                          barres: vue.signalEnseignant,
+                        )
+                      : null,
+                ),
               ),
             ),
           ),
@@ -228,7 +178,3 @@ class _Signal extends StatelessWidget {
 
 /// L'ecart entre deux barres de signal : un demi-palier.
 const double _ecartBarres = AppSpacing.xs / 2;
-
-/// Le retrait de l'etiquette du nom, et sa marge laterale : un palier et
-/// demi, pour que le nom tienne en entier dans la vignette etroite.
-const double _retraitEtiquette = AppSpacing.xs + AppSpacing.xs / 2;
