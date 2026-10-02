@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../icons/app_icons.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -9,7 +10,11 @@ import 'pressable.dart';
 @immutable
 class Segment<T> {
   /// Cree un segment.
-  const Segment({required this.valeur, required this.libelle});
+  const Segment({required this.valeur, required this.libelle, this.icone});
+
+  /// Une icone posee au-dessus du libelle (soleil, lune) : elle ne remplace
+  /// jamais le libelle, l'etat ne repose pas sur le seul pictogramme.
+  final AppIcon? icone;
 
   /// La valeur que le segment selectionne.
   final T valeur;
@@ -39,7 +44,14 @@ class ControleSegmente<T> extends StatelessWidget {
     required this.valeur,
     required this.onChange,
     super.key,
+    this.rectangle = false,
   });
+
+  /// Vrai : un petit rectangle a coins arrondis (`AppRadius.md`) au lieu de la
+  /// pilule, pour les segments qui portent une icone au-dessus du libelle
+  /// (choix du theme, THEME-SW-1). Le segment actif prend le rayon `sm`, plus
+  /// petit que celui de la piste.
+  final bool rectangle;
 
   /// Les segments, dans l'ordre de lecture : deux a quatre. Un seul segment
   /// n'est pas un choix, et au-dela de quatre les libelles ne tiennent plus
@@ -58,7 +70,7 @@ class ControleSegmente<T> extends StatelessWidget {
 
     return DecoratedBox(
       decoration: palette.surfaceSunken.decoration(
-        borderRadius: AppRadius.arrondiFull,
+        borderRadius: rectangle ? AppRadius.arrondiMd : AppRadius.arrondiFull,
       ),
       // Hauteur intrinseque : les segments prennent tous la hauteur du plus
       // haut (un libelle qui passe a la ligne a 200 %), sans exiger du parent
@@ -73,6 +85,9 @@ class ControleSegmente<T> extends StatelessWidget {
                   segment: segment,
                   selectionne: segment.valeur == valeur,
                   onChange: onChange,
+                  arrondi: rectangle
+                      ? AppRadius.arrondiSm
+                      : AppRadius.arrondiFull,
                 ),
               ),
           ],
@@ -87,11 +102,13 @@ class _Segment<T> extends StatelessWidget {
     required this.segment,
     required this.selectionne,
     required this.onChange,
+    required this.arrondi,
   });
 
   final Segment<T> segment;
   final bool selectionne;
   final ValueChanged<T> onChange;
+  final BorderRadius arrondi;
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +127,7 @@ class _Segment<T> extends StatelessWidget {
             onChange(segment.valeur);
           }
         },
-        arrondiFocus: AppRadius.arrondiFull,
+        arrondiFocus: arrondi,
         constructeur: (BuildContext contexte, EtatPression etat) => Padding(
           // La cible fait toute la hauteur de la piste ; la pastille active
           // est posee dedans, a 4 du bord.
@@ -118,11 +135,11 @@ class _Segment<T> extends StatelessWidget {
           child: DecoratedBox(
             decoration: selectionne
                 ? palette.washAccent.decoration(
-                    borderRadius: AppRadius.arrondiFull,
+                    borderRadius: arrondi,
                     side: palette.inkAccent.asBorderSide(),
                   )
                 : BoxDecoration(
-                    borderRadius: AppRadius.arrondiFull,
+                    borderRadius: arrondi,
                     color: etat.survole || etat.presse
                         ? palette.calqueInteraction(presse: etat.presse)
                         : null,
@@ -133,12 +150,32 @@ class _Segment<T> extends StatelessWidget {
                   horizontal: AppSpacing.md,
                   vertical: AppSpacing.sm,
                 ),
-                child: Text(
-                  segment.libelle,
-                  textAlign: TextAlign.center,
-                  style: selectionne
-                      ? palette.washAccent.applyTo(base)
-                      : palette.inkMuted.applyTo(base),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    if (segment.icone != null) ...<Widget>[
+                      ExcludeSemantics(
+                        child: Icon(
+                          selectionne
+                              ? segment.icone!.actif
+                              : segment.icone!.repos,
+                          size: AppSpacing.xl,
+                          color: selectionne
+                              ? palette.washAccent.applyTo(base).color
+                              : palette.inkMuted.applyTo(base).color,
+                        ),
+                      ),
+                      Ecart.vXs,
+                    ],
+                    Text(
+                      segment.libelle,
+                      textAlign: TextAlign.center,
+                      style: selectionne
+                          ? palette.washAccent.applyTo(base)
+                          : palette.inkMuted.applyTo(base),
+                    ),
+                  ],
                 ),
               ),
             ),
