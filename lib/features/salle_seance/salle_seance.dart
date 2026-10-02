@@ -1153,13 +1153,13 @@ class _BoutonsPanneaux extends StatelessWidget {
     if (enColonne) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        spacing: AppSpacing.md,
+        spacing: AppSpacing.lg,
         children: boutons,
       );
     }
     return Row(
       mainAxisSize: etire ? MainAxisSize.max : MainAxisSize.min,
-      spacing: AppSpacing.md,
+      spacing: AppSpacing.lg,
       children: <Widget>[
         for (final Widget b in boutons) etire ? Expanded(child: b) : b,
       ],
@@ -1231,12 +1231,7 @@ class BoutonPanneau extends StatelessWidget {
               ),
               if (serre) Ecart.hSm else Ecart.hMd,
               if (etire) Expanded(child: texte) else texte,
-              if (serre)
-                Ecart.hXs
-              else if (etire)
-                Ecart.hSm
-              else
-                Ecart.hLg,
+              if (serre) Ecart.hXs else if (etire) Ecart.hSm else Ecart.hLg,
               IconTheme(
                 data: palette.inkMuted.asIconTheme(
                   size: serre ? AppSpacing.lg : AppSpacing.xl,

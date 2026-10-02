@@ -132,7 +132,7 @@ class _SelecteurRessourcesState extends State<SelecteurRessources> {
           else
             for (final SupportDisponible s in visibles)
               Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                padding: const EdgeInsets.only(bottom: AppSpacing.lg),
                 // La carte pressable du core (K-54) : surface, filet et cible
                 // tactile viennent d'`AppCard`, jamais d'un fond peint ici.
                 child: AppCard(

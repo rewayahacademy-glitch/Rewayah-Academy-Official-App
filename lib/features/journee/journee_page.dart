@@ -1005,7 +1005,7 @@ class _AlertesUtiles extends ConsumerWidget {
         Ecart.vSm,
         if (coursAnnule != null) ...<Widget>[
           _CarteCoursAnnule(cours: coursAnnule!),
-          if (alertes.isNotEmpty || offres.isNotEmpty) Ecart.vMd,
+          if (alertes.isNotEmpty || offres.isNotEmpty) Ecart.vLg,
         ],
         if (alertes.isNotEmpty || offres.isNotEmpty)
           GroupeReglages(
