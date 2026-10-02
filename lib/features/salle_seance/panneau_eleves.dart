@@ -17,6 +17,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/widgets/bouton_outil.dart';
 import '../../core/widgets/pressable.dart';
 import '../foyer/photo_eleve.dart';
 import 'actions_seance.dart';
@@ -594,55 +595,27 @@ class _TuileAction extends StatelessWidget {
   final VoidCallback onPress;
 
   @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    return Pressable(
+  Widget build(BuildContext context) => ConstrainedBox(
+    // Feuille du telephone : la cible reste d'au moins 48 de haut.
+    constraints: BoxConstraints(
+      minHeight: serre
+          ? AppSpacing.titreEcran
+          : AppSpacing.respiration + AppSpacing.lg,
+    ),
+    // La surface, l'icone et le mot centres sont peints par le composant du
+    // core (K-54).
+    child: BoutonOutil(
+      icone: icone,
+      libelle: libelle,
+      avecLibelle: true,
+      forme: FormeBoutonOutil.tuile,
+      lignesLibelle: 3,
+      iconeActive: true,
+      serre: serre,
+      tailleIcone: AppSpacing.xxl + AppSpacing.xs,
       onPress: onPress,
-      libelleSemantique: libelle,
-      arrondiFocus: AppRadius.arrondiMd,
-      child: DecoratedBox(
-        decoration: palette.surfaceRaised.decoration(
-          borderRadius: AppRadius.arrondiMd,
-          side: palette.borderHairline.asBorderSide(),
-        ),
-        child: ConstrainedBox(
-          // Feuille du telephone : la cible reste d'au moins 48 de haut.
-          constraints: BoxConstraints(
-            minHeight: serre
-                ? AppSpacing.titreEcran
-                : AppSpacing.respiration + AppSpacing.lg,
-          ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: AppSpacing.xs,
-              vertical: serre ? AppSpacing.xs : AppSpacing.sm,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                IconTheme(
-                  data: palette.inkAccent.asIconTheme(
-                    size: AppSpacing.xxl + AppSpacing.xs,
-                  ),
-                  child: Icon(icone.actif),
-                ),
-                if (!serre) Ecart.vXs,
-                Text(
-                  libelle,
-                  textAlign: TextAlign.center,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: palette.inkStrong.applyTo(
-                    Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+    ),
+  );
 }
 
 /// Le prenom d'une cle de la file : l'inscrit de meme cle, ou la cle elle-meme.

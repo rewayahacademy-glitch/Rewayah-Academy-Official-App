@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
+import 'package:rewayah_academy/core/widgets/bouton_commande.dart';
+import 'package:rewayah_academy/core/widgets/bouton_icone.dart';
+import 'package:rewayah_academy/core/widgets/bouton_outil.dart';
+import 'package:rewayah_academy/core/widgets/filter_pill.dart';
+import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
+import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart';
 
 import '../support/garde_interface.dart';
 import '../support/hote_theme.dart';
 
-/// Gardes de la revue du directeur des 01 et 02/10/2026 (K-54, K-55) sur les
+/// Gardes de la revue du directeur des 01 et 02/10/2026 (K-54, K-55, K-56) sur les
 /// composants partages : un defaut vu a l'ecran doit echouer ici.
 void main() {
   const String court = 'Poser un creneau';
@@ -182,5 +190,325 @@ void main() {
         ]);
       });
     }
+  });
+
+  // K-54 (BTN-CENTRE-1) : chaque composant partage qui peint un bouton centre
+  // son contenu en largeur ET en hauteur, sans deborder, a 320 et 1440 px, en
+  // texte normal et en texte x2, en clair et en sombre, que le parent l'etire
+  // (Column stretch) ou le laisse a sa largeur naturelle.
+  group('K-54 : composants partages, contenu centre', () {
+    const String libelle = 'Tester';
+    const String longLibelle =
+        'Tester la camera et le micro avant la seance du mardi';
+
+    final Map<String, ({Widget Function(String) cree, List<Finder> contenu})>
+    composants =
+        <String, ({Widget Function(String) cree, List<Finder> contenu})>{
+          'FilterPill': (
+            cree: (String l) =>
+                FilterPill(libelle: l, onPress: () {}, retenue: true),
+            contenu: <Finder>[find.byType(Text)],
+          ),
+          'LienFleche': (
+            cree: (String l) => LienFleche(libelle: l, onPress: () {}),
+            contenu: <Finder>[find.byType(Text), find.byType(Icon)],
+          ),
+          'LienFleche sans fleche': (
+            cree: (String l) =>
+                LienFleche(libelle: l, onPress: () {}, fleche: false),
+            contenu: <Finder>[find.byType(Text)],
+          ),
+          'StatusPill': (
+            cree: (String l) => StatusPill(libelle: l, ton: TonEtat.accent),
+            contenu: <Finder>[
+              find.byType(Text),
+              find.byWidgetPredicate(
+                (Widget w) =>
+                    w is SizedBox && w.width == StatusPill.diametrePastille,
+              ),
+            ],
+          ),
+          'MenuFiltre': (
+            cree: (String l) => MenuFiltre<int>(
+              libelle: l,
+              valeur: null,
+              entrees: const <EntreeFiltre<int>>[],
+              onChoix: (int? _) {},
+            ),
+            contenu: <Finder>[find.byType(Text), find.byType(Icon)],
+          ),
+          'ActionPrincipale doux': (
+            cree: (String l) => ActionPrincipale(
+              libelle: l,
+              onPress: () {},
+              niveau: NiveauAction.destructive,
+              doux: true,
+              prefixe: const Icon(Icons.circle, size: 20),
+            ),
+            contenu: <Finder>[find.byType(Text), find.byType(Icon)],
+          ),
+          'ActionPrincipale fleche': (
+            cree: (String l) =>
+                ActionPrincipale(libelle: l, onPress: () {}, fleche: true),
+            contenu: <Finder>[find.byType(Text), find.byType(Icon)],
+          ),
+          'BoutonOutil nu': (
+            cree: (String l) => BoutonOutil(
+              icone: AppIcons.crayon,
+              libelle: l,
+              avecLibelle: true,
+              retenu: true,
+              onPress: () {},
+            ),
+            contenu: <Finder>[find.byType(Text), find.byType(Icon)],
+          ),
+          'BoutonOutil tuile': (
+            cree: (String l) => BoutonOutil(
+              icone: AppIcons.crayon,
+              libelle: l,
+              avecLibelle: true,
+              forme: FormeBoutonOutil.tuile,
+              onPress: () {},
+            ),
+            contenu: <Finder>[find.byType(Text), find.byType(Icon)],
+          ),
+        };
+
+    for (final MapEntry<String, ({Widget Function(String) cree, List<Finder> contenu})>
+        c in composants.entries) {
+      for (final double largeur in <double>[320, 1440]) {
+        for (final double echelle in <double>[1, 2]) {
+          for (final Brightness lum in Brightness.values) {
+            for (final bool etire in <bool>[true, false]) {
+              for (final String l in <String>[
+                libelle,
+                if (!c.key.startsWith('Bouton')) longLibelle,
+              ]) {
+                testWidgets(
+                  '${c.key} : ${l.length} car., ${largeur.toInt()} px, '
+                  'texte x${echelle.toInt()}, ${lum.name}, '
+                  '${etire ? 'etire' : 'naturel'}',
+                  (WidgetTester tester) async {
+                    fixerVue(tester, Size(largeur, 900));
+                    await tester.pumpWidget(
+                      hoteTheme(
+                        Column(
+                          crossAxisAlignment: etire
+                              ? CrossAxisAlignment.stretch
+                              : CrossAxisAlignment.center,
+                          children: <Widget>[
+                            if (c.key == 'BoutonOutil tuile')
+                              SizedBox(
+                                height: 96,
+                                child: c.value.cree(l),
+                              )
+                            else
+                              c.value.cree(l),
+                          ],
+                        ),
+                        echelleTexte: echelle,
+                        luminosite: lum,
+                      ),
+                    );
+                    final Finder bouton = find
+                        .byWidgetPredicate(
+                          (Widget w) =>
+                              w.runtimeType.toString() ==
+                              c.value.cree(l).runtimeType.toString(),
+                        )
+                        .first;
+                    verifierContenuCentre(tester, bouton, c.value.contenu);
+                    expect(tester.takeException(), isNull);
+                  },
+                );
+              }
+            }
+          }
+        }
+      }
+    }
+
+    testWidgets('un libelle qui passe a la ligne reste centre ligne a ligne', (
+      WidgetTester tester,
+    ) async {
+      fixerVue(tester, const Size(320, 900));
+      await tester.pumpWidget(
+        hoteTheme(
+          Column(
+            children: <Widget>[
+              ActionPrincipale(libelle: longLibelle, onPress: () {}),
+              FilterPill(libelle: longLibelle, onPress: () {}),
+              const StatusPill(libelle: longLibelle, ton: TonEtat.neutre),
+            ],
+          ),
+          echelleTexte: 2,
+        ),
+      );
+      verifierLibelleCentreLigneALigne(
+        tester,
+        find.byType(ActionPrincipale),
+        longLibelle,
+      );
+      verifierLibelleCentreLigneALigne(
+        tester,
+        find.byType(FilterPill),
+        longLibelle,
+      );
+      verifierLibelleCentreLigneALigne(
+        tester,
+        find.byType(StatusPill),
+        longLibelle,
+      );
+    });
+
+    for (final double largeur in <double>[320, 1440]) {
+      testWidgets(
+        'ActionPrincipale pleineLargeur: false prend la largeur de son '
+        'contenu, jamais celle de son parent, a ${largeur.toInt()} px',
+        (WidgetTester tester) async {
+          fixerVue(tester, Size(largeur, 900));
+          await tester.pumpWidget(
+            hoteTheme(
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: ActionPrincipale(
+                  libelle: libelle,
+                  onPress: () {},
+                  pleineLargeur: false,
+                ),
+              ),
+            ),
+          );
+          final Rect bouton = tester.getRect(find.byType(ActionPrincipale));
+          expect(
+            bouton.width,
+            lessThan(largeur / 2),
+            reason: 'le bouton non pleine largeur s\'etire : $bouton',
+          );
+        },
+      );
+    }
+  });
+
+  group('K-54 : boutons icone et commandes rondes, contenu centre', () {
+    for (final double largeur in <double>[320, 1440]) {
+      for (final double echelle in <double>[1, 2]) {
+        for (final FormeBoutonIcone forme in FormeBoutonIcone.values) {
+          testWidgets(
+            'BoutonIcone ${forme.name} : icone au centre de sa cible, '
+            '${largeur.toInt()} px, texte x${echelle.toInt()}',
+            (WidgetTester tester) async {
+              fixerVue(tester, Size(largeur, 900));
+              await tester.pumpWidget(
+                hoteTheme(
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: BoutonIcone(
+                      icone: AppIcons.zoomPlus,
+                      libelle: 'Agrandir',
+                      forme: forme,
+                      onPress: () {},
+                    ),
+                  ),
+                  echelleTexte: echelle,
+                ),
+              );
+              verifierContenuCentre(tester, find.byType(BoutonIcone), <Finder>[
+                find.byType(Icon),
+              ]);
+            },
+          );
+        }
+        for (final FondCommande fond in FondCommande.values) {
+          testWidgets(
+            'BoutonCommande ${fond.name} : disque et mot centres l un sur '
+            'l autre, ${largeur.toInt()} px, texte x${echelle.toInt()}',
+            (WidgetTester tester) async {
+              fixerVue(tester, Size(largeur, 900));
+              await tester.pumpWidget(
+                hoteTheme(
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: BoutonCommande(
+                      cleDisque: const ValueKey<String>('disque'),
+                      icone: AppIcons.micro.repos,
+                      libelle: 'Micro',
+                      diametre: 56,
+                      tailleIcone: 24,
+                      fond: fond,
+                      onPress: () {},
+                    ),
+                  ),
+                  echelleTexte: echelle,
+                ),
+              );
+              final Rect disque = tester.getRect(
+                find.byKey(const ValueKey<String>('disque')),
+              );
+              final Rect mot = tester.getRect(find.text('Micro'));
+              final Rect icone = tester.getRect(
+                find.descendant(
+                  of: find.byKey(const ValueKey<String>('disque')),
+                  matching: find.byType(Icon),
+                ),
+              );
+              expect((mot.center.dx - disque.center.dx).abs(), lessThan(1.5));
+              expect((icone.center.dx - disque.center.dx).abs(), lessThan(1.5));
+              expect((icone.center.dy - disque.center.dy).abs(), lessThan(1.5));
+              expect(disque.bottom, lessThanOrEqualTo(mot.top));
+            },
+          );
+        }
+      }
+    }
+  });
+
+  group('K-56 : un seul bouton plein', () {
+    testWidgets('la garde compte les boutons pleins, pas les autres niveaux', (
+      WidgetTester tester,
+    ) async {
+      fixerVue(tester, const Size(390, 844));
+      await tester.pumpWidget(
+        hoteTheme(
+          Column(
+            children: <Widget>[
+              ActionPrincipale(libelle: 'Envoyer', onPress: () {}),
+              ActionPrincipale(
+                libelle: 'Revenir',
+                onPress: () {},
+                niveau: NiveauAction.secondaire,
+              ),
+              ActionPrincipale(
+                libelle: 'Plus tard',
+                onPress: () {},
+                niveau: NiveauAction.tertiaire,
+              ),
+              LienFleche(libelle: 'Choisir une photo', onPress: () {}),
+            ],
+          ),
+        ),
+      );
+      verifierUnSeulBoutonPlein(tester);
+    });
+
+    testWidgets('deux boutons pleins font echouer la garde', (
+      WidgetTester tester,
+    ) async {
+      fixerVue(tester, const Size(390, 844));
+      await tester.pumpWidget(
+        hoteTheme(
+          Column(
+            children: <Widget>[
+              ActionPrincipale(libelle: 'Envoyer', onPress: () {}),
+              ActionPrincipale(libelle: 'Choisir une photo', onPress: () {}),
+            ],
+          ),
+        ),
+      );
+      expect(
+        () => verifierUnSeulBoutonPlein(tester),
+        throwsA(isA<TestFailure>()),
+      );
+    });
   });
 }

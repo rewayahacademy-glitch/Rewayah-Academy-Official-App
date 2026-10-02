@@ -114,6 +114,7 @@ void main(List<String> arguments) {
     'affirmation-reseau',
     'cartes-collees',
     'bouton-recompose',
+    'plein-multiple',
     'libelle-ambigu',
     'mot-interne',
     'erreur-sans-action',
@@ -171,6 +172,9 @@ void main(List<String> arguments) {
   }
   if (regles.contains('selecteur-theme-recompose')) {
     violations.addAll(_selecteursThemeRecomposes());
+  }
+  if (regles.contains('plein-multiple')) {
+    violations.addAll(_pleinsMultiples());
   }
   if (regles.contains('libelle-ambigu')) {
     for (final MapEntry<String, String> e in fr.entries) {
@@ -435,45 +439,85 @@ List<Violation> _cartesCollees() {
   return v;
 }
 
+/// Les composants du core qui peignent eux-memes leur fond : un `Pressable`
+/// qui en contient un n'est pas un bouton recompose.
+const String _composantsBouton =
+    r'AppCard|ActionPrincipale|BentoTile|ChildCard|LienFleche|FilterPill|'
+    r'BoutonOutil|ControleSegmente|ChoiceCardGroup|GroupeReglages|SettingRow|'
+    r'StatTile|ScheduleOption|StatusPill';
+
+/// Les gestes qui font d'un `GestureDetector` ou d'un `InkWell` un bouton :
+/// un detecteur de glissement (`onPan`, un dessin) n'en est pas un.
+final RegExp _gesteBouton = RegExp(
+  r'\bon(?:Tap|TapDown|TapUp|DoubleTap|LongPress|SecondaryTap)\s*:',
+);
+
 /// K-54 / K-56 : un bouton construit dans un ecran au lieu d'un composant du
-/// core : un bouton Material, ou un `Pressable` qui peint lui-meme un fond
-/// arrondi autour d'un `Text`, hors `AppCard` et `ActionPrincipale`.
+/// core. Quatre formes, toutes hors `lib/core` :
+///
+///  1. un bouton ou une puce Material (`TextButton`, `ChoiceChip`,
+///     `PopupMenuButton`, `SegmentedButton`...), `InkWell` ;
+///  2. un `GestureDetector` qui reagit au toucher (`onTap`...), le detecteur
+///     de glissement d'un dessin n'en est pas un ;
+///  3. un `Pressable` qui peint lui-meme une surface (`BoxDecoration`,
+///     `.decoration(`, `avecFilet`, `DecoratedBox`, `Material`) autour d'un
+///     `Text` ou d'une `Icon`, sans composant du core pour la peindre ;
+///  4. un `Pressable` dont l'enfant est un `Text` nu : un lien recompose
+///     (`LienFleche` le fait, avec sa cible de 48 et son centrage).
 List<Violation> _boutonsRecomposes() {
   final List<Violation> v = <Violation>[];
   final RegExp materiel = RegExp(
     r'\b(ElevatedButton|FilledButton|OutlinedButton|TextButton|IconButton|'
-    r'MaterialButton|InkWell|GestureDetector)\s*[(.]',
+    r'MaterialButton|FloatingActionButton|SegmentedButton|ChoiceChip|'
+    r'ActionChip|FilterChip|InputChip|RawChip|PopupMenuButton|DropdownButton|'
+    r'InkResponse|InkWell|GestureDetector)\s*[(.<]',
   );
   final RegExp pressable = RegExp(r'\bPressable(?:\.selon)?\s*\(');
+  final RegExp surfacePeinte = RegExp(
+    r'BoxDecoration\(|\.decoration\(|avecFilet\(|DecoratedBox\(|Material\(|'
+    r'ColoredBox\(',
+  );
+  final RegExp composantCore = RegExp(
+    '(?<![\\w.])(?:$_composantsBouton)\\s*\\(',
+  );
   for (final File f in _sourcesFeatures()) {
     final String t = _sansCommentaires(f);
     for (final RegExpMatch m in materiel.allMatches(t)) {
-      v.add(
-        Violation(
-          f.path,
-          _ligneDe(t, m.start),
-          'bouton-recompose',
-          m.group(1)!,
-        ),
-      );
+      final String nom = m.group(1)!;
+      if (nom == 'GestureDetector' ||
+          nom == 'InkWell' ||
+          nom == 'InkResponse') {
+        final int ouvre = t.indexOf('(', m.start);
+        final int ferme = _fermante(t, ouvre);
+        if (ferme < 0 || !_gesteBouton.hasMatch(t.substring(ouvre, ferme))) {
+          continue;
+        }
+      }
+      v.add(Violation(f.path, _ligneDe(t, m.start), 'bouton-recompose', nom));
     }
+    int rang = 0;
     for (final RegExpMatch m in pressable.allMatches(t)) {
       final int ferme = _fermante(t, m.end - 1);
       if (ferme < 0) {
         continue;
       }
       final String corps = t.substring(m.start, ferme);
-      if (corps.contains('BoxDecoration(') &&
-          corps.contains('borderRadius') &&
-          corps.contains('Text(') &&
-          !corps.contains('AppCard(') &&
-          !corps.contains('ActionPrincipale(')) {
+      final bool etiquette = corps.contains('Text(') || corps.contains('Icon(');
+      final bool peint =
+          surfacePeinte.hasMatch(corps) &&
+          etiquette &&
+          !composantCore.hasMatch(corps);
+      final bool lienNu = !peint && _enfantEstTexteNu(corps);
+      if (peint || lienNu) {
         v.add(
           Violation(
             f.path,
             _ligneDe(t, m.start),
             'bouton-recompose',
-            'Pressable avec fond et libelle peints dans l\'ecran',
+            peint
+                ? 'Pressable avec surface et libelle peints dans l\'ecran '
+                      'n°${++rang}'
+                : 'Pressable avec texte nu (lien recompose) n°${++rang}',
           ),
         );
       }
@@ -506,6 +550,111 @@ List<Violation> _selecteursThemeRecomposes() {
     }
   }
   return v;
+}
+
+/// K-56 : plus d'un bouton plein (`ActionPrincipale` de niveau `principale`,
+/// explicite ou par defaut) dans un meme fichier d'ecran. Un ecran n'a qu'un
+/// bouton plein : les autres actions sont des boutons secondaires, tertiaires
+/// ou des liens (`LienFleche`).
+///
+/// **Limite assumee** : le controle lit le texte, pas l'arbre rendu. Deux
+/// boutons pleins de branches exclusives (`if / else`, `switch`) ou de feuilles
+/// differentes dans un meme fichier sont comptes ensemble : l'existant est fige
+/// dans le socle apres revue (la signature porte le nombre, un bouton plein de
+/// plus fait echouer). Ce qui se joue a l'ecran, deux boutons pleins
+/// visibles ensemble, est mesure par `verifierUnSeulBoutonPlein`
+/// (`test/support/garde_interface.dart`).
+List<Violation> _pleinsMultiples() {
+  final List<Violation> v = <Violation>[];
+  final RegExp appel = RegExp(r'(?<![\w.])ActionPrincipale\s*\(');
+  for (final File f in _sourcesFeatures()) {
+    final String t = _sansCommentaires(f);
+    int pleins = 0;
+    int? premiere;
+    for (final RegExpMatch m in appel.allMatches(t)) {
+      final int ferme = _fermante(t, m.end - 1);
+      if (ferme < 0) {
+        continue;
+      }
+      final String? niveau = _argumentDePremierNiveau(
+        t.substring(m.start, ferme + 1),
+        'niveau',
+      );
+      if (niveau == null || niveau.contains('principale')) {
+        pleins++;
+        premiere ??= _ligneDe(t, m.start);
+      }
+    }
+    if (pleins > 1) {
+      v.add(
+        Violation(
+          f.path,
+          premiere!,
+          'plein-multiple',
+          '$pleins boutons pleins',
+        ),
+      );
+    }
+  }
+  return v;
+}
+
+/// La valeur de l'argument nomme [nom] au premier niveau de l'appel [corps] ;
+/// null s'il n'y est pas.
+String? _argumentDePremierNiveau(String corps, String nom) {
+  final int ouvre = corps.indexOf('(');
+  if (ouvre < 0) {
+    return null;
+  }
+  int profondeur = 0;
+  for (int i = ouvre; i < corps.length; i++) {
+    final String c = corps[i];
+    if (c == "'" || c == '"') {
+      i = _finChaine(corps, i);
+      if (i < 0) {
+        return null;
+      }
+    } else if (c == '(' || c == '[' || c == '{') {
+      profondeur++;
+    } else if (c == ')' || c == ']' || c == '}') {
+      profondeur--;
+    } else if (profondeur == 1 &&
+        corps.startsWith('$nom:', i) &&
+        RegExp(r'[\s(,]').hasMatch(corps[i - 1])) {
+      return _argument(corps, i + nom.length + 1).trim();
+    }
+  }
+  return null;
+}
+
+/// Vrai quand l'argument `child:` de premier niveau de l'appel [corps] est un
+/// `Text` : un `Pressable` qui ne fait que presenter un mot. Un `Text` cache
+/// plus loin dans une ligne n'est pas un lien recompose.
+bool _enfantEstTexteNu(String corps) {
+  final int ouvre = corps.indexOf('(');
+  if (ouvre < 0) {
+    return false;
+  }
+  int profondeur = 0;
+  for (int i = ouvre; i < corps.length; i++) {
+    final String c = corps[i];
+    if (c == "'" || c == '"') {
+      i = _finChaine(corps, i);
+      if (i < 0) {
+        return false;
+      }
+    } else if (c == '(' || c == '[' || c == '{') {
+      profondeur++;
+    } else if (c == ')' || c == ']' || c == '}') {
+      profondeur--;
+    } else if (profondeur == 1 &&
+        corps.startsWith('child:', i) &&
+        RegExp(r'[\s(,]').hasMatch(corps[i - 1])) {
+      return RegExp(r'^child:\s*(?:const\s+)?Text\(')
+          .hasMatch(corps.substring(i));
+    }
+  }
+  return false;
 }
 
 /// L'argument d'une action, jusqu'a la virgule ou la parenthese qui le ferme.

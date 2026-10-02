@@ -13,16 +13,14 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
-import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
 import '../../core/theme/app_palette.dart';
-import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/page_shell.dart';
-import '../../core/widgets/pressable.dart';
 import '../salle_seance/actions_seance.dart';
 import '../salle_seance/outils_dock_salle.dart';
 import '../salle_seance/panneau_eleves.dart';
@@ -224,45 +222,13 @@ class _Lien extends StatelessWidget {
   final VoidCallback onPress;
 
   @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    return Pressable(
-      onPress: onPress,
-      libelleSemantique: libelle,
-      arrondiFocus: AppRadius.arrondiFull,
-      child: DecoratedBox(
-        decoration: palette.surfaceRaised.decoration(
-          borderRadius: AppRadius.arrondiFull,
-          side: palette.borderHairline.asBorderSide(),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.md,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              // Reflow 320 et texte 200 % (T-S6) : le libelle passe a la ligne.
-              Flexible(
-                child: Text(
-                  libelle,
-                  style: palette.inkStrong.applyTo(
-                    Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
-                  ),
-                ),
-              ),
-              Ecart.hSm,
-              IconTheme(
-                data: palette.inkMuted.asIconTheme(size: AppSpacing.lg),
-                child: Icon(AppIcons.chevron.repos),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => ActionPrincipale(
+    libelle: libelle,
+    onPress: onPress,
+    niveau: NiveauAction.secondaire,
+    fleche: true,
+    pleineLargeur: false,
+  );
 }
 
 /// La salle de demonstration, avec son etat local.

@@ -11,6 +11,8 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/raccourci_tactile.dart';
 import '../tc_mes_groupes/photo_enseignant.dart';
 
 // `ENS-05A` : la photo publique professionnelle de l'enseignant (doc 04
@@ -237,7 +239,16 @@ class _EditeurPhotoPubliqueState extends ConsumerState<EditeurPhotoPublique> {
 
     final Widget portrait = avecApercu
         ? _Apercu(photo: photo, prenom: widget.prenom, diametre: _diametre)
-        : PortraitPublic(prenom: widget.prenom, cle: cle, diametre: _diametre);
+        // Toucher la photo ouvre aussi le choix (PHOTO-LIEN-1) : le lien en
+        // dessous reste le controle du clavier et du lecteur d'ecran.
+        : RaccourciTactile(
+            onPress: _phase == _Phase.envoi ? null : _choisir,
+            child: PortraitPublic(
+              prenom: widget.prenom,
+              cle: cle,
+              diametre: _diametre,
+            ),
+          );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -301,10 +312,8 @@ class _EditeurPhotoPubliqueState extends ConsumerState<EditeurPhotoPublique> {
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.sm,
             children: <Widget>[
-              ActionPrincipale(
+              LienFleche(
                 libelle: t.enseignant.photo.autre,
-                niveau: NiveauAction.secondaire,
-                pleineLargeur: false,
                 onPress: _phase == _Phase.envoi ? null : _choisir,
               ),
               ActionPrincipale(
@@ -319,12 +328,13 @@ class _EditeurPhotoPubliqueState extends ConsumerState<EditeurPhotoPublique> {
         else
           Align(
             alignment: AlignmentDirectional.centerEnd,
-            child: ActionPrincipale(
+            // Une action secondaire n'est jamais un bouton plein (K-56,
+            // PHOTO-LIEN-1) : une ligne de lien, texte et fleche.
+            child: LienFleche(
               key: EditeurPhotoPublique.choisirKey,
               libelle: cle == null
                   ? t.enseignant.photo.choisir
                   : t.enseignant.photo.remplacer,
-              pleineLargeur: false,
               onPress: _choisir,
             ),
           ),

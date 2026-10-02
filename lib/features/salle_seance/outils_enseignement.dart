@@ -12,7 +12,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/pressable.dart';
+import '../../core/widgets/bouton_outil.dart';
 import 'actions_seance.dart';
 
 /// La disposition des tuiles.
@@ -223,56 +223,21 @@ class _Tuile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final String libelle = _libelle(outil);
+    // L'icone, le mot et la surface sont peints par le composant du core
+    // (K-54) ; texte agrandi (DESIGN-GOV, 200 %) : l'icone seule, le libelle en
+    // infobulle et pour le lecteur d'ecran, plutot qu'un mot tronque.
     final bool agrandi = MediaQuery.textScalerOf(context).scale(1) > 1.3;
-    final Widget tuile = Semantics(
+    return Semantics(
       selected: actif,
-      child: Pressable(
+      child: BoutonOutil(
+        key: ValueKey<String>('outil-${outil.name}'),
+        icone: _icone(outil),
+        libelle: _libelle(outil),
+        retenu: actif,
+        avecLibelle: !agrandi,
+        forme: FormeBoutonOutil.tuile,
         onPress: onPress,
-        libelleSemantique: libelle,
-        arrondiFocus: AppRadius.arrondiMd,
-        child: DecoratedBox(
-          key: ValueKey<String>('outil-${outil.name}'),
-          decoration: (actif ? palette.washAccent : palette.surfaceRaised)
-              .decoration(
-                borderRadius: AppRadius.arrondiMd,
-                side: palette.borderHairline.asBorderSide(),
-              ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                IconTheme(
-                  data: (actif ? palette.inkAccent : palette.inkStrong)
-                      .asIconTheme(size: AppSpacing.xxl),
-                  child: Icon(_icone(outil).resoudre(selectionne: actif)),
-                ),
-                // Texte agrandi (DESIGN-GOV, 200 %) : l'icone seule, le
-                // libelle en infobulle et pour le lecteur d'ecran, plutot
-                // qu'un mot tronque.
-                if (!agrandi) ...<Widget>[
-                  Ecart.vXs,
-                  Text(
-                    libelle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: palette.inkStrong.applyTo(
-                      Theme.of(context).textTheme.labelSmall ??
-                          const TextStyle(),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
       ),
     );
-    // Le lecteur d'ecran lit deja le libelle par `Pressable`.
-    return agrandi
-        ? Tooltip(message: libelle, excludeFromSemantics: true, child: tuile)
-        : tuile;
   }
 }

@@ -468,17 +468,13 @@ class _Apercu extends StatelessWidget {
               ),
               Ecart.vSm,
             ],
-            Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: IntrinsicWidth(
-                child: ActionPrincipale(
-                  key: const ValueKey<String>('preparation-tester-camera'),
-                  libelle: t.salle.preparation.testerCamera,
-                  onPress: onTester,
-                  niveau: NiveauAction.secondaire,
-                  pleineLargeur: false,
-                ),
-              ),
+            // BTN-TESTER-1 : le bouton occupe toute la largeur de sa carte, en
+            // bas, contenu centre (K-54) : la carte est une colonne etiree.
+            ActionPrincipale(
+              key: const ValueKey<String>('preparation-tester-camera'),
+              libelle: t.salle.preparation.testerCamera,
+              onPress: onTester,
+              niveau: NiveauAction.secondaire,
             ),
           ],
         ],

@@ -143,28 +143,35 @@ class MenuFiltre<T> extends StatelessWidget {
                   : palette.borderHairline.asBorderSide(),
             ),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Flexible(
-                child: Text(
-                  texte,
-                  overflow: TextOverflow.ellipsis,
-                  style: (actif ? palette.inkAccent : palette.inkStrong)
-                      .applyTo(textes.labelLarge ?? const TextStyle()),
+          // K-54 : libelle et chevron centres dans le bouton, y compris quand
+          // le parent l'etire.
+          child: Center(
+            widthFactor: 1,
+            heightFactor: 1,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Flexible(
+                  child: Text(
+                    texte,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    style: (actif ? palette.inkAccent : palette.inkStrong)
+                        .applyTo(textes.labelLarge ?? const TextStyle()),
+                  ),
                 ),
-              ),
-              Ecart.hXs,
-              Icon(
-                // Vers le bas, la ou le menu s'ouvre. Un chevron vers la
-                // droite promettrait de mener ailleurs.
-                AppIcons.menuDeroulant.repos,
-                size: AppSpacing.lg,
-                color: (actif ? palette.inkAccent : palette.inkMuted)
-                    .asIconTheme()
-                    .color,
-              ),
-            ],
+                Ecart.hXs,
+                Icon(
+                  // Vers le bas, la ou le menu s'ouvre. Un chevron vers la
+                  // droite promettrait de mener ailleurs.
+                  AppIcons.menuDeroulant.repos,
+                  size: AppSpacing.lg,
+                  color: (actif ? palette.inkAccent : palette.inkMuted)
+                      .asIconTheme()
+                      .color,
+                ),
+              ],
+            ),
           ),
         ),
       ),

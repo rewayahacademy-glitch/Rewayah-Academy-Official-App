@@ -15,8 +15,8 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
+import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/etat_systeme.dart';
-import '../../core/widgets/pressable.dart';
 import '../../core/widgets/skeleton.dart';
 import 'textes_dossier.dart';
 
@@ -530,42 +530,12 @@ class _BoutonZoom extends StatelessWidget {
   final VoidCallback? onPress;
 
   @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    return Tooltip(
-      message: t.dossiers.visionneuse.infoBulle(
-        action: libelle,
-        touche: touche,
-      ),
-      excludeFromSemantics: true,
-      child: Pressable(
-        onPress: onPress,
-        actif: onPress != null,
-        libelleSemantique: libelle,
-        arrondiFocus: AppRadius.arrondiFull,
-        child: ExcludeSemantics(
-          child: SizedBox.square(
-            dimension: AppTouchTarget.standard,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.fromBorderSide(
-                  palette.contourCarte.asBorderSide(),
-                ),
-              ),
-              child: Center(
-                child: IconTheme(
-                  data: (onPress == null ? palette.inkMuted : palette.inkAccent)
-                      .asIconTheme(size: AppSpacing.xxl),
-                  child: Icon(icone.repos),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => BoutonIcone(
+    icone: icone,
+    libelle: libelle,
+    infobulle: t.dossiers.visionneuse.infoBulle(action: libelle, touche: touche),
+    onPress: onPress,
+  );
 }
 
 /// La piece de demonstration, dessinee par code : un cadre aux proportions

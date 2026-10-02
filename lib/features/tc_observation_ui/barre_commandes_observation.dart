@@ -7,6 +7,7 @@ import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/pressable.dart';
 
 /// Au-dela de ce grossissement du texte, les commandes du telephone passent
@@ -256,46 +257,21 @@ class _Quitter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
     final AppColorPair paire = AppPalette.of(context).washAlert;
 
-    return Pressable(
-      onPress: onPress,
-      libelleSemantique: t.tc.observation.visite.quitter,
-      arrondiFocus: AppRadius.arrondiFull,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: AppTouchTarget.standard),
-        child: DecoratedBox(
-          decoration: paire.decoration(
-            borderRadius: empile ? AppRadius.arrondiMd : AppRadius.arrondiFull,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-              vertical: AppSpacing.md,
-            ),
-            child: Center(
-              widthFactor: 1,
-              heightFactor: 1,
-              child: _IconeEtLibelle(
-                empile: empile,
-                icone: IconTheme(
-                  data: IconThemeData(
-                    color: paire.onBackground,
-                    size: AppSpacing.xl,
-                  ),
-                  child: Icon(AppIcons.sortie.repos),
-                ),
-                libelle: Text(
-                  t.tc.observation.visite.quitter,
-                  textAlign: TextAlign.center,
-                  style: paire.applyTo(_style(context, textes)),
-                ),
-              ),
-            ),
-          ),
-        ),
+    // Le bouton du core, registre doux d'alerte (K-54) : fond, centrage et
+    // cible tactile viennent d'`ActionPrincipale`, jamais d'une pilule peinte
+    // ici. Tres agrandi, il prend la largeur de sa case.
+    return ActionPrincipale(
+      libelle: t.tc.observation.visite.quitter,
+      niveau: NiveauAction.destructive,
+      doux: true,
+      pleineLargeur: empile,
+      prefixe: IconTheme(
+        data: IconThemeData(color: paire.onBackground, size: AppSpacing.xl),
+        child: Icon(AppIcons.sortie.repos),
       ),
+      onPress: onPress,
     );
   }
 }

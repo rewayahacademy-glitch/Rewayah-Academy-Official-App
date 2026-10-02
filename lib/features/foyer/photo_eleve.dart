@@ -10,6 +10,8 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/raccourci_tactile.dart';
 
 /// La photo d'un profil eleve, par URL signee, avec repli sur les initiales.
 ///
@@ -214,10 +216,15 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
 
     final Widget portrait = avecApercu
         ? _Apercu(photo: photo)
-        : PhotoEleve(
-            prenom: _profil.prenom,
-            cleAvatar: _profil.cleAvatar,
-            diametre: AppSpacing.respiration + AppSpacing.xxxl,
+        // Toucher la photo ouvre aussi le choix (PHOTO-LIEN-1) : le lien en
+        // dessous reste le controle du clavier et du lecteur d'ecran.
+        : RaccourciTactile(
+            onPress: enCours ? null : _choisir,
+            child: PhotoEleve(
+              prenom: _profil.prenom,
+              cleAvatar: _profil.cleAvatar,
+              diametre: AppSpacing.respiration + AppSpacing.xxxl,
+            ),
           );
 
     return Column(
@@ -306,17 +313,20 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
             libelle: _phase == _Phase.apercu
                 ? t.ficheEleve.informations.envoyer
                 : t.ficheEleve.informations.reprendre,
-            niveau: NiveauAction.secondaire,
+            // L'envoi est l'unique bouton plein de cet etat (K-56) : les
+            // autres actions sont des liens.
             // Hors ligne, l'envoi ne peut pas aboutir : pas de geste, une
             // phrase dit pourquoi (lib/CLAUDE.md).
             onPress: horsLigne ? null : _envoyer,
           ),
           Ecart.vSm,
           if (_phase != _Phase.echecEnregistrement)
-            ActionPrincipale(
-              libelle: t.ficheEleve.informations.autre,
-              niveau: NiveauAction.tertiaire,
-              onPress: _choisir,
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: LienFleche(
+                libelle: t.ficheEleve.informations.autre,
+                onPress: _choisir,
+              ),
             ),
           ActionPrincipale(
             libelle: t.ficheEleve.informations.annuler,
@@ -345,13 +355,18 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
             ),
             Ecart.vMd,
           ],
-          ActionPrincipale(
-            key: EditeurPhotoEleve.choisirKey,
-            libelle: _profil.cleAvatar == null
-                ? t.ficheEleve.informations.choisir
-                : t.ficheEleve.informations.changer,
-            niveau: NiveauAction.secondaire,
-            onPress: _choisir,
+          // Une action secondaire n'est jamais un bouton plein (K-56,
+          // PHOTO-LIEN-1) : une ligne de lien, texte et fleche, au bord de
+          // debut, sous la photo.
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: LienFleche(
+              key: EditeurPhotoEleve.choisirKey,
+              libelle: _profil.cleAvatar == null
+                  ? t.ficheEleve.informations.choisir
+                  : t.ficheEleve.informations.changer,
+              onPress: _choisir,
+            ),
           ),
         ],
       ],

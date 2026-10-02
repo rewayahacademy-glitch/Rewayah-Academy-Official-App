@@ -87,6 +87,9 @@ class StatusPill extends StatelessWidget {
         decoration: fond.decoration(borderRadius: AppRadius.arrondiFull),
         child: Row(
           mainAxisSize: MainAxisSize.min,
+          // Etiree par son parent, la pastille garde son contenu au centre
+          // (K-54).
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             SizedBox.square(
               dimension: diametrePastille,
@@ -96,6 +99,7 @@ class StatusPill extends StatelessWidget {
             Flexible(
               child: Text(
                 libelle,
+                textAlign: TextAlign.center,
                 style: fond.applyTo(
                   Theme.of(context).textTheme.labelMedium ?? const TextStyle(),
                 ),

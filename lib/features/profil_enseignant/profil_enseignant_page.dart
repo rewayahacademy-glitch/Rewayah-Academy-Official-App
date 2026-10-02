@@ -24,8 +24,10 @@ import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/raccourci_tactile.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
@@ -188,6 +190,8 @@ class _Entete extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final TextTheme textes = Theme.of(context).textTheme;
     final String? cle = ref.watch(photoPubliqueProvider);
+    void choisir() =>
+        unawaited(ouvrirPhotoPublique(context, prenom: profil.prenom));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,19 +201,16 @@ class _Entete extends ConsumerWidget {
           nomPublic: ref.watch(nomPublicEnseignantProvider),
           cle: cle,
           textes: textes,
+          onPhoto: choisir,
         ),
-        Ecart.vMd,
-        // Largeur naturelle : une action secondaire, pas le bouton dominant.
-        IntrinsicWidth(
-          child: ActionPrincipale(
-            libelle: cle == null
-                ? t.enseignant.photo.choisir
-                : t.enseignant.photo.changer,
-            niveau: NiveauAction.secondaire,
-            pleineLargeur: false,
-            onPress: () =>
-                unawaited(ouvrirPhotoPublique(context, prenom: profil.prenom)),
-          ),
+        // Une action secondaire n'est jamais un bouton plein (K-56,
+        // PHOTO-LIEN-1) : une ligne de lien, texte et fleche, et toucher la
+        // photo ouvre le meme choix.
+        LienFleche(
+          libelle: cle == null
+              ? t.enseignant.photo.choisir
+              : t.enseignant.photo.changer,
+          onPress: choisir,
         ),
       ],
     );
@@ -222,6 +223,7 @@ class _Identite extends StatelessWidget {
     required this.nomPublic,
     required this.cle,
     required this.textes,
+    required this.onPhoto,
   });
 
   final ProfilEnseignant profil;
@@ -229,15 +231,21 @@ class _Identite extends StatelessWidget {
   final String? cle;
   final TextTheme textes;
 
+  /// Ouvre le choix de la photo (toucher la photo, comme le lien).
+  final VoidCallback onPhoto;
+
   @override
   Widget build(BuildContext context) {
     final String? titre = nomPublic?.trim();
     return Row(
       children: <Widget>[
-        PortraitPublic(
-          prenom: profil.prenom,
-          cle: cle,
-          diametre: AppSpacing.respiration + AppSpacing.xxxl,
+        RaccourciTactile(
+          onPress: onPhoto,
+          child: PortraitPublic(
+            prenom: profil.prenom,
+            cle: cle,
+            diametre: AppSpacing.respiration + AppSpacing.xxxl,
+          ),
         ),
         Ecart.hLg,
         Expanded(

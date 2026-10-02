@@ -12,17 +12,15 @@ import '../../core/mouvement/apparition_douce.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
-import '../../core/theme/app_elevation.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
-import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
-import '../../core/widgets/pressable.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import 'carte_rubriques.dart';
@@ -543,56 +541,17 @@ class _CarteDeconnexionState extends ConsumerState<CarteDeconnexion> {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final TextStyle style = palette.inkAlert.applyTo(
-      textes.labelLarge ?? const TextStyle(),
-    );
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Pressable.selon(
+        // Une sortie n'est pas l'action principale : niveau destructif du core,
+        // texte a l'encre d'alerte, centre (K-54, K-56).
+        ActionPrincipale(
+          libelle: t.compte.deconnexion,
+          niveau: NiveauAction.destructive,
+          enCours: _enCours,
           onPress: _enCours ? null : _seDeconnecter,
-          libelleSemantique: t.compte.deconnexion,
-          arrondiFocus: AppRadius.arrondiMd,
-          constructeur: (BuildContext _, EtatPression etat) => DecoratedBox(
-            decoration: AppElevation.avecFilet(
-              surface: palette.surfaceRaised,
-              filet: palette.contourCarte,
-              ombre: palette.ombre,
-              arrondi: AppRadius.arrondiMd,
-            ),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                minHeight: AppTouchTarget.standard,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                child: ExcludeSemantics(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      IconTheme(
-                        data: palette.inkAlert.asIconTheme(size: AppSpacing.xl),
-                        child: Icon(AppIcons.sortie.repos),
-                      ),
-                      Ecart.hSm,
-                      Flexible(
-                        child: Text(
-                          t.compte.deconnexion,
-                          style: etat.survole || etat.focus
-                              ? style.copyWith(
-                                  decoration: TextDecoration.underline,
-                                )
-                              : style,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
         ),
         if (_echec) ...<Widget>[
           Ecart.vSm,

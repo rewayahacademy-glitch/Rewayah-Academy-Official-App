@@ -11,9 +11,9 @@ import 'package:flutter/material.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_palette.dart';
-import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/pressable.dart';
+import '../../core/widgets/app_card.dart';
+import '../../core/widgets/filter_pill.dart';
 import 'actions_seance.dart';
 import 'libelles_salle_b.dart';
 import 'vue_seance.dart';
@@ -96,11 +96,11 @@ class _SelecteurRessourcesState extends State<SelecteurRessources> {
             runSpacing: AppSpacing.sm,
             children: <Widget>[
               for (final OngletRessources o in OngletRessources.values)
-                ChoiceChip(
+                FilterPill(
                   key: ValueKey<String>('onglet-${o.name}'),
-                  label: Text(_libelle(o)),
-                  selected: _onglet == o && _recherche.trim().isEmpty,
-                  onSelected: (_) => _choisirOnglet(o),
+                  libelle: _libelle(o),
+                  retenue: _onglet == o && _recherche.trim().isEmpty,
+                  onPress: () => _choisirOnglet(o),
                 ),
             ],
           ),
@@ -134,34 +134,27 @@ class _SelecteurRessourcesState extends State<SelecteurRessources> {
             for (final SupportDisponible s in visibles)
               Padding(
                 padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                child: Pressable(
+                // La carte pressable du core (K-54) : surface, filet et cible
+                // tactile viennent d'`AppCard`, jamais d'un fond peint ici.
+                child: AppCard(
                   key: ValueKey<String>('ressource-${s.id}'),
+                  surface: palette.surfaceOverlay,
+                  marge: AppSpacing.md,
                   libelleSemantique: t.salle.seance.panneauSupports
                       .ouvrirSupport(titre: s.titre),
                   onPress: ouvrir == null ? null : () => ouvrir(s),
-                  child: Container(
-                    constraints: const BoxConstraints(minHeight: 48),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md,
-                      vertical: AppSpacing.sm,
-                    ),
-                    decoration: palette.surfaceOverlay.decoration(
-                      borderRadius: AppRadius.arrondiMd,
-                      side: palette.borderHairline.asBorderSide(),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(s.titre, style: texte.titleSmall),
-                        Text(
-                          s.detail,
-                          style: palette.inkMuted.applyTo(
-                            texte.bodySmall ?? const TextStyle(),
-                          ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(s.titre, style: texte.titleSmall),
+                      Text(
+                        s.detail,
+                        style: palette.inkMuted.applyTo(
+                          texte.bodySmall ?? const TextStyle(),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
