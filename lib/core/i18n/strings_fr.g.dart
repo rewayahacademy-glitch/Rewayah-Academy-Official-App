@@ -8588,6 +8588,81 @@ class Traductions$controleur$historique$fr {
 
 	/// fr: 'Cet écran est en préparation.'
 	String get provisoire => 'Cet écran est en préparation.';
+
+	/// fr: 'Envoyé'
+	String get envoye => 'Envoyé';
+
+	/// fr: 'Complément ajouté'
+	String get complementAjoute => 'Complément ajouté';
+
+	/// fr: 'À terminer'
+	String get aTerminer => 'À terminer';
+
+	/// fr: 'État'
+	String get filtreEtat => 'État';
+
+	/// fr: 'Tous les états'
+	String get tousEtats => 'Tous les états';
+
+	/// fr: '{minutes} min observées'
+	String duree({required Object minutes}) => '${minutes} min observées';
+
+	/// fr: '{heure} · {duree}'
+	String meta({required Object heure, required Object duree}) => '${heure} · ${duree}';
+
+	/// fr: '{date}, {classe}, {enseignant}, {duree}, {statut}'
+	String ligne({required Object date, required Object classe, required Object enseignant, required Object duree, required Object statut}) => '${date}, ${classe}, ${enseignant}, ${duree}, ${statut}';
+
+	/// fr: 'Aucun contrôle pour le moment.'
+	String get vide => 'Aucun contrôle pour le moment.';
+
+	/// fr: 'Aucun contrôle ne correspond à ces filtres.'
+	String get videFiltres => 'Aucun contrôle ne correspond à ces filtres.';
+
+	/// fr: 'Contrôles affichés : {n}'
+	String resultats({required Object n}) => 'Contrôles affichés : ${n}';
+
+	/// fr: '{classe} · {date}'
+	String titreDetail({required Object classe, required Object date}) => '${classe} · ${date}';
+
+	/// fr: 'Mission'
+	String get sectionMission => 'Mission';
+
+	/// fr: 'Observation du Contrôleur'
+	String get sectionObservation => 'Observation du Contrôleur';
+
+	/// fr: 'Compléments'
+	String get sectionComplements => 'Compléments';
+
+	/// fr: 'Échanges Admin'
+	String get sectionEchanges => 'Échanges Admin';
+
+	/// fr: 'Classe'
+	String get cleClasse => 'Classe';
+
+	/// fr: 'Enseignant'
+	String get cleEnseignant => 'Enseignant';
+
+	/// fr: 'Date'
+	String get cleDate => 'Date';
+
+	/// fr: 'Durée observée'
+	String get cleDuree => 'Durée observée';
+
+	/// fr: 'Présents'
+	String get cleElevesPresents => 'Présents';
+
+	/// fr: 'Réponse'
+	String get cleReponse => 'Réponse';
+
+	/// fr: 'Aucun complément.'
+	String get sansComplement => 'Aucun complément.';
+
+	/// fr: 'Motif : {motif}'
+	String motif({required Object motif}) => 'Motif : ${motif}';
+
+	/// fr: 'Ajouter un complément'
+	String get ajouterComplement => 'Ajouter un complément';
 }
 
 // Path: controleur.compteRendu
@@ -8676,8 +8751,8 @@ class Traductions$controleur$compteRendu$fr {
 	/// fr: 'Ce compte rendu est transmis automatiquement à l'administration.'
 	String get notice => 'Ce compte rendu est transmis automatiquement à l\'administration.';
 
-	/// fr: 'Le compte rendu n'a pas pu être envoyé. Votre choix est gardé : réessayez dans un instant.'
-	String get echec => 'Le compte rendu n\'a pas pu être envoyé. Votre choix est gardé : réessayez dans un instant.';
+	/// fr: 'L'envoi n'a pas été confirmé. Vérifiez avant de réessayer.'
+	String get echec => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.';
 
 	/// fr: 'Compte rendu envoyé'
 	String get envoyeTitre => 'Compte rendu envoyé';
@@ -8805,8 +8880,8 @@ class Traductions$controleur$observation$fr {
 	/// fr: 'Aucun texte'
 	String get sansTexte => 'Aucun texte';
 
-	/// fr: 'L'observation n'a pas pu être envoyée. Votre saisie est gardée : réessayez dans un instant.'
-	String get echec => 'L\'observation n\'a pas pu être envoyée. Votre saisie est gardée : réessayez dans un instant.';
+	/// fr: 'L'envoi n'a pas été confirmé. Vérifiez avant de réessayer.'
+	String get echec => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.';
 }
 
 // Path: controleur.echanges
@@ -8871,8 +8946,8 @@ class Traductions$controleur$echanges$fr {
 	/// fr: 'Envoyé.'
 	String get envoye => 'Envoyé.';
 
-	/// fr: 'Ce message n'a pas pu être envoyé. Il est gardé : réessayez.'
-	String get echec => 'Ce message n\'a pas pu être envoyé. Il est gardé : réessayez.';
+	/// fr: 'L'envoi n'a pas été confirmé. Vérifiez avant de réessayer.'
+	String get echec => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.';
 
 	/// fr: 'Réessayer'
 	String get reessayer => 'Réessayer';
@@ -15767,6 +15842,31 @@ extension on Traductions {
 			'enseignant.revue.typeReorientation' => 'Proposition de réorientation',
 			'controleur.historique.titre' => 'Historique',
 			'controleur.historique.provisoire' => 'Cet écran est en préparation.',
+			'controleur.historique.envoye' => 'Envoyé',
+			'controleur.historique.complementAjoute' => 'Complément ajouté',
+			'controleur.historique.aTerminer' => 'À terminer',
+			'controleur.historique.filtreEtat' => 'État',
+			'controleur.historique.tousEtats' => 'Tous les états',
+			'controleur.historique.duree' => ({required Object minutes}) => '${minutes} min observées',
+			'controleur.historique.meta' => ({required Object heure, required Object duree}) => '${heure} · ${duree}',
+			'controleur.historique.ligne' => ({required Object date, required Object classe, required Object enseignant, required Object duree, required Object statut}) => '${date}, ${classe}, ${enseignant}, ${duree}, ${statut}',
+			'controleur.historique.vide' => 'Aucun contrôle pour le moment.',
+			'controleur.historique.videFiltres' => 'Aucun contrôle ne correspond à ces filtres.',
+			'controleur.historique.resultats' => ({required Object n}) => 'Contrôles affichés : ${n}',
+			'controleur.historique.titreDetail' => ({required Object classe, required Object date}) => '${classe} · ${date}',
+			'controleur.historique.sectionMission' => 'Mission',
+			'controleur.historique.sectionObservation' => 'Observation du Contrôleur',
+			'controleur.historique.sectionComplements' => 'Compléments',
+			'controleur.historique.sectionEchanges' => 'Échanges Admin',
+			'controleur.historique.cleClasse' => 'Classe',
+			'controleur.historique.cleEnseignant' => 'Enseignant',
+			'controleur.historique.cleDate' => 'Date',
+			'controleur.historique.cleDuree' => 'Durée observée',
+			'controleur.historique.cleElevesPresents' => 'Présents',
+			'controleur.historique.cleReponse' => 'Réponse',
+			'controleur.historique.sansComplement' => 'Aucun complément.',
+			'controleur.historique.motif' => ({required Object motif}) => 'Motif : ${motif}',
+			'controleur.historique.ajouterComplement' => 'Ajouter un complément',
 			'controleur.compteRendu.titre' => 'Compte rendu',
 			'controleur.compteRendu.provisoire' => 'Cet écran est en préparation.',
 			'controleur.compteRendu.revenir' => 'Revenir au contrôle',
@@ -15793,7 +15893,7 @@ extension on Traductions {
 			'controleur.compteRendu.envoyer' => 'Envoyer le compte rendu',
 			'controleur.compteRendu.plusTard' => 'Plus tard',
 			'controleur.compteRendu.notice' => 'Ce compte rendu est transmis automatiquement à l\'administration.',
-			'controleur.compteRendu.echec' => 'Le compte rendu n\'a pas pu être envoyé. Votre choix est gardé : réessayez dans un instant.',
+			'controleur.compteRendu.echec' => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.',
 			'controleur.compteRendu.envoyeTitre' => 'Compte rendu envoyé',
 			'controleur.compteRendu.envoyePhrase' => 'Il est transmis à l\'administration. Pour y revenir, ouvrez-le dans l\'Historique et choisissez « Ajouter un complément ».',
 			'controleur.compteRendu.ecrireAdmin' => 'Écrire à l\'administration',
@@ -15833,7 +15933,7 @@ extension on Traductions {
 			'controleur.observation.clePersonne' => 'Personne concernée',
 			'controleur.observation.cleTexte' => 'Remarque',
 			'controleur.observation.sansTexte' => 'Aucun texte',
-			'controleur.observation.echec' => 'L\'observation n\'a pas pu être envoyée. Votre saisie est gardée : réessayez dans un instant.',
+			'controleur.observation.echec' => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.',
 			'controleur.echanges.titre' => 'Échanges',
 			'controleur.echanges.titreFil' => ({required Object classe, required Object date}) => '${classe} · ${date}',
 			'controleur.echanges.derniereActivite' => ({required Object date}) => 'Dernière activité : ${date}',
@@ -15852,7 +15952,7 @@ extension on Traductions {
 			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
 			'controleur.echanges.enCours' => 'Envoi en cours.',
 			'controleur.echanges.envoye' => 'Envoyé.',
-			'controleur.echanges.echec' => 'Ce message n\'a pas pu être envoyé. Il est gardé : réessayez.',
+			'controleur.echanges.echec' => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.',
 			'controleur.echanges.reessayer' => 'Réessayer',
 			'controleur.echanges.nouveauMessage' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
 			'controleur.demo.titre' => 'Démonstration contrôleur',
@@ -16108,6 +16208,8 @@ extension on Traductions {
 			'tc.classe.recitation.actif' => ({required Object prenom}) => '${prenom} récite',
 			'tc.classe.recitation.pastille' => 'Récite',
 			'tc.classe.recitation.suivants' => 'Ensuite',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.recitation.personne' => 'Personne ne récite',
 			'tc.classe.recitation.arreter' => 'Arrêter la récitation',
 			'tc.classe.support.aucun' => 'Aucun support présenté',
@@ -16133,8 +16235,6 @@ extension on Traductions {
 			'tc.classe.attente.ouverture' => 'Ouverture du cours',
 			'tc.classe.attente.connexion' => 'Connexion au cours',
 			'tc.classe.attente.refus' => 'Le cours n\'est pas accessible pour le moment',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.lien.instable' => 'Connexion instable',
 			'tc.classe.lien.reconnexion' => 'Reconnexion en cours',
 			'tc.classe.lien.retabli' => 'Connexion rétablie',

@@ -3140,7 +3140,32 @@
   "controleur": {
     "historique": {
       "titre": "Historique",
-      "provisoire": "Cet écran est en préparation."
+      "provisoire": "Cet écran est en préparation.",
+      "envoye": "Envoyé",
+      "complementAjoute": "Complément ajouté",
+      "aTerminer": "À terminer",
+      "filtreEtat": "État",
+      "tousEtats": "Tous les états",
+      "duree": "{minutes} min observées",
+      "meta": "{heure} · {duree}",
+      "ligne": "{date}, {classe}, {enseignant}, {duree}, {statut}",
+      "vide": "Aucun contrôle pour le moment.",
+      "videFiltres": "Aucun contrôle ne correspond à ces filtres.",
+      "resultats": "Contrôles affichés : {n}",
+      "titreDetail": "{classe} · {date}",
+      "sectionMission": "Mission",
+      "sectionObservation": "Observation du Contrôleur",
+      "sectionComplements": "Compléments",
+      "sectionEchanges": "Échanges Admin",
+      "cleClasse": "Classe",
+      "cleEnseignant": "Enseignant",
+      "cleDate": "Date",
+      "cleDuree": "Durée observée",
+      "cleElevesPresents": "Présents",
+      "cleReponse": "Réponse",
+      "sansComplement": "Aucun complément.",
+      "motif": "Motif : {motif}",
+      "ajouterComplement": "Ajouter un complément"
     },
     "compteRendu": {
       "titre": "Compte rendu",
@@ -3169,7 +3194,7 @@
       "envoyer": "Envoyer le compte rendu",
       "plusTard": "Plus tard",
       "notice": "Ce compte rendu est transmis automatiquement à l'administration.",
-      "echec": "Le compte rendu n'a pas pu être envoyé. Votre choix est gardé : réessayez dans un instant.",
+      "echec": "L'envoi n'a pas été confirmé. Vérifiez avant de réessayer.",
       "envoyeTitre": "Compte rendu envoyé",
       "envoyePhrase": "Il est transmis à l'administration. Pour y revenir, ouvrez-le dans l'Historique et choisissez « Ajouter un complément ».",
       "ecrireAdmin": "Écrire à l'administration",
@@ -3211,7 +3236,7 @@
       "clePersonne": "Personne concernée",
       "cleTexte": "Remarque",
       "sansTexte": "Aucun texte",
-      "echec": "L'observation n'a pas pu être envoyée. Votre saisie est gardée : réessayez dans un instant."
+      "echec": "L'envoi n'a pas été confirmé. Vérifiez avant de réessayer."
     },
     "echanges": {
       "titre": "Échanges",
@@ -3232,7 +3257,7 @@
       "champVide": "Écrivez un message pour pouvoir l'envoyer.",
       "enCours": "Envoi en cours.",
       "envoye": "Envoyé.",
-      "echec": "Ce message n'a pas pu être envoyé. Il est gardé : réessayez.",
+      "echec": "L'envoi n'a pas été confirmé. Vérifiez avant de réessayer.",
       "reessayer": "Réessayer",
       "nouveauMessage": "Nouveau message de {auteur} : {texte}"
     },

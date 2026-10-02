@@ -41,12 +41,14 @@ import '../controleur/compte_rendu_controle_page.dart';
 import '../controleur/controle_page.dart';
 import '../controleur/echanges_controleur.dart';
 import '../controleur/echanges_controleur_page.dart';
+import '../controleur/historique_controleur.dart';
 import '../controleur/historique_controleur_page.dart';
 import '../controleur/mission_controle.dart';
 import '../controleur/observation_controle.dart';
 import '../controleur/observation_controle_page.dart';
 import '../salle/salle_page.dart';
 import 'controleur_demo.dart';
+import 'historique_controleur_demo.dart';
 import 'mode_demonstration.dart';
 import 'repere_demonstration.dart';
 import 'salle_controleur_demo.dart';
@@ -307,14 +309,23 @@ class EchangesDemo implements PortEchanges {
     final MissionControleurDemo? m = DonneesControleurDemo.mission(
       EtatDemoControleur.enDirect,
     );
-    if (m == null || m.id != missionId) {
-      throw StateError('Mission inconnue de la demonstration.');
-    }
+    // Une mission passee de l'Historique (CT-7) a aussi son fil canonique.
+    final RapportControleurDemo? r = DonneesControleurDemo.rapports
+        .where((RapportControleurDemo r) => r.missionId == missionId)
+        .firstOrNull;
+    final (String classe, DateTime debut) = switch ((m, r)) {
+      (final MissionControleurDemo m, _) when m.id == missionId => (
+        m.classe,
+        m.debut,
+      ),
+      (_, final RapportControleurDemo r) => (r.classe, r.date),
+      _ => throw StateError('Mission inconnue de la demonstration.'),
+    };
     final FilEchange nouveau = FilEchange(
       id: 'demo-fil-$missionId',
       missionId: missionId,
-      classe: m.classe,
-      debutMission: m.debut,
+      classe: classe,
+      debutMission: debut,
       etat: EtatFilEchange.enAttente,
       messages: const <MessageEchange>[],
     );
@@ -392,6 +403,8 @@ List<Override> surchargesCoquilleControleurDemo(EtatDemoControleur etat) =>
       envoiCompteRenduProvider.overrideWithValue(const EnvoiCompteRenduDemo()),
       // Echanges simules (CT-6) : fils en memoire, envoi sans serveur.
       portEchangesProvider.overrideWith((Ref _) => EchangesDemo()),
+      // Historique simule (CT-7) : rapports en memoire, aucun serveur.
+      portHistoriqueProvider.overrideWithValue(const HistoriqueDemo()),
     ];
 
 /// La mission de demonstration de [etat], dans le modele de CTR-01.
@@ -535,7 +548,18 @@ class CoquilleControleurDemo extends StatelessWidget {
               onReprendreCompteRendu: () =>
                   context.go(cheminDemoCompteRenduControleur),
             ),
-            EcranDemoControleur.historique => const HistoriqueControleurPage(),
+            EcranDemoControleur.historique => HistoriqueControleurPage(
+              maintenant: DonneesControleurDemo.maintenant,
+              onReprendreCompteRendu: () =>
+                  context.go(cheminDemoCompteRenduControleur),
+              onEcrireAdmin: (String mission) => context.go(
+                adresseDemoControleur(
+                  EcranDemoControleur.echanges,
+                  etat: etat,
+                  fil: mission,
+                ),
+              ),
+            ),
             EcranDemoControleur.echanges => EchangesControleurPage(
               key: ValueKey<String?>(fil),
               missionOuverte: fil,

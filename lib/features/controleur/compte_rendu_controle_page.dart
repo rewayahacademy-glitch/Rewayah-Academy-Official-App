@@ -495,7 +495,7 @@ class _FaitsAutomatiquesState extends ConsumerState<_FaitsAutomatiques> {
                     child: switch (faits) {
                       AsyncData<FaitsVisite?>(:final FaitsVisite? value)
                           when value != null =>
-                        _Lignes(faits: value),
+                        LignesFaitsVisite(faits: value),
                       AsyncData<FaitsVisite?>() ||
                       AsyncError<FaitsVisite?>() => Text(
                         t.controleur.compteRendu.faitsAbsents,
@@ -514,8 +514,13 @@ class _FaitsAutomatiquesState extends ConsumerState<_FaitsAutomatiques> {
   }
 }
 
-class _Lignes extends StatelessWidget {
-  const _Lignes({required this.faits});
+/// Les faits automatiques d'une visite en lignes cle-valeur (CTR-03, et le
+/// detail CTR-06 de l'Historique, CT-7).
+class LignesFaitsVisite extends StatelessWidget {
+  /// Cree les lignes.
+  const LignesFaitsVisite({required this.faits, super.key});
+
+  /// Les faits.
 
   final FaitsVisite faits;
 

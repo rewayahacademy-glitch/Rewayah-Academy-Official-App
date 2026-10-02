@@ -13,6 +13,7 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.dart';
+import 'package:rewayah_academy/features/controleur/historique_controleur_page.dart';
 import 'package:rewayah_academy/features/controleur/observation_controle.dart';
 import 'package:rewayah_academy/features/controleur/observation_controle_page.dart';
 import 'package:rewayah_academy/features/demo/controleur_demo.dart';
@@ -398,4 +399,55 @@ void main() {
       }
     }
   });
+
+  group(
+    'Capture : CT-7, CTR-05 Historique et CTR-06 Detail',
+    skip: sautSansCapture,
+    () {
+      setUpAll(chargerPolicesDuDepot);
+      Future<void> liste(WidgetTester tester) async {
+        await tester.pump(const Duration(milliseconds: 500));
+        await tester.pumpAndSettle();
+      }
+
+      Future<void> detail(WidgetTester tester) async {
+        await liste(tester);
+        await tester.tap(
+          find.byKey(HistoriqueControleurPage.ligneKey('demo-rapport-0924')),
+        );
+        await tester.pumpAndSettle();
+      }
+
+      for (final (String l, Size taille) in <(String, Size)>[
+        ('390', const Size(390, 844)),
+        ('768', const Size(768, 1000)),
+        ('1440', const Size(1440, 900)),
+      ]) {
+        for (final ThemeMode mode in <ThemeMode>[
+          ThemeMode.light,
+          ThemeMode.dark,
+        ]) {
+          final String s = '${l}_${mode.name}';
+          for (final (String nom, Future<void> Function(WidgetTester) avant)
+              in <(String, Future<void> Function(WidgetTester))>[
+                ('liste', liste),
+                ('detail', detail),
+              ]) {
+            testWidgets('ct7_historique_${nom}_$s', (
+              WidgetTester tester,
+            ) async {
+              await _capturerRoute(
+                tester,
+                'ct7_historique_${nom}_$s',
+                adresseDemoControleur(EcranDemoControleur.historique),
+                taille,
+                mode: mode,
+                avant: avant,
+              );
+            });
+          }
+        }
+      }
+    },
+  );
 }

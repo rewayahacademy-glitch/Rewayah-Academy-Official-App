@@ -189,7 +189,8 @@ class _EchangesControleurPageState
   static Widget _pastille(EtatFilEchange etat) => switch (etat) {
     EtatFilEchange.reponseRecue => StatusPill(
       libelle: t.controleur.echanges.reponseRecue,
-      ton: TonEtat.succes,
+      // Couleur neutre (decision du directeur C8 = a, 27/09).
+      ton: TonEtat.neutre,
     ),
     EtatFilEchange.enAttente => StatusPill(
       libelle: t.controleur.echanges.enAttente,
