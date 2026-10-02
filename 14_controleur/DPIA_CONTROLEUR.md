@@ -278,3 +278,69 @@ Signature du directeur : ____________________  Date : ____________
 19. Consultation des enseignants, des familles et des contrôleurs.
 20. Test d'intrusion de l'accès Contrôle.
 21. Signature du directeur et avis d'un juriste.
+
+---
+
+## Relecture juridique (agent, 02/10)
+
+Relecture faite par un agent qui joue le rôle de juriste en protection des données (UK GDPR, DPA 2018, guides de l'ICO, Children's Code ; RGPD en complément), à la demande du directeur du 27/09 : « claude peut le faire avec des agents qui disposent les bonnes skills dans le domaine pour trancher ». Les pièces sont dans `14_controleur/juridique/`. Elles ne remplacent pas un avocat britannique ; les points où un professionnel humain reste préférable sont listés plus bas, sans bloquer le travail.
+
+### Ce qui est tranché
+
+| Question | Décision | Pièce |
+|---|---|---|
+| Base légale du contrôle des enseignants | Intérêt légitime, art. 6(1)(f). Test en trois étapes réussi, sous conditions (clause, politique, information, mesures BR-1). | `LIA_CONTROLE.md` |
+| Base légale pour les élèves vus pendant la visite | Intérêt légitime, art. 6(1)(f). Le traitement va dans le sens de l'enfant (Children's Code, standard 1). | `LIA_CONTROLE.md` |
+| Signe de surveillance permanent et non en temps réel (B12, standard 11) | Défendable : la protection de l'enfant est la raison impérieuse. | `LIA_CONTROLE.md` §3.2 |
+| Contestation B7 | Gardée, avec deux règles : le délai de 7 jours part de la réception de la synthèse ; la contestation ne limite aucun droit légal (accès, rectification, opposition). | `POLITIQUE_CONTROLE_ENSEIGNANTS.md` |
+| Identité du contrôleur (B15) | Jamais révélée, y compris dans une réponse d'accès : DPA 2018, annexe 2, partie 3, paragraphe 16. | `POLITIQUE_CONTROLE_ENSEIGNANTS.md` §8 |
+| Opposition (art. 21) | Enseignant : contrôle maintenu pour motifs impérieux ; sinon pas de Classe d'enfants. Famille : pas d'exclusion d'un seul enfant ; solution ou arrêt sans frais. | `LIA_CONTROLE.md` §4 |
+| Art. 9, religion | Art. 9(2)(d) écarté (LTD commerciale). Consentement explicite art. 9(2)(a) : texte A0 pour les élèves, case séparée au contrat pour les enseignants. A0 doit citer les personnes chargées des visites de contrôle. | `ART9_RELIGION.md` |
+| Données sensibles captées pendant un contrôle | Non écrites ; signalements de sécurité sous art. 9(2)(g) et DPA 2018 annexe 1 para. 18, avec document de politique appropriée. Procédure de retrait d'un passage hors sujet écrite. | `ART9_RELIGION.md` §4 |
+| RGPD (UE) | S'applique (art. 3(2)(a) et (b)). | `RGPD_UE.md` |
+| Représentant dans l'UE (art. 27) | Obligatoire. Prestataire en France, avant l'ouverture aux familles de l'UE. | `RGPD_UE.md` §2 |
+| DPO (art. 37) | Pas obligatoire au lancement. Référent nommé. Revue à 1 000 élèves actifs ou plus de 10 pays. | `RGPD_UE.md` §3 |
+| Contrôleurs hors Royaume-Uni et EEE | Tant qu'aucun cadre de transfert n'est signé : seulement des contrôleurs au Royaume-Uni, dans l'EEE, dans un pays adéquat, ou salariés de l'académie. | `RGPD_UE.md` §4 |
+| Fréquence des visites | Au hasard, plusieurs fois par mois possible, sans compteur montré. | `POLITIQUE_CONTROLE_ENSEIGNANTS.md` §2 |
+| Durées manquantes (recommandation) | Synthèse mensuelle : durée du contrat + 12 mois. Fils d'échanges : comme le rapport (12 mois, prolongés si dossier ouvert). Brouillon jamais envoyé : effacé après 7 jours. Journal d'audit : 24 mois. Trace d'une capacité retirée : 24 mois au journal. | ici |
+
+### Points « à faire » désormais traités
+
+| N° | Point | État |
+|---|---|---|
+| 7 | Durées manquantes | Traité (recommandation ci-dessus, à confirmer par le directeur) |
+| 8 | LIA complète | Traité : `LIA_CONTROLE.md`, à signer avec la DPIA |
+| 9 | Condition de l'art. 9 | Traité : `ART9_RELIGION.md` |
+| 10 | Représentant UE et DPO | Traité : `RGPD_UE.md` |
+| 12 | Politique de contrôle et clause au contrat | Traité : `POLITIQUE_CONTROLE_ENSEIGNANTS.md` (projet à valider) |
+| 13 | Textes enfants et parents | Traité : `INFO_ELEVES_PARENTS.md` (projets FR et EN à valider) |
+| 15 | Procédure des droits avec masquage du contrôleur | Traité pour le contrôle (politique §8) ; la procédure générale de l'académie reste à écrire |
+| 16 | Retrait d'une donnée sensible hors sujet | Traité : `ART9_RELIGION.md` §4 |
+| 17 | Fréquence des visites | Traité : politique §2 |
+
+### Points qui restent, et qui doit agir
+
+| N° | Point | Qui |
+|---|---|---|
+| 1 | Relire le guide DPIA général de l'ICO et noter son adresse | Orchestrateur (recherche en ligne) |
+| 2 | DPIA de la Classe (visio, enregistrement) et LIA de l'enregistrement audio (texte A3) | Orchestrateur, même méthode |
+| 3 | Volumes | Directeur |
+| 4, 5, 6 | Pays des contrôleurs ; service vidéo (hébergeur, lieu, contrat) ; DPA Cloudflare, sous-traitants hors EEE, chiffrement au repos | Directeur pour les choix ; BR-1 pour la vérification |
+| 11 | Inscription et redevance ICO, numéro de société, contact confidentialité | Directeur (formalité en ligne auprès de l'ICO ; montant à vérifier sur le site de l'ICO) |
+| 14 | Charte de confidentialité du contrôleur | Orchestrateur (rédaction) ; directeur (validation) |
+| 18 | Prénom seul ou prénom et initiale | Directeur, puis BR-1 |
+| 19 | Consultation des enseignants, des familles et des contrôleurs | Directeur (choisir quelques personnes) |
+| 20 | Test d'intrusion | BR-1, avant production |
+| 21 | Signature du directeur | Directeur (DPIA et LIA) |
+| Nouveau | Écrire le document de politique appropriée (DPA 2018, annexe 1, partie 4) pour le para. 18 | Orchestrateur |
+| Nouveau | Compléter A0 (« y compris les personnes chargées des visites de contrôle ») et harmoniser A3 avec B15 et avec la réalité (le contrôleur voit aussi l'image) | Orchestrateur, puis directeur ; LG-1 pour les langues |
+| Nouveau | Choisir et mandater le représentant dans l'UE | Directeur (devis) |
+| Nouveau | Nommer le référent protection des données | Directeur |
+
+### Où un avocat humain reste préférable (sans bloquer)
+
+1. Le droit du travail de chaque pays des enseignants (validité de la clause de contrôle hors Royaume-Uni et UE).
+2. Le cadre de transfert pour des contrôleurs indépendants situés hors Royaume-Uni, EEE et pays adéquats.
+3. Les statuts de la société (but lucratif ou non) : ils ne changent pas la décision art. 9, mais un avocat peut les lire.
+4. Le contrôle d'antécédents (KYC, art. 10, casier judiciaire), dans le lot KYC.
+5. Une relecture d'ensemble de la DPIA et de la LIA avant l'ouverture réelle, si le budget le permet un jour.
