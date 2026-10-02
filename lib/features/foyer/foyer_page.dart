@@ -222,14 +222,15 @@ class FoyerPage extends ConsumerWidget {
               // « Ajouter un profil eleve »).
               if (placePermetNouvelleDemande(adulte.place) &&
                   nouvelleDemande != null) ...<Widget>[
-                Ecart.vMd,
-                // Compact au bord de debut. `IntrinsicWidth` : sans lui,
+                Ecart.vLg,
+                // Compact au bord de fin : l'action qui poursuit (contrat B,
+                // revue EA-R m1). `IntrinsicWidth` : sans lui,
                 // `ActionPrincipale` s'etire a toute la colonne meme avec
                 // `pleineLargeur: false` (son `Container.alignment`, motif
                 // deja contourne ainsi ailleurs) ; borne par la colonne, le
                 // libelle passe a la ligne a 200 %.
                 Align(
-                  alignment: AlignmentDirectional.centerStart,
+                  alignment: AlignmentDirectional.centerEnd,
                   child: IntrinsicWidth(
                     child: ActionPrincipale(
                       key: nouvelleDemandeKey,
@@ -243,7 +244,8 @@ class FoyerPage extends ConsumerWidget {
               ],
               Ecart.vSection,
               profils,
-              if (!bureau) ...<Widget>[Ecart.vXl, ajouter],
+              // 16 entre les profils et leur action (contrat A, revue EA-R m2).
+              if (!bureau) ...<Widget>[Ecart.vLg, ajouter],
             ],
           );
     final Widget annexes = Column(

@@ -9577,6 +9577,7 @@ class Traductions$adulte$demo$fr {
 	/// fr: 'Le réseau est coupé : l'Accueil et Ma classe hors ligne.'
 	String get reseauCoupe => 'Le réseau est coupé : l\'Accueil et Ma classe hors ligne.';
 
+	late final Traductions$adulte$demo$donnees$fr donnees = Traductions$adulte$demo$donnees$fr.internal(_root);
 	late final Traductions$adulte$demo$etats$fr etats = Traductions$adulte$demo$etats$fr.internal(_root);
 }
 
@@ -13321,6 +13322,45 @@ class Traductions$adulte$reprise$notifications$fr {
 	String get refusee => 'Votre demande de reprise du foyer a été refusée.';
 }
 
+// Path: adulte.demo.donnees
+class Traductions$adulte$demo$donnees$fr {
+	Traductions$adulte$demo$donnees$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Solde de démonstration 1'
+	String get soldeTitulaire => 'Solde de démonstration 1';
+
+	/// fr: 'Solde de démonstration 2'
+	String get soldeSecondAdulte => 'Solde de démonstration 2';
+
+	/// fr: 'Solde de démonstration 3'
+	String get soldeAicha => 'Solde de démonstration 3';
+
+	/// fr: 'Solde de démonstration 4'
+	String get soldeOumar => 'Solde de démonstration 4';
+
+	/// fr: 'Total de démonstration A'
+	String get totalAvecSecondAdulte => 'Total de démonstration A';
+
+	/// fr: 'Total de démonstration B'
+	String get totalSansSecondAdulte => 'Total de démonstration B';
+
+	/// fr: '5,00 € (démonstration)'
+	String get prixOffreA => '5,00 € (démonstration)';
+
+	/// fr: '10,00 € (démonstration)'
+	String get prixOffreB => '10,00 € (démonstration)';
+
+	/// fr: 'Solde de démonstration A'
+	String get detailOffreA => 'Solde de démonstration A';
+
+	/// fr: 'Solde de démonstration B'
+	String get detailOffreB => 'Solde de démonstration B';
+}
+
 // Path: adulte.demo.etats
 class Traductions$adulte$demo$etats$fr {
 	Traductions$adulte$demo$etats$fr.internal(this._root);
@@ -13353,11 +13393,11 @@ class Traductions$adulte$demo$etats$fr {
 	/// fr: 'Le second adulte a été retiré du foyer.'
 	String get conjointRetire => 'Le second adulte a été retiré du foyer.';
 
-	/// fr: 'Un délai de 60 jours est en cours.'
-	String get delai60 => 'Un délai de 60 jours est en cours.';
+	/// fr: 'Un premier délai est en cours.'
+	String get delai60 => 'Un premier délai est en cours.';
 
-	/// fr: 'Une nouvelle invitation est possible après le délai de 60 jours.'
-	String get nouvelleDemande => 'Une nouvelle invitation est possible après le délai de 60 jours.';
+	/// fr: 'Une nouvelle invitation est possible après le premier délai.'
+	String get nouvelleDemande => 'Une nouvelle invitation est possible après le premier délai.';
 
 	/// fr: 'La validation administrative est en attente.'
 	String get validationEnAttente => 'La validation administrative est en attente.';
@@ -13368,11 +13408,11 @@ class Traductions$adulte$demo$etats$fr {
 	/// fr: 'Le second adulte est parti pour la deuxième fois.'
 	String get secondDepart => 'Le second adulte est parti pour la deuxième fois.';
 
-	/// fr: 'Un délai de 120 jours est en cours.'
-	String get delai120 => 'Un délai de 120 jours est en cours.';
+	/// fr: 'Un délai suivant, plus long, est en cours.'
+	String get delai120 => 'Un délai suivant, plus long, est en cours.';
 
-	/// fr: 'Après le troisième départ, le délai reste de 120 jours.'
-	String get departsSuivants => 'Après le troisième départ, le délai reste de 120 jours.';
+	/// fr: 'Après le troisième départ, le délai suivant s'applique toujours.'
+	String get departsSuivants => 'Après le troisième départ, le délai suivant s\'applique toujours.';
 
 	/// fr: 'Une demande de reprise du foyer a été déposée.'
 	String get repriseDemandee => 'Une demande de reprise du foyer a été déposée.';
@@ -13380,8 +13420,8 @@ class Traductions$adulte$demo$etats$fr {
 	/// fr: 'La demande de reprise a été refusée par le titulaire.'
 	String get repriseRefuseeParTitulaire => 'La demande de reprise a été refusée par le titulaire.';
 
-	/// fr: 'Après 30 jours sans réponse, la demande attend l'administration.'
-	String get repriseSansReponse => 'Après 30 jours sans réponse, la demande attend l\'administration.';
+	/// fr: 'Sans réponse dans le délai, la demande attend l'administration.'
+	String get repriseSansReponse => 'Sans réponse dans le délai, la demande attend l\'administration.';
 
 	/// fr: 'La reprise du foyer a été validée.'
 	String get repriseValidee => 'La reprise du foyer a été validée.';
@@ -13401,8 +13441,8 @@ class Traductions$adulte$demo$etats$fr {
 	/// fr: 'La notification n'a pas pu partir sur le téléphone, elle reste visible dans l'application.'
 	String get notificationDansLApplication => 'La notification n\'a pas pu partir sur le téléphone, elle reste visible dans l\'application.';
 
-	/// fr: 'Un élève devenu adulte garde toutes ses données.'
-	String get emancipation => 'Un élève devenu adulte garde toutes ses données.';
+	/// fr: 'Émancipation d'un élève devenu adulte : non construit dans cette vague.'
+	String get emancipation => 'Émancipation d\'un élève devenu adulte : non construit dans cette vague.';
 }
 
 // Path: salle.preparation.eleve.guidee
@@ -17312,6 +17352,16 @@ extension on Traductions {
 			'adulte.demo.invitationRecueConjoint' => 'L\'invitation reçue par le conjoint, dans son propre compte.',
 			'adulte.demo.invitationSansCompte' => 'L\'invitation ouverte sans compte.',
 			'adulte.demo.reseauCoupe' => 'Le réseau est coupé : l\'Accueil et Ma classe hors ligne.',
+			'adulte.demo.donnees.soldeTitulaire' => 'Solde de démonstration 1',
+			'adulte.demo.donnees.soldeSecondAdulte' => 'Solde de démonstration 2',
+			'adulte.demo.donnees.soldeAicha' => 'Solde de démonstration 3',
+			'adulte.demo.donnees.soldeOumar' => 'Solde de démonstration 4',
+			'adulte.demo.donnees.totalAvecSecondAdulte' => 'Total de démonstration A',
+			'adulte.demo.donnees.totalSansSecondAdulte' => 'Total de démonstration B',
+			'adulte.demo.donnees.prixOffreA' => '5,00 € (démonstration)',
+			'adulte.demo.donnees.prixOffreB' => '10,00 € (démonstration)',
+			'adulte.demo.donnees.detailOffreA' => 'Solde de démonstration A',
+			'adulte.demo.donnees.detailOffreB' => 'Solde de démonstration B',
 			'adulte.demo.etats.adulteSeul' => 'L\'adulte est seul, sans foyer.',
 			'adulte.demo.etats.titulaireSansConjoint' => 'Le foyer n\'a pas de second adulte.',
 			'adulte.demo.etats.invitationEnAttente' => 'L\'invitation du second adulte est en attente.',
@@ -17320,23 +17370,23 @@ extension on Traductions {
 			'adulte.demo.etats.conjointActif' => 'Le second adulte fait partie du foyer.',
 			'adulte.demo.etats.conjointQuitte' => 'Le second adulte a quitté le foyer.',
 			'adulte.demo.etats.conjointRetire' => 'Le second adulte a été retiré du foyer.',
-			'adulte.demo.etats.delai60' => 'Un délai de 60 jours est en cours.',
-			'adulte.demo.etats.nouvelleDemande' => 'Une nouvelle invitation est possible après le délai de 60 jours.',
+			'adulte.demo.etats.delai60' => 'Un premier délai est en cours.',
+			'adulte.demo.etats.nouvelleDemande' => 'Une nouvelle invitation est possible après le premier délai.',
 			'adulte.demo.etats.validationEnAttente' => 'La validation administrative est en attente.',
 			'adulte.demo.etats.validationRefusee' => 'La validation administrative a été refusée.',
 			'adulte.demo.etats.secondDepart' => 'Le second adulte est parti pour la deuxième fois.',
-			'adulte.demo.etats.delai120' => 'Un délai de 120 jours est en cours.',
-			'adulte.demo.etats.departsSuivants' => 'Après le troisième départ, le délai reste de 120 jours.',
+			'adulte.demo.etats.delai120' => 'Un délai suivant, plus long, est en cours.',
+			'adulte.demo.etats.departsSuivants' => 'Après le troisième départ, le délai suivant s\'applique toujours.',
 			'adulte.demo.etats.repriseDemandee' => 'Une demande de reprise du foyer a été déposée.',
 			'adulte.demo.etats.repriseRefuseeParTitulaire' => 'La demande de reprise a été refusée par le titulaire.',
-			'adulte.demo.etats.repriseSansReponse' => 'Après 30 jours sans réponse, la demande attend l\'administration.',
+			'adulte.demo.etats.repriseSansReponse' => 'Sans réponse dans le délai, la demande attend l\'administration.',
 			'adulte.demo.etats.repriseValidee' => 'La reprise du foyer a été validée.',
 			'adulte.demo.etats.repriseRefusee' => 'La reprise du foyer a été refusée.',
 			'adulte.demo.etats.dejaDansUnAutreFoyer' => 'L\'adulte invité fait déjà partie d\'un autre foyer.',
 			'adulte.demo.etats.erreurReseau' => 'Le réseau a coupé pendant une action.',
 			'adulte.demo.etats.doubleSoumission' => 'La même action a été envoyée deux fois.',
 			'adulte.demo.etats.notificationDansLApplication' => 'La notification n\'a pas pu partir sur le téléphone, elle reste visible dans l\'application.',
-			'adulte.demo.etats.emancipation' => 'Un élève devenu adulte garde toutes ses données.',
+			'adulte.demo.etats.emancipation' => 'Émancipation d\'un élève devenu adulte : non construit dans cette vague.',
 			_ => null,
 		};
 	}

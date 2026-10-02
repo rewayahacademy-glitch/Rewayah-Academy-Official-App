@@ -483,6 +483,8 @@ void main() {
     final List<Override> horsLigne = <Override>[
       horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
     ];
+    // Un port espion : « Rien n'est envoyé » doit etre vrai (revue EA-R m13).
+    final _PortEspion port = _PortEspion();
     await monterPage(
       tester,
       RepriseFoyerPage(onRetour: () {}, onDeposee: () {}),
@@ -491,11 +493,19 @@ void main() {
         repriseFoyerProvider.overrideWith(
           (Ref _) async => const RepriseAucune(),
         ),
+        portRepriseFoyerProvider.overrideWithValue(port),
       ],
     );
     await tester.pumpAndSettle();
     expect(find.text(r.horsLigne), findsOneWidget);
     expect(bouton(tester, RepriseFoyerPage.deposerKey).onPress, isNull);
+    await tester.ensureVisible(find.byKey(RepriseFoyerPage.deposerKey));
+    await tester.tap(
+      find.byKey(RepriseFoyerPage.deposerKey),
+      warnIfMissed: false,
+    );
+    await tester.pumpAndSettle();
+    expect(port.appels, 0);
   });
 
   testWidgets('hors ligne, titulaire : le refus inactif, rien ne part', (
@@ -505,6 +515,7 @@ void main() {
     final List<Override> horsLigne = <Override>[
       horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
     ];
+    final _PortEspion port = _PortEspion();
     await monterPage(
       tester,
       RepriseTitulairePage(onRetour: () {}, onRefusee: () {}),
@@ -513,11 +524,19 @@ void main() {
         demandeRepriseRecueProvider.overrideWith(
           (Ref _) async => const RepriseARefuser(),
         ),
+        portRepriseFoyerProvider.overrideWithValue(port),
       ],
     );
     await tester.pumpAndSettle();
     expect(find.text(r.titulaire.horsLigne), findsOneWidget);
     expect(bouton(tester, RepriseTitulairePage.refuserKey).onPress, isNull);
+    await tester.ensureVisible(find.byKey(RepriseTitulairePage.refuserKey));
+    await tester.tap(
+      find.byKey(RepriseTitulairePage.refuserKey),
+      warnIfMissed: false,
+    );
+    await tester.pumpAndSettle();
+    expect(port.appels, 0);
   });
 
   testWidgets('sans source serveur : indisponible (EA-BR-27, EA-BR-28)', (
@@ -644,6 +663,23 @@ void main() {
 }
 
 /// Un port dont la reponse se perd (D5).
+/// Un serveur espion : il compte les gestes qui partent.
+class _PortEspion implements PortRepriseFoyer {
+  int appels = 0;
+
+  @override
+  Future<ResultatReprise> deposer({required String cle}) async {
+    appels++;
+    return const RepriseEnregistree();
+  }
+
+  @override
+  Future<ResultatReprise> refuser({required String cle}) async {
+    appels++;
+    return const RepriseEnregistree();
+  }
+}
+
 class _PortCoupe implements PortRepriseFoyer {
   const _PortCoupe();
 

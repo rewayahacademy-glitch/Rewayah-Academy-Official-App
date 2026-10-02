@@ -469,8 +469,19 @@ void main() {
     expect(find.byType(FoyerPage), findsNothing);
   });
 
+  testWidgets('telephone : 16 entre les profils et « Ajouter un profil '
+      'eleve » (contrat A, revue EA-R m2)', (WidgetTester tester) async {
+    taille(tester, const Size(390, 844));
+    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
+    expect(
+      tester.getTopLeft(find.byKey(FoyerPage.ajouterKey)).dy -
+          tester.getBottomLeft(find.byKey(FoyerPage.membresKey)).dy,
+      AppSpacing.lg,
+    );
+  });
+
   testWidgets('« Faire une nouvelle demande » sur bureau : compacte au bord '
-      'de debut, jamais sur toute la colonne (EA-5c)', (
+      'de fin, jamais sur toute la colonne (EA-5c, revue EA-R m1)', (
     WidgetTester tester,
   ) async {
     taille(tester, const Size(1440, 900));
@@ -487,7 +498,12 @@ void main() {
       tester.getSize(bouton).width,
       lessThan(tester.getSize(ligne).width * 0.8),
     );
-    expect(tester.getTopLeft(bouton).dx, tester.getTopLeft(ligne).dx);
+    expect(tester.getTopRight(bouton).dx, tester.getTopRight(ligne).dx);
+    // 16 au-dessus du bouton (Ecart.vLg, revue EA-R m1).
+    expect(
+      tester.getTopLeft(bouton).dy - tester.getBottomLeft(ligne).dy,
+      AppSpacing.lg,
+    );
   });
 
   testWidgets('« A propos du forfait famille » sur bureau : le texte garde '

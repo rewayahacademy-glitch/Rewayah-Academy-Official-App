@@ -219,8 +219,8 @@ void main() {
       }
     });
 
-    test('textes adulte.* du dictionnaire fr (hors le selecteur de '
-        'demonstration) : aucune occurrence', () {
+    test('textes adulte.* du dictionnaire fr (hors adulte.demo.donnees) : '
+        'aucune occurrence', () {
       final Map<String, dynamic> racine = jsonDecode(
         File('assets/i18n/fr.i18n.json').readAsStringSync(),
       ) as Map<String, dynamic>;
@@ -242,22 +242,53 @@ void main() {
       }
 
       for (final MapEntry<String, dynamic> e in adulte.entries) {
-        // `demo` : le SELECTEUR de demonstration (adulte.demo.etats.*),
-        // exception connue, signalee au rapport EA-12, pas corrigee ici.
-        if (e.key == 'demo') continue;
+        if (e.key == 'demo') {
+          // `adulte.demo.donnees` : les DONNEES de demonstration (prix de la
+          // planche, marques « (démonstration) », F12), seule exception. Le
+          // selecteur (adulte.demo.etats.*) est verifie comme le reste
+          // depuis la revue EA-R m6.
+          for (final MapEntry<String, dynamic> d
+              in (e.value as Map<String, dynamic>).entries) {
+            if (d.key == 'donnees') continue;
+            parcourir('adulte.demo.${d.key}', d.value);
+          }
+          continue;
+        }
         parcourir('adulte.${e.key}', e.value);
       }
       expect(fautes, isEmpty, reason: fautes.join('\n'));
     });
 
-    test('exception connue et signalee (pas corrigee ici) : le selecteur '
-        'adulte.demo.etats.* porte encore des delais en jours en dur', () {
-      // Preuve que l'exception existe toujours a l'endroit attendu : si
-      // elle disparait sans mise a jour du rapport EA-12, ce test echoue
-      // et la re-signale plutot que de laisser le rapport perimer.
-      expect(t.adulte.demo.etats.delai60, contains('60 jours'));
-      expect(t.adulte.demo.etats.delai120, contains('120 jours'));
-      expect(t.adulte.demo.etats.repriseSansReponse, contains('30 jours'));
+    test('selecteur de demonstration (revue EA-R m6) : plus aucun delai en '
+        'jours en dur', () {
+      for (final String libelle in <String>[
+        t.adulte.demo.etats.delai60,
+        t.adulte.demo.etats.nouvelleDemande,
+        t.adulte.demo.etats.delai120,
+        t.adulte.demo.etats.departsSuivants,
+        t.adulte.demo.etats.repriseSansReponse,
+      ]) {
+        expect(delaiJours.hasMatch(libelle), isFalse, reason: libelle);
+      }
+    });
+
+    test('donnees de demonstration (revue EA-R m3, m4, m17) : prix marques '
+        '« démonstration », soldes sans unite', () {
+      final d = t.adulte.demo.donnees;
+      for (final String prix in <String>[d.prixOffreA, d.prixOffreB]) {
+        expect(prix, contains('(démonstration)'));
+      }
+      for (final String solde in <String>[
+        d.soldeTitulaire,
+        d.soldeSecondAdulte,
+        d.soldeAicha,
+        d.soldeOumar,
+        d.totalAvecSecondAdulte,
+        d.totalSansSecondAdulte,
+      ]) {
+        expect(solde, contains('démonstration'));
+        expect(solde.contains(RegExp('unit', caseSensitive: false)), isFalse);
+      }
     });
   });
 

@@ -421,6 +421,8 @@ void main() {
     WidgetTester tester,
   ) async {
     taille(tester, const Size(390, 844));
+    // Un port espion : « Rien n'est envoyé » doit etre vrai (revue EA-R m13).
+    final _PortEspion port = _PortEspion();
     await monterPage(
       tester,
       PlaceConjointPage(
@@ -431,11 +433,19 @@ void main() {
       ),
       surcharges: <Override>[
         horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
+        portSortieForfaitProvider.overrideWithValue(port),
       ],
     );
     await tester.pumpAndSettle();
     expect(find.text(t.adulte.sortie.horsLigne), findsOneWidget);
     expect(bouton(tester, PlaceConjointPage.retirerKey).onPress, isNull);
+    await tester.ensureVisible(find.byKey(PlaceConjointPage.retirerKey));
+    await tester.tap(
+      find.byKey(PlaceConjointPage.retirerKey),
+      warnIfMissed: false,
+    );
+    await tester.pumpAndSettle();
+    expect(port.appels, 0);
   });
 
   testWidgets('sans source serveur : la sortie dit « indisponible » '
@@ -587,4 +597,21 @@ void main() {
     await taper(tester, confirmer(t.adulte.sortie.retirerElle));
     expect(find.byKey(sortieResultatKey), findsOneWidget);
   });
+}
+
+/// Un serveur espion : il compte les sorties qui partent.
+class _PortEspion implements PortSortieForfait {
+  int appels = 0;
+
+  @override
+  Future<ResultatSortie> retirerSecondAdulte({required String cle}) async {
+    appels++;
+    return const SortieFaite();
+  }
+
+  @override
+  Future<ResultatSortie> quitterForfait({required String cle}) async {
+    appels++;
+    return const SortieFaite();
+  }
 }

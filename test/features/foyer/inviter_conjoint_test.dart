@@ -603,9 +603,15 @@ void main() {
       WidgetTester tester,
     ) async {
       taille(tester, const Size(390, 844));
+      // Un port espion : « Rien n'est envoyé » doit etre vrai (revue EA-R
+      // m13), aucun appel ne part hors ligne.
+      final _PortCompteur port = _PortCompteur();
       await tester.pumpWidget(
         _page(
           horsLigne: true,
+          overrides: <Override>[
+            portInvitationConjointProvider.overrideWithValue(port),
+          ],
           child: InviterConjointPage(
             placeFeminine: true,
             onAbandon: () {},
@@ -627,14 +633,24 @@ void main() {
             .onPress,
         isNull,
       );
+      await tester.tap(
+        find.byKey(InviterConjointPage.envoyerKey),
+        warnIfMissed: false,
+      );
+      await tester.pump();
+      expect(port.envois, 0);
     });
 
     testWidgets('hors ligne a l\'annulation : "Annuler" attend, dit '
         'pourquoi (EA-6c)', (WidgetTester tester) async {
       taille(tester, const Size(390, 844));
+      final _PortCompteur port = _PortCompteur();
       await tester.pumpWidget(
         _page(
           horsLigne: true,
+          overrides: <Override>[
+            portInvitationConjointProvider.overrideWithValue(port),
+          ],
           child: InvitationEnvoyeePage(
             invitation: DonneesAdulteDemo.invitationEnvoyee(
               GenreTitulaireDemo.homme,
@@ -656,6 +672,14 @@ void main() {
             .onPress,
         isNull,
       );
+      // « Rien n'est annulé » est vrai : aucun appel (revue EA-R m13).
+      await tester.ensureVisible(find.byKey(InvitationEnvoyeePage.annulerKey));
+      await tester.tap(
+        find.byKey(InvitationEnvoyeePage.annulerKey),
+        warnIfMissed: false,
+      );
+      await tester.pumpAndSettle();
+      expect(port.annulations, 0);
     });
 
     testWidgets('sans source serveur (EA-BR-15) : indisponible, jamais '
@@ -793,8 +817,13 @@ class _PortCompteur implements PortInvitationConjoint {
     return reponse.future;
   }
 
+  int annulations = 0;
+
   @override
-  Future<ResultatAnnulation> annuler() async => const AnnulationFaite();
+  Future<ResultatAnnulation> annuler() async {
+    annulations++;
+    return const AnnulationFaite();
+  }
 }
 
 Widget _page({

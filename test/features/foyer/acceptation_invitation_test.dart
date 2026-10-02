@@ -49,6 +49,23 @@ class _ReponseDatee implements PortReponseInvitation {
       ReponseRecue(etat);
 }
 
+/// Un serveur espion : il compte les reponses qui partent.
+class _PortEspion implements PortReponseInvitation {
+  int appels = 0;
+
+  @override
+  Future<ResultatReponseInvitation> accepter({required String cle}) async {
+    appels++;
+    return const ReponseRecue(InvitationPerimee());
+  }
+
+  @override
+  Future<ResultatReponseInvitation> refuser({required String cle}) async {
+    appels++;
+    return const ReponseRecue(InvitationPerimee());
+  }
+}
+
 void main() {
   void taille(WidgetTester tester, Size s) {
     tester.view.physicalSize = s;
@@ -483,6 +500,8 @@ void main() {
     WidgetTester tester,
   ) async {
     taille(tester, const Size(390, 844));
+    // Un port espion : « Rien n'est envoyé » doit etre vrai (revue EA-R m13).
+    final _PortEspion port = _PortEspion();
     await monterPage(
       tester,
       surcharges: <Override>[
@@ -493,12 +512,22 @@ void main() {
             titulaireFeminin: false,
           ),
         ),
+        portReponseInvitationProvider.overrideWithValue(port),
       ],
     );
     await tester.pumpAndSettle();
     expect(find.text(t.adulte.acceptation.horsLigne), findsOneWidget);
     expect(bouton(tester, InvitationRecuePage.accepterKey).onPress, isNull);
     expect(bouton(tester, InvitationRecuePage.refuserKey).onPress, isNull);
+    for (final Key cle in <Key>[
+      InvitationRecuePage.accepterKey,
+      InvitationRecuePage.refuserKey,
+    ]) {
+      await tester.ensureVisible(find.byKey(cle));
+      await tester.tap(find.byKey(cle), warnIfMissed: false);
+      await tester.pumpAndSettle();
+    }
+    expect(port.appels, 0);
   });
 
   testWidgets('chargement : un squelette, aucun faux prenom', (

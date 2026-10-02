@@ -97,7 +97,8 @@ enum EtatDemoAdulte {
   /// 24. Notification non delivrable en push, visible dans l'application.
   notificationDansLApplication,
 
-  /// 25. Emancipation d'un eleve devenu adulte, sans perte de donnees.
+  /// 25. Emancipation d'un eleve devenu adulte : non construite dans cette
+  /// vague (F19), le selecteur le dit sans rien affirmer (revue EA-R m7).
   emancipation,
 }
 
@@ -510,8 +511,10 @@ abstract final class DonneesAdulteDemo {
   /// seulement s'il est rattache (ses initiales, aucune photo ni Classe, Q4,
   /// F6), puis les enfants.
   ///
-  /// Les libelles reprennent les valeurs de la planche 4.1 (« 120 unités »),
-  /// sans taux ni devise (decision E2, Q9) ; l'exception « Bientôt épuisé »
+  /// Les libelles sont des libelles de demonstration MARQUES comme tels, sans
+  /// quantite ni unite (decision E2 = c, revue EA-R m3 et m17) : l'unite du
+  /// solde n'est pas fixee (Q9, doc section 20.3), comme pour la recharge ;
+  /// l'exception « Bientôt épuisé »
   /// est RENDUE par la demonstration, jamais deduite d'un seuil (F12). Le
   /// recapitulatif est une phrase rendue, ecrite ici pour chaque cas, jamais
   /// additionnee dans Flutter (F9). Oumar n'a pas la pastille « Inactif » de
@@ -519,32 +522,33 @@ abstract final class DonneesAdulteDemo {
   /// demonstration ne se contredit pas d'un ecran a l'autre.
   static SoldesFoyer soldes(EtatDemoAdulte etat, GenreTitulaireDemo genre) {
     final bool second = secondAdultePresent(etat);
+    final d = t.adulte.demo.donnees;
     return SoldesFoyer(
       beneficiaires: <SoldeBeneficiaire>[
         SoldeBeneficiaire(
           id: idTitulaire(genre),
           prenom: prenomTitulaire(genre),
-          soldeRendu: '120 unités',
+          soldeRendu: d.soldeTitulaire,
         ),
         if (second)
           SoldeBeneficiaire(
             id: genre == GenreTitulaireDemo.homme ? mariamaId : mamadouId,
             prenom: prenomSecondAdulte(genre),
-            soldeRendu: '80 unités',
+            soldeRendu: d.soldeSecondAdulte,
           ),
-        const SoldeBeneficiaire(
+        SoldeBeneficiaire(
           id: aichaId,
           prenom: 'Aïcha',
-          soldeRendu: '15 unités',
+          soldeRendu: d.soldeAicha,
           exception: ExceptionSolde.bientotEpuise,
         ),
-        const SoldeBeneficiaire(
+        SoldeBeneficiaire(
           id: oumarId,
           prenom: 'Oumar',
-          soldeRendu: '0 unité',
+          soldeRendu: d.soldeOumar,
         ),
       ],
-      recapitulatif: second ? '215 unités au total' : '135 unités au total',
+      recapitulatif: second ? d.totalAvecSecondAdulte : d.totalSansSecondAdulte,
     );
   }
 
@@ -555,22 +559,23 @@ abstract final class DonneesAdulteDemo {
   static const String offreB = 'demo-offre-b';
 
   /// Les offres de recharge de la demonstration (EA-10, EA-BR-24). Le prix
-  /// reprend la planche 4.3 (« 5,00 € ») ; le solde attribue est un libelle
+  /// reprend la planche 4.3 (« 5,00 € »), MARQUE « (démonstration) » (F12,
+  /// revue EA-R m4) ; le solde attribue est un libelle
   /// de demonstration MARQUE comme tel, sans quantite d'unites : l'unite du
   /// solde n'est pas fixee (doc section 20.3, 00_MAQUETTES 4.1 C3) et une
   /// quantite a cote d'un prix ramenerait le taux retire (4.2 C2, E2). Ni
   /// taux ni formule (F12, 00_MAQUETTES section 3). Aucune remise n'est
   /// rendue : la planche la calcule (10 %), le doc ne la fixe pas (section 20).
-  static const List<OffreRecharge> _offresRecharge = <OffreRecharge>[
+  static List<OffreRecharge> get _offresRecharge => <OffreRecharge>[
     OffreRecharge(
       id: offreA,
-      libelle: '5,00 €',
-      detail: 'Solde de démonstration A',
+      libelle: t.adulte.demo.donnees.prixOffreA,
+      detail: t.adulte.demo.donnees.detailOffreA,
     ),
     OffreRecharge(
       id: offreB,
-      libelle: '10,00 €',
-      detail: 'Solde de démonstration B',
+      libelle: t.adulte.demo.donnees.prixOffreB,
+      detail: t.adulte.demo.donnees.detailOffreB,
     ),
   ];
 

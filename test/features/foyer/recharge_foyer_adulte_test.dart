@@ -151,10 +151,10 @@ void main() {
     // son solde tel que rendu, une case.
     for (final (String id, String prenom, String solde)
         in <(String, String, String)>[
-          (_mamadou, 'Mamadou', '120 unités'),
-          (_mariama, 'Mariama', '80 unités'),
-          (_aicha, 'Aïcha', '15 unités'),
-          (_oumar, 'Oumar', '0 unité'),
+          (_mamadou, 'Mamadou', t.adulte.demo.donnees.soldeTitulaire),
+          (_mariama, 'Mariama', t.adulte.demo.donnees.soldeSecondAdulte),
+          (_aicha, 'Aïcha', t.adulte.demo.donnees.soldeAicha),
+          (_oumar, 'Oumar', t.adulte.demo.donnees.soldeOumar),
         ]) {
       expect(find.text(prenom), findsOneWidget, reason: prenom);
       expect(find.text(solde), findsOneWidget, reason: solde);
@@ -185,11 +185,11 @@ void main() {
     );
     // Les offres telles que rendues (planche 4.3), sans « Autre » ; aucune
     // quantite d'unites a cote d'un prix, donc aucun taux (4.1 C3, 4.2 C2).
-    expect(find.text('5,00 €'), findsOneWidget);
-    expect(find.text('10,00 €'), findsOneWidget);
+    expect(find.text(t.adulte.demo.donnees.prixOffreA), findsOneWidget);
+    expect(find.text(t.adulte.demo.donnees.prixOffreB), findsOneWidget);
     expect(find.text('Solde de démonstration A'), findsOneWidget);
     expect(find.text('Solde de démonstration B'), findsOneWidget);
-    expect(find.text('120 unités'), findsOneWidget);
+    expect(find.text(t.adulte.demo.donnees.soldeTitulaire), findsOneWidget);
     // Les offres de Mamadou juste sous SA ligne (ligne 15 a) : avant la
     // ligne suivante.
     expect(
@@ -226,8 +226,18 @@ void main() {
     // paye, solde attribue, statut ; aucune remise rendue, aucune ligne.
     for (final (String id, String prenom, String montant, String solde)
         in <(String, String, String, String)>[
-          (_mamadou, 'Mamadou', '10,00 €', 'Solde de démonstration B'),
-          (_aicha, 'Aïcha', '5,00 €', 'Solde de démonstration A'),
+          (
+            _mamadou,
+            'Mamadou',
+            t.adulte.demo.donnees.prixOffreB,
+            'Solde de démonstration B',
+          ),
+          (
+            _aicha,
+            'Aïcha',
+            t.adulte.demo.donnees.prixOffreA,
+            'Solde de démonstration A',
+          ),
         ]) {
       final Key ligne = RechargeFoyerPage.ligneDe(id);
       expect(dans(ligne, find.text(prenom)), findsOneWidget);
@@ -279,7 +289,10 @@ void main() {
     await taper(tester, find.byKey(RechargeFoyerPage.offreDe(_aicha, _offreB)));
     await taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
     expect(
-      dans(RechargeFoyerPage.ligneDe(_aicha), find.text('10,00 €')),
+      dans(
+        RechargeFoyerPage.ligneDe(_aicha),
+        find.text(t.adulte.demo.donnees.prixOffreB),
+      ),
       findsOneWidget,
     );
     expect(

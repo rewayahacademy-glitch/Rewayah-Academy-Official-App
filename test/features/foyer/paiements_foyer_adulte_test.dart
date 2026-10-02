@@ -134,12 +134,14 @@ void main() {
     expect(find.text(t.adulte.famille.paiementsFoyer), findsOneWidget);
 
     // Une ligne par beneficiaire autorise, dans l'ordre rendu, avec son
-    // solde TEL QUE RENDU.
+    // solde TEL QUE RENDU, un libelle de demonstration sans unite (E2 = c,
+    // revue EA-R m3 et m17).
+    final d = t.adulte.demo.donnees;
     for (final (String prenom, String solde) in <(String, String)>[
-      ('Mamadou', '120 unités'),
-      ('Mariama', '80 unités'),
-      ('Aïcha', '15 unités'),
-      ('Oumar', '0 unité'),
+      ('Mamadou', d.soldeTitulaire),
+      ('Mariama', d.soldeSecondAdulte),
+      ('Aïcha', d.soldeAicha),
+      ('Oumar', d.soldeOumar),
     ]) {
       expect(dansSoldes(find.text(prenom)), findsOneWidget, reason: prenom);
       expect(dansSoldes(find.text(solde)), findsOneWidget, reason: solde);
@@ -183,7 +185,7 @@ void main() {
     // Le recapitulatif, discret, sous le bouton ; puis l'historique.
     expect(
       find.text(
-        t.adulte.paiements.recapitulatif(valeur: '215 unités au total'),
+        t.adulte.paiements.recapitulatif(valeur: d.totalAvecSecondAdulte),
       ),
       findsOneWidget,
     );
@@ -233,7 +235,9 @@ void main() {
     expect(dansSoldes(find.text('Mamadou')), findsOneWidget);
     expect(
       find.text(
-        t.adulte.paiements.recapitulatif(valeur: '135 unités au total'),
+        t.adulte.paiements.recapitulatif(
+          valeur: t.adulte.demo.donnees.totalSansSecondAdulte,
+        ),
       ),
       findsOneWidget,
     );

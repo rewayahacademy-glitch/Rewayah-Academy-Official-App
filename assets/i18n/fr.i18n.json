@@ -4145,6 +4145,18 @@
       "invitationRecueConjoint": "L'invitation reçue par le conjoint, dans son propre compte.",
       "invitationSansCompte": "L'invitation ouverte sans compte.",
       "reseauCoupe": "Le réseau est coupé : l'Accueil et Ma classe hors ligne.",
+      "donnees": {
+        "soldeTitulaire": "Solde de démonstration 1",
+        "soldeSecondAdulte": "Solde de démonstration 2",
+        "soldeAicha": "Solde de démonstration 3",
+        "soldeOumar": "Solde de démonstration 4",
+        "totalAvecSecondAdulte": "Total de démonstration A",
+        "totalSansSecondAdulte": "Total de démonstration B",
+        "prixOffreA": "5,00 € (démonstration)",
+        "prixOffreB": "10,00 € (démonstration)",
+        "detailOffreA": "Solde de démonstration A",
+        "detailOffreB": "Solde de démonstration B"
+      },
       "etats": {
         "adulteSeul": "L'adulte est seul, sans foyer.",
         "titulaireSansConjoint": "Le foyer n'a pas de second adulte.",
@@ -4154,23 +4166,23 @@
         "conjointActif": "Le second adulte fait partie du foyer.",
         "conjointQuitte": "Le second adulte a quitté le foyer.",
         "conjointRetire": "Le second adulte a été retiré du foyer.",
-        "delai60": "Un délai de 60 jours est en cours.",
-        "nouvelleDemande": "Une nouvelle invitation est possible après le délai de 60 jours.",
+        "delai60": "Un premier délai est en cours.",
+        "nouvelleDemande": "Une nouvelle invitation est possible après le premier délai.",
         "validationEnAttente": "La validation administrative est en attente.",
         "validationRefusee": "La validation administrative a été refusée.",
         "secondDepart": "Le second adulte est parti pour la deuxième fois.",
-        "delai120": "Un délai de 120 jours est en cours.",
-        "departsSuivants": "Après le troisième départ, le délai reste de 120 jours.",
+        "delai120": "Un délai suivant, plus long, est en cours.",
+        "departsSuivants": "Après le troisième départ, le délai suivant s'applique toujours.",
         "repriseDemandee": "Une demande de reprise du foyer a été déposée.",
         "repriseRefuseeParTitulaire": "La demande de reprise a été refusée par le titulaire.",
-        "repriseSansReponse": "Après 30 jours sans réponse, la demande attend l'administration.",
+        "repriseSansReponse": "Sans réponse dans le délai, la demande attend l'administration.",
         "repriseValidee": "La reprise du foyer a été validée.",
         "repriseRefusee": "La reprise du foyer a été refusée.",
         "dejaDansUnAutreFoyer": "L'adulte invité fait déjà partie d'un autre foyer.",
         "erreurReseau": "Le réseau a coupé pendant une action.",
         "doubleSoumission": "La même action a été envoyée deux fois.",
         "notificationDansLApplication": "La notification n'a pas pu partir sur le téléphone, elle reste visible dans l'application.",
-        "emancipation": "Un élève devenu adulte garde toutes ses données."
+        "emancipation": "Émancipation d'un élève devenu adulte : non construit dans cette vague."
       }
     }
   }
