@@ -60,6 +60,7 @@ Textes complets : consignes K-54 à K-59 du tableau ; table des preuves : `docs/
 
 Règles équivalentes, déduites des remarques du directeur :
 
+- **Le bouton principal d'une séance change de sens, il ne se grise jamais (CTA-FIN-1).** Avant l'ouverture de la salle : « Préparer la séance ». Salle ouverte, et tant qu'elle l'est (un cours qui déborde garde son bouton) : « Rejoindre la salle », avec la pastille « En direct » dès l'heure de début. Temps écoulé et cahier non déposé : « Remplir le cahier de transmission », avec le rappel qu'il est obligatoire. Cahier déposé : « Voir le cahier », en lien discret (`LienFleche`). Séance annulée : « Voir la Classe ». La logique est pure et testée (`ctaSeance`, `seanceDeLaCarte` dans `lib/core/enseignant/cta_seance.dart`) ; l'écran ne décide rien. Contrôle : `test/core/enseignant/cta_seance_test.dart`, et le groupe « CTA-FIN-1 » de `test/features/journee_test.dart` (320 px et 1440 px, texte ×1 et ×2, clair et sombre).
 - **Aucun élément ne recouvre un contenu à lire** (bouton flottant, bandeau, pastille). Test : `verifierSansChevauchement`, à 320 px et en texte ×2.
 - **Hiérarchie de titres stricte** : un titre d'écran, des titres de section, jamais deux niveaux au même rang ni un saut de niveau.
 - **Un état ne se signale jamais par la couleur seule** (en direct, annulée, actif / inactif) : texte ou icône en plus de la couleur.
