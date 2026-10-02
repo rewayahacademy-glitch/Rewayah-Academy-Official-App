@@ -347,7 +347,7 @@ Grille appliquée : K-59 (un message d'erreur dit la cause et l'action) et D5 (d
 
 ## Textes « Proposé par un agent » à valider
 
-Ces 112 textes sont ceux que le directeur doit valider ou changer (garder / changer en …).
+Ces 137 textes sont ceux que le directeur doit valider ou changer (garder / changer en …).
 
 1. P1 : « Planning » (`nav.controleur.planning`)
 2. P2 : « Le contrôle s'ouvrira dès que la séance sera en direct. » (`controleur.controle.attente`)
@@ -461,6 +461,34 @@ Ces 112 textes sont ceux que le directeur doit valider ou changer (garder / chan
 110. P110 : « Accès révoqué pendant la navigation » (`controleur.demo.accesRevoque`)
 111. P111 : « Enseignant sans capacité Contrôle » (`controleur.demo.sansCapacite`)
 112. P112 : « Compte rendu, mission devenue indisponible » (`controleur.demo.compteRenduIndisponible`)
+
+Ajouts de CT-RC (revue CT-R M1, m1, m2, m9 ; 02/10/2026). Lignes d'aide au format « Quand … · conséquence », provisoires (D4) :
+
+113. P113 : « Votre réponse s'ajoute aux faits automatiques de cette visite. » (`controleur.compteRendu.contexte`)
+114. P114 : « Quand la séance s'est déroulée normalement · le compte rendu part en une action ; vous pourrez ajouter un complément ensuite » (`controleur.compteRendu.rienASignalerAide`)
+115. P115 : « Quand vous voulez noter un fait · quelques questions courtes, une à la fois » (`controleur.compteRendu.ajouterObservationAide`)
+116. P116 : « Quand un fait demande l'attention de l'administration · votre texte sera demandé » (`controleur.compteRendu.pointImportantAide`)
+117. P117 : « Votre observation rejoint le compte rendu de cette visite, transmis à l'administration. » (`controleur.observation.contexteNature`)
+118. P118 : « Quand une pratique mérite d'être relevée · elle figure au rapport comme point positif » (`controleur.observation.pointPositifAide`)
+119. P119 : « Quand un point devra être revu lors d'une prochaine visite · il figure au rapport comme point à suivre » (`controleur.observation.aSuivreAide`)
+120. P120 : « Quand l'administration doit agir · votre texte sera demandé, elle le reçoit avec le rapport » (`controleur.observation.interventionAdminAide`)
+121. P121 : « Le domaine aide l'administration à lire votre observation. » (`controleur.observation.contexteDomaine`)
+122. P122 : « Quand il s'agit de l'enseignement : explications, progression, supports » (`controleur.observation.pedagogieAide`)
+123. P123 : « Quand il s'agit des échanges entre l'enseignant et les élèves » (`controleur.observation.interactionAide`)
+124. P124 : « Quand il s'agit de l'organisation de la séance : temps, consignes, déroulement » (`controleur.observation.gestionClasseAide`)
+125. P125 : « Quand il s'agit des règles de l'académie et de la séance » (`controleur.observation.respectCadreAide`)
+126. P126 : « Quand il s'agit du comportement ou de l'ambiance de la classe » (`controleur.observation.climatAide`)
+127. P127 : « Quand aucun autre domaine ne convient · précisez-le dans votre texte » (`controleur.observation.autreAide`)
+128. P128 : « Indiquez qui l'observation concerne. Un élève se choisit dans la liste de la Classe, prénom seulement. » (`controleur.observation.contextePersonne`)
+129. P129 : « Quand l'observation porte sur l'enseignant de la séance » (`controleur.observation.enseignantAide`)
+130. P130 : « Quand elle porte sur l'ensemble des élèves présents » (`controleur.observation.classeEntiereAide`)
+131. P131 : « Quand un seul élève est concerné · vous le choisissez dans la liste, prénom seulement » (`controleur.observation.elevePrecisAide`)
+132. P132 : « Quand elle ne vise personne en particulier, par exemple le déroulement » (`controleur.observation.aucunAide`)
+133. P133 : « L'envoi n'est pas confirmé : la connexion ou le serveur n'a pas répondu. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l'administration. » (`controleur.compteRendu.echecRien`, échec de « Rien à signaler »)
+134. P134 : « Lecture de la liste des élèves présents. » (`controleur.observation.rosterChargement`)
+135. P135 : « La liste des élèves présents n'est pas reçue, sans doute à cause de la connexion. Réessayez, ou choisissez « Classe entière » ou « Aucun participant précis ». Vos autres réponses sont gardées. » (`controleur.observation.rosterIndisponible`, texte modifié, avec le bouton « Réessayer »)
+136. P136 : « Aucun élève présent n'apparaît dans la liste de cette visite. Choisissez « Classe entière » ou « Aucun participant précis ». » (`controleur.observation.rosterVide`)
+137. P137 : « {date}, {heure} » (`controleur.historique.dateHeure`, ordre et virgule traduisibles)
 
 ### Textes déjà en place avant ce lot (partagés avec d'autres rôles, à regarder sans urgence)
 
