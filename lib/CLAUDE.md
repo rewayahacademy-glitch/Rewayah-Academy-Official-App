@@ -8,7 +8,7 @@ dans `docs/archive/2026-09-pre-remise-a-plat/design/` (référence, pas une règ
 
 Les composants partagés (`Pressable`, `BentoTile`, `AvatarTile`, `AudioLabel`,
 `PermanentNotice`, `PinPad`, `EmptyState`, `OfflineBanner`, `ChoiceCardGroup`,
-`ActionPrincipale`) sont les seuls points d'entrée de leur fonction : on les améliore, on
+`ActionPrincipale`, `PileCartes`, `CarteGroupee`, `CarteLignes`) sont les seuls points d'entrée de leur fonction : on les améliore, on
 n'en recrée pas un qui ferait la même chose.
 
 ## 🧊 Règles gelées du directeur, DESIGN-GOV-2026-09-26 (obligatoires avant tout nouveau lot visuel)
@@ -52,7 +52,12 @@ Texte intégral et seul faisant foi : `docs/current/DESIGN-GOV-2026-09-26.md` (c
 Textes complets : consignes K-54 à K-59 du tableau ; table des preuves : `docs/current/REVUE-DIRECTEUR-2026-10.md`. Ces règles s'ajoutent aux autres et valent pour tous les rôles. Chaque correction se fait dans le **composant partagé**, jamais écran par écran.
 
 - **K-54 Boutons centrés.** Le contenu d'un bouton (libellé, icône) est centré horizontalement et verticalement, ligne à ligne s'il passe à la ligne. Un bouton ne déborde jamais de l'écran ni de sa carte. Jamais de bouton recomposé dans un écran : `ActionPrincipale` (centrage fait une fois). Contrôle : `bouton-recompose`, test `test/core/garde_interface_test.dart` (320 px, texte ×2).
-- **K-55 Jamais de cartes collées.** Deux cas seulement : cartes détachées séparées par `Ecart` (contenus indépendants), ou **une seule** grande carte à lignes fines (contenus liés). Contrôle : `cartes-collees`, `verifierEcartCartes`.
+- **K-55 Jamais de cartes collées.** Deux cas seulement : cartes détachées séparées par `Ecart` (contenus indépendants), ou **une seule** grande carte à lignes fines (contenus liés). Tout le reste est interdit.
+  - **Écart minimal : 16 (`Ecart.vLg`)**, celui des écrans du tuteur, entre deux cartes ; 8 entre deux pastilles de choix (`AppCard` à `marge` réduite) ; jamais 0, 4, 8 ou 12 entre deux cartes de contenu.
+  - **Contenus indépendants** : `PileCartes` (impose 16 au moins, refuse moins par assertion). Jamais un `Column` de cartes sans `spacing:` ni `Ecart`.
+  - **Contenus liés** : `CarteGroupee` (sections à filet `FiletCarte` dans UNE `AppCard`), `GroupeReglages` (rubriques `LigneRubrique`) ou `CarteLignes` (lignes `SettingRow`, `ConfigLigne...` : la ligne se rend à plat dans le groupe). Une pile de `SettingRow` hors `CarteLignes` est un défaut.
+  - Une liste dense de salle (galerie vidéo, panneau d'élèves) garde ses 8 : ce sont des tuiles de présence, pas des cartes de contenu.
+  - Contrôles : `cartes-collees` (détecteur `tool/revue_cartes.dart` : deux cartes voisines, boucle `for` ou `.map`, variable ou méthode qui rend une carte, widget dérivé, `ListView.builder` / `.separated`, boîte peinte à la main, espace inférieur à 16 ; test `test/tool/revue_cartes_test.dart` qui vérifie aussi que le dépôt n'en contient aucun) ; géométrie : `verifierEcartCartes` (composant) et `verifierAucuneCarteCollee` (écran réel, 320 et 1440 px, texte ×1 et ×2, clair et sombre : `test/core/cartes_collees_test.dart`).
 - **K-56 Un seul bouton plein par écran**, à la place prévue par la Bible V2 (bas de formulaire ou de feuille, jamais au milieu du contenu). Les actions secondaires sont des boutons discrets ou des liens avec flèche (`LienFleche`). Un bouton qui ne peut pas aboutir n'est pas grisé (`bouton-grise` / `bouton-desactive`).
 - **K-57 Formulaires semi-automatiques : déduit > choisi > saisi.** Préremplir (profil, foyer, classe, créneaux, dernière valeur, date du jour), sinon proposer (liste, puces, sélecteur, meilleure option justifiée), sinon seulement saisir (nom, note libre). Chaque fiche de formulaire classe ses champs déduit / choisi / saisi et justifie chaque « saisi ».
 - **K-58 Tout choix s'explique.** Chaque option dit quand la choisir et sa conséquence ; une conséquence irréversible se dit avant le choix ; l'écran commence par une phrase de contexte ; quand l'option est une carte, **toute la carte** est cliquable et l'état choisi se voit sur toute la carte.
@@ -61,7 +66,7 @@ Textes complets : consignes K-54 à K-59 du tableau ; table des preuves : `docs/
 Règles équivalentes, déduites des remarques du directeur :
 
 - **Aucun élément ne recouvre un contenu à lire** (bouton flottant, bandeau, pastille). Test : `verifierSansChevauchement`, à 320 px et en texte ×2.
-- **Hiérarchie de titres stricte** : un titre d'écran, des titres de section, jamais deux niveaux au même rang ni un saut de niveau.
+- **Hiérarchie de titres stricte** (HIER-1) : un niveau de texte par rôle, chaque niveau **strictement plus grand** que le suivant, dans les deux échelles (`AppTypography.standard` et `.enfant`) : titre d'écran (`headline*` : `PageShell`, `EntetePage`, `AppBottomSheet`) > titre de section (`titleLarge` : `SectionHeader`) > nom et titre de carte (`titleMedium`, `titleSmall`) > corps. Le mot-marque (`MarquePage`) est au rang `titleLarge` : toujours plus petit que le titre de l'écran qu'il surmonte. Jamais un `display*` pour un titre (réservé aux valeurs chiffrées). Un nom et un titre ne valent jamais la même taille ; `titleSmall` peut valoir le corps seulement s'il est plus gras. Contrôles : `test/theme/hierarchie_titres_test.dart` (échelles, composants, écrans-clés à 320 et 1440 px, `verifierHierarchie`).
 - **Un état ne se signale jamais par la couleur seule** (en direct, annulée, actif / inactif) : texte ou icône en plus de la couleur.
 - **Une alerte urgente va toujours en tête** de l'écran, avant tout autre bloc.
 - **Aucun libellé ambigu** : il dit « qui » et « quoi » (« Cahier de séance de Yasmine », pas « Cahier » ; « Déclarer l'absence de… », pas « Déclarer une absence »). Contrôle : `libelle-ambigu`.
