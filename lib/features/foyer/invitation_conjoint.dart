@@ -69,6 +69,9 @@ part 'sortie_forfait.dart';
 // La recharge du foyer (EA-10) aussi.
 part 'recharge_foyer.dart';
 
+// La reprise du foyer (EA-11) aussi.
+part 'reprise_foyer.dart';
+
 /// Ce que le titulaire envoie : le prenom et l'adresse (obligatoires), le nom
 /// (facultatif, Q7), et une cle d'idempotence tiree une fois par saisie, que
 /// chaque nouvelle tentative reprend (doc section 17).

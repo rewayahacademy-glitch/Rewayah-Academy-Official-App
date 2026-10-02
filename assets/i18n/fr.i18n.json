@@ -4069,6 +4069,68 @@
       "pourquoi": "Pourquoi cette attente ?",
       "pourquoiPhrase": "Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants."
     },
+    "reprise": {
+      "titre": "Demande de reprise du foyer",
+      "explication": "Utilisez cette démarche si le titulaire du foyer est décédé. La demande sera signalée au compte concerné et examinée par l'administration.",
+      "reprisTitre": "Ce qui sera repris",
+      "repris": {
+        "profils": "Les profils mineurs existants",
+        "composition": "La composition future du foyer selon les règles actives",
+        "paiements": "Les paiements futurs du foyer",
+        "parcours": "Les parcours Tuteur attachés aux mineurs"
+      },
+      "jamaisTitre": "Ce qui n'est jamais repris",
+      "jamais": {
+        "identifiants": "Les identifiants de connexion du titulaire",
+        "messages": "Ses messages privés",
+        "conversations": "Ses conversations",
+        "historique": "Son historique pédagogique personnel",
+        "moyensPaiement": "Ses moyens de paiement enregistrés",
+        "pieces": "Ses pièces d'identité",
+        "donnees": "Ses données privées sans rapport avec la gestion du foyer"
+      },
+      "succession": "Il s'agit d'une succession de titularité du foyer, pas d'une prise de contrôle du compte personnel.",
+      "deposer": "Déposer la demande",
+      "deposerQuestion": "Déposer cette demande ?",
+      "deposerConsequence": "Le titulaire du foyer en sera informé et pourra la refuser. L'administration examinera ensuite la demande et décidera.",
+      "horsLigne": "Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.",
+      "depotEchecTitre": "La demande n'a pas été confirmée.",
+      "echecPhrase": "Vérifiez avant de réessayer.",
+      "motif": "Motif",
+      "motifDeces": "Décès déclaré du titulaire",
+      "deposeeLe": "Déposée le",
+      "etat": "État",
+      "etats": {
+        "deposee": "Déposée",
+        "refuseeParTitulaire": "Refusée par le titulaire",
+        "attenteAdministration": "En attente de l'administration",
+        "validee": "Validée",
+        "refusee": "Refusée"
+      },
+      "phrases": {
+        "deposee": "Le titulaire du foyer en a été informé. L'administration examinera la demande.",
+        "examenLe": "Sans réponse du titulaire, l'administration pourra l'examiner à partir du {date}.",
+        "refuseeParTitulaire": "Le titulaire du foyer a refusé cette demande. L'administration en est informée. Aucune permission du foyer n'est transférée.",
+        "attenteAdministration": "Le titulaire n'a pas répondu. Rien n'est transféré automatiquement : l'administration doit encore examiner la demande.",
+        "validee": "L'administration a validé la demande. Vous êtes désormais titulaire du foyer.",
+        "refusee": "L'administration a refusé la demande. Aucune permission du foyer n'est transférée."
+      },
+      "titulaire": {
+        "notification": "Une demande de reprise de votre foyer a été déposée en indiquant votre décès.",
+        "consigne": "Si cette demande est erronée, refusez-la.",
+        "refuser": "Refuser la demande",
+        "ligne": "Une demande de reprise de votre foyer a été déposée.",
+        "refusEchecTitre": "Le refus n'a pas été confirmé.",
+        "horsLigne": "Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez refuser la demande vous-même quand la connexion sera revenue.",
+        "refusee": "Vous avez refusé cette demande. L'administration en est informée. Aucune permission de votre foyer n'est transférée."
+      },
+      "notifications": {
+        "refuseeParTitulaire": "Le titulaire du foyer a refusé votre demande de reprise du foyer.",
+        "attenteAdministration": "Votre demande de reprise du foyer est en attente de l'administration.",
+        "validee": "Votre demande de reprise du foyer a été validée.",
+        "refusee": "Votre demande de reprise du foyer a été refusée."
+      }
+    },
     "demo": {
       "titre": "Démonstration de l'élève adulte",
       "mention": "Les données sont fictives et rien n'est envoyé.",

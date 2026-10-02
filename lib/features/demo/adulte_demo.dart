@@ -274,7 +274,10 @@ abstract final class DonneesAdulteDemo {
     final DateTime? fin = finDelaiPour(etat);
     if (fin != null) return DelaiEnCours(fin);
     if (secondAdultePresent(etat)) {
-      return PlaceOccupee(prenomSecondAdulte(genre));
+      return PlaceOccupee(
+        prenomSecondAdulte(genre),
+        repriseARepondre: repriseTitulaire(etat) is RepriseARefuser,
+      );
     }
     return switch (etat) {
       // Cas 21 : la reponse a l'invitation reste neutre pour le titulaire
@@ -403,6 +406,81 @@ abstract final class DonneesAdulteDemo {
           : t.adulte.sortie.notificationRetire(prenom: prenomTitulaire(genre)),
     _ => null,
   };
+
+  /// La date du depot de la demande de reprise (EA-11), une donnee de
+  /// demonstration rendue telle quelle.
+  static final DateTime dateDepotReprise = DateTime.utc(2026, 9, 29, 10);
+
+  /// La date a partir de laquelle l'administration peut examiner la demande
+  /// sans reponse du titulaire (doc section 12.3) : une DONNEE rendue par le
+  /// serveur de demonstration, jamais un calcul (F17).
+  static final DateTime examenRepriseLe = DateTime.utc(2026, 10, 29);
+
+  /// La date des notifications qui suivent la demande (EA-11), une donnee de
+  /// demonstration rendue telle quelle.
+  static final DateTime dateSuiteReprise = DateTime.utc(2026, 10, 30, 9);
+
+  /// La demande de reprise que le second adulte lit (EA-11, EA-BR-27) :
+  /// aucune tant que la situation n'en a pas, sinon le statut rendu (doc
+  /// section 18, cas 16 a 20).
+  static EtatReprise reprise(EtatDemoAdulte etat) {
+    RepriseDemande demande(StatutReprise statut) => RepriseDemande(
+      statut: statut,
+      deposeeLe: dateDepotReprise,
+      examenPossibleLe: statut == StatutReprise.deposee
+          ? examenRepriseLe
+          : null,
+    );
+    return switch (etat) {
+      EtatDemoAdulte.repriseDemandee => demande(StatutReprise.deposee),
+      EtatDemoAdulte.repriseRefuseeParTitulaire => demande(
+        StatutReprise.refuseeParTitulaire,
+      ),
+      EtatDemoAdulte.repriseSansReponse => demande(
+        StatutReprise.attenteAdministration,
+      ),
+      EtatDemoAdulte.repriseValidee => demande(StatutReprise.validee),
+      EtatDemoAdulte.repriseRefusee => demande(StatutReprise.refusee),
+      _ => const RepriseAucune(),
+    };
+  }
+
+  /// La demande de reprise que le titulaire lit (EA-11, EA-BR-28), ou `null`
+  /// quand il n'y en a aucune pour lui. CHOIX DE DEMONSTRATION : apres 30
+  /// jours sans reponse, le refus reste possible (rien n'est transfere, doc
+  /// section 12.3) ; c'est le serveur qui le dira (EA-BR-28). Apres la
+  /// decision de l'administration, la demonstration ne modelise pas la
+  /// succession cote titulaire (EA-BR-17).
+  static DemandeRepriseRecue? repriseTitulaire(EtatDemoAdulte etat) =>
+      switch (etat) {
+        EtatDemoAdulte.repriseDemandee ||
+        EtatDemoAdulte.repriseSansReponse => const RepriseARefuser(),
+        EtatDemoAdulte.repriseRefuseeParTitulaire =>
+          const RepriseRefuseeParVous(),
+        _ => null,
+      };
+
+  /// La notification d'une demande de reprise (EA-11), ou `null` :
+  /// - le titulaire : le texte du doc section 12.2 (sans le nom du
+  ///   demandeur, Q11) ;
+  /// - le second adulte : chaque suite de sa demande (libelles provisoires,
+  ///   lexique D4).
+  static String? notificationReprise(EtatDemoAdulte etat, VueDemoAdulte vue) {
+    final n = t.adulte.reprise.notifications;
+    return switch ((etat, vue)) {
+      (
+        EtatDemoAdulte.repriseDemandee || EtatDemoAdulte.repriseSansReponse,
+        VueDemoAdulte.titulaire,
+      ) =>
+        t.adulte.reprise.titulaire.notification,
+      (_, VueDemoAdulte.titulaire) => null,
+      (EtatDemoAdulte.repriseRefuseeParTitulaire, _) => n.refuseeParTitulaire,
+      (EtatDemoAdulte.repriseSansReponse, _) => n.attenteAdministration,
+      (EtatDemoAdulte.repriseValidee, _) => n.validee,
+      (EtatDemoAdulte.repriseRefusee, _) => n.refusee,
+      _ => null,
+    };
+  }
 
   /// La page Forfait famille du second adulte rattache (EA-8, EA-BR-22).
   static ForfaitFamilleVM forfaitFamille(GenreTitulaireDemo genre) =>

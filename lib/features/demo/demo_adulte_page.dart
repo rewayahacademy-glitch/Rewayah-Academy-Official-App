@@ -17,8 +17,13 @@
 // (informations, paiements, securite, preferences et apparence, aide,
 // informations legales), avec un retour vers Mon espace ; « Mes accords » et
 // « Cours et acces », sans source, disent qu'ils sont indisponibles. Forfait
-// famille porte « Quitter le forfait famille » (EA-8 ; la demande de reprise
-// viendra avec EA-11). Coran reste PROVISOIRE.
+// famille porte « Quitter le forfait famille » (EA-8) et le lien « Demande de
+// reprise du foyer » (EA-11). Coran reste PROVISOIRE.
+//
+// EA-11 : la demande de reprise du second adulte (`ecran=repriseFoyer`), la
+// notification du titulaire et sa decision (`ecran=repriseTitulaire`, aussi
+// depuis la ligne de la place de Ma famille), puis les etats rendus (cas 16
+// a 20 du doc section 18), dans la cloche de la personne concernee.
 //
 // EA-8 : la place occupee de Ma famille porte « Retirer ma conjointe » ou
 // « Retirer mon conjoint », la place en delai ouvre « Nouvelle invitation
@@ -189,6 +194,14 @@ enum EcranDemoAdulte {
   /// L'invitation ouverte sans compte (lien du message, EA-7) : hors de
   /// toute coquille, vers la connexion existante.
   invitationSansCompte,
+
+  /// La demande de reprise du foyer du second adulte, ouverte depuis Forfait
+  /// famille ou sa notification (EA-11).
+  repriseFoyer,
+
+  /// La demande de reprise vue par le titulaire, ouverte depuis sa
+  /// notification ou la ligne de la place de Ma famille (EA-11).
+  repriseTitulaire,
 }
 
 /// Les ecrans ranges sous l'Accueil : la cloche y mene (EA-7).
@@ -212,6 +225,7 @@ const Set<EcranDemoAdulte> _ecransFoyer = <EcranDemoAdulte>{
   EcranDemoAdulte.aProposForfait,
   EcranDemoAdulte.creerMonProfil,
   EcranDemoAdulte.profilNonCree,
+  EcranDemoAdulte.repriseTitulaire,
 };
 
 /// Les situations « pendant une mutation » du doc section 18 (22, 23) : la
@@ -240,6 +254,16 @@ EcranDemoAdulte ecranPermisDemoAdulte(
     return vue == VueDemoAdulte.secondAdulte &&
             DonneesAdulteDemo.invitationRecue(etat, GenreTitulaireDemo.homme) !=
                 null
+        ? ecran
+        : EcranDemoAdulte.monEspace;
+  }
+  // La demande de reprise n'est qu'au second adulte (matrice du doc section
+  // 16) : rattache, ou apres une reprise validee, qu'il lit depuis sa
+  // notification (EA-11).
+  if (ecran == EcranDemoAdulte.repriseFoyer) {
+    return vue == VueDemoAdulte.secondAdulte &&
+            (DonneesAdulteDemo.secondAdultePresent(etat) ||
+                etat == EtatDemoAdulte.repriseValidee)
         ? ecran
         : EcranDemoAdulte.monEspace;
   }
@@ -282,6 +306,9 @@ EcranDemoAdulte ecranPermisDemoAdulte(
     // La place occupee (retrait) ou en delai (son detail), EA-8.
     EcranDemoAdulte.placeAdulte =>
       place is PlaceOccupee || place is DelaiEnCours,
+    // La demande de reprise, seulement s'il y en a une pour lui (EA-11).
+    EcranDemoAdulte.repriseTitulaire =>
+      DonneesAdulteDemo.repriseTitulaire(etat) != null,
     _ => true,
   };
   return permis ? ecran : EcranDemoAdulte.maFamille;
@@ -388,6 +415,8 @@ String libelleEcranDemoAdulte(EcranDemoAdulte ecran) => switch (ecran) {
   EcranDemoAdulte.notifications => t.notifications.titre,
   EcranDemoAdulte.invitationRecue => t.adulte.acceptation.titreNeutre,
   EcranDemoAdulte.invitationSansCompte => t.adulte.demo.invitationSansCompte,
+  EcranDemoAdulte.repriseFoyer ||
+  EcranDemoAdulte.repriseTitulaire => t.adulte.reprise.titre,
 };
 
 /// Le libelle d'une situation (doc section 18).
@@ -687,6 +716,10 @@ class CoquilleAdulteDemo extends StatelessWidget {
         seance: seance,
       ),
     );
+    // La suite d'une demande de reprise, dans la cloche de la personne
+    // concernee (EA-11, F16) : le titulaire ouvre la decision, le second
+    // adulte l'etat de sa demande.
+    final String? reprise = DonneesAdulteDemo.notificationReprise(etat, vue);
     return ProviderScope(
       key: ValueKey<String>(_adresse(vu)),
       overrides: <Override>[
@@ -752,6 +785,25 @@ class CoquilleAdulteDemo extends StatelessWidget {
                 ),
               ],
             ),
+          // La demande de reprise (EA-11, EA-BR-27 et 28), sans push : la
+          // notification du titulaire porte le texte du doc section 12.2.
+          if (sousAccueil && reprise != null)
+            notificationsTuteurProvider.overrideWith(
+              (Ref _) async => <NotificationTuteur>[
+                NotificationTuteur(
+                  id: 'demo-reprise-foyer',
+                  titre: reprise,
+                  date: vue == VueDemoAdulte.titulaire
+                      ? DonneesAdulteDemo.dateDepotReprise
+                      : DonneesAdulteDemo.dateSuiteReprise,
+                  destination: _adresse(
+                    vue == VueDemoAdulte.titulaire
+                        ? EcranDemoAdulte.repriseTitulaire
+                        : EcranDemoAdulte.repriseFoyer,
+                  ),
+                ),
+              ],
+            ),
           // Mon espace et ses pages lisent l'identite de la personne qui
           // regarde par le port du Compte, et sa ligne famille (EA-4). Les
           // paiements et l'aide gardent leur fournisseur reel (indisponible,
@@ -781,6 +833,14 @@ class CoquilleAdulteDemo extends StatelessWidget {
                 (Ref _) async => DonneesAdulteDemo.forfaitFamille(genre),
               ),
               portSortieForfaitProvider.overrideWithValue(_SortieDemo(etat)),
+            ],
+            // La demande de reprise du second adulte (EA-11, EA-BR-27) : rien
+            // n'est envoye.
+            if (vu == EcranDemoAdulte.repriseFoyer) ...<Override>[
+              repriseFoyerProvider.overrideWith(
+                (Ref _) async => DonneesAdulteDemo.reprise(etat),
+              ),
+              portRepriseFoyerProvider.overrideWithValue(_RepriseDemo(etat)),
             ],
           ],
         ],
@@ -868,6 +928,25 @@ class CoquilleAdulteDemo extends StatelessWidget {
             EcranDemoAdulte.forfaitFamille => ForfaitFamillePage(
               onRetour: versMonEspace,
               onCompris: () => versMonEspaceDans(EtatDemoAdulte.conjointQuitte),
+              onReprise: () =>
+                  context.go(_adresse(EcranDemoAdulte.repriseFoyer)),
+            ),
+            // La demande de reprise (EA-11) : apres le depot, la page relue
+            // dans la situation que le serveur rendrait (demande deposee).
+            // Le retour mene au forfait famille, ou a Mon espace quand il n'y
+            // en a plus (reprise validee, `ecranPermisDemoAdulte`).
+            EcranDemoAdulte.repriseFoyer => RepriseFoyerPage(
+              onRetour: () =>
+                  context.go(_adresse(EcranDemoAdulte.forfaitFamille)),
+              onDeposee: () => context.go(
+                adresseDemoAdulte(
+                  EcranDemoAdulte.repriseFoyer,
+                  etat: EtatDemoAdulte.repriseDemandee,
+                  genre: genre,
+                  vue: vue,
+                  seance: seance,
+                ),
+              ),
             ),
             EcranDemoAdulte.ajouterMaFamille => _PageProvisoire(
               titre: t.adulte.famille.ajouter,
@@ -905,6 +984,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
             EcranDemoAdulte.invitationEnvoyee ||
             EcranDemoAdulte.aProposForfait ||
             EcranDemoAdulte.creerMonProfil ||
+            EcranDemoAdulte.repriseTitulaire ||
             EcranDemoAdulte.profilNonCree => const SizedBox.shrink(),
           },
         ),
@@ -1058,6 +1138,20 @@ class CoquilleAdulteDemo extends StatelessWidget {
       EcranDemoAdulte.aProposForfait => AProposForfaitFamillePage(
         onRetour: versMaFamille,
       ),
+      // La demande de reprise, cote titulaire (EA-11, EA-BR-28) : apres le
+      // refus, la page relue dans la situation que le serveur rendrait.
+      EcranDemoAdulte.repriseTitulaire => RepriseTitulairePage(
+        onRetour: versMaFamille,
+        onRefusee: () => context.go(
+          adresseDemoAdulte(
+            EcranDemoAdulte.repriseTitulaire,
+            etat: EtatDemoAdulte.repriseRefuseeParTitulaire,
+            genre: genre,
+            vue: vue,
+            seance: seance,
+          ),
+        ),
+      ),
       // Mamadou suit deja les cours : la page lui parle en adulte, jamais du
       // « compte de tuteur » (EA-5c, EA-BR-19).
       EcranDemoAdulte.creerMonProfil => CreerMonProfilIndisponible(
@@ -1103,6 +1197,10 @@ class CoquilleAdulteDemo extends StatelessWidget {
                   _adresse(switch (place) {
                     PlaceDisponible() => EcranDemoAdulte.inviterConjoint,
                     InvitationEnvoyee() => EcranDemoAdulte.invitationEnvoyee,
+                    // Une demande de reprise attend sa reponse : la ligne
+                    // ouvre la decision (EA-11, UX_REVIEW_07 ligne 18 d).
+                    PlaceOccupee(repriseARepondre: true) =>
+                      EcranDemoAdulte.repriseTitulaire,
                     _ => EcranDemoAdulte.placeAdulte,
                   }),
                 ),
@@ -1167,6 +1265,12 @@ class CoquilleAdulteDemo extends StatelessWidget {
         beneficiairesRechargeProvider.overrideWith(
           (Ref _) => _RechargeDemo(etat, genre).beneficiaires(),
         ),
+        // La demande de reprise qui concerne le titulaire (EA-11, EA-BR-28) :
+        // rien n'est envoye.
+        if (DonneesAdulteDemo.repriseTitulaire(etat)
+            case final DemandeRepriseRecue demande)
+          demandeRepriseRecueProvider.overrideWith((Ref _) async => demande),
+        portRepriseFoyerProvider.overrideWithValue(_RepriseDemo(etat)),
       ],
       child: RepereDemonstration(
         child: NavShell(
@@ -1332,6 +1436,30 @@ class _RechargeDemo implements PortRechargeFoyer {
     }
     throw const CapaciteIndisponible('EA-BR-25');
   }
+}
+
+/// La reprise du foyer en demonstration (EA-11, EA-BR-27 et 28) : rien n'est
+/// envoye (K-28). « Erreur reseau » rend la coupure (D5) ; « Double
+/// soumission » repond apres la meme latence simulee ; sinon le geste est
+/// enregistre et la page relit l'etat que le serveur de demonstration rend.
+class _RepriseDemo implements PortRepriseFoyer {
+  const _RepriseDemo(this.etat);
+
+  final EtatDemoAdulte etat;
+
+  Future<ResultatReprise> _repondre() async {
+    if (etat == EtatDemoAdulte.erreurReseau) return const RepriseEchecReseau();
+    if (etat == EtatDemoAdulte.doubleSoumission) {
+      await Future<void>.delayed(latenceSimulee);
+    }
+    return const RepriseEnregistree();
+  }
+
+  @override
+  Future<ResultatReprise> deposer({required String cle}) => _repondre();
+
+  @override
+  Future<ResultatReprise> refuser({required String cle}) => _repondre();
 }
 
 /// La latence reseau simulee de la situation « Double soumission » : le

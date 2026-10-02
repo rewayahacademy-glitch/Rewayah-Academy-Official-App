@@ -2289,6 +2289,7 @@ class Traductions$adulte$fr {
 	late final Traductions$adulte$invitation$fr invitation = Traductions$adulte$invitation$fr.internal(_root);
 	late final Traductions$adulte$acceptation$fr acceptation = Traductions$adulte$acceptation$fr.internal(_root);
 	late final Traductions$adulte$sortie$fr sortie = Traductions$adulte$sortie$fr.internal(_root);
+	late final Traductions$adulte$reprise$fr reprise = Traductions$adulte$reprise$fr.internal(_root);
 	late final Traductions$adulte$demo$fr demo = Traductions$adulte$demo$fr.internal(_root);
 }
 
@@ -9466,6 +9467,69 @@ class Traductions$adulte$sortie$fr {
 	String get pourquoiPhrase => 'Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants.';
 }
 
+// Path: adulte.reprise
+class Traductions$adulte$reprise$fr {
+	Traductions$adulte$reprise$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demande de reprise du foyer'
+	String get titre => 'Demande de reprise du foyer';
+
+	/// fr: 'Utilisez cette démarche si le titulaire du foyer est décédé. La demande sera signalée au compte concerné et examinée par l'administration.'
+	String get explication => 'Utilisez cette démarche si le titulaire du foyer est décédé. La demande sera signalée au compte concerné et examinée par l\'administration.';
+
+	/// fr: 'Ce qui sera repris'
+	String get reprisTitre => 'Ce qui sera repris';
+
+	late final Traductions$adulte$reprise$repris$fr repris = Traductions$adulte$reprise$repris$fr.internal(_root);
+
+	/// fr: 'Ce qui n'est jamais repris'
+	String get jamaisTitre => 'Ce qui n\'est jamais repris';
+
+	late final Traductions$adulte$reprise$jamais$fr jamais = Traductions$adulte$reprise$jamais$fr.internal(_root);
+
+	/// fr: 'Il s'agit d'une succession de titularité du foyer, pas d'une prise de contrôle du compte personnel.'
+	String get succession => 'Il s\'agit d\'une succession de titularité du foyer, pas d\'une prise de contrôle du compte personnel.';
+
+	/// fr: 'Déposer la demande'
+	String get deposer => 'Déposer la demande';
+
+	/// fr: 'Déposer cette demande ?'
+	String get deposerQuestion => 'Déposer cette demande ?';
+
+	/// fr: 'Le titulaire du foyer en sera informé et pourra la refuser. L'administration examinera ensuite la demande et décidera.'
+	String get deposerConsequence => 'Le titulaire du foyer en sera informé et pourra la refuser. L\'administration examinera ensuite la demande et décidera.';
+
+	/// fr: 'Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.'
+	String get horsLigne => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.';
+
+	/// fr: 'La demande n'a pas été confirmée.'
+	String get depotEchecTitre => 'La demande n\'a pas été confirmée.';
+
+	/// fr: 'Vérifiez avant de réessayer.'
+	String get echecPhrase => 'Vérifiez avant de réessayer.';
+
+	/// fr: 'Motif'
+	String get motif => 'Motif';
+
+	/// fr: 'Décès déclaré du titulaire'
+	String get motifDeces => 'Décès déclaré du titulaire';
+
+	/// fr: 'Déposée le'
+	String get deposeeLe => 'Déposée le';
+
+	/// fr: 'État'
+	String get etat => 'État';
+
+	late final Traductions$adulte$reprise$etats$fr etats = Traductions$adulte$reprise$etats$fr.internal(_root);
+	late final Traductions$adulte$reprise$phrases$fr phrases = Traductions$adulte$reprise$phrases$fr.internal(_root);
+	late final Traductions$adulte$reprise$titulaire$fr titulaire = Traductions$adulte$reprise$titulaire$fr.internal(_root);
+	late final Traductions$adulte$reprise$notifications$fr notifications = Traductions$adulte$reprise$notifications$fr.internal(_root);
+}
+
 // Path: adulte.demo
 class Traductions$adulte$demo$fr {
 	Traductions$adulte$demo$fr.internal(this._root);
@@ -13099,6 +13163,159 @@ class Traductions$adulte$famille$place$fr {
 
 	/// fr: 'L'invitation a été annulée et ne peut plus être acceptée. Vous pouvez en envoyer une nouvelle.'
 	String get annulee => 'L\'invitation a été annulée et ne peut plus être acceptée. Vous pouvez en envoyer une nouvelle.';
+}
+
+// Path: adulte.reprise.repris
+class Traductions$adulte$reprise$repris$fr {
+	Traductions$adulte$reprise$repris$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les profils mineurs existants'
+	String get profils => 'Les profils mineurs existants';
+
+	/// fr: 'La composition future du foyer selon les règles actives'
+	String get composition => 'La composition future du foyer selon les règles actives';
+
+	/// fr: 'Les paiements futurs du foyer'
+	String get paiements => 'Les paiements futurs du foyer';
+
+	/// fr: 'Les parcours Tuteur attachés aux mineurs'
+	String get parcours => 'Les parcours Tuteur attachés aux mineurs';
+}
+
+// Path: adulte.reprise.jamais
+class Traductions$adulte$reprise$jamais$fr {
+	Traductions$adulte$reprise$jamais$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les identifiants de connexion du titulaire'
+	String get identifiants => 'Les identifiants de connexion du titulaire';
+
+	/// fr: 'Ses messages privés'
+	String get messages => 'Ses messages privés';
+
+	/// fr: 'Ses conversations'
+	String get conversations => 'Ses conversations';
+
+	/// fr: 'Son historique pédagogique personnel'
+	String get historique => 'Son historique pédagogique personnel';
+
+	/// fr: 'Ses moyens de paiement enregistrés'
+	String get moyensPaiement => 'Ses moyens de paiement enregistrés';
+
+	/// fr: 'Ses pièces d'identité'
+	String get pieces => 'Ses pièces d\'identité';
+
+	/// fr: 'Ses données privées sans rapport avec la gestion du foyer'
+	String get donnees => 'Ses données privées sans rapport avec la gestion du foyer';
+}
+
+// Path: adulte.reprise.etats
+class Traductions$adulte$reprise$etats$fr {
+	Traductions$adulte$reprise$etats$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Déposée'
+	String get deposee => 'Déposée';
+
+	/// fr: 'Refusée par le titulaire'
+	String get refuseeParTitulaire => 'Refusée par le titulaire';
+
+	/// fr: 'En attente de l'administration'
+	String get attenteAdministration => 'En attente de l\'administration';
+
+	/// fr: 'Validée'
+	String get validee => 'Validée';
+
+	/// fr: 'Refusée'
+	String get refusee => 'Refusée';
+}
+
+// Path: adulte.reprise.phrases
+class Traductions$adulte$reprise$phrases$fr {
+	Traductions$adulte$reprise$phrases$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le titulaire du foyer en a été informé. L'administration examinera la demande.'
+	String get deposee => 'Le titulaire du foyer en a été informé. L\'administration examinera la demande.';
+
+	/// fr: 'Sans réponse du titulaire, l'administration pourra l'examiner à partir du {date}.'
+	String examenLe({required Object date}) => 'Sans réponse du titulaire, l\'administration pourra l\'examiner à partir du ${date}.';
+
+	/// fr: 'Le titulaire du foyer a refusé cette demande. L'administration en est informée. Aucune permission du foyer n'est transférée.'
+	String get refuseeParTitulaire => 'Le titulaire du foyer a refusé cette demande. L\'administration en est informée. Aucune permission du foyer n\'est transférée.';
+
+	/// fr: 'Le titulaire n'a pas répondu. Rien n'est transféré automatiquement : l'administration doit encore examiner la demande.'
+	String get attenteAdministration => 'Le titulaire n\'a pas répondu. Rien n\'est transféré automatiquement : l\'administration doit encore examiner la demande.';
+
+	/// fr: 'L'administration a validé la demande. Vous êtes désormais titulaire du foyer.'
+	String get validee => 'L\'administration a validé la demande. Vous êtes désormais titulaire du foyer.';
+
+	/// fr: 'L'administration a refusé la demande. Aucune permission du foyer n'est transférée.'
+	String get refusee => 'L\'administration a refusé la demande. Aucune permission du foyer n\'est transférée.';
+}
+
+// Path: adulte.reprise.titulaire
+class Traductions$adulte$reprise$titulaire$fr {
+	Traductions$adulte$reprise$titulaire$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Une demande de reprise de votre foyer a été déposée en indiquant votre décès.'
+	String get notification => 'Une demande de reprise de votre foyer a été déposée en indiquant votre décès.';
+
+	/// fr: 'Si cette demande est erronée, refusez-la.'
+	String get consigne => 'Si cette demande est erronée, refusez-la.';
+
+	/// fr: 'Refuser la demande'
+	String get refuser => 'Refuser la demande';
+
+	/// fr: 'Une demande de reprise de votre foyer a été déposée.'
+	String get ligne => 'Une demande de reprise de votre foyer a été déposée.';
+
+	/// fr: 'Le refus n'a pas été confirmé.'
+	String get refusEchecTitre => 'Le refus n\'a pas été confirmé.';
+
+	/// fr: 'Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez refuser la demande vous-même quand la connexion sera revenue.'
+	String get horsLigne => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez refuser la demande vous-même quand la connexion sera revenue.';
+
+	/// fr: 'Vous avez refusé cette demande. L'administration en est informée. Aucune permission de votre foyer n'est transférée.'
+	String get refusee => 'Vous avez refusé cette demande. L\'administration en est informée. Aucune permission de votre foyer n\'est transférée.';
+}
+
+// Path: adulte.reprise.notifications
+class Traductions$adulte$reprise$notifications$fr {
+	Traductions$adulte$reprise$notifications$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le titulaire du foyer a refusé votre demande de reprise du foyer.'
+	String get refuseeParTitulaire => 'Le titulaire du foyer a refusé votre demande de reprise du foyer.';
+
+	/// fr: 'Votre demande de reprise du foyer est en attente de l'administration.'
+	String get attenteAdministration => 'Votre demande de reprise du foyer est en attente de l\'administration.';
+
+	/// fr: 'Votre demande de reprise du foyer a été validée.'
+	String get validee => 'Votre demande de reprise du foyer a été validée.';
+
+	/// fr: 'Votre demande de reprise du foyer a été refusée.'
+	String get refusee => 'Votre demande de reprise du foyer a été refusée.';
 }
 
 // Path: adulte.demo.etats
@@ -17031,6 +17248,54 @@ extension on Traductions {
 			'adulte.sortie.delaiPhrase' => ({required Object date}) => 'Une nouvelle demande pourra être déposée à partir du ${date}. Elle devra ensuite être validée par l\'administration.',
 			'adulte.sortie.pourquoi' => 'Pourquoi cette attente ?',
 			'adulte.sortie.pourquoiPhrase' => 'Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants.',
+			'adulte.reprise.titre' => 'Demande de reprise du foyer',
+			'adulte.reprise.explication' => 'Utilisez cette démarche si le titulaire du foyer est décédé. La demande sera signalée au compte concerné et examinée par l\'administration.',
+			'adulte.reprise.reprisTitre' => 'Ce qui sera repris',
+			'adulte.reprise.repris.profils' => 'Les profils mineurs existants',
+			'adulte.reprise.repris.composition' => 'La composition future du foyer selon les règles actives',
+			'adulte.reprise.repris.paiements' => 'Les paiements futurs du foyer',
+			'adulte.reprise.repris.parcours' => 'Les parcours Tuteur attachés aux mineurs',
+			'adulte.reprise.jamaisTitre' => 'Ce qui n\'est jamais repris',
+			'adulte.reprise.jamais.identifiants' => 'Les identifiants de connexion du titulaire',
+			'adulte.reprise.jamais.messages' => 'Ses messages privés',
+			'adulte.reprise.jamais.conversations' => 'Ses conversations',
+			'adulte.reprise.jamais.historique' => 'Son historique pédagogique personnel',
+			'adulte.reprise.jamais.moyensPaiement' => 'Ses moyens de paiement enregistrés',
+			'adulte.reprise.jamais.pieces' => 'Ses pièces d\'identité',
+			'adulte.reprise.jamais.donnees' => 'Ses données privées sans rapport avec la gestion du foyer',
+			'adulte.reprise.succession' => 'Il s\'agit d\'une succession de titularité du foyer, pas d\'une prise de contrôle du compte personnel.',
+			'adulte.reprise.deposer' => 'Déposer la demande',
+			'adulte.reprise.deposerQuestion' => 'Déposer cette demande ?',
+			'adulte.reprise.deposerConsequence' => 'Le titulaire du foyer en sera informé et pourra la refuser. L\'administration examinera ensuite la demande et décidera.',
+			'adulte.reprise.horsLigne' => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.',
+			'adulte.reprise.depotEchecTitre' => 'La demande n\'a pas été confirmée.',
+			'adulte.reprise.echecPhrase' => 'Vérifiez avant de réessayer.',
+			'adulte.reprise.motif' => 'Motif',
+			'adulte.reprise.motifDeces' => 'Décès déclaré du titulaire',
+			'adulte.reprise.deposeeLe' => 'Déposée le',
+			'adulte.reprise.etat' => 'État',
+			'adulte.reprise.etats.deposee' => 'Déposée',
+			'adulte.reprise.etats.refuseeParTitulaire' => 'Refusée par le titulaire',
+			'adulte.reprise.etats.attenteAdministration' => 'En attente de l\'administration',
+			'adulte.reprise.etats.validee' => 'Validée',
+			'adulte.reprise.etats.refusee' => 'Refusée',
+			'adulte.reprise.phrases.deposee' => 'Le titulaire du foyer en a été informé. L\'administration examinera la demande.',
+			'adulte.reprise.phrases.examenLe' => ({required Object date}) => 'Sans réponse du titulaire, l\'administration pourra l\'examiner à partir du ${date}.',
+			'adulte.reprise.phrases.refuseeParTitulaire' => 'Le titulaire du foyer a refusé cette demande. L\'administration en est informée. Aucune permission du foyer n\'est transférée.',
+			'adulte.reprise.phrases.attenteAdministration' => 'Le titulaire n\'a pas répondu. Rien n\'est transféré automatiquement : l\'administration doit encore examiner la demande.',
+			'adulte.reprise.phrases.validee' => 'L\'administration a validé la demande. Vous êtes désormais titulaire du foyer.',
+			'adulte.reprise.phrases.refusee' => 'L\'administration a refusé la demande. Aucune permission du foyer n\'est transférée.',
+			'adulte.reprise.titulaire.notification' => 'Une demande de reprise de votre foyer a été déposée en indiquant votre décès.',
+			'adulte.reprise.titulaire.consigne' => 'Si cette demande est erronée, refusez-la.',
+			'adulte.reprise.titulaire.refuser' => 'Refuser la demande',
+			'adulte.reprise.titulaire.ligne' => 'Une demande de reprise de votre foyer a été déposée.',
+			'adulte.reprise.titulaire.refusEchecTitre' => 'Le refus n\'a pas été confirmé.',
+			'adulte.reprise.titulaire.horsLigne' => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez refuser la demande vous-même quand la connexion sera revenue.',
+			'adulte.reprise.titulaire.refusee' => 'Vous avez refusé cette demande. L\'administration en est informée. Aucune permission de votre foyer n\'est transférée.',
+			'adulte.reprise.notifications.refuseeParTitulaire' => 'Le titulaire du foyer a refusé votre demande de reprise du foyer.',
+			'adulte.reprise.notifications.attenteAdministration' => 'Votre demande de reprise du foyer est en attente de l\'administration.',
+			'adulte.reprise.notifications.validee' => 'Votre demande de reprise du foyer a été validée.',
+			'adulte.reprise.notifications.refusee' => 'Votre demande de reprise du foyer a été refusée.',
 			'adulte.demo.titre' => 'Démonstration de l\'élève adulte',
 			'adulte.demo.mention' => 'Les données sont fictives et rien n\'est envoyé.',
 			'adulte.demo.intro' => 'Choisissez un écran, puis une situation du foyer Diallo.',

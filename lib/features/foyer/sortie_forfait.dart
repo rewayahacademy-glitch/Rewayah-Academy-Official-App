@@ -172,12 +172,14 @@ class PlaceConjointPage extends StatelessWidget {
 
 /// « Forfait famille », ouvert par le second adulte depuis Mon espace
 /// (UX_REVIEW_07 ligne 5 c) : le forfait de qui, puis « Quitter le forfait
-/// famille », jamais sur Mon espace lui-meme.
+/// famille » et « Demande de reprise du foyer » (lien tertiaire, EA-11),
+/// jamais sur Mon espace lui-meme.
 class ForfaitFamillePage extends ConsumerWidget {
   /// Cree la page.
   const ForfaitFamillePage({
     required this.onRetour,
     required this.onCompris,
+    this.onReprise,
     super.key,
   });
 
@@ -187,8 +189,14 @@ class ForfaitFamillePage extends ConsumerWidget {
   /// « Compris », apres le resultat : Mon espace relu.
   final VoidCallback onCompris;
 
+  /// « Demande de reprise du foyer » (EA-11) ; sans lui, aucun lien.
+  final VoidCallback? onReprise;
+
   /// « Quitter le forfait famille ».
   static const Key quitterKey = Key('sortie.quitter');
+
+  /// « Demande de reprise du foyer ».
+  static const Key repriseKey = Key('sortie.reprise');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -241,6 +249,16 @@ class ForfaitFamillePage extends ConsumerWidget {
       resultatPhrase: t.adulte.sortie.resultatSecondAdulte,
       // Le delai porte sur le foyer du titulaire, pas sur ce compte.
       montrerDelai: false,
+      // La reprise du foyer : un lien tertiaire, apres la seule action
+      // destructive (UX_REVIEW_07 ligne 5 c, EA-11). Nom du doc section 19.
+      pied: switch (onReprise) {
+        final VoidCallback ouvrir => LienFleche(
+          key: repriseKey,
+          libelle: t.adulte.reprise.titre,
+          onPress: ouvrir,
+        ),
+        null => null,
+      },
       onRetour: onRetour,
       onCompris: onCompris,
     );
@@ -265,7 +283,11 @@ class _PageSortie extends ConsumerStatefulWidget {
     required this.montrerDelai,
     required this.onRetour,
     required this.onCompris,
+    this.pied,
   });
+
+  /// Un lien sous les actions, ou rien.
+  final Widget? pied;
 
   final String titre;
   final String titreResultat;
@@ -417,6 +439,8 @@ class _PageSortieState extends ConsumerState<_PageSortie> {
                   pleineLargeur: false,
                 ),
               ),
+              if (widget.pied case final Widget pied)
+                if (!_envoi) ...<Widget>[Ecart.vXxl, pied],
             ],
           ),
         ),

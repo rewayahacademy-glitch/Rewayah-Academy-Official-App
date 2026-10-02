@@ -71,10 +71,15 @@ final class InvitationEnvoyee extends EtatPlaceAdulte {
 /// La place est occupee par le second adulte, dont seul le prenom est rendu.
 final class PlaceOccupee extends EtatPlaceAdulte {
   /// Cree l'etat.
-  const PlaceOccupee(this.prenom);
+  const PlaceOccupee(this.prenom, {this.repriseARepondre = false});
 
   /// Le prenom du second adulte.
   final String prenom;
+
+  /// Vrai quand une demande de reprise du foyer attend la reponse du
+  /// titulaire (EA-11, EA-BR-28) : la ligne le dit et ouvre la decision
+  /// (UX_REVIEW_07 ligne 18 d), sans rien dire du demandeur (Q11).
+  final bool repriseARepondre;
 }
 
 /// Un rattachement attend la validation de l'administration (F17).
@@ -178,6 +183,8 @@ String? legendePlace(FoyerTitulaireVM vue) => switch (vue.place) {
   InvitationEnvoyee(:final String courriel?) => t.adulte.famille.place.envoyeeA(
     courriel: courriel,
   ),
+  // Libelle provisoire, lexique D4 (d'apres le doc section 12.2).
+  PlaceOccupee(repriseARepondre: true) => t.adulte.reprise.titulaire.ligne,
   _ => null,
 };
 
