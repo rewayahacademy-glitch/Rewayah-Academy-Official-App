@@ -8638,8 +8638,8 @@ class Traductions$controleur$historique$fr {
 	/// fr: 'Compléments'
 	String get sectionComplements => 'Compléments';
 
-	/// fr: 'Échanges Admin'
-	String get sectionEchanges => 'Échanges Admin';
+	/// fr: 'Échanges avec l'administration'
+	String get sectionEchanges => 'Échanges avec l\'administration';
 
 	/// fr: 'Classe'
 	String get cleClasse => 'Classe';
@@ -15913,7 +15913,7 @@ extension on Traductions {
 			'controleur.historique.sectionMission' => 'Mission',
 			'controleur.historique.sectionObservation' => 'Observation du Contrôleur',
 			'controleur.historique.sectionComplements' => 'Compléments',
-			'controleur.historique.sectionEchanges' => 'Échanges Admin',
+			'controleur.historique.sectionEchanges' => 'Échanges avec l\'administration',
 			'controleur.historique.cleClasse' => 'Classe',
 			'controleur.historique.cleEnseignant' => 'Enseignant',
 			'controleur.historique.cleDate' => 'Date',
