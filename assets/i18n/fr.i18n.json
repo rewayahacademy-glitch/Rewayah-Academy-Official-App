@@ -205,7 +205,7 @@
         },
         "demo": {
           "section": "Préparation élève",
-          "sectionGuidee": "Préparation élève, Interface guidée",
+          "sectionGuidee": "Préparation élève, Mode Accessibilité",
           "verification": "Vérification en cours",
           "pret": "Prêt",
           "microBloque": "Micro bloqué",
@@ -325,7 +325,7 @@
         },
         "roles": {
           "eleve": "Élève standard",
-          "guidee": "Interface guidée",
+          "guidee": "Mode Accessibilité",
           "enseignant": "Enseignant"
         },
         "etats": {
@@ -2111,7 +2111,7 @@
     "aucunProfilDetail": "Ajoutez un enfant pour commencer",
     "ajouterEnfant": "Ajouter un enfant",
     "ouvrirProfil": "Ouvrir le profil",
-    "modeEnfant": "Mode enfant",
+    "modeEnfant": "Mode Accessibilité",
     "modeStandard": "Mode standard",
     "cameraLabel": "Caméra",
     "cameraAutorisee": "Autorisée",
@@ -2617,7 +2617,7 @@
         "intro": "Données fictives, aucun appel serveur. Chaque lien montre ce que dit l'emplacement d'entrée pour un rôle et un moment.",
         "roles": {
           "eleve": "Élève",
-          "guidee": "Élève, Interface guidée",
+          "guidee": "Élève, Mode Accessibilité",
           "enseignant": "Enseignant"
         },
         "etats": {
@@ -3235,7 +3235,7 @@
     "typographie": "Échelles typographiques",
     "polices": "Polices",
     "composants": "Composants partagés",
-    "modeEnfant": "Mode enfant",
+    "modeEnfant": "Mode Accessibilité",
     "modeStandard": "Mode standard"
   },
   "tc": {

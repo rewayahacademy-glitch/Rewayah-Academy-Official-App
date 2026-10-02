@@ -1978,8 +1978,8 @@ class Traductions$compte$fr {
 	/// fr: 'Ouvrir le profil'
 	String get ouvrirProfil => 'Ouvrir le profil';
 
-	/// fr: 'Mode enfant'
-	String get modeEnfant => 'Mode enfant';
+	/// fr: 'Mode Accessibilité'
+	String get modeEnfant => 'Mode Accessibilité';
 
 	/// fr: 'Mode standard'
 	String get modeStandard => 'Mode standard';
@@ -2263,8 +2263,8 @@ class Traductions$galerie$fr {
 	/// fr: 'Composants partagés'
 	String get composants => 'Composants partagés';
 
-	/// fr: 'Mode enfant'
-	String get modeEnfant => 'Mode enfant';
+	/// fr: 'Mode Accessibilité'
+	String get modeEnfant => 'Mode Accessibilité';
 
 	/// fr: 'Mode standard'
 	String get modeStandard => 'Mode standard';
@@ -12563,8 +12563,8 @@ class Traductions$salle$preparation$eleve$demo$fr {
 	/// fr: 'Préparation élève'
 	String get section => 'Préparation élève';
 
-	/// fr: 'Préparation élève, Interface guidée'
-	String get sectionGuidee => 'Préparation élève, Interface guidée';
+	/// fr: 'Préparation élève, Mode Accessibilité'
+	String get sectionGuidee => 'Préparation élève, Mode Accessibilité';
 
 	/// fr: 'Vérification en cours'
 	String get verification => 'Vérification en cours';
@@ -12605,8 +12605,8 @@ class Traductions$salle$seance$demo$roles$fr {
 	/// fr: 'Élève standard'
 	String get eleve => 'Élève standard';
 
-	/// fr: 'Interface guidée'
-	String get guidee => 'Interface guidée';
+	/// fr: 'Mode Accessibilité'
+	String get guidee => 'Mode Accessibilité';
 
 	/// fr: 'Enseignant'
 	String get enseignant => 'Enseignant';
@@ -12680,8 +12680,8 @@ class Traductions$classe$entree$demo$roles$fr {
 	/// fr: 'Élève'
 	String get eleve => 'Élève';
 
-	/// fr: 'Élève, Interface guidée'
-	String get guidee => 'Élève, Interface guidée';
+	/// fr: 'Élève, Mode Accessibilité'
+	String get guidee => 'Élève, Mode Accessibilité';
 
 	/// fr: 'Enseignant'
 	String get enseignant => 'Enseignant';
@@ -13088,7 +13088,7 @@ extension on Traductions {
 			'salle.preparation.eleve.guidee.microBloque' => 'Le micro est bloqué.',
 			'salle.preparation.eleve.guidee.horsLigne' => 'La connexion ne marche pas pour l\'instant.',
 			'salle.preparation.eleve.demo.section' => 'Préparation élève',
-			'salle.preparation.eleve.demo.sectionGuidee' => 'Préparation élève, Interface guidée',
+			'salle.preparation.eleve.demo.sectionGuidee' => 'Préparation élève, Mode Accessibilité',
 			'salle.preparation.eleve.demo.verification' => 'Vérification en cours',
 			'salle.preparation.eleve.demo.pret' => 'Prêt',
 			'salle.preparation.eleve.demo.microBloque' => 'Micro bloqué',
@@ -13190,7 +13190,7 @@ extension on Traductions {
 			'salle.seance.demo.groupes.seance' => 'Déroulé de la séance',
 			'salle.seance.demo.groupes.secours' => 'Situations de secours',
 			'salle.seance.demo.roles.eleve' => 'Élève standard',
-			'salle.seance.demo.roles.guidee' => 'Interface guidée',
+			'salle.seance.demo.roles.guidee' => 'Mode Accessibilité',
 			'salle.seance.demo.roles.enseignant' => 'Enseignant',
 			'salle.seance.demo.etats.repos' => 'Repos',
 			'salle.seance.demo.etats.visite' => 'Visite',
@@ -14748,7 +14748,7 @@ extension on Traductions {
 			'compte.aucunProfilDetail' => 'Ajoutez un enfant pour commencer',
 			'compte.ajouterEnfant' => 'Ajouter un enfant',
 			'compte.ouvrirProfil' => 'Ouvrir le profil',
-			'compte.modeEnfant' => 'Mode enfant',
+			'compte.modeEnfant' => 'Mode Accessibilité',
 			'compte.modeStandard' => 'Mode standard',
 			'compte.cameraLabel' => 'Caméra',
 			'compte.cameraAutorisee' => 'Autorisée',
@@ -15186,7 +15186,7 @@ extension on Traductions {
 			'classe.entree.demo.mention' => 'Démonstration',
 			'classe.entree.demo.intro' => 'Données fictives, aucun appel serveur. Chaque lien montre ce que dit l\'emplacement d\'entrée pour un rôle et un moment.',
 			'classe.entree.demo.roles.eleve' => 'Élève',
-			'classe.entree.demo.roles.guidee' => 'Élève, Interface guidée',
+			'classe.entree.demo.roles.guidee' => 'Élève, Mode Accessibilité',
 			'classe.entree.demo.roles.enseignant' => 'Enseignant',
 			'classe.entree.demo.etats.aVenir' => 'À venir',
 			'classe.entree.demo.etats.fenetreOuverte' => 'Fenêtre ouverte',
@@ -15735,7 +15735,7 @@ extension on Traductions {
 			'galerie.typographie' => 'Échelles typographiques',
 			'galerie.polices' => 'Polices',
 			'galerie.composants' => 'Composants partagés',
-			'galerie.modeEnfant' => 'Mode enfant',
+			'galerie.modeEnfant' => 'Mode Accessibilité',
 			'galerie.modeStandard' => 'Mode standard',
 			'tc.groupe.mesGroupes.titre' => 'Mes classes',
 			'tc.groupe.mesGroupes.aucun' => 'Aucune classe pour le moment',
