@@ -7955,8 +7955,8 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Réessayez, ou déposez le cahier sans le constat.'
 	String get erreurDetail => 'Réessayez, ou déposez le cahier sans le constat.';
 
-	/// fr: 'Le cahier n'a pas pu être enregistré. Réessayez.'
-	String get echecEnvoi => 'Le cahier n\'a pas pu être enregistré. Réessayez.';
+	/// fr: 'L'envoi n'a pas été confirmé. Vérifiez avant de réessayer.'
+	String get echecEnvoi => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.';
 
 	/// fr: 'Le cahier de cette séance est déjà déposé.'
 	String get dejaDepose => 'Le cahier de cette séance est déjà déposé.';
@@ -8095,6 +8095,66 @@ class Traductions$enseignant$cahier$fr {
 
 	/// fr: 'Faiblesses'
 	String get faiblesses => 'Faiblesses';
+
+	/// fr: 'À revoir'
+	String get niveauARevoir => 'À revoir';
+
+	/// fr: 'En progrès'
+	String get niveauEnProgres => 'En progrès';
+
+	/// fr: 'Acquis'
+	String get niveauAcquis => 'Acquis';
+
+	/// fr: 'Maîtrisé'
+	String get niveauMaitrise => 'Maîtrisé';
+
+	/// fr: 'Makharij'
+	String get faiblesseMakharij => 'Makharij';
+
+	/// fr: 'Madd'
+	String get faiblesseMadd => 'Madd';
+
+	/// fr: 'Ghunna'
+	String get faiblesseGhunna => 'Ghunna';
+
+	/// fr: 'Waqf'
+	String get faiblesseWaqf => 'Waqf';
+
+	/// fr: 'Fluidité'
+	String get faiblesseFluidite => 'Fluidité';
+
+	/// fr: 'Mémorisation'
+	String get faiblesseMemorisation => 'Mémorisation';
+
+	/// fr: 'La leçon est à reprendre à la prochaine séance.'
+	String get niveauARevoirDetail => 'La leçon est à reprendre à la prochaine séance.';
+
+	/// fr: 'L'élève avance, quelques erreurs restent.'
+	String get niveauEnProgresDetail => 'L\'élève avance, quelques erreurs restent.';
+
+	/// fr: 'La leçon est sue, avec peu d'erreurs.'
+	String get niveauAcquisDetail => 'La leçon est sue, avec peu d\'erreurs.';
+
+	/// fr: 'La leçon est sue sans erreur, l'élève peut avancer.'
+	String get niveauMaitriseDetail => 'La leçon est sue sans erreur, l\'élève peut avancer.';
+
+	/// fr: 'La prononciation des lettres.'
+	String get faiblesseMakharijDetail => 'La prononciation des lettres.';
+
+	/// fr: 'Les allongements.'
+	String get faiblesseMaddDetail => 'Les allongements.';
+
+	/// fr: 'Le son nasal.'
+	String get faiblesseGhunnaDetail => 'Le son nasal.';
+
+	/// fr: 'Les arrêts.'
+	String get faiblesseWaqfDetail => 'Les arrêts.';
+
+	/// fr: 'La lecture sans hésitation.'
+	String get faiblesseFluiditeDetail => 'La lecture sans hésitation.';
+
+	/// fr: 'La récitation de mémoire.'
+	String get faiblesseMemorisationDetail => 'La récitation de mémoire.';
 
 	/// fr: 'Où la Classe s'est arrêtée'
 	String get reprise => 'Où la Classe s\'est arrêtée';
@@ -8476,15 +8536,6 @@ class Traductions$enseignant$ficheGroupe$fr {
 
 	/// fr: 'Progression de la Classe'
 	String get progressionTitre => 'Progression de la Classe';
-
-	/// fr: 'Présence régulière'
-	String get indicateurRegulier => 'Présence régulière';
-
-	/// fr: 'À renforcer'
-	String get indicateurARenforcer => 'À renforcer';
-
-	/// fr: 'Absence récente'
-	String get indicateurAbsence => 'Absence récente';
 }
 
 // Path: enseignant.revue
@@ -15237,7 +15288,7 @@ extension on Traductions {
 			'enseignant.cahier.videDetail' => 'Aucune présence et aucun événement n\'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier.',
 			'enseignant.cahier.erreur' => 'Le constat n\'a pas pu être lu.',
 			'enseignant.cahier.erreurDetail' => 'Réessayez, ou déposez le cahier sans le constat.',
-			'enseignant.cahier.echecEnvoi' => 'Le cahier n\'a pas pu être enregistré. Réessayez.',
+			'enseignant.cahier.echecEnvoi' => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.',
 			'enseignant.cahier.dejaDepose' => 'Le cahier de cette séance est déjà déposé.',
 			'enseignant.cahier.dejaDeposeDetail' => 'Un cahier ne se dépose qu\'une fois, et il ne se supprime pas d\'ici.',
 			'enseignant.cahier.depose' => 'Cahier enregistré',
@@ -15286,6 +15337,26 @@ extension on Traductions {
 		} ?? switch (path) {
 			'enseignant.cahier.performance' => 'Performance',
 			'enseignant.cahier.faiblesses' => 'Faiblesses',
+			'enseignant.cahier.niveauARevoir' => 'À revoir',
+			'enseignant.cahier.niveauEnProgres' => 'En progrès',
+			'enseignant.cahier.niveauAcquis' => 'Acquis',
+			'enseignant.cahier.niveauMaitrise' => 'Maîtrisé',
+			'enseignant.cahier.faiblesseMakharij' => 'Makharij',
+			'enseignant.cahier.faiblesseMadd' => 'Madd',
+			'enseignant.cahier.faiblesseGhunna' => 'Ghunna',
+			'enseignant.cahier.faiblesseWaqf' => 'Waqf',
+			'enseignant.cahier.faiblesseFluidite' => 'Fluidité',
+			'enseignant.cahier.faiblesseMemorisation' => 'Mémorisation',
+			'enseignant.cahier.niveauARevoirDetail' => 'La leçon est à reprendre à la prochaine séance.',
+			'enseignant.cahier.niveauEnProgresDetail' => 'L\'élève avance, quelques erreurs restent.',
+			'enseignant.cahier.niveauAcquisDetail' => 'La leçon est sue, avec peu d\'erreurs.',
+			'enseignant.cahier.niveauMaitriseDetail' => 'La leçon est sue sans erreur, l\'élève peut avancer.',
+			'enseignant.cahier.faiblesseMakharijDetail' => 'La prononciation des lettres.',
+			'enseignant.cahier.faiblesseMaddDetail' => 'Les allongements.',
+			'enseignant.cahier.faiblesseGhunnaDetail' => 'Le son nasal.',
+			'enseignant.cahier.faiblesseWaqfDetail' => 'Les arrêts.',
+			'enseignant.cahier.faiblesseFluiditeDetail' => 'La lecture sans hésitation.',
+			'enseignant.cahier.faiblesseMemorisationDetail' => 'La récitation de mémoire.',
 			'enseignant.cahier.reprise' => 'Où la Classe s\'est arrêtée',
 			'enseignant.cahier.repriseDetail' => 'C\'est la position de reprise d\'un remplaçant.',
 			'enseignant.cahier.repriseProposee' => ({required Object sourate, required Object verset}) => 'Sourate ${sourate}, verset ${verset}',
@@ -15404,9 +15475,6 @@ extension on Traductions {
 			'enseignant.ficheGroupe.chargementClasse' => 'Chargement de la Classe.',
 			'enseignant.ficheGroupe.ressourcesTitre' => 'Ressources récentes',
 			'enseignant.ficheGroupe.progressionTitre' => 'Progression de la Classe',
-			'enseignant.ficheGroupe.indicateurRegulier' => 'Présence régulière',
-			'enseignant.ficheGroupe.indicateurARenforcer' => 'À renforcer',
-			'enseignant.ficheGroupe.indicateurAbsence' => 'Absence récente',
 			'enseignant.revue.titre' => 'Revue de la Classe',
 			'enseignant.revue.titreClasse' => ({required Object classe}) => 'Revue de la Classe ${classe}',
 			'enseignant.revue.aucuneAnomalie' => 'Rien ne demande votre attention.',
@@ -15779,6 +15847,8 @@ extension on Traductions {
 			'tc.observation.disponibilite.reseau' => 'La disponibilité de l\'observation n\'a pas pu être vérifiée. Aucune visite n\'a commencé.',
 			'tc.observation.disponibilite.capaciteTitre' => 'Observation indisponible',
 			'tc.observation.disponibilite.capacite' => 'L\'observation n\'est pas disponible pour le moment.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.connexion.titre' => 'Connexion et vérification',
 			'tc.observation.connexion.phrase' => 'Vos visites restantes sont vérifiées. La visite commence dès que l\'entrée est acceptée, connexion vidéo comprise.',
 			'tc.observation.connexion.enCours' => 'Connexion et vérification en cours',
@@ -15796,8 +15866,6 @@ extension on Traductions {
 			'tc.observation.refus.lienTuteur' => 'Vous n\'êtes rattaché à aucun élève de cette séance.',
 			'tc.observation.refus.seanceNonActive' => 'La séance n\'est pas en cours.',
 			'tc.observation.refus.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.refus.indisponible' => 'L\'observation n\'est pas disponible pour le moment.',
 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
 			'tc.observation.visite.titre' => 'Observation en cours',
