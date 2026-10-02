@@ -752,7 +752,7 @@ class _Resultat extends StatelessWidget {
         liveRegion: true,
         // La phrase du resultat : libelle provisoire, lexique D4.
         child: EcranResultat(
-          icone: AppIcons.foyer,
+          icone: AppIcons.invitationEnvoyee,
           ton: TonEtat.neutre,
           titre: t.adulte.invitation.envoyeeTitre,
           phrase: t.adulte.invitation.envoyeePhrase(courriel: courriel),

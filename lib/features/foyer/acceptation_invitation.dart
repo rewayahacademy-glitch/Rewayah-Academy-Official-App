@@ -516,18 +516,34 @@ class _PageEtatInvitation extends StatelessWidget {
     // invitation n'est plus valable » : libelles provisoires, lexique D4. Les
     // autres viennent du doc (sections 10.4 et 11) et d'UX_REVIEW_07 (T1, T2,
     // ligne 10 d).
-    final (String titre, String phrase) = switch (etat) {
+    // EA-PL : une icone par etat, pour le lire sans le texte (directeur,
+    // 02/10). Le ton reste neutre (E7) : l'icone distingue, pas la couleur.
+    final (String titre, String phrase, AppIcon icone) = switch (etat) {
       InvitationAcceptee(:final String prenomTitulaire) => (
         t.adulte.famille.forfaitFamille,
         a.rejoint(prenom: prenomTitulaire),
+        AppIcons.invitationAcceptee,
       ),
       InvitationEnValidation() => (
         t.adulte.famille.place.validationEnAttente,
         a.validation,
+        AppIcons.horloge,
       ),
-      InvitationRefuseeParVous() => (a.refuseeTitre, a.refus),
-      InvitationNonAcceptable() => (a.titreNeutre, a.impossible),
-      InvitationPerimee() => (a.titreNeutre, a.perimee),
+      InvitationRefuseeParVous() => (
+        a.refuseeTitre,
+        a.refus,
+        AppIcons.invitationRefusee,
+      ),
+      InvitationNonAcceptable() => (
+        a.titreNeutre,
+        a.impossible,
+        AppIcons.interdit,
+      ),
+      InvitationPerimee() => (
+        a.titreNeutre,
+        a.perimee,
+        AppIcons.invitationExpiree,
+      ),
       // Impossible : `InvitationRecuePage` rend la page de reponse pour cet
       // etat, a la lecture comme apres une reponse.
       InvitationARepondre() => throw StateError(
@@ -550,7 +566,7 @@ class _PageEtatInvitation extends StatelessWidget {
       child: Semantics(
         liveRegion: apresReponse,
         child: EcranResultat(
-          icone: AppIcons.foyer,
+          icone: icone,
           ton: TonEtat.neutre,
           titre: titre,
           phrase: phrase,

@@ -18,10 +18,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
+import 'package:rewayah_academy/core/widgets/ecran_resultat.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/page_etape.dart';
@@ -220,6 +222,11 @@ void main() {
     // Envoi : le resultat suit la reponse (E7), jamais un rattachement.
     await taper(tester, InviterConjointPage.envoyerKey);
     expect(find.byKey(InviterConjointPage.envoyeeKey), findsOneWidget);
+    // EA-PL : l'envoi a son icone, distincte des etats de la reponse.
+    expect(
+      tester.widget<EcranResultat>(find.byType(EcranResultat)).icone,
+      AppIcons.invitationEnvoyee,
+    );
     expect(find.text(t.adulte.invitation.envoyeeTitre), findsWidgets);
     expect(
       find.text(

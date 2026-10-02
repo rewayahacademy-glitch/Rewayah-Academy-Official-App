@@ -788,4 +788,35 @@ abstract final class AppIcons {
     IconData(0xe2ce, fontFamily: _repos),
     IconData(0xe2ce, fontFamily: _actif),
   );
+
+  // --- Etats d'une invitation au forfait famille (EA-PL) -----------------
+  // Une icone par etat, pour le lire sans le texte (demande du directeur,
+  // 02/10). Points de code releves dans `phosphor_flutter` 2.1.0, dont les
+  // polices sont celles de `assets/fonts` (meme empreinte).
+
+  /// Invitation envoyee : Phosphor `paper-plane-tilt` (0xe398).
+  static const AppIcon invitationEnvoyee = AppIcon._(
+    IconData(0xe398, fontFamily: _repos),
+    IconData(0xe398, fontFamily: _actif),
+  );
+
+  /// Invitation acceptee : Phosphor `user-check` (0xeafa).
+  static const AppIcon invitationAcceptee = AppIcon._(
+    IconData(0xeafa, fontFamily: _repos),
+    IconData(0xeafa, fontFamily: _actif),
+  );
+
+  /// Invitation refusee : Phosphor `user-minus` (0xe4ce).
+  static const AppIcon invitationRefusee = AppIcon._(
+    IconData(0xe4ce, fontFamily: _repos),
+    IconData(0xe4ce, fontFamily: _actif),
+  );
+
+  /// Invitation qui n'est plus valable (expiree ou annulee, une seule forme
+  /// cote destinataire) : Phosphor `hourglass` (0xe2b2), distinct du sablier
+  /// d'attente [attente] (`hourglass-medium`).
+  static const AppIcon invitationExpiree = AppIcon._(
+    IconData(0xe2b2, fontFamily: _repos),
+    IconData(0xe2b2, fontFamily: _actif),
+  );
 }

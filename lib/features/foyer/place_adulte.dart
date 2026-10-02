@@ -223,7 +223,10 @@ LigneRubrique lignePlaceAdulte(FoyerTitulaireVM vue, {VoidCallback? onPress}) {
       PlaceOccupee() => null,
 
       DelaiEnCours() || ValidationEnAttente() => AppIcons.horloge,
-      InvitationEnvoyee() || ValidationRefusee() => AppIcons.foyer,
+      // EA-PL : une icone par etat, comme les ecrans resultat de
+      // l'invitation (directeur, 02/10).
+      InvitationEnvoyee() => AppIcons.invitationEnvoyee,
+      ValidationRefusee() => AppIcons.interdit,
     },
     // Le second adulte : ses initiales, jamais sa photo (Q4).
     meneur: place is PlaceOccupee

@@ -93,11 +93,11 @@ class EtatSysteme extends StatelessWidget {
     this.actionsContratB = false,
   });
 
-  /// Bloc seulement. Vrai : actions selon les contrats A et B
-  /// (DESIGN-GOV-2026-09-26 §4 bis.1-2) : 16 sous l'objet, groupe aligne
-  /// au bord trailing, sortie ([onSecondaire]) puis poursuite ([onAction])
-  /// en LTR, 8 entre les deux. Faux (defaut) : disposition historique,
-  /// harmonisee en HU-1 pour les ecrans deja livres.
+  /// Sans effet depuis l'harmonisation HU-1 (EA-PL) : tous les blocs rendent
+  /// leurs actions selon les contrats A et B (DESIGN-GOV-2026-09-26
+  /// §4 bis.1-2) : 16 sous l'objet, groupe aligne au bord trailing, a la
+  /// largeur de ses libelles, sortie ([onSecondaire]) puis poursuite
+  /// ([onAction]) en LTR, 8 entre les deux. Garde pour les appels existants.
   final bool actionsContratB;
 
   /// La nature de l'etat.
@@ -269,7 +269,6 @@ class EtatSysteme extends StatelessWidget {
       actionEnCours: actionEnCours,
       libelleSecondaire: libelleSecondaire,
       onSecondaire: onSecondaire,
-      actionsContratB: actionsContratB,
     );
   }
 }
@@ -291,10 +290,8 @@ class _Bloc extends StatelessWidget {
     required this.actionEnCours,
     required this.libelleSecondaire,
     required this.onSecondaire,
-    this.actionsContratB = false,
   });
 
-  final bool actionsContratB;
   final AppIcon icone;
   final TonEtat ton;
   final String titre;
@@ -317,6 +314,26 @@ class _Bloc extends StatelessWidget {
     final bool avecSecondaire =
         libelleSecondaire != null && onSecondaire != null;
 
+    // EA-PL : jamais une carte de 1100 en bureau. La carte garde la largeur
+    // de lecture (K-42), posee au bord de debut ; `heightFactor` : elle ne
+    // prend que sa hauteur, meme dans un parent borne.
+    return Align(
+      alignment: AlignmentDirectional.topStart,
+      heightFactor: 1,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: AppPage.largeurLecture),
+        child: _carte(palette, textes, medaillon, avecAction, avecSecondaire),
+      ),
+    );
+  }
+
+  Widget _carte(
+    AppPalette palette,
+    TextTheme textes,
+    AppColorPair medaillon,
+    bool avecAction,
+    bool avecSecondaire,
+  ) {
     return Semantics(
       liveRegion: true,
       container: true,
@@ -374,8 +391,10 @@ class _Bloc extends StatelessWidget {
                         ),
                       ),
                     ],
-                    if (actionsContratB &&
-                        (avecAction || avecSecondaire)) ...<Widget>[
+                    // HU-1 (EA-PL) : une seule rangee, celle du contrat B,
+                    // pour tous les blocs ; « Reessayer » garde la largeur
+                    // de son libelle, au bord de fin, jamais toute la carte.
+                    if (avecAction || avecSecondaire) ...<Widget>[
                       Ecart.vLg,
                       SizedBox(
                         width: double.infinity,
@@ -416,30 +435,6 @@ class _Bloc extends StatelessWidget {
                               ),
                           ],
                         ),
-                      ),
-                    ] else if (avecAction || avecSecondaire) ...<Widget>[
-                      Ecart.vMd,
-                      Wrap(
-                        spacing: AppSpacing.sm,
-                        runSpacing: AppSpacing.sm,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: <Widget>[
-                          if (avecAction)
-                            ActionPrincipale(
-                              libelle: libelleAction!,
-                              onPress: onAction,
-                              enCours: actionEnCours,
-                              niveau: NiveauAction.secondaire,
-                              pleineLargeur: false,
-                            ),
-                          if (avecSecondaire)
-                            ActionPrincipale(
-                              libelle: libelleSecondaire!,
-                              onPress: onSecondaire,
-                              niveau: NiveauAction.tertiaire,
-                              pleineLargeur: false,
-                            ),
-                        ],
                       ),
                     ],
                   ],

@@ -18,14 +18,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/ecran_resultat.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/page_etape.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart' show TonEtat;
 import 'package:rewayah_academy/features/compte/donnees_compte.dart'
     show dateLongue;
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
@@ -402,6 +405,43 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(t.adulte.acceptation.impossible), findsOneWidget);
     expect(find.textContaining('genre'), findsNothing);
+  });
+
+  // EA-PL : chaque etat se lit sans le texte, par son icone (directeur,
+  // 02/10) ; le ton reste neutre (E7).
+  testWidgets('une icone distincte par etat de l\'invitation', (
+    WidgetTester tester,
+  ) async {
+    taille(tester, const Size(390, 844));
+    final Map<EtatInvitationRecue, AppIcon> attendues =
+        <EtatInvitationRecue, AppIcon>{
+          const InvitationAcceptee('Mamadou'): AppIcons.invitationAcceptee,
+          const InvitationRefuseeParVous(): AppIcons.invitationRefusee,
+          const InvitationEnValidation(): AppIcons.horloge,
+          const InvitationNonAcceptable(): AppIcons.interdit,
+          const InvitationPerimee(): AppIcons.invitationExpiree,
+        };
+    for (final MapEntry<EtatInvitationRecue, AppIcon>(:key, :value)
+        in attendues.entries) {
+      await monterPage(
+        tester,
+        surcharges: <Override>[
+          invitationRecueProvider.overrideWith((Ref _) async => key),
+        ],
+      );
+      await tester.pumpAndSettle();
+      final EcranResultat ecran = tester.widget(find.byType(EcranResultat));
+      expect(ecran.icone, value, reason: '$key');
+      expect(ecran.ton, TonEtat.neutre, reason: '$key');
+      // Une page vide entre deux etats : le fournisseur est relu.
+      await tester.pumpWidget(const SizedBox.shrink());
+    }
+    // Cinq etats recus et l'invitation envoyee : six icones differentes.
+    final Set<int> points = <int>{
+      for (final AppIcon i in attendues.values) i.actif.codePoint,
+      AppIcons.invitationEnvoyee.actif.codePoint,
+    };
+    expect(points, hasLength(attendues.length + 1));
   });
 
   testWidgets('expiree : « Cette invitation n\'est plus valable »', (

@@ -158,8 +158,11 @@ class EcranResultat extends StatelessWidget {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(AppSpacing.lg),
+                  // Centre comme le titre et la phrase (EA-PL) : jamais un
+                  // texte au bord de debut dans un bloc centre.
                   child: Text(
                     encart!,
+                    textAlign: TextAlign.center,
                     style: palette.washAccent.applyTo(
                       textes.bodyMedium ?? const TextStyle(),
                     ),
