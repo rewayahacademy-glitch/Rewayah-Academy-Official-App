@@ -2207,6 +2207,7 @@
     "reglagesTitre": "Réglages",
     "reglagesIntro": "Ces préférences restent sur cet appareil et s'appliquent tout de suite.",
     "apparence": "Apparence",
+    "themeContexte": "Choisissez l'apparence de l'application. Le changement est immédiat et reste sur cet appareil. Vous pouvez le modifier à tout moment.",
     "themeSysteme": "Système",
     "themeSystemeDetail": "Suit le réglage de votre appareil",
     "themeClair": "Clair",

@@ -2010,7 +2010,8 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           data: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
           child: const SelecteurTheme(),
         ),
-      ),    ],
+      ),
+    ],
   ),
   ...entreesEtatsTuteur(),
 ];

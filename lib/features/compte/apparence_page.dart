@@ -56,13 +56,6 @@ class ApparenceComptePage extends ConsumerWidget {
                 ),
               ),
             ),
-            Ecart.vXs,
-            Text(
-              t.compte.tuteur.pageApparence.themeDetail,
-              style: palette.inkMuted.applyTo(
-                textes.bodyMedium ?? const TextStyle(),
-              ),
-            ),
             Ecart.vMd,
             const SelecteurTheme(),
             Ecart.vXl,

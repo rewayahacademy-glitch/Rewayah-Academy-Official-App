@@ -8,11 +8,42 @@ import 'package:rewayah_academy/core/widgets/selecteur_theme.dart';
 
 import '../support/hote_theme.dart';
 
-PreferenceTheme _theme(WidgetTester tester) => ProviderScope.containerOf(
-  tester.element(find.byType(SelecteurTheme)),
-).read(preferencesLocalesProvider).theme;
+PreferenceTheme _theme(WidgetTester tester) =>
+    ProviderScope.containerOf(tester.element(find.byType(SelecteurTheme)))
+        .read(preferencesLocalesProvider)
+        .theme;
+
+Finder ligne(String detail) => find.textContaining(detail, findRichText: true);
 
 void main() {
+  testWidgets(
+    'phrase de contexte et ligne des trois options toujours visibles',
+    (WidgetTester tester) async {
+      fixerVue(tester, vueMobile);
+      await tester.pumpWidget(hoteTheme(const SelecteurTheme()));
+
+      expect(find.text(t.compte.themeContexte), findsOneWidget);
+      for (final String detail in <String>[
+        t.compte.themeClairDetail,
+        t.compte.themeSystemeDetail,
+        t.compte.themeSombreDetail,
+      ]) {
+        expect(ligne(detail), findsOneWidget, reason: detail);
+      }
+
+      // Les trois lignes restent affichees apres un changement de choix.
+      await tester.tap(find.text(t.compte.themeSombre));
+      await tester.pump();
+      for (final String detail in <String>[
+        t.compte.themeClairDetail,
+        t.compte.themeSystemeDetail,
+        t.compte.themeSombreDetail,
+      ]) {
+        expect(ligne(detail), findsOneWidget, reason: detail);
+      }
+    },
+  );
+
   testWidgets('trois segments cote a cote : clair, systeme, sombre', (
     WidgetTester tester,
   ) async {
@@ -75,20 +106,17 @@ void main() {
 
     expect(_theme(tester), PreferenceTheme.systeme);
     expect(selectionnes(), 1);
-    expect(find.text(t.compte.themeSystemeDetail), findsOneWidget);
+    expect(ligne(t.compte.themeSystemeDetail), findsOneWidget);
 
     await tester.tap(find.text(t.compte.themeSombre));
     await tester.pump();
     expect(_theme(tester), PreferenceTheme.sombre);
     expect(selectionnes(), 1);
-    expect(find.text(t.compte.themeSombreDetail), findsOneWidget);
-    expect(find.text(t.compte.themeSystemeDetail), findsNothing);
 
     await tester.tap(find.text(t.compte.themeClair));
     await tester.pump();
     expect(_theme(tester), PreferenceTheme.clair);
     expect(selectionnes(), 1);
-    expect(find.text(t.compte.themeClairDetail), findsOneWidget);
 
     // Presser le segment deja choisi ne change rien.
     await tester.tap(find.text(t.compte.themeClair));
@@ -135,7 +163,9 @@ void main() {
             expect(a.right, lessThanOrEqualTo(b.left));
             expect(b.right, lessThanOrEqualTo(c.left));
             expect(
-              tester.getSize(find.byType(ControleSegmente<PreferenceTheme>)).height,
+              tester
+                  .getSize(find.byType(ControleSegmente<PreferenceTheme>))
+                  .height,
               greaterThanOrEqualTo(48),
             );
           },

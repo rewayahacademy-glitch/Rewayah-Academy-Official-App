@@ -60,7 +60,7 @@ Textes complets : consignes K-54 à K-59 du tableau ; table des preuves : `docs/
 
 Règles équivalentes, déduites des remarques du directeur :
 
-- **THEME-SW-1 Le choix du thème est `SelecteurTheme`** (`lib/core/widgets/selecteur_theme.dart`) : un seul petit rectangle, trois bascules côte à côte, soleil (clair) à gauche, système au milieu, lune (sombre) à droite (l'ordre se miroite en arabe), avec sous le rectangle la phrase de l'option choisie. Jamais de cartes, de lignes radio ou de boutons recomposés pour le thème. Contrôle : `selecteur-theme-recompose`, test `test/widgets/selecteur_theme_test.dart`.
+- **THEME-SW-1 Le choix du thème est `SelecteurTheme`** (`lib/core/widgets/selecteur_theme.dart`) : un seul petit rectangle, trois bascules côte à côte, soleil (clair) à gauche, système au milieu, lune (sombre) à droite (l'ordre se miroite en arabe), avec au-dessus une phrase de contexte et dessous la ligne courte des trois options, toutes visibles (K-58). Jamais de cartes, de lignes radio ou de boutons recomposés pour le thème. Contrôle : `selecteur-theme-recompose`, test `test/widgets/selecteur_theme_test.dart`.
 - **Aucun élément ne recouvre un contenu à lire** (bouton flottant, bandeau, pastille). Test : `verifierSansChevauchement`, à 320 px et en texte ×2.
 - **Hiérarchie de titres stricte** : un titre d'écran, des titres de section, jamais deux niveaux au même rang ni un saut de niveau.
 - **Un état ne se signale jamais par la couleur seule** (en direct, annulée, actif / inactif) : texte ou icône en plus de la couleur.
