@@ -28,6 +28,28 @@ Le document demande de ne pas les résoudre dans l'écran, mais de les marquer a
 
 Note : BR-CT-08 (journal d'audit) est prévu côté serveur mais ne répond à aucun de ces points seul ; il aidera pour B3, B13 et B14.
 
+### 1 bis. Décisions du directeur (02/10/2026, commentaires sur la planche CT)
+
+Le directeur a répondu point par point. Il a confié le reste à l'orchestrateur : « le reste tu te débrouilles pour le bien de l'académie et de ses élèves ». Les choix marqués *orchestrateur* peuvent être repris par lui à tout moment. Ces points ne bloquent plus le Contrôleur : ils sont à appliquer au branchement (BR-1). Seule la DPIA (B6) reste à signer.
+
+| N° | Décision | Ce qu'il faudra faire (BR-1, sauf mention) |
+|---|---|---|
+| B1 | Pour observer, le contrôleur doit être **connecté et approuvé par l'administration**. | Le serveur refuse l'entrée si la capacité Contrôle n'est pas approuvée (BR-CT-01). |
+| B2 | Double vérification à la connexion : **oui**. | MFA pour tout compte qui a la capacité Contrôle. |
+| B3 | **Un clic** de l'administration pour donner ou retirer l'accès ; le contrôleur reçoit une **notification** dans les deux cas. | Bouton côté admin (CT-IMP-AD-16) ; notification au contrôleur ; écran « accès retiré » déjà fait (CT-9). |
+| B4 | Garder assez longtemps pour revoir et prendre les mesures. *Orchestrateur* : rapport brut **12 mois** après l'envoi, prolongé tant qu'un dossier ou une mesure est ouvert, puis supprimé ; synthèse sans nom d'élève gardée plus longtemps. | Effacement programmé côté serveur. |
+| B5 | Les enseignants signent à l'inscription un **contrat qui annonce les visites de contrôle**. *Orchestrateur* : base légale = intérêt légitime (protection des enfants), avec test de mise en balance ; pas le consentement. | Clause au contrat enseignant (charte 09_consentements) ; politique de contrôle publiée. |
+| B6 | Le directeur confie la DPIA à l'orchestrateur. | `DPIA_CONTROLEUR.md` (projet) ; signature du directeur ; avis d'un juriste conseillé avant la production. |
+| B7 | L'enseignant peut contester, **mais pas trop facilement**. *Orchestrateur* : une demande par rapport, dans les 7 jours suivant la publication de la synthèse mensuelle, avec un motif écrit ; traitée par l'administration ; pas de bouton mis en avant. | Écran dans la vague Enseignant (CT-IMP-EN-02) ; file côté admin. |
+| B8 | Les participants savent qu'ils ne sont pas en privé : risque faible. | Le contrôleur n'écrit que ce qui concerne le cours (ligne d'aide « Décrivez seulement ce que vous avez observé » déjà en place). |
+| B9 | Aucun élève ni enseignant au Royaume-Uni ; données chez **Cloudflare, Europe de l'Ouest**. | Royaume-Uni vers EEE couvert par l'adéquation britannique ; vérifier les sous-traitants Cloudflare hors EEE (DPA, UK Addendum). |
+| B10 | Capture bloquée : **oui**. Le filigrane **n'apparaît que lorsqu'une capture est tentée**, jamais en permanence. | Blocage de capture (Android) et détection (iOS) ; filigrane affiché à la tentative. |
+| B11 | Le brouillon **ne sort jamais de l'application**. | Stockage local chiffré, hors sauvegarde et hors partage, effacé après l'envoi. |
+| B12 | Élèves, parents et enseignants voient **le minimum possible**. | Bandeau permanent actuel, sans nom ni annonce en temps réel ; rien de plus. |
+| B13 | Lecture d'un rapport brut : **l'administration** (et le contrôleur auteur, pour son propre rapport). | BR-CT-14 déjà conforme. |
+| B14 | Export : **l'administration seulement**. | Export tracé au journal d'audit (BR-CT-08). |
+| B15 | Identité du contrôleur après la synthèse mensuelle : **jamais révélée**. | La synthèse enseignant n'affiche aucun nom de contrôleur. |
+
 ## 2. Ce que le Contrôleur change pour les autres rôles
 
 ### 2.1 Enseignant (doc §12 et §3.4)
