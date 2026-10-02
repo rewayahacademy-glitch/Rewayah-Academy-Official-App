@@ -1810,8 +1810,8 @@ class Traductions$compte$fr {
 	/// fr: 'Les espaces auxquels votre compte donne accès'
 	String get espacesDetail => 'Les espaces auxquels votre compte donne accès';
 
-	/// fr: 'Pour revenir à votre espace principal, quittez d'abord la mission en cours.'
-	String get espacesMissionEnCours => 'Pour revenir à votre espace principal, quittez d\'abord la mission en cours.';
+	/// fr: 'Pour revenir à votre espace principal, quittez d'abord la visite en cours.'
+	String get espacesMissionEnCours => 'Pour revenir à votre espace principal, quittez d\'abord la visite en cours.';
 
 	/// fr: 'Habilité'
 	String get habilitation => 'Habilité';
@@ -8633,8 +8633,8 @@ class Traductions$controleur$historique$fr {
 	/// fr: '{classe} · {date}'
 	String titreDetail({required Object classe, required Object date}) => '${classe} · ${date}';
 
-	/// fr: 'Mission'
-	String get sectionMission => 'Mission';
+	/// fr: 'Classe observée'
+	String get sectionMission => 'Classe observée';
 
 	/// fr: 'Observation du Contrôleur'
 	String get sectionObservation => 'Observation du Contrôleur';
@@ -8666,8 +8666,8 @@ class Traductions$controleur$historique$fr {
 	/// fr: 'Aucun complément.'
 	String get sansComplement => 'Aucun complément.';
 
-	/// fr: 'Les faits de cette visite ne sont pas encore reçus : la séance vient de se terminer ou la connexion a été coupée. Ils s'afficheront ici dès leur réception. Le reste du rapport reste fiable.'
-	String get faitsIndisponibles => 'Les faits de cette visite ne sont pas encore reçus : la séance vient de se terminer ou la connexion a été coupée. Ils s\'afficheront ici dès leur réception. Le reste du rapport reste fiable.';
+	/// fr: 'Le relevé automatique de cette visite (heures, élèves présents, reconnexions) n'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Il s'affichera ici dès sa réception. Le reste du rapport reste fiable.'
+	String get faitsIndisponibles => 'Le relevé automatique de cette visite (heures, élèves présents, reconnexions) n\'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Il s\'affichera ici dès sa réception. Le reste du rapport reste fiable.';
 
 	/// fr: 'Motif : {motif}'
 	String motif({required Object motif}) => 'Motif : ${motif}';
@@ -8702,11 +8702,11 @@ class Traductions$controleur$complement$fr {
 	/// fr: 'Correction'
 	String get correction => 'Correction';
 
-	/// fr: 'Quand un fait est inexact · l'original reste lisible, la correction s'affiche dessous'
-	String get correctionAide => 'Quand un fait est inexact · l\'original reste lisible, la correction s\'affiche dessous';
+	/// fr: 'Quand une information du rapport est inexacte · l'original reste lisible, la correction s'affiche dessous'
+	String get correctionAide => 'Quand une information du rapport est inexacte · l\'original reste lisible, la correction s\'affiche dessous';
 
-	/// fr: 'Fait nouveau'
-	String get faitNouveau => 'Fait nouveau';
+	/// fr: 'Information nouvelle'
+	String get faitNouveau => 'Information nouvelle';
 
 	/// fr: 'Quand vous l'apprenez après la visite · il est daté du jour de l'ajout'
 	String get faitNouveauAide => 'Quand vous l\'apprenez après la visite · il est daté du jour de l\'ajout';
@@ -8714,8 +8714,8 @@ class Traductions$controleur$complement$fr {
 	/// fr: 'Qu'ajoutez-vous au rapport ?'
 	String get questionTexte => 'Qu\'ajoutez-vous au rapport ?';
 
-	/// fr: 'Obligatoire : des faits, en quelques phrases.'
-	String get texteObligatoire => 'Obligatoire : des faits, en quelques phrases.';
+	/// fr: 'Obligatoire : ce que vous avez constaté, en quelques phrases.'
+	String get texteObligatoire => 'Obligatoire : ce que vous avez constaté, en quelques phrases.';
 
 	/// fr: 'Complément'
 	String get libelleTexte => 'Complément';
@@ -8780,20 +8780,20 @@ class Traductions$controleur$compteRendu$fr {
 	/// fr: '{classe} · {heure}'
 	String sousTitre({required Object classe, required Object heure}) => '${classe} · ${heure}';
 
-	/// fr: 'Faits automatiques'
-	String get faits => 'Faits automatiques';
+	/// fr: 'Relevé automatique de la séance'
+	String get faits => 'Relevé automatique de la séance';
 
-	/// fr: 'Faits automatiques, repliés'
-	String get faitsReplies => 'Faits automatiques, repliés';
+	/// fr: 'Relevé automatique de la séance, replié'
+	String get faitsReplies => 'Relevé automatique de la séance, replié';
 
-	/// fr: 'Faits automatiques, dépliés'
-	String get faitsDeplies => 'Faits automatiques, dépliés';
+	/// fr: 'Relevé automatique de la séance, déplié'
+	String get faitsDeplies => 'Relevé automatique de la séance, déplié';
 
-	/// fr: 'Lecture des faits de la visite en cours.'
-	String get faitsChargement => 'Lecture des faits de la visite en cours.';
+	/// fr: 'Lecture du relevé automatique de la séance : heures, élèves présents, reconnexions.'
+	String get faitsChargement => 'Lecture du relevé automatique de la séance : heures, élèves présents, reconnexions.';
 
-	/// fr: 'Les faits de la visite ne sont pas encore reçus : la séance vient de se terminer ou la connexion a été coupée. Vous pouvez répondre sans eux ; ils seront joints au rapport dès leur réception.'
-	String get faitsAbsents => 'Les faits de la visite ne sont pas encore reçus : la séance vient de se terminer ou la connexion a été coupée. Vous pouvez répondre sans eux ; ils seront joints au rapport dès leur réception.';
+	/// fr: 'Le relevé automatique de la séance (heures, élèves présents, reconnexions) n'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Vous pouvez répondre sans lui ; il sera joint au rapport dès sa réception.'
+	String get faitsAbsents => 'Le relevé automatique de la séance (heures, élèves présents, reconnexions) n\'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Vous pouvez répondre sans lui ; il sera joint au rapport dès sa réception.';
 
 	/// fr: 'Heure prévue'
 	String get cleHoraire => 'Heure prévue';
@@ -8828,8 +8828,8 @@ class Traductions$controleur$compteRendu$fr {
 	/// fr: 'Avez-vous quelque chose à signaler ?'
 	String get question => 'Avez-vous quelque chose à signaler ?';
 
-	/// fr: 'Votre réponse s'ajoute aux faits automatiques de cette visite.'
-	String get contexte => 'Votre réponse s\'ajoute aux faits automatiques de cette visite.';
+	/// fr: 'Votre réponse s'ajoute au relevé automatique de la séance : heures, présents, reconnexions.'
+	String get contexte => 'Votre réponse s\'ajoute au relevé automatique de la séance : heures, présents, reconnexions.';
 
 	/// fr: 'Rien à signaler'
 	String get rienASignaler => 'Rien à signaler';
@@ -8840,14 +8840,14 @@ class Traductions$controleur$compteRendu$fr {
 	/// fr: 'Ajouter une observation'
 	String get ajouterObservation => 'Ajouter une observation';
 
-	/// fr: 'Quand vous voulez noter un fait · quelques questions courtes, une à la fois'
-	String get ajouterObservationAide => 'Quand vous voulez noter un fait · quelques questions courtes, une à la fois';
+	/// fr: 'Quand vous voulez noter ce que vous avez vu · quelques questions courtes, une à la fois'
+	String get ajouterObservationAide => 'Quand vous voulez noter ce que vous avez vu · quelques questions courtes, une à la fois';
 
 	/// fr: 'Signaler un point important'
 	String get pointImportant => 'Signaler un point important';
 
-	/// fr: 'Quand un fait demande l'attention de l'administration · votre texte sera demandé'
-	String get pointImportantAide => 'Quand un fait demande l\'attention de l\'administration · votre texte sera demandé';
+	/// fr: 'Quand ce que vous avez vu demande l'attention de l'administration · votre texte sera demandé'
+	String get pointImportantAide => 'Quand ce que vous avez vu demande l\'attention de l\'administration · votre texte sera demandé';
 
 	/// fr: 'Envoyer le compte rendu'
 	String get envoyer => 'Envoyer le compte rendu';
@@ -8876,11 +8876,11 @@ class Traductions$controleur$compteRendu$fr {
 	/// fr: 'Transmission de la visite à l'administration en cours.'
 	String get visiteEnCours => 'Transmission de la visite à l\'administration en cours.';
 
-	/// fr: 'La visite et ses faits sont transmis à l'administration.'
-	String get visiteTransmise => 'La visite et ses faits sont transmis à l\'administration.';
+	/// fr: 'La visite et son relevé automatique sont transmis à l'administration.'
+	String get visiteTransmise => 'La visite et son relevé automatique sont transmis à l\'administration.';
 
-	/// fr: 'La transmission de la visite n'est pas confirmée : la connexion ou le serveur n'a pas répondu. Réessayez ; les faits de la visite restent enregistrés sur le serveur.'
-	String get visiteEchec => 'La transmission de la visite n\'est pas confirmée : la connexion ou le serveur n\'a pas répondu. Réessayez ; les faits de la visite restent enregistrés sur le serveur.';
+	/// fr: 'La transmission de la visite n'est pas confirmée : la connexion ou le serveur n'a pas répondu. Réessayez ; le relevé de la visite reste enregistré sur le serveur.'
+	String get visiteEchec => 'La transmission de la visite n\'est pas confirmée : la connexion ou le serveur n\'a pas répondu. Réessayez ; le relevé de la visite reste enregistré sur le serveur.';
 
 	/// fr: 'Compte rendu à terminer'
 	String get aTerminer => 'Compte rendu à terminer';
@@ -9134,11 +9134,11 @@ class Traductions$controleur$demo$fr {
 	/// fr: 'Données fictives, aucun envoi.'
 	String get mention => 'Données fictives, aucun envoi.';
 
-	/// fr: 'Choisissez un écran du contrôle et une situation de mission.'
-	String get intro => 'Choisissez un écran du contrôle et une situation de mission.';
+	/// fr: 'Choisissez un écran du contrôle et une situation de visite.'
+	String get intro => 'Choisissez un écran du contrôle et une situation de visite.';
 
-	/// fr: 'Aucune mission'
-	String get etatAucune => 'Aucune mission';
+	/// fr: 'Aucune visite'
+	String get etatAucune => 'Aucune visite';
 
 	/// fr: 'Séance pas encore en direct'
 	String get etatPasEncoreEnDirect => 'Séance pas encore en direct';
@@ -9146,8 +9146,8 @@ class Traductions$controleur$demo$fr {
 	/// fr: 'Séance en direct'
 	String get etatEnDirect => 'Séance en direct';
 
-	/// fr: 'Mission indisponible'
-	String get etatIndisponible => 'Mission indisponible';
+	/// fr: 'Visite plus proposée'
+	String get etatIndisponible => 'Visite plus proposée';
 
 	/// fr: 'Espaces et accès'
 	String get espaces => 'Espaces et accès';
@@ -9167,8 +9167,8 @@ class Traductions$controleur$demo$fr {
 	/// fr: 'Admin-Contrôleur, espace Admin'
 	String get adminPrincipal => 'Admin-Contrôleur, espace Admin';
 
-	/// fr: 'Mission en cours, retour à l'espace principal'
-	String get missionEnCours => 'Mission en cours, retour à l\'espace principal';
+	/// fr: 'Visite en cours, retour à l'espace principal'
+	String get missionEnCours => 'Visite en cours, retour à l\'espace principal';
 
 	/// fr: 'Accès révoqué pendant la navigation'
 	String get accesRevoque => 'Accès révoqué pendant la navigation';
@@ -9176,8 +9176,8 @@ class Traductions$controleur$demo$fr {
 	/// fr: 'Enseignant sans capacité Contrôle'
 	String get sansCapacite => 'Enseignant sans capacité Contrôle';
 
-	/// fr: 'Compte rendu, mission devenue indisponible'
-	String get compteRenduIndisponible => 'Compte rendu, mission devenue indisponible';
+	/// fr: 'Compte rendu, visite plus proposée'
+	String get compteRenduIndisponible => 'Compte rendu, visite plus proposée';
 }
 
 // Path: controleur.acces
@@ -9206,11 +9206,11 @@ class Traductions$controleur$controle$fr {
 	/// fr: 'Contrôle'
 	String get titre => 'Contrôle';
 
-	/// fr: 'Votre prochaine mission'
-	String get mission => 'Votre prochaine mission';
+	/// fr: 'Votre prochaine Classe à observer'
+	String get mission => 'Votre prochaine Classe à observer';
 
-	/// fr: 'Mission en cours'
-	String get missionEnDirect => 'Mission en cours';
+	/// fr: 'Classe à observer maintenant'
+	String get missionEnDirect => 'Classe à observer maintenant';
 
 	/// fr: 'Commencer le contrôle'
 	String get commencer => 'Commencer le contrôle';
@@ -9218,11 +9218,11 @@ class Traductions$controleur$controle$fr {
 	/// fr: 'Aucun contrôle n'est à réaliser pour le moment.'
 	String get vide => 'Aucun contrôle n\'est à réaliser pour le moment.';
 
-	/// fr: 'Rewayah vous proposera une mission lorsqu'une séance compatible sera disponible.'
-	String get videAide => 'Rewayah vous proposera une mission lorsqu\'une séance compatible sera disponible.';
+	/// fr: 'Rewayah vous proposera une Classe à observer lorsqu'une séance compatible sera disponible.'
+	String get videAide => 'Rewayah vous proposera une Classe à observer lorsqu\'une séance compatible sera disponible.';
 
-	/// fr: 'Cette mission n'est plus disponible.'
-	String get indisponible => 'Cette mission n\'est plus disponible.';
+	/// fr: 'Cette visite n'est plus proposée : la séance a été annulée ou confiée à un autre contrôleur.'
+	String get indisponible => 'Cette visite n\'est plus proposée : la séance a été annulée ou confiée à un autre contrôleur.';
 
 	/// fr: 'Le contrôle s'ouvrira dès que la séance sera en direct.'
 	String get attente => 'Le contrôle s\'ouvrira dès que la séance sera en direct.';
@@ -9242,11 +9242,11 @@ class Traductions$controleur$controle$fr {
 		other: '${n} élèves',
 	);
 
-	/// fr: 'Lecture de votre mission en cours.'
-	String get chargement => 'Lecture de votre mission en cours.';
+	/// fr: 'Lecture de votre prochaine visite.'
+	String get chargement => 'Lecture de votre prochaine visite.';
 
-	/// fr: 'Votre mission n'a pas pu être lue, sans doute à cause de la connexion ou d'un service momentanément indisponible. Réessayez dans un instant.'
-	String get erreur => 'Votre mission n\'a pas pu être lue, sans doute à cause de la connexion ou d\'un service momentanément indisponible. Réessayez dans un instant.';
+	/// fr: 'Votre prochaine visite n'a pas pu être lue, sans doute à cause de la connexion ou d'un service momentanément indisponible. Réessayez dans un instant.'
+	String get erreur => 'Votre prochaine visite n\'a pas pu être lue, sans doute à cause de la connexion ou d\'un service momentanément indisponible. Réessayez dans un instant.';
 }
 
 // Path: tc.groupe
@@ -15055,7 +15055,7 @@ extension on Traductions {
 			'compte.confidentialiteDetail' => 'Bientôt disponible',
 			'compte.espaces' => 'Espaces',
 			'compte.espacesDetail' => 'Les espaces auxquels votre compte donne accès',
-			'compte.espacesMissionEnCours' => 'Pour revenir à votre espace principal, quittez d\'abord la mission en cours.',
+			'compte.espacesMissionEnCours' => 'Pour revenir à votre espace principal, quittez d\'abord la visite en cours.',
 			'compte.habilitation' => 'Habilité',
 			'compte.deconnexion' => 'Se déconnecter',
 			'compte.deconnexionDetail' => 'Mettre fin à la session sur cet appareil',
@@ -16071,7 +16071,7 @@ extension on Traductions {
 			'controleur.historique.videFiltres' => 'Aucun contrôle ne correspond à ces filtres.',
 			'controleur.historique.resultats' => ({required Object n}) => 'Contrôles affichés : ${n}',
 			'controleur.historique.titreDetail' => ({required Object classe, required Object date}) => '${classe} · ${date}',
-			'controleur.historique.sectionMission' => 'Mission',
+			'controleur.historique.sectionMission' => 'Classe observée',
 			'controleur.historique.sectionObservation' => 'Observation du Contrôleur',
 			'controleur.historique.sectionComplements' => 'Compléments',
 			'controleur.historique.sectionEchanges' => 'Échanges avec l\'administration',
@@ -16082,7 +16082,7 @@ extension on Traductions {
 			'controleur.historique.cleElevesPresents' => 'Présents',
 			'controleur.historique.cleReponse' => 'Réponse',
 			'controleur.historique.sansComplement' => 'Aucun complément.',
-			'controleur.historique.faitsIndisponibles' => 'Les faits de cette visite ne sont pas encore reçus : la séance vient de se terminer ou la connexion a été coupée. Ils s\'afficheront ici dès leur réception. Le reste du rapport reste fiable.',
+			'controleur.historique.faitsIndisponibles' => 'Le relevé automatique de cette visite (heures, élèves présents, reconnexions) n\'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Il s\'affichera ici dès sa réception. Le reste du rapport reste fiable.',
 			'controleur.historique.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'controleur.historique.ajouterComplement' => 'Ajouter un complément',
 			'controleur.complement.bandeau' => 'Ce complément sera ajouté au rapport existant.',
@@ -16091,11 +16091,11 @@ extension on Traductions {
 			'controleur.complement.precision' => 'Précision',
 			'controleur.complement.precisionAide' => 'Quand un détail manque · il complète le rapport, sans rien y changer',
 			'controleur.complement.correction' => 'Correction',
-			'controleur.complement.correctionAide' => 'Quand un fait est inexact · l\'original reste lisible, la correction s\'affiche dessous',
-			'controleur.complement.faitNouveau' => 'Fait nouveau',
+			'controleur.complement.correctionAide' => 'Quand une information du rapport est inexacte · l\'original reste lisible, la correction s\'affiche dessous',
+			'controleur.complement.faitNouveau' => 'Information nouvelle',
 			'controleur.complement.faitNouveauAide' => 'Quand vous l\'apprenez après la visite · il est daté du jour de l\'ajout',
 			'controleur.complement.questionTexte' => 'Qu\'ajoutez-vous au rapport ?',
-			'controleur.complement.texteObligatoire' => 'Obligatoire : des faits, en quelques phrases.',
+			'controleur.complement.texteObligatoire' => 'Obligatoire : ce que vous avez constaté, en quelques phrases.',
 			'controleur.complement.libelleTexte' => 'Complément',
 			'controleur.complement.aideTexte' => 'Ce que vous avez constaté ou appris depuis la visite.',
 			'controleur.complement.texteRequis' => 'Écrivez le complément pour continuer.',
@@ -16114,11 +16114,11 @@ extension on Traductions {
 			'controleur.compteRendu.provisoire' => 'Cet écran est en préparation.',
 			'controleur.compteRendu.revenir' => 'Revenir au contrôle',
 			'controleur.compteRendu.sousTitre' => ({required Object classe, required Object heure}) => '${classe} · ${heure}',
-			'controleur.compteRendu.faits' => 'Faits automatiques',
-			'controleur.compteRendu.faitsReplies' => 'Faits automatiques, repliés',
-			'controleur.compteRendu.faitsDeplies' => 'Faits automatiques, dépliés',
-			'controleur.compteRendu.faitsChargement' => 'Lecture des faits de la visite en cours.',
-			'controleur.compteRendu.faitsAbsents' => 'Les faits de la visite ne sont pas encore reçus : la séance vient de se terminer ou la connexion a été coupée. Vous pouvez répondre sans eux ; ils seront joints au rapport dès leur réception.',
+			'controleur.compteRendu.faits' => 'Relevé automatique de la séance',
+			'controleur.compteRendu.faitsReplies' => 'Relevé automatique de la séance, replié',
+			'controleur.compteRendu.faitsDeplies' => 'Relevé automatique de la séance, déplié',
+			'controleur.compteRendu.faitsChargement' => 'Lecture du relevé automatique de la séance : heures, élèves présents, reconnexions.',
+			'controleur.compteRendu.faitsAbsents' => 'Le relevé automatique de la séance (heures, élèves présents, reconnexions) n\'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Vous pouvez répondre sans lui ; il sera joint au rapport dès sa réception.',
 			'controleur.compteRendu.cleHoraire' => 'Heure prévue',
 			'controleur.compteRendu.horaire' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'controleur.compteRendu.cleDebutReel' => 'Début réel',
@@ -16130,13 +16130,13 @@ extension on Traductions {
 			'controleur.compteRendu.presents' => ({required Object presents, required Object attendus}) => '${presents} sur ${attendus}',
 			'controleur.compteRendu.cleReconnexions' => 'Reconnexions',
 			'controleur.compteRendu.question' => 'Avez-vous quelque chose à signaler ?',
-			'controleur.compteRendu.contexte' => 'Votre réponse s\'ajoute aux faits automatiques de cette visite.',
+			'controleur.compteRendu.contexte' => 'Votre réponse s\'ajoute au relevé automatique de la séance : heures, présents, reconnexions.',
 			'controleur.compteRendu.rienASignaler' => 'Rien à signaler',
 			'controleur.compteRendu.rienASignalerAide' => 'Quand la séance s\'est déroulée normalement · le compte rendu part en une action ; vous pourrez ajouter un complément ensuite',
 			'controleur.compteRendu.ajouterObservation' => 'Ajouter une observation',
-			'controleur.compteRendu.ajouterObservationAide' => 'Quand vous voulez noter un fait · quelques questions courtes, une à la fois',
+			'controleur.compteRendu.ajouterObservationAide' => 'Quand vous voulez noter ce que vous avez vu · quelques questions courtes, une à la fois',
 			'controleur.compteRendu.pointImportant' => 'Signaler un point important',
-			'controleur.compteRendu.pointImportantAide' => 'Quand un fait demande l\'attention de l\'administration · votre texte sera demandé',
+			'controleur.compteRendu.pointImportantAide' => 'Quand ce que vous avez vu demande l\'attention de l\'administration · votre texte sera demandé',
 			'controleur.compteRendu.envoyer' => 'Envoyer le compte rendu',
 			'controleur.compteRendu.plusTard' => 'Plus tard',
 			'controleur.compteRendu.notice' => 'Ce compte rendu est transmis automatiquement à l\'administration.',
@@ -16146,8 +16146,8 @@ extension on Traductions {
 			'controleur.compteRendu.envoyePhrase' => 'Il est transmis à l\'administration. Pour y revenir, ouvrez-le dans l\'Historique et choisissez « Ajouter un complément ».',
 			'controleur.compteRendu.ecrireAdmin' => 'Écrire à l\'administration',
 			'controleur.compteRendu.visiteEnCours' => 'Transmission de la visite à l\'administration en cours.',
-			'controleur.compteRendu.visiteTransmise' => 'La visite et ses faits sont transmis à l\'administration.',
-			'controleur.compteRendu.visiteEchec' => 'La transmission de la visite n\'est pas confirmée : la connexion ou le serveur n\'a pas répondu. Réessayez ; les faits de la visite restent enregistrés sur le serveur.',
+			'controleur.compteRendu.visiteTransmise' => 'La visite et son relevé automatique sont transmis à l\'administration.',
+			'controleur.compteRendu.visiteEchec' => 'La transmission de la visite n\'est pas confirmée : la connexion ou le serveur n\'a pas répondu. Réessayez ; le relevé de la visite reste enregistré sur le serveur.',
 			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
 			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
 			'controleur.observation.important' => 'Vous signalez un point important : votre texte sera demandé.',
@@ -16223,37 +16223,37 @@ extension on Traductions {
 			'controleur.echanges.nouveauMessage' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
 			'controleur.demo.titre' => 'Démonstration contrôleur',
 			'controleur.demo.mention' => 'Données fictives, aucun envoi.',
-			'controleur.demo.intro' => 'Choisissez un écran du contrôle et une situation de mission.',
-			'controleur.demo.etatAucune' => 'Aucune mission',
+			'controleur.demo.intro' => 'Choisissez un écran du contrôle et une situation de visite.',
+			'controleur.demo.etatAucune' => 'Aucune visite',
 			'controleur.demo.etatPasEncoreEnDirect' => 'Séance pas encore en direct',
 			'controleur.demo.etatEnDirect' => 'Séance en direct',
-			'controleur.demo.etatIndisponible' => 'Mission indisponible',
+			'controleur.demo.etatIndisponible' => 'Visite plus proposée',
 			'controleur.demo.espaces' => 'Espaces et accès',
 			'controleur.demo.espacesIntro' => 'Le même compte, plusieurs espaces : Enseignant ou Admin passent en Contrôle par Compte, puis Espaces.',
 			'controleur.demo.enseignantControle' => 'Enseignant-Contrôleur, espace Contrôle',
 			'controleur.demo.enseignantPrincipal' => 'Enseignant-Contrôleur, espace Enseignant',
 			'controleur.demo.adminControle' => 'Admin-Contrôleur, espace Contrôle',
 			'controleur.demo.adminPrincipal' => 'Admin-Contrôleur, espace Admin',
-			'controleur.demo.missionEnCours' => 'Mission en cours, retour à l\'espace principal',
+			'controleur.demo.missionEnCours' => 'Visite en cours, retour à l\'espace principal',
 			'controleur.demo.accesRevoque' => 'Accès révoqué pendant la navigation',
 			'controleur.demo.sansCapacite' => 'Enseignant sans capacité Contrôle',
-			'controleur.demo.compteRenduIndisponible' => 'Compte rendu, mission devenue indisponible',
+			'controleur.demo.compteRenduIndisponible' => 'Compte rendu, visite plus proposée',
 			'controleur.acces.revoque' => 'Votre accès au contrôle n\'est plus actif.',
 			'controleur.acces.revenir' => 'Revenir à mon espace',
 			'controleur.controle.titre' => 'Contrôle',
-			'controleur.controle.mission' => 'Votre prochaine mission',
-			'controleur.controle.missionEnDirect' => 'Mission en cours',
+			'controleur.controle.mission' => 'Votre prochaine Classe à observer',
+			'controleur.controle.missionEnDirect' => 'Classe à observer maintenant',
 			'controleur.controle.commencer' => 'Commencer le contrôle',
 			'controleur.controle.vide' => 'Aucun contrôle n\'est à réaliser pour le moment.',
-			'controleur.controle.videAide' => 'Rewayah vous proposera une mission lorsqu\'une séance compatible sera disponible.',
-			'controleur.controle.indisponible' => 'Cette mission n\'est plus disponible.',
+			'controleur.controle.videAide' => 'Rewayah vous proposera une Classe à observer lorsqu\'une séance compatible sera disponible.',
+			'controleur.controle.indisponible' => 'Cette visite n\'est plus proposée : la séance a été annulée ou confiée à un autre contrôleur.',
 			'controleur.controle.attente' => 'Le contrôle s\'ouvrira dès que la séance sera en direct.',
 			'controleur.controle.incognito' => 'Votre présence n\'est pas annoncée en temps réel.',
 			'controleur.controle.horaire' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'controleur.controle.duree' => ({required Object minutes}) => '${minutes} min prévues',
 			'controleur.controle.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève', other: '${n} élèves', ), 
-			'controleur.controle.chargement' => 'Lecture de votre mission en cours.',
-			'controleur.controle.erreur' => 'Votre mission n\'a pas pu être lue, sans doute à cause de la connexion ou d\'un service momentanément indisponible. Réessayez dans un instant.',
+			'controleur.controle.chargement' => 'Lecture de votre prochaine visite.',
+			'controleur.controle.erreur' => 'Votre prochaine visite n\'a pas pu être lue, sans doute à cause de la connexion ou d\'un service momentanément indisponible. Réessayez dans un instant.',
 			'aConstruire.titre' => 'Écran à construire',
 			'aConstruire.detail' => 'Cet écran arrive à l\'étape 3.',
 			'galerie.titre' => 'Galerie des composants',

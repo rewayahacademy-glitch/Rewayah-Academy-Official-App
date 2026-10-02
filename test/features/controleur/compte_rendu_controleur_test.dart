@@ -366,6 +366,8 @@ void main() {
     await _jusquAuCompteRendu(tester);
     final r = t.controleur.compteRendu;
 
+    await tester.ensureVisible(find.byKey(CompteRenduControlePage.plusTardKey));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(CompteRenduControlePage.plusTardKey));
     await tester.pump(const Duration(milliseconds: 500));
     await tester.pumpAndSettle();
@@ -384,6 +386,8 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text(r.notice), findsNothing);
+    await tester.ensureVisible(find.byKey(CompteRenduControlePage.actionKey));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(CompteRenduControlePage.actionKey));
     await tester.pumpAndSettle();
     expect(find.byType(ObservationControlePage), findsOneWidget);
