@@ -86,8 +86,21 @@ class EmptyState extends StatelessWidget {
         libelleAction != null &&
         onAction != null;
 
-    return Center(
-      child: Padding(
+    // Un etat vide ne deborde jamais : centre quand la place suffit, defilant
+    // sinon (barre du Mode Accessibilite plus haute, texte agrandi, 320 px).
+    Widget centre(Widget contenu) => LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints c) => c.hasBoundedHeight
+          ? SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: c.maxHeight),
+                child: Center(child: contenu),
+              ),
+            )
+          : Center(child: contenu),
+    );
+
+    return centre(
+      Padding(
         padding: EdgeInsets.all(metriques.marge),
         child: Column(
           mainAxisSize: MainAxisSize.min,
