@@ -31,6 +31,10 @@
     }
   },
   "salle": {
+    "microOuvert": "الميكروفون مفتوح",
+    "microCoupe": "الميكروفون مغلق",
+    "cameraAllumee": "الكاميرا مشغّلة",
+    "cameraCoupee": "الكاميرا مطفأة",
     "secours": {
       "reseauFaible": "الشبكة ضعيفة. الأولوية للصوت.",
       "reseauFaibleGuidee": "الشبكة ضعيفة.",

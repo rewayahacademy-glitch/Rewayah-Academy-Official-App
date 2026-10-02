@@ -176,6 +176,12 @@ void main(List<String> arguments) {
   if (regles.contains('plein-multiple')) {
     violations.addAll(_pleinsMultiples());
   }
+  if (regles.contains('nav-a-libelle')) {
+    violations.addAll(_navigationsALibelle());
+  }
+  if (regles.contains('bascule-sans-etat')) {
+    violations.addAll(_basculesSansEtat());
+  }
   if (regles.contains('libelle-ambigu')) {
     for (final MapEntry<String, String> e in fr.entries) {
       if (_libellesAmbigus.contains(_normaliser(e.value).trim())) {
@@ -655,6 +661,123 @@ bool _enfantEstTexteNu(String corps) {
     }
   }
   return false;
+}
+
+/// NAV-FLECHES-1 : une navigation precedent / suivant faite de boutons a
+/// libelle (`ActionPrincipale`) au lieu de `BarrePrecedentSuivant` (fleche,
+/// position, fleche, la fleche disparait aux bornes).
+List<Violation> _navigationsALibelle() {
+  final List<Violation> v = <Violation>[];
+  final RegExp appel = RegExp(r'(?<![\w.])ActionPrincipale\s*\(');
+  final RegExp libelle = RegExp(
+    r'libelle:\s*t\.[\w.]*\b(?:page)?(?:Precedent|Suivant|precedent|suivant)e?\b',
+  );
+  for (final File f in _sourcesFeatures()) {
+    final String t = _sansCommentaires(f);
+    for (final RegExpMatch m in appel.allMatches(t)) {
+      final int ferme = _fermante(t, m.end - 1);
+      if (ferme < 0) {
+        continue;
+      }
+      final RegExpMatch? l = libelle.firstMatch(t.substring(m.start, ferme));
+      if (l != null) {
+        v.add(
+          Violation(
+            f.path,
+            _ligneDe(t, m.start),
+            'nav-a-libelle',
+            'ActionPrincipale ${l.group(0)}',
+          ),
+        );
+      }
+    }
+    // Toute autre forme (LienFleche, Pressable recompose, Text) : une cle de
+    // libelle precedent / suivant hors des deux arguments de
+    // BarrePrecedentSuivant, ou la fleche de progression hors du composant.
+    for (final RegExpMatch m in _cleNavigation.allMatches(t)) {
+      final int debutLigne = t.lastIndexOf('\n', m.start) + 1;
+      final String avant = t.substring(debutLigne, m.start);
+      if (RegExp(r'libelle(?:Precedent|Suivant)\s*:\s*$').hasMatch(avant) ||
+          _navigationsVerifiees.contains(m.group(0))) {
+        continue;
+      }
+      v.add(
+        Violation(
+          f.path,
+          _ligneDe(t, m.start),
+          'nav-a-libelle',
+          'cle de navigation hors BarrePrecedentSuivant : ${m.group(0)}',
+        ),
+      );
+    }
+    for (final RegExpMatch m in RegExp(r'AppIcons\.suivant\b').allMatches(t)) {
+      v.add(
+        Violation(
+          f.path,
+          _ligneDe(t, m.start),
+          'nav-a-libelle',
+          'AppIcons.suivant hors BarrePrecedentSuivant',
+        ),
+      );
+    }
+  }
+  return v;
+}
+
+/// Une cle de libelle dont le nom dit precedent ou suivant.
+final RegExp _cleNavigation = RegExp(
+  r't\.[A-Za-z0-9_.]*\.\w*(?:[Pp]recedent|[Ss]uivant)\w*',
+);
+
+/// Les sites verifies a la main, qui portent le mot suivant ou precedent sans
+/// etre une navigation de pages (liste de la fiche REVUE-DIRECTEUR-2026-10.md) :
+/// etape de formulaire, pagination de liste, devoir de la seance d'avant.
+const Set<String> _navigationsVerifiees = <String>{
+  't.foyer.ajout.suivant',
+  't.dossiers.file.suivants',
+  't.dossiers.file.suivantAnnonce',
+  't.dossiers.file.suivantsErreur',
+  't.enseignant.cahier.devoirPrecedent',
+};
+
+/// ETATS-BTN-1 : une commande de la salle a deux etats (micro, camera,
+/// agrandir / reduire, son recu, ou toute icone choisie selon l'etat) doit
+/// declarer son etat (`bascule:`), sans quoi le disque plein ou en contour et
+/// le mot d'etat ne suivent pas.
+List<Violation> _basculesSansEtat() {
+  final List<Violation> v = <Violation>[];
+  final RegExp appel = RegExp(
+    r'(?<![\w.])(?:CommandeSalle|BoutonAppel|_Commande)\s*\(',
+  );
+  // Une icone de bascule connue, OU toute commande dont l'icone change avec
+  // l'etat (`x ? AppIcons.a : AppIcons.b`) : c'est le caractere a deux etats
+  // qui compte, pas la liste.
+  final RegExp icone = RegExp(
+    r'AppIcons\.(?:micro|microCoupe|camera|cameraCoupee|agrandir|reduire|'
+    r'libelleAudio)\b'
+    r'|\?\s*\(?\s*AppIcons\.\w+\s*\)?(?:\.\w+)?\s*:\s*\(?\s*AppIcons\.\w+',
+  );
+  for (final File f in _sourcesFeatures()) {
+    final String t = _sansCommentaires(f);
+    for (final RegExpMatch m in appel.allMatches(t)) {
+      final int ferme = _fermante(t, m.end - 1);
+      if (ferme < 0) {
+        continue;
+      }
+      final String corps = t.substring(m.start, ferme);
+      if (icone.hasMatch(corps) && !corps.contains('bascule:')) {
+        v.add(
+          Violation(
+            f.path,
+            _ligneDe(t, m.start),
+            'bascule-sans-etat',
+            'commande a deux etats (micro, camera, agrandir, son) sans bascule:',
+          ),
+        );
+      }
+    }
+  }
+  return v;
 }
 
 /// L'argument d'une action, jusqu'a la virgule ou la parenthese qui le ferme.

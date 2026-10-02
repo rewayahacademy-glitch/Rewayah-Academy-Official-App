@@ -222,6 +222,9 @@ class Traductions$salle$fr {
 	/// fr: 'Caméra éteinte'
 	String get cameraCoupee => 'Caméra éteinte';
 
+	/// fr: 'Caméra allumée'
+	String get cameraAllumee => 'Caméra allumée';
+
 	/// fr: 'Quitter'
 	String get quitter => 'Quitter';
 
@@ -14536,6 +14539,7 @@ extension on Traductions {
 			'salle.microOuvert' => 'Micro ouvert',
 			'salle.camera' => 'Caméra',
 			'salle.cameraCoupee' => 'Caméra éteinte',
+			'salle.cameraAllumee' => 'Caméra allumée',
 			'salle.quitter' => 'Quitter',
 			'salle.ouvrirCoran' => 'Ouvrir le Coran',
 			'salle.confirmerSortie' => 'Quitter le cours ?',
@@ -14752,9 +14756,9 @@ extension on Traductions {
 			'accessibilite.demo.mention' => 'Données fictives, aucun envoi.',
 			'accessibilite.demo.intro' => 'Choisissez un élève et un moment de la séance.',
 			'accessibilite.demo.eleveMineure' => 'Mariam, élève mineure',
-			'accessibilite.demo.eleveAdulte' => 'Idriss, élève adulte',
 			_ => null,
 		} ?? switch (path) {
+			'accessibilite.demo.eleveAdulte' => 'Idriss, élève adulte',
 			'accessibilite.demo.etatAvant' => 'Avant la séance',
 			'accessibilite.demo.etatFenetre' => 'Juste avant la séance, l\'entrée est ouverte',
 			'accessibilite.demo.etatPendant' => 'Pendant la séance',
@@ -15266,9 +15270,9 @@ extension on Traductions {
 			'dossiers.revue.etats.horsLigne' => 'Vous êtes hors ligne. Aucune décision ne peut être envoyée.',
 			'dossiers.revue.etats.accesPerdu' => 'Vous n’avez plus accès à ce dossier.',
 			'dossiers.revue.etats.retourDossiers' => 'Retour aux dossiers',
-			'dossiers.revue.etats.verificationsIncompletes' => 'Terminez les vérifications requises.',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.revue.etats.verificationsIncompletes' => 'Terminez les vérifications requises.',
 			'dossiers.revue.etats.accordManquant' => 'Un accord requis manque à ce dossier.',
 			'dossiers.revue.etats.decisionIndisponible' => 'La décision est indisponible pour le moment.',
 			'dossiers.revue.etats.modifie' => 'Ce dossier a changé depuis son ouverture.',
@@ -15780,9 +15784,9 @@ extension on Traductions {
 			'admin.journal.chargerSuite' => 'Charger les entrées plus anciennes',
 			'admin.journal.fin' => 'Vous êtes remonté jusqu\'à la première entrée du journal.',
 			'admin.journal.evenements.observationEntree' => 'Visite d\'observation commencée',
-			'admin.journal.evenements.observationSortie' => 'Visite d\'observation terminée',
 			_ => null,
 		} ?? switch (path) {
+			'admin.journal.evenements.observationSortie' => 'Visite d\'observation terminée',
 			'admin.journal.evenements.observationPolitiqueGroupeModifiee' => 'Règles d\'observation de la classe modifiées',
 			'admin.observations.titre' => 'Observations',
 			'admin.observations.titrePage' => 'Historique des observations',
@@ -16294,9 +16298,9 @@ extension on Traductions {
 			'historique.moisCourts.7' => 'août',
 			'historique.moisCourts.8' => 'sept.',
 			'historique.moisCourts.9' => 'oct.',
-			'historique.moisCourts.10' => 'nov.',
 			_ => null,
 		} ?? switch (path) {
+			'historique.moisCourts.10' => 'nov.',
 			'historique.moisCourts.11' => 'déc.',
 			'historique.dateCourte' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
 			'historique.dateLongue' => ({required Object jourSemaine, required Object jour, required Object mois, required Object annee}) => '${jourSemaine} ${jour} ${mois} ${annee}',
@@ -16808,9 +16812,9 @@ extension on Traductions {
 			'enseignant.journee.lancer' => 'Lancer le cours',
 			'enseignant.journee.preflight' => 'Vérifier avant le cours',
 			'enseignant.journee.titre' => 'Aujourd\'hui',
-			'enseignant.journee.prochainCours' => 'Prochain cours',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.journee.prochainCours' => 'Prochain cours',
 			'enseignant.journee.coursEnCours' => 'Séance en direct',
 			'enseignant.journee.minuteurHeures' => ({required Object heures, required Object minutes}) => 'Dans ${heures} h ${minutes}',
 			'enseignant.journee.minuteurMinutes' => ({required Object minutes}) => 'Dans ${minutes} min',
@@ -17322,9 +17326,9 @@ extension on Traductions {
 			'tc.bibliotheque.offline.enCache' => 'En cache',
 			'tc.bibliotheque.offline.telecharge' => 'Téléchargé',
 			'tc.bibliotheque.offline.indisponible' => 'Hors ligne indisponible',
-			'tc.bibliotheque.type.quran' => 'Coran',
 			_ => null,
 		} ?? switch (path) {
+			'tc.bibliotheque.type.quran' => 'Coran',
 			'tc.bibliotheque.type.texteStructure' => 'Texte',
 			'tc.bibliotheque.type.pdf' => 'PDF',
 			'tc.bibliotheque.type.image' => 'Image',
@@ -17836,9 +17840,9 @@ extension on Traductions {
 			'adulte.demo.etats.delai120' => 'Un délai de 120 jours est en cours.',
 			'adulte.demo.etats.departsSuivants' => 'Après le troisième départ, le délai reste de 120 jours.',
 			'adulte.demo.etats.repriseDemandee' => 'Une demande de reprise du foyer a été déposée.',
-			'adulte.demo.etats.repriseRefuseeParTitulaire' => 'La demande de reprise a été refusée par le titulaire.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.demo.etats.repriseRefuseeParTitulaire' => 'La demande de reprise a été refusée par le titulaire.',
 			'adulte.demo.etats.repriseSansReponse' => 'Après 30 jours sans réponse, la demande attend l\'administration.',
 			'adulte.demo.etats.repriseValidee' => 'La reprise du foyer a été validée.',
 			'adulte.demo.etats.repriseRefusee' => 'La reprise du foyer a été refusée.',

@@ -64,6 +64,10 @@ class _Traductions$salle$ar extends Traductions$salle$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get microOuvert => 'الميكروفون مفتوح';
+	@override String get microCoupe => 'الميكروفون مغلق';
+	@override String get cameraAllumee => 'الكاميرا مشغّلة';
+	@override String get cameraCoupee => 'الكاميرا مطفأة';
 	@override late final _Traductions$salle$secours$ar secours = _Traductions$salle$secours$ar._(_root);
 }
 
@@ -283,6 +287,10 @@ extension on TraductionsAr {
 			'classe.entree.annonce.aVenir' => 'حصة قادمة',
 			'classe.entree.annonce.fenetreOuverte' => 'القاعة مفتوحة',
 			'classe.entree.annonce.attente' => 'أنت في القاعة',
+			'salle.microOuvert' => 'الميكروفون مفتوح',
+			'salle.microCoupe' => 'الميكروفون مغلق',
+			'salle.cameraAllumee' => 'الكاميرا مشغّلة',
+			'salle.cameraCoupee' => 'الكاميرا مطفأة',
 			'salle.secours.reseauFaible' => 'الشبكة ضعيفة. الأولوية للصوت.',
 			'salle.secours.reseauFaibleGuidee' => 'الشبكة ضعيفة.',
 			'salle.secours.reseauFaibleGuideeSuite' => 'الصوت يبقى أولوية.',

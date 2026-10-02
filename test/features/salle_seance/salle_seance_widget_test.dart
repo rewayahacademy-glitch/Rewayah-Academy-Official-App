@@ -101,12 +101,20 @@ void main() {
             find.byKey(const ValueKey<String>('pagination-support')),
             findsNothing,
           );
-          expect(find.text('Micro'), findsOneWidget);
-          expect(find.text('Caméra'), findsOneWidget);
-          // Sans support, rien a agrandir.
+          // ETATS-BTN-1 : le mot d'etat des deux bascules, micro ouvert et
+          // camera allumee par defaut.
+          expect(find.text('Micro ouvert'), findsOneWidget);
+          expect(find.text('Caméra allumée'), findsOneWidget);
+          // Sans support, rien a agrandir. Sur bureau, la barre du support
+          // (zoom local) porte la meme bascule que le dock : meme rendu, donc
+          // le mot d'etat parait deux fois (ETATS-BTN-1).
           expect(
             find.text('Agrandir'),
-            etat == EtatDemoSalle.rienPartage ? findsNothing : findsOneWidget,
+            etat == EtatDemoSalle.rienPartage
+                ? findsNothing
+                : taille.value.width >= 1200
+                ? findsNWidgets(2)
+                : findsOneWidget,
           );
           expect(find.text('Quitter'), findsOneWidget);
         });

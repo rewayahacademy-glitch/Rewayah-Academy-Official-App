@@ -23,12 +23,13 @@ import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/audio_label.dart';
 import '../../../core/widgets/avatar_tile.dart';
 import '../../../core/widgets/bandeau_observation.dart';
+import '../../../core/widgets/barre_precedent_suivant.dart';
 import '../../../core/widgets/bento_tile.dart';
-import '../../../core/widgets/bouton_commande.dart';
 import '../../../core/widgets/bouton_icone.dart';
 import '../../../core/widgets/bouton_outil.dart';
 import '../../../core/widgets/child_card.dart';
 import '../../../core/widgets/choice_card_group.dart';
+import '../../../core/widgets/commande_salle.dart';
 import '../../../core/widgets/confirm_destructive.dart';
 import '../../../core/widgets/controle_segmente.dart';
 import '../../../core/widgets/data_collection.dart';
@@ -1985,53 +1986,6 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
     ],
   ),
   EntreeGalerie(
-    nom: 'BoutonCommande',
-    famille: FamilleComposant.composantEtat,
-    etats: <EtatGalerie>[
-      EtatGalerie(
-        'surface',
-        (BuildContext _) => Align(
-          alignment: AlignmentDirectional.topStart,
-          child: BoutonCommande(
-            icone: AppIcons.micro.repos,
-            libelle: 'Micro',
-            diametre: 56,
-            tailleIcone: 24,
-            onPress: _rien,
-          ),
-        ),
-      ),
-      EtatGalerie(
-        'alerte',
-        (BuildContext _) => Align(
-          alignment: AlignmentDirectional.topStart,
-          child: BoutonCommande(
-            icone: AppIcons.sortie.repos,
-            libelle: 'Quitter',
-            diametre: 56,
-            tailleIcone: 24,
-            fond: FondCommande.alerte,
-            onPress: _rien,
-          ),
-        ),
-      ),
-      EtatGalerie(
-        'inerte',
-        (BuildContext _) => Align(
-          alignment: AlignmentDirectional.topStart,
-          child: BoutonCommande(
-            icone: AppIcons.camera.repos,
-            libelle: 'Camera',
-            diametre: 56,
-            tailleIcone: 24,
-            actif: false,
-            onPress: _rien,
-          ),
-        ),
-      ),
-    ],
-  ),
-  EntreeGalerie(
     nom: 'RaccourciTactile',
     famille: FamilleComposant.composantEtat,
     etats: <EtatGalerie>[
@@ -2053,6 +2007,83 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             onPress: null,
             child: AvatarTile(prenom: 'Yasmine', diametre: 72),
           ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'CommandeSalle',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'bascule active',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.topStart,
+          child: CommandeSalle(
+            icone: AppIcons.micro.repos,
+            libelle: 'Micro ouvert',
+            libelleSemantique: 'Fermer le micro',
+            bascule: true,
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'bascule inactive',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.topStart,
+          child: CommandeSalle(
+            icone: AppIcons.microCoupe.repos,
+            libelle: 'Micro coupé',
+            libelleSemantique: 'Ouvrir le micro',
+            bascule: false,
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'commande ordinaire',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.topStart,
+          child: CommandeSalle(
+            icone: AppIcons.supports.repos,
+            libelle: 'Supports',
+            onPress: _rien,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'BarrePrecedentSuivant',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'au milieu',
+        (BuildContext _) => const BarrePrecedentSuivant(
+          position: '12 / 604',
+          libellePrecedent: 'Page précédente',
+          libelleSuivant: 'Page suivante',
+          onPrecedent: _rien,
+          onSuivant: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'au debut',
+        (BuildContext _) => const BarrePrecedentSuivant(
+          position: '1 / 604',
+          libellePrecedent: 'Page précédente',
+          libelleSuivant: 'Page suivante',
+          onSuivant: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'a la fin',
+        (BuildContext _) => const BarrePrecedentSuivant(
+          position: '604 / 604',
+          libellePrecedent: 'Page précédente',
+          libelleSuivant: 'Page suivante',
+          onPrecedent: _rien,
         ),
       ),
     ],

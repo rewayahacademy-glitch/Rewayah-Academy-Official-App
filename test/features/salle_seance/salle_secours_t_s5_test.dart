@@ -83,9 +83,10 @@ final Finder _statut = find.byKey(
 );
 final Finder _dock = find.byKey(const ValueKey<String>('dock-seance'));
 
-/// Le bouton Camera du dock : son libelle visible « Camera ».
+/// Le bouton Camera du dock : son mot d'etat visible (ETATS-BTN-1), « Camera
+/// allumee » quand la camera est allumee.
 Finder get _boutonCamera =>
-    find.descendant(of: _dock, matching: find.text('Caméra'));
+    find.descendant(of: _dock, matching: find.text('Caméra allumée'));
 
 void main() {
   group('P10 camera interdite', () {

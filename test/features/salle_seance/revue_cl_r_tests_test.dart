@@ -173,7 +173,7 @@ void main() {
       expect(suivante, 1);
     });
 
-    testWidgets('page 1 : precedente desactivee, aucun rappel possible', (
+    testWidgets('page 1 : precedente absente (pas grisee), aucun rappel', (
       WidgetTester tester,
     ) async {
       int precedente = 0;
@@ -192,22 +192,14 @@ void main() {
       await tester.pump();
       expect(_pressablePar(t.salle.seance.pagePrecedente), findsNothing);
       expect(precedente, 0);
-
-      final AppPalette palette = AppPalette.of(
-        tester.element(find.byType(PaginationSupport)),
-      );
-      final IconTheme themePrecedente = tester.widget<IconTheme>(
-        find
-            .ancestor(
-              of: find.byIcon(AppIcons.chevron.repos).first,
-              matching: find.byType(IconTheme),
-            )
-            .first,
-      );
+      // NAV-FLECHES-1 : la fleche disparait, elle n'est pas grisee. Une seule
+      // fleche (suivante) est rendue ; sa place vide garde la page au centre.
       expect(
-        themePrecedente.data.color,
-        palette.inkFaint.asIconTheme(size: AppSpacing.xxl).color,
+        find.byKey(const ValueKey<String>('nav-precedent')),
+        findsNothing,
       );
+      expect(find.byKey(const ValueKey<String>('nav-suivant')), findsOneWidget);
+      expect(find.byIcon(AppIcons.suivant.repos), findsOneWidget);
     });
 
     testWidgets('derniere page : suivante desactivee, aucun rappel possible', (

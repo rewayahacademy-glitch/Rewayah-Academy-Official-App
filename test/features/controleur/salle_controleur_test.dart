@@ -73,6 +73,10 @@ void main() {
       t.salle.fermerCamera,
       t.salle.micro,
       t.salle.camera,
+      t.salle.microOuvert,
+      t.salle.microCoupe,
+      t.salle.cameraAllumee,
+      t.salle.cameraCoupee,
       t.salle.quitterLeCours,
     ]) {
       expect(find.text(interdit), findsNothing, reason: interdit);

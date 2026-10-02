@@ -13,6 +13,8 @@ Principe : corriger la cause (composant partagé de `lib/core`), recenser tous l
 | Formulaires déduit > choisi > saisi | K-57 | `ChoiceCardGroup` | revue de fiche (FORM-AUTO-1) | |
 | Tout choix : contexte, quand, conséquence, carte entière cliquable | K-58 | `ChoiceCardGroup` | revue de fiche | |
 | Message d'erreur : cause et action | K-59 | `EtatSysteme`, `BlocAsynchrone` | `erreur-sans-action`, `affirmation-reseau` | |
+| Bascule de la salle : trois signaux (disque plein ou contour, icône, mot d'état), actions lourdes confirmées | ETATS-BTN-1 (K-54, K-56) | `CommandeSalle` | `bascule-sans-etat` | `commande_salle_test.dart` |
+| Navigation précédent / suivant : flèche, position, flèche, la flèche disparaît aux bornes, miroir RTL | NAV-FLECHES-1 (K-54, K-56) | `BarrePrecedentSuivant` | `nav-a-libelle` | `barre_precedent_suivant_test.dart` |
 | Aucun élément ne recouvre un contenu | déduite | | | `verifierSansChevauchement` |
 | Hiérarchie de titres stricte | déduite | `EnteteDePage`, `SectionHeader` | revue d'écran | |
 | État jamais par la couleur seule | déduite | `StatusPill` | revue d'écran | |
@@ -105,3 +107,35 @@ Contrôles ajoutés : `plein-multiple` (`tool/verifier_revue.dart`) et `verifier
 ### Preuves visuelles
 
 `docs/current/captures/l1-boutons/` : `avant_*` (base `ad0e2c6`) et `apres_*` (cette branche), mêmes écrans, 320 et 1440 px, produits par `test/capture/l1_boutons_capture_test.dart` (`CAPTURE_DIR`, `CAPTURE_PREFIXE`) : préparation de l'enseignant (« Tester la caméra »), photo professionnelle (« Choisir une photo »), boutons du core (pilule étirée, bouton compact, lien, bouton secondaire). Les écrans de la salle (dock, outils, tuiles) ne sont pas capturés : leur preuve est la mesure de géométrie de `test/core/garde_interface_test.dart` (335 cas).
+## ETATS-BTN-1 et NAV-FLECHES-1 : avant et après (branche `corrections/l1-salle`)
+
+| Mesure | Avant | Après |
+|---|---|---|
+| Composants qui dessinent le disque d'une commande de salle (dock `BoutonAppel`, `_Commande` de `salle_page`) | 2, deux dessins différents | 1 (`CommandeSalle`, `BoutonAppel` et `_Commande` le délèguent) |
+| Signaux d'état d'une bascule micro ou caméra du dock | 1 (l'icône) ; mot fixe « Micro », « Caméra », « Parler » | 3 (disque plein ou contour 2 points, icône barrée ou non, mot « Micro ouvert » / « Micro coupé », « Caméra allumée » / « Caméra éteinte ») |
+| Signaux d'état d'une bascule de `salle_page` (micro, caméra, son reçu, agrandir) | 2 (remplissage, icône), sans mot d'état | 3 |
+| Sites de bascule qui déclarent leur état (`bascule:`) | 0 | 8 (dock : 3 ; barre du support : 1 ; `salle_page` : 4) |
+| Navigations précédent / suivant faites de deux boutons à libellé ou de chevrons grisés | 3 (lecteur de Coran, présentation de l'enseignant, pagination de la salle) | 0 : les 3 passent par `BarrePrecedentSuivant` |
+| Flèche grisée au début ou à la fin | 3 sites | 0 : la flèche disparaît, sa place reste réservée |
+| `bouton-grise` (`onPress: null` rendu grisé) | 73 | 69 |
+| `verifier_jetons` | 36 | 36 |
+| `cartes-collees`, `bouton-recompose`, `libelle-ambigu`, `mot-interne`, `erreur-sans-action` | 0 hors socle | 0 hors socle |
+
+Limites : aucune action « couper le micro de toute la classe » n'existe dans l'application ; « Quitter » (dock, rail, en-tête guidé, `salle_page`) passe déjà par `ConfirmDestructive` (`confirmerQuitterSeance`) et le contrôle `bascule-sans-etat` ne vérifie que la présence de `bascule:`. Dans une rangée compacte et au-delà de 130 % d'échelle de texte, le mot d'état passe en infobulle et dans la voix du lecteur d'écran : à 200 % sur 390 px, deux lignes de mot par commande ne tiennent plus dans la hauteur du téléphone (test `salle_secours_test`, aucun débordement exigé). Les captures avant/après ne sont pas produites : les mesures de géométrie des tests (320 et 1440 px, texte ×1 et ×2) tiennent lieu de preuve.
+
+## ETATS-BTN-1 et NAV-FLECHES-1 : corrections de la relecture (02/10/2026)
+
+| Écart relevé | Correction |
+|---|---|
+| Agrandir / Réduire traité en bascule dans `salle_page` mais pas dans le dock de la séance ni dans la barre du support | `dock_seance.dart` passe `bascule: agrandi` ; `barre_support.dart` (`ZoomLocal`) remplace son bouton recomposé par `CommandeSalle(bascule: agrandi)`. Les deux sites, comme `salle_page`, ont le même rendu à trois signaux (disque plein ou contour, icône réduire / agrandir, mot « Réduire » / « Agrandir »). Test : `test/features/salle_seance/etats_agrandir_test.dart` (deux sites, deux états, clair et sombre). |
+| Contrôle `bascule-sans-etat` trop faible (micro et caméra seulement) | Étendu à `_Commande`, aux icônes agrandir, réduire, son, et à **toute commande dont l'icône change avec l'état** (`x ? AppIcons.a : AppIcons.b`) : c'est le caractère à deux états qui compte. Sans la correction du dock, la règle signale bien 1 violation (vérifié en retirant la ligne). |
+| Outil inactif du Teaching Dock sans contour | `BoutonOutil` inactif a le même contour fort de 2 points que la bascule de salle ; plein contrasté seulement quand l'outil est armé. Test : `test/teaching_core/d/bouton_outil_etat_test.dart`. |
+| Valeurs littérales 2 et 1,3 dans `commande_salle.dart` | Jeton `AppContour.fort` (2 points, source : anneau de focus `Pressable.epaisseurFocus`, WCAG 2.4.11) et `AppContour.seuilTexteAgrandi` (1,3, source : `nav_shell` et Teaching Dock, doc 04 §28 et §33 n. 13), dans `lib/core/theme/app_contour.dart`. Référencés par `CommandeSalle` et `BoutonOutil`. |
+| Désactivation : la bascule perdait son état visuel | Une bascule inerte garde sa forme : plein neutre quand elle est active, contour seul quand elle est inactive ; seule l'encre s'atténue (`inkMuted`). Le mot d'état reste. Test : `commande_salle_test.dart`, groupe « bascule inerte ». |
+| Navigation du panneau enseignant : flèches disparues pendant une reconnexion | `BarrePrecedentSuivant` reçoit `actives` : **borne atteinte** = rappel nul = la flèche disparaît ; **commande momentanément inactive** = la flèche reste, inerte et atténuée. Le panneau passe `actives` au lieu d'annuler les rappels. Tests : `barre_precedent_suivant_test.dart` (cas `actives == false`, et borne maintenue) et `salle_enseignant_test.dart` (reconnexion). |
+| Exhaustivité de la navigation (règle `nav-a-libelle` trop étroite) | La règle voit maintenant toute clé de libellé nommée précédent ou suivant hors des arguments de `BarrePrecedentSuivant`, et tout `AppIcons.suivant` hors du composant. Sites vérifiés à la main et admis (liste dans `tool/verifier_revue.dart`) : `t.foyer.ajout.suivant` (étape de formulaire), `t.dossiers.file.suivants`, `suivantAnnonce`, `suivantsErreur` (pagination de liste « Charger les dossiers suivants »), `t.enseignant.cahier.devoirPrecedent` (devoir de la séance d'avant). Sites migrés : `mushaf_page`, `panneau_enseignant`, `barre_support`. Les chevrons de ligne (`AppIcons.chevron`) et « Retour » ne sont pas des navigations de pages. |
+| Action lourde « couper le micro de toute la classe » : preuve manquante | Commande : `git grep -niE "muteAll\|mute_all\|couperTous\|micro.*(tous\|toute la classe)\|(tous\|toute la classe).*micro\|setMicrophoneEnabled.*all\|muteParticipant\|mutePublished" -- lib test` (hors fichiers générés). Résultat : aucune occurrence dans `lib` ; une seule dans `test`, un commentaire sans rapport (`politique_observation_test.dart` : « micro, camera, publication data et admission : tous fermes »). L'action n'existe pas, donc aucune confirmation à poser ; si elle est créée, elle passera par `ConfirmDestructive`. |
+
+### Décision à valider par le directeur : mot d'état au-delà de 130 % de texte
+
+Dans une rangée compacte et au-delà de 130 % d'échelle de texte, le mot d'état d'une bascule passe en infobulle et dans la voix du lecteur d'écran. Il ne reste alors que deux signaux visibles (disque plein ou contour, icône), plus le mot parlé : « jamais la couleur seule » reste vrai, mais les trois signaux cumulés visibles ne tiennent pas. Cause mesurée : à 200 % sur 390 px, deux lignes de mot par commande ne tiennent plus dans la hauteur du téléphone (`salle_secours_test`, aucun débordement exigé). Choix provisoire consigné, sans blocage : dégradation acceptée sur ce seul palier, mot toujours lu à voix haute et en infobulle. Alternative à arbitrer : une rangée de commandes sur deux lignes à ce palier, au prix d'un dock plus haut. Aucune modification de l'exigence n'a été faite ; décision à dater par le directeur.

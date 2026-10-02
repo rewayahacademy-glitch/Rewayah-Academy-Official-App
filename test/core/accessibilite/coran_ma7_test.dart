@@ -196,8 +196,16 @@ void main() {
         tester.element(find.byType(MushafPage)),
       );
       expect(c.read(lectureCoranProvider).page, page);
-      expect(find.text(t.eleve.coran.pageSuivante), findsOneWidget);
-      expect(find.text(t.eleve.coran.pagePrecedente), findsOneWidget);
+      // NAV-FLECHES-1 : deux fleches rondes (le verbe entier est lu par le
+      // lecteur d'ecran), pas deux boutons a libelle.
+      expect(
+        find.byKey(const ValueKey<String>('nav-suivant')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey<String>('nav-precedent')),
+        findsOneWidget,
+      );
       expect(tester.takeException(), isNull);
     });
   }

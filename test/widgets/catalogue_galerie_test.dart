@@ -64,6 +64,10 @@ const List<String> composantsDuCatalogue = <String>[
   // montre qu'il en manquait un second, pour les ecrans sans page -- ni titre,
   // ni gouttiere, ni colonne bornee.
   'PageImmersive',
+  // Les deux que ETATS-BTN-1 et NAV-FLECHES-1 (revue du directeur 01-02/10)
+  // produisent : la commande ronde de la salle et la barre precedent / suivant.
+  'CommandeSalle',
+  'BarrePrecedentSuivant',
   // Section 2 : le composant d'etat que le lot N4 produit. Il porte a lui seul
   // deux invariants de l'etape 5 -- J3, un etat indisponible se dit « inconnu »
   // et jamais « absent », et J7, une couleur seule ne represente jamais un etat
@@ -104,7 +108,6 @@ const List<String> composantsDuCatalogue = <String>[
   // eux-memes, rendus au core. Voir lib/CLAUDE.md, « Interdits d'interface ».
   'BoutonOutil',
   'BoutonIcone',
-  'BoutonCommande',
   'RaccourciTactile',
   'LigneCleValeur',
   'GroupeReglages',

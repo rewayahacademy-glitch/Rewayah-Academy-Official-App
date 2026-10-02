@@ -5,9 +5,9 @@ import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
-import 'package:rewayah_academy/core/widgets/bouton_commande.dart';
 import 'package:rewayah_academy/core/widgets/bouton_icone.dart';
 import 'package:rewayah_academy/core/widgets/bouton_outil.dart';
+import 'package:rewayah_academy/core/widgets/commande_salle.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
@@ -274,8 +274,12 @@ void main() {
           ),
         };
 
-    for (final MapEntry<String, ({Widget Function(String) cree, List<Finder> contenu})>
-        c in composants.entries) {
+    for (final MapEntry<
+          String,
+          ({Widget Function(String) cree, List<Finder> contenu})
+        >
+        c
+        in composants.entries) {
       for (final double largeur in <double>[320, 1440]) {
         for (final double echelle in <double>[1, 2]) {
           for (final Brightness lum in Brightness.values) {
@@ -298,10 +302,7 @@ void main() {
                               : CrossAxisAlignment.center,
                           children: <Widget>[
                             if (c.key == 'BoutonOutil tuile')
-                              SizedBox(
-                                height: 96,
-                                child: c.value.cree(l),
-                              )
+                              SizedBox(height: 96, child: c.value.cree(l))
                             else
                               c.value.cree(l),
                           ],
@@ -421,7 +422,7 @@ void main() {
         }
         for (final FondCommande fond in FondCommande.values) {
           testWidgets(
-            'BoutonCommande ${fond.name} : disque et mot centres l un sur '
+            'CommandeSalle ${fond.name} : disque et mot centres l un sur '
             'l autre, ${largeur.toInt()} px, texte x${echelle.toInt()}',
             (WidgetTester tester) async {
               fixerVue(tester, Size(largeur, 900));
@@ -429,12 +430,9 @@ void main() {
                 hoteTheme(
                   Align(
                     alignment: AlignmentDirectional.centerStart,
-                    child: BoutonCommande(
-                      cleDisque: const ValueKey<String>('disque'),
+                    child: CommandeSalle(
                       icone: AppIcons.micro.repos,
                       libelle: 'Micro',
-                      diametre: 56,
-                      tailleIcone: 24,
                       fond: fond,
                       onPress: () {},
                     ),
@@ -443,12 +441,12 @@ void main() {
                 ),
               );
               final Rect disque = tester.getRect(
-                find.byKey(const ValueKey<String>('disque')),
+                find.byKey(const ValueKey<String>('disque-appel')),
               );
               final Rect mot = tester.getRect(find.text('Micro'));
               final Rect icone = tester.getRect(
                 find.descendant(
-                  of: find.byKey(const ValueKey<String>('disque')),
+                  of: find.byKey(const ValueKey<String>('disque-appel')),
                   matching: find.byType(Icon),
                 ),
               );

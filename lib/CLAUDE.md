@@ -8,7 +8,7 @@ dans `docs/archive/2026-09-pre-remise-a-plat/design/` (référence, pas une règ
 
 Les composants partagés (`Pressable`, `BentoTile`, `AvatarTile`, `AudioLabel`,
 `PermanentNotice`, `PinPad`, `EmptyState`, `OfflineBanner`, `ChoiceCardGroup`,
-`ActionPrincipale`, `LienFleche`, `FilterPill`, `BoutonOutil`, `BoutonIcone`, `BoutonCommande`, `RaccourciTactile`) sont les seuls points d'entrée de leur fonction : on les améliore, on
+`ActionPrincipale`, `LienFleche`, `FilterPill`, `BoutonOutil`, `BoutonIcone`, `CommandeSalle`, `RaccourciTactile`) sont les seuls points d'entrée de leur fonction : on les améliore, on
 n'en recrée pas un qui ferait la même chose.
 
 ## 🧊 Règles gelées du directeur, DESIGN-GOV-2026-09-26 (obligatoires avant tout nouveau lot visuel)
@@ -54,7 +54,7 @@ Textes complets : consignes K-54 à K-59 du tableau ; table des preuves : `docs/
 - **K-54 Boutons centrés.** Le contenu d'un bouton (libellé, icône) est centré horizontalement et verticalement, ligne à ligne s'il passe à la ligne. Un bouton ne déborde jamais de l'écran ni de sa carte. **Jamais de bouton recomposé dans un écran** : un `Pressable` qui peint lui-même un fond autour d'un `Text` ou d'une `Icon`, un `Pressable` dont l'enfant est un `Text` nu, un `InkWell` / `GestureDetector` qui réagit au toucher, un bouton ou une puce Material (`ChoiceChip`, `PopupMenuButton`...) sont refusés. Le composant du core qui convient, sinon on l'ajoute au core (centrage fait une fois, dans le composant) :
   - un verbe et son objet : `ActionPrincipale` (`pleineLargeur: false` donne la largeur du contenu, jamais celle du parent ; `doux` : pilule d'alerte douce de la sortie d'une salle) ;
   - un mot qui mène ailleurs : `LienFleche` (cible de 48, `libelleSemantique`, `encre` pour la salle) ;
-  - une icône et son mot (outil, tuile) : `BoutonOutil` (`nue` ou `tuile`) ; une icône seule : `BoutonIcone` ; un disque et son mot (micro, caméra, quitter) : `BoutonCommande` ;
+  - une icône et son mot (outil, tuile) : `BoutonOutil` (`nue` ou `tuile`) ; une icône seule : `BoutonIcone` ; un disque et son mot (micro, caméra, quitter) : `CommandeSalle` ;
   - un filtre ou un onglet : `FilterPill` ; une ligne ou une carte qui se touche : `AppCard(onPress:)`, `SettingRow` ; un menu : `MenuActions`, `MenuFiltre` ;
   - toucher une photo en doublon d'un lien : `RaccourciTactile` (exclu du focus et de la sémantique, le lien reste le contrôle).
   Contrôles : `bouton-recompose` (`tool/verifier_revue.dart`, quatre formes, socle à 0) ; `test/core/garde_interface_test.dart` (`verifierContenuCentre`, `verifierLibelleCentreLigneALigne`, 320 et 1440 px, texte ×1 et ×2, clair et sombre, parent qui étire ou non) ; tout nouveau composant de bouton entre dans cette garde.
@@ -63,6 +63,11 @@ Textes complets : consignes K-54 à K-59 du tableau ; table des preuves : `docs/
 - **K-57 Formulaires semi-automatiques : déduit > choisi > saisi.** Préremplir (profil, foyer, classe, créneaux, dernière valeur, date du jour), sinon proposer (liste, puces, sélecteur, meilleure option justifiée), sinon seulement saisir (nom, note libre). Chaque fiche de formulaire classe ses champs déduit / choisi / saisi et justifie chaque « saisi ».
 - **K-58 Tout choix s'explique.** Chaque option dit quand la choisir et sa conséquence ; une conséquence irréversible se dit avant le choix ; l'écran commence par une phrase de contexte ; quand l'option est une carte, **toute la carte** est cliquable et l'état choisi se voit sur toute la carte.
 - **K-59 Tout message d'échec ou de données incomplètes** dit ce qui manque, la cause probable en mots simples, et quoi faire maintenant (D5 : « non confirmé », jamais « non envoyé »). Contrôle : `erreur-sans-action`.
+
+Deux règles de la salle, de la revue du 01 et 02/10 (ETATS-BTN-1, NAV-FLECHES-1), composants partagés `CommandeSalle` et `BarrePrecedentSuivant` (`lib/core/widgets`) :
+
+- **Une bascule (micro, caméra, son reçu, agrandir) montre son état par trois signaux cumulés**, jamais par la couleur seule : disque plein de contraste (`surfaceInverse`) quand elle est active, contour seul de 2 points (`borderStrong`) quand elle est inactive ; icône différente (micro / micro barré, caméra / caméra barrée) ; mot d'état court sous l'icône (« Micro ouvert » / « Micro coupé », « Caméra allumée » / « Caméra éteinte »). Cible 48 px, au moins un palier (8) entre deux disques, case de bascule de deux cibles de large pour que le mot ne déplace pas ses voisines. Seul un texte agrandi à plus de 130 % dans une rangée compacte fait passer le mot en infobulle et dans la voix du lecteur d'écran. Les actions lourdes (quitter, terminer la séance) passent par `ConfirmDestructive` (`confirmerQuitterSeance`), jamais par un appui direct. Contrôle : `bascule-sans-etat`, test `test/core/widgets/commande_salle_test.dart`.
+- **Navigation précédent / suivant façon lecteur de musique** : flèche de début, position courante au centre, flèche de fin ; deux disques ronds de même taille, icône centrée, cible 48 px ; **au début et à la fin la flèche disparaît** (elle n'est pas grisée, sa place reste réservée pour que la position reste centrée) ; libellés lus en entier (« Page précédente », « Présenter la page suivante ») ; miroir en arabe (le glyphe de `AppIcons.suivant` est retourné selon `Directionality`, dans le composant seulement). Jamais deux boutons à libellé. Contrôle : `nav-a-libelle`, test `test/core/widgets/barre_precedent_suivant_test.dart`.
 
 Règles équivalentes, déduites des remarques du directeur :
 

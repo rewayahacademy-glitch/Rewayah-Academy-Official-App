@@ -146,6 +146,14 @@ void main() {
               ),
               home: SalleSeance(
                 vue: vue,
+                // Le mot d'etat des bascules (ETATS-BTN-1) suit l'etat local :
+                // la Classe Live entre micro et camera coupes, la salle
+                // comparee doit etre dans le meme etat pour dire les memes
+                // mots.
+                local: const EtatLocalSeance(
+                  microOuvert: false,
+                  cameraAllumee: false,
+                ),
                 actions: ActionsSeance(
                   onQuitter: rien,
                   onMicro: rien,

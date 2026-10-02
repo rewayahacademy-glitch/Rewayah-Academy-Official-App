@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../icons/app_icons.dart';
+import '../theme/app_contour.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
@@ -98,15 +99,23 @@ class BoutonOutil extends StatelessWidget {
     // Doc 04 §28 et §33 n. 13 : sans libelle visible, ou quand l'agrandissement
     // du texte le coupe, une infobulle le montre (comme `nav_shell`).
     final bool infobulle =
-        !avecLibelle || MediaQuery.textScalerOf(context).scale(1) > 1.3;
+        !avecLibelle ||
+        MediaQuery.textScalerOf(context).scale(1) > AppContour.seuilTexteAgrandi;
 
-    final TextStyle styleLibelle =
-        (tuile
-                ? palette.inkStrong
-                : retenu
-                ? palette.inkAccent
-                : palette.inkMuted)
-            .applyTo(textes.labelSmall ?? const TextStyle());
+    final TextStyle base = textes.labelSmall ?? const TextStyle();
+    final TextStyle styleLibelle = tuile
+        ? palette.inkStrong.applyTo(base)
+        : retenu
+        ? palette.surfaceInverse.applyTo(base)
+        : palette.inkMuted.applyTo(base);
+    final IconThemeData themeIcone = tuile
+        ? (retenu || iconeActive ? palette.inkAccent : palette.inkStrong)
+              .asIconTheme(size: taille)
+        : retenu
+        ? IconThemeData(color: palette.surfaceInverse.onBackground, size: taille)
+        : (iconeActive ? palette.inkAccent : palette.inkStrong).asIconTheme(
+            size: taille,
+          );
 
     final Widget contenu = Padding(
       padding: EdgeInsets.symmetric(
@@ -124,8 +133,7 @@ class BoutonOutil extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             IconTheme(
-              data: (retenu || iconeActive ? palette.inkAccent : palette.inkStrong)
-                  .asIconTheme(size: taille),
+              data: themeIcone,
               child: Icon(
                 iconeActive ? icone.actif : icone.resoudre(selectionne: retenu),
               ),
@@ -160,8 +168,18 @@ class BoutonOutil extends StatelessWidget {
                   side: palette.borderHairline.asBorderSide(),
                 )
               : retenu
-              ? palette.washAccent.decoration(borderRadius: AppRadius.arrondiSm)
-              : const BoxDecoration(),
+              // ETATS-BTN-1 : l'outil arme est un aplat plein et contraste ;
+              // l'outil inactif garde un contour seul (jamais l'absence de
+              // forme : l'etat se lit sans la couleur).
+              ? palette.surfaceInverse.decoration(
+                  borderRadius: AppRadius.arrondiSm,
+                )
+              : BoxDecoration(
+                  borderRadius: AppRadius.arrondiSm,
+                  border: Border.fromBorderSide(
+                    palette.borderStrong.asBorderSide(width: AppContour.fort),
+                  ),
+                ),
           child: contenu,
         ),
       ),
