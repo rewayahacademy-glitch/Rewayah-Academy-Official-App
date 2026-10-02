@@ -5,6 +5,7 @@ import '../../core/theme/app_elevation.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/pressable.dart';
 
@@ -352,36 +353,12 @@ class BoutonEntete extends StatelessWidget {
   final VoidCallback onPress;
 
   @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    return Tooltip(
-      message: libelle,
-      child: Pressable(
-        onPress: onPress,
-        libelleSemantique: libelle,
-        arrondiFocus: AppRadius.arrondiSm,
-        child: ExcludeSemantics(
-          child: SizedBox.square(
-            dimension: AppTouchTarget.standard,
-            child: DecoratedBox(
-              decoration: AppElevation.avecFilet(
-                surface: palette.surfaceRaised,
-                filet: palette.contourCarte,
-                ombre: palette.ombre,
-                arrondi: AppRadius.arrondiSm,
-              ),
-              child: Center(
-                child: IconTheme(
-                  data: palette.inkAccent.asIconTheme(size: AppSpacing.xxl),
-                  child: Icon(icone.repos),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => BoutonIcone(
+    icone: icone,
+    libelle: libelle,
+    forme: FormeBoutonIcone.carre,
+    onPress: onPress,
+  );
 }
 
 /// La colonne des sous-pages du Compte : largeur de lecture des reglages

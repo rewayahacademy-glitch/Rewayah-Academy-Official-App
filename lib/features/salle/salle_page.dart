@@ -21,7 +21,6 @@ import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
-import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/livekit_session_provider.dart';
 import '../../core/video/pre_vol.dart';
@@ -30,11 +29,12 @@ import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/bouton_commande.dart';
 import '../../core/widgets/confirm_destructive.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/page_immersive.dart';
 import '../../core/widgets/permanent_notice.dart';
-import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/status_pill.dart';
 import '../fiche_groupe/preparation_seance.dart';
@@ -719,19 +719,16 @@ class _Entete extends StatelessWidget {
               // **Un mot, pas une icone.** Aucune icone du catalogue ne dit
               // « presence » : emprunter celle du foyer lui donnerait un
               // second sens, et `AppIcons` n'existe que pour qu'un signe garde
-              // le sien. Le mot suffit, et `Pressable` lui donne sa cible
-              // tactile.
-              Pressable(
-                onPress: onVoirPresence,
+              // le sien. Le mot suffit : `LienFleche` lui donne sa cible tactile
+              // et son centrage (K-54).
+              LienFleche(
+                libelle: t.presence.titre,
                 libelleSemantique: t.presence.voir,
-                child: Text(
-                  t.presence.titre,
-                  style: _encreSalle(
-                    context,
-                    textes.labelMedium,
-                    active: encreAccessible,
-                  ),
-                ),
+                onPress: onVoirPresence,
+                fleche: false,
+                encre: encreAccessible
+                    ? AppPalette.of(context).surfaceInverse.applyTo
+                    : null,
               ),
             ],
           ],
@@ -1867,52 +1864,26 @@ class _Commande extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final AppColorPair ouverte = palette.surfaceRaised;
 
+    // Le disque, l'icone et le mot sont peints par le composant du core
+    // (K-54) : ici, seulement l'etat (cercle rempli quand ouverte) et l'encre
+    // du registre de la salle.
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-      child: Pressable(
-        onPress: onPress,
+      child: BoutonCommande(
+        icone: icone.resoudre(selectionne: actif),
+        libelle: libelle,
         libelleSemantique: acte,
-        arrondiFocus: AppRadius.arrondiFull,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            SizedBox.square(
-              dimension: metriques.cibleTactile,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: actif ? ouverte.background : null,
-                  border: actif
-                      ? null
-                      : Border.fromBorderSide(
-                          palette.borderStrong.asBorderSide(),
-                        ),
-                ),
-                child: Center(
-                  child: Icon(
-                    icone.resoudre(selectionne: actif),
-                    color: actif ? ouverte.onBackground : null,
-                  ),
-                ),
-              ),
-            ),
-            Ecart.vXs,
-            Text(
-              libelle,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: _encreSalle(
-                context,
-                textes.labelSmall,
-                active: encreDuRegistre,
-              ),
-            ),
-          ],
+        onPress: onPress,
+        diametre: metriques.cibleTactile,
+        tailleIcone: AppSpacing.xxl,
+        fond: actif ? FondCommande.releve : FondCommande.contour,
+        styleLibelle: _encreSalle(
+          context,
+          textes.labelSmall,
+          active: encreDuRegistre,
         ),
       ),
     );

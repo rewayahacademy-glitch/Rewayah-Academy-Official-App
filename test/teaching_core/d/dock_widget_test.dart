@@ -15,7 +15,7 @@ import 'package:rewayah_academy/core/tc_outils/port_assignations.dart';
 import 'package:rewayah_academy/core/tc_outils/port_dock_hote.dart';
 import 'package:rewayah_academy/core/tc_realtime/port_realtime_pedagogique.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
-import 'package:rewayah_academy/features/tc_dock/bouton_outil.dart';
+import 'package:rewayah_academy/core/widgets/bouton_outil.dart';
 import 'package:rewayah_academy/features/tc_dock/teaching_dock.dart';
 
 import 'faux/faux_dock_hote.dart';

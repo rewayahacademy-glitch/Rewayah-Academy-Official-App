@@ -317,13 +317,15 @@ void main() {
         WidgetTester tester,
       ) async {
         await _monter(tester, taille.value);
+        // La pastille est la surface peinte de l'ActionPrincipale compacte (la
+        // cible tactile de 48 qui l'entoure n'est pas dessinee).
         final Rect pastille = tester.getRect(
           find
               .descendant(
                 of: find.byKey(
                   const ValueKey<String>('ouvrir-demo-chapitre-1'),
                 ),
-                matching: find.byType(Container),
+                matching: find.byType(DecoratedBox),
               )
               .first,
         );

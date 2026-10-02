@@ -18,6 +18,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
+import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/pressable.dart';
 
 /// La largeur du volet en web etroit (image CLV-07 : ≈ 313 a 640 de large).
@@ -255,35 +256,12 @@ class _MenuPanneau extends StatelessWidget {
   final VoidCallback onFermer;
 
   @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final Color? encre = palette.inkStrong
-        .asIconTheme(size: AppSpacing.xs)
-        .color;
-    Widget point() => SizedBox.square(
-      dimension: AppSpacing.xs,
-      child: DecoratedBox(
-        decoration: BoxDecoration(color: encre, shape: BoxShape.circle),
-      ),
-    );
-    return PopupMenuButton<int>(
-      key: const ValueKey<String>('menu-panneau-seance'),
-      tooltip: t.salle.seance.optionsPanneau(titre: titre),
-      position: PopupMenuPosition.under,
-      onSelected: (int _) => onFermer(),
-      itemBuilder: (BuildContext _) => <PopupMenuEntry<int>>[
-        PopupMenuItem<int>(value: 0, child: Text(t.salle.seance.fermerPanneau)),
-      ],
-      child: SizedBox.square(
-        dimension: AppSpacing.titreEcran,
-        child: Center(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            spacing: AppSpacing.xs,
-            children: <Widget>[point(), point(), point()],
-          ),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => MenuActions(
+    key: const ValueKey<String>('menu-panneau-seance'),
+    tooltip: t.salle.seance.optionsPanneau(titre: titre),
+    points: true,
+    actions: <EntreeAction>[
+      EntreeAction(libelle: t.salle.seance.fermerPanneau, onChoix: onFermer),
+    ],
+  );
 }

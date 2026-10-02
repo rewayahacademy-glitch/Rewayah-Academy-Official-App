@@ -20,10 +20,10 @@ import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/app_card.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/offline_banner.dart';
-import '../../core/widgets/pressable.dart';
 import 'actions_seance.dart';
 import 'barre_support.dart';
 import 'chrome_seance.dart';
@@ -1207,58 +1207,43 @@ class BoutonPanneau extends StatelessWidget {
         Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
       ),
     );
+    // La carte pressable du core (K-54) : surface, filet, cible tactile et
+    // centrage vertical viennent d'`AppCard`, jamais d'un fond peint ici.
     return Semantics(
       selected: ouvert,
-      child: Pressable(
+      child: AppCard(
         onPress: onPress,
         libelleSemantique: libelle,
-        arrondiFocus: AppRadius.arrondiMd,
         focusNode: focusNode,
-        child: DecoratedBox(
-          decoration: palette.surfaceRaised.decoration(
-            borderRadius: AppRadius.arrondiMd,
-            side: palette.borderHairline.asBorderSide(),
-          ),
-          child: SizedBox(
-            // Telephone et web etroit : plus bas et plus serre (images).
-            height: etire
-                ? AppSpacing.titreEcran
-                : AppSpacing.titreEcran + AppSpacing.xs,
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: etire ? AppSpacing.md : AppSpacing.lg,
-              ),
-              // Le libelle est deja porte par la semantique de Pressable :
-              // exclure celle du contenu visuel evite une double lecture
-              // (« Eleves 1/3\nEleves 1/3 »).
-              child: ExcludeSemantics(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    IconTheme(
-                      data: palette.inkAccent.asIconTheme(
-                        size: serre ? AppSpacing.xl : AppSpacing.xxl,
-                      ),
-                      child: Icon(icone.repos),
-                    ),
-                    if (serre) Ecart.hSm else Ecart.hMd,
-                    if (etire) Expanded(child: texte) else texte,
-                    if (serre)
-                      Ecart.hXs
-                    else if (etire)
-                      Ecart.hSm
-                    else
-                      Ecart.hLg,
-                    IconTheme(
-                      data: palette.inkMuted.asIconTheme(
-                        size: serre ? AppSpacing.lg : AppSpacing.xl,
-                      ),
-                      child: Icon(AppIcons.chevron.repos),
-                    ),
-                  ],
+        marge: etire ? AppSpacing.md : AppSpacing.lg,
+        // Le libelle est deja porte par la semantique de la carte : exclure
+        // celle du contenu visuel evite une double lecture
+        // (« Eleves 1/3 » lu deux fois).
+        child: ExcludeSemantics(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              IconTheme(
+                data: palette.inkAccent.asIconTheme(
+                  size: serre ? AppSpacing.xl : AppSpacing.xxl,
                 ),
+                child: Icon(icone.repos),
               ),
-            ),
+              if (serre) Ecart.hSm else Ecart.hMd,
+              if (etire) Expanded(child: texte) else texte,
+              if (serre)
+                Ecart.hXs
+              else if (etire)
+                Ecart.hSm
+              else
+                Ecart.hLg,
+              IconTheme(
+                data: palette.inkMuted.asIconTheme(
+                  size: serre ? AppSpacing.lg : AppSpacing.xl,
+                ),
+                child: Icon(AppIcons.chevron.repos),
+              ),
+            ],
           ),
         ),
       ),

@@ -17,8 +17,8 @@ import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/bouton_commande.dart';
 import '../../core/widgets/confirm_destructive.dart';
-import '../../core/widgets/pressable.dart';
 import 'actions_seance.dart';
 import 'feuille_micro_bloque.dart';
 import 'libelles_salle_b.dart';
@@ -85,10 +85,6 @@ double _tailleIconeAppel(BuildContext context) =>
     ? AppSpacing.xxxl
     : AppSpacing.xxl;
 
-/// L'encre claire fixe de Quitter : l'encre de la paire d'alerte du theme
-/// clair (blanc), prise au jeton et non ecrite en dur.
-final Color _encreClaire = AppPalette.claire().surfaceAlert.onBackground;
-
 /// EN-12 (UX_REVIEW_04 n° 17 d, K-42) : le dock etroit trop serre (390,
 /// 768 a sept boutons) ou le texte agrandi. Les boutons y passent en icone
 /// seule, le libelle reste lu par le lecteur d'ecran, et le disque tient
@@ -137,103 +133,30 @@ class BoutonAppel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final ThemeData theme = Theme.of(context);
     final _DockEtroit? etroit = context
         .dependOnInheritedWidgetOfExactType<_DockEtroit>();
-    final bool iconeSeule = etroit != null;
-    final double diametre = etroit?.diametre ?? diametreBoutonAppel(context);
-    final double tailleIcone = _tailleIconeAppel(context);
-    final BoxDecoration disque = !actif
-        ? palette.surfaceRaised.decoration(
-            borderRadius: AppRadius.arrondiFull,
-            side: palette.borderResting.asBorderSide(),
-          )
-        : switch (fond) {
-            FondBoutonAppel.surface ||
-            FondBoutonAppel.reseau => palette.surfaceOverlay.decoration(
-              borderRadius: AppRadius.arrondiFull,
-              side: palette.borderHairline.asBorderSide(),
-            ),
-            FondBoutonAppel.alerte => palette.pointsStatut.alerte.pastille(),
-            FondBoutonAppel.succes => palette.surfaceSuccess.decoration(
-              borderRadius: AppRadius.arrondiFull,
-            ),
-            FondBoutonAppel.primaire => palette.surfacePrimary.decoration(
-              borderRadius: AppRadius.arrondiFull,
-            ),
-          };
-    final IconThemeData encre = !actif
-        ? palette.inkMuted.asIconTheme(size: tailleIcone)
-        : switch (fond) {
-            FondBoutonAppel.surface => palette.inkStrong.asIconTheme(
-              size: tailleIcone,
-            ),
-            // Encre claire fixe, dans les deux themes (images : combine blanc sur
-            // disque rouge). Le disque est un point d'alerte, pas la paire
-            // `surfaceAlert` : son encre sombre en theme sombre tombait sous 2:1
-            // sur le rouge vif. Le blanc tient 4,1:1 (clair) et 3,3:1 (sombre),
-            // au-dessus du seuil de 3:1 d'un element graphique (WCAG 1.4.11).
-            FondBoutonAppel.alerte => IconThemeData(
-              color: _encreClaire,
-              size: tailleIcone,
-            ),
-            FondBoutonAppel.reseau => palette.inkSuccess.asIconTheme(
-              size: tailleIcone,
-            ),
-            FondBoutonAppel.succes => IconThemeData(
-              color: palette.surfaceSuccess.onBackground,
-              size: tailleIcone,
-            ),
-            FondBoutonAppel.primaire => IconThemeData(
-              color: palette.surfacePrimary.onBackground,
-              size: tailleIcone,
-            ),
-          };
-    final Widget pressable = Pressable(
+    // Le disque, l'icone et le mot sont peints par le composant du core
+    // (K-54) : ici, seulement ce que le dock decide.
+    return BoutonCommande(
+      icone: icone,
+      libelle: libelle,
+      libelleSemantique: libelleSemantique,
       onPress: onPress,
+      diametre: etroit?.diametre ?? diametreBoutonAppel(context),
+      tailleIcone: _tailleIconeAppel(context),
+      fond: switch (fond) {
+        FondBoutonAppel.surface => FondCommande.surface,
+        FondBoutonAppel.alerte => FondCommande.alerte,
+        FondBoutonAppel.succes => FondCommande.succes,
+        FondBoutonAppel.primaire => FondCommande.primaire,
+        FondBoutonAppel.reseau => FondCommande.reseau,
+      },
       actif: actif,
       focusNode: focusNode,
-      libelleSemantique: libelleSemantique ?? libelle,
-      arrondiFocus: AppRadius.arrondiMd,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          SizedBox.square(
-            key: const ValueKey<String>('disque-appel'),
-            dimension: diametre,
-            child: DecoratedBox(
-              decoration: disque,
-              child: Center(
-                child: IconTheme(data: encre, child: Icon(icone)),
-              ),
-            ),
-          ),
-          if (!iconeSeule) ...<Widget>[
-            Ecart.vXs,
-            Text(
-              libelle,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: (actif ? palette.inkStrong : palette.inkMuted).applyTo(
-                theme.textTheme.labelMedium ?? const TextStyle(),
-              ),
-            ),
-          ],
-        ],
-      ),
+      selectionne: selectionne,
+      iconeSeule: etroit != null,
+      cleDisque: const ValueKey<String>('disque-appel'),
     );
-    // Doc 04 §28 et §33 n. 13 : en icone seule, le libelle reste visible en
-    // infobulle (comme `nav_shell`), deja lu par `Pressable`.
-    final Widget bouton = iconeSeule
-        ? Tooltip(
-            message: libelleSemantique ?? libelle,
-            excludeFromSemantics: true,
-            child: pressable,
-          )
-        : pressable;
-    final bool? choisi = selectionne;
-    return choisi == null ? bouton : Semantics(selected: choisi, child: bouton);
   }
 }
 
@@ -495,7 +418,7 @@ class DockSeance extends StatelessWidget {
 /// Le statut « Camera desactivee pour ce profil. » de l'eleve standard
 /// (P10.3, [VueSeance.texteCameraInterdite]) : un **texte d'etat discret**
 /// (encre `inkMuted`, `bodyMedium`), comme « La seance se poursuit. » de la
-/// ligne d'etat. Non interactif (aucun [Pressable], ni survol ni focus), lu
+/// ligne d'etat. Non interactif (aucun `Pressable`, ni survol ni focus), lu
 /// avant le dock. Une phrase de cinq mots : une `StatusPill` (deux mots au
 /// plus) passait a la ligne ; le texte reflue librement a 320 et a 200 %.
 class StatutCameraInterdite extends StatelessWidget {
