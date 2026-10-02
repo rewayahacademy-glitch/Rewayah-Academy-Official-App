@@ -213,6 +213,59 @@ void main() {
     });
   }
 
+  // MA-RC (M2, MA22, K-51) : comme `MushafPage`, le grossissement enregistre
+  // avec la position est retabli a l'ouverture, puis garde a l'ecriture.
+  testWidgets('le grossissement enregistre est retabli puis garde', (
+    WidgetTester tester,
+  ) async {
+    await _taille(tester, const Size(390, 844));
+    final int page = reference.pages.first.numero;
+    final FauxNavigationCoran navigation = FauxNavigationCoran(
+      personnelle: PositionLecture(
+        page: page,
+        sourate: 1,
+        verset: 1,
+        zoom: 1.6,
+      ),
+    );
+    await tester.pumpWidget(
+      _hote(
+        EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+          destinationInitiale: EcranAccessibiliteDemo.indexCoran,
+          surchargesCoran: <Override>[
+            portCorpusCoranProvider.overrideWithValue(
+              FauxCorpusCoran(reference),
+            ),
+            portLayoutMushafProvider.overrideWithValue(
+              const LayoutLignesIndisponible(),
+            ),
+            portNavigationCoranProvider.overrideWithValue(navigation),
+          ],
+        ),
+      ),
+    );
+    await poser(tester);
+    await tester.tap(find.byKey(_principale));
+    await poser(tester);
+    final ProviderContainer c = ProviderScope.containerOf(
+      tester.element(find.byType(LecteurCoranAccessibilite)),
+    );
+    expect(c.read(lectureCoranProvider).zoomLocal, 1.6);
+    final Finder suivante = find.text(t.eleve.coran.pageSuivante);
+    await tester.ensureVisible(suivante);
+    await tester.tap(suivante);
+    // La page se charge, puis la minuterie (3 s) ecrit la position.
+    await poser(tester);
+    expect(c.read(lectureCoranProvider).page, isNot(page));
+    for (int i = 0; i < 8; i++) {
+      await tester.pump(const Duration(milliseconds: 500));
+    }
+    expect(navigation.ecritures, isNotEmpty);
+    expect(navigation.ecritures.last.position.zoom, 1.6);
+    expect(tester.takeException(), isNull);
+  });
+
   // Revue MA-7 (1) et (2) : commandes de page flechees, jamais coupees en
   // plein mot, visibles sans defilement a 390 et a 1440 ; a 200 % elles
   // restent atteignables.

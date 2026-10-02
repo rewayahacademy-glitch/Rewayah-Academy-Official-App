@@ -128,6 +128,9 @@ class _CoranAccessibiliteEtat extends ConsumerState<CoranAccessibilite> {
     final PositionLecture? reprise = _reprise;
     if (reprise != null) {
       lecture.allerA(reprise.page, origine: OrigineNavigation.personnelle);
+      // Comme `MushafPage` : le grossissement voyage avec la position, un
+      // lecteur qui a grossi son texte le retrouve grossi (MA22, K-51).
+      lecture.definirZoom(reprise.zoom);
     }
     if (widget.lectureGrande ??
         ref.read(preferencesLocalesProvider).lectureGrande) {
