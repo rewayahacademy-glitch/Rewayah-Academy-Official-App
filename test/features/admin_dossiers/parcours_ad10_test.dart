@@ -228,12 +228,11 @@ void main() {
     await tester.tap(find.text(t.attente.corriger));
     await _stabiliser(tester);
     expect(find.text(t.kyc.titre), findsOneWidget);
-    await tester.tap(find.text(t.kyc.passeport));
-    await _stabiliser(tester);
-    await tester.tap(find.text(t.kyc.choisirFichier));
-    await _stabiliser(tester);
-    await tester.tap(find.text(t.kyc.envoyer));
-    await _stabiliser(tester);
+    // KYC-PHOTO-1 a ajoute la phrase de confidentialite sous l'intro : a
+    // 390 x 844 les choix passent sous le pli, on fait defiler puis on tape.
+    await _toucher(tester, t.kyc.passeport);
+    await _toucher(tester, t.kyc.choisirFichier);
+    await _toucher(tester, t.kyc.envoyer);
     await _stabiliser(tester);
     expect(find.text(t.attente.titre), findsOneWidget);
     expect(find.textContaining('notification'), findsNothing);

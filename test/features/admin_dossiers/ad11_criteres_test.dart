@@ -34,7 +34,7 @@ import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
-import 'package:rewayah_academy/core/widgets/stat_tile.dart';
+import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/admin_dossiers/etat_file_dossiers.dart';
 import 'package:rewayah_academy/features/admin_dossiers/textes_dossier.dart';
@@ -174,8 +174,12 @@ Future<void> _barre(WidgetTester tester, AdminDomaine d) async {
   await _stab(tester);
 }
 
-Finder _tuileDossiers() => find.byWidgetPredicate(
-  (Widget w) => w is StatTile && w.libelle == t.admin.tableau.dossiers,
+/// La grande tuile « Dossiers a valider » du Centre de commande (BENTO-1),
+/// trouvee par ce qu'elle lit : le chiffre [valeur] ET ce qu'il compte.
+Finder _tuileDossiers(int valeur) => find.byWidgetPredicate(
+  (Widget w) =>
+      w is AppCard &&
+      w.libelleSemantique == '$valeur ${t.admin.tableau.dossiers}',
 );
 
 Future<void> _capture(WidgetTester tester, String nom) async {
@@ -290,9 +294,16 @@ void main() {
         const Size(1440, 900),
         etat: etat,
       );
-      expect(tester.widget<StatTile>(_tuileDossiers()).valeur, avant);
-      await tester.ensureVisible(_tuileDossiers());
-      await tester.tap(_tuileDossiers());
+      expect(_tuileDossiers(avant), findsOneWidget);
+      expect(
+        find.descendant(
+          of: _tuileDossiers(avant),
+          matching: find.text('$avant'),
+        ),
+        findsOneWidget,
+      );
+      await tester.ensureVisible(_tuileDossiers(avant));
+      await tester.tap(_tuileDossiers(avant));
       await _stab(tester);
       expect(_chemin(routeur), Routes.adminPersonnesDossiers);
 
@@ -316,7 +327,14 @@ void main() {
 
       await _barre(tester, AdminDomaine.accueil);
       expect(_chemin(routeur), Routes.admin);
-      expect(tester.widget<StatTile>(_tuileDossiers()).valeur, avant - 1);
+      expect(_tuileDossiers(avant - 1), findsOneWidget);
+      expect(
+        find.descendant(
+          of: _tuileDossiers(avant - 1),
+          matching: find.text('${avant - 1}'),
+        ),
+        findsOneWidget,
+      );
       expect(
         find.bySemanticsLabel(
           RegExp('^${avant - 1} ${RegExp.escape(t.admin.tableau.dossiers)}'),
