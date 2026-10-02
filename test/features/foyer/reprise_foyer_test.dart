@@ -585,6 +585,25 @@ void main() {
     expect(find.byKey(RepriseFoyerPage.etatKey), findsNothing);
   });
 
+  testWidgets('chargement, titulaire : un squelette, aucun faux etat', (
+    WidgetTester tester,
+  ) async {
+    taille(tester, const Size(390, 844));
+    final Completer<DemandeRepriseRecue> jamais =
+        Completer<DemandeRepriseRecue>();
+    await monterPage(
+      tester,
+      RepriseTitulairePage(onRetour: () {}, onRefusee: () {}),
+      surcharges: <Override>[
+        demandeRepriseRecueProvider.overrideWith((Ref _) => jamais.future),
+      ],
+    );
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.byType(Skeleton), findsWidgets);
+    expect(find.byKey(RepriseTitulairePage.refuserKey), findsNothing);
+    expect(find.byKey(RepriseTitulairePage.refuseeKey), findsNothing);
+  });
+
   testWidgets('echec de lecture : recuperable, aucune action', (
     WidgetTester tester,
   ) async {
