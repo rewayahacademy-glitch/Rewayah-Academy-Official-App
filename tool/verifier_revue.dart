@@ -117,6 +117,7 @@ void main(List<String> arguments) {
     'libelle-ambigu',
     'mot-interne',
     'erreur-sans-action',
+    'selecteur-theme-recompose',
   };
   final String? filtre = arguments
       .where((String a) => a.startsWith('--regle='))
@@ -167,6 +168,9 @@ void main(List<String> arguments) {
   }
   if (regles.contains('bouton-recompose')) {
     violations.addAll(_boutonsRecomposes());
+  }
+  if (regles.contains('selecteur-theme-recompose')) {
+    violations.addAll(_selecteursThemeRecomposes());
   }
   if (regles.contains('libelle-ambigu')) {
     for (final MapEntry<String, String> e in fr.entries) {
@@ -473,6 +477,32 @@ List<Violation> _boutonsRecomposes() {
           ),
         );
       }
+    }
+  }
+  return v;
+}
+
+/// THEME-SW-1 : le choix du theme est `SelecteurTheme` (un rectangle, trois
+/// bascules soleil, systeme, lune). Un ecran qui recompose le choix en cartes,
+/// en lignes radio ou en boutons de son cru est une violation.
+List<Violation> _selecteursThemeRecomposes() {
+  final List<Violation> v = <Violation>[];
+  final RegExp recompose = RegExp(
+    r'\b(?:RadioGroup|Radio|SegmentedButton|DropdownButton|'
+    r'ControleSegmente)<PreferenceTheme>|'
+    r'PreferenceTheme\.values',
+  );
+  for (final File f in _sourcesFeatures()) {
+    final String t = _sansCommentaires(f);
+    for (final RegExpMatch m in recompose.allMatches(t)) {
+      v.add(
+        Violation(
+          f.path,
+          _ligneDe(t, m.start),
+          'selecteur-theme-recompose',
+          m.group(0)!,
+        ),
+      );
     }
   }
   return v;

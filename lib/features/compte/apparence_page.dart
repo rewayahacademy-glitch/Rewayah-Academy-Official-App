@@ -4,15 +4,13 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/preferences/preferences_locales.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/selecteur_theme.dart';
 import 'carte_rubriques.dart';
-import 'preferences_page.dart';
 
 /// L'apparence de l'application sur cet appareil
 /// (`/tuteur/compte/preferences/apparence`, maquette V4, ecran 02).
@@ -37,9 +35,6 @@ class ApparenceComptePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final PreferenceTheme theme = ref.watch(
-      preferencesLocalesProvider.select((PreferencesLocales p) => p.theme),
-    );
 
     return PageShell(
       titre: t.compte.tuteur.pageApparence.titre,
@@ -61,37 +56,8 @@ class ApparenceComptePage extends ConsumerWidget {
                 ),
               ),
             ),
-            Ecart.vXs,
-            Text(
-              t.compte.tuteur.pageApparence.themeDetail,
-              style: palette.inkMuted.applyTo(
-                textes.bodyMedium ?? const TextStyle(),
-              ),
-            ),
             Ecart.vMd,
-            // La cle suit le theme : un choix fait ailleurs (bascule de
-            // l'en-tete) se reflete ici au lieu de garder l'ancienne carte.
-            ChoiceCardGroup(
-              key: ValueKey<PreferenceTheme>(theme),
-              autoriserSaisieLibre: false,
-              valeurInitiale: ReponseChoix(valeurs: <String>{theme.name}),
-              options: <OptionChoix>[
-                for (final PreferenceTheme choix in PreferenceTheme.values)
-                  OptionChoix(
-                    valeur: choix.name,
-                    libelle: libelleTheme(choix),
-                    icone: _icone(choix),
-                  ),
-              ],
-              onChange: (ReponseChoix reponse) {
-                final PreferenceTheme? choisi = reponse.valeurs.isEmpty
-                    ? null
-                    : PreferenceTheme.depuis(reponse.valeurs.first);
-                if (choisi != null) {
-                  ref.read(preferencesLocalesProvider.notifier).theme(choisi);
-                }
-              },
-            ),
+            const SelecteurTheme(),
             Ecart.vXl,
             GroupeReglages(
               titre: t.compte.tuteur.pageApparence.confort,
@@ -113,10 +79,4 @@ class ApparenceComptePage extends ConsumerWidget {
       ),
     );
   }
-
-  static AppIcon _icone(PreferenceTheme theme) => switch (theme) {
-    PreferenceTheme.systeme => AppIcons.tabletteOuOrdinateur,
-    PreferenceTheme.clair => AppIcons.themeClair,
-    PreferenceTheme.sombre => AppIcons.themeSombre,
-  };
 }

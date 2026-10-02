@@ -6,6 +6,7 @@ Principe : corriger la cause (composant partagé de `lib/core`), recenser tous l
 
 | Règle | Consigne | Composant partagé | Contrôle automatique | Test de garde |
 |---|---|---|---|---|
+| Choix du thème : un rectangle, trois bascules (soleil, système, lune) | THEME-SW-1 | `SelecteurTheme` (sur `ControleSegmente`) | `selecteur-theme-recompose` | `test/widgets/selecteur_theme_test.dart` |
 | Contenu de bouton centré, sans débordement | K-54 | `ActionPrincipale` | `bouton-recompose` | `verifierBoutonCentre` |
 | Jamais de cartes collées (cartes séparées, ou une carte à lignes fines) | K-55 | `AppCard`, `Ecart`, `GroupeReglages` | `cartes-collees` | `verifierEcartCartes` |
 | Un seul bouton plein par écran, secondaires en lien flèche | K-56 | `ActionPrincipale`, `LienFleche` | `bouton-grise` (alias `bouton-desactive`) | revue d'écran |
@@ -34,5 +35,6 @@ Avant correction, par contrôle (`dart run tool/verifier_revue.dart --regle=<nom
 | `affirmation-reseau` | 10 (6 dans le socle hérité de `main`) | |
 | `libelle-sans-source` | 1377 (1023 dans le socle hérité de `main`) | |
 | `verifier_jetons` | 36 | |
+| `selecteur-theme-recompose` (THEME-SW-1) | 2 écrans recomposaient le thème (Apparence : 3 cartes `ChoiceCardGroup` ; Réglages : 3 lignes `Radio`) | 0 (les deux utilisent `SelecteurTheme`) |
 
 Limites connues des contrôles (heuristiques de texte) : `cartes-collees` ne voit que des appels voisins dans une liste `children` sans `spacing:` (pas les `ListView.builder` sans séparateur) ; `bouton-recompose` ne voit que les boutons Material, `InkWell`, `GestureDetector` et un `Pressable` qui peint lui-même fond arrondi et `Text`. Ce que ces contrôles ne voient pas se mesure par les tests de géométrie et par les captures à 320 px et 1440 px.

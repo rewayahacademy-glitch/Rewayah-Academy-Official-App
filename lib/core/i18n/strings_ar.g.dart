@@ -43,6 +43,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$salle$ar salle = _Traductions$salle$ar._(_root);
 	@override late final _Traductions$eleve$ar eleve = _Traductions$eleve$ar._(_root);
 	@override late final _Traductions$enseignant$ar enseignant = _Traductions$enseignant$ar._(_root);
+	@override late final _Traductions$compte$ar compte = _Traductions$compte$ar._(_root);
 	@override late final _Traductions$tc$ar tc = _Traductions$tc$ar._(_root);
 }
 
@@ -84,6 +85,22 @@ class _Traductions$enseignant$ar extends Traductions$enseignant$fr {
 
 	// Translations
 	@override late final _Traductions$enseignant$ficheGroupe$ar ficheGroupe = _Traductions$enseignant$ficheGroupe$ar._(_root);
+}
+
+// Path: compte
+class _Traductions$compte$ar extends Traductions$compte$fr {
+	_Traductions$compte$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get themeContexte => 'اختر مظهر التطبيق. يتم التغيير فورًا ويبقى على هذا الجهاز، ويمكنك تعديله في أي وقت.';
+	@override String get themeSysteme => 'النظام';
+	@override String get themeSystemeDetail => 'يتبع إعداد جهازك';
+	@override String get themeClair => 'فاتح';
+	@override String get themeClairDetail => 'خلفية فاتحة مهما كان إعداد جهازك';
+	@override String get themeSombre => 'داكن';
+	@override String get themeSombreDetail => 'خلفية داكنة مهما كان إعداد جهازك';
 }
 
 // Path: tc
@@ -311,6 +328,13 @@ extension on TraductionsAr {
 			'enseignant.ficheGroupe.repriseEleve' => ({required Object page}) => 'الاستئناف: ${page}',
 			'enseignant.ficheGroupe.dernierPoint' => ({required Object texte}) => 'آخر ملاحظة: ${texte}',
 			'enseignant.ficheGroupe.chargementClasse' => 'جارٍ تحميل الفصل.',
+			'compte.themeContexte' => 'اختر مظهر التطبيق. يتم التغيير فورًا ويبقى على هذا الجهاز، ويمكنك تعديله في أي وقت.',
+			'compte.themeSysteme' => 'النظام',
+			'compte.themeSystemeDetail' => 'يتبع إعداد جهازك',
+			'compte.themeClair' => 'فاتح',
+			'compte.themeClairDetail' => 'خلفية فاتحة مهما كان إعداد جهازك',
+			'compte.themeSombre' => 'داكن',
+			'compte.themeSombreDetail' => 'خلفية داكنة مهما كان إعداد جهازك',
 			'tc.groupe.enseignant.sayyid' => 'سيد',
 			'tc.groupe.enseignant.sayyida' => 'سيدة',
 			_ => null,
