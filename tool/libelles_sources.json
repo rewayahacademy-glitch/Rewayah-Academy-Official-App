@@ -15,5 +15,7 @@
   "enseignant.journee.remplirCahierLecteur": "commentaire du directeur 01-02/10, etape CTA-FIN-1",
   "enseignant.journee.cahierObligatoire": "commentaire du directeur 01-02/10, etape CTA-FIN-1",
   "enseignant.journee.voirCahier": "commentaire du directeur 01-02/10, etape CTA-FIN-1",
-  "enseignant.journee.voirCahierLecteur": "commentaire du directeur 01-02/10, etape CTA-FIN-1"
+  "enseignant.journee.voirCahierLecteur": "commentaire du directeur 01-02/10, etape CTA-FIN-1",
+  "enseignant.journee.absence.ouvrir": "commentaire du directeur, revue du 01-02/10, etape LIB-ABS-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
+  "enseignant.journee.absence.ouvrirContexte": "commentaire du directeur, revue du 01-02/10, etape LIB-ABS-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)"
 }

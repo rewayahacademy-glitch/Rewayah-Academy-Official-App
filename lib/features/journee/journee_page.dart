@@ -723,6 +723,15 @@ class _CarteProchaineSeance extends ConsumerWidget {
                     ),
                   ),
                 ),
+                // LIB-ABS-1 : la suite de l'absence, dite sous le bouton.
+                Ecart.vXs,
+                Text(
+                  t.enseignant.journee.absence.ouvrirContexte,
+                  key: const ValueKey<String>('journee-absence-contexte'),
+                  style: palette.inkMuted.applyTo(
+                    textes.bodyMedium ?? const TextStyle(),
+                  ),
+                ),
               ],
             ],
           ),

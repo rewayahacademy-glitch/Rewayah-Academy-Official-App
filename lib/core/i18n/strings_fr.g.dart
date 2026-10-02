@@ -11663,8 +11663,11 @@ class Traductions$enseignant$journee$absence$fr {
 
 	// Translations
 
-	/// fr: 'Déclarer une absence'
-	String get ouvrir => 'Déclarer une absence';
+	/// fr: 'Signaler mon absence à cette séance'
+	String get ouvrir => 'Signaler mon absence à cette séance';
+
+	/// fr: 'Un remplaçant sera recherché pour vos élèves.'
+	String get ouvrirContexte => 'Un remplaçant sera recherché pour vos élèves.';
 
 	/// fr: 'Vous ne pourrez pas assurer cette séance ?'
 	String get titre => 'Vous ne pourrez pas assurer cette séance ?';
@@ -16946,7 +16949,8 @@ extension on Traductions {
 			'enseignant.journee.aucuneSeance' => 'Aucune séance à venir',
 			'enseignant.journee.aucuneSeanceDetail' => 'Vos prochaines séances apparaîtront ici.',
 			'enseignant.journee.date' => ({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}',
-			'enseignant.journee.absence.ouvrir' => 'Déclarer une absence',
+			'enseignant.journee.absence.ouvrir' => 'Signaler mon absence à cette séance',
+			'enseignant.journee.absence.ouvrirContexte' => 'Un remplaçant sera recherché pour vos élèves.',
 			'enseignant.journee.absence.titre' => 'Vous ne pourrez pas assurer cette séance ?',
 			'enseignant.journee.absence.cleDate' => 'Date',
 			'enseignant.journee.absence.notice' => 'Votre affectation à la Classe reste inchangée.',
@@ -17383,9 +17387,9 @@ extension on Traductions {
 			'tc.bibliotheque.filtre.disponibilite' => 'Disponibilité',
 			'tc.bibliotheque.sections.continuer' => 'Continuer',
 			'tc.bibliotheque.sections.pourCeGroupe' => 'Pour cette Classe',
-			'tc.bibliotheque.sections.groupe' => 'Supports à afficher',
 			_ => null,
 		} ?? switch (path) {
+			'tc.bibliotheque.sections.groupe' => 'Supports à afficher',
 			'tc.bibliotheque.sections.recents' => 'Récents',
 			'tc.bibliotheque.sections.tousLesSupports' => 'Tous les supports',
 			'tc.bibliotheque.sections.resultats' => 'Résultats',
@@ -17897,9 +17901,9 @@ extension on Traductions {
 			'adulte.demo.variantes' => 'Les variantes',
 			'adulte.demo.titulaireFemme' => 'La titulaire est une femme, son conjoint est le second adulte.',
 			'adulte.demo.vueConjointe' => 'Mon espace vu par la conjointe, second adulte du foyer.',
-			'adulte.demo.vueConjoint' => 'Mon espace vu par le conjoint, second adulte du foyer.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.demo.vueConjoint' => 'Mon espace vu par le conjoint, second adulte du foyer.',
 			'adulte.demo.etats.adulteSeul' => 'L\'adulte est seul, sans foyer.',
 			'adulte.demo.etats.titulaireSansConjoint' => 'Le foyer n\'a pas de second adulte.',
 			'adulte.demo.etats.invitationEnAttente' => 'L\'invitation du second adulte est en attente.',

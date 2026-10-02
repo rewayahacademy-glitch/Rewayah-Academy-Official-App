@@ -3086,7 +3086,8 @@
       "aucuneSeanceDetail": "Vos prochaines séances apparaîtront ici.",
       "date": "{jour} {numero} {mois}",
       "absence": {
-        "ouvrir": "Déclarer une absence",
+        "ouvrir": "Signaler mon absence à cette séance",
+        "ouvrirContexte": "Un remplaçant sera recherché pour vos élèves.",
         "titre": "Vous ne pourrez pas assurer cette séance ?",
         "cleDate": "Date",
         "notice": "Votre affectation à la Classe reste inchangée.",
