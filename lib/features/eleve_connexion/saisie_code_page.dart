@@ -20,6 +20,7 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/entete_page.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 
 /// Le titre et la phrase d'un refus, dits simplement, jamais le texte brut du
@@ -351,10 +352,11 @@ class _Formulaire extends StatelessWidget {
         ],
         if (scanner != null) ...<Widget>[
           Ecart.vLg,
-          ActionPrincipale(
+          // Une autre facon de se connecter n'est pas l'action principale :
+          // une ligne de lien (K-56).
+          LienFleche(
             libelle: t.eleveConnexion.saisie.scanner,
-            niveau: NiveauAction.secondaire,
-            prefixe: Icon(AppIcons.qr.repos),
+            icone: AppIcons.qr,
             onPress: scanner,
           ),
         ],

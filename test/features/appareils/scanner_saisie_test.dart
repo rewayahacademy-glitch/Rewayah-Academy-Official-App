@@ -24,6 +24,7 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
+import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/features/eleve_connexion/saisie_code_page.dart';
 import 'package:rewayah_academy/features/eleve_connexion/scanner_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart'
@@ -119,6 +120,9 @@ Future<void> _taper(WidgetTester tester, Finder cible) async {
 Finder _action(String libelle) =>
     find.widgetWithText(ActionPrincipale, libelle);
 
+/// « Scanner le QR code » est une ligne de lien, pas un bouton plein (K-56).
+Finder _lien(String libelle) => find.widgetWithText(LienFleche, libelle);
+
 void main() {
   group('Parcours depuis la connexion (vrai routeur, gestes)', () {
     testWidgets(
@@ -139,7 +143,7 @@ void main() {
         expect(find.byType(SaisieCodePage), findsOneWidget);
 
         // 3. « Scanner le QR code » ouvre le scanner, qui demande la camera.
-        await _taper(tester, _action(t.eleveConnexion.saisie.scanner));
+        await _taper(tester, _lien(t.eleveConnexion.saisie.scanner));
         expect(m.lieu, Routes.connexionEleveScanner);
         expect(find.byType(ScannerPage), findsOneWidget);
         expect(m.lecteur.demarrages, 1);
@@ -169,7 +173,7 @@ void main() {
       final _Montage m = await _monter(tester);
       await _taper(tester, find.text(t.connexion.appareilEleve));
       await _taper(tester, find.text(t.connexion.feuilleAppareil.saisir));
-      await _taper(tester, _action(t.eleveConnexion.saisie.scanner));
+      await _taper(tester, _lien(t.eleveConnexion.saisie.scanner));
       expect(m.lieu, Routes.connexionEleveScanner);
 
       await _taper(tester, find.byType(DisqueRetour));
@@ -186,7 +190,7 @@ void main() {
       final _Montage m = await _monter(tester);
       await _taper(tester, find.text(t.connexion.appareilEleve));
       await _taper(tester, find.text(t.connexion.feuilleAppareil.saisir));
-      await _taper(tester, _action(t.eleveConnexion.saisie.scanner));
+      await _taper(tester, _lien(t.eleveConnexion.saisie.scanner));
 
       await _taper(tester, _action(t.eleveConnexion.lecteur.saisir));
       expect(m.lieu, Routes.connexionEleveCode);
@@ -295,7 +299,7 @@ void main() {
       expect(valider(tester).enCours, isTrue);
       expect(champ(tester).enabled, isFalse);
       // Pendant la verification, pas de detour vers le scanner.
-      expect(_action(t.eleveConnexion.saisie.scanner), findsNothing);
+      expect(_lien(t.eleveConnexion.saisie.scanner), findsNothing);
 
       service.attente!.complete();
       await stabiliser(tester);
@@ -324,7 +328,7 @@ void main() {
         depart: Routes.connexionEleveCode,
         disponible: false,
       );
-      expect(_action(t.eleveConnexion.saisie.scanner), findsNothing);
+      expect(_lien(t.eleveConnexion.saisie.scanner), findsNothing);
     });
 
     testWidgets('bureau 1440 : panneau centre qui porte son action', (
