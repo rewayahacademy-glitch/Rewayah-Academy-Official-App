@@ -439,4 +439,53 @@ void main() {
       await ouvrir(tester, 'ma7/ma7_coran_lecteur_mariam_390_light_texte200');
     });
   });
+
+  // -------------------------------------------------------------------
+  // MA-8 : Mon espace (Mariam : demande au tuteur ; Idriss : bascule ;
+  // texte a 200 %).
+  // -------------------------------------------------------------------
+  group('Capture MA-8 : Mon espace', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final EleveDemoAccessibilite eleve in EleveDemoAccessibilite.values) {
+      for (final ThemeMode mode in _themes) {
+        testWidgets('mon_espace_${eleve.name}_390_${mode.name}', (
+          WidgetTester tester,
+        ) async {
+          await _capturer(
+            tester,
+            'ma8/ma8_mon_espace_${eleve.name}_390_${mode.name}',
+            EcranAccessibiliteDemo(
+              eleve: eleve,
+              destinationInitiale: EcranAccessibiliteDemo.indexMonEspace,
+            ),
+            const Size(390, 3000),
+            mode: mode,
+          );
+        });
+      }
+    }
+    testWidgets('mon_espace_mariam_1440_light', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma8/ma8_mon_espace_mariam_1440_light',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+          destinationInitiale: EcranAccessibiliteDemo.indexMonEspace,
+        ),
+        const Size(1440, 2200),
+      );
+    });
+    testWidgets('mon_espace_390_light_texte200', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma8/ma8_mon_espace_mariam_390_light_texte200',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+          destinationInitiale: EcranAccessibiliteDemo.indexMonEspace,
+        ),
+        const Size(390, 6000),
+        echelle: 2,
+      );
+    });
+  });
 }

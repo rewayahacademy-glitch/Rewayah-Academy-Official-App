@@ -789,6 +789,7 @@ class Traductions$accessibilite$fr {
 	late final Traductions$accessibilite$maClasse$fr maClasse = Traductions$accessibilite$maClasse$fr.internal(_root);
 	late final Traductions$accessibilite$tutoiement$fr tutoiement = Traductions$accessibilite$tutoiement$fr.internal(_root);
 	late final Traductions$accessibilite$apres$fr apres = Traductions$accessibilite$apres$fr.internal(_root);
+	late final Traductions$accessibilite$monEspace$fr monEspace = Traductions$accessibilite$monEspace$fr.internal(_root);
 }
 
 // Path: accuse
@@ -3125,6 +3126,42 @@ class Traductions$accessibilite$apres$fr {
 
 	/// fr: 'Le support reste dans votre Classe.'
 	String get revoirSupportDetailVous => 'Le support reste dans votre Classe.';
+}
+
+// Path: accessibilite.monEspace
+class Traductions$accessibilite$monEspace$fr {
+	Traductions$accessibilite$monEspace$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mon espace'
+	String get titre => 'Mon espace';
+
+	/// fr: 'Mode Accessibilité'
+	String get mode => 'Mode Accessibilité';
+
+	/// fr: 'Une interface simplifiée et adaptée pour un apprentissage plus serein.'
+	String get modeDetail => 'Une interface simplifiée et adaptée pour un apprentissage plus serein.';
+
+	/// fr: 'Activé'
+	String get modeActif => 'Activé';
+
+	/// fr: 'Présentation standard'
+	String get presentationStandard => 'Présentation standard';
+
+	/// fr: 'Demande à ton tuteur de passer à la présentation standard.'
+	String get demanderDetail => 'Demande à ton tuteur de passer à la présentation standard.';
+
+	/// fr: 'Ta demande est en cours d'envoi.'
+	String get demandeEnCours => 'Ta demande est en cours d\'envoi.';
+
+	/// fr: 'Ta demande a été envoyée à ton tuteur.'
+	String get demandeEnvoyee => 'Ta demande a été envoyée à ton tuteur.';
+
+	/// fr: 'L'envoi n'a pas été confirmé, sans doute à cause de la connexion. Vérifie ta connexion, puis touche la ligne pour réessayer.'
+	String get demandeNonConfirmee => 'L\'envoi n\'a pas été confirmé, sans doute à cause de la connexion. Vérifie ta connexion, puis touche la ligne pour réessayer.';
 }
 
 // Path: consentement.texte
@@ -13424,6 +13461,15 @@ extension on Traductions {
 			'accessibilite.apres.revoirSupport' => 'Revoir le support du cours',
 			'accessibilite.apres.revoirSupportDetail' => 'Le support reste dans ta Classe.',
 			'accessibilite.apres.revoirSupportDetailVous' => 'Le support reste dans votre Classe.',
+			'accessibilite.monEspace.titre' => 'Mon espace',
+			'accessibilite.monEspace.mode' => 'Mode Accessibilité',
+			'accessibilite.monEspace.modeDetail' => 'Une interface simplifiée et adaptée pour un apprentissage plus serein.',
+			'accessibilite.monEspace.modeActif' => 'Activé',
+			'accessibilite.monEspace.presentationStandard' => 'Présentation standard',
+			'accessibilite.monEspace.demanderDetail' => 'Demande à ton tuteur de passer à la présentation standard.',
+			'accessibilite.monEspace.demandeEnCours' => 'Ta demande est en cours d\'envoi.',
+			'accessibilite.monEspace.demandeEnvoyee' => 'Ta demande a été envoyée à ton tuteur.',
+			'accessibilite.monEspace.demandeNonConfirmee' => 'L\'envoi n\'a pas été confirmé, sans doute à cause de la connexion. Vérifie ta connexion, puis touche la ligne pour réessayer.',
 			'accuse.titre' => 'À savoir avant de commencer',
 			'accuse.compris' => 'J\'ai compris',
 			'consentement.titre' => 'Consentements',
@@ -13915,6 +13961,8 @@ extension on Traductions {
 			'admin.demandes.reclameRegle' => ({required Object regle, required Object valeur}) => 'Porter ${regle} à ${valeur} min',
 			'admin.demandes.reclameRegleSansValeur' => ({required Object regle}) => 'Revoir ${regle}',
 			'admin.demandes.motifDemande' => 'Motif invoqué',
+			_ => null,
+		} ?? switch (path) {
 			'admin.demandes.verdict' => 'Décision',
 			'admin.demandes.accorder' => 'Accorder',
 			'admin.demandes.refuser' => 'Refuser',
@@ -13924,8 +13972,6 @@ extension on Traductions {
 			'admin.demandes.journalisation' => 'Chaque décision et chaque règle posée sont inscrites au journal d\'audit, avec votre nom.',
 			'admin.demandes.feuille' => ({required Object prenom}) => 'Les règles de ${prenom}',
 			'admin.demandes.feuilleIntro' => 'La valeur de la plateforme et celle qui s\'applique, côte à côte. Une règle se change ici sans qu\'une demande existe.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.demandes.regleDuree' => 'Durée d\'une séance',
 			'admin.demandes.regleMinimum' => 'Durée minimale payable',
 			'admin.demandes.reglePause' => 'Pause entre deux cours',
@@ -14429,6 +14475,8 @@ extension on Traductions {
 			'admin.agents.pourraDetail' => 'Ouvrir l\'application, naviguer, et lire tout ce que cette personne lit.',
 			'admin.agents.nePourraPas' => 'Ne pourra pas',
 			'admin.agents.nePourraPasDetail' => 'Écrire quoi que ce soit, voir une pièce d\'identité, un appareil, le journal d\'audit, ni sortir du périmètre de cette personne.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.emissionEnCours' => 'Émission',
 			'admin.agents.emis' => 'Jeton émis',
 			'admin.agents.emisDetail' => 'Remettez ce lien à l\'agent. Il n\'apparaîtra plus : ni cet écran ni la base ne peuvent le retrouver.',
@@ -14438,8 +14486,6 @@ extension on Traductions {
 			'admin.agents.erreurEmission' => 'Le jeton n\'a pas pu être émis. Réessayez dans un instant.',
 			'admin.agents.colonneLibelle' => 'Jeton',
 			'admin.agents.colonneQui' => 'Observe',
-			_ => null,
-		} ?? switch (path) {
 			'admin.agents.colonneParcours' => 'Parcours',
 			'admin.agents.colonneIdentite' => 'Prénoms',
 			'admin.agents.colonneExpire' => 'Jusqu\'à',
@@ -14943,6 +14989,8 @@ extension on Traductions {
 			'eleve.coran.medinoise' => 'Révélée à Médine',
 			'eleve.coran.reprendre' => 'Reprendre ta lecture',
 			'eleve.coran.reprendreDetail' => ({required Object page}) => 'Tu en étais page ${page}',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.coran.chargement' => 'Le texte arrive',
 			'eleve.coran.indisponible' => 'Le texte n\'a pas pu être chargé',
 			'eleve.coran.indisponibleDetail' => 'Dès que le réseau revient, ta page se rouvre ici.',
@@ -14952,8 +15000,6 @@ extension on Traductions {
 			'eleve.coran.pagePrecedente' => 'Page précédente',
 			'eleve.coran.pageSuivante' => 'Page suivante',
 			'eleve.coran.reglages' => 'Réglages de lecture',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.coran.fermerReglages' => 'Fermer les réglages',
 			'eleve.coran.taille' => 'Taille du texte',
 			'eleve.coran.agrandir' => 'Agrandir le texte',
@@ -15457,6 +15503,8 @@ extension on Traductions {
 			'enseignant.cahier.retourJournee' => 'Retour à ma journée',
 			'enseignant.cahier.vide' => 'Le constat n\'a pas pu être déduit',
 			'enseignant.cahier.videDetail' => 'Aucune présence et aucun événement n\'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.erreur' => 'Le constat n\'a pas pu être lu.',
 			'enseignant.cahier.erreurDetail' => 'Réessayez, ou déposez le cahier sans le constat.',
 			'enseignant.cahier.echecEnvoi' => 'Le cahier n\'a pas pu être enregistré. Réessayez.',
@@ -15466,8 +15514,6 @@ extension on Traductions {
 			'enseignant.cahier.deposeDetail' => 'L\'académie l\'a reçu.',
 			'enseignant.cahier.enFileTitre' => 'En attente d\'envoi',
 			'enseignant.cahier.enFile' => 'Le cahier sera envoyé lorsque la connexion reviendra.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.enFileDetail' => 'Le cahier sera envoyé lorsque la connexion reviendra.',
 			'enseignant.cahier.enFileDetailHorsLigne' => 'Sans réseau, le cahier reste sur cet appareil et part dès que le réseau revient. Vous pouvez enchaîner sur votre cours suivant.',
 			'enseignant.cahier.ajusterPour' => ({required Object eleve}) => 'Ajuster · ${eleve}',
@@ -15971,6 +16017,8 @@ extension on Traductions {
 			'tc.observation.explication.observer' => 'Observer maintenant',
 			'tc.observation.explication.pasMaintenant' => 'Pas maintenant',
 			'tc.observation.explication.restanteUne' => ({required Object restantes, required Object max}) => '${restantes}/${max} visite restante pour cette séance',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.explication.restantes' => ({required Object restantes, required Object max}) => '${restantes}/${max} visites restantes pour cette séance',
 			'tc.observation.explication.aucuneRestante' => 'Aucune visite restante pour cette séance',
 			'tc.observation.disponibilite.visitesEpuiseesTitre' => 'Aucune visite restante pour cette séance',
@@ -15980,8 +16028,6 @@ extension on Traductions {
 			'tc.observation.disponibilite.seanceNonCommenceeTitre' => 'La séance n\'a pas encore commencé',
 			'tc.observation.disponibilite.seanceNonCommencee' => 'L\'observation s\'ouvre pendant la séance.',
 			'tc.observation.disponibilite.seanceTermineeTitre' => 'La séance est terminée',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.disponibilite.seanceTerminee' => 'Vous pourrez observer la prochaine séance.',
 			'tc.observation.disponibilite.seanceNonTenueTitre' => 'Cette séance n\'a pas lieu',
 			'tc.observation.disponibilite.seanceNonTenue' => 'Elle a été annulée, reportée ou n\'a pas été tenue.',
