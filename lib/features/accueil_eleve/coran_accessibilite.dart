@@ -70,8 +70,26 @@ class CoranAccessibilite extends ConsumerStatefulWidget {
   ConsumerState<CoranAccessibilite> createState() => _CoranAccessibiliteEtat();
 }
 
+/// L'etat de la lecture de la position de reprise (revue MA-7, MA-11).
+enum EtatRepriseCoran {
+  /// Lecture en cours : l'action principale attend (pas d'ouverture a la
+  /// mauvaise page).
+  recherche,
+
+  /// Lecture terminee (position connue ou absente).
+  connue,
+
+  /// Lecture echouee : l'ecran le dit (K-59) et le Coran s'ouvre quand meme.
+  echec,
+}
+
 class _CoranAccessibiliteEtat extends ConsumerState<CoranAccessibilite> {
+  /// Au-dela, la reprise est tenue pour non retrouvee : l'action principale
+  /// ne reste jamais bloquee (ce n'est pas une animation).
+  static const Duration _delaiReprise = Duration(seconds: 5);
+
   PositionLecture? _reprise;
+  EtatRepriseCoran _etatReprise = EtatRepriseCoran.recherche;
   bool _ouvert = false;
 
   @override
@@ -80,18 +98,25 @@ class _CoranAccessibiliteEtat extends ConsumerState<CoranAccessibilite> {
     unawaited(_lireReprise());
   }
 
-  /// La reprise vient du port existant : aucune position inventee.
+  /// La reprise vient du port existant : aucune position inventee. Un echec
+  /// n'est plus avale en silence (revue MA-7) : il est dit, avec ce qu'il
+  /// reste a faire.
   Future<void> _lireReprise() async {
     final PositionLecture? position;
     try {
       position = await ref
           .read(portNavigationCoranProvider)
-          .dernierePositionPersonnelle();
+          .dernierePositionPersonnelle()
+          .timeout(_delaiReprise);
     } on Object {
+      if (mounted) setState(() => _etatReprise = EtatRepriseCoran.echec);
       return;
     }
-    if (!mounted || position == null) return;
-    setState(() => _reprise = position);
+    if (!mounted) return;
+    setState(() {
+      _reprise = position;
+      _etatReprise = EtatRepriseCoran.connue;
+    });
   }
 
   /// Ouvre le lecteur existant, sur la page de reprise s'il y en a une, et
@@ -206,17 +231,34 @@ class _CoranAccessibiliteEtat extends ConsumerState<CoranAccessibilite> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          if (reprise != null) ...<Widget>[
-            Text(
-              tu
-                  ? t.accessibilite.coran.reprendreDetail(
-                      page: '${reprise.page}',
-                    )
-                  : t.accessibilite.coran.reprendreDetailVous(
-                      page: '${reprise.page}',
-                    ),
-              style: palette.inkMuted.applyTo(
-                textes.bodyLarge ?? const TextStyle(),
+          // L'etat de la reprise est annonce quand il change (region vive).
+          if (reprise != null ||
+              _etatReprise != EtatRepriseCoran.connue) ...<Widget>[
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                switch (_etatReprise) {
+                  EtatRepriseCoran.recherche =>
+                    tu
+                        ? t.accessibilite.coran.repriseRecherche
+                        : t.accessibilite.coran.repriseRechercheVous,
+                  EtatRepriseCoran.echec =>
+                    tu
+                        ? t.accessibilite.coran.repriseErreur
+                        : t.accessibilite.coran.repriseErreurVous,
+                  EtatRepriseCoran.connue =>
+                    tu
+                        ? t.accessibilite.coran.reprendreDetail(
+                            page: '${reprise?.page}',
+                          )
+                        : t.accessibilite.coran.reprendreDetailVous(
+                            page: '${reprise?.page}',
+                          ),
+                },
+                key: const ValueKey<String>('coran-ma-reprise'),
+                style: palette.inkMuted.applyTo(
+                  textes.bodyLarge ?? const TextStyle(),
+                ),
               ),
             ),
             const SizedBox(height: AppSpacing.md),
@@ -231,7 +273,10 @@ class _CoranAccessibiliteEtat extends ConsumerState<CoranAccessibilite> {
                   ? t.accessibilite.coran.reprendre
                   : t.accessibilite.coran.reprendreVous,
               pleineLargeur: false,
-              onPress: _ouvrir,
+              // Pas cliquable avant l'arrivee de la reprise (revue MA-7).
+              onPress: _etatReprise == EtatRepriseCoran.recherche
+                  ? null
+                  : _ouvrir,
             ),
           ),
           if (grande) ...<Widget>[
