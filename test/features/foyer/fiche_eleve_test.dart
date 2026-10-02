@@ -723,7 +723,12 @@ void main() {
         depart: Routes.ficheEleveSousPage(a1, 'interface'),
       );
       await _toucher(tester, find.text(t.ficheEleve.interface.standard));
-      expect(find.text(t.ficheEleve.interface.echec), findsOneWidget);
+      expect(
+        find.text(
+          t.ficheEleve.interface.echec(prenom: FoyersFictifs.a1.prenom),
+        ),
+        findsOneWidget,
+      );
       expect(
         appairage.elevesRendus.firstWhere((EleveDuFoyer e) => e.id == a1).mode,
         InterfaceMode.enfant,
@@ -888,7 +893,12 @@ void main() {
       await tester.tap(find.text(t.ficheEleve.interface.standard));
       await stabiliser(tester);
       expect(appairage.reglagesEcrits, isEmpty);
-      expect(find.text(t.ficheEleve.interface.echec), findsNothing);
+      expect(
+        find.text(
+          t.ficheEleve.interface.echec(prenom: FoyersFictifs.a1.prenom),
+        ),
+        findsNothing,
+      );
     });
 
     testWidgets('selecteur de photo qui leve : refus lisible, rien envoye', (

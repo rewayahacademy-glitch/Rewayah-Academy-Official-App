@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_typography.dart';
 import 'action_principale.dart';
-import 'texte_sans_coupure.dart';
 
 /// Le titre d'une section, son compteur et son action tertiaire.
 ///
