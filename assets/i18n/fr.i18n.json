@@ -138,7 +138,10 @@
     "annule": "Annulé",
     "enAttente": "En attente",
     "enRetard": "En retard",
-    "termine": "Terminé"
+    "termine": "Terminé",
+    "seanceAnnulee": "Annulée",
+    "heureAnnulee": "Prévue à {heure}",
+    "raisonEtSuite": "{raison} · {suite}"
   },
   "destructif": {
     "irreversible": "Cette action ne peut pas être annulée."

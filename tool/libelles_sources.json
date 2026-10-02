@@ -1,0 +1,5 @@
+{
+  "etat.seanceAnnulee": "commentaire du directeur 01-02/10, etape ANNUL-VIS-1 : pastille « Annulée » sur la couleur d'erreur, icône d'annulation",
+  "etat.heureAnnulee": "commentaire du directeur 01-02/10, etape ANNUL-VIS-1 : heure barrée, annoncée au lecteur d'écran",
+  "etat.raisonEtSuite": "commentaire du directeur 01-02/10, etape ANNUL-VIS-1 : une ligne dit pourquoi et la suite"
+}

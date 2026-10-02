@@ -8,6 +8,7 @@ import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'avatar_tile.dart';
+import 'pastille_etat_seance.dart';
 import 'pressable.dart';
 
 /// Le point de statut d'un profil, pris dans `AppPalette.pointsStatut`.
@@ -39,7 +40,12 @@ class ProfilSelectionnable {
     required this.etat,
     this.urlPhoto,
     this.point,
+    this.enDirect = false,
   });
+
+  /// Vrai quand la seance du profil est en direct : le point bat doucement
+  /// (le meme point que la pastille « En direct », ON-AIR-1).
+  final bool enDirect;
 
   /// L'identifiant du profil eleve.
   final String id;
@@ -212,15 +218,20 @@ class _Item extends StatelessWidget {
                     PositionedDirectional(
                       end: AppSpacing.xs,
                       bottom: AppSpacing.xs,
-                      child: SizedBox.square(
-                        dimension: SelecteurProfils.diametrePoint,
-                        child: DecoratedBox(
-                          decoration: _couleurPoint(
-                            palette,
-                            point,
-                          ).pastille(cerclage: palette.surfaceCanvas),
-                        ),
-                      ),
+                      child: profil.enDirect
+                          ? PointDirect(
+                              diametre: SelecteurProfils.diametrePoint,
+                              cerclage: palette.surfaceCanvas,
+                            )
+                          : SizedBox.square(
+                              dimension: SelecteurProfils.diametrePoint,
+                              child: DecoratedBox(
+                                decoration: _couleurPoint(
+                                  palette,
+                                  point,
+                                ).pastille(cerclage: palette.surfaceCanvas),
+                              ),
+                            ),
                     ),
                 ],
               ),

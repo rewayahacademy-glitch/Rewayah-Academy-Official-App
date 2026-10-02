@@ -1,4 +1,10 @@
 {
+  "etat": {
+    "enDirect": "مباشر",
+    "seanceAnnulee": "ملغاة",
+    "heureAnnulee": "كانت مقررة في {heure}",
+    "raisonEtSuite": "{raison} · {suite}"
+  },
   "classe": {
     "entree": {
       "coursDans": "الدرس بعد {duree}",

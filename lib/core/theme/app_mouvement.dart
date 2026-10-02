@@ -52,6 +52,20 @@ abstract final class AppMouvement {
   /// sens des deux (`04-systeme-mouvement.md` section 4).
   static const Duration pulsation = Duration(milliseconds: 1200);
 
+  /// Periode d'un battement complet du point de la pastille « En direct »
+  /// (ON-AIR-1, demande du directeur du 01/10/2026 : cycle d'environ 1,5 s).
+  ///
+  /// **Hors du budget de transition**, comme [pulsation] : elle signale un
+  /// etat qui dure, elle n'explique pas un changement. Plus lente que
+  /// [pulsation] (1,2 s, imminence) pour que les deux ne se confondent pas.
+  static const Duration pulsationDirect = Duration(milliseconds: 1500);
+
+  /// Nombre de battements du point « En direct » avant qu'il reste fixe :
+  /// trois fois [pulsationDirect], soit 4,5 s, **sous les cinq secondes** au
+  /// dela desquelles WCAG 2.2.2 exige une commande d'arret. Le mot « En
+  /// direct » reste, le point reste, seul le battement s'arrete.
+  static const int battementsDirect = 3;
+
   /// Temps d'affichage d'un retour local, avant sa disparition.
   static const Duration retourLocalMaintien = Duration(seconds: 3);
 
@@ -65,6 +79,10 @@ abstract final class AppMouvement {
   /// Tout ce qui entre. Rapide au depart, s'installe doucement.
   static const Curve selection = Curves.easeOut;
   static const Curve entree = Curves.easeOutCubic;
+
+  /// Courbe du battement du point « En direct » : douce aux deux bouts, sans
+  /// rebond (voir [pulsationDirect]).
+  static const Curve pulsationCourbe = Curves.easeInOut;
 
   /// Tout ce qui sort.
   static const Curve sortie = Curves.easeInCubic;

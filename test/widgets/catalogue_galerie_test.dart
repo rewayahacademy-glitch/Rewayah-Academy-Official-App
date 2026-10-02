@@ -116,6 +116,8 @@ const List<String> composantsDuCatalogue = <String>[
   'PointRappel',
   // CT-6 : le fil de discussion generique (CTR-04 Echanges).
   'FilDiscussion',
+  // ON-AIR-1, ANNUL-VIS-1 : la pastille d'etat de seance.
+  'PastilleEtatSeance',
 ];
 
 /// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.
