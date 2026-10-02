@@ -6,7 +6,7 @@
 - **Mode** : lecture seule. Aucun fichier de code modifié. Aucun `flutter test` ni `flutter analyze` lancé (machine prise par une autre session). Les chiffres de tests cités viennent de `05_recette/EA/RAPPORT.md`, non rejoués ici.
 - **Documents lus** : `16_eleves_adultes/00_REPRISE.md`, `02_DECOUPAGE.md`, `UX_REVIEW_07_ELEVES_ADULTES.md`, `EA-BR.md` ; `05_recette/EA/RAPPORT.md` ; `memoire/ELEVES-ADULTES-2026-09-27.md` (F1 à F24), `DESIGN-GOV-2026-09-26.md`, `STYLE-REFERENCE-CL4-2026-09-26.md` (K-42) ; spec foyer §7.1 à §7.3, §16, §17.
 - **Limite importante** : le texte des décisions du directeur du 27/09 (E1 à E8, D4, D5) n'est écrit dans aucun fichier lu (pilotage, ressources, recette). Je juge ces décisions d'après leur résumé donné dans la consigne de cette revue. E8 reste non vérifiable.
-- **Complément de la session (02/10)** : le texte de ces décisions existe, dans la feuille du directeur https://claude.ai/artifact/5hqpCULEK4Hwchu7D4BVtg (collection `reponses`). E3 = a y dit mot pour mot : « Dans le Foyer pour le titulaire, le Compte garde l'historique ; pas de rubrique Paiements pour le second adulte ». **M1 est donc décidé : à corriger en EA-RC, sans question au directeur** (question 1 retirée). E5 = a y dit « « Validation Admin refusée » (doc §18) et un bouton « Faire une nouvelle demande » (§10.3) » : le conflit avec K-53.6 reste une vraie question (question 2). Question 5 : sans objet, la source est cette feuille.
+- **Rectification (02/10, EA-RC) : M1 et M3 sont ANNULÉS.** Le premier complément de cette revue était faux : il citait le texte de l'option a de E3, pas le choix du directeur. La feuille https://claude.ai/artifact/5hqpCULEK4Hwchu7D4BVtg (collection `reponses`) dit **E3 = b** : « le second adulte voit aussi les paiements (spec §7.1) », avec la note « on cherche à combiner le compte d'une famille pour la gestion du paiement unifiée » ; c'est la règle **K-53.8** (« Paiements du foyer visibles des deux adultes »). Le code est donc conforme : la ligne « Paiements du foyer » du second adulte RESTE, et EA-BR-16 reste juste. Pour M3, **K-53.6** tranche : un client ne voit jamais « admin », il voit « la direction » ou « l'administration » ; « Validation refusée par la direction » est conforme. Questions 1 à 5 : toutes réglées par la feuille (E3 = b, K-53.6, E4 = a « par e-mail seul » = le canal, E2 = c « libellé de démonstration sans taux », texte des décisions = la feuille). Seule la question 6 reste, notée au tableau, sans attendre le directeur (K-53.1).
 
 ## Verdict
 
@@ -14,7 +14,7 @@
 
 ## Majeurs
 
-### M1. Le second adulte rattaché a une rubrique « Paiements du foyer » (contredit E3 = a)
+### ~~M1. Le second adulte rattaché a une rubrique « Paiements du foyer » (contredit E3 = a)~~ ANNULÉ : E3 = b (K-53.8), le code est conforme, ne rien retirer
 
 - **Où** :
   - `lib/features/mon_espace_adulte/mon_espace_adulte_page.dart:328-338` : sous « Forfait famille », une ligne « Paiements du foyer » pour le second adulte.
@@ -34,7 +34,7 @@
 - **À faire** : ne pas afficher la rubrique « Paiements » tant que la ligne famille n'est pas lue (squelette à sa place), ou faire rendre la liste des rubriques par la même lecture. Ajouter un test : second adulte, lecture en erreur, aucune rubrique « Paiements ».
 - **Décision du directeur** : non.
 
-### M3. Texte E5 non appliqué : « Validation refusée par la direction » au lieu de « Validation Admin refusée »
+### ~~M3. Texte E5 non appliqué : « Validation refusée par la direction » au lieu de « Validation Admin refusée »~~ ANNULÉ : K-53.6 (note du directeur sur E5), le texte est conforme
 
 - **Où** : `assets/i18n/fr.i18n.json:3954` (« Validation refusée par la direction ») ; justification dans `lib/features/foyer/place_adulte.dart:195-196` (règle K-53.6 qui interdit le mot « admin »).
 - **Ce qui est faux** : E5 = a fixe le libellé « Validation Admin refusée » avec « Faire une nouvelle demande » (ce second texte est bon, `fr.i18n.json:3955`). Le code a remplacé le premier sans décision écrite. Le vocabulaire est aussi incohérent : « direction » (`:3954`), « validation administrative » (`:3953`), « l'administration » (`:4026`, `:4068`).
@@ -205,4 +205,4 @@ Aucun fichier de revue EA-6 n'a été trouvé ; la trace est le message du commi
 
 ## Bilan
 
-**6 majeurs, 17 mineurs.** Deux majeurs (M1, M3) attendent une décision du directeur avant correction. Les quatre autres (M2, M4, M5, M6) se corrigent en EA-RC sans attendre. Les tests et l'analyse n'ont pas été rejoués dans cette revue.
+**Après rectification : 4 majeurs (M2, M4, M5, M6), 17 mineurs ; M1 et M3 annulés (E3 = b, K-53.6).** (Texte d'origine : 6 majeurs, 17 mineurs. Deux majeurs (M1, M3) attendent une décision du directeur avant correction.) Les quatre autres (M2, M4, M5, M6) se corrigent en EA-RC sans attendre. Les tests et l'analyse n'ont pas été rejoués dans cette revue.

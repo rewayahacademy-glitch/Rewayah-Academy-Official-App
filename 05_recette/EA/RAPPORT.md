@@ -32,7 +32,7 @@ pas.
 
 | # | Critère (doc §21) | Preuve (fichier:test) | Résultat |
 |---|---|---|---|
-| 1 | Un adulte « Moi uniquement » ouvre « Ajouter ma famille » sans perdre son profil élève | `mon_espace_adulte_page_test.dart` (entrée `ajouterMaFamille`, cas `adulteSeul`) ; écran provisoire confirmé par `demo_adulte_page.dart` (`ajouterMaFamille`, EA-4) | OK |
+| 1 | Un adulte « Moi uniquement » ouvre « Ajouter ma famille » sans perdre son profil élève | `mon_espace_adulte_page_test.dart` (entrée `ajouterMaFamille`, cas `adulteSeul`) ; écran provisoire confirmé par `demo_adulte_page.dart` (`ajouterMaFamille`, EA-4) | **Non construit** (rectifié en EA-RC, revue EA-R m14) : la ligne existe, mais elle mène à une page « arrivera dans une prochaine étape » ; le parcours lui-même n'existe pas |
 | 2 | Le titulaire voit un libellé conjoint/conjointe cohérent avec son genre | `foyer/inviter_conjoint_test.dart` (« Ajouter un conjoint », titulaire femme, F3) ; `foyer/ma_famille_adulte_test.dart` (ligne 277, F3) | OK |
 | 3 | Un seul second adulte peut être actif | `foyer/ma_famille_adulte_test.dart` (place adulte à une seule ligne, aucune liste) ; modèle `DonneesAdulteDemo.place` à une seule place (EA-BR-14) | OK (démonstration ; le serveur devra le garantir, EA-BR-14/15) |
 | 4 | Une seule invitation peut être en attente | `foyer/inviter_conjoint_test.dart` (ligne 539, F5/F21) | OK |
