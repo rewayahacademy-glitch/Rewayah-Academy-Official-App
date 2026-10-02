@@ -503,6 +503,29 @@ void main() {
         const Size(1440, 2200),
       );
     });
+    testWidgets('mon_espace_mariam_768_light', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma8/ma8_mon_espace_mariam_768_light',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+          destinationInitiale: EcranAccessibiliteDemo.indexMonEspace,
+        ),
+        const Size(768, 2400),
+      );
+    });
+    testWidgets('mon_espace_mariam_1440_dark', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma8/ma8_mon_espace_mariam_1440_dark',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+          destinationInitiale: EcranAccessibiliteDemo.indexMonEspace,
+        ),
+        const Size(1440, 2200),
+        mode: ThemeMode.dark,
+      );
+    });
     testWidgets('mon_espace_390_light_texte200', (WidgetTester tester) async {
       await _capturer(
         tester,
