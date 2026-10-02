@@ -1358,6 +1358,8 @@
     "tableau": {
       "titre": "Centre de commande",
       "dossiers": "Dossiers à valider",
+      "dossiersDetail": "Ouvrir la file, le plus ancien en premier.",
+      "demandesDetail": "Familles et enseignants attendent une réponse.",
       "foyers": "Élèves sans enseignant",
       "rapports": "Cahiers manquants",
       "incidents": "Incidents (24 h)",
