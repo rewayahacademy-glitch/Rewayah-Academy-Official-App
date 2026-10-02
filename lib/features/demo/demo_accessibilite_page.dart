@@ -8,6 +8,8 @@
 // ecrans propres au mode arrivent de MA-2 a MA-8. Aucun port reseau n'est
 // modifie : aucun appel serveur (K-28).
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -26,6 +28,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/video/pre_vol.dart';
+import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
@@ -249,6 +252,25 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
   /// Vrai quand le Suivi est ouvert depuis Ma classe (MA-4).
   bool _suivi = false;
 
+  /// MA14 : la page d'aide honnete. Aucun canal n'est publie : elle le dit,
+  /// avec les textes existants de l'aide du compte, sans bouton qui ne
+  /// menerait nulle part. Le retour ramene a Mon espace.
+  Future<void> _ouvrirAide(BuildContext context) =>
+      Navigator.of(context).push<void>(
+        MaterialPageRoute<void>(
+          builder: (BuildContext contexte) => PageShell(
+            key: const ValueKey<String>('demo-aide'),
+            titre: t.compte.tuteur.pageAide.titre,
+            onRetour: () => Navigator.of(contexte).pop(),
+            child: EtatSysteme(
+              nature: NatureEtat.aucunResultat,
+              titre: t.compte.tuteur.pageAide.indisponibleTitre,
+              phrase: t.compte.tuteur.pageAide.aucunCanal,
+            ),
+          ),
+        ),
+      );
+
   void _aller(int index) => setState(() {
     _index = index;
     _suivi = false;
@@ -465,6 +487,7 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
                     key: const ValueKey<String>('demo-mon-espace'),
                     prenom: DonneesAccessibiliteDemo.prenom(widget.eleve),
                     modeActif: _presentation == InterfaceMode.enfant,
+                    onAide: () => unawaited(_ouvrirAide(context)),
                     // Le mineur lit l'etat et peut demander la presentation
                     // standard a son tuteur (S7 = b, port neutre) ; l'adulte
                     // bascule (demonstration).

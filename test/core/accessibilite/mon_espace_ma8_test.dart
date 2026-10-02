@@ -112,8 +112,24 @@ void main() {
     // n'est pas affiche en Mode Accessibilite.
     await _vers(tester, find.text(t.compte.animations));
     expect(find.text(t.compte.effets), findsNothing);
-    await _vers(tester, find.text(t.compte.tuteur.pageAide.aucunCanal));
-    expect(find.text(t.accessibilite.accueil.aide), findsOneWidget);
+    // MA-RC (M3, MA14) : « Besoin d'aide ? » ouvre la page d'aide honnete,
+    // comme sur les autres ecrans ; le retour ramene a Mon espace.
+    final Finder aide = find.text(t.accessibilite.accueil.aide);
+    await _vers(tester, aide);
+    await tester.tap(aide);
+    await stabiliser(tester);
+    expect(find.byKey(const ValueKey<String>('demo-aide')), findsOneWidget);
+    expect(find.text(t.compte.tuteur.pageAide.aucunCanal), findsOneWidget);
+    expect(
+      find.text(t.compte.tuteur.pageAide.indisponibleTitre),
+      findsOneWidget,
+    );
+    Navigator.of(
+      tester.element(find.byKey(const ValueKey<String>('demo-aide'))),
+    ).pop();
+    await stabiliser(tester);
+    expect(find.byKey(const ValueKey<String>('demo-aide')), findsNothing);
+    expect(find.byType(ReglagesComptePage), findsOneWidget);
   });
 
   testWidgets('Idriss (adulte) : la bascule agit sur la presentation de la '

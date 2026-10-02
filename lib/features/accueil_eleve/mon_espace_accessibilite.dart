@@ -46,6 +46,7 @@ class MonEspaceAccessibilite extends StatefulWidget {
   const MonEspaceAccessibilite({
     required this.prenom,
     required this.modeActif,
+    required this.onAide,
     this.onBasculer,
     this.portDemande,
     super.key,
@@ -56,6 +57,10 @@ class MonEspaceAccessibilite extends StatefulWidget {
 
   /// L'etat du Mode Accessibilite.
   final bool modeActif;
+
+  /// Ouvre la page d'aide honnete, comme la ligne d'aide des autres ecrans
+  /// du Mode Accessibilite (MA14, MA9).
+  final VoidCallback onAide;
 
   /// La bascule de l'adulte ; nulle pour le mineur.
   final ValueChanged<bool>? onBasculer;
@@ -168,7 +173,7 @@ class _MonEspaceAccessibiliteEtat extends State<MonEspaceAccessibilite> {
         lignes: <LigneRubrique>[
           LigneRubrique(
             libelle: t.accessibilite.accueil.aide,
-            legende: t.compte.tuteur.pageAide.aucunCanal,
+            onPress: widget.onAide,
             icone: AppIcons.info,
           ),
         ],
