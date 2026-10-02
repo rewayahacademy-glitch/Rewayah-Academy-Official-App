@@ -686,7 +686,7 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
             Ecart.vMd,
             for (final OffreHoraire o in autres)
               Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                padding: const EdgeInsets.only(bottom: AppSpacing.lg),
                 child: _CarteOffre(
                   offre: o,
                   fuseauVu: _fuseauVu,

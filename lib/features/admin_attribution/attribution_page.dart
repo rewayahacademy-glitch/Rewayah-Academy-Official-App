@@ -76,13 +76,15 @@ class _AttributionPageEtat extends ConsumerState<AttributionPage> {
   ///
   /// C'est ce qui fait tenir la promesse des « deux taps » : une seule heure
   /// possible ne se redemande pas.
-  void _choisirEnseignant(EnseignantCandidat enseignant, List<Creneau> offerts) =>
-      setState(() {
-        _enseignantChoisi = enseignant.id;
-        _creneauChoisi = offerts.length == 1 ? offerts.first : null;
-        _motif.clear();
-        _erreur = null;
-      });
+  void _choisirEnseignant(
+    EnseignantCandidat enseignant,
+    List<Creneau> offerts,
+  ) => setState(() {
+    _enseignantChoisi = enseignant.id;
+    _creneauChoisi = offerts.length == 1 ? offerts.first : null;
+    _motif.clear();
+    _erreur = null;
+  });
 
   Future<void> _attribuer({
     required FoyerEnAttente eleve,
@@ -335,11 +337,13 @@ class _ColonneEleves extends StatelessWidget {
         Ecart.vMd,
         for (final FoyerEnAttente foyer in visibles)
           Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            padding: const EdgeInsets.only(bottom: AppSpacing.lg),
             child: _CarteEleve(
               foyer: foyer,
               selectionne: foyer.eleveId == choisi,
-              onPress: foyer.attribuable ? () => onChoisir(foyer.eleveId) : null,
+              onPress: foyer.attribuable
+                  ? () => onChoisir(foyer.eleveId)
+                  : null,
             ),
           ),
       ],

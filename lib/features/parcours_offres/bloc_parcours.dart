@@ -79,7 +79,7 @@ class BlocParcours extends ConsumerWidget {
         Ecart.vLg,
         for (final ParcoursApprenant p in aSuivre)
           Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.md),
+            padding: const EdgeInsets.only(bottom: AppSpacing.lg),
             child: _Carte(apprenant: p, minimumLancement: minimum),
           ),
         Ecart.vXl,

@@ -233,7 +233,7 @@ class _Exceptions extends StatelessWidget {
               ],
             ),
           ),
-          Ecart.vSm,
+          Ecart.vLg,
         ],
       ],
     );
@@ -316,7 +316,7 @@ class _Travail extends StatelessWidget {
                 ],
               ),
             ),
-            Ecart.vSm,
+            Ecart.vLg,
           ],
       ],
     );

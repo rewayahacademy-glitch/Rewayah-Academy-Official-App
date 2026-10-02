@@ -17,6 +17,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
@@ -59,46 +60,50 @@ class ComptePage extends ConsumerWidget {
           ),
           Ecart.vSection,
           SectionHeader(titre: t.compte.informations),
-          SettingRow(
-            title: t.compte.profil,
-            description: t.compte.profilDetail,
-            icon: AppIcons.profil,
-            onPress: () => context.push(Routes.compteProfil),
-          ),
-          SettingRow(
-            title: t.compte.reglages,
-            description: t.compte.reglagesDetail,
-            icon: AppIcons.reglages,
-            onPress: () => context.push(Routes.compteReglages),
-          ),
-          // Le Foyer est une destination du tuteur (seul role a qui la ligne
-          // s'affiche) : on la rejoint par `go`, pour que la barre allume le
-          // Foyer. Un `push` de `/compte/profils`, redirige vers le Foyer,
-          // l'empilait dans la branche Compte (revue phase 0, routes D7).
-          if (projection.afficheFoyer)
-            SettingRow(
-              title: t.compte.profils,
-              description: t.compte.profilsDetail,
-              icon: AppIcons.foyer,
-              onPress: () => context.go(Routes.tuteurFoyer),
-            ),
-          // Minimisation (C8, CT-9) : le controle ne montre ni appareils ni
-          // foyer, pas meme une ligne inerte.
-          if (projection.afficheAppareils)
-            SettingRow(
-              title: t.compte.appareils,
-              description: t.compte.appareilsDetail,
-              icon: AppIcons.appareil,
-              onPress: projection.afficheFoyer
-                  ? () => context.push(Routes.tuteurFoyer)
-                  : null,
-              enabled: projection.afficheFoyer,
-            ),
-          SettingRow(
-            title: t.compte.confidentialite,
-            description: t.compte.confidentialiteDetail,
-            icon: AppIcons.controleQualite,
-            enabled: false,
+          CarteLignes(
+            lignes: <Widget>[
+              SettingRow(
+                title: t.compte.profil,
+                description: t.compte.profilDetail,
+                icon: AppIcons.profil,
+                onPress: () => context.push(Routes.compteProfil),
+              ),
+              SettingRow(
+                title: t.compte.reglages,
+                description: t.compte.reglagesDetail,
+                icon: AppIcons.reglages,
+                onPress: () => context.push(Routes.compteReglages),
+              ),
+              // Le Foyer est une destination du tuteur (seul role a qui la ligne
+              // s'affiche) : on la rejoint par `go`, pour que la barre allume le
+              // Foyer. Un `push` de `/compte/profils`, redirige vers le Foyer,
+              // l'empilait dans la branche Compte (revue phase 0, routes D7).
+              if (projection.afficheFoyer)
+                SettingRow(
+                  title: t.compte.profils,
+                  description: t.compte.profilsDetail,
+                  icon: AppIcons.foyer,
+                  onPress: () => context.go(Routes.tuteurFoyer),
+                ),
+              // Minimisation (C8, CT-9) : le controle ne montre ni appareils ni
+              // foyer, pas meme une ligne inerte.
+              if (projection.afficheAppareils)
+                SettingRow(
+                  title: t.compte.appareils,
+                  description: t.compte.appareilsDetail,
+                  icon: AppIcons.appareil,
+                  onPress: projection.afficheFoyer
+                      ? () => context.push(Routes.tuteurFoyer)
+                      : null,
+                  enabled: projection.afficheFoyer,
+                ),
+              SettingRow(
+                title: t.compte.confidentialite,
+                description: t.compte.confidentialiteDetail,
+                icon: AppIcons.controleQualite,
+                enabled: false,
+              ),
+            ],
           ),
           Ecart.vSection,
           SectionHeader(titre: t.compte.espaces),
@@ -109,15 +114,19 @@ class ComptePage extends ConsumerWidget {
           if (plusieursEspaces)
             const SelecteurEspaces()
           else
-            for (final _EspaceCompte espace in projection.espaces)
-              SettingRow(
-                key: ValueKey<String>(espace.code),
-                title: espace.libelle,
-                description: espace.detail,
-                value: t.compte.habilitation,
-                icon: espace.icone,
-                enabled: false,
-              ),
+            CarteLignes(
+              lignes: <Widget>[
+                for (final _EspaceCompte espace in projection.espaces)
+                  SettingRow(
+                    key: ValueKey<String>(espace.code),
+                    title: espace.libelle,
+                    description: espace.detail,
+                    value: t.compte.habilitation,
+                    icon: espace.icone,
+                    enabled: false,
+                  ),
+              ],
+            ),
           Ecart.vSection,
           SettingRow(
             title: t.compte.deconnexion,
@@ -154,51 +163,63 @@ class ProfilPersonnelPage extends ConsumerWidget {
           ),
           Ecart.vSection,
           SectionHeader(titre: t.compte.informations),
-          _LigneLecture(
-            titre: t.compte.identifiant,
-            valeur: projection.profileId ?? t.compte.nonDisponible,
-            icon: AppIcons.profil,
-          ),
-          _LigneLecture(
-            titre: t.compte.contact,
-            valeur: t.compte.nonDisponible,
-            detail: t.compte.contactDetail,
-            icon: AppIcons.profil,
-          ),
-          _LigneLecture(
-            titre: t.compte.langue,
-            valeur: t.compte.francais,
-            icon: AppIcons.reglages,
-          ),
-          _LigneLecture(
-            titre: t.compte.fuseau,
-            valeur: t.compte.nonDisponible,
-            icon: AppIcons.reglages,
+          CarteLignes(
+            lignes: <Widget>[
+              _LigneLecture(
+                titre: t.compte.identifiant,
+                valeur: projection.profileId ?? t.compte.nonDisponible,
+                icon: AppIcons.profil,
+              ),
+              _LigneLecture(
+                titre: t.compte.contact,
+                valeur: t.compte.nonDisponible,
+                detail: t.compte.contactDetail,
+                icon: AppIcons.profil,
+              ),
+              _LigneLecture(
+                titre: t.compte.langue,
+                valeur: t.compte.francais,
+                icon: AppIcons.reglages,
+              ),
+              _LigneLecture(
+                titre: t.compte.fuseau,
+                valeur: t.compte.nonDisponible,
+                icon: AppIcons.reglages,
+              ),
+            ],
           ),
           Ecart.vSection,
           SectionHeader(titre: t.compte.academie),
-          for (final _EspaceCompte espace in projection.espaces)
-            _LigneLecture(
-              key: ValueKey<String>('profile-${espace.code}'),
-              titre: espace.libelle,
-              valeur: t.compte.habilitation,
-              detail: espace.detail,
-              icon: espace.icone,
-            ),
+          CarteLignes(
+            lignes: <Widget>[
+              for (final _EspaceCompte espace in projection.espaces)
+                _LigneLecture(
+                  key: ValueKey<String>('profile-${espace.code}'),
+                  titre: espace.libelle,
+                  valeur: t.compte.habilitation,
+                  detail: espace.detail,
+                  icon: espace.icone,
+                ),
+            ],
+          ),
           Ecart.vSection,
           SectionHeader(titre: t.compte.securite),
-          _LigneLecture(
-            titre: t.compte.statut,
-            valeur: projection.statut,
-            icon: AppIcons.controleQualite,
+          CarteLignes(
+            lignes: <Widget>[
+              _LigneLecture(
+                titre: t.compte.statut,
+                valeur: projection.statut,
+                icon: AppIcons.controleQualite,
+              ),
+              if (projection.afficheFoyer)
+                SettingRow(
+                  title: t.compte.profils,
+                  description: t.compte.profilsDetail,
+                  icon: AppIcons.foyer,
+                  onPress: () => context.go(Routes.tuteurFoyer),
+                ),
+            ],
           ),
-          if (projection.afficheFoyer)
-            SettingRow(
-              title: t.compte.profils,
-              description: t.compte.profilsDetail,
-              icon: AppIcons.foyer,
-              onPress: () => context.go(Routes.tuteurFoyer),
-            ),
         ],
       ),
     );
@@ -243,9 +264,8 @@ class ReglagesComptePage extends ConsumerWidget {
             onChanged: (PreferenceTheme? valeur) {
               if (valeur != null) controleur.theme(valeur);
             },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
+            child: CarteLignes(
+              lignes: <Widget>[
                 SettingRow(
                   title: t.compte.themeSysteme,
                   description: t.compte.themeSystemeDetail,
@@ -273,36 +293,41 @@ class ReglagesComptePage extends ConsumerWidget {
           ),
           Ecart.vSection,
           SectionHeader(titre: t.compte.accessibilite),
-          SettingRow(
-            title: t.compte.animations,
-            description: t.compte.animationsDetail,
-            icon: AppIcons.journee,
-            controle: Switch.adaptive(
-              value: preferences.animationsReduites,
-              onChanged: controleur.animations,
-            ),
+          CarteLignes(
+            lignes: <Widget>[
+              SettingRow(
+                title: t.compte.animations,
+                description: t.compte.animationsDetail,
+                icon: AppIcons.journee,
+                controle: Switch.adaptive(
+                  value: preferences.animationsReduites,
+                  onChanged: controleur.animations,
+                ),
+              ),
+              SettingRow(
+                title: t.compte.effets,
+                description: t.compte.effetsDetail,
+                icon: AppIcons.reglages,
+                controle: Switch.adaptive(
+                  value: preferences.effetsReduits,
+                  onChanged: controleur.effets,
+                ),
+              ),
+              // EN-KB (E19) : les raccourcis d'une seule lettre sont
+              // desactivables (WCAG 2.1.4). Preference locale, sans serveur.
+              SettingRow(
+                key: const ValueKey<String>('reglage-raccourcis-salle'),
+                title: LibellesSalleB.raccourcisTitre,
+                description: LibellesSalleB.raccourcisDetail,
+                icon: AppIcons.reglages,
+                controle: Switch.adaptive(
+                  value: preferences.raccourcisSalle,
+                  onChanged: controleur.raccourcisSalle,
+                ),
+              ),
+            ],
           ),
-          SettingRow(
-            title: t.compte.effets,
-            description: t.compte.effetsDetail,
-            icon: AppIcons.reglages,
-            controle: Switch.adaptive(
-              value: preferences.effetsReduits,
-              onChanged: controleur.effets,
-            ),
-          ),
-          // EN-KB (E19) : les raccourcis d'une seule lettre sont
-          // desactivables (WCAG 2.1.4). Preference locale, sans serveur.
-          SettingRow(
-            key: const ValueKey<String>('reglage-raccourcis-salle'),
-            title: LibellesSalleB.raccourcisTitre,
-            description: LibellesSalleB.raccourcisDetail,
-            icon: AppIcons.reglages,
-            controle: Switch.adaptive(
-              value: preferences.raccourcisSalle,
-              onChanged: controleur.raccourcisSalle,
-            ),
-          ),
+          Ecart.vLg,
           AppCard(
             surface: AppPalette.of(context).washAccent,
             child: Text(
@@ -312,83 +337,99 @@ class ReglagesComptePage extends ConsumerWidget {
           ),
           Ecart.vSection,
           SectionHeader(titre: t.compte.langueRegion),
-          SettingRow(
-            title: t.compte.francais,
-            description: t.compte.francaisDetail,
-            value: t.compte.actif,
-            icon: AppIcons.reglages,
-            enabled: false,
-          ),
-          SettingRow(
-            title: t.compte.arabe,
-            description: t.compte.arabeDetail,
-            value: t.compte.nonDisponible,
-            icon: AppIcons.reglages,
-            enabled: false,
-          ),
-          SettingRow(
-            title: t.compte.fuseau,
-            description: t.compte.fuseauDetail,
-            value: t.compte.nonDisponible,
-            icon: AppIcons.reglages,
-            enabled: false,
+          CarteLignes(
+            lignes: <Widget>[
+              SettingRow(
+                title: t.compte.francais,
+                description: t.compte.francaisDetail,
+                value: t.compte.actif,
+                icon: AppIcons.reglages,
+                enabled: false,
+              ),
+              SettingRow(
+                title: t.compte.arabe,
+                description: t.compte.arabeDetail,
+                value: t.compte.nonDisponible,
+                icon: AppIcons.reglages,
+                enabled: false,
+              ),
+              SettingRow(
+                title: t.compte.fuseau,
+                description: t.compte.fuseauDetail,
+                value: t.compte.nonDisponible,
+                icon: AppIcons.reglages,
+                enabled: false,
+              ),
+            ],
           ),
           Ecart.vSection,
           SectionHeader(titre: t.compte.notifications),
-          SettingRow(
-            title: t.compte.notificationsCours,
-            description: t.compte.notificationsCoursDetail,
-            icon: AppIcons.cours,
-            controle: Switch.adaptive(
-              value: preferences.notificationsCours,
-              onChanged: controleur.notificationsCours,
-            ),
-          ),
-          SettingRow(
-            title: t.compte.notificationsFoyer,
-            description: t.compte.notificationsFoyerDetail,
-            icon: AppIcons.foyer,
-            controle: Switch.adaptive(
-              value: preferences.notificationsFoyer,
-              onChanged: controleur.notificationsFoyer,
-            ),
+          CarteLignes(
+            lignes: <Widget>[
+              SettingRow(
+                title: t.compte.notificationsCours,
+                description: t.compte.notificationsCoursDetail,
+                icon: AppIcons.cours,
+                controle: Switch.adaptive(
+                  value: preferences.notificationsCours,
+                  onChanged: controleur.notificationsCours,
+                ),
+              ),
+              SettingRow(
+                title: t.compte.notificationsFoyer,
+                description: t.compte.notificationsFoyerDetail,
+                icon: AppIcons.foyer,
+                controle: Switch.adaptive(
+                  value: preferences.notificationsFoyer,
+                  onChanged: controleur.notificationsFoyer,
+                ),
+              ),
+            ],
           ),
           Text(t.compte.notificationsEtat),
           Ecart.vSection,
           SectionHeader(titre: t.compte.coursDonnees),
-          SettingRow(
-            title: t.compte.economieDonnees,
-            description: t.compte.economieDonneesDetail,
-            icon: AppIcons.horsLigne,
-            controle: Switch.adaptive(
-              value: preferences.economieDonnees,
-              onChanged: controleur.economieDonnees,
-            ),
-          ),
-          SettingRow(
-            title: t.compte.lectureGrande,
-            description: t.compte.lectureGrandeDetail,
-            icon: AppIcons.coran,
-            controle: Switch.adaptive(
-              value: preferences.lectureGrande,
-              onChanged: controleur.lectureGrande,
-            ),
+          CarteLignes(
+            lignes: <Widget>[
+              SettingRow(
+                title: t.compte.economieDonnees,
+                description: t.compte.economieDonneesDetail,
+                icon: AppIcons.horsLigne,
+                controle: Switch.adaptive(
+                  value: preferences.economieDonnees,
+                  onChanged: controleur.economieDonnees,
+                ),
+              ),
+              SettingRow(
+                title: t.compte.lectureGrande,
+                description: t.compte.lectureGrandeDetail,
+                icon: AppIcons.coran,
+                controle: Switch.adaptive(
+                  value: preferences.lectureGrande,
+                  onChanged: controleur.lectureGrande,
+                ),
+              ),
+            ],
           ),
           Ecart.vSection,
-          SettingRow(
-            title: t.compte.appareils,
-            description: t.compte.appareilsDetail,
-            icon: AppIcons.appareil,
-            onPress: foyerDisponible
-                ? () => context.push(Routes.tuteurFoyer)
-                : null,
-            enabled: foyerDisponible,
-          ),
-          SettingRow(
-            title: t.compte.confidentialite,
-            description: t.compte.confidentialiteDetail,
-            icon: AppIcons.controleQualite,
-            enabled: false,
+          CarteLignes(
+            lignes: <Widget>[
+              SettingRow(
+                title: t.compte.appareils,
+                description: t.compte.appareilsDetail,
+                icon: AppIcons.appareil,
+                onPress: foyerDisponible
+                    ? () => context.push(Routes.tuteurFoyer)
+                    : null,
+                enabled: foyerDisponible,
+              ),
+              SettingRow(
+                title: t.compte.confidentialite,
+                description: t.compte.confidentialiteDetail,
+                icon: AppIcons.controleQualite,
+                enabled: false,
+              ),
+            ],
           ),
         ],
       ),
@@ -432,7 +473,7 @@ class ProfilsComptePage extends ConsumerWidget {
                 children: <Widget>[
                   for (final EleveDuFoyer enfant in enfants)
                     Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
                       child: AppCard(
                         key: ValueKey<String>(enfant.id),
                         onPress: () => context.push(
@@ -619,31 +660,35 @@ class _DetailEnfant extends StatelessWidget {
       ),
       Ecart.vSection,
       SectionHeader(titre: t.compte.informations),
-      _LigneLecture(
-        titre: t.compte.identifiant,
-        valeur: enfant.identifiantImmuable,
-        icon: AppIcons.profil,
-      ),
-      _LigneLecture(
-        titre: t.compte.modeEnfant,
-        valeur: enfant.mode == InterfaceMode.enfant
-            ? t.compte.modeEnfant
-            : t.compte.modeStandard,
-        icon: AppIcons.coran,
-      ),
-      _LigneLecture(
-        titre: t.compte.cameraLabel,
-        valeur: enfant.camera == CameraPolicy.allowed
-            ? t.compte.cameraAutorisee
-            : t.compte.cameraInterdite,
-        icon: AppIcons.camera,
-      ),
-      _LigneLecture(
-        titre: t.compte.statut,
-        valeur: enfant.finAcces == null
-            ? t.compte.accesSansFin
-            : t.compte.accesJusqua(date: _dateCourte(enfant.finAcces!)),
-        icon: AppIcons.controleQualite,
+      CarteLignes(
+        lignes: <Widget>[
+          _LigneLecture(
+            titre: t.compte.identifiant,
+            valeur: enfant.identifiantImmuable,
+            icon: AppIcons.profil,
+          ),
+          _LigneLecture(
+            titre: t.compte.modeEnfant,
+            valeur: enfant.mode == InterfaceMode.enfant
+                ? t.compte.modeEnfant
+                : t.compte.modeStandard,
+            icon: AppIcons.coran,
+          ),
+          _LigneLecture(
+            titre: t.compte.cameraLabel,
+            valeur: enfant.camera == CameraPolicy.allowed
+                ? t.compte.cameraAutorisee
+                : t.compte.cameraInterdite,
+            icon: AppIcons.camera,
+          ),
+          _LigneLecture(
+            titre: t.compte.statut,
+            valeur: enfant.finAcces == null
+                ? t.compte.accesSansFin
+                : t.compte.accesJusqua(date: _dateCourte(enfant.finAcces!)),
+            icon: AppIcons.controleQualite,
+          ),
+        ],
       ),
       Ecart.vSection,
       SettingRow(

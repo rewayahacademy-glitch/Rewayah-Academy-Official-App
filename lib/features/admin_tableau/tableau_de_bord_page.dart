@@ -13,6 +13,7 @@ import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/setting_row.dart';
@@ -181,7 +182,7 @@ class TableauDeBordPage extends ConsumerWidget {
           else
             for (final ATraiter ligne in lignes)
               Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                padding: const EdgeInsets.only(bottom: AppSpacing.lg),
                 child: SignalRow(
                   phrase: ligne.libelle,
                   icone: ligne.icone,
@@ -234,20 +235,24 @@ class TableauDeBordPage extends ConsumerWidget {
           // montre une personne inscrite qui n'a pas encore depose sa piece.
           // Sans lui, trois enseignants ont attendu sept jours sans qu'aucun
           // ecran ne les nomme (defaut mesure le 18 septembre 2026).
-          SettingRow(
-            title: t.admin.tableau.outilsComptes,
-            description: t.admin.tableau.outilsComptesDetail,
-            icon: AppIcons.profil,
-            onPress: () =>
-                GoRouter.of(context).go(Routes.adminPersonnesComptes),
-          ),
-          Ecart.vSm,
-          SettingRow(
-            title: t.admin.tableau.outilsAccesAgents,
-            description: t.admin.tableau.outilsAccesAgentsDetail,
-            icon: AppIcons.controleQualite,
-            onPress: () =>
-                GoRouter.of(context).go(Routes.adminSecuriteAuditAccesAgents),
+          CarteLignes(
+            lignes: <Widget>[
+              SettingRow(
+                title: t.admin.tableau.outilsComptes,
+                description: t.admin.tableau.outilsComptesDetail,
+                icon: AppIcons.profil,
+                onPress: () =>
+                    GoRouter.of(context).go(Routes.adminPersonnesComptes),
+              ),
+              SettingRow(
+                title: t.admin.tableau.outilsAccesAgents,
+                description: t.admin.tableau.outilsAccesAgentsDetail,
+                icon: AppIcons.controleQualite,
+                onPress: () =>
+                    GoRouter.of(context)
+                        .go(Routes.adminSecuriteAuditAccesAgents),
+              ),
+            ],
           ),
         ],
       ),
@@ -327,10 +332,10 @@ class _Compteurs extends StatelessWidget {
         // La largeur derive de l'echelle et du nombre de colonnes, elle n'est
         // jamais posee telle quelle.
         final double colonne =
-            (contraintes.maxWidth - AppSpacing.md * (colonnes - 1)) / colonnes;
+            (contraintes.maxWidth - AppSpacing.lg * (colonnes - 1)) / colonnes;
         return Wrap(
-          spacing: AppSpacing.md,
-          runSpacing: AppSpacing.md,
+          spacing: AppSpacing.lg,
+          runSpacing: AppSpacing.lg,
           children: <Widget>[
             for (final StatTile tuile in tuiles)
               SizedBox(width: colonne, child: tuile),

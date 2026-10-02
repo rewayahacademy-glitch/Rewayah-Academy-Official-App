@@ -8,6 +8,7 @@ import '../../core/capacites/port_politique_revue_kyc.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
@@ -78,9 +79,8 @@ class _Corps extends StatelessWidget {
     String erreurEcriture(String message) =>
         t.admin.fonctionnalites.erreurEcriture(message: message);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
+    return CarteLignes(
+      lignes: <Widget>[
         ConfigLigneBooleenne(
           titre: t.admin.fonctionnalites.multiParticipants,
           description: t.admin.fonctionnalites.multiParticipantsDetail,
