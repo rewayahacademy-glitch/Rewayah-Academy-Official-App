@@ -2205,6 +2205,7 @@ class Traductions$controleur$fr {
 
 	// Translations
 	late final Traductions$controleur$historique$fr historique = Traductions$controleur$historique$fr.internal(_root);
+	late final Traductions$controleur$complement$fr complement = Traductions$controleur$complement$fr.internal(_root);
 	late final Traductions$controleur$compteRendu$fr compteRendu = Traductions$controleur$compteRendu$fr.internal(_root);
 	late final Traductions$controleur$observation$fr observation = Traductions$controleur$observation$fr.internal(_root);
 	late final Traductions$controleur$echanges$fr echanges = Traductions$controleur$echanges$fr.internal(_root);
@@ -8670,6 +8671,90 @@ class Traductions$controleur$historique$fr {
 
 	/// fr: 'Ajouter un complément'
 	String get ajouterComplement => 'Ajouter un complément';
+}
+
+// Path: controleur.complement
+class Traductions$controleur$complement$fr {
+	Traductions$controleur$complement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce complément sera ajouté au rapport existant.'
+	String get bandeau => 'Ce complément sera ajouté au rapport existant.';
+
+	/// fr: 'Pourquoi ajoutez-vous ce complément ?'
+	String get questionMotif => 'Pourquoi ajoutez-vous ce complément ?';
+
+	/// fr: 'Facultatif : le motif aide l'administration à lire le complément. Le rapport d'origine ne change pas.'
+	String get contexteMotif => 'Facultatif : le motif aide l\'administration à lire le complément. Le rapport d\'origine ne change pas.';
+
+	/// fr: 'Précision'
+	String get precision => 'Précision';
+
+	/// fr: 'Quand un détail manque · il complète le rapport, sans rien y changer'
+	String get precisionAide => 'Quand un détail manque · il complète le rapport, sans rien y changer';
+
+	/// fr: 'Correction'
+	String get correction => 'Correction';
+
+	/// fr: 'Quand un fait est inexact · l'original reste lisible, la correction s'affiche dessous'
+	String get correctionAide => 'Quand un fait est inexact · l\'original reste lisible, la correction s\'affiche dessous';
+
+	/// fr: 'Fait nouveau'
+	String get faitNouveau => 'Fait nouveau';
+
+	/// fr: 'Quand vous l'apprenez après la visite · il est daté du jour de l'ajout'
+	String get faitNouveauAide => 'Quand vous l\'apprenez après la visite · il est daté du jour de l\'ajout';
+
+	/// fr: 'Qu'ajoutez-vous au rapport ?'
+	String get questionTexte => 'Qu\'ajoutez-vous au rapport ?';
+
+	/// fr: 'Obligatoire : des faits, en quelques phrases.'
+	String get texteObligatoire => 'Obligatoire : des faits, en quelques phrases.';
+
+	/// fr: 'Complément'
+	String get libelleTexte => 'Complément';
+
+	/// fr: 'Ce que vous avez constaté ou appris depuis la visite.'
+	String get aideTexte => 'Ce que vous avez constaté ou appris depuis la visite.';
+
+	/// fr: 'Écrivez le complément pour continuer.'
+	String get texteRequis => 'Écrivez le complément pour continuer.';
+
+	/// fr: 'Vérifiez avant d'envoyer'
+	String get questionRecap => 'Vérifiez avant d\'envoyer';
+
+	/// fr: 'Rapport d'origine'
+	String get cleRapport => 'Rapport d\'origine';
+
+	/// fr: '{classe} · {date}, inchangé'
+	String rapportInchange({required Object classe, required Object date}) => '${classe} · ${date}, inchangé';
+
+	/// fr: 'Motif'
+	String get cleMotif => 'Motif';
+
+	/// fr: 'Aucun motif'
+	String get sansMotif => 'Aucun motif';
+
+	/// fr: 'Complément'
+	String get cleTexte => 'Complément';
+
+	/// fr: 'Envoyer le complément'
+	String get envoyer => 'Envoyer le complément';
+
+	/// fr: 'L'envoi n'est pas confirmé : la connexion ou le serveur n'a pas répondu. Votre texte est gardé ici, réessayez dans un instant. Le rapport d'origine reste intact.'
+	String get echec => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici, réessayez dans un instant. Le rapport d\'origine reste intact.';
+
+	/// fr: 'Complément ajouté'
+	String get envoyeTitre => 'Complément ajouté';
+
+	/// fr: 'Il s'affiche sous le rapport d'origine, qui reste inchangé.'
+	String get envoyePhrase => 'Il s\'affiche sous le rapport d\'origine, qui reste inchangé.';
+
+	/// fr: 'Revenir au rapport'
+	String get revenir => 'Revenir au rapport';
 }
 
 // Path: controleur.compteRendu
@@ -15924,6 +16009,31 @@ extension on Traductions {
 			'controleur.historique.faitsIndisponibles' => 'Les faits de cette visite ne sont pas encore reçus : la séance vient de se terminer ou la connexion a été coupée. Ils s\'afficheront ici dès leur réception. Le reste du rapport reste fiable.',
 			'controleur.historique.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'controleur.historique.ajouterComplement' => 'Ajouter un complément',
+			'controleur.complement.bandeau' => 'Ce complément sera ajouté au rapport existant.',
+			'controleur.complement.questionMotif' => 'Pourquoi ajoutez-vous ce complément ?',
+			'controleur.complement.contexteMotif' => 'Facultatif : le motif aide l\'administration à lire le complément. Le rapport d\'origine ne change pas.',
+			'controleur.complement.precision' => 'Précision',
+			'controleur.complement.precisionAide' => 'Quand un détail manque · il complète le rapport, sans rien y changer',
+			'controleur.complement.correction' => 'Correction',
+			'controleur.complement.correctionAide' => 'Quand un fait est inexact · l\'original reste lisible, la correction s\'affiche dessous',
+			'controleur.complement.faitNouveau' => 'Fait nouveau',
+			'controleur.complement.faitNouveauAide' => 'Quand vous l\'apprenez après la visite · il est daté du jour de l\'ajout',
+			'controleur.complement.questionTexte' => 'Qu\'ajoutez-vous au rapport ?',
+			'controleur.complement.texteObligatoire' => 'Obligatoire : des faits, en quelques phrases.',
+			'controleur.complement.libelleTexte' => 'Complément',
+			'controleur.complement.aideTexte' => 'Ce que vous avez constaté ou appris depuis la visite.',
+			'controleur.complement.texteRequis' => 'Écrivez le complément pour continuer.',
+			'controleur.complement.questionRecap' => 'Vérifiez avant d\'envoyer',
+			'controleur.complement.cleRapport' => 'Rapport d\'origine',
+			'controleur.complement.rapportInchange' => ({required Object classe, required Object date}) => '${classe} · ${date}, inchangé',
+			'controleur.complement.cleMotif' => 'Motif',
+			'controleur.complement.sansMotif' => 'Aucun motif',
+			'controleur.complement.cleTexte' => 'Complément',
+			'controleur.complement.envoyer' => 'Envoyer le complément',
+			'controleur.complement.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici, réessayez dans un instant. Le rapport d\'origine reste intact.',
+			'controleur.complement.envoyeTitre' => 'Complément ajouté',
+			'controleur.complement.envoyePhrase' => 'Il s\'affiche sous le rapport d\'origine, qui reste inchangé.',
+			'controleur.complement.revenir' => 'Revenir au rapport',
 			'controleur.compteRendu.titre' => 'Compte rendu',
 			'controleur.compteRendu.provisoire' => 'Cet écran est en préparation.',
 			'controleur.compteRendu.revenir' => 'Revenir au contrôle',
@@ -16238,6 +16348,8 @@ extension on Traductions {
 			'tc.classe.roster.titre' => 'Élèves',
 			'tc.classe.roster.compteur' => ({required Object presents, required Object attendus}) => 'Élèves : ${presents} présents sur ${attendus} attendus',
 			'tc.classe.roster.indisponible' => 'Roster indisponible',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.roster.indisponibleDetail' => 'Les états de vos élèves n\'ont pas pu être lus. Le cours continue.',
 			'tc.classe.roster.vide' => 'Aucun élève inscrit',
 			'tc.classe.roster.videDetail' => 'Cette séance n\'a aucun élève inscrit.',
@@ -16263,8 +16375,6 @@ extension on Traductions {
 			'tc.classe.fiche.travailActuel' => 'Travail actuel',
 			'tc.classe.fiche.interfaceGuidee' => 'Interface guidée',
 			'tc.classe.fiche.sansPedagogie' => 'Suivi pédagogique indisponible',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.fiche.sansPedagogieDetail' => 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l\'enseignant.',
 			'tc.classe.action.rappel' => 'Rappel discret',
 			'tc.classe.action.reciter' => 'Choisir pour réciter',
