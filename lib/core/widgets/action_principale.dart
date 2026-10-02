@@ -59,6 +59,7 @@ class ActionPrincipale extends StatelessWidget {
     this.fleche = false,
     this.pilule = false,
     this.compacte = false,
+    this.doux = false,
     this.autofocus = false,
     this.focusNode,
   });
@@ -72,6 +73,12 @@ class ActionPrincipale extends StatelessWidget {
   /// liste (≈ 34 de haut au lieu de 52). La zone pressable garde la cible
   /// tactile du mode ; en Interface guidee, le format reduit est ignore.
   final bool compacte;
+
+  /// Registre doux d'un [NiveauAction.destructive] : pilule sur le fond doux
+  /// d'alerte (`washAlert`) au lieu du texte nu. **Jamais un aplat rouge** : la
+  /// paire douce garde l'encre lisible. Reserve a la sortie volontaire d'une
+  /// salle (maquette M4, D1). Ignore pour les autres niveaux.
+  final bool doux;
 
   /// Le libelle du bouton. **Un verbe et son objet** : « Poser un creneau »,
   /// pas « Valider » (`02-regles-ux.md` section 9).
@@ -165,66 +172,89 @@ class ActionPrincipale extends StatelessWidget {
       guidee: metriques.estEnfant,
     );
 
-    return Container(
+    // K-54 : le contenu est centre en largeur ET en hauteur. Un `Container`
+    // avec `alignment` s'etirait a toute la largeur offerte meme avec
+    // `pleineLargeur: false` (un parent `Align` ou `Column` donne des
+    // contraintes souples) : le bouton « compact » prenait 1408 de large sur
+    // bureau. `Center(widthFactor: 1)` lui rend la largeur de son contenu, et
+    // `heightFactor: 1` le centre dans la hauteur minimale sans l'etirer.
+    return SizedBox(
       width: pleineLargeur ? double.infinity : null,
-      constraints: BoxConstraints(
-        minHeight: reduit
-            ? AppSpacing.xxxl + AppSpacing.xs / 2
-            : metriques.estEnfant
-            ? AppTouchTarget.enfant
-            : AppPage.hauteurBouton,
-      ),
-      alignment: Alignment.center,
-      padding: reduit
-          ? const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-              vertical: AppSpacing.xs,
-            )
-          : const EdgeInsets.symmetric(
-              horizontal: AppSpacing.xl,
-              vertical: AppSpacing.md,
-            ),
-      decoration: BoxDecoration(
-        color: peinture.fond,
-        borderRadius: _arrondi,
-        border: peinture.filet == null
-            ? null
-            : Border.fromBorderSide(peinture.filet!),
-      ),
-      child: Semantics(
-        liveRegion: enCours,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            if (enCours) ...<Widget>[
-              SizedBox.square(
-                dimension: AppSpacing.xl,
-                child: CircularProgressIndicator(
-                  value: 0.65,
-                  strokeWidth: 2,
-                  color: peinture.encre(const TextStyle()).color,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: reduit
+              ? AppSpacing.xxxl + AppSpacing.xs / 2
+              : metriques.estEnfant
+              ? AppTouchTarget.enfant
+              : AppPage.hauteurBouton,
+        ),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: peinture.fond,
+            borderRadius: _arrondi,
+            border: peinture.filet == null
+                ? null
+                : Border.fromBorderSide(peinture.filet!),
+          ),
+          child: Padding(
+            padding: reduit
+                ? const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.xs,
+                  )
+                : const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xl,
+                    vertical: AppSpacing.md,
+                  ),
+            child: Center(
+              widthFactor: pleineLargeur ? null : 1,
+              heightFactor: 1,
+              child: Semantics(
+                liveRegion: enCours,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    if (enCours) ...<Widget>[
+                      SizedBox.square(
+                        dimension: AppSpacing.xl,
+                        child: CircularProgressIndicator(
+                          value: 0.65,
+                          strokeWidth: 2,
+                          color: peinture.encre(const TextStyle()).color,
+                        ),
+                      ),
+                      Ecart.hSm,
+                    ] else if (prefixe != null) ...<Widget>[
+                      prefixe!,
+                      Ecart.hSm,
+                    ],
+                    // Le libelle est deja porte par `Pressable` : le texte visible
+                    // est retire de l'arbre semantique, sinon un lecteur d'ecran
+                    // annonce le bouton deux fois.
+                    Flexible(
+                      child: ExcludeSemantics(
+                        child: Text(
+                          libelle,
+                          textAlign: TextAlign.center,
+                          style: _styleLibelle(context, peinture, actif: actif),
+                        ),
+                      ),
+                    ),
+                    if (fleche && !enCours) ...<Widget>[
+                      Ecart.hSm,
+                      IconTheme(
+                        data: IconThemeData(
+                          color: peinture.encre(const TextStyle()).color,
+                          size: AppSpacing.xl,
+                        ),
+                        child: Icon(AppIcons.flecheAction.repos),
+                      ),
+                    ],
+                  ],
                 ),
               ),
-              Ecart.hSm,
-            ] else if (prefixe != null) ...<Widget>[prefixe!, Ecart.hSm],
-            Flexible(
-              child: Text(
-                libelle,
-                textAlign: TextAlign.center,
-                style: _styleLibelle(context, peinture, actif: actif),
-              ),
             ),
-            if (fleche && !enCours) ...<Widget>[
-              Ecart.hSm,
-              IconTheme(
-                data: IconThemeData(
-                  color: peinture.encre(const TextStyle()).color,
-                  size: AppSpacing.xl,
-                ),
-                child: Icon(AppIcons.flecheAction.repos),
-              ),
-            ],
-          ],
+          ),
         ),
       ),
     );
@@ -336,6 +366,15 @@ class ActionPrincipale extends StatelessWidget {
           encre: palette.inkAccent.applyTo,
         );
       case NiveauAction.destructive:
+        if (doux) {
+          return _Peinture(
+            fond: palette.washAlert.background,
+            encre: palette.washAlert.applyTo,
+            filet: etat.survole || etat.presse
+                ? palette.borderStrong.asBorderSide()
+                : null,
+          );
+        }
         return _Peinture(
           fond: etat.survole ? palette.washAlert.background : null,
           encre: palette.inkAlert.applyTo,

@@ -28,7 +28,19 @@ class LienFleche extends StatelessWidget {
     this.annonceLien = false,
     this.alignerEnFin = false,
     this.legende = false,
+    this.libelleSemantique,
+    this.encre,
   });
+
+  /// Ce que lit le lecteur d'ecran quand il doit dire plus que le texte
+  /// visible (« 4 presents sur 4 attendus » pour un « 4/4 »). Par defaut, le
+  /// libelle.
+  final String? libelleSemantique;
+
+  /// L'encre du lien, pour une surface qui n'est pas celle de la page (la
+  /// salle en direct) : la fonction `applyTo` d'une paire ou d'une encre de la
+  /// palette, jamais une couleur seule. Par defaut, `inkAccent`.
+  final TextStyle Function(TextStyle base)? encre;
 
   /// Vrai : le lien se range au bord de fin, comme les actions qu'il suit
   /// (HL-A-3) : aucun retrait de fin, lignes alignees en fin quand le texte
@@ -64,10 +76,13 @@ class LienFleche extends StatelessWidget {
     final TextStyle base =
         (legende ? textes.labelSmall : textes.labelLarge) ?? const TextStyle();
     final double tailleIcone = legende ? AppSpacing.md : AppSpacing.lg;
+    final TextStyle Function(TextStyle) encreLien =
+        encre ?? palette.inkAccent.applyTo;
+    final Color? couleurIcone = encreLien(const TextStyle()).color;
 
     return Pressable.selon(
       onPress: onPress,
-      libelleSemantique: libelle,
+      libelleSemantique: libelleSemantique ?? libelle,
       lien: annonceLien,
       arrondiFocus: AppRadius.arrondiSm,
       constructeur: (BuildContext contexte, EtatPression etat) => Padding(
@@ -79,10 +94,12 @@ class LienFleche extends StatelessWidget {
         child: ExcludeSemantics(
           child: Row(
             mainAxisSize: MainAxisSize.min,
+            // K-54 : sous la cible minimale de 48, le contenu reste au centre.
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               if (icone != null) ...<Widget>[
                 IconTheme(
-                  data: palette.inkAccent.asIconTheme(size: AppSpacing.lg),
+                  data: IconThemeData(color: couleurIcone, size: AppSpacing.lg),
                   child: Icon(icone!.repos),
                 ),
                 Ecart.hXs,
@@ -91,8 +108,7 @@ class LienFleche extends StatelessWidget {
                 child: Text(
                   libelle,
                   textAlign: alignerEnFin ? TextAlign.end : null,
-                  style: palette.inkAccent
-                      .applyTo(base)
+                  style: encreLien(base)
                       .copyWith(
                         decoration: etat.survole || etat.focus
                             ? TextDecoration.underline
@@ -103,7 +119,7 @@ class LienFleche extends StatelessWidget {
               if (fleche) ...<Widget>[
                 Ecart.hXs,
                 IconTheme(
-                  data: palette.inkAccent.asIconTheme(size: tailleIcone),
+                  data: IconThemeData(color: couleurIcone, size: tailleIcone),
                   child: Icon(AppIcons.flecheAction.repos),
                 ),
               ],
