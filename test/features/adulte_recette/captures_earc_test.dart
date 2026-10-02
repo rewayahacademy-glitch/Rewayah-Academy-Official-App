@@ -18,6 +18,7 @@
 // (g)  Ma famille du titulaire, « Faire une nouvelle demande » au bord de fin
 //      (m8, validation refusee).
 // (h)  Confirmation « Se deconnecter » en demonstration (M6).
+// (i)  « Ajouter ma famille » de l'adulte seul (EA-PL parcours).
 //
 // 390x844, 768x1024 et 1440x900, clair et sombre. Jamais sans CAPTURE_DIR
 // (voir test/capture/LISEZ-MOI.md).
@@ -280,5 +281,14 @@ void main() {
       await tester.tap(carte);
       await tester.pumpAndSettle();
     },
+  );
+
+  _groupe(
+    '(i) « Ajouter ma famille », adulte seul',
+    'i_ajouter_ma_famille',
+    adresseDemoAdulte(
+      EcranDemoAdulte.ajouterMaFamille,
+      etat: EtatDemoAdulte.adulteSeul,
+    ),
   );
 }

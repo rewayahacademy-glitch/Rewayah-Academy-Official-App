@@ -71,6 +71,9 @@ part 'recharge_foyer.dart';
 // La reprise du foyer (EA-11) aussi.
 part 'reprise_foyer.dart';
 
+// « Ajouter ma famille » (EA-PL parcours) aussi.
+part 'ajouter_ma_famille.dart';
+
 /// Ce que le titulaire envoie : le prenom et l'adresse (obligatoires), le nom
 /// (facultatif, Q7), et une cle d'idempotence tiree une fois par saisie, que
 /// chaque nouvelle tentative reprend (doc section 17).

@@ -3881,8 +3881,7 @@
       }
     },
     "provisoire": {
-      "coran": "Le Coran de votre espace élève s'affichera ici.",
-      "ajouterMaFamille": "L'ajout de votre famille arrivera dans une prochaine étape."
+      "coran": "Le Coran de votre espace élève s'affichera ici."
     },
     "recharge": {
       "titre": "Nouvelle recharge",
@@ -3929,6 +3928,8 @@
     "famille": {
       "ajouter": "Ajouter ma famille",
       "ajouterLegende": "Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.",
+      "ajouterPhrase": "Vous pouvez ajouter vos enfants et inviter un conjoint ou une conjointe à rejoindre votre forfait famille. Votre espace élève reste inchangé.",
+      "inscrireEnfant": "Inscrire un enfant",
       "maFamille": "Ma famille",
       "forfaitFamille": "Forfait famille",
       "retourMonEspace": "Revenir à Mon espace",
@@ -3938,6 +3939,7 @@
       "aProposForfaitPhrase": "Le forfait famille comprend un titulaire, un conjoint ou une conjointe adulte, et les enfants ou adolescents sous la responsabilité du titulaire. Chaque adulte conserve son propre compte.",
       "profilNonCreeTitre": "Démonstration : aucun profil n'a été créé",
       "profilNonCreePhrase": "En démonstration, rien n'est envoyé. Ma famille reste telle qu'elle était.",
+      "profilNonCreePhraseSeul": "En démonstration, rien n'est envoyé. Votre espace élève reste tel qu'il était.",
       "monProfilIndisponibleTitre": "Pas encore disponible",
       "monProfilIndisponiblePhrase": "La création d'un profil élève séparé n'est pas encore disponible. Vos cours et Ma famille restent tels qu'ils sont.",
       "indisponibleTitre": "La rubrique famille n'est pas encore disponible",

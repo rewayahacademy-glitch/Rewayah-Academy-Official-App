@@ -312,7 +312,7 @@ void main() {
     );
     // Adulte seul : « Ajouter ma famille », comme sa ligne de Mon espace.
     expect(find.byType(FoyerPage), findsNothing);
-    expect(find.text(t.adulte.provisoire.ajouterMaFamille), findsOneWidget);
+    expect(find.byType(AjouterMaFamillePage), findsOneWidget);
     expect(find.text(t.adulte.famille.titulaire), findsNothing);
     // Second adulte : « Forfait famille », sans enfants ni place.
     for (final EcranDemoAdulte ecran in <EcranDemoAdulte>[

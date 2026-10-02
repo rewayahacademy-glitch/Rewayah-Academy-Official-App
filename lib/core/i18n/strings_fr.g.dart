@@ -8935,9 +8935,6 @@ class Traductions$adulte$provisoire$fr {
 
 	/// fr: 'Le Coran de votre espace élève s'affichera ici.'
 	String get coran => 'Le Coran de votre espace élève s\'affichera ici.';
-
-	/// fr: 'L'ajout de votre famille arrivera dans une prochaine étape.'
-	String get ajouterMaFamille => 'L\'ajout de votre famille arrivera dans une prochaine étape.';
 }
 
 // Path: adulte.recharge
@@ -9086,6 +9083,12 @@ class Traductions$adulte$famille$fr {
 	/// fr: 'Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.'
 	String get ajouterLegende => 'Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.';
 
+	/// fr: 'Vous pouvez ajouter vos enfants et inviter un conjoint ou une conjointe à rejoindre votre forfait famille. Votre espace élève reste inchangé.'
+	String get ajouterPhrase => 'Vous pouvez ajouter vos enfants et inviter un conjoint ou une conjointe à rejoindre votre forfait famille. Votre espace élève reste inchangé.';
+
+	/// fr: 'Inscrire un enfant'
+	String get inscrireEnfant => 'Inscrire un enfant';
+
 	/// fr: 'Ma famille'
 	String get maFamille => 'Ma famille';
 
@@ -9112,6 +9115,9 @@ class Traductions$adulte$famille$fr {
 
 	/// fr: 'En démonstration, rien n'est envoyé. Ma famille reste telle qu'elle était.'
 	String get profilNonCreePhrase => 'En démonstration, rien n\'est envoyé. Ma famille reste telle qu\'elle était.';
+
+	/// fr: 'En démonstration, rien n'est envoyé. Votre espace élève reste tel qu'il était.'
+	String get profilNonCreePhraseSeul => 'En démonstration, rien n\'est envoyé. Votre espace élève reste tel qu\'il était.';
 
 	/// fr: 'Pas encore disponible'
 	String get monProfilIndisponibleTitre => 'Pas encore disponible';
@@ -17143,7 +17149,6 @@ extension on Traductions {
 			'adulte.monEspace.pageCoursAcces.indisponibleTitre' => 'Cours et accès pas encore consultables',
 			'adulte.monEspace.pageCoursAcces.indisponiblePhrase' => 'Le détail de vos cours, de vos séances et de votre accès n\'est pas encore disponible dans l\'application.',
 			'adulte.provisoire.coran' => 'Le Coran de votre espace élève s\'affichera ici.',
-			'adulte.provisoire.ajouterMaFamille' => 'L\'ajout de votre famille arrivera dans une prochaine étape.',
 			'adulte.recharge.titre' => 'Nouvelle recharge',
 			'adulte.recharge.phrase' => 'Sélectionnez un ou plusieurs bénéficiaires, puis choisissez une offre pour chacun.',
 			'adulte.recharge.toutSelectionner' => 'Tout sélectionner',
@@ -17184,6 +17189,8 @@ extension on Traductions {
 			'adulte.paiements.aucunBeneficiairePhrase' => 'Aucun profil élève de votre foyer n\'a de solde à recharger pour l\'instant.',
 			'adulte.famille.ajouter' => 'Ajouter ma famille',
 			'adulte.famille.ajouterLegende' => 'Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.',
+			'adulte.famille.ajouterPhrase' => 'Vous pouvez ajouter vos enfants et inviter un conjoint ou une conjointe à rejoindre votre forfait famille. Votre espace élève reste inchangé.',
+			'adulte.famille.inscrireEnfant' => 'Inscrire un enfant',
 			'adulte.famille.maFamille' => 'Ma famille',
 			'adulte.famille.forfaitFamille' => 'Forfait famille',
 			'adulte.famille.retourMonEspace' => 'Revenir à Mon espace',
@@ -17193,6 +17200,7 @@ extension on Traductions {
 			'adulte.famille.aProposForfaitPhrase' => 'Le forfait famille comprend un titulaire, un conjoint ou une conjointe adulte, et les enfants ou adolescents sous la responsabilité du titulaire. Chaque adulte conserve son propre compte.',
 			'adulte.famille.profilNonCreeTitre' => 'Démonstration : aucun profil n\'a été créé',
 			'adulte.famille.profilNonCreePhrase' => 'En démonstration, rien n\'est envoyé. Ma famille reste telle qu\'elle était.',
+			'adulte.famille.profilNonCreePhraseSeul' => 'En démonstration, rien n\'est envoyé. Votre espace élève reste tel qu\'il était.',
 			'adulte.famille.monProfilIndisponibleTitre' => 'Pas encore disponible',
 			'adulte.famille.monProfilIndisponiblePhrase' => 'La création d\'un profil élève séparé n\'est pas encore disponible. Vos cours et Ma famille restent tels qu\'ils sont.',
 			'adulte.famille.indisponibleTitre' => 'La rubrique famille n\'est pas encore disponible',

@@ -265,9 +265,13 @@ abstract final class DonneesAdulteDemo {
           dernieresSeances: dernieresSeances(),
         );
 
-  /// Les enfants que Ma famille montre : aucun sans foyer.
-  static List<EleveDuFoyer> enfantsPour(EtatDemoAdulte etat) =>
-      aUnFoyer(etat) ? enfants : const <EleveDuFoyer>[];
+  /// Les enfants que Ma famille montre : aucun sans foyer, aucun non plus
+  /// dans le foyer que l'adulte seul vient d'ouvrir par « Ajouter ma
+  /// famille » ([foyerNouveau], EA-PL) : rien n'est invente.
+  static List<EleveDuFoyer> enfantsPour(
+    EtatDemoAdulte etat, {
+    bool foyerNouveau = false,
+  }) => aUnFoyer(etat) && !foyerNouveau ? enfants : const <EleveDuFoyer>[];
 
   /// L'etat de la place adulte vu par le titulaire (F21, EA-5, EA-BR-14).
   /// Une invitation expiree ou annulee rend la place libre, sans delai (F5).
@@ -520,9 +524,28 @@ abstract final class DonneesAdulteDemo {
   /// additionnee dans Flutter (F9). Oumar n'a pas la pastille « Inactif » de
   /// la planche : son acces, dans Ma famille, est sans echeance, et la
   /// demonstration ne se contredit pas d'un ecran a l'autre.
-  static SoldesFoyer soldes(EtatDemoAdulte etat, GenreTitulaireDemo genre) {
+  ///
+  /// Le foyer que l'adulte seul vient d'ouvrir ([foyerNouveau], EA-PL) n'a
+  /// que le titulaire : ni second adulte rattache, ni enfant.
+  static SoldesFoyer soldes(
+    EtatDemoAdulte etat,
+    GenreTitulaireDemo genre, {
+    bool foyerNouveau = false,
+  }) {
     final bool second = secondAdultePresent(etat);
     final d = t.adulte.demo.donnees;
+    if (foyerNouveau) {
+      return SoldesFoyer(
+        beneficiaires: <SoldeBeneficiaire>[
+          SoldeBeneficiaire(
+            id: idTitulaire(genre),
+            prenom: prenomTitulaire(genre),
+            soldeRendu: d.soldeTitulaire,
+          ),
+        ],
+        recapitulatif: d.totalSansSecondAdulte,
+      );
+    }
     return SoldesFoyer(
       beneficiaires: <SoldeBeneficiaire>[
         SoldeBeneficiaire(
@@ -608,9 +631,14 @@ abstract final class DonneesAdulteDemo {
   /// pour lui.
   static List<BeneficiaireRecharge> beneficiairesRecharge(
     EtatDemoAdulte etat,
-    GenreTitulaireDemo genre,
-  ) => <BeneficiaireRecharge>[
-    for (final SoldeBeneficiaire s in soldes(etat, genre).beneficiaires)
+    GenreTitulaireDemo genre, {
+    bool foyerNouveau = false,
+  }) => <BeneficiaireRecharge>[
+    for (final SoldeBeneficiaire s in soldes(
+      etat,
+      genre,
+      foyerNouveau: foyerNouveau,
+    ).beneficiaires)
       BeneficiaireRecharge(
         id: s.id,
         prenom: s.prenom,
@@ -628,8 +656,9 @@ abstract final class DonneesAdulteDemo {
   static RecapitulatifRecharge recapitulatifRecharge(
     EtatDemoAdulte etat,
     GenreTitulaireDemo genre,
-    List<ChoixRecharge> choix,
-  ) {
+    List<ChoixRecharge> choix, {
+    bool foyerNouveau = false,
+  }) {
     final Map<String, String> offreDe = <String, String>{
       for (final ChoixRecharge c in choix) c.beneficiaireId: c.offreId,
     };
@@ -637,7 +666,11 @@ abstract final class DonneesAdulteDemo {
       for (final OffreRecharge o in _offresRecharge) o.id: o,
     };
     final List<LigneRecapitulatif> lignes = <LigneRecapitulatif>[
-      for (final BeneficiaireRecharge b in beneficiairesRecharge(etat, genre))
+      for (final BeneficiaireRecharge b in beneficiairesRecharge(
+        etat,
+        genre,
+        foyerNouveau: foyerNouveau,
+      ))
         if (offreDe[b.id] case final String offreId)
           if (offreParId[offreId] case final OffreRecharge o)
             LigneRecapitulatif(

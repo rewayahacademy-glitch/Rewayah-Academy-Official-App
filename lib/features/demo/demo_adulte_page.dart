@@ -163,7 +163,7 @@ enum EcranDemoAdulte {
   appareils,
 
   /// « Ajouter ma famille », ouvert depuis Mon espace par l'adulte sans
-  /// foyer : provisoire.
+  /// foyer (EA-PL) : inscrire un enfant ou inviter le second adulte.
   ajouterMaFamille,
 
   /// Inviter la conjointe ou le conjoint, ouvert depuis la place libre de Ma
@@ -229,6 +229,15 @@ const Set<EcranDemoAdulte> _ecransFoyer = <EcranDemoAdulte>{
   EcranDemoAdulte.repriseTitulaire,
 };
 
+/// Les ecrans du Foyer qu'ouvre « Ajouter ma famille » a l'adulte seul
+/// (EA-PL) : l'invitation du second adulte, l'ajout d'un enfant et son
+/// resultat de demonstration.
+const Set<EcranDemoAdulte> _ecransAjouterMaFamille = <EcranDemoAdulte>{
+  EcranDemoAdulte.inviterConjoint,
+  EcranDemoAdulte.ajouterProfil,
+  EcranDemoAdulte.profilNonCree,
+};
+
 /// Les situations « pendant une mutation » du doc section 18 (22, 23) : la
 /// demonstration les montre sur l'invitation, quel que soit l'etat de la
 /// place (EA-6).
@@ -276,6 +285,14 @@ EcranDemoAdulte ecranPermisDemoAdulte(
         : EcranDemoAdulte.monEspace;
   }
   if (!_ecransFoyer.contains(ecran)) return ecran;
+  // « Ajouter ma famille » (EA-PL, doc section 4) : l'adulte seul ouvre
+  // l'invitation et l'ajout d'un enfant, la meme architecture familiale que
+  // l'onboarding ; rien d'autre du Foyer tant qu'il n'en a pas.
+  if (etat == EtatDemoAdulte.adulteSeul &&
+      vue == VueDemoAdulte.titulaire &&
+      _ecransAjouterMaFamille.contains(ecran)) {
+    return ecran;
+  }
   switch (DonneesAdulteDemo.ligneFamille(etat, vue)) {
     case LigneFamilleAdulte.maFamille:
       break;
@@ -352,6 +369,7 @@ List<RouteBase> routesDemoAdulte(String environnement) {
               EtatDemoClasse.aVenir,
           eleve: p['eleve'],
           reseauCoupe: p['reseau'] == 'coupe',
+          foyerNouveau: p['foyer'] == 'nouveau',
         );
       },
     ),
@@ -374,6 +392,7 @@ String adresseDemoAdulte(
   EtatDemoClasse seance = EtatDemoClasse.aVenir,
   String? eleve,
   bool reseauCoupe = false,
+  bool foyerNouveau = false,
 }) => Uri(
   path: Routes.demoAdulte,
   queryParameters: <String, String>{
@@ -384,6 +403,7 @@ String adresseDemoAdulte(
     if (seance != EtatDemoClasse.aVenir) 'seance': seance.name,
     'eleve': ?eleve,
     if (reseauCoupe) 'reseau': 'coupe',
+    if (foyerNouveau) 'foyer': 'nouveau',
   },
 ).toString();
 
@@ -515,8 +535,13 @@ class DemoAdultePage extends StatelessWidget {
     this.seance = EtatDemoClasse.aVenir,
     this.eleve,
     this.reseauCoupe = false,
+    this.foyerNouveau = false,
     super.key,
   });
+
+  /// `foyer=nouveau` : le foyer que l'adulte seul vient d'ouvrir par
+  /// « Ajouter ma famille » (EA-PL), sans enfant.
+  final bool foyerNouveau;
 
   /// La situation de la prochaine seance (Accueil).
   final EtatDemoClasse seance;
@@ -551,6 +576,7 @@ class DemoAdultePage extends StatelessWidget {
         seance: seance,
         eleve: eleve,
         reseauCoupe: reseauCoupe,
+        foyerNouveau: foyerNouveau,
       );
     }
     final AppPalette palette = AppPalette.of(context);
@@ -680,8 +706,15 @@ class CoquilleAdulteDemo extends StatelessWidget {
     this.environnement = Env.environnement,
     this.eleve,
     this.reseauCoupe = false,
+    this.foyerNouveau = false,
     super.key,
   });
+
+  /// `foyer=nouveau` : le foyer que l'adulte seul vient d'ouvrir par
+  /// « Ajouter ma famille » (EA-PL). Ma famille n'y montre aucun enfant, et
+  /// les soldes, que le titulaire. Son espace eleve ne change pas : Accueil,
+  /// Ma classe et Mon espace ne lisent pas cette valeur.
+  final bool foyerNouveau;
 
   /// La situation de la prochaine seance (Accueil).
   final EtatDemoClasse seance;
@@ -719,6 +752,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
     seance: seance,
     eleve: eleve,
     reseauCoupe: reseauCoupe,
+    foyerNouveau: foyerNouveau,
   );
 
   @override
@@ -1039,10 +1073,23 @@ class CoquilleAdulteDemo extends StatelessWidget {
                 ),
               ),
             ),
-            EcranDemoAdulte.ajouterMaFamille => _PageProvisoire(
-              titre: t.adulte.famille.ajouter,
-              phrase: t.adulte.provisoire.ajouterMaFamille,
+            // « Ajouter ma famille » (EA-PL, doc section 4) : le libelle de
+            // l'invitation suit le genre de la personne qui regarde (doc
+            // section 2). Les actions ouvrent les vrais ecrans du Foyer pour
+            // l'adulte seul ; le second adulte qui n'est plus rattache n'a
+            // pas encore de foyer de demonstration a lui (EA-BR-17) : la page
+            // l'explique, sans action.
+            EcranDemoAdulte.ajouterMaFamille => AjouterMaFamillePage(
+              placeFeminine:
+                  (genre == GenreTitulaireDemo.homme) ==
+                  (vue == VueDemoAdulte.titulaire),
               onRetour: versMonEspace,
+              onInscrireEnfant: vue == VueDemoAdulte.titulaire
+                  ? () => context.go(_adresse(EcranDemoAdulte.ajouterProfil))
+                  : null,
+              onInviter: vue == VueDemoAdulte.titulaire
+                  ? () => context.go(_adresse(EcranDemoAdulte.inviterConjoint))
+                  : null,
             ),
             // Le second adulte rattache : les paiements du foyer, la meme
             // page que le titulaire (E3, EA-BR-16), retour vers Mon espace.
@@ -1108,12 +1155,22 @@ class CoquilleAdulteDemo extends StatelessWidget {
       role: AppRole.guardian,
       mode: InterfaceMode.standard,
     );
-    final List<EleveDuFoyer> enfants = DonneesAdulteDemo.enfantsPour(etat);
+    final List<EleveDuFoyer> enfants = DonneesAdulteDemo.enfantsPour(
+      etat,
+      foyerNouveau: foyerNouveau,
+    );
     final FoyerTitulaireVM titulaire = DonneesAdulteDemo.foyerTitulaire(
       etat,
       genre,
     );
-    void versMaFamille() => context.go(_adresse(EcranDemoAdulte.maFamille));
+    // L'adulte seul, venu de « Ajouter ma famille » (EA-PL) : abandonner y
+    // ramene, il n'a pas encore de Ma famille.
+    final bool seul = etat == EtatDemoAdulte.adulteSeul;
+    void versMaFamille() => context.go(
+      _adresse(
+        seul ? EcranDemoAdulte.ajouterMaFamille : EcranDemoAdulte.maFamille,
+      ),
+    );
     void versRecharge() => context.go(_adresse(EcranDemoAdulte.recharge));
     void versFiche(String id) =>
         context.go(_adresse(EcranDemoAdulte.ficheEleve, eleve: id));
@@ -1143,6 +1200,8 @@ class CoquilleAdulteDemo extends StatelessWidget {
 
     // Apres un envoi ou une annulation, Ma famille dans la situation que le
     // serveur rendrait : l'invitation envoyee, ou la place libre « annulee ».
+    // Envoyee par l'adulte seul (EA-PL) : il devient titulaire d'un foyer
+    // nouveau, sans enfant, et Mon espace dit desormais « Ma famille ».
     void versMaFamilleApres(EtatDemoAdulte suite) => context.go(
       adresseDemoAdulte(
         EcranDemoAdulte.maFamille,
@@ -1151,6 +1210,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
         vue: vue,
         seance: seance,
         reseauCoupe: reseauCoupe,
+        foyerNouveau: foyerNouveau || seul,
       ),
     );
     final EtatPlaceAdulte place = titulaire.place;
@@ -1220,9 +1280,17 @@ class CoquilleAdulteDemo extends StatelessWidget {
             // Titre et phrase sans source (spec, planche) : libelle
             // provisoire, lexique D4.
             titre: t.adulte.famille.profilNonCreeTitre,
-            phrase: t.adulte.famille.profilNonCreePhrase,
-            libelleAction: t.adulte.invitation.revenirMaFamille,
-            onAction: versMaFamille,
+            // L'adulte seul (EA-PL) n'a pas de Ma famille : son espace eleve
+            // reste tel quel, et il y revient. Libelle provisoire, lexique D4.
+            phrase: seul
+                ? t.adulte.famille.profilNonCreePhraseSeul
+                : t.adulte.famille.profilNonCreePhrase,
+            libelleAction: seul
+                ? t.adulte.famille.retourMonEspace
+                : t.adulte.invitation.revenirMaFamille,
+            onAction: seul
+                ? () => context.go(_adresse(EcranDemoAdulte.monEspace))
+                : versMaFamille,
             dependance: 'demonstration',
           ),
         ),
@@ -1350,7 +1418,8 @@ class CoquilleAdulteDemo extends StatelessWidget {
         foyerTitulaireProvider.overrideWith((Ref _) async => titulaire),
         // Les soldes du foyer (EA-9, EA-BR-23), au titulaire seulement (F7).
         soldesFoyerProvider.overrideWith(
-          (Ref _) async => DonneesAdulteDemo.soldes(etat, genre),
+          (Ref _) async =>
+              DonneesAdulteDemo.soldes(etat, genre, foyerNouveau: foyerNouveau),
         ),
         // L'invitation (EA-6, EA-BR-15) : rien n'est envoye (K-28).
         portInvitationConjointProvider.overrideWithValue(_InvitationDemo(etat)),
@@ -1358,11 +1427,17 @@ class CoquilleAdulteDemo extends StatelessWidget {
         portSortieForfaitProvider.overrideWithValue(_SortieDemo(etat)),
         // La recharge (EA-10, EA-BR-24 et 25), au titulaire seulement (F7) :
         // rien n'est paye.
-        portRechargeFoyerProvider.overrideWithValue(_RechargeDemo(etat, genre)),
+        portRechargeFoyerProvider.overrideWithValue(
+          _RechargeDemo(etat, genre, foyerNouveau: foyerNouveau),
+        ),
         // Derive du port : sans surcharge ici, il se resoudrait dans le
         // conteneur racine, sur le port reel (indisponible).
         beneficiairesRechargeProvider.overrideWith(
-          (Ref _) => _RechargeDemo(etat, genre).beneficiaires(),
+          (Ref _) => _RechargeDemo(
+            etat,
+            genre,
+            foyerNouveau: foyerNouveau,
+          ).beneficiaires(),
         ),
         // La demande de reprise qui concerne le titulaire (EA-11, EA-BR-28) :
         // rien n'est envoye.
@@ -1509,18 +1584,28 @@ class _SortieDemo implements PortSortieForfait {
 /// reseau » rend la coupure (D5) ; « Double soumission » repond apres la
 /// meme latence simulee. Rien n'est envoye (K-28).
 class _RechargeDemo implements PortRechargeFoyer {
-  const _RechargeDemo(this.etat, this.genre);
+  const _RechargeDemo(this.etat, this.genre, {this.foyerNouveau = false});
 
   final EtatDemoAdulte etat;
   final GenreTitulaireDemo genre;
+  final bool foyerNouveau;
 
   @override
   Future<List<BeneficiaireRecharge>> beneficiaires() async =>
-      DonneesAdulteDemo.beneficiairesRecharge(etat, genre);
+      DonneesAdulteDemo.beneficiairesRecharge(
+        etat,
+        genre,
+        foyerNouveau: foyerNouveau,
+      );
 
   @override
   Future<RecapitulatifRecharge> verifier(List<ChoixRecharge> choix) async =>
-      DonneesAdulteDemo.recapitulatifRecharge(etat, genre, choix);
+      DonneesAdulteDemo.recapitulatifRecharge(
+        etat,
+        genre,
+        choix,
+        foyerNouveau: foyerNouveau,
+      );
 
   @override
   Future<String> payer({
@@ -1567,22 +1652,16 @@ const Duration latenceSimulee = Mouvement.maximum;
 
 /// Une page provisoire : son titre et une phrase qui dit ce qui viendra.
 class _PageProvisoire extends StatelessWidget {
-  const _PageProvisoire({
-    required this.titre,
-    required this.phrase,
-    this.onRetour,
-  });
+  const _PageProvisoire({required this.titre, required this.phrase});
 
   final String titre;
   final String phrase;
-  final VoidCallback? onRetour;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     return PageShell(
       titre: titre,
-      onRetour: onRetour,
       child: Text(
         phrase,
         style: palette.inkMuted.applyTo(
