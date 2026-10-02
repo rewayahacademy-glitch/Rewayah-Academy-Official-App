@@ -15,11 +15,11 @@
 // Aucune traduction sous les versets (Q7).
 
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/commandes_masquables.dart';
 import '../../core/coran/service_coran.dart'
     show PositionLecture, Sourate, pagesMushafMedine;
 import '../../core/i18n/strings.g.dart';
@@ -31,13 +31,15 @@ import '../../core/tc_coran/navigation_coran.dart';
 import '../../core/tc_coran/page_mushaf_vm.dart';
 import '../../core/tc_coran/port_navigation_coran.dart';
 import '../../core/theme/app_gabarit.dart';
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pressable.dart';
 import '../tc_mushaf/navigation_coran_feuille.dart';
 import '../tc_mushaf/vue_page_mushaf.dart';
 import '../tc_mushaf/vue_verset_agrandi.dart';
@@ -139,6 +141,9 @@ class _CoranAccessibiliteEtat extends ConsumerState<CoranAccessibilite> {
     setState(() => _ouvert = true);
   }
 
+  /// Revient a l'entree.
+  void _fermer() => setState(() => _ouvert = false);
+
   @override
   Widget build(BuildContext context) {
     if (_ouvert) {
@@ -160,38 +165,20 @@ class _CoranAccessibiliteEtat extends ConsumerState<CoranAccessibilite> {
         style: palette.surfaceQuran.applyTo(
           textes.bodyMedium ?? const TextStyle(),
         ),
-        child: Column(
+        child: KeyedSubtree(
           key: const ValueKey<String>('coran-ma-lecteur'),
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(
-                AppSpacing.lg,
-                AppSpacing.sm,
-                AppSpacing.lg,
-                0,
-              ),
-              child: Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: ActionPrincipale(
-                  key: const ValueKey<String>('coran-ma-retour'),
-                  libelle: t.accessibilite.coran.retour,
-                  niveau: NiveauAction.tertiaire,
-                  pleineLargeur: false,
-                  prefixe: _IconeAction(
-                    icone: AppIcons.retour,
-                    couleur: palette.inkAccent.applyTo(const TextStyle()).color,
-                  ),
-                  onPress: () => setState(() => _ouvert = false),
-                ),
-              ),
-            ),
-            Expanded(
-              child: widget.demonstration
-                  ? _demonstrationSansTexte()
-                  : const LecteurCoranAccessibilite(),
-            ),
-          ],
+          child: widget.demonstration
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    EnteteLecteurCoranAccessibilite(
+                      titre: t.eleve.coran.titre,
+                      onRetour: _fermer,
+                    ),
+                    Expanded(child: _demonstrationSansTexte()),
+                  ],
+                )
+              : LecteurCoranAccessibilite(onRetour: _fermer),
         ),
       ),
     );
@@ -311,20 +298,33 @@ class _CoranAccessibiliteEtat extends ConsumerState<CoranAccessibilite> {
 /// (`VuePageMushaf`, `VueVersetAgrandi`), reprises telles quelles, dans un
 /// enrobage propre au mode.
 ///
-/// Seul l'enrobage change par rapport a `MushafPage` (revue MA-7) : les
-/// commandes de page portent une fleche directionnelle (miroitee en arabe),
-/// ne coupent jamais un libelle en plein mot (cote a cote quand chaque mot
-/// tient, l'une sous l'autre sinon, K-54) et restent en bas de l'ecran,
-/// visibles sans defilement ; a texte tres agrandi, le bloc des commandes
-/// defile dans sa moitie d'ecran au lieu de passer sous la ligne de
-/// flottaison. Aucune hauteur litterale.
+/// MA-CMD-1 (directeur, 02/10/2026, capture a 200 % : « des fleches et sans
+/// texte, compacte en bas, qui s'affiche a la touche de l'ecran pour laisser
+/// le Coran et le support respirer ») : le Coran garde tout l'ecran. L'en-tete
+/// tient sur une ligne (retour en icone, sourate et page en petit) ; les
+/// commandes reprennent la disposition de `_Commandes` de `MushafPage`
+/// (page precedente, navigation, page suivante, et la taille du texte en
+/// verset agrandi), en icones seules posees par-dessus le bas du Mushaf dans
+/// [CommandesMasquables] : masquees apres quelques secondes, rappelees d'une
+/// touche ou au focus, toujours visibles avec lecteur d'ecran ou clavier.
+/// Chaque icone garde son nom pour le lecteur d'ecran et une infobulle.
 ///
 /// Repris de `MushafPage` sans rien y changer : l'enregistrement differe de
 /// la position personnelle (seulement apres une navigation du lecteur) et
-/// l'attribution Tanzil dans le flux.
+/// l'attribution Tanzil, toujours visible au pied de l'ecran (jamais masquee
+/// avec les commandes : la licence demande qu'elle soit lisible).
 class LecteurCoranAccessibilite extends ConsumerStatefulWidget {
   /// Cree le lecteur.
-  const LecteurCoranAccessibilite({super.key});
+  const LecteurCoranAccessibilite({this.onRetour, super.key});
+
+  /// Le retour a l'entree ; nul : pas de bouton de retour.
+  final VoidCallback? onRetour;
+
+  /// La cle de l'en-tete (tests, captures).
+  static const Key enteteKey = ValueKey<String>('coran-ma-entete');
+
+  /// La cle de l'attribution (tests, captures).
+  static const Key attributionKey = ValueKey<String>('coran-ma-attribution');
 
   @override
   ConsumerState<LecteurCoranAccessibilite> createState() =>
@@ -391,228 +391,229 @@ class _LecteurCoranAccessibiliteEtat
         : vue.sections.first.sourate;
     final int? precedente = vue?.pagePrecedente;
     final int? suivante = vue?.pageSuivante;
-    final EdgeInsetsDirectional marges = EdgeInsetsDirectional.symmetric(
-      horizontal: gabarit.gouttiere,
+    final bool agrandi = etat.mode == ModeRenduCoran.versetAgrandi;
+    final String taille = t.tc.coran.zoom.valeur(
+      pourcent: (etat.zoomLocal * 100).round(),
     );
 
-    final Widget commandes = Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        // Les commandes de page en tete du bloc : toujours les premieres
-        // visibles, meme quand le bloc defile.
-        _NavigationPages(
-          onPrecedente: precedente == null ? null : () => _allerA(precedente),
-          onSuivante: suivante == null ? null : () => _allerA(suivante),
-        ),
-        Ecart.vSm,
-        Center(
-          child: ActionPrincipale(
-            libelle: t.tc.coran.navigation.ouvrir,
-            niveau: NiveauAction.tertiaire,
-            pleineLargeur: false,
-            onPress: () => unawaited(
-              FeuilleNavigationCoran.ouvrir(context, onAller: _allerA),
+    // La disposition de `_Commandes` (MushafPage), en icones seules : les
+    // fleches aux deux bouts, la navigation au milieu, la taille du texte
+    // entre les deux en verset agrandi. Ecarts serres : les cinq disques de
+    // la cible du mode guide (72) tiennent sur une seule rangee a 390.
+    final Widget commandes = Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(
+        AppSpacing.xs,
+        0,
+        AppSpacing.xs,
+        AppSpacing.sm,
+      ),
+      child: Center(
+        child: Wrap(
+          key: const ValueKey<String>('coran-ma-commandes'),
+          alignment: WrapAlignment.center,
+          spacing: AppSpacing.xs,
+          runSpacing: AppSpacing.xs,
+          children: <Widget>[
+            _BoutonIcone(
+              key: const ValueKey<String>('coran-ma-page-precedente'),
+              icone: AppIcons.retour,
+              libelle: t.eleve.coran.pagePrecedente,
+              onPress: precedente == null ? null : () => _allerA(precedente),
             ),
-          ),
-        ),
-        if (etat.mode == ModeRenduCoran.versetAgrandi) ...<Widget>[
-          Ecart.vSm,
-          Wrap(
-            alignment: WrapAlignment.center,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: <Widget>[
-              ActionPrincipale(
-                libelle: t.eleve.coran.reduire,
-                niveau: NiveauAction.tertiaire,
-                pleineLargeur: false,
+            _BoutonIcone(
+              key: const ValueKey<String>('coran-ma-navigation'),
+              icone: AppIcons.menu,
+              libelle: t.tc.coran.navigation.ouvrir,
+              onPress: () => unawaited(
+                FeuilleNavigationCoran.ouvrir(context, onAller: _allerA),
+              ),
+            ),
+            if (agrandi) ...<Widget>[
+              _BoutonIcone(
+                key: const ValueKey<String>('coran-ma-reduire'),
+                icone: AppIcons.zoomMoins,
+                libelle: '${t.eleve.coran.reduire}, $taille',
+                infobulle: t.eleve.coran.reduire,
                 onPress: () => _zoomer(-0.2),
               ),
-              Text(
-                t.tc.coran.zoom.valeur(
-                  pourcent: (etat.zoomLocal * 100).round(),
-                ),
-                style: palette.inkMuted.applyTo(
-                  AppTypography.tabulaire(
-                    textes.labelMedium ?? const TextStyle(),
-                  ),
-                ),
-              ),
-              ActionPrincipale(
-                libelle: t.eleve.coran.agrandir,
-                niveau: NiveauAction.tertiaire,
-                pleineLargeur: false,
+              _BoutonIcone(
+                key: const ValueKey<String>('coran-ma-agrandir'),
+                icone: AppIcons.zoomPlus,
+                libelle: '${t.eleve.coran.agrandir}, $taille',
+                infobulle: t.eleve.coran.agrandir,
                 onPress: () => _zoomer(0.2),
               ),
             ],
-          ),
-        ],
-        if (vue != null && vue.aDuTexte) ...<Widget>[
-          Ecart.vSm,
-          Text(
-            '${t.eleve.coran.edition} . ${t.eleve.coran.source} . '
-            '${t.eleve.coran.sourceLien}',
-            textAlign: TextAlign.center,
-            style: palette.inkFaint.applyTo(
-              textes.labelSmall ?? const TextStyle(),
-            ),
-          ),
-        ],
-      ],
-    );
-
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints contraintes) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Padding(
-              padding: marges.add(
-                const EdgeInsetsDirectional.symmetric(vertical: AppSpacing.sm),
-              ),
-              child: Text(
-                <String>[
-                  sourate?.nomTranslittere ?? t.eleve.coran.titre,
-                  t.eleve.coran.page(
-                    page: '${vue?.numero ?? etat.page}',
-                    total: '${vue?.nombrePages ?? pagesMushafMedine}',
-                  ),
-                ].join(' . '),
-                style: palette.inkStrong.applyTo(
-                  textes.titleSmall ?? const TextStyle(),
-                ),
-              ),
-            ),
-            Expanded(
-              child: switch (etat.mode) {
-                ModeRenduCoran.versetAgrandi => const VueVersetAgrandi(),
-                _ => const VuePageMushaf(),
-              },
-            ),
-            // Les commandes, collees en bas : jamais plus de la moitie de
-            // l'ecran ; au-dela (texte tres agrandi), elles defilent.
-            ConstrainedBox(
-              key: const ValueKey<String>('coran-ma-commandes'),
-              constraints: BoxConstraints(maxHeight: contraintes.maxHeight / 2),
-              child: SingleChildScrollView(
-                padding: marges.add(
-                  const EdgeInsetsDirectional.symmetric(
-                    vertical: AppSpacing.md,
-                  ),
-                ),
-                child: commandes,
-              ),
+            _BoutonIcone(
+              key: const ValueKey<String>('coran-ma-page-suivante'),
+              icone: AppIcons.flecheAction,
+              libelle: t.eleve.coran.pageSuivante,
+              onPress: suivante == null ? null : () => _allerA(suivante),
             ),
           ],
-        );
-      },
+        ),
+      ),
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        EnteteLecteurCoranAccessibilite(
+          key: LecteurCoranAccessibilite.enteteKey,
+          titre: <String>[
+            sourate?.nomTranslittere ?? t.eleve.coran.titre,
+            t.eleve.coran.page(
+              page: '${vue?.numero ?? etat.page}',
+              total: '${vue?.nombrePages ?? pagesMushafMedine}',
+            ),
+          ].join(' . '),
+          onRetour: widget.onRetour,
+        ),
+        Expanded(
+          child: CommandesMasquables(
+            contenu: switch (etat.mode) {
+              ModeRenduCoran.versetAgrandi => const VueVersetAgrandi(),
+              _ => const VuePageMushaf(),
+            },
+            commandes: commandes,
+          ),
+        ),
+        if (vue != null && vue.aDuTexte)
+          Padding(
+            key: LecteurCoranAccessibilite.attributionKey,
+            padding: EdgeInsetsDirectional.symmetric(
+              horizontal: gabarit.gouttiere,
+              vertical: AppSpacing.xs,
+            ),
+            child: Text(
+              '${t.eleve.coran.edition} . ${t.eleve.coran.source} . '
+              '${t.eleve.coran.sourceLien}',
+              textAlign: TextAlign.center,
+              style: palette.inkFaint.applyTo(
+                textes.labelSmall ?? const TextStyle(),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }
 
-/// « Page precedente » et « Page suivante », chacune avec sa fleche.
-///
-/// Cote a cote quand le mot le plus long de chaque libelle tient dans une
-/// demi-largeur ; sinon l'une sous l'autre. Un libelle ne se coupe donc
-/// jamais en plein mot (K-54). Les fleches portent `matchTextDirection` :
-/// en arabe, « precedente » pointe a droite et « suivante » a gauche.
-class _NavigationPages extends StatelessWidget {
-  const _NavigationPages({
-    required this.onPrecedente,
-    required this.onSuivante,
+/// L'en-tete minimal du lecteur, sur une ligne : le retour en icone seule
+/// (nom lu « Retour », infobulle) et le titre en petit.
+class EnteteLecteurCoranAccessibilite extends StatelessWidget {
+  /// Cree l'en-tete.
+  const EnteteLecteurCoranAccessibilite({
+    required this.titre,
+    required this.onRetour,
+    super.key,
   });
 
-  final VoidCallback? onPrecedente;
-  final VoidCallback? onSuivante;
+  /// La sourate et la page (ou le titre du Coran).
+  final String titre;
 
-  /// Ce que le bouton prend autour de son libelle : ses marges, la fleche
-  /// et son ecart, le filet.
-  static const double _habillage =
-      AppSpacing.xl * 2 + AppSpacing.xl + AppSpacing.sm + AppSpacing.xs;
-
-  /// La largeur du mot le plus long d'un libelle, au style et a l'echelle
-  /// de texte courants, en graisse forte.
-  static double _motLePlusLong(BuildContext context, String libelle) {
-    final TextStyle style = AppTypography.graisse(
-      Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
-      FontWeight.w700,
-    );
-    double plusLong = 0;
-    for (final String mot in libelle.split(' ')) {
-      final TextPainter peintre = TextPainter(
-        text: TextSpan(text: mot, style: style),
-        textDirection: Directionality.of(context),
-        textScaler: MediaQuery.textScalerOf(context),
-        maxLines: 1,
-      )..layout();
-      plusLong = math.max(plusLong, peintre.width);
-      peintre.dispose();
-    }
-    return plusLong;
-  }
+  /// Le retour a l'entree ; nul : pas de bouton.
+  final VoidCallback? onRetour;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final Color? encre = onPrecedente == null
-        ? palette.inkMuted.applyTo(const TextStyle()).color
-        : palette.surfaceRaised.applyTo(const TextStyle()).color;
-
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints contraintes) {
-        final double demi = (contraintes.maxWidth - AppSpacing.sm) / 2;
-        final double mot = math.max(
-          _motLePlusLong(context, t.eleve.coran.pagePrecedente),
-          _motLePlusLong(context, t.eleve.coran.pageSuivante),
-        );
-        // Ecran tres etroit a texte tres agrandi : la fleche cede sa place
-        // plutot que de couper un mot ; le libelle porte seul le sens.
-        final bool fleches = mot + _habillage <= contraintes.maxWidth;
-        final Widget precedenteBouton = ActionPrincipale(
-          key: const ValueKey<String>('coran-ma-page-precedente'),
-          libelle: t.eleve.coran.pagePrecedente,
-          niveau: NiveauAction.secondaire,
-          prefixe: fleches
-              ? _IconeAction(icone: AppIcons.retour, couleur: encre)
-              : null,
-          onPress: onPrecedente,
-        );
-        final Widget suivanteBouton = ActionPrincipale(
-          key: const ValueKey<String>('coran-ma-page-suivante'),
-          libelle: t.eleve.coran.pageSuivante,
-          niveau: NiveauAction.secondaire,
-          fleche: fleches,
-          onPress: onSuivante,
-        );
-        if (mot + _habillage <= demi) {
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Expanded(child: precedenteBouton),
-              Ecart.hSm,
-              Expanded(child: suivanteBouton),
-            ],
-          );
-        }
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[precedenteBouton, Ecart.vSm, suivanteBouton],
-        );
-      },
+    final TextTheme textes = Theme.of(context).textTheme;
+    final Gabarit gabarit = AppGabarit.de(context);
+    final VoidCallback? retour = onRetour;
+    return Padding(
+      padding: EdgeInsetsDirectional.fromSTEB(
+        retour == null ? gabarit.gouttiere : AppSpacing.xs,
+        AppSpacing.xs,
+        gabarit.gouttiere,
+        AppSpacing.xs,
+      ),
+      child: Row(
+        children: <Widget>[
+          if (retour != null) ...<Widget>[
+            _BoutonIcone(
+              key: const ValueKey<String>('coran-ma-retour'),
+              icone: AppIcons.retour,
+              libelle: t.accessibilite.coran.retour,
+              onPress: retour,
+              disque: false,
+            ),
+            Ecart.hXs,
+          ],
+          Expanded(
+            child: Text(
+              titre,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: palette.inkStrong.applyTo(
+                textes.labelMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
-/// L'icone posee devant le libelle d'une action, dans l'encre du bouton.
-class _IconeAction extends StatelessWidget {
-  const _IconeAction({required this.icone, required this.couleur});
+/// Une commande en icone seule, sur le modele de `BoutonAppel` en dock
+/// etroit : disque de la cible tactile du mode (48 en standard, 72 en
+/// guide), nom lu par le lecteur d'ecran, infobulle. Les fleches portent
+/// `matchTextDirection` (miroitees en arabe).
+class _BoutonIcone extends StatelessWidget {
+  const _BoutonIcone({
+    required this.icone,
+    required this.libelle,
+    required this.onPress,
+    this.infobulle,
+    this.disque = true,
+    super.key,
+  });
 
   final AppIcon icone;
-  final Color? couleur;
+
+  /// Le nom lu par le lecteur d'ecran.
+  final String libelle;
+
+  /// Le texte de l'infobulle ; nul : [libelle].
+  final String? infobulle;
+
+  /// Nul : la commande est inerte (premiere ou derniere page).
+  final VoidCallback? onPress;
+
+  /// Faux : l'icone seule, sans disque (retour de l'en-tete).
+  final bool disque;
 
   @override
-  Widget build(BuildContext context) =>
-      Icon(icone.repos, color: couleur, size: AppSpacing.xl);
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final double diametre = AppMetriques.of(context).cibleTactile;
+    final bool actif = onPress != null;
+    final IconThemeData encre = (actif ? palette.inkStrong : palette.inkMuted)
+        .asIconTheme(size: AppSpacing.xl);
+    return Tooltip(
+      message: infobulle ?? libelle,
+      excludeFromSemantics: true,
+      child: Pressable(
+        onPress: onPress,
+        actif: actif,
+        libelleSemantique: libelle,
+        arrondiFocus: AppRadius.arrondiFull,
+        child: SizedBox.square(
+          dimension: diametre,
+          child: DecoratedBox(
+            decoration: disque
+                ? palette.surfaceOverlay.decoration(
+                    borderRadius: AppRadius.arrondiFull,
+                    side: palette.borderHairline.asBorderSide(),
+                  )
+                : const BoxDecoration(),
+            child: Center(
+              child: IconTheme(data: encre, child: Icon(icone.repos)),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

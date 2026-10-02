@@ -102,21 +102,6 @@ class _DockEtroit extends InheritedWidget {
   bool updateShouldNotify(_DockEtroit ancien) => ancien.diametre != diametre;
 }
 
-/// MA9, MA20 : en Mode Accessibilite, a texte agrandi, le dock etroit
-/// garde un libelle visible sous chaque commande (deux commandes par ligne),
-/// sur deux lignes au plus, passant a la ligne entre les mots. Jamais une
-/// icone seule. Hors Mode Accessibilite, EN-12 s'applique inchange.
-class _DockLibelles extends InheritedWidget {
-  const _DockLibelles({required this.diametre, required super.child});
-
-  /// MA10 : 56, le haut de la plage des boutons majeurs quand la
-  /// composition ne permet pas plus (deux rangees de libelles sur telephone).
-  final double diametre;
-
-  @override
-  bool updateShouldNotify(_DockLibelles ancien) => ancien.diametre != diametre;
-}
-
 /// Un bouton du dock : cercle, icone, libelle dessous.
 class BoutonAppel extends StatelessWidget {
   const BoutonAppel({
@@ -157,11 +142,7 @@ class BoutonAppel extends StatelessWidget {
     final _DockEtroit? etroit = context
         .dependOnInheritedWidgetOfExactType<_DockEtroit>();
     final bool iconeSeule = etroit != null;
-    final _DockLibelles? libelles = context
-        .dependOnInheritedWidgetOfExactType<_DockLibelles>();
-    final bool libelleLong = libelles != null;
-    final double diametre =
-        etroit?.diametre ?? libelles?.diametre ?? diametreBoutonAppel(context);
+    final double diametre = etroit?.diametre ?? diametreBoutonAppel(context);
     final double tailleIcone = _tailleIconeAppel(context);
     final BoxDecoration disque = !actif
         ? palette.surfaceRaised.decoration(
@@ -232,12 +213,8 @@ class BoutonAppel extends StatelessWidget {
             Ecart.vXs,
             Text(
               libelle,
-              maxLines: libelleLong ? 2 : 1,
-              softWrap: libelleLong,
-              textAlign: libelleLong ? TextAlign.center : null,
-              overflow: libelleLong
-                  ? TextOverflow.visible
-                  : TextOverflow.ellipsis,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: (actif ? palette.inkStrong : palette.inkMuted).applyTo(
                 theme.textTheme.labelMedium ?? const TextStyle(),
               ),
@@ -443,9 +420,12 @@ class DockSeance extends StatelessWidget {
         key: const ValueKey<String>('dock-seance'),
         decoration: cadre,
         child: Padding(
-          padding: const EdgeInsets.symmetric(
+          // MA-CMD-1 : dock plus mince en Mode Accessibilite.
+          padding: EdgeInsets.symmetric(
             horizontal: AppSpacing.sm,
-            vertical: AppSpacing.md,
+            vertical: AppMetriques.of(context).mode == InterfaceMode.enfant
+                ? AppSpacing.xs
+                : AppSpacing.md,
           ),
           child: LayoutBuilder(
             builder: (BuildContext contexte, BoxConstraints contraintes) {
@@ -462,33 +442,20 @@ class DockSeance extends StatelessWidget {
               final bool serre = parCase < diametre + AppSpacing.sm;
               final bool texteAgrandi =
                   MediaQuery.textScalerOf(contexte).scale(1) > 1;
-              if (!serre && !texteAgrandi) return rangee;
-              // MA9, MA20 : Mode Accessibilite a texte agrandi, deux
-              // commandes par ligne, libelle visible sous chaque disque.
-              if (texteAgrandi &&
-                  AppMetriques.of(contexte).mode == InterfaceMode.enfant) {
-                final double largeurCase = contraintes.maxWidth / 2;
-                return _DockLibelles(
-                  diametre: math.min(
-                    diametre,
-                    AppTouchTarget.standard + AppSpacing.sm,
-                  ),
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    runSpacing: AppSpacing.md,
-                    children: <Widget>[
-                      for (final Widget bouton in boutons)
-                        SizedBox(
-                          width: largeurCase,
-                          child: Center(child: bouton),
-                        ),
-                    ],
-                  ),
-                );
-              }
+              // MA-CMD-1 (directeur, 02/10/2026) : en Mode Accessibilite, a
+              // toute taille de texte, icones seules et compactes, disque a
+              // la cible tactile (le libelle reste lu et en infobulle).
+              // Annule le dock a libelles visibles de M1.
+              final bool accessibilite =
+                  AppMetriques.of(contexte).mode == InterfaceMode.enfant;
+              if (!serre && !texteAgrandi && !accessibilite) return rangee;
               // EN-12 (17 d) : icone seule, libelle lu ; disque a la case
               // moins un ecart, jamais sous la cible tactile.
-              final double cible = AppMetriques.of(contexte).cibleTactile;
+              // MA-CMD-1 : disque compact de 56 (cible de 48 et plus), pour
+              // que toutes les commandes tiennent sur une rangee a 390.
+              final double cible = accessibilite
+                  ? AppTouchTarget.standard + AppSpacing.sm
+                  : AppMetriques.of(contexte).cibleTactile;
               // UX_REVIEW_04 n. 17 d, WCAG 1.4.10 : quand la part egale
               // tombe sous la cible (320), les boutons ne se partagent plus
               // la largeur ; ils passent sur deux lignes, en cases fixes, et
@@ -509,10 +476,12 @@ class DockSeance extends StatelessWidget {
                   ),
                 );
               }
-              final double reduit = math.max(
-                math.min(diametre, parCase - AppSpacing.xs),
-                cible,
-              );
+              final double reduit = accessibilite
+                  ? cible
+                  : math.max(
+                      math.min(diametre, parCase - AppSpacing.xs),
+                      cible,
+                    );
               return _DockEtroit(diametre: reduit, child: rangee);
             },
           ),

@@ -12,6 +12,7 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/commandes_masquables.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/preferences/preferences_locales.dart';
@@ -141,6 +142,58 @@ class SalleSeance extends StatelessWidget {
     final double gouttiere = large
         ? AppPage.gouttiereDesktop
         : AppPage.gouttiereMobile;
+    // MA-CMD-1 (directeur, 02/10/2026) : en Mode Accessibilite, telephone et
+    // web etroit, l'en-tete tient sur une ligne et les commandes, icones
+    // seules, sont posees en bas par-dessus le support, masquables d'une
+    // touche (CommandesMasquables) : le support et la video gardent l'ecran.
+    if (vue.role == RoleSeance.guidee && !large) {
+      return Material(
+        color: palette.surfaceCanvas.background,
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              if (!agrandi)
+                ChromeSeance(vue: vue, actions: actions, compacte: true),
+              BandeauSecours(vue: vue, actions: actions, gouttiere: gouttiere),
+              if (!agrandi) ?_appel(vue, gouttiere),
+              Expanded(
+                child: CommandesMasquables(
+                  contenu: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      gouttiere,
+                      AppSpacing.xs,
+                      gouttiere,
+                      AppSpacing.xs,
+                    ),
+                    child: ZoneSupport(
+                      vue: vue,
+                      zoom: local.zoom,
+                      contenu: contenuSupport,
+                    ),
+                  ),
+                  commandes: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      gouttiere,
+                      0,
+                      gouttiere,
+                      AppSpacing.sm,
+                    ),
+                    child: DockSeance(
+                      vue: vue,
+                      actions: actions,
+                      microOuvert: local.microOuvert,
+                      cameraAllumee: local.cameraAllumee,
+                      agrandi: agrandi,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     // Plein cadre, sans coquille de page : ni titre d'ecran, ni colonne
     // bornee (CONTENT > CHROME). Le fond reste celui du theme (clair et
     // sombre), comme sur les images, et non le registre inverse.
