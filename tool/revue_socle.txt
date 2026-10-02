@@ -57,8 +57,6 @@ bouton-grise|lib/features/tc_mushaf/mushaf_page.dart|onPress: precedente == null
 bouton-grise|lib/features/tc_mushaf/mushaf_page.dart|onPress: suivante == null ? null : () => onPage(suivante)
 bouton-grise|lib/features/tc_observation_ui/choix_entree_observation.dart|onPress: options.observationPossible ? onEntrer : null
 bouton-grise|lib/features/tc_observation_ui/module_reglages_observation.dart|onPress: _etat.valide ? () => widget.onEnregistrer( _etat.appliquerA(widget.politiqueAcademie), ) : null
-bouton-recompose|lib/features\tc_dock\bouton_outil.dart|Pressable avec fond et libelle peints dans l'ecran
-bouton-recompose|lib/features\tc_dock\couche_annotation.dart|GestureDetector
 cartes-collees|lib/features\admin_tableau\tableau_de_bord_page.dart|StatTile n°1
 cartes-collees|lib/features\admin_tableau\tableau_de_bord_page.dart|StatTile n°2
 cartes-collees|lib/features\admin_tableau\tableau_de_bord_page.dart|StatTile n°3
@@ -1123,3 +1121,17 @@ mot-interne|assets/i18n/fr.i18n.json|controleur.demo.adminControle : Admin-Contr
 mot-interne|assets/i18n/fr.i18n.json|controleur.demo.adminPrincipal : Admin-Contrôleur, espace Admin
 mot-interne|assets/i18n/fr.i18n.json|controleur.demo.espacesIntro : Le même compte, plusieurs espaces : Enseignant ou Admin passent en Contrôle par Compte, puis Espaces.
 mot-interne|assets/i18n/fr.i18n.json|controleur.observation.interventionAdmin : Intervention Admin souhaitée
+plein-multiple|lib/features\admin_demandes\demandes_page.dart|2 boutons pleins
+plein-multiple|lib/features\admin_groupes\groupes_page.dart|5 boutons pleins
+plein-multiple|lib/features\admin_pedagogie_evaluations\evaluations_page.dart|3 boutons pleins
+plein-multiple|lib/features\admin_pedagogie_programmes\programmes_page.dart|4 boutons pleins
+plein-multiple|lib/features\admin_pedagogie_progression\progression_page.dart|2 boutons pleins
+plein-multiple|lib/features\cahier\cahier_page.dart|3 boutons pleins
+plein-multiple|lib/features\consentements\consentement_observation_page.dart|2 boutons pleins
+plein-multiple|lib/features\creneaux\creneaux_page.dart|2 boutons pleins
+plein-multiple|lib/features\foyer\invitation_conjoint.dart|3 boutons pleins
+plein-multiple|lib/features\parcours_offres\parcours_offres_page.dart|5 boutons pleins
+plein-multiple|lib/features\salle\preparation_enseignant.dart|2 boutons pleins
+plein-multiple|lib/features\salle\salle_page.dart|2 boutons pleins
+plein-multiple|lib/features\salle_seance\feuille_micro_bloque.dart|2 boutons pleins
+plein-multiple|lib/features\tc_observation_ui\explication_premiere_visite.dart|2 boutons pleins
