@@ -15,8 +15,10 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/accessibilite/port_demande_presentation.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/core/widgets/setting_row.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
@@ -130,6 +132,22 @@ void main() {
     await stabiliser(tester);
     expect(find.byKey(const ValueKey<String>('demo-aide')), findsNothing);
     expect(find.byType(ReglagesComptePage), findsOneWidget);
+  });
+
+  testWidgets('MA-GR-1 : appareils et confidentialite masques, un seul '
+      'ecart de section avant l\'aide', (WidgetTester tester) async {
+    await _ouvrirMonEspace(tester, EleveDemoAccessibilite.mariam);
+    final Finder aide = find.byKey(const ValueKey<String>('mon-espace-aide'));
+    await _vers(tester, aide);
+    expect(find.text(t.compte.appareils), findsNothing);
+    expect(find.text(t.compte.confidentialite), findsNothing);
+    final Finder derniere = find.ancestor(
+      of: find.text(t.compte.lectureGrande),
+      matching: find.byType(SettingRow),
+    );
+    final double ecart =
+        tester.getTopLeft(aide).dy - tester.getBottomLeft(derniere).dy;
+    expect(ecart, moreOrLessEquals(AppSpacing.section));
   });
 
   testWidgets('Idriss (adulte) : la bascule agit sur la presentation de la '

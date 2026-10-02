@@ -392,8 +392,11 @@ class ReglagesComptePage extends ConsumerWidget {
               onChanged: controleur.lectureGrande,
             ),
           ),
-          Ecart.vSection,
-          if (!modeAccessibilite || foyerDisponible)
+          // MA-GR-1 : l'ecart de section n'accompagne le bloc appareils et
+          // confidentialite que s'il est affiche ; masque (Mode
+          // Accessibilite), un seul ecart reste avant l'aide.
+          if (!modeAccessibilite || foyerDisponible) ...<Widget>[
+            Ecart.vSection,
             SettingRow(
               title: t.compte.appareils,
               description: t.compte.appareilsDetail,
@@ -403,6 +406,7 @@ class ReglagesComptePage extends ConsumerWidget {
                   : null,
               enabled: foyerDisponible,
             ),
+          ],
           if (!modeAccessibilite)
             SettingRow(
               title: t.compte.confidentialite,
