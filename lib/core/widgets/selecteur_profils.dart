@@ -7,7 +7,7 @@ import '../theme/app_gabarit.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
-import 'avatar_tile.dart';
+import 'avatar_nom.dart';
 import 'pressable.dart';
 
 /// Le point de statut d'un profil, pris dans `AppPalette.pointsStatut`.
@@ -67,7 +67,7 @@ class ProfilSelectionnable {
 /// porte un anneau `surfacePrimary` de 2 et son sous-libelle passe en encre
 /// d'accent. Le dernier item, « Ajouter », ouvre l'ajout d'un profil eleve.
 /// Defilement horizontal sur telephone ; sur les grands ecrans, la meme
-/// rangee, alignee au debut, avec des avatars plus grands (56 contre 72).
+/// rangee, alignee au debut, avec des avatars plus grands (48 contre 64).
 ///
 /// Chaque item est une cible d'au moins 48, lue « Prenom, etat » et annoncee
 /// « selectionne » ; « Ajouter » est lu « Ajouter un profil eleve ».
@@ -93,11 +93,11 @@ class SelecteurProfils extends StatelessWidget {
   /// L'ajout d'un profil eleve. Sans lui, pas d'item « Ajouter ».
   final VoidCallback? onAjouter;
 
-  /// Diametre d'avatar sur telephone : 56.
-  static const double diametreMobile = AppSpacing.titreEcran + AppSpacing.sm;
+  /// Diametre d'avatar sur telephone : 48 ([AppAvatar.moyen]).
+  static const double diametreMobile = AppAvatar.moyen;
 
-  /// Diametre d'avatar sur tablette et bureau : 72.
-  static const double diametreLarge = AppSpacing.respiration + AppSpacing.sm;
+  /// Diametre d'avatar sur tablette et bureau : 64 ([AppAvatar.grand]).
+  static const double diametreLarge = AppAvatar.grand;
 
   /// Diametre du point de statut.
   static const double diametrePoint = AppSpacing.md;
@@ -188,55 +188,45 @@ class _Item extends StatelessWidget {
         ),
         arrondiFocus: AppRadius.arrondiSm,
         child: ExcludeSemantics(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Stack(
-                clipBehavior: Clip.none,
-                children: <Widget>[
-                  _Couronne(
-                    diametre: diametre,
-                    anneau: selectionne
-                        ? BorderSide(
-                            color: palette.surfacePrimary.background,
-                            width: SelecteurProfils.epaisseurAnneau,
-                          )
-                        : null,
-                    child: AvatarTile(
-                      prenom: profil.prenom,
-                      urlSignee: profil.urlPhoto,
-                      diametre: diametre,
-                    ),
-                  ),
-                  if (point != null)
-                    PositionedDirectional(
-                      end: AppSpacing.xs,
-                      bottom: AppSpacing.xs,
-                      child: SizedBox.square(
-                        dimension: SelecteurProfils.diametrePoint,
-                        child: DecoratedBox(
-                          decoration: _couleurPoint(
-                            palette,
-                            point,
-                          ).pastille(cerclage: palette.surfaceCanvas),
-                        ),
+          // AVATAR-1 : avatar centre, prenom et etat centres dessous sur le
+          // meme axe (composant partage). L'anneau de selection et le point de
+          // statut habillent le cercle sans le deformer.
+          child: AvatarNom.vertical(
+            prenom: profil.prenom,
+            urlSignee: profil.urlPhoto,
+            diametre: diametre,
+            role: profil.etat,
+            styleRole: (selectionne ? palette.inkAccent : palette.inkMuted)
+                .applyTo(textes.bodySmall ?? const TextStyle()),
+            enveloppeAvatar: (Widget avatar) => Stack(
+              clipBehavior: Clip.none,
+              children: <Widget>[
+                _Couronne(
+                  diametre: diametre,
+                  anneau: selectionne
+                      ? BorderSide(
+                          color: palette.surfacePrimary.background,
+                          width: SelecteurProfils.epaisseurAnneau,
+                        )
+                      : null,
+                  child: avatar,
+                ),
+                if (point != null)
+                  PositionedDirectional(
+                    end: AppSpacing.xs,
+                    bottom: AppSpacing.xs,
+                    child: SizedBox.square(
+                      dimension: SelecteurProfils.diametrePoint,
+                      child: DecoratedBox(
+                        decoration: _couleurPoint(
+                          palette,
+                          point,
+                        ).pastille(cerclage: palette.surfaceCanvas),
                       ),
                     ),
-                ],
-              ),
-              Ecart.vXs,
-              Text(
-                profil.prenom,
-                style: palette.inkStrong.applyTo(
-                  textes.labelLarge ?? const TextStyle(),
-                ),
-              ),
-              Text(
-                profil.etat,
-                style: (selectionne ? palette.inkAccent : palette.inkMuted)
-                    .applyTo(textes.bodySmall ?? const TextStyle()),
-              ),
-            ],
+                  ),
+              ],
+            ),
           ),
         ),
       ),

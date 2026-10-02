@@ -117,6 +117,8 @@ void main(List<String> arguments) {
     'libelle-ambigu',
     'mot-interne',
     'erreur-sans-action',
+    'avatar-recompose',
+    'avatar-taille',
   };
   final String? filtre = arguments
       .where((String a) => a.startsWith('--regle='))
@@ -167,6 +169,10 @@ void main(List<String> arguments) {
   }
   if (regles.contains('bouton-recompose')) {
     violations.addAll(_boutonsRecomposes());
+  }
+  if (regles.contains('avatar-recompose') || regles.contains('avatar-taille')) {
+    final List<Violation> avatars = _avatars();
+    violations.addAll(avatars.where((Violation a) => regles.contains(a.regle)));
   }
   if (regles.contains('libelle-ambigu')) {
     for (final MapEntry<String, String> e in fr.entries) {
@@ -470,6 +476,163 @@ List<Violation> _boutonsRecomposes() {
             _ligneDe(t, m.start),
             'bouton-recompose',
             'Pressable avec fond et libelle peints dans l\'ecran',
+          ),
+        );
+      }
+    }
+  }
+  return v;
+}
+
+/// Les composants qui peignent un avatar : seul `AvatarNom` les pose a cote
+/// d'un nom (AVATAR-1).
+final RegExp _appelAvatar = RegExp(
+  r'(?<![\w.])(AvatarTile|PhotoEleve|PhotoEnseignant)\s*\(',
+);
+
+/// Les enveloppes qui ne changent ni l'axe ni le texte : on les traverse pour
+/// trouver la rangee ou la colonne qui porte l'avatar.
+const Set<String> _enveloppesAvatar = <String>{
+  'Expanded',
+  'Flexible',
+  'Padding',
+  'ExcludeSemantics',
+  'Semantics',
+  'MergeSemantics',
+  'Center',
+  'Align',
+  'SizedBox',
+  'ConstrainedBox',
+};
+
+/// Une taille d'avatar hors jetons : un nombre, un produit, la cible tactile
+/// ou une valeur d'espacement. Les jetons sont `AppAvatar.*` et
+/// `SelecteurProfils.diametre*` ; un parametre transmis tel quel reste permis.
+final RegExp _tailleHorsJeton = RegExp(
+  r'^(?:\d+(?:\.\d+)?|.*\*.*|.*cibleTactile.*|AppSpacing\..*|AppTouchTarget\..*)$',
+);
+
+/// Le nom de l'appel dont l'ouvrante est a [ouvre] (« Row » pour `Row(`).
+String _nomAppel(String t, int ouvre) {
+  int i = ouvre - 1;
+  while (i >= 0 && RegExp(r'\s').hasMatch(t[i])) {
+    i--;
+  }
+  final int fin = i + 1;
+  while (i >= 0 && RegExp(r'[\w.]').hasMatch(t[i])) {
+    i--;
+  }
+  return t.substring(i + 1, fin);
+}
+
+/// AVATAR-1 : `avatar-recompose` : un avatar pose dans une `Row`, `Column` ou
+/// `Wrap` qui contient aussi un `Text` (un couple avatar + nom recompose dans
+/// l'ecran, a la main) ; `avatar-taille` : un diametre qui ne vient pas des
+/// jetons `AppAvatar`.
+List<Violation> _avatars() {
+  final List<Violation> v = <Violation>[];
+  final List<File> fichiers = <File>[
+    ..._sourcesFeatures(),
+    ...Directory('lib/core/widgets')
+        .listSync()
+        .whereType<File>()
+        .where((File f) => f.path.endsWith('.dart')),
+  ];
+  for (final File f in fichiers) {
+    final String chemin = f.path.replaceAll('\\', '/');
+    // Le composant lui-meme, et la tuile qu'il pose.
+    if (chemin.endsWith('core/widgets/avatar_nom.dart') ||
+        chemin.endsWith('core/widgets/avatar_tile.dart')) {
+      continue;
+    }
+    final String t = _sansCommentaires(f);
+    for (final RegExpMatch m in _appelAvatar.allMatches(t)) {
+      final int ouvre = m.end - 1;
+      final int ferme = _fermante(t, ouvre);
+      if (ferme < 0) {
+        continue;
+      }
+      // La definition d'un composant (`const PhotoEleve({`) n'est pas un appel.
+      if (t[ouvre + 1] == '{') {
+        continue;
+      }
+      final String corps = t.substring(ouvre, ferme);
+      final RegExpMatch? d = RegExp(
+        r'diametre\s*:\s*([^,)]+(?:\([^)]*\))?[^,)]*)',
+      ).firstMatch(corps);
+      if (d != null && _tailleHorsJeton.hasMatch(d.group(1)!.trim())) {
+        v.add(
+          Violation(
+            f.path,
+            _ligneDe(t, m.start),
+            'avatar-taille',
+            '${m.group(1)} diametre: ${d.group(1)!.trim()}',
+          ),
+        );
+      }
+      int courant = m.start;
+      for (int montee = 0; montee < 6; montee++) {
+        final int parent = _appelParent(t, courant);
+        if (parent < 0) {
+          break;
+        }
+        final String nom = _nomAppel(t, parent);
+        if (_enveloppesAvatar.contains(nom)) {
+          courant = parent;
+          continue;
+        }
+        if (nom == 'Row' ||
+            nom == 'Column' ||
+            nom == 'Wrap' ||
+            nom == 'Stack') {
+          final int finParent = _fermante(t, parent);
+          if (finParent > 0) {
+            final String autour =
+                t.substring(parent, m.start) + t.substring(ferme, finParent);
+            if (RegExp(r'\bText\s*\(').hasMatch(autour)) {
+              v.add(
+                Violation(
+                  f.path,
+                  _ligneDe(t, m.start),
+                  'avatar-recompose',
+                  '${m.group(1)} a cote d\'un Text dans un $nom : AvatarNom',
+                ),
+              );
+            }
+          }
+        }
+        break;
+      }
+    }
+
+    // Un cercle d'initiales recompose a la main : un `BoxShape.circle` dont le
+    // sous-arbre pose des initiales (hors composants de l'avatar).
+    for (final RegExpMatch m in RegExp(r'BoxShape.circle').allMatches(t)) {
+      final int parent = _appelParent(t, m.start);
+      if (parent < 0) {
+        continue;
+      }
+      final int finParent = _fermante(t, parent);
+      if (finParent < 0) {
+        continue;
+      }
+      final String nom = _nomAppel(t, parent);
+      if (nom != 'BoxDecoration') {
+        continue;
+      }
+      final int boite = _appelParent(t, parent);
+      final int finBoite = boite < 0 ? -1 : _fermante(t, boite);
+      if (finBoite > 0 &&
+          RegExp(
+            r'initiale',
+            caseSensitive: false,
+          ).hasMatch(t.substring(boite, finBoite))) {
+        v.add(
+          Violation(
+            f.path,
+            _ligneDe(t, m.start),
+            'avatar-recompose',
+            'cercle d initiales recompose : AvatarTile ou AvatarNom',
           ),
         );
       }

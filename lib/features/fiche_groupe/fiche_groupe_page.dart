@@ -22,6 +22,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
@@ -781,7 +782,7 @@ LigneRubrique _ligneMembre(
       child: PhotoEleve(
         prenom: membre.libelle,
         cleAvatar: projection?.cleAvatar,
-        diametre: 40,
+        diametre: AppAvatar.petit,
       ),
     ),
     // L'identifiant immuable reste lisible, discret, en fin de ligne. [A11Y]

@@ -20,6 +20,7 @@ import '../../../core/widgets/admin_shell.dart';
 import '../../../core/widgets/app_bottom_sheet.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/audio_label.dart';
+import '../../../core/widgets/avatar_nom.dart';
 import '../../../core/widgets/avatar_tile.dart';
 import '../../../core/widgets/bandeau_observation.dart';
 import '../../../core/widgets/bento_tile.dart';
@@ -898,6 +899,30 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         (BuildContext _) => const AvatarTile(
           prenom: 'Ibrahim',
           urlSignee: 'https://exemple.invalid/introuvable.webp',
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'AvatarNom',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'vertical : avatar centre, nom centre dessous',
+        (BuildContext _) => const Center(
+          child: AvatarNom.vertical(prenom: 'Amina', nom: 'Amina Bah'),
+        ),
+      ),
+      EtatGalerie(
+        'en ligne : nom centre sur le cercle',
+        (BuildContext _) => const AvatarNom.enLigne(prenom: 'Ibrahim'),
+      ),
+      EtatGalerie(
+        'en ligne : nom et une ligne de role',
+        (BuildContext _) => const AvatarNom.enLigne(
+          prenom: 'Youssef',
+          nom: 'Sayyid Youssef',
+          role: 'Coran, niveau 2',
         ),
       ),
     ],

@@ -15,6 +15,7 @@ import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
@@ -566,8 +567,13 @@ class IdentiteGroupe extends StatelessWidget {
         ? AvatarTile(
             prenom: groupe.enseignant.nomAffichage,
             urlSignee: urlPhoto,
+            diametre: AppAvatar.grand,
           )
-        : PhotoEnseignant(enseignant: groupe.enseignant, urlSignee: urlPhoto);
+        : PhotoEnseignant(
+            enseignant: groupe.enseignant,
+            urlSignee: urlPhoto,
+            diametre: AppAvatar.grand,
+          );
     // A 200 % (ou en Mode Accessibilite), une colonne a cote d'un grand
     // cercle couperait le nom au milieu d'un mot : la pile lui rend la
     // largeur entiere (MA-4).
@@ -603,20 +609,23 @@ class IdentiteGroupe extends StatelessWidget {
             ),
           ),
         ],
-        Ecart.vXs,
-        Text(
-          LibellesGroupe.enseignantNomme(groupe.enseignant),
-          style: textes.titleSmall ?? const TextStyle(),
-        ),
-        if (discrete != null && discrete.isNotEmpty) ...<Widget>[
-          Ecart.vXs,
-          Text(
-            discrete,
-            style: palette.inkMuted.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
+        Ecart.vSm,
+        // AVATAR-1 : couple avatar + nom du composant partage, nom centre
+        // verticalement sur le cercle, au plus une ligne de role (le rendez-vous
+        // hebdomadaire, cote enseignant). A 200 %, le nom passe a la ligne a
+        // cote du cercle : plus de pile a part (MA-4).
+        AvatarNom.enLigne(
+          prenom: groupe.enseignant.nomAffichage,
+          nom: LibellesGroupe.enseignantNomme(groupe.enseignant),
+          role: (discrete != null && discrete.isNotEmpty) ? discrete : null,
+          diametre: AppAvatar.grand,
+          ecart: AppSpacing.lg,
+          avatar: photo,
+          styleNom: textes.titleSmall,
+          styleRole: palette.inkMuted.applyTo(
+            textes.bodySmall ?? const TextStyle(),
           ),
-        ],
+        ),
         Ecart.vSm,
         Wrap(
           spacing: AppSpacing.sm,
@@ -638,20 +647,6 @@ class IdentiteGroupe extends StatelessWidget {
         ),
       ],
     );
-    return MergeSemantics(
-      child: pile
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[photo, Ecart.vMd, texte],
-            )
-          : Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                photo,
-                Ecart.hLg,
-                Expanded(child: texte),
-              ],
-            ),
-    );
+    return MergeSemantics(child: texte);
   }
 }

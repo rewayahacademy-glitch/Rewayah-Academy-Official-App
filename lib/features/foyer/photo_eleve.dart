@@ -217,7 +217,7 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
         : PhotoEleve(
             prenom: _profil.prenom,
             cleAvatar: _profil.cleAvatar,
-            diametre: AppSpacing.respiration + AppSpacing.xxxl,
+            diametre: AppAvatar.grand,
           );
 
     return Column(
@@ -369,7 +369,7 @@ class _Apercu extends StatelessWidget {
 
   final PhotoEnfant photo;
 
-  static const double _diametre = AppSpacing.respiration + AppSpacing.xxxl;
+  static const double _diametre = AppAvatar.grand;
 
   @override
   Widget build(BuildContext context) {

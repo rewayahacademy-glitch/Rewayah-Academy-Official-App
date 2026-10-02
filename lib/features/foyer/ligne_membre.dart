@@ -7,7 +7,7 @@ import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/offres/offre_horaire.dart';
-import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import 'photo_eleve.dart';
 
@@ -186,7 +186,7 @@ LigneRubrique ligneMembre({
   meneur: PhotoEleve(
     prenom: profil.prenom,
     cleAvatar: profil.cleAvatar,
-    diametre: AppSpacing.section,
+    diametre: AppAvatar.moyen,
   ),
   libelle: profil.prenom,
   legende: legendeMembre(

@@ -87,6 +87,34 @@ void verifierAlignes(WidgetTester tester, Finder a, Finder b) {
   );
 }
 
+/// Les centres horizontaux de [a] et [b] coincident (avatar et nom sur le meme
+/// axe central, disposition verticale : revue du 01/10 et du 02/10, le nom
+/// restait decale par rapport au cercle).
+void verifierMemeAxe(WidgetTester tester, Finder a, Finder b) {
+  final double xa = tester.getRect(a).center.dx;
+  final double xb = tester.getRect(b).center.dx;
+  expect(
+    (xa - xb).abs(),
+    lessThanOrEqualTo(toleranceGarde),
+    reason: 'centres horizontaux decales : $xa contre $xb',
+  );
+}
+
+/// [interieur] reste entierement dans [cadre] (un avatar ne deborde pas de sa
+/// tuile).
+void verifierContenu(WidgetTester tester, Finder interieur, Finder cadre) {
+  final Rect i = tester.getRect(interieur);
+  final Rect c = tester.getRect(cadre);
+  expect(
+    i.left >= c.left - toleranceGarde &&
+        i.right <= c.right + toleranceGarde &&
+        i.top >= c.top - toleranceGarde &&
+        i.bottom <= c.bottom + toleranceGarde,
+    isTrue,
+    reason: 'deborde de son cadre : $i hors de $c',
+  );
+}
+
 /// Aucun des elements de [finders] ne recouvre un autre (regle : aucun
 /// element ne recouvre un contenu a lire).
 void verifierSansChevauchement(WidgetTester tester, List<Finder> finders) {

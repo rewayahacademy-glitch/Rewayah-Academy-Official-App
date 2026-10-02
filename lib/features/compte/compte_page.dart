@@ -16,7 +16,7 @@ import '../../core/session/session_state.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
@@ -504,32 +504,15 @@ class _EnteteCompte extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        AvatarTile(
-          prenom: projection.libelleRole,
-          diametre: AppSpacing.xxxl * 2,
-        ),
-        Ecart.hXl,
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                projection.libelleRole,
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              Ecart.vXs,
-              Text(projection.statut),
-              if (projection.profileId != null) ...<Widget>[
-                Ecart.vXs,
-                Text(projection.profileId!),
-              ],
-            ],
-          ),
-        ),
-      ],
+    // AVATAR-1 : couple avatar + nom du composant partage, nom et une ligne de
+    // role (le statut). L'identifiant du profil a sa propre ligne plus bas.
+    return AvatarNom.enLigne(
+      prenom: projection.libelleRole,
+      role: projection.statut,
+      diametre: AppAvatar.grand,
+      ecart: AppSpacing.xl,
+      styleNom: Theme.of(context).textTheme.headlineSmall,
+      styleRole: Theme.of(context).textTheme.bodyMedium,
     );
   }
 }
@@ -564,32 +547,17 @@ class _EnfantResume extends StatelessWidget {
   final EleveDuFoyer enfant;
 
   @override
-  Widget build(BuildContext context) => Row(
-    children: <Widget>[
-      AvatarTile(prenom: enfant.prenom),
-      Ecart.hXl,
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(enfant.prenom, style: Theme.of(context).textTheme.titleLarge),
-            Ecart.vXs,
-            Text(
-              t.compte.identifiantEnfant(
-                identifiant: enfant.identifiantImmuable,
-              ),
-            ),
-            Ecart.vXs,
-            Text(
-              enfant.mode == InterfaceMode.enfant
-                  ? t.compte.modeEnfant
-                  : t.compte.modeStandard,
-            ),
-          ],
-        ),
-      ),
-      Icon(AppIcons.chevron.repos),
-    ],
+  // AVATAR-1 : nom et une seule ligne de role (le mode) ; l'identifiant se lit
+  // dans la fiche, pas sur l'avatar.
+  Widget build(BuildContext context) => AvatarNom.enLigne(
+    prenom: enfant.prenom,
+    role: enfant.mode == InterfaceMode.enfant
+        ? t.compte.modeEnfant
+        : t.compte.modeStandard,
+    ecart: AppSpacing.xl,
+    styleNom: Theme.of(context).textTheme.titleLarge,
+    styleRole: Theme.of(context).textTheme.bodyMedium,
+    fin: Icon(AppIcons.chevron.repos),
   );
 }
 
@@ -604,17 +572,11 @@ class _DetailEnfant extends StatelessWidget {
     children: <Widget>[
       AppCard(
         dominante: true,
-        child: Row(
-          children: <Widget>[
-            AvatarTile(prenom: enfant.prenom),
-            Ecart.hXl,
-            Expanded(
-              child: Text(
-                enfant.prenom,
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-            ),
-          ],
+        child: AvatarNom.enLigne(
+          prenom: enfant.prenom,
+          diametre: AppAvatar.grand,
+          ecart: AppSpacing.xl,
+          styleNom: Theme.of(context).textTheme.headlineSmall,
         ),
       ),
       Ecart.vSection,

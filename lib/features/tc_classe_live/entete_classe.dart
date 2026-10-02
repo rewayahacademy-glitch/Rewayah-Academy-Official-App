@@ -7,7 +7,7 @@ import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/status_pill.dart';
 import '../tc_observation_ui/indicateur_observation.dart';
 import 'roster_classe.dart';
@@ -117,6 +117,7 @@ class EnteteClasse extends StatelessWidget {
     final String? compteur = vue.compteurCompact;
     final VoidCallback? voirRoster = onVoirRoster;
     final String? mot = _motDuLien(vue.motLien);
+    final String? photoEnseignant = session.enseignant.photoCleOuUrl;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -127,32 +128,38 @@ class EnteteClasse extends StatelessWidget {
             // La photo enseignant est OBLIGATOIRE (decision D-01). Quand elle
             // manque, on ne pose pas un avatar generique : cela masquerait une
             // donnee absente au lieu de la signaler. On ecrit qu'elle manque.
-            if (session.enseignant.photoCleOuUrl case final String photo)
-              ...<Widget>[
-              AvatarTile(
-                prenom: session.enseignant.nomAffichage,
-                urlSignee: photo,
-              ),
-              Ecart.hSm,
-            ],
             Expanded(
               child: MergeSemantics(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      session.libelleGroupe,
-                      overflow: TextOverflow.ellipsis,
-                      style: textes.titleSmall ?? const TextStyle(),
-                    ),
-                    Text(
-                      nomAvecTitre(session.enseignant),
-                      overflow: TextOverflow.ellipsis,
-                      style: textes.labelMedium ?? const TextStyle(),
-                    ),
-                  ],
-                ),
+                // AVATAR-1 : couple avatar + nom du composant partage, le nom
+                // de l'enseignant centre sur le cercle, une ligne de role (la
+                // classe).
+                child: photoEnseignant != null
+                    ? AvatarNom.enLigne(
+                        prenom: session.enseignant.nomAffichage,
+                        urlSignee: photoEnseignant,
+                        nom: nomAvecTitre(session.enseignant),
+                        role: session.libelleGroupe,
+                        diametre: AppAvatar.petit,
+                        ecart: AppSpacing.sm,
+                        styleNom: textes.titleSmall,
+                        styleRole: textes.labelMedium,
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            session.libelleGroupe,
+                            overflow: TextOverflow.ellipsis,
+                            style: textes.titleSmall ?? const TextStyle(),
+                          ),
+                          Text(
+                            nomAvecTitre(session.enseignant),
+                            overflow: TextOverflow.ellipsis,
+                            style: textes.labelMedium ?? const TextStyle(),
+                          ),
+                        ],
+                      ),
               ),
             ),
             if (restant != null) ...<Widget>[

@@ -8,7 +8,7 @@ import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
 import 'action_principale.dart';
 import 'app_card.dart';
-import 'avatar_tile.dart';
+import 'avatar_nom.dart';
 import 'status_pill.dart';
 
 /// Ce qu'un enfant du foyer est en train de vivre.
@@ -187,32 +187,29 @@ class ChildCard extends StatelessWidget {
   Widget _corps(BuildContext context, AppPalette palette, AppColorPair paire) {
     final TextTheme textes = Theme.of(context).textTheme;
 
-    return Row(
+    // AVATAR-1 : le couple avatar + prenom vient du composant partage, le nom
+    // centre verticalement sur le cercle ; l'etat de l'enfant se lit dessous,
+    // il n'est pas le texte de l'avatar.
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        AvatarTile(prenom: prenom, urlSignee: urlAvatar),
-        Ecart.hLg,
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                prenom,
-                style: paire.applyTo(textes.titleMedium ?? const TextStyle()),
-              ),
-              ..._detail(context, palette, paire, textes),
-              ..._action(context),
-            ],
-          ),
+        AvatarNom.enLigne(
+          prenom: prenom,
+          urlSignee: urlAvatar,
+          styleNom: paire.applyTo(textes.titleMedium ?? const TextStyle()),
+          fin: onOuvrir == null
+              ? null
+              : IconTheme(
+                  data: IconThemeData(
+                    color: paire.onBackground,
+                    size: AppSpacing.xl,
+                  ),
+                  child: Icon(AppIcons.chevron.repos),
+                ),
         ),
-        if (onOuvrir != null) ...<Widget>[
-          Ecart.hSm,
-          IconTheme(
-            data: IconThemeData(color: paire.onBackground, size: AppSpacing.xl),
-            child: Icon(AppIcons.chevron.repos),
-          ),
-        ],
+        ..._detail(context, palette, paire, textes),
+        ..._action(context),
       ],
     );
   }

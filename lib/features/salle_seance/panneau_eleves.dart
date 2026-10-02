@@ -17,6 +17,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/pressable.dart';
 import '../foyer/photo_eleve.dart';
 import 'actions_seance.dart';
@@ -213,50 +214,39 @@ class _EnTeteEleve extends StatelessWidget {
     final String statut = libelleStatutEleve(eleve.statut);
     final Widget ligne = Padding(
       padding: const EdgeInsets.all(AppSpacing.xs),
-      child: Row(
-        children: <Widget>[
-          _Avatar(eleve: eleve),
-          Ecart.hMd,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  eleve.prenom,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: palette.inkStrong.applyTo(
-                    textes.titleSmall ?? const TextStyle(),
-                  ),
+      // AVATAR-1 : couple avatar + prenom du composant partage ; la ligne de
+      // role est le statut, avec son point.
+      child: AvatarNom.enLigne(
+        prenom: eleve.prenom,
+        diametre: _Avatar._diametre,
+        avatar: _Avatar(eleve: eleve),
+        styleNom: palette.inkStrong.applyTo(
+          textes.titleSmall ?? const TextStyle(),
+        ),
+        roleWidget: Row(
+          children: <Widget>[
+            _Pastille(couleur: _couleurPastille(palette, eleve.statut)),
+            Ecart.hXs,
+            Flexible(
+              child: Text(
+                statut,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: (connecte ? encre : palette.inkMuted).applyTo(
+                  _styleFiche(context),
                 ),
-                Ecart.vXs,
-                Row(
-                  children: <Widget>[
-                    _Pastille(couleur: _couleurPastille(palette, eleve.statut)),
-                    Ecart.hXs,
-                    Flexible(
-                      child: Text(
-                        statut,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: (connecte ? encre : palette.inkMuted).applyTo(
-                          _styleFiche(context),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          if (onBasculer != null)
-            IconTheme(
-              data: palette.inkStrong.asIconTheme(size: AppSpacing.xl),
-              child: Icon(
-                deplie ? AppIcons.replier.repos : AppIcons.chevron.repos,
               ),
             ),
-        ],
+          ],
+        ),
+        fin: onBasculer == null
+            ? null
+            : IconTheme(
+                data: palette.inkStrong.asIconTheme(size: AppSpacing.xl),
+                child: Icon(
+                  deplie ? AppIcons.replier.repos : AppIcons.chevron.repos,
+                ),
+              ),
       ),
     );
     final VoidCallback? basculer = onBasculer;
@@ -283,7 +273,7 @@ class _Avatar extends StatelessWidget {
 
   final EleveSeance eleve;
 
-  static const double _diametre = AppSpacing.titreEcran - AppSpacing.xs;
+  static const double _diametre = AppAvatar.moyen;
 
   @override
   Widget build(BuildContext context) {

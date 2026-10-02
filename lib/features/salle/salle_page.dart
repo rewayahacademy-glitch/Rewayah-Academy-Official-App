@@ -29,7 +29,7 @@ import '../../core/video/service_video.dart';
 import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
-import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/page_immersive.dart';
@@ -1528,25 +1528,14 @@ class _SansImage extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
-    return Center(
-      child: Semantics(
-        label: avecLegende ? null : t.salle.sansImage,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            AvatarTile(prenom: nom),
-            if (avecLegende) ...<Widget>[
-              Ecart.vSm,
-              Text(
-                t.salle.sansImage,
-                textAlign: TextAlign.center,
-                style: palette.surfaceSunken.applyTo(
-                  textes.labelSmall ?? const TextStyle(),
-                ),
-              ),
-            ],
-          ],
+    // AVATAR-1 / CTRL-SALLE-1 : un petit cercle, contenu dans son cadre.
+    return Semantics(
+      label: avecLegende ? null : t.salle.sansImage,
+      child: AvatarSansImage(
+        prenom: nom,
+        legende: avecLegende ? t.salle.sansImage : null,
+        styleLegende: palette.surfaceSunken.applyTo(
+          textes.labelSmall ?? const TextStyle(),
         ),
       ),
     );

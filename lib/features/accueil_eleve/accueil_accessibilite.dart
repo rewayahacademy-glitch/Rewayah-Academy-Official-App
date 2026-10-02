@@ -16,10 +16,10 @@ import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
@@ -205,38 +205,35 @@ class _IdentiteClasse extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
+    // AVATAR-1 : le nom de la Classe est le titre ; l'enseignant est un couple
+    // avatar + nom du composant partage, centre verticalement sur le cercle.
     return MergeSemantics(
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          PhotoEnseignant(
-            enseignant: identite.enseignant,
-            diametre: AppMetriques.of(context).cibleTactile,
-            // Un eleve ne voit jamais d'avertissement pour une photo
-            // manquante : les initiales en repli (MA-3).
-            repliInitiales: true,
+          Text(
+            identite.libelle,
+            style: palette.inkStrong.applyTo(
+              textes.titleMedium ?? const TextStyle(),
+            ),
           ),
-          Ecart.hLg,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  identite.libelle,
-                  style: palette.inkStrong.applyTo(
-                    textes.titleMedium ?? const TextStyle(),
-                  ),
-                ),
-                Ecart.vXs,
-                Text(
-                  t.accessibilite.accueil.avec(
-                    nomme: LibellesGroupe.enseignantNomme(identite.enseignant),
-                  ),
-                  style: palette.inkMuted.applyTo(
-                    textes.bodyMedium ?? const TextStyle(),
-                  ),
-                ),
-              ],
+          Ecart.vSm,
+          AvatarNom.enLigne(
+            prenom: identite.enseignant.nomAffichage,
+            nom: t.accessibilite.accueil.avec(
+              nomme: LibellesGroupe.enseignantNomme(identite.enseignant),
+            ),
+            ecart: AppSpacing.lg,
+            styleNom: palette.inkMuted.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
+            avatar: PhotoEnseignant(
+              enseignant: identite.enseignant,
+              diametre: AppAvatar.moyen,
+              // Un eleve ne voit jamais d'avertissement pour une photo
+              // manquante : les initiales en repli (MA-3).
+              repliInitiales: true,
             ),
           ),
         ],

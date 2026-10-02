@@ -17,6 +17,7 @@ import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/confirm_destructive.dart';
@@ -291,9 +292,7 @@ class CarteIdentiteCompte extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final String? nom = nomComplet(identite);
-    final double diametre = large
-        ? AppSpacing.section * 2
-        : AppSpacing.respiration;
+    final double diametre = large ? AppAvatar.grand : AppAvatar.moyen;
     final ({String libelle, bool valide})? lu = statutAffiche(identite.statut);
     final ({String libelle, bool valide})? statut =
         lu != null && lu.valide && !pastilleEtatNormal ? null : lu;
@@ -305,49 +304,35 @@ class CarteIdentiteCompte extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Row(
-              children: <Widget>[
-                ExcludeSemantics(
-                  child:
-                      photo?.call(diametre) ??
-                      AvatarTile(prenom: nom ?? '', diametre: diametre),
+            // AVATAR-1 : couple avatar + nom du composant partage, nom et une
+            // ligne de role ; la pastille d'etat se lit dessous.
+            Semantics(
+              header: true,
+              child: AvatarNom.enLigne(
+                prenom: nom ?? '',
+                nom: nom ?? t.compte.tuteur.identite.nomInconnu,
+                role: role ?? t.compte.roles.guardian,
+                diametre: diametre,
+                avatar: photo?.call(diametre),
+                ecart: AppSpacing.lg,
+                styleNom: palette.inkStrong.applyTo(
+                  textes.titleLarge ?? const TextStyle(),
                 ),
-                Ecart.hLg,
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Semantics(
-                        header: true,
-                        child: Text(
-                          nom ?? t.compte.tuteur.identite.nomInconnu,
-                          style: palette.inkStrong.applyTo(
-                            textes.titleLarge ?? const TextStyle(),
-                          ),
-                        ),
-                      ),
-                      Ecart.vXs,
-                      Text(
-                        role ?? t.compte.roles.guardian,
-                        style: palette.inkMuted.applyTo(
-                          textes.bodyMedium ?? const TextStyle(),
-                        ),
-                      ),
-                      if (statut != null) ...<Widget>[
-                        Ecart.vSm,
-                        StatusPill(
-                          libelle: statut.libelle,
-                          ton: statut.valide
-                              ? TonEtat.succes
-                              : TonEtat.avertissement,
-                        ),
-                      ],
-                    ],
-                  ),
+                styleRole: palette.inkMuted.applyTo(
+                  textes.bodyMedium ?? const TextStyle(),
                 ),
-              ],
+              ),
             ),
+            if (statut != null) ...<Widget>[
+              Ecart.vSm,
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: StatusPill(
+                  libelle: statut.libelle,
+                  ton: statut.valide ? TonEtat.succes : TonEtat.avertissement,
+                ),
+              ),
+            ],
             Ecart.vLg,
             MergeSemantics(
               child: Row(
@@ -463,7 +448,7 @@ class _ResumeFoyer extends StatelessWidget {
                         widthFactor: 0.8,
                         child: AvatarTile(
                           prenom: p.prenom,
-                          diametre: AppSpacing.section,
+                          diametre: AppAvatar.petit,
                         ),
                       ),
                   ],

@@ -7,7 +7,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/livekit_session_provider.dart';
 import '../../core/video/video_session_provider.dart';
-import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/avatar_nom.dart';
 import 'vue_classe_live.dart';
 
 /// La scene video de la Classe Live.
@@ -198,25 +198,14 @@ class _SansImage extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
-    return Center(
-      child: Semantics(
-        label: avecLegende ? null : t.tc.classe.scene.sansImage,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            AvatarTile(prenom: nom),
-            if (avecLegende) ...<Widget>[
-              Ecart.vSm,
-              Text(
-                t.tc.classe.scene.sansImage,
-                textAlign: TextAlign.center,
-                style: palette.surfaceSunken.applyTo(
-                  textes.labelSmall ?? const TextStyle(),
-                ),
-              ),
-            ],
-          ],
+    // AVATAR-1 : le petit cercle du composant partage, contenu dans son cadre.
+    return Semantics(
+      label: avecLegende ? null : t.tc.classe.scene.sansImage,
+      child: AvatarSansImage(
+        prenom: nom,
+        legende: avecLegende ? t.tc.classe.scene.sansImage : null,
+        styleLegende: palette.surfaceSunken.applyTo(
+          textes.labelSmall ?? const TextStyle(),
         ),
       ),
     );
