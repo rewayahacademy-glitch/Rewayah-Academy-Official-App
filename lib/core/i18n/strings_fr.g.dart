@@ -5801,6 +5801,9 @@ class Traductions$admin$programmes$fr {
 	/// fr: 'Créer une version vide'
 	String get creerVersionVide => 'Créer une version vide';
 
+	/// fr: 'Enregistrer la version'
+	String get enregistrerVersion => 'Enregistrer la version';
+
 	/// fr: 'Créer une nouvelle version à partir de celle-ci'
 	String get creerVersionDepuisPubliee => 'Créer une nouvelle version à partir de celle-ci';
 
@@ -15744,6 +15747,7 @@ extension on Traductions {
 			'admin.programmes.niveauxSur' => ({required Object nombre}) => '${nombre} niveaux',
 			'admin.programmes.creerVersion' => 'Créer une version',
 			'admin.programmes.creerVersionVide' => 'Créer une version vide',
+			'admin.programmes.enregistrerVersion' => 'Enregistrer la version',
 			'admin.programmes.creerVersionDepuisPubliee' => 'Créer une nouvelle version à partir de celle-ci',
 			'admin.programmes.creerVersionErreur' => ({required Object message}) => 'La création n\'a pas abouti : ${message}',
 			'admin.programmes.niveauxTitre' => 'Niveaux',
@@ -15829,9 +15833,9 @@ extension on Traductions {
 			'admin.journal.evtJetonVideo' => 'Entrée en salle autorisée',
 			'admin.journal.vide' => 'Aucun événement enregistré',
 			'admin.journal.videDetail' => 'Chaque lecture de dossier, chaque décision et chaque attribution viendra s\'inscrire ici.',
-			'admin.journal.videFiltre' => 'Aucun événement ne correspond',
 			_ => null,
 		} ?? switch (path) {
+			'admin.journal.videFiltre' => 'Aucun événement ne correspond',
 			'admin.journal.videFiltreDetail' => 'Élargissez la période, ou relâchez un filtre.',
 			'admin.journal.effacerFiltres' => 'Effacer les filtres',
 			'admin.journal.erreur' => 'Le journal n\'a pas pu être lu. Réessayez dans un instant.',
@@ -16343,9 +16347,9 @@ extension on Traductions {
 			'historique.segments.observations' => 'Observations',
 			'historique.moisCourts.0' => 'janv.',
 			'historique.moisCourts.1' => 'févr.',
-			'historique.moisCourts.2' => 'mars',
 			_ => null,
 		} ?? switch (path) {
+			'historique.moisCourts.2' => 'mars',
 			'historique.moisCourts.3' => 'avr.',
 			'historique.moisCourts.4' => 'mai',
 			'historique.moisCourts.5' => 'juin',
@@ -16857,9 +16861,9 @@ extension on Traductions {
 			'enseignant.photo.changer' => 'Changer la photo',
 			'enseignant.photo.alternatif' => 'Votre photo publique',
 			'enseignant.photo.succes' => 'La photo est enregistrée.',
-			'enseignant.photo.echec' => 'La photo n\'a pas pu être envoyée. Rien n\'a changé sur le profil.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.photo.echec' => 'La photo n\'a pas pu être envoyée. Rien n\'a changé sur le profil.',
 			'enseignant.photo.selectionEchec' => 'La photo n\'a pas pu être ouverte. Vérifiez l\'accès aux photos de l\'appareil, puis réessayez.',
 			'enseignant.photo.horsLigne' => 'Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.',
 			'enseignant.journee.lancer' => 'Lancer le cours',
@@ -17371,9 +17375,9 @@ extension on Traductions {
 			'tc.bibliotheque.sections.recents' => 'Récents',
 			'tc.bibliotheque.sections.tousLesSupports' => 'Tous les supports',
 			'tc.bibliotheque.sections.resultats' => 'Résultats',
-			'tc.bibliotheque.vide.message' => 'Aucun support publié pour le moment',
 			_ => null,
 		} ?? switch (path) {
+			'tc.bibliotheque.vide.message' => 'Aucun support publié pour le moment',
 			'tc.bibliotheque.vide.invitation' => 'Vos enseignants déposeront ici les supports de vos cours.',
 			'tc.bibliotheque.aucunResultat.message' => 'Aucun support ne correspond',
 			'tc.bibliotheque.aucunResultat.invitation' => 'Essayez un autre mot, ou relâchez les filtres.',
@@ -17885,9 +17889,9 @@ extension on Traductions {
 			'adulte.demo.etats.adulteSeul' => 'L\'adulte est seul, sans foyer.',
 			'adulte.demo.etats.titulaireSansConjoint' => 'Le foyer n\'a pas de second adulte.',
 			'adulte.demo.etats.invitationEnAttente' => 'L\'invitation du second adulte est en attente.',
-			'adulte.demo.etats.invitationExpiree' => 'L\'invitation du second adulte a expiré.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.demo.etats.invitationExpiree' => 'L\'invitation du second adulte a expiré.',
 			'adulte.demo.etats.invitationAnnulee' => 'L\'invitation du second adulte a été annulée.',
 			'adulte.demo.etats.conjointActif' => 'Le second adulte fait partie du foyer.',
 			'adulte.demo.etats.conjointQuitte' => 'Le second adulte a quitté le foyer.',
