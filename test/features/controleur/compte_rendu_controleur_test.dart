@@ -249,7 +249,10 @@ void main() {
     expect(find.text(r.visiteEnCours), findsOneWidget);
     expect(find.text(r.visiteTransmise), findsNothing);
 
-    // « Plus tard » tout de suite : la transmission n'est pas retenue.
+    // « Plus tard » tout de suite : la transmission n'est pas retenue. Les
+    // lignes d'aide (K-58) allongent la page : on fait defiler jusqu'au
+    // bouton, comme l'utilisateur.
+    await tester.ensureVisible(find.byKey(CompteRenduControlePage.plusTardKey));
     await tester.tap(find.byKey(CompteRenduControlePage.plusTardKey));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));

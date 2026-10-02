@@ -8615,6 +8615,9 @@ class Traductions$controleur$historique$fr {
 	/// fr: '{heure} · {duree}'
 	String meta({required Object heure, required Object duree}) => '${heure} · ${duree}';
 
+	/// fr: '{date}, {heure}'
+	String dateHeure({required Object date, required Object heure}) => '${date}, ${heure}';
+
 	/// fr: '{date}, {classe}, {enseignant}, {duree}, {statut}'
 	String ligne({required Object date, required Object classe, required Object enseignant, required Object duree, required Object statut}) => '${date}, ${classe}, ${enseignant}, ${duree}, ${statut}';
 
@@ -8825,14 +8828,26 @@ class Traductions$controleur$compteRendu$fr {
 	/// fr: 'Avez-vous quelque chose à signaler ?'
 	String get question => 'Avez-vous quelque chose à signaler ?';
 
+	/// fr: 'Votre réponse s'ajoute aux faits automatiques de cette visite.'
+	String get contexte => 'Votre réponse s\'ajoute aux faits automatiques de cette visite.';
+
 	/// fr: 'Rien à signaler'
 	String get rienASignaler => 'Rien à signaler';
+
+	/// fr: 'Quand la séance s'est déroulée normalement · le compte rendu part en une action ; vous pourrez ajouter un complément ensuite'
+	String get rienASignalerAide => 'Quand la séance s\'est déroulée normalement · le compte rendu part en une action ; vous pourrez ajouter un complément ensuite';
 
 	/// fr: 'Ajouter une observation'
 	String get ajouterObservation => 'Ajouter une observation';
 
+	/// fr: 'Quand vous voulez noter un fait · quelques questions courtes, une à la fois'
+	String get ajouterObservationAide => 'Quand vous voulez noter un fait · quelques questions courtes, une à la fois';
+
 	/// fr: 'Signaler un point important'
 	String get pointImportant => 'Signaler un point important';
+
+	/// fr: 'Quand un fait demande l'attention de l'administration · votre texte sera demandé'
+	String get pointImportantAide => 'Quand un fait demande l\'attention de l\'administration · votre texte sera demandé';
 
 	/// fr: 'Envoyer le compte rendu'
 	String get envoyer => 'Envoyer le compte rendu';
@@ -8845,6 +8860,9 @@ class Traductions$controleur$compteRendu$fr {
 
 	/// fr: 'L'envoi n'est pas confirmé : la connexion ou le serveur n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
 	String get echec => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
+
+	/// fr: 'L'envoi n'est pas confirmé : la connexion ou le serveur n'a pas répondu. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
+	String get echecRien => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
 
 	/// fr: 'Compte rendu envoyé'
 	String get envoyeTitre => 'Compte rendu envoyé';
@@ -8885,56 +8903,110 @@ class Traductions$controleur$observation$fr {
 	/// fr: 'Quelle est la nature de votre observation ?'
 	String get questionNature => 'Quelle est la nature de votre observation ?';
 
+	/// fr: 'Votre observation rejoint le compte rendu de cette visite, transmis à l'administration.'
+	String get contexteNature => 'Votre observation rejoint le compte rendu de cette visite, transmis à l\'administration.';
+
 	/// fr: 'Point positif'
 	String get pointPositif => 'Point positif';
+
+	/// fr: 'Quand une pratique mérite d'être relevée · elle figure au rapport comme point positif'
+	String get pointPositifAide => 'Quand une pratique mérite d\'être relevée · elle figure au rapport comme point positif';
 
 	/// fr: 'À suivre'
 	String get aSuivre => 'À suivre';
 
+	/// fr: 'Quand un point devra être revu lors d'une prochaine visite · il figure au rapport comme point à suivre'
+	String get aSuivreAide => 'Quand un point devra être revu lors d\'une prochaine visite · il figure au rapport comme point à suivre';
+
 	/// fr: 'Intervention de l'administration souhaitée'
 	String get interventionAdmin => 'Intervention de l\'administration souhaitée';
+
+	/// fr: 'Quand l'administration doit agir · votre texte sera demandé, elle le reçoit avec le rapport'
+	String get interventionAdminAide => 'Quand l\'administration doit agir · votre texte sera demandé, elle le reçoit avec le rapport';
 
 	/// fr: 'Quel domaine concerne-t-elle ?'
 	String get questionDomaine => 'Quel domaine concerne-t-elle ?';
 
+	/// fr: 'Le domaine aide l'administration à lire votre observation.'
+	String get contexteDomaine => 'Le domaine aide l\'administration à lire votre observation.';
+
 	/// fr: 'Pédagogie'
 	String get pedagogie => 'Pédagogie';
+
+	/// fr: 'Quand il s'agit de l'enseignement : explications, progression, supports'
+	String get pedagogieAide => 'Quand il s\'agit de l\'enseignement : explications, progression, supports';
 
 	/// fr: 'Interaction avec les élèves'
 	String get interaction => 'Interaction avec les élèves';
 
+	/// fr: 'Quand il s'agit des échanges entre l'enseignant et les élèves'
+	String get interactionAide => 'Quand il s\'agit des échanges entre l\'enseignant et les élèves';
+
 	/// fr: 'Gestion de la classe'
 	String get gestionClasse => 'Gestion de la classe';
+
+	/// fr: 'Quand il s'agit de l'organisation de la séance : temps, consignes, déroulement'
+	String get gestionClasseAide => 'Quand il s\'agit de l\'organisation de la séance : temps, consignes, déroulement';
 
 	/// fr: 'Respect du cadre'
 	String get respectCadre => 'Respect du cadre';
 
+	/// fr: 'Quand il s'agit des règles de l'académie et de la séance'
+	String get respectCadreAide => 'Quand il s\'agit des règles de l\'académie et de la séance';
+
 	/// fr: 'Comportement / climat'
 	String get climat => 'Comportement / climat';
+
+	/// fr: 'Quand il s'agit du comportement ou de l'ambiance de la classe'
+	String get climatAide => 'Quand il s\'agit du comportement ou de l\'ambiance de la classe';
 
 	/// fr: 'Autre'
 	String get autre => 'Autre';
 
+	/// fr: 'Quand aucun autre domaine ne convient · précisez-le dans votre texte'
+	String get autreAide => 'Quand aucun autre domaine ne convient · précisez-le dans votre texte';
+
 	/// fr: 'Qui est concerné ?'
 	String get questionPersonne => 'Qui est concerné ?';
+
+	/// fr: 'Indiquez qui l'observation concerne. Un élève se choisit dans la liste de la Classe, prénom seulement.'
+	String get contextePersonne => 'Indiquez qui l\'observation concerne. Un élève se choisit dans la liste de la Classe, prénom seulement.';
 
 	/// fr: 'Enseignant'
 	String get enseignant => 'Enseignant';
 
+	/// fr: 'Quand l'observation porte sur l'enseignant de la séance'
+	String get enseignantAide => 'Quand l\'observation porte sur l\'enseignant de la séance';
+
 	/// fr: 'Classe entière'
 	String get classeEntiere => 'Classe entière';
+
+	/// fr: 'Quand elle porte sur l'ensemble des élèves présents'
+	String get classeEntiereAide => 'Quand elle porte sur l\'ensemble des élèves présents';
 
 	/// fr: 'Élève précis'
 	String get elevePrecis => 'Élève précis';
 
+	/// fr: 'Quand un seul élève est concerné · vous le choisissez dans la liste, prénom seulement'
+	String get elevePrecisAide => 'Quand un seul élève est concerné · vous le choisissez dans la liste, prénom seulement';
+
 	/// fr: 'Aucun participant précis'
 	String get aucun => 'Aucun participant précis';
+
+	/// fr: 'Quand elle ne vise personne en particulier, par exemple le déroulement'
+	String get aucunAide => 'Quand elle ne vise personne en particulier, par exemple le déroulement';
 
 	/// fr: 'Choisissez l'élève dans la liste de la Classe.'
 	String get questionEleve => 'Choisissez l\'élève dans la liste de la Classe.';
 
-	/// fr: 'La liste des élèves présents n'est pas encore reçue, sans doute à cause de la connexion. Revenez à l'étape précédente pour choisir « Classe entière » ou « Aucun participant précis », ou réessayez dans un instant.'
-	String get rosterIndisponible => 'La liste des élèves présents n\'est pas encore reçue, sans doute à cause de la connexion. Revenez à l\'étape précédente pour choisir « Classe entière » ou « Aucun participant précis », ou réessayez dans un instant.';
+	/// fr: 'Lecture de la liste des élèves présents.'
+	String get rosterChargement => 'Lecture de la liste des élèves présents.';
+
+	/// fr: 'La liste des élèves présents n'est pas reçue, sans doute à cause de la connexion. Réessayez, ou choisissez « Classe entière » ou « Aucun participant précis ». Vos autres réponses sont gardées.'
+	String get rosterIndisponible => 'La liste des élèves présents n\'est pas reçue, sans doute à cause de la connexion. Réessayez, ou choisissez « Classe entière » ou « Aucun participant précis ». Vos autres réponses sont gardées.';
+
+	/// fr: 'Aucun élève présent n'apparaît dans la liste de cette visite. Choisissez « Classe entière » ou « Aucun participant précis ».'
+	String get rosterVide => 'Aucun élève présent n\'apparaît dans la liste de cette visite. Choisissez « Classe entière » ou « Aucun participant précis ».';
 
 	/// fr: 'Qu'avez-vous observé ?'
 	String get questionTexte => 'Qu\'avez-vous observé ?';
@@ -15990,6 +16062,7 @@ extension on Traductions {
 			'controleur.historique.tousEtats' => 'Tous les états',
 			'controleur.historique.duree' => ({required Object minutes}) => '${minutes} min observées',
 			'controleur.historique.meta' => ({required Object heure, required Object duree}) => '${heure} · ${duree}',
+			'controleur.historique.dateHeure' => ({required Object date, required Object heure}) => '${date}, ${heure}',
 			'controleur.historique.ligne' => ({required Object date, required Object classe, required Object enseignant, required Object duree, required Object statut}) => '${date}, ${classe}, ${enseignant}, ${duree}, ${statut}',
 			'controleur.historique.vide' => 'Aucun contrôle pour le moment.',
 			'controleur.historique.videFiltres' => 'Aucun contrôle ne correspond à ces filtres.',
@@ -16054,13 +16127,18 @@ extension on Traductions {
 			'controleur.compteRendu.presents' => ({required Object presents, required Object attendus}) => '${presents} sur ${attendus}',
 			'controleur.compteRendu.cleReconnexions' => 'Reconnexions',
 			'controleur.compteRendu.question' => 'Avez-vous quelque chose à signaler ?',
+			'controleur.compteRendu.contexte' => 'Votre réponse s\'ajoute aux faits automatiques de cette visite.',
 			'controleur.compteRendu.rienASignaler' => 'Rien à signaler',
+			'controleur.compteRendu.rienASignalerAide' => 'Quand la séance s\'est déroulée normalement · le compte rendu part en une action ; vous pourrez ajouter un complément ensuite',
 			'controleur.compteRendu.ajouterObservation' => 'Ajouter une observation',
+			'controleur.compteRendu.ajouterObservationAide' => 'Quand vous voulez noter un fait · quelques questions courtes, une à la fois',
 			'controleur.compteRendu.pointImportant' => 'Signaler un point important',
+			'controleur.compteRendu.pointImportantAide' => 'Quand un fait demande l\'attention de l\'administration · votre texte sera demandé',
 			'controleur.compteRendu.envoyer' => 'Envoyer le compte rendu',
 			'controleur.compteRendu.plusTard' => 'Plus tard',
 			'controleur.compteRendu.notice' => 'Ce compte rendu est transmis automatiquement à l\'administration.',
 			'controleur.compteRendu.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
+			'controleur.compteRendu.echecRien' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.compteRendu.envoyeTitre' => 'Compte rendu envoyé',
 			'controleur.compteRendu.envoyePhrase' => 'Il est transmis à l\'administration. Pour y revenir, ouvrez-le dans l\'Historique et choisissez « Ajouter un complément ».',
 			'controleur.compteRendu.ecrireAdmin' => 'Écrire à l\'administration',
@@ -16071,23 +16149,41 @@ extension on Traductions {
 			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
 			'controleur.observation.important' => 'Vous signalez un point important : votre texte sera demandé.',
 			'controleur.observation.questionNature' => 'Quelle est la nature de votre observation ?',
+			'controleur.observation.contexteNature' => 'Votre observation rejoint le compte rendu de cette visite, transmis à l\'administration.',
 			'controleur.observation.pointPositif' => 'Point positif',
+			'controleur.observation.pointPositifAide' => 'Quand une pratique mérite d\'être relevée · elle figure au rapport comme point positif',
 			'controleur.observation.aSuivre' => 'À suivre',
+			'controleur.observation.aSuivreAide' => 'Quand un point devra être revu lors d\'une prochaine visite · il figure au rapport comme point à suivre',
 			'controleur.observation.interventionAdmin' => 'Intervention de l\'administration souhaitée',
+			'controleur.observation.interventionAdminAide' => 'Quand l\'administration doit agir · votre texte sera demandé, elle le reçoit avec le rapport',
 			'controleur.observation.questionDomaine' => 'Quel domaine concerne-t-elle ?',
+			'controleur.observation.contexteDomaine' => 'Le domaine aide l\'administration à lire votre observation.',
 			'controleur.observation.pedagogie' => 'Pédagogie',
+			'controleur.observation.pedagogieAide' => 'Quand il s\'agit de l\'enseignement : explications, progression, supports',
 			'controleur.observation.interaction' => 'Interaction avec les élèves',
+			'controleur.observation.interactionAide' => 'Quand il s\'agit des échanges entre l\'enseignant et les élèves',
 			'controleur.observation.gestionClasse' => 'Gestion de la classe',
+			'controleur.observation.gestionClasseAide' => 'Quand il s\'agit de l\'organisation de la séance : temps, consignes, déroulement',
 			'controleur.observation.respectCadre' => 'Respect du cadre',
+			'controleur.observation.respectCadreAide' => 'Quand il s\'agit des règles de l\'académie et de la séance',
 			'controleur.observation.climat' => 'Comportement / climat',
+			'controleur.observation.climatAide' => 'Quand il s\'agit du comportement ou de l\'ambiance de la classe',
 			'controleur.observation.autre' => 'Autre',
+			'controleur.observation.autreAide' => 'Quand aucun autre domaine ne convient · précisez-le dans votre texte',
 			'controleur.observation.questionPersonne' => 'Qui est concerné ?',
+			'controleur.observation.contextePersonne' => 'Indiquez qui l\'observation concerne. Un élève se choisit dans la liste de la Classe, prénom seulement.',
 			'controleur.observation.enseignant' => 'Enseignant',
+			'controleur.observation.enseignantAide' => 'Quand l\'observation porte sur l\'enseignant de la séance',
 			'controleur.observation.classeEntiere' => 'Classe entière',
+			'controleur.observation.classeEntiereAide' => 'Quand elle porte sur l\'ensemble des élèves présents',
 			'controleur.observation.elevePrecis' => 'Élève précis',
+			'controleur.observation.elevePrecisAide' => 'Quand un seul élève est concerné · vous le choisissez dans la liste, prénom seulement',
 			'controleur.observation.aucun' => 'Aucun participant précis',
+			'controleur.observation.aucunAide' => 'Quand elle ne vise personne en particulier, par exemple le déroulement',
 			'controleur.observation.questionEleve' => 'Choisissez l\'élève dans la liste de la Classe.',
-			'controleur.observation.rosterIndisponible' => 'La liste des élèves présents n\'est pas encore reçue, sans doute à cause de la connexion. Revenez à l\'étape précédente pour choisir « Classe entière » ou « Aucun participant précis », ou réessayez dans un instant.',
+			'controleur.observation.rosterChargement' => 'Lecture de la liste des élèves présents.',
+			'controleur.observation.rosterIndisponible' => 'La liste des élèves présents n\'est pas reçue, sans doute à cause de la connexion. Réessayez, ou choisissez « Classe entière » ou « Aucun participant précis ». Vos autres réponses sont gardées.',
+			'controleur.observation.rosterVide' => 'Aucun élève présent n\'apparaît dans la liste de cette visite. Choisissez « Classe entière » ou « Aucun participant précis ».',
 			'controleur.observation.questionTexte' => 'Qu\'avez-vous observé ?',
 			'controleur.observation.texteObligatoire' => 'Votre texte est nécessaire pour cette observation.',
 			'controleur.observation.texteFacultatif' => 'Ce texte est facultatif.',
@@ -16324,6 +16420,8 @@ extension on Traductions {
 			'tc.outils.portee.enregistree' => 'Enregistrer',
 			'tc.outils.portee.aide' => 'Combien de temps garder ces annotations ?',
 			'tc.outils.marquer.titre' => 'Marquer ce passage',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.marquer.aide' => 'Choisissez ce que ce passage demande.',
 			'tc.outils.marquer.retirer' => 'Retirer le marqueur',
 			'tc.outils.revision.titre' => 'À préparer',
@@ -16348,8 +16446,6 @@ extension on Traductions {
 			'tc.classe.roster.titre' => 'Élèves',
 			'tc.classe.roster.compteur' => ({required Object presents, required Object attendus}) => 'Élèves : ${presents} présents sur ${attendus} attendus',
 			'tc.classe.roster.indisponible' => 'Roster indisponible',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.roster.indisponibleDetail' => 'Les états de vos élèves n\'ont pas pu être lus. Le cours continue.',
 			'tc.classe.roster.vide' => 'Aucun élève inscrit',
 			'tc.classe.roster.videDetail' => 'Cette séance n\'a aucun élève inscrit.',

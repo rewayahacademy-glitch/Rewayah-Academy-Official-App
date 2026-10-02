@@ -287,7 +287,9 @@ class _ObservationControlePageState
     switch (_etape) {
       case _Etape.nature:
         question = o.questionNature;
-        explication = _important ? o.important : null;
+        // Phrase de contexte et lignes « quand · consequence » (K-58) :
+        // libelles provisoires (D4), proposes par un agent.
+        explication = _important ? o.important : o.contexteNature;
         corps = _cartes<NatureObservation>(
           NatureObservation.values,
           _nature,
@@ -302,20 +304,36 @@ class _ObservationControlePageState
             NatureObservation.aSuivre => AppIcons.noter,
             NatureObservation.interventionAdmin => AppIcons.signaler,
           },
+          description: (NatureObservation n) => switch (n) {
+            NatureObservation.pointPositif => o.pointPositifAide,
+            NatureObservation.aSuivre => o.aSuivreAide,
+            NatureObservation.interventionAdmin => o.interventionAdminAide,
+          },
         );
         if (_nature != null) action = () => _aller(_Etape.domaine);
       case _Etape.domaine:
         question = o.questionDomaine;
+        explication = o.contexteDomaine;
         corps = _cartes<DomaineObservation>(
           DomaineObservation.values,
           _domaine,
           ObservationControlePage.libelleDomaine,
           ObservationControlePage.cleDomaine,
           (DomaineObservation d) => setState(() => _domaine = d),
+          // Une ligne « quand » par domaine, sans consequence inventee (D4).
+          description: (DomaineObservation d) => switch (d) {
+            DomaineObservation.pedagogie => o.pedagogieAide,
+            DomaineObservation.interaction => o.interactionAide,
+            DomaineObservation.gestionClasse => o.gestionClasseAide,
+            DomaineObservation.respectCadre => o.respectCadreAide,
+            DomaineObservation.climat => o.climatAide,
+            DomaineObservation.autre => o.autreAide,
+          },
         );
         if (_domaine != null) action = () => _aller(_Etape.personne);
       case _Etape.personne:
         question = o.questionPersonne;
+        explication = o.contextePersonne;
         corps = _personneEtRoster();
         final bool pret =
             _personne != null &&
@@ -357,6 +375,7 @@ class _ObservationControlePageState
     Key Function(E) cle,
     void Function(E) onChoix, {
     AppIcon Function(E)? icone,
+    String Function(E)? description,
   }) => ChoiceCardGroup(
     key: ValueKey<Type>(E),
     autoriserSaisieLibre: false,
@@ -369,6 +388,7 @@ class _ObservationControlePageState
           cle: cle(v),
           valeur: v.name,
           libelle: libelle(v),
+          description: description?.call(v),
           icone: icone?.call(v),
         ),
     ],
@@ -381,6 +401,7 @@ class _ObservationControlePageState
   Widget _personneEtRoster() {
     final List<EleveRoster> roster =
         ref.watch(rosterControleProvider).value ?? const <EleveRoster>[];
+    final o = t.controleur.observation;
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final String? eleve = _eleveId;
@@ -397,6 +418,12 @@ class _ObservationControlePageState
             _personne = p;
             if (p != PersonneConcernee.elevePrecis) _eleveId = null;
           }),
+          description: (PersonneConcernee p) => switch (p) {
+            PersonneConcernee.enseignant => o.enseignantAide,
+            PersonneConcernee.classeEntiere => o.classeEntiereAide,
+            PersonneConcernee.elevePrecis => o.elevePrecisAide,
+            PersonneConcernee.aucun => o.aucunAide,
+          },
         ),
         if (_personne == PersonneConcernee.elevePrecis) ...<Widget>[
           Ecart.vXl,

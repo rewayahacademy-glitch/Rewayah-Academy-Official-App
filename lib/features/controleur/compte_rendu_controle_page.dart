@@ -248,6 +248,11 @@ class _CompteRenduControlePageState
                     ),
                   ),
                 ),
+                Ecart.vSm,
+                // Phrase de contexte et lignes « quand · consequence » sous
+                // chaque option (K-58) : libelles provisoires (D4), proposes
+                // par un agent, a valider par le directeur.
+                Text(t.controleur.compteRendu.contexte, style: doux),
                 Ecart.vLg,
                 ChoiceCardGroup(
                   autoriserSaisieLibre: false,
@@ -263,6 +268,14 @@ class _CompteRenduControlePageState
                             t.controleur.compteRendu.ajouterObservation,
                           ChoixCompteRendu.pointImportant =>
                             t.controleur.compteRendu.pointImportant,
+                        },
+                        description: switch (c) {
+                          ChoixCompteRendu.rienASignaler =>
+                            t.controleur.compteRendu.rienASignalerAide,
+                          ChoixCompteRendu.ajouterObservation =>
+                            t.controleur.compteRendu.ajouterObservationAide,
+                          ChoixCompteRendu.pointImportant =>
+                            t.controleur.compteRendu.pointImportantAide,
                         },
                         icone: switch (c) {
                           ChoixCompteRendu.rienASignaler => AppIcons.succes,
