@@ -612,6 +612,7 @@ void main() {
     setUpAll(chargerPolicesDuDepot);
     for (final (String l, Size taille) in <(String, Size)>[
       ('390', const Size(390, 1100)),
+      ('768', const Size(768, 1024)),
       ('1440', const Size(1440, 900)),
     ]) {
       for (final ThemeMode mode in _themes) {
