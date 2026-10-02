@@ -9,6 +9,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/accessibilite/commandes_masquables.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
@@ -115,8 +116,9 @@ void main() {
             const ValueKey<String>('vignette-support-pile'),
           );
           if (echelle >= 2) {
-            // MA-RC (M1, MA9, MA20) : a 200 %, jamais une icone seule ; chaque
-            // commande du dock garde son libelle visible dessous.
+            // MA-CMD-1 (directeur, 02/10/2026, annule M1) : icones seules,
+            // sans libelle visible ; chaque commande garde son nom pour le
+            // lecteur d'ecran et une infobulle.
             final Finder dock = find.byKey(
               const ValueKey<String>('dock-seance'),
             );
@@ -131,17 +133,22 @@ void main() {
                   of: boutonsDock.at(i),
                   matching: find.byType(Text),
                 ),
-                findsOneWidget,
+                findsNothing,
+              );
+              expect(
+                tester.getSize(boutonsDock.at(i)).height,
+                greaterThanOrEqualTo(48),
               );
             }
-            for (final String libelle in <String>[
-              t.salle.quitter,
-              t.salle.seance.parler,
-            ]) {
-              expect(
-                find.descendant(of: dock, matching: find.text(libelle)),
-                findsOneWidget,
-              );
+            final List<Tooltip> bulles = tester
+                .widgetList<Tooltip>(
+                  find.descendant(of: dock, matching: find.byType(Tooltip)),
+                )
+                .toList();
+            expect(find.byTooltip(t.salle.seance.sortir), findsOneWidget);
+            expect(bulles, hasLength(boutonsDock.evaluate().length));
+            for (final Tooltip bulle in bulles) {
+              expect(find.bySemanticsLabel(bulle.message!), findsWidgets);
             }
             expect(pile, findsOneWidget);
             final Finder chapitre = find.textContaining('Chapitre');
@@ -158,6 +165,56 @@ void main() {
       );
     }
   }
+
+  // MA-CMD-1 (directeur, 02/10/2026) : a 200 % et a 390 px, en-tete et
+  // commandes tiennent dans 30 % de l'ecran ; les commandes se masquent et
+  // une touche sur l'ecran les fait revenir.
+  testWidgets('MA-CMD-1 : 390, texte x2, commandes compactes et masquables', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, echelle: 2);
+    final Finder rejoindre = find.text(LibellesGroupe.rejoindre);
+    await tester.ensureVisible(rejoindre);
+    await tester.tap(rejoindre);
+    await stabiliser(tester);
+    final Finder entrer = find.byKey(
+      const ValueKey<String>('preparation-entrer'),
+    );
+    await tester.ensureVisible(entrer);
+    await tester.tap(entrer);
+    await tester.pump(const Duration(milliseconds: 500));
+
+    final double hauteurEntete = tester
+        .getSize(find.byKey(const ValueKey<String>('entete-seance-compacte')))
+        .height;
+    final double hauteurCommandes = tester
+        .getSize(find.byKey(CommandesMasquables.commandesKey))
+        .height;
+    expect(
+      hauteurEntete + hauteurCommandes,
+      lessThanOrEqualTo(844 * 0.30),
+      reason: 'en-tete $hauteurEntete + commandes $hauteurCommandes',
+    );
+
+    double opacite() => tester
+        .widget<AnimatedOpacity>(
+          find.ancestor(
+            of: find.byKey(CommandesMasquables.commandesKey),
+            matching: find.byType(AnimatedOpacity),
+          ),
+        )
+        .opacity;
+    expect(opacite(), 1);
+    await tester.pump(CommandesMasquables.delaiParDefaut);
+    await tester.pump(const Duration(seconds: 1));
+    expect(opacite(), 0);
+    // Une touche au milieu de l'ecran (sur le support) les fait revenir.
+    await tester.tapAt(const Offset(195, 400));
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(opacite(), 1);
+    expect(find.byTooltip(t.salle.seance.sortir), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 
   // L'eleve courant de la salle suit celui de la demonstration : Idriss ne
   // voit jamais « M Mariam » en haut a droite sur bureau.
