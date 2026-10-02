@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../icons/app_icons.dart';
-import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -172,7 +171,8 @@ class SettingRow extends StatelessWidget {
     TextStyle styleSecondaire,
   ) {
     final TextScaler echelle = MediaQuery.textScalerOf(context);
-    if (echelle.scale(1) > 1.3) return true;
+    // Un controle de largeur inconnue (pas a pas) : la valeur passe dessous.
+    if (echelle.scale(1) > 1.3 || controle != null) return true;
     double mesure(String texte, TextStyle style) {
       final TextPainter p = TextPainter(
         text: TextSpan(text: texte, style: style),
@@ -190,18 +190,10 @@ class SettingRow extends StatelessWidget {
       return m;
     }
 
-    // Icone, ecarts, controle ou chevron (le padding est deja retire). Le
-    // controle ne se mesure pas avant d'etre pose : on lui reserve deux
-    // cibles tactiles, la largeur d'un pas a pas (le plus large en usage).
+    // Icone, ecarts, controle ou chevron (le padding est deja retire).
     final double reserve =
         AppSpacing.xxl +
         AppSpacing.md * 2 +
-        (controle != null
-            ? AppSpacing.sm +
-                  (Theme.of(context).extension<AppMetriques>()?.cibleTactile ??
-                          AppTouchTarget.standard) *
-                      2
-            : 0) +
         (onPress != null ? AppSpacing.sm + AppSpacing.xl : 0);
     final double gauche = largeur - reserve - mesure(value!, styleSecondaire);
     final double titre = motLong(title, styleTitre);
