@@ -2,7 +2,7 @@
 
 Rédigée le 02/10/2026, avant tout code (lot L0 du plan, §21 et §22). Corrigée le 02/10/2026 après relecture (2 bloquants, 9 majeurs, 9 mineurs ; voir « Reste » en fin de document). Document seulement : aucun fichier applicatif n'a été modifié. Preuve exigée par `DESIGN-GOV-2026-09-26` §4.2 (fichier `UX_REVIEW_<lot>.md`).
 
-**Statut L0 : INCOMPLET.** Le livrable L0 du plan exige des « captures actuelles » (plan §21, ligne L0 ; §22 « Avant toute modification », point 2 ; plan l. 318). Aucune capture actuelle de la salle n'est jointe (§0 bis). Tant qu'elles manquent, L0 n'est pas levé et **L1 (TB-1b et suivantes) reste bloqué**. Aucun emplacement en pixels de cette revue n'est présenté comme vérifié (plan §1).
+**Mise à jour 03/10/2026 : les captures « avant » existent (§0 bis, 20 PNG sur `0796f75`).** Reste à confronter les lignes « emplacement » du §3 à ces images avant de lever L0. Texte d'origine : **Statut L0 : INCOMPLET.** Le livrable L0 du plan exige des « captures actuelles » (plan §21, ligne L0 ; §22 « Avant toute modification », point 2 ; plan l. 318). Aucune capture actuelle de la salle n'est jointe (§0 bis). Tant qu'elles manquent, L0 n'est pas levé et **L1 (TB-1b et suivantes) reste bloqué**. Aucun emplacement en pixels de cette revue n'est présenté comme vérifié (plan §1).
 
 **Limite (§4.3 de DESIGN-GOV).** Les standards ci-dessous ne changent ni une permission, ni un état serveur, ni une règle R1–R21, E1–E20, TB1–TB30. Quand un standard pousse ailleurs qu'une décision du directeur, la ligne dit « dérogation, décision du directeur » et la décision est gardée.
 
@@ -28,9 +28,33 @@ Les API citées (`applyBoxFit`, `Alignment.inscribe`, `TransformationController.
 
 **Toutes les références `fichier:ligne` ci-dessous sont sur `corrections` @ `0796f75` (chemins relatifs à `lib/`, sauf `assets/` et `pubspec.yaml`), sauf mention « acc » (`origin/ui/accessibilite-v1` @ `7885b35`).** Une correction à TB-0 : le contrôle `display_mode` est à `0032_tc_catalogue.sql:410` (la table commence à `:404`).
 
-### 0 bis. Captures avant (exigence L0) : manquantes
+### 0 bis. Captures avant (exigence L0) : produites le 03/10/2026
 
-Aucune capture actuelle de la salle n'existe dans `pilotage-git` : les seules captures proches (`10_classe/captures/CL-4.7/*.png`, 26/09/2026) montrent la **préparation** et l'espace, pas la salle, et précèdent la base `0796f75`. Elles ne valent pas preuve.
+**Recette du 03/10/2026, base `corrections/revue-directeur-2026-10` @ `0796f75`.** 20 PNG dans `18_supports_tableau/captures/L0/`, rendus par un test de capture temporaire (`test/capture/tb_l0_salle_capture_test.dart`, modelé sur `ctrl_salle1_capture_test.dart` : vrai routeur `routesDemoSalle('dev')`, polices du dépôt, thème clair, densité 1), lancé sous le verrou avec `CAPTURE_DIR` (20/20 passés, 28 s, journal `yaaden-cache/c1-suite/captures.log`), puis supprimé ; le worktree n'a rien gardé. « Avec support » = `?etat=repos` (support « Chapitre 1, Les bonnes manières en classe ») ; « sans support » = `?etat=rienPartage`. Tailles : 390×844, 768×1024 (web étroit), 1440×900.
+
+| Fichiers | Ce qu'on y voit (ouvert : ✓) |
+|---|---|
+| `tb0_eleve_390_avec.png` ✓ | En-tête « Séance en direct », « Classe An-Nour · Sayyid Ibrahim », pastille « En ligne », mention d'enregistrement. Carte du support : « Chapitre 1 », titre, lignes grises (texte fictif en barres), trois consignes numérotées ; vignette caméra de l'enseignant (« SI ») dans l'angle haut droit de la carte. Barre du bas : Micro ouvert, Caméra allumée, Agrandir, Quitter. Pas d'illustration, pas de numéro de page ni de zoom. |
+| `tb0_eleve_390_sans.png` ✓ | Même en-tête ; zone grise avec la grande vignette de l'enseignant et « Sayyid Ibrahim n'a rien partagé pour l'instant. » ; barre réduite à Micro, Caméra, Quitter (pas d'Agrandir). |
+| `tb0_eleve_768_avec.png`, `tb0_eleve_768_sans.png` | Non ouverts (même composition, largeur tablette). |
+| `tb0_eleve_1440_avec.png` ✓ | En-tête de bureau (thème clair/sombre, cloche, réglages, « Mariam »). Support en grand avec illustration livre (fond crème) et vignette enseignant à droite. Bas : « 1 / 12 » sans flèches, barre Micro/Caméra/Agrandir/Quitter, texte d'aide **tronqué** « Zoom local, sans effet sur les au… », zoom 100 %, et un **second bouton « Agrandir »** isolé à droite (doublon avec celui de la barre). |
+| `tb0_eleve_1440_sans.png` | Non ouvert. |
+| `tb0_guidee_768_avec.png` ✓ | Thème enfant : titre « Ma séance » (sans nom de Classe), même support et vignette ; boutons colorés (micro vert, caméra violette, Agrandir, Quitter rouge) ; grand vide entre le support et la barre (support à hauteur de contenu, pas étiré). |
+| `tb0_guidee_390_avec/sans`, `tb0_guidee_768_sans`, `tb0_guidee_1440_avec/sans` | Non ouverts. |
+| `tb0_enseignant_390_avec.png` ✓ | « Classe An-Nour · 32 min restantes » ; bandeau « Élèves 1/3 » ; support compact ; rangée d'outils Pointeur (actif)/Marquer/Masquer/Annoter **sous** le support ; barre de commandes **sur deux lignes**, seuls Micro et Caméra gardent un libellé (Supports, Partager, Outils, Réseau, Quitter en icône seule). Ni page, ni zoom. |
+| `tb0_enseignant_390_sans.png` | Non ouvert. |
+| `tb0_enseignant_768_sans.png` ✓ | Bandeau « Élèves 1/3 », grande zone vide avec la vignette enseignant et « Sayyid Ibrahim n'a rien partagé pour l'instant. » ; barre d'une ligne avec libellé **tronqué** « Outils d'enseig… ». Pas d'outils de tableau sans support. |
+| `tb0_enseignant_768_avec.png` | Non ouvert. |
+| `tb0_enseignant_1440_avec.png` ✓ | Rangée d'outils Pointeur/Marquer/Masquer/Annoter au-dessus du support ; support avec illustration et vignette ; **panneau Élèves déjà ouvert à droite** (file « Personne ne récite », fiche de Mariam dépliée avec Faire réciter, Appeler discrètement, Noter, Signaler un besoin ; Yusuf « Pas encore connecté ») ; bas : « 1 / 12 » avec flèche suivante, barre Supports/Micro/Caméra éteinte/Partager/Outils d'enseignement/Réseau/Quitter, zoom 100 %. |
+| `tb0_enseignant_1440_sans.png` | Non ouvert. |
+| `tb0_enseignant_1440_avec_panneau_eleves.png` ✓ | Identique au précédent sauf la file : « Mariam récite · À suivre : Yusuf, Aïcha ». |
+| `tb0_enseignant_1440_avec_panneau_supports.png` ✓ | Panneau **Supports à gauche** (Reprendre : Chapitre 1 + « Ouvrir » ; Récents : Fiche de mémorisation, Exercices – Chapitre 1, « Voir tout » ; Ressources de la Classe : Bibliothèque An-Nour, 24 ressources ; « Voir toute la bibliothèque »). Le support passe au centre, rétréci ; à droite, colonne « Outils d'enseignement » (4 outils en carrés) et bandeau « Élèves 1/3 » replié. Page et zoom déplacés à droite de la barre. |
+
+Constats pour le §3 (à confronter, non corrigés ici) : (a) à 1440 l'enseignant a **toujours** le panneau Élèves ouvert à l'état `repos`, si bien que « avec panneau Élèves » ne diffère que par la file ; (b) à 390 et 768 la vignette caméra est logée dans l'angle haut droit de la carte du support et prend la place du titre (à vérifier : recouvrement ou mise en page) ; (c) deux « Agrandir » chez l'élève à 1440 ; (d) libellés tronqués (aide du zoom élève 1440, « Outils d'enseig… » enseignant 768) et libellés absents de la barre enseignant à 390 ; (e) l'élève n'a ni page ni zoom à 390 et 768 ; (f) le contenu du support est un gabarit (barres grises), pas une vraie page de PDF : la démonstration ne sait pas montrer un support paginé réel.
+
+**États non atteignables en démonstration** : un vrai document (PDF ou image) affiché dans la salle (seul le gabarit de `seance_demo.dart` existe) ; le tableau / annotations en cours (les outils Pointeur, Marquer, Masquer, Annoter sont inertes) ; le thème sombre n'a pas été capturé (le §0 bis ne le demandait pas ; le test le permet via `themeMode`).
+
+Historique (02/10/2026, avant la recette) : aucune capture actuelle de la salle n'existe dans `pilotage-git` : les seules captures proches (`10_classe/captures/CL-4.7/*.png`, 26/09/2026) montrent la **préparation** et l'espace, pas la salle, et précèdent la base `0796f75`. Elles ne valent pas preuve.
 
 Cette correction ne pouvait pas les produire : consigne « n'écris aucun autre fichier », et aucun navigateur piloté n'était joignable (serveurs Playwright et navigateur en échec de connexion ce soir). Le jeu exigé, à produire avant de lever L0, depuis `/demo/salle` sur `0796f75` :
 
