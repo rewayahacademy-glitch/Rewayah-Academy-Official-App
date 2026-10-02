@@ -1,7 +1,8 @@
 # YAADEN_RULES — injecté au réveil. Résumé : le texte K du tableau fait foi.
 
 ## 0. OBLIGATOIRE (K-48, ordre du directeur 27/09)
-- Le poste A orchestre. Le tableau est le seul canal entre postes, sessions et agents ; ce qui n'y est pas n'existe pas.
+- K-60 (directeur, 02/10) : AUCUNE étape n'appartient à un poste. Toute session, sur tout poste, prend l'étape `a_faire` d'ordre le plus petit dont les dépendances sont faites et qui n'attend pas le directeur, la réserve (K-03) et la fait. Le champ « poste » d'une étape vaut « tous » ; « auteur » dit seulement qui l'a écrite. La session active orchestre. Seule limite : la revue croisée (…-R) est faite par une session qui n'a pas écrit le code revu.
+- Le tableau est le seul canal entre postes, sessions et agents ; ce qui n'y est pas n'existe pas.
 - Toute session, sur tout poste, installe YAADEN (LISEZMOI) avant de travailler.
 - Tout morceau livré (commit) = une ligne `@Y RELAIS` dans la même réponse ; sinon le hook Stop renvoie l'écrire.
 - Le travail d'un sous-agent est relayé par l'orchestrateur dès sa réception, morceau par morceau.
@@ -40,7 +41,8 @@
 - SI écran ALORS style CL-4 : de l'air, un seul bouton dominant trailing, cartes groupées, en-tête sobre (K-42) ; hiérarchie des boutons (K-36).
 - SI couleur ou thème ALORS rien : une ligne TH-2 (K-37). SI règles gelées DESIGN-GOV ALORS ne rien réinterpréter ; UX_REVIEW avant le code (K-38).
 - SI étape terminée ALORS jamais rouverte : dette → HU-1 (K-38).
-- SI poste A ALORS périmètre Admin ADM-02 dans l'ordre, arrêt après AD-11 (K-39).
+- SI une étape, une note ou un ancien texte nomme un poste (« poste A », « poste B ») ALORS c'est de l'historique : la prendre quand même dans l'ordre (K-60).
+- SI rôle Admin ALORS périmètre ADM-02, pas d'AD-X sans décision du directeur (K-39).
 - SI écran Classe ALORS règles R1–R21 (K-40) ; SI enseignant ALORS E1–E20 (K-43) ; photo de l'élève visible (K-44) ; cahier (K-45).
 - SI KYC ALORS enseignant seulement ; le tuteur n'est jamais bloqué à l'entrée (K-47).
 - SI texte légal ou consentement ALORS charte 09_consentements (K-26).

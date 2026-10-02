@@ -196,8 +196,8 @@ export function documentPour(x) {
   switch (e.type) {
     case 'RELAIS':
       return { collection: 'relais', doc_id: id, data: { ...base, etape: e.etape, code: e.code, champs: e.champs, texte: e.texte } };
-    case 'PLUS_TARD': // visible au tableau comme une étape reportée
-      return { collection: 'etapes', doc_id: `PT-${id}`, data: { ...base, titre: e.titre, note: e.texte, statut: 'a_faire', phase: 'À faire plus tard', vague: 'À faire plus tard', ordre: 900 } };
+    case 'PLUS_TARD': // visible au tableau comme une étape reportée, prise par n'importe quel poste (K-60)
+      return { collection: 'etapes', doc_id: `PT-${id}`, data: { ...base, poste: 'tous', auteur: poste, titre: e.titre, note: e.texte, statut: 'a_faire', phase: 'À faire plus tard', vague: 'À faire plus tard', ordre: 900 } };
     case 'QUESTION':
       return { collection: 'depots', doc_id: `${poste}-q-${id.slice(poste.length + 1)}`, data: { ...base, type: 'question', statut: 'nouveau', titre: e.titre, texte: e.texte } };
     case 'REGLE':

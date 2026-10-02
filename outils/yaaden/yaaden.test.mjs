@@ -88,6 +88,8 @@ test('document PLUS_TARD visible au tableau comme étape reportée', () => {
   assert.equal(d.collection, 'etapes');
   assert.equal(d.data.statut, 'a_faire');
   assert.equal(d.data.phase, 'À faire plus tard');
+  assert.equal(d.data.poste, 'tous'); // K-60 : aucune étape n'appartient à un poste
+  assert.equal(d.data.auteur, 'A');
 });
 
 test('nettoyage : archive seulement verifie/traite, copie avant retrait, refuse une photo ancienne', () => {
