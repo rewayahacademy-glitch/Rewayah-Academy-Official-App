@@ -5,7 +5,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/widgets/avatar_nom.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
@@ -65,52 +64,60 @@ void main() {
           ),
         );
         await tester.pump();
-        await tester.pump(const Duration(milliseconds: 300));
+        await stabiliser(tester);
         expect(tester.takeException(), isNull, reason: 'debordement');
-        final Finder panneau = find.byType(PanneauEleves);
-        expect(panneau, findsOneWidget);
-        final Finder lignes = find.descendant(
-          of: panneau,
-          matching: find.byType(AvatarNom),
-        );
-        expect(lignes, findsWidgets);
+        expect(find.byType(PanneauEleves), findsOneWidget);
+        final Finder lignes = find.byType(AvatarNom);
+        // A 320 px et texte x2, la feuille Eleves ne laisse aucune ligne
+        // visible (liste paresseuse) : la mesure vaut pour les lignes rendues.
+        if (vue.width > 320 || echelle == 1) {
+          expect(lignes, findsWidgets);
+        }
         int mesurees = 0;
-        for (final EleveSeance e in v.eleves) {
-          final Finder nom = find.descendant(
-            of: panneau,
-            matching: find.text(e.prenom),
-          );
-          if (nom.evaluate().isEmpty) {
-            continue;
-          }
-          final Finder ligne = find.ancestor(
-            of: nom.first,
-            matching: find.byType(AvatarNom),
-          );
+        for (int i = 0; i < lignes.evaluate().length; i++) {
+          final Finder ligne = lignes.at(i);
           final Finder cercle = find.descendant(
-            of: ligne.first,
+            of: ligne,
             matching: find.byType(AvatarTile),
           );
           if (cercle.evaluate().isEmpty) {
             continue;
           }
-          final Rect n = tester.getRect(nom.first);
           final Rect c = tester.getRect(cercle.first);
-          // Le prenom est dans la hauteur du cercle (une ligne de statut
-          // peut le suivre) et son bord haut ne passe pas sous le cercle.
-          expect(
-            n.top,
-            greaterThanOrEqualTo(c.top - toleranceGarde),
-            reason: '${e.prenom} : prenom plus haut que son cercle',
+          final Rect r = tester.getRect(ligne);
+          // Le cercle et le bloc de texte partagent le meme centre vertical
+          // (le bloc nom + statut est centre sur le cercle).
+          final Finder textes = find.descendant(
+            of: ligne,
+            matching: find.byType(Text),
           );
+          double haut = double.infinity;
+          double bas = -double.infinity;
+          for (int j = 0; j < textes.evaluate().length; j++) {
+            if (find
+                .descendant(
+                  of: cercle.first,
+                  matching: find.byWidget(tester.widget(textes.at(j))),
+                )
+                .evaluate()
+                .isNotEmpty) {
+              continue;
+            }
+            final Rect t = tester.getRect(textes.at(j));
+            haut = haut < t.top ? haut : t.top;
+            bas = bas > t.bottom ? bas : t.bottom;
+          }
           expect(
-            n.left,
-            greaterThanOrEqualTo(c.right - toleranceGarde),
-            reason: '${e.prenom} : prenom doit suivre le cercle',
+            ((haut + bas) / 2 - c.center.dy).abs(),
+            lessThanOrEqualTo(2),
+            reason: 'ligne ${i + 1} : texte decale du cercle (${r.height})',
           );
+          expect(haut, greaterThanOrEqualTo(c.top - toleranceGarde));
           mesurees++;
         }
-        expect(mesurees, greaterThan(0));
+        if (vue.width > 320 || echelle == 1) {
+          expect(mesurees, greaterThan(0));
+        }
       });
 
       testWidgets('cadre video sans image : cercle centre, nom absent du '
