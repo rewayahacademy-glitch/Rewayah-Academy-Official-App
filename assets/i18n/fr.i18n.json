@@ -4155,7 +4155,15 @@
         "prixOffreA": "5,00 € (démonstration)",
         "prixOffreB": "10,00 € (démonstration)",
         "detailOffreA": "Solde de démonstration A",
-        "detailOffreB": "Solde de démonstration B"
+        "detailOffreB": "Solde de démonstration B",
+        "totalRecharge5": "5,00 € (démonstration)",
+        "totalRecharge10": "10,00 € (démonstration)",
+        "totalRecharge15": "15,00 € (démonstration)",
+        "totalRecharge20": "20,00 € (démonstration)",
+        "totalRecharge25": "25,00 € (démonstration)",
+        "totalRecharge30": "30,00 € (démonstration)",
+        "totalRecharge35": "35,00 € (démonstration)",
+        "totalRecharge40": "40,00 € (démonstration)"
       },
       "etats": {
         "adulteSeul": "L'adulte est seul, sans foyer.",
@@ -4182,7 +4190,7 @@
         "erreurReseau": "Le réseau a coupé pendant une action.",
         "doubleSoumission": "La même action a été envoyée deux fois.",
         "notificationDansLApplication": "La notification n'a pas pu partir sur le téléphone, elle reste visible dans l'application.",
-        "emancipation": "Émancipation d'un élève devenu adulte : non construit dans cette vague."
+        "emancipation": "Émancipation d'un élève devenu adulte : non construite dans cette vague."
       }
     }
   }

@@ -13359,6 +13359,30 @@ class Traductions$adulte$demo$donnees$fr {
 
 	/// fr: 'Solde de démonstration B'
 	String get detailOffreB => 'Solde de démonstration B';
+
+	/// fr: '5,00 € (démonstration)'
+	String get totalRecharge5 => '5,00 € (démonstration)';
+
+	/// fr: '10,00 € (démonstration)'
+	String get totalRecharge10 => '10,00 € (démonstration)';
+
+	/// fr: '15,00 € (démonstration)'
+	String get totalRecharge15 => '15,00 € (démonstration)';
+
+	/// fr: '20,00 € (démonstration)'
+	String get totalRecharge20 => '20,00 € (démonstration)';
+
+	/// fr: '25,00 € (démonstration)'
+	String get totalRecharge25 => '25,00 € (démonstration)';
+
+	/// fr: '30,00 € (démonstration)'
+	String get totalRecharge30 => '30,00 € (démonstration)';
+
+	/// fr: '35,00 € (démonstration)'
+	String get totalRecharge35 => '35,00 € (démonstration)';
+
+	/// fr: '40,00 € (démonstration)'
+	String get totalRecharge40 => '40,00 € (démonstration)';
 }
 
 // Path: adulte.demo.etats
@@ -13441,8 +13465,8 @@ class Traductions$adulte$demo$etats$fr {
 	/// fr: 'La notification n'a pas pu partir sur le téléphone, elle reste visible dans l'application.'
 	String get notificationDansLApplication => 'La notification n\'a pas pu partir sur le téléphone, elle reste visible dans l\'application.';
 
-	/// fr: 'Émancipation d'un élève devenu adulte : non construit dans cette vague.'
-	String get emancipation => 'Émancipation d\'un élève devenu adulte : non construit dans cette vague.';
+	/// fr: 'Émancipation d'un élève devenu adulte : non construite dans cette vague.'
+	String get emancipation => 'Émancipation d\'un élève devenu adulte : non construite dans cette vague.';
 }
 
 // Path: salle.preparation.eleve.guidee
@@ -17362,6 +17386,14 @@ extension on Traductions {
 			'adulte.demo.donnees.prixOffreB' => '10,00 € (démonstration)',
 			'adulte.demo.donnees.detailOffreA' => 'Solde de démonstration A',
 			'adulte.demo.donnees.detailOffreB' => 'Solde de démonstration B',
+			'adulte.demo.donnees.totalRecharge5' => '5,00 € (démonstration)',
+			'adulte.demo.donnees.totalRecharge10' => '10,00 € (démonstration)',
+			'adulte.demo.donnees.totalRecharge15' => '15,00 € (démonstration)',
+			'adulte.demo.donnees.totalRecharge20' => '20,00 € (démonstration)',
+			'adulte.demo.donnees.totalRecharge25' => '25,00 € (démonstration)',
+			'adulte.demo.donnees.totalRecharge30' => '30,00 € (démonstration)',
+			'adulte.demo.donnees.totalRecharge35' => '35,00 € (démonstration)',
+			'adulte.demo.donnees.totalRecharge40' => '40,00 € (démonstration)',
 			'adulte.demo.etats.adulteSeul' => 'L\'adulte est seul, sans foyer.',
 			'adulte.demo.etats.titulaireSansConjoint' => 'Le foyer n\'a pas de second adulte.',
 			'adulte.demo.etats.invitationEnAttente' => 'L\'invitation du second adulte est en attente.',
@@ -17386,7 +17418,7 @@ extension on Traductions {
 			'adulte.demo.etats.erreurReseau' => 'Le réseau a coupé pendant une action.',
 			'adulte.demo.etats.doubleSoumission' => 'La même action a été envoyée deux fois.',
 			'adulte.demo.etats.notificationDansLApplication' => 'La notification n\'a pas pu partir sur le téléphone, elle reste visible dans l\'application.',
-			'adulte.demo.etats.emancipation' => 'Émancipation d\'un élève devenu adulte : non construit dans cette vague.',
+			'adulte.demo.etats.emancipation' => 'Émancipation d\'un élève devenu adulte : non construite dans cette vague.',
 			_ => null,
 		};
 	}

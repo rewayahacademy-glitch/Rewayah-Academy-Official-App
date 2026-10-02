@@ -85,7 +85,7 @@ void main() {
     ),
   );
 
-  // La connexion existante, telle quelle : la demonstration y renvoie.
+  // La connexion existante : la demonstration n'y renvoie jamais (K-28).
   final GoRoute connexion = GoRoute(
     path: Routes.connexion,
     builder: (BuildContext _, GoRouterState _) =>
@@ -530,6 +530,44 @@ void main() {
     expect(port.appels, 0);
   });
 
+  // Revue EA-R m13 : preuve par mutation, le reseau coupe PENDANT l'etape ;
+  // les gestionnaires branches en ligne, appeles hors ligne, n'appellent rien.
+  testWidgets('le reseau coupe sur l\'invitation : les deux reponses '
+      'n\'appellent rien', (WidgetTester tester) async {
+    taille(tester, const Size(390, 844));
+    final _PortEspion port = _PortEspion();
+    final StreamController<bool> reseau = StreamController<bool>();
+    addTearDown(reseau.close);
+    reseau.add(false);
+    await monterPage(
+      tester,
+      surcharges: <Override>[
+        horsLigneProvider.overrideWith((Ref _) => reseau.stream),
+        invitationRecueProvider.overrideWith(
+          (Ref _) async => const InvitationARepondre(
+            prenomTitulaire: 'Mamadou',
+            titulaireFeminin: false,
+          ),
+        ),
+        portReponseInvitationProvider.overrideWithValue(port),
+      ],
+    );
+    await tester.pumpAndSettle();
+    final List<VoidCallback?> gestionnaires = <VoidCallback?>[
+      bouton(tester, InvitationRecuePage.accepterKey).onPress,
+      bouton(tester, InvitationRecuePage.refuserKey).onPress,
+    ];
+    expect(gestionnaires, everyElement(isNotNull));
+    reseau.add(true);
+    await tester.pumpAndSettle();
+    expect(find.text(t.adulte.acceptation.horsLigne), findsOneWidget);
+    for (final VoidCallback? repondre in gestionnaires) {
+      repondre!();
+      await tester.pumpAndSettle();
+    }
+    expect(port.appels, 0);
+  });
+
   testWidgets('chargement : un squelette, aucun faux prenom', (
     WidgetTester tester,
   ) async {
@@ -729,7 +767,8 @@ void main() {
     );
   });
 
-  testWidgets('sans compte : le renvoi vers la connexion existante', (
+  testWidgets('sans compte : « Continuer » revient a la liste de la '
+      'demonstration, jamais la vraie connexion (K-28, F24)', (
     WidgetTester tester,
   ) async {
     taille(tester, const Size(390, 844));
@@ -741,6 +780,10 @@ void main() {
     // Sans session, rien n'est lu : ni prenom, ni etat.
     expect(find.textContaining('Mamadou'), findsNothing);
     await taper(tester, find.byKey(InvitationSansComptePage.continuerKey));
-    expect(find.text('connexion-existante'), findsOneWidget);
+    expect(find.text('connexion-existante'), findsNothing);
+    expect(
+      find.byKey(const ValueKey<String>('lien-ecran-accueil')),
+      findsOneWidget,
+    );
   });
 }

@@ -633,12 +633,88 @@ void main() {
             .onPress,
         isNull,
       );
+      await tester.ensureVisible(find.byKey(InviterConjointPage.envoyerKey));
       await tester.tap(
         find.byKey(InviterConjointPage.envoyerKey),
         warnIfMissed: false,
       );
       await tester.pump();
       expect(port.envois, 0);
+    });
+
+    testWidgets('le reseau coupe sur la page de verification : le '
+        'gestionnaire d\'envoi n\'appelle rien (revue EA-R m13)', (
+      WidgetTester tester,
+    ) async {
+      taille(tester, const Size(390, 844));
+      final _PortCompteur port = _PortCompteur();
+      final StreamController<bool> reseau = StreamController<bool>();
+      addTearDown(reseau.close);
+      reseau.add(false);
+      await tester.pumpWidget(
+        _page(
+          reseau: reseau.stream,
+          overrides: <Override>[
+            portInvitationConjointProvider.overrideWithValue(port),
+          ],
+          child: InviterConjointPage(
+            placeFeminine: true,
+            onAbandon: () {},
+            onTerminee: () {},
+          ),
+        ),
+      );
+      await tester.pump();
+      await saisir(tester);
+      await taper(tester, InviterConjointPage.verifierKey);
+      // En ligne : le gestionnaire d'envoi est branche ; on le garde.
+      final VoidCallback? envoyer = tester
+          .widget<ActionPrincipale>(find.byKey(InviterConjointPage.envoyerKey))
+          .onPress;
+      expect(envoyer, isNotNull);
+      reseau.add(true);
+      await tester.pumpAndSettle();
+      expect(find.text(t.adulte.invitation.horsLigne), findsOneWidget);
+      // Le gestionnaire lui-meme, appele hors ligne : rien ne part.
+      envoyer!();
+      await tester.pump();
+      expect(port.envois, 0);
+    });
+
+    testWidgets('le reseau coupe pendant la confirmation d\'annulation : '
+        'rien n\'est annule (revue EA-R m13)', (WidgetTester tester) async {
+      taille(tester, const Size(390, 844));
+      final _PortCompteur port = _PortCompteur();
+      final StreamController<bool> reseau = StreamController<bool>();
+      addTearDown(reseau.close);
+      reseau.add(false);
+      await tester.pumpWidget(
+        _page(
+          reseau: reseau.stream,
+          overrides: <Override>[
+            portInvitationConjointProvider.overrideWithValue(port),
+          ],
+          child: InvitationEnvoyeePage(
+            invitation: DonneesAdulteDemo.invitationEnvoyee(
+              GenreTitulaireDemo.homme,
+            ),
+            onRetour: () {},
+            onAnnulee: () {},
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await taper(tester, InvitationEnvoyeePage.annulerKey);
+      final Finder confirmer = find
+          .widgetWithText(ActionPrincipale, t.adulte.invitation.annuler)
+          .last;
+      expect(confirmer, findsOneWidget);
+      reseau.add(true);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(confirmer);
+      await tester.tap(confirmer);
+      await tester.pumpAndSettle();
+      expect(port.annulations, 0);
     });
 
     testWidgets('hors ligne a l\'annulation : "Annuler" attend, dit '
@@ -830,9 +906,12 @@ Widget _page({
   required Widget child,
   List<Override> overrides = const <Override>[],
   bool horsLigne = false,
+  Stream<bool>? reseau,
 }) => ProviderScope(
   overrides: <Override>[
-    horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(horsLigne)),
+    horsLigneProvider.overrideWith(
+      (Ref _) => reseau ?? Stream<bool>.value(horsLigne),
+    ),
     ...overrides,
   ],
   child: TranslationProvider(

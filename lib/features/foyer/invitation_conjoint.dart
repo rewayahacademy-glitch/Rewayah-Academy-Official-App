@@ -325,6 +325,9 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
   Future<void> _envoyer() async {
     // Double envoi : un seul appel part, le bouton attend la reponse.
     if (_envoi) return;
+    // Hors ligne, rien ne part, meme si le bouton n'a pas encore ete
+    // reconstruit (revue EA-R m13).
+    if (ref.read(horsLigneProvider).value ?? false) return;
     setState(() {
       _envoi = true;
       _echec = null;
@@ -620,6 +623,8 @@ class _InvitationEnvoyeePageState extends ConsumerState<InvitationEnvoyeePage> {
       libelleAnnuler: t.adulte.invitation.garder,
     );
     if (!confirme || !mounted || _envoi) return;
+    // Le reseau a pu couper pendant la confirmation (revue EA-R m13).
+    if (ref.read(horsLigneProvider).value ?? false) return;
     setState(() {
       _envoi = true;
       _echec = null;

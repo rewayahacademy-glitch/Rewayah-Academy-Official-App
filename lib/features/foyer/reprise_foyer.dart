@@ -233,6 +233,8 @@ class _RepriseFoyerPageState extends ConsumerState<RepriseFoyerPage> {
       libelleConfirmer: t.adulte.reprise.deposer,
     );
     if (!confirme || !mounted || _envoi) return;
+    // Le reseau a pu couper pendant la confirmation (revue EA-R m13).
+    if (ref.read(horsLigneProvider).value ?? false) return;
     setState(() {
       _envoi = true;
       _echec = null;
@@ -533,6 +535,8 @@ class _RepriseTitulairePageState extends ConsumerState<RepriseTitulairePage> {
   // (UX_REVIEW_07 ligne 18 b).
   Future<void> _refuser() async {
     if (_envoi) return;
+    // Hors ligne, rien ne part (revue EA-R m13).
+    if (ref.read(horsLigneProvider).value ?? false) return;
     setState(() {
       _envoi = true;
       _echec = null;

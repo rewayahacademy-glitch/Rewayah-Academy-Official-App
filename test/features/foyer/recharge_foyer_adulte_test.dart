@@ -255,14 +255,21 @@ void main() {
     expect(find.textContaining('Remise'), findsNothing);
     // Le total rendu, et « Payer {total} » au bord de fin, 16 sous le total.
     expect(
-      dans(RechargeFoyerPage.totalKey, find.text('15,00 €')),
+      dans(
+        RechargeFoyerPage.totalKey,
+        find.text(t.adulte.demo.donnees.totalRecharge15),
+      ),
       findsOneWidget,
     );
     final Finder payer = find.byKey(RechargeFoyerPage.payerKey);
     expect(
       dans(
         RechargeFoyerPage.payerKey,
-        find.text(t.adulte.recharge.payer(montant: '15,00 €')),
+        find.text(
+          t.adulte.recharge.payer(
+            montant: t.adulte.demo.donnees.totalRecharge15,
+          ),
+        ),
       ),
       findsOneWidget,
     );
@@ -296,7 +303,10 @@ void main() {
       findsOneWidget,
     );
     expect(
-      dans(RechargeFoyerPage.totalKey, find.text('20,00 €')),
+      dans(
+        RechargeFoyerPage.totalKey,
+        find.text(t.adulte.demo.donnees.totalRecharge20),
+      ),
       findsOneWidget,
     );
 
@@ -385,7 +395,10 @@ void main() {
     );
     expect(photo.cleAvatar, isNull);
     expect(
-      dans(RechargeFoyerPage.totalKey, find.text('20,00 €')),
+      dans(
+        RechargeFoyerPage.totalKey,
+        find.text(t.adulte.demo.donnees.totalRecharge20),
+      ),
       findsOneWidget,
     );
     // Retour de l'etape 2 : l'etape 1 ; puis tout deselectionne.

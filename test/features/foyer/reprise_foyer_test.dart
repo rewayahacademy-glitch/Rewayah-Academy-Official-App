@@ -539,6 +539,66 @@ void main() {
     expect(port.appels, 0);
   });
 
+  // Revue EA-R m13 : preuve par mutation, le reseau coupe PENDANT l'etape.
+  testWidgets('le reseau coupe pendant la confirmation du depot : rien ne '
+      'part', (WidgetTester tester) async {
+    taille(tester, const Size(390, 844));
+    final _PortEspion port = _PortEspion();
+    final StreamController<bool> reseau = StreamController<bool>();
+    addTearDown(reseau.close);
+    reseau.add(false);
+    await monterPage(
+      tester,
+      RepriseFoyerPage(onRetour: () {}, onDeposee: () {}),
+      surcharges: <Override>[
+        horsLigneProvider.overrideWith((Ref _) => reseau.stream),
+        repriseFoyerProvider.overrideWith(
+          (Ref _) async => const RepriseAucune(),
+        ),
+        portRepriseFoyerProvider.overrideWithValue(port),
+      ],
+    );
+    await tester.pumpAndSettle();
+    await taper(tester, find.byKey(RepriseFoyerPage.deposerKey));
+    expect(confirmer(r.deposer), findsOneWidget);
+    reseau.add(true);
+    await tester.pumpAndSettle();
+    await taper(tester, confirmer(r.deposer));
+    expect(port.appels, 0);
+  });
+
+  testWidgets('le reseau coupe avant le refus du titulaire : le gestionnaire '
+      'n\'appelle rien', (WidgetTester tester) async {
+    taille(tester, const Size(390, 844));
+    final _PortEspion port = _PortEspion();
+    final StreamController<bool> reseau = StreamController<bool>();
+    addTearDown(reseau.close);
+    reseau.add(false);
+    await monterPage(
+      tester,
+      RepriseTitulairePage(onRetour: () {}, onRefusee: () {}),
+      surcharges: <Override>[
+        horsLigneProvider.overrideWith((Ref _) => reseau.stream),
+        demandeRepriseRecueProvider.overrideWith(
+          (Ref _) async => const RepriseARefuser(),
+        ),
+        portRepriseFoyerProvider.overrideWithValue(port),
+      ],
+    );
+    await tester.pumpAndSettle();
+    final VoidCallback? refuser = bouton(
+      tester,
+      RepriseTitulairePage.refuserKey,
+    ).onPress;
+    expect(refuser, isNotNull);
+    reseau.add(true);
+    await tester.pumpAndSettle();
+    expect(find.text(r.titulaire.horsLigne), findsOneWidget);
+    refuser!();
+    await tester.pumpAndSettle();
+    expect(port.appels, 0);
+  });
+
   testWidgets('sans source serveur : indisponible (EA-BR-27, EA-BR-28)', (
     WidgetTester tester,
   ) async {

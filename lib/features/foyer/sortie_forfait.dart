@@ -326,6 +326,9 @@ class _PageSortieState extends ConsumerState<_PageSortie> {
       libelleConfirmer: widget.libelleConfirmer,
     );
     if (!confirme || !mounted || _envoi) return;
+    // Le reseau a pu couper pendant la confirmation : « Rien n'est envoyé »
+    // reste vrai (revue EA-R m13).
+    if (ref.read(horsLigneProvider).value ?? false) return;
     setState(() {
       _envoi = true;
       _echec = null;

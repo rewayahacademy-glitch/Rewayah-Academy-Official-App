@@ -417,35 +417,118 @@ void main() {
     expect(find.byKey(sortieResultatKey), findsOneWidget);
   });
 
-  testWidgets('hors ligne : le retrait inactif, rien ne part', (
-    WidgetTester tester,
-  ) async {
+  Widget forfait() => ForfaitFamillePage(onRetour: () {}, onCompris: () {});
+
+  // Revue EA-R m13 : « Retirer » (titulaire) et « Quitter le forfait »
+  // (second adulte), chacun avec un port espion sur SON appel.
+  final List<(String, Widget Function(), Key, String, List<Override>)> sorties =
+      <(String, Widget Function(), Key, String, List<Override>)>[
+        (
+          'retirer',
+          () => PlaceConjointPage(
+            placeFeminine: true,
+            prenom: 'Mariama',
+            onRetour: () {},
+            onCompris: () {},
+          ),
+          PlaceConjointPage.retirerKey,
+          t.adulte.sortie.retirerElle,
+          const <Override>[],
+        ),
+        (
+          'quitter le forfait',
+          forfait,
+          ForfaitFamillePage.quitterKey,
+          t.adulte.sortie.quitterConfirmer,
+          <Override>[
+            forfaitFamilleProvider.overrideWith(
+              (Ref _) async =>
+                  const ForfaitFamilleVM(prenomTitulaire: 'Mamadou'),
+            ),
+          ],
+        ),
+      ];
+  for (final (
+        String nom,
+        Widget Function() page,
+        Key cle,
+        String libelleConfirmer,
+        List<Override> lecture,
+      )
+      in sorties) {
+    testWidgets('hors ligne ($nom) : le bouton inactif, rien ne part', (
+      WidgetTester tester,
+    ) async {
+      taille(tester, const Size(390, 844));
+      final _PortEspion port = _PortEspion();
+      await monterPage(
+        tester,
+        page(),
+        surcharges: <Override>[
+          horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
+          portSortieForfaitProvider.overrideWithValue(port),
+          ...lecture,
+        ],
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(t.adulte.sortie.horsLigne), findsOneWidget);
+      expect(bouton(tester, cle).onPress, isNull);
+      await tester.ensureVisible(find.byKey(cle));
+      await tester.tap(find.byKey(cle), warnIfMissed: false);
+      await tester.pumpAndSettle();
+      expect(port.retraits + port.departs, 0);
+    });
+
+    testWidgets('le reseau coupe pendant la confirmation ($nom) : rien ne '
+        'part', (WidgetTester tester) async {
+      taille(tester, const Size(390, 844));
+      final _PortEspion port = _PortEspion();
+      final StreamController<bool> reseau = StreamController<bool>();
+      addTearDown(reseau.close);
+      reseau.add(false);
+      await monterPage(
+        tester,
+        page(),
+        surcharges: <Override>[
+          horsLigneProvider.overrideWith((Ref _) => reseau.stream),
+          portSortieForfaitProvider.overrideWithValue(port),
+          ...lecture,
+        ],
+      );
+      await tester.pumpAndSettle();
+      // En ligne : le bouton ouvre la confirmation.
+      expect(bouton(tester, cle).onPress, isNotNull);
+      await taper(tester, find.byKey(cle));
+      expect(confirmer(libelleConfirmer), findsOneWidget);
+      // Le reseau coupe avant la confirmation : l'appel ne part pas.
+      reseau.add(true);
+      await tester.pumpAndSettle();
+      await taper(tester, confirmer(libelleConfirmer));
+      expect(port.retraits + port.departs, 0);
+      expect(find.byKey(sortieResultatKey), findsNothing);
+    });
+  }
+
+  testWidgets('en ligne, la confirmation appelle le bon port (le compteur '
+      'de l\'espion est vivant)', (WidgetTester tester) async {
     taille(tester, const Size(390, 844));
-    // Un port espion : « Rien n'est envoyé » doit etre vrai (revue EA-R m13).
     final _PortEspion port = _PortEspion();
     await monterPage(
       tester,
-      PlaceConjointPage(
-        placeFeminine: true,
-        prenom: 'Mariama',
-        onRetour: () {},
-        onCompris: () {},
-      ),
+      forfait(),
       surcharges: <Override>[
-        horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
+        horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
         portSortieForfaitProvider.overrideWithValue(port),
+        forfaitFamilleProvider.overrideWith(
+          (Ref _) async => const ForfaitFamilleVM(prenomTitulaire: 'Mamadou'),
+        ),
       ],
     );
     await tester.pumpAndSettle();
-    expect(find.text(t.adulte.sortie.horsLigne), findsOneWidget);
-    expect(bouton(tester, PlaceConjointPage.retirerKey).onPress, isNull);
-    await tester.ensureVisible(find.byKey(PlaceConjointPage.retirerKey));
-    await tester.tap(
-      find.byKey(PlaceConjointPage.retirerKey),
-      warnIfMissed: false,
-    );
-    await tester.pumpAndSettle();
-    expect(port.appels, 0);
+    await taper(tester, find.byKey(ForfaitFamillePage.quitterKey));
+    await taper(tester, confirmer(t.adulte.sortie.quitterConfirmer));
+    expect(port.departs, 1);
+    expect(port.retraits, 0);
   });
 
   testWidgets('sans source serveur : la sortie dit « indisponible » '
@@ -474,8 +557,6 @@ void main() {
     expect(bouton(tester, PlaceConjointPage.retirerKey).onPress, isNull);
     expect(find.byKey(sortieResultatKey), findsNothing);
   });
-
-  Widget forfait() => ForfaitFamillePage(onRetour: () {}, onCompris: () {});
 
   testWidgets('Forfait famille sans source : indisponible (EA-BR-22)', (
     WidgetTester tester,
@@ -601,17 +682,21 @@ void main() {
 
 /// Un serveur espion : il compte les sorties qui partent.
 class _PortEspion implements PortSortieForfait {
-  int appels = 0;
+  /// Les retraits du second adulte (titulaire).
+  int retraits = 0;
+
+  /// Les departs du forfait (second adulte).
+  int departs = 0;
 
   @override
   Future<ResultatSortie> retirerSecondAdulte({required String cle}) async {
-    appels++;
+    retraits++;
     return const SortieFaite();
   }
 
   @override
   Future<ResultatSortie> quitterForfait({required String cle}) async {
-    appels++;
+    departs++;
     return const SortieFaite();
   }
 }

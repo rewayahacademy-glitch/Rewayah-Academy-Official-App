@@ -581,18 +581,23 @@ abstract final class DonneesAdulteDemo {
 
   /// Le total que le serveur de demonstration arrete, une DONNEE fixee
   /// d'avance pour chaque combinaison possible (le nombre d'offres A et B
-  /// choisies, quatre beneficiaires au plus), jamais une addition.
-  static String _totalRecharge(int a, int b) => switch ((a, b)) {
-    (1, 0) => '5,00 €',
-    (0, 1) || (2, 0) => '10,00 €',
-    (1, 1) || (3, 0) => '15,00 €',
-    (0, 2) || (2, 1) || (4, 0) => '20,00 €',
-    (1, 2) || (3, 1) => '25,00 €',
-    (0, 3) || (2, 2) => '30,00 €',
-    (1, 3) => '35,00 €',
-    (0, 4) => '40,00 €',
-    _ => throw StateError('combinaison absente de la demonstration'),
-  };
+  /// choisies, quatre beneficiaires au plus), jamais une addition. Chaque
+  /// total est MARQUE « (démonstration) » comme les prix (F12, relecture
+  /// EA-RC de m4).
+  static String _totalRecharge(int a, int b) {
+    final d = t.adulte.demo.donnees;
+    return switch ((a, b)) {
+      (1, 0) => d.totalRecharge5,
+      (0, 1) || (2, 0) => d.totalRecharge10,
+      (1, 1) || (3, 0) => d.totalRecharge15,
+      (0, 2) || (2, 1) || (4, 0) => d.totalRecharge20,
+      (1, 2) || (3, 1) => d.totalRecharge25,
+      (0, 3) || (2, 2) => d.totalRecharge30,
+      (1, 3) => d.totalRecharge35,
+      (0, 4) => d.totalRecharge40,
+      _ => throw StateError('combinaison absente de la demonstration'),
+    };
+  }
 
   /// Le statut de l'attribution avant le paiement, tel que le serveur de
   /// demonstration le rend (F11).

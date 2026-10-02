@@ -724,12 +724,14 @@ class CoquilleAdulteDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final EcranDemoAdulte vu = ecranPermisDemoAdulte(ecran, etat, vue);
-    // Sans compte, aucune coquille : la page renvoie vers la connexion
-    // existante, qui cree le compte, sans la modifier (EA-7).
+    // Sans compte, aucune coquille. Dans l'application, « Continuer » mene a
+    // la connexion existante (EA-7) ; depuis la demonstration, il revient a
+    // la liste : la vraie connexion appellerait le vrai service
+    // d'authentification (K-28, F24, relecture EA-RC).
     if (vu == EcranDemoAdulte.invitationSansCompte) {
       return RepereDemonstration(
         child: InvitationSansComptePage(
-          onContinuer: () => context.go(Routes.connexion),
+          onContinuer: () => context.go(Routes.demoAdulte),
         ),
       );
     }

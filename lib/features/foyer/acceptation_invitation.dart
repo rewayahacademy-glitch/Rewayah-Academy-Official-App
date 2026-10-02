@@ -225,6 +225,8 @@ class _InvitationRecuePageState extends ConsumerState<InvitationRecuePage> {
   Future<void> _repondre(_Reponse reponse) async {
     // Double envoi : une seule reponse part, l'autre bouton attend aussi.
     if (_enCours != null) return;
+    // Hors ligne, rien ne part (revue EA-R m13).
+    if (ref.read(horsLigneProvider).value ?? false) return;
     setState(() {
       _enCours = reponse;
       _echouee = null;

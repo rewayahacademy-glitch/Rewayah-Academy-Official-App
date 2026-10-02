@@ -30,6 +30,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart'
     show EleveDuFoyer;
+import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart'
+    show ChoixRecharge;
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
@@ -289,6 +291,55 @@ void main() {
         expect(solde, contains('démonstration'));
         expect(solde.contains(RegExp('unit', caseSensitive: false)), isFalse);
       }
+    });
+
+    test('recapitulatif de recharge (relecture EA-RC de m4) : chaque total '
+        'rendu est marque « (démonstration) », comme chaque ligne', () {
+      final List<String> ids = <String>[
+        for (final b in DonneesAdulteDemo.beneficiairesRecharge(
+          EtatDemoAdulte.conjointActif,
+          GenreTitulaireDemo.homme,
+        ))
+          b.id,
+      ];
+      expect(ids, hasLength(4));
+      final Set<String> totaux = <String>{};
+      // Toutes les combinaisons : de 1 a 4 beneficiaires, offre A ou B.
+      for (int masque = 1; masque < 81; masque++) {
+        final List<ChoixRecharge> choix = <ChoixRecharge>[];
+        int reste = masque;
+        for (final String id in ids) {
+          final int c = reste % 3;
+          reste ~/= 3;
+          if (c == 1) {
+            choix.add(
+              ChoixRecharge(
+                beneficiaireId: id,
+                offreId: DonneesAdulteDemo.offreA,
+              ),
+            );
+          } else if (c == 2) {
+            choix.add(
+              ChoixRecharge(
+                beneficiaireId: id,
+                offreId: DonneesAdulteDemo.offreB,
+              ),
+            );
+          }
+        }
+        final recap = DonneesAdulteDemo.recapitulatifRecharge(
+          EtatDemoAdulte.conjointActif,
+          GenreTitulaireDemo.homme,
+          choix,
+        );
+        expect(recap.total, contains('(démonstration)'), reason: '$masque');
+        for (final ligne in recap.lignes) {
+          expect(ligne.montantPaye, contains('(démonstration)'));
+        }
+        totaux.add(recap.total);
+      }
+      // Les huit totaux du serveur de demonstration, tous atteints.
+      expect(totaux, hasLength(8));
     });
   });
 
