@@ -261,11 +261,24 @@ class _Etroit extends StatelessWidget {
                     _Retour(onPress: actions.onRetour),
                     Ecart.hXs,
                   ],
+                  // MA-TITRE-1 : jamais de points de suspension. L'en-tete
+                  // reste sur une ligne (MA-CMD-1) : le titre se reduit
+                  // juste assez pour tenir en entier.
                   Expanded(
-                    child: _Titre(
-                      texte: vue.titre,
-                      style: theme.textTheme.titleMedium,
-                      lignes: 1,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: AlignmentDirectional.centerStart,
+                      child: Semantics(
+                        header: true,
+                        child: Text(
+                          vue.titre,
+                          maxLines: 1,
+                          softWrap: false,
+                          style: palette.inkStrong.applyTo(
+                            theme.textTheme.titleMedium ?? const TextStyle(),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                   Ecart.hSm,
