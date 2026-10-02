@@ -14,6 +14,7 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/skeleton.dart';
 
 /// La Session Card : le bloc dominant de l'Espace Classe (CLV-01, CL-4.3).
@@ -139,6 +140,11 @@ class _CarteSessionState extends State<CarteSession> {
 
     return AppCard(
       dominante: true,
+      // Une seance annulee attenue la carte par sa surface, jamais par une
+      // opacite (ANNUL-VIS-1).
+      surface: emplacement.etat == EtatEntree.annulee
+          ? surfaceCarteSeance(AppPalette.of(context), annulee: true)
+          : null,
       entete: Focus(
         focusNode: _focusTitre,
         child: Semantics(
@@ -160,6 +166,7 @@ class _CarteSessionState extends State<CarteSession> {
             horloge: horloge,
             duree: occurrence.duree,
             tutoiement: widget.tutoiement,
+            annulee: emplacement.etat == EtatEntree.annulee,
           ),
           if (emplacement.avisDst != null) ...<Widget>[
             Ecart.vMd,
@@ -215,7 +222,11 @@ class HeuresSeance extends StatelessWidget {
     required this.duree,
     super.key,
     this.tutoiement = false,
+    this.annulee = false,
   });
+
+  /// Vrai quand la seance est annulee : les heures sont barrees (ANNUL-VIS-1).
+  final bool annulee;
 
   /// Vrai pour l'eleve mineur en Mode Accessibilite : « Ton heure ».
   final bool tutoiement;
@@ -240,12 +251,14 @@ class HeuresSeance extends StatelessWidget {
               ? t.accessibilite.tutoiement.tonHeure
               : LibellesGroupe.votreHeure,
           horloge: horloge.horlogeUtilisateur,
+          annulee: annulee,
         ),
         if (horloge.horlogeContrepartie != null) ...<Widget>[
           Ecart.vSm,
           _LigneHorloge(
             libelle: libelleContrepartie,
             horloge: horloge.horlogeContrepartie!,
+            annulee: annulee,
           ),
         ],
         Ecart.vSm,
@@ -446,6 +459,20 @@ class _LigneEtat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // « En direct » et « Annulee » : le composant partage d'etat de seance
+    // (ON-AIR-1, ANNUL-VIS-1), avec le mot de l'emplacement.
+    if (etat == EtatEntree.enDirect) {
+      return PastilleEtatSeance(
+        etat: EtatPastilleSeance.enDirect,
+        libelle: texte,
+      );
+    }
+    if (etat == EtatEntree.annulee) {
+      return PastilleEtatSeance(
+        etat: EtatPastilleSeance.annulee,
+        libelle: texte,
+      );
+    }
     final TextTheme textes = Theme.of(context).textTheme;
     final AppIcon icone = switch (etat) {
       EtatEntree.aVenir || EtatEntree.attente => AppIcons.horloge,
@@ -522,15 +549,21 @@ String _libelleContrepartie(GroupHomeVM espace) => espace.estCoteFamille
 
 /// Une heure deja rendue, avec sa ville.
 class _LigneHorloge extends StatelessWidget {
-  const _LigneHorloge({required this.libelle, required this.horloge});
+  const _LigneHorloge({
+    required this.libelle,
+    required this.horloge,
+    this.annulee = false,
+  });
 
   final String libelle;
   final HorlogeAffichee horloge;
+  final bool annulee;
 
   @override
   Widget build(BuildContext context) {
     return _LigneValeur(
       libelle: libelle,
+      annulee: annulee,
       valeur: LibellesGroupe.heureEtVille(
         heure: horloge.heureLocaleRendue,
         ville: horloge.libelleVille,
@@ -542,10 +575,17 @@ class _LigneHorloge extends StatelessWidget {
 /// Un libelle et sa valeur, lus d'un bloc. En paire qui s'empile : a 320 de
 /// large et a 200 % de texte, rien ne deborde (revue UX n° 14).
 class _LigneValeur extends StatelessWidget {
-  const _LigneValeur({required this.libelle, required this.valeur});
+  const _LigneValeur({
+    required this.libelle,
+    required this.valeur,
+    this.annulee = false,
+  });
 
   final String libelle;
   final String valeur;
+
+  /// Vrai quand la valeur est l'heure d'une seance annulee : barree.
+  final bool annulee;
 
   @override
   Widget build(BuildContext context) {
@@ -563,8 +603,9 @@ class _LigneValeur extends StatelessWidget {
               textes.bodySmall ?? const TextStyle(),
             ),
           ),
-          Text(
-            valeur,
+          TexteHeureSeance(
+            heure: valeur,
+            annulee: annulee,
             // Une heure : chiffres tabulaires (revue phase 0, jetons D4).
             style: AppTypography.tabulaire(
               textes.titleSmall ?? const TextStyle(),

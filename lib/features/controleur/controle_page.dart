@@ -16,6 +16,7 @@ import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/skeleton.dart';
 import '../accueil_famille/bloc_seance.dart' show heureDeLAppareil;
 import 'compte_rendu_controle.dart';
@@ -63,8 +64,10 @@ class ControleControleurPage extends ConsumerWidget {
       missionControleProvider,
     );
     final Widget corps = switch (mission) {
-      AsyncData<MissionControle?>(:final MissionControle? value) =>
-        _Mission(mission: value, onCommencer: onCommencer),
+      AsyncData<MissionControle?>(:final MissionControle? value) => _Mission(
+        mission: value,
+        onCommencer: onCommencer,
+      ),
       AsyncError<MissionControle?>() => EtatSysteme(
         nature: NatureEtat.echecServeur,
         phrase: t.controleur.controle.erreur,
@@ -239,9 +242,21 @@ class _CarteMission extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Semantics(
-            header: true,
-            child: Text(t.controleur.controle.mission, style: doux),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Semantics(
+                  header: true,
+                  child: Text(t.controleur.controle.mission, style: doux),
+                ),
+              ),
+              // La seance en direct se reconnait au premier coup d'oeil
+              // (ON-AIR-1) : le meme composant que partout ailleurs.
+              if (_enDirect) ...<Widget>[
+                Ecart.hSm,
+                const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
+              ],
+            ],
           ),
           Ecart.vSm,
           Text(mission.classe, style: fort),

@@ -9,6 +9,7 @@ import '../theme/app_spacing.dart';
 import 'action_principale.dart';
 import 'app_card.dart';
 import 'avatar_tile.dart';
+import 'pastille_etat_seance.dart';
 import 'status_pill.dart';
 
 /// Ce qu'un enfant du foyer est en train de vivre.
@@ -249,7 +250,7 @@ class ChildCard extends StatelessWidget {
       ],
       final EnfantEnCours e => <Widget>[
         Ecart.vSm,
-        StatusPill(libelle: t.etat.enDirect, ton: TonEtat.succes),
+        const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
         Ecart.vXs,
         Text(t.tuteur.accueil.enCours(prenom: e.enseignant), style: style),
         Text(e.depuis, style: style),
@@ -270,7 +271,7 @@ class ChildCard extends StatelessWidget {
       ],
       final EnfantSeanceAnnulee e => <Widget>[
         Ecart.vSm,
-        StatusPill(libelle: t.etat.annule, ton: TonEtat.alerte),
+        const PastilleEtatSeance(etat: EtatPastilleSeance.annulee),
         Ecart.vXs,
         Text(e.motif, style: style),
         Text(e.propose, style: style),
@@ -335,7 +336,9 @@ class ChildCard extends StatelessWidget {
   AppColorPair _paire(AppPalette palette) => switch (etat) {
     EnfantSansPlanning() => palette.washWarning,
     EnfantImminent() => palette.washAccent,
-    EnfantSeanceAnnulee() => palette.washAlert,
+    // Une seance annulee s'attenue (surface enfoncee, jamais une opacite) ;
+    // c'est la pastille « Annulee » qui porte la couleur d'alerte.
+    EnfantSeanceAnnulee() => surfaceCarteSeance(palette, annulee: true),
     EnfantProchainCours() ||
     EnfantEnCours() ||
     EnfantEnRecherche() => palette.surfaceRaised,
@@ -350,6 +353,7 @@ class ChildCard extends StatelessWidget {
       '$prenom, ${t.etat.enDirect}, ${t.tuteur.accueil.enCours(prenom: e.enseignant)}',
     final EnfantEnRecherche e =>
       '$prenom, ${t.tuteur.accueil.enRecherche}, ${e.depuis}',
-    final EnfantSeanceAnnulee e => '$prenom, ${t.etat.annule}, ${e.motif}',
+    final EnfantSeanceAnnulee e =>
+      '$prenom, ${t.etat.seanceAnnulee}, ${e.motif}',
   };
 }

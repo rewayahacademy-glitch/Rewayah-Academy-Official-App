@@ -16,7 +16,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/etat_systeme.dart';
-import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../accueil_famille/ancre_horloge_serveur.dart';
 import '../accueil_famille/bloc_seance.dart';
 import 'contexte_classe.dart';
@@ -246,7 +246,8 @@ class _Ligne extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final ({String libelle, TonEtat ton})? pastille = affichage.pastille;
+    final Widget? pastille = affichage.widgetPastille;
+    final bool annulee = affichage.etatPastille == EtatPastilleSeance.annulee;
     final bool large = classeEnColonnes(context);
     return MergeSemantics(
       child: ConstrainedBox(
@@ -260,16 +261,17 @@ class _Ligne extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text(
-                      affichage.date,
+                    TexteHeureSeance(
+                      heure: affichage.date,
+                      annulee: annulee,
                       style: palette.inkStrong.applyTo(
                         (large ? textes.titleMedium : textes.titleSmall) ??
                             const TextStyle(),
                       ),
                     ),
                     Ecart.vXs,
-                    Text(
-                      avecFuseau
+                    TexteHeureSeance(
+                      heure: avecFuseau
                           ? t.classe.pagePlanning.ligneFuseau(
                               heure: affichage.heure,
                               fuseau: affichage.fuseau,
@@ -279,6 +281,7 @@ class _Ligne extends StatelessWidget {
                               heure: affichage.heure,
                               duree: affichage.duree,
                             ),
+                      annulee: annulee,
                       style: AppTypography.tabulaire(
                         palette.inkMuted.applyTo(
                           (large ? textes.bodyLarge : textes.bodyMedium) ??
@@ -289,10 +292,7 @@ class _Ligne extends StatelessWidget {
                   ],
                 ),
               ),
-              if (pastille != null) ...<Widget>[
-                Ecart.hSm,
-                StatusPill(libelle: pastille.libelle, ton: pastille.ton),
-              ],
+              if (pastille != null) ...<Widget>[Ecart.hSm, pastille],
             ],
           ),
         ),

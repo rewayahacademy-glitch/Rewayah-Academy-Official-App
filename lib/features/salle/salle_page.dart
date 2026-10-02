@@ -33,6 +33,7 @@ import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/page_immersive.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/permanent_notice.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
@@ -694,7 +695,7 @@ class _Entete extends StatelessWidget {
             // Une reconnexion n'est pas une absence, et un retablissement n'est
             // pas un silence : la seance continue, et l'ecran le dit sans
             // dramatiser.
-            StatusPill(libelle: etatDuLien.$1, ton: etatDuLien.$2),
+            _pastilleDuLien(etatDuLien),
             // La qualite du lien se dit en MOTS. Une pastille de couleur seule
             // ne represente jamais un etat critique (invariant J7). La pastille
             // porte deja le mot quand la phase est `instable` : on ne le repete
@@ -808,6 +809,13 @@ String? _attenteDe(VueSalle vue) => switch (vue.phase) {
   PhaseSalle.refus => (t.etat.enDirect, TonEtat.succes),
 };
 
+/// La pastille de l'etat du lien : « En direct » passe par le composant
+/// partage d'etat de seance (ON-AIR-1), les autres etats par `StatusPill`.
+Widget _pastilleDuLien((String, TonEtat) etat) =>
+    etat.$1 == t.etat.enDirect && etat.$2 == TonEtat.succes
+    ? const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect)
+    : StatusPill(libelle: etat.$1, ton: etat.$2);
+
 /// CTR-02 : la zone haute du controleur, visible de lui seul.
 ///
 /// « Contrôle Rewayah », l'etat reseau (le meme mot que pour tous : une
@@ -855,7 +863,7 @@ class _EnteteControle extends StatelessWidget {
                           textes.labelLarge ?? const TextStyle(),
                         ),
                       )
-                    : StatusPill(libelle: lien.$1, ton: lien.$2),
+                    : _pastilleDuLien(lien),
               ),
             ],
           ),

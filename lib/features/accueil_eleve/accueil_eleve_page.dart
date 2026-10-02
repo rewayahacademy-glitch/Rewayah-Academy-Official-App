@@ -26,8 +26,8 @@ import '../../core/widgets/audio_label.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/skeleton.dart';
-import '../../core/widgets/status_pill.dart';
 
 /// Ce que le bloc principal de `ELV-02` annonce.
 ///
@@ -283,6 +283,7 @@ class _BlocPrincipal extends StatelessWidget {
         ),
         EtatAccueilEleve.seanceAnnulee => _SansCoursAujourdhui(
           message: t.eleve.accueil.annulee,
+          annulee: true,
           prochain: prochain,
           interruptions: interruptions,
           paire: paire,
@@ -372,9 +373,9 @@ class _CoursEnDirect extends StatelessWidget {
         // La pastille verte de la fiche produit, portee par le composant
         // d'etat : une pastille pleine `surfaceSuccess` et son mot, jamais la
         // couleur seule (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md` section 8).
-        Align(
+        const Align(
           alignment: AlignmentDirectional.centerStart,
-          child: StatusPill(libelle: t.etat.enDirect, ton: TonEtat.succes),
+          child: PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
         ),
         Ecart.vSm,
         AudioLabel(cle: ClesAudio.eleveAccueilCoursEnDirect, surface: paire),
@@ -449,9 +450,14 @@ class _SansCoursAujourdhui extends StatelessWidget {
     required this.interruptions,
     required this.paire,
     required this.maintenant,
+    this.annulee = false,
   });
 
   final String message;
+
+  /// Vrai quand le message dit une seance annulee : la pastille « Annulee »
+  /// ouvre le bloc (ANNUL-VIS-1), le mot ne reste pas seul dans le texte.
+  final bool annulee;
   final Seance? prochain;
   final List<InterruptionPriere> interruptions;
   final AppColorPair paire;
@@ -467,6 +473,12 @@ class _SansCoursAujourdhui extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        if (annulee) ...<Widget>[
+          const Align(
+            child: PastilleEtatSeance(etat: EtatPastilleSeance.annulee),
+          ),
+          Ecart.vSm,
+        ],
         _etatVide(cours, jours),
         _Interruptions(interruptions: interruptions, paire: paire),
       ],

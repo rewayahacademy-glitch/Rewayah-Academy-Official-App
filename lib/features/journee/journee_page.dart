@@ -67,10 +67,10 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/point_rappel.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
-import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/timeline_row.dart';
 import '../tc_espace_groupe/carte_session.dart' show EmplacementEntreeVue;
 import 'absence_remplacement_vue.dart';
@@ -224,9 +224,10 @@ class _Corps extends ConsumerWidget {
         retards.value ?? const <CahierEnRetard>[];
 
     // Les alertes utiles : ce qui change ce que l'enseignant fait aujourd'hui.
+    final String? coursAnnule = annulee == null
+        ? null
+        : t.enseignant.journee.coursAnnule(heure: _hhmm(annulee.debut));
     final List<String> alertes = <String>[
-      if (annulee != null)
-        t.enseignant.journee.coursAnnule(heure: _hhmm(annulee.debut)),
       if (dominant != null && dominant.enCoursA(maintenant))
         ..._alertesPresence(ref, dominant),
       if (reglages.hasError || pause.hasError || retards.hasError)
@@ -267,9 +268,13 @@ class _Corps extends ConsumerWidget {
               enFile:
                   ref.watch(cahiersEnFileProvider).value ?? const <String>{},
             ),
-      alertes: alertes.isEmpty && offres.isEmpty
+      alertes: alertes.isEmpty && offres.isEmpty && coursAnnule == null
           ? null
-          : _AlertesUtiles(alertes: alertes, offres: offres),
+          : _AlertesUtiles(
+              alertes: alertes,
+              offres: offres,
+              coursAnnule: coursAnnule,
+            ),
     );
   }
 }
@@ -533,7 +538,7 @@ class _CarteProchaineSeance extends ConsumerWidget {
                 ),
               ),
               if (enCours)
-                StatusPill(libelle: t.etat.enDirect, ton: TonEtat.succes),
+                const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
             ],
           ),
           child: Column(
@@ -869,8 +874,12 @@ class _AlertesUtiles extends ConsumerWidget {
   const _AlertesUtiles({
     required this.alertes,
     this.offres = const <OffreRemplacement>[],
+    this.coursAnnule,
   });
 
+  /// La phrase du cours annule du jour : la premiere ligne, avec la pastille
+  /// « Annulee » (ANNUL-VIS-1), avant toute autre alerte.
+  final String? coursAnnule;
   final List<String> alertes;
   final List<OffreRemplacement> offres;
 
@@ -884,6 +893,14 @@ class _AlertesUtiles extends ConsumerWidget {
         Ecart.vSm,
         GroupeReglages(
           lignes: <LigneRubrique>[
+            if (coursAnnule != null)
+              LigneRubrique(
+                icone: AppIcons.interdit,
+                libelle: coursAnnule!,
+                marque: const PastilleEtatSeance(
+                  etat: EtatPastilleSeance.annulee,
+                ),
+              ),
             for (final OffreRemplacement offre in offres)
               LigneRubrique(
                 icone: AppIcons.cours,

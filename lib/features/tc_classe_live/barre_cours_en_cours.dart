@@ -5,8 +5,8 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/tc_classe/port_session_persistante.dart';
 import '../../core/tc_classe/session_persistante.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/pressable.dart';
-import '../../core/widgets/status_pill.dart';
 import 'entete_classe.dart';
 
 /// La barre compacte « Cours en cours » (spec section 9.4).
@@ -59,9 +59,9 @@ class BarreCoursEnCours extends ConsumerWidget {
           child: Row(
             children: <Widget>[
               // Le mot porte l'etat, jamais la seule couleur (invariant J7).
-              StatusPill(
+              PastilleEtatSeance(
+                etat: EtatPastilleSeance.enDirect,
                 libelle: t.tc.classe.barre.titre,
-                ton: TonEtat.succes,
               ),
               Ecart.hSm,
               Expanded(
@@ -73,10 +73,7 @@ class BarreCoursEnCours extends ConsumerWidget {
               ),
               if (restant != null) ...<Widget>[
                 Ecart.hSm,
-                Text(
-                  restant,
-                  style: textes.labelMedium ?? const TextStyle(),
-                ),
+                Text(restant, style: textes.labelMedium ?? const TextStyle()),
               ],
             ],
           ),
