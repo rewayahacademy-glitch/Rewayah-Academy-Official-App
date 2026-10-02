@@ -1,4 +1,9 @@
 {
+  "commun": {
+    "sections": {
+      "page": "أقسام الصفحة"
+    }
+  },
   "classe": {
     "entree": {
       "coursDans": "الدرس بعد {duree}",
@@ -88,6 +93,11 @@
     }
   },
   "tc": {
+    "bibliotheque": {
+      "sections": {
+        "groupe": "المواد المعروضة"
+      }
+    },
     "groupe": {
       "enseignant": {
         "sayyid": "سيد",
