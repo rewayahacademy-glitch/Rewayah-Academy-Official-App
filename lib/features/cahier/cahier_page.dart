@@ -231,6 +231,9 @@ class _CahierState extends ConsumerState<_Cahier> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          // LIB-CAHIER-1 : ce qu'est le cahier de transmission, et qu'il est
+          // obligatoire, avant tout le reste.
+          if (!lectureSeule) ...<Widget>[const _IntroCahier(), Ecart.vLg],
           if (_echecEnvoi) ...<Widget>[
             LocalFeedback(message: t.enseignant.cahier.echecEnvoi),
             Ecart.vLg,
@@ -1272,3 +1275,46 @@ String _seanceDu(DateTime debut) => t.enseignant.journee.cahierDetail(
       '${debut.hour.toString().padLeft(2, '0')}:'
       '${debut.minute.toString().padLeft(2, '0')}',
 );
+
+/// LIB-CAHIER-1 : la pastille « Obligatoire » (composant partage
+/// [StatusPill]), le sous-titre et ce que le cahier de transmission sert a
+/// faire, en une phrase.
+class _IntroCahier extends StatelessWidget {
+  const _IntroCahier();
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Column(
+      key: const ValueKey<String>('cahier-intro'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.xs,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: <Widget>[
+            StatusPill(
+              key: const ValueKey<String>('cahier-obligatoire'),
+              libelle: t.enseignant.cahier.obligatoire,
+              ton: TonEtat.avertissement,
+            ),
+            Text(
+              t.enseignant.cahier.sousTitre,
+              style: textes.titleSmall ?? const TextStyle(),
+            ),
+          ],
+        ),
+        Ecart.vXs,
+        Text(
+          t.enseignant.cahier.description,
+          style: palette.inkMuted.applyTo(
+            textes.bodyMedium ?? const TextStyle(),
+          ),
+        ),
+      ],
+    );
+  }
+}

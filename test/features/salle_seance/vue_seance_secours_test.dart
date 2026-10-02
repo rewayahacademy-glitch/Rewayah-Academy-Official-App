@@ -278,7 +278,7 @@ void main() {
         find.byKey(const ValueKey<String>('fin-seance-enseignant')),
         findsOne,
       );
-      await tester.tap(find.text('Ouvrir le cahier'));
+      await tester.tap(find.text('Ouvrir le cahier de transmission'));
       expect(sorties, 1);
     });
   });

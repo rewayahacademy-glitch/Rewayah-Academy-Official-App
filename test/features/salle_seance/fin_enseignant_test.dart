@@ -157,9 +157,9 @@ void main() {
           '18:45',
           '2 élèves connectés',
           'sur 3 inscrits',
-          'Cahier de séance',
-          'Cahier à compléter',
-          'Ouvrir le cahier',
+          'Cahier de transmission',
+          'Cahier de transmission à compléter',
+          'Ouvrir le cahier de transmission',
           'Revenir à ma journée',
         ]) {
           expect(find.text(texte), findsWidgets, reason: texte);
@@ -191,11 +191,11 @@ void main() {
     ) async {
       await _monterFin(tester, const Size(1440, 900), indisponible: true);
       expect(
-        find.text('Le cahier ne peut pas être ouvert pour le moment.'),
+        find.text(t.salle.fin.enseignant.erreurCahier),
         findsOneWidget,
       );
       expect(find.text(t.commun.reessayer), findsOneWidget);
-      expect(find.text('Ouvrir le cahier'), findsNothing);
+      expect(find.text('Ouvrir le cahier de transmission'), findsNothing);
     });
 
     testWidgets('le recapitulatif lit la liste du compteur (I-6)', (
@@ -231,7 +231,7 @@ void main() {
         expect(vue.voitRecapitulatifFin, isFalse);
         await _monterFin(tester, const Size(1440, 900), vue: vue);
         expect(find.byKey(_recap), findsNothing);
-        expect(find.text('Ouvrir le cahier'), findsNothing);
+        expect(find.text('Ouvrir le cahier de transmission'), findsNothing);
       }
       // La demonstration : fin eleve = CLV-09, sans recapitulatif.
       fixerVueCapture(tester, const Size(1440, 900), 1);

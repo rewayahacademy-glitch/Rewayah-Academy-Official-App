@@ -352,7 +352,7 @@ void main() {
         find.byKey(const ValueKey<String>('fin-seance-enseignant')),
         findsOneWidget,
       );
-      await tester.tap(find.text('Ouvrir le cahier'));
+      await tester.tap(find.text('Ouvrir le cahier de transmission'));
       expect(_sorties, 1);
     });
   });

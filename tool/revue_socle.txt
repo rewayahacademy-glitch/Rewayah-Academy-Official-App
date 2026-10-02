@@ -1,6 +1,6 @@
 affirmation-reseau|assets/i18n/fr.i18n.json|admin.groupes.observationErreur : Le réglage n'a pas pu être enregistré.
 affirmation-reseau|assets/i18n/fr.i18n.json|disponibilites.erreur : Ce créneau n'a pas pu être enregistré. Réessayez.
-affirmation-reseau|assets/i18n/fr.i18n.json|enseignant.cahier.echecEnvoi : Le cahier n'a pas pu être enregistré. Réessayez.
+affirmation-reseau|assets/i18n/fr.i18n.json|enseignant.cahier.echecEnvoi : Le cahier de transmission n'a pas pu être enregistré. Réessayez.
 affirmation-reseau|assets/i18n/fr.i18n.json|parcours.erreur : Cette réponse n'a pas pu être enregistrée. Réessayez.
 affirmation-reseau|assets/i18n/fr.i18n.json|tc.classe.rappel.echec : Le rappel n'a pas pu être envoyé
 affirmation-reseau|assets/i18n/fr.i18n.json|tc.parcours.signalement.echec : Le signalement n'a pas pu être transmis. Réessayez.
@@ -81,7 +81,6 @@ erreur-sans-action|assets/i18n/fr.i18n.json|enseignant.revue.erreur : La revue n
 erreur-sans-action|assets/i18n/fr.i18n.json|enseignant.revue.erreurDetail : Cette Classe n'est peut-être pas la vôtre, ou la lecture a échoué.
 erreur-sans-action|assets/i18n/fr.i18n.json|parcours.erreurChargement : Le questionnaire n'a pas pu s'afficher
 erreur-sans-action|assets/i18n/fr.i18n.json|pin.erreur : Ce code ne correspond pas
-erreur-sans-action|assets/i18n/fr.i18n.json|salle.fin.enseignant.erreurCahier : Le cahier ne peut pas être ouvert pour le moment.
 erreur-sans-action|assets/i18n/fr.i18n.json|tc.groupe.commun.erreur : Vos classes n'ont pas pu être lues
 erreur-sans-action|assets/i18n/fr.i18n.json|tuteur.reglages.erreur : L'enregistrement n'a pas abouti : {message}
 libelle-ambigu|assets/i18n/fr.i18n.json|adulte.accueil.absence : Absence

@@ -74,6 +74,7 @@ import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/point_rappel.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/timeline_row.dart';
 import '../tc_espace_groupe/carte_session.dart' show EmplacementEntreeVue;
 import 'absence_remplacement_vue.dart';
@@ -874,6 +875,13 @@ class _ATerminer extends ConsumerWidget {
             PointRappel(
               key: const ValueKey<String>('journee-point-rappel'),
               libelle: t.enseignant.journee.rappelCahier,
+            ),
+            // LIB-CAHIER-1 : le caractere obligatoire se voit sur la carte.
+            Ecart.hXs,
+            StatusPill(
+              key: const ValueKey<String>('journee-cahier-obligatoire'),
+              libelle: t.enseignant.cahier.obligatoire,
+              ton: TonEtat.avertissement,
             ),
             if (tries.length > maximumATerminer) ...<Widget>[
               const Spacer(),

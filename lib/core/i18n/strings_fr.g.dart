@@ -2856,8 +2856,8 @@ class Traductions$salle$seance$fr {
 	/// fr: 'Vous passerez ensuite au cahier de transmission.'
 	String get quitterCahierConsequence => 'Vous passerez ensuite au cahier de transmission.';
 
-	/// fr: 'Quitter et ouvrir le cahier'
-	String get quitterCahier => 'Quitter et ouvrir le cahier';
+	/// fr: 'Quitter et ouvrir le cahier de transmission'
+	String get quitterCahier => 'Quitter et ouvrir le cahier de transmission';
 
 	/// fr: 'Rester'
 	String get rester => 'Rester';
@@ -8043,11 +8043,11 @@ class Traductions$enseignant$classes$fr {
 	/// fr: 'Remplacement'
 	String get remplacement => 'Remplacement';
 
-	/// fr: 'Un cahier de séance reste à valider'
-	String get rappelCahier => 'Un cahier de séance reste à valider';
+	/// fr: 'Un cahier de transmission reste à valider'
+	String get rappelCahier => 'Un cahier de transmission reste à valider';
 
-	/// fr: 'Cahier à valider'
-	String get cahierAValider => 'Cahier à valider';
+	/// fr: 'Cahier de transmission à valider'
+	String get cahierAValider => 'Cahier de transmission à valider';
 }
 
 // Path: enseignant.eleve
@@ -8453,14 +8453,14 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'À terminer'
 	String get aTerminer => 'À terminer';
 
-	/// fr: 'Le cahier aide vos élèves et vous permet d'ajuster le prochain cours.'
-	String get aTerminerAide => 'Le cahier aide vos élèves et vous permet d\'ajuster le prochain cours.';
+	/// fr: 'Le cahier de transmission aide vos élèves et vous permet d'ajuster le prochain cours.'
+	String get aTerminerAide => 'Le cahier de transmission aide vos élèves et vous permet d\'ajuster le prochain cours.';
 
-	/// fr: 'Des cahiers attendent d'être terminés'
-	String get rappelCahier => 'Des cahiers attendent d\'être terminés';
+	/// fr: 'Des cahiers de transmission attendent d'être terminés'
+	String get rappelCahier => 'Des cahiers de transmission attendent d\'être terminés';
 
-	/// fr: 'Cahier {classe}'
-	String cahierLigne({required Object classe}) => 'Cahier ${classe}';
+	/// fr: 'Cahier de transmission {classe}'
+	String cahierLigne({required Object classe}) => 'Cahier de transmission ${classe}';
 
 	/// fr: 'Séance du {jour} {numero} {mois} à {heure}'
 	String cahierDetail({required Object jour, required Object numero, required Object mois, required Object heure}) => 'Séance du ${jour} ${numero} ${mois} à ${heure}';
@@ -8501,11 +8501,11 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Remplir le cahier de transmission de la Classe {classe}'
 	String remplirCahierLecteur({required Object classe}) => 'Remplir le cahier de transmission de la Classe ${classe}';
 
-	/// fr: 'Obligatoire : le cahier {classe} se remplit à la fin de chaque séance.'
-	String cahierObligatoire({required Object classe}) => 'Obligatoire : le cahier ${classe} se remplit à la fin de chaque séance.';
+	/// fr: 'Obligatoire : le cahier de transmission {classe} se remplit à la fin de chaque séance.'
+	String cahierObligatoire({required Object classe}) => 'Obligatoire : le cahier de transmission ${classe} se remplit à la fin de chaque séance.';
 
-	/// fr: 'Voir le cahier {classe}'
-	String voirCahier({required Object classe}) => 'Voir le cahier ${classe}';
+	/// fr: 'Voir le cahier de transmission {classe}'
+	String voirCahier({required Object classe}) => 'Voir le cahier de transmission ${classe}';
 
 	/// fr: 'Voir le cahier de transmission de la Classe {classe}'
 	String voirCahierLecteur({required Object classe}) => 'Voir le cahier de transmission de la Classe ${classe}';
@@ -8609,8 +8609,17 @@ class Traductions$enseignant$cahier$fr {
 
 	// Translations
 
-	/// fr: 'Cahier de séance'
-	String get titre => 'Cahier de séance';
+	/// fr: 'Cahier de transmission'
+	String get titre => 'Cahier de transmission';
+
+	/// fr: 'Obligatoire'
+	String get obligatoire => 'Obligatoire';
+
+	/// fr: 'Obligatoire après chaque séance'
+	String get sousTitre => 'Obligatoire après chaque séance';
+
+	/// fr: 'Notez où en est chaque élève (sourate, verset, règle travaillée). Si un autre enseignant vous remplace, il reprend exactement là où la séance s'est arrêtée.'
+	String get description => 'Notez où en est chaque élève (sourate, verset, règle travaillée). Si un autre enseignant vous remplace, il reprend exactement là où la séance s\'est arrêtée.';
 
 	/// fr: '{minutes} min de cours'
 	String duree({required Object minutes}) => '${minutes} min de cours';
@@ -8642,11 +8651,11 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Rien à signaler'
 	String get nominaux => 'Rien à signaler';
 
-	/// fr: 'Le niveau et le programme sont ceux de l'académie : ils ne se modifient pas depuis le cahier.'
-	String get curriculumFige => 'Le niveau et le programme sont ceux de l\'académie : ils ne se modifient pas depuis le cahier.';
+	/// fr: 'Le niveau et le programme sont ceux de l'académie : ils ne se modifient pas depuis le cahier de transmission.'
+	String get curriculumFige => 'Le niveau et le programme sont ceux de l\'académie : ils ne se modifient pas depuis le cahier de transmission.';
 
-	/// fr: 'Valider le cahier'
-	String get valider => 'Valider le cahier';
+	/// fr: 'Valider le cahier de transmission'
+	String get valider => 'Valider le cahier de transmission';
 
 	/// fr: 'Tout est conforme, valider'
 	String get validerTout => 'Tout est conforme, valider';
@@ -8660,26 +8669,26 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Le constat n'a pas pu être déduit'
 	String get vide => 'Le constat n\'a pas pu être déduit';
 
-	/// fr: 'Aucune présence et aucun événement n'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier.'
-	String get videDetail => 'Aucune présence et aucun événement n\'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier.';
+	/// fr: 'Aucune présence et aucun événement n'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier de transmission.'
+	String get videDetail => 'Aucune présence et aucun événement n\'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier de transmission.';
 
 	/// fr: 'Le constat n'a pas pu être lu.'
 	String get erreur => 'Le constat n\'a pas pu être lu.';
 
-	/// fr: 'Réessayez, ou déposez le cahier sans le constat.'
-	String get erreurDetail => 'Réessayez, ou déposez le cahier sans le constat.';
+	/// fr: 'Réessayez, ou déposez le cahier de transmission sans le constat.'
+	String get erreurDetail => 'Réessayez, ou déposez le cahier de transmission sans le constat.';
 
-	/// fr: 'Le cahier n'a pas pu être enregistré. Réessayez.'
-	String get echecEnvoi => 'Le cahier n\'a pas pu être enregistré. Réessayez.';
+	/// fr: 'Le cahier de transmission n'a pas pu être enregistré. Réessayez.'
+	String get echecEnvoi => 'Le cahier de transmission n\'a pas pu être enregistré. Réessayez.';
 
-	/// fr: 'Le cahier de cette séance est déjà déposé.'
-	String get dejaDepose => 'Le cahier de cette séance est déjà déposé.';
+	/// fr: 'Le cahier de transmission de cette séance est déjà déposé.'
+	String get dejaDepose => 'Le cahier de transmission de cette séance est déjà déposé.';
 
-	/// fr: 'Un cahier ne se dépose qu'une fois, et il ne se supprime pas d'ici.'
-	String get dejaDeposeDetail => 'Un cahier ne se dépose qu\'une fois, et il ne se supprime pas d\'ici.';
+	/// fr: 'Un cahier de transmission ne se dépose qu'une fois, et il ne se supprime pas d'ici.'
+	String get dejaDeposeDetail => 'Un cahier de transmission ne se dépose qu\'une fois, et il ne se supprime pas d\'ici.';
 
-	/// fr: 'Cahier enregistré'
-	String get depose => 'Cahier enregistré';
+	/// fr: 'Cahier de transmission enregistré'
+	String get depose => 'Cahier de transmission enregistré';
 
 	/// fr: 'L'académie l'a reçu.'
 	String get deposeDetail => 'L\'académie l\'a reçu.';
@@ -8687,14 +8696,14 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'En attente d'envoi'
 	String get enFileTitre => 'En attente d\'envoi';
 
-	/// fr: 'Le cahier sera envoyé lorsque la connexion reviendra.'
-	String get enFile => 'Le cahier sera envoyé lorsque la connexion reviendra.';
+	/// fr: 'Le cahier de transmission sera envoyé lorsque la connexion reviendra.'
+	String get enFile => 'Le cahier de transmission sera envoyé lorsque la connexion reviendra.';
 
-	/// fr: 'Le cahier sera envoyé lorsque la connexion reviendra.'
-	String get enFileDetail => 'Le cahier sera envoyé lorsque la connexion reviendra.';
+	/// fr: 'Le cahier de transmission sera envoyé lorsque la connexion reviendra.'
+	String get enFileDetail => 'Le cahier de transmission sera envoyé lorsque la connexion reviendra.';
 
-	/// fr: 'Sans réseau, le cahier reste sur cet appareil et part dès que le réseau revient. Vous pouvez enchaîner sur votre cours suivant.'
-	String get enFileDetailHorsLigne => 'Sans réseau, le cahier reste sur cet appareil et part dès que le réseau revient. Vous pouvez enchaîner sur votre cours suivant.';
+	/// fr: 'Sans réseau, le cahier de transmission reste sur cet appareil et part dès que le réseau revient. Vous pouvez enchaîner sur votre cours suivant.'
+	String get enFileDetailHorsLigne => 'Sans réseau, le cahier de transmission reste sur cet appareil et part dès que le réseau revient. Vous pouvez enchaîner sur votre cours suivant.';
 
 	/// fr: 'Ajuster · {eleve}'
 	String ajusterPour({required Object eleve}) => 'Ajuster · ${eleve}';
@@ -8783,14 +8792,14 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Enregistrement…'
 	String get exceptionEnCours => 'Enregistrement…';
 
-	/// fr: 'Exception consignée. Elle partira avec le cahier.'
-	String get exceptionSucces => 'Exception consignée. Elle partira avec le cahier.';
+	/// fr: 'Exception consignée. Elle partira avec le cahier de transmission.'
+	String get exceptionSucces => 'Exception consignée. Elle partira avec le cahier de transmission.';
 
 	/// fr: 'L'exception n'a pas pu être consignée.'
 	String get exceptionErreur => 'L\'exception n\'a pas pu être consignée.';
 
-	/// fr: 'Sans réseau, une exception ne peut pas être confirmée. Le cahier, lui, part quand même.'
-	String get exceptionHorsLigne => 'Sans réseau, une exception ne peut pas être confirmée. Le cahier, lui, part quand même.';
+	/// fr: 'Sans réseau, une exception ne peut pas être confirmée. Le cahier de transmission, lui, part quand même.'
+	String get exceptionHorsLigne => 'Sans réseau, une exception ne peut pas être confirmée. Le cahier de transmission, lui, part quand même.';
 
 	/// fr: 'À valider'
 	String get aValider => 'À valider';
@@ -8825,8 +8834,8 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.'
 	String get integrite => 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.';
 
-	/// fr: 'Corriger le cahier'
-	String get corriger => 'Corriger le cahier';
+	/// fr: 'Corriger le cahier de transmission'
+	String get corriger => 'Corriger le cahier de transmission';
 
 	/// fr: 'Corrigé le {date}'
 	String corrigeLe({required Object date}) => 'Corrigé le ${date}';
@@ -10592,8 +10601,8 @@ class Traductions$salle$fin$enseignant$fr {
 	/// fr: 'Terminée'
 	String get terminee => 'Terminée';
 
-	/// fr: 'Le cahier est prêt avec les informations de la séance.'
-	String get phrase => 'Le cahier est prêt avec les informations de la séance.';
+	/// fr: 'Le cahier de transmission est prêt avec les informations de la séance.'
+	String get phrase => 'Le cahier de transmission est prêt avec les informations de la séance.';
 
 	/// fr: 'Récapitulatif de la séance'
 	String get recapitulatif => 'Récapitulatif de la séance';
@@ -10613,20 +10622,20 @@ class Traductions$salle$fin$enseignant$fr {
 	/// fr: 'sur {n} inscrit'
 	String unInscrit({required Object n}) => 'sur ${n} inscrit';
 
-	/// fr: 'Cahier de séance'
-	String get cahierSeance => 'Cahier de séance';
+	/// fr: 'Cahier de transmission'
+	String get cahierSeance => 'Cahier de transmission';
 
-	/// fr: 'Cahier à compléter'
-	String get cahierACompleter => 'Cahier à compléter';
+	/// fr: 'Cahier de transmission à compléter'
+	String get cahierACompleter => 'Cahier de transmission à compléter';
 
-	/// fr: 'Ouvrir le cahier'
-	String get ouvrirCahier => 'Ouvrir le cahier';
+	/// fr: 'Ouvrir le cahier de transmission'
+	String get ouvrirCahier => 'Ouvrir le cahier de transmission';
 
 	/// fr: 'Revenir à ma journée'
 	String get revenirJournee => 'Revenir à ma journée';
 
-	/// fr: 'Le cahier ne peut pas être ouvert pour le moment.'
-	String get erreurCahier => 'Le cahier ne peut pas être ouvert pour le moment.';
+	/// fr: 'Le cahier de transmission ne peut pas être ouvert pour le moment. Réessayez dans un instant.'
+	String get erreurCahier => 'Le cahier de transmission ne peut pas être ouvert pour le moment. Réessayez dans un instant.';
 }
 
 // Path: appareils.emetteur.verification
@@ -14516,7 +14525,7 @@ extension on Traductions {
 			'salle.seance.quitterConsequence' => 'Vous pourrez revenir si la séance est encore ouverte.',
 			'salle.seance.illustration' => 'Illustration du support',
 			'salle.seance.quitterCahierConsequence' => 'Vous passerez ensuite au cahier de transmission.',
-			'salle.seance.quitterCahier' => 'Quitter et ouvrir le cahier',
+			'salle.seance.quitterCahier' => 'Quitter et ouvrir le cahier de transmission',
 			'salle.seance.rester' => 'Rester',
 			'salle.seance.supports' => 'Supports',
 			'salle.seance.reseau' => 'Réseau',
@@ -14590,18 +14599,18 @@ extension on Traductions {
 			'salle.fin.titreGuidee' => 'La séance est terminée.',
 			'salle.fin.retourAccueil' => 'Retour à l\'accueil',
 			'salle.fin.enseignant.terminee' => 'Terminée',
-			'salle.fin.enseignant.phrase' => 'Le cahier est prêt avec les informations de la séance.',
+			'salle.fin.enseignant.phrase' => 'Le cahier de transmission est prêt avec les informations de la séance.',
 			'salle.fin.enseignant.recapitulatif' => 'Récapitulatif de la séance',
 			'salle.fin.enseignant.fin' => 'Fin',
 			'salle.fin.enseignant.connectes' => ({required Object n}) => '${n} élèves connectés',
 			'salle.fin.enseignant.unConnecte' => ({required Object n}) => '${n} élève connecté',
 			'salle.fin.enseignant.inscrits' => ({required Object n}) => 'sur ${n} inscrits',
 			'salle.fin.enseignant.unInscrit' => ({required Object n}) => 'sur ${n} inscrit',
-			'salle.fin.enseignant.cahierSeance' => 'Cahier de séance',
-			'salle.fin.enseignant.cahierACompleter' => 'Cahier à compléter',
-			'salle.fin.enseignant.ouvrirCahier' => 'Ouvrir le cahier',
+			'salle.fin.enseignant.cahierSeance' => 'Cahier de transmission',
+			'salle.fin.enseignant.cahierACompleter' => 'Cahier de transmission à compléter',
+			'salle.fin.enseignant.ouvrirCahier' => 'Ouvrir le cahier de transmission',
 			'salle.fin.enseignant.revenirJournee' => 'Revenir à ma journée',
-			'salle.fin.enseignant.erreurCahier' => 'Le cahier ne peut pas être ouvert pour le moment.',
+			'salle.fin.enseignant.erreurCahier' => 'Le cahier de transmission ne peut pas être ouvert pour le moment. Réessayez dans un instant.',
 			'salle.micro' => 'Micro',
 			'salle.microCoupe' => 'Micro coupé',
 			'salle.microOuvert' => 'Micro ouvert',
@@ -16800,8 +16809,8 @@ extension on Traductions {
 			'enseignant.classes.prochaine' => ({required Object jour, required Object heure}) => 'Prochaine séance : ${jour} à ${heure}',
 			'enseignant.classes.sansProchaine' => 'Aucune séance prévue',
 			'enseignant.classes.remplacement' => 'Remplacement',
-			'enseignant.classes.rappelCahier' => 'Un cahier de séance reste à valider',
-			'enseignant.classes.cahierAValider' => 'Cahier à valider',
+			'enseignant.classes.rappelCahier' => 'Un cahier de transmission reste à valider',
+			'enseignant.classes.cahierAValider' => 'Cahier de transmission à valider',
 			'enseignant.eleve.titre' => ({required Object prenom}) => 'Fiche de ${prenom}',
 			'enseignant.eleve.retour' => 'Élèves',
 			'enseignant.eleve.identifiant' => ({required Object id}) => 'Identifiant Académie : ${id}',
@@ -16925,9 +16934,9 @@ extension on Traductions {
 			'enseignant.journee.prochaineSeance' => 'Prochaine séance',
 			'enseignant.journee.maJournee' => 'Ma journée',
 			'enseignant.journee.aTerminer' => 'À terminer',
-			'enseignant.journee.aTerminerAide' => 'Le cahier aide vos élèves et vous permet d\'ajuster le prochain cours.',
-			'enseignant.journee.rappelCahier' => 'Des cahiers attendent d\'être terminés',
-			'enseignant.journee.cahierLigne' => ({required Object classe}) => 'Cahier ${classe}',
+			'enseignant.journee.aTerminerAide' => 'Le cahier de transmission aide vos élèves et vous permet d\'ajuster le prochain cours.',
+			'enseignant.journee.rappelCahier' => 'Des cahiers de transmission attendent d\'être terminés',
+			'enseignant.journee.cahierLigne' => ({required Object classe}) => 'Cahier de transmission ${classe}',
 			'enseignant.journee.cahierDetail' => ({required Object jour, required Object numero, required Object mois, required Object heure}) => 'Séance du ${jour} ${numero} ${mois} à ${heure}',
 			'enseignant.journee.alertesUtiles' => 'Alertes utiles',
 			'enseignant.journee.heure' => 'Heure',
@@ -16941,8 +16950,8 @@ extension on Traductions {
 			'enseignant.journee.rejoindreSalleLecteur' => ({required Object classe}) => 'Rejoindre la salle de la Classe ${classe}',
 			'enseignant.journee.remplirCahier' => 'Remplir le cahier de transmission',
 			'enseignant.journee.remplirCahierLecteur' => ({required Object classe}) => 'Remplir le cahier de transmission de la Classe ${classe}',
-			'enseignant.journee.cahierObligatoire' => ({required Object classe}) => 'Obligatoire : le cahier ${classe} se remplit à la fin de chaque séance.',
-			'enseignant.journee.voirCahier' => ({required Object classe}) => 'Voir le cahier ${classe}',
+			'enseignant.journee.cahierObligatoire' => ({required Object classe}) => 'Obligatoire : le cahier de transmission ${classe} se remplit à la fin de chaque séance.',
+			'enseignant.journee.voirCahier' => ({required Object classe}) => 'Voir le cahier de transmission ${classe}',
 			'enseignant.journee.voirCahierLecteur' => ({required Object classe}) => 'Voir le cahier de transmission de la Classe ${classe}',
 			'enseignant.journee.voirClasse' => 'Voir la Classe',
 			'enseignant.journee.voirClasseLecteur' => ({required Object classe}) => 'Voir la Classe ${classe}',
@@ -16986,7 +16995,10 @@ extension on Traductions {
 			'enseignant.salle.corpusAbsentDetail' => 'Il n\'y a rien à présenter.',
 			'enseignant.salle.echecPresentation' => 'Ce verset n\'a pas pu être situé dans le mushaf. Rien n\'a été envoyé à votre Classe.',
 			'enseignant.salle.sansDroitPresentation' => 'Votre accès à cette séance ne permet pas de présenter un contenu.',
-			'enseignant.cahier.titre' => 'Cahier de séance',
+			'enseignant.cahier.titre' => 'Cahier de transmission',
+			'enseignant.cahier.obligatoire' => 'Obligatoire',
+			'enseignant.cahier.sousTitre' => 'Obligatoire après chaque séance',
+			'enseignant.cahier.description' => 'Notez où en est chaque élève (sourate, verset, règle travaillée). Si un autre enseignant vous remplace, il reprend exactement là où la séance s\'est arrêtée.',
 			'enseignant.cahier.duree' => ({required Object minutes}) => '${minutes} min de cours',
 			'enseignant.cahier.dureeEtInterruption' => ({required Object minutes, required Object interruption}) => '${minutes} min de cours, dont ${interruption} min d\'interruption',
 			'enseignant.cahier.unEleve' => '1 élève',
@@ -16997,24 +17009,24 @@ extension on Traductions {
 			'enseignant.cahier.uneException' => '1 élève demande un regard.',
 			'enseignant.cahier.plusieursExceptions' => ({required Object nombre}) => '${nombre} élèves demandent un regard.',
 			'enseignant.cahier.nominaux' => 'Rien à signaler',
-			'enseignant.cahier.curriculumFige' => 'Le niveau et le programme sont ceux de l\'académie : ils ne se modifient pas depuis le cahier.',
-			'enseignant.cahier.valider' => 'Valider le cahier',
+			'enseignant.cahier.curriculumFige' => 'Le niveau et le programme sont ceux de l\'académie : ils ne se modifient pas depuis le cahier de transmission.',
+			'enseignant.cahier.valider' => 'Valider le cahier de transmission',
 			'enseignant.cahier.validerTout' => 'Tout est conforme, valider',
 			'enseignant.cahier.validerSansConstat' => 'Déposer sans le constat',
 			'enseignant.cahier.retourJournee' => 'Retour à ma journée',
 			'enseignant.cahier.vide' => 'Le constat n\'a pas pu être déduit',
-			'enseignant.cahier.videDetail' => 'Aucune présence et aucun événement n\'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier.',
+			'enseignant.cahier.videDetail' => 'Aucune présence et aucun événement n\'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier de transmission.',
 			'enseignant.cahier.erreur' => 'Le constat n\'a pas pu être lu.',
-			'enseignant.cahier.erreurDetail' => 'Réessayez, ou déposez le cahier sans le constat.',
-			'enseignant.cahier.echecEnvoi' => 'Le cahier n\'a pas pu être enregistré. Réessayez.',
-			'enseignant.cahier.dejaDepose' => 'Le cahier de cette séance est déjà déposé.',
-			'enseignant.cahier.dejaDeposeDetail' => 'Un cahier ne se dépose qu\'une fois, et il ne se supprime pas d\'ici.',
-			'enseignant.cahier.depose' => 'Cahier enregistré',
+			'enseignant.cahier.erreurDetail' => 'Réessayez, ou déposez le cahier de transmission sans le constat.',
+			'enseignant.cahier.echecEnvoi' => 'Le cahier de transmission n\'a pas pu être enregistré. Réessayez.',
+			'enseignant.cahier.dejaDepose' => 'Le cahier de transmission de cette séance est déjà déposé.',
+			'enseignant.cahier.dejaDeposeDetail' => 'Un cahier de transmission ne se dépose qu\'une fois, et il ne se supprime pas d\'ici.',
+			'enseignant.cahier.depose' => 'Cahier de transmission enregistré',
 			'enseignant.cahier.deposeDetail' => 'L\'académie l\'a reçu.',
 			'enseignant.cahier.enFileTitre' => 'En attente d\'envoi',
-			'enseignant.cahier.enFile' => 'Le cahier sera envoyé lorsque la connexion reviendra.',
-			'enseignant.cahier.enFileDetail' => 'Le cahier sera envoyé lorsque la connexion reviendra.',
-			'enseignant.cahier.enFileDetailHorsLigne' => 'Sans réseau, le cahier reste sur cet appareil et part dès que le réseau revient. Vous pouvez enchaîner sur votre cours suivant.',
+			'enseignant.cahier.enFile' => 'Le cahier de transmission sera envoyé lorsque la connexion reviendra.',
+			'enseignant.cahier.enFileDetail' => 'Le cahier de transmission sera envoyé lorsque la connexion reviendra.',
+			'enseignant.cahier.enFileDetailHorsLigne' => 'Sans réseau, le cahier de transmission reste sur cet appareil et part dès que le réseau revient. Vous pouvez enchaîner sur votre cours suivant.',
 			'enseignant.cahier.ajusterPour' => ({required Object eleve}) => 'Ajuster · ${eleve}',
 			'enseignant.cahier.ajusterValider' => 'Enregistrer pour cet élève',
 			'enseignant.cahier.exceptionConsignee' => 'Exception signalée',
@@ -17044,9 +17056,9 @@ extension on Traductions {
 			'enseignant.cahier.exceptionMotif' => 'Motif',
 			'enseignant.cahier.exceptionMotifRequis' => 'Le motif est obligatoire.',
 			'enseignant.cahier.exceptionEnCours' => 'Enregistrement…',
-			'enseignant.cahier.exceptionSucces' => 'Exception consignée. Elle partira avec le cahier.',
+			'enseignant.cahier.exceptionSucces' => 'Exception consignée. Elle partira avec le cahier de transmission.',
 			'enseignant.cahier.exceptionErreur' => 'L\'exception n\'a pas pu être consignée.',
-			'enseignant.cahier.exceptionHorsLigne' => 'Sans réseau, une exception ne peut pas être confirmée. Le cahier, lui, part quand même.',
+			'enseignant.cahier.exceptionHorsLigne' => 'Sans réseau, une exception ne peut pas être confirmée. Le cahier de transmission, lui, part quand même.',
 			'enseignant.cahier.aValider' => 'À valider',
 			'enseignant.cahier.statutPresents' => ({required Object nombre}) => 'Présents ${nombre}',
 			'enseignant.cahier.statutAbsents' => ({required Object nombre}) => 'Absents ${nombre}',
@@ -17058,7 +17070,7 @@ extension on Traductions {
 			'enseignant.cahier.repriseProposee' => ({required Object sourate, required Object verset}) => 'Sourate ${sourate}, verset ${verset}',
 			'enseignant.cahier.repriseRequise' => 'Indiquez où la Classe s\'est arrêtée : un remplaçant reprendra ici.',
 			'enseignant.cahier.integrite' => 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.',
-			'enseignant.cahier.corriger' => 'Corriger le cahier',
+			'enseignant.cahier.corriger' => 'Corriger le cahier de transmission',
 			'enseignant.cahier.corrigeLe' => ({required Object date}) => 'Corrigé le ${date}',
 			'enseignant.profil.titre' => 'Profil',
 			'enseignant.profil.compteValide' => 'Compte enseignant vérifié',
@@ -17384,11 +17396,11 @@ extension on Traductions {
 			'tc.bibliotheque.rechercheLibelle' => 'Rechercher un support',
 			'tc.bibliotheque.effacerRecherche' => 'Tout afficher',
 			'tc.bibliotheque.filtre.type' => 'Type',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.filtre.disponibilite' => 'Disponibilité',
 			'tc.bibliotheque.sections.continuer' => 'Continuer',
 			'tc.bibliotheque.sections.pourCeGroupe' => 'Pour cette Classe',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.sections.groupe' => 'Supports à afficher',
 			'tc.bibliotheque.sections.recents' => 'Récents',
 			'tc.bibliotheque.sections.tousLesSupports' => 'Tous les supports',
@@ -17898,11 +17910,11 @@ extension on Traductions {
 			'adulte.demo.intro' => 'Choisissez un écran, puis une situation du foyer Diallo.',
 			'adulte.demo.ecrans' => 'Les écrans',
 			'adulte.demo.situations' => 'Les situations du foyer',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.variantes' => 'Les variantes',
 			'adulte.demo.titulaireFemme' => 'La titulaire est une femme, son conjoint est le second adulte.',
 			'adulte.demo.vueConjointe' => 'Mon espace vu par la conjointe, second adulte du foyer.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.vueConjoint' => 'Mon espace vu par le conjoint, second adulte du foyer.',
 			'adulte.demo.etats.adulteSeul' => 'L\'adulte est seul, sans foyer.',
 			'adulte.demo.etats.titulaireSansConjoint' => 'Le foyer n\'a pas de second adulte.',
