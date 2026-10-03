@@ -24,7 +24,7 @@ et continué. Chaque ligne dit la question et le choix pris. Répondre « d'acco
 | # | Question | Choix pris |
 |---|---|---|
 | I-Q1 | En Mode Accessibilité, le Coran revient dans la barre du bas (4 onglets), comme le dit la décision déléguée du 02/10 (« le Coran reste »). Mais votre revue (MA-NAV-1, §326 et §344) disait 3 onglets : Accueil, Ma classe, Mon espace. Lequel gardez-vous ? | 4 onglets gardés pour l'instant (décision la plus récente). Recommandation : confirmer les 4 onglets, puis corriger la revue. |
-| I-Q2 | En Mode Accessibilité, quand le texte dépasse 130 %, les boutons de la salle (micro, caméra) n'affichent plus le mot d'état (« Micro ouvert ») : il n'apparaît qu'au survol. La décision déléguée disait « le mot d'état reste ». | Pas tranché : noté pour correction (l'état doit rester lisible). Recommandation : le mot reste visible. |
+| I-Q2 | En Mode Accessibilité, quand le texte dépasse 130 %, les boutons de la salle (micro, caméra) n'affichent plus le mot d'état (« Micro ouvert ») : il n'apparaît qu'au survol. La décision déléguée disait « le mot d'état reste ». | Pas tranché. Essai fait puis retiré : garder le mot fait déborder la salle à 390 px ×2 (34 à 51 px) et dépasse la hauteur demandée par MA-CMD-1 (292 au lieu de 253). Deux choix, mesures dans `docs/current/REVUE-DIRECTEUR-2026-10.md` (« Décision à valider », branche corrections/c1-integ @ 4a4fbe7) : (a) le mot reste et les commandes passent sur deux rangées ; (b) MA-CMD-1 l'emporte, le mot est dans l'infobulle et lu par le lecteur d'écran. Recommandation : (a). |
 
 ## Finance (FI-1a, 17_finance/UX_REVIEW_08_FINANCE.md)
 
