@@ -26,6 +26,13 @@ et continué. Chaque ligne dit la question et le choix pris. Répondre « d'acco
 | I-Q1 | En Mode Accessibilité, le Coran revient dans la barre du bas (4 onglets), comme le dit la décision déléguée du 02/10 (« le Coran reste »). Mais votre revue (MA-NAV-1, §326 et §344) disait 3 onglets : Accueil, Ma classe, Mon espace. Lequel gardez-vous ? | 4 onglets gardés pour l'instant (décision la plus récente). Recommandation : confirmer les 4 onglets, puis corriger la revue. |
 | I-Q2 | En Mode Accessibilité, quand le texte dépasse 130 %, les boutons de la salle (micro, caméra) n'affichent plus le mot d'état (« Micro ouvert ») : il n'apparaît qu'au survol. La décision déléguée disait « le mot d'état reste ». | Pas tranché. Essai fait puis retiré : garder le mot fait déborder la salle à 390 px ×2 (34 à 51 px) et dépasse la hauteur demandée par MA-CMD-1 (292 au lieu de 253). Deux choix, mesures dans `docs/current/REVUE-DIRECTEUR-2026-10.md` (« Décision à valider », branche corrections/c1-integ @ 4a4fbe7) : (a) le mot reste et les commandes passent sur deux rangées ; (b) MA-CMD-1 l'emporte, le mot est dans l'infobulle et lu par le lecteur d'écran. Recommandation : (a). |
 
+## Cahier de l'enseignant (EN-7c-200, EN-7c-SUGG-T, branche commune @ d57ed2b1)
+
+| # | Question | Choix pris |
+|---|---|---|
+| C-Q1 | La feuille « Ajuster » disait « Ajustez la suggestion » alors qu'aucun devoir n'est jamais suggéré (l'application ne connaît que le devoir de la séance précédente). D'où doit venir une vraie suggestion : recopier le devoir précédent, ou une proposition préparée côté serveur (d'après la page de lecture ou le plan de cours) ? | Aucune des deux pour l'instant : la phrase ne s'affiche que pour une vraie suggestion. Recommandation : une proposition préparée côté serveur, au moment du branchement (BR-1), plutôt que recopier le devoir précédent. |
+| C-Q2 | Quand l'enseignant rouvre la feuille sur un devoir qu'il a déjà écrit, la phrase affichée est « Vous avez déjà noté ce devoir. Modifiez-le ou laissez-le tel quel. » Elle vous convient ? | Gardée, marquée « à faire valider ». |
+
 ## Finance (FI-1a, 17_finance/UX_REVIEW_08_FINANCE.md)
 
 | # | Question | Choix pris |
