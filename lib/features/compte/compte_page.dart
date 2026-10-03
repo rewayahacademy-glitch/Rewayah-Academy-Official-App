@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/auth/service_auth.dart';
 import '../../core/domain/enums.dart';
@@ -230,7 +231,13 @@ class ProfilPersonnelPage extends ConsumerWidget {
 /// Preferences qui restent dans l'appareil et prennent effet immediatement.
 class ReglagesComptePage extends ConsumerWidget {
   /// Cree les reglages locaux.
-  const ReglagesComptePage({super.key, this.onRetour});
+  const ReglagesComptePage({
+    super.key,
+    this.onRetour,
+    this.titre,
+    this.avant,
+    this.apres,
+  });
 
   /// Le disque retour de l'en-tete, pour une **tache focalisee** : sur
   /// telephone, la barre basse du tuteur s'efface sur ses preferences, et ce
@@ -238,11 +245,28 @@ class ReglagesComptePage extends ConsumerWidget {
   /// point 5). Nul pour les autres roles, qui gardent leur barre.
   final VoidCallback? onRetour;
 
+  /// MA-8 : le titre de la destination « Mon espace » du Mode
+  /// Accessibilite ; nul (defaut) pour le titre commun des reglages.
+  final String? titre;
+
+  /// MA-8 : les blocs propres au Mode Accessibilite poses AVANT les
+  /// reglages communs (identite, ligne « Mode Accessibilite ») ; nul partout
+  /// ailleurs.
+  final Widget? avant;
+
+  /// MA-8 : le bloc pose APRES les reglages communs (aide) ; nul ailleurs.
+  final Widget? apres;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final PreferencesLocales preferences = ref.watch(
       preferencesLocalesProvider,
     );
+    // MA-8 : en Mode Accessibilite seulement, « Reduire les effets », qui
+    // n'agit sur aucun ecran, n'est pas affiche (un interrupteur sans effet
+    // n'est pas montre). Les autres roles et la presentation standard gardent
+    // la page telle quelle.
+    final bool modeAccessibilite = ref.watch(modeAccessibiliteActifProvider);
     final bool foyerDisponible = ref.watch(
       sessionProvider.select(
         (SessionState session) => session.role == AppRole.guardian,
@@ -253,12 +277,13 @@ class ReglagesComptePage extends ConsumerWidget {
     );
 
     return PageShell(
-      titre: t.compte.reglagesTitre,
+      titre: titre ?? t.compte.reglagesTitre,
       onRetour: onRetour,
       entete: Text(t.compte.reglagesIntro),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          if (avant case final Widget bloc) ...<Widget>[bloc, Ecart.vSection],
           SectionHeader(titre: t.compte.apparence),
           const SelecteurTheme(),
           Ecart.vSection,
@@ -274,15 +299,16 @@ class ReglagesComptePage extends ConsumerWidget {
                   onChanged: controleur.animations,
                 ),
               ),
-              SettingRow(
-                title: t.compte.effets,
-                description: t.compte.effetsDetail,
-                icon: AppIcons.reglages,
-                controle: Switch.adaptive(
-                  value: preferences.effetsReduits,
-                  onChanged: controleur.effets,
+              if (!modeAccessibilite)
+                SettingRow(
+                  title: t.compte.effets,
+                  description: t.compte.effetsDetail,
+                  icon: AppIcons.reglages,
+                  controle: Switch.adaptive(
+                    value: preferences.effetsReduits,
+                    onChanged: controleur.effets,
+                  ),
                 ),
-              ),
               // EN-KB (E19) : les raccourcis d'une seule lettre sont
               // desactivables (WCAG 2.1.4). Preference locale, sans serveur.
               SettingRow(
@@ -316,20 +342,25 @@ class ReglagesComptePage extends ConsumerWidget {
                 icon: AppIcons.reglages,
                 enabled: false,
               ),
-              SettingRow(
-                title: t.compte.arabe,
-                description: t.compte.arabeDetail,
-                value: t.compte.nonDisponible,
-                icon: AppIcons.reglages,
-                enabled: false,
-              ),
-              SettingRow(
-                title: t.compte.fuseau,
-                description: t.compte.fuseauDetail,
-                value: t.compte.nonDisponible,
-                icon: AppIcons.reglages,
-                enabled: false,
-              ),
+              // MA-RC (MA7, K-42) : en Mode Accessibilite, les lignes
+              // inactives (sans effet pour l'eleve) ne sont pas affichees ;
+              // les rubriques et les droits restent les memes.
+              if (!modeAccessibilite) ...<Widget>[
+                SettingRow(
+                  title: t.compte.arabe,
+                  description: t.compte.arabeDetail,
+                  value: t.compte.nonDisponible,
+                  icon: AppIcons.reglages,
+                  enabled: false,
+                ),
+                SettingRow(
+                  title: t.compte.fuseau,
+                  description: t.compte.fuseauDetail,
+                  value: t.compte.nonDisponible,
+                  icon: AppIcons.reglages,
+                  enabled: false,
+                ),
+              ],
             ],
           ),
           Ecart.vSection,
@@ -345,15 +376,16 @@ class ReglagesComptePage extends ConsumerWidget {
                   onChanged: controleur.notificationsCours,
                 ),
               ),
-              SettingRow(
-                title: t.compte.notificationsFoyer,
-                description: t.compte.notificationsFoyerDetail,
-                icon: AppIcons.foyer,
-                controle: Switch.adaptive(
-                  value: preferences.notificationsFoyer,
-                  onChanged: controleur.notificationsFoyer,
+              if (!modeAccessibilite)
+                SettingRow(
+                  title: t.compte.notificationsFoyer,
+                  description: t.compte.notificationsFoyerDetail,
+                  icon: AppIcons.foyer,
+                  controle: Switch.adaptive(
+                    value: preferences.notificationsFoyer,
+                    onChanged: controleur.notificationsFoyer,
+                  ),
                 ),
-              ),
             ],
           ),
           Text(t.compte.notificationsEtat),
@@ -381,26 +413,33 @@ class ReglagesComptePage extends ConsumerWidget {
               ),
             ],
           ),
-          Ecart.vSection,
-          CarteLignes(
-            lignes: <Widget>[
-              SettingRow(
-                title: t.compte.appareils,
-                description: t.compte.appareilsDetail,
-                icon: AppIcons.appareil,
-                onPress: foyerDisponible
-                    ? () => context.push(Routes.tuteurFoyer)
-                    : null,
-                enabled: foyerDisponible,
-              ),
-              SettingRow(
-                title: t.compte.confidentialite,
-                description: t.compte.confidentialiteDetail,
-                icon: AppIcons.controleQualite,
-                enabled: false,
-              ),
-            ],
-          ),
+          // MA-GR-1 : l'ecart de section n'accompagne le bloc appareils et
+          // confidentialite que s'il est affiche ; masque (Mode
+          // Accessibilite), un seul ecart reste avant l'aide.
+          if (!modeAccessibilite || foyerDisponible) ...<Widget>[
+            Ecart.vSection,
+            CarteLignes(
+              lignes: <Widget>[
+                SettingRow(
+                  title: t.compte.appareils,
+                  description: t.compte.appareilsDetail,
+                  icon: AppIcons.appareil,
+                  onPress: foyerDisponible
+                      ? () => context.push(Routes.tuteurFoyer)
+                      : null,
+                  enabled: foyerDisponible,
+                ),
+                if (!modeAccessibilite)
+                  SettingRow(
+                    title: t.compte.confidentialite,
+                    description: t.compte.confidentialiteDetail,
+                    icon: AppIcons.controleQualite,
+                    enabled: false,
+                  ),
+              ],
+            ),
+          ],
+          if (apres case final Widget bloc) ...<Widget>[Ecart.vSection, bloc],
         ],
       ),
     );

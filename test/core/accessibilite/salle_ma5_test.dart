@@ -9,6 +9,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/accessibilite/commandes_masquables.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
@@ -16,6 +17,7 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
+import 'package:rewayah_academy/features/salle_seance/dock_seance.dart';
 
 import '../../router/support_routeur.dart' show stabiliser;
 
@@ -114,6 +116,51 @@ void main() {
             const ValueKey<String>('vignette-support-pile'),
           );
           if (echelle >= 2) {
+            // MA-CMD-1 (directeur, 02/10/2026, annule M1) : icones seules,
+            // sans libelle visible ; chaque commande garde son nom pour le
+            // lecteur d'ecran et une infobulle.
+            final Finder dock = find.byKey(
+              const ValueKey<String>('dock-seance'),
+            );
+            final Finder boutonsDock = find.descendant(
+              of: dock,
+              matching: find.byType(BoutonAppel),
+            );
+            expect(boutonsDock, findsWidgets);
+            for (int i = 0; i < boutonsDock.evaluate().length; i++) {
+              expect(
+                find.descendant(
+                  of: boutonsDock.at(i),
+                  matching: find.byType(Text),
+                ),
+                findsNothing,
+              );
+              expect(
+                tester.getSize(boutonsDock.at(i)).height,
+                greaterThanOrEqualTo(48),
+              );
+            }
+            final List<Tooltip> bulles = tester
+                .widgetList<Tooltip>(
+                  find.descendant(of: dock, matching: find.byType(Tooltip)),
+                )
+                .toList();
+            expect(find.byTooltip(t.salle.seance.sortir), findsOneWidget);
+            expect(bulles, hasLength(boutonsDock.evaluate().length));
+            // Une commande : l'infobulle montre le nom lu. Une bascule
+            // (ETATS-BTN-1) : l'infobulle montre son mot d'etat (« Micro
+            // ouvert »), le lecteur d'ecran lit l'acte et l'etat bascule.
+            for (final BoutonAppel b in tester.widgetList<BoutonAppel>(
+              boutonsDock,
+            )) {
+              final String lu = b.libelleSemantique ?? b.libelle;
+              expect(find.bySemanticsLabel(lu), findsWidgets, reason: lu);
+              expect(
+                bulles.map((Tooltip x) => x.message),
+                contains(b.bascule == null ? lu : b.libelle),
+                reason: lu,
+              );
+            }
             expect(pile, findsOneWidget);
             final Finder chapitre = find.textContaining('Chapitre');
             expect(chapitre, findsWidgets);
@@ -129,6 +176,56 @@ void main() {
       );
     }
   }
+
+  // MA-CMD-1 (directeur, 02/10/2026) : a 200 % et a 390 px, en-tete et
+  // commandes tiennent dans 30 % de l'ecran ; les commandes se masquent et
+  // une touche sur l'ecran les fait revenir.
+  testWidgets('MA-CMD-1 : 390, texte x2, commandes compactes et masquables', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, echelle: 2);
+    final Finder rejoindre = find.text(LibellesGroupe.rejoindre);
+    await tester.ensureVisible(rejoindre);
+    await tester.tap(rejoindre);
+    await stabiliser(tester);
+    final Finder entrer = find.byKey(
+      const ValueKey<String>('preparation-entrer'),
+    );
+    await tester.ensureVisible(entrer);
+    await tester.tap(entrer);
+    await tester.pump(const Duration(milliseconds: 500));
+
+    final double hauteurEntete = tester
+        .getSize(find.byKey(const ValueKey<String>('entete-seance-compacte')))
+        .height;
+    final double hauteurCommandes = tester
+        .getSize(find.byKey(CommandesMasquables.commandesKey))
+        .height;
+    expect(
+      hauteurEntete + hauteurCommandes,
+      lessThanOrEqualTo(844 * 0.30),
+      reason: 'en-tete $hauteurEntete + commandes $hauteurCommandes',
+    );
+
+    double opacite() => tester
+        .widget<AnimatedOpacity>(
+          find.ancestor(
+            of: find.byKey(CommandesMasquables.commandesKey),
+            matching: find.byType(AnimatedOpacity),
+          ),
+        )
+        .opacity;
+    expect(opacite(), 1);
+    await tester.pump(CommandesMasquables.delaiParDefaut);
+    await tester.pump(const Duration(seconds: 1));
+    expect(opacite(), 0);
+    // Une touche au milieu de l'ecran (sur le support) les fait revenir.
+    await tester.tapAt(const Offset(195, 400));
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(opacite(), 1);
+    expect(find.byTooltip(t.salle.seance.sortir), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 
   // L'eleve courant de la salle suit celui de la demonstration : Idriss ne
   // voit jamais « M Mariam » en haut a droite sur bureau.

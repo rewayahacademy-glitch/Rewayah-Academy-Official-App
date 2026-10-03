@@ -326,31 +326,41 @@ class _Ligne extends StatelessWidget {
       textes.bodyMedium ?? const TextStyle(),
     );
     // Libelle et valeur partagent la ligne tant qu'ils tiennent ; sinon la
-    // valeur passe dessous (Wrap), sans jamais couper un mot.
+    // valeur passe dessous (Wrap), sans jamais couper un mot. Le Wrap prend
+    // toute la largeur (MA-GR-1) : sur une seule ligne, spaceBetween pousse
+    // la valeur au bord de fin ; seule sur sa ligne, elle reste au debut.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Wrap(
-          spacing: AppSpacing.md,
-          runSpacing: AppSpacing.xs,
-          alignment: WrapAlignment.spaceBetween,
-          children: <Widget>[
-            Text(
-              ligne.libelle,
-              style: palette.inkStrong
-                  .applyTo(textes.bodyLarge ?? const TextStyle())
-                  .copyWith(
-                    fontWeight: (ligne.selectionnee ?? false)
-                        ? FontWeight.w600
-                        : null,
-                  ),
-            ),
-            if (ligne.pastille != null && ligne.pastilleSousLibelle != true)
-              ligne.pastille!,
-            if (ligne.valeur != null)
-              Text(ligne.valeur!, style: styleSecondaire),
-          ],
+        SizedBox(
+          width: double.infinity,
+          child: Wrap(
+            spacing: AppSpacing.md,
+            runSpacing: AppSpacing.xs,
+            alignment: WrapAlignment.spaceBetween,
+            children: <Widget>[
+              Text(
+                ligne.libelle,
+                key: const ValueKey<String>('groupe-reglages-libelle'),
+                style: palette.inkStrong
+                    .applyTo(textes.bodyLarge ?? const TextStyle())
+                    .copyWith(
+                      fontWeight: (ligne.selectionnee ?? false)
+                          ? FontWeight.w600
+                          : null,
+                    ),
+              ),
+              if (ligne.pastille != null && ligne.pastilleSousLibelle != true)
+                ligne.pastille!,
+              if (ligne.valeur != null)
+                Text(
+                  ligne.valeur!,
+                  key: const ValueKey<String>('groupe-reglages-valeur'),
+                  style: styleSecondaire,
+                ),
+            ],
+          ),
         ),
         if (ligne.pastille != null &&
             ligne.pastilleSousLibelle == true) ...<Widget>[

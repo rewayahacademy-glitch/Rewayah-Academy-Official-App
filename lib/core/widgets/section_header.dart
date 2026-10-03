@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_typography.dart';
@@ -54,7 +55,14 @@ class SectionHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Flexible(
-          child: Text(titre, style: palette.surfaceCanvas.applyTo(styleTitre)),
+          // Texte agrandi : le titre ne coupe jamais un mot (« Accessibilit
+          // / e ») ; a l'echelle 1, un simple texte, sans mesure.
+          child: MediaQuery.textScalerOf(context).scale(1) > 1
+              ? TexteSansCoupure(
+                  titre,
+                  style: palette.surfaceCanvas.applyTo(styleTitre),
+                )
+              : Text(titre, style: palette.surfaceCanvas.applyTo(styleTitre)),
         ),
         if (compteur != null) ...<Widget>[
           Ecart.hSm,

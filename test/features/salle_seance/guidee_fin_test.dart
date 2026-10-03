@@ -24,6 +24,13 @@ import '../../capture/outil_capture.dart';
 
 void _rien() {}
 
+/// Le bouton du dock nomme [libelle]. MA-CMD-1 : a 390 et 640, la salle
+/// guidee pose ses commandes en icones seules (le nom est lu par le lecteur
+/// d'ecran et montre en infobulle) ; on cherche donc le bouton, pas un texte.
+Finder _bouton(String libelle) => find.byWidgetPredicate(
+  (Widget w) => w is BoutonAppel && w.libelle == libelle,
+);
+
 const ActionsSeance _actions = ActionsSeance(
   onRetour: _rien,
   onQuitter: _rien,
@@ -155,7 +162,7 @@ void main() {
           'Agrandir',
           'Quitter',
         ]) {
-          expect(find.text(bouton), findsOneWidget, reason: bouton);
+          expect(_bouton(bouton), findsOneWidget, reason: bouton);
         }
         expect(find.text('Micro'), findsNothing);
         expect(find.text('Parler'), findsNothing);
@@ -198,6 +205,10 @@ void main() {
     expect(find.text('Caméra allumée'), findsNothing);
     expect(find.text('Caméra éteinte'), findsNothing);
     expect(find.text('Micro ouvert'), findsOneWidget);
+    // Le bouton lui-meme (MA-CMD-1 : icones seules), par son mot d'etat.
+    expect(_bouton('Caméra allumée'), findsNothing);
+    expect(_bouton('Caméra éteinte'), findsNothing);
+    expect(_bouton('Micro ouvert'), findsOneWidget);
   });
 
   testWidgets('guidee : le point reste fixe pendant la visite', (

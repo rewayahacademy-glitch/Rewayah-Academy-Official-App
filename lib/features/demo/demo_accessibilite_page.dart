@@ -8,21 +8,27 @@
 // ecrans propres au mode arrivent de MA-2 a MA-8. Aucun port reseau n'est
 // modifie : aucun appel serveur (K-28).
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/mode_accessibilite.dart';
+import '../../core/accessibilite/port_demande_presentation.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/preferences/preferences_locales.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/session_controleur.dart';
+import '../../core/session/session_state.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/video/pre_vol.dart';
+import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
@@ -30,6 +36,7 @@ import '../../core/widgets/page_shell.dart';
 import '../accueil_eleve/accueil_accessibilite.dart';
 import '../accueil_eleve/apres_seance_accessibilite.dart';
 import '../accueil_eleve/coran_accessibilite.dart';
+import '../accueil_eleve/mon_espace_accessibilite.dart';
 import '../salle/preparation_eleve.dart';
 import '../salle/preparation_enseignant.dart' show ReseauPreparation;
 import '../salle_seance/vue_seance.dart' show RoleSeance;
@@ -98,11 +105,25 @@ String libelleMomentDemoAccessibilite(MomentDemoAccessibilite moment) =>
     };
 
 /// Les surcharges du Mode Accessibilite en demonstration.
-List<Override> surchargesAccessibiliteDemo() => <Override>[
-  surchargePresentationProvider.overrideWithValue(
-    DonneesAccessibiliteDemo.presentation,
-  ),
+List<Override> surchargesAccessibiliteDemo({
+  InterfaceMode presentation = DonneesAccessibiliteDemo.presentation,
+}) => <Override>[
+  surchargePresentationProvider.overrideWithValue(presentation),
+  // MA-8 : la page commune des reglages lit la session ; en demonstration,
+  // une session eleve fictive, resolue tout de suite, sans serveur.
+  sessionProvider.overrideWith(_SessionEleveDemo.new),
 ];
+
+/// La session eleve fictive de la demonstration (aucun serveur).
+class _SessionEleveDemo extends SessionControleur {
+  @override
+  SessionState build() => const SessionState(
+    resolue: true,
+    role: AppRole.student,
+    accountStatus: AccountStatus.active,
+    lectureProfil: LectureProfil.presente,
+  );
+}
 
 /// La page : la liste des situations, ou l'ecran de la situation choisie.
 class DemoAccessibilitePage extends StatelessWidget {
@@ -169,7 +190,7 @@ class DemoAccessibilitePage extends StatelessWidget {
 /// classe. Les autres destinations restent dans la demonstration (aucune
 /// route reelle, aucun serveur). MA-3 : l'Accueil du mode
 /// (`AccueilAccessibilite`) ; MA-7 : le Coran (`CoranAccessibilite`) ;
-/// Mon espace arrive en MA-8. Pendant la seance, aucune
+/// MA-8 : Mon espace (`MonEspaceAccessibilite`). Pendant la seance, aucune
 /// navigation d'app (MA17, MA20).
 class EcranAccessibiliteDemo extends StatefulWidget {
   /// Cree l'ecran.
@@ -179,8 +200,14 @@ class EcranAccessibiliteDemo extends StatefulWidget {
     this.destinationInitiale = indexMaClasse,
     this.etapeInitiale = EtapeDemoAccessibilite.classe,
     this.surchargesCoran,
+    this.portDemande = const PortDemandePresentationDemo(),
     super.key,
   });
+
+  /// MA-8 : le port de la demande de presentation standard du mineur ; en
+  /// demonstration, le port neutre (aucun serveur). Les tests y posent un
+  /// envoi non confirme.
+  final PortDemandePresentation portDemande;
 
   /// MA-7 : le corpus et la navigation du Coran ; nul en demonstration
   /// (aucun serveur, lecteur dans son etat « indisponible »). Les tests et
@@ -218,8 +245,31 @@ class EcranAccessibiliteDemo extends StatefulWidget {
 class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
   late int _index = widget.destinationInitiale;
 
+  /// MA-8 : la presentation de la demonstration. L'adulte la bascule depuis
+  /// Mon espace (MA24) ; rien n'est envoye (BR-1).
+  InterfaceMode _presentation = DonneesAccessibiliteDemo.presentation;
+
   /// Vrai quand le Suivi est ouvert depuis Ma classe (MA-4).
   bool _suivi = false;
+
+  /// MA14 : la page d'aide honnete. Aucun canal n'est publie : elle le dit,
+  /// avec les textes existants de l'aide du compte, sans bouton qui ne
+  /// menerait nulle part. Le retour ramene a Mon espace.
+  Future<void> _ouvrirAide(BuildContext context) =>
+      Navigator.of(context).push<void>(
+        MaterialPageRoute<void>(
+          builder: (BuildContext contexte) => PageShell(
+            key: const ValueKey<String>('demo-aide'),
+            titre: t.compte.tuteur.pageAide.titre,
+            onRetour: () => Navigator.of(contexte).pop(),
+            child: EtatSysteme(
+              nature: NatureEtat.aucunResultat,
+              titre: t.compte.tuteur.pageAide.indisponibleTitre,
+              phrase: t.compte.tuteur.pageAide.aucunCanal,
+            ),
+          ),
+        ),
+      );
 
   void _aller(int index) => setState(() {
     _index = index;
@@ -350,9 +400,10 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
       role: AppRole.student,
       mode: InterfaceMode.standard,
     );
+    // MA-8 : la presentation suit la bascule de demonstration.
     final List<Destination> visibles = destinationsPour(
       role: AppRole.student,
-      mode: DonneesAccessibiliteDemo.presentation,
+      mode: _presentation,
     );
     final Widget contenu = _etape == EtapeDemoAccessibilite.salle
         ? _salle()
@@ -433,11 +484,34 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
                             widget.eleve,
                           ),
                           lectureGrande: grande,
+                          // Sans surcharge, aucun texte du Coran n'est
+                          // charge : l'ecran le dit (revue MA-7, K-59).
+                          demonstration: widget.surchargesCoran == null,
                           onAide: () =>
                               _aller(EcranAccessibiliteDemo.indexMonEspace),
                         ),
                       );
                     },
+                  )
+                : _index == EcranAccessibiliteDemo.indexMonEspace
+                ? MonEspaceAccessibilite(
+                    key: const ValueKey<String>('demo-mon-espace'),
+                    prenom: DonneesAccessibiliteDemo.prenom(widget.eleve),
+                    modeActif: _presentation == InterfaceMode.enfant,
+                    onAide: () => unawaited(_ouvrirAide(context)),
+                    // Le mineur lit l'etat et peut demander la presentation
+                    // standard a son tuteur (S7 = b, port neutre) ; l'adulte
+                    // bascule (demonstration).
+                    portDemande: DonneesAccessibiliteDemo.mineur(widget.eleve)
+                        ? widget.portDemande
+                        : null,
+                    onBasculer: DonneesAccessibiliteDemo.mineur(widget.eleve)
+                        ? null
+                        : (bool actif) => setState(
+                            () => _presentation = actif
+                                ? InterfaceMode.enfant
+                                : InterfaceMode.standard,
+                          ),
                   )
                 : PageShell(
                     key: ValueKey<String>('demo-destination-$_index'),
@@ -451,12 +525,9 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
     // `AppTheme.pour` existant, sans aucune couleur nouvelle (K-37).
     return ProviderScope(
       key: ValueKey<String>('${widget.eleve.name}-${widget.moment.name}'),
-      overrides: surchargesAccessibiliteDemo(),
+      overrides: surchargesAccessibiliteDemo(presentation: _presentation),
       child: Theme(
-        data: AppTheme.pour(
-          DonneesAccessibiliteDemo.presentation,
-          Theme.of(context).brightness,
-        ),
+        data: AppTheme.pour(_presentation, Theme.of(context).brightness),
         child: contenu,
       ),
     );

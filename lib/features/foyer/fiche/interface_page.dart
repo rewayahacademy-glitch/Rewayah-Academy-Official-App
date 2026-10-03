@@ -116,22 +116,24 @@ class _ChoixInterfaceState extends ConsumerState<_ChoixInterface> {
             child: ChoiceCardGroup(
               key: ValueKey<(InterfaceMode, int)>((profil.mode, _generation)),
               autoriserSaisieLibre: false,
-              valeurInitiale: ReponseChoix(
-                valeurs: <String>{profil.mode.name},
-              ),
+              valeurInitiale: ReponseChoix(valeurs: <String>{profil.mode.name}),
               options: <OptionChoix>[
                 OptionChoix(
                   valeur: InterfaceMode.enfant.name,
                   libelle: t.ficheEleve.interface.guidee,
                   icone: AppIcons.focus,
-                  description: t.ficheEleve.interface.guideeDescription,
+                  description: t.ficheEleve.interface.guideeDescription(
+                    prenom: profil.prenom,
+                  ),
                   disponible: !horsLigne,
                 ),
                 OptionChoix(
                   valeur: InterfaceMode.standard.name,
                   libelle: t.ficheEleve.interface.standard,
                   icone: AppIcons.tabletteOuOrdinateur,
-                  description: t.ficheEleve.interface.standardDescription,
+                  description: t.ficheEleve.interface.standardDescription(
+                    prenom: profil.prenom,
+                  ),
                   disponible: !horsLigne,
                 ),
               ],
@@ -163,7 +165,7 @@ class _ChoixInterfaceState extends ConsumerState<_ChoixInterface> {
               child: Text(
                 _enCours
                     ? t.ficheEleve.interface.enCours
-                    : t.ficheEleve.interface.echec,
+                    : t.ficheEleve.interface.echec(prenom: profil.prenom),
                 style: (_echec ? palette.inkAlert : palette.inkMuted).applyTo(
                   textes.bodyMedium ?? const TextStyle(),
                 ),

@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/tc_classe/roster_classe_vm.dart';
@@ -69,11 +69,10 @@ void main() {
       if (t.data case final String texte) texte,
     for (final Semantics s in tester.widgetList<Semantics>(
       find.byType(Semantics),
-    ))
-      ...<String>[
-        if (s.properties.label case final String etiquette) etiquette,
-        if (s.properties.value case final String valeur) valeur,
-      ],
+    )) ...<String>[
+      if (s.properties.label case final String etiquette) etiquette,
+      if (s.properties.value case final String valeur) valeur,
+    ],
   ];
 
   void aucunInterdit(List<String> mots) {
@@ -207,7 +206,7 @@ void main() {
     testWidgets('aucune UI n ecrit « mode enfant »', (
       WidgetTester tester,
     ) async {
-      // Decision D-07 : le nom visible est « Interface guidée ». La valeur SQL
+      // Decision D-07, puis MA-9 : le nom visible est « Mode Accessibilité ». La valeur SQL
       // reste `'child'`, et ce n'est pas un renommage de donnee.
       const TeacherStudentProjection fiche = TeacherStudentProjection(
         firstName: 'Ilyas',
@@ -231,7 +230,18 @@ void main() {
 
       final String tout = motsRendus(tester).join(' | ').toLowerCase();
       expect(tout.contains('mode enfant'), isFalse);
-      expect(tout.contains('interface guidée'), isTrue);
+      // MA-9 (Q6, 27/09) : libelle neutre « Mode Accessibilité », sans
+      // raison ni diagnostic ni age.
+      expect(tout.contains('mode accessibilité'), isTrue);
+      expect(tout.contains('interface guidée'), isFalse);
+      for (final String interdit in <String>[
+        'handicap',
+        'diagnostic',
+        'trouble',
+        ' ans',
+      ]) {
+        expect(tout.contains(interdit), isFalse, reason: interdit);
+      }
     });
   });
 }

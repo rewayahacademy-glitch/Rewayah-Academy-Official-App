@@ -133,9 +133,13 @@ void main() {
     await tester.ensureVisible(coran);
     await tester.tap(coran);
     await stabiliser(tester);
-    // MA-NAV-1 : le Coran n'est plus une destination de la barre du Mode
-    // Accessibilite ; l'Accueil y mene, et aucune destination n'est surlignee.
-    expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, isNull);
+    // MA-CMD-1 (decision deleguee du 02/10) : le Coran reste une destination
+    // de la barre du Mode Accessibilite ; ouvert depuis l'Accueil, il y est
+    // surligne.
+    expect(
+      tester.widget<NavShell>(find.byType(NavShell)).indexActif,
+      EcranAccessibiliteDemo.indexCoran,
+    );
     expect(find.text(t.accessibilite.accueil.lireCoran), findsNothing);
     expect(tester.takeException(), isNull);
   });

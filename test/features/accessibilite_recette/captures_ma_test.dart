@@ -5,27 +5,50 @@
 // `captures_en_test.dart`. Sortie en un sous-dossier par ecran.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/accessibilite/commandes_masquables.dart';
 import 'package:rewayah_academy/core/coran/service_coran.dart'
     show PositionLecture;
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
+import 'package:rewayah_academy/core/router/app_router.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_coran/corpus_service_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/layout_lignes_indisponible.dart';
 import 'package:rewayah_academy/core/tc_coran/navigation_coran.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
+import 'package:rewayah_academy/features/foyer/foyer_page.dart';
+import 'package:rewayah_academy/features/tc_classe_live/fiche_seance.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../fixtures/tuteur/foyers.dart';
+import '../../router/support_routeur.dart' hide stabiliser;
+import '../../support/harnais.dart';
 import '../../teaching_core/c/faux/faux_corpus_coran.dart';
 import '../../teaching_core/c/goldens/corpus_reference.dart';
+import '../../teaching_core/e/faux/faux_classe.dart';
+import '../../teaching_core/e/support/hote_classe.dart';
 
 const List<(String, Size)> _tailles = <(String, Size)>[
   ('390', Size(390, 1900)),
   ('768', Size(768, 1500)),
   ('1440', Size(1440, 1100)),
+];
+
+/// MA-7 (revue) : le lecteur se juge a la hauteur reelle d'un ecran, pas
+/// sur une planche allongee : les commandes doivent y etre visibles.
+const List<(String, Size)> _ecransReels = <(String, Size)>[
+  ('390', Size(390, 844)),
+  ('768', Size(768, 1024)),
+  ('1440', Size(1440, 900)),
 ];
 
 const List<ThemeMode> _themes = <ThemeMode>[ThemeMode.light, ThemeMode.dark];
@@ -40,8 +63,12 @@ Future<void> _capturer(
   ThemeMode mode = ThemeMode.light,
   double echelle = 1,
   bool reduit = false,
+  bool rtl = false,
 }) async {
   fixerVueCapture(tester, taille, 1);
+  if (rtl) {
+    ecran = Directionality(textDirection: TextDirection.rtl, child: ecran);
+  }
   await tester.pumpWidget(
     hoteCapture(
       reduit
@@ -62,6 +89,37 @@ Future<void> _capturer(
 }
 
 void main() {
+  // MA-12 : l'ecriture de droite a gauche (structure, texte reste francais).
+  group('Capture MA-12 : RTL', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    const Map<String, EcranAccessibiliteDemo> ecrans =
+        <String, EcranAccessibiliteDemo>{
+          'accueil_mariam': EcranAccessibiliteDemo(
+            eleve: EleveDemoAccessibilite.mariam,
+          ),
+          'ma_classe_idriss': EcranAccessibiliteDemo(
+            eleve: EleveDemoAccessibilite.idriss,
+            destinationInitiale: EcranAccessibiliteDemo.indexMaClasse,
+          ),
+          'salle_mariam': EcranAccessibiliteDemo(
+            eleve: EleveDemoAccessibilite.mariam,
+            moment: MomentDemoAccessibilite.fenetre,
+            etapeInitiale: EtapeDemoAccessibilite.salle,
+          ),
+        };
+    for (final MapEntry<String, EcranAccessibiliteDemo> e in ecrans.entries) {
+      testWidgets('rtl_${e.key}', (WidgetTester tester) async {
+        await _capturer(
+          tester,
+          'ma12/ma12_rtl_${e.key}_390_light',
+          e.value,
+          const Size(390, 844),
+          rtl: true,
+        );
+      });
+    }
+  });
+
   // -------------------------------------------------------------------
   // Socle (MA-1b) : la liste de la demonstration et l'ecran de Mariam.
   // -------------------------------------------------------------------
@@ -401,9 +459,24 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
       debugPrint('PNG ${await capturer(tester, fichier)}');
+      // Finition MA-CMD-1 : commandes masquees, la barre du bas s'efface
+      // avec elles ; la part de l'ecran laissee au Coran est relevee.
+      await tester.pump(CommandesMasquables.delaiParDefaut);
+      await tester.pump(const Duration(seconds: 1));
+      final double ecranHauteur =
+          tester.view.physicalSize.height / tester.view.devicePixelRatio;
+      final double coran = tester
+          .getSize(find.byType(CommandesMasquables))
+          .height;
+      debugPrint(
+        'CORAN $fichier masque : ${coran.toStringAsFixed(0)} / '
+        '${ecranHauteur.toStringAsFixed(0)} = '
+        '${(coran / ecranHauteur * 100).toStringAsFixed(1)} %',
+      );
+      debugPrint('PNG ${await capturer(tester, '${fichier}_masque')}');
     }
 
-    for (final (String l, Size taille) in _tailles) {
+    for (final (String l, Size taille) in _ecransReels) {
       for (final ThemeMode mode in _themes) {
         testWidgets('coran_${l}_${mode.name}', (WidgetTester tester) async {
           await _capturer(
@@ -428,15 +501,224 @@ void main() {
         const Size(390, 1900),
       );
     });
+    // Revue MA-7 (3) : la demonstration sans texte du Coran dit la vraie
+    // cause, sans « Reessayer » (Idriss, adulte : vouvoiement).
+    testWidgets('coran_demo_sans_texte_390_light', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma7/ma7_coran_demo_sans_texte_idriss_390_light',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.idriss,
+          destinationInitiale: EcranAccessibiliteDemo.indexCoran,
+        ),
+        const Size(390, 844),
+      );
+      await tester.tap(
+        find.byKey(const ValueKey<String>('coran-ma-principale')),
+      );
+      await stabiliser(tester);
+      debugPrint(
+        'PNG ${await capturer(tester, 'ma7/ma7_coran_demo_sans_texte_lecteur_idriss_390_light')}',
+      );
+    });
     testWidgets('coran_390_light_texte200', (WidgetTester tester) async {
       await _capturer(
         tester,
         'ma7/ma7_coran_mariam_390_light_texte200',
         ecran(EleveDemoAccessibilite.mariam),
-        const Size(390, 1900),
+        const Size(390, 844),
         echelle: 2,
       );
       await ouvrir(tester, 'ma7/ma7_coran_lecteur_mariam_390_light_texte200');
     });
   });
+
+  // -------------------------------------------------------------------
+  // MA-8 : Mon espace (Mariam : demande au tuteur ; Idriss : bascule ;
+  // texte a 200 %).
+  // -------------------------------------------------------------------
+  group('Capture MA-8 : Mon espace', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final EleveDemoAccessibilite eleve in EleveDemoAccessibilite.values) {
+      for (final ThemeMode mode in _themes) {
+        testWidgets('mon_espace_${eleve.name}_390_${mode.name}', (
+          WidgetTester tester,
+        ) async {
+          await _capturer(
+            tester,
+            'ma8/ma8_mon_espace_${eleve.name}_390_${mode.name}',
+            EcranAccessibiliteDemo(
+              eleve: eleve,
+              destinationInitiale: EcranAccessibiliteDemo.indexMonEspace,
+            ),
+            const Size(390, 3000),
+            mode: mode,
+          );
+        });
+      }
+    }
+    testWidgets('mon_espace_mariam_1440_light', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma8/ma8_mon_espace_mariam_1440_light',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+          destinationInitiale: EcranAccessibiliteDemo.indexMonEspace,
+        ),
+        const Size(1440, 2200),
+      );
+    });
+    testWidgets('mon_espace_mariam_768_light', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma8/ma8_mon_espace_mariam_768_light',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+          destinationInitiale: EcranAccessibiliteDemo.indexMonEspace,
+        ),
+        const Size(768, 2400),
+      );
+    });
+    testWidgets('mon_espace_mariam_1440_dark', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma8/ma8_mon_espace_mariam_1440_dark',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+          destinationInitiale: EcranAccessibiliteDemo.indexMonEspace,
+        ),
+        const Size(1440, 2200),
+        mode: ThemeMode.dark,
+      );
+    });
+    testWidgets('mon_espace_390_light_texte200', (WidgetTester tester) async {
+      await _capturer(
+        tester,
+        'ma8/ma8_mon_espace_mariam_390_light_texte200',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+          destinationInitiale: EcranAccessibiliteDemo.indexMonEspace,
+        ),
+        const Size(390, 6000),
+        echelle: 2,
+      );
+    });
+    // MA-RC (B1) : la hauteur reelle d'un telephone, la tete defile.
+    testWidgets('mon_espace_390x844_light_texte200', (
+      WidgetTester tester,
+    ) async {
+      await _capturer(
+        tester,
+        'ma8/marc_mon_espace_mariam_390x844_light_texte200',
+        const EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+          destinationInitiale: EcranAccessibiliteDemo.indexMonEspace,
+        ),
+        const Size(390, 844),
+        echelle: 2,
+      );
+    });
+  });
+
+  // -------------------------------------------------------------------
+  // MA-9 : la page « Interface » du tuteur (vrai routeur, coquille
+  // tuteur) et la fiche de seance de l'enseignant (libelle neutre, Q6).
+  // -------------------------------------------------------------------
+  group('Capture MA-9 : tuteur et enseignant', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String l, Size taille) in <(String, Size)>[
+      ('390', const Size(390, 1100)),
+      ('768', const Size(768, 1024)),
+      ('1440', const Size(1440, 900)),
+    ]) {
+      for (final ThemeMode mode in _themes) {
+        testWidgets('interface_${l}_${mode.name}', (WidgetTester tester) async {
+          fixerVueCapture(tester, taille, 1);
+          await tester.pumpWidget(_appTuteur(mode));
+          await stabiliser(tester);
+          _routeurMa9.go(
+            Routes.ficheEleveSousPage(FoyersFictifs.a1.id, 'interface'),
+          );
+          await stabiliser(tester);
+          debugPrint(
+            'PNG ${await capturer(tester, 'ma9/ma9_interface_tuteur_${l}_${mode.name}')}',
+          );
+        });
+        testWidgets('fiche_seance_${l}_${mode.name}', (
+          WidgetTester tester,
+        ) async {
+          fixerVueCapture(tester, taille, 1);
+          await tester.pumpWidget(
+            hoteCapture(
+              const Scaffold(
+                body: Align(
+                  alignment: Alignment.topCenter,
+                  child: SizedBox(
+                    width: 420,
+                    child: Padding(
+                      padding: EdgeInsets.all(24),
+                      child: FicheSeance(
+                        eleve: TeacherStudentProjection(
+                          firstName: 'Ilyas',
+                          academyId: 'RA-CD0044',
+                          liveStatus: EtatPresenceProjete.present,
+                          interfaceGuidee: true,
+                          level: 'Debutant',
+                        ),
+                        sessionId: 's1',
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              themeMode: mode,
+              surcharges: surchargesClasse(
+                moteur: FauxMoteurClasse(),
+                video: FauxServiceVideoClasse(),
+                preVol: FauxPreVolClasse(),
+                rappel: FauxRappelDiscret(),
+              ),
+            ),
+          );
+          await stabiliser(tester);
+          debugPrint(
+            'PNG ${await capturer(tester, 'ma9/ma9_fiche_seance_${l}_${mode.name}')}',
+          );
+        });
+      }
+    }
+  });
 }
+
+late GoRouter _routeurMa9;
+
+/// L'application du tuteur sur le vrai routeur (coquille comprise).
+Widget _appTuteur(ThemeMode mode) => ProviderScope(
+  overrides: <Override>[
+    ...surchargesRouteur(
+      FausseSourceSession(sessionActive(AppRole.guardian)),
+      appairage: FauxServiceAppairage()..elevesRendus = FoyersFictifs.foyerA,
+    ),
+    horlogeFoyerProvider.overrideWithValue(() => DateTime(2026, 9, 24, 12)),
+  ],
+  child: TranslationProvider(
+    child: RepaintBoundary(
+      key: cadreCapture,
+      child: Consumer(
+        builder: (BuildContext context, WidgetRef ref, Widget? _) {
+          _routeurMa9 = ref.read(routeurProvider);
+          return MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+            darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+            themeMode: mode,
+            locale: TranslationProvider.of(context).flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            routerConfig: _routeurMa9,
+          );
+        },
+      ),
+    ),
+  ),
+);

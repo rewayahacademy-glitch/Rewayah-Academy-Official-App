@@ -1,6 +1,9 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../accessibilite/effacement_barre_basse.dart';
 import '../accessibilite/texte_sans_coupure.dart';
 import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
@@ -70,10 +73,10 @@ class Destination {
 /// depuis Ma classe), Mon espace a `/compte`. Le parametre [mode] reste pour
 /// les autres roles et la signature ; il ne change plus rien a l'eleve.
 ///
-/// **MA-NAV-1 (02/10/2026), qui remplace les quatre destinations des deux
-/// presentations de MA-2** (demande explicite du directeur, plus recente) : en
-/// Mode Accessibilite la barre ne garde que les destinations
-/// [Destination.essentielle]. L'arborescence et les routes ne changent pas :
+/// **MA-NAV-1 (02/10/2026)** : en Mode Accessibilite la barre ne garde que
+/// les destinations [Destination.essentielle] ; pour l'eleve les quatre le
+/// sont (MA-CMD-1 : le Coran reste dans la barre, decision deleguee du
+/// 02/10). L'arborescence et les routes ne changent pas :
 /// seule la liste montree est plus courte. Pour retrouver la branche du
 /// routeur d'une destination, on lit la liste **complete**
 /// (`destinationsPour(mode: InterfaceMode.standard)`), jamais l'index de la
@@ -105,9 +108,9 @@ List<Destination> destinationsPour({
         libelle: t.nav.eleve.coran,
         icone: AppIcons.coran,
         chemin: Routes.eleveCoran,
-        // MA-NAV-1 : hors de la barre du Mode Accessibilite, atteint par le
-        // bloc Coran permanent de l'Accueil.
-        essentielle: false,
+        // MA-CMD-1 (02/10/2026) : le Coran RESTE dans la barre du Mode
+        // Accessibilite (4 destinations ; DECISIONS_DELEGUEES_2026-10-02,
+        // MA-NAV-1) ; de MA-NAV-1 seule la presentation est reportee.
       ),
       Destination(
         libelle: t.nav.eleve.monEspace,
@@ -424,31 +427,12 @@ class NavShell extends StatelessWidget {
       if (masquerBarreBasse) {
         return child;
       }
-      final AppPalette palette = AppPalette.of(context);
-      return ColoredBox(
-        // Le fond de page passe sous la barre flottante et autour d'elle.
-        color: palette.surfaceCanvas.background,
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: MediaQuery.removePadding(
-                context: context,
-                removeBottom: true,
-                child: child,
-              ),
-            ),
-            MediaQuery.removePadding(
-              context: context,
-              removeTop: true,
-              child: _BarreFlottante(
-                guide: guide(context),
-                destinations: destinations,
-                indexActif: indexActif,
-                onAller: onAller,
-              ),
-            ),
-          ],
-        ),
+      return _CoquilleBarreBasse(
+        guide: guide(context),
+        destinations: destinations,
+        indexActif: indexActif,
+        onAller: onAller,
+        child: child,
       );
     }
 
@@ -462,6 +446,87 @@ class NavShell extends StatelessWidget {
       libellesDansLeRail: libellesDansLeRail,
       guide: guide(context),
       child: child,
+    );
+  }
+}
+
+/// Le contenu et la barre basse flottante, sur telephone.
+///
+/// MA-CMD-1 (finition, 02/10/2026) : la coquille pose un
+/// [ControleurBarreBasse] ; pendant la lecture du Coran en Mode
+/// Accessibilite, `CommandesMasquables(effacerBarreBasse: true)` y signale
+/// que ses commandes se sont masquees, et la barre s'efface avec elles pour
+/// rendre sa hauteur au Coran. Elle revient a la meme touche, et des que le
+/// lecteur se ferme. Aucun autre ecran ne la pilote : partout ailleurs elle
+/// reste ou elle est.
+class _CoquilleBarreBasse extends StatefulWidget {
+  const _CoquilleBarreBasse({
+    required this.guide,
+    required this.destinations,
+    required this.indexActif,
+    required this.onAller,
+    required this.child,
+  });
+
+  final bool guide;
+  final List<Destination> destinations;
+  final int? indexActif;
+  final void Function(String chemin) onAller;
+  final Widget child;
+
+  @override
+  State<_CoquilleBarreBasse> createState() => _CoquilleBarreBasseEtat();
+}
+
+class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
+  final ControleurBarreBasse _controleur = ControleurBarreBasse();
+
+  @override
+  void dispose() {
+    _controleur.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    // Le contenu garde son identite quand la barre s'efface : seul son
+    // encart bas change.
+    final Widget contenu = EffacementBarreBasse(
+      controleur: _controleur,
+      child: widget.child,
+    );
+    return ColoredBox(
+      // Le fond de page passe sous la barre flottante et autour d'elle.
+      color: palette.surfaceCanvas.background,
+      child: ValueListenableBuilder<bool>(
+        valueListenable: _controleur,
+        child: contenu,
+        builder: (BuildContext context, bool effacee, Widget? contenu) {
+          return Column(
+            children: <Widget>[
+              Expanded(
+                child: MediaQuery.removePadding(
+                  context: context,
+                  removeBottom: !effacee,
+                  child: contenu!,
+                ),
+              ),
+              if (!effacee)
+                MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  child: _BarreFlottante(
+                    guide: widget.guide,
+                    destinations: widget.destinations,
+                    indexActif: widget.indexActif,
+                    onAller: widget.onAller,
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
     );
   }
 }
@@ -492,56 +557,97 @@ class _BarreFlottante extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = _metriques(context);
 
+    // MA-CMD-1 : quatre onglets de 72 doivent tenir a 320 ; marges et ecarts
+    // se resserrent alors (le Coran reste dans la barre).
+    final bool serre = destinations.length >= 4;
+    final double ecart = serre ? AppSpacing.xs : AppSpacing.sm;
+
     return KeyedSubtree(
       key: NavShell.barreBasseKey,
       child: SafeArea(
         top: false,
         minimum: const EdgeInsets.only(bottom: AppSpacing.md),
-        child: Padding(
-          // Guide : marges laterales de 8 au lieu de 12, pour que les libelles
-          // agrandis gardent leur largeur.
-          padding: EdgeInsetsDirectional.fromSTEB(
-            guide ? AppSpacing.sm : AppSpacing.md,
-            AppSpacing.sm,
-            guide ? AppSpacing.sm : AppSpacing.md,
-            0,
+        child: LayoutBuilder(
+          builder: (BuildContext contexte, BoxConstraints c) {
+            // INTEG-RC-1 : quatre onglets a 320 dont chaque mot garde ses 4
+            // de chaque cote (MA-NAV-1) ne laissent plus de place a la marge
+            // laterale ; elle tombe alors a zero, et seulement alors.
+            double margeGuide = serre ? AppSpacing.xs : AppSpacing.sm;
+            if (guide && serre && c.maxWidth.isFinite) {
+              final double besoin =
+                  _minimumsOnglets(
+                    contexte,
+                    metriques,
+                  ).fold<double>(0, (double a, double b) => a + b) +
+                  ecart * (destinations.length - 1);
+              if (c.maxWidth - 2 * margeGuide < besoin) margeGuide = 0;
+            }
+            return _cadre(contexte, palette, metriques, margeGuide, ecart);
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _cadre(
+    BuildContext context,
+    AppPalette palette,
+    AppMetriques metriques,
+    double margeGuide,
+    double ecart,
+  ) {
+    final bool serre = destinations.length >= 4;
+    return Padding(
+      // Guide : marges laterales de 8 au lieu de 12, pour que les libelles
+      // agrandis gardent leur largeur.
+      padding: EdgeInsetsDirectional.fromSTEB(
+        guide ? margeGuide : AppSpacing.md,
+        AppSpacing.sm,
+        guide ? margeGuide : AppSpacing.md,
+        0,
+      ),
+      child: Semantics(
+        container: true,
+        explicitChildNodes: true,
+        label: t.nav.principale,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: palette.surfaceRaised.background,
+            borderRadius: guide ? metriques.arrondi : AppRadius.arrondiMd,
+            // Guide : contour franc (`borderStrong`) a la place du filet
+            // de carte, pour que la barre se detache du fond.
+            border: Border.fromBorderSide(
+              guide
+                  ? palette.borderStrong.asBorderSide(
+                      width: NavShell.epaisseurContourGuide,
+                    )
+                  : palette.contourCarte.asBorderSide(),
+            ),
+            boxShadow: AppElevation.niveau1(palette.ombre),
           ),
-          child: Semantics(
-            container: true,
-            explicitChildNodes: true,
-            label: t.nav.principale,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: palette.surfaceRaised.background,
-                borderRadius: guide ? metriques.arrondi : AppRadius.arrondiMd,
-                // Guide : contour franc (`borderStrong`) a la place du filet
-                // de carte, pour que la barre se detache du fond.
-                border: Border.fromBorderSide(
-                  guide
-                      ? palette.borderStrong.asBorderSide(
-                          width: NavShell.epaisseurContourGuide,
-                        )
-                      : palette.contourCarte.asBorderSide(),
-                ),
-                boxShadow: AppElevation.niveau1(palette.ombre),
-              ),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: guide
-                      ? metriques.cibleTactile + AppSpacing.xl
-                      : NavShell.hauteurBarre,
-                ),
-                // Guide : la hauteur de la barre suit le libelle, qui passe a la
-                // ligne sans ellipse, plafonne par `echelleTexteMaxGuide`.
-                child: guide
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.xs,
-                          vertical: AppSpacing.sm,
-                        ),
-                        child: MediaQuery.withClampedTextScaling(
-                          maxScaleFactor: NavShell.echelleTexteMaxGuide,
-                          child: IntrinsicHeight(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: guide
+                  ? metriques.cibleTactile + AppSpacing.xl
+                  : NavShell.hauteurBarre,
+            ),
+            // Guide : la hauteur de la barre suit le libelle, qui passe a la
+            // ligne sans ellipse, plafonne par `echelleTexteMaxGuide`.
+            child: guide
+                ? Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: serre ? 0 : AppSpacing.xs,
+                      vertical: AppSpacing.sm,
+                    ),
+                    child: MediaQuery.withClampedTextScaling(
+                      maxScaleFactor: NavShell.echelleTexteMaxGuide,
+                      child: LayoutBuilder(
+                        builder: (BuildContext contexte, BoxConstraints c) {
+                          final List<double>? largeurs = _largeursOnglets(
+                            _minimumsOnglets(contexte, metriques),
+                            c.maxWidth - ecart * (destinations.length - 1),
+                          );
+                          return IntrinsicHeight(
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: <Widget>[
@@ -550,9 +656,13 @@ class _BarreFlottante extends StatelessWidget {
                                   i < destinations.length;
                                   i++
                                 ) ...<Widget>[
-                                  if (i > 0) Ecart.hSm,
-                                  Expanded(
-                                    child: _OngletBarreGuide(
+                                  if (i > 0) SizedBox(width: ecart),
+                                  _part(
+                                    largeurs == null ||
+                                            i == destinations.length - 1
+                                        ? null
+                                        : largeurs[i],
+                                    _OngletBarreGuide(
                                       destination: destinations[i],
                                       actif: i == indexActif,
                                       onAller: onAller,
@@ -561,30 +671,101 @@ class _BarreFlottante extends StatelessWidget {
                                 ],
                               ],
                             ),
-                          ),
-                        ),
-                      )
-                    : MediaQuery.withClampedTextScaling(
-                        maxScaleFactor: NavShell.echelleTexteMaxBarre,
-                        child: Row(
-                          children: <Widget>[
-                            for (int i = 0; i < destinations.length; i++)
-                              Expanded(
-                                child: _OngletBarre(
-                                  destination: destinations[i],
-                                  actif: i == indexActif,
-                                  onAller: onAller,
-                                ),
-                              ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
-              ),
-            ),
+                    ),
+                  )
+                : MediaQuery.withClampedTextScaling(
+                    maxScaleFactor: NavShell.echelleTexteMaxBarre,
+                    child: Row(
+                      children: <Widget>[
+                        for (int i = 0; i < destinations.length; i++)
+                          Expanded(
+                            child: _OngletBarre(
+                              destination: destinations[i],
+                              actif: i == indexActif,
+                              onAller: onAller,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
           ),
         ),
       ),
     );
+  }
+
+  /// Un onglet de largeur fixe [largeur], ou qui prend le reste (nulle).
+  static Widget _part(double? largeur, Widget onglet) => largeur == null
+      ? Expanded(child: onglet)
+      : SizedBox(width: largeur, child: onglet);
+
+  /// Les largeurs des onglets du Mode Accessibilite dans [disponible] (ecarts
+  /// deja retires), ou nul pour des parts egales.
+  ///
+  /// INTEG-RC-1 : avec quatre onglets a 320 (Coran garde dans la barre,
+  /// MA-CMD-1), des parts egales ne laissaient pas a « Accueil » ses 4 de
+  /// chaque cote (MA-NAV-1). Chaque onglet recoit donc son minimum
+  /// ([_minimumsOnglets]), puis une part egale du reste. Si ces minimums ne
+  /// tiennent pas, parts egales.
+  List<double>? _largeursOnglets(List<double> minimums, double disponible) {
+    if (!disponible.isFinite) return null;
+    final double somme = minimums.fold<double>(
+      0,
+      (double a, double b) => a + b,
+    );
+    if (somme > disponible) return null;
+    final double reste = (disponible - somme) / minimums.length;
+    return <double>[for (final double m in minimums) m + reste];
+  }
+
+  /// La largeur minimale de chaque onglet du Mode Accessibilite : la cible
+  /// tactile, ou son mot le plus long a l'echelle 1 plus 4 de chaque cote
+  /// ([TexteSansCoupure] ne descend jamais sous 1).
+  List<double> _minimumsOnglets(BuildContext context, AppMetriques metriques) {
+    final double facteur = MediaQuery.textScalerOf(context).scale(1);
+    final TextStyle style = DefaultTextStyle.of(context).style.merge(
+      AppTypography.graisse(
+        Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
+        FontWeight.w700,
+      ),
+    );
+    return <double>[
+      for (final Destination d in destinations)
+        math.max(
+          metriques.cibleTactile,
+          _motLePlusLong(
+                context,
+                d.libelle,
+                style,
+                TextScaler.linear(math.min(facteur, 1)),
+              ) +
+              2 * AppSpacing.xs,
+        ),
+    ];
+  }
+
+  static double _motLePlusLong(
+    BuildContext context,
+    String texte,
+    TextStyle style,
+    TextScaler echelle,
+  ) {
+    double max = 0;
+    for (final String mot in texte.split(RegExp(r'\s+'))) {
+      if (mot.isEmpty) continue;
+      final TextPainter p = TextPainter(
+        text: TextSpan(text: mot, style: style),
+        textDirection: Directionality.of(context),
+        textScaler: echelle,
+        maxLines: 1,
+      )..layout();
+      if (p.width > max) max = p.width;
+      p.dispose();
+    }
+    return max;
   }
 }
 

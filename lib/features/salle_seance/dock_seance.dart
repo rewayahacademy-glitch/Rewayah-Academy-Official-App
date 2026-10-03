@@ -8,6 +8,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_color_pair.dart';
@@ -330,9 +331,12 @@ class DockSeance extends StatelessWidget {
         key: const ValueKey<String>('dock-seance'),
         decoration: cadre,
         child: Padding(
-          padding: const EdgeInsets.symmetric(
+          // MA-CMD-1 : dock plus mince en Mode Accessibilite.
+          padding: EdgeInsets.symmetric(
             horizontal: AppSpacing.sm,
-            vertical: AppSpacing.md,
+            vertical: AppMetriques.of(context).mode == InterfaceMode.enfant
+                ? AppSpacing.xs
+                : AppSpacing.md,
           ),
           child: LayoutBuilder(
             builder: (BuildContext contexte, BoxConstraints contraintes) {
@@ -351,10 +355,20 @@ class DockSeance extends StatelessWidget {
               final bool serre = parCase < diametre + AppSpacing.sm;
               final bool texteAgrandi =
                   MediaQuery.textScalerOf(contexte).scale(1) > 1;
-              if (!serre && !texteAgrandi) return rangee;
+              // MA-CMD-1 (directeur, 02/10/2026) : en Mode Accessibilite, a
+              // toute taille de texte, icones seules et compactes, disque a
+              // la cible tactile (le libelle reste lu et en infobulle).
+              // Annule le dock a libelles visibles de M1.
+              final bool accessibilite =
+                  AppMetriques.of(contexte).mode == InterfaceMode.enfant;
+              if (!serre && !texteAgrandi && !accessibilite) return rangee;
               // EN-12 (17 d) : icone seule, libelle lu ; disque a la case
               // moins un ecart, jamais sous la cible tactile.
-              final double cible = AppMetriques.of(contexte).cibleTactile;
+              // MA-CMD-1 : disque compact de 56 (cible de 48 et plus), pour
+              // que toutes les commandes tiennent sur une rangee a 390.
+              final double cible = accessibilite
+                  ? AppTouchTarget.standard + AppSpacing.sm
+                  : AppMetriques.of(contexte).cibleTactile;
               // UX_REVIEW_04 n. 17 d, WCAG 1.4.10 : quand la part egale
               // tombe sous la cible (320), les boutons ne se partagent plus
               // la largeur ; ils passent sur deux lignes, en cases fixes, et
@@ -377,10 +391,12 @@ class DockSeance extends StatelessWidget {
                   ),
                 );
               }
-              final double reduit = math.max(
-                math.min(diametre, parCase - AppSpacing.xs),
-                cible,
-              );
+              final double reduit = accessibilite
+                  ? cible
+                  : math.max(
+                      math.min(diametre, parCase - AppSpacing.xs),
+                      cible,
+                    );
               return CommandeSalleCompacte(diametre: reduit, child: rangee);
             },
           ),
@@ -494,7 +510,9 @@ class _BoutonMicroState extends State<_BoutonMicro> {
       bascule: ouvert,
       libelle: libelle,
       libelleSemantique:
-          vue.libelleIndisponible(colore ? t.salle.seance.parler : t.salle.micro) ??
+          vue.libelleIndisponible(
+            colore ? t.salle.seance.parler : t.salle.micro,
+          ) ??
           (ouvert ? t.salle.fermerMicro : t.salle.ouvrirMicro),
       actif: vue.commandesPublicationActives,
       fond: colore ? FondBoutonAppel.succes : FondBoutonAppel.surface,

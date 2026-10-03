@@ -845,6 +845,7 @@ class Traductions$accessibilite$fr {
 	late final Traductions$accessibilite$maClasse$fr maClasse = Traductions$accessibilite$maClasse$fr.internal(_root);
 	late final Traductions$accessibilite$tutoiement$fr tutoiement = Traductions$accessibilite$tutoiement$fr.internal(_root);
 	late final Traductions$accessibilite$apres$fr apres = Traductions$accessibilite$apres$fr.internal(_root);
+	late final Traductions$accessibilite$monEspace$fr monEspace = Traductions$accessibilite$monEspace$fr.internal(_root);
 }
 
 // Path: accuse
@@ -2047,8 +2048,8 @@ class Traductions$compte$fr {
 	/// fr: 'Ouvrir le profil'
 	String get ouvrirProfil => 'Ouvrir le profil';
 
-	/// fr: 'Mode enfant'
-	String get modeEnfant => 'Mode enfant';
+	/// fr: 'Mode Accessibilité'
+	String get modeEnfant => 'Mode Accessibilité';
 
 	/// fr: 'Mode standard'
 	String get modeStandard => 'Mode standard';
@@ -2339,8 +2340,8 @@ class Traductions$galerie$fr {
 	/// fr: 'Composants partagés'
 	String get composants => 'Composants partagés';
 
-	/// fr: 'Mode enfant'
-	String get modeEnfant => 'Mode enfant';
+	/// fr: 'Mode Accessibilité'
+	String get modeEnfant => 'Mode Accessibilité';
 
 	/// fr: 'Mode standard'
 	String get modeStandard => 'Mode standard';
@@ -3198,11 +3199,11 @@ class Traductions$accessibilite$coran$fr {
 	/// fr: 'Ouvrir le Coran'
 	String get ouvrir => 'Ouvrir le Coran';
 
-	/// fr: 'Reprendre là où tu t'es arrêté(e)'
-	String get reprendre => 'Reprendre là où tu t\'es arrêté(e)';
+	/// fr: 'Reprendre à ta dernière page'
+	String get reprendre => 'Reprendre à ta dernière page';
 
-	/// fr: 'Reprendre là où vous vous êtes arrêté(e)'
-	String get reprendreVous => 'Reprendre là où vous vous êtes arrêté(e)';
+	/// fr: 'Reprendre à votre dernière page'
+	String get reprendreVous => 'Reprendre à votre dernière page';
 
 	/// fr: 'Tu en étais page {page}.'
 	String reprendreDetail({required Object page}) => 'Tu en étais page ${page}.';
@@ -3210,11 +3211,32 @@ class Traductions$accessibilite$coran$fr {
 	/// fr: 'Vous en étiez page {page}.'
 	String reprendreDetailVous({required Object page}) => 'Vous en étiez page ${page}.';
 
+	/// fr: 'Recherche de ta dernière page…'
+	String get repriseRecherche => 'Recherche de ta dernière page…';
+
+	/// fr: 'Recherche de votre dernière page…'
+	String get repriseRechercheVous => 'Recherche de votre dernière page…';
+
+	/// fr: 'Ta dernière page n'a pas pu être retrouvée, sans doute à cause de la connexion. Ouvre le Coran et choisis ta page dans le lecteur. Tes réglages de lecture restent enregistrés.'
+	String get repriseErreur => 'Ta dernière page n\'a pas pu être retrouvée, sans doute à cause de la connexion. Ouvre le Coran et choisis ta page dans le lecteur. Tes réglages de lecture restent enregistrés.';
+
+	/// fr: 'Votre dernière page n'a pas pu être retrouvée, sans doute à cause de la connexion. Ouvrez le Coran et choisissez votre page dans le lecteur. Vos réglages de lecture restent enregistrés.'
+	String get repriseErreurVous => 'Votre dernière page n\'a pas pu être retrouvée, sans doute à cause de la connexion. Ouvrez le Coran et choisissez votre page dans le lecteur. Vos réglages de lecture restent enregistrés.';
+
 	/// fr: 'Le Coran s'ouvre en lecture agrandie, verset par verset.'
 	String get lectureGrande => 'Le Coran s\'ouvre en lecture agrandie, verset par verset.';
 
 	/// fr: 'Retour à l'entrée du Coran'
 	String get retour => 'Retour à l\'entrée du Coran';
+
+	/// fr: 'Le texte du Coran n'est pas chargé dans la démonstration'
+	String get demoSansTexte => 'Le texte du Coran n\'est pas chargé dans la démonstration';
+
+	/// fr: 'Ce n'est pas une panne : la démonstration ne contient pas le texte. Tu n'as rien à faire. Dans l'application, le Coran s'ouvre ici, à ta page, et tes réglages de lecture restent enregistrés.'
+	String get demoSansTexteDetail => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte. Tu n\'as rien à faire. Dans l\'application, le Coran s\'ouvre ici, à ta page, et tes réglages de lecture restent enregistrés.';
+
+	/// fr: 'Ce n'est pas une panne : la démonstration ne contient pas le texte. Vous n'avez rien à faire. Dans l'application, le Coran s'ouvre ici, à votre page, et vos réglages de lecture restent enregistrés.'
+	String get demoSansTexteDetailVous => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte. Vous n\'avez rien à faire. Dans l\'application, le Coran s\'ouvre ici, à votre page, et vos réglages de lecture restent enregistrés.';
 }
 
 // Path: accessibilite.maClasse
@@ -3281,6 +3303,42 @@ class Traductions$accessibilite$apres$fr {
 
 	/// fr: 'Le support reste dans votre Classe.'
 	String get revoirSupportDetailVous => 'Le support reste dans votre Classe.';
+}
+
+// Path: accessibilite.monEspace
+class Traductions$accessibilite$monEspace$fr {
+	Traductions$accessibilite$monEspace$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mon espace'
+	String get titre => 'Mon espace';
+
+	/// fr: 'Mode Accessibilité'
+	String get mode => 'Mode Accessibilité';
+
+	/// fr: 'Une interface simplifiée et adaptée pour un apprentissage plus serein.'
+	String get modeDetail => 'Une interface simplifiée et adaptée pour un apprentissage plus serein.';
+
+	/// fr: 'Activé'
+	String get modeActif => 'Activé';
+
+	/// fr: 'Présentation standard'
+	String get presentationStandard => 'Présentation standard';
+
+	/// fr: 'Demande à ton tuteur de passer à la présentation standard.'
+	String get demanderDetail => 'Demande à ton tuteur de passer à la présentation standard.';
+
+	/// fr: 'Ta demande est en cours d'envoi.'
+	String get demandeEnCours => 'Ta demande est en cours d\'envoi.';
+
+	/// fr: 'Ta demande a été envoyée à ton tuteur.'
+	String get demandeEnvoyee => 'Ta demande a été envoyée à ton tuteur.';
+
+	/// fr: 'L'envoi n'a pas été confirmé, sans doute à cause de la connexion. Vérifie ta connexion, puis touche la ligne pour réessayer. Rien n'a changé en attendant : ta présentation reste la même.'
+	String get demandeNonConfirmee => 'L\'envoi n\'a pas été confirmé, sans doute à cause de la connexion. Vérifie ta connexion, puis touche la ligne pour réessayer. Rien n\'a changé en attendant : ta présentation reste la même.';
 }
 
 // Path: consentement.texte
@@ -3924,23 +3982,23 @@ class Traductions$ficheEleve$interface$fr {
 	/// fr: 'Interface'
 	String get titre => 'Interface';
 
-	/// fr: 'Comment Rewayah s'affiche sur l'appareil de {prenom}.'
-	String intro({required Object prenom}) => 'Comment Rewayah s\'affiche sur l\'appareil de ${prenom}.';
+	/// fr: 'Choisissez comment Rewayah s'affiche sur l'appareil de {prenom}. Vous pourrez changer ce choix à tout moment.'
+	String intro({required Object prenom}) => 'Choisissez comment Rewayah s\'affiche sur l\'appareil de ${prenom}. Vous pourrez changer ce choix à tout moment.';
 
-	/// fr: 'Interface guidée'
-	String get guidee => 'Interface guidée';
+	/// fr: 'Mode Accessibilité'
+	String get guidee => 'Mode Accessibilité';
 
-	/// fr: 'Des écrans simplifiés, de grands boutons, une chose à la fois.'
-	String get guideeDescription => 'Des écrans simplifiés, de grands boutons, une chose à la fois.';
+	/// fr: 'Quand {prenom} préfère des écrans aérés : textes plus grands, une action à la fois. Mêmes rubriques et mêmes droits.'
+	String guideeDescription({required Object prenom}) => 'Quand ${prenom} préfère des écrans aérés : textes plus grands, une action à la fois. Mêmes rubriques et mêmes droits.';
 
-	/// fr: 'Interface standard'
-	String get standard => 'Interface standard';
+	/// fr: 'Présentation standard'
+	String get standard => 'Présentation standard';
 
-	/// fr: 'L'affichage habituel de Rewayah.'
-	String get standardDescription => 'L\'affichage habituel de Rewayah.';
+	/// fr: 'Quand {prenom} est à l'aise avec des écrans plus denses : plus d'informations par écran. Mêmes rubriques et mêmes droits.'
+	String standardDescription({required Object prenom}) => 'Quand ${prenom} est à l\'aise avec des écrans plus denses : plus d\'informations par écran. Mêmes rubriques et mêmes droits.';
 
-	/// fr: 'Vous choisissez ce réglage. Au départ, il a été fixé selon l'âge indiqué à la création du profil.'
-	String get politique => 'Vous choisissez ce réglage. Au départ, il a été fixé selon l\'âge indiqué à la création du profil.';
+	/// fr: 'Vous choisissez ce réglage. Aucune raison n'est demandée, et l'enseignant voit seulement le nom du mode.'
+	String get politique => 'Vous choisissez ce réglage. Aucune raison n\'est demandée, et l\'enseignant voit seulement le nom du mode.';
 
 	/// fr: 'Le changement s'applique à la prochaine ouverture de Rewayah sur l'appareil de {prenom}.'
 	String application({required Object prenom}) => 'Le changement s\'applique à la prochaine ouverture de Rewayah sur l\'appareil de ${prenom}.';
@@ -3951,11 +4009,11 @@ class Traductions$ficheEleve$interface$fr {
 	/// fr: 'Enregistrement en cours'
 	String get enCours => 'Enregistrement en cours';
 
-	/// fr: 'Le changement n'a pas été enregistré. Réessayez.'
-	String get echec => 'Le changement n\'a pas été enregistré. Réessayez.';
+	/// fr: 'Le changement n'a pas été enregistré, probablement à cause d'une coupure de connexion avec Rewayah. Vérifiez votre connexion, puis touchez de nouveau votre choix. La présentation actuelle de {prenom} reste inchangée sur son appareil.'
+	String echec({required Object prenom}) => 'Le changement n\'a pas été enregistré, probablement à cause d\'une coupure de connexion avec Rewayah. Vérifiez votre connexion, puis touchez de nouveau votre choix. La présentation actuelle de ${prenom} reste inchangée sur son appareil.';
 
-	/// fr: 'Vous êtes hors ligne. L'interface pourra être changée quand la connexion reviendra.'
-	String get horsLigne => 'Vous êtes hors ligne. L\'interface pourra être changée quand la connexion reviendra.';
+	/// fr: 'Vous êtes hors ligne. La présentation pourra être changée quand la connexion reviendra.'
+	String get horsLigne => 'Vous êtes hors ligne. La présentation pourra être changée quand la connexion reviendra.';
 }
 
 // Path: ficheEleve.camera
@@ -13472,8 +13530,8 @@ class Traductions$tc$classe$fiche$fr {
 	/// fr: 'Travail actuel'
 	String get travailActuel => 'Travail actuel';
 
-	/// fr: 'Interface guidée'
-	String get interfaceGuidee => 'Interface guidée';
+	/// fr: 'Mode Accessibilité'
+	String get interfaceGuidee => 'Mode Accessibilité';
 
 	/// fr: 'Suivi pédagogique indisponible'
 	String get sansPedagogie => 'Suivi pédagogique indisponible';
@@ -14918,8 +14976,8 @@ class Traductions$salle$preparation$eleve$demo$fr {
 	/// fr: 'Préparation élève'
 	String get section => 'Préparation élève';
 
-	/// fr: 'Préparation élève, Interface guidée'
-	String get sectionGuidee => 'Préparation élève, Interface guidée';
+	/// fr: 'Préparation élève, Mode Accessibilité'
+	String get sectionGuidee => 'Préparation élève, Mode Accessibilité';
 
 	/// fr: 'Vérification en cours'
 	String get verification => 'Vérification en cours';
@@ -14960,8 +15018,8 @@ class Traductions$salle$seance$demo$roles$fr {
 	/// fr: 'Élève standard'
 	String get eleve => 'Élève standard';
 
-	/// fr: 'Interface guidée'
-	String get guidee => 'Interface guidée';
+	/// fr: 'Mode Accessibilité'
+	String get guidee => 'Mode Accessibilité';
 
 	/// fr: 'Enseignant'
 	String get enseignant => 'Enseignant';
@@ -15035,8 +15093,8 @@ class Traductions$classe$entree$demo$roles$fr {
 	/// fr: 'Élève'
 	String get eleve => 'Élève';
 
-	/// fr: 'Élève, Interface guidée'
-	String get guidee => 'Élève, Interface guidée';
+	/// fr: 'Élève, Mode Accessibilité'
+	String get guidee => 'Élève, Mode Accessibilité';
 
 	/// fr: 'Enseignant'
 	String get enseignant => 'Enseignant';
@@ -15452,7 +15510,7 @@ extension on Traductions {
 			'salle.preparation.eleve.guidee.microBloque' => 'Le micro est bloqué.',
 			'salle.preparation.eleve.guidee.horsLigne' => 'La connexion ne marche pas pour l\'instant.',
 			'salle.preparation.eleve.demo.section' => 'Préparation élève',
-			'salle.preparation.eleve.demo.sectionGuidee' => 'Préparation élève, Interface guidée',
+			'salle.preparation.eleve.demo.sectionGuidee' => 'Préparation élève, Mode Accessibilité',
 			'salle.preparation.eleve.demo.verification' => 'Vérification en cours',
 			'salle.preparation.eleve.demo.pret' => 'Prêt',
 			'salle.preparation.eleve.demo.microBloque' => 'Micro bloqué',
@@ -15554,7 +15612,7 @@ extension on Traductions {
 			'salle.seance.demo.groupes.seance' => 'Déroulé de la séance',
 			'salle.seance.demo.groupes.secours' => 'Situations de secours',
 			'salle.seance.demo.roles.eleve' => 'Élève standard',
-			'salle.seance.demo.roles.guidee' => 'Interface guidée',
+			'salle.seance.demo.roles.guidee' => 'Mode Accessibilité',
 			'salle.seance.demo.roles.enseignant' => 'Enseignant',
 			'salle.seance.demo.etats.repos' => 'Repos',
 			'salle.seance.demo.etats.visite' => 'Visite',
@@ -15833,12 +15891,19 @@ extension on Traductions {
 			'accessibilite.accueil.lireCoranDetail' => 'Accéder au Mushaf',
 			'accessibilite.accueil.aide' => 'Besoin d\'aide ?',
 			'accessibilite.coran.ouvrir' => 'Ouvrir le Coran',
-			'accessibilite.coran.reprendre' => 'Reprendre là où tu t\'es arrêté(e)',
-			'accessibilite.coran.reprendreVous' => 'Reprendre là où vous vous êtes arrêté(e)',
+			'accessibilite.coran.reprendre' => 'Reprendre à ta dernière page',
+			'accessibilite.coran.reprendreVous' => 'Reprendre à votre dernière page',
 			'accessibilite.coran.reprendreDetail' => ({required Object page}) => 'Tu en étais page ${page}.',
 			'accessibilite.coran.reprendreDetailVous' => ({required Object page}) => 'Vous en étiez page ${page}.',
+			'accessibilite.coran.repriseRecherche' => 'Recherche de ta dernière page…',
+			'accessibilite.coran.repriseRechercheVous' => 'Recherche de votre dernière page…',
+			'accessibilite.coran.repriseErreur' => 'Ta dernière page n\'a pas pu être retrouvée, sans doute à cause de la connexion. Ouvre le Coran et choisis ta page dans le lecteur. Tes réglages de lecture restent enregistrés.',
+			'accessibilite.coran.repriseErreurVous' => 'Votre dernière page n\'a pas pu être retrouvée, sans doute à cause de la connexion. Ouvrez le Coran et choisissez votre page dans le lecteur. Vos réglages de lecture restent enregistrés.',
 			'accessibilite.coran.lectureGrande' => 'Le Coran s\'ouvre en lecture agrandie, verset par verset.',
 			'accessibilite.coran.retour' => 'Retour à l\'entrée du Coran',
+			'accessibilite.coran.demoSansTexte' => 'Le texte du Coran n\'est pas chargé dans la démonstration',
+			'accessibilite.coran.demoSansTexteDetail' => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte. Tu n\'as rien à faire. Dans l\'application, le Coran s\'ouvre ici, à ta page, et tes réglages de lecture restent enregistrés.',
+			'accessibilite.coran.demoSansTexteDetailVous' => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte. Vous n\'avez rien à faire. Dans l\'application, le Coran s\'ouvre ici, à votre page, et vos réglages de lecture restent enregistrés.',
 			'accessibilite.maClasse.titre' => 'Ma classe',
 			'accessibilite.maClasse.suivi' => 'Mon suivi',
 			'accessibilite.maClasse.suiviDetail' => 'Les séances passées et la présence',
@@ -15852,6 +15917,15 @@ extension on Traductions {
 			'accessibilite.apres.revoirSupport' => 'Revoir le support du cours',
 			'accessibilite.apres.revoirSupportDetail' => 'Le support reste dans ta Classe.',
 			'accessibilite.apres.revoirSupportDetailVous' => 'Le support reste dans votre Classe.',
+			'accessibilite.monEspace.titre' => 'Mon espace',
+			'accessibilite.monEspace.mode' => 'Mode Accessibilité',
+			'accessibilite.monEspace.modeDetail' => 'Une interface simplifiée et adaptée pour un apprentissage plus serein.',
+			'accessibilite.monEspace.modeActif' => 'Activé',
+			'accessibilite.monEspace.presentationStandard' => 'Présentation standard',
+			'accessibilite.monEspace.demanderDetail' => 'Demande à ton tuteur de passer à la présentation standard.',
+			'accessibilite.monEspace.demandeEnCours' => 'Ta demande est en cours d\'envoi.',
+			'accessibilite.monEspace.demandeEnvoyee' => 'Ta demande a été envoyée à ton tuteur.',
+			'accessibilite.monEspace.demandeNonConfirmee' => 'L\'envoi n\'a pas été confirmé, sans doute à cause de la connexion. Vérifie ta connexion, puis touche la ligne pour réessayer. Rien n\'a changé en attendant : ta présentation reste la même.',
 			'accuse.titre' => 'À savoir avant de commencer',
 			'accuse.compris' => 'J\'ai compris',
 			'consentement.titre' => 'Consentements',
@@ -16105,17 +16179,17 @@ extension on Traductions {
 			'ficheEleve.inscription.classeEchec' => 'La classe n\'a pas pu être lue.',
 			'ficheEleve.inscription.relireClasse' => 'Relire la classe',
 			'ficheEleve.interface.titre' => 'Interface',
-			'ficheEleve.interface.intro' => ({required Object prenom}) => 'Comment Rewayah s\'affiche sur l\'appareil de ${prenom}.',
-			'ficheEleve.interface.guidee' => 'Interface guidée',
-			'ficheEleve.interface.guideeDescription' => 'Des écrans simplifiés, de grands boutons, une chose à la fois.',
-			'ficheEleve.interface.standard' => 'Interface standard',
-			'ficheEleve.interface.standardDescription' => 'L\'affichage habituel de Rewayah.',
-			'ficheEleve.interface.politique' => 'Vous choisissez ce réglage. Au départ, il a été fixé selon l\'âge indiqué à la création du profil.',
+			'ficheEleve.interface.intro' => ({required Object prenom}) => 'Choisissez comment Rewayah s\'affiche sur l\'appareil de ${prenom}. Vous pourrez changer ce choix à tout moment.',
+			'ficheEleve.interface.guidee' => 'Mode Accessibilité',
+			'ficheEleve.interface.guideeDescription' => ({required Object prenom}) => 'Quand ${prenom} préfère des écrans aérés : textes plus grands, une action à la fois. Mêmes rubriques et mêmes droits.',
+			'ficheEleve.interface.standard' => 'Présentation standard',
+			'ficheEleve.interface.standardDescription' => ({required Object prenom}) => 'Quand ${prenom} est à l\'aise avec des écrans plus denses : plus d\'informations par écran. Mêmes rubriques et mêmes droits.',
+			'ficheEleve.interface.politique' => 'Vous choisissez ce réglage. Aucune raison n\'est demandée, et l\'enseignant voit seulement le nom du mode.',
 			'ficheEleve.interface.application' => ({required Object prenom}) => 'Le changement s\'applique à la prochaine ouverture de Rewayah sur l\'appareil de ${prenom}.',
 			'ficheEleve.interface.demandeEleve' => 'La demande de changement par l\'élève lui-même n\'est pas encore proposée.',
 			'ficheEleve.interface.enCours' => 'Enregistrement en cours',
-			'ficheEleve.interface.echec' => 'Le changement n\'a pas été enregistré. Réessayez.',
-			'ficheEleve.interface.horsLigne' => 'Vous êtes hors ligne. L\'interface pourra être changée quand la connexion reviendra.',
+			'ficheEleve.interface.echec' => ({required Object prenom}) => 'Le changement n\'a pas été enregistré, probablement à cause d\'une coupure de connexion avec Rewayah. Vérifiez votre connexion, puis touchez de nouveau votre choix. La présentation actuelle de ${prenom} reste inchangée sur son appareil.',
+			'ficheEleve.interface.horsLigne' => 'Vous êtes hors ligne. La présentation pourra être changée quand la connexion reviendra.',
 			'ficheEleve.camera.titre' => 'Caméra en cours',
 			'ficheEleve.camera.ligne' => 'Caméra pendant les séances',
 			'ficheEleve.camera.autorisee' => ({required Object prenom}) => '${prenom} peut allumer sa caméra pendant les séances.',
@@ -16309,6 +16383,8 @@ extension on Traductions {
 			'dossiers.visionneuse.aucune' => 'Aucune pièce n’est disponible.',
 			'dossiers.visionneuse.fermerPiece' => 'Fermer la pièce',
 			'dossiers.visionneuse.agrandir' => 'Agrandir',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.visionneuse.reduire' => 'Réduire',
 			'dossiers.visionneuse.ajuster' => 'Ajuster à l’écran',
 			'dossiers.visionneuse.infoBulle' => ({required Object action, required Object touche}) => '${action} (touche ${touche})',
@@ -16325,8 +16401,6 @@ extension on Traductions {
 			'dossiers.revue.etatDossier' => 'État du dossier',
 			'dossiers.revue.dateIndisponible' => 'Date de dépôt indisponible',
 			'dossiers.revue.pasPret' => 'Ce dossier n\'est pas encore prêt à être validé.',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.revue.erreurChargement' => 'Impossible de charger ce dossier.',
 			'dossiers.revue.pieceIndisponible' => 'La consultation de la pièce est indisponible pour le moment.',
 			'dossiers.revue.etats.chargement' => 'Chargement du dossier…',
@@ -16823,6 +16897,8 @@ extension on Traductions {
 			'admin.journal.evtProfilEnfantCree' => 'Profil enfant créé',
 			'admin.journal.evtCodeCree' => 'Code d\'appairage créé',
 			'admin.journal.evtAppareilAppaire' => 'Appareil appairé',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.evtAppareilRevoque' => 'Appareil révoqué',
 			'admin.journal.evtPedagogie' => 'Réglages pédagogiques modifiés',
 			'admin.journal.evtAffectationPrise' => 'Élève pris par un enseignant',
@@ -16839,8 +16915,6 @@ extension on Traductions {
 			'admin.journal.evtObservationControleur' => 'Visite de contrôle commencée',
 			'admin.journal.evtJetonVideo' => 'Entrée en salle autorisée',
 			'admin.journal.vide' => 'Aucun événement enregistré',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.videDetail' => 'Chaque lecture de dossier, chaque décision et chaque attribution viendra s\'inscrire ici.',
 			'admin.journal.videFiltre' => 'Aucun événement ne correspond',
 			'admin.journal.videFiltreDetail' => 'Élargissez la période, ou relâchez un filtre.',
@@ -17225,7 +17299,7 @@ extension on Traductions {
 			'compte.aucunProfilDetail' => 'Ajoutez un enfant pour commencer',
 			'compte.ajouterEnfant' => 'Ajouter un enfant',
 			'compte.ouvrirProfil' => 'Ouvrir le profil',
-			'compte.modeEnfant' => 'Mode enfant',
+			'compte.modeEnfant' => 'Mode Accessibilité',
 			'compte.modeStandard' => 'Mode standard',
 			'compte.cameraLabel' => 'Caméra',
 			'compte.cameraAutorisee' => 'Autorisée',
@@ -17337,6 +17411,8 @@ extension on Traductions {
 			'compte.tuteur.pageAide.canalCourriel' => 'Courriel de l\'académie',
 			'compte.tuteur.pageAide.canalLien' => 'Page d\'aide de l\'académie',
 			'compte.tuteur.pageAide.aucunCanal' => 'Aucun canal d\'aide n\'est publié pour le moment.',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageLegal.titre' => 'Informations légales',
 			'compte.tuteur.pageLegal.documents' => 'Documents acceptés',
 			'compte.tuteur.pageLegal.conditionsTuteur' => 'Conditions du tuteur',
@@ -17353,8 +17429,6 @@ extension on Traductions {
 			'historique.segments.seances' => 'Séances',
 			'historique.segments.observations' => 'Observations',
 			'historique.moisCourts.0' => 'janv.',
-			_ => null,
-		} ?? switch (path) {
 			'historique.moisCourts.1' => 'févr.',
 			'historique.moisCourts.2' => 'mars',
 			'historique.moisCourts.3' => 'avr.',
@@ -17661,7 +17735,7 @@ extension on Traductions {
 			'classe.entree.demo.mention' => 'Démonstration',
 			'classe.entree.demo.intro' => 'Données fictives, aucun appel serveur. Chaque lien montre ce que dit l\'emplacement d\'entrée pour un rôle et un moment.',
 			'classe.entree.demo.roles.eleve' => 'Élève',
-			'classe.entree.demo.roles.guidee' => 'Élève, Interface guidée',
+			'classe.entree.demo.roles.guidee' => 'Élève, Mode Accessibilité',
 			'classe.entree.demo.roles.enseignant' => 'Enseignant',
 			'classe.entree.demo.etats.aVenir' => 'À venir',
 			'classe.entree.demo.etats.fenetreOuverte' => 'Fenêtre ouverte',
@@ -17851,6 +17925,8 @@ extension on Traductions {
 			'enseignant.bienvenue.ctaInformations' => 'Vérifier mes informations',
 			'enseignant.bienvenue.ctaJournee' => 'Voir ma journée',
 			'enseignant.bienvenue.rappels' => 'Deux choses à ne pas découvrir en cours de route',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.bienvenue.declarer' => 'Déclarer mes disponibilités',
 			'enseignant.bienvenue.versJournee' => 'Aller à ma journée',
 			'enseignant.bienvenue.horsLigne' => 'Sans réseau, vos créneaux ne pourront pas être enregistrés.',
@@ -17867,8 +17943,6 @@ extension on Traductions {
 			'enseignant.photo.utiliser' => 'Utiliser cette photo',
 			'enseignant.photo.remplacer' => 'Remplacer la photo',
 			'enseignant.photo.autre' => 'Choisir une autre photo',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.photo.changer' => 'Changer la photo',
 			'enseignant.photo.alternatif' => 'Votre photo publique',
 			'enseignant.photo.succes' => 'La photo est enregistrée.',
@@ -18365,6 +18439,8 @@ extension on Traductions {
 			'controleur.echanges.enCours' => 'Envoi en cours.',
 			'controleur.echanges.envoye' => 'Envoyé.',
 			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.echanges.reessayer' => 'Réessayer',
 			'controleur.echanges.nouveauMessage' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
 			'controleur.demo.titre' => 'Démonstration contrôleur',
@@ -18381,8 +18457,6 @@ extension on Traductions {
 			'controleur.demo.enseignantPrincipal' => 'Enseignant-Contrôleur, espace Enseignant',
 			'controleur.demo.adminControle' => 'Admin-Contrôleur, espace Contrôle',
 			'controleur.demo.adminPrincipal' => 'Admin-Contrôleur, espace Admin',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.demo.missionEnCours' => 'Visite en cours, retour à l\'espace principal',
 			'controleur.demo.accesRevoque' => 'Accès révoqué pendant la navigation',
 			'controleur.demo.sansCapacite' => 'Enseignant sans capacité Contrôle',
@@ -18414,7 +18488,7 @@ extension on Traductions {
 			'galerie.typographie' => 'Échelles typographiques',
 			'galerie.polices' => 'Polices',
 			'galerie.composants' => 'Composants partagés',
-			'galerie.modeEnfant' => 'Mode enfant',
+			'galerie.modeEnfant' => 'Mode Accessibilité',
 			'galerie.modeStandard' => 'Mode standard',
 			'tc.groupe.mesGroupes.titre' => 'Mes classes',
 			'tc.groupe.mesGroupes.aucun' => 'Aucune classe pour le moment',
@@ -18623,7 +18697,7 @@ extension on Traductions {
 			'tc.classe.fiche.presenceRecente' => 'Présence récente',
 			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => '${presences} / ${total} cours',
 			'tc.classe.fiche.travailActuel' => 'Travail actuel',
-			'tc.classe.fiche.interfaceGuidee' => 'Interface guidée',
+			'tc.classe.fiche.interfaceGuidee' => 'Mode Accessibilité',
 			'tc.classe.fiche.sansPedagogie' => 'Suivi pédagogique indisponible',
 			'tc.classe.fiche.sansPedagogieDetail' => 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l\'enseignant.',
 			'tc.classe.action.rappel' => 'Rappel discret',
@@ -18879,6 +18953,8 @@ extension on Traductions {
 			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
 			'tc.parcours.signalement.interne' => 'Note interne',
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',
 			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'Élève ${eleve}. La séance, le groupe et votre nom sont déjà joints.',
@@ -18895,8 +18971,6 @@ extension on Traductions {
 			'tc.parcours.postCours.travail' => 'Travail proposé',
 			'tc.parcours.postCours.travailAucun' => 'Aucun travail proposé pour l\'instant.',
 			'tc.parcours.postCours.valider' => 'Valider',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.postCours.enFile' => 'Enregistré. Il partira dès le retour du réseau.',
 			'tc.parcours.postCours.envoye' => 'Cours clôturé.',
 			'adulte.nav.accueil' => 'Accueil',

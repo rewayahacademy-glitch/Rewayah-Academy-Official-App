@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -118,8 +118,7 @@ class _FicheSeanceEtat extends ConsumerState<FicheSeance> {
   Widget build(BuildContext context) {
     final TeacherStudentProjection eleve = widget.eleve;
     final TextTheme textes = Theme.of(context).textTheme;
-    final bool recite =
-        ref.watch(recitationProvider).actif == eleve.academyId;
+    final bool recite = ref.watch(recitationProvider).actif == eleve.academyId;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -136,7 +135,8 @@ class _FicheSeanceEtat extends ConsumerState<FicheSeance> {
               libelle: libelleEtatProjete(eleve.liveStatus),
               ton: tonEtatProjete(eleve.liveStatus),
             ),
-            // « Interface guidee », JAMAIS « mode enfant » (decision D-07).
+            // « Mode Accessibilite » en libelle neutre, JAMAIS « mode
+            // enfant » ni raison ou diagnostic (decision D-07, Q6 du 27/09).
             if (eleve.interfaceGuidee) ...<Widget>[
               Ecart.hSm,
               StatusPill(

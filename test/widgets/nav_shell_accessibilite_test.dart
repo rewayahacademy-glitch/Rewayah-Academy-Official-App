@@ -3,7 +3,8 @@
 //
 // - memes routes : la liste montree est un sous-ensemble de la liste standard,
 //   et chaque onglet rend le chemin qu'il avait ;
-// - moins de destinations pour l'eleve (les essentielles) ;
+// - les destinations essentielles seulement ; pour l'eleve, les quatre
+//   (Coran compris, MA-CMD-1, decision deleguee du 02/10) ;
 // - icones et libelles plus grands, libelle toujours visible sous l'icone,
 //   cibles de 72 au moins et espacees, contraste renforce ;
 // - destination active a trois signaux : fond plein, icone pleine, libelle en
@@ -107,13 +108,19 @@ void main() {
     });
 
     test(
-      'l eleve a moins de destinations, les autres roles gardent les leurs',
+      'l eleve garde ses 4 destinations, Coran compris (MA-CMD-1), les autres '
+      'roles gardent les leurs',
       () {
         expect(
           _eleve(InterfaceMode.enfant)
               .map((Destination d) => d.chemin)
               .toList(),
-          <String>[Routes.eleve, Routes.eleveSuivi, Routes.compte],
+          <String>[
+            Routes.eleve,
+            Routes.eleveSuivi,
+            Routes.eleveCoran,
+            Routes.compte,
+          ],
         );
         expect(_eleve(InterfaceMode.standard), hasLength(4));
         for (final AppRole role in AppRole.values) {
@@ -149,9 +156,9 @@ void main() {
         );
         expect(index(0), 0);
         expect(index(1), 1);
-        // Coran : hors barre, aucune destination surlignee.
-        expect(index(2), isNull);
-        expect(index(3), 2);
+        // Coran : dans la barre (MA-CMD-1).
+        expect(index(2), 2);
+        expect(index(3), 3);
         expect(index(null), isNull);
         expect(index(9), isNull);
         // Standard : identite.
@@ -215,7 +222,11 @@ void main() {
               if (finPrecedent != null) {
                 expect(
                   onglet.left - finPrecedent,
-                  greaterThanOrEqualTo(AppSpacing.sm),
+                  // MA-CMD-1 : quatre onglets de 72 a 320, l'ecart se
+                  // resserre a 4.
+                  greaterThanOrEqualTo(
+                    d.length >= 4 ? AppSpacing.xs : AppSpacing.sm,
+                  ),
                   reason: x.libelle,
                 );
               }

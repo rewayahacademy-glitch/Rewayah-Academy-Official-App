@@ -218,7 +218,7 @@
         },
         "demo": {
           "section": "Préparation élève",
-          "sectionGuidee": "Préparation élève, Interface guidée",
+          "sectionGuidee": "Préparation élève, Mode Accessibilité",
           "verification": "Vérification en cours",
           "pret": "Prêt",
           "microBloque": "Micro bloqué",
@@ -338,7 +338,7 @@
         },
         "roles": {
           "eleve": "Élève standard",
-          "guidee": "Interface guidée",
+          "guidee": "Mode Accessibilité",
           "enseignant": "Enseignant"
         },
         "etats": {
@@ -658,12 +658,19 @@
     },
     "coran": {
       "ouvrir": "Ouvrir le Coran",
-      "reprendre": "Reprendre là où tu t'es arrêté(e)",
-      "reprendreVous": "Reprendre là où vous vous êtes arrêté(e)",
+      "reprendre": "Reprendre à ta dernière page",
+      "reprendreVous": "Reprendre à votre dernière page",
       "reprendreDetail": "Tu en étais page {page}.",
       "reprendreDetailVous": "Vous en étiez page {page}.",
+      "repriseRecherche": "Recherche de ta dernière page…",
+      "repriseRechercheVous": "Recherche de votre dernière page…",
+      "repriseErreur": "Ta dernière page n'a pas pu être retrouvée, sans doute à cause de la connexion. Ouvre le Coran et choisis ta page dans le lecteur. Tes réglages de lecture restent enregistrés.",
+      "repriseErreurVous": "Votre dernière page n'a pas pu être retrouvée, sans doute à cause de la connexion. Ouvrez le Coran et choisissez votre page dans le lecteur. Vos réglages de lecture restent enregistrés.",
       "lectureGrande": "Le Coran s'ouvre en lecture agrandie, verset par verset.",
-      "retour": "Retour à l'entrée du Coran"
+      "retour": "Retour à l'entrée du Coran",
+      "demoSansTexte": "Le texte du Coran n'est pas chargé dans la démonstration",
+      "demoSansTexteDetail": "Ce n'est pas une panne : la démonstration ne contient pas le texte. Tu n'as rien à faire. Dans l'application, le Coran s'ouvre ici, à ta page, et tes réglages de lecture restent enregistrés.",
+      "demoSansTexteDetailVous": "Ce n'est pas une panne : la démonstration ne contient pas le texte. Vous n'avez rien à faire. Dans l'application, le Coran s'ouvre ici, à votre page, et vos réglages de lecture restent enregistrés."
     },
     "maClasse": {
       "titre": "Ma classe",
@@ -683,6 +690,17 @@
       "revoirSupport": "Revoir le support du cours",
       "revoirSupportDetail": "Le support reste dans ta Classe.",
       "revoirSupportDetailVous": "Le support reste dans votre Classe."
+    },
+    "monEspace": {
+      "titre": "Mon espace",
+      "mode": "Mode Accessibilité",
+      "modeDetail": "Une interface simplifiée et adaptée pour un apprentissage plus serein.",
+      "modeActif": "Activé",
+      "presentationStandard": "Présentation standard",
+      "demanderDetail": "Demande à ton tuteur de passer à la présentation standard.",
+      "demandeEnCours": "Ta demande est en cours d'envoi.",
+      "demandeEnvoyee": "Ta demande a été envoyée à ton tuteur.",
+      "demandeNonConfirmee": "L'envoi n'a pas été confirmé, sans doute à cause de la connexion. Vérifie ta connexion, puis touche la ligne pour réessayer. Rien n'a changé en attendant : ta présentation reste la même."
     }
   },
   "accuse": {
@@ -1018,17 +1036,17 @@
     },
     "interface": {
       "titre": "Interface",
-      "intro": "Comment Rewayah s'affiche sur l'appareil de {prenom}.",
-      "guidee": "Interface guidée",
-      "guideeDescription": "Des écrans simplifiés, de grands boutons, une chose à la fois.",
-      "standard": "Interface standard",
-      "standardDescription": "L'affichage habituel de Rewayah.",
-      "politique": "Vous choisissez ce réglage. Au départ, il a été fixé selon l'âge indiqué à la création du profil.",
+      "intro": "Choisissez comment Rewayah s'affiche sur l'appareil de {prenom}. Vous pourrez changer ce choix à tout moment.",
+      "guidee": "Mode Accessibilité",
+      "guideeDescription": "Quand {prenom} préfère des écrans aérés : textes plus grands, une action à la fois. Mêmes rubriques et mêmes droits.",
+      "standard": "Présentation standard",
+      "standardDescription": "Quand {prenom} est à l'aise avec des écrans plus denses : plus d'informations par écran. Mêmes rubriques et mêmes droits.",
+      "politique": "Vous choisissez ce réglage. Aucune raison n'est demandée, et l'enseignant voit seulement le nom du mode.",
       "application": "Le changement s'applique à la prochaine ouverture de Rewayah sur l'appareil de {prenom}.",
       "demandeEleve": "La demande de changement par l'élève lui-même n'est pas encore proposée.",
       "enCours": "Enregistrement en cours",
-      "echec": "Le changement n'a pas été enregistré. Réessayez.",
-      "horsLigne": "Vous êtes hors ligne. L'interface pourra être changée quand la connexion reviendra."
+      "echec": "Le changement n'a pas été enregistré, probablement à cause d'une coupure de connexion avec Rewayah. Vérifiez votre connexion, puis touchez de nouveau votre choix. La présentation actuelle de {prenom} reste inchangée sur son appareil.",
+      "horsLigne": "Vous êtes hors ligne. La présentation pourra être changée quand la connexion reviendra."
     },
     "camera": {
       "titre": "Caméra en cours",
@@ -2257,7 +2275,7 @@
     "aucunProfilDetail": "Ajoutez un enfant pour commencer",
     "ajouterEnfant": "Ajouter un enfant",
     "ouvrirProfil": "Ouvrir le profil",
-    "modeEnfant": "Mode enfant",
+    "modeEnfant": "Mode Accessibilité",
     "modeStandard": "Mode standard",
     "cameraLabel": "Caméra",
     "cameraAutorisee": "Autorisée",
@@ -2761,7 +2779,7 @@
         "intro": "Données fictives, aucun appel serveur. Chaque lien montre ce que dit l'emplacement d'entrée pour un rôle et un moment.",
         "roles": {
           "eleve": "Élève",
-          "guidee": "Élève, Interface guidée",
+          "guidee": "Élève, Mode Accessibilité",
           "enseignant": "Enseignant"
         },
         "etats": {
@@ -3598,7 +3616,7 @@
     "typographie": "Échelles typographiques",
     "polices": "Polices",
     "composants": "Composants partagés",
-    "modeEnfant": "Mode enfant",
+    "modeEnfant": "Mode Accessibilité",
     "modeStandard": "Mode standard"
   },
   "tc": {
@@ -3909,7 +3927,7 @@
         "presenceRecente": "Présence récente",
         "assiduite": "{presences} / {total} cours",
         "travailActuel": "Travail actuel",
-        "interfaceGuidee": "Interface guidée",
+        "interfaceGuidee": "Mode Accessibilité",
         "sansPedagogie": "Suivi pédagogique indisponible",
         "sansPedagogieDetail": "Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l'enseignant."
       },

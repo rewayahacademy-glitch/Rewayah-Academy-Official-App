@@ -28,10 +28,20 @@ import 'vue_seance.dart';
 /// a droite du titre, la mention sur une ligne seule dessous, rien d'autre a
 /// droite. Aucune barre d'application empilee au-dessus (I-8).
 class ChromeSeance extends StatelessWidget {
-  const ChromeSeance({required this.vue, required this.actions, super.key});
+  const ChromeSeance({
+    required this.vue,
+    required this.actions,
+    this.compacte = false,
+    super.key,
+  });
 
   final VueSeance vue;
   final ActionsSeance actions;
+
+  /// MA-CMD-1 : en Mode Accessibilite (telephone et web etroit), l'en-tete
+  /// tient sur une ligne ; la ligne d'etat et la mention restent lues par le
+  /// lecteur d'ecran.
+  final bool compacte;
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +60,12 @@ class ChromeSeance extends StatelessWidget {
       ),
       child: gabarit == Gabarit.desktop
           ? _Large(vue: vue, actions: actions)
-          : _Etroit(vue: vue, actions: actions, gabarit: gabarit),
+          : _Etroit(
+              vue: vue,
+              actions: actions,
+              gabarit: gabarit,
+              compacte: compacte,
+            ),
     );
   }
 }
@@ -205,11 +220,13 @@ class _Etroit extends StatelessWidget {
     required this.vue,
     required this.actions,
     required this.gabarit,
+    this.compacte = false,
   });
 
   final VueSeance vue;
   final ActionsSeance actions;
   final Gabarit gabarit;
+  final bool compacte;
 
   @override
   Widget build(BuildContext context) {
@@ -218,6 +235,63 @@ class _Etroit extends StatelessWidget {
     final String? ligne = vue.ligneEtat;
     final bool retour = actions.onRetour != null;
     final bool mention = vue.texteMention != null;
+    if (compacte) {
+      // MA-CMD-1 : une seule ligne (chevron, titre, « En ligne ») ; la ligne
+      // d'etat reste lue sans prendre de hauteur. La mention (observation
+      // du parent, enregistrement) reste VISIBLE dessous quand elle existe :
+      // transparence due a l'enfant (Children's Code), elle n'est pas
+      // masquee.
+      final String lu = ligne ?? '';
+      return Padding(
+        key: const ValueKey<String>('entete-seance-compacte'),
+        padding: const EdgeInsetsDirectional.fromSTEB(
+          AppPage.gouttiereMobile,
+          AppSpacing.xs,
+          AppPage.gouttiereMobile,
+          AppSpacing.xs,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Semantics(
+              hint: lu.isEmpty ? null : lu,
+              child: Row(
+                children: <Widget>[
+                  if (retour) ...<Widget>[
+                    _Retour(onPress: actions.onRetour),
+                    Ecart.hXs,
+                  ],
+                  // MA-TITRE-1 : jamais de points de suspension. L'en-tete
+                  // reste sur une ligne (MA-CMD-1) : le titre se reduit
+                  // juste assez pour tenir en entier.
+                  Expanded(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: AlignmentDirectional.centerStart,
+                      child: Semantics(
+                        header: true,
+                        child: Text(
+                          vue.titre,
+                          maxLines: 1,
+                          softWrap: false,
+                          style: palette.inkStrong.applyTo(
+                            theme.textTheme.titleMedium ?? const TextStyle(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Ecart.hSm,
+                  _Connexion(vue: vue, compacte: true),
+                ],
+              ),
+            ),
+            if (mention) MentionSeance(vue: vue),
+          ],
+        ),
+      );
+    }
     // Gouttiere de 16 des deux cotes ; le web etroit laisse plus d'air
     // au-dessus du titre (CLV-04-05-06_web_etroit).
     return Padding(

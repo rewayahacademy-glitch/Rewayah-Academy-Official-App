@@ -190,6 +190,13 @@ class PageShell extends StatelessWidget {
           )
         : child;
 
+    // A texte agrandi (au-dela de 130 %), la tete (titre sur plusieurs lignes,
+    // phrase d'introduction) peut prendre toute la hauteur d'un telephone et
+    // ne laisser aucune place a la zone qui defile (MA15) : elle defile alors
+    // avec le contenu. En taille normale, rien ne change.
+    final bool teteDefile =
+        defilante && MediaQuery.textScalerOf(context).scale(1) > 1.3;
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -215,8 +222,11 @@ class PageShell extends StatelessWidget {
                 // dessus, a 320x640 avec un clavier de 300). Lu sur la vue :
                 // le Scaffold de la coquille retire le clavier du MediaQuery
                 // de son corps.
+                // MA-RC B1 : une page defilante a texte agrandi (au-dela de
+                // 130 %) fait aussi defiler sa tete, sur tout gabarit.
                 child: _Bascule(
                   teteDefilante: (double hauteur) =>
+                      teteDefile ||
                       hauteur +
                               View.of(context).viewInsets.bottom /
                                   View.of(context).devicePixelRatio <
