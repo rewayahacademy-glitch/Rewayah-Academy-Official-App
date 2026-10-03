@@ -34,6 +34,8 @@ import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 
+import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../support/aucun_mot_coupe.dart';
 import '../support/garde_interface.dart';
 import '../support/harnais.dart';
 
@@ -113,6 +115,7 @@ Widget _hoteCarte({
   required Brightness luminosite,
   required double echelleTexte,
   required List<Override> surcharges,
+  TextDirection? direction,
 }) => ProviderScope(
   overrides: surcharges,
   child: TranslationProvider(
@@ -125,7 +128,9 @@ Widget _hoteCarte({
       builder: (BuildContext context, Widget? app) => MediaQuery(
         data: MediaQuery.of(context)
             .copyWith(textScaler: TextScaler.linear(echelleTexte)),
-        child: app!,
+        child: direction == null
+            ? app!
+            : Directionality(textDirection: direction, child: app!),
       ),
       home: const JourneePage(),
     ),
@@ -1030,15 +1035,22 @@ void main() {
         ..retardsRendus = <CahierEnRetard>[_cahier('a', 'Al-Badr', 26)],
     );
 
-    testWidgets('bureau : A terminer a droite de la carte', (
+    // BENTO-2 (DASH_STRATEGIE.md §3.5) : Ma journee a droite de la carte,
+    // A terminer (rang 4) sous la carte, dans la meme colonne.
+    testWidgets('bureau : Ma journee a droite, A terminer sous la carte', (
       WidgetTester tester,
     ) async {
       await journeeComplete(tester, const Size(1440, 1000));
-      final double xCarte = tester.getTopLeft(find.text('An-Nour')).dx;
-      final double xCahiers = tester
-          .getTopLeft(find.text(t.enseignant.journee.aTerminer))
+      final Offset carte = tester.getTopLeft(find.text('An-Nour'));
+      final double xJournee = tester
+          .getTopLeft(find.text(t.enseignant.journee.maJournee))
           .dx;
-      expect(xCahiers, greaterThan(xCarte + 300));
+      final Offset cahiers = tester.getTopLeft(
+        find.text(t.enseignant.journee.aTerminer),
+      );
+      expect(xJournee, greaterThan(carte.dx + 300));
+      expect(cahiers.dx, lessThan(carte.dx + 300));
+      expect(cahiers.dy, greaterThan(carte.dy));
       expect(tester.takeException(), isNull);
     });
 
@@ -1064,5 +1076,47 @@ void main() {
       await journeeComplete(tester, const Size(390, 2400));
       expect(tester.takeException(), isNull);
     });
+  });
+
+  group('BENTO-2b : « A terminer » ne coupe aucun mot', () {
+    // Les mesures de texte n'ont de sens qu'avec les vraies polices.
+    setUpAll(chargerPolicesDuDepot);
+
+    for (final (double, double) cas in const <(double, double)>[
+      (320, 2),
+      (390, 2),
+      (768, 1),
+      (768, 2),
+    ]) {
+      for (final TextDirection sens in TextDirection.values) {
+        testWidgets('${cas.$1.toInt()} px, texte x${cas.$2.toInt()}, '
+            '${sens.name}', (WidgetTester tester) async {
+          _fenetre(tester, Size(cas.$1, 3000));
+          await tester.pumpWidget(
+            _hoteCarte(
+              luminosite: Brightness.light,
+              echelleTexte: cas.$2,
+              direction: sens,
+              surcharges: _surcharges(
+                enseignant: FauxServiceEnseignant()
+                  ..seancesRendues = <SeanceEnseignant>[_anNour()]
+                  ..retardsRendus = <CahierEnRetard>[
+                    _cahier('a', 'Al-Badr', 26),
+                    _cahier('b', 'As-Salam', 25),
+                  ],
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          final Finder titre = find.text(t.enseignant.journee.aTerminer);
+          expect(titre, findsOneWidget);
+          verifierAucunMotCoupe(
+            tester,
+            find.ancestor(of: titre, matching: find.byType(Wrap)).first,
+          );
+        });
+      }
+    }
   });
 }
