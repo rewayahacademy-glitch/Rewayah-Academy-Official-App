@@ -131,7 +131,7 @@ Contrôles ajoutés : `plein-multiple` (`tool/verifier_revue.dart`) et `verifier
 | Signaux d'état d'une bascule micro ou caméra du dock | 1 (l'icône) ; mot fixe « Micro », « Caméra », « Parler » | 3 (disque plein ou contour 2 points, icône barrée ou non, mot « Micro ouvert » / « Micro coupé », « Caméra allumée » / « Caméra éteinte ») |
 | Signaux d'état d'une bascule de `salle_page` (micro, caméra, son reçu, agrandir) | 2 (remplissage, icône), sans mot d'état | 3 |
 | Sites de bascule qui déclarent leur état (`bascule:`) | 0 | 8 (dock : 3 ; barre du support : 1 ; `salle_page` : 4) |
-| Navigations précédent / suivant faites de deux boutons à libellé ou de chevrons grisés | 3 (lecteur de Coran, présentation de l'enseignant, pagination de la salle) | 0 : les 3 passent par `BarrePrecedentSuivant` |
+| Navigations précédent / suivant faites de deux boutons à libellé ou de chevrons grisés | 3 (lecteur de Coran, présentation de l'enseignant, pagination de la salle) | 0 : les 3 passent par `BarrePrecedentSuivant`. Exception depuis INTEG-RC-1 (03/10/2026) : le lecteur de Coran du Mode Accessibilité (`LecteurCoranAccessibilite`, MA-CMD-1) a ses propres flèches en icônes seules ; elles suivent la même règle (la flèche disparaît aux bornes, sa place reste réservée), test `coran_ma7_test.dart` « NAV-FLECHES-1 » |
 | Flèche grisée au début ou à la fin | 3 sites | 0 : la flèche disparaît, sa place reste réservée |
 | `bouton-grise` (`onPress: null` rendu grisé) | 73 | 69 |
 | `verifier_jetons` | 36 | 36 |
@@ -155,6 +155,8 @@ Limites : aucune action « couper le micro de toute la classe » n'existe dans l
 ### Décision à valider par le directeur : mot d'état au-delà de 130 % de texte
 
 Dans une rangée compacte et au-delà de 130 % d'échelle de texte, le mot d'état d'une bascule passe en infobulle et dans la voix du lecteur d'écran. Il ne reste alors que deux signaux visibles (disque plein ou contour, icône), plus le mot parlé : « jamais la couleur seule » reste vrai, mais les trois signaux cumulés visibles ne tiennent pas. Cause mesurée : à 200 % sur 390 px, deux lignes de mot par commande ne tiennent plus dans la hauteur du téléphone (`salle_secours_test`, aucun débordement exigé). Choix provisoire consigné, sans blocage : dégradation acceptée sur ce seul palier, mot toujours lu à voix haute et en infobulle. Alternative à arbitrer : une rangée de commandes sur deux lignes à ce palier, au prix d'un dock plus haut. Aucune modification de l'exigence n'a été faite ; décision à dater par le directeur.
+
+**Contradiction ouverte, à arbitrer par le directeur (relevée à INTEG-RC-1, 03/10/2026).** La décision déléguée du 02/10/2026 (`DECISIONS_DELEGUEES_2026-10-02.md`) dit « le mot d'état reste » au-delà de 130 % (WCAG 1.4.1). Le code ne l'applique pas encore : `CommandeSalle` masque le mot d'une bascule dans une rangée compacte au-delà de 130 %, et avec MA-CMD-1 (demande du directeur, « des flèches et sans texte, compacte en bas ») toutes les commandes du dock sont compactes en Mode Accessibilité. `salle_ma5_test.dart` (×2) vérifie aujourd'hui ce comportement provisoire, pas la décision. Essai mesuré en gardant le mot visible dans la rangée compacte : en Mode Accessibilité à 390 px et ×2, en-tête 152 + commandes 140 = 292, au-delà de la limite de 30 % de MA-CMD-1 (253) ; salle de l'enseignant à 390 px et ×2 (`salle_secours_test`, `salle_secours_bandeau_test`), débordement de 34 à 51 px ; panneau Élèves à 320 px et ×2, 22 px. L'essai n'est donc pas livré. Il faut choisir : (a) le mot reste et le dock passe sur deux rangées ou le support cède de la hauteur (MA-CMD-1 à relâcher) ; (b) MA-CMD-1 prime en Mode Accessibilité et la décision du 02/10 est reprise par une décision datée.
 Limites connues des contrôles (heuristiques de texte) : `cartes-collees` lit le code (`tool/revue_cartes.dart`, qui reconnaît aussi `ElementEchelonne`, les `itemBuilder` à plusieurs `return`, les `child` ternaires, les séparateurs conditionnels, les éléments `if` facultatifs et les boîtes peintes par `.decoration(` nommées `Carte...`, et ne baisse plus à 8 le minimum d'une liste `separated`) : cartes voisines, boucles `for` et `.map`, variables et méthodes qui rendent une carte, widgets dérivés, listes nommées posées dans `children:`, `ListView.builder` et `.separated`, boîtes peintes à la main ; il ne voit pas une carte construite par un appel dynamique ni un `GridView` de widgets variables (les cadres vidéo de la salle, à 8, en font partie : flux média plein cadre, sans marge ni action, donc pas des cartes ; le panneau d'élèves de la salle, lui, passe à 16) ; `bouton-recompose` ne voit que les boutons Material, `InkWell`, `GestureDetector` et un `Pressable` qui peint lui-même fond arrondi et `Text`. Ce que ces contrôles ne voient pas se mesure par les tests de géométrie et par les captures à 320 px et 1440 px.
 
 ## Lot l1-cartes : CARTES-ECART-1 (K-55) et HIER-1
@@ -323,7 +325,7 @@ Chiffres :
 
 | Mesure | Avant | Après |
 |---|---|---|
-| Destinations de l'élève dans la barre (Mode Accessibilité) | 4 | 3 (Accueil, Ma classe, Mon espace ; le Coran reste atteint par le bloc permanent de l'Accueil) |
+| Destinations de l'élève dans la barre (Mode Accessibilité) | 4 | 4 (Accueil, Ma classe, Coran, Mon espace) : le retrait du Coran (3 destinations) est annulé par la décision déléguée du 02/10/2026 (`DECISIONS_DELEGUEES_2026-10-02.md`), appliquée à INTEG-RC-1 |
 | Présentations de la barre basse | 1 (standard dans les deux modes) | 2 (standard, guide) |
 | Hauteur d'un onglet (guide) | environ 64 | 72 au moins |
 | Icône (guide) | 24 | 32 |
@@ -341,7 +343,7 @@ Limites connues des contrôles (heuristiques de texte) : `cartes-collees` ne voi
 - Contour du guide : constante nommée `NavShell.epaisseurContourGuide`.
 - Texte agrandi : plafond du guide relevé de 1,0 à 1,3 (`echelleTexteMaxGuide`), libellés sans ellipse ; test arabe à 320, ×2, RTL.
 - Preuve visuelle : `docs/current/captures/MA-NAV-1/` (`avant` = ad0e2c6, `apres` ; élève, clair/sombre, 320, 320 ×2, tablette, bureau ; harnais `test/capture/ma_nav1_capture_test.dart`).
-- À trancher par le directeur : le Coran n'est plus dans la barre de l'élève en Mode Accessibilité (accès par le bloc Coran de l'Accueil) ; confirmer qu'aucun autre écran n'exige un accès direct. Le plafond 1,3 est un choix de conception.
+- Coran dans la barre de l'élève en Mode Accessibilité : la demande MA-NAV-1 de le retirer est annulée par la décision déléguée du 02/10/2026 (« le Coran reste », 4 destinations : Accueil, Ma classe, Coran, Mon espace ; une destination essentielle dans une académie de Coran). Appliqué à INTEG-RC-1 (03/10/2026). **Accord écrit du directeur à obtenir** : c'est l'annulation d'une demande qu'il avait faite lui-même ; il peut la reprendre par une décision datée. Le plafond 1,3 est un choix de conception.
 ## CTA-FIN-1 : le bouton principal d'une séance selon son moment (02/10/2026)
 
 Demande du directeur (commentaire du 01/10) : le bouton d'une séance n'est jamais désactivé, il change de sens.

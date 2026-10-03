@@ -326,6 +326,17 @@ class LecteurCoranAccessibilite extends ConsumerStatefulWidget {
   /// La cle de l'attribution (tests, captures).
   static const Key attributionKey = ValueKey<String>('coran-ma-attribution');
 
+  /// La place reservee de la fleche « page precedente » a la premiere page
+  /// (NAV-FLECHES-1 : la fleche disparait, sa place reste).
+  static const Key placePrecedenteKey = ValueKey<String>(
+    'coran-ma-place-precedente',
+  );
+
+  /// Idem pour « page suivante » a la derniere page.
+  static const Key placeSuivanteKey = ValueKey<String>(
+    'coran-ma-place-suivante',
+  );
+
   @override
   ConsumerState<LecteurCoranAccessibilite> createState() =>
       _LecteurCoranAccessibiliteEtat();
@@ -400,6 +411,10 @@ class _LecteurCoranAccessibiliteEtat
     // fleches aux deux bouts, la navigation au milieu, la taille du texte
     // entre les deux en verset agrandi. Ecarts serres : les cinq disques de
     // la cible du mode guide (72) tiennent sur une seule rangee a 390.
+    // NAV-FLECHES-1 (K-54, K-56) : a la premiere ou a la derniere page, la
+    // fleche DISPARAIT (jamais grisee) et sa place reste reservee, pour que
+    // les autres commandes ne bougent pas.
+    final double cible = AppMetriques.of(context).cibleTactile;
     final Widget commandes = Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(
         AppSpacing.xs,
@@ -414,12 +429,18 @@ class _LecteurCoranAccessibiliteEtat
           spacing: AppSpacing.xs,
           runSpacing: AppSpacing.xs,
           children: <Widget>[
-            _BoutonIcone(
-              key: const ValueKey<String>('coran-ma-page-precedente'),
-              icone: AppIcons.retour,
-              libelle: t.eleve.coran.pagePrecedente,
-              onPress: precedente == null ? null : () => _allerA(precedente),
-            ),
+            if (precedente == null)
+              SizedBox.square(
+                key: LecteurCoranAccessibilite.placePrecedenteKey,
+                dimension: cible,
+              )
+            else
+              _BoutonIcone(
+                key: const ValueKey<String>('coran-ma-page-precedente'),
+                icone: AppIcons.retour,
+                libelle: t.eleve.coran.pagePrecedente,
+                onPress: () => _allerA(precedente),
+              ),
             _BoutonIcone(
               key: const ValueKey<String>('coran-ma-navigation'),
               icone: AppIcons.menu,
@@ -444,12 +465,18 @@ class _LecteurCoranAccessibiliteEtat
                 onPress: () => _zoomer(0.2),
               ),
             ],
-            _BoutonIcone(
-              key: const ValueKey<String>('coran-ma-page-suivante'),
-              icone: AppIcons.flecheAction,
-              libelle: t.eleve.coran.pageSuivante,
-              onPress: suivante == null ? null : () => _allerA(suivante),
-            ),
+            if (suivante == null)
+              SizedBox.square(
+                key: LecteurCoranAccessibilite.placeSuivanteKey,
+                dimension: cible,
+              )
+            else
+              _BoutonIcone(
+                key: const ValueKey<String>('coran-ma-page-suivante'),
+                icone: AppIcons.flecheAction,
+                libelle: t.eleve.coran.pageSuivante,
+                onPress: () => _allerA(suivante),
+              ),
           ],
         ),
       ),
@@ -641,7 +668,8 @@ class _BoutonIcone extends StatelessWidget {
   /// Le texte de l'infobulle ; nul : [libelle].
   final String? infobulle;
 
-  /// Nul : la commande est inerte (premiere ou derniere page).
+  /// Nul : la commande est inerte. Jamais pour une fleche a la borne : elle
+  /// n'est alors pas rendue (NAV-FLECHES-1).
   final VoidCallback? onPress;
 
   /// Faux : l'icone seule, sans disque (retour de l'en-tete).

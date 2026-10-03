@@ -271,6 +271,53 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  // NAV-FLECHES-1 (K-54, K-56) : a la premiere page, la fleche « page
+  // precedente » DISPARAIT (ni grisee ni inerte) et sa place reste reservee ;
+  // elle revient des qu'il y a une page avant.
+  testWidgets('NAV-FLECHES-1 : a la premiere page la fleche disparait, '
+      'sa place reste', (WidgetTester tester) async {
+    await _taille(tester, const Size(390, 844));
+    await tester.pumpWidget(
+      _hote(
+        EcranAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+          destinationInitiale: EcranAccessibiliteDemo.indexCoran,
+          surchargesCoran: corpus(
+            personnelle: const PositionLecture(page: 1, sourate: 1, verset: 1),
+          ),
+        ),
+      ),
+    );
+    await poser(tester);
+    await tester.tap(find.byKey(_principale));
+    await poser(tester);
+    final ProviderContainer c = ProviderScope.containerOf(
+      tester.element(find.byType(LecteurCoranAccessibilite)),
+    );
+    expect(c.read(lectureCoranProvider).page, 1);
+    expect(find.byTooltip(t.eleve.coran.pagePrecedente), findsNothing);
+    expect(
+      find.byKey(const ValueKey<String>('coran-ma-page-precedente')),
+      findsNothing,
+    );
+    final Finder place = find.byKey(
+      LecteurCoranAccessibilite.placePrecedenteKey,
+    );
+    expect(place, findsOneWidget);
+    final Finder suivante = find.byKey(
+      const ValueKey<String>('coran-ma-page-suivante'),
+    );
+    expect(suivante, findsOneWidget);
+    // Meme taille que la fleche presente : rien ne bouge autour.
+    expect(tester.getSize(place), tester.getSize(suivante));
+    await tester.tap(find.byTooltip(t.eleve.coran.pageSuivante));
+    await poser(tester);
+    expect(c.read(lectureCoranProvider).page, 2);
+    expect(find.byTooltip(t.eleve.coran.pagePrecedente), findsOneWidget);
+    expect(place, findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   // MA-CMD-1 (directeur, 02/10/2026, capture a 200 %) : a 390 px et texte
   // x2, en-tete, commandes et attribution restent sous 30 % de l'ecran ; les
   // commandes se masquent puis reviennent d'une touche ; les fleches changent
