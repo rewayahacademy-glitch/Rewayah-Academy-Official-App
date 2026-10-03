@@ -1,0 +1,11 @@
+﻿lib/core/widgets/admin_shell.dart:463: fontWeight: FontWeight.w600,
+lib/core/widgets/admin_shell.dart:613: fontWeight: FontWeight.w600,
+lib/core/widgets/groupe_reglages.dart:301: ? FontWeight.w600
+lib/features/admin_dossiers/detail_dossier.dart:204: width: 160,
+lib/features/admin_dossiers/file_dossiers.dart:361: fontWeight: FontWeight.w600,
+lib/features/admin_dossiers/visionneuse_piece.dart:659: width: 320,
+lib/features/admin_dossiers/visionneuse_piece.dart:660: height: 320 / ratio,
+lib/features/demo/repere_demonstration.dart:41: fontSize: 9,
+lib/features/demo/repere_demonstration.dart:42: fontWeight: FontWeight.w600,
+lib/features/demo/repere_demonstration.dart:43: height: 1,
+lib/features/demo/repere_demonstration.dart:46: letterSpacing: 0,
