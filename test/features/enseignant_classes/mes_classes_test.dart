@@ -17,6 +17,7 @@ import 'package:rewayah_academy/features/enseignant_classes/mes_classes_page.dar
 import 'package:rewayah_academy/features/journee/journee_page.dart'
     show maintenantJourneeProvider;
 
+import '../../support/aucun_mot_coupe.dart';
 import '../../support/harnais.dart';
 
 void _fenetre(WidgetTester tester, Size taille) {
@@ -147,69 +148,89 @@ void main() {
 
   // Lecon 8 (K-41.6) : le mot « Cahier de transmission a valider » (LIB-CAHIER-1)
   // et la pastille « Remplacement » sur la meme ligne, de 320 px au bureau,
-  // texte a 100 % puis a 200 % : rien ne deborde, rien n'est coupe.
+  // texte a 100 % puis a 200 %, de gauche a droite puis de droite a gauche :
+  // rien ne deborde, aucun mot n'est coupe (PASTILLE-COUPE-1 : « Remplacem /
+  // ent » a 200 %), rien n'est tronque (CORR-SUITE-2).
   group('ENS-09 : les marques passent a la ligne', () {
     final GroupeEnseignant badr = DonneesEnseignantDemo.groupes().firstWhere(
       (GroupeEnseignant g) => g.libelle == 'Al-Badr',
     );
-    for (final double largeur in <double>[320, 390, 600, 1280]) {
-      for (final double echelle in <double>[1, 2]) {
-        testWidgets('a $largeur px, texte a ${(echelle * 100).round()} %', (
-          WidgetTester tester,
-        ) async {
-          _fenetre(tester, Size(largeur, 1600));
-          tester.platformDispatcher.textScaleFactorTestValue = echelle;
-          addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-          await tester.pumpWidget(
-            hote(
-              const MesClassesPage(),
-              surcharges: <Override>[
-                maintenantJourneeProvider.overrideWithValue(
-                  () => DonneesEnseignantDemo.maintenant,
+    for (final TextDirection sens in TextDirection.values)
+      for (final double largeur in <double>[320, 390, 600, 1280]) {
+        for (final double echelle in <double>[1, 2]) {
+          testWidgets('a $largeur px, texte a ${(echelle * 100).round()} %, '
+              '${sens.name}', (WidgetTester tester) async {
+            _fenetre(tester, Size(largeur, 1600));
+            tester.platformDispatcher.textScaleFactorTestValue = echelle;
+            addTearDown(
+              tester.platformDispatcher.clearTextScaleFactorTestValue,
+            );
+            await tester.pumpWidget(
+              hote(
+                Directionality(
+                  textDirection: sens,
+                  child: const MesClassesPage(),
                 ),
-                groupesEnseignantProvider.overrideWith(
-                  (Ref _) async => DonneesEnseignantDemo.groupes(),
-                ),
-                seancesEnseignantProvider.overrideWith(
-                  (Ref _) async =>
-                      DonneesEnseignantDemo.seances(EtatDemoEnseignant.nominal),
-                ),
-                cahiersEnRetardProvider.overrideWith(
-                  (Ref _) async => DonneesEnseignantDemo.cahiersEnRetard(
-                    EtatDemoEnseignant.nominal,
+                surcharges: <Override>[
+                  maintenantJourneeProvider.overrideWithValue(
+                    () => DonneesEnseignantDemo.maintenant,
                   ),
-                ),
-                detailsClassesProvider.overrideWithValue(<String, DetailClasse>{
-                  badr.id: const DetailClasse(
-                    niveau: 2,
-                    langue: 'Français',
-                    remplacement: true,
+                  groupesEnseignantProvider.overrideWith(
+                    (Ref _) async => DonneesEnseignantDemo.groupes(),
                   ),
-                }),
-              ],
-            ),
-          );
-          await tester.pumpAndSettle();
+                  seancesEnseignantProvider.overrideWith(
+                    (Ref _) async => DonneesEnseignantDemo.seances(
+                      EtatDemoEnseignant.nominal,
+                    ),
+                  ),
+                  cahiersEnRetardProvider.overrideWith(
+                    (Ref _) async => DonneesEnseignantDemo.cahiersEnRetard(
+                      EtatDemoEnseignant.nominal,
+                    ),
+                  ),
+                  detailsClassesProvider.overrideWithValue(
+                    <String, DetailClasse>{
+                      badr.id: const DetailClasse(
+                        niveau: 2,
+                        langue: 'Français',
+                        remplacement: true,
+                      ),
+                    },
+                  ),
+                ],
+              ),
+            );
+            await tester.pumpAndSettle();
 
-          expect(tester.takeException(), isNull);
-          // Le mot entier, lisible, a cote du point, et la pastille.
-          final Finder mot = find.text(t.enseignant.classes.cahierAValider);
-          expect(mot, findsOneWidget);
-          expect(
-            find.widgetWithText(StatusPill, t.enseignant.classes.remplacement),
-            findsOneWidget,
-          );
-          // Ni coupe ni ellipse : le texte tient dans l'ecran.
-          final Text texte = tester.widget<Text>(mot);
-          expect(texte.overflow, isNot(TextOverflow.ellipsis));
-          expect(tester.getRect(mot).right, lessThanOrEqualTo(largeur));
-          expect(
-            tester.getRect(find.byType(StatusPill)).right,
-            lessThanOrEqualTo(largeur),
-          );
-        });
+            expect(tester.takeException(), isNull);
+            // Le mot entier, lisible, a cote du point, et la pastille.
+            final Finder mot = find.text(t.enseignant.classes.cahierAValider);
+            expect(mot, findsOneWidget);
+            expect(
+              find.widgetWithText(
+                StatusPill,
+                t.enseignant.classes.remplacement,
+              ),
+              findsOneWidget,
+            );
+            // Ni coupe ni ellipse : le texte tient dans l'ecran.
+            final Text texte = tester.widget<Text>(mot);
+            expect(texte.overflow, isNot(TextOverflow.ellipsis));
+            // Les quatre bords : en arabe, c'est le bord gauche qui deborde.
+            for (final Finder f in <Finder>[mot, find.byType(StatusPill)]) {
+              final Rect r = tester.getRect(f);
+              expect(r.left, greaterThanOrEqualTo(0));
+              expect(r.right, lessThanOrEqualTo(largeur));
+            }
+            // Aucun mot coupe, rien de tronque : mesure par mot.
+            verifierAucunMotCoupe(tester, find.byType(StatusPill));
+            verifierAucunMotCoupe(
+              tester,
+              find.byKey(const ValueKey<String>('classes-cahier-a-valider')),
+            );
+          });
+        }
       }
-    }
   });
 
   group('PointRappel', () {

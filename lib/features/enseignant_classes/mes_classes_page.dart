@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/domain/enums.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
@@ -302,8 +303,9 @@ class _CahierAValider extends StatelessWidget {
         children: <Widget>[
           PointRappel(libelle: t.enseignant.classes.rappelCahier),
           Ecart.hXs,
+          // Entre les mots, jamais dans « transmission » (lecon 8).
           Flexible(
-            child: Text(
+            child: TexteSansCoupure(
               t.enseignant.classes.cahierAValider,
               style: palette.inkMuted.applyTo(
                 textes.labelMedium ?? const TextStyle(),
