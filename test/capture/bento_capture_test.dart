@@ -53,15 +53,49 @@ void main() {
   group('Capture : BENTO-1 Centre de commande', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
 
-    for (final (Size, ThemeMode, String) cas in <(Size, ThemeMode, String)>[
-      (const Size(320, 1500), ThemeMode.light, 'centre_commande_320_clair'),
-      (const Size(1440, 1100), ThemeMode.light, 'centre_commande_1440_clair'),
-      (const Size(390, 1500), ThemeMode.dark, 'centre_commande_390_sombre'),
-    ]) {
+    for (final (Size, ThemeMode, String, double) cas
+        in <(Size, ThemeMode, String, double)>[
+          (
+            const Size(320, 1500),
+            ThemeMode.light,
+            'centre_commande_320_clair',
+            1,
+          ),
+          (
+            const Size(1440, 1100),
+            ThemeMode.light,
+            'centre_commande_1440_clair',
+            1,
+          ),
+          (
+            const Size(390, 1500),
+            ThemeMode.dark,
+            'centre_commande_390_sombre',
+            1,
+          ),
+          // BENTO-1b : texte double, une colonne a 320 px, plusieurs a 1440.
+          (
+            const Size(320, 3000),
+            ThemeMode.light,
+            'centre_commande_320x2_clair',
+            2,
+          ),
+          (
+            const Size(1440, 2400),
+            ThemeMode.light,
+            'centre_commande_1440x2_clair',
+            2,
+          ),
+        ]) {
       testWidgets(cas.$3, (WidgetTester tester) async {
         fixerVueCapture(tester, cas.$1, 1);
         await tester.pumpWidget(
-          hoteCapture(_tableau(), surcharges: _surcharges(), themeMode: cas.$2),
+          hoteCapture(
+            _tableau(),
+            surcharges: _surcharges(),
+            themeMode: cas.$2,
+            echelleTexte: cas.$4,
+          ),
         );
         await stabiliser(tester);
         debugPrint('PNG ${await capturer(tester, cas.$3)}');

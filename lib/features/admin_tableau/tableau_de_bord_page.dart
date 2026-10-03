@@ -454,7 +454,11 @@ class _TuileCompteur extends StatelessWidget {
           final bool place =
               apercu.isNotEmpty &&
               c.hasBoundedHeight &&
-              c.maxHeight >= GrilleBento.hauteurLigne * 1.5;
+              c.maxHeight >=
+                  GrilleBento.hauteurLignePour(
+                        MediaQuery.textScalerOf(context).scale(1),
+                      ) *
+                      1.5;
           return ContenuTuileBento(
             children: <Widget>[
               chiffre,
