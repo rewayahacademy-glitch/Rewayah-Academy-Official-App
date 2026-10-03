@@ -111,6 +111,65 @@ void main() {
     expect(find.text(t.enseignant.cahier.depose), findsOneWidget);
   });
 
+  // EN-7c-200 (K-61) : la feuille « Ajuster » de Nour, ouverte depuis la vraie
+  // coquille, a 200 % de texte, sur 390 et sur 320 de large. Un debordement
+  // leve une exception de rendu et fait echouer le test de lui-meme ; on
+  // verifie en plus que le bouton du bas s'atteint en defilant, et qu'il
+  // enregistre.
+  for (final double largeur in <double>[390, 320]) {
+    testWidgets(
+      'feuille Ajuster a 200 % de texte, ${largeur.toInt()} de large',
+      (WidgetTester tester) async {
+        fixerVueCapture(tester, Size(largeur, 844), 1);
+        await tester.pumpWidget(
+          hoteCapture(
+            const CoquilleEnseignantDemo(
+              ecran: EcranDemoEnseignant.cahier,
+              etat: EtatDemoEnseignant.nominal,
+            ),
+            surcharges: <Override>[
+              depotRapportsProvider.overrideWithValue(FauxDepotRapports()),
+            ],
+            echelleTexte: 2,
+          ),
+        );
+        await stabiliser(tester);
+        expect(tester.takeException(), isNull);
+
+        await _toucher(tester, find.text('Nour'));
+        expect(tester.takeException(), isNull);
+        expect(
+          find.text(t.enseignant.cahier.ajusterPour(eleve: 'Nour')),
+          findsOneWidget,
+        );
+        expect(_cle('cahier-emplacement-performance'), findsOneWidget);
+        expect(_cle('cahier-emplacement-faiblesses'), findsOneWidget);
+
+        // Le bouton du bas : atteint en defilant le corps de la feuille, puis
+        // tape ; la feuille se referme sur la decision.
+        final Finder enregistrer = find.text(
+          t.enseignant.cahier.ajusterValider,
+        );
+        expect(enregistrer, findsOneWidget);
+        // Le titre nomme chaque champ une seule fois : pas de label flottant
+        // repete, qui se coupait a 320 (« Objectif de No… »).
+        expect(
+          find.text(t.enseignant.cahier.objectif(eleve: 'Nour')),
+          findsOneWidget,
+        );
+        expect(
+          find.text(t.enseignant.cahier.travailMaison(eleve: 'Nour')),
+          findsOneWidget,
+        );
+        await _toucher(tester, _cle('cahier-performance-acquis'));
+        await _toucher(tester, enregistrer);
+        expect(tester.takeException(), isNull);
+        expect(enregistrer, findsNothing);
+        expect(find.text(t.enseignant.cahier.niveauAcquis), findsOneWidget);
+      },
+    );
+  }
+
   test('l echec reseau ne dit jamais « n a pas ete envoye » (D5)', () {
     expect(
       t.enseignant.cahier.echecEnvoi,

@@ -66,5 +66,46 @@ void main() {
         });
       }
     }
+
+    // EN-7c-200 (K-61) : la feuille de Nour a 200 % de texte, sur 390 et 320
+    // de large, a la hauteur d'un telephone : le haut a l'ouverture, puis le
+    // bas, defile jusqu'au bouton « Enregistrer pour cet eleve ».
+    for (final double largeur in <double>[390, 320]) {
+      final String l = '${largeur.toInt()}';
+      testWidgets('en7c_feuille_texte200_$l', (WidgetTester tester) async {
+        fixerVueCapture(tester, Size(largeur, 844), 1);
+        await tester.pumpWidget(
+          hoteCapture(
+            const CoquilleEnseignantDemo(
+              ecran: EcranDemoEnseignant.cahier,
+              etat: EtatDemoEnseignant.nominal,
+            ),
+            surcharges: <Override>[
+              depotRapportsProvider.overrideWithValue(FauxDepotRapports()),
+            ],
+            echelleTexte: 2,
+          ),
+        );
+        await stabiliser(tester);
+        await capturer(tester, 'en7c_cahier_texte200_$l');
+        await _toucher(tester, find.text('Nour'));
+        await capturer(tester, 'en7c_feuille_texte200_${l}_haut');
+        await tester.ensureVisible(_cle('cahier-emplacement-faiblesses'));
+        await stabiliser(tester);
+        await capturer(tester, 'en7c_feuille_texte200_${l}_faiblesses');
+        await tester.ensureVisible(
+          find.text(t.enseignant.cahier.pointPhonetique),
+        );
+        await stabiliser(tester);
+        await capturer(tester, 'en7c_feuille_texte200_${l}_presence');
+        final Finder enregistrer = find.text(
+          t.enseignant.cahier.ajusterValider,
+        );
+        await tester.ensureVisible(enregistrer);
+        await stabiliser(tester);
+        await capturer(tester, 'en7c_feuille_texte200_${l}_bas');
+        expect(tester.takeException(), isNull);
+      });
+    }
   });
 }

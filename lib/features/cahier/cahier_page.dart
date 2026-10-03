@@ -1056,9 +1056,11 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
           onChange: _choisirPhonetique,
         ),
         Ecart.vSection,
-        Text(
-          t.enseignant.cahier.objectif(eleve: participant.membre.libelle),
-          style: textes.titleSmall,
+        ExcludeSemantics(
+          child: Text(
+            t.enseignant.cahier.objectif(eleve: participant.membre.libelle),
+            style: textes.titleSmall,
+          ),
         ),
         Ecart.vXs,
         // La marge autorisee d'un objectif personnel n'existe pas encore comme
@@ -1071,20 +1073,29 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
           style: discret,
         ),
         Ecart.vMd,
-        TextField(
-          controller: _objectif,
-          maxLines: 2,
-          textInputAction: TextInputAction.newline,
-          decoration: InputDecoration(
-            labelText: t.enseignant.cahier.objectif(
-              eleve: participant.membre.libelle,
-            ),
+        // EN-7c-200 : le titre nomme le champ, sans label flottant qui le
+        // repete (K-42 §1) ; a 200 % de texte et 320 de large, ce label se
+        // coupait en « Objectif de No… ». Le lecteur d'ecran garde le nom
+        // par la semantique du champ.
+        Semantics(
+          label: t.enseignant.cahier.objectif(
+            eleve: participant.membre.libelle,
+          ),
+          child: TextField(
+            key: const ValueKey<String>('cahier-objectif'),
+            controller: _objectif,
+            maxLines: 2,
+            textInputAction: TextInputAction.newline,
           ),
         ),
         Ecart.vXl,
-        Text(
-          t.enseignant.cahier.travailMaison(eleve: participant.membre.libelle),
-          style: textes.titleSmall,
+        ExcludeSemantics(
+          child: Text(
+            t.enseignant.cahier.travailMaison(
+              eleve: participant.membre.libelle,
+            ),
+            style: textes.titleSmall,
+          ),
         ),
         // « Ajustez la suggestion » seulement quand une suggestion existe
         // (EN-7c) : sur un champ vide, la phrase ne decrirait rien.
@@ -1097,14 +1108,15 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
           ),
         ],
         Ecart.vMd,
-        TextField(
-          controller: _travail,
-          maxLines: 2,
-          textInputAction: TextInputAction.newline,
-          decoration: InputDecoration(
-            labelText: t.enseignant.cahier.travailMaison(
-              eleve: participant.membre.libelle,
-            ),
+        Semantics(
+          label: t.enseignant.cahier.travailMaison(
+            eleve: participant.membre.libelle,
+          ),
+          child: TextField(
+            key: const ValueKey<String>('cahier-devoir'),
+            controller: _travail,
+            maxLines: 2,
+            textInputAction: TextInputAction.newline,
           ),
         ),
         Ecart.vSection,
