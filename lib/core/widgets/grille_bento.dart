@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../theme/app_spacing.dart';
@@ -218,13 +220,19 @@ List<PlacementBento> placerBento(List<EtendueBento> etendues, int colonnes) {
 /// s'imbriquent sans trou, jamais un damier de carres identiques.
 ///
 /// * **Colonnes** : deux sous [seuilQuatreColonnes] de largeur offerte
-///   (telephone), quatre au-dela (tablette et ordinateur).
+///   (telephone), quatre au-dela (tablette et ordinateur). Puis, tant qu'une
+///   colonne est plus etroite que [largeurMinCellule] multipliee par l'echelle
+///   du texte, la grille divise ses colonnes par deux : 4, 2, puis 1
+///   (BENTO-1b). C'est la largeur UTILE par colonne qui decide, jamais
+///   l'echelle seule : a 1440 px et texte double, la grille garde plusieurs
+///   colonnes et ses tailles variees.
 /// * **Ecart** : 16 px entre tuiles, dans les deux sens (K-55).
-/// * **Hauteur** : une ligne vaut [hauteurLigne] ; une tuile `1 x 2` vaut deux
-///   lignes plus un ecart.
-/// * **Texte agrandi** : au-dela de [seuilUneColonne], la grille repasse en
-///   une seule colonne de hauteur libre, dans l'ordre declare. Le contenu ne
-///   deborde donc jamais d'une hauteur fixe.
+/// * **Hauteur** : une ligne vaut [hauteurLigne] multipliee par l'echelle du
+///   texte quand elle depasse 1 ([hauteurLignePour]) ; une tuile `1 x 2` vaut
+///   deux lignes plus un ecart.
+/// * **Une colonne** : la grille repasse en une colonne de hauteur libre,
+///   dans l'ordre declare. Le contenu ne deborde donc jamais d'une hauteur
+///   fixe (320 px et texte double).
 class GrilleBento extends StatelessWidget {
   /// Cree la grille.
   const GrilleBento({required this.tuiles, super.key});
@@ -241,17 +249,41 @@ class GrilleBento extends StatelessWidget {
   /// Largeur offerte a partir de laquelle la grille passe a quatre colonnes.
   static const double seuilQuatreColonnes = 600;
 
-  /// Echelle de texte au-dela de laquelle la grille passe en une colonne.
-  static const double seuilUneColonne = 1.15;
+  /// Largeur utile minimale d'une colonne, a texte 100 %. Elle est
+  /// multipliee par l'echelle du texte. 112 garde quatre colonnes a 600 px et
+  /// deux a 320 px de place offerte, a texte 100 % comme avant BENTO-1b.
+  static const double largeurMinCellule = 112;
 
-  /// Le nombre de colonnes pour une largeur offerte.
-  static int colonnesPour(double largeur) =>
-      largeur >= seuilQuatreColonnes ? 4 : 2;
+  /// Le nombre de colonnes pour une largeur offerte et une echelle de texte :
+  /// 4 ou 2 selon la largeur, puis divise par deux tant que la largeur
+  /// utile par colonne est sous `largeurMinCellule x echelle`.
+  static int colonnesPour(double largeur, [double echelle = 1]) {
+    int colonnes = largeur >= seuilQuatreColonnes ? 4 : 2;
+    final double minimum = largeurMinCellule * math.max(1, echelle);
+    while (colonnes > 1 &&
+        (largeur - ecart * (colonnes - 1)) / colonnes < minimum) {
+      colonnes ~/= 2;
+    }
+    return colonnes;
+  }
+
+  /// La hauteur d'une ligne de grille a cette echelle de texte : le texte
+  /// agrandi garde sa place au lieu d'etre reduit.
+  static double hauteurLignePour(double echelle) =>
+      hauteurLigne * math.max(1, echelle);
 
   @override
   Widget build(BuildContext context) {
     final double echelle = MediaQuery.textScalerOf(context).scale(1);
-    if (echelle > seuilUneColonne) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) =>
+          _grille(contraintes.maxWidth, echelle),
+    );
+  }
+
+  Widget _grille(double largeur, double echelle) {
+    final int colonnes = colonnesPour(largeur, echelle);
+    if (colonnes == 1) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -262,40 +294,35 @@ class GrilleBento extends StatelessWidget {
         ],
       );
     }
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints contraintes) {
-        final double largeur = contraintes.maxWidth;
-        final int colonnes = colonnesPour(largeur);
-        final double cellule = (largeur - ecart * (colonnes - 1)) / colonnes;
-        final List<PlacementBento> places = placerBento(<EtendueBento>[
-          for (final TuileBento t in tuiles) t.pour(colonnes),
-        ], colonnes);
-        int lignes = 0;
-        for (final PlacementBento p in places) {
-          if (p.ligne + p.lignes > lignes) lignes = p.ligne + p.lignes;
-        }
-        return SizedBox(
-          height: lignes == 0
-              ? 0
-              : lignes * hauteurLigne + (lignes - 1) * ecart,
-          child: Stack(
-            children: <Widget>[
-              for (int i = 0; i < tuiles.length; i++)
-                PositionedDirectional(
-                  start: places[i].colonne * (cellule + ecart),
-                  top: places[i].ligne * (hauteurLigne + ecart),
-                  width:
-                      places[i].colonnes * cellule +
-                      (places[i].colonnes - 1) * ecart,
-                  height:
-                      places[i].lignes * hauteurLigne +
-                      (places[i].lignes - 1) * ecart,
-                  child: tuiles[i].child,
-                ),
-            ],
-          ),
-        );
-      },
+    final double hauteur = hauteurLignePour(echelle);
+    final double cellule = (largeur - ecart * (colonnes - 1)) / colonnes;
+    // Les etendues se replient sur le nombre de colonnes retenu : celle de
+    // quatre colonnes ne vaut qu'a quatre, et `placerBento` ramene une tuile
+    // trop large a la largeur de la grille.
+    final List<PlacementBento> places = placerBento(<EtendueBento>[
+      for (final TuileBento t in tuiles) t.pour(colonnes),
+    ], colonnes);
+    int lignes = 0;
+    for (final PlacementBento p in places) {
+      if (p.ligne + p.lignes > lignes) lignes = p.ligne + p.lignes;
+    }
+    return SizedBox(
+      height: lignes == 0 ? 0 : lignes * hauteur + (lignes - 1) * ecart,
+      child: Stack(
+        children: <Widget>[
+          for (int i = 0; i < tuiles.length; i++)
+            PositionedDirectional(
+              start: places[i].colonne * (cellule + ecart),
+              top: places[i].ligne * (hauteur + ecart),
+              width:
+                  places[i].colonnes * cellule +
+                  (places[i].colonnes - 1) * ecart,
+              height:
+                  places[i].lignes * hauteur + (places[i].lignes - 1) * ecart,
+              child: tuiles[i].child,
+            ),
+        ],
+      ),
     );
   }
 }
