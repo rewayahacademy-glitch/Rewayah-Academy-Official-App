@@ -236,9 +236,21 @@ void main() {
       }
     }
 
-    for (final double largeur in <double>[320, 390]) {
-      for (final double echelle in <double>[1, 2]) {
-        final String suffixe = '${largeur.round()}_${_x(echelle)}_light';
+    for (final (double largeur, double echelle, ThemeMode mode) cas
+        in <(double, double, ThemeMode)>[
+          for (final double l in <double>[320, 390])
+            for (final double e in <double>[1, 2])
+              for (final ThemeMode m in <ThemeMode>[
+                ThemeMode.light,
+                ThemeMode.dark,
+              ])
+                (l, e, m),
+        ]) {
+      {
+        final double largeur = cas.$1;
+        final double echelle = cas.$2;
+        final ThemeMode mode = cas.$3;
+        final String suffixe = '${largeur.round()}_${_x(echelle)}_${mode.name}';
         testWidgets('controleur detail echanges $suffixe', (
           WidgetTester tester,
         ) async {
@@ -251,7 +263,7 @@ void main() {
               ),
               routes: routesDemoControleur('dev'),
             ),
-            mode: ThemeMode.light,
+            mode: mode,
             echelle: echelle,
           );
           await _toucher(

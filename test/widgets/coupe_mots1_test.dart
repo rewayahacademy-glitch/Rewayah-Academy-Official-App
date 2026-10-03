@@ -7,13 +7,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/accessibilite/texte_sans_coupure.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
+import 'package:rewayah_academy/core/theme/app_gabarit.dart';
 import 'package:rewayah_academy/core/widgets/avatar_nom.dart';
 import 'package:rewayah_academy/core/widgets/controle_segmente.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
+import 'package:rewayah_academy/features/salle_seance/chrome_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart';
 
 import '../capture/outil_capture.dart';
 import '../support/aucun_mot_coupe.dart';
@@ -233,5 +238,190 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     verifierAucunMotCoupe(tester, find.byType(StatusPill));
+  });
+
+  // Relecture COUPE-MOTS-1 : la reduction est BORNEE. La barre basse ne
+  // descend jamais sous 0,85 ; au-dela, la rangee defile. Le rail ne descend
+  // jamais sous 0,85 non plus ; au-dela, il s'elargit.
+  group('plancher de reduction', () {
+    // Quatre destinations au plus par role (NavShell.maxDestinations), aux
+    // mots longs : une langue plus longue que le francais.
+    const List<String> longs = <String>[
+      'Disponibilités',
+      'Remplacements',
+      'Transmissions',
+      'Administration',
+    ];
+    final List<Destination> quatre = <Destination>[
+      for (final String l in longs)
+        Destination(libelle: l, icone: AppIcons.chevron, chemin: '/$l'),
+    ];
+
+    for (final double echelle in <double>[1, 2]) {
+      testWidgets('barre basse : quatre libelles longs a 280, x$echelle', (
+        WidgetTester tester,
+      ) async {
+        _vue(tester, const Size(280, 700), echelle);
+        await tester.pumpWidget(
+          hote(
+            NavShell(
+              destinations: quatre,
+              indexActif: 0,
+              onAller: (String _) {},
+              child: const SizedBox.expand(),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        final Finder barre = find.byKey(NavShell.barreBasseKey);
+        verifierAucunMotCoupe(tester, barre);
+        final Set<double> echelles = _echelles(tester, barre);
+        expect(echelles, hasLength(1));
+        expect(echelles.single, greaterThanOrEqualTo(echelleMinimaleLisible));
+        // Au plancher, ils ne tiennent pas ensemble : la rangee defile.
+        expect(find.byKey(NavShell.barreBasseDefileKey), findsOneWidget);
+      });
+    }
+
+    for (final double echelle in <double>[1, 2]) {
+      testWidgets('rail a 768, x$echelle : jamais sous 0,85, le rail '
+          's elargit', (WidgetTester tester) async {
+        _vue(tester, const Size(768, 1024), echelle);
+        await tester.pumpWidget(
+          hote(
+            NavShell(
+              destinations: quatre,
+              indexActif: 0,
+              libellesDansLeRail: true,
+              onAller: (String _) {},
+              child: const SizedBox.expand(),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        final Finder rail = find.byKey(NavShell.railKey);
+        verifierAucunMotCoupe(tester, rail);
+        final Set<double> echelles = _echelles(tester, rail);
+        expect(echelles, hasLength(1));
+        expect(echelles.single, greaterThanOrEqualTo(echelleMinimaleLisible));
+        // « Administration » ne tient pas dans 80 meme a 0,85 : le rail
+        // s'elargit.
+        expect(tester.getSize(rail).width, greaterThan(AppGabarit.largeurRail));
+      });
+    }
+
+    testWidgets('TexteSansCoupure a x1 : un mot trop long se reduit, '
+        'jamais sous 0,85', (WidgetTester tester) async {
+      _vue(tester, const Size(320, 400), 1);
+      Future<double> echelleDans(double largeur) async {
+        await tester.pumpWidget(
+          hote(
+            Scaffold(
+              body: Center(
+                child: SizedBox(
+                  width: largeur,
+                  child: const Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: TexteSansCoupure('Reconnexions'),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        return tester
+            .renderObject<RenderParagraph>(find.byType(RichText))
+            .textScaler
+            .scale(1);
+      }
+
+      // Large : la taille du theme.
+      expect(await echelleDans(300), 1);
+      final double naturelle = tester.getSize(find.byType(RichText)).width;
+      // Un peu juste (92 % du mot) : reduit, mot entier.
+      final double reduite = await echelleDans(naturelle * 0.92);
+      verifierAucunMotCoupe(tester, find.byType(TexteSansCoupure));
+      expect(reduite, lessThan(1));
+      expect(reduite, greaterThanOrEqualTo(echelleMinimaleLisible));
+      // Beaucoup trop etroit : bloque au plancher (le conteneur doit alors
+      // s'elargir ; le mot n'est jamais rendu minuscule).
+      expect(await echelleDans(20), echelleMinimaleLisible);
+    });
+  });
+
+  testWidgets('feuille de la salle ecrasee : elle defile, rien n est rogne', (
+    WidgetTester tester,
+  ) async {
+    _vue(tester, const Size(320, 700), 2);
+    await tester.pumpWidget(
+      hote(
+        Scaffold(
+          body: Align(
+            alignment: Alignment.topCenter,
+            child: SizedBox(
+              // Bien plus bas que la tete du panneau a 200 %.
+              height: 90,
+              child: PanneauSeance(
+                titre: 'Élèves',
+                onFermer: () {},
+                forme: FormePanneau.feuille,
+                enfant: ListView(
+                  children: const <Widget>[
+                    Text('Sayyid Ibrahim', key: ValueKey<String>('premier')),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    final Finder defile = find.byKey(
+      const ValueKey<String>('panneau-seance-defile'),
+    );
+    expect(defile, findsOneWidget);
+    // Le premier eleve est joignable : on le fait venir dans la feuille.
+    await tester.dragUntilVisible(
+      find.byKey(const ValueKey<String>('premier')),
+      defile,
+      const Offset(0, -40),
+    );
+    await tester.pumpAndSettle();
+    final Rect feuille = tester.getRect(find.byType(PanneauSeance));
+    final Rect premier = tester.getRect(
+      find.byKey(const ValueKey<String>('premier')),
+    );
+    expect(premier.top, greaterThanOrEqualTo(feuille.top));
+    expect(premier.top, lessThan(feuille.bottom));
+  });
+
+  testWidgets('titre de la salle : jamais plus petit que son sous-titre', (
+    WidgetTester tester,
+  ) async {
+    _vue(tester, const Size(320, 700), 2);
+    late double plancher;
+    late double sousTitre;
+    late double titre;
+    await tester.pumpWidget(
+      hote(
+        Builder(
+          builder: (BuildContext context) {
+            final TextTheme textes = Theme.of(context).textTheme;
+            plancher = plancherTitreSeance(context, textes.titleLarge);
+            final TextScaler e = MediaQuery.textScalerOf(context);
+            sousTitre = e.scale(textes.bodyMedium!.fontSize!);
+            titre = textes.titleLarge!.fontSize! * plancher;
+            return const SizedBox();
+          },
+        ),
+      ),
+    );
+    expect(plancher, greaterThanOrEqualTo(1));
+    expect(titre, greaterThan(sousTitre));
   });
 }

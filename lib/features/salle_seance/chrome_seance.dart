@@ -351,6 +351,26 @@ class _Etroit extends StatelessWidget {
   }
 }
 
+/// Le rapport minimal entre la taille du titre de la salle et celle de son
+/// sous-titre (`bodyMedium`, a l'echelle de l'appareil) : la hierarchie ne
+/// s'inverse jamais. Le titre se reduit pour tenir dans ses lignes, mais pas
+/// sous 1,15 fois le sous-titre ; s'il n'y tient toujours pas, il prend une
+/// ligne de plus (l'en-tete grandit, la feuille du telephone defile).
+const double rapportMinimalTitreSousTitre = 1.15;
+
+/// L'echelle sous laquelle le titre de la salle (de style [style]) ne
+/// descend pas pour garder ses lignes : jamais sous 1, jamais au-dessus de
+/// l'echelle de l'appareil.
+double plancherTitreSeance(BuildContext context, TextStyle? style) {
+  final TextTheme textes = Theme.of(context).textTheme;
+  final double titre = style?.fontSize ?? textes.titleLarge?.fontSize ?? 22;
+  final double sousTitre = textes.bodyMedium?.fontSize ?? 14;
+  final double facteur = MediaQuery.textScalerOf(context).scale(1);
+  final double p = facteur * rapportMinimalTitreSousTitre * sousTitre / titre;
+  if (p > facteur) return facteur;
+  return p < 1 ? 1 : p;
+}
+
 class _Titre extends StatelessWidget {
   const _Titre({required this.texte, required this.style, this.lignes = 2});
 
@@ -362,15 +382,10 @@ class _Titre extends StatelessWidget {
   ///
   /// COUPE-MOTS-1 : c'est un nombre de lignes VISE, plus une troncature. Un
   /// titre de page n'a jamais de points de suspension (« Seance en d... ») :
-  /// son echelle se reduit juste assez pour tenir dans ces lignes, comme le
-  /// `FittedBox` de l'en-tete compact (MA-TITRE-1) : la hauteur de l'en-tete
-  /// est comptee, au-dessus du bloc de secours. Les mots ne sont jamais
-  /// coupes : la reduction s'arrete des que chaque mot et le titre tiennent.
+  /// son echelle se reduit pour tenir dans ces lignes, au plus jusqu'a
+  /// [plancherTitreSeance] (le titre reste plus grand que son sous-titre) ; au-dela, il
+  /// prend une ligne de plus. Les mots ne sont jamais coupes.
   final int lignes;
-
-  /// Aucune echelle minimale : comme un `FittedBox`, le titre se reduit
-  /// autant qu'il le faut pour garder ses lignes.
-  static const double _plancher = 0;
 
   @override
   Widget build(BuildContext context) => Semantics(
@@ -378,7 +393,7 @@ class _Titre extends StatelessWidget {
     child: TexteSansCoupure(
       texte,
       maxLignes: lignes,
-      plancher: _plancher,
+      plancher: plancherTitreSeance(context, style),
       style: AppPalette.of(context).inkStrong
           .applyTo(style ?? const TextStyle()),
     ),

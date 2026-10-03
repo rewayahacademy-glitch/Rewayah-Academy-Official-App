@@ -128,7 +128,7 @@ class PanneauSeance extends StatelessWidget {
           ),
           child: _HauteurMinimale(
             actif: !ajuste,
-            minimum: _hauteurEnTete(context, feuille: feuille),
+            minimum: _hauteurInterieure(context, forme: forme),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: ajuste ? MainAxisSize.min : MainAxisSize.max,
@@ -183,26 +183,66 @@ class PanneauSeance extends StatelessWidget {
     return Align(alignment: AlignmentDirectional.topCenter, child: cadre);
   }
 
-  /// La hauteur de la tete du panneau (poignee, titre ou croix) a l'echelle
-  /// courante du texte.
-  static double _hauteurEnTete(BuildContext context, {required bool feuille}) {
-    final TextStyle titre =
-        Theme.of(context).textTheme.titleLarge ?? const TextStyle();
-    final double ligne =
-        MediaQuery.textScalerOf(context).scale(titre.fontSize ?? 22) *
-        (titre.height ?? 1.3);
-    // Sous la marge haute du cadre : poignee (feuille), titre ou croix, ecart.
+  /// La hauteur sous laquelle le panneau ne se tasse pas : sa tete (poignee,
+  /// titre ou croix, mesure du titre tel qu'il est rendu, une seule ligne)
+  /// plus une rangee de contenu a l'echelle courante du texte. La salle
+  /// reduit d'abord le support visible au-dessus de la feuille pour la lui
+  /// laisser ([supportVisiblePour]) ; s'il manque encore de la place, le
+  /// panneau defile au lieu d'etre rogne.
+  static double hauteurMinimale(
+    BuildContext context, {
+    required FormePanneau forme,
+  }) {
+    final bool feuille = forme == FormePanneau.feuille;
+    // Marge haute du cadre, puis l'interieur.
+    return (feuille ? AppSpacing.sm : AppSpacing.md) +
+        _hauteurInterieure(context, forme: forme);
+  }
+
+  /// [hauteurMinimale] sans la marge haute du cadre : poignee (feuille),
+  /// titre ou croix, ecart, une rangee de contenu.
+  static double _hauteurInterieure(
+    BuildContext context, {
+    required FormePanneau forme,
+  }) {
+    final bool feuille = forme == FormePanneau.feuille;
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    final TextPainter p = TextPainter(
+      text: TextSpan(
+        text: 'Ag',
+        style: DefaultTextStyle.of(context).style
+            .merge(Theme.of(context).textTheme.titleLarge),
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: echelle,
+      maxLines: 1,
+    )..layout();
+    final double ligne = p.height;
+    p.dispose();
     return (feuille ? AppBottomSheet.hauteurPoignee + AppSpacing.sm : 0) +
         (ligne > AppSpacing.titreEcran ? ligne : AppSpacing.titreEcran) +
-        AppSpacing.sm;
+        AppSpacing.sm +
+        echelle.scale(AppSpacing.respiration);
   }
 }
 
-/// Quand la place laissee au panneau est plus basse que sa tete (feuille
+/// Le support laisse visible au-dessus de la feuille du telephone dans une
+/// hauteur [disponible] : [supportVisibleSousFeuille], reduit (jusqu'a zero)
+/// pour que la feuille garde sa [PanneauSeance.hauteurMinimale].
+double supportVisiblePour(BuildContext context, double disponible) {
+  if (!disponible.isFinite) return supportVisibleSousFeuille;
+  final double reste =
+      disponible -
+      PanneauSeance.hauteurMinimale(context, forme: FormePanneau.feuille);
+  if (reste >= supportVisibleSousFeuille) return supportVisibleSousFeuille;
+  return reste > 0 ? reste : 0;
+}
+
+/// Quand la place laissee au panneau est plus basse que [minimum] (feuille
 /// ecrasee sous un en-tete de salle haut, 320 px a 200 %), le panneau garde
-/// sa hauteur de tete et le surplus est rogne, au lieu de deborder
-/// (COUPE-MOTS-1 : le titre de la salle, qui ne tronque plus, a rendu ce cas
-/// visible). Avec assez de place, rien ne change.
+/// sa hauteur minimale et DEFILE : son contenu reste joignable (la liste
+/// defile a l'interieur, le panneau entier autour), rien n'est rogne. Avec
+/// assez de place, rien ne change.
 class _HauteurMinimale extends StatelessWidget {
   const _HauteurMinimale({
     required this.actif,
@@ -221,13 +261,9 @@ class _HauteurMinimale extends StatelessWidget {
       builder: (BuildContext _, BoxConstraints c) =>
           !c.maxHeight.isFinite || c.maxHeight >= minimum
           ? child
-          : ClipRect(
-              child: OverflowBox(
-                alignment: AlignmentDirectional.topCenter,
-                minHeight: minimum,
-                maxHeight: minimum,
-                child: child,
-              ),
+          : SingleChildScrollView(
+              key: const ValueKey<String>('panneau-seance-defile'),
+              child: SizedBox(height: minimum, child: child),
             ),
     );
   }

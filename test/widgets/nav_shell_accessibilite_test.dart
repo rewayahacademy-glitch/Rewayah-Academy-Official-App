@@ -15,6 +15,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/accessibilite/texte_sans_coupure.dart'
+    show echelleMinimaleLisible;
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -24,6 +26,8 @@ import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
+
+import '../support/aucun_mot_coupe.dart';
 
 Future<void> _monter(
   WidgetTester tester, {
@@ -258,11 +262,13 @@ void main() {
         // vraies polices) : le libelle passe a la ligne, sans limite de lignes.
         expect(p.didExceedMaxLines, isFalse, reason: x.libelle);
         // Le texte regle a x2 grandit dans la barre, jusqu'au plafond de 1,3 ;
-        // il ne recule (jamais sous 1) que si le mot le plus long ne tiendrait
-        // pas sur une ligne (MA-NAV-1, TexteSansCoupure).
+        // il ne recule que si le mot le plus long ne tiendrait pas sur une
+        // ligne (MA-NAV-1, TexteSansCoupure), et jamais sous 0,85
+        // (`echelleMinimaleLisible`, relecture COUPE-MOTS-1) : la police de
+        // test, un em par lettre, l'y amene.
         expect(
           p.textScaler.scale(10),
-          inInclusiveRange(10, 13.001),
+          inInclusiveRange(10 * echelleMinimaleLisible - 0.001, 13.001),
           reason: x.libelle,
         );
         expect(p.maxLines, isNull, reason: x.libelle);
@@ -578,10 +584,14 @@ void main() {
           echelle: 2,
         );
         expect(find.byKey(NavShell.railKey), findsOneWidget);
+        // 96 de base ; plus large seulement si un mot n'y tient pas meme a
+        // 0,85 (police de test, un em par lettre) : le rail s'elargit au lieu
+        // de couper le mot (relecture COUPE-MOTS-1).
         expect(
           tester.getSize(find.byKey(NavShell.railKey)).width,
-          AppGabarit.largeurRail + AppSpacing.lg,
+          greaterThanOrEqualTo(AppGabarit.largeurRail + AppSpacing.lg),
         );
+        verifierAucunMotCoupe(tester, find.byKey(NavShell.railKey));
         for (final Destination x in d) {
           // Le nom est rendu (jamais l'infobulle seule), sous l'icone.
           expect(find.text(x.libelle), findsOneWidget, reason: x.libelle);

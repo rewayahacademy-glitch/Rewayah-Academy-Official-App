@@ -8,10 +8,12 @@ import 'package:flutter/rendering.dart';
 /// se reduit (echelle bornee) ou son conteneur s'elargit.
 ///
 /// Quand le mot le plus long ne tient pas dans la largeur offerte, l'echelle
-/// du texte est bornee juste assez pour qu'il tienne (jamais sous 1) : le
-/// texte reste agrandi autant que la place le permet, sans ellipse et sans
-/// « Accessibilit / e ». Partout ailleurs, l'echelle de l'appareil est
-/// gardee telle quelle.
+/// du texte est bornee juste assez pour qu'il tienne, jamais sous
+/// [echelleMinimaleLisible] (0,85) : le texte reste agrandi autant que la
+/// place le permet, sans ellipse et sans « Accessibilit / e ». A 100 %, un
+/// mot qui ne tient pas se reduit de meme (jusqu'a 0,85). Un mot qui ne tient
+/// toujours pas a 0,85 serait coupe : c'est alors au conteneur de s'elargir.
+/// Partout ailleurs, l'echelle de l'appareil est gardee telle quelle.
 ///
 /// Les dimensions intrinseques (un parent `IntrinsicWidth`) sont mesurees sur
 /// le texte lui-meme, sans relancer la mise en page.
@@ -47,10 +49,10 @@ class TexteSansCoupure extends StatelessWidget {
   /// ellipse (COUPE-MOTS-1). Nul : autant de lignes qu'il faut.
   final int? maxLignes;
 
-  /// L'echelle sous laquelle le texte ne descend pas : 1 par defaut (le
-  /// texte reste au moins a la taille du theme). Un en-tete de hauteur
-  /// comptee (titre de la salle sur une ligne) peut descendre plus bas,
-  /// comme un `FittedBox` borne, plutot que de tronquer.
+  /// L'echelle sous laquelle la reduction pour [maxLignes] ne descend pas :
+  /// 1 par defaut (taille du theme). Le titre de la salle la place plus
+  /// haut, pour rester plus grand que son sous-titre. Elle ne concerne pas
+  /// le mot le plus long, borne par [echelleMinimaleLisible].
   final double plancher;
 
   @override
@@ -124,12 +126,18 @@ double _motLePlusLong(
   return motLong;
 }
 
+/// L'echelle sous laquelle aucun libelle ne descend pour garder un mot
+/// entier (85 % de la taille du theme). Au-dela, le conteneur s'elargit
+/// (rail, ligne cle-valeur) ou defile (barre basse) : la reduction est
+/// bornee, comme un `FittedBox` borne, jamais une troncature invisible.
+const double echelleMinimaleLisible = 0.85;
+
 /// Une petite marge : l'arrondi des glyphes ne doit pas renvoyer la derniere
 /// lettre a la ligne.
 const double _margeArrondi = 2;
 
 /// L'echelle de [context], bornee pour que le mot le plus long de [texte]
-/// tienne dans [largeur] (jamais sous 1) et, si [maxLignes] est donne, pour
+/// tienne dans [largeur] (jamais sous [echelleMinimaleLisible]) et, si [maxLignes] est donne, pour
 /// que le texte entier tienne si possible dans ce nombre de lignes. Les mots
 /// de [voisins] comptent comme les siens (voir [TexteSansCoupure.voisins]).
 TextScaler echelleSansCoupure(
@@ -162,10 +170,15 @@ TextScaler _echelleBornee({
   required double plancher,
 }) {
   final double facteur = echelle.scale(1);
-  // Jamais plus grand que l'echelle de l'appareil, jamais sous le plancher
-  // (sauf si l'appareil est deja en dessous).
-  final double minimum = plancher < facteur ? plancher : facteur;
-  if (!largeur.isFinite || facteur <= minimum) return echelle;
+  if (!largeur.isFinite) return echelle;
+  // 1. Le mot le plus long doit tenir : l'echelle se reduit juste assez,
+  // jamais sous [echelleMinimaleLisible] (sauf si l'appareil est deja en
+  // dessous). Cela vaut aussi a 100 % : un mot plus long que sa place a la
+  // taille du theme se reduit au lieu d'etre coupe. Sous ce plancher, c'est
+  // au conteneur de s'elargir (barre de navigation, rail, ligne cle-valeur).
+  final double minimumMot = echelleMinimaleLisible < facteur
+      ? echelleMinimaleLisible
+      : facteur;
   final double motLong = _motLePlusLong(
     complet,
     sens,
@@ -175,10 +188,12 @@ TextScaler _echelleBornee({
   double borne = motLong <= largeur
       ? facteur
       : facteur * (largeur - _margeArrondi) / motLong;
-  if (borne < minimum) borne = minimum;
+  if (borne < minimumMot) borne = minimumMot;
   if (maxLignes != null) {
-    // Des pas de 5 % : le titre garde la plus grande echelle qui le fait
-    // tenir dans ses lignes.
+    // 2. Le nombre de lignes vise : des pas de 5 %, jamais sous [plancher]
+    // (ni sous l'echelle deja retenue pour le mot). Le texte garde la plus
+    // grande echelle qui le fait tenir ; sinon il prend une ligne de plus.
+    final double minimum = plancher < borne ? plancher : borne;
     for (int pas = 0; pas < 60 && borne > minimum; pas++) {
       final TextPainter p = TextPainter(
         text: TextSpan(text: texte, style: complet),
@@ -237,7 +252,9 @@ TextScaler echelleCommuneSansCoupure(
 /// commune, plus [marge], puis une part egale du reste. L'echelle commune
 /// est la plus grande, au plus celle de [context] et jamais sous [plancher],
 /// qui laisse tenir tous ces mots ensemble : le conteneur s'elargit pour le
-/// mot long au lieu de le couper (« Disponibilites »).
+/// mot long au lieu de le couper (« Disponibilites »). Si meme au plancher
+/// ils ne tiennent pas, les largeurs rendues depassent [largeur] (voir la
+/// fin de la fonction).
 ({TextScaler echelle, List<double> largeurs}) repartitionSansCoupure(
   BuildContext context, {
   required List<String> textes,
@@ -270,8 +287,11 @@ TextScaler echelleCommuneSansCoupure(
       largeur - besoins.fold<double>(0, (double a, double b) => a + b);
   return (
     echelle: borne >= facteur ? echelle : TextScaler.linear(borne),
+    // Au plancher, si les mots ne tiennent toujours pas ensemble, chacun
+    // garde sa largeur : leur somme depasse [largeur] et l'appelant fait
+    // defiler la rangee (le conteneur s'elargit, aucun mot n'est coupe).
     largeurs: reste < 0
-        ? <double>[for (int i = 0; i < n; i++) largeur / n]
+        ? besoins
         : <double>[for (final double b in besoins) b + reste / n],
   );
 }
@@ -296,6 +316,8 @@ class _Intrinseques extends SingleChildRenderObjectWidget {
 
   @override
   void updateRenderObject(BuildContext context, _RenduIntrinseques rendu) {
+    // Le rendu possede son peintre : l'ancien est libere.
+    if (!identical(rendu.peintre, peintre)) rendu.peintre.dispose();
     rendu
       ..peintre = peintre
       ..echellePour = echellePour
@@ -308,6 +330,12 @@ class _RenduIntrinseques extends RenderProxyBox {
 
   TextPainter peintre;
   TextScaler Function(double largeur) echellePour;
+
+  @override
+  void dispose() {
+    peintre.dispose();
+    super.dispose();
+  }
 
   /// Pose sur le peintre l'echelle que le texte aura a [largeur].
   void _echelle(double largeur) {

@@ -71,13 +71,23 @@ Future<void> _monter(
   await tester.pumpAndSettle();
 }
 
+/// Le defilement vertical de la page. A 200 % sous la police de test, les
+/// onglets de la barre basse ne tiennent plus ensemble meme au plancher de
+/// 0,85 : la barre defile alors horizontalement (COUPE-MOTS-1), et il y a
+/// plus d'un `Scrollable` a l'ecran.
+final Finder _defilementPage = find
+    .byWidgetPredicate(
+      (Widget w) => w is Scrollable && w.axisDirection == AxisDirection.down,
+    )
+    .first;
+
 Future<void> _versDetailHistorique(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 500));
   await tester.pumpAndSettle();
   final Finder ligne = find.byKey(
     HistoriqueControleurPage.ligneKey('demo-rapport-0924'),
   );
-  await tester.scrollUntilVisible(ligne, 200);
+  await tester.scrollUntilVisible(ligne, 200, scrollable: _defilementPage);
   await tester.tap(ligne);
   await tester.pumpAndSettle();
   expect(find.text(t.controleur.historique.sectionMission), findsOneWidget);
@@ -127,6 +137,7 @@ void main() {
       await tester.scrollUntilVisible(
         find.byKey(ControleControleurPage.commencerKey),
         200,
+        scrollable: _defilementPage,
       );
       expect(find.byKey(ControleControleurPage.commencerKey), findsOneWidget);
       final Rect bouton = tester.getRect(

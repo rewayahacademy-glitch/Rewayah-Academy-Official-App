@@ -307,10 +307,14 @@ class _Ligne extends StatelessWidget {
         // une largeur fixe posee par l'ecran : une marque longue (« Cahier de
         // transmission a valider ») tient sur une ligne des que la place le
         // permet, et passe a la ligne entre ses mots sinon.
+        // La part se compte apres l'ecart et le chevron : le libelle garde
+        // au moins le tiers de ce qui reste.
         if (marque != null && !marqueDessous) ...<Widget>[
           Ecart.hSm,
           ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: largeur * _partMarqueEnFin),
+            constraints: BoxConstraints(
+              maxWidth: (largeur - _fixesEnFin) * _partMarqueEnFin,
+            ),
             child: marque,
           ),
         ],
@@ -333,8 +337,18 @@ class _Ligne extends StatelessWidget {
   /// En dessous de cette largeur de texte, la marque passe sous la legende.
   static const double _largeurMarqueEnFin = 320;
 
-  /// La part de la ligne que peut prendre une marque en fin de ligne.
+  /// La part de la ligne (ecart et chevron retires) que peut prendre une
+  /// marque en fin de ligne.
   static const double _partMarqueEnFin = 2 / 3;
+
+  /// Ce que la rangee pose a cote du libelle et de la marque : l'ecart avant
+  /// la marque et, s'il y en a un, le chevron et son ecart. Un controle
+  /// (interrupteur) n'est pas mesure : une ligne a marque n'en porte pas.
+  double get _fixesEnFin =>
+      AppSpacing.sm +
+      (ligne.onPress != null && ligne.controle == null && ligne.cochee == null
+          ? AppSpacing.sm + AppSpacing.xl
+          : 0);
 
   Widget _textes(AppPalette palette, TextTheme textes) {
     final TextStyle styleSecondaire = palette.inkMuted.applyTo(

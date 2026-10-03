@@ -293,6 +293,12 @@ List<Destination> secondairesPour({required AppRole role}) =>
 class NavShell extends StatelessWidget {
   /// Cles stables pour verifier les trois presentations adaptatives du shell.
   static const Key barreBasseKey = ValueKey<String>('nav-shell-barre-basse');
+
+  /// La rangee d'onglets de la barre basse quand elle defile (libelles qui
+  /// ne tiennent pas ensemble, meme a [echelleMinimaleLisible]).
+  static const Key barreBasseDefileKey = ValueKey<String>(
+    'nav-shell-barre-basse-defile',
+  );
   static const Key railKey = ValueKey<String>('nav-shell-rail');
   static const Key barreLateraleKey = ValueKey<String>(
     'nav-shell-barre-laterale',
@@ -726,27 +732,56 @@ class _BarreFlottante extends StatelessWidget {
                                 FontWeight.w600,
                               ),
                               marge: 2 * AppSpacing.xs,
-                              plancher: 0,
+                              // Reduction bornee : jamais sous 85 % du theme.
+                              plancher: echelleMinimaleLisible,
                             );
+                        final double total = r.largeurs.fold<double>(
+                          0,
+                          (double a, double b) => a + b,
+                        );
+                        // Au plancher, des libelles qui ne tiennent toujours
+                        // pas ensemble (cinq onglets, langue longue) gardent
+                        // chacun sa largeur et la rangee defile.
+                        final bool defile =
+                            c.maxWidth.isFinite && total > c.maxWidth + 0.5;
+                        final Widget rangee = Row(
+                          mainAxisSize: defile
+                              ? MainAxisSize.min
+                              : MainAxisSize.max,
+                          children: <Widget>[
+                            for (int i = 0; i < destinations.length; i++)
+                              defile
+                                  ? SizedBox(
+                                      width: r.largeurs[i],
+                                      child: _OngletBarre(
+                                        destination: destinations[i],
+                                        actif: i == indexActif,
+                                        onAller: onAller,
+                                      ),
+                                    )
+                                  : _part(
+                                      r.largeurs.isEmpty ||
+                                              i == destinations.length - 1
+                                          ? null
+                                          : r.largeurs[i],
+                                      _OngletBarre(
+                                        destination: destinations[i],
+                                        actif: i == indexActif,
+                                        onAller: onAller,
+                                      ),
+                                    ),
+                          ],
+                        );
                         return MediaQuery(
                           data: MediaQuery.of(contexte)
                               .copyWith(textScaler: r.echelle),
-                          child: Row(
-                            children: <Widget>[
-                              for (int i = 0; i < destinations.length; i++)
-                                _part(
-                                  r.largeurs.isEmpty ||
-                                          i == destinations.length - 1
-                                      ? null
-                                      : r.largeurs[i],
-                                  _OngletBarre(
-                                    destination: destinations[i],
-                                    actif: i == indexActif,
-                                    onAller: onAller,
-                                  ),
-                                ),
-                            ],
-                          ),
+                          child: defile
+                              ? SingleChildScrollView(
+                                  key: NavShell.barreBasseDefileKey,
+                                  scrollDirection: Axis.horizontal,
+                                  child: rangee,
+                                )
+                              : rangee,
                         );
                       },
                     ),
@@ -1158,12 +1193,8 @@ class _Colonne extends StatelessWidget {
     return SizedBox(
       key: repliee ? NavShell.railKey : NavShell.barreLateraleKey,
       // Guide : le rail est plus large (96) pour que le libelle, toujours
-      // visible, tienne sous l'icone.
-      width: repliee
-          ? (guide
-                ? AppGabarit.largeurRail + AppSpacing.lg
-                : AppGabarit.largeurRail)
-          : AppGabarit.largeurBarreLaterale,
+      // visible, tienne sous l'icone ; elargi si un mot n'y tient pas.
+      width: _largeur(context, commune),
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: palette.surfaceRaised.background,
@@ -1210,14 +1241,58 @@ class _Colonne extends StatelessWidget {
 }
 
 extension on _Colonne {
+  /// La largeur du rail replie avant tout elargissement.
+  double get _largeurRailDeBase =>
+      guide ? AppGabarit.largeurRail + AppSpacing.lg : AppGabarit.largeurRail;
+
+  /// Ce que le rail retire autour d'un libelle : 4 de chaque cote de l'item
+  /// (et 4 dans l'item en guide).
+  double get _retraitLibelleRail =>
+      guide ? 4 * AppSpacing.xs : 2 * AppSpacing.xs;
+
+  TextStyle _styleLibelleRail(TextTheme textes) => guide
+      ? AppTypography.graisse(
+          textes.labelLarge ?? const TextStyle(),
+          FontWeight.w700,
+        )
+      : textes.labelMedium ?? const TextStyle();
+
+  /// La largeur de la colonne. Rail replie a libelles : sa largeur de base,
+  /// elargie quand le mot le plus long, a l'[commune] (jamais sous 0,85),
+  /// n'y tient pas : le conteneur s'elargit au lieu de reduire le texte
+  /// davantage ou de le couper. En vraies polices, francais, le rail garde
+  /// sa largeur de base (80, 96 en guide).
+  double _largeur(BuildContext context, TextScaler? commune) {
+    if (!repliee) return AppGabarit.largeurBarreLaterale;
+    final double base = _largeurRailDeBase;
+    if (commune == null) return base;
+    double mot = 0;
+    for (final Destination d in <Destination>[
+      ...destinations,
+      ...secondaires,
+    ]) {
+      final double m = largeurMotLePlusLong(
+        context,
+        d.libelle,
+        _styleLibelleRail(Theme.of(context).textTheme),
+        commune,
+      );
+      if (m > mot) mot = m;
+    }
+    // La marge d'arrondi (2) est deja comptee dans l'echelle commune : on
+    // ne s'elargit que si le mot depasse vraiment la place de base.
+    final double besoin = mot + _retraitLibelleRail + 2;
+    return besoin > base + 1 ? besoin.ceilToDouble() : base;
+  }
+
   /// L'echelle commune des libelles visibles de la colonne (COUPE-MOTS-1
   /// points 5 et 6), ou nulle quand le rail n'a que des icones.
   ///
-  /// - Rail a libelles (80, ou 96 en guide) : largeur fixe, le plafond de la
-  ///   barre basse (1,5 ; 1,3 en guide), puis l'echelle qui fait tenir le mot
-  ///   le plus long de tous (« Disponibilites », « Historique ») : elle peut
-  ///   passer sous 1 (reduction bornee, comme un `FittedBox`) plutot que de
-  ///   tronquer « Contr... Histori... » ou couper « Disponibilit / es ».
+  /// - Rail a libelles (80, ou 96 en guide) : le plafond de la barre basse
+  ///   (1,5 ; 1,3 en guide), puis l'echelle qui fait tenir le mot le plus
+  ///   long de tous (« Disponibilites », « Historique »), jamais sous
+  ///   [echelleMinimaleLisible] (0,85) ; au-dela, le rail s'elargit ([_largeur]) plutot que de tronquer
+  ///   « Contr... Histori... » ou de couper « Disponibilit / es ».
   /// - Barre laterale depliee : l'echelle de l'appareil, reduite au besoin
   ///   pour tous les libelles a la fois, jamais sous 1.
   TextScaler? _echelleLibelles(BuildContext context) {
@@ -1238,18 +1313,11 @@ extension on _Colonne {
         context,
         libelles,
         MediaQuery.textScalerOf(context).clamp(maxScaleFactor: plafond),
-        guide
-            // 96 de rail, 4 de chaque cote de l'item, 4 dans l'item.
-            ? AppGabarit.largeurRail + AppSpacing.lg - 4 * AppSpacing.xs
-            // 80 de rail, 4 de chaque cote de l'item.
-            : AppGabarit.largeurRail - 2 * AppSpacing.xs,
-        guide
-            ? AppTypography.graisse(
-                textes.labelLarge ?? const TextStyle(),
-                FontWeight.w700,
-              )
-            : textes.labelMedium ?? const TextStyle(),
-        plancher: 0,
+        _largeurRailDeBase - _retraitLibelleRail,
+        _styleLibelleRail(textes),
+        // Reduction bornee : jamais sous 85 % du theme ; au-dela, le rail
+        // s'elargit ([_largeur]).
+        plancher: echelleMinimaleLisible,
       );
     }
     // Depliee : 12 (ou 8) de chaque cote de l'item, 12 dans la pastille,

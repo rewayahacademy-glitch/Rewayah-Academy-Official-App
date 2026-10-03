@@ -217,16 +217,51 @@ void main() {
             // Ni coupe ni ellipse : le texte tient dans l'ecran.
             final Text texte = tester.widget<Text>(mot);
             expect(texte.overflow, isNot(TextOverflow.ellipsis));
-            // Les quatre bords : en arabe, c'est le bord gauche qui deborde.
+            // Les quatre bords : en arabe, c'est le bord gauche qui deborde ;
+            // le haut et le bas restent dans la fenetre (1600 de haut).
             for (final Finder f in <Finder>[mot, find.byType(StatusPill)]) {
               final Rect r = tester.getRect(f);
               expect(r.left, greaterThanOrEqualTo(0));
               expect(r.right, lessThanOrEqualTo(largeur));
+              expect(r.top, greaterThanOrEqualTo(0));
+              expect(r.bottom, lessThanOrEqualTo(1600));
             }
-            // Aucun mot coupe, rien de tronque : mesure par mot.
+            // Aucun mot coupe, rien de tronque : mesure par mot, sur la
+            // pastille puis sur l'ecran ENTIER (noms de classe, legendes,
+            // corps des cartes, titre), sans exception.
             verifierAucunMotCoupe(tester, find.byType(StatusPill));
+            verifierEcranSansMotCoupe(tester);
             // CORR-SUITE-2 : au bureau, la marque n'est plus bornee a 200 :
-            // « Cahier de transmission a valider » tient sur une ligne.
+            // « Cahier de transmission a valider » tient sur une ligne. A
+            // 100 %, en fin de ligne ; a 200 %, la marque passe SOUS la
+            // legende (GroupeReglages, echelle au-dessus de 1,3), et y tient
+            // encore sur une ligne.
+            if (largeur >= 1280) {
+              final Rect marque = tester.getRect(mot);
+              // Le nom de la classe de la MEME ligne : le plus proche au-dessus
+              // (ou au niveau) de la marque.
+              Rect? libelle;
+              for (final Element e in find.text(badr.libelle).evaluate()) {
+                final Rect r = tester.getRect(find.byWidget(e.widget).first);
+                if (r.top > marque.top + 1) continue;
+                if (libelle == null || r.top > libelle.top) libelle = r;
+              }
+              expect(libelle, isNotNull);
+              final Rect nom = libelle!;
+              if (echelle == 1) {
+                // En fin de ligne : a cote du texte, du cote de fin.
+                if (sens == TextDirection.ltr) {
+                  expect(marque.left, greaterThan(nom.right));
+                } else {
+                  expect(marque.right, lessThan(nom.left));
+                }
+              } else {
+                expect(marque.top, greaterThanOrEqualTo(nom.bottom));
+              }
+            }
+            // Une seule ligne a 1280 x1 ici ; a x2, la police de test (un em
+            // par lettre) ne le permet pas : la ligne unique a 1280 x2 est
+            // verifiee en vraies polices (test/capture/coupe_mots1_capture).
             if (largeur >= 1280 && echelle == 1) {
               final RenderParagraph p = tester.renderObject(mot);
               final Set<int> lignes = <int>{
@@ -239,6 +274,17 @@ void main() {
                   b.top.round(),
               };
               expect(lignes, hasLength(1));
+            }
+            // Ellipse effective : aucune, nulle part (CORR-SUITE-2).
+            for (final RenderParagraph p
+                in tester.renderObjectList<RenderParagraph>(
+                  find.byType(RichText),
+                )) {
+              expect(
+                p.didExceedMaxLines,
+                isFalse,
+                reason: '« ${p.text.toPlainText()} » tronque',
+              );
             }
             verifierAucunMotCoupe(
               tester,

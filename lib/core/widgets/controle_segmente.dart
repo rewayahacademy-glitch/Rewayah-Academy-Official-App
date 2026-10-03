@@ -155,11 +155,12 @@ class _Segment<T> extends StatelessWidget {
                   ),
             child: Center(
               child: Padding(
-                // THEME-SW-1 : marge laterale de 4 (et non 12) pour que
-                // « Systeme » tienne a 320 ; le libelle reduit au besoin son
-                // echelle (jamais sous 1) au lieu d'etre coupe.
+                // THEME-SW-1 : marge laterale de 8 (et non 12) ; le libelle
+                // reduit au besoin son echelle (jamais sous 0,85) au lieu
+                // d'etre coupe, sans toucher le contour de la pastille
+                // (relecture COUPE-MOTS-1 : a 4, « Systeme » le touchait).
                 padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.xs,
+                  horizontal: AppSpacing.sm,
                   vertical: AppSpacing.sm,
                 ),
                 child: Column(
