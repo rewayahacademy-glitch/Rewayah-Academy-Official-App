@@ -214,10 +214,20 @@ class AvatarNom extends StatelessWidget {
         children: <Widget>[
           cercleHabille,
           if (afficherNom || ligneRole != null) Ecart.vXs,
+          // COUPE-MOTS-1 : nom et role passent a la ligne entre leurs mots,
+          // jamais dans un mot (« Administrat / eur » a 200 %).
           if (afficherNom)
-            Text(affiche, textAlign: TextAlign.center, style: styleDuNom),
+            TexteSansCoupure(
+              affiche,
+              textAlign: TextAlign.center,
+              style: styleDuNom,
+            ),
           if (ligneRole != null)
-            Text(ligneRole, textAlign: TextAlign.center, style: styleDuRole),
+            TexteSansCoupure(
+              ligneRole,
+              textAlign: TextAlign.center,
+              style: styleDuRole,
+            ),
         ],
       ),
       DispositionAvatar.enLigne => Row(
@@ -231,11 +241,11 @@ class AvatarNom extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(affiche, style: styleDuNom),
+                TexteSansCoupure(affiche, style: styleDuNom),
                 if (roleWidget != null)
                   roleWidget!
                 else if (ligneRole != null)
-                  Text(ligneRole, style: styleDuRole),
+                  TexteSansCoupure(ligneRole, style: styleDuRole),
               ],
             ),
           ),

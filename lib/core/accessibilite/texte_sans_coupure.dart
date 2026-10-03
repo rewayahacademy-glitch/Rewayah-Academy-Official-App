@@ -23,7 +23,14 @@ class TexteSansCoupure extends StatelessWidget {
     this.style,
     this.textAlign,
     this.maxLignes,
+    this.voisins = const <String>[],
+    this.plancher = 1,
   });
+
+  /// Les libelles voisins de MEME largeur (segments d'un `ControleSegmente`) :
+  /// l'echelle est bornee par le mot le plus long de tous, pour que les
+  /// voisins gardent la meme taille (COUPE-MOTS-1 point 6).
+  final List<String> voisins;
 
   /// Le texte.
   final String texte;
@@ -35,36 +42,52 @@ class TexteSansCoupure extends StatelessWidget {
   final TextAlign? textAlign;
 
   /// Le nombre de lignes vise (titre de la salle : deux a 200 %). L'echelle
-  /// se reduit encore, jamais sous 1, pour que le texte y tienne ; s'il n'y
-  /// tient toujours pas, il prend une ligne de plus plutot qu'une ellipse
-  /// (COUPE-MOTS-1). Nul : autant de lignes qu'il faut.
+  /// se reduit encore, jamais sous [plancher], pour que le texte y tienne ;
+  /// s'il n'y tient toujours pas, il prend une ligne de plus plutot qu'une
+  /// ellipse (COUPE-MOTS-1). Nul : autant de lignes qu'il faut.
   final int? maxLignes;
 
+  /// L'echelle sous laquelle le texte ne descend pas : 1 par defaut (le
+  /// texte reste au moins a la taille du theme). Un en-tete de hauteur
+  /// comptee (titre de la salle sur une ligne) peut descendre plus bas,
+  /// comme un `FittedBox` borne, plutot que de tronquer.
+  final double plancher;
+
   @override
-  Widget build(BuildContext context) => _Intrinseques(
-    peintre: TextPainter(
-      text: TextSpan(
-        text: texte,
-        style: DefaultTextStyle.of(context).style.merge(style),
+  Widget build(BuildContext context) {
+    final TextStyle complet = DefaultTextStyle.of(context).style.merge(style);
+    final TextDirection sens = Directionality.of(context);
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    // L'echelle retenue pour une largeur : la meme regle pour la mise en
+    // page et pour les hauteurs intrinseques (un parent `IntrinsicHeight`
+    // mesure le texte tel qu'il sera rendu, pas a l'echelle de l'appareil).
+    TextScaler pour(double largeur) => _echelleBornee(
+      echelle: echelle,
+      complet: complet,
+      sens: sens,
+      texte: texte,
+      largeur: largeur,
+      maxLignes: maxLignes,
+      voisins: voisins,
+      plancher: plancher,
+    );
+    return _Intrinseques(
+      peintre: TextPainter(
+        text: TextSpan(text: texte, style: complet),
+        textDirection: sens,
+        textScaler: echelle,
       ),
-      textDirection: Directionality.of(context),
-      textScaler: MediaQuery.textScalerOf(context),
-    ),
-    child: LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints c) => Text(
-        texte,
-        style: style,
-        textAlign: textAlign,
-        textScaler: echelleSansCoupure(
-          context,
+      echellePour: pour,
+      child: LayoutBuilder(
+        builder: (BuildContext _, BoxConstraints c) => Text(
           texte,
-          style,
-          c.maxWidth,
-          maxLignes: maxLignes,
+          style: style,
+          textAlign: textAlign,
+          textScaler: pour(c.maxWidth),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 /// La largeur du mot le plus long de [texte], a l'echelle [echelle].
@@ -73,14 +96,25 @@ double largeurMotLePlusLong(
   String texte,
   TextStyle? style,
   TextScaler echelle,
+) => _motLePlusLong(
+  DefaultTextStyle.of(context).style.merge(style),
+  Directionality.of(context),
+  texte,
+  echelle,
+);
+
+double _motLePlusLong(
+  TextStyle complet,
+  TextDirection sens,
+  String texte,
+  TextScaler echelle,
 ) {
-  final TextStyle complet = DefaultTextStyle.of(context).style.merge(style);
   double motLong = 0;
   for (final String mot in texte.split(RegExp(r'\s+'))) {
     if (mot.isEmpty) continue;
     final TextPainter p = TextPainter(
       text: TextSpan(text: mot, style: complet),
-      textDirection: Directionality.of(context),
+      textDirection: sens,
       textScaler: echelle,
       maxLines: 1,
     )..layout();
@@ -96,37 +130,66 @@ const double _margeArrondi = 2;
 
 /// L'echelle de [context], bornee pour que le mot le plus long de [texte]
 /// tienne dans [largeur] (jamais sous 1) et, si [maxLignes] est donne, pour
-/// que le texte entier tienne si possible dans ce nombre de lignes.
+/// que le texte entier tienne si possible dans ce nombre de lignes. Les mots
+/// de [voisins] comptent comme les siens (voir [TexteSansCoupure.voisins]).
 TextScaler echelleSansCoupure(
   BuildContext context,
   String texte,
   TextStyle? style,
   double largeur, {
   int? maxLignes,
+  List<String> voisins = const <String>[],
+  double plancher = 1,
+}) => _echelleBornee(
+  echelle: MediaQuery.textScalerOf(context),
+  complet: DefaultTextStyle.of(context).style.merge(style),
+  sens: Directionality.of(context),
+  texte: texte,
+  largeur: largeur,
+  maxLignes: maxLignes,
+  voisins: voisins,
+  plancher: plancher,
+);
+
+TextScaler _echelleBornee({
+  required TextScaler echelle,
+  required TextStyle complet,
+  required TextDirection sens,
+  required String texte,
+  required double largeur,
+  required int? maxLignes,
+  required List<String> voisins,
+  required double plancher,
 }) {
-  final TextScaler echelle = MediaQuery.textScalerOf(context);
   final double facteur = echelle.scale(1);
-  if (!largeur.isFinite || facteur <= 1) return echelle;
-  final double motLong = largeurMotLePlusLong(context, texte, style, echelle);
+  // Jamais plus grand que l'echelle de l'appareil, jamais sous le plancher
+  // (sauf si l'appareil est deja en dessous).
+  final double minimum = plancher < facteur ? plancher : facteur;
+  if (!largeur.isFinite || facteur <= minimum) return echelle;
+  final double motLong = _motLePlusLong(
+    complet,
+    sens,
+    <String>[texte, ...voisins].join(' '),
+    echelle,
+  );
   double borne = motLong <= largeur
       ? facteur
       : facteur * (largeur - _margeArrondi) / motLong;
-  if (borne < 1) borne = 1;
+  if (borne < minimum) borne = minimum;
   if (maxLignes != null) {
-    final TextStyle complet = DefaultTextStyle.of(context).style.merge(style);
-    // Quelques pas de 5 % au plus : le titre garde la plus grande echelle
-    // qui le fait tenir dans ses lignes.
-    while (borne > 1) {
+    // Des pas de 5 % : le titre garde la plus grande echelle qui le fait
+    // tenir dans ses lignes.
+    for (int pas = 0; pas < 60 && borne > minimum; pas++) {
       final TextPainter p = TextPainter(
         text: TextSpan(text: texte, style: complet),
-        textDirection: Directionality.of(context),
+        textDirection: sens,
         textScaler: TextScaler.linear(borne),
         maxLines: maxLignes,
       )..layout(maxWidth: largeur);
       final bool depasse = p.didExceedMaxLines;
       p.dispose();
       if (!depasse) break;
-      borne = borne * 0.95 < 1 ? 1 : borne * 0.95;
+      borne = borne * 0.95 < minimum ? minimum : borne * 0.95;
     }
   }
   return borne == facteur ? echelle : TextScaler.linear(borne);
@@ -216,38 +279,57 @@ TextScaler echelleCommuneSansCoupure(
 /// Repond aux questions de dimensions intrinseques avec le texte mesure,
 /// la ou un `LayoutBuilder` ne sait pas le faire.
 class _Intrinseques extends SingleChildRenderObjectWidget {
-  const _Intrinseques({required this.peintre, super.child});
+  const _Intrinseques({
+    required this.peintre,
+    required this.echellePour,
+    super.child,
+  });
 
   final TextPainter peintre;
 
+  /// L'echelle retenue pour une largeur donnee.
+  final TextScaler Function(double largeur) echellePour;
+
   @override
   _RenduIntrinseques createRenderObject(BuildContext context) =>
-      _RenduIntrinseques(peintre);
+      _RenduIntrinseques(peintre, echellePour);
 
   @override
   void updateRenderObject(BuildContext context, _RenduIntrinseques rendu) {
-    rendu.peintre = peintre;
+    rendu
+      ..peintre = peintre
+      ..echellePour = echellePour
+      ..markNeedsLayout();
   }
 }
 
 class _RenduIntrinseques extends RenderProxyBox {
-  _RenduIntrinseques(this.peintre);
+  _RenduIntrinseques(this.peintre, this.echellePour);
 
   TextPainter peintre;
+  TextScaler Function(double largeur) echellePour;
+
+  /// Pose sur le peintre l'echelle que le texte aura a [largeur].
+  void _echelle(double largeur) {
+    peintre.textScaler = echellePour(largeur);
+  }
 
   @override
   double computeMinIntrinsicWidth(double height) {
+    _echelle(double.infinity);
     peintre.layout();
     return peintre.minIntrinsicWidth;
   }
 
   @override
   double computeMaxIntrinsicWidth(double height) {
+    _echelle(double.infinity);
     peintre.layout();
     return peintre.maxIntrinsicWidth;
   }
 
   double _hauteur(double width) {
+    _echelle(width);
     peintre.layout(maxWidth: width.isFinite ? width : double.infinity);
     return peintre.height;
   }
@@ -260,6 +342,7 @@ class _RenduIntrinseques extends RenderProxyBox {
 
   @override
   Size computeDryLayout(BoxConstraints constraints) {
+    _echelle(constraints.maxWidth);
     peintre.layout(maxWidth: constraints.maxWidth);
     return constraints.constrain(peintre.size);
   }

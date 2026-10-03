@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_color_pair.dart';
@@ -358,15 +359,26 @@ class _Titre extends StatelessWidget {
 
   /// Doc 04 §28, §33 n. 13 : a 200 %, le titre passe sur deux lignes. Une
   /// seule quand un bloc de secours occupe deja l'ecran etroit.
+  ///
+  /// COUPE-MOTS-1 : c'est un nombre de lignes VISE, plus une troncature. Un
+  /// titre de page n'a jamais de points de suspension (« Seance en d... ») :
+  /// son echelle se reduit juste assez pour tenir dans ces lignes, comme le
+  /// `FittedBox` de l'en-tete compact (MA-TITRE-1) : la hauteur de l'en-tete
+  /// est comptee, au-dessus du bloc de secours. Les mots ne sont jamais
+  /// coupes : la reduction s'arrete des que chaque mot et le titre tiennent.
   final int lignes;
+
+  /// Aucune echelle minimale : comme un `FittedBox`, le titre se reduit
+  /// autant qu'il le faut pour garder ses lignes.
+  static const double _plancher = 0;
 
   @override
   Widget build(BuildContext context) => Semantics(
     header: true,
-    child: Text(
+    child: TexteSansCoupure(
       texte,
-      maxLines: lignes,
-      overflow: TextOverflow.ellipsis,
+      maxLignes: lignes,
+      plancher: _plancher,
       style: AppPalette.of(context).inkStrong
           .applyTo(style ?? const TextStyle()),
     ),

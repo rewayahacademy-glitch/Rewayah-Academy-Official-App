@@ -126,54 +126,110 @@ class PanneauSeance extends StatelessWidget {
             forme == FormePanneau.colonne ? AppSpacing.xs : AppSpacing.sm,
             0,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: ajuste ? MainAxisSize.min : MainAxisSize.max,
-            children: <Widget>[
-              if (feuille) ...<Widget>[
-                Center(
-                  child: ExcludeSemantics(
-                    child: SizedBox(
-                      width: AppBottomSheet.largeurPoignee,
-                      height: AppBottomSheet.hauteurPoignee,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: palette.borderResting.asBorderSide().color,
-                          borderRadius: AppRadius.arrondiFull,
+          child: _HauteurMinimale(
+            actif: !ajuste,
+            minimum: _hauteurEnTete(context, feuille: feuille),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: ajuste ? MainAxisSize.min : MainAxisSize.max,
+              children: <Widget>[
+                if (feuille) ...<Widget>[
+                  Center(
+                    child: ExcludeSemantics(
+                      child: SizedBox(
+                        width: AppBottomSheet.largeurPoignee,
+                        height: AppBottomSheet.hauteurPoignee,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: palette.borderResting.asBorderSide().color,
+                            borderRadius: AppRadius.arrondiFull,
+                          ),
                         ),
                       ),
                     ),
                   ),
+                  Ecart.vSm,
+                ],
+                _EnTete(
+                  titre: titre,
+                  onFermer: onFermer,
+                  enMenu: colonne && enMenu,
                 ),
                 Ecart.vSm,
-              ],
-              _EnTete(
-                titre: titre,
-                onFermer: onFermer,
-                enMenu: colonne && enMenu,
-              ),
-              Ecart.vSm,
-              if (ajuste) Flexible(child: enfant) else Expanded(child: enfant),
-              // Web etroit : le chevron de bas de volet (image CLV-07-08-10).
-              if (forme == FormePanneau.volet)
-                ExcludeSemantics(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.sm,
-                    ),
-                    child: IconTheme(
-                      data: palette.inkMuted.asIconTheme(size: AppSpacing.lg),
-                      child: Icon(AppIcons.suiteEnBas.repos),
+                if (ajuste)
+                  Flexible(child: enfant)
+                else
+                  Expanded(child: enfant),
+                // Web etroit : le chevron de bas de volet (image CLV-07-08-10).
+                if (forme == FormePanneau.volet)
+                  ExcludeSemantics(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppSpacing.sm,
+                      ),
+                      child: IconTheme(
+                        data: palette.inkMuted.asIconTheme(size: AppSpacing.lg),
+                        child: Icon(AppIcons.suiteEnBas.repos),
+                      ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
     if (!ajuste) return cadre;
     return Align(alignment: AlignmentDirectional.topCenter, child: cadre);
+  }
+
+  /// La hauteur de la tete du panneau (poignee, titre ou croix) a l'echelle
+  /// courante du texte.
+  static double _hauteurEnTete(BuildContext context, {required bool feuille}) {
+    final TextStyle titre =
+        Theme.of(context).textTheme.titleLarge ?? const TextStyle();
+    final double ligne =
+        MediaQuery.textScalerOf(context).scale(titre.fontSize ?? 22) *
+        (titre.height ?? 1.3);
+    // Sous la marge haute du cadre : poignee (feuille), titre ou croix, ecart.
+    return (feuille ? AppBottomSheet.hauteurPoignee + AppSpacing.sm : 0) +
+        (ligne > AppSpacing.titreEcran ? ligne : AppSpacing.titreEcran) +
+        AppSpacing.sm;
+  }
+}
+
+/// Quand la place laissee au panneau est plus basse que sa tete (feuille
+/// ecrasee sous un en-tete de salle haut, 320 px a 200 %), le panneau garde
+/// sa hauteur de tete et le surplus est rogne, au lieu de deborder
+/// (COUPE-MOTS-1 : le titre de la salle, qui ne tronque plus, a rendu ce cas
+/// visible). Avec assez de place, rien ne change.
+class _HauteurMinimale extends StatelessWidget {
+  const _HauteurMinimale({
+    required this.actif,
+    required this.minimum,
+    required this.child,
+  });
+
+  final bool actif;
+  final double minimum;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!actif) return child;
+    return LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints c) =>
+          !c.maxHeight.isFinite || c.maxHeight >= minimum
+          ? child
+          : ClipRect(
+              child: OverflowBox(
+                alignment: AlignmentDirectional.topCenter,
+                minHeight: minimum,
+                maxHeight: minimum,
+                child: child,
+              ),
+            ),
+    );
   }
 }
 

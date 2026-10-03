@@ -156,7 +156,7 @@ void main() {
     final GroupeEnseignant badr = DonneesEnseignantDemo.groupes().firstWhere(
       (GroupeEnseignant g) => g.libelle == 'Al-Badr',
     );
-    for (final TextDirection sens in TextDirection.values)
+    for (final TextDirection sens in TextDirection.values) {
       for (final double largeur in <double>[320, 390, 600, 1280]) {
         for (final double echelle in <double>[1, 2]) {
           testWidgets('a $largeur px, texte a ${(echelle * 100).round()} %, '
@@ -247,6 +247,7 @@ void main() {
           });
         }
       }
+    }
   });
 
   group('PointRappel', () {

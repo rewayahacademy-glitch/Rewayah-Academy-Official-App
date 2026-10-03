@@ -84,6 +84,10 @@ class ControleSegmente<T> extends StatelessWidget {
               Expanded(
                 child: _Segment<T>(
                   segment: segment,
+                  voisins: <String>[
+                    for (final Segment<T> s in segments)
+                      if (!identical(s, segment)) s.libelle,
+                  ],
                   selectionne: segment.valeur == valeur,
                   onChange: onChange,
                   arrondi: rectangle
@@ -101,12 +105,16 @@ class ControleSegmente<T> extends StatelessWidget {
 class _Segment<T> extends StatelessWidget {
   const _Segment({
     required this.segment,
+    required this.voisins,
     required this.selectionne,
     required this.onChange,
     required this.arrondi,
   });
 
   final Segment<T> segment;
+
+  /// Les libelles des autres segments.
+  final List<String> voisins;
   final bool selectionne;
   final ValueChanged<T> onChange;
   final BorderRadius arrondi;
@@ -172,8 +180,12 @@ class _Segment<T> extends StatelessWidget {
                       ),
                       Ecart.vXs,
                     ],
+                    // COUPE-MOTS-1 point 6 : les segments ont la meme
+                    // largeur ; l'echelle est bornee par le mot le plus long
+                    // de TOUS, pour que les voisins gardent la meme taille.
                     TexteSansCoupure(
                       segment.libelle,
+                      voisins: voisins,
                       textAlign: TextAlign.center,
                       style: selectionne
                           ? palette.washAccent.applyTo(base)

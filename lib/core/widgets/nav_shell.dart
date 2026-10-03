@@ -643,33 +643,61 @@ class _BarreFlottante extends StatelessWidget {
                       maxScaleFactor: NavShell.echelleTexteMaxGuide,
                       child: LayoutBuilder(
                         builder: (BuildContext contexte, BoxConstraints c) {
+                          final double disponible =
+                              c.maxWidth - ecart * (destinations.length - 1);
                           final List<double>? largeurs = _largeursOnglets(
                             _minimumsOnglets(contexte, metriques),
-                            c.maxWidth - ecart * (destinations.length - 1),
+                            disponible,
                           );
-                          return IntrinsicHeight(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: <Widget>[
-                                for (
-                                  int i = 0;
-                                  i < destinations.length;
-                                  i++
-                                ) ...<Widget>[
-                                  if (i > 0) SizedBox(width: ecart),
-                                  _part(
-                                    largeurs == null ||
-                                            i == destinations.length - 1
-                                        ? null
-                                        : largeurs[i],
-                                    _OngletBarreGuide(
-                                      destination: destinations[i],
-                                      actif: i == indexActif,
-                                      onAller: onAller,
+                          // COUPE-MOTS-1 point 6 : une seule echelle pour les
+                          // quatre libelles, celle du plus contraint ; plus
+                          // un onglet reduit et son voisin non.
+                          final TextScaler commune = echelleCommuneSansCoupure(
+                            contexte,
+                            textes: <String>[
+                              for (final Destination d in destinations)
+                                d.libelle,
+                            ],
+                            largeurs: <double>[
+                              for (int i = 0; i < destinations.length; i++)
+                                (largeurs == null
+                                        ? disponible / destinations.length
+                                        : largeurs[i]) -
+                                    2 * AppSpacing.xs,
+                            ],
+                            style: AppTypography.graisse(
+                              Theme.of(contexte).textTheme.labelLarge ??
+                                  const TextStyle(),
+                              FontWeight.w700,
+                            ),
+                          );
+                          return MediaQuery(
+                            data: MediaQuery.of(contexte)
+                                .copyWith(textScaler: commune),
+                            child: IntrinsicHeight(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: <Widget>[
+                                  for (
+                                    int i = 0;
+                                    i < destinations.length;
+                                    i++
+                                  ) ...<Widget>[
+                                    if (i > 0) SizedBox(width: ecart),
+                                    _part(
+                                      largeurs == null ||
+                                              i == destinations.length - 1
+                                          ? null
+                                          : largeurs[i],
+                                      _OngletBarreGuide(
+                                        destination: destinations[i],
+                                        actif: i == indexActif,
+                                        onAller: onAller,
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ],
-                              ],
+                              ),
                             ),
                           );
                         },
@@ -678,17 +706,49 @@ class _BarreFlottante extends StatelessWidget {
                   )
                 : MediaQuery.withClampedTextScaling(
                     maxScaleFactor: NavShell.echelleTexteMaxBarre,
-                    child: Row(
-                      children: <Widget>[
-                        for (int i = 0; i < destinations.length; i++)
-                          Expanded(
-                            child: _OngletBarre(
-                              destination: destinations[i],
-                              actif: i == indexActif,
-                              onAller: onAller,
-                            ),
+                    // COUPE-MOTS-1 : chaque onglet recoit son mot le plus long
+                    // (« Disponibilites ») puis une part egale du reste, au
+                    // lieu de parts egales qui coupaient le mot long des 100 % ;
+                    // les quatre libelles partagent une seule echelle.
+                    child: LayoutBuilder(
+                      builder: (BuildContext contexte, BoxConstraints c) {
+                        final ({TextScaler echelle, List<double> largeurs}) r =
+                            repartitionSansCoupure(
+                              contexte,
+                              textes: <String>[
+                                for (final Destination d in destinations)
+                                  d.libelle,
+                              ],
+                              largeur: c.maxWidth,
+                              style: AppTypography.graisse(
+                                Theme.of(contexte).textTheme.labelMedium ??
+                                    const TextStyle(),
+                                FontWeight.w600,
+                              ),
+                              marge: 2 * AppSpacing.xs,
+                              plancher: 0,
+                            );
+                        return MediaQuery(
+                          data: MediaQuery.of(contexte)
+                              .copyWith(textScaler: r.echelle),
+                          child: Row(
+                            children: <Widget>[
+                              for (int i = 0; i < destinations.length; i++)
+                                _part(
+                                  r.largeurs.isEmpty ||
+                                          i == destinations.length - 1
+                                      ? null
+                                      : r.largeurs[i],
+                                  _OngletBarre(
+                                    destination: destinations[i],
+                                    actif: i == indexActif,
+                                    onAller: onAller,
+                                  ),
+                                ),
+                            ],
                           ),
-                      ],
+                        );
+                      },
                     ),
                   ),
           ),
@@ -809,17 +869,22 @@ class _OngletBarre extends StatelessWidget {
                   child: Icon(destination.icone.resoudre(selectionne: actif)),
                 ),
                 Ecart.vXs,
-                // MA-2 : a 200 %, le nom passe sur deux lignes au plus au lieu
-                // d'etre tronque (UX_REVIEW_06, ligne 1 c).
-                Text(
-                  destination.libelle,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
-                  style: encre.applyTo(
-                    AppTypography.graisse(
-                      base,
-                      actif ? FontWeight.w600 : FontWeight.w500,
+                // MA-2 : a 200 %, le nom passe a la ligne au lieu d'etre
+                // tronque (UX_REVIEW_06, ligne 1 c) ; COUPE-MOTS-1 : entre
+                // ses mots, jamais dans un mot, a l'echelle commune de la
+                // barre.
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xs,
+                  ),
+                  child: TexteSansCoupure(
+                    destination.libelle,
+                    textAlign: TextAlign.center,
+                    style: encre.applyTo(
+                      AppTypography.graisse(
+                        base,
+                        actif ? FontWeight.w600 : FontWeight.w500,
+                      ),
                     ),
                   ),
                 ),
@@ -1048,17 +1113,25 @@ class _Colonne extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    final TextScaler? commune = _echelleLibelles(context);
 
-    Widget item(Destination d, {required bool actif, required bool entree}) =>
-        _ItemColonne(
-          destination: d,
-          actif: actif,
-          repliee: repliee,
-          libelleSousIcone: libellesDansLeRail,
-          guide: guide,
-          onPress: () =>
-              entree ? onAllerSecondaire?.call(d.chemin) : onAller(d.chemin),
-        );
+    Widget item(Destination d, {required bool actif, required bool entree}) {
+      final Widget rendu = _ItemColonne(
+        destination: d,
+        actif: actif,
+        repliee: repliee,
+        libelleSousIcone: libellesDansLeRail,
+        guide: guide,
+        onPress: () =>
+            entree ? onAllerSecondaire?.call(d.chemin) : onAller(d.chemin),
+      );
+      return commune == null
+          ? rendu
+          : MediaQuery(
+              data: MediaQuery.of(context).copyWith(textScaler: commune),
+              child: rendu,
+            );
+    }
 
     final List<Widget> haut = <Widget>[
       for (int i = 0; i < destinations.length; i++)
@@ -1136,6 +1209,93 @@ class _Colonne extends StatelessWidget {
   }
 }
 
+extension on _Colonne {
+  /// L'echelle commune des libelles visibles de la colonne (COUPE-MOTS-1
+  /// points 5 et 6), ou nulle quand le rail n'a que des icones.
+  ///
+  /// - Rail a libelles (80, ou 96 en guide) : largeur fixe, le plafond de la
+  ///   barre basse (1,5 ; 1,3 en guide), puis l'echelle qui fait tenir le mot
+  ///   le plus long de tous (« Disponibilites », « Historique ») : elle peut
+  ///   passer sous 1 (reduction bornee, comme un `FittedBox`) plutot que de
+  ///   tronquer « Contr... Histori... » ou couper « Disponibilit / es ».
+  /// - Barre laterale depliee : l'echelle de l'appareil, reduite au besoin
+  ///   pour tous les libelles a la fois, jamais sous 1.
+  TextScaler? _echelleLibelles(BuildContext context) {
+    if (repliee && !libellesDansLeRail) return null;
+    final TextTheme textes = Theme.of(context).textTheme;
+    final List<String> libelles = <String>[
+      for (final Destination d in <Destination>[
+        ...destinations,
+        ...secondaires,
+      ])
+        d.libelle,
+    ];
+    if (repliee) {
+      final double plafond = guide
+          ? NavShell.echelleTexteMaxGuide
+          : NavShell.echelleTexteMaxBarre;
+      return _commune(
+        context,
+        libelles,
+        MediaQuery.textScalerOf(context).clamp(maxScaleFactor: plafond),
+        guide
+            // 96 de rail, 4 de chaque cote de l'item, 4 dans l'item.
+            ? AppGabarit.largeurRail + AppSpacing.lg - 4 * AppSpacing.xs
+            // 80 de rail, 4 de chaque cote de l'item.
+            : AppGabarit.largeurRail - 2 * AppSpacing.xs,
+        guide
+            ? AppTypography.graisse(
+                textes.labelLarge ?? const TextStyle(),
+                FontWeight.w700,
+              )
+            : textes.labelMedium ?? const TextStyle(),
+        plancher: 0,
+      );
+    }
+    // Depliee : 12 (ou 8) de chaque cote de l'item, 12 dans la pastille,
+    // l'icone et l'ecart de 12.
+    final double largeur =
+        AppGabarit.largeurBarreLaterale -
+        2 * AppSpacing.md -
+        2 * AppSpacing.md -
+        (guide ? AppSpacing.xxxl : AppSpacing.xxl) -
+        AppSpacing.md;
+    return _commune(
+      context,
+      libelles,
+      MediaQuery.textScalerOf(context),
+      largeur,
+      AppTypography.graisse(
+        textes.bodyLarge ?? const TextStyle(),
+        guide ? FontWeight.w700 : FontWeight.w600,
+      ),
+      plancher: 1,
+    );
+  }
+}
+
+/// [echelleCommuneSansCoupure] a partir de l'echelle [depart] (deja
+/// plafonnee) plutot que de celle du contexte.
+TextScaler _commune(
+  BuildContext context,
+  List<String> libelles,
+  TextScaler depart,
+  double largeur,
+  TextStyle style, {
+  required double plancher,
+}) {
+  final TextScaler commune = echelleCommuneSansCoupure(
+    context,
+    textes: libelles,
+    largeurs: <double>[largeur],
+    style: style,
+    plancher: plancher,
+  );
+  final double f = commune.scale(1);
+  final double d = depart.scale(1);
+  return f < d ? TextScaler.linear(f) : depart;
+}
+
 /// La tete de la colonne : mot-symbole et bouton de repli quand elle est
 /// depliee, bouton de depli seul quand elle est repliee.
 class _EnteteColonne extends StatelessWidget {
@@ -1205,12 +1365,12 @@ class _EnteteColonne extends StatelessWidget {
       child: Row(
         children: <Widget>[
           Expanded(
+            // COUPE-MOTS-1 : plus de « Reway... » a 1440 px et 200 % ; le
+            // nom de l'application reduit son echelle pour tenir en entier.
             child: Semantics(
               header: true,
-              child: Text(
+              child: TexteSansCoupure(
                 t.nav.motSymbole,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
                 style: palette.inkStrong.applyTo(
                   AppTypography.graisse(
                     textes.titleLarge ?? const TextStyle(),
@@ -1314,7 +1474,7 @@ class _ItemColonne extends StatelessWidget {
                     icone,
                     Ecart.hMd,
                     Expanded(
-                      child: Text(
+                      child: TexteSansCoupure(
                         destination.libelle,
                         style: AppTypography.graisse(
                           textes.bodyLarge ?? const TextStyle(),
@@ -1366,16 +1526,15 @@ class _ItemColonne extends StatelessWidget {
                       children: <Widget>[
                         icone,
                         Ecart.vXs,
-                        MediaQuery.withClampedTextScaling(
-                          maxScaleFactor: NavShell.echelleTexteMaxGuide,
-                          child: Text(
-                            destination.libelle,
-                            textAlign: TextAlign.center,
-                            style: AppTypography.graisse(
-                              textes.labelLarge ?? const TextStyle(),
-                              actif ? FontWeight.w700 : FontWeight.w600,
-                            ).copyWith(color: couleurLibelle),
-                          ),
+                        // Echelle commune du rail, deja plafonnee a 1,3
+                        // (`_Colonne`) : entre les mots, jamais dans un mot.
+                        TexteSansCoupure(
+                          destination.libelle,
+                          textAlign: TextAlign.center,
+                          style: AppTypography.graisse(
+                            textes.labelLarge ?? const TextStyle(),
+                            actif ? FontWeight.w700 : FontWeight.w600,
+                          ).copyWith(color: couleurLibelle),
                         ),
                       ],
                     ),
@@ -1420,18 +1579,16 @@ class _ItemColonne extends StatelessWidget {
                     ),
                   ),
                   Ecart.vXs,
-                  MediaQuery.withClampedTextScaling(
-                    maxScaleFactor: NavShell.echelleTexteMaxBarre,
-                    child: Text(
-                      destination.libelle,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      style: (textes.labelMedium ?? const TextStyle()).copyWith(
-                        color: !actif
-                            ? palette.inkMuted.asBorderSide().color
-                            : palette.inkAccent.asBorderSide().color,
-                      ),
+                  // COUPE-MOTS-1 (VERIF-CT-2) : plus de « Contr... Histori... »
+                  // a 768 px et 200 % : l'echelle commune du rail
+                  // (`_Colonne`, plafonnee a 1,5) fait tenir chaque mot.
+                  TexteSansCoupure(
+                    destination.libelle,
+                    textAlign: TextAlign.center,
+                    style: (textes.labelMedium ?? const TextStyle()).copyWith(
+                      color: !actif
+                          ? palette.inkMuted.asBorderSide().color
+                          : palette.inkAccent.asBorderSide().color,
                     ),
                   ),
                 ],
