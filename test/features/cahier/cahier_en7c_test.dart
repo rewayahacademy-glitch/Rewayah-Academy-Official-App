@@ -5,13 +5,16 @@
 // l'identifiant de l'eleve une seule fois dans la feuille.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/widgets/app_bottom_sheet.dart';
 import 'package:rewayah_academy/core/widgets/choice_card_group.dart';
 import 'package:rewayah_academy/features/cahier/cahier_page.dart';
+import 'package:rewayah_academy/features/cahier/makharij.dart';
 import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
 import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 
@@ -146,6 +149,26 @@ void main() {
         expect(_cle('cahier-emplacement-performance'), findsOneWidget);
         expect(_cle('cahier-emplacement-faiblesses'), findsOneWidget);
 
+        // Aucun texte de la feuille n'est tronque (ellipse ou lignes
+        // coupees) : la feuille entiere est mise en page dans son defilement,
+        // chaque paragraphe se controle, meme hors de l'ecran.
+        final List<RenderParagraph> paragraphes = tester
+            .renderObjectList<RenderParagraph>(
+              find.descendant(
+                of: find.byType(FeuilleAjusterCahier),
+                matching: find.byType(RichText),
+              ),
+            )
+            .toList();
+        expect(paragraphes, isNotEmpty);
+        for (final RenderParagraph p in paragraphes) {
+          expect(
+            p.didExceedMaxLines,
+            isFalse,
+            reason: 'tronque : ${p.text.toPlainText()}',
+          );
+        }
+
         // Le bouton du bas : atteint en defilant le corps de la feuille, puis
         // tape ; la feuille se referme sur la decision.
         final Finder enregistrer = find.text(
@@ -161,6 +184,30 @@ void main() {
         expect(
           find.text(t.enseignant.cahier.travailMaison(eleve: 'Nour')),
           findsOneWidget,
+        );
+        // Le devoir saisi se lit en entier : le champ grandit avec son texte
+        // au lieu de le faire defiler dans deux lignes fixes.
+        await tester.ensureVisible(_cle('cahier-devoir'));
+        await stabiliser(tester);
+        await tester.enterText(
+          _cle('cahier-devoir'),
+          DonneesEnseignantDemo.brouillonCahier()
+              .participants
+              .first
+              .devoirPrecedent!,
+        );
+        await stabiliser(tester);
+        expect(
+          tester
+              .state<ScrollableState>(
+                find.descendant(
+                  of: _cle('cahier-devoir'),
+                  matching: find.byType(Scrollable),
+                ),
+              )
+              .position
+              .maxScrollExtent,
+          0,
         );
         await _toucher(tester, _cle('cahier-performance-acquis'));
         await _toucher(tester, enregistrer);
@@ -210,8 +257,10 @@ void main() {
   // EN-7c-SUGG-T, cas positif : une vraie suggestion (decision marquee
   // `devoirSuggere`) affiche « Ajustez la suggestion » ; gardee telle quelle,
   // elle reste une suggestion, modifiee, elle devient le devoir de
-  // l'enseignant. Aucune source ne l'alimente encore : la feuille est montee
-  // directement.
+  // l'enseignant. Aucune source ne l'alimente encore, la coquille ne peut donc
+  // pas l'atteindre (K-07 hors de portee) : la feuille est ouverte comme le
+  // cahier l'ouvre, par `AppBottomSheet.ouvrir`, avec une decision suggeree.
+  // Le jour ou une source existera, ce test devra passer par la coquille.
   for (final bool modifier in <bool>[false, true]) {
     testWidgets('devoir suggere : « Ajustez la suggestion », '
         '${modifier ? 'modifie' : 'garde'}', (WidgetTester tester) async {
@@ -227,20 +276,16 @@ void main() {
               body: Center(
                 child: TextButton(
                   onPressed: () async {
-                    rendue = await Navigator.of(context).push(
-                      MaterialPageRoute<DecisionEleve>(
-                        builder: (BuildContext _) => Scaffold(
-                          body: SingleChildScrollView(
-                            child: FeuilleAjusterCahier(
-                              participant: nour,
-                              brouillon: brouillon,
-                              decision: DecisionEleve(
-                                studentId: nour.membre.studentId,
-                                travailMaison: suggestion,
-                                devoirSuggere: true,
-                              ),
-                            ),
-                          ),
+                    rendue = await AppBottomSheet.ouvrir<DecisionEleve>(
+                      context,
+                      titre: t.enseignant.cahier.ajusterPour(eleve: 'Nour'),
+                      constructeur: (BuildContext _) => FeuilleAjusterCahier(
+                        participant: nour,
+                        brouillon: brouillon,
+                        decision: DecisionEleve(
+                          studentId: nour.membre.studentId,
+                          travailMaison: suggestion,
+                          devoirSuggere: true,
                         ),
                       ),
                     );
@@ -277,6 +322,37 @@ void main() {
       expect(rendue!.versJson().containsKey('devoir_suggere'), isFalse);
     });
   }
+
+  // EN-7c-200 : les titres visibles des deux champs sont exclus de la
+  // semantique ; le nom doit donc etre porte par le noeud du champ editable
+  // lui-meme, pas par un noeud voisin.
+  testWidgets('objectif et devoir : le champ editable porte son nom', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle semantique = tester.ensureSemantics();
+    await _monter(tester);
+    await _toucher(tester, find.text('Nour'));
+    for (final (String cle, String nom) in <(String, String)>[
+      ('cahier-objectif', t.enseignant.cahier.objectif(eleve: 'Nour')),
+      ('cahier-devoir', t.enseignant.cahier.travailMaison(eleve: 'Nour')),
+    ]) {
+      final SemanticsNode noeud = tester.getSemantics(
+        find.descendant(of: _cle(cle), matching: find.byType(EditableText)),
+      );
+      expect(noeud, isSemantics(isTextField: true), reason: cle);
+      expect(noeud.getSemanticsData().label, contains(nom), reason: cle);
+    }
+    semantique.dispose();
+  });
+
+  test('la paire arabe d un makhraj est isolee et insecable', () {
+    final String sinSad = referentielMakharij().first.libelle;
+    expect(sinSad, 'Sîn / Sâd (\u2067س\u00A0/\u00A0ص\u2069)');
+    for (final OptionChoix o in referentielMakharij()) {
+      expect(o.libelle, contains('(\u2067'), reason: o.valeur);
+      expect(o.libelle, contains('\u2069)'), reason: o.valeur);
+    }
+  });
 
   test('la decision preremplie ne suggere aucun devoir (pas de source)', () {
     final ParticipantBrouillon nour =

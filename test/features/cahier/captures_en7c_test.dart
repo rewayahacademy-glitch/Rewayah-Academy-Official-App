@@ -3,11 +3,14 @@
 // et une faiblesse choisis.
 // Jamais sans `CAPTURE_DIR` (voir test/capture/LISEZ-MOI.md).
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/features/cahier/cahier_page.dart';
 import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
 import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 
@@ -68,8 +71,11 @@ void main() {
     }
 
     // EN-7c-200 (K-61) : la feuille de Nour a 200 % de texte, sur 390 et 320
-    // de large, a la hauteur d'un telephone : le haut a l'ouverture, puis le
-    // bas, defile jusqu'au bouton « Enregistrer pour cet eleve ».
+    // de large, a la hauteur d'un telephone, ENTIERE : le defilement de la
+    // feuille avance par pages qui se chevauchent (80 % de la hauteur
+    // visible), une capture par page, du haut jusqu'au bouton « Enregistrer
+    // pour cet eleve ». Aucune zone n'est sautee. Puis le devoir saisi,
+    // enregistre, et la feuille rouverte : la phrase « deja note ».
     for (final double largeur in <double>[390, 320]) {
       final String l = '${largeur.toInt()}';
       testWidgets('en7c_feuille_texte200_$l', (WidgetTester tester) async {
@@ -89,21 +95,48 @@ void main() {
         await stabiliser(tester);
         await capturer(tester, 'en7c_cahier_texte200_$l');
         await _toucher(tester, find.text('Nour'));
-        await capturer(tester, 'en7c_feuille_texte200_${l}_haut');
-        await tester.ensureVisible(_cle('cahier-emplacement-faiblesses'));
+
+        final ScrollPosition defilement = tester
+            .state<ScrollableState>(
+              find
+                  .ancestor(
+                    of: find.byType(FeuilleAjusterCahier),
+                    matching: find.byType(Scrollable),
+                  )
+                  .first,
+            )
+            .position;
+        final double pas = defilement.viewportDimension * 0.8;
+        int page = 1;
+        while (true) {
+          await capturer(
+            tester,
+            'en7c_feuille_texte200_${l}_p${'$page'.padLeft(2, '0')}',
+          );
+          if (defilement.pixels >= defilement.maxScrollExtent) {
+            break;
+          }
+          defilement.jumpTo(
+            math.min(defilement.pixels + pas, defilement.maxScrollExtent),
+          );
+          await stabiliser(tester);
+          page++;
+        }
+        expect(tester.takeException(), isNull);
+
+        // Le devoir saisi par l'enseignant (donnee de la demonstration : le
+        // devoir precedent de Nour), enregistre, puis la feuille rouverte.
+        final String devoir = DonneesEnseignantDemo.brouillonCahier()
+            .participants
+            .first
+            .devoirPrecedent!;
+        await tester.enterText(_cle('cahier-devoir'), devoir);
         await stabiliser(tester);
-        await capturer(tester, 'en7c_feuille_texte200_${l}_faiblesses');
-        await tester.ensureVisible(
-          find.text(t.enseignant.cahier.pointPhonetique),
-        );
+        await _toucher(tester, find.text(t.enseignant.cahier.ajusterValider));
+        await _toucher(tester, find.text('Nour'));
+        await tester.ensureVisible(_cle('cahier-devoir'));
         await stabiliser(tester);
-        await capturer(tester, 'en7c_feuille_texte200_${l}_presence');
-        final Finder enregistrer = find.text(
-          t.enseignant.cahier.ajusterValider,
-        );
-        await tester.ensureVisible(enregistrer);
-        await stabiliser(tester);
-        await capturer(tester, 'en7c_feuille_texte200_${l}_bas');
+        await capturer(tester, 'en7c_feuille_texte200_${l}_devoir_saisi');
         expect(tester.takeException(), isNull);
       });
     }

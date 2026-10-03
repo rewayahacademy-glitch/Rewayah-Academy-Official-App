@@ -1106,7 +1106,10 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
           child: TextField(
             key: const ValueKey<String>('cahier-objectif'),
             controller: _objectif,
-            maxLines: 2,
+            // Le champ grandit avec son texte : a 200 % et 320 de large, deux
+            // lignes fixes cachaient la fin du devoir (EN-7c-200).
+            minLines: 2,
+            maxLines: 6,
             textInputAction: TextInputAction.newline,
           ),
         ),
@@ -1146,7 +1149,8 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
           child: TextField(
             key: const ValueKey<String>('cahier-devoir'),
             controller: _travail,
-            maxLines: 2,
+            minLines: 2,
+            maxLines: 6,
             textInputAction: TextInputAction.newline,
           ),
         ),
