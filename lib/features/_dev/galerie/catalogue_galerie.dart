@@ -75,6 +75,7 @@ import '../../../core/widgets/sous_navigation_domaine.dart';
 import '../../../core/widgets/stat_tile.dart';
 import '../../../core/widgets/status_pill.dart';
 import '../../../core/widgets/timeline_row.dart';
+import '../../admin_tableau/tuiles_compteur.dart';
 import '../../disponibilites/grille_semaine.dart';
 import 'entrees_etats_tuteur.dart';
 
@@ -219,32 +220,50 @@ final List<EntreeJournee> _entreesJournee = <EntreeJournee>[
 List<Destination> _destinationsExemple() =>
     destinationsPour(role: AppRole.guardian, mode: InterfaceMode.standard);
 
-/// Un compteur dans sa tuile Bento : le chiffre en haut, ce qu'il compte en
-/// bas, comme au Centre de commande.
-Widget _tuileBento(int valeur, String libelle) => AppCard(
-  marge: AppSpacing.lg,
-  libelleSemantique: '$valeur $libelle',
-  child: ContenuTuileBento(children: <Widget>[Text('$valeur'), Text(libelle)]),
-);
-
-/// Les quatre tuiles de tete du Centre de commande, avec leurs vrais libelles.
+/// Les quatre tuiles de tete du Centre de commande, avec les vraies tuiles
+/// (GALERIE-BENTO-2, K-10) : chiffre tabulaire, phrase de detail et apercu
+/// des trois plus anciens dossiers, comme dans tableau_de_bord_page.dart.
 List<TuileBento> _tuilesBentoPrincipales() => <TuileBento>[
   TuileBento(
     etendue: EtendueBento.large,
     etendueLarge: EtendueBento.grande,
-    child: _tuileBento(5, t.admin.tableau.dossiers),
+    child: TuileCompteur(
+      valeur: 5,
+      libelle: t.admin.tableau.dossiers,
+      detail: t.admin.tableau.dossiersDetail,
+      apercu: <String>[
+        'Aicha · ${t.admin.tableau.attenteJours(jours: '4')}',
+        'Ibrahim · ${t.admin.tableau.attenteUnJour}',
+        'Youssef · ${t.admin.tableau.attenteAujourdhui}',
+      ],
+      enLigne: true,
+      onPress: _rien,
+    ),
   ),
   TuileBento(
     etendue: EtendueBento.haute,
-    child: _tuileBento(3, t.admin.tableau.demandes),
+    child: TuileCompteur(
+      valeur: 3,
+      libelle: t.admin.tableau.demandes,
+      detail: t.admin.tableau.demandesDetail,
+      onPress: _rien,
+    ),
   ),
   TuileBento(
     etendue: EtendueBento.carree,
-    child: _tuileBento(17, t.admin.tableau.foyers),
+    child: TuileCompteur(
+      valeur: 17,
+      libelle: t.admin.tableau.foyers,
+      onPress: _rien,
+    ),
   ),
   TuileBento(
     etendue: EtendueBento.carree,
-    child: _tuileBento(0, t.admin.tableau.rapports),
+    child: TuileCompteur(
+      valeur: 0,
+      libelle: t.admin.tableau.rapports,
+      onPress: _rien,
+    ),
   ),
 ];
 
@@ -1541,7 +1560,10 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             TuileBento(
               etendue: EtendueBento.large,
               etendueLarge: const EtendueBento(4, 1),
-              child: _tuileBento(0, t.admin.tableau.incidents),
+              child: TuileDouble(
+                gauche: (0, t.admin.tableau.incidents),
+                droite: (0, t.admin.tableau.comptes),
+              ),
             ),
           ],
         ),
@@ -1554,12 +1576,15 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             TuileBento(
               etendue: EtendueBento.carree,
               etendueLarge: EtendueBento.large,
-              child: _tuileBento(2, t.admin.tableau.incidents),
+              child: TuileCompteur(
+                valeur: 2,
+                libelle: t.admin.tableau.incidents,
+              ),
             ),
             TuileBento(
               etendue: EtendueBento.carree,
               etendueLarge: EtendueBento.large,
-              child: _tuileBento(1, t.admin.tableau.comptes),
+              child: TuileCompteur(valeur: 1, libelle: t.admin.tableau.comptes),
             ),
           ],
         ),
