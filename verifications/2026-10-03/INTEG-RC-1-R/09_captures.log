@@ -1,0 +1,39 @@
+00:00 +0: loading D:/RA_TUTEUR/r-integ/test/capture/integ_rc1_r_capture_test.dart
+00:00 +0: INTEG-RC-1-R : salle MA 390 x2 (setUpAll)
+00:00 +0: INTEG-RC-1-R : salle MA 390 x2 salle_mariam_light
+PNG D:\RA_TUTEUR\pilotage-git\verifications\2026-10-03\INTEG-RC-1-R\captures\salle_ma_mariam_390_x2_light.png
+EXCEPTION salle mariam: null
+00:02 +1: INTEG-RC-1-R : salle MA 390 x2 salle_mariam_dark
+PNG D:\RA_TUTEUR\pilotage-git\verifications\2026-10-03\INTEG-RC-1-R\captures\salle_ma_mariam_390_x2_dark.png
+EXCEPTION salle mariam: null
+00:02 +2: INTEG-RC-1-R : salle MA 390 x2 salle_idriss_light
+PNG D:\RA_TUTEUR\pilotage-git\verifications\2026-10-03\INTEG-RC-1-R\captures\salle_ma_idriss_390_x2_light.png
+EXCEPTION salle idriss: null
+00:02 +3: INTEG-RC-1-R : salle MA 390 x2 salle_idriss_dark
+PNG D:\RA_TUTEUR\pilotage-git\verifications\2026-10-03\INTEG-RC-1-R\captures\salle_ma_idriss_390_x2_dark.png
+EXCEPTION salle idriss: null
+00:03 +4: INTEG-RC-1-R : salle MA 390 x2 (tearDownAll)
+00:03 +4: INTEG-RC-1-R : lecteur du Coran MA 390 x2 (setUpAll)
+00:03 +4: INTEG-RC-1-R : lecteur du Coran MA 390 x2 coran_mushaf_derniere
+PNG D:\RA_TUTEUR\pilotage-git\verifications\2026-10-03\INTEG-RC-1-R\captures\coran_ma_entree_mushaf_derniere_390_x2.png
+PNG D:\RA_TUTEUR\pilotage-git\verifications\2026-10-03\INTEG-RC-1-R\captures\coran_ma_lecteur_mushaf_derniere_390_x2.png
+TOOLTIP precedente=1 suivante=1
+CORAN mushaf_derniere masque : 704 / 844 = 83.4 %
+PNG D:\RA_TUTEUR\pilotage-git\verifications\2026-10-03\INTEG-RC-1-R\captures\coran_ma_lecteur_mushaf_derniere_390_x2_masque.png
+EXCEPTION coran mushaf_derniere: null
+00:04 +5: INTEG-RC-1-R : lecteur du Coran MA 390 x2 coran_verset_agrandi_derniere
+PNG D:\RA_TUTEUR\pilotage-git\verifications\2026-10-03\INTEG-RC-1-R\captures\coran_ma_entree_verset_agrandi_derniere_390_x2.png
+PNG D:\RA_TUTEUR\pilotage-git\verifications\2026-10-03\INTEG-RC-1-R\captures\coran_ma_lecteur_verset_agrandi_derniere_390_x2.png
+TOOLTIP precedente=1 suivante=1
+CORAN verset_agrandi_derniere masque : 704 / 844 = 83.4 %
+PNG D:\RA_TUTEUR\pilotage-git\verifications\2026-10-03\INTEG-RC-1-R\captures\coran_ma_lecteur_verset_agrandi_derniere_390_x2_masque.png
+EXCEPTION coran verset_agrandi_derniere: null
+00:05 +6: INTEG-RC-1-R : lecteur du Coran MA 390 x2 coran_mushaf_page1
+PNG D:\RA_TUTEUR\pilotage-git\verifications\2026-10-03\INTEG-RC-1-R\captures\coran_ma_entree_mushaf_page1_390_x2.png
+PNG D:\RA_TUTEUR\pilotage-git\verifications\2026-10-03\INTEG-RC-1-R\captures\coran_ma_lecteur_mushaf_page1_390_x2.png
+TOOLTIP precedente=0 suivante=1
+CORAN mushaf_page1 masque : 704 / 844 = 83.4 %
+PNG D:\RA_TUTEUR\pilotage-git\verifications\2026-10-03\INTEG-RC-1-R\captures\coran_ma_lecteur_mushaf_page1_390_x2_masque.png
+EXCEPTION coran mushaf_page1: null
+00:05 +7: INTEG-RC-1-R : lecteur du Coran MA 390 x2 (tearDownAll)
+00:05 +7: All tests passed!

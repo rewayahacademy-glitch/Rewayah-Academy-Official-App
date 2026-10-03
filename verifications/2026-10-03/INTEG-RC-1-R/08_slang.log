@@ -1,0 +1,10 @@
+Generating translations...
+
+[32mTranslations generated successfully. (0.631 seconds)[0m
+ M lib/core/i18n/strings.g.dart
+ M lib/core/i18n/strings_ar.g.dart
+ M lib/core/i18n/strings_fr.g.dart
+warning: in the working copy of 'lib/core/i18n/strings.g.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/core/i18n/strings_ar.g.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/core/i18n/strings_fr.g.dart', LF will be replaced by CRLF the next time Git touches it
+--- fin slang (aucune ligne de status ci-dessus = genere identique)

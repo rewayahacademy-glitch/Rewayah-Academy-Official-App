@@ -1,0 +1,161 @@
+﻿0c0b739005cc078905a2e99e095baa8a5ed7dcce 98e3f9d094df2349546dbce361853ebc108b7571 058c5251525d4cc237b5b31fcaf3f80636980a1e
+INTEG-RC-1 : fusion de ui/enseignant-v1 dans la branche des corrections
+
+diff --git a/assets/i18n/fr.i18n.json b/assets/i18n/fr.i18n.json
+remerge CONFLICT (content): Merge conflict in assets/i18n/fr.i18n.json
+index 08534e1..b72dcbc 100644
+--- a/assets/i18n/fr.i18n.json
++++ b/assets/i18n/fr.i18n.json
+@@ -3159,19 +3159,11 @@
+       "vide": "Le constat n'a pas pu être déduit",
+       "videDetail": "Aucune présence et aucun événement n'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier de transmission.",
+       "erreur": "Le constat n'a pas pu être lu.",
+-<<<<<<< 98e3f9d (CORR-SUITE-1 (mes-classes) : les marques de ligne ENS-09 passent a la ligne (Wrap borne a 200 px) au lieu de deborder depuis le libelle long de LIB-CAHIER-1 ; test 320/390/600/1280 px a 100 % et 200 % avec cahier et Remplacement)
+       "erreurDetail": "Réessayez, ou déposez le cahier de transmission sans le constat.",
+-      "echecEnvoi": "Le cahier de transmission n'a pas pu être enregistré. Réessayez.",
++      "echecEnvoi": "L'envoi n'a pas été confirmé. Vérifiez avant de réessayer.",
+       "dejaDepose": "Le cahier de transmission de cette séance est déjà déposé.",
+       "dejaDeposeDetail": "Un cahier de transmission ne se dépose qu'une fois, et il ne se supprime pas d'ici.",
+       "depose": "Cahier de transmission enregistré",
+-=======
+-      "erreurDetail": "Réessayez, ou déposez le cahier sans le constat.",
+-      "echecEnvoi": "L'envoi n'a pas été confirmé. Vérifiez avant de réessayer.",
+-      "dejaDepose": "Le cahier de cette séance est déjà déposé.",
+-      "dejaDeposeDetail": "Un cahier ne se dépose qu'une fois, et il ne se supprime pas d'ici.",
+-      "depose": "Cahier enregistré",
+->>>>>>> 058c525 (EN-7c : cahier de séance, échelle de performance (À revoir, En progrès, Acquis, Maîtrisé) et faiblesses (Makharij, Madd, Ghunna, Waqf, Fluidité, Mémorisation) préremplies depuis la séance précédente, une ligne courte par option (K-58), « Ajustez la suggestion » seulement avec une suggestion, identifiant de l'élève affiché une seule fois, échec d'envoi reformulé ; chaînes indicateur* retirées (EN-IND, N2))
+       "deposeDetail": "L'académie l'a reçu.",
+       "enFileTitre": "En attente d'envoi",
+       "enFile": "Le cahier de transmission sera envoyé lorsque la connexion reviendra.",
+diff --git a/lib/core/i18n/strings.g.dart b/lib/core/i18n/strings.g.dart
+remerge CONFLICT (content): Merge conflict in lib/core/i18n/strings.g.dart
+index 8008150..433ef76 100644
+--- a/lib/core/i18n/strings.g.dart
++++ b/lib/core/i18n/strings.g.dart
+@@ -4,11 +4,7 @@
+ /// To regenerate, run: `dart run slang`
+ ///
+ /// Locales: 2
+-<<<<<<< 98e3f9d (CORR-SUITE-1 (mes-classes) : les marques de ligne ENS-09 passent a la ligne (Wrap borne a 200 px) au lieu de deborder depuis le libelle long de LIB-CAHIER-1 ; test 320/390/600/1280 px a 100 % et 200 % avec cahier et Remplacement)
+-/// Strings: 3720 (1860 per locale)
+-=======
+-/// Strings: 3305 (1652 per locale)
+->>>>>>> 058c525 (EN-7c : cahier de séance, échelle de performance (À revoir, En progrès, Acquis, Maîtrisé) et faiblesses (Makharij, Madd, Ghunna, Waqf, Fluidité, Mémorisation) préremplies depuis la séance précédente, une ligne courte par option (K-58), « Ajustez la suggestion » seulement avec une suggestion, identifiant de l'élève affiché une seule fois, échec d'envoi reformulé ; chaînes indicateur* retirées (EN-IND, N2))
++/// Strings: 3737 (1868 per locale)
+ 
+ // coverage:ignore-file
+ // ignore_for_file: type=lint, unused_import
+diff --git a/lib/core/i18n/strings_fr.g.dart b/lib/core/i18n/strings_fr.g.dart
+remerge CONFLICT (content): Merge conflict in lib/core/i18n/strings_fr.g.dart
+index 45f19d9..953fab1 100644
+--- a/lib/core/i18n/strings_fr.g.dart
++++ b/lib/core/i18n/strings_fr.g.dart
+@@ -8693,13 +8693,8 @@ class Traductions$enseignant$cahier$fr {
+ 	/// fr: 'Réessayez, ou déposez le cahier de transmission sans le constat.'
+ 	String get erreurDetail => 'Réessayez, ou déposez le cahier de transmission sans le constat.';
+ 
+-<<<<<<< 98e3f9d (CORR-SUITE-1 (mes-classes) : les marques de ligne ENS-09 passent a la ligne (Wrap borne a 200 px) au lieu de deborder depuis le libelle long de LIB-CAHIER-1 ; test 320/390/600/1280 px a 100 % et 200 % avec cahier et Remplacement)
+-	/// fr: 'Le cahier de transmission n'a pas pu être enregistré. Réessayez.'
+-	String get echecEnvoi => 'Le cahier de transmission n\'a pas pu être enregistré. Réessayez.';
+-=======
+ 	/// fr: 'L'envoi n'a pas été confirmé. Vérifiez avant de réessayer.'
+ 	String get echecEnvoi => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.';
+->>>>>>> 058c525 (EN-7c : cahier de séance, échelle de performance (À revoir, En progrès, Acquis, Maîtrisé) et faiblesses (Makharij, Madd, Ghunna, Waqf, Fluidité, Mémorisation) préremplies depuis la séance précédente, une ligne courte par option (K-58), « Ajustez la suggestion » seulement avec une suggestion, identifiant de l'élève affiché une seule fois, échec d'envoi reformulé ; chaînes indicateur* retirées (EN-IND, N2))
+ 
+ 	/// fr: 'Le cahier de transmission de cette séance est déjà déposé.'
+ 	String get dejaDepose => 'Le cahier de transmission de cette séance est déjà déposé.';
+@@ -17093,19 +17088,11 @@ extension on Traductions {
+ 			'enseignant.cahier.vide' => 'Le constat n\'a pas pu être déduit',
+ 			'enseignant.cahier.videDetail' => 'Aucune présence et aucun événement n\'ont été relevés pour cette séance. Vous pouvez tout de même déposer le cahier de transmission.',
+ 			'enseignant.cahier.erreur' => 'Le constat n\'a pas pu être lu.',
+-<<<<<<< 98e3f9d (CORR-SUITE-1 (mes-classes) : les marques de ligne ENS-09 passent a la ligne (Wrap borne a 200 px) au lieu de deborder depuis le libelle long de LIB-CAHIER-1 ; test 320/390/600/1280 px a 100 % et 200 % avec cahier et Remplacement)
+ 			'enseignant.cahier.erreurDetail' => 'Réessayez, ou déposez le cahier de transmission sans le constat.',
+-			'enseignant.cahier.echecEnvoi' => 'Le cahier de transmission n\'a pas pu être enregistré. Réessayez.',
++			'enseignant.cahier.echecEnvoi' => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.',
+ 			'enseignant.cahier.dejaDepose' => 'Le cahier de transmission de cette séance est déjà déposé.',
+ 			'enseignant.cahier.dejaDeposeDetail' => 'Un cahier de transmission ne se dépose qu\'une fois, et il ne se supprime pas d\'ici.',
+ 			'enseignant.cahier.depose' => 'Cahier de transmission enregistré',
+-=======
+-			'enseignant.cahier.erreurDetail' => 'Réessayez, ou déposez le cahier sans le constat.',
+-			'enseignant.cahier.echecEnvoi' => 'L\'envoi n\'a pas été confirmé. Vérifiez avant de réessayer.',
+-			'enseignant.cahier.dejaDepose' => 'Le cahier de cette séance est déjà déposé.',
+-			'enseignant.cahier.dejaDeposeDetail' => 'Un cahier ne se dépose qu\'une fois, et il ne se supprime pas d\'ici.',
+-			'enseignant.cahier.depose' => 'Cahier enregistré',
+->>>>>>> 058c525 (EN-7c : cahier de séance, échelle de performance (À revoir, En progrès, Acquis, Maîtrisé) et faiblesses (Makharij, Madd, Ghunna, Waqf, Fluidité, Mémorisation) préremplies depuis la séance précédente, une ligne courte par option (K-58), « Ajustez la suggestion » seulement avec une suggestion, identifiant de l'élève affiché une seule fois, échec d'envoi reformulé ; chaînes indicateur* retirées (EN-IND, N2))
+ 			'enseignant.cahier.deposeDetail' => 'L\'académie l\'a reçu.',
+ 			'enseignant.cahier.enFileTitre' => 'En attente d\'envoi',
+ 			'enseignant.cahier.enFile' => 'Le cahier de transmission sera envoyé lorsque la connexion reviendra.',
+@@ -17475,6 +17462,8 @@ extension on Traductions {
+ 			'tc.groupe.horloges.chezEnseignant' => ({required Object nomme}) => 'Chez ${nomme}',
+ 			'tc.groupe.horloges.heureGroupe' => 'Heure de la classe',
+ 			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '${heure} ${ville}',
++			_ => null,
++		} ?? switch (path) {
+ 			'tc.groupe.dst.j30' => 'Changement d\'heure dans un mois',
+ 			'tc.groupe.dst.j7' => 'Changement d\'heure la semaine prochaine',
+ 			'tc.groupe.dst.j1' => 'Changement d\'heure demain',
+@@ -17492,8 +17481,6 @@ extension on Traductions {
+ 			'tc.groupe.espace.introuvableDetail' => 'Elle a peut-être été clôturée, ou elle concerne un autre profil.',
+ 			'tc.groupe.emplacement.nonBranche' => 'Bientôt disponible',
+ 			'tc.groupe.emplacement.nonBrancheDetail' => 'Ce contenu sera rattaché à cet espace prochainement.',
+-			_ => null,
+-		} ?? switch (path) {
+ 			'tc.bibliotheque.titre' => 'Bibliothèque',
+ 			'tc.bibliotheque.rechercheIndication' => 'Titre, niveau, sourate ou page',
+ 			'tc.bibliotheque.rechercheLibelle' => 'Rechercher un support',
+@@ -17758,8 +17745,6 @@ extension on Traductions {
+ 			'tc.observation.disponibilite.reseau' => 'La disponibilité de l\'observation n\'a pas pu être vérifiée. Aucune visite n\'a commencé.',
+ 			'tc.observation.disponibilite.capaciteTitre' => 'Observation indisponible',
+ 			'tc.observation.disponibilite.capacite' => 'L\'observation n\'est pas disponible pour le moment.',
+-			_ => null,
+-		} ?? switch (path) {
+ 			'tc.observation.connexion.titre' => 'Connexion et vérification',
+ 			'tc.observation.connexion.phrase' => 'Vos visites restantes sont vérifiées. La visite commence dès que l\'entrée est acceptée, connexion vidéo comprise.',
+ 			'tc.observation.connexion.enCours' => 'Connexion et vérification en cours',
+@@ -17991,6 +17976,8 @@ extension on Traductions {
+ 			'adulte.invitation.nonRenseigne' => 'Non renseigné',
+ 			'adulte.invitation.modifier' => 'Modifier',
+ 			'adulte.invitation.envoyer' => 'Envoyer l\'invitation',
++			_ => null,
++		} ?? switch (path) {
+ 			'adulte.invitation.horsLigne' => 'Vous êtes hors ligne. L\'invitation pourra partir quand la connexion reviendra.',
+ 			'adulte.invitation.echecTitre' => 'L\'invitation n\'est pas partie',
+ 			'adulte.invitation.echecPhrase' => 'La connexion a été interrompue. Vos informations sont conservées : vous pouvez réessayer.',
+@@ -18008,8 +17995,6 @@ extension on Traductions {
+ 			'adulte.invitation.garder' => 'Garder l\'invitation',
+ 			'adulte.invitation.annulationEchecTitre' => 'L\'invitation n\'a pas été annulée',
+ 			'adulte.invitation.annulationEchecPhrase' => 'La connexion a été interrompue. L\'invitation est toujours envoyée : vous pouvez réessayer.',
+-			_ => null,
+-		} ?? switch (path) {
+ 			'adulte.demo.titre' => 'Démonstration de l\'élève adulte',
+ 			'adulte.demo.mention' => 'Les données sont fictives et rien n\'est envoyé.',
+ 			'adulte.demo.intro' => 'Choisissez un écran, puis une situation du foyer Diallo.',
+diff --git a/lib/features/cahier/cahier_page.dart b/lib/features/cahier/cahier_page.dart
+remerge CONFLICT (content): Merge conflict in lib/features/cahier/cahier_page.dart
+index 329ea21..bfe6c90 100644
+--- a/lib/features/cahier/cahier_page.dart
++++ b/lib/features/cahier/cahier_page.dart
+@@ -1082,15 +1082,10 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
+           ),
+         ),
+         Ecart.vXl,
+-<<<<<<< 98e3f9d (CORR-SUITE-1 (mes-classes) : les marques de ligne ENS-09 passent a la ligne (Wrap borne a 200 px) au lieu de deborder depuis le libelle long de LIB-CAHIER-1 ; test 320/390/600/1280 px a 100 % et 200 % avec cahier et Remplacement)
+         Text(
+           t.enseignant.cahier.travailMaison(eleve: participant.membre.libelle),
+           style: textes.titleSmall,
+         ),
+-        Ecart.vXs,
+-        Text(t.enseignant.cahier.travailMaisonDetail, style: discret),
+-=======
+-        Text(t.enseignant.cahier.travailMaison, style: textes.titleSmall),
+         // « Ajustez la suggestion » seulement quand une suggestion existe
+         // (EN-7c) : sur un champ vide, la phrase ne decrirait rien.
+         if (_suggestionDevoir) ...<Widget>[
+@@ -1101,7 +1096,6 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
+             style: discret,
+           ),
+         ],
+->>>>>>> 058c525 (EN-7c : cahier de séance, échelle de performance (À revoir, En progrès, Acquis, Maîtrisé) et faiblesses (Makharij, Madd, Ghunna, Waqf, Fluidité, Mémorisation) préremplies depuis la séance précédente, une ligne courte par option (K-58), « Ajustez la suggestion » seulement avec une suggestion, identifiant de l'élève affiché une seule fois, échec d'envoi reformulé ; chaînes indicateur* retirées (EN-IND, N2))
+         Ecart.vMd,
+         TextField(
+           controller: _travail,

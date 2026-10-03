@@ -1,0 +1,201 @@
+﻿== skip ajoutes dans test entre 98e3f9d et 4a4fbe7 (lignes +)
++  group('Capture MA-12 : RTL', skip: sautSansCapture, () {
++  group('Capture MA-8 : Mon espace', skip: sautSansCapture, () {
++  group('Capture MA-9 : tuteur et enseignant', skip: sautSansCapture, () {
++  group('Capture : EA-10', skip: sautSansCapture, () {
++  group('Capture : EA-11', skip: sautSansCapture, () {
++    skip: sautSansCapture,
++    skip: sautSansCapture,
++    skip: sautSansCapture,
++    skip: sautSansCapture,
++    skip: sautSansCapture,
++  group('Capture : EA-5c', skip: sautSansCapture, () {
++  group('Capture : EA-6c', skip: sautSansCapture, () {
++  group('Capture : EA-7', skip: sautSansCapture, () {
++  group('Capture : EA-8', skip: sautSansCapture, () {
++  group('Capture : EA-9', skip: sautSansCapture, () {
++  group('Capture : EA-RC, $nom', skip: sautSansCapture, () {
++    skip: sautSansCapture,
++  group('Capture : EN-7c', skip: sautSansCapture, () {
++    skip: sautSansCapture,
++  group('Capture : CT-8, CTR-03B Complement', skip: sautSansCapture, () {
++  group('Capture : CT-12, 200 % et RTL', skip: sautSansCapture, () {
+== skip retires (lignes -)
+== skip total dans test a 98e3f9d / 4a4fbe7
+142
+163
+4a4fbe7:test/accessibilite/admin_ad11_test.dart:94:  skip: _restes.contains(nom) && !const bool.fromEnvironment('TOUT'),
+4a4fbe7:test/capture/LISEZ-MOI.md:17:**sauté** (`skip: sautSansCapture`) : `flutter test` et la CI le comptent comme
+4a4fbe7:test/capture/ad10_parcours_capture_test.dart:163:  group('Capture : AD-10 parcours', skip: sautSansCapture, () {
+4a4fbe7:test/capture/ad11_accessibilite_capture_test.dart:137:  group('Capture : AD-11 accessibilite', skip: sautSansCapture, () {
+4a4fbe7:test/capture/ad5_dossiers_capture_test.dart:103:  group('Capture : AD-5 file des dossiers', skip: sautSansCapture, () {
+4a4fbe7:test/capture/ad6_revue_capture_test.dart:148:  group('Capture : AD-6 revue du dossier', skip: sautSansCapture, () {
+4a4fbe7:test/capture/ad7_visionneuse_capture_test.dart:275:  group('Capture : AD-7 visionneuse de piece', skip: sautSansCapture, () {
+4a4fbe7:test/capture/ad8_decisions_capture_test.dart:227:  group('Capture : AD-8 decisions (refus ADM-02D, validation ADM-02E)', skip: sautSansCapture, () {
+4a4fbe7:test/capture/ad9_politique_capture_test.dart:190:  group('Capture : AD-9 politique de genre', skip: sautSansCapture, () {
+4a4fbe7:test/capture/bento_capture_test.dart:53:  group('Capture : BENTO-1 Centre de commande', skip: sautSansCapture, () {
+4a4fbe7:test/capture/compte_tuteur_capture_test.dart:127:  group('Capture : Compte du tuteur', skip: sautSansCapture, () {
+4a4fbe7:test/capture/compte_tuteur_capture_test.dart:256:      testWidgets('planche : $nom', skip: maquette == null, (
+4a4fbe7:test/capture/coque_admin_capture_test.dart:68:  group('Capture : coque admin', skip: sautSansCapture, () {
+4a4fbe7:test/capture/coquille_capture_test.dart:94:  group('Capture : coquille du tuteur', skip: sautSansCapture, () {
+4a4fbe7:test/capture/coquille_capture_test.dart:153:      skip: _maquetteBureau == null,
+4a4fbe7:test/capture/coquille_capture_test.dart:171:      skip: _maquetteMobile == null,
+4a4fbe7:test/capture/ctrl_salle1_capture_test.dart:57:    skip: sautSansCapture,
+4a4fbe7:test/capture/exemple_capture_test.dart:49:  group('Capture : exemple, ecran resultat', skip: sautSansCapture, () {
+4a4fbe7:test/capture/exemple_capture_test.dart:93:      skip: _maquette == null,
+4a4fbe7:test/capture/historique_tuteur_capture_test.dart:93:  group('Capture : Historique du tuteur', skip: sautSansCapture, () {
+4a4fbe7:test/capture/historique_tuteur_capture_test.dart:232:      testWidgets('planche : $nom', skip: maquette == null, (
+4a4fbe7:test/capture/hl_a5_planche_capture_test.dart:180:  group('Capture : planche HL-A-5', skip: sautSansCapture, () {
+4a4fbe7:test/capture/l1_boutons_capture_test.dart:52:  group('Capture : lot l1-boutons', skip: sautSansCapture, () {
+4a4fbe7:test/capture/l1_cartes_capture_test.dart:63:    skip: sautSansCapture,
+4a4fbe7:test/capture/l1_pastilles_capture_test.dart:101:  group('Capture : pastille d\'etat de seance', skip: sautSansCapture, () {
+4a4fbe7:test/capture/l1_revue_capture_test.dart:114:    skip: sautSansCapture,
+4a4fbe7:test/capture/la1_bienvenue_connexion_capture_test.dart:78:  group('Capture LA-1 : bienvenue, connexion, recuperation', skip: sautSansCapture, () {
+4a4fbe7:test/capture/la1_bienvenue_connexion_capture_test.dart:106:        skip: _maquette == null,
+4a4fbe7:test/capture/la2_inscription_capture_test.dart:170:  group('Capture LA-2 : inscription par etapes', skip: sautSansCapture, () {
+4a4fbe7:test/capture/la2_inscription_capture_test.dart:206:        skip: maquette == null,
+4a4fbe7:test/capture/la2_inscription_capture_test.dart:301:      skip: Platform.environment['CAPTURE_MAQUETTE_LA2_RECAP'] == null,
+4a4fbe7:test/capture/la3_dossier_capture_test.dart:103:  group('Capture LA-3 : dossier, contrat, consentements', skip: sautSansCapture, () {
+4a4fbe7:test/capture/la3_dossier_capture_test.dart:230:      skip: Platform.environment['CAPTURE_MAQUETTE_LA3_CONSENTEMENTS'] == null,
+4a4fbe7:test/capture/la4_parcours_capture_test.dart:92:  group('Capture LA-4 : questionnaire par eleve', skip: sautSansCapture, () {
+4a4fbe7:test/capture/la4_parcours_capture_test.dart:491:      skip: Platform.environment['CAPTURE_MAQUETTE_LA4_AGE'] == null,
+4a4fbe7:test/capture/ma_nav1_capture_test.dart:20:  group('Capture : navigation eleve MA-NAV-1', skip: sautSansCapture, () {
+4a4fbe7:test/capture/notifications_observations_admin_capture_test.dart:109:  group('Capture : Notifications et observations admin', skip: sautSansCapture, () {
+4a4fbe7:test/capture/notifications_observations_admin_capture_test.dart:190:      skip: maquetteD3 == null,
+4a4fbe7:test/capture/onglets1_capture_test.dart:32:  group('Capture : ONGLETS-1', skip: sautSansCapture, () {
+4a4fbe7:test/capture/outil_capture.dart:36:/// A passer au `skip:` d'un `group` de capture : une raison lisible quand
+4a4fbe7:test/capture/video_tuile1_capture_test.dart:86:  group('Capture : VIDEO-TUILE-1', skip: sautSansCapture, () {
+4a4fbe7:test/features/accessibilite_recette/captures_ma_test.dart:93:  group('Capture MA-12 : RTL', skip: sautSansCapture, () {
+4a4fbe7:test/features/accessibilite_recette/captures_ma_test.dart:126:  group('Capture MA-1b : socle', skip: sautSansCapture, () {
+4a4fbe7:test/features/accessibilite_recette/captures_ma_test.dart:169:  group('Capture MA-2 : navigation', skip: sautSansCapture, () {
+4a4fbe7:test/features/accessibilite_recette/captures_ma_test.dart:202:  group('Capture MA-3 : Accueil', skip: sautSansCapture, () {
+4a4fbe7:test/features/accessibilite_recette/captures_ma_test.dart:249:  group('Capture MA-4 : Ma classe', skip: sautSansCapture, () {
+4a4fbe7:test/features/accessibilite_recette/captures_ma_test.dart:279:  group('Capture MA-5 : preparation et salle', skip: sautSansCapture, () {
+4a4fbe7:test/features/accessibilite_recette/captures_ma_test.dart:376:  group('Capture MA-6 : apres la seance', skip: sautSansCapture, () {
+4a4fbe7:test/features/accessibilite_recette/captures_ma_test.dart:424:  group('Capture MA-7 : Coran', skip: sautSansCapture, () {
+4a4fbe7:test/features/accessibilite_recette/captures_ma_test.dart:540:  group('Capture MA-8 : Mon espace', skip: sautSansCapture, () {
+4a4fbe7:test/features/accessibilite_recette/captures_ma_test.dart:627:  group('Capture MA-9 : tuteur et enseignant', skip: sautSansCapture, () {
+4a4fbe7:test/features/accueil_famille_capture_test.dart:186:  group('Capture : Accueil du tuteur', skip: sautSansCapture, () {
+4a4fbe7:test/features/accueil_famille_capture_test.dart:285:      skip: _maquetteMobile == null,
+4a4fbe7:test/features/accueil_famille_capture_test.dart:304:      skip: _maquetteBureau == null,
+4a4fbe7:test/features/adulte_recette/captures_ea10_test.dart:141:  group('Capture : EA-10', skip: sautSansCapture, () {
+4a4fbe7:test/features/adulte_recette/captures_ea11_test.dart:107:  group('Capture : EA-11', skip: sautSansCapture, () {
+4a4fbe7:test/features/adulte_recette/captures_ea12_test.dart:196:    skip: sautSansCapture,
+4a4fbe7:test/features/adulte_recette/captures_ea12_test.dart:228:    skip: sautSansCapture,
+4a4fbe7:test/features/adulte_recette/captures_ea12_test.dart:264:    skip: sautSansCapture,
+4a4fbe7:test/features/adulte_recette/captures_ea12_test.dart:291:    skip: sautSansCapture,
+4a4fbe7:test/features/adulte_recette/captures_ea12_test.dart:377:    skip: sautSansCapture,
+4a4fbe7:test/features/adulte_recette/captures_ea2_test.dart:71:  group('Capture : EA-2', skip: sautSansCapture, () {
+4a4fbe7:test/features/adulte_recette/captures_ea3_test.dart:90:  group('Capture : EA-3', skip: sautSansCapture, () {
+4a4fbe7:test/features/adulte_recette/captures_ea4_test.dart:136:  group('Capture : EA-4', skip: sautSansCapture, () {
+4a4fbe7:test/features/adulte_recette/captures_ea5_test.dart:91:  group('Capture : EA-5', skip: sautSansCapture, () {
+4a4fbe7:test/features/adulte_recette/captures_ea5c_test.dart:168:  group('Capture : EA-5c', skip: sautSansCapture, () {
+4a4fbe7:test/features/adulte_recette/captures_ea6_test.dart:78:  group('Capture : EA-6', skip: sautSansCapture, () {
+4a4fbe7:test/features/adulte_recette/captures_ea6c_test.dart:95:  group('Capture : EA-6c', skip: sautSansCapture, () {
+4a4fbe7:test/features/adulte_recette/captures_ea7_test.dart:84:  group('Capture : EA-7', skip: sautSansCapture, () {
+4a4fbe7:test/features/adulte_recette/captures_ea8_test.dart:121:  group('Capture : EA-8', skip: sautSansCapture, () {
+4a4fbe7:test/features/adulte_recette/captures_ea9_test.dart:80:  group('Capture : EA-9', skip: sautSansCapture, () {
+4a4fbe7:test/features/adulte_recette/captures_ea_test.dart:73:  group('Capture EA-1b : coquille', skip: sautSansCapture, () {
+4a4fbe7:test/features/adulte_recette/captures_earc_test.dart:107:  group('Capture : EA-RC, $nom', skip: sautSansCapture, () {
+4a4fbe7:test/features/adulte_recette/captures_earc_test.dart:191:    skip: sautSansCapture,
+4a4fbe7:test/features/appareils/appareils_capture_test.dart:397:  group('Capture : appareils et appareil partage', skip: sautSansCapture, () {
+4a4fbe7:test/features/appareils/appareils_capture_test.dart:490:      skip: _maquetteProfil == null,
+4a4fbe7:test/features/appareils/appareils_capture_test.dart:502:      skip: _maquetteFoyer == null,
+4a4fbe7:test/features/appareils/appareils_capture_test.dart:514:      skip: _maquetteGenre == null,
+4a4fbe7:test/features/appareils/appareils_capture_test.dart:526:      skip: _maquetteE3 == null,
+4a4fbe7:test/features/appareils/emetteur_qr_capture_test.dart:220:  group('Capture : emetteur QR', skip: sautSansCapture, () {
+4a4fbe7:test/features/appareils/emetteur_qr_capture_test.dart:266:      skip: _maquetteM5 == null,
+4a4fbe7:test/features/appareils/emetteur_qr_capture_test.dart:284:      skip: _maquetteM5 == null,
+4a4fbe7:test/features/appareils/scanner_saisie_capture_test.dart:278:  group('Capture : scanner et saisie du code', skip: sautSansCapture, () {
+4a4fbe7:test/features/appareils/scanner_saisie_capture_test.dart:324:      skip: _maquetteM3 == null,
+4a4fbe7:test/features/appareils/scanner_saisie_capture_test.dart:342:      skip: _maquetteE3 == null,
+4a4fbe7:test/features/cahier/captures_en7_test.dart:41:  group('Capture : EN-7', skip: sautSansCapture, () {
+4a4fbe7:test/features/cahier/captures_en7b_test.dart:44:  group('Capture : EN-7b', skip: sautSansCapture, () {
+4a4fbe7:test/features/cahier/captures_en7c_test.dart:46:  group('Capture : EN-7c', skip: sautSansCapture, () {
+4a4fbe7:test/features/classe_eleve/espace_classe_eleve_test.dart:304:  group('Capture : CL-4.3', skip: sautSansCapture, () {
+4a4fbe7:test/features/classe_eleve/preparation_eleve_test.dart:648:  group('Capture : CL-4.6', skip: sautSansCapture, () {
+4a4fbe7:test/features/classe_enseignant/espace_classe_enseignant_test.dart:435:  group('Capture : CL-4.4', skip: sautSansCapture, () {
+4a4fbe7:test/features/classe_enseignant/preparation_enseignant_test.dart:383:  group('Capture : CL-4.5', skip: sautSansCapture, () {
+4a4fbe7:test/features/classe_recette/captures_cl47_test.dart:56:  group('Capture : CL-4.7', skip: sautSansCapture, () {
+4a4fbe7:test/features/classe_tuteur/catalogue_classes_capture_test.dart:85:  group('Capture : catalogue des classes', skip: sautSansCapture, () {
+4a4fbe7:test/features/classe_tuteur/classe_tuteur_capture_test.dart:151:  group('Capture : Classe du tuteur', skip: sautSansCapture, () {
+4a4fbe7:test/features/classe_tuteur/classe_tuteur_capture_test.dart:351:      skip: _maquetteMobile == null,
+4a4fbe7:test/features/controleur_recette/captures_ct_test.dart:86:  group('Capture : CT-1b, coquille controleur', skip: sautSansCapture, () {
+4a4fbe7:test/features/controleur_recette/captures_ct_test.dart:116:  group('Capture : CT-2, CTR-01 Controle', skip: sautSansCapture, () {
+4a4fbe7:test/features/controleur_recette/captures_ct_test.dart:149:    skip: sautSansCapture,
+4a4fbe7:test/features/controleur_recette/captures_ct_test.dart:189:  group('Capture : CT-4, CTR-03 compte rendu', skip: sautSansCapture, () {
+4a4fbe7:test/features/controleur_recette/captures_ct_test.dart:247:  group('Capture : CT-5, CTR-03A observation', skip: sautSansCapture, () {
+4a4fbe7:test/features/controleur_recette/captures_ct_test.dart:339:  group('Capture : CT-6, CTR-04 Echanges', skip: sautSansCapture, () {
+4a4fbe7:test/features/controleur_recette/captures_ct_test.dart:407:    skip: sautSansCapture,
+4a4fbe7:test/features/controleur_recette/captures_ct_test.dart:498:    skip: sautSansCapture,
+4a4fbe7:test/features/controleur_recette/captures_ct_test.dart:547:  group('Capture : CT-8, CTR-03B Complement', skip: sautSansCapture, () {
+4a4fbe7:test/features/controleur_recette/recette_ct12_test.dart:256:  group('Capture : CT-12, 200 % et RTL', skip: sautSansCapture, () {
+4a4fbe7:test/features/creneaux/captures_en5_test.dart:32:  group('Capture : EN-5', skip: sautSansCapture, () {
+4a4fbe7:test/features/demo/demo_salle_page_test.dart:202:  group('Capture : T-S6', skip: sautSansCapture, () {
+4a4fbe7:test/features/demo/entree_demonstration_test.dart:115:  group('captures de la demonstration', skip: capture.sautSansCapture, () {
+4a4fbe7:test/features/enseignant_recette/captures_en_test.dart:88:  group('Capture EN-12 : coquille', skip: sautSansCapture, () {
+4a4fbe7:test/features/enseignant_recette/captures_en_test.dart:112:  group('Capture EN-12 : aujourdhui', skip: sautSansCapture, () {
+4a4fbe7:test/features/enseignant_recette/captures_en_test.dart:170:  group('Capture EN-12 : classes', skip: sautSansCapture, () {
+4a4fbe7:test/features/enseignant_recette/captures_en_test.dart:225:  group('Capture EN-12 : fiche_eleve', skip: sautSansCapture, () {
+4a4fbe7:test/features/enseignant_recette/captures_en_test.dart:298:  group('Capture EN-12 : disponibilites', skip: sautSansCapture, () {
+4a4fbe7:test/features/enseignant_recette/captures_en_test.dart:388:  group('Capture EN-12 : premiers_pas', skip: sautSansCapture, () {
+4a4fbe7:test/features/enseignant_recette/captures_en_test.dart:430:  group('Capture EN-12 : profil', skip: sautSansCapture, () {
+4a4fbe7:test/features/enseignant_recette/captures_en_test.dart:518:  group('Capture EN-12 : cahier', skip: sautSansCapture, () {
+4a4fbe7:test/features/enseignant_recette/captures_en_test.dart:603:  group('Capture EN-12 : absence_remplacement', skip: sautSansCapture, () {
+4a4fbe7:test/features/enseignant_recette/captures_en_test.dart:713:  group('Capture EN-12 : salle', skip: sautSansCapture, () {
+4a4fbe7:test/features/enseignant_recette/captures_en_test.dart:840:  group('Capture EN-12 : revue_classe', skip: sautSansCapture, () {
+4a4fbe7:test/features/fiche_eleve/captures_en4_test.dart:36:  group('Capture : EN-4', skip: sautSansCapture, () {
+4a4fbe7:test/features/foyer/fiche_eleve_capture_test.dart:183:  group('Capture : fiche eleve', skip: sautSansCapture, () {
+4a4fbe7:test/features/foyer/fiche_eleve_capture_test.dart:285:      skip: _maquetteProfil == null,
+4a4fbe7:test/features/foyer/fiche_eleve_capture_test.dart:301:      skip: _maquetteCompteMobile == null,
+4a4fbe7:test/features/foyer/fiche_eleve_capture_test.dart:315:      skip: _maquetteCompteBureau == null,
+4a4fbe7:test/features/foyer/formulaire_profil_eleve_capture_test.dart:197:  group('Capture : ajout d un profil eleve', skip: sautSansCapture, () {
+4a4fbe7:test/features/foyer/formulaire_profil_eleve_capture_test.dart:235:      skip: _maquetteE1 == null,
+4a4fbe7:test/features/foyer/formulaire_profil_eleve_capture_test.dart:248:      skip: _maquetteE3 == null,
+4a4fbe7:test/features/foyer/foyer_capture_test.dart:192:  group('Capture : Foyer', skip: sautSansCapture, () {
+4a4fbe7:test/features/foyer/foyer_capture_test.dart:314:      skip: _maquetteFoyer == null,
+4a4fbe7:test/features/foyer/foyer_capture_test.dart:328:      skip: _maquetteCompteMobile == null,
+4a4fbe7:test/features/foyer/foyer_capture_test.dart:342:      skip: _maquetteCompteBureau == null,
+4a4fbe7:test/features/journee/captures_en8_test.dart:45:  group('Capture : EN-8', skip: sautSansCapture, () {
+4a4fbe7:test/features/profil_enseignant/captures_en6_test.dart:38:  group('Capture : EN-6', skip: sautSansCapture, () {
+4a4fbe7:test/features/revue_groupe/captures_en11_test.dart:70:  group('Capture : EN-11 revue de Classe', skip: sautSansCapture, () {
+4a4fbe7:test/features/salle_200_test.dart:144:          testWidgets('$role, $largeur px, texte x$texte', skip: reste, (
+4a4fbe7:test/features/salle_200_test.dart:212:  group('SALLE-200-1 : captures 390 px, texte x2', skip: sautSansCapture, () {
+4a4fbe7:test/features/salle_seance/captures_en9_test.dart:31:  group('Capture : EN-9', skip: sautSansCapture, () {
+4a4fbe7:test/features/salle_seance/classe_live_capture_test.dart:117:  group('Capture : /tc/classe sur la salle unique (T8)', skip: sautSansCapture, () {
+4a4fbe7:test/features/salle_seance/en10_salle_test.dart:189:  group('Capture : EN-10', skip: sautSansCapture, () {
+4a4fbe7:test/features/salle_seance/en12_micro_test.dart:128:  group('Capture : EN-12 micro', skip: sautSansCapture, () {
+4a4fbe7:test/features/salle_seance/enkb_raccourcis_test.dart:267:  group('Capture : EN-KB', skip: sautSansCapture, () {
+4a4fbe7:test/features/salle_seance/salle_micro_bloque_test.dart:271:  group('Capture : micro bloque (T-S4)', skip: sautSansCapture, () {
+4a4fbe7:test/features/salle_seance/salle_seance_capture_test.dart:80:  group('Capture : en-tete de la salle (T1)', skip: sautSansCapture, () {
+4a4fbe7:test/features/salle_seance/salle_seance_capture_test.dart:135:  group('Capture : salle eleve (T2)', skip: sautSansCapture, () {
+4a4fbe7:test/features/salle_seance/salle_seance_capture_test.dart:176:  group('Capture : guidee et fin eleve (T3)', skip: sautSansCapture, () {
+4a4fbe7:test/features/salle_seance/salle_seance_capture_test.dart:249:  group('Capture : salle enseignant (T4)', skip: sautSansCapture, () {
+4a4fbe7:test/features/salle_seance/salle_seance_capture_test.dart:286:  group('Capture : panneau Eleves (T5)', skip: sautSansCapture, () {
+4a4fbe7:test/features/salle_seance/salle_seance_capture_test.dart:339:  group('Capture : panneau Supports (T6)', skip: sautSansCapture, () {
+4a4fbe7:test/features/salle_seance/salle_seance_capture_test.dart:392:  group('Capture : fin enseignant CLV-10 (T7)', skip: sautSansCapture, () {
+4a4fbe7:test/features/salle_seance/salle_seance_capture_test.dart:437:  group('Capture : recette complements (T10)', skip: sautSansCapture, () {
+4a4fbe7:test/features/salle_seance/salle_seance_capture_test.dart:544:  group('Capture : planches de recette (T10)', skip: sautSansCapture, () {
+4a4fbe7:test/features/salle_seance/salle_secours_bandeau_test.dart:321:  group('Capture : bandeau et retour bref (T-S2)', skip: sautSansCapture, () {
+4a4fbe7:test/features/salle_seance/salle_secours_t_s5_test.dart:366:  group('Capture : T-S5', skip: sautSansCapture, () {
+4a4fbe7:test/features/salle_seance/salle_secours_test.dart:287:    skip: sautSansCapture,
+4a4fbe7:test/teaching_core/g/entree_explication_capture_test.dart:132:    skip: sautSansCapture,
+4a4fbe7:test/teaching_core/g/entree_explication_capture_test.dart:359:        skip: _maquetteM2 == null,
+4a4fbe7:test/teaching_core/g/fin_visite_capture_test.dart:166:  group('Capture : fin de visite', skip: sautSansCapture, () {
+4a4fbe7:test/teaching_core/g/fin_visite_capture_test.dart:291:        skip: _maquetteM5 == null, (WidgetTester tester) async {
+4a4fbe7:test/teaching_core/g/salle_observation_capture_test.dart:207:  group('Capture : salle d\'observation', skip: sautSansCapture, () {
+4a4fbe7:test/teaching_core/g/salle_observation_capture_test.dart:335:        skip: _maquetteM4 == null, (WidgetTester tester) async {
+4a4fbe7:test/teaching_core/g/salle_observation_capture_test.dart:351:        skip: _maquetteM3 == null, (WidgetTester tester) async {
+4a4fbe7:test/teaching_core/g/salle_observation_capture_test.dart:367:        skip: _maquetteD1 == null, (WidgetTester tester) async {
+== couleurs ajoutees par les commits d'integration seuls (remerge-diff et 4a4fbe7), lignes +
+-- 0c0b739
+-- f4c917c
+-- 328a737
+-- 760802c
+-- 4a4fbe7
+== fichiers theme/couleurs touches par les commits d'integration (remerge)
+0c0b739 : 
+f4c917c : 
+328a737 : 
+760802c : 
+4a4fbe7 : docs/current/REVUE-DIRECTEUR-2026-10.md, lib/features/accueil_eleve/coran_accessibilite.dart, test/core/accessibilite/coran_ma7_test.dart

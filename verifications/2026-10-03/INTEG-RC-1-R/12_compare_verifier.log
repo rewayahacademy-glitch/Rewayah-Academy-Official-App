@@ -1,0 +1,12 @@
+﻿98e3f9d: total=1399 affirmation-reseau=10 bouton-grise=71 libelle-sans-source=1318
+058c525: total=1220 affirmation-reseau=5 avatar-recompose=20 avatar-taille=13 bouton-grise=65 bouton-recompose=15 cartes-collees=50 erreur-sans-action=2 etat-seance-pastille=6 libelle-sans-source=1034 onglets-defilants=4 plein-multiple=1 selecteur-theme-recompose=5
+39a702a: total=1363 affirmation-reseau=6 avatar-recompose=21 avatar-taille=14 bouton-grise=66 bouton-recompose=15 cartes-collees=51 erreur-sans-action=2 etat-seance-pastille=6 libelle-sans-source=1172 onglets-defilants=4 plein-multiple=1 selecteur-theme-recompose=5
+5629693: total=1508 affirmation-reseau=6 avatar-recompose=21 avatar-taille=18 bouton-grise=77 bouton-recompose=15 cartes-collees=51 erreur-sans-action=2 etat-seance-pastille=6 libelle-sans-source=1299 onglets-defilants=4 plein-multiple=4 selecteur-theme-recompose=5
+7885b35: total=1260 affirmation-reseau=6 avatar-recompose=21 avatar-taille=13 bouton-grise=69 bouton-recompose=16 cartes-collees=50 erreur-sans-action=2 etat-seance-pastille=6 libelle-sans-source=1067 onglets-defilants=4 plein-multiple=1 selecteur-theme-recompose=5
+4a4fbe7: total=1663 affirmation-reseau=5 avatar-recompose=3 avatar-taille=4 bouton-grise=80 bouton-recompose=1 libelle-sans-source=1567 plein-multiple=3
+
+Nees dans l'integration (4a4fbe7 moins union base+pointes) : 0
+  par regle : 
+
+Presentes dans un parent, absentes de 4a4fbe7 : 250
+  par regle : affirmation-reseau=7 avatar-recompose=22 avatar-taille=15 bouton-grise=9 bouton-recompose=15 cartes-collees=52 erreur-sans-action=2 etat-seance-pastille=6 libelle-sans-source=112 onglets-defilants=4 plein-multiple=1 selecteur-theme-recompose=5

@@ -1,0 +1,8 @@
+﻿4a4fbe7f7d22ae19aab67c6f0e0853454634e885
+INTEG-RC-1 (ui/accessibilite-v1) : corrections apres relecture
+
+
+ docs/current/REVUE-DIRECTEUR-2026-10.md            |  8 ++--
+ .../accueil_eleve/coran_accessibilite.dart         | 54 ++++++++++++++++------
+ test/core/accessibilite/coran_ma7_test.dart        | 47 +++++++++++++++++++
+ 3 files changed, 93 insertions(+), 16 deletions(-)

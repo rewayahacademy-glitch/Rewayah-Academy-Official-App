@@ -1,0 +1,58 @@
+# Verification INTEG-RC-1-R : union des cles i18n a chaque fusion.
+# Lance par : python union_i18n.py.txt (depuis D:\RA_TUTEUR\r-integ)
+# Pour chaque fusion M (P1, P2), base B = merge-base(P1, P2) :
+#   perdues = (cles(P1) | cles(P2)) - cles(M)
+#   une cle perdue est "retrait voulu" si elle est dans B et absente d'un parent
+#   (un cote l'a retiree) ; sinon c'est une PERTE.
+#   ajoutees = cles(M) - (cles(P1) | cles(P2))  (cles nees dans la fusion)
+import json, subprocess, sys
+
+def git(*a):
+    return subprocess.run(["git", *a], capture_output=True, check=True).stdout
+
+def cles(rev, f):
+    try:
+        d = json.loads(git("show", f"{rev}:{f}").decode("utf-8-sig"))
+    except subprocess.CalledProcessError:
+        return set()
+    out = set()
+    def rec(p, v):
+        if isinstance(v, dict):
+            for k, x in v.items():
+                rec(f"{p}.{k}" if p else k, x)
+        else:
+            out.add(p)
+    rec("", d)
+    return out
+
+fusions = ["0c0b739", "f4c917c", "328a737", "760802c"]
+probleme = False
+for f in ["assets/i18n/fr.i18n.json", "assets/i18n/ar.i18n.json"]:
+    for m in fusions:
+        p1, p2 = git("show", "-s", "--format=%P", m).decode().split()
+        b = git("merge-base", p1, p2).decode().strip()
+        K1, K2, KM, KB = cles(p1, f), cles(p2, f), cles(m, f), cles(b, f)
+        perdues = (K1 | K2) - KM
+        voulues = {k for k in perdues if k in KB and (k not in K1 or k not in K2)}
+        pertes = perdues - voulues
+        ajoutees = KM - (K1 | K2)
+        print(f"{f} {m}: P1={len(K1)} P2={len(K2)} M={len(KM)} base={len(KB)} "
+              f"retraits_voulus={len(voulues)} PERTES={len(pertes)} nees_dans_fusion={len(ajoutees)}")
+        for k in sorted(voulues):
+            cote = "P1" if k not in K1 else "P2"
+            print(f"   retrait voulu (absent de {cote}) : {k}")
+        for k in sorted(pertes):
+            print(f"   PERTE : {k}")
+            probleme = True
+        for k in sorted(ajoutees):
+            print(f"   nee dans la fusion : {k}")
+    # correction finale
+    K, KC = cles("760802c", f), cles("4a4fbe7", f)
+    print(f"{f} 760802c->4a4fbe7 : retirees={sorted(K-KC)} ajoutees={sorted(KC-K)}")
+# ar suit fr ?
+for rev in ["98e3f9d", "4a4fbe7"]:
+    fr, ar = cles(rev, "assets/i18n/fr.i18n.json"), cles(rev, "assets/i18n/ar.i18n.json")
+    print(f"{rev}: fr={len(fr)} ar={len(ar)} ar_hors_fr={len(ar-fr)} fr_sans_ar={len(fr-ar)}")
+    for k in sorted(ar - fr):
+        print(f"   ar sans fr : {k}")
+sys.exit(1 if probleme else 0)

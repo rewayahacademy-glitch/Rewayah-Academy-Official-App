@@ -1,0 +1,39 @@
+# INTEG-RC-1-R : les violations de verifier_revue presentes sur 4a4fbe7 et
+# absentes de la base 98e3f9d ET des quatre pointes (outil de 4a4fbe7 pose
+# dessus) sont nees de l'integration. Cle de comparaison : (regle, fichier,
+# extrait), sans le numero de ligne (il bouge d'une fusion a l'autre).
+# Lance par : python compare_verifier.py.txt  (dans ce dossier)
+import re, sys, collections
+
+L = re.compile(r"^\s+(\S+?):(\d+)\s+\[([^\]]+)\]\s+(.*)$")
+
+def lire(rev):
+    out = collections.Counter()
+    with open(f"10_verifier_detail_{rev}.log" if rev != "4a4fbe7" else "07_verifier_detail_4a4fbe7.log",
+              encoding="utf-8", errors="replace") as f:
+        for ligne in f:
+            m = L.match(ligne.rstrip("\n"))
+            if m:
+                out[(m.group(3), m.group(1), m.group(4).strip())] += 1
+    return out
+
+revs = ["98e3f9d", "058c525", "39a702a", "5629693", "7885b35"]
+parents = {r: lire(r) for r in revs}
+m = lire("4a4fbe7")
+for r in revs + ["4a4fbe7"]:
+    c = parents.get(r, m)
+    par = collections.Counter(k[0] for k in c.elements())
+    print(f"{r}: total={sum(c.values())} " + " ".join(f"{k}={v}" for k, v in sorted(par.items())))
+union = collections.Counter()
+for c in parents.values():
+    union |= c
+nees = m - union
+print(f"\nNees dans l'integration (4a4fbe7 moins union base+pointes) : {sum(nees.values())}")
+par = collections.Counter(k[0] for k in nees.elements())
+print("  par regle : " + " ".join(f"{k}={v}" for k, v in sorted(par.items())))
+for (regle, chemin, extrait), n in sorted(nees.items()):
+    print(f"  [{regle}] {chemin}  x{n}  {extrait[:160]}")
+disparues = union - m
+print(f"\nPresentes dans un parent, absentes de 4a4fbe7 : {sum(disparues.values())}")
+par = collections.Counter(k[0] for k in disparues.elements())
+print("  par regle : " + " ".join(f"{k}={v}" for k, v in sorted(par.items())))

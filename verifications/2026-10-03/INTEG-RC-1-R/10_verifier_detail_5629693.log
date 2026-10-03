@@ -1,0 +1,1522 @@
+Running build hooks...Running build hooks...  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.chargementProlonge.titre : La connexion prend plus de temps que prévu
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.chargementProlonge.phrase : Vous pouvez patienter encore un peu ou réessayer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.horsLigne.titre : Vous êtes hors ligne
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.horsLigne.phrase : Vérifiez votre connexion. Ce qui est déjà affiché reste consultable.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.reconnexion.phrase : Une nouvelle tentative de connexion est en cours.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.echecServeur.titre : Impossible de charger ces informations
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.echecServeur.phrase : Le chargement n'a pas abouti. Réessayez dans un instant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.introuvable.titre : Cette page est introuvable
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.introuvable.phrase : Le lien est peut-être incomplet, ou la page n'existe plus.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.accesRefuse.titre : Vous n'avez pas accès à cette page
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.accesRefuse.phrase : Ce contenu n'est pas ouvert à votre compte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.sessionExpiree.titre : Votre session a expiré
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.sessionExpiree.phrase : Reconnectez-vous pour continuer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.dossierEnAttente.titre : Votre dossier est en attente
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.dossierEnAttente.phrase : Une étape reste à franchir avant d'ouvrir cet espace.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.aucunResultat.phrase : Rien ne correspond pour le moment.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.permissionRefusee.titre : Autorisation refusée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.permissionRefusee.phrase : Sans cette autorisation, cette fonction ne peut pas s'ouvrir. Vous pouvez la modifier dans les réglages de votre appareil.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.ressourceExpiree.titre : Ce contenu n'est plus disponible
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.ressourceExpiree.phrase : Il a été retiré, ou son accès a pris fin.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.indisponible.phrase : Cette fonction n'est pas encore ouverte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.reessaisEpuises : Toujours sans réponse. Réessayez un peu plus tard.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.horsLigneDemarrage : Rewayah a besoin d'Internet pour vérifier votre compte. Reconnectez cet appareil, puis réessayez.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.actions.retourAccueil : Retour à l'accueil
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.actions.voirDossier : Voir mon dossier
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.actions.reinitialiserFiltres : Réinitialiser les filtres
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.etats.actions.revenir : Revenir en arrière
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.entete.notificationsUneNonLue : Notifications, une non lue
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.entete.notificationsNonLues : Notifications, {nombre} non lues
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.selecteurProfils.ajouterSemantique : Ajouter un profil élève
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.theme.groupe : Apparence
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.theme.sombre : Thème sombre
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  commun.demarrage.ouverture : Ouverture de Rewayah
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.titre : Préparer l'entrée dans la classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.retour : Retour à la Classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.cameraCoupee : Caméra coupée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.testerCamera : Tester la caméra
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.testCameraFait : Test local terminé. La caméra reste coupée à l'entrée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.equipement : Votre équipement
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.sortieAudio : Sortie audio
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.verification : Vérification…
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.chargement : Vérification du matériel…
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.connexionPrete : Connexion prête
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.connexionInstable : Connexion instable
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.reseauFaible : Connexion instable. L'audio sera prioritaire.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.microPret : Micro détecté · Micro coupé à l'entrée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.microAbsent : Aucun micro détecté
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.microAbsentRaison : Aucun micro détecté. Connectez ou activez un micro pour enseigner.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.microBloque : Micro bloqué
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.permissionRefusee : Le micro est bloqué dans les réglages de cet appareil.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.ouvrirReglages : Ouvrir les réglages
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.sortieSysteme : Sortie système
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.cameraPrete : Caméra détectée · Caméra coupée à l'entrée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.cameraAbsente : Caméra non disponible. Vous pouvez entrer sans caméra.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.modifierPeripheriques : Modifier les périphériques
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.support : Support prévu
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.eleves : Élèves attendus
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.entrer : Entrer dans la classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.terminee : Cette séance est terminée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.nonAssignee : Cette séance ne vous est pas attribuée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.retourJournee : Retour à ma journée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.demo.section : Préparation enseignant
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.eleve.verification : Nous vérifions votre appareil…
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.eleve.pret : Tout est prêt
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.eleve.acces : Accès à la classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.eleve.accesOk : Vous pouvez entrer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.eleve.accesAttente : En attente de la connexion
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.eleve.microCoupe : Vous entrerez avec le micro coupé.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.eleve.microInaccessible : Votre micro n'est pas accessible
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.eleve.microInaccessibleDetail : Personne dans la classe ne pourra vous entendre tant que l'accès au micro reste bloqué.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.eleve.autoriserMicro : Autoriser le micro
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.eleve.guidee.verification : Préparation de la séance…
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.eleve.guidee.pret : Tout est prêt.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.eleve.guidee.microCoupe : Le micro sera coupé en entrant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.eleve.guidee.microQuestion : Le micro est bloqué. On l'autorise ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.eleve.guidee.microBloque : Le micro est bloqué.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.eleve.guidee.horsLigne : La connexion ne marche pas pour l'instant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.eleve.demo.section : Préparation élève
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.eleve.demo.sectionGuidee : Préparation élève, Interface guidée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.eleve.demo.verification : Vérification en cours
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.preparation.eleve.demo.microBloque : Micro bloqué
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.secours.reseauFaible : Réseau faible. L'audio est prioritaire.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.secours.reseauFaibleGuidee : Le réseau est faible.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.secours.reseauFaibleGuideeSuite : Le son reste prioritaire.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.secours.reconnexion : Connexion interrompue. Reconnexion en cours…
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.secours.reconnexionGuidee : Reconnexion de la séance…
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.secours.retablie : Connexion rétablie.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.secours.echec : Impossible de rétablir la connexion.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.secours.echecGuidee : La connexion ne revient pas.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.secours.horsLigne : Vous êtes hors ligne. La séance nécessite une connexion.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.secours.indisponible : {commande}. Indisponible pendant la reconnexion.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.secours.cameraInterdite : Caméra désactivée pour ce profil.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.secours.microBloque : Le micro est bloqué dans les réglages de cet appareil.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.secours.microBloqueGuidee : Le micro est bloqué sur cet appareil.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.secours.continuerSansMicro : Continuer sans micro
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.secours.ouvrirReglages : Ouvrir les réglages
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.titre : Séance en direct
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.titreGuidee : Ma séance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.minutesRestantes : {minutes} min restantes
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.sePoursuit : La séance se poursuit.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.coursEnregistreCourt : Le cours est enregistré.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.votreParentObserve : Votre parent observe la séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.tonParentObserve : Ton parent observe la séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.tuteurDeObserve : Tuteur de {prenom} observe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.unParentObserve : Un parent observe cette séance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.leTuteurDeObserve : Le tuteur de {prenom} observe la séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.sortir : Quitter la séance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.rienPartage : {nom} n'a rien partagé pour l'instant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.zoomLocal : Zoom local, sans effet sur les autres
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.zoomMoins : Réduire le zoom
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.zoomPlus : Augmenter le zoom
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.quitterQuestion : Quitter la séance ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.quitterConsequence : Vous pourrez revenir si la séance est encore ouverte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.illustration : Illustration du support
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.quitterCahierConsequence : Vous passerez ensuite au cahier de transmission.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.outils.titre : Outils d'enseignement
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.outils.annoter : Annoter
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.fermerPanneau : Fermer le panneau
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.panneauSupports.ressourcesClasse : Ressources de la Classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.panneauSupports.voirTout : Voir tout
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.panneauSupports.voirBibliotheque : Voir toute la bibliothèque
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.rappeler : Appeler discrètement
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.faireReciter : Faire réciter
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.vousAppelle : {nom} vous appelle
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.deplierFiche : Afficher la fiche de {prenom}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.replierFiche : Masquer la fiche de {prenom}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.fiche.aucuneSeanceSemaine : Aucune séance cette semaine
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.fiche.uneSeanceSemaine : 1 séance cette semaine
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.fiche.seancesSemaine : {nombre} séances cette semaine
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.optionsPanneau : Options du panneau {titre}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.demo.titre : Salle de démonstration
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.demo.intro : Données fictives, aucun serveur. Choisissez un rôle et un état.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.demo.groupes.seance : Déroulé de la séance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.demo.groupes.secours : Situations de secours
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.demo.etats.rienPartage : Rien partagé
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.demo.etats.appel : Appeler discrètement
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.demo.etats.eleves : Panneau Élèves
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.demo.etats.supports : Panneau Supports
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.demo.etats.retablie : Connexion rétablie
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.demo.etats.echec : Reconnexion impossible
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.demo.etats.microBloque : Micro bloqué
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.demo.etats.accesRetire : Accès retiré
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.statut.pasEncoreConnecte : Pas encore connecté
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.seance.statut.connexionInterrompue : Connexion interrompue
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.fin.phrase : Vous pouvez retrouver votre travail dans votre Classe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.fin.retourClasse : Retour à la Classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.fin.quitteTitre : Vous avez quitté la séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.fin.quittePhrase : Vous pourrez revenir tant qu'elle reste ouverte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.fin.accesRetireTitre : Votre accès à cette séance a pris fin.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.fin.titreGuidee : La séance est terminée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.fin.retourAccueil : Retour à l'accueil
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.fin.enseignant.recapitulatif : Récapitulatif de la séance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  salle.fin.enseignant.revenirJournee : Revenir à ma journée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  bienvenue.accroche : Apprendre le Coran en classe, avec un enseignant attitré
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  bienvenue.phrase : Des séances en visio, à horaire fixe, pour vous ou pour les élèves de votre foyer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  bienvenue.pointsTitre : Comment ça se passe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  bienvenue.pointClasse : Les mêmes camarades et le même horaire, chaque semaine.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  bienvenue.pointEnseignantTitre : Un enseignant attitré
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  bienvenue.pointEnseignant : Un Sayyid ou une Sayyida qui suit chaque élève d'une séance à l'autre.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  bienvenue.pointFoyerTitre : Un seul compte pour le foyer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  bienvenue.pointFoyer : Les séances de chaque élève du foyer se suivent depuis votre compte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  bienvenue.dejaCompte : J'ai déjà un compte
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  attente.titreDossier : Votre dossier
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  attente.reste.one : Il reste un élément à fournir.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  attente.reste.other : Il reste {n} éléments à fournir.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  attente.prochaineEtape : Prochaine étape : {etape}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  attente.refuseDetail : Déposez une nouvelle pièce pour relancer la vérification.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  attente.illisible : L'état de votre dossier ne s'affiche pas pour le moment.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  attente.horsLigne : Vous êtes hors ligne. L'état de votre dossier s'affichera dès le retour du réseau.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.renvoyer : Renvoyer le lien
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.renvoye : Un nouveau lien est parti à {courriel}. Utilisez celui du message le plus récent.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.erreurTropTot : Un lien vient déjà de partir. Attendez un moment avant d'en demander un autre.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.horsLigne : Vous êtes hors ligne : le lien ne peut pas partir pour l'instant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.probleme : Lien expiré ou jamais reçu ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.decouvrir : Découvrir Rewayah Academy
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.recuperation.titre : Retrouver mon accès
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.recuperation.intro : Il n'y a pas de mot de passe à réinitialiser : indiquez votre adresse, nous vous envoyons un nouveau lien de connexion.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.recuperation.lienExpireTitre : Ce lien n'est plus valable
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.recuperation.lienExpire : Un lien de connexion ne sert qu'une fois et expire au bout d'un moment. Demandez-en un nouveau ci-dessous.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.recuperation.lienRefuseTitre : La connexion n'a pas abouti
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.recuperation.lienRefuse : Ce lien n'a pas pu vous connecter. Demandez-en un nouveau ci-dessous.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.recuperation.envoyer : Recevoir un nouveau lien
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.recuperation.envoyeTitre : Nouveau lien envoyé
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.recuperation.envoye : Ouvrez le message envoyé à {courriel}, puis suivez le lien.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.recuperation.envoyeEncart : Le message peut mettre quelques minutes à arriver. Pensez à regarder dans les courriers indésirables.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.recuperation.autreAdresse : Utiliser une autre adresse
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.recuperation.revenirConnexion : Revenir à la connexion
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.feuilleAppareil.etape1 : Sur votre propre appareil, ouvrez Foyer, puis Appareils du foyer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.feuilleAppareil.etape2 : Touchez le profil de l'élève, puis Connecter un appareil.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.feuilleAppareil.etape3 : Un QR code et un code de six caractères s'affichent, avec leur heure de fin.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.feuilleAppareil.etape4 : Sur l'appareil de l'élève, scannez le QR code ou saisissez le code.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  connexion.feuilleAppareil.plafond : Le nombre d'appareils par élève est limité. Si la limite est atteinte, retirez-en un depuis Foyer, Appareils du foyer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  inscription.retourEtape : Revenir à l'étape précédente
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  inscription.erreurActualisation : Votre compte est créé, mais la connexion n'a pas pu être actualisée. Réessayez, ou déconnectez-vous puis reconnectez-vous.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  inscription.usage.question : Quel type de compte souhaitez-vous créer ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  inscription.usage.moiTitre : Moi uniquement
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  inscription.usage.moiDescription : Je souhaite suivre les cours avec mon propre profil élève.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  inscription.usage.familleTitre : Moi et ma famille
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  inscription.usage.familleDescription : Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  inscription.usage.enseignant : Je suis enseignant
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  inscription.recap.usage : Type de compte
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  contrat.horsLigne : Vous êtes hors ligne. Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  contrat.caseRequise : Cochez la case pour continuer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.texte.titre : Les visites des parents
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.texte.quiResponsable : Les parents des élèves présents peuvent observer brièvement la séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.texte.quiResponsableDetail : Ils entendent l'enseignant et les élèves qui prennent la parole, y compris votre enfant. Leur micro et leur caméra restent désactivés : ils ne peuvent ni parler, ni écrire, ni apparaître à l'écran.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.texte.quiAdulte : Les parents des autres élèves présents peuvent observer brièvement la séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.texte.quiAdulteDetail : Ils entendent l'enseignant et les élèves qui prennent la parole, y compris vous. Leur micro et leur caméra restent désactivés : ils ne peuvent ni parler, ni écrire, ni apparaître à l'écran.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.texte.pourquoi : Pour suivre l'apprentissage sans interrompre la classe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.texte.pourquoiDetail : Un parent vient voir si son enfant participe, puis repart. La salle rappelle en permanence qu'une visite est possible.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.texte.limites : Des visites courtes, en nombre limité.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.texte.limitesDetail : Chaque parent a un petit nombre de visites par séance, fixé par l'académie et rappelé dans « Comment ça marche ? ». Une visite quittée avant la fin compte comme une visite.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.texte.caseResponsable : J'accepte ces modalités pour mon enfant
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.texte.caseAdulte : J'accepte ces modalités
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.comment.titre : Comment ça marche ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.comment.visites.one : Une visite de {minutes} min par séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.comment.visites.other : {n} visites de {minutes} min par séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.comment.visitesSansDuree.one : Une visite courte par séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.comment.visitesSansDuree.other : {n} visites courtes par séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.comment.parParent : Ce nombre vaut pour chaque parent, que la séance réunisse un ou plusieurs de ses enfants.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.comment.ecourtee : Une visite quittée avant la fin est comptée : il ne reste alors que la suivante, jusqu'à la dernière.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.comment.ecouter : Vous entendez l'enseignant et les élèves qui prennent la parole, y compris votre enfant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.comment.sansMicro : Votre micro et votre caméra restent désactivés pendant la visite.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.comment.valeursIndisponibles : Le nombre de visites et leur durée s'affichent depuis la classe de votre enfant, selon les règles de sa classe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.comment.fermee : Les visites d'observation ne sont pas ouvertes pour cette classe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.compte.intro : L'académie a ajouté à ses conditions un paragraphe sur les visites des parents. Rien n'est considéré comme accepté tant que vous ne l'avez pas fait.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.compte.accepteLe : Vous avez accepté ces modalités le {date}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.compte.merci : Merci, votre accord est enregistré.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.compte.chargement : Lecture de vos accords
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.compte.erreur : Vos accords ne s'affichent pas pour le moment.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.compte.horsLigne : Vous êtes hors ligne. Vos accords s'afficheront dès le retour du réseau.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.compte.sansProfil : Aucun compte connecté : reconnectez-vous pour lire vos accords.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  consentement.compte.invite : Une nouvelle version à lire : les visites des parents
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.foyer.phrase : Chaque profil élève a ses propres appareils. Touchez un profil pour voir ses appareils, en retirer un ou en connecter un nouveau.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.foyer.groupeProfils : Profils élèves
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.foyer.aucunAppareil : Aucun appareil connecté
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.foyer.unAppareil : 1 appareil connecté : {nom}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.foyer.plusieursAppareils : {nombre} appareils connectés : {noms}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.foyer.partage : Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel. Cet appareil apparaît alors sous chaque profil qui l'utilise.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.foyer.videTitre : Aucun profil élève
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.foyer.vide : Ajoutez un profil élève pour lui connecter une tablette, un téléphone ou un ordinateur.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.foyer.videAction : Ajouter un profil élève
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.eleve.sousTitre : Gérez les appareils autorisés pour {prenom}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.eleve.groupe : Appareils connectés
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.eleve.connecter : Connecter un appareil
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.eleve.videTitre : Aucun appareil connecté
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.eleve.vide : Connectez la tablette, le téléphone ou l'ordinateur de {prenom} avec le code affiché par le bouton ci-dessous.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.eleve.introuvableTitre : Profil élève introuvable
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.eleve.introuvable : Ce profil élève n'est pas rattaché à votre foyer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.eleve.introuvableAction : Voir les appareils du foyer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.eleve.connecteLe : Connecté le {date}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.eleve.utiliseLe : Dernière utilisation : {date}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.eleve.jamaisUtilise : Pas encore utilisé
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.eleve.horsLigne : Retirer ou connecter un appareil demande une connexion internet.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.eleve.partageTitre : Choix du profil et code personnel
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.eleve.partage : Sur un appareil partagé, chaque élève choisit son profil puis saisit son propre code personnel, gardé sur cet appareil.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.eleve.retraitTitre : Retirer un appareil
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.eleve.retrait : Un appareil retiré ne peut plus se reconnecter. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.plateforme.android : Téléphone ou tablette Android
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.plateforme.ios : iPhone ou iPad
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.plateforme.web : Navigateur web
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.retrait.question : Retirer cet appareil ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.retrait.consequence : {appareil} ne pourra plus se connecter au profil de {prenom}. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.retrait.confirmer : Retirer l'appareil
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.retrait.enCours : Retrait en cours
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.retrait.reussi : Appareil retiré. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.retrait.echec : Le retrait n'a pas abouti. L'appareil est toujours autorisé. Réessayez dans un instant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.retrait.horsLigne : Pas de connexion internet : l'appareil n'a pas été retiré.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.titre : Connecter un appareil
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.consigneTitre : Sur l'autre appareil
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.consigne : Ouvrez Rewayah, touchez « Connecter l'appareil d'un élève », puis scannez ce QR ou saisissez le code.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.libelleQr : QR de connexion. Le même code est aussi écrit sur cet écran, à saisir si l'appareil ne lit pas le QR.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.codeManuel : Code à saisir
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.codeLu : Code à saisir : {code}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.sortie : Quitter cet écran n'annule pas le code : il reste valable jusqu'à {heure}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.suiviIndisponible : Cet écran ne peut pas confirmer la connexion. Vérifiez sur l'appareil de l'élève.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.preparation : Préparation du code
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.verification.titre : Vérification du code
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.verification.phrase : Le code est masqué le temps de vérifier qu'il est toujours valable.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.confirme.titre : Appareil connecté
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.confirme.phrase : L'appareil de {prenom} est prêt. Le code n'est plus affiché et ne peut plus servir.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.confirme.phraseSansPrenom : L'appareil de l'élève est prêt. Le code n'est plus affiché et ne peut plus servir.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.expire.titre : Ce code a expiré
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.expire.phrase : Il ne peut plus servir. Générez-en un nouveau quand l'autre appareil est prêt.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.remplace.titre : Ce code a été remplacé
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.remplace.phrase : Un nouveau code a été demandé pour cet élève, ici ou sur un autre appareil. Celui-ci ne marche plus.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.dejaActif.titre : Un code est déjà valable
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.dejaActif.phrase : Un code créé pour cet élève vaut jusqu'à {heure}. Il ne peut pas être réaffiché : en générer un nouveau rendra l'ancien inutilisable.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.horsLigne.titre : Connexion interrompue
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.horsLigne.phraseAvecCode : Le code est masqué jusqu'au retour de la connexion. Il reste valable jusqu'à {heure}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.horsLigne.phraseSansCode : Le code n'a pas pu être préparé. Il le sera dès le retour de la connexion.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.erreur.plafondTitre : Limite d'appareils atteinte
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.erreur.plafondPhrase : Cet élève a déjà le nombre maximal d'appareils. Retirez-en un pour en connecter un autre.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.erreur.plafondAction : Voir les appareils
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.erreur.horsFoyerTitre : Profil élève introuvable
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.erreur.horsFoyerPhrase : Ce profil élève n'est pas rattaché à votre foyer. Revenez au Foyer pour en choisir un.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.erreur.compteTitre : Connexion d'appareil pas encore ouverte
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.erreur.comptePhrase : Votre compte doit être validé avant de connecter l'appareil d'un élève.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.erreur.generiqueTitre : Le code n'a pas pu être préparé
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.emetteur.erreur.generiquePhrase : La demande n'a pas abouti. Réessayez dans un instant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  appareils.revoquerConfirmation : Retirer cet appareil ? Il ne pourra plus se connecter tant que le tuteur ne l'aura pas reconnecté avec un nouveau code.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enfant.titre : Ajouter un profil élève
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enfant.aucun : Aucun profil élève dans le foyer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enfant.aucunDetail : Ajoutez d'abord un profil élève depuis le Foyer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  reglagesEnfant.titre : Réglages par profil élève
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  reglagesEnfant.intro : La photo, la caméra et l'interface de chaque élève se règlent dans sa fiche, depuis le Foyer. Les demandes à l'administration restent ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  reglagesEnfant.renvoi : Photo, caméra et interface
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  reglagesEnfant.renvoiLegende : Dans la fiche de {prenom}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajouterProfil : Ajouter un profil élève
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.sousTitre : Les profils élèves de votre foyer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.membres : Profils élèves
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.vide.titre : Aucun profil élève pour l'instant
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.vide.phrase : Ajoutez un profil élève pour l'inscrire dans une classe et relier son appareil.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.membre.sansClasse : Pas encore de classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.membre.classeEchec : Classe non lue
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.membre.accesSansEcheance : Accès sans échéance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.membre.accesJusquau : Accès jusqu'au {date}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.membre.accesExpire : Accès expiré depuis le {date}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.classesIndisponibles : La classe de chaque élève ne s'affiche pas encore sur cette page.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.classesEchec : La classe de certains élèves n'a pas pu être lue.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.relireClasses : Relire les classes
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.inscriptionIllisible : L'inscription en cours de chaque élève ne s'affiche pas encore sur cette page.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.appareilsPartages : Appareils partagés
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.appareilsFoyerLegende : Connecter un appareil, voir ceux qui sont reliés, en retirer un
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.creerMonProfil : Créer mon profil élève
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.monProfil.titre : Créer mon profil élève
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.monProfil.indisponibleTitre : Pas encore possible
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.monProfil.indisponiblePhrase : Suivre vous-même les cours avec votre propre profil élève sera proposé prochainement. Votre compte de tuteur reste tel qu'il est.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.monProfil.retour : Retour au foyer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.creer : Créer le profil
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.porte.illisibleTitre : Votre compte n'a pas pu être lu
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.porte.illisiblePhrase : Nous ne savons pas encore quels profils vous pouvez ajouter. Réessayez dans un instant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.pourQui.question : Pour qui est ce profil élève ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.pourQui.sousTitre : Choisissez la personne qui suivra les cours.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.pourQui.requis : Choisissez pour qui est ce profil pour continuer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.pourQui.enfantTitre : Un enfant ou un mineur
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.pourQui.enfantDescription : Un profil rattaché à votre foyer, que vous gérez pour lui.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.pourQui.enfantAttente : Possible dès que votre dossier est validé.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.pourQui.moiDescription : Pas encore possible : suivre vous-même les cours avec votre propre profil élève sera proposé prochainement.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.identite.question : Qui est l'élève ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.identite.sousTitre : Son prénom, son nom et son âge.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.identite.nomAide : Le nom de famille n'est jamais montré à l'enseignant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.identite.ageAide : L'âge fixe l'affichage et la caméra au départ. Vous pourrez changer les deux ensuite.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.erreurs.prenomRequis : Indiquez le prénom de l'élève.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.erreurs.nomRequis : Indiquez le nom de l'élève.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.erreurs.ageRequis : Indiquez l'âge, en chiffres.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.erreurs.ageHorsBornes : Indiquez un âge entre {min} et {max} ans.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.refus.compteNonValide : Votre dossier doit être validé avant d'ajouter un profil élève.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.refus.ageHorsBornes : Cet âge n'est pas accepté. Vérifiez-le puis réessayez.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.refus.refuse : La création n'a pas été acceptée. Vérifiez les informations puis réessayez.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.incertaine.titre : Le profil a peut-être été créé
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.incertaine.phrase : La réponse ne nous est pas parvenue. Vérifiez le foyer avant de réessayer, pour ne pas créer le profil deux fois.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.incertaine.voirFoyer : Voir le foyer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.incertaine.reessayer : Réessayer quand même
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  foyer.ajout.horsLigne : Vous êtes hors ligne. Le profil pourra être créé quand la connexion reviendra.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.parametres : Paramètres de l'élève
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.introuvable.titre : Ce profil élève est introuvable
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.introuvable.phrase : Il ne fait pas partie de votre foyer, ou le lien est incomplet.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.introuvable.retour : Retour au foyer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.lignes.informationsLegende : Prénom et photo
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.lignes.inscription : Parcours et inscription
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.lignes.inscriptionLegende : Questionnaire et classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.lignes.camera : Caméra en cours
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.lignes.cameraNonAutorisee : Non autorisée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.lignes.acces : Accès Rewayah
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.lignes.appareilsLegende : Connecter un appareil, voir ceux qui sont reliés, en retirer un
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.informations.titre : Informations de l'élève
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.informations.identiteNote : Le prénom ne se modifie pas encore depuis cette page.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.informations.ageNote : L'âge et la date de naissance ne sont pas encore enregistrés sur le profil.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.informations.photoLegende : Une photo du visage de {prenom}. Ce n'est pas une pièce d'identité.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.informations.photoAucune : Pas encore de photo
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.informations.photoPresente : Photo enregistrée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.informations.choisir : Choisir une photo
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.informations.apercuPhrase : Vérifiez la photo avant de l'envoyer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.informations.apercuIllisible : L'aperçu ne s'affiche pas sur cet appareil. La photo peut quand même être envoyée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.informations.envoyer : Envoyer cette photo
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.informations.autre : Choisir une autre photo
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.informations.etapeEnvoi : Envoi de la photo, étape 1 sur 2
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.informations.etapeEnregistrement : Enregistrement sur le profil, étape 2 sur 2
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.informations.succes : La photo est enregistrée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.informations.tropLourde : Cette photo dépasse {taille} Mo. Choisissez une image plus légère.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.informations.echecEnvoi : La photo n'a pas pu être envoyée. Rien n'a changé sur le profil.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.informations.echecEnregistrement : La photo est envoyée, mais elle n'a pas pu être enregistrée sur le profil.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.informations.selectionEchec : La photo n'a pas pu être ouverte. Vérifiez l'accès aux photos de l'appareil, puis réessayez.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.informations.horsLigne : Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.inscription.titre : Parcours et inscription
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.inscription.intro : Où en est {prenom} : questionnaire et classe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.inscription.questionnaire : Questionnaire
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.inscription.lecture : Lecture en cours
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.inscription.etatInconnu : L'état du questionnaire ne s'affiche pas encore.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.inscription.horaireAChoisir : Rempli, horaire à choisir
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.inscription.horaireRetire : Horaire retiré, à choisir de nouveau
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.inscription.echangeAPrevoir : Préférence enregistrée, échange de niveau à prévoir
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.inscription.echangePrevu : Échange de niveau prévu
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.inscription.classeEnConstitution : Classe en cours de constitution
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.inscription.classeConfirmee : Classe confirmée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.inscription.classeAucune : Pas encore de classe. Choisir une classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.inscription.classeIndisponible : La classe ne s'affiche pas encore ici. Choisir une classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.inscription.classeEchec : La classe n'a pas pu être lue.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.inscription.relireClasse : Relire la classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.interface.intro : Comment Rewayah s'affiche sur l'appareil de {prenom}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.interface.guideeDescription : Des écrans simplifiés, de grands boutons, une chose à la fois.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.interface.standard : Interface standard
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.interface.standardDescription : L'affichage habituel de Rewayah.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.interface.politique : Vous choisissez ce réglage. Au départ, il a été fixé selon l'âge indiqué à la création du profil.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.interface.application : Le changement s'applique à la prochaine ouverture de Rewayah sur l'appareil de {prenom}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.interface.demandeEleve : La demande de changement par l'élève lui-même n'est pas encore proposée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.interface.enCours : Enregistrement en cours
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.interface.echec : Le changement n'a pas été enregistré. Réessayez.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.interface.horsLigne : Vous êtes hors ligne. L'interface pourra être changée quand la connexion reviendra.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.camera.titre : Caméra en cours
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.camera.ligne : Caméra pendant les séances
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.camera.autorisee : {prenom} peut allumer sa caméra pendant les séances.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.camera.interdite : Le bouton caméra n'apparaîtra pas pour {prenom} pendant les séances.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.camera.application : Le changement compte à la prochaine entrée de {prenom} en séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.camera.distincte : Ce réglage ne change pas l'autorisation caméra de l'appareil, celle que le téléphone demande pour lire un QR code.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.camera.echec : Le changement n'a pas été enregistré. Réessayez.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.camera.horsLigne : Vous êtes hors ligne. La caméra pourra être réglée quand la connexion reviendra.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.acces.titre : Accès Rewayah
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.acces.pastilleSansEcheance : Sans échéance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.acces.sansEcheance : Aucune date de fin n'est enregistrée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.acces.expireDepuis : Expiré depuis le {date}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.acces.expirePhrase : Depuis cette date, {prenom} ne peut plus entrer dans Rewayah.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  ficheEleve.acces.detailIndisponible : Le début de l'accès et son motif ne s'affichent pas encore.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.profils.phrase : Touche ton prénom pour continuer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.profils.ajouter : Ajouter un profil sur cet appareil
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.profils.ajouterLegende : Avec le code affiché par le tuteur
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.profils.profilLibelle : Continuer en tant que {prenom}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.profils.videTitre : Aucun profil sur cet appareil
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.profils.vide : Pour utiliser cet appareil, le tuteur doit afficher un nouveau code sur son propre appareil.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.profils.videAction : Saisir un code
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.profils.retire : Cet appareil a été retiré pour {prenom}. Demande au tuteur de le reconnecter avec un nouveau code.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.profils.jetonAbsent : Cet appareil ne retrouve plus la connexion de {prenom}. Demande au tuteur d'afficher un nouveau code, puis saisis-le ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.pin.bonjour : Bonjour {prenom}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.pin.creer : Choisis ton code personnel
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.pin.creerPhrase : Quatre chiffres, rien que pour toi. Il reste sur cet appareil.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.pin.confirmer : Entre-le encore une fois
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.pin.different : Les deux codes ne sont pas les mêmes. Choisis ton code à nouveau.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.pin.horsLigne : Pas de connexion internet. Ton code est bon : réessaie quand internet revient.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.pin.tropDEssais : Trop d'essais. Patiente un instant avant de réessayer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.pin.echec : La connexion n'a pas abouti. Réessaie dans un instant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.pin.changerProfil : Changer de profil
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.pin.oublie : Code oublié ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.pin.oubliePhrase : Demande au tuteur d'afficher un nouveau code sur son appareil, puis saisis-le ici. Tu choisiras alors un nouveau code personnel.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.pin.oublieAction : Saisir un nouveau code
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.saisie.titre : Connecter cet appareil
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.saisie.phrase : Saisissez le code de six caractères affiché sous le QR code, sur l'appareil du tuteur.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.saisie.aide : Chiffres de 2 à 9 et lettres, sans I ni O.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.saisie.scanner : Scanner le QR code
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.saisie.horsLigne : Pas de connexion internet. Le code pourra être vérifié au retour du réseau.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.lecteur.titre : Scanner le QR code
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.lecteur.consigne : Visez le QR code affiché sur l'appareil du tuteur.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.lecteur.demarrage : Autorisez la caméra si l'appareil le demande.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.lecteur.libelleApercu : Vue de la caméra
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.lecteur.contenuInvalide : Ce QR code n'est pas un code de connexion Rewayah. Visez celui affiché par le tuteur.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.lecteur.scannerANouveau : Scanner à nouveau
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.lecteur.verificationTitre : Vérification du code
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.lecteur.verificationPhrase : La caméra est arrêtée pendant la vérification.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.lecteur.refuseeTitre : Caméra non autorisée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.lecteur.refuseePhrase : Pour lire le QR code, autorisez la caméra. Vous pouvez aussi saisir le code affiché sous le QR.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.lecteur.refuseeAction : Autoriser la caméra
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.lecteur.refuseeDurablementTitre : Caméra bloquée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.lecteur.refuseeDurablementPhrase : La caméra reste refusée pour Rewayah. Autorisez-la dans les réglages de l'appareil ou du navigateur, ou saisissez le code.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.lecteur.occupeeTitre : Caméra occupée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.lecteur.occupeePhrase : Une autre application utilise la caméra. Fermez-la, puis réessayez, ou saisissez le code.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.lecteur.absentePhrase : Cet appareil n'a pas de caméra disponible. Saisissez le code affiché sous le QR.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.lecteur.nonSupporteeTitre : Lecture impossible ici
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.lecteur.nonSupporteePhrase : Cet appareil ou ce navigateur ne sait pas lire un QR code. Saisissez le code affiché sous le QR.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.lecteur.erreurTitre : La caméra n'a pas démarré
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.lecteur.erreurPhrase : Réessayez, ou saisissez le code affiché sous le QR.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.refus.format : Un code compte six caractères : chiffres de 2 à 9 et lettres, sans I ni O.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.refus.inconnuTitre : Code non reconnu
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.refus.inconnu : Ce code n'existe pas, ou un code plus récent l'a remplacé. Vérifiez-le, ou affichez un nouveau code sur l'appareil du tuteur.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.refus.expireTitre : Code expiré
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.refus.expire : Ce code n'est plus valable. Affichez un nouveau code sur l'appareil du tuteur.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.refus.dejaUtiliseTitre : Code déjà utilisé
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.refus.dejaUtilise : Ce code a déjà servi à connecter un appareil. Affichez un nouveau code sur l'appareil du tuteur.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.refus.revoqueTitre : Appareil retiré
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.refus.revoque : Le tuteur a retiré cet appareil. Demandez-lui d'afficher un nouveau code.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.refus.plafondTitre : Limite d'appareils atteinte
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.refus.plafond : Ce profil élève a atteint le nombre d'appareils autorisés. Le tuteur peut en retirer un dans Foyer, puis afficher un nouveau code.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.refus.tropDEssaisTitre : Trop d'essais
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.refus.tropDEssais : Patientez un instant avant de réessayer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.refus.horsLigneTitre : Pas de connexion
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.refus.horsLigne : Le code n'a pas pu être vérifié. Vérifiez la connexion internet, puis réessayez.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.refus.nonEnregistreTitre : Connexion non enregistrée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.refus.nonEnregistre : Cet appareil n'a pas pu garder la connexion. Le code a sans doute déjà servi : affichez un nouveau code sur l'appareil du tuteur, puis recommencez.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.refus.generiqueTitre : Connexion non aboutie
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  eleveConnexion.refus.generique : La vérification du code n'a pas abouti. Réessayez dans un instant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.journal.evenements.observationEntree : Visite d'observation commencée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.journal.evenements.observationSortie : Visite d'observation terminée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.journal.evenements.observationPolitiqueGroupeModifiee : Règles d'observation de la classe modifiées
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.titrePage : Historique des observations
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.recherche : Rechercher un tuteur ou un élève
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.rechercheCourte : Saisissez au moins deux lettres.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.rechercheAucune : Aucun tuteur ni élève ne porte ce nom.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.rechercheErreur : La recherche n'a pas abouti. Réessayez.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.retirerFiltre : Retirer le filtre {filtre}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.toutesClasses : Toutes les classes
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.tousStatuts : Tous les statuts
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.ouverte : Sortie non enregistrée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.sortieAbsente : Non enregistrée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.nomInconnu : Nom non disponible
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.classeInconnue : Classe non disponible
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.fuseau : Heures affichées à l'heure de cet appareil (UTC{decalage}).
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.indisponibleTitre : Historique des observations indisponible
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.indisponiblePhrase : La lecture des visites d'observation n'est pas encore ouverte dans l'application.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.videTitre : Aucune visite enregistrée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.videPhrase : Les visites d'observation des tuteurs s'afficheront ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.videFiltreTitre : Aucune visite ne correspond
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.videFiltrePhrase : Élargissez la période ou retirez un filtre.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.chargerSuite : Charger les visites plus anciennes
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.erreurSuite : Les visites plus anciennes n'ont pas pu être lues.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  admin.observations.fin : Toutes les visites sont affichées.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.retourAccueil : Retour à l'accueil
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.retourFoyer : Retour au Foyer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.indisponibleTitre : Le questionnaire n'est pas encore disponible
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.indisponibleDetail : Cette étape n'est pas encore ouverte par l'académie. Vous n'avez rien à faire pour l'instant : rien n'est perdu, et vous pourrez la remplir dès qu'elle sera ouverte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.horsLigneTitre : Pas de connexion
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.horsLigneDetail : Vérifiez votre connexion, puis réessayez. Vos réponses sont gardées.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.erreurChargement : Le questionnaire n'a pas pu s'afficher
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.erreurChargementDetail : Une erreur est survenue de notre côté. Réessayez dans un instant ; vos réponses sont gardées.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.introuvableTitre : Ce profil élève est introuvable
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.introuvableDetail : Il a peut-être été retiré du foyer. Revenez au Foyer pour choisir un profil élève.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.finTitre : Préférence enregistrée pour {prenom}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.finDetail : Cet horaire est noté comme votre préférence. Il ne réserve pas encore de place.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.finAjouterDetail : Une autre personne du foyer souhaite apprendre ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.finAjouterProfil : Ajouter un profil élève
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.ageRaison : L'âge décide de la durée des séances et du nombre d'élèves par classe. Nous ne demandons pas de date de naissance : une tranche suffit.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.offresRaison : Ces horaires sont affichés à votre heure locale. Choisir un horaire enregistre votre préférence : cela ne réserve pas de place et ne constitue pas encore une classe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.refusEffet : Nous enregistrons que la demande existe. Cela ne crée pas de classe, ne cherche pas d'enseignant et ne promet aucun horaire futur.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.etatOffreIndisponibleDetail : L'horaire retenu pour {prenom} a été retiré avant qu'une classe soit constituée. Choisissez-en un autre : rien n'est perdu.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.etatClasseEnFormation : Classe en cours de constitution
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.etatClasseEnFormationDetail : Une classe démarre à partir de {minimum} élèves. Nous vous préviendrons dès qu'elle est confirmée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.etatClasseEnFormationDetailSansMinimum : Une classe démarre à partir d'un certain nombre d'élèves. Nous vous préviendrons dès qu'elle est confirmée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.etatClasseConfirmee : Classe confirmée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  parcours.etatClasseConfirmeeDetail : La classe de {prenom} est constituée. Vous retrouverez ses séances dans son espace.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  nav.replier : Replier la navigation
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  nav.deplier : Déplier la navigation
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.profils : Gérer mon foyer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.identite.nomInconnu : Titulaire du compte
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.identite.courrielAbsent : Adresse de connexion non communiquée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.identite.connexionLien : Connexion par lien reçu par courriel
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.identite.connexionGoogle : Connexion avec Google
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.identite.connexionInconnue : Méthode de connexion non précisée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.acces.resume : Statut et échéance de chaque profil élève
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.acces.pastilleActif : Accès actif
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.acces.pastilleExpire : Accès terminé
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.acces.ligne : Accès des profils élèves
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.acces.paiements : Paiements et reçus
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.securite.titre : Connexion et sécurité
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.securite.methode : Méthode de connexion
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.securite.methodeLien : Lien par courriel
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.informations.titre : Informations personnelles
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.informations.resume : Nom, adresse de connexion, langue et fuseau
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.informations.langueFuseau : Français · {ville}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.informations.consulter : Consulter mes informations
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.foyer.titre : Mon foyer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.foyer.aucun : Aucun profil élève pour le moment
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.foyer.un : 1 profil élève
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.foyer.plusieurs : {nombre} profils élèves
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.foyer.legende : Profils élèves et appareils du foyer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.foyer.creerMonProfil : Créer mon profil élève
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.aide.titre : Aide et support
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.aide.ligne : Aide et contact
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.aide.legal : Informations légales
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.deconnexion.question : Se déconnecter de Rewayah ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.deconnexion.consequence : Vous devrez vous reconnecter pour revenir sur cet appareil. Vos autres appareils restent connectés.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.deconnexion.echec : La déconnexion n'a pas abouti. Vérifiez votre connexion, puis réessayez.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageInformations.titre : Informations personnelles
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageInformations.courriel : Adresse de connexion
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageInformations.fuseau : Fuseau des séances
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageInformations.fuseauIndisponible : Non disponible pour le moment
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageInformations.note : Ces informations sont tenues par l'académie. Elles ne se modifient pas encore depuis l'application.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageSecurite.titre : Connexion et sécurité
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageSecurite.sousTitre : Comment vous accédez à votre compte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageSecurite.methode : Méthode de connexion
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageSecurite.adresse : Adresse de connexion
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageSecurite.appareils : Les appareils connectés à votre compte ne sont pas encore listés dans l'application.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageSecurite.deconnexion : Pour fermer la session de cet appareil, utilisez « Se déconnecter » en bas de Mon compte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageAcces.titre : Accès des profils élèves
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageAcces.sousTitre : Le statut de l'accès de chaque profil élève.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageAcces.sansEcheance : Sans date de fin
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageAcces.jusqua : Ouvert jusqu'au {date}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageAcces.expire : Terminé le {date}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageAcces.aucunTitre : Aucun profil élève
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageAcces.aucunePhrase : L'accès de chaque profil élève s'affichera ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageAcces.titulaire : Votre compte de titulaire n'a pas d'échéance propre : l'accès se règle profil par profil.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pagePaiements.titre : Paiements et reçus
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pagePaiements.indisponibleTitre : Paiements pas encore consultables
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pagePaiements.indisponiblePhrase : L'historique des paiements, les reçus et les moyens de paiement ne sont pas encore disponibles dans l'application. Aucun paiement ne vous est demandé ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pagePaiements.aucunTitre : Aucun paiement enregistré
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pagePaiements.aucunePhrase : Les paiements enregistrés par l'académie s'afficheront ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pagePaiements.paiementDu : Paiement du {date}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pagePaiements.justificatif : Justificatif disponible
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pagePreferences.sousTitre : Personnalisez votre expérience sur cet appareil.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pagePreferences.apparence : Apparence
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pagePreferences.apparenceDetail : Thème et confort visuel
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pagePreferences.notificationsDetail : Pas encore disponibles dans l'application
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageApparence.titre : Apparence
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageApparence.sousTitre : Appliqué sur cet appareil.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageApparence.theme : Thème de l'application
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageApparence.themeDetail : Personnalisez l'apparence de Rewayah.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageApparence.confort : Confort visuel
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageApparence.animationsDetail : Réduites quand votre appareil le demande
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageApparence.texteDetail : Suit la taille du système
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageAide.titre : Aide et support
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageAide.indisponibleTitre : Aide pas encore disponible
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageAide.indisponiblePhrase : Les questions fréquentes et le contact de l'académie ne sont pas encore ouverts dans l'application.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageAide.canalCourriel : Courriel de l'académie
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageAide.canalLien : Page d'aide de l'académie
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageAide.aucunCanal : Aucun canal d'aide n'est publié pour le moment.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageLegal.titre : Informations légales
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageLegal.documents : Documents acceptés
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageLegal.conditionsTuteur : Conditions du tuteur
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageLegal.accuseEnregistrement : Accusé d'enregistrement des cours
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageLegal.acceptation : Version {version}, acceptée le {date}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageLegal.aucunTitre : Aucun document accepté
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageLegal.aucun : Aucun document accepté n'est enregistré pour ce compte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageLegal.lectureSeule : Un document accepté ne se modifie pas.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageLegal.textes : Conditions et confidentialité
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  compte.tuteur.pageLegal.textesIndisponibles : Les conditions générales, la politique de confidentialité et les mentions légales ne sont pas encore consultables dans l'application.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.fuseauListe : Heures affichées à l'heure de cet appareil.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.fuseauDetail : Heures affichées à l'heure de cet appareil (UTC{decalage}).
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.classeInconnue : Classe non disponible
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.selecteur.une : 1 séance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.filtres.toutesClasses : Toutes les classes
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.filtres.toutePeriode : Toute la période
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.filtres.septJours : 7 derniers jours
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.filtres.trenteJours : 30 derniers jours
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.filtres.troisMois : 3 derniers mois
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.filtres.tousStatuts : Tous les statuts
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.retour : Retour à l'historique
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.etat.verification : En cours de vérification
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.etat.nonTenu : Cours non tenu
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.presenceIllisible : La présence n'a pas pu être lue : les états restent inconnus pour le moment.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.seances.videTitre : Aucune séance passée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.seances.videPhrase : Les séances passées de {prenom} s'afficheront ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.seances.videPhraseFoyer : Les séances passées des profils élèves s'afficheront ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.seances.filtreVideTitre : Aucune séance ne correspond
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.seances.filtreVidePhrase : Changez les filtres pour retrouver les autres séances.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.seances.tronquee : Les {nombre} séances les plus récentes sont affichées.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.observations.indisponibleTitre : Historique des observations indisponible
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.observations.indisponiblePhrase : Les visites enregistrées ne peuvent pas encore être lues dans l'application.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.observations.videTitre : Aucune observation
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.observations.videPhrase : Les visites que vous faites pendant les séances de {prenom} s'afficheront ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.observations.videPhraseFoyer : Vos visites pendant les séances s'afficheront ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.observations.filtreVideTitre : Aucune observation ne correspond
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.observations.filtreVidePhrase : Changez les filtres pour retrouver les autres visites.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.observations.dureeNonConfirmee : Durée non confirmée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.observations.nonRefermee : Sortie non enregistrée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.observations.tronquee : Seules les visites les plus récentes sont affichées.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.observations.ouvrir : Observations du {date}, {classe}, {etat}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.seance.dureePrevue : Durée prévue
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.seance.verificationPhrase : La présence n'est pas encore confirmée pour cette séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.seance.nonTenuPhrase : La séance n'a pas eu lieu : ce n'est pas le fait de l'élève.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.seance.annulePhrase : La séance a été annulée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.seance.introuvablePhrase : Cette séance ne figure pas dans l'historique de votre foyer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.observation.titreSansClasse : Observations du {date}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.observation.dureeTotale : Durée totale
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.observation.terminee : Visite terminée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.observation.introuvableTitre : Aucune visite pour cette séance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  historique.observation.introuvablePhrase : Aucune visite enregistrée ne correspond à cette séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  notifications.indisponibleTitre : Les notifications ne sont pas encore disponibles
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  notifications.indisponiblePhrase : Les rappels de séance et les messages de l'académie s'afficheront ici dès qu'ils seront ouverts.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  notifications.videPhrase : Les rappels de séance et les messages de l'académie s'afficheront ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.voirLaClasse : Voir la classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.heureAppareil : Heure de cet appareil
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.heureClasse : Heure de la classe : {heure} {ville}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.seanceEnDirect : Séance en direct
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.seanceAnnulee : Cette séance n'aura pas lieu.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.seanceNonTenue : Cette séance n'a pas pu se tenir.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.horaireIncertain : Ouverture de la salle non confirmée pour l'instant
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.aucuneSeance : Aucune séance planifiée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.aucuneSeanceDetail : La prochaine séance de {prenom} apparaîtra ici dès qu'elle sera programmée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.seanceIllisible : La prochaine séance n'a pas pu être lue.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.classeIndisponible : Le détail de la classe n'est pas encore disponible ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.classeIllisible : La classe n'a pas pu être lue.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.sansClasseTitre : Aucune classe pour {prenom}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.sansClassePhrase : Choisissez une classe pour que {prenom} puisse commencer les cours.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.foyerVideTitre : Aucun profil élève pour l'instant
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.foyerVidePhrase : Ajoutez un profil élève pour choisir une classe et suivre ses séances.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.ajouterProfil : Ajouter un profil élève
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.profilsIllisibles : Les profils du foyer n'ont pas pu être lus.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.blocageAppareilTitre : Aucun appareil prêt pour {prenom}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.blocageAppareilPhrase : Sans appareil connecté, {prenom} ne pourra pas entrer en classe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.connecterAppareil : Connecter un appareil
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.voirTout : Voir tout
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.travailIndisponible : Le travail à préparer n'est pas encore relié à cet espace.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.travailIllisible : Le travail à préparer n'a pas pu être lu.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.rienAPreparer : Rien à préparer pour l'instant
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.derniereSeance : Dernière séance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.voirHistorique : Voir l'historique
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.detailsSeance : Détails de la séance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.aucuneDerniere : Aucune séance passée pour l'instant
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.derniereIllisible : La dernière séance n'a pas pu être lue.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.etatCourt.prevue : Séance prévue
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tuteur.accueil.etatCourt.nonTenue : Séance non tenue
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.coursImminent : Cours dans moins d'une minute
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.rejoindreLecteur : Rejoindre la séance de {classe}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.preparer : Préparer l'entrée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.preparerLecteur : Préparer l'entrée de la séance de {classe}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.salleOuverte : La salle est ouverte. La séance commence dans {duree}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.salleOuverteImminent : La salle est ouverte. La séance commence dans moins d'une minute.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.preparation : Préparation en cours
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.attente : Vous êtes dans la salle. La séance commence dans {duree}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.attenteImminent : Vous êtes dans la salle. La séance commence dans moins d'une minute.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.enDirect : Séance en direct
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.tempsEcoule : Temps prévu écoulé
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.aucune : Aucune séance prévue
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.horsLigne : Vous êtes hors ligne. La séance nécessite une connexion.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.indisponible : L'information sur la séance est indisponible pour l'instant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.accesInverifiable : L'accès à la salle ne peut pas être vérifié pour le moment.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.chargementSeance : Chargement de la prochaine séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.dst : Changement d'heure : le cours passera de {avant} à {apres}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.annonce.fenetreOuverte : La salle est ouverte
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.annonce.attente : Vous êtes dans la salle
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.demo.intro : Données fictives, aucun appel serveur. Chaque lien montre ce que dit l'emplacement d'entrée pour un rôle et un moment.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.demo.roles.guidee : Élève, Interface guidée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.demo.etats.preparation : Préparation en cours
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.demo.etats.attente : Attente avant le début
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.demo.etats.tempsEcoule : Temps prévu écoulé
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.demo.etats.indisponible : Information indisponible
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.demo.formeBouton : Forme : bouton
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.demo.formeLigne : Forme : ligne d'état
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.demo.lecteur : Lecteur d'écran : {texte}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.demo.annonce : Annonce : {texte}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.entree.demo.retour : Retour à la liste
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.observer : Observer la séance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.indisponiblePhrase : Le détail de la classe n'est pas encore disponible ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.introuvableTitre : Cette classe n'est pas ouverte à ce profil
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.introuvablePhrase : Elle a peut-être pris fin, ou elle concerne un autre élève du foyer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.seance.aucune : Aucune séance planifiée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.seance.aucuneDetail : La prochaine séance de {prenom} apparaîtra ici dès qu'elle sera programmée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.seance.illisible : La prochaine séance n'a pas pu être lue.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.observation.commentCaMarche : Comment ça marche ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.observation.uneVisite : 1 visite disponible
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.observation.visites : {nombre} visites disponibles
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.observation.restanteAucune : Aucune visite restante pour cette séance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.observation.restanteUne : 1 visite restante pour cette séance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.observation.restantes : {nombre} visites restantes pour cette séance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.observation.motif.visitesEpuisees : Vous avez utilisé vos visites pour cette séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.observation.motif.tempsEpuise : Votre temps d'observation est épuisé pour cette séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.observation.motif.seanceNonCommencee : L'observation ouvre quand la séance commence.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.observation.motif.seanceTerminee : La séance est terminée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.observation.motif.seanceNonTenue : Cette séance n'a pas lieu : il n'y a rien à observer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.observation.motif.horsFenetre : La salle n'est pas ouverte à cette heure.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.observation.motif.observationDesactivee : L'observation est fermée pour cette classe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.observation.motif.lienAbsent : Aucun élève de votre foyer n'est rattaché à cette séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.observation.motif.enfantAbsent : L'observation attend l'arrivée de {prenom}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.observation.motif.presenceEnVerification : La présence de {prenom} est en cours de vérification.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.observation.motif.visiteDejaOuverte : Une visite est déjà ouverte, sur cet appareil ou sur un autre.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.observation.motif.garantieServeurAbsente : L'observation des séances n'est pas encore ouverte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.observation.motif.reseau : La disponibilité de l'observation n'a pas pu être vérifiée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.observation.motif.capaciteAbsente : L'observation n'est pas disponible pour le moment.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pagePlanning.aucune : Aucune séance à venir pour l'instant
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pagePlanning.aucuneDetail : Les prochaines séances de {prenom} apparaîtront ici dès qu'elles seront programmées.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pagePlanning.habituelIndisponible : Les jours habituels de la classe ne sont pas encore affichés ici : seules les séances déjà programmées apparaissent.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pagePlanning.indisponible : Le planning de la classe n'est pas encore relié à cet espace.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageTravail.aucun : Rien à préparer pour l'instant
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageTravail.aucunDetail : Le travail donné par l'enseignant apparaîtra ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageTravail.indisponible : Le travail à préparer n'est pas encore relié à cet espace.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageTravail.echeance : Échéance : {date}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageTravail.nonCochable : Marquer un travail comme fait n'est pas encore possible ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageTravail.statut.expire : Échéance passée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageRessources.aucune : Aucune ressource pour cette classe pour l'instant
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageRessources.aucuneDetail : Les supports choisis par l'enseignant apparaîtront ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageRessources.indisponible : La bibliothèque de la classe n'est pas encore reliée à cet espace.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageProgression.indisponible : La progression de {prenom} n'est pas encore partagée ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageProgression.jalons : Étapes franchies
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageProgression.aucune : Aucune étape partagée pour l'instant
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageProgression.aucuneDetail : Les progrès que l'enseignant partage avec la famille apparaîtront ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.indisponible : Le choix de classe en ligne n'est pas encore ouvert.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.aucune : Aucune classe ne convient pour l'instant
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.aucuneDetail : Aucune classe ouverte ne correspond au profil de {prenom} en ce moment.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.eleveInconnuTitre : Ce profil n'est pas dans votre foyer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.eleveInconnuPhrase : Revenez à l'accueil et choisissez le profil élève concerné.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.horairesAbsents : Les jours et heures de cette classe ne sont pas encore affichés ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.fuseauClasse : Heures de la classe ({fuseau})
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.placeUne : 1 place restante
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.choisir : Choisir cette classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.rejoindreAttente : Rejoindre la liste d'attente
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.precisionEnseignant : Une classe garde le même enseignant pour toutes ses séances.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.precisionPlaces : Les places affichées sont celles de l'académie au moment de la lecture.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.precisionReserve : Rien n'est réservé avant votre confirmation.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.confirmerTitre : Confirmer la classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.confirmerPhrase : Vous inscrivez {prenom} dans cette classe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.confirmerAttentePhrase : Vous inscrivez {prenom} sur la liste d'attente de cette classe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.memeEnseignant : Même classe et même enseignant pour toutes les séances de la semaine : {enseignant}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.confirmer : Confirmer l'inscription
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.confirmerAttente : Confirmer la liste d'attente
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.envoiIncertain : La réponse de l'académie n'est pas arrivée. Réessayer ne crée pas de seconde inscription.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.envoiIndisponible : L'inscription en ligne n'est pas encore ouverte : aucune place n'a été réservée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.resultat.inscritTitre : Inscription confirmée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.resultat.voirClasse : Voir la classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.resultat.validationTitre : Demande envoyée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.resultat.validationPhrase : L'académie doit encore valider l'inscription de {prenom} dans {classe}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.resultat.listeAttenteTitre : Inscription sur liste d'attente
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.resultat.listeAttentePhrase : {prenom} est sur la liste d'attente de {classe}. Aucune place n'est réservée pour l'instant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.resultat.refuseTitre : Inscription non acceptée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.resultat.refusePhrase : Aucune place n'a été réservée pour {prenom}. Vous pouvez choisir une autre classe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.resultat.autresClasses : Voir les autres classes
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  classe.pageCatalogue.resultat.retourAccueil : Retour à l'accueil
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.classes.vide : Aucune Classe attribuée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.classes.videDetail : Les Classes confirmées apparaîtront ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.classes.erreur : Vos Classes n'ont pas pu être lues. Réessayez dans un instant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.classes.chargement : Chargement de vos Classes.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.classes.eleveUn : 1 élève
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.classes.prochaine : Prochaine séance : {jour} à {heure}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.classes.sansProchaine : Aucune séance prévue
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.eleve.identifiant : Identifiant Académie : {id}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.eleve.presence : Présence récente
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.eleve.travailReprise : Reprise à la {page}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.eleve.derniereSeance : Dernière séance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.eleve.signalerAide : Un besoin à remonter à l'académie, sans recopier le contexte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.signalement.categories.pedagogique : Problème pédagogique
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.signalement.details : Détails internes
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.signalement.detailsAide : Lu par l'équipe de l'académie seulement.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.signalement.resume : Résumé partageable
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.signalement.resumeAide : Peut être partagé avec la famille par l'académie.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.signalement.notice : Les détails internes ne sont pas envoyés automatiquement à la famille.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.signalement.choisirCategorie : Choisissez une catégorie pour continuer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.signalement.detailsRequis : Pour « Autre », dites en quelques mots de quoi il s'agit.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.signalement.envoyer : Envoyer le signalement
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.signalement.demoSucces : Démonstration : ce signalement est prêt, mais rien n'a été envoyé.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.signalement.demoSuccesDetail : Dans l'application reliée, il partira vers l'équipe de l'académie.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.demo.titre : Démonstration enseignant
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.demo.mention : Données fictives, aucun envoi.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.demo.intro : Choisissez un écran de Sayyid Ibrahim.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.demo.etats : Situations
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.demo.etatNominal : Journée ordinaire
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.bienvenue.sousTitre : Préparez votre espace avant votre première Classe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.bienvenue.prerequisPhoto : Ajouter ma photo professionnelle
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.bienvenue.prerequisLangues : Vérifier mes langues d'enseignement
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.bienvenue.prerequisFuseau : Vérifier mon fuseau horaire
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.bienvenue.ctaPhoto : Ajouter ma photo
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.bienvenue.ctaInformations : Vérifier mes informations
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.bienvenue.ctaJournee : Voir ma journée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.photo.notice : N'utilisez pas votre pièce d'identité.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.photo.choisir : Choisir une photo
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.photo.utiliser : Utiliser cette photo
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.photo.remplacer : Remplacer la photo
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.photo.autre : Choisir une autre photo
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.photo.alternatif : Votre photo publique
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.photo.succes : La photo est enregistrée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.photo.echec : La photo n'a pas pu être envoyée. Rien n'a changé sur le profil.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.photo.selectionEchec : La photo n'a pas pu être ouverte. Vérifiez l'accès aux photos de l'appareil, puis réessayez.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.photo.horsLigne : Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.coursEnCours : Séance en direct
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.alertesUtiles : Alertes utiles
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.preparerSeance : Préparer la séance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.preparerSeanceLecteur : Préparer la séance {classe}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.finaliserCahier : Finaliser le cahier
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.finaliserCahierLecteur : Finaliser le cahier {classe}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.voirClasse : Voir la Classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.voirClasseLecteur : Voir la Classe {classe}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.aucuneSeance : Aucune séance à venir
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.aucuneSeanceDetail : Vos prochaines séances apparaîtront ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.absence.titre : Vous ne pourrez pas assurer cette séance ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.absence.notice : Votre affectation à la Classe reste inchangée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.absence.declarer : Déclarer mon absence
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.absence.echec : La demande n'a pas abouti. Réessayez dans un instant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.absence.etats.enregistree : Absence enregistrée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.absence.etats.recherche : Recherche d'un remplaçant
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.absence.etats.remplacantConfirme : Remplaçant confirmé
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.absence.etats.aucunRemplacant : Aucun remplaçant confirmé
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.absence.etats.demandeAnnulee : Demande annulée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.remplacement.titre : Assurer ce remplacement ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.remplacement.assurer : Assurer ce remplacement
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.journee.remplacement.pasCetteFois : Pas cette fois
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.salle.rienInvitation : Ouvrez le Coran pour montrer une page à votre Classe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.salle.lienFaibleDetail : le tour de page peut arriver en retard chez votre Classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.salle.souratesIndisponiblesDetail : Ce que votre Classe voit n'a pas changé. Réessayez.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.salle.pageIndisponibleDetail : Le texte n'est pas arrivé jusqu'ici. Votre Classe voit toujours la page présentée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.salle.corpusAbsentDetail : Il n'y a rien à présenter.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.salle.echecPresentation : Ce verset n'a pas pu être situé dans le mushaf. Rien n'a été envoyé à votre Classe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.cahier.retourJournee : Retour à ma journée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.cahier.enFileTitre : En attente d'envoi
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.cahier.devoirPrecedent : Devoir précédent : {devoir}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.cahier.devoirPlage : Réviser la sourate {sourate}, versets {debut} à {fin}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.cahier.exceptionMotifRequis : Le motif est obligatoire.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.cahier.faiblesses : Faiblesses
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.cahier.reprise : Où la Classe s'est arrêtée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.cahier.repriseDetail : C'est la position de reprise d'un remplaçant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.cahier.repriseRequise : Indiquez où la Classe s'est arrêtée : un remplaçant reprendra ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.cahier.integrite : Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.profil.statutValideDetail : Vous pouvez enseigner et déclarer vos heures.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.profil.statutInconnuDetail : Nous n'avons pas pu lire votre statut.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.profil.contratLectureSeule : Ces pièces sont en lecture seule.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.creneaux.aucuneHeure : Vous n'avez proposé aucune heure. Sans créneau, aucune Classe ne peut vous être proposée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.creneaux.retraitEngage : {heure} retiré. La séance déjà attribuée sur cette heure continue : demandez une réaffectation pour l'arrêter.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.creneaux.grilleErreurDetail : Les heures que vous avez déjà posées ne sont pas perdues.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.creneaux.heureEngagee : Vous avez déjà une Classe sur {heures}. Retirer cette heure ne met pas fin à la séance : il faut une réaffectation.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.creneaux.heuresEngagees : Vous avez déjà une Classe sur {heures}. Retirer ces heures ne met pas fin aux séances : il faut une réaffectation.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.creneaux.ajouterCreneau : Ajouter un créneau
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.creneaux.classesDisponibles : Classes disponibles
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.creneaux.etatLimite : Limite de charge atteinte
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.creneaux.limiteDetail : Votre charge actuelle ne permet pas de réserver une Classe supplémentaire.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.creneaux.aucuneClasse : Aucune Classe compatible pour le moment
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.creneaux.aucuneClasseDetail : Modifiez vos disponibilités si votre emploi du temps a changé.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.creneaux.reserver : Réserver cette Classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.creneaux.demandeTransmise : Votre demande a été transmise.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.creneaux.demandeTransmiseDetail : Elle apparaîtra dans vos Classes après confirmation.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.creneaux.confirmerTitre : Confirmer cette Classe ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.creneaux.confirmer : Confirmer cette Classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.ficheGroupe.aucunMembre : Aucun élève dans cette Classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.ficheGroupe.aucunMembreDetail : L'administration compose les Classes : celle-ci n'a pas encore d'élève.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.ficheGroupe.erreur : Cette Classe n'a pas pu être lue. Réessayez dans un instant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.ficheGroupe.introuvable : Cette Classe n'est pas l'une des vôtres
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.ficheGroupe.introuvableDetail : Elle a peut-être été clôturée, ou elle appartient à un autre enseignant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.ficheGroupe.revue : Ouvrir la revue de la Classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.ficheGroupe.supportPrevu : Support prévu
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.ficheGroupe.preparationVide : Aucune préparation renseignée pour cette séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.ficheGroupe.supportsTitre : Supports récents
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.ficheGroupe.dernierPoint : Dernier point : {texte}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.ficheGroupe.chargementClasse : Chargement de la Classe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.ficheGroupe.ressourcesTitre : Ressources récentes
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.ficheGroupe.progressionTitre : Progression de la Classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.ficheGroupe.indicateurRegulier : Présence régulière
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.ficheGroupe.indicateurAbsence : Absence récente
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.revue.titre : Revue de la Classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.revue.titreClasse : Revue de la Classe {classe}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  enseignant.revue.erreurDetail : Cette Classe n'est peut-être pas la vôtre, ou la lecture a échoué.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.groupe.mesGroupes.titre : Mes classes
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.groupe.mesGroupes.aucun : Aucune classe pour le moment
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.groupe.mesGroupes.aucunDetail : L'académie vous placera dans une classe dès qu'un créneau vous correspond.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.groupe.commun.erreur : Vos classes n'ont pas pu être lues
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.groupe.carte.ouvrir : Ouvrir la classe {libelle}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.groupe.carte.aucuneSeanceDetail : Le planning de cette classe n'est pas encore posé.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.groupe.temps.enCours : Séance en direct · {reste}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.groupe.temps.prolongee : Séance toujours en direct
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.groupe.horloges.heureGroupe : Heure de la classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.groupe.espace.retour : Mes classes
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.groupe.espace.roster : Élèves de la Classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.groupe.espace.introuvable : Cette Classe ne vous est pas ouverte
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.groupe.espace.introuvableDetail : Elle a peut-être été clôturée, ou elle concerne un autre profil.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.bibliotheque.sections.pourCeGroupe : Pour cette Classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.coran.reprise.groupeDetail : La Classe en était page {page}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.outils.trait.ardoise : Ardoise d'annotation, facultative : le cours reste lisible sans elle
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.outils.trait.effacerDernier : Effacer mon dernier trait
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.classe.entete.coursEnCours : Séance toujours en direct
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.classe.roster.videDetail : Cette séance n'a aucun élève inscrit.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.classe.support.aucunDetail : Ouvrez la Bibliothèque pour présenter un support à la Classe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.classe.barre.titre : Séance en direct
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.entree.retourClasse : Retour à la classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.explication.titre : Un aperçu de son apprentissage
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.explication.regle : {n} visites de {duree}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.explication.regleDetail : Par séance et par parent, même si plusieurs de vos enfants sont dans la classe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.explication.ecoute : Écoutez l'enseignant et les élèves
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.explication.ecouteDetail : Vous entendez l'enseignant et les élèves qui prennent la parole, y compris votre enfant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.explication.sansMedia : Sans micro ni caméra
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.explication.sansMediaDetail : Votre micro et votre caméra restent désactivés pour ne pas interrompre la classe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.explication.revenir : Si un autre élève récite lors de votre première visite, vous pourrez revenir plus tard pour écouter votre enfant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.explication.ecourtee : Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n'est pas reporté.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.explication.sansIntervenir : Pour préserver la concentration, vous observez sans intervenir.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.explication.informes : Votre enfant et son enseignant sont informés.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.explication.observer : Observer maintenant
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.explication.restanteUne : {restantes}/{max} visite restante pour cette séance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.explication.restantes : {restantes}/{max} visites restantes pour cette séance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.explication.aucuneRestante : Aucune visite restante pour cette séance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.visitesEpuiseesTitre : Aucune visite restante pour cette séance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.visitesEpuisees : Vous avez utilisé vos visites. Vous pourrez observer la prochaine séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.tempsEpuiseTitre : Temps d'observation écoulé
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.tempsEpuise : Votre temps d'observation pour cette séance est utilisé. Vous pourrez observer la prochaine séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.seanceNonCommenceeTitre : La séance n'a pas encore commencé
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.seanceNonCommencee : L'observation s'ouvre pendant la séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.seanceTermineeTitre : La séance est terminée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.seanceTerminee : Vous pourrez observer la prochaine séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.seanceNonTenueTitre : Cette séance n'a pas lieu
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.seanceNonTenue : Elle a été annulée, reportée ou n'a pas été tenue.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.horsFenetreTitre : La séance n'est pas ouverte en ce moment
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.horsFenetre : L'observation est possible seulement pendant la séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.desactiveeTitre : Observation fermée pour cette classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.desactivee : L'administration a fermé l'observation de cette classe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.lienAbsentTitre : Aucun de vos enfants dans cette séance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.lienAbsent : L'observation est réservée aux parents des élèves de la séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.enfantAbsentTitre : Votre enfant n'est pas dans la séance
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.enfantAbsent : L'observation s'ouvre quand votre enfant est présent.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.presenceTitre : Présence en cours de vérification
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.presence : L'observation s'ouvre dès que la présence de votre enfant est confirmée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.visiteOuverteTitre : Une visite est déjà ouverte
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.visiteOuverte : Une de vos visites est encore ouverte pour cette séance, sur cet appareil ou sur un autre. Elle compte parmi vos visites.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.fermeeTitre : Observation pas encore ouverte
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.fermee : L'observation des séances par les parents n'est pas encore ouverte. Elle sera proposée ici dès son ouverture.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.reseauTitre : Vérification impossible
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.reseau : La disponibilité de l'observation n'a pas pu être vérifiée. Aucune visite n'a commencé.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.capaciteTitre : Observation indisponible
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.disponibilite.capacite : L'observation n'est pas disponible pour le moment.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.connexion.titre : Connexion et vérification
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.connexion.phrase : Vos visites restantes sont vérifiées. La visite commence dès que l'entrée est acceptée, connexion vidéo comprise.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.connexion.enCours : Connexion et vérification en cours
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.connexion.prolongee : Restez sur cette page : la vérification continue.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.connexion.impossibleTitre : Connexion impossible
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.connexion.impossible : L'entrée dans la séance n'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.refus.politiqueDesactivee : L'observation est désactivée pour cette classe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.visite.decompteLu : Temps restant : {duree}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.visite.reconnexionDetail : La connexion est interrompue, reconnexion en cours. Votre temps d'observation continue de s'écouler.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.visite.sonRecu : Son reçu
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.visite.sonInterrompu : Son interrompu
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.visite.quitterQuestion : Quitter la visite ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.visite.quitterConsequence : Il vous reste {duree}. Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n'est pas reporté.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.visite.quitterConsequenceSansTemps : Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n'est pas reporté.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.visite.quitterConfirmer : Quitter la visite
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.resultat.premiereTerminee : Votre première visite est terminée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.resultat.derniereTerminee : Votre dernière visite est terminée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.resultat.terminee : Votre visite est terminée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.resultat.dureeAtteinte : Durée de visite atteinte
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.resultat.interrompue : Observation interrompue
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.resultat.continuePour : La séance continue pour {prenom}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.resultat.continueSansPrenom : La séance continue.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.resultat.resteUne : Il vous reste une visite de {duree}. Revenez plus tard pour l'écouter.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.resultat.restent : Il vous reste {n} visites de {duree}. Revenez plus tard pour l'écouter.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.resultat.resteUneSansDuree : Il vous reste une visite. Revenez plus tard pour l'écouter.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.resultat.restentSansDuree : Il vous reste {n} visites. Revenez plus tard pour l'écouter.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.resultat.aucune : Vous avez utilisé vos visites pour cette séance. Vous pourrez observer la prochaine séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.resultat.prochaineSeance : Vous pourrez observer la prochaine séance.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.resultat.verification : Vérification de vos visites restantes
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.resultat.inconnues : Vos visites restantes n'ont pas pu être vérifiées. Elles le seront de nouveau dans la classe.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.resultat.voirObservations : Voir mes observations
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  tc.observation.annonce.tuteursObservent : {nombre} tuteurs observent
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.nav.maClasse : Ma classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.nav.monEspace : Mon espace
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.accueil.salutation : Bonjour {prenom}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.accueil.parcours : Mon parcours
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.accueil.dernieresSeances : Dernières séances
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.accueil.ressources : Ressources de la classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.accueil.aucuneClasse : Aucune classe pour le moment.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.accueil.aucuneClasseDetail : Votre prochaine séance s'affichera ici dès que votre classe sera ouverte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.maClasse.aPropos : À propos de cette classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.maClasse.vous : {prenom} (vous)
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.maClasse.progression : Ma progression dans cette classe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.maClasse.aucuneClasseDetail : Votre classe, ses participants et ses ressources s'afficheront ici dès qu'elle sera ouverte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.monEspace.informations : Mes informations
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.monEspace.coursAcces : Cours et accès
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.monEspace.coursAccesLegende : Classe, séances et accès
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.monEspace.paiementsLegende : Historique et reçus
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.monEspace.accords : Mes accords
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.monEspace.accordsLegende : Accords donnés à l'académie
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.monEspace.securiteLegende : Méthode et adresse de connexion
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.monEspace.pageAccords.indisponibleTitre : Vos accords ne sont pas encore consultables
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.monEspace.pageAccords.indisponiblePhrase : Accepter, refuser ou retirer chacun de vos accords n'est pas encore possible dans l'application. Aucun accord ne vous est demandé ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.monEspace.pageCoursAcces.indisponibleTitre : Cours et accès pas encore consultables
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.monEspace.pageCoursAcces.indisponiblePhrase : Le détail de vos cours, de vos séances et de votre accès n'est pas encore disponible dans l'application.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.provisoire.coran : Le Coran de votre espace élève s'affichera ici.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.titre : Nouvelle recharge
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.phrase : Sélectionnez un ou plusieurs bénéficiaires, puis choisissez une offre pour chacun.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.toutSelectionner : Tout sélectionner
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.toutDeselectionner : Tout désélectionner
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.offrePour : Offre pour {prenom}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.verifier : Vérifier la recharge
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.raisonAucun : Sélectionnez au moins un bénéficiaire pour continuer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.raisonOffre : Choisissez une offre pour chaque bénéficiaire sélectionné.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.horsLigneVerifier : Vous êtes hors ligne. Vous pourrez vérifier la recharge quand la connexion sera revenue.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.indisponibleTitre : Recharge pas encore disponible
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.indisponiblePhrase : Les offres de recharge ne sont pas encore disponibles dans l'application. Aucun paiement n'est possible ici pour l'instant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.verificationEchecTitre : La vérification n'a pas abouti.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.verificationEchecPhrase : Vos choix sont conservés. Vous pouvez réessayer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.verifierTitre : Vérifier la recharge
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.verifierPhrase : Vérifiez les détails avant de procéder au paiement.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.recapitulatif : Récapitulatif par bénéficiaire
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.montantPaye : Montant payé
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.soldeAttribue : Solde attribué
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.statut : Statut de l'attribution
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.total : Total à payer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.horsLignePayer : Vous êtes hors ligne. Vous pourrez payer quand la connexion sera revenue.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.paiementEchecTitre : Le paiement n'a pas été confirmé.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.paiementEchecPhrase : Vérifiez avant de réessayer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.paiementIndisponibleTitre : Paiement pas encore disponible
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.paiementIndisponiblePhrase : Aucun paiement n'a été effectué. Le paiement en ligne n'est pas encore ouvert dans l'application.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.recharge.revenirPaiements : Revenir aux paiements du foyer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.paiements.beneficiaires : Bénéficiaires
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.paiements.recapitulatif : Récapitulatif du foyer : {valeur}. Chaque solde reste celui de son bénéficiaire.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.paiements.bientotEpuise : Bientôt épuisé
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.paiements.historique : Historique des paiements
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.paiements.soldesIndisponiblesTitre : Soldes pas encore consultables
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.paiements.soldesIndisponiblesPhrase : Le solde de chaque bénéficiaire n'est pas encore disponible dans l'application. Aucune recharge n'est possible ici pour l'instant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.paiements.aucunBeneficiaireTitre : Aucun bénéficiaire
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.paiements.aucunBeneficiairePhrase : Aucun profil élève de votre foyer n'a de solde à recharger pour l'instant.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.ajouter : Ajouter ma famille
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.ajouterLegende : Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.ajouterPhrase : Vous pouvez ajouter vos enfants et inviter un conjoint ou une conjointe à rejoindre votre forfait famille. Votre espace élève reste inchangé.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.inscrireEnfant : Inscrire un enfant
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.maFamille : Ma famille
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.forfaitFamille : Forfait famille
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.retourMonEspace : Revenir à Mon espace
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.titulaire : Vous êtes titulaire du foyer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.paiementsFoyer : Paiements du foyer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.aProposForfait : À propos du forfait famille
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.aProposForfaitPhrase : Le forfait famille comprend un titulaire, un conjoint ou une conjointe adulte, et les enfants ou adolescents sous la responsabilité du titulaire. Chaque adulte conserve son propre compte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.profilNonCreeTitre : Démonstration : aucun profil n'a été créé
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.profilNonCreePhrase : En démonstration, rien n'est envoyé. Ma famille reste telle qu'elle était.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.profilNonCreePhraseSeul : En démonstration, rien n'est envoyé. Votre espace élève reste tel qu'il était.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.monProfilIndisponiblePhrase : La création d'un profil élève séparé n'est pas encore disponible. Vos cours et Ma famille restent tels qu'ils sont.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.indisponibleTitre : La rubrique famille n'est pas encore disponible
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.indisponiblePhrase : Votre famille ou votre forfait famille s'affichera ici dès qu'il sera disponible.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.place.ajouterConjointe : Ajouter une conjointe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.place.ajouterConjoint : Ajouter un conjoint
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.place.inviterConjointe : Invitez votre conjointe à rejoindre Rewayah avec son propre compte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.place.inviterConjoint : Invitez votre conjoint à rejoindre Rewayah avec son propre compte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.place.invitationEnvoyee : Invitation envoyée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.place.maConjointe : {prenom}, votre conjointe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.place.monConjoint : {prenom}, votre conjoint
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.place.validationEnAttente : En attente de validation administrative
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.place.validationRefusee : Validation refusée par la direction
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.place.nouvelleDemande : Faire une nouvelle demande
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.place.nouvelleInvitation : Nouvelle invitation possible à partir du {date}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.place.expiree : L'invitation précédente a expiré. Vous pouvez en envoyer une nouvelle.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.famille.place.annulee : L'invitation a été annulée et ne peut plus être acceptée. Vous pouvez en envoyer une nouvelle.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.titreElle : Inviter ma conjointe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.titreLui : Inviter mon conjoint
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.enteteElle : Un compte personnel pour elle
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.enteteLui : Un compte personnel pour lui
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.phraseElle : Votre conjointe utilisera son propre compte. Elle ne pourra pas gérer votre foyer ni les profils élèves que vous avez créés.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.phraseLui : Votre conjoint utilisera son propre compte. Il ne pourra pas gérer votre foyer ni les profils élèves que vous avez créés.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.courriel : Adresse e-mail
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.courrielAideElle : L'adresse e-mail sera utilisée pour envoyer à votre conjointe l'invitation à rejoindre Rewayah.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.courrielAideLui : L'adresse e-mail sera utilisée pour envoyer à votre conjoint l'invitation à rejoindre Rewayah.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.prenomRequis : Indiquez son prénom.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.courrielRequis : Indiquez son adresse e-mail.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.courrielInvalide : Vérifiez l'adresse e-mail : elle doit ressembler à nom@exemple.com.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.verifierTitre : Vérifier et envoyer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.verifierPhrase : Relisez ces informations. L'invitation partira à cette adresse.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.envoyer : Envoyer l'invitation
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.horsLigne : Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez envoyer l'invitation vous-même quand la connexion sera revenue.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.echecTitre : L'envoi n'a pas été confirmé.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.echecPhrase : Vérifiez avant de réessayer. Vos informations sont conservées.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.refusTitre : Cette invitation ne peut pas être envoyée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.refusPhrase : Ma famille indique l'état actuel de la place.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.envoyeeTitre : Invitation envoyée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.envoyeePhrase : L'invitation est partie vers {courriel}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.revenirMaFamille : Revenir à Ma famille
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.detailPhrase : L'invitation attend sa réponse. Vous pouvez l'annuler tant qu'elle n'a pas été acceptée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.annuler : Annuler l'invitation
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.annulerQuestion : Annuler l'invitation de {prenom} ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.annulerQuestionSansPrenom : Annuler cette invitation ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.annulerHorsLigne : Vous êtes hors ligne. Rien n'est annulé. Vous pourrez annuler l'invitation vous-même quand la connexion sera revenue.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.annulerConsequence : L'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.garder : Garder l'invitation
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.annulationEchecTitre : L'annulation n'a pas été confirmée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.invitation.annulationEchecPhrase : Vérifiez avant de réessayer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.notification : {prenom} vous invite à rejoindre son forfait famille.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.titre : Rejoindre le forfait famille de {prenom}
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.faisonsTitre : Ce que nous faisons
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.faisons : {prenom} vous invite dans son forfait famille. Si vous acceptez, votre compte est rattaché à son foyer. Votre compte reste le vôtre. Rien n'est fusionné.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.pourquoiElle : {prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, elle doit voir votre solde.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.pourquoiLui : {prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, il doit voir votre solde.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.verraElle : Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L'offre qui vous concerne. L'état de votre accès, s'il empêche de payer. Elle saura aussi si vous quittez le forfait famille.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.verraLui : Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L'offre qui vous concerne. L'état de votre accès, s'il empêche de payer. Il saura aussi si vous quittez le forfait famille.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.verraPasTitre : Ce que {prenom} ne verra pas
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.verraPas : Votre Classe. Votre niveau. Vos séances et votre présence. Vos progrès. Vos messages. Vos notifications. Vos moyens de paiement personnels. Vos pièces d'identité.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.vousTitre : Ce que vous ne verrez pas
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.vous : Les cours, les progrès et les messages de {prenom} et des enfants du foyer. Vous ne pourrez pas ajouter d'enfant, inviter quelqu'un ni modifier le foyer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.autresTitre : Qui d'autre voit
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.autres : Votre enseignant ne voit rien de votre foyer. L'équipe de l'académie voit le rattachement, pour le gérer et, si nécessaire, le valider.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.duree : Le rattachement dure jusqu'à ce que vous quittiez le forfait famille, ou que {prenom} y mette fin.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.conservation : Nous gardons la trace du rattachement {duree}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.partirTitre : Comment partir
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.partir : Dans Mon espace, Forfait famille, Quitter le forfait famille. Vous n'avez pas besoin de son accord. Votre compte, vos cours, votre historique et votre solde restent disponibles.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.refusTitre : Si vous refusez
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.refus : Rien ne change pour votre compte, vos cours ni votre solde.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.validation : Ce rattachement doit être validé par l'administration de l'académie. En attendant, votre compte et vos cours fonctionnent normalement.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.refuser : Refuser l'invitation
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.accepter : Accepter l'invitation
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.horsLigne : Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez répondre vous-même quand la connexion sera revenue.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.acceptationEchecTitre : L'acceptation n'a pas été confirmée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.refusEchecTitre : Le refus n'a pas été confirmé.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.echecPhrase : Vérifiez avant de réessayer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.accepteeTitre : Invitation acceptée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.rejoint : Vous avez rejoint le forfait famille de {prenom}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.refuseeTitre : Invitation refusée
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.impossible : Ce compte ne peut pas rejoindre ce forfait actuellement.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.perimee : Cette invitation n'est plus valable.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.monEspace : Aller à Mon espace
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.recu : Réponse enregistrée le {date}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.titreNeutre : Invitation au forfait famille
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.sansCompteTitre : Invitation au forfait famille
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.sansCompte : Pour répondre, connectez-vous à votre compte, ou créez-en un. Vous lirez alors ce que la personne qui vous invite verra et ne verra pas avant de décider.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.acceptation.sansCompteAction : Me connecter ou créer mon compte
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.retirerElle : Retirer ma conjointe
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.retirerLui : Retirer mon conjoint
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.retirerQuestionElle : Retirer ma conjointe ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.retirerQuestionLui : Retirer mon conjoint ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.retirerConsequence : Son compte, ses cours, son historique et son solde ne seront pas supprimés.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.placePhrase : {prenom} fait partie de votre forfait famille, avec son propre compte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.quitter : Quitter le forfait famille
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.quitterQuestion : Quitter le forfait famille ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.quitterConfirmer : Quitter le forfait
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.quitterConsequence : Votre compte, vos cours, votre historique et votre solde restent disponibles. Le rattachement au forfait famille prendra fin.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.forfaitPhrase : Vous faites partie du forfait famille de {prenom}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.resultatTitre : Le rattachement au forfait famille a pris fin
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.resultatTitulaire : Son compte, ses cours, son historique et son solde restent disponibles.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.resultatSecondAdulte : Votre compte, vos cours, votre historique et votre solde restent disponibles.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.retraitEchecTitre : Le retrait n'a pas été confirmé.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.departEchecTitre : Le départ n'a pas été confirmé.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.echecPhrase : Vérifiez avant de réessayer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.horsLigne : Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez réessayer vous-même quand la connexion sera revenue.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.notificationQuitte : {prenom} a quitté votre forfait famille.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.notificationRetiree : Vous avez été retirée du forfait famille de {prenom}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.notificationRetire : Vous avez été retiré du forfait famille de {prenom}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.delaiTitre : Nouvelle invitation indisponible
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.delaiPhrase : Une nouvelle demande pourra être déposée à partir du {date}. Elle devra ensuite être validée par l'administration.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.pourquoi : Pourquoi cette attente ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.sortie.pourquoiPhrase : Cette mesure permet de garantir la sécurité des foyers et la bonne gestion des accès des enfants.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.titre : Demande de reprise du foyer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.explication : Utilisez cette démarche si le titulaire du foyer est décédé. La demande sera signalée au compte concerné et examinée par l'administration.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.reprisTitre : Ce qui sera repris
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.repris.profils : Les profils mineurs existants
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.repris.composition : La composition future du foyer selon les règles actives
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.repris.paiements : Les paiements futurs du foyer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.repris.parcours : Les parcours Tuteur attachés aux mineurs
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.jamaisTitre : Ce qui n'est jamais repris
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.jamais.identifiants : Les identifiants de connexion du titulaire
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.jamais.messages : Ses messages privés
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.jamais.conversations : Ses conversations
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.jamais.historique : Son historique pédagogique personnel
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.jamais.moyensPaiement : Ses moyens de paiement enregistrés
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.jamais.pieces : Ses pièces d'identité
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.jamais.donnees : Ses données privées sans rapport avec la gestion du foyer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.succession : Il s'agit d'une succession de titularité du foyer, pas d'une prise de contrôle du compte personnel.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.deposer : Déposer la demande
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.deposerQuestion : Déposer cette demande ?
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.deposerConsequence : Le titulaire du foyer en sera informé et pourra la refuser. L'administration examinera ensuite la demande et décidera.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.horsLigne : Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.depotEchecTitre : La demande n'a pas été confirmée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.echecPhrase : Vérifiez avant de réessayer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.motifDeces : Décès déclaré du titulaire
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.deposeeLe : Déposée le
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.etats.refuseeParTitulaire : Refusée par le titulaire
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.etats.attenteAdministration : En attente de l'administration
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.phrases.deposee : Le titulaire du foyer en a été informé. L'administration examinera la demande.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.phrases.examenLe : Sans réponse du titulaire, l'administration pourra l'examiner à partir du {date}.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.phrases.refuseeParTitulaire : Le titulaire du foyer a refusé cette demande. L'administration en est informée. Aucune permission du foyer n'est transférée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.phrases.attenteAdministration : Le titulaire n'a pas répondu. Rien n'est transféré automatiquement : l'administration doit encore examiner la demande.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.phrases.validee : L'administration a validé la demande. Vous êtes désormais titulaire du foyer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.phrases.refusee : L'administration a refusé la demande. Aucune permission du foyer n'est transférée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.titulaire.notification : Une demande de reprise de votre foyer a été déposée en indiquant votre décès.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.titulaire.consigne : Si cette demande est erronée, refusez-la.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.titulaire.refuser : Refuser la demande
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.titulaire.ligne : Une demande de reprise de votre foyer a été déposée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.titulaire.refusEchecTitre : Le refus n'a pas été confirmé.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.titulaire.horsLigne : Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez refuser la demande vous-même quand la connexion sera revenue.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.titulaire.refusee : Vous avez refusé cette demande. L'administration en est informée. Aucune permission de votre foyer n'est transférée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.notifications.refuseeParTitulaire : Le titulaire du foyer a refusé votre demande de reprise du foyer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.notifications.attenteAdministration : Votre demande de reprise du foyer est en attente de l'administration.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.notifications.validee : Votre demande de reprise du foyer a été validée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.reprise.notifications.refusee : Votre demande de reprise du foyer a été refusée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.titre : Démonstration de l'élève adulte
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.mention : Les données sont fictives et rien n'est envoyé.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.intro : Choisissez un écran, puis une situation du foyer Diallo.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.situations : Les situations du foyer
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.titulaireFemme : La titulaire est une femme, son conjoint est le second adulte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.vueConjointe : Mon espace vu par la conjointe, second adulte du foyer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.vueConjoint : Mon espace vu par le conjoint, second adulte du foyer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.invitationRecueConjointe : L'invitation reçue par la conjointe, dans son propre compte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.invitationRecueConjoint : L'invitation reçue par le conjoint, dans son propre compte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.invitationSansCompte : L'invitation ouverte sans compte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.reseauCoupe : Le réseau est coupé : l'Accueil et Ma classe hors ligne.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.donnees.soldeTitulaire : Solde de démonstration 1
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.donnees.soldeSecondAdulte : Solde de démonstration 2
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.donnees.soldeAicha : Solde de démonstration 3
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.donnees.soldeOumar : Solde de démonstration 4
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.donnees.totalAvecSecondAdulte : Total de démonstration A
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.donnees.totalSansSecondAdulte : Total de démonstration B
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.donnees.prixOffreA : 5,00 € (démonstration)
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.donnees.prixOffreB : 10,00 € (démonstration)
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.donnees.detailOffreA : Solde de démonstration A
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.donnees.detailOffreB : Solde de démonstration B
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.donnees.totalRecharge5 : 5,00 € (démonstration)
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.donnees.totalRecharge10 : 10,00 € (démonstration)
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.donnees.totalRecharge15 : 15,00 € (démonstration)
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.donnees.totalRecharge20 : 20,00 € (démonstration)
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.donnees.totalRecharge25 : 25,00 € (démonstration)
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.donnees.totalRecharge30 : 30,00 € (démonstration)
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.donnees.totalRecharge35 : 35,00 € (démonstration)
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.donnees.totalRecharge40 : 40,00 € (démonstration)
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.adulteSeul : L'adulte est seul, sans foyer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.titulaireSansConjoint : Le foyer n'a pas de second adulte.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.invitationEnAttente : L'invitation du second adulte est en attente.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.invitationExpiree : L'invitation du second adulte a expiré.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.invitationAnnulee : L'invitation du second adulte a été annulée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.conjointActif : Le second adulte fait partie du foyer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.conjointQuitte : Le second adulte a quitté le foyer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.conjointRetire : Le second adulte a été retiré du foyer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.delai60 : Un premier délai est en cours.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.nouvelleDemande : Une nouvelle invitation est possible après le premier délai.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.validationEnAttente : La validation administrative est en attente.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.validationRefusee : La validation administrative a été refusée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.secondDepart : Le second adulte est parti pour la deuxième fois.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.delai120 : Un délai suivant, plus long, est en cours.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.departsSuivants : Après le troisième départ, le délai suivant s'applique toujours.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.repriseDemandee : Une demande de reprise du foyer a été déposée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.repriseRefuseeParTitulaire : La demande de reprise a été refusée par le titulaire.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.repriseSansReponse : Sans réponse dans le délai, la demande attend l'administration.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.repriseValidee : La reprise du foyer a été validée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.repriseRefusee : La reprise du foyer a été refusée.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.dejaDansUnAutreFoyer : L'adulte invité fait déjà partie d'un autre foyer.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.erreurReseau : Le réseau a coupé pendant une action.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.doubleSoumission : La même action a été envoyée deux fois.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.notificationDansLApplication : La notification n'a pas pu partir sur le téléphone, elle reste visible dans l'application.
+  assets/i18n/fr.i18n.json:1  [libelle-sans-source]  adulte.demo.etats.emancipation : Émancipation d'un élève devenu adulte : non construite dans cette vague.
+  assets/i18n/fr.i18n.json:1  [affirmation-reseau]  ficheEleve.informations.echecEnvoi : La photo n'a pas pu être envoyée. Rien n'a changé sur le profil.
+  assets/i18n/fr.i18n.json:1  [affirmation-reseau]  ficheEleve.informations.echecEnregistrement : La photo est envoyée, mais elle n'a pas pu être enregistrée sur le profil.
+  assets/i18n/fr.i18n.json:1  [affirmation-reseau]  ficheEleve.interface.echec : Le changement n'a pas été enregistré. Réessayez.
+  assets/i18n/fr.i18n.json:1  [affirmation-reseau]  ficheEleve.camera.echec : Le changement n'a pas été enregistré. Réessayez.
+  assets/i18n/fr.i18n.json:1  [affirmation-reseau]  enseignant.photo.echec : La photo n'a pas pu être envoyée. Rien n'a changé sur le profil.
+  assets/i18n/fr.i18n.json:1  [affirmation-reseau]  enseignant.cahier.echecEnvoi : Le cahier n'a pas pu être enregistré. Réessayez.
+  lib/features\accueil_eleve\accueil_eleve_page.dart:396  [bouton-grise]  onPress: joignable ? () => GoRouter.of(context).go( Routes.salle, extra: BilletSalle( sessionId: seance.id, emisA: DateTime.now(), ), ) : null
+  lib/features\admin_acces_agents\acces_agents_page.dart:342  [bouton-grise]  onPress: _emissionPossible ? _emettre : null
+  lib/features\admin_attribution\attribution_page.dart:342  [bouton-grise]  onPress: foyer.attribuable ? () => onChoisir(foyer.eleveId) : null
+  lib/features\admin_attribution\attribution_page.dart:555  [bouton-grise]  onPress: candidat.complet ? null : () => onChoisirEnseignant( candidat, _ColonneEnseignants.offerts(eleve, candidat), )
+  lib/features\admin_attribution\attribution_page.dart:742  [bouton-grise]  onPress: pret ? () => unawaited( onAttribuer( eleve: eleve, enseignant: enseignant, creneau: creneauChoisi!, ), ) : null
+  lib/features\admin_demandes\demandes_page.dart:241  [bouton-grise]  onPress: motif.text.trim().isEmpty ? null : onRefuser
+  lib/features\admin_demandes\demandes_page.dart:681  [bouton-grise]  onPress: _pret ? _envoyer : null
+  lib/features\admin_dossiers\dossiers_page.dart:308  [bouton-grise]  onPress: motif.text.trim().isEmpty ? null : onRefuser
+  lib/features\admin_dossiers\dossiers_page.dart:314  [bouton-grise]  onPress: tousVerifies ? onApprouver : null
+  lib/features\admin_groupes\groupes_page.dart:505  [bouton-grise]  onPress: _libelle.text.trim().isEmpty || _enseignantId.text.trim().isEmpty ? null : () => _creer(ref)
+  lib/features\admin_groupes\groupes_page.dart:649  [bouton-grise]  onPress: _eleveId.text.trim().isEmpty || _motif.text.trim().isEmpty ? null : () => _ajouter(ref)
+  lib/features\admin_groupes\groupes_page.dart:734  [bouton-grise]  onPress: int.tryParse(_seuil.text.trim()) == null ? null : () => _modifier(ref)
+  lib/features\admin_groupes\groupes_page.dart:818  [bouton-grise]  onPress: _motif.text.trim().isEmpty ? null : _envoyer
+  lib/features\admin_pedagogie_diagnostics\diagnostics_page.dart:283  [bouton-grise]  onPress: niveauId == null || motif.text.trim().isEmpty ? null : onDecider
+  lib/features\admin_pedagogie_evaluations\evaluations_page.dart:441  [bouton-grise]  onPress: _eleveId.text.trim().isEmpty || _niveauId == null || _lireDate(_date.text) == null ? null : _envoyer
+  lib/features\admin_pedagogie_evaluations\evaluations_page.dart:566  [bouton-grise]  onPress: _resultat == null ? null : () => _envoyer(ref)
+  lib/features\admin_pedagogie_evaluations\evaluations_page.dart:644  [bouton-grise]  onPress: _motif.text.trim().isEmpty ? null : _envoyer
+  lib/features\admin_pedagogie_programmes\programmes_page.dart:211  [bouton-grise]  onPress: selectionnee.nombreNiveaux == 0 ? null : () => onPublier(selectionnee)
+  lib/features\admin_pedagogie_programmes\programmes_page.dart:639  [bouton-grise]  onPress: _valide ? _envoyer : null
+  lib/features\admin_pedagogie_programmes\programmes_page.dart:723  [bouton-grise]  onPress: _motif.text.trim().isEmpty ? null : _envoyer
+  lib/features\admin_pedagogie_progression\progression_page.dart:419  [bouton-grise]  onPress: _niveauId == null || _motif.text.trim().isEmpty ? null : _envoyer
+  lib/features\admin_pedagogie_progression\progression_page.dart:529  [bouton-grise]  onPress: _motif.text.trim().isEmpty ? null : _envoyer
+  lib/features\cahier\cahier_page.dart:605  [bouton-grise]  onPress: lectureSeule ? null : () => unawaited(onAjuster(p))
+  lib/features\compte\compte_page.dart:83  [bouton-grise]  onPress: projection.afficheFoyer ? () => context.push(Routes.tuteurFoyer) : null
+  lib/features\compte\compte_page.dart:368  [bouton-grise]  onPress: foyerDisponible ? () => context.push(Routes.tuteurFoyer) : null
+  lib/features\consentements\consentement_observation_page.dart:167  [bouton-grise]  onPress: _cochee ? () => unawaited(_accepter()) : null
+  lib/features\creneaux\creneaux_page.dart:444  [bouton-grise]  onPress: ouvrable ? () => _ouvrir(offre) : null
+  lib/features\dossier\depot_piece_page.dart:134  [bouton-grise]  onPress: _type == null ? null : () => unawaited(_choisir())
+  lib/features\dossier\depot_piece_page.dart:141  [bouton-grise]  onPress: _piece == null ? null : () => unawaited(_envoyer())
+  lib/features\dossier\signature_page.dart:175  [bouton-grise]  onPress: _signable ? () => unawaited(_signer()) : null
+  lib/features\eleve_connexion\saisie_code_page.dart:238  [bouton-grise]  onPress: _complet && !horsLigne ? () => unawaited(_valider()) : null
+  lib/features\fiche_groupe\fiche_groupe_page.dart:795  [bouton-grise]  onPress: onOuvrirEleve == null ? null : () => onOuvrirEleve(membre.studentId)
+  lib/features\foyer\acceptation_invitation.dart:416  [bouton-grise]  onPress: bloque || _enCours == _Reponse.accepter ? null : () => unawaited(_repondre(_Reponse.refuser))
+  lib/features\foyer\acceptation_invitation.dart:425  [bouton-grise]  onPress: bloque || _enCours == _Reponse.refuser ? null : () => unawaited(_repondre(_Reponse.accepter))
+  lib/features\foyer\invitation_conjoint.dart:569  [bouton-grise]  onPress: horsLigne || _echec == _Echec.indisponible || _echec == _Echec.refus ? null : () => unawaited(_envoyer())
+  lib/features\foyer\invitation_conjoint.dart:726  [bouton-grise]  onPress: horsLigne || _echec == _Echec.indisponible ? null : () => unawaited(_annuler())
+  lib/features\foyer\photo_eleve.dart:312  [bouton-grise]  onPress: horsLigne ? null : _envoyer
+  lib/features\foyer\place_adulte.dart:237  [bouton-grise]  onPress: placeActionnable(place) ? onPress : null
+  lib/features\foyer\recharge_foyer.dart:458  [bouton-grise]  onPress: pret && !horsLigne && _echecVerif != _EchecRecharge.indisponible ? () => unawaited(_verifier(liste)) : null
+  lib/features\foyer\recharge_foyer.dart:667  [bouton-grise]  onPress: horsLigne ? null : () => unawaited(_payer(recapitulatif))
+  lib/features\foyer\reprise_foyer.dart:392  [bouton-grise]  onPress: horsLigne || _echec == _Echec.indisponible ? null : () => unawaited(_deposer())
+  lib/features\foyer\reprise_foyer.dart:675  [bouton-grise]  onPress: horsLigne || _echec == _Echec.indisponible ? null : () => unawaited(_refuser())
+  lib/features\foyer\sortie_forfait.dart:438  [bouton-grise]  onPress: horsLigne || _echec == _Echec.indisponible ? null : () => unawaited(_sortir())
+  lib/features\journee\journee_page.dart:894  [bouton-grise]  onPress: port == null ? null : () async { final bool confirme = await ouvrirFeuilleRemplacement( context, port: port, offre: offre, date: dateLisible(offre.debut), ); if (confirme) { ref .read(remplacementsConfirmesProvider.notifier) .confirmer(offre); } }
+  lib/features\mon_espace_adulte\mon_espace_adulte_page.dart:209  [bouton-grise]  onPress: onOuvrir == null ? null : () => onOuvrir!(r)
+  lib/features\mon_espace_adulte\mon_espace_adulte_page.dart:332  [bouton-grise]  onPress: onFamille == null ? null : () => onFamille!(famille)
+  lib/features\presence_correction\presence_correction_page.dart:311  [bouton-grise]  onPress: _motif.text.trim().isEmpty ? null : () => Navigator.of(context).pop(_motif.text.trim())
+  lib/features\profil_enseignant\profil_enseignant_page.dart:458  [bouton-grise]  onPress: widget.horsLigne ? null : () => unawaited( _editer( titre: t.enseignant.profil.modifierPays, valeur: profil.pays ?? '', indice: null, ecrire: (String saisie) => _service.declarer(pays: saisie), ), )
+  lib/features\profil_enseignant\profil_enseignant_page.dart:476  [bouton-grise]  onPress: widget.horsLigne ? null : () => unawaited( _editer( titre: t.enseignant.profil.modifierLangues, valeur: langues, indice: t.enseignant.profil.languesIndice, ecrire: (String saisie) => _service.declarer(langues: _listeDeLangues(saisie)), ), )
+  lib/features\reglages_enfant\reglages_enfant_page.dart:422  [bouton-grise]  onPress: _pret ? _envoyer : null
+  lib/features\revue_groupe\revue_groupe_page.dart:217  [bouton-grise]  onPress: membre == null ? null : () => ouvrirFicheEleve( context, EleveFiche( membre: membre, classe: classe, projection: ref.read( projectionElevesProvider(groupeId), )[membre.studentId], ), )
+  lib/features\salle\preparation_enseignant.dart:395  [bouton-grise]  onPress: peutEntrer ? widget.onEntrer : null
+  lib/features\salle\preparation_enseignant.dart:402  [bouton-grise]  onPress: peutEntrer ? widget.onEntrer : null
+  lib/features\salle\salle_page.dart:1495  [bouton-grise]  onPress: enSalle ? () => unawaited(onMicro(microOuvert)) : null
+  lib/features\salle\salle_page.dart:1503  [bouton-grise]  onPress: enSalle ? () => unawaited(onCamera(cameraOuverte)) : null
+  lib/features\salle_enseignant\panneau_enseignant.dart:463  [bouton-grise]  onPress: actives && avant != null ? () => onPresenter(avant) : null
+  lib/features\salle_enseignant\panneau_enseignant.dart:468  [bouton-grise]  onPress: actives && apres != null ? () => onPresenter(apres) : null
+  lib/features\salle_enseignant\panneau_enseignant.dart:488  [bouton-grise]  onPress: actives ? onBibliotheque : null
+  lib/features\salle_seance\rail_seance.dart:87  [bouton-grise]  onPress: groupe == null ? null : sortirVers(Routes.groupePour(groupe))
+  lib/features\salle_seance\selecteur_ressources.dart:141  [bouton-grise]  onPress: ouvrir == null ? null : () => ouvrir(s)
+  lib/features\tc_catalogue\detail_ressource_page.dart:315  [bouton-grise]  onPress: null
+  lib/features\tc_catalogue\surface_bibliotheque.dart:312  [bouton-grise]  onPress: ouvrable ? () => widget.onChoisir(r, position) : null
+  lib/features\tc_classe_live\classe_live_page.dart:995  [bouton-grise]  onPress: enSalle ? () => unawaited(onMicro(microOuvert)) : null
+  lib/features\tc_classe_live\classe_live_page.dart:1004  [bouton-grise]  onPress: enSalle ? () => unawaited(onCamera(cameraOuverte)) : null
+  lib/features\tc_classe_live\classe_live_page.dart:1011  [bouton-grise]  onPress: enSalle ? onBibliotheque : null
+  lib/features\tc_classe_live\fiche_seance.dart:299  [bouton-grise]  onPress: recite ? null : onReciter
+  lib/features\tc_dock\barre_stylet.dart:70  [bouton-grise]  onPress: peutAnnuler ? onAnnuler : null
+  lib/features\tc_espace_groupe\espace_groupe_page.dart:337  [bouton-grise]  onPress: reprendre == null ? null : () => reprendre(identite)
+  lib/features\tc_flux_academique\bloc_avant_prochain_cours.dart:176  [bouton-grise]  onPress: rappel == null ? null : () => rappel(action)
+  lib/features\tc_flux_academique\feuille_signalement.dart:171  [bouton-grise]  onPress: _interne.text.trim().isEmpty ? null : _envoyer
+  lib/features\tc_mushaf\mushaf_page.dart:495  [bouton-grise]  onPress: precedente == null ? null : () => onPage(precedente)
+  lib/features\tc_mushaf\mushaf_page.dart:511  [bouton-grise]  onPress: suivante == null ? null : () => onPage(suivante)
+  lib/features\tc_observation_ui\choix_entree_observation.dart:98  [bouton-grise]  onPress: options.observationPossible ? onEntrer : null
+  lib/features\tc_observation_ui\module_reglages_observation.dart:199  [bouton-grise]  onPress: _etat.valide ? () => widget.onEnregistrer( _etat.appliquerA(widget.politiqueAcademie), ) : null
+  lib/features\_dev\galerie\catalogue_galerie.dart:786  [bouton-grise]  onPress: null
+  lib/features\_dev\galerie\catalogue_galerie.dart:818  [bouton-grise]  onPress: null
+  lib/features\_dev\galerie\catalogue_galerie.dart:2106  [bouton-grise]  onPress: actif ? _rien : null
+  lib/core/widgets/choice_card_group.dart:204  [cartes-collees]  _carteOption n°1 (ecart 12)
+  lib/core/widgets/choice_card_group.dart:209  [cartes-collees]  _Carte n°1 (ecart 12)
+  lib/core/widgets/choice_card_group.dart:194  [cartes-collees]  _carteOption n°2 (ecart 12)
+  lib/features/admin_attribution/attribution_page.dart:337  [cartes-collees]  _CarteEleve n°1 (ecart 8)
+  lib/features/admin_attribution/attribution_page.dart:547  [cartes-collees]  _CarteEnseignant n°1 (ecart 8)
+  lib/features/admin_configuration_conservation_donnees/conservation_donnees_page.dart:95  [cartes-collees]  ConfigLigneEntiere n°1 (collees)
+  lib/features/admin_configuration_fonctionnalites/fonctionnalites_page.dart:89  [cartes-collees]  ConfigLigneEntiere n°1 (collees)
+  lib/features/admin_configuration_regles/regles_page.dart:156  [cartes-collees]  ConfigLigneEntiere n°1 (collees)
+  lib/features/admin_demandes/demandes_page.dart:333  [cartes-collees]  _LigneRegle n°1 (ecart 8)
+  lib/features/admin_tableau/tableau_de_bord_page.dart:169  [cartes-collees]  SignalRow n°1 (ecart 8)
+  lib/features/admin_tableau/tableau_de_bord_page.dart:228  [cartes-collees]  SettingRow n°1 (ecart 8)
+  lib/features/admin_tableau/tableau_de_bord_page.dart:318  [cartes-collees]  tuile n°1 (ecart 12)
+  lib/features/classe_tuteur/catalogue_classes_page.dart:350  [cartes-collees]  CarteClasseOuverte n°1 (ecart 12)
+  lib/features/compte/compte_page.dart:62  [cartes-collees]  SettingRow n°1 (collees)
+  lib/features/compte/compte_page.dart:73  [cartes-collees]  SettingRow n°2 (collees)
+  lib/features/compte/compte_page.dart:79  [cartes-collees]  SettingRow n°3 (collees)
+  lib/features/compte/compte_page.dart:88  [cartes-collees]  SettingRow n°4 (collees)
+  lib/features/compte/compte_page.dart:99  [cartes-collees]  SettingRow n°5 (collees)
+  lib/features/compte/compte_page.dart:148  [cartes-collees]  _LigneLecture n°1 (collees)
+  lib/features/compte/compte_page.dart:154  [cartes-collees]  _LigneLecture n°2 (collees)
+  lib/features/compte/compte_page.dart:159  [cartes-collees]  _LigneLecture n°3 (collees)
+  lib/features/compte/compte_page.dart:167  [cartes-collees]  _LigneLecture n°4 (collees)
+  lib/features/compte/compte_page.dart:182  [cartes-collees]  SettingRow n°6 (collees)
+  lib/features/compte/compte_page.dart:271  [cartes-collees]  SettingRow n°7 (collees)
+  lib/features/compte/compte_page.dart:282  [cartes-collees]  SettingRow n°8 (collees)
+  lib/features/compte/compte_page.dart:292  [cartes-collees]  AppCard n°1 (collees)
+  lib/features/compte/compte_page.dart:308  [cartes-collees]  SettingRow n°9 (collees)
+  lib/features/compte/compte_page.dart:315  [cartes-collees]  SettingRow n°10 (collees)
+  lib/features/compte/compte_page.dart:333  [cartes-collees]  SettingRow n°11 (collees)
+  lib/features/compte/compte_page.dart:354  [cartes-collees]  SettingRow n°12 (collees)
+  lib/features/compte/compte_page.dart:373  [cartes-collees]  SettingRow n°13 (collees)
+  lib/features/compte/compte_page.dart:243  [cartes-collees]  SettingRow n°14 (collees)
+  lib/features/compte/compte_page.dart:250  [cartes-collees]  SettingRow n°15 (collees)
+  lib/features/compte/compte_page.dart:420  [cartes-collees]  AppCard n°2 (ecart 12)
+  lib/features/compte/compte_page.dart:613  [cartes-collees]  _LigneLecture n°5 (collees)
+  lib/features/compte/compte_page.dart:620  [cartes-collees]  _LigneLecture n°6 (collees)
+  lib/features/compte/compte_page.dart:627  [cartes-collees]  _LigneLecture n°7 (collees)
+  lib/features/eleve_connexion/eleve_connexion_page.dart:530  [cartes-collees]  _CarteProfil n°1 (ecart 12)
+  lib/features/foyer/recharge_foyer.dart:566  [cartes-collees]  _Carte n°1 (ecart 12)
+  lib/features/parcours_offres/bloc_parcours.dart:81  [cartes-collees]  _Carte n°1 (ecart 12)
+  lib/features/parcours_offres/parcours_offres_page.dart:688  [cartes-collees]  _CarteOffre n°1 (ecart 12)
+  lib/features/reglages_enfant/reglages_enfant_page.dart:69  [cartes-collees]  SettingRow n°1 (collees)
+  lib/features/reglages_enfant/reglages_enfant_page.dart:75  [cartes-collees]  SettingRow n°2 (collees)
+  lib/features/salle_seance/panneau_eleves.dart:131  [cartes-collees]  _CarteEleve n°1 (ecart 4)
+  lib/features/tc_catalogue/surface_bibliotheque.dart:291  [cartes-collees]  _carte n°1 (ecart 12)
+  lib/features/tc_flux_academique/bloc_avant_prochain_cours.dart:125  [cartes-collees]  _Action n°1 (ecart 8)
+  lib/features/tc_flux_academique/panneau_post_cours.dart:217  [cartes-collees]  AppCard n°1 (ecart 8)
+  lib/features/tc_flux_academique/panneau_post_cours.dart:298  [cartes-collees]  AppCard n°2 (ecart 8)
+  lib/features/tc_mushaf/navigation_coran_feuille.dart:112  [cartes-collees]  _LigneResultat n°1 (ecart 8)
+  lib/features/tc_observation_ui/module_reglages_observation.dart:134  [cartes-collees]  SettingRow n°1 (collees)
+  lib/features/tc_observation_ui/module_reglages_observation.dart:156  [cartes-collees]  SettingRow n°2 (collees)
+  lib\core\widgets\sous_navigation_domaine.dart:55  [onglets-defilants]  TabBar(
+  lib\core\widgets\sous_navigation_domaine.dart:57  [onglets-defilants]  isScrollable: true
+  lib\features\tc_catalogue\surface_bibliotheque.dart:160  [onglets-defilants]  rangee horizontale qui defile avec pastilles ou onglets
+  lib\features\tc_mushaf\mushaf_page.dart:255  [onglets-defilants]  rangee horizontale qui defile avec pastilles ou onglets
+  lib/features\compte\carte_rubriques.dart:359  [bouton-recompose]  Pressable avec surface et libelle peints dans l'ecran n°1
+  lib/features\compte\compte_tuteur_page.dart:554  [bouton-recompose]  Pressable avec surface et libelle peints dans l'ecran n°1
+  lib/features\demo\demo_salle_page.dart:229  [bouton-recompose]  Pressable avec surface et libelle peints dans l'ecran n°1
+  lib/features\salle\salle_page.dart:668  [bouton-recompose]  Pressable avec texte nu (lien recompose) n°1
+  lib/features\salle\salle_page.dart:1553  [bouton-recompose]  Pressable avec surface et libelle peints dans l'ecran n°2
+  lib/features\salle_seance\dock_seance.dart:193  [bouton-recompose]  Pressable avec surface et libelle peints dans l'ecran n°1
+  lib/features\salle_seance\outils_enseignement.dart:231  [bouton-recompose]  Pressable avec surface et libelle peints dans l'ecran n°1
+  lib/features\salle_seance\panneau_eleves.dart:599  [bouton-recompose]  Pressable avec surface et libelle peints dans l'ecran n°1
+  lib/features\salle_seance\panneau_seance.dart:269  [bouton-recompose]  PopupMenuButton
+  lib/features\salle_seance\salle_seance.dart:1212  [bouton-recompose]  Pressable avec surface et libelle peints dans l'ecran n°1
+  lib/features\salle_seance\selecteur_ressources.dart:99  [bouton-recompose]  ChoiceChip
+  lib/features\salle_seance\selecteur_ressources.dart:137  [bouton-recompose]  Pressable avec surface et libelle peints dans l'ecran n°1
+  lib/features\tc_classe_live\roster_classe.dart:281  [bouton-recompose]  Pressable avec texte nu (lien recompose) n°1
+  lib/features\tc_dock\bouton_outil.dart:59  [bouton-recompose]  Pressable avec surface et libelle peints dans l'ecran n°1
+  lib/features\tc_observation_ui\barre_commandes_observation.dart:262  [bouton-recompose]  Pressable avec surface et libelle peints dans l'ecran n°1
+  lib/features\compte\apparence_page.dart:79  [selecteur-theme-recompose]  PreferenceTheme.values
+  lib/features\compte\compte_page.dart:227  [selecteur-theme-recompose]  RadioGroup<PreferenceTheme>
+  lib/features\compte\compte_page.dart:239  [selecteur-theme-recompose]  Radio<PreferenceTheme>
+  lib/features\compte\compte_page.dart:246  [selecteur-theme-recompose]  Radio<PreferenceTheme>
+  lib/features\compte\compte_page.dart:253  [selecteur-theme-recompose]  Radio<PreferenceTheme>
+  lib/features\foyer\invitation_conjoint.dart:478  [plein-multiple]  2 boutons pleins
+  lib/features\foyer\recharge_foyer.dart:454  [plein-multiple]  3 boutons pleins
+  lib/features\foyer\reprise_foyer.dart:389  [plein-multiple]  2 boutons pleins
+  lib/features\profil_enseignant\photo_publique.dart:310  [plein-multiple]  2 boutons pleins
+  lib/features\accueil_famille\carte_classe_seance.dart:151  [avatar-recompose]  AvatarTile a cote d'un Text dans un Row : AvatarNom
+  lib/features\accueil_famille\carte_classe_seance.dart:235  [avatar-taille]  AvatarTile diametre: AppSpacing.xxxl
+  lib/features\accueil_famille\carte_classe_seance.dart:235  [avatar-recompose]  AvatarTile a cote d'un Text dans un Row : AvatarNom
+  lib/features\cahier\cahier_page.dart:594  [avatar-taille]  PhotoEleve diametre: AppSpacing.section
+  lib/features\classe_tuteur\carte_seance_classe.dart:240  [avatar-recompose]  AvatarTile a cote d'un Text dans un Row : AvatarNom
+  lib/features\classe_tuteur\catalogue_classes_page.dart:410  [avatar-taille]  AvatarTile diametre: AppSpacing.xxxl + AppSpacing.md
+  lib/features\classe_tuteur\catalogue_classes_page.dart:410  [avatar-recompose]  AvatarTile a cote d'un Text dans un Row : AvatarNom
+  lib/features\compte\compte_page.dart:496  [avatar-taille]  AvatarTile diametre: AppSpacing.xxxl * 2
+  lib/features\compte\compte_page.dart:496  [avatar-recompose]  AvatarTile a cote d'un Text dans un Row : AvatarNom
+  lib/features\compte\compte_page.dart:555  [avatar-recompose]  AvatarTile a cote d'un Text dans un Row : AvatarNom
+  lib/features\compte\compte_page.dart:595  [avatar-recompose]  AvatarTile a cote d'un Text dans un Row : AvatarNom
+  lib/features\compte\compte_tuteur_page.dart:313  [avatar-recompose]  AvatarTile a cote d'un Text dans un Row : AvatarNom
+  lib/features\compte\compte_tuteur_page.dart:464  [avatar-taille]  AvatarTile diametre: AppSpacing.section
+  lib/features\compte\soldes_foyer.dart:156  [avatar-taille]  PhotoEleve diametre: AppSpacing.section
+  lib/features\eleve_connexion\eleve_connexion_page.dart:601  [avatar-taille]  AvatarTile diametre: metriques.cibleTactile * 2
+  lib/features\eleve_connexion\eleve_connexion_page.dart:601  [avatar-recompose]  AvatarTile a cote d'un Text dans un Column : AvatarNom
+  lib/features\eleve_connexion\eleve_connexion_page.dart:659  [avatar-recompose]  AvatarTile a cote d'un Text dans un Column : AvatarNom
+  lib/features\fiche_groupe\fiche_eleve_enseignant.dart:129  [avatar-taille]  PhotoEleve diametre: AppSpacing.respiration + AppSpacing.lg
+  lib/features\fiche_groupe\fiche_eleve_enseignant.dart:129  [avatar-recompose]  PhotoEleve a cote d'un Text dans un Row : AvatarNom
+  lib/features\fiche_groupe\fiche_groupe_page.dart:781  [avatar-taille]  PhotoEleve diametre: 40
+  lib/features\foyer\fiche_eleve_page.dart:393  [avatar-taille]  PhotoEleve diametre: AppSpacing.respiration + AppSpacing.sm
+  lib/features\foyer\fiche_eleve_page.dart:393  [avatar-recompose]  PhotoEleve a cote d'un Text dans un Row : AvatarNom
+  lib/features\foyer\ligne_membre.dart:186  [avatar-taille]  PhotoEleve diametre: AppSpacing.section
+  lib/features\foyer\photo_eleve.dart:217  [avatar-taille]  PhotoEleve diametre: AppSpacing.respiration + AppSpacing.xxxl
+  lib/features\foyer\place_adulte.dart:233  [avatar-taille]  AvatarTile diametre: AppSpacing.section
+  lib/features\foyer\recharge_foyer.dart:389  [avatar-taille]  PhotoEleve diametre: AppSpacing.section
+  lib/features\foyer\recharge_foyer.dart:577  [avatar-taille]  PhotoEleve diametre: AppSpacing.section
+  lib/features\foyer\recharge_foyer.dart:577  [avatar-recompose]  PhotoEleve a cote d'un Text dans un Row : AvatarNom
+  lib/features\foyer\sortie_forfait.dart:140  [avatar-taille]  AvatarTile diametre: AppSpacing.section
+  lib/features\reglages_enfant\reglages_enfant_page.dart:167  [avatar-taille]  AvatarTile diametre: AppSpacing.xxxl * 2
+  lib/features\salle\salle_page.dart:1241  [avatar-recompose]  AvatarTile a cote d'un Text dans un Column : AvatarNom
+  lib/features\tc_classe_live\entete_classe.dart:132  [avatar-recompose]  AvatarTile a cote d'un Text dans un Row : AvatarNom
+  lib/features\tc_classe_live\scene_classe.dart:208  [avatar-recompose]  AvatarTile a cote d'un Text dans un Column : AvatarNom
+  lib/features\tc_espace_groupe\espace_groupe_page.dart:513  [avatar-recompose]  AvatarTile a cote d'un Text dans un Row : AvatarNom
+  lib/features\tc_espace_groupe\espace_groupe_page.dart:518  [avatar-recompose]  PhotoEnseignant a cote d'un Text dans un Row : AvatarNom
+  lib/features\tc_mes_groupes\carte_groupe.dart:201  [avatar-recompose]  PhotoEnseignant a cote d'un Text dans un Row : AvatarNom
+  lib/features\tc_observation_ui\panneau_observation_tuteur.dart:445  [avatar-taille]  AvatarTile diametre: 44
+  lib/features\tc_observation_ui\panneau_observation_tuteur.dart:445  [avatar-recompose]  AvatarTile a cote d'un Text dans un Column : AvatarNom
+  lib/core/widgets\child_card.dart:193  [avatar-recompose]  AvatarTile a cote d'un Text dans un Row : AvatarNom
+  lib/features\accueil_eleve\accueil_eleve_page.dart:377  [etat-seance-pastille]  StatusPill(libelle: t.etat.enDirect, ton: TonEtat.succes)
+  lib/features\journee\journee_page.dart:536  [etat-seance-pastille]  StatusPill(libelle: t.etat.enDirect, ton: TonEtat.succes)
+  lib/features\tc_classe_live\barre_cours_en_cours.dart:62  [etat-seance-pastille]  StatusPill( libelle: t.tc.classe.barre.titre, ton: TonEtat.succes, )
+  lib/features\tc_observation_ui\panneau_observation_tuteur.dart:325  [etat-seance-pastille]  StatusPill(libelle: v.enDirect, ton: TonEtat.succes)
+  lib/core/widgets\child_card.dart:252  [etat-seance-pastille]  StatusPill(libelle: t.etat.enDirect, ton: TonEtat.succes)
+  lib/core/widgets\child_card.dart:273  [etat-seance-pastille]  StatusPill(libelle: t.etat.annule, ton: TonEtat.alerte)
+  assets/i18n/fr.i18n.json:1  [erreur-sans-action]  salle.fin.enseignant.erreurCahier : Le cahier ne peut pas être ouvert pour le moment.
+  assets/i18n/fr.i18n.json:1  [erreur-sans-action]  enseignant.journee.erreurPartielle : Une partie de la journée n'a pas pu être lue : prières ou pauses peuvent manquer.
+libelle-sans-source : 1300
+affirmation-reseau : 6
+bouton-grise : 77
+cartes-collees : 51
+onglets-defilants : 4
+bouton-recompose : 15
+selecteur-theme-recompose : 5
+plein-multiple : 4
+avatar-recompose : 21
+avatar-taille : 18
+etat-seance-pastille : 6
+erreur-sans-action : 2
+1509 violation(s)

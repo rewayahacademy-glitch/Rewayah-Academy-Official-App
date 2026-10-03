@@ -1,0 +1,38 @@
+$ErrorActionPreference = 'Continue'
+$w = 'D:\RA_TUTEUR\r-integ'
+$p = 'D:\RA_TUTEUR\pilotage-git\verifications\2026-10-03\INTEG-RC-1-R'
+$s = 'C:\Users\dell\AppData\Local\Temp\claude\C--Users-dell-AppData-Local-Programs-WindowsTerminal\00166a22-7abb-40af-b006-a56b5a30133f\scratchpad'
+Set-Location $w
+$env:PATH = "C:\flutter\bin;" + $env:PATH
+
+# 1. verifier_revue --detail sur 4a4fbe7
+cmd /c "dart run tool/verifier_revue.dart --detail > `"$p\07_verifier_detail_4a4fbe7.log`" 2>&1"
+"verifier 4a4fbe7 code $LASTEXITCODE" | Out-File -Append -Encoding utf8 "$p\job2.log"
+
+# 2. slang regenere : le genere doit etre identique au commit
+cmd /c "dart run slang > `"$p\08_slang.log`" 2>&1"
+"slang code $LASTEXITCODE" | Out-File -Append -Encoding utf8 "$p\job2.log"
+cmd /c "git status --porcelain -- lib/core/i18n assets/i18n >> `"$p\08_slang.log`" 2>&1"
+cmd /c "git diff --stat -- lib/core/i18n >> `"$p\08_slang.log`" 2>&1"
+"--- fin slang (aucune ligne de status ci-dessus = genere identique)" | Out-File -Append -Encoding utf8 "$p\08_slang.log"
+git checkout -- lib/core/i18n
+
+# 3. captures temporaires (CAPTURE_DIR uniquement pour ce fichier)
+Copy-Item "$s\integ_rc1_r_capture_test.dart" "$w\test\capture\integ_rc1_r_capture_test.dart"
+$env:CAPTURE_DIR = "$p\captures"
+cmd /c "flutter test test/capture/integ_rc1_r_capture_test.dart -r expanded > `"$p\09_captures.log`" 2>&1"
+"captures code $LASTEXITCODE" | Out-File -Append -Encoding utf8 "$p\job2.log"
+Remove-Item Env:\CAPTURE_DIR
+Remove-Item "$w\test\capture\integ_rc1_r_capture_test.dart"
+
+# 4. verifier_revue --detail sur la base et les quatre pointes (outil de 4a4fbe7)
+foreach ($r in '98e3f9d', '058c525', '39a702a', '5629693', '7885b35') {
+  git checkout --detach -q $r
+  if ($r -ne '98e3f9d') { git checkout 4a4fbe7 -- tool }
+  cmd /c "dart run tool/verifier_revue.dart --detail > `"$p\10_verifier_detail_$r.log`" 2>&1"
+  "verifier $r code $LASTEXITCODE" | Out-File -Append -Encoding utf8 "$p\job2.log"
+  git reset -q --hard
+}
+git checkout --detach -q 4a4fbe7
+git reset -q --hard
+"HEAD final : $(git rev-parse --short HEAD)" | Out-File -Append -Encoding utf8 "$p\job2.log"

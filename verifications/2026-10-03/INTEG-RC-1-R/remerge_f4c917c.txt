@@ -1,0 +1,218 @@
+﻿f4c917cb07dcd9bb93479a4930713b4ad01722f6 0c0b739005cc078905a2e99e095baa8a5ed7dcce 39a702ae81e9b9f03c725a3b2f75a14939cd083d
+INTEG-RC-1 : fusion de ui/controleur-v1 dans la branche des corrections
+
+diff --git a/assets/i18n/fr.i18n.json b/assets/i18n/fr.i18n.json
+remerge CONFLICT (content): Merge conflict in assets/i18n/fr.i18n.json
+index aaf016c..2ce2931 100644
+--- a/assets/i18n/fr.i18n.json
++++ b/assets/i18n/fr.i18n.json
+@@ -3549,12 +3549,8 @@
+       "etatAucune": "Aucune visite",
+       "etatPasEncoreEnDirect": "Séance pas encore en direct",
+       "etatEnDirect": "Séance en direct",
+-<<<<<<< 0c0b739 (INTEG-RC-1 : fusion de ui/enseignant-v1 dans la branche des corrections)
+-      "etatIndisponible": "Mission indisponible",
+-      "etatDejaControlee": "Classe déjà contrôlée",
+-=======
+       "etatIndisponible": "Visite plus proposée",
+->>>>>>> 39a702a (CT-RC-m4 : l'auteur d'un complément suit sa date (« date, heure · auteur ») ; fixé par le serveur, « Vous » par défaut)
++      "etatDejaControlee": "Classe déjà contrôlée",
+       "espaces": "Espaces et accès",
+       "espacesIntro": "Le même compte, plusieurs espaces : Enseignant ou Admin passent en Contrôle par Compte, puis Espaces.",
+       "enseignantControle": "Enseignant-Contrôleur, espace Contrôle",
+@@ -3579,13 +3575,9 @@
+       "videAide": "Rewayah vous proposera une Classe à observer lorsqu'une séance compatible sera disponible.",
+       "indisponible": "Cette visite n'est plus proposée : la séance a été annulée ou confiée à un autre contrôleur.",
+       "attente": "Le contrôle s'ouvrira dès que la séance sera en direct.",
+-<<<<<<< 0c0b739 (INTEG-RC-1 : fusion de ui/enseignant-v1 dans la branche des corrections)
+       "dejaEnCours": "Un contrôle est déjà en cours dans cette classe.",
+       "dejaEnCoursAide": "Un seul contrôle à la fois par classe. Choisissez une autre séance, ou revenez plus tard : vous pourrez commencer quand ce contrôle sera terminé.",
+-      "incognito": "Visite en mode incognito : votre présence n'est pas annoncée à l'enseignant.",
+-=======
+       "incognito": "Votre présence n'est pas annoncée en temps réel.",
+->>>>>>> 39a702a (CT-RC-m4 : l'auteur d'un complément suit sa date (« date, heure · auteur ») ; fixé par le serveur, « Vous » par défaut)
+       "horaire": "{debut} à {fin}",
+       "duree": "{minutes} min prévues",
+       "eleves": {
+diff --git a/lib/core/i18n/strings.g.dart b/lib/core/i18n/strings.g.dart
+remerge CONFLICT (content): Merge conflict in lib/core/i18n/strings.g.dart
+index 26f8ab3..1351d21 100644
+--- a/lib/core/i18n/strings.g.dart
++++ b/lib/core/i18n/strings.g.dart
+@@ -4,11 +4,7 @@
+ /// To regenerate, run: `dart run slang`
+ ///
+ /// Locales: 2
+-<<<<<<< 0c0b739 (INTEG-RC-1 : fusion de ui/enseignant-v1 dans la branche des corrections)
+-/// Strings: 3737 (1868 per locale)
+-=======
+-/// Strings: 3471 (1735 per locale)
+->>>>>>> 39a702a (CT-RC-m4 : l'auteur d'un complément suit sa date (« date, heure · auteur ») ; fixé par le serveur, « Vous » par défaut)
++/// Strings: 3814 (1907 per locale)
+ 
+ // coverage:ignore-file
+ // ignore_for_file: type=lint, unused_import
+diff --git a/lib/core/i18n/strings_fr.g.dart b/lib/core/i18n/strings_fr.g.dart
+remerge CONFLICT (content): Merge conflict in lib/core/i18n/strings_fr.g.dart
+index ee9c5d0..f0e6a3b 100644
+--- a/lib/core/i18n/strings_fr.g.dart
++++ b/lib/core/i18n/strings_fr.g.dart
+@@ -9969,19 +9969,14 @@ class Traductions$controleur$controle$fr {
+ 	/// fr: 'Le contrôle s'ouvrira dès que la séance sera en direct.'
+ 	String get attente => 'Le contrôle s\'ouvrira dès que la séance sera en direct.';
+ 
+-<<<<<<< 0c0b739 (INTEG-RC-1 : fusion de ui/enseignant-v1 dans la branche des corrections)
+ 	/// fr: 'Un contrôle est déjà en cours dans cette classe.'
+ 	String get dejaEnCours => 'Un contrôle est déjà en cours dans cette classe.';
+ 
+ 	/// fr: 'Un seul contrôle à la fois par classe. Choisissez une autre séance, ou revenez plus tard : vous pourrez commencer quand ce contrôle sera terminé.'
+ 	String get dejaEnCoursAide => 'Un seul contrôle à la fois par classe. Choisissez une autre séance, ou revenez plus tard : vous pourrez commencer quand ce contrôle sera terminé.';
+ 
+-	/// fr: 'Visite en mode incognito : votre présence n'est pas annoncée à l'enseignant.'
+-	String get incognito => 'Visite en mode incognito : votre présence n\'est pas annoncée à l\'enseignant.';
+-=======
+ 	/// fr: 'Votre présence n'est pas annoncée en temps réel.'
+ 	String get incognito => 'Votre présence n\'est pas annoncée en temps réel.';
+->>>>>>> 39a702a (CT-RC-m4 : l'auteur d'un complément suit sa date (« date, heure · auteur ») ; fixé par le serveur, « Vous » par défaut)
+ 
+ 	/// fr: '{debut} à {fin}'
+ 	String horaire({required Object debut, required Object fin}) => '${debut} à ${fin}';
+@@ -17702,16 +17697,14 @@ extension on Traductions {
+ 			'controleur.demo.etatAucune' => 'Aucune visite',
+ 			'controleur.demo.etatPasEncoreEnDirect' => 'Séance pas encore en direct',
+ 			'controleur.demo.etatEnDirect' => 'Séance en direct',
+-<<<<<<< 0c0b739 (INTEG-RC-1 : fusion de ui/enseignant-v1 dans la branche des corrections)
+-			'controleur.demo.etatIndisponible' => 'Mission indisponible',
+-			'controleur.demo.etatDejaControlee' => 'Classe déjà contrôlée',
+-=======
+ 			'controleur.demo.etatIndisponible' => 'Visite plus proposée',
+->>>>>>> 39a702a (CT-RC-m4 : l'auteur d'un complément suit sa date (« date, heure · auteur ») ; fixé par le serveur, « Vous » par défaut)
++			'controleur.demo.etatDejaControlee' => 'Classe déjà contrôlée',
+ 			'controleur.demo.espaces' => 'Espaces et accès',
+ 			'controleur.demo.espacesIntro' => 'Le même compte, plusieurs espaces : Enseignant ou Admin passent en Contrôle par Compte, puis Espaces.',
+ 			'controleur.demo.enseignantControle' => 'Enseignant-Contrôleur, espace Contrôle',
+ 			'controleur.demo.enseignantPrincipal' => 'Enseignant-Contrôleur, espace Enseignant',
++			_ => null,
++		} ?? switch (path) {
+ 			'controleur.demo.adminControle' => 'Admin-Contrôleur, espace Contrôle',
+ 			'controleur.demo.adminPrincipal' => 'Admin-Contrôleur, espace Admin',
+ 			'controleur.demo.missionEnCours' => 'Visite en cours, retour à l\'espace principal',
+@@ -17728,13 +17721,9 @@ extension on Traductions {
+ 			'controleur.controle.videAide' => 'Rewayah vous proposera une Classe à observer lorsqu\'une séance compatible sera disponible.',
+ 			'controleur.controle.indisponible' => 'Cette visite n\'est plus proposée : la séance a été annulée ou confiée à un autre contrôleur.',
+ 			'controleur.controle.attente' => 'Le contrôle s\'ouvrira dès que la séance sera en direct.',
+-<<<<<<< 0c0b739 (INTEG-RC-1 : fusion de ui/enseignant-v1 dans la branche des corrections)
+ 			'controleur.controle.dejaEnCours' => 'Un contrôle est déjà en cours dans cette classe.',
+ 			'controleur.controle.dejaEnCoursAide' => 'Un seul contrôle à la fois par classe. Choisissez une autre séance, ou revenez plus tard : vous pourrez commencer quand ce contrôle sera terminé.',
+-			'controleur.controle.incognito' => 'Visite en mode incognito : votre présence n\'est pas annoncée à l\'enseignant.',
+-=======
+ 			'controleur.controle.incognito' => 'Votre présence n\'est pas annoncée en temps réel.',
+->>>>>>> 39a702a (CT-RC-m4 : l'auteur d'un complément suit sa date (« date, heure · auteur ») ; fixé par le serveur, « Vous » par défaut)
+ 			'controleur.controle.horaire' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
+ 			'controleur.controle.duree' => ({required Object minutes}) => '${minutes} min prévues',
+ 			'controleur.controle.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève', other: '${n} élèves', ), 
+@@ -17793,8 +17782,6 @@ extension on Traductions {
+ 			'tc.groupe.horloges.chezEnseignant' => ({required Object nomme}) => 'Chez ${nomme}',
+ 			'tc.groupe.horloges.heureGroupe' => 'Heure de la classe',
+ 			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '${heure} ${ville}',
+-			_ => null,
+-		} ?? switch (path) {
+ 			'tc.groupe.dst.j30' => 'Changement d\'heure dans un mois',
+ 			'tc.groupe.dst.j7' => 'Changement d\'heure la semaine prochaine',
+ 			'tc.groupe.dst.j1' => 'Changement d\'heure demain',
+@@ -17911,8 +17898,6 @@ extension on Traductions {
+ 			'tc.outils.portee.temporaire' => 'Le temps d\'expliquer',
+ 			'tc.outils.portee.seance' => 'Jusqu\'à la fin du cours',
+ 			'tc.outils.portee.enregistree' => 'Enregistrer',
+-			_ => null,
+-		} ?? switch (path) {
+ 			'tc.outils.portee.aide' => 'Combien de temps garder ces annotations ?',
+ 			'tc.outils.marquer.titre' => 'Marquer ce passage',
+ 			'tc.outils.marquer.aide' => 'Choisissez ce que ce passage demande.',
+@@ -18232,6 +18217,8 @@ extension on Traductions {
+ 			'tc.parcours.postCours.reprise' => 'Reprise proposée',
+ 			'tc.parcours.postCours.repriseInconnue' => 'Aucune position de reprise connue pour cette séance.',
+ 			'tc.parcours.postCours.travail' => 'Travail proposé',
++			_ => null,
++		} ?? switch (path) {
+ 			'tc.parcours.postCours.travailAucun' => 'Aucun travail proposé pour l\'instant.',
+ 			'tc.parcours.postCours.valider' => 'Valider',
+ 			'tc.parcours.postCours.enFile' => 'Enregistré. Il partira dès le retour du réseau.',
+@@ -18309,8 +18296,6 @@ extension on Traductions {
+ 			'adulte.invitation.nonRenseigne' => 'Non renseigné',
+ 			'adulte.invitation.modifier' => 'Modifier',
+ 			'adulte.invitation.envoyer' => 'Envoyer l\'invitation',
+-			_ => null,
+-		} ?? switch (path) {
+ 			'adulte.invitation.horsLigne' => 'Vous êtes hors ligne. L\'invitation pourra partir quand la connexion reviendra.',
+ 			'adulte.invitation.echecTitre' => 'L\'invitation n\'est pas partie',
+ 			'adulte.invitation.echecPhrase' => 'La connexion a été interrompue. Vos informations sont conservées : vous pouvez réessayer.',
+diff --git a/lib/features/controleur/controle_page.dart b/lib/features/controleur/controle_page.dart
+remerge CONFLICT (content): Merge conflict in lib/features/controleur/controle_page.dart
+index 4ce7748..7d7fc9f 100644
+--- a/lib/features/controleur/controle_page.dart
++++ b/lib/features/controleur/controle_page.dart
+@@ -112,14 +112,6 @@ class ControleControleurPage extends ConsumerWidget {
+                     in aTerminer.indexed) ...<Widget>[
+                   if (i == 0) Ecart.vXxl else Ecart.vLg,
+                   _BlocATerminer(
+-<<<<<<< 0c0b739 (INTEG-RC-1 : fusion de ui/enseignant-v1 dans la branche des corrections)
+-                    visite: aTerminer,
+-                    onReprendre:
+-                        onReprendreCompteRendu ??
+-                        () =>
+-                            GoRouter.of(context)
+-                                .go(Routes.controleurCompteRendu),
+-=======
+                     visite: v,
+                     cle: i == 0 ? reprendreKey : cleReprendre(v.seanceId),
+                     onReprendre: () {
+@@ -135,7 +127,6 @@ class ControleControleurPage extends ConsumerWidget {
+                         );
+                       }
+                     },
+->>>>>>> 39a702a (CT-RC-m4 : l'auteur d'un complément suit sa date (« date, heure · auteur ») ; fixé par le serveur, « Vous » par défaut)
+                   ),
+                 ],
+               ],
+@@ -283,13 +274,19 @@ class _CarteMission extends StatelessWidget {
+         crossAxisAlignment: CrossAxisAlignment.stretch,
+         mainAxisSize: MainAxisSize.min,
+         children: <Widget>[
+-<<<<<<< 0c0b739 (INTEG-RC-1 : fusion de ui/enseignant-v1 dans la branche des corrections)
+           Row(
+             children: <Widget>[
+               Expanded(
+                 child: Semantics(
+                   header: true,
+-                  child: Text(t.controleur.controle.mission, style: doux),
++                  // Decision du directeur C1 = a (27/09), textes revus le
++                  // 02/10 : un titre pendant le direct, un autre avant.
++                  child: Text(
++                    _enDirect
++                        ? t.controleur.controle.missionEnDirect
++                        : t.controleur.controle.mission,
++                    style: doux,
++                  ),
+                 ),
+               ),
+               // La seance en direct se reconnait au premier coup d'oeil
+@@ -299,18 +296,6 @@ class _CarteMission extends StatelessWidget {
+                 const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
+               ],
+             ],
+-=======
+-          Semantics(
+-            header: true,
+-            // Decision du directeur C1 = a (27/09), textes revus le 02/10 :
+-            // un titre pendant le direct, un autre avant.
+-            child: Text(
+-              _enDirect
+-                  ? t.controleur.controle.missionEnDirect
+-                  : t.controleur.controle.mission,
+-              style: doux,
+-            ),
+->>>>>>> 39a702a (CT-RC-m4 : l'auteur d'un complément suit sa date (« date, heure · auteur ») ; fixé par le serveur, « Vous » par défaut)
+           ),
+           Ecart.vSm,
+           Text(mission.classe, style: fort),

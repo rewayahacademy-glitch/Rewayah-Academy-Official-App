@@ -1,0 +1,264 @@
+﻿328a73755abc730416a8094789bd679fa03d9a7c f4c917cb07dcd9bb93479a4930713b4ad01722f6 56296938cccbf51689f58af937aa61a204e23d89
+INTEG-RC-1 : fusion de ui/eleves-adultes-v1 dans la branche des corrections
+
+diff --git a/assets/i18n/fr.i18n.json b/assets/i18n/fr.i18n.json
+remerge CONFLICT (content): Merge conflict in assets/i18n/fr.i18n.json
+index a0f7b84..3b18229 100644
+--- a/assets/i18n/fr.i18n.json
++++ b/assets/i18n/fr.i18n.json
+@@ -913,13 +913,7 @@
+         "indisponible": "Indisponible",
+         "enfantTitre": "Un enfant ou un mineur",
+         "enfantDescription": "Un profil rattaché à votre foyer, que vous gérez pour lui.",
+-<<<<<<< f4c917c (INTEG-RC-1 : fusion de ui/controleur-v1 dans la branche des corrections)
+         "enfantAttente": "Possible dès que votre accès est ouvert.",
+-        "procheTitre": "Un proche adulte",
+-        "procheDescription": "Pas encore possible : un adulte aura son propre profil et donnera lui-même son accord.",
+-=======
+-        "enfantAttente": "Possible dès que votre dossier est validé.",
+->>>>>>> 5629693 (EA-PL reprise : rangee contrat B partagee (RangeeActions : empilee a largeur egale au bord de fin, jamais en escalier) pour EtatSysteme et le Foyer ; actionsContratB supprime ; Ajouter ma famille en carte ; second adulte non rattache : etat indisponible et retour au lieu d'une phrase sans action ; titre Invitation acceptee ; etats finaux acceptee et refusee sans fleche de retour ; bandeau hors ligne hors du ruban Demonstration ; espace insecable votre solde ; tests (Inscrire un enfant jusqu'au resultat, second adulte, rangee, ruban))
+         "moiTitre": "Moi-même",
+         "moiDescription": "Pas encore possible : suivre vous-même les cours avec votre propre profil élève sera proposé prochainement."
+       },
+diff --git a/lib/core/i18n/strings.g.dart b/lib/core/i18n/strings.g.dart
+remerge CONFLICT (content): Merge conflict in lib/core/i18n/strings.g.dart
+index 4697e33..367207d 100644
+--- a/lib/core/i18n/strings.g.dart
++++ b/lib/core/i18n/strings.g.dart
+@@ -4,11 +4,7 @@
+ /// To regenerate, run: `dart run slang`
+ ///
+ /// Locales: 2
+-<<<<<<< f4c917c (INTEG-RC-1 : fusion de ui/controleur-v1 dans la branche des corrections)
+-/// Strings: 3814 (1907 per locale)
+-=======
+-/// Strings: 3597 (1798 per locale)
+->>>>>>> 5629693 (EA-PL reprise : rangee contrat B partagee (RangeeActions : empilee a largeur egale au bord de fin, jamais en escalier) pour EtatSysteme et le Foyer ; actionsContratB supprime ; Ajouter ma famille en carte ; second adulte non rattache : etat indisponible et retour au lieu d'une phrase sans action ; titre Invitation acceptee ; etats finaux acceptee et refusee sans fleche de retour ; bandeau hors ligne hors du ruban Demonstration ; espace insecable votre solde ; tests (Inscrire un enfant jusqu'au resultat, second adulte, rangee, ruban))
++/// Strings: 3999 (1999 per locale)
+ 
+ // coverage:ignore-file
+ // ignore_for_file: type=lint, unused_import
+diff --git a/lib/core/i18n/strings_fr.g.dart b/lib/core/i18n/strings_fr.g.dart
+remerge CONFLICT (content): Merge conflict in lib/core/i18n/strings_fr.g.dart
+index 28297dc..80a5efa 100644
+--- a/lib/core/i18n/strings_fr.g.dart
++++ b/lib/core/i18n/strings_fr.g.dart
+@@ -16021,13 +16021,7 @@ extension on Traductions {
+ 			'foyer.ajout.pourQui.indisponible' => 'Indisponible',
+ 			'foyer.ajout.pourQui.enfantTitre' => 'Un enfant ou un mineur',
+ 			'foyer.ajout.pourQui.enfantDescription' => 'Un profil rattaché à votre foyer, que vous gérez pour lui.',
+-<<<<<<< f4c917c (INTEG-RC-1 : fusion de ui/controleur-v1 dans la branche des corrections)
+ 			'foyer.ajout.pourQui.enfantAttente' => 'Possible dès que votre accès est ouvert.',
+-			'foyer.ajout.pourQui.procheTitre' => 'Un proche adulte',
+-			'foyer.ajout.pourQui.procheDescription' => 'Pas encore possible : un adulte aura son propre profil et donnera lui-même son accord.',
+-=======
+-			'foyer.ajout.pourQui.enfantAttente' => 'Possible dès que votre dossier est validé.',
+->>>>>>> 5629693 (EA-PL reprise : rangee contrat B partagee (RangeeActions : empilee a largeur egale au bord de fin, jamais en escalier) pour EtatSysteme et le Foyer ; actionsContratB supprime ; Ajouter ma famille en carte ; second adulte non rattache : etat indisponible et retour au lieu d'une phrase sans action ; titre Invitation acceptee ; etats finaux acceptee et refusee sans fleche de retour ; bandeau hors ligne hors du ruban Demonstration ; espace insecable votre solde ; tests (Inscrire un enfant jusqu'au resultat, second adulte, rangee, ruban))
+ 			'foyer.ajout.pourQui.moiTitre' => 'Moi-même',
+ 			'foyer.ajout.pourQui.moiDescription' => 'Pas encore possible : suivre vous-même les cours avec votre propre profil élève sera proposé prochainement.',
+ 			'foyer.ajout.identite.question' => 'Qui est l\'élève ?',
+@@ -16329,10 +16323,10 @@ extension on Traductions {
+ 			'dossiers.revue.typeDossier' => 'Type de dossier',
+ 			'dossiers.revue.dateDepot' => 'Date de dépôt',
+ 			'dossiers.revue.etatDossier' => 'État du dossier',
+-			_ => null,
+-		} ?? switch (path) {
+ 			'dossiers.revue.dateIndisponible' => 'Date de dépôt indisponible',
+ 			'dossiers.revue.pasPret' => 'Ce dossier n\'est pas encore prêt à être validé.',
++			_ => null,
++		} ?? switch (path) {
+ 			'dossiers.revue.erreurChargement' => 'Impossible de charger ce dossier.',
+ 			'dossiers.revue.pieceIndisponible' => 'La consultation de la pièce est indisponible pour le moment.',
+ 			'dossiers.revue.etats.chargement' => 'Chargement du dossier…',
+@@ -16491,8 +16485,6 @@ extension on Traductions {
+ 			'admin.attribution.heuresProposees' => ({required Object nombre}) => '${nombre} heures proposées',
+ 			'admin.attribution.heureProposee' => '1 heure proposée',
+ 			'admin.attribution.sansHeure' => 'Aucune heure proposée',
+-			_ => null,
+-		} ?? switch (path) {
+ 			'admin.attribution.sansHeureDetail' => 'Tant que la famille n\'a posé aucun créneau, personne ne peut lui donner d\'enseignant, pas même vous. Le geste est chez elle, sur ses disponibilités.',
+ 			'admin.attribution.changerEleve' => 'Choisir un autre élève',
+ 			'admin.attribution.choisirEleve' => 'Choisissez un élève',
+@@ -16845,10 +16837,10 @@ extension on Traductions {
+ 			'admin.journal.evtAgentJetonRevoque' => 'Accès d\'agent IA révoqué',
+ 			'admin.journal.evtAgentSessionOuverte' => 'Session d\'agent IA ouverte',
+ 			'admin.journal.evtObservationControleur' => 'Visite de contrôle commencée',
+-			_ => null,
+-		} ?? switch (path) {
+ 			'admin.journal.evtJetonVideo' => 'Entrée en salle autorisée',
+ 			'admin.journal.vide' => 'Aucun événement enregistré',
++			_ => null,
++		} ?? switch (path) {
+ 			'admin.journal.videDetail' => 'Chaque lecture de dossier, chaque décision et chaque attribution viendra s\'inscrire ici.',
+ 			'admin.journal.videFiltre' => 'Aucun événement ne correspond',
+ 			'admin.journal.videFiltreDetail' => 'Élargissez la période, ou relâchez un filtre.',
+@@ -17013,8 +17005,6 @@ extension on Traductions {
+ 			'agent.ouverture' => 'Ouverture',
+ 			'agent.refus' => 'Jeton refusé',
+ 			'agent.refusDetail' => 'Ce jeton est inconnu, révoqué ou expiré. Demandez-en un nouveau à l\'académie.',
+-			_ => null,
+-		} ?? switch (path) {
+ 			'agent.indisponible' => 'Service indisponible',
+ 			'agent.indisponibleDetail' => 'L\'ouverture de session n\'a pas répondu. Réessayez dans un instant.',
+ 			'agent.reessayer' => 'Réessayer',
+@@ -17361,10 +17351,10 @@ extension on Traductions {
+ 			'historique.titre' => 'Historique',
+ 			'historique.detailSeance' => 'Détail de la séance',
+ 			'historique.segments.seances' => 'Séances',
+-			_ => null,
+-		} ?? switch (path) {
+ 			'historique.segments.observations' => 'Observations',
+ 			'historique.moisCourts.0' => 'janv.',
++			_ => null,
++		} ?? switch (path) {
+ 			'historique.moisCourts.1' => 'févr.',
+ 			'historique.moisCourts.2' => 'mars',
+ 			'historique.moisCourts.3' => 'avr.',
+@@ -17539,8 +17529,6 @@ extension on Traductions {
+ 			'tuteur.accueil.pastilleAnnulee' => 'Annulée',
+ 			'tuteur.accueil.pastilleNonTenue' => 'Non tenue',
+ 			'tuteur.accueil.pastilleTerminee' => 'Terminée',
+-			_ => null,
+-		} ?? switch (path) {
+ 			'tuteur.accueil.aucuneSeance' => 'Aucune séance planifiée',
+ 			'tuteur.accueil.aucuneSeanceDetail' => ({required Object prenom}) => 'La prochaine séance de ${prenom} apparaîtra ici dès qu\'elle sera programmée.',
+ 			'tuteur.accueil.seanceIllisible' => 'La prochaine séance n\'a pas pu être lue.',
+@@ -17877,10 +17865,10 @@ extension on Traductions {
+ 			'enseignant.photo.notice' => 'N\'utilisez pas votre pièce d\'identité.',
+ 			'enseignant.photo.choisir' => 'Choisir une photo',
+ 			'enseignant.photo.utiliser' => 'Utiliser cette photo',
+-			_ => null,
+-		} ?? switch (path) {
+ 			'enseignant.photo.remplacer' => 'Remplacer la photo',
+ 			'enseignant.photo.autre' => 'Choisir une autre photo',
++			_ => null,
++		} ?? switch (path) {
+ 			'enseignant.photo.changer' => 'Changer la photo',
+ 			'enseignant.photo.alternatif' => 'Votre photo publique',
+ 			'enseignant.photo.succes' => 'La photo est enregistrée.',
+@@ -18065,7 +18053,6 @@ extension on Traductions {
+ 			'enseignant.cahier.statutEnRetard' => ({required Object nombre}) => 'En retard ${nombre}',
+ 			'enseignant.cahier.performance' => 'Performance',
+ 			'enseignant.cahier.faiblesses' => 'Faiblesses',
+-<<<<<<< f4c917c (INTEG-RC-1 : fusion de ui/controleur-v1 dans la branche des corrections)
+ 			'enseignant.cahier.niveauARevoir' => 'À revoir',
+ 			'enseignant.cahier.niveauEnProgres' => 'En progrès',
+ 			'enseignant.cahier.niveauAcquis' => 'Acquis',
+@@ -18086,10 +18073,6 @@ extension on Traductions {
+ 			'enseignant.cahier.faiblesseWaqfDetail' => 'Les arrêts.',
+ 			'enseignant.cahier.faiblesseFluiditeDetail' => 'La lecture sans hésitation.',
+ 			'enseignant.cahier.faiblesseMemorisationDetail' => 'La récitation de mémoire.',
+-=======
+-			_ => null,
+-		} ?? switch (path) {
+->>>>>>> 5629693 (EA-PL reprise : rangee contrat B partagee (RangeeActions : empilee a largeur egale au bord de fin, jamais en escalier) pour EtatSysteme et le Foyer ; actionsContratB supprime ; Ajouter ma famille en carte ; second adulte non rattache : etat indisponible et retour au lieu d'une phrase sans action ; titre Invitation acceptee ; etats finaux acceptee et refusee sans fleche de retour ; bandeau hors ligne hors du ruban Demonstration ; espace insecable votre solde ; tests (Inscrire un enfant jusqu'au resultat, second adulte, rangee, ruban))
+ 			'enseignant.cahier.reprise' => 'Où la Classe s\'est arrêtée',
+ 			'enseignant.cahier.repriseDetail' => 'C\'est la position de reprise d\'un remplaçant.',
+ 			'enseignant.cahier.repriseProposee' => ({required Object sourate, required Object verset}) => 'Sourate ${sourate}, verset ${verset}',
+@@ -18396,10 +18379,10 @@ extension on Traductions {
+ 			'controleur.demo.espacesIntro' => 'Le même compte, plusieurs espaces : Enseignant ou Admin passent en Contrôle par Compte, puis Espaces.',
+ 			'controleur.demo.enseignantControle' => 'Enseignant-Contrôleur, espace Contrôle',
+ 			'controleur.demo.enseignantPrincipal' => 'Enseignant-Contrôleur, espace Enseignant',
+-			_ => null,
+-		} ?? switch (path) {
+ 			'controleur.demo.adminControle' => 'Admin-Contrôleur, espace Contrôle',
+ 			'controleur.demo.adminPrincipal' => 'Admin-Contrôleur, espace Admin',
++			_ => null,
++		} ?? switch (path) {
+ 			'controleur.demo.missionEnCours' => 'Visite en cours, retour à l\'espace principal',
+ 			'controleur.demo.accesRevoque' => 'Accès révoqué pendant la navigation',
+ 			'controleur.demo.sansCapacite' => 'Enseignant sans capacité Contrôle',
+@@ -18775,8 +18758,6 @@ extension on Traductions {
+ 			'tc.observation.refus.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
+ 			'tc.observation.refus.indisponible' => 'L\'observation n\'est pas disponible pour le moment.',
+ 			'tc.observation.refus.capaciteAbsente' => 'L\'observation n\'est pas encore activée sur cette installation.',
+-			_ => null,
+-		} ?? switch (path) {
+ 			'tc.observation.visite.titre' => 'Observation en cours',
+ 			'tc.observation.visite.quitter' => 'Quitter',
+ 			'tc.observation.visite.supportIndisponible' => 'Le support partagé par l\'enseignant s\'affiche ici.',
+@@ -18912,10 +18893,10 @@ extension on Traductions {
+ 			'tc.parcours.postCours.reprise' => 'Reprise proposée',
+ 			'tc.parcours.postCours.repriseInconnue' => 'Aucune position de reprise connue pour cette séance.',
+ 			'tc.parcours.postCours.travail' => 'Travail proposé',
+-			_ => null,
+-		} ?? switch (path) {
+ 			'tc.parcours.postCours.travailAucun' => 'Aucun travail proposé pour l\'instant.',
+ 			'tc.parcours.postCours.valider' => 'Valider',
++			_ => null,
++		} ?? switch (path) {
+ 			'tc.parcours.postCours.enFile' => 'Enregistré. Il partira dès le retour du réseau.',
+ 			'tc.parcours.postCours.envoye' => 'Cours clôturé.',
+ 			'adulte.nav.accueil' => 'Accueil',
+diff --git a/lib/features/demo/repere_demonstration.dart b/lib/features/demo/repere_demonstration.dart
+remerge CONFLICT (content): Merge conflict in lib/features/demo/repere_demonstration.dart
+index 6af796b..2242365 100644
+--- a/lib/features/demo/repere_demonstration.dart
++++ b/lib/features/demo/repere_demonstration.dart
+@@ -7,18 +7,11 @@ import 'dart:math' as math;
+ 
+ import 'package:flutter/material.dart';
+ 
+-<<<<<<< f4c917c (INTEG-RC-1 : fusion de ui/controleur-v1 dans la branche des corrections)
+ import '../../core/i18n/strings.g.dart';
++import '../../core/widgets/offline_banner.dart' show ReserveCoinFin;
+ 
+ /// Le libelle du repere, traduit (K-41) : `commun.demonstration.repere`.
+ String get libelleRepereDemonstration => t.commun.demonstration.repere;
+-=======
+-import '../../core/widgets/offline_banner.dart' show ReserveCoinFin;
+-
+-/// Le libelle du repere. Volontairement en dur : le mode n'existe que sur
+-/// l'apercu, il n'entre pas dans les traductions du produit.
+-const String libelleRepereDemonstration = 'Démonstration';
+->>>>>>> 5629693 (EA-PL reprise : rangee contrat B partagee (RangeeActions : empilee a largeur egale au bord de fin, jamais en escalier) pour EtatSysteme et le Foyer ; actionsContratB supprime ; Ajouter ma famille en carte ; second adulte non rattache : etat indisponible et retour au lieu d'une phrase sans action ; titre Invitation acceptee ; etats finaux acceptee et refusee sans fleche de retour ; bandeau hors ligne hors du ruban Demonstration ; espace insecable votre solde ; tests (Inscrire un enfant jusqu'au resultat, second adulte, rangee, ruban))
+ 
+ /// L'emprise du ruban le long du bord superieur, depuis le coin de fin : la
+ /// geometrie du `Banner` de Flutter (bas du ruban a 40 du coin, a 45 degres),
+@@ -47,14 +40,9 @@ class RepereDemonstration extends StatelessWidget {
+         textDirection: sens,
+         layoutDirection: sens,
+         color: Theme.of(context).colorScheme.tertiary,
+-<<<<<<< f4c917c (INTEG-RC-1 : fusion de ui/controleur-v1 dans la branche des corrections)
+         // La famille vient du theme : un `TextStyle` nu laisse le bandeau
+         // (peint, hors `DefaultTextStyle`) sans police, donc illisible
+-        // (revue AD-S). Couleurs inchangees.
+-=======
+-        // La police du theme (K-42 : captures lisibles) : un `TextStyle` nu
+-        // retombait sur la police de test et le ruban se peignait en blocs.
+->>>>>>> 5629693 (EA-PL reprise : rangee contrat B partagee (RangeeActions : empilee a largeur egale au bord de fin, jamais en escalier) pour EtatSysteme et le Foyer ; actionsContratB supprime ; Ajouter ma famille en carte ; second adulte non rattache : etat indisponible et retour au lieu d'une phrase sans action ; titre Invitation acceptee ; etats finaux acceptee et refusee sans fleche de retour ; bandeau hors ligne hors du ruban Demonstration ; espace insecable votre solde ; tests (Inscrire un enfant jusqu'au resultat, second adulte, rangee, ruban))
++        // (revue AD-S, K-42). Couleurs inchangees.
+         textStyle: (Theme.of(context).textTheme.labelSmall ?? const TextStyle())
+             .copyWith(
+               color: Theme.of(context).colorScheme.onTertiary,
+diff --git a/lib/features/foyer/place_adulte.dart b/lib/features/foyer/place_adulte.dart
+remerge CONFLICT (content): Merge conflict in lib/features/foyer/place_adulte.dart
+index 4cc7915..419bd19 100644
+--- a/lib/features/foyer/place_adulte.dart
++++ b/lib/features/foyer/place_adulte.dart
+@@ -21,11 +21,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
+ import '../../core/capacites/capacite_indisponible.dart';
+ import '../../core/i18n/strings.g.dart';
+ import '../../core/icons/app_icons.dart';
+-<<<<<<< f4c917c (INTEG-RC-1 : fusion de ui/controleur-v1 dans la branche des corrections)
+-=======
+ import '../../core/theme/app_palette.dart';
+ import '../../core/theme/app_spacing.dart';
+->>>>>>> 5629693 (EA-PL reprise : rangee contrat B partagee (RangeeActions : empilee a largeur egale au bord de fin, jamais en escalier) pour EtatSysteme et le Foyer ; actionsContratB supprime ; Ajouter ma famille en carte ; second adulte non rattache : etat indisponible et retour au lieu d'une phrase sans action ; titre Invitation acceptee ; etats finaux acceptee et refusee sans fleche de retour ; bandeau hors ligne hors du ruban Demonstration ; espace insecable votre solde ; tests (Inscrire un enfant jusqu'au resultat, second adulte, rangee, ruban))
+ import '../../core/widgets/avatar_tile.dart';
+ import '../../core/widgets/groupe_reglages.dart';
+ import '../../core/widgets/page_shell.dart';
+diff --git a/lib/features/foyer/recharge_foyer.dart b/lib/features/foyer/recharge_foyer.dart
+index 0174494..302a31a 100644
+--- a/lib/features/foyer/recharge_foyer.dart
++++ b/lib/features/foyer/recharge_foyer.dart
+@@ -562,7 +562,8 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
+           children: <Widget>[
+             for (final (int i, LigneRecapitulatif l)
+                 in recapitulatif.lignes.indexed) ...<Widget>[
+-              if (i > 0) Ecart.vMd,
++              // K-55 : 16 entre deux cartes (`Ecart.vLg`).
++              if (i > 0) Ecart.vLg,
+               _Carte(
+                 key: RechargeFoyerPage.ligneDe(l.beneficiaireId),
+                 lignes: <Widget>[
