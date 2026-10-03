@@ -1,0 +1,174 @@
+// CORR-SUITE-1-R (revue croisee, lecture seule) : fichier temporaire, jamais
+// commite. Captures Mes Classes 320/390/1280, texte x1/x2, LTR/RTL, et galerie
+// GrilleBento face au vrai Centre de commande.
+
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/admin/service_admin.dart';
+import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
+import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/dossier/service_validation.dart';
+import 'package:rewayah_academy/features/_dev/galerie/catalogue_galerie.dart';
+import 'package:rewayah_academy/features/admin_tableau/tableau_de_bord_page.dart';
+import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
+import 'package:rewayah_academy/features/enseignant_classes/mes_classes_page.dart';
+import 'package:rewayah_academy/features/journee/journee_page.dart'
+    show maintenantJourneeProvider;
+
+import '../support/harnais.dart';
+import 'outil_capture.dart';
+
+List<Override> _surchargesClasses() {
+  final GroupeEnseignant badr = DonneesEnseignantDemo.groupes().firstWhere(
+    (GroupeEnseignant g) => g.libelle == 'Al-Badr',
+  );
+  return <Override>[
+    maintenantJourneeProvider.overrideWithValue(
+      () => DonneesEnseignantDemo.maintenant,
+    ),
+    groupesEnseignantProvider.overrideWith(
+      (Ref _) async => DonneesEnseignantDemo.groupes(),
+    ),
+    seancesEnseignantProvider.overrideWith(
+      (Ref _) async =>
+          DonneesEnseignantDemo.seances(EtatDemoEnseignant.nominal),
+    ),
+    cahiersEnRetardProvider.overrideWith(
+      (Ref _) async =>
+          DonneesEnseignantDemo.cahiersEnRetard(EtatDemoEnseignant.nominal),
+    ),
+    detailsClassesProvider.overrideWithValue(<String, DetailClasse>{
+      badr.id: const DetailClasse(
+        niveau: 2,
+        langue: 'Français',
+        remplacement: true,
+      ),
+    }),
+  ];
+}
+
+/// Releve : mots coupes au milieu, ellipses, sortie d'ecran a gauche/droite.
+List<String> _releve(WidgetTester tester, double largeur) {
+  final List<String> defauts = <String>[];
+  for (final Element e in find.byType(RichText).evaluate()) {
+    final RenderParagraph p = e.renderObject! as RenderParagraph;
+    if (!p.hasSize) continue;
+    final String texte = p.text.toPlainText();
+    final Rect r = p.localToGlobal(Offset.zero) & p.size;
+    if (r.left < -0.5 || r.right > largeur + 0.5) {
+      defauts.add('HORS ECRAN « $texte » $r');
+    }
+    if (p.didExceedMaxLines) defauts.add('ELLIPSE/TRONQUE « $texte »');
+    for (final RegExpMatch m in RegExp(r'[^\s]+').allMatches(texte)) {
+      final List<TextBox> boites = p.getBoxesForSelection(
+        TextSelection(baseOffset: m.start, extentOffset: m.end),
+      );
+      final Set<int> lignes = <int>{for (final TextBox b in boites) b.top.round()};
+      if (lignes.length > 1) {
+        defauts.add('MOT COUPE « ${m.group(0)} » dans « $texte »');
+      }
+    }
+  }
+  return defauts;
+}
+
+void main() {
+  group('CORR-SUITE-1-R Mes Classes', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final double largeur in <double>[320, 390, 1280]) {
+      for (final double echelle in <double>[1, 2]) {
+        for (final TextDirection sens in TextDirection.values) {
+          final String nom =
+              'mes_classes_${largeur.round()}_x${echelle.round()}_${sens.name}';
+          testWidgets(nom, (WidgetTester tester) async {
+            fixerVueCapture(tester, Size(largeur, 1700), 1);
+            await tester.pumpWidget(
+              hoteCapture(
+                Directionality(
+                  textDirection: sens,
+                  child: const MesClassesPage(),
+                ),
+                surcharges: _surchargesClasses(),
+                echelleTexte: echelle,
+              ),
+            );
+            await stabiliser(tester);
+            final Object? ex = tester.takeException();
+            final Finder mot = find.text(t.enseignant.classes.cahierAValider);
+            final Rect rMot = tester.getRect(mot);
+            final Rect rPill = tester.getRect(
+              find.text(t.enseignant.classes.remplacement),
+            );
+            debugPrint('RELEVE $nom exception=$ex mot=$rMot pastille=$rPill');
+            for (final String d in _releve(tester, largeur)) {
+              debugPrint('RELEVE $nom $d');
+            }
+            debugPrint('PNG ${await capturer(tester, nom)}');
+          });
+        }
+      }
+    }
+  });
+
+  group('CORR-SUITE-1-R galerie Bento', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    final EntreeGalerie entree = catalogueGalerie().firstWhere(
+      (EntreeGalerie e) => e.nom == 'GrilleBento',
+    );
+    for (final EtatGalerie etat in entree.etats.take(2)) {
+      for (final double largeur in <double>[390, 1280]) {
+        final String nom =
+            'galerie_bento_${etat.nom.replaceAll(RegExp('[^a-z]+'), '_')}_${largeur.round()}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, Size(largeur, 1100), 1);
+          await tester.pumpWidget(
+            hoteCapture(
+              Scaffold(
+                body: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Builder(builder: etat.construire),
+                ),
+              ),
+            ),
+          );
+          await stabiliser(tester);
+          debugPrint('RELEVE $nom exception=${tester.takeException()}');
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
+    }
+    for (final double largeur in <double>[390, 1280]) {
+      final String nom = 'vrai_centre_commande_${largeur.round()}';
+      testWidgets(nom, (WidgetTester tester) async {
+        fixerVueCapture(tester, Size(largeur, 1100), 1);
+        await tester.pumpWidget(
+          hoteCapture(
+            TableauDeBordPage(horloge: () => DateTime(2026, 9, 8, 17)),
+            surcharges: <Override>[
+              serviceAdminProvider.overrideWithValue(
+                FauxServiceAdmin()
+                  ..indicateursRendus = const IndicateursAdmin(
+                    dossiersEnAttente: 5,
+                    foyersSansEnseignant: 17,
+                    rapportsManquants: 0,
+                    incidents24h: 0,
+                    comptesEchus: 0,
+                    demandesEnAttente: 3,
+                  ),
+              ),
+              serviceValidationProvider.overrideWithValue(
+                FauxServiceValidation(),
+              ),
+            ],
+          ),
+        );
+        await stabiliser(tester);
+        debugPrint('PNG ${await capturer(tester, nom)}');
+      });
+    }
+  });
+}
