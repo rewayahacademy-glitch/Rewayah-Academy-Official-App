@@ -7,11 +7,13 @@ largeur offerte, quatre au-delà ; écart 16 px (K-55) ; ligne de 160 px
 dépasse 100 % (`GrilleBento.hauteurLignePour`). Depuis BENTO-1b, c'est la
 largeur utile par colonne qui décide, pas l'échelle seule
 (`GrilleBento.colonnesPour`) : tant qu'une colonne ferait moins de
-112 px × échelle (`GrilleBento.largeurMinCellule`), la grille divise ses
-colonnes par deux (4, puis 2, puis 1 colonne de hauteur libre, jamais 3). À
-1440 px et texte × 2, le Centre de commande garde plusieurs colonnes ; à
-320 px et texte × 2, une seule. À texte 100 %, une largeur offerte sous
-240 px donne aussi une seule colonne.
+112 px × échelle (`GrilleBento.largeurMinCellule`, seuil sans source, à faire
+valider), la grille perd une colonne : 4, 3, 2, puis 1 colonne de hauteur
+libre (BENTO-1c). Cette règle ne joue qu'au-dessus de 100 % : à 100 % ou
+moins, rien ne change, même dans une place étroite. À trois colonnes et plus,
+une tuile prend son étendue large (`TuileBento.etendueLarge`). À 1440 px et
+texte × 2, le Centre de commande garde plusieurs colonnes ; à 320 px et
+texte × 2, une seule.
 
 ## Fait dans ce lot
 

@@ -337,8 +337,8 @@ List<String> _alertesPresence(WidgetRef ref, SeanceEnseignant seance) {
 /// confirme, Ma journee haute (grande sur quatre colonnes), A terminer en
 /// grande tuile, Alertes utiles en large. Chaque tuile garde la hauteur de son
 /// contenu (`hauteurContenu`) : la frise du jour n'est jamais bornee (D6 a).
-/// Sous 600 px de place, ou quand le texte agrandi ne laisse plus la largeur,
-/// la grille repasse en une colonne dans cet ordre (BENTO-1b).
+/// Les colonnes suivent la largeur utile (`GrilleBento.colonnesPour`) : en
+/// une colonne, les tuiles se suivent dans cet ordre (BENTO-1b, BENTO-1c).
 class _Composition extends StatelessWidget {
   const _Composition({
     required this.prochaine,
