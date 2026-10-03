@@ -34,6 +34,18 @@ et continué. Chaque ligne dit la question et le choix pris. Répondre « d'acco
 | C-Q1 | La feuille « Ajuster » disait « Ajustez la suggestion » alors qu'aucun devoir n'est jamais suggéré (l'application ne connaît que le devoir de la séance précédente). D'où doit venir une vraie suggestion : recopier le devoir précédent, ou une proposition préparée côté serveur (d'après la page de lecture ou le plan de cours) ? | Aucune des deux pour l'instant : la phrase ne s'affiche que pour une vraie suggestion. Recommandation : une proposition préparée côté serveur, au moment du branchement (BR-1), plutôt que recopier le devoir précédent. |
 | C-Q2 | Quand l'enseignant rouvre la feuille sur un devoir qu'il a déjà écrit, la phrase affichée est « Vous avez déjà noté ce devoir. Modifiez-le ou laissez-le tel quel. » Elle vous convient ? | Gardée, marquée « à faire valider ». |
 
+## Mots coupés (COUPE-MOTS-1, PASTILLE-COUPE-1, CORR-SUITE-2, branche corrections/c1-coupe)
+
+Règle appliquée partout : un mot n'est plus jamais coupé en deux ; s'il ne tient pas, il rétrécit un peu (jamais en dessous d'une taille lisible), ou le texte passe à la ligne entre deux mots.
+
+| # | Question | Choix pris |
+|---|---|---|
+| M-Q1 | Barre de gauche (tablette, enseignant et contrôleur) : « Disponibilités » ne tient qu'en rétrécissant un peu le texte (environ 88 %), même en taille normale. Élargir cette barre quand elle affiche des mots, ou écrire « Dispos » ? | Texte un peu réduit, barre inchangée. Recommandation : élargir la barre (de 80 à environ 112 px). |
+| M-Q2 | Barre du bas : les onglets ne sont plus de largeur égale ; chacun a la place de son mot le plus long (c'est ce qui garde « Disponibilités » entier sur petit téléphone). | Gardé. Recommandation : garder. |
+| M-Q3 | Petits libellés à gauche des valeurs (« Reconnexions » dans les détails) : sur petit téléphone, ils rétrécissent un peu (jusqu'à 80 %). Ou bien empiler le libellé au-dessus de sa valeur ? | Rétrécir un peu. Recommandation : garder, et empiler seulement si un libellé plus long apparaît. |
+| M-Q4 | Noms composés : « Classe Al- / Badr » peut passer à la ligne après le trait d'union. | Toléré. Recommandation : tolérer. |
+| M-Q5 | Photo publique : le point « obligatoire » est maintenant au début de la première ligne (comme une puce) et non plus collé à la fin du paragraphe. La consigne disait « à côté du titre ». | Au début de la ligne. Recommandation : garder. |
+
 ## Finance (FI-1a, 17_finance/UX_REVIEW_08_FINANCE.md)
 
 | # | Question | Choix pris |
