@@ -12,6 +12,13 @@ et continué. Chaque ligne dit la question et le choix pris. Répondre « d'acco
 | D-Q3 | En Mode Accessibilité, une seule colonne simple plutôt que des tuiles de tailles variées ? | Oui (un seul ordre de lecture). |
 | D-Q4 | Sur « Aujourd'hui » de l'enseignant, garder toute la journée plutôt que 3 lignes et « Voir tout » ? | Oui (la journée est le sujet de l'écran). |
 
+## Grille Bento (BENTO-1b, branche corrections/c2-bento1b)
+
+| # | Question | Choix pris |
+|---|---|---|
+| B-Q1 | Sous la tuile « Dossiers à valider », la phrase « Ouvrir la file, le plus ancien en premier. » ; sous « Demandes à trancher », « Familles et enseignants attendent une réponse. » : ces deux textes vous conviennent ? | Gardés, marqués « à faire valider ». |
+| B-Q2 | Quand le texte est agrandi sur ordinateur, la grille garde 4 colonnes tant que chaque colonne a au moins 112 px × l'agrandissement. Préférez-vous passer plus tôt à 2 colonnes, avec des tuiles plus larges ? | 4 colonnes gardées (captures `docs/current/captures/BENTO-1b`). |
+
 ## Finance (FI-1a, 17_finance/UX_REVIEW_08_FINANCE.md)
 
 | # | Question | Choix pris |
