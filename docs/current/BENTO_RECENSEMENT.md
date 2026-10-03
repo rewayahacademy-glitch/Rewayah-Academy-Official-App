@@ -3,8 +3,15 @@
 Composant partagé : `lib/core/widgets/grille_bento.dart` (`GrilleBento`,
 `TuileBento`, `EtendueBento`, `placerBento`). Deux colonnes sous 600 px de
 largeur offerte, quatre au-delà ; écart 16 px (K-55) ; ligne de 160 px
-(`GrilleBento.hauteurLigne`) ; une seule colonne de hauteur libre dès que le
-texte dépasse 115 %.
+(`GrilleBento.hauteurLigne`), multipliée par l'échelle du texte quand elle
+dépasse 100 % (`GrilleBento.hauteurLignePour`). Depuis BENTO-1b, c'est la
+largeur utile par colonne qui décide, pas l'échelle seule
+(`GrilleBento.colonnesPour`) : tant qu'une colonne ferait moins de
+112 px × échelle (`GrilleBento.largeurMinCellule`), la grille divise ses
+colonnes par deux (4, puis 2, puis 1 colonne de hauteur libre, jamais 3). À
+1440 px et texte × 2, le Centre de commande garde plusieurs colonnes ; à
+320 px et texte × 2, une seule. À texte 100 %, une largeur offerte sous
+240 px donne aussi une seule colonne.
 
 ## Fait dans ce lot
 
