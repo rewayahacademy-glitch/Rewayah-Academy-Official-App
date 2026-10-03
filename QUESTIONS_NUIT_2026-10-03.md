@@ -19,6 +19,13 @@ et continué. Chaque ligne dit la question et le choix pris. Répondre « d'acco
 | B-Q1 | Sous la tuile « Dossiers à valider », la phrase « Ouvrir la file, le plus ancien en premier. » ; sous « Demandes à trancher », « Familles et enseignants attendent une réponse. » : ces deux textes vous conviennent ? | Gardés, marqués « à faire valider ». |
 | B-Q2 | Quand le texte est agrandi sur ordinateur, la grille garde 4 colonnes tant que chaque colonne a au moins 112 px × l'agrandissement. Préférez-vous passer plus tôt à 2 colonnes, avec des tuiles plus larges ? | 4 colonnes gardées (captures `docs/current/captures/BENTO-1b`). |
 
+## Réunion des branches de rôle (INTEG-RC-1, fusion de l'accessibilité, 760802c)
+
+| # | Question | Choix pris |
+|---|---|---|
+| I-Q1 | En Mode Accessibilité, le Coran revient dans la barre du bas (4 onglets), comme le dit la décision déléguée du 02/10 (« le Coran reste »). Mais votre revue (MA-NAV-1, §326 et §344) disait 3 onglets : Accueil, Ma classe, Mon espace. Lequel gardez-vous ? | 4 onglets gardés pour l'instant (décision la plus récente). Recommandation : confirmer les 4 onglets, puis corriger la revue. |
+| I-Q2 | En Mode Accessibilité, quand le texte dépasse 130 %, les boutons de la salle (micro, caméra) n'affichent plus le mot d'état (« Micro ouvert ») : il n'apparaît qu'au survol. La décision déléguée disait « le mot d'état reste ». | Pas tranché : noté pour correction (l'état doit rester lisible). Recommandation : le mot reste visible. |
+
 ## Finance (FI-1a, 17_finance/UX_REVIEW_08_FINANCE.md)
 
 | # | Question | Choix pris |
