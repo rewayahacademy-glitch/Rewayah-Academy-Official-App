@@ -17,6 +17,7 @@ et continué. Chaque ligne dit la question et le choix pris. Répondre « d'acco
 | # | Question | Choix pris |
 |---|---|---|
 | B-Q1 | Sous la tuile « Dossiers à valider », la phrase « Ouvrir la file, le plus ancien en premier. » ; sous « Demandes à trancher », « Familles et enseignants attendent une réponse. » : ces deux textes vous conviennent ? | Gardés, marqués « à faire valider ». |
+| B-Q3 | Une grille Bento placée dans un panneau très étroit (moins de 240 px, texte normal) : 2 colonnes de petites tuiles, ou 1 colonne ? Aucun écran actuel n'est concerné (288 px au minimum). | 2 colonnes (choix de BENTO-1c, relu et accepté). Recommandation : 1 colonne sous 240 px, plus sûr si un panneau étroit apparaît un jour. |
 | B-Q2 | Quand le texte est agrandi sur ordinateur, la grille garde 4 colonnes tant que chaque colonne a au moins 112 px × l'agrandissement. Préférez-vous passer plus tôt à 2 colonnes, avec des tuiles plus larges ? | 4 colonnes gardées (captures `docs/current/captures/BENTO-1b`). |
 
 ## Réunion des branches de rôle (INTEG-RC-1, fusion de l'accessibilité, 760802c)
