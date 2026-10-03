@@ -86,6 +86,31 @@ void main() {
             'centre_commande_1440x2_clair',
             2,
           ),
+          // BENTO-1b : memes largeurs et echelles en sombre.
+          (
+            const Size(320, 1500),
+            ThemeMode.dark,
+            'centre_commande_320_sombre',
+            1,
+          ),
+          (
+            const Size(1440, 1100),
+            ThemeMode.dark,
+            'centre_commande_1440_sombre',
+            1,
+          ),
+          (
+            const Size(320, 3000),
+            ThemeMode.dark,
+            'centre_commande_320x2_sombre',
+            2,
+          ),
+          (
+            const Size(1440, 2400),
+            ThemeMode.dark,
+            'centre_commande_1440x2_sombre',
+            2,
+          ),
         ]) {
       testWidgets(cas.$3, (WidgetTester tester) async {
         fixerVueCapture(tester, cas.$1, 1);
