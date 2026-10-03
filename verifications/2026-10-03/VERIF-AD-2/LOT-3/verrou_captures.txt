@@ -1,0 +1,2 @@
+﻿VERROU acquis 11:46:41 -> set CAPTURE_DIR=D:\RA_TUTEUR\pilotage-git\verifications\2026-10-03\VERIF-AD-2\LOT-3\captures_a8dfcb3&& flutter test --no-pub test/capture/ad9_politique_capture_test.dart test/capture/hl_a5_planche_capture_test.dart --name "(indisponible|(telephone|ordinateur), clair, (chaine principale|portail apres refus|tuteur attente ouverture))" -r expanded > D:\RA_TUTEUR\pilotage-git\verifications\2026-10-03\VERIF-AD-2\LOT-3\captures_a8dfcb3.log 2>&1
+VERROU libéré, durée 34 s, code 0
