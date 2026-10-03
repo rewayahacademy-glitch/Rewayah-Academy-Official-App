@@ -63,13 +63,13 @@ telle quelle), **ajustée** (la source est adaptée, l'écart est dit), **non ap
 | D3 | **3 à 5 indicateurs** par écran, **dans tous les cas de valeurs** (nulles ou non). Deux compteurs de même nature (rapports sans page) partagent une seule tuile qui garde leurs deux chiffres. | 3 à 5 tuiles de chiffres, quelles que soient les valeurs | S8, S1 | ajustée : S8 donne une capacité moyenne de 4, la règle en fait un plafond d'écran |
 | D4 | Une tuile = **une seule idée**, et la tuile entière est le lien vers sa page dédiée. Pas de bouton plein dans une tuile. **Exceptions nommées** : (a) une ligne d'aperçu qui **nomme une personne** ouvre **sa** fiche, pas la file (cible ≥ 48, ADM-01 Dossiers, modification UX n°2, `tableau_de_bord_page.dart:81-83`) ; (b) la tuile de la **tâche immédiate** garde son bouton (voir D5). | 1 idée ; 0 bouton plein hors exception (b) | S7, DESIGN-GOV Contrat B règle 4 ; S5 en appui (M1, non revérifiée en M3) | ajustée : exceptions (a) et (b) |
 | D5 | **Une seule action dominante** par écran. Sans tâche immédiate, l'élément dominant est la **plus grande tuile**, pas un bouton. Quand une tâche est immédiate (entrer en salle, remplir le cahier, connecter l'appareil qui bloque), c'est son bouton, **au niveau primaire, et lui seul** : tout autre bouton de l'écran passe au niveau secondaire ou devient une tuile-lien. | 1 bouton primaire au plus par écran | K-42 point 2, DESIGN-GOV Contrat B règle 1 | conforme |
-| D6 | Toute liste sur un tableau de bord est **bornée à 3 lignes**, les plus anciennes ou les plus proches d'abord, puis un lien **« Voir tout »** vers la page dédiée. **Exceptions nommées** : (a) la frise « Ma journée » d'ENS-02, non bornée (elle est le sujet de l'écran, Q4) ; (b) « Alertes utiles » d'ENS-02, 2 lignes puis « et N autres » sans lien, tant qu'aucune page ne liste ces alertes (D9, ligne DASH-ENS-ALERTES). | 3 lignes + 1 lien, sauf (a) et (b) | S9 (liste bornée et « Show All »), convention déjà en place : `journee_page.dart:83`, `port_travail_a_venir.dart:37`, `accueil_adulte_page.dart:137` | ajustée : S9 borne par une fenêtre de 7 jours, la règle borne par un nombre |
+| D6 | Toute liste sur un tableau de bord est **bornée à 3 lignes**, les plus anciennes ou les plus proches d'abord, puis un lien **« Voir tout »** vers la page dédiée. **Exceptions nommées** : (a) la frise « Ma journée » d'ENS-02, non bornée (elle est le sujet de l'écran, Q4) ; (b) « Alertes utiles » d'ENS-02, 2 lignes puis « et N autres » sans lien, tant qu'aucune page ne liste ces alertes (D9, ligne DASH-ENS-ALERTES). | 3 lignes + 1 lien, sauf (a) et (b) | S9 (liste bornée et « Show All »), convention déjà en place : `journee_page.dart:83`, `port_travail_a_venir.dart:37`, `accueil_adulte_page.dart:143` | ajustée : S9 borne par une fenêtre de 7 jours, la règle borne par un nombre |
 | D7 | Une information n'apparaît **qu'une fois** sur l'écran. | 0 doublon | K-42 point 3 | conforme |
 | D8 | **Le zéro s'affiche** comme les autres valeurs. | 0 tuile masquée parce que sa valeur est 0 | invariant I9, `tableau_de_bord_page.dart:109-111` | conforme |
 | D9 | Une tuile **sans page dédiée** est un rapport : elle n'a pas d'appui, jamais un bouton grisé. Une page cible qui n'existe pas = une ligne « à faire », jamais un lien inerte. **Exception nommée** : « Rejoindre » de l'Accueil élève reste présent et inerte **hors ligne** (panne passagère, signalée par un changement de paire de couleurs, `accueil_eleve_page.dart:389-399`). | 0 bouton grisé hors exception | leçon 11, `tableau_de_bord_page.dart:348-350` | conforme |
 | D10 | Une donnée absente du serveur ne remplit jamais une tuile. | une lecture en échec ou absente donne un état d'erreur ou de chargement, **jamais un 0 ni un texte de remplacement** | DESIGN-GOV §1 (« Une donnée absente du contrat serveur ne doit pas être inventée pour remplir une carte ») | conforme |
 | D11 | **Cinq états**, chacun atteignable en démonstration : chargement (skeleton fidèle aux tuiles, après 180 ms), vide (phrase + chemin direct quand une action existe), erreur **par source de données** (une source en échec n'emporte que ce qu'elle remplit ; les autres restent justes), hors ligne (bandeau de `PageShell`, `page_shell.dart:198`), contenu. | 5 états par fiche | leçon 9, S4, DESIGN-GOV §4 bis.6 | conforme |
-| D12 | **320 px et texte à 200 %** : deux colonnes sous 600 px **de place disponible** (`LayoutBuilder`, `GrilleBento.colonnesPour`), quatre au-delà. **Texte agrandi seulement** (au-dessus de 100 %) : une colonne de moins, 4 → 3 → 2 → 1, tant que la largeur utile par colonne est sous 112 px × l'échelle du texte (seuil sans source, à faire valider)  ; à trois colonnes et plus, une tuile prend son étendue large, si bien que la grande tuile 2×2 reste. À 100 % ou moins, rien ne change, même dans une place étroite. La hauteur de ligne suit l'échelle (`hauteurLignePour`) ; les tuiles à contenu variable prennent la hauteur de leur contenu (`hauteurContenu`, BENTO-2). En une colonne, hauteur libre. Aucune troncature (BENTO-1b, BENTO-1c). Jamais de décision d'après le type d'appareil. | 320 px, 200 % | S10, S11, `BENTO_RECENSEMENT.md:3-7`, leçon 8 | conforme |
+| D12 | **320 px et texte à 200 %** : deux colonnes sous 600 px **de place disponible** (`LayoutBuilder`, `GrilleBento.colonnesPour`), quatre au-delà. **Texte agrandi seulement** (au-dessus de 100 %) : une colonne de moins, 4 → 3 → 2 → 1, tant que la largeur utile par colonne est sous 112 px × l'échelle du texte (seuil sans source, à faire valider) ; à trois colonnes et plus, une tuile prend son étendue large, si bien que la grande tuile 2×2 reste. À 100 % ou moins, rien ne change, même dans une place étroite. La hauteur de ligne suit l'échelle (`hauteurLignePour`) ; les tuiles à contenu variable prennent la hauteur de leur contenu (`hauteurContenu`, BENTO-2). En une colonne, hauteur libre. Aucune troncature (BENTO-1b, BENTO-1c). Jamais de décision d'après le type d'appareil. | 320 px, 200 % | S10, S11, `BENTO_RECENSEMENT.md:3-20`, leçon 8 | conforme |
 | D13 | Une **liste** dans une tuile prend au moins **2 lignes de grille** (2 × 160) : une rangée de 160 ne tient pas un titre et trois lignes de 48. | hauteur ≥ 2 lignes | `GrilleBento.hauteurLigne` (`BENTO_RECENSEMENT.md:6`), anatomie `GroupeReglages` ligne 48 (DESIGN-GOV Contrat C) | conforme |
 | D14 | Pas de décor pour remplir un vide. Un rôle qui n'a qu'une chose à faire garde **une seule carte**. | écran de **2 tuiles ou moins → pas de Bento** ; 0 élément sans donnée ni action | K-42 point 1, S7 | conforme |
 
@@ -218,7 +218,7 @@ Jamais deux boutons primaires sur l'écran (K-42 point 2).
 | 4 | À terminer (3 + « Voir tout ») | grande 2×2 / 2×2 | liste complète : voir « à faire » ci-dessous |
 | 5 | Alertes utiles, s'il y en a | large 2×1 / 2×1 | `/enseignant/groupe/:id` (`routes.dart:325`) |
 
-Accord avec `BENTO_RECENSEMENT.md:21` (« Prochaine séance large, Ma journée haute »).
+Accord avec `BENTO_RECENSEMENT.md:28` (« Prochaine séance grande, […] Ma journée haute »).
 
 **À faire** : « Voir tout » ouvre la liste par `Navigator.push(MaterialPageRoute)` (l.908-912), sans adresse. Le retour fonctionne, mais la page n'a pas de route (un rechargement Web la perd). Ligne DASH-ENS-ROUTE.
 
@@ -240,13 +240,15 @@ Accord avec `BENTO_RECENSEMENT.md:21` (« Prochaine séance large, Ma journée h
 | 4 | Dernières séances (3) | grande 2×2 / 2×2 | aucune page d'historique adulte : pas de « Voir tout » tant qu'elle n'existe pas |
 | 5 | Ressources (3 + « Voir tout ») | grande 2×2 / 2×2 | `/tc/bibliotheque` (`routes.dart:567`) |
 
-**À faire** : l'écran n'a « aucune source serveur à ce jour » (l.104-112, EA-BR-04) et n'est monté que par la démonstration (`lib/features/demo/demo_adulte_page.dart:590`). Pas de route `/adulte` dans `routes.dart`. Ligne DASH-EA-PROD.
+**Fait (BENTO-3)** : `GrilleBento` en hauteur de contenu selon le tableau ci-dessus (l.364-424). Deux grandes tuiles ne partagent leur bande que si chaque moitié offre 360 px × échelle du texte (`largeurMinCarteClasse`, règle BENTO-2b de l'accueil famille, seuil sans source) ; sans « Avant le prochain cours », la Prochaine séance prend toute sa bande (ordre D2) ; avec 2 tuiles ou moins (séance et ressources seules), une colonne sans Bento (D14).
+
+**À faire** : l'écran n'a « aucune source serveur à ce jour » (l.110-118, EA-BR-04) et n'est monté que par la démonstration (`lib/features/demo/demo_adulte_page.dart:590`). Pas de route `/adulte` dans `routes.dart`. Ligne DASH-EA-PROD.
 
 « Mon espace » adulte (`mon_espace_adulte_page.dart:119`) est une page de compte (identité, rubriques), pas un tableau de bord : hors DASH.
 
 ### 3.8 Enseignant : Mes classes (`/enseignant/classes`)
 
-Liste de cartes, pas un tableau de bord (`BENTO_RECENSEMENT.md:24`). Hors DASH.
+Liste de cartes, pas un tableau de bord (`BENTO_RECENSEMENT.md:43`). Hors DASH.
 
 ---
 
@@ -277,7 +279,7 @@ Aucune ne bloque. Chaque recommandation est appliquée dans ce document.
 | DASH-TUT-BENTO | Accueil famille en `GrilleBento` selon §3.4 | `accueil_famille_page.dart:293-353` |
 | DASH-ENS-BENTO | Aujourd'hui en `GrilleBento` selon §3.5 | `journee_page.dart:336-409` |
 | DASH-ENS-ROUTE | Donner une route à la liste complète « À terminer » | `journee_page.dart:908-912` |
-| DASH-EA-PROD | Accueil adulte : route réelle et source serveur (EA-BR-04) ; historique adulte pour « Voir tout » des dernières séances | `accueil_adulte_page.dart:104-112` |
+| DASH-EA-PROD | Accueil adulte : route réelle et source serveur (EA-BR-04) ; historique adulte pour « Voir tout » des dernières séances | `accueil_adulte_page.dart:110-118` |
 | DASH-LIB | Déclarer les libellés de l'annexe B dans `tool/libelles_sources.json` après accord | annexe B |
 
 Aucun branchement serveur (avant BR-1). Le seul besoin serveur cité (compteur des dossiers qui inclut les tuteurs) est déjà la ligne BR-1.c.
@@ -440,13 +442,17 @@ Priorités         P0  Prochaine séance            grande
                   P2  Ressources (3 + Voir tout)   grande
 Action principale     « Rejoindre » quand l'entrée est possible (seul primaire) ;
                       sinon la tuile Prochaine séance, sans bouton plein
-États             chargement  SqueletteGroupe (accueil_adulte_page.dart:158) et
-                              salutation en skeleton (l.190-199)
-                  vide        « aucune classe », état subi (l.221-227)
-                  erreur      BlocAsynchrone avec Réessayer (l.156-159)
-                  hors ligne  bandeau de PageShell (l.154)
+Composition       GrilleBento en hauteur de contenu (BENTO-3, l.364-424) ;
+                  2 tuiles ou moins : une colonne, pas de Bento (D14)
+États             chargement  SqueletteGroupe (accueil_adulte_page.dart:180) et
+                              salutation en skeleton (l.212-221) ; le
+                              squelette garde l'ancienne forme en colonnes
+                              (D11 « fidèle aux tuiles » : à faire)
+                  vide        « aucune classe », état subi (l.244-249)
+                  erreur      BlocAsynchrone avec Réessayer (l.178-181)
+                  hors ligne  bandeau de PageShell (l.168)
                   contenu     les tuiles ci-dessus ; source serveur absente
-                              (l.104, DASH-EA-PROD)
+                              (l.110, DASH-EA-PROD)
 ```
 
 ## Annexe B : libellés nouveaux
