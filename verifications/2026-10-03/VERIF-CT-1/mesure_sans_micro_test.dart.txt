@@ -1,0 +1,99 @@
+// TEMPORAIRE VERIF-CT-1 : a supprimer, jamais commite.
+// Mesure : un controleur sans micro entre-t-il dans /salle ?
+
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/presence/service_presence.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
+import 'package:rewayah_academy/core/video/pre_vol.dart';
+import 'package:rewayah_academy/core/video/service_video.dart';
+import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.dart';
+import 'package:rewayah_academy/features/demo/controleur_demo.dart';
+import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
+import 'package:rewayah_academy/features/demo/salle_controleur_demo.dart';
+import 'package:rewayah_academy/features/salle/salle_page.dart';
+
+class _SansMicro implements ServicePreVol {
+  const _SansMicro();
+  @override
+  Future<ResultatPreVol> verifier() async => const ResultatPreVol(
+    microDisponible: false,
+    cameraDisponible: false,
+    sortieAudioDisponible: true,
+    permissionRefusee: false,
+  );
+}
+
+void main() {
+  testWidgets('VERIF-CT-1 : controleur sans micro devant /salle', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final GoRouter routeur = GoRouter(
+      initialLocation: '/s',
+      routes: <RouteBase>[
+        GoRoute(
+          path: '/s',
+          builder: (BuildContext _, GoRouterState _) => ProviderScope(
+            overrides: <Override>[
+              ...surchargesCoquilleControleurDemo(EtatDemoControleur.enDirect),
+              moteurSalleProvider.overrideWith(
+                (Ref _) => MoteurSalleControleurDemo(),
+              ),
+              serviceVideoProvider.overrideWithValue(
+                const ServiceVideoControleurDemo(),
+              ),
+              servicePreVolProvider.overrideWithValue(const _SansMicro()),
+              preVolProvider.overrideWith(
+                (Ref _) => const _SansMicro().verifier(),
+              ),
+              presenceSeanceProvider.overrideWith(
+                (Ref _, String _) =>
+                    Stream<List<PresenceParticipant>?>.value(null),
+              ),
+              servicePresenceProvider.overrideWithValue(
+                const PresenceControleurDemo(),
+              ),
+            ],
+            child: const SallePage(
+              seanceId: 'demo-controle',
+              cheminCompteRenduControle: cheminDemoCompteRenduControleur,
+            ),
+          ),
+        ),
+        ...routesDemoControleur('dev'),
+      ],
+    );
+    await tester.pumpWidget(
+      ProviderScope(
+        child: TranslationProvider(
+          child: MaterialApp.router(
+            theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+            locale: AppLocale.fr.flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            routerConfig: routeur,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final bool bloque = find.text(t.salle.refusMateriel).evaluate().isNotEmpty;
+    final bool zoneControle =
+        find.text(t.salle.visiteControle.titre).evaluate().isNotEmpty;
+    debugPrint('VERIF-CT-1 MESURE refusMateriel=$bloque zoneControle=$zoneControle');
+    // Constat attendu par la revue cloud du 27/09 (majeur 3) : bloque.
+    expect(bloque, isTrue, reason: 'le controleur sans micro est bloque');
+    expect(zoneControle, isFalse);
+    expect(find.byType(CompteRenduControlePage), findsNothing);
+  });
+}

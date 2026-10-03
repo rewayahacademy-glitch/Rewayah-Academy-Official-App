@@ -1,0 +1,605 @@
+=== TESTS ROLE 03-10-26  9:22:39,17 
+Resolving dependencies...
+Downloading packages...
+  _fe_analyzer_shared 107.0.0 (108.0.0 available)
+  analyzer 14.3.0 (14.4.0 available)
+  android_file_picker 1.1.0 (2.0.0 available)
+  built_collection 5.1.1 (5.1.2 available)
+  cli_util 0.5.2 (0.6.0 available)
+  code_assets 1.2.1 (2.1.0 available)
+  connectivity_plus 7.3.1 (7.3.2 available)
+  cross_file 0.3.5+5 (0.4.0 available)
+  cupertino_icons 1.0.9 (2.0.0 available)
+  cupertino_ui 1.0.2 (1.1.1 available)
+  dbus 0.7.15 (0.8.0 available)
+  device_info_plus 13.2.0 (13.3.0 available)
+  drift 2.34.4 (2.35.1 available)
+  drift_dev 2.34.6 (2.35.1 available)
+  file_picker 12.2.0 (13.1.0 available)
+  file_picker_darwin 1.1.0 (2.1.2 available)
+  file_picker_linux 1.1.0 (2.0.1 available)
+  file_picker_platform_interface 3.3.0 (4.0.0 available)
+  file_picker_web 3.1.0 (4.0.0 available)
+  flutter_cache_manager 3.4.2 (3.4.5 available)
+  flutter_secure_storage 11.0.0 (11.2.0 available)
+  flutter_secure_storage_darwin 0.4.0 (0.4.3 available)
+  flutter_secure_storage_linux 3.0.2 (3.0.3 available)
+  flutter_secure_storage_platform_interface 2.0.3 (2.1.1 available)
+  flutter_webrtc 1.6.0 (1.6.2+hotfix.3 available)
+  go_router 18.0.1 (18.0.2 available)
+  hooks 2.0.2 (2.2.0 available)
+  jni 1.0.3 (1.1.0 available)
+  livekit_client 2.12.0 (2.13.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  material_ui 1.1.1 (1.5.0 available)
+  meta 1.18.3 (1.19.0 available)
+  native_toolchain_c 0.19.2 (0.19.5 available)
+  nm 0.5.0 (0.6.0 available)
+  objective_c 9.5.0 (9.6.2 available)
+  package_info_plus 10.2.1 (10.2.2 available)
+  passkeys_platform_interface 2.9.0 (2.10.0 available)
+  petitparser 7.0.2 (7.1.0 available)
+  platform 3.1.6 (3.2.0 available)
+  qr 3.0.2 (4.0.0 available)
+  record_use 0.6.0 (1.1.1 available)
+  sentry 8.14.2 (9.30.1 available)
+  sentry_flutter 8.14.2 (9.30.1 available)
+  slang 4.19.1 (4.19.2 available)
+  sqflite 2.4.3 (2.4.4 available)
+  sqflite_android 2.4.3 (2.4.4 available)
+  sqflite_common 2.5.11 (2.5.13 available)
+  sqflite_darwin 2.4.3+1 (2.4.4 available)
+  sqflite_platform_interface 2.4.1 (2.4.2 available)
+  sqlite3 3.5.2 (3.7.0 available)
+  storage_client 2.8.0 (2.8.1 available)
+  supabase 2.16.1 (2.16.2 available)
+  supabase_flutter 2.17.2 (2.18.0 available)
+  synchronized 3.4.1+2 (3.4.2 available)
+  test_api 0.7.12 (0.7.14 available)
+  vector_math 2.4.0 (2.4.3 available)
+  windows_file_picker 1.2.0 (2.0.0 available)
+  xml 7.0.1 (7.1.0 available)
+Got dependencies!
+58 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading D:/RA_TUTEUR/v-ct1/test/features/controleur/compte_rendu_controleur_test.dart
+00:00 +0: D:/RA_TUTEUR/v-ct1/test/features/controleur/compte_rendu_controleur_test.dart: Rien a signaler, puis Envoyer le compte rendu : resultat
+00:05 +1: D:/RA_TUTEUR/v-ct1/test/features/controleur/controle_page_test.dart: aucune mission : le texte du doc, aucun bouton
+00:06 +2: D:/RA_TUTEUR/v-ct1/test/features/controleur/compte_rendu_controleur_test.dart: Quitter puis Plus tard : les faits de la visite sont partis
+00:07 +3: D:/RA_TUTEUR/v-ct1/test/features/controleur/controle_page_test.dart: pas encore en direct : ligne calme, aucun bouton (R4)
+00:07 +4: D:/RA_TUTEUR/v-ct1/test/features/controleur/compte_rendu_controleur_test.dart: Transmission de la visite en echec : le dit, puis nouvel essai
+00:07 +5: D:/RA_TUTEUR/v-ct1/test/features/controleur/compte_rendu_controleur_test.dart: Transmission de la visite en echec : le dit, puis nouvel essai
+00:07 +6: D:/RA_TUTEUR/v-ct1/test/features/controleur/controle_page_test.dart: en direct : on tape « Commencer le controle » et on entre en salle avec le billet de la seance
+00:07 +7: D:/RA_TUTEUR/v-ct1/test/features/controleur/compte_rendu_controleur_test.dart: Plus tard et Envoyer : cote a cote sur ordinateur
+00:08 +8: D:/RA_TUTEUR/v-ct1/test/features/controleur/controle_page_test.dart: aucun debordement a 800x600, dans chaque situation
+00:09 +9: D:/RA_TUTEUR/v-ct1/test/features/controleur/controle_page_test.dart: aucun debordement a 800x600, dans chaque situation
+00:09 +10: D:/RA_TUTEUR/v-ct1/test/features/controleur/compte_rendu_controleur_test.dart: Plus tard : compte rendu a terminer, puis reprise
+00:09 +11: D:/RA_TUTEUR/v-ct1/test/features/controleur/compte_rendu_controleur_test.dart: Plus tard : compte rendu a terminer, puis reprise
+00:09 +12: D:/RA_TUTEUR/v-ct1/test/features/controleur/compte_rendu_controleur_test.dart: Plus tard : compte rendu a terminer, puis reprise
+00:09 +13: D:/RA_TUTEUR/v-ct1/test/features/controleur/compte_rendu_controleur_test.dart: Plus tard : compte rendu a terminer, puis reprise
+00:10 +14: D:/RA_TUTEUR/v-ct1/test/features/controleur/compte_rendu_controleur_test.dart: Sans serveur, l envoi echoue et le dit
+00:10 +15: D:/RA_TUTEUR/v-ct1/test/features/controleur/compte_rendu_controleur_test.dart: Sortie de la seance A, la mission courante est devenue une autre : A est transmise et envoyee
+00:11 +16: D:/RA_TUTEUR/v-ct1/test/features/controleur/compte_rendu_controleur_test.dart: Sortie de la seance A, la mission courante est vide : A est transmise et envoyee
+00:11 +17: D:/RA_TUTEUR/v-ct1/test/features/controleur/compte_rendu_controleur_test.dart: Seance inconnue : le message generique, aucune transmission
+00:11 +18: D:/RA_TUTEUR/v-ct1/test/features/controleur/compte_rendu_controleur_test.dart: Deux visites a terminer coexistent ; terminer en retire une
+00:11 +19: D:/RA_TUTEUR/v-ct1/test/features/controleur/compte_rendu_controleur_test.dart: Deux visites a terminer : la reprise ouvre la bonne
+00:14 +20: D:/RA_TUTEUR/v-ct1/test/features/controleur/echanges_controleur_test.dart: Echanges -> un fil -> ecrire -> envoyer -> message affiche
+00:19 +21: D:/RA_TUTEUR/v-ct1/test/features/controleur/echanges_controleur_test.dart: resultat du compte rendu : Ecrire a l'administration ouvre le fil de la mission
+00:21 +22: D:/RA_TUTEUR/v-ct1/test/features/controleur/echanges_controleur_test.dart: sans serveur, l'envoi echoue honnetement et se reessaie
+00:21 +23: D:/RA_TUTEUR/v-ct1/test/features/controleur/echanges_controleur_test.dart: le port par defaut n'invente aucun fil
+00:21 +24: D:/RA_TUTEUR/v-ct1/test/features/controleur/echanges_controleur_test.dart: hors demonstration, Ecrire a l'administration (avec identifiant)
+00:22 +25: D:/RA_TUTEUR/v-ct1/test/features/controleur/echanges_controleur_test.dart: hors demonstration, Ecrire a l'administration (sans identifiant)
+00:23 +26: D:/RA_TUTEUR/v-ct1/test/features/controleur/espaces_controleur_test.dart: 1. Compte > Espaces Enseignant-Controleur : Controle actif, Enseignant propose ; passer en Enseignant puis revenir en Controle
+00:27 +27: D:/RA_TUTEUR/v-ct1/test/features/controleur/espaces_controleur_test.dart: 1. Compte > Espaces Admin-Controleur : Admin et Controle, aucune action Admin en Controle
+00:28 +28: D:/RA_TUTEUR/v-ct1/test/features/controleur/espaces_controleur_test.dart: 1. Compte > Espaces controleur externe : Controle seul, aucun selecteur
+00:28 +29: D:/RA_TUTEUR/v-ct1/test/features/controleur/espaces_controleur_test.dart: 1. Compte > Espaces le tuteur, l eleve et le comptable n ont jamais Controle
+00:28 +30: D:/RA_TUTEUR/v-ct1/test/features/controleur/espaces_controleur_test.dart: 1. Compte > Espaces le Compte d un tuteur ne propose pas Controle
+00:28 +31: D:/RA_TUTEUR/v-ct1/test/features/controleur/espaces_controleur_test.dart: 2. Raccourci d en-tete il ouvre le MEME selecteur, qui fait passer d espace
+00:29 +32: D:/RA_TUTEUR/v-ct1/test/features/controleur/espaces_controleur_test.dart: 2. Raccourci d en-tete absent pour le controleur externe (un seul espace)
+00:29 +33: D:/RA_TUTEUR/v-ct1/test/features/controleur/espaces_controleur_test.dart: 3. Mission en cours le selecteur le dit au lieu de basculer
+00:30 +34: D:/RA_TUTEUR/v-ct1/test/features/controleur/espaces_controleur_test.dart: 3. Mission en cours apres la sortie de mission, l espace principal revient
+00:30 +35: D:/RA_TUTEUR/v-ct1/test/features/controleur/espaces_controleur_test.dart: 4. Acces revoque pendant la navigation (P-CTR-01) sur Historique : refus generique, retour a mon espace
+00:31 +36: D:/RA_TUTEUR/v-ct1/test/features/controleur/espaces_controleur_test.dart: 4. Acces revoque pendant la navigation (P-CTR-01) sur Echanges : rien du fil ne reste
+00:31 +37: D:/RA_TUTEUR/v-ct1/test/features/controleur/espaces_controleur_test.dart: 4. Acces revoque pendant la navigation (P-CTR-01) par l adresse de demonstration
+00:32 +38: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration liste a 390
+00:32 +39: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration liste a 390
+00:32 +40: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration liste a 390
+00:32 +41: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration liste a 390
+00:32 +42: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration liste a 390
+00:32 +43: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration liste a 390
+00:33 +44: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration liste a 390
+00:33 +45: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration liste a 390
+00:36 +46: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-controle-aucune a 390
+00:36 +47: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-controle-pasEncoreEnDirect a 390
+00:36 +48: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-controle-enDirect a 390
+00:37 +49: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-controle-indisponible a 390
+00:37 +50: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-historique-aucune a 390
+00:37 +51: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-historique-pasEncoreEnDirect a 390
+00:38 +52: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-historique-enDirect a 390
+00:38 +53: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-historique-indisponible a 390
+00:38 +54: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-echanges-aucune a 390
+00:38 +55: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-echanges-pasEncoreEnDirect a 390
+00:39 +56: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-echanges-enDirect a 390
+00:39 +57: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-echanges-indisponible a 390
+00:39 +58: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:39 +59: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:40 +60: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:40 +61: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:40 +62: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:40 +63: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:40 +64: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:40 +65: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:41 +66: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:41 +67: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:41 +68: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:41 +69: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:42 +70: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:42 +71: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:42 +72: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:43 +73: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:43 +74: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:43 +75: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:43 +76: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:44 +77: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:44 +78: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:44 +79: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: Historique -> rapport -> detail -> fil de la mission
+00:44 +80: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration observation-domaine a 390
+00:44 +81: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: un rapport sans fil ouvre un fil neuf de sa mission
+00:45 +82: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration observation-roster a 390
+00:45 +83: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: « A terminer » reprend le compte rendu
+00:45 +84: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration observation-texte a 390
+00:46 +85: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: le filtre Etat ne garde que les rapports choisis
+00:46 +86: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration observation-recapitulatif a 390
+00:47 +87: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration observation-recapitulatif a 390
+00:47 +88: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: CTR-03B : complement envoye, visible dans le detail
+00:48 +89: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: CTR-03B : complement envoye, visible dans le detail
+00:48 +90: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: CTR-03B : complement envoye, visible dans le detail
+00:49 +91: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration historique-detail-demo-rapport-0924 a 390
+00:49 +92: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: CTR-03B : echec non confirme, la saisie reste
+00:49 +93: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: CTR-03B : echec non confirme, la saisie reste
+00:49 +94: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration complement-motif a 390
+00:49 +95: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: CTR-03B : le rapport parent reste intact
+00:50 +96: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration complement-recapitulatif a 390
+00:50 +97: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration complement-recapitulatif a 390
+00:50 +98: D:/RA_TUTEUR/v-ct1/test/features/controleur/historique_controleur_test.dart: route reelle : Ecrire a l administration ouvre le fil
+00:50 +99: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration complement-ajoute a 390
+00:50 +100: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration fil-al-badr a 390
+00:51 +101: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration fil-mission-envoye a 390
+00:51 +102: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration liste a 1440
+00:51 +103: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-controle-aucune a 1440
+00:51 +104: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-controle-pasEncoreEnDirect a 1440
+00:52 +105: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-controle-enDirect a 1440
+00:52 +106: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-controle-indisponible a 1440
+00:52 +107: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-historique-aucune a 1440
+00:52 +108: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-historique-pasEncoreEnDirect a 1440
+00:52 +109: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-historique-enDirect a 1440
+00:53 +110: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-historique-indisponible a 1440
+00:53 +111: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-echanges-aucune a 1440
+00:53 +112: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-echanges-pasEncoreEnDirect a 1440
+00:53 +113: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-echanges-enDirect a 1440
+00:53 +114: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-echanges-indisponible a 1440
+00:53 +115: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-compte-aucune a 1440
+00:53 +116: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-compte-pasEncoreEnDirect a 1440
+00:54 +117: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-compte-enDirect a 1440
+00:54 +118: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-compte-indisponible a 1440
+00:54 +119: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-espaces-enseignant-controle a 1440
+00:54 +120: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-espaces-enseignant-principal a 1440
+00:54 +121: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-espaces-admin-controle a 1440
+00:54 +122: D:/RA_TUTEUR/v-ct1/test/features/controleur/frontiere_donnees_controleur_test.dart: C8 : aucune donnee interdite sur les ecrans de demonstration lien-espaces-admin-principal a 1440
+00:54 +123: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:55 +124: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:55 +125: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:55 +126: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:55 +127: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:55 +128: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:55 +129: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:55 +130: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:55 +131: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:56 +132: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:56 +133: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:56 +134: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:56 +135: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:56 +136: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:57 +137: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:57 +138: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:57 +139: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:58 +140: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:58 +141: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:58 +142: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:59 +143: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:59 +144: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+00:59 +145: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+01:00 +146: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+01:00 +147: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+01:00 +148: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+01:00 +149: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+01:01 +150: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+01:01 +151: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+01:01 +152: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+01:01 +153: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+01:01 +154: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Parcours complet : cinq etapes, envoi, resultat
+01:01 +155: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Intervention Admin souhaitee sans texte ne part pas
+01:02 +156: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Point important : texte obligatoire, sans nature choisie
+01:03 +157: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Liste des eleves non recue : le dire, puis Reessayer
+01:04 +158: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Sans serveur, l envoi echoue et la saisie reste
+01:05 +159: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: le choix se lit dans l adresse, puis dans extra
+01:05 +160: D:/RA_TUTEUR/v-ct1/test/features/controleur/observation_controleur_test.dart: Point important par un lien direct, sans extra
+01:05 +161: D:/RA_TUTEUR/v-ct1/test/features/controleur/salle_controleur_test.dart: Commencer, observer sans commande interdite, puis Quitter
+01:06 +162: D:/RA_TUTEUR/v-ct1/test/features/controleur/salle_controleur_test.dart: Commencer, observer sans commande interdite, puis Quitter
+01:11 +163: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_controle_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~1: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_controle_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~2: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_controle_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~3: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_controle_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~4: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_controle_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~5: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_controle_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~6: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_historique_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~7: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_historique_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~8: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_historique_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~9: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_historique_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~10: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_historique_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~11: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_historique_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~12: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_echanges_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~13: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_echanges_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~14: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_echanges_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~15: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_echanges_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~16: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_echanges_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~17: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_echanges_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~18: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_compte_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~19: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_compte_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~20: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_compte_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~21: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_compte_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~22: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_compte_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~23: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-1b, coquille controleur ct1b_coquille_compte_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~24: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_aucune_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~25: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_aucune_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~26: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_aucune_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~27: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_aucune_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~28: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_aucune_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~29: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_aucune_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~30: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_pasEncoreEnDirect_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~31: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_pasEncoreEnDirect_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~32: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_pasEncoreEnDirect_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~33: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_pasEncoreEnDirect_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~34: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_pasEncoreEnDirect_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~35: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_pasEncoreEnDirect_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~36: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_enDirect_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~37: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_enDirect_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~38: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_enDirect_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~39: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_enDirect_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~40: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_enDirect_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~41: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_enDirect_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~42: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_indisponible_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~43: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_indisponible_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~44: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_indisponible_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~45: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_indisponible_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~46: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_indisponible_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~47: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-2, CTR-01 Controle ct2_controle_indisponible_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~48: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-3, CTR-02 salle et compte rendu ct3_salle_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~49: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-3, CTR-02 salle et compte rendu ct3_compte_rendu_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~50: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-3, CTR-02 salle et compte rendu ct3_salle_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~51: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-3, CTR-02 salle et compte rendu ct3_compte_rendu_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~52: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-3, CTR-02 salle et compte rendu ct3_salle_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~53: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-3, CTR-02 salle et compte rendu ct3_compte_rendu_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~54: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-3, CTR-02 salle et compte rendu ct3_salle_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~55: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-3, CTR-02 salle et compte rendu ct3_compte_rendu_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~56: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-3, CTR-02 salle et compte rendu ct3_salle_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~57: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-3, CTR-02 salle et compte rendu ct3_compte_rendu_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~58: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-3, CTR-02 salle et compte rendu ct3_salle_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~59: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-3, CTR-02 salle et compte rendu ct3_compte_rendu_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~60: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-4, CTR-03 compte rendu ct4_compte_rendu_initial_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~61: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-4, CTR-03 compte rendu ct4_compte_rendu_rien_a_signaler_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~62: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-4, CTR-03 compte rendu ct4_compte_rendu_resultat_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~63: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-4, CTR-03 compte rendu ct4_compte_rendu_initial_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~64: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-4, CTR-03 compte rendu ct4_compte_rendu_rien_a_signaler_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~65: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-4, CTR-03 compte rendu ct4_compte_rendu_resultat_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~66: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-4, CTR-03 compte rendu ct4_compte_rendu_initial_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~67: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-4, CTR-03 compte rendu ct4_compte_rendu_rien_a_signaler_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~68: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-4, CTR-03 compte rendu ct4_compte_rendu_resultat_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~69: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-4, CTR-03 compte rendu ct4_compte_rendu_initial_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~70: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-4, CTR-03 compte rendu ct4_compte_rendu_rien_a_signaler_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~71: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-4, CTR-03 compte rendu ct4_compte_rendu_resultat_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~72: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-4, CTR-03 compte rendu ct4_compte_rendu_initial_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~73: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-4, CTR-03 compte rendu ct4_compte_rendu_rien_a_signaler_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~74: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-4, CTR-03 compte rendu ct4_compte_rendu_resultat_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~75: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-4, CTR-03 compte rendu ct4_compte_rendu_initial_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~76: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-4, CTR-03 compte rendu ct4_compte_rendu_rien_a_signaler_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~77: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-4, CTR-03 compte rendu ct4_compte_rendu_resultat_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~78: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_nature_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~79: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_personne_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~80: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_texte_requis_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~81: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_recapitulatif_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~82: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_nature_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~83: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_personne_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~84: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_texte_requis_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~85: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_recapitulatif_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~86: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_nature_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~87: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_personne_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~88: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_texte_requis_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~89: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_recapitulatif_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~90: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_nature_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~91: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_personne_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~92: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_texte_requis_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~93: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_recapitulatif_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~94: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_nature_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~95: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_personne_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~96: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_texte_requis_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~97: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_recapitulatif_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~98: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_nature_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~99: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_personne_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~100: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_texte_requis_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~101: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-5, CTR-03A observation ct5_observation_recapitulatif_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~102: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-6, CTR-04 Echanges ct6_echanges_liste_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~103: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-6, CTR-04 Echanges ct6_echanges_fil_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~104: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-6, CTR-04 Echanges ct6_echanges_fil_envoye_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~105: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-6, CTR-04 Echanges ct6_echanges_liste_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~106: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-6, CTR-04 Echanges ct6_echanges_fil_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~107: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-6, CTR-04 Echanges ct6_echanges_fil_envoye_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~108: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-6, CTR-04 Echanges ct6_echanges_liste_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~109: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-6, CTR-04 Echanges ct6_echanges_fil_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~110: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-6, CTR-04 Echanges ct6_echanges_fil_envoye_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~111: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-6, CTR-04 Echanges ct6_echanges_liste_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~112: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-6, CTR-04 Echanges ct6_echanges_fil_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~113: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-6, CTR-04 Echanges ct6_echanges_fil_envoye_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~114: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-6, CTR-04 Echanges ct6_echanges_liste_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~115: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-6, CTR-04 Echanges ct6_echanges_fil_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~116: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-6, CTR-04 Echanges ct6_echanges_fil_envoye_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~117: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-6, CTR-04 Echanges ct6_echanges_liste_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~118: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-6, CTR-04 Echanges ct6_echanges_fil_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~119: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-6, CTR-04 Echanges ct6_echanges_fil_envoye_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~120: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-9, espaces et etats transverses ct9_controle_raccourci_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~121: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-9, espaces et etats transverses ct9_feuille_espaces_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~122: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-9, espaces et etats transverses ct9_compte_mission_en_cours_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~123: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-9, espaces et etats transverses ct9_acces_revoque_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~124: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-9, espaces et etats transverses ct9_compte_rendu_indisponible_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~125: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-9, espaces et etats transverses ct9_controle_raccourci_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~126: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-9, espaces et etats transverses ct9_feuille_espaces_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~127: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-9, espaces et etats transverses ct9_compte_mission_en_cours_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~128: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-9, espaces et etats transverses ct9_acces_revoque_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~129: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-9, espaces et etats transverses ct9_compte_rendu_indisponible_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~130: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-9, espaces et etats transverses ct9_controle_raccourci_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~131: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-9, espaces et etats transverses ct9_feuille_espaces_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~132: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-9, espaces et etats transverses ct9_compte_mission_en_cours_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~133: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-9, espaces et etats transverses ct9_acces_revoque_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~134: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-9, espaces et etats transverses ct9_compte_rendu_indisponible_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~135: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-9, espaces et etats transverses ct9_controle_raccourci_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~136: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-9, espaces et etats transverses ct9_feuille_espaces_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~137: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-9, espaces et etats transverses ct9_compte_mission_en_cours_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~138: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-9, espaces et etats transverses ct9_acces_revoque_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~139: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-9, espaces et etats transverses ct9_compte_rendu_indisponible_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~140: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-7, CTR-05 Historique et CTR-06 Detail ct7_historique_liste_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~141: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-7, CTR-05 Historique et CTR-06 Detail ct7_historique_detail_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~142: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-7, CTR-05 Historique et CTR-06 Detail ct7_historique_liste_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~143: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-7, CTR-05 Historique et CTR-06 Detail ct7_historique_detail_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~144: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-7, CTR-05 Historique et CTR-06 Detail ct7_historique_liste_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~145: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-7, CTR-05 Historique et CTR-06 Detail ct7_historique_detail_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~146: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-7, CTR-05 Historique et CTR-06 Detail ct7_historique_liste_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~147: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-7, CTR-05 Historique et CTR-06 Detail ct7_historique_detail_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~148: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-7, CTR-05 Historique et CTR-06 Detail ct7_historique_liste_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~149: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-7, CTR-05 Historique et CTR-06 Detail ct7_historique_detail_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~150: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-7, CTR-05 Historique et CTR-06 Detail ct7_historique_liste_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~151: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-7, CTR-05 Historique et CTR-06 Detail ct7_historique_detail_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~152: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_motif_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~153: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_texte_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~154: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_recapitulatif_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~155: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_ajoute_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~156: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_motif_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~157: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_texte_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~158: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_recapitulatif_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~159: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_ajoute_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~160: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_motif_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~161: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_texte_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~162: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_recapitulatif_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~163: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_ajoute_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~164: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_motif_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~165: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_texte_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~166: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_recapitulatif_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~167: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_ajoute_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~168: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_motif_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~169: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_texte_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~170: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_recapitulatif_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~171: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_ajoute_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~172: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_motif_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~173: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_texte_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~174: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_recapitulatif_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:11 +163 ~175: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/captures_ct_test.dart: Capture : CT-8, CTR-03B Complement ct8_complement_ajoute_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:14 +163 ~176: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/recette_ct12_test.dart: Scenario 25 : texte a 200 %, 390 px Controle en direct : rien ne deborde, le bouton reste
+01:16 +164 ~176: D:/RA_TUTEUR/v-ct1/test/features/demo/demo_controleur_page_test.dart: /demo/controleur absente en production, presente ailleurs
+01:16 +165 ~176: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/recette_ct12_test.dart: Scenario 25 : texte a 200 %, 390 px Detail de l Historique : rien ne deborde
+01:16 +166 ~176: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/recette_ct12_test.dart: Scenario 25 : texte a 200 %, 390 px Detail de l Historique : rien ne deborde
+01:16 +167 ~176: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/recette_ct12_test.dart: Scenario 25 : texte a 200 %, 390 px Detail de l Historique : rien ne deborde
+01:17 +168 ~176: D:/RA_TUTEUR/v-ct1/test/features/demo/demo_controleur_page_test.dart: la liste propose chaque ecran x situation
+01:17 +169 ~176: D:/RA_TUTEUR/v-ct1/test/features/demo/demo_controleur_page_test.dart: la liste propose chaque ecran x situation
+01:18 +170 ~176: D:/RA_TUTEUR/v-ct1/test/features/demo/demo_controleur_page_test.dart: la liste propose chaque ecran x situation
+01:19 +171 ~176: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/recette_ct12_test.dart: Scenario 26 : clavier seul, compte rendu Tab atteint chaque choix et le bouton, Entree choisit
+01:19 +172 ~176: D:/RA_TUTEUR/v-ct1/test/features/demo/demo_controleur_page_test.dart: chacune des quatre destinations se tape depuis la coquille
+01:20 +173 ~176: D:/RA_TUTEUR/v-ct1/test/features/demo/demo_controleur_page_test.dart: chacune des quatre destinations se tape depuis la coquille
+01:20 +173 ~176: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/recette_ct12_test.dart: Capture : CT-12, 200 % et RTL ct12_texte200_controle_390
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:20 +173 ~177: D:/RA_TUTEUR/v-ct1/test/features/demo/demo_controleur_page_test.dart: chacune des quatre destinations se tape depuis la coquille
+01:20 +173 ~177: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/recette_ct12_test.dart: Capture : CT-12, 200 % et RTL ct12_texte200_historique_detail_390
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:20 +173 ~178: D:/RA_TUTEUR/v-ct1/test/features/demo/demo_controleur_page_test.dart: chacune des quatre destinations se tape depuis la coquille
+01:20 +173 ~178: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/recette_ct12_test.dart: Capture : CT-12, 200 % et RTL ct12_rtl_controle_390
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:20 +173 ~179: D:/RA_TUTEUR/v-ct1/test/features/demo/demo_controleur_page_test.dart: chacune des quatre destinations se tape depuis la coquille
+01:20 +173 ~179: D:/RA_TUTEUR/v-ct1/test/features/controleur_recette/recette_ct12_test.dart: Capture : CT-12, 200 % et RTL ct12_rtl_historique_detail_390
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:20 +173 ~180: D:/RA_TUTEUR/v-ct1/test/features/demo/demo_controleur_page_test.dart: chacune des quatre destinations se tape depuis la coquille
+01:21 +174 ~180: All tests passed!
+CODE TESTS 0 

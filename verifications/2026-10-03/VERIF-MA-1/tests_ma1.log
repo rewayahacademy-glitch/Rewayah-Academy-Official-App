@@ -1,0 +1,254 @@
+Resolving dependencies...
+Downloading packages...
+  _fe_analyzer_shared 107.0.0 (108.0.0 available)
+  analyzer 14.3.0 (14.4.0 available)
+  android_file_picker 1.1.0 (2.0.0 available)
+  built_collection 5.1.1 (5.1.2 available)
+  cli_util 0.5.2 (0.6.0 available)
+  code_assets 1.2.1 (2.1.0 available)
+  connectivity_plus 7.3.1 (7.3.2 available)
+  cross_file 0.3.5+5 (0.4.0 available)
+  cupertino_icons 1.0.9 (2.0.0 available)
+  cupertino_ui 1.0.2 (1.1.1 available)
+  dbus 0.7.15 (0.8.0 available)
+  device_info_plus 13.2.0 (13.3.0 available)
+  drift 2.34.4 (2.35.1 available)
+  drift_dev 2.34.6 (2.35.1 available)
+  file_picker 12.2.0 (13.1.0 available)
+  file_picker_darwin 1.1.0 (2.1.2 available)
+  file_picker_linux 1.1.0 (2.0.1 available)
+  file_picker_platform_interface 3.3.0 (4.0.0 available)
+  file_picker_web 3.1.0 (4.0.0 available)
+  flutter_cache_manager 3.4.2 (3.4.5 available)
+  flutter_secure_storage 11.0.0 (11.2.0 available)
+  flutter_secure_storage_darwin 0.4.0 (0.4.3 available)
+  flutter_secure_storage_linux 3.0.2 (3.0.3 available)
+  flutter_secure_storage_platform_interface 2.0.3 (2.1.1 available)
+  flutter_webrtc 1.6.0 (1.6.2+hotfix.3 available)
+  go_router 18.0.1 (18.0.2 available)
+  hooks 2.0.2 (2.2.0 available)
+  jni 1.0.3 (1.1.0 available)
+  livekit_client 2.12.0 (2.13.0 available)
+  material_color_utilities 0.13.0 (0.13.1 available)
+  material_ui 1.1.1 (1.5.0 available)
+  meta 1.18.3 (1.19.0 available)
+  native_toolchain_c 0.19.2 (0.19.5 available)
+  nm 0.5.0 (0.6.0 available)
+  objective_c 9.5.0 (9.6.2 available)
+  package_info_plus 10.2.1 (10.2.2 available)
+  passkeys_platform_interface 2.9.0 (2.10.0 available)
+  petitparser 7.0.2 (7.1.0 available)
+  platform 3.1.6 (3.2.0 available)
+  qr 3.0.2 (4.0.0 available)
+  record_use 0.6.0 (1.1.1 available)
+  sentry 8.14.2 (9.30.1 available)
+  sentry_flutter 8.14.2 (9.30.1 available)
+  slang 4.19.1 (4.19.2 available)
+  sqflite 2.4.3 (2.4.4 available)
+  sqflite_android 2.4.3 (2.4.4 available)
+  sqflite_common 2.5.11 (2.5.13 available)
+  sqflite_darwin 2.4.3+1 (2.4.4 available)
+  sqflite_platform_interface 2.4.1 (2.4.2 available)
+  sqlite3 3.5.2 (3.7.0 available)
+  storage_client 2.8.0 (2.8.1 available)
+  supabase 2.16.1 (2.16.2 available)
+  supabase_flutter 2.17.2 (2.18.0 available)
+  synchronized 3.4.1+2 (3.4.2 available)
+  test_api 0.7.12 (0.7.14 available)
+  vector_math 2.4.0 (2.4.3 available)
+  windows_file_picker 1.2.0 (2.0.0 available)
+  xml 7.0.1 (7.1.0 available)
+Got dependencies!
+58 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading D:/RA_TUTEUR/v-ma1/test/core/accessibilite/accueil_ma3_test.dart
+00:00 +0: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/accueil_ma3_test.dart: route de demonstration, 390 : Accueil, puis « Voir ma classe » mene a Ma classe
+00:04 +1: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/accueil_ma3_test.dart: route de demonstration, 390 : Accueil, puis « Voir ma classe » mene a Ma classe
+00:04 +2: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/apres_ma6_test.dart: MA-6 : idriss, 390, texte x1.0 : apres la seance, puis « Retour a la Classe »
+00:04 +3: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/accueil_ma3_test.dart: route de demonstration, 768 : Accueil, puis « Voir ma classe » mene a Ma classe
+00:05 +4: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/accueil_ma3_test.dart: route de demonstration, 768 : Accueil, puis « Voir ma classe » mene a Ma classe
+00:05 +5: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/apres_ma6_test.dart: MA-6 : idriss, 390, texte x2.0 : apres la seance, puis « Retour a la Classe »
+00:05 +6: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/accueil_ma3_test.dart: route de demonstration, 1440 : Accueil, puis « Voir ma classe » mene a Ma classe
+00:06 +7: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/apres_ma6_test.dart: MA-6 : mariam, 1440, texte x1.0 : apres la seance, puis « Retour a la Classe »
+00:06 +8: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/accueil_ma3_test.dart: Idriss, apres la seance : l Accueil et « Lire le Coran »
+00:07 +9: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/apres_ma6_test.dart: MA-6 : idriss, 1440, texte x1.0 : apres la seance, puis « Retour a la Classe »
+00:07 +10: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/accueil_ma3_test.dart: mariam : initiales de l enseignant, jamais d avertissement ; tutoiement selon l age
+00:07 +11: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/accueil_ma3_test.dart: idriss : initiales de l enseignant, jamais d avertissement ; tutoiement selon l age
+00:07 +12: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/accueil_ma3_test.dart: cote enseignant : la photo manquante reste un etat explicite
+00:07 +13: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/accueil_ma3_test.dart: bureau a 200 % : une seule colonne, rien ne deborde
+00:08 +14: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/accueil_ma3_test.dart: seance ouverte : « Rejoindre » est le seul bouton
+00:12 +15: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/coran_ma7_test.dart: (setUpAll)
+00:12 +15: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/coran_ma7_test.dart: depuis la vraie route : Coran -> action principale -> lecteur ; lecture en grand texte = true
+00:16 +16: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/ma_classe_ma4_test.dart: route de demonstration, texte x1.0 : Ma classe, titre aligne, identite en pile, une seule ligne d'etat, puis Mon suivi
+00:17 +17: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/ma_classe_ma4_test.dart: route de demonstration, texte x1.0 : Ma classe, titre aligne, identite en pile, une seule ligne d'etat, puis Mon suivi
+00:17 +18: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/coran_ma7_test.dart: mariam : reprise la ou l eleve s etait arrete(e)
+00:17 +19: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/ma_classe_ma4_test.dart: route de demonstration, texte x2.0 : Ma classe, titre aligne, identite en pile, une seule ligne d'etat, puis Mon suivi
+00:18 +20: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/ma_classe_ma4_test.dart: route de demonstration, texte x2.0 : Ma classe, titre aligne, identite en pile, une seule ligne d'etat, puis Mon suivi
+00:18 +21: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/coran_ma7_test.dart: le grossissement enregistre est retabli puis garde
+00:18 +22: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/coran_ma7_test.dart: le grossissement enregistre est retabli puis garde
+00:18 +23: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/coran_ma7_test.dart: le grossissement enregistre est retabli puis garde
+00:18 +24: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/coran_ma7_test.dart: MA-CMD-1 : 390, texte x2, grand texte = true, commandes compactes et masquables
+00:19 +25: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/coran_ma7_test.dart: MA-CMD-1 : 390, texte x2, grand texte = false, commandes compactes et masquables
+00:20 +26: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/coran_ma7_test.dart: MA-CMD-1 finition : 390, x2, grand texte = true, lecteur d ecran = false : barre et commandes s effacent ensemble
+00:20 +27: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/coran_ma7_test.dart: MA-CMD-1 finition : 390, x2, grand texte = true, lecteur d ecran = true : barre et commandes s effacent ensemble
+00:21 +28: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/coran_ma7_test.dart: MA-CMD-1 finition : 390, x2, grand texte = false, lecteur d ecran = false : barre et commandes s effacent ensemble
+00:21 +29: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/coran_ma7_test.dart: MA-CMD-1 finition : 390, x2, grand texte = false, lecteur d ecran = true : barre et commandes s effacent ensemble
+00:21 +30: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/coran_ma7_test.dart: commandes de page : 390 px, texte x1.0, grand texte = false
+00:22 +31: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/coran_ma7_test.dart: commandes de page : 390 px, texte x1.0, grand texte = true
+00:22 +32: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/coran_ma7_test.dart: commandes de page : 1440 px, texte x1.0, grand texte = false
+00:22 +33: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/coran_ma7_test.dart: commandes de page : 1440 px, texte x1.0, grand texte = true
+00:23 +34: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/mode_accessibilite_test.dart: fournisseur unique suit InterfaceMode du profil
+00:23 +35: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/coran_ma7_test.dart: commandes de page : 390 px, texte x2.0, grand texte = false
+00:23 +36: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/coran_ma7_test.dart: commandes de page : 390 px, texte x2.0, grand texte = false
+00:23 +37: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/coran_ma7_test.dart: commandes de page : 390 px, texte x2.0, grand texte = false
+00:23 +38: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/coran_ma7_test.dart: commandes de page : 390 px, texte x2.0, grand texte = false
+00:23 +39: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/mode_accessibilite_test.dart: mouvement reduit dans RewayahApp sans reglage, les durees voulues
+00:23 +40: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/mode_accessibilite_test.dart: mouvement reduit dans RewayahApp sans reglage, les durees voulues
+00:25 +41: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/mode_accessibilite_test.dart: mouvement reduit dans RewayahApp la preference locale seule met toute duree a zero
+00:25 +42: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/mode_accessibilite_test.dart: mouvement reduit dans RewayahApp reduceMotion (iOS) seul met toute duree a zero
+00:25 +43: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/mode_accessibilite_test.dart: mouvement reduit dans RewayahApp disableAnimations du systeme seul met toute duree a zero
+00:27 +44: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/mon_espace_ma8_test.dart: Mariam (mineure) : reglages communs repris, sans bascule, sans age, sans « effets », aide honnete
+00:31 +45: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/mon_espace_ma8_test.dart: MA-GR-1 : appareils et confidentialite masques, un seul ecart de section avant l'aide
+00:32 +46: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/mon_espace_ma8_test.dart: Idriss (adulte) : la bascule agit sur la presentation de la demonstration
+00:32 +47: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/mon_espace_ma8_test.dart: Idriss (adulte) : la bascule agit sur la presentation de la demonstration
+00:33 +48: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/navigation_ma2_test.dart: vraie coquille, enfant, 390 : les 4 destinations se tapent
+00:34 +49: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/navigation_ma2_test.dart: vraie coquille, enfant, 390 : les 4 destinations se tapent
+00:37 +50: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/navigation_ma2_test.dart: vraie coquille, enfant, 768 : les 4 destinations se tapent
+00:38 +51: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/navigation_ma2_test.dart: vraie coquille, enfant, 1440 : les 4 destinations se tapent
+00:39 +52: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/salle_ma5_test.dart: MA-5 : mariam, texte x1.0, Rejoindre puis la salle
+00:40 +53: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/salle_ma5_test.dart: MA-5 : mariam, texte x1.0, Rejoindre puis la salle
+00:41 +54: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/salle_ma5_test.dart: MA-5 : mariam, texte x1.0, Rejoindre puis la salle
+00:42 +55: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/salle_ma5_test.dart: MA-5 : mariam, texte x1.0, Rejoindre puis la salle
+00:43 +56: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/navigation_ma2_test.dart: demonstration les 4 destinations se tapent, 390
+00:44 +57: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/salle_ma5_test.dart: MA-5 : mariam, texte x2.0, Rejoindre puis la salle
+00:44 +58: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/navigation_ma2_test.dart: demonstration les 4 destinations se tapent, 768
+00:45 +59: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/navigation_ma2_test.dart: demonstration les 4 destinations se tapent, 768
+00:45 +60: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/salle_ma5_test.dart: MA-5 : idriss, texte x2.0, Rejoindre puis la salle
+00:45 +61: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/navigation_ma2_test.dart: demonstration les 4 destinations se tapent, 1440
+00:46 +62: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/navigation_ma2_test.dart: demonstration les 4 destinations se tapent, 1440
+00:46 +63: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/salle_ma5_test.dart: MA-5 : la salle d'Idriss sur bureau porte son prenom
+00:46 +64: D:/RA_TUTEUR/v-ma1/test/core/accessibilite/salle_ma5_test.dart: MA-5 : la salle d'Idriss sur bureau porte son prenom
+00:50 +65: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: destinationsPour : une barre par role, jamais plus de quatre un eleve a les memes destinations dans les deux presentations
+00:50 +66: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: destinationsPour : une barre par role, jamais plus de quatre les chemins des destinations sont exactement ceux du role
+00:50 +67: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: destinationsPour : une barre par role, jamais plus de quatre libelles et icones du tuteur, Compte epingle, aucune secondaire
+00:50 +68: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: destinationsPour : une barre par role, jamais plus de quatre aucun role ne demande plus de quatre destinations
+00:50 +69: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: destinationsPour : une barre par role, jamais plus de quatre chaque destination porte un libelle et son icone
+00:50 +70: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur chaque destination de la barre mene a sa branche
+00:55 +71: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: verification, puis pret, puis « Entrer dans la classe » tape
+00:55 +72: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: verification, puis pret, puis « Entrer dans la classe » tape
+00:56 +73: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: verification, puis pret, puis « Entrer dans la classe » tape
+00:56 +74: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/notifications rend NotificationsPage, destination 0 active
+00:56 +75: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/notifications rend NotificationsPage, destination 0 active
+00:56 +76: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: salle : jamais d entree sans appui, puis un seul appui
+00:56 +77: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: salle : jamais d entree sans appui, puis un seul appui
+00:57 +78: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/classes/g1?eleve=e1 rend ClasseTuteurPage, destination 0 active
+00:57 +79: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: micro bloque sans action reelle : « Reessayer », jamais « Autoriser »
+00:57 +80: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/classes/g1/planning rend PlanningClassePage, destination 0 active
+00:57 +81: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: micro bloque : « Autoriser le micro » ouvre la feuille CL-7
+00:58 +82: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/classes/g1/travail rend TravailClassePage, destination 0 active
+00:58 +83: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: aucun micro : « Reessayer » en principal, jamais d impasse
+00:58 +84: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/classes/g1/ressources rend RessourcesClassePage, destination 0 active
+00:58 +85: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/classes/g1/ressources rend RessourcesClassePage, destination 0 active
+00:58 +86: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: aucun terme technique brut, dans aucun etat
+00:59 +87: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/classes/g1/progression rend ProgressionClassePage, destination 0 active
+00:59 +88: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: Interface guidee : une seule action principale, sans liste
+00:59 +89: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer rend FoyerPage, destination 1 active
+00:59 +90: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer rend FoyerPage, destination 1 active
+00:59 +91: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: salle, Interface guidee : « Retour a l accueil » mene a l accueil de l eleve (spec 02 §2.2)
+00:59 +92: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/ajouter rend AjouterEnfantPage, destination 1 active
+01:00 +93: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/ajouter rend AjouterEnfantPage, destination 1 active
+01:00 +94: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: admin avec preparation : jamais la preparation enseignant, le comportement de son role
+01:00 +95: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/ajouter?pour=moi rend CreerMonProfilIndisponible, destination 1 active
+01:00 +96: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/ajouter?pour=moi rend CreerMonProfilIndisponible, destination 1 active
+01:00 +97: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/ajouter?pour=moi rend CreerMonProfilIndisponible, destination 1 active
+01:00 +98: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: reflow a 320 et texte a 200 % : aucun debordement
+01:00 +99: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/appareils rend AppareilsPage, destination 1 active
+01:00 +100: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: demonstration : les huit etats s ouvrent sans serveur
+01:01 +101: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/appairer/e1 rend AppairagePage, destination 1 active
+01:01 +101: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: Capture : CL-4.6 cl46_preparation_eleve_pret_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:01 +101 ~1: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/appairer/e1 rend AppairagePage, destination 1 active
+01:01 +101 ~1: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: Capture : CL-4.6 cl46_preparation_eleve_pret_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:01 +101 ~2: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/appairer/e1 rend AppairagePage, destination 1 active
+01:01 +101 ~2: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: Capture : CL-4.6 cl46_preparation_eleve_pret_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:01 +101 ~3: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/appairer/e1 rend AppairagePage, destination 1 active
+01:01 +101 ~3: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: Capture : CL-4.6 cl46_preparation_eleve_pret_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:01 +101 ~4: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/appairer/e1 rend AppairagePage, destination 1 active
+01:01 +101 ~4: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: Capture : CL-4.6 cl46_preparation_eleve_pret_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:01 +101 ~5: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/appairer/e1 rend AppairagePage, destination 1 active
+01:01 +101 ~5: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: Capture : CL-4.6 cl46_preparation_eleve_pret_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:01 +101 ~6: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/appairer/e1 rend AppairagePage, destination 1 active
+01:01 +101 ~6: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: Capture : CL-4.6 cl46_preparation_eleve_microBloque_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:01 +101 ~7: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/appairer/e1 rend AppairagePage, destination 1 active
+01:01 +101 ~7: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: Capture : CL-4.6 cl46_preparation_eleve_microBloque_390_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:01 +101 ~8: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/appairer/e1 rend AppairagePage, destination 1 active
+01:01 +101 ~8: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: Capture : CL-4.6 cl46_preparation_eleve_microBloque_768_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:01 +101 ~9: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/appairer/e1 rend AppairagePage, destination 1 active
+01:01 +101 ~9: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: Capture : CL-4.6 cl46_preparation_eleve_microBloque_768_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:01 +101 ~10: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/appairer/e1 rend AppairagePage, destination 1 active
+01:01 +101 ~10: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: Capture : CL-4.6 cl46_preparation_eleve_microBloque_1440_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:01 +101 ~11: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/appairer/e1 rend AppairagePage, destination 1 active
+01:01 +101 ~11: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: Capture : CL-4.6 cl46_preparation_eleve_microBloque_1440_dark
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:01 +101 ~12: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/appairer/e1 rend AppairagePage, destination 1 active
+01:01 +101 ~12: D:/RA_TUTEUR/v-ma1/test/features/classe_eleve/preparation_eleve_test.dart: Capture : CL-4.6 cl46_preparation_eleve_guidee_pret_390_light
+  Skip: CAPTURE_DIR absent : captures sautees (voir test/capture/LISEZ-MOI.md)
+01:01 +101 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/appairer/e1 rend AppairagePage, destination 1 active
+01:01 +102 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/e1 rend FicheElevePage, destination 1 active
+01:01 +103 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/e1/informations rend InformationsElevePage, destination 1 active
+01:02 +104 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/e1/inscription rend InscriptionElevePage, destination 1 active
+01:02 +105 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/e1/interface rend InterfaceElevePage, destination 1 active
+01:02 +106 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/e1/camera rend CameraElevePage, destination 1 active
+01:03 +107 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/e1/acces rend AccesElevePage, destination 1 active
+01:03 +108 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/e1/appareils rend AppareilsElevePage, destination 1 active
+01:03 +109 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/parcours/e1 rend ParcoursOffresPage, destination 1 active
+01:03 +110 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/suivi rend SuiviFoyerPage, destination 2 active
+01:04 +111 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/suivi/observations rend ObservationsPage, destination 2 active
+01:04 +112 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/seances/s1 rend DetailSeancePage, destination 2 active
+01:04 +113 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/seances/s1/observations?eleve=e1 rend DetailObservationsPage, destination 2 active
+01:05 +114 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/compte rend CompteTuteurPage, destination 3 active
+01:05 +115 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/compte/informations rend InformationsComptePage, destination 3 active
+01:05 +116 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/compte/securite rend SecuriteComptePage, destination 3 active
+01:05 +117 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/compte/acces rend AccesComptePage, destination 3 active
+01:06 +118 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/compte/paiements rend PaiementsComptePage, destination 3 active
+01:06 +119 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/compte/preferences rend PreferencesComptePage, destination 3 active
+01:06 +120 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/compte/preferences/apparence rend ApparenceComptePage, destination 3 active
+01:07 +121 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/compte/aide rend AideComptePage, destination 3 active
+01:07 +122 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/compte/informations-legales rend InformationsLegalesComptePage, destination 3 active
+01:07 +123 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/compte/consentements rend ConsentementObservationPage, destination 3 active
+01:07 +124 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur une tache focalisee efface la barre basse sur telephone
+01:10 +125 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur les preferences, tache focalisee, sortent par le disque retour
+01:10 +126 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur la ligne des profils du Compte allume le Foyer
+01:10 +127 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur la cloche mene aux notifications ; bascule des la tablette
+01:11 +128 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/accueil mene le tuteur a /tuteur
+01:11 +129 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/historique mene le tuteur a /tuteur/suivi
+01:11 +130 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/historique/observations mene le tuteur a /tuteur/suivi/observations
+01:12 +131 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/ajouter-enfant mene le tuteur a /tuteur/foyer/ajouter
+01:12 +132 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/ajouter-enfant?pour=moi mene le tuteur a /tuteur/foyer/ajouter?pour=moi
+01:12 +133 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/disponibilites mene le tuteur a /tuteur/foyer
+01:12 +134 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/reglages mene le tuteur a /tuteur/foyer
+01:12 +135 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/foyer/e1/appareils/connexion mene le tuteur a /tuteur/foyer/appairer/e1
+01:13 +136 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tuteur/classes/g1/observer?eleve=e1 mene le tuteur a /tuteur/classes/g1?eleve=e1
+01:13 +137 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /compte mene le tuteur a /tuteur/compte
+01:13 +138 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /compte/profil mene le tuteur a /tuteur/compte/informations
+01:13 +139 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /compte/reglages mene le tuteur a /tuteur/compte/preferences
+01:14 +140 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /compte/profils mene le tuteur a /tuteur/foyer
+01:14 +141 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /compte/profils/e1 mene le tuteur a /tuteur/foyer/e1
+01:14 +142 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tc/groupes mene le tuteur a /tuteur
+01:14 +143 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Coquille tuteur sur le vrai routeur /tc/groupes/g1 mene le tuteur a /tuteur/classes/g1
+01:14 +144 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Les autres roles gardent leur navigation l eleve : quatre destinations, Compte sans branche
+01:15 +145 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Les autres roles gardent leur navigation l enseignant et l admin gardent /compte
+01:16 +146 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Les autres roles gardent leur navigation l eleve garde son Espace Groupe sous /tc/groupes
+01:16 +147 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Aucune route orpheline chaque route declaree est atteignable par au moins une session
+01:16 +148 ~13: D:/RA_TUTEUR/v-ma1/test/router/navigation_test.dart: Aucune route orpheline toutes les routes du tuteur sont sous /tuteur (R1)
+01:16 +149 ~13: All tests passed!

@@ -1,0 +1,175 @@
+﻿### Reprise apres contradiction, 03/10, session 90248232
+pilotage HEAD = 19b405636cd1e37cc5f7708514d0c3aab1603a16
+git diff --stat 8e5f5ba3 HEAD -- 17_finance 18_supports_tableau LECONS_DES_ROLES.md : [] (vide = inchange)
+
+### Objection 2 : originaux du directeur contre blobs de 9855fb63 (git hash-object --no-filters)
+EGAL a348c8870c8e7b84a9ffc4e684fa71975494a297 (1229416 o, sha256 6B778899809E34D2...) Image ChatGPT 2 oct. 2026, 21_30_46-1.png => 17_finance/V/01_mobile_sombre_paiement_confirme.png
+EGAL 3bae1bb6fceca7f275c61f456b4bb71a5160a696 (1238992 o, sha256 41096DDC7F5BE472...) Image ChatGPT 2 oct. 2026, 21_30_50-2.png => 17_finance/V/02_mobile_sombre_mariam_finances.png
+EGAL 943e595b84d3fbd2b144f9c164cc9897c9b86cd1 (1272632 o, sha256 D5BC0627C58B7EB4...) Image ChatGPT 2 oct. 2026, 21_30_54-3.png => 17_finance/V/03_mobile_sombre_foyer_soldes.png
+EGAL 0da6351d5189023f03ebdf9609580dbee23110a6 (1205656 o, sha256 57B0A3C2C196E355...) Image ChatGPT 2 oct. 2026, 21_30_58-4.png => 17_finance/V/04_mobile_sombre_recharge.png
+EGAL 3bb070a4b5b57b1453b65a073982e6289b7d5f40 (1306517 o, sha256 5022ED1C32FAE1F9...) Image ChatGPT 2 oct. 2026, 21_31_09-1.png => 17_finance/V/05_bureau_clair_foyer_soldes.png
+EGAL 3af456545ba6a90c2c131eb39d8d2b43321152c9 (1283981 o, sha256 A596FAF3EF9FA05F...) Image ChatGPT 2 oct. 2026, 21_31_12-2.png => 17_finance/V/06_bureau_clair_mariam_finances.png
+EGAL 3da99cc3fb05bf7b0ad24ff1c61f2550349c2fcf (1380241 o, sha256 9CFB9BA6E1744D2F...) Image ChatGPT 2 oct. 2026, 21_31_15-3.png => 17_finance/V/07_bureau_clair_paiement_du_foyer.png
+EGAL 93ad84b1768572b30d7e1d87afdabbd6239ffb70 (36801 o, sha256 9E4B2CFDFBC23A5D...) REWAYAH_FINANCE_FRONTEND_GUIDE_V4_2026-10-02.md => 17_finance/V/REWAYAH_FINANCE_FRONTEND_GUIDE_V4_2026-10-02.md
+EGAL e4af1df8fc10a3d8242f856a118777bcf62f665d (1289173 o, sha256 FC6B360344FF2B82...) Classe An-Nour, panneaux équilibrés.png => "18_supports_tableau/V/Classe An-Nour, panneaux \303\251quilibr\303\251s.png"
+EGAL c13703c2f6bc2c0fb09abdf2411c56bf7d6f35ee (1260380 o, sha256 0F42F9221F3FE2DD...) Interface immersive, commandes pédagogiques ouvertes-6.png => "18_supports_tableau/V/Interface immersive, commandes p\303\251dagogiques ouvertes-6.png"
+EGAL 9a83576f344f38b4338d4c84416a7983b549d7d2 (1359389 o, sha256 3099CA6B24AEFD5F...) Les panneaux restent à la demande-1.png => "18_supports_tableau/V/Les panneaux restent \303\240 la demande-1.png"
+EGAL bec5905e451b8520854fbdfd36fd87da49f4e9cb (1342208 o, sha256 C626FAC42B49CF92...) Mode focus, document zoomé et barre média-4.png => "18_supports_tableau/V/Mode focus, document zoom\303\251 et barre m\303\251dia-4.png"
+EGAL e8dac2d5efdd1d6d90614d1dff99b19031471397 (1170172 o, sha256 59D6637ECFD2C957...) Présentation immersive d’une page ivoire-3.png => "18_supports_tableau/V/Pr\303\251sentation immersive d\342\200\231une page ivoire-3.png"
+EGAL 2f7adaa5fcc4cd2985fd6997a02744cb5ba9c235 (68678 o, sha256 4E92F858A90EB704...) REWAYAH_PLAN_SUPPORTS_TABLEAU_V2.md => 18_supports_tableau/V/REWAYAH_PLAN_SUPPORTS_TABLEAU_V2.md
+EGAL 8952c7383309482a3729750f9c199a180f436c71 (771542 o, sha256 9A2AF1752ADB2975...) Tableau blanc et note lavande-5.png => 18_supports_tableau/V/Tableau blanc et note lavande-5.png
+EGAL f825456370c01fc4cd69dbcc2cefcd52b9ee3be2 (1287312 o, sha256 8A02148C0D0254EC...) Trois vues mobiles en mode focus-7.png => 18_supports_tableau/V/Trois vues mobiles en mode focus-7.png
+EGAL 02e46211b2df20d8f33acafc1559c420b04c86a3 (1388272 o, sha256 CD31E7B166B4586D...) Trois écrans, visio et outils au toucher-2.png => "18_supports_tableau/V/Trois \303\251crans, visio et outils au toucher-2.png"
+identiques : 17 / 17
+worktree REWAYAH_FINANCE_FRONTEND_GUIDE_V4_2026-10-02.md : 38411 o, CR=1610, sans CR=36801
+worktree REWAYAH_PLAN_SUPPORTS_TABLEAU_V2.md : 69351 o, CR=673, sans CR=68678
+core.autocrlf = true
+
+### Objection 1 : accent de profil
+guide:22 : 4. Les nouvelles couleurs d'identité des profils constituent une **extension explicitement approuvée le 2 octobre 2026**. Elles ne doivent pas devenir une nouvelle palette générale.
+guide:366 : Le bandeau n'est PAS :
+guide:367 : 
+guide:368 : - un statut ;
+guide:369 : - un niveau ;
+guide:370 : - une alerte ;
+guide:371 : - une couleur de classe.
+guide:373 : C'est uniquement un identifiant visuel de personne.
+guide:465 : 2. réutiliser les accents de profils déjà présents si disponibles ;
+guide:466 : 3. s'ils n'existent pas, ajouter uniquement les tokens sémantiques nécessaires au niveau du design system ;
+guide:470 : Cette extension est la seule exception couleur nouvellement approuvée dans ce chantier.
+17_finance/00_REPRISE.md:57 : | Accent d'identité stable | `lib/core/theme/app_palette.dart:306` `teintesIdentite` (32 paires vérifiées AA, décision D-18), `:309` `teinteGroupe(index)` | Aucune couleur nouvelle (K-37) : la clé `profileAccentKey` est un index stable rendu par les données, jamais la position dans la liste. Le guide §3.8 point 2 demande justement de réutiliser l'existant. **Contredit par la revue FI-1a : voir §4 bis, X-1.** |
+17_finance/00_REPRISE.md:139 : | X-1 | Accent de profil pris dans `teintesIdentite` par `teinteGroupe(index)` : `00_REPRISE.md` §4 (ligne « Accent d'identité stable ») et §5 RISQUE (« on prend les 32 teintes d'identité existantes ») ; `02_DECOUPAGE.md` FI-2 (« bandeau d'accent depuis `teintesIdentite` par clé stable »). | Ne pas réutiliser `teinteGroupe` tel quel (ces teintes sont l'identité des classes et des couvertures) ; TH-2 tranche entre jetons d'accent distincts ou règle écrite ; « jusque-là, FI-2 ne pose aucune teinte de profil » (revue:19, revue:152). | FI-2, ligne TH-2 |
+17_finance/00_REPRISE.md:185 : - Le guide §3 approuve des couleurs nouvelles, K-37 gèle le thème : on prend les 32 teintes
+17_finance/00_REPRISE.md:186 :   d'identité existantes ; si le directeur veut les teintes exactes des maquettes, ligne TH-2.
+17_finance/00_REPRISE.md:244 : | FI15 | Chaque profil porte `ProfileIdentityAvatar` : photo ou initiale, bandeau d'accent derrière, nom lu (« Mariam, profil enfant, Classe An-Nour »). L'accent vient d'une clé stable, jamais de l'index de la liste ; il n'est ni un statut, ni une classe, ni une alerte ; pas de filtre sur la photo. | §3 ; §11.5 |
+17_finance/02_DECOUPAGE.md:32 : | 1104 | **FI-2** | Identité de profil : `ProfileIdentityAvatar` (autour de `PhotoEleve`, bandeau d'accent depuis `teintesIdentite` par clé stable, trois tailles : carte bureau, mobile, grand en-tête) et `ProfileIdentityRow` (avatar + prénom + âge + classe, ordre constant), dans `lib/core/widgets/`. Galerie de développement. | FI-1a, FI-1c | guide §3 en entier, §11.5 ; `photo_eleve.dart:20` ; `app_palette.dart:290-315` | Tests : photo et initiale, accent stable, libellé lu « Mariam, profil enfant, Classe An-Nour », 200 % sans coupure, 320 px, clair et sombre ; golden des trois tailles. | Aucun hex dans le widget ; ne pas filtrer la photo ; ne jamais indexer par position ; bandeau jamais masqué par le cercle. Ligne « Harmonisation : AvatarNom » (corrections/AVATAR-1). | Opus, 30 min, puis Sonnet |
+17_finance/02_DECOUPAGE.md:59 : | FI-2 | `ProfileIdentityAvatar` sans teinte de profil tant que TH-2 n'a pas tranché ; âge seulement s'il est rendu, ordre prénom, âge, classe constant (E-13). | revue:19, :126, :152 | X-1 |
+17_finance/02_DECOUPAGE.md:75 : | **NOUVELLE : TH-2 (hors vague FI)** | Accent de profil : jetons distincts figés par test, ou règle écrite « un profil et une classe affichés ensemble ne partagent pas une teinte » ; teintes exactes des maquettes si le directeur les veut. Aucune étape FI ne pose de teinte de profil avant. | revue:19, :151, :152 | X-1 |
+== 5629693:lib/core/theme/app_palette.dart:306-315
+306 :   final List<AppColorPair> teintesIdentite;
+307 : 
+308 :   /// La teinte d'identite d'un groupe, par index stable (decision D-18).
+309 :   AppColorPair teinteGroupe(int index) =>
+310 :       teintesIdentite[index % teintesIdentite.length];
+311 : 
+312 :   /// La teinte d'identite d'une couverture de ressource calculee (decision
+313 :   /// D-18). Meme table que [teinteGroupe] : deux demandeurs, un seul lot.
+314 :   AppColorPair teinteCouverture(int index) =>
+315 :       teintesIdentite[index % teintesIdentite.length];
+== 5629693:lib/core/tc_groupe/palette_groupe.dart:21 :       AppPalette.of(context).teinteGroupe(jeton.index);
+git grep accent de profil sur 5629693 (lib) : [] (vide = aucun accent de profil existant)
+git grep accent de profil sur a8dfcb3 (lib) : [] (vide = aucun accent de profil existant)
+git grep accent de profil sur 0796f75 (lib) : [] (vide = aucun accent de profil existant)
+git grep accent de profil sur af9f408b (lib) : [] (vide = aucun accent de profil existant)
+== board/etapes/FI-2.json (export du 03/10 07:10)
+{
+  "auteur": "A",
+  "date": "02/10",
+  "depend": [
+    "FI-1a",
+    "FI-1c"
+  ],
+  "note": "Opus 30 min puis Sonnet. Guide §3, §11.5, photo_eleve.dart:20, app_palette.dart:290-315. Bandeau pris dans teintesIdentite par clé stable (aucune couleur nouvelle, K-37), 3 tailles. Fait : photo et initiale testées, libellé lu « Mariam, profil enfant, Classe An-Nour », 200 %, 320, clair/sombre. Recoupe FOY-COUL-1 : le fermer comme doublon.",
+  "ordre": 1104,
+  "phase": "Finance (17_finance)",
+  "poste": "tous",
+  "prise": "K-60 : toute session, dans une voie libre (Maintenant). Réserver par K-03.",
+  "statut": "a_faire",
+  "titre": "Identité de profil (ProfileIdentityAvatar, ProfileIdentityRow)",
+  "vague": "Finance",
+  "voie": "FIN"
+}
+== board/etapes/TH-2.json (export du 03/10 07:10)
+{
+  "attend": "Fin de tous les rôles.",
+  "note": "Aimé par le directeur, mis en réserve le 26/09 pour ne pas retarder la suite. Code sauvegardé : branche reserve/theme-monochrome-k36 (commits 83cee7b, 855d10b, 7727511). À faire en une fois, quand tous les rôles sont finis : un réglage « Style » par rôle (violet ou noir et blanc) branché sur les jetons de couleur, pas composant par composant.",
+  "ordre": 900,
+  "phase": "Thèmes",
+  "poste": "tous",
+  "prise": "K-60 : n'importe quel poste ou session la prend dans l'ordre (plus petit « ordre » libre, dépendances faites, rien en attente du directeur). Réserver par K-03.",
+  "releve_02_10": "Bouton principal lavande pâle qui peut se lire comme inactif (captures EA-9 à EA-11, ancienne ligne PT-A-20261002-8d9412ea) ; aucun changement de couleur sans accord (K-37).",
+  "statut": "a_faire",
+  "titre": "Thème 2 « chrome / noir et blanc » (monochrome), en option dans les paramètres de chaque rôle, à côté du thème actuel chrome / violet",
+  "vague": "Après BR-1",
+  "voie": "ATTEND"
+}
+== board/etapes/FOY-COUL-1.json (export du 03/10 07:10)
+{
+  "date": "01/10",
+  "depend": [
+    "INTEG-RC-1"
+  ],
+  "note": "Comme sur les maquettes : un bandeau coloré derrière la photo de chaque profil, contenu dans la carte (il ne déborde jamais à l'extérieur). Il sert à distinguer d'un coup d'œil les profils d'un même foyer. Le tuteur choisit librement cette couleur dans les paramètres du profil concerné. Absent de l'app actuelle. À faire : retrouver la maquette source, inscrire au catalogue, couleur stockée par profil (BR-1), contraste texte et photo vérifié en clair et sombre.",
+  "note_menage": "Foyer modifié par EA. Recoupe la vague Finance (FI-2, bandeau de couleur des profils) : si FI-2 est fait, fermer FOY-COUL-1 comme doublon.",
+  "ordre": 1028,
+  "par": "Directeur (commentaire sur la page Essai de fusion, 01/10 22:22)",
+  "phase": "Voie CORR-2 (accueils, Bento, public)",
+  "poste": "tous",
+  "prise": "K-60 : n'importe quel poste ou session la prend dans l'ordre (plus petit « ordre » libre, dépendances faites, rien en attente du directeur). Réserver par K-03.",
+  "statut": "a_faire",
+  "titre": "Foyer : bandeau de couleur derrière la photo de chaque profil, couleur choisie par le tuteur",
+  "vague": "Corrections du directeur",
+  "voie": "CORR-2"
+}
+
+### Objection 4 : compaction_trait
+18_supports_tableau/00_REPRISE.md:69 : | Trait en cours (aperçu puis version compacte) | `TraitEnCours`, `simplifierTrait` (RDP, sans dépendance) | `tc_outils/compaction_trait.dart:91`, `:17` |
+18_supports_tableau/00_REPRISE.md:108 : 2. **perfect_freehand** (§9.5) n'est pas dans `pubspec.yaml`, qui est interdit (K-19). Le code existant a choisi de s'en passer (`compaction_trait.dart:9-11`). On rend avec `_PeintreAnnotations` ; la question va en TB-BR
+18_supports_tableau/TB-BR.md:8 : - **TB-BR-02 Aperçu de trait et pointeur** : canal non fiable (lossy), lots au plus toutes les 40 ms pendant le geste, environ 1 200 octets (sous 1 300), numéros de lot. Vérifier que `TraitEnCours.pointsParPaquetParDefau
+18_supports_tableau/UX_REVIEW_TB.md:199 : | 23 | **Lissage perfect_freehand** (§9.5) | — | — | Contradiction (déjà relevée) | `pubspec.yaml` interdit (K-19) ; rendu par `_PeintreAnnotations` (`couche_annotation.dart:386`) et `simplifierTrait` (`compaction_trait.
+18_supports_tableau/UX_REVIEW_TB.md:351 : | Trait, compaction | `TraitEnCours`, `simplifierTrait` | `core/tc_outils/compaction_trait.dart:91`, `:17` |
+0796f75 compaction_trait.dart:17 : List<PointNormalise> simplifierTrait(
+0796f75 compaction_trait.dart:91 : class TraitEnCours {
+0796f75 compaction_trait.dart:105 :   static const int pointsParPaquetParDefaut = 3;
+
+### Objection 5 : stylet
+plan:164 : - Avec stylet détecté : stylet pour l'encre lorsque Écrire est actif ; doigt pour déplacement/zoom. La disponibilité de pression et de rejet de paume dépend du matériel et du navigateur : ne pas la promettre partout.
+plan:165 : - Sans stylet : un doigt dessine uniquement en mode Écrire ; deux doigts déplacent/zoomment. En mode lecture, un doigt peut déplacer la page.
+18_supports_tableau/00_REPRISE.md:160 : 21. **TB21** Gestes : un doigt dessine seulement en Écrire, deux doigts déplacent ; le stylet écrit s'il est détecté (`PolitiqueSaisie`) ; pas de tour de page par balayage pendant un trait (§7).
+18_supports_tableau/UX_REVIEW_TB.md:198 : | 22 | **Gestes : un doigt n'écrit qu'en Écrire, deux doigts déplacent, stylet détecté** (§7, TB21) | F-IN | Lecture et écriture séparées. | Conforme (existant) | `PolitiqueSaisie` le fait (`couche_annotation.dart:35-59`). À relier à l'outil Écrire de TB-7b au lieu du dock dormant. | Aucune |
+0796f75 couche_annotation.dart:38 :   /// **Le stylet ecrit toujours**, y compris avant que l'outil ne soit arme :
+0796f75 couche_annotation.dart:39 :   /// c'est la regle de la spec, et c'est aussi ce que la main attend d'un
+0796f75 couche_annotation.dart:40 :   /// stylet. Le doigt, lui, n'ecrit que sur un appareil ou aucun stylet ne
+0796f75 couche_annotation.dart:41 :   /// s'est jamais manifeste, et seulement quand l'outil Stylet a ete arme dans
+0796f75 couche_annotation.dart:42 :   /// le dock -- sans quoi l'annotation serait impossible sur un telephone.
+0796f75 couche_annotation.dart:47 :     if (!styletDetecte && styletArme) {
+0796f75 couche_annotation.dart:48 :       return const <PointerDeviceKind>{
+0796f75 couche_annotation.dart:49 :         PointerDeviceKind.stylus,
+0796f75 couche_annotation.dart:50 :         PointerDeviceKind.invertedStylus,
+0796f75 couche_annotation.dart:51 :         PointerDeviceKind.touch,
+0796f75 couche_annotation.dart:52 :         PointerDeviceKind.mouse,
+0796f75 couche_annotation.dart:53 :       };
+0796f75 couche_annotation.dart:54 :     }
+0796f75 couche_annotation.dart:55 :     return const <PointerDeviceKind>{
+0796f75 couche_annotation.dart:56 :       PointerDeviceKind.stylus,
+0796f75 couche_annotation.dart:57 :       PointerDeviceKind.invertedStylus,
+0796f75 couche_annotation.dart:58 :     };
+
+### Objection 6 : maquettes du tuteur
+guide:285 : ### Tuteur mobile dark
+guide:286 : 
+guide:287 : - Foyer - Soldes et paiements
+guide:288 : - Mariam - Finances
+guide:289 : - Recharge multi-profils
+guide:290 : - Paiement confirmé
+guide:291 : 
+guide:292 : ### Tuteur desktop light
+guide:293 : 
+guide:294 : - Foyer - Soldes et paiements
+guide:295 : - Mariam - Finances
+guide:296 : - Paiement du foyer
+guide:297 : 
+guide:298 : ### Autres rôles / desktop
+guide:299 : 
+guide:300 : - Enseignant - Revenus
+guide:301 : - Finance - Vue globale
+guide:302 : - Admin - Politiques commerciales
+17_finance/00_REPRISE.md:12 : **Pour qui, par ordre de volume** : tuteur (6 maquettes sur 7), direction (2 écrans, pas de maquette fournie), enseignant (1 écran, pas de maquette), élève adulte, enfant (états d'accès seulement).
+17_finance/00_REPRISE.md:40 : 2. Mais 6 maquettes sur 7 sont des écrans **tuteur** qui existent déjà sur `ui/eleves-adultes-v1` (EA-9 soldes, EA-10 recharge, `PortPaiementsFoyer`, `PortRechargeFoyer`, foyer de démonstration). Les recréer violerait K-10 et K-51 ; le guide interdit « deux moteurs de recharge » (§4).
+17_finance/QUESTIONS.md:7 : Le guide (§2) annonce les maquettes « Enseignant - Revenus », « Finance - Vue globale » et « Admin - Politiques commerciales », mais le dossier ne contient que les 7 images du tuteur : pouvez-vous les envoyer ?
+
+### Objection 7 et remarque 5
+board/etapes/CONTRASTE-SUPPORT-1.json:9 :   "releve_02_10": "Même cause dans salle_page.dart : « Cours enregistré », libellés Micro/Caméra/Quitter et colonne Présence à 1440 en couleur de fond clair sur fond sombre (élève et enseignant ; corrigé pour le seul contrôleur en 8ea4f29) — ancienne ligne PT-B-20260927-1ab2a969. À régler avec le chantier TB si TB passe avant TH-2.",
+EA-12a dans board/etapes : 0 occurrence(s)
+05_recette/EA/RAPPORT.md:22 : balayages transverses demandés par la tâche EA-12a (mot « admin », valeurs
+05_recette/EA/RAPPORT.md:149 : **Limite assumée.** Ces 50 captures ciblent les cinq trous relevés par l'inventaire, pas une reprise intégrale de tous les écrans × 25 états × 3 largeurs × 2 thèmes (plusieurs milliers de rendus, déjà hors de portée d'EA-12 §19, point ouvert #5 du rapport EA-12a). Les autres écrans restent couverts par les commits de captures d'EA-2 à EA-11, non repris ici.

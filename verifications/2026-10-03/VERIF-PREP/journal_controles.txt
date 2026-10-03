@@ -1,0 +1,162 @@
+﻿
+### Pilotage verifie
+pilotage/tuteur-v1 HEAD = 8e5f5ba3e9a8599373798757ae87cc9d88667e29
+9855fb63 2026-10-02 22:35:16 +0300 Ménage du 02/10 : leçons des rôles, préparation Finance (17_finance) et Supports du tableau (18_supports_tableau), règles YAADEN alignées sur les consignes nettoyées
+
+### Lignes retirees depuis 9855fb63 (sources V/ et regles inchangees)
+
+(vide = identique)
+
+### Commits cites (cat-file -t)
+5629693 : commit
+a8dfcb3 : commit
+058c525 : commit
+0796f75 : commit
+d44710a : commit
+f02444f : commit
+7885b35 : commit
+0b01297 : commit
+d7b006f : commit
+cef9fba : commit
+ca841ef : commit
+
+### FI 00_REPRISE section 3 : commits et fichiers communs
+merge-base a8dfcb3 5629693 = d44710aeddadfdf9f61249db9c1da2ebe2d6e1ac
+d44710a..a8dfcb3 = 47
+d44710a..5629693 = 79
+fichiers communs : 12
+assets/i18n/fr.i18n.json
+lib/core/i18n/strings.g.dart
+lib/core/i18n/strings_fr.g.dart
+lib/core/icons/app_icons.dart
+lib/core/router/app_router.dart
+lib/core/router/redirection.dart
+lib/core/router/routes.dart
+lib/core/widgets/action_principale.dart
+lib/core/widgets/groupe_reglages.dart
+lib/features/demo/mode_demonstration.dart
+lib/features/demo/repere_demonstration.dart
+test/router/navigation_test.dart
+
+### FI devoir de regard (git grep, vide = conforme)
+[a8dfcb3]
+
+[5629693]
+
+[058c525]
+
+
+### FI citations fichier:ligne
+== 5629693:lib/core/widgets/choice_card_group.dart (lignes: 578)
+78: class ChoiceCardGroup extends StatefulWidget {
+== 5629693:lib/core/capacites/port_acces_foyer.dart (lignes: 97)
+7: enum EtatAccesAffiche {
+39: class AccesBeneficiaire {
+== 5629693:lib/core/theme/app_palette.dart (lignes: 598)
+306:   final List<AppColorPair> teintesIdentite;
+309:   AppColorPair teinteGroupe(int index) =>
+== a8dfcb3:lib/core/admin/admin_domaine.dart (lignes: 231)
+33:   finance,
+99:     AdminDomaine.finance || AdminDomaine.direction => null,
+124:       AdminDomaine.finance,
+153: List<({String libelle, String chemin})> ongletsPedagogie() =>
+== 5629693:lib/core/capacites/port_recharge_foyer.dart (lignes: 198)
+66: /// Le choix du titulaire pour un beneficiaire : une offre, jamais un montant
+67: /// saisi ni reparti (F11).
+147:   /// Le total a payer, deja redige : jamais additionne dans Flutter.
+152: abstract interface class PortRechargeFoyer {
+== 5629693:lib/core/capacites/port_paiements_foyer.dart (lignes: 140)
+57: /// **Aucun calcul** : le solde arrive deja redige ([soldeRendu]), sans taux
+61: class SoldeBeneficiaire {
+90: class SoldesFoyer {
+103: abstract interface class PortPaiementsFoyer {
+== 5629693:assets/i18n/fr.i18n.json (lignes: 4200)
+4162:         "totalRecharge5": "5,00 € (démonstration)",
+4169:         "totalRecharge40": "40,00 € (démonstration)"
+== a8dfcb3:docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md (lignes: 125)
+72: | Finance | Paiements | `/admin/finance/paiements` | `wallets`, `wallet_entries` (existent, sans interface) ; `profiles.access_until` prévu par l'ADR-003 pour le contournement manuel MVP-0 | **Bloqué ADR-003**, sauf si l'opérateur avance explicitement la V1 |
+== 5629693:lib/features/demo/demo_adulte_page.dart (lignes: 1691)
+96: enum EcranDemoAdulte {
+349: List<RouteBase> routesDemoAdulte(String environnement) {
+1248:       EcranDemoAdulte.recharge => RechargeFoyerPage(
+== a8dfcb3:lib/core/router/app_router.dart (lignes: 1388)
+1020:       // Comptable : le role existe, son interface arrive en V1 (ADR-003).
+1021:       GoRoute(
+1022:         path: Routes.comptable,
+1023:         builder: (BuildContext _, GoRouterState _) => const ComptePage(),
+1024:       ),
+== 5629693:lib/core/router/app_router.dart (lignes: 1382)
+663:                     path: 'paiements',
+
+### TB 00_REPRISE section 3 : commits en plus de 0796f75 (etat du 02/10 21:35)
+origin/ui/accessibilite-v1 -> 7885b35b 2026-10-02 20:30:04 +0300 ; en plus : 31
+origin/ui/enseignant-v1 -> 058c5251 2026-10-02 13:51:00 +0300 ; en plus : 2
+origin/ui/controleur-v1 -> 39a702ae 2026-10-02 17:23:23 +0300 ; en plus : 19
+controleur salle_page.dart :  1 file changed, 6 insertions(+), 1 deletion(-)
+
+### TB essai a blanc : git merge-tree --write-tree 0796f75 7885b35b
+CONFLICT (content): Merge conflict in lib/core/i18n/strings.g.dart
+CONFLICT (content): Merge conflict in lib/core/i18n/strings_fr.g.dart
+CONFLICT (content): Merge conflict in lib/core/widgets/groupe_reglages.dart
+CONFLICT (content): Merge conflict in lib/core/widgets/nav_shell.dart
+CONFLICT (content): Merge conflict in lib/core/widgets/page_shell.dart
+CONFLICT (content): Merge conflict in lib/core/widgets/setting_row.dart
+CONFLICT (content): Merge conflict in lib/features/compte/compte_page.dart
+CONFLICT (content): Merge conflict in lib/features/demo/demo_accessibilite_page.dart
+CONFLICT (content): Merge conflict in lib/features/salle_seance/dock_seance.dart
+CONFLICT (content): Merge conflict in lib/features/tc_observation_ui/module_reglages_observation.dart
+CONFLICT (content): Merge conflict in test/core/accessibilite/coran_ma7_test.dart
+CONFLICT (content): Merge conflict in test/features/salle_seance/guidee_fin_test.dart
+CONFLICT (content): Merge conflict in test/features/salle_seance/salle_secours_bandeau_test.dart
+CONFLICT (add/add): Merge conflict in test/widgets/nav_shell_accessibilite_test.dart
+nombre de CONFLICT : 14
+
+### TB citations fichier:ligne (0796f75 sauf mention)
+== 0796f75:lib/features/salle_seance/zone_support.dart (lignes: 811)
+25: class ZoneSupport extends StatelessWidget {
+759: class _RienPartage extends StatelessWidget {
+== 0796f75:lib/features/salle_seance/panneau_eleves.dart (lignes: 700)
+65: class PanneauEleves extends StatefulWidget {
+504: class _ActionsEleve extends StatelessWidget {
+== 0796f75:lib/core/tc_outils/evenements_outils.dart (lignes: 327)
+238: class EvenementMasquage extends EvenementOutil {
+268: class DiffusionOutils {
+== 0796f75:lib/core/tc_outils/annotation_layer.dart (lignes: 372)
+11: enum PorteeAnnotation {
+46: enum OutilTrait {
+82: class PointNormalise {
+126: class TraitVectoriel {
+247: class AnnotationLayer {
+== 0796f75:supabase/migrations/0032_tc_catalogue.sql (lignes: 693)
+228: create table public.annotation_layer (
+280: create table public.annotation_trait (
+404: create table public.session_shared_content (
+410:   display_mode          text not null check (display_mode in ('page', 'verse', 'focus')),
+== 0796f75:lib/core/tc_outils/compaction_trait.dart (lignes: 192)
+9: /// Algorithme de Ramer-Douglas-Peucker, ecrit ici plutot qu'importe : il tient
+10: /// en trente lignes, et ajouter une dependance pour cela serait exactement le
+11: /// genre de dette que `pubspec.yaml` est gele pour eviter.
+105:   static const int pointsParPaquetParDefaut = 3;
+== 0796f75:lib/core/theme/app_mouvement.dart (lignes: 149)
+25:   static const Duration apparition = Duration(milliseconds: 180);
+28:   static const Duration navigation = Duration(milliseconds: 220);
+53:   static const Duration pulsation = Duration(milliseconds: 1200);
+== 0796f75:lib/features/tc_dock/couche_annotation.dart (lignes: 513)
+35: abstract final class PolitiqueSaisie {
+74: class CoucheAnnotation extends ConsumerStatefulWidget {
+386: class _PeintreAnnotations extends CustomPainter {
+== 0796f75:lib/features/salle_seance/salle_seance.dart (lignes: 1477)
+41: class EtatLocalSeance {
+206: class _FocusPanneaux extends StatefulWidget {
+1250: class _BarreBasse extends StatelessWidget {
+== 0796f75:lib/features/salle/salle_page.dart (lignes: 2277)
+79: class SallePage extends ConsumerStatefulWidget {
+1000: class _CommandesControle extends StatelessWidget {
+== 0796f75:lib/core/tc_bibliotheque/catalogue_local.dart (lignes: 217)
+15: /// relues, et aucun bucket Storage n'existe en dehors de `kyc` et `avatars`.
+== 7885b35:lib/core/accessibilite/commandes_masquables.dart (lignes: 186)
+25:   const CommandesMasquables({
+48:   static const Duration delaiParDefaut = Duration(seconds: 4);
+== 7885b35:lib/features/salle_seance/salle_seance.dart (lignes: 1550)
+161:                 child: CommandesMasquables(
+0796f75:pubspec.yaml:63:  livekit_client: ^2.12.0
