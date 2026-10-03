@@ -15,6 +15,7 @@ import '../../features/admin_configuration_politique_kyc/politique_revue_kyc_pag
 import '../../features/admin_configuration_regles/regles_page.dart';
 import '../../features/admin_demandes/demandes_page.dart';
 import '../../features/admin_dossiers/dossiers_page.dart';
+import '../../features/admin_finance/finance_page.dart';
 import '../../features/admin_groupes/groupes_page.dart';
 import '../../features/admin_journal/journal_page.dart';
 import '../../features/admin_observations/observations_admin_page.dart';
@@ -66,6 +67,7 @@ import '../../features/demo/demo_adulte_page.dart';
 import '../../features/demo/demo_classe_page.dart';
 import '../../features/demo/demo_controleur_page.dart';
 import '../../features/demo/demo_enseignant_page.dart';
+import '../../features/demo/demo_finance_page.dart';
 import '../../features/demo/demo_salle_page.dart';
 import '../../features/dossier/attente_page.dart';
 import '../../features/dossier/depot_piece_page.dart';
@@ -854,10 +856,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md`), routes NESTED par domaine.
       // Chaque route porte son domaine explicitement, comme
       // `_CoquilleSecondaire` portait deja son role -- ni l'un ni l'autre ne
-      // devine depuis le chemin courant. Pedagogie, Finance, Configuration et
-      // Direction n'ont **aucune route ici** : l'audit interdit une page
-      // construite pour un domaine sans fonction reelle
-      // (`AdminDomaine.chemin` y est nul, `AdminShell` les rend inertes).
+      // devine depuis le chemin courant. Direction n'a **aucune route ici** :
+      // l'audit interdit une page construite pour un domaine sans fonction
+      // reelle (`AdminDomaine.chemin` y est nul, `AdminShell` le rend inerte).
+      // Finance a ses routes depuis FI-1b (guide Finance V4 du directeur,
+      // 02/10/2026) : sans port branche, chaque onglet dit honnetement
+      // « Pas encore disponible ».
       GoRoute(
         path: Routes.admin,
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
@@ -975,6 +979,24 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.pedagogie,
           child: QualitePage(),
+        ),
+      ),
+      // Domaine Finance (FI-1b) : la racine EST la Vue globale (route
+      // canonique « Vue d'ensemble » du contrat metier), jamais une
+      // redirection ; Politiques commerciales est son onglet pair
+      // (`ongletsFinance()`).
+      GoRoute(
+        path: Routes.adminFinance,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.finance,
+          child: FinancePage(onglet: OngletFinance.vueGlobale),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminFinancePolitiques,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.finance,
+          child: FinancePage(onglet: OngletFinance.politiques),
         ),
       ),
       // Domaine Configuration : la racine redirige vers Regles, sa fonction
@@ -1167,6 +1189,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ...routesDemoControleur(Env.environnement),
       ...routesDemoAccessibilite(Env.environnement),
       ...routesDemoAdulte(Env.environnement),
+      ...routesDemoFinance(Env.environnement),
     ],
   );
 });

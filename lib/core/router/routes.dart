@@ -425,6 +425,15 @@ abstract final class Routes {
   /// Controle qualite pedagogique (`ADM-14`), sous Pedagogie.
   static const String adminPedagogieQualite = '/admin/pedagogie/qualite';
 
+  /// Domaine Finance (FI-1b) : racine et onglet « Vue globale » (route
+  /// canonique « Vue d'ensemble » du contrat metier,
+  /// `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md:68`).
+  static const String adminFinance = '/admin/finance';
+
+  /// Politiques commerciales, onglet de Finance (FI-1b ; revue FI-1a,
+  /// `17_finance/UX_REVIEW_08_FINANCE.md:91`).
+  static const String adminFinancePolitiques = '/admin/finance/politiques';
+
   /// Domaine Configuration -- regles globales du systeme, contrat metier du
   /// 19 septembre 2026 (`docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md`).
   static const String adminConfiguration = '/admin/configuration';
@@ -518,6 +527,10 @@ abstract final class Routes {
   /// `?ecran=...&etat=...&titulaire=femme&vue=conjoint`.
   /// Enregistree seulement hors production (`environnementAutoriseDemo`).
   static const String demoAdulte = '/demo/adulte';
+
+  /// Le domaine Finance en demonstration (FI-1b) : `?ecran=...`.
+  /// Enregistree seulement hors production (`environnementAutoriseDemo`).
+  static const String demoFinance = '/demo/finance';
 
   // --- Developpement --------------------------------------------------------
 

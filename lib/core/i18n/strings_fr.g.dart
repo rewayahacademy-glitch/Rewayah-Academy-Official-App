@@ -1397,6 +1397,7 @@ class Traductions$admin$fr {
 	late final Traductions$admin$groupes$fr groupes = Traductions$admin$groupes$fr.internal(_root);
 	late final Traductions$admin$diagnostics$fr diagnostics = Traductions$admin$diagnostics$fr.internal(_root);
 	late final Traductions$admin$qualite$fr qualite = Traductions$admin$qualite$fr.internal(_root);
+	late final Traductions$admin$finance$fr finance = Traductions$admin$finance$fr.internal(_root);
 	late final Traductions$admin$regles$fr regles = Traductions$admin$regles$fr.internal(_root);
 	late final Traductions$admin$fonctionnalites$fr fonctionnalites = Traductions$admin$fonctionnalites$fr.internal(_root);
 	late final Traductions$admin$conservationDonnees$fr conservationDonnees = Traductions$admin$conservationDonnees$fr.internal(_root);
@@ -5351,6 +5352,21 @@ class Traductions$admin$qualite$fr {
 
 	/// fr: 'Le traitement n'a pas abouti : {message}'
 	String traiterErreur({required Object message}) => 'Le traitement n\'a pas abouti : ${message}';
+}
+
+// Path: admin.finance
+class Traductions$admin$finance$fr {
+	Traductions$admin$finance$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vue globale'
+	String get vueGlobale => 'Vue globale';
+
+	/// fr: 'Politiques commerciales'
+	String get politiques => 'Politiques commerciales';
 }
 
 // Path: admin.regles
@@ -16675,6 +16691,8 @@ extension on Traductions {
 			'admin.qualite.champNote' => 'Note (optionnelle)',
 			'admin.qualite.traiterEnvoyer' => 'Marquer traité',
 			'admin.qualite.traiterErreur' => ({required Object message}) => 'Le traitement n\'a pas abouti : ${message}',
+			'admin.finance.vueGlobale' => 'Vue globale',
+			'admin.finance.politiques' => 'Politiques commerciales',
 			'admin.regles.titre' => 'Règles',
 			'admin.regles.intro' => 'Les valeurs par défaut de toute la plateforme. Une exception pour un profil précis se pose depuis Opérations > Règles individuelles, jamais ici.',
 			'admin.regles.erreur' => 'Les règles n\'ont pas pu être lues. Réessayez dans un instant.',
@@ -16895,10 +16913,10 @@ extension on Traductions {
 			'admin.journal.evtKycTranche' => 'Dossier d\'identité tranché',
 			'admin.journal.evtProfilCree' => 'Profil créé',
 			'admin.journal.evtProfilEnfantCree' => 'Profil enfant créé',
-			'admin.journal.evtCodeCree' => 'Code d\'appairage créé',
-			'admin.journal.evtAppareilAppaire' => 'Appareil appairé',
 			_ => null,
 		} ?? switch (path) {
+			'admin.journal.evtCodeCree' => 'Code d\'appairage créé',
+			'admin.journal.evtAppareilAppaire' => 'Appareil appairé',
 			'admin.journal.evtAppareilRevoque' => 'Appareil révoqué',
 			'admin.journal.evtPedagogie' => 'Réglages pédagogiques modifiés',
 			'admin.journal.evtAffectationPrise' => 'Élève pris par un enseignant',
@@ -17409,10 +17427,10 @@ extension on Traductions {
 			'compte.tuteur.pageAide.indisponibleTitre' => 'Aide pas encore disponible',
 			'compte.tuteur.pageAide.indisponiblePhrase' => 'Les questions fréquentes et le contact de l\'académie ne sont pas encore ouverts dans l\'application.',
 			'compte.tuteur.pageAide.canalCourriel' => 'Courriel de l\'académie',
-			'compte.tuteur.pageAide.canalLien' => 'Page d\'aide de l\'académie',
-			'compte.tuteur.pageAide.aucunCanal' => 'Aucun canal d\'aide n\'est publié pour le moment.',
 			_ => null,
 		} ?? switch (path) {
+			'compte.tuteur.pageAide.canalLien' => 'Page d\'aide de l\'académie',
+			'compte.tuteur.pageAide.aucunCanal' => 'Aucun canal d\'aide n\'est publié pour le moment.',
 			'compte.tuteur.pageLegal.titre' => 'Informations légales',
 			'compte.tuteur.pageLegal.documents' => 'Documents acceptés',
 			'compte.tuteur.pageLegal.conditionsTuteur' => 'Conditions du tuteur',
@@ -17923,10 +17941,10 @@ extension on Traductions {
 			'enseignant.bienvenue.prerequisFuseau' => 'Vérifier mon fuseau horaire',
 			'enseignant.bienvenue.ctaPhoto' => 'Ajouter ma photo',
 			'enseignant.bienvenue.ctaInformations' => 'Vérifier mes informations',
-			'enseignant.bienvenue.ctaJournee' => 'Voir ma journée',
-			'enseignant.bienvenue.rappels' => 'Deux choses à ne pas découvrir en cours de route',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.bienvenue.ctaJournee' => 'Voir ma journée',
+			'enseignant.bienvenue.rappels' => 'Deux choses à ne pas découvrir en cours de route',
 			'enseignant.bienvenue.declarer' => 'Déclarer mes disponibilités',
 			'enseignant.bienvenue.versJournee' => 'Aller à ma journée',
 			'enseignant.bienvenue.horsLigne' => 'Sans réseau, vos créneaux ne pourront pas être enregistrés.',
@@ -18437,10 +18455,10 @@ extension on Traductions {
 			'controleur.echanges.envoyer' => 'Envoyer',
 			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
 			'controleur.echanges.enCours' => 'Envoi en cours.',
-			'controleur.echanges.envoye' => 'Envoyé.',
-			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.echanges.envoye' => 'Envoyé.',
+			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.reessayer' => 'Réessayer',
 			'controleur.echanges.nouveauMessage' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
 			'controleur.demo.titre' => 'Démonstration contrôleur',
@@ -18951,10 +18969,10 @@ extension on Traductions {
 			'tc.parcours.signalement.categorieValeur.technique' => 'Technique',
 			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
 			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
-			'tc.parcours.signalement.interne' => 'Note interne',
-			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.signalement.interne' => 'Note interne',
+			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',
 			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'Élève ${eleve}. La séance, le groupe et votre nom sont déjà joints.',

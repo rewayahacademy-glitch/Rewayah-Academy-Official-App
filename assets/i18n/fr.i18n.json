@@ -1591,6 +1591,10 @@
       "traiterEnvoyer": "Marquer traité",
       "traiterErreur": "Le traitement n'a pas abouti : {message}"
     },
+    "finance": {
+      "vueGlobale": "Vue globale",
+      "politiques": "Politiques commerciales"
+    },
     "regles": {
       "titre": "Règles",
       "intro": "Les valeurs par défaut de toute la plateforme. Une exception pour un profil précis se pose depuis Opérations > Règles individuelles, jamais ici.",

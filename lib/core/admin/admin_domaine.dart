@@ -28,8 +28,10 @@ enum AdminDomaine {
   /// domaine.
   pedagogie,
 
-  /// Reserve. Hors MVP-0, module finance (ADR-003), voir
+  /// Vue globale et politiques commerciales (FI-1b, guide Finance V4 du
+  /// directeur, 02/10/2026), routes du contrat metier
   /// `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md`.
+  /// Sans port branche, chaque onglet dit « Pas encore disponible ».
   finance,
 
   /// Regles globales du systeme -- distinctes de Finance par nature, jamais
@@ -96,7 +98,8 @@ extension AdminDomaineX on AdminDomaine {
     AdminDomaine.pedagogie => Routes.adminPedagogie,
     AdminDomaine.configuration => Routes.adminConfiguration,
     AdminDomaine.securite => Routes.adminSecuriteAudit,
-    AdminDomaine.finance || AdminDomaine.direction => null,
+    AdminDomaine.finance => Routes.adminFinance,
+    AdminDomaine.direction => null,
   };
 
   /// Vrai quand le domaine a une fonction reelle, livree et atteignable.
@@ -109,12 +112,10 @@ extension AdminDomaineX on AdminDomaine {
 /// gel d'architecture. Direction ne parait meme pas dans cette liste tant que
 /// [voitDirection] ne l'accorde pas -- « ni la route ni le libelle ne sont
 /// exposes » (regle 6 de l'audit) -- fixe a `false` aujourd'hui, faute de
-/// toute fondation de permission (`SessionState.peutVoirDirection`). Les
-/// domaine reserve restant (Finance), lui, **reste visible** mais inerte :
-/// l'audit ne demande pas de le masquer, seulement de ne rien construire
-/// derriere. Pedagogie a quitte cette liste le 19 septembre 2026, ses cinq
+/// toute fondation de permission (`SessionState.peutVoirDirection`).
+/// Pedagogie a quitte les domaines reserves le 19 septembre 2026, ses cinq
 /// fonctions livrees ; Configuration l'a quittee le meme jour (soir), ses
-/// trois premieres fonctions livrees.
+/// trois premieres fonctions livrees ; Finance le 3 octobre 2026 (FI-1b).
 List<AdminDomaine> domainesAdmin({required bool voitDirection}) =>
     <AdminDomaine>[
       AdminDomaine.accueil,
@@ -133,7 +134,7 @@ List<AdminDomaine> domainesAdmin({required bool voitDirection}) =>
 /// **Une recherche de navigation, pas une recherche metier** : aucune donnee
 /// n'est interrogee, seulement des libelles fixes et leurs routes -- ce
 /// qu'une coquille a le droit de faire, rien de plus. Un domaine sans
-/// fonction (Finance) n'y figure pas : il n'a pas de route a trouver.
+/// fonction (Direction) n'y figure pas : il n'a pas de route a trouver.
 List<({String libelle, String chemin})> ciblesRechercheAdmin({
   required bool voitDirection,
 }) => <({String libelle, String chemin})>[
@@ -169,6 +170,21 @@ List<({String libelle, String chemin})> ongletsPedagogie() =>
         chemin: Routes.adminPedagogieProgrammes,
       ),
       (libelle: t.admin.qualite.titre, chemin: Routes.adminPedagogieQualite),
+    ];
+
+/// Les deux fonctions pairs du domaine Finance (FI-1b), dans l'ordre du guide
+/// Finance V4 §2 et des maquettes 09 et 10 : Vue globale, puis Politiques
+/// commerciales (revue FI-1a, `17_finance/UX_REVIEW_08_FINANCE.md:91`, :297).
+/// Les politiques vivent sous Finance, pas sous Configuration : une
+/// politique commerciale est financiere par nature (contrat metier).
+/// Consommee par `SousNavigationDomaine` dans l'en-tete de `FinancePage`.
+List<({String libelle, String chemin})> ongletsFinance() =>
+    <({String libelle, String chemin})>[
+      (libelle: t.admin.finance.vueGlobale, chemin: Routes.adminFinance),
+      (
+        libelle: t.admin.finance.politiques,
+        chemin: Routes.adminFinancePolitiques,
+      ),
     ];
 
 /// Les fonctions livrees du domaine Configuration, dans l'ordre du contrat

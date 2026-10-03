@@ -38,33 +38,26 @@ void main() {
   });
 
   group('AdminDomaine.chemin : nul pour un domaine sans fonction livree', () {
-    test(
-      'Accueil, Operations, Personnes, Pedagogie, Configuration et Securite '
-      'ont une route reelle',
-      () {
-        for (final AdminDomaine domaine in <AdminDomaine>[
-          AdminDomaine.accueil,
-          AdminDomaine.operations,
-          AdminDomaine.personnes,
-          AdminDomaine.pedagogie,
-          AdminDomaine.configuration,
-          AdminDomaine.securite,
-        ]) {
-          expect(domaine.chemin, isNotNull, reason: domaine.name);
-          expect(domaine.chemin, startsWith('/admin'), reason: domaine.name);
-          expect(domaine.actif, isTrue, reason: domaine.name);
-        }
-      },
-    );
-
-    test('Finance et Direction n ont aucune route', () {
+    test('Accueil, Operations, Personnes, Pedagogie, Finance, Configuration et '
+        'Securite ont une route reelle', () {
       for (final AdminDomaine domaine in <AdminDomaine>[
+        AdminDomaine.accueil,
+        AdminDomaine.operations,
+        AdminDomaine.personnes,
+        AdminDomaine.pedagogie,
         AdminDomaine.finance,
-        AdminDomaine.direction,
+        AdminDomaine.configuration,
+        AdminDomaine.securite,
       ]) {
-        expect(domaine.chemin, isNull, reason: domaine.name);
-        expect(domaine.actif, isFalse, reason: domaine.name);
+        expect(domaine.chemin, isNotNull, reason: domaine.name);
+        expect(domaine.chemin, startsWith('/admin'), reason: domaine.name);
+        expect(domaine.actif, isTrue, reason: domaine.name);
       }
+    });
+
+    test('Direction n a aucune route', () {
+      expect(AdminDomaine.direction.chemin, isNull);
+      expect(AdminDomaine.direction.actif, isFalse);
     });
 
     test('aucune route n est partagee entre deux domaines actifs', () {
@@ -76,16 +69,19 @@ void main() {
     });
   });
 
-  group('ciblesRechercheAdmin : une recherche de navigation, pas de donnees', () {
-    test('ne couvre que les domaines actifs', () {
-      final List<({String libelle, String chemin})> cibles =
-          ciblesRechercheAdmin(voitDirection: true);
+  group(
+    'ciblesRechercheAdmin : une recherche de navigation, pas de donnees',
+    () {
+      test('ne couvre que les domaines actifs', () {
+        final List<({String libelle, String chemin})> cibles =
+            ciblesRechercheAdmin(voitDirection: true);
 
-      expect(cibles.length, 6);
-      for (final ({String libelle, String chemin}) cible in cibles) {
-        expect(cible.libelle, isNotEmpty);
-        expect(cible.chemin, startsWith('/admin'));
-      }
-    });
-  });
+        expect(cibles.length, 7);
+        for (final ({String libelle, String chemin}) cible in cibles) {
+          expect(cible.libelle, isNotEmpty);
+          expect(cible.chemin, startsWith('/admin'));
+        }
+      });
+    },
+  );
 }
