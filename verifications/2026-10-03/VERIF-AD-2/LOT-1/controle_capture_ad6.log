@@ -1,0 +1,41 @@
+00:00 +0: loading D:/RA_TUTEUR/r-ad/test/capture/ad6_revue_capture_test.dart
+00:00 +0: Capture : AD-6 revue du dossier (setUpAll)
+FAMILLES chargees : MaterialIcons, UthmanTahaNaskh, NotoSansArabic, PlusJakartaSans, DMSans, Phosphor, PhosphorFill, packages/cupertino_icons/CupertinoIcons
+00:00 +0: Capture : AD-6 revue du dossier 390x844@3, nominal Omar, light
+PNG C:\Users\dell\AppData\Local\Temp\claude_ctrl_caps\ad6_nominal_390x844@3_light.png
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:694:25)
+#1      WidgetController.element (package:flutter_test/src/controller.dart:888:30)
+#2      WidgetController.dragUntilVisible.<anonymous closure> (package:flutter_test/src/controller.dart:2489:38)
+<asynchronous suspension>
+#3      TestAsyncUtils.guard.<anonymous closure> (package:flutter_test/src/test_async_utils.dart:130:27)
+<asynchronous suspension>
+#4      main.<anonymous closure>.<anonymous closure> (file:///D:/RA_TUTEUR/r-ad/test/capture/ad6_revue_capture_test.dart:167:13)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  390x844@3, nominal Omar, light
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:05 +0 -1: Capture : AD-6 revue du dossier 390x844@3, nominal Omar, light [E]
+  Test failed. See exception logs above.
+  The test description was: 390x844@3, nominal Omar, light
+  
+00:05 +0 -1: Capture : AD-6 revue du dossier 768x1024@1, nominal Omar, light
+PNG C:\Users\dell\AppData\Local\Temp\claude_ctrl_caps\ad6_nominal_768x1024@1_light.png
+00:07 +1 -1: Capture : AD-6 revue du dossier 1440x900@1, nominal Omar, light
+PNG C:\Users\dell\AppData\Local\Temp\claude_ctrl_caps\ad6_nominal_1440x900@1_light.png
+00:08 +2 -1: Capture : AD-6 revue du dossier (tearDownAll)
+00:08 +2 -1: Some tests failed.
+
+Failing tests:
+  D:/RA_TUTEUR/r-ad/test/capture/ad6_revue_capture_test.dart: Capture : AD-6 revue du dossier 390x844@3, nominal Omar, light

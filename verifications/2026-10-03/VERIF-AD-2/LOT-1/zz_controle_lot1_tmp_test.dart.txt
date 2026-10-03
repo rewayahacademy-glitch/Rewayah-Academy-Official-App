@@ -1,0 +1,90 @@
+// TEMPORAIRE (VERIF-AD-2 LOT-1, controle adverse) : supprime apres mesure,
+// jamais committe dans r-ad. Hors de lib/ et test/.
+// Mesure ou va le focus quand on decide le DERNIER dossier de la file alors
+// qu'il en reste un autre au-dessus (pas de suivant, file non vide).
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/app.dart';
+import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/app_router.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
+import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
+import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
+
+Future<void> _stabiliser(WidgetTester tester) async {
+  for (int i = 0; i < 8; i++) {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+}
+
+void main() {
+  for (final Size taille in <Size>[const Size(1440, 900), const Size(390, 844)]) {
+    testWidgets('${taille.width.toInt()} : focus apres decision du dernier, file non vide', (
+      WidgetTester tester,
+    ) async {
+      final EtatRevueDemo etat = EtatRevueDemo.initial();
+      for (final String id in etat.dossiers.keys) {
+        if (id != DonneesDossiersDemo.enseignantNominal &&
+            id != DonneesDossiersDemo.enseignantDocumentaire) {
+          etat.dossiers[id]!.statut = StatutRevue.valide;
+        }
+      }
+      // Omar devient le plus recent : dernier de la file, sans suivant.
+      etat.dossiers[DonneesDossiersDemo.enseignantNominal]!.soumisLe =
+          DateTime.now().toUtc();
+      tester.view.physicalSize = taille;
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: surchargesDemoAdmin(environnement: 'staging', etat: etat),
+          child: TranslationProvider(
+            child: RewayahApp(
+              builder: (BuildContext context, Widget? child) =>
+                  RepereDemonstration(child: child),
+            ),
+          ),
+        ),
+      );
+      await _stabiliser(tester);
+      final GoRouter routeur = ProviderScope.containerOf(
+        tester.element(find.byType(RewayahApp)),
+      ).read(routeurProvider);
+      routeur.go(Routes.adminPersonnesDossiers);
+      await _stabiliser(tester);
+      await tester.tap(
+        find.bySemanticsLabel(RegExp("^Ouvrir le dossier d(e |')Omar")),
+      );
+      await _stabiliser(tester);
+      for (final String point in <String>[
+        t.dossiers.pointLisible,
+        t.dossiers.pointNom,
+        t.dossiers.pointValidite,
+      ]) {
+        await tester.ensureVisible(find.text(point));
+        await _stabiliser(tester);
+        await tester.tap(find.text(point));
+        await _stabiliser(tester);
+      }
+      await tester.ensureVisible(find.text(t.dossiers.approuver));
+      await _stabiliser(tester);
+      await tester.tap(find.text(t.dossiers.approuver));
+      await _stabiliser(tester);
+      await tester.tap(find.text(t.dossiers.approuver).last);
+      await _stabiliser(tester);
+      // ignore: avoid_print
+      print(
+        'CONTROLE ${taille.width.toInt()} : omarVisible=${find.textContaining('Omar').evaluate().length} '
+        'aucun=${find.text(t.dossiers.aucun).evaluate().length} '
+        'focus=${FocusManager.instance.primaryFocus?.debugLabel} '
+        'focusNode=${FocusManager.instance.primaryFocus}',
+      );
+    });
+  }
+}

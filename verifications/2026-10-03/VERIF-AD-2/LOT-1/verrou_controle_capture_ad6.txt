@@ -1,0 +1,2 @@
+﻿VERROU acquis 11:49:37 -> set CAPTURE_DIR=C:\Users\dell\AppData\Local\Temp\claude_ctrl_caps&& flutter test --no-pub test/capture/ad6_revue_capture_test.dart --plain-name "nominal Omar, light" -r expanded > D:\RA_TUTEUR\pilotage-git\verifications\2026-10-03\VERIF-AD-2\LOT-1\controle_capture_ad6.log 2>&1
+VERROU libéré, durée 26 s, code 1
