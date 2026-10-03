@@ -94,7 +94,9 @@ Sorties complètes : `remerge_<sha>.txt` ; diff de la correction : `correction_4
 - **Slang** : `dart run slang` relancé sur 4a4fbe7 (`08_slang.log`) : régénération OK. `git status` marque les trois
   `strings*.g.dart` modifiés mais `git diff --stat` ne montre aucune ligne : écart de fins de ligne seulement
   (avertissements LF/CRLF dans le même journal). Recontrôle octet à octet, fins de ligne normalisées :
-  `11_slang_recontrole.log` (voir le résultat en fin de rapport).
+  `11_slang_recontrole.log` : `strings.g.dart` 6613 octets, `strings_fr.g.dart` 893240, `strings_ar.g.dart` 24888,
+  **identique=True** pour les trois ; `git diff --numstat` vide, avec ou sans `--ignore-cr-at-eol` (core.autocrlf=true).
+  Le généré du commit est donc exactement celui des `.i18n.json`. Fichiers restaurés ensuite (status vide).
 - **Couleurs (K-37)** : aucune ligne `Color(0x`, `Colors.`, `fromARGB`, `fromRGBO`, `withOpacity`, `withValues(alpha`
   ajoutée par les commits d'intégration (remerge-diff des 4 fusions + 4a4fbe7) ; aucun fichier `lib/core/theme` touché
   par eux (`06_skip_couleurs.log`).

@@ -1,0 +1,21 @@
+﻿HEAD 4a4fbe7f ; core.autocrlf=true
+Generating translations...
+
+[32mTranslations generated successfully. (0.765 seconds)[0m
+== git status --porcelain lib/core/i18n
+ M lib/core/i18n/strings.g.dart
+ M lib/core/i18n/strings_ar.g.dart
+ M lib/core/i18n/strings_fr.g.dart
+== git diff --numstat (filtres git appliques)
+warning: in the working copy of 'lib/core/i18n/strings.g.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/core/i18n/strings_ar.g.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/core/i18n/strings_fr.g.dart', LF will be replaced by CRLF the next time Git touches it
+== git diff --numstat --ignore-cr-at-eol
+warning: in the working copy of 'lib/core/i18n/strings.g.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/core/i18n/strings_ar.g.dart', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'lib/core/i18n/strings_fr.g.dart', LF will be replaced by CRLF the next time Git touches it
+== hash du fichier genere contre le blob du commit (fins de ligne normalisees)
+strings.g.dart octets_disque=6613 octets_commit=6613 identique=True
+strings_fr.g.dart octets_disque=893240 octets_commit=893240 identique=True
+strings_ar.g.dart octets_disque=24888 octets_commit=24888 identique=True
+== apres restauration

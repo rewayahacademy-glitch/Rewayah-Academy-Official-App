@@ -1,0 +1,26 @@
+$w = 'D:\RA_TUTEUR\r-integ'
+$p = 'D:\RA_TUTEUR\pilotage-git\verifications\2026-10-03\INTEG-RC-1-R'
+$o = "$p\11_slang_recontrole.log"
+Set-Location $w
+$env:PATH = "C:\flutter\bin;" + $env:PATH
+"HEAD $(git rev-parse --short HEAD) ; core.autocrlf=$(git config core.autocrlf)" | Out-File -Encoding utf8 $o
+cmd /c "dart run slang >> `"$o`" 2>&1"
+"== git status --porcelain lib/core/i18n" | Out-File -Append -Encoding utf8 $o
+cmd /c "git status --porcelain -- lib/core/i18n >> `"$o`" 2>&1"
+"== git diff --numstat (filtres git appliques)" | Out-File -Append -Encoding utf8 $o
+cmd /c "git diff --numstat -- lib/core/i18n >> `"$o`" 2>&1"
+"== git diff --numstat --ignore-cr-at-eol" | Out-File -Append -Encoding utf8 $o
+cmd /c "git diff --numstat --ignore-cr-at-eol -- lib/core/i18n >> `"$o`" 2>&1"
+"== hash du fichier genere contre le blob du commit (fins de ligne normalisees)" | Out-File -Append -Encoding utf8 $o
+$py = @'
+import subprocess, sys
+for f in ["strings.g.dart", "strings_fr.g.dart", "strings_ar.g.dart"]:
+    disque = open(f"lib/core/i18n/{f}", "rb").read().replace(b"\r\n", b"\n")
+    commit = subprocess.run(["git", "show", f"4a4fbe7:lib/core/i18n/{f}"], capture_output=True).stdout.replace(b"\r\n", b"\n")
+    print(f"{f} octets_disque={len(disque)} octets_commit={len(commit)} identique={disque == commit}")
+'@
+$py | Out-File -Encoding ascii "$env:TEMP\integ_r_cmp.py"
+cmd /c "python `"$env:TEMP\integ_r_cmp.py`" >> `"$o`" 2>&1"
+git checkout -- lib/core/i18n
+"== apres restauration" | Out-File -Append -Encoding utf8 $o
+cmd /c "git status --porcelain -- lib/core/i18n >> `"$o`" 2>&1"
