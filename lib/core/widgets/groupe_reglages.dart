@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_palette.dart';
@@ -126,7 +127,7 @@ class GroupeReglages extends StatelessWidget {
         if (titre != null) ...<Widget>[
           Semantics(
             header: true,
-            child: Text(
+            child: TexteSansCoupure(
               titre!,
               style: palette.inkStrong.applyTo(
                 textes.titleMedium ?? const TextStyle(),
@@ -354,7 +355,10 @@ class _Ligne extends StatelessWidget {
             runSpacing: AppSpacing.xs,
             alignment: WrapAlignment.spaceBetween,
             children: <Widget>[
-              Text(
+              // COUPE-MOTS-1 : libelle, valeur et legende passent a la ligne
+              // entre les mots, jamais dans un mot (« Assurer ce
+              // remplacem / ent ? » a 200 %, 320 px).
+              TexteSansCoupure(
                 ligne.libelle,
                 key: const ValueKey<String>('groupe-reglages-libelle'),
                 style: palette.inkStrong
@@ -368,7 +372,7 @@ class _Ligne extends StatelessWidget {
               if (ligne.pastille != null && ligne.pastilleSousLibelle != true)
                 ligne.pastille!,
               if (ligne.valeur != null)
-                Text(
+                TexteSansCoupure(
                   ligne.valeur!,
                   key: const ValueKey<String>('groupe-reglages-valeur'),
                   style: styleSecondaire,
@@ -383,7 +387,7 @@ class _Ligne extends StatelessWidget {
         ],
         if (ligne.legende != null) ...<Widget>[
           Ecart.vXs,
-          Text(ligne.legende!, style: styleSecondaire),
+          TexteSansCoupure(ligne.legende!, style: styleSecondaire),
         ],
       ],
     );

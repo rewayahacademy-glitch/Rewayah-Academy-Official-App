@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
@@ -45,6 +46,9 @@ class LigneCleValeur extends StatelessWidget {
   /// attenuee, annoncee « Annulee : ... » (ANNUL-VIS-1).
   final bool annulee;
 
+  /// L'echelle sous laquelle la cle ne descend pas pour garder un mot entier.
+  static const double _plancherCle = 0.8;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -54,8 +58,13 @@ class LigneCleValeur extends StatelessWidget {
           ? AppTypography.tabulaire(textes.bodyLarge ?? const TextStyle())
           : textes.bodyLarge ?? const TextStyle(),
     );
-    final Text texteCle = Text(
+    // COUPE-MOTS-1 : la cle passe a la ligne entre les mots ; un mot trop
+    // long pour sa colonne (« Reconnexions » a 320 px, texte a 100 %) se
+    // reduit, au plus jusqu'a 80 % de la taille du theme, au lieu d'etre
+    // coupe (« Reconnexion / s »).
+    final Widget texteCle = TexteSansCoupure(
       cle,
+      plancher: _plancherCle,
       style: palette.inkMuted.applyTo(textes.bodyMedium ?? const TextStyle()),
     );
     final Widget blocValeur = Wrap(
@@ -66,7 +75,7 @@ class LigneCleValeur extends StatelessWidget {
         if (annulee)
           TexteHeureSeance(heure: valeur, annulee: true, style: styleValeur)
         else
-          Text(valeur, style: styleValeur),
+          TexteSansCoupure(valeur, style: styleValeur),
         ?complement,
       ],
     );

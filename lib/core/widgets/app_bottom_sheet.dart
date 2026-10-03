@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../icons/app_icons.dart';
 
 import '../theme/app_color_pair.dart';
@@ -324,7 +325,7 @@ class AppBottomSheet extends StatelessWidget {
               ],
               Semantics(
                 header: true,
-                child: Text(
+                child: TexteSansCoupure(
                   titre,
                   style: surface.applyTo(
                     textes.headlineSmall ?? const TextStyle(),
@@ -482,7 +483,7 @@ class _SurfaceLecture extends StatelessWidget {
             children: <Widget>[
               Semantics(
                 header: true,
-                child: Text(
+                child: TexteSansCoupure(
                   titre,
                   style: surface.applyTo(
                     textes.headlineSmall ?? const TextStyle(),

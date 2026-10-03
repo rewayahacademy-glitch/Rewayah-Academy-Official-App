@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/appairage/service_avatar.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -182,6 +183,23 @@ class _EditeurPhotoPubliqueState extends ConsumerState<EditeurPhotoPublique> {
 
   static const double _diametre = AppSpacing.respiration + AppSpacing.xxxl;
 
+  /// La hauteur d'une ligne de [style] a l'echelle de l'appareil : le point
+  /// « obligatoire » se centre sur la premiere ligne du paragraphe.
+  static double _hauteurPremiereLigne(BuildContext context, TextStyle style) {
+    final TextPainter p = TextPainter(
+      text: TextSpan(
+        text: 'M',
+        style: DefaultTextStyle.of(context).style.merge(style),
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    final double hauteur = p.height;
+    p.dispose();
+    return hauteur;
+  }
+
   Future<void> _choisir() async {
     setState(() {
       _refus = null;
@@ -251,48 +269,86 @@ class _EditeurPhotoPubliqueState extends ConsumerState<EditeurPhotoPublique> {
             ),
           );
 
+    final TextStyle styleAide = palette.inkStrong.applyTo(
+      textes.bodyLarge ?? const TextStyle(),
+    );
+    // KYC-PHOTO-1 : la photo est obligatoire, le point rouge partage le dit
+    // (fixe, sans pulsation). COUPE-MOTS-1 point 3 : le point se pose au bord
+    // de debut, centre sur la PREMIERE ligne du paragraphe, comme une puce,
+    // et non plus colle au bout du texte.
+    final double premiereLigne = _hauteurPremiereLigne(context, styleAide);
+    final Widget aide = Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        SizedBox(
+          height: premiereLigne,
+          child: Center(
+            child: PointRappel(
+              key: const ValueKey<String>('photo-obligatoire'),
+              libelle: t.enseignant.photo.obligatoireLecteur,
+              battements: 0,
+            ),
+          ),
+        ),
+        Ecart.hSm,
+        Expanded(
+          child: TexteSansCoupure(t.enseignant.photo.aide, style: styleAide),
+        ),
+      ],
+    );
+    final Widget textesAide = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        aide,
+        Ecart.vSm,
+        TexteSansCoupure(t.enseignant.photo.voile, style: attenue),
+        Ecart.vSm,
+        TexteSansCoupure(t.enseignant.photo.notice, style: attenue),
+      ],
+    );
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            portrait,
-            Ecart.hLg,
-            Expanded(
-              child: Column(
+        // COUPE-MOTS-1 point 3 : a cote du portrait tant que le mot le plus
+        // long des textes y tient (« obligatoire » a 200 %, 320 px) ; sinon
+        // le portrait passe au-dessus et les textes prennent toute la
+        // largeur, au lieu de couper « obligatoir / e ».
+        LayoutBuilder(
+          builder: (BuildContext contexte, BoxConstraints c) {
+            final double colonne =
+                c.maxWidth -
+                _diametre -
+                AppSpacing.lg -
+                PointRappel.diametre * 2 -
+                AppSpacing.sm;
+            final bool cote =
+                largeurMotLePlusLong(
+                  contexte,
+                  '${t.enseignant.photo.aide} '
+                  '${t.enseignant.photo.voile} '
+                  '${t.enseignant.photo.notice}',
+                  styleAide,
+                  MediaQuery.textScalerOf(contexte),
+                ) <=
+                colonne;
+            if (!cote) {
+              return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  // KYC-PHOTO-1 : la photo est obligatoire, le point rouge
-                  // partage le dit (fixe, sans pulsation).
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Flexible(
-                        child: Text(
-                          t.enseignant.photo.aide,
-                          style: palette.inkStrong.applyTo(
-                            textes.bodyLarge ?? const TextStyle(),
-                          ),
-                        ),
-                      ),
-                      Ecart.hXs,
-                      PointRappel(
-                        key: const ValueKey<String>('photo-obligatoire'),
-                        libelle: t.enseignant.photo.obligatoireLecteur,
-                        battements: 0,
-                      ),
-                    ],
-                  ),
-                  Ecart.vSm,
-                  Text(t.enseignant.photo.voile, style: attenue),
-                  Ecart.vSm,
-                  Text(t.enseignant.photo.notice, style: attenue),
-                ],
-              ),
-            ),
-          ],
+                children: <Widget>[portrait, Ecart.vLg, textesAide],
+              );
+            }
+            return Row(
+              children: <Widget>[
+                portrait,
+                Ecart.hLg,
+                Expanded(child: textesAide),
+              ],
+            );
+          },
         ),
         Ecart.vXl,
         if (_refus != null) ...<Widget>[

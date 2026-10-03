@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
@@ -104,16 +105,17 @@ class LienFleche extends StatelessWidget {
                 ),
                 Ecart.hXs,
               ],
+              // COUPE-MOTS-1 : le libelle passe a la ligne entre les mots,
+              // jamais dans un mot (« Ecrire a l'admini / stration » a 200 %).
               Flexible(
-                child: Text(
+                child: TexteSansCoupure(
                   libelle,
                   textAlign: alignerEnFin ? TextAlign.end : null,
-                  style: encreLien(base)
-                      .copyWith(
-                        decoration: etat.survole || etat.focus
-                            ? TextDecoration.underline
-                            : TextDecoration.none,
-                      ),
+                  style: encreLien(base).copyWith(
+                    decoration: etat.survole || etat.focus
+                        ? TextDecoration.underline
+                        : TextDecoration.none,
+                  ),
                 ),
               ),
               if (fleche) ...<Widget>[

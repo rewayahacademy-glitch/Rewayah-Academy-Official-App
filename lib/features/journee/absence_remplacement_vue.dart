@@ -16,6 +16,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/enseignant/absence_remplacement.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
@@ -210,15 +211,22 @@ class CarteRemplacement extends StatelessWidget {
               onPress: () =>
                   GoRouter.of(context).push<void>(Routes.groupePour(groupe)),
             ),
-      entete: Row(
+      // COUPE-MOTS-1 point 5 : le nom et la pastille partagent la ligne tant
+      // qu'ils y tiennent entiers (pastille au bord de fin) ; sinon la
+      // pastille passe dessous, au bord de debut. Avant, la pastille a sa
+      // largeur naturelle ecrasait le nom (« Al- / Fatiha ») et debordait a
+      // 320 px, texte a 200 %.
+      entete: OverflowBar(
+        alignment: MainAxisAlignment.spaceBetween,
+        overflowAlignment: OverflowBarAlignment.start,
+        spacing: AppSpacing.sm,
+        overflowSpacing: AppSpacing.sm,
         children: <Widget>[
-          Expanded(
-            child: Semantics(
-              header: true,
-              child: Text(
-                offre.classe,
-                style: textes.titleLarge ?? const TextStyle(),
-              ),
+          Semantics(
+            header: true,
+            child: TexteSansCoupure(
+              offre.classe,
+              style: textes.titleLarge ?? const TextStyle(),
             ),
           ),
           StatusPill(
