@@ -1,0 +1,206 @@
+00:00 +0: loading D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart
+00:00 +0: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 1440 : focus apres la derniere decision
+00:04 +1: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 1440 : focus apres la derniere decision
+00:04 +2: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 1440 : focus apres la derniere decision
+00:04 +3: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 1440 : focus apres la derniere decision
+00:04 +4: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 1440 : focus apres la derniere decision
+00:04 +5: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 1440 : focus apres la derniere decision
+00:05 +6: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 1440 : focus apres la derniere decision
+00:05 +7: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 1440 : focus apres la derniere decision
+00:05 +8: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 1440 : focus apres la derniere decision
+00:05 +9: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 1440 : focus apres la derniere decision
+00:05 +10: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 1440 : focus apres la derniere decision
+00:05 +11: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 1440 : focus apres la derniere decision
+MESURE 1440 : aucun=1 focus=_ModalScopeState<dynamic> Focus Scope focusNode=FocusScopeNode#5d0fa(_ModalScopeState<dynamic> Focus Scope [PRIMARY FOCUS])(context: _FocusScopeWithExternalFocusNode, PRIMARY FOCUS)
+00:05 +12: D:/RA_TUTEUR/r-ad/test/widgets/composants_partages_test.dart: GroupeReglages : une surface, des filets en retrait filets : un de moins que de lignes
+00:05 +13: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 390 : focus apres la derniere decision
+00:05 +14: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 390 : focus apres la derniere decision
+00:05 +15: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 390 : focus apres la derniere decision
+00:05 +16: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 390 : focus apres la derniere decision
+00:05 +17: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 390 : focus apres la derniere decision
+00:06 +18: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 390 : focus apres la derniere decision
+00:06 +19: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 390 : focus apres la derniere decision
+00:06 +20: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 390 : focus apres la derniere decision
+00:06 +21: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 390 : focus apres la derniere decision
+00:06 +22: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 390 : focus apres la derniere decision
+00:06 +23: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 390 : focus apres la derniere decision
+00:06 +24: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 390 : focus apres la derniere decision
+00:06 +25: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 390 : focus apres la derniere decision
+00:06 +26: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 390 : focus apres la derniere decision
+00:07 +27: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 390 : focus apres la derniere decision
+00:07 +28: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 390 : focus apres la derniere decision
+WARNING (drift): It looks like you've created the database class AppDatabase multiple times. When these two databases use the same QueryExecutor, race conditions will occur and might corrupt the database. 
+Try to follow the advice at https://drift.simonbinder.eu/faq/#using-the-database or, if you know what you're doing, set driftRuntimeOptions.dontWarnAboutMultipleDatabases = true
+00:07 +29: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 390 : focus apres la derniere decision
+Here is the stacktrace from when the database was opened a second time:
+#0      GeneratedDatabase._handleInstantiated (package:drift/src/runtime/api/db_base.dart:96:30)
+#1      GeneratedDatabase._whenConstructed (package:drift/src/runtime/api/db_base.dart:73:12)
+#2      new GeneratedDatabase (package:drift/src/runtime/api/db_base.dart:64:5)
+#3      new _$AppDatabase (package:rewayah_academy/core/cache/db/app_database.g.dart:2035:36)
+#4      new AppDatabase (package:rewayah_academy/core/cache/db/app_database.dart:165:19)
+#5      baseLocaleProvider.<anonymous closure> (package:rewayah_academy/core/appairage/profils_locaux.dart:103:28)
+#6      Provider.create (package:riverpod/src/providers/provider.dart:59:36)
+#7      $ProviderElement.create (package:riverpod/src/providers/provider.dart:343:33)
+#8      ProviderElement.buildState (package:riverpod/src/core/element.dart:751:28)
+#9      ProviderElement.mount (package:riverpod/src/core/element.dart:587:7)
+#10     ProviderElement.flush (package:riverpod/src/core/element.dart:704:9)
+#11     $ProviderBaseImpl._addListener (package:riverpod/src/core/provider/provider.dart:119:24)
+#12     ProviderElement.listen (package:riverpod/src/core/element.dart:991:28)
+#13     Ref.watch (package:riverpod/src/core/ref.dart:726:20)
+#14     stockagePreferencesProvider.<anonymous closure> (package:rewayah_academy/core/preferences/preferences_locales.dart:245:42)
+#15     Provider.create (package:riverpod/src/providers/provider.dart:59:36)
+#16     $ProviderElement.create (package:riverpod/src/providers/provider.dart:343:33)
+#17     ProviderElement.buildState (package:riverpod/src/core/element.dart:751:28)
+#18     ProviderElement.mount (package:riverpod/src/core/element.dart:587:7)
+#19     ProviderElement.flush (package:riverpod/src/core/element.dart:704:9)
+#20     $ProviderBaseImpl._addListener (package:riverpod/src/core/provider/provider.dart:119:24)
+#21     ProviderElement.listen (package:riverpod/src/core/element.dart:991:28)
+#22     Ref.watch (package:riverpod/src/core/ref.dart:726:20)
+#23     persistanceApparenceProvider.<anonymous closure> (package:rewayah_academy/core/preferences/preferences_locales.dart:256:44)
+#24     Provider.create (package:riverpod/src/providers/provider.dart:59:36)
+#25     $ProviderElement.create (package:riverpod/src/providers/provider.dart:343:33)
+#26     ProviderElement.buildState (package:riverpod/src/core/element.dart:751:28)
+#27     ProviderElement.mount (package:riverpod/src/core/element.dart:587:7)
+#28     ProviderElement.flush (package:riverpod/src/core/element.dart:704:9)
+#29     $ProviderBaseImpl._addListener (package:riverpod/src/core/provider/provider.dart:119:24)
+#30     ProviderContainer.listen (package:riverpod/src/core/provider_container.dart:1141:26)
+#31     ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:37)
+#32     _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:631:23)
+#33     ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#34     RewayahApp.build (package:rewayah_academy/app.dart:49:9)
+#35     _ConsumerState.build (package:flutter_riverpod/src/core/consumer.dart:283:48)
+#36     StatefulElement.build (package:flutter/src/widgets/framework.dart:5944:27)
+#37     ConsumerStatefulElement.build (package:flutter_riverpod/src/core/consumer.dart:460:20)
+#38     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5830:15)
+#39     StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5995:11)
+#40     Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
+#41     ComponentElement._firstBuild (package:flutter/src/widgets/framework.dart:5812:5)
+#42     StatefulElement._firstBuild (package:flutter/src/widgets/framework.dart:5986:11)
+#43     ComponentElement.mount (package:flutter/src/widgets/framework.dart:5806:5)
+#44     ConsumerStatefulElement.mount (package:flutter_riverpod/src/core/consumer.dart:389:11)
+#45     Element.inflateWidget (package:flutter/src/widgets/framework.dart:4600:20)
+#46     Element.updateChild (package:flutter/src/widgets/framework.dart:4072:18)
+#47     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
+#48     Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
+#49     ComponentElement._firstBuild (package:flutter/src/widgets/framework.dart:5812:5)
+#50     ComponentElement.mount (package:flutter/src/widgets/framework.dart:5806:5)
+#51     Element.inflateWidget (package:flutter/src/widgets/framework.dart:4600:20)
+#52     Element.updateChild (package:flutter/src/widgets/framework.dart:4072:18)
+#53     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
+#54     StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5995:11)
+#55     Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
+#56     ComponentElement._firstBuild (package:flutter/src/widgets/framework.dart:5812:5)
+#57     StatefulElement._firstBuild (package:flutter/src/widgets/framework.dart:5986:11)
+#58     ComponentElement.mount (package:flutter/src/widgets/framework.dart:5806:5)
+#59     Element.inflateWidget (package:flutter/src/widgets/framework.dart:4600:20)
+#60     Element.updateChild (package:flutter/src/widgets/framework.dart:4072:18)
+#61     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
+#62     Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
+#63     ComponentElement._firstBuild (package:flutter/src/widgets/framework.dart:5812:5)
+#64     ComponentElement.mount (package:flutter/src/widgets/framework.dart:5806:5)
+#65     Element.inflateWidget (package:flutter/src/widgets/framework.dart:4600:20)
+#66     Element.updateChild (package:flutter/src/widgets/framework.dart:4072:18)
+#67     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
+#68     StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5995:11)
+#69     Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
+#70     ComponentElement._firstBuild (package:flutter/src/widgets/framework.dart:5812:5)
+#71     StatefulElement._firstBuild (package:flutter/src/widgets/framework.dart:5986:11)
+#72     ComponentElement.mount (package:flutter/src/widgets/framework.dart:5806:5)
+#73     Element.inflateWidget (package:flutter/src/widgets/framework.dart:4600:20)
+#74     Element.updateChild (package:flutter/src/widgets/framework.dart:4072:18)
+#75     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
+#76     StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5995:11)
+#77     Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
+#78     ComponentElement._firstBuild (package:flutter/src/widgets/framework.dart:5812:5)
+#79     StatefulElement._firstBuild (package:flutter/src/widgets/framework.dart:5986:11)
+#80     ComponentElement.mount (package:flutter/src/widgets/framework.dart:5806:5)
+#81     Element.inflateWidget (package:flutter/src/widgets/framework.dart:4600:20)
+#82     Element.updateChild (package:flutter/src/widgets/framework.dart:4066:20)
+#83     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
+#84     Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
+#85     ProxyElement.update (package:flutter/src/widgets/framework.dart:6162:5)
+#86     _InheritedNotifierElement.update (package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#87     Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
+#88     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
+#89     StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5995:11)
+#90     Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
+#91     StatefulElement.update (package:flutter/src/widgets/framework.dart:6020:5)
+#92     Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
+#93     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
+#94     Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
+#95     ProxyElement.update (package:flutter/src/widgets/framework.dart:6162:5)
+#96     _InheritedNotifierElement.update (package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#97     Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
+#98     ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
+#99     StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5995:11)
+#100    Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
+#101    StatefulElement.update (package:flutter/src/widgets/framework.dart:6020:5)
+#102    Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
+#103    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
+#104    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5995:11)
+#105    Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
+#106    StatefulElement.update (package:flutter/src/widgets/framework.dart:6020:5)
+#107    Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
+#108    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
+#109    Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
+#110    ProxyElement.update (package:flutter/src/widgets/framework.dart:6162:5)
+#111    Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
+#112    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
+#113    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5995:11)
+#114    Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
+#115    StatefulElement.update (package:flutter/src/widgets/framework.dart:6020:5)
+#116    Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
+#117    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
+#118    Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
+#119    ProxyElement.update (package:flutter/src/widgets/framework.dart:6162:5)
+#120    Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
+#121    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
+00:07 +30: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 390 : focus apres la derniere decision
+#122    Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
+#123    ProxyElement.update (package:flutter/src/widgets/framework.dart:6162:5)
+#124    Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
+#125    _RawViewElement._updateChild (package:flutter/src/widgets/view.dart:488:16)
+#126    _RawViewElement.update (package:flutter/src/widgets/view.dart:575:5)
+#127    Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
+#128    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
+#129    Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
+#130    StatelessElement.update (package:flutter/src/widgets/framework.dart:5908:5)
+#131    Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
+#132    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5854:16)
+#133    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5995:11)
+#134    Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
+#135    StatefulElement.update (package:flutter/src/widgets/framework.dart:6020:5)
+#136    Element.updateChild (package:flutter/src/widgets/framework.dart:4050:15)
+#137    RootElement._rebuild (package:flutter/src/widgets/binding.dart:2091:16)
+#138    RootElement.update (package:flutter/src/widgets/binding.dart:2069:5)
+#139    RootElement.performRebuild (package:flutter/src/widgets/binding.dart:2083:7)
+00:07 +31: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 390 : focus apres la derniere decision
+00:07 +32: D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart: 390 : focus apres la derniere decision
+#140    Element.rebuild (package:flutter/src/widgets/framework.dart:5542:7)
+#141    BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2763:15)
+#142    BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2820:11)
+#143    BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3124:18)
+#144    AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:2432:19)
+#145    RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:558:5)
+#146    SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1430:15)
+#147    SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1345:9)
+#148    AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:2261:9)
+#149    _rootRun (dart:async/zone_root.dart:35:13)
+#150    _CustomZone.run (dart:async/zone.dart:810:35)
+#151    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#152    AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:2250:27)
+#153    WidgetTester.pumpWidget.<anonymous closure> (package:flutter_test/src/widget_tester.dart:598:22)
+#154    _rootRun (dart:async/zone_root.dart:35:13)
+#155    _CustomZone.run (dart:async/zone.dart:810:35)
+#156    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#157    WidgetTester.pumpWidget (package:flutter_test/src/widget_tester.dart:595:27)
+#158    main.<anonymous closure> (file:///D:/RA_TUTEUR/r-ad/test/features/admin_dossiers/zz_verif_lot1_tmp_test.dart:40:20)
+#159    testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:29)
+<asynchronous suspension>
+#160    TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+#161    StackZoneSpecification._registerCallback.<anonymous closure> (package:stack_trace/src/stack_zone_specification.dart:114:42)
+<asynchronous suspension>
+This warning will only appear on debug builds.
+MESURE 390 : aucun=1 focus=adm02a-titre focusNode=FocusNode#ba90a(adm02a-titre [PRIMARY FOCUS])(context: Focus, PRIMARY FOCUS)
+00:07 +33: All tests passed!
