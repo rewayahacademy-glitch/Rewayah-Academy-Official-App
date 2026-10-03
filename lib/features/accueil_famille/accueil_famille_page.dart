@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Comme partout ailleurs : le type d'une famille de providers n'est pas exporte
@@ -49,6 +51,14 @@ final FutureProviderFamily<ClasseFoyer?, String> classeDeLEleveProvider =
           .classesDe(eleveId);
       return classes.isEmpty ? null : classes.first;
     });
+
+/// Largeur minimale (texte 100 %) de la carte classe pour qu'elle partage sa
+/// bande avec « Avant le prochain cours » (BENTO-2b, revue BENTO-2-R M1) :
+/// a 310 px, la colonne « Duree » coupait « Duré/e » et « 45 mi/n ». 360
+/// garde le cote a cote a 1280 et 1440 px et rend la pleine largeur sous
+/// ~1024 px. Elle croit avec l'echelle du texte. Mesuree par les tests de
+/// mots coupes de `accueil_famille_test.dart`, sans autre source.
+const double largeurMinCarteClasse = 360;
 
 /// La cle de lecture d'une presence : une seance, un eleve.
 typedef ClePresenceEleve = ({String seanceId, String eleveId});
@@ -292,33 +302,54 @@ class _Contenu extends ConsumerWidget {
     // prochaine seance, puis « Avant le prochain cours », en grandes tuiles
     // cote a cote sur quatre colonnes ; la derniere seance en large. Chaque
     // tuile garde la hauteur de son contenu ; sur telephone, une colonne.
+    // BENTO-2b : cote a cote seulement si chaque moitie offre
+    // [largeurMinCarteClasse] x echelle du texte ; sinon (tablette de 600 a
+    // ~1024 px, texte agrandi) la carte et « Avant le prochain cours » passent
+    // en pleine largeur, comme avant BENTO-2 : la ligne « 18:10 | Duree
+    // 45 min » ne coupe plus aucun mot.
     final double marge = compact ? AppSpacing.lg : AppSpacing.xxl;
+    final double echelle = MediaQuery.textScalerOf(context).scale(1);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         selecteur,
         Ecart.vXl,
-        GrilleBento(
-          hauteurContenu: true,
-          tuiles: <TuileBento>[
-            if (bandeau != null)
-              TuileBento(
-                etendue: EtendueBento.large,
-                etendueLarge: const EtendueBento(4, 1),
-                child: bandeau,
-              ),
-            TuileBento(etendue: EtendueBento.grande, child: carte),
-            TuileBento(
-              etendue: EtendueBento.grande,
-              child: AppCard(marge: marge, child: preparation),
-            ),
-            TuileBento(
-              etendue: EtendueBento.large,
-              etendueLarge: const EtendueBento(4, 1),
-              child: AppCard(marge: marge, child: derniereSeance),
-            ),
-          ],
+        LayoutBuilder(
+          builder: (BuildContext _, BoxConstraints contraintes) {
+            final bool coteACote =
+                (contraintes.maxWidth - GrilleBento.ecart) / 2 >=
+                largeurMinCarteClasse * math.max(1, echelle);
+            final EtendueBento? pleine = coteACote
+                ? null
+                : const EtendueBento(4, 1);
+            return GrilleBento(
+              hauteurContenu: true,
+              tuiles: <TuileBento>[
+                if (bandeau != null)
+                  TuileBento(
+                    etendue: EtendueBento.large,
+                    etendueLarge: const EtendueBento(4, 1),
+                    child: bandeau,
+                  ),
+                TuileBento(
+                  etendue: EtendueBento.grande,
+                  etendueLarge: pleine,
+                  child: carte,
+                ),
+                TuileBento(
+                  etendue: EtendueBento.grande,
+                  etendueLarge: pleine,
+                  child: AppCard(marge: marge, child: preparation),
+                ),
+                TuileBento(
+                  etendue: EtendueBento.large,
+                  etendueLarge: const EtendueBento(4, 1),
+                  child: AppCard(marge: marge, child: derniereSeance),
+                ),
+              ],
+            );
+          },
         ),
       ],
     );

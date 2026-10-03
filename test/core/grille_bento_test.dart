@@ -445,19 +445,39 @@ void main() {
     testWidgets('dispositions en moulinet : une colonne, rien de perdu', (
       WidgetTester tester,
     ) async {
-      // haute(0) | large(1) / carree(2) carree(3) / large(4) | haute(5) :
-      // sur quatre colonnes, aucune coupe ne traverse sans couper une tuile
-      // si le placement forme un moulinet ; chaque tuile reste affichee.
-      await poser(tester, 800, <TuileBento>[
-        tuile(0, EtendueBento.haute, 40),
-        tuile(1, const EtendueBento(3, 1), 40),
-        tuile(2, EtendueBento.carree, 40),
-        tuile(3, EtendueBento.large, 40),
-        tuile(4, const EtendueBento(3, 1), 40),
-        tuile(5, EtendueBento.carree, 40),
+      // BENTO-2b (revue BENTO-2-R, m2) : un vrai moulinet sur quatre
+      // colonnes, prouve par placerBento, puis la branche de repli prouvee
+      // par les positions rendues.
+      //   A A A B
+      //   D C C B
+      //   D E E E
+      // y = 1 coupe B, y = 2 coupe D ; x = 1 et x = 2 coupent A, x = 3
+      // coupe E : aucune coupe possible.
+      const List<EtendueBento> etendues = <EtendueBento>[
+        EtendueBento(3, 1), // A
+        EtendueBento(1, 2), // B
+        EtendueBento(1, 2), // D
+        EtendueBento(2, 1), // C
+        EtendueBento(3, 1), // E
+      ];
+      expect(placerBento(etendues, 4), const <PlacementBento>[
+        PlacementBento(0, 0, 3, 1),
+        PlacementBento(3, 0, 1, 2),
+        PlacementBento(0, 1, 1, 2),
+        PlacementBento(1, 1, 2, 1),
+        PlacementBento(1, 2, 3, 1),
       ]);
-      for (int i = 0; i < 6; i++) {
-        expect(find.byKey(ValueKey<int>(i)), findsOneWidget);
+      expect(GrilleBento.colonnesPour(800), 4);
+      await poser(tester, 800, <TuileBento>[
+        for (int i = 0; i < etendues.length; i++)
+          tuile(i, etendues[i], 40, etendues[i]),
+      ]);
+      // Repli : une colonne pleine largeur, dans l'ordre declare, 16 entre
+      // deux tuiles ; aucune tuile perdue.
+      for (int i = 0; i < etendues.length; i++) {
+        expect(r(tester, i).width, 800);
+        expect(r(tester, i).left, 0);
+        if (i > 0) expect(r(tester, i).top - r(tester, i - 1).bottom, 16);
       }
       expect(tester.takeException(), isNull);
     });

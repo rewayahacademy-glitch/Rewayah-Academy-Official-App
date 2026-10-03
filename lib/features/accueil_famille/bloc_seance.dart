@@ -244,24 +244,28 @@ class BlocSeance extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final ({String libelle, TonEtat ton})? pastille = affichage.pastille;
 
-    final Widget tete = Row(
+    // BENTO-2b : un `Wrap` aux deux bouts et non une `Row` : le titre au
+    // debut, la pastille a la fin quand ils tiennent ensemble ; a 320 px et
+    // texte double, la pastille passe a la ligne au lieu de couper la date
+    // mot par mot.
+    final Widget tete = Wrap(
+      alignment: WrapAlignment.spaceBetween,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.xs,
       children: <Widget>[
-        Expanded(
-          child: Semantics(
-            header: true,
-            child: Text(
-              compact ? affichage.date : t.tuteur.accueil.prochaineSeance,
-              style: palette.inkStrong.applyTo(
-                (compact ? textes.titleMedium : textes.titleLarge) ??
-                    const TextStyle(),
-              ),
+        Semantics(
+          header: true,
+          child: Text(
+            compact ? affichage.date : t.tuteur.accueil.prochaineSeance,
+            style: palette.inkStrong.applyTo(
+              (compact ? textes.titleMedium : textes.titleLarge) ??
+                  const TextStyle(),
             ),
           ),
         ),
-        if (pastille != null) ...<Widget>[
-          Ecart.hSm,
+        if (pastille != null)
           StatusPill(libelle: pastille.libelle, ton: pastille.ton),
-        ],
       ],
     );
 
@@ -399,51 +403,67 @@ class _HeuresCompactes extends StatelessWidget {
     final TextStyle valeur = AppTypography.tabulaire(
       palette.inkStrong.applyTo(textes.titleMedium ?? const TextStyle()),
     );
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+    final Widget heure = MergeSemantics(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Expanded(
-            child: MergeSemantics(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    affichage.ville == null
-                        ? affichage.fuseau
-                        : LibellesGroupe.votreHeure,
-                    style: libelle,
-                  ),
-                  Text(
-                    affichage.ville == null
-                        ? affichage.heure
-                        : LibellesGroupe.heureEtVille(
-                            heure: affichage.heure,
-                            ville: affichage.ville!,
-                          ),
-                    style: valeur,
-                  ),
-                ],
-              ),
-            ),
+          Text(
+            affichage.ville == null
+                ? affichage.fuseau
+                : LibellesGroupe.votreHeure,
+            style: libelle,
           ),
-          Expanded(
-            child: _ColonneFiletee(
-              child: MergeSemantics(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(LibellesGroupe.dureeLibelle, style: libelle),
-                    Text(affichage.duree, style: valeur),
-                  ],
-                ),
-              ),
-            ),
+          Text(
+            affichage.ville == null
+                ? affichage.heure
+                : LibellesGroupe.heureEtVille(
+                    heure: affichage.heure,
+                    ville: affichage.ville!,
+                  ),
+            style: valeur,
           ),
         ],
       ),
     );
+    final Widget duree = MergeSemantics(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(LibellesGroupe.dureeLibelle, style: libelle),
+          Text(affichage.duree, style: valeur),
+        ],
+      ),
+    );
+    final double echelle = MediaQuery.textScalerOf(context).scale(1);
+    return LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints c) {
+        // BENTO-2b : a 320 px et texte double, la demi-colonne coupait
+        // « Duré/e ». Sous [_largeurMinColonne] x echelle par moitie (filet
+        // compris), la duree passe sous l'heure, sans filet.
+        final double moitie = (c.maxWidth - AppSpacing.lg * 2) / 2;
+        if (moitie < _largeurMinColonne * (echelle < 1 ? 1 : echelle)) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[heure, Ecart.vSm, duree],
+          );
+        }
+        return IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Expanded(child: heure),
+              Expanded(child: _ColonneFiletee(child: duree)),
+            ],
+          ),
+        );
+      },
+    );
   }
+
+  /// Largeur minimale d'une demi-colonne a texte 100 % : « Durée », « Votre
+  /// heure », « 18:10 Paris » y tiennent sans couper de mot. Sans source
+  /// externe, mesuree par `accueil_famille_test.dart`.
+  static const double _largeurMinColonne = 96;
 }
 
 /// Tablette et bureau : l'heure en grand, la date et le fuseau dessous ; la
