@@ -1030,15 +1030,22 @@ void main() {
         ..retardsRendus = <CahierEnRetard>[_cahier('a', 'Al-Badr', 26)],
     );
 
-    testWidgets('bureau : A terminer a droite de la carte', (
+    // BENTO-2 (DASH_STRATEGIE.md §3.5) : Ma journee a droite de la carte,
+    // A terminer (rang 4) sous la carte, dans la meme colonne.
+    testWidgets('bureau : Ma journee a droite, A terminer sous la carte', (
       WidgetTester tester,
     ) async {
       await journeeComplete(tester, const Size(1440, 1000));
-      final double xCarte = tester.getTopLeft(find.text('An-Nour')).dx;
-      final double xCahiers = tester
-          .getTopLeft(find.text(t.enseignant.journee.aTerminer))
+      final Offset carte = tester.getTopLeft(find.text('An-Nour'));
+      final double xJournee = tester
+          .getTopLeft(find.text(t.enseignant.journee.maJournee))
           .dx;
-      expect(xCahiers, greaterThan(xCarte + 300));
+      final Offset cahiers = tester.getTopLeft(
+        find.text(t.enseignant.journee.aTerminer),
+      );
+      expect(xJournee, greaterThan(carte.dx + 300));
+      expect(cahiers.dx, lessThan(carte.dx + 300));
+      expect(cahiers.dy, greaterThan(carte.dy));
       expect(tester.takeException(), isNull);
     });
 

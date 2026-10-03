@@ -58,7 +58,6 @@ import '../../core/session/session_controleur.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_horloge/emplacement_entree.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
-import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
@@ -66,6 +65,7 @@ import '../../core/video/pre_vol.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
@@ -331,8 +331,14 @@ List<String> _alertesPresence(WidgetRef ref, SeanceEnseignant seance) {
   ];
 }
 
-/// Une ou deux colonnes, selon la largeur utile divisee par le facteur de
-/// texte (UX_REVIEW_04, ligne ENS-02, point c).
+/// BENTO-2 : la grille Bento partagee, disposition de DASH_STRATEGIE.md §3.5.
+///
+/// Prochaine seance en grande tuile, une tuile large par remplacement
+/// confirme, Ma journee haute (grande sur quatre colonnes), A terminer en
+/// grande tuile, Alertes utiles en large. Chaque tuile garde la hauteur de son
+/// contenu (`hauteurContenu`) : la frise du jour n'est jamais bornee (D6 a).
+/// Sous 600 px de place, ou quand le texte agrandi ne laisse plus la largeur,
+/// la grille repasse en une colonne dans cet ordre (BENTO-1b).
 class _Composition extends StatelessWidget {
   const _Composition({
     required this.prochaine,
@@ -350,61 +356,24 @@ class _Composition extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double facteur = MediaQuery.textScalerOf(context).scale(1);
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints contraintes) {
-        final bool deuxColonnes =
-            contraintes.maxWidth / facteur >= AppGabarit.seuilEtendu;
-        final Widget ecartSection = deuxColonnes ? Ecart.vXxxl : Ecart.vXxl;
-        final List<Widget> principale = <Widget>[
-          prochaine,
-          // Deux cartes autonomes d'une meme section : 16 (contrat A).
-          for (final Widget carte in remplacements) ...<Widget>[
-            Ecart.vLg,
-            carte,
-          ],
-          ecartSection,
-          maJournee,
-        ];
-        final Widget? cahiers = aTerminer;
-        final Widget? signaux = alertes;
-        final List<Widget> secondaire = <Widget>[
-          ?cahiers,
-          if (cahiers != null && signaux != null) ecartSection,
-          ?signaux,
-        ];
-
-        if (!deuxColonnes || secondaire.isEmpty) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              ...principale,
-              if (secondaire.isNotEmpty) ecartSection,
-              ...secondaire,
-            ],
-          );
-        }
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              flex: 3,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: principale,
-              ),
-            ),
-            const SizedBox(width: AppSpacing.xxxl),
-            Expanded(
-              flex: 2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: secondaire,
-              ),
-            ),
-          ],
-        );
-      },
+    final Widget? cahiers = aTerminer;
+    final Widget? signaux = alertes;
+    return GrilleBento(
+      hauteurContenu: true,
+      tuiles: <TuileBento>[
+        TuileBento(etendue: EtendueBento.grande, child: prochaine),
+        for (final Widget carte in remplacements)
+          TuileBento(etendue: EtendueBento.large, child: carte),
+        TuileBento(
+          etendue: EtendueBento.haute,
+          etendueLarge: EtendueBento.grande,
+          child: maJournee,
+        ),
+        if (cahiers != null)
+          TuileBento(etendue: EtendueBento.grande, child: cahiers),
+        if (signaux != null)
+          TuileBento(etendue: EtendueBento.large, child: signaux),
+      ],
     );
   }
 }
