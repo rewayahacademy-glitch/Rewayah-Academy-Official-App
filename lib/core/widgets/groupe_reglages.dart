@@ -301,7 +301,18 @@ class _Ligne extends StatelessWidget {
                 )
               : _textes(palette, textes),
         ),
-        if (marque != null && !marqueDessous) ...<Widget>[Ecart.hSm, marque],
+        // CORR-SUITE-2 : en fin de ligne, la marque est bornee par la ligne
+        // elle-meme (deux tiers de sa largeur, le reste au libelle), plus par
+        // une largeur fixe posee par l'ecran : une marque longue (« Cahier de
+        // transmission a valider ») tient sur une ligne des que la place le
+        // permet, et passe a la ligne entre ses mots sinon.
+        if (marque != null && !marqueDessous) ...<Widget>[
+          Ecart.hSm,
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: largeur * _partMarqueEnFin),
+            child: marque,
+          ),
+        ],
         if (ligne.controle != null) ...<Widget>[Ecart.hSm, ligne.controle!],
         if (ligne.onPress != null &&
             ligne.controle == null &&
@@ -320,6 +331,9 @@ class _Ligne extends StatelessWidget {
 
   /// En dessous de cette largeur de texte, la marque passe sous la legende.
   static const double _largeurMarqueEnFin = 320;
+
+  /// La part de la ligne que peut prendre une marque en fin de ligne.
+  static const double _partMarqueEnFin = 2 / 3;
 
   Widget _textes(AppPalette palette, TextTheme textes) {
     final TextStyle styleSecondaire = palette.inkMuted.applyTo(

@@ -1,6 +1,7 @@
 // EN-3 : ENS-09 Mes Classes, sur les donnees de demonstration (K-35).
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -224,6 +225,21 @@ void main() {
             }
             // Aucun mot coupe, rien de tronque : mesure par mot.
             verifierAucunMotCoupe(tester, find.byType(StatusPill));
+            // CORR-SUITE-2 : au bureau, la marque n'est plus bornee a 200 :
+            // « Cahier de transmission a valider » tient sur une ligne.
+            if (largeur >= 1280 && echelle == 1) {
+              final RenderParagraph p = tester.renderObject(mot);
+              final Set<int> lignes = <int>{
+                for (final TextBox b in p.getBoxesForSelection(
+                  TextSelection(
+                    baseOffset: 0,
+                    extentOffset: p.text.toPlainText().length,
+                  ),
+                ))
+                  b.top.round(),
+              };
+              expect(lignes, hasLength(1));
+            }
             verifierAucunMotCoupe(
               tester,
               find.byKey(const ValueKey<String>('classes-cahier-a-valider')),
