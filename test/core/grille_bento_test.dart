@@ -1,6 +1,8 @@
 // BENTO-1 : la grille Bento partagee. Aucune tuile ne se chevauche, aucun
-// trou, ecart de 16 px, deux colonnes a 320 et 390 px, une colonne a texte
-// agrandi, et le Centre de commande alterne plusieurs etendues.
+// trou, ecart de 16 px, deux colonnes a 320 et 390 px, et le Centre de
+// commande alterne plusieurs etendues. BENTO-1b : le nombre de colonnes suit
+// la largeur utile a l'echelle du texte (une colonne a 320 px et texte
+// double, plusieurs a 1440 px et texte double).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -128,6 +130,30 @@ void main() {
       expect(GrilleBento.colonnesPour(600), 4);
       expect(GrilleBento.colonnesPour(1440), 4);
     });
+
+    // BENTO-1b : la largeur utile par colonne, a l'echelle du texte, decide
+    // du nombre de colonnes (4, 2, 1), jamais l'echelle seule.
+    final Map<double, List<int>> attendu = <double, List<int>>{
+      // echelles :  1.0 1.15 1.3 2.0
+      320: <int>[2, 2, 2, 1],
+      600: <int>[4, 4, 2, 2],
+      1024: <int>[4, 4, 4, 4],
+      1440: <int>[4, 4, 4, 4],
+    };
+    const List<double> echelles = <double>[1, 1.15, 1.3, 2];
+    test('colonnes selon la largeur utile et le texte', () {
+      attendu.forEach((double largeur, List<int> colonnes) {
+        for (int i = 0; i < echelles.length; i++) {
+          expect(
+            GrilleBento.colonnesPour(largeur, echelles[i]),
+            colonnes[i],
+            reason: '$largeur px, texte x${echelles[i]}',
+          );
+        }
+      });
+      // Une place etroite repasse en une colonne.
+      expect(GrilleBento.colonnesPour(200), 1);
+    });
   });
 
   group('GrilleBento', () {
@@ -158,6 +184,65 @@ void main() {
       });
     }
 
+    // BENTO-1b : 320/600/1024/1440 px x texte 1.0/1.15/1.3/2.0. La plus
+    // etroite des tuiles fait exactement une colonne du nombre attendu, les
+    // lignes grandissent avec le texte, rien ne se chevauche ni ne sort.
+    for (final double largeur in <double>[320, 600, 1024, 1440]) {
+      for (final double echelle in <double>[1, 1.15, 1.3, 2]) {
+        testWidgets('$largeur px, texte x$echelle : colonnes et bornes', (
+          WidgetTester tester,
+        ) async {
+          fixerVueCapture(tester, Size(largeur, 3000), 1);
+          await tester.pumpWidget(
+            _hote(largeur, <TuileBento>[
+              for (int i = 0; i < _centre2.length; i++)
+                TuileBento(
+                  etendue: _centre2[i],
+                  etendueLarge: _centre4[i],
+                  child: ColoredBox(
+                    key: ValueKey<int>(i),
+                    color: const Color(0xFF000000),
+                  ),
+                ),
+            ], echelle: echelle),
+          );
+          expect(tester.takeException(), isNull);
+          final int n = GrilleBento.colonnesPour(largeur, echelle);
+          final List<Rect> r = <Rect>[
+            for (int i = 0; i < _centre2.length; i++)
+              tester.getRect(find.byKey(ValueKey<int>(i))),
+          ];
+          final double cellule = (largeur - 16 * (n - 1)) / n;
+          final double plusEtroite = r
+              .map((Rect x) => x.width)
+              .reduce((double a, double b) => a < b ? a : b);
+          expect(plusEtroite, closeTo(cellule, 0.01));
+          for (int i = 0; i < r.length; i++) {
+            expect(r[i].left, greaterThanOrEqualTo(-0.01));
+            expect(r[i].right, lessThanOrEqualTo(largeur + 0.01));
+            for (int j = i + 1; j < r.length; j++) {
+              expect(r[i].overlaps(r[j]), isFalse);
+            }
+          }
+          if (n > 1) {
+            // La tuile haute : deux lignes agrandies plus un ecart.
+            expect(
+              r[1].height,
+              closeTo(GrilleBento.hauteurLignePour(echelle) * 2 + 16, 0.01),
+            );
+            // Des tailles variees, jamais un damier.
+            expect(
+              <String>{
+                for (final Rect x in r)
+                  '${x.width.round()}x${x.height.round()}',
+              }.length,
+              greaterThanOrEqualTo(2),
+            );
+          }
+        });
+      }
+    }
+
     testWidgets('texte a 200 % : une seule colonne de hauteur libre', (
       WidgetTester tester,
     ) async {
@@ -186,11 +271,9 @@ void main() {
     // texte bien plus large que celui de l'application.
     setUpAll(chargerPolicesDuDepot);
     for (final (double, double) cas in <(double, double)>[
-      (320, 1),
       (390, 1),
-      (320, 1.15),
-      (1440, 1),
-      (320, 2),
+      for (final double l in <double>[320, 600, 1024, 1440])
+        for (final double e in <double>[1, 1.15, 1.3, 2]) (l, e),
     ]) {
       final double largeur = cas.$1;
       testWidgets(
@@ -234,9 +317,31 @@ void main() {
                 return '${s.width.round()}x${s.height.round()}';
               }(),
           };
-          // Large, haute et carree : trois formes distinctes (une seule
-          // colonne a texte double, par construction).
-          if (cas.$2 < 2) expect(formes.length, greaterThanOrEqualTo(3));
+          // BENTO-1b : le nombre de colonnes suit la largeur utile de la
+          // grille a cette echelle ; la plus etroite des cartes fait une
+          // colonne, et aucune ne sort de la grille.
+          final Rect grille = tester.getRect(find.byType(GrilleBento));
+          final int n = GrilleBento.colonnesPour(grille.width, cas.$2);
+          final double cellule = (grille.width - 16 * (n - 1)) / n;
+          final List<Rect> rects = <Rect>[
+            for (final Element e in cartes)
+              tester.getRect(find.byElementPredicate((Element x) => x == e)),
+          ];
+          expect(
+            rects
+                .map((Rect x) => x.width)
+                .reduce((double a, double b) => a < b ? a : b),
+            closeTo(cellule, 0.5),
+          );
+          for (final Rect x in rects) {
+            expect(x.left, greaterThanOrEqualTo(grille.left - 0.5));
+            expect(x.right, lessThanOrEqualTo(grille.right + 0.5));
+          }
+          if (largeur == 320 && cas.$2 == 2) expect(n, 1);
+          if (largeur == 1440) expect(n, greaterThanOrEqualTo(2));
+          // Large, haute et carree : trois formes distinctes des qu'il y a
+          // plusieurs colonnes (une seule colonne a 320 px et texte double).
+          if (n > 1) expect(formes.length, greaterThanOrEqualTo(3));
           expect(tester.takeException(), isNull);
         },
       );
