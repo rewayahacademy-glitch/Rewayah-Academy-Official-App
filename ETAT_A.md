@@ -1,5 +1,12 @@
 # État annoncé par le poste A (coordinateur)
 
+## 03/10/2026 : branche commune corrections/revue-directeur-2026-10 @ fa64a6ad (BENTO-2, BENTO-1c, BENTO-2b)
+
+- Session 0c20e592, voie CORR-2, ordre du directeur. Fusions `--no-ff` sur `d57ed2b1` : `f329e3a0` (corrections/c2-bento2 @ 27c57db5, BENTO-2), puis `fa64a6ad` (corrections/c2-bento2b @ 641ef8b8 = c2-bento1c e7b94c3a + BENTO-2b, correctifs de la revue refusée BENTO-2-R). Sans conflit, aucun marqueur, pas de changement i18n.
+- Vérification sous verrou sur `fa64a6ad` : `flutter analyze --fatal-infos` aucun problème ; tests par dossiers tous verts, 0 échec (core 648, teaching_core 912, features 2458, accessibilite 314, fixtures 5312, router 277, widgets 230, theme 70, et 21 autres dossiers).
+- Frontière `git diff --stat d57ed2b1..fa64a6ad -- supabase .github vercel.json pubspec.yaml` : vide.
+- Revue de BENTO-2b à faire par une autre session : BENTO-2b-R. corrections/c2-dash1 (DASH_STRATEGIE.md) reprise dans corrections/c2-bento3 (BENTO-3 en cours).
+
 ## 25/09/2026 : nouvelle base origin/ui/tuteur-v1 @ 92f5cf7 (animations sobres P2-16)
 
 - **Nouvelle base commune poussee : `origin/ui/tuteur-v1` @ `92f5cf7`** (fusion `--no-ff` de `origin/ui/tuteur-v1-anim` sur `f93272b`, commit `92f5cf7`, sans conflit).
