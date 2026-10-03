@@ -266,6 +266,178 @@ void main() {
     });
   });
 
+  group('GrilleBento, hauteur du contenu (BENTO-2)', () {
+    // La vue de test fait 800 x 600 par defaut : on la fixe a la largeur
+    // voulue, assez haute pour que rien ne soit borne par l'ecran.
+    Future<void> poser(
+      WidgetTester tester,
+      double largeur,
+      List<TuileBento> tuiles, {
+      double echelle = 1,
+    }) {
+      fixerVueCapture(tester, Size(largeur, 3000), 1);
+      return tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: MediaQueryData(
+              size: Size(largeur, 3000),
+              textScaler: TextScaler.linear(echelle),
+            ),
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: SizedBox(
+                width: largeur,
+                child: GrilleBento(hauteurContenu: true, tuiles: tuiles),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    TuileBento tuile(int i, EtendueBento e, double h, [EtendueBento? l]) =>
+        TuileBento(
+          etendue: e,
+          etendueLarge: l,
+          child: SizedBox(key: ValueKey<int>(i), height: h),
+        );
+    Rect r(WidgetTester tester, int i) =>
+        tester.getRect(find.byKey(ValueKey<int>(i)));
+
+    // Composition d'Aujourd'hui (ENS-02) : grande, large, haute/grande,
+    // grande, large. Sur quatre colonnes : deux colonnes de 2 cellules.
+    testWidgets('1440 px : deux colonnes exactes, hauteurs du contenu', (
+      WidgetTester tester,
+    ) async {
+      await poser(tester, 1440, <TuileBento>[
+        tuile(0, EtendueBento.grande, 500),
+        tuile(1, EtendueBento.large, 90),
+        tuile(2, EtendueBento.haute, 700, EtendueBento.grande),
+        tuile(3, EtendueBento.grande, 210),
+        tuile(4, EtendueBento.large, 60),
+      ]);
+      const double demi = (1440 - 16) / 2;
+      for (final int i in <int>[0, 1, 2, 3, 4]) {
+        expect(r(tester, i).width, demi, reason: 'tuile $i');
+      }
+      // Le contenu garde sa hauteur : rien n'est reduit ni coupe.
+      expect(r(tester, 2).height, 700);
+      expect(r(tester, 0).left, 0);
+      expect(r(tester, 3).left, 0);
+      expect(r(tester, 3).top - r(tester, 0).bottom, 16);
+      expect(r(tester, 1).left, demi + 16);
+      expect(r(tester, 2).top - r(tester, 1).bottom, 16);
+      expect(r(tester, 4).top - r(tester, 2).bottom, 16);
+      expect(tester.takeException(), isNull);
+    });
+
+    // Accueil famille (TUT-01) : blocage 4x1, deux grandes, derniere 4x1.
+    testWidgets('1024 px : bandes pleine largeur et tuiles cote a cote', (
+      WidgetTester tester,
+    ) async {
+      await poser(tester, 1024, <TuileBento>[
+        tuile(0, EtendueBento.large, 80, const EtendueBento(4, 1)),
+        tuile(1, EtendueBento.grande, 400),
+        tuile(2, EtendueBento.grande, 250),
+        tuile(3, EtendueBento.large, 120, const EtendueBento(4, 1)),
+      ]);
+      expect(r(tester, 0).width, 1024);
+      expect(r(tester, 1).top - r(tester, 0).bottom, 16);
+      expect(r(tester, 2).top, r(tester, 1).top);
+      expect(r(tester, 2).left, r(tester, 1).right + 16);
+      // La bande suivante part sous la plus haute des deux.
+      expect(r(tester, 3).top - r(tester, 1).bottom, 16);
+      expect(r(tester, 3).width, 1024);
+    });
+
+    testWidgets('390 px : tout en pleine largeur, dans l\'ordre declare', (
+      WidgetTester tester,
+    ) async {
+      await poser(tester, 390, <TuileBento>[
+        tuile(0, EtendueBento.grande, 300),
+        tuile(1, EtendueBento.haute, 200, EtendueBento.grande),
+        tuile(2, EtendueBento.grande, 100),
+      ]);
+      for (final int i in <int>[0, 1, 2]) {
+        expect(r(tester, i).width, 390, reason: 'tuile $i');
+      }
+      expect(r(tester, 1).top - r(tester, 0).bottom, 16);
+      expect(r(tester, 2).top - r(tester, 1).bottom, 16);
+    });
+
+    testWidgets('1440 px, texte x2 : aucune hauteur fixe, aucun debordement', (
+      WidgetTester tester,
+    ) async {
+      await poser(tester, 1440, <TuileBento>[
+        tuile(0, EtendueBento.grande, 900),
+        tuile(1, EtendueBento.haute, 50, EtendueBento.grande),
+      ], echelle: 2);
+      expect(r(tester, 0).height, 900);
+      expect(tester.takeException(), isNull);
+    });
+
+    // Aujourd'hui sans remplacement : carte, Ma journee, A terminer. La
+    // troisieme tuile, seule dans sa bande, est elargie par la regle sans trou
+    // de placerBento : pleine largeur, sous la carte et Ma journee.
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets(
+        '1440 px, ${sens.name} : une 2x2 seule s elargit, sans trou',
+        (WidgetTester tester) async {
+          fixerVueCapture(tester, const Size(1440, 3000), 1);
+          await tester.pumpWidget(
+            MediaQuery(
+              data: const MediaQueryData(size: Size(1440, 3000)),
+              child: Directionality(
+                textDirection: sens,
+                child: Align(
+                  alignment: Alignment.topLeft,
+                  child: SizedBox(
+                    width: 1440,
+                    child: GrilleBento(
+                      hauteurContenu: true,
+                      tuiles: <TuileBento>[
+                        tuile(0, EtendueBento.grande, 300),
+                        tuile(1, EtendueBento.haute, 120, EtendueBento.grande),
+                        tuile(2, EtendueBento.grande, 200),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+          const double demi = (1440 - 16) / 2;
+          expect(r(tester, 0).width, demi);
+          expect(r(tester, 1).width, demi);
+          expect(r(tester, 2).width, 1440);
+          expect(r(tester, 2).top - r(tester, 0).bottom, 16);
+          expect(r(tester, 0).left, sens == TextDirection.ltr ? 0 : demi + 16);
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
+
+    testWidgets('dispositions en moulinet : une colonne, rien de perdu', (
+      WidgetTester tester,
+    ) async {
+      // haute(0) | large(1) / carree(2) carree(3) / large(4) | haute(5) :
+      // sur quatre colonnes, aucune coupe ne traverse sans couper une tuile
+      // si le placement forme un moulinet ; chaque tuile reste affichee.
+      await poser(tester, 800, <TuileBento>[
+        tuile(0, EtendueBento.haute, 40),
+        tuile(1, const EtendueBento(3, 1), 40),
+        tuile(2, EtendueBento.carree, 40),
+        tuile(3, EtendueBento.large, 40),
+        tuile(4, const EtendueBento(3, 1), 40),
+        tuile(5, EtendueBento.carree, 40),
+      ]);
+      for (int i = 0; i < 6; i++) {
+        expect(find.byKey(ValueKey<int>(i)), findsOneWidget);
+      }
+      expect(tester.takeException(), isNull);
+    });
+  });
+
   group('Centre de commande', () {
     // Les vraies polices : la police de test (carres de 1 em) mesure un
     // texte bien plus large que celui de l'application.

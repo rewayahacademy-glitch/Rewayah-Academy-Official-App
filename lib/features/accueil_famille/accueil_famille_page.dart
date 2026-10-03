@@ -22,6 +22,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/selecteur_profils.dart';
@@ -74,13 +75,9 @@ presenceEleveProvider =
 /// prochaine seance du profil selectionne, blocage eventuel, « Avant le
 /// prochain cours », « Derniere seance ».
 ///
-/// Trois compositions, un seul arbre de donnees (manifeste : seul le format
-/// change la composition, jamais le theme) :
-///
-/// - telephone : une colonne, cartes separees (V1) ;
-/// - tablette : la carte classe, puis une carte groupee (V2 B) ;
-/// - bureau : deux colonnes, carte classe a gauche, carte groupee a droite
-///   (V2 A, C).
+/// Une seule composition, la grille Bento partagee (BENTO-2, DASH_STRATEGIE.md
+/// §3.4) : une colonne sur telephone, tuiles de tailles variees au-dela. Seul
+/// le format change la composition, jamais le theme.
 ///
 /// **Ce que l'ecran ne fait plus**, et ou la fonction vit desormais (une
 /// fonction = un seul endroit) : « Assister » (l'observation se fait depuis
@@ -290,65 +287,39 @@ class _Contenu extends ConsumerWidget {
       onReessayer: () => ref.invalidate(derniereSeanceProvider(eleveId)),
     );
 
-    if (compact) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          selecteur,
-          Ecart.vXl,
-          carte,
-          if (bandeau != null) ...<Widget>[Ecart.vLg, bandeau],
-          Ecart.vLg,
-          AppCard(marge: AppSpacing.lg, child: preparation),
-          Ecart.vLg,
-          AppCard(marge: AppSpacing.lg, child: derniereSeance),
-        ],
-      );
-    }
-
-    // Tablette et bureau : blocage, preparation et derniere seance dans UNE
-    // carte groupee, sujets separes par un filet (decisions 1 ter, point 3).
-    final Widget carteGroupee = AppCard(
-      marge: AppSpacing.xxl,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          if (bandeau != null) ...<Widget>[
-            bandeau,
-            Ecart.vXl,
-            const FiletHorizontal(),
-            Ecart.vXl,
-          ],
-          preparation,
-          Ecart.vXl,
-          const FiletHorizontal(),
-          Ecart.vXl,
-          derniereSeance,
-        ],
-      ),
-    );
-
+    // BENTO-2 : la grille Bento partagee, disposition de DASH_STRATEGIE.md
+    // §3.4. Le blocage, s'il existe, d'abord et en large ; la classe et sa
+    // prochaine seance, puis « Avant le prochain cours », en grandes tuiles
+    // cote a cote sur quatre colonnes ; la derniere seance en large. Chaque
+    // tuile garde la hauteur de son contenu ; sur telephone, une colonne.
+    final double marge = compact ? AppSpacing.lg : AppSpacing.xxl;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         selecteur,
         Ecart.vXl,
-        if (gabarit == Gabarit.desktop)
-          // Deux colonnes de hauteur egale, environ 62 / 38 (V2 A).
-          IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Expanded(flex: 62, child: carte),
-                Ecart.hLg,
-                Expanded(flex: 38, child: carteGroupee),
-              ],
+        GrilleBento(
+          hauteurContenu: true,
+          tuiles: <TuileBento>[
+            if (bandeau != null)
+              TuileBento(
+                etendue: EtendueBento.large,
+                etendueLarge: const EtendueBento(4, 1),
+                child: bandeau,
+              ),
+            TuileBento(etendue: EtendueBento.grande, child: carte),
+            TuileBento(
+              etendue: EtendueBento.grande,
+              child: AppCard(marge: marge, child: preparation),
             ),
-          )
-        else ...<Widget>[carte, Ecart.vLg, carteGroupee],
+            TuileBento(
+              etendue: EtendueBento.large,
+              etendueLarge: const EtendueBento(4, 1),
+              child: AppCard(marge: marge, child: derniereSeance),
+            ),
+          ],
+        ),
       ],
     );
   }

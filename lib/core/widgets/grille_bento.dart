@@ -233,12 +233,25 @@ List<PlacementBento> placerBento(List<EtendueBento> etendues, int colonnes) {
 /// * **Une colonne** : la grille repasse en une colonne de hauteur libre,
 ///   dans l'ordre declare. Le contenu ne deborde donc jamais d'une hauteur
 ///   fixe (320 px et texte double).
+/// * **Hauteur du contenu** ([hauteurContenu], BENTO-2) : pour les accueils
+///   dont les cartes portent des listes, des boutons et des frises, la place
+///   des tuiles (colonnes, ordre) vient de [placerBento], mais chaque tuile
+///   prend la hauteur de son contenu, jamais une hauteur fixe : rien n'est
+///   reduit ni coupe. Les tuiles s'alignent en haut de leur bande.
 class GrilleBento extends StatelessWidget {
   /// Cree la grille.
-  const GrilleBento({required this.tuiles, super.key});
+  const GrilleBento({
+    required this.tuiles,
+    this.hauteurContenu = false,
+    super.key,
+  });
 
   /// Les tuiles, dans l'ordre d'importance.
   final List<TuileBento> tuiles;
+
+  /// Vrai : chaque tuile prend la hauteur de son contenu au lieu de
+  /// [hauteurLigne] par ligne couverte.
+  final bool hauteurContenu;
 
   /// Le jeton de hauteur d'une ligne de grille.
   static const double hauteurLigne = 160;
@@ -302,6 +315,13 @@ class GrilleBento extends StatelessWidget {
     final List<PlacementBento> places = placerBento(<EtendueBento>[
       for (final TuileBento t in tuiles) t.pour(colonnes),
     ], colonnes);
+    if (hauteurContenu) {
+      return _bloc(
+        <int>[for (int i = 0; i < tuiles.length; i++) i],
+        places,
+        cellule,
+      );
+    }
     int lignes = 0;
     for (final PlacementBento p in places) {
       if (p.ligne + p.lignes > lignes) lignes = p.ligne + p.lignes;
@@ -323,6 +343,81 @@ class GrilleBento extends StatelessWidget {
             ),
         ],
       ),
+    );
+  }
+
+  /// [hauteurContenu] : decoupe les tuiles [ids] en bandes, sans hauteur
+  /// fixe. D'abord une coupe horizontale qu'aucune tuile ne traverse (bande
+  /// du dessus, puis celle du dessous), sinon une coupe verticale (debut de
+  /// lecture, puis fin) ; chaque part a la largeur exacte de ses colonnes.
+  /// Une disposition en moulinet, qui n'admet aucune coupe, se lit en une
+  /// colonne dans l'ordre declare : rien n'est perdu.
+  Widget _bloc(List<int> ids, List<PlacementBento> places, double cellule) {
+    if (ids.length == 1) return tuiles[ids.single].child;
+    int haut = 1 << 30, bas = 0, debut = 1 << 30, fin = 0;
+    for (final int i in ids) {
+      final PlacementBento p = places[i];
+      haut = math.min(haut, p.ligne);
+      bas = math.max(bas, p.ligne + p.lignes);
+      debut = math.min(debut, p.colonne);
+      fin = math.max(fin, p.colonne + p.colonnes);
+    }
+    double largeur(int colonnes) => colonnes * cellule + (colonnes - 1) * ecart;
+
+    for (int y = haut + 1; y < bas; y++) {
+      final List<int> dessus = <int>[
+        for (final int i in ids)
+          if (places[i].ligne + places[i].lignes <= y) i,
+      ];
+      final List<int> dessous = <int>[
+        for (final int i in ids)
+          if (places[i].ligne >= y) i,
+      ];
+      if (dessus.length + dessous.length == ids.length) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            _bloc(dessus, places, cellule),
+            const SizedBox(height: ecart),
+            _bloc(dessous, places, cellule),
+          ],
+        );
+      }
+    }
+    for (int x = debut + 1; x < fin; x++) {
+      final List<int> avant = <int>[
+        for (final int i in ids)
+          if (places[i].colonne + places[i].colonnes <= x) i,
+      ];
+      final List<int> apres = <int>[
+        for (final int i in ids)
+          if (places[i].colonne >= x) i,
+      ];
+      if (avant.length + apres.length == ids.length) {
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(
+              width: largeur(x - debut),
+              child: _bloc(avant, places, cellule),
+            ),
+            const SizedBox(width: ecart),
+            SizedBox(
+              width: largeur(fin - x),
+              child: _bloc(apres, places, cellule),
+            ),
+          ],
+        );
+      }
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        for (int k = 0; k < ids.length; k++) ...<Widget>[
+          if (k > 0) const SizedBox(height: ecart),
+          tuiles[ids[k]].child,
+        ],
+      ],
     );
   }
 }
