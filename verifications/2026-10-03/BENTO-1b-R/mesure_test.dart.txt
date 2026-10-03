@@ -1,0 +1,89 @@
+// REVUE BENTO-1b-R (session c3316e32) : mesure temporaire, NON commitee.
+// Vraie app, vraie coquille admin, vrai routeur, demonstration admin.
+
+import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/app.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/app_router.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/widgets/grille_bento.dart';
+import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
+import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
+
+Future<void> _stabiliser(WidgetTester tester) async {
+  for (int i = 0; i < 8; i++) {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+}
+
+void main() {
+  for (final Size taille in const <Size>[
+    Size(1440, 900),
+    Size(1280, 800),
+    Size(1024, 768),
+    Size(768, 1024),
+    Size(390, 844),
+    Size(360, 800),
+  ]) {
+    for (final double s in const <double>[1, 1.15, 1.3, 1.5, 1.75, 2]) {
+      testWidgets('MESURE ${taille.width.toInt()} x$s', (WidgetTester tester) async {
+        tester.view.physicalSize = taille;
+        tester.view.devicePixelRatio = 1;
+        tester.platformDispatcher.textScaleFactorTestValue = s;
+        addTearDown(tester.view.resetPhysicalSize);
+        addTearDown(tester.view.resetDevicePixelRatio);
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: surchargesDemoAdmin(environnement: 'staging'),
+            child: TranslationProvider(
+              child: RewayahApp(
+                builder: (BuildContext context, Widget? child) =>
+                    RepereDemonstration(child: child),
+              ),
+            ),
+          ),
+        );
+        await _stabiliser(tester);
+        ProviderScope.containerOf(tester.element(find.byType(RewayahApp)))
+            .read(routeurProvider)
+            .go(Routes.admin);
+        await _stabiliser(tester);
+        final Finder grille = find.byType(GrilleBento);
+        if (grille.evaluate().isEmpty) {
+          debugPrint('MESURE ${taille.width.toInt()} x$s : PAS DE GRILLE');
+          return;
+        }
+        final double largeur = tester.getSize(grille).width;
+        final int col = GrilleBento.colonnesPour(largeur, s);
+        double pire = 1;
+        int reduites = 0;
+        final Iterable<Element> boites = find
+            .descendant(of: grille, matching: find.byType(FittedBox))
+            .evaluate();
+        for (final Element e in boites) {
+          final RenderBox r = e.renderObject! as RenderBox;
+          RenderBox? enfant;
+          r.visitChildren((RenderObject c) => enfant = c as RenderBox);
+          if (enfant == null || !enfant!.hasSize) continue;
+          final double f = math.min(
+            r.size.width / enfant!.size.width,
+            r.size.height / enfant!.size.height,
+          );
+          if (f < 0.999) reduites++;
+          pire = math.min(pire, f);
+        }
+        debugPrint(
+          'MESURE ${taille.width.toInt()} x$s : grille ${largeur.toStringAsFixed(0)} px, '
+          '$col col, tuiles ${boites.length}, reduites $reduites, '
+          'pire facteur ${pire.toStringAsFixed(2)}, texte effectif ${(s * pire).toStringAsFixed(2)}',
+        );
+      });
+    }
+  }
+}

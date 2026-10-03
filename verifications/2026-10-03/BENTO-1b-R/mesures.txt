@@ -1,0 +1,44 @@
+
+VERROU acquis 06:18:46 -> flutter test test/_revue_bento1b/mesure_test.dart -r expanded
+MESURE 1440 x1.0 : grille 1088 px, 4 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 1.00
+MESURE 1440 x1.15 : grille 1088 px, 4 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 1.15
+MESURE 1440 x1.3 : grille 1088 px, 4 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 1.30
+MESURE 1440 x1.5 : grille 1088 px, 4 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 1.50
+MESURE 1440 x1.75 : grille 1088 px, 4 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 1.75
+MESURE 1440 x2.0 : grille 1088 px, 4 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 2.00
+MESURE 1280 x1.0 : grille 928 px, 4 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 1.00
+MESURE 1280 x1.15 : grille 928 px, 4 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 1.15
+MESURE 1280 x1.3 : grille 928 px, 4 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 1.30
+MESURE 1280 x1.5 : grille 928 px, 4 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 1.50
+MESURE 1280 x1.75 : grille 928 px, 4 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 1.75
+MESURE 1280 x2.0 : grille 928 px, 2 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 2.00
+MESURE 1024 x1.0 : grille 896 px, 4 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 1.00
+MESURE 1024 x1.15 : grille 896 px, 4 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 1.15
+MESURE 1024 x1.3 : grille 896 px, 4 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 1.30
+MESURE 1024 x1.5 : grille 896 px, 4 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 1.50
+MESURE 1024 x1.75 : grille 896 px, 4 col, tuiles 5, reduites 1, pire facteur 0.96, texte effectif 1.68
+MESURE 1024 x2.0 : grille 896 px, 2 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 2.00
+MESURE 768 x1.0 : grille 640 px, 4 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 1.00
+MESURE 768 x1.15 : grille 640 px, 4 col, tuiles 5, reduites 1, pire facteur 0.99, texte effectif 1.13
+MESURE 768 x1.3 : grille 640 px, 4 col, tuiles 5, reduites 1, pire facteur 0.93, texte effectif 1.21
+MESURE 768 x1.5 : grille 640 px, 2 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 1.50
+MESURE 768 x1.75 : grille 640 px, 2 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 1.75
+MESURE 768 x2.0 : grille 640 px, 2 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 2.00
+MESURE 390 x1.0 : grille 358 px, 2 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 1.00
+MESURE 390 x1.15 : grille 358 px, 2 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 1.15
+MESURE 390 x1.3 : grille 358 px, 2 col, tuiles 5, reduites 1, pire facteur 0.97, texte effectif 1.26
+MESURE 390 x1.5 : grille 358 px, 2 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 1.50
+MESURE 390 x1.75 : grille 358 px, 1 col, tuiles 0, reduites 0, pire facteur 1.00, texte effectif 1.75
+MESURE 390 x2.0 : grille 358 px, 1 col, tuiles 0, reduites 0, pire facteur 1.00, texte effectif 2.00
+MESURE 360 x1.0 : grille 328 px, 2 col, tuiles 5, reduites 0, pire facteur 1.00, texte effectif 1.00
+MESURE 360 x1.15 : grille 328 px, 2 col, tuiles 5, reduites 1, pire facteur 0.94, texte effectif 1.08
+MESURE 360 x1.3 : grille 328 px, 2 col, tuiles 5, reduites 1, pire facteur 0.97, texte effectif 1.26
+MESURE 360 x1.5 : grille 328 px, 1 col, tuiles 0, reduites 0, pire facteur 1.00, texte effectif 1.50
+MESURE 360 x1.75 : grille 328 px, 1 col, tuiles 0, reduites 0, pire facteur 1.00, texte effectif 1.75
+MESURE 360 x2.0 : grille 328 px, 1 col, tuiles 0, reduites 0, pire facteur 1.00, texte effectif 2.00
+00:31 +36: All tests passed!
+VERROU libéré, durée 130 s, code 0
+
+
+
+[exited with code 0]
