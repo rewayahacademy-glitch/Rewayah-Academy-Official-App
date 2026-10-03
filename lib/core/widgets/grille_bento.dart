@@ -47,10 +47,11 @@ class EtendueBento {
 
 /// Une tuile de [GrilleBento].
 ///
-/// [etendue] vaut sur la grille de deux colonnes (telephone) ;
-/// [etendueLarge], quand elle est donnee, vaut sur la grille de quatre
-/// (tablette et ordinateur). Le contenu ne porte jamais sa propre hauteur :
-/// c'est la grille qui la fixe.
+/// [etendue] vaut sur la grille de deux colonnes ou moins (telephone, texte
+/// tres agrandi) ; [etendueLarge], quand elle est donnee, vaut a trois
+/// colonnes et plus (tablette, ordinateur, palier a 3 du texte agrandi),
+/// ramenee par [placerBento] a la largeur de la grille. Le contenu ne porte
+/// jamais sa propre hauteur : c'est la grille qui la fixe.
 @immutable
 class TuileBento {
   /// Cree une tuile.
@@ -60,10 +61,10 @@ class TuileBento {
     this.etendueLarge,
   });
 
-  /// L'etendue sur deux colonnes.
+  /// L'etendue sur deux colonnes ou moins.
   final EtendueBento etendue;
 
-  /// L'etendue sur quatre colonnes, sinon [etendue].
+  /// L'etendue a trois colonnes et plus, sinon [etendue].
   final EtendueBento? etendueLarge;
 
   /// Le contenu, qui remplit toute la tuile.
@@ -71,7 +72,7 @@ class TuileBento {
 
   /// L'etendue retenue pour [colonnes].
   EtendueBento pour(int colonnes) =>
-      colonnes >= 4 ? (etendueLarge ?? etendue) : etendue;
+      colonnes >= 3 ? (etendueLarge ?? etendue) : etendue;
 }
 
 /// La place d'une tuile, en cellules de la grille.
@@ -220,12 +221,12 @@ List<PlacementBento> placerBento(List<EtendueBento> etendues, int colonnes) {
 /// s'imbriquent sans trou, jamais un damier de carres identiques.
 ///
 /// * **Colonnes** : deux sous [seuilQuatreColonnes] de largeur offerte
-///   (telephone), quatre au-dela (tablette et ordinateur). Puis, tant qu'une
-///   colonne est plus etroite que [largeurMinCellule] multipliee par l'echelle
-///   du texte, la grille divise ses colonnes par deux : 4, 2, puis 1
-///   (BENTO-1b). C'est la largeur UTILE par colonne qui decide, jamais
-///   l'echelle seule : a 1440 px et texte double, la grille garde plusieurs
-///   colonnes et ses tailles variees.
+///   (telephone), quatre au-dela (tablette et ordinateur). Texte agrandi
+///   seulement : tant qu'une colonne est plus etroite que
+///   [largeurMinCellule] multipliee par l'echelle du texte, la grille perd
+///   une colonne : 4, 3, 2, puis 1 (BENTO-1b, BENTO-1c). C'est la largeur
+///   UTILE par colonne qui decide, jamais l'echelle seule : a 1440 px et
+///   texte double, la grille garde plusieurs colonnes et ses tailles variees.
 /// * **Ecart** : 16 px entre tuiles, dans les deux sens (K-55).
 /// * **Hauteur** : une ligne vaut [hauteurLigne] multipliee par l'echelle du
 ///   texte quand elle depasse 1 ([hauteurLignePour]) ; une tuile `1 x 2` vaut
@@ -262,20 +263,29 @@ class GrilleBento extends StatelessWidget {
   /// Largeur offerte a partir de laquelle la grille passe a quatre colonnes.
   static const double seuilQuatreColonnes = 600;
 
-  /// Largeur utile minimale d'une colonne, a texte 100 %. Elle est
-  /// multipliee par l'echelle du texte. 112 garde quatre colonnes a 600 px et
-  /// deux a 320 px de place offerte, a texte 100 % comme avant BENTO-1b.
+  /// Largeur utile minimale d'une colonne, multipliee par l'echelle du texte
+  /// quand elle depasse 1 (sans effet a 100 % ou moins). 112 garde quatre
+  /// colonnes a 600 px et texte 115 % (138 >= 128,8) et donne une colonne a
+  /// 320 px et texte double. Valeur sans source externe : a faire valider
+  /// par le directeur.
   static const double largeurMinCellule = 112;
 
   /// Le nombre de colonnes pour une largeur offerte et une echelle de texte :
-  /// 4 ou 2 selon la largeur, puis divise par deux tant que la largeur
-  /// utile par colonne est sous `largeurMinCellule x echelle`.
+  /// 4 ou 2 selon la largeur. Texte agrandi seulement : une colonne de moins
+  /// (4, 3, 2, 1) tant que la largeur utile par colonne est sous
+  /// `largeurMinCellule x echelle`. A trois colonnes, les tuiles prennent
+  /// leur [TuileBento.etendueLarge] : la grande tuile 2x2 reste la ou deux
+  /// colonnes la reduiraient (BENTO-1c). A texte 100 % ou moins, rien ne
+  /// change, meme dans une place etroite ; une place sans largeur utile
+  /// (premiere image, panneau qui s'ouvre) donne une colonne.
   static int colonnesPour(double largeur, [double echelle = 1]) {
+    if (largeur <= ecart) return 1;
     int colonnes = largeur >= seuilQuatreColonnes ? 4 : 2;
-    final double minimum = largeurMinCellule * math.max(1, echelle);
+    if (echelle <= 1) return colonnes;
+    final double minimum = largeurMinCellule * echelle;
     while (colonnes > 1 &&
         (largeur - ecart * (colonnes - 1)) / colonnes < minimum) {
-      colonnes ~/= 2;
+      colonnes--;
     }
     return colonnes;
   }

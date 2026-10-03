@@ -41,6 +41,18 @@ void _sansTrouNiChevauchement(List<PlacementBento> places, int colonnes) {
   }
 }
 
+// BENTO-1b/1c : la largeur utile par colonne, a l'echelle du texte, decide du
+// nombre de colonnes (4, 3, 2, 1), jamais l'echelle seule. Valeurs fixes,
+// jamais recalculees par la fonction testee.
+const List<double> _echelles = <double>[1, 1.15, 1.3, 2];
+final Map<double, List<int>> _colonnesAttendues = <double, List<int>>{
+  // echelles :  1.0 1.15 1.3 2.0
+  320: <int>[2, 2, 2, 1],
+  600: <int>[4, 4, 3, 2],
+  1024: <int>[4, 4, 4, 4],
+  1440: <int>[4, 4, 4, 4],
+};
+
 const List<EtendueBento> _centre2 = <EtendueBento>[
   EtendueBento.large,
   EtendueBento.haute,
@@ -118,7 +130,7 @@ void main() {
         ],
       ];
       for (final List<EtendueBento> c in cas) {
-        for (final int colonnes in <int>[2, 4]) {
+        for (final int colonnes in <int>[2, 3, 4]) {
           _sansTrouNiChevauchement(placerBento(c, colonnes), colonnes);
         }
       }
@@ -131,28 +143,21 @@ void main() {
       expect(GrilleBento.colonnesPour(1440), 4);
     });
 
-    // BENTO-1b : la largeur utile par colonne, a l'echelle du texte, decide
-    // du nombre de colonnes (4, 2, 1), jamais l'echelle seule.
-    final Map<double, List<int>> attendu = <double, List<int>>{
-      // echelles :  1.0 1.15 1.3 2.0
-      320: <int>[2, 2, 2, 1],
-      600: <int>[4, 4, 2, 2],
-      1024: <int>[4, 4, 4, 4],
-      1440: <int>[4, 4, 4, 4],
-    };
-    const List<double> echelles = <double>[1, 1.15, 1.3, 2];
     test('colonnes selon la largeur utile et le texte', () {
-      attendu.forEach((double largeur, List<int> colonnes) {
-        for (int i = 0; i < echelles.length; i++) {
+      _colonnesAttendues.forEach((double largeur, List<int> colonnes) {
+        for (int i = 0; i < _echelles.length; i++) {
           expect(
-            GrilleBento.colonnesPour(largeur, echelles[i]),
+            GrilleBento.colonnesPour(largeur, _echelles[i]),
             colonnes[i],
-            reason: '$largeur px, texte x${echelles[i]}',
+            reason: '$largeur px, texte x${_echelles[i]}',
           );
         }
       });
-      // Une place etroite repasse en une colonne.
-      expect(GrilleBento.colonnesPour(200), 1);
+      // BENTO-1c : a texte 100 %, une place etroite garde ses deux colonnes ;
+      // texte agrandi, elle repasse en une colonne.
+      expect(GrilleBento.colonnesPour(200), 2);
+      expect(GrilleBento.colonnesPour(200, 0.9), 2);
+      expect(GrilleBento.colonnesPour(200, 1.15), 1);
     });
   });
 
@@ -188,7 +193,7 @@ void main() {
     // etroite des tuiles fait exactement une colonne du nombre attendu, les
     // lignes grandissent avec le texte, rien ne se chevauche ni ne sort.
     for (final double largeur in <double>[320, 600, 1024, 1440]) {
-      for (final double echelle in <double>[1, 1.15, 1.3, 2]) {
+      for (final double echelle in _echelles) {
         testWidgets('$largeur px, texte x$echelle : colonnes et bornes', (
           WidgetTester tester,
         ) async {
@@ -207,7 +212,8 @@ void main() {
             ], echelle: echelle),
           );
           expect(tester.takeException(), isNull);
-          final int n = GrilleBento.colonnesPour(largeur, echelle);
+          final int n =
+              _colonnesAttendues[largeur]![_echelles.indexOf(echelle)];
           final List<Rect> r = <Rect>[
             for (int i = 0; i < _centre2.length; i++)
               tester.getRect(find.byKey(ValueKey<int>(i))),
@@ -417,22 +423,61 @@ void main() {
       );
     }
 
+    // BENTO-1c : 750 px et texte double donnent trois colonnes. Aujourd'hui
+    // avec un remplacement : l'ordre declare est garde (le remplacement
+    // avant Ma journee) et Ma journee n'est jamais reduite a un tiers.
+    testWidgets('750 px, texte x2 (trois colonnes) : ordre garde, rien de '
+        'reduit', (WidgetTester tester) async {
+      await poser(tester, 750, <TuileBento>[
+        tuile(0, EtendueBento.grande, 300),
+        tuile(1, EtendueBento.large, 80),
+        tuile(2, EtendueBento.haute, 400, EtendueBento.grande),
+        tuile(3, EtendueBento.grande, 200),
+      ], echelle: 2);
+      for (int i = 1; i < 4; i++) {
+        expect(r(tester, i).top, greaterThan(r(tester, i - 1).top));
+      }
+      expect(r(tester, 2).width, greaterThan(750 / 2));
+      expect(r(tester, 2).height, 400);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('dispositions en moulinet : une colonne, rien de perdu', (
       WidgetTester tester,
     ) async {
-      // haute(0) | large(1) / carree(2) carree(3) / large(4) | haute(5) :
-      // sur quatre colonnes, aucune coupe ne traverse sans couper une tuile
-      // si le placement forme un moulinet ; chaque tuile reste affichee.
-      await poser(tester, 800, <TuileBento>[
-        tuile(0, EtendueBento.haute, 40),
-        tuile(1, const EtendueBento(3, 1), 40),
-        tuile(2, EtendueBento.carree, 40),
-        tuile(3, EtendueBento.large, 40),
-        tuile(4, const EtendueBento(3, 1), 40),
-        tuile(5, EtendueBento.carree, 40),
+      // BENTO-2b (revue BENTO-2-R, m2) : un vrai moulinet sur quatre
+      // colonnes, prouve par placerBento, puis la branche de repli prouvee
+      // par les positions rendues.
+      //   A A A B
+      //   D C C B
+      //   D E E E
+      // y = 1 coupe B, y = 2 coupe D ; x = 1 et x = 2 coupent A, x = 3
+      // coupe E : aucune coupe possible.
+      const List<EtendueBento> etendues = <EtendueBento>[
+        EtendueBento(3, 1), // A
+        EtendueBento(1, 2), // B
+        EtendueBento(1, 2), // D
+        EtendueBento(2, 1), // C
+        EtendueBento(3, 1), // E
+      ];
+      expect(placerBento(etendues, 4), const <PlacementBento>[
+        PlacementBento(0, 0, 3, 1),
+        PlacementBento(3, 0, 1, 2),
+        PlacementBento(0, 1, 1, 2),
+        PlacementBento(1, 1, 2, 1),
+        PlacementBento(1, 2, 3, 1),
       ]);
-      for (int i = 0; i < 6; i++) {
-        expect(find.byKey(ValueKey<int>(i)), findsOneWidget);
+      expect(GrilleBento.colonnesPour(800), 4);
+      await poser(tester, 800, <TuileBento>[
+        for (int i = 0; i < etendues.length; i++)
+          tuile(i, etendues[i], 40, etendues[i]),
+      ]);
+      // Repli : une colonne pleine largeur, dans l'ordre declare, 16 entre
+      // deux tuiles ; aucune tuile perdue.
+      for (int i = 0; i < etendues.length; i++) {
+        expect(r(tester, i).width, 800);
+        expect(r(tester, i).left, 0);
+        if (i > 0) expect(r(tester, i).top - r(tester, i - 1).bottom, 16);
       }
       expect(tester.takeException(), isNull);
     });
@@ -442,11 +487,30 @@ void main() {
     // Les vraies polices : la police de test (carres de 1 em) mesure un
     // texte bien plus large que celui de l'application.
     setUpAll(chargerPolicesDuDepot);
-    for (final (double, double) cas in <(double, double)>[
-      (390, 1),
-      for (final double l in <double>[320, 600, 1024, 1440])
-        for (final double e in <double>[1, 1.15, 1.3, 2]) (l, e),
-    ]) {
+    // (vue, texte, largeur de la grille, colonnes) : valeurs fixes relevees
+    // sur la page reelle, jamais recalculees par colonnesPour (BENTO-1c).
+    // 800 px et texte double tombe dans le palier a trois colonnes.
+    for (final (double, double, double, int) cas
+        in <(double, double, double, int)>[
+          (390, 1, 358, 2),
+          (320, 1, 288, 2),
+          (320, 1.15, 288, 2),
+          (320, 1.3, 288, 1),
+          (320, 2, 288, 1),
+          (600, 1, 552, 2),
+          (600, 1.15, 552, 2),
+          (600, 1.3, 552, 2),
+          (600, 2, 552, 2),
+          (800, 2, 752, 3),
+          (1024, 1, 976, 4),
+          (1024, 1.15, 976, 4),
+          (1024, 1.3, 976, 4),
+          (1024, 2, 976, 4),
+          (1440, 1, 1136, 4),
+          (1440, 1.15, 1136, 4),
+          (1440, 1.3, 1136, 4),
+          (1440, 2, 1136, 4),
+        ]) {
       final double largeur = cas.$1;
       testWidgets(
         '$largeur px, texte x${cas.$2} : formes variees, sans debordement',
@@ -493,7 +557,8 @@ void main() {
           // grille a cette echelle ; la plus etroite des cartes fait une
           // colonne, et aucune ne sort de la grille.
           final Rect grille = tester.getRect(find.byType(GrilleBento));
-          final int n = GrilleBento.colonnesPour(grille.width, cas.$2);
+          expect(grille.width, cas.$3);
+          final int n = cas.$4;
           final double cellule = (grille.width - 16 * (n - 1)) / n;
           final List<Rect> rects = <Rect>[
             for (final Element e in cartes)
@@ -509,8 +574,6 @@ void main() {
             expect(x.left, greaterThanOrEqualTo(grille.left - 0.5));
             expect(x.right, lessThanOrEqualTo(grille.right + 0.5));
           }
-          if (largeur == 320 && cas.$2 == 2) expect(n, 1);
-          if (largeur == 1440) expect(n, greaterThanOrEqualTo(2));
           // Large, haute et carree : trois formes distinctes des qu'il y a
           // plusieurs colonnes (une seule colonne a 320 px et texte double).
           if (n > 1) expect(formes.length, greaterThanOrEqualTo(3));

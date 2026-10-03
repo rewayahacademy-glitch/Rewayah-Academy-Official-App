@@ -26,6 +26,7 @@ import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_parcours/port_travail_a_venir.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
+import 'package:rewayah_academy/core/widgets/grille_bento.dart';
 import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_profils.dart';
@@ -34,13 +35,16 @@ import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/accueil_famille/accueil_famille_page.dart';
 import 'package:rewayah_academy/features/accueil_famille/bandeau_blocage.dart';
 import 'package:rewayah_academy/features/accueil_famille/bloc_seance.dart';
+import 'package:rewayah_academy/features/accueil_famille/carte_classe_seance.dart';
 import 'package:rewayah_academy/features/accueil_famille/ligne_derniere_seance.dart';
 import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
 
+import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../fixtures/tuteur/faux_classes_foyer.dart';
 import '../fixtures/tuteur/faux_seances_famille.dart';
 import '../fixtures/tuteur/foyers.dart';
 import '../router/support_routeur.dart';
+import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
 
 /// Le premier profil retenu : « Eleve A1 » (tri par prenom, contrat K1).
@@ -135,6 +139,8 @@ Future<GoRouter> _monter(
   bool horlogeAbsente = false,
   Size taille = const Size(390, 844),
   List<Override> autres = const <Override>[],
+  double echelle = 1,
+  TextDirection? direction,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -177,6 +183,17 @@ Future<GoRouter> _monter(
             routeur = ref.read(routeurProvider);
             return MaterialApp.router(
               theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              // Sans echelle ni sens demandes, l'application reste telle quelle.
+              builder: echelle == 1 && direction == null
+                  ? null
+                  : (BuildContext c, Widget? app) => MediaQuery(
+                      data: MediaQuery.of(c)
+                          .copyWith(textScaler: TextScaler.linear(echelle)),
+                      child: Directionality(
+                        textDirection: direction ?? TextDirection.ltr,
+                        child: app!,
+                      ),
+                    ),
               routerConfig: routeur,
             );
           },
@@ -516,6 +533,61 @@ void main() {
       expect((avant.dy - classe.dy).abs(), lessThan(200));
       expect(find.text(t.tuteur.accueil.prochaineSeance), findsOneWidget);
       expect(find.byType(NavShell), findsOneWidget);
+    });
+  });
+
+  group('BENTO-2b : la carte classe ne coupe aucun mot', () {
+    // Les mesures de texte n'ont de sens qu'avec les vraies polices.
+    setUpAll(chargerPolicesDuDepot);
+
+    for (final (double, double) cas in const <(double, double)>[
+      (320, 2),
+      (768, 1),
+      (768, 2),
+      (1024, 1),
+      (1440, 1),
+      (1440, 2),
+    ]) {
+      for (final TextDirection sens in TextDirection.values) {
+        testWidgets('${cas.$1.toInt()} px, texte x${cas.$2.toInt()}, '
+            '${sens.name}', (WidgetTester tester) async {
+          await _monter(
+            tester,
+            depart: Routes.tuteurAccueil,
+            taille: Size(cas.$1, 3000),
+            echelle: cas.$2,
+            direction: sens,
+          );
+          expect(tester.takeException(), isNull);
+          // La carte, « Avant le prochain cours » et « Derniere seance » ;
+          // le selecteur de profils (qui defile) et la coquille sont hors
+          // de cette mesure.
+          verifierAucunMotCoupe(tester, find.byType(GrilleBento));
+        });
+      }
+    }
+
+    testWidgets('768 px : la carte classe passe en pleine largeur ; 1440 px : '
+        'cote a cote', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        depart: Routes.tuteurAccueil,
+        taille: const Size(768, 1500),
+      );
+      final double grille = tester.getSize(find.byType(GrilleBento)).width;
+      expect(
+        tester.getSize(find.byType(CarteClasseSeance)).width,
+        moreOrLessEquals(grille),
+      );
+      await _monter(
+        tester,
+        depart: Routes.tuteurAccueil,
+        taille: const Size(1440, 1500),
+      );
+      expect(
+        tester.getSize(find.byType(CarteClasseSeance)).width,
+        lessThan(tester.getSize(find.byType(GrilleBento)).width / 2),
+      );
     });
   });
 

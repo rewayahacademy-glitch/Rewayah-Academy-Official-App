@@ -334,11 +334,11 @@ List<String> _alertesPresence(WidgetRef ref, SeanceEnseignant seance) {
 /// BENTO-2 : la grille Bento partagee, disposition de DASH_STRATEGIE.md §3.5.
 ///
 /// Prochaine seance en grande tuile, une tuile large par remplacement
-/// confirme, Ma journee haute (grande sur quatre colonnes), A terminer en
+/// confirme, Ma journee haute (grande a trois colonnes et plus), A terminer en
 /// grande tuile, Alertes utiles en large. Chaque tuile garde la hauteur de son
 /// contenu (`hauteurContenu`) : la frise du jour n'est jamais bornee (D6 a).
-/// Sous 600 px de place, ou quand le texte agrandi ne laisse plus la largeur,
-/// la grille repasse en une colonne dans cet ordre (BENTO-1b).
+/// Les colonnes suivent la largeur utile (`GrilleBento.colonnesPour`) : en
+/// une colonne, les tuiles se suivent dans cet ordre (BENTO-1b, BENTO-1c).
 class _Composition extends StatelessWidget {
   const _Composition({
     required this.prochaine,
@@ -841,35 +841,44 @@ class _ATerminer extends ConsumerWidget {
       children: <Widget>[
         // Le titre au style de `SectionHeader`, le point colle a lui : dans
         // `SectionHeader`, qui occupe toute la ligne, il partirait au bout.
+        // BENTO-2b : un `Wrap` et non une `Row` : a 390 px et texte double, la
+        // pastille passe a la ligne au lieu de serrer le titre (« À termi/ner »).
         Row(
           children: <Widget>[
-            Flexible(
-              child: Semantics(
-                header: true,
-                child: Text(
-                  t.enseignant.journee.aTerminer,
-                  // Un titre de section : `titleLarge`, comme `SectionHeader` ; la
-                  // page porte son titre d'ecran au rang `headline*` (HIER-1).
-                  style: palette.surfaceCanvas.applyTo(
-                    textes.titleLarge ?? const TextStyle(),
+            Expanded(
+              child: Wrap(
+                spacing: AppSpacing.xs,
+                runSpacing: AppSpacing.xs,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: <Widget>[
+                  Semantics(
+                    header: true,
+                    child: Text(
+                      t.enseignant.journee.aTerminer,
+                      // Un titre de section : `titleLarge`, comme
+                      // `SectionHeader` ; la page porte son titre d'ecran au
+                      // rang `headline*` (HIER-1).
+                      style: palette.surfaceCanvas.applyTo(
+                        textes.titleLarge ?? const TextStyle(),
+                      ),
+                    ),
                   ),
-                ),
+                  PointRappel(
+                    key: const ValueKey<String>('journee-point-rappel'),
+                    libelle: t.enseignant.journee.rappelCahier,
+                  ),
+                  // LIB-CAHIER-1 : le caractere obligatoire se voit sur la
+                  // carte.
+                  StatusPill(
+                    key: const ValueKey<String>('journee-cahier-obligatoire'),
+                    libelle: t.enseignant.cahier.obligatoire,
+                    ton: TonEtat.avertissement,
+                  ),
+                ],
               ),
             ),
-            Ecart.hXs,
-            PointRappel(
-              key: const ValueKey<String>('journee-point-rappel'),
-              libelle: t.enseignant.journee.rappelCahier,
-            ),
-            // LIB-CAHIER-1 : le caractere obligatoire se voit sur la carte.
-            Ecart.hXs,
-            StatusPill(
-              key: const ValueKey<String>('journee-cahier-obligatoire'),
-              libelle: t.enseignant.cahier.obligatoire,
-              ton: TonEtat.avertissement,
-            ),
             if (tries.length > maximumATerminer) ...<Widget>[
-              const Spacer(),
+              Ecart.hXs,
               LienFleche(
                 key: const ValueKey<String>('journee-a-terminer-voir-tout'),
                 libelle: t.tuteur.accueil.voirTout,
