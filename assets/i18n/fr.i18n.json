@@ -3195,6 +3195,7 @@
       "objectifDetail": "Ce que {eleve} doit atteindre, dans le cadre du programme de l'académie.",
       "travailMaison": "Devoir de {eleve}",
       "travailMaisonDetail": "Ajustez la suggestion, ou laissez-la telle quelle.",
+      "travailMaisonSaisi": "Vous avez déjà noté ce devoir. Modifiez-le ou laissez-le tel quel.",
       "suite": "La suite pour {eleve}",
       "suiteContinuer": "Continuer",
       "suiteRenforcer": "Renforcer",

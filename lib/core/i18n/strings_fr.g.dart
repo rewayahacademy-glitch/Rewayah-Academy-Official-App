@@ -8814,6 +8814,9 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Ajustez la suggestion, ou laissez-la telle quelle.'
 	String get travailMaisonDetail => 'Ajustez la suggestion, ou laissez-la telle quelle.';
 
+	/// fr: 'Vous avez déjà noté ce devoir. Modifiez-le ou laissez-le tel quel.'
+	String get travailMaisonSaisi => 'Vous avez déjà noté ce devoir. Modifiez-le ou laissez-le tel quel.';
+
 	/// fr: 'La suite pour {eleve}'
 	String suite({required Object eleve}) => 'La suite pour ${eleve}';
 
@@ -18099,6 +18102,7 @@ extension on Traductions {
 			'enseignant.cahier.objectifDetail' => ({required Object eleve}) => 'Ce que ${eleve} doit atteindre, dans le cadre du programme de l\'académie.',
 			'enseignant.cahier.travailMaison' => ({required Object eleve}) => 'Devoir de ${eleve}',
 			'enseignant.cahier.travailMaisonDetail' => 'Ajustez la suggestion, ou laissez-la telle quelle.',
+			'enseignant.cahier.travailMaisonSaisi' => 'Vous avez déjà noté ce devoir. Modifiez-le ou laissez-le tel quel.',
 			'enseignant.cahier.suite' => ({required Object eleve}) => 'La suite pour ${eleve}',
 			'enseignant.cahier.suiteContinuer' => 'Continuer',
 			'enseignant.cahier.suiteRenforcer' => 'Renforcer',
@@ -18438,9 +18442,9 @@ extension on Traductions {
 			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
 			'controleur.echanges.enCours' => 'Envoi en cours.',
 			'controleur.echanges.envoye' => 'Envoyé.',
-			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.reessayer' => 'Réessayer',
 			'controleur.echanges.nouveauMessage' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
 			'controleur.demo.titre' => 'Démonstration contrôleur',
@@ -18952,9 +18956,9 @@ extension on Traductions {
 			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
 			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
 			'tc.parcours.signalement.interne' => 'Note interne',
-			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',
 			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'Élève ${eleve}. La séance, le groupe et votre nom sont déjà joints.',

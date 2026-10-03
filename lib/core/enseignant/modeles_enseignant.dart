@@ -629,6 +629,7 @@ class DecisionEleve {
     this.pointPhonetique,
     this.objectifPersonnel,
     this.travailMaison,
+    this.devoirSuggere = false,
     this.suite = SuiteEleve.continuer,
     this.performance,
     this.faiblesses = const <FaiblesseRecitation>{},
@@ -637,6 +638,12 @@ class DecisionEleve {
   /// La decision de depart d'un eleve : la performance et les faiblesses de
   /// la seance precedente, reprises telles quelles (N1, cahier en moins de
   /// 45 s). L'enseignant les confirme en validant, ou les change.
+  ///
+  /// EN-7c-SUGG-T : le devoir n'est **pas** prerempli. Aucune source de
+  /// devoir propose n'existe : `brouillon_cahier()` ne rend que le devoir de
+  /// la seance precedente ([ParticipantBrouillon.devoirPrecedent]), deja
+  /// rappele en lecture, et le recopier comme devoir a venir serait inventer
+  /// une decision pedagogique. [devoirSuggere] reste donc faux ici.
   factory DecisionEleve.preremplie(ParticipantBrouillon participant) =>
       DecisionEleve(
         studentId: participant.membre.studentId,
@@ -665,8 +672,15 @@ class DecisionEleve {
   /// L'objectif personnel, dans la marge autorisee par les regles.
   final String? objectifPersonnel;
 
-  /// Le travail maison, ajuste a partir de la suggestion du systeme.
+  /// Le travail maison : saisi par l'enseignant, ou ajuste a partir d'une
+  /// suggestion du systeme quand [devoirSuggere] est vrai.
   final String? travailMaison;
+
+  /// Vrai seulement quand [travailMaison] vient d'une suggestion du systeme,
+  /// pas encore modifiee par l'enseignant (K-57 : proposer, puis saisir).
+  /// La feuille ne dit « Ajustez la suggestion » que dans ce cas. Provenance
+  /// d'ecran : elle ne part pas dans le cahier.
+  final bool devoirSuggere;
 
   /// La suite pedagogique choisie pour cet eleve (doc 04 §20.4). « Continuer »
   /// par defaut.

@@ -369,7 +369,7 @@ class _CahierState extends ConsumerState<_Cahier> {
     final DecisionEleve? decision = await AppBottomSheet.ouvrir<DecisionEleve>(
       context,
       titre: t.enseignant.cahier.ajusterPour(eleve: participant.membre.libelle),
-      constructeur: (BuildContext _) => _FeuilleAjuster(
+      constructeur: (BuildContext _) => FeuilleAjusterCahier(
         participant: participant,
         brouillon: brouillon,
         decision: _decisions[eleveId] ?? DecisionEleve.preremplie(participant),
@@ -851,22 +851,34 @@ class _Actions extends StatelessWidget {
 /// `PresenceCorrectionPanneau`, deja teste, avec ses quatre etats de mutation et
 /// sa regle de motif obligatoire, que son propre commentaire destinait « a la
 /// salle enseignant ou a l'espace administration ». Le cahier le branche ici.
-class _FeuilleAjuster extends StatefulWidget {
-  const _FeuilleAjuster({
+///
+/// Publique pour les tests seulement (EN-7c-SUGG-T) : aucune source de devoir
+/// suggere n'existe encore, le cas « suggestion » ne s'atteint donc pas depuis
+/// la coquille ; il se teste en montant la feuille avec une decision suggeree.
+@visibleForTesting
+class FeuilleAjusterCahier extends StatefulWidget {
+  /// Cree la feuille d'un eleve.
+  const FeuilleAjusterCahier({
     required this.participant,
     required this.brouillon,
     required this.decision,
+    super.key,
   });
 
+  /// L'eleve regle.
   final ParticipantBrouillon participant;
+
+  /// Le brouillon de la seance.
   final BrouillonCahier brouillon;
+
+  /// La decision de depart : preremplie, ou celle deja retenue.
   final DecisionEleve decision;
 
   @override
-  State<_FeuilleAjuster> createState() => _FeuilleAjusterState();
+  State<FeuilleAjusterCahier> createState() => _FeuilleAjusterCahierState();
 }
 
-class _FeuilleAjusterState extends State<_FeuilleAjuster> {
+class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
   late final TextEditingController _objectif = TextEditingController(
     text: widget.decision.objectifPersonnel ?? '',
   );
@@ -880,9 +892,19 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
   late NiveauPerformance? _performance = widget.decision.performance;
   late Set<FaiblesseRecitation> _faiblesses = widget.decision.faiblesses;
 
-  /// Vrai quand le devoir arrive avec une suggestion a ajuster.
+  /// Le devoir tel qu'il arrive dans la feuille, sans espaces de bord.
+  late final String _devoirInitial =
+      widget.decision.travailMaison?.trim() ?? '';
+
+  /// Vrai quand le devoir arrive d'une vraie suggestion du systeme, a
+  /// ajuster (K-57). Un devoir deja saisi par l'enseignant n'en est pas une
+  /// (EN-7c-SUGG-T).
   late final bool _suggestionDevoir =
-      widget.decision.travailMaison?.trim().isNotEmpty ?? false;
+      widget.decision.devoirSuggere && _devoirInitial.isNotEmpty;
+
+  /// Vrai quand le devoir arrive saisi par l'enseignant lui-meme.
+  late final bool _devoirDejaSaisi =
+      !widget.decision.devoirSuggere && _devoirInitial.isNotEmpty;
 
   @override
   void dispose() {
@@ -1097,13 +1119,22 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
             style: textes.titleSmall,
           ),
         ),
-        // « Ajustez la suggestion » seulement quand une suggestion existe
-        // (EN-7c) : sur un champ vide, la phrase ne decrirait rien.
+        // « Ajustez la suggestion » seulement quand une vraie suggestion
+        // existe (EN-7c, EN-7c-SUGG-T) : sur un champ vide, la phrase ne
+        // decrirait rien, et le texte que l'enseignant a lui-meme saisi n'est
+        // pas une suggestion.
         if (_suggestionDevoir) ...<Widget>[
           Ecart.vXs,
           Text(
             t.enseignant.cahier.travailMaisonDetail,
             key: const ValueKey<String>('cahier-devoir-suggestion'),
+            style: discret,
+          ),
+        ] else if (_devoirDejaSaisi) ...<Widget>[
+          Ecart.vXs,
+          Text(
+            t.enseignant.cahier.travailMaisonSaisi,
+            key: const ValueKey<String>('cahier-devoir-saisi'),
             style: discret,
           ),
         ],
@@ -1195,6 +1226,9 @@ class _FeuilleAjusterState extends State<_FeuilleAjuster> {
         pointPhonetique: _phonetique,
         objectifPersonnel: objectif.isEmpty ? null : objectif,
         travailMaison: travail.isEmpty ? null : travail,
+        // Une suggestion gardee telle quelle reste une suggestion ; des que
+        // l'enseignant la modifie, le devoir est le sien.
+        devoirSuggere: _suggestionDevoir && travail == _devoirInitial,
         suite: _suite,
         performance: _performance,
         faiblesses: _faiblesses,
