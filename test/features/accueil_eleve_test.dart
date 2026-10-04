@@ -16,6 +16,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/bento_tile.dart';
+import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
 
@@ -652,6 +653,45 @@ void main() {
         joursCivilsEntre(DateTime(2026, 9, 8, 1), DateTime(2026, 9, 8, 23)),
         0,
       );
+    });
+  });
+
+  group('DASH-ELV-ERR : une lecture en echec n est pas « aucun cours »', () {
+    testWidgets('l echec le dit, propose de relire, et garde le Coran', (
+      WidgetTester tester,
+    ) async {
+      int lectures = 0;
+      await tester.pumpWidget(
+        hote(
+          _ecran(),
+          surcharges: <Override>[
+            ..._surcharges(planning: FauxServicePlanning()),
+            seancesProvider.overrideWith((_) async {
+              lectures++;
+              if (lectures == 1) {
+                throw StateError('reseau');
+              }
+              return const <Seance>[];
+            }),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // D10 : jamais « Pas de cours aujourd'hui » sur une lecture ratee.
+      expect(find.text(t.eleve.accueil.aucunCours), findsNothing);
+      expect(find.text(t.eleve.accueil.erreurCours), findsOneWidget);
+      expect(find.text(t.eleve.accueil.coran), findsOneWidget);
+
+      // Relire : la seconde lecture aboutit, le vrai etat revient.
+      await tester.tap(
+        find.text(EtatSysteme.libelleActionPar(NatureEtat.echecServeur)),
+      );
+      await tester.pumpAndSettle();
+
+      expect(lectures, 2);
+      expect(find.text(t.eleve.accueil.erreurCours), findsNothing);
+      expect(find.text(t.eleve.accueil.aucunCours), findsOneWidget);
     });
   });
 }
