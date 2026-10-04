@@ -91,6 +91,8 @@ class CarteClasseSeance extends StatelessWidget {
     return AppCard(
       onPress: ouvrir,
       libelleSemantique: lien ? t.tuteur.accueil.voirLaClasse : null,
+      // Elle mene a la classe, elle n'engage rien : un lien, pas un bouton.
+      lien: lien,
       // Bureau et tablette : la carte mise en avant (V2) ; telephone : la
       // surface elevee, avec la seance en zone imbriquee (V1).
       surface: compact ? palette.surfaceRaised : palette.surfaceMiseEnAvant,
@@ -116,7 +118,12 @@ class CarteClasseSeance extends StatelessWidget {
             compact: compact,
             onReessayer: onReessayerSeance,
           ),
-          // L'indice du lien, pas un bouton : la carte entiere s'ouvre.
+          if (!compact && seance.value != null) ...<Widget>[
+            Ecart.vLg,
+            const ConseilAppareil(),
+          ],
+          // L'indice du lien, pas un bouton : la carte entiere s'ouvre. Il ferme
+          // la carte, sous le conseil appareil du bureau (DASH-TUT-CTA-b).
           if (lien) ...<Widget>[
             Ecart.vXl,
             ExcludeSemantics(
@@ -141,10 +148,6 @@ class CarteClasseSeance extends StatelessWidget {
                 ],
               ),
             ),
-          ],
-          if (!compact && seance.value != null) ...<Widget>[
-            Ecart.vLg,
-            const ConseilAppareil(),
           ],
         ],
       ),
