@@ -16,6 +16,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
 import 'mission_controle.dart';
 import 'observation_controle.dart';
@@ -63,10 +64,13 @@ class FaitsVisite {
   }
 }
 
-/// Les faits de la visite qui vient de finir, ou nuls. **Neutre par
-/// defaut** : aucun appel reseau.
-final FutureProvider<FaitsVisite?> faitsVisiteProvider =
-    FutureProvider<FaitsVisite?>((Ref _) async => null);
+/// Les faits de la visite de la seance donnee, ou nuls. Lus PAR SEANCE
+/// (CTRL-SEANCE-1) : le compte rendu de la Classe A ne montre jamais le
+/// releve de la Classe B. **Neutre par defaut** : aucun appel reseau.
+final FutureProviderFamily<FaitsVisite?, String> faitsVisiteProvider =
+    FutureProvider.family<FaitsVisite?, String>(
+      (Ref _, String _) async => null,
+    );
 
 /// La reponse du controleur a « Avez-vous quelque chose a signaler ? ».
 enum ChoixCompteRendu {

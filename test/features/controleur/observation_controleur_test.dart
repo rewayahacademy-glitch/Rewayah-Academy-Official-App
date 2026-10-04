@@ -252,7 +252,7 @@ void main() {
               visite.seanceId: visite,
             }),
           ),
-          rosterControleProvider.overrideWith((Ref _) async {
+          rosterControleProvider.overrideWith((Ref _, String _) async {
             appels++;
             if (appels == 1) throw StateError('connexion coupee');
             return const <EleveRoster>[EleveRoster(id: 'e1', prenom: 'Amina')];

@@ -237,7 +237,7 @@ class _CompteRenduControlePageState
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                const _FaitsAutomatiques(),
+                _FaitsAutomatiques(seanceId: visite.seanceId),
                 Ecart.vMd,
                 LigneTransmissionVisite(seanceId: visite.seanceId),
                 Ecart.vXxl,
@@ -481,7 +481,11 @@ class LigneTransmissionVisite extends ConsumerWidget {
 /// Les faits automatiques de la visite, en lecture seule, replies par
 /// defaut ; les deplier ne quitte pas la page (UX_REVIEW_08 n° 5 a).
 class _FaitsAutomatiques extends ConsumerStatefulWidget {
-  const _FaitsAutomatiques();
+  const _FaitsAutomatiques({required this.seanceId});
+
+  /// La seance de la visite : ses faits, jamais ceux d'une autre Classe
+  /// (CTRL-SEANCE-1).
+  final String seanceId;
 
   @override
   ConsumerState<_FaitsAutomatiques> createState() => _FaitsAutomatiquesState();
@@ -494,7 +498,9 @@ class _FaitsAutomatiquesState extends ConsumerState<_FaitsAutomatiques> {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final AsyncValue<FaitsVisite?> faits = ref.watch(faitsVisiteProvider);
+    final AsyncValue<FaitsVisite?> faits = ref.watch(
+      faitsVisiteProvider(widget.seanceId),
+    );
     final TextStyle doux = palette.inkMuted.applyTo(
       textes.bodyMedium ?? const TextStyle(),
     );

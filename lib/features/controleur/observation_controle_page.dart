@@ -137,6 +137,11 @@ class _ObservationControlePageState
     widget.seanceId,
   );
 
+  /// Le roster de CETTE seance, jamais celui d'une autre Classe
+  /// (CTRL-SEANCE-1). Lu seulement quand la visite est connue.
+  FutureProvider<List<EleveRoster>> get _roster =>
+      rosterControleProvider(_visite!.seanceId);
+
   bool get _important => widget.choix == ChoixCompteRendu.pointImportant;
 
   bool get _texteRequis =>
@@ -406,9 +411,7 @@ class _ObservationControlePageState
   );
 
   Widget _personneEtRoster() {
-    final AsyncValue<List<EleveRoster>> etatRoster = ref.watch(
-      rosterControleProvider,
-    );
+    final AsyncValue<List<EleveRoster>> etatRoster = ref.watch(_roster);
     final List<EleveRoster> roster = etatRoster.hasError
         ? const <EleveRoster>[]
         : etatRoster.value ?? const <EleveRoster>[];
@@ -481,7 +484,7 @@ class _ObservationControlePageState
                       libelle: t.commun.reessayer,
                       niveau: NiveauAction.secondaire,
                       pleineLargeur: false,
-                      onPress: () => ref.invalidate(rosterControleProvider),
+                      onPress: () => ref.invalidate(_roster),
                     ),
                   ),
                 ],
@@ -539,7 +542,7 @@ class _ObservationControlePageState
   Widget _recapitulatif() {
     final o = t.controleur.observation;
     final List<EleveRoster> roster =
-        ref.watch(rosterControleProvider).value ?? const <EleveRoster>[];
+        ref.watch(_roster).value ?? const <EleveRoster>[];
     final PersonneConcernee? p = _personne;
     final NatureObservation? n = _nature;
     final DomaineObservation? d = _domaine;
