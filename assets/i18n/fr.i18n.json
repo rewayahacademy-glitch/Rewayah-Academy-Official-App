@@ -552,7 +552,7 @@
     "renvoyer": "Renvoyer le lien",
     "renvoye": "Un nouveau lien est parti à {courriel}. Utilisez celui du message le plus récent.",
     "erreurTropTot": "Un lien vient déjà de partir. Attendez un moment avant d'en demander un autre.",
-    "horsLigne": "Le lien n'est pas parti. Réessayez quand la connexion sera revenue.",
+    "horsLigne": "Le lien ne peut pas partir pour l'instant. Réessayez quand la connexion sera revenue.",
     "probleme": "Lien expiré ou jamais reçu ?",
     "decouvrir": "Découvrir Rewayah Academy",
     "recuperation": {

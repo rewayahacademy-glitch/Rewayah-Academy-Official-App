@@ -687,8 +687,8 @@ class Traductions$connexion$fr {
 	/// fr: 'Un lien vient déjà de partir. Attendez un moment avant d'en demander un autre.'
 	String get erreurTropTot => 'Un lien vient déjà de partir. Attendez un moment avant d\'en demander un autre.';
 
-	/// fr: 'Le lien n'est pas parti. Réessayez quand la connexion sera revenue.'
-	String get horsLigne => 'Le lien n\'est pas parti. Réessayez quand la connexion sera revenue.';
+	/// fr: 'Le lien ne peut pas partir pour l'instant. Réessayez quand la connexion sera revenue.'
+	String get horsLigne => 'Le lien ne peut pas partir pour l\'instant. Réessayez quand la connexion sera revenue.';
 
 	/// fr: 'Lien expiré ou jamais reçu ?'
 	String get probleme => 'Lien expiré ou jamais reçu ?';
@@ -15926,7 +15926,7 @@ extension on Traductions {
 			'connexion.renvoyer' => 'Renvoyer le lien',
 			'connexion.renvoye' => ({required Object courriel}) => 'Un nouveau lien est parti à ${courriel}. Utilisez celui du message le plus récent.',
 			'connexion.erreurTropTot' => 'Un lien vient déjà de partir. Attendez un moment avant d\'en demander un autre.',
-			'connexion.horsLigne' => 'Le lien n\'est pas parti. Réessayez quand la connexion sera revenue.',
+			'connexion.horsLigne' => 'Le lien ne peut pas partir pour l\'instant. Réessayez quand la connexion sera revenue.',
 			'connexion.probleme' => 'Lien expiré ou jamais reçu ?',
 			'connexion.decouvrir' => 'Découvrir Rewayah Academy',
 			'connexion.recuperation.titre' => 'Retrouver mon accès',
