@@ -15,8 +15,10 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/grille_bento.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/com_communaute/communaute_page.dart';
+import 'package:rewayah_academy/features/com_communaute/composer_publication.dart';
 import 'package:rewayah_academy/features/com_communaute/entree_communaute.dart';
 import 'package:rewayah_academy/features/com_communaute/flux_publications.dart';
+import 'package:rewayah_academy/features/com_communaute/garde_promotion.dart';
 import 'package:rewayah_academy/features/com_communaute/publication_detail.dart';
 import 'package:rewayah_academy/features/demo/communications/com_communaute_demo.dart';
 import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
@@ -145,11 +147,21 @@ void main() {
               SituationDemoCommunaute.horsLigne ||
               SituationDemoCommunaute.envoiNonConfirme ||
               SituationDemoCommunaute.moderationIndisponible ||
+              SituationDemoCommunaute.signalementNonConfirme ||
               SituationDemoCommunaute.lecteurSeul:
             expect(
               find.byKey(FluxPublications.cleCarte('pub-memorisation')),
               findsOneWidget,
             );
+          case SituationDemoCommunaute.avertissementPromotion ||
+              SituationDemoCommunaute.lienAffilie ||
+              SituationDemoCommunaute.vente:
+            // COM-COMU-2 : la nouvelle publication s'ouvre sur le brouillon
+            // marque, restaure ; aucun verdict avant « Publier ».
+            expect(find.byType(ComposerPublication), findsOneWidget);
+            expect(find.text(s.brouillon!.titre), findsOneWidget);
+            expect(find.byKey(GardePromotion.cleAide), findsOneWidget);
+            expect(find.byKey(ComposerPublication.cleVerdict), findsNothing);
           case SituationDemoCommunaute.vide:
             expect(find.text(t.com.communaute.videToutes), findsOneWidget);
           case SituationDemoCommunaute.erreur:

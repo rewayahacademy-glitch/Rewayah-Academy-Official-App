@@ -16,9 +16,17 @@
 // reouverture.
 //
 // « Publiee » n'est dit qu'apres l'accuse du serveur ; un echec dit « pas
-// encore confirmee », jamais un faux succes (R-COM-05, COM-BR-02). Le garde
-// anti-promotion (`CommunityPromotionGuard`) arrive a COM-COMU-2 ; ici, la
-// politique est rappelee par le bandeau.
+// encore confirmee », jamais un faux succes (R-COM-05, COM-BR-02).
+//
+// Garde anti-promotion (COM-COMU-2, `CommunityPromotionGuard`) : la politique
+// est rappelee en tete (« Partage pedagogique uniquement »). Avant tout
+// envoi, le brouillon passe par `PortGardePromotion` : un verdict
+// « avertissement », « lien affilie » ou « vente » RETIENT la publication,
+// le garde le dit en bas du formulaire, pres de « Publier », avec son motif
+// et l'etat des liens ; rien ne part, aucun succes n'est affiche (R-COM-05,
+// R-COM-06). Le garde ne detecte rien lui-meme. Sans contrat (COM-BR-07,
+// port neutre) ou s'il ne repond pas, le composer ne pretend pas avoir relu
+// la publication : il la transmet, et le serveur reste seul juge.
 
 import 'dart:async';
 
@@ -40,8 +48,9 @@ import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/communications/carte_piece_jointe.dart';
 import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/section_header.dart';
+import 'garde_promotion.dart';
 import 'port_communaute.dart';
-import 'regles_communaute.dart';
+import 'port_garde_promotion.dart';
 
 /// Le composer d'une nouvelle publication.
 class ComposerPublication extends ConsumerStatefulWidget {
@@ -91,6 +100,11 @@ class ComposerPublication extends ConsumerStatefulWidget {
     'communaute-composer-erreur',
   );
 
+  /// La cle de l'emplacement du verdict du garde, pres de « Publier ».
+  static const ValueKey<String> cleVerdict = ValueKey<String>(
+    'communaute-composer-verdict',
+  );
+
   /// La cle de la carte d'une categorie.
   static ValueKey<String> cleCategorie(String id) =>
       ValueKey<String>('communaute-composer-categorie-$id');
@@ -124,6 +138,11 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
   String? _erreur;
   String? _cle;
   int _numeroPiece = 0;
+
+  /// Le dernier verdict du garde qui a retenu la publication ; nul tant
+  /// qu'aucun ne l'a fait.
+  VerificationPromotion? _verdict;
+  final GlobalKey _emplacementVerdict = GlobalKey();
 
   @override
   void initState() {
@@ -208,19 +227,29 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
     // La cle d'idempotence vit avec le contenu : un renvoi apres un echec la
     // rejoue telle quelle, et le serveur ne cree jamais deux publications.
     final String cle = _cle ??= 'pub-${DateTime.now().microsecondsSinceEpoch}';
+    final BrouillonPublication brouillon = BrouillonPublication(
+      categorieId: categorie,
+      titre: titre,
+      texte: texte,
+      piecesJointes: List<PieceJointe>.unmodifiable(_pieces),
+    );
     setState(() => _enCours = true);
+    final VerificationPromotion? verification = await _relireGarde(brouillon);
+    if (!mounted) return;
+    if (verification != null && verification.verdict.retient) {
+      // Le garde retient la publication : rien ne part, aucun succes.
+      setState(() {
+        _enCours = false;
+        _verdict = verification;
+      });
+      _montrerVerdict();
+      return;
+    }
+    setState(() => _verdict = null);
     try {
       final PublicationCommunaute publiee = await ref
           .read(portCommunauteProvider)
-          .publier(
-            BrouillonPublication(
-              categorieId: categorie,
-              titre: titre,
-              texte: texte,
-              piecesJointes: List<PieceJointe>.unmodifiable(_pieces),
-            ),
-            cleIdempotence: cle,
-          );
+          .publier(brouillon, cleIdempotence: cle);
       await _brouillons.effacer(ComposerPublication.brouillonTitre);
       await _brouillons.effacer(ComposerPublication.brouillonTexte);
       if (!mounted) return;
@@ -235,6 +264,29 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
             : t.com.communaute.composer.erreurEnvoi;
       });
     }
+  }
+
+  /// Le verdict du garde sur [brouillon] ; nul si le garde n'a pas de
+  /// contrat (COM-BR-07) ou ne repond pas. Dans ce cas, rien n'est affirme :
+  /// la publication part au serveur, seul juge.
+  Future<VerificationPromotion?> _relireGarde(
+    BrouillonPublication brouillon,
+  ) async {
+    try {
+      return await ref.read(portGardePromotionProvider).verifier(brouillon);
+    } on Object {
+      return null;
+    }
+  }
+
+  /// Amene le verdict a l'ecran : il s'affiche pres de « Publier », mais un
+  /// long texte peut l'avoir pousse hors de la vue.
+  void _montrerVerdict() {
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      final BuildContext? contexte = _emplacementVerdict.currentContext;
+      if (contexte == null || !contexte.mounted) return;
+      unawaited(Scrollable.ensureVisible(contexte));
+    });
   }
 
   void _contenuModifie() {
@@ -265,7 +317,9 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
           ),
         ),
         Ecart.vLg,
-        const BandeauRegles(),
+        // La politique, en tete (spec section 5.2, etats « Normal » et
+        // « Aide ») : le garde sans verdict.
+        const GardePromotion(),
         if (_restaure) ...<Widget>[
           Ecart.vMd,
           Semantics(
@@ -401,6 +455,16 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
             c.pieceRefusee,
             style: palette.inkAlert.applyTo(
               textes.bodySmall ?? const TextStyle(),
+            ),
+          ),
+        ],
+        if (_verdict case final VerificationPromotion verdict) ...<Widget>[
+          Ecart.vXl,
+          KeyedSubtree(
+            key: _emplacementVerdict,
+            child: KeyedSubtree(
+              key: ComposerPublication.cleVerdict,
+              child: GardePromotion(verification: verdict),
             ),
           ),
         ],

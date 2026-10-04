@@ -7,8 +7,17 @@
 // jamais un faux signalement accepte (section 25, « moderation
 // indisponible »).
 //
-// COM-COMU-2 completera cette feuille (motifs de la politique anti-promotion)
-// sans en changer l'entree.
+// La politique anti-promotion (COM-COMU-2, spec section 5.1) : les quatre
+// premiers motifs sont ceux de la politique (publicite, lien affilie, vente,
+// sollicitation commerciale). Le motif choisi dit la regle qu'il vise, pour
+// rendre visible la difference entre un contenu autorise et un contenu
+// commercial ; les autres motifs n'ajoutent rien. Le motif part tel quel au
+// port (en demonstration, `ModerationDemo` le garde).
+//
+// Le texte d'echec n'est pas celui de la spec section 5.2 (« Le signalement
+// n'a pas pu etre envoye. Reessayez. ») : apres une coupure, l'app ne sait
+// pas si le signalement est arrive, elle dit donc « pas encore confirme »
+// (K-59, D5, regle `affirmation-reseau`).
 
 import 'package:flutter/material.dart';
 
@@ -43,6 +52,22 @@ class _Signalement extends ChangeNotifier {
   }
 }
 
+/// La regle de la politique anti-promotion que vise [motif] ; nulle pour un
+/// motif hors de la politique (spec section 4.1, section 5.2, section 22).
+String? reglePolitique(MotifSignalement motif) {
+  final p = t.com.communaute.signalement.politique;
+  return switch (motif) {
+    MotifSignalement.publicite => p.publicite,
+    MotifSignalement.lienAffilie => t.com.communaute.garde.bloqueAffilie,
+    MotifSignalement.venteNonAutorisee => t.com.communaute.garde.bloqueVente,
+    MotifSignalement.sollicitationCommerciale => p.sollicitation,
+    MotifSignalement.horsSujet ||
+    MotifSignalement.harcelement ||
+    MotifSignalement.donneesPersonnelles ||
+    MotifSignalement.autre => null,
+  };
+}
+
 /// La feuille de signalement de la Communaute.
 abstract final class FeuilleSignalementCommunaute {
   /// La cle de l'action « Envoyer le signalement », pour les tests.
@@ -58,6 +83,11 @@ abstract final class FeuilleSignalementCommunaute {
   /// La cle de la carte d'un motif, pour les tests.
   static ValueKey<String> cleMotif(MotifSignalement motif) =>
       ValueKey<String>('communaute-motif-${motif.name}');
+
+  /// La cle de la regle visee par le motif choisi, pour les tests.
+  static const ValueKey<String> cleRegle = ValueKey<String>(
+    'communaute-signalement-regle',
+  );
 
   /// Ouvre la feuille pour [objet]. Rend vrai seulement si le serveur a
   /// accuse le signalement ; faux si la personne renonce.
@@ -148,6 +178,28 @@ class _Corps extends StatelessWidget {
             final String? nom = reponse.valeurs.firstOrNull;
             etat.choisir(
               nom == null ? null : MotifSignalement.values.byName(nom),
+            );
+          },
+        ),
+        // La regle visee par le motif choisi, sous les motifs.
+        ListenableBuilder(
+          listenable: etat,
+          builder: (BuildContext _, Widget? _) {
+            final MotifSignalement? motif = etat.motif;
+            final String? regle = motif == null ? null : reglePolitique(motif);
+            if (regle == null) return const SizedBox.shrink();
+            return Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+              child: Semantics(
+                liveRegion: true,
+                child: Text(
+                  regle,
+                  key: FeuilleSignalementCommunaute.cleRegle,
+                  style: palette.inkMuted.applyTo(
+                    textes.bodyMedium ?? const TextStyle(),
+                  ),
+                ),
+              ),
             );
           },
         ),

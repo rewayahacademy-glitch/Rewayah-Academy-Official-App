@@ -355,6 +355,8 @@ class _Traductions$com$communaute$ar extends Traductions$com$communaute$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$com$communaute$garde$ar garde = _Traductions$com$communaute$garde$ar._(_root);
+	@override late final _Traductions$com$communaute$lien$ar lien = _Traductions$com$communaute$lien$ar._(_root);
 	@override String get sousTitre => 'تبادل وتعاون بين المعلّمين';
 	@override String get sections => 'فئات مجتمع المعلّمين';
 	@override String get toutes => 'الكل';
@@ -540,6 +542,38 @@ class _Traductions$com$socle$navigation$ar extends Traductions$com$socle$navigat
 	@override late final _Traductions$com$socle$navigation$demo$ar demo = _Traductions$com$socle$navigation$demo$ar._(_root);
 }
 
+// Path: com.communaute.garde
+class _Traductions$com$communaute$garde$ar extends Traductions$com$communaute$garde$fr {
+	_Traductions$com$communaute$garde$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get aide => 'لا إعلانات. لا روابط تسويق بالعمولة. لا بيع.';
+	@override String get avertissement => 'يبدو أن هذا المنشور يتضمّن ترويجًا تجاريًا. أزِل الرابط أو الرمز أو العرض قبل النشر.';
+	@override String get bloqueAffilie => 'روابط التسويق بالعمولة غير مسموح بها في مجتمع المعلّمين.';
+	@override String get bloqueVente => 'بيع المنتجات أو الخدمات غير مسموح به في هذه المساحة.';
+	@override String get titreAvertissement => 'منشور يحتاج إلى مراجعة';
+	@override String get titreBlocage => 'منشور محظور';
+	@override String motif({required Object motif}) => 'السبب: ${motif}';
+	@override String get liensTitre => 'روابط المنشور';
+	@override String get consigneBlocage => 'عدِّل المنشور ثم انشره من جديد.';
+}
+
+// Path: com.communaute.lien
+class _Traductions$com$communaute$lien$ar extends Traductions$com$communaute$lien$fr {
+	_Traductions$com$communaute$lien$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get interne => 'رابط داخلي في رواية';
+	@override String get ressourceExterne => 'مورد تعليمي خارجي';
+	@override String get commercialInterdit => 'رابط تجاري ممنوع';
+	@override String get nonVerifie => 'رابط غير مُتحقَّق منه';
+	@override String semantique({required Object adresse, required Object etat}) => '${adresse}، ${etat}';
+}
+
 // Path: com.communaute.flux
 class _Traductions$com$communaute$flux$ar extends Traductions$com$communaute$flux$fr {
 	_Traductions$com$communaute$flux$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -632,6 +666,7 @@ class _Traductions$com$communaute$signalement$ar extends Traductions$com$communa
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$com$communaute$signalement$politique$ar politique = _Traductions$com$communaute$signalement$politique$ar._(_root);
 	@override String get motifManquant => 'اختر سببًا لإرسال البلاغ.';
 }
 
@@ -702,6 +737,10 @@ class _Traductions$com$communaute$demo$ar extends Traductions$com$communaute$dem
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get avertissement => 'منشور يحتاج إلى مراجعة: إعلان تجاري';
+	@override String get lienAffilie => 'رابط تسويق بالعمولة محظور';
+	@override String get vente => 'بيع محظور';
+	@override String get signalementNonConfirme => 'إبلاغ غير مؤكَّد';
 	@override String get choisir => 'اختر حالة لتجربتها داخل واجهة المعلّم.';
 	@override String get aujourdhui => 'اليوم، مع الاختصار';
 	@override String get nominal => 'ستة منشورات';
@@ -844,6 +883,17 @@ class _Traductions$com$socle$navigation$demo$ar extends Traductions$com$socle$na
 	@override String get titre => 'عرض توضيحي للاتصالات';
 	@override String get detail => 'بيانات وهمية، غير موجودة في نسخ الإنتاج.';
 	@override String get choisir => 'اختر مساحة لتجربتها.';
+}
+
+// Path: com.communaute.signalement.politique
+class _Traductions$com$communaute$signalement$politique$ar extends Traductions$com$communaute$signalement$politique$fr {
+	_Traductions$com$communaute$signalement$politique$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get publicite => 'الإعلانات التجارية غير مسموح بها في مجتمع المعلّمين.';
+	@override String get sollicitation => 'الاستدراج التجاري غير مسموح به في هذه المساحة.';
 }
 
 /// The flat map containing all translations for locale <ar>.
@@ -1072,6 +1122,20 @@ extension on TraductionsAr {
 			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
 			'com.messages.vide' => 'لا توجد محادثات حاليًا.',
 			'com.vocal.titre' => 'رسالة صوتية',
+			'com.communaute.garde.aide' => 'لا إعلانات. لا روابط تسويق بالعمولة. لا بيع.',
+			'com.communaute.garde.avertissement' => 'يبدو أن هذا المنشور يتضمّن ترويجًا تجاريًا. أزِل الرابط أو الرمز أو العرض قبل النشر.',
+			'com.communaute.garde.bloqueAffilie' => 'روابط التسويق بالعمولة غير مسموح بها في مجتمع المعلّمين.',
+			'com.communaute.garde.bloqueVente' => 'بيع المنتجات أو الخدمات غير مسموح به في هذه المساحة.',
+			'com.communaute.garde.titreAvertissement' => 'منشور يحتاج إلى مراجعة',
+			'com.communaute.garde.titreBlocage' => 'منشور محظور',
+			'com.communaute.garde.motif' => ({required Object motif}) => 'السبب: ${motif}',
+			'com.communaute.garde.liensTitre' => 'روابط المنشور',
+			'com.communaute.garde.consigneBlocage' => 'عدِّل المنشور ثم انشره من جديد.',
+			'com.communaute.lien.interne' => 'رابط داخلي في رواية',
+			'com.communaute.lien.ressourceExterne' => 'مورد تعليمي خارجي',
+			'com.communaute.lien.commercialInterdit' => 'رابط تجاري ممنوع',
+			'com.communaute.lien.nonVerifie' => 'رابط غير مُتحقَّق منه',
+			'com.communaute.lien.semantique' => ({required Object adresse, required Object etat}) => '${adresse}، ${etat}',
 			'com.communaute.sousTitre' => 'تبادل وتعاون بين المعلّمين',
 			'com.communaute.sections' => 'فئات مجتمع المعلّمين',
 			'com.communaute.toutes' => 'الكل',
@@ -1119,6 +1183,8 @@ extension on TraductionsAr {
 			'com.communaute.reponses.menu' => ({required Object nom}) => 'إجراءات على ردّ ${nom}',
 			'com.communaute.reponses.signaler' => 'الإبلاغ عن الردّ',
 			'com.communaute.reponses.signalee' => 'لقد أبلغت عن هذا الردّ.',
+			'com.communaute.signalement.politique.publicite' => 'الإعلانات التجارية غير مسموح بها في مجتمع المعلّمين.',
+			'com.communaute.signalement.politique.sollicitation' => 'الاستدراج التجاري غير مسموح به في هذه المساحة.',
 			'com.communaute.signalement.motifManquant' => 'اختر سببًا لإرسال البلاغ.',
 			'com.communaute.composer.nouvelle' => 'منشور جديد',
 			'com.communaute.composer.contexte' => 'شارك سؤالًا أو طريقة أو موردًا مفيدًا للتعليم.',
@@ -1153,6 +1219,10 @@ extension on TraductionsAr {
 			'com.communaute.regles.voir' => 'عرض القواعد',
 			'com.communaute.entree.lecteur' => 'فتح مجتمع المعلّمين',
 			'com.communaute.entree.detail' => 'أسئلة وطرق وموارد بين المعلّمين',
+			'com.communaute.demo.avertissement' => 'منشور يحتاج إلى مراجعة: إعلان تجاري',
+			'com.communaute.demo.lienAffilie' => 'رابط تسويق بالعمولة محظور',
+			'com.communaute.demo.vente' => 'بيع محظور',
+			'com.communaute.demo.signalementNonConfirme' => 'إبلاغ غير مؤكَّد',
 			'com.communaute.demo.choisir' => 'اختر حالة لتجربتها داخل واجهة المعلّم.',
 			'com.communaute.demo.aujourdhui' => 'اليوم، مع الاختصار',
 			'com.communaute.demo.nominal' => 'ستة منشورات',

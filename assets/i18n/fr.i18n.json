@@ -4801,6 +4801,24 @@
       "titre": "Message vocal"
     },
     "communaute": {
+      "garde": {
+        "aide": "Aucune publicité. Aucun lien affilié. Aucune vente.",
+        "avertissement": "Cette publication semble contenir une promotion commerciale. Retirez le lien, le code ou l'offre avant de publier.",
+        "bloqueAffilie": "Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.",
+        "bloqueVente": "La vente de produits ou de services n'est pas autorisée dans cet espace.",
+        "titreAvertissement": "Publication à revoir",
+        "titreBlocage": "Publication bloquée",
+        "motif": "Motif : {motif}",
+        "liensTitre": "Liens de la publication",
+        "consigneBlocage": "Modifiez la publication, puis publiez-la de nouveau."
+      },
+      "lien": {
+        "interne": "Lien interne Rewayah",
+        "ressourceExterne": "Ressource pédagogique externe",
+        "commercialInterdit": "Lien commercial interdit",
+        "nonVerifie": "Lien non vérifié",
+        "semantique": "{adresse}, {etat}"
+      },
       "sousTitre": "Échanges et entraide entre enseignants",
       "sections": "Catégories de la Communauté enseignants",
       "toutes": "Toutes",
@@ -4859,6 +4877,10 @@
         "signalee": "Vous avez signalé cette réponse."
       },
       "signalement": {
+        "politique": {
+          "publicite": "La publicité n'est pas autorisée dans la Communauté enseignants.",
+          "sollicitation": "La sollicitation commerciale n'est pas autorisée dans cet espace."
+        },
         "motifManquant": "Choisissez un motif pour envoyer le signalement."
       },
       "composer": {
@@ -4901,6 +4923,10 @@
         "detail": "Questions, méthodes et ressources entre enseignants"
       },
       "demo": {
+        "avertissement": "Publication à revoir : publicité",
+        "lienAffilie": "Lien affilié bloqué",
+        "vente": "Vente bloquée",
+        "signalementNonConfirme": "Signalement non confirmé",
         "choisir": "Choisissez une situation à essayer, dans la coquille Enseignant.",
         "aujourdhui": "Aujourd'hui, avec le raccourci",
         "nominal": "Six publications",

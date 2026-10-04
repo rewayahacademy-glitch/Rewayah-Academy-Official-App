@@ -15,7 +15,15 @@
 //
 // Donnees (spec section 26) : six publications communautaires, trois
 // categories (Pedagogie, Ressources, Gestion, celles de la maquette,
-// marquees demonstration), des reponses, une piece jointe.
+// marquees demonstration), des reponses, une piece jointe ; et, pour le
+// garde anti-promotion (COM-COMU-2), deux publications bloquees (un lien
+// affilie, une vente), une publicite retenue par un avertissement, et les
+// quatre etats de lien. Ces verdicts sont une TABLE de contenus marques
+// d'avance (`GardePromotionFixtures`), jamais une detection : la situation
+// ouvre la nouvelle publication sur le brouillon marque, et modifier un mot
+// le rend normal.
+
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,8 +48,11 @@ import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/nav_shell.dart';
 import '../../../core/widgets/page_shell.dart';
 import '../../com_communaute/communaute_page.dart';
+import '../../com_communaute/composer_publication.dart';
 import '../../com_communaute/entree_communaute.dart';
+import '../../com_communaute/etat_lien.dart';
 import '../../com_communaute/port_communaute.dart';
+import '../../com_communaute/port_garde_promotion.dart';
 import '../../journee/journee_page.dart';
 import '../demo_enseignant_page.dart'
     show adresseDemoEnseignant, surchargesCoquilleEnseignantDemo;
@@ -82,7 +93,39 @@ enum SituationDemoCommunaute {
 
   /// Lecture seule : ni publication ni reponse (capacites fermees).
   lecteurSeul,
+
+  /// Une publicite : le garde retient la publication par un avertissement
+  /// (R-COM-05).
+  avertissementPromotion,
+
+  /// Un lien affilie : le garde bloque la publication (R-COM-06).
+  lienAffilie,
+
+  /// Une vente : le garde bloque la publication.
+  vente,
+
+  /// Le signalement part, mais l'accuse ne revient pas : « pas encore
+  /// confirme ».
+  signalementNonConfirme;
+
+  /// Le brouillon marque que la situation ouvre, s'il y en a un.
+  BrouillonMarqueDemo? get brouillon => switch (this) {
+    SituationDemoCommunaute.avertissementPromotion =>
+      DonneesCommunauteDemo.brouillonPublicite,
+    SituationDemoCommunaute.lienAffilie =>
+      DonneesCommunauteDemo.brouillonAffilie,
+    SituationDemoCommunaute.vente => DonneesCommunauteDemo.brouillonVente,
+    _ => null,
+  };
 }
+
+/// Un brouillon de demonstration marque par le garde : son contenu et le
+/// verdict que la fixture lui donne.
+typedef BrouillonMarqueDemo = ({
+  String titre,
+  String texte,
+  VerificationPromotion verdict,
+});
 
 /// L'adresse d'une situation de la demonstration.
 String adresseDemoCommunaute(SituationDemoCommunaute situation) => Uri(
@@ -108,6 +151,10 @@ String libelleSituationDemoCommunaute(SituationDemoCommunaute situation) {
     SituationDemoCommunaute.envoiNonConfirme => d.envoiNonConfirme,
     SituationDemoCommunaute.moderationIndisponible => d.moderationIndisponible,
     SituationDemoCommunaute.lecteurSeul => d.lecteurSeul,
+    SituationDemoCommunaute.avertissementPromotion => d.avertissement,
+    SituationDemoCommunaute.lienAffilie => d.lienAffilie,
+    SituationDemoCommunaute.vente => d.vente,
+    SituationDemoCommunaute.signalementNonConfirme => d.signalementNonConfirme,
   };
 }
 
@@ -314,6 +361,114 @@ abstract final class DonneesCommunauteDemo {
         ],
       };
 
+  /// Un lien interne Rewayah (fixture).
+  static const String lienInterne =
+      'https://rewayah-academy.vercel.app/tc/bibliotheque';
+
+  /// Une ressource pedagogique externe (fixture).
+  static const String lienRessource = 'https://quran.com/1';
+
+  /// Un lien affilie : commercial interdit (fixture).
+  static const String lienAffilieDemo =
+      'https://lecteur-coran.example/produit?ref=prof42';
+
+  /// Un lien que le serveur n'a pas qualifie (fixture).
+  static const String lienNonQualifie = 'https://app-revision.example/offre';
+
+  /// L'etat de chaque lien des fixtures (spec section 5.4).
+  static const Map<String, EtatLien> etatsLiens = <String, EtatLien>{
+    lienInterne: EtatLien.interne,
+    lienRessource: EtatLien.ressourceExterne,
+    lienAffilieDemo: EtatLien.commercialInterdit,
+    lienNonQualifie: EtatLien.nonVerifie,
+  };
+
+  /// Publication bloquee 1 (spec section 26) : un lien affilie.
+  static const BrouillonMarqueDemo brouillonAffilie = (
+    titre: 'Mon lecteur audio préféré pour réviser',
+    texte:
+        "J'utilise ce lecteur pour faire réécouter les sourates. Il est "
+        'en réduction cette semaine avec mon lien : $lienAffilieDemo',
+    verdict: VerificationPromotion(
+      verdict: VerdictPromotion.lienAffilie,
+      motif: MotifSignalement.lienAffilie,
+      liens: <LienAnalyse>[
+        LienAnalyse(
+          adresse: lienAffilieDemo,
+          etat: EtatLien.commercialInterdit,
+        ),
+      ],
+    ),
+  );
+
+  /// Publication bloquee 2 (spec section 26) : une vente.
+  static const BrouillonMarqueDemo brouillonVente = (
+    titre: 'Je vends mes fiches de mémorisation',
+    texte:
+        'Lot de 30 fiches plastifiées, 25 euros, envoi par la poste. '
+        'Écrivez-moi pour commander.',
+    verdict: VerificationPromotion(
+      verdict: VerdictPromotion.vente,
+      motif: MotifSignalement.venteNonAutorisee,
+    ),
+  );
+
+  /// Une publicite retenue par un avertissement (R-COM-05), avec les trois
+  /// autres etats de lien.
+  static const BrouillonMarqueDemo brouillonPublicite = (
+    titre: 'Une application pour réviser',
+    texte:
+        'Je recommande cette application de révision, avec le code PROF20 '
+        "pour l'abonnement : $lienNonQualifie. Pour le texte, la ressource "
+        'de la Bibliothèque ($lienInterne) et $lienRessource suffisent.',
+    verdict: VerificationPromotion(
+      verdict: VerdictPromotion.avertissement,
+      motif: MotifSignalement.publicite,
+      liens: <LienAnalyse>[
+        LienAnalyse(adresse: lienNonQualifie, etat: EtatLien.nonVerifie),
+        LienAnalyse(adresse: lienInterne, etat: EtatLien.interne),
+        LienAnalyse(adresse: lienRessource, etat: EtatLien.ressourceExterne),
+      ],
+    ),
+  );
+
+  /// Les brouillons marques, dans l'ordre de la spec section 26.
+  static const List<BrouillonMarqueDemo> brouillonsMarques =
+      <BrouillonMarqueDemo>[
+        brouillonAffilie,
+        brouillonVente,
+        brouillonPublicite,
+      ];
+
+  /// Le garde des fixtures : les trois brouillons marques et les quatre
+  /// etats de lien. Tout autre contenu est normal.
+  static GardePromotionFixtures garde() => GardePromotionFixtures(
+    verdicts: <ContenuMarque, VerificationPromotion>{
+      for (final BrouillonMarqueDemo b in brouillonsMarques)
+        (titre: b.titre, texte: b.texte): b.verdict,
+    },
+    liens: etatsLiens,
+  );
+
+  /// Les brouillons de session d'une situation : le brouillon marque deja
+  /// ecrit, restaure a l'ouverture de la nouvelle publication.
+  static BrouillonsMemoire brouillons(SituationDemoCommunaute situation) {
+    final BrouillonsMemoire memoire = BrouillonsMemoire(
+      maintenant: () => maintenant,
+    );
+    final BrouillonMarqueDemo? marque = situation.brouillon;
+    if (marque != null) {
+      // La memoire ecrit sans attendre : le brouillon est la des le retour.
+      unawaited(
+        memoire.enregistrer(ComposerPublication.brouillonTitre, marque.titre),
+      );
+      unawaited(
+        memoire.enregistrer(ComposerPublication.brouillonTexte, marque.texte),
+      );
+    }
+    return memoire;
+  }
+
   /// La politique des pieces jointes de la demonstration : 10 Mo, documents
   /// PDF, images et audio.
   static final PolitiquePiecesJointes politique = PolitiquePiecesJointes(
@@ -357,10 +512,13 @@ abstract final class DonneesCommunauteDemo {
 /// quitte l'appareil.
 class ModerationDemo implements PortModeration {
   /// Cree la moderation.
-  ModerationDemo({this.indisponible = false});
+  ModerationDemo({this.indisponible = false, this.nonConfirme = false});
 
   /// Vrai : chaque signalement echoue comme un port sans contrat.
   final bool indisponible;
+
+  /// Vrai : l'accuse ne revient pas (reseau coupe) ; rien n'est garde.
+  final bool nonConfirme;
 
   /// Les signalements accuses (tests).
   final List<(ObjetLie, MotifSignalement)> signalements =
@@ -377,6 +535,7 @@ class ModerationDemo implements PortModeration {
     String? precision,
   }) async {
     if (indisponible) throw const CapaciteIndisponible('COM-BR-06');
+    if (nonConfirme) throw StateError('accuse de signalement non recu');
     signalements.add((objet, motif));
   }
 
@@ -422,8 +581,10 @@ List<Override> surchargesCommunauteDemo(
   portModerationProvider.overrideWithValue(
     ModerationDemo(
       indisponible: situation == SituationDemoCommunaute.moderationIndisponible,
+      nonConfirme: situation == SituationDemoCommunaute.signalementNonConfirme,
     ),
   ),
+  portGardePromotionProvider.overrideWithValue(DonneesCommunauteDemo.garde()),
   portElementsEnregistresProvider.overrideWithValue(
     ElementsEnregistresMemoire(
       maintenant: () => DonneesCommunauteDemo.maintenant,
@@ -443,7 +604,9 @@ List<Override> surchargesCommunauteDemo(
   politiquePiecesJointesProvider.overrideWith(
     (Ref _) async => DonneesCommunauteDemo.politique,
   ),
-  portBrouillonsProvider.overrideWithValue(BrouillonsMemoire()),
+  portBrouillonsProvider.overrideWithValue(
+    DonneesCommunauteDemo.brouillons(situation),
+  ),
   destinationCommunauteProvider.overrideWithValue(
     adresseDemoCommunaute(SituationDemoCommunaute.nominal),
   ),
@@ -555,6 +718,9 @@ class CoquilleCommunauteDemo extends StatelessWidget {
               ).go(adresseDemoCommunaute(SituationDemoCommunaute.aujourdhui)),
             ),
             _ => CommunautePage(
+              // Le garde anti-promotion : la nouvelle publication s'ouvre
+              // sur le brouillon marque.
+              composerOuvert: situation.brouillon != null,
               onRetour: () => GoRouter.of(
                 context,
               ).go(adresseDemoCommunaute(SituationDemoCommunaute.aujourdhui)),

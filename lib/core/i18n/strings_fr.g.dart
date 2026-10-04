@@ -11070,6 +11070,8 @@ class Traductions$com$communaute$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$com$communaute$garde$fr garde = Traductions$com$communaute$garde$fr.internal(_root);
+	late final Traductions$com$communaute$lien$fr lien = Traductions$com$communaute$lien$fr.internal(_root);
 
 	/// fr: 'Échanges et entraide entre enseignants'
 	String get sousTitre => 'Échanges et entraide entre enseignants';
@@ -15279,6 +15281,66 @@ class Traductions$com$socle$navigation$fr {
 	late final Traductions$com$socle$navigation$demo$fr demo = Traductions$com$socle$navigation$demo$fr.internal(_root);
 }
 
+// Path: com.communaute.garde
+class Traductions$com$communaute$garde$fr {
+	Traductions$com$communaute$garde$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucune publicité. Aucun lien affilié. Aucune vente.'
+	String get aide => 'Aucune publicité. Aucun lien affilié. Aucune vente.';
+
+	/// fr: 'Cette publication semble contenir une promotion commerciale. Retirez le lien, le code ou l'offre avant de publier.'
+	String get avertissement => 'Cette publication semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant de publier.';
+
+	/// fr: 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.'
+	String get bloqueAffilie => 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.';
+
+	/// fr: 'La vente de produits ou de services n'est pas autorisée dans cet espace.'
+	String get bloqueVente => 'La vente de produits ou de services n\'est pas autorisée dans cet espace.';
+
+	/// fr: 'Publication à revoir'
+	String get titreAvertissement => 'Publication à revoir';
+
+	/// fr: 'Publication bloquée'
+	String get titreBlocage => 'Publication bloquée';
+
+	/// fr: 'Motif : {motif}'
+	String motif({required Object motif}) => 'Motif : ${motif}';
+
+	/// fr: 'Liens de la publication'
+	String get liensTitre => 'Liens de la publication';
+
+	/// fr: 'Modifiez la publication, puis publiez-la de nouveau.'
+	String get consigneBlocage => 'Modifiez la publication, puis publiez-la de nouveau.';
+}
+
+// Path: com.communaute.lien
+class Traductions$com$communaute$lien$fr {
+	Traductions$com$communaute$lien$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Lien interne Rewayah'
+	String get interne => 'Lien interne Rewayah';
+
+	/// fr: 'Ressource pédagogique externe'
+	String get ressourceExterne => 'Ressource pédagogique externe';
+
+	/// fr: 'Lien commercial interdit'
+	String get commercialInterdit => 'Lien commercial interdit';
+
+	/// fr: 'Lien non vérifié'
+	String get nonVerifie => 'Lien non vérifié';
+
+	/// fr: '{adresse}, {etat}'
+	String semantique({required Object adresse, required Object etat}) => '${adresse}, ${etat}';
+}
+
 // Path: com.communaute.flux
 class Traductions$com$communaute$flux$fr {
 	Traductions$com$communaute$flux$fr.internal(this._root);
@@ -15451,6 +15513,7 @@ class Traductions$com$communaute$signalement$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$com$communaute$signalement$politique$fr politique = Traductions$com$communaute$signalement$politique$fr.internal(_root);
 
 	/// fr: 'Choisissez un motif pour envoyer le signalement.'
 	String get motifManquant => 'Choisissez un motif pour envoyer le signalement.';
@@ -15589,6 +15652,18 @@ class Traductions$com$communaute$demo$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+
+	/// fr: 'Publication à revoir : publicité'
+	String get avertissement => 'Publication à revoir : publicité';
+
+	/// fr: 'Lien affilié bloqué'
+	String get lienAffilie => 'Lien affilié bloqué';
+
+	/// fr: 'Vente bloquée'
+	String get vente => 'Vente bloquée';
+
+	/// fr: 'Signalement non confirmé'
+	String get signalementNonConfirme => 'Signalement non confirmé';
 
 	/// fr: 'Choisissez une situation à essayer, dans la coquille Enseignant.'
 	String get choisir => 'Choisissez une situation à essayer, dans la coquille Enseignant.';
@@ -16300,6 +16375,21 @@ class Traductions$com$socle$navigation$demo$fr {
 
 	/// fr: 'Choisissez un espace à essayer.'
 	String get choisir => 'Choisissez un espace à essayer.';
+}
+
+// Path: com.communaute.signalement.politique
+class Traductions$com$communaute$signalement$politique$fr {
+	Traductions$com$communaute$signalement$politique$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La publicité n'est pas autorisée dans la Communauté enseignants.'
+	String get publicite => 'La publicité n\'est pas autorisée dans la Communauté enseignants.';
+
+	/// fr: 'La sollicitation commerciale n'est pas autorisée dans cet espace.'
+	String get sollicitation => 'La sollicitation commerciale n\'est pas autorisée dans cet espace.';
 }
 
 /// The flat map containing all translations for locale <fr>.
@@ -20357,6 +20447,20 @@ extension on Traductions {
 			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
 			'com.messages.vide' => 'Aucune conversation pour le moment.',
 			'com.vocal.titre' => 'Message vocal',
+			'com.communaute.garde.aide' => 'Aucune publicité. Aucun lien affilié. Aucune vente.',
+			'com.communaute.garde.avertissement' => 'Cette publication semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant de publier.',
+			'com.communaute.garde.bloqueAffilie' => 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.',
+			'com.communaute.garde.bloqueVente' => 'La vente de produits ou de services n\'est pas autorisée dans cet espace.',
+			'com.communaute.garde.titreAvertissement' => 'Publication à revoir',
+			'com.communaute.garde.titreBlocage' => 'Publication bloquée',
+			'com.communaute.garde.motif' => ({required Object motif}) => 'Motif : ${motif}',
+			'com.communaute.garde.liensTitre' => 'Liens de la publication',
+			'com.communaute.garde.consigneBlocage' => 'Modifiez la publication, puis publiez-la de nouveau.',
+			'com.communaute.lien.interne' => 'Lien interne Rewayah',
+			'com.communaute.lien.ressourceExterne' => 'Ressource pédagogique externe',
+			'com.communaute.lien.commercialInterdit' => 'Lien commercial interdit',
+			'com.communaute.lien.nonVerifie' => 'Lien non vérifié',
+			'com.communaute.lien.semantique' => ({required Object adresse, required Object etat}) => '${adresse}, ${etat}',
 			'com.communaute.sousTitre' => 'Échanges et entraide entre enseignants',
 			'com.communaute.sections' => 'Catégories de la Communauté enseignants',
 			'com.communaute.toutes' => 'Toutes',
@@ -20404,6 +20508,10 @@ extension on Traductions {
 			'com.communaute.reponses.menu' => ({required Object nom}) => 'Actions sur la réponse de ${nom}',
 			'com.communaute.reponses.signaler' => 'Signaler la réponse',
 			'com.communaute.reponses.signalee' => 'Vous avez signalé cette réponse.',
+			'com.communaute.signalement.politique.publicite' => 'La publicité n\'est pas autorisée dans la Communauté enseignants.',
+			'com.communaute.signalement.politique.sollicitation' => 'La sollicitation commerciale n\'est pas autorisée dans cet espace.',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.signalement.motifManquant' => 'Choisissez un motif pour envoyer le signalement.',
 			'com.communaute.composer.nouvelle' => 'Nouvelle publication',
 			'com.communaute.composer.contexte' => 'Partagez une question, une méthode ou une ressource utile à l\'enseignement.',
@@ -20420,8 +20528,6 @@ extension on Traductions {
 			'com.communaute.composer.choixIndisponible' => 'Le choix d\'un fichier n\'est pas encore disponible ici.',
 			'com.communaute.composer.publier' => 'Publier',
 			'com.communaute.composer.fermer' => 'Fermer la nouvelle publication',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.composer.confirmee' => 'Votre publication est en ligne.',
 			'com.communaute.composer.erreurEnvoi' => 'Votre publication n\'a pas encore été confirmée. Vérifiez votre connexion, puis réessayez.',
 			'com.communaute.composer.indisponible' => 'La publication n\'est pas encore disponible ici.',
@@ -20440,6 +20546,10 @@ extension on Traductions {
 			'com.communaute.regles.voir' => 'Voir les règles',
 			'com.communaute.entree.lecteur' => 'Ouvrir la Communauté enseignants',
 			'com.communaute.entree.detail' => 'Questions, méthodes et ressources entre enseignants',
+			'com.communaute.demo.avertissement' => 'Publication à revoir : publicité',
+			'com.communaute.demo.lienAffilie' => 'Lien affilié bloqué',
+			'com.communaute.demo.vente' => 'Vente bloquée',
+			'com.communaute.demo.signalementNonConfirme' => 'Signalement non confirmé',
 			'com.communaute.demo.choisir' => 'Choisissez une situation à essayer, dans la coquille Enseignant.',
 			'com.communaute.demo.aujourdhui' => 'Aujourd\'hui, avec le raccourci',
 			'com.communaute.demo.nominal' => 'Six publications',

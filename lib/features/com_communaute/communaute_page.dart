@@ -53,7 +53,12 @@ import 'regles_communaute.dart';
 /// La Communaute enseignants.
 class CommunautePage extends ConsumerStatefulWidget {
   /// Cree la page.
-  const CommunautePage({super.key, this.publicationId, this.onRetour});
+  const CommunautePage({
+    super.key,
+    this.publicationId,
+    this.onRetour,
+    this.composerOuvert = false,
+  });
 
   /// La publication demandee par l'adresse, s'il y en a une.
   final String? publicationId;
@@ -61,6 +66,11 @@ class CommunautePage extends ConsumerStatefulWidget {
   /// Le retour hors de la Communaute ; par defaut, Aujourd'hui (d'ou part le
   /// raccourci, Q2). La demonstration passe le sien.
   final VoidCallback? onRetour;
+
+  /// Vrai : la page s'ouvre sur la nouvelle publication (si la personne
+  /// peut publier). La demonstration du garde anti-promotion s'en sert pour
+  /// montrer un brouillon deja ecrit ; aucune route ne le pose.
+  final bool composerOuvert;
 
   /// La cle de la ligne des categories et de la recherche (ordinateur et
   /// tablette), pour les tests.
@@ -82,8 +92,9 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
   String _recherche = '';
   bool _rechercheOuverte = false;
   late String? _selection = widget.publicationId;
-  bool _composer = false;
-  late SurfaceMobile _surface = widget.publicationId == null
+  late bool _composer = widget.composerOuvert;
+  late SurfaceMobile _surface =
+      widget.publicationId == null && !widget.composerOuvert
       ? SurfaceMobile.liste
       : SurfaceMobile.principal;
   String? _retourLocal;
