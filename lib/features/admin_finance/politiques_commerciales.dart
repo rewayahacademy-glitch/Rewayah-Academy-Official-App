@@ -8,9 +8,17 @@
 // la valeur du brouillon (K-57 : deduit), et la valeur de la version active
 // s'affiche sous un champ des qu'elle differe.
 //
-// Les invariants (paiement web seul au lancement, confirmation avant credit,
-// pas de double debit, acces par periode financee, soldes separes) ne sont
-// JAMAIS des champs (FI22) : une carte « Regles fixes » les dit en texte.
+// Les invariants (idempotence, separation des soldes, historique en ajout
+// seul, confirmation avant credit, pas de double debit, acces par periode
+// financee) ne sont JAMAIS des champs (FI22) : une carte « Regles fixes » les
+// dit en texte. Le paiement web seul au lancement se lit dans Paiement, sans
+// champ non plus.
+//
+// Une saisie est refusee sur sa forme (un nombre entier) puis sur sa
+// coherence (capacite d'au moins 1, tarif non nul, plafond pas sous la base,
+// maximum pas sous l'objectif, minimum pas au-dessus de la plus petite
+// classe, remise pas au-dessus du tarif) : une phrase par refus, sous le
+// champ (LOT F8, erreur de champ). Une comparaison, jamais un calcul.
 //
 // « Publier » appelle le port, qui rend `CapaciteIndisponible` en production
 // comme en demonstration : l'ecran le dit honnetement, rien n'est ecrit.
@@ -24,6 +32,7 @@
 // partir du brouillon a l'ecran, relus a chaque saisie valide ; jamais
 // calcules ici (garde de source dans le test).
 
+import 'package:flutter/foundation.dart' show setEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -144,6 +153,8 @@ class _Champ {
     required this.nature,
     required this.lue,
     required this.active,
+    this.devise,
+    this.facultatif = false,
   });
 
   final String id;
@@ -158,32 +169,48 @@ class _Champ {
   /// La valeur de la version active, pour la comparaison.
   final Object? active;
 
+  /// La devise d'un montant que la version ne fixe pas encore (aide
+  /// Internet) : celle des tarifs.
+  final String? devise;
+
+  /// Vrai quand le champ peut rester vide : la valeur n'est alors pas fixee
+  /// (aide Internet, montant configurable, guide §1.4).
+  final bool facultatif;
+
   bool get estMontant =>
       nature == _Nature.montant ||
       nature == _Nature.montantHoraire ||
       nature == _Nature.remise;
 
-  /// La valeur preremplie dans le champ, en unites entieres (une remise en
-  /// valeur absolue), ou `null` quand une saisie entiere ne la represente
-  /// pas : le champ reste alors en lecture.
-  int? get saisieInitiale {
+  /// Le texte prerempli dans le champ, en unites entieres (une remise en
+  /// valeur absolue), vide pour un champ facultatif pas encore fixe, ou
+  /// `null` quand une saisie entiere ne represente pas la valeur : le champ
+  /// reste alors en lecture.
+  String? get saisieInitiale {
     final Object? v = lue;
-    if (v is int) return v;
+    if (v is int) return '$v';
     if (v is Montant) {
       final int? unites = unitesEntieresDe(v);
       if (unites == null) return null;
-      return nature == _Nature.remise ? -unites : unites;
+      return '${nature == _Nature.remise ? -unites : unites}';
     }
+    if (v == null && facultatif && devise != null) return '';
     return null;
   }
 
+  /// La devise du champ quand c'est un montant.
+  String? get deviseMontant => switch (lue) {
+    final Montant m => m.devise,
+    _ => devise,
+  };
+
   /// La valeur d'une saisie [unites] (deja validee), dans la forme du port.
   Object depuisSaisie(int unites) {
-    final Object? v = lue;
-    if (v is Montant) {
+    final String? d = deviseMontant;
+    if (estMontant && d != null) {
       return montantDepuisUnites(
         nature == _Nature.remise ? -unites : unites,
-        v.devise,
+        d,
       );
     }
     return unites;
@@ -273,9 +300,9 @@ class _PolitiquesCommercialesContenuState
     super.initState();
     if (!_estBrouillon) return;
     for (final _Champ c in _tousLesChamps()) {
-      final int? initiale = c.saisieInitiale;
+      final String? initiale = c.saisieInitiale;
       if (initiale == null) continue;
-      _saisies[c.id] = TextEditingController(text: '$initiale')
+      _saisies[c.id] = TextEditingController(text: initiale)
         ..addListener(_rafraichir);
     }
   }
@@ -295,19 +322,84 @@ class _PolitiquesCommercialesContenuState
   }
 
   /// La saisie du champ [id] en unites entieres, ou `null` si elle est vide
-  /// ou mal formee (chiffres seulement, six au plus).
+  /// ou mal formee. La borne (douze chiffres) tient un franc guineen a
+  /// plusieurs millions et reste loin du depassement d'un entier sur 64 bits
+  /// une fois converti en unites mineures.
   int? _saisie(String id) {
     final String texte = _saisies[id]?.text.trim() ?? '';
-    if (!RegExp(r'^\d{1,6}$').hasMatch(texte)) return null;
+    if (!RegExp(r'^\d{1,12}$').hasMatch(texte)) return null;
     return int.parse(texte);
   }
 
-  bool _enErreur(String id) => _saisies.containsKey(id) && _saisie(id) == null;
+  /// Vrai quand le champ facultatif [c] est laisse vide : pas encore fixe.
+  bool _videPermis(_Champ c) =>
+      c.facultatif && (_saisies[c.id]?.text.trim() ?? '').isEmpty;
 
-  /// La valeur courante du champ : la saisie quand elle est valide, sinon
-  /// la valeur lue.
+  /// La phrase d'erreur du champ [c], ou `null` : la forme d'abord, puis la
+  /// coherence avec les autres valeurs a l'ecran.
+  String? _erreurDe(_Champ c) {
+    if (!_saisies.containsKey(c.id) || _videPermis(c)) return null;
+    final pol = t.admin.finance.pol;
+    final int? s = _saisie(c.id);
+    if (s == null) return pol.erreurChamp;
+    final Object v = c.depuisSaisie(s);
+    Object? autre(String id) => _courante(_champ(id));
+    switch (c.id) {
+      case 'capaciteEnfant' || 'capaciteAdulte' || 'capaciteDebutant':
+        if (s < 1) return pol.erreurCapacite;
+      case 'tarifEnfant' || 'tarifAdulte':
+        if (s < 1) return pol.erreurTarif;
+      case 'plafondHoraire':
+        if (autre('baseHoraire') case final Montant base
+            when v is Montant && v.mineur < base.mineur) {
+          return pol.erreurPlafond(base: _texteValeur(base, c.nature));
+        }
+      case 'groupesMax':
+        if (autre('groupesObjectif') case final int objectif
+            when s < objectif) {
+          return pol.erreurGroupesMax(objectif: pol.groupes(n: objectif));
+        }
+      case 'minimum':
+        final List<int> capacites = <int>[
+          for (final String id in <String>[
+            'capaciteEnfant',
+            'capaciteAdulte',
+            'capaciteDebutant',
+          ])
+            if (autre(id) case final int n) n,
+        ];
+        final int plusPetite = capacites.reduce(
+          (int a, int b) => a < b ? a : b,
+        );
+        // Une capacite nulle porte deja sa propre erreur.
+        if (plusPetite >= 1 && s > plusPetite) {
+          return pol.erreurMinimum(capacite: pol.eleves(n: plusPetite));
+        }
+      default:
+        if (c.nature == _Nature.remise && v is Montant) {
+          // La remise ne depasse aucun tarif auquel elle s'applique.
+          for (final String id in <String>['tarifEnfant', 'tarifAdulte']) {
+            if (autre(id) case final Montant tarif
+                when v.mineur.abs() > tarif.mineur) {
+              return pol.erreurRemise(tarif: _texteValeur(tarif, c.nature));
+            }
+          }
+        }
+    }
+    return null;
+  }
+
+  bool _enErreur(String id) => _erreurDe(_champ(id)) != null;
+
+  /// Le champ [id] de la version affichee.
+  _Champ _champ(String id) =>
+      _tousLesChamps().firstWhere((_Champ c) => c.id == id);
+
+  /// La valeur courante du champ : la saisie quand elle est bien formee
+  /// (`null` pour un champ facultatif laisse vide), sinon la valeur lue.
   Object? _courante(_Champ c) {
     if (!_saisies.containsKey(c.id)) return c.lue;
+    if (_videPermis(c)) return null;
     final int? s = _saisie(c.id);
     return s == null ? c.lue : c.depuisSaisie(s);
   }
@@ -425,6 +517,8 @@ class _PolitiquesCommercialesContenuState
         nature: _Nature.montant,
         lue: _lue.allocationInternet,
         active: a.allocationInternet,
+        devise: _lue.tarifEnfant.devise,
+        facultatif: true,
       ),
     ];
   }
@@ -558,8 +652,11 @@ class _PolitiquesCommercialesContenuState
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final pol = t.admin.finance.pol;
+    // Les champs, puis la marge et les rails, lus sans champ.
     final int differences = _estBrouillon
-        ? _tousLesChamps().where(_differe).length
+        ? _tousLesChamps().where(_differe).length +
+              (_margeDiffere ? 1 : 0) +
+              (_railsDifferent ? 1 : 0)
         : 0;
 
     final List<Widget> sections = <Widget>[
@@ -595,11 +692,17 @@ class _PolitiquesCommercialesContenuState
       ]),
       _section(pol.paiement, pol.paiementDetail, <Widget>[
         LigneCleValeur(
+          key: PolitiquesCommercialesContenu.champKey('rails'),
           cle: pol.railWeb,
           detailCle: pol.railWebDetail,
-          valeur: _lue.railsActifs.contains(RailPaiement.webStripe)
-              ? pol.railActif
-              : pol.railInactif,
+          valeur: _texteRail(_lue),
+          complement: _railsDifferent
+              ? _texteComparaison(
+                  'rails',
+                  _texteRail(widget.active),
+                  chiffres: false,
+                )
+              : null,
         ),
         for (final _Champ c in _paiement()) _ligne(c),
       ]),
@@ -765,29 +868,49 @@ class _PolitiquesCommercialesContenuState
       consequence: c.consequence,
       suffixe: _suffixe(c),
       controleur: saisie,
-      erreur: _enErreur(c.id) ? t.admin.finance.pol.erreurChamp : null,
+      erreur: _erreurDe(c),
+      indice: c.facultatif ? t.admin.finance.pol.internetNonFixee : null,
       comparaison: _differe(c) ? _comparaison(c) : null,
     );
   }
 
-  Widget _comparaison(_Champ c) {
+  Widget _comparaison(_Champ c) =>
+      _texteComparaison(c.id, _texteValeur(c.active, c.nature));
+
+  /// « Version active : [valeur] », sous la ligne [id].
+  Widget _texteComparaison(String id, String valeur, {bool chiffres = true}) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle base = textes.bodyMedium ?? const TextStyle();
     return Text(
-      t.admin.finance.pol.versionActiveValeur(
-        valeur: _texteValeur(c.active, c.nature),
-      ),
-      key: PolitiquesCommercialesContenu.comparaisonKey(c.id),
+      t.admin.finance.pol.versionActiveValeur(valeur: valeur),
+      key: PolitiquesCommercialesContenu.comparaisonKey(id),
       style: palette.inkMuted.applyTo(
-        AppTypography.tabulaire(textes.bodyMedium ?? const TextStyle()),
+        chiffres ? AppTypography.tabulaire(base) : base,
       ),
     );
   }
 
+  /// Vrai quand la marge de reference du brouillon differe de l'active.
+  bool get _margeDiffere =>
+      _estBrouillon &&
+      _lue.margeReferencePourMille != widget.active.margeReferencePourMille;
+
+  /// Vrai quand les rails actifs du brouillon different de l'active.
+  bool get _railsDifferent =>
+      _estBrouillon && !setEquals(_lue.railsActifs, widget.active.railsActifs);
+
+  /// Le rail web de [p] en mots : actif ou inactif.
+  String _texteRail(PolitiqueCommerciale p) =>
+      p.railsActifs.contains(RailPaiement.webStripe)
+      ? t.admin.finance.pol.railActif
+      : t.admin.finance.pol.railInactif;
+
   String _suffixe(_Champ c) {
     final pol = t.admin.finance.pol;
-    final String symbole = c.lue is Montant
-        ? symboleDe((c.lue! as Montant).devise)
+    final String? devise = c.deviseMontant;
+    final String symbole = c.estMontant && devise != null
+        ? symboleDe(devise)
         : '';
     return switch (c.nature) {
       _Nature.montant => symbole,
@@ -813,22 +936,14 @@ class _PolitiquesCommercialesContenuState
       forte: pourMilleEnTexte(r.forte),
       stretch: pourMilleEnTexte(r.stretch),
     );
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
     return LigneCleValeur(
       key: PolitiquesCommercialesContenu.champKey('marge'),
       cle: pol.marge,
       detailCle: pol.margeDetail,
       valeur: texte(m),
       chiffres: true,
-      complement: _estBrouillon && m != a
-          ? Text(
-              pol.versionActiveValeur(valeur: texte(a)),
-              key: PolitiquesCommercialesContenu.comparaisonKey('marge'),
-              style: palette.inkMuted.applyTo(
-                textes.bodyMedium ?? const TextStyle(),
-              ),
-            )
+      complement: _margeDiffere
+          ? _texteComparaison('marge', texte(a), chiffres: false)
           : null,
     );
   }
@@ -856,10 +971,12 @@ class _PolitiquesCommercialesContenuState
             ),
           ),
           for (final String regle in <String>[
+            pol.invariantIdempotence,
+            pol.invariantSoldes,
+            pol.invariantHistorique,
             pol.invariantConfirmation,
             pol.invariantDoubleDebit,
             pol.invariantPeriode,
-            pol.invariantSoldes,
           ]) ...<Widget>[Ecart.vMd, Text(regle, style: textes.bodyMedium)],
         ],
       ),
@@ -874,10 +991,12 @@ bool _enColonne(BuildContext contexte, BoxConstraints contraintes) =>
     contraintes.maxWidth < AppGabarit.seuilEtendu;
 
 /// Une valeur mise en mots : montant (« 50 $ », « 4 $ / h », « −5 $ ») ou
-/// nombre avec son unite (« 5 élèves »). `null` : pas encore fixee.
+/// nombre avec son unite (« 5 élèves »). `null` : pas de remise pour un
+/// rang (« Prix normal »), pas encore fixee sinon (aide Internet).
 String _texteValeur(Object? valeur, _Nature nature) {
   final pol = t.admin.finance.pol;
   return switch (valeur) {
+    null when nature == _Nature.remise => pol.remiseAucuneValeur,
     null => pol.internetNonFixee,
     final Montant m when nature == _Nature.montantHoraire => pol.parHeure(
       montant: formaterMontant(m),
@@ -991,6 +1110,7 @@ class _ChampPolitique extends StatelessWidget {
     required this.erreur,
     required this.comparaison,
     super.key,
+    this.indice,
   });
 
   final String libelle;
@@ -999,6 +1119,9 @@ class _ChampPolitique extends StatelessWidget {
   final TextEditingController controleur;
   final String? erreur;
   final Widget? comparaison;
+
+  /// Le texte d'un champ facultatif laisse vide (« Pas encore fixée »).
+  final String? indice;
 
   @override
   Widget build(BuildContext context) {
@@ -1027,6 +1150,7 @@ class _ChampPolitique extends StatelessWidget {
             ),
             decoration: InputDecoration(
               suffixText: suffixe,
+              hintText: indice,
               errorText: erreur,
               errorMaxLines: 4,
             ),
@@ -1178,6 +1302,11 @@ class _ApercuState extends ConsumerState<_Apercu> {
   int _jetonFamille = 0;
   int _jetonEnseignant = 0;
 
+  /// Vrai pendant un nouveau calcul : le resultat affiche est celui du choix
+  /// precedent, et l'apercu le dit.
+  bool _familleARelire = false;
+  bool _enseignantARelire = false;
+
   @override
   void initState() {
     super.initState();
@@ -1208,18 +1337,18 @@ class _ApercuState extends ConsumerState<_Apercu> {
     return e > capacite ? capacite : e;
   }
 
-  /// Une valeur deja la reste affichee pendant un nouveau calcul.
-  static AsyncValue<T> _enCalcul<T>(AsyncValue<T>? avant) =>
-      avant is AsyncData<T> ? avant : AsyncLoading<T>();
-
   void _relireFamille() {
     final int jeton = ++_jetonFamille;
     final PolitiqueCommerciale? b = widget.brouillon;
     if (b == null) {
       _famille = null;
+      _familleARelire = false;
       return;
     }
-    _famille = _enCalcul(_famille);
+    // Pendant le calcul, un ancien resultat reste en place (pas de saut de
+    // mise en page) mais il est signale perime ; sans resultat, le squelette.
+    _familleARelire = _famille is AsyncData<ApercuFamille>;
+    if (!_familleARelire) _famille = const AsyncLoading<ApercuFamille>();
     ref
         .read(portPolitiquesCommercialesProvider)
         .apercuFamille(b, _enfants)
@@ -1233,7 +1362,10 @@ class _ApercuState extends ConsumerState<_Apercu> {
 
   void _poserFamille(int jeton, AsyncValue<ApercuFamille> v) {
     if (!mounted || jeton != _jetonFamille) return;
-    setState(() => _famille = v);
+    setState(() {
+      _famille = v;
+      _familleARelire = false;
+    });
   }
 
   void _relireEnseignant() {
@@ -1242,9 +1374,13 @@ class _ApercuState extends ConsumerState<_Apercu> {
     final int? capacite = _capacite;
     if (b == null || capacite == null || capacite < 1) {
       _enseignant = null;
+      _enseignantARelire = false;
       return;
     }
-    _enseignant = _enCalcul(_enseignant);
+    _enseignantARelire = _enseignant is AsyncData<ApercuEnseignant>;
+    if (!_enseignantARelire) {
+      _enseignant = const AsyncLoading<ApercuEnseignant>();
+    }
     ref
         .read(portPolitiquesCommercialesProvider)
         .apercuEnseignant(
@@ -1262,7 +1398,10 @@ class _ApercuState extends ConsumerState<_Apercu> {
 
   void _poserEnseignant(int jeton, AsyncValue<ApercuEnseignant> v) {
     if (!mounted || jeton != _jetonEnseignant) return;
-    setState(() => _enseignant = v);
+    setState(() {
+      _enseignant = v;
+      _enseignantARelire = false;
+    });
   }
 
   @override
@@ -1304,6 +1443,7 @@ class _ApercuState extends ConsumerState<_Apercu> {
           Ecart.vLg,
           _resultat<ApercuFamille>(
             _famille,
+            aRelire: _familleARelire,
             horsLigne: horsLigne,
             attente: pol.apercuAttenteDetail,
             relancer: () => setState(_relireFamille),
@@ -1364,6 +1504,7 @@ class _ApercuState extends ConsumerState<_Apercu> {
           Ecart.vLg,
           _resultat<ApercuEnseignant>(
             _enseignant,
+            aRelire: _enseignantARelire,
             horsLigne: horsLigne,
             attente: widget.brouillon == null
                 ? pol.apercuAttenteDetail
@@ -1520,11 +1661,13 @@ class _ApercuState extends ConsumerState<_Apercu> {
     );
   }
 
-  /// Le resultat d'un apercu : attente d'une saisie valide, calcul, contenu,
+  /// Le resultat d'un apercu : attente d'une saisie valide, calcul, contenu
+  /// (signale perime pendant un nouveau calcul, [aRelire]),
   /// indisponible, hors ligne ou echec (K-59 : ce qui manque, pourquoi, quoi
   /// faire).
   Widget _resultat<T>(
     AsyncValue<T>? valeur, {
+    required bool aRelire,
     required bool horsLigne,
     required String attente,
     required VoidCallback relancer,
@@ -1533,6 +1676,18 @@ class _ApercuState extends ConsumerState<_Apercu> {
     final pol = t.admin.finance.pol;
     return switch (valeur) {
       null => _EtatApercu(titre: pol.apercuAttente, detail: attente),
+      AsyncData<T>(:final T value) when aRelire => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          _EtatApercu(
+            titre: pol.apercuRecalcul,
+            detail: pol.apercuRecalculDetail,
+          ),
+          Ecart.vMd,
+          contenu(value),
+        ],
+      ),
       AsyncData<T>(:final T value) => contenu(value),
       AsyncError<T>(:final Object error) when error is CapaciteIndisponible =>
         _EtatApercu(

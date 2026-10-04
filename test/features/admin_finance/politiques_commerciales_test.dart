@@ -17,6 +17,12 @@
 // (attente d'une saisie valide, calcul, indisponible, erreur, hors ligne) ;
 // garde de source : aucune formule de prix, remise ou taux dans
 // lib/features/admin_finance.
+//
+// REVUE2 : aide Internet saisissable quand elle n'est pas fixee ; six
+// invariants ; erreurs de coherence (plafond, maximum, minimum, capacite,
+// tarif, remise) ; franc guineen a 7 chiffres ; marge et rails comptes ;
+// « Prix normal » pour un rang sans remise ; publication non confirmee ;
+// recalcul signale perime ; etats de l'apercu a 320 px texte x2, LTR/RTL.
 
 import 'dart:async';
 import 'dart:io';
@@ -49,19 +55,24 @@ import '../../support/harnais.dart';
 /// Un port de test : [versions] (la plus recente d'abord), ou [erreur] ; il
 /// retient chaque brouillon qu'on lui demande de publier, et chaque apercu
 /// demande. L'apercu est celui du double de demonstration, ou
-/// [erreurApercu], ou [apercuSuspendu] (jamais rendu).
+/// [erreurApercu], ou [apercuSuspendu] (jamais rendu ; modifiable en cours
+/// de test pour suspendre un calcul apres un premier resultat). La
+/// publication rend `CapaciteIndisponible`, sauf [publication] : `null`
+/// pour une reponse sans erreur, ou l'erreur a lever.
 class _Port implements PortPolitiquesCommerciales {
   _Port({
     this.versionsRendues,
     this.erreur,
     this.erreurApercu,
     this.apercuSuspendu = false,
+    this.publication = const CapaciteIndisponible('FI-BR-02'),
   });
 
   final List<PolitiqueCommerciale>? versionsRendues;
   final Object? erreur;
   final Object? erreurApercu;
-  final bool apercuSuspendu;
+  bool apercuSuspendu;
+  final Object? publication;
   final List<PolitiqueCommerciale> publies = <PolitiqueCommerciale>[];
   final List<(PolitiqueCommerciale, int)> apercusFamille =
       <(PolitiqueCommerciale, int)>[];
@@ -114,7 +125,8 @@ class _Port implements PortPolitiquesCommerciales {
   @override
   Future<void> publier(PolitiqueCommerciale brouillon) {
     publies.add(brouillon);
-    return Future<void>.error(const CapaciteIndisponible('FI-BR-02'));
+    final Object? rendu = publication;
+    return rendu == null ? Future<void>.value() : Future<void>.error(rendu);
   }
 }
 
@@ -170,6 +182,45 @@ Widget _hote({
       ),
     ),
   ),
+);
+
+/// Le brouillon de la demonstration, avec quelques valeurs changees.
+PolitiqueCommerciale _brouillon({
+  Montant? tarifEnfant,
+  List<RemiseRang>? remisesParRang,
+  ({int objectif, int forte, int stretch})? marge,
+  Set<RailPaiement>? rails,
+}) {
+  final PolitiqueCommerciale b = DonneesFinanceDemo.politiqueBrouillon;
+  return PolitiqueCommerciale(
+    version: b.version,
+    statut: b.statut,
+    dateEffet: b.dateEffet,
+    tarifEnfant: tarifEnfant ?? b.tarifEnfant,
+    tarifAdulte: b.tarifAdulte,
+    essaisMax: b.essaisMax,
+    remisesParRang: remisesParRang ?? b.remisesParRang,
+    baseHoraire: b.baseHoraire,
+    plafondHoraire: b.plafondHoraire,
+    capaciteEnfant: b.capaciteEnfant,
+    capaciteAdulte: b.capaciteAdulte,
+    capaciteDebutant: b.capaciteDebutant,
+    minimumOuverture: b.minimumOuverture,
+    groupesObjectif: b.groupesObjectif,
+    groupesMax: b.groupesMax,
+    joursConservationPlace: b.joursConservationPlace,
+    margeReferencePourMille: marge ?? b.margeReferencePourMille,
+    railsActifs: rails ?? b.railsActifs,
+    allocationInternet: b.allocationInternet,
+  );
+}
+
+/// [brouillon] et la version active.
+_Port _avecCeBrouillon(PolitiqueCommerciale brouillon) => _Port(
+  versionsRendues: <PolitiqueCommerciale>[
+    brouillon,
+    DonneesFinanceDemo.politiqueLancement,
+  ],
 );
 
 List<Override> _avec(PortPolitiquesCommerciales port) => <Override>[
@@ -249,6 +300,7 @@ const Set<String> _reglables = <String>{
   'plafondHoraire',
   'groupesObjectif',
   'groupesMax',
+  'internet',
   'capaciteEnfant',
   'capaciteAdulte',
   'capaciteDebutant',
@@ -397,6 +449,8 @@ void main() {
         'plafondHoraire': '7',
         'groupesObjectif': '3',
         'groupesMax': '4',
+        // L'aide Internet n'est pas encore fixee : un champ vide, qui le dit.
+        'internet': '',
         'capaciteEnfant': '5',
         'capaciteAdulte': '6',
         'capaciteDebutant': '4',
@@ -414,6 +468,12 @@ void main() {
         tester.widget<TextField>(_champ('baseHoraire')).decoration!.suffixText,
         pol.suffixeParHeure(symbole: r'$'),
       );
+      final InputDecoration internet = tester
+          .widget<TextField>(_champ('internet'))
+          .decoration!;
+      expect(internet.hintText, pol.internetNonFixee);
+      expect(internet.suffixText, r'$');
+      expect(internet.errorText, isNull);
       // Aucune comparaison tant que rien ne differe.
       for (final String id in _reglables) {
         expect(_comparaison(id), findsNothing, reason: id);
@@ -438,15 +498,19 @@ void main() {
       final Finder carte = find.byKey(
         PolitiquesCommercialesContenu.invariantsKey,
       );
+      // Les six invariants du guide §5.7.
       for (final String regle in <String>[
+        pol.invariantIdempotence,
+        pol.invariantSoldes,
+        pol.invariantHistorique,
         pol.invariantConfirmation,
         pol.invariantDoubleDebit,
         pol.invariantPeriode,
-        pol.invariantSoldes,
       ]) {
         expect(
           find.descendant(of: carte, matching: find.text(regle)),
           findsOneWidget,
+          reason: regle,
         );
       }
       expect(
@@ -468,7 +532,37 @@ void main() {
         findsOneWidget, // la seule conservation de place
       );
       expect(_champ('marge'), findsNothing);
-      expect(_champ('internet'), findsNothing);
+      expect(_champ('rails'), findsNothing);
+    });
+
+    testWidgets('aide Internet pas encore fixee : un champ facultatif, saisi '
+        'en USD, compare et transmis ; vide, elle reste non fixee', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 2600));
+      final _Port port = _avecBrouillon();
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(_champ('internet'), '30');
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<Text>(_comparaison('internet')).data,
+        pol.versionActiveValeur(valeur: pol.internetNonFixee),
+      );
+      expect(find.text(pol.differences(n: 1)), findsOneWidget);
+      await _publier(tester);
+      expect(
+        port.publies.single.allocationInternet,
+        const Montant(3000, 'USD'),
+      );
+
+      await tester.enterText(_champ('internet'), '');
+      await tester.pumpAndSettle();
+      expect(_comparaison('internet'), findsNothing);
+      expect(find.text(pol.erreurChamp), findsNothing);
+      await _publier(tester);
+      expect(port.publies.last.allocationInternet, isNull);
     });
 
     testWidgets('comparaison : la valeur active apparait sous un champ qui '
@@ -523,6 +617,159 @@ void main() {
       expect(port.publies, isEmpty);
       expect(tester.takeException(), isNull);
     });
+
+    testWidgets('coherence : plafond sous la base, maximum sous l objectif, '
+        'minimum au-dessus de la plus petite classe, capacite ou tarif nul, '
+        'remise au-dessus du tarif ; chacun sa phrase, Publier refuse', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 3200));
+      final _Port port = _avecBrouillon();
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      String? erreur(String id) =>
+          tester.widget<TextField>(_champ(id)).decoration!.errorText;
+
+      await tester.enterText(_champ('plafondHoraire'), '3');
+      await tester.pumpAndSettle();
+      expect(
+        erreur('plafondHoraire'),
+        pol.erreurPlafond(
+          base: pol.parHeure(montant: formaterMontant(_usd(4))),
+        ),
+      );
+      // L'apercu attend : aucune part d'occupation negative.
+      expect(find.text(pol.apercuAttente), findsNWidgets(2));
+      await _publier(tester);
+      expect(find.text(pol.champsACorriger), findsOneWidget);
+      expect(port.publies, isEmpty);
+      await tester.enterText(_champ('plafondHoraire'), '7');
+
+      await tester.enterText(_champ('groupesMax'), '2');
+      await tester.pump();
+      expect(
+        erreur('groupesMax'),
+        pol.erreurGroupesMax(objectif: pol.groupes(n: 3)),
+      );
+      await tester.enterText(_champ('groupesMax'), '4');
+
+      await tester.enterText(_champ('minimum'), '5');
+      await tester.pump();
+      expect(erreur('minimum'), pol.erreurMinimum(capacite: pol.eleves(n: 4)));
+      await tester.enterText(_champ('minimum'), '4');
+
+      await tester.enterText(_champ('capaciteAdulte'), '0');
+      await tester.pump();
+      expect(erreur('capaciteAdulte'), pol.erreurCapacite);
+      // La capacite nulle porte seule l'erreur, pas le minimum.
+      expect(erreur('minimum'), isNull);
+      await tester.enterText(_champ('capaciteAdulte'), '6');
+
+      await tester.enterText(_champ('tarifAdulte'), '0');
+      await tester.pump();
+      expect(erreur('tarifAdulte'), pol.erreurTarif);
+      await tester.enterText(_champ('tarifAdulte'), '60');
+
+      await tester.enterText(_champ('remise-3'), '51');
+      await tester.pump();
+      expect(
+        erreur('remise-3'),
+        pol.erreurRemise(tarif: formaterMontant(_usd(50))),
+      );
+      await tester.enterText(_champ('remise-3'), '50');
+      await tester.pump();
+      expect(erreur('remise-3'), isNull);
+      await tester.enterText(_champ('remise-3'), '5');
+      await tester.pumpAndSettle();
+
+      for (final String id in _reglables) {
+        expect(erreur(id), isNull, reason: id);
+      }
+      await _publier(tester);
+      expect(port.publies, hasLength(1));
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('franc guineen : un tarif de 1 500 000 GNF se preremplit sans '
+        'erreur et se publie tel quel', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 2600));
+      final _Port port = _avecCeBrouillon(
+        _brouillon(tarifEnfant: const Montant(1500000, 'GNF')),
+      );
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      expect(_saisie(tester, 'tarifEnfant'), '1500000');
+      expect(
+        tester.widget<TextField>(_champ('tarifEnfant')).decoration!.errorText,
+        isNull,
+      );
+      expect(find.text(pol.erreurChamp), findsNothing);
+      await _publier(tester);
+      expect(find.text(pol.champsACorriger), findsNothing);
+      expect(port.publies.single.tarifEnfant, const Montant(1500000, 'GNF'));
+    });
+
+    testWidgets('marge et rails qui different : comptes dans l en-tete et '
+        'rappeles sous leur ligne', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 2600));
+      await tester.pumpWidget(
+        _hote(
+          surcharges: _avec(
+            _avecCeBrouillon(
+              _brouillon(
+                marge: (objectif: 320, forte: 350, stretch: 400),
+                rails: const <RailPaiement>{},
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(pol.aucuneDifference), findsNothing);
+      expect(find.text(pol.differences(n: 2)), findsOneWidget);
+      expect(
+        tester.widget<Text>(_comparaison('marge')).data,
+        pol.versionActiveValeur(
+          valeur: pol.margeValeur(objectif: '30', forte: '35', stretch: '40'),
+        ),
+      );
+      expect(
+        tester.widget<Text>(_comparaison('rails')).data,
+        pol.versionActiveValeur(valeur: pol.railActif),
+      );
+      expect(find.text(pol.railInactif), findsOneWidget);
+    });
+
+    testWidgets('un rang remise dans le brouillon, sans remise dans la '
+        'version active : « Prix normal », jamais « Pas encore fixee »', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 2600));
+      await tester.pumpWidget(
+        _hote(
+          surcharges: _avec(
+            _avecCeBrouillon(
+              _brouillon(
+                remisesParRang: <RemiseRang>[
+                  RemiseRang(aPartirDuRang: 2, remise: _usd(-3)),
+                  RemiseRang(aPartirDuRang: 3, remise: _usd(-5)),
+                  RemiseRang(aPartirDuRang: 4, remise: _usd(-7)),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<Text>(_comparaison('remise-2')).data,
+        pol.versionActiveValeur(valeur: pol.remiseAucuneValeur),
+      );
+      expect(
+        find.text(pol.versionActiveValeur(valeur: pol.internetNonFixee)),
+        findsNothing,
+      );
+    });
   });
 
   group('Publier', () {
@@ -566,6 +813,50 @@ void main() {
       verifierUnSeulBoutonPlein(tester);
       expect(tester.takeException(), isNull);
     });
+
+    for (final (String nom, Object? rendu) in <(String, Object?)>[
+      ('une reponse sans erreur', null),
+      ('une erreur reseau', const SocketException('coupure')),
+    ]) {
+      testWidgets('$nom : « Publication non confirmee », jamais un succes ni '
+          'le brouillon dit publie', (WidgetTester tester) async {
+        _taille(tester, const Size(1440, 2600));
+        final _Port port = _Port(
+          versionsRendues: _avecBrouillon().versionsRendues,
+          publication: rendu,
+        );
+        await tester.pumpWidget(_hote(surcharges: _avec(port)));
+        await tester.pumpAndSettle();
+        await _publier(tester);
+
+        expect(port.publies, hasLength(1));
+        expect(
+          find.descendant(
+            of: find.byKey(PolitiquesCommercialesContenu.publicationKey),
+            matching: find.text(pol.publicationNonConfirmee),
+          ),
+          findsOneWidget,
+        );
+        expect(find.text(pol.publicationNonConfirmeeDetail), findsOneWidget);
+        expect(find.text(pol.publicationIndisponible), findsNothing);
+        // Le brouillon reste un brouillon ; « Publiee » ne marque que la
+        // version active, dans l'en-tete comme dans l'historique.
+        expect(_dansEntete(find.text(pol.statutBrouillon)), findsOneWidget);
+        expect(_dansEntete(find.text(pol.statutPubliee)), findsOneWidget);
+        expect(
+          find.descendant(
+            of: find.byKey(
+              PolitiquesCommercialesContenu.historiqueLigneKey(
+                DonneesFinanceDemo.politiqueBrouillon.version,
+              ),
+            ),
+            matching: find.text(pol.statutPubliee),
+          ),
+          findsNothing,
+        );
+        expect(tester.takeException(), isNull);
+      });
+    }
 
     testWidgets('demonstration : la publication reste indisponible', (
       WidgetTester tester,
@@ -731,6 +1022,47 @@ void main() {
       );
     });
 
+    test('incoherences refusees par le double : plafond sous la base, '
+        'remise au-dessus du tarif (aucun montant negatif)', () {
+      final PolitiqueCommerciale l = lancement;
+      final PolitiqueCommerciale incoherente = PolitiqueCommerciale(
+        version: l.version,
+        statut: l.statut,
+        dateEffet: l.dateEffet,
+        tarifEnfant: l.tarifEnfant,
+        tarifAdulte: l.tarifAdulte,
+        essaisMax: l.essaisMax,
+        remisesParRang: <RemiseRang>[
+          RemiseRang(aPartirDuRang: 3, remise: _usd(-60)),
+        ],
+        baseHoraire: _usd(4),
+        plafondHoraire: _usd(3),
+        capaciteEnfant: l.capaciteEnfant,
+        capaciteAdulte: l.capaciteAdulte,
+        capaciteDebutant: l.capaciteDebutant,
+        minimumOuverture: l.minimumOuverture,
+        groupesObjectif: l.groupesObjectif,
+        groupesMax: l.groupesMax,
+        joursConservationPlace: l.joursConservationPlace,
+        margeReferencePourMille: l.margeReferencePourMille,
+        railsActifs: l.railsActifs,
+      );
+      expect(
+        () => DonneesFinanceDemo.apercuEnseignant(
+          incoherente,
+          capacite: 5,
+          eligibles: 5,
+        ),
+        throwsArgumentError,
+      );
+      expect(
+        () => DonneesFinanceDemo.apercuFamille(incoherente, 3),
+        throwsArgumentError,
+      );
+      // Deux rangs au prix normal restent calcules.
+      expect(DonneesFinanceDemo.apercuFamille(incoherente, 2).total, _usd(100));
+    });
+
     test('production : l apercu est indisponible', () async {
       await expectLater(
         const PolitiquesCommercialesIndisponibles().apercuFamille(lancement, 3),
@@ -890,15 +1222,60 @@ void main() {
       // 55 + 55 + 50 : la remise de rang 3 s'applique au nouveau tarif.
       expect(_ligneDit(total, formaterMontant(_usd(160))), isTrue);
 
-      // Une classe sans siege n'a pas de taux : l'apercu le dit.
+      // Une classe sans siege est refusee sous son champ : l'apercu attend,
+      // sans taux.
       await tester.enterText(_champ('capaciteEnfant'), '0');
       await tester.pumpAndSettle();
+      expect(find.text(pol.erreurCapacite), findsOneWidget);
+      expect(_dans(enseignant, find.text(pol.apercuAttente)), findsOneWidget);
+      expect(find.byKey(taux), findsNothing);
+      expect(find.byKey(total), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('recalcul lent apres un premier resultat : l ancien total est '
+        'signale perime, puis remplace', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 3200));
+      final _Port port = _avecBrouillon();
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      expect(_ligneDit(total, formaterMontant(_usd(145))), isTrue);
+      expect(find.text(pol.apercuRecalcul), findsNothing);
+
+      port.apercuSuspendu = true;
+      await _toucher(tester, find.text(pol.apercuEnfants(n: 5)));
+      // La pilule « 5 enfants » est retenue ; le total de 3 reste a l'ecran
+      // mais il est dit perime, en region annoncee.
+      expect(_dans(famille, find.text(pol.apercuRecalcul)), findsOneWidget);
       expect(
-        _dans(enseignant, find.text(pol.apercuCapaciteAttente)),
+        _dans(famille, find.text(pol.apercuRecalculDetail)),
         findsOneWidget,
       );
-      expect(find.byKey(taux), findsNothing);
-      expect(_ligneDit(total, formaterMontant(_usd(160))), isTrue);
+      expect(
+        tester
+            .widget<Semantics>(
+              find
+                  .ancestor(
+                    of: find.text(pol.apercuRecalcul),
+                    matching: find.byType(Semantics),
+                  )
+                  .first,
+            )
+            .properties
+            .liveRegion,
+        isTrue,
+      );
+      expect(_dans(enseignant, find.text(pol.apercuRecalcul)), findsNothing);
+
+      // Le meme signe pour le taux d'une classe.
+      await _toucher(tester, _bouton(pol.apercuEligiblesMoins));
+      expect(_dans(enseignant, find.text(pol.apercuRecalcul)), findsOneWidget);
+
+      // Une reponse arrive : le signe disparait avec l'ancien resultat.
+      port.apercuSuspendu = false;
+      await _toucher(tester, find.text(pol.apercuEnfants(n: 4)));
+      expect(_dans(famille, find.text(pol.apercuRecalcul)), findsNothing);
+      expect(_ligneDit(total, formaterMontant(_usd(188))), isTrue);
       expect(tester.takeException(), isNull);
     });
 
@@ -1121,6 +1498,63 @@ void main() {
             );
           });
         }
+      }
+    }
+
+    // Les etats de l'apercu a 320 px, texte a 200 %, dans les deux sens.
+    for (final TextDirection sens in TextDirection.values) {
+      for (final (String nom, Object? erreurApercu, bool horsLigne)
+          in <(String, Object?, bool)>[
+            ('echec', StateError('panne'), false),
+            ('hors ligne', StateError('reseau'), true),
+            ('indisponible', const CapaciteIndisponible('FI-BR-01'), false),
+            ('attente', null, false),
+          ]) {
+        testWidgets('apercu $nom, 320 texte x2, ${sens.name} : aucun '
+            'debordement', (WidgetTester tester) async {
+          _taille(tester, const Size(320, 900));
+          await tester.pumpWidget(
+            _hote(
+              surcharges: _avec(
+                _Port(
+                  versionsRendues: _avecBrouillon().versionsRendues,
+                  erreurApercu: erreurApercu,
+                ),
+              ),
+              echelle: 2,
+              sens: sens,
+              horsLigne: horsLigne,
+            ),
+          );
+          await tester.pumpAndSettle();
+          if (erreurApercu == null) {
+            await tester.enterText(_champ('tarifEnfant'), '');
+            await tester.pumpAndSettle();
+          }
+          expect(tester.takeException(), isNull);
+          final String titre = switch (nom) {
+            'echec' => pol.apercuErreur,
+            'hors ligne' => pol.apercuHorsLigne,
+            'indisponible' => pol.apercuIndisponible,
+            _ => pol.apercuAttente,
+          };
+          expect(find.text(titre, skipOffstage: false), findsNWidgets(2));
+          final Finder relancer = find.text(
+            pol.apercuRecalculer,
+            skipOffstage: false,
+          );
+          if (erreurApercu is StateError) {
+            expect(relancer, findsNWidgets(2));
+            await _toucher(tester, relancer.first);
+            expect(tester.takeException(), isNull);
+          } else {
+            expect(relancer, findsNothing);
+          }
+          verifierAucuneCarteCollee(
+            tester,
+            estCarte: (Widget w) => w is AppCard || w is BandeauAttention,
+          );
+        });
       }
     }
   });

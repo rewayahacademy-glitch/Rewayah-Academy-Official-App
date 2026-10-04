@@ -795,7 +795,9 @@ abstract final class DonneesFinanceDemo {
 
   /// L'apercu d'un foyer de [enfants] membres payants sous [politique]
   /// (FI-11c) : la mensualite de chaque rang (`lignesPourRang`), puis le
-  /// total. Calcul du double de demonstration, jamais dans un widget.
+  /// total. Calcul du double de demonstration, jamais dans un widget. Une
+  /// remise au-dessus du tarif (mensualite negative) est une erreur
+  /// d'argument : le formulaire la refuse avant (revue FI-11c).
   static ApercuFamille apercuFamille(
     PolitiqueCommerciale politique,
     int enfants,
@@ -804,6 +806,11 @@ abstract final class DonneesFinanceDemo {
       for (int rang = 1; rang <= enfants; rang++)
         _mensualiteApercu(rang, lignesPourRang(rang, politique: politique)),
     ];
+    for (final MensualiteApercu l in lignes) {
+      if (l.mensualite.mineur < 0) {
+        throw ArgumentError('mensualite negative au rang ${l.rang}');
+      }
+    }
     return ApercuFamille(
       enfants: lignes,
       total: _somme(lignes.map((MensualiteApercu l) => l.mensualite)),
@@ -828,7 +835,9 @@ abstract final class DonneesFinanceDemo {
 
   /// L'apercu du taux horaire d'une classe sous [politique] (FI-11c) : le
   /// taux de `tauxEffectif`, et la part d'occupation au-dessus de la base.
-  /// Une capacite nulle n'a pas de taux : erreur d'argument.
+  /// Une capacite nulle n'a pas de taux, un plafond sous la base donnerait
+  /// une part d'occupation negative : erreurs d'argument (le formulaire les
+  /// refuse avant, revue FI-11c).
   static ApercuEnseignant apercuEnseignant(
     PolitiqueCommerciale politique, {
     required int capacite,
@@ -836,6 +845,9 @@ abstract final class DonneesFinanceDemo {
   }) {
     if (capacite < 1 || eligibles < 0) {
       throw ArgumentError('capacite $capacite, eligibles $eligibles');
+    }
+    if (politique.plafondHoraire.mineur < politique.baseHoraire.mineur) {
+      throw ArgumentError('plafond sous la base');
     }
     final Montant taux = tauxEffectif(
       siegesEligibles: eligibles,

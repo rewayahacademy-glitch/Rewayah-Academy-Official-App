@@ -12692,6 +12692,24 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: 'Ce champ est vide ou mal saisi : saisissez un nombre entier, sans virgule ni signe.'
 	String get erreurChamp => 'Ce champ est vide ou mal saisi : saisissez un nombre entier, sans virgule ni signe.';
 
+	/// fr: 'Une classe compte au moins une place : saisissez 1 ou plus.'
+	String get erreurCapacite => 'Une classe compte au moins une place : saisissez 1 ou plus.';
+
+	/// fr: 'Un tarif nul rendrait le cours gratuit : saisissez un montant supérieur à 0.'
+	String get erreurTarif => 'Un tarif nul rendrait le cours gratuit : saisissez un montant supérieur à 0.';
+
+	/// fr: 'Le plafond est sous la base garantie ({base}) : le taux baisserait quand la classe se remplit. Saisissez au moins la base.'
+	String erreurPlafond({required Object base}) => 'Le plafond est sous la base garantie (${base}) : le taux baisserait quand la classe se remplit. Saisissez au moins la base.';
+
+	/// fr: 'Le maximum est sous l'objectif ({objectif}) : saisissez au moins l'objectif.'
+	String erreurGroupesMax({required Object objectif}) => 'Le maximum est sous l\'objectif (${objectif}) : saisissez au moins l\'objectif.';
+
+	/// fr: 'Le minimum dépasse la plus petite classe ({capacite}) : elle ne pourrait jamais ouvrir. Saisissez au plus cette capacité.'
+	String erreurMinimum({required Object capacite}) => 'Le minimum dépasse la plus petite classe (${capacite}) : elle ne pourrait jamais ouvrir. Saisissez au plus cette capacité.';
+
+	/// fr: 'La remise dépasse le tarif ({tarif}) : la mensualité deviendrait négative. Saisissez au plus ce montant.'
+	String erreurRemise({required Object tarif}) => 'La remise dépasse le tarif (${tarif}) : la mensualité deviendrait négative. Saisissez au plus ce montant.';
+
 	/// fr: '{montant} / h'
 	String parHeure({required Object montant}) => '${montant} / h';
 
@@ -12929,6 +12947,12 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: 'Chaque profil a son propre solde ; le total du foyer n'est qu'une lecture.'
 	String get invariantSoldes => 'Chaque profil a son propre solde ; le total du foyer n\'est qu\'une lecture.';
 
+	/// fr: 'Un même paiement reçu deux fois n'est enregistré qu'une fois.'
+	String get invariantIdempotence => 'Un même paiement reçu deux fois n\'est enregistré qu\'une fois.';
+
+	/// fr: 'L'historique des paiements ne s'efface ni ne se réécrit : on y ajoute seulement.'
+	String get invariantHistorique => 'L\'historique des paiements ne s\'efface ni ne se réécrit : on y ajoute seulement.';
+
 	/// fr: 'Publier cette version'
 	String get publier => 'Publier cette version';
 
@@ -12950,8 +12974,8 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: 'Corrigez d'abord les champs signalés'
 	String get champsACorriger => 'Corrigez d\'abord les champs signalés';
 
-	/// fr: 'Un champ vide ou mal saisi empêche de préparer la publication : saisissez un nombre entier dans chaque champ signalé, puis publiez.'
-	String get champsACorrigerDetail => 'Un champ vide ou mal saisi empêche de préparer la publication : saisissez un nombre entier dans chaque champ signalé, puis publiez.';
+	/// fr: 'Un champ vide, mal saisi ou incohérent empêche de préparer la publication : corrigez chaque champ signalé comme sa phrase l'indique, puis publiez.'
+	String get champsACorrigerDetail => 'Un champ vide, mal saisi ou incohérent empêche de préparer la publication : corrigez chaque champ signalé comme sa phrase l\'indique, puis publiez.';
 
 	/// fr: 'Aperçu avant publication'
 	String get apercu => 'Aperçu avant publication';
@@ -13037,8 +13061,8 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: 'L'aperçu attend une saisie valide'
 	String get apercuAttente => 'L\'aperçu attend une saisie valide';
 
-	/// fr: 'Un champ du brouillon est vide ou mal saisi : corrigez le champ signalé, l'aperçu se recalcule aussitôt.'
-	String get apercuAttenteDetail => 'Un champ du brouillon est vide ou mal saisi : corrigez le champ signalé, l\'aperçu se recalcule aussitôt.';
+	/// fr: 'Un champ du brouillon est vide, mal saisi ou incohérent : corrigez le champ signalé, l'aperçu se recalcule aussitôt.'
+	String get apercuAttenteDetail => 'Un champ du brouillon est vide, mal saisi ou incohérent : corrigez le champ signalé, l\'aperçu se recalcule aussitôt.';
 
 	/// fr: 'Cette classe n'a aucun siège : saisissez une capacité d'au moins 1 élève pour voir le taux.'
 	String get apercuCapaciteAttente => 'Cette classe n\'a aucun siège : saisissez une capacité d\'au moins 1 élève pour voir le taux.';
@@ -13063,6 +13087,12 @@ class Traductions$admin$finance$pol$fr {
 
 	/// fr: 'Relancer le calcul'
 	String get apercuRecalculer => 'Relancer le calcul';
+
+	/// fr: 'Recalcul en cours'
+	String get apercuRecalcul => 'Recalcul en cours';
+
+	/// fr: 'Les montants ci-dessous correspondent au choix précédent : ils se mettent à jour dès que le calcul aboutit.'
+	String get apercuRecalculDetail => 'Les montants ci-dessous correspondent au choix précédent : ils se mettent à jour dès que le calcul aboutit.';
 
 	/// fr: 'Historique des versions'
 	String get historique => 'Historique des versions';
@@ -18285,6 +18315,12 @@ extension on Traductions {
 			'admin.finance.pol.sansBrouillon' => 'Aucun brouillon en cours : les valeurs ci-dessous sont celles qui s\'appliquent aujourd\'hui. Elles ne se modifient que dans un brouillon.',
 			'admin.finance.pol.versionActiveValeur' => ({required Object valeur}) => 'Version active : ${valeur}',
 			'admin.finance.pol.erreurChamp' => 'Ce champ est vide ou mal saisi : saisissez un nombre entier, sans virgule ni signe.',
+			'admin.finance.pol.erreurCapacite' => 'Une classe compte au moins une place : saisissez 1 ou plus.',
+			'admin.finance.pol.erreurTarif' => 'Un tarif nul rendrait le cours gratuit : saisissez un montant supérieur à 0.',
+			'admin.finance.pol.erreurPlafond' => ({required Object base}) => 'Le plafond est sous la base garantie (${base}) : le taux baisserait quand la classe se remplit. Saisissez au moins la base.',
+			'admin.finance.pol.erreurGroupesMax' => ({required Object objectif}) => 'Le maximum est sous l\'objectif (${objectif}) : saisissez au moins l\'objectif.',
+			'admin.finance.pol.erreurMinimum' => ({required Object capacite}) => 'Le minimum dépasse la plus petite classe (${capacite}) : elle ne pourrait jamais ouvrir. Saisissez au plus cette capacité.',
+			'admin.finance.pol.erreurRemise' => ({required Object tarif}) => 'La remise dépasse le tarif (${tarif}) : la mensualité deviendrait négative. Saisissez au plus ce montant.',
 			'admin.finance.pol.parHeure' => ({required Object montant}) => '${montant} / h',
 			'admin.finance.pol.suffixeParHeure' => ({required Object symbole}) => '${symbole} / h',
 			'admin.finance.pol.suffixeRemise' => ({required Object symbole}) => '${symbole} de remise',
@@ -18350,18 +18386,20 @@ extension on Traductions {
 			'admin.finance.pol.conservation' => 'Conservation de la place',
 			'admin.finance.pol.conservationDetail' => 'Le délai pendant lequel la place d\'un élève reste réservée quand sa nouvelle période n\'est pas financée.',
 			'admin.finance.pol.pilotage' => 'Pilotage',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.pilotageDetail' => 'Des repères pour lire les chiffres, jamais des règles qui bloquent.',
 			'admin.finance.pol.marge' => 'Marge de référence',
 			'admin.finance.pol.margeValeur' => ({required Object objectif, required Object forte, required Object stretch}) => 'Objectif ${objectif} %, forte ${forte} %, stretch ${stretch} %',
 			'admin.finance.pol.margeDetail' => 'Un repère pour lire la vue globale, jamais une sanction, un refus ni un blocage. Il ne se modifie pas sur cet écran pour l\'instant.',
 			'admin.finance.pol.invariants' => 'Règles fixes',
 			'admin.finance.pol.invariantsDetail' => 'Elles protègent l\'argent des familles : ce ne sont pas des réglages, aucune version ne les change.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.invariantConfirmation' => 'Un paiement est confirmé avant tout crédit sur un profil.',
 			'admin.finance.pol.invariantDoubleDebit' => 'Un même paiement n\'est jamais débité deux fois.',
 			'admin.finance.pol.invariantPeriode' => 'L\'accès au cours dépend de la période financée, jamais du solde.',
 			'admin.finance.pol.invariantSoldes' => 'Chaque profil a son propre solde ; le total du foyer n\'est qu\'une lecture.',
+			'admin.finance.pol.invariantIdempotence' => 'Un même paiement reçu deux fois n\'est enregistré qu\'une fois.',
+			'admin.finance.pol.invariantHistorique' => 'L\'historique des paiements ne s\'efface ni ne se réécrit : on y ajoute seulement.',
 			'admin.finance.pol.publier' => 'Publier cette version',
 			'admin.finance.pol.publierConsequence' => 'Publier rend ce brouillon applicable à partir de sa date d\'effet ; aucune facture déjà payée n\'est modifiée.',
 			'admin.finance.pol.publicationIndisponible' => 'La publication n\'est pas encore disponible',
@@ -18369,7 +18407,7 @@ extension on Traductions {
 			'admin.finance.pol.publicationNonConfirmee' => 'Publication non confirmée',
 			'admin.finance.pol.publicationNonConfirmeeDetail' => 'La réponse n\'est pas arrivée, sans doute à cause de la connexion. Vérifiez la version active avant de réessayer.',
 			'admin.finance.pol.champsACorriger' => 'Corrigez d\'abord les champs signalés',
-			'admin.finance.pol.champsACorrigerDetail' => 'Un champ vide ou mal saisi empêche de préparer la publication : saisissez un nombre entier dans chaque champ signalé, puis publiez.',
+			'admin.finance.pol.champsACorrigerDetail' => 'Un champ vide, mal saisi ou incohérent empêche de préparer la publication : corrigez chaque champ signalé comme sa phrase l\'indique, puis publiez.',
 			'admin.finance.pol.apercu' => 'Aperçu avant publication',
 			'admin.finance.pol.apercuDetail' => 'Ce que donnerait le brouillon à l\'écran, recalculé à chaque modification valide. Ce sont des exemples : rien n\'est facturé ni payé.',
 			'admin.finance.pol.apercuFamille' => 'Exemple de foyer',
@@ -18397,7 +18435,7 @@ extension on Traductions {
 			'admin.finance.pol.apercuTaux' => 'Taux horaire effectif',
 			'admin.finance.pol.apercuTauxDetail' => ({required Object plafond}) => 'Jamais au-dessus du plafond de ${plafond}.',
 			'admin.finance.pol.apercuAttente' => 'L\'aperçu attend une saisie valide',
-			'admin.finance.pol.apercuAttenteDetail' => 'Un champ du brouillon est vide ou mal saisi : corrigez le champ signalé, l\'aperçu se recalcule aussitôt.',
+			'admin.finance.pol.apercuAttenteDetail' => 'Un champ du brouillon est vide, mal saisi ou incohérent : corrigez le champ signalé, l\'aperçu se recalcule aussitôt.',
 			'admin.finance.pol.apercuCapaciteAttente' => 'Cette classe n\'a aucun siège : saisissez une capacité d\'au moins 1 élève pour voir le taux.',
 			'admin.finance.pol.apercuIndisponible' => 'L\'aperçu n\'est pas encore disponible',
 			'admin.finance.pol.apercuIndisponibleDetail' => 'Le calcul de l\'aperçu n\'est pas encore branché : aucun montant n\'est estimé ici. Le brouillon reste modifiable.',
@@ -18406,6 +18444,8 @@ extension on Traductions {
 			'admin.finance.pol.apercuHorsLigne' => 'Aperçu hors ligne',
 			'admin.finance.pol.apercuHorsLigneDetail' => 'L\'appareil n\'a pas de connexion : l\'aperçu n\'a pas pu être calculé. Vos saisies sont gardées ; relancez le calcul une fois reconnecté.',
 			'admin.finance.pol.apercuRecalculer' => 'Relancer le calcul',
+			'admin.finance.pol.apercuRecalcul' => 'Recalcul en cours',
+			'admin.finance.pol.apercuRecalculDetail' => 'Les montants ci-dessous correspondent au choix précédent : ils se mettent à jour dès que le calcul aboutit.',
 			'admin.finance.pol.historique' => 'Historique des versions',
 			'admin.finance.pol.historiqueDetail' => 'Toutes les versions, la plus récente d\'abord. Rien ne s\'y modifie : une version publiée reste telle quelle.',
 			'admin.finance.pol.historiqueVersion' => ({required Object version}) => 'Version ${version}',
@@ -18860,6 +18900,8 @@ extension on Traductions {
 			'parcours.lieuQuestion' => 'Où vous trouvez-vous ?',
 			'parcours.lieuRaison' => 'Nous nous en servons uniquement pour vous montrer les horaires à votre heure locale. Nous ne demandons jamais votre position exacte, et cette réponse ne quitte pas votre dossier.',
 			'parcours.lieuSuggere' => 'Proposé d\'après l\'heure de votre appareil',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.niveauQuestion' => ({required Object prenom}) => 'Où en est ${prenom} aujourd\'hui ?',
 			'parcours.niveauRaison' => 'Votre réponse oriente les premières propositions. Elle ne fixe pas le niveau officiel : celui-ci est attribué par l\'académie après un échange avec un enseignant.',
 			'parcours.niveauDebutLettres' => 'Nous commençons par les lettres',
@@ -18870,8 +18912,6 @@ extension on Traductions {
 			'parcours.objectifQuestion' => 'Que souhaitez-vous d\'abord ?',
 			'parcours.objectifRaison' => 'Vous pourrez changer d\'objectif plus tard : il oriente le travail de l\'enseignant, il ne vous engage pas.',
 			'parcours.objectifApprendreALire' => 'Apprendre à lire',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.objectifDevenirFluide' => 'Lire plus couramment',
 			'parcours.objectifMemoriser' => 'Mémoriser',
 			'parcours.objectifIndecis' => 'Je ne sais pas encore',
@@ -19374,6 +19414,8 @@ extension on Traductions {
 			'tuteur.accueil.etatCourt.aucune' => 'Aucune séance',
 			'tuteur.accueil.etatCourt.illisible' => 'Non disponible',
 			'tuteur.accueil.assister' => 'Assister',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.assisterRefuse' => 'Le cours n\'a pas pu être rejoint. Il vient peut-être de se terminer.',
 			'tuteur.accueil.enCours' => ({required Object prenom}) => 'En cours avec ${prenom}',
 			'tuteur.accueil.depuisMinutes' => ({required Object minutes}) => 'Commencé il y a ${minutes} min',
@@ -19384,8 +19426,6 @@ extension on Traductions {
 			'tuteur.accueil.aucunCoursPrevu' => 'Aucun cours programmé pour l\'instant',
 			'tuteur.accueil.aucunCoursPrevuDetail' => 'Les cours de la semaine sont préparés à l\'avance. Celui-ci apparaîtra ici.',
 			'tuteur.accueil.enRecherche' => 'En recherche d\'un enseignant',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.enRechercheDepuis' => ({required Object date}) => 'Demande déposée le ${date}',
 			'tuteur.accueil.enRechercheSansDate' => ({required Object prenom}) => 'Un enseignant prendra ${prenom} en charge parmi les heures proposées.',
 			'tuteur.accueil.sansCreneau' => ({required Object prenom}) => 'Aucune heure proposée pour ${prenom}',
@@ -19888,6 +19928,8 @@ extension on Traductions {
 			'enseignant.cahier.integrite' => 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.',
 			'enseignant.cahier.corriger' => 'Corriger le cahier de transmission',
 			'enseignant.cahier.corrigeLe' => ({required Object date}) => 'Corrigé le ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.titre' => 'Profil',
 			'enseignant.profil.remuneration' => 'Rémunération',
 			'enseignant.profil.revenus' => 'Mes revenus',
@@ -19898,8 +19940,6 @@ extension on Traductions {
 			'enseignant.profil.pays' => 'Pays',
 			'enseignant.profil.langues' => 'Langues',
 			'enseignant.profil.fuseau' => 'Fuseau de mes cours',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.fuseauDetail' => 'C\'est lui qui décide de l\'heure de vos créneaux, pas l\'heure de cet appareil.',
 			'enseignant.profil.plafond' => 'Plafond hebdomadaire',
 			'enseignant.profil.plafondValeur' => ({required Object nombre}) => '${nombre} h par semaine',
@@ -20402,6 +20442,8 @@ extension on Traductions {
 			'tc.outils.dock.marquer' => 'Marquer',
 			'tc.outils.dock.masquer' => 'Masquer',
 			'tc.outils.dock.stylet' => 'Stylet',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.dock.pointeur' => 'Pointeur',
 			'tc.outils.dock.revision' => 'Révision',
 			'tc.outils.intention.aApprendre' => 'À apprendre',
@@ -20412,8 +20454,6 @@ extension on Traductions {
 			'tc.outils.trait.stylet' => 'Stylet',
 			'tc.outils.trait.surligneur' => 'Surligner',
 			'tc.outils.trait.gomme' => 'Gomme',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.trait.annuler' => 'Annuler',
 			'tc.outils.trait.plus' => 'Plus',
 			'tc.outils.trait.ardoise' => 'Ardoise d\'annotation, facultative : le cours reste lisible sans elle',
@@ -20916,6 +20956,8 @@ extension on Traductions {
 			'adulte.invitation.courrielAideElle' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjointe l\'invitation à rejoindre Rewayah.',
 			'adulte.invitation.courrielAideLui' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjoint l\'invitation à rejoindre Rewayah.',
 			'adulte.invitation.prenomRequis' => 'Indiquez son prénom.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.courrielRequis' => 'Indiquez son adresse e-mail.',
 			'adulte.invitation.courrielInvalide' => 'Vérifiez l\'adresse e-mail : elle doit ressembler à nom@exemple.com.',
 			'adulte.invitation.verifier' => 'Continuer',
@@ -20926,8 +20968,6 @@ extension on Traductions {
 			'adulte.invitation.envoyer' => 'Envoyer l\'invitation',
 			'adulte.invitation.horsLigne' => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez envoyer l\'invitation vous-même quand la connexion sera revenue.',
 			'adulte.invitation.echecTitre' => 'L\'envoi n\'a pas été confirmé.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.echecPhrase' => 'Vérifiez avant de réessayer. Vos informations sont conservées.',
 			'adulte.invitation.refusTitre' => 'Cette invitation ne peut pas être envoyée',
 			'adulte.invitation.refusPhrase' => 'Ma famille indique l\'état actuel de la place.',
