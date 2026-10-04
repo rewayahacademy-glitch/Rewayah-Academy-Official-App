@@ -367,8 +367,14 @@ class Traductions$salle$fr {
 	/// fr: 'Vous assistez au cours. Vous n'êtes pas entendu.'
 	String get observationMuette => 'Vous assistez au cours. Vous n\'êtes pas entendu.';
 
+	/// fr: 'Vous assistez au cours.'
+	String get observationMuetteTitre => 'Vous assistez au cours.';
+
 	/// fr: 'Visite de contrôle. Vous n'êtes ni vu ni entendu, et votre passage est inscrit au journal.'
 	String get bandeauControle => 'Visite de contrôle. Vous n\'êtes ni vu ni entendu, et votre passage est inscrit au journal.';
+
+	/// fr: 'Visite de contrôle.'
+	String get bandeauControleTitre => 'Visite de contrôle.';
 
 	late final Traductions$salle$visiteControle$fr visiteControle = Traductions$salle$visiteControle$fr.internal(_root);
 }
@@ -15777,7 +15783,9 @@ extension on Traductions {
 			'salle.roleTuteur' => 'Tuteur, en observation',
 			'salle.roleAdministration' => 'Administration Rewayah',
 			'salle.observationMuette' => 'Vous assistez au cours. Vous n\'êtes pas entendu.',
+			'salle.observationMuetteTitre' => 'Vous assistez au cours.',
 			'salle.bandeauControle' => 'Visite de contrôle. Vous n\'êtes ni vu ni entendu, et votre passage est inscrit au journal.',
+			'salle.bandeauControleTitre' => 'Visite de contrôle.',
 			'salle.visiteControle.titre' => 'Contrôle Rewayah',
 			'salle.visiteControle.sonRecu' => 'Son reçu',
 			'salle.visiteControle.sonCoupe' => 'Son coupé',
@@ -15943,10 +15951,10 @@ extension on Traductions {
 			'contrat.pointControle' => 'Un contrôleur qualité peut assister à un cours sans être vu. La salle le rappelle en permanence, que la visite ait lieu ou non.',
 			'contrat.pointCoordonnees' => 'Vous ne voyez jamais les coordonnées d\'une famille : ni nom complet, ni courriel, ni téléphone.',
 			'contrat.lireTexte' => 'Lire le texte complet',
-			'contrat.accepter' => 'J\'ai lu et j\'accepte',
-			'contrat.accepteLe' => ({required Object date}) => 'Accepté le ${date}',
 			_ => null,
 		} ?? switch (path) {
+			'contrat.accepter' => 'J\'ai lu et j\'accepte',
+			'contrat.accepteLe' => ({required Object date}) => 'Accepté le ${date}',
 			'contrat.erreur' => 'La signature n\'a pas abouti. Réessayez dans un instant.',
 			'contrat.horsLigne' => 'Vous êtes hors ligne. Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.',
 			'contrat.caseRequise' => 'Cochez la case pour continuer.',
@@ -16457,10 +16465,10 @@ extension on Traductions {
 			'dossiers.detail.titreElide' => ({required Object nom}) => 'Dossier d\'${nom}',
 			'dossiers.visionneuse.chargement' => 'Chargement de la pièce…',
 			'dossiers.visionneuse.erreur' => 'La pièce ne peut pas être affichée.',
-			'dossiers.visionneuse.expire' => 'L\'accès à cette pièce a expiré.',
-			'dossiers.visionneuse.recharger' => 'Recharger la pièce',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.visionneuse.expire' => 'L\'accès à cette pièce a expiré.',
+			'dossiers.visionneuse.recharger' => 'Recharger la pièce',
 			'dossiers.visionneuse.formatNonPrisEnCharge' => 'Ce format de pièce ne peut pas être affiché.',
 			'dossiers.visionneuse.accesRetire' => 'Vous n’avez plus accès à cette pièce.',
 			'dossiers.visionneuse.horsLigne' => 'Vous êtes hors ligne. La pièce ne peut pas être chargée.',
@@ -16971,10 +16979,10 @@ extension on Traductions {
 			'admin.journal.roleEleve' => 'Élève',
 			'admin.journal.roleControleur' => 'Contrôleur',
 			'admin.journal.roleComptable' => 'Comptable',
-			'admin.journal.roleAucun' => 'Hors session',
-			'admin.journal.evtKycLu' => 'Dossier d\'identité consulté',
 			_ => null,
 		} ?? switch (path) {
+			'admin.journal.roleAucun' => 'Hors session',
+			'admin.journal.evtKycLu' => 'Dossier d\'identité consulté',
 			'admin.journal.evtKycTranche' => 'Dossier d\'identité tranché',
 			'admin.journal.evtProfilCree' => 'Profil créé',
 			'admin.journal.evtProfilEnfantCree' => 'Profil enfant créé',
@@ -17485,10 +17493,10 @@ extension on Traductions {
 			'compte.tuteur.pageApparence.animations' => 'Animations',
 			'compte.tuteur.pageApparence.animationsDetail' => 'Réduites quand votre appareil le demande',
 			'compte.tuteur.pageApparence.texte' => 'Taille du texte',
-			'compte.tuteur.pageApparence.texteDetail' => 'Suit la taille du système',
-			'compte.tuteur.pageAide.titre' => 'Aide et support',
 			_ => null,
 		} ?? switch (path) {
+			'compte.tuteur.pageApparence.texteDetail' => 'Suit la taille du système',
+			'compte.tuteur.pageAide.titre' => 'Aide et support',
 			'compte.tuteur.pageAide.indisponibleTitre' => 'Aide pas encore disponible',
 			'compte.tuteur.pageAide.indisponiblePhrase' => 'Les questions fréquentes et le contact de l\'académie ne sont pas encore ouverts dans l\'application.',
 			'compte.tuteur.pageAide.canalCourriel' => 'Courriel de l\'académie',
@@ -17999,10 +18007,10 @@ extension on Traductions {
 			'enseignant.bienvenue.salutationSansNom' => 'Bienvenue.',
 			'enseignant.bienvenue.dossierValide' => 'Votre dossier est validé.',
 			'enseignant.bienvenue.sousTitre' => 'Préparez votre espace avant votre première Classe.',
-			'enseignant.bienvenue.aCompleter' => 'À compléter',
-			'enseignant.bienvenue.compteur' => ({required Object fait, required Object total}) => '${fait} sur ${total}',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.bienvenue.aCompleter' => 'À compléter',
+			'enseignant.bienvenue.compteur' => ({required Object fait, required Object total}) => '${fait} sur ${total}',
 			'enseignant.bienvenue.prerequisPhoto' => 'Ajouter ma photo professionnelle',
 			'enseignant.bienvenue.prerequisLangues' => 'Vérifier mes langues d\'enseignement',
 			'enseignant.bienvenue.prerequisFuseau' => 'Vérifier mon fuseau horaire',
@@ -18513,10 +18521,10 @@ extension on Traductions {
 			'controleur.observation.sansTexte' => 'Aucun texte',
 			'controleur.observation.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.titre' => 'Échanges',
-			'controleur.echanges.titreFil' => ({required Object classe, required Object date}) => '${classe} · ${date}',
-			'controleur.echanges.derniereActivite' => ({required Object date}) => 'Dernière activité : ${date}',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.echanges.titreFil' => ({required Object classe, required Object date}) => '${classe} · ${date}',
+			'controleur.echanges.derniereActivite' => ({required Object date}) => 'Dernière activité : ${date}',
 			'controleur.echanges.reponseRecue' => 'Réponse reçue',
 			'controleur.echanges.enAttente' => 'En attente',
 			'controleur.echanges.vide' => 'Aucun échange avec l\'administration pour le moment.',
@@ -19027,10 +19035,10 @@ extension on Traductions {
 			'tc.parcours.feedback.technique.intitule' => 'Le son et l\'image étaient-ils confortables ?',
 			'tc.parcours.feedback.technique.difficile' => 'Gênants',
 			'tc.parcours.feedback.technique.bien' => 'Corrects',
-			'tc.parcours.feedback.technique.tresBien' => 'Très bons',
-			'tc.parcours.feedback.confiance.intitule' => 'Vous sentez-vous prêt pour le prochain cours ?',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.feedback.technique.tresBien' => 'Très bons',
+			'tc.parcours.feedback.confiance.intitule' => 'Vous sentez-vous prêt pour le prochain cours ?',
 			'tc.parcours.feedback.confiance.difficile' => 'Pas encore',
 			'tc.parcours.feedback.confiance.bien' => 'Plutôt',
 			'tc.parcours.feedback.confiance.tresBien' => 'Tout à fait',
