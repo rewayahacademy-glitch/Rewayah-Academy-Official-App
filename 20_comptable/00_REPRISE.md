@@ -30,3 +30,11 @@ Frontend seulement (spec §1.1) : aucune migration, RLS, RPC, webhook, secret, i
 ## 6. Découpage
 
 Voir `02_DECOUPAGE.md` (généré) : 18 étapes, 8 voies (CPT, CPT-PAY, CPT-TRES, CPT-ENC, CPT-BEN, CPT-CTR, CPT-DIR, VERIF) plus CPT-Q.
+
+## 7. Livrables de CPT-0 (04/10/2026)
+
+- `UX_REVIEW_FINANCE_COMPTABLE_L0.md` : inventaire de `ui/finance-v1` @ `5198107f`, planches une par une (H00 confirmée comme référence de W01, H08 pour W02 à W06 et les mobiles), shell retenu (quatre destinations + onglets), composants §39 réutilisés ou à créer, entrée et shell de chaque écran.
+- `DEVOIR_DE_REGARD_FINANCE.md` : 25 constats (DR-01 à DR-25) ; les voies ajoutent les leurs à la suite.
+- `CPT-BR.md` : 17 besoins serveur et leurs ports.
+- `QUESTIONS.md` : CPT-Q1 (où la Direction valide) ; ne bloque aucune voie.
+- `02_DECOUPAGE.md` : fichiers par étape et propriétaire de chaque fichier.

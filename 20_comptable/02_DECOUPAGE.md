@@ -1,6 +1,6 @@
 # Comptable V1 : découpage
 
-Étapes du tableau YAADEN, ordre 1400 à 1474, plus CPT-Q (ATTEND, 2017). CPT-0 complète ce fichier avec la liste des fichiers de chaque étape.
+Étapes du tableau YAADEN, ordre 1400 à 1474, plus CPT-Q (ATTEND, 2017). CPT-0 complète ce fichier avec la liste des fichiers de chaque étape : voir « Fichiers par étape » en fin de fichier (fait le 04/10).
 
 ```
 CPT-0 ─► CPT-F ─┬─► CPT-JOUR (voie CPT) ──────────────────────┐
@@ -124,3 +124,85 @@ Une page web unique (K-21), chaque question avec exemple et recommandation. Les 
 ## Règle de style et frontière (toutes étapes)
 
 STYLE (directeur 04/10, K-63) : maquette = composition seulement (zones, proportions, densité, place des actions) ; thème Rewayah en vigueur, aucune couleur, police, rayon, ombre ou identité « banque » venue des maquettes (K-37 : sinon une ligne TH-2) ; shell réel du rôle Comptable. FRONTEND SEULEMENT (spec §1) : aucun serveur, aucune vraie coordonnée, aucun vrai paiement. Sources : 20_comptable/00_REPRISE.md.
+
+## Fichiers par étape (CPT-0, 04/10/2026)
+
+Écrit par CPT-0 sur `origin/ui/finance-v1` @ `5198107f` (numéros de ligne à revérifier par CPT-F après FI-VAGUE-CORR). Justification des choix : `UX_REVIEW_FINANCE_COMPTABLE_L0.md` (§3 shell, §4 composants, §5 écrans) et `DEVOIR_DE_REGARD_FINANCE.md`.
+
+### Règle de propriété
+
+1. **CPT-F crée tous les fichiers partagés** (liste A) et **un fichier de départ par voie** pour chaque page, port et fichier de démonstration (liste B), avec leur API définitive (nom de classe, constructeur, méthodes du port, nom de la fonction de surcharges de démonstration).
+2. Après CPT-F, **chaque fichier a un seul propriétaire** : la liste A est gelée (aucune voie ne la modifie ; un besoin = une ligne « pour CPT-FUS » dans le rapport de la voie, sans modifier), sauf les deux fichiers dont le propriétaire est nommé ; chaque fichier de la liste B appartient à sa voie seule.
+3. Une voie peut **créer** tout nouveau fichier sous ses dossiers (liste C) ; elle **importe** les fichiers des autres sans jamais les modifier.
+4. Trois fichiers sont modifiés par plusieurs voies et **jamais fusionnés à la main** : `assets/i18n/fr.i18n.json` (chaque voie n'écrit que dans son sous-bloc `comptable.<module>`), `tool/libelles_sources.json`, `lib/core/i18n/strings*.g.dart` (régénérés). CPT-FUS fait l'union, puis `dart run slang`. `assets/i18n/ar.i18n.json` n'est touché par personne.
+5. Interdits de toutes les étapes : `main`, PR, `supabase/`, `.github/`, `vercel.json`, `pubspec.yaml`, valeurs des jetons `lib/core/theme`, Coran, `dart_define.json`, secrets (K-19) ; aucun fichier de la vague FIN hors de ceux nommés ici ; aucune couleur, police, durée inventée (K-37, K-63).
+
+### A. Fichiers partagés posés par CPT-F (gelés ensuite)
+
+| Fichier | Ce que CPT-F y pose | Propriétaire après CPT-F |
+|---|---|---|
+| `lib/core/router/routes.dart` | Constantes et aides de toutes les routes : `/comptable`, `/comptable/paiements`, `/comptable/paiements/obligation/:obligationId`, `/comptable/paiements/contractuels`, `/comptable/paiements/contractuels/nouvelle`, `/comptable/paiements/contractuels/obligation/:obligationId`, `/comptable/paiements/beneficiaires`, `/comptable/paiements/beneficiaires/:beneficiaireId`, `/comptable/tresorerie`, `/comptable/tresorerie/encaissements`, `/comptable/tresorerie/encaissements/:encaissementId`, `/comptable/tresorerie/rapprochement`, `/compte/paiements-recus`, `/admin/finance/reserve-delegation`, `/demo/comptable` ; aides de filtre (`?filtre=`, `?type=`, `?classe=`, `?action=alimenter`, `?vue=attention`) ; `estTacheFocalisee` si une page de détail cache la barre basse. | gelé |
+| `lib/core/router/app_router.dart` | Coquille `StatefulShellRoute.indexedStack` du Comptable (modèle contrôleur, `:962`) à trois branches + `/compte` ; toutes les routes ci-dessus vers les pages de la liste B (les constructeurs ne prennent que des `String` : identifiant, filtre brut) ; remplacement de `ComptePage` nue (`:1256-1260`) ; `/compte/paiements-recus` en `_CoquilleSecondaire` ; `/admin/finance/reserve-delegation` dans `AdminShell` ; `...routesDemoComptable(Env.environnement)`. | gelé |
+| `lib/core/widgets/nav_shell.dart` | `destinationsPour(AppRole.accountant)` : Aujourd'hui, Paiements, Trésorerie, Compte (`:217`), commentaire mis à jour. | gelé |
+| `lib/core/admin/admin_domaine.dart` | Troisième entrée de `ongletsFinance()` (`:181`) : « Réserve et délégation ». | gelé |
+| `lib/features/admin_finance/finance_page.dart` | Valeur `OngletFinance.reserveDelegation` et son cas vers `ReserveDelegationPage`. Seule retouche d'un fichier FIN. | gelé |
+| `lib/features/demo/demo_finance_page.dart` | Ajout de `...surchargesDemoDirection()` aux surcharges de la démonstration Finance, et de l'onglet dans ses adresses. | gelé |
+| `lib/core/icons/app_icons.dart` | **Toutes** les icônes de la vague (`UX_REVIEW` §6.1). | gelé |
+| `lib/core/comptable/visibilite_montants.dart` | État de session de la visibilité (Riverpod, en mémoire, remis à masqué à chaque session ; jamais `PortPreferencesPersistantes`). | gelé |
+| `lib/core/comptable/statuts_comptable.dart` | Énumérations : 15 états du paiement sortant (§15), 9 états d'encaissement (§24.1), 6 états de rapprochement (§25), 6+1 états du profil de paiement (§38 + « Invitation envoyée »), 5 retours de capacité (§42), actions permises et raisons de blocage (`CPT-BR.md` §1), types d'alerte (§28) avec leur liste (DR-10), états de la Réserve (§49). | gelé |
+| `lib/core/comptable/navigation_comptable.dart` | `ongletsPaiementsComptable()` (À effectuer, Contractuels, Bénéficiaires), `ongletsTresorerieComptable()` (Coffres, Encaissements, Rapprochement). | gelé |
+| `lib/core/widgets/montant_sensible.dart` | `SensitiveAmount` (masque de longueur fixe par devise, « Montant masqué », chiffres tabulaires). | gelé |
+| `lib/core/widgets/bascule_montants.dart` | `FinanceAmountVisibilityToggle` (« Afficher les montants » / « Masquer les montants »). | gelé |
+| `lib/core/widgets/pastilles_comptable.dart` | Habits de `StatusPill` pour chaque énumération d'état ci-dessus, dont `FinanceProviderStatus`. | gelé |
+| `lib/core/widgets/ligne_destination.dart` | `LigneDestinationMasquee` (`PaymentMethodRow` du personnel). | gelé |
+| `lib/core/widgets/comptable/ligne_activite.dart` | `FinanceActivityRow` (§48). | gelé |
+| `lib/core/widgets/comptable/resume_tresorerie.dart` | `AvailableTreasurySummary` (Trésorerie libre au centre). | **CPT-TRES-1** (CPT-JOUR importe seulement) |
+| `lib/core/widgets/comptable/carte_reserve_strategique.dart` | `StrategicReserveCard` en lecture (titre fixe, objectif selon le mode). | **CPT-TRES-1** (CPT-JOUR importe seulement) |
+| `lib/features/demo/demo_comptable_page.dart` | `routesDemoComptable` (`/demo/comptable?ecran=...&montants=affiches`, aucune route en production) et l'assemblage des surcharges de chaque voie. | gelé |
+| `lib/features/demo/comptable/socle_comptable_demo.dart` | Personnes et identifiants communs (15 enseignants, 5 contractuels, le Comptable lui-même, prestataires neutres), pour que les fichiers de démonstration des voies parlent des mêmes personnes. | gelé |
+| `test/router/navigation_test.dart` | `:139` : le Comptable a quatre destinations. | gelé |
+| Tests du socle | `test/core/widgets/montant_sensible_test.dart`, `test/core/comptable/visibilite_montants_test.dart` (R-FIN-01 à 03), `test/core/widgets/pastilles_comptable_test.dart`, `test/features/comptable/socle/routes_comptable_test.dart` (chaque route ouvre sa page dans la bonne coquille). | gelé |
+
+### B. Fichiers de départ posés par CPT-F, puis propriété d'une voie
+
+Chaque page est posée « en préparation » (un `PageShell` honnête, aucun chiffre) avec son constructeur définitif ; chaque port avec son interface complète (`CPT-BR.md`) et son implémentation neutre `CapaciteIndisponible('CPT-BR-nn')` ; chaque fichier de démonstration avec une implémentation vide du port et sa fonction de surcharges.
+
+| Voie (étapes) | Pages | Ports (`lib/core/capacites/`) | Démonstration (`lib/features/demo/comptable/`) |
+|---|---|---|---|
+| CPT (CPT-JOUR) | `lib/features/comptable/aujourdhui/aujourdhui_page.dart` (`AujourdhuiComptablePage({String? vue})`) | `port_aujourdhui_comptable.dart` (CPT-BR-03) | `aujourdhui_demo.dart` |
+| CPT-PAY (1, 2) | `lib/features/comptable/paiements/paiements_page.dart` (`PaiementsAEffectuerPage({String? filtre, String? type, String? classe})`), `lib/features/comptable/paiements/detail_paiement_page.dart` (`DetailPaiementPage({required String obligationId})`) | `port_obligations_payables.dart` (01), `port_payout.dart` (02), `port_capacite_payout.dart` (10) | `paiements_demo.dart` |
+| CPT-TRES (1, 2) | `lib/features/comptable/tresorerie/tresorerie_page.dart` (`TresoreriePage({String? action})`) | `port_tresorerie.dart` (04, 05), `port_politique_reserve.dart` (12, **lecture** ; l'écriture `enregistrer` est posée par CPT-F et utilisée par CPT-DIR-1 sans modifier le fichier) | `tresorerie_demo.dart` |
+| CPT-ENC (1, 2) | `lib/features/comptable/encaissements/encaissements_page.dart` (`EncaissementsPage({String? filtre})`), `.../detail_encaissement_page.dart` (`DetailEncaissementPage({required String encaissementId})`), `.../rapprochement_page.dart` (`RapprochementPage()`) | `port_encaissements.dart` (07, 15), `port_rapprochement.dart` (14) | `encaissements_demo.dart` |
+| CPT-BEN (1, 2) | `lib/features/comptable/beneficiaires/beneficiaires_page.dart` (`BeneficiairesPage({String? filtre})`), `.../profil_paiement_page.dart` (`ProfilPaiementPage({required String beneficiaireId})`), `lib/features/paiements_recus/recevoir_paiements_page.dart` (`RecevoirPaiementsPage()`) | `port_beneficiaires_paiement.dart` (06), `port_relance_paiement.dart` (11), `port_mes_moyens_paiement.dart` (16) | `beneficiaires_demo.dart` |
+| CPT-CTR (1) | `lib/features/comptable/contractuels/contractuels_page.dart` (`ContractuelsPage({String? onglet})`), `.../obligation_contractuel_page.dart` (`ObligationContractuelPage({required String obligationId})`), `.../nouvelle_obligation_page.dart` (`NouvelleObligationPage()`) | `port_obligations_contractuels.dart` (08) | `contractuels_demo.dart` |
+| CPT-DIR (1) | `lib/features/admin_finance/reserve_delegation_page.dart` (`ReserveDelegationPage()`) | `port_delegation_finance.dart` (13), `port_validations_finance.dart` (09, interface seulement ; son écran Direction attend CPT-Q1) | `direction_demo.dart` |
+
+`port_politique_reserve.dart` est le seul port lu par deux voies (TRES lit les indicateurs, DIR écrit la politique) : CPT-F le pose **complet** (CPT-BR-12) et il est **gelé** ; un champ manquant = ligne pour CPT-FUS.
+
+### C. Dossiers et fichiers que chaque voie crée et modifie seule
+
+| Étape | Branche / worktree | Crée et modifie (en plus de sa liste B) | Tests | i18n | Ne touche jamais |
+|---|---|---|---|---|---|
+| CPT-JOUR | `ui/comptable-v1` / `cpt` | `lib/features/comptable/aujourdhui/**` (file d'attention `FinanceAttentionQueue` sur `SignalRow`, alertes, échéances, colonne prestataires, accès rapides) | `test/features/comptable/aujourdhui/**` | `comptable.aujourdhui.*` | les dossiers des autres voies ; `resume_tresorerie.dart` et `carte_reserve_strategique.dart` (import seulement) |
+| CPT-PAY-1 | `ui/cpt-pay` / `cpt-pay` | `lib/features/comptable/paiements/**` (liste W02, `PayableObligationRow`, filtres, barre de sélection, détail W03, lignes de calcul, « Signaler un écart », mobile) | `test/features/comptable/paiements/**` (R-FIN-16, 17, 18) | `comptable.paiements.*` | `lib/features/comptable/contractuels/**` |
+| CPT-PAY-2 | `ui/cpt-pay` / `cpt-pay` | `lib/features/comptable/paiements/confirmation/**` (`PayoutConfirmationSheet`, préflight du lot, suivi), mêmes fichiers que PAY-1 | idem (R-FIN-04, 14, 15, 22, 23) | idem | idem |
+| CPT-TRES-1 | `ui/cpt-tres` / `cpt-tres` | `lib/features/comptable/tresorerie/**` (W04, `TreasuryVaultCard`, sept coffres, prévision, mobile) ; propriétaire de `resume_tresorerie.dart` et `carte_reserve_strategique.dart` | `test/features/comptable/tresorerie/**` (R-FIN-05 à 09) | `comptable.tresorerie.*` | `port_politique_reserve.dart` (gelé) |
+| CPT-TRES-2 | `ui/cpt-tres` / `cpt-tres` | `lib/features/comptable/tresorerie/transfert/**` (`TreasuryInternalTransfer`, Alimenter, retrait sensible, historique) | idem (R-FIN-10, interdits §10.4) | idem | idem |
+| CPT-ENC-1 | `ui/cpt-enc` / `cpt-enc` | `lib/features/comptable/encaissements/**` (W05, filtres, panneau détail, mobile) | `test/features/comptable/encaissements/**` | `comptable.encaissements.*` | les lignes de transaction de la vague FIN (`ligne_transaction.dart`, `ligne_allocation.dart` : import seulement) |
+| CPT-ENC-2 | `ui/cpt-enc` / `cpt-enc` | `lib/features/comptable/encaissements/rapprochement/**` (`ReconciliationWorkspace`, doublon, remboursements et avoirs) | idem | idem | idem |
+| CPT-BEN-1 | `ui/cpt-ben` / `cpt-ben` | `lib/features/comptable/beneficiaires/**` (W07, `BeneficiaryPaymentProfileCard`, Relancer, Demander une mise à jour, Suspendre) | `test/features/comptable/beneficiaires/**` (R-FIN-11, 19, 21) | `comptable.beneficiaires.*` | `port_messages_metier.dart` de Communications (absent de la base) |
+| CPT-BEN-2 | `ui/cpt-ben` / `cpt-ben` | `lib/features/paiements_recus/**` (`BeneficiaryPaymentSetup`, états §38, notice §27.1, externe invité) ; **seules retouches de fichiers existants** : une ligne « Recevoir mes paiements » dans `lib/features/profil_enseignant/profil_enseignant_page.dart` et une rubrique dans `lib/features/compte/compte_page.dart`, chacune affichée selon une capacité rendue par le port, jamais selon le rôle | `test/features/paiements_recus/**` (R-FIN-13, 19) | `comptable.beneficiaires.*` (sous-bloc `recevoir`) | `revenus_enseignant_page.dart` (DR-14) |
+| CPT-CTR-1 | `ui/cpt-ctr` / `cpt-ctr` | `lib/features/comptable/contractuels/**` (W06, onglets, formulaire Nouvelle obligation K-57, approbations, mobile) ; « Payer » navigue vers `Routes` de W03, aucun composant de paiement (DR-12) | `test/features/comptable/contractuels/**` | `comptable.contractuels.*` | `lib/features/comptable/paiements/**` |
+| CPT-DIR-1 | `ui/cpt-dir` / `cpt-dir` | `lib/features/admin_finance/reserve_delegation/**` (`StrategicReservePolicyPanel`, `FinanceDelegationPolicyPanel`) ; si CPT-Q1 est « oui » : `lib/features/admin_finance/validations/**` (la route et l'onglet « À valider » sont alors posés par CPT-F si la réponse arrive avant lui, sinon par CPT-FUS sur la ligne écrite par CPT-DIR-1) | `test/features/admin_finance/reserve_delegation/**` (R-FIN-08, 09 côté politique ; R-FIN-12 si CPT-Q1 oui) | `comptable.direction.*` | `politiques_commerciales.dart`, `vue_globale_finance.dart`, `finance_page.dart` (gelé après CPT-F) |
+
+**Vérification d'absence de chevauchement** : les six sous-branches écrivent dans des dossiers disjoints (`comptable/paiements`, `comptable/tresorerie`, `comptable/encaissements`, `comptable/beneficiaires` + `paiements_recus` + deux lignes dans `profil_enseignant_page.dart` et `compte_page.dart`, `comptable/contractuels`, `admin_finance/reserve_delegation`) ; CPT-JOUR, sur la branche de base, n'écrit que dans `comptable/aujourdhui`. Les seuls fichiers touchés par plusieurs voies sont les trois de la règle 4, fusionnés par régénération.
+
+### D. Étapes de fin
+
+| Étape | Fichiers |
+|---|---|
+| CPT-FUS | merges `--no-ff` des six sous-branches dans `ui/comptable-v1` ; union de `fr.i18n.json` et `tool/libelles_sources.json`, `dart run slang` ; lignes « pour CPT-FUS » des voies (routes, onglets, icônes manquantes) dans les fichiers de la liste A ; liens d'Aujourd'hui vérifiés vers les vraies pages ; pilotage `20_comptable/CARTE_FONCTIONS.md`. |
+| CPT-COM | `port_relance_paiement.dart` remplacé par `PortMessagesMetier` (puis supprimé : un seul port), page de fil dans la coquille du Comptable (route posée ici, dans la liste A, par cette étape seule), test « Relancer » → fil « Profil de paiement ». |
+| CPT-CAPT | `test/features/comptable_recette/**` (captures 390 / 1440, clair / sombre, 320 à 200 %, RTL, montants `_masques` et `_affiches`) ; pilotage `20_comptable/captures/`. |
+| CPT-R | pilotage `20_comptable/REVUE_CPT-R.md` seulement. |
+| CPT-RC | les fichiers désignés par la revue, dans le respect des propriétaires ci-dessus. |
