@@ -629,6 +629,22 @@ final List<_Cas> _cas = <_Cas>[
       surcharges: () => const <Override>[],
       page: null,
     ),
+  // Adulte autonome a regulariser (variante ajoutee par FI-12 passe 2).
+  for (final (String nom, EcranDemoAdulte ecran) in <(String, EcranDemoAdulte)>[
+    ('adulte_a_regulariser_paiements', EcranDemoAdulte.paiements),
+    ('adulte_a_regulariser_recharge', EcranDemoAdulte.maRecharge),
+  ])
+    (
+      nom: nom,
+      hote: _Hote.demoAdulte,
+      chemin: adresseDemoAdulte(
+        ecran,
+        etat: EtatDemoAdulte.adulteSeul,
+        financeARegulariser: true,
+      ),
+      surcharges: () => const <Override>[],
+      page: null,
+    ),
   _page(
     'adulte_erreur',
     _mesFinances,
