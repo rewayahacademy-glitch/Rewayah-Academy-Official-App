@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_metriques.dart';
@@ -115,14 +116,16 @@ class EmptyState extends StatelessWidget {
               child: Icon((icone ?? _iconeParDefaut).repos),
             ),
             Ecart.vXl,
-            Text(
+            // Lecon 8 (DASH-MA-PROD) : jamais un mot coupe, meme a 200 %
+            // dans une carte etroite (« l'acadé / mie »).
+            TexteSansCoupure(
               message,
               textAlign: TextAlign.center,
               style: fond.applyTo(textes.titleLarge ?? const TextStyle()),
             ),
             if (invitation != null) ...<Widget>[
               Ecart.vSm,
-              Text(
+              TexteSansCoupure(
                 invitation!,
                 textAlign: TextAlign.center,
                 style: palette.inkMuted.applyTo(

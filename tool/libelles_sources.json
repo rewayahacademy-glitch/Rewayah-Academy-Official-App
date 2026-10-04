@@ -60,5 +60,11 @@
   "enseignant.photo.aide": "commentaire du directeur, revue du 01-02/10, etape KYC-PHOTO-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
   "enseignant.photo.obligatoireLecteur": "commentaire du directeur, revue du 01-02/10, etape KYC-PHOTO-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
   "enseignant.photo.voile": "commentaire du directeur, revue du 01-02/10, etape KYC-PHOTO-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
-  "enseignant.cahier.travailMaisonSaisi": "revue du directeur 10/2026, etape EN-7c-SUGG-T : aucune source de devoir suggere n'existe (brouillon_cahier ne rend que le devoir precedent) ; « Ajustez la suggestion » est reservee a une vraie suggestion, ce texte dit le devoir deja saisi par l'enseignant (K-57) ; a valider par le directeur"
+  "enseignant.cahier.travailMaisonSaisi": "revue du directeur 10/2026, etape EN-7c-SUGG-T : aucune source de devoir suggere n'existe (brouillon_cahier ne rend que le devoir precedent) ; « Ajustez la suggestion » est reservee a une vraie suggestion, ce texte dit le devoir deja saisi par l'enseignant (K-57) ; a valider par le directeur",
+  "accessibilite.accueil.erreurTitre": "ecrit par l'agent, etape DASH-MA-PROD (DASH_STRATEGIE §3.3, D10, D11 ; K-59 pour l'erreur) ; a faire valider par le directeur",
+  "accessibilite.accueil.erreurPhrase": "ecrit par l'agent, etape DASH-MA-PROD (DASH_STRATEGIE §3.3, D10, D11 ; K-59 pour l'erreur) ; a faire valider par le directeur",
+  "accessibilite.accueil.indisponibleTitre": "ecrit par l'agent, etape DASH-MA-PROD (DASH_STRATEGIE §3.3, D10, D11 ; K-59 pour l'erreur) ; a faire valider par le directeur",
+  "accessibilite.accueil.indisponiblePhrase": "ecrit par l'agent, etape DASH-MA-PROD (DASH_STRATEGIE §3.3, D10, D11 ; K-59 pour l'erreur) ; a faire valider par le directeur",
+  "accessibilite.accueil.videTitre": "ecrit par l'agent, etape DASH-MA-PROD (DASH_STRATEGIE §3.3, D10, D11 ; K-59 pour l'erreur) ; a faire valider par le directeur",
+  "accessibilite.accueil.videPhrase": "ecrit par l'agent, etape DASH-MA-PROD (DASH_STRATEGIE §3.3, D10, D11 ; K-59 pour l'erreur) ; a faire valider par le directeur"
 }

@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_metriques.dart';
@@ -236,7 +237,10 @@ class ActionPrincipale extends StatelessWidget {
                     // annonce le bouton deux fois.
                     Flexible(
                       child: ExcludeSemantics(
-                        child: Text(
+                        // DASH-MA-PROD (lecon 8) : a 200 % dans une place
+                        // etroite, « Reessay / er » ; le mot entier se
+                        // reduit plutot que d'etre coupe.
+                        child: TexteSansCoupure(
                           libelle,
                           textAlign: TextAlign.center,
                           style: _styleLibelle(context, peinture, actif: actif),
