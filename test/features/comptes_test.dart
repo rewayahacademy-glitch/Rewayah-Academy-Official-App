@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/service_comptes.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
 import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
 
+import '../router/support_routeur.dart';
 import '../support/harnais.dart';
 
 /// Le defaut que cet ecran repare, mesure en production le 18 septembre 2026 :
@@ -358,6 +362,110 @@ void main() {
       await tester.tap(filtre);
       await tester.pumpAndSettle();
       expect(find.textContaining('Encore'), findsNothing);
+    });
+
+    // Revue DASH-ADM-ECHUS, defaut 2 : « Tous 3 » et « Acces echus 2 »
+    // etaient retenues ensemble pour deux lignes affichees.
+    testWidgets('une seule pastille retenue, et « Tous » relache les echus', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, _FauxServiceComptes(jeu()), echusSeulement: true);
+      List<String> retenues() => tester
+          .widgetList<FilterPill>(find.byType(FilterPill))
+          .where((FilterPill p) => p.retenue)
+          .map((FilterPill p) => p.libelle)
+          .toList();
+      expect(retenues(), <String>['Accès échus']);
+      await tester.tap(find.widgetWithText(FilterPill, 'Tous'));
+      await tester.pumpAndSettle();
+      expect(retenues(), <String>['Tous']);
+      expect(find.textContaining('Encore'), findsWidgets);
+    });
+
+    // Revue DASH-ADM-ECHUS, defaut 1 (majeur) : go_router cle la page sur le
+    // chemin seul, le `State` survit au changement de requete.
+    Widget routant(String depart) => hoteRoutant(
+      depart: depart,
+      routes: <RouteBase>[
+        GoRoute(
+          path: '/c',
+          builder: (BuildContext _, GoRouterState etat) => ComptesPage(
+            echusSeulement: etat.uri.queryParameters['filtre'] == 'echus',
+          ),
+        ),
+      ],
+      surcharges: <Override>[
+        serviceComptesProvider.overrideWithValue(_FauxServiceComptes(jeu())),
+        serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+      ],
+    );
+
+    testWidgets('le filtre suit l adresse sur un vrai GoRouter', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(routant('/c?filtre=echus'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Encore'), findsNothing);
+      final GoRouter routeur = GoRouter.of(
+        tester.element(find.byType(ComptesPage)),
+      );
+      routeur.go('/c');
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Encore'), findsWidgets);
+      routeur.go('/c?filtre=echus');
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Encore'), findsNothing);
+    });
+
+    // Revue DASH-ADM-ECHUS, defaut 4 : relacher la pastille laissait
+    // `?filtre=echus` dans l'adresse.
+    testWidgets('relacher ou reprendre la pastille ecrit l adresse', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(routant('/c?filtre=echus'));
+      await tester.pumpAndSettle();
+      final GoRouter routeur = GoRouter.of(
+        tester.element(find.byType(ComptesPage)),
+      );
+      String adresse() =>
+          routeur.routerDelegate.currentConfiguration.uri.toString();
+      final Finder filtre = find.byKey(
+        const ValueKey<String>('comptes-filtre-echus'),
+      );
+      await tester.tap(filtre);
+      await tester.pumpAndSettle();
+      expect(adresse(), '/c');
+      expect(find.textContaining('Encore'), findsWidgets);
+      await tester.tap(filtre);
+      await tester.pumpAndSettle();
+      expect(adresse(), '/c?filtre=echus');
+      expect(find.textContaining('Encore'), findsNothing);
+      await tester.tap(find.widgetWithText(FilterPill, 'Tous'));
+      await tester.pumpAndSettle();
+      expect(adresse(), '/c');
+    });
+
+    // Revue DASH-ADM-ECHUS, defaut 3 : le cablage reel de `?filtre=echus`
+    // dans `routeurProvider` n'etait couvert par aucun test.
+    testWidgets('le vrai routeur ouvre Comptes filtre sur les echus', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await monterRouteur(
+        tester,
+        Routes.adminPersonnesComptesEchus,
+        source: FausseSourceSession(sessionActive(AppRole.admin)),
+        taille: const Size(1440, 900),
+        surcharges: <Override>[
+          serviceComptesProvider.overrideWithValue(_FauxServiceComptes(jeu())),
+        ],
+      );
+      expect(lieu(routeur), Routes.adminPersonnesComptesEchus);
+      expect(find.byType(ComptesPage), findsOneWidget);
+      expect(find.textContaining('Echue'), findsWidgets);
+      expect(find.textContaining('Encore'), findsNothing);
+      routeur.go(Routes.adminPersonnesComptes);
+      await stabiliser(tester);
+      expect(find.textContaining('Encore'), findsWidgets);
     });
 
     testWidgets('sans echu, pas de filtre a vide', (WidgetTester tester) async {

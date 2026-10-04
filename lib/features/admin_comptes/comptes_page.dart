@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_comptes.dart';
@@ -56,6 +57,59 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   /// Vrai : seuls les acces echus (DASH-ADM-ECHUS).
   late bool _echus = widget.echusSeulement;
 
+  /// L'adresse porte le filtre, et go_router garde ce `State` d'une requete a
+  /// l'autre (la page est cle sur le chemin seul) : sans ce recalage, passer
+  /// de `?filtre=echus` a l'adresse nue (entree « Comptes » de la navigation)
+  /// laissait l'ecran filtre.
+  @override
+  void didUpdateWidget(ComptesPage ancien) {
+    super.didUpdateWidget(ancien);
+    if (ancien.echusSeulement != widget.echusSeulement) {
+      _echus = widget.echusSeulement;
+      if (_echus) {
+        _etat = null;
+      }
+    }
+  }
+
+  /// Une seule pastille retenue a la fois dans la rangee des etats : « Tous »,
+  /// un etat, ou « Acces echus ». Choisir l'une relache les autres.
+  void _choisir({AccountStatus? etat, bool echus = false}) {
+    setState(() {
+      _etat = echus ? null : etat;
+      _echus = echus;
+    });
+    _ecrireAdresse(echus);
+  }
+
+  /// Reporte le filtre des echus dans l'adresse, pour qu'elle dise toujours ce
+  /// que montre l'ecran (lien partage, retour arriere, rechargement). Hors
+  /// routeur (tests montes sans GoRouter), rien a faire.
+  void _ecrireAdresse(bool echus) {
+    final GoRouter? routeur = GoRouter.maybeOf(context);
+    if (routeur == null) {
+      return;
+    }
+    final Uri actuelle = routeur.routerDelegate.currentConfiguration.uri;
+    if ((actuelle.queryParameters['filtre'] == 'echus') == echus) {
+      return;
+    }
+    final Map<String, String> requete = Map<String, String>.of(
+      actuelle.queryParameters,
+    );
+    if (echus) {
+      requete['filtre'] = 'echus';
+    } else {
+      requete.remove('filtre');
+    }
+    routeur.go(
+      Uri(
+        path: actuelle.path,
+        queryParameters: requete.isEmpty ? null : requete,
+      ).toString(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
@@ -82,8 +136,8 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
                 etat: _etat,
                 role: _role,
                 echus: _echus,
-                onEchus: (bool echus) => setState(() => _echus = echus),
-                onEtat: (AccountStatus? etat) => setState(() => _etat = etat),
+                onEchus: (bool echus) => _choisir(echus: echus),
+                onEtat: (AccountStatus? etat) => _choisir(etat: etat),
                 onRole: (AppRole? role) => setState(() => _role = role),
               ),
             ),
@@ -205,7 +259,10 @@ class _Corps extends StatelessWidget {
             FilterPill(
               libelle: t.admin.comptes.filtreTousEtats,
               compteur: comptes.length,
-              retenue: etat == null,
+              // « Tous » ne se dit retenu que s'il l'est vraiment : avec les
+              // echus retenus, deux pastilles allumees pour une seule liste
+              // mentaient sur ce qui est affiche.
+              retenue: etat == null && !echus,
               onPress: () => onEtat(null),
             ),
             for (final AccountStatus valeur in AccountStatus.values)
