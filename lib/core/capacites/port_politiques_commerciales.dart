@@ -4,8 +4,10 @@
 // Lecture des versions (FI-1c) ; FI-11b ajoute la publication d'un
 // brouillon, qui rend `CapaciteIndisponible` partout, demonstration comprise,
 // jusqu'au branchement : « Publier » mene a un etat honnete et n'ecrit rien
-// (K-28). Aucune source serveur a ce jour : la demonstration surcharge le
-// port (`finance_demo.dart`).
+// (K-28). FI-11c ajoute l'apercu d'un brouillon (foyer, enseignant) : des
+// montants arretes par la source, jamais calcules dans un widget (FI6).
+// Aucune source serveur a ce jour : la demonstration surcharge le port
+// (`finance_demo.dart`).
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -24,6 +26,21 @@ abstract interface class PortPolitiquesCommerciales {
   /// implementation n'ecrit a ce jour** : production et demonstration rendent
   /// `CapaciteIndisponible`.
   Future<void> publier(PolitiqueCommerciale brouillon);
+
+  /// L'apercu d'un foyer de [enfants] membres payants (1 a 5) sous
+  /// [brouillon] : la mensualite de chacun et le total, arretes.
+  Future<ApercuFamille> apercuFamille(
+    PolitiqueCommerciale brouillon,
+    int enfants,
+  );
+
+  /// L'apercu du taux horaire d'une classe de [capacite] sieges dont
+  /// [eligibles] sont finances, sous [brouillon].
+  Future<ApercuEnseignant> apercuEnseignant(
+    PolitiqueCommerciale brouillon, {
+    required int capacite,
+    required int eligibles,
+  });
 }
 
 /// **Aucune source serveur a ce jour** (FI-BR-01, FI-BR-02).
@@ -46,6 +63,19 @@ class PolitiquesCommercialesIndisponibles
   @override
   Future<void> publier(PolitiqueCommerciale brouillon) =>
       Future<void>.error(const CapaciteIndisponible('FI-BR-02'));
+
+  @override
+  Future<ApercuFamille> apercuFamille(
+    PolitiqueCommerciale brouillon,
+    int enfants,
+  ) => Future<ApercuFamille>.error(const CapaciteIndisponible('FI-BR-01'));
+
+  @override
+  Future<ApercuEnseignant> apercuEnseignant(
+    PolitiqueCommerciale brouillon, {
+    required int capacite,
+    required int eligibles,
+  }) => Future<ApercuEnseignant>.error(const CapaciteIndisponible('FI-BR-01'));
 }
 
 /// Le port des politiques ; la demonstration le surcharge.

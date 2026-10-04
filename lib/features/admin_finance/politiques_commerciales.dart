@@ -16,6 +16,13 @@
 // comme en demonstration : l'ecran le dit honnetement, rien n'est ecrit.
 // Aucun calcul de prix ni de remise ici (FI6) : seule la conversion d'une
 // saisie en unites entieres vers les unites mineures (`montantDepuisUnites`).
+//
+// FI-11c : l'historique des versions (lecture seule, la version active
+// marquee) et, sous un brouillon, l'« Apercu avant publication » : un foyer
+// de 1 a 5 enfants payants et le taux horaire d'une classe. Les montants de
+// l'apercu sont ARRETES par le port (`apercuFamille`, `apercuEnseignant`) a
+// partir du brouillon a l'ecran, relus a chaque saisie valide ; jamais
+// calcules ici (garde de source dans le test).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,6 +33,7 @@ import '../../core/finance/format_montant.dart';
 import '../../core/finance/montant.dart';
 import '../../core/finance/politique_commerciale.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -35,18 +43,24 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
+import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/carte_groupee.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/filter_pill.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
+import '../../core/widgets/ligne_finance.dart';
 import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import 'vue_globale_finance.dart' show pourMilleEnTexte;
 
-/// La version active et le brouillon en cours, s'il y en a un.
+/// La version active, le brouillon en cours s'il y en a un, et l'historique
+/// des versions (le plus recent d'abord).
 typedef PolitiquesLues = ({
   PolitiqueCommerciale active,
   PolitiqueCommerciale? brouillon,
+  List<PolitiqueCommerciale> versions,
 });
 
 /// Lit [port] : la version active, puis le plus recent brouillon de
@@ -61,7 +75,7 @@ Future<PolitiquesLues> lirePolitiques(PortPolitiquesCommerciales port) async {
       break;
     }
   }
-  return (active: active, brouillon: brouillon);
+  return (active: active, brouillon: brouillon, versions: versions);
 }
 
 /// Les politiques lues sur le port. `retry` nul : pas de retentative
@@ -103,6 +117,7 @@ class PolitiquesCommercialesBloc extends ConsumerWidget {
         key: ValueKey<String>(l.brouillon?.version ?? l.active.version),
         active: l.active,
         brouillon: l.brouillon,
+        versions: l.versions,
       ),
     );
   }
@@ -183,7 +198,11 @@ class PolitiquesCommercialesContenu extends ConsumerStatefulWidget {
     required this.active,
     required this.brouillon,
     super.key,
+    this.versions = const <PolitiqueCommerciale>[],
   });
+
+  /// L'historique des versions rendu par le port, le plus recent d'abord.
+  final List<PolitiqueCommerciale> versions;
 
   /// La version active (publiee).
   final PolitiqueCommerciale active;
@@ -205,6 +224,31 @@ class PolitiquesCommercialesContenu extends ConsumerStatefulWidget {
 
   /// La cle de la valeur active rappelee sous le champ [id].
   static Key comparaisonKey(String id) => ValueKey<String>('fi-pol-cmp-$id');
+
+  /// La cle de la carte d'historique des versions.
+  static const Key historiqueKey = ValueKey<String>('fi-pol-historique');
+
+  /// La cle de la ligne d'historique de la version [version].
+  static Key historiqueLigneKey(String version) =>
+      ValueKey<String>('fi-pol-histo-$version');
+
+  /// La cle de la carte d'apercu du foyer.
+  static const Key apercuFamilleKey = ValueKey<String>('fi-pol-apercu-famille');
+
+  /// La cle de la carte d'apercu de l'enseignant.
+  static const Key apercuEnseignantKey = ValueKey<String>(
+    'fi-pol-apercu-enseignant',
+  );
+
+  /// La cle de la ligne de l'enfant de rang [rang] dans l'apercu.
+  static Key apercuEnfantKey(int rang) =>
+      ValueKey<String>('fi-pol-apercu-enfant-$rang');
+
+  /// La cle du total du foyer dans l'apercu.
+  static const Key apercuTotalKey = ValueKey<String>('fi-pol-apercu-total');
+
+  /// La cle du taux horaire effectif dans l'apercu.
+  static const Key apercuTauxKey = ValueKey<String>('fi-pol-apercu-taux');
 
   @override
   ConsumerState<PolitiquesCommercialesContenu> createState() =>
@@ -269,6 +313,15 @@ class _PolitiquesCommercialesContenuState
   }
 
   bool _differe(_Champ c) => _courante(c) != c.active;
+
+  /// Vrai quand chaque champ du brouillon porte une saisie valide.
+  bool get _saisiesValides => !_saisies.keys.any(_enErreur);
+
+  /// L'empreinte des saisies : l'apercu se relit quand elle change.
+  String get _empreinteSaisies => <String>[
+    for (final MapEntry<String, TextEditingController> e in _saisies.entries)
+      '${e.key}=${e.value.text}',
+  ].join(';');
 
   // Les champs, section par section, dans l'ordre du guide §5.7.
 
@@ -572,13 +625,15 @@ class _PolitiquesCommercialesContenuState
           differences: differences,
         ),
         Ecart.vXxl,
+        _Historique(
+          key: PolitiquesCommercialesContenu.historiqueKey,
+          versions: widget.versions,
+          active: widget.active,
+        ),
+        Ecart.vXxl,
         LayoutBuilder(
           builder: (BuildContext contexte, BoxConstraints contraintes) {
-            final bool agrandi =
-                MediaQuery.textScalerOf(contexte).scale(AppSpacing.lg) /
-                    AppSpacing.lg >=
-                AppGabarit.seuilTexteColonne;
-            if (agrandi || contraintes.maxWidth < AppGabarit.seuilEtendu) {
+            if (_enColonne(contexte, contraintes)) {
               return PileCartes(children: sections);
             }
             return PileCartes(
@@ -604,6 +659,11 @@ class _PolitiquesCommercialesContenuState
           },
         ),
         if (_estBrouillon) ...<Widget>[
+          Ecart.vXxl,
+          _Apercu(
+            brouillon: _saisiesValides ? _brouillonAEcran() : null,
+            empreinte: _empreinteSaisies,
+          ),
           Ecart.vXxl,
           Text(pol.publierConsequence, style: textes.bodyLarge),
           ..._bandeauPublication(),
@@ -807,6 +867,12 @@ class _PolitiquesCommercialesContenuState
   }
 }
 
+/// Vrai quand les cartes s'empilent : ecran etroit ou texte agrandi.
+bool _enColonne(BuildContext contexte, BoxConstraints contraintes) =>
+    MediaQuery.textScalerOf(contexte).scale(AppSpacing.lg) / AppSpacing.lg >=
+        AppGabarit.seuilTexteColonne ||
+    contraintes.maxWidth < AppGabarit.seuilEtendu;
+
 /// Une valeur mise en mots : montant (« 50 $ », « 4 $ / h », « −5 $ ») ou
 /// nombre avec son unite (« 5 élèves »). `null` : pas encore fixee.
 String _texteValeur(Object? valeur, _Nature nature) {
@@ -987,4 +1053,544 @@ class _Squelette extends StatelessWidget {
       Skeleton.liste(lignes: 4),
     ],
   );
+}
+
+/// Le titre d'une carte et sa phrase, comme les sections.
+class _TitreCarte extends StatelessWidget {
+  const _TitreCarte({required this.titre, required this.detail});
+
+  final String titre;
+  final String detail;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Semantics(header: true, child: Text(titre, style: textes.titleMedium)),
+        Ecart.vXs,
+        Text(
+          detail,
+          style: palette.inkMuted.applyTo(
+            textes.bodySmall ?? const TextStyle(),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Des lignes separees par un filet fin, dans une meme carte (K-55).
+List<Widget> _avecFilets(List<Widget> lignes) => <Widget>[
+  for (int i = 0; i < lignes.length; i++) ...<Widget>[
+    if (i > 0) ...<Widget>[Ecart.vSm, const FiletCarte(), Ecart.vSm],
+    lignes[i],
+  ],
+];
+
+/// L'historique des versions (PolicyVersionHistory) : version, statut, date
+/// d'effet, la version active marquee. Rien ne s'y modifie.
+class _Historique extends StatelessWidget {
+  const _Historique({required this.versions, required this.active, super.key});
+
+  final List<PolitiqueCommerciale> versions;
+  final PolitiqueCommerciale active;
+
+  @override
+  Widget build(BuildContext context) {
+    final pol = t.admin.finance.pol;
+    final TextTheme textes = Theme.of(context).textTheme;
+    // La version active est toujours dans l'historique, meme quand la
+    // liste rendue l'omet.
+    final List<PolitiqueCommerciale> liste = <PolitiqueCommerciale>[
+      ...versions,
+      if (!versions.any(
+        (PolitiqueCommerciale v) => v.version == active.version,
+      ))
+        active,
+    ];
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          _TitreCarte(titre: pol.historique, detail: pol.historiqueDetail),
+          Ecart.vMd,
+          ..._avecFilets(<Widget>[
+            for (final PolitiqueCommerciale v in liste)
+              LigneCleValeur(
+                key: PolitiquesCommercialesContenu.historiqueLigneKey(
+                  v.version,
+                ),
+                cle: pol.historiqueVersion(version: v.version),
+                detailCle: pol.dateEffet(date: dateEffetEnTexte(v.dateEffet)),
+                valeur: v.statut == StatutPolitique.brouillon
+                    ? pol.statutBrouillon
+                    : pol.statutPubliee,
+                complement: v.version == active.version
+                    ? StatusPill(
+                        libelle: pol.historiqueActive,
+                        ton: TonEtat.succes,
+                      )
+                    : null,
+              ),
+          ]),
+          if (liste.length == 1) ...<Widget>[
+            Ecart.vMd,
+            Text(pol.historiqueVide, style: textes.bodyMedium),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Le type de classe de l'apercu enseignant : sa capacite se lit dans le
+/// brouillon.
+enum _TypeClasse { enfants, adultes, debutants }
+
+/// L'« Apercu avant publication » du brouillon a l'ecran : un foyer et un
+/// enseignant. [brouillon] nul : une saisie est invalide, l'apercu attend.
+/// Les montants viennent du port, relus quand [empreinte] change.
+class _Apercu extends ConsumerStatefulWidget {
+  const _Apercu({required this.brouillon, required this.empreinte});
+
+  final PolitiqueCommerciale? brouillon;
+  final String empreinte;
+
+  @override
+  ConsumerState<_Apercu> createState() => _ApercuState();
+}
+
+class _ApercuState extends ConsumerState<_Apercu> {
+  /// Le foyer de la maquette 10 : trois enfants payants.
+  int _enfants = 3;
+  _TypeClasse _type = _TypeClasse.enfants;
+
+  /// Les sieges eligibles choisis ; nul : toute la classe.
+  int? _eligibles;
+
+  AsyncValue<ApercuFamille>? _famille;
+  AsyncValue<ApercuEnseignant>? _enseignant;
+  int _jetonFamille = 0;
+  int _jetonEnseignant = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _relireFamille();
+    _relireEnseignant();
+  }
+
+  @override
+  void didUpdateWidget(_Apercu ancien) {
+    super.didUpdateWidget(ancien);
+    if (ancien.empreinte != widget.empreinte ||
+        (ancien.brouillon == null) != (widget.brouillon == null)) {
+      _relireFamille();
+      _relireEnseignant();
+    }
+  }
+
+  int? get _capacite => switch ((widget.brouillon, _type)) {
+    (null, _) => null,
+    (final PolitiqueCommerciale b, _TypeClasse.enfants) => b.capaciteEnfant,
+    (final PolitiqueCommerciale b, _TypeClasse.adultes) => b.capaciteAdulte,
+    (final PolitiqueCommerciale b, _TypeClasse.debutants) => b.capaciteDebutant,
+  };
+
+  /// Les sieges eligibles retenus, jamais au-dessus de la capacite.
+  int _eligiblesPour(int capacite) {
+    final int e = _eligibles ?? capacite;
+    return e > capacite ? capacite : e;
+  }
+
+  /// Une valeur deja la reste affichee pendant un nouveau calcul.
+  static AsyncValue<T> _enCalcul<T>(AsyncValue<T>? avant) =>
+      avant is AsyncData<T> ? avant : AsyncLoading<T>();
+
+  void _relireFamille() {
+    final int jeton = ++_jetonFamille;
+    final PolitiqueCommerciale? b = widget.brouillon;
+    if (b == null) {
+      _famille = null;
+      return;
+    }
+    _famille = _enCalcul(_famille);
+    ref
+        .read(portPolitiquesCommercialesProvider)
+        .apercuFamille(b, _enfants)
+        .then(
+          (ApercuFamille a) =>
+              _poserFamille(jeton, AsyncData<ApercuFamille>(a)),
+          onError: (Object e, StackTrace s) =>
+              _poserFamille(jeton, AsyncError<ApercuFamille>(e, s)),
+        );
+  }
+
+  void _poserFamille(int jeton, AsyncValue<ApercuFamille> v) {
+    if (!mounted || jeton != _jetonFamille) return;
+    setState(() => _famille = v);
+  }
+
+  void _relireEnseignant() {
+    final int jeton = ++_jetonEnseignant;
+    final PolitiqueCommerciale? b = widget.brouillon;
+    final int? capacite = _capacite;
+    if (b == null || capacite == null || capacite < 1) {
+      _enseignant = null;
+      return;
+    }
+    _enseignant = _enCalcul(_enseignant);
+    ref
+        .read(portPolitiquesCommercialesProvider)
+        .apercuEnseignant(
+          b,
+          capacite: capacite,
+          eligibles: _eligiblesPour(capacite),
+        )
+        .then(
+          (ApercuEnseignant a) =>
+              _poserEnseignant(jeton, AsyncData<ApercuEnseignant>(a)),
+          onError: (Object e, StackTrace s) =>
+              _poserEnseignant(jeton, AsyncError<ApercuEnseignant>(e, s)),
+        );
+  }
+
+  void _poserEnseignant(int jeton, AsyncValue<ApercuEnseignant> v) {
+    if (!mounted || jeton != _jetonEnseignant) return;
+    setState(() => _enseignant = v);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final pol = t.admin.finance.pol;
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    final Widget famille = AppCard(
+      key: PolitiquesCommercialesContenu.apercuFamilleKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          _TitreCarte(
+            titre: pol.apercuFamille,
+            detail: pol.apercuFamilleDetail,
+          ),
+          Ecart.vLg,
+          Text(pol.apercuEnfantsChoix, style: textes.titleSmall),
+          Ecart.vSm,
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: <Widget>[
+              for (int n = 1; n <= 5; n++)
+                FilterPill(
+                  libelle: pol.apercuEnfants(n: n),
+                  retenue: _enfants == n,
+                  onPress: () => setState(() {
+                    _enfants = n;
+                    _relireFamille();
+                  }),
+                ),
+            ],
+          ),
+          Ecart.vLg,
+          const FiletCarte(),
+          Ecart.vLg,
+          _resultat<ApercuFamille>(
+            _famille,
+            horsLigne: horsLigne,
+            attente: pol.apercuAttenteDetail,
+            relancer: () => setState(_relireFamille),
+            contenu: _contenuFamille,
+          ),
+        ],
+      ),
+    );
+    final int? capacite = _capacite;
+    final Widget enseignant = AppCard(
+      key: PolitiquesCommercialesContenu.apercuEnseignantKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          _TitreCarte(
+            titre: pol.apercuEnseignant,
+            detail: pol.apercuEnseignantDetail,
+          ),
+          Ecart.vLg,
+          Text(pol.apercuTypeClasse, style: textes.titleSmall),
+          Ecart.vSm,
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: <Widget>[
+              for (final _TypeClasse type in _TypeClasse.values)
+                FilterPill(
+                  libelle: switch (type) {
+                    _TypeClasse.enfants => pol.apercuClasseEnfants,
+                    _TypeClasse.adultes => pol.apercuClasseAdultes,
+                    _TypeClasse.debutants => pol.apercuClasseDebutants,
+                  },
+                  retenue: _type == type,
+                  onPress: () => setState(() {
+                    _type = type;
+                    _eligibles = null;
+                    _relireEnseignant();
+                  }),
+                ),
+            ],
+          ),
+          if (capacite != null && capacite >= 1) ...<Widget>[
+            Ecart.vLg,
+            Text(pol.apercuEligiblesChoix, style: textes.titleSmall),
+            Ecart.vXs,
+            Text(
+              pol.apercuEligiblesDetail,
+              style: palette.inkMuted.applyTo(
+                textes.bodySmall ?? const TextStyle(),
+              ),
+            ),
+            Ecart.vSm,
+            _pasEligibles(capacite),
+          ],
+          Ecart.vLg,
+          const FiletCarte(),
+          Ecart.vLg,
+          _resultat<ApercuEnseignant>(
+            _enseignant,
+            horsLigne: horsLigne,
+            attente: widget.brouillon == null
+                ? pol.apercuAttenteDetail
+                : pol.apercuCapaciteAttente,
+            relancer: () => setState(_relireEnseignant),
+            contenu: _contenuEnseignant,
+          ),
+        ],
+      ),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Semantics(
+          header: true,
+          child: Text(pol.apercu, style: textes.titleLarge),
+        ),
+        Ecart.vXs,
+        Text(
+          pol.apercuDetail,
+          style: palette.inkMuted.applyTo(
+            textes.bodyMedium ?? const TextStyle(),
+          ),
+        ),
+        Ecart.vLg,
+        LayoutBuilder(
+          builder: (BuildContext contexte, BoxConstraints contraintes) {
+            if (_enColonne(contexte, contraintes)) {
+              return PileCartes(children: <Widget>[famille, enseignant]);
+            }
+            return PileCartes(
+              axe: Axis.horizontal,
+              alignement: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(child: famille),
+                Expanded(child: enseignant),
+              ],
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  /// Le pas des sieges eligibles : moins, « 4 sur 5 », plus. Une fleche qui
+  /// ne peut plus aboutir disparait (sa place reste), jamais grisee (K-56).
+  Widget _pasEligibles(int capacite) {
+    final pol = t.admin.finance.pol;
+    final TextTheme textes = Theme.of(context).textTheme;
+    final int e = _eligiblesPour(capacite);
+    Widget fleche({
+      required bool visible,
+      required AppIcon icone,
+      required String libelle,
+      required int vers,
+    }) => Visibility(
+      visible: visible,
+      maintainSize: true,
+      maintainAnimation: true,
+      maintainState: true,
+      child: BoutonIcone(
+        icone: icone,
+        libelle: libelle,
+        onPress: () => setState(() {
+          _eligibles = vers;
+          _relireEnseignant();
+        }),
+      ),
+    );
+    return Row(
+      children: <Widget>[
+        fleche(
+          visible: e > 0,
+          icone: AppIcons.moins,
+          libelle: pol.apercuEligiblesMoins,
+          vers: e - 1,
+        ),
+        Expanded(
+          child: Text(
+            pol.apercuEligibles(eligibles: '$e', capacite: '$capacite'),
+            textAlign: TextAlign.center,
+            style: AppTypography.tabulaire(
+              textes.titleMedium ?? const TextStyle(),
+            ),
+          ),
+        ),
+        fleche(
+          visible: e < capacite,
+          icone: AppIcons.ajouter,
+          libelle: pol.apercuEligiblesPlus,
+          vers: e + 1,
+        ),
+      ],
+    );
+  }
+
+  Widget _contenuFamille(ApercuFamille a) {
+    final pol = t.admin.finance.pol;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: _avecFilets(<Widget>[
+        for (final MensualiteApercu m in a.enfants)
+          LigneFinance(
+            key: PolitiquesCommercialesContenu.apercuEnfantKey(m.rang),
+            libelle: pol.apercuEnfant(rang: '${m.rang}'),
+            detail: switch (m.remise) {
+              null => pol.apercuPrixNormal,
+              final Montant r => pol.apercuRemise(montant: formaterMontant(r)),
+            },
+            montant: m.mensualite,
+          ),
+        LigneFinance(
+          key: PolitiquesCommercialesContenu.apercuTotalKey,
+          libelle: pol.apercuTotalFamille,
+          montant: a.total,
+          total: true,
+        ),
+      ]),
+    );
+  }
+
+  Widget _contenuEnseignant(ApercuEnseignant a) {
+    final pol = t.admin.finance.pol;
+    String parHeure(Montant m) => pol.parHeure(montant: formaterMontant(m));
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: _avecFilets(<Widget>[
+        LigneCleValeur(
+          cle: pol.apercuBase,
+          valeur: parHeure(a.baseHoraire),
+          chiffres: true,
+        ),
+        LigneCleValeur(
+          cle: pol.apercuOccupation,
+          detailCle: pol.apercuOccupationDetail(
+            eligibles: '${a.eligibles}',
+            capacite: '${a.capacite}',
+          ),
+          valeur: parHeure(a.occupation),
+          chiffres: true,
+        ),
+        LigneCleValeur(
+          key: PolitiquesCommercialesContenu.apercuTauxKey,
+          cle: pol.apercuTaux,
+          detailCle: pol.apercuTauxDetail(plafond: parHeure(a.plafondHoraire)),
+          valeur: parHeure(a.tauxHoraire),
+          chiffres: true,
+          valeurForte: true,
+        ),
+      ]),
+    );
+  }
+
+  /// Le resultat d'un apercu : attente d'une saisie valide, calcul, contenu,
+  /// indisponible, hors ligne ou echec (K-59 : ce qui manque, pourquoi, quoi
+  /// faire).
+  Widget _resultat<T>(
+    AsyncValue<T>? valeur, {
+    required bool horsLigne,
+    required String attente,
+    required VoidCallback relancer,
+    required Widget Function(T) contenu,
+  }) {
+    final pol = t.admin.finance.pol;
+    return switch (valeur) {
+      null => _EtatApercu(titre: pol.apercuAttente, detail: attente),
+      AsyncData<T>(:final T value) => contenu(value),
+      AsyncError<T>(:final Object error) when error is CapaciteIndisponible =>
+        _EtatApercu(
+          titre: pol.apercuIndisponible,
+          detail: pol.apercuIndisponibleDetail,
+        ),
+      AsyncError<T>() when horsLigne => _EtatApercu(
+        titre: pol.apercuHorsLigne,
+        detail: pol.apercuHorsLigneDetail,
+        relancer: relancer,
+      ),
+      AsyncError<T>() => _EtatApercu(
+        titre: pol.apercuErreur,
+        detail: pol.apercuErreurDetail,
+        relancer: relancer,
+      ),
+      _ => const Skeleton.texte(lignes: 3),
+    };
+  }
+}
+
+/// Un etat de l'apercu, dans sa carte : un titre, une phrase, et « Relancer
+/// le calcul » quand un nouvel essai peut aboutir.
+class _EtatApercu extends StatelessWidget {
+  const _EtatApercu({required this.titre, required this.detail, this.relancer});
+
+  final String titre;
+  final String detail;
+  final VoidCallback? relancer;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final VoidCallback? action = relancer;
+    return Semantics(
+      liveRegion: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(titre, style: textes.titleSmall),
+          Ecart.vXs,
+          Text(
+            detail,
+            style: palette.inkMuted.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+          if (action != null) ...<Widget>[
+            Ecart.vSm,
+            LienFleche(
+              libelle: t.admin.finance.pol.apercuRecalculer,
+              onPress: action,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
 }

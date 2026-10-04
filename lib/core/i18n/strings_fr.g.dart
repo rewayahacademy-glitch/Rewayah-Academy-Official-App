@@ -12822,6 +12822,132 @@ class Traductions$admin$finance$pol$fr {
 
 	/// fr: 'Un champ vide ou mal saisi empêche de préparer la publication : saisissez un nombre entier dans chaque champ signalé, puis publiez.'
 	String get champsACorrigerDetail => 'Un champ vide ou mal saisi empêche de préparer la publication : saisissez un nombre entier dans chaque champ signalé, puis publiez.';
+
+	/// fr: 'Aperçu avant publication'
+	String get apercu => 'Aperçu avant publication';
+
+	/// fr: 'Ce que donnerait le brouillon à l'écran, recalculé à chaque modification valide. Ce sont des exemples : rien n'est facturé ni payé.'
+	String get apercuDetail => 'Ce que donnerait le brouillon à l\'écran, recalculé à chaque modification valide. Ce sont des exemples : rien n\'est facturé ni payé.';
+
+	/// fr: 'Exemple de foyer'
+	String get apercuFamille => 'Exemple de foyer';
+
+	/// fr: 'La mensualité de chaque enfant payant, dans l'ordre des rangs, puis le total du foyer.'
+	String get apercuFamilleDetail => 'La mensualité de chaque enfant payant, dans l\'ordre des rangs, puis le total du foyer.';
+
+	/// fr: 'Nombre d'enfants payants'
+	String get apercuEnfantsChoix => 'Nombre d\'enfants payants';
+
+	/// fr: '(one) {{n} enfant} (other) {{n} enfants}'
+	String apercuEnfants({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} enfant',
+		other: '${n} enfants',
+	);
+
+	/// fr: 'Enfant {rang}'
+	String apercuEnfant({required Object rang}) => 'Enfant ${rang}';
+
+	/// fr: 'Prix normal, aucune remise'
+	String get apercuPrixNormal => 'Prix normal, aucune remise';
+
+	/// fr: 'Remise de rang : {montant}'
+	String apercuRemise({required Object montant}) => 'Remise de rang : ${montant}';
+
+	/// fr: 'Total du foyer par mois'
+	String get apercuTotalFamille => 'Total du foyer par mois';
+
+	/// fr: 'Exemple d'enseignant'
+	String get apercuEnseignant => 'Exemple d\'enseignant';
+
+	/// fr: 'Le taux horaire d'une classe selon ses sièges éligibles : la base garantie, plus la part d'occupation, jamais au-dessus du plafond.'
+	String get apercuEnseignantDetail => 'Le taux horaire d\'une classe selon ses sièges éligibles : la base garantie, plus la part d\'occupation, jamais au-dessus du plafond.';
+
+	/// fr: 'Type de classe'
+	String get apercuTypeClasse => 'Type de classe';
+
+	/// fr: 'Enfants'
+	String get apercuClasseEnfants => 'Enfants';
+
+	/// fr: 'Adultes'
+	String get apercuClasseAdultes => 'Adultes';
+
+	/// fr: 'Débutants'
+	String get apercuClasseDebutants => 'Débutants';
+
+	/// fr: 'Sièges éligibles'
+	String get apercuEligiblesChoix => 'Sièges éligibles';
+
+	/// fr: 'Un siège compte quand sa période est financée, même si l'élève est absent.'
+	String get apercuEligiblesDetail => 'Un siège compte quand sa période est financée, même si l\'élève est absent.';
+
+	/// fr: '{eligibles} sur {capacite}'
+	String apercuEligibles({required Object eligibles, required Object capacite}) => '${eligibles} sur ${capacite}';
+
+	/// fr: 'Un siège éligible de moins'
+	String get apercuEligiblesMoins => 'Un siège éligible de moins';
+
+	/// fr: 'Un siège éligible de plus'
+	String get apercuEligiblesPlus => 'Un siège éligible de plus';
+
+	/// fr: 'Base garantie'
+	String get apercuBase => 'Base garantie';
+
+	/// fr: 'Part d'occupation'
+	String get apercuOccupation => 'Part d\'occupation';
+
+	/// fr: '{eligibles} sièges éligibles sur {capacite}'
+	String apercuOccupationDetail({required Object eligibles, required Object capacite}) => '${eligibles} sièges éligibles sur ${capacite}';
+
+	/// fr: 'Taux horaire effectif'
+	String get apercuTaux => 'Taux horaire effectif';
+
+	/// fr: 'Jamais au-dessus du plafond de {plafond}.'
+	String apercuTauxDetail({required Object plafond}) => 'Jamais au-dessus du plafond de ${plafond}.';
+
+	/// fr: 'L'aperçu attend une saisie valide'
+	String get apercuAttente => 'L\'aperçu attend une saisie valide';
+
+	/// fr: 'Un champ du brouillon est vide ou mal saisi : corrigez le champ signalé, l'aperçu se recalcule aussitôt.'
+	String get apercuAttenteDetail => 'Un champ du brouillon est vide ou mal saisi : corrigez le champ signalé, l\'aperçu se recalcule aussitôt.';
+
+	/// fr: 'Cette classe n'a aucun siège : saisissez une capacité d'au moins 1 élève pour voir le taux.'
+	String get apercuCapaciteAttente => 'Cette classe n\'a aucun siège : saisissez une capacité d\'au moins 1 élève pour voir le taux.';
+
+	/// fr: 'L'aperçu n'est pas encore disponible'
+	String get apercuIndisponible => 'L\'aperçu n\'est pas encore disponible';
+
+	/// fr: 'Le calcul de l'aperçu n'est pas encore branché : aucun montant n'est estimé ici. Le brouillon reste modifiable.'
+	String get apercuIndisponibleDetail => 'Le calcul de l\'aperçu n\'est pas encore branché : aucun montant n\'est estimé ici. Le brouillon reste modifiable.';
+
+	/// fr: 'Aperçu non calculé'
+	String get apercuErreur => 'Aperçu non calculé';
+
+	/// fr: 'Le calcul n'a pas répondu, sans doute un incident passager. Vos saisies sont gardées : relancez le calcul.'
+	String get apercuErreurDetail => 'Le calcul n\'a pas répondu, sans doute un incident passager. Vos saisies sont gardées : relancez le calcul.';
+
+	/// fr: 'Aperçu hors ligne'
+	String get apercuHorsLigne => 'Aperçu hors ligne';
+
+	/// fr: 'L'appareil n'a pas de connexion : l'aperçu n'a pas pu être calculé. Vos saisies sont gardées ; relancez le calcul une fois reconnecté.'
+	String get apercuHorsLigneDetail => 'L\'appareil n\'a pas de connexion : l\'aperçu n\'a pas pu être calculé. Vos saisies sont gardées ; relancez le calcul une fois reconnecté.';
+
+	/// fr: 'Relancer le calcul'
+	String get apercuRecalculer => 'Relancer le calcul';
+
+	/// fr: 'Historique des versions'
+	String get historique => 'Historique des versions';
+
+	/// fr: 'Toutes les versions, la plus récente d'abord. Rien ne s'y modifie : une version publiée reste telle quelle.'
+	String get historiqueDetail => 'Toutes les versions, la plus récente d\'abord. Rien ne s\'y modifie : une version publiée reste telle quelle.';
+
+	/// fr: 'Version {version}'
+	String historiqueVersion({required Object version}) => 'Version ${version}';
+
+	/// fr: 'Version active'
+	String get historiqueActive => 'Version active';
+
+	/// fr: 'Aucune autre version pour l'instant : seule la version active existe.'
+	String get historiqueVide => 'Aucune autre version pour l\'instant : seule la version active existe.';
 }
 
 // Path: admin.journal.evenements
@@ -17974,11 +18100,52 @@ extension on Traductions {
 			'admin.finance.pol.publicationNonConfirmeeDetail' => 'La réponse n\'est pas arrivée, sans doute à cause de la connexion. Vérifiez la version active avant de réessayer.',
 			'admin.finance.pol.champsACorriger' => 'Corrigez d\'abord les champs signalés',
 			'admin.finance.pol.champsACorrigerDetail' => 'Un champ vide ou mal saisi empêche de préparer la publication : saisissez un nombre entier dans chaque champ signalé, puis publiez.',
+			'admin.finance.pol.apercu' => 'Aperçu avant publication',
+			'admin.finance.pol.apercuDetail' => 'Ce que donnerait le brouillon à l\'écran, recalculé à chaque modification valide. Ce sont des exemples : rien n\'est facturé ni payé.',
+			'admin.finance.pol.apercuFamille' => 'Exemple de foyer',
+			_ => null,
+		} ?? switch (path) {
+			'admin.finance.pol.apercuFamilleDetail' => 'La mensualité de chaque enfant payant, dans l\'ordre des rangs, puis le total du foyer.',
+			'admin.finance.pol.apercuEnfantsChoix' => 'Nombre d\'enfants payants',
+			'admin.finance.pol.apercuEnfants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} enfant', other: '${n} enfants', ), 
+			'admin.finance.pol.apercuEnfant' => ({required Object rang}) => 'Enfant ${rang}',
+			'admin.finance.pol.apercuPrixNormal' => 'Prix normal, aucune remise',
+			'admin.finance.pol.apercuRemise' => ({required Object montant}) => 'Remise de rang : ${montant}',
+			'admin.finance.pol.apercuTotalFamille' => 'Total du foyer par mois',
+			'admin.finance.pol.apercuEnseignant' => 'Exemple d\'enseignant',
+			'admin.finance.pol.apercuEnseignantDetail' => 'Le taux horaire d\'une classe selon ses sièges éligibles : la base garantie, plus la part d\'occupation, jamais au-dessus du plafond.',
+			'admin.finance.pol.apercuTypeClasse' => 'Type de classe',
+			'admin.finance.pol.apercuClasseEnfants' => 'Enfants',
+			'admin.finance.pol.apercuClasseAdultes' => 'Adultes',
+			'admin.finance.pol.apercuClasseDebutants' => 'Débutants',
+			'admin.finance.pol.apercuEligiblesChoix' => 'Sièges éligibles',
+			'admin.finance.pol.apercuEligiblesDetail' => 'Un siège compte quand sa période est financée, même si l\'élève est absent.',
+			'admin.finance.pol.apercuEligibles' => ({required Object eligibles, required Object capacite}) => '${eligibles} sur ${capacite}',
+			'admin.finance.pol.apercuEligiblesMoins' => 'Un siège éligible de moins',
+			'admin.finance.pol.apercuEligiblesPlus' => 'Un siège éligible de plus',
+			'admin.finance.pol.apercuBase' => 'Base garantie',
+			'admin.finance.pol.apercuOccupation' => 'Part d\'occupation',
+			'admin.finance.pol.apercuOccupationDetail' => ({required Object eligibles, required Object capacite}) => '${eligibles} sièges éligibles sur ${capacite}',
+			'admin.finance.pol.apercuTaux' => 'Taux horaire effectif',
+			'admin.finance.pol.apercuTauxDetail' => ({required Object plafond}) => 'Jamais au-dessus du plafond de ${plafond}.',
+			'admin.finance.pol.apercuAttente' => 'L\'aperçu attend une saisie valide',
+			'admin.finance.pol.apercuAttenteDetail' => 'Un champ du brouillon est vide ou mal saisi : corrigez le champ signalé, l\'aperçu se recalcule aussitôt.',
+			'admin.finance.pol.apercuCapaciteAttente' => 'Cette classe n\'a aucun siège : saisissez une capacité d\'au moins 1 élève pour voir le taux.',
+			'admin.finance.pol.apercuIndisponible' => 'L\'aperçu n\'est pas encore disponible',
+			'admin.finance.pol.apercuIndisponibleDetail' => 'Le calcul de l\'aperçu n\'est pas encore branché : aucun montant n\'est estimé ici. Le brouillon reste modifiable.',
+			'admin.finance.pol.apercuErreur' => 'Aperçu non calculé',
+			'admin.finance.pol.apercuErreurDetail' => 'Le calcul n\'a pas répondu, sans doute un incident passager. Vos saisies sont gardées : relancez le calcul.',
+			'admin.finance.pol.apercuHorsLigne' => 'Aperçu hors ligne',
+			'admin.finance.pol.apercuHorsLigneDetail' => 'L\'appareil n\'a pas de connexion : l\'aperçu n\'a pas pu être calculé. Vos saisies sont gardées ; relancez le calcul une fois reconnecté.',
+			'admin.finance.pol.apercuRecalculer' => 'Relancer le calcul',
+			'admin.finance.pol.historique' => 'Historique des versions',
+			'admin.finance.pol.historiqueDetail' => 'Toutes les versions, la plus récente d\'abord. Rien ne s\'y modifie : une version publiée reste telle quelle.',
+			'admin.finance.pol.historiqueVersion' => ({required Object version}) => 'Version ${version}',
+			'admin.finance.pol.historiqueActive' => 'Version active',
+			'admin.finance.pol.historiqueVide' => 'Aucune autre version pour l\'instant : seule la version active existe.',
 			'admin.regles.titre' => 'Règles',
 			'admin.regles.intro' => 'Les valeurs par défaut de toute la plateforme. Une exception pour un profil précis se pose depuis Opérations > Règles individuelles, jamais ici.',
 			'admin.regles.erreur' => 'Les règles n\'ont pas pu être lues. Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.regles.erreurEcriture' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'admin.regles.valeurInvalide' => 'Entrez un nombre valide.',
 			'admin.regles.envoyer' => 'Enregistrer',
@@ -18450,6 +18617,8 @@ extension on Traductions {
 			'parcours.offreRecurrence' => ({required Object seances, required Object duree}) => '${seances} séances par semaine, ${duree} min',
 			'parcours.offreRecurrencePause' => ({required Object seances, required Object duree, required Object pause}) => '${seances} séances par semaine, ${duree} min dont ${pause} min de pause',
 			'parcours.offreLangue' => ({required Object langue}) => 'Cours en ${langue}',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.offreFuseau' => ({required Object fuseau}) => 'Heure affichée pour ${fuseau}',
 			'parcours.offreTraduite' => 'Affiché à votre heure locale',
 			'parcours.offreJours' => ({required Object jours}) => '${jours}',
@@ -18491,8 +18660,6 @@ extension on Traductions {
 			'nav.tuteur.accueil' => 'Accueil',
 			'nav.tuteur.foyer' => 'Foyer',
 			'nav.tuteur.disponibilites' => 'Disponibilités',
-			_ => null,
-		} ?? switch (path) {
 			'nav.tuteur.reglages' => 'Réglages',
 			'nav.tuteur.suivi' => 'Suivi',
 			'nav.tuteur.historique' => 'Historique',
@@ -18964,6 +19131,8 @@ extension on Traductions {
 			'tuteur.accueil.blocAppareilsDetail' => 'Ajouter un appareil, ou en retirer un.',
 			'tuteur.accueil.blocReglages' => 'Réglages par enfant',
 			'tuteur.accueil.blocReglagesDetail' => 'Photo, caméra et affichage, enfant par enfant.',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.blocGroupesDetail' => 'Le groupe, l\'enseignant et le prochain cours de chaque enfant.',
 			'tuteur.accueil.acces' => 'Accès',
 			'tuteur.accueil.accesJusqua' => ({required Object prenom, required Object date}) => 'Accès de ${prenom} jusqu\'au ${date}',
@@ -19005,8 +19174,6 @@ extension on Traductions {
 			'tuteur.reglages.demandeEnvoyee' => 'Demande envoyée. L\'administration la tranchera.',
 			'tuteur.reglages.aucunEnfant' => 'Aucun enfant dans le foyer',
 			'tuteur.reglages.aucunEnfantDetail' => 'Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.reglages.erreur' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
 			'classe.entree.coursDans' => ({required Object duree}) => 'Cours dans ${duree}',
 			'classe.entree.coursImminent' => 'Cours dans moins d\'une minute',
@@ -19478,6 +19645,8 @@ extension on Traductions {
 			'enseignant.profil.statutSuspenduDetail' => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.',
 			'enseignant.profil.statutInconnu' => 'Statut non disponible',
 			'enseignant.profil.statutInconnuDetail' => 'Nous n\'avons pas pu lire votre statut.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.statutDivergent' => 'Ce statut vient de changer. Rouvrez l\'application pour que votre accès suive.',
 			'enseignant.profil.verification' => 'Vérification du dossier',
 			'enseignant.profil.verificationEnAttente' => 'En attente',
@@ -19519,8 +19688,6 @@ extension on Traductions {
 			'enseignant.revenus.detailSection' => 'Détail par Classe',
 			'enseignant.revenus.classe' => ({required Object nom}) => 'Classe ${nom}',
 			'enseignant.revenus.capacite' => 'Capacité',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revenus.capaciteValeur' => ({required Object nombre}) => '${nombre} places',
 			'enseignant.revenus.sieges' => 'Sièges éligibles',
 			'enseignant.revenus.siegesValeur' => ({required Object nombre, required Object capacite}) => '${nombre} sur ${capacite}',
@@ -19992,6 +20159,8 @@ extension on Traductions {
 			'tc.outils.revision.aide' => 'Le passage sélectionné devient un travail à préparer.',
 			'tc.outils.revision.groupeEntier' => 'Tout le groupe',
 			'tc.outils.revision.consigne' => 'Consigne courte (facultatif)',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.revision.creer' => 'Poser le travail',
 			'tc.outils.revision.posee' => 'Travail à préparer posé',
 			'tc.outils.masquer.reveler' => 'Révéler',
@@ -20033,8 +20202,6 @@ extension on Traductions {
 			'tc.classe.fiche.presenceRecente' => 'Présence récente',
 			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => '${presences} / ${total} cours',
 			'tc.classe.fiche.travailActuel' => 'Travail actuel',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.fiche.interfaceGuidee' => 'Mode Accessibilité',
 			'tc.classe.fiche.sansPedagogie' => 'Suivi pédagogique indisponible',
 			'tc.classe.fiche.sansPedagogieDetail' => 'Le parcours, les objectifs et le travail en cours ne sont pas encore ouverts à l\'enseignant.',
@@ -20506,6 +20673,8 @@ extension on Traductions {
 			'adulte.sortie.resultatSecondAdulte' => 'Votre compte, vos cours, votre historique et votre solde restent disponibles.',
 			'adulte.sortie.compris' => 'Compris',
 			'adulte.sortie.retraitEchecTitre' => 'Le retrait n\'a pas été confirmé.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.sortie.departEchecTitre' => 'Le départ n\'a pas été confirmé.',
 			'adulte.sortie.echecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.sortie.horsLigne' => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez réessayer vous-même quand la connexion sera revenue.',
@@ -20547,8 +20716,6 @@ extension on Traductions {
 			'adulte.reprise.etats.attenteAdministration' => 'En attente de l\'administration',
 			'adulte.reprise.etats.validee' => 'Validée',
 			'adulte.reprise.etats.refusee' => 'Refusée',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.phrases.deposee' => 'Le titulaire du foyer en a été informé. L\'administration examinera la demande.',
 			'adulte.reprise.phrases.examenLe' => ({required Object date}) => 'Sans réponse du titulaire, l\'administration pourra l\'examiner à partir du ${date}.',
 			'adulte.reprise.phrases.refuseeParTitulaire' => 'Le titulaire du foyer a refusé cette demande. L\'administration en est informée. Aucune permission du foyer n\'est transférée.',
