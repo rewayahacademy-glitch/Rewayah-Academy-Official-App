@@ -8490,6 +8490,12 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Les horaires de prière et vos pauses n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.'
 	String get erreurPartielle => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.';
 
+	/// fr: 'Vos cahiers de transmission à terminer n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.'
+	String get erreurPartielleCahiers => 'Vos cahiers de transmission à terminer n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.';
+
+	/// fr: 'Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.'
+	String get erreurPartielleTout => 'Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.';
+
 	/// fr: '{eleve} n'est pas entré en salle.'
 	String absenceDetectee({required Object eleve}) => '${eleve} n\'est pas entré en salle.';
 
@@ -8802,14 +8808,14 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Point de prononciation noté'
 	String get pointPhonetiqueNote => 'Point de prononciation noté';
 
-	/// fr: 'Objectif de {eleve}'
-	String objectif({required Object eleve}) => 'Objectif de ${eleve}';
+	/// fr: 'Objectif {deEleve}'
+	String objectif({required Object deEleve}) => 'Objectif ${deEleve}';
 
-	/// fr: 'Ce que {eleve} doit atteindre, dans le cadre du programme de l'académie.'
-	String objectifDetail({required Object eleve}) => 'Ce que ${eleve} doit atteindre, dans le cadre du programme de l\'académie.';
+	/// fr: 'Ce {queEleve} doit atteindre, dans le cadre du programme de l'académie.'
+	String objectifDetail({required Object queEleve}) => 'Ce ${queEleve} doit atteindre, dans le cadre du programme de l\'académie.';
 
-	/// fr: 'Devoir de {eleve}'
-	String travailMaison({required Object eleve}) => 'Devoir de ${eleve}';
+	/// fr: 'Devoir {deEleve}'
+	String travailMaison({required Object deEleve}) => 'Devoir ${deEleve}';
 
 	/// fr: 'Ajustez la suggestion, ou laissez-la telle quelle.'
 	String get travailMaisonDetail => 'Ajustez la suggestion, ou laissez-la telle quelle.';
@@ -9108,8 +9114,8 @@ class Traductions$enseignant$profil$fr {
 	/// fr: 'Me déconnecter maintenant'
 	String get deconnexionConfirmer => 'Me déconnecter maintenant';
 
-	/// fr: 'Votre journée, vos créneaux et vos cahiers restent enregistrés. Il faudra un nouveau lien de connexion pour revenir.'
-	String get deconnexionConsequence => 'Votre journée, vos créneaux et vos cahiers restent enregistrés. Il faudra un nouveau lien de connexion pour revenir.';
+	/// fr: 'Votre journée, vos créneaux et vos cahiers de transmission restent enregistrés. Il faudra un nouveau lien de connexion pour revenir.'
+	String get deconnexionConsequence => 'Votre journée, vos créneaux et vos cahiers de transmission restent enregistrés. Il faudra un nouveau lien de connexion pour revenir.';
 
 	/// fr: 'Votre profil n'a pas pu être lu. Réessayez dans un instant.'
 	String get erreur => 'Votre profil n\'a pas pu être lu. Réessayez dans un instant.';
@@ -17985,6 +17991,8 @@ extension on Traductions {
 			'enseignant.journee.preflightIndisponible' => 'La vérification du matériel n\'a pas abouti. Réessayez avant de lancer le cours.',
 			'enseignant.journee.lancerHorsLigne' => 'Sans réseau, la salle ne peut pas s\'ouvrir. Reconnectez-vous pour lancer le cours.',
 			'enseignant.journee.erreurPartielle' => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.',
+			'enseignant.journee.erreurPartielleCahiers' => 'Vos cahiers de transmission à terminer n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.',
+			'enseignant.journee.erreurPartielleTout' => 'Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.',
 			'enseignant.journee.absenceDetectee' => ({required Object eleve}) => '${eleve} n\'est pas entré en salle.',
 			'enseignant.journee.coupureDetectee' => ({required Object eleve}) => '${eleve} a perdu la connexion.',
 			'enseignant.journee.autresAbsences' => ({required Object nombre}) => 'et ${nombre} autres élèves.',
@@ -18098,9 +18106,9 @@ extension on Traductions {
 			'enseignant.cahier.pointPhonetique' => 'Point de prononciation',
 			'enseignant.cahier.pointPhonetiqueDetail' => 'Une paire, pas un bilan. Laissez vide s\'il n\'y a rien à dire.',
 			'enseignant.cahier.pointPhonetiqueNote' => 'Point de prononciation noté',
-			'enseignant.cahier.objectif' => ({required Object eleve}) => 'Objectif de ${eleve}',
-			'enseignant.cahier.objectifDetail' => ({required Object eleve}) => 'Ce que ${eleve} doit atteindre, dans le cadre du programme de l\'académie.',
-			'enseignant.cahier.travailMaison' => ({required Object eleve}) => 'Devoir de ${eleve}',
+			'enseignant.cahier.objectif' => ({required Object deEleve}) => 'Objectif ${deEleve}',
+			'enseignant.cahier.objectifDetail' => ({required Object queEleve}) => 'Ce ${queEleve} doit atteindre, dans le cadre du programme de l\'académie.',
+			'enseignant.cahier.travailMaison' => ({required Object deEleve}) => 'Devoir ${deEleve}',
 			'enseignant.cahier.travailMaisonDetail' => 'Ajustez la suggestion, ou laissez-la telle quelle.',
 			'enseignant.cahier.travailMaisonSaisi' => 'Vous avez déjà noté ce devoir. Modifiez-le ou laissez-le tel quel.',
 			'enseignant.cahier.suite' => ({required Object eleve}) => 'La suite pour ${eleve}',
@@ -18197,7 +18205,7 @@ extension on Traductions {
 			'enseignant.profil.personnel' => 'Mes réglages',
 			'enseignant.profil.deconnexionQuestion' => 'Se déconnecter de cet appareil ?',
 			'enseignant.profil.deconnexionConfirmer' => 'Me déconnecter maintenant',
-			'enseignant.profil.deconnexionConsequence' => 'Votre journée, vos créneaux et vos cahiers restent enregistrés. Il faudra un nouveau lien de connexion pour revenir.',
+			'enseignant.profil.deconnexionConsequence' => 'Votre journée, vos créneaux et vos cahiers de transmission restent enregistrés. Il faudra un nouveau lien de connexion pour revenir.',
 			'enseignant.profil.erreur' => 'Votre profil n\'a pas pu être lu. Réessayez dans un instant.',
 			'enseignant.profil.vide' => 'Aucun profil enseignant',
 			'enseignant.profil.videDetail' => 'Ce compte n\'a pas de profil enseignant. Seule l\'académie peut en créer un.',
@@ -18440,10 +18448,10 @@ extension on Traductions {
 			'controleur.echanges.champLibelle' => 'Répondre à l\'administration',
 			'controleur.echanges.envoyer' => 'Envoyer',
 			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
-			'controleur.echanges.enCours' => 'Envoi en cours.',
-			'controleur.echanges.envoye' => 'Envoyé.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.echanges.enCours' => 'Envoi en cours.',
+			'controleur.echanges.envoye' => 'Envoyé.',
 			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.reessayer' => 'Réessayer',
 			'controleur.echanges.nouveauMessage' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
@@ -18954,10 +18962,10 @@ extension on Traductions {
 			'tc.parcours.signalement.categorieValeur.presence' => 'Présence',
 			'tc.parcours.signalement.categorieValeur.technique' => 'Technique',
 			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
-			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
-			'tc.parcours.signalement.interne' => 'Note interne',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
+			'tc.parcours.signalement.interne' => 'Note interne',
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',
