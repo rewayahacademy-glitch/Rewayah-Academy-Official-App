@@ -142,6 +142,7 @@
           "nonLuUn": "1 غير مقروء",
           "nonLus": "{nombre} غير مقروءة",
           "nonLusSemantique": "{nombre} عناصر غير مقروءة",
+          "nonLuUnSemantique": "عنصر واحد غير مقروء",
           "information": "للعلم",
           "aLire": "للقراءة",
           "actionRequise": "@:com.socle.lexique.actionRequise",
@@ -181,6 +182,7 @@
           "nonConfirme": "لم يُؤكَّد إرسال هذه الرسالة بعد.",
           "reessayer": "إعادة المحاولة",
           "auteurSoi": "أنت",
+          "annonce": "رسالة جديدة من {auteur}: {texte}",
           "brouillon": "@:com.socle.lexique.brouillon",
           "brouillonRestaure": "تمت استعادة المسودة"
         },

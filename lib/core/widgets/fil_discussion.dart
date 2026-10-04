@@ -128,6 +128,9 @@ class FilDiscussion extends StatefulWidget {
     required this.textes,
     required this.onEnvoyer,
     super.key,
+    this.entete,
+    this.emplacementPieceJointe,
+    this.emplacementVocal,
   });
 
   /// Les messages connus, du plus ancien au plus recent.
@@ -139,6 +142,18 @@ class FilDiscussion extends StatefulWidget {
   /// L'envoi d'un texte : le futur se termine sur la reponse, et echoue si
   /// le message n'est pas parti.
   final Future<void> Function(String texte) onEnvoyer;
+
+  /// Un en-tete pose au-dessus des messages (contexte du fil, COM-MSG), ou
+  /// `null` : rien n'est rendu, le fil reste celui du controleur.
+  final Widget? entete;
+
+  /// Ce qui se joint au message en preparation (cartes des pieces, entree
+  /// « Joindre un fichier »), pose juste au-dessus du champ ; `null` : rien.
+  final Widget? emplacementPieceJointe;
+
+  /// L'emplacement du message vocal (COM-VOC), pose sous le champ ; `null`
+  /// par defaut : rien n'est rendu, aucune place n'est reservee.
+  final Widget? emplacementVocal;
 
   /// Le champ de saisie, pour les tests.
   static const Key champKey = ValueKey<String>('fil-discussion-champ');
@@ -249,9 +264,12 @@ class _FilDiscussionState extends State<FilDiscussion> {
           onReessayer: () => _tenter(m),
         ),
     ];
+    final Widget? entete = widget.entete;
+    final Widget? pieceJointe = widget.emplacementPieceJointe;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        ?entete,
         Expanded(
           child: ListView.separated(
             controller: _defilement,
@@ -261,7 +279,18 @@ class _FilDiscussionState extends State<FilDiscussion> {
             itemBuilder: (BuildContext _, int i) => bulles[i],
           ),
         ),
-        _Saisie(champ: _champ, vide: _vide, textes: x, onEnvoyer: _envoyer),
+        if (pieceJointe != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: pieceJointe,
+          ),
+        _Saisie(
+          champ: _champ,
+          vide: _vide,
+          textes: x,
+          onEnvoyer: _envoyer,
+          vocal: widget.emplacementVocal,
+        ),
       ],
     );
   }
@@ -373,51 +402,72 @@ class _Saisie extends StatelessWidget {
     required this.vide,
     required this.textes,
     required this.onEnvoyer,
+    this.vocal,
   });
 
   final TextEditingController champ;
   final bool vide;
   final TextesFilDiscussion textes;
   final VoidCallback onEnvoyer;
+  final Widget? vocal;
 
   @override
   Widget build(BuildContext context) {
+    final Widget? vocal = this.vocal;
+    final Widget rangee = _rangee();
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            child: TextField(
-              key: FilDiscussion.champKey,
-              controller: champ,
-              minLines: 1,
-              maxLines: 5,
-              keyboardType: TextInputType.multiline,
-              textInputAction: TextInputAction.newline,
-              textCapitalization: TextCapitalization.sentences,
-              decoration: InputDecoration(
-                labelText: textes.libelleChamp,
-                hintText: textes.aideChamp,
-                floatingLabelBehavior: FloatingLabelBehavior.auto,
-                // La raison du bouton inactif, lisible sous le champ.
-                helperText: vide ? textes.champVide : null,
-                helperMaxLines: 3,
-              ),
+      child: vocal == null
+          ? rangee
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                rangee,
+                Ecart.vSm,
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: vocal,
+                ),
+              ],
+            ),
+    );
+  }
+
+  Widget _rangee() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Expanded(
+          child: TextField(
+            key: FilDiscussion.champKey,
+            controller: champ,
+            minLines: 1,
+            maxLines: 5,
+            keyboardType: TextInputType.multiline,
+            textInputAction: TextInputAction.newline,
+            textCapitalization: TextCapitalization.sentences,
+            decoration: InputDecoration(
+              labelText: textes.libelleChamp,
+              hintText: textes.aideChamp,
+              floatingLabelBehavior: FloatingLabelBehavior.auto,
+              // La raison du bouton inactif, lisible sous le champ.
+              helperText: vide ? textes.champVide : null,
+              helperMaxLines: 3,
             ),
           ),
-          Ecart.hSm,
-          // Une action se nomme, elle ne s'illustre pas : « Envoyer » en
-          // toutes lettres, inerte (et dit comme tel) tant que le champ est
-          // vide ; la raison est ecrite sous le champ.
-          ActionPrincipale(
-            key: FilDiscussion.envoyerKey,
-            libelle: textes.envoyer,
-            onPress: vide ? null : onEnvoyer,
-            pleineLargeur: false,
-          ),
-        ],
-      ),
+        ),
+        Ecart.hSm,
+        // Une action se nomme, elle ne s'illustre pas : « Envoyer » en
+        // toutes lettres, inerte (et dit comme tel) tant que le champ est
+        // vide ; la raison est ecrite sous le champ.
+        ActionPrincipale(
+          key: FilDiscussion.envoyerKey,
+          libelle: textes.envoyer,
+          onPress: vide ? null : onEnvoyer,
+          pleineLargeur: false,
+        ),
+      ],
     );
   }
 }

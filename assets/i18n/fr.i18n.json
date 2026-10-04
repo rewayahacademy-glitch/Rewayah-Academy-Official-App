@@ -4654,6 +4654,7 @@
           "nonLuUn": "1 non lu",
           "nonLus": "{nombre} non lus",
           "nonLusSemantique": "{nombre} éléments non lus",
+          "nonLuUnSemantique": "1 élément non lu",
           "information": "Information",
           "aLire": "À lire",
           "actionRequise": "@:com.socle.lexique.actionRequise",
@@ -4693,6 +4694,7 @@
           "nonConfirme": "Ce message n'a pas encore été confirmé.",
           "reessayer": "Réessayer",
           "auteurSoi": "Vous",
+          "annonce": "Nouveau message de {auteur} : {texte}",
           "brouillon": "@:com.socle.lexique.brouillon",
           "brouillonRestaure": "Brouillon restauré"
         },

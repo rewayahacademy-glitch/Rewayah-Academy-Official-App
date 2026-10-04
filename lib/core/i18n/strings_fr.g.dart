@@ -15675,6 +15675,9 @@ class Traductions$com$socle$composants$badge$fr {
 	/// fr: '{nombre} éléments non lus'
 	String nonLusSemantique({required Object nombre}) => '${nombre} éléments non lus';
 
+	/// fr: '1 élément non lu'
+	String get nonLuUnSemantique => '1 élément non lu';
+
 	/// fr: 'Information'
 	String get information => 'Information';
 
@@ -15797,6 +15800,9 @@ class Traductions$com$socle$composants$composer$fr {
 
 	/// fr: 'Vous'
 	String get auteurSoi => 'Vous';
+
+	/// fr: 'Nouveau message de {auteur} : {texte}'
+	String annonce({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}';
 
 	/// fr: 'Brouillon'
 	String get brouillon => _root.com.socle.lexique.brouillon;
@@ -19857,6 +19863,7 @@ extension on Traductions {
 			'com.socle.composants.badge.nonLuUn' => '1 non lu',
 			'com.socle.composants.badge.nonLus' => ({required Object nombre}) => '${nombre} non lus',
 			'com.socle.composants.badge.nonLusSemantique' => ({required Object nombre}) => '${nombre} éléments non lus',
+			'com.socle.composants.badge.nonLuUnSemantique' => '1 élément non lu',
 			'com.socle.composants.badge.information' => 'Information',
 			'com.socle.composants.badge.aLire' => 'À lire',
 			'com.socle.composants.badge.actionRequise' => _root.com.socle.lexique.actionRequise,
@@ -19892,6 +19899,7 @@ extension on Traductions {
 			'com.socle.composants.composer.nonConfirme' => 'Ce message n\'a pas encore été confirmé.',
 			'com.socle.composants.composer.reessayer' => 'Réessayer',
 			'com.socle.composants.composer.auteurSoi' => 'Vous',
+			'com.socle.composants.composer.annonce' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
 			'com.socle.composants.composer.brouillon' => _root.com.socle.lexique.brouillon,
 			'com.socle.composants.composer.brouillonRestaure' => 'Brouillon restauré',
 			'com.socle.composants.etats.chargement' => 'Chargement en cours',
