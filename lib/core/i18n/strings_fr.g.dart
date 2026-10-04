@@ -4707,23 +4707,20 @@ class Traductions$admin$tableau$fr {
 	/// fr: 'Accès échus'
 	String get comptes => 'Accès échus';
 
+	/// fr: 'Incidents et accès'
+	String get incidentsEtAcces => 'Incidents et accès';
+
 	/// fr: 'Demandes à trancher'
 	String get demandes => 'Demandes à trancher';
 
 	/// fr: 'Les compteurs n'ont pas pu être lus. Réessayez dans un instant.'
 	String get compteursErreur => 'Les compteurs n\'ont pas pu être lus. Réessayez dans un instant.';
 
-	/// fr: 'À traiter en premier'
-	String get aTraiter => 'À traiter en premier';
+	/// fr: 'Rien n'attend de décision aujourd'hui.'
+	String get calme => 'Rien n\'attend de décision aujourd\'hui.';
 
-	/// fr: 'Rien à traiter'
-	String get aTraiterAucun => 'Rien à traiter';
-
-	/// fr: 'Les dossiers déposés et les demandes des familles et des enseignants apparaîtront ici, le plus ancien en premier.'
-	String get aTraiterAucunDetail => 'Les dossiers déposés et les demandes des familles et des enseignants apparaîtront ici, le plus ancien en premier.';
-
-	/// fr: 'Les élèves sans enseignant s'attribuent depuis leur compteur, qui mène à la page Attribution. Les trois derniers se règlent ailleurs : ils n'ont pas encore d'écran d'action.'
-	String get aTraiterPortee => 'Les élèves sans enseignant s\'attribuent depuis leur compteur, qui mène à la page Attribution. Les trois derniers se règlent ailleurs : ils n\'ont pas encore d\'écran d\'action.';
+	/// fr: 'La liste n'a pas pu être lue.'
+	String get apercuErreur => 'La liste n\'a pas pu être lue.';
 
 	/// fr: 'Outils'
 	String get outils => 'Outils';
@@ -4740,8 +4737,8 @@ class Traductions$admin$tableau$fr {
 	/// fr: 'Ouvrir un accès en lecture seule, borné dans le temps, sur le parcours d'une personne.'
 	String get outilsAccesAgentsDetail => 'Ouvrir un accès en lecture seule, borné dans le temps, sur le parcours d\'une personne.';
 
-	/// fr: 'La liste n'a pas pu être lue en entier. Les compteurs, eux, restent justes.'
-	String get listeErreur => 'La liste n\'a pas pu être lue en entier. Les compteurs, eux, restent justes.';
+	/// fr: 'Les classes, leurs élèves et leur enseignant.'
+	String get outilsGroupesDetail => 'Les classes, leurs élèves et leur enseignant.';
 
 	/// fr: 'Dossier d'identité de {prenom}'
 	String ligneDossier({required Object prenom}) => 'Dossier d\'identité de ${prenom}';
@@ -16478,18 +16475,17 @@ extension on Traductions {
 			'admin.tableau.rapports' => 'Cahiers manquants',
 			'admin.tableau.incidents' => 'Incidents (24 h)',
 			'admin.tableau.comptes' => 'Accès échus',
+			'admin.tableau.incidentsEtAcces' => 'Incidents et accès',
 			'admin.tableau.demandes' => 'Demandes à trancher',
 			'admin.tableau.compteursErreur' => 'Les compteurs n\'ont pas pu être lus. Réessayez dans un instant.',
-			'admin.tableau.aTraiter' => 'À traiter en premier',
-			'admin.tableau.aTraiterAucun' => 'Rien à traiter',
-			'admin.tableau.aTraiterAucunDetail' => 'Les dossiers déposés et les demandes des familles et des enseignants apparaîtront ici, le plus ancien en premier.',
-			'admin.tableau.aTraiterPortee' => 'Les élèves sans enseignant s\'attribuent depuis leur compteur, qui mène à la page Attribution. Les trois derniers se règlent ailleurs : ils n\'ont pas encore d\'écran d\'action.',
+			'admin.tableau.calme' => 'Rien n\'attend de décision aujourd\'hui.',
+			'admin.tableau.apercuErreur' => 'La liste n\'a pas pu être lue.',
 			'admin.tableau.outils' => 'Outils',
 			'admin.tableau.outilsComptes' => 'Comptes',
 			'admin.tableau.outilsComptesDetail' => 'Toutes les personnes inscrites, celles qui attendent une décision en premier. Y compris celles qui n\'ont pas encore déposé de pièce.',
 			'admin.tableau.outilsAccesAgents' => 'Accès des agents IA',
 			'admin.tableau.outilsAccesAgentsDetail' => 'Ouvrir un accès en lecture seule, borné dans le temps, sur le parcours d\'une personne.',
-			'admin.tableau.listeErreur' => 'La liste n\'a pas pu être lue en entier. Les compteurs, eux, restent justes.',
+			'admin.tableau.outilsGroupesDetail' => 'Les classes, leurs élèves et leur enseignant.',
 			'admin.tableau.ligneDossier' => ({required Object prenom}) => 'Dossier d\'identité de ${prenom}',
 			'admin.tableau.ligneReaffectation' => ({required Object prenom}) => 'Changement d\'enseignant pour ${prenom}',
 			'admin.tableau.lignePlafond' => ({required Object prenom}) => 'Plafond d\'élèves de ${prenom}',
@@ -16900,9 +16896,9 @@ extension on Traductions {
 			'admin.journal.evtProfilEnfantCree' => 'Profil enfant créé',
 			'admin.journal.evtCodeCree' => 'Code d\'appairage créé',
 			'admin.journal.evtAppareilAppaire' => 'Appareil appairé',
+			'admin.journal.evtAppareilRevoque' => 'Appareil révoqué',
 			_ => null,
 		} ?? switch (path) {
-			'admin.journal.evtAppareilRevoque' => 'Appareil révoqué',
 			'admin.journal.evtPedagogie' => 'Réglages pédagogiques modifiés',
 			'admin.journal.evtAffectationPrise' => 'Élève pris par un enseignant',
 			'admin.journal.evtAffectationAttribuee' => 'Élève attribué par l\'administration',
@@ -17414,9 +17410,9 @@ extension on Traductions {
 			'compte.tuteur.pageAide.canalCourriel' => 'Courriel de l\'académie',
 			'compte.tuteur.pageAide.canalLien' => 'Page d\'aide de l\'académie',
 			'compte.tuteur.pageAide.aucunCanal' => 'Aucun canal d\'aide n\'est publié pour le moment.',
+			'compte.tuteur.pageLegal.titre' => 'Informations légales',
 			_ => null,
 		} ?? switch (path) {
-			'compte.tuteur.pageLegal.titre' => 'Informations légales',
 			'compte.tuteur.pageLegal.documents' => 'Documents acceptés',
 			'compte.tuteur.pageLegal.conditionsTuteur' => 'Conditions du tuteur',
 			'compte.tuteur.pageLegal.contratEnseignant' => 'Contrat enseignant',
@@ -17928,9 +17924,9 @@ extension on Traductions {
 			'enseignant.bienvenue.ctaInformations' => 'Vérifier mes informations',
 			'enseignant.bienvenue.ctaJournee' => 'Voir ma journée',
 			'enseignant.bienvenue.rappels' => 'Deux choses à ne pas découvrir en cours de route',
+			'enseignant.bienvenue.declarer' => 'Déclarer mes disponibilités',
 			_ => null,
 		} ?? switch (path) {
-			'enseignant.bienvenue.declarer' => 'Déclarer mes disponibilités',
 			'enseignant.bienvenue.versJournee' => 'Aller à ma journée',
 			'enseignant.bienvenue.horsLigne' => 'Sans réseau, vos créneaux ne pourront pas être enregistrés.',
 			'enseignant.bienvenue.dossierIncomplet' => 'Votre dossier n\'est pas encore validé.',
@@ -18442,9 +18438,9 @@ extension on Traductions {
 			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
 			'controleur.echanges.enCours' => 'Envoi en cours.',
 			'controleur.echanges.envoye' => 'Envoyé.',
+			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			_ => null,
 		} ?? switch (path) {
-			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.reessayer' => 'Réessayer',
 			'controleur.echanges.nouveauMessage' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
 			'controleur.demo.titre' => 'Démonstration contrôleur',
@@ -18956,9 +18952,9 @@ extension on Traductions {
 			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
 			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
 			'tc.parcours.signalement.interne' => 'Note interne',
+			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
 			_ => null,
 		} ?? switch (path) {
-			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',
 			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'Élève ${eleve}. La séance, le groupe et votre nom sont déjà joints.',
