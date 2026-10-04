@@ -169,6 +169,8 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
     if (fichier == null || !mounted) return;
     final FichierChoisi f = fichier;
     setState(() {
+      // Une piece de plus est une autre publication : nouvelle cle.
+      _cle = null;
       _numeroPiece++;
       _pieces.add(
         PieceJointe(
@@ -236,7 +238,8 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
   }
 
   void _contenuModifie() {
-    // Un contenu modifie est une autre publication : nouvelle cle.
+    // Un contenu modifie (titre, texte, categorie, pieces) est une autre
+    // publication : nouvelle cle.
     _cle = null;
     if (_erreur != null) setState(() => _erreur = null);
   }
@@ -299,8 +302,11 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
                 libelle: categorie.libelle,
               ),
           ],
-          onChange: (ReponseChoix reponse) =>
-              setState(() => _categorie = reponse.valeurs.firstOrNull),
+          onChange: (ReponseChoix reponse) => setState(() {
+            _categorie = reponse.valeurs.firstOrNull;
+            // Une autre categorie est une autre publication : nouvelle cle.
+            _cle = null;
+          }),
         ),
         if (manque(_categorie == null, c.categorieManquante)
             case final String texte) ...<Widget>[

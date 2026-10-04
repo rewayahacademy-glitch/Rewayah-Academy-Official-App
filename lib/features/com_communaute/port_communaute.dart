@@ -560,6 +560,24 @@ final List<ProviderOrFamily> _dependances = <ProviderOrFamily>[
 /// Le filtre du flux : la categorie (nulle : toutes) et la recherche.
 typedef FiltreFlux = ({String? categorieId, String recherche});
 
+/// Les publications de [publications] qui contiennent [recherche] dans leur
+/// titre ou leur texte, sans tenir compte de la casse ; toutes si
+/// [recherche] est vide. Filtre local de la liste deja lue, en attendant la
+/// recherche serveur de COM-BR-05.
+List<PublicationCommunaute> filtrerPublications(
+  List<PublicationCommunaute> publications,
+  String recherche,
+) {
+  final String cherche = recherche.trim().toLowerCase();
+  if (cherche.isEmpty) return publications;
+  return <PublicationCommunaute>[
+    for (final PublicationCommunaute p in publications)
+      if (p.titre.toLowerCase().contains(cherche) ||
+          p.texte.toLowerCase().contains(cherche))
+        p,
+  ];
+}
+
 /// Les capacites de la personne connectee dans la Communaute.
 final FutureProvider<CapacitesCommunaute> capacitesCommunauteProvider =
     FutureProvider.autoDispose<CapacitesCommunaute>(

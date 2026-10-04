@@ -151,7 +151,7 @@ void main() {
               findsOneWidget,
             );
           case SituationDemoCommunaute.vide:
-            expect(find.text(t.com.communaute.vide), findsOneWidget);
+            expect(find.text(t.com.communaute.videToutes), findsOneWidget);
           case SituationDemoCommunaute.erreur:
             expect(
               find.text(t.com.socle.composants.etats.erreurTitre),

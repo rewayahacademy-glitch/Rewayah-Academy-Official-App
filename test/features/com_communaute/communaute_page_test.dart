@@ -317,12 +317,11 @@ void main() {
       await demonter(tester);
     });
 
-    testWidgets('vide : « Aucune publication dans cette categorie. »', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('vide sur « Toutes » : « Aucune publication pour le '
+        'moment. »', (WidgetTester tester) async {
       await monterCommunaute(tester, port: memoireDemo(vide: true));
       expect(_cartes(), 0);
-      expect(find.text(c.vide), findsOneWidget);
+      expect(find.text(c.videToutes), findsOneWidget);
       // On peut toujours publier la premiere.
       expect(_present(EntreeNouvellePublication.cle), isTrue);
     });

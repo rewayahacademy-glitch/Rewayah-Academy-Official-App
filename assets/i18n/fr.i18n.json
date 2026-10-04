@@ -4807,6 +4807,7 @@
       "videTitre": "Aucune publication",
       "rechercheVideTitre": "Aucun résultat",
       "rechercheVide": "Aucune publication ne correspond à votre recherche. Essayez un autre mot.",
+      "videToutes": "Aucune publication pour le moment.",
       "flux": {
         "ouvrir": "Ouvrir la publication {titre}",
         "reponseUne": "1 réponse",
@@ -4834,7 +4835,7 @@
         "retirer": "Retirer des éléments enregistrés",
         "menu": "Actions sur la publication {titre}",
         "signaler": "Signaler la publication",
-        "signalee": "Vous avez signalé cette publication. L'équipe de modération va l'examiner.",
+        "signalee": "Le contenu a été signalé à l'équipe de modération.",
         "choisirTitre": "Aucune publication ouverte",
         "choisir": "Choisissez une publication dans la liste pour la lire et y répondre.",
         "introuvableTitre": "Publication indisponible",

@@ -211,8 +211,13 @@ class FluxPublications extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // La lecture ne depend que de la categorie : la recherche filtre la
+    // liste deja lue, sans appel au port ni retour au squelette a chaque
+    // frappe (revue COM-COMU-1). Quand COM-BR-05 donnera une recherche
+    // serveur, la frappe sera temporisee avant d'interroger le port.
+    final FiltreFlux lecture = (categorieId: filtre.categorieId, recherche: '');
     final AsyncValue<List<PublicationCommunaute>> lues = ref.watch(
-      publicationsCommunauteProvider(filtre),
+      publicationsCommunauteProvider(lecture),
     );
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final DateTime maintenant = ref.watch(horlogeCommunauteProvider)();
@@ -220,14 +225,24 @@ class FluxPublications extends ConsumerWidget {
     final bool recherche = filtre.recherche.trim().isNotEmpty;
 
     final Widget corps = BlocAsynchrone<List<PublicationCommunaute>>(
-      valeur: lues,
+      valeur: lues.whenData(
+        (List<PublicationCommunaute> liste) =>
+            filtrerPublications(liste, filtre.recherche),
+      ),
       squelette: const Skeleton.liste(),
       titreEchec: t.com.socle.composants.etats.erreurTitre,
-      onReessayer: () => ref.invalidate(publicationsCommunauteProvider(filtre)),
+      onReessayer: () =>
+          ref.invalidate(publicationsCommunauteProvider(lecture)),
       vide: VueEtatCommunication(
         etat: EtatCommunication.vide,
         titreVide: recherche ? c.rechercheVideTitre : c.videTitre,
-        phraseVide: recherche ? c.rechercheVide : c.vide,
+        // « Dans cette categorie » seulement quand une categorie est
+        // retenue ; sur « Toutes », la Communaute entiere est vide.
+        phraseVide: recherche
+            ? c.rechercheVide
+            : filtre.categorieId == null
+            ? c.videToutes
+            : c.vide,
       ),
       erreurVersEtat: (Object erreur, VoidCallback? reessayer) =>
           erreur is CapaciteIndisponible

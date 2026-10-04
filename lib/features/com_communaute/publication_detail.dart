@@ -69,6 +69,8 @@ class PublicationDetail extends ConsumerStatefulWidget {
     required this.publicationId,
     super.key,
     this.peutRepondre = false,
+    this.signales = const <ObjetLie>{},
+    this.onSignale,
     this.onRevenir,
   });
 
@@ -77,6 +79,14 @@ class PublicationDetail extends ConsumerStatefulWidget {
 
   /// Vrai si la personne peut repondre (capacite du serveur).
   final bool peutRepondre;
+
+  /// Les objets deja signales pendant la visite, tenus par la page : ils
+  /// survivent a l'ouverture d'une autre publication (aucun double
+  /// signalement, la confirmation reste dite).
+  final Set<ObjetLie> signales;
+
+  /// Un signalement accuse par le serveur, remonte a la page.
+  final ValueChanged<ObjetLie>? onSignale;
 
   /// Ramene a la liste.
   final VoidCallback? onRevenir;
@@ -107,8 +117,15 @@ class PublicationDetail extends ConsumerStatefulWidget {
 
 class _PublicationDetailState extends ConsumerState<PublicationDetail> {
   final List<ReponseEnAttente> _enAttente = <ReponseEnAttente>[];
-  final Set<ObjetLie> _signales = <ObjetLie>{};
+
+  /// Les signalements de cette publication, quand aucune page ne les tient.
+  final Set<ObjetLie> _signalesLocaux = <ObjetLie>{};
   static int _compteur = 0;
+
+  Set<ObjetLie> get _signales => <ObjetLie>{
+    ...widget.signales,
+    ..._signalesLocaux,
+  };
 
   String get _id => widget.publicationId;
 
@@ -171,7 +188,9 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
       moderation: ref.read(portModerationProvider),
       objet: objet,
     );
-    if (accuse && mounted) setState(() => _signales.add(objet));
+    if (!accuse || !mounted) return;
+    setState(() => _signalesLocaux.add(objet));
+    widget.onSignale?.call(objet);
   }
 
   Future<void> _basculerEnregistrement(ObjetLie objet, bool enregistre) async {
@@ -253,7 +272,8 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
     final bool peutSignaler =
         ref.watch(capacitesModerationCommunauteProvider).value?.peutSignaler ??
         false;
-    final bool signalee = _signales.contains(objet);
+    final Set<ObjetLie> signales = _signales;
+    final bool signalee = signales.contains(objet);
     final AsyncValue<bool> enregistrement = ref.watch(
       estEnregistreProvider(objet),
     );
@@ -386,7 +406,7 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
             enAttente: List<ReponseEnAttente>.unmodifiable(_enAttente),
             maintenant: maintenant,
             peutSignaler: peutSignaler,
-            signalees: _signales,
+            signalees: signales,
             onSignaler: (ReponseCommunaute r) => unawaited(_signaler(r.objet)),
             onRenvoyer: (ReponseEnAttente r) => unawaited(_envoyer(r)),
           ),

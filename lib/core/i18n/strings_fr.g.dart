@@ -11089,6 +11089,9 @@ class Traductions$com$communaute$fr {
 	/// fr: 'Aucune publication ne correspond à votre recherche. Essayez un autre mot.'
 	String get rechercheVide => 'Aucune publication ne correspond à votre recherche. Essayez un autre mot.';
 
+	/// fr: 'Aucune publication pour le moment.'
+	String get videToutes => 'Aucune publication pour le moment.';
+
 	late final Traductions$com$communaute$flux$fr flux = Traductions$com$communaute$flux$fr.internal(_root);
 	late final Traductions$com$communaute$recherche$fr recherche = Traductions$com$communaute$recherche$fr.internal(_root);
 	late final Traductions$com$communaute$moment$fr moment = Traductions$com$communaute$moment$fr.internal(_root);
@@ -15371,8 +15374,8 @@ class Traductions$com$communaute$publication$fr {
 	/// fr: 'Signaler la publication'
 	String get signaler => 'Signaler la publication';
 
-	/// fr: 'Vous avez signalé cette publication. L'équipe de modération va l'examiner.'
-	String get signalee => 'Vous avez signalé cette publication. L\'équipe de modération va l\'examiner.';
+	/// fr: 'Le contenu a été signalé à l'équipe de modération.'
+	String get signalee => 'Le contenu a été signalé à l\'équipe de modération.';
 
 	/// fr: 'Aucune publication ouverte'
 	String get choisirTitre => 'Aucune publication ouverte';
@@ -20360,6 +20363,7 @@ extension on Traductions {
 			'com.communaute.videTitre' => 'Aucune publication',
 			'com.communaute.rechercheVideTitre' => 'Aucun résultat',
 			'com.communaute.rechercheVide' => 'Aucune publication ne correspond à votre recherche. Essayez un autre mot.',
+			'com.communaute.videToutes' => 'Aucune publication pour le moment.',
 			'com.communaute.flux.ouvrir' => ({required Object titre}) => 'Ouvrir la publication ${titre}',
 			'com.communaute.flux.reponseUne' => '1 réponse',
 			'com.communaute.flux.reponses' => ({required Object nombre}) => '${nombre} réponses',
@@ -20380,7 +20384,7 @@ extension on Traductions {
 			'com.communaute.publication.retirer' => 'Retirer des éléments enregistrés',
 			'com.communaute.publication.menu' => ({required Object titre}) => 'Actions sur la publication ${titre}',
 			'com.communaute.publication.signaler' => 'Signaler la publication',
-			'com.communaute.publication.signalee' => 'Vous avez signalé cette publication. L\'équipe de modération va l\'examiner.',
+			'com.communaute.publication.signalee' => 'Le contenu a été signalé à l\'équipe de modération.',
 			'com.communaute.publication.choisirTitre' => 'Aucune publication ouverte',
 			'com.communaute.publication.choisir' => 'Choisissez une publication dans la liste pour la lire et y répondre.',
 			'com.communaute.publication.introuvableTitre' => 'Publication indisponible',
@@ -20416,9 +20420,9 @@ extension on Traductions {
 			'com.communaute.composer.choixIndisponible' => 'Le choix d\'un fichier n\'est pas encore disponible ici.',
 			'com.communaute.composer.publier' => 'Publier',
 			'com.communaute.composer.fermer' => 'Fermer la nouvelle publication',
-			'com.communaute.composer.confirmee' => 'Votre publication est en ligne.',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.composer.confirmee' => 'Votre publication est en ligne.',
 			'com.communaute.composer.erreurEnvoi' => 'Votre publication n\'a pas encore été confirmée. Vérifiez votre connexion, puis réessayez.',
 			'com.communaute.composer.indisponible' => 'La publication n\'est pas encore disponible ici.',
 			'com.communaute.regles.panneau' => 'Aide et règles',

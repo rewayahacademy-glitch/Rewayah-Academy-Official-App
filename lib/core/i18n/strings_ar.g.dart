@@ -361,6 +361,7 @@ class _Traductions$com$communaute$ar extends Traductions$com$communaute$fr {
 	@override String get videTitre => 'لا توجد منشورات';
 	@override String get rechercheVideTitre => 'لا توجد نتائج';
 	@override String get rechercheVide => 'لا يوجد منشور يطابق بحثك. جرّب كلمة أخرى.';
+	@override String get videToutes => 'لا توجد منشورات حاليًا.';
 	@override late final _Traductions$com$communaute$flux$ar flux = _Traductions$com$communaute$flux$ar._(_root);
 	@override late final _Traductions$com$communaute$recherche$ar recherche = _Traductions$com$communaute$recherche$ar._(_root);
 	@override late final _Traductions$com$communaute$moment$ar moment = _Traductions$com$communaute$moment$ar._(_root);
@@ -593,7 +594,7 @@ class _Traductions$com$communaute$publication$ar extends Traductions$com$communa
 	@override String get retirer => 'إزالة من العناصر المحفوظة';
 	@override String menu({required Object titre}) => 'إجراءات على المنشور ${titre}';
 	@override String get signaler => 'الإبلاغ عن المنشور';
-	@override String get signalee => 'لقد أبلغت عن هذا المنشور. سيراجعه فريق الإشراف.';
+	@override String get signalee => 'تم الإبلاغ عن المحتوى إلى فريق الإشراف.';
 	@override String get choisirTitre => 'لا يوجد منشور مفتوح';
 	@override String get choisir => 'اختر منشورًا من القائمة لقراءته والردّ عليه.';
 	@override String get introuvableTitre => 'المنشور غير متاح';
@@ -1077,6 +1078,7 @@ extension on TraductionsAr {
 			'com.communaute.videTitre' => 'لا توجد منشورات',
 			'com.communaute.rechercheVideTitre' => 'لا توجد نتائج',
 			'com.communaute.rechercheVide' => 'لا يوجد منشور يطابق بحثك. جرّب كلمة أخرى.',
+			'com.communaute.videToutes' => 'لا توجد منشورات حاليًا.',
 			'com.communaute.flux.ouvrir' => ({required Object titre}) => 'فتح المنشور ${titre}',
 			'com.communaute.flux.reponseUne' => 'ردّ واحد',
 			'com.communaute.flux.reponses' => ({required Object nombre}) => '${nombre} ردود',
@@ -1097,7 +1099,7 @@ extension on TraductionsAr {
 			'com.communaute.publication.retirer' => 'إزالة من العناصر المحفوظة',
 			'com.communaute.publication.menu' => ({required Object titre}) => 'إجراءات على المنشور ${titre}',
 			'com.communaute.publication.signaler' => 'الإبلاغ عن المنشور',
-			'com.communaute.publication.signalee' => 'لقد أبلغت عن هذا المنشور. سيراجعه فريق الإشراف.',
+			'com.communaute.publication.signalee' => 'تم الإبلاغ عن المحتوى إلى فريق الإشراف.',
 			'com.communaute.publication.choisirTitre' => 'لا يوجد منشور مفتوح',
 			'com.communaute.publication.choisir' => 'اختر منشورًا من القائمة لقراءته والردّ عليه.',
 			'com.communaute.publication.introuvableTitre' => 'المنشور غير متاح',

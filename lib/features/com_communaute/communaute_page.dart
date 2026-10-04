@@ -11,7 +11,12 @@
 // - Ordinateur : Navigation (la coquille) | Flux | Publication/Reponses |
 //   Aide/Regles. Les categories et la recherche persistante tiennent la
 //   ligne au-dessus des colonnes.
-// - Tablette : Flux | Publication ; l'aide s'ouvre en feuille.
+// - Tablette (deux colonnes) : Flux | Publication ; l'aide s'ouvre en
+//   feuille. Dans la vraie coquille Enseignant, le rail a libelles laisse
+//   moins de 600 a l'espace a 768 : les deux colonnes n'arrivent qu'a partir
+//   de 1024 ; a 768, c'est la disposition du telephone (seuils
+//   d'`EspaceTravailAdaptatif` avec un rail a libelles : point ouvert
+//   COM-FUS).
 // - Telephone : une surface a la fois (le flux, la publication ou le
 //   composer), retour explicite ; la recherche est une surface temporaire
 //   dont la fermeture rend le flux tel qu'il etait (spec section 18).
@@ -27,6 +32,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/communications/modeles_communication.dart';
 import '../../core/communications/port_brouillons.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -85,6 +91,15 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
   /// Le nombre de colonnes de la derniere mise en page : lu par le retour,
   /// au moment du geste.
   int _colonnes = 1;
+
+  /// Vrai tant que le panneau Aide/Regles est ouvert (il se ferme par le
+  /// bouton du socle) : ferme, le bandeau des regles revient dans le flux.
+  bool _contexteOuvert = true;
+
+  /// Les objets signales pendant la visite : ils survivent au changement de
+  /// publication ouverte, pour qu'un objet ne soit jamais signale deux fois
+  /// et que la confirmation reste dite.
+  final Set<ObjetLie> _signales = <ObjetLie>{};
 
   FiltreFlux get _filtre => (categorieId: _categorie, recherche: _recherche);
 
@@ -225,7 +240,10 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
     final CapacitesCommunaute capacites = capacitesLues.requireValue;
     final List<CategorieCommunaute> categories = categoriesLues.requireValue;
     final bool uneColonne = _colonnes == 1;
-    final bool avecContexte = _colonnes >= 3;
+    // Le panneau Aide/Regles n'est en colonne qu'a trois colonnes et tant
+    // qu'il est ouvert ; sinon le bandeau « Partage pedagogique uniquement »
+    // se pose dans le flux, toujours present (spec section 5.2, section 16).
+    final bool avecContexte = _colonnes >= 3 && _contexteOuvert;
 
     final Widget? entree = capacites.peutPublier && !_composer
         ? EntreeNouvellePublication(
@@ -262,6 +280,9 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
       contexte: const ReglesCommunaute(),
       titreContexte: t.com.communaute.regles.panneau,
       surfaceMobile: _surface,
+      contexteOuvertInitial: _contexteOuvert,
+      onContexteBascule: (bool ouvert) =>
+          setState(() => _contexteOuvert = ouvert),
     );
 
     return Column(
@@ -362,6 +383,8 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
       key: ValueKey<String>('communaute-detail-$selection'),
       publicationId: selection,
       peutRepondre: capacites.peutRepondre,
+      signales: _signales,
+      onSignale: (ObjetLie objet) => setState(() => _signales.add(objet)),
       onRevenir: () => setState(() {
         _selection = null;
         _surface = SurfaceMobile.liste;
