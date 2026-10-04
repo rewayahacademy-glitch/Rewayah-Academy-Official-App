@@ -2161,6 +2161,28 @@ class Traductions$notifications$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$notifications$filtres$fr filtres = Traductions$notifications$filtres$fr.internal(_root);
+
+	/// fr: 'Aucune notification dans ce filtre'
+	String get filtreVideTitre => 'Aucune notification dans ce filtre';
+
+	/// fr: 'Choisissez « Toutes » pour revoir l'ensemble de vos notifications.'
+	String get filtreVidePhrase => 'Choisissez « Toutes » pour revoir l\'ensemble de vos notifications.';
+
+	/// fr: 'Voir toutes les notifications'
+	String get voirToutes => 'Voir toutes les notifications';
+
+	/// fr: 'Non lue'
+	String get nonLue => 'Non lue';
+
+	/// fr: 'non lue'
+	String get nonLueSemantique => 'non lue';
+
+	/// fr: 'La lecture n'est pas encore confirmée. Réessayez dans un instant.'
+	String get lectureNonConfirmee => 'La lecture n\'est pas encore confirmée. Réessayez dans un instant.';
+
+	late final Traductions$notifications$detail$fr detail = Traductions$notifications$detail$fr.internal(_root);
+	late final Traductions$notifications$types$fr types = Traductions$notifications$types$fr.internal(_root);
 
 	/// fr: 'Notifications'
 	String get titre => 'Notifications';
@@ -7211,6 +7233,150 @@ class Traductions$historique$observation$fr {
 	String get introuvablePhrase => 'Aucune visite enregistrée ne correspond à cette séance.';
 }
 
+// Path: notifications.filtres
+class Traductions$notifications$filtres$fr {
+	Traductions$notifications$filtres$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Filtrer les notifications'
+	String get libelle => 'Filtrer les notifications';
+
+	/// fr: 'Toutes'
+	String get toutes => 'Toutes';
+
+	/// fr: 'Non lues'
+	String get nonLues => 'Non lues';
+
+	/// fr: 'Mentions'
+	String get mentions => 'Mentions';
+
+	/// fr: 'Action requise'
+	String get actionRequise => 'Action requise';
+}
+
+// Path: notifications.detail
+class Traductions$notifications$detail$fr {
+	Traductions$notifications$detail$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Choisissez une notification'
+	String get choisirTitre => 'Choisissez une notification';
+
+	/// fr: 'Son détail s'affiche ici, à côté de la liste.'
+	String get choisirPhrase => 'Son détail s\'affiche ici, à côté de la liste.';
+
+	/// fr: 'Reçue le {date} à {heure}'
+	String recue({required Object date, required Object heure}) => 'Reçue le ${date} à ${heure}';
+
+	/// fr: 'Ouvrir la page concernée'
+	String get ouvrir => 'Ouvrir la page concernée';
+
+	/// fr: 'Revenir à la liste des notifications'
+	String get retour => 'Revenir à la liste des notifications';
+}
+
+// Path: notifications.types
+class Traductions$notifications$types$fr {
+	Traductions$notifications$types$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Annonce de Classe'
+	String get annonceClasse => 'Annonce de Classe';
+
+	/// fr: 'Changement de séance'
+	String get changementSeance => 'Changement de séance';
+
+	/// fr: 'Décision sur un dossier'
+	String get decisionDossier => 'Décision sur un dossier';
+
+	/// fr: 'Message'
+	String get messageMetier => 'Message';
+
+	/// fr: 'Réponse attendue'
+	String get reponseAttendue => 'Réponse attendue';
+
+	/// fr: 'Accès et paiements'
+	String get accesFinance => 'Accès et paiements';
+
+	/// fr: 'Observation'
+	String get observation => 'Observation';
+
+	/// fr: 'Travail ou ressource'
+	String get travailRessource => 'Travail ou ressource';
+
+	/// fr: 'Annonce de la direction'
+	String get annonceDirection => 'Annonce de la direction';
+
+	/// fr: 'Changement de planning'
+	String get changementPlanning => 'Changement de planning';
+
+	/// fr: 'Remplacement'
+	String get remplacement => 'Remplacement';
+
+	/// fr: 'Mention dans la Communauté'
+	String get mentionCommunaute => 'Mention dans la Communauté';
+
+	/// fr: 'Réponse dans la Communauté'
+	String get reponseCommunaute => 'Réponse dans la Communauté';
+
+	/// fr: 'Message de l'Administration'
+	String get messageAdministration => 'Message de l\'Administration';
+
+	/// fr: 'Dossier à traiter'
+	String get dossierATraiter => 'Dossier à traiter';
+
+	/// fr: 'Signalement dans la Communauté'
+	String get signalementCommunaute => 'Signalement dans la Communauté';
+
+	/// fr: 'Réponse à un fil'
+	String get reponseFil => 'Réponse à un fil';
+
+	/// fr: 'Annonce planifiée à publier'
+	String get annoncePlanifiee => 'Annonce planifiée à publier';
+
+	/// fr: 'Événement de l'académie'
+	String get evenementOperationnel => 'Événement de l\'académie';
+
+	/// fr: 'Mission'
+	String get mission => 'Mission';
+
+	/// fr: 'Changement de mission'
+	String get changementMission => 'Changement de mission';
+
+	/// fr: 'Réponse de l'Administration'
+	String get reponseAdministration => 'Réponse de l\'Administration';
+
+	/// fr: 'Mention dans Le Studio'
+	String get mentionStudio => 'Mention dans Le Studio';
+
+	/// fr: 'Réponse dans Le Studio'
+	String get reponseStudio => 'Réponse dans Le Studio';
+
+	/// fr: 'Décision demandée'
+	String get decisionDemandee => 'Décision demandée';
+
+	/// fr: 'Élément assigné'
+	String get elementAssigne => 'Élément assigné';
+
+	/// fr: 'Annonce interne'
+	String get annonceInterne => 'Annonce interne';
+
+	/// fr: 'Événement'
+	String get evenementContextuel => 'Événement';
+
+	/// fr: 'Notification'
+	String get autre => 'Notification';
+}
+
 // Path: eleve.accueil
 class Traductions$eleve$accueil$fr {
 	Traductions$eleve$accueil$fr.internal(this._root);
@@ -11100,6 +11266,50 @@ class Traductions$com$annonces$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+
+	/// fr: 'Annonces de la Classe'
+	String get section => 'Annonces de la Classe';
+
+	/// fr: 'Annonce'
+	String get annonce => 'Annonce';
+
+	/// fr: 'Publier une annonce'
+	String get publier => 'Publier une annonce';
+
+	/// fr: 'Aucune annonce pour cette Classe. Publiez la première pour toute la Classe.'
+	String get videPublier => 'Aucune annonce pour cette Classe. Publiez la première pour toute la Classe.';
+
+	/// fr: '{auteur}, le {date} à {heure}'
+	String auteurDate({required Object auteur, required Object date, required Object heure}) => '${auteur}, le ${date} à ${heure}';
+
+	/// fr: 'Le {date} à {heure}'
+	String date({required Object date, required Object heure}) => 'Le ${date} à ${heure}';
+
+	/// fr: 'Lire l'annonce en entier'
+	String get lire => 'Lire l\'annonce en entier';
+
+	/// fr: 'Ouvrir la Classe'
+	String get ouvrirClasse => 'Ouvrir la Classe';
+
+	/// fr: 'Ouvrir {classe}'
+	String ouvrirClasseSemantique({required Object classe}) => 'Ouvrir ${classe}';
+
+	/// fr: 'Marquer comme lue'
+	String get marquerLue => 'Marquer comme lue';
+
+	/// fr: 'Lue'
+	String get lue => 'Lue';
+
+	/// fr: 'Annonce de {classe} : {titre}'
+	String carteSemantique({required Object classe, required Object titre}) => 'Annonce de ${classe} : ${titre}';
+
+	/// fr: 'Cette annonce n'est plus disponible'
+	String get introuvableTitre => 'Cette annonce n\'est plus disponible';
+
+	/// fr: 'Elle a peut-être été retirée de la Classe. Revenez à vos notifications.'
+	String get introuvablePhrase => 'Elle a peut-être été retirée de la Classe. Revenez à vos notifications.';
+
+	late final Traductions$com$annonces$demo$fr demo = Traductions$com$annonces$demo$fr.internal(_root);
 
 	/// fr: 'Annonces'
 	String get titre => 'Annonces';
@@ -15250,6 +15460,34 @@ class Traductions$com$socle$navigation$fr {
 	late final Traductions$com$socle$navigation$demo$fr demo = Traductions$com$socle$navigation$demo$fr.internal(_root);
 }
 
+// Path: com.annonces.demo
+class Traductions$com$annonces$demo$fr {
+	Traductions$com$annonces$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Démonstration hors production : données fictives, rien n'est envoyé.'
+	String get detail => 'Démonstration hors production : données fictives, rien n\'est envoyé.';
+
+	/// fr: 'Choisissez le rôle à montrer'
+	String get choisirRole => 'Choisissez le rôle à montrer';
+
+	late final Traductions$com$annonces$demo$roles$fr roles = Traductions$com$annonces$demo$roles$fr.internal(_root);
+
+	/// fr: 'Classe An-Nour'
+	String get classeNour => 'Classe An-Nour';
+
+	/// fr: 'Classe Al-Fajr'
+	String get classeFajr => 'Classe Al-Fajr';
+
+	/// fr: 'Enseignante de la Classe'
+	String get enseignante => 'Enseignante de la Classe';
+
+	late final Traductions$com$annonces$demo$f$fr f = Traductions$com$annonces$demo$f$fr.internal(_root);
+}
+
 // Path: salle.preparation.eleve.guidee
 class Traductions$salle$preparation$eleve$guidee$fr {
 	Traductions$salle$preparation$eleve$guidee$fr.internal(this._root);
@@ -15932,6 +16170,120 @@ class Traductions$com$socle$navigation$demo$fr {
 
 	/// fr: 'Choisissez un espace à essayer.'
 	String get choisir => 'Choisissez un espace à essayer.';
+}
+
+// Path: com.annonces.demo.roles
+class Traductions$com$annonces$demo$roles$fr {
+	Traductions$com$annonces$demo$roles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Famille'
+	String get tuteur => 'Famille';
+
+	/// fr: 'Enseignant'
+	String get enseignant => 'Enseignant';
+
+	/// fr: 'Élève adulte'
+	String get adulte => 'Élève adulte';
+
+	/// fr: 'Administration'
+	String get admin => 'Administration';
+
+	/// fr: 'Contrôleur'
+	String get controleur => 'Contrôleur';
+}
+
+// Path: com.annonces.demo.f
+class Traductions$com$annonces$demo$f$fr {
+	Traductions$com$annonces$demo$f$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Récitation de fin de trimestre devant les familles'
+	String get annonceNourTitre => 'Récitation de fin de trimestre devant les familles';
+
+	/// fr: 'Chères familles, la Classe An-Nour présentera sa récitation de fin de trimestre le samedi 14 décembre à 10 h, en visio. Chaque élève récitera la sourate travaillée ce trimestre. Merci de prévoir une connexion stable et un endroit calme. Les élèves qui le souhaitent peuvent répéter pendant la séance du mercredi précédent. Les familles peuvent assister en silence, micro coupé. Un compte rendu sera partagé après la séance.'
+	String get annonceNourTexte => 'Chères familles, la Classe An-Nour présentera sa récitation de fin de trimestre le samedi 14 décembre à 10 h, en visio. Chaque élève récitera la sourate travaillée ce trimestre. Merci de prévoir une connexion stable et un endroit calme. Les élèves qui le souhaitent peuvent répéter pendant la séance du mercredi précédent. Les familles peuvent assister en silence, micro coupé. Un compte rendu sera partagé après la séance.';
+
+	/// fr: 'Révision avant l'évaluation de jeudi'
+	String get annonceFajrTitre => 'Révision avant l\'évaluation de jeudi';
+
+	/// fr: 'Révisez les dix derniers versets de la sourate Al-Mulk avant jeudi.'
+	String get annonceFajrTexte => 'Révisez les dix derniers versets de la sourate Al-Mulk avant jeudi.';
+
+	/// fr: 'La séance de ce soir est annulée'
+	String get tuteurUrgent => 'La séance de ce soir est annulée';
+
+	/// fr: 'L'enseignante est absente ce soir. La séance est reportée à jeudi, même heure. Vous n'avez rien à faire.'
+	String get tuteurUrgentTexte => 'L\'enseignante est absente ce soir. La séance est reportée à jeudi, même heure. Vous n\'avez rien à faire.';
+
+	/// fr: 'Réponse attendue : accord pour la récitation de Yasmine'
+	String get tuteurReponse => 'Réponse attendue : accord pour la récitation de Yasmine';
+
+	/// fr: 'L'enseignante attend votre accord pour que Yasmine récite devant les familles. Répondez-lui depuis l'Espace Classe.'
+	String get tuteurReponseTexte => 'L\'enseignante attend votre accord pour que Yasmine récite devant les familles. Répondez-lui depuis l\'Espace Classe.';
+
+	/// fr: 'Nouveau message de l'enseignante de la Classe An-Nour'
+	String get tuteurMessage => 'Nouveau message de l\'enseignante de la Classe An-Nour';
+
+	/// fr: 'Votre dossier d'inscription est validé'
+	String get tuteurDossier => 'Votre dossier d\'inscription est validé';
+
+	/// fr: 'Votre séance de mardi est déplacée à 19 h'
+	String get adulteSeance => 'Votre séance de mardi est déplacée à 19 h';
+
+	/// fr: 'Nouveau message de votre enseignante'
+	String get adulteMessage => 'Nouveau message de votre enseignante';
+
+	/// fr: 'Message de la famille de Yasmine, Classe An-Nour'
+	String get enseignantFamille => 'Message de la famille de Yasmine, Classe An-Nour';
+
+	/// fr: 'Annonce de la direction : calendrier des vacances d'hiver'
+	String get enseignantDirection => 'Annonce de la direction : calendrier des vacances d\'hiver';
+
+	/// fr: 'Les cours s'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.'
+	String get enseignantDirectionTexte => 'Les cours s\'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.';
+
+	/// fr: 'Votre planning de la semaine prochaine a changé'
+	String get enseignantPlanning => 'Votre planning de la semaine prochaine a changé';
+
+	/// fr: 'Une publication de la Communauté vous mentionne'
+	String get enseignantMention => 'Une publication de la Communauté vous mentionne';
+
+	/// fr: 'Nouvelle réponse à votre publication'
+	String get enseignantReponse => 'Nouvelle réponse à votre publication';
+
+	/// fr: 'Message de l'Administration : pièces à fournir'
+	String get enseignantAdministration => 'Message de l\'Administration : pièces à fournir';
+
+	/// fr: 'Trois dossiers d'inscription sont à traiter'
+	String get adminDossiers => 'Trois dossiers d\'inscription sont à traiter';
+
+	/// fr: 'Une publication de la Communauté a été signalée'
+	String get adminSignalement => 'Une publication de la Communauté a été signalée';
+
+	/// fr: 'Réponse de la famille de Bilal à votre message'
+	String get adminReponse => 'Réponse de la famille de Bilal à votre message';
+
+	/// fr: 'Une annonce planifiée est à vérifier avant publication'
+	String get adminPlanifiee => 'Une annonce planifiée est à vérifier avant publication';
+
+	/// fr: 'Classe An-Nour : effectif complet'
+	String get adminOperationnel => 'Classe An-Nour : effectif complet';
+
+	/// fr: 'Nouvelle mission : visite de la Classe An-Nour'
+	String get controleurMission => 'Nouvelle mission : visite de la Classe An-Nour';
+
+	/// fr: 'Votre mission de jeudi est déplacée à 18 h'
+	String get controleurChangement => 'Votre mission de jeudi est déplacée à 18 h';
+
+	/// fr: 'Réponse de l'Administration à votre rapport'
+	String get controleurReponse => 'Réponse de l\'Administration à votre rapport';
 }
 
 /// The flat map containing all translations for locale <fr>.
@@ -18106,6 +18458,51 @@ extension on Traductions {
 			'historique.observation.terminee' => 'Visite terminée',
 			'historique.observation.introuvableTitre' => 'Aucune visite pour cette séance',
 			'historique.observation.introuvablePhrase' => 'Aucune visite enregistrée ne correspond à cette séance.',
+			'notifications.filtres.libelle' => 'Filtrer les notifications',
+			'notifications.filtres.toutes' => 'Toutes',
+			'notifications.filtres.nonLues' => 'Non lues',
+			'notifications.filtres.mentions' => 'Mentions',
+			'notifications.filtres.actionRequise' => 'Action requise',
+			'notifications.filtreVideTitre' => 'Aucune notification dans ce filtre',
+			'notifications.filtreVidePhrase' => 'Choisissez « Toutes » pour revoir l\'ensemble de vos notifications.',
+			'notifications.voirToutes' => 'Voir toutes les notifications',
+			'notifications.nonLue' => 'Non lue',
+			'notifications.nonLueSemantique' => 'non lue',
+			'notifications.lectureNonConfirmee' => 'La lecture n\'est pas encore confirmée. Réessayez dans un instant.',
+			'notifications.detail.choisirTitre' => 'Choisissez une notification',
+			'notifications.detail.choisirPhrase' => 'Son détail s\'affiche ici, à côté de la liste.',
+			'notifications.detail.recue' => ({required Object date, required Object heure}) => 'Reçue le ${date} à ${heure}',
+			'notifications.detail.ouvrir' => 'Ouvrir la page concernée',
+			'notifications.detail.retour' => 'Revenir à la liste des notifications',
+			'notifications.types.annonceClasse' => 'Annonce de Classe',
+			'notifications.types.changementSeance' => 'Changement de séance',
+			'notifications.types.decisionDossier' => 'Décision sur un dossier',
+			'notifications.types.messageMetier' => 'Message',
+			'notifications.types.reponseAttendue' => 'Réponse attendue',
+			'notifications.types.accesFinance' => 'Accès et paiements',
+			'notifications.types.observation' => 'Observation',
+			'notifications.types.travailRessource' => 'Travail ou ressource',
+			'notifications.types.annonceDirection' => 'Annonce de la direction',
+			'notifications.types.changementPlanning' => 'Changement de planning',
+			'notifications.types.remplacement' => 'Remplacement',
+			'notifications.types.mentionCommunaute' => 'Mention dans la Communauté',
+			'notifications.types.reponseCommunaute' => 'Réponse dans la Communauté',
+			'notifications.types.messageAdministration' => 'Message de l\'Administration',
+			'notifications.types.dossierATraiter' => 'Dossier à traiter',
+			'notifications.types.signalementCommunaute' => 'Signalement dans la Communauté',
+			'notifications.types.reponseFil' => 'Réponse à un fil',
+			'notifications.types.annoncePlanifiee' => 'Annonce planifiée à publier',
+			'notifications.types.evenementOperationnel' => 'Événement de l\'académie',
+			'notifications.types.mission' => 'Mission',
+			'notifications.types.changementMission' => 'Changement de mission',
+			'notifications.types.reponseAdministration' => 'Réponse de l\'Administration',
+			'notifications.types.mentionStudio' => 'Mention dans Le Studio',
+			'notifications.types.reponseStudio' => 'Réponse dans Le Studio',
+			'notifications.types.decisionDemandee' => 'Décision demandée',
+			'notifications.types.elementAssigne' => 'Élément assigné',
+			'notifications.types.annonceInterne' => 'Annonce interne',
+			'notifications.types.evenementContextuel' => 'Événement',
+			'notifications.types.autre' => 'Notification',
 			'notifications.titre' => 'Notifications',
 			'notifications.indisponibleTitre' => 'Les notifications ne sont pas encore disponibles',
 			'notifications.indisponiblePhrase' => 'Les rappels de séance et les messages de l\'académie s\'afficheront ici dès qu\'ils seront ouverts.',
@@ -18465,6 +18862,8 @@ extension on Traductions {
 			'enseignant.eleve.travail' => 'Travail',
 			'enseignant.eleve.travailReprise' => ({required Object page}) => 'Reprise à la ${page}',
 			'enseignant.eleve.derniereSeance' => 'Dernière séance',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.eleve.nonRenseigne' => 'Non renseigné',
 			'enseignant.eleve.signaler' => 'Signaler un besoin',
 			'enseignant.eleve.signalerAide' => 'Un besoin à remonter à l\'académie, sans recopier le contexte.',
@@ -18510,8 +18909,6 @@ extension on Traductions {
 			'enseignant.bienvenue.ctaJournee' => 'Voir ma journée',
 			'enseignant.bienvenue.rappels' => 'Deux choses à ne pas découvrir en cours de route',
 			'enseignant.bienvenue.declarer' => 'Déclarer mes disponibilités',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.bienvenue.versJournee' => 'Aller à ma journée',
 			'enseignant.bienvenue.horsLigne' => 'Sans réseau, vos créneaux ne pourront pas être enregistrés.',
 			'enseignant.bienvenue.dossierIncomplet' => 'Votre dossier n\'est pas encore validé.',
@@ -18979,6 +19376,8 @@ extension on Traductions {
 			'controleur.observation.autre' => 'Autre',
 			'controleur.observation.autreAide' => 'Quand aucun autre domaine ne convient · précisez-le dans votre texte',
 			'controleur.observation.questionPersonne' => 'Qui est concerné ?',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.contextePersonne' => 'Indiquez qui l\'observation concerne. Un élève se choisit dans la liste de la Classe, prénom seulement.',
 			'controleur.observation.enseignant' => 'Enseignant',
 			'controleur.observation.enseignantAide' => 'Quand l\'observation porte sur l\'enseignant de la séance',
@@ -19024,8 +19423,6 @@ extension on Traductions {
 			'controleur.echanges.enCours' => 'Envoi en cours.',
 			'controleur.echanges.envoye' => 'Envoyé.',
 			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.echanges.reessayer' => 'Réessayer',
 			'controleur.echanges.nouveauMessage' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
 			'controleur.demo.titre' => 'Démonstration contrôleur',
@@ -19493,6 +19890,8 @@ extension on Traductions {
 			'tc.parcours.avant.nonBrancheDetail' => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.',
 			'tc.parcours.avant.reprendre' => 'Reprendre le cours',
 			'tc.parcours.avant.reprendreDepuis' => ({required Object position}) => 'Reprendre le cours à ${position}',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.intention.apprendre' => 'À apprendre',
 			'tc.parcours.intention.revoir' => 'À revoir',
 			'tc.parcours.intention.renforcer' => 'À renforcer',
@@ -19538,8 +19937,6 @@ extension on Traductions {
 			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
 			'tc.parcours.signalement.interne' => 'Note interne',
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',
 			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'Élève ${eleve}. La séance, le groupe et votre nom sont déjà joints.',
@@ -19996,6 +20393,59 @@ extension on Traductions {
 			'com.communaute.vide' => 'Aucune publication dans cette catégorie.',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
 			'com.studio.vide' => 'Aucune activité à traiter ici.',
+			'com.annonces.section' => 'Annonces de la Classe',
+			'com.annonces.annonce' => 'Annonce',
+			'com.annonces.publier' => 'Publier une annonce',
+			'com.annonces.videPublier' => 'Aucune annonce pour cette Classe. Publiez la première pour toute la Classe.',
+			'com.annonces.auteurDate' => ({required Object auteur, required Object date, required Object heure}) => '${auteur}, le ${date} à ${heure}',
+			'com.annonces.date' => ({required Object date, required Object heure}) => 'Le ${date} à ${heure}',
+			'com.annonces.lire' => 'Lire l\'annonce en entier',
+			'com.annonces.ouvrirClasse' => 'Ouvrir la Classe',
+			'com.annonces.ouvrirClasseSemantique' => ({required Object classe}) => 'Ouvrir ${classe}',
+			'com.annonces.marquerLue' => 'Marquer comme lue',
+			'com.annonces.lue' => 'Lue',
+			_ => null,
+		} ?? switch (path) {
+			'com.annonces.carteSemantique' => ({required Object classe, required Object titre}) => 'Annonce de ${classe} : ${titre}',
+			'com.annonces.introuvableTitre' => 'Cette annonce n\'est plus disponible',
+			'com.annonces.introuvablePhrase' => 'Elle a peut-être été retirée de la Classe. Revenez à vos notifications.',
+			'com.annonces.demo.detail' => 'Démonstration hors production : données fictives, rien n\'est envoyé.',
+			'com.annonces.demo.choisirRole' => 'Choisissez le rôle à montrer',
+			'com.annonces.demo.roles.tuteur' => 'Famille',
+			'com.annonces.demo.roles.enseignant' => 'Enseignant',
+			'com.annonces.demo.roles.adulte' => 'Élève adulte',
+			'com.annonces.demo.roles.admin' => 'Administration',
+			'com.annonces.demo.roles.controleur' => 'Contrôleur',
+			'com.annonces.demo.classeNour' => 'Classe An-Nour',
+			'com.annonces.demo.classeFajr' => 'Classe Al-Fajr',
+			'com.annonces.demo.enseignante' => 'Enseignante de la Classe',
+			'com.annonces.demo.f.annonceNourTitre' => 'Récitation de fin de trimestre devant les familles',
+			'com.annonces.demo.f.annonceNourTexte' => 'Chères familles, la Classe An-Nour présentera sa récitation de fin de trimestre le samedi 14 décembre à 10 h, en visio. Chaque élève récitera la sourate travaillée ce trimestre. Merci de prévoir une connexion stable et un endroit calme. Les élèves qui le souhaitent peuvent répéter pendant la séance du mercredi précédent. Les familles peuvent assister en silence, micro coupé. Un compte rendu sera partagé après la séance.',
+			'com.annonces.demo.f.annonceFajrTitre' => 'Révision avant l\'évaluation de jeudi',
+			'com.annonces.demo.f.annonceFajrTexte' => 'Révisez les dix derniers versets de la sourate Al-Mulk avant jeudi.',
+			'com.annonces.demo.f.tuteurUrgent' => 'La séance de ce soir est annulée',
+			'com.annonces.demo.f.tuteurUrgentTexte' => 'L\'enseignante est absente ce soir. La séance est reportée à jeudi, même heure. Vous n\'avez rien à faire.',
+			'com.annonces.demo.f.tuteurReponse' => 'Réponse attendue : accord pour la récitation de Yasmine',
+			'com.annonces.demo.f.tuteurReponseTexte' => 'L\'enseignante attend votre accord pour que Yasmine récite devant les familles. Répondez-lui depuis l\'Espace Classe.',
+			'com.annonces.demo.f.tuteurMessage' => 'Nouveau message de l\'enseignante de la Classe An-Nour',
+			'com.annonces.demo.f.tuteurDossier' => 'Votre dossier d\'inscription est validé',
+			'com.annonces.demo.f.adulteSeance' => 'Votre séance de mardi est déplacée à 19 h',
+			'com.annonces.demo.f.adulteMessage' => 'Nouveau message de votre enseignante',
+			'com.annonces.demo.f.enseignantFamille' => 'Message de la famille de Yasmine, Classe An-Nour',
+			'com.annonces.demo.f.enseignantDirection' => 'Annonce de la direction : calendrier des vacances d\'hiver',
+			'com.annonces.demo.f.enseignantDirectionTexte' => 'Les cours s\'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.',
+			'com.annonces.demo.f.enseignantPlanning' => 'Votre planning de la semaine prochaine a changé',
+			'com.annonces.demo.f.enseignantMention' => 'Une publication de la Communauté vous mentionne',
+			'com.annonces.demo.f.enseignantReponse' => 'Nouvelle réponse à votre publication',
+			'com.annonces.demo.f.enseignantAdministration' => 'Message de l\'Administration : pièces à fournir',
+			'com.annonces.demo.f.adminDossiers' => 'Trois dossiers d\'inscription sont à traiter',
+			'com.annonces.demo.f.adminSignalement' => 'Une publication de la Communauté a été signalée',
+			'com.annonces.demo.f.adminReponse' => 'Réponse de la famille de Bilal à votre message',
+			'com.annonces.demo.f.adminPlanifiee' => 'Une annonce planifiée est à vérifier avant publication',
+			'com.annonces.demo.f.adminOperationnel' => 'Classe An-Nour : effectif complet',
+			'com.annonces.demo.f.controleurMission' => 'Nouvelle mission : visite de la Classe An-Nour',
+			'com.annonces.demo.f.controleurChangement' => 'Votre mission de jeudi est déplacée à 18 h',
+			'com.annonces.demo.f.controleurReponse' => 'Réponse de l\'Administration à votre rapport',
 			'com.annonces.titre' => 'Annonces',
 			_ => null,
 		};

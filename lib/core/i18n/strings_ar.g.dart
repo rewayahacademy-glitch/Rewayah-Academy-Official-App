@@ -39,6 +39,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	TraductionsAr $copyWith({TranslationMetadata<AppLocale, Traductions>? meta}) => TraductionsAr(meta: meta ?? this.$meta);
 
 	// Translations
+	@override late final _Traductions$notifications$ar notifications = _Traductions$notifications$ar._(_root);
 	@override late final _Traductions$commun$ar commun = _Traductions$commun$ar._(_root);
 	@override late final _Traductions$etat$ar etat = _Traductions$etat$ar._(_root);
 	@override late final _Traductions$classe$ar classe = _Traductions$classe$ar._(_root);
@@ -48,6 +49,30 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$compte$ar compte = _Traductions$compte$ar._(_root);
 	@override late final _Traductions$tc$ar tc = _Traductions$tc$ar._(_root);
 	@override late final _Traductions$com$ar com = _Traductions$com$ar._(_root);
+}
+
+// Path: notifications
+class _Traductions$notifications$ar extends Traductions$notifications$fr {
+	_Traductions$notifications$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الإشعارات';
+	@override String get indisponibleTitre => 'الإشعارات غير متاحة بعد';
+	@override String get indisponiblePhrase => 'ستظهر هنا تذكيرات الحصص ورسائل الأكاديمية بمجرد تفعيلها.';
+	@override String get videTitre => 'لا توجد إشعارات';
+	@override String get videPhrase => 'ستظهر هنا تذكيرات الحصص ورسائل الأكاديمية.';
+	@override String ligne({required Object titre, required Object date, required Object heure}) => '${titre}، يوم ${date} الساعة ${heure}';
+	@override late final _Traductions$notifications$filtres$ar filtres = _Traductions$notifications$filtres$ar._(_root);
+	@override String get filtreVideTitre => 'لا توجد إشعارات في هذا التصنيف';
+	@override String get filtreVidePhrase => 'اختر « الكل » لرؤية جميع إشعاراتك من جديد.';
+	@override String get voirToutes => 'عرض كل الإشعارات';
+	@override String get nonLue => 'غير مقروء';
+	@override String get nonLueSemantique => 'غير مقروء';
+	@override String get lectureNonConfirmee => 'لم تُؤكَّد القراءة بعد. أعد المحاولة بعد قليل.';
+	@override late final _Traductions$notifications$detail$ar detail = _Traductions$notifications$detail$ar._(_root);
+	@override late final _Traductions$notifications$types$ar types = _Traductions$notifications$types$ar._(_root);
 }
 
 // Path: commun
@@ -161,6 +186,72 @@ class _Traductions$com$ar extends Traductions$com$fr {
 	@override late final _Traductions$com$communaute$ar communaute = _Traductions$com$communaute$ar._(_root);
 	@override late final _Traductions$com$studio$ar studio = _Traductions$com$studio$ar._(_root);
 	@override late final _Traductions$com$annonces$ar annonces = _Traductions$com$annonces$ar._(_root);
+}
+
+// Path: notifications.filtres
+class _Traductions$notifications$filtres$ar extends Traductions$notifications$filtres$fr {
+	_Traductions$notifications$filtres$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'تصفية الإشعارات';
+	@override String get toutes => 'الكل';
+	@override String get nonLues => 'غير المقروءة';
+	@override String get mentions => 'الإشارات';
+	@override String get actionRequise => 'إجراء مطلوب';
+}
+
+// Path: notifications.detail
+class _Traductions$notifications$detail$ar extends Traductions$notifications$detail$fr {
+	_Traductions$notifications$detail$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get choisirTitre => 'اختر إشعارًا';
+	@override String get choisirPhrase => 'تظهر تفاصيله هنا، بجانب القائمة.';
+	@override String recue({required Object date, required Object heure}) => 'وصل يوم ${date} الساعة ${heure}';
+	@override String get ouvrir => 'فتح الصفحة المعنية';
+	@override String get retour => 'العودة إلى قائمة الإشعارات';
+}
+
+// Path: notifications.types
+class _Traductions$notifications$types$ar extends Traductions$notifications$types$fr {
+	_Traductions$notifications$types$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get annonceClasse => 'إعلان الفصل';
+	@override String get changementSeance => 'تغيير في الحصة';
+	@override String get decisionDossier => 'قرار بشأن ملف';
+	@override String get messageMetier => 'رسالة';
+	@override String get reponseAttendue => 'رد منتظر';
+	@override String get accesFinance => 'الوصول والمدفوعات';
+	@override String get observation => 'ملاحظة';
+	@override String get travailRessource => 'واجب أو مورد';
+	@override String get annonceDirection => 'إعلان من الإدارة';
+	@override String get changementPlanning => 'تغيير في الجدول';
+	@override String get remplacement => 'استخلاف';
+	@override String get mentionCommunaute => 'إشارة في مجتمع المعلمين';
+	@override String get reponseCommunaute => 'رد في مجتمع المعلمين';
+	@override String get messageAdministration => 'رسالة من الإدارة';
+	@override String get dossierATraiter => 'ملف للمعالجة';
+	@override String get signalementCommunaute => 'بلاغ في مجتمع المعلمين';
+	@override String get reponseFil => 'رد على محادثة';
+	@override String get annoncePlanifiee => 'إعلان مجدول للنشر';
+	@override String get evenementOperationnel => 'حدث في الأكاديمية';
+	@override String get mission => 'مهمة';
+	@override String get changementMission => 'تغيير في المهمة';
+	@override String get reponseAdministration => 'رد من الإدارة';
+	@override String get mentionStudio => 'إشارة في الاستوديو';
+	@override String get reponseStudio => 'رد في الاستوديو';
+	@override String get decisionDemandee => 'قرار مطلوب';
+	@override String get elementAssigne => 'عنصر مُسند';
+	@override String get annonceInterne => 'إعلان داخلي';
+	@override String get evenementContextuel => 'حدث';
+	@override String get autre => 'إشعار';
 }
 
 // Path: commun.sections
@@ -377,6 +468,21 @@ class _Traductions$com$annonces$ar extends Traductions$com$annonces$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get section => 'إعلانات الفصل';
+	@override String get annonce => 'إعلان';
+	@override String get publier => 'نشر إعلان';
+	@override String get videPublier => 'لا توجد إعلانات لهذا الفصل. انشر أول إعلان للفصل كله.';
+	@override String auteurDate({required Object auteur, required Object date, required Object heure}) => '${auteur}، يوم ${date} الساعة ${heure}';
+	@override String date({required Object date, required Object heure}) => 'يوم ${date} الساعة ${heure}';
+	@override String get lire => 'قراءة الإعلان كاملًا';
+	@override String get ouvrirClasse => 'فتح الفصل';
+	@override String ouvrirClasseSemantique({required Object classe}) => 'فتح ${classe}';
+	@override String get marquerLue => 'تحديد كمقروء';
+	@override String get lue => 'مقروء';
+	@override String carteSemantique({required Object classe, required Object titre}) => 'إعلان ${classe} : ${titre}';
+	@override String get introuvableTitre => 'هذا الإعلان لم يعد متاحًا';
+	@override String get introuvablePhrase => 'ربما سُحب من الفصل. عد إلى إشعاراتك.';
+	@override late final _Traductions$com$annonces$demo$ar demo = _Traductions$com$annonces$demo$ar._(_root);
 	@override String get titre => 'الإعلانات';
 }
 
@@ -524,6 +630,22 @@ class _Traductions$com$socle$navigation$ar extends Traductions$com$socle$navigat
 	@override late final _Traductions$com$socle$navigation$demo$ar demo = _Traductions$com$socle$navigation$demo$ar._(_root);
 }
 
+// Path: com.annonces.demo
+class _Traductions$com$annonces$demo$ar extends Traductions$com$annonces$demo$fr {
+	_Traductions$com$annonces$demo$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get detail => 'عرض تجريبي خارج الإنتاج : بيانات وهمية، ولا يُرسل شيء.';
+	@override String get choisirRole => 'اختر الدور المراد عرضه';
+	@override late final _Traductions$com$annonces$demo$roles$ar roles = _Traductions$com$annonces$demo$roles$ar._(_root);
+	@override String get classeNour => 'فصل النور';
+	@override String get classeFajr => 'فصل الفجر';
+	@override String get enseignante => 'معلمة الفصل';
+	@override late final _Traductions$com$annonces$demo$f$ar f = _Traductions$com$annonces$demo$f$ar._(_root);
+}
+
 // Path: com.socle.composants.badge
 class _Traductions$com$socle$composants$badge$ar extends Traductions$com$socle$composants$badge$fr {
 	_Traductions$com$socle$composants$badge$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -657,6 +779,56 @@ class _Traductions$com$socle$navigation$demo$ar extends Traductions$com$socle$na
 	@override String get choisir => 'اختر مساحة لتجربتها.';
 }
 
+// Path: com.annonces.demo.roles
+class _Traductions$com$annonces$demo$roles$ar extends Traductions$com$annonces$demo$roles$fr {
+	_Traductions$com$annonces$demo$roles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get tuteur => 'الأسرة';
+	@override String get enseignant => 'المعلم';
+	@override String get adulte => 'الطالب البالغ';
+	@override String get admin => 'الإدارة';
+	@override String get controleur => 'المراقب';
+}
+
+// Path: com.annonces.demo.f
+class _Traductions$com$annonces$demo$f$ar extends Traductions$com$annonces$demo$f$fr {
+	_Traductions$com$annonces$demo$f$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get annonceNourTitre => 'تلاوة نهاية الفصل الدراسي أمام الأسر';
+	@override String get annonceNourTexte => 'أسرنا الكريمة، سيقدم فصل النور تلاوة نهاية الفصل الدراسي يوم السبت 14 ديسمبر الساعة 10، عبر الاتصال المرئي. سيتلو كل طالب السورة التي عمل عليها هذا الفصل. يرجى تجهيز اتصال مستقر ومكان هادئ. يمكن للطلاب الراغبين التدرب خلال حصة الأربعاء السابقة. يمكن للأسر الحضور بصمت مع كتم الميكروفون. سيُشارك تقرير بعد الحصة.';
+	@override String get annonceFajrTitre => 'مراجعة قبل تقييم يوم الخميس';
+	@override String get annonceFajrTexte => 'راجعوا الآيات العشر الأخيرة من سورة الملك قبل يوم الخميس.';
+	@override String get tuteurUrgent => 'حصة هذا المساء ملغاة';
+	@override String get tuteurUrgentTexte => 'المعلمة غائبة هذا المساء. أُجّلت الحصة إلى يوم الخميس في الوقت نفسه. لا شيء عليك فعله.';
+	@override String get tuteurReponse => 'رد منتظر : الموافقة على تلاوة ياسمين';
+	@override String get tuteurReponseTexte => 'تنتظر المعلمة موافقتك لتتلو ياسمين أمام الأسر. أجبها من فضاء الفصل.';
+	@override String get tuteurMessage => 'رسالة جديدة من معلمة فصل النور';
+	@override String get tuteurDossier => 'تم قبول ملف التسجيل الخاص بك';
+	@override String get adulteSeance => 'نُقلت حصتك يوم الثلاثاء إلى الساعة 19';
+	@override String get adulteMessage => 'رسالة جديدة من معلمتك';
+	@override String get enseignantFamille => 'رسالة من أسرة ياسمين، فصل النور';
+	@override String get enseignantDirection => 'إعلان من الإدارة : جدول عطلة الشتاء';
+	@override String get enseignantDirectionTexte => 'تتوقف الدروس من 21 ديسمبر إلى 5 يناير. تُستأنف الحصص يوم الاثنين 6 يناير في المواعيد المعتادة.';
+	@override String get enseignantPlanning => 'تغيّر جدولك للأسبوع القادم';
+	@override String get enseignantMention => 'منشور في مجتمع المعلمين يشير إليك';
+	@override String get enseignantReponse => 'رد جديد على منشورك';
+	@override String get enseignantAdministration => 'رسالة من الإدارة : وثائق مطلوبة';
+	@override String get adminDossiers => 'ثلاثة ملفات تسجيل في انتظار المعالجة';
+	@override String get adminSignalement => 'تم الإبلاغ عن منشور في مجتمع المعلمين';
+	@override String get adminReponse => 'رد أسرة بلال على رسالتك';
+	@override String get adminPlanifiee => 'إعلان مجدول يحتاج إلى مراجعة قبل النشر';
+	@override String get adminOperationnel => 'فصل النور : العدد مكتمل';
+	@override String get controleurMission => 'مهمة جديدة : زيارة فصل النور';
+	@override String get controleurChangement => 'نُقلت مهمتك يوم الخميس إلى الساعة 18';
+	@override String get controleurReponse => 'رد الإدارة على تقريرك';
+}
+
 /// The flat map containing all translations for locale <ar>.
 /// Only for edge cases! For simple maps, use the map function of this library.
 ///
@@ -665,6 +837,57 @@ class _Traductions$com$socle$navigation$demo$ar extends Traductions$com$socle$na
 extension on TraductionsAr {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'notifications.titre' => 'الإشعارات',
+			'notifications.indisponibleTitre' => 'الإشعارات غير متاحة بعد',
+			'notifications.indisponiblePhrase' => 'ستظهر هنا تذكيرات الحصص ورسائل الأكاديمية بمجرد تفعيلها.',
+			'notifications.videTitre' => 'لا توجد إشعارات',
+			'notifications.videPhrase' => 'ستظهر هنا تذكيرات الحصص ورسائل الأكاديمية.',
+			'notifications.ligne' => ({required Object titre, required Object date, required Object heure}) => '${titre}، يوم ${date} الساعة ${heure}',
+			'notifications.filtres.libelle' => 'تصفية الإشعارات',
+			'notifications.filtres.toutes' => 'الكل',
+			'notifications.filtres.nonLues' => 'غير المقروءة',
+			'notifications.filtres.mentions' => 'الإشارات',
+			'notifications.filtres.actionRequise' => 'إجراء مطلوب',
+			'notifications.filtreVideTitre' => 'لا توجد إشعارات في هذا التصنيف',
+			'notifications.filtreVidePhrase' => 'اختر « الكل » لرؤية جميع إشعاراتك من جديد.',
+			'notifications.voirToutes' => 'عرض كل الإشعارات',
+			'notifications.nonLue' => 'غير مقروء',
+			'notifications.nonLueSemantique' => 'غير مقروء',
+			'notifications.lectureNonConfirmee' => 'لم تُؤكَّد القراءة بعد. أعد المحاولة بعد قليل.',
+			'notifications.detail.choisirTitre' => 'اختر إشعارًا',
+			'notifications.detail.choisirPhrase' => 'تظهر تفاصيله هنا، بجانب القائمة.',
+			'notifications.detail.recue' => ({required Object date, required Object heure}) => 'وصل يوم ${date} الساعة ${heure}',
+			'notifications.detail.ouvrir' => 'فتح الصفحة المعنية',
+			'notifications.detail.retour' => 'العودة إلى قائمة الإشعارات',
+			'notifications.types.annonceClasse' => 'إعلان الفصل',
+			'notifications.types.changementSeance' => 'تغيير في الحصة',
+			'notifications.types.decisionDossier' => 'قرار بشأن ملف',
+			'notifications.types.messageMetier' => 'رسالة',
+			'notifications.types.reponseAttendue' => 'رد منتظر',
+			'notifications.types.accesFinance' => 'الوصول والمدفوعات',
+			'notifications.types.observation' => 'ملاحظة',
+			'notifications.types.travailRessource' => 'واجب أو مورد',
+			'notifications.types.annonceDirection' => 'إعلان من الإدارة',
+			'notifications.types.changementPlanning' => 'تغيير في الجدول',
+			'notifications.types.remplacement' => 'استخلاف',
+			'notifications.types.mentionCommunaute' => 'إشارة في مجتمع المعلمين',
+			'notifications.types.reponseCommunaute' => 'رد في مجتمع المعلمين',
+			'notifications.types.messageAdministration' => 'رسالة من الإدارة',
+			'notifications.types.dossierATraiter' => 'ملف للمعالجة',
+			'notifications.types.signalementCommunaute' => 'بلاغ في مجتمع المعلمين',
+			'notifications.types.reponseFil' => 'رد على محادثة',
+			'notifications.types.annoncePlanifiee' => 'إعلان مجدول للنشر',
+			'notifications.types.evenementOperationnel' => 'حدث في الأكاديمية',
+			'notifications.types.mission' => 'مهمة',
+			'notifications.types.changementMission' => 'تغيير في المهمة',
+			'notifications.types.reponseAdministration' => 'رد من الإدارة',
+			'notifications.types.mentionStudio' => 'إشارة في الاستوديو',
+			'notifications.types.reponseStudio' => 'رد في الاستوديو',
+			'notifications.types.decisionDemandee' => 'قرار مطلوب',
+			'notifications.types.elementAssigne' => 'عنصر مُسند',
+			'notifications.types.annonceInterne' => 'إعلان داخلي',
+			'notifications.types.evenementContextuel' => 'حدث',
+			'notifications.types.autre' => 'إشعار',
 			'commun.sections.page' => 'أقسام الصفحة',
 			'etat.enDirect' => 'مباشر',
 			'etat.seanceAnnulee' => 'ملغاة',
@@ -890,6 +1113,57 @@ extension on TraductionsAr {
 			'com.communaute.vide' => 'لا توجد منشورات في هذه الفئة.',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
 			'com.studio.vide' => 'لا يوجد نشاط للمعالجة هنا.',
+			'com.annonces.section' => 'إعلانات الفصل',
+			'com.annonces.annonce' => 'إعلان',
+			'com.annonces.publier' => 'نشر إعلان',
+			'com.annonces.videPublier' => 'لا توجد إعلانات لهذا الفصل. انشر أول إعلان للفصل كله.',
+			'com.annonces.auteurDate' => ({required Object auteur, required Object date, required Object heure}) => '${auteur}، يوم ${date} الساعة ${heure}',
+			'com.annonces.date' => ({required Object date, required Object heure}) => 'يوم ${date} الساعة ${heure}',
+			'com.annonces.lire' => 'قراءة الإعلان كاملًا',
+			'com.annonces.ouvrirClasse' => 'فتح الفصل',
+			'com.annonces.ouvrirClasseSemantique' => ({required Object classe}) => 'فتح ${classe}',
+			'com.annonces.marquerLue' => 'تحديد كمقروء',
+			'com.annonces.lue' => 'مقروء',
+			'com.annonces.carteSemantique' => ({required Object classe, required Object titre}) => 'إعلان ${classe} : ${titre}',
+			'com.annonces.introuvableTitre' => 'هذا الإعلان لم يعد متاحًا',
+			'com.annonces.introuvablePhrase' => 'ربما سُحب من الفصل. عد إلى إشعاراتك.',
+			'com.annonces.demo.detail' => 'عرض تجريبي خارج الإنتاج : بيانات وهمية، ولا يُرسل شيء.',
+			'com.annonces.demo.choisirRole' => 'اختر الدور المراد عرضه',
+			'com.annonces.demo.roles.tuteur' => 'الأسرة',
+			'com.annonces.demo.roles.enseignant' => 'المعلم',
+			'com.annonces.demo.roles.adulte' => 'الطالب البالغ',
+			'com.annonces.demo.roles.admin' => 'الإدارة',
+			'com.annonces.demo.roles.controleur' => 'المراقب',
+			'com.annonces.demo.classeNour' => 'فصل النور',
+			'com.annonces.demo.classeFajr' => 'فصل الفجر',
+			'com.annonces.demo.enseignante' => 'معلمة الفصل',
+			'com.annonces.demo.f.annonceNourTitre' => 'تلاوة نهاية الفصل الدراسي أمام الأسر',
+			'com.annonces.demo.f.annonceNourTexte' => 'أسرنا الكريمة، سيقدم فصل النور تلاوة نهاية الفصل الدراسي يوم السبت 14 ديسمبر الساعة 10، عبر الاتصال المرئي. سيتلو كل طالب السورة التي عمل عليها هذا الفصل. يرجى تجهيز اتصال مستقر ومكان هادئ. يمكن للطلاب الراغبين التدرب خلال حصة الأربعاء السابقة. يمكن للأسر الحضور بصمت مع كتم الميكروفون. سيُشارك تقرير بعد الحصة.',
+			'com.annonces.demo.f.annonceFajrTitre' => 'مراجعة قبل تقييم يوم الخميس',
+			'com.annonces.demo.f.annonceFajrTexte' => 'راجعوا الآيات العشر الأخيرة من سورة الملك قبل يوم الخميس.',
+			'com.annonces.demo.f.tuteurUrgent' => 'حصة هذا المساء ملغاة',
+			'com.annonces.demo.f.tuteurUrgentTexte' => 'المعلمة غائبة هذا المساء. أُجّلت الحصة إلى يوم الخميس في الوقت نفسه. لا شيء عليك فعله.',
+			'com.annonces.demo.f.tuteurReponse' => 'رد منتظر : الموافقة على تلاوة ياسمين',
+			'com.annonces.demo.f.tuteurReponseTexte' => 'تنتظر المعلمة موافقتك لتتلو ياسمين أمام الأسر. أجبها من فضاء الفصل.',
+			'com.annonces.demo.f.tuteurMessage' => 'رسالة جديدة من معلمة فصل النور',
+			'com.annonces.demo.f.tuteurDossier' => 'تم قبول ملف التسجيل الخاص بك',
+			'com.annonces.demo.f.adulteSeance' => 'نُقلت حصتك يوم الثلاثاء إلى الساعة 19',
+			'com.annonces.demo.f.adulteMessage' => 'رسالة جديدة من معلمتك',
+			'com.annonces.demo.f.enseignantFamille' => 'رسالة من أسرة ياسمين، فصل النور',
+			'com.annonces.demo.f.enseignantDirection' => 'إعلان من الإدارة : جدول عطلة الشتاء',
+			'com.annonces.demo.f.enseignantDirectionTexte' => 'تتوقف الدروس من 21 ديسمبر إلى 5 يناير. تُستأنف الحصص يوم الاثنين 6 يناير في المواعيد المعتادة.',
+			'com.annonces.demo.f.enseignantPlanning' => 'تغيّر جدولك للأسبوع القادم',
+			'com.annonces.demo.f.enseignantMention' => 'منشور في مجتمع المعلمين يشير إليك',
+			'com.annonces.demo.f.enseignantReponse' => 'رد جديد على منشورك',
+			'com.annonces.demo.f.enseignantAdministration' => 'رسالة من الإدارة : وثائق مطلوبة',
+			'com.annonces.demo.f.adminDossiers' => 'ثلاثة ملفات تسجيل في انتظار المعالجة',
+			'com.annonces.demo.f.adminSignalement' => 'تم الإبلاغ عن منشور في مجتمع المعلمين',
+			'com.annonces.demo.f.adminReponse' => 'رد أسرة بلال على رسالتك',
+			'com.annonces.demo.f.adminPlanifiee' => 'إعلان مجدول يحتاج إلى مراجعة قبل النشر',
+			'com.annonces.demo.f.adminOperationnel' => 'فصل النور : العدد مكتمل',
+			'com.annonces.demo.f.controleurMission' => 'مهمة جديدة : زيارة فصل النور',
+			'com.annonces.demo.f.controleurChangement' => 'نُقلت مهمتك يوم الخميس إلى الساعة 18',
+			'com.annonces.demo.f.controleurReponse' => 'رد الإدارة على تقريرك',
 			'com.annonces.titre' => 'الإعلانات',
 			_ => null,
 		};

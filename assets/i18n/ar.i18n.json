@@ -1,4 +1,63 @@
 {
+  "notifications": {
+    "titre": "الإشعارات",
+    "indisponibleTitre": "الإشعارات غير متاحة بعد",
+    "indisponiblePhrase": "ستظهر هنا تذكيرات الحصص ورسائل الأكاديمية بمجرد تفعيلها.",
+    "videTitre": "لا توجد إشعارات",
+    "videPhrase": "ستظهر هنا تذكيرات الحصص ورسائل الأكاديمية.",
+    "ligne": "{titre}، يوم {date} الساعة {heure}",
+    "filtres": {
+      "libelle": "تصفية الإشعارات",
+      "toutes": "الكل",
+      "nonLues": "غير المقروءة",
+      "mentions": "الإشارات",
+      "actionRequise": "إجراء مطلوب"
+    },
+    "filtreVideTitre": "لا توجد إشعارات في هذا التصنيف",
+    "filtreVidePhrase": "اختر « الكل » لرؤية جميع إشعاراتك من جديد.",
+    "voirToutes": "عرض كل الإشعارات",
+    "nonLue": "غير مقروء",
+    "nonLueSemantique": "غير مقروء",
+    "lectureNonConfirmee": "لم تُؤكَّد القراءة بعد. أعد المحاولة بعد قليل.",
+    "detail": {
+      "choisirTitre": "اختر إشعارًا",
+      "choisirPhrase": "تظهر تفاصيله هنا، بجانب القائمة.",
+      "recue": "وصل يوم {date} الساعة {heure}",
+      "ouvrir": "فتح الصفحة المعنية",
+      "retour": "العودة إلى قائمة الإشعارات"
+    },
+    "types": {
+      "annonceClasse": "إعلان الفصل",
+      "changementSeance": "تغيير في الحصة",
+      "decisionDossier": "قرار بشأن ملف",
+      "messageMetier": "رسالة",
+      "reponseAttendue": "رد منتظر",
+      "accesFinance": "الوصول والمدفوعات",
+      "observation": "ملاحظة",
+      "travailRessource": "واجب أو مورد",
+      "annonceDirection": "إعلان من الإدارة",
+      "changementPlanning": "تغيير في الجدول",
+      "remplacement": "استخلاف",
+      "mentionCommunaute": "إشارة في مجتمع المعلمين",
+      "reponseCommunaute": "رد في مجتمع المعلمين",
+      "messageAdministration": "رسالة من الإدارة",
+      "dossierATraiter": "ملف للمعالجة",
+      "signalementCommunaute": "بلاغ في مجتمع المعلمين",
+      "reponseFil": "رد على محادثة",
+      "annoncePlanifiee": "إعلان مجدول للنشر",
+      "evenementOperationnel": "حدث في الأكاديمية",
+      "mission": "مهمة",
+      "changementMission": "تغيير في المهمة",
+      "reponseAdministration": "رد من الإدارة",
+      "mentionStudio": "إشارة في الاستوديو",
+      "reponseStudio": "رد في الاستوديو",
+      "decisionDemandee": "قرار مطلوب",
+      "elementAssigne": "عنصر مُسند",
+      "annonceInterne": "إعلان داخلي",
+      "evenementContextuel": "حدث",
+      "autre": "إشعار"
+    }
+  },
   "commun": {
     "sections": {
       "page": "أقسام الصفحة"
@@ -300,6 +359,63 @@
       "vide": "لا يوجد نشاط للمعالجة هنا."
     },
     "annonces": {
+      "section": "إعلانات الفصل",
+      "annonce": "إعلان",
+      "publier": "نشر إعلان",
+      "videPublier": "لا توجد إعلانات لهذا الفصل. انشر أول إعلان للفصل كله.",
+      "auteurDate": "{auteur}، يوم {date} الساعة {heure}",
+      "date": "يوم {date} الساعة {heure}",
+      "lire": "قراءة الإعلان كاملًا",
+      "ouvrirClasse": "فتح الفصل",
+      "ouvrirClasseSemantique": "فتح {classe}",
+      "marquerLue": "تحديد كمقروء",
+      "lue": "مقروء",
+      "carteSemantique": "إعلان {classe} : {titre}",
+      "introuvableTitre": "هذا الإعلان لم يعد متاحًا",
+      "introuvablePhrase": "ربما سُحب من الفصل. عد إلى إشعاراتك.",
+      "demo": {
+        "detail": "عرض تجريبي خارج الإنتاج : بيانات وهمية، ولا يُرسل شيء.",
+        "choisirRole": "اختر الدور المراد عرضه",
+        "roles": {
+          "tuteur": "الأسرة",
+          "enseignant": "المعلم",
+          "adulte": "الطالب البالغ",
+          "admin": "الإدارة",
+          "controleur": "المراقب"
+        },
+        "classeNour": "فصل النور",
+        "classeFajr": "فصل الفجر",
+        "enseignante": "معلمة الفصل",
+        "f": {
+          "annonceNourTitre": "تلاوة نهاية الفصل الدراسي أمام الأسر",
+          "annonceNourTexte": "أسرنا الكريمة، سيقدم فصل النور تلاوة نهاية الفصل الدراسي يوم السبت 14 ديسمبر الساعة 10، عبر الاتصال المرئي. سيتلو كل طالب السورة التي عمل عليها هذا الفصل. يرجى تجهيز اتصال مستقر ومكان هادئ. يمكن للطلاب الراغبين التدرب خلال حصة الأربعاء السابقة. يمكن للأسر الحضور بصمت مع كتم الميكروفون. سيُشارك تقرير بعد الحصة.",
+          "annonceFajrTitre": "مراجعة قبل تقييم يوم الخميس",
+          "annonceFajrTexte": "راجعوا الآيات العشر الأخيرة من سورة الملك قبل يوم الخميس.",
+          "tuteurUrgent": "حصة هذا المساء ملغاة",
+          "tuteurUrgentTexte": "المعلمة غائبة هذا المساء. أُجّلت الحصة إلى يوم الخميس في الوقت نفسه. لا شيء عليك فعله.",
+          "tuteurReponse": "رد منتظر : الموافقة على تلاوة ياسمين",
+          "tuteurReponseTexte": "تنتظر المعلمة موافقتك لتتلو ياسمين أمام الأسر. أجبها من فضاء الفصل.",
+          "tuteurMessage": "رسالة جديدة من معلمة فصل النور",
+          "tuteurDossier": "تم قبول ملف التسجيل الخاص بك",
+          "adulteSeance": "نُقلت حصتك يوم الثلاثاء إلى الساعة 19",
+          "adulteMessage": "رسالة جديدة من معلمتك",
+          "enseignantFamille": "رسالة من أسرة ياسمين، فصل النور",
+          "enseignantDirection": "إعلان من الإدارة : جدول عطلة الشتاء",
+          "enseignantDirectionTexte": "تتوقف الدروس من 21 ديسمبر إلى 5 يناير. تُستأنف الحصص يوم الاثنين 6 يناير في المواعيد المعتادة.",
+          "enseignantPlanning": "تغيّر جدولك للأسبوع القادم",
+          "enseignantMention": "منشور في مجتمع المعلمين يشير إليك",
+          "enseignantReponse": "رد جديد على منشورك",
+          "enseignantAdministration": "رسالة من الإدارة : وثائق مطلوبة",
+          "adminDossiers": "ثلاثة ملفات تسجيل في انتظار المعالجة",
+          "adminSignalement": "تم الإبلاغ عن منشور في مجتمع المعلمين",
+          "adminReponse": "رد أسرة بلال على رسالتك",
+          "adminPlanifiee": "إعلان مجدول يحتاج إلى مراجعة قبل النشر",
+          "adminOperationnel": "فصل النور : العدد مكتمل",
+          "controleurMission": "مهمة جديدة : زيارة فصل النور",
+          "controleurChangement": "نُقلت مهمتك يوم الخميس إلى الساعة 18",
+          "controleurReponse": "رد الإدارة على تقريرك"
+        }
+      },
       "titre": "الإعلانات"
     }
   }
