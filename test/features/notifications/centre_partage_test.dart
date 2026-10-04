@@ -310,6 +310,84 @@ void main() {
     });
   });
 
+  group('Revue COM-ANN-1 : le niveau Information est dit', () {
+    testWidgets('la phrase du lecteur d ecran dit « Information » quand '
+        'aucun badge n est rendu', (WidgetTester tester) async {
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      await _monter(tester);
+      final NotificationTuteur lue = _catalogue().firstWhere(
+        (NotificationTuteur n) => n.id == 'n-lue',
+      );
+      final String phrase = LigneNotification.phraseSemantique(lue);
+      expect(phrase, contains(t.com.socle.composants.badge.information));
+      expect(find.bySemanticsLabel(phrase), findsOneWidget);
+      // Une notification qui a un badge garde la phrase du badge, sans
+      // « Information » en plus.
+      final String urgente = LigneNotification.phraseSemantique(
+        _catalogue().firstWhere((NotificationTuteur n) => n.id == 'n-urgent'),
+      );
+      expect(
+        urgente,
+        isNot(contains(t.com.socle.composants.badge.information)),
+      );
+      semantique.dispose();
+    });
+
+    testWidgets('1440 : le detail ecrit « Information » en texte neutre, '
+        'sans pastille', (WidgetTester tester) async {
+      await _monter(tester, taille: const Size(1440, 900));
+      await _toucher(tester, _ligne('n-lue'));
+      final Finder detail = find.byKey(NotificationsPage.cleDetail);
+      final Finder typeNiveau = find.descendant(
+        of: detail,
+        matching: find.byKey(DetailNotification.cleTypeNiveau),
+      );
+      expect(typeNiveau, findsOneWidget);
+      expect(
+        tester.widget<Text>(typeNiveau).data,
+        contains(t.com.socle.composants.badge.information),
+      );
+      expect(
+        find.descendant(of: detail, matching: find.byType(BadgeNonLu)),
+        findsNothing,
+      );
+      // Une urgence garde son badge, et « Information » n'est pas ecrit.
+      await _toucher(tester, _ligne('n-urgent'));
+      expect(
+        find.descendant(of: detail, matching: find.byType(BadgeNonLu)),
+        findsOneWidget,
+      );
+      expect(
+        tester.widget<Text>(typeNiveau).data,
+        isNot(contains(t.com.socle.composants.badge.information)),
+      );
+    });
+  });
+
+  group('Revue COM-ANN-1 : lecture de l annonce en echec', () {
+    testWidgets('la notification lue est relue ; seule l annonce est dite '
+        'non confirmee', (WidgetTester tester) async {
+      final FauxAnnonces annonces = _annonces()..echecLecture = true;
+      final (routeur: _, :FauxNotifications notifications, annonces: _) =
+          await _monter(tester, annonces: annonces);
+      await _toucher(tester, _ligne('n-annonce'));
+      expect(notifications.lues, <String>['n-annonce']);
+      expect(annonces.lues, isEmpty);
+      expect(find.text(t.notifications.lectureNonConfirmee), findsOneWidget);
+      await _toucher(tester, find.byType(DisqueRetour));
+      // La lecture de la notification est enregistree : la liste relue ne
+      // la dit plus « Non lue ».
+      expect(
+        find.descendant(
+          of: _ligne('n-annonce'),
+          matching: find.textContaining(t.notifications.nonLue),
+        ),
+        findsNothing,
+      );
+      expect(tester.takeException(), isNull);
+    });
+  });
+
   group('Centre partage : telephone, une surface a la fois', () {
     testWidgets('R-COM-12 : la notification d annonce ouvre l annonce, puis '
         'sa Classe ; la lecture est enregistree', (WidgetTester tester) async {

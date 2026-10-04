@@ -213,7 +213,6 @@ class _Traductions$notifications$detail$ar extends Traductions$notifications$det
 	@override String get choisirPhrase => 'تظهر تفاصيله هنا، بجانب القائمة.';
 	@override String recue({required Object date, required Object heure}) => 'وصل يوم ${date} الساعة ${heure}';
 	@override String get ouvrir => 'فتح الصفحة المعنية';
-	@override String get retour => 'العودة إلى قائمة الإشعارات';
 }
 
 // Path: notifications.types
@@ -800,6 +799,12 @@ class _Traductions$com$annonces$demo$f$ar extends Traductions$com$annonces$demo$
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get adminStudioMention => 'الاستوديو : نقاش في قناة البرامج يشير إليك';
+	@override String get adminStudioReponse => 'الاستوديو : رد جديد على رسالتك بشأن برنامج الربيع';
+	@override String get adminStudioDecision => 'الاستوديو : مطلوب قرار بشأن دعامة الدرس 4';
+	@override String get adminStudioAssigne => 'الاستوديو : أُسندت إليك مراجعة دعامة التجويد';
+	@override String get adminStudioInterne => 'إعلان داخلي لفريق الاستوديو : اجتماع الفريق يوم الخميس الساعة 18';
+	@override String get adminStudioContexte => 'الاستوديو : دعامة جاهزة لفصل النور';
 	@override String get annonceNourTitre => 'تلاوة نهاية الفصل الدراسي أمام الأسر';
 	@override String get annonceNourTexte => 'أسرنا الكريمة، سيقدم فصل النور تلاوة نهاية الفصل الدراسي يوم السبت 14 ديسمبر الساعة 10، عبر الاتصال المرئي. سيتلو كل طالب السورة التي عمل عليها هذا الفصل. يرجى تجهيز اتصال مستقر ومكان هادئ. يمكن للطلاب الراغبين التدرب خلال حصة الأربعاء السابقة. يمكن للأسر الحضور بصمت مع كتم الميكروفون. سيُشارك تقرير بعد الحصة.';
 	@override String get annonceFajrTitre => 'مراجعة قبل تقييم يوم الخميس';
@@ -858,7 +863,6 @@ extension on TraductionsAr {
 			'notifications.detail.choisirPhrase' => 'تظهر تفاصيله هنا، بجانب القائمة.',
 			'notifications.detail.recue' => ({required Object date, required Object heure}) => 'وصل يوم ${date} الساعة ${heure}',
 			'notifications.detail.ouvrir' => 'فتح الصفحة المعنية',
-			'notifications.detail.retour' => 'العودة إلى قائمة الإشعارات',
 			'notifications.types.annonceClasse' => 'إعلان الفصل',
 			'notifications.types.changementSeance' => 'تغيير في الحصة',
 			'notifications.types.decisionDossier' => 'قرار بشأن ملف',
@@ -1137,6 +1141,12 @@ extension on TraductionsAr {
 			'com.annonces.demo.classeNour' => 'فصل النور',
 			'com.annonces.demo.classeFajr' => 'فصل الفجر',
 			'com.annonces.demo.enseignante' => 'معلمة الفصل',
+			'com.annonces.demo.f.adminStudioMention' => 'الاستوديو : نقاش في قناة البرامج يشير إليك',
+			'com.annonces.demo.f.adminStudioReponse' => 'الاستوديو : رد جديد على رسالتك بشأن برنامج الربيع',
+			'com.annonces.demo.f.adminStudioDecision' => 'الاستوديو : مطلوب قرار بشأن دعامة الدرس 4',
+			'com.annonces.demo.f.adminStudioAssigne' => 'الاستوديو : أُسندت إليك مراجعة دعامة التجويد',
+			'com.annonces.demo.f.adminStudioInterne' => 'إعلان داخلي لفريق الاستوديو : اجتماع الفريق يوم الخميس الساعة 18',
+			'com.annonces.demo.f.adminStudioContexte' => 'الاستوديو : دعامة جاهزة لفصل النور',
 			'com.annonces.demo.f.annonceNourTitre' => 'تلاوة نهاية الفصل الدراسي أمام الأسر',
 			'com.annonces.demo.f.annonceNourTexte' => 'أسرنا الكريمة، سيقدم فصل النور تلاوة نهاية الفصل الدراسي يوم السبت 14 ديسمبر الساعة 10، عبر الاتصال المرئي. سيتلو كل طالب السورة التي عمل عليها هذا الفصل. يرجى تجهيز اتصال مستقر ومكان هادئ. يمكن للطلاب الراغبين التدرب خلال حصة الأربعاء السابقة. يمكن للأسر الحضور بصمت مع كتم الميكروفون. سيُشارك تقرير بعد الحصة.',
 			'com.annonces.demo.f.annonceFajrTitre' => 'مراجعة قبل تقييم يوم الخميس',

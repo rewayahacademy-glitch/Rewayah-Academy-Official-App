@@ -196,6 +196,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
   /// Enregistre la lecture de [n] (et de son annonce), puis relit la liste.
   /// Rien n'est suppose : sans port de lecture, rien ne change ; un echec
   /// garde la notification non lue et le dit.
+  ///
+  /// Les deux lectures sont independantes : une lecture de notification
+  /// enregistree relit la liste meme si celle de l'annonce echoue ensuite,
+  /// et seule cette derniere est alors dite non confirmee.
   Future<void> _marquerLue(NotificationTuteur n) async {
     if (n.lue) return;
     final PortNotifications port = ref.read(portNotificationsProvider);
@@ -205,23 +209,33 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       if (port case final PortLectureNotifications lecture) {
         await lecture.marquerLue(n.id);
       }
-      if (annonceId != null) {
-        try {
-          await annonces.marquerLue(annonceId);
-        } on CapaciteIndisponible {
-          // Aucune source d'annonces : rien n'est enregistre ni affirme.
-        }
-      }
-      if (!mounted) return;
-      setState(() => _retour = null);
-      ref.invalidate(notificationsTuteurProvider);
-      if (annonceId != null) ref.invalidate(annonceProvider(annonceId));
     } on CapaciteIndisponible {
       // Pas de source : rien a enregistrer.
+      return;
     } on Object {
       if (!mounted) return;
       setState(() => _retour = t.notifications.lectureNonConfirmee);
+      return;
     }
+    if (!mounted) return;
+    ref.invalidate(notificationsTuteurProvider);
+    bool annonceConfirmee = true;
+    if (annonceId != null) {
+      try {
+        await annonces.marquerLue(annonceId);
+      } on CapaciteIndisponible {
+        // Aucune source d'annonces : rien n'est enregistre ni affirme.
+      } on Object {
+        annonceConfirmee = false;
+      }
+      if (!mounted) return;
+      ref.invalidate(annonceProvider(annonceId));
+    }
+    setState(
+      () => _retour = annonceConfirmee
+          ? null
+          : t.notifications.lectureNonConfirmee,
+    );
   }
 
   @override
@@ -447,7 +461,7 @@ class LigneNotification extends StatelessWidget {
   final bool selectionnee;
 
   /// La phrase lue par le lecteur d'ecran : titre, date, type, non lue,
-  /// niveau et mention.
+  /// niveau (« Information » compris) et mention.
   static String phraseSemantique(NotificationTuteur notification) {
     final DateTime quand = notification.date.toLocal();
     final String? badge = BadgeNonLu.phraseSemantique(
@@ -462,7 +476,9 @@ class LigneNotification extends StatelessWidget {
       if (notification.type != TypeNotification.autre)
         libelleTypeNotification(notification.type),
       if (!notification.lue) t.notifications.nonLueSemantique,
-      ?badge,
+      // Rien a signaler : le niveau « Information » est dit quand meme, en
+      // toutes lettres (spec section 13.1 : quatre niveaux, chacun dit).
+      badge ?? BadgeNonLu.libelleNiveau(NiveauAttention.information),
     ].join(', ');
   }
 

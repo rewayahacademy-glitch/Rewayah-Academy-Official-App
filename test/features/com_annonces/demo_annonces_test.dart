@@ -99,6 +99,31 @@ void main() {
       );
     });
 
+    test('le catalogue « Equipe Studio » (section 13.2) est dans la '
+        'demonstration de l Administration, seule a avoir le Studio', () {
+      const Set<TypeNotification> studio = <TypeNotification>{
+        TypeNotification.mentionStudio,
+        TypeNotification.reponseStudio,
+        TypeNotification.decisionDemandee,
+        TypeNotification.elementAssigne,
+        TypeNotification.annonceInterne,
+        TypeNotification.evenementContextuel,
+      };
+      final Set<TypeNotification> admin = notificationsDemo(
+        RoleDemoCommunications.admin,
+        _maintenant,
+      ).map((NotificationTuteur n) => n.type).toSet();
+      expect(admin, containsAll(studio));
+      for (final RoleDemoCommunications role in RoleDemoCommunications.values) {
+        if (role == RoleDemoCommunications.admin) continue;
+        final Set<TypeNotification> types = notificationsDemo(
+          role,
+          _maintenant,
+        ).map((NotificationTuteur n) => n.type).toSet();
+        expect(types.intersection(studio), isEmpty, reason: role.name);
+      }
+    });
+
     test('les annonces de demonstration menent a l Espace Classe de '
         'demonstration, jamais a une page a session', () {
       final Map<String, List<AnnonceClasse>> annonces = annoncesDemo(
@@ -204,6 +229,35 @@ void main() {
         ),
         findsNothing,
       );
+    });
+
+    testWidgets('administration, 1440 : une notification Studio se lit '
+        'dans le centre, son type en toutes lettres', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        _adresse(RoleDemoCommunications.admin),
+        taille: const Size(1440, 900),
+      );
+      final Finder ligne = _ligne('demo-d-studio-decision');
+      expect(ligne, findsOneWidget);
+      expect(
+        find.descendant(
+          of: ligne,
+          matching: find.textContaining(t.notifications.types.decisionDemandee),
+        ),
+        findsOneWidget,
+      );
+      await _toucher(tester, ligne);
+      expect(
+        find.descendant(
+          of: find.byKey(NotificationsPage.cleDetail),
+          matching: find.text(t.com.annonces.demo.f.adminStudioDecision),
+        ),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('famille, 1440 : liste et detail cote a cote', (

@@ -106,14 +106,30 @@ class _AnnoncesDeClasseState extends ConsumerState<AnnoncesDeClasse> {
   }
 
   /// Le detail, en surface contextuelle (spec section 18) : le texte entier
-  /// de l'annonce deja lue par la Classe, sans nouvelle lecture.
+  /// de l'annonce deja lue par la Classe, sans nouvelle lecture du port.
+  /// La feuille suit la liste de la Classe : une fois la lecture enregistree
+  /// et la Classe relue, son badge « A lire » tombe comme celui de la carte.
+  /// Tant que la Classe n'est pas relue (ou si l'annonce en a disparu),
+  /// l'instantane ouvert reste affiche.
   Future<void> _lire(AnnonceClasse annonce) async {
+    final String classeId = widget.classeId;
     unawaited(_marquerLue(annonce));
     await AppBottomSheet.ouvrir<void>(
       context,
       titre: t.com.annonces.annonce,
-      constructeur: (BuildContext _) =>
-          CarteAnnonceClasse(annonce: annonce, complete: true),
+      constructeur: (BuildContext _) => Consumer(
+        builder: (BuildContext _, WidgetRef ref, Widget? _) {
+          final AnnonceClasse courante =
+              ref
+                  .watch(annoncesDeClasseProvider(classeId))
+                  .value
+                  ?.annonces
+                  .where((AnnonceClasse a) => a.id == annonce.id)
+                  .firstOrNull ??
+              annonce;
+          return CarteAnnonceClasse(annonce: courante, complete: true);
+        },
+      ),
     );
   }
 

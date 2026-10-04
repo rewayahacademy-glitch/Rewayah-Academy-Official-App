@@ -7276,9 +7276,6 @@ class Traductions$notifications$detail$fr {
 
 	/// fr: 'Ouvrir la page concernée'
 	String get ouvrir => 'Ouvrir la page concernée';
-
-	/// fr: 'Revenir à la liste des notifications'
-	String get retour => 'Revenir à la liste des notifications';
 }
 
 // Path: notifications.types
@@ -16204,6 +16201,24 @@ class Traductions$com$annonces$demo$f$fr {
 
 	// Translations
 
+	/// fr: 'Studio : une discussion du canal Programmes vous mentionne'
+	String get adminStudioMention => 'Studio : une discussion du canal Programmes vous mentionne';
+
+	/// fr: 'Studio : nouvelle réponse à votre message sur le programme de printemps'
+	String get adminStudioReponse => 'Studio : nouvelle réponse à votre message sur le programme de printemps';
+
+	/// fr: 'Studio : une décision est demandée sur le support de la leçon 4'
+	String get adminStudioDecision => 'Studio : une décision est demandée sur le support de la leçon 4';
+
+	/// fr: 'Studio : la relecture du support de Tajwid vous est assignée'
+	String get adminStudioAssigne => 'Studio : la relecture du support de Tajwid vous est assignée';
+
+	/// fr: 'Annonce interne de l'équipe Studio : réunion d'équipe jeudi à 18 h'
+	String get adminStudioInterne => 'Annonce interne de l\'équipe Studio : réunion d\'équipe jeudi à 18 h';
+
+	/// fr: 'Studio : un support est prêt pour la Classe An-Nour'
+	String get adminStudioContexte => 'Studio : un support est prêt pour la Classe An-Nour';
+
 	/// fr: 'Récitation de fin de trimestre devant les familles'
 	String get annonceNourTitre => 'Récitation de fin de trimestre devant les familles';
 
@@ -18473,7 +18488,6 @@ extension on Traductions {
 			'notifications.detail.choisirPhrase' => 'Son détail s\'affiche ici, à côté de la liste.',
 			'notifications.detail.recue' => ({required Object date, required Object heure}) => 'Reçue le ${date} à ${heure}',
 			'notifications.detail.ouvrir' => 'Ouvrir la page concernée',
-			'notifications.detail.retour' => 'Revenir à la liste des notifications',
 			'notifications.types.annonceClasse' => 'Annonce de Classe',
 			'notifications.types.changementSeance' => 'Changement de séance',
 			'notifications.types.decisionDossier' => 'Décision sur un dossier',
@@ -18862,9 +18876,9 @@ extension on Traductions {
 			'enseignant.eleve.travail' => 'Travail',
 			'enseignant.eleve.travailReprise' => ({required Object page}) => 'Reprise à la ${page}',
 			'enseignant.eleve.derniereSeance' => 'Dernière séance',
+			'enseignant.eleve.nonRenseigne' => 'Non renseigné',
 			_ => null,
 		} ?? switch (path) {
-			'enseignant.eleve.nonRenseigne' => 'Non renseigné',
 			'enseignant.eleve.signaler' => 'Signaler un besoin',
 			'enseignant.eleve.signalerAide' => 'Un besoin à remonter à l\'académie, sans recopier le contexte.',
 			'enseignant.signalement.titre' => 'Signaler un besoin',
@@ -19376,9 +19390,9 @@ extension on Traductions {
 			'controleur.observation.autre' => 'Autre',
 			'controleur.observation.autreAide' => 'Quand aucun autre domaine ne convient · précisez-le dans votre texte',
 			'controleur.observation.questionPersonne' => 'Qui est concerné ?',
+			'controleur.observation.contextePersonne' => 'Indiquez qui l\'observation concerne. Un élève se choisit dans la liste de la Classe, prénom seulement.',
 			_ => null,
 		} ?? switch (path) {
-			'controleur.observation.contextePersonne' => 'Indiquez qui l\'observation concerne. Un élève se choisit dans la liste de la Classe, prénom seulement.',
 			'controleur.observation.enseignant' => 'Enseignant',
 			'controleur.observation.enseignantAide' => 'Quand l\'observation porte sur l\'enseignant de la séance',
 			'controleur.observation.classeEntiere' => 'Classe entière',
@@ -19890,9 +19904,9 @@ extension on Traductions {
 			'tc.parcours.avant.nonBrancheDetail' => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.',
 			'tc.parcours.avant.reprendre' => 'Reprendre le cours',
 			'tc.parcours.avant.reprendreDepuis' => ({required Object position}) => 'Reprendre le cours à ${position}',
+			'tc.parcours.intention.apprendre' => 'À apprendre',
 			_ => null,
 		} ?? switch (path) {
-			'tc.parcours.intention.apprendre' => 'À apprendre',
 			'tc.parcours.intention.revoir' => 'À revoir',
 			'tc.parcours.intention.renforcer' => 'À renforcer',
 			'tc.parcours.intention.entretenir' => 'À entretenir',
@@ -20404,9 +20418,9 @@ extension on Traductions {
 			'com.annonces.ouvrirClasseSemantique' => ({required Object classe}) => 'Ouvrir ${classe}',
 			'com.annonces.marquerLue' => 'Marquer comme lue',
 			'com.annonces.lue' => 'Lue',
+			'com.annonces.carteSemantique' => ({required Object classe, required Object titre}) => 'Annonce de ${classe} : ${titre}',
 			_ => null,
 		} ?? switch (path) {
-			'com.annonces.carteSemantique' => ({required Object classe, required Object titre}) => 'Annonce de ${classe} : ${titre}',
 			'com.annonces.introuvableTitre' => 'Cette annonce n\'est plus disponible',
 			'com.annonces.introuvablePhrase' => 'Elle a peut-être été retirée de la Classe. Revenez à vos notifications.',
 			'com.annonces.demo.detail' => 'Démonstration hors production : données fictives, rien n\'est envoyé.',
@@ -20419,6 +20433,12 @@ extension on Traductions {
 			'com.annonces.demo.classeNour' => 'Classe An-Nour',
 			'com.annonces.demo.classeFajr' => 'Classe Al-Fajr',
 			'com.annonces.demo.enseignante' => 'Enseignante de la Classe',
+			'com.annonces.demo.f.adminStudioMention' => 'Studio : une discussion du canal Programmes vous mentionne',
+			'com.annonces.demo.f.adminStudioReponse' => 'Studio : nouvelle réponse à votre message sur le programme de printemps',
+			'com.annonces.demo.f.adminStudioDecision' => 'Studio : une décision est demandée sur le support de la leçon 4',
+			'com.annonces.demo.f.adminStudioAssigne' => 'Studio : la relecture du support de Tajwid vous est assignée',
+			'com.annonces.demo.f.adminStudioInterne' => 'Annonce interne de l\'équipe Studio : réunion d\'équipe jeudi à 18 h',
+			'com.annonces.demo.f.adminStudioContexte' => 'Studio : un support est prêt pour la Classe An-Nour',
 			'com.annonces.demo.f.annonceNourTitre' => 'Récitation de fin de trimestre devant les familles',
 			'com.annonces.demo.f.annonceNourTexte' => 'Chères familles, la Classe An-Nour présentera sa récitation de fin de trimestre le samedi 14 décembre à 10 h, en visio. Chaque élève récitera la sourate travaillée ce trimestre. Merci de prévoir une connexion stable et un endroit calme. Les élèves qui le souhaitent peuvent répéter pendant la séance du mercredi précédent. Les familles peuvent assister en silence, micro coupé. Un compte rendu sera partagé après la séance.',
 			'com.annonces.demo.f.annonceFajrTitre' => 'Révision avant l\'évaluation de jeudi',

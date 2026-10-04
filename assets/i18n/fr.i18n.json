@@ -2559,8 +2559,7 @@
       "choisirTitre": "Choisissez une notification",
       "choisirPhrase": "Son détail s'affiche ici, à côté de la liste.",
       "recue": "Reçue le {date} à {heure}",
-      "ouvrir": "Ouvrir la page concernée",
-      "retour": "Revenir à la liste des notifications"
+      "ouvrir": "Ouvrir la page concernée"
     },
     "types": {
       "annonceClasse": "Annonce de Classe",
@@ -4891,6 +4890,12 @@
         "classeFajr": "Classe Al-Fajr",
         "enseignante": "Enseignante de la Classe",
         "f": {
+          "adminStudioMention": "Studio : une discussion du canal Programmes vous mentionne",
+          "adminStudioReponse": "Studio : nouvelle réponse à votre message sur le programme de printemps",
+          "adminStudioDecision": "Studio : une décision est demandée sur le support de la leçon 4",
+          "adminStudioAssigne": "Studio : la relecture du support de Tajwid vous est assignée",
+          "adminStudioInterne": "Annonce interne de l'équipe Studio : réunion d'équipe jeudi à 18 h",
+          "adminStudioContexte": "Studio : un support est prêt pour la Classe An-Nour",
           "annonceNourTitre": "Récitation de fin de trimestre devant les familles",
           "annonceNourTexte": "Chères familles, la Classe An-Nour présentera sa récitation de fin de trimestre le samedi 14 décembre à 10 h, en visio. Chaque élève récitera la sourate travaillée ce trimestre. Merci de prévoir une connexion stable et un endroit calme. Les élèves qui le souhaitent peuvent répéter pendant la séance du mercredi précédent. Les familles peuvent assister en silence, micro coupé. Un compte rendu sera partagé après la séance.",
           "annonceFajrTitre": "Révision avant l'évaluation de jeudi",

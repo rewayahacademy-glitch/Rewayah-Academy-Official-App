@@ -16,6 +16,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/badge_non_lu.dart';
 import 'package:rewayah_academy/core/widgets/pile_cartes.dart';
 import 'package:rewayah_academy/features/classe_tuteur/carte_seance_classe.dart';
 import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
@@ -250,6 +251,12 @@ void main() {
               )
               .maxLines,
           isNull,
+        );
+        // Revue COM-ANN-1 : la feuille suit la lecture enregistree, le
+        // badge « A lire » n'y reste pas.
+        expect(
+          find.descendant(of: detail, matching: find.byType(BadgeNonLu)),
+          findsNothing,
         );
         expect(tester.takeException(), isNull);
       });

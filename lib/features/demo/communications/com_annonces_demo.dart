@@ -175,9 +175,13 @@ List<NotificationTuteur> notificationsDemo(
   );
   const Duration h1 = Duration(hours: 1);
   const Duration h3 = Duration(hours: 3);
+  const Duration h2 = Duration(hours: 2);
+  const Duration h4 = Duration(hours: 4);
   const Duration h5 = Duration(hours: 5);
+  const Duration h6 = Duration(hours: 6);
   const Duration j1 = Duration(days: 1);
   const Duration j2 = Duration(days: 2);
+  const Duration j3 = Duration(days: 3);
   const Duration j5 = Duration(days: 5);
   return switch (role) {
     RoleDemoCommunications.tuteur => <NotificationTuteur>[
@@ -330,6 +334,53 @@ List<NotificationTuteur> notificationsDemo(
         f.adminOperationnel,
         j2,
         TypeNotification.evenementOperationnel,
+        NiveauAttention.information,
+        lue: true,
+      ),
+      // Le catalogue « Equipe Studio » (section 13.2) : le Studio est reserve
+      // a l'Administration (reponse du directeur), ses notifications
+      // arrivent donc dans ce meme centre.
+      n(
+        'demo-d-studio-decision',
+        f.adminStudioDecision,
+        h2,
+        TypeNotification.decisionDemandee,
+        NiveauAttention.actionRequise,
+      ),
+      n(
+        'demo-d-studio-mention',
+        f.adminStudioMention,
+        h4,
+        TypeNotification.mentionStudio,
+        NiveauAttention.aLire,
+        mention: true,
+      ),
+      n(
+        'demo-d-studio-assigne',
+        f.adminStudioAssigne,
+        h6,
+        TypeNotification.elementAssigne,
+        NiveauAttention.actionRequise,
+      ),
+      n(
+        'demo-d-studio-reponse',
+        f.adminStudioReponse,
+        j1 + h2,
+        TypeNotification.reponseStudio,
+        NiveauAttention.aLire,
+      ),
+      n(
+        'demo-d-studio-interne',
+        f.adminStudioInterne,
+        j3,
+        TypeNotification.annonceInterne,
+        NiveauAttention.information,
+      ),
+      n(
+        'demo-d-studio-contexte',
+        f.adminStudioContexte,
+        j5,
+        TypeNotification.evenementContextuel,
         NiveauAttention.information,
         lue: true,
       ),
