@@ -58,25 +58,34 @@ class CarteReserveStrategique extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Row(
+          // Wrap : a 320 avec le texte a 200 %, la pastille passe sous le
+          // titre au lieu de lui laisser une colonne d'un caractere.
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: <Widget>[
-              IconTheme(
-                data: palette.inkStrong.asIconTheme(size: AppSpacing.xxl),
-                child: Icon(AppIcons.reserve.repos),
-              ),
-              Ecart.hMd,
-              Expanded(
-                child: Semantics(
-                  header: true,
-                  child: Text(
-                    c.reserveStrategique,
-                    style: palette.inkStrong.applyTo(
-                      textes.titleMedium ?? const TextStyle(),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  IconTheme(
+                    data: palette.inkStrong.asIconTheme(size: AppSpacing.xxl),
+                    child: Icon(AppIcons.reserve.repos),
+                  ),
+                  Ecart.hMd,
+                  Flexible(
+                    child: Semantics(
+                      header: true,
+                      child: Text(
+                        c.reserveStrategique,
+                        style: palette.inkStrong.applyTo(
+                          textes.titleMedium ?? const TextStyle(),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-              Ecart.hSm,
               PastilleEtatReserve(i.etat),
             ],
           ),

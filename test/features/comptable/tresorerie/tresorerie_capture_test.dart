@@ -29,6 +29,10 @@ Future<void> _demo(
   await tester.pumpWidget(
     hoteCapture(
       CoquilleComptableDemo(ecran: ecran, montantsAffiches: affiches),
+      // Les memes surcharges a la racine : les lectures de la page (providers
+      // non surcharges) se resolvent dans la portee racine, pas dans celle,
+      // imbriquee, de la coquille (sinon « en preparation »).
+      surcharges: surchargesCoquilleComptableDemo(montantsAffiches: affiches),
       themeMode: mode,
       echelleTexte: echelle,
     ),
