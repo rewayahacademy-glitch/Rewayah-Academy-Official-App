@@ -148,11 +148,16 @@ class _Contenu extends ConsumerWidget {
 
     // COM-F : les emplacements des Communications, vides tant que leurs
     // voies ne les remplissent pas (annonces de la Classe en tete, entree
-    // des Messages apres les rubriques) ; ils portent leur propre ecart.
-    final Widget annonces = AnnoncesDeClasse(classeId: classeId);
+    // des Messages apres les rubriques) ; la page dit de quel cote poser
+    // l'ecart, rendu seulement quand l'emplacement rend quelque chose.
+    final Widget annonces = AnnoncesDeClasse(
+      classeId: classeId,
+      ecartApres: Ecart.vLg,
+    );
     final Widget messages = EntreeMessagesContexte(
       type: TypeObjetLie.classe,
       objetId: classeId,
+      ecartAvant: Ecart.vLg,
     );
 
     if (!large) {

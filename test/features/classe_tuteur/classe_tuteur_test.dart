@@ -12,6 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_progression_famille.dart';
+import 'package:rewayah_academy/core/communications/modeles_communication.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
@@ -44,6 +45,8 @@ import 'package:rewayah_academy/features/classe_tuteur/planning_classe_page.dart
 import 'package:rewayah_academy/features/classe_tuteur/progression_classe_page.dart';
 import 'package:rewayah_academy/features/classe_tuteur/ressources_classe_page.dart';
 import 'package:rewayah_academy/features/classe_tuteur/travail_classe_page.dart';
+import 'package:rewayah_academy/features/com_annonces/annonces_de_classe.dart';
+import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.dart';
 import 'package:rewayah_academy/features/suivi_foyer/suivi_foyer_page.dart';
 import 'package:rewayah_academy/features/tc_catalogue/detail_ressource_page.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/entree_observation_page.dart';
@@ -904,5 +907,41 @@ void main() {
         isFalse,
       );
     });
+  });
+
+  group('COM-F : emplacements des Communications rendus dans la page', () {
+    for (final Size taille in <Size>[
+      const Size(390, 844),
+      const Size(1440, 1000),
+    ]) {
+      testWidgets('${taille.width.round()} : annonces en tete, Messages '
+          'apres les rubriques, sur la Classe affichee', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          depart: Routes.classePour(_classe, eleveId: _a1),
+          taille: taille,
+        );
+        expect(find.byType(ClasseTuteurPage), findsOneWidget);
+        final AnnoncesDeClasse annonces = tester.widget<AnnoncesDeClasse>(
+          find.byType(AnnoncesDeClasse),
+        );
+        expect(annonces.classeId, _classe);
+        // En tete : l'ecart se pose apres.
+        expect(annonces.ecartAvant, isNull);
+        expect(annonces.ecartApres, isNotNull);
+        final EntreeMessagesContexte messages = tester
+            .widget<EntreeMessagesContexte>(
+              find.byType(EntreeMessagesContexte),
+            );
+        expect(messages.type, TypeObjetLie.classe);
+        expect(messages.objetId, _classe);
+        // Apres les rubriques : l'ecart se pose avant.
+        expect(messages.ecartAvant, isNotNull);
+        expect(messages.ecartApres, isNull);
+        expect(tester.takeException(), isNull);
+      });
+    }
   });
 }

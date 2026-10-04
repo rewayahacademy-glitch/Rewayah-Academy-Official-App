@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/service_groupes.dart'
     show TypePublicGroupe;
+import 'package:rewayah_academy/core/communications/modeles_communication.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -18,6 +19,8 @@ import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/stat_tile.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
+import 'package:rewayah_academy/features/com_annonces/annonces_de_classe.dart';
+import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_groupe_page.dart';
 import 'package:rewayah_academy/features/fiche_groupe/preparation_seance.dart';
 import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
@@ -672,5 +675,28 @@ void main() {
         findsNothing,
       );
     });
+  });
+
+  testWidgets('COM-F : annonces et Messages de la Classe rendus en fin de '
+      'section, sur le groupe affiche', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      hote(
+        const FicheGroupePage(groupeId: _groupeId),
+        surcharges: _surcharges(_avec()),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final AnnoncesDeClasse annonces = tester.widget<AnnoncesDeClasse>(
+      find.byType(AnnoncesDeClasse),
+    );
+    expect(annonces.classeId, _groupeId);
+    expect(annonces.ecartAvant, isNotNull);
+    expect(annonces.ecartApres, isNull);
+    final EntreeMessagesContexte messages = tester
+        .widget<EntreeMessagesContexte>(find.byType(EntreeMessagesContexte));
+    expect(messages.type, TypeObjetLie.classe);
+    expect(messages.objetId, _groupeId);
+    expect(messages.ecartAvant, isNotNull);
+    expect(messages.ecartApres, isNull);
   });
 }

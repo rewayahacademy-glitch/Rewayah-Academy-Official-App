@@ -213,11 +213,16 @@ class MesClassesPage extends ConsumerWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: AppPage.largeurReglages),
           // COM-F : l'entree generale des Messages, vide tant que la voie
-          // COM-MSG ne la remplit pas ; elle porte son propre ecart.
+          // COM-MSG ne la remplit pas ; en fin de page, l'ecart entre
+          // sections se pose avant elle, rendu seulement quand elle rend
+          // quelque chose.
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
-            children: <Widget>[corps, const EntreeMessagesContexte()],
+            children: <Widget>[
+              corps,
+              const EntreeMessagesContexte(ecartAvant: Ecart.vSection),
+            ],
           ),
         ),
       ),

@@ -2,8 +2,6 @@
 // routeur (K-07) : chaque nouvelle route resout vers son ecran, chaque
 // entree de coquille est TAPEE depuis la coquille reelle.
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -463,36 +461,5 @@ void main() {
         ]),
       );
     });
-  });
-
-  group('Emplacements d entree poses dans les pages hotes', () {
-    // Les emplacements sont vides (SizedBox.shrink) tant que leurs voies ne
-    // les remplissent pas : on verifie qu'ils sont poses, les tests propres
-    // des pages hotes verifient que leur rendu n'a pas change.
-    final Map<String, List<String>> hotes = <String, List<String>>{
-      'lib/features/classe_tuteur/classe_tuteur_page.dart': <String>[
-        'AnnoncesDeClasse(',
-        'EntreeMessagesContexte(',
-      ],
-      'lib/features/fiche_groupe/fiche_groupe_page.dart': <String>[
-        'AnnoncesDeClasse(',
-        'EntreeMessagesContexte(',
-      ],
-      'lib/features/enseignant_classes/mes_classes_page.dart': <String>[
-        'EntreeMessagesContexte(',
-      ],
-      'lib/features/ma_classe_adulte/ma_classe_adulte_page.dart': <String>[
-        'AnnoncesDeClasse(',
-        'EntreeMessagesContexte(',
-      ],
-    };
-    for (final MapEntry<String, List<String>> h in hotes.entries) {
-      test(h.key, () {
-        final String source = File(h.key).readAsStringSync();
-        for (final String attendu in h.value) {
-          expect(source, contains(attendu), reason: '${h.key} : $attendu');
-        }
-      });
-    }
   });
 }

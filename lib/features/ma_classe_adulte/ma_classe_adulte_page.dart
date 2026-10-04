@@ -279,9 +279,14 @@ class _Sections extends StatelessWidget {
       ),
       // COM-F : les emplacements des Communications (annonces de la Classe,
       // entree des Messages), vides tant que leurs voies ne les remplissent
-      // pas ; ils portent leur propre ecart.
-      AnnoncesDeClasse(classeId: groupeId),
-      EntreeMessagesContexte(type: TypeObjetLie.classe, objetId: groupeId),
+      // pas ; en fin de section, l'ecart entre sections se pose avant eux,
+      // rendu seulement quand ils rendent quelque chose.
+      AnnoncesDeClasse(classeId: groupeId, ecartAvant: Ecart.vSection),
+      EntreeMessagesContexte(
+        type: TypeObjetLie.classe,
+        objetId: groupeId,
+        ecartAvant: Ecart.vSection,
+      ),
     ];
 
     List<Widget> bloc(List<List<Widget>> sections) => <Widget>[

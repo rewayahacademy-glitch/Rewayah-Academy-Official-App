@@ -12,6 +12,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
 import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
+import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.dart';
 import 'package:rewayah_academy/features/demo/demo_enseignant_page.dart';
 import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 import 'package:rewayah_academy/features/enseignant_classes/mes_classes_page.dart';
@@ -315,5 +316,20 @@ void main() {
       );
       expect(tester.hasRunningAnimations, isFalse);
     });
+  });
+
+  testWidgets('COM-F : l entree generale des Messages rendue sous la liste, '
+      'sans objet lie', (WidgetTester tester) async {
+    _fenetre(tester, const Size(390, 1200));
+    await tester.pumpWidget(
+      hote(const CoquilleEnseignantDemo(ecran: EcranDemoEnseignant.classes)),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byType(MesClassesPage), findsOneWidget);
+    final EntreeMessagesContexte messages = tester
+        .widget<EntreeMessagesContexte>(find.byType(EntreeMessagesContexte));
+    expect(messages.type, isNull);
+    expect(messages.objetId, isNull);
+    expect(messages.ecartAvant, isNotNull);
   });
 }

@@ -320,9 +320,14 @@ class _CorpsState extends ConsumerState<_Corps> {
       ressources,
       // COM-F : les emplacements des Communications (annonces de la Classe,
       // entree des Messages), vides tant que leurs voies ne les remplissent
-      // pas ; ils portent leur propre ecart.
-      AnnoncesDeClasse(classeId: groupe.id),
-      EntreeMessagesContexte(type: TypeObjetLie.classe, objetId: groupe.id),
+      // pas ; en fin de section, l'ecart entre sections se pose avant eux,
+      // rendu seulement quand ils rendent quelque chose.
+      AnnoncesDeClasse(classeId: groupe.id, ecartAvant: Ecart.vSection),
+      EntreeMessagesContexte(
+        type: TypeObjetLie.classe,
+        objetId: groupe.id,
+        ecartAvant: Ecart.vSection,
+      ),
     ];
 
     // [RESPONSIVE] EN-3 (planche 2, rectification 5) : sur bureau, deux
