@@ -28,6 +28,7 @@ import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/avatar_nom.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
+import 'package:rewayah_academy/features/tc_observation_ui/barre_commandes_observation.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/compteur_visite.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/ouverture_observation.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/panneau_observation_tuteur.dart';
@@ -120,9 +121,16 @@ Future<_Salle> _entrerEnSalle(
   PortClassesFoyer? classes,
   bool horsLigne = false,
   TextDirection? sens,
+  EdgeInsets zoneSure = EdgeInsets.zero,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
+  tester.view.padding = FakeViewPadding(
+    left: zoneSure.left,
+    top: zoneSure.top,
+    right: zoneSure.right,
+    bottom: zoneSure.bottom,
+  );
   addTearDown(tester.view.reset);
   final FauxPortVisite visites = FauxPortVisite(reponse: reponse ?? _entree());
   final FauxPortPolitique politique = FauxPortPolitique();
@@ -541,6 +549,61 @@ void main() {
       await _presser(tester, find.text(v.quitter));
       expect(find.text(v.quitterQuestion), findsOneWidget);
     });
+  });
+  // PAGESHELL-200-1 (reserve 1 de la revue OBS-COUPE-1b) : sur telephone a
+  // 200 %, la tete de `PageShell` defile et le corps non defilant recevait
+  // toute la hauteur de la vue sous elle ; la salle depassait de la hauteur
+  // de la tete et le bas de sa barre passait sous la zone sure au premier
+  // affichage (390x844 : bas du panneau a 834 pour une zone sure a 810).
+  group('PAGESHELL-200-1 : barre entiere au premier affichage', () {
+    const EdgeInsets zoneSure = EdgeInsets.only(top: 47, bottom: 34);
+    for (final (Size, double, TextDirection) cas
+        in const <(Size, double, TextDirection)>[
+          (Size(390, 844), 2, TextDirection.ltr),
+          (Size(320, 844), 2, TextDirection.ltr),
+          (Size(390, 844), 2, TextDirection.rtl),
+          (Size(320, 844), 2, TextDirection.rtl),
+          (Size(390, 844), 1, TextDirection.ltr),
+          (Size(360, 800), 2, TextDirection.ltr),
+        ]) {
+      testWidgets('${cas.$1.width.toInt()}x${cas.$1.height.toInt()}, texte '
+          'x${cas.$2.toInt()}, ${cas.$3.name}', (WidgetTester tester) async {
+        final _Salle salle = await _entrerEnSalle(
+          tester,
+          taille: cas.$1,
+          echelleTexte: cas.$2,
+          sens: cas.$3,
+          zoneSure: zoneSure,
+        );
+        _publierParticipants(salle.moteur);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+
+        final double basZoneSure = cas.$1.height - zoneSure.bottom;
+        // Premier affichage : aucun defilement.
+        for (final ScrollableState defileur
+            in tester.stateList<ScrollableState>(find.byType(Scrollable))) {
+          if (defileur.position.axis == Axis.vertical) {
+            expect(defileur.position.pixels, 0);
+          }
+        }
+        final Rect barre = tester.getRect(
+          find.byType(BarreCommandesObservation),
+        );
+        final Rect panneau = tester.getRect(
+          find.byType(PanneauObservationTuteur),
+        );
+        expect(barre.top, greaterThanOrEqualTo(zoneSure.top));
+        expect(barre.bottom, lessThanOrEqualTo(basZoneSure));
+        expect(panneau.bottom, lessThanOrEqualTo(basZoneSure));
+        expect(
+          tester.getRect(find.text(v.quitter)).bottom,
+          lessThanOrEqualTo(basZoneSure),
+        );
+        // Rien n'est vole : la salle descend jusqu'au bas de la zone sure.
+        expect(panneau.bottom, closeTo(basZoneSure, 0.5));
+      });
+    }
   });
   // TUILE-TUTEUR-1 : sans image, la vignette du tuteur prend la tuile sans
   // image partagee (VIDEO-TUILE-1) : cercle, nom centre dessous, une seule
