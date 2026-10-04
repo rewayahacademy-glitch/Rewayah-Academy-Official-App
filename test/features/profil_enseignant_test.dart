@@ -6,6 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/offres/offre_horaire.dart';
+import 'package:rewayah_academy/core/offres/service_offres.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/profil/service_acceptations.dart';
 import 'package:rewayah_academy/core/profil/service_declaration.dart';
@@ -15,6 +17,7 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/stat_tile.dart';
+import 'package:rewayah_academy/features/profil_enseignant/declaration_choix.dart';
 import 'package:rewayah_academy/features/profil_enseignant/profil_enseignant_page.dart';
 
 import '../support/harnais.dart';
@@ -113,6 +116,13 @@ Future<_Monte> _monter(
         ),
         serviceAuthProvider.overrideWithValue(auth),
         serviceDeclarationProvider.overrideWithValue(declaration),
+        // FORM-L8 : les langues se cochent parmi celles que l'academie publie.
+        languesCoursProvider.overrideWith(
+          (_) async => const <LangueCours>[
+            LangueCours(code: 'poular', nom: 'Poular'),
+            LangueCours(code: 'francais', nom: 'Français'),
+          ],
+        ),
         servicePlanningProvider.overrideWithValue(FauxServicePlanning()),
         serviceReseauProvider.overrideWithValue(
           FauxServiceReseau(horsLigneRendu: horsLigne),
@@ -179,18 +189,19 @@ void main() {
         ];
 
     for (final ({AccountStatus? statut, String attendu}) c in cas) {
-      testWidgets('${c.statut?.valeurSql ?? 'illisible'} se dit en une phrase', (
-        WidgetTester tester,
-      ) async {
-        await _monter(
-          tester,
-          profil: _profilDeTest(statutCompte: c.statut),
-          statutSession: c.statut,
-        );
-        await tester.pumpAndSettle();
+      testWidgets(
+        '${c.statut?.valeurSql ?? 'illisible'} se dit en une phrase',
+        (WidgetTester tester) async {
+          await _monter(
+            tester,
+            profil: _profilDeTest(statutCompte: c.statut),
+            statutSession: c.statut,
+          );
+          await tester.pumpAndSettle();
 
-        expect(find.text(c.attendu), findsOneWidget);
-      });
+          expect(find.text(c.attendu), findsOneWidget);
+        },
+      );
     }
 
     testWidgets('un statut illisible ne se replie JAMAIS sur « verifie »', (
@@ -209,22 +220,23 @@ void main() {
       expect(find.text(t.enseignant.profil.statutInconnu), findsOneWidget);
     });
 
-    testWidgets('une divergence entre le statut affiche et celui du routeur se dit', (
-      WidgetTester tester,
-    ) async {
-      // `account_status` est lu par deux chemins : la session gouverne la porte
-      // du routeur, le profil alimente l'ecran. Rien ne garantit qu'ils soient
-      // du meme instant, et l'enseignant ne doit pas decouvrir l'ecart en
-      // butant sur un acces.
-      await _monter(
-        tester,
-        profil: _profilDeTest(statutCompte: AccountStatus.active),
-        statutSession: AccountStatus.pendingKyc,
-      );
-      await tester.pumpAndSettle();
+    testWidgets(
+      'une divergence entre le statut affiche et celui du routeur se dit',
+      (WidgetTester tester) async {
+        // `account_status` est lu par deux chemins : la session gouverne la porte
+        // du routeur, le profil alimente l'ecran. Rien ne garantit qu'ils soient
+        // du meme instant, et l'enseignant ne doit pas decouvrir l'ecart en
+        // butant sur un acces.
+        await _monter(
+          tester,
+          profil: _profilDeTest(statutCompte: AccountStatus.active),
+          statutSession: AccountStatus.pendingKyc,
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.text(t.enseignant.profil.statutDivergent), findsOneWidget);
-    });
+        expect(find.text(t.enseignant.profil.statutDivergent), findsOneWidget);
+      },
+    );
 
     testWidgets('sans divergence, rien n est annonce', (
       WidgetTester tester,
@@ -263,7 +275,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // La feuille est ouverte, et rien n'est encore parti.
-      expect(find.text(t.enseignant.profil.deconnexionConsequence), findsOneWidget);
+      expect(
+        find.text(t.enseignant.profil.deconnexionConsequence),
+        findsOneWidget,
+      );
       expect(monte.auth.deconnexions, 0);
 
       await tester.tap(find.text(t.enseignant.profil.deconnexionConfirmer));
@@ -472,16 +487,22 @@ void main() {
       final _Monte monte = await _monter(tester, profil: _profilDeTest());
       await tester.pumpAndSettle();
 
+      // FORM-L8 : les langues se cochent, la langue hors liste (« Arabe »)
+      // reste cochee ; on decoche « Français » et on coche « Poular ».
       await _taperLigne(tester, t.enseignant.profil.langues);
-      await tester.enterText(find.byType(TextField), 'Peul , Arabe,');
-      await tester.tap(find.text(t.enseignant.profil.enregistrer));
+      expect(find.byType(TextField), findsNothing);
+      await tester.tap(find.byKey(FeuilleLangues.carteKey('Français')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(FeuilleLangues.carteKey('Poular')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(FeuilleLangues.enregistrerKey));
       await tester.pumpAndSettle();
 
       expect(monte.declaration.ecritures, hasLength(1));
       expect(monte.declaration.ecritures.single.pays, isNull);
       expect(monte.declaration.ecritures.single.langues, <String>[
-        'Peul',
         'Arabe',
+        'Poular',
       ]);
       expect(find.text(t.enseignant.profil.enregistre), findsOneWidget);
     });
@@ -493,16 +514,21 @@ void main() {
       await tester.pumpAndSettle();
       monte.declaration.erreurAJeter = StateError('refus du serveur');
 
+      // FORM-L8 : le pays se choisit dans la liste. « GN », declare hors
+      // liste, revient dans « Autre » ; on choisit le Senegal.
       await _taperLigne(tester, t.enseignant.profil.pays);
-      await tester.enterText(find.byType(TextField), 'SN');
-      await tester.tap(find.text(t.enseignant.profil.enregistrer));
+      await tester.ensureVisible(find.byKey(FeuillePays.carteKey('Sénégal')));
+      await tester.tap(find.byKey(FeuillePays.carteKey('Sénégal')));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byKey(FeuillePays.enregistrerKey));
+      await tester.tap(find.byKey(FeuillePays.enregistrerKey));
       await tester.pumpAndSettle();
 
       expect(find.text(t.enseignant.profil.editionErreur), findsOneWidget);
       // L'ecran n'a aucun etat local de profil : il reaffiche ce que la lecture
       // rend, donc l'ancienne valeur.
       expect(find.text('GN'), findsOneWidget);
-      expect(find.text('SN'), findsNothing);
+      expect(find.text('Sénégal'), findsNothing);
     });
 
     testWidgets('le plafond hebdomadaire ne s edite pas', (
