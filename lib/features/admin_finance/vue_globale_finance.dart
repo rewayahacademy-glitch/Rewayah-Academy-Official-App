@@ -94,17 +94,33 @@ class VueGlobaleFinanceContenu extends StatelessWidget {
   /// La cle de la liste des alertes.
   static const Key alertesKey = ValueKey<String>('fi-vue-alertes');
 
-  /// Le nombre de colonnes de la grille pour une largeur de contenu : quatre
-  /// sur un bureau, deux sur une tablette, une sur un telephone ; une de moins
-  /// par palier quand le texte est agrandi (aucun mot coupe).
+  /// La largeur minimale d'une carte au texte normal : celle qui loge quatre
+  /// cartes a partir du seuil etendu (840), ecarts de 16 compris.
+  static const double largeurMinCarte =
+      (AppGabarit.seuilEtendu - 3 * AppSpacing.lg) / 4;
+
+  /// Le nombre de colonnes de la grille pour une largeur de contenu : autant
+  /// de cartes que la largeur en loge, chacune au moins [largeurMinCarte]
+  /// multipliee par l'echelle du texte (aucun montant ni mot coupe), entre
+  /// une et quatre.
   static int colonnesPour(double largeur, TextScaler texte) {
-    final bool agrandi =
-        texte.scale(AppSpacing.lg) / AppSpacing.lg >=
-        AppGabarit.seuilTexteColonne;
-    if (largeur >= AppGabarit.seuilEtendu) return agrandi ? 2 : 4;
-    if (largeur >= AppGabarit.seuilChoixDouble) return agrandi ? 1 : 2;
-    return 1;
+    final double echelle = texte.scale(AppSpacing.lg) / AppSpacing.lg;
+    final double carte = largeurMinCarte * (echelle < 1 ? 1 : echelle);
+    final int loge = ((largeur + AppSpacing.lg) / (carte + AppSpacing.lg))
+        .floor();
+    return loge.clamp(1, 4);
   }
+
+  /// Vrai quand tous les indicateurs rendus sont nuls (montants a zero, aucun
+  /// essai, marge absente) : une lecture de valeurs, jamais un calcul.
+  static bool toutEstNul(VueGlobaleFinance v) =>
+      v.margeProjeteePourMille == null &&
+      v.essaisEnCours == 0 &&
+      v.encaisse.estNul &&
+      v.revenuAcademique.estNul &&
+      v.paieEnseignants.estNul &&
+      v.impayes.estNul &&
+      v.soldesCrediteurs.estNul;
 
   @override
   Widget build(BuildContext context) {
@@ -116,6 +132,7 @@ class VueGlobaleFinanceContenu extends StatelessWidget {
       annee: '${vue.mois.year}',
     );
     final int? marge = vue.margeProjeteePourMille;
+    final bool sansActivite = toutEstNul(vue);
     final List<Widget> indicateurs = <Widget>[
       _CarteIndicateur(
         libelle: vueT.encaisse,
@@ -137,9 +154,11 @@ class VueGlobaleFinanceContenu extends StatelessWidget {
       ),
       _CarteIndicateur(
         libelle: vueT.marge,
-        valeur: marge == null
-            ? vueT.margeSansActivite
-            : vueT.margeValeur(valeur: pourMilleEnTexte(marge)),
+        valeur: switch (marge) {
+          final int m => vueT.margeValeur(valeur: pourMilleEnTexte(m)),
+          null when sansActivite => vueT.margeSansActivite,
+          null => vueT.margeNonCalculable,
+        },
         detail: vueT.margeDetail,
       ),
       _CarteIndicateur(
@@ -171,10 +190,15 @@ class VueGlobaleFinanceContenu extends StatelessWidget {
           ),
         ),
         // Mois sans activite : les zeros restent affiches (un compteur qui
-        // disparait fait douter qu'il ait ete charge), la phrase le dit.
-        if (marge == null) ...<Widget>[
+        // disparait fait douter qu'il ait ete charge), la phrase le dit. Sans
+        // revenu mais avec d'autres chiffres, seule la marge manque : la
+        // phrase dit cela, et rien de plus.
+        if (sansActivite) ...<Widget>[
           Ecart.vMd,
           Text(vueT.sansActivite(mois: mois), style: textes.bodyLarge),
+        ] else if (marge == null) ...<Widget>[
+          Ecart.vMd,
+          Text(vueT.sansRevenu(mois: mois), style: textes.bodyLarge),
         ],
         Ecart.vXxl,
         SectionHeader(titre: vueT.indicateurs),

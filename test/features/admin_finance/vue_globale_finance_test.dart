@@ -28,6 +28,7 @@ import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_finance/vue_globale_finance.dart';
 import 'package:rewayah_academy/features/demo/finance_demo.dart';
 
+import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 
@@ -55,6 +56,19 @@ final VueGlobaleFinance _sansActivite = VueGlobaleFinance(
   impayes: _usd(0),
   essaisEnCours: 0,
   soldesCrediteurs: _usd(0),
+);
+
+/// Revenu reconnu nul, mais des soldes, des impayes et des essais : la marge
+/// manque, le mois n'est pas vide (revue FI-11a).
+final VueGlobaleFinance _sansRevenu = VueGlobaleFinance(
+  mois: DateTime(2026, 8),
+  encaisse: _usd(0),
+  revenuAcademique: _usd(0),
+  paieEnseignants: _usd(0),
+  margeProjeteePourMille: null,
+  impayes: const Montant(4500, 'USD'),
+  essaisEnCours: 3,
+  soldesCrediteurs: const Montant(12000, 'USD'),
 );
 
 /// Impayes et soldes crediteurs eleves, longue liste d'alertes de toutes
@@ -345,8 +359,34 @@ void main() {
       expect(find.text(formaterMontant(_usd(0))), findsNWidgets(5));
       expect(find.text('0'), findsOneWidget);
       expect(find.text(vue.margeSansActivite), findsOneWidget);
+      expect(find.text(vue.margeNonCalculable), findsNothing);
+      expect(find.textContaining(vue.sansRevenu(mois: '')), findsNothing);
       expect(find.text(vue.aucuneAlerte), findsOneWidget);
       expect(find.byType(BandeauAttention), findsNothing);
+    });
+
+    testWidgets('revenu nul avec soldes et impayes : pas de « a zero », les '
+        'montants rendus, la phrase de la marge', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 1400));
+      await tester.pumpWidget(
+        _hote(surcharges: _avec(_Port(vue: _sansRevenu))),
+      );
+      await tester.pumpAndSettle();
+      final vue = t.admin.finance.vue;
+      final String mois = vue.moisAnnee(mois: 'août', annee: '2026');
+      expect(find.text(vue.sansActivite(mois: mois)), findsNothing);
+      expect(find.text(vue.margeSansActivite), findsNothing);
+      expect(find.text(vue.sansRevenu(mois: mois)), findsOneWidget);
+      expect(find.text(vue.margeNonCalculable), findsOneWidget);
+      expect(find.text(formaterMontant(_sansRevenu.impayes)), findsOneWidget);
+      expect(
+        find.text(formaterMontant(_sansRevenu.soldesCrediteurs)),
+        findsOneWidget,
+      );
+      expect(find.text('3'), findsOneWidget);
+      // Encaisse, revenu, paie : trois zeros, vrais, restent affiches.
+      expect(find.text(formaterMontant(_usd(0))), findsNWidgets(3));
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('impayes, soldes crediteurs, longue liste d alertes : tout '
@@ -442,13 +482,23 @@ void main() {
       }
     }
 
-    test('colonnes : 4 au bureau, 2 en tablette, 1 au telephone, moins '
-        'quand le texte est agrandi', () {
+    test('colonnes : par largeur minimale de carte, proportionnelle au '
+        'texte, bornee a 4', () {
       const TextScaler x1 = TextScaler.noScaling;
       const TextScaler x2 = TextScaler.linear(2);
       expect(VueGlobaleFinanceContenu.colonnesPour(1100, x1), 4);
       expect(VueGlobaleFinanceContenu.colonnesPour(1100, x2), 2);
-      expect(VueGlobaleFinanceContenu.colonnesPour(700, x1), 2);
+      expect(VueGlobaleFinanceContenu.colonnesPour(700, x1), 3);
+      expect(VueGlobaleFinanceContenu.colonnesPour(560, x1), 2);
+      expect(VueGlobaleFinanceContenu.colonnesPour(840, x1), 4);
+      expect(VueGlobaleFinanceContenu.colonnesPour(1408, x1), 4);
+      expect(
+        VueGlobaleFinanceContenu.colonnesPour(
+          860,
+          const TextScaler.linear(1.4),
+        ),
+        2,
+      );
       expect(VueGlobaleFinanceContenu.colonnesPour(700, x2), 1);
       expect(VueGlobaleFinanceContenu.colonnesPour(288, x1), 1);
     });
@@ -458,6 +508,63 @@ void main() {
       expect(pourMilleEnTexte(300), '30');
       expect(pourMilleEnTexte(0), '0');
       expect(pourMilleEnTexte(-45), '${signeMoins}4,5');
+    });
+  });
+
+  // Dernier groupe : les vraies polices, une fois chargees, le restent pour
+  // tout le fichier. La police de test (carres de 1 em) exagere les largeurs.
+  group('polices du depot', () {
+    setUpAll(chargerPolicesDuDepot);
+
+    testWidgets('860 px de contenu, texte 1,4, montant a 7 chiffres : le '
+        'montant reste dans sa carte, sur une ligne', (
+      WidgetTester tester,
+    ) async {
+      // 860 de contenu : la page de 892 moins 2 x 16 de marge.
+      _taille(tester, const Size(892, 1600));
+      final VueGlobaleFinance large = VueGlobaleFinance(
+        mois: DateTime(2026, 11),
+        encaisse: const Montant(123456789, 'USD'),
+        revenuAcademique: const Montant(123456789, 'USD'),
+        paieEnseignants: const Montant(123456789, 'USD'),
+        margeProjeteePourMille: 700,
+        impayes: const Montant(123456789, 'USD'),
+        essaisEnCours: 12,
+        soldesCrediteurs: const Montant(123456789, 'USD'),
+      );
+      await tester.pumpWidget(
+        _hote(surcharges: _avec(_Port(vue: large)), echelle: 1.4),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      final String texte = formaterMontant(large.encaisse);
+      final Finder montants = find.text(texte);
+      expect(montants, findsNWidgets(5));
+      for (final Element e in montants.evaluate()) {
+        final Finder carte = find.ancestor(
+          of: find.byWidget(e.widget),
+          matching: find.byType(AppCard),
+        );
+        final Rect zoneCarte = tester.getRect(carte.first);
+        final Rect zone = tester.getRect(find.byWidget(e.widget).first);
+        expect(zoneCarte.contains(zone.topLeft), isTrue);
+        expect(
+          zoneCarte.contains(zone.bottomRight - const Offset(1, 1)),
+          isTrue,
+        );
+        // Une seule ligne : la hauteur rendue est celle du texte non borne.
+        final Text t0 = e.widget as Text;
+        final TextPainter seul = TextPainter(
+          text: TextSpan(
+            text: texte,
+            style: DefaultTextStyle.of(e).style.merge(t0.style),
+          ),
+          textDirection: TextDirection.ltr,
+          textScaler: const TextScaler.linear(1.4),
+        )..layout();
+        expect(zone.height, closeTo(seul.height, 0.5), reason: texte);
+        seul.dispose();
+      }
     });
   });
 }

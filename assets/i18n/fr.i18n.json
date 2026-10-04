@@ -1710,6 +1710,7 @@
         "margeValeur": "{valeur} %",
         "margeDetail": "Calculée sur la seule paie des enseignants, sans les autres charges : elle ne se compare pas à une marge nette.",
         "margeSansActivite": "Aucune activité",
+        "margeNonCalculable": "Non calculable",
         "impayes": "Impayés",
         "impayesDetail": "Reste à financer sur les périodes du mois.",
         "essais": "Essais en cours",
@@ -1717,6 +1718,7 @@
         "soldes": "Soldes créditeurs",
         "soldesDetail": "Argent disponible sur les profils des familles : ni un revenu, ni une marge.",
         "sansActivite": "Aucune activité financière en {mois} : les indicateurs sont à zéro.",
+        "sansRevenu": "Aucun revenu reconnu en {mois} : la marge n'est pas calculable.",
         "alertes": "Alertes",
         "aucuneAlerte": "Aucune alerte ce mois.",
         "alerte": {
