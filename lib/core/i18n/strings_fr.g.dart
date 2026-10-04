@@ -9155,6 +9155,9 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Verset'
 	String get repriseVerset => 'Verset';
 
+	/// fr: 'Entre 1 et {n}'
+	String repriseVersetBornes({required Object n}) => 'Entre 1 et ${n}';
+
 	/// fr: 'Retenir cette position'
 	String get repriseRetenir => 'Retenir cette position';
 
@@ -18441,6 +18444,7 @@ extension on Traductions {
 			'enseignant.cahier.repriseVersets' => ({required Object n}) => '${n} versets',
 			'enseignant.cahier.repriseRestantes' => ({required Object n}) => 'Encore ${n} sourates : précisez la recherche.',
 			'enseignant.cahier.repriseVerset' => 'Verset',
+			'enseignant.cahier.repriseVersetBornes' => ({required Object n}) => 'Entre 1 et ${n}',
 			'enseignant.cahier.repriseRetenir' => 'Retenir cette position',
 			'enseignant.cahier.repriseIncomplete' => 'Choisissez la sourate puis le verset.',
 			'enseignant.cahier.repriseAucune' => 'Aucune sourate ne correspond',
@@ -18674,9 +18678,9 @@ extension on Traductions {
 			'controleur.compteRendu.visiteEchec' => 'La transmission de la visite n\'est pas confirmée : la connexion ou le serveur n\'a pas répondu. Réessayez ; le relevé de la visite reste enregistré sur le serveur.',
 			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
 			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
-			'controleur.compteRendu.visiteInconnue' => 'Ce compte rendu ne peut plus être repris ici.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.compteRendu.visiteInconnue' => 'Ce compte rendu ne peut plus être repris ici.',
 			'controleur.compteRendu.visiteInconnueAide' => 'Cet appareil n\'a plus la visite en mémoire, sans doute après un rechargement de la page. La visite reste transmise à l\'administration avec son relevé automatique ; ce point n\'est pas confirmé depuis cet écran. Pour ajouter une remarque, écrivez à l\'administration.',
 			'controleur.observation.important' => 'Vous signalez un point important : votre texte sera demandé.',
 			'controleur.observation.questionNature' => 'Quelle est la nature de votre observation ?',
@@ -19188,9 +19192,9 @@ extension on Traductions {
 			'tc.observation.resultat.voirObservations' => 'Voir mes observations',
 			'tc.observation.annonce.tuteurObserve' => ({required Object prenomEnfant}) => 'Tuteur de ${prenomEnfant} observe',
 			'tc.observation.annonce.restant' => ({required Object secondes}) => '${secondes} s',
-			'tc.observation.annonce.enfantIndicateur' => 'Ton tuteur regarde le cours',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.annonce.enfantIndicateur' => 'Ton tuteur regarde le cours',
 			'tc.observation.annonce.tuteursObservent' => ({required Object nombre}) => '${nombre} tuteurs observent',
 			'tc.observation.reglages.titre' => 'Observation par les tuteurs',
 			'tc.observation.reglages.intro' => 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s\'applique à ce groupe.',

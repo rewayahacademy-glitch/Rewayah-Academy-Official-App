@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_coran/port_corpus_coran.dart';
+import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/features/cahier/selecteur_reprise.dart';
 
 import '../../capture/outil_capture.dart';
@@ -171,4 +172,71 @@ void main() {
       findsOneWidget,
     );
   });
+
+  Future<void> ouvrirFeuille(WidgetTester tester) async {
+    await monterCahier(tester, CorpusSourates(sourates));
+    await _toucher(tester, find.byKey(ChampReprise.champKey));
+  }
+
+  String saisie(WidgetTester tester) => tester
+      .widget<TextField>(find.byKey(FeuilleReprise.versetSaisieKey))
+      .controller!
+      .text;
+
+  testWidgets('a l\'ouverture, le champ Verset affiche le verset de la '
+      'reprise initiale', (WidgetTester tester) async {
+    await ouvrirFeuille(tester);
+    expect(saisie(tester), '12');
+  });
+
+  for (final String valeur in <String>['0', 'N+1', '']) {
+    testWidgets('verset hors bornes ou vide ("$valeur") : rien n\'est '
+        'retenu, Retenir est inerte, un message le dit', (
+      WidgetTester tester,
+    ) async {
+      await ouvrirFeuille(tester);
+      final int n = sourates
+          .firstWhere((SourateVM v) => v.numero == 78)
+          .nombreVersets;
+      final String texte = valeur == 'N+1' ? '${n + 1}' : valeur;
+      await tester.enterText(find.byKey(FeuilleReprise.versetSaisieKey), texte);
+      await stabiliser(tester);
+      expect(
+        find.text(t.enseignant.cahier.repriseVersetBornes(n: n)),
+        findsOneWidget,
+      );
+      // Aucune puce n'est retenue.
+      expect(
+        tester
+            .widgetList<FilterPill>(find.byType(FilterPill))
+            .where((FilterPill p) => p.retenue),
+        isEmpty,
+      );
+      // Retenir est inerte : le toucher ne ferme pas la feuille.
+      await tester.ensureVisible(find.byKey(FeuilleReprise.retenirKey));
+      await tester.tap(find.byKey(FeuilleReprise.retenirKey));
+      await stabiliser(tester);
+      expect(find.byKey(FeuilleReprise.versetSaisieKey), findsOneWidget);
+      expect(
+        find.text(
+          t.enseignant.cahier.repriseProposee(sourate: '78', verset: '12'),
+        ),
+        findsOneWidget, // le champ du cahier derriere garde l'ancienne valeur
+      );
+      // Revenir a une valeur valide leve l'erreur et rend Retenir actif.
+      await tester.enterText(find.byKey(FeuilleReprise.versetSaisieKey), '3');
+      await stabiliser(tester);
+      expect(
+        find.text(t.enseignant.cahier.repriseVersetBornes(n: n)),
+        findsNothing,
+      );
+      await _toucher(tester, find.byKey(FeuilleReprise.retenirKey));
+      expect(
+        find.text(
+          t.enseignant.cahier.repriseProposee(sourate: '78', verset: '3'),
+        ),
+        findsOneWidget,
+      );
+    });
+  }
 }

@@ -158,8 +158,16 @@ class _FeuilleRepriseEtat extends ConsumerState<FeuilleReprise> {
   final TextEditingController _recherche = TextEditingController();
   late int? _sourate = widget.initiale?.sourate;
   late int? _verset = widget.initiale?.verset;
-  final TextEditingController _numero = TextEditingController();
+  // Le champ « Verset » montre toujours le verset retenu, y compris celui de
+  // la reprise initiale.
+  late final TextEditingController _numero = TextEditingController(
+    text: widget.initiale == null ? '' : '${widget.initiale!.verset}',
+  );
   bool _incomplete = false;
+
+  /// Vrai quand la saisie du verset est vide ou hors bornes : aucun verset
+  /// n'est retenu, la feuille ne peut pas se refermer sur une autre valeur.
+  bool _saisieInvalide = false;
 
   @override
   void dispose() {
@@ -285,6 +293,7 @@ class _FeuilleRepriseEtat extends ConsumerState<FeuilleReprise> {
             if (choisie != _sourate) {
               _sourate = choisie;
               _verset = null;
+              _saisieInvalide = false;
               _numero.clear();
             }
           }),
@@ -307,13 +316,19 @@ class _FeuilleRepriseEtat extends ConsumerState<FeuilleReprise> {
             onChanged: (String v) {
               final int? n = int.tryParse(v);
               setState(() {
-                if (n != null && n >= 1 && n <= retenue.nombreVersets) {
-                  _verset = n;
-                  _incomplete = false;
-                }
+                final bool valide =
+                    n != null && n >= 1 && n <= retenue.nombreVersets;
+                _verset = valide ? n : null;
+                _saisieInvalide = !valide;
+                if (valide) _incomplete = false;
               });
             },
-            decoration: InputDecoration(labelText: s.repriseVerset),
+            decoration: InputDecoration(
+              labelText: s.repriseVerset,
+              errorText: _saisieInvalide
+                  ? s.repriseVersetBornes(n: retenue.nombreVersets)
+                  : null,
+            ),
           ),
           Ecart.vMd,
           Wrap(
@@ -328,6 +343,7 @@ class _FeuilleRepriseEtat extends ConsumerState<FeuilleReprise> {
                   onPress: () => setState(() {
                     _verset = n;
                     _numero.text = '$n';
+                    _saisieInvalide = false;
                     _incomplete = false;
                   }),
                 ),
@@ -350,15 +366,19 @@ class _FeuilleRepriseEtat extends ConsumerState<FeuilleReprise> {
         ActionPrincipale(
           key: FeuilleReprise.retenirKey,
           libelle: s.repriseRetenir,
-          onPress: () {
-            final int? verset = _verset;
-            if (retenue == null || verset == null) {
-              setState(() => _incomplete = true);
-              return;
-            }
-            Navigator.of(context)
-                .pop(PositionReprise(sourate: retenue.numero, verset: verset));
-          },
+          // Inerte tant que la saisie du verset n'est pas valide.
+          onPress: _saisieInvalide
+              ? null
+              : () {
+                  final int? verset = _verset;
+                  if (retenue == null || verset == null) {
+                    setState(() => _incomplete = true);
+                    return;
+                  }
+                  Navigator.of(context).pop(
+                    PositionReprise(sourate: retenue.numero, verset: verset),
+                  );
+                },
         ),
       ],
     );
