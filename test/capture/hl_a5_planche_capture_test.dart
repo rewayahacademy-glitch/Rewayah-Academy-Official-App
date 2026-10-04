@@ -48,8 +48,11 @@ Future<void> _monter(
   WidgetTester tester,
   ThemeMode mode,
   List<Override> surcharges,
-  String depart,
-) async {
+  String depart, {
+  // AD-NETTOYAGE-2 (n5) : le repere « Demonstration » est pose par l'hote de
+  // capture ; l'ecran 16 (production avant BR-1) se capture sans lui.
+  bool repere = true,
+}) async {
   await tester.pumpWidget(
     ProviderScope(
       key: UniqueKey(),
@@ -72,8 +75,10 @@ Future<void> _monter(
                 supportedLocales: AppLocaleUtils.supportedLocales,
                 localizationsDelegates: GlobalMaterialLocalizations.delegates,
                 routerConfig: _routeur,
-                builder: (BuildContext context, Widget? child) =>
-                    RepereDemonstration(child: child),
+                builder: repere
+                    ? (BuildContext context, Widget? child) =>
+                          RepereDemonstration(child: child)
+                    : null,
               );
             },
           ),
@@ -209,12 +214,30 @@ void main() {
           await _stabiliser(tester);
           debugPrint('PNG ${await capturer(tester, fichier('fiche_dossier'))}');
 
-          // 3. Verifications incompletes.
+          // 3. Verifications incompletes : ce que fait le lien. La capture 2
+          //    (AD-NETTOYAGE-2, AD-M2-CAPT) montre deja l'emplacement de
+          //    decision ; le lien ne deplace que le focus sur la premiere case
+          //    manquante (et defile jusqu'a elle si elle est hors ecran). Un
+          //    tap passe en mode de focus « tactile », qui cache l'anneau :
+          //    l'effet du lien resterait invisible et l'image identique a la
+          //    fiche. On capture donc en mode de focus « clavier » (anneau
+          //    visible), comme pour un lecteur qui active le lien au clavier.
           const String lien = 'Terminez les vérifications requises.';
           await tester.ensureVisible(find.text(lien));
           await _stabiliser(tester);
+          FocusManager.instance.highlightStrategy =
+              FocusHighlightStrategy.alwaysTraditional;
+          addTearDown(
+            () => FocusManager.instance.highlightStrategy =
+                FocusHighlightStrategy.automatic,
+          );
           await tester.tap(find.text(lien));
           await _stabiliser(tester);
+          expect(
+            FocusManager.instance.primaryFocus?.context,
+            isNotNull,
+            reason: 'le lien pose le focus sur la premiere verification',
+          );
           debugPrint(
             'PNG ${await capturer(tester, fichier('verifications_incompletes'))}',
           );
@@ -435,7 +458,7 @@ void main() {
                   contratSigne: true,
                 ),
             ),
-          ], Routes.attente);
+          ], Routes.attente, repere: false);
           expect(find.text(t.attente.accesEnPreparation), findsOneWidget);
           expect(find.text(t.attente.deposerLaPiece), findsNothing);
           debugPrint(
