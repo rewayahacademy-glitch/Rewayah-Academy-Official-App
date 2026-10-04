@@ -177,6 +177,20 @@ class EmptyState extends StatelessWidget {
         final bool serre =
             MediaQuery.textScalerOf(context).scale(1) > 1 &&
             c.maxHeight < AppSpacing.respiration * 5;
+        // Une region plus basse que le bouton et ses marges ne peut pas le
+        // garder pose : tout defile alors d'un bloc, plutot que de deborder.
+        if (bouton != null && c.maxHeight < AppSpacing.respiration * 2) {
+          return SingleChildScrollView(
+            padding: marge,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                corps(serre: serre),
+                bouton,
+              ],
+            ),
+          );
+        }
         return Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
