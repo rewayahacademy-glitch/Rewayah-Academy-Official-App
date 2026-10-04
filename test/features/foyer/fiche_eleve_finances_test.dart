@@ -409,8 +409,9 @@ void main() {
         find.text(t.ficheEleve.finances.titreBureau(prenom: 'Mariam')),
         findsOneWidget,
       );
+      expect(find.byKey(FilArianeFiche.foyerKey), findsOneWidget);
       expect(
-        find.text(t.ficheEleve.finances.filAriane(prenom: 'Mariam')),
+        find.text(t.ficheEleve.filAriane.suite(prenom: 'Mariam')),
         findsOneWidget,
       );
       final Rect gauche = tester.getRect(
@@ -463,6 +464,19 @@ void main() {
       verifierUnSeulBoutonPlein(tester);
       await _toucher(tester, find.byKey(FinancesElevePage.voirToutKey));
       expect(lieu(routeur), Routes.ficheEleveSousPage(_mariam, 'mouvements'));
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('1440 : « Foyer » du fil d Ariane mene au Foyer', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        depart: _chemin(_mariam),
+        taille: const Size(1440, 1600),
+      );
+      await _toucher(tester, find.byKey(FilArianeFiche.foyerKey));
+      expect(lieu(routeur), Routes.tuteurFoyer);
       expect(tester.takeException(), isNull);
     });
 
@@ -925,6 +939,8 @@ void main() {
       );
       expect(find.byType(LigneFinance), findsNothing);
       expect(find.byKey(FinancesElevePage.rechargerKey), findsNothing);
+      // Comme la fiche sans source : aucun onglet Général / Finances.
+      expect(find.byKey(OngletsFiche.cle), findsNothing);
     });
 
     testWidgets('vide : la source ne rend pas ce profil', (

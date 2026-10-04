@@ -24,6 +24,7 @@ import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/identite_profil.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_financiere.dart';
 import '../../core/widgets/selecteur_couleur_profil.dart';
@@ -63,9 +64,10 @@ class PageFiche extends ConsumerWidget {
   /// de son prenom (« Mariam · Finances », maquette 06) ; `null` : [titre].
   final String Function(String prenom)? titreBureau;
 
-  /// A 1200 et plus, avec [titreBureau] : la ligne sous le titre (« Foyer ›
-  /// Mariam », maquette 06) ; `null` : le prenom.
-  final String Function(String prenom)? sousTitreBureau;
+  /// A 1200 et plus, avec [titreBureau] : la ligne sous le titre, un fil
+  /// d'Ariane dont « Foyer » mene au Foyer ([FilArianeFiche], maquette 06) ;
+  /// `null` : le prenom.
+  final Widget Function(String prenom)? sousTitreBureau;
 
   /// Le retour visible (niveau 2) : la fiche pour une sous-page, le Foyer
   /// pour la fiche.
@@ -142,7 +144,8 @@ class PageFiche extends ConsumerWidget {
     if (titreLarge != null && prenom != null) {
       return PageShell(
         titre: titreLarge(prenom),
-        sousTitre: sousTitreBureau?.call(prenom) ?? prenom,
+        sousTitre: sousTitreBureau == null ? prenom : null,
+        ligneSousTitre: sousTitreBureau?.call(prenom),
         onRetour: onRetour,
         child: corps,
       );
@@ -154,6 +157,43 @@ class PageFiche extends ConsumerWidget {
       sousTitre: titre == null ? null : prenom,
       onRetour: onRetour,
       child: corps,
+    );
+  }
+}
+
+/// Le fil d'Ariane d'une sous-page de la fiche, sur bureau (maquette 06,
+/// revue 4 a) : « Foyer », un lien vers le Foyer, puis « › {prenom} », la
+/// page courante, en encre attenuee. Le disque retour, lui, mene a la fiche.
+class FilArianeFiche extends StatelessWidget {
+  /// Cree le fil.
+  const FilArianeFiche({required this.prenom, super.key});
+
+  /// Le lien « Foyer ».
+  static const Key foyerKey = Key('ficheEleve.filAriane.foyer');
+
+  /// Le prenom de l'eleve.
+  final String prenom;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: AppSpacing.xs,
+      children: <Widget>[
+        LienFleche(
+          key: foyerKey,
+          libelle: t.ficheEleve.filAriane.foyer,
+          fleche: false,
+          onPress: () => GoRouter.of(context).go(Routes.tuteurFoyer),
+        ),
+        Text(
+          t.ficheEleve.filAriane.suite(prenom: prenom),
+          style: palette.inkMuted.applyTo(
+            Theme.of(context).textTheme.bodyLarge ?? const TextStyle(),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1121,6 +1121,10 @@
       "expirePhrase": "Depuis cette date, {prenom} ne peut plus entrer dans Rewayah.",
       "detailIndisponible": "Le début de l'accès et son motif ne s'affichent pas encore."
     },
+    "filAriane": {
+      "foyer": "Foyer",
+      "suite": "› {prenom}"
+    },
     "onglets": {
       "general": "Général",
       "finances": "Finances"
@@ -1128,7 +1132,6 @@
     "finances": {
       "titre": "Finances",
       "titreBureau": "{prenom} · Finances",
-      "filAriane": "Foyer › {prenom}",
       "vueTitre": "Vue financière",
       "mensualite": "Mensualité",
       "mensualiteValeur": "{montant} / mois",

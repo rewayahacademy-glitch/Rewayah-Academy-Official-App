@@ -51,8 +51,9 @@ import 'mouvements_page.dart';
 /// Etats : chargement, contenu, vide (aucune finance rendue pour ce profil),
 /// erreur, hors ligne, et production (`CapaciteIndisponible`), qui n'est ni
 /// un echec ni un vide. Un seul bouton plein, « Recharger {prenom} », qui
-/// ouvre la recharge avec ce profil coche ; le lien « Mouvements » mene a
-/// l'historique du profil (FI-6b).
+/// ouvre la recharge avec ce profil coche ; le lien « Voir les mouvements »
+/// (ou, sur bureau, « Voir tout » de l'historique) mene a l'historique du
+/// profil (FI-6b). Sans source, ni onglets ni actions : l'etat de production.
 class FinancesElevePage extends ConsumerWidget {
   /// Cree la page.
   const FinancesElevePage({required this.eleveId, super.key});
@@ -110,21 +111,10 @@ class FinancesElevePage extends ConsumerWidget {
       // Maquette 06 : « Mariam · Finances », le chemin « Foyer › Mariam ».
       titreBureau: (String prenom) =>
           t.ficheEleve.finances.titreBureau(prenom: prenom),
-      sousTitreBureau: (String prenom) =>
-          t.ficheEleve.finances.filAriane(prenom: prenom),
+      sousTitreBureau: (String prenom) => FilArianeFiche(prenom: prenom),
       onRetour: retourVersFiche(context, eleveId),
-      construire: (BuildContext context, ProfilEleveFoyer profil) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          // Sous 1200, les onglets Général / Finances (Q-FI-1, revue 3 a) ;
-          // a 1200 et plus, aucun segmente (revue 4 b).
-          if (AppGabarit.de(context) != Gabarit.desktop) ...<Widget>[
-            OngletsFiche(eleveId: profil.eleveId, actif: OngletFiche.finances),
-            Ecart.vXxl,
-          ],
+      construire: (BuildContext context, ProfilEleveFoyer profil) =>
           _CorpsFinances(profil: profil),
-        ],
-      ),
     );
   }
 }
@@ -149,7 +139,7 @@ class _CorpsFinances extends ConsumerWidget {
             financesParProfil(foyer)[profil.eleveId],
           )
         : const AsyncValue<FinancesProfil?>.loading();
-    return EtatsFinancesProfil(
+    final Widget etats = EtatsFinancesProfil(
       lecture: lecture,
       onRelire: () => ref.invalidate(financesFoyerProvider),
       textes: (
@@ -200,6 +190,21 @@ class _CorpsFinances extends ConsumerWidget {
         ),
         historique: _HistoriqueProfil(profil: profil),
       ),
+    );
+    // Sous 1200, les onglets Général / Finances (Q-FI-1, revue 3 a) ; a 1200
+    // et plus, aucun segmente (revue 4 b). Sans source (production), la
+    // fiche n'en montre aucun : la page ouverte par son adresse non plus.
+    final bool avecOnglets =
+        AppGabarit.de(context) != Gabarit.desktop &&
+        lecture.error is! CapaciteIndisponible;
+    if (!avecOnglets) return etats;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        OngletsFiche(eleveId: profil.eleveId, actif: OngletFiche.finances),
+        Ecart.vXxl,
+        etats,
+      ],
     );
   }
 }
@@ -483,7 +488,7 @@ class VueFinancesProfil extends ConsumerWidget {
   /// Ouvre LA recharge, ce profil coche (un seul moteur, guide §4).
   final VoidCallback onRecharger;
 
-  /// Ce que le lecteur d'ecran dit du lien « Mouvements ».
+  /// Ce que le lecteur d'ecran dit du lien « Voir les mouvements ».
   final String semantiqueMouvements;
 
   /// Ouvre les mouvements du profil.
