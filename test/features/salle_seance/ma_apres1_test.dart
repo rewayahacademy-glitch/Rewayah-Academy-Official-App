@@ -107,13 +107,13 @@ void main() {
     expect(find.text(t.accessibilite.accueil.prochaineSeance), findsNothing);
   });
 
-  testWidgets('MA-APRES-1 : vide, aucune seance programmee', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('MA-APRES-1b : Classe introuvable, vide : phrase neutre, '
+      'jamais « pas encore programmee »', (WidgetTester tester) async {
     await quitterLaSalleMa(tester, groupes: GroupesMaApres(() async => null));
     _ecranUnique(tester);
     expect(find.byKey(ApresSeanceAccessibilite.cleVide), findsOneWidget);
-    expect(find.text(t.accessibilite.apres.vide), findsOneWidget);
+    expect(find.text(t.accessibilite.apres.prochaineInconnue), findsOneWidget);
+    expect(find.text(t.accessibilite.apres.vide), findsNothing);
     expect(find.text(t.accessibilite.accueil.prochaineSeance), findsNothing);
   });
 

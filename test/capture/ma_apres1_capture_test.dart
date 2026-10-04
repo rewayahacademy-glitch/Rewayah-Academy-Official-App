@@ -17,9 +17,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
 import 'package:rewayah_academy/features/accueil_eleve/apres_seance_accessibilite.dart';
+import 'package:rewayah_academy/features/demo/classe_demo.dart';
 
 import '../features/salle_seance/support_ma_apres1.dart';
 import '../support/aucun_mot_coupe.dart';
@@ -95,6 +97,55 @@ void main() {
         _mesurer(tester);
         debugPrint('PNG ${await capturer(tester, nom)}');
       });
+    }
+
+    // MA-APRES-1b (revue C1-MA-R, M1) : apres « Quitter » une seance EN
+    // DIRECT de la Classe hebdomadaire, avec et sans travail, et la Classe de
+    // forme production (sans horloge, travail non branche). Sortie dans
+    // `docs/current/captures/MA-APRES-1b/`.
+    for (final (
+          String cas,
+          Future<GroupSummaryVM?> Function() classe,
+          bool avecTravail,
+          bool relie,
+        )
+        in <(String, Future<GroupSummaryVM?> Function(), bool, bool)>[
+          ('en_direct_travail', classeEnDirect, true, true),
+          ('en_direct_sans_travail', classeEnDirect, false, true),
+          ('production_non_relie', classeFormeProduction, false, false),
+        ]) {
+      for (final (Size taille, double echelle, ThemeMode mode)
+          in <(Size, double, ThemeMode)>[
+            (const Size(390, 844), 1, ThemeMode.light),
+            (const Size(320, 700), 2, ThemeMode.dark),
+          ]) {
+        final String nom =
+            'ma_apres1b_${cas}_${taille.width.round()}_x${echelle.round()}_${mode.name}';
+        testWidgets(nom, (WidgetTester tester) async {
+          await quitterLaSalleMa(
+            tester,
+            groupes: GroupesMaApres(classe),
+            taille: taille,
+            densite: 2,
+            echelle: echelle,
+            themeMode: mode,
+            travail: !relie
+                ? null
+                : avecTravail
+                ? DonneesClasseDemo.actions
+                : const <SlotAction>[],
+            cadre: cadreCapture,
+          );
+          // L'endroit mesure : la phrase neutre de la prochaine seance,
+          // amenee a l'ecran (sous la ligne de flottaison a 320 x2).
+          await tester.ensureVisible(
+            find.byKey(ApresSeanceAccessibilite.cleProchaineInconnue),
+          );
+          await stabiliserMaApres(tester);
+          _mesurer(tester);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
     }
   });
 }

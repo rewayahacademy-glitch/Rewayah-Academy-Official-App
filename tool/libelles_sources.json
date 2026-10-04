@@ -74,5 +74,7 @@
   "accessibilite.coran.reprendreVous": "decision du directeur A8 = a du 27/09 : vouvoiement (decision A4 = a) du libelle existant eleve.coran.reprendre « Reprendre ta lecture », etape MA-DEC-1",
   "accessibilite.coran.reprendreDetailVous": "decision du directeur A8 = a du 27/09 : vouvoiement (decision A4 = a) du libelle existant eleve.coran.reprendreDetail « Tu en etais page {page} », etape MA-DEC-1",
   "accessibilite.coran.indisponibleDetailVous": "etape MA-TUTOIEMENT-1 (decision A4 = a) : vouvoiement du libelle existant eleve.coran.indisponibleDetail dans le lecteur du Mode Accessibilite",
-  "accessibilite.coran.absentDetailVous": "etape MA-TUTOIEMENT-1 (decision A4 = a) : vouvoiement du libelle existant eleve.coran.absentDetail dans le lecteur du Mode Accessibilite"
+  "accessibilite.coran.absentDetailVous": "etape MA-TUTOIEMENT-1 (decision A4 = a) : vouvoiement du libelle existant eleve.coran.absentDetail dans le lecteur du Mode Accessibilite",
+  "accessibilite.apres.prochaineInconnue": "etape MA-APRES-1b : phrase neutre proposee par la revue C1-MA-R (majeur M1, « Ta prochaine séance s'affichera dans ta Classe. ») quand l'occurrence suivante n'est pas connue (seance quittee en direct, horloge non reliee en production) ; remplace « pas encore programmée », qui serait faux ; a valider par le directeur",
+  "accessibilite.apres.prochaineInconnueVous": "etape MA-APRES-1b : meme phrase neutre, vouvoiement (decision A4 = a) ; a valider par le directeur"
 }

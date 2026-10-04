@@ -3,6 +3,8 @@
 // captures). Horloge fixe : la Classe de demonstration « a venir »
 // (instants figes de `DonneesClasseDemo`).
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,6 +21,7 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
+import 'package:rewayah_academy/core/tc_groupe/groupes_supabase.dart';
 import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
 import 'package:rewayah_academy/core/tc_horloge/port_horloge_seance.dart';
 import 'package:rewayah_academy/core/tc_horloge/session_clock_vm.dart';
@@ -107,6 +110,42 @@ class _Travail implements PortTravailAVenir {
 Future<GroupSummaryVM?> classeAVenir() async =>
     DonneesClasseDemo.groupe(EtatDemoClasse.aVenir);
 
+/// MA-APRES-1b : la Classe de demonstration (hebdomadaire, le lundi), seance
+/// EN DIRECT : l'horloge porte la seance que l'eleve quitte.
+Future<GroupSummaryVM?> classeEnDirect() async =>
+    DonneesClasseDemo.groupe(EtatDemoClasse.enDirect);
+
+/// MA-APRES-1b : la Classe telle que la production la lit
+/// (`groupeDepuisLigne`, vue `mes_groupes_famille_v`) : aucune occurrence,
+/// aucune horloge.
+Future<GroupSummaryVM?> classeFormeProduction() async =>
+    groupeDepuisLigne(const <String, dynamic>{
+      'groupe_id': DonneesClasseDemo.groupeId,
+      'libelle': DonneesClasseDemo.classe,
+      'seuil_max': 6,
+      'nb_membres': 3,
+      'couleur_jeton': 2,
+      'teacher_id': 'ens-1',
+      'teacher_prenom': 'Idriss',
+      'teacher_titre': 'sayyid',
+      'nom_cours': DonneesClasseDemo.cours,
+      'type_public': 'enfant',
+    });
+
+/// MA-APRES-1b : un port de travail dont la lecture ne finit jamais.
+class TravailJamais implements PortTravailAVenir {
+  /// Cree le port.
+  TravailJamais();
+
+  final Completer<List<SlotAction>> _jamais = Completer<List<SlotAction>>();
+
+  @override
+  Future<List<SlotAction>> avantProchainCours({
+    required String groupeId,
+    String? studentId,
+  }) => _jamais.future;
+}
+
 /// Pompe sans exiger la fin des animations (squelette).
 Future<void> stabiliserMaApres(WidgetTester tester) async {
   for (int i = 0; i < 10; i++) {
@@ -137,7 +176,8 @@ Future<void> quitterLaSalleMa(
   double densite = 1,
   double echelle = 1,
   bool horsLigne = false,
-  List<SlotAction> travail = DonneesClasseDemo.actions,
+  List<SlotAction>? travail = DonneesClasseDemo.actions,
+  PortTravailAVenir? portTravail,
   ThemeMode themeMode = ThemeMode.light,
   Key? cadre,
   AgeEleve? age = AgeEleve.mineur,
@@ -170,7 +210,12 @@ Future<void> quitterLaSalleMa(
     ),
     portGroupesProvider.overrideWithValue(groupes),
     portHorlogeSeanceProvider.overrideWithValue(_HorlogeMuette()),
-    portTravailAVenirProvider.overrideWithValue(_Travail(travail)),
+    // `travail: null` et aucun [portTravail] : le port de l'application,
+    // non branche (`null`), comme en production.
+    if (portTravail != null)
+      portTravailAVenirProvider.overrideWithValue(portTravail)
+    else if (travail != null)
+      portTravailAVenirProvider.overrideWithValue(_Travail(travail)),
     serviceReseauProvider.overrideWithValue(
       FauxServiceReseau(horsLigneRendu: horsLigne),
     ),

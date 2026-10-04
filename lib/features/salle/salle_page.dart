@@ -490,6 +490,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         final String? groupe = widget.groupeId;
         return ApresSeanceSalle(
           groupeId: groupe,
+          // MA-APRES-1b : la seance quittee n'est jamais « la prochaine ».
+          seanceQuitteeId: widget.seanceId,
           quittee: sortie == IssueSeance.quittee,
           // MA-TUTOIEMENT-1 : le tutoiement suit l'age, jamais la
           // presentation ; port neutre (K-09) avant BR-1, age inconnu :

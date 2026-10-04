@@ -11,6 +11,14 @@
 // MA-APRES-1 (decision A7 = a) : UN SEUL ecran de fin en Mode Accessibilite.
 // La vraie salle le monte aussi ([ApresSeanceSalle]), avec ses cinq etats
 // ([EtatApresSeance]) ; la prochaine seance porte son heure.
+//
+// MA-APRES-1b (revue C1-MA-R, majeur M1) : « pas encore programmee » n'est
+// dit que si l'on SAIT qu'aucune occurrence n'est prevue. Aucune source ne le
+// dit aujourd'hui (seance quittee en direct : l'horloge porte celle qu'on
+// quitte ; en production : aucune horloge de groupe). La salle passe donc
+// [ApresSeanceAccessibilite.prochaineInconnue] et l'ecran dit la phrase
+// neutre « Ta prochaine seance s'affichera dans ta Classe. ». Le travail non
+// relie (`null`) n'est plus confondu avec « aucun travail » (liste vide).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -72,6 +80,8 @@ class ApresSeanceAccessibilite extends StatelessWidget {
     this.etat = EtatApresSeance.contenu,
     this.quittee = false,
     this.onReessayer,
+    this.prochaineInconnue = false,
+    this.travailRelie = true,
   });
 
   /// La Classe et le travail pour la prochaine fois (3 au plus), ou `null`
@@ -105,6 +115,26 @@ class ApresSeanceAccessibilite extends StatelessWidget {
 
   /// Relit la Classe (etat [EtatApresSeance.erreur]).
   final VoidCallback? onReessayer;
+
+  /// Vrai quand [prochaineSeance] vaut `null` parce que l'occurrence
+  /// suivante n'est PAS CONNUE (aucune source ne la donne), et non parce
+  /// qu'aucune n'est programmee : l'ecran dit alors la phrase neutre, jamais
+  /// « pas encore programmee ».
+  final bool prochaineInconnue;
+
+  /// Faux quand le travail a venir n'est pas relie (port `null`) : l'ecran
+  /// le dit, il ne pretend jamais qu'il n'y a rien a preparer.
+  final bool travailRelie;
+
+  /// Cle de la phrase neutre de la prochaine seance inconnue.
+  static const Key cleProchaineInconnue = ValueKey<String>(
+    'ma-apres-prochaine-inconnue',
+  );
+
+  /// Cle de la ligne « travail non relie ».
+  static const Key cleTravailNonRelie = ValueKey<String>(
+    'ma-apres-travail-non-relie',
+  );
 
   /// Cle du bouton dominant.
   static const Key cleRetourClasse = ValueKey<String>('ma6-retour-classe');
@@ -207,6 +237,16 @@ class ApresSeanceAccessibilite extends StatelessWidget {
         ? lu.avantProchainCours.take(3).toList()
         : const <SlotAction>[];
     final DateTime? suivante = montreContenu ? prochaineSeance : null;
+    final bool montreInconnue =
+        montreContenu &&
+        etat == EtatApresSeance.contenu &&
+        suivante == null &&
+        prochaineInconnue;
+    final bool montreNonRelie =
+        montreContenu && etat == EtatApresSeance.contenu && !travailRelie;
+    final String phraseInconnue = tutoiement
+        ? t.accessibilite.apres.prochaineInconnue
+        : t.accessibilite.apres.prochaineInconnueVous;
     final VoidCallback? reessayer = onReessayer;
 
     // Ce qui remplace le travail et la prochaine seance hors contenu.
@@ -218,7 +258,9 @@ class ApresSeanceAccessibilite extends StatelessWidget {
         child: const Skeleton.liste(lignes: 2),
       ),
       EtatApresSeance.vide => Text(
-        tutoiement
+        prochaineInconnue
+            ? phraseInconnue
+            : tutoiement
             ? t.accessibilite.apres.vide
             : t.accessibilite.apres.videVous,
         key: cleVide,
@@ -269,7 +311,16 @@ class ApresSeanceAccessibilite extends StatelessWidget {
             const SizedBox(height: AppSpacing.section),
             message,
           ],
-          if (travail.isNotEmpty) ...<Widget>[
+          if (montreNonRelie) ...<Widget>[
+            const SizedBox(height: AppSpacing.section),
+            SectionHeader(titre: LibellesGroupe.avantProchainCours),
+            Ecart.vMd,
+            Text(
+              t.tc.parcours.avant.nonBranche,
+              key: cleTravailNonRelie,
+              style: corps,
+            ),
+          ] else if (travail.isNotEmpty) ...<Widget>[
             const SizedBox(height: AppSpacing.section),
             SectionHeader(titre: LibellesGroupe.avantProchainCours),
             Ecart.vMd,
@@ -314,6 +365,11 @@ class ApresSeanceAccessibilite extends StatelessWidget {
                 ),
               ],
             ),
+          ] else if (montreInconnue) ...<Widget>[
+            const SizedBox(height: AppSpacing.section),
+            SectionHeader(titre: t.accessibilite.accueil.prochaineSeance),
+            Ecart.vMd,
+            Text(phraseInconnue, key: cleProchaineInconnue, style: corps),
           ],
           const SizedBox(height: AppSpacing.section),
           // L'aide, dernier bloc du contenu (MA14).
@@ -345,7 +401,12 @@ class ApresSeanceSalle extends ConsumerWidget {
     required this.onClasse,
     required this.onAide,
     super.key,
+    this.seanceQuitteeId,
   });
+
+  /// La seance que l'eleve vient de quitter, si la salle la connait : elle
+  /// n'est jamais « la prochaine ».
+  final String? seanceQuitteeId;
 
   /// La Classe de la seance, ou `null` quand la salle ne la connait pas.
   final String? groupeId;
@@ -375,9 +436,14 @@ class ApresSeanceSalle extends ConsumerWidget {
       GroupHomeVM? espace,
       DateTime? prochaine,
       VoidCallback? onReessayer,
+      bool travailRelie = true,
     }) => ApresSeanceAccessibilite(
       espace: espace,
       prochaineSeance: prochaine,
+      // Aucune source ne dit qu'aucune occurrence n'est prevue : une
+      // prochaine seance absente est toujours inconnue (M1).
+      prochaineInconnue: prochaine == null,
+      travailRelie: travailRelie,
       tutoiement: tutoiement,
       quittee: quittee,
       etat: etat,
@@ -417,29 +483,62 @@ class ApresSeanceSalle extends ConsumerWidget {
     final GroupSummaryVM identite = tic == null
         ? trouve
         : trouve.avecHorloge(tic);
-    final List<SlotAction> actions =
-        ref
-            .watch(travailAVenirProvider((groupeId: id, studentId: null)))
-            .value ??
-        const <SlotAction>[];
+    // `null` = travail non relie (port non branche), liste vide = aucun
+    // travail : la difference du port va jusqu'a l'ecran (M1).
+    final ContexteTravailAVenir contexte = (groupeId: id, studentId: null);
+    final AsyncValue<List<SlotAction>?> lectureTravail = ref.watch(
+      travailAVenirProvider(contexte),
+    );
+    if (lectureTravail.hasError && !lectureTravail.hasValue) {
+      return horsLigne
+          ? ecran(EtatApresSeance.horsLigne)
+          : ecran(
+              EtatApresSeance.erreur,
+              onReessayer: () =>
+                  ref.invalidate(travailAVenirProvider(contexte)),
+            );
+    }
+    if (!lectureTravail.hasValue) {
+      return ecran(EtatApresSeance.chargement);
+    }
+    final List<SlotAction>? lus = lectureTravail.requireValue;
+    final List<SlotAction> actions = lus ?? const <SlotAction>[];
     final GroupHomeVM espace = GroupHomeVM.pourRole(
       identite: identite,
       role: RoleEspaceGroupe.eleve,
       actions: actions.take(3).toList(),
     );
-    // Seule une occurrence A VENIR est « la prochaine seance » : celle que
-    // l'eleve vient de quitter, encore ouverte, ne l'est pas.
-    final SessionClockVM? horloge = espace.horloge;
-    final DateTime? prochaine =
-        horloge != null && horloge.debutUtc.isAfter(horloge.calculeeAUtc)
-        ? horloge.debutUtc
-        : null;
+    final DateTime? prochaine = prochaineApres(
+      espace.horloge,
+      seanceQuitteeId: seanceQuitteeId,
+    );
 
-    final EtatApresSeance etat = horsLigne
-        ? EtatApresSeance.horsLigne
-        : actions.isEmpty && prochaine == null
-        ? EtatApresSeance.vide
-        : EtatApresSeance.contenu;
-    return ecran(etat, espace: espace, prochaine: prochaine);
+    // Jamais « vide » ici : sans prochaine seance connue, l'ecran dit la
+    // phrase neutre dans le contenu (M1).
+    return ecran(
+      horsLigne ? EtatApresSeance.horsLigne : EtatApresSeance.contenu,
+      espace: espace,
+      prochaine: prochaine,
+      travailRelie: lus != null,
+    );
+  }
+
+  /// La prochaine seance a annoncer apres la sortie, ou `null` si elle n'est
+  /// pas connue. Seule une occurrence dont la salle n'est pas encore ouverte
+  /// (phase [PhaseSeance.avantFenetre]) et qui n'est pas la seance quittee
+  /// l'est : celle que l'eleve vient de quitter, ouverte, en direct ou
+  /// prolongee, ne l'est jamais. L'occurrence suivante d'une Classe
+  /// hebdomadaire n'a aucune source cote client (ni recurrence, ni horloge de
+  /// groupe en production) : elle n'est pas devinee.
+  static DateTime? prochaineApres(
+    SessionClockVM? horloge, {
+    String? seanceQuitteeId,
+  }) {
+    if (horloge == null) return null;
+    if (horloge.phase != PhaseSeance.avantFenetre) return null;
+    if (!horloge.debutUtc.isAfter(horloge.calculeeAUtc)) return null;
+    final String? id = horloge.sessionId;
+    if (id != null && id == seanceQuitteeId) return null;
+    return horloge.debutUtc;
   }
 }

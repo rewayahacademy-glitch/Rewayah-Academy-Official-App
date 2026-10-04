@@ -3315,6 +3315,12 @@ class Traductions$accessibilite$apres$fr {
 
 	/// fr: 'Vous êtes hors ligne : votre prochaine séance et votre travail s'afficheront quand la connexion reviendra.'
 	String get horsLigneVous => 'Vous êtes hors ligne : votre prochaine séance et votre travail s\'afficheront quand la connexion reviendra.';
+
+	/// fr: 'Ta prochaine séance s'affichera dans ta Classe.'
+	String get prochaineInconnue => 'Ta prochaine séance s\'affichera dans ta Classe.';
+
+	/// fr: 'Votre prochaine séance s'affichera dans votre Classe.'
+	String get prochaineInconnueVous => 'Votre prochaine séance s\'affichera dans votre Classe.';
 }
 
 // Path: accessibilite.monEspace
@@ -15936,6 +15942,8 @@ extension on Traductions {
 			'accessibilite.apres.erreurVous' => 'Votre prochaine séance et votre travail n\'ont pas pu être chargés, sans doute à cause de la connexion. Réessayez, ou retrouvez-les dans votre Classe.',
 			'accessibilite.apres.horsLigne' => 'Tu es hors ligne : ta prochaine séance et ton travail s\'afficheront quand la connexion reviendra.',
 			'accessibilite.apres.horsLigneVous' => 'Vous êtes hors ligne : votre prochaine séance et votre travail s\'afficheront quand la connexion reviendra.',
+			'accessibilite.apres.prochaineInconnue' => 'Ta prochaine séance s\'affichera dans ta Classe.',
+			'accessibilite.apres.prochaineInconnueVous' => 'Votre prochaine séance s\'affichera dans votre Classe.',
 			'accessibilite.monEspace.titre' => 'Mon espace',
 			'accessibilite.monEspace.mode' => 'Mode Accessibilité',
 			'accessibilite.monEspace.modeDetail' => 'Une interface simplifiée et adaptée pour un apprentissage plus serein.',
@@ -16396,10 +16404,10 @@ extension on Traductions {
 			'dossiers.visionneuse.erreur' => 'La pièce ne peut pas être affichée.',
 			'dossiers.visionneuse.expire' => 'L\'accès à cette pièce a expiré.',
 			'dossiers.visionneuse.recharger' => 'Recharger la pièce',
-			'dossiers.visionneuse.formatNonPrisEnCharge' => 'Ce format de pièce ne peut pas être affiché.',
-			'dossiers.visionneuse.accesRetire' => 'Vous n’avez plus accès à cette pièce.',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.visionneuse.formatNonPrisEnCharge' => 'Ce format de pièce ne peut pas être affiché.',
+			'dossiers.visionneuse.accesRetire' => 'Vous n’avez plus accès à cette pièce.',
 			'dossiers.visionneuse.horsLigne' => 'Vous êtes hors ligne. La pièce ne peut pas être chargée.',
 			'dossiers.visionneuse.aucune' => 'Aucune pièce n’est disponible.',
 			'dossiers.visionneuse.fermerPiece' => 'Fermer la pièce',
@@ -16910,10 +16918,10 @@ extension on Traductions {
 			'admin.journal.roleControleur' => 'Contrôleur',
 			'admin.journal.roleComptable' => 'Comptable',
 			'admin.journal.roleAucun' => 'Hors session',
-			'admin.journal.evtKycLu' => 'Dossier d\'identité consulté',
-			'admin.journal.evtKycTranche' => 'Dossier d\'identité tranché',
 			_ => null,
 		} ?? switch (path) {
+			'admin.journal.evtKycLu' => 'Dossier d\'identité consulté',
+			'admin.journal.evtKycTranche' => 'Dossier d\'identité tranché',
 			'admin.journal.evtProfilCree' => 'Profil créé',
 			'admin.journal.evtProfilEnfantCree' => 'Profil enfant créé',
 			'admin.journal.evtCodeCree' => 'Code d\'appairage créé',
@@ -17424,10 +17432,10 @@ extension on Traductions {
 			'compte.tuteur.pageApparence.animationsDetail' => 'Réduites quand votre appareil le demande',
 			'compte.tuteur.pageApparence.texte' => 'Taille du texte',
 			'compte.tuteur.pageApparence.texteDetail' => 'Suit la taille du système',
-			'compte.tuteur.pageAide.titre' => 'Aide et support',
-			'compte.tuteur.pageAide.indisponibleTitre' => 'Aide pas encore disponible',
 			_ => null,
 		} ?? switch (path) {
+			'compte.tuteur.pageAide.titre' => 'Aide et support',
+			'compte.tuteur.pageAide.indisponibleTitre' => 'Aide pas encore disponible',
 			'compte.tuteur.pageAide.indisponiblePhrase' => 'Les questions fréquentes et le contact de l\'académie ne sont pas encore ouverts dans l\'application.',
 			'compte.tuteur.pageAide.canalCourriel' => 'Courriel de l\'académie',
 			'compte.tuteur.pageAide.canalLien' => 'Page d\'aide de l\'académie',
@@ -17938,10 +17946,10 @@ extension on Traductions {
 			'enseignant.bienvenue.aCompleter' => 'À compléter',
 			'enseignant.bienvenue.compteur' => ({required Object fait, required Object total}) => '${fait} sur ${total}',
 			'enseignant.bienvenue.prerequisPhoto' => 'Ajouter ma photo professionnelle',
-			'enseignant.bienvenue.prerequisLangues' => 'Vérifier mes langues d\'enseignement',
-			'enseignant.bienvenue.prerequisFuseau' => 'Vérifier mon fuseau horaire',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.bienvenue.prerequisLangues' => 'Vérifier mes langues d\'enseignement',
+			'enseignant.bienvenue.prerequisFuseau' => 'Vérifier mon fuseau horaire',
 			'enseignant.bienvenue.ctaPhoto' => 'Ajouter ma photo',
 			'enseignant.bienvenue.ctaInformations' => 'Vérifier mes informations',
 			'enseignant.bienvenue.ctaJournee' => 'Voir ma journée',
@@ -18452,10 +18460,10 @@ extension on Traductions {
 			'controleur.echanges.cleHeure' => 'Heure',
 			'controleur.echanges.auteurVous' => 'Vous',
 			'controleur.echanges.auteurAdmin' => 'Administration',
-			'controleur.echanges.champ' => 'Répondre à l\'administration…',
-			'controleur.echanges.champLibelle' => 'Répondre à l\'administration',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.echanges.champ' => 'Répondre à l\'administration…',
+			'controleur.echanges.champLibelle' => 'Répondre à l\'administration',
 			'controleur.echanges.envoyer' => 'Envoyer',
 			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
 			'controleur.echanges.enCours' => 'Envoi en cours.',
@@ -18966,10 +18974,10 @@ extension on Traductions {
 			'tc.parcours.feedback.tendance.anonyme' => 'Les retours sont anonymes et agrégés. Ils ne suffisent jamais, seuls, à une décision.',
 			'tc.parcours.signalement.titre' => 'Signaler un besoin',
 			'tc.parcours.signalement.categorie' => 'De quoi s\'agit-il ?',
-			'tc.parcours.signalement.categorieValeur.pedagogique' => 'Pédagogique',
-			'tc.parcours.signalement.categorieValeur.presence' => 'Présence',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.signalement.categorieValeur.pedagogique' => 'Pédagogique',
+			'tc.parcours.signalement.categorieValeur.presence' => 'Présence',
 			'tc.parcours.signalement.categorieValeur.technique' => 'Technique',
 			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
 			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',

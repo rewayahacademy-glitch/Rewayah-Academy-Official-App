@@ -693,7 +693,9 @@
       "erreur": "Ta prochaine séance et ton travail n'ont pas pu être chargés, sans doute à cause de la connexion. Réessaie, ou retrouve-les dans ta Classe.",
       "erreurVous": "Votre prochaine séance et votre travail n'ont pas pu être chargés, sans doute à cause de la connexion. Réessayez, ou retrouvez-les dans votre Classe.",
       "horsLigne": "Tu es hors ligne : ta prochaine séance et ton travail s'afficheront quand la connexion reviendra.",
-      "horsLigneVous": "Vous êtes hors ligne : votre prochaine séance et votre travail s'afficheront quand la connexion reviendra."
+      "horsLigneVous": "Vous êtes hors ligne : votre prochaine séance et votre travail s'afficheront quand la connexion reviendra.",
+      "prochaineInconnue": "Ta prochaine séance s'affichera dans ta Classe.",
+      "prochaineInconnueVous": "Votre prochaine séance s'affichera dans votre Classe."
     },
     "monEspace": {
       "titre": "Mon espace",

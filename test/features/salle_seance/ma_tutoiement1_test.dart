@@ -44,15 +44,18 @@ void main() {
         find.text(t.salle.fin.quittePhrase),
         tu ? findsNothing : findsOneWidget,
       );
-      // L'etat vide suit le meme registre.
+      // L'etat vide (Classe introuvable) suit le meme registre, avec la
+      // phrase neutre (MA-APRES-1b) : jamais « pas encore programmee ».
       expect(
-        find.text(t.accessibilite.apres.vide),
+        find.text(t.accessibilite.apres.prochaineInconnue),
         tu ? findsOneWidget : findsNothing,
       );
       expect(
-        find.text(t.accessibilite.apres.videVous),
+        find.text(t.accessibilite.apres.prochaineInconnueVous),
         tu ? findsNothing : findsOneWidget,
       );
+      expect(find.text(t.accessibilite.apres.vide), findsNothing);
+      expect(find.text(t.accessibilite.apres.videVous), findsNothing);
       expect(tester.takeException(), isNull);
     });
   }
