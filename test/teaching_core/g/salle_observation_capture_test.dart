@@ -83,12 +83,18 @@ Future<FauxMoteurClasse> _monterSalle(
   bool participants = true,
   bool jetonRefuse = false,
   double echelleTexte = 1,
+  bool sansImage = false,
+  TextDirection? sens,
 }) async {
   final FauxPortPolitique politique = FauxPortPolitique();
   addTearDown(politique.fermer);
-  final FauxMoteurClasse moteur = FauxMoteurClasse()
-    ..videos['prof-1'] = _videoDouble(const Color(0xFF6F6A86))
-    ..videos['enfant-1'] = _videoDouble(const Color(0xFF8C84A8));
+  final FauxMoteurClasse moteur = FauxMoteurClasse();
+  // TUILE-TUTEUR-1 : sans image, les vignettes prennent la tuile partagee.
+  if (!sansImage) {
+    moteur
+      ..videos['prof-1'] = _videoDouble(const Color(0xFF6F6A86))
+      ..videos['enfant-1'] = _videoDouble(const Color(0xFF8C84A8));
+  }
   await tester.pumpWidget(
     ProviderScope(
       overrides: surchargesTcG(
@@ -128,10 +134,11 @@ Future<FauxMoteurClasse> _monterSalle(
               supportedLocales: AppLocaleUtils.supportedLocales,
               localizationsDelegates: GlobalMaterialLocalizations.delegates,
               builder: (BuildContext contexte, Widget? enfant) => MediaQuery(
-                data: MediaQuery.of(
-                  contexte,
-                ).copyWith(textScaler: TextScaler.linear(echelleTexte)),
-                child: enfant!,
+                data: MediaQuery.of(contexte)
+                    .copyWith(textScaler: TextScaler.linear(echelleTexte)),
+                child: sens == null
+                    ? enfant!
+                    : Directionality(textDirection: sens, child: enfant!),
               ),
               routerConfig: GoRouter(
                 initialLocation: _porte,
@@ -219,10 +226,7 @@ void main() {
       );
     });
 
-    for (final ThemeMode mode in <ThemeMode>[
-      ThemeMode.light,
-      ThemeMode.dark,
-    ]) {
+    for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
       testWidgets('salle 390x844 @3, ${mode.name}', (
         WidgetTester tester,
       ) async {
@@ -264,9 +268,7 @@ void main() {
       await _capturer(tester, 'o2_salle_1024x768@1_light');
     });
 
-    testWidgets('telephone en paysage 844x390 @3', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('telephone en paysage 844x390 @3', (WidgetTester tester) async {
       fixerVueCapture(tester, const Size(844, 390), 3);
       await _monterSalle(tester);
       await _capturer(tester, 'o2_salle_844x390@3_paysage_light');
@@ -319,6 +321,75 @@ void main() {
       await _capturer(tester, 'o2_salle_vide_390x844@3_light');
     });
 
+    // TUILE-TUTEUR-1 : vignettes sans image (cercle, nom centre dessous).
+    for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
+      testWidgets('sans image 390x844 @3, ${mode.name}', (
+        WidgetTester tester,
+      ) async {
+        fixerVueCapture(tester, const Size(390, 844), 3, zoneSure: _zoneSure);
+        await _monterSalle(tester, mode: mode, sansImage: true);
+        await _capturer(tester, 'o2_sans_image_390x844@3_${mode.name}');
+      });
+    }
+
+    testWidgets('sans image 1440x900 @1', (WidgetTester tester) async {
+      fixerVueCapture(tester, const Size(1440, 900), 1);
+      await _monterSalle(tester, sansImage: true);
+      await _capturer(tester, 'o2_sans_image_1440x900@1_light');
+    });
+
+    testWidgets('sans image, texte a 200 % 320x844 @2', (
+      WidgetTester tester,
+    ) async {
+      fixerVueCapture(tester, const Size(320, 844), 2, zoneSure: _zoneSure);
+      await _monterSalle(tester, sansImage: true, echelleTexte: 2);
+      // TUILE-TUTEUR-1b : a 200 %, les vignettes sont sous le pli ; la
+      // capture les amene a l'ecran, sinon elle ne prouve rien du lot.
+      await tester.ensureVisible(
+        find.byKey(const ValueKey<String>('vignette-enfant')),
+      );
+      await stabiliser(tester);
+      await _capturer(tester, 'o2_sans_image_texte200_320x844@2_light');
+    });
+
+    // TUILE-TUTEUR-1b : droite a gauche.
+    testWidgets('sans image 390x844 @3, rtl', (WidgetTester tester) async {
+      fixerVueCapture(tester, const Size(390, 844), 3, zoneSure: _zoneSure);
+      await _monterSalle(tester, sansImage: true, sens: TextDirection.rtl);
+      await _capturer(tester, 'o2_sans_image_390x844@3_rtl_light');
+    });
+
+    // OBS-COUPE-1b : la barre sur les telephones etroits, texte a 100 %,
+    // agrandi ou non, son recu ou interrompu.
+    for (final (Size, double) vue in const <(Size, double)>[
+      (Size(320, 844), 2),
+      (Size(360, 800), 3),
+      (Size(375, 812), 3),
+    ]) {
+      final String format =
+          '${vue.$1.width.toInt()}x${vue.$1.height.toInt()}@${vue.$2.toInt()}';
+      testWidgets('barre $format', (WidgetTester tester) async {
+        fixerVueCapture(tester, vue.$1, vue.$2, zoneSure: _zoneSure);
+        await _monterSalle(tester);
+        await _capturer(tester, 'o2_salle_${format}_light');
+      });
+
+      testWidgets('barre reduire $format', (WidgetTester tester) async {
+        fixerVueCapture(tester, vue.$1, vue.$2, zoneSure: _zoneSure);
+        await _monterSalle(tester);
+        await _presser(tester, t.tc.observation.visite.agrandir);
+        await _capturer(tester, 'o2_agrandi_${format}_light');
+      });
+
+      testWidgets('barre son interrompu $format', (WidgetTester tester) async {
+        fixerVueCapture(tester, vue.$1, vue.$2, zoneSure: _zoneSure);
+        final FauxMoteurClasse moteur = await _monterSalle(tester);
+        moteur.poser(EtatSalle.reconnexion);
+        await stabiliser(tester);
+        await _capturer(tester, 'o2_son_interrompu_${format}_light');
+      });
+    }
+
     testWidgets('video indisponible 390x844 @3', (WidgetTester tester) async {
       fixerVueCapture(tester, const Size(390, 844), 3, zoneSure: _zoneSure);
       await _monterSalle(tester, jetonRefuse: true, participants: false);
@@ -331,51 +402,60 @@ void main() {
       await _capturer(tester, 'o2_texte200_390x844@2_light');
     });
 
-    testWidgets('planche : salle mobile claire contre la maquette V8 M4',
-        skip: _maquetteM4 == null, (WidgetTester tester) async {
-      final (int l, int h) = await _taillePx(tester, _maquetteM4!);
-      fixerVueMaquette(
-        tester,
-        largeurPx: l,
-        hauteurPx: h,
-        largeurLogique: 390,
-        zoneSure: const EdgeInsets.only(top: 24),
-      );
-      await _monterSalle(tester);
-      debugPrint(
-        'PNG ${await capturerEtComparer(tester, 'o2_salle_mobile_contre_maquette_M4', _maquetteM4!)}',
-      );
-    });
+    testWidgets(
+      'planche : salle mobile claire contre la maquette V8 M4',
+      skip: _maquetteM4 == null,
+      (WidgetTester tester) async {
+        final (int l, int h) = await _taillePx(tester, _maquetteM4!);
+        fixerVueMaquette(
+          tester,
+          largeurPx: l,
+          hauteurPx: h,
+          largeurLogique: 390,
+          zoneSure: const EdgeInsets.only(top: 24),
+        );
+        await _monterSalle(tester);
+        debugPrint(
+          'PNG ${await capturerEtComparer(tester, 'o2_salle_mobile_contre_maquette_M4', _maquetteM4!)}',
+        );
+      },
+    );
 
-    testWidgets('planche : salle mobile sombre contre la maquette V8 M3',
-        skip: _maquetteM3 == null, (WidgetTester tester) async {
-      final (int l, int h) = await _taillePx(tester, _maquetteM3!);
-      fixerVueMaquette(
-        tester,
-        largeurPx: l,
-        hauteurPx: h,
-        largeurLogique: 390,
-        zoneSure: const EdgeInsets.only(top: 24),
-      );
-      await _monterSalle(tester, mode: ThemeMode.dark);
-      debugPrint(
-        'PNG ${await capturerEtComparer(tester, 'o2_salle_mobile_sombre_contre_maquette_M3', _maquetteM3!)}',
-      );
-    });
+    testWidgets(
+      'planche : salle mobile sombre contre la maquette V8 M3',
+      skip: _maquetteM3 == null,
+      (WidgetTester tester) async {
+        final (int l, int h) = await _taillePx(tester, _maquetteM3!);
+        fixerVueMaquette(
+          tester,
+          largeurPx: l,
+          hauteurPx: h,
+          largeurLogique: 390,
+          zoneSure: const EdgeInsets.only(top: 24),
+        );
+        await _monterSalle(tester, mode: ThemeMode.dark);
+        debugPrint(
+          'PNG ${await capturerEtComparer(tester, 'o2_salle_mobile_sombre_contre_maquette_M3', _maquetteM3!)}',
+        );
+      },
+    );
 
-    testWidgets('planche : salle bureau contre la maquette V8 D1',
-        skip: _maquetteD1 == null, (WidgetTester tester) async {
-      final (int l, int h) = await _taillePx(tester, _maquetteD1!);
-      fixerVueMaquette(
-        tester,
-        largeurPx: l,
-        hauteurPx: h,
-        largeurLogique: 1280,
-      );
-      await _monterSalle(tester);
-      debugPrint(
-        'PNG ${await capturerEtComparer(tester, 'o2_salle_bureau_contre_maquette_D1', _maquetteD1!)}',
-      );
-    });
+    testWidgets(
+      'planche : salle bureau contre la maquette V8 D1',
+      skip: _maquetteD1 == null,
+      (WidgetTester tester) async {
+        final (int l, int h) = await _taillePx(tester, _maquetteD1!);
+        fixerVueMaquette(
+          tester,
+          largeurPx: l,
+          hauteurPx: h,
+          largeurLogique: 1280,
+        );
+        await _monterSalle(tester);
+        debugPrint(
+          'PNG ${await capturerEtComparer(tester, 'o2_salle_bureau_contre_maquette_D1', _maquetteD1!)}',
+        );
+      },
+    );
   });
 }

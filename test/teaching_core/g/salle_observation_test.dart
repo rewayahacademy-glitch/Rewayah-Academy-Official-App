@@ -11,6 +11,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show SemanticsNode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -18,12 +19,14 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_observation/port_visite_observation.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/avatar_nom.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/compteur_visite.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/ouverture_observation.dart';
@@ -91,7 +94,13 @@ ResultatEntreeObservation _entree({
 
 /// Ce que le test garde en main apres l'entree en salle.
 class _Salle {
-  _Salle(this.visites, this.politique, this.moteur, this.horloge, this.battement);
+  _Salle(
+    this.visites,
+    this.politique,
+    this.moteur,
+    this.horloge,
+    this.battement,
+  );
 
   final FauxPortVisite visites;
   final FauxPortPolitique politique;
@@ -110,6 +119,7 @@ Future<_Salle> _entrerEnSalle(
   double echelleTexte = 1,
   PortClassesFoyer? classes,
   bool horsLigne = false,
+  TextDirection? sens,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -134,7 +144,8 @@ Future<_Salle> _entrerEnSalle(
         horloge: horloge.lire,
         horsLigne: horsLigne,
         autres: <Override>[
-          if (classes != null) portClassesFoyerProvider.overrideWithValue(classes),
+          if (classes != null)
+            portClassesFoyerProvider.overrideWithValue(classes),
         ],
       ),
       child: TranslationProvider(
@@ -143,10 +154,11 @@ Future<_Salle> _entrerEnSalle(
           darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
           themeMode: mode,
           builder: (BuildContext context, Widget? enfant) => MediaQuery(
-            data: MediaQuery.of(
-              context,
-            ).copyWith(textScaler: TextScaler.linear(echelleTexte)),
-            child: enfant!,
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: TextScaler.linear(echelleTexte)),
+            child: sens == null
+                ? enfant!
+                : Directionality(textDirection: sens, child: enfant!),
           ),
           routerConfig: GoRouter(
             initialLocation: '/tuteur/classes/c1?eleve=enfant-1',
@@ -181,13 +193,12 @@ Future<void> _presser(WidgetTester tester, Finder cible) async {
 }
 
 /// L'enseignant et l'enfant, et deux camarades qui ne doivent jamais sortir.
-void _publierParticipants(FauxMoteurClasse moteur) => moteur.publier(
-  <ParticipantSalle>[
-    participantDe(identite: 'prof-1', role: 'teacher', nom: 'Amina'),
-    participantDe(identite: 'enfant-1', role: 'student', nom: 'Mariam'),
-    participantDe(identite: 'enfant-2', role: 'student', nom: 'Camarade'),
-  ],
-);
+void _publierParticipants(FauxMoteurClasse moteur) =>
+    moteur.publier(<ParticipantSalle>[
+      participantDe(identite: 'prof-1', role: 'teacher', nom: 'Amina'),
+      participantDe(identite: 'enfant-1', role: 'student', nom: 'Mariam'),
+      participantDe(identite: 'enfant-2', role: 'student', nom: 'Camarade'),
+    ]);
 
 final v = t.tc.observation.visite;
 
@@ -199,7 +210,9 @@ String _texteDecompte(WidgetTester tester) =>
 void main() {
   group('La salle, au format telephone (M4)', () {
     testWidgets('Observer la seance, Observer maintenant : la salle, son '
-        'bandeau, trois commandes, deux personnes', (WidgetTester tester) async {
+        'bandeau, trois commandes, deux personnes', (
+      WidgetTester tester,
+    ) async {
       final _Salle salle = await _entrerEnSalle(tester);
       _publierParticipants(salle.moteur);
       await tester.pumpAndSettle();
@@ -284,25 +297,26 @@ void main() {
       );
     });
 
-    testWidgets('les trente dernieres secondes passent au ton d\'avertissement', (
-      WidgetTester tester,
-    ) async {
-      await _entrerEnSalle(
-        tester,
-        reponse: _entree(restant: const Duration(seconds: 20)),
-      );
-      expect(_texteDecompte(tester), '00:20');
-      final BuildContext contexte = tester.element(_decompte);
-      final DecoratedBox fond = tester.widget<DecoratedBox>(
-        find
-            .ancestor(of: _decompte, matching: find.byType(DecoratedBox))
-            .first,
-      );
-      expect(
-        (fond.decoration as BoxDecoration).color,
-        AppPalette.of(contexte).washWarning.background,
-      );
-    });
+    testWidgets(
+      'les trente dernieres secondes passent au ton d\'avertissement',
+      (WidgetTester tester) async {
+        await _entrerEnSalle(
+          tester,
+          reponse: _entree(restant: const Duration(seconds: 20)),
+        );
+        expect(_texteDecompte(tester), '00:20');
+        final BuildContext contexte = tester.element(_decompte);
+        final DecoratedBox fond = tester.widget<DecoratedBox>(
+          find
+              .ancestor(of: _decompte, matching: find.byType(DecoratedBox))
+              .first,
+        );
+        expect(
+          (fond.decoration as BoxDecoration).color,
+          AppPalette.of(contexte).washWarning.background,
+        );
+      },
+    );
 
     testWidgets('Agrandir : le support seul, le bandeau et Quitter restent ; '
         'Reduire rend la salle', (WidgetTester tester) async {
@@ -528,4 +542,188 @@ void main() {
       expect(find.text(v.quitterQuestion), findsOneWidget);
     });
   });
+  // TUILE-TUTEUR-1 : sans image, la vignette du tuteur prend la tuile sans
+  // image partagee (VIDEO-TUILE-1) : cercle, nom centre dessous, une seule
+  // fois ; « Camera fermee » reste lu.
+  group('TUILE-TUTEUR-1 : vignette sans image', () {
+    // TUILE-TUTEUR-1b : les deux sens d'ecriture (revue du 4 octobre 2026).
+    for (final (Size, double, TextDirection) cas
+        in const <(Size, double, TextDirection)>[
+          (Size(390, 844), 1, TextDirection.ltr),
+          (Size(320, 844), 2, TextDirection.ltr),
+          (Size(1440, 900), 1, TextDirection.ltr),
+          (Size(390, 844), 1, TextDirection.rtl),
+          (Size(320, 844), 2, TextDirection.rtl),
+        ]) {
+      testWidgets('${cas.$1.width.toInt()} px, texte x${cas.$2.toInt()}, '
+          '${cas.$3.name}', (WidgetTester tester) async {
+        final _Salle salle = await _entrerEnSalle(
+          tester,
+          taille: cas.$1,
+          echelleTexte: cas.$2,
+          sens: cas.$3,
+        );
+        _publierParticipants(salle.moteur);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+
+        for (final (String cle, String nom) vignette in <(String, String)>[
+          ('vignette-enfant', 'Mariam'),
+          ('vignette-enseignant', 'Amina'),
+        ]) {
+          final Finder cadre = find.byKey(ValueKey<String>(vignette.$1));
+          final Finder tuile = find.descendant(
+            of: cadre,
+            matching: find.byType(TuileSansImage),
+          );
+          expect(tuile, findsOneWidget);
+          // Le nom une seule fois : l'etiquette du bas ne le redit pas.
+          expect(
+            find.descendant(of: cadre, matching: find.text(vignette.$2)),
+            findsOneWidget,
+          );
+          final Rect cercle = tester.getRect(
+            find.descendant(
+              of: tuile,
+              matching: find.byKey(
+                const ValueKey<String>('tuile-sans-image-cercle'),
+              ),
+            ),
+          );
+          final Rect nomRect = tester.getRect(
+            find.descendant(
+              of: tuile,
+              matching: find.byKey(
+                const ValueKey<String>('tuile-sans-image-nom'),
+              ),
+            ),
+          );
+          expect(
+            nomRect.center.dx,
+            moreOrLessEquals(cercle.center.dx, epsilon: 1),
+          );
+          expect(nomRect.top, greaterThanOrEqualTo(cercle.bottom));
+          // Tout dans le cadre.
+          final Rect bord = tester.getRect(cadre);
+          expect(bord.contains(cercle.topLeft), isTrue);
+          expect(nomRect.bottom, lessThanOrEqualTo(bord.bottom + 0.5));
+          // TUILE-TUTEUR-1b : un seul noeud porte le nom, celui du cadre ;
+          // la tuile ne le redit pas dessous (« Mariam » puis « Mariam,
+          // Camera fermee » sur 1910b943).
+          expect(
+            tester.getSemantics(cadre).label,
+            '${vignette.$2}, ${v.cameraFermee}',
+          );
+          expect(_noeudsNommant(tester, cadre, vignette.$2), 1);
+        }
+        // OBS-COUPE-1b : la ligne d'attente du support se lit en entier,
+        // jamais rognee par sa carte.
+        final Rect support = tester.getRect(
+          find.byKey(const ValueKey<String>('support-observation')),
+        );
+        final Rect attente = tester.getRect(find.text(v.supportIndisponible));
+        expect(attente.top, greaterThanOrEqualTo(support.top));
+        expect(attente.bottom, lessThanOrEqualTo(support.bottom));
+        // TUILE-TUTEUR-1b : la vignette se voit vraiment, une fois amenee a
+        // l'ecran (a 320 px et 200 %, elle est sous le pli) : son cercle est
+        // dans la fenetre, pas seulement dans son cadre.
+        final Finder enfant = find.byKey(
+          const ValueKey<String>('vignette-enfant'),
+        );
+        await tester.ensureVisible(enfant);
+        await tester.pumpAndSettle();
+        final Rect ecran = Offset.zero & cas.$1;
+        final Rect cercleEnfant = tester.getRect(
+          find.descendant(
+            of: enfant,
+            matching: find.byKey(
+              const ValueKey<String>('tuile-sans-image-cercle'),
+            ),
+          ),
+        );
+        expect(ecran.contains(cercleEnfant.topLeft), isTrue);
+        expect(ecran.contains(cercleEnfant.bottomRight), isTrue);
+        expect(tester.getSemantics(enfant).flagsCollection.isHidden, isFalse);
+        // « Camera fermee » est dit au lecteur d'ecran.
+        expect(
+          find.bySemanticsLabel(RegExp(RegExp.escape(v.cameraFermee))),
+          findsNWidgets(2),
+        );
+      });
+    }
+
+    // TUILE-TUTEUR-1b : sans image, la parole se voit par les ondes dans le
+    // coin de la tuile (l'etiquette du bas n'est plus la pour les porter), et
+    // se dit au lecteur d'ecran.
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets('ondes de parole sans image, ${sens.name}', (
+        WidgetTester tester,
+      ) async {
+        final _Salle salle = await _entrerEnSalle(tester, sens: sens);
+        salle.moteur.publier(<ParticipantSalle>[
+          participantDe(identite: 'prof-1', role: 'teacher', nom: 'Amina'),
+          const ParticipantSalle(
+            identite: 'enfant-1',
+            nom: 'Mariam',
+            role: 'student',
+            estLocal: false,
+            micro: true,
+            camera: false,
+            parle: true,
+            qualite: QualiteLien.bonne,
+          ),
+        ]);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+
+        Finder ondes(String cle) => find.descendant(
+          of: find.descendant(
+            of: find.byKey(ValueKey<String>(cle)),
+            matching: find.byType(TuileSansImage),
+          ),
+          matching: find.byIcon(AppIcons.libelleAudio.repos),
+        );
+        expect(ondes('vignette-enfant'), findsOneWidget);
+        expect(ondes('vignette-enseignant'), findsNothing);
+        // Dans le coin bas de fin de la tuile.
+        final Rect tuile = tester.getRect(
+          find.descendant(
+            of: find.byKey(const ValueKey<String>('vignette-enfant')),
+            matching: find.byType(TuileSansImage),
+          ),
+        );
+        final Rect icone = tester.getRect(ondes('vignette-enfant'));
+        expect(icone.center.dy, greaterThan(tuile.center.dy));
+        if (sens == TextDirection.ltr) {
+          expect(icone.center.dx, greaterThan(tuile.center.dx));
+        } else {
+          expect(icone.center.dx, lessThan(tuile.center.dx));
+        }
+        expect(
+          tester
+              .getSemantics(
+                find.byKey(const ValueKey<String>('vignette-enfant')),
+              )
+              .label,
+          '${v.parle(nom: 'Mariam')}, ${v.cameraFermee}',
+        );
+      });
+    }
+  });
+}
+
+/// Le nombre de noeuds semantiques, sous [cadre] compris, dont le libelle
+/// contient [nom].
+int _noeudsNommant(WidgetTester tester, Finder cadre, String nom) {
+  int n = 0;
+  void visiter(SemanticsNode noeud) {
+    if (noeud.label.contains(nom)) n++;
+    noeud.visitChildren((SemanticsNode enfant) {
+      visiter(enfant);
+      return true;
+    });
+  }
+
+  visiter(tester.getSemantics(cadre));
+  return n;
 }
