@@ -647,6 +647,12 @@ abstract final class DonneesAdulteDemo {
         soldeRendu: s.soldeRendu,
         offres: _offresRecharge,
         montantsProposes: const <Montant>[montantOffreA, montantOffreB],
+        // Chaque montant se lit comme le prix de son offre, MARQUE
+        // « (démonstration) » a l'etape 1 comme au recapitulatif (F12).
+        montantsRediges: <Montant, String>{
+          montantOffreA: t.adulte.demo.donnees.prixOffreA,
+          montantOffreB: t.adulte.demo.donnees.prixOffreB,
+        },
       ),
   ];
 

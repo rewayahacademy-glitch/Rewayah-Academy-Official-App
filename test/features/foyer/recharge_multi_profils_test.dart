@@ -8,6 +8,8 @@
 // production indisponible ; 320 px a 200 % et 1440 px, LTR et RTL, clair et
 // sombre.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -29,6 +31,8 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/bouton_icone.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart'
+    show DisqueRetour;
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/ligne_moyen_paiement.dart';
 import 'package:rewayah_academy/features/compte/paiements_page.dart';
@@ -182,6 +186,21 @@ class _PortEspion extends RechargeFoyerFinanceDemo {
       lignes: r.lignes,
       total: 'TOTAL-ARRETE-PAR-LE-PORT',
     );
+  }
+}
+
+/// Un port dont la verification attend [verrou] : l'ecran reste occupe.
+class _PortLent extends RechargeFoyerFinanceDemo {
+  _PortLent() : super(JeuFoyerFinance.tousFinances);
+
+  final Completer<void> verrou = Completer<void>();
+
+  @override
+  Future<RecapitulatifRecharge> verifierMontants(
+    List<MontantRecharge> choix,
+  ) async {
+    await verrou.future;
+    return super.verifierMontants(choix);
   }
 }
 
@@ -487,6 +506,105 @@ void main() {
     expect(routeur.state.uri.path, Routes.tuteurFoyerRecharge);
     expect(find.byType(RechargeFoyerPage), findsOneWidget);
     expect(find.byType(PaiementsComptePage), findsNothing);
+  });
+
+  testWidgets('Compte > Paiements : abandonner la recharge y ramene, jamais '
+      'au Foyer (revue FI-7)', (WidgetTester tester) async {
+    final GoRouter routeur = await _monter(
+      tester,
+      depart: Routes.compteTuteurSousPage('paiements'),
+    );
+    await _taper(tester, find.byKey(PaiementsComptePage.rechargerKey));
+    expect(find.byType(RechargeFoyerPage), findsOneWidget);
+    await _taper(
+      tester,
+      find.descendant(
+        of: find.byType(RechargeFoyerPage),
+        matching: find.byType(DisqueRetour),
+      ),
+    );
+    expect(routeur.state.uri.path, Routes.compteTuteurSousPage('paiements'));
+    expect(find.byType(PaiementsComptePage), findsOneWidget);
+    expect(find.byType(FoyerPage), findsNothing);
+  });
+
+  testWidgets('ouverte depuis le Foyer : l abandon ramene au Foyer', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter routeur = await _monter(tester);
+    await _taper(
+      tester,
+      find.descendant(
+        of: find.byType(RechargeFoyerPage),
+        matching: find.byType(DisqueRetour),
+      ),
+    );
+    expect(routeur.state.uri.path, Routes.tuteurFoyer);
+  });
+
+  testWidgets('« Tout selectionner » est fige pendant la verification, '
+      'comme les cases (revue FI-7)', (WidgetTester tester) async {
+    final _PortLent port = _PortLent();
+    await _monter(tester, port: port);
+    await _cocher(tester, _mariam);
+    await _plus(tester, _mariam, 1);
+    final Finder verifier = find.byKey(RechargeFoyerPage.verifierKey);
+    await tester.ensureVisible(verifier);
+    await tester.pumpAndSettle();
+    await tester.tap(verifier);
+    await tester.pump();
+    final Finder tout = find.byKey(RechargeFoyerPage.toutSelectionnerKey);
+    await tester.ensureVisible(tout);
+    await tester.pump();
+    await tester.tap(tout, warnIfMissed: false);
+    await tester.pump();
+    expect(_coche(tester, _ibrahim), isFalse);
+    expect(_coche(tester, _aicha), isFalse);
+    port.verrou.complete();
+    await stabiliser(tester);
+    // Le recapitulatif correspond aux cases : Mariam seule.
+    expect(find.byKey(RechargeFoyerPage.ligneDe(_mariam)), findsOneWidget);
+    expect(find.byKey(RechargeFoyerPage.ligneDe(_ibrahim)), findsNothing);
+    await _taper(tester, find.byKey(RechargeFoyerPage.modifierDe(_mariam)));
+    expect(_coche(tester, _mariam), isTrue);
+    expect(_coche(tester, _ibrahim), isFalse);
+    expect(_coche(tester, _aicha), isFalse);
+  });
+
+  test('demonstration : les montants proposes sont croissants, un manque '
+      'hors paliers a sa place (revue FI-7)', () {
+    final FinancesProfil ibrahim = DonneesFinanceDemo.profils(
+      JeuFoyerFinance.unARegulariser,
+    ).firstWhere((FinancesProfil p) => p.profilId == _ibrahim);
+    final Montant manque = DonneesFinanceDemo.usd(35);
+    final BeneficiaireRecharge b = DonneesFinanceDemo.beneficiairesDe(
+      <FinancesProfil>[
+        FinancesProfil(
+          profilId: ibrahim.profilId,
+          prenom: ibrahim.prenom,
+          cleAccent: ibrahim.cleAccent,
+          estAdulte: ibrahim.estAdulte,
+          etat: ibrahim.etat,
+          solde: ibrahim.solde,
+          mensualite: ibrahim.mensualite,
+          manque: manque,
+        ),
+      ],
+    ).single;
+    expect(b.montantsProposes, <Montant>[
+      for (final int u in const <int>[10, 20, 30, 35, 40, 50])
+        DonneesFinanceDemo.usd(u),
+    ]);
+    // Chaque jeu de la demonstration tient le contrat du port.
+    for (final JeuFoyerFinance jeu in JeuFoyerFinance.values) {
+      for (final BeneficiaireRecharge r
+          in DonneesFinanceDemo.beneficiairesRecharge(jeu)) {
+        final List<int> mineurs = <int>[
+          for (final Montant m in r.montantsProposes) m.mineur,
+        ];
+        expect(mineurs, <int>[...mineurs]..sort(), reason: '$jeu ${r.id}');
+      }
+    }
   });
 
   testWidgets('Compte > Paiements sans source (production) : aucun raccourci', (

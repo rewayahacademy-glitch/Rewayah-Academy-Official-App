@@ -49,6 +49,7 @@ class BeneficiaireRecharge {
     this.offres = const <OffreRecharge>[],
     this.montantsProposes = const <Montant>[],
     this.montantSuggere,
+    this.montantsRediges = const <Montant, String>{},
     this.cleAvatar,
   });
 
@@ -80,6 +81,12 @@ class BeneficiaireRecharge {
   /// [montantsProposes], ou `null` : rien n'est choisi d'avance (guide V4
   /// §5.3, « minimum requis peut etre suggere »).
   final Montant? montantSuggere;
+
+  /// Le libelle que la source redige pour un montant propose, affiche tel
+  /// quel a la place du montant formate (E2) : la demonstration EA marque
+  /// ainsi ses prix « (demonstration) » (F12, revue EA-R m4). Un montant
+  /// absent se formate (`formaterMontant`).
+  final Map<Montant, String> montantsRediges;
 }
 
 /// Le choix du titulaire pour un beneficiaire : une offre, jamais un montant

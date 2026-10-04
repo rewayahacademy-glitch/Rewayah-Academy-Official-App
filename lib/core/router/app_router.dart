@@ -544,10 +544,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       (GoRouterState etat) => Builder(
                         builder: (BuildContext context) => RechargeFoyerPage(
                           // Une autre selection (« Reessayer » apres un
-                          // echec, FI-8) ouvre une recharge neuve : l'etat
-                          // d'une page gardee sous le resultat ne la masque
-                          // pas.
-                          key: ValueKey<String>(etat.uri.query),
+                          // echec, FI-8, `&reprise=`) ouvre une recharge
+                          // neuve. Sous le resultat, l'adresse garde les
+                          // memes parametres (plus `commande`, ignore ici) :
+                          // la page et sa commande restent, et le retour du
+                          // navigateur montre « Suivre le paiement », jamais
+                          // un second « Payer » (revue FI-8).
+                          key: ValueKey<String>(
+                            Routes.identiteRecharge(etat.uri.queryParameters),
+                          ),
                           preselection: <String>{
                             for (final String id
                                 in (etat.uri.queryParameters['profils'] ?? '')
@@ -557,8 +562,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                           montantsInitiaux: Routes.montantsDe(
                             etat.uri.queryParameters['montants'],
                           ),
-                          onAbandon: () =>
-                              GoRouter.of(context).go(Routes.tuteurFoyer),
+                          verifierALOuverture:
+                              etat.uri.queryParameters['etape'] ==
+                              Routes.etapeVerification,
+                          // L'abandon ramene d'ou la recharge est partie :
+                          // Compte > Paiements (`?depuis=compte`) ou le Foyer.
+                          onAbandon: () => GoRouter.of(context).go(
+                            etat.uri.queryParameters['depuis'] ==
+                                    Routes.origineCompte
+                                ? Routes.compteTuteurSousPage('paiements')
+                                : Routes.tuteurFoyer,
+                          ),
                           // Apres le paiement, le Foyer relit ses finances
                           // (soldes, etats) au lieu de montrer les anciennes.
                           onTerminee: () {
@@ -570,9 +584,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                           },
                           // Le paiement rend une commande : son resultat
                           // (FI-8), qui relit l'etat, jamais un succes local.
-                          onPaye: (String commande) =>
-                              GoRouter.of(context)
-                                  .go(Routes.resultatRechargePour(commande)),
+                          onPaye: (String commande) => GoRouter.of(context).go(
+                            Routes.resultatRechargePour(
+                              commande,
+                              recharge: etat.uri.queryParameters,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -597,8 +614,25 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                                     GoRouter.of(context).go(Routes.tuteurFoyer);
                                   },
                                   onReprendre: (Map<String, Montant> m) =>
-                                      GoRouter.of(context)
-                                          .go(Routes.rechargeReprise(m)),
+                                      GoRouter.of(context).go(
+                                        Routes.rechargeReprise(
+                                          m,
+                                          commande: etat
+                                              .uri
+                                              .queryParameters['commande'],
+                                        ),
+                                      ),
+                                  // L'etape 2, ou se choisit le moyen.
+                                  onVerifier: (Map<String, Montant> m) =>
+                                      GoRouter.of(context).go(
+                                        Routes.rechargeReprise(
+                                          m,
+                                          commande: etat
+                                              .uri
+                                              .queryParameters['commande'],
+                                          verifier: true,
+                                        ),
+                                      ),
                                 ),
                           ),
                         ),
@@ -778,9 +812,10 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     pageBuilder: glissee(
                       (GoRouterState _) => Builder(
                         builder: (BuildContext context) => PaiementsComptePage(
+                          // `?depuis=compte` : l'abandon revient ici.
                           onRecharger: () =>
                               GoRouter.of(context)
-                                  .go(Routes.tuteurFoyerRecharge),
+                                  .go(Routes.rechargeDepuisCompte),
                         ),
                       ),
                     ),

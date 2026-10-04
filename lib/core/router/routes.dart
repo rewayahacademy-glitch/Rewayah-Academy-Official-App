@@ -134,12 +134,32 @@ abstract final class Routes {
     queryParameters: <String, String>{'profils': profils.join(',')},
   ).toString();
 
+  /// La recharge ouverte depuis Compte > Paiements (`?depuis=compte`) :
+  /// l'abandon y ramene, jamais au Foyer (revue FI-7).
+  static final String rechargeDepuisCompte = Uri(
+    path: tuteurFoyerRecharge,
+    queryParameters: <String, String>{'depuis': origineCompte},
+  ).toString();
+
+  /// La valeur de `?depuis=` d'une recharge ouverte depuis le Compte.
+  static const String origineCompte = 'compte';
+
+  /// La valeur de `?etape=` qui ouvre l'etape 2 (verification et moyen).
+  static const String etapeVerification = 'verification';
+
   /// La recharge reprise apres un echec (FI-8, guide §5.4 : « ne pas perdre
   /// la selection ») : les profils coches et le montant de chacun
   /// (`?profils=a,b&montants=a:1000:USD,b:4000:USD`). Le montant n'est
   /// qu'un rappel : l'ecran ne le retient que s'il fait partie des montants
-  /// que la source propose.
-  static String rechargeReprise(Map<String, Montant> montants) => Uri(
+  /// que la source propose. [commande] : la commande d'ou l'on reprend
+  /// (`&reprise=`), pour qu'une reprise ouvre toujours une recharge neuve ;
+  /// [verifier] : ouvrir l'etape 2 (`&etape=verification`, « Changer de
+  /// moyen de paiement »).
+  static String rechargeReprise(
+    Map<String, Montant> montants, {
+    String? commande,
+    bool verifier = false,
+  }) => Uri(
     path: tuteurFoyerRecharge,
     queryParameters: <String, String>{
       'profils': montants.keys.join(','),
@@ -147,6 +167,8 @@ abstract final class Routes {
         for (final MapEntry<String, Montant> e in montants.entries)
           '${e.key}:${e.value.mineur}:${e.value.devise}',
       ].join(','),
+      if (commande != null && commande.isNotEmpty) 'reprise': commande,
+      if (verifier) 'etape': etapeVerification,
     },
   ).toString();
 
@@ -167,11 +189,35 @@ abstract final class Routes {
       '$tuteurFoyerRecharge/result';
 
   /// Le resultat de la commande [commandeId] (`?commande=`) : une adresse
-  /// rouverte relit l'etat, elle ne rejoue jamais le paiement.
-  static String resultatRechargePour(String commandeId) => Uri(
+  /// rouverte relit l'etat, elle ne rejoue jamais le paiement. [recharge] :
+  /// les parametres de la recharge qui a paye, gardes dans l'adresse pour
+  /// que la recharge sous le resultat reste la meme page (sa commande, son
+  /// « Suivre le paiement »), y compris au retour du navigateur. `etape`
+  /// n'y passe pas : la recharge rouverte sous un resultat ne se verifie
+  /// jamais d'elle-meme.
+  static String resultatRechargePour(
+    String commandeId, {
+    Map<String, String> recharge = const <String, String>{},
+  }) => Uri(
     path: tuteurFoyerRechargeResultat,
-    queryParameters: <String, String>{'commande': commandeId},
+    queryParameters: <String, String>{
+      for (final MapEntry<String, String> e in recharge.entries)
+        if (!_horsIdentite.contains(e.key)) e.key: e.value,
+      'commande': commandeId,
+    },
   ).toString();
+
+  /// L'identite d'une recharge, lue de son adresse ou de celle de son
+  /// resultat : tous les parametres sauf `commande` et `etape`, tries. La
+  /// meme identite garde la meme page (et sa commande) ; une autre en ouvre
+  /// une neuve.
+  static String identiteRecharge(Map<String, String> parametres) => (<String>[
+    for (final MapEntry<String, String> e in parametres.entries)
+      if (!_horsIdentite.contains(e.key)) '${e.key}=${e.value}',
+  ]..sort()).join('&');
+
+  /// Les parametres qui ne font pas l'identite d'une recharge.
+  static const Set<String> _horsIdentite = <String>{'commande', 'etape'};
 
   /// La fiche d'un profil eleve du foyer.
   static String ficheElevePour(String eleveId) => '$tuteurFoyer/$eleveId';

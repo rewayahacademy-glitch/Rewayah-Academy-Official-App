@@ -213,6 +213,12 @@ void main() {
         switch (etat) {
           case EtatPaiement.preparation:
             expect(find.text(r.preparationPhrase), findsOneWidget);
+            // La phrase demande de verifier : le geste y mene (K-59).
+            expect(
+              find.byKey(ResultatRechargePage.verifierKey),
+              findsOneWidget,
+            );
+            expect(find.byKey(ResultatRechargePage.revenirKey), findsOneWidget);
             expect(
               find.byKey(ResultatRechargePage.actualiserKey),
               findsOneWidget,
@@ -406,6 +412,12 @@ void main() {
         cle: 'autre-cle',
       );
       expect(d, isNot(a));
+      // Chaque commande a SA reference, tiree de son identifiant (revue
+      // FI-8) : jamais la meme pour deux paiements.
+      final String? refD = (await port.suivre(d)).reference;
+      expect(s.reference, isNotNull);
+      expect(refD, isNot(s.reference));
+      expect(s.reference!.length, lessThanOrEqualTo('RWY-'.length + 8));
     });
 
     testWidgets('deux pressions sur Payer : un seul paiement, une seule '
@@ -461,45 +473,98 @@ void main() {
     _aucunSucces();
   });
 
-  group('echec : la selection est gardee', () {
-    for (final Key bouton in <Key>[
-      ResultatRechargePage.reessayerKey,
-      ResultatRechargePage.changerMoyenKey,
+  group('la selection est gardee (echec, annule, perime, preparation)', () {
+    bool coche(WidgetTester tester, String id) =>
+        tester
+            .widget<Checkbox>(find.byKey(RechargeFoyerPage.caseDe(id)))
+            .value ??
+        false;
+    String montant(WidgetTester tester, String id) => tester
+        .widget<Text>(
+          find.descendant(
+            of: find.byKey(RechargeFoyerPage.montantDe(id)),
+            matching: find.byType(Text),
+          ),
+        )
+        .data!;
+
+    // « Reessayer » et « Recommencer » : l'etape 1, profils et montants
+    // repris.
+    for (final (EtatPaiement etat, Key bouton) in <(EtatPaiement, Key)>[
+      (EtatPaiement.echec, ResultatRechargePage.reessayerKey),
+      (EtatPaiement.annule, ResultatRechargePage.recommencerKey),
+      (EtatPaiement.perime, ResultatRechargePage.recommencerKey),
     ]) {
-      testWidgets('$bouton revient a la recharge, profils et montants '
-          'repris', (WidgetTester tester) async {
+      testWidgets('${etat.name} : $bouton revient a l etape 1, profils et '
+          'montants repris', (WidgetTester tester) async {
         final GoRouter routeur = await _monter(
           tester,
           depart: Routes.resultatRechargePour(
-            DonneesFinanceDemo.commandeDemo(EtatPaiement.echec),
+            DonneesFinanceDemo.commandeDemo(etat),
           ),
         );
-        expect(find.text(DonneesFinanceDemo.motifEchecDemo), findsOneWidget);
+        if (etat == EtatPaiement.echec) {
+          expect(find.text(DonneesFinanceDemo.motifEchecDemo), findsOneWidget);
+        }
         _aucunSucces();
         await _taper(tester, find.byKey(bouton));
         expect(_lieu(routeur).path, Routes.tuteurFoyerRecharge);
+        expect(_lieu(routeur).queryParameters['etape'], isNull);
         expect(find.byType(RechargeFoyerPage), findsOneWidget);
-        bool coche(String id) =>
-            tester
-                .widget<Checkbox>(find.byKey(RechargeFoyerPage.caseDe(id)))
-                .value ??
-            false;
-        expect(coche(_mariam), isTrue);
-        expect(coche(_ibrahim), isTrue);
-        String montant(String id) => tester
-            .widget<Text>(
-              find.descendant(
-                of: find.byKey(RechargeFoyerPage.montantDe(id)),
-                matching: find.byType(Text),
-              ),
-            )
-            .data!;
-        expect(montant(_mariam), formaterMontant(DonneesFinanceDemo.usd(10)));
-        expect(montant(_ibrahim), formaterMontant(DonneesFinanceDemo.usd(40)));
+        expect(find.byKey(RechargeFoyerPage.verifierKey), findsOneWidget);
+        expect(find.byKey(RechargeFoyerPage.payerKey), findsNothing);
+        expect(coche(tester, _mariam), isTrue);
+        expect(coche(tester, _ibrahim), isTrue);
+        expect(
+          montant(tester, _mariam),
+          formaterMontant(DonneesFinanceDemo.usd(10)),
+        );
+        expect(
+          montant(tester, _ibrahim),
+          formaterMontant(DonneesFinanceDemo.usd(40)),
+        );
       });
     }
 
-    test('un montant rappele qui n est pas propose est ignore', () {
+    // « Changer de moyen de paiement » et la preparation : l'etape 2, ou le
+    // moyen se choisit, avec la meme selection ; jamais la meme
+    // destination que « Reessayer » (revue FI-8).
+    for (final (EtatPaiement etat, Key bouton) in <(EtatPaiement, Key)>[
+      (EtatPaiement.echec, ResultatRechargePage.changerMoyenKey),
+      (EtatPaiement.preparation, ResultatRechargePage.verifierKey),
+    ]) {
+      testWidgets('${etat.name} : $bouton ouvre l etape 2, moyen et '
+          'recapitulatif de la meme selection', (WidgetTester tester) async {
+        final GoRouter routeur = await _monter(
+          tester,
+          depart: Routes.resultatRechargePour(
+            DonneesFinanceDemo.commandeDemo(etat),
+          ),
+        );
+        await _taper(tester, find.byKey(bouton));
+        expect(_lieu(routeur).path, Routes.tuteurFoyerRecharge);
+        expect(
+          _lieu(routeur).queryParameters['etape'],
+          Routes.etapeVerification,
+        );
+        expect(find.text(t.adulte.recharge.verifierTitre), findsOneWidget);
+        expect(find.byKey(RechargeFoyerPage.moyenKey), findsOneWidget);
+        expect(find.byType(LigneMoyenPaiement), findsOneWidget);
+        expect(find.byKey(RechargeFoyerPage.payerKey), findsOneWidget);
+        expect(find.byKey(RechargeFoyerPage.ligneDe(_mariam)), findsOneWidget);
+        expect(find.byKey(RechargeFoyerPage.ligneDe(_ibrahim)), findsOneWidget);
+        // « Modifier » revient a l'etape 1 sans rien perdre.
+        await _taper(tester, find.byKey(RechargeFoyerPage.modifierDe(_mariam)));
+        expect(coche(tester, _mariam), isTrue);
+        expect(coche(tester, _ibrahim), isTrue);
+        expect(
+          montant(tester, _ibrahim),
+          formaterMontant(DonneesFinanceDemo.usd(40)),
+        );
+      });
+    }
+
+    test('l adresse de reprise se relit', () {
       expect(
         Routes.montantsDe('a:1000:USD,b:x:USD,:5:USD,c:200'),
         <String, Montant>{'a': const Montant(1000, 'USD')},
@@ -519,6 +584,51 @@ void main() {
         },
       );
     });
+
+    // Le filtrage de l'ecran : un montant rappele n'est retenu que s'il est
+    // propose ; sinon le montant suggere par la source (le manque de 8 $
+    // d'Ibrahim) s'applique.
+    for (final (int rappele, int attendu) in <(int, int)>[
+      (123, 800),
+      (2000, 2000),
+    ]) {
+      testWidgets('montant rappele $rappele : $attendu affiche', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          port: const RechargeFoyerFinanceDemo(JeuFoyerFinance.unARegulariser),
+          depart: Routes.rechargeReprise(<String, Montant>{
+            _ibrahim: Montant(rappele, DonneesFinanceDemo.devise),
+          }),
+        );
+        expect(coche(tester, _ibrahim), isTrue);
+        expect(
+          montant(tester, _ibrahim),
+          formaterMontant(Montant(attendu, DonneesFinanceDemo.devise)),
+        );
+      });
+    }
+  });
+
+  testWidgets('apres le paiement, la recharge rouverte (retour du '
+      'navigateur) garde sa commande : « Suivre le paiement », jamais un '
+      'second « Payer » (revue FI-8)', (WidgetTester tester) async {
+    final String recharge = Routes.rechargePour(<String>[_mariam]);
+    final GoRouter routeur = await _monter(tester, depart: recharge);
+    await _taper(tester, find.byKey(RechargeFoyerPage.plusDe(_mariam)));
+    await _taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
+    await _taper(tester, find.byKey(RechargeFoyerPage.payerKey));
+    expect(_lieu(routeur).path, Routes.tuteurFoyerRechargeResultat);
+    final String commande = _lieu(routeur).queryParameters['commande']!;
+    expect(_lieu(routeur).queryParameters['profils'], _mariam);
+    routeur.go(recharge);
+    await stabiliser(tester);
+    expect(find.byType(RechargeFoyerPage), findsOneWidget);
+    expect(find.byKey(RechargeFoyerPage.payerKey), findsNothing);
+    expect(find.byKey(RechargeFoyerPage.suivreKey), findsOneWidget);
+    await _taper(tester, find.byKey(RechargeFoyerPage.suivreKey));
+    expect(_lieu(routeur).queryParameters['commande'], commande);
   });
 
   group('production, hors ligne, erreur, vide', () {

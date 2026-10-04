@@ -53,6 +53,7 @@ class RechargeFoyerPage extends ConsumerStatefulWidget {
     super.key,
     this.preselection = const <String>{},
     this.montantsInitiaux = const <String, Montant>{},
+    this.verifierALOuverture = false,
   });
 
   /// Les profils deja coches a l'ouverture : « Recharger Mariam » ouvre le
@@ -66,10 +67,17 @@ class RechargeFoyerPage extends ConsumerStatefulWidget {
   /// source propose a ce profil ; sinon le montant suggere s'applique.
   final Map<String, Montant> montantsInitiaux;
 
+  /// Vrai pour ouvrir directement l'etape 2 (verification et moyen de
+  /// paiement) avec la selection rappelee : « Changer de moyen de paiement »
+  /// apres un echec, ou une commande en preparation (FI-8, guide §5.4). Si
+  /// la selection rappelee n'est pas complete, l'etape 1 reste ouverte.
+  final bool verifierALOuverture;
+
   /// Le paiement a rendu la commande [commandeId] : ouvrir son resultat.
   final ValueChanged<String> onPaye;
 
-  /// Quitter depuis la premiere etape : retour aux paiements du foyer.
+  /// Quitter depuis la premiere etape : retour a l'ecran d'ou la recharge
+  /// a ete ouverte (le Foyer, ou Compte > Paiements).
   final VoidCallback onAbandon;
 
   /// « Revenir aux paiements du foyer », apres le paiement.
@@ -153,6 +161,20 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
   void initState() {
     super.initState();
     _selection.addAll(widget.preselection);
+    if (widget.verifierALOuverture) unawaited(_verifierALOuverture());
+  }
+
+  /// Les beneficiaires lus, la verification part une fois, d'elle-meme ;
+  /// une lecture manquee laisse l'etape 1 et ses etats dire pourquoi.
+  Future<void> _verifierALOuverture() async {
+    final List<BeneficiaireRecharge> liste;
+    try {
+      liste = await ref.read(beneficiairesRechargeProvider.future);
+    } on Object {
+      return;
+    }
+    if (!mounted || !_pret(liste)) return;
+    await _verifier(liste);
   }
 
   bool _verification = false;
@@ -465,7 +487,9 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
                   ? t.adulte.recharge.toutDeselectionner
                   : t.adulte.recharge.toutSelectionner,
               fleche: false,
-              onPress: () => _toutSelectionner(liste, !tout),
+              // Fige pendant la verification, comme les cases : la
+              // selection ne change pas sous le recapitulatif en calcul.
+              onPress: _occupe ? null : () => _toutSelectionner(liste, !tout),
             ),
           ],
         ),
@@ -556,7 +580,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     };
     final String? suggere = switch (b.montantSuggere) {
       final Montant m => t.adulte.recharge.montantSuggere(
-        montant: formaterMontant(m),
+        montant: b.montantsRediges[m] ?? formaterMontant(m),
       ),
       null => null,
     };
@@ -612,7 +636,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
               children: <Widget>[
                 Expanded(child: identite),
                 Ecart.hMd,
-                montant,
+                Flexible(child: montant),
               ],
             )
           : Column(
@@ -655,18 +679,27 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
           )
         else
           place,
-        ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: AppSpacing.respiration),
-          child: Semantics(
-            label: t.adulte.recharge.montantPour(prenom: b.prenom),
-            liveRegion: actif,
-            child: Center(
-              widthFactor: 1,
-              child: KeyedSubtree(
-                key: RechargeFoyerPage.montantDe(b.id),
-                child: affiche == null
-                    ? const SizedBox.shrink()
-                    : MontantArgent(affiche, attenue: !actif || choisi == null),
+        // Souple : un libelle redige long (« 5,00 € (démonstration) ») passe
+        // a la ligne au lieu de pousser « plus » hors de l'ecran.
+        Flexible(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minWidth: AppSpacing.respiration),
+            child: Semantics(
+              label: t.adulte.recharge.montantPour(prenom: b.prenom),
+              liveRegion: actif,
+              child: Center(
+                widthFactor: 1,
+                child: KeyedSubtree(
+                  key: RechargeFoyerPage.montantDe(b.id),
+                  child: switch (affiche) {
+                    null => const SizedBox.shrink(),
+                    final Montant m => _montantLu(
+                      b,
+                      m,
+                      attenue: !actif || choisi == null,
+                    ),
+                  },
+                ),
               ),
             ),
           ),
@@ -683,6 +716,30 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
       ],
     );
   }
+
+  /// Le montant [m] de [b] : le libelle que la source redige pour lui,
+  /// tel quel (la demonstration EA le marque « (demonstration) », F12),
+  /// sinon le montant formate.
+  Widget _montantLu(
+    BeneficiaireRecharge b,
+    Montant m, {
+    required bool attenue,
+  }) => switch (b.montantsRediges[m]) {
+    final String redige => Text(
+      redige,
+      textAlign: TextAlign.center,
+      style:
+          (attenue
+                  ? AppPalette.of(context).inkMuted
+                  : AppPalette.of(context).inkStrong)
+              .applyTo(
+                AppTypography.tabulaire(
+                  Theme.of(context).textTheme.bodyLarge ?? const TextStyle(),
+                ),
+              ),
+    ),
+    null => MontantArgent(m, attenue: attenue),
+  };
 
   Widget _pageVerification(
     BuildContext context,

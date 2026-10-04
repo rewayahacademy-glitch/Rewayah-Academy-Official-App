@@ -646,6 +646,17 @@ abstract final class DonneesFinanceDemo {
   /// credit, FI-8).
   static String commandePayee(String cle) => 'demo-fi-paye-$cle';
 
+  /// La reference de la commande payee [commandeId], tiree de son
+  /// identifiant : deux commandes n'ont jamais la meme (revue FI-8).
+  /// Huit signes au plus, pour tenir a 320 px.
+  static String referenceDe(String commandeId) {
+    final String cle = commandeId
+        .replaceFirst(commandePayee(''), '')
+        .replaceAll('-', '')
+        .toUpperCase();
+    return 'RWY-${cle.length > 8 ? cle.substring(0, 8) : cle}';
+  }
+
   /// Le suivi d'une commande payee en demonstration (FI-8) : les montants
   /// choisis [choix] du jeu [jeu], dans l'etat [etat]. Le nouveau solde de
   /// chaque profil (son solde plus SA part, une seule fois) n'est rendu
@@ -664,7 +675,7 @@ abstract final class DonneesFinanceDemo {
       commandeId: commandeId,
       etat: etat,
       total: _somme(montantDe.values),
-      reference: 'RWY-124',
+      reference: referenceDe(commandeId),
       date: aujourdhui,
       moyen: RailPaiement.webStripe,
       allocations: <AllocationProfil>[
@@ -708,11 +719,14 @@ abstract final class DonneesFinanceDemo {
         prenom: p.prenom,
         solde: p.solde,
         montantSuggere: p.manque,
+        // Croissants, comme le contrat du port le demande : le manque prend
+        // sa place parmi les paliers, jamais d'office la premiere (revue
+        // FI-7), sinon « Augmenter » ferait baisser le montant.
         montantsProposes: <Montant>[
           if (p.manque case final Montant m when !paliersRecharge.contains(m))
             m,
           ...paliersRecharge,
-        ],
+        ]..sort((Montant a, Montant b) => a.mineur.compareTo(b.mineur)),
       ),
   ];
 

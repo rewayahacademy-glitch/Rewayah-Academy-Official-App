@@ -4,15 +4,17 @@
 // L'ecran lit l'etat de la commande par le port (`suivre`) et rend l'un des
 // huit etats, tel quel :
 //
-// - preparation : « Verifiez la repartition avant de payer. » ;
+// - preparation : « Verifiez la repartition avant de payer. », et
+//   « Verifier la recharge » qui ouvre l'etape 2 avec la meme selection ;
 // - attente de confirmation : « Paiement en cours de confirmation » et le
 //   bandeau « Ne payez pas une seconde fois. » ; aucun bouton « Payer » ;
 // - confirme puis allocation en cours : « Paiement confirme », « Mise a jour
 //   des soldes... » ;
 // - termine, **seul etat de reussite** : montant total, reference, moyen,
 //   date, repartition exacte et nouveau solde par profil (maquette 01) ;
-// - echec : le motif rendu, la selection gardee, « Reessayer », « Changer de
-//   moyen de paiement » et le retour ;
+// - echec : le motif rendu, la selection gardee, « Reessayer » (etape 1),
+//   « Changer de moyen de paiement » (etape 2, ou se choisit le moyen) et le
+//   retour ;
 // - annule, perime : ce qui s'est passe, rien de credite, recommencer avec
 //   la meme selection.
 //
@@ -48,6 +50,7 @@ class ResultatRechargePage extends ConsumerWidget {
     required this.commandeId,
     required this.onRevenir,
     required this.onReprendre,
+    required this.onVerifier,
     super.key,
   });
 
@@ -60,6 +63,11 @@ class ResultatRechargePage extends ConsumerWidget {
   /// Revenir a la recharge avec la meme selection : les profils et le
   /// montant de chacun, tels que la commande les rend.
   final ValueChanged<Map<String, Montant>> onReprendre;
+
+  /// Ouvrir l'etape 2 de la recharge (verification et moyen de paiement)
+  /// avec la meme selection : « Changer de moyen de paiement », ou une
+  /// commande encore en preparation.
+  final ValueChanged<Map<String, Montant>> onVerifier;
 
   /// Le heros de l'etat [etat].
   static Key etatKey(EtatPaiement etat) => Key('resultat.etat.${etat.name}');
@@ -81,6 +89,9 @@ class ResultatRechargePage extends ConsumerWidget {
 
   /// « Changer de moyen de paiement » (echec).
   static const Key changerMoyenKey = Key('resultat.changerMoyen');
+
+  /// « Verifier la recharge » (preparation).
+  static const Key verifierKey = Key('resultat.verifier');
 
   /// « Recommencer la recharge » (annule, perime).
   static const Key recommencerKey = Key('resultat.recommencer');
@@ -139,6 +150,7 @@ class ResultatRechargePage extends ConsumerWidget {
             onActualiser: relire,
             onRevenir: onRevenir,
             onReprendre: onReprendre,
+            onVerifier: onVerifier,
           ),
         );
       }
@@ -163,6 +175,7 @@ class _ContenuResultat extends ConsumerWidget {
     required this.onActualiser,
     required this.onRevenir,
     required this.onReprendre,
+    required this.onVerifier,
   });
 
   final SuiviPaiement suivi;
@@ -170,6 +183,7 @@ class _ContenuResultat extends ConsumerWidget {
   final VoidCallback onActualiser;
   final VoidCallback onRevenir;
   final ValueChanged<Map<String, Montant>> onReprendre;
+  final ValueChanged<Map<String, Montant>> onVerifier;
 
   /// La selection de la commande : chaque profil et SA part.
   Map<String, Montant> get _selection => <String, Montant>{
@@ -288,6 +302,7 @@ class _ContenuResultat extends ConsumerWidget {
       _ => null,
     };
     void reprendre() => onReprendre(_selection);
+    void verifier() => onVerifier(_selection);
     // Un seul bouton plein par etat (K-56) : son geste, et au plus une
     // action secondaire a filet.
     final ({Key cle, String libelle, VoidCallback geste}) principale =
@@ -308,6 +323,13 @@ class _ContenuResultat extends ConsumerWidget {
             libelle: r.recommencer,
             geste: reprendre,
           ),
+          // Rien n'est encore paye : la phrase demande de verifier, le
+          // geste y mene, la selection gardee (K-59).
+          EtatPaiement.preparation => (
+            cle: ResultatRechargePage.verifierKey,
+            libelle: t.adulte.recharge.verifier,
+            geste: verifier,
+          ),
           // En cours : aucun « Payer », seulement le retour (ne pas payer
           // deux fois).
           _ => (
@@ -318,12 +340,15 @@ class _ContenuResultat extends ConsumerWidget {
         };
     final ({Key cle, String libelle, VoidCallback geste})? secondaire =
         switch (etat) {
+          // L'etape 2, ou le moyen se choisit ; « Reessayer » mene a la 1.
           EtatPaiement.echec => (
             cle: ResultatRechargePage.changerMoyenKey,
             libelle: r.changerMoyen,
-            geste: reprendre,
+            geste: verifier,
           ),
-          EtatPaiement.annule || EtatPaiement.perime => (
+          EtatPaiement.preparation ||
+          EtatPaiement.annule ||
+          EtatPaiement.perime => (
             cle: ResultatRechargePage.revenirKey,
             libelle: t.adulte.recharge.revenirPaiements,
             geste: onRevenir,

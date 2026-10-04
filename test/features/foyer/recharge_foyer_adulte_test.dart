@@ -19,6 +19,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/finance/format_montant.dart';
 import 'package:rewayah_academy/core/finance/montant.dart';
 import 'package:rewayah_academy/core/finance/politique_commerciale.dart';
 import 'package:rewayah_academy/core/finance/suivi_paiement.dart';
@@ -231,11 +232,38 @@ void main() {
     // Deux pas : le second montant propose ; un pas en arriere puis en avant
     // le garde, et « plus » s'arrete au dernier montant rendu.
     await montant(tester, _mamadou, _offreB);
+    // Le prix de la demonstration EA reste MARQUE « (démonstration) » des
+    // l'etape 1, comme au recapitulatif : jamais un prix nu (F12, revue
+    // EA-R m4).
+    expect(
+      dans(
+        RechargeFoyerPage.montantDe(_mamadou),
+        find.text(t.adulte.demo.donnees.prixOffreB),
+      ),
+      findsOneWidget,
+    );
+    for (final Montant prix in <Montant>[
+      DonneesAdulteDemo.montantOffreA,
+      DonneesAdulteDemo.montantOffreB,
+    ]) {
+      expect(find.text(formaterMontant(prix)), findsNothing, reason: '$prix');
+    }
     expect(actif(tester, RechargeFoyerPage.plusDe(_mamadou)), isFalse);
     expect(actif(tester, RechargeFoyerPage.moinsDe(_mamadou)), isTrue);
     expect(find.byKey(RechargeFoyerPage.raisonKey), findsNothing);
     expect(bouton(tester, RechargeFoyerPage.verifierKey).onPress, isNotNull);
     await choisir(tester, _aicha, _offreA);
+    expect(
+      dans(
+        RechargeFoyerPage.montantDe(_aicha),
+        find.text(t.adulte.demo.donnees.prixOffreA),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.text(formaterMontant(DonneesAdulteDemo.montantOffreA)),
+      findsNothing,
+    );
 
     // « Verifier la recharge » : etape 2 (planche 4.3).
     await taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
