@@ -200,6 +200,9 @@ class _LecteurVocalState extends State<LecteurVocal> {
     final TextStyle discret = palette.inkMuted.applyTo(
       textes.bodySmall ?? const TextStyle(),
     );
+    // Une lecture interrompue apres son lancement se dit comme un echec a
+    // l'ouverture : la phrase, puis « Reessayer ».
+    final bool enErreur = _erreur != null || _etat.echec;
     final Object? erreur = _erreur;
 
     return Semantics(
@@ -268,7 +271,7 @@ class _LecteurVocalState extends State<LecteurVocal> {
             Ecart.vSm,
             Text(l.indisponible, style: discret),
           ] else ...<Widget>[
-            if (erreur != null) ...<Widget>[
+            if (enErreur) ...<Widget>[
               Ecart.vSm,
               Semantics(
                 liveRegion: true,
@@ -285,7 +288,7 @@ class _LecteurVocalState extends State<LecteurVocal> {
               children: <Widget>[
                 ActionPrincipale(
                   key: LecteurVocal.cleAction,
-                  libelle: erreur != null
+                  libelle: enErreur
                       ? l.erreurLectureAction
                       : LecteurVocal.libelleAction(etat),
                   onPress: _agir,
@@ -339,6 +342,13 @@ class LecteurVocalRecu extends ConsumerWidget {
 class LectureVocaleJustAudio implements LectureVocale {
   LectureVocaleJustAudio._(this._lecteur, this.duree);
 
+  /// Adapte un lecteur deja charge (tests de l'adaptateur).
+  @visibleForTesting
+  factory LectureVocaleJustAudio.surLecteur(
+    AudioPlayer lecteur, {
+    required Duration duree,
+  }) => LectureVocaleJustAudio._(lecteur, duree).._ecouter();
+
   /// Ouvre [source] ; [duree] sert si le fichier ne dit pas la sienne.
   static Future<LectureVocaleJustAudio> ouvrir(
     Uri source, {
@@ -360,6 +370,8 @@ class LectureVocaleJustAudio implements LectureVocale {
   );
   final List<StreamSubscription<Object?>> _abonnements =
       <StreamSubscription<Object?>>[];
+  bool _echec = false;
+  bool _liberee = false;
 
   @override
   final Duration duree;
@@ -374,12 +386,32 @@ class LectureVocaleJustAudio implements LectureVocale {
   }
 
   void _maj() {
+    if (_liberee) return;
     final PlayerState etat = _lecteur.playerState;
     final bool termine = etat.processingState == ProcessingState.completed;
     _etat.value = EtatLectureAudio(
       position: termine ? duree : _lecteur.position,
-      enLecture: etat.playing && !termine,
+      enLecture: etat.playing && !termine && !_echec,
       termine: termine,
+      echec: _echec,
+    );
+  }
+
+  /// Lance `play` sans l'attendre (il ne se termine qu'a la pause ou a la
+  /// fin) ; une erreur survenue ensuite (source expiree, reseau perdu) passe
+  /// dans l'etat, jamais en erreur non geree.
+  void _jouer() {
+    _echec = false;
+    _maj();
+    unawaited(
+      _lecteur.play().then(
+        (_) {},
+        onError: (Object _) {
+          if (_liberee) return;
+          _echec = true;
+          _maj();
+        },
+      ),
     );
   }
 
@@ -388,8 +420,7 @@ class LectureVocaleJustAudio implements LectureVocale {
     if (_lecteur.playerState.processingState == ProcessingState.completed) {
       await _lecteur.seek(Duration.zero);
     }
-    // `play` ne se termine qu'a la pause ou a la fin : on ne l'attend pas.
-    unawaited(_lecteur.play());
+    _jouer();
   }
 
   @override
@@ -398,11 +429,14 @@ class LectureVocaleJustAudio implements LectureVocale {
   @override
   Future<void> relire() async {
     await _lecteur.seek(Duration.zero);
-    unawaited(_lecteur.play());
+    _jouer();
   }
 
   @override
   Future<void> liberer() async {
+    // Idempotent : un second appel ne fait rien.
+    if (_liberee) return;
+    _liberee = true;
     for (final StreamSubscription<Object?> a in _abonnements) {
       await a.cancel();
     }

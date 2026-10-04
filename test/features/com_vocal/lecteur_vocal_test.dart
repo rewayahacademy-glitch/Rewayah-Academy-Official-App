@@ -4,9 +4,13 @@
 // ouverte qu'au toucher ; port neutre : une phrase, aucun bouton ; echec :
 // « Reessayer ».
 
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/communications/port_pieces_jointes.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -18,6 +22,67 @@ import '../../support/hote_theme.dart';
 import 'support_vocal.dart';
 
 const Duration _duree = Duration(seconds: 28);
+
+/// Une lecture dont l'etat est pose par le test (lecture interrompue).
+class _LectureManuelle implements LectureVocale {
+  final ValueNotifier<EtatLectureAudio> notifiant =
+      ValueNotifier<EtatLectureAudio>(const EtatLectureAudio());
+  int lectures = 0;
+
+  @override
+  Duration get duree => _duree;
+
+  @override
+  ValueListenable<EtatLectureAudio> get etat => notifiant;
+
+  @override
+  Future<void> lire() async {
+    lectures++;
+    notifiant.value = const EtatLectureAudio(enLecture: true);
+  }
+
+  @override
+  Future<void> mettreEnPause() async {}
+
+  @override
+  Future<void> relire() => lire();
+
+  @override
+  Future<void> liberer() async {}
+}
+
+/// Un lecteur `just_audio` sans plateforme : `play` echoue (source expiree),
+/// `dispose` est compte.
+class _LecteurSansPlateforme extends AudioPlayer {
+  final Completer<void> lecture = Completer<void>();
+  int liberations = 0;
+  int lancements = 0;
+
+  @override
+  PlayerState get playerState => PlayerState(false, ProcessingState.ready);
+
+  @override
+  Duration get position => Duration.zero;
+
+  @override
+  Stream<Duration> get positionStream => const Stream<Duration>.empty();
+
+  @override
+  Stream<PlayerState> get playerStateStream =>
+      const Stream<PlayerState>.empty();
+
+  @override
+  Future<void> play() {
+    lancements++;
+    return lecture.future;
+  }
+
+  @override
+  Future<void> seek(Duration? position, {int? index}) async {}
+
+  @override
+  Future<void> dispose() async => liberations++;
+}
 
 Future<void> _monter(
   WidgetTester tester,
@@ -267,6 +332,67 @@ void main() {
       await monterRecu(tester, ferme);
       expect(find.text(l.indisponible), findsOneWidget);
       expect(find.byKey(LecteurVocal.cleAction), findsNothing);
+    });
+  });
+
+  testWidgets(
+    'lecture interrompue apres son lancement : la phrase, Reessayer',
+    (WidgetTester tester) async {
+      final _LectureManuelle lecture = _LectureManuelle();
+      await _monter(tester, () async => lecture);
+      await _agir(tester);
+      expect(find.text(l.lecture), findsOneWidget);
+      lecture.notifiant.value = const EtatLectureAudio(echec: true);
+      await tester.pump();
+      expect(find.text(l.erreurLectureTitre), findsOneWidget);
+      expect(_libelleAction(tester), l.erreurLectureAction);
+      await _agir(tester);
+      expect(lecture.lectures, 2);
+      expect(find.text(l.erreurLectureTitre), findsNothing);
+      expect(find.text(l.lecture), findsOneWidget);
+    },
+  );
+
+  group('LectureVocaleJustAudio', () {
+    test(
+      'play qui echoue : l echec passe dans l etat, rien de non gere',
+      () async {
+        final _LecteurSansPlateforme lecteur = _LecteurSansPlateforme();
+        final LectureVocaleJustAudio lecture =
+            LectureVocaleJustAudio.surLecteur(lecteur, duree: _duree);
+        await lecture.lire();
+        expect(lecteur.lancements, 1);
+        expect(lecture.etat.value.echec, isFalse);
+        lecteur.lecture.completeError(StateError('source expiree'));
+        await Future<void>.delayed(Duration.zero);
+        expect(lecture.etat.value.echec, isTrue);
+        expect(lecture.etat.value.enLecture, isFalse);
+        await lecture.liberer();
+      },
+    );
+
+    test('liberer deux fois ne leve rien et ne libere qu une fois', () async {
+      final _LecteurSansPlateforme lecteur = _LecteurSansPlateforme();
+      final LectureVocaleJustAudio lecture = LectureVocaleJustAudio.surLecteur(
+        lecteur,
+        duree: _duree,
+      );
+      await lecture.liberer();
+      await lecture.liberer();
+      expect(lecteur.liberations, 1);
+    });
+
+    test('un echec arrive apres la liberation ne touche plus l etat', () async {
+      final _LecteurSansPlateforme lecteur = _LecteurSansPlateforme();
+      final LectureVocaleJustAudio lecture = LectureVocaleJustAudio.surLecteur(
+        lecteur,
+        duree: _duree,
+      );
+      await lecture.lire();
+      await lecture.liberer();
+      lecteur.lecture.completeError(StateError('reseau perdu'));
+      await Future<void>.delayed(Duration.zero);
+      expect(lecteur.liberations, 1);
     });
   });
 }

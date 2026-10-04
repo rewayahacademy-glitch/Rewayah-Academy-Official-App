@@ -179,4 +179,22 @@ void main() {
     );
     expect(v.toString(), isNot(contains('secret')));
   });
+
+  test('vocal attendu : pre-ecoute ou suppression demandee, rien d autre', () {
+    final MachineEnregistrementVocal m = MachineEnregistrementVocal()
+      ..demarrer(_a(0));
+    expect(m.vocalAttendu, isFalse);
+    m.arreter(_a(4));
+    expect(m.vocalAttendu, isTrue);
+    m.demanderSuppression();
+    expect(m.vocalAttendu, isTrue);
+    m.confirmerSuppression();
+    expect(m.vocalAttendu, isFalse);
+    m
+      ..demarrer(_a(10))
+      ..mettreEnPause(_a(12))
+      ..demanderSuppression();
+    expect(m.suppressionEnPause, isTrue);
+    expect(m.vocalAttendu, isFalse);
+  });
 }

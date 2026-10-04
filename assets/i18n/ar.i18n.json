@@ -304,7 +304,7 @@
         "enregistrement": "التسجيل جارٍ",
         "pause": "التسجيل متوقف مؤقتًا",
         "reprise": "استُؤنف التسجيل",
-        "limiteProche": "بقي {restant} قبل الحد الأقصى {max}",
+        "limiteProche": "بقي أقل من {seuil} قبل الحد الأقصى {max}",
         "limiteAtteinte": "بلغت المدة القصوى ({max}). استمع إلى رسالتك، ثم أرسلها أو احذفها.",
         "ecoule": "{ecoule} من {max}",
         "preEcoute": "الاستماع قبل الإرسال",

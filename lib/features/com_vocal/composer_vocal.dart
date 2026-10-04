@@ -173,6 +173,11 @@ class _ComposerVocalState extends ConsumerState<ComposerVocal> {
   bool _occupe = false;
   String? _erreurMicro;
 
+  /// Le numero de l'enregistrement en cours, incremente a chaque demarrage :
+  /// un vocal rendu par un arret lent ne vaut que pour la session qui l'a
+  /// demande.
+  int _session = 0;
+
   @override
   void initState() {
     super.initState();
@@ -185,13 +190,22 @@ class _ComposerVocalState extends ConsumerState<ComposerVocal> {
     // Quitter l'ecran ne garde pas de vocal : il n'y a pas de brouillon vocal
     // en V1. Un enregistrement en cours est abandonne, un vocal arrete et pas
     // envoye est efface. Un vocal en cours d'envoi est laisse a l'envoi.
+    // Un enregistrement en pause dont la suppression est seulement demandee
+    // est encore ouvert cote enregistreur : il est abandonne aussi. Un arret
+    // encore en attente efface lui-meme le vocal rendu (`_arreter`).
     final EnregistrementVocal? vocal = _vocal;
-    if (_machine.enCours) {
+    if (_machine.enCours || _machine.suppressionEnPause) {
       unawaited(_port.abandonner().then((_) {}, onError: (Object _) {}));
     } else if (vocal != null && _machine.etat != EtatVocal.envoi) {
-      unawaited(_port.supprimer(vocal).then((_) {}, onError: (Object _) {}));
+      _effacer(vocal);
     }
     super.dispose();
+  }
+
+  /// Efface [vocal] cote enregistreur, sans attendre ni rien dire : il n'est
+  /// plus propose a la personne.
+  void _effacer(EnregistrementVocal vocal) {
+    unawaited(_port.supprimer(vocal).then((_) {}, onError: (Object _) {}));
   }
 
   // --- Micro ---------------------------------------------------------------
@@ -279,7 +293,10 @@ class _ComposerVocalState extends ConsumerState<ComposerVocal> {
   Future<void> _demarrer() async {
     await _port.demarrer();
     if (!mounted) return;
-    setState(() => _machine.demarrer(_horloge()));
+    setState(() {
+      _session++;
+      _machine.demarrer(_horloge());
+    });
     _armer();
   }
 
@@ -341,12 +358,21 @@ class _ComposerVocalState extends ConsumerState<ComposerVocal> {
     final DateTime maintenant = _horloge();
     _desarmer();
     final Duration duree = _machine.arreter(maintenant, limite: limite);
+    final int session = _session;
     setState(() {});
+    // Le vocal rendu ne vaut que si la personne l'attend encore : ni ecran
+    // ferme, ni suppression confirmee, ni nouvel enregistrement pendant que
+    // l'enregistreur repondait. Sinon il est efface, jamais propose ni envoye.
+    bool attendu() => mounted && session == _session && _machine.vocalAttendu;
     try {
       final EnregistrementVocal vocal = await _port.arreter(duree: duree);
-      if (!mounted) return;
+      if (!attendu()) {
+        _effacer(vocal);
+        return;
+      }
       setState(() => _vocal = vocal);
     } on Object catch (erreur) {
+      if (!attendu()) return;
       _echecMicro(erreur, t.com.vocal.composer.erreurInterrompu);
     }
   }
@@ -518,9 +544,14 @@ class _ComposerVocalState extends ConsumerState<ComposerVocal> {
           titre: ComposerVocal.titreEtat(etat),
           duree: c.ecoule(ecoule: libelleDureeVocal(ecoule), max: max),
           progression: ecoule.inMilliseconds / _machine.dureeMax.inMilliseconds,
+          // Annonce fixe, dite une fois au passage du seuil : le decompte
+          // seconde par seconde est dans la duree ecrite, hors region
+          // vivante (section 24 : le statut est annonce, sans bruit).
           annonce: etat == EtatVocal.limiteProche
               ? c.limiteProche(
-                  restant: libelleDureeVocal(_machine.restant(maintenant)),
+                  seuil: libelleDureeVocal(
+                    _machine.dureeMax - _machine.seuilLimiteProche,
+                  ),
                   max: max,
                 )
               : null,

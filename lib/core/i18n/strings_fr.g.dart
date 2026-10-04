@@ -15309,8 +15309,8 @@ class Traductions$com$vocal$composer$fr {
 	/// fr: 'Enregistrement repris'
 	String get reprise => 'Enregistrement repris';
 
-	/// fr: 'Plus que {restant} avant la limite de {max}'
-	String limiteProche({required Object restant, required Object max}) => 'Plus que ${restant} avant la limite de ${max}';
+	/// fr: 'Moins de {seuil} avant la limite de {max}'
+	String limiteProche({required Object seuil, required Object max}) => 'Moins de ${seuil} avant la limite de ${max}';
 
 	/// fr: 'Durée maximale atteinte ({max}). Écoutez votre message, puis envoyez-le ou supprimez-le.'
 	String limiteAtteinte({required Object max}) => 'Durée maximale atteinte (${max}). Écoutez votre message, puis envoyez-le ou supprimez-le.';
@@ -20221,7 +20221,7 @@ extension on Traductions {
 			'com.vocal.composer.enregistrement' => 'Enregistrement en cours',
 			'com.vocal.composer.pause' => 'Enregistrement en pause',
 			'com.vocal.composer.reprise' => 'Enregistrement repris',
-			'com.vocal.composer.limiteProche' => ({required Object restant, required Object max}) => 'Plus que ${restant} avant la limite de ${max}',
+			'com.vocal.composer.limiteProche' => ({required Object seuil, required Object max}) => 'Moins de ${seuil} avant la limite de ${max}',
 			'com.vocal.composer.limiteAtteinte' => ({required Object max}) => 'Durée maximale atteinte (${max}). Écoutez votre message, puis envoyez-le ou supprimez-le.',
 			'com.vocal.composer.ecoule' => ({required Object ecoule, required Object max}) => '${ecoule} sur ${max}',
 			'com.vocal.composer.preEcoute' => 'Pré-écoute',

@@ -4816,7 +4816,7 @@
         "enregistrement": "Enregistrement en cours",
         "pause": "Enregistrement en pause",
         "reprise": "Enregistrement repris",
-        "limiteProche": "Plus que {restant} avant la limite de {max}",
+        "limiteProche": "Moins de {seuil} avant la limite de {max}",
         "limiteAtteinte": "Durée maximale atteinte ({max}). Écoutez votre message, puis envoyez-le ou supprimez-le.",
         "ecoule": "{ecoule} sur {max}",
         "preEcoute": "Pré-écoute",

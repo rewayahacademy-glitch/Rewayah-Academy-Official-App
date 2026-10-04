@@ -550,7 +550,7 @@ class _Traductions$com$vocal$composer$ar extends Traductions$com$vocal$composer$
 	@override String get enregistrement => 'التسجيل جارٍ';
 	@override String get pause => 'التسجيل متوقف مؤقتًا';
 	@override String get reprise => 'استُؤنف التسجيل';
-	@override String limiteProche({required Object restant, required Object max}) => 'بقي ${restant} قبل الحد الأقصى ${max}';
+	@override String limiteProche({required Object seuil, required Object max}) => 'بقي أقل من ${seuil} قبل الحد الأقصى ${max}';
 	@override String limiteAtteinte({required Object max}) => 'بلغت المدة القصوى (${max}). استمع إلى رسالتك، ثم أرسلها أو احذفها.';
 	@override String ecoule({required Object ecoule, required Object max}) => '${ecoule} من ${max}';
 	@override String get preEcoute => 'الاستماع قبل الإرسال';
@@ -991,7 +991,7 @@ extension on TraductionsAr {
 			'com.vocal.composer.enregistrement' => 'التسجيل جارٍ',
 			'com.vocal.composer.pause' => 'التسجيل متوقف مؤقتًا',
 			'com.vocal.composer.reprise' => 'استُؤنف التسجيل',
-			'com.vocal.composer.limiteProche' => ({required Object restant, required Object max}) => 'بقي ${restant} قبل الحد الأقصى ${max}',
+			'com.vocal.composer.limiteProche' => ({required Object seuil, required Object max}) => 'بقي أقل من ${seuil} قبل الحد الأقصى ${max}',
 			'com.vocal.composer.limiteAtteinte' => ({required Object max}) => 'بلغت المدة القصوى (${max}). استمع إلى رسالتك، ثم أرسلها أو احذفها.',
 			'com.vocal.composer.ecoule' => ({required Object ecoule, required Object max}) => '${ecoule} من ${max}',
 			'com.vocal.composer.preEcoute' => 'الاستماع قبل الإرسال',

@@ -251,6 +251,15 @@ class MachineEnregistrementVocal {
   bool get suppressionEnPause =>
       _etat == EtatVocal.supprimer && _avantSuppression == EtatVocal.pause;
 
+  /// Vrai si un vocal rendu par l'enregistreur apres [arreter] est encore
+  /// attendu : la pre-ecoute est ouverte, ou sa suppression est seulement
+  /// demandee (« Garder » y ramene). Faux sinon (supprime, autre
+  /// enregistrement commence) : le vocal rendu doit alors etre efface.
+  bool get vocalAttendu =>
+      etatsPreEcouteVocal.contains(_etat) ||
+      (_etat == EtatVocal.supprimer &&
+          etatsPreEcouteVocal.contains(_avantSuppression));
+
   /// La suppression est confirmee : retour au repos, plus rien de garde.
   void confirmerSuppression() {
     _exiger(_etat == EtatVocal.supprimer, 'Suppression confirmee');

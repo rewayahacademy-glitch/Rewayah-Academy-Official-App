@@ -13,6 +13,8 @@
 // - branchement dans l'emplacement vocal du composer de COM-F ;
 // - 390, 768, 1440 ; 320 en texte x2 ; sombre ; arabe (RTL).
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show SemanticsNode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -96,6 +98,25 @@ class _PortCapricieux extends EnregistreurVocalDemonstration {
   Future<void> mettreEnPause() async {
     if (echouerPause) throw StateError('micro perdu');
     return super.mettreEnPause();
+  }
+}
+
+/// Un enregistreur dont le prochain arret ne repond qu'a l'ouverture de
+/// [porte] (enregistreur reel lent a finaliser son fichier).
+class _PortLent extends EnregistreurVocalDemonstration {
+  _PortLent({required super.horloge});
+
+  final Completer<void> porte = Completer<void>();
+  bool retenir = true;
+
+  @override
+  Future<EnregistrementVocal> arreter({required Duration duree}) async {
+    final EnregistrementVocal vocal = await super.arreter(duree: duree);
+    if (retenir) {
+      retenir = false;
+      await porte.future;
+    }
+    return vocal;
   }
 }
 
@@ -254,6 +275,112 @@ void main() {
     });
   });
 
+  group('Arret lent de l enregistreur', () {
+    testWidgets('supprime avant la reponse : le vocal rendu est efface', (
+      WidgetTester tester,
+    ) async {
+      final _Banc banc = _Banc();
+      final _PortLent port = _PortLent(horloge: banc.horloge.horloge);
+      await _monter(tester, banc, port: port);
+      await _toucher(tester, ComposerVocal.cleEnregistrer);
+      await avancer(tester, banc.horloge, const Duration(seconds: 3));
+      await _toucher(tester, ComposerVocal.cleArreter);
+      await _toucher(tester, ComposerVocal.cleSupprimer);
+      await _toucher(tester, ComposerVocal.cleConfirmerSuppression);
+      expect(find.byKey(ComposerVocal.cleEnregistrer), findsOneWidget);
+
+      port.porte.complete();
+      await tester.pump();
+      await tester.pump();
+      expect(port.supprimes, <String>['vocal-demo-1']);
+      expect(find.byKey(ComposerVocal.cleEnvoyer), findsNothing);
+      expect(find.byKey(ComposerVocal.cleEnregistrer), findsOneWidget);
+      expect(banc.envois.recus, isEmpty);
+    });
+
+    testWidgets(
+      'nouvel enregistrement avant la reponse : l ancien ne part pas',
+      (WidgetTester tester) async {
+        final _Banc banc = _Banc();
+        final _PortLent port = _PortLent(horloge: banc.horloge.horloge);
+        await _monter(tester, banc, port: port);
+        await _toucher(tester, ComposerVocal.cleEnregistrer);
+        await avancer(tester, banc.horloge, const Duration(seconds: 3));
+        await _toucher(tester, ComposerVocal.cleArreter);
+        await _toucher(tester, ComposerVocal.cleSupprimer);
+        await _toucher(tester, ComposerVocal.cleConfirmerSuppression);
+
+        await _toucher(tester, ComposerVocal.cleEnregistrer);
+        await avancer(tester, banc.horloge, const Duration(seconds: 5));
+        await _toucher(tester, ComposerVocal.cleArreter);
+        expect(_texte(c.duree(duree: '0:05')), findsOneWidget);
+
+        // L'ancien arret repond enfin : il ne remplace pas le nouveau vocal.
+        port.porte.complete();
+        await tester.pump();
+        await tester.pump();
+        expect(port.supprimes, <String>['vocal-demo-1']);
+        await _toucher(tester, ComposerVocal.cleEnvoyer);
+        expect(banc.envois.recus.single.id, 'vocal-demo-2');
+        expect(banc.envois.recus.single.duree, const Duration(seconds: 5));
+      },
+    );
+
+    testWidgets('ecran ferme avant la reponse : le vocal rendu est efface', (
+      WidgetTester tester,
+    ) async {
+      final _Banc banc = _Banc();
+      final _PortLent port = _PortLent(horloge: banc.horloge.horloge);
+      await _monter(tester, banc, port: port);
+      await _toucher(tester, ComposerVocal.cleEnregistrer);
+      await avancer(tester, banc.horloge, const Duration(seconds: 2));
+      await _toucher(tester, ComposerVocal.cleArreter);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump();
+      port.porte.complete();
+      await tester.pump();
+      await tester.pump();
+      expect(port.supprimes, <String>['vocal-demo-1']);
+      expect(banc.envois.recus, isEmpty);
+    });
+
+    testWidgets('Garder pendant l attente : le vocal rendu reste propose', (
+      WidgetTester tester,
+    ) async {
+      final _Banc banc = _Banc();
+      final _PortLent port = _PortLent(horloge: banc.horloge.horloge);
+      await _monter(tester, banc, port: port);
+      await _toucher(tester, ComposerVocal.cleEnregistrer);
+      await avancer(tester, banc.horloge, const Duration(seconds: 4));
+      await _toucher(tester, ComposerVocal.cleArreter);
+      await _toucher(tester, ComposerVocal.cleSupprimer);
+      port.porte.complete();
+      await tester.pump();
+      await tester.pump();
+      await _toucher(tester, ComposerVocal.cleGarder);
+      expect(port.supprimes, isEmpty);
+      await _toucher(tester, ComposerVocal.cleEnvoyer);
+      expect(banc.envois.recus.single.id, 'vocal-demo-1');
+    });
+  });
+
+  testWidgets('quitter l ecran pendant la confirmation en pause l abandonne', (
+    WidgetTester tester,
+  ) async {
+    final _Banc banc = _Banc();
+    await _monter(tester, banc);
+    await _toucher(tester, ComposerVocal.cleEnregistrer);
+    await avancer(tester, banc.horloge, const Duration(seconds: 3));
+    await _toucher(tester, ComposerVocal.clePause);
+    await _toucher(tester, ComposerVocal.cleSupprimer);
+    expect(_texte(c.confirmerTitre), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+    expect(banc.enregistreur.abandons, 1);
+    expect(banc.enregistreur.actif, isFalse);
+    expect(banc.envois.recus, isEmpty);
+  });
+
   group('R-COM-04 : limite de 3:00', () {
     testWidgets('limite proche a 2:30, arret seul a 3:00, pre-ecoute', (
       WidgetTester tester,
@@ -268,12 +395,22 @@ void main() {
         const Duration(minutes: 2, seconds: 30),
       );
       expect(
-        _texte(c.limiteProche(restant: '0:30', max: '3:00')),
+        _texte(c.limiteProche(seuil: '0:30', max: '3:00')),
         findsOneWidget,
       );
       expect(find.byKey(ComposerVocal.clePause), findsOneWidget);
 
-      await avancer(tester, banc.horloge, const Duration(seconds: 30));
+      // Annonce fixe : dix secondes plus tard, la region vivante dit la meme
+      // chose (pas de relecture a chaque seconde) ; le decompte est dans la
+      // duree ecrite.
+      await avancer(tester, banc.horloge, const Duration(seconds: 10));
+      expect(
+        _texte(c.limiteProche(seuil: '0:30', max: '3:00')),
+        findsOneWidget,
+      );
+      expect(_texte(c.ecoule(ecoule: '2:40', max: '3:00')), findsOneWidget);
+
+      await avancer(tester, banc.horloge, const Duration(seconds: 20));
       expect(_texte(c.preEcoute), findsOneWidget);
       expect(_texte(c.limiteAtteinte(max: '3:00')), findsOneWidget);
       expect(_texte(c.duree(duree: '3:00')), findsOneWidget);

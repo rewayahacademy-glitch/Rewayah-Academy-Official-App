@@ -90,6 +90,7 @@ class EtatLectureAudio {
     this.position = Duration.zero,
     this.enLecture = false,
     this.termine = false,
+    this.echec = false,
   });
 
   /// La position de lecture.
@@ -101,15 +102,21 @@ class EtatLectureAudio {
   /// Vrai quand la lecture est arrivee a la fin.
   final bool termine;
 
+  /// Vrai quand la lecture s'est interrompue d'elle-meme apres son lancement
+  /// (source expiree, reseau perdu) : le lecteur le dit et propose de
+  /// reessayer.
+  final bool echec;
+
   @override
   bool operator ==(Object other) =>
       other is EtatLectureAudio &&
       other.position == position &&
       other.enLecture == enLecture &&
-      other.termine == termine;
+      other.termine == termine &&
+      other.echec == echec;
 
   @override
-  int get hashCode => Object.hash(position, enLecture, termine);
+  int get hashCode => Object.hash(position, enLecture, termine, echec);
 }
 
 /// Une lecture audio ouverte : un vocal recu, ou la pre-ecoute d'un vocal
