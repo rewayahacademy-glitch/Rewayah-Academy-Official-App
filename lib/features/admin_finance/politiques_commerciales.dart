@@ -1002,9 +1002,11 @@ class _PolitiquesCommercialesContenuState
     if (jours == null || jours.isEmpty) return pol.relancesNonFixees;
     return <String>[
       for (int i = 0; i < jours.length; i++)
-        '${pol.relanceRang(rang: '${i + 1}')} : '
-            '${pol.relanceApres(jours: pol.jours(n: jours[i]))}',
-    ].join(' ; ');
+        pol.relanceComparaison(
+          rang: pol.relanceRang(rang: '${i + 1}'),
+          apres: pol.relanceApres(jours: pol.jours(n: jours[i])),
+        ),
+    ].join(pol.separateurComparaison);
   }
 
   /// Les budgets de pilotage, **non contraignants** (guide §5.7, ECARTS
@@ -1059,9 +1061,11 @@ class _PolitiquesCommercialesContenuState
     if (budgets.isEmpty) return pol.budgetsNonFixes;
     return <String>[
       for (final BudgetPilotage b in budgets)
-        '${_libelleBudget(b.nature)} : '
-            '${pol.budgetValeur(valeur: pourMilleEnTexte(b.pourMille))}',
-    ].join(' ; ');
+        pol.budgetComparaison(
+          libelle: _libelleBudget(b.nature),
+          valeur: pol.budgetValeur(valeur: pourMilleEnTexte(b.pourMille)),
+        ),
+    ].join(pol.separateurComparaison);
   }
 
   /// Vrai quand la marge de reference du brouillon differe de l'active.
@@ -1271,9 +1275,6 @@ class _EnteteVersion extends StatelessWidget {
   }
 }
 
-/// Un champ de politique (PolicyField), compose ici : le libelle, la
-/// consequence en une phrase (K-58), la saisie en nombre entier avec son
-/// unite, l'erreur de saisie, et la valeur active quand elle differe.
 /// Un reglage oui ou non d'un brouillon (activation de l'essai) : libelle,
 /// consequence (K-58), etat en mots et interrupteur, en un seul noeud pour
 /// le lecteur d'ecran.
@@ -1337,6 +1338,9 @@ class _InterrupteurPolitique extends StatelessWidget {
   }
 }
 
+/// Un champ de politique (PolicyField), compose ici : le libelle, la
+/// consequence en une phrase (K-58), la saisie en nombre entier avec son
+/// unite, l'erreur de saisie, et la valeur active quand elle differe.
 class _ChampPolitique extends StatelessWidget {
   const _ChampPolitique({
     required this.libelle,

@@ -13055,6 +13055,9 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: '{jours} après le début de la période'
 	String relanceApres({required Object jours}) => '${jours} après le début de la période';
 
+	/// fr: '{rang} : {apres}'
+	String relanceComparaison({required Object rang, required Object apres}) => '${rang} : ${apres}';
+
 	/// fr: 'Pilotage'
 	String get pilotage => 'Pilotage';
 
@@ -13087,6 +13090,12 @@ class Traductions$admin$finance$pol$fr {
 
 	/// fr: '{valeur} %, non contraignant'
 	String budgetValeur({required Object valeur}) => '${valeur} %, non contraignant';
+
+	/// fr: '{libelle} : {valeur}'
+	String budgetComparaison({required Object libelle, required Object valeur}) => '${libelle} : ${valeur}';
+
+	/// fr: ' ; '
+	String get separateurComparaison => ' ; ';
 
 	/// fr: 'Règles fixes'
 	String get invariants => 'Règles fixes';
@@ -18573,6 +18582,7 @@ extension on Traductions {
 			'admin.finance.pol.relancesNonFixees' => 'Pas encore fixées',
 			'admin.finance.pol.relanceRang' => ({required Object rang}) => 'Relance ${rang}',
 			'admin.finance.pol.relanceApres' => ({required Object jours}) => '${jours} après le début de la période',
+			'admin.finance.pol.relanceComparaison' => ({required Object rang, required Object apres}) => '${rang} : ${apres}',
 			'admin.finance.pol.pilotage' => 'Pilotage',
 			'admin.finance.pol.pilotageDetail' => 'Des repères pour lire les chiffres, jamais des règles qui bloquent.',
 			'admin.finance.pol.marge' => 'Marge de référence',
@@ -18584,6 +18594,8 @@ extension on Traductions {
 			'admin.finance.pol.budgetMarketing' => 'Budget marketing',
 			'admin.finance.pol.budgetOperationnel' => 'Budget opérationnel',
 			'admin.finance.pol.budgetValeur' => ({required Object valeur}) => '${valeur} %, non contraignant',
+			'admin.finance.pol.budgetComparaison' => ({required Object libelle, required Object valeur}) => '${libelle} : ${valeur}',
+			'admin.finance.pol.separateurComparaison' => ' ; ',
 			'admin.finance.pol.invariants' => 'Règles fixes',
 			'admin.finance.pol.invariantsDetail' => 'Elles protègent l\'argent des familles : ce ne sont pas des réglages, aucune version ne les change.',
 			'admin.finance.pol.invariantConfirmation' => 'Un paiement est confirmé avant tout crédit sur un profil.',
@@ -19062,11 +19074,11 @@ extension on Traductions {
 			'choix.autre' => 'Autre',
 			'choix.autreInvite' => 'Précisez',
 			'choix.selectionMultiple' => 'Plusieurs réponses possibles',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.titre' => ({required Object prenom}) => 'Le parcours de ${prenom}',
 			'parcours.intro' => 'Quelques questions pour personnaliser votre parcours. Vous ne verrez ensuite que les horaires et options adaptés à votre situation.',
 			'parcours.reprendre' => 'Reprendre',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.commencer' => 'Personnaliser le parcours',
 			'parcours.modifier' => 'Modifier mes réponses',
 			'parcours.erreur' => 'Cette réponse n\'a pas pu être enregistrée. Réessayez.',
@@ -19576,11 +19588,11 @@ extension on Traductions {
 			'tuteur.accueil.classeIllisible' => 'La classe n\'a pas pu être lue.',
 			'tuteur.accueil.sansClasseTitre' => ({required Object prenom}) => 'Aucune classe pour ${prenom}',
 			'tuteur.accueil.sansClassePhrase' => ({required Object prenom}) => 'Choisissez une classe pour que ${prenom} puisse commencer les cours.',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.foyerVideTitre' => 'Aucun profil élève pour l\'instant',
 			'tuteur.accueil.foyerVidePhrase' => 'Ajoutez un profil élève pour choisir une classe et suivre ses séances.',
 			'tuteur.accueil.ajouterProfil' => 'Ajouter un profil élève',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.profilsIllisibles' => 'Les profils du foyer n\'ont pas pu être lus.',
 			'tuteur.accueil.blocageAppareilTitre' => ({required Object prenom}) => 'Aucun appareil prêt pour ${prenom}',
 			'tuteur.accueil.blocageAppareilPhrase' => ({required Object prenom}) => 'Sans appareil connecté, ${prenom} ne pourra pas entrer en classe.',
@@ -20090,11 +20102,11 @@ extension on Traductions {
 			'enseignant.cahier.statutAbsents' => ({required Object nombre}) => 'Absents ${nombre}',
 			'enseignant.cahier.statutEnRetard' => ({required Object nombre}) => 'En retard ${nombre}',
 			'enseignant.cahier.performance' => 'Performance',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.faiblesses' => 'Faiblesses',
 			'enseignant.cahier.niveauARevoir' => 'À revoir',
 			'enseignant.cahier.niveauEnProgres' => 'En progrès',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.niveauAcquis' => 'Acquis',
 			'enseignant.cahier.niveauMaitrise' => 'Maîtrisé',
 			'enseignant.cahier.faiblesseMakharij' => 'Makharij',
@@ -20604,11 +20616,11 @@ extension on Traductions {
 			'tc.bibliotheque.action.liberer' => 'Libérer la place',
 			'tc.bibliotheque.action.enregistrerCopie' => 'Enregistrer une copie',
 			'tc.bibliotheque.message.copieEnregistree' => 'Copie enregistrée',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.message.copieImpossible' => 'Cette copie n’est pas disponible pour le moment',
 			'tc.bibliotheque.message.telechargementImpossible' => 'Ce support n’est pas encore disponible hors ligne',
 			'tc.bibliotheque.message.horsLigneNonTelecharge' => 'Disponible une fois téléchargé ou de retour en ligne',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.message.aucunTelechargement' => 'Aucun fichier à télécharger pour cette version.',
 			'tc.bibliotheque.classe.titre' => 'Choisir un support',
 			'tc.bibliotheque.classe.sousTitre' => 'Le support choisi remplace celui affiché. Le cours continue.',
@@ -21118,11 +21130,11 @@ extension on Traductions {
 			'adulte.finances.mouvementsErreurTitre' => 'Vos mouvements ne peuvent pas être lus',
 			'adulte.finances.mouvementsIndisponiblePhrase' => 'Vos recharges et vos mensualités s\'afficheront ici dès leur mise en service.',
 			'adulte.finances.mouvementsVidePhrase' => 'Aucune recharge ni aucune mensualité n\'est encore enregistrée pour votre profil. Les mouvements apparaîtront ici après le premier paiement.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.famille.ajouter' => 'Ajouter ma famille',
 			'adulte.famille.ajouterLegende' => 'Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.',
 			'adulte.famille.ajouterPhrase' => 'Vous pouvez ajouter vos enfants et inviter un conjoint ou une conjointe à rejoindre votre forfait famille. Votre espace élève reste inchangé.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.famille.inscrireEnfant' => 'Inscrire un enfant',
 			'adulte.famille.maFamille' => 'Ma famille',
 			'adulte.famille.forfaitFamille' => 'Forfait famille',
