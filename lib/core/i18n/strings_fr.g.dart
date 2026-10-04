@@ -123,6 +123,7 @@ class Traductions$commun$fr {
 	late final Traductions$commun$demonstration$fr demonstration = Traductions$commun$demonstration$fr.internal(_root);
 	late final Traductions$commun$etape$fr etape = Traductions$commun$etape$fr.internal(_root);
 	late final Traductions$commun$choix$fr choix = Traductions$commun$choix$fr.internal(_root);
+	late final Traductions$commun$selecteurPersonne$fr selecteurPersonne = Traductions$commun$selecteurPersonne$fr.internal(_root);
 	late final Traductions$commun$etats$fr etats = Traductions$commun$etats$fr.internal(_root);
 	late final Traductions$commun$entete$fr entete = Traductions$commun$entete$fr.internal(_root);
 	late final Traductions$commun$selecteurProfils$fr selecteurProfils = Traductions$commun$selecteurProfils$fr.internal(_root);
@@ -2426,6 +2427,69 @@ class Traductions$commun$choix$fr {
 
 	/// fr: 'Indisponible'
 	String get indisponible => 'Indisponible';
+}
+
+// Path: commun.selecteurPersonne
+class Traductions$commun$selecteurPersonne$fr {
+	Traductions$commun$selecteurPersonne$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Élève'
+	String get titreEleve => 'Élève';
+
+	/// fr: 'Enseignant'
+	String get titreEnseignant => 'Enseignant';
+
+	/// fr: 'Choisissez l'élève dans la liste. Seuls les comptes élèves actifs y figurent : un compte encore en attente de validation ne peut pas être choisi.'
+	String get contexteEleve => 'Choisissez l\'élève dans la liste. Seuls les comptes élèves actifs y figurent : un compte encore en attente de validation ne peut pas être choisi.';
+
+	/// fr: 'Choisissez l'enseignant dans la liste. Seuls les comptes enseignants actifs y figurent : un enseignant dont le dossier attend sa validation ne peut pas encore recevoir de classe.'
+	String get contexteEnseignant => 'Choisissez l\'enseignant dans la liste. Seuls les comptes enseignants actifs y figurent : un enseignant dont le dossier attend sa validation ne peut pas encore recevoir de classe.';
+
+	/// fr: 'Chercher un élève par son nom ou son identifiant'
+	String get rechercheEleve => 'Chercher un élève par son nom ou son identifiant';
+
+	/// fr: 'Chercher un enseignant par son nom ou son identifiant'
+	String get rechercheEnseignant => 'Chercher un enseignant par son nom ou son identifiant';
+
+	/// fr: 'Aucun compte élève actif'
+	String get videEleve => 'Aucun compte élève actif';
+
+	/// fr: 'Aucun élève ne peut être choisi pour l'instant. Validez d'abord les inscriptions en attente dans Personnes > Comptes, puis revenez ici.'
+	String get videEleveDetail => 'Aucun élève ne peut être choisi pour l\'instant. Validez d\'abord les inscriptions en attente dans Personnes > Comptes, puis revenez ici.';
+
+	/// fr: 'Aucun compte enseignant actif'
+	String get videEnseignant => 'Aucun compte enseignant actif';
+
+	/// fr: 'Aucun enseignant ne peut être choisi pour l'instant. Validez d'abord les dossiers en attente dans Personnes > Comptes, puis revenez ici.'
+	String get videEnseignantDetail => 'Aucun enseignant ne peut être choisi pour l\'instant. Validez d\'abord les dossiers en attente dans Personnes > Comptes, puis revenez ici.';
+
+	/// fr: 'La liste des élèves n'a pas pu être lue'
+	String get erreurEleveTitre => 'La liste des élèves n\'a pas pu être lue';
+
+	/// fr: 'La liste des enseignants n'a pas pu être lue'
+	String get erreurEnseignantTitre => 'La liste des enseignants n\'a pas pu être lue';
+
+	/// fr: 'Cause probable : la connexion au serveur s'est interrompue (non confirmé). Réessayez dans un instant.'
+	String get erreurDetail => 'Cause probable : la connexion au serveur s\'est interrompue (non confirmé). Réessayez dans un instant.';
+
+	/// fr: 'Personne ne correspond à « {recherche} »'
+	String aucunResultat({required Object recherche}) => 'Personne ne correspond à « ${recherche} »';
+
+	/// fr: 'Vérifiez l'orthographe, ou cherchez une partie du nom ou de l'identifiant.'
+	String get aucunResultatDetail => 'Vérifiez l\'orthographe, ou cherchez une partie du nom ou de l\'identifiant.';
+
+	/// fr: 'Effacer la recherche'
+	String get effacerRecherche => 'Effacer la recherche';
+
+	/// fr: 'Une autre personne correspond : précisez la recherche pour la voir.'
+	String get autreUne => 'Une autre personne correspond : précisez la recherche pour la voir.';
+
+	/// fr: '{n} autres personnes correspondent : précisez la recherche pour les voir.'
+	String autresPlusieurs({required Object n}) => '${n} autres personnes correspondent : précisez la recherche pour les voir.';
 }
 
 // Path: commun.etats
@@ -5103,8 +5167,11 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'Nom du groupe'
 	String get champLibelle => 'Nom du groupe';
 
-	/// fr: 'Identifiant de l'enseignant'
-	String get champEnseignantId => 'Identifiant de l\'enseignant';
+	/// fr: 'Il manque le nom de la classe : écrivez-le dans le premier champ.'
+	String get manqueNom => 'Il manque le nom de la classe : écrivez-le dans le premier champ.';
+
+	/// fr: 'Il manque l'enseignant : choisissez-le dans la liste.'
+	String get manqueEnseignant => 'Il manque l\'enseignant : choisissez-le dans la liste.';
 
 	/// fr: 'Public'
 	String get champType => 'Public';
@@ -5151,8 +5218,11 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'Ajouter un élève à {libelle}'
 	String ajouterTitre({required Object libelle}) => 'Ajouter un élève à ${libelle}';
 
-	/// fr: 'Identifiant de l'élève'
-	String get champEleveId => 'Identifiant de l\'élève';
+	/// fr: 'Il manque l'élève : choisissez-le dans la liste.'
+	String get manqueEleve => 'Il manque l\'élève : choisissez-le dans la liste.';
+
+	/// fr: 'Il manque le motif : écrivez-le, il s'inscrit au journal d'audit.'
+	String get manqueMotif => 'Il manque le motif : écrivez-le, il s\'inscrit au journal d\'audit.';
 
 	/// fr: 'Motif'
 	String get champMotif => 'Motif';
@@ -5661,8 +5731,14 @@ class Traductions$admin$evaluations$fr {
 	/// fr: 'Planifier une évaluation'
 	String get planifierTitre => 'Planifier une évaluation';
 
-	/// fr: 'Identifiant de l'élève'
-	String get champEleveId => 'Identifiant de l\'élève';
+	/// fr: 'Il manque l'élève : choisissez-le dans la liste.'
+	String get manqueEleve => 'Il manque l\'élève : choisissez-le dans la liste.';
+
+	/// fr: 'Il manque le niveau évalué : choisissez-le dans la liste des niveaux.'
+	String get manqueNiveau => 'Il manque le niveau évalué : choisissez-le dans la liste des niveaux.';
+
+	/// fr: 'Il manque une date valide : écrivez-la au format JJ/MM/AAAA, par exemple 15/11/2026.'
+	String get manqueDate => 'Il manque une date valide : écrivez-la au format JJ/MM/AAAA, par exemple 15/11/2026.';
 
 	/// fr: 'Niveau évalué'
 	String get champNiveau => 'Niveau évalué';
@@ -15373,6 +15449,24 @@ extension on Traductions {
 			'commun.etape.sur' => ({required Object n, required Object total}) => '${n} sur ${total}',
 			'commun.etape.surLue' => ({required Object n, required Object total}) => 'Étape ${n} sur ${total}',
 			'commun.choix.indisponible' => 'Indisponible',
+			'commun.selecteurPersonne.titreEleve' => 'Élève',
+			'commun.selecteurPersonne.titreEnseignant' => 'Enseignant',
+			'commun.selecteurPersonne.contexteEleve' => 'Choisissez l\'élève dans la liste. Seuls les comptes élèves actifs y figurent : un compte encore en attente de validation ne peut pas être choisi.',
+			'commun.selecteurPersonne.contexteEnseignant' => 'Choisissez l\'enseignant dans la liste. Seuls les comptes enseignants actifs y figurent : un enseignant dont le dossier attend sa validation ne peut pas encore recevoir de classe.',
+			'commun.selecteurPersonne.rechercheEleve' => 'Chercher un élève par son nom ou son identifiant',
+			'commun.selecteurPersonne.rechercheEnseignant' => 'Chercher un enseignant par son nom ou son identifiant',
+			'commun.selecteurPersonne.videEleve' => 'Aucun compte élève actif',
+			'commun.selecteurPersonne.videEleveDetail' => 'Aucun élève ne peut être choisi pour l\'instant. Validez d\'abord les inscriptions en attente dans Personnes > Comptes, puis revenez ici.',
+			'commun.selecteurPersonne.videEnseignant' => 'Aucun compte enseignant actif',
+			'commun.selecteurPersonne.videEnseignantDetail' => 'Aucun enseignant ne peut être choisi pour l\'instant. Validez d\'abord les dossiers en attente dans Personnes > Comptes, puis revenez ici.',
+			'commun.selecteurPersonne.erreurEleveTitre' => 'La liste des élèves n\'a pas pu être lue',
+			'commun.selecteurPersonne.erreurEnseignantTitre' => 'La liste des enseignants n\'a pas pu être lue',
+			'commun.selecteurPersonne.erreurDetail' => 'Cause probable : la connexion au serveur s\'est interrompue (non confirmé). Réessayez dans un instant.',
+			'commun.selecteurPersonne.aucunResultat' => ({required Object recherche}) => 'Personne ne correspond à « ${recherche} »',
+			'commun.selecteurPersonne.aucunResultatDetail' => 'Vérifiez l\'orthographe, ou cherchez une partie du nom ou de l\'identifiant.',
+			'commun.selecteurPersonne.effacerRecherche' => 'Effacer la recherche',
+			'commun.selecteurPersonne.autreUne' => 'Une autre personne correspond : précisez la recherche pour la voir.',
+			'commun.selecteurPersonne.autresPlusieurs' => ({required Object n}) => '${n} autres personnes correspondent : précisez la recherche pour les voir.',
 			'commun.etats.chargementProlonge.titre' => 'La connexion prend plus de temps que prévu',
 			'commun.etats.chargementProlonge.phrase' => 'Vous pouvez patienter encore un peu ou réessayer.',
 			'commun.etats.horsLigne.titre' => 'Vous êtes hors ligne',
@@ -15854,6 +15948,8 @@ extension on Traductions {
 			'inscription.modifier' => 'Modifier',
 			'inscription.reessayer' => 'Réessayer',
 			'inscription.erreurActualisation' => 'Votre compte est créé, mais la connexion n\'a pas pu être actualisée. Réessayez, ou déconnectez-vous puis reconnectez-vous.',
+			_ => null,
+		} ?? switch (path) {
 			'inscription.usage.question' => 'Quel type de compte souhaitez-vous créer ?',
 			'inscription.usage.moiTitre' => 'Moi uniquement',
 			'inscription.usage.moiDescription' => 'Je souhaite suivre les cours avec mon propre profil élève.',
@@ -15872,8 +15968,6 @@ extension on Traductions {
 			'contrat.lireTexte' => 'Lire le texte complet',
 			'contrat.accepter' => 'J\'ai lu et j\'accepte',
 			'contrat.accepteLe' => ({required Object date}) => 'Accepté le ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'contrat.erreur' => 'La signature n\'a pas abouti. Réessayez dans un instant.',
 			'contrat.horsLigne' => 'Vous êtes hors ligne. Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.',
 			'contrat.caseRequise' => 'Cochez la case pour continuer.',
@@ -16368,6 +16462,8 @@ extension on Traductions {
 			'dossiers.file.ouvrirElide' => ({required Object nom}) => 'Ouvrir le dossier d\'${nom}',
 			'dossiers.file.enVerification' => 'En cours de vérification',
 			'dossiers.file.sansNom' => 'Dossier sans nom disponible',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.file.legende' => ({required Object type, required Object date}) => '${type} · ${date}',
 			'dossiers.file.dateHeure' => ({required Object date, required Object heure, required Object zone}) => '${date} à ${heure} (${zone})',
 			'dossiers.file.dateChiffres' => ({required Object jour, required Object mois, required Object annee}) => '${jour}/${mois}/${annee}',
@@ -16386,8 +16482,6 @@ extension on Traductions {
 			'dossiers.visionneuse.aucune' => 'Aucune pièce n’est disponible.',
 			'dossiers.visionneuse.fermerPiece' => 'Fermer la pièce',
 			'dossiers.visionneuse.agrandir' => 'Agrandir',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.visionneuse.reduire' => 'Réduire',
 			'dossiers.visionneuse.ajuster' => 'Ajuster à l’écran',
 			'dossiers.visionneuse.infoBulle' => ({required Object action, required Object touche}) => '${action} (touche ${touche})',
@@ -16601,7 +16695,8 @@ extension on Traductions {
 			'admin.groupes.creer' => 'Créer un groupe',
 			'admin.groupes.creerTitre' => 'Créer un groupe',
 			'admin.groupes.champLibelle' => 'Nom du groupe',
-			'admin.groupes.champEnseignantId' => 'Identifiant de l\'enseignant',
+			'admin.groupes.manqueNom' => 'Il manque le nom de la classe : écrivez-le dans le premier champ.',
+			'admin.groupes.manqueEnseignant' => 'Il manque l\'enseignant : choisissez-le dans la liste.',
 			'admin.groupes.champType' => 'Public',
 			'admin.groupes.champJour' => 'Jour',
 			'admin.groupes.champHeure' => 'Heure (0-23)',
@@ -16617,7 +16712,8 @@ extension on Traductions {
 			'admin.groupes.actionObservation' => 'Réglages d\'observation',
 			'admin.groupes.actionCloturer' => 'Clôturer le groupe',
 			'admin.groupes.ajouterTitre' => ({required Object libelle}) => 'Ajouter un élève à ${libelle}',
-			'admin.groupes.champEleveId' => 'Identifiant de l\'élève',
+			'admin.groupes.manqueEleve' => 'Il manque l\'élève : choisissez-le dans la liste.',
+			'admin.groupes.manqueMotif' => 'Il manque le motif : écrivez-le, il s\'inscrit au journal d\'audit.',
 			'admin.groupes.champMotif' => 'Motif',
 			'admin.groupes.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
 			'admin.groupes.ajouterEnvoyer' => 'Ajouter',
@@ -16766,7 +16862,9 @@ extension on Traductions {
 			'admin.evaluations.resultatARevoir' => 'À revoir',
 			'admin.evaluations.planifier' => 'Planifier une évaluation',
 			'admin.evaluations.planifierTitre' => 'Planifier une évaluation',
-			'admin.evaluations.champEleveId' => 'Identifiant de l\'élève',
+			'admin.evaluations.manqueEleve' => 'Il manque l\'élève : choisissez-le dans la liste.',
+			'admin.evaluations.manqueNiveau' => 'Il manque le niveau évalué : choisissez-le dans la liste des niveaux.',
+			'admin.evaluations.manqueDate' => 'Il manque une date valide : écrivez-la au format JJ/MM/AAAA, par exemple 15/11/2026.',
 			'admin.evaluations.champNiveau' => 'Niveau évalué',
 			'admin.evaluations.champType' => 'Type',
 			'admin.evaluations.champDatePrevue' => 'Date prévue (JJ/MM/AAAA)',
@@ -16878,6 +16976,8 @@ extension on Traductions {
 			'admin.journal.periodeTout' => 'Depuis le début',
 			'admin.journal.tousTypes' => 'Tous les événements',
 			'admin.journal.tousActeurs' => 'Tout le monde',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.colonneQuand' => 'Quand',
 			'admin.journal.colonneQui' => 'Qui',
 			'admin.journal.colonneRole' => 'À quel titre',
@@ -16900,8 +17000,6 @@ extension on Traductions {
 			'admin.journal.evtProfilEnfantCree' => 'Profil enfant créé',
 			'admin.journal.evtCodeCree' => 'Code d\'appairage créé',
 			'admin.journal.evtAppareilAppaire' => 'Appareil appairé',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.evtAppareilRevoque' => 'Appareil révoqué',
 			'admin.journal.evtPedagogie' => 'Réglages pédagogiques modifiés',
 			'admin.journal.evtAffectationPrise' => 'Élève pris par un enseignant',
@@ -17392,6 +17490,8 @@ extension on Traductions {
 			'compte.tuteur.pagePaiements.aucunePhrase' => 'Les paiements enregistrés par l\'académie s\'afficheront ici.',
 			'compte.tuteur.pagePaiements.paiementDu' => ({required Object date}) => 'Paiement du ${date}',
 			'compte.tuteur.pagePaiements.justificatif' => 'Justificatif disponible',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pagePreferences.titre' => 'Préférences',
 			'compte.tuteur.pagePreferences.sousTitre' => 'Personnalisez votre expérience sur cet appareil.',
 			'compte.tuteur.pagePreferences.apparence' => 'Apparence',
@@ -17414,8 +17514,6 @@ extension on Traductions {
 			'compte.tuteur.pageAide.canalCourriel' => 'Courriel de l\'académie',
 			'compte.tuteur.pageAide.canalLien' => 'Page d\'aide de l\'académie',
 			'compte.tuteur.pageAide.aucunCanal' => 'Aucun canal d\'aide n\'est publié pour le moment.',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageLegal.titre' => 'Informations légales',
 			'compte.tuteur.pageLegal.documents' => 'Documents acceptés',
 			'compte.tuteur.pageLegal.conditionsTuteur' => 'Conditions du tuteur',
@@ -17906,6 +18004,8 @@ extension on Traductions {
 			'enseignant.signalement.demoSucces' => 'Démonstration : ce signalement est prêt, mais rien n\'a été envoyé.',
 			'enseignant.signalement.demoSuccesDetail' => 'Dans l\'application reliée, il partira vers l\'équipe de l\'académie.',
 			'enseignant.signalement.fermer' => 'Fermer',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.demo.titre' => 'Démonstration enseignant',
 			'enseignant.demo.mention' => 'Données fictives, aucun envoi.',
 			'enseignant.demo.intro' => 'Choisissez un écran de Sayyid Ibrahim.',
@@ -17928,8 +18028,6 @@ extension on Traductions {
 			'enseignant.bienvenue.ctaInformations' => 'Vérifier mes informations',
 			'enseignant.bienvenue.ctaJournee' => 'Voir ma journée',
 			'enseignant.bienvenue.rappels' => 'Deux choses à ne pas découvrir en cours de route',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.bienvenue.declarer' => 'Déclarer mes disponibilités',
 			'enseignant.bienvenue.versJournee' => 'Aller à ma journée',
 			'enseignant.bienvenue.horsLigne' => 'Sans réseau, vos créneaux ne pourront pas être enregistrés.',
@@ -18420,6 +18518,8 @@ extension on Traductions {
 			'controleur.observation.questionRecap' => 'Vérifiez votre observation avant l\'envoi.',
 			'controleur.observation.cleNature' => 'Nature',
 			'controleur.observation.cleDomaine' => 'Domaine',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.clePersonne' => 'Personne concernée',
 			'controleur.observation.cleTexte' => 'Remarque',
 			'controleur.observation.sansTexte' => 'Aucun texte',
@@ -18442,8 +18542,6 @@ extension on Traductions {
 			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
 			'controleur.echanges.enCours' => 'Envoi en cours.',
 			'controleur.echanges.envoye' => 'Envoyé.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.reessayer' => 'Réessayer',
 			'controleur.echanges.nouveauMessage' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
@@ -18934,6 +19032,8 @@ extension on Traductions {
 			'tc.parcours.feedback.comprehension.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.rythme.intitule' => 'Le rythme du cours vous a-t-il convenu ?',
 			'tc.parcours.feedback.rythme.difficile' => 'Trop rapide',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.feedback.rythme.bien' => 'Convenable',
 			'tc.parcours.feedback.rythme.tresBien' => 'Très confortable',
 			'tc.parcours.feedback.technique.intitule' => 'Le son et l\'image étaient-ils confortables ?',
@@ -18956,8 +19056,6 @@ extension on Traductions {
 			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
 			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
 			'tc.parcours.signalement.interne' => 'Note interne',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',

@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/admin/admin_domaine.dart';
+import '../../core/admin/personnes_proposables.dart';
+import '../../core/admin/service_comptes.dart';
 import '../../core/admin/service_evaluations.dart';
 import '../../core/admin/service_programme.dart';
+import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
@@ -15,6 +18,7 @@ import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/selecteur_niveau_programme.dart';
+import '../../core/widgets/selecteur_personne.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
@@ -211,7 +215,8 @@ class _Corps extends StatelessWidget {
                           tooltip: e.eleveLibelle,
                           actions: <EntreeAction>[
                             EntreeAction(
-                              libelle: t.admin.evaluations.actionEnregistrerResultat,
+                              libelle:
+                                  t.admin.evaluations.actionEnregistrerResultat,
                               onChoix: () => onEnregistrerResultat(e),
                             ),
                             EntreeAction(
@@ -282,8 +287,9 @@ void _ouvrirPlanification(BuildContext context, WidgetRef ref) {
   AppBottomSheet.ouvrir<void>(
     context,
     titre: t.admin.evaluations.planifierTitre,
-    constructeur: (BuildContext contexte) =>
-        _FeuillePlanification(onCree: () => ref.invalidate(evaluationsProvider)),
+    constructeur: (BuildContext contexte) => _FeuillePlanification(
+      onCree: () => ref.invalidate(evaluationsProvider),
+    ),
   );
 }
 
@@ -332,10 +338,11 @@ class _FeuillePlanification extends ConsumerStatefulWidget {
       _FeuillePlanificationEtat();
 }
 
-class _FeuillePlanificationEtat
-    extends ConsumerState<_FeuillePlanification> {
-  final TextEditingController _eleveId = TextEditingController();
+class _FeuillePlanificationEtat extends ConsumerState<_FeuillePlanification> {
   final TextEditingController _date = TextEditingController();
+
+  /// L'eleve choisi dans la liste (FORM-L2) : plus d'identifiant tape.
+  String? _eleveId;
   String? _niveauId;
   TypeEvaluation _type = TypeEvaluation.periodique;
   bool _envoi = false;
@@ -343,15 +350,27 @@ class _FeuillePlanificationEtat
 
   @override
   void dispose() {
-    _eleveId.dispose();
     _date.dispose();
     super.dispose();
   }
 
+  /// Ce qui manque encore, nul quand tout est la (bouton jamais grise, K-56).
+  String? get _manque => _eleveId == null
+      ? t.admin.evaluations.manqueEleve
+      : _niveauId == null
+      ? t.admin.evaluations.manqueNiveau
+      : _lireDate(_date.text) == null
+      ? t.admin.evaluations.manqueDate
+      : null;
+
   Future<void> _envoyer() async {
     final DateTime? date = _lireDate(_date.text);
     final String? niveauId = _niveauId;
-    if (date == null || niveauId == null) return;
+    final String? eleveId = _eleveId;
+    if (date == null || niveauId == null || eleveId == null) {
+      setState(() => _erreur = _manque);
+      return;
+    }
     setState(() {
       _envoi = true;
       _erreur = null;
@@ -360,7 +379,7 @@ class _FeuillePlanificationEtat
       await ref
           .read(serviceEvaluationsProvider)
           .planifier(
-            studentId: _eleveId.text.trim(),
+            studentId: eleveId,
             niveauId: niveauId,
             type: _type,
             datePrevue: date,
@@ -387,13 +406,21 @@ class _FeuillePlanificationEtat
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        TextField(
-          controller: _eleveId,
-          onChanged: (String _) => setState(() {}),
-          decoration: InputDecoration(labelText: t.admin.evaluations.champEleveId),
+        SelecteurPersonne(
+          sorte: SortePersonne.eleve,
+          personnes: ref.watch(personnesProposablesProvider(AppRole.student)),
+          choisie: _eleveId,
+          onChoix: (PersonneProposee p) => setState(() {
+            _eleveId = p.id;
+            _erreur = null;
+          }),
+          onReessayer: () => ref.invalidate(comptesProvider),
         ),
         Ecart.vLg,
-        Text(t.admin.evaluations.champType, style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          t.admin.evaluations.champType,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         Ecart.vSm,
         Wrap(
           spacing: AppSpacing.sm,
@@ -407,7 +434,10 @@ class _FeuillePlanificationEtat
           ],
         ),
         Ecart.vLg,
-        Text(t.admin.evaluations.champNiveau, style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          t.admin.evaluations.champNiveau,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         Ecart.vSm,
         switch (versionActive) {
           AsyncValue<VersionProgramme?>(hasValue: true) =>
@@ -428,22 +458,22 @@ class _FeuillePlanificationEtat
         TextField(
           controller: _date,
           onChanged: (String _) => setState(() {}),
-          decoration: InputDecoration(labelText: t.admin.evaluations.champDatePrevue),
+          decoration: InputDecoration(
+            labelText: t.admin.evaluations.champDatePrevue,
+          ),
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
-          Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          Text(
+            _erreur!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
         ],
         Ecart.vLg,
         ActionPrincipale(
           libelle: t.admin.evaluations.planifierEnvoyer,
           enCours: _envoi,
-          onPress:
-              _eleveId.text.trim().isEmpty ||
-                  _niveauId == null ||
-                  _lireDate(_date.text) == null
-              ? null
-              : _envoyer,
+          onPress: _envoyer,
         ),
       ],
     );
@@ -483,7 +513,10 @@ class _NiveauxVersion extends ConsumerWidget {
 
 /// Le formulaire de resultat : trois valeurs, puis des notes optionnelles.
 class _FeuilleResultat extends StatefulWidget {
-  const _FeuilleResultat({required this.evaluation, required this.onEnregistre});
+  const _FeuilleResultat({
+    required this.evaluation,
+    required this.onEnregistre,
+  });
 
   final EvaluationAdmin evaluation;
   final VoidCallback onEnregistre;
@@ -553,11 +586,16 @@ class _FeuilleResultatEtat extends State<_FeuilleResultat> {
           TextField(
             controller: _notes,
             maxLines: 2,
-            decoration: InputDecoration(labelText: t.admin.evaluations.champNotes),
+            decoration: InputDecoration(
+              labelText: t.admin.evaluations.champNotes,
+            ),
           ),
           if (_erreur != null) ...<Widget>[
             Ecart.vMd,
-            Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            Text(
+              _erreur!,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
           ],
           Ecart.vLg,
           ActionPrincipale(
@@ -612,9 +650,7 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
       widget.onSucces();
       if (mounted) Navigator.of(context).pop();
     } catch (erreur) {
-      setState(
-        () => _erreur = widget.messageErreur(message: _message(erreur)),
-      );
+      setState(() => _erreur = widget.messageErreur(message: _message(erreur)));
     } finally {
       if (mounted) setState(() => _envoi = false);
     }
@@ -625,17 +661,25 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(t.admin.evaluations.motifRequis, style: Theme.of(context).textTheme.bodySmall),
+        Text(
+          t.admin.evaluations.motifRequis,
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
         Ecart.vSm,
         TextField(
           controller: _motif,
           maxLines: 2,
-          decoration: InputDecoration(labelText: t.admin.evaluations.champMotif),
+          decoration: InputDecoration(
+            labelText: t.admin.evaluations.champMotif,
+          ),
           onChanged: (String _) => setState(() {}),
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
-          Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          Text(
+            _erreur!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
         ],
         Ecart.vLg,
         ActionPrincipale(
