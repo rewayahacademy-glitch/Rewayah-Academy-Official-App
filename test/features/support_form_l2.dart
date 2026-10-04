@@ -10,8 +10,12 @@ import 'package:rewayah_academy/core/admin/service_programme.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart'
     show Creneau;
+import 'package:rewayah_academy/core/widgets/champ_date.dart';
 
 final DateTime _inscrit = DateTime(2026, 9, 1, 10);
+
+/// « Aujourd'hui » dans les tests de formulaires : le 4 octobre 2026.
+final DateTime aujourdhuiFormL2 = DateTime(2026, 10, 4, 9, 30);
 
 /// Un compte d'administration, inscrit a date fixe.
 CompteAdmin compteFormL2(
@@ -229,6 +233,8 @@ List<Override> surchargesFormL2({
   FauxGroupesFormL2? groupes,
   FauxEvaluationsFormL2? evaluations,
 }) => <Override>[
+  // Horloge fixe : les bornes du calendrier de date (FORM-L4) en dependent.
+  horlogeFormulairesProvider.overrideWithValue(() => aujourdhuiFormL2),
   serviceComptesProvider.overrideWithValue(comptes),
   serviceGroupesProvider.overrideWithValue(groupes ?? FauxGroupesFormL2()),
   serviceEvaluationsProvider.overrideWithValue(

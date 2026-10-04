@@ -12,6 +12,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
+import '../../core/widgets/champ_date.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
@@ -267,22 +268,6 @@ String _message(Object erreur) {
       : brut;
 }
 
-/// Lit une date `JJ/MM/AAAA`, nulle si le format ne correspond pas.
-DateTime? _lireDate(String saisie) {
-  final List<String> parts = saisie.trim().split('/');
-  if (parts.length != 3) return null;
-  final int? j = int.tryParse(parts[0]);
-  final int? m = int.tryParse(parts[1]);
-  final int? a = int.tryParse(parts[2]);
-  if (j == null || m == null || a == null) return null;
-  try {
-    final DateTime date = DateTime(a, m, j);
-    return date.year == a && date.month == m && date.day == j ? date : null;
-  } on Object {
-    return null;
-  }
-}
-
 void _ouvrirPlanification(BuildContext context, WidgetRef ref) {
   AppBottomSheet.ouvrir<void>(
     context,
@@ -339,7 +324,8 @@ class _FeuillePlanification extends ConsumerStatefulWidget {
 }
 
 class _FeuillePlanificationEtat extends ConsumerState<_FeuillePlanification> {
-  final TextEditingController _date = TextEditingController();
+  /// Le jour choisi dans le calendrier (FORM-L4) : plus de date tapee.
+  DateTime? _datePrevue;
 
   /// L'eleve choisi dans la liste (FORM-L2) : plus d'identifiant tape.
   String? _eleveId;
@@ -348,23 +334,17 @@ class _FeuillePlanificationEtat extends ConsumerState<_FeuillePlanification> {
   bool _envoi = false;
   String? _erreur;
 
-  @override
-  void dispose() {
-    _date.dispose();
-    super.dispose();
-  }
-
   /// Ce qui manque encore, nul quand tout est la (bouton jamais grise, K-56).
   String? get _manque => _eleveId == null
       ? t.admin.evaluations.manqueEleve
       : _niveauId == null
       ? t.admin.evaluations.manqueNiveau
-      : _lireDate(_date.text) == null
+      : _datePrevue == null
       ? t.admin.evaluations.manqueDate
       : null;
 
   Future<void> _envoyer() async {
-    final DateTime? date = _lireDate(_date.text);
+    final DateTime? date = _datePrevue;
     final String? niveauId = _niveauId;
     final String? eleveId = _eleveId;
     if (date == null || niveauId == null || eleveId == null) {
@@ -455,12 +435,14 @@ class _FeuillePlanificationEtat extends ConsumerState<_FeuillePlanification> {
           _ => const Skeleton.liste(lignes: 2),
         },
         Ecart.vLg,
-        TextField(
-          controller: _date,
-          onChanged: (String _) => setState(() {}),
-          decoration: InputDecoration(
-            labelText: t.admin.evaluations.champDatePrevue,
-          ),
+        ChampDate(
+          libelle: t.admin.evaluations.champDatePrevue,
+          valeur: _datePrevue,
+          aujourdhui: ref.watch(horlogeFormulairesProvider)(),
+          onChoix: (DateTime jour) => setState(() {
+            _datePrevue = jour;
+            _erreur = null;
+          }),
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,

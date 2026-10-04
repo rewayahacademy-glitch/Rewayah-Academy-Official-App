@@ -19,6 +19,10 @@
     "choix": {
       "indisponible": "Indisponible"
     },
+    "champDate": {
+      "choisir": "Choisir une date",
+      "aide": "Entre aujourd'hui et dans un an."
+    },
     "selecteurPersonne": {
       "titreEleve": "Élève",
       "titreEnseignant": "Enseignant",
@@ -781,6 +785,7 @@
     "carteIdentite": "Carte d'identité",
     "passeport": "Passeport",
     "titreSejour": "Titre de séjour",
+    "autrePiece": "Autre pièce officielle",
     "choisirFichier": "Choisir la photo",
     "fichierChoisi": "Photo prête à être envoyée",
     "envoyer": "Envoyer ma pièce",
@@ -1712,10 +1717,10 @@
       "planifierTitre": "Planifier une évaluation",
       "manqueEleve": "Il manque l'élève : choisissez-le dans la liste.",
       "manqueNiveau": "Il manque le niveau évalué : choisissez-le dans la liste des niveaux.",
-      "manqueDate": "Il manque une date valide : écrivez-la au format JJ/MM/AAAA, par exemple 15/11/2026.",
+      "manqueDate": "Il manque la date prévue : touchez le champ date et choisissez un jour dans le calendrier.",
       "champNiveau": "Niveau évalué",
       "champType": "Type",
-      "champDatePrevue": "Date prévue (JJ/MM/AAAA)",
+      "champDatePrevue": "Date prévue",
       "planifierEnvoyer": "Planifier",
       "planifierErreur": "La planification n'a pas abouti : {message}",
       "actionEnregistrerResultat": "Enregistrer le résultat",
@@ -1977,6 +1982,9 @@
       "libelle": "À quoi sert ce jeton",
       "libelleAide": "Obligatoire. Un jeton sans nom est un jeton que personne n'ose révoquer.",
       "libelleExemple": "Relecture du suivi de Maryam",
+      "libelleAuto": "Observation de {prenom}, le {date}, {duree} h",
+      "manqueLibelle": "Il manque le nom du jeton : écrivez à quoi il sert.",
+      "manquePersonne": "Il manque la personne observée : choisissez-la dans la liste.",
       "qui": "Qui l'agent observe",
       "quiAide": "L'agent verra exactement l'écran de cette personne, et son parcours sera le sien.",
       "quiVide": "Choisir une personne",

@@ -85,5 +85,12 @@
   "admin.groupes.manqueMotif": "etape FORM-L2 : raison a la place du bouton grise (K-56, K-59)",
   "admin.evaluations.manqueEleve": "etape FORM-L2 : raison a la place du bouton grise (K-56, K-59)",
   "admin.evaluations.manqueNiveau": "etape FORM-L2 : raison a la place du bouton grise (K-56, K-59)",
-  "admin.evaluations.manqueDate": "etape FORM-L2 : raison a la place du bouton grise (K-56, K-59) ; le format tape reste jusqu'a L4 (selecteur de date)"
+  "admin.evaluations.manqueDate": "etape FORM-L4-11-12 (L4, texte modifie : plus de format tape, selecteur de date) ; etape FORM-L2 : raison a la place du bouton grise (K-56, K-59)",
+  "admin.evaluations.champDatePrevue": "etape FORM-L4-11-12 (L4) : le format JJ/MM/AAAA n'est plus tape, il sort du libelle",
+  "commun.champDate.choisir": "etape FORM-L4-11-12 (recensement FORM-AUTO-1 L4) : champ date a selecteur",
+  "commun.champDate.aide": "etape FORM-L4-11-12 : bornes du selecteur (aujourd'hui, +1 an) ; a valider par le directeur",
+  "kyc.autrePiece": "etape FORM-L4-11-12 (L11) : la carte Autre en champ libre jamais lu est remplacee par un type explicite (TypePiece.autre existe, valeur SQL other) ; a valider par le directeur",
+  "admin.agents.libelleAuto": "etape FORM-L4-11-12 (L12) : libelle du jeton prerempli depuis la personne, la date et la duree, modifiable ; a valider par le directeur",
+  "admin.agents.manqueLibelle": "etape FORM-L4-11-12 (L12) : raison a la place du bouton grise (K-56, K-59)",
+  "admin.agents.manquePersonne": "etape FORM-L4-11-12 (L12) : raison a la place du bouton grise (K-56, K-59)"
 }

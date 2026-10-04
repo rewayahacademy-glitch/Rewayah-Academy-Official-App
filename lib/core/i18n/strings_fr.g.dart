@@ -123,6 +123,7 @@ class Traductions$commun$fr {
 	late final Traductions$commun$demonstration$fr demonstration = Traductions$commun$demonstration$fr.internal(_root);
 	late final Traductions$commun$etape$fr etape = Traductions$commun$etape$fr.internal(_root);
 	late final Traductions$commun$choix$fr choix = Traductions$commun$choix$fr.internal(_root);
+	late final Traductions$commun$champDate$fr champDate = Traductions$commun$champDate$fr.internal(_root);
 	late final Traductions$commun$selecteurPersonne$fr selecteurPersonne = Traductions$commun$selecteurPersonne$fr.internal(_root);
 	late final Traductions$commun$etats$fr etats = Traductions$commun$etats$fr.internal(_root);
 	late final Traductions$commun$entete$fr entete = Traductions$commun$entete$fr.internal(_root);
@@ -908,6 +909,9 @@ class Traductions$kyc$fr {
 
 	/// fr: 'Titre de séjour'
 	String get titreSejour => 'Titre de séjour';
+
+	/// fr: 'Autre pièce officielle'
+	String get autrePiece => 'Autre pièce officielle';
 
 	/// fr: 'Choisir la photo'
 	String get choisirFichier => 'Choisir la photo';
@@ -2427,6 +2431,21 @@ class Traductions$commun$choix$fr {
 
 	/// fr: 'Indisponible'
 	String get indisponible => 'Indisponible';
+}
+
+// Path: commun.champDate
+class Traductions$commun$champDate$fr {
+	Traductions$commun$champDate$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Choisir une date'
+	String get choisir => 'Choisir une date';
+
+	/// fr: 'Entre aujourd'hui et dans un an.'
+	String get aide => 'Entre aujourd\'hui et dans un an.';
 }
 
 // Path: commun.selecteurPersonne
@@ -5737,8 +5756,8 @@ class Traductions$admin$evaluations$fr {
 	/// fr: 'Il manque le niveau évalué : choisissez-le dans la liste des niveaux.'
 	String get manqueNiveau => 'Il manque le niveau évalué : choisissez-le dans la liste des niveaux.';
 
-	/// fr: 'Il manque une date valide : écrivez-la au format JJ/MM/AAAA, par exemple 15/11/2026.'
-	String get manqueDate => 'Il manque une date valide : écrivez-la au format JJ/MM/AAAA, par exemple 15/11/2026.';
+	/// fr: 'Il manque la date prévue : touchez le champ date et choisissez un jour dans le calendrier.'
+	String get manqueDate => 'Il manque la date prévue : touchez le champ date et choisissez un jour dans le calendrier.';
 
 	/// fr: 'Niveau évalué'
 	String get champNiveau => 'Niveau évalué';
@@ -5746,8 +5765,8 @@ class Traductions$admin$evaluations$fr {
 	/// fr: 'Type'
 	String get champType => 'Type';
 
-	/// fr: 'Date prévue (JJ/MM/AAAA)'
-	String get champDatePrevue => 'Date prévue (JJ/MM/AAAA)';
+	/// fr: 'Date prévue'
+	String get champDatePrevue => 'Date prévue';
 
 	/// fr: 'Planifier'
 	String get planifierEnvoyer => 'Planifier';
@@ -6536,6 +6555,15 @@ class Traductions$admin$agents$fr {
 
 	/// fr: 'Relecture du suivi de Maryam'
 	String get libelleExemple => 'Relecture du suivi de Maryam';
+
+	/// fr: 'Observation de {prenom}, le {date}, {duree} h'
+	String libelleAuto({required Object prenom, required Object date, required Object duree}) => 'Observation de ${prenom}, le ${date}, ${duree} h';
+
+	/// fr: 'Il manque le nom du jeton : écrivez à quoi il sert.'
+	String get manqueLibelle => 'Il manque le nom du jeton : écrivez à quoi il sert.';
+
+	/// fr: 'Il manque la personne observée : choisissez-la dans la liste.'
+	String get manquePersonne => 'Il manque la personne observée : choisissez-la dans la liste.';
 
 	/// fr: 'Qui l'agent observe'
 	String get qui => 'Qui l\'agent observe';
@@ -15449,6 +15477,8 @@ extension on Traductions {
 			'commun.etape.sur' => ({required Object n, required Object total}) => '${n} sur ${total}',
 			'commun.etape.surLue' => ({required Object n, required Object total}) => 'Étape ${n} sur ${total}',
 			'commun.choix.indisponible' => 'Indisponible',
+			'commun.champDate.choisir' => 'Choisir une date',
+			'commun.champDate.aide' => 'Entre aujourd\'hui et dans un an.',
 			'commun.selecteurPersonne.titreEleve' => 'Élève',
 			'commun.selecteurPersonne.titreEnseignant' => 'Enseignant',
 			'commun.selecteurPersonne.contexteEleve' => 'Choisissez l\'élève dans la liste. Seuls les comptes élèves actifs y figurent : un compte encore en attente de validation ne peut pas être choisi.',
@@ -15946,10 +15976,10 @@ extension on Traductions {
 			'inscription.retourEtape' => 'Revenir à l\'étape précédente',
 			'inscription.seDeconnecter' => 'Se déconnecter',
 			'inscription.modifier' => 'Modifier',
-			'inscription.reessayer' => 'Réessayer',
-			'inscription.erreurActualisation' => 'Votre compte est créé, mais la connexion n\'a pas pu être actualisée. Réessayez, ou déconnectez-vous puis reconnectez-vous.',
 			_ => null,
 		} ?? switch (path) {
+			'inscription.reessayer' => 'Réessayer',
+			'inscription.erreurActualisation' => 'Votre compte est créé, mais la connexion n\'a pas pu être actualisée. Réessayez, ou déconnectez-vous puis reconnectez-vous.',
 			'inscription.usage.question' => 'Quel type de compte souhaitez-vous créer ?',
 			'inscription.usage.moiTitre' => 'Moi uniquement',
 			'inscription.usage.moiDescription' => 'Je souhaite suivre les cours avec mon propre profil élève.',
@@ -16064,6 +16094,7 @@ extension on Traductions {
 			'kyc.carteIdentite' => 'Carte d\'identité',
 			'kyc.passeport' => 'Passeport',
 			'kyc.titreSejour' => 'Titre de séjour',
+			'kyc.autrePiece' => 'Autre pièce officielle',
 			'kyc.choisirFichier' => 'Choisir la photo',
 			'kyc.fichierChoisi' => 'Photo prête à être envoyée',
 			'kyc.envoyer' => 'Envoyer ma pièce',
@@ -16459,11 +16490,11 @@ extension on Traductions {
 			'dossiers.file.aucuneSelection' => 'Sélectionnez un dossier à examiner.',
 			'dossiers.file.suivants' => 'Charger les dossiers suivants',
 			'dossiers.file.ouvrirDe' => ({required Object nom}) => 'Ouvrir le dossier de ${nom}',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.file.ouvrirElide' => ({required Object nom}) => 'Ouvrir le dossier d\'${nom}',
 			'dossiers.file.enVerification' => 'En cours de vérification',
 			'dossiers.file.sansNom' => 'Dossier sans nom disponible',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.file.legende' => ({required Object type, required Object date}) => '${type} · ${date}',
 			'dossiers.file.dateHeure' => ({required Object date, required Object heure, required Object zone}) => '${date} à ${heure} (${zone})',
 			'dossiers.file.dateChiffres' => ({required Object jour, required Object mois, required Object annee}) => '${jour}/${mois}/${annee}',
@@ -16864,10 +16895,10 @@ extension on Traductions {
 			'admin.evaluations.planifierTitre' => 'Planifier une évaluation',
 			'admin.evaluations.manqueEleve' => 'Il manque l\'élève : choisissez-le dans la liste.',
 			'admin.evaluations.manqueNiveau' => 'Il manque le niveau évalué : choisissez-le dans la liste des niveaux.',
-			'admin.evaluations.manqueDate' => 'Il manque une date valide : écrivez-la au format JJ/MM/AAAA, par exemple 15/11/2026.',
+			'admin.evaluations.manqueDate' => 'Il manque la date prévue : touchez le champ date et choisissez un jour dans le calendrier.',
 			'admin.evaluations.champNiveau' => 'Niveau évalué',
 			'admin.evaluations.champType' => 'Type',
-			'admin.evaluations.champDatePrevue' => 'Date prévue (JJ/MM/AAAA)',
+			'admin.evaluations.champDatePrevue' => 'Date prévue',
 			'admin.evaluations.planifierEnvoyer' => 'Planifier',
 			'admin.evaluations.planifierErreur' => ({required Object message}) => 'La planification n\'a pas abouti : ${message}',
 			'admin.evaluations.actionEnregistrerResultat' => 'Enregistrer le résultat',
@@ -16973,11 +17004,11 @@ extension on Traductions {
 			'admin.journal.chaineEnCoursDetail' => 'Relecture de l\'empreinte de chaque entrée.',
 			'admin.journal.periodeSemaine' => '7 derniers jours',
 			'admin.journal.periodeMois' => '30 derniers jours',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.periodeTout' => 'Depuis le début',
 			'admin.journal.tousTypes' => 'Tous les événements',
 			'admin.journal.tousActeurs' => 'Tout le monde',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.colonneQuand' => 'Quand',
 			'admin.journal.colonneQui' => 'Qui',
 			'admin.journal.colonneRole' => 'À quel titre',
@@ -17117,6 +17148,9 @@ extension on Traductions {
 			'admin.agents.libelle' => 'À quoi sert ce jeton',
 			'admin.agents.libelleAide' => 'Obligatoire. Un jeton sans nom est un jeton que personne n\'ose révoquer.',
 			'admin.agents.libelleExemple' => 'Relecture du suivi de Maryam',
+			'admin.agents.libelleAuto' => ({required Object prenom, required Object date, required Object duree}) => 'Observation de ${prenom}, le ${date}, ${duree} h',
+			'admin.agents.manqueLibelle' => 'Il manque le nom du jeton : écrivez à quoi il sert.',
+			'admin.agents.manquePersonne' => 'Il manque la personne observée : choisissez-la dans la liste.',
 			'admin.agents.qui' => 'Qui l\'agent observe',
 			'admin.agents.quiAide' => 'L\'agent verra exactement l\'écran de cette personne, et son parcours sera le sien.',
 			'admin.agents.quiVide' => 'Choisir une personne',
@@ -17484,14 +17518,14 @@ extension on Traductions {
 			'compte.tuteur.pageAcces.aucunePhrase' => 'L\'accès de chaque profil élève s\'affichera ici.',
 			'compte.tuteur.pageAcces.titulaire' => 'Votre compte de titulaire n\'a pas d\'échéance propre : l\'accès se règle profil par profil.',
 			'compte.tuteur.pagePaiements.titre' => 'Paiements et reçus',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pagePaiements.indisponibleTitre' => 'Paiements pas encore consultables',
 			'compte.tuteur.pagePaiements.indisponiblePhrase' => 'L\'historique des paiements, les reçus et les moyens de paiement ne sont pas encore disponibles dans l\'application. Aucun paiement ne vous est demandé ici.',
 			'compte.tuteur.pagePaiements.aucunTitre' => 'Aucun paiement enregistré',
 			'compte.tuteur.pagePaiements.aucunePhrase' => 'Les paiements enregistrés par l\'académie s\'afficheront ici.',
 			'compte.tuteur.pagePaiements.paiementDu' => ({required Object date}) => 'Paiement du ${date}',
 			'compte.tuteur.pagePaiements.justificatif' => 'Justificatif disponible',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pagePreferences.titre' => 'Préférences',
 			'compte.tuteur.pagePreferences.sousTitre' => 'Personnalisez votre expérience sur cet appareil.',
 			'compte.tuteur.pagePreferences.apparence' => 'Apparence',
@@ -17998,14 +18032,14 @@ extension on Traductions {
 			'enseignant.signalement.resume' => 'Résumé partageable',
 			'enseignant.signalement.resumeAide' => 'Peut être partagé avec la famille par l\'académie.',
 			'enseignant.signalement.notice' => 'Les détails internes ne sont pas envoyés automatiquement à la famille.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.signalement.choisirCategorie' => 'Choisissez une catégorie pour continuer.',
 			'enseignant.signalement.detailsRequis' => 'Pour « Autre », dites en quelques mots de quoi il s\'agit.',
 			'enseignant.signalement.envoyer' => 'Envoyer le signalement',
 			'enseignant.signalement.demoSucces' => 'Démonstration : ce signalement est prêt, mais rien n\'a été envoyé.',
 			'enseignant.signalement.demoSuccesDetail' => 'Dans l\'application reliée, il partira vers l\'équipe de l\'académie.',
 			'enseignant.signalement.fermer' => 'Fermer',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.demo.titre' => 'Démonstration enseignant',
 			'enseignant.demo.mention' => 'Données fictives, aucun envoi.',
 			'enseignant.demo.intro' => 'Choisissez un écran de Sayyid Ibrahim.',
@@ -18512,14 +18546,14 @@ extension on Traductions {
 			'controleur.observation.questionTexte' => 'Qu\'avez-vous observé ?',
 			'controleur.observation.texteObligatoire' => 'Votre texte est nécessaire pour cette observation.',
 			'controleur.observation.texteFacultatif' => 'Ce texte est facultatif.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.libelleTexte' => 'Votre remarque',
 			'controleur.observation.aideTexte' => 'Décrivez seulement ce que vous avez observé.',
 			'controleur.observation.texteRequis' => 'Écrivez ce que vous avez observé pour continuer.',
 			'controleur.observation.questionRecap' => 'Vérifiez votre observation avant l\'envoi.',
 			'controleur.observation.cleNature' => 'Nature',
 			'controleur.observation.cleDomaine' => 'Domaine',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.clePersonne' => 'Personne concernée',
 			'controleur.observation.cleTexte' => 'Remarque',
 			'controleur.observation.sansTexte' => 'Aucun texte',
@@ -19026,14 +19060,14 @@ extension on Traductions {
 			'tc.parcours.feedback.cours.difficile' => 'Difficile',
 			'tc.parcours.feedback.cours.bien' => 'Bien',
 			'tc.parcours.feedback.cours.tresBien' => 'Très bien',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.feedback.comprehension.intitule' => 'Avez-vous compris ce qui a été travaillé ?',
 			'tc.parcours.feedback.comprehension.difficile' => 'Pas vraiment',
 			'tc.parcours.feedback.comprehension.bien' => 'Plutôt oui',
 			'tc.parcours.feedback.comprehension.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.rythme.intitule' => 'Le rythme du cours vous a-t-il convenu ?',
 			'tc.parcours.feedback.rythme.difficile' => 'Trop rapide',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.feedback.rythme.bien' => 'Convenable',
 			'tc.parcours.feedback.rythme.tresBien' => 'Très confortable',
 			'tc.parcours.feedback.technique.intitule' => 'Le son et l\'image étaient-ils confortables ?',

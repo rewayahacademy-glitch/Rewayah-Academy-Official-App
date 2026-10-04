@@ -301,16 +301,18 @@ void main() {
 
       await _presser(tester, _carte('e-mariam'));
       await _presser(tester, find.text(niveauFormL2.nomHumain));
-      await tester.enterText(
-        find.widgetWithText(TextField, t.admin.evaluations.champDatePrevue),
-        '15/11/2026',
-      );
+      // FORM-L4 : la date se choisit dans le calendrier, elle ne se tape plus.
+      await _presser(tester, find.byKey(const ValueKey<String>('champ-date')));
+      await tester.tap(find.text('15'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
       await _presser(tester, find.text(t.admin.evaluations.planifierEnvoyer));
 
       expect(evaluations.planifiees, hasLength(1));
       expect(evaluations.planifiees.single.$1, 'e-mariam');
       expect(evaluations.planifiees.single.$2, 'n1');
-      expect(evaluations.planifiees.single.$3, DateTime(2026, 11, 15));
+      expect(evaluations.planifiees.single.$3, DateTime(2026, 10, 15));
     });
   });
 
