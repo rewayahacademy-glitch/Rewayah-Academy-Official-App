@@ -71,6 +71,7 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../acces_finance/acces_finance.dart';
 import '../compte/carte_rubriques.dart' show ColonneSousPage;
 import '../compte/compte_tuteur_page.dart'
     show CarteDeconnexion, CarteIdentiteCompte;
@@ -393,6 +394,17 @@ class MonEspaceAdultePage extends ConsumerWidget {
       ],
     );
 
+    // L'acces de l'eleve adulte autonome (FI-9a, guide §1.2, §1.7) : « Accès
+    // à régulariser » et le manque exact, ou « Essai : n/2 ». Seulement pour
+    // l'adulte seul (« Ajouter ma famille »), une fois la ligne famille lue
+    // (F7, revue EA-R M2) : le titulaire d'une famille lit l'acces de chaque
+    // profil dans son Foyer, le second adulte rattache n'a aucune donnee
+    // financiere propre (lecon 15).
+    final Widget? acces =
+        vue?.ligneFamille == LigneFamilleAdulte.ajouterMaFamille
+        ? AccesAdulte(ecartApres: ecart * 2)
+        : null;
+
     Widget pile(List<Widget> blocs) => Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -419,6 +431,7 @@ class MonEspaceAdultePage extends ConsumerWidget {
             children: <Widget>[
               identite,
               SizedBox(height: ecart * 2),
+              ?acces,
               if (deuxColonnes)
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,

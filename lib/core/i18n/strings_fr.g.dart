@@ -2403,6 +2403,7 @@ class Traductions$argent$fr {
 	late final Traductions$argent$periode$fr periode = Traductions$argent$periode$fr.internal(_root);
 	late final Traductions$argent$moyen$fr moyen = Traductions$argent$moyen$fr.internal(_root);
 	late final Traductions$argent$soldes$fr soldes = Traductions$argent$soldes$fr.internal(_root);
+	late final Traductions$argent$acces$fr acces = Traductions$argent$acces$fr.internal(_root);
 }
 
 // Path: identiteProfil
@@ -11383,6 +11384,39 @@ class Traductions$argent$soldes$fr {
 	String get paiements => 'Paiements du mois';
 }
 
+// Path: argent.acces
+class Traductions$argent$acces$fr {
+	Traductions$argent$acces$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Accès à cette classe temporairement indisponible'
+	String get enfantTitre => 'Accès à cette classe temporairement indisponible';
+
+	/// fr: 'Votre tuteur peut gérer l'accès.'
+	String get enfantMessage => 'Votre tuteur peut gérer l\'accès.';
+
+	/// fr: 'Accès à régulariser'
+	String get regulariserTitre => 'Accès à régulariser';
+
+	/// fr: 'Il manque {montant} pour financer {mois}.'
+	String regulariserManque({required Object montant, required Object mois}) => 'Il manque ${montant} pour financer ${mois}.';
+
+	/// fr: 'Il manque {montant} pour financer la nouvelle période.'
+	String regulariserManqueNouvellePeriode({required Object montant}) => 'Il manque ${montant} pour financer la nouvelle période.';
+
+	/// fr: 'La nouvelle période n'est pas encore financée.'
+	String get regulariserSansManque => 'La nouvelle période n\'est pas encore financée.';
+
+	/// fr: 'Place conservée jusqu'au {date}.'
+	String placeConservee({required Object date}) => 'Place conservée jusqu\'au ${date}.';
+
+	/// fr: 'Essai : {n}/{max}'
+	String essai({required Object n, required Object max}) => 'Essai : ${n}/${max}';
+}
+
 // Path: commun.etats.chargementProlonge
 class Traductions$commun$etats$chargementProlonge$fr {
 	Traductions$commun$etats$chargementProlonge$fr.internal(this._root);
@@ -19900,6 +19934,14 @@ extension on Traductions {
 			'argent.soldes.profilsFinances' => 'Profils financés',
 			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} sur ${total}',
 			'argent.soldes.paiements' => 'Paiements du mois',
+			'argent.acces.enfantTitre' => 'Accès à cette classe temporairement indisponible',
+			'argent.acces.enfantMessage' => 'Votre tuteur peut gérer l\'accès.',
+			'argent.acces.regulariserTitre' => 'Accès à régulariser',
+			'argent.acces.regulariserManque' => ({required Object montant, required Object mois}) => 'Il manque ${montant} pour financer ${mois}.',
+			'argent.acces.regulariserManqueNouvellePeriode' => ({required Object montant}) => 'Il manque ${montant} pour financer la nouvelle période.',
+			'argent.acces.regulariserSansManque' => 'La nouvelle période n\'est pas encore financée.',
+			'argent.acces.placeConservee' => ({required Object date}) => 'Place conservée jusqu\'au ${date}.',
+			'argent.acces.essai' => ({required Object n, required Object max}) => 'Essai : ${n}/${max}',
 			'identiteProfil.age' => ({required Object n}) => '${n} ans',
 			'identiteProfil.classe' => ({required Object classe}) => 'Classe ${classe}',
 			'identiteProfil.ageEtClasse' => ({required Object age, required Object classe}) => '${age} · ${classe}',

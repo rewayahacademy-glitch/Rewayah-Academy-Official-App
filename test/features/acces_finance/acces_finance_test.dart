@@ -1,0 +1,812 @@
+// FI-9a : acces, essai et impaye, pour l'enfant, le tuteur et l'eleve adulte
+// autonome (guide Finance V4 §1.2, §1.7, §8 F5 ; revue FI-1a:77).
+//
+// Ce que ces tests tiennent :
+// - l'enfant ne lit jamais une cause financiere : ni « payé », ni « manque »,
+//   ni « USD », ni un montant, et son ecran ne lit jamais la finance ;
+// - le tuteur et l'adulte autonome lisent le manque exact, mis en mots par
+//   `formaterMontant`, et le mois du debit attendu, rendus par la source ;
+// - « Essai : n/2 » vient des compteurs rendus ;
+// - Rejoindre depend de la periode financee, jamais du solde ;
+// - production (ports neutres), echec, hors ligne : rien n'est invente ;
+// - 320 px, texte 200 %, clair et sombre, LTR et RTL, sans debordement.
+
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/appairage/service_appairage.dart';
+import 'package:rewayah_academy/core/capacites/port_acces_foyer.dart';
+import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
+import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/finance/finances_profil.dart';
+import 'package:rewayah_academy/core/finance/format_montant.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/planning/service_planning.dart';
+import 'package:rewayah_academy/core/priere/service_priere.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/router/app_router.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/bandeau_attention.dart';
+import 'package:rewayah_academy/core/widgets/pastille_financiere.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart';
+import 'package:rewayah_academy/features/acces_finance/acces_finance.dart';
+import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
+import 'package:rewayah_academy/features/compte/acces_page.dart';
+import 'package:rewayah_academy/features/compte/donnees_compte.dart';
+import 'package:rewayah_academy/features/demo/finance_demo.dart';
+import 'package:rewayah_academy/features/foyer/fiche/acces_page.dart';
+import 'package:rewayah_academy/features/foyer/foyer_page.dart';
+import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
+
+import '../../router/support_routeur.dart';
+import '../../support/harnais.dart';
+
+/// L'instant de reference : le 4 octobre 2026, jour de la demonstration.
+final DateTime _maintenant = DateTime(2026, 10, 4, 17);
+
+/// Les acces rendus tels quels, ou un echec.
+class _AccesFixes implements PortAccesFoyer {
+  const _AccesFixes(this.rendus, {this.echec = false});
+
+  final List<AccesBeneficiaire> rendus;
+  final bool echec;
+
+  @override
+  Future<List<AccesBeneficiaire>> acces() async {
+    if (echec) throw Exception('lecture des acces refusee');
+    return rendus;
+  }
+}
+
+/// Un port des paiements qui compte ses lectures de finance : l'ecran de
+/// l'enfant ne doit jamais en faire une (lecon 15).
+class _PaiementsEspion implements PortPaiementsFoyer {
+  _PaiementsEspion(this.foyer);
+
+  final FinancesFoyer foyer;
+  int lecturesFinances = 0;
+
+  @override
+  Future<FinancesFoyer> finances() async {
+    lecturesFinances++;
+    return foyer;
+  }
+
+  @override
+  Future<List<PaiementFoyer>> historique() async => const <PaiementFoyer>[];
+
+  @override
+  Future<PaiementFoyer?> detail(String id) async => null;
+
+  @override
+  Future<SoldesFoyer> soldes() => throw UnimplementedError();
+}
+
+/// L'acces d'Aicha apres ses deux essais, sans periode financee (FIN4-13).
+const AccesBeneficiaire _essaisEpuises = AccesBeneficiaire(
+  eleveId: DonneesFinanceDemo.aichaId,
+  prenom: 'Aïcha',
+  etatAffiche: EtatAccesAffiche.sansEcheance,
+  seancesPayantesOuvertes: false,
+  essaisUtilises: 2,
+  essaisMax: 2,
+);
+
+AccesBeneficiaire _acces(JeuFoyerFinance jeu, String id) =>
+    DonneesFinanceDemo.acces(jeu).firstWhere((AccesBeneficiaire a) {
+      return a.eleveId == id;
+    });
+
+FinancesProfil _finance(JeuFoyerFinance jeu, String id) =>
+    DonneesFinanceDemo.profils(jeu).firstWhere((FinancesProfil p) {
+      return p.profilId == id;
+    });
+
+/// L'eleve adulte autonome a regulariser : 52 $ sur 60, janvier a financer
+/// (l'exemple du guide §1.7).
+final FinancesProfil _adulteARegulariser = FinancesProfil(
+  profilId: 'adulte-autonome',
+  prenom: 'Youssouf',
+  cleAccent: 'accent-adulte',
+  estAdulte: true,
+  etat: EtatFinancier.aRegulariser,
+  solde: DonneesFinanceDemo.usd(52),
+  mensualite: DonneesFinanceDemo.usd(60),
+  prochainDebit: ProchainDebit(
+    date: DateTime(2027),
+    montant: DonneesFinanceDemo.usd(60),
+  ),
+  manque: DonneesFinanceDemo.usd(8),
+  finConservation: DateTime(2027, 1, 8),
+);
+
+FinancesFoyer _foyerDe(FinancesProfil p) => FinancesFoyer(
+  synthese: SyntheseFoyer(
+    totalSoldes: p.solde,
+    aPayerCeMois: p.manque ?? DonneesFinanceDemo.usd(0),
+    profilsFinances: 0,
+    profils: 1,
+    paiementsDuMois: 0,
+  ),
+  profils: <FinancesProfil>[p],
+);
+
+/// L'hote d'un ecran : largeur, texte agrandi, sens et theme au choix.
+Widget _hote(
+  Widget ecran, {
+  List<Override> surcharges = const <Override>[],
+  double echelle = 1,
+  TextDirection sens = TextDirection.ltr,
+  Brightness luminosite = Brightness.light,
+}) => ProviderScope(
+  overrides: surcharges,
+  child: TranslationProvider(
+    child: MaterialApp(
+      theme: AppTheme.pour(InterfaceMode.standard, luminosite),
+      locale: AppLocale.fr.flutterLocale,
+      supportedLocales: AppLocaleUtils.supportedLocales,
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      home: Builder(
+        builder: (BuildContext context) => MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaler: TextScaler.linear(echelle),
+            disableAnimations: true,
+          ),
+          child: Directionality(textDirection: sens, child: ecran),
+        ),
+      ),
+    ),
+  ),
+);
+
+void _taille(WidgetTester tester, Size taille) {
+  tester.view.physicalSize = taille;
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+}
+
+/// Les textes rendus, y compris ceux des `RichText`.
+List<String> _textes(WidgetTester tester) => <String>[
+  for (final Text texte in tester.widgetList<Text>(find.byType(Text)))
+    ?texte.data,
+  for (final RichText r in tester.widgetList<RichText>(find.byType(RichText)))
+    r.text.toPlainText(),
+];
+
+// ---------------------------------------------------------------------------
+// Enfant : accueil eleve.
+
+/// Le cours en direct de l'eleve [eleveId].
+Seance _coursEnDirect(String eleveId) => Seance(
+  id: 's1',
+  debut: _maintenant.subtract(const Duration(minutes: 10)),
+  fin: _maintenant.add(const Duration(minutes: 50)),
+  statut: StatutSeance.enCours,
+  eleveId: eleveId,
+  elevePrenom: 'Ibrahim',
+  eleveIdentifiant: 'STUD-FI-000002',
+  enseignantId: 't1',
+  enseignantPrenom: 'Aminata',
+  enseignantIdentifiant: 'TEACH-AD-000001',
+);
+
+List<Override> _surchargesEnfant({
+  required String eleveId,
+  PortAccesFoyer? acces,
+  PortPaiementsFoyer? paiements,
+  bool horsLigne = false,
+}) => <Override>[
+  servicePlanningProvider.overrideWithValue(
+    FauxServicePlanning()..seancesRendues = <Seance>[_coursEnDirect(eleveId)],
+  ),
+  servicePriereProvider.overrideWithValue(FauxServicePriere()),
+  serviceReseauProvider.overrideWithValue(
+    FauxServiceReseau(horsLigneRendu: horsLigne),
+  ),
+  if (acces != null) portAccesFoyerProvider.overrideWithValue(acces),
+  if (paiements != null)
+    portPaiementsFoyerProvider.overrideWithValue(paiements),
+];
+
+Widget _accueil() => AccueilElevePage(horloge: () => _maintenant);
+
+/// Le bouton Rejoindre, s'il est rendu.
+Finder get _rejoindre => find.byWidgetPredicate(
+  (Widget w) => w is ActionPrincipale && w.libelle == t.eleve.accueil.rejoindre,
+);
+
+/// Aucune cause financiere, aucun montant, aucune devise (guide §1.7).
+void _verifierSansCauseFinanciere(WidgetTester tester) {
+  final RegExp interdit = RegExp(
+    r'pay|manque|usd|\$|€|solde|régularis|financ|\d',
+    caseSensitive: false,
+  );
+  for (final String texte in _textes(tester)) {
+    // Les chiffres de l'horloge et du compte a rebours ne sont pas sur
+    // l'ecran d'un cours en direct : tout chiffre serait un montant.
+    expect(interdit.hasMatch(texte), isFalse, reason: texte);
+  }
+}
+
+void main() {
+  group('regles pures', () {
+    test('Rejoindre suit la periode financee, jamais le solde', () {
+      // Ibrahim a 0 $ et son mois est finance : ouvert (FIN4-08).
+      expect(
+        _finance(
+          JeuFoyerFinance.tousFinances,
+          DonneesFinanceDemo.ibrahimId,
+        ).solde.estNul,
+        isTrue,
+      );
+      expect(
+        ouvertureSeances(
+          _acces(JeuFoyerFinance.tousFinances, DonneesFinanceDemo.ibrahimId),
+        ),
+        OuvertureSeances.ouvertes,
+      );
+      // Ibrahim a 42 $ et sa nouvelle periode n'est pas financee : ferme.
+      expect(
+        _finance(
+          JeuFoyerFinance.unARegulariser,
+          DonneesFinanceDemo.ibrahimId,
+        ).solde.mineur,
+        greaterThan(0),
+      );
+      expect(
+        ouvertureSeances(
+          _acces(JeuFoyerFinance.unARegulariser, DonneesFinanceDemo.ibrahimId),
+        ),
+        OuvertureSeances.fermees,
+      );
+    });
+
+    test('essai : 1/2 ouvert, 2/2 ferme, rien de suppose sans compteur', () {
+      final AccesBeneficiaire essai = _acces(
+        JeuFoyerFinance.unEnEssai,
+        DonneesFinanceDemo.aichaId,
+      );
+      expect(ouvertureSeances(essai), OuvertureSeances.essai);
+      expect(libelleEssai(essai), 'Essai : 1/2');
+      expect(ouvertureSeances(_essaisEpuises), OuvertureSeances.fermees);
+      expect(libelleEssai(_essaisEpuises), 'Essai : 2/2');
+      expect(ouvertureSeances(null), OuvertureSeances.inconnue);
+      expect(
+        ouvertureSeances(
+          const AccesBeneficiaire(
+            eleveId: 'x',
+            prenom: 'X',
+            etatAffiche: EtatAccesAffiche.sansEcheance,
+          ),
+        ),
+        OuvertureSeances.inconnue,
+      );
+    });
+
+    test('tuteur : le manque exact et le mois du debit attendu', () {
+      final FinancesProfil ibrahim = _finance(
+        JeuFoyerFinance.unARegulariser,
+        DonneesFinanceDemo.ibrahimId,
+      );
+      expect(aRegulariser(ibrahim), isTrue);
+      expect(
+        messageRegularisation(ibrahim),
+        t.argent.acces.regulariserManque(
+          montant: formaterMontant(DonneesFinanceDemo.usd(8)),
+          mois: 'octobre',
+        ),
+      );
+      expect(
+        messageRegularisation(_adulteARegulariser),
+        'Il manque 8 \$ pour financer janvier.',
+      );
+      expect(
+        phraseConservation(ibrahim),
+        t.argent.acces.placeConservee(date: '8 octobre 2026'),
+      );
+    });
+
+    test('copies du guide, mot pour mot', () {
+      expect(
+        t.argent.acces.enfantTitre,
+        'Accès à cette classe temporairement indisponible',
+      );
+      expect(t.argent.acces.enfantMessage, "Votre tuteur peut gérer l'accès.");
+      expect(t.argent.acces.regulariserTitre, 'Accès à régulariser');
+    });
+  });
+
+  group('enfant : accueil eleve', () {
+    testWidgets('periode non financee : copie neutre, Rejoindre absent, '
+        'aucune cause, aucune finance lue', (WidgetTester tester) async {
+      final _PaiementsEspion espion = _PaiementsEspion(
+        DonneesFinanceDemo.finances(JeuFoyerFinance.unARegulariser),
+      );
+      await tester.pumpWidget(
+        _hote(
+          _accueil(),
+          surcharges: _surchargesEnfant(
+            eleveId: DonneesFinanceDemo.ibrahimId,
+            acces: const AccesFoyerFinanceDemo(JeuFoyerFinance.unARegulariser),
+            paiements: espion,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(BandeauAccesEnfant.cle), findsOneWidget);
+      expect(find.text(t.argent.acces.enfantTitre), findsOneWidget);
+      expect(find.text(t.argent.acces.enfantMessage), findsOneWidget);
+      expect(_rejoindre, findsNothing);
+      // Le compte reste navigable : le bloc du Coran reste la.
+      expect(find.text(t.eleve.accueil.coran), findsOneWidget);
+      _verifierSansCauseFinanciere(tester);
+      expect(espion.lecturesFinances, 0);
+    });
+
+    testWidgets('essais epuises (2/2) : la meme copie neutre', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        _hote(
+          _accueil(),
+          surcharges: _surchargesEnfant(
+            eleveId: DonneesFinanceDemo.aichaId,
+            acces: const _AccesFixes(<AccesBeneficiaire>[_essaisEpuises]),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(BandeauAccesEnfant.cle), findsOneWidget);
+      expect(_rejoindre, findsNothing);
+      _verifierSansCauseFinanciere(tester);
+    });
+
+    final Map<String, (String, PortAccesFoyer?)> ouverts =
+        <String, (String, PortAccesFoyer?)>{
+          'mois finance a solde nul': (
+            DonneesFinanceDemo.ibrahimId,
+            const AccesFoyerFinanceDemo(JeuFoyerFinance.tousFinances),
+          ),
+          'essai 1/2': (
+            DonneesFinanceDemo.aichaId,
+            const AccesFoyerFinanceDemo(JeuFoyerFinance.unEnEssai),
+          ),
+          'production (port neutre)': (DonneesFinanceDemo.ibrahimId, null),
+          'lecture en echec': (
+            DonneesFinanceDemo.ibrahimId,
+            const _AccesFixes(<AccesBeneficiaire>[], echec: true),
+          ),
+          'eleve absent de la reponse': (
+            'inconnu',
+            const AccesFoyerFinanceDemo(JeuFoyerFinance.unARegulariser),
+          ),
+        };
+    for (final MapEntry<String, (String, PortAccesFoyer?)> cas
+        in ouverts.entries) {
+      testWidgets('${cas.key} : Rejoindre rendu et actif, aucun bandeau', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(
+          _hote(
+            _accueil(),
+            surcharges: _surchargesEnfant(
+              eleveId: cas.value.$1,
+              acces: cas.value.$2,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(find.byKey(BandeauAccesEnfant.cle), findsNothing);
+        expect(_rejoindre, findsOneWidget);
+        expect(tester.widget<ActionPrincipale>(_rejoindre).onPress, isNotNull);
+      });
+    }
+
+    testWidgets('hors ligne et periode financee : Rejoindre present, inerte '
+        '(panne, pas une limite de droit)', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        _hote(
+          _accueil(),
+          surcharges: _surchargesEnfant(
+            eleveId: DonneesFinanceDemo.ibrahimId,
+            acces: const AccesFoyerFinanceDemo(JeuFoyerFinance.tousFinances),
+            horsLigne: true,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(BandeauAccesEnfant.cle), findsNothing);
+      expect(tester.widget<ActionPrincipale>(_rejoindre).onPress, isNull);
+    });
+
+    testWidgets('hors ligne et periode non financee : la copie neutre, sans '
+        'Rejoindre', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        _hote(
+          _accueil(),
+          surcharges: _surchargesEnfant(
+            eleveId: DonneesFinanceDemo.ibrahimId,
+            acces: const AccesFoyerFinanceDemo(JeuFoyerFinance.unARegulariser),
+            horsLigne: true,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(BandeauAccesEnfant.cle), findsOneWidget);
+      expect(_rejoindre, findsNothing);
+    });
+
+    for (final TextDirection sens in TextDirection.values) {
+      for (final Brightness luminosite in Brightness.values) {
+        testWidgets('320 px, texte 200 %, ${sens.name}, ${luminosite.name} : '
+            'aucun debordement', (WidgetTester tester) async {
+          _taille(tester, const Size(320, 900));
+          await tester.pumpWidget(
+            _hote(
+              _accueil(),
+              echelle: 2,
+              sens: sens,
+              luminosite: luminosite,
+              surcharges: _surchargesEnfant(
+                eleveId: DonneesFinanceDemo.ibrahimId,
+                acces: const AccesFoyerFinanceDemo(
+                  JeuFoyerFinance.unARegulariser,
+                ),
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(find.byKey(BandeauAccesEnfant.cle), findsOneWidget);
+          expect(tester.takeException(), isNull);
+        });
+      }
+    }
+  });
+
+  group('tuteur : Compte > Acces', () {
+    List<Override> surcharges(JeuFoyerFinance jeu, {bool finance = true}) =>
+        <Override>[
+          portAccesFoyerProvider.overrideWithValue(AccesFoyerFinanceDemo(jeu)),
+          if (finance)
+            portPaiementsFoyerProvider.overrideWithValue(
+              PaiementsFoyerFinanceDemo(jeu),
+            ),
+        ];
+
+    testWidgets('a regulariser : pastille et manque exact en legende', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(390, 844));
+      await tester.pumpWidget(
+        _hote(
+          const AccesComptePage(),
+          surcharges: surcharges(JeuFoyerFinance.unARegulariser),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(PastilleFinanciere), findsOneWidget);
+      expect(find.text(t.argent.etat.aRegulariser), findsOneWidget);
+      expect(
+        find.text(
+          t.argent.acces.regulariserManque(
+            montant: formaterMontant(DonneesFinanceDemo.usd(8)),
+            mois: 'octobre',
+          ),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('essai : « Essai : 1/2 »', (WidgetTester tester) async {
+      _taille(tester, const Size(390, 844));
+      await tester.pumpWidget(
+        _hote(
+          const AccesComptePage(),
+          surcharges: surcharges(JeuFoyerFinance.unEnEssai),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Essai : 1/2'), findsOneWidget);
+    });
+
+    testWidgets('finance indisponible (production) : la ligne de l echeance, '
+        'aucune cause inventee', (WidgetTester tester) async {
+      _taille(tester, const Size(390, 844));
+      await tester.pumpWidget(
+        _hote(
+          const AccesComptePage(),
+          surcharges: surcharges(
+            JeuFoyerFinance.unARegulariser,
+            finance: false,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(PastilleFinanciere), findsNothing);
+      expect(
+        find.text(t.compte.tuteur.pageAcces.pastilleExpire),
+        findsOneWidget,
+      );
+      expect(find.textContaining('manque'), findsNothing);
+    });
+
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets('320 px, texte 200 %, ${sens.name}, sombre : aucun '
+          'debordement', (WidgetTester tester) async {
+        _taille(tester, const Size(320, 1200));
+        await tester.pumpWidget(
+          _hote(
+            const AccesComptePage(),
+            echelle: 2,
+            sens: sens,
+            luminosite: Brightness.dark,
+            surcharges: surcharges(JeuFoyerFinance.unARegulariser),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+      });
+    }
+  });
+
+  group('tuteur : fiche eleve > Acces', () {
+    Future<void> monter(
+      WidgetTester tester, {
+      required JeuFoyerFinance jeu,
+      required String eleveId,
+      bool finance = true,
+      Size taille = const Size(390, 844),
+    }) async {
+      _taille(tester, taille);
+      final FinancesProfil profil = _finance(jeu, eleveId);
+      final FauxServiceAppairage appairage = FauxServiceAppairage()
+        ..elevesRendus = <EleveDuFoyer>[
+          EleveDuFoyer(
+            id: eleveId,
+            prenom: profil.prenom,
+            identifiantImmuable: 'STUD-FI-000002',
+            mode: InterfaceMode.standard,
+            camera: CameraPolicy.forbidden,
+            finAcces: _acces(jeu, eleveId).finAcces,
+          ),
+        ];
+      late GoRouter routeur;
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: <Override>[
+            ...surchargesRouteur(
+              FausseSourceSession(sessionActive(AppRole.guardian)),
+              appairage: appairage,
+            ),
+            horlogeFoyerProvider.overrideWithValue(() => _maintenant),
+            portAccesFoyerProvider.overrideWithValue(
+              AccesFoyerFinanceDemo(jeu),
+            ),
+            if (finance)
+              portPaiementsFoyerProvider.overrideWithValue(
+                PaiementsFoyerFinanceDemo(jeu),
+              ),
+          ],
+          child: TranslationProvider(
+            child: Consumer(
+              builder: (BuildContext _, WidgetRef ref, Widget? _) {
+                routeur = ref.read(routeurProvider);
+                return MaterialApp.router(
+                  theme: AppTheme.pour(
+                    InterfaceMode.standard,
+                    Brightness.light,
+                  ),
+                  routerConfig: routeur,
+                );
+              },
+            ),
+          ),
+        ),
+      );
+      await stabiliser(tester);
+      routeur.go(Routes.ficheEleveSousPage(eleveId, 'acces'));
+      await stabiliser(tester);
+    }
+
+    testWidgets('a regulariser : « Accès à régulariser », le manque exact, la '
+        'place conservee ; jamais « ne peut plus entrer »', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        jeu: JeuFoyerFinance.unARegulariser,
+        eleveId: DonneesFinanceDemo.ibrahimId,
+      );
+      expect(find.byType(AccesElevePage), findsOneWidget);
+      expect(find.byKey(AccesElevePage.bandeauKey), findsOneWidget);
+      final BandeauAttention bandeau = tester.widget<BandeauAttention>(
+        find.byKey(AccesElevePage.bandeauKey),
+      );
+      expect(bandeau.titre, 'Accès à régulariser');
+      expect(
+        bandeau.message,
+        'Il manque ${formaterMontant(DonneesFinanceDemo.usd(8))} pour '
+        'financer octobre.',
+      );
+      expect(
+        find.text(t.argent.acces.placeConservee(date: '8 octobre 2026')),
+        findsOneWidget,
+      );
+      expect(find.byType(PastilleFinanciere), findsOneWidget);
+      expect(
+        find.text(t.ficheEleve.acces.expirePhrase(prenom: 'Ibrahim')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('essai : la pastille « Essai : 1/2 »', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        jeu: JeuFoyerFinance.unEnEssai,
+        eleveId: DonneesFinanceDemo.aichaId,
+      );
+      expect(
+        tester.widget<StatusPill>(find.byType(StatusPill)).libelle,
+        'Essai : 1/2',
+      );
+      expect(find.byKey(AccesElevePage.bandeauKey), findsNothing);
+    });
+
+    testWidgets('finance indisponible : la carte de l echeance seule', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        jeu: JeuFoyerFinance.unARegulariser,
+        eleveId: DonneesFinanceDemo.ibrahimId,
+        finance: false,
+      );
+      expect(find.byKey(AccesElevePage.bandeauKey), findsNothing);
+      expect(
+        tester.widget<StatusPill>(find.byType(StatusPill)).libelle,
+        t.ficheEleve.acces.pastilleExpire,
+      );
+    });
+
+    testWidgets('320 px : aucun debordement', (WidgetTester tester) async {
+      await monter(
+        tester,
+        jeu: JeuFoyerFinance.unARegulariser,
+        eleveId: DonneesFinanceDemo.ibrahimId,
+        taille: const Size(320, 900),
+      );
+      expect(find.byKey(AccesElevePage.bandeauKey), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('adulte autonome : Mon espace', () {
+    List<Override> surcharges({
+      PortPaiementsFoyer? paiements,
+      PortAccesFoyer? acces,
+      LigneFamilleAdulte? ligne = LigneFamilleAdulte.ajouterMaFamille,
+    }) => <Override>[
+      horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
+      identiteTitulaireProvider.overrideWith(
+        (Ref _) async => const IdentiteTitulaire(
+          prenom: 'Youssouf',
+          nom: 'Diallo',
+          methodeConnexion: MethodeConnexion.lienCourriel,
+        ),
+      ),
+      monEspaceAdulteProvider.overrideWith(
+        (Ref _) async => MonEspaceAdulteVM(ligneFamille: ligne),
+      ),
+      if (paiements != null)
+        portPaiementsFoyerProvider.overrideWithValue(paiements),
+      if (acces != null) portAccesFoyerProvider.overrideWithValue(acces),
+    ];
+
+    testWidgets('a regulariser : « Accès à régulariser » et « Il manque 8 \$ '
+        'pour financer janvier. »', (WidgetTester tester) async {
+      _taille(tester, const Size(390, 1400));
+      await tester.pumpWidget(
+        _hote(
+          const MonEspaceAdultePage(),
+          surcharges: surcharges(
+            paiements: _PaiementsEspion(_foyerDe(_adulteARegulariser)),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(BandeauRegularisation.cle), findsOneWidget);
+      expect(find.text('Accès à régulariser'), findsOneWidget);
+      expect(
+        find.text('Il manque 8 \$ pour financer janvier.'),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.argent.acces.placeConservee(date: '8 janvier 2027')),
+        findsOneWidget,
+      );
+      // Aucun compte ferme : les rubriques restent la.
+      expect(find.text(t.adulte.monEspace.monCompte), findsOneWidget);
+    });
+
+    testWidgets('essai : « Essai : 1/2 »', (WidgetTester tester) async {
+      _taille(tester, const Size(390, 1400));
+      await tester.pumpWidget(
+        _hote(
+          const MonEspaceAdultePage(),
+          surcharges: surcharges(
+            acces: _AccesFixes(<AccesBeneficiaire>[
+              _acces(JeuFoyerFinance.unEnEssai, DonneesFinanceDemo.aichaId),
+            ]),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(AccesAdulte.essaiKey), findsOneWidget);
+      expect(find.text('Essai : 1/2'), findsOneWidget);
+    });
+
+    testWidgets('second adulte rattache : aucune finance lue, aucun bandeau', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(390, 1400));
+      final _PaiementsEspion espion = _PaiementsEspion(
+        _foyerDe(_adulteARegulariser),
+      );
+      await tester.pumpWidget(
+        _hote(
+          const MonEspaceAdultePage(),
+          surcharges: surcharges(
+            paiements: espion,
+            ligne: LigneFamilleAdulte.forfaitFamille,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(BandeauRegularisation.cle), findsNothing);
+      expect(espion.lecturesFinances, 0);
+    });
+
+    testWidgets('production (ports neutres) : rien d invente', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(390, 1400));
+      await tester.pumpWidget(
+        _hote(const MonEspaceAdultePage(), surcharges: surcharges()),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(BandeauRegularisation.cle), findsNothing);
+      expect(find.byKey(AccesAdulte.essaiKey), findsNothing);
+      expect(find.text(t.adulte.monEspace.monCompte), findsOneWidget);
+    });
+
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets('320 px, texte 200 %, ${sens.name} : aucun debordement', (
+        WidgetTester tester,
+      ) async {
+        _taille(tester, const Size(320, 2400));
+        await tester.pumpWidget(
+          _hote(
+            const MonEspaceAdultePage(),
+            echelle: 2,
+            sens: sens,
+            surcharges: surcharges(
+              paiements: _PaiementsEspion(_foyerDe(_adulteARegulariser)),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(find.byKey(BandeauRegularisation.cle), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+    }
+  });
+}

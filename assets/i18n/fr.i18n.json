@@ -4786,6 +4786,16 @@
       "profilsFinances": "Profils financés",
       "profilsFinancesValeur": "{n} sur {total}",
       "paiements": "Paiements du mois"
+    },
+    "acces": {
+      "enfantTitre": "Accès à cette classe temporairement indisponible",
+      "enfantMessage": "Votre tuteur peut gérer l'accès.",
+      "regulariserTitre": "Accès à régulariser",
+      "regulariserManque": "Il manque {montant} pour financer {mois}.",
+      "regulariserManqueNouvellePeriode": "Il manque {montant} pour financer la nouvelle période.",
+      "regulariserSansManque": "La nouvelle période n'est pas encore financée.",
+      "placeConservee": "Place conservée jusqu'au {date}.",
+      "essai": "Essai : {n}/{max}"
     }
   },
   "identiteProfil": {

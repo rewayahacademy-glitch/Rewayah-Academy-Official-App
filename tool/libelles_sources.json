@@ -184,5 +184,13 @@
   "admin.finance.vue.alerte.sousMinimumDetail": "guide Finance V4 du directeur (02/10), §5.6 « Finance - Vue globale » et §8 LOT F7 ; maquette 09 ; lexique de la revue FI-1a (pilotage 17_finance/UX_REVIEW_08_FINANCE.md:298), etape FI-11a ; natures de NatureAlerteFinance (port_finance_direction.dart), K-41",
   "admin.finance.vue.alerte.quiPrenomClasse": "guide Finance V4 du directeur (02/10), §5.6 « Finance - Vue globale » et §8 LOT F7 ; maquette 09 ; lexique de la revue FI-1a (pilotage 17_finance/UX_REVIEW_08_FINANCE.md:298), etape FI-11a ; natures de NatureAlerteFinance (port_finance_direction.dart), K-41",
   "admin.finance.vue.alerte.quiClasse": "guide Finance V4 du directeur (02/10), §5.6 « Finance - Vue globale » et §8 LOT F7 ; maquette 09 ; lexique de la revue FI-1a (pilotage 17_finance/UX_REVIEW_08_FINANCE.md:298), etape FI-11a ; natures de NatureAlerteFinance (port_finance_direction.dart), K-41",
-  "admin.finance.vue.alerte.quiInconnu": "guide Finance V4 du directeur (02/10), §5.6 « Finance - Vue globale » et §8 LOT F7 ; maquette 09 ; lexique de la revue FI-1a (pilotage 17_finance/UX_REVIEW_08_FINANCE.md:298), etape FI-11a ; natures de NatureAlerteFinance (port_finance_direction.dart), K-41"
+  "admin.finance.vue.alerte.quiInconnu": "guide Finance V4 du directeur (02/10), §5.6 « Finance - Vue globale » et §8 LOT F7 ; maquette 09 ; lexique de la revue FI-1a (pilotage 17_finance/UX_REVIEW_08_FINANCE.md:298), etape FI-11a ; natures de NatureAlerteFinance (port_finance_direction.dart), K-41",
+  "argent.acces.enfantTitre": "guide Finance V4 du directeur (02/10) §1.7 « Copie enfant », mot pour mot, etape FI-9a",
+  "argent.acces.enfantMessage": "guide Finance V4 du directeur (02/10) §1.7 « Copie enfant », mot pour mot, etape FI-9a",
+  "argent.acces.regulariserTitre": "guide Finance V4 du directeur (02/10) §1.7 « Copie tuteur / adulte autonome », mot pour mot, etape FI-9a",
+  "argent.acces.regulariserManque": "guide Finance V4 du directeur (02/10) §1.7 « Il manque 8 USD pour financer janvier. », montant par formaterMontant (§7), etape FI-9a",
+  "argent.acces.regulariserManqueNouvellePeriode": "guide Finance V4 du directeur (02/10) §1.7 « la nouvelle période affiche À régulariser », quand la source ne rend pas le mois, etape FI-9a",
+  "argent.acces.regulariserSansManque": "guide Finance V4 du directeur (02/10) §1.7 « Si la nouvelle période n'est pas financée », quand la source ne rend pas de manque, etape FI-9a",
+  "argent.acces.placeConservee": "guide Finance V4 du directeur (02/10) §1.7 « la place peut être conservée 7 jours » (finConservation rendue par la source), etape FI-9a",
+  "argent.acces.essai": "guide Finance V4 du directeur (02/10) §1.2 « Essai : n/2 », FIN4-10, etape FI-9a"
 }

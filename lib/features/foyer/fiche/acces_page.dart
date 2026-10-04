@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/capacites/port_acces_foyer.dart';
+import '../../../core/finance/finances_profil.dart';
 import '../../../core/foyer/selection_eleve.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/widgets/bandeau_attention.dart';
+import '../../../core/widgets/pastille_financiere.dart';
 import '../../../core/widgets/status_pill.dart';
+import '../../acces_finance/acces_finance.dart';
 import '../fiche_eleve_page.dart';
 import '../foyer_page.dart';
 import '../ligne_membre.dart';
@@ -24,6 +28,13 @@ import '../ligne_membre.dart';
 /// jamais valide. Le debut, le statut detaille et le motif n'existent pas
 /// encore cote serveur (DB-FOY-05) : l'ecran le dit une fois, sans inventer
 /// de motif.
+///
+/// FI-9a (guide §1.2, §1.7) : quand la finance du profil dit « a
+/// regulariser », la carte porte la pastille « À régulariser » et la fin de
+/// conservation de la place, et le bandeau « Accès à régulariser » dit le
+/// manque exact ; pendant l'essai, la pastille dit « Essai : n/2 ». Sans
+/// finance lue (chargement, echec, production), la carte reste celle de
+/// l'echeance : rien n'est invente.
 class AccesElevePage extends StatelessWidget {
   /// Cree la page.
   const AccesElevePage({required this.eleveId, super.key});
@@ -36,6 +47,9 @@ class AccesElevePage extends StatelessWidget {
 
   /// Le medaillon de la carte.
   static const Key medaillonKey = Key('ficheEleve.acces.medaillon');
+
+  /// Le bandeau « Accès à régulariser ».
+  static const Key bandeauKey = Key('ficheEleve.acces.regulariser');
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +75,13 @@ class _Acces extends ConsumerWidget {
     final EtatAccesAffiche etat = etatAccesAffiche(
       finAcces: fin,
       maintenantUtc: maintenant.toUtc(),
+    );
+    final FinancesProfil? finances = ref
+        .watch(financesProfilProvider(profil.eleveId))
+        .value;
+    final bool regulariser = aRegulariser(finances);
+    final String? essai = libelleEssai(
+      ref.watch(accesEleveProvider(profil.eleveId)).value,
     );
     final (String pastille, TonEtat ton, String legende) = switch (etat) {
       EtatAccesAffiche.sansEcheance => (
@@ -128,14 +149,20 @@ class _Acces extends ConsumerWidget {
                     ),
                     Ecart.vXs,
                     Text(
-                      legende,
+                      (regulariser ? phraseConservation(finances!) : null) ??
+                          legende,
                       style: palette.inkMuted.applyTo(
                         textes.bodyMedium ?? const TextStyle(),
                       ),
                     ),
                   ],
                 ),
-                StatusPill(libelle: pastille, ton: ton),
+                if (regulariser)
+                  const PastilleFinanciere(etat: EtatFinancier.aRegulariser)
+                else if (essai != null)
+                  StatusPill(libelle: essai, ton: TonEtat.accent)
+                else
+                  StatusPill(libelle: pastille, ton: ton),
               ],
             ),
           ),
@@ -144,12 +171,28 @@ class _Acces extends ConsumerWidget {
     );
 
     return ColonnesFiche(
-      principal: carte,
+      principal: regulariser
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                BandeauAttention(
+                  key: AccesElevePage.bandeauKey,
+                  titre: t.argent.acces.regulariserTitre,
+                  message: messageRegularisation(finances!),
+                ),
+                Ecart.vLg,
+                carte,
+              ],
+            )
+          : carte,
       annexe: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          if (etat == EtatAccesAffiche.expire)
+          // A regulariser, l'eleve garde son compte et sa place (guide
+          // §1.7) : « ne peut plus entrer dans Rewayah » serait faux.
+          if (etat == EtatAccesAffiche.expire && !regulariser)
             NoteFiche(t.ficheEleve.acces.expirePhrase(prenom: profil.prenom)),
           NoteFiche(t.ficheEleve.acces.detailIndisponible),
         ],
