@@ -116,8 +116,10 @@ class EmptyState extends StatelessWidget {
               child: Icon((icone ?? _iconeParDefaut).repos),
             ),
             Ecart.vXl,
-            // Lecon 8 (DASH-MA-PROD) : jamais un mot coupe, meme a 200 %
-            // dans une carte etroite (« l'acadé / mie »).
+            // Aucun mot coupe, meme a 320 px et texte x2 (« aujourd'hu / i »,
+            // ELV-VIDE-COUPE-1, et « l'acadé / mie », DASH-MA-PROD) : le constat et l'invitation passent a la
+            // ligne entre les mots ; le mot le plus long se reduit juste
+            // assez pour tenir. A l'echelle 1, rien ne change.
             TexteSansCoupure(
               message,
               textAlign: TextAlign.center,

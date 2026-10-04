@@ -28,6 +28,8 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
+import '../../core/widgets/raccourci_tactile.dart';
+import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
 
 /// Ce que le bloc principal de `ELV-02` annonce.
@@ -212,7 +214,7 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
               children: <Widget>[
                 Skeleton.tuileBento(hauteur: 160),
                 Ecart.vXl,
-                Skeleton.tuileBento(hauteur: 80),
+                Skeleton.tuileBento(hauteur: 156),
               ],
             )
           : Column(
@@ -577,6 +579,34 @@ class _Interruptions extends StatelessWidget {
 }
 
 /// Le second bloc, permanent : le Coran.
+///
+/// Deux etages, une action par zone (demande du directeur du 04/10/2026 :
+/// « chaque element a part et lisible ») :
+/// - en-tete sans texte : le livre au bord de debut, le haut-parleur au bord
+///   de fin ;
+/// - une [SettingRow] nue : titre, phrase et chevron, le lien qui ouvre le
+///   Coran (`ELV-04`).
+///
+/// Le livre ouvre aussi le Coran : c'est un [RaccourciTactile] du lien,
+/// touchable au doigt et a la souris, hors du clavier et du lecteur d'ecran
+/// (un seul lien « Le Coran »). La tuile ne se presse pas : les cibles sont
+/// soeurs, jamais l'une dans l'autre.
+///
+/// Le haut-parleur dit « Le Coran » a qui ne lit pas encore ; pour le lecteur
+/// d'ecran, c'est le bouton « Ecouter : Le Coran », distinct du lien.
+///
+/// Sur grand ecran, le contenu garde la largeur de la colonne de l'etat vide
+/// ([AppPage.largeurEtatVide]), calee sur le bord de debut de la carte comme
+/// le contenu des autres tuiles Bento (a gauche en LTR, a droite en RTL) : le
+/// haut-parleur reste pres du titre qu'il prononce au lieu de partir au bout
+/// d'une carte de 1 100 points.
+///
+/// Les icones gardent leur taille quand le texte est agrandi (spec
+/// CORAN-CARTE-1, point 6, acte) : elles vivent seules sur leur ligne et
+/// grandissent avec l'Interface guidee (le mode enfant), jamais avec
+/// l'echelle du texte. A 320 points et texte x2, le livre et le haut-parleur
+/// gardent donc leur taille pendant que le titre et la phrase doublent ;
+/// c'est voulu, ce n'est pas un oubli.
 class _BlocCoran extends StatelessWidget {
   const _BlocCoran();
 
@@ -584,30 +614,59 @@ class _BlocCoran extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppMetriques metriques = AppMetriques.of(context);
     final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
+    final double tailleLivre = metriques.estEnfant
+        ? AppSpacing.xxxl
+        : AppSpacing.xxl;
+    // L'en-tete a la hauteur de la cible tactile, le livre y est centre, avec
+    // cet air au-dessus de lui. Le meme air est rendu sous la phrase (la
+    // ligne nue pose son texte en bas de sa cible), pour que la carte
+    // respire autant en haut qu'en bas.
+    final double airEntete = (metriques.cibleTactile - tailleLivre) / 2;
+    void ouvrir() => GoRouter.of(context).go(Routes.eleveCoran);
 
     return BentoTile(
-      libelleSemantique: t.eleve.accueil.coran,
-      onPress: () => GoRouter.of(context).go(Routes.eleveCoran),
-      child: Row(
-        children: <Widget>[
-          IconTheme(
-            data: palette.inkAccent.asIconTheme(
-              size: metriques.estEnfant ? AppSpacing.xxxl : AppSpacing.xxl,
-            ),
-            child: Icon(AppIcons.coran.repos),
+      child: Align(
+        alignment: AlignmentDirectional.topStart,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: AppPage.largeurEtatVide),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  RaccourciTactile(
+                    onPress: ouvrir,
+                    child: Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      widthFactor: 1,
+                      child: IconTheme(
+                        data: palette.inkAccent.asIconTheme(size: tailleLivre),
+                        child: Icon(AppIcons.coran.repos),
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  AudioLabel(
+                    cle: ClesAudio.eleveAccueilCoran,
+                    afficherTexte: false,
+                    alignerEnFin: true,
+                    libelleSemantique: t.eleve.accueil.coranEcouter,
+                  ),
+                ],
+              ),
+              Ecart.vSm,
+              SettingRow(
+                title: t.eleve.accueil.coran,
+                description: t.eleve.accueil.coranDetail,
+                nue: true,
+                lien: true,
+                onPress: ouvrir,
+              ),
+              SizedBox(height: airEntete),
+            ],
           ),
-          Ecart.hMd,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const AudioLabel(cle: ClesAudio.eleveAccueilCoran),
-                Text(t.eleve.accueil.coranDetail, style: textes.bodyMedium),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

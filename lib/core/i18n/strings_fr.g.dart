@@ -7231,6 +7231,9 @@ class Traductions$eleve$accueil$fr {
 	/// fr: 'À lire quand tu veux'
 	String get coranDetail => 'À lire quand tu veux';
 
+	/// fr: 'Écouter : Le Coran'
+	String get coranEcouter => 'Écouter : Le Coran';
+
 	/// fr: 'Prochain cours'
 	String get prochainCours => 'Prochain cours';
 
@@ -17606,6 +17609,7 @@ extension on Traductions {
 			'eleve.accueil.rejoindre' => 'Rejoindre',
 			'eleve.accueil.coran' => 'Le Coran',
 			'eleve.accueil.coranDetail' => 'À lire quand tu veux',
+			'eleve.accueil.coranEcouter' => 'Écouter : Le Coran',
 			'eleve.accueil.prochainCours' => 'Prochain cours',
 			'eleve.accueil.coursEnDirect' => 'Ton cours a commencé',
 			'eleve.accueil.avec' => ({required Object prenom}) => 'Avec ${prenom}',
@@ -18001,6 +18005,11 @@ extension on Traductions {
 			'enseignant.bienvenue.prerequisFuseau' => 'Vérifier mon fuseau horaire',
 			'enseignant.bienvenue.ctaPhoto' => 'Ajouter ma photo',
 			'enseignant.bienvenue.ctaInformations' => 'Vérifier mes informations',
+<<<<<<< HEAD
+=======
+			_ => null,
+		} ?? switch (path) {
+>>>>>>> origin/corrections/c2-elv-vide
 			'enseignant.bienvenue.ctaJournee' => 'Voir ma journée',
 			'enseignant.bienvenue.rappels' => 'Deux choses à ne pas découvrir en cours de route',
 			'enseignant.bienvenue.declarer' => 'Déclarer mes disponibilités',
@@ -18523,6 +18532,11 @@ extension on Traductions {
 			'controleur.echanges.champLibelle' => 'Répondre à l\'administration',
 			'controleur.echanges.envoyer' => 'Envoyer',
 			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
+<<<<<<< HEAD
+=======
+			_ => null,
+		} ?? switch (path) {
+>>>>>>> origin/corrections/c2-elv-vide
 			'controleur.echanges.enCours' => 'Envoi en cours.',
 			'controleur.echanges.envoye' => 'Envoyé.',
 			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
@@ -19037,6 +19051,11 @@ extension on Traductions {
 			'tc.parcours.signalement.categorieValeur.presence' => 'Présence',
 			'tc.parcours.signalement.categorieValeur.technique' => 'Technique',
 			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
+<<<<<<< HEAD
+=======
+			_ => null,
+		} ?? switch (path) {
+>>>>>>> origin/corrections/c2-elv-vide
 			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
 			'tc.parcours.signalement.interne' => 'Note interne',
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',

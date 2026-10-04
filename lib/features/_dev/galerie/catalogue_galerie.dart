@@ -1023,6 +1023,17 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           afficherTexte: false,
         ),
       ),
+      EtatGalerie(
+        'sans texte, aligne en fin',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topEnd,
+          child: AudioLabel(
+            cle: ClesAudio.eleveAccueilRejoindre,
+            afficherTexte: false,
+            alignerEnFin: true,
+          ),
+        ),
+      ),
     ],
   ),
   EntreeGalerie(
@@ -1700,6 +1711,20 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
     nom: 'SettingRow',
     famille: FamilleComposant.carteCliquable,
     etats: <EtatGalerie>[
+      // CORAN-CARTE-3 : la ligne nue, sans icone, posee dans une carte qui
+      // porte deja fond et marge ; annoncee comme lien.
+      EtatGalerie(
+        'nue, lien, dans une BentoTile',
+        (BuildContext _) => const BentoTile(
+          child: SettingRow(
+            title: 'Le Coran',
+            description: 'À lire quand tu veux',
+            nue: true,
+            lien: true,
+            onPress: _rien,
+          ),
+        ),
+      ),
       EtatGalerie(
         'default',
         (BuildContext _) => const SettingRow(

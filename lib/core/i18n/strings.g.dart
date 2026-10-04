@@ -4,7 +4,11 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 2
+<<<<<<< HEAD
 /// Strings: 4035 (2017 per locale)
+=======
+/// Strings: 4018 (2009 per locale)
+>>>>>>> origin/corrections/c2-elv-vide
 
 // coverage:ignore-file
 // ignore_for_file: type=lint, unused_import
