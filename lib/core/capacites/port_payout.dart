@@ -177,6 +177,44 @@ class SuiviPayout {
   final DateTime? miseAJour;
 }
 
+/// Pourquoi la source refuse une soumission (§41, §47 ; DR-13). Un refus
+/// n'envoie **rien** : aucun paiement du lot n'est parti.
+enum MotifRefusPayout {
+  /// Une obligation a ete recalculee depuis le preflight (R-FIN-18) : sa
+  /// version a change, l'ancien montant ne part pas.
+  versionChangee,
+
+  /// La cle d'idempotence ou l'obligation a deja ete soumise : le suivi
+  /// existant fait foi, rien n'est renvoye.
+  dejaSoumis,
+
+  /// Le cumul depasse la delegation (par Comptable, par beneficiaire, par
+  /// periode : jamais par lot, donc aucun contournement par fractionnement).
+  horsDelegation,
+
+  /// Le preflight est perime ou inconnu : il faut le relancer.
+  preflightPerime,
+
+  /// Le prestataire est devenu indisponible pour ce corridor.
+  fournisseurIndisponible,
+}
+
+/// Le refus d'une soumission par la source, avec les obligations en cause.
+@immutable
+class RefusPayout implements Exception {
+  /// Cree le refus.
+  const RefusPayout(this.motif, {this.obligationIds = const <String>[]});
+
+  /// Le motif rendu.
+  final MotifRefusPayout motif;
+
+  /// Les obligations en cause (une version changee, un doublon).
+  final List<String> obligationIds;
+
+  @override
+  String toString() => 'RefusPayout(${motif.name}, $obligationIds)';
+}
+
 /// Une demande de validation deposee (§21.4) : « Validation demandee ».
 @immutable
 class DemandeValidationDeposee {
@@ -203,7 +241,10 @@ abstract interface class PortPayout {
   Future<PreflightLot> preflight(List<ObligationChoisie> selection);
 
   /// Soumet les seuls prets d'un preflight, une fois, avec la cle
-  /// d'idempotence generee par l'app et rejouee telle quelle.
+  /// d'idempotence generee par l'app et rejouee telle quelle : la meme cle
+  /// rend le meme suivi, sans second envoi. Jette [RefusPayout] quand la
+  /// source refuse (rien n'est parti) ; toute autre erreur laisse l'issue
+  /// inconnue (la reponse a pu se perdre apres l'envoi).
   Future<List<SuiviPayout>> soumettre({
     required String preflightId,
     required String cleIdempotence,
@@ -212,10 +253,12 @@ abstract interface class PortPayout {
   /// Le suivi d'un payout (depuis le webhook du prestataire).
   Future<SuiviPayout> suivre(String payoutId);
 
-  /// Demande une validation pour un payout sensible (§21.4).
+  /// Demande une validation pour un payout sensible (§21.4), une fois par
+  /// [cleIdempotence].
   Future<DemandeValidationDeposee> demanderValidation({
     required String obligationId,
     required String motif,
+    required String cleIdempotence,
   });
 }
 
@@ -244,6 +287,7 @@ class PayoutIndisponible implements PortPayout {
   Future<DemandeValidationDeposee> demanderValidation({
     required String obligationId,
     required String motif,
+    required String cleIdempotence,
   }) => Future<DemandeValidationDeposee>.error(_manque);
 }
 

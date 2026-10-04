@@ -5302,6 +5302,110 @@
       "voirTout": "Voir tout"
     },
     "paiements": {
+      "filtres": {
+        "tous": "Tous",
+        "enseignants": "Enseignants",
+        "contractuels": "Contractuels",
+        "statut": "Statut",
+        "tousStatuts": "Tous les statuts",
+        "prets": "Prêts",
+        "infos": "Infos manquantes",
+        "verification": "Vérification",
+        "validation": "Validation",
+        "retard": "En retard",
+        "classe": "Classe",
+        "toutesClasses": "Toutes les Classes",
+        "periode": "Période",
+        "toutesPeriodes": "Toutes les périodes",
+        "effacer": "Effacer les filtres"
+      },
+      "colonnes": {
+        "beneficiaire": "Bénéficiaire",
+        "type": "Type",
+        "periode": "Période / objet",
+        "montant": "Montant",
+        "destination": "Destination",
+        "echeance": "Échéance",
+        "statut": "Statut",
+        "action": "Action"
+      },
+      "types": {
+        "enseignant": "Enseignant",
+        "contractuel": "Contractuel"
+      },
+      "compteur": {
+        "one": "Un paiement",
+        "other": "{n} paiements"
+      },
+      "actions": {
+        "voir": "Voir",
+        "payer": "Payer",
+        "demanderValidation": "Demander validation",
+        "relancer": "Relancer",
+        "signalerEcart": "Signaler un écart",
+        "selectionner": "Sélectionner le paiement de {nom}",
+        "selectionnerPrets": "Sélectionner tous les paiements prêts",
+        "payerSelection": "Payer la sélection",
+        "viderSelection": "Vider la sélection",
+        "voirProfil": "Voir le profil de paiement"
+      },
+      "selection": {
+        "one": "Un paiement sélectionné",
+        "other": "{n} paiements sélectionnés"
+      },
+      "selectionPhrase": "Le total et les exclusions sont rendus par le contrôle, avant tout envoi.",
+      "horsLigneCourt": "Hors ligne : paiement impossible",
+      "vide": {
+        "message": "Aucun paiement à effectuer.",
+        "invitation": "Les obligations apparaissent ici dès qu'elles sont calculées à la source.",
+        "filtreMessage": "Aucun paiement ne correspond à ces filtres.",
+        "filtreInvitation": "Effacez les filtres pour revoir tous les paiements."
+      },
+      "horsLigne": "Hors ligne : aucun paiement ne part sans réseau. Reconnectez-vous pour payer.",
+      "detail": {
+        "total": "Total à payer",
+        "lignes": "Détail du calcul",
+        "ligneTotal": "Total",
+        "source": "Source : {source}",
+        "auteur": "Ajouté par {auteur}",
+        "voirSource": "Voir la source",
+        "methode": "Méthode de paiement",
+        "informations": "Informations",
+        "type": "Type",
+        "periode": "Période / objet",
+        "echeance": "Échéance",
+        "prestataire": "Prestataire prévu",
+        "preuve": "Preuve",
+        "classes": "Classes",
+        "version": "Version du calcul",
+        "historique": "Historique",
+        "historiqueVide": "Aucune opération enregistrée pour ce paiement.",
+        "encart": "Le Comptable ne peut modifier ni le montant ni les coordonnées de paiement du bénéficiaire.",
+        "alerteMethodeRecente": "Méthode de paiement modifiée le {date} : une validation supplémentaire est requise avant tout paiement.",
+        "alerteLieeOperateur": "Bénéficiaire lié à l'opérateur : une validation supplémentaire est requise avant tout paiement.",
+        "alerteEchec": "Le dernier envoi a échoué chez le prestataire. Vérifiez la méthode de paiement avant une nouvelle tentative.",
+        "alerteInfos": "Le bénéficiaire n'a pas encore de méthode de paiement complète. Relancez-le depuis son profil de paiement.",
+        "alerteTitre": "À savoir avant de payer",
+        "autoPaiementPhrase": "Ce paiement vous concerne : une autre personne habilitée le traitera. Personne ne peut exécuter son propre paiement.",
+        "introuvableTitre": "Ce paiement est introuvable.",
+        "introuvablePhrase": "Revenez à la liste des paiements à effectuer pour choisir un autre paiement."
+      },
+      "ecart": {
+        "titre": "Signaler un écart",
+        "phrase": "Choisissez la ligne et ce qui ne va pas. La correction se fait à la source, puis le montant est recalculé.",
+        "ligne": "Ligne concernée",
+        "motif": "Ce qui ne va pas",
+        "motifs": {
+          "montantLigne": "Le montant de cette ligne ne correspond pas",
+          "ligneManquante": "Une ligne manque (séance, remplacement, bonus)",
+          "ligneEnTrop": "Cette ligne ne devrait pas être là",
+          "sourceErronee": "La source citée n'est pas la bonne"
+        },
+        "envoyer": "Envoyer le signalement",
+        "annuler": "Annuler",
+        "envoye": "Écart signalé le {date}. Le montant reste celui de la source jusqu'au recalcul.",
+        "erreurEnvoi": "Le signalement n'a pas abouti. Réessayez : il ne sera enregistré qu'une fois."
+      },
       "titre": "Paiements à effectuer",
       "sousTitre": "Montants calculés à la source : ici on vérifie et on paie, on ne modifie rien.",
       "detailTitre": "Détail du paiement",

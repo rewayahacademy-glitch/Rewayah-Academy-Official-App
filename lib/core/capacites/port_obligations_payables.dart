@@ -96,6 +96,21 @@ class FiltreObligations {
 
   /// La Classe (`?classe=`).
   final String? classe;
+
+  /// Vrai quand aucun filtre n'est pose.
+  bool get estVide => filtre == null && type == null && classe == null;
+
+  // L'egalite par valeur : le filtre sert de cle a la lecture de la liste
+  // (`obligationsPayablesProvider`), deux filtres egaux lisent une fois.
+  @override
+  bool operator ==(Object other) =>
+      other is FiltreObligations &&
+      other.filtre == filtre &&
+      other.type == type &&
+      other.classe == classe;
+
+  @override
+  int get hashCode => Object.hash(filtre, type, classe);
 }
 
 /// Un signalement d'ecart depose (§13.4).
@@ -130,12 +145,15 @@ abstract interface class PortObligationsPayables {
   /// Le detail d'une obligation (W03).
   Future<ObligationPayable> detail(String obligationId);
 
-  /// « Signaler un ecart » sur une ligne, avec un motif libre et **aucun
-  /// montant** (R-FIN-17).
+  /// « Signaler un ecart » sur une ligne, avec un motif choisi et **aucun
+  /// montant** (R-FIN-17). [cleIdempotence] est generee par l'app une fois
+  /// par signalement et rejouee telle quelle : un double appui ou une
+  /// reponse perdue ne cree qu'un signalement (`CPT-BR.md` §1).
   Future<SignalementEcart> signalerEcart({
     required String obligationId,
     required String ligneId,
     required String motif,
+    required String cleIdempotence,
   });
 
   /// Le journal d'une obligation (CPT-BR-17).
@@ -162,6 +180,7 @@ class ObligationsPayablesIndisponibles implements PortObligationsPayables {
     required String obligationId,
     required String ligneId,
     required String motif,
+    required String cleIdempotence,
   }) => Future<SignalementEcart>.error(_manque);
 
   @override
