@@ -271,20 +271,27 @@ abstract final class DonneesSeanceDemo {
     pages: 12,
   );
 
+  /// La version du Chapitre 1 : portee par son detail et par la page fixe.
+  static const String _versionChapitre1 = 'v2.0';
+
+  /// Le Chapitre 1, rubrique Reprendre : la seule source de son identifiant,
+  /// de son titre, de sa version et de son nombre de pages (`support`).
+  static const SupportDisponible chapitre1 = SupportDisponible(
+    id: 'demo-chapitre-1',
+    surTitre: 'Chapitre 1',
+    titre: 'Les bonnes manières',
+    detail: 'Support de cours · $_versionChapitre1',
+    rubrique: RubriqueSupport.reprendre,
+    type: TypeRessource.lecon,
+    teinte: 9,
+    monogramme: 'BM',
+    contenu: support,
+  );
+
   /// Le panneau Supports (CLV-08) : Reprendre, deux Recents, le fonds de la
   /// Classe. « Ouvrir » montre `contenu` dans la salle de demonstration.
   static const List<SupportDisponible> supports = <SupportDisponible>[
-    SupportDisponible(
-      id: 'demo-chapitre-1',
-      surTitre: 'Chapitre 1',
-      titre: 'Les bonnes manières',
-      detail: 'Support de cours · v2.0',
-      rubrique: RubriqueSupport.reprendre,
-      type: TypeRessource.lecon,
-      teinte: 9,
-      monogramme: 'BM',
-      contenu: support,
-    ),
+    chapitre1,
     SupportDisponible(
       id: 'demo-fiche-memorisation',
       titre: 'Fiche de mémorisation',
@@ -389,15 +396,16 @@ abstract final class DonneesSeanceDemo {
   static const int largeurPage = 1240;
   static const int hauteurPage = 1754;
 
-  /// Le support a page fixe presente : le Chapitre 1 du panneau Supports
-  /// (meme identifiant, meme version, meme nombre de pages). Une page neutre
-  /// marquee « Support illustratif » : aucune page de Coran (TB27).
-  static const SupportPageFixe supportPageFixe = SupportPageFixe(
-    id: 'demo-chapitre-1',
-    version: 'v2.0',
-    titre: 'Les bonnes manières',
+  /// Le support a page fixe presente : le Chapitre 1 du panneau Supports,
+  /// derive de [chapitre1] (meme identifiant, meme titre, meme version, meme
+  /// nombre de pages). Une page neutre marquee « Support illustratif » :
+  /// aucune page de Coran (TB27).
+  static final SupportPageFixe supportPageFixe = SupportPageFixe(
+    id: chapitre1.id,
+    version: _versionChapitre1,
+    titre: chapitre1.titre,
     page: 1,
-    total: 12,
+    total: chapitre1.contenu!.pages,
     largeurCanonique: largeurPage,
     hauteurCanonique: hauteurPage,
     mention: 'Support illustratif',

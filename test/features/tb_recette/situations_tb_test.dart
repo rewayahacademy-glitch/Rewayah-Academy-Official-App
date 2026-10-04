@@ -11,7 +11,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/router/redirection.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_etat_partage/shared_content_state.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart'
     show TitreEnseignant;
@@ -72,11 +74,14 @@ void main() {
     });
 
     test('support a page fixe : celui du panneau, ratio des donnees', () {
-      const SupportPageFixe p = DonneesSeanceDemo.supportPageFixe;
+      final SupportPageFixe p = DonneesSeanceDemo.supportPageFixe;
       final SupportDisponible chapitre = DonneesSeanceDemo.supports.firstWhere(
         (SupportDisponible s) => s.id == p.id,
       );
-      expect(chapitre.detail, contains(p.version));
+      expect(chapitre.rubrique, RubriqueSupport.reprendre);
+      expect(chapitre.detail, endsWith(' · ${p.version}'));
+      expect(p.titre, chapitre.titre);
+      expect(p.total, chapitre.contenu!.pages);
       expect(p.total, DonneesSeanceDemo.support.pages);
       expect(p.page, 1);
       expect(p.ratio, closeTo(1240 / 1754, 1e-9));
@@ -132,6 +137,35 @@ void main() {
         expect(autorise.peutEcrire, isTrue);
         expect(autorise.elevesAutorisesAEcrire.single.prenom, 'Mariam');
       }
+    });
+
+    test('peutEcrire : sans eleve courant, personne n\'ecrit cote eleve', () {
+      // Une ligne autorisee existe : seul le prenom manquant doit fermer.
+      final VueSeance base = DonneesSeanceDemo.vueTb(
+        RoleSeance.eleve,
+        SituationTb.autorisationEcrire,
+      );
+      expect(base.peutEcrire, isTrue);
+      final VueSeance sansEleve = VueSeance(
+        role: RoleSeance.eleve,
+        nomClasse: base.nomClasse,
+        nomEnseignant: base.nomEnseignant,
+        initialesEnseignant: base.initialesEnseignant,
+        eleves: base.eleves,
+      );
+      expect(sansEleve.prenomEleve, isNull);
+      expect(sansEleve.elevesAutorisesAEcrire, hasLength(1));
+      expect(sansEleve.peutEcrire, isFalse);
+      // L'enseignant ecrit toujours, meme sans eleve courant.
+      expect(
+        VueSeance(
+          role: RoleSeance.enseignant,
+          nomClasse: base.nomClasse,
+          nomEnseignant: base.nomEnseignant,
+          initialesEnseignant: base.initialesEnseignant,
+        ).peutEcrire,
+        isTrue,
+      );
     });
 
     test('hors situation TB, la salle garde ses donnees d\'avant', () {
@@ -209,6 +243,92 @@ void main() {
         });
       }
     }
+  });
+
+  group('Les donnees de la situation arrivent a l\'ecran', () {
+    // Telephone pour les panneaux : sur bureau, le panneau Eleves est ouvert
+    // d'office (EN-9) et ne distinguerait pas la situation.
+    Future<void> ouvrir(
+      WidgetTester tester,
+      RoleSeance role,
+      SituationTb s, {
+      Size taille = const Size(390, 844),
+    }) async {
+      final GoRouter routeur = await monterRouteur(
+        tester,
+        adresseDemoSalleTb(role, s),
+        taille: taille,
+      );
+      expect(lieu(routeur), adresseDemoSalleTb(role, s));
+      expect(tester.takeException(), isNull);
+    }
+
+    testWidgets('SAL-00 enseignant : compteur des quatre inscrits', (
+      WidgetTester tester,
+    ) async {
+      await ouvrir(
+        tester,
+        RoleSeance.enseignant,
+        SituationTb.sal00,
+        taille: const Size(1440, 900),
+      );
+      // vueTb : quatre inscrits dont deux connectes ; la salle d'avant TB-1b
+      // n'en a que trois.
+      expect(find.text('Élèves 2/4'), findsWidgets);
+      expect(find.textContaining('/3'), findsNothing);
+    });
+
+    testWidgets('PER-01 enseignant : panneau Eleves ouvert', (
+      WidgetTester tester,
+    ) async {
+      await ouvrir(tester, RoleSeance.enseignant, SituationTb.per01);
+      expect(
+        find.byKey(const ValueKey<String>('panneau-eleves')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('LIB-01 enseignant : panneau Supports ouvert', (
+      WidgetTester tester,
+    ) async {
+      await ouvrir(tester, RoleSeance.enseignant, SituationTb.lib01);
+      final Finder panneau = find.byKey(
+        const ValueKey<String>('panneau-supports'),
+      );
+      expect(panneau, findsOneWidget);
+      expect(
+        find.descendant(
+          of: panneau,
+          matching: find.text(DonneesSeanceDemo.supports.first.titre),
+        ),
+        findsWidgets,
+      );
+    });
+  });
+
+  group('Garde de la demonstration (/demo/salle?tb=...)', () {
+    test('la route n\'existe pas en production', () {
+      expect(routesDemoSalle('production'), isEmpty);
+      expect(routesDemoSalle(' Production '), isEmpty);
+      expect(routesDemoSalle(''), isEmpty);
+      expect(routesDemoSalle('development'), hasLength(1));
+    });
+
+    test('la porte ne laisse passer la situation que hors production', () {
+      final String adresse = adresseDemoSalleTb(
+        RoleSeance.enseignant,
+        SituationTb.ped03,
+      );
+      String? decider(String environnement) => deciderRedirection(
+        session: const SessionState.deconnecte(),
+        cheminDemande: Routes.demoSalle,
+        cheminComplet: adresse,
+        maintenant: DateTime.utc(2026, 10, 4),
+        environnement: environnement,
+      );
+      expect(decider('production'), isNotNull);
+      expect(decider('development'), isNull);
+    });
   });
 
   testWidgets('une situation sans objet pour le role ramene a la liste', (
