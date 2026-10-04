@@ -1,5 +1,7 @@
 # Test de mise en balance de l'intérêt légitime (LIA) : visites de contrôle
 
+> **Statut mis à jour le 04/10/2026.** Le directeur a écrit « je signe » le 02/10/2026 (`SIGNATURES_2026-10-02.md:9`). La pièce est donc **adoptée** (signée), et non plus à l'état de projet. Le texte ci-dessous n'a pas été modifié (K-26) : les mentions « projet », « à signer » ou « à valider » qui y restent sont celles d'avant la signature.
+
 **Statut.** Relecture juridique par un agent, 02/10/2026. Ce document complète `../DPIA_CONTROLEUR.md` (partie 4.1, point « à faire » n° 8). Il est signé avec la DPIA par le directeur. Il ne remplace pas l'avis d'un avocat britannique, conseillé avant la production, mais il tranche pour que le travail avance.
 
 **Cadre.** UK GDPR art. 5, 6(1)(f), 13, 14 et 21 ; Data Protection Act 2018 ; guide de l'ICO « Legitimate interests » (méthode en trois tests : finalité, nécessité, mise en balance) ; guide de l'ICO « Employment practices and data protection: monitoring workers » (cité ICO-MW dans la DPIA) ; Children's Code de l'ICO (ICO-AADC). Le RGPD (UE) a le même article 6(1)(f) : ce test vaut aussi pour les personnes situées dans l'UE (voir `RGPD_UE.md`).

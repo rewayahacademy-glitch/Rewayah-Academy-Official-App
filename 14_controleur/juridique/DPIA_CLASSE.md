@@ -1,4 +1,6 @@
-# DPIA de la Classe en visio, avec enregistrement audio (projet)
+# DPIA de la Classe en visio, avec enregistrement audio (signée le 02/10/2026)
+
+> **Statut mis à jour le 04/10/2026.** Le directeur a écrit « je signe » le 02/10/2026 (`SIGNATURES_2026-10-02.md:8`). La pièce est donc **adoptée** (signée), et non plus à l'état de projet. Le texte ci-dessous n'a pas été modifié (K-26) : les mentions « projet », « à signer » ou « à valider » qui y restent sont celles d'avant la signature.
 
 **Statut.** Projet rédigé par un agent juriste le 02/10/2026 (lot JUR-SUITE-1). Il répond au point « à faire » n° 2 de `../DPIA_CONTROLEUR.md`. Il n'est pas valable tant que le directeur ne l'a pas signé (partie 9). Il ne remplace pas un avocat britannique ; il tranche pour que le travail avance.
 
@@ -158,12 +160,12 @@ Le traitement est déjà réduit au nécessaire. **Réussi.**
 
 | Point | Nom, date | Remarque |
 |---|---|---|
-| Mesures et LIA approuvées | Directeur : **à signer** | |
-| Risques résiduels acceptés | Directeur : **à signer** | 2 moyens : C2 (capture par une famille), C9 (jusqu'à vérification) |
+| Mesures et LIA approuvées | Directeur : **signé le 02/10/2026** | |
+| Risques résiduels acceptés | Directeur : **signé le 02/10/2026** | 2 moyens : C2 (capture par une famille), C9 (jusqu'à vérification) |
 | Avis d'un avocat britannique | Recommandé, sans bloquer | Accès aux enregistrements contenant d'autres enfants ; transferts du service vidéo |
 | Revue | À l'ouverture réelle, puis chaque année | |
 
-Signature du directeur : ____________________  Date : ____________
+Signature du directeur : « je signe » (02/10/2026, voir `SIGNATURES_2026-10-02.md:8`)
 
 ## Ce qui reste à faire
 

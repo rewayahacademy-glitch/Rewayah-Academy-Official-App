@@ -1,4 +1,6 @@
-# Politique de contrôle des enseignants (projet) et clause du contrat
+# Politique de contrôle des enseignants (validée le 02/10/2026) et clause du contrat
+
+> **Statut mis à jour le 04/10/2026.** Le directeur a écrit « je valide » le 02/10/2026 (`SIGNATURES_2026-10-02.md:11`). La pièce est donc **adoptée** (signée), et non plus à l'état de projet. Le texte ci-dessous n'a pas été modifié (K-26) : les mentions « projet », « à signer » ou « à valider » qui y restent sont celles d'avant la signature.
 
 **Statut.** Projet rédigé par un agent juriste, 02/10/2026, à valider par le directeur. Ce texte est publié aux enseignants **avant la première visite réelle** (doc 08 §14.1, ICO-MW). Il reprend les décisions B1 à B15 du 02/10 (`../BLOQUANTS_ET_IMPACTS.md` §1 bis). Version française pour le directeur ; la version anglaise, qui fera foi dans l'application, sera faite à LG-1 sur ce texte validé.
 

@@ -1,4 +1,6 @@
-# Corrections proposées aux textes A0 et A3 (propositions)
+# Corrections proposées aux textes A0 et A3 (validées le 02/10/2026)
+
+> **Statut mis à jour le 04/10/2026.** Le directeur a écrit « je valide » le 02/10/2026 (`SIGNATURES_2026-10-02.md:14`). La pièce est donc **adoptée** (signée), et non plus à l'état de projet. Le texte ci-dessous n'a pas été modifié (K-26) : les mentions « projet », « à signer » ou « à valider » qui y restent sont celles d'avant la signature.
 
 **Statut.** Propositions d'un agent juriste, 02/10/2026 (lot JUR-SUITE-1), **à valider par le directeur**. **Rien n'est appliqué dans l'application** : ni dans `assets/i18n`, ni dans `09_consentements/TEXTES_V2.md`. Le directeur lit la version française ; la version anglaise fera foi dans l'application ; les trois autres langues viendront à LG-1, traduites depuis l'anglais validé.
 

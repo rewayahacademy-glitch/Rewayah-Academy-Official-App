@@ -1,4 +1,6 @@
-# DPIA du rôle Contrôleur (projet)
+# DPIA du rôle Contrôleur (signée le 02/10/2026)
+
+> **Statut mis à jour le 04/10/2026.** Le directeur a écrit « je signe » le 02/10/2026 (`juridique/SIGNATURES_2026-10-02.md:7`). La pièce est donc **adoptée** (signée), et non plus à l'état de projet. Le texte ci-dessous n'a pas été modifié (K-26) : les mentions « projet », « à signer » ou « à valider » qui y restent sont celles d'avant la signature.
 
 **Statut.** Projet, rédigé le 02/10/2026 par l'orchestrateur, à la demande du directeur (B6 : « à toi de le faire »). Il n'est pas valable tant que le directeur ne l'a pas signé (partie 7). L'avis d'un juriste est recommandé avant la production.
 
@@ -244,14 +246,14 @@ Pour les élèves et enseignants de l'UE, les mêmes mesures répondent aux arti
 
 | Point | Nom, date | Décision ou remarque |
 |---|---|---|
-| Mesures approuvées par | Directeur : **à signer** | |
-| Risques résiduels approuvés par | Directeur : **à signer** | Aucun résiduel élevé si BR-1 est fait ; 4 moyens à accepter (R2, R4, R10, R12). |
+| Mesures approuvées par | Directeur : **signé le 02/10/2026** | |
+| Risques résiduels approuvés par | Directeur : **signé le 02/10/2026** | Aucun résiduel élevé si BR-1 est fait ; 4 moyens à accepter (R2, R4, R10, R12). |
 | Avis du DPO | **À faire** (aucun DPO désigné) | |
 | Avis d'un juriste britannique | **Recommandé avant la production** | Base légale et LIA, art. 9, transferts, demandes d'accès, représentant UE, DPO. |
 | Avis des enseignants et des familles | **À faire** (partie 3) | |
 | Date de revue | **À faire** : proposée à l'ouverture réelle, puis chaque année, ou à tout changement important. | |
 
-Signature du directeur : ____________________  Date : ____________
+Signature du directeur : « je signe » (02/10/2026, voir `juridique/SIGNATURES_2026-10-02.md:7`)
 
 ---
 

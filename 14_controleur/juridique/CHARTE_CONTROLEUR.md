@@ -1,4 +1,6 @@
-# Charte de confidentialité du contrôleur (projet)
+# Charte de confidentialité du contrôleur (validée le 02/10/2026)
+
+> **Statut mis à jour le 04/10/2026.** Le directeur a écrit « je valide » le 02/10/2026 (`SIGNATURES_2026-10-02.md:12`). La pièce est donc **adoptée** (signée), et non plus à l'état de projet. Le texte ci-dessous n'a pas été modifié (K-26) : les mentions « projet », « à signer » ou « à valider » qui y restent sont celles d'avant la signature.
 
 **Statut.** Projet rédigé par un agent juriste le 02/10/2026 (lot JUR-SUITE-1), **à valider par le directeur**. Il traite le point « à faire » n° 14 de `../DPIA_CONTROLEUR.md` (mesures R2, R6, R11, R17). Rien n'est appliqué dans l'application.
 

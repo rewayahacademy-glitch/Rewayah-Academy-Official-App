@@ -1,4 +1,6 @@
-# Information des élèves et des parents sur les visites de contrôle (projets)
+# Information des élèves et des parents sur les visites de contrôle (validés le 02/10/2026)
+
+> **Statut mis à jour le 04/10/2026.** Le directeur a écrit « je valide » le 02/10/2026 (`SIGNATURES_2026-10-02.md:13`). La pièce est donc **adoptée** (signée), et non plus à l'état de projet. Le texte ci-dessous n'a pas été modifié (K-26) : les mentions « projet », « à signer » ou « à valider » qui y restent sont celles d'avant la signature.
 
 **Statut.** Projets rédigés par un agent juriste, 02/10/2026, **à valider par le directeur**. Chaque texte existe en français (lu par le directeur) et en anglais (qui fera foi dans l'application). Les trois autres langues viendront à LG-1, traduites depuis la version anglaise validée.
 

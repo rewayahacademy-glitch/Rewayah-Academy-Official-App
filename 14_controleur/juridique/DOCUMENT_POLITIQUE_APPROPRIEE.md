@@ -1,5 +1,7 @@
 # Document de politique appropriée (appropriate policy document)
 
+> **Statut mis à jour le 04/10/2026.** Le directeur a écrit « je signe » le 02/10/2026 (`SIGNATURES_2026-10-02.md:10`). La pièce est donc **adoptée** (signée), et non plus à l'état de projet. Le texte ci-dessous n'a pas été modifié (K-26) : les mentions « projet », « à signer » ou « à valider » qui y restent sont celles d'avant la signature.
+
 **Statut.** Projet rédigé par un agent juriste le 02/10/2026 (lot JUR-SUITE-1), **à signer par le directeur**. Il répond au point « Nouveau » de la relecture juridique de `../DPIA_CONTROLEUR.md` et au point 3 de `ART9_RELIGION.md` §5. Il ne remplace pas l'avis d'un avocat britannique ; il tranche pour que le travail avance.
 
 **Cadre.** UK GDPR art. 5, 9 et 10 ; Data Protection Act 2018 (DPA 2018), section 10 et annexe 1 (Schedule 1), en particulier partie 2 paragraphe 18 (protection des enfants et des personnes à risque), partie 3 paragraphe 36 (extension aux données pénales) et partie 4 (paragraphes 38 à 41 : contenu, conservation et revue de ce document) ; guide de l'ICO « Special category data » et « Criminal offence data ».

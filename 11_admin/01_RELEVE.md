@@ -15,7 +15,7 @@
 | Bouton Personnes | Aucun bouton dédié. Seule entrée : l'élément « Personnes » de la barre latérale, `/admin/personnes`, qui redirige vers ADM-02. | `lib/core/admin/admin_domaine.dart:95` ; `lib/core/router/app_router.dart:834-837` |
 | Bouton compteur Accueil | StatTile « Dossiers à valider » : `go(Routes.adminPersonnesDossiers)`. | `lib/features/admin_tableau/tableau_de_bord_page.dart:259-262` ; `assets/i18n/fr.i18n.json:928` |
 | Trois libellés exacts | « La pièce est lisible », « Le nom correspond à celui du compte », « La pièce n'est pas expirée ». | `assets/i18n/fr.i18n.json:913-915` |
-| Source | Constante client `_points = ['lisible','nom','validite']`, état local `Set _verifie`. Rien côté serveur. | `lib/features/admin_dossiers/dossiers_page.dart:42`, `:49` |
+| Source | Constante client `_points = ['lisible','nom','validite']`, état local `Set _verifie`. Rien côté serveur. | `lib/features/admin_dossiers/dossiers_page.dart:49` (`_points`), `:42` (`Set _verifie`) |
 | can_validate | Introuvable sous ce nom. Équivalent client : `jugeable` puis `tousVerifies`. Côté serveur : rôle, motif, visibilité de la pièce. | `lib/core/dossier/service_validation.dart:151-152` ; `dossiers_page.dart:142` ; `supabase/migrations/0004_inscription_kyc_appairage.sql:533-548` |
 | Mécanisme de décision | RPC `decider_dossier(p_document_id, p_approuve, p_motif)`, returns void, security definer. | `0004:523-574` ; `service_validation.dart:230-237` |
 | Atomicité | Oui : une seule fonction plpgsql (document, profil, teacher_profiles, audit). Activation silencieuse si le compte n'est pas `pending_kyc`. | `0004:550-570` |
@@ -73,7 +73,7 @@
   - `validite` : « La pièce n'est pas expirée », clé `dossiers.pointValidite` (`fr.i18n.json:915`).
 - Nœud i18n racine `dossiers` (`fr.i18n.json:895`), pas `admin.dossiers`. Titre de section : « Vérifications » (`fr.i18n.json:912`).
 - Code inconnu : retombe sur `pointValidite` (`dossiers_page.dart:188-192`).
-- Source : constante codée en dur, état coché en `Set<String>` local, vidé après décision (`dossiers_page.dart:42`, `:57-62`).
+- Source : constante codée en dur, état coché en `Set<String>` local, vidé après décision (`dossiers_page.dart:49` pour la constante, `:42` pour le `Set`, `:57-62` pour la remise à zéro).
 - Nature : cases manuelles `_Case` (Pressable, icône). Rien de calculé (`dossiers_page.dart:389-429`).
 - Obligatoire : pour Valider seulement, côté client. `onPress: tousVerifies ? onApprouver : null` (`dossiers_page.dart:142`, `:311-321`). Refuser reste toujours actif.
 - Test widget : Valider avant les trois coches ne produit aucun verdict (`test/features/dossiers_admin_test.dart:139-163`).

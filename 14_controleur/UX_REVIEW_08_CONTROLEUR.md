@@ -85,7 +85,7 @@ De l'air : CTR-01 n'a que la mission et, s'il existe, le bloc à terminer. Un se
 
 ## Synthèse
 
-- 20 lignes contrôlées : 2 gardées telles quelles (n° 17, 18), 18 adaptées, 0 écran refusé. Les éléments de planche refusés étaient déjà listés dans `V/00_MAQUETTES_CONTROLEUR.md`.
+- 20 lignes contrôlées : 3 gardées telles quelles (n° 1, 17, 18), 17 adaptées, 0 écran refusé. Les éléments de planche refusés étaient déjà listés dans `V/00_MAQUETTES_CONTROLEUR.md`.
 - Aucune dérogation nouvelle : les deux dérogations de UX_REVIEW_CL-4 (bouton non étiré sur bureau, bouton dans la carte) s'appliquent à CTR-01.
 - Deux décisions nouvelles de cette revue : le choix d'une carte n'envoie jamais rien (bouton 16 sous le groupe) ; pas d'« Annuler » à durée limitée après « Rien à signaler », la réversibilité passant par le complément.
 - Aucune permission, aucun état serveur, aucune donnée visible, aucune règle C1 à C21 ou R1 à R21 n'est modifiée ; rien ne touche le thème (aucune ligne TH-2 nécessaire).
