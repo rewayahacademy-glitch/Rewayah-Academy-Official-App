@@ -1,5 +1,7 @@
 // CORAN-CARTE-3 : la carte du Coran de l'accueil eleve, etat de contenu
 // normal (aucun cours aujourd'hui, le prochain dans deux jours).
+// A 1440, la colonne bornee est calee au bord de debut de la carte (a gauche
+// en LTR, a droite en RTL : coran_1440_clair, coran_1440_rtl).
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -108,8 +110,11 @@ void main() {
             InterfaceMode.standard,
             TextDirection.rtl,
           ),
+          // Interface guidee a 320 x2 : la carte du Coran est plus bas que
+          // dans les autres cas ; 1400 de haut pour voir titre, phrase,
+          // chevron et l'air du bas.
           (
-            const Size(320, 1000),
+            const Size(320, 1400),
             ThemeMode.light,
             'coran_320x2_enfant',
             2,
@@ -123,6 +128,14 @@ void main() {
             1,
             InterfaceMode.standard,
             TextDirection.ltr,
+          ),
+          (
+            const Size(1440, 900),
+            ThemeMode.light,
+            'coran_1440_rtl',
+            1,
+            InterfaceMode.standard,
+            TextDirection.rtl,
           ),
         ]) {
       testWidgets(cas.$3, (WidgetTester tester) async {
