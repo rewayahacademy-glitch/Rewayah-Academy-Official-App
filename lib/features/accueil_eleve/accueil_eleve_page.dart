@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/cle_audio.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -28,6 +29,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
+import '../../core/widgets/pressable.dart';
 import '../../core/widgets/skeleton.dart';
 
 /// Ce que le bloc principal de `ELV-02` annonce.
@@ -212,7 +214,7 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
               children: <Widget>[
                 Skeleton.tuileBento(hauteur: 160),
                 Ecart.vXl,
-                Skeleton.tuileBento(hauteur: 80),
+                Skeleton.tuileBento(hauteur: 144),
               ],
             )
           : Column(
@@ -577,6 +579,17 @@ class _Interruptions extends StatelessWidget {
 }
 
 /// Le second bloc, permanent : le Coran.
+///
+/// Deux etages, une action par zone (demande du directeur du 04/10/2026 :
+/// « chaque element a part et lisible ») :
+/// - en-tete sans texte : le livre au debut de la ligne, le haut-parleur a la
+///   fin ; toute la largeur de la carte les separe ;
+/// - zone d'ouverture : titre, phrase et chevron, qui ouvre le Coran (`ELV-04`).
+///
+/// La tuile ne se presse plus : les deux [Pressable] sont freres, jamais l'un
+/// dans l'autre, sur le modele de `_BlocPrincipal`. Le haut-parleur sert a qui
+/// ne lit pas encore ; il est exclu de la semantique, ou il doublerait le
+/// lien « Le Coran ». Il garde son arret de focus au clavier.
 class _BlocCoran extends StatelessWidget {
   const _BlocCoran();
 
@@ -585,25 +598,66 @@ class _BlocCoran extends StatelessWidget {
     final AppMetriques metriques = AppMetriques.of(context);
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle styleTitre = textes.titleMedium ?? const TextStyle();
+    final TextStyle styleSecondaire = palette.inkMuted.applyTo(
+      textes.bodyMedium ?? const TextStyle(),
+    );
+    // Texte agrandi : aucun mot n'est coupe au milieu ; a l'echelle 1, un
+    // simple texte, sans mesure (meme regle que `SettingRow`).
+    final bool agrandi = MediaQuery.textScalerOf(context).scale(1) > 1;
+    Widget texte(String s, TextStyle style) =>
+        agrandi ? TexteSansCoupure(s, style: style) : Text(s, style: style);
 
     return BentoTile(
-      libelleSemantique: t.eleve.accueil.coran,
-      onPress: () => GoRouter.of(context).go(Routes.eleveCoran),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          IconTheme(
-            data: palette.inkAccent.asIconTheme(
-              size: metriques.estEnfant ? AppSpacing.xxxl : AppSpacing.xxl,
-            ),
-            child: Icon(AppIcons.coran.repos),
+          Row(
+            children: <Widget>[
+              IconTheme(
+                data: palette.inkAccent.asIconTheme(
+                  size: metriques.estEnfant ? AppSpacing.xxxl : AppSpacing.xxl,
+                ),
+                child: Icon(AppIcons.coran.repos),
+              ),
+              const Spacer(),
+              const ExcludeSemantics(
+                child: AudioLabel(
+                  cle: ClesAudio.eleveAccueilCoran,
+                  afficherTexte: false,
+                ),
+              ),
+            ],
           ),
-          Ecart.hMd,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          Ecart.vSm,
+          Pressable(
+            onPress: () => GoRouter.of(context).go(Routes.eleveCoran),
+            libelleSemantique: t.eleve.accueil.coran,
+            lien: true,
+            arrondiFocus: metriques.arrondi,
+            child: Row(
               children: <Widget>[
-                const AudioLabel(cle: ClesAudio.eleveAccueilCoran),
-                Text(t.eleve.accueil.coranDetail, style: textes.bodyMedium),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      // Le lien porte deja « Le Coran » : le titre n'est
+                      // pas lu une seconde fois.
+                      ExcludeSemantics(
+                        child: texte(t.eleve.accueil.coran, styleTitre),
+                      ),
+                      Ecart.vSm,
+                      texte(t.eleve.accueil.coranDetail, styleSecondaire),
+                    ],
+                  ),
+                ),
+                Ecart.hSm,
+                IconTheme(
+                  data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
+                  child: Icon(AppIcons.chevron.repos),
+                ),
               ],
             ),
           ),

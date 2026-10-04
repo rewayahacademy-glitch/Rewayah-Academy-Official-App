@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart' show SemanticsNode;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/priere/horaires_priere.dart';
 import 'package:rewayah_academy/core/priere/libelle_priere.dart';
@@ -14,12 +16,17 @@ import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/audio_label.dart';
 import 'package:rewayah_academy/core/widgets/bento_tile.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
+import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
 
+import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
 
 const String _enseignantId = 't1';
@@ -692,6 +699,244 @@ void main() {
       expect(lectures, 2);
       expect(find.text(t.eleve.accueil.erreurCours), findsNothing);
       expect(find.text(t.eleve.accueil.aucunCours), findsOneWidget);
+    });
+  });
+  // CORAN-CARTE-1 (demande du directeur du 04/10/2026) : la carte du Coran
+  // separe ses elements. Le livre et le haut-parleur aux deux bouts d'un
+  // en-tete sans texte ; titre, phrase et chevron dans une zone qui ouvre le
+  // Coran. Deux cibles soeurs, jamais l'une dans l'autre.
+  //
+  // Ce groupe charge les vraies polices : il reste le DERNIER du fichier, pour
+  // ne pas changer les mesures des groupes qui le precedent.
+  group('ELV-02 : la carte du Coran separe chaque element', () {
+    setUpAll(chargerPolicesDuDepot);
+
+    Future<void> monter(
+      WidgetTester tester, {
+      double largeur = 390,
+      double echelle = 1,
+      TextDirection sens = TextDirection.ltr,
+      InterfaceMode mode = InterfaceMode.standard,
+    }) async {
+      tester.view.physicalSize = Size(largeur, 1400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: Routes.eleve,
+          mode: mode,
+          routes: <RouteBase>[
+            GoRoute(
+              path: Routes.eleve,
+              builder: (BuildContext contexte, GoRouterState _) => MediaQuery(
+                data: MediaQuery.of(contexte)
+                    .copyWith(textScaler: TextScaler.linear(echelle)),
+                child: Directionality(textDirection: sens, child: _ecran()),
+              ),
+            ),
+            GoRoute(
+              path: Routes.eleveCoran,
+              builder: (BuildContext _, GoRouterState _) =>
+                  const Text('ELV-04'),
+            ),
+          ],
+          surcharges: _surcharges(planning: FauxServicePlanning()),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    Finder carte() => find.ancestor(
+      of: find.text(t.eleve.accueil.coranDetail),
+      matching: find.byType(BentoTile),
+    );
+    Finder dans(Finder f) => find.descendant(of: carte(), matching: f);
+    Finder livre() => dans(find.byIcon(AppIcons.coran.repos));
+    Finder audio() => dans(
+      find.descendant(
+        of: find.byType(AudioLabel),
+        matching: find.byType(Pressable),
+      ),
+    );
+    Finder titre() => dans(find.text(t.eleve.accueil.coran));
+    Finder phrase() => dans(find.text(t.eleve.accueil.coranDetail));
+
+    /// Les quatre elements : aucun ne chevauche un autre, et chaque paire
+    /// garde au moins un jeton d'ecart (8) sur l'un des deux axes.
+    void verifierSepares(WidgetTester tester) {
+      final Map<String, Rect> r = <String, Rect>{
+        'livre': tester.getRect(livre()),
+        'audio': tester.getRect(audio().first),
+        'titre': tester.getRect(titre()),
+        'phrase': tester.getRect(phrase()),
+      };
+      final List<String> noms = r.keys.toList();
+      for (int i = 0; i < noms.length; i++) {
+        for (int j = i + 1; j < noms.length; j++) {
+          final Rect a = r[noms[i]]!;
+          final Rect b = r[noms[j]]!;
+          final double ecartX = a.left >= b.right
+              ? a.left - b.right
+              : b.left - a.right;
+          final double ecartY = a.top >= b.bottom
+              ? a.top - b.bottom
+              : b.top - a.bottom;
+          expect(
+            ecartX >= AppSpacing.sm || ecartY >= AppSpacing.sm,
+            isTrue,
+            reason: '${noms[i]} $a et ${noms[j]} $b sont colles',
+          );
+        }
+      }
+    }
+
+    testWidgets('livre et haut-parleur sur un en-tete, aux deux bouts', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester);
+      verifierSepares(tester);
+      final Rect tuile = tester.getRect(carte());
+      final Rect l = tester.getRect(livre());
+      final Rect a = tester.getRect(audio().first);
+      // Le livre au debut, le haut-parleur a la fin : toute la largeur de la
+      // carte les separe, ils ne se lisent pas comme une paire.
+      expect(a.left - l.right, greaterThan(tuile.width / 2));
+      // L'en-tete est au-dessus du titre et de la phrase.
+      expect(tester.getRect(titre()).top, greaterThanOrEqualTo(a.bottom));
+      expect(
+        tester.getRect(phrase()).top,
+        greaterThanOrEqualTo(tester.getRect(titre()).bottom + AppSpacing.sm),
+      );
+      // Le titre et la phrase partent du meme bord.
+      expect(tester.getRect(titre()).left, tester.getRect(phrase()).left);
+    });
+
+    testWidgets('aucune cible n est posee dans une autre', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester);
+      final Finder cibles = dans(find.byType(Pressable));
+      expect(cibles, findsNWidgets(2));
+      for (final Element e in cibles.evaluate()) {
+        expect(
+          find.ancestor(
+            of: find.byElementPredicate((Element x) => x == e),
+            matching: find.byType(Pressable),
+          ),
+          findsNothing,
+          reason: 'Un bouton dans un bouton',
+        );
+      }
+      // La tuile elle-meme ne se presse plus.
+      expect(
+        find.ancestor(of: carte(), matching: find.byType(Pressable)),
+        findsNothing,
+      );
+    });
+
+    testWidgets('toucher le titre ouvre le Coran', (WidgetTester tester) async {
+      await monter(tester);
+      await tester.tap(titre());
+      await tester.pumpAndSettle();
+      expect(find.text('ELV-04'), findsOneWidget);
+    });
+
+    testWidgets('toucher le haut-parleur ne quitte pas l accueil', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester);
+      await tester.tap(dans(find.byIcon(AppIcons.libelleAudio.repos)));
+      await tester.pumpAndSettle();
+      expect(find.text('ELV-04'), findsNothing);
+      expect(phrase(), findsOneWidget);
+    });
+
+    testWidgets('cibles tactiles : 48 au moins, toute la largeur pour ouvrir', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester);
+      final Size a = tester.getSize(audio().first);
+      expect(a.width, greaterThanOrEqualTo(48));
+      expect(a.height, greaterThanOrEqualTo(48));
+      final Finder ouvrir = dans(
+        find.ancestor(of: titre(), matching: find.byType(Pressable)),
+      );
+      expect(tester.getSize(ouvrir).height, greaterThanOrEqualTo(48));
+    });
+
+    testWidgets('le lecteur d ecran entend « Le Coran » une fois, un lien', (
+      WidgetTester tester,
+    ) async {
+      final SemanticsHandle poignee = tester.ensureSemantics();
+      await monter(tester);
+      final Finder lien = find.bySemanticsLabel(
+        RegExp('^${RegExp.escape(t.eleve.accueil.coran)}'),
+      );
+      expect(lien, findsOneWidget);
+      final SemanticsNode noeud = tester.getSemantics(lien);
+      expect(
+        noeud.label,
+        '${t.eleve.accueil.coran}\n${t.eleve.accueil.coranDetail}',
+      );
+      expect(noeud.flagsCollection.isLink, isTrue);
+      expect(noeud.flagsCollection.isButton, isFalse);
+      // Le haut-parleur n'ajoute pas de second « Le Coran ».
+      expect(
+        find.bySemanticsLabel(RegExp(RegExp.escape(t.eleve.accueil.coran))),
+        findsOneWidget,
+      );
+      poignee.dispose();
+    });
+
+    testWidgets('mode enfant : haut-parleur de 72, rien de masque', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, mode: InterfaceMode.enfant);
+      final Size a = tester.getSize(audio().first);
+      expect(a.width, greaterThanOrEqualTo(72));
+      expect(a.height, greaterThanOrEqualTo(72));
+      expect(phrase(), findsOneWidget);
+      verifierSepares(tester);
+    });
+
+    testWidgets('RTL : le livre passe a droite du haut-parleur', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, sens: TextDirection.rtl);
+      expect(
+        tester.getRect(livre()).left,
+        greaterThan(tester.getRect(audio().first).right),
+      );
+      verifierSepares(tester);
+    });
+
+    for (final (double, double, TextDirection) cas
+        in <(double, double, TextDirection)>[
+          (320, 2, TextDirection.ltr),
+          (320, 2, TextDirection.rtl),
+          (1440, 1, TextDirection.ltr),
+          (1440, 1, TextDirection.rtl),
+        ]) {
+      testWidgets(
+        '${cas.$1.toInt()} px, texte x${cas.$2.toInt()}, ${cas.$3.name} : '
+        'aucun debordement, aucun mot coupe',
+        (WidgetTester tester) async {
+          await monter(tester, largeur: cas.$1, echelle: cas.$2, sens: cas.$3);
+          expect(tester.takeException(), isNull);
+          verifierAucunMotCoupe(tester, carte());
+          verifierSepares(tester);
+        },
+      );
+    }
+
+    testWidgets('le squelette a la hauteur de la carte', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester);
+      // Mode standard, echelle 1, vraies polices : la hauteur que le squelette
+      // du second bloc reserve (`Skeleton.tuileBento(hauteur: 144)`). Si ce
+      // test change, changer le squelette avec lui.
+      expect(tester.getSize(carte()).height, 144);
     });
   });
 }
