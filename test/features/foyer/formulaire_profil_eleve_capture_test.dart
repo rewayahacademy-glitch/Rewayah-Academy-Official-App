@@ -135,7 +135,6 @@ Future<void> _monter(
     return;
   }
   if (etat == _Etat.identiteErreurs) {
-    await tester.enterText(find.byKey(FormulaireProfilEleve.ageKey), '25');
     await toucher(FormulaireProfilEleve.actionKey);
     return;
   }
@@ -144,7 +143,7 @@ Future<void> _monter(
     'Eleve A3',
   );
   await tester.enterText(find.byKey(FormulaireProfilEleve.nomKey), 'Fictif');
-  await tester.enterText(find.byKey(FormulaireProfilEleve.ageKey), '9');
+  await toucher(FormulaireProfilEleve.ageChoixKey(9));
   // Le clavier ne reste pas ouvert sur la capture.
   FocusManager.instance.primaryFocus?.unfocus();
   await stabiliser(tester);

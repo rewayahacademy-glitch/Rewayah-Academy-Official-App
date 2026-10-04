@@ -73,5 +73,9 @@
   "admin.programmes.manqueOrdre": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
   "admin.programmes.manqueCode": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
   "admin.programmes.manque": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
-  "admin.programmes.ajouterNiveauErreur": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur"
+  "admin.programmes.ajouterNiveauErreur": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "foyer.ajout.identite.nomAidePrerempli": "etape FORM-L6 (recensement FORM-AUTO-1 section 3 et 8) : nom prerempli et age choisi ; a valider par le directeur",
+  "foyer.ajout.identite.age": "etape FORM-L6 (recensement FORM-AUTO-1 section 3 et 8) : nom prerempli et age choisi ; a valider par le directeur",
+  "foyer.ajout.erreurs.ageRequis": "etape FORM-L6 (recensement FORM-AUTO-1 section 3 et 8) : nom prerempli et age choisi ; a valider par le directeur",
+  "adulte.invitation.nomAidePrerempli": "etape FORM-L6 (recensement FORM-AUTO-1 section 3 et 8) : nom prerempli et age choisi ; a valider par le directeur"
 }

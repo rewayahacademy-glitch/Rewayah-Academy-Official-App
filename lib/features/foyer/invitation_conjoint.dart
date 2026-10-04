@@ -30,6 +30,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -53,7 +54,8 @@ import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
-import '../compte/donnees_compte.dart' show dateLongue;
+import '../compte/donnees_compte.dart'
+    show dateLongue, identiteTitulaireProvider;
 import 'ligne_membre.dart' show dateEcheance;
 import 'photo_eleve.dart';
 import 'place_adulte.dart';
@@ -258,6 +260,8 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
   bool _verification = false;
   bool _montrerErreurs = false;
   bool _courrielQuitte = false;
+  bool _nomModifie = false;
+  bool _nomPrerempli = false;
   bool _envoi = false;
   bool _partie = false;
   _Echec? _echec;
@@ -265,6 +269,19 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
   @override
   void initState() {
     super.initState();
+    // Le nom de famille du titulaire est propose (modifiable) : un foyer partage
+    // le plus souvent le meme. Compte illisible : le champ reste vide.
+    ref.listenManual<AsyncValue<IdentiteTitulaire>>(identiteTitulaireProvider, (
+      AsyncValue<IdentiteTitulaire>? _,
+      AsyncValue<IdentiteTitulaire> suivant,
+    ) {
+      final String nom = suivant.value?.nom.trim() ?? '';
+      if (nom.isEmpty || _nomModifie || _nom.text.isNotEmpty) return;
+      setState(() {
+        _nom.text = nom;
+        _nomPrerempli = true;
+      });
+    }, fireImmediately: true);
     // L'erreur de format se dit a la sortie du champ, pas a chaque lettre.
     _focusCourriel.addListener(() {
       if (!_focusCourriel.hasFocus && _courriel.text.trim().isNotEmpty) {
@@ -442,13 +459,19 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
         TextField(
           key: InviterConjointPage.nomKey,
           controller: _nom,
-          onChanged: _modifie,
+          onChanged: (String valeur) {
+            _nomModifie = true;
+            _modifie(valeur);
+          },
           textCapitalization: TextCapitalization.words,
           textInputAction: TextInputAction.next,
           // « Facultatif. » : libelle provisoire, lexique D4 (Q7).
           decoration: InputDecoration(
             labelText: t.adulte.invitation.nom,
-            helperText: t.adulte.invitation.nomAide,
+            helperText: _nomPrerempli
+                ? t.adulte.invitation.nomAidePrerempli
+                : t.adulte.invitation.nomAide,
+            helperMaxLines: 8,
           ),
         ),
         Ecart.vMd,
@@ -468,7 +491,7 @@ class _InviterConjointPageState extends ConsumerState<InviterConjointPage> {
             helperText: f
                 ? t.adulte.invitation.courrielAideElle
                 : t.adulte.invitation.courrielAideLui,
-            helperMaxLines: 3,
+            helperMaxLines: 8,
             errorText: _erreurCourriel,
             errorMaxLines: 3,
           ),

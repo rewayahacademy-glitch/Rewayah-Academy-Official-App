@@ -10623,6 +10623,9 @@ class Traductions$adulte$invitation$fr {
 	/// fr: 'Facultatif.'
 	String get nomAide => 'Facultatif.';
 
+	/// fr: 'Facultatif. Prérempli avec le nom de votre compte : modifiez-le si besoin.'
+	String get nomAidePrerempli => 'Facultatif. Prérempli avec le nom de votre compte : modifiez-le si besoin.';
+
 	/// fr: 'Adresse e-mail'
 	String get courriel => 'Adresse e-mail';
 
@@ -11716,11 +11719,11 @@ class Traductions$foyer$ajout$identite$fr {
 	/// fr: 'Le nom de famille n'est jamais montré à l'enseignant.'
 	String get nomAide => 'Le nom de famille n\'est jamais montré à l\'enseignant.';
 
-	/// fr: 'Âge'
-	String get age => 'Âge';
+	/// fr: 'Prérempli avec le nom de votre compte : modifiez-le si l'élève porte un autre nom. Jamais montré à l'enseignant.'
+	String get nomAidePrerempli => 'Prérempli avec le nom de votre compte : modifiez-le si l\'élève porte un autre nom. Jamais montré à l\'enseignant.';
 
-	/// fr: 'ans'
-	String get ageSuffixe => 'ans';
+	/// fr: 'Âge, en années'
+	String get age => 'Âge, en années';
 
 	/// fr: 'L'âge fixe l'affichage et la caméra au départ. Vous pourrez changer les deux ensuite.'
 	String get ageAide => 'L\'âge fixe l\'affichage et la caméra au départ. Vous pourrez changer les deux ensuite.';
@@ -11740,8 +11743,8 @@ class Traductions$foyer$ajout$erreurs$fr {
 	/// fr: 'Indiquez le nom de l'élève.'
 	String get nomRequis => 'Indiquez le nom de l\'élève.';
 
-	/// fr: 'Indiquez l'âge, en chiffres.'
-	String get ageRequis => 'Indiquez l\'âge, en chiffres.';
+	/// fr: 'Choisissez l'âge de l'élève pour continuer.'
+	String get ageRequis => 'Choisissez l\'âge de l\'élève pour continuer.';
 
 	/// fr: 'Indiquez un âge entre {min} et {max} ans.'
 	String ageHorsBornes({required Object min, required Object max}) => 'Indiquez un âge entre ${min} et ${max} ans.';
@@ -16142,12 +16145,12 @@ extension on Traductions {
 			'foyer.ajout.identite.prenom' => 'Prénom',
 			'foyer.ajout.identite.nom' => 'Nom',
 			'foyer.ajout.identite.nomAide' => 'Le nom de famille n\'est jamais montré à l\'enseignant.',
-			'foyer.ajout.identite.age' => 'Âge',
-			'foyer.ajout.identite.ageSuffixe' => 'ans',
+			'foyer.ajout.identite.nomAidePrerempli' => 'Prérempli avec le nom de votre compte : modifiez-le si l\'élève porte un autre nom. Jamais montré à l\'enseignant.',
+			'foyer.ajout.identite.age' => 'Âge, en années',
 			'foyer.ajout.identite.ageAide' => 'L\'âge fixe l\'affichage et la caméra au départ. Vous pourrez changer les deux ensuite.',
 			'foyer.ajout.erreurs.prenomRequis' => 'Indiquez le prénom de l\'élève.',
 			'foyer.ajout.erreurs.nomRequis' => 'Indiquez le nom de l\'élève.',
-			'foyer.ajout.erreurs.ageRequis' => 'Indiquez l\'âge, en chiffres.',
+			'foyer.ajout.erreurs.ageRequis' => 'Choisissez l\'âge de l\'élève pour continuer.',
 			'foyer.ajout.erreurs.ageHorsBornes' => ({required Object min, required Object max}) => 'Indiquez un âge entre ${min} et ${max} ans.',
 			'foyer.ajout.refus.compteNonValide' => 'Votre accès doit être ouvert avant d\'ajouter un profil élève.',
 			'foyer.ajout.refus.ageHorsBornes' => 'Cet âge n\'est pas accepté. Vérifiez-le puis réessayez.',
@@ -19136,6 +19139,7 @@ extension on Traductions {
 			'adulte.invitation.prenom' => 'Prénom',
 			'adulte.invitation.nom' => 'Nom',
 			'adulte.invitation.nomAide' => 'Facultatif.',
+			'adulte.invitation.nomAidePrerempli' => 'Facultatif. Prérempli avec le nom de votre compte : modifiez-le si besoin.',
 			'adulte.invitation.courriel' => 'Adresse e-mail',
 			'adulte.invitation.courrielAideElle' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjointe l\'invitation à rejoindre Rewayah.',
 			'adulte.invitation.courrielAideLui' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjoint l\'invitation à rejoindre Rewayah.',
