@@ -5,11 +5,15 @@
 //
 // Route reelle : `/eleve/adulte` vit dans la branche 0 de la coquille eleve ;
 // l'onglet Coran rejoint la branche 2 (`/eleve/coran`), Accueil y ramene.
-// Demonstration : la page provisoire est remplacee par `CoranDemoAdulte`.
-// Avec un corpus (tests, captures), c'est la vraie `MushafPage` dans un
-// conteneur isole, sans serveur (K-28). Sans corpus (la demonstration
-// elle-meme), la page dit la vraie cause, vouvoie l'adulte et ne propose
-// aucun bouton voue a l'echec : jamais l'erreur reseau du lecteur (K-59).
+// Demonstration : la page provisoire est remplacee par `CoranDemoAdulte`,
+// la vraie `MushafPage` dans un conteneur isole, sans serveur (K-28), sur le
+// corpus de la base recopie mot pour mot (`service_coran_demo.dart`, verifie
+// par `test/features/demo/corpus_demo_coran_test.dart`) : la demonstration
+// montre le vrai texte, jamais l'erreur reseau du lecteur (K-59). Ses propres
+// etats (attente, echec du chargement differe, reprise) sont verifies ici.
+
+import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -17,6 +21,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/coran/service_coran.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
@@ -28,7 +33,9 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
 import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
+import 'package:rewayah_academy/features/demo/coran_demo_adulte.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
+import 'package:rewayah_academy/features/demo/service_coran_demo.dart';
 import 'package:rewayah_academy/features/tc_mushaf/mushaf_page.dart';
 import 'package:rewayah_academy/features/tc_mushaf/vue_page_mushaf.dart';
 
@@ -60,35 +67,35 @@ Future<void> _poser(WidgetTester tester) async {
   }
 }
 
-/// La demonstration sans corpus dit la vraie cause (K-59) : texte non charge
-/// DANS la demonstration, adulte vouvoye, aucun bouton voue a l'echec, jamais
-/// l'erreur reseau du lecteur ni l'ancienne page provisoire.
-void _verifierDemoHonnete() {
-  expect(find.byKey(CoranDemoAdulte.sansTexteKey), findsOneWidget);
-  expect(find.text(t.accessibilite.coran.demoSansTexte), findsOneWidget);
-  expect(
-    find.text(t.accessibilite.coran.demoSansTexteDetailVous),
-    findsOneWidget,
-  );
-  expect(find.text(t.accessibilite.coran.demoSansTexteDetail), findsNothing);
+/// Le deuxieme verset d'Al-Faatiha, LU dans la migration 0013 (jamais
+/// recopie a la main : un texte du Coran ne se retape pas) : la preuve que le
+/// VRAI texte de la base est rendu.
+final String _alHamd = (() {
+  final RegExpMatch? ligne =
+      RegExp(r"^  \(1, 2, '([^']*)', 1\),$", multiLine: true).firstMatch(
+        File('supabase/migrations/0013_corpus_coranique.sql')
+            .readAsStringSync(),
+      );
+  return ligne!.group(1)!;
+})();
+
+/// La demonstration rend la vraie page Coran, avec le vrai texte et son
+/// attribution, jamais l'erreur reseau du lecteur ni l'ancienne page
+/// provisoire (K-59).
+void _verifierVraiePageDemo() {
+  expect(find.byType(CoranDemoAdulte), findsOneWidget);
+  expect(find.byType(MushafPage), findsOneWidget);
+  // Une page, ou deux en vis-a-vis sur grand ecran.
+  expect(find.byType(CadrePageMushaf), findsWidgets);
+  expect(find.textContaining(_alHamd, findRichText: true), findsWidgets);
+  expect(find.text('Al-Faatiha'), findsWidgets);
+  expect(find.textContaining(t.eleve.coran.source), findsOneWidget);
   expect(find.text(t.eleve.coran.indisponible), findsNothing);
   expect(find.text(t.eleve.coran.indisponibleDetail), findsNothing);
+  expect(find.text(t.eleve.coran.absent), findsNothing);
   expect(find.text(t.eleve.coran.reessayer), findsNothing);
   expect(find.byIcon(AppIcons.horsLigne.repos), findsNothing);
-  expect(find.byType(MushafPage), findsNothing);
   expect(find.text(_phraseProvisoire), findsNothing);
-}
-
-/// Vrai si [cible] est entierement visible dans la fenetre, au-dessus de la
-/// barre de navigation (rien de rogne, rien sous la barre).
-void _entierementVisible(WidgetTester tester, Finder cible) {
-  final Rect zone = tester.getRect(cible);
-  final Rect barre = tester.getRect(find.byKey(NavShell.barreBasseKey));
-  final Size fenetre = tester.view.physicalSize / tester.view.devicePixelRatio;
-  expect(zone.top, greaterThanOrEqualTo(0));
-  expect(zone.left, greaterThanOrEqualTo(0));
-  expect(zone.right, lessThanOrEqualTo(fenetre.width));
-  expect(zone.bottom, lessThanOrEqualTo(barre.top));
 }
 
 void main() {
@@ -198,6 +205,12 @@ void main() {
         addTearDown(routeur.dispose);
         await tester.pumpWidget(
           ProviderScope(
+            // Ce que `main.dart` pose a la racine au demarrage sur
+            // `/demo/adulte` : la feuille « Aller a » s'y ouvre.
+            overrides: surchargesRacineDemoAdulte(
+              adresse: Uri.parse('https://exemple.test/#/demo/adulte'),
+              environnement: 'dev',
+            ),
             child: TranslationProvider(
               child: MaterialApp.router(
                 theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
@@ -218,8 +231,10 @@ void main() {
         return routeur;
       }
 
-      testWidgets('onglet Coran : la vraie page Coran, sans serveur, onglet '
-          'allume ; Accueil y ramene', (WidgetTester tester) async {
+      testWidgets('onglet Coran : la vraie page Coran et son vrai texte, sans '
+          'serveur, onglet allume ; Accueil y ramene', (
+        WidgetTester tester,
+      ) async {
         final GoRouter routeur = await monterDemo(tester);
         expect(find.byType(AccueilAdultePage), findsOneWidget);
         expect(_actif(tester), 0);
@@ -228,8 +243,7 @@ void main() {
         await _poser(tester);
 
         expect(lieu(routeur), adresseDemoAdulte(EcranDemoAdulte.coran));
-        expect(find.byType(CoranDemoAdulte), findsOneWidget);
-        _verifierDemoHonnete();
+        _verifierVraiePageDemo();
         expect(_actif(tester), 2);
         expect(
           tester.widget<NavShell>(find.byType(NavShell)).destinations,
@@ -245,43 +259,110 @@ void main() {
         expect(tester.takeException(), isNull);
       });
 
-      testWidgets('le conteneur isole rend le vrai texte quand un corpus est '
-          'pose (tests et captures)', (WidgetTester tester) async {
+      // 390 : feuille du bas ; 1440 : dialogue du navigateur racine, qui lit
+      // la portee racine (celle que `main.dart` pose sur `/demo/adulte`).
+      for (final (String nom, Size taille) in <(String, Size)>[
+        ('390', const Size(390, 844)),
+        ('1440', const Size(1440, 1000)),
+      ]) {
+        testWidgets('demo $nom : « Aller a » 2:255 ouvre la page 42, '
+            'Al-Baqara, par la navigation reelle, sans serveur', (
+          WidgetTester tester,
+        ) async {
+          await monterDemo(tester, taille: taille);
+          await tester.tap(_onglet(t.adulte.nav.coran));
+          await _poser(tester);
+
+          await tester.tap(find.text(t.tc.coran.navigation.ouvrir));
+          await _poser(tester);
+          await tester.enterText(find.byType(TextField), '2:255');
+          await _poser(tester);
+          // Le resultat de la feuille (le champ porte aussi « 2:255 »).
+          await tester.tap(
+            find.text(t.tc.coran.navigation.pageNumero(page: 42)),
+          );
+          await _poser(tester);
+
+          expect(find.byType(MushafPage), findsOneWidget);
+          expect(
+            find.textContaining(t.eleve.coran.page(page: '42', total: '604')),
+            findsWidgets,
+          );
+          expect(find.text('Al-Baqara'), findsWidgets);
+          expect(find.text(t.eleve.coran.indisponible), findsNothing);
+          expect(_actif(tester), 2);
+          expect(tester.takeException(), isNull);
+        });
+      }
+
+      Future<void> monterSeule(
+        WidgetTester tester,
+        Future<ServiceCoran> Function() charger,
+      ) async {
         tester.view.physicalSize = const Size(390, 844);
         tester.view.devicePixelRatio = 1;
         addTearDown(tester.view.reset);
         await tester.pumpWidget(
-          TranslationProvider(
-            child: MaterialApp(
-              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
-              locale: AppLocale.fr.flutterLocale,
-              supportedLocales: AppLocaleUtils.supportedLocales,
-              localizationsDelegates: GlobalMaterialLocalizations.delegates,
-              home: Scaffold(body: CoranDemoAdulte(surchargesCoran: corpus())),
+          ProviderScope(
+            child: TranslationProvider(
+              child: MaterialApp(
+                theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+                locale: AppLocale.fr.flutterLocale,
+                supportedLocales: AppLocaleUtils.supportedLocales,
+                localizationsDelegates: GlobalMaterialLocalizations.delegates,
+                home: Scaffold(body: CoranDemoAdulte(charger: charger)),
+              ),
             ),
           ),
         );
-        await _poser(tester);
-        expect(find.byType(CadrePageMushaf), findsOneWidget);
+      }
+
+      testWidgets('corpus en cours de chargement : la vraie page Coran dans '
+          'son attente, aucun texte d\'echec', (WidgetTester tester) async {
+        final Completer<ServiceCoran> attente = Completer<ServiceCoran>();
+        await monterSeule(tester, () => attente.future);
+        await tester.pump();
+        expect(find.byType(MushafPage), findsOneWidget);
+        expect(
+          find.byType(CircularProgressIndicator, skipOffstage: false),
+          findsWidgets,
+        );
         expect(find.text(t.eleve.coran.indisponible), findsNothing);
+
+        attente.complete(const ServiceCoranDemo());
+        await _poser(tester);
+        expect(find.textContaining(_alHamd, findRichText: true), findsWidgets);
+        expect(tester.takeException(), isNull);
       });
 
-      testWidgets('demo 320 x2 (fenetre de capture) : titre et explication '
-          'entiers, atteignables, jamais rognes', (WidgetTester tester) async {
-        await monterDemo(tester, taille: const Size(320, 900), echelle: 2);
-        await tester.tap(_onglet(t.adulte.nav.coran));
+      testWidgets('chargement differe en echec : l\'etat d\'echec du lecteur ; '
+          '« Reessayer » relance le chargement et montre le texte', (
+        WidgetTester tester,
+      ) async {
+        // Le chargement echoue tant que le reseau manque (Riverpod relance
+        // seul une lecture en echec : l'echec doit durer pour etre vu).
+        bool reseau = false;
+        int appels = 0;
+        await monterSeule(tester, () async {
+          appels++;
+          if (!reseau) {
+            throw StateError('bibliotheque differee injoignable');
+          }
+          return const ServiceCoranDemo();
+        });
         await _poser(tester);
-        _verifierDemoHonnete();
-        for (final String texte in <String>[
-          t.accessibilite.coran.demoSansTexte,
-          t.accessibilite.coran.demoSansTexteDetailVous,
-        ]) {
-          final Finder cible = find.text(texte);
-          await tester.ensureVisible(cible);
-          await _poser(tester);
-          _entierementVisible(tester, cible);
-        }
-        verifierEcranSansMotCoupe(tester);
+        expect(find.byType(MushafPage), findsOneWidget);
+        expect(find.text(t.eleve.coran.indisponible), findsOneWidget);
+        expect(find.text(t.eleve.coran.reessayer), findsOneWidget);
+        expect(find.textContaining(_alHamd, findRichText: true), findsNothing);
+
+        reseau = true;
+        final int avant = appels;
+        await tester.tap(find.text(t.eleve.coran.reessayer));
+        await _poser(tester);
+        expect(appels, greaterThan(avant));
+        expect(find.text(t.eleve.coran.indisponible), findsNothing);
+        expect(find.textContaining(_alHamd, findRichText: true), findsWidgets);
         expect(tester.takeException(), isNull);
       });
 
@@ -303,7 +384,7 @@ void main() {
             );
             await tester.tap(_onglet(t.adulte.nav.coran));
             await _poser(tester);
-            _verifierDemoHonnete();
+            _verifierVraiePageDemo();
             verifierEcranSansMotCoupe(tester);
             expect(tester.takeException(), isNull);
           });
@@ -328,4 +409,27 @@ void main() {
       }
     },
   );
+
+  group('portee racine de main.dart (demarrage sur /demo/adulte)', () {
+    test('posee seulement sur la demonstration adulte, hors production', () {
+      List<Override> pour(String adresse, String environnement) =>
+          surchargesRacineDemoAdulte(
+            adresse: Uri.parse(adresse),
+            environnement: environnement,
+          );
+      expect(pour('https://a.test/demo/adulte', 'staging'), hasLength(1));
+      expect(
+        pour('https://a.test/#/demo/adulte?ecran=coran', 'dev'),
+        hasLength(1),
+      );
+      expect(pour('https://a.test/demo/adulte/x', 'staging'), hasLength(1));
+      // Production : jamais, quelle que soit l'adresse.
+      expect(pour('https://a.test/demo/adulte', 'production'), isEmpty);
+      expect(pour('https://a.test/#/demo/adulte', ''), isEmpty);
+      // Toute autre adresse : la racine reste la vraie.
+      expect(pour('https://a.test/#/eleve/coran', 'dev'), isEmpty);
+      expect(pour('https://a.test/demo/adultes', 'dev'), isEmpty);
+      expect(pour('https://a.test/#/demo/classe', 'dev'), isEmpty);
+    });
+  });
 }

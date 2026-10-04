@@ -1,13 +1,16 @@
 // PT-B-CORAN-ADULTE : captures de l'onglet Coran de l'eleve adulte, atteint
 // en touchant l'onglet de la vraie barre (K-07).
-// - `reel_*` : route reelle (vrai routeur, session d'eleve, capacite vraie),
-//   `/eleve/adulte` -> onglet Coran -> `/eleve/coran`, la vraie page Coran
-//   avec le corpus de reference des tests (aucun serveur).
-// - `demo_*` : `/demo/adulte`, onglet Coran -> sans corpus hors serveur, la
-//   demonstration dit la vraie cause (texte non charge DANS la
-//   demonstration, adulte vouvoye, aucun bouton voue a l'echec), jamais
-//   l'erreur reseau du lecteur (K-59). Le vrai lecteur, avec corpus, est
-//   capture par `reel_*`.
+// - `demo_coran_*` : `/demo/adulte`, onglet Coran -> la VRAIE page Coran
+//   (`MushafPage`) sur le corpus de demonstration, recopie mot pour mot de la
+//   migration 0013 (`service_coran_demo.dart`), avec la portee racine que
+//   `main.dart` pose au demarrage sur `/demo/adulte` ; aucun serveur.
+// - `demo_aller_a_*` : la feuille « Aller a » (390, feuille du bas) et le
+//   dialogue (1440), saisie « 2:255 » ; `demo_page42_390` : la page ouverte.
+// - `reel_coran_*` : route reelle (vrai routeur, session d'eleve, capacite
+//   vraie), `/eleve/adulte` -> onglet Coran -> `/eleve/coran`. Le service
+//   serveur est REMPLACE par le meme corpus de demonstration (aucun serveur
+//   en test) : la capture prouve la navigation et le vrai rendu du vrai
+//   texte, pas une lecture sur staging.
 // 320 px texte x2, 390 clair et sombre, 1440.
 // Saute sans CAPTURE_DIR (voir LISEZ-MOI.md). A copier dans test/capture/.
 
@@ -20,30 +23,74 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
-import 'package:rewayah_academy/core/tc_coran/corpus_service_coran.dart';
-import 'package:rewayah_academy/core/tc_coran/layout_lignes_indisponible.dart';
-import 'package:rewayah_academy/core/tc_coran/navigation_coran.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/features/demo/coran_demo_adulte.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
+import 'package:rewayah_academy/features/demo/service_coran_demo.dart';
 import 'package:rewayah_academy/features/tc_mushaf/mushaf_page.dart';
 
 import '../features/accueil_adulte/support_accueil_adulte_route.dart';
-import '../teaching_core/c/faux/faux_corpus_coran.dart';
-import '../teaching_core/c/goldens/corpus_reference.dart';
 import 'outil_capture.dart';
 
 Finder _onglet(String libelle) => find
     .descendant(of: find.byType(NavShell), matching: find.text(libelle))
     .last;
 
+Future<void> _monterDemo(
+  WidgetTester tester,
+  Size taille,
+  double echelle,
+  ThemeMode theme,
+) async {
+  tester.view.physicalSize = taille;
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+  final GoRouter routeur = GoRouter(
+    initialLocation: adresseDemoAdulte(EcranDemoAdulte.accueil),
+    routes: routesDemoAdulte('dev'),
+  );
+  addTearDown(routeur.dispose);
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: surchargesRacineDemoAdulte(
+        adresse: Uri.parse('https://exemple.test/#/demo/adulte'),
+        environnement: 'dev',
+      ),
+      child: TranslationProvider(
+        child: RepaintBoundary(
+          key: cadreCapture,
+          child: MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+            darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+            themeMode: theme,
+            locale: AppLocale.fr.flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            builder: (BuildContext c, Widget? app) => MediaQuery(
+              data: MediaQuery.of(c)
+                  .copyWith(textScaler: TextScaler.linear(echelle)),
+              child: app!,
+            ),
+            routerConfig: routeur,
+          ),
+        ),
+      ),
+    ),
+  );
+  await stabiliser(tester);
+  await tester.tap(_onglet(t.adulte.nav.coran));
+  await stabiliser(tester);
+  expect(find.byType(CoranDemoAdulte), findsOneWidget);
+  expect(find.byType(MushafPage), findsOneWidget);
+  expect(find.textContaining(t.eleve.coran.source), findsOneWidget);
+  expect(find.text(t.eleve.coran.indisponible), findsNothing);
+}
+
 void main() {
   group('Capture : PT-B-CORAN-ADULTE', skip: sautSansCapture, () {
-    late CorpusReference reference;
-    setUpAll(() async {
-      await chargerPolicesDuDepot();
-      reference = CorpusReference.charger();
-    });
+    setUpAll(chargerPolicesDuDepot);
 
     // nom : (taille logique, echelle du texte, theme)
     final Map<String, (Size, double, ThemeMode)> formats =
@@ -66,15 +113,7 @@ void main() {
           theme: theme,
           surcharges: <Override>[
             ...surchargesAccueilAdulte(accueil: Valeur(accueilDemo())),
-            portCorpusCoranProvider.overrideWithValue(
-              FauxCorpusCoran(reference),
-            ),
-            portLayoutMushafProvider.overrideWithValue(
-              const LayoutLignesIndisponible(),
-            ),
-            portNavigationCoranProvider.overrideWithValue(
-              FauxNavigationCoran(),
-            ),
+            ...surchargesCoranDemoAdulte(const ServiceCoranDemo()),
           ],
           depart: Routes.eleve,
         );
@@ -85,55 +124,42 @@ void main() {
           Routes.eleveCoran,
         );
         expect(find.byType(MushafPage), findsOneWidget);
+        expect(find.textContaining(t.eleve.coran.source), findsOneWidget);
         await capturer(tester, 'reel_coran_${f.key}');
       });
 
       testWidgets('demo_${f.key}', (WidgetTester tester) async {
-        tester.view.physicalSize = taille;
-        tester.view.devicePixelRatio = 1;
-        addTearDown(tester.view.reset);
-        final GoRouter routeur = GoRouter(
-          initialLocation: adresseDemoAdulte(EcranDemoAdulte.accueil),
-          routes: routesDemoAdulte('dev'),
-        );
-        addTearDown(routeur.dispose);
-        await tester.pumpWidget(
-          ProviderScope(
-            child: TranslationProvider(
-              child: RepaintBoundary(
-                key: cadreCapture,
-                child: MaterialApp.router(
-                  debugShowCheckedModeBanner: false,
-                  theme: AppTheme.pour(
-                    InterfaceMode.standard,
-                    Brightness.light,
-                  ),
-                  darkTheme: AppTheme.pour(
-                    InterfaceMode.standard,
-                    Brightness.dark,
-                  ),
-                  themeMode: theme,
-                  locale: AppLocale.fr.flutterLocale,
-                  supportedLocales: AppLocaleUtils.supportedLocales,
-                  localizationsDelegates: GlobalMaterialLocalizations.delegates,
-                  builder: (BuildContext c, Widget? app) => MediaQuery(
-                    data: MediaQuery.of(c)
-                        .copyWith(textScaler: TextScaler.linear(echelle)),
-                    child: app!,
-                  ),
-                  routerConfig: routeur,
-                ),
-              ),
-            ),
-          ),
-        );
-        await stabiliser(tester);
-        await tester.tap(_onglet(t.adulte.nav.coran));
-        await stabiliser(tester);
-        expect(find.byKey(CoranDemoAdulte.sansTexteKey), findsOneWidget);
-        expect(find.byType(MushafPage), findsNothing);
-        expect(find.text(t.eleve.coran.indisponible), findsNothing);
+        await _monterDemo(tester, taille, echelle, theme);
         await capturer(tester, 'demo_coran_${f.key}');
+      });
+    }
+
+    for (final (String nom, Size taille) in <(String, Size)>[
+      ('390', const Size(390, 844)),
+      ('1440', const Size(1440, 900)),
+    ]) {
+      testWidgets('demo_aller_a_$nom', (WidgetTester tester) async {
+        await _monterDemo(tester, taille, 1, ThemeMode.light);
+        await tester.tap(find.text(t.tc.coran.navigation.ouvrir));
+        await stabiliser(tester);
+        await tester.enterText(find.byType(TextField), '2:255');
+        await stabiliser(tester);
+        expect(
+          find.text(t.tc.coran.navigation.pageNumero(page: 42)),
+          findsOneWidget,
+        );
+        await capturer(tester, 'demo_aller_a_$nom');
+        if (nom == '390') {
+          await tester.tap(
+            find.text(t.tc.coran.navigation.pageNumero(page: 42)),
+          );
+          await stabiliser(tester);
+          expect(
+            find.textContaining(t.eleve.coran.page(page: '42', total: '604')),
+            findsWidgets,
+          );
+          await capturer(tester, 'demo_page42_390');
+        }
       });
     }
   });

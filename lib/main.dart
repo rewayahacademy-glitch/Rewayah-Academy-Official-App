@@ -17,6 +17,7 @@ import 'core/observabilite/supervision.dart';
 import 'core/session/session_controleur.dart';
 import 'core/session/source_session_agent.dart';
 import 'features/_dev/playground/playground_racine.dart';
+import 'features/demo/coran_demo_adulte.dart';
 import 'features/demo/dossiers_demo.dart';
 import 'features/demo/mode_demonstration.dart';
 import 'features/demo/racine_demonstrable.dart';
@@ -126,7 +127,22 @@ Future<void> main() async {
   // Hors production, la racine porte l'entree « Essayer la demonstration »
   // (P2-07) ; en production elle n'a aucun lanceur et se comporte comme
   // l'application seule.
-  runApp(RacineDemonstrable(surchargesReelles: _surchargesAppReelle()));
+  //
+  // Ouverte sur `/demo/adulte` (hors production), la racine lit aussi la
+  // recherche du Coran sur le corpus de demonstration : la feuille « Aller a »
+  // de la vraie page Coran s'ouvre au-dessus de la coquille, dans cette
+  // portee, et ne doit appeler aucun serveur (PT-B-CORAN-ADULTE, K-28).
+  runApp(
+    RacineDemonstrable(
+      surchargesReelles: <Override>[
+        ..._surchargesAppReelle(),
+        ...surchargesRacineDemoAdulte(
+          adresse: Uri.base,
+          environnement: Env.environnement,
+        ),
+      ],
+    ),
+  );
 }
 
 /// Demarre l'application en session d'observation.

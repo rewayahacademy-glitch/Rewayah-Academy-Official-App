@@ -1,0 +1,69 @@
+# PT-B-CORAN-ADULTE : genere lib/features/demo/corpus_demo_coran_donnees.dart
+# depuis supabase/migrations/0013_corpus_coranique.sql, mot pour mot.
+# Usage : python3 generer_corpus_demo.py.txt <migration.sql> <sortie.dart>
+# Verification : test/features/demo/corpus_demo_coran_test.dart.
+import re, sys
+src = open(sys.argv[1], encoding='utf-8').read()
+lignes = src.split('\n')
+licence = []
+dans = False
+for l in lignes:
+    if 'PLEASE DO NOT REMOVE OR CHANGE THIS COPYRIGHT BLOCK' in l: dans = True
+    if dans: licence.append(l)
+    if dans and l.startswith('-- Please check updates at'):
+        licence.append('-- ' if False else '--'); 
+        licence.append('-- ====================================================================')
+        break
+sour = re.findall(r"^  \((\d+), '((?:[^']|'')*)', '((?:[^']|'')*)', '(mecque|medine)', (\d+)\)", src, re.M)
+juz = []
+sec = src[src.index('insert into public.juz'):src.index('insert into public.page_mushaf')]
+juz = re.findall(r"^  \((\d+), (\d+), (\d+)\)", sec, re.M)
+pages = []
+for bloc in re.findall(r"insert into public\.page_mushaf.*?\) as t\(numero, juz_numero\)", src, re.S):
+    pages += re.findall(r"^  \((\d+), (\d+)\)", bloc, re.M)
+vers = []
+for bloc in re.findall(r"insert into public\.verset .*?\) as t\(sourate_numero, numero, texte, page_numero\)", src, re.S):
+    vers += re.findall(r"^  \((\d+), (\d+), '((?:[^']|'')*)', (\d+)\)", bloc, re.M)
+print(len(sour), len(juz), len(pages), len(vers), file=sys.stderr)
+assert len(sour)==114 and len(juz)==30 and len(pages)==604 and len(vers)==6236
+def u(s): return s.replace("''", "'")
+for x in vers:
+    assert '|' not in x[2] and "'''" not in u(x[2]) and '\n' not in x[2] and '$' not in x[2]
+out = []
+out.append('// GENERE depuis supabase/migrations/0013_corpus_coranique.sql : ne pas')
+out.append('// modifier a la main. Le test test/features/demo/corpus_demo_coran_test.dart')
+out.append('// verifie, verset par verset, que ce fichier recopie la migration mot pour')
+out.append('// mot. Generateur : docs/current/captures/PT-B-CORAN-ADULTE/')
+out.append('// generer_corpus_demo.py.txt (python3 generer_corpus_demo.py.txt')
+out.append('// supabase/migrations/0013_corpus_coranique.sql')
+out.append('// lib/features/demo/corpus_demo_coran_donnees.dart).')
+out.append('//')
+out.append('// Le corpus de la DEMONSTRATION seulement (K-28 : aucun serveur) ; charge')
+out.append('// en differe (`deferred as`, via service_coran_demo.dart), il ne pese sur')
+out.append('// aucun autre ecran.')
+out.append('//')
+out.append('// PROVENANCE DU TEXTE, reproduite mot pour mot comme la licence l\'exige :')
+out.append('//')
+for l in licence:
+    out.append('//' + l[2:])
+out.append('')
+out.append('/// Les 114 sourates : `numero|nom arabe|nom translittere|lieu|versets`.')
+out.append("const String souratesDemo = r'''")
+for s in sour: out.append('|'.join([s[0], u(s[1]), u(s[2]), s[3], s[4]]))
+out.append("''';")
+out.append('')
+out.append('/// Les 30 juz : `numero|sourate de depart|verset de depart`.')
+out.append("const String juzDemo = r'''")
+for j in juz: out.append('|'.join(j))
+out.append("''';")
+out.append('')
+out.append('/// Les 604 pages : `numero|juz`.')
+out.append("const String pagesDemo = r'''")
+for p in pages: out.append('|'.join(p))
+out.append("''';")
+out.append('')
+out.append('/// Les 6236 versets : `sourate|verset|page|texte`, le texte tel quel.')
+out.append("const String versetsDemo = r'''")
+for v in vers: out.append('|'.join([v[0], v[1], v[3], u(v[2])]))
+out.append("''';")
+open(sys.argv[2], 'w', encoding='utf-8').write('\n'.join(out) + '\n')
