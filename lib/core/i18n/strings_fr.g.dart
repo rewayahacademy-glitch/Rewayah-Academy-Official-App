@@ -87,6 +87,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$tc$fr tc = Traductions$tc$fr.internal(_root);
 	late final Traductions$adulte$fr adulte = Traductions$adulte$fr.internal(_root);
 	late final Traductions$argent$fr argent = Traductions$argent$fr.internal(_root);
+	late final Traductions$comptable$fr comptable = Traductions$comptable$fr.internal(_root);
 	late final Traductions$identiteProfil$fr identiteProfil = Traductions$identiteProfil$fr.internal(_root);
 }
 
@@ -2408,6 +2409,29 @@ class Traductions$argent$fr {
 	late final Traductions$argent$moyen$fr moyen = Traductions$argent$moyen$fr.internal(_root);
 	late final Traductions$argent$soldes$fr soldes = Traductions$argent$soldes$fr.internal(_root);
 	late final Traductions$argent$acces$fr acces = Traductions$argent$acces$fr.internal(_root);
+}
+
+// Path: comptable
+class Traductions$comptable$fr {
+	Traductions$comptable$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$comptable$nav$fr nav = Traductions$comptable$nav$fr.internal(_root);
+	late final Traductions$comptable$onglets$fr onglets = Traductions$comptable$onglets$fr.internal(_root);
+	late final Traductions$comptable$commun$fr commun = Traductions$comptable$commun$fr.internal(_root);
+	late final Traductions$comptable$coffres$fr coffres = Traductions$comptable$coffres$fr.internal(_root);
+	late final Traductions$comptable$statuts$fr statuts = Traductions$comptable$statuts$fr.internal(_root);
+	late final Traductions$comptable$alertes$fr alertes = Traductions$comptable$alertes$fr.internal(_root);
+	late final Traductions$comptable$aujourdhui$fr aujourdhui = Traductions$comptable$aujourdhui$fr.internal(_root);
+	late final Traductions$comptable$paiements$fr paiements = Traductions$comptable$paiements$fr.internal(_root);
+	late final Traductions$comptable$tresorerie$fr tresorerie = Traductions$comptable$tresorerie$fr.internal(_root);
+	late final Traductions$comptable$encaissements$fr encaissements = Traductions$comptable$encaissements$fr.internal(_root);
+	late final Traductions$comptable$beneficiaires$fr beneficiaires = Traductions$comptable$beneficiaires$fr.internal(_root);
+	late final Traductions$comptable$contractuels$fr contractuels = Traductions$comptable$contractuels$fr.internal(_root);
+	late final Traductions$comptable$direction$fr direction = Traductions$comptable$direction$fr.internal(_root);
+	late final Traductions$comptable$demo$fr demo = Traductions$comptable$demo$fr.internal(_root);
 }
 
 // Path: identiteProfil
@@ -5705,6 +5729,9 @@ class Traductions$admin$finance$fr {
 
 	/// fr: 'Politiques commerciales'
 	String get politiques => 'Politiques commerciales';
+
+	/// fr: 'Réserve et délégation'
+	String get reserveDelegation => 'Réserve et délégation';
 
 	late final Traductions$admin$finance$vue$fr vue = Traductions$admin$finance$vue$fr.internal(_root);
 	late final Traductions$admin$finance$pol$fr pol = Traductions$admin$finance$pol$fr.internal(_root);
@@ -11676,6 +11703,471 @@ class Traductions$argent$acces$fr {
 	String seancesFermees({required Object prenom}) => '${prenom} ne peut pas rejoindre de nouvelle séance pour le moment. Son compte et ses contenus restent accessibles.';
 }
 
+// Path: comptable.nav
+class Traductions$comptable$nav$fr {
+	Traductions$comptable$nav$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aujourd'hui'
+	String get aujourdhui => 'Aujourd\'hui';
+
+	/// fr: 'Paiements'
+	String get paiements => 'Paiements';
+
+	/// fr: 'Trésorerie'
+	String get tresorerie => 'Trésorerie';
+
+	/// fr: 'Compte'
+	String get compte => 'Compte';
+}
+
+// Path: comptable.onglets
+class Traductions$comptable$onglets$fr {
+	Traductions$comptable$onglets$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À effectuer'
+	String get aEffectuer => 'À effectuer';
+
+	/// fr: 'Contractuels'
+	String get contractuels => 'Contractuels';
+
+	/// fr: 'Bénéficiaires'
+	String get beneficiaires => 'Bénéficiaires';
+
+	/// fr: 'Coffres'
+	String get coffres => 'Coffres';
+
+	/// fr: 'Encaissements'
+	String get encaissements => 'Encaissements';
+
+	/// fr: 'Rapprochement'
+	String get rapprochement => 'Rapprochement';
+}
+
+// Path: comptable.commun
+class Traductions$comptable$commun$fr {
+	Traductions$comptable$commun$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Montant masqué'
+	String get montantMasque => 'Montant masqué';
+
+	/// fr: 'Afficher les montants'
+	String get afficherMontants => 'Afficher les montants';
+
+	/// fr: 'Masquer les montants'
+	String get masquerMontants => 'Masquer les montants';
+
+	/// fr: 'Montants masqués'
+	String get montantsMasques => 'Montants masqués';
+
+	/// fr: 'Montants affichés'
+	String get montantsAffiches => 'Montants affichés';
+
+	/// fr: 'Cet écran est en préparation.'
+	String get enPreparationTitre => 'Cet écran est en préparation.';
+
+	/// fr: 'Aucun chiffre n'est affiché ici pour l'instant. Aucun paiement n'est possible depuis cet écran.'
+	String get enPreparationPhrase => 'Aucun chiffre n\'est affiché ici pour l\'instant. Aucun paiement n\'est possible depuis cet écran.';
+
+	/// fr: 'Réserve stratégique'
+	String get reserveStrategique => 'Réserve stratégique';
+
+	/// fr: 'Trésorerie libre'
+	String get tresorerieLibre => 'Trésorerie libre';
+
+	/// fr: 'Trésorerie détenue'
+	String get tresorerieDetenue => 'Trésorerie détenue';
+
+	/// fr: 'Fonds protégés'
+	String get fondsProteges => 'Fonds protégés';
+
+	/// fr: 'En transit'
+	String get enTransit => 'En transit';
+
+	/// fr: 'Ce qui reste réellement disponible après les fonds protégés, les obligations et le transit.'
+	String get tresorerieLibreDetail => 'Ce qui reste réellement disponible après les fonds protégés, les obligations et le transit.';
+
+	/// fr: 'Objectif'
+	String get objectif => 'Objectif';
+
+	/// fr: 'Objectif : montant fixe'
+	String get objectifFixe => 'Objectif : montant fixe';
+
+	/// fr: 'Objectif actuel : {n} mois de charges essentielles'
+	String objectifMois({required Object n}) => 'Objectif actuel : ${n} mois de charges essentielles';
+
+	/// fr: 'Montant actuel'
+	String get montantActuel => 'Montant actuel';
+
+	/// fr: 'Manque à compléter'
+	String get manque => 'Manque à compléter';
+
+	/// fr: '{pourcent} % atteint'
+	String atteint({required Object pourcent}) => '${pourcent} % atteint';
+
+	/// fr: 'Mode de calcul'
+	String get modeCalcul => 'Mode de calcul';
+
+	/// fr: 'Montant cible fixe'
+	String get modeMontantFixe => 'Montant cible fixe';
+
+	/// fr: 'Couverture en mois de charges essentielles'
+	String get modeCouvertureMois => 'Couverture en mois de charges essentielles';
+
+	/// fr: 'Dernière allocation : {date}'
+	String derniereAllocation({required Object date}) => 'Dernière allocation : ${date}';
+
+	/// fr: 'Prochaine allocation prévue : {date}'
+	String prochaineAllocation({required Object date}) => 'Prochaine allocation prévue : ${date}';
+
+	/// fr: 'Aucune allocation enregistrée'
+	String get aucuneAllocation => 'Aucune allocation enregistrée';
+
+	/// fr: 'Destination'
+	String get destination => 'Destination';
+
+	/// fr: '{type} •••• {suffixe}'
+	String destinationMasquee({required Object type, required Object suffixe}) => '${type} •••• ${suffixe}';
+
+	/// fr: '{type}, numéro masqué, se termine par {suffixe}'
+	String destinationMasqueeLecteur({required Object type, required Object suffixe}) => '${type}, numéro masqué, se termine par ${suffixe}';
+
+	/// fr: 'Aucune méthode de paiement'
+	String get destinationAucune => 'Aucune méthode de paiement';
+
+	/// fr: '{pays} · {devise}'
+	String paysDevise({required Object pays, required Object devise}) => '${pays} · ${devise}';
+
+	/// fr: 'Vérification'
+	String get verification => 'Vérification';
+
+	/// fr: '{initiateur} · {date}'
+	String activiteInitiateurDate({required Object initiateur, required Object date}) => '${initiateur} · ${date}';
+
+	/// fr: '{avant} → {apres}'
+	String activiteTransition({required Object avant, required Object apres}) => '${avant} → ${apres}';
+
+	/// fr: 'Réf. {reference}'
+	String activiteReference({required Object reference}) => 'Réf. ${reference}';
+
+	/// fr: 'Relance préparée (démonstration)'
+	String get relancePreparee => 'Relance préparée (démonstration)';
+
+	/// fr: '{nom} (démonstration)'
+	String prestataireDemonstration({required Object nom}) => '${nom} (démonstration)';
+
+	/// fr: '{jour} {mois} {annee}'
+	String date({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}';
+
+	/// fr: 'Non renseigné'
+	String get aucuneValeur => 'Non renseigné';
+}
+
+// Path: comptable.coffres
+class Traductions$comptable$coffres$fr {
+	Traductions$comptable$coffres$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Fonds clients engagés'
+	String get fondsClientsEngages => 'Fonds clients engagés';
+
+	/// fr: 'Paie à décaisser'
+	String get paieADecaisser => 'Paie à décaisser';
+
+	/// fr: 'Charges essentielles'
+	String get chargesEssentielles => 'Charges essentielles';
+
+	/// fr: 'Taxes & obligations'
+	String get taxesObligations => 'Taxes & obligations';
+
+	/// fr: 'Réserve stratégique'
+	String get reserveStrategique => 'Réserve stratégique';
+
+	/// fr: 'En transit'
+	String get enTransit => 'En transit';
+
+	/// fr: 'Trésorerie libre'
+	String get tresorerieLibre => 'Trésorerie libre';
+}
+
+// Path: comptable.statuts
+class Traductions$comptable$statuts$fr {
+	Traductions$comptable$statuts$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$comptable$statuts$paiement$fr paiement = Traductions$comptable$statuts$paiement$fr.internal(_root);
+	late final Traductions$comptable$statuts$encaissement$fr encaissement = Traductions$comptable$statuts$encaissement$fr.internal(_root);
+	late final Traductions$comptable$statuts$rapprochement$fr rapprochement = Traductions$comptable$statuts$rapprochement$fr.internal(_root);
+	late final Traductions$comptable$statuts$profil$fr profil = Traductions$comptable$statuts$profil$fr.internal(_root);
+	late final Traductions$comptable$statuts$capacite$fr capacite = Traductions$comptable$statuts$capacite$fr.internal(_root);
+	late final Traductions$comptable$statuts$reserve$fr reserve = Traductions$comptable$statuts$reserve$fr.internal(_root);
+	late final Traductions$comptable$statuts$obligation$fr obligation = Traductions$comptable$statuts$obligation$fr.internal(_root);
+	late final Traductions$comptable$statuts$remboursement$fr remboursement = Traductions$comptable$statuts$remboursement$fr.internal(_root);
+	late final Traductions$comptable$statuts$validation$fr validation = Traductions$comptable$statuts$validation$fr.internal(_root);
+	late final Traductions$comptable$statuts$raison$fr raison = Traductions$comptable$statuts$raison$fr.internal(_root);
+}
+
+// Path: comptable.alertes
+class Traductions$comptable$alertes$fr {
+	Traductions$comptable$alertes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Enseignants à payer'
+	String get enseignantsAPayer => 'Enseignants à payer';
+
+	/// fr: 'Contractuels à échéance'
+	String get contractuelsAEcheance => 'Contractuels à échéance';
+
+	/// fr: 'Infos paiement manquantes'
+	String get infosManquantes => 'Infos paiement manquantes';
+
+	/// fr: 'Payout échoué'
+	String get payoutEchoue => 'Payout échoué';
+
+	/// fr: 'Paiement famille échoué'
+	String get paiementFamilleEchoue => 'Paiement famille échoué';
+
+	/// fr: 'Transaction non rapprochée'
+	String get transactionNonRapprochee => 'Transaction non rapprochée';
+
+	/// fr: 'Remboursement en attente'
+	String get remboursementEnAttente => 'Remboursement en attente';
+
+	/// fr: 'Réserve stratégique sous objectif'
+	String get reserveSousObjectif => 'Réserve stratégique sous objectif';
+
+	/// fr: 'Solde prestataire insuffisant'
+	String get soldePrestataireInsuffisant => 'Solde prestataire insuffisant';
+
+	/// fr: 'Méthode modifiée récemment'
+	String get methodeModifieeRecemment => 'Méthode modifiée récemment';
+
+	/// fr: 'Doublon potentiel'
+	String get doublonPotentiel => 'Doublon potentiel';
+
+	/// fr: 'Validation supplémentaire requise'
+	String get validationRequise => 'Validation supplémentaire requise';
+}
+
+// Path: comptable.aujourdhui
+class Traductions$comptable$aujourdhui$fr {
+	Traductions$comptable$aujourdhui$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aujourd'hui'
+	String get titre => 'Aujourd\'hui';
+
+	/// fr: 'Que dois-je faire maintenant ?'
+	String get sousTitre => 'Que dois-je faire maintenant ?';
+
+	/// fr: 'À traiter et alertes'
+	String get attention => 'À traiter et alertes';
+
+	/// fr: 'À traiter aujourd'hui'
+	String get aTraiter => 'À traiter aujourd\'hui';
+
+	/// fr: 'Alertes'
+	String get alertes => 'Alertes';
+
+	/// fr: 'Échéances proches'
+	String get echeances => 'Échéances proches';
+
+	/// fr: 'Prestataires'
+	String get prestataires => 'Prestataires';
+
+	/// fr: 'Activité récente'
+	String get activiteRecente => 'Activité récente';
+
+	/// fr: 'Accès rapides'
+	String get accesRapides => 'Accès rapides';
+
+	/// fr: 'Encaissements récents'
+	String get encaissementsRecents => 'Encaissements récents';
+
+	/// fr: 'Voir tout'
+	String get voirTout => 'Voir tout';
+}
+
+// Path: comptable.paiements
+class Traductions$comptable$paiements$fr {
+	Traductions$comptable$paiements$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Paiements à effectuer'
+	String get titre => 'Paiements à effectuer';
+
+	/// fr: 'Montants calculés à la source : ici on vérifie et on paie, on ne modifie rien.'
+	String get sousTitre => 'Montants calculés à la source : ici on vérifie et on paie, on ne modifie rien.';
+
+	/// fr: 'Détail du paiement'
+	String get detailTitre => 'Détail du paiement';
+
+	/// fr: 'Chaque ligne a sa source. Un écart se signale, il ne se corrige pas ici.'
+	String get detailSousTitre => 'Chaque ligne a sa source. Un écart se signale, il ne se corrige pas ici.';
+}
+
+// Path: comptable.tresorerie
+class Traductions$comptable$tresorerie$fr {
+	Traductions$comptable$tresorerie$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Trésorerie et coffres'
+	String get titre => 'Trésorerie et coffres';
+
+	/// fr: 'La Trésorerie libre est le seul chiffre dépensable.'
+	String get sousTitre => 'La Trésorerie libre est le seul chiffre dépensable.';
+
+	/// fr: 'Alimenter la Réserve stratégique'
+	String get alimenter => 'Alimenter la Réserve stratégique';
+}
+
+// Path: comptable.encaissements
+class Traductions$comptable$encaissements$fr {
+	Traductions$comptable$encaissements$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Encaissements'
+	String get titre => 'Encaissements';
+
+	/// fr: 'Un paiement n'est confirmé qu'après le prestataire.'
+	String get sousTitre => 'Un paiement n\'est confirmé qu\'après le prestataire.';
+
+	/// fr: 'Détail de l'encaissement'
+	String get detailTitre => 'Détail de l\'encaissement';
+
+	/// fr: 'Rapprochement'
+	String get rapprochementTitre => 'Rapprochement';
+
+	/// fr: 'Relier chaque transaction à ce qui l'attendait.'
+	String get rapprochementSousTitre => 'Relier chaque transaction à ce qui l\'attendait.';
+}
+
+// Path: comptable.beneficiaires
+class Traductions$comptable$beneficiaires$fr {
+	Traductions$comptable$beneficiaires$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Bénéficiaires'
+	String get titre => 'Bénéficiaires';
+
+	/// fr: 'Coordonnées masquées : seul le bénéficiaire modifie les siennes.'
+	String get sousTitre => 'Coordonnées masquées : seul le bénéficiaire modifie les siennes.';
+
+	/// fr: 'Profil de paiement'
+	String get profilTitre => 'Profil de paiement';
+
+	late final Traductions$comptable$beneficiaires$recevoir$fr recevoir = Traductions$comptable$beneficiaires$recevoir$fr.internal(_root);
+}
+
+// Path: comptable.contractuels
+class Traductions$comptable$contractuels$fr {
+	Traductions$comptable$contractuels$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Contractuels et obligations'
+	String get titre => 'Contractuels et obligations';
+
+	/// fr: 'Les montants sont définis à la création de l'obligation, figés après approbation.'
+	String get sousTitre => 'Les montants sont définis à la création de l\'obligation, figés après approbation.';
+
+	/// fr: 'Nouvelle obligation'
+	String get nouvelle => 'Nouvelle obligation';
+
+	/// fr: 'Obligation'
+	String get detailTitre => 'Obligation';
+}
+
+// Path: comptable.direction
+class Traductions$comptable$direction$fr {
+	Traductions$comptable$direction$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Réserve et délégation'
+	String get titre => 'Réserve et délégation';
+
+	/// fr: 'La politique de la Réserve stratégique et ce que le Comptable peut exécuter seul.'
+	String get sousTitre => 'La politique de la Réserve stratégique et ce que le Comptable peut exécuter seul.';
+
+	/// fr: 'Politique de la Réserve stratégique'
+	String get reserve => 'Politique de la Réserve stratégique';
+
+	/// fr: 'Délégation financière'
+	String get delegation => 'Délégation financière';
+}
+
+// Path: comptable.demo
+class Traductions$comptable$demo$fr {
+	Traductions$comptable$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Démonstration Comptable'
+	String get titre => 'Démonstration Comptable';
+
+	/// fr: 'Données fictives, aucun paiement, aucun envoi.'
+	String get mention => 'Données fictives, aucun paiement, aucun envoi.';
+
+	/// fr: 'Choisissez un écran du Comptable. Les montants sont masqués par défaut ; la variante « montants affichés » les révèle pour la durée de la page.'
+	String get intro => 'Choisissez un écran du Comptable. Les montants sont masqués par défaut ; la variante « montants affichés » les révèle pour la durée de la page.';
+
+	/// fr: 'Montants masqués'
+	String get montantsMasques => 'Montants masqués';
+
+	/// fr: 'Montants affichés'
+	String get montantsAffiches => 'Montants affichés';
+
+	/// fr: 'Coquille du Comptable'
+	String get groupeComptable => 'Coquille du Comptable';
+
+	/// fr: 'Compte et bénéficiaire'
+	String get groupeCompte => 'Compte et bénéficiaire';
+
+	/// fr: 'Direction'
+	String get groupeDirection => 'Direction';
+}
+
 // Path: commun.etats.chargementProlonge
 class Traductions$commun$etats$chargementProlonge$fr {
 	Traductions$commun$etats$chargementProlonge$fr.internal(this._root);
@@ -16385,6 +16877,336 @@ class Traductions$adulte$demo$etats$fr {
 	String get emancipation => 'Émancipation d\'un élève devenu adulte : non construite dans cette vague.';
 }
 
+// Path: comptable.statuts.paiement
+class Traductions$comptable$statuts$paiement$fr {
+	Traductions$comptable$statuts$paiement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À calculer'
+	String get aCalculer => 'À calculer';
+
+	/// fr: 'Calculé'
+	String get calcule => 'Calculé';
+
+	/// fr: 'À vérifier'
+	String get aVerifier => 'À vérifier';
+
+	/// fr: 'Infos paiement manquantes'
+	String get infosManquantes => 'Infos paiement manquantes';
+
+	/// fr: 'Vérification paiement requise'
+	String get verificationRequise => 'Vérification paiement requise';
+
+	/// fr: 'Prêt à payer'
+	String get pretAPayer => 'Prêt à payer';
+
+	/// fr: 'Validation supplémentaire requise'
+	String get validationRequise => 'Validation supplémentaire requise';
+
+	/// fr: 'Soumis'
+	String get soumis => 'Soumis';
+
+	/// fr: 'En transit'
+	String get enTransit => 'En transit';
+
+	/// fr: 'Réussi'
+	String get reussi => 'Réussi';
+
+	/// fr: 'Échoué'
+	String get echoue => 'Échoué';
+
+	/// fr: 'À relancer'
+	String get aRelancer => 'À relancer';
+
+	/// fr: 'Annulé'
+	String get annule => 'Annulé';
+
+	/// fr: 'Remboursé / retourné'
+	String get retourne => 'Remboursé / retourné';
+
+	/// fr: 'Indisponible'
+	String get indisponible => 'Indisponible';
+}
+
+// Path: comptable.statuts.encaissement
+class Traductions$comptable$statuts$encaissement$fr {
+	Traductions$comptable$statuts$encaissement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'En attente'
+	String get enAttente => 'En attente';
+
+	/// fr: 'Confirmé'
+	String get confirme => 'Confirmé';
+
+	/// fr: 'Échoué'
+	String get echoue => 'Échoué';
+
+	/// fr: 'Remboursé'
+	String get rembourse => 'Remboursé';
+
+	/// fr: 'Partiellement remboursé'
+	String get partiellementRembourse => 'Partiellement remboursé';
+
+	/// fr: 'Contesté'
+	String get conteste => 'Contesté';
+
+	/// fr: 'Chargeback'
+	String get chargeback => 'Chargeback';
+
+	/// fr: 'À rapprocher'
+	String get aRapprocher => 'À rapprocher';
+
+	/// fr: 'Rapproché'
+	String get rapproche => 'Rapproché';
+}
+
+// Path: comptable.statuts.rapprochement
+class Traductions$comptable$statuts$rapprochement$fr {
+	Traductions$comptable$statuts$rapprochement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Automatique'
+	String get automatique => 'Automatique';
+
+	/// fr: 'À vérifier'
+	String get aVerifier => 'À vérifier';
+
+	/// fr: 'Rapproché'
+	String get rapproche => 'Rapproché';
+
+	/// fr: 'Conflit'
+	String get conflit => 'Conflit';
+
+	/// fr: 'Sans correspondance'
+	String get sansCorrespondance => 'Sans correspondance';
+
+	/// fr: 'Doublon potentiel'
+	String get doublonPotentiel => 'Doublon potentiel';
+}
+
+// Path: comptable.statuts.profil
+class Traductions$comptable$statuts$profil$fr {
+	Traductions$comptable$statuts$profil$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucun moyen'
+	String get aucunMoyen => 'Aucun moyen';
+
+	/// fr: 'Incomplet'
+	String get incomplet => 'Incomplet';
+
+	/// fr: 'En vérification'
+	String get enVerification => 'En vérification';
+
+	/// fr: 'Vérifié'
+	String get verifie => 'Vérifié';
+
+	/// fr: 'Suspendu'
+	String get suspendu => 'Suspendu';
+
+	/// fr: 'Action requise'
+	String get actionRequise => 'Action requise';
+
+	/// fr: 'Invitation envoyée'
+	String get invitationEnvoyee => 'Invitation envoyée';
+}
+
+// Path: comptable.statuts.capacite
+class Traductions$comptable$statuts$capacite$fr {
+	Traductions$comptable$statuts$capacite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pris en charge'
+	String get prisEnCharge => 'Pris en charge';
+
+	/// fr: 'Non pris en charge'
+	String get nonPrisEnCharge => 'Non pris en charge';
+
+	/// fr: 'Temporairement indisponible'
+	String get temporairementIndisponible => 'Temporairement indisponible';
+
+	/// fr: 'Vérification requise'
+	String get verificationRequise => 'Vérification requise';
+
+	/// fr: 'Solde prestataire insuffisant'
+	String get soldePrestataireInsuffisant => 'Solde prestataire insuffisant';
+}
+
+// Path: comptable.statuts.reserve
+class Traductions$comptable$statuts$reserve$fr {
+	Traductions$comptable$statuts$reserve$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Objectif atteint'
+	String get atteint => 'Objectif atteint';
+
+	/// fr: 'Sous objectif'
+	String get sousObjectif => 'Sous objectif';
+
+	/// fr: 'Dépassement'
+	String get depassement => 'Dépassement';
+
+	/// fr: 'Règle inactive'
+	String get regleInactive => 'Règle inactive';
+
+	/// fr: 'Alimentation prévue'
+	String get alimentationPrevue => 'Alimentation prévue';
+
+	/// fr: 'Mouvement sensible'
+	String get mouvementSensible => 'Mouvement sensible';
+}
+
+// Path: comptable.statuts.obligation
+class Traductions$comptable$statuts$obligation$fr {
+	Traductions$comptable$statuts$obligation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Brouillon'
+	String get brouillon => 'Brouillon';
+
+	/// fr: 'À approuver'
+	String get aApprouver => 'À approuver';
+
+	/// fr: 'Approuvée'
+	String get approuvee => 'Approuvée';
+
+	/// fr: 'Refusée'
+	String get refusee => 'Refusée';
+
+	/// fr: 'Payable'
+	String get payable => 'Payable';
+
+	/// fr: 'Payée'
+	String get payee => 'Payée';
+
+	/// fr: 'Annulée'
+	String get annulee => 'Annulée';
+}
+
+// Path: comptable.statuts.remboursement
+class Traductions$comptable$statuts$remboursement$fr {
+	Traductions$comptable$statuts$remboursement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demandé'
+	String get demande => 'Demandé';
+
+	/// fr: 'Approbation requise'
+	String get approbationRequise => 'Approbation requise';
+
+	/// fr: 'Approuvé'
+	String get approuve => 'Approuvé';
+
+	/// fr: 'Exécuté'
+	String get execute => 'Exécuté';
+
+	/// fr: 'Refusé'
+	String get refuse => 'Refusé';
+}
+
+// Path: comptable.statuts.validation
+class Traductions$comptable$statuts$validation$fr {
+	Traductions$comptable$statuts$validation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Validation demandée'
+	String get enAttente => 'Validation demandée';
+
+	/// fr: 'Validée'
+	String get validee => 'Validée';
+
+	/// fr: 'Refusée'
+	String get refusee => 'Refusée';
+}
+
+// Path: comptable.statuts.raison
+class Traductions$comptable$statuts$raison$fr {
+	Traductions$comptable$statuts$raison$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Traitement par un autre responsable requis'
+	String get autoPaiement => 'Traitement par un autre responsable requis';
+
+	/// fr: 'Validation supplémentaire requise'
+	String get validationRequise => 'Validation supplémentaire requise';
+
+	/// fr: 'Informations de paiement manquantes'
+	String get infosManquantes => 'Informations de paiement manquantes';
+
+	/// fr: 'Vérification paiement requise'
+	String get verificationRequise => 'Vérification paiement requise';
+
+	/// fr: 'Hors délégation'
+	String get horsDelegation => 'Hors délégation';
+
+	/// fr: 'Fournisseur indisponible'
+	String get fournisseurIndisponible => 'Fournisseur indisponible';
+
+	/// fr: 'Fonds insuffisants'
+	String get fondsInsuffisants => 'Fonds insuffisants';
+
+	/// fr: 'Doublon potentiel'
+	String get doublonPotentiel => 'Doublon potentiel';
+
+	/// fr: 'Obligation non approuvée'
+	String get nonApprouvee => 'Obligation non approuvée';
+
+	/// fr: 'Capacité absente'
+	String get capaciteAbsente => 'Capacité absente';
+}
+
+// Path: comptable.beneficiaires.recevoir
+class Traductions$comptable$beneficiaires$recevoir$fr {
+	Traductions$comptable$beneficiaires$recevoir$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Recevoir mes paiements'
+	String get titre => 'Recevoir mes paiements';
+
+	/// fr: 'Vos coordonnées de paiement, modifiables par vous seul.'
+	String get sousTitre => 'Vos coordonnées de paiement, modifiables par vous seul.';
+
+	/// fr: 'Informations de paiement à compléter'
+	String get notice => 'Informations de paiement à compléter';
+
+	/// fr: 'Configurer mes paiements'
+	String get configurer => 'Configurer mes paiements';
+}
+
 // Path: salle.preparation.eleve.guidee
 class Traductions$salle$preparation$eleve$guidee$fr {
 	Traductions$salle$preparation$eleve$guidee$fr.internal(this._root);
@@ -18265,6 +19087,7 @@ extension on Traductions {
 			'admin.qualite.traiterErreur' => ({required Object message}) => 'Le traitement n\'a pas abouti : ${message}',
 			'admin.finance.vueGlobale' => 'Vue globale',
 			'admin.finance.politiques' => 'Politiques commerciales',
+			'admin.finance.reserveDelegation' => 'Réserve et délégation',
 			'admin.finance.vue.moisAnnee' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
 			'admin.finance.vue.contexte' => ({required Object mois}) => 'Les chiffres de ${mois}, chacun à part : ce qui est encaissé, ce qui est reconnu comme revenu, ce qui est dû aux enseignants et ce qui reste sur les profils des familles.',
 			'admin.finance.vue.indicateurs' => 'Indicateurs du mois',
@@ -18385,9 +19208,9 @@ extension on Traductions {
 			'admin.finance.pol.railWebDetail' => 'Le seul moyen de paiement au lancement : une règle fixe, pas un réglage.',
 			'admin.finance.pol.conservation' => 'Conservation de la place',
 			'admin.finance.pol.conservationDetail' => 'Le délai pendant lequel la place d\'un élève reste réservée quand sa nouvelle période n\'est pas financée.',
-			'admin.finance.pol.pilotage' => 'Pilotage',
 			_ => null,
 		} ?? switch (path) {
+			'admin.finance.pol.pilotage' => 'Pilotage',
 			'admin.finance.pol.pilotageDetail' => 'Des repères pour lire les chiffres, jamais des règles qui bloquent.',
 			'admin.finance.pol.marge' => 'Marge de référence',
 			'admin.finance.pol.margeValeur' => ({required Object objectif, required Object forte, required Object stretch}) => 'Objectif ${objectif} %, forte ${forte} %, stretch ${stretch} %',
@@ -18899,9 +19722,9 @@ extension on Traductions {
 			'parcours.langueRaison' => 'C\'est la langue que l\'enseignant parlera pendant la séance. Elle est indépendante de la langue de l\'application, que vous pouvez changer à tout moment dans vos réglages.',
 			'parcours.lieuQuestion' => 'Où vous trouvez-vous ?',
 			'parcours.lieuRaison' => 'Nous nous en servons uniquement pour vous montrer les horaires à votre heure locale. Nous ne demandons jamais votre position exacte, et cette réponse ne quitte pas votre dossier.',
-			'parcours.lieuSuggere' => 'Proposé d\'après l\'heure de votre appareil',
 			_ => null,
 		} ?? switch (path) {
+			'parcours.lieuSuggere' => 'Proposé d\'après l\'heure de votre appareil',
 			'parcours.niveauQuestion' => ({required Object prenom}) => 'Où en est ${prenom} aujourd\'hui ?',
 			'parcours.niveauRaison' => 'Votre réponse oriente les premières propositions. Elle ne fixe pas le niveau officiel : celui-ci est attribué par l\'académie après un échange avec un enseignant.',
 			'parcours.niveauDebutLettres' => 'Nous commençons par les lettres',
@@ -19413,9 +20236,9 @@ extension on Traductions {
 			'tuteur.accueil.etatCourt.terminee' => 'Séance terminée',
 			'tuteur.accueil.etatCourt.aucune' => 'Aucune séance',
 			'tuteur.accueil.etatCourt.illisible' => 'Non disponible',
-			'tuteur.accueil.assister' => 'Assister',
 			_ => null,
 		} ?? switch (path) {
+			'tuteur.accueil.assister' => 'Assister',
 			'tuteur.accueil.assisterRefuse' => 'Le cours n\'a pas pu être rejoint. Il vient peut-être de se terminer.',
 			'tuteur.accueil.enCours' => ({required Object prenom}) => 'En cours avec ${prenom}',
 			'tuteur.accueil.depuisMinutes' => ({required Object minutes}) => 'Commencé il y a ${minutes} min',
@@ -19927,9 +20750,9 @@ extension on Traductions {
 			'enseignant.cahier.repriseRequise' => 'Indiquez où la Classe s\'est arrêtée : un remplaçant reprendra ici.',
 			'enseignant.cahier.integrite' => 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.',
 			'enseignant.cahier.corriger' => 'Corriger le cahier de transmission',
-			'enseignant.cahier.corrigeLe' => ({required Object date}) => 'Corrigé le ${date}',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.cahier.corrigeLe' => ({required Object date}) => 'Corrigé le ${date}',
 			'enseignant.profil.titre' => 'Profil',
 			'enseignant.profil.remuneration' => 'Rémunération',
 			'enseignant.profil.revenus' => 'Mes revenus',
@@ -20441,9 +21264,9 @@ extension on Traductions {
 			'tc.outils.dock.focus' => 'Focus',
 			'tc.outils.dock.marquer' => 'Marquer',
 			'tc.outils.dock.masquer' => 'Masquer',
-			'tc.outils.dock.stylet' => 'Stylet',
 			_ => null,
 		} ?? switch (path) {
+			'tc.outils.dock.stylet' => 'Stylet',
 			'tc.outils.dock.pointeur' => 'Pointeur',
 			'tc.outils.dock.revision' => 'Révision',
 			'tc.outils.intention.aApprendre' => 'À apprendre',
@@ -20955,9 +21778,9 @@ extension on Traductions {
 			'adulte.invitation.courriel' => 'Adresse e-mail',
 			'adulte.invitation.courrielAideElle' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjointe l\'invitation à rejoindre Rewayah.',
 			'adulte.invitation.courrielAideLui' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjoint l\'invitation à rejoindre Rewayah.',
-			'adulte.invitation.prenomRequis' => 'Indiquez son prénom.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.invitation.prenomRequis' => 'Indiquez son prénom.',
 			'adulte.invitation.courrielRequis' => 'Indiquez son adresse e-mail.',
 			'adulte.invitation.courrielInvalide' => 'Vérifiez l\'adresse e-mail : elle doit ressembler à nom@exemple.com.',
 			'adulte.invitation.verifier' => 'Continuer',
@@ -21181,6 +22004,192 @@ extension on Traductions {
 			'argent.acces.placeConservee' => ({required Object date}) => 'Place conservée jusqu\'au ${date}.',
 			'argent.acces.seancesFermeesTitre' => 'Nouvelles séances indisponibles',
 			'argent.acces.seancesFermees' => ({required Object prenom}) => '${prenom} ne peut pas rejoindre de nouvelle séance pour le moment. Son compte et ses contenus restent accessibles.',
+			'comptable.nav.aujourdhui' => 'Aujourd\'hui',
+			'comptable.nav.paiements' => 'Paiements',
+			'comptable.nav.tresorerie' => 'Trésorerie',
+			'comptable.nav.compte' => 'Compte',
+			'comptable.onglets.aEffectuer' => 'À effectuer',
+			'comptable.onglets.contractuels' => 'Contractuels',
+			'comptable.onglets.beneficiaires' => 'Bénéficiaires',
+			'comptable.onglets.coffres' => 'Coffres',
+			'comptable.onglets.encaissements' => 'Encaissements',
+			'comptable.onglets.rapprochement' => 'Rapprochement',
+			'comptable.commun.montantMasque' => 'Montant masqué',
+			'comptable.commun.afficherMontants' => 'Afficher les montants',
+			'comptable.commun.masquerMontants' => 'Masquer les montants',
+			'comptable.commun.montantsMasques' => 'Montants masqués',
+			'comptable.commun.montantsAffiches' => 'Montants affichés',
+			'comptable.commun.enPreparationTitre' => 'Cet écran est en préparation.',
+			'comptable.commun.enPreparationPhrase' => 'Aucun chiffre n\'est affiché ici pour l\'instant. Aucun paiement n\'est possible depuis cet écran.',
+			'comptable.commun.reserveStrategique' => 'Réserve stratégique',
+			'comptable.commun.tresorerieLibre' => 'Trésorerie libre',
+			'comptable.commun.tresorerieDetenue' => 'Trésorerie détenue',
+			'comptable.commun.fondsProteges' => 'Fonds protégés',
+			'comptable.commun.enTransit' => 'En transit',
+			'comptable.commun.tresorerieLibreDetail' => 'Ce qui reste réellement disponible après les fonds protégés, les obligations et le transit.',
+			'comptable.commun.objectif' => 'Objectif',
+			'comptable.commun.objectifFixe' => 'Objectif : montant fixe',
+			'comptable.commun.objectifMois' => ({required Object n}) => 'Objectif actuel : ${n} mois de charges essentielles',
+			'comptable.commun.montantActuel' => 'Montant actuel',
+			'comptable.commun.manque' => 'Manque à compléter',
+			'comptable.commun.atteint' => ({required Object pourcent}) => '${pourcent} % atteint',
+			'comptable.commun.modeCalcul' => 'Mode de calcul',
+			'comptable.commun.modeMontantFixe' => 'Montant cible fixe',
+			'comptable.commun.modeCouvertureMois' => 'Couverture en mois de charges essentielles',
+			'comptable.commun.derniereAllocation' => ({required Object date}) => 'Dernière allocation : ${date}',
+			'comptable.commun.prochaineAllocation' => ({required Object date}) => 'Prochaine allocation prévue : ${date}',
+			'comptable.commun.aucuneAllocation' => 'Aucune allocation enregistrée',
+			'comptable.commun.destination' => 'Destination',
+			'comptable.commun.destinationMasquee' => ({required Object type, required Object suffixe}) => '${type} •••• ${suffixe}',
+			'comptable.commun.destinationMasqueeLecteur' => ({required Object type, required Object suffixe}) => '${type}, numéro masqué, se termine par ${suffixe}',
+			'comptable.commun.destinationAucune' => 'Aucune méthode de paiement',
+			'comptable.commun.paysDevise' => ({required Object pays, required Object devise}) => '${pays} · ${devise}',
+			'comptable.commun.verification' => 'Vérification',
+			'comptable.commun.activiteInitiateurDate' => ({required Object initiateur, required Object date}) => '${initiateur} · ${date}',
+			'comptable.commun.activiteTransition' => ({required Object avant, required Object apres}) => '${avant} → ${apres}',
+			'comptable.commun.activiteReference' => ({required Object reference}) => 'Réf. ${reference}',
+			'comptable.commun.relancePreparee' => 'Relance préparée (démonstration)',
+			'comptable.commun.prestataireDemonstration' => ({required Object nom}) => '${nom} (démonstration)',
+			'comptable.commun.date' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
+			'comptable.commun.aucuneValeur' => 'Non renseigné',
+			'comptable.coffres.fondsClientsEngages' => 'Fonds clients engagés',
+			'comptable.coffres.paieADecaisser' => 'Paie à décaisser',
+			'comptable.coffres.chargesEssentielles' => 'Charges essentielles',
+			'comptable.coffres.taxesObligations' => 'Taxes & obligations',
+			'comptable.coffres.reserveStrategique' => 'Réserve stratégique',
+			'comptable.coffres.enTransit' => 'En transit',
+			'comptable.coffres.tresorerieLibre' => 'Trésorerie libre',
+			'comptable.statuts.paiement.aCalculer' => 'À calculer',
+			'comptable.statuts.paiement.calcule' => 'Calculé',
+			'comptable.statuts.paiement.aVerifier' => 'À vérifier',
+			'comptable.statuts.paiement.infosManquantes' => 'Infos paiement manquantes',
+			'comptable.statuts.paiement.verificationRequise' => 'Vérification paiement requise',
+			'comptable.statuts.paiement.pretAPayer' => 'Prêt à payer',
+			'comptable.statuts.paiement.validationRequise' => 'Validation supplémentaire requise',
+			'comptable.statuts.paiement.soumis' => 'Soumis',
+			'comptable.statuts.paiement.enTransit' => 'En transit',
+			'comptable.statuts.paiement.reussi' => 'Réussi',
+			'comptable.statuts.paiement.echoue' => 'Échoué',
+			'comptable.statuts.paiement.aRelancer' => 'À relancer',
+			'comptable.statuts.paiement.annule' => 'Annulé',
+			'comptable.statuts.paiement.retourne' => 'Remboursé / retourné',
+			'comptable.statuts.paiement.indisponible' => 'Indisponible',
+			'comptable.statuts.encaissement.enAttente' => 'En attente',
+			'comptable.statuts.encaissement.confirme' => 'Confirmé',
+			'comptable.statuts.encaissement.echoue' => 'Échoué',
+			'comptable.statuts.encaissement.rembourse' => 'Remboursé',
+			'comptable.statuts.encaissement.partiellementRembourse' => 'Partiellement remboursé',
+			'comptable.statuts.encaissement.conteste' => 'Contesté',
+			'comptable.statuts.encaissement.chargeback' => 'Chargeback',
+			'comptable.statuts.encaissement.aRapprocher' => 'À rapprocher',
+			'comptable.statuts.encaissement.rapproche' => 'Rapproché',
+			'comptable.statuts.rapprochement.automatique' => 'Automatique',
+			'comptable.statuts.rapprochement.aVerifier' => 'À vérifier',
+			'comptable.statuts.rapprochement.rapproche' => 'Rapproché',
+			'comptable.statuts.rapprochement.conflit' => 'Conflit',
+			'comptable.statuts.rapprochement.sansCorrespondance' => 'Sans correspondance',
+			'comptable.statuts.rapprochement.doublonPotentiel' => 'Doublon potentiel',
+			'comptable.statuts.profil.aucunMoyen' => 'Aucun moyen',
+			'comptable.statuts.profil.incomplet' => 'Incomplet',
+			'comptable.statuts.profil.enVerification' => 'En vérification',
+			'comptable.statuts.profil.verifie' => 'Vérifié',
+			'comptable.statuts.profil.suspendu' => 'Suspendu',
+			'comptable.statuts.profil.actionRequise' => 'Action requise',
+			'comptable.statuts.profil.invitationEnvoyee' => 'Invitation envoyée',
+			'comptable.statuts.capacite.prisEnCharge' => 'Pris en charge',
+			'comptable.statuts.capacite.nonPrisEnCharge' => 'Non pris en charge',
+			'comptable.statuts.capacite.temporairementIndisponible' => 'Temporairement indisponible',
+			'comptable.statuts.capacite.verificationRequise' => 'Vérification requise',
+			'comptable.statuts.capacite.soldePrestataireInsuffisant' => 'Solde prestataire insuffisant',
+			'comptable.statuts.reserve.atteint' => 'Objectif atteint',
+			'comptable.statuts.reserve.sousObjectif' => 'Sous objectif',
+			'comptable.statuts.reserve.depassement' => 'Dépassement',
+			'comptable.statuts.reserve.regleInactive' => 'Règle inactive',
+			'comptable.statuts.reserve.alimentationPrevue' => 'Alimentation prévue',
+			'comptable.statuts.reserve.mouvementSensible' => 'Mouvement sensible',
+			'comptable.statuts.obligation.brouillon' => 'Brouillon',
+			'comptable.statuts.obligation.aApprouver' => 'À approuver',
+			'comptable.statuts.obligation.approuvee' => 'Approuvée',
+			'comptable.statuts.obligation.refusee' => 'Refusée',
+			'comptable.statuts.obligation.payable' => 'Payable',
+			'comptable.statuts.obligation.payee' => 'Payée',
+			'comptable.statuts.obligation.annulee' => 'Annulée',
+			'comptable.statuts.remboursement.demande' => 'Demandé',
+			'comptable.statuts.remboursement.approbationRequise' => 'Approbation requise',
+			'comptable.statuts.remboursement.approuve' => 'Approuvé',
+			'comptable.statuts.remboursement.execute' => 'Exécuté',
+			'comptable.statuts.remboursement.refuse' => 'Refusé',
+			'comptable.statuts.validation.enAttente' => 'Validation demandée',
+			'comptable.statuts.validation.validee' => 'Validée',
+			'comptable.statuts.validation.refusee' => 'Refusée',
+			'comptable.statuts.raison.autoPaiement' => 'Traitement par un autre responsable requis',
+			'comptable.statuts.raison.validationRequise' => 'Validation supplémentaire requise',
+			'comptable.statuts.raison.infosManquantes' => 'Informations de paiement manquantes',
+			'comptable.statuts.raison.verificationRequise' => 'Vérification paiement requise',
+			'comptable.statuts.raison.horsDelegation' => 'Hors délégation',
+			'comptable.statuts.raison.fournisseurIndisponible' => 'Fournisseur indisponible',
+			'comptable.statuts.raison.fondsInsuffisants' => 'Fonds insuffisants',
+			'comptable.statuts.raison.doublonPotentiel' => 'Doublon potentiel',
+			'comptable.statuts.raison.nonApprouvee' => 'Obligation non approuvée',
+			'comptable.statuts.raison.capaciteAbsente' => 'Capacité absente',
+			'comptable.alertes.enseignantsAPayer' => 'Enseignants à payer',
+			'comptable.alertes.contractuelsAEcheance' => 'Contractuels à échéance',
+			'comptable.alertes.infosManquantes' => 'Infos paiement manquantes',
+			'comptable.alertes.payoutEchoue' => 'Payout échoué',
+			'comptable.alertes.paiementFamilleEchoue' => 'Paiement famille échoué',
+			'comptable.alertes.transactionNonRapprochee' => 'Transaction non rapprochée',
+			'comptable.alertes.remboursementEnAttente' => 'Remboursement en attente',
+			'comptable.alertes.reserveSousObjectif' => 'Réserve stratégique sous objectif',
+			'comptable.alertes.soldePrestataireInsuffisant' => 'Solde prestataire insuffisant',
+			'comptable.alertes.methodeModifieeRecemment' => 'Méthode modifiée récemment',
+			'comptable.alertes.doublonPotentiel' => 'Doublon potentiel',
+			'comptable.alertes.validationRequise' => 'Validation supplémentaire requise',
+			'comptable.aujourdhui.titre' => 'Aujourd\'hui',
+			'comptable.aujourdhui.sousTitre' => 'Que dois-je faire maintenant ?',
+			'comptable.aujourdhui.attention' => 'À traiter et alertes',
+			'comptable.aujourdhui.aTraiter' => 'À traiter aujourd\'hui',
+			'comptable.aujourdhui.alertes' => 'Alertes',
+			'comptable.aujourdhui.echeances' => 'Échéances proches',
+			'comptable.aujourdhui.prestataires' => 'Prestataires',
+			'comptable.aujourdhui.activiteRecente' => 'Activité récente',
+			'comptable.aujourdhui.accesRapides' => 'Accès rapides',
+			'comptable.aujourdhui.encaissementsRecents' => 'Encaissements récents',
+			'comptable.aujourdhui.voirTout' => 'Voir tout',
+			'comptable.paiements.titre' => 'Paiements à effectuer',
+			'comptable.paiements.sousTitre' => 'Montants calculés à la source : ici on vérifie et on paie, on ne modifie rien.',
+			'comptable.paiements.detailTitre' => 'Détail du paiement',
+			'comptable.paiements.detailSousTitre' => 'Chaque ligne a sa source. Un écart se signale, il ne se corrige pas ici.',
+			'comptable.tresorerie.titre' => 'Trésorerie et coffres',
+			'comptable.tresorerie.sousTitre' => 'La Trésorerie libre est le seul chiffre dépensable.',
+			'comptable.tresorerie.alimenter' => 'Alimenter la Réserve stratégique',
+			'comptable.encaissements.titre' => 'Encaissements',
+			'comptable.encaissements.sousTitre' => 'Un paiement n\'est confirmé qu\'après le prestataire.',
+			'comptable.encaissements.detailTitre' => 'Détail de l\'encaissement',
+			'comptable.encaissements.rapprochementTitre' => 'Rapprochement',
+			'comptable.encaissements.rapprochementSousTitre' => 'Relier chaque transaction à ce qui l\'attendait.',
+			'comptable.beneficiaires.titre' => 'Bénéficiaires',
+			'comptable.beneficiaires.sousTitre' => 'Coordonnées masquées : seul le bénéficiaire modifie les siennes.',
+			'comptable.beneficiaires.profilTitre' => 'Profil de paiement',
+			'comptable.beneficiaires.recevoir.titre' => 'Recevoir mes paiements',
+			'comptable.beneficiaires.recevoir.sousTitre' => 'Vos coordonnées de paiement, modifiables par vous seul.',
+			'comptable.beneficiaires.recevoir.notice' => 'Informations de paiement à compléter',
+			'comptable.beneficiaires.recevoir.configurer' => 'Configurer mes paiements',
+			'comptable.contractuels.titre' => 'Contractuels et obligations',
+			'comptable.contractuels.sousTitre' => 'Les montants sont définis à la création de l\'obligation, figés après approbation.',
+			'comptable.contractuels.nouvelle' => 'Nouvelle obligation',
+			'comptable.contractuels.detailTitre' => 'Obligation',
+			'comptable.direction.titre' => 'Réserve et délégation',
+			'comptable.direction.sousTitre' => 'La politique de la Réserve stratégique et ce que le Comptable peut exécuter seul.',
+			'comptable.direction.reserve' => 'Politique de la Réserve stratégique',
+			'comptable.direction.delegation' => 'Délégation financière',
+			'comptable.demo.titre' => 'Démonstration Comptable',
+			'comptable.demo.mention' => 'Données fictives, aucun paiement, aucun envoi.',
+			'comptable.demo.intro' => 'Choisissez un écran du Comptable. Les montants sont masqués par défaut ; la variante « montants affichés » les révèle pour la durée de la page.',
+			'comptable.demo.montantsMasques' => 'Montants masqués',
+			'comptable.demo.montantsAffiches' => 'Montants affichés',
+			'comptable.demo.groupeComptable' => 'Coquille du Comptable',
+			'comptable.demo.groupeCompte' => 'Compte et bénéficiaire',
+			'comptable.demo.groupeDirection' => 'Direction',
 			'identiteProfil.age' => ({required Object n}) => '${n} ans',
 			'identiteProfil.classe' => ({required Object classe}) => 'Classe ${classe}',
 			'identiteProfil.ageEtClasse' => ({required Object age, required Object classe}) => '${age} · ${classe}',

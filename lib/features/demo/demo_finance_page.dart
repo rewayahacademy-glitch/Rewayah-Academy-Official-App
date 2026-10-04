@@ -1,7 +1,7 @@
 // Le domaine Finance en demonstration : /demo/finance (hors production,
 // FI-1b).
 //
-// `?ecran=vueGlobale|politiques` (Vue globale par defaut) : la VRAIE coquille
+// `?ecran=vueGlobale|politiques|reserveDelegation` (Vue globale par defaut) : la VRAIE coquille
 // admin (`AdminShell`, domaine Finance actif) sur la VRAIE page Finance. La
 // Vue globale lit le port de la direction, surcharge ici par la
 // demonstration (`FinanceDirectionDemo`, FI-11a) ; Politiques lit
@@ -22,6 +22,7 @@ import '../../core/widgets/admin_shell.dart';
 import '../admin_finance/finance_page.dart';
 import '../admin_finance/politiques_commerciales.dart';
 import '../admin_finance/vue_globale_finance.dart';
+import 'comptable/direction_demo.dart';
 import 'finance_demo.dart';
 import 'mode_demonstration.dart';
 import 'repere_demonstration.dart';
@@ -77,6 +78,9 @@ class DemoFinancePage extends StatelessWidget {
         politiquesCommercialesProvider.overrideWith(
           (Ref _) => lirePolitiques(const PolitiquesCommercialesDemo()),
         ),
+        // Reserve et delegation (Comptable V1, CPT-F) : la politique de la
+        // Reserve et la delegation de la demonstration Direction.
+        ...surchargesDemoDirection(),
       ],
       child: RepereDemonstration(
         child: AdminShell(

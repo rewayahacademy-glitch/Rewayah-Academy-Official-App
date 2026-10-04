@@ -134,9 +134,16 @@ void main() {
           Routes.controleurEchanges,
           Routes.compte,
         ],
-        // Le comptable n'a pas de barre ; l'admin a sa propre coquille
-        // (`admin_domaine_test.dart`).
-        AppRole.accountant: <String>[],
+        // Le comptable a QUATRE destinations (Comptable V1, CPT-F) :
+        // Aujourd'hui, Paiements, Tresorerie, Compte (spec §45,
+        // `UX_REVIEW_FINANCE_COMPTABLE_L0.md` §3). L'admin a sa propre
+        // coquille (`admin_domaine_test.dart`).
+        AppRole.accountant: <String>[
+          Routes.comptable,
+          Routes.comptablePaiements,
+          Routes.comptableTresorerie,
+          Routes.compte,
+        ],
         AppRole.admin: <String>[],
       };
 

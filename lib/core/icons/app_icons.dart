@@ -856,4 +856,100 @@ abstract final class AppIcons {
     IconData(0xe2b2, fontFamily: _repos),
     IconData(0xe2b2, fontFamily: _actif),
   );
+
+  // --- Comptable V1 (CPT-F, `UX_REVIEW_FINANCE_COMPTABLE_L0.md` §6.1) ------
+  //
+  // Toutes les icones de la vague Comptable, posees d'un coup par CPT-F :
+  // ce fichier est gele ensuite, une voie qui en veut une autre ecrit une
+  // ligne pour CPT-FUS. Aucune icone de marque de prestataire (DR-21). Points
+  // de code releves dans `phosphor_flutter` 2.1.0 (memes polices que
+  // `assets/fonts`), et verifies presents dans les deux graisses embarquees.
+
+  /// Destination Paiements du Comptable (paiements sortants) : Phosphor
+  /// `hand-coins` (0xea8c).
+  static const AppIcon paiements = AppIcon._(
+    IconData(0xea8c, fontFamily: _repos),
+    IconData(0xea8c, fontFamily: _actif),
+  );
+
+  /// Destination Tresorerie et coffre de tresorerie : Phosphor `vault`
+  /// (0xe76e).
+  static const AppIcon coffre = AppIcon._(
+    IconData(0xe76e, fontFamily: _repos),
+    IconData(0xe76e, fontFamily: _actif),
+  );
+
+  /// Reserve strategique (bouclier) : Phosphor `shield-check` (0xe40c).
+  static const AppIcon reserve = AppIcon._(
+    IconData(0xe40c, fontFamily: _repos),
+    IconData(0xe40c, fontFamily: _actif),
+  );
+
+  /// Argent en transit (engage, non confirme) : Phosphor `arrows-left-right`
+  /// (0xe0a0). Un aller-retour, pas une direction de lecture : ne se miroite
+  /// pas.
+  static const AppIcon enTransit = AppIcon._(
+    IconData(0xe0a0, fontFamily: _repos),
+    IconData(0xe0a0, fontFamily: _actif),
+  );
+
+  /// Entree d'argent (encaissement) : Phosphor `arrow-circle-down-left`
+  /// (0xe02a), miroitee en arabe.
+  static const AppIcon entreeArgent = AppIcon._(
+    IconData(0xe02a, fontFamily: _repos, matchTextDirection: true),
+    IconData(0xe02a, fontFamily: _actif, matchTextDirection: true),
+  );
+
+  /// Sortie d'argent (paiement sortant, decaissement) : Phosphor
+  /// `arrow-circle-up-right` (0xe034), miroitee en arabe.
+  static const AppIcon sortieArgent = AppIcon._(
+    IconData(0xe034, fontFamily: _repos, matchTextDirection: true),
+    IconData(0xe034, fontFamily: _actif, matchTextDirection: true),
+  );
+
+  /// Encaissement, recu d'un prestataire : Phosphor `receipt` (0xe3ec).
+  static const AppIcon encaissement = AppIcon._(
+    IconData(0xe3ec, fontFamily: _repos),
+    IconData(0xe3ec, fontFamily: _actif),
+  );
+
+  /// Rapprochement (lien entre un attendu et une transaction) : Phosphor
+  /// `link` (0xe2e2).
+  static const AppIcon rapprochement = AppIcon._(
+    IconData(0xe2e2, fontFamily: _repos),
+    IconData(0xe2e2, fontFamily: _actif),
+  );
+
+  /// Contractuel et obligation de contractuel : Phosphor `briefcase`
+  /// (0xe0ee).
+  static const AppIcon contractuel = AppIcon._(
+    IconData(0xe0ee, fontFamily: _repos),
+    IconData(0xe0ee, fontFamily: _actif),
+  );
+
+  /// Beneficiaire d'un paiement : Phosphor `user` (0xe4c2), distinct du
+  /// groupe [eleves] (`users-three`).
+  static const AppIcon beneficiaire = AppIcon._(
+    IconData(0xe4c2, fontFamily: _repos),
+    IconData(0xe4c2, fontFamily: _actif),
+  );
+
+  /// Echeance datee : Phosphor `calendar` (0xe108).
+  static const AppIcon echeance = AppIcon._(
+    IconData(0xe108, fontFamily: _repos),
+    IconData(0xe108, fontFamily: _actif),
+  );
+
+  /// Ecart signale sur une ligne de calcul (« Signaler un ecart ») : Phosphor
+  /// `warning-circle` (0xe4e2), distinct du triangle [avertissement].
+  static const AppIcon ecartSignale = AppIcon._(
+    IconData(0xe4e2, fontFamily: _repos),
+    IconData(0xe4e2, fontFamily: _actif),
+  );
+
+  /// Suspendre un paiement ou un payout : Phosphor `pause-circle` (0xe3a0).
+  static const AppIcon suspendre = AppIcon._(
+    IconData(0xe3a0, fontFamily: _repos),
+    IconData(0xe3a0, fontFamily: _actif),
+  );
 }

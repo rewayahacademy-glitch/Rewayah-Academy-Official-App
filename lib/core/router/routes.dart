@@ -593,10 +593,194 @@ abstract final class Routes {
   static String entreePour(String jeton) => '$agentEntree?jeton=$jeton';
 
   // --- Comptable ----------------------------------------------------------
+  //
+  // Comptable V1 (CPT-F, spec `REWAYAH_FINANCE_OPERATIONNELLE_COMPTABLE_V1`,
+  // `20_comptable/UX_REVIEW_FINANCE_COMPTABLE_L0.md` §3) : quatre
+  // destinations, Aujourd'hui, Paiements, Tresorerie, Compte (`/compte`,
+  // partage), et des onglets DANS la page pour le second niveau. Toutes les
+  // routes du role vivent sous `/comptable` (`prefixePour`) ; « Recevoir mes
+  // paiements » vit sous `/compte`, ouvert a tout beneficiaire avec compte ;
+  // le delta Direction vit sous `/admin/finance`. Ces constantes sont posees
+  // UNE FOIS par CPT-F et gelees : une voie qui en veut une autre ecrit une
+  // ligne pour CPT-FUS (`20_comptable/02_DECOUPAGE.md`, regle de propriete).
 
-  /// Le role existe dans le modele de donnees, son interface arrive en V1
-  /// avec le module finance (ADR-003).
+  /// La racine du role : Aujourd'hui (FIN-CPT-W01, M01 ecran 1).
   static const String comptable = '/comptable';
+
+  /// Destination Paiements, onglet « A effectuer » (W02, M01 ecran 2).
+  static const String comptablePaiements = '/comptable/paiements';
+
+  /// Le segment fixe du detail d'une obligation payable (W03) : `obligation`
+  /// pour ne jamais entrer en collision avec `contractuels` et
+  /// `beneficiaires`, qui vivent sous le meme prefixe.
+  static const String comptablePaiementsObligation =
+      '/comptable/paiements/obligation';
+
+  /// Le detail d'une obligation payable (W03, M01 ecran 3).
+  static String comptablePaiementObligationPour(String obligationId) =>
+      '$comptablePaiementsObligation/$obligationId';
+
+  /// Onglet « Contractuels » de Paiements (W06).
+  static const String comptableContractuels =
+      '/comptable/paiements/contractuels';
+
+  /// « Nouvelle obligation » (W06), seulement si la capacite
+  /// `creerObligation` est rendue par la source. Une tache focalisee.
+  static const String comptableContractuelsNouvelle =
+      '/comptable/paiements/contractuels/nouvelle';
+
+  /// Le segment fixe du detail d'une obligation de contractuel.
+  static const String comptableContractuelsObligation =
+      '/comptable/paiements/contractuels/obligation';
+
+  /// Le detail d'une obligation de contractuel (W06). « Payer » y ouvre le
+  /// W03 de l'obligation payable, jamais un second tunnel (DR-12).
+  static String comptableContractuelObligationPour(String obligationId) =>
+      '$comptableContractuelsObligation/$obligationId';
+
+  /// Onglet « Beneficiaires » de Paiements (W07, liste).
+  static const String comptableBeneficiaires =
+      '/comptable/paiements/beneficiaires';
+
+  /// Le profil de paiement d'un beneficiaire, vu par le Comptable (W07).
+  static String comptableBeneficiairePour(String beneficiaireId) =>
+      '$comptableBeneficiaires/$beneficiaireId';
+
+  /// Destination Tresorerie, onglet « Coffres » (W04, M02 ecran 1).
+  static const String comptableTresorerie = '/comptable/tresorerie';
+
+  /// Onglet « Encaissements » de Tresorerie (W05, M02 ecran 2).
+  static const String comptableEncaissements =
+      '/comptable/tresorerie/encaissements';
+
+  /// Le detail d'un encaissement (panneau a 1440, page sous 1200).
+  static String comptableEncaissementPour(String encaissementId) =>
+      '$comptableEncaissements/$encaissementId';
+
+  /// Onglet « Rapprochement » de Tresorerie (`ReconciliationWorkspace`).
+  static const String comptableRapprochement =
+      '/comptable/tresorerie/rapprochement';
+
+  /// « Recevoir mes paiements » (spec §17, §38) : la surface personnelle de
+  /// tout beneficiaire avec compte (enseignant, Comptable), sous `/compte`
+  /// comme `/compte/profil`, dans la coquille du role connecte.
+  static const String comptePaiementsRecus = '/compte/paiements-recus';
+
+  /// Le troisieme onglet du domaine Finance de la direction : « Reserve et
+  /// delegation » (spec §37, delta Direction).
+  static const String adminFinanceReserveDelegation =
+      '/admin/finance/reserve-delegation';
+
+  /// La coquille du Comptable en demonstration : `?ecran=...&montants=...`.
+  /// Enregistree seulement hors production (`environnementAutoriseDemo`).
+  static const String demoComptable = '/demo/comptable';
+
+  /// Parametre de requete : le filtre d'une liste du Comptable (`?filtre=`),
+  /// valeurs de [filtresPaiementsComptable] pour les paiements.
+  static const String parametreFiltreComptable = 'filtre';
+
+  /// Parametre de requete : le type de beneficiaire (`?type=enseignant` ou
+  /// `?type=contractuel`, [typesBeneficiaireComptable]).
+  static const String parametreTypeComptable = 'type';
+
+  /// Parametre de requete : la Classe, qui reste un filtre et un detail
+  /// analytique, jamais un payout separe (`?classe=`, spec §14.5).
+  static const String parametreClasseComptable = 'classe';
+
+  /// Parametre de requete : l'action ouverte a l'arrivee (`?action=`).
+  static const String parametreActionComptable = 'action';
+
+  /// Parametre de requete : la vue d'Aujourd'hui (`?vue=`).
+  static const String parametreVueComptable = 'vue';
+
+  /// Valeur de `?action=` : ouvrir « Alimenter la Reserve strategique » sur
+  /// la Tresorerie (W04), depuis les Acces rapides d'Aujourd'hui.
+  static const String actionAlimenterReserve = 'alimenter';
+
+  /// Valeur de `?vue=` : la file complete « A traiter » et « Alertes »
+  /// d'Aujourd'hui (le « Voir tout » de M01, DR-10), meme route.
+  static const String vueAttentionComptable = 'attention';
+
+  /// Les filtres de la liste « Paiements a effectuer » (`?filtre=`) : les
+  /// liens d'Aujourd'hui ouvrent la liste deja filtree (spec §5.1, « un
+  /// raccourci ouvre toujours l'ecran canonique »).
+  static const List<String> filtresPaiementsComptable = <String>[
+    'prets',
+    'infos',
+    'verification',
+    'validation',
+    'retard',
+  ];
+
+  /// Les valeurs de `?type=` de la liste des paiements.
+  static const List<String> typesBeneficiaireComptable = <String>[
+    'enseignant',
+    'contractuel',
+  ];
+
+  /// L'adresse de la liste des paiements, filtree : aucun parametre vide.
+  static String comptablePaiementsFiltres({
+    String? filtre,
+    String? type,
+    String? classe,
+  }) => _avecRequete(comptablePaiements, <String, String?>{
+    parametreFiltreComptable: filtre,
+    parametreTypeComptable: type,
+    parametreClasseComptable: classe,
+  });
+
+  /// L'adresse de la liste des encaissements, filtree.
+  static String comptableEncaissementsFiltres({String? filtre}) => _avecRequete(
+    comptableEncaissements,
+    <String, String?>{parametreFiltreComptable: filtre},
+  );
+
+  /// L'adresse des beneficiaires, filtree (`?filtre=infos`, par exemple).
+  static String comptableBeneficiairesFiltres({String? filtre}) => _avecRequete(
+    comptableBeneficiaires,
+    <String, String?>{parametreFiltreComptable: filtre},
+  );
+
+  /// La Tresorerie ouverte sur « Alimenter la Reserve strategique ».
+  static String get comptableTresorerieAlimenter => _avecRequete(
+    comptableTresorerie,
+    <String, String?>{parametreActionComptable: actionAlimenterReserve},
+  );
+
+  /// Aujourd'hui ouvert sur la file complete.
+  static String get comptableAttention => _avecRequete(
+    comptable,
+    <String, String?>{parametreVueComptable: vueAttentionComptable},
+  );
+
+  /// Vrai quand [chemin] est une page de la destination Paiements du
+  /// Comptable (onglet actif, retour des pages de detail).
+  static bool estPaiementsComptable(String chemin) =>
+      chemin == comptablePaiements || chemin.startsWith('$comptablePaiements/');
+
+  /// Vrai quand [chemin] est une page de la destination Tresorerie.
+  static bool estTresorerieComptable(String chemin) =>
+      chemin == comptableTresorerie ||
+      chemin.startsWith('$comptableTresorerie/');
+
+  /// Vrai quand [chemin] est une tache focalisee du Comptable : sur
+  /// telephone, la barre basse s'efface et l'ecran porte son disque retour.
+  /// Seul le formulaire « Nouvelle obligation » en est une : les pages de
+  /// detail (obligation, encaissement, profil de paiement) gardent la barre,
+  /// comme les fiches du tuteur.
+  static bool estTacheFocaliseeComptable(String chemin) =>
+      chemin == comptableContractuelsNouvelle;
+
+  /// [chemin] avec les parametres de [requete] qui ont une valeur non vide ;
+  /// sans aucun, le chemin nu (jamais un `?` orphelin).
+  static String _avecRequete(String chemin, Map<String, String?> requete) {
+    final Map<String, String> pleins = <String, String>{
+      for (final MapEntry<String, String?> e in requete.entries)
+        if (e.value != null && e.value!.isNotEmpty) e.key: e.value!,
+    };
+    if (pleins.isEmpty) return chemin;
+    return Uri(path: chemin, queryParameters: pleins).toString();
+  }
 
   // --- Salle ---------------------------------------------------------------
 

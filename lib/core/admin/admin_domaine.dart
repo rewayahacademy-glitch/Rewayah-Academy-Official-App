@@ -172,11 +172,16 @@ List<({String libelle, String chemin})> ongletsPedagogie() =>
       (libelle: t.admin.qualite.titre, chemin: Routes.adminPedagogieQualite),
     ];
 
-/// Les deux fonctions pairs du domaine Finance (FI-1b), dans l'ordre du guide
+/// Les trois fonctions pairs du domaine Finance, dans l'ordre du guide
 /// Finance V4 §2 et des maquettes 09 et 10 : Vue globale, puis Politiques
-/// commerciales (revue FI-1a, `17_finance/UX_REVIEW_08_FINANCE.md:91`, :297).
+/// commerciales (revue FI-1a, `17_finance/UX_REVIEW_08_FINANCE.md:91`, :297),
+/// puis **Reserve et delegation** (Comptable V1, CPT-F : la politique de la
+/// Reserve strategique et la delegation financiere, spec Finance
+/// operationnelle §37 ; `UX_REVIEW_FINANCE_COMPTABLE_L0.md` §5.9).
 /// Les politiques vivent sous Finance, pas sous Configuration : une
-/// politique commerciale est financiere par nature (contrat metier).
+/// politique commerciale est financiere par nature (contrat metier) ; la
+/// Reserve et la delegation sont de la gouvernance de tresorerie, un onglet
+/// de plus dans le meme domaine, jamais un second systeme Finance.
 /// Consommee par `SousNavigationDomaine` dans l'en-tete de `FinancePage`.
 List<({String libelle, String chemin})> ongletsFinance() =>
     <({String libelle, String chemin})>[
@@ -184,6 +189,10 @@ List<({String libelle, String chemin})> ongletsFinance() =>
       (
         libelle: t.admin.finance.politiques,
         chemin: Routes.adminFinancePolitiques,
+      ),
+      (
+        libelle: t.admin.finance.reserveDelegation,
+        chemin: Routes.adminFinanceReserveDelegation,
       ),
     ];
 

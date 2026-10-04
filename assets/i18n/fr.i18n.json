@@ -1711,6 +1711,7 @@
     "finance": {
       "vueGlobale": "Vue globale",
       "politiques": "Politiques commerciales",
+      "reserveDelegation": "Réserve et délégation",
       "vue": {
         "moisAnnee": "{mois} {annee}",
         "contexte": "Les chiffres de {mois}, chacun à part : ce qui est encaissé, ce qui est reconnu comme revenu, ce qui est dû aux enseignants et ce qui reste sur les profils des familles.",
@@ -5113,6 +5114,244 @@
       "placeConservee": "Place conservée jusqu'au {date}.",
       "seancesFermeesTitre": "Nouvelles séances indisponibles",
       "seancesFermees": "{prenom} ne peut pas rejoindre de nouvelle séance pour le moment. Son compte et ses contenus restent accessibles."
+    }
+  },
+  "comptable": {
+    "nav": {
+      "aujourdhui": "Aujourd'hui",
+      "paiements": "Paiements",
+      "tresorerie": "Trésorerie",
+      "compte": "Compte"
+    },
+    "onglets": {
+      "aEffectuer": "À effectuer",
+      "contractuels": "Contractuels",
+      "beneficiaires": "Bénéficiaires",
+      "coffres": "Coffres",
+      "encaissements": "Encaissements",
+      "rapprochement": "Rapprochement"
+    },
+    "commun": {
+      "montantMasque": "Montant masqué",
+      "afficherMontants": "Afficher les montants",
+      "masquerMontants": "Masquer les montants",
+      "montantsMasques": "Montants masqués",
+      "montantsAffiches": "Montants affichés",
+      "enPreparationTitre": "Cet écran est en préparation.",
+      "enPreparationPhrase": "Aucun chiffre n'est affiché ici pour l'instant. Aucun paiement n'est possible depuis cet écran.",
+      "reserveStrategique": "Réserve stratégique",
+      "tresorerieLibre": "Trésorerie libre",
+      "tresorerieDetenue": "Trésorerie détenue",
+      "fondsProteges": "Fonds protégés",
+      "enTransit": "En transit",
+      "tresorerieLibreDetail": "Ce qui reste réellement disponible après les fonds protégés, les obligations et le transit.",
+      "objectif": "Objectif",
+      "objectifFixe": "Objectif : montant fixe",
+      "objectifMois": "Objectif actuel : {n} mois de charges essentielles",
+      "montantActuel": "Montant actuel",
+      "manque": "Manque à compléter",
+      "atteint": "{pourcent} % atteint",
+      "modeCalcul": "Mode de calcul",
+      "modeMontantFixe": "Montant cible fixe",
+      "modeCouvertureMois": "Couverture en mois de charges essentielles",
+      "derniereAllocation": "Dernière allocation : {date}",
+      "prochaineAllocation": "Prochaine allocation prévue : {date}",
+      "aucuneAllocation": "Aucune allocation enregistrée",
+      "destination": "Destination",
+      "destinationMasquee": "{type} •••• {suffixe}",
+      "destinationMasqueeLecteur": "{type}, numéro masqué, se termine par {suffixe}",
+      "destinationAucune": "Aucune méthode de paiement",
+      "paysDevise": "{pays} · {devise}",
+      "verification": "Vérification",
+      "activiteInitiateurDate": "{initiateur} · {date}",
+      "activiteTransition": "{avant} → {apres}",
+      "activiteReference": "Réf. {reference}",
+      "relancePreparee": "Relance préparée (démonstration)",
+      "prestataireDemonstration": "{nom} (démonstration)",
+      "date": "{jour} {mois} {annee}",
+      "aucuneValeur": "Non renseigné"
+    },
+    "coffres": {
+      "fondsClientsEngages": "Fonds clients engagés",
+      "paieADecaisser": "Paie à décaisser",
+      "chargesEssentielles": "Charges essentielles",
+      "taxesObligations": "Taxes & obligations",
+      "reserveStrategique": "Réserve stratégique",
+      "enTransit": "En transit",
+      "tresorerieLibre": "Trésorerie libre"
+    },
+    "statuts": {
+      "paiement": {
+        "aCalculer": "À calculer",
+        "calcule": "Calculé",
+        "aVerifier": "À vérifier",
+        "infosManquantes": "Infos paiement manquantes",
+        "verificationRequise": "Vérification paiement requise",
+        "pretAPayer": "Prêt à payer",
+        "validationRequise": "Validation supplémentaire requise",
+        "soumis": "Soumis",
+        "enTransit": "En transit",
+        "reussi": "Réussi",
+        "echoue": "Échoué",
+        "aRelancer": "À relancer",
+        "annule": "Annulé",
+        "retourne": "Remboursé / retourné",
+        "indisponible": "Indisponible"
+      },
+      "encaissement": {
+        "enAttente": "En attente",
+        "confirme": "Confirmé",
+        "echoue": "Échoué",
+        "rembourse": "Remboursé",
+        "partiellementRembourse": "Partiellement remboursé",
+        "conteste": "Contesté",
+        "chargeback": "Chargeback",
+        "aRapprocher": "À rapprocher",
+        "rapproche": "Rapproché"
+      },
+      "rapprochement": {
+        "automatique": "Automatique",
+        "aVerifier": "À vérifier",
+        "rapproche": "Rapproché",
+        "conflit": "Conflit",
+        "sansCorrespondance": "Sans correspondance",
+        "doublonPotentiel": "Doublon potentiel"
+      },
+      "profil": {
+        "aucunMoyen": "Aucun moyen",
+        "incomplet": "Incomplet",
+        "enVerification": "En vérification",
+        "verifie": "Vérifié",
+        "suspendu": "Suspendu",
+        "actionRequise": "Action requise",
+        "invitationEnvoyee": "Invitation envoyée"
+      },
+      "capacite": {
+        "prisEnCharge": "Pris en charge",
+        "nonPrisEnCharge": "Non pris en charge",
+        "temporairementIndisponible": "Temporairement indisponible",
+        "verificationRequise": "Vérification requise",
+        "soldePrestataireInsuffisant": "Solde prestataire insuffisant"
+      },
+      "reserve": {
+        "atteint": "Objectif atteint",
+        "sousObjectif": "Sous objectif",
+        "depassement": "Dépassement",
+        "regleInactive": "Règle inactive",
+        "alimentationPrevue": "Alimentation prévue",
+        "mouvementSensible": "Mouvement sensible"
+      },
+      "obligation": {
+        "brouillon": "Brouillon",
+        "aApprouver": "À approuver",
+        "approuvee": "Approuvée",
+        "refusee": "Refusée",
+        "payable": "Payable",
+        "payee": "Payée",
+        "annulee": "Annulée"
+      },
+      "remboursement": {
+        "demande": "Demandé",
+        "approbationRequise": "Approbation requise",
+        "approuve": "Approuvé",
+        "execute": "Exécuté",
+        "refuse": "Refusé"
+      },
+      "validation": {
+        "enAttente": "Validation demandée",
+        "validee": "Validée",
+        "refusee": "Refusée"
+      },
+      "raison": {
+        "autoPaiement": "Traitement par un autre responsable requis",
+        "validationRequise": "Validation supplémentaire requise",
+        "infosManquantes": "Informations de paiement manquantes",
+        "verificationRequise": "Vérification paiement requise",
+        "horsDelegation": "Hors délégation",
+        "fournisseurIndisponible": "Fournisseur indisponible",
+        "fondsInsuffisants": "Fonds insuffisants",
+        "doublonPotentiel": "Doublon potentiel",
+        "nonApprouvee": "Obligation non approuvée",
+        "capaciteAbsente": "Capacité absente"
+      }
+    },
+    "alertes": {
+      "enseignantsAPayer": "Enseignants à payer",
+      "contractuelsAEcheance": "Contractuels à échéance",
+      "infosManquantes": "Infos paiement manquantes",
+      "payoutEchoue": "Payout échoué",
+      "paiementFamilleEchoue": "Paiement famille échoué",
+      "transactionNonRapprochee": "Transaction non rapprochée",
+      "remboursementEnAttente": "Remboursement en attente",
+      "reserveSousObjectif": "Réserve stratégique sous objectif",
+      "soldePrestataireInsuffisant": "Solde prestataire insuffisant",
+      "methodeModifieeRecemment": "Méthode modifiée récemment",
+      "doublonPotentiel": "Doublon potentiel",
+      "validationRequise": "Validation supplémentaire requise"
+    },
+    "aujourdhui": {
+      "titre": "Aujourd'hui",
+      "sousTitre": "Que dois-je faire maintenant ?",
+      "attention": "À traiter et alertes",
+      "aTraiter": "À traiter aujourd'hui",
+      "alertes": "Alertes",
+      "echeances": "Échéances proches",
+      "prestataires": "Prestataires",
+      "activiteRecente": "Activité récente",
+      "accesRapides": "Accès rapides",
+      "encaissementsRecents": "Encaissements récents",
+      "voirTout": "Voir tout"
+    },
+    "paiements": {
+      "titre": "Paiements à effectuer",
+      "sousTitre": "Montants calculés à la source : ici on vérifie et on paie, on ne modifie rien.",
+      "detailTitre": "Détail du paiement",
+      "detailSousTitre": "Chaque ligne a sa source. Un écart se signale, il ne se corrige pas ici."
+    },
+    "tresorerie": {
+      "titre": "Trésorerie et coffres",
+      "sousTitre": "La Trésorerie libre est le seul chiffre dépensable.",
+      "alimenter": "Alimenter la Réserve stratégique"
+    },
+    "encaissements": {
+      "titre": "Encaissements",
+      "sousTitre": "Un paiement n'est confirmé qu'après le prestataire.",
+      "detailTitre": "Détail de l'encaissement",
+      "rapprochementTitre": "Rapprochement",
+      "rapprochementSousTitre": "Relier chaque transaction à ce qui l'attendait."
+    },
+    "beneficiaires": {
+      "titre": "Bénéficiaires",
+      "sousTitre": "Coordonnées masquées : seul le bénéficiaire modifie les siennes.",
+      "profilTitre": "Profil de paiement",
+      "recevoir": {
+        "titre": "Recevoir mes paiements",
+        "sousTitre": "Vos coordonnées de paiement, modifiables par vous seul.",
+        "notice": "Informations de paiement à compléter",
+        "configurer": "Configurer mes paiements"
+      }
+    },
+    "contractuels": {
+      "titre": "Contractuels et obligations",
+      "sousTitre": "Les montants sont définis à la création de l'obligation, figés après approbation.",
+      "nouvelle": "Nouvelle obligation",
+      "detailTitre": "Obligation"
+    },
+    "direction": {
+      "titre": "Réserve et délégation",
+      "sousTitre": "La politique de la Réserve stratégique et ce que le Comptable peut exécuter seul.",
+      "reserve": "Politique de la Réserve stratégique",
+      "delegation": "Délégation financière"
+    },
+    "demo": {
+      "titre": "Démonstration Comptable",
+      "mention": "Données fictives, aucun paiement, aucun envoi.",
+      "intro": "Choisissez un écran du Comptable. Les montants sont masqués par défaut ; la variante « montants affichés » les révèle pour la durée de la page.",
+      "montantsMasques": "Montants masqués",
+      "montantsAffiches": "Montants affichés",
+      "groupeComptable": "Coquille du Comptable",
+      "groupeCompte": "Compte et bénéficiaire",
+      "groupeDirection": "Direction"
     }
   },
   "identiteProfil": {
