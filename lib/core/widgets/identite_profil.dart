@@ -229,6 +229,9 @@ class IdentiteProfil extends StatelessWidget {
             remontee: remontee,
           ),
           cercleEnHaut: remontee > 0,
+          // FI-COUPE-2 : le prenom n'est jamais coupe au milieu d'un mot
+          // (« Abdourahmane » sur la page Couleur, 320 px, 200 %).
+          nomSansCoupure: true,
           role: ligneDetail,
           styleNom: taille == TailleIdentite.ligne
               ? null

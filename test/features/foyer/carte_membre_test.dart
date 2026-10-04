@@ -9,7 +9,6 @@
 // lecture ni sur un echec.
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
@@ -23,6 +22,7 @@ import 'package:rewayah_academy/features/foyer/ligne_membre.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/harnais.dart';
+import '../../support/mots_coupes.dart';
 
 const ProfilEleveFoyer _profil = ProfilEleveFoyer(
   eleveId: 'e1',
@@ -31,29 +31,6 @@ const ProfilEleveFoyer _profil = ProfilEleveFoyer(
   mode: InterfaceMode.standard,
   camera: CameraPolicy.allowed,
 );
-
-/// Les mots coupes au milieu sous [racine] : un mot dont les boites tombent
-/// sur plus d'une ligne.
-List<String> motsCoupes(WidgetTester tester, Finder racine) {
-  final List<String> coupes = <String>[];
-  for (final Element e
-      in find
-          .descendant(of: racine, matching: find.byType(RichText))
-          .evaluate()) {
-    final RenderParagraph p = e.renderObject! as RenderParagraph;
-    final String texte = p.text.toPlainText();
-    for (final RegExpMatch m in RegExp(r'\S+').allMatches(texte)) {
-      final Set<double> lignes = <double>{
-        for (final TextBox b in p.getBoxesForSelection(
-          TextSelection(baseOffset: m.start, extentOffset: m.end),
-        ))
-          b.top.roundToDouble(),
-      };
-      if (lignes.length > 1) coupes.add(m.group(0)!);
-    }
-  }
-  return coupes;
-}
 
 void main() {
   group('M1 : la fleche au bout de la carte', () {

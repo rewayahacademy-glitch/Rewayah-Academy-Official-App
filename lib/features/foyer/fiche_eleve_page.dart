@@ -436,6 +436,9 @@ class _Entete extends StatelessWidget {
         // Le bandeau part du bord haut de la surface (marge
         // `SurfaceFiche.marge`, K-62) ; le cercle reste donc en haut.
         cercleEnHaut: true,
+        // FI-COUPE-2 : « Abdourahmane » entier a 320 px et 200 %, jamais
+        // coupe au milieu du mot.
+        nomSansCoupure: true,
         enveloppeAvatar: BandeauProfil.enveloppe(
           diametre: AppAvatar.grand,
           accent: accent,

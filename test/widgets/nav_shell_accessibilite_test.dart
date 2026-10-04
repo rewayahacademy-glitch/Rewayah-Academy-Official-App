@@ -15,6 +15,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/accessibilite/texte_sans_coupure.dart'
+    show echelleMinimaleLisible;
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -258,11 +260,13 @@ void main() {
         // vraies polices) : le libelle passe a la ligne, sans limite de lignes.
         expect(p.didExceedMaxLines, isFalse, reason: x.libelle);
         // Le texte regle a x2 grandit dans la barre, jusqu'au plafond de 1,3 ;
-        // il ne recule (jamais sous 1) que si le mot le plus long ne tiendrait
-        // pas sur une ligne (MA-NAV-1, TexteSansCoupure).
+        // il ne recule que si le mot le plus long ne tiendrait pas sur une
+        // ligne (MA-NAV-1, TexteSansCoupure), et jamais sous 0,85
+        // (`echelleMinimaleLisible`, relecture COUPE-MOTS-1) : la police de
+        // test, un em par lettre, l'y amene.
         expect(
           p.textScaler.scale(10),
-          inInclusiveRange(10, 13.001),
+          inInclusiveRange(10 * echelleMinimaleLisible - 0.001, 13.001),
           reason: x.libelle,
         );
         expect(p.maxLines, isNull, reason: x.libelle);

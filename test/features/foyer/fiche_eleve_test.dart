@@ -53,11 +53,13 @@ import 'package:rewayah_academy/features/foyer/ligne_membre.dart';
 import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 import 'package:rewayah_academy/features/parcours_offres/parcours_offres_page.dart';
 
+import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../fixtures/tuteur/faux_classes_foyer.dart';
 import '../../fixtures/tuteur/foyers.dart';
 import '../../parcours/faux_service_offres.dart';
 import '../../router/support_routeur.dart';
 import '../../support/harnais.dart';
+import '../../support/mots_coupes.dart';
 
 /// L'instant fixe des tests : le 24 septembre 2026 a midi.
 final DateTime _maintenant = DateTime(2026, 9, 24, 12);
@@ -122,6 +124,7 @@ Future<GoRouter> _monter(
   List<Override> autres = const <Override>[],
   Size taille = const Size(390, 844),
   TextDirection? sens,
+  double echelle = 1,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -144,11 +147,20 @@ Future<GoRouter> _monter(
             return MaterialApp.router(
               theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
               routerConfig: routeur,
-              // Le droite-a-gauche force (FI-2-CORR-MINEURS).
-              builder: sens == null
-                  ? null
-                  : (BuildContext _, Widget? app) =>
-                        Directionality(textDirection: sens, child: app!),
+              // Le droite-a-gauche force (FI-2-CORR-MINEURS) et le texte
+              // agrandi (FI-COUPE-2).
+              builder: (BuildContext contexte, Widget? app) {
+                final Widget avecTexte = echelle == 1
+                    ? app!
+                    : MediaQuery(
+                        data: MediaQuery.of(contexte)
+                            .copyWith(textScaler: TextScaler.linear(echelle)),
+                        child: app!,
+                      );
+                return sens == null
+                    ? avecTexte
+                    : Directionality(textDirection: sens, child: avecTexte);
+              },
             );
           },
         ),
@@ -1298,6 +1310,27 @@ void main() {
         ),
         findsNothing,
       );
+      // FI-COUPE-2 : la couleur du profil ouvert (Ciel) est la retenue ; sans
+      // l'exclusion du profil ouvert, c'est la phrase « Deja choisie pour
+      // Eleve A1 » qui l'avouerait, et le libelle du rond Ciel.
+      final String priseParLui = t.ficheEleve.couleur.dejaPrise(
+        prenom: 'Eleve A1',
+      );
+      expect(find.textContaining(priseParLui), findsNothing);
+      expect(
+        find.bySemanticsLabel(RegExp(RegExp.escape(priseParLui))),
+        findsNothing,
+      );
+      expect(
+        find.bySemanticsLabel(
+          RegExp(
+            RegExp.escape(
+              t.ficheEleve.couleur.dejaPrise(prenom: 'Eleve A2 et Eleve A3'),
+            ),
+          ),
+        ),
+        findsOneWidget,
+      );
       expect(tester.takeException(), isNull);
     });
 
@@ -1355,6 +1388,63 @@ void main() {
       expect(find.byKey(CouleurElevePage.echecKey), findsOneWidget);
       expect(bandeauApercu(), findsNothing);
     });
+  });
+
+  // FI-COUPE-2 (captures FI-2-CORR-MINEURS) : a 320 px et texte a 200 %,
+  // aucun mot coupe au milieu, dans les deux sens de lecture : la fiche
+  // (« Abdourahmane » dans le titre et la carte d'identite, « Informations »
+  // dans une rubrique) et la page Couleur (« Couleur du profil »). En vraies
+  // polices : la mesure par mot depend des glyphes.
+  group('FI-COUPE-2 : aucun mot coupe a 320 px, texte a 200 %', () {
+    setUpAll(chargerPolicesDuDepot);
+
+    const EleveDuFoyer long = EleveDuFoyer(
+      id: 'foyer-a-eleve-long',
+      prenom: 'Abdourahmane',
+      identifiantImmuable: 'STUD-FA-000009',
+      mode: InterfaceMode.standard,
+      camera: CameraPolicy.allowed,
+    );
+
+    for (final TextDirection sens in TextDirection.values) {
+      for (final (String nom, String chemin, Type page)
+          in <(String, String, Type)>[
+            ('fiche', Routes.ficheElevePour(long.id), FicheElevePage),
+            (
+              'Couleur',
+              Routes.ficheEleveSousPage(long.id, 'couleur'),
+              CouleurElevePage,
+            ),
+          ]) {
+        testWidgets('$nom, ${sens.name}', (WidgetTester tester) async {
+          await _monter(
+            tester,
+            appairage: _AppairagePilote()
+              ..elevesRendus = <EleveDuFoyer>[...FoyersFictifs.foyerA, long],
+            depart: chemin,
+            autres: <Override>[
+              portAccentsProfilsProvider.overrideWithValue(
+                AccentsProfilsEnMemoire(<String, AccentProfil>{
+                  long.id: AccentProfil.menthe,
+                }),
+              ),
+            ],
+            taille: const Size(320, 844),
+            sens: sens,
+            echelle: 2,
+          );
+          expect(tester.takeException(), isNull);
+          expect(find.byType(page), findsOneWidget);
+          expect(find.text('Abdourahmane'), findsWidgets);
+          if (page == FicheElevePage) {
+            expect(find.text(t.ficheEleve.lignes.informations), findsOneWidget);
+          } else {
+            expect(find.text(t.ficheEleve.couleur.titre), findsOneWidget);
+          }
+          expect(motsCoupes(tester, find.byType(page)), isEmpty);
+        });
+      }
+    }
   });
 }
 
