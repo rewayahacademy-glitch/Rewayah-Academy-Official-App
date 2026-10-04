@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/communications/port_pieces_jointes.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/widgets/communications/carte_piece_jointe.dart';
+import 'package:rewayah_academy/core/widgets/carte_piece_jointe.dart';
 
 import '../../support/hote_theme.dart';
 

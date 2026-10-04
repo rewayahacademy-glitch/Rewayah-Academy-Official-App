@@ -14,15 +14,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../communications/port_pieces_jointes.dart';
-import '../../i18n/strings.g.dart';
-import '../../icons/app_icons.dart';
-import '../../theme/app_palette.dart';
-import '../../theme/app_spacing.dart';
-import '../action_principale.dart';
-import '../app_card.dart';
-import '../lien_fleche.dart';
-import '../status_pill.dart';
+import '../communications/port_pieces_jointes.dart';
+import '../i18n/strings.g.dart';
+import '../icons/app_icons.dart';
+import '../theme/app_palette.dart';
+import '../theme/app_spacing.dart';
+import 'action_principale.dart';
+import 'app_card.dart';
+import 'lien_fleche.dart';
+import 'status_pill.dart';
 
 /// La politique des pieces jointes lue une fois par ecran. Elle echoue avec
 /// `CapaciteIndisponible` tant que le port de production n'a pas de contrat.
@@ -235,9 +235,13 @@ class CartePieceJointe extends StatelessWidget {
           ),
           if (_peutOuvrir) ...<Widget>[
             Ecart.vSm,
+            // m3 (revue COM-F-R) : le verbe seul a l'ecran, le nom dans
+            // le libelle semantique ; a 320 et texte double, « Ouvrir
+            // <nom long> » prenait quatre lignes.
             LienFleche(
               key: cleOuvrir,
-              libelle: p.ouvrir(nom: piece.nom),
+              libelle: p.ouvrir,
+              libelleSemantique: p.ouvrirLecteur(nom: piece.nom),
               onPress: onOuvrir,
             ),
           ],
@@ -246,9 +250,12 @@ class CartePieceJointe extends StatelessWidget {
             RangeeActions(
               children: <Widget>[
                 if (_peutRetirer)
+                  // Meme regle que « Ouvrir » : « Retirer » a l'ecran, le nom
+                  // pour le lecteur d'ecran.
                   ActionPrincipale(
                     key: cleRetirer,
-                    libelle: p.retirer(nom: piece.nom),
+                    libelle: p.retirer,
+                    libelleSemantique: p.retirerLecteur(nom: piece.nom),
                     onPress: onRetirer,
                     niveau: NiveauAction.tertiaire,
                     pleineLargeur: false,
@@ -304,7 +311,7 @@ class EntreePieceJointe extends ConsumerWidget {
       return LienFleche(
         key: cleJoindre,
         libelle: p.joindre,
-        icone: AppIcons.ajouter,
+        icone: AppIcons.pieceJointe,
         fleche: false,
         onPress: () => onJoindre(politique),
       );

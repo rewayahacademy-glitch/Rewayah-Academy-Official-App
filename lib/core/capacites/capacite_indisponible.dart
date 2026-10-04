@@ -8,7 +8,7 @@
 /// production, jamais une fixture.
 ///
 /// [dependance] nomme ce qui manque, pour la trace et les tests, **jamais pour
-/// l'affichage** (aucun code technique a l'ecran, mandat section 8). Trois
+/// l'affichage** (aucun code technique a l'ecran, mandat section 8). Quatre
 /// familles d'identifiants seulement :
 ///
 /// - `DB-xxx` : une dependance du registre des dependances backend du chantier
@@ -18,12 +18,16 @@
 ///   que le lot `x` ecrit (`00_OWNERSHIP.md` section 3), par exemple `LOT-E`
 ///   pour l'identite du titulaire ;
 /// - `AD-BR-nn` : un besoin serveur de la vague Admin, une ligne de
-///   `11_admin/AD-BR.md` (K-28).
+///   `11_admin/AD-BR.md` (K-28) ;
+/// - `COM-BR-nn` : un contrat serveur du chantier Communications V1, une
+///   ligne de `19_communications/COM-BR.md` (K-28), par exemple `COM-BR-06`
+///   pour la moderation ou `COM-BR-16` pour les capacites Communications.
 class CapaciteIndisponible implements Exception {
   /// Cree l'exception pour une dependance donnee.
   const CapaciteIndisponible(this.dependance);
 
-  /// L'identifiant de ce qui manque : `DB-xxx`, `LOT-x` ou `AD-BR-nn`.
+  /// L'identifiant de ce qui manque : `DB-xxx`, `LOT-x`, `AD-BR-nn` ou
+  /// `COM-BR-nn`.
   final String dependance;
 
   @override

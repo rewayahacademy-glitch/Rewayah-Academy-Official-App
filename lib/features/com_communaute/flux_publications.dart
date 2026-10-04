@@ -25,13 +25,13 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/bouton_icone.dart';
-import '../../core/widgets/communications/etats_communication.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/vue_etat_communication.dart';
 import 'port_communaute.dart';
 import 'regles_communaute.dart';
 

@@ -14,7 +14,7 @@ import 'package:rewayah_academy/core/communications/port_brouillons.dart';
 import 'package:rewayah_academy/core/communications/port_elements_enregistres.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
-import 'package:rewayah_academy/core/widgets/communications/carte_piece_jointe.dart';
+import 'package:rewayah_academy/core/widgets/carte_piece_jointe.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 import 'package:rewayah_academy/features/com_communaute/composer_publication.dart';
 import 'package:rewayah_academy/features/com_communaute/feuille_signalement_communaute.dart';

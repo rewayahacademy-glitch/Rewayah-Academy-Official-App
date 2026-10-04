@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/communications/modeles_communication.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/widgets/communications/badge_non_lu.dart';
+import 'package:rewayah_academy/core/widgets/badge_non_lu.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 
 import '../../support/hote_theme.dart';

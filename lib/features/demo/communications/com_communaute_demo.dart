@@ -42,7 +42,7 @@ import '../../../core/router/routes.dart';
 import '../../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/widgets/communications/carte_piece_jointe.dart'
+import '../../../core/widgets/carte_piece_jointe.dart'
     show politiquePiecesJointesProvider;
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/nav_shell.dart';
