@@ -15,7 +15,15 @@ import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/creneaux/creneaux_page.dart';
 import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
 
+import '../capture/outil_capture.dart'
+    show
+        capturer,
+        chargerPolicesDuDepot,
+        fixerVueCapture,
+        hoteCapture,
+        sautSansCapture;
 import '../support/harnais.dart';
+import '../support/hors_ligne_une_fois.dart';
 
 const String _monId = 't1';
 
@@ -414,6 +422,9 @@ void main() {
       // Consultable : le compteur d'heures posees est la.
       expect(find.text(t.disponibilites.poseeUne), findsOneWidget);
       expect(find.text(t.enseignant.creneaux.horsLigneGrille), findsOneWidget);
+      // EA-HL-DOUBLE-1 (reprise) : la note dit ce qui ne peut pas se faire ;
+      // le bandeau seul dit « hors ligne ».
+      expectHorsLigneUneFois();
       // Et inerte : la case n'expose plus de libelle pressable.
       expect(
         find.bySemanticsLabel(
@@ -424,5 +435,82 @@ void main() {
       expect(planning.poses, isEmpty);
       expect(planning.retires, isEmpty);
     });
+  });
+
+  // EA-HL-DOUBLE-1 (reprise) : captures de preuve, hors ligne, la note dit
+  // ce qui ne peut pas se faire, le bandeau seul dit le reseau. Sautees sans
+  // CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String, Size, ThemeMode, double, InterfaceMode) cas
+        in <(String, Size, ThemeMode, double, InterfaceMode)>[
+          (
+            '390_clair',
+            const Size(390, 844),
+            ThemeMode.light,
+            1,
+            InterfaceMode.standard,
+          ),
+          (
+            '390_sombre',
+            const Size(390, 844),
+            ThemeMode.dark,
+            1,
+            InterfaceMode.standard,
+          ),
+          (
+            '320x2_clair',
+            const Size(320, 900),
+            ThemeMode.light,
+            2,
+            InterfaceMode.standard,
+          ),
+          (
+            '1440_clair',
+            const Size(1440, 900),
+            ThemeMode.light,
+            1,
+            InterfaceMode.standard,
+          ),
+          (
+            '390_guidee',
+            const Size(390, 844),
+            ThemeMode.light,
+            1,
+            InterfaceMode.enfant,
+          ),
+        ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        fixerVueCapture(tester, cas.$2, 1);
+        final FauxServicePlanning planning = FauxServicePlanning()
+          ..creneaux[_monId] = <Creneau>[
+            const Creneau(jour: 2, heure: 17, fuseau: 'Europe/Paris'),
+          ];
+        await tester.pumpWidget(
+          hoteCapture(
+            const CreneauxPage(),
+            surcharges: _surcharges(
+              matching: FauxServiceMatching(),
+              planning: planning,
+              regles: _reglesAvecPlafond(5),
+              horsLigne: true,
+            ),
+            themeMode: cas.$3,
+            echelleTexte: cas.$4,
+            interfaceMode: cas.$5,
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(
+          find.text(t.enseignant.creneaux.horsLigneGrille),
+          findsOneWidget,
+        );
+        expectHorsLigneUneFois();
+        debugPrint(
+          'PNG ${await capturer(tester, 'ea_hl_double1_creneaux_${cas.$1}')}',
+        );
+      });
+    }
   });
 }

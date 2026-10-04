@@ -491,7 +491,9 @@ class _LigneEtat extends StatelessWidget {
       EtatEntree.terminee => AppIcons.succes,
       EtatEntree.annulee => AppIcons.annuler,
       EtatEntree.aucune => AppIcons.info,
-      EtatEntree.indisponible => AppIcons.horsLigne,
+      // Hors ligne se dit une fois (EA-HL-DOUBLE-1) : le « wifi barre » est
+      // celui du bandeau ; la ligne dit l'attente de l'entree.
+      EtatEntree.indisponible => AppIcons.attente,
     };
     return MergeSemantics(
       child: Row(

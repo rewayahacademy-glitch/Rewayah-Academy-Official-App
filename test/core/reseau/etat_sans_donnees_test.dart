@@ -35,6 +35,25 @@ const Set<String> _permises = <String>{
   'tc.bibliotheque.offline.indisponible',
   'tc.bibliotheque.action.telecharger',
   'tc.bibliotheque.message.telechargementImpossible',
+  // La salle et la classe en direct (`PageImmersive`, sans bandeau) disent
+  // elles-memes l'etat de leur lien.
+  'salle.secours.reconnexion',
+  'salle.seance.statut.connexionInterrompue',
+  'salle.lienPerdu',
+  'tc.classe.reseau.perdu',
+  'tc.classe.lien.echec',
+  'tc.observation.visite.reconnexionDetail',
+  // Une cause passee, pas l'etat de l'appareil qui lit : la visite a pris
+  // fin, ou le releve d'une seance terminee manque.
+  'tc.observation.fin.deconnexion',
+  'controleur.historique.faitsIndisponibles',
+  'controleur.compteRendu.faitsAbsents',
+  // Textes du cahier sources « commentaire du directeur, LIB-CAHIER-1 »
+  // (tool/libelles_sources.json) : non reecrits par l'agent. Ils redisent le
+  // reseau sous le bandeau ; l'arbitrage est remonte au directeur
+  // (EA-HL-DOUBLE-1, reprise).
+  'enseignant.cahier.enFileDetailHorsLigne',
+  'enseignant.cahier.exceptionHorsLigne',
 };
 
 void _aplatir(Object? noeud, String chemin, Map<String, String> sortie) {
@@ -170,11 +189,7 @@ void main() {
     );
     final List<String> fautifs = <String>[
       for (final MapEntry<String, String> e in textes.entries)
-        if (!_permises.contains(e.key) &&
-            RegExp(
-              r'hors ligne|pas de réseau|pas de connexion',
-              caseSensitive: false,
-            ).hasMatch(e.value))
+        if (!_permises.contains(e.key) && motifHorsLigne.hasMatch(e.value))
           '${e.key} = ${e.value}',
     ];
     expect(fautifs, isEmpty);

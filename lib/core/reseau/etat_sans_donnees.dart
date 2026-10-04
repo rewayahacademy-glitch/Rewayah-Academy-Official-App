@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../capacites/capacite_indisponible.dart';
+import '../icons/app_icons.dart';
 import '../widgets/etat_systeme.dart';
 
 // Hors ligne se dit UNE fois (EA-HL-DOUBLE-1, decision du 04/10 deleguee par
@@ -37,8 +38,10 @@ bool sansDonneesHorsLigne(
 /// manque ([quoi]) et propose de relire, sans redire l'absence de reseau que
 /// le bandeau de `PageShell` porte deja.
 ///
-/// La nature reste [NatureEtat.horsLigne] : son icone et son ton
-/// d'avertissement, pas ceux d'un echec du serveur, qui n'a rien refuse.
+/// La nature reste [NatureEtat.horsLigne] : son ton d'avertissement, pas
+/// celui d'un echec du serveur, qui n'a rien refuse. L'icone, elle, n'est pas
+/// le « wifi barre » du bandeau, qui serait un second signal : c'est
+/// l'attente de ce qui manque (revue EA-HL-DOUBLE-1, m3).
 class EtatSansDonnees extends StatelessWidget {
   /// Cree le bloc.
   const EtatSansDonnees({required this.quoi, super.key, this.onAction});
@@ -56,5 +59,6 @@ class EtatSansDonnees extends StatelessWidget {
     // Phrase vide : le bandeau dit deja le reste.
     phrase: '',
     onAction: onAction,
+    icone: AppIcons.attente,
   );
 }

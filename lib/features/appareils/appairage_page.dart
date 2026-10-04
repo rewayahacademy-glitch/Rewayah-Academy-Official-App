@@ -540,10 +540,15 @@ class _AppairagePageState extends ConsumerState<AppairagePage>
           enCours: _enCours,
         );
       case EtapeEmetteur.horsLigne:
+        // Hors ligne se dit une fois (EA-HL-DOUBLE-1) : le bandeau de
+        // `PageShell` le dit, en mots et en icone ; la carte dit ce qui
+        // manque, le code, et quand il reviendra.
         return _Resultat(
-          icone: AppIcons.horsLigne,
+          icone: AppIcons.attente,
           ton: TonEtat.neutre,
-          titre: t.appareils.emetteur.horsLigne.titre,
+          titre: _code == null
+              ? t.appareils.emetteur.horsLigne.titreSansCode
+              : t.appareils.emetteur.horsLigne.titreAvecCode,
           phrase: _code == null
               ? t.appareils.emetteur.horsLigne.phraseSansCode
               : t.appareils.emetteur.horsLigne.phraseAvecCode(heure: heure),

@@ -46,6 +46,8 @@ import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 import 'package:rewayah_academy/features/parcours_offres/parcours_offres_page.dart';
 
+import '../../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../../fixtures/tuteur/faux_classes_foyer.dart';
 import '../../fixtures/tuteur/foyers.dart';
 import '../../parcours/faux_service_offres.dart';
@@ -1026,5 +1028,41 @@ void main() {
       expect(photo.left, greaterThan(identite.right));
       expect(tester.takeException(), isNull);
     });
+  });
+
+  // EA-HL-DOUBLE-1 (reprise) : captures de preuve de la fiche eleve hors
+  // ligne, sans donnees et avec donnees. Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, bool) cas in <(String, Size, bool)>[
+      ('sans_donnees_390', const Size(390, 844), true),
+      ('sans_donnees_320', const Size(320, 900), true),
+      ('avec_donnees_390', const Size(390, 844), false),
+      ('avec_donnees_1440', const Size(1440, 900), false),
+    ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        await _monter(
+          tester,
+          appairage: _foyerA()..echoue = cas.$3,
+          depart: Routes.ficheEleveSousPage(a1, 'informations'),
+          taille: cas.$2,
+          autres: <Override>[
+            horsLigneProvider.overrideWith(
+              (Ref ref) => Stream<bool>.value(true),
+            ),
+          ],
+        );
+        expect(tester.takeException(), isNull);
+        if (cas.$3) {
+          expectSansDonnees(t.ficheEleve.sansDonnees);
+        } else {
+          expectAvecDonnees();
+        }
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_fiche_eleve_${cas.$1}_clair')}',
+        );
+      });
+    }
   });
 }

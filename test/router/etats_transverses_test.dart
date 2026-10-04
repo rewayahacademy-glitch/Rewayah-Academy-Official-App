@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/etats_routeur.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
@@ -12,6 +15,8 @@ import 'package:rewayah_academy/core/widgets/marque_page.dart';
 import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 
+import '../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../support/harnais.dart';
 import '../support/hors_ligne_une_fois.dart';
 import 'support_routeur.dart';
@@ -217,6 +222,58 @@ void main() {
           findsOneWidget,
         );
         expect(signauxHorsLigne().evaluate().length, lessThanOrEqualTo(1));
+        // Reprise : le « wifi barre » n'est pas repose par la page.
+        expect(
+          iconesHorsLigne().evaluate().length,
+          signauxHorsLigne().evaluate().length,
+        );
+      }
+    });
+
+    testWidgets('appareil hors ligne : le bandeau seul dit « hors ligne », '
+        'en mots et en icone (EA-HL-DOUBLE-1)', (WidgetTester tester) async {
+      final SourcePilotee source = SourcePilotee(injoignable);
+      addTearDown(source.fermer);
+      await monterRouteur(
+        tester,
+        Routes.tuteurAccueil,
+        source: source,
+        surcharges: <Override>[
+          horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
+        ],
+      );
+      expect(find.byType(PageHorsLigne), findsOneWidget);
+      expectHorsLigneUneFois();
+    });
+
+    group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final (String, Size) cas in <(String, Size)>[
+        ('390', const Size(390, 844)),
+        ('320', const Size(320, 900)),
+        ('1440', const Size(1440, 900)),
+      ]) {
+        testWidgets(cas.$1, (WidgetTester tester) async {
+          final SourcePilotee source = SourcePilotee(injoignable);
+          addTearDown(source.fermer);
+          await monterRouteur(
+            tester,
+            Routes.tuteurAccueil,
+            source: source,
+            taille: cas.$2,
+            surcharges: <Override>[
+              horsLigneProvider.overrideWith(
+                (Ref _) => Stream<bool>.value(true),
+              ),
+            ],
+          );
+          expect(tester.takeException(), isNull);
+          expectHorsLigneUneFois();
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'ea_hl_double1_demarrage_${cas.$1}_clair')}',
+          );
+        });
       }
     });
 

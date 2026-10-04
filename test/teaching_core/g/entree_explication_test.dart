@@ -38,6 +38,8 @@ import 'package:rewayah_academy/features/tc_observation_ui/panneau_observation_t
 import 'package:rewayah_academy/features/tc_observation_ui/routes_tc_g.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/verification_prealable.dart';
 
+import '../../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../../support/harnais.dart' show FauxServicePresence;
 import '../../support/hors_ligne_une_fois.dart';
 import 'faux/faux_observation.dart';
@@ -820,5 +822,38 @@ void main() {
       expect(find.textContaining('visites de'), findsNothing);
       expect(_observerMaintenant, findsNothing);
     });
+  });
+
+  // EA-HL-DOUBLE-1 (reprise) : captures de preuve de la verification de
+  // l'observation hors ligne : le motif dit ce qui manque, le bandeau seul
+  // dit le reseau. Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, ThemeMode) cas in <(String, Size, ThemeMode)>[
+      ('390_clair', const Size(390, 844), ThemeMode.light),
+      ('390_sombre', const Size(390, 844), ThemeMode.dark),
+      ('320_clair', const Size(320, 900), ThemeMode.light),
+      ('1440_clair', const Size(1440, 900), ThemeMode.light),
+    ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        final FauxPortPolitique politique = FauxPortPolitique()
+          ..echecBudget = const EchecObservation(MotifEchecObservation.reseau);
+        addTearDown(politique.fermer);
+        await _monter(
+          tester,
+          politique: politique,
+          horsLigne: true,
+          taille: cas.$2,
+          mode: cas.$3,
+        );
+        await _presser(tester, find.text(t.classe.observer));
+        expect(tester.takeException(), isNull);
+        expectHorsLigneUneFois();
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_observation_${cas.$1}')}',
+        );
+      });
+    }
   });
 }

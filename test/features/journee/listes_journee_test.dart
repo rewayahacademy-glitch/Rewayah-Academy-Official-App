@@ -30,7 +30,8 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 
-import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../../support/aucun_mot_coupe.dart';
 import '../../support/harnais.dart';
 import '../../support/hors_ligne_une_fois.dart';
@@ -320,6 +321,41 @@ void main() {
         expect(rtl.right, moreOrLessEquals(1440 - ltr.left));
         expect(rtl.width, moreOrLessEquals(ltr.width));
       });
+    }
+  });
+
+  // EA-HL-DOUBLE-1 (reprise) : captures de preuve des listes de la Journee
+  // hors ligne sans donnees, LTR et RTL, texte x2. Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+    setUp(masquerRubanDebug);
+    for (final (String, Widget) page in <(String, Widget)>[
+      ('a_terminer', const ListeATerminerPage()),
+      ('alertes', const ListeAlertesPage()),
+    ]) {
+      for (final (String, double, double, TextDirection) cas
+          in <(String, double, double, TextDirection)>[
+            ('390', 390, 1, TextDirection.ltr),
+            ('320x2', 320, 2, TextDirection.ltr),
+            ('320x2_rtl', 320, 2, TextDirection.rtl),
+          ]) {
+        testWidgets('${page.$1} ${cas.$1}', (WidgetTester tester) async {
+          await _monter(
+            tester,
+            page.$2,
+            _Etat.horsLigne,
+            direction: cas.$4,
+            largeur: cas.$2,
+            echelle: cas.$3,
+          );
+          tester.view.physicalSize = Size(cas.$2, 900);
+          await tester.pump();
+          expect(tester.takeException(), isNull);
+          expectHorsLigneUneFois();
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'ea_hl_double1_journee_${page.$1}_sans_donnees_${cas.$1}_clair')}',
+          );
+        });
+      }
     }
   });
 }
