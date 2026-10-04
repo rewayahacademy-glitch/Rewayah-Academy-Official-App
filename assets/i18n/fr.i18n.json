@@ -1001,7 +1001,8 @@
       "appareilsLegende": "Connecter un appareil, voir ceux qui sont reliés, en retirer un",
       "couleur": "Couleur du profil",
       "couleurAucune": "Sans couleur",
-      "couleurIndisponible": "Pas encore disponible"
+      "couleurIndisponible": "Pas encore disponible",
+      "finances": "Finances"
     },
     "couleur": {
       "titre": "Couleur du profil",
@@ -1103,6 +1104,32 @@
       "expireDepuis": "Expiré depuis le {date}",
       "expirePhrase": "Depuis cette date, {prenom} ne peut plus entrer dans Rewayah.",
       "detailIndisponible": "Le début de l'accès et son motif ne s'affichent pas encore."
+    },
+    "finances": {
+      "titre": "Finances",
+      "vueTitre": "Vue financière",
+      "mensualite": "Mensualité",
+      "mensualiteValeur": "{montant} / mois",
+      "detailTitre": "Détail de la mensualité",
+      "tarifEnfant": "Tarif enfant",
+      "tarifAdulte": "Tarif adulte",
+      "remiseRang": "Remise familiale",
+      "prorata": "Réduction calendrier",
+      "avoir": "Avoir",
+      "taxe": "Taxe applicable",
+      "total": "Total à financer",
+      "regulariserTitre": "Accès à régulariser",
+      "aFinancerTitre": "Prochaine période à financer",
+      "expireTitre": "Accès expiré",
+      "manqueEtConservation": "Il manque {montant} pour la prochaine période. La place est conservée jusqu'au {date}.",
+      "sansManque": "La prochaine période n'est pas encore financée.",
+      "confirmationTitre": "Paiement en cours de confirmation",
+      "confirmationPhrase": "Ne payez pas une seconde fois : la période se met à jour dès la confirmation.",
+      "indisponibleTitre": "Les finances ne sont pas encore disponibles",
+      "indisponiblePhrase": "Le solde et la mensualité de {prenom} s'afficheront ici dès leur mise en service.",
+      "erreurTitre": "Les finances de {prenom} ne peuvent pas être lues",
+      "videTitre": "Aucune finance enregistrée pour {prenom}",
+      "videPhrase": "Aucun solde ni aucune mensualité n'est encore rendu pour ce profil. Ils apparaîtront ici après son inscription à une classe."
     }
   },
   "disponibilites": {

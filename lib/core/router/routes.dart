@@ -137,7 +137,7 @@ abstract final class Routes {
   static String ficheElevePour(String eleveId) => '$tuteurFoyer/$eleveId';
 
   /// Une sous-page de la fiche : `informations`, `inscription`, `interface`,
-  /// `camera`, `acces` ou `appareils`.
+  /// `camera`, `acces`, `finances` ou `appareils`.
   static String ficheEleveSousPage(String eleveId, String segment) =>
       '${ficheElevePour(eleveId)}/$segment';
 
@@ -149,6 +149,7 @@ abstract final class Routes {
     'couleur',
     'camera',
     'acces',
+    'finances',
     'appareils',
   ];
 

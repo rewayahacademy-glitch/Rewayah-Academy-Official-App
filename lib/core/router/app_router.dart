@@ -81,6 +81,7 @@ import '../../features/foyer/creer_mon_profil_indisponible.dart';
 import '../../features/foyer/fiche/acces_page.dart';
 import '../../features/foyer/fiche/camera_page.dart';
 import '../../features/foyer/fiche/couleur_page.dart';
+import '../../features/foyer/fiche/finances_page.dart';
 import '../../features/foyer/fiche/informations_page.dart';
 import '../../features/foyer/fiche/inscription_page.dart';
 import '../../features/foyer/fiche/interface_page.dart';
@@ -611,6 +612,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                         path: 'acces',
                         pageBuilder: glissee(
                           (GoRouterState etat) => AccesElevePage(
+                            eleveId: _parametre(etat, 'eleveId'),
+                          ),
+                        ),
+                      ),
+                      GoRoute(
+                        path: 'finances',
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => FinancesElevePage(
                             eleveId: _parametre(etat, 'eleveId'),
                           ),
                         ),
