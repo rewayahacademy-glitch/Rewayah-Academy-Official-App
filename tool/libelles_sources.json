@@ -60,5 +60,6 @@
   "enseignant.photo.aide": "commentaire du directeur, revue du 01-02/10, etape KYC-PHOTO-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
   "enseignant.photo.obligatoireLecteur": "commentaire du directeur, revue du 01-02/10, etape KYC-PHOTO-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
   "enseignant.photo.voile": "commentaire du directeur, revue du 01-02/10, etape KYC-PHOTO-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
-  "enseignant.cahier.travailMaisonSaisi": "revue du directeur 10/2026, etape EN-7c-SUGG-T : aucune source de devoir suggere n'existe (brouillon_cahier ne rend que le devoir precedent) ; « Ajustez la suggestion » est reservee a une vraie suggestion, ce texte dit le devoir deja saisi par l'enseignant (K-57) ; a valider par le directeur"
+  "enseignant.cahier.travailMaisonSaisi": "revue du directeur 10/2026, etape EN-7c-SUGG-T : aucune source de devoir suggere n'existe (brouillon_cahier ne rend que le devoir precedent) ; « Ajustez la suggestion » est reservee a une vraie suggestion, ce texte dit le devoir deja saisi par l'enseignant (K-57) ; a valider par le directeur",
+  "eleve.accueil.erreurCours": "DASH_STRATEGIE.md annexe B (DASH-1, 02/10) « Vos cours n'ont pas pu être lus. Réessayez dans un instant. », au tutoiement de l'accueil eleve (eleve.accueil.*) ; code a l'etape DASH-ELV-ERR (04/10) ; format K-59 ; a faire valider par le directeur (DASH-LIB)"
 }

@@ -25,6 +25,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/audio_label.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/skeleton.dart';
@@ -217,12 +218,24 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
           : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                _BlocPrincipal(
-                  etat: etat,
-                  prochain: prochain,
-                  interruptions: interruptions,
-                  maintenant: _maintenant,
-                ),
+                // DASH-ELV-ERR (DASH_STRATEGIE D10, D11) : une lecture en
+                // echec n'est jamais « pas de cours aujourd'hui ». Le bloc dit
+                // que les cours manquent et propose de relire ; le Coran, lu
+                // ailleurs, reste en place.
+                if (seances.hasError && !seances.hasValue)
+                  EtatSysteme(
+                    key: const ValueKey<String>('accueil-eleve-erreur'),
+                    nature: NatureEtat.echecServeur,
+                    phrase: t.eleve.accueil.erreurCours,
+                    onAction: () => ref.invalidate(seancesProvider),
+                  )
+                else
+                  _BlocPrincipal(
+                    etat: etat,
+                    prochain: prochain,
+                    interruptions: interruptions,
+                    maintenant: _maintenant,
+                  ),
                 Ecart.vXl,
                 const _BlocCoran(),
               ],
