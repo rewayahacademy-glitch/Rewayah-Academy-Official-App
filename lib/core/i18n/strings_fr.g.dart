@@ -9633,8 +9633,8 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: 'Le relevé n'est pas encore disponible'
 	String get releveIndisponibleTitre => 'Le relevé n\'est pas encore disponible';
 
-	/// fr: 'Les mois arrêtés par l'académie s'afficheront ici dès sa mise en service. D'ici là, seule l'estimation du mois en cours est montrée.'
-	String get releveIndisponiblePhrase => 'Les mois arrêtés par l\'académie s\'afficheront ici dès sa mise en service. D\'ici là, seule l\'estimation du mois en cours est montrée.';
+	/// fr: 'Les mois arrêtés par l'académie s'afficheront ici dès que le relevé sera en service. D'ici là, seule l'estimation du mois en cours est montrée.'
+	String get releveIndisponiblePhrase => 'Les mois arrêtés par l\'académie s\'afficheront ici dès que le relevé sera en service. D\'ici là, seule l\'estimation du mois en cours est montrée.';
 
 	/// fr: 'Aucun mois arrêté pour l'instant'
 	String get releveVide => 'Aucun mois arrêté pour l\'instant';
@@ -20107,7 +20107,7 @@ extension on Traductions {
 			'enseignant.revenus.internetAucune' => 'Aucune aide Internet n\'est prévue ce mois-ci.',
 			'enseignant.revenus.releveSection' => 'Relevé',
 			'enseignant.revenus.releveIndisponibleTitre' => 'Le relevé n\'est pas encore disponible',
-			'enseignant.revenus.releveIndisponiblePhrase' => 'Les mois arrêtés par l\'académie s\'afficheront ici dès sa mise en service. D\'ici là, seule l\'estimation du mois en cours est montrée.',
+			'enseignant.revenus.releveIndisponiblePhrase' => 'Les mois arrêtés par l\'académie s\'afficheront ici dès que le relevé sera en service. D\'ici là, seule l\'estimation du mois en cours est montrée.',
 			'enseignant.revenus.releveVide' => 'Aucun mois arrêté pour l\'instant',
 			'enseignant.revenus.releveVideDetail' => 'Chaque mois apparaîtra ici une fois arrêté par l\'académie.',
 			'enseignant.revenus.mention' => 'Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l\'académie fait foi.',

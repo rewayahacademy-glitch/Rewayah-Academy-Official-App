@@ -3676,7 +3676,7 @@
       "internetAucune": "Aucune aide Internet n'est prévue ce mois-ci.",
       "releveSection": "Relevé",
       "releveIndisponibleTitre": "Le relevé n'est pas encore disponible",
-      "releveIndisponiblePhrase": "Les mois arrêtés par l'académie s'afficheront ici dès sa mise en service. D'ici là, seule l'estimation du mois en cours est montrée.",
+      "releveIndisponiblePhrase": "Les mois arrêtés par l'académie s'afficheront ici dès que le relevé sera en service. D'ici là, seule l'estimation du mois en cours est montrée.",
       "releveVide": "Aucun mois arrêté pour l'instant",
       "releveVideDetail": "Chaque mois apparaîtra ici une fois arrêté par l'académie.",
       "mention": "Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l'académie fait foi.",

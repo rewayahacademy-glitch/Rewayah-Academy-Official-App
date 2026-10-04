@@ -143,10 +143,12 @@ class _Corps extends StatelessWidget {
           ),
         ),
         Ecart.vSm,
-        if (AppGabarit.de(context) == Gabarit.desktop)
-          _TableauClasses(revenus: revenus)
-        else
-          _DetailClasses(classes: revenus.classes),
+        KeyedSubtree(
+          key: const ValueKey<String>('revenus-detail'),
+          child: AppGabarit.de(context) == Gabarit.desktop
+              ? _TableauClasses(revenus: revenus)
+              : _DetailClasses(classes: revenus.classes),
+        ),
       ],
     );
     final Widget annexe = Column(
@@ -193,8 +195,8 @@ String _duree(int minutes) {
 }
 
 /// Le resume : « Estimation », la periode, le total estime, les heures
-/// assurees, le nombre de Classes et le taux horaire moyen, puis la mention qui dit que le releve
-/// de l'academie fait foi.
+/// assurees, le nombre de Classes et le taux horaire moyen, puis la mention
+/// qui dit que le releve de l'academie fait foi.
 class _Resume extends StatelessWidget {
   const _Resume({required this.revenus});
 
@@ -383,28 +385,165 @@ String _type(TypeClasseRevenus type) => switch (type) {
 /// Le detail par Classe en tableau compact, sur bureau (revue 11 e) : une
 /// ligne par Classe et la ligne de total rendue par le port. Les memes
 /// colonnes que les lignes groupees du telephone.
+///
+/// Un mot n'est jamais coupe dans une cellule (K-54, K-61) : quand le plus
+/// long mot d'une colonne (en-tete, valeur ou pastille « Remplacement ») ne
+/// tient pas dans sa largeur, au texte agrandi par exemple, le detail passe
+/// aux lignes groupees du telephone, qui gardent les memes valeurs.
 class _TableauClasses extends StatelessWidget {
   const _TableauClasses({required this.revenus});
 
   final RevenusEnseignant revenus;
 
   /// La part de largeur de chaque colonne, dans l'ordre d'affichage.
-  static const List<int> _parts = <int>[3, 3, 2, 2, 2, 2, 3];
+  static const List<int> _parts = <int>[4, 3, 2, 2, 2, 2, 3];
+
+  /// Ce que la pastille ajoute a son libelle : ses marges, son disque et
+  /// l'ecart qui le suit (voir [StatusPill]).
+  static const double _cadrePastille =
+      2 * AppSpacing.md + StatusPill.diametrePastille + AppSpacing.sm;
+
+  /// La largeur du plus long mot de [texte], a l'echelle de l'appareil.
+  static double _plusLongMot(
+    String texte,
+    TextStyle style,
+    TextScaler echelle,
+    TextDirection sens,
+  ) {
+    double plusLong = 0;
+    for (final String mot in texte.split(RegExp(r'\s+'))) {
+      if (mot.isEmpty) continue;
+      final TextPainter peintre = TextPainter(
+        text: TextSpan(text: mot, style: style),
+        textDirection: sens,
+        textScaler: echelle,
+        maxLines: 1,
+      )..layout();
+      if (peintre.width > plusLong) plusLong = peintre.width;
+      peintre.dispose();
+    }
+    return plusLong;
+  }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (BuildContext context, BoxConstraints contraintes) =>
+        _tient(context, contraintes.maxWidth)
+        ? _tableau(context)
+        : _DetailClasses(classes: revenus.classes),
+  );
+
+  /// Les styles du tableau : cellule, en-tete, total.
+  static (TextStyle, TextStyle, TextStyle) _styles(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle defaut = DefaultTextStyle.of(context).style;
+    return (
+      defaut.merge(
+        AppTypography.tabulaire(
+          palette.inkStrong.applyTo(textes.bodySmall ?? const TextStyle()),
+        ),
+      ),
+      defaut.merge(
+        palette.inkMuted.applyTo(textes.labelMedium ?? const TextStyle()),
+      ),
+      defaut.merge(
+        AppTypography.tabulaire(
+          palette.inkStrong.applyTo(textes.labelMedium ?? const TextStyle()),
+        ),
+      ),
+    );
+  }
+
+  /// Les textes de chaque colonne, en-tete et total compris.
+  List<List<String>> _colonnes() {
+    final r = t.enseignant.revenus;
+    final TotalRevenus total = revenus.total;
+    return <List<String>>[
+      <String>[
+        r.classeColonne,
+        r.total,
+        for (final RevenusClasse c in revenus.classes) r.classe(nom: c.classe),
+      ],
+      <String>[
+        r.type,
+        for (final RevenusClasse c in revenus.classes) _type(c.type),
+      ],
+      <String>[
+        r.capacite,
+        '${total.capacite}',
+        for (final RevenusClasse c in revenus.classes) '${c.capacite}',
+      ],
+      <String>[
+        r.sieges,
+        r.siegesValeur(nombre: total.siegesEligibles, capacite: total.capacite),
+        for (final RevenusClasse c in revenus.classes)
+          r.siegesValeur(nombre: c.siegesEligibles, capacite: c.capacite),
+      ],
+      <String>[
+        r.heuresAssurees,
+        _duree(total.minutesAssurees),
+        for (final RevenusClasse c in revenus.classes)
+          _duree(c.minutesAssurees),
+      ],
+      <String>[
+        r.tauxColonne,
+        formaterMontant(total.tauxHoraireMoyen),
+        for (final RevenusClasse c in revenus.classes)
+          formaterMontant(c.tauxHoraireEffectif),
+      ],
+      <String>[
+        r.montantClasse,
+        formaterMontant(revenus.totalEstime),
+        for (final RevenusClasse c in revenus.classes)
+          formaterMontant(c.montantEstime),
+      ],
+    ];
+  }
+
+  /// Vrai quand chaque mot de chaque colonne tient dans sa largeur, a
+  /// l'echelle de texte de l'appareil, dans un tableau large de [largeur].
+  bool _tient(BuildContext context, double largeur) {
+    if (!largeur.isFinite) return false;
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    final TextDirection sens = Directionality.of(context);
+    final (TextStyle base, TextStyle entete, TextStyle fort) = _styles(context);
+    final TextStyle pastille = DefaultTextStyle.of(context).style
+        .merge(Theme.of(context).textTheme.labelMedium);
+    final int somme = _parts.fold(0, (int a, int b) => a + b);
+    final double utile = largeur - 2 * AppSpacing.lg;
+    final List<List<String>> colonnes = _colonnes();
+    for (int i = 0; i < colonnes.length; i++) {
+      final double place = utile * _parts[i] / somme - AppSpacing.sm;
+      final List<String> textes = colonnes[i];
+      // En-tete, total puis cellules : le plus large des trois styles.
+      for (int j = 0; j < textes.length; j++) {
+        final TextStyle style = j == 0 ? entete : (j == 1 ? fort : base);
+        if (_plusLongMot(textes[j], style, echelle, sens) > place) {
+          return false;
+        }
+      }
+    }
+    final bool avecPastille = revenus.classes.any(
+      (RevenusClasse c) => c.enRemplacement,
+    );
+    if (avecPastille) {
+      final double place = utile * _parts[0] / somme - AppSpacing.sm;
+      final double libelle = _plusLongMot(
+        t.enseignant.revenus.remplacement,
+        pastille,
+        echelle,
+        sens,
+      );
+      if (libelle + _cadrePastille > place) return false;
+    }
+    return true;
+  }
+
+  Widget _tableau(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final AppMetriques metriques = AppMetriques.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    final TextStyle base = AppTypography.tabulaire(
-      palette.inkStrong.applyTo(textes.bodySmall ?? const TextStyle()),
-    );
-    final TextStyle entete = palette.inkMuted.applyTo(
-      textes.labelMedium ?? const TextStyle(),
-    );
-    final TextStyle fort = AppTypography.tabulaire(
-      palette.inkStrong.applyTo(textes.labelMedium ?? const TextStyle()),
-    );
+    final (TextStyle base, TextStyle entete, TextStyle fort) = _styles(context);
     final r = t.enseignant.revenus;
     final List<String> titres = <String>[
       r.classeColonne,

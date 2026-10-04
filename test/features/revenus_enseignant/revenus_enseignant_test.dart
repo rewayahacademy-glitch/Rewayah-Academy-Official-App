@@ -47,6 +47,7 @@ import 'package:rewayah_academy/features/revenus_enseignant/revenus_enseignant_p
 import '../../capture/outil_capture.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
+import '../../support/mots_coupes.dart';
 
 /// Les prenoms des profils du foyer de demonstration Finance : aucun ne
 /// s'affiche chez l'enseignant (guide §5.5).
@@ -77,6 +78,11 @@ Future<void> _attendre(WidgetTester tester) async {
 }
 
 void main() {
+  // Les vraies polices du depot pour tout le fichier : le tableau de bureau
+  // se choisit sur la largeur mesuree des mots, que la police de test
+  // (un carre par lettre) fausserait.
+  setUpAll(chargerPolicesDuDepot);
+
   group('Chemin depuis la vraie coquille enseignant', () {
     List<Override> surcharges({PortRevenusEnseignant? port}) => <Override>[
       sourceSessionProvider.overrideWithValue(
@@ -465,11 +471,14 @@ void main() {
       WidgetTester tester,
       PortRevenusEnseignant port, {
       bool horsLigne = false,
+      Size taille = const Size(390, 1600),
+      double echelle = 1,
     }) async {
-      fixerVueCapture(tester, const Size(390, 1600), 1);
+      fixerVueCapture(tester, taille, 1);
       await tester.pumpWidget(
         hoteCapture(
           RevenusEnseignantPage(onRetour: () {}),
+          echelleTexte: echelle,
           surcharges: <Override>[
             serviceReseauProvider.overrideWithValue(
               FauxServiceReseau(horsLigneRendu: horsLigne),
@@ -695,6 +704,65 @@ void main() {
       // Une seule pastille « Remplacement » : les Classes titulaires n'en
       // portent pas.
       expect(find.text(t.enseignant.revenus.remplacement), findsOneWidget);
+    });
+
+    group('Mots entiers dans le detail sur bureau (vraies polices)', () {
+      Finder detail() => find.byKey(const ValueKey<String>('revenus-detail'));
+
+      for (final JeuRevenusEnseignant jeu in <JeuRevenusEnseignant>[
+        JeuRevenusEnseignant.nominal,
+        JeuRevenusEnseignant.remplacement,
+      ]) {
+        for (final double largeur in <double>[1200, 1440]) {
+          testWidgets('${jeu.name}, $largeur, texte x1 : le tableau, aucun '
+              'mot coupe', (WidgetTester tester) async {
+            await monterPage(
+              tester,
+              RevenusEnseignantDemo(jeu: jeu),
+              taille: Size(largeur, 1400),
+            );
+            await _attendre(tester);
+            final Finder tableau = find.byKey(
+              const ValueKey<String>('revenus-tableau'),
+            );
+            expect(tableau, findsOneWidget);
+            expect(motsCoupes(tester, tableau), isEmpty);
+            if (jeu == JeuRevenusEnseignant.remplacement) {
+              expect(
+                find.descendant(of: tableau, matching: find.byType(StatusPill)),
+                findsOneWidget,
+              );
+            }
+            await tester.pumpWidget(const SizedBox());
+          });
+
+          testWidgets('${jeu.name}, $largeur, texte x2 : les lignes groupees, '
+              'aucun mot coupe', (WidgetTester tester) async {
+            await monterPage(
+              tester,
+              RevenusEnseignantDemo(jeu: jeu),
+              taille: Size(largeur, 2400),
+              echelle: 2,
+            );
+            await _attendre(tester);
+            expect(
+              find.byKey(const ValueKey<String>('revenus-tableau')),
+              findsNothing,
+            );
+            expect(detail(), findsOneWidget);
+            expect(motsCoupes(tester, detail()), isEmpty);
+            for (final RevenusClasse c in DonneesFinanceDemo.revenus(
+              jeu: jeu,
+            ).classes) {
+              expect(
+                find.byKey(ValueKey<String>('revenus-classe-${c.classeId}')),
+                findsOneWidget,
+              );
+            }
+            await tester.pumpWidget(const SizedBox());
+          });
+        }
+      }
     });
 
     testWidgets('aide Internet : a part, une seule ligne, hors total', (
