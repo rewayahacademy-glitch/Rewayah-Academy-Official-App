@@ -334,6 +334,17 @@ class _Traductions$com$messages$ar extends Traductions$com$messages$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get videDetail => 'تُفتح المحادثة من فصل أو طالب أو ملف.';
+	@override String get choisirTitre => 'اختر محادثة';
+	@override String get choisir => 'اختر محادثة من القائمة لقراءتها والرد عليها.';
+	@override late final _Traductions$com$messages$recherche$ar recherche = _Traductions$com$messages$recherche$ar._(_root);
+	@override late final _Traductions$com$messages$ligne$ar ligne = _Traductions$com$messages$ligne$ar._(_root);
+	@override late final _Traductions$com$messages$noms$ar noms = _Traductions$com$messages$noms$ar._(_root);
+	@override late final _Traductions$com$messages$entete$ar entete = _Traductions$com$messages$entete$ar._(_root);
+	@override late final _Traductions$com$messages$types$ar types = _Traductions$com$messages$types$ar._(_root);
+	@override late final _Traductions$com$messages$panneau$ar panneau = _Traductions$com$messages$panneau$ar._(_root);
+	@override late final _Traductions$com$messages$fil$ar fil = _Traductions$com$messages$fil$ar._(_root);
+	@override late final _Traductions$com$messages$demo$ar demo = _Traductions$com$messages$demo$ar._(_root);
 	@override String get titre => _root.com.socle.lexique.messagesMetier;
 	@override String get vide => 'لا توجد محادثات حاليًا.';
 }
@@ -523,6 +534,120 @@ class _Traductions$com$socle$navigation$ar extends Traductions$com$socle$navigat
 	@override late final _Traductions$com$socle$navigation$demo$ar demo = _Traductions$com$socle$navigation$demo$ar._(_root);
 }
 
+// Path: com.messages.recherche
+class _Traductions$com$messages$recherche$ar extends Traductions$com$messages$recherche$fr {
+	_Traductions$com$messages$recherche$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get champ => 'البحث عن محادثة';
+	@override String get aide => 'الاسم أو الفصل أو الملف';
+	@override String get fermer => 'إغلاق البحث';
+	@override String get effacer => 'مسح البحث';
+	@override String get aucunTitre => 'لم يتم العثور على أي محادثة';
+	@override String aucun({required Object texte}) => 'لا توجد محادثة تطابق « ${texte} ». جرّب اسمًا آخر أو فصلًا آخر.';
+	@override String get resultatUn => 'تم العثور على محادثة واحدة';
+	@override String resultats({required Object nombre}) => 'تم العثور على ${nombre} محادثات';
+}
+
+// Path: com.messages.ligne
+class _Traductions$com$messages$ligne$ar extends Traductions$com$messages$ligne$fr {
+	_Traductions$com$messages$ligne$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String legende({required Object objet, required Object apercu}) => '${objet} · ${apercu}';
+	@override String get sansApercu => 'لا توجد رسائل حاليًا';
+	@override String dateCourte({required Object numero, required Object mois}) => '${numero} ${mois}';
+}
+
+// Path: com.messages.noms
+class _Traductions$com$messages$noms$ar extends Traductions$com$messages$noms$fr {
+	_Traductions$com$messages$noms$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String avecFonction({required Object nom, required Object fonction}) => '${nom}، ${fonction}';
+	@override String deux({required Object premier, required Object second}) => '${premier} و${second}';
+	@override String plusieurs({required Object premier, required Object nombre}) => '${premier} و${nombre} أشخاص آخرين';
+}
+
+// Path: com.messages.entete
+class _Traductions$com$messages$entete$ar extends Traductions$com$messages$entete$fr {
+	_Traductions$com$messages$entete$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String avecAttention({required Object entete, required Object attention}) => '${entete}. ${attention}';
+	@override String deuxObjets({required Object premier, required Object second}) => '${premier} · ${second}';
+	@override String semantique({required Object noms, required Object objets}) => 'محادثة مع ${noms}، بخصوص ${objets}';
+}
+
+// Path: com.messages.types
+class _Traductions$com$messages$types$ar extends Traductions$com$messages$types$fr {
+	_Traductions$com$messages$types$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get classe => 'الفصل';
+	@override String get eleve => 'الطالب';
+	@override String get dossier => 'الملف';
+	@override String get mission => 'مهمة المراقبة';
+	@override String get remplacement => 'الاستبدال';
+	@override String get autre => 'عنصر مرتبط';
+}
+
+// Path: com.messages.panneau
+class _Traductions$com$messages$panneau$ar extends Traductions$com$messages$panneau$fr {
+	_Traductions$com$messages$panneau$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get objets => 'العناصر المرتبطة';
+	@override String get participants => 'المشاركون';
+	@override String get fichiers => _root.com.socle.lexique.fichiersPartages;
+	@override String ouvrir({required Object objet}) => 'فتح ${objet}';
+	@override String get inaccessible => 'لم يعد بإمكانك الوصول إلى هذا العنصر. تبقى المحادثة قابلة للقراءة.';
+	@override String get vous => 'أنت';
+}
+
+// Path: com.messages.fil
+class _Traductions$com$messages$fil$ar extends Traductions$com$messages$fil$fr {
+	_Traductions$com$messages$fil$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String auteurEtMoment({required Object auteur, required Object moment}) => '${auteur} · ${moment}';
+	@override String get lectureSeule => 'يمكنك قراءة هذه المحادثة. الرد فيها غير متاح لك.';
+	@override String pieceJointe({required Object nom}) => 'مرفق: ${nom}';
+	@override String vocal({required Object duree}) => 'رسالة صوتية مدتها ${duree}';
+	@override String get vocalSansDuree => 'رسالة صوتية';
+	@override String horodatage({required Object date, required Object heure}) => '${date}، ${heure}';
+}
+
+// Path: com.messages.demo
+class _Traductions$com$messages$demo$ar extends Traductions$com$messages$demo$fr {
+	_Traductions$com$messages$demo$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get choisirRole => 'اختر وجهة النظر في هذا العرض التوضيحي.';
+	@override late final _Traductions$com$messages$demo$roles$ar roles = _Traductions$com$messages$demo$roles$ar._(_root);
+	@override String get situations => 'حالات للتجربة';
+	@override String get echec => 'إرسال غير مؤكد، من جهة المعلم';
+	@override String get horsLigne => 'دون اتصال، من جهة الأسرة';
+	@override String get refuse => 'محادثة أسرة أخرى، مرفوضة';
+	@override String vue({required Object role}) => 'وجهة النظر: ${role}';
+}
+
 // Path: com.socle.composants.badge
 class _Traductions$com$socle$composants$badge$ar extends Traductions$com$socle$composants$badge$fr {
 	_Traductions$com$socle$composants$badge$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -652,6 +777,20 @@ class _Traductions$com$socle$navigation$demo$ar extends Traductions$com$socle$na
 	@override String get titre => 'عرض توضيحي للاتصالات';
 	@override String get detail => 'بيانات وهمية، غير موجودة في نسخ الإنتاج.';
 	@override String get choisir => 'اختر مساحة لتجربتها.';
+}
+
+// Path: com.messages.demo.roles
+class _Traductions$com$messages$demo$roles$ar extends Traductions$com$messages$demo$roles$fr {
+	_Traductions$com$messages$demo$roles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get tuteur => 'الأسرة';
+	@override String get enseignant => 'المعلم';
+	@override String get adulte => 'طالب بالغ';
+	@override String get admin => 'الإدارة';
+	@override String get controleur => 'المراقب';
 }
 
 /// The flat map containing all translations for locale <ar>.
@@ -877,6 +1016,55 @@ extension on TraductionsAr {
 			'com.socle.navigation.demo.titre' => 'عرض توضيحي للاتصالات',
 			'com.socle.navigation.demo.detail' => 'بيانات وهمية، غير موجودة في نسخ الإنتاج.',
 			'com.socle.navigation.demo.choisir' => 'اختر مساحة لتجربتها.',
+			'com.messages.videDetail' => 'تُفتح المحادثة من فصل أو طالب أو ملف.',
+			'com.messages.choisirTitre' => 'اختر محادثة',
+			'com.messages.choisir' => 'اختر محادثة من القائمة لقراءتها والرد عليها.',
+			'com.messages.recherche.champ' => 'البحث عن محادثة',
+			'com.messages.recherche.aide' => 'الاسم أو الفصل أو الملف',
+			'com.messages.recherche.fermer' => 'إغلاق البحث',
+			'com.messages.recherche.effacer' => 'مسح البحث',
+			'com.messages.recherche.aucunTitre' => 'لم يتم العثور على أي محادثة',
+			'com.messages.recherche.aucun' => ({required Object texte}) => 'لا توجد محادثة تطابق « ${texte} ». جرّب اسمًا آخر أو فصلًا آخر.',
+			'com.messages.recherche.resultatUn' => 'تم العثور على محادثة واحدة',
+			'com.messages.recherche.resultats' => ({required Object nombre}) => 'تم العثور على ${nombre} محادثات',
+			'com.messages.ligne.legende' => ({required Object objet, required Object apercu}) => '${objet} · ${apercu}',
+			'com.messages.ligne.sansApercu' => 'لا توجد رسائل حاليًا',
+			'com.messages.ligne.dateCourte' => ({required Object numero, required Object mois}) => '${numero} ${mois}',
+			'com.messages.noms.avecFonction' => ({required Object nom, required Object fonction}) => '${nom}، ${fonction}',
+			'com.messages.noms.deux' => ({required Object premier, required Object second}) => '${premier} و${second}',
+			'com.messages.noms.plusieurs' => ({required Object premier, required Object nombre}) => '${premier} و${nombre} أشخاص آخرين',
+			'com.messages.entete.avecAttention' => ({required Object entete, required Object attention}) => '${entete}. ${attention}',
+			'com.messages.entete.deuxObjets' => ({required Object premier, required Object second}) => '${premier} · ${second}',
+			'com.messages.entete.semantique' => ({required Object noms, required Object objets}) => 'محادثة مع ${noms}، بخصوص ${objets}',
+			'com.messages.types.classe' => 'الفصل',
+			'com.messages.types.eleve' => 'الطالب',
+			'com.messages.types.dossier' => 'الملف',
+			'com.messages.types.mission' => 'مهمة المراقبة',
+			'com.messages.types.remplacement' => 'الاستبدال',
+			'com.messages.types.autre' => 'عنصر مرتبط',
+			'com.messages.panneau.objets' => 'العناصر المرتبطة',
+			'com.messages.panneau.participants' => 'المشاركون',
+			'com.messages.panneau.fichiers' => _root.com.socle.lexique.fichiersPartages,
+			'com.messages.panneau.ouvrir' => ({required Object objet}) => 'فتح ${objet}',
+			'com.messages.panneau.inaccessible' => 'لم يعد بإمكانك الوصول إلى هذا العنصر. تبقى المحادثة قابلة للقراءة.',
+			'com.messages.panneau.vous' => 'أنت',
+			'com.messages.fil.auteurEtMoment' => ({required Object auteur, required Object moment}) => '${auteur} · ${moment}',
+			'com.messages.fil.lectureSeule' => 'يمكنك قراءة هذه المحادثة. الرد فيها غير متاح لك.',
+			'com.messages.fil.pieceJointe' => ({required Object nom}) => 'مرفق: ${nom}',
+			'com.messages.fil.vocal' => ({required Object duree}) => 'رسالة صوتية مدتها ${duree}',
+			'com.messages.fil.vocalSansDuree' => 'رسالة صوتية',
+			'com.messages.fil.horodatage' => ({required Object date, required Object heure}) => '${date}، ${heure}',
+			'com.messages.demo.choisirRole' => 'اختر وجهة النظر في هذا العرض التوضيحي.',
+			'com.messages.demo.roles.tuteur' => 'الأسرة',
+			'com.messages.demo.roles.enseignant' => 'المعلم',
+			'com.messages.demo.roles.adulte' => 'طالب بالغ',
+			'com.messages.demo.roles.admin' => 'الإدارة',
+			'com.messages.demo.roles.controleur' => 'المراقب',
+			'com.messages.demo.situations' => 'حالات للتجربة',
+			'com.messages.demo.echec' => 'إرسال غير مؤكد، من جهة المعلم',
+			'com.messages.demo.horsLigne' => 'دون اتصال، من جهة الأسرة',
+			'com.messages.demo.refuse' => 'محادثة أسرة أخرى، مرفوضة',
+			'com.messages.demo.vue' => ({required Object role}) => 'وجهة النظر: ${role}',
 			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
 			'com.messages.vide' => 'لا توجد محادثات حاليًا.',
 			'com.vocal.titre' => 'رسالة صوتية',

@@ -11044,6 +11044,24 @@ class Traductions$com$messages$fr {
 
 	// Translations
 
+	/// fr: 'Une conversation s'ouvre depuis une Classe, un élève ou un dossier.'
+	String get videDetail => 'Une conversation s\'ouvre depuis une Classe, un élève ou un dossier.';
+
+	/// fr: 'Choisissez une conversation'
+	String get choisirTitre => 'Choisissez une conversation';
+
+	/// fr: 'Choisissez une conversation dans la liste pour la lire et y répondre.'
+	String get choisir => 'Choisissez une conversation dans la liste pour la lire et y répondre.';
+
+	late final Traductions$com$messages$recherche$fr recherche = Traductions$com$messages$recherche$fr.internal(_root);
+	late final Traductions$com$messages$ligne$fr ligne = Traductions$com$messages$ligne$fr.internal(_root);
+	late final Traductions$com$messages$noms$fr noms = Traductions$com$messages$noms$fr.internal(_root);
+	late final Traductions$com$messages$entete$fr entete = Traductions$com$messages$entete$fr.internal(_root);
+	late final Traductions$com$messages$types$fr types = Traductions$com$messages$types$fr.internal(_root);
+	late final Traductions$com$messages$panneau$fr panneau = Traductions$com$messages$panneau$fr.internal(_root);
+	late final Traductions$com$messages$fil$fr fil = Traductions$com$messages$fil$fr.internal(_root);
+	late final Traductions$com$messages$demo$fr demo = Traductions$com$messages$demo$fr.internal(_root);
+
 	/// fr: 'Messages métier'
 	String get titre => _root.com.socle.lexique.messagesMetier;
 
@@ -15247,6 +15265,203 @@ class Traductions$com$socle$navigation$fr {
 	late final Traductions$com$socle$navigation$demo$fr demo = Traductions$com$socle$navigation$demo$fr.internal(_root);
 }
 
+// Path: com.messages.recherche
+class Traductions$com$messages$recherche$fr {
+	Traductions$com$messages$recherche$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Rechercher une conversation'
+	String get champ => 'Rechercher une conversation';
+
+	/// fr: 'Nom, Classe ou dossier'
+	String get aide => 'Nom, Classe ou dossier';
+
+	/// fr: 'Fermer la recherche'
+	String get fermer => 'Fermer la recherche';
+
+	/// fr: 'Effacer la recherche'
+	String get effacer => 'Effacer la recherche';
+
+	/// fr: 'Aucune conversation trouvée'
+	String get aucunTitre => 'Aucune conversation trouvée';
+
+	/// fr: 'Aucune conversation ne correspond à « {texte} ». Essayez un autre nom ou une autre Classe.'
+	String aucun({required Object texte}) => 'Aucune conversation ne correspond à « ${texte} ». Essayez un autre nom ou une autre Classe.';
+
+	/// fr: '1 conversation trouvée'
+	String get resultatUn => '1 conversation trouvée';
+
+	/// fr: '{nombre} conversations trouvées'
+	String resultats({required Object nombre}) => '${nombre} conversations trouvées';
+}
+
+// Path: com.messages.ligne
+class Traductions$com$messages$ligne$fr {
+	Traductions$com$messages$ligne$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{objet} · {apercu}'
+	String legende({required Object objet, required Object apercu}) => '${objet} · ${apercu}';
+
+	/// fr: 'Aucun message pour le moment'
+	String get sansApercu => 'Aucun message pour le moment';
+
+	/// fr: '{numero} {mois}'
+	String dateCourte({required Object numero, required Object mois}) => '${numero} ${mois}';
+}
+
+// Path: com.messages.noms
+class Traductions$com$messages$noms$fr {
+	Traductions$com$messages$noms$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{nom}, {fonction}'
+	String avecFonction({required Object nom, required Object fonction}) => '${nom}, ${fonction}';
+
+	/// fr: '{premier} et {second}'
+	String deux({required Object premier, required Object second}) => '${premier} et ${second}';
+
+	/// fr: '{premier} et {nombre} autres personnes'
+	String plusieurs({required Object premier, required Object nombre}) => '${premier} et ${nombre} autres personnes';
+}
+
+// Path: com.messages.entete
+class Traductions$com$messages$entete$fr {
+	Traductions$com$messages$entete$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{entete}. {attention}'
+	String avecAttention({required Object entete, required Object attention}) => '${entete}. ${attention}';
+
+	/// fr: '{premier} · {second}'
+	String deuxObjets({required Object premier, required Object second}) => '${premier} · ${second}';
+
+	/// fr: 'Conversation avec {noms}, à propos de {objets}'
+	String semantique({required Object noms, required Object objets}) => 'Conversation avec ${noms}, à propos de ${objets}';
+}
+
+// Path: com.messages.types
+class Traductions$com$messages$types$fr {
+	Traductions$com$messages$types$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Classe'
+	String get classe => 'Classe';
+
+	/// fr: 'Élève'
+	String get eleve => 'Élève';
+
+	/// fr: 'Dossier'
+	String get dossier => 'Dossier';
+
+	/// fr: 'Mission de contrôle'
+	String get mission => 'Mission de contrôle';
+
+	/// fr: 'Remplacement'
+	String get remplacement => 'Remplacement';
+
+	/// fr: 'Objet lié'
+	String get autre => 'Objet lié';
+}
+
+// Path: com.messages.panneau
+class Traductions$com$messages$panneau$fr {
+	Traductions$com$messages$panneau$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Objets liés'
+	String get objets => 'Objets liés';
+
+	/// fr: 'Participants'
+	String get participants => 'Participants';
+
+	/// fr: 'Fichiers partagés'
+	String get fichiers => _root.com.socle.lexique.fichiersPartages;
+
+	/// fr: 'Ouvrir {objet}'
+	String ouvrir({required Object objet}) => 'Ouvrir ${objet}';
+
+	/// fr: 'Vous n'avez plus accès à cet objet. La conversation reste lisible.'
+	String get inaccessible => 'Vous n\'avez plus accès à cet objet. La conversation reste lisible.';
+
+	/// fr: 'Vous'
+	String get vous => 'Vous';
+}
+
+// Path: com.messages.fil
+class Traductions$com$messages$fil$fr {
+	Traductions$com$messages$fil$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{auteur} · {moment}'
+	String auteurEtMoment({required Object auteur, required Object moment}) => '${auteur} · ${moment}';
+
+	/// fr: 'Vous pouvez lire cette conversation. La réponse n'y est pas ouverte pour vous.'
+	String get lectureSeule => 'Vous pouvez lire cette conversation. La réponse n\'y est pas ouverte pour vous.';
+
+	/// fr: 'Pièce jointe : {nom}'
+	String pieceJointe({required Object nom}) => 'Pièce jointe : ${nom}';
+
+	/// fr: 'Message vocal de {duree}'
+	String vocal({required Object duree}) => 'Message vocal de ${duree}';
+
+	/// fr: 'Message vocal'
+	String get vocalSansDuree => 'Message vocal';
+
+	/// fr: '{date}, {heure}'
+	String horodatage({required Object date, required Object heure}) => '${date}, ${heure}';
+}
+
+// Path: com.messages.demo
+class Traductions$com$messages$demo$fr {
+	Traductions$com$messages$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Choisissez le point de vue de cette démonstration.'
+	String get choisirRole => 'Choisissez le point de vue de cette démonstration.';
+
+	late final Traductions$com$messages$demo$roles$fr roles = Traductions$com$messages$demo$roles$fr.internal(_root);
+
+	/// fr: 'Situations à essayer'
+	String get situations => 'Situations à essayer';
+
+	/// fr: 'Envoi non confirmé, vu par l'enseignant'
+	String get echec => 'Envoi non confirmé, vu par l\'enseignant';
+
+	/// fr: 'Hors ligne, vu par la famille'
+	String get horsLigne => 'Hors ligne, vu par la famille';
+
+	/// fr: 'Conversation d'une autre famille, refusée'
+	String get refuse => 'Conversation d\'une autre famille, refusée';
+
+	/// fr: 'Point de vue : {role}'
+	String vue({required Object role}) => 'Point de vue : ${role}';
+}
+
 // Path: salle.preparation.eleve.guidee
 class Traductions$salle$preparation$eleve$guidee$fr {
 	Traductions$salle$preparation$eleve$guidee$fr.internal(this._root);
@@ -15923,6 +16138,30 @@ class Traductions$com$socle$navigation$demo$fr {
 
 	/// fr: 'Choisissez un espace à essayer.'
 	String get choisir => 'Choisissez un espace à essayer.';
+}
+
+// Path: com.messages.demo.roles
+class Traductions$com$messages$demo$roles$fr {
+	Traductions$com$messages$demo$roles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Famille'
+	String get tuteur => 'Famille';
+
+	/// fr: 'Enseignant'
+	String get enseignant => 'Enseignant';
+
+	/// fr: 'Élève adulte'
+	String get adulte => 'Élève adulte';
+
+	/// fr: 'Direction'
+	String get admin => 'Direction';
+
+	/// fr: 'Contrôleur'
+	String get controleur => 'Contrôleur';
 }
 
 /// The flat map containing all translations for locale <fr>.
@@ -19977,6 +20216,55 @@ extension on Traductions {
 			'com.socle.navigation.demo.titre' => 'Démonstration des communications',
 			'com.socle.navigation.demo.detail' => 'Données fictives, absentes des versions de production.',
 			'com.socle.navigation.demo.choisir' => 'Choisissez un espace à essayer.',
+			'com.messages.videDetail' => 'Une conversation s\'ouvre depuis une Classe, un élève ou un dossier.',
+			'com.messages.choisirTitre' => 'Choisissez une conversation',
+			'com.messages.choisir' => 'Choisissez une conversation dans la liste pour la lire et y répondre.',
+			'com.messages.recherche.champ' => 'Rechercher une conversation',
+			'com.messages.recherche.aide' => 'Nom, Classe ou dossier',
+			'com.messages.recherche.fermer' => 'Fermer la recherche',
+			'com.messages.recherche.effacer' => 'Effacer la recherche',
+			'com.messages.recherche.aucunTitre' => 'Aucune conversation trouvée',
+			'com.messages.recherche.aucun' => ({required Object texte}) => 'Aucune conversation ne correspond à « ${texte} ». Essayez un autre nom ou une autre Classe.',
+			'com.messages.recherche.resultatUn' => '1 conversation trouvée',
+			'com.messages.recherche.resultats' => ({required Object nombre}) => '${nombre} conversations trouvées',
+			'com.messages.ligne.legende' => ({required Object objet, required Object apercu}) => '${objet} · ${apercu}',
+			'com.messages.ligne.sansApercu' => 'Aucun message pour le moment',
+			'com.messages.ligne.dateCourte' => ({required Object numero, required Object mois}) => '${numero} ${mois}',
+			'com.messages.noms.avecFonction' => ({required Object nom, required Object fonction}) => '${nom}, ${fonction}',
+			'com.messages.noms.deux' => ({required Object premier, required Object second}) => '${premier} et ${second}',
+			'com.messages.noms.plusieurs' => ({required Object premier, required Object nombre}) => '${premier} et ${nombre} autres personnes',
+			'com.messages.entete.avecAttention' => ({required Object entete, required Object attention}) => '${entete}. ${attention}',
+			'com.messages.entete.deuxObjets' => ({required Object premier, required Object second}) => '${premier} · ${second}',
+			'com.messages.entete.semantique' => ({required Object noms, required Object objets}) => 'Conversation avec ${noms}, à propos de ${objets}',
+			'com.messages.types.classe' => 'Classe',
+			'com.messages.types.eleve' => 'Élève',
+			'com.messages.types.dossier' => 'Dossier',
+			'com.messages.types.mission' => 'Mission de contrôle',
+			'com.messages.types.remplacement' => 'Remplacement',
+			'com.messages.types.autre' => 'Objet lié',
+			'com.messages.panneau.objets' => 'Objets liés',
+			'com.messages.panneau.participants' => 'Participants',
+			'com.messages.panneau.fichiers' => _root.com.socle.lexique.fichiersPartages,
+			'com.messages.panneau.ouvrir' => ({required Object objet}) => 'Ouvrir ${objet}',
+			'com.messages.panneau.inaccessible' => 'Vous n\'avez plus accès à cet objet. La conversation reste lisible.',
+			'com.messages.panneau.vous' => 'Vous',
+			'com.messages.fil.auteurEtMoment' => ({required Object auteur, required Object moment}) => '${auteur} · ${moment}',
+			'com.messages.fil.lectureSeule' => 'Vous pouvez lire cette conversation. La réponse n\'y est pas ouverte pour vous.',
+			'com.messages.fil.pieceJointe' => ({required Object nom}) => 'Pièce jointe : ${nom}',
+			'com.messages.fil.vocal' => ({required Object duree}) => 'Message vocal de ${duree}',
+			'com.messages.fil.vocalSansDuree' => 'Message vocal',
+			'com.messages.fil.horodatage' => ({required Object date, required Object heure}) => '${date}, ${heure}',
+			'com.messages.demo.choisirRole' => 'Choisissez le point de vue de cette démonstration.',
+			'com.messages.demo.roles.tuteur' => 'Famille',
+			'com.messages.demo.roles.enseignant' => 'Enseignant',
+			'com.messages.demo.roles.adulte' => 'Élève adulte',
+			'com.messages.demo.roles.admin' => 'Direction',
+			'com.messages.demo.roles.controleur' => 'Contrôleur',
+			'com.messages.demo.situations' => 'Situations à essayer',
+			'com.messages.demo.echec' => 'Envoi non confirmé, vu par l\'enseignant',
+			'com.messages.demo.horsLigne' => 'Hors ligne, vu par la famille',
+			'com.messages.demo.refuse' => 'Conversation d\'une autre famille, refusée',
+			'com.messages.demo.vue' => ({required Object role}) => 'Point de vue : ${role}',
 			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
 			'com.messages.vide' => 'Aucune conversation pour le moment.',
 			'com.vocal.titre' => 'Message vocal',
