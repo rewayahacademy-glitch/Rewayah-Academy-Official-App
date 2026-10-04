@@ -153,7 +153,7 @@ List<Override> surchargesDemoTuteur({
         const PolitiquesCommercialesDemo(),
       ),
       portRechargeFoyerProvider.overrideWithValue(
-        const RechargeFoyerFinanceDemo(),
+        RechargeFoyerFinanceDemo(jeu),
       ),
     ],
     portAccesFoyerProvider.overrideWithValue(const AccesFoyerDemo()),

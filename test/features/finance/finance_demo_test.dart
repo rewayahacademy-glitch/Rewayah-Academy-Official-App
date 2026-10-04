@@ -356,6 +356,79 @@ void main() {
     });
   });
 
+  group('recharge par montants en demonstration (FI-7, guide §5.3)', () {
+    test('les profils du jeu, leurs montants proposes, le manque suggere', () {
+      final List<BeneficiaireRecharge> liste =
+          DonneesFinanceDemo.beneficiairesRecharge(
+            JeuFoyerFinance.unARegulariser,
+          );
+      expect(liste.map((BeneficiaireRecharge b) => b.id), <String>[
+        DonneesFinanceDemo.mariamId,
+        DonneesFinanceDemo.ibrahimId,
+        DonneesFinanceDemo.aichaId,
+      ]);
+      final BeneficiaireRecharge ibrahim = liste[1];
+      expect(ibrahim.montantSuggere, DonneesFinanceDemo.usd(8));
+      expect(ibrahim.montantsProposes.first, DonneesFinanceDemo.usd(8));
+      expect(liste.first.montantSuggere, isNull);
+      // Entiers en unites mineures, jamais un double.
+      for (final BeneficiaireRecharge b in liste) {
+        for (final Montant m in b.montantsProposes) {
+          expect(m.mineur, isA<int>());
+          expect(m.devise, DonneesFinanceDemo.devise);
+        }
+      }
+    });
+
+    test('Mariam +10, Ibrahim +40 : total 50 arrete par la demonstration', () {
+      final RecapitulatifRecharge r = DonneesFinanceDemo.recapitulatifMontants(
+        JeuFoyerFinance.tousFinances,
+        <MontantRecharge>[
+          MontantRecharge(
+            beneficiaireId: DonneesFinanceDemo.ibrahimId,
+            montant: DonneesFinanceDemo.usd(40),
+          ),
+          MontantRecharge(
+            beneficiaireId: DonneesFinanceDemo.mariamId,
+            montant: DonneesFinanceDemo.usd(10),
+          ),
+        ],
+      );
+      // Dans l'ordre du foyer, une ligne par profil.
+      expect(r.lignes.map((LigneRecapitulatif l) => l.beneficiaireId), <String>[
+        DonneesFinanceDemo.mariamId,
+        DonneesFinanceDemo.ibrahimId,
+      ]);
+      expect(r.total, '50\u00a0\$');
+    });
+
+    test('un montant non propose, nul ou un profil inconnu est refuse', () {
+      for (final List<MontantRecharge> choix in <List<MontantRecharge>>[
+        const <MontantRecharge>[],
+        <MontantRecharge>[
+          MontantRecharge(
+            beneficiaireId: DonneesFinanceDemo.mariamId,
+            montant: DonneesFinanceDemo.usd(7),
+          ),
+        ],
+        <MontantRecharge>[
+          MontantRecharge(
+            beneficiaireId: 'inconnu',
+            montant: DonneesFinanceDemo.usd(10),
+          ),
+        ],
+      ]) {
+        expect(
+          () => DonneesFinanceDemo.recapitulatifMontants(
+            JeuFoyerFinance.tousFinances,
+            choix,
+          ),
+          throwsArgumentError,
+        );
+      }
+    });
+  });
+
   group('revenus de l enseignant (guide §1.4)', () {
     test('taux plafonne, jamais au-dessus du plafond', () {
       expect(

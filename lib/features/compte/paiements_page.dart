@@ -9,11 +9,13 @@ import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../foyer/finances_foyer.dart' show financesFoyerProvider;
 import 'carte_rubriques.dart';
 import 'donnees_compte.dart';
 import 'soldes_foyer.dart';
@@ -35,6 +37,13 @@ import 'soldes_foyer.dart';
 /// solde tel que rendu, le seul bouton « Recharger », le recapitulatif ;
 /// puis l'historique sous son titre. Le second adulte rattache n'a que
 /// l'historique, en lecture seule (E3, EA-BR-16) : jamais [soldes].
+///
+/// **Raccourci vers la recharge du foyer** (FI-7, guide Finance V4 §4) : sans
+/// [soldes], [onRecharger] pose « Recharger » au-dessus de l'historique, qui
+/// ouvre LA recharge du Foyer (`/tuteur/foyer/recharge`), jamais un second
+/// centre de paiement. Il n'apparait que si les finances du foyer sont
+/// rendues (capacite lue dans les donnees, comme sur le Foyer) : ni en
+/// production, ni pour le second adulte.
 class PaiementsComptePage extends ConsumerWidget {
   /// Cree la page.
   const PaiementsComptePage({
@@ -58,8 +67,11 @@ class PaiementsComptePage extends ConsumerWidget {
   /// l'historique (EA-9).
   final bool soldes;
 
-  /// Ouvre la recharge (EA-10), avec [soldes].
+  /// Ouvre la recharge (EA-10, FI-7).
   final VoidCallback? onRecharger;
+
+  /// « Recharger », raccourci vers la recharge du foyer (FI-7).
+  static const Key rechargerKey = Key('paiements.raccourciRecharge');
 
   /// Le titre « Historique des paiements », avec [soldes].
   static const Key historiqueKey = Key('paiements.historique');
@@ -108,7 +120,7 @@ class PaiementsComptePage extends ConsumerWidget {
       onRetour: onRetour ?? () => GoRouter.of(context).go(Routes.tuteurCompte),
       child: ColonneSousPage(
         child: !soldes
-            ? historique
+            ? _avecRaccourci(ref, historique)
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,
@@ -131,6 +143,32 @@ class PaiementsComptePage extends ConsumerWidget {
                 ],
               ),
       ),
+    );
+  }
+
+  /// L'historique, precede de « Recharger » quand la recharge est ouverte.
+  Widget _avecRaccourci(WidgetRef ref, Widget historique) {
+    final VoidCallback? recharger = onRecharger;
+    final AsyncValue<Object> finances = ref.watch(financesFoyerProvider);
+    if (recharger == null || !finances.hasValue || finances.hasError) {
+      return historique;
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: ActionPrincipale(
+            key: rechargerKey,
+            libelle: t.adulte.paiements.recharger,
+            onPress: recharger,
+            pleineLargeur: false,
+          ),
+        ),
+        Ecart.vSection,
+        historique,
+      ],
     );
   }
 }

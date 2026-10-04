@@ -75,7 +75,7 @@ Future<GoRouter> _monter(
             const PolitiquesCommercialesDemo(),
           ),
           portRechargeFoyerProvider.overrideWithValue(
-            const RechargeFoyerFinanceDemo(),
+            RechargeFoyerFinanceDemo(jeu),
           ),
         ],
       ],

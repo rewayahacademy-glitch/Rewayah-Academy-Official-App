@@ -10651,11 +10651,35 @@ class Traductions$adulte$recharge$fr {
 
 	// Translations
 
-	/// fr: 'Nouvelle recharge'
-	String get titre => 'Nouvelle recharge';
+	/// fr: 'Recharge'
+	String get titre => 'Recharge';
 
-	/// fr: 'Sélectionnez un ou plusieurs bénéficiaires, puis choisissez une offre pour chacun.'
-	String get phrase => 'Sélectionnez un ou plusieurs bénéficiaires, puis choisissez une offre pour chacun.';
+	/// fr: 'Choisissez les profils et les montants.'
+	String get phrase => 'Choisissez les profils et les montants.';
+
+	/// fr: 'Profils à recharger'
+	String get profils => 'Profils à recharger';
+
+	/// fr: 'Solde actuel : {montant}'
+	String soldeActuel({required Object montant}) => 'Solde actuel : ${montant}';
+
+	/// fr: 'Montant suggéré : {montant}'
+	String montantSuggere({required Object montant}) => 'Montant suggéré : ${montant}';
+
+	/// fr: 'Montant pour {prenom}'
+	String montantPour({required Object prenom}) => 'Montant pour ${prenom}';
+
+	/// fr: 'Diminuer le montant pour {prenom}'
+	String diminuer({required Object prenom}) => 'Diminuer le montant pour ${prenom}';
+
+	/// fr: 'Augmenter le montant pour {prenom}'
+	String augmenter({required Object prenom}) => 'Augmenter le montant pour ${prenom}';
+
+	/// fr: 'Un seul paiement sera effectué. Chaque montant va au solde de son profil : il n'y a pas de solde commun.'
+	String get repartition => 'Un seul paiement sera effectué. Chaque montant va au solde de son profil : il n\'y a pas de solde commun.';
+
+	/// fr: 'Moyen de paiement'
+	String get moyen => 'Moyen de paiement';
 
 	/// fr: 'Tout sélectionner'
 	String get toutSelectionner => 'Tout sélectionner';
@@ -10663,17 +10687,14 @@ class Traductions$adulte$recharge$fr {
 	/// fr: 'Tout désélectionner'
 	String get toutDeselectionner => 'Tout désélectionner';
 
-	/// fr: 'Offre pour {prenom}'
-	String offrePour({required Object prenom}) => 'Offre pour ${prenom}';
-
 	/// fr: 'Vérifier la recharge'
 	String get verifier => 'Vérifier la recharge';
 
-	/// fr: 'Sélectionnez au moins un bénéficiaire pour continuer.'
-	String get raisonAucun => 'Sélectionnez au moins un bénéficiaire pour continuer.';
+	/// fr: 'Sélectionnez au moins un profil pour continuer.'
+	String get raisonAucun => 'Sélectionnez au moins un profil pour continuer.';
 
-	/// fr: 'Choisissez une offre pour chaque bénéficiaire sélectionné.'
-	String get raisonOffre => 'Choisissez une offre pour chaque bénéficiaire sélectionné.';
+	/// fr: 'Choisissez un montant pour chaque profil sélectionné.'
+	String get raisonMontant => 'Choisissez un montant pour chaque profil sélectionné.';
 
 	/// fr: 'Vous êtes hors ligne. Vous pourrez vérifier la recharge quand la connexion sera revenue.'
 	String get horsLigneVerifier => 'Vous êtes hors ligne. Vous pourrez vérifier la recharge quand la connexion sera revenue.';
@@ -10681,8 +10702,8 @@ class Traductions$adulte$recharge$fr {
 	/// fr: 'Recharge pas encore disponible'
 	String get indisponibleTitre => 'Recharge pas encore disponible';
 
-	/// fr: 'Les offres de recharge ne sont pas encore disponibles dans l'application. Aucun paiement n'est possible ici pour l'instant.'
-	String get indisponiblePhrase => 'Les offres de recharge ne sont pas encore disponibles dans l\'application. Aucun paiement n\'est possible ici pour l\'instant.';
+	/// fr: 'La recharge n'est pas encore disponible dans l'application. Aucun paiement n'est possible ici pour l'instant.'
+	String get indisponiblePhrase => 'La recharge n\'est pas encore disponible dans l\'application. Aucun paiement n\'est possible ici pour l\'instant.';
 
 	/// fr: 'La vérification n'a pas abouti.'
 	String get verificationEchecTitre => 'La vérification n\'a pas abouti.';
@@ -10696,8 +10717,8 @@ class Traductions$adulte$recharge$fr {
 	/// fr: 'Vérifiez les détails avant de procéder au paiement.'
 	String get verifierPhrase => 'Vérifiez les détails avant de procéder au paiement.';
 
-	/// fr: 'Récapitulatif par bénéficiaire'
-	String get recapitulatif => 'Récapitulatif par bénéficiaire';
+	/// fr: 'Récapitulatif par profil'
+	String get recapitulatif => 'Récapitulatif par profil';
 
 	/// fr: 'Montant payé'
 	String get montantPaye => 'Montant payé';
@@ -19604,22 +19625,29 @@ extension on Traductions {
 			'adulte.monEspace.pageCoursAcces.indisponibleTitre' => 'Cours et accès pas encore consultables',
 			'adulte.monEspace.pageCoursAcces.indisponiblePhrase' => 'Le détail de vos cours, de vos séances et de votre accès n\'est pas encore disponible dans l\'application.',
 			'adulte.provisoire.coran' => 'Le Coran de votre espace élève s\'affichera ici.',
-			'adulte.recharge.titre' => 'Nouvelle recharge',
-			'adulte.recharge.phrase' => 'Sélectionnez un ou plusieurs bénéficiaires, puis choisissez une offre pour chacun.',
+			'adulte.recharge.titre' => 'Recharge',
+			'adulte.recharge.phrase' => 'Choisissez les profils et les montants.',
+			'adulte.recharge.profils' => 'Profils à recharger',
+			'adulte.recharge.soldeActuel' => ({required Object montant}) => 'Solde actuel : ${montant}',
+			'adulte.recharge.montantSuggere' => ({required Object montant}) => 'Montant suggéré : ${montant}',
+			'adulte.recharge.montantPour' => ({required Object prenom}) => 'Montant pour ${prenom}',
+			'adulte.recharge.diminuer' => ({required Object prenom}) => 'Diminuer le montant pour ${prenom}',
+			'adulte.recharge.augmenter' => ({required Object prenom}) => 'Augmenter le montant pour ${prenom}',
+			'adulte.recharge.repartition' => 'Un seul paiement sera effectué. Chaque montant va au solde de son profil : il n\'y a pas de solde commun.',
+			'adulte.recharge.moyen' => 'Moyen de paiement',
 			'adulte.recharge.toutSelectionner' => 'Tout sélectionner',
 			'adulte.recharge.toutDeselectionner' => 'Tout désélectionner',
-			'adulte.recharge.offrePour' => ({required Object prenom}) => 'Offre pour ${prenom}',
 			'adulte.recharge.verifier' => 'Vérifier la recharge',
-			'adulte.recharge.raisonAucun' => 'Sélectionnez au moins un bénéficiaire pour continuer.',
-			'adulte.recharge.raisonOffre' => 'Choisissez une offre pour chaque bénéficiaire sélectionné.',
+			'adulte.recharge.raisonAucun' => 'Sélectionnez au moins un profil pour continuer.',
+			'adulte.recharge.raisonMontant' => 'Choisissez un montant pour chaque profil sélectionné.',
 			'adulte.recharge.horsLigneVerifier' => 'Vous êtes hors ligne. Vous pourrez vérifier la recharge quand la connexion sera revenue.',
 			'adulte.recharge.indisponibleTitre' => 'Recharge pas encore disponible',
-			'adulte.recharge.indisponiblePhrase' => 'Les offres de recharge ne sont pas encore disponibles dans l\'application. Aucun paiement n\'est possible ici pour l\'instant.',
+			'adulte.recharge.indisponiblePhrase' => 'La recharge n\'est pas encore disponible dans l\'application. Aucun paiement n\'est possible ici pour l\'instant.',
 			'adulte.recharge.verificationEchecTitre' => 'La vérification n\'a pas abouti.',
 			'adulte.recharge.verificationEchecPhrase' => 'Vos choix sont conservés. Vous pouvez réessayer.',
 			'adulte.recharge.verifierTitre' => 'Vérifier la recharge',
 			'adulte.recharge.verifierPhrase' => 'Vérifiez les détails avant de procéder au paiement.',
-			'adulte.recharge.recapitulatif' => 'Récapitulatif par bénéficiaire',
+			'adulte.recharge.recapitulatif' => 'Récapitulatif par profil',
 			'adulte.recharge.montantPaye' => 'Montant payé',
 			'adulte.recharge.soldeAttribue' => 'Solde attribué',
 			'adulte.recharge.statut' => 'Statut de l\'attribution',

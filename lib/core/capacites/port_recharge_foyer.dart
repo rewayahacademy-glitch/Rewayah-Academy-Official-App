@@ -37,15 +37,18 @@ class OffreRecharge {
 
 /// Un beneficiaire que le titulaire peut recharger (F10) : son prenom, sa
 /// photo (jamais celle du second adulte, Q4), son solde tel que rendu et les
-/// offres qui le concernent. Rien d'autre : ni Classe, ni niveau (F6).
+/// montants qu'il peut recevoir. Rien d'autre : ni Classe, ni niveau (F6).
 @immutable
 class BeneficiaireRecharge {
   /// Cree le beneficiaire.
   const BeneficiaireRecharge({
     required this.id,
     required this.prenom,
-    required this.soldeRendu,
-    required this.offres,
+    this.soldeRendu,
+    this.solde,
+    this.offres = const <OffreRecharge>[],
+    this.montantsProposes = const <Montant>[],
+    this.montantSuggere,
     this.cleAvatar,
   });
 
@@ -58,11 +61,25 @@ class BeneficiaireRecharge {
   /// La cle de sa photo, ou `null` (initiales).
   final String? cleAvatar;
 
-  /// Son solde, deja redige, affiche tel quel (E2).
-  final String soldeRendu;
+  /// Son solde, deja redige, affiche tel quel (E2), ou `null`.
+  final String? soldeRendu;
 
-  /// Les offres qui le concernent, dans l'ordre rendu.
+  /// Son solde en unites mineures + ISO (FI-7), ou `null` : il prime sur
+  /// [soldeRendu] quand la source le rend.
+  final Montant? solde;
+
+  /// Les offres qui le concernent, dans l'ordre rendu (EA-10, F11).
   final List<OffreRecharge> offres;
+
+  /// Les montants qu'il peut recevoir, croissants, tels que la source les
+  /// rend (FI-7, guide V4 §5.3) : l'ecran passe de l'un a l'autre, il n'en
+  /// calcule aucun (FI6). Choisi plutot que saisi (K-57).
+  final List<Montant> montantsProposes;
+
+  /// Le montant suggere (par exemple le manque du mois), l'un de
+  /// [montantsProposes], ou `null` : rien n'est choisi d'avance (guide V4
+  /// §5.3, « minimum requis peut etre suggere »).
+  final Montant? montantSuggere;
 }
 
 /// Le choix du titulaire pour un beneficiaire : une offre, jamais un montant
@@ -170,7 +187,9 @@ abstract interface class PortRechargeFoyer {
   /// Les beneficiaires autorises et leurs offres (EA-BR-24).
   Future<List<BeneficiaireRecharge>> beneficiaires();
 
-  /// Le recapitulatif de ces choix, arrete par le serveur (EA-BR-24).
+  /// Le recapitulatif de ces choix, arrete par le serveur (EA-BR-24). Depuis
+  /// FI-7, l'ecran verifie par montants ([verifierMontants]) : ce contrat par
+  /// offres reste celui des sources EA, il n'a plus d'appelant a l'ecran.
   Future<RecapitulatifRecharge> verifier(List<ChoixRecharge> choix);
 
   /// Paie le recapitulatif [recapitulatifId], idempotent par [cle] : une
