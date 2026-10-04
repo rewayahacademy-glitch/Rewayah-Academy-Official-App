@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_color_pair.dart';
@@ -350,6 +351,26 @@ class _Etroit extends StatelessWidget {
   }
 }
 
+/// Le rapport minimal entre la taille du titre de la salle et celle de son
+/// sous-titre (`bodyMedium`, a l'echelle de l'appareil) : la hierarchie ne
+/// s'inverse jamais. Le titre se reduit pour tenir dans ses lignes, mais pas
+/// sous 1,15 fois le sous-titre ; s'il n'y tient toujours pas, il prend une
+/// ligne de plus (l'en-tete grandit, la feuille du telephone defile).
+const double rapportMinimalTitreSousTitre = 1.15;
+
+/// L'echelle sous laquelle le titre de la salle (de style [style]) ne
+/// descend pas pour garder ses lignes : jamais sous 1, jamais au-dessus de
+/// l'echelle de l'appareil.
+double plancherTitreSeance(BuildContext context, TextStyle? style) {
+  final TextTheme textes = Theme.of(context).textTheme;
+  final double titre = style?.fontSize ?? textes.titleLarge?.fontSize ?? 22;
+  final double sousTitre = textes.bodyMedium?.fontSize ?? 14;
+  final double facteur = MediaQuery.textScalerOf(context).scale(1);
+  final double p = facteur * rapportMinimalTitreSousTitre * sousTitre / titre;
+  if (p > facteur) return facteur;
+  return p < 1 ? 1 : p;
+}
+
 class _Titre extends StatelessWidget {
   const _Titre({required this.texte, required this.style, this.lignes = 2});
 
@@ -358,15 +379,21 @@ class _Titre extends StatelessWidget {
 
   /// Doc 04 §28, §33 n. 13 : a 200 %, le titre passe sur deux lignes. Une
   /// seule quand un bloc de secours occupe deja l'ecran etroit.
+  ///
+  /// COUPE-MOTS-1 : c'est un nombre de lignes VISE, plus une troncature. Un
+  /// titre de page n'a jamais de points de suspension (« Seance en d... ») :
+  /// son echelle se reduit pour tenir dans ces lignes, au plus jusqu'a
+  /// [plancherTitreSeance] (le titre reste plus grand que son sous-titre) ; au-dela, il
+  /// prend une ligne de plus. Les mots ne sont jamais coupes.
   final int lignes;
 
   @override
   Widget build(BuildContext context) => Semantics(
     header: true,
-    child: Text(
+    child: TexteSansCoupure(
       texte,
-      maxLines: lignes,
-      overflow: TextOverflow.ellipsis,
+      maxLignes: lignes,
+      plancher: plancherTitreSeance(context, style),
       style: AppPalette.of(context).inkStrong
           .applyTo(style ?? const TextStyle()),
     ),

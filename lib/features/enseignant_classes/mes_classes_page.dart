@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/domain/enums.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
@@ -259,28 +260,19 @@ LigneRubrique _ligne(ClasseListee l, VoidCallback? onPress) {
     onPress: onPress,
     // Wrap, jamais Row : le mot « Cahier de transmission a valider »
     // (LIB-CAHIER-1) passe a la ligne et la pastille passe sous lui, au lieu
-    // de deborder a 320 px ou a 200 % (lecon 8, K-41.6). En fin de ligne,
-    // `LigneRubrique` ne borne pas la marque : la borne vient d'ici.
-    // ponytail: borne fixe ; si d'autres marques longues apparaissent,
-    // `LigneRubrique` devra mesurer sa marque elle-meme.
+    // de deborder a 320 px ou a 200 % (lecon 8, K-41.6). La borne vient de
+    // `LigneRubrique`, qui mesure sa ligne (CORR-SUITE-2) : plus de largeur
+    // fixe de 200, qui repliait la marque meme a 1280 px.
     marque: marques.isEmpty
         ? null
-        : ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: _largeurMarqueMax),
-            child: Wrap(
-              spacing: AppSpacing.sm,
-              runSpacing: AppSpacing.xs,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: marques,
-            ),
+        : Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: marques,
           ),
   );
 }
-
-/// La largeur au-dela de laquelle les marques d'une ligne passent a la ligne :
-/// en fin de ligne, elle laisse au nom de la Classe au moins le tiers d'une
-/// ligne de 320 px.
-const double _largeurMarqueMax = 200;
 
 /// Le rappel d'un cahier non valide (K-45) : le point **et** le mot
 /// « Cahier a valider », jamais la couleur seule (WCAG 1.4.1, relecture
@@ -302,8 +294,9 @@ class _CahierAValider extends StatelessWidget {
         children: <Widget>[
           PointRappel(libelle: t.enseignant.classes.rappelCahier),
           Ecart.hXs,
+          // Entre les mots, jamais dans « transmission » (lecon 8).
           Flexible(
-            child: Text(
+            child: TexteSansCoupure(
               t.enseignant.classes.cahierAValider,
               style: palette.inkMuted.applyTo(
                 textes.labelMedium ?? const TextStyle(),

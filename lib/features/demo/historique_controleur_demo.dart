@@ -71,7 +71,7 @@ class HistoriqueDemo implements PortHistorique {
             date: DateTime(2026, 9, 24, 17, 55),
             texte:
                 "Le retard venait d'une coupure de connexion de "
-                "l'enseignant, rétablie à 17 h 08.",
+                "l'enseignant, rétablie à 17 h 08.",
           ),
         ],
       ),

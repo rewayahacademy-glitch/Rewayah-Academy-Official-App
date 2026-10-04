@@ -239,9 +239,12 @@ void main() {
         await tester.pump();
 
         expect(find.byKey(NavShell.railKey), findsOneWidget);
+        // 80 de base ; plus large seulement si un mot n'y tient pas meme a
+        // 0,85 (police de test, un em par lettre) : le rail s'elargit au lieu
+        // de couper le mot (relecture COUPE-MOTS-1).
         expect(
           tester.getSize(find.byKey(NavShell.railKey)).width,
-          AppGabarit.largeurRail,
+          greaterThanOrEqualTo(AppGabarit.largeurRail),
         );
         for (final Destination d in _destinations) {
           expect(

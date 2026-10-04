@@ -208,16 +208,28 @@ class SalleSeance extends StatelessWidget {
               // visible (CL-7 §2.7).
               BandeauSecours(vue: vue, actions: actions, gouttiere: gouttiere),
               Ecart.vLg,
-            ] else ...<Widget>[
+            ] else if (large) ...<Widget>[
               ChromeSeance(vue: vue, actions: actions),
               BandeauSecours(
                 vue: vue,
                 actions: actions,
                 gouttiere: gouttiere,
-                espaceApres: large ? AppSpacing.lg : 0,
+                espaceApres: AppSpacing.lg,
               ),
               ?_appel(vue, gouttiere),
-              if (!large) Ecart.vLg,
+            ] else ...<Widget>[
+              TeteSalleBornee(
+                children: <Widget>[
+                  ChromeSeance(vue: vue, actions: actions),
+                  BandeauSecours(
+                    vue: vue,
+                    actions: actions,
+                    gouttiere: gouttiere,
+                  ),
+                  ?_appel(vue, gouttiere),
+                ],
+              ),
+              Ecart.vLg,
             ],
             Expanded(
               child: Padding(
@@ -740,8 +752,12 @@ class _SalleEnseignant extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            ChromeSeance(vue: vue, actions: actions),
-            BandeauSecours(vue: vue, actions: actions),
+            TeteSalleBornee(
+              children: <Widget>[
+                ChromeSeance(vue: vue, actions: actions),
+                BandeauSecours(vue: vue, actions: actions),
+              ],
+            ),
             ecart,
             if (boutons != null) ...<Widget>[
               Padding(
@@ -1070,12 +1086,16 @@ class _SalleEnseignant extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        ChromeSeance(vue: vue, actions: actions),
-        BandeauSecours(vue: vue, actions: actions),
+        TeteSalleBornee(
+          children: <Widget>[
+            ChromeSeance(vue: vue, actions: actions),
+            BandeauSecours(vue: vue, actions: actions),
+          ],
+        ),
         mobile ? Ecart.vSm : Ecart.vMd,
         Expanded(
           child: LayoutBuilder(
-            builder: (BuildContext _, BoxConstraints c) {
+            builder: (BuildContext contexte, BoxConstraints c) {
               // Volet : au plus la moitie de la largeur, moins un palier, pour
               // laisser au dock toute sa place a droite (image : ≈ 313).
               final double largeurVolet = math.min(
@@ -1087,7 +1107,9 @@ class _SalleEnseignant extends StatelessWidget {
                   Positioned.fill(child: dessous(largeurVolet)),
                   if (mobile)
                     Positioned.fill(
-                      top: supportVisibleSousFeuille,
+                      // COUPE-MOTS-1 : sous un en-tete haut (titre a 200 %),
+                      // le support visible cede sa place a la feuille.
+                      top: supportVisiblePour(contexte, c.maxHeight),
                       child: panneau,
                     )
                   else
@@ -1366,6 +1388,43 @@ class _BarreBasse extends StatelessWidget {
 /// Reconnexion impossible ou hors ligne confirme (T-S3) : `EtatSysteme` en
 /// bloc a la place du bandeau, la salle reste montee ; largeur bornee
 /// (contrat D), alignee au bord start du support.
+/// La tete de la salle au telephone et en web etroit (en-tete, bandeau de
+/// secours, appel), bornee a [part] de la hauteur de l'ecran. Le titre ne
+/// tronque plus et ne se reduit plus sous son sous-titre (COUPE-MOTS-1) : a
+/// 200 %, sur un ecran etroit, cette tete peut depasser la place. Elle
+/// defile alors en elle-meme, rien n'est rogne, et le support et le dock
+/// gardent leur place. Sinon, rien ne change (hauteur naturelle).
+class TeteSalleBornee extends StatelessWidget {
+  /// Cree la tete.
+  const TeteSalleBornee({required this.children, super.key});
+
+  /// La part maximale de la hauteur de l'ecran. Au-dessus du tiers que
+  /// prend deja le bloc d'echec (lui-meme borne et defilant), pour qu'a
+  /// 100 % en-tete et bloc restent visibles ensemble.
+  static const double part = 0.55;
+
+  /// La cle du defilement de la tete.
+  static const Key defilementKey = ValueKey<String>('tete-salle-defile');
+
+  /// L'en-tete, le bandeau, l'appel.
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) => ConstrainedBox(
+    constraints: BoxConstraints(
+      maxHeight: MediaQuery.sizeOf(context).height * part,
+    ),
+    child: SingleChildScrollView(
+      key: defilementKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: children,
+      ),
+    ),
+  );
+}
+
 class BandeauSecours extends StatelessWidget {
   const BandeauSecours({
     required this.vue,

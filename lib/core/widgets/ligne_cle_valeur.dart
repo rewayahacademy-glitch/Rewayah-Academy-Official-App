@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
@@ -54,10 +55,14 @@ class LigneCleValeur extends StatelessWidget {
           ? AppTypography.tabulaire(textes.bodyLarge ?? const TextStyle())
           : textes.bodyLarge ?? const TextStyle(),
     );
-    final Text texteCle = Text(
-      cle,
-      style: palette.inkMuted.applyTo(textes.bodyMedium ?? const TextStyle()),
+    // COUPE-MOTS-1 : la cle passe a la ligne entre les mots, a la taille du
+    // theme ; un mot trop long pour sa colonne (« Reconnexions » a 320 px,
+    // texte a 100 %) ne se reduit pas : la cle passe au-dessus de la valeur,
+    // sur toute la largeur (voir [_cleTientEnColonne]).
+    final TextStyle styleCle = palette.inkMuted.applyTo(
+      textes.bodyMedium ?? const TextStyle(),
     );
+    final Widget texteCle = TexteSansCoupure(cle, style: styleCle);
     final Widget blocValeur = Wrap(
       spacing: AppSpacing.sm,
       runSpacing: AppSpacing.xs,
@@ -66,32 +71,49 @@ class LigneCleValeur extends StatelessWidget {
         if (annulee)
           TexteHeureSeance(heure: valeur, annulee: true, style: styleValeur)
         else
-          Text(valeur, style: styleValeur),
+          TexteSansCoupure(valeur, style: styleValeur),
         ?complement,
       ],
     );
-    final bool empiler =
+    final bool grandTexte =
         MediaQuery.textScalerOf(context).scale(AppSpacing.lg) / AppSpacing.lg >=
         AppGabarit.seuilTexteColonne;
 
     return MergeSemantics(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-        child: empiler
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[texteCle, Ecart.vXs, blocValeur],
-              )
-            : Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(flex: 2, child: texteCle),
-                  Ecart.hLg,
-                  Expanded(flex: 3, child: blocValeur),
-                ],
-              ),
+        child: LayoutBuilder(
+          builder: (BuildContext contexte, BoxConstraints c) =>
+              grandTexte || !_cleTientEnColonne(contexte, styleCle, c.maxWidth)
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[texteCle, Ecart.vXs, blocValeur],
+                )
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(flex: 2, child: texteCle),
+                    Ecart.hLg,
+                    Expanded(flex: 3, child: blocValeur),
+                  ],
+                ),
+        ),
       ),
     );
+  }
+
+  /// Vrai quand chaque mot de la cle tient, a l'echelle de l'appareil, dans
+  /// sa colonne (deux cinquiemes de la ligne, ecart retire).
+  bool _cleTientEnColonne(BuildContext context, TextStyle style, double w) {
+    if (!w.isFinite) return true;
+    final double colonne = (w - AppSpacing.lg) * 2 / 5;
+    return largeurMotLePlusLong(
+          context,
+          cle,
+          style,
+          MediaQuery.textScalerOf(context),
+        ) <=
+        colonne - 2;
   }
 }

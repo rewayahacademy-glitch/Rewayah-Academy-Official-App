@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
@@ -109,8 +110,11 @@ class StatusPill extends StatelessWidget {
                   child: DecoratedBox(decoration: pastille),
                 ),
             Ecart.hSm,
+            // PASTILLE-COUPE-1 : le libelle passe a la ligne entre les mots,
+            // jamais dans un mot (« Remplacem / ent » a 200 %) ; un mot trop
+            // long pour la place reduit son echelle, jamais sous 1.
             Flexible(
-              child: Text(
+              child: TexteSansCoupure(
                 libelle,
                 textAlign: TextAlign.center,
                 style: fond.applyTo(

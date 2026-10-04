@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_gabarit.dart';
@@ -71,9 +72,11 @@ class EntetePage extends StatelessWidget {
             children: <Widget>[
               titreFocalisable(
                 focusTitre,
+                // COUPE-MOTS-1 : entre les mots, jamais dans un mot
+                // (« Centre de com / mande », « Cahier de trans / mission »).
                 Semantics(
                   header: true,
-                  child: Text(
+                  child: TexteSansCoupure(
                     titre,
                     style: palette.inkStrong.applyTo(styleTitre),
                   ),
@@ -81,7 +84,7 @@ class EntetePage extends StatelessWidget {
               ),
               if (sousTitre != null) ...<Widget>[
                 Ecart.vXs,
-                Text(
+                TexteSansCoupure(
                   sousTitre!,
                   style: palette.inkMuted.applyTo(
                     textes.bodyLarge ?? const TextStyle(),

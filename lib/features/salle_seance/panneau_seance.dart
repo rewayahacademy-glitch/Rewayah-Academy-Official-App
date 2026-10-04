@@ -126,54 +126,146 @@ class PanneauSeance extends StatelessWidget {
             forme == FormePanneau.colonne ? AppSpacing.xs : AppSpacing.sm,
             0,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: ajuste ? MainAxisSize.min : MainAxisSize.max,
-            children: <Widget>[
-              if (feuille) ...<Widget>[
-                Center(
-                  child: ExcludeSemantics(
-                    child: SizedBox(
-                      width: AppBottomSheet.largeurPoignee,
-                      height: AppBottomSheet.hauteurPoignee,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: palette.borderResting.asBorderSide().color,
-                          borderRadius: AppRadius.arrondiFull,
+          child: _HauteurMinimale(
+            actif: !ajuste,
+            minimum: _hauteurInterieure(context, forme: forme),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: ajuste ? MainAxisSize.min : MainAxisSize.max,
+              children: <Widget>[
+                if (feuille) ...<Widget>[
+                  Center(
+                    child: ExcludeSemantics(
+                      child: SizedBox(
+                        width: AppBottomSheet.largeurPoignee,
+                        height: AppBottomSheet.hauteurPoignee,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: palette.borderResting.asBorderSide().color,
+                            borderRadius: AppRadius.arrondiFull,
+                          ),
                         ),
                       ),
                     ),
                   ),
+                  Ecart.vSm,
+                ],
+                _EnTete(
+                  titre: titre,
+                  onFermer: onFermer,
+                  enMenu: colonne && enMenu,
                 ),
                 Ecart.vSm,
-              ],
-              _EnTete(
-                titre: titre,
-                onFermer: onFermer,
-                enMenu: colonne && enMenu,
-              ),
-              Ecart.vSm,
-              if (ajuste) Flexible(child: enfant) else Expanded(child: enfant),
-              // Web etroit : le chevron de bas de volet (image CLV-07-08-10).
-              if (forme == FormePanneau.volet)
-                ExcludeSemantics(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.sm,
-                    ),
-                    child: IconTheme(
-                      data: palette.inkMuted.asIconTheme(size: AppSpacing.lg),
-                      child: Icon(AppIcons.suiteEnBas.repos),
+                if (ajuste)
+                  Flexible(child: enfant)
+                else
+                  Expanded(child: enfant),
+                // Web etroit : le chevron de bas de volet (image CLV-07-08-10).
+                if (forme == FormePanneau.volet)
+                  ExcludeSemantics(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AppSpacing.sm,
+                      ),
+                      child: IconTheme(
+                        data: palette.inkMuted.asIconTheme(size: AppSpacing.lg),
+                        child: Icon(AppIcons.suiteEnBas.repos),
+                      ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
     if (!ajuste) return cadre;
     return Align(alignment: AlignmentDirectional.topCenter, child: cadre);
+  }
+
+  /// La hauteur sous laquelle le panneau ne se tasse pas : sa tete (poignee,
+  /// titre ou croix, mesure du titre tel qu'il est rendu, une seule ligne)
+  /// plus une rangee de contenu a l'echelle courante du texte. La salle
+  /// reduit d'abord le support visible au-dessus de la feuille pour la lui
+  /// laisser ([supportVisiblePour]) ; s'il manque encore de la place, le
+  /// panneau defile au lieu d'etre rogne.
+  static double hauteurMinimale(
+    BuildContext context, {
+    required FormePanneau forme,
+  }) {
+    final bool feuille = forme == FormePanneau.feuille;
+    // Marge haute du cadre, puis l'interieur.
+    return (feuille ? AppSpacing.sm : AppSpacing.md) +
+        _hauteurInterieure(context, forme: forme);
+  }
+
+  /// [hauteurMinimale] sans la marge haute du cadre : poignee (feuille),
+  /// titre ou croix, ecart, une rangee de contenu.
+  static double _hauteurInterieure(
+    BuildContext context, {
+    required FormePanneau forme,
+  }) {
+    final bool feuille = forme == FormePanneau.feuille;
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    final TextPainter p = TextPainter(
+      text: TextSpan(
+        text: 'Ag',
+        style: DefaultTextStyle.of(context).style
+            .merge(Theme.of(context).textTheme.titleLarge),
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: echelle,
+      maxLines: 1,
+    )..layout();
+    final double ligne = p.height;
+    p.dispose();
+    return (feuille ? AppBottomSheet.hauteurPoignee + AppSpacing.sm : 0) +
+        (ligne > AppSpacing.titreEcran ? ligne : AppSpacing.titreEcran) +
+        AppSpacing.sm +
+        echelle.scale(AppSpacing.respiration);
+  }
+}
+
+/// Le support laisse visible au-dessus de la feuille du telephone dans une
+/// hauteur [disponible] : [supportVisibleSousFeuille], reduit (jusqu'a zero)
+/// pour que la feuille garde sa [PanneauSeance.hauteurMinimale].
+double supportVisiblePour(BuildContext context, double disponible) {
+  if (!disponible.isFinite) return supportVisibleSousFeuille;
+  final double reste =
+      disponible -
+      PanneauSeance.hauteurMinimale(context, forme: FormePanneau.feuille);
+  if (reste >= supportVisibleSousFeuille) return supportVisibleSousFeuille;
+  return reste > 0 ? reste : 0;
+}
+
+/// Quand la place laissee au panneau est plus basse que [minimum] (feuille
+/// ecrasee sous un en-tete de salle haut, 320 px a 200 %), le panneau garde
+/// sa hauteur minimale et DEFILE : son contenu reste joignable (la liste
+/// defile a l'interieur, le panneau entier autour), rien n'est rogne. Avec
+/// assez de place, rien ne change.
+class _HauteurMinimale extends StatelessWidget {
+  const _HauteurMinimale({
+    required this.actif,
+    required this.minimum,
+    required this.child,
+  });
+
+  final bool actif;
+  final double minimum;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!actif) return child;
+    return LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints c) =>
+          !c.maxHeight.isFinite || c.maxHeight >= minimum
+          ? child
+          : SingleChildScrollView(
+              key: const ValueKey<String>('panneau-seance-defile'),
+              child: SizedBox(height: minimum, child: child),
+            ),
+    );
   }
 }
 
