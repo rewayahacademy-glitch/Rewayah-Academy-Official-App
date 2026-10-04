@@ -140,8 +140,8 @@ class Traductions$reseau$fr {
 
 	// Translations
 
-	/// fr: 'Pas de réseau. Tout reste consultable, l'envoi attendra.'
-	String get horsLigne => 'Pas de réseau. Tout reste consultable, l\'envoi attendra.';
+	/// fr: 'Pas de réseau. Ce qui est déjà affiché reste consultable.'
+	String get horsLigne => 'Pas de réseau. Ce qui est déjà affiché reste consultable.';
 
 	/// fr: 'Sera envoyé dès le retour du réseau'
 	String get enAttenteEnvoi => 'Sera envoyé dès le retour du réseau';
@@ -4936,8 +4936,8 @@ class Traductions$admin$demandes$fr {
 	/// fr: 'Clore la surcharge'
 	String get cloreEnvoyer => 'Clore la surcharge';
 
-	/// fr: 'L'opération n'a pas abouti : {message}'
-	String erreur({required Object message}) => 'L\'opération n\'a pas abouti : ${message}';
+	/// fr: 'La file des demandes n'a pas pu se charger. Réessayez dans un instant.'
+	String get erreurFile => 'La file des demandes n\'a pas pu se charger. Réessayez dans un instant.';
 }
 
 // Path: admin.attribution
@@ -15505,7 +15505,7 @@ extension on Traductions {
 			'commun.dates.mois.11' => 'décembre',
 			'commun.dates.jourDate' => ({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}',
 			'commun.sections.page' => 'Sections de la page',
-			'reseau.horsLigne' => 'Pas de réseau. Tout reste consultable, l\'envoi attendra.',
+			'reseau.horsLigne' => 'Pas de réseau. Ce qui est déjà affiché reste consultable.',
 			'reseau.enAttenteEnvoi' => 'Sera envoyé dès le retour du réseau',
 			'reseau.retabli' => 'Réseau rétabli',
 			'reseau.syncImpossible' => 'Synchronisation impossible',
@@ -16618,7 +16618,7 @@ extension on Traductions {
 			'admin.demandes.poserMotifRequis' => 'Une règle sans motif ne se relit pas six mois plus tard.',
 			'admin.demandes.poserEnvoyer' => 'Poser la règle',
 			'admin.demandes.cloreEnvoyer' => 'Clore la surcharge',
-			'admin.demandes.erreur' => ({required Object message}) => 'L\'opération n\'a pas abouti : ${message}',
+			'admin.demandes.erreurFile' => 'La file des demandes n\'a pas pu se charger. Réessayez dans un instant.',
 			'admin.attribution.titre' => 'Attribution',
 			'admin.attribution.intro' => 'Quand aucun enseignant n\'a pris un enfant, c\'est ici qu\'on lui en donne un.',
 			'admin.attribution.colonneEleves' => 'Élèves sans enseignant',

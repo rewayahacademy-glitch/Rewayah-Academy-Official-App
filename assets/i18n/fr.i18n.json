@@ -130,7 +130,7 @@
     }
   },
   "reseau": {
-    "horsLigne": "Pas de réseau. Tout reste consultable, l'envoi attendra.",
+    "horsLigne": "Pas de réseau. Ce qui est déjà affiché reste consultable.",
     "enAttenteEnvoi": "Sera envoyé dès le retour du réseau",
     "retabli": "Réseau rétabli",
     "syncImpossible": "Synchronisation impossible"
@@ -1455,7 +1455,7 @@
       "poserMotifRequis": "Une règle sans motif ne se relit pas six mois plus tard.",
       "poserEnvoyer": "Poser la règle",
       "cloreEnvoyer": "Clore la surcharge",
-      "erreur": "L'opération n'a pas abouti : {message}"
+      "erreurFile": "La file des demandes n'a pas pu se charger. Réessayez dans un instant."
     },
     "attribution": {
       "titre": "Attribution",

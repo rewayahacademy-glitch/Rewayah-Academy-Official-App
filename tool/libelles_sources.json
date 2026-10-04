@@ -85,5 +85,7 @@
   "adulte.historique.titre": "propose par l'agent, etape DASH-EA-PROD (DASH_STRATEGIE.md §3.7, D6, D11, K-59) : a faire valider par le directeur",
   "adulte.historique.echec": "propose par l'agent, etape DASH-EA-PROD (DASH_STRATEGIE.md §3.7, D6, D11, K-59) : a faire valider par le directeur",
   "adulte.historique.vide": "propose par l'agent, etape DASH-EA-PROD (DASH_STRATEGIE.md §3.7, D6, D11, K-59) : a faire valider par le directeur",
-  "adulte.historique.videDetail": "propose par l'agent, etape DASH-EA-PROD (DASH_STRATEGIE.md §3.7, D6, D11, K-59) : a faire valider par le directeur"
+  "adulte.historique.videDetail": "propose par l'agent, etape DASH-EA-PROD (DASH_STRATEGIE.md §3.7, D6, D11, K-59) : a faire valider par le directeur",
+  "reseau.horsLigne": "etape EA-HORS-LIGNE-1 puis 1b (04/10, releve VERIF-EA-1, revue EA-HORS-LIGNE-1-R) : redige par l'agent, a faire valider par le directeur ; « l'envoi attendra » et « Tout reste consultable » retires, dementis par les pages qui n'envoient rien hors ligne et par les ecrans jamais charges ; reprend la phrase deja posee de commun.etats.horsLigne.phrase",
+  "admin.demandes.erreurFile": "etape EA-HORS-LIGNE-1b (04/10, revue EA-HORS-LIGNE-1-R) : redige par l'agent, a faire valider par le directeur ; phrase d'action incluse (regle erreur-sans-action) ; remplace « L'operation n'a pas abouti : Pas de reseau. Tout reste consultable. », faux pour toute panne et pour une file non chargee"
 }
