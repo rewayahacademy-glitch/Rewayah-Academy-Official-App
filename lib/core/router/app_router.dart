@@ -41,7 +41,6 @@ import '../../features/classe_tuteur/travail_classe_page.dart';
 import '../../features/com_annonces/administration_communications_page.dart';
 import '../../features/com_annonces/publier_annonce_classe_page.dart';
 import '../../features/com_communaute/communaute_page.dart';
-import '../../features/com_messages/messages_admin.dart';
 import '../../features/com_messages/messages_page.dart';
 import '../../features/com_studio/studio_page.dart';
 import '../../features/compte/acces_page.dart';
@@ -1013,20 +1012,23 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      // COM-MSG-2 : l'onglet Messages monte la vue de la voie COM-MSG
-      // directement (la page d'Annonces n'importe jamais un fichier de MSG).
       GoRoute(
         path: Routes.adminCommunicationsMessages,
         builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
           domaine: AdminDomaine.operations,
-          child: MessagesAdminPage(),
+          child: AdministrationCommunicationsPage(
+            onglet: OngletCommunications.messages,
+          ),
         ),
         routes: <RouteBase>[
           GoRoute(
             path: ':filId',
             builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
               domaine: AdminDomaine.operations,
-              child: MessagesAdminPage(filId: _parametre(etat, 'filId')),
+              child: AdministrationCommunicationsPage(
+                onglet: OngletCommunications.messages,
+                filId: _parametre(etat, 'filId'),
+              ),
             ),
           ),
         ],

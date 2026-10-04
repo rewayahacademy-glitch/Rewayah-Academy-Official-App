@@ -178,7 +178,7 @@ class ConversationPossible {
   /// Ce que l'interlocuteur est vu de l'objet (libelle de l'entree).
   final NatureInterlocuteur nature;
 
-  /// L'objet du fil : celui que `filPourObjet` recoit quand le fil manque.
+  /// L'objet du fil (la Classe, un eleve, le dossier).
   final ObjetLie objet;
 
   /// Le fil existant, ou `null` s'il reste a ouvrir.
@@ -186,6 +186,12 @@ class ConversationPossible {
 
   /// Ce que le badge doit dire du fil existant.
   final IndicateurAttention attention;
+
+  /// La cle de la conversation : la paire (objet, interlocuteur). Deux
+  /// interlocuteurs sur le meme objet (l'enseignant et l'Administration sur
+  /// une Classe, spec section 3.2) sont deux conversations distinctes ; un
+  /// identifiant, jamais une autorisation (COM-BR-01).
+  String get cle => '${objet.type.name}:${objet.id}:${interlocuteur.id}';
 }
 
 /// Les Messages metier (COM-BR-01, COM-BR-02).
@@ -201,6 +207,12 @@ abstract interface class PortMessagesMetier {
   /// Le fil canonique de l'objet ([type], [objetId]), cree par le serveur
   /// s'il manque ; `null` si la paire n'est pas autorisee (spec section 3.2).
   Future<FilMetier?> filPourObjet(TypeObjetLie type, String objetId);
+
+  /// Le fil de la conversation [conversation] : la paire (objet,
+  /// interlocuteur), jamais l'objet seul (deux interlocuteurs peuvent partager
+  /// un objet, spec section 3.2). Le serveur le cree s'il manque ; `null` si
+  /// la paire n'est pas autorisee (COM-BR-01, COM-MSG-2).
+  Future<FilMetier?> ouvrirConversation(ConversationPossible conversation);
 
   /// Les conversations que la page de l'objet ([type], [objetId]) peut
   /// ouvrir (une Classe, un dossier), dans l'ordre du serveur (COM-MSG-2).
@@ -235,6 +247,10 @@ class MessagesMetierIndisponibles implements PortMessagesMetier {
 
   @override
   Future<FilMetier?> filPourObjet(TypeObjetLie type, String objetId) =>
+      Future<FilMetier?>.error(const CapaciteIndisponible('COM-BR-01'));
+
+  @override
+  Future<FilMetier?> ouvrirConversation(ConversationPossible conversation) =>
       Future<FilMetier?>.error(const CapaciteIndisponible('COM-BR-01'));
 
   @override

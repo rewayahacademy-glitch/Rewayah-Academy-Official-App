@@ -301,7 +301,7 @@
         "inaccessibleTitre": "محادثة غير متاحة",
         "inaccessible": "لم تعد هذه المحادثة متاحة لك. اختر شخصًا آخر من القائمة.",
         "erreurOuvertureTitre": "تعذّر فتح هذه المحادثة.",
-        "ouvertureEchouee": "تحقّق من اتصالك ثم المس السطر مرة أخرى."
+        "ouvertureEchouee": "تحقّق من اتصالك ثم أعد المحاولة."
       },
       "videDetail": "تُفتح المحادثة من فصل أو طالب أو ملف.",
       "choisirTitre": "اختر محادثة",

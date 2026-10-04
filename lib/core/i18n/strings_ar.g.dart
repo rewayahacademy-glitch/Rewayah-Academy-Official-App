@@ -558,7 +558,7 @@ class _Traductions$com$messages$entree$ar extends Traductions$com$messages$entre
 	@override String get inaccessibleTitre => 'محادثة غير متاحة';
 	@override String get inaccessible => 'لم تعد هذه المحادثة متاحة لك. اختر شخصًا آخر من القائمة.';
 	@override String get erreurOuvertureTitre => 'تعذّر فتح هذه المحادثة.';
-	@override String get ouvertureEchouee => 'تحقّق من اتصالك ثم المس السطر مرة أخرى.';
+	@override String get ouvertureEchouee => 'تحقّق من اتصالك ثم أعد المحاولة.';
 }
 
 // Path: com.messages.recherche
@@ -1066,7 +1066,7 @@ extension on TraductionsAr {
 			'com.messages.entree.inaccessibleTitre' => 'محادثة غير متاحة',
 			'com.messages.entree.inaccessible' => 'لم تعد هذه المحادثة متاحة لك. اختر شخصًا آخر من القائمة.',
 			'com.messages.entree.erreurOuvertureTitre' => 'تعذّر فتح هذه المحادثة.',
-			'com.messages.entree.ouvertureEchouee' => 'تحقّق من اتصالك ثم المس السطر مرة أخرى.',
+			'com.messages.entree.ouvertureEchouee' => 'تحقّق من اتصالك ثم أعد المحاولة.',
 			'com.messages.videDetail' => 'تُفتح المحادثة من فصل أو طالب أو ملف.',
 			'com.messages.choisirTitre' => 'اختر محادثة',
 			'com.messages.choisir' => 'اختر محادثة من القائمة لقراءتها والرد عليها.',

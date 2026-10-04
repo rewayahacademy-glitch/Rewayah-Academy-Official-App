@@ -15322,8 +15322,8 @@ class Traductions$com$messages$entree$fr {
 	/// fr: 'Impossible d'ouvrir cette conversation.'
 	String get erreurOuvertureTitre => 'Impossible d\'ouvrir cette conversation.';
 
-	/// fr: 'Vérifiez votre connexion, puis touchez à nouveau la ligne.'
-	String get ouvertureEchouee => 'Vérifiez votre connexion, puis touchez à nouveau la ligne.';
+	/// fr: 'Vérifiez votre connexion, puis réessayez.'
+	String get ouvertureEchouee => 'Vérifiez votre connexion, puis réessayez.';
 }
 
 // Path: com.messages.recherche
@@ -20310,7 +20310,7 @@ extension on Traductions {
 			'com.messages.entree.inaccessibleTitre' => 'Conversation inaccessible',
 			'com.messages.entree.inaccessible' => 'Cette conversation n\'est plus ouverte pour vous. Choisissez une autre personne dans la liste.',
 			'com.messages.entree.erreurOuvertureTitre' => 'Impossible d\'ouvrir cette conversation.',
-			'com.messages.entree.ouvertureEchouee' => 'Vérifiez votre connexion, puis touchez à nouveau la ligne.',
+			'com.messages.entree.ouvertureEchouee' => 'Vérifiez votre connexion, puis réessayez.',
 			'com.messages.videDetail' => 'Une conversation s\'ouvre depuis une Classe, un élève ou un dossier.',
 			'com.messages.choisirTitre' => 'Choisissez une conversation',
 			'com.messages.choisir' => 'Choisissez une conversation dans la liste pour la lire et y répondre.',

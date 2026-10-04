@@ -161,6 +161,7 @@ class FauxMessagesMetier implements PortMessagesMetier {
     this.resumesEnPlus = const <ResumeFil>[],
     this.conversations = const <String, List<ConversationPossible>>{},
     this.filsParObjet = const <String, String>{},
+    this.filsParConversation = const <String, String>{},
     this.erreurConversations,
     this.attenteConversations,
     this.erreurFilPourObjet,
@@ -169,8 +170,17 @@ class FauxMessagesMetier implements PortMessagesMetier {
   /// `type:objetId` vers les conversations que l'objet ouvre.
   final Map<String, List<ConversationPossible>> conversations;
 
-  /// `type:objetId` vers l'identifiant du fil que `filPourObjet` rend.
+  /// `type:objetId` vers l'identifiant du fil que `filPourObjet` rend (et
+  /// `ouvrirConversation`, faute d'entree dans [filsParConversation]).
   final Map<String, String> filsParObjet;
+
+  /// [ConversationPossible.cle] (objet et interlocuteur) vers le fil que
+  /// `ouvrirConversation` rend.
+  final Map<String, String> filsParConversation;
+
+  /// Les conversations demandees a `ouvrirConversation`, par cle, dans
+  /// l'ordre.
+  final List<String> conversationsDemandees = <String>[];
 
   /// L'erreur rendue par `conversationsPourObjet`, tant qu'elle n'est pas
   /// retiree.
@@ -179,10 +189,11 @@ class FauxMessagesMetier implements PortMessagesMetier {
   /// Retient `conversationsPourObjet` jusqu'a sa completion.
   Completer<void>? attenteConversations;
 
-  /// L'erreur rendue par `filPourObjet`.
+  /// L'erreur rendue par `filPourObjet` et `ouvrirConversation`.
   Exception? erreurFilPourObjet;
 
-  /// Les objets demandes a `filPourObjet`, dans l'ordre.
+  /// Les objets demandes a `filPourObjet` ou `ouvrirConversation`, dans
+  /// l'ordre.
   final List<String> objetsDemandes = <String>[];
 
   /// Le nombre de lectures des conversations d'un objet.
@@ -247,6 +258,23 @@ class FauxMessagesMetier implements PortMessagesMetier {
     final Exception? e = erreurFilPourObjet;
     if (e != null) throw e;
     final String? id = filsParObjet[cleObjet(type, objetId)];
+    return id == null ? null : _fils[id];
+  }
+
+  /// Retient `ouvrirConversation` jusqu'a sa completion.
+  Completer<void>? attenteOuverture;
+
+  @override
+  Future<FilMetier?> ouvrirConversation(ConversationPossible c) async {
+    objetsDemandes.add(cleObjet(c.objet.type, c.objet.id));
+    conversationsDemandees.add(c.cle);
+    final Completer<void>? attente = attenteOuverture;
+    if (attente != null) await attente.future;
+    final Exception? e = erreurFilPourObjet;
+    if (e != null) throw e;
+    final String? id =
+        filsParConversation[c.cle] ??
+        filsParObjet[cleObjet(c.objet.type, c.objet.id)];
     return id == null ? null : _fils[id];
   }
 

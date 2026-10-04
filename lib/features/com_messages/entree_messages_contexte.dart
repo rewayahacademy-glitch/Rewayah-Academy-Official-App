@@ -144,9 +144,13 @@ class _EntreeMessagesContexteState
   AsyncValue<IndicateurAttention> _attention =
       const AsyncValue<IndicateurAttention>.loading();
 
-  /// L'objet de la conversation en cours d'ouverture (`type:id`).
+  /// La cle de la conversation en cours d'ouverture : la paire (objet,
+  /// interlocuteur), [ConversationPossible.cle], jamais l'objet seul.
   String? _ouverture;
   _Echec? _echec;
+
+  /// La derniere conversation demandee, que « Reessayer » rouvre.
+  ConversationPossible? _derniere;
 
   PortMessagesMetier get _port => ref.read(portMessagesMetierProvider);
 
@@ -165,6 +169,7 @@ class _EntreeMessagesContexteState
       // Le build suit : aucun setState ici, l'etat repart du chargement.
       _echec = null;
       _ouverture = null;
+      _derniere = null;
       _conversations = const AsyncValue<List<ConversationPossible>>.loading();
       _attention = const AsyncValue<IndicateurAttention>.loading();
       unawaited(_charger());
@@ -217,10 +222,9 @@ class _EntreeMessagesContexteState
     return cheminMessagesDepuis(chemin);
   }
 
-  static String _cle(ObjetLie o) => '${o.type.name}:${o.id}';
-
   Future<void> _ouvrir(ConversationPossible c, String liste) async {
     if (_ouverture != null) return;
+    _derniere = c;
     final String? existant = c.filId;
     if (existant != null) {
       setState(() => _echec = null);
@@ -228,14 +232,16 @@ class _EntreeMessagesContexteState
       return;
     }
     setState(() {
-      _ouverture = _cle(c.objet);
+      _ouverture = c.cle;
       _echec = null;
     });
     final FilMetier? fil;
     try {
       // Ouvert a la demande de la personne, jamais au rendu : le serveur cree
-      // le fil s'il manque, et seulement pour une paire autorisee.
-      fil = await _port.filPourObjet(c.objet.type, c.objet.id);
+      // le fil s'il manque, et seulement pour une paire autorisee. La paire
+      // (objet, interlocuteur), jamais l'objet seul : l'Administration et
+      // l'enseignant peuvent partager une Classe (spec section 3.2).
+      fil = await _port.ouvrirConversation(c);
     } on CapaciteIndisponible {
       if (mounted) {
         setState(() {
@@ -344,11 +350,42 @@ class _EntreeMessagesContexteState
         if (c.filId != null || ecrire) c,
     ];
     if (ouvertes.isEmpty) return null;
-    final e = t.com.messages.entree;
     final List<ConversationPossible> rendues = ouvertes
         .take(limiteConversationsEntree)
         .toList();
-    final Widget groupe = GroupeReglages(
+    // Pendant une ouverture, le groupe est occupe : aucun toucher n'y passe,
+    // et le lecteur d'ecran n'y offre plus d'action (IgnorePointer bloque les
+    // actions semantiques). Les lignes ne sont pas grisees (K-56) ; la ligne
+    // touchee dit « Ouverture de la conversation ». Au clavier, `_ouvrir`
+    // ignore un second appui.
+    final bool occupe = _ouverture != null;
+    final Widget groupe = IgnorePointer(
+      ignoring: occupe,
+      child: _groupe(rendues, ouvertes, liste, ecrire: ecrire),
+    );
+    final Widget? echec = _vueEchec(horsLigne, liste);
+    if (echec == null) return groupe;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        groupe,
+        Ecart.vLg,
+        KeyedSubtree(key: EntreeMessagesContexte.cleEchec, child: echec),
+      ],
+    );
+  }
+
+  /// Le groupe des conversations rendues, puis « Voir toutes les
+  /// conversations » s'il en reste.
+  Widget _groupe(
+    List<ConversationPossible> rendues,
+    List<ConversationPossible> ouvertes,
+    String liste, {
+    required bool ecrire,
+  }) {
+    final e = t.com.messages.entree;
+    return GroupeReglages(
       key: EntreeMessagesContexte.cleObjet,
       titre: switch (widget.type) {
         TypeObjetLie.classe => e.titreClasse,
@@ -364,17 +401,6 @@ class _EntreeMessagesContexteState
             libelle: e.voirTout,
             onPress: () => GoRouter.of(context).go(liste),
           ),
-      ],
-    );
-    final Widget? echec = _vueEchec(horsLigne);
-    if (echec == null) return groupe;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        groupe,
-        Ecart.vLg,
-        KeyedSubtree(key: EntreeMessagesContexte.cleEchec, child: echec),
       ],
     );
   }
@@ -395,7 +421,8 @@ class _EntreeMessagesContexteState
             NatureInterlocuteur.personne => e.ecrireA(nom: p.nomAffiche),
           };
     final String? fonction = p.fonction;
-    final String legende = _ouverture == _cle(c.objet)
+    final bool enOuverture = _ouverture == c.cle;
+    final String legende = enOuverture
         ? e.ouverture
         : nommee
         ? (fonction ?? c.objet.libelle)
@@ -418,7 +445,8 @@ class _EntreeMessagesContexteState
 
   /// L'etat de la derniere ouverture, sous le groupe ; `null` s'il n'y a
   /// rien a dire.
-  Widget? _vueEchec(bool horsLigne) {
+  Widget? _vueEchec(bool horsLigne, String liste) {
+    final ConversationPossible? derniere = _derniere;
     final e = t.com.messages.entree;
     return switch (_echec) {
       null => null,
@@ -433,6 +461,11 @@ class _EntreeMessagesContexteState
         nature: horsLigne ? NatureEtat.horsLigne : NatureEtat.echecServeur,
         titre: e.erreurOuvertureTitre,
         phrase: e.ouvertureEchouee,
+        // Spec section 22 : une erreur ou le hors ligne offrent « Reessayer »,
+        // qui rouvre la meme conversation.
+        onAction: derniere == null
+            ? null
+            : () => unawaited(_ouvrir(derniere, liste)),
       ),
       _Echec.indisponible => const VueEtatCommunication(
         etat: EtatCommunication.indisponible,

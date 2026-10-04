@@ -4813,7 +4813,7 @@
         "inaccessibleTitre": "Conversation inaccessible",
         "inaccessible": "Cette conversation n'est plus ouverte pour vous. Choisissez une autre personne dans la liste.",
         "erreurOuvertureTitre": "Impossible d'ouvrir cette conversation.",
-        "ouvertureEchouee": "Vérifiez votre connexion, puis touchez à nouveau la ligne."
+        "ouvertureEchouee": "Vérifiez votre connexion, puis réessayez."
       },
       "videDetail": "Une conversation s'ouvre depuis une Classe, un élève ou un dossier.",
       "choisirTitre": "Choisissez une conversation",

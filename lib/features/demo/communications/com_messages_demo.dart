@@ -279,7 +279,7 @@ class MessagesMetierDemo implements PortMessagesMetier {
   final Set<String> _clesEnEchec = <String>{};
 
   /// Les conversations possibles sans fil encore ouvert, par objet de page
-  /// (`type:id`) : `filPourObjet` en cree le fil a la demande.
+  /// (`type:id`) : `ouvrirConversation` en cree le fil a la demande.
   final Map<String, List<ConversationPossible>> _aOuvrir;
 
   /// Les cles d'idempotence recues, dans l'ordre (pour les tests).
@@ -300,19 +300,42 @@ class MessagesMetierDemo implements PortMessagesMetier {
 
   @override
   Future<FilMetier?> filPourObjet(TypeObjetLie type, String objetId) async {
+    // Le fil canonique de l'objet (COM-MSG-1) : la premiere conversation
+    // possible sur cet objet. L'entree d'une page passe par
+    // `ouvrirConversation`, qui tient compte de l'interlocuteur.
     for (final FilMetier f in _fils.values) {
       if (f.contexte.last.objet.type == type &&
           f.contexte.last.objet.id == objetId) {
         return f;
       }
     }
+    for (final List<ConversationPossible> liste in _aOuvrir.values) {
+      for (final ConversationPossible c in liste) {
+        if (c.objet.type == type && c.objet.id == objetId) {
+          return ouvrirConversation(c);
+        }
+      }
+    }
+    return null;
+  }
+
+  @override
+  Future<FilMetier?> ouvrirConversation(
+    ConversationPossible conversation,
+  ) async {
+    // Le fil existant de la PAIRE (objet, interlocuteur), jamais celui d'un
+    // autre interlocuteur sur le meme objet (spec section 3.2).
+    for (final FilMetier f in _fils.values) {
+      if (_dePaire(f, conversation)) return f;
+    }
     // Une conversation possible sans fil : le fil est cree, vide, comme le
     // ferait le serveur pour une paire autorisee (spec section 3.2).
     for (final List<ConversationPossible> liste in _aOuvrir.values) {
       for (final ConversationPossible c in liste) {
-        if (c.objet.type != type || c.objet.id != objetId) continue;
+        if (c.cle != conversation.cle) continue;
+        final String base = 'fil-${c.objet.id}';
         final FilMetier cree = FilMetier(
-          id: 'fil-${c.objet.id}',
+          id: _fils.containsKey(base) ? '$base-${c.interlocuteur.id}' : base,
           contexte: <ElementContexteFil>[ElementContexteFil(objet: c.objet)],
           participants: <Participant>[_soi(), c.interlocuteur],
           messages: const <MessageCommunication>[],
@@ -324,6 +347,11 @@ class MessagesMetierDemo implements PortMessagesMetier {
     }
     return null;
   }
+
+  static bool _dePaire(FilMetier f, ConversationPossible c) =>
+      f.contexte.last.objet.type == c.objet.type &&
+      f.contexte.last.objet.id == c.objet.id &&
+      f.interlocuteurs.any((Participant p) => p.id == c.interlocuteur.id);
 
   @override
   Future<List<ConversationPossible>> conversationsPourObjet(
@@ -350,7 +378,9 @@ class MessagesMetierDemo implements PortMessagesMetier {
       for (final ConversationPossible c
           in _aOuvrir['${type.name}:$objetId'] ??
               const <ConversationPossible>[])
-        if (!existantes.any((ConversationPossible e) => e.objet == c.objet)) c,
+        // Une paire (objet, interlocuteur) deja ouverte n'est pas repetee ;
+        // un autre interlocuteur sur le meme objet reste propose.
+        if (!existantes.any((ConversationPossible e) => e.cle == c.cle)) c,
     ];
   }
 

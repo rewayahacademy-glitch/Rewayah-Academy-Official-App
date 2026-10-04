@@ -8,6 +8,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -411,10 +413,46 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(t.com.messages.entree.ouvertureEchouee), findsOne);
+      // Spec section 22 : l'erreur offre « Reessayer », qui rouvre la meme
+      // conversation.
+      final Finder reessayer = find.descendant(
+        of: find.byKey(EntreeMessagesContexte.cleEchec),
+        matching: find.text(t.commun.etats.actions.reessayer),
+      );
+      expect(reessayer, findsOneWidget);
       port.erreurFilPourObjet = null;
-      await tester.tap(find.text('Parent 2, Parent de Eleve 2'));
+      await tester.tap(reessayer);
       await tester.pumpAndSettle();
       expect(cheminCourant(routeur), Routes.enseignantFilPour('fil-1'));
+      expect(port.conversationsDemandees, <String>[
+        'eleve:e2:p-2',
+        'eleve:e2:p-2',
+      ]);
+    });
+
+    testWidgets('hors ligne a l ouverture : l etat hors ligne et '
+        '« Reessayer »', (WidgetTester tester) async {
+      final FauxMessagesMetier port = _port()
+        ..erreurFilPourObjet = Exception('hors ligne');
+      await _monter(tester, port: port, horsLigne: true);
+      await tester.tap(find.text('Parent 2, Parent de Eleve 2'));
+      await tester.pumpAndSettle();
+      final Finder echec = find.byKey(EntreeMessagesContexte.cleEchec);
+      expect(
+        tester
+            .widget<EtatSysteme>(
+              find.descendant(of: echec, matching: find.byType(EtatSysteme)),
+            )
+            .nature,
+        NatureEtat.horsLigne,
+      );
+      expect(
+        find.descendant(
+          of: echec,
+          matching: find.text(t.commun.etats.actions.reessayer),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('administration : l adresse /admin mene a l onglet Messages, '
@@ -636,4 +674,259 @@ void main() {
       );
     });
   });
+  group('Revue COM-MSG-2 : une conversation est une paire (objet, '
+      'interlocuteur)', () {
+    final ObjetLie classe = ObjetLie(
+      type: TypeObjetLie.classe,
+      id: _classe,
+      libelle: 'Classe An-Nour',
+    );
+    const Participant enseignante = Participant(
+      id: 'p-mariam',
+      nomAffiche: 'Mme Mariam',
+      fonction: 'Enseignante de la Classe',
+    );
+    const Participant administration = Participant(
+      id: 'p-direction',
+      nomAffiche: 'Administration',
+      fonction: 'Direction de Rewayah',
+    );
+    final ConversationPossible avecEnseignante = ConversationPossible(
+      interlocuteur: enseignante,
+      objet: classe,
+    );
+    final ConversationPossible avecAdministration = ConversationPossible(
+      interlocuteur: administration,
+      nature: NatureInterlocuteur.administration,
+      objet: classe,
+    );
+
+    FauxMessagesMetier deuxSurLaClasse() => FauxMessagesMetier(
+      fils: <FilMetier>[
+        filAvec(id: 'fil-ens', autre: enseignante, objets: <ObjetLie>[classe]),
+        filAvec(
+          id: 'fil-adm',
+          autre: administration,
+          objets: <ObjetLie>[classe],
+        ),
+      ],
+      conversations: <String, List<ConversationPossible>>{
+        cleObjet(TypeObjetLie.classe, _classe): <ConversationPossible>[
+          avecEnseignante,
+          avecAdministration,
+        ],
+      },
+      filsParConversation: <String, String>{
+        avecEnseignante.cle: 'fil-ens',
+        avecAdministration.cle: 'fil-adm',
+      },
+    );
+
+    test('la cle distingue deux interlocuteurs sur le meme objet', () {
+      expect(avecEnseignante.cle, isNot(avecAdministration.cle));
+    });
+
+    testWidgets('deux interlocuteurs sur la meme Classe : chaque ligne '
+        'ouvre son propre fil', (WidgetTester tester) async {
+      final FauxMessagesMetier port = deuxSurLaClasse();
+      final GoRouter routeur = await _monter(tester, port: port);
+      await tester.tap(find.text(t.com.messages.entree.ecrireAdministration));
+      await tester.pumpAndSettle();
+      expect(cheminCourant(routeur), Routes.enseignantFilPour('fil-adm'));
+
+      routeur.go('${Routes.enseignantGroupe}/$_classe');
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.text(t.com.messages.entree.ecrireA(nom: 'Mme Mariam')),
+      );
+      await tester.pumpAndSettle();
+      expect(cheminCourant(routeur), Routes.enseignantFilPour('fil-ens'));
+      expect(port.conversationsDemandees, <String>[
+        avecAdministration.cle,
+        avecEnseignante.cle,
+      ]);
+    });
+
+    testWidgets('« Ouverture de la conversation » ne se pose que sur la '
+        'ligne touchee ; les autres ne se pressent plus pendant l ouverture', (
+      WidgetTester tester,
+    ) async {
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      final FauxMessagesMetier port = deuxSurLaClasse()
+        ..attenteOuverture = Completer<void>();
+      final GoRouter routeur = await _monter(tester, port: port);
+      await tester.tap(find.text(t.com.messages.entree.ecrireAdministration));
+      await tester.pump();
+      expect(
+        _dansGroupe(find.text(t.com.messages.entree.ouverture)),
+        findsOneWidget,
+      );
+      // Le groupe est occupe : la ligne de l'enseignante n'offre plus
+      // d'action au lecteur d'ecran, et un second toucher ne demande rien.
+      final Finder autre = find.text(
+        t.com.messages.entree.ecrireA(nom: 'Mme Mariam'),
+      );
+      expect(
+        tester
+            .getSemantics(autre)
+            .getSemanticsData()
+            .hasAction(SemanticsAction.tap),
+        isFalse,
+      );
+      await tester.tap(autre, warnIfMissed: false);
+      await tester.pump();
+      expect(port.conversationsDemandees, hasLength(1));
+
+      port.attenteOuverture!.complete();
+      await tester.pumpAndSettle();
+      expect(cheminCourant(routeur), Routes.enseignantFilPour('fil-adm'));
+      semantique.dispose();
+    });
+
+    test('demonstration : ouvrirConversation rend le fil de la paire, jamais '
+        'celui d un autre interlocuteur sur le meme objet', () async {
+      final MessagesMetierDemo port = portDemo(
+        RoleDemoCommunications.enseignant,
+      );
+      final ObjetLie anNour = ObjetLie(
+        type: TypeObjetLie.classe,
+        id: 'classe-an-nour',
+        libelle: 'Classe An-Nour',
+      );
+      // Le fil de la Classe avec l'Administration existe (« fil-affectation »).
+      final FilMetier? administration = await port.ouvrirConversation(
+        ConversationPossible(
+          interlocuteur: const Participant(
+            id: 'p-direction',
+            nomAffiche: 'Administration',
+          ),
+          nature: NatureInterlocuteur.administration,
+          objet: anNour,
+        ),
+      );
+      expect(
+        administration?.interlocuteurs.map((Participant p) => p.id),
+        contains('p-direction'),
+      );
+      // Une autre personne sur la meme Classe, sans paire autorisee : aucun
+      // fil, et surtout pas celui de l'Administration.
+      expect(
+        await port.ouvrirConversation(
+          ConversationPossible(
+            interlocuteur: const Participant(id: 'p-karim', nomAffiche: 'K'),
+            nature: NatureInterlocuteur.famille,
+            objet: anNour,
+          ),
+        ),
+        isNull,
+      );
+    });
+  });
+
+  group('Revue COM-MSG-2 : accessibilite de l entree (spec section 24, '
+      'etat 14 de la section 25)', () {
+    testWidgets('une ligne est un bouton, lue avec son interlocuteur et '
+        'ses non-lus', (WidgetTester tester) async {
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      await _monter(tester, port: _port());
+      final SemanticsNode ligne = tester.getSemantics(
+        find.text('Parent 1, Parent de Eleve 1'),
+      );
+      expect(ligne.flagsCollection.isButton, isTrue);
+      final String lu = _texteLu(ligne);
+      expect(lu, contains(t.com.messages.entree.ecrireFamille));
+      expect(lu, contains('Parent 1, Parent de Eleve 1'));
+      expect(
+        lu,
+        contains(
+          BadgeNonLu.phraseSemantique(const IndicateurAttention(nonLus: 3)),
+        ),
+      );
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      semantique.dispose();
+    });
+
+    testWidgets('l ouverture est annoncee sur la ligne touchee', (
+      WidgetTester tester,
+    ) async {
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      final FauxMessagesMetier port = _port(
+        filsParObjet: <String, String>{
+          cleObjet(TypeObjetLie.eleve, 'e2'): 'fil-1',
+        },
+      )..attenteOuverture = Completer<void>();
+      await _monter(tester, port: port);
+      await tester.tap(find.text('Parent 2, Parent de Eleve 2'));
+      await tester.pump();
+      expect(
+        _texteLu(
+          tester.getSemantics(find.text(t.com.messages.entree.ouverture)),
+        ),
+        contains(t.com.messages.entree.ouverture),
+      );
+      port.attenteOuverture!.complete();
+      await tester.pumpAndSettle();
+      semantique.dispose();
+    });
+
+    testWidgets('clavier : Tab jusqu a la ligne, Entree ouvre le fil', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monter(tester, port: _port());
+      final Finder cible = find.text('Parent 1, Parent de Eleve 1');
+      for (int i = 0; i < 10 && !_aLeFocus(tester, cible); i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+      }
+      expect(_aLeFocus(tester, cible), isTrue);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(cheminCourant(routeur), Routes.enseignantFilPour('fil-1'));
+    });
+
+    testWidgets('clavier : apres un echec, Tab atteint « Reessayer », '
+        'Entree rouvre la conversation', (WidgetTester tester) async {
+      final FauxMessagesMetier port = _port(
+        filsParObjet: <String, String>{
+          cleObjet(TypeObjetLie.eleve, 'e2'): 'fil-1',
+        },
+      )..erreurFilPourObjet = Exception('reseau');
+      final GoRouter routeur = await _monter(tester, port: port);
+      await tester.tap(find.text('Parent 2, Parent de Eleve 2'));
+      await tester.pumpAndSettle();
+      port.erreurFilPourObjet = null;
+      final Finder reessayer = find.descendant(
+        of: find.byKey(EntreeMessagesContexte.cleEchec),
+        matching: find.text(t.commun.etats.actions.reessayer),
+      );
+      for (int i = 0; i < 12 && !_aLeFocus(tester, reessayer); i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+      }
+      expect(_aLeFocus(tester, reessayer), isTrue);
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(cheminCourant(routeur), Routes.enseignantFilPour('fil-1'));
+    });
+  });
+}
+
+/// Tout ce que le lecteur d'ecran lit du noeud [n] et de ses descendants.
+String _texteLu(SemanticsNode n) {
+  final List<String> morceaux = <String>[
+    if (n.label.isNotEmpty) n.label,
+    if (n.value.isNotEmpty) n.value,
+  ];
+  n.visitChildren((SemanticsNode enfant) {
+    morceaux.add(_texteLu(enfant));
+    return true;
+  });
+  return morceaux.join('\n');
+}
+
+/// Vrai si la zone de focus la plus proche de [cible] (la ligne, le bouton)
+/// a le focus.
+bool _aLeFocus(WidgetTester tester, Finder cible) {
+  if (cible.evaluate().isEmpty) return false;
+  return Focus.of(tester.element(cible.first)).hasPrimaryFocus;
 }
