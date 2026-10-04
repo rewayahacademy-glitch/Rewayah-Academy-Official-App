@@ -237,12 +237,16 @@ Accord avec `BENTO_RECENSEMENT.md:28` (« Prochaine séance grande, […] Ma jou
 | 1 | Prochaine séance. « Rejoindre » est son bouton, primaire et seul, **quand l'entrée est possible** (tâche immédiate, D5, exception D4 (b)) ; sinon la tuile n'a pas de bouton plein | grande 2×2 / 2×2 | `/salle` (`routes.dart:495`) |
 | 2 | Avant le prochain cours, s'il y en a | grande 2×2 / 2×2 | Ma classe adulte : route réelle absente (voir à faire) |
 | 3 | Mon parcours : **une ligne**, pas une tuile de chiffres (K-42 point 4) | large 2×1 / 4×1 | — |
-| 4 | Dernières séances (3) | grande 2×2 / 2×2 | aucune page d'historique adulte : pas de « Voir tout » tant qu'elle n'existe pas |
+| 4 | Dernières séances (3 + « Voir tout ») | grande 2×2 / 2×2 | `/eleve/adulte/seances` (DASH-EA-PROD ; sans source avant BR-1 : « indisponible ») |
 | 5 | Ressources (3 + « Voir tout ») | grande 2×2 / 2×2 | `/tc/bibliotheque` (`routes.dart:567`) |
 
 **Fait (BENTO-3)** : `GrilleBento` en hauteur de contenu selon le tableau ci-dessus (l.364-424). Deux grandes tuiles ne partagent leur bande que si chaque moitié offre 360 px × échelle du texte (`largeurMinCarteClasse`, règle BENTO-2b de l'accueil famille, seuil sans source) ; sans « Avant le prochain cours », la Prochaine séance prend toute sa bande (ordre D2) ; avec 2 tuiles ou moins (séance et ressources seules), une colonne sans Bento (D14).
 
-**À faire** : l'écran n'a « aucune source serveur à ce jour » (l.110-118, EA-BR-04) et n'est monté que par la démonstration (`lib/features/demo/demo_adulte_page.dart:590`). Pas de route `/adulte` dans `routes.dart`. Ligne DASH-EA-PROD.
+**Fait (DASH-EA-PROD, 04/10/2026)** : route réelle `/eleve/adulte` dans la branche Accueil de la coquille élève (`routes_accueil_adulte.dart`), atteinte depuis `/eleve` quand la capacité `capaciteAccueilAdulteProvider` est servie (lecture `accueil_eleve_adulte` rendue au compte élève), jamais d'après le rôle ; « Voir tout » des dernières séances vers `/eleve/adulte/seances` (`historique_seances_adulte_page.dart`) ; squelette en grille Bento (m6 de BENTO-3-R) ; pas de cloche sans destination (D9). Captures : `docs/current/captures/DASH-EA-PROD/`.
+
+**Fait (DASH-EA-PROD-b, 04/10/2026, revue DASH-EA-PROD-R)** : test du réveil du routeur quand la capacité arrive après la première navigation (vrai parcours de connexion) ; capacité fausse après une relecture en échec, même après une première lecture réussie (`hasValue && !hasError`) ; « Voir tout » des dernières séances placé comme celui des ressources (sur la ligne du titre au bord de fin, sous le titre à grande taille de texte, `EnteteVoirTout`) ; hauteurs du squelette composées des jetons (`AppSpacing`, `AppPage.hauteurReglage`) ; besoins serveur inscrits au registre §5 bis.
+
+**Reste** : sources serveur (avant BR-1, ports neutres « indisponible ») : EA-BR-04 (accueil), DASH-BR-01 (historique complet, prolongement d'EA-BR-06) et DASH-BR-02 (capacité « accueil adulte » rendue avec la session, pour éviter d'afficher un instant l'accueil élève avant la redirection), registre §5 bis. Le titre « Ressources de la classe » de `BlocBibliotheque` se réduit en bloc (`FittedBox`) à 320 px et texte ×2 : composant partagé par quatre écrans, à traiter dans une étape dédiée (revue DASH-EA-PROD-R, défaut 4).
 
 « Mon espace » adulte (`mon_espace_adulte_page.dart:119`) est une page de compte (identité, rubriques), pas un tableau de bord : hors DASH.
 
@@ -279,10 +283,20 @@ Aucune ne bloque. Chaque recommandation est appliquée dans ce document.
 | DASH-TUT-BENTO | Accueil famille en `GrilleBento` selon §3.4 | `accueil_famille_page.dart:293-353` |
 | DASH-ENS-BENTO | Aujourd'hui en `GrilleBento` selon §3.5 | `journee_page.dart:336-409` |
 | DASH-ENS-ROUTE | Donner une route à la liste complète « À terminer » | `journee_page.dart:908-912` |
-| DASH-EA-PROD | Accueil adulte : route réelle et source serveur (EA-BR-04) ; historique adulte pour « Voir tout » des dernières séances | `accueil_adulte_page.dart:110-118` |
+| DASH-EA-PROD | Accueil adulte : route réelle et historique faits (04/10/2026, §3.7) ; **reste** la source serveur (EA-BR-04, DASH-BR-01, DASH-BR-02, §5 bis) | `routes_accueil_adulte.dart`, `historique_seances_adulte_page.dart` |
+| DASH-BIB-TITRE | Titre de `BlocBibliotheque` réduit en bloc à 320 px et texte ×2 (« Ressources de la classe ») : passer à la ligne entre les mots (`TexteSansCoupure`) sur les quatre écrans qui l'emploient | `tc_espace_groupe/emplacements_groupe.dart:155-160` |
 | DASH-LIB | Déclarer les libellés de l'annexe B dans `tool/libelles_sources.json` après accord | annexe B |
 
 Aucun branchement serveur (avant BR-1). Le seul besoin serveur cité (compteur des dossiers qui inclut les tuteurs) est déjà la ligne BR-1.c.
+
+### 5 bis. Registre des besoins serveur DASH
+
+Le registre des besoins de l'élève adulte, `16_eleves_adultes/EA-BR.md`, n'existe que sur la branche `pilotage/tuteur-v1`, hors de la lignée de cette branche. Les besoins nés des lots DASH y sont donc inscrits ici, sous une référence propre (pas de numéro EA-BR inventé qui heurterait la suite de ce registre), **à reporter dans `EA-BR.md` à la réunion des branches**. Rien n'est branché avant BR-1 (K-28) ; chaque ligne suit le doc §17 : idempotence, audit, tests d'accès horizontal, revue sécurité séparée.
+
+| Réf. | Étape | Besoin | Aujourd'hui |
+|---|---|---|---|
+| DASH-BR-01 | DASH-EA-PROD | Historique complet des séances passées de la Classe de l'élève adulte, prolongement d'EA-BR-06 : pour le compte connecté seulement, chaque séance passée (les plus récentes d'abord), sa date déjà rendue, sa plage horaire, l'absence de l'élève seule (aucune donnée de présence d'un autre élève) ; tests d'accès horizontal (un élève ne lit que sa propre Classe). | `historiqueSeancesAdulteProvider` rend `CapaciteIndisponible` (« indisponible ») ; la démonstration le surcharge (`DonneesAdulteDemo.historiqueSeances()`). |
+| DASH-BR-02 | DASH-EA-PROD | Capacité « accueil de l'élève adulte » rendue avec la session (ou le profil), pour que `/eleve` s'ouvre directement sur `/eleve/adulte` sans afficher un instant l'accueil de l'élève, et pour qu'elle ne dépende plus du succès de la lecture d'EA-BR-04 ; jamais déduite du rôle côté client. | `capaciteAccueilAdulteProvider` déduite de la lecture d'`accueil_eleve_adulte` (vraie seulement quand elle réussit, fausse après une relecture en échec) ; le routeur se réveille quand elle change. |
 
 ---
 
@@ -433,7 +447,7 @@ Composition       une colonne bornée à 640 ; pas de Bento
 CODE              EA-ACCUEIL
 Nom               Accueil élève adulte
 Rôle              Élève adulte
-Route             démonstration seulement (/demo/adulte) ; DASH-EA-PROD
+Route             /eleve/adulte (capacité) ; démonstration /demo/adulte
 Question          Quand est ma prochaine séance, et que dois-je préparer ?
 Priorités         P0  Prochaine séance            grande
                   P1  Avant le prochain cours      grande

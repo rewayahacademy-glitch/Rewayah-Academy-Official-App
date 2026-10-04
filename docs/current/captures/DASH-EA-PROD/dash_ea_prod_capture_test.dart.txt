@@ -1,0 +1,143 @@
+// DASH-EA-PROD : captures de l'Accueil de l'eleve adulte sur sa route reelle
+// (`/eleve/adulte`, vrai routeur, session d'eleve) et de l'historique de ses
+// seances (`/eleve/adulte/seances`), dans chaque etat : contenu, vide,
+// erreur, hors ligne, indisponible (production, sans source), chargement,
+// historique. 320 px texte x2, 390 clair et sombre, 1440.
+// Saute sans CAPTURE_DIR (voir LISEZ-MOI.md). A copier dans test/capture/.
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
+import 'package:rewayah_academy/features/demo/adulte_demo.dart';
+
+import '../features/accueil_adulte/support_accueil_adulte_route.dart';
+import 'outil_capture.dart';
+
+void main() {
+  group('Capture : DASH-EA-PROD', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    // nom : (adresse, doubles, hauteur 320 x2, hauteur 390, hauteur 1440)
+    final Map<String, (String, List<Override>, double, double, double)> etats =
+        <String, (String, List<Override>, double, double, double)>{
+          'contenu': (
+            Routes.eleve,
+            surchargesAccueilAdulte(accueil: Valeur(accueilDemo())),
+            5400,
+            2700,
+            1500,
+          ),
+          'vide': (
+            Routes.eleve,
+            surchargesAccueilAdulte(
+              accueil: const Valeur(AccueilAdulteVM(prenom: 'Mamadou')),
+            ),
+            1400,
+            900,
+            900,
+          ),
+          'erreur': (
+            Routes.eleveAdulte,
+            surchargesAccueilAdulte(accueil: const Echec<AccueilAdulteVM>()),
+            1400,
+            900,
+            900,
+          ),
+          'horsligne': (
+            Routes.eleveAdulte,
+            surchargesAccueilAdulte(
+              accueil: const Echec<AccueilAdulteVM>(),
+              horsLigne: true,
+            ),
+            1400,
+            900,
+            900,
+          ),
+          'indisponible': (
+            Routes.eleveAdulte,
+            surchargesAccueilAdulte(),
+            1400,
+            900,
+            900,
+          ),
+          'chargement': (
+            Routes.eleveAdulte,
+            surchargesAccueilAdulte(accueil: const Attente<AccueilAdulteVM>()),
+            3000,
+            1800,
+            1000,
+          ),
+          'historique': (
+            Routes.eleveAdulteSeances,
+            surchargesAccueilAdulte(
+              historique: Valeur(DonneesAdulteDemo.historiqueSeances()),
+            ),
+            2600,
+            1300,
+            1000,
+          ),
+          'historique_vide': (
+            Routes.eleveAdulteSeances,
+            surchargesAccueilAdulte(
+              historique: const Valeur(<SeancePasseeAdulte>[]),
+            ),
+            1400,
+            900,
+            900,
+          ),
+          'historique_erreur': (
+            Routes.eleveAdulteSeances,
+            surchargesAccueilAdulte(
+              historique: const Echec<List<SeancePasseeAdulte>>(),
+            ),
+            1400,
+            900,
+            900,
+          ),
+          'historique_indisponible': (
+            Routes.eleveAdulteSeances,
+            surchargesAccueilAdulte(),
+            1400,
+            900,
+            900,
+          ),
+        };
+
+    for (final MapEntry<
+          String,
+          (String, List<Override>, double, double, double)
+        >
+        etat
+        in etats.entries) {
+      final (
+        String adresse,
+        List<Override> doubles,
+        double h320,
+        double h390,
+        double h1440,
+      ) = etat.value;
+      for (final (String nom, Size vue, double echelle, ThemeMode mode)
+          in <(String, Size, double, ThemeMode)>[
+            ('320x2_clair', Size(320, h320), 2, ThemeMode.light),
+            ('390_clair', Size(390, h390), 1, ThemeMode.light),
+            ('390_sombre', Size(390, h390), 1, ThemeMode.dark),
+            ('1440_clair', Size(1440, h1440), 1, ThemeMode.light),
+          ]) {
+        testWidgets('${etat.key} $nom', (WidgetTester tester) async {
+          await monterAccueilAdulteReel(
+            tester,
+            taille: vue,
+            echelle: echelle,
+            theme: mode,
+            surcharges: doubles,
+            depart: adresse,
+          );
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, '${etat.key}_$nom')}');
+        });
+      }
+    }
+  });
+}

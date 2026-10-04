@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/_dev/galerie/compte_galerie.dart';
 import '../../features/_dev/galerie/galerie_page.dart';
+import '../../features/accueil_adulte/accueil_adulte_page.dart'
+    show capaciteAccueilAdulteProvider;
+import '../../features/accueil_adulte/routes_accueil_adulte.dart';
 import '../../features/accueil_eleve/accueil_eleve_selon_presentation.dart';
 import '../../features/accueil_famille/accueil_famille_page.dart';
 import '../../features/admin_acces_agents/acces_agents_page.dart';
@@ -139,6 +142,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
     rafraichisseur.declencher();
   });
   ref.onDispose(rafraichisseur.dispose);
+
+  // --- DASH-EA-PROD : capacite « accueil adulte » ---------------------------
+  // La redirection de `/eleve` vers l'Accueil adulte depend d'une capacite
+  // lue apres la session : le routeur se reveille quand elle change.
+  ref.listen<bool>(capaciteAccueilAdulteProvider, (bool? _, bool _) {
+    rafraichisseur.declencher();
+  });
+  // --- fin du bloc DASH-EA-PROD ---------------------------------------------
 
   // Lu une fois, a la construction du routeur : un role ne change pas sans
   // reconnexion, qui recree ce provider. `routesTcA` n'en a besoin que pour
@@ -322,11 +333,23 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             routes: <GoRoute>[
               GoRoute(
                 path: Routes.eleve,
-                // DASH-MA-PROD : l'Accueil du Mode Accessibilite quand la
-                // presentation de l'eleve l'est, `ELV-02` sinon.
+                // DASH-EA-PROD : l'Accueil adulte quand la capacite est
+                // servie, jamais d'apres le role.
+                redirect: (BuildContext _, GoRouterState _) =>
+                    redirectionAccueilEleve(
+                      capaciteAccueilAdulte: ref.read(
+                        capaciteAccueilAdulteProvider,
+                      ),
+                    ),
+                // DASH-MA-PROD : sinon, l'Accueil du Mode Accessibilite quand
+                // la presentation de l'eleve l'est, `ELV-02` sinon.
                 builder: (BuildContext _, GoRouterState _) =>
                     const AccueilEleveSelonPresentation(),
               ),
+              // --- DASH-EA-PROD : Accueil adulte et historique -------------
+              // Dans la branche Accueil : la destination reste allumee.
+              ...routesAccueilAdulte(),
+              // --- fin du bloc DASH-EA-PROD --------------------------------
             ],
           ),
           StatefulShellBranch(

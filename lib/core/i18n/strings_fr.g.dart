@@ -2373,6 +2373,7 @@ class Traductions$adulte$fr {
 	// Translations
 	late final Traductions$adulte$nav$fr nav = Traductions$adulte$nav$fr.internal(_root);
 	late final Traductions$adulte$accueil$fr accueil = Traductions$adulte$accueil$fr.internal(_root);
+	late final Traductions$adulte$historique$fr historique = Traductions$adulte$historique$fr.internal(_root);
 	late final Traductions$adulte$maClasse$fr maClasse = Traductions$adulte$maClasse$fr.internal(_root);
 	late final Traductions$adulte$monEspace$fr monEspace = Traductions$adulte$monEspace$fr.internal(_root);
 	late final Traductions$adulte$provisoire$fr provisoire = Traductions$adulte$provisoire$fr.internal(_root);
@@ -10317,6 +10318,30 @@ class Traductions$adulte$accueil$fr {
 
 	/// fr: 'Votre prochaine séance s'affichera ici dès que votre classe sera ouverte.'
 	String get aucuneClasseDetail => 'Votre prochaine séance s\'affichera ici dès que votre classe sera ouverte.';
+
+	/// fr: 'Votre prochaine séance et vos dernières séances n'ont pas pu être chargées : le serveur n'a pas répondu. Réessayez dans un instant.'
+	String get echec => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées : le serveur n\'a pas répondu. Réessayez dans un instant.';
+}
+
+// Path: adulte.historique
+class Traductions$adulte$historique$fr {
+	Traductions$adulte$historique$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mes séances passées'
+	String get titre => 'Mes séances passées';
+
+	/// fr: 'Vos séances passées n'ont pas pu être chargées : le serveur n'a pas répondu. Réessayez dans un instant.'
+	String get echec => 'Vos séances passées n\'ont pas pu être chargées : le serveur n\'a pas répondu. Réessayez dans un instant.';
+
+	/// fr: 'Aucune séance passée pour le moment.'
+	String get vide => 'Aucune séance passée pour le moment.';
+
+	/// fr: 'Vos séances s'afficheront ici après votre premier cours.'
+	String get videDetail => 'Vos séances s\'afficheront ici après votre premier cours.';
 }
 
 // Path: adulte.maClasse
@@ -19045,6 +19070,11 @@ extension on Traductions {
 			'adulte.accueil.absence' => 'Absence',
 			'adulte.accueil.aucuneClasse' => 'Aucune classe pour le moment.',
 			'adulte.accueil.aucuneClasseDetail' => 'Votre prochaine séance s\'affichera ici dès que votre classe sera ouverte.',
+			'adulte.accueil.echec' => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées : le serveur n\'a pas répondu. Réessayez dans un instant.',
+			'adulte.historique.titre' => 'Mes séances passées',
+			'adulte.historique.echec' => 'Vos séances passées n\'ont pas pu être chargées : le serveur n\'a pas répondu. Réessayez dans un instant.',
+			'adulte.historique.vide' => 'Aucune séance passée pour le moment.',
+			'adulte.historique.videDetail' => 'Vos séances s\'afficheront ici après votre premier cours.',
 			'adulte.maClasse.aPropos' => 'À propos de cette classe',
 			'adulte.maClasse.participants' => 'Participants',
 			'adulte.maClasse.vous' => ({required Object prenom}) => '${prenom} (vous)',

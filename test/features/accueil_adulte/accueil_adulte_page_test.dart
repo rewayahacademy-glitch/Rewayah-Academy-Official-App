@@ -329,7 +329,9 @@ void main() {
     expect(find.byWidgetPredicate(estHorsLigne), findsNothing);
   });
 
-  testWidgets('chargement : le squelette de la carte de seance', (
+  // DASH-EA-PROD (revue BENTO-3-R m6) : le squelette a la forme de la
+  // grille Bento, plus l'ancienne pile en colonnes.
+  testWidgets('chargement : le squelette en grille Bento', (
     WidgetTester tester,
   ) async {
     final Completer<AccueilAdulteVM> jamais = Completer<AccueilAdulteVM>();
@@ -338,11 +340,19 @@ void main() {
         overrides: <Override>[
           accueilAdulteProvider.overrideWith((Ref _) => jamais.future),
         ],
-        child: const AccueilAdultePage(),
+        child: AccueilAdultePage(onNotifications: () {}),
       ),
     );
     await tester.pump(const Duration(milliseconds: 250));
-    expect(find.byType(SqueletteCarteSession), findsOneWidget);
+    expect(find.byType(SqueletteAccueilAdulte), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(SqueletteAccueilAdulte),
+        matching: find.byType(GrilleBento),
+      ),
+      findsOneWidget,
+    );
+    expect(find.byType(SqueletteCarteSession), findsNothing);
     // L'en-tete garde sa place : la cloche est deja posee.
     expect(find.byType(ClocheNotifications), findsOneWidget);
     expect(find.byType(CarteSession), findsNothing);

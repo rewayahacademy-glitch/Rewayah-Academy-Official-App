@@ -240,7 +240,12 @@ class LecteurGroupe extends ConsumerWidget {
     required this.construire,
     super.key,
     this.role = RoleEspaceGroupe.eleve,
+    this.squelette = const SqueletteGroupe(),
   });
+
+  /// La forme du chargement : celle de l'ecran qui lit le groupe (l'Accueil
+  /// adulte garde sa grille Bento, DASH-EA-PROD).
+  final Widget squelette;
 
   /// Le groupe a lire.
   final String groupeId;
@@ -267,7 +272,7 @@ class LecteurGroupe extends ConsumerWidget {
     }
 
     if (!lecture.hasValue) {
-      return const SqueletteGroupe();
+      return squelette;
     }
 
     final GroupSummaryVM? trouve = lecture.requireValue;

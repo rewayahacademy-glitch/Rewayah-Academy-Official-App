@@ -247,6 +247,36 @@ abstract final class DonneesAdulteDemo {
       ),
   ];
 
+  /// L'historique des seances passees (DASH-EA-PROD, « Voir tout » de
+  /// l'Accueil) : les trois dernieres seances, puis les lundis d'aout de la
+  /// meme Classe. Une seule absence, comme dans les dernieres.
+  static List<SeancePasseeAdulte> historiqueSeances() => <SeancePasseeAdulte>[
+    ...dernieresSeances(),
+    for (final (int i, (int jour, String date)) in <(int, String)>[
+      (31, 'Lundi 31 août'),
+      (24, 'Lundi 24 août'),
+      (17, 'Lundi 17 août'),
+      (10, 'Lundi 10 août'),
+    ].indexed)
+      SeancePasseeAdulte(
+        dateRendue: date,
+        seance: Seance(
+          id: 'demo-seance-historique-$i',
+          debut: DateTime(2026, 8, jour, 18),
+          fin: DateTime(2026, 8, jour, 18, 45),
+          statut: null,
+          eleveId: '',
+          elevePrenom: DonneesClasseDemo.classe,
+          eleveIdentifiant: LibellesGroupe.enseignantNomme(
+            DonneesClasseDemo.enseignant,
+          ),
+          enseignantId: DonneesClasseDemo.enseignant.enseignantId,
+          enseignantPrenom: DonneesClasseDemo.enseignant.nomAffichage,
+          enseignantIdentifiant: '',
+        ),
+      ),
+  ];
+
   /// L'accueil de la personne qui regarde, ou `null` quand la demonstration
   /// n'a pas sa Classe.
   ///

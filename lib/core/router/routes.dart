@@ -89,6 +89,23 @@ abstract final class Routes {
   /// role s'y applique sans rien ajouter.
   static const String eleveAide = '/eleve/aide';
 
+  // --- DASH-EA-PROD : Accueil de l'eleve adulte (bloc propre a l'etape) ----
+  //
+  // Sous le prefixe `/eleve` : l'eleve adulte est un compte eleve
+  // (`AppRole.student`), la garde de role l'y laisse donc entrer. Atteint
+  // par `/eleve` quand la capacite « accueil adulte » est servie
+  // (`capaciteAccueilAdulteProvider`), jamais d'apres le role. Sans source
+  // serveur avant BR-1 (EA-BR-04) : la page dit « indisponible ».
+
+  /// L'Accueil de l'eleve adulte (EA-2, DASH_STRATEGIE.md §3.7).
+  static const String eleveAdulte = '/eleve/adulte';
+
+  /// L'historique de ses seances passees, « Voir tout » des dernieres
+  /// seances de l'Accueil adulte (D6).
+  static const String eleveAdulteSeances = '/eleve/adulte/seances';
+
+  // --- fin du bloc DASH-EA-PROD ---------------------------------------------
+
   // --- Tuteur -------------------------------------------------------------
 
   /// Accueil famille : l'etat en direct de chaque enfant.
