@@ -7,10 +7,10 @@ Poste A, 27/09/2026. Branche `ui/admin-v1`, de `2fac423` à `a8dfcb3`. Aucun pus
 | Constat | Commit | Ce qui change |
 |---|---|---|
 | M5 (partie CL-4) | `739f478` | Fusion de `d44710a` (CL-4 et CL-4.RC). 5 conflits résolus en gardant les deux API, avec des valeurs neutres par défaut. slang régénéré. L'icône `reduire` était définie deux fois : la version admin s'appelle maintenant `AppIcons.moins` (`visionneuse_piece.dart`). |
-| M1 (+ n2) | `dcd85ce` | Comptes : un tuteur `pending_kyc` n'est plus compté dans « attendent une décision ». Sa colonne Pièce affiche « Sans objet ». L'intro parle des enseignants. Fixture GUARDIAN-SR-000002 passée à `aucune`. Deux tests ajoutés. |
-| M3 (partie sans arbitrage, = m2) | `23d39a5` | `decider()` refuse lui-même la validation en production (`CapaciteIndisponible('AD-BR-02')`) avant tout appel RPC. Un test prouve qu'aucun appel ne part. Le refus et l'aperçu des pièces restent inchangés, en attente du directeur. |
-| M4 | `746fb94` | `PageShell` garde l'état du corps d'une structure à l'autre (rotation, redimensionnement, texte à 200 %). Le nouveau test `page_shell_etat_test.dart` échoue sur le code d'avant (0 sur 3) et passe après. |
-| M2 | pilotage `a73ace1` | `planche.json` à jour : commit `2fac423`, écrans 15 et 16 (tuteur), captures `ad10_1_famille_dispensee_*` marquées périmées K-47. Chaque chemin est vérifié avec Test-Path. |
+| M1 (+ n2) | `c1d33d8` | Comptes : un tuteur `pending_kyc` n'est plus compté dans « attendent une décision ». Sa colonne Pièce affiche « Sans objet ». L'intro parle des enseignants. Fixture GUARDIAN-SR-000002 passée à `aucune`. Deux tests ajoutés. |
+| M3 (partie sans arbitrage, = m2) | `f242c06` | `decider()` refuse lui-même la validation en production (`CapaciteIndisponible('AD-BR-02')`) avant tout appel RPC. Un test prouve qu'aucun appel ne part. Le refus et l'aperçu des pièces restent inchangés, en attente du directeur. |
+| M4 | `a8dfcb3` | `PageShell` garde l'état du corps d'une structure à l'autre (rotation, redimensionnement, texte à 200 %). Le nouveau test `page_shell_etat_test.dart` échoue sur le code d'avant (0 sur 3) et passe après. |
+| M2 | `d5fdd94` | `planche.json` à jour : commit `2fac423`, écrans 15 et 16 (tuteur), captures `ad10_1_famille_dispensee_*` marquées périmées K-47. Chaque chemin est vérifié avec Test-Path. |
 | Intégration | `a8dfcb3` | Cherry-pick de M1, M3 et M4 sur la fusion. |
 
 Chaque correctif a été relu par un agent qui ne l'avait pas écrit. Les trois relectures l'ont accepté, sans défaut bloquant.
