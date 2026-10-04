@@ -77,6 +77,7 @@ import '../../../core/widgets/status_pill.dart';
 import '../../../core/widgets/timeline_row.dart';
 import '../../admin_tableau/tuiles_compteur.dart';
 import '../../disponibilites/grille_semaine.dart';
+import '../../enseignant_classes/mes_classes_page.dart' show MarquesClasse;
 import 'entrees_etats_tuteur.dart';
 
 /// Les familles d'etats obligatoires.
@@ -2440,6 +2441,24 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
               icone: AppIcons.foyer,
               libelle: 'Membres du foyer',
               valeur: '3',
+            ),
+          ],
+        ),
+      ),
+      // Revue COUPE-MOTS-1-R (m7, CORR-SUITE-2) : la ligne de Mes Classes
+      // avec sa marque la plus longue et la pastille « Remplacement », par le
+      // composant reel ; la marque passe sous la legende et a la ligne entre
+      // les mots, jamais dans un mot.
+      EtatGalerie(
+        'marque longue et pastille Remplacement',
+        (BuildContext _) => const GroupeReglages(
+          lignes: <LigneRubrique>[
+            LigneRubrique(
+              icone: AppIcons.classes,
+              libelle: 'Al-Badr',
+              legende: 'Niveau 2 · Français · 3 élèves\nMardi à 18:00',
+              onPress: _rien,
+              marque: MarquesClasse(cahierAValider: true, remplacement: true),
             ),
           ],
         ),
