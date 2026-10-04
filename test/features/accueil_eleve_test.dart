@@ -1157,7 +1157,7 @@ void main() {
         ]) {
       testWidgets(
         '${cas.$1.name}, ${cas.$2.toInt()} px, texte x${cas.$3.toInt()}, '
-        '${cas.$4.name} : aucun debordement, aucun mot coupe',
+        '${cas.$4.name} : aucun debordement, aucun mot coupe sur la page',
         (WidgetTester tester) async {
           await monter(
             tester,
@@ -1167,6 +1167,10 @@ void main() {
             sens: cas.$4,
           );
           expect(tester.takeException(), isNull);
+          // TOUTE la page, pas seulement la carte : l'etat vide « Pas de
+          // cours aujourd'hui » coupait « aujourd'hu / i » (ELV-VIDE-COUPE-1).
+          expect(find.text(t.eleve.accueil.aucunCours), findsOneWidget);
+          verifierEcranSansMotCoupe(tester);
           verifierAucunMotCoupe(tester, carte());
           verifierSepares(tester);
         },
