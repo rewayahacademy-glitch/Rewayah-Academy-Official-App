@@ -45,6 +45,8 @@ import 'package:rewayah_academy/features/foyer/place_adulte.dart'
     show paiementsFoyerKey;
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
+import '../../support/harnais.dart' show sansPersonneConnectee;
+
 const String _mamadou = DonneesAdulteDemo.mamadouId;
 const String _mariama = DonneesAdulteDemo.mariamaId;
 const String _aicha = DonneesAdulteDemo.aichaId;
@@ -67,6 +69,7 @@ void main() {
     addTearDown(routeur.dispose);
     await tester.pumpWidget(
       ProviderScope(
+        overrides: <Override>[sansPersonneConnectee()],
         child: TranslationProvider(
           child: MaterialApp.router(
             theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
@@ -627,14 +630,14 @@ void main() {
       expect(etat(tester)?.nature, NatureEtat.horsLigne);
     });
 
-    testWidgets('indisponible : le port reel, la dependance EA-BR-24', (
+    testWidgets('indisponible : le port reel, la dependance FI-BR-06', (
       WidgetTester tester,
     ) async {
       await monter(tester);
       await tester.pumpAndSettle();
       final EtatSysteme? e = etat(tester);
       expect(e?.nature, NatureEtat.indisponible);
-      expect(e?.dependance, 'EA-BR-24');
+      expect(e?.dependance, 'FI-BR-06');
       expect(e?.titre, t.adulte.recharge.indisponibleTitre);
       expect(find.byKey(RechargeFoyerPage.payerKey), findsNothing);
     });
@@ -889,6 +892,7 @@ Widget _page({
   List<Override> overrides = const <Override>[],
 }) => ProviderScope(
   overrides: <Override>[
+    sansPersonneConnectee(),
     horsLigneProvider.overrideWith((Ref _) => horsLigne),
     ...overrides,
   ],

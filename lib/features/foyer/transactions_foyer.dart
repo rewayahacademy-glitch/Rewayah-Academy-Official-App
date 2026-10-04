@@ -17,6 +17,7 @@ import '../../core/finance/mouvements_profil.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/carte_groupee.dart';
@@ -32,11 +33,12 @@ const int nombreDernieresTransactions = 3;
 
 /// Les derniers mouvements du foyer, relus a chaque ouverture du Foyer.
 final FutureProvider<List<MouvementFoyer>> derniersMouvementsFoyerProvider =
-    FutureProvider<List<MouvementFoyer>>(
-      (Ref ref) => ref
+    FutureProvider<List<MouvementFoyer>>((Ref ref) {
+      surveillerPersonneConnectee(ref);
+      return ref
           .watch(portPaiementsFoyerProvider)
-          .derniersMouvements(limite: nombreDernieresTransactions),
-    );
+          .derniersMouvements(limite: nombreDernieresTransactions);
+    });
 
 /// Vrai quand la source des transactions existe : faux en production
 /// (`CapaciteIndisponible`), ou la page garde sa composition sans ce bloc.

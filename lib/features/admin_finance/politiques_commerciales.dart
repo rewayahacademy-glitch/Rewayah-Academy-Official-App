@@ -41,6 +41,7 @@ import '../../core/capacites/port_politiques_commerciales.dart';
 import '../../core/finance/format_montant.dart';
 import '../../core/finance/montant.dart';
 import '../../core/finance/politique_commerciale.dart';
+import '../../core/i18n/jour_du_mois.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -1189,9 +1190,9 @@ String _texteValeur(Object? valeur, _Nature nature) {
   };
 }
 
-/// Une date d'effet en mots : « 1 octobre 2026 ».
+/// Une date d'effet en mots : « 1er octobre 2026 » (R8-05).
 String dateEffetEnTexte(DateTime date) => t.admin.finance.pol.date(
-  jour: '${date.day}',
+  jour: jourDuMois(date.day),
   mois: t.commun.dates.mois[date.month - 1],
   annee: '${date.year}',
 );

@@ -5,9 +5,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/foyer/selection_eleve.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
+import 'package:rewayah_academy/core/widgets/badge_periode_financee.dart';
+import 'package:rewayah_academy/features/admin_finance/politiques_commerciales.dart'
+    show dateEffetEnTexte;
 import 'package:rewayah_academy/features/foyer/ligne_membre.dart';
 
 import '../../fixtures/tuteur/faux_classes_foyer.dart';
@@ -46,6 +50,28 @@ void main() {
         statutAcces(_profil(finAcces: maintenant), maintenant),
         t.foyer.membre.accesExpire(date: '24 septembre 2026'),
       );
+    });
+  });
+
+  group('R8-05 : « 1er » pour le premier du mois', () {
+    test('dateEcheance : « 1er novembre 2026 », puis « 2 novembre 2026 »', () {
+      expect(dateEcheance(DateTime(2026, 11, 1, 12)), '1er novembre 2026');
+      expect(dateEcheance(DateTime(2026, 11, 2, 12)), '2 novembre 2026');
+      expect(dateEcheance(DateTime(2026, 10, 31, 12)), '31 octobre 2026');
+    });
+
+    test('la periode financee et la date d effet suivent la meme regle', () {
+      expect(
+        BadgePeriodeFinancee.phraseDe(
+          PeriodeFinancee(
+            debut: DateTime(2026, 10, 1, 12),
+            fin: DateTime(2026, 12, 1, 12),
+          ),
+        ),
+        t.argent.periode.jusquau(date: '1er décembre 2026'),
+      );
+      expect(dateEffetEnTexte(DateTime(2027)), '1er janvier 2027');
+      expect(dateEffetEnTexte(DateTime(2027, 1, 15)), '15 janvier 2027');
     });
   });
 

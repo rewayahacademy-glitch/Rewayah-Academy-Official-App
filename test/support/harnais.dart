@@ -35,6 +35,7 @@ import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/profil/service_acceptations.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
 import 'package:rewayah_academy/core/suivi/service_suivi.dart';
@@ -61,6 +62,13 @@ Widget hote(
     ),
   ),
 );
+
+/// Un appareil sans personne connectee, pour un ecran monte seul : les
+/// lectures d'argent suivent la personne de la session (revue FI-VAGUE-R
+/// R7-04), et la source reelle lirait Supabase. La session reste « sans
+/// profil » du debut a la fin : aucune relecture parasite.
+Override sansPersonneConnectee() =>
+    sourceSessionProvider.overrideWithValue(FausseSourceSession());
 
 /// L'hote d'un ecran qui navigue.
 ///

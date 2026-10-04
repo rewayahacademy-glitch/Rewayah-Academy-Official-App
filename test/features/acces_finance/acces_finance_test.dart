@@ -219,7 +219,13 @@ Widget _hote(
   TextDirection sens = TextDirection.ltr,
   Brightness luminosite = Brightness.light,
 }) => ProviderScope(
-  overrides: surcharges,
+  overrides: <Override>[
+    // R7-04 : les lectures d'argent suivent la session ; sans source de
+    // session fournie par le test, aucune personne connectee.
+    if (!surcharges.any((Override o) => o.origin == sourceSessionProvider))
+      sansPersonneConnectee(),
+    ...surcharges,
+  ],
   child: TranslationProvider(
     child: MaterialApp(
       theme: AppTheme.pour(InterfaceMode.standard, luminosite),
@@ -1799,7 +1805,10 @@ void main() {
         'ouverture (autoDispose)', () async {
       final _MesFinancesComptees port = _MesFinancesComptees();
       final ProviderContainer conteneur = ProviderContainer(
-        overrides: <Override>[portMesFinancesProvider.overrideWithValue(port)],
+        overrides: <Override>[
+          sansPersonneConnectee(),
+          portMesFinancesProvider.overrideWithValue(port),
+        ],
       );
       addTearDown(conteneur.dispose);
       for (int ouverture = 1; ouverture <= 2; ouverture++) {

@@ -696,7 +696,7 @@ void main() {
     await _monter(tester, avecFinances: false);
     final EtatSysteme e = tester.widget<EtatSysteme>(find.byType(EtatSysteme));
     expect(e.nature, NatureEtat.indisponible);
-    expect(e.dependance, 'EA-BR-24');
+    expect(e.dependance, 'FI-BR-06');
     expect(find.byKey(RechargeFoyerPage.payerKey), findsNothing);
     expect(find.byType(LigneMoyenPaiement), findsNothing);
   });

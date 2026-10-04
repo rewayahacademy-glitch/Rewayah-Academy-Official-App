@@ -15,6 +15,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../finance/finances_profil.dart';
 import '../finance/mouvements_profil.dart';
+import '../session/session_controleur.dart';
 import 'capacite_indisponible.dart';
 
 /// Les finances de la personne connectee, eleve adulte autonome.
@@ -53,13 +54,15 @@ final Provider<PortMesFinances> portMesFinancesProvider =
 /// liberee des que plus aucun ecran ne la regarde (revue FI-VAGUE-R R4-05),
 /// et un retour de recharge relit donc le solde au lieu de montrer l'ancien.
 final FutureProvider<FinancesProfil?> mesFinancesProvider =
-    FutureProvider.autoDispose<FinancesProfil?>(
-      (Ref ref) => ref.watch(portMesFinancesProvider).finances(),
-    );
+    FutureProvider.autoDispose<FinancesProfil?>((Ref ref) {
+      surveillerPersonneConnectee(ref);
+      return ref.watch(portMesFinancesProvider).finances();
+    });
 
 /// Mes mouvements, relus a chaque ouverture (`autoDispose`, comme
 /// [mesFinancesProvider]).
 final FutureProvider<List<MouvementProfil>> mesMouvementsProvider =
-    FutureProvider.autoDispose<List<MouvementProfil>>(
-      (Ref ref) => ref.watch(portMesFinancesProvider).mouvements(),
-    );
+    FutureProvider.autoDispose<List<MouvementProfil>>((Ref ref) {
+      surveillerPersonneConnectee(ref);
+      return ref.watch(portMesFinancesProvider).mouvements();
+    });

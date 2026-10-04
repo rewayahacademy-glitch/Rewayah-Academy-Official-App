@@ -847,7 +847,7 @@ void main() {
       await monterAcces(tester, DateTime(2026, 9, 1, 12));
       expect(pastille(tester), t.ficheEleve.acces.pastilleExpire);
       expect(
-        find.text(t.ficheEleve.acces.expireDepuis(date: '1 septembre 2026')),
+        find.text(t.ficheEleve.acces.expireDepuis(date: '1er septembre 2026')),
         findsOneWidget,
       );
       expect(

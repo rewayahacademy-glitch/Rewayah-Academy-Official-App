@@ -87,7 +87,8 @@ class SoldeBeneficiaire {
   final ExceptionSolde? exception;
 }
 
-/// Les soldes du foyer vus par le titulaire (EA-BR-23).
+/// Les soldes du foyer vus par le titulaire (FI-BR-03, qui remplace
+/// EA-BR-23).
 @immutable
 class SoldesFoyer {
   /// Cree la vue.
@@ -110,7 +111,7 @@ abstract interface class PortPaiementsFoyer {
   Future<PaiementFoyer?> detail(String id);
 
   /// Les soldes des beneficiaires autorises, pour le titulaire seulement
-  /// (EA-BR-23).
+  /// (FI-BR-03, qui remplace EA-BR-23).
   Future<SoldesFoyer> soldes();
 
   /// Les finances du foyer (FI-1c, FI-BR-03, FI-BR-04) : par profil, solde
@@ -151,7 +152,7 @@ class PaiementsFoyerIndisponible implements PortPaiementsFoyer {
 
   @override
   Future<SoldesFoyer> soldes() =>
-      Future<SoldesFoyer>.error(const CapaciteIndisponible('EA-BR-23'));
+      Future<SoldesFoyer>.error(const CapaciteIndisponible('FI-BR-03'));
 
   @override
   Future<FinancesFoyer> finances() =>

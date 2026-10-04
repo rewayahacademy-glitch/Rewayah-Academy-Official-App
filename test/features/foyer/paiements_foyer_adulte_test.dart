@@ -414,17 +414,17 @@ void main() {
       expect(etat(tester)?.nature, NatureEtat.horsLigne);
     });
 
-    testWidgets('indisponible : la dependance EA-BR-23, sans « Reessayer »', (
+    testWidgets('indisponible : la dependance FI-BR-03, sans « Reessayer »', (
       WidgetTester tester,
     ) async {
       await monter(
         tester,
-        () => Future<SoldesFoyer>.error(const CapaciteIndisponible('EA-BR-23')),
+        () => Future<SoldesFoyer>.error(const CapaciteIndisponible('FI-BR-03')),
       );
       await tester.pumpAndSettle();
       final EtatSysteme? e = etat(tester);
       expect(e?.nature, NatureEtat.indisponible);
-      expect(e?.dependance, 'EA-BR-23');
+      expect(e?.dependance, 'FI-BR-03');
       expect(e?.titre, t.adulte.paiements.soldesIndisponiblesTitre);
     });
 

@@ -617,7 +617,7 @@ void main() {
         expect(find.text(lignes[i].date), findsWidgets);
       }
       expect(iconeMouvement(NatureMouvement.recharge), AppIcons.ajouter);
-      // L'heure locale, au format de la langue : « 1 octobre 2026 à 09:30 ».
+      // L'heure locale, au format de la langue : « 1er octobre 2026 à 09:30 ».
       final DateTime d = DateTime(2026, 10, 1, 9, 30);
       expect(
         dateHeureMouvement(d),

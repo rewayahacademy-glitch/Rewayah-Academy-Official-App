@@ -537,7 +537,7 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text(t.foyer.membre.accesExpire(date: '1 septembre 2026')),
+        find.text(t.foyer.membre.accesExpire(date: '1er septembre 2026')),
         findsOneWidget,
       );
     });

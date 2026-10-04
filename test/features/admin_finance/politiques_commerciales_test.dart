@@ -366,7 +366,10 @@ void main() {
       expect(find.text(pol.sansBrouillon), findsOneWidget);
       expect(_dansEntete(find.text(pol.statutPubliee)), findsOneWidget);
       expect(find.text(pol.statutBrouillon), findsNothing);
-      expect(find.text(pol.enVigueur(date: '1 octobre 2026')), findsOneWidget);
+      expect(
+        find.text(pol.enVigueur(date: '1er octobre 2026')),
+        findsOneWidget,
+      );
       expect(find.byType(TextField), findsNothing);
       verifierUnSeulBoutonPlein(tester, maximum: 0);
       expect(find.text(pol.publier), findsNothing);
@@ -437,7 +440,7 @@ void main() {
         findsOneWidget,
       );
       expect(
-        _dansEntete(find.text(pol.dateEffet(date: '1 janvier 2027'))),
+        _dansEntete(find.text(pol.dateEffet(date: '1er janvier 2027'))),
         findsOneWidget,
       );
       expect(find.text(pol.aucuneDifference), findsOneWidget);
@@ -1387,7 +1390,7 @@ void main() {
       expect(
         find.descendant(
           of: ligneB,
-          matching: find.text(pol.dateEffet(date: '1 janvier 2027')),
+          matching: find.text(pol.dateEffet(date: '1er janvier 2027')),
         ),
         findsOneWidget,
       );
@@ -1398,7 +1401,7 @@ void main() {
       expect(
         find.descendant(
           of: ligneA,
-          matching: find.text(pol.dateEffet(date: '1 octobre 2026')),
+          matching: find.text(pol.dateEffet(date: '1er octobre 2026')),
         ),
         findsOneWidget,
       );

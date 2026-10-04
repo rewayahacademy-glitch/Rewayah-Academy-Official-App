@@ -205,6 +205,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: <Override>[
+            sansPersonneConnectee(),
             serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
           ],
           child: TranslationProvider(
@@ -480,6 +481,7 @@ void main() {
           RevenusEnseignantPage(onRetour: () {}),
           echelleTexte: echelle,
           surcharges: <Override>[
+            sansPersonneConnectee(),
             serviceReseauProvider.overrideWithValue(
               FauxServiceReseau(horsLigneRendu: horsLigne),
             ),

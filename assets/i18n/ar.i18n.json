@@ -2,6 +2,9 @@
   "commun": {
     "sections": {
       "page": "أقسام الصفحة"
+    },
+    "dates": {
+      "premierJour": "1"
     }
   },
   "etat": {

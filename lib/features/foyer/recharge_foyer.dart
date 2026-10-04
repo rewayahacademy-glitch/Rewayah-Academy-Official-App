@@ -859,7 +859,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         nature: NatureEtat.indisponible,
         titre: t.adulte.recharge.paiementIndisponibleTitre,
         phrase: t.adulte.recharge.paiementIndisponiblePhrase,
-        dependance: 'EA-BR-25',
+        dependance: 'FI-BR-06',
         libelleAction: t.adulte.recharge.revenirPaiements,
         onAction: widget.onTerminee,
       ),

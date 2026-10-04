@@ -10,13 +10,15 @@
 // 20.8), il rend `CapaciteIndisponible`.
 //
 // Aucune source serveur (K-28) : les offres et la verification attendent
-// EA-BR-24, le paiement EA-BR-25 ; la demonstration surcharge le port.
+// FI-BR-06 (qui remplace EA-BR-24, 25 et 26) ; la demonstration surcharge
+// le port.
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../finance/montant.dart';
 import '../finance/suivi_paiement.dart';
+import '../session/session_controleur.dart';
 import 'capacite_indisponible.dart';
 
 /// Une offre de recharge, telle que le serveur la rend pour un beneficiaire.
@@ -191,16 +193,16 @@ class RecapitulatifRecharge {
 
 /// La recharge du foyer, pour le titulaire seulement.
 abstract interface class PortRechargeFoyer {
-  /// Les beneficiaires autorises et leurs offres (EA-BR-24).
+  /// Les beneficiaires autorises et leurs offres (FI-BR-06).
   Future<List<BeneficiaireRecharge>> beneficiaires();
 
-  /// Le recapitulatif de ces choix, arrete par le serveur (EA-BR-24). Depuis
+  /// Le recapitulatif de ces choix, arrete par le serveur (FI-BR-06). Depuis
   /// FI-7, l'ecran verifie par montants ([verifierMontants]) : ce contrat par
   /// offres reste celui des sources EA, il n'a plus d'appelant a l'ecran.
   Future<RecapitulatifRecharge> verifier(List<ChoixRecharge> choix);
 
   /// Paie le recapitulatif [recapitulatifId], idempotent par [cle] : une
-  /// nouvelle tentative apres une coupure ne paie pas deux fois (EA-BR-25),
+  /// nouvelle tentative apres une coupure ne paie pas deux fois (FI-BR-06),
   /// et la meme cle rend la meme commande (FI-8 : double confirmation, un
   /// seul credit). Rend l'identifiant de la commande, dont l'etat se lit par
   /// [suivre] : l'ecran n'en deduit jamais une reussite (F13, FI9).
@@ -216,7 +218,8 @@ abstract interface class PortRechargeFoyer {
   Future<SuiviPaiement> suivre(String commandeId);
 }
 
-/// **Aucune source serveur a ce jour** (EA-BR-24, EA-BR-25).
+/// **Aucune source serveur a ce jour** (FI-BR-06, qui remplace EA-BR-24 et
+/// EA-BR-25).
 class RechargeFoyerIndisponible implements PortRechargeFoyer {
   /// Cree l'implementation.
   const RechargeFoyerIndisponible();
@@ -224,20 +227,20 @@ class RechargeFoyerIndisponible implements PortRechargeFoyer {
   @override
   Future<List<BeneficiaireRecharge>> beneficiaires() =>
       Future<List<BeneficiaireRecharge>>.error(
-        const CapaciteIndisponible('EA-BR-24'),
+        const CapaciteIndisponible('FI-BR-06'),
       );
 
   @override
   Future<RecapitulatifRecharge> verifier(List<ChoixRecharge> choix) =>
       Future<RecapitulatifRecharge>.error(
-        const CapaciteIndisponible('EA-BR-24'),
+        const CapaciteIndisponible('FI-BR-06'),
       );
 
   @override
   Future<String> payer({
     required String recapitulatifId,
     required String cle,
-  }) => Future<String>.error(const CapaciteIndisponible('EA-BR-25'));
+  }) => Future<String>.error(const CapaciteIndisponible('FI-BR-06'));
 
   @override
   Future<RecapitulatifRecharge> verifierMontants(List<MontantRecharge> choix) =>
@@ -256,6 +259,7 @@ final Provider<PortRechargeFoyer> portRechargeFoyerProvider =
 
 /// Les beneficiaires de la recharge et leurs offres.
 final FutureProvider<List<BeneficiaireRecharge>> beneficiairesRechargeProvider =
-    FutureProvider<List<BeneficiaireRecharge>>(
-      (Ref ref) => ref.watch(portRechargeFoyerProvider).beneficiaires(),
-    );
+    FutureProvider<List<BeneficiaireRecharge>>((Ref ref) {
+      surveillerPersonneConnectee(ref);
+      return ref.watch(portRechargeFoyerProvider).beneficiaires();
+    });

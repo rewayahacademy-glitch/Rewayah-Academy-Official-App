@@ -20,6 +20,7 @@ import '../../core/finance/periode_a_financer.dart';
 import '../../core/finance/politique_commerciale.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -37,9 +38,10 @@ import 'ligne_membre.dart' show dateEcheance;
 /// invalide avant de revenir au Foyer (route `recharge`), pour qu'il les
 /// relise.
 final FutureProvider<FinancesFoyer> financesFoyerProvider =
-    FutureProvider<FinancesFoyer>(
-      (Ref ref) => ref.watch(portPaiementsFoyerProvider).finances(),
-    );
+    FutureProvider<FinancesFoyer>((Ref ref) {
+      surveillerPersonneConnectee(ref);
+      return ref.watch(portPaiementsFoyerProvider).finances();
+    });
 
 /// La politique commerciale active, pour le nombre de seances d'essai : une
 /// valeur commerciale n'est jamais ecrite dans un ecran (guide §8 F1).

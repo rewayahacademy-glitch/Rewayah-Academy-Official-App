@@ -6,6 +6,7 @@ import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/finance/finances_profil.dart';
 import '../../core/foyer/selection_eleve.dart';
+import '../../core/i18n/jour_du_mois.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/offres/offre_horaire.dart';
@@ -68,11 +69,12 @@ final class _Classes extends ClasseMembre {
   final List<String> libelles;
 }
 
-/// La date d'une echeance d'acces, en toutes lettres : « 30 octobre 2026 ».
+/// La date d'une echeance d'acces, en toutes lettres : « 30 octobre 2026 »,
+/// « 1er novembre 2026 » (R8-05).
 String dateEcheance(DateTime date) {
   final DateTime locale = date.toLocal();
   return t.foyer.membre.date(
-    jour: locale.day.toString(),
+    jour: jourDuMois(locale.day),
     mois: t.commun.dates.mois[locale.month - 1],
     annee: locale.year.toString(),
   );
@@ -237,8 +239,6 @@ class CarteMembre extends StatelessWidget {
       cercleEnHaut: true,
       // La fleche au bout de la carte, a toute largeur (revue FI-2-R M1).
       texteEtire: true,
-      // « Abdourahmane » entier a 320 px et 200 % (revue FI-2-CORR-R).
-      nomSansCoupure: true,
       avatar: PhotoEleve(
         prenom: profil.prenom,
         cleAvatar: profil.cleAvatar,

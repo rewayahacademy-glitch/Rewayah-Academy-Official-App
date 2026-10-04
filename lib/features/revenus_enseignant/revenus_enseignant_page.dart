@@ -33,6 +33,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
@@ -55,18 +56,18 @@ import '../../core/widgets/status_pill.dart';
 /// relance automatique : une capacite absente ne revient pas en insistant,
 /// et « Reessayer » reste un geste de la personne (`BlocAsynchrone`).
 final FutureProvider<RevenusEnseignant> revenusEnseignantProvider =
-    FutureProvider<RevenusEnseignant>(
-      (Ref ref) => ref.watch(portRevenusEnseignantProvider).moisEnCours(),
-      retry: (int retryCount, Object error) => null,
-    );
+    FutureProvider<RevenusEnseignant>((Ref ref) {
+      surveillerPersonneConnectee(ref);
+      return ref.watch(portRevenusEnseignantProvider).moisEnCours();
+    }, retry: (int retryCount, Object error) => null);
 
 /// Le releve des mois arretes par l'academie, lu par le port (FI-BR-11). Meme
 /// regle de relance que [revenusEnseignantProvider].
 final FutureProvider<List<LigneReleve>> releveEnseignantProvider =
-    FutureProvider<List<LigneReleve>>(
-      (Ref ref) => ref.watch(portRevenusEnseignantProvider).releve(),
-      retry: (int retryCount, Object error) => null,
-    );
+    FutureProvider<List<LigneReleve>>((Ref ref) {
+      surveillerPersonneConnectee(ref);
+      return ref.watch(portRevenusEnseignantProvider).releve();
+    }, retry: (int retryCount, Object error) => null);
 
 /// `/enseignant/revenus` : l'estimation du mois, atteinte depuis le Profil.
 class RevenusEnseignantPage extends ConsumerWidget {

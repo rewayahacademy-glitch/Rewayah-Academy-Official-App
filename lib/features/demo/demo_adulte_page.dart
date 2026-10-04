@@ -1813,7 +1813,7 @@ class _RechargeDemo implements PortRechargeFoyer {
     if (etat == EtatDemoAdulte.doubleSoumission) {
       await Future<void>.delayed(latenceSimulee);
     }
-    throw const CapaciteIndisponible('EA-BR-25');
+    throw const CapaciteIndisponible('FI-BR-06');
   }
 
   // La recharge se choisit par montants depuis FI-7 (un seul moteur) ; le

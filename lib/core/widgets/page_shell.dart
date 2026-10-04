@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
@@ -151,7 +152,13 @@ class PageShell extends StatelessWidget {
         else
           titreFocalisable(
             focusTitre,
-            Text(titre!, style: textes.headlineLarge ?? const TextStyle()),
+            // R8-02 : comme `EntetePage`, le titre passe a la ligne ENTRE les
+            // mots, jamais dans un mot (« Politiques / commerci / ales » a
+            // 390 et 200 %).
+            TexteSansCoupure(
+              titre!,
+              style: textes.headlineLarge ?? const TextStyle(),
+            ),
           ),
         Ecart.vXxl,
       ] else if (enteteRiche) ...<Widget>[

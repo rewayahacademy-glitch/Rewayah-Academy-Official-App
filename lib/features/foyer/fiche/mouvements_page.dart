@@ -16,6 +16,7 @@ import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
+import '../../../core/session/session_controleur.dart';
 import '../../../core/theme/app_gabarit.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -41,10 +42,10 @@ import '../photo_eleve.dart';
 /// l'historique rouvert porte le nouveau mouvement, jamais l'ancienne liste.
 final FutureProviderFamily<List<MouvementProfil>, String>
 mouvementsProfilProvider = FutureProvider.autoDispose
-    .family<List<MouvementProfil>, String>(
-      (Ref ref, String profilId) =>
-          ref.watch(portPaiementsFoyerProvider).mouvements(profilId),
-    );
+    .family<List<MouvementProfil>, String>((Ref ref, String profilId) {
+      surveillerPersonneConnectee(ref);
+      return ref.watch(portPaiementsFoyerProvider).mouvements(profilId);
+    });
 
 /// Les mouvements d'un profil eleve (`/tuteur/foyer/:eleveId/mouvements`,
 /// FI-6b ; guide Finance V4 §4, §5.2 ; maquettes 05 et 06).
@@ -121,7 +122,7 @@ AppIcon iconeMouvement(NatureMouvement nature) => switch (nature) {
 
 String _deuxChiffres(int n) => n.toString().padLeft(2, '0');
 
-/// La date d'un mouvement avec son heure locale : « 1 octobre 2026 à
+/// La date d'un mouvement avec son heure locale : « 1er octobre 2026 à
 /// 09:30 » (guide §5.2, revue 5 b). Jamais le jour seul : deux recharges du
 /// meme jour se distinguent.
 String dateHeureMouvement(DateTime date) {

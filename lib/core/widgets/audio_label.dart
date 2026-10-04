@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/cle_audio.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
@@ -110,7 +111,8 @@ class _AudioLabelState extends State<AudioLabel> {
           if (widget.afficherTexte) ...<Widget>[
             Ecart.hSm,
             Flexible(
-              child: Text(
+              // R8-03 : « Ton cours a commencé » entier a 320 px et 200 %.
+              child: TexteSansCoupure(
                 texte,
                 style: paire == null ? base : paire.applyTo(base),
               ),

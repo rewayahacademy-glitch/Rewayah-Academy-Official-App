@@ -133,7 +133,9 @@ abstract interface class PortAccesFoyer {
 /// porte deja l'echeance. L'adaptateur reel
 /// `lib/core/capacites/acces_foyer_depuis_eleves.dart` est ecrit par le **lot
 /// E** ; le lot B (fiche eleve) lit le meme provider, jamais le fichier de E.
-/// E remplace alors l'implementation ci-dessous.
+/// E remplace alors l'implementation ci-dessous. La reference rendue est le
+/// besoin serveur, FI-BR-08 (acces par periode financee), pas le lot qui
+/// ecrit l'adaptateur (`FI-BR.md`, revue FI-VAGUE-R R7-07).
 class AccesFoyerIndisponible implements PortAccesFoyer {
   /// Cree l'implementation.
   const AccesFoyerIndisponible();
@@ -141,7 +143,7 @@ class AccesFoyerIndisponible implements PortAccesFoyer {
   @override
   Future<List<AccesBeneficiaire>> acces() =>
       Future<List<AccesBeneficiaire>>.error(
-        const CapaciteIndisponible('LOT-E'),
+        const CapaciteIndisponible('FI-BR-08'),
       );
 }
 
