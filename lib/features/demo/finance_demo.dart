@@ -7,6 +7,8 @@
 // - le foyer de demonstration (Mariam, Ibrahim, Aicha) et les six jeux du
 //   guide F2 (tous finances, un a regulariser, un en essai, aucun paiement,
 //   un profil, cinq profils) ;
+// - les finances du foyer du titulaire adulte de la demonstration EA
+//   (`profilsFoyerTitulaire`, revue FI-VAGUE-R R1-06) ;
 // - les doubles de demonstration des ports Finance, qui CALCULENT ici ce que
 //   le serveur arretera apres BR-1 (mensualites par rang, synthese du foyer,
 //   revenus de l'enseignant) : jamais dans un widget (FI6, FI-11c).
@@ -378,6 +380,73 @@ abstract final class DonneesFinanceDemo {
     adulte: true,
   );
 
+  /// Les finances du foyer du titulaire adulte de la demonstration EA
+  /// (revue FI-VAGUE-R R1-06, E-11) : le titulaire au rang 1, le second
+  /// adulte rattache au rang 2 quand il l'est, tous deux au tarif adulte,
+  /// puis les enfants aux rangs suivants. Tous ont leur mois de reference
+  /// finance ; le dernier enfant a le solde le plus bas, sans jamais etre
+  /// dit « a recharger » par un seuil (FI2). Aucune Classe ni age : la
+  /// demonstration EA ne les rend pas dans ces donnees (rien d'invente).
+  static List<FinancesProfil> profilsFoyerTitulaire({
+    required ({String id, String prenom}) titulaire,
+    ({String id, String prenom})? secondAdulte,
+    List<({String id, String prenom})> enfants =
+        const <({String id, String prenom})>[],
+  }) {
+    final List<int> soldesEnfants = <int>[3, 20];
+    return <FinancesProfil>[
+      _finance(
+        _ProfilDemo(titulaire.id, titulaire.prenom, 'accent-titulaire', null),
+        rang: 1,
+        etat: EtatFinancier.finance,
+        solde: 15,
+        adulte: true,
+      ),
+      if (secondAdulte != null)
+        _finance(
+          _ProfilDemo(
+            secondAdulte.id,
+            secondAdulte.prenom,
+            'accent-second-adulte',
+            null,
+          ),
+          rang: 2,
+          etat: EtatFinancier.finance,
+          solde: 10,
+          adulte: true,
+        ),
+      for (final (int i, ({String id, String prenom}) e) in enfants.indexed)
+        _finance(
+          _ProfilDemo(e.id, e.prenom, 'accent-${e.id}', null),
+          rang: (secondAdulte == null ? 2 : 3) + i,
+          etat: EtatFinancier.finance,
+          solde: soldesEnfants[i % soldesEnfants.length],
+        ),
+    ];
+  }
+
+  /// Les finances d'un foyer de [liste], synthese comprise, lue (FI1) :
+  /// additionnee ici, dans le double de demonstration.
+  static FinancesFoyer foyerDe(
+    List<FinancesProfil> liste, {
+    required int paiementsDuMois,
+  }) => FinancesFoyer(
+    profils: liste,
+    synthese: SyntheseFoyer(
+      totalSoldes: _somme(liste.map((FinancesProfil p) => p.solde)),
+      aPayerCeMois: _somme(
+        liste
+            .where((FinancesProfil p) => p.manque != null)
+            .map((FinancesProfil p) => p.manque!),
+      ),
+      profilsFinances: liste
+          .where((FinancesProfil p) => p.etat == EtatFinancier.finance)
+          .length,
+      profils: liste.length,
+      paiementsDuMois: paiementsDuMois,
+    ),
+  );
+
   /// Le nombre de paiements du mois dans le jeu [jeu].
   static int paiementsDuMois(JeuFoyerFinance jeu) => switch (jeu) {
     JeuFoyerFinance.aucunPaiement => 0,
@@ -387,25 +456,8 @@ abstract final class DonneesFinanceDemo {
 
   /// Les finances du foyer du jeu [jeu], synthese comprise. La synthese est
   /// une LECTURE (FI1) : additionnee ici, dans le double de demonstration.
-  static FinancesFoyer finances(JeuFoyerFinance jeu) {
-    final List<FinancesProfil> liste = profils(jeu);
-    return FinancesFoyer(
-      profils: liste,
-      synthese: SyntheseFoyer(
-        totalSoldes: _somme(liste.map((FinancesProfil p) => p.solde)),
-        aPayerCeMois: _somme(
-          liste
-              .where((FinancesProfil p) => p.manque != null)
-              .map((FinancesProfil p) => p.manque!),
-        ),
-        profilsFinances: liste
-            .where((FinancesProfil p) => p.etat == EtatFinancier.finance)
-            .length,
-        profils: liste.length,
-        paiementsDuMois: paiementsDuMois(jeu),
-      ),
-    );
-  }
+  static FinancesFoyer finances(JeuFoyerFinance jeu) =>
+      foyerDe(profils(jeu), paiementsDuMois: paiementsDuMois(jeu));
 
   /// La fin du dernier acces d'un profil payant sans periode financee : la
   /// fin de sa derniere periode, ou celle de son essai (FIN4-13). Elle est
@@ -515,6 +567,9 @@ abstract final class DonneesFinanceDemo {
   /// n'a ete recharge (aucun paiement, essai seul).
   static RecuPaiement? recu(JeuFoyerFinance jeu) => _recuDe(profils(jeu));
 
+  /// Le recu du paiement qui a recharge les profils de [liste] (R1-06).
+  static RecuPaiement? recuDe(List<FinancesProfil> liste) => _recuDe(liste);
+
   /// Le recu du paiement qui a recharge [liste] : une allocation par profil
   /// recharge, `null` sans aucun.
   static RecuPaiement? _recuDe(List<FinancesProfil> liste) {
@@ -543,12 +598,18 @@ abstract final class DonneesFinanceDemo {
   static List<MouvementProfil> mouvements(
     JeuFoyerFinance jeu,
     String profilId,
+  ) => mouvementsDans(profils(jeu), profilId);
+
+  /// Les mouvements du profil [profilId] parmi [liste], comme [mouvements].
+  static List<MouvementProfil> mouvementsDans(
+    List<FinancesProfil> liste,
+    String profilId,
   ) {
-    final FinancesProfil? p = profils(jeu)
+    final FinancesProfil? p = liste
         .where((FinancesProfil f) => f.profilId == profilId)
         .firstOrNull;
     if (p == null) return const <MouvementProfil>[];
-    return _mouvementsDe(p, recu(jeu));
+    return _mouvementsDe(p, _recuDe(liste));
   }
 
   /// Les [limite] derniers mouvements du foyer du jeu [jeu] (FI-5b) : ceux
@@ -558,10 +619,17 @@ abstract final class DonneesFinanceDemo {
   static List<MouvementFoyer> derniersMouvements(
     JeuFoyerFinance jeu, {
     int limite = 3,
+  }) => derniersMouvementsDans(profils(jeu), limite: limite);
+
+  /// Les [limite] derniers mouvements des profils de [liste], comme
+  /// [derniersMouvements].
+  static List<MouvementFoyer> derniersMouvementsDans(
+    List<FinancesProfil> liste, {
+    int limite = 3,
   }) {
     final List<MouvementFoyer> tous = <MouvementFoyer>[
-      for (final FinancesProfil p in profils(jeu))
-        for (final MouvementProfil m in mouvements(jeu, p.profilId))
+      for (final FinancesProfil p in liste)
+        for (final MouvementProfil m in mouvementsDans(liste, p.profilId))
           MouvementFoyer(profilId: p.profilId, prenom: p.prenom, mouvement: m),
     ];
     // `List.sort` n'est pas stable : l'indice departage deux dates egales.
@@ -1077,6 +1145,60 @@ class PaiementsFoyerFinanceDemo implements PortPaiementsFoyer {
   @override
   Future<List<MouvementFoyer>> derniersMouvements({int limite = 3}) async =>
       DonneesFinanceDemo.derniersMouvements(jeu, limite: limite);
+
+  // Les soldes rediges d'EA-9 sont remplaces par `finances()` (FI-BR-03).
+  @override
+  Future<SoldesFoyer> soldes() =>
+      Future<SoldesFoyer>.error(const CapaciteIndisponible('FI-BR-03'));
+}
+
+/// Les paiements du foyer du titulaire adulte en demonstration (revue
+/// FI-VAGUE-R R1-06) : ses finances, ses mouvements et l'historique d'un
+/// seul paiement, celui du recu qui a recharge le foyer. Rien n'est envoye
+/// (K-28).
+class PaiementsFoyerProfilsDemo implements PortPaiementsFoyer {
+  /// Cree le double pour les profils [profils].
+  const PaiementsFoyerProfilsDemo(this.profils);
+
+  /// Les finances des membres du foyer, dans l'ordre du foyer.
+  final List<FinancesProfil> profils;
+
+  RecuPaiement? get _recu => DonneesFinanceDemo.recuDe(profils);
+
+  @override
+  Future<FinancesFoyer> finances() async => DonneesFinanceDemo.foyerDe(
+    profils,
+    paiementsDuMois: _recu == null ? 0 : 1,
+  );
+
+  @override
+  Future<List<PaiementFoyer>> historique() async => <PaiementFoyer>[
+    if (_recu case final RecuPaiement r)
+      PaiementFoyer(
+        id: 'demo-fi-paiement-${r.reference}',
+        montantMineur: r.total.mineur,
+        devise: r.total.devise,
+        statutServeur: 'completed',
+        date: r.date,
+        justificatifDisponible: true,
+      ),
+  ];
+
+  @override
+  Future<PaiementFoyer?> detail(String id) async {
+    for (final PaiementFoyer p in await historique()) {
+      if (p.id == id) return p;
+    }
+    return null;
+  }
+
+  @override
+  Future<List<MouvementProfil>> mouvements(String profilId) async =>
+      DonneesFinanceDemo.mouvementsDans(profils, profilId);
+
+  @override
+  Future<List<MouvementFoyer>> derniersMouvements({int limite = 3}) async =>
+      DonneesFinanceDemo.derniersMouvementsDans(profils, limite: limite);
 
   // Les soldes rediges d'EA-9 sont remplaces par `finances()` (FI-BR-03).
   @override

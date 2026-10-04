@@ -247,8 +247,10 @@ class FoyerPage extends ConsumerWidget {
                 ],
               ),
               // Validation refusee : une nouvelle demande, action secondaire
-              // juste sous sa ligne d'etat (le seul bouton dominant reste
-              // « Ajouter un profil eleve »).
+              // juste sous sa ligne d'etat. Le seul bouton plein reste celui
+              // de la page : « Recharger plusieurs profils » quand les
+              // finances sont rendues, sinon « Ajouter un profil eleve »
+              // (R1-01).
               if (placePermetNouvelleDemande(adulte.place) &&
                   nouvelleDemande != null) ...<Widget>[
                 Ecart.vLg,
@@ -346,9 +348,12 @@ class FoyerPage extends ConsumerWidget {
       // En-tete sobre (K-42 point 5) : « Ma famille » pour le titulaire
       // adulte, comme sa ligne de Mon espace.
       titre: adulte == null ? t.foyer.titre : t.adulte.famille.maFamille,
-      // « Soldes et paiements » quand la source des finances existe
-      // (maquettes 03 et 05, R1-09) ; sinon le sous-titre d'avant.
-      sousTitre: avecFinances
+      // « Soldes et paiements » quand les finances sont lues, rendues ou en
+      // echec (maquettes 03 et 05, R1-09 : le titre de la synthese, qui dit
+      // alors son contenu ou son erreur) ; pendant le chargement et sans
+      // source (production), le sous-titre d'avant : jamais un sous-titre
+      // pose une image puis retire (contre-revue FI-VAGUE-CORR).
+      sousTitre: avecFinances && (finances.hasValue || finances.hasError)
           ? t.foyer.finances.titre
           : adulte == null
           ? t.foyer.sousTitre

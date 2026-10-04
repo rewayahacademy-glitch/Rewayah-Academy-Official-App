@@ -36,6 +36,7 @@ import 'package:rewayah_academy/features/demo/classe_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/foyer/creer_mon_profil_indisponible.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
+import 'package:rewayah_academy/features/foyer/finances_foyer.dart';
 import 'package:rewayah_academy/features/foyer/formulaire_profil_eleve.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
@@ -155,8 +156,15 @@ void main() {
       find.descendant(of: membres, matching: find.byType(PhotoEleve)),
       findsNWidgets(2),
     );
-    // Un seul bouton dominant : « Ajouter un profil eleve ».
-    expect(find.byType(ActionPrincipale), findsOneWidget);
+    // Un seul bouton plein : « Recharger plusieurs profils » de la synthese,
+    // les finances du foyer etant rendues ; « Ajouter un profil eleve » en
+    // secondaire (Q-FI-2, E-17, revue FI-VAGUE-R R1-01 et R1-06).
+    final List<ActionPrincipale> pleins = tester
+        .widgetList<ActionPrincipale>(find.byType(ActionPrincipale))
+        .where((ActionPrincipale a) => a.niveau == NiveauAction.principale)
+        .toList();
+    expect(pleins, hasLength(1));
+    expect(pleins.single.key, SyntheseSoldesFoyer.rechargerKey);
     expect(find.text(t.foyer.ajouterProfil), findsOneWidget);
     // Sur telephone, la carte du titulaire EN TETE, puis la place, les
     // profils, et seulement ensuite « Ajouter un profil eleve » (planche 3.1,

@@ -13,6 +13,7 @@ import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/capacites/port_paiements_foyer.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/domain/enums.dart';
+import '../../core/finance/finances_profil.dart';
 import '../../core/finance/montant.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart' show Seance;
@@ -23,6 +24,7 @@ import '../foyer/place_adulte.dart';
 import '../ma_classe_adulte/ma_classe_adulte_page.dart';
 import '../mon_espace_adulte/mon_espace_adulte_page.dart';
 import 'classe_demo.dart';
+import 'finance_demo.dart';
 
 /// Les 25 cas du doc section 18, dans son ordre.
 enum EtatDemoAdulte {
@@ -575,6 +577,32 @@ abstract final class DonneesAdulteDemo {
       recapitulatif: second ? d.totalAvecSecondAdulte : d.totalSansSecondAdulte,
     );
   }
+
+  /// Les finances du foyer vues par le titulaire (revue FI-VAGUE-R R1-06,
+  /// E-11) : les memes beneficiaires que [soldes], dans le meme ordre, lus
+  /// par la Finance (`DonneesFinanceDemo`, seule source de ses donnees).
+  /// Ma famille les montre comme le Foyer du tuteur : la synthese, puis la
+  /// finance de chaque enfant sur sa carte.
+  static List<FinancesProfil> finances(
+    EtatDemoAdulte etat,
+    GenreTitulaireDemo genre, {
+    bool foyerNouveau = false,
+  }) => DonneesFinanceDemo.profilsFoyerTitulaire(
+    titulaire: (id: idTitulaire(genre), prenom: prenomTitulaire(genre)),
+    secondAdulte: !foyerNouveau && secondAdultePresent(etat)
+        ? (
+            id: genre == GenreTitulaireDemo.homme ? mariamaId : mamadouId,
+            prenom: prenomSecondAdulte(genre),
+          )
+        : null,
+    enfants: <({String id, String prenom})>[
+      for (final EleveDuFoyer e in enfantsPour(
+        etat,
+        foyerNouveau: foyerNouveau,
+      ))
+        (id: e.id, prenom: e.prenom),
+    ],
+  );
 
   /// L'identifiant de l'offre A de la demonstration.
   static const String offreA = 'demo-offre-a';

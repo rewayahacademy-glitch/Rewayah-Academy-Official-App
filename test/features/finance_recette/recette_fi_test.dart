@@ -1138,7 +1138,7 @@ void main() {
     });
 
     testWidgets('4 bis. l eleve adulte : un avatar garde sa couleur de Ma '
-        'famille aux Paiements du foyer et a la recharge ; l adulte autonome, '
+        'famille a la recharge ; l adulte autonome, '
         'de Mes finances a sa recharge', (WidgetTester tester) async {
       Future<Map<String, Set<AccentProfil?>>> releve(
         List<String> adresses,
@@ -1164,10 +1164,18 @@ void main() {
 
       final Map<String, Set<AccentProfil?>> famille = await releve(<String>[
         adresseDemoAdulte(EcranDemoAdulte.maFamille),
-        adresseDemoAdulte(EcranDemoAdulte.paiementsFoyer),
         adresseDemoAdulte(EcranDemoAdulte.recharge),
       ]);
       expect(famille.keys, containsAll(<String>['Aïcha', 'Oumar']));
+      // Paiements du foyer ne pose plus aucun avatar : ses soldes sont
+      // portes par Ma famille (E-11, revue FI-VAGUE-R R1-06), comme Compte
+      // > Paiements du tuteur. Aucune couleur ne peut y changer (releve
+      // vide, dit ici pour ne pas le supposer).
+      await monterAdulteFi(
+        tester,
+        adresseDemoAdulte(EcranDemoAdulte.paiementsFoyer),
+      );
+      expect(_accentsRendus(tester), isEmpty);
       final Map<String, Set<AccentProfil?>> seul = await releve(<String>[
         adresseDemoAdulte(
           EcranDemoAdulte.paiements,

@@ -35,7 +35,6 @@ import 'package:rewayah_academy/core/widgets/ligne_cle_valeur.dart';
 import 'package:rewayah_academy/core/widgets/ligne_moyen_paiement.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/compte/paiements_page.dart';
-import 'package:rewayah_academy/features/compte/soldes_foyer.dart';
 import 'package:rewayah_academy/features/demo/adulte_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
@@ -161,7 +160,7 @@ void main() {
         matching: find.text(t.adulte.famille.paiementsFoyer),
       ),
     );
-    await taper(tester, find.byKey(SoldesFoyerSection.rechargerKey));
+    await taper(tester, find.byKey(PaiementsComptePage.rechargerKey));
 
     // Etape 1, « Nouvelle recharge » (planche 4.2).
     expect(find.byType(RechargeFoyerPage), findsOneWidget);

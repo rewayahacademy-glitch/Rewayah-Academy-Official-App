@@ -6,6 +6,8 @@
 // second adulte » est porte par le port serveur (FI-BR-03), pas par l'ecran :
 // ce fichier ne le prouve pas.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -118,6 +120,16 @@ class _PaiementsComptes extends PaiementsFoyerFinanceDemo {
     lectures++;
     return super.finances();
   }
+}
+
+/// Des finances qui ne sont rendues que sur demande du test.
+class _PaiementsEnAttente extends PaiementsFoyerFinanceDemo {
+  _PaiementsEnAttente() : super(JeuFoyerFinance.tousFinances);
+
+  final Completer<FinancesFoyer> lecture = Completer<FinancesFoyer>();
+
+  @override
+  Future<FinancesFoyer> finances() => lecture.future;
 }
 
 /// Les liens « Recharger {prenom} » poses sous les cartes.
@@ -442,6 +454,26 @@ void main() {
       NiveauAction.principale,
     );
     expect(find.text(t.foyer.sousTitre), findsOneWidget);
+  });
+
+  testWidgets('chargement des finances : le sous-titre d avant, jamais '
+      '« Soldes et paiements » pose une image puis retire (contre-revue '
+      'FI-VAGUE-CORR)', (WidgetTester tester) async {
+    final _PaiementsEnAttente paiements = _PaiementsEnAttente();
+    await _monter(
+      tester,
+      jeu: JeuFoyerFinance.tousFinances,
+      paiements: paiements,
+    );
+    expect(find.text(t.foyer.sousTitre), findsOneWidget);
+    expect(find.text(t.foyer.finances.titre), findsNothing);
+
+    paiements.lecture.complete(
+      DonneesFinanceDemo.finances(JeuFoyerFinance.tousFinances),
+    );
+    await stabiliser(tester);
+    expect(find.text(t.foyer.finances.titre), findsOneWidget);
+    expect(find.text(t.foyer.sousTitre), findsNothing);
   });
 
   // L'invariant « jamais rendu au second adulte » est porte par le port
