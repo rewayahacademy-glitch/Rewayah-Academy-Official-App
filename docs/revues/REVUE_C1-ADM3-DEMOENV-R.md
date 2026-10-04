@@ -319,7 +319,7 @@ Aucun.
 - **CAPT-4** (proposé cosmétique, ramené à info) : la pastille de statut étirée à 320×2 (point
   au bord, texte centré) vient de `StatusPill` (PASTILLE-COUPE-1, `284cd2b7`, règle K-54),
   inchangée par la branche. Le contre-vérificateur a cherché l'image au mauvais chemin
-  (`/tmp/adm3_320x2_clair.png`) ; elle existe à `/tmp/adm3_capt/adm3_320x2_clair.png`. Son
+  (`/tmp/adm3_320x2_clair.png`) ; elle existe à `docs/revues/captures/C1-ADM3-DEMOENV-R/adm3_320x2_clair.png`. Son
   analyse repose sur le code et reste valable.
 
 ### Vérifié sans défaut (info)
@@ -341,7 +341,7 @@ Ouvertes aussi par la session principale (K-61) : `adm3_1440_sombre_piece.png` (
 
 Captures faites par cette revue avec un test temporaire (supprimé ensuite, `git status` vide)
 sur `e68aad98` : vraie coque admin, vrai routeur, `surchargeRevueDossiersProduction`, polices du
-dépôt, dossier de Moussa ouvert depuis Personnes / Dossiers. 15 PNG dans `/tmp/adm3_capt/`
+dépôt, dossier de Moussa ouvert depuis Personnes / Dossiers. 15 PNG dans `docs/revues/captures/C1-ADM3-DEMOENV-R/`
 (locaux, non commités) : pour chacun des cas 390 clair, 390 sombre, 1440 clair, 1440 sombre et
 320 à texte ×2 clair, le haut de page, le bloc Pièce d'identité et le bas de page.
 
@@ -396,7 +396,7 @@ Aucune capture de la branche B n'a été produite (10 tests de capture sautés s
    inverser : observations == [seanceId] avant /salle, un refus reste sur CTR-01 ».
    Corriger aussi la plage en `service_video.dart:120-123` dans `CT-BR.md` (pilotage).
 3. **AD-M2-PLANCHE** (voie admin, déjà prévue par l'auteur) : commiter les captures 390/1440
-   clair/sombre de la revue en production. Les 15 PNG de `/tmp/adm3_capt/` montrent le rendu
+   clair/sombre de la revue en production. Les 15 PNG de `docs/revues/captures/C1-ADM3-DEMOENV-R/` montrent le rendu
    attendu et peuvent servir de référence.
 4. **DEMO-ENV-1b** (voie corrections, petit) : DEMO-ENV-1-M1, test
    `expect(Env.environnementDeclare, isFalse)` sous `flutter test` ; écrire dans la fiche que
@@ -416,3 +416,22 @@ Aucune capture de la branche B n'a été produite (10 tests de capture sautés s
 ## Audit du rapport
 
 Un auditeur en contexte neuf a relu chaque chiffre contre les résultats bruts et revérifié dans le dépôt les affirmations clés (fermeture de `surchargeRevueDossiersProduction`, aucun appel à `observerEnControle`, 2c565f68 sans `lib/`, totaux 5366 / 5366 / 5446). Verdicts jugés conformes à la règle. Cinq écarts de détail relevés (numéros de ligne, décompte de dossiers, une somme) : tous corrigés dans cette version.
+
+## Fusion réelle dans la branche commune (04/10, session 01MrLWqB)
+
+Sur demande du directeur (étape menée de A à Z), `c1-adm3` puis `c1-demoenv` ont été fusionnées dans
+`corrections/revue-directeur-2026-10`, partie de `ddd24db7` (qui avait avancé depuis la fusion à blanc
+sur `f6ac3658` : c2-elv-err, c2-coupe2, c2-bento3b).
+
+| Contrôle | Résultat |
+|---|---|
+| Fusions | `336b4297` (c1-adm3), `08a27c2e` (c1-demoenv), aucun conflit |
+| Fichiers des deux branches identiques à leur source dans la fusion | oui (aucun fichier touché des deux côtés) |
+| Fichiers de la branche commune conservés | 246 contrôlés, aucune perte |
+| `dart analyze --fatal-infos` | No issues found |
+| `tool/verifier_jetons.dart` | 39 relevés, identique à `ddd24db7` |
+| `tool/verifier_revue.dart` | 1609 |
+| `flutter test` (suite complète) | 5470 réussis, 0 échec, 2774 sautés |
+
+Poussé en avance rapide (`ddd24db7..08a27c2e`), sans forcer.
+Les captures de la revue sont versionnées dans `docs/revues/captures/C1-ADM3-DEMOENV-R/` (15 PNG).
