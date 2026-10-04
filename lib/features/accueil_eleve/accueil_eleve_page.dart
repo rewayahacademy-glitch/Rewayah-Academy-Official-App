@@ -172,7 +172,14 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
     // reponse manque, l'appareil est repute en ligne.
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
 
-    if (!seances.hasValue && seances.isLoading) {
+    // DASH-ELV-ERR-b (revue DASH-ELV-ERR-R, m1 et i1) : l'echec passe avant
+    // le squelette. Pendant la relecture lancee par « Reessayer », Riverpod
+    // garde l'erreur precedente (`hasError` reste vrai, `isLoading` monte) :
+    // le message et le Coran restent a l'ecran, seul le bouton dit qu'il
+    // travaille.
+    final bool echec = seances.hasError && !seances.hasValue;
+
+    if (!echec && !seances.hasValue && seances.isLoading) {
       return const PageShell(child: Skeleton.liste(lignes: 2));
     }
 
@@ -205,7 +212,8 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
     // colonne centree et bornee a 1200 (« centre et borne, on n'ajoute rien »,
     // `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 3) et le bandeau hors ligne.
     // L'ecran ne rend plus que ses deux blocs.
-    final bool enChargement = seances.isLoading && seances.value == null;
+    final bool enChargement =
+        !echec && seances.isLoading && seances.value == null;
 
     return PageShell(
       child: enChargement
@@ -223,13 +231,19 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
                 // DASH-ELV-ERR (DASH_STRATEGIE D10, D11) : une lecture en
                 // echec n'est jamais « pas de cours aujourd'hui ». Le bloc dit
                 // que les cours manquent et propose de relire ; le Coran, lu
-                // ailleurs, reste en place.
-                if (seances.hasError && !seances.hasValue)
+                // ailleurs, reste en place. Une erreur apres une valeur deja
+                // lue garde cette valeur (DASH-ELV-ERR-b, m3) : l'eleve voit
+                // encore son prochain cours plutot qu'un message. Hors ligne,
+                // le bloc dit la cause par sa nature (K-59, m2).
+                if (echec)
                   EtatSysteme(
                     key: const ValueKey<String>('accueil-eleve-erreur'),
-                    nature: NatureEtat.echecServeur,
+                    nature: horsLigne
+                        ? NatureEtat.horsLigne
+                        : NatureEtat.echecServeur,
                     phrase: t.eleve.accueil.erreurCours,
                     onAction: () => ref.invalidate(seancesProvider),
+                    actionEnCours: seances.isLoading,
                   )
                 else
                   _BlocPrincipal(
