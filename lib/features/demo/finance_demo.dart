@@ -357,16 +357,20 @@ abstract final class DonneesFinanceDemo {
   /// Les finances de l'eleve adulte autonome (FI-9b, FI-BR-17) : son seul
   /// profil, seul membre payant (rang 1, sans remise) au tarif adulte, le
   /// mois de reference finance. [classe] `null` : la demonstration n'a pas
-  /// sa Classe (rien d'invente).
+  /// sa Classe (rien d'invente). [aRegulariser] : le mois de reference
+  /// n'est pas finance, 52 sur 60, il manque 8 (l'exemple du guide §1.7).
   static FinancesProfil financesAdulte({
     required String profilId,
     required String prenom,
     String? classe,
+    bool aRegulariser = false,
   }) => _finance(
     _ProfilDemo(profilId, prenom, 'accent-adulte', classe),
     rang: 1,
-    etat: EtatFinancier.finance,
-    solde: 15,
+    etat: aRegulariser ? EtatFinancier.aRegulariser : EtatFinancier.finance,
+    solde: aRegulariser ? 52 : 15,
+    finance: !aRegulariser,
+    manque: aRegulariser ? 8 : null,
     adulte: true,
   );
 

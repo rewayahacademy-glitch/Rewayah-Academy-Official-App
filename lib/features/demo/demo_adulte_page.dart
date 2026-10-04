@@ -413,6 +413,7 @@ List<RouteBase> routesDemoAdulte(String environnement) {
           eleve: p['eleve'],
           reseauCoupe: p['reseau'] == 'coupe',
           foyerNouveau: p['foyer'] == 'nouveau',
+          financeARegulariser: p['finance'] == 'a-regulariser',
         );
       },
     ),
@@ -436,6 +437,7 @@ String adresseDemoAdulte(
   String? eleve,
   bool reseauCoupe = false,
   bool foyerNouveau = false,
+  bool financeARegulariser = false,
 }) => Uri(
   path: Routes.demoAdulte,
   queryParameters: <String, String>{
@@ -447,6 +449,7 @@ String adresseDemoAdulte(
     'eleve': ?eleve,
     if (reseauCoupe) 'reseau': 'coupe',
     if (foyerNouveau) 'foyer': 'nouveau',
+    if (financeARegulariser) 'finance': 'a-regulariser',
   },
 ).toString();
 
@@ -581,8 +584,13 @@ class DemoAdultePage extends StatelessWidget {
     this.eleve,
     this.reseauCoupe = false,
     this.foyerNouveau = false,
+    this.financeARegulariser = false,
     super.key,
   });
+
+  /// `finance=a-regulariser` : l'eleve adulte autonome n'a pas finance le
+  /// mois de reference (FI-12, refus 9 du guide §13) ; sans lui, finance.
+  final bool financeARegulariser;
 
   /// `foyer=nouveau` : le foyer que l'adulte seul vient d'ouvrir par
   /// « Ajouter ma famille » (EA-PL), sans enfant.
@@ -622,6 +630,7 @@ class DemoAdultePage extends StatelessWidget {
         eleve: eleve,
         reseauCoupe: reseauCoupe,
         foyerNouveau: foyerNouveau,
+        financeARegulariser: financeARegulariser,
       );
     }
     final AppPalette palette = AppPalette.of(context);
@@ -752,8 +761,13 @@ class CoquilleAdulteDemo extends StatelessWidget {
     this.eleve,
     this.reseauCoupe = false,
     this.foyerNouveau = false,
+    this.financeARegulariser = false,
     super.key,
   });
+
+  /// `finance=a-regulariser` : l'eleve adulte autonome n'a pas finance le
+  /// mois de reference (FI-12, refus 9 du guide §13) ; sans lui, finance.
+  final bool financeARegulariser;
 
   /// `foyer=nouveau` : le foyer que l'adulte seul vient d'ouvrir par
   /// « Ajouter ma famille » (EA-PL). Ma famille n'y montre aucun enfant, et
@@ -798,6 +812,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
     eleve: eleve,
     reseauCoupe: reseauCoupe,
     foyerNouveau: foyerNouveau,
+    financeARegulariser: financeARegulariser,
   );
 
   @override
@@ -840,6 +855,7 @@ class CoquilleAdulteDemo extends StatelessWidget {
       classe: vue == VueDemoAdulte.titulaire
           ? DonneesAdulteDemo.classeTitulaire
           : null,
+      aRegulariser: financeARegulariser,
     );
     void versNotifications() =>
         context.go(_adresse(EcranDemoAdulte.notifications));
@@ -1124,9 +1140,10 @@ class CoquilleAdulteDemo extends StatelessWidget {
               onRetour: versPaiements,
             ),
             // LE moteur de recharge du foyer, son seul profil coche
-            // (guide §4) : aucun second moteur.
+            // (guide §4) : aucun second moteur. Ouverte directement, sans
+            // `eleve=`, elle coche aussi son profil : il n'en a pas d'autre.
             EcranDemoAdulte.maRecharge => RechargeFoyerPage(
-              preselection: <String>{?eleve},
+              preselection: <String>{mesFinances.profilId},
               onAbandon: versPaiements,
               onTerminee: versPaiements,
               // La demo de l'adulte seul ne rend aucune commande payee : par
