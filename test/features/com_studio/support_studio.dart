@@ -230,9 +230,15 @@ class FauxStudio implements PortStudio {
   @override
   Future<void> marquerLu(String canalId) async {}
 
+  /// Retient chaque envoi jusqu'a sa completion (l'envoi est compte des
+  /// son depart).
+  Completer<void>? attenteEnvoi;
+
   @override
   Future<void> envoyer(String canalId, String texte, String cle) async {
     envois.add((canalId, texte, cle));
+    final Completer<void>? attente = attenteEnvoi;
+    if (attente != null) await attente.future;
   }
 }
 

@@ -65,7 +65,10 @@ List<(SectionStudio, List<ResumeCanal>)> canauxParSection(
 /// La liste des canaux (`StudioChannelList`).
 ///
 /// [entete] se pose au-dessus des sections (la recherche du Studio) ; la
-/// liste defile sous lui et garde sa position quand on revient d'un canal.
+/// liste defile sous lui. Sa position est gardee par la cle de stockage
+/// ci-dessous, dans la memoire du Studio (`positionsStudioProvider`) que
+/// l'espace pose au-dessus d'elle : sans cette memoire, chaque route du
+/// Studio recreerait sa page et la liste remonterait en haut.
 class ListeCanaux extends StatelessWidget {
   /// Cree la liste.
   const ListeCanaux({
@@ -109,7 +112,8 @@ class ListeCanaux extends StatelessWidget {
         if (entete != null) ...<Widget>[entete, Ecart.vLg],
         Expanded(
           child: ListView(
-            // La position de lecture survit a l'aller-retour d'un canal.
+            // La position de lecture survit a l'aller-retour d'un canal
+            // (memoire du Studio, au-dessus des pages routees).
             key: const PageStorageKey<String>('studio-liste-canaux'),
             padding: const EdgeInsets.only(bottom: AppSpacing.lg),
             children: <Widget>[

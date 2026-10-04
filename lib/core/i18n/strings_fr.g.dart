@@ -15365,6 +15365,12 @@ class Traductions$com$studio$canal$fr {
 	/// fr: 'Vous pouvez lire ce canal. L'écriture n'y est pas ouverte pour vous.'
 	String get lectureSeule => 'Vous pouvez lire ce canal. L\'écriture n\'y est pas ouverte pour vous.';
 
+	/// fr: 'Aucun message pour le moment'
+	String get aucunMessageTitre => 'Aucun message pour le moment';
+
+	/// fr: 'Les messages de ce canal s'afficheront ici dès leur publication.'
+	String get aucunMessage => 'Les messages de ce canal s\'afficheront ici dès leur publication.';
+
 	/// fr: 'Canal indisponible'
 	String get indisponibleTitre => 'Canal indisponible';
 
@@ -20361,6 +20367,8 @@ extension on Traductions {
 			'com.studio.canal.membres' => ({required Object nombre}) => '${nombre} membres',
 			'com.studio.canal.aide' => ({required Object nom}) => 'Écrire dans ${nom}',
 			'com.studio.canal.lectureSeule' => 'Vous pouvez lire ce canal. L\'écriture n\'y est pas ouverte pour vous.',
+			'com.studio.canal.aucunMessageTitre' => 'Aucun message pour le moment',
+			'com.studio.canal.aucunMessage' => 'Les messages de ce canal s\'afficheront ici dès leur publication.',
 			'com.studio.canal.indisponibleTitre' => 'Canal indisponible',
 			'com.studio.canal.indisponible' => 'Ce canal n\'est pas disponible pour vous. Choisissez un autre canal dans la liste.',
 			'com.studio.canal.pieceJointe' => ({required Object nom}) => 'Pièce jointe : ${nom}',
@@ -20396,10 +20404,10 @@ extension on Traductions {
 			'com.studio.enregistres.sansDestination' => ({required Object type}) => '${type}, ne s\'ouvre plus d\'ici',
 			'com.studio.enregistres.types.canal' => 'Canal',
 			'com.studio.enregistres.types.publication' => 'Publication',
-			'com.studio.enregistres.types.message' => 'Message',
-			'com.studio.enregistres.types.element' => 'Élément du Studio',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.enregistres.types.message' => 'Message',
+			'com.studio.enregistres.types.element' => 'Élément du Studio',
 			'com.studio.recherche.champ' => 'Rechercher dans Le Studio',
 			'com.studio.recherche.aide' => 'Canal, message ou fichier',
 			'com.studio.recherche.fermer' => 'Fermer la recherche',

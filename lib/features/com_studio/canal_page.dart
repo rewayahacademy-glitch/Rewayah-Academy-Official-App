@@ -31,6 +31,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/communications/carte_piece_jointe.dart';
 import '../../core/widgets/communications/composer_texte.dart';
+import '../../core/widgets/communications/etats_communication.dart';
 import '../../core/widgets/fil_discussion.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../accueil_famille/bloc_seance.dart'
@@ -162,15 +163,28 @@ class CanalStudio extends StatefulWidget {
     'studio-canal-lecture-seule',
   );
 
+  /// La cle de l'etat vide d'un canal en lecture seule, pour les tests.
+  static const ValueKey<String> cleAucunMessage = ValueKey<String>(
+    'studio-canal-aucun-message',
+  );
+
   @override
   State<CanalStudio> createState() => _CanalStudioState();
 }
 
 class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
-  /// Les cles des envois pas encore confirmes, par texte : un nouvel essai
-  /// (« Reessayer ») rejoue la meme cle, et le serveur ne compte pas deux
-  /// fois le meme message. La cle part avec la confirmation.
-  final Map<String, String> _clesEnAttente = <String, String>{};
+  /// Les cles LIBRES des envois non confirmes, par texte : une cle part
+  /// avec un essai, revient ici si l'essai echoue, et disparait avec la
+  /// confirmation. Un nouvel essai (« Reessayer ») reprend une cle libre :
+  /// le serveur ne compte pas deux fois le meme message (COM-BR-02).
+  ///
+  /// `FilDiscussion` (socle) ne transmet que le texte, pas l'identite de la
+  /// bulle (ligne COM-FUS). Une cle n'est donc jamais attachee a un texte
+  /// seul : deux envois simultanes du meme texte prennent deux cles
+  /// distinctes, et une cle n'est reprise qu'apres l'echec de son essai.
+  /// Ainsi, a tout instant, chaque bulle en attente a SA cle, et deux bulles
+  /// au meme texte ne peuvent jamais etre comptees comme un seul message.
+  final Map<String, List<String>> _clesLibres = <String, List<String>>{};
   int _compteur = 0;
 
   /// La hauteur du clavier logiciel au dernier releve, en points logiques.
@@ -242,11 +256,19 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
   }
 
   Future<void> _envoyer(String texte) async {
-    final String cle = _clesEnAttente[texte] ??=
-        '${widget.canal.id}-${DateTime.now().microsecondsSinceEpoch}-'
-        '${_compteur++}';
-    await widget.onEnvoyer(texte, cle);
-    _clesEnAttente.remove(texte);
+    final List<String>? libres = _clesLibres[texte];
+    final String cle = libres != null && libres.isNotEmpty
+        ? libres.removeLast()
+        : '${widget.canal.id}-${DateTime.now().microsecondsSinceEpoch}-'
+              '${_compteur++}';
+    if (libres != null && libres.isEmpty) _clesLibres.remove(texte);
+    try {
+      await widget.onEnvoyer(texte, cle);
+    } on Object {
+      // Non confirme : la cle redevient libre pour le nouvel essai.
+      (_clesLibres[texte] ??= <String>[]).add(cle);
+      rethrow;
+    }
   }
 
   @override
@@ -300,7 +322,15 @@ class _CanalEnLecture extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.only(bottom: AppSpacing.lg),
             children: <Widget>[
-              if (canal.messages.isNotEmpty)
+              // Aucun message : l'etat vide le dit, jamais une zone blanche.
+              if (canal.messages.isEmpty)
+                VueEtatCommunication(
+                  key: CanalStudio.cleAucunMessage,
+                  etat: EtatCommunication.vide,
+                  titreVide: c.aucunMessageTitre,
+                  phraseVide: c.aucunMessage,
+                )
+              else
                 GroupeReglages(
                   lignes: <LigneRubrique>[
                     for (final MessageCommunication m in canal.messages)

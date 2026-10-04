@@ -217,6 +217,18 @@ class CoquilleStudio extends StatelessWidget {
   }
 }
 
+/// La memoire des positions de lecture du Studio (la liste des canaux).
+///
+/// `/admin/studio` et `/admin/studio/canaux/:canalId` sont deux routes : a
+/// chaque passage de l'une a l'autre, la page et son `PageStorage` sont
+/// recrees. Cette memoire vit au-dessus des pages (dans le `ProviderScope`) :
+/// la liste retrouve sa position quand on revient d'un canal (telephone) ou
+/// quand on en ouvre un depuis la liste (ordinateur, tablette). Elle ne garde
+/// que des positions de defilement, jamais un contenu : la liste est relue
+/// a chaque page.
+final Provider<PageStorageBucket> positionsStudioProvider =
+    Provider<PageStorageBucket>((Ref ref) => PageStorageBucket());
+
 /// L'espace des canaux du Studio : liste, canal, panneau, recherche, et
 /// leurs etats.
 ///
@@ -466,20 +478,23 @@ class _EspaceStudioState extends ConsumerState<EspaceStudio> {
   @override
   Widget build(BuildContext context) {
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        if (horsLigne) ...<Widget>[
-          const BandeauHorsLigneCommunication(encadre: true),
-          Ecart.vLg,
-        ],
-        Expanded(
-          child: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints contraintes) =>
-                _espace(colonnesPour(contraintes.maxWidth), horsLigne),
+    return PageStorage(
+      bucket: ref.watch(positionsStudioProvider),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          if (horsLigne) ...<Widget>[
+            const BandeauHorsLigneCommunication(encadre: true),
+            Ecart.vLg,
+          ],
+          Expanded(
+            child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints contraintes) =>
+                  _espace(colonnesPour(contraintes.maxWidth), horsLigne),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -653,12 +668,14 @@ class _EspaceStudioState extends ConsumerState<EspaceStudio> {
     if (canal == null) {
       // Retire, ou prive et non autorise : rien du canal n'est rendu, ni
       // nom, ni membre, ni message (R-COM-08). Une seule phrase pour les
-      // deux, pour ne pas dire qu'un canal prive existe.
+      // deux, pour ne pas dire qu'un canal prive existe. La nature est
+      // « introuvable », jamais « acces refuse » : son cadenas laisserait
+      // entendre qu'un canal verrouille est la (sans cadenas, R-COM-08).
       final c = t.com.studio.canal;
       return SingleChildScrollView(
         child: EtatSysteme(
           key: EspaceStudio.cleCanalIndisponible,
-          nature: NatureEtat.accesRefuse,
+          nature: NatureEtat.introuvable,
           titre: c.indisponibleTitre,
           phrase: c.indisponible,
           dependance: 'COM-BR-08',

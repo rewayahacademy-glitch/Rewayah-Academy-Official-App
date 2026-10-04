@@ -15,10 +15,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/modeles_communication.dart';
 import '../../core/communications/port_elements_enregistres.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/communications/etats_communication.dart';
@@ -94,9 +96,17 @@ class _VueElementsEnregistresState
     final e = t.com.studio.enregistres;
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    final Object? erreur = _elements.isLoading ? null : _elements.error;
     return ListView(
       padding: const EdgeInsets.only(bottom: AppSpacing.lg),
       children: <Widget>[
+        // Hors ligne : le bandeau des communications, comme dans l'espace des
+        // canaux ; la liste deja lue reste en place.
+        if (horsLigne) ...<Widget>[
+          const BandeauHorsLigneCommunication(encadre: true),
+          Ecart.vLg,
+        ],
         Text(
           e.detail,
           style: palette.inkMuted.applyTo(
@@ -104,18 +114,26 @@ class _VueElementsEnregistresState
           ),
         ),
         Ecart.vLg,
-        BlocCommunication<List<ElementEnregistre>>(
-          valeur: _elements,
-          onReessayer: _charger,
-          titreVide: e.videTitre,
-          phraseVide: e.vide,
-          construire: (List<ElementEnregistre> elements) => GroupeReglages(
-            key: VueElementsEnregistres.cleListe,
-            lignes: <LigneRubrique>[
-              for (final ElementEnregistre el in elements) _ligne(el),
-            ],
+        // Une lecture en echec hors ligne dit la connexion, avec
+        // « Reessayer » ; une capacite absente reste « indisponible ».
+        if (horsLigne && erreur != null && erreur is! CapaciteIndisponible)
+          VueEtatCommunication(
+            etat: EtatCommunication.horsLigne,
+            onReessayer: _charger,
+          )
+        else
+          BlocCommunication<List<ElementEnregistre>>(
+            valeur: _elements,
+            onReessayer: _charger,
+            titreVide: e.videTitre,
+            phraseVide: e.vide,
+            construire: (List<ElementEnregistre> elements) => GroupeReglages(
+              key: VueElementsEnregistres.cleListe,
+              lignes: <LigneRubrique>[
+                for (final ElementEnregistre el in elements) _ligne(el),
+              ],
+            ),
           ),
-        ),
       ],
     );
   }

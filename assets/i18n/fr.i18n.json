@@ -4836,6 +4836,8 @@
         "membres": "{nombre} membres",
         "aide": "Écrire dans {nom}",
         "lectureSeule": "Vous pouvez lire ce canal. L'écriture n'y est pas ouverte pour vous.",
+        "aucunMessageTitre": "Aucun message pour le moment",
+        "aucunMessage": "Les messages de ce canal s'afficheront ici dès leur publication.",
         "indisponibleTitre": "Canal indisponible",
         "indisponible": "Ce canal n'est pas disponible pour vous. Choisissez un autre canal dans la liste.",
         "pieceJointe": "Pièce jointe : {nom}",

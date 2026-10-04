@@ -590,6 +590,8 @@ class _Traductions$com$studio$canal$ar extends Traductions$com$studio$canal$fr {
 	@override String membres({required Object nombre}) => '${nombre} أعضاء';
 	@override String aide({required Object nom}) => 'اكتب في ${nom}';
 	@override String get lectureSeule => 'يمكنك قراءة هذه القناة. الكتابة فيها غير مفتوحة لك.';
+	@override String get aucunMessageTitre => 'لا توجد رسائل حاليًا';
+	@override String get aucunMessage => 'ستظهر رسائل هذه القناة هنا فور نشرها.';
 	@override String get indisponibleTitre => 'القناة غير متاحة';
 	@override String get indisponible => 'هذه القناة غير متاحة لك. اختر قناة أخرى من القائمة.';
 	@override String pieceJointe({required Object nom}) => 'مرفق: ${nom}';
@@ -1090,6 +1092,8 @@ extension on TraductionsAr {
 			'com.studio.canal.membres' => ({required Object nombre}) => '${nombre} أعضاء',
 			'com.studio.canal.aide' => ({required Object nom}) => 'اكتب في ${nom}',
 			'com.studio.canal.lectureSeule' => 'يمكنك قراءة هذه القناة. الكتابة فيها غير مفتوحة لك.',
+			'com.studio.canal.aucunMessageTitre' => 'لا توجد رسائل حاليًا',
+			'com.studio.canal.aucunMessage' => 'ستظهر رسائل هذه القناة هنا فور نشرها.',
 			'com.studio.canal.indisponibleTitre' => 'القناة غير متاحة',
 			'com.studio.canal.indisponible' => 'هذه القناة غير متاحة لك. اختر قناة أخرى من القائمة.',
 			'com.studio.canal.pieceJointe' => ({required Object nom}) => 'مرفق: ${nom}',

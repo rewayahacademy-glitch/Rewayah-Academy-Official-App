@@ -324,6 +324,8 @@
         "membres": "{nombre} أعضاء",
         "aide": "اكتب في {nom}",
         "lectureSeule": "يمكنك قراءة هذه القناة. الكتابة فيها غير مفتوحة لك.",
+        "aucunMessageTitre": "لا توجد رسائل حاليًا",
+        "aucunMessage": "ستظهر رسائل هذه القناة هنا فور نشرها.",
         "indisponibleTitre": "القناة غير متاحة",
         "indisponible": "هذه القناة غير متاحة لك. اختر قناة أخرى من القائمة.",
         "pieceJointe": "مرفق: {nom}",

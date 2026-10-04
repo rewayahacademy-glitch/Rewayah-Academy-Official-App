@@ -183,6 +183,59 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    for (final Size taille in <Size>[_mobile, _bureau]) {
+      testWidgets('${taille.width.toInt()} : la liste garde sa position a '
+          'l aller-retour d un canal (deux routes, une memoire)', (
+        WidgetTester tester,
+      ) async {
+        final FauxStudio port = FauxStudio(
+          canaux: <Canal>[
+            for (int i = 0; i < 40; i++)
+              canalSimple(id: 'c$i', nom: 'Canal $i'),
+          ],
+        );
+        final GoRouter routeur = await monterStudio(
+          tester,
+          port: port,
+          taille: taille,
+        );
+        final Finder defilante = find.byKey(
+          const PageStorageKey<String>('studio-liste-canaux'),
+        );
+        ScrollPosition position() => tester
+            .state<ScrollableState>(
+              find
+                  .descendant(of: defilante, matching: find.byType(Scrollable))
+                  .first,
+            )
+            .position;
+        await tester.drag(defilante, const Offset(0, -400));
+        await tester.pumpAndSettle();
+        final double avant = position().pixels;
+        expect(avant, greaterThan(0));
+        // Un canal visible a cet endroit de la liste.
+        final Finder ligne = find
+            .descendant(
+              of: find.byType(ListeCanaux),
+              matching: find.textContaining('Canal '),
+            )
+            .hitTestable()
+            .first;
+        await tester.tap(ligne);
+        await tester.pumpAndSettle();
+        expect(cheminCourant(routeur), startsWith(Routes.adminStudioCanaux));
+        if (taille == _mobile) {
+          expect(find.byType(ListeCanaux), findsNothing);
+          await tester.tap(find.byType(DisqueRetour));
+          await tester.pumpAndSettle();
+          expect(cheminCourant(routeur), Routes.adminStudio);
+        }
+        expect(find.byType(ListeCanaux), findsOneWidget);
+        expect(position().pixels, avant);
+        expect(tester.takeException(), isNull);
+      });
+    }
+
     testWidgets('la sortie du Studio ramene a l Accueil admin', (
       WidgetTester tester,
     ) async {
@@ -333,6 +386,9 @@ void main() {
       );
       expect(find.byKey(EspaceStudio.cleCanalIndisponible), findsOneWidget);
       expect(find.text(t.com.studio.canal.indisponibleTitre), findsOneWidget);
+      // Sans cadenas : rien ne laisse entendre qu'un canal verrouille existe.
+      expect(find.byIcon(AppIcons.verrou.repos), findsNothing);
+      expect(find.byIcon(AppIcons.verrou.actif), findsNothing);
       final String tout = textesRendus(tester).join(' ');
       expect(tout.contains('Direction stratégique'), isFalse);
       expect(tout.contains('Budget'), isFalse);
@@ -346,6 +402,8 @@ void main() {
         depart: Routes.canalStudioPour('canal-retire'),
       );
       expect(find.byKey(EspaceStudio.cleCanalIndisponible), findsOneWidget);
+      expect(find.byIcon(AppIcons.verrou.repos), findsNothing);
+      expect(find.byIcon(AppIcons.verrou.actif), findsNothing);
     });
 
     testWidgets('la recherche ne rend rien d un canal prive', (
@@ -447,6 +505,31 @@ void main() {
       expect(port.clesRecues.first, startsWith('organisation-'));
     });
 
+    testWidgets('COM-BR-02 : deux messages au meme texte, envoyes ensemble, '
+        'partent avec deux cles distinctes', (WidgetTester tester) async {
+      final FauxStudio port = FauxStudio(canaux: <Canal>[canalSimple()])
+        ..attenteEnvoi = Completer<void>();
+      await monterStudio(
+        tester,
+        port: port,
+        depart: Routes.canalStudioPour('c1'),
+      );
+      for (int i = 0; i < 2; i++) {
+        await tester.enterText(find.byKey(FilDiscussion.champKey), "D'accord");
+        await tester.pump();
+        await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+        await tester.pump();
+      }
+      expect(port.envois, hasLength(2));
+      expect(port.envois.first.$3, isNot(port.envois.last.$3));
+      port.attenteEnvoi!.complete();
+      await tester.pumpAndSettle();
+      expect(
+        _dansFil(find.text(t.com.socle.composants.composer.envoye)),
+        findsNWidgets(2),
+      );
+    });
+
     testWidgets('envoi confirme : « Envoye » et le message part au bon canal', (
       WidgetTester tester,
     ) async {
@@ -494,6 +577,26 @@ void main() {
       expect(find.byKey(FilDiscussion.champKey), findsNothing);
       expect(find.byKey(FilDiscussion.envoyerKey), findsNothing);
       expect(find.textContaining('Classe An-Nour'), findsOneWidget);
+    });
+
+    testWidgets('lecture seule sans aucun message : l etat vide le dit, '
+        'aucune zone blanche', (WidgetTester tester) async {
+      final Canal plein = canalSimple(ecrire: false);
+      final Canal vide = Canal(
+        resume: plein.resume,
+        membres: plein.membres,
+        messages: const <MessageCommunication>[],
+        capacites: const <CapaciteCanal>{},
+      );
+      await monterStudio(
+        tester,
+        port: FauxStudio(canaux: <Canal>[vide]),
+        depart: Routes.canalStudioPour('c1'),
+      );
+      expect(find.byKey(CanalStudio.cleLectureSeule), findsOneWidget);
+      expect(find.byKey(CanalStudio.cleAucunMessage), findsOneWidget);
+      expect(find.text(t.com.studio.canal.aucunMessageTitre), findsOneWidget);
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('hors ligne : bandeau des communications, contenu garde, '
@@ -797,6 +900,35 @@ void main() {
       expect(find.text(t.com.studio.enregistres.videTitre), findsOneWidget);
       final NavShell nav = tester.widget<NavShell>(find.byType(NavShell));
       expect(nav.indexActif, VueStudio.enregistres.index);
+    });
+
+    testWidgets('hors ligne : bandeau des communications ; une lecture en '
+        'echec dit la connexion, avec Reessayer', (WidgetTester tester) async {
+      final _EnregistresListeEnEchec memoire = _EnregistresListeEnEchec();
+      await monterStudio(
+        tester,
+        port: portDemo(),
+        enregistres: memoire,
+        depart: adresseVueStudio(VueStudio.enregistres),
+        horsLigne: true,
+      );
+      expect(find.byType(BandeauHorsLigneCommunication), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+          (Widget w) =>
+              w is VueEtatCommunication &&
+              w.etat == EtatCommunication.horsLigne,
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(t.com.socle.composants.etats.erreurTitre), findsNothing);
+      expect(find.text(t.com.socle.composants.etats.reessayer), findsOneWidget);
+
+      // Le reseau revenu, « Reessayer » relit la liste.
+      memoire.echouer = false;
+      await tester.tap(find.text(t.com.socle.composants.etats.reessayer));
+      await tester.pumpAndSettle();
+      expect(find.text(t.com.studio.enregistres.videTitre), findsOneWidget);
     });
 
     testWidgets('un enregistrement non confirme le dit, rien ne change', (
@@ -1184,6 +1316,15 @@ void main() {
 
 /// Un service d'elements enregistres qui repond a la lecture mais dont
 /// l'enregistrement n'est jamais confirme.
+class _EnregistresListeEnEchec extends ElementsEnregistresMemoire {
+  bool echouer = true;
+
+  @override
+  Future<List<ElementEnregistre>> liste() => echouer
+      ? Future<List<ElementEnregistre>>.error(StateError('reseau'))
+      : super.liste();
+}
+
 class _EnregistresQuiEchouent extends ElementsEnregistresMemoire {
   @override
   Future<void> enregistrer(ObjetLie objet) =>
