@@ -41,12 +41,18 @@ class CarteProfilPaiement extends StatelessWidget {
       entete: AvatarNom.enLigne(
         prenom: profil.identite.nom,
         role: libelleTypeBeneficiaire(profil.identite.type),
-        fin: PastilleProfilPaiement(profil.etat),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          // L'etat sous le nom, jamais a cote : « Invitation envoyee » a
+          // 320 px ou a texte x2 ecraserait le nom (mots coupes).
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: PastilleProfilPaiement(profil.etat),
+          ),
+          Ecart.vSm,
           LigneDestinationMasquee(destination: profil.destination),
           LigneCleValeur(
             cle: p.derniereModification,

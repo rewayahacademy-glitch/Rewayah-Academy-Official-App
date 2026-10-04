@@ -504,45 +504,60 @@ class _LignePaiement extends StatelessWidget {
         ? dateComptable(paiement.date)
         : '${dateComptable(paiement.date)} · '
               '${t.comptable.commun.activiteReference(reference: reference)}';
+    // Texte agrandi : la ligne s'empile, comme `LigneCleValeur`
+    // (`AppGabarit.seuilTexteColonne`) ; a 200 %, deux colonnes coupent.
+    final bool empiler =
+        MediaQuery.textScalerOf(context).scale(AppSpacing.lg) / AppSpacing.lg >=
+        AppGabarit.seuilTexteColonne;
+    final Widget gauche = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Text(
+          paiement.periode,
+          style: palette.inkStrong.applyTo(
+            textes.bodyLarge ?? const TextStyle(),
+          ),
+        ),
+        Text(
+          detail,
+          style: palette.inkMuted.applyTo(
+            AppTypography.tabulaire(textes.bodySmall ?? const TextStyle()),
+          ),
+        ),
+      ],
+    );
+    final Widget droite = Column(
+      crossAxisAlignment: empiler
+          ? CrossAxisAlignment.start
+          : CrossAxisAlignment.end,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        MontantSensible(paiement.montant),
+        Ecart.vXs,
+        PastillePaiementSortant(paiement.etat),
+      ],
+    );
+    final Key cle = ValueKey<String>(
+      'cpt-ben-paiement-${paiement.obligationId}',
+    );
     return MergeSemantics(
-      child: Row(
-        key: ValueKey<String>('cpt-ben-paiement-${paiement.obligationId}'),
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            child: Column(
+      child: empiler
+          ? Column(
+              key: cle,
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
+              children: <Widget>[gauche, Ecart.vXs, droite],
+            )
+          : Row(
+              key: cle,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  paiement.periode,
-                  style: palette.inkStrong.applyTo(
-                    textes.bodyLarge ?? const TextStyle(),
-                  ),
-                ),
-                Text(
-                  detail,
-                  style: palette.inkMuted.applyTo(
-                    AppTypography.tabulaire(
-                      textes.bodySmall ?? const TextStyle(),
-                    ),
-                  ),
-                ),
+                Expanded(child: gauche),
+                Ecart.hMd,
+                droite,
               ],
             ),
-          ),
-          Ecart.hMd,
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              MontantSensible(paiement.montant),
-              Ecart.vXs,
-              PastillePaiementSortant(paiement.etat),
-            ],
-          ),
-        ],
-      ),
     );
   }
 }

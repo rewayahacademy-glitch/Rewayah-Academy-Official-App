@@ -103,10 +103,14 @@ List<Override> _surcharges({
   sourceSessionProvider.overrideWithValue(
     FausseSourceSession(sessionActive(AppRole.accountant)),
   ),
-  ...surchargesDemoBeneficiaires(),
   horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(horsLigne)),
-  if (port != null) portBeneficiairesPaiementProvider.overrideWithValue(port),
-  if (relance != null) portRelancePaiementProvider.overrideWithValue(relance),
+  // Une seule surcharge par port : la demo, sauf si le test la remplace.
+  portBeneficiairesPaiementProvider.overrideWithValue(
+    port ?? const BeneficiairesPaiementDemo(),
+  ),
+  portRelancePaiementProvider.overrideWithValue(
+    relance ?? const RelancePaiementDemo(),
+  ),
 ];
 
 Future<void> _monter(
@@ -119,6 +123,9 @@ Future<void> _monter(
   TextDirection sens = TextDirection.ltr,
 }) async {
   fixerVueCapture(tester, taille, 1);
+  // Un nouveau conteneur a chaque montage : un ProviderScope garde sinon
+  // les surcharges du montage precedent (hors ligne, source).
+  await tester.pumpWidget(const SizedBox.shrink());
   await tester.pumpWidget(
     hoteCapture(
       Directionality(textDirection: sens, child: page),
@@ -137,7 +144,12 @@ void main() {
     testWidgets('les 20 beneficiaires, destinations masquees par la source', (
       WidgetTester tester,
     ) async {
-      await _monter(tester, const BeneficiairesPage());
+      // Tableau large et haut : la collection construit les 20 lignes.
+      await _monter(
+        tester,
+        const BeneficiairesPage(),
+        taille: const Size(1440, 2400),
+      );
       expect(find.byKey(BeneficiairesPage.collectionKey), findsOneWidget);
       for (final IdentiteBeneficiaire p in <IdentiteBeneficiaire>[
         ...SocleComptableDemo.enseignants,
@@ -169,7 +181,11 @@ void main() {
     testWidgets('?filtre=infos (Aujourd hui) : les 2 infos manquantes', (
       WidgetTester tester,
     ) async {
-      await _monter(tester, const BeneficiairesPage(filtre: 'infos'));
+      await _monter(
+        tester,
+        const BeneficiairesPage(filtre: 'infos'),
+        taille: const Size(1440, 2400),
+      );
       expect(
         find.byKey(
           const ValueKey<String>(
@@ -208,7 +224,11 @@ void main() {
     testWidgets('filtre « Invitations envoyees » : l externe sans compte', (
       WidgetTester tester,
     ) async {
-      await _monter(tester, const BeneficiairesPage(filtre: 'invitations'));
+      await _monter(
+        tester,
+        const BeneficiairesPage(filtre: 'invitations'),
+        taille: const Size(1440, 2400),
+      );
       expect(
         find.byKey(
           const ValueKey<String>(
@@ -552,6 +572,9 @@ void main() {
   });
 
   group('Garde d interface W07', () {
+    // Les mesures de texte n'ont de sens qu'avec les vraies polices.
+    setUpAll(chargerPolicesDuDepot);
+
     bool estCarte(Widget w) => w is AppCard;
 
     for (final ThemeMode theme in <ThemeMode>[

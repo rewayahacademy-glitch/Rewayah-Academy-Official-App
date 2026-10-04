@@ -88,6 +88,9 @@ Future<void> _monter(
   TextDirection sens = TextDirection.ltr,
 }) async {
   fixerVueCapture(tester, taille, 1);
+  // Un nouveau conteneur a chaque montage : un ProviderScope garde sinon
+  // les surcharges du montage precedent (hors ligne, source).
+  await tester.pumpWidget(const SizedBox.shrink());
   await tester.pumpWidget(
     hoteCapture(
       Directionality(textDirection: sens, child: page),
@@ -344,6 +347,9 @@ void main() {
   });
 
   group('Garde d interface', () {
+    // Les mesures de texte n'ont de sens qu'avec les vraies polices.
+    setUpAll(chargerPolicesDuDepot);
+
     for (final ThemeMode theme in <ThemeMode>[
       ThemeMode.light,
       ThemeMode.dark,
