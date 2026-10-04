@@ -140,8 +140,8 @@ class Traductions$reseau$fr {
 
 	// Translations
 
-	/// fr: 'Pas de réseau. Tout reste consultable, l'envoi attendra.'
-	String get horsLigne => 'Pas de réseau. Tout reste consultable, l\'envoi attendra.';
+	/// fr: 'Pas de réseau. Tout reste consultable.'
+	String get horsLigne => 'Pas de réseau. Tout reste consultable.';
 
 	/// fr: 'Sera envoyé dès le retour du réseau'
 	String get enAttenteEnvoi => 'Sera envoyé dès le retour du réseau';
@@ -15435,7 +15435,7 @@ extension on Traductions {
 			'commun.dates.mois.11' => 'décembre',
 			'commun.dates.jourDate' => ({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}',
 			'commun.sections.page' => 'Sections de la page',
-			'reseau.horsLigne' => 'Pas de réseau. Tout reste consultable, l\'envoi attendra.',
+			'reseau.horsLigne' => 'Pas de réseau. Tout reste consultable.',
 			'reseau.enAttenteEnvoi' => 'Sera envoyé dès le retour du réseau',
 			'reseau.retabli' => 'Réseau rétabli',
 			'reseau.syncImpossible' => 'Synchronisation impossible',

@@ -130,7 +130,7 @@
     }
   },
   "reseau": {
-    "horsLigne": "Pas de réseau. Tout reste consultable, l'envoi attendra.",
+    "horsLigne": "Pas de réseau. Tout reste consultable.",
     "enAttenteEnvoi": "Sera envoyé dès le retour du réseau",
     "retabli": "Réseau rétabli",
     "syncImpossible": "Synchronisation impossible"
