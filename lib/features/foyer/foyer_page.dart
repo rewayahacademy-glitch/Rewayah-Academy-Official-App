@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/appairage/service_appairage.dart';
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/capacites/port_accents_profils.dart';
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/foyer/selection_eleve.dart';
@@ -16,6 +17,7 @@ import '../../core/offres/offre_horaire.dart';
 import '../../core/offres/service_offres.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/accent_profil.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -423,6 +425,9 @@ class _ListeMembres extends ConsumerWidget {
     bool classesIndisponibles = false;
     final List<String> classesEnEchec = <String>[];
     final List<LigneRubrique> lignes = <LigneRubrique>[];
+    final AsyncValue<Map<String, AccentProfil>> accents = ref.watch(
+      accentsProfilsProvider,
+    );
     for (final ProfilEleveFoyer profil in profils) {
       final ClasseMembre classe = classeMembreLue(
         ref.watch(classesMembreProvider(profil.eleveId)),
@@ -439,6 +444,7 @@ class _ListeMembres extends ConsumerWidget {
           classe: classe,
           maintenant: maintenant,
           inscription: etapeInscriptionLue(parcours, profil.eleveId),
+          accent: accentLu(accents, profil.eleveId),
           onPress: () => aller(Routes.ficheElevePour(profil.eleveId)),
         ),
       );

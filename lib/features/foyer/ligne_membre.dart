@@ -7,8 +7,10 @@ import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/offres/offre_horaire.dart';
+import '../../core/theme/accent_profil.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/identite_profil.dart';
 import 'photo_eleve.dart';
 
 /// Ce que le Foyer sait de la classe d'un membre.
@@ -175,18 +177,25 @@ String? texteClasse(ClasseMembre classe) => switch (classe) {
 /// Une rubrique du composant partage `GroupeReglages` : une surface pour tout
 /// le groupe, un filet en retrait entre les membres, un chevron vers la fiche.
 /// La tete de ligne est la photo de l'eleve, ou ses initiales sans photo, par
-/// le composant partage `AvatarTile` (via [PhotoEleve]).
+/// le composant partage `AvatarTile` (via [PhotoEleve]), derriere laquelle
+/// se pose le bandeau de la couleur choisie par le tuteur ([accent], K-62,
+/// maquette 11) ; sans couleur choisie, le cercle seul.
 LigneRubrique ligneMembre({
   required ProfilEleveFoyer profil,
   required ClasseMembre classe,
   required DateTime maintenant,
   required VoidCallback onPress,
   EtapeParcours? inscription,
+  AccentProfil? accent,
 }) => LigneRubrique(
-  meneur: PhotoEleve(
-    prenom: profil.prenom,
-    cleAvatar: profil.cleAvatar,
+  meneur: BandeauProfil(
     diametre: AppAvatar.moyen,
+    accent: accent,
+    avatar: PhotoEleve(
+      prenom: profil.prenom,
+      cleAvatar: profil.cleAvatar,
+      diametre: AppAvatar.moyen,
+    ),
   ),
   libelle: profil.prenom,
   legende: legendeMembre(

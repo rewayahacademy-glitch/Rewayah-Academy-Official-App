@@ -1110,6 +1110,25 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('le Foyer pose le bandeau de chaque enfant qui en a un', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        appairage: _foyerA(),
+        depart: Routes.tuteurFoyer,
+        autres: accents(
+          AccentsProfilsEnMemoire(<String, AccentProfil>{
+            a1: AccentProfil.menthe,
+          }),
+        ),
+      );
+      expect(find.byType(FoyerPage), findsOneWidget);
+      // A1 a choisi Menthe, A2 rien : un seul bandeau, jamais au hasard.
+      expect(bandeau(), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('« Sans couleur » retire le bandeau', (
       WidgetTester tester,
     ) async {

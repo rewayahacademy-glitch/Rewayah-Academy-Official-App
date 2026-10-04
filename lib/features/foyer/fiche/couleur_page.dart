@@ -11,7 +11,7 @@ import '../../../core/reseau/service_reseau.dart';
 import '../../../core/theme/accent_profil.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/widgets/avatar_nom.dart';
+import '../../../core/widgets/avatar_tile.dart';
 import '../../../core/widgets/bloc_asynchrone.dart';
 import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/identite_profil.dart';
@@ -191,7 +191,7 @@ class _ChoixCouleurState extends ConsumerState<_ChoixCouleur> {
                   cle: CouleurElevePage.carteDe(a),
                   valeur: a.name,
                   libelle: libelleAccent(a),
-                  apercu: _Pastille(accent: a),
+                  apercu: _Pastille(accent: a, prenom: profil.prenom),
                   description: switch (priseePar(a)) {
                     final String autre => t.ficheEleve.couleur.dejaPrise(
                       prenom: autre,
@@ -245,12 +245,13 @@ class _ChoixCouleurState extends ConsumerState<_ChoixCouleur> {
   }
 }
 
-/// La pastille d'une couleur dans sa carte : le bandeau en petit, sur le
-/// cercle neutre, comme sur le Foyer.
+/// La pastille d'une couleur dans sa carte : le bandeau en petit derriere
+/// le cercle d'initiales du profil, comme sur le Foyer.
 class _Pastille extends StatelessWidget {
-  const _Pastille({required this.accent});
+  const _Pastille({required this.accent, required this.prenom});
 
   final AccentProfil accent;
+  final String prenom;
 
   @override
   Widget build(BuildContext context) {
@@ -258,15 +259,7 @@ class _Pastille extends StatelessWidget {
       child: BandeauProfil(
         diametre: AppAvatar.petit,
         accent: accent,
-        avatar: SizedBox.square(
-          dimension: AppAvatar.petit,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppPalette.of(context).surfaceSunken.background,
-            ),
-          ),
-        ),
+        avatar: AvatarTile(prenom: prenom, diametre: AppAvatar.petit),
       ),
     );
   }
