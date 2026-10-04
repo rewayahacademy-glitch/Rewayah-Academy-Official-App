@@ -20,6 +20,7 @@
 import 'package:flutter/material.dart';
 
 import '../icons/app_icons.dart';
+import '../theme/app_color_pair.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
@@ -37,6 +38,7 @@ class BarrePrecedentSuivant extends StatelessWidget {
     this.onSuivant,
     this.etendue = true,
     this.actives = true,
+    this.encrePosition,
     super.key,
   });
 
@@ -70,6 +72,12 @@ class BarrePrecedentSuivant extends StatelessWidget {
   /// atteinte (rappel nul), ou la fleche disparait.
   final bool actives;
 
+  /// La paire de la surface sur laquelle la barre est posee, quand ce n'est
+  /// pas celle de la page : la salle en direct (`surfaceInverse`,
+  /// SALLE-ENCRE-1). Seule la position (« 42 / 604 ») en prend l'encre ; les
+  /// fleches gardent leur disque `surfaceRaised`. `null` : `inkStrong`.
+  final AppColorPair? encrePosition;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -82,7 +90,7 @@ class BarrePrecedentSuivant extends StatelessWidget {
         position,
         key: const ValueKey<String>('nav-position'),
         textAlign: TextAlign.center,
-        style: palette.inkStrong.applyTo(
+        style: (encrePosition?.applyTo ?? palette.inkStrong.applyTo)(
           Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
         ),
       ),

@@ -556,9 +556,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       impasse: _impasse,
     );
     final bool enImpasse = vue.phase == PhaseSalle.refus;
-    // MA-5 : l'eleve en Mode Accessibilite lit la salle avec l'encre du
-    // registre `salle` (celle que `PageImmersive` pose en fond), comme le
-    // controleur (CT-3). Les autres roles gardent leur rendu (HU-1).
+    // SALLE-ENCRE-1 : les textes de la salle prennent l'encre du registre
+    // `salle` (celle que `PageImmersive` pose en fond) pour TOUS les roles,
+    // hors Mode Accessibilite aussi (`_encreSalle`). Ce drapeau ne garde que
+    // le bandeau permanent pose sur la surface des vignettes (MA-5) : le
+    // bandeau n'est pas du perimetre (JUR-APP-1).
     final bool encreAccessible =
         vue.role == RoleSalle.eleve &&
         ref.watch(modeAccessibiliteActifProvider);
@@ -627,7 +629,6 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       registre: RegistreImmersif.salle,
       entete: _Entete(
         vue: vue,
-        encreAccessible: encreAccessible,
         monTuteurObserve: monTuteurObserve,
         annonces: annonces,
         // L'eleve lit SON etat, et lui seul : la section 6.6 le dit deux fois,
@@ -660,7 +661,6 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       child: enImpasse
           ? _Impasse(
               cause: vue.cause,
-              encreAccessible: encreAccessible,
               onReessayer: _entrer,
               onRentrer: _rentrer,
             )
@@ -677,7 +677,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
               lignes: lignes,
               seanceId: widget.seanceId,
             )
-          : _Corps(vue: vue, lignes: lignes, encreAccessible: encreAccessible),
+          : _Corps(vue: vue, lignes: lignes),
     );
   }
 }
@@ -697,7 +697,6 @@ class _Entete extends StatelessWidget {
     this.monTuteurObserve = false,
     this.annonces = const <AnnonceObservation>[],
     this.onVoirPresence,
-    this.encreAccessible = false,
   });
 
   final VueSalle vue;
@@ -716,10 +715,6 @@ class _Entete extends StatelessWidget {
   /// Ouvre la liste de presence, quand elle ne tient pas en colonne.
   final VoidCallback? onVoirPresence;
 
-  /// MA-5 : l'eleve en Mode Accessibilite lit la salle avec l'encre du
-  /// registre (`surfaceInverse`) ; les autres gardent leur rendu (HU-1).
-  final bool encreAccessible;
-
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
@@ -727,10 +722,7 @@ class _Entete extends StatelessWidget {
     final String? attente = _attenteDe(vue);
 
     if (attente != null) {
-      return Text(
-        attente,
-        style: _encreSalle(context, textes.labelLarge, active: encreAccessible),
-      );
+      return Text(attente, style: _encreSalle(context, textes.labelLarge));
     }
 
     final _EtatLien etatDuLien = _etatDuLien(vue);
@@ -754,11 +746,7 @@ class _Entete extends StatelessWidget {
                   vue.qualite == QualiteLien.perdue
                       ? t.salle.lienPerdu
                       : t.salle.lienMediocre,
-                  style: _encreSalle(
-                    context,
-                    textes.labelMedium,
-                    active: encreAccessible,
-                  ),
+                  style: _encreSalle(context, textes.labelMedium),
                 ),
               // Ma presence en pastille seule : « Votre presence » est lu avec
               // l'etat, et la pastille porte deja le mot de l'etat (J7).
@@ -778,9 +766,7 @@ class _Entete extends StatelessWidget {
                   libelleSemantique: t.presence.voir,
                   onPress: onVoirPresence,
                   fleche: false,
-                  encre: encreAccessible
-                      ? AppPalette.of(context).surfaceInverse.applyTo
-                      : null,
+                  encre: AppPalette.of(context).surfaceInverse.applyTo,
                 ),
             ],
           ),
@@ -817,11 +803,7 @@ class _Entete extends StatelessWidget {
                   vue.qualite == QualiteLien.perdue
                       ? t.salle.lienPerdu
                       : t.salle.lienMediocre,
-                  style: _encreSalle(
-                    context,
-                    textes.labelMedium,
-                    active: encreAccessible,
-                  ),
+                  style: _encreSalle(context, textes.labelMedium),
                 ),
               ),
             ],
@@ -837,9 +819,7 @@ class _Entete extends StatelessWidget {
                 libelleSemantique: t.presence.voir,
                 onPress: onVoirPresence,
                 fleche: false,
-                encre: encreAccessible
-                    ? AppPalette.of(context).surfaceInverse.applyTo
-                    : null,
+                encre: AppPalette.of(context).surfaceInverse.applyTo,
               ),
             ],
           ],
@@ -849,7 +829,7 @@ class _Entete extends StatelessWidget {
         if (mienne case final VuePresence etat) ...<Widget>[
           Ecart.vSm,
           _SurLaSalle(
-            active: encreAccessible,
+            active: true,
             child: LignePresence(nom: t.presence.mienne, vue: etat),
           ),
         ],
@@ -1277,10 +1257,7 @@ class _CorpsEnseignant extends StatelessWidget {
               // La meme largeur que `_Corps` : une seule mesure de colonne de
               // presence dans ce fichier.
               width: AppGabarit.largeurBarreLaterale,
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: _ListePresence(lignes: lignes, entete: true),
-              ),
+              child: _ColonnePresence(lignes: lignes),
             ),
         ],
       );
@@ -1316,10 +1293,7 @@ class _CorpsEnseignant extends StatelessWidget {
               // `_ListePresence` est une colonne de taille minimale, elle vit
               // sans hauteur bornee.
               if (_colonneDePresence(context, vue))
-                Padding(
-                  padding: const EdgeInsets.all(AppSpacing.lg),
-                  child: _ListePresence(lignes: lignes, entete: true),
-                ),
+                _ColonnePresence(lignes: lignes),
             ],
           ),
         );
@@ -1330,18 +1304,10 @@ class _CorpsEnseignant extends StatelessWidget {
 
 /// La scene, et la presence quand l'ecran a la place de la garder ouverte.
 class _Corps extends StatelessWidget {
-  const _Corps({
-    required this.vue,
-    required this.lignes,
-    this.encreAccessible = false,
-  });
+  const _Corps({required this.vue, required this.lignes});
 
   final VueSalle vue;
   final List<_Presence> lignes;
-
-  /// MA-5 : l'eleve en Mode Accessibilite lit la salle avec l'encre du
-  /// registre (`surfaceInverse`) ; les autres gardent leur rendu (HU-1).
-  final bool encreAccessible;
 
   @override
   Widget build(BuildContext context) {
@@ -1349,39 +1315,18 @@ class _Corps extends StatelessWidget {
     final bool colonne = gabarit.estLarge && vue.voitLesParticipants;
 
     if (!colonne) {
-      return _Scene(vue: vue, encreAccessible: encreAccessible);
+      return _Scene(vue: vue);
     }
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Expanded(
-          child: _Scene(vue: vue, encreAccessible: encreAccessible),
-        ),
+        Expanded(child: _Scene(vue: vue)),
         SizedBox(
           // Une largeur de chrome, deja posee pour la barre laterale : la
           // reutiliser evite d'en inventer une seconde.
           width: AppGabarit.largeurBarreLaterale,
-          child: DecoratedBox(
-            // CT-3 : chez le controleur, la colonne se pose sur la surface des
-            // vignettes (`surfaceSunken`) : `SectionHeader` et `LignePresence`
-            // portent l'encre des surfaces claires, illisible sur le fond de la
-            // salle. Les autres roles gardent leur rendu (HU-1).
-            decoration: vue.role == RoleSalle.controleur
-                ? AppPalette.of(context).surfaceSunken.decoration()
-                : const BoxDecoration(),
-            child: IconTheme.merge(
-              data: vue.role == RoleSalle.controleur
-                  ? IconThemeData(
-                      color: AppPalette.of(context).surfaceSunken.onBackground,
-                    )
-                  : const IconThemeData(),
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: _ListePresence(lignes: lignes, entete: true),
-              ),
-            ),
-          ),
+          child: _ColonnePresence(lignes: lignes),
         ),
       ],
     );
@@ -1398,13 +1343,9 @@ class _Corps extends StatelessWidget {
 /// etait deja mesure a deux, par le test d'invisibilite du controleur, ou une
 /// vignette de 96x128 ne contenait pas son propre bloc « sans image ».
 class _Scene extends StatelessWidget {
-  const _Scene({required this.vue, this.encreAccessible = false});
+  const _Scene({required this.vue});
 
   final VueSalle vue;
-
-  /// MA-5 : l'eleve en Mode Accessibilite lit la salle avec l'encre du
-  /// registre (`surfaceInverse`) ; les autres gardent leur rendu (HU-1).
-  final bool encreAccessible;
 
   @override
   Widget build(BuildContext context) {
@@ -1445,7 +1386,7 @@ class _Scene extends StatelessWidget {
       children: <Widget>[
         Positioned.fill(
           child: distants.isEmpty
-              ? _Seul(role: vue.role, encreAccessible: encreAccessible)
+              ? _Seul(role: vue.role)
               : _Galerie(participants: distants),
         ),
         if (moi case final ParticipantSalle local)
@@ -1677,13 +1618,9 @@ class _SansImage extends StatelessWidget {
 
 /// Seul dans la salle.
 class _Seul extends StatelessWidget {
-  const _Seul({required this.role, this.encreAccessible = false});
+  const _Seul({required this.role});
 
   final RoleSalle role;
-
-  /// MA-5 : l'eleve en Mode Accessibilite lit la salle avec l'encre du
-  /// registre (`surfaceInverse`) ; les autres gardent leur rendu (HU-1).
-  final bool encreAccessible;
 
   @override
   Widget build(BuildContext context) {
@@ -1717,21 +1654,13 @@ class _Seul extends StatelessWidget {
             Text(
               phrase.$1,
               textAlign: TextAlign.center,
-              style: _encreSalle(
-                context,
-                textes.titleMedium,
-                active: encreAccessible,
-              ),
+              style: _encreSalle(context, textes.titleMedium),
             ),
             Ecart.vSm,
             Text(
               phrase.$2,
               textAlign: TextAlign.center,
-              style: _encreSalle(
-                context,
-                textes.bodyMedium,
-                active: encreAccessible,
-              ),
+              style: _encreSalle(context, textes.bodyMedium),
             ),
           ],
         ),
@@ -1836,6 +1765,35 @@ class _Presence {
 /// Le meme corps en colonne et en feuille : deux rendus d'une meme liste
 /// finiraient par ne plus dire la meme chose, et c'est precisement ce que le
 /// lot N3 a evite en refusant trois ecrans de salle.
+/// La colonne de presence posee dans la salle.
+///
+/// CT-3 la posait, chez le controleur seul, sur la surface des vignettes
+/// (`surfaceSunken`) : `SectionHeader` et `LignePresence` portent l'encre des
+/// surfaces claires, illisible sur le fond de la salle (« Presence », « Vous »,
+/// les prenoms, sombres sur sombre en clair, clairs sur clair en sombre).
+/// SALLE-ENCRE-1 : la meme surface pour TOUS les roles, colonne laterale comme
+/// liste sous la scene de l'enseignant ; le role n'est plus lu ici.
+class _ColonnePresence extends StatelessWidget {
+  const _ColonnePresence({required this.lignes});
+
+  final List<_Presence> lignes;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppColorPair sunken = AppPalette.of(context).surfaceSunken;
+    return DecoratedBox(
+      decoration: sunken.decoration(),
+      child: IconTheme.merge(
+        data: IconThemeData(color: sunken.onBackground),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: _ListePresence(lignes: lignes, entete: true),
+        ),
+      ),
+    );
+  }
+}
+
 class _ListePresence extends StatelessWidget {
   const _ListePresence({required this.lignes, this.entete = false});
 
@@ -2075,16 +2033,11 @@ class _Impasse extends StatelessWidget {
     required this.cause,
     required this.onReessayer,
     required this.onRentrer,
-    this.encreAccessible = false,
   });
 
   final CauseImpasse cause;
   final Future<void> Function() onReessayer;
   final VoidCallback onRentrer;
-
-  /// MA-5 : l'eleve en Mode Accessibilite lit la salle avec l'encre du
-  /// registre (`surfaceInverse`) ; les autres gardent leur rendu (HU-1).
-  final bool encreAccessible;
 
   @override
   Widget build(BuildContext context) {
@@ -2117,21 +2070,13 @@ class _Impasse extends StatelessWidget {
             Text(
               dit.$1,
               textAlign: TextAlign.center,
-              style: _encreSalle(
-                context,
-                textes.titleMedium,
-                active: encreAccessible,
-              ),
+              style: _encreSalle(context, textes.titleMedium),
             ),
             Ecart.vSm,
             Text(
               dit.$2,
               textAlign: TextAlign.center,
-              style: _encreSalle(
-                context,
-                textes.bodyMedium,
-                active: encreAccessible,
-              ),
+              style: _encreSalle(context, textes.bodyMedium),
             ),
             Ecart.vXxl,
             // Une seule action principale : reessayer quand cela a un sens,
@@ -2251,16 +2196,12 @@ class _PreparationEleveBranchee extends ConsumerWidget {
   }
 }
 
-/// MA-5 : un style de texte avec l'encre du registre `salle`
-/// (`surfaceInverse`) quand [active] ; le style du theme sinon.
-TextStyle _encreSalle(
-  BuildContext context,
-  TextStyle? style, {
-  required bool active,
-}) {
-  final TextStyle base = style ?? const TextStyle();
-  return active ? AppPalette.of(context).surfaceInverse.applyTo(base) : base;
-}
+/// Un style de texte avec l'encre du registre `salle` (`surfaceInverse`),
+/// pour tous les roles (SALLE-ENCRE-1, d'abord reserve a l'eleve en Mode
+/// Accessibilite par MA-5) : le style du theme porte l'encre des surfaces
+/// claires, sombre sur sombre en clair, clair sur clair en sombre.
+TextStyle _encreSalle(BuildContext context, TextStyle? style) =>
+    AppPalette.of(context).surfaceInverse.applyTo(style ?? const TextStyle());
 
 /// MA-5 : un composant partage fait pour une surface claire se pose, pour
 /// l'eleve en Mode Accessibilite, sur la surface des vignettes

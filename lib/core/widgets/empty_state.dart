@@ -53,7 +53,14 @@ class EmptyState extends StatelessWidget {
     this.libelleAction,
     this.onAction,
     this.registre = RegistreVide.actionnable,
+    this.encre,
   });
+
+  /// La paire de la surface sur laquelle l'etat vide est pose, quand ce
+  /// n'est pas celle de la page : la salle en direct (`surfaceInverse`,
+  /// SALLE-ENCRE-1). L'icone, le constat et l'invitation en prennent l'encre.
+  /// `null` : les encres du theme, faites pour `surfaceCanvas`.
+  final AppColorPair? encre;
 
   /// Le constat, en une ligne courte.
   final String message;
@@ -106,26 +113,32 @@ class EmptyState extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             IconTheme(
-              data: _encre(palette).asIconTheme(
-                // Multiples de l'echelle, pas des valeurs ponctuelles.
-                size: metriques.estEnfant
-                    ? AppSpacing.xxxl * 3
-                    : AppSpacing.xxxl * 2,
-              ),
+              data:
+                  (encre != null
+                          ? AppInkColor(encre!.onBackground)
+                          : _encre(palette))
+                      .asIconTheme(
+                        // Multiples de l'echelle, pas des valeurs ponctuelles.
+                        size: metriques.estEnfant
+                            ? AppSpacing.xxxl * 3
+                            : AppSpacing.xxxl * 2,
+                      ),
               child: Icon((icone ?? _iconeParDefaut).repos),
             ),
             Ecart.vXl,
             Text(
               message,
               textAlign: TextAlign.center,
-              style: fond.applyTo(textes.titleLarge ?? const TextStyle()),
+              style: (encre ?? fond).applyTo(
+                textes.titleLarge ?? const TextStyle(),
+              ),
             ),
             if (invitation != null) ...<Widget>[
               Ecart.vSm,
               Text(
                 invitation!,
                 textAlign: TextAlign.center,
-                style: palette.inkMuted.applyTo(
+                style: (encre?.applyTo ?? palette.inkMuted.applyTo)(
                   textes.bodyMedium ?? const TextStyle(),
                 ),
               ),

@@ -65,7 +65,17 @@ class ActionPrincipale extends StatelessWidget {
     this.doux = false,
     this.autofocus = false,
     this.focusNode,
+    this.encre,
   });
+
+  /// La paire de la surface sur laquelle une action [NiveauAction.tertiaire]
+  /// est posee, quand ce n'est pas celle de la page : la salle en direct
+  /// (`surfaceInverse`, SALLE-ENCRE-1), ou `inkAccent` disparait (sombre sur
+  /// sombre en clair, clair sur clair en sombre). Au repos, le texte en prend
+  /// l'encre ; au survol, la paire douce de l'accent garde son propre couple.
+  /// Ignore pour les autres niveaux, qui portent leur fond. `null` :
+  /// `inkAccent`.
+  final AppColorPair? encre;
 
   /// Vrai pour prendre le focus clavier a l'ouverture de l'ecran : un ecran
   /// qui remplace la page sans geste (acces retire en salle) pose le focus
@@ -364,6 +374,13 @@ class ActionPrincipale extends StatelessWidget {
           );
         }
       case NiveauAction.tertiaire:
+        final AppColorPair? pose = encre;
+        if (pose != null) {
+          return _Peinture(
+            fond: etat.survole ? palette.washAccent.background : null,
+            encre: etat.survole ? palette.washAccent.applyTo : pose.applyTo,
+          );
+        }
         return _Peinture(
           fond: etat.survole ? palette.washAccent.background : null,
           encre: palette.inkAccent.applyTo,
