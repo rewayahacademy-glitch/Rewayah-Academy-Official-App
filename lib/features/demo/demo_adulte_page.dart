@@ -18,7 +18,8 @@
 // informations legales), avec un retour vers Mon espace ; « Mes accords » et
 // « Cours et acces », sans source, disent qu'ils sont indisponibles. Forfait
 // famille porte « Quitter le forfait famille » (EA-8) et le lien « Demande de
-// reprise du foyer » (EA-11). Coran reste PROVISOIRE.
+// reprise du foyer » (EA-11). Coran ouvre la VRAIE page Coran de l'eleve
+// (`MushafPage`, PT-B-CORAN-ADULTE), dans un conteneur isole sans serveur.
 //
 // EA-11 : la demande de reprise du second adulte (`ecran=repriseFoyer`), la
 // notification du titulaire et sa decision (`ecran=repriseTitulaire`, aussi
@@ -85,8 +86,10 @@ import '../foyer/place_adulte.dart';
 import '../ma_classe_adulte/ma_classe_adulte_page.dart';
 import '../mon_espace_adulte/mon_espace_adulte_page.dart';
 import '../notifications/notifications_page.dart';
+import '../tc_mushaf/mushaf_page.dart';
 import 'adulte_demo.dart';
 import 'classe_demo.dart';
+import 'coran_demo_accessibilite.dart';
 import 'demo_classe_page.dart'
     show PreparationEleveDemo, adressePreparationEleveDemo, surchargesEleveDemo;
 import 'mode_demonstration.dart';
@@ -1025,10 +1028,9 @@ class CoquilleAdulteDemo extends StatelessWidget {
                 adressePreparationEleveDemo(PreparationEleveDemo.pret),
               ),
             ),
-            EcranDemoAdulte.coran => _PageProvisoire(
-              titre: t.adulte.nav.coran,
-              phrase: t.adulte.provisoire.coran,
-            ),
+            // La VRAIE page Coran de l'eleve (celle de /eleve/coran), sans
+            // aucun appel serveur (K-28) : le rendu du Coran n'est pas touche.
+            EcranDemoAdulte.coran => const CoranDemoAdulte(),
             // Chaque rubrique ouvre la VRAIE sous-page du Compte, retour vers
             // Mon espace (sans fork) ; « Mes accords » et « Cours et acces »,
             // qui n'ont aucune source, disent qu'ils sont indisponibles.
@@ -1694,24 +1696,36 @@ class _RepriseDemo implements PortRepriseFoyer {
 /// jeton de mouvement le plus long (EA-6c), assez pour voir l'attente.
 const Duration latenceSimulee = Mouvement.maximum;
 
-/// Une page provisoire : son titre et une phrase qui dit ce qui viendra.
-class _PageProvisoire extends StatelessWidget {
-  const _PageProvisoire({required this.titre, required this.phrase});
+/// La page Coran de l'eleve adulte en demonstration : la VRAIE [MushafPage]
+/// de `/eleve/coran`, dans un conteneur ISOLE (corpus absent, navigation sans
+/// lecture ni ecriture de position) : aucun fournisseur du lecteur ne remonte
+/// jusqu'au service serveur de la racine (K-28, comme le Coran de la
+/// demonstration du Mode Accessibilite, MA-7). Sans corpus hors serveur, le
+/// lecteur dit honnetement que le texte n'a pas pu etre charge.
+class CoranDemoAdulte extends StatefulWidget {
+  /// Cree la page. [surchargesCoran] remplace les surcharges de la
+  /// demonstration (tests et captures : le corpus de reference).
+  const CoranDemoAdulte({super.key, this.surchargesCoran});
 
-  final String titre;
-  final String phrase;
+  /// Les surcharges du conteneur isole ; par defaut, aucun serveur.
+  final List<Override>? surchargesCoran;
 
   @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    return PageShell(
-      titre: titre,
-      child: Text(
-        phrase,
-        style: palette.inkMuted.applyTo(
-          Theme.of(context).textTheme.bodyLarge ?? const TextStyle(),
-        ),
-      ),
-    );
+  State<CoranDemoAdulte> createState() => _CoranDemoAdulteEtat();
+}
+
+class _CoranDemoAdulteEtat extends State<CoranDemoAdulte> {
+  late final ProviderContainer _coran = ProviderContainer(
+    overrides: widget.surchargesCoran ?? surchargesCoranDemoAccessibilite(),
+  );
+
+  @override
+  void dispose() {
+    _coran.dispose();
+    super.dispose();
   }
+
+  @override
+  Widget build(BuildContext context) =>
+      UncontrolledProviderScope(container: _coran, child: const MushafPage());
 }

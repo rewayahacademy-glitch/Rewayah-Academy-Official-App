@@ -1,0 +1,135 @@
+// PT-B-CORAN-ADULTE : captures de l'onglet Coran de l'eleve adulte, atteint
+// en touchant l'onglet de la vraie barre (K-07).
+// - `reel_*` : route reelle (vrai routeur, session d'eleve, capacite vraie),
+//   `/eleve/adulte` -> onglet Coran -> `/eleve/coran`, la vraie page Coran
+//   avec le corpus de reference des tests (aucun serveur).
+// - `demo_*` : `/demo/adulte`, onglet Coran -> la vraie page Coran dans son
+//   conteneur isole, sans corpus hors serveur : l'etat honnete du lecteur.
+// 320 px texte x2, 390 clair et sombre, 1440.
+// Saute sans CAPTURE_DIR (voir LISEZ-MOI.md). A copier dans test/capture/.
+
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/tc_coran/corpus_service_coran.dart';
+import 'package:rewayah_academy/core/tc_coran/layout_lignes_indisponible.dart';
+import 'package:rewayah_academy/core/tc_coran/navigation_coran.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
+import 'package:rewayah_academy/features/tc_mushaf/mushaf_page.dart';
+
+import '../features/accueil_adulte/support_accueil_adulte_route.dart';
+import '../teaching_core/c/faux/faux_corpus_coran.dart';
+import '../teaching_core/c/goldens/corpus_reference.dart';
+import 'outil_capture.dart';
+
+Finder _onglet(String libelle) => find
+    .descendant(of: find.byType(NavShell), matching: find.text(libelle))
+    .last;
+
+void main() {
+  group('Capture : PT-B-CORAN-ADULTE', skip: sautSansCapture, () {
+    late CorpusReference reference;
+    setUpAll(() async {
+      await chargerPolicesDuDepot();
+      reference = CorpusReference.charger();
+    });
+
+    // nom : (taille logique, echelle du texte, theme)
+    final Map<String, (Size, double, ThemeMode)> formats =
+        <String, (Size, double, ThemeMode)>{
+          '320x2_clair': (const Size(320, 900), 2, ThemeMode.light),
+          '390_clair': (const Size(390, 844), 1, ThemeMode.light),
+          '390_sombre': (const Size(390, 844), 1, ThemeMode.dark),
+          '1440_clair': (const Size(1440, 900), 1, ThemeMode.light),
+        };
+
+    for (final MapEntry<String, (Size, double, ThemeMode)> f
+        in formats.entries) {
+      final (Size taille, double echelle, ThemeMode theme) = f.value;
+
+      testWidgets('reel_${f.key}', (WidgetTester tester) async {
+        final GoRouter routeur = await monterAccueilAdulteReel(
+          tester,
+          taille: taille,
+          echelle: echelle,
+          theme: theme,
+          surcharges: <Override>[
+            ...surchargesAccueilAdulte(accueil: Valeur(accueilDemo())),
+            portCorpusCoranProvider.overrideWithValue(
+              FauxCorpusCoran(reference),
+            ),
+            portLayoutMushafProvider.overrideWithValue(
+              const LayoutLignesIndisponible(),
+            ),
+            portNavigationCoranProvider.overrideWithValue(
+              FauxNavigationCoran(),
+            ),
+          ],
+          depart: Routes.eleve,
+        );
+        await tester.tap(_onglet(t.nav.eleve.coran));
+        await stabiliser(tester);
+        expect(
+          routeur.routerDelegate.currentConfiguration.uri.toString(),
+          Routes.eleveCoran,
+        );
+        expect(find.byType(MushafPage), findsOneWidget);
+        await capturer(tester, 'reel_coran_${f.key}');
+      });
+
+      testWidgets('demo_${f.key}', (WidgetTester tester) async {
+        tester.view.physicalSize = taille;
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        final GoRouter routeur = GoRouter(
+          initialLocation: adresseDemoAdulte(EcranDemoAdulte.accueil),
+          routes: routesDemoAdulte('dev'),
+        );
+        addTearDown(routeur.dispose);
+        await tester.pumpWidget(
+          ProviderScope(
+            child: TranslationProvider(
+              child: RepaintBoundary(
+                key: cadreCapture,
+                child: MaterialApp.router(
+                  debugShowCheckedModeBanner: false,
+                  theme: AppTheme.pour(
+                    InterfaceMode.standard,
+                    Brightness.light,
+                  ),
+                  darkTheme: AppTheme.pour(
+                    InterfaceMode.standard,
+                    Brightness.dark,
+                  ),
+                  themeMode: theme,
+                  locale: AppLocale.fr.flutterLocale,
+                  supportedLocales: AppLocaleUtils.supportedLocales,
+                  localizationsDelegates: GlobalMaterialLocalizations.delegates,
+                  builder: (BuildContext c, Widget? app) => MediaQuery(
+                    data: MediaQuery.of(c)
+                        .copyWith(textScaler: TextScaler.linear(echelle)),
+                    child: app!,
+                  ),
+                  routerConfig: routeur,
+                ),
+              ),
+            ),
+          ),
+        );
+        await stabiliser(tester);
+        await tester.tap(_onglet(t.adulte.nav.coran));
+        await stabiliser(tester);
+        expect(find.byType(MushafPage), findsOneWidget);
+        await capturer(tester, 'demo_coran_${f.key}');
+      });
+    }
+  });
+}
