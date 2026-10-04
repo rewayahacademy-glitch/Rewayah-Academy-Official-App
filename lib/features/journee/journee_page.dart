@@ -9,7 +9,9 @@
 ///
 /// Retires d'EN-2 (00_MAQUETTES §2, planche 1) : « Eleves en attente » (ancien
 /// matching, E1), « Cours individuel » (une seance est celle d'une Classe), la
-/// cloche, la ligne « Bonjour... » et la pastille « Confirmee ».
+/// cloche de la maquette, la ligne « Bonjour... » et la pastille « Confirmee ».
+/// La page ne pose aucune cloche : celle de l'enseignant est portee par sa
+/// coquille, sur chaque page (COM-F, reponse Q5 du directeur du 04/10).
 ///
 /// **Cours, pauses et prieres sont des entrees de meme nature** dans « Ma
 /// journee » : le gabarit `TimelineRow` est le meme pour les trois sortes.

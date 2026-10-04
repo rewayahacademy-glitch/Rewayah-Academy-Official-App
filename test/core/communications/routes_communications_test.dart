@@ -2,8 +2,12 @@
 // routeur (K-07) : chaque nouvelle route resout vers son ecran, chaque
 // entree de coquille est TAPEE depuis la coquille reelle.
 
+import 'dart:ui' show Tristate;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+// `Override` n'est pas exporte par l'entree principale de Riverpod 3.
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/app.dart';
@@ -13,6 +17,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/redirection.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
@@ -22,6 +27,7 @@ import 'package:rewayah_academy/features/com_annonces/publier_annonce_classe_pag
 import 'package:rewayah_academy/features/com_communaute/communaute_page.dart';
 import 'package:rewayah_academy/features/com_messages/messages_page.dart';
 import 'package:rewayah_academy/features/com_studio/studio_page.dart';
+import 'package:rewayah_academy/features/compte/espaces_compte.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
@@ -74,6 +80,19 @@ Future<GoRouter> _monterAdmin(
 
 String _chemin(GoRouter routeur) =>
     routeur.routerDelegate.currentConfiguration.uri.path;
+
+/// Un enseignant qui est aussi controleur : deux espaces, donc le raccourci
+/// Espaces de CT-9 dans l'en-tete, a cote de la cloche.
+class _DeuxEspaces extends EspacesCompteControleur {
+  @override
+  EspacesCompte build() => const EspacesCompte(
+    disponibles: <EspaceTravail>[
+      EspaceTravail.enseignement,
+      EspaceTravail.controle,
+    ],
+    actif: EspaceTravail.enseignement,
+  );
+}
 
 Finder _dans(Key cle, Finder cible) =>
     find.descendant(of: find.byKey(cle), matching: cible);
@@ -372,6 +391,228 @@ void main() {
       for (final o in ongletsCommunications()) {
         expect(o.chemin, startsWith(Routes.adminOperations));
       }
+    });
+
+    testWidgets('390 : la cloche de l en-tete de page y mene', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monterAdmin(
+        tester,
+        Routes.admin,
+        taille: const Size(390, 844),
+      );
+      final Finder cloche = find.byType(ClocheNotifications);
+      expect(cloche, findsOneWidget);
+      // Sous 600 la cloche est dans l'en-tete de page, pas dans la barre.
+      expect(
+        find.descendant(of: find.byType(EntetePage), matching: cloche),
+        findsOneWidget,
+      );
+      await tester.tap(cloche);
+      await stabiliser(tester);
+      expect(_chemin(routeur), Routes.adminNotifications);
+      expect(find.byType(NotificationsPage), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('COM-F-Q5 : la cloche se montre active sur sa propre page', () {
+    bool actif(WidgetTester tester) => tester
+        .widget<ClocheNotifications>(find.byType(ClocheNotifications))
+        .actif;
+
+    for (final (String accueil, String page, AppRole role)
+        in <(String, String, AppRole)>[
+          (
+            Routes.enseignantJournee,
+            Routes.enseignantNotifications,
+            AppRole.teacher,
+          ),
+          (
+            Routes.controleur,
+            Routes.controleurNotifications,
+            AppRole.controller,
+          ),
+          (Routes.tuteurAccueil, Routes.tuteurNotifications, AppRole.guardian),
+        ]) {
+      testWidgets('${role.valeurSql} : repos ailleurs, active sur $page', (
+        WidgetTester tester,
+      ) async {
+        final GoRouter routeur = await _monter(tester, accueil, role);
+        expect(actif(tester), isFalse);
+        final SemanticsHandle repos = tester.ensureSemantics();
+        expect(
+          tester
+              .getSemantics(find.byType(ClocheNotifications))
+              .flagsCollection
+              .isSelected,
+          Tristate.none,
+          reason: 'au repos, la cloche n annonce aucun etat de selection',
+        );
+        repos.dispose();
+        routeur.go(page);
+        await stabiliser(tester);
+        expect(find.byType(NotificationsPage), findsOneWidget);
+        expect(actif(tester), isTrue);
+        final SemanticsHandle semantique = tester.ensureSemantics();
+        expect(
+          tester
+              .getSemantics(find.byType(ClocheNotifications))
+              .flagsCollection
+              .isSelected,
+          Tristate.isTrue,
+          reason: 'la cloche active s annonce selectionnee',
+        );
+        semantique.dispose();
+        expect(tester.takeException(), isNull);
+      });
+    }
+
+    testWidgets('admin : repos sur l Accueil, active sur ses notifications', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monterAdmin(tester, Routes.admin);
+      expect(actif(tester), isFalse);
+      routeur.go(Routes.adminNotifications);
+      await stabiliser(tester);
+      expect(actif(tester), isTrue);
+    });
+  });
+
+  group('COM-F-Q5 : une seule rangee d actions, Espaces puis cloche', () {
+    testWidgets('compte a deux espaces : raccourci puis cloche, une fois', (
+      WidgetTester tester,
+    ) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      late GoRouter routeur;
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: <Override>[
+            ...surchargesRouteur(
+              FausseSourceSession(sessionActive(AppRole.teacher)),
+            ),
+            espacesCompteProvider.overrideWith(_DeuxEspaces.new),
+          ],
+          child: TranslationProvider(
+            child: Consumer(
+              builder: (BuildContext _, WidgetRef ref, Widget? _) {
+                routeur = ref.read(routeurProvider);
+                return MaterialApp.router(
+                  theme: AppTheme.pour(
+                    InterfaceMode.standard,
+                    Brightness.light,
+                  ),
+                  routerConfig: routeur,
+                );
+              },
+            ),
+          ),
+        ),
+      );
+      await stabiliser(tester);
+      routeur.go(Routes.enseignantJournee);
+      await stabiliser(tester);
+
+      final Finder espaces = find.byType(RaccourciEspaces);
+      final Finder cloche = find.byType(ClocheNotifications);
+      expect(espaces, findsOneWidget);
+      expect(cloche, findsOneWidget);
+      // Meme ligne, Espaces avant la cloche (sens de lecture).
+      expect(
+        tester.getCenter(espaces).dy,
+        moreOrLessEquals(tester.getCenter(cloche).dy),
+      );
+      expect(
+        tester.getCenter(espaces).dx,
+        lessThan(tester.getCenter(cloche).dx),
+      );
+    });
+  });
+
+  group('COM-F-Q5 : barre mobile admin', () {
+    Finder champ() => find.descendant(
+      of: find.byType(AdminShell),
+      matching: find.byType(TextField),
+    );
+
+    testWidgets('390 avec encoche : aucun vide entre la barre et le titre', (
+      WidgetTester tester,
+    ) async {
+      tester.view.padding = const FakeViewPadding(top: 47);
+      tester.view.viewPadding = const FakeViewPadding(top: 47);
+      addTearDown(tester.view.reset);
+      await _monterAdmin(tester, Routes.admin, taille: const Size(390, 844));
+      final double basChamp = tester
+          .getBottomLeft(find.bySemanticsLabel(t.nav.admin.menu))
+          .dy;
+      final double hautTitre = tester.getTopLeft(find.byType(EntetePage)).dy;
+      // La zone sure du haut n'est posee qu'une fois, par la barre.
+      expect(hautTitre - basChamp, lessThan(47));
+    });
+
+    // Balayage pixel par pixel sous 600 : partout ou le champ est en ligne,
+    // son indication tient sur UNE ligne (revue COM-F-Q5 : une bande de 6 px
+    // la passait a la ligne quand la place reservee etait sous-estimee).
+    testWidgets('sous 600 : champ en ligne = indication sur une ligne', (
+      WidgetTester tester,
+    ) async {
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      double? uneLigne;
+      int champsVus = 0;
+      for (double largeur = 599; largeur >= 300; largeur -= 1) {
+        tester.view.physicalSize = Size(largeur, 900);
+        await tester.pumpWidget(
+          ProviderScope(
+            child: TranslationProvider(
+              child: MaterialApp(
+                theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+                home: AdminShell(
+                  domaines: domainesAdmin(voitDirection: true),
+                  domaineActif: AdminDomaine.accueil,
+                  onAller: (_) {},
+                  onCompte: () {},
+                  child: const SizedBox(),
+                ),
+              ),
+            ),
+          ),
+        );
+        final Finder indication = find.descendant(
+          of: find.byType(TextField),
+          matching: find.text(t.nav.admin.rechercheIndication),
+        );
+        if (indication.evaluate().isEmpty) continue;
+        champsVus++;
+        final double hauteur = tester.getSize(indication).height;
+        uneLigne ??= hauteur;
+        expect(hauteur, uneLigne, reason: 'indication sur 2 lignes a $largeur');
+      }
+      expect(champsVus, greaterThan(0), reason: 'le champ doit apparaitre');
+    });
+
+    testWidgets(
+      '320 : la recherche passe en bouton, la barre garde une ligne',
+      (WidgetTester tester) async {
+        await _monterAdmin(tester, Routes.admin, taille: const Size(320, 640));
+        expect(champ(), findsNothing);
+        expect(find.bySemanticsLabel(t.nav.admin.recherche), findsOneWidget);
+        expect(find.byType(ClocheNotifications), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    // La bascule se decide sur la largeur MESUREE de l'indication : la
+    // police de test (un carre par glyphe) est plus large que la vraie, d'ou
+    // 599 ici ; avec les vraies polices le champ tient des 390
+    // (`test/capture/cloches_capture_test.dart`).
+    testWidgets('599 : le champ de recherche reste en ligne', (
+      WidgetTester tester,
+    ) async {
+      await _monterAdmin(tester, Routes.admin, taille: const Size(599, 900));
+      expect(champ(), findsOneWidget);
     });
   });
 
