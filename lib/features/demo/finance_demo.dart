@@ -525,23 +525,30 @@ abstract final class DonneesFinanceDemo {
     ];
   }
 
-  /// Les revenus estimes de l'enseignant de demonstration.
-  static RevenusEnseignant revenus() {
+  /// Les revenus estimes de l'enseignant de demonstration (jeux du guide §8
+  /// F6 : classe pleine, classe a 80 %, classe au minimum). L'aide Internet
+  /// est celle de la politique : aucune tant qu'elle n'en fixe pas le montant
+  /// (§1.4), la demonstration n'en invente pas. [vide] : aucune heure
+  /// assuree sur le mois.
+  static RevenusEnseignant revenus({bool vide = false}) {
     final List<RevenusClasse> classes = <RevenusClasse>[
-      for (final _ClasseDemo c in _classesDemo())
-        _classe(
-          c.id,
-          c.nom,
-          minutes: c.minutes,
-          capacite: c.capacite,
-          eligibles: c.eligibles,
-        ),
+      if (!vide)
+        for (final _ClasseDemo c in _classesDemo())
+          _classe(
+            c.id,
+            c.nom,
+            minutes: c.minutes,
+            capacite: c.capacite,
+            eligibles: c.eligibles,
+          ),
     ];
     return RevenusEnseignant(
       debut: debutMois,
       fin: finMois,
       classes: classes,
       totalEstime: _somme(classes.map((RevenusClasse c) => c.montantEstime)),
+      baseHoraire: politiqueLancement.baseHoraire,
+      plafondHoraire: politiqueLancement.plafondHoraire,
       allocationInternet: politiqueLancement.allocationInternet,
     );
   }
@@ -722,11 +729,15 @@ class PolitiquesCommercialesDemo implements PortPolitiquesCommerciales {
 
 /// Les revenus de l'enseignant en demonstration (FI-BR-11).
 class RevenusEnseignantDemo implements PortRevenusEnseignant {
-  /// Cree le double.
-  const RevenusEnseignantDemo();
+  /// Cree le double ; [vide] rend un mois sans heure assuree.
+  const RevenusEnseignantDemo({this.vide = false});
+
+  /// Vrai pour un mois sans heure assuree.
+  final bool vide;
 
   @override
-  Future<RevenusEnseignant> moisEnCours() async => DonneesFinanceDemo.revenus();
+  Future<RevenusEnseignant> moisEnCours() async =>
+      DonneesFinanceDemo.revenus(vide: vide);
 }
 
 /// La vue globale de la direction en demonstration (FI-BR-12).

@@ -2278,6 +2278,7 @@ class Traductions$enseignant$fr {
 	late final Traductions$enseignant$salle$fr salle = Traductions$enseignant$salle$fr.internal(_root);
 	late final Traductions$enseignant$cahier$fr cahier = Traductions$enseignant$cahier$fr.internal(_root);
 	late final Traductions$enseignant$profil$fr profil = Traductions$enseignant$profil$fr.internal(_root);
+	late final Traductions$enseignant$revenus$fr revenus = Traductions$enseignant$revenus$fr.internal(_root);
 	late final Traductions$enseignant$creneaux$fr creneaux = Traductions$enseignant$creneaux$fr.internal(_root);
 	late final Traductions$enseignant$ficheGroupe$fr ficheGroupe = Traductions$enseignant$ficheGroupe$fr.internal(_root);
 	late final Traductions$enseignant$revue$fr revue = Traductions$enseignant$revue$fr.internal(_root);
@@ -9116,6 +9117,15 @@ class Traductions$enseignant$profil$fr {
 	/// fr: 'Profil'
 	String get titre => 'Profil';
 
+	/// fr: 'Rémunération'
+	String get remuneration => 'Rémunération';
+
+	/// fr: 'Mes revenus'
+	String get revenus => 'Mes revenus';
+
+	/// fr: 'Estimation du mois en cours, Classe par Classe'
+	String get revenusDetail => 'Estimation du mois en cours, Classe par Classe';
+
 	/// fr: 'Compte enseignant vérifié'
 	String get compteValide => 'Compte enseignant vérifié';
 
@@ -9262,6 +9272,117 @@ class Traductions$enseignant$profil$fr {
 
 	/// fr: 'La modification n'a pas abouti. Réessayez dans un instant.'
 	String get editionErreur => 'La modification n\'a pas abouti. Réessayez dans un instant.';
+}
+
+// Path: enseignant.revenus
+class Traductions$enseignant$revenus$fr {
+	Traductions$enseignant$revenus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mes revenus'
+	String get titre => 'Mes revenus';
+
+	/// fr: 'Une estimation de votre rémunération du mois en cours, Classe par Classe.'
+	String get intro => 'Une estimation de votre rémunération du mois en cours, Classe par Classe.';
+
+	/// fr: 'Estimation'
+	String get estimation => 'Estimation';
+
+	/// fr: '{mois} {annee}'
+	String periode({required Object mois, required Object annee}) => '${mois} ${annee}';
+
+	/// fr: 'Revenu estimé du mois'
+	String get totalEstime => 'Revenu estimé du mois';
+
+	/// fr: 'Rémunération pédagogique, hors aide Internet.'
+	String get totalDetail => 'Rémunération pédagogique, hors aide Internet.';
+
+	/// fr: 'Heures assurées'
+	String get heuresAssurees => 'Heures assurées';
+
+	/// fr: 'Classes'
+	String get classesActives => 'Classes';
+
+	/// fr: '{heures} h'
+	String heures({required Object heures}) => '${heures} h';
+
+	/// fr: '{heures} h {minutes}'
+	String heuresMinutes({required Object heures, required Object minutes}) => '${heures} h ${minutes}';
+
+	/// fr: 'Détail par Classe'
+	String get detailSection => 'Détail par Classe';
+
+	/// fr: 'Classe {nom}'
+	String classe({required Object nom}) => 'Classe ${nom}';
+
+	/// fr: 'Capacité'
+	String get capacite => 'Capacité';
+
+	/// fr: '{nombre} places'
+	String capaciteValeur({required Object nombre}) => '${nombre} places';
+
+	/// fr: 'Sièges éligibles'
+	String get sieges => 'Sièges éligibles';
+
+	/// fr: '{nombre} sur {capacite}'
+	String siegesValeur({required Object nombre, required Object capacite}) => '${nombre} sur ${capacite}';
+
+	/// fr: 'Élèves financés, présents ou absents, et élèves en essai présents.'
+	String get siegesDetail => 'Élèves financés, présents ou absents, et élèves en essai présents.';
+
+	/// fr: 'Taux horaire effectif'
+	String get taux => 'Taux horaire effectif';
+
+	/// fr: '{montant} par heure'
+	String tauxValeur({required Object montant}) => '${montant} par heure';
+
+	/// fr: 'Montant estimé'
+	String get montantClasse => 'Montant estimé';
+
+	/// fr: 'Comment l'estimation se calcule'
+	String get calculSection => 'Comment l\'estimation se calcule';
+
+	/// fr: '1. Base garantie'
+	String get base => '1. Base garantie';
+
+	/// fr: '{base} par heure assurée, quelle que soit l'occupation de la Classe.'
+	String baseDetail({required Object base}) => '${base} par heure assurée, quelle que soit l\'occupation de la Classe.';
+
+	/// fr: '2. Composante d'occupation'
+	String get occupation => '2. Composante d\'occupation';
+
+	/// fr: 'Chaque siège éligible ajoute une part au taux. Un élève financé absent compte : une absence ne vous fait rien perdre.'
+	String get occupationDetail => 'Chaque siège éligible ajoute une part au taux. Un élève financé absent compte : une absence ne vous fait rien perdre.';
+
+	/// fr: '3. Plafond horaire'
+	String get plafond => '3. Plafond horaire';
+
+	/// fr: 'Le taux ne dépasse jamais {plafond} par heure, même au-delà de la capacité.'
+	String plafondDetail({required Object plafond}) => 'Le taux ne dépasse jamais ${plafond} par heure, même au-delà de la capacité.';
+
+	/// fr: 'Aide Internet'
+	String get internetSection => 'Aide Internet';
+
+	/// fr: 'Aide Internet du mois'
+	String get internet => 'Aide Internet du mois';
+
+	/// fr: 'Une seule aide par mois, versée à part de la rémunération pédagogique.'
+	String get internetDetail => 'Une seule aide par mois, versée à part de la rémunération pédagogique.';
+
+	/// fr: 'Vous n'êtes pas concerné par l'aide Internet ce mois-ci.'
+	String get internetNon => 'Vous n\'êtes pas concerné par l\'aide Internet ce mois-ci.';
+
+	/// fr: 'Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l'académie fait foi.'
+	String get mention => 'Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l\'académie fait foi.';
+
+	/// fr: 'Aucune heure assurée ce mois-ci'
+	String get vide => 'Aucune heure assurée ce mois-ci';
+
+	/// fr: 'L'estimation apparaîtra après votre première séance assurée du mois.'
+	String get videDetail => 'L\'estimation apparaîtra après votre première séance assurée du mois.';
 }
 
 // Path: enseignant.creneaux
@@ -18388,6 +18509,9 @@ extension on Traductions {
 			'enseignant.cahier.corriger' => 'Corriger le cahier de transmission',
 			'enseignant.cahier.corrigeLe' => ({required Object date}) => 'Corrigé le ${date}',
 			'enseignant.profil.titre' => 'Profil',
+			'enseignant.profil.remuneration' => 'Rémunération',
+			'enseignant.profil.revenus' => 'Mes revenus',
+			'enseignant.profil.revenusDetail' => 'Estimation du mois en cours, Classe par Classe',
 			'enseignant.profil.compteValide' => 'Compte enseignant vérifié',
 			'enseignant.profil.intro' => 'Ce que l\'académie sait de vous, et ce que vous pouvez y changer.',
 			'enseignant.profil.identite' => 'Identité professionnelle',
@@ -18437,6 +18561,40 @@ extension on Traductions {
 			'enseignant.profil.enregistrer' => 'Enregistrer',
 			'enseignant.profil.enregistre' => 'Modification enregistrée',
 			'enseignant.profil.editionErreur' => 'La modification n\'a pas abouti. Réessayez dans un instant.',
+			'enseignant.revenus.titre' => 'Mes revenus',
+			'enseignant.revenus.intro' => 'Une estimation de votre rémunération du mois en cours, Classe par Classe.',
+			'enseignant.revenus.estimation' => 'Estimation',
+			'enseignant.revenus.periode' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
+			'enseignant.revenus.totalEstime' => 'Revenu estimé du mois',
+			'enseignant.revenus.totalDetail' => 'Rémunération pédagogique, hors aide Internet.',
+			'enseignant.revenus.heuresAssurees' => 'Heures assurées',
+			'enseignant.revenus.classesActives' => 'Classes',
+			'enseignant.revenus.heures' => ({required Object heures}) => '${heures} h',
+			'enseignant.revenus.heuresMinutes' => ({required Object heures, required Object minutes}) => '${heures} h ${minutes}',
+			'enseignant.revenus.detailSection' => 'Détail par Classe',
+			'enseignant.revenus.classe' => ({required Object nom}) => 'Classe ${nom}',
+			'enseignant.revenus.capacite' => 'Capacité',
+			'enseignant.revenus.capaciteValeur' => ({required Object nombre}) => '${nombre} places',
+			'enseignant.revenus.sieges' => 'Sièges éligibles',
+			'enseignant.revenus.siegesValeur' => ({required Object nombre, required Object capacite}) => '${nombre} sur ${capacite}',
+			'enseignant.revenus.siegesDetail' => 'Élèves financés, présents ou absents, et élèves en essai présents.',
+			'enseignant.revenus.taux' => 'Taux horaire effectif',
+			'enseignant.revenus.tauxValeur' => ({required Object montant}) => '${montant} par heure',
+			'enseignant.revenus.montantClasse' => 'Montant estimé',
+			'enseignant.revenus.calculSection' => 'Comment l\'estimation se calcule',
+			'enseignant.revenus.base' => '1. Base garantie',
+			'enseignant.revenus.baseDetail' => ({required Object base}) => '${base} par heure assurée, quelle que soit l\'occupation de la Classe.',
+			'enseignant.revenus.occupation' => '2. Composante d\'occupation',
+			'enseignant.revenus.occupationDetail' => 'Chaque siège éligible ajoute une part au taux. Un élève financé absent compte : une absence ne vous fait rien perdre.',
+			'enseignant.revenus.plafond' => '3. Plafond horaire',
+			'enseignant.revenus.plafondDetail' => ({required Object plafond}) => 'Le taux ne dépasse jamais ${plafond} par heure, même au-delà de la capacité.',
+			'enseignant.revenus.internetSection' => 'Aide Internet',
+			'enseignant.revenus.internet' => 'Aide Internet du mois',
+			'enseignant.revenus.internetDetail' => 'Une seule aide par mois, versée à part de la rémunération pédagogique.',
+			'enseignant.revenus.internetNon' => 'Vous n\'êtes pas concerné par l\'aide Internet ce mois-ci.',
+			'enseignant.revenus.mention' => 'Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l\'académie fait foi.',
+			'enseignant.revenus.vide' => 'Aucune heure assurée ce mois-ci',
+			'enseignant.revenus.videDetail' => 'L\'estimation apparaîtra après votre première séance assurée du mois.',
 			'enseignant.creneaux.heureLibelle' => ({required Object jour, required Object heure}) => '${jour} ${heure} h',
 			'enseignant.creneaux.aucuneHeure' => 'Vous n\'avez proposé aucune heure. Sans créneau, aucune Classe ne peut vous être proposée.',
 			'enseignant.creneaux.heureEnregistree' => ({required Object heure}) => '${heure} enregistré',
@@ -18614,6 +18772,8 @@ extension on Traductions {
 			'controleur.observation.interventionAdminAide' => 'Quand l\'administration doit agir · votre texte sera demandé, elle le reçoit avec le rapport',
 			'controleur.observation.questionDomaine' => 'Quel domaine concerne-t-elle ?',
 			'controleur.observation.contexteDomaine' => 'Le domaine aide l\'administration à lire votre observation.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.pedagogie' => 'Pédagogie',
 			'controleur.observation.pedagogieAide' => 'Quand il s\'agit de l\'enseignement : explications, progression, supports',
 			'controleur.observation.interaction' => 'Interaction avec les élèves',
@@ -18651,8 +18811,6 @@ extension on Traductions {
 			'controleur.observation.cleDomaine' => 'Domaine',
 			'controleur.observation.clePersonne' => 'Personne concernée',
 			'controleur.observation.cleTexte' => 'Remarque',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.sansTexte' => 'Aucun texte',
 			'controleur.observation.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.titre' => 'Échanges',
@@ -19128,6 +19286,8 @@ extension on Traductions {
 			'tc.observation.reglages.augmenter' => 'Augmenter',
 			'tc.observation.reglages.enregistrer' => 'Enregistrer',
 			'tc.observation.reglages.invalideVisites' => 'Au moins une visite par séance.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.reglages.invalideTemps' => 'Au moins trente secondes par séance.',
 			'tc.observation.reglages.valeurHeritee' => ({required Object valeur}) => 'Académie : ${valeur}',
 			'tc.observation.reglages.uniteVisiteUne' => ({required Object n}) => '${n} visite',
@@ -19165,8 +19325,6 @@ extension on Traductions {
 			'tc.parcours.feedback.rythme.difficile' => 'Trop rapide',
 			'tc.parcours.feedback.rythme.bien' => 'Convenable',
 			'tc.parcours.feedback.rythme.tresBien' => 'Très confortable',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.feedback.technique.intitule' => 'Le son et l\'image étaient-ils confortables ?',
 			'tc.parcours.feedback.technique.difficile' => 'Gênants',
 			'tc.parcours.feedback.technique.bien' => 'Corrects',
