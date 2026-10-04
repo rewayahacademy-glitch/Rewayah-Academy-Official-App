@@ -74,7 +74,9 @@ class BandeauBlocage extends StatelessWidget {
     final Widget action = ActionPrincipale(
       libelle: t.tuteur.accueil.connecterAppareil,
       onPress: onConnecter,
-      niveau: NiveauAction.secondaire,
+      // DASH-TUT-CTA (D5) : la tache immediate porte le seul bouton primaire
+      // de l'Accueil ; la carte classe n'est plus qu'un lien.
+      niveau: NiveauAction.principale,
       pleineLargeur: false,
     );
 

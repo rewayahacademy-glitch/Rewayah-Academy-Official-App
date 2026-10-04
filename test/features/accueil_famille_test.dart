@@ -25,6 +25,7 @@ import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_parcours/port_travail_a_venir.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/grille_bento.dart';
 import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
@@ -429,6 +430,46 @@ void main() {
         _lieu(routeur),
         '${Routes.classeSousPage('classe-a', 'travail')}?eleve=$_a1',
       );
+    });
+  });
+
+  // DASH-TUT-CTA (DASH_STRATEGIE §3.4, D4, D5) : un seul bouton primaire au
+  // plus ; avec blocage, c'est « Connecter un appareil » ; sans blocage,
+  // aucun, et la carte classe est le lien.
+  group('DASH-TUT-CTA : un seul bouton dominant', () {
+    Iterable<ActionPrincipale> principales(WidgetTester tester) => tester
+        .widgetList<ActionPrincipale>(find.byType(ActionPrincipale))
+        .where((ActionPrincipale a) => a.niveau == NiveauAction.principale);
+
+    testWidgets('sans blocage : aucun bouton plein, la carte ouvre la classe', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monter(tester);
+      await _ouvrirAccueilParLaBarre(tester);
+
+      expect(find.byType(BandeauBlocage), findsNothing);
+      expect(principales(tester), isEmpty);
+      // Toucher la carte ailleurs que sur l'indice : le nom de l'eleve.
+      await _toucher(
+        tester,
+        find
+            .descendant(
+              of: find.byType(CarteClasseSeance),
+              matching: find.text('Eleve A1'),
+            )
+            .first,
+      );
+      expect(_lieu(routeur), Routes.classePour('classe-a', eleveId: _a1));
+    });
+
+    testWidgets('avec blocage : « Connecter un appareil » est le seul '
+        'bouton primaire', (WidgetTester tester) async {
+      await _monter(tester, appareils: <AppareilAppaire>[]);
+      await _ouvrirAccueilParLaBarre(tester);
+
+      final List<ActionPrincipale> seules = principales(tester).toList();
+      expect(seules, hasLength(1));
+      expect(seules.single.libelle, t.tuteur.accueil.connecterAppareil);
     });
   });
 
