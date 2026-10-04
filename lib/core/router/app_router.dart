@@ -96,6 +96,7 @@ import '../../features/journee/journee_page.dart';
 import '../../features/notifications/notifications_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
+import '../../features/revenus_enseignant/revenus_enseignant_page.dart';
 import '../../features/revue_groupe/revue_groupe_page.dart';
 import '../../features/salle/salle_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
@@ -793,6 +794,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 path: Routes.enseignantProfil,
                 builder: (BuildContext _, GoRouterState _) =>
                     const ProfilEnseignantPage(),
+              ),
+              // Mes revenus (FI-10) : une pose de la branche Profil, ou elle
+              // s'ouvre ; la barre garde Profil actif.
+              GoRoute(
+                path: Routes.enseignantRevenus,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const RevenusEnseignantPage(),
               ),
             ],
           ),

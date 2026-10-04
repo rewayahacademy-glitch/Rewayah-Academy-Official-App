@@ -301,6 +301,10 @@ abstract final class Routes {
   /// Profil de l'enseignant.
   static const String enseignantProfil = '/enseignant/profil';
 
+  /// Mes revenus (FI-10, guide Finance V4 §4 et §5.5) : l'estimation du mois,
+  /// atteinte depuis le Profil (le Compte de l'enseignant), dans sa branche.
+  static const String enseignantRevenus = '/enseignant/revenus';
+
   // Les quatre routes suivantes ne sont **pas** des destinations de premier
   // niveau : la barre de l'enseignant en tient quatre, Aujourd'hui, Classes,
   // Disponibilites et Profil (E10, decision du directeur du 26/09/2026, qui

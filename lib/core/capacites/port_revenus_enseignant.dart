@@ -60,6 +60,8 @@ class RevenusEnseignant {
     required this.fin,
     required this.classes,
     required this.totalEstime,
+    required this.baseHoraire,
+    required this.plafondHoraire,
     this.allocationInternet,
   });
 
@@ -74,6 +76,14 @@ class RevenusEnseignant {
 
   /// Le total estime de la remuneration pedagogique, hors aide Internet.
   final Montant totalEstime;
+
+  /// La base horaire garantie de la politique appliquee (guide §1.4) :
+  /// l'ecran l'explique, il ne s'en sert pour aucun calcul.
+  final Montant baseHoraire;
+
+  /// Le plafond horaire de la politique appliquee : aucun taux effectif ne
+  /// le depasse (guide §1.4, §8 F6).
+  final Montant plafondHoraire;
 
   /// L'aide Internet, a part ; `null` quand l'enseignant n'y est pas
   /// eligible.
