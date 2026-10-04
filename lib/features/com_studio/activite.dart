@@ -33,6 +33,7 @@ String libelleModule(ModuleCanonique module) {
     ModuleCanonique.dossiers => m.dossiers,
     ModuleCanonique.classes => m.classes,
     ModuleCanonique.admissions => m.admissions,
+    ModuleCanonique.demandes => m.demandes,
     ModuleCanonique.communications => m.communications,
   };
 }
@@ -44,6 +45,7 @@ AppIcon iconeActivite(ActiviteStudio activite) => switch (activite.module) {
   ModuleCanonique.planning => AppIcons.planningGlobal,
   ModuleCanonique.dossiers || ModuleCanonique.admissions => AppIcons.dossiers,
   ModuleCanonique.classes => AppIcons.classes,
+  ModuleCanonique.demandes => AppIcons.reaffectation,
   ModuleCanonique.communications => AppIcons.notifications,
   ModuleCanonique.studio => switch (activite.type) {
     TypeActivite.mention || TypeActivite.reponse => AppIcons.envoyerMessage,

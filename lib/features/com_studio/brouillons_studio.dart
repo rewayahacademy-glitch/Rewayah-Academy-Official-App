@@ -35,6 +35,7 @@ import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/communications/etats_communication.dart';
+import '../../core/widgets/fil_discussion.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import 'canal_page.dart' show horodatageCanal;
@@ -358,9 +359,13 @@ class _VueBrouillonsStudioState extends ConsumerState<VueBrouillonsStudio> {
 /// reouverture.
 ///
 /// Le champ est celui de `FilDiscussion` (socle), qui ne l'expose pas : la
-/// persistance le trouve dans ses descendants, comme le canal y trouve deja
-/// sa zone defilante (`canal_page.dart`). Une ligne COM-FUS demande au socle
-/// un parametre « texte initial et changement » pour s'en passer.
+/// persistance le trouve dans ses descendants par sa cle publique
+/// ([FilDiscussion.champKey]), jamais comme « le premier champ venu » : un
+/// autre champ pose avant lui (recherche, vocal, texte selectionnable) n'est
+/// pas garde. Apres chaque construction, la persistance verifie qu'elle tient
+/// toujours ce champ : si le socle en recree le controleur, elle s'y
+/// rebranche. Une ligne COM-FUS demande au socle un parametre « texte
+/// initial et changement » pour s'en passer.
 ///
 /// [constructeur] recoit vrai tant que le brouillon restaure n'a pas ete
 /// modifie : le canal le dit (« Brouillon restaure »).
@@ -397,7 +402,6 @@ class _PersistanceBrouillonCanalState
   void initState() {
     super.initState();
     _port = ref.read(portBrouillonsProvider);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _brancher());
   }
 
   @override
@@ -408,13 +412,15 @@ class _PersistanceBrouillonCanalState
     super.dispose();
   }
 
+  /// Le controleur du champ de `FilDiscussion`, reconnu par sa cle ; nul
+  /// sans champ (canal en lecture seule).
   TextEditingController? _trouverChamp() {
     if (!mounted) return null;
     TextEditingController? trouve;
     void visiter(Element e) {
       if (trouve != null) return;
       final Widget w = e.widget;
-      if (w is EditableText) {
+      if (w is TextField && w.key == FilDiscussion.champKey) {
         trouve = w.controller;
         return;
       }
@@ -425,8 +431,19 @@ class _PersistanceBrouillonCanalState
     return trouve;
   }
 
-  Future<void> _brancher() async {
+  /// Apres une construction : le champ tenu est-il toujours celui du fil ?
+  /// Sinon (controleur recree, champ apparu ou retire), on s'y rebranche.
+  void _verifierBranchement() {
+    if (!mounted) return;
     final TextEditingController? champ = _trouverChamp();
+    if (identical(champ, _champ)) return;
+    _champ?.removeListener(_auChangement);
+    _champ = null;
+    unawaited(_brancher(champ));
+  }
+
+  Future<void> _brancher([TextEditingController? trouve]) async {
+    final TextEditingController? champ = trouve ?? _trouverChamp();
     // Un canal en lecture seule n'a pas de champ : rien a garder.
     if (champ == null) return;
     _champ = champ;
@@ -465,5 +482,8 @@ class _PersistanceBrouillonCanalState
   }
 
   @override
-  Widget build(BuildContext context) => widget.constructeur(context, _restaure);
+  Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) => _verifierBranchement());
+    return widget.constructeur(context, _restaure);
+  }
 }

@@ -16462,6 +16462,9 @@ class Traductions$com$studio$aujourdhui$modules$fr {
 	/// fr: 'Admissions'
 	String get admissions => 'Admissions';
 
+	/// fr: 'Demandes'
+	String get demandes => 'Demandes';
+
 	/// fr: 'Administration des communications'
 	String get communications => 'Administration des communications';
 }
@@ -20613,6 +20616,7 @@ extension on Traductions {
 			'com.studio.aujourdhui.modules.dossiers' => 'Dossiers',
 			'com.studio.aujourdhui.modules.classes' => 'Classes',
 			'com.studio.aujourdhui.modules.admissions' => 'Admissions',
+			'com.studio.aujourdhui.modules.demandes' => 'Demandes',
 			'com.studio.aujourdhui.modules.communications' => 'Administration des communications',
 			'com.studio.aujourdhui.acces.messages' => _root.com.socle.lexique.messagesMetier,
 			'com.studio.aujourdhui.acces.messagesDetail' => 'Les fils avec les familles, les enseignants et les contrôleurs',
@@ -20643,9 +20647,9 @@ extension on Traductions {
 			'com.studio.choisirTitre' => 'Choisissez un canal',
 			'com.studio.choisir' => 'Choisissez un canal dans la liste pour lire la discussion et y écrire.',
 			'com.studio.aucunCanalTitre' => 'Aucun canal pour le moment',
-			'com.studio.aucunCanal' => 'Les canaux qui vous sont ouverts apparaîtront ici.',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.aucunCanal' => 'Les canaux qui vous sont ouverts apparaîtront ici.',
 			'com.studio.sections.organisation' => 'Organisation',
 			'com.studio.sections.admissionsFamilles' => 'Admissions & familles',
 			'com.studio.sections.pedagogieQualite' => 'Pédagogie & qualité',

@@ -127,7 +127,7 @@ List<AccesRapideStudio> accesRapidesStudio() {
       icone: AppIcons.reaffectation,
       destination: const DestinationStudio(
         chemin: Routes.adminOperationsDemandes,
-        module: ModuleCanonique.classes,
+        module: ModuleCanonique.demandes,
       ),
     ),
   ];

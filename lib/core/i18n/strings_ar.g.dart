@@ -931,6 +931,7 @@ class _Traductions$com$studio$aujourdhui$modules$ar extends Traductions$com$stud
 	@override String get dossiers => 'الملفات';
 	@override String get classes => 'الفصول';
 	@override String get admissions => 'القبول';
+	@override String get demandes => 'الطلبات';
 	@override String get communications => 'إدارة الاتصالات';
 }
 
@@ -1224,6 +1225,7 @@ extension on TraductionsAr {
 			'com.studio.aujourdhui.modules.dossiers' => 'الملفات',
 			'com.studio.aujourdhui.modules.classes' => 'الفصول',
 			'com.studio.aujourdhui.modules.admissions' => 'القبول',
+			'com.studio.aujourdhui.modules.demandes' => 'الطلبات',
 			'com.studio.aujourdhui.modules.communications' => 'إدارة الاتصالات',
 			'com.studio.aujourdhui.acces.messages' => _root.com.socle.lexique.messagesMetier,
 			'com.studio.aujourdhui.acces.messagesDetail' => 'المحادثات مع الأسر والمعلّمين والمراقبين',

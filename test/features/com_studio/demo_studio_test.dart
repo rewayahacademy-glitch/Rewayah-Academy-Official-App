@@ -148,6 +148,30 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('l acces rapide « Demandes » nomme Demandes, pas Classes', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, adresseDemoStudio());
+      final Finder demandes = find.descendant(
+        of: find.byKey(TableauAujourdhui.cleAcces),
+        matching: find.text(t.com.studio.aujourdhui.acces.demandes),
+      );
+      await tester.ensureVisible(demandes);
+      await tester.pumpAndSettle();
+      await tester.tap(demandes);
+      await tester.pumpAndSettle();
+      final m = t.com.studio.aujourdhui.modules;
+      expect(
+        find.text(t.com.studio.demo.horsDemo(module: m.demandes)),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.com.studio.demo.horsDemo(module: m.classes)),
+        findsNothing,
+      );
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets("Aujourd'hui sans activite : l etat vide de la spec", (
       WidgetTester tester,
     ) async {

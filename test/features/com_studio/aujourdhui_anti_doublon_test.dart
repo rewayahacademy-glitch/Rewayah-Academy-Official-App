@@ -156,6 +156,13 @@ void main() {
     );
     for (final AccesRapideStudio a in acces) {
       expect(modulesTemoins, contains(a.destination.chemin));
+      // Le module annonce est celui de la page ouverte (R-COM-11) : le
+      // chemin est sous la racine de son module.
+      expect(
+        destinationModule(a.destination.module, a.destination.chemin),
+        a.destination.chemin,
+        reason: '${a.libelle} annonce ${a.destination.module.name}',
+      );
     }
     final Finder dossiers = find.descendant(
       of: find.byKey(TableauAujourdhui.cleAcces),

@@ -213,6 +213,23 @@ void main() {
     expect(find.byType(ListeCanaux), findsNothing);
   });
 
+  testWidgets('/admin/studio/canaux (ancien lien) ouvre la liste des '
+      "canaux, jamais Aujourd'hui", (WidgetTester tester) async {
+    final GoRouter routeur = await _monterAdmin(
+      tester,
+      Routes.adminStudioCanaux,
+      port: portDemo(),
+    );
+    expect(_adresse(routeur), adresseVueStudio(VueStudio.canaux));
+    expect(find.byType(ListeCanaux), findsOneWidget);
+    expect(find.byType(TableauAujourdhui), findsNothing);
+    expect(
+      tester.widget<NavShell>(find.byType(NavShell)).indexActif,
+      VueStudio.canaux.index,
+    );
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Elements enregistres : une vue du Studio a son adresse', (
     WidgetTester tester,
   ) async {

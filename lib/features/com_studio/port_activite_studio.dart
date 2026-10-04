@@ -78,6 +78,10 @@ enum ModuleCanonique {
   /// Admissions.
   admissions,
 
+  /// Les demandes a trancher (ADM-06 : demandes des familles, enseignants et
+  /// controleurs), une page des Operations distincte des Classes.
+  demandes,
+
   /// Administration des communications (annonces, messages).
   communications;
 
@@ -95,6 +99,7 @@ enum ModuleCanonique {
     ModuleCanonique.dossiers => Routes.adminPersonnes,
     ModuleCanonique.classes => Routes.adminOperationsGroupes,
     ModuleCanonique.admissions => Routes.adminPersonnesDossiers,
+    ModuleCanonique.demandes => Routes.adminOperationsDemandes,
     ModuleCanonique.communications => Routes.adminOperationsCommunications,
   };
 }

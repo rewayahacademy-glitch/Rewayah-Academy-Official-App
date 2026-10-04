@@ -1046,14 +1046,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       // COM-F : Le Studio (QUESTIONS Q1), hors de l'`AdminShell` : sa propre
       // navigation viendra de la voie COM-STU, la sortie ramene a `/admin`.
-      // `/admin/studio/canaux` n'a pas de page : elle renvoie au Studio.
+      // `/admin/studio/canaux` n'a pas de page : elle renvoie a la vue des
+      // canaux du Studio (`/admin/studio` est Aujourd'hui, COM-STU-2).
       GoRoute(
         path: Routes.adminStudio,
         builder: (BuildContext _, GoRouterState _) => const StudioPage(),
       ),
       GoRoute(
         path: Routes.adminStudioCanaux,
-        redirect: (BuildContext _, GoRouterState _) => Routes.adminStudio,
+        redirect: (BuildContext _, GoRouterState _) =>
+            adresseVueStudio(VueStudio.canaux),
       ),
       GoRoute(
         path: '${Routes.adminStudioCanaux}/:canalId',
