@@ -60,7 +60,7 @@ class AffichageSeance {
           ? t.tuteur.accueil.heureAppareil
           : t.tuteur.accueil.heureDe(ville: foyer.libelleVille),
       date: foyer?.dateLocaleRendue ?? dateDeLAppareil(local),
-      duree: LibellesGroupe.dureeLisible(seance.dureePrevue),
+      duree: LibellesGroupe.dureeSeule(seance.dureePrevue),
       heureClasse: classe == null
           ? null
           : t.tuteur.accueil.heureClasse(

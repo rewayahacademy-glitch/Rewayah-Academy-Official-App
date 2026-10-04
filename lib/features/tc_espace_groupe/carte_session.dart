@@ -273,7 +273,7 @@ class HeuresSeance extends StatelessWidget {
         Ecart.vSm,
         _LigneValeur(
           libelle: LibellesGroupe.dureeLibelle,
-          valeur: LibellesGroupe.dureeLisible(duree),
+          valeur: LibellesGroupe.dureeSeule(duree),
         ),
       ],
     );

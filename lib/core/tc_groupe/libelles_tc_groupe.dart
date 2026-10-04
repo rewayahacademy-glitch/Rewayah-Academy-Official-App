@@ -190,7 +190,7 @@ abstract final class LibellesGroupe {
 
   /// Une heure et sa ville, par exemple « 18:00 Riyad ».
   static String heureEtVille({required String heure, required String ville}) =>
-      t.tc.groupe.horloges.heureEtVille(heure: heure, ville: ville);
+      ancreSens(t.tc.groupe.horloges.heureEtVille(heure: heure, ville: ville));
 
   /// Anticipation a trente jours.
   static String get dstJ30 => t.tc.groupe.dst.j30;
@@ -267,6 +267,29 @@ abstract final class LibellesGroupe {
       .replaceAllMapped(_espaceApresNombre, (Match m) => '${m[1]}$_insecable')
       .replaceAllMapped(_espaceAvantMinutes, (Match m) => '${m[1]}$_insecable');
 
+  /// DUREE-INSECABLE-1 (reprise) : un libelle en ecriture latine qui commence
+  /// par un nombre (« 45 min », « 21:28 Paris ») garde son ordre dans une
+  /// interface de droite a gauche. Applique aux valeurs affichees seules
+  /// ([dureeSeule], [heureEtVille]) ; une duree glissee dans une phrase
+  /// (« Cours dans 3 h 28 ») suit deja le mot qui la precede. Sans ancre,
+  /// l'algorithme bidirectionnel range le nombre apres le mot (« min 45 », « Paris 21:28 ») ; une marque
+  /// gauche-a-droite invisible (U+200E) en tete le rattache au mot latin qui
+  /// suit. Un libelle qui porte deja une lettre arabe ou hebraique reste
+  /// intact : son ordre est celui de sa langue.
+  static String ancreSens(String texte) =>
+      _commenceParNombre.hasMatch(texte) &&
+          !_lettreDroiteAGauche.hasMatch(texte)
+      ? '$_marqueGaucheADroite$texte'
+      : texte;
+
+  static const String _marqueGaucheADroite = '\u200E';
+
+  static final RegExp _commenceParNombre = RegExp(r'^\d');
+
+  static final RegExp _lettreDroiteAGauche = RegExp(
+    '[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]',
+  );
+
   static const String _insecable = '\u00A0';
 
   /// « 3 h », « 45 min » : l'espace qui suit un nombre.
@@ -328,6 +351,11 @@ abstract final class LibellesGroupe {
             ),
     );
   }
+
+  /// La duree affichee seule, comme valeur (« Duree / 45 min ») : celle de
+  /// [dureeLisible], ancree pour garder son ordre en interface de droite a
+  /// gauche ([ancreSens]). Dans une phrase, [dureeLisible] suffit.
+  static String dureeSeule(Duration duree) => ancreSens(dureeLisible(duree));
 
   /// La ligne d'etat de la Session Card, deduite de l'horloge.
   ///

@@ -345,4 +345,66 @@ void main() {
       });
     }
   });
+
+  group('Interface de droite a gauche : le nombre reste devant son mot', () {
+    setUpAll(chargerPolicesDuDepot);
+
+    /// Le bord gauche visuel de [partie] dans [texte] rendu de droite a
+    /// gauche.
+    double gauche(TextPainter p, String texte, String partie) {
+      final int debut = texte.indexOf(partie);
+      expect(debut, isNonNegative, reason: '« $partie » dans « $texte »');
+      final List<TextBox> boites = p.getBoxesForSelection(
+        TextSelection(baseOffset: debut, extentOffset: debut + partie.length),
+      );
+      return boites
+          .map((TextBox b) => b.left)
+          .reduce((double a, double b) => a < b ? a : b);
+    }
+
+    for (final ({String nom, String texte, String avant, String apres}) cas
+        in <({String nom, String texte, String avant, String apres})>[
+          (
+            nom: 'duree prevue 45 min',
+            texte: LibellesGroupe.dureeSeule(const Duration(minutes: 45)),
+            avant: '45',
+            apres: 'min',
+          ),
+          (
+            nom: 'duree prevue 1 h 30',
+            texte: LibellesGroupe.dureeSeule(
+              const Duration(hours: 1, minutes: 30),
+            ),
+            avant: '1',
+            apres: 'h',
+          ),
+          (
+            nom: 'heure et ville',
+            texte: LibellesGroupe.heureEtVille(heure: '21:28', ville: 'Paris'),
+            avant: '21:28',
+            apres: 'Paris',
+          ),
+        ]) {
+      test('${cas.nom} : « ${cas.avant} » a gauche de « ${cas.apres} »', () {
+        final TextPainter p = TextPainter(
+          text: TextSpan(
+            text: cas.texte,
+            style: const TextStyle(fontFamily: 'DMSans', fontSize: 16),
+          ),
+          textDirection: TextDirection.rtl,
+        )..layout();
+        expect(
+          gauche(p, cas.texte, cas.avant),
+          lessThan(gauche(p, cas.texte, cas.apres)),
+          reason: '« ${cas.texte} » se lit a l envers en RTL',
+        );
+        p.dispose();
+      });
+    }
+
+    test('un libelle arabe n est pas ancre', () {
+      expect(LibellesGroupe.ancreSens('45 دقيقة'), '45 دقيقة');
+      expect(LibellesGroupe.ancreSens('Cours dans 3 h'), 'Cours dans 3 h');
+    });
+  });
 }

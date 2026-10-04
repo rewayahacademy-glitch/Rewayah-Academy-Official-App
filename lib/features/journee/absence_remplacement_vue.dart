@@ -107,7 +107,7 @@ Future<EtatAbsence?> ouvrirFeuilleAbsence(
       ),
       LigneCleValeur(
         cle: LibellesGroupe.dureeLibelle,
-        valeur: LibellesGroupe.dureeLisible(fin.difference(debut)),
+        valeur: LibellesGroupe.dureeSeule(fin.difference(debut)),
         chiffres: true,
       ),
     ],
@@ -166,7 +166,7 @@ List<LigneCleValeur> lignesRemplacement(
   ),
   LigneCleValeur(
     cle: LibellesGroupe.dureeLibelle,
-    valeur: LibellesGroupe.dureeLisible(offre.fin.difference(offre.debut)),
+    valeur: LibellesGroupe.dureeSeule(offre.fin.difference(offre.debut)),
     chiffres: true,
   ),
   LigneCleValeur(
