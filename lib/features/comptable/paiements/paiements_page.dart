@@ -45,6 +45,7 @@ import '../../../core/widgets/pile_cartes.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/sous_navigation_domaine.dart';
 import 'barre_selection.dart';
+import 'confirmation/confirmation_payout.dart';
 import 'ligne_obligation.dart';
 import 'paiements_donnees.dart';
 
@@ -149,6 +150,19 @@ class _PaiementsAEffectuerPageState
     }
   });
 
+  /// Ouvre la confirmation (CPT-PAY-2) pour [choisies] : preflight, puis
+  /// confirmation explicite des seuls prets. Au retour, la selection est
+  /// relachee et la liste relue : les etats viennent de la source.
+  Future<void> _payer(List<ObligationPayable> choisies) async {
+    if (choisies.isEmpty) return;
+    final bool change = await ouvrirConfirmationPayout(context, choisies);
+    if (!mounted) return;
+    if (change) {
+      setState(_selection.clear);
+      _relire();
+    }
+  }
+
   void _selectionnerPrets(List<ObligationPayable> visibles) => setState(() {
     _selection
       ..clear()
@@ -186,8 +200,17 @@ class _PaiementsAEffectuerPageState
       ouvrir: _ouvrir,
       basculer: _basculer,
       relancer: _relancer,
+      payer: (ObligationPayable o) => _payer(<ObligationPayable>[o]),
+      demanderValidation: (ObligationPayable o) =>
+          _payer(<ObligationPayable>[o]),
       horsLigne: horsLigne,
     );
+    // Les obligations retenues, dans l'ordre de la liste lue.
+    final List<ObligationPayable> retenues = <ObligationPayable>[
+      if (valeur.hasValue)
+        for (final ObligationPayable o in valeur.requireValue)
+          if (_selection.contains(o.id)) o,
+    ];
 
     final Widget bloc = BlocAsynchrone<List<ObligationPayable>>(
       valeur: valeur,
@@ -248,6 +271,7 @@ class _PaiementsAEffectuerPageState
           : BarreSelection(
               nombre: _selection.length,
               horsLigne: horsLigne,
+              onPayer: retenues.isEmpty ? null : () => _payer(retenues),
               onVider: () => setState(_selection.clear),
             ),
       child: Column(

@@ -55,12 +55,21 @@ enum MotifEcart {
 Future<SignalementEcart?> ouvrirSignalerEcart(
   BuildContext context,
   ObligationPayable obligation,
-) => AppBottomSheet.ouvrir<SignalementEcart>(
-  context,
-  titre: t.comptable.paiements.ecart.titre,
-  constructeur: (BuildContext _) =>
-      FeuilleSignalerEcart(obligation: obligation),
-);
+) {
+  // La feuille lit le port de la portee de la page (demonstration comprise).
+  final ProviderContainer portee = ProviderScope.containerOf(
+    context,
+    listen: false,
+  );
+  return AppBottomSheet.ouvrir<SignalementEcart>(
+    context,
+    titre: t.comptable.paiements.ecart.titre,
+    constructeur: (BuildContext _) => UncontrolledProviderScope(
+      container: portee,
+      child: FeuilleSignalerEcart(obligation: obligation),
+    ),
+  );
+}
 
 /// Le contenu de la feuille « Signaler un ecart ».
 class FeuilleSignalerEcart extends ConsumerStatefulWidget {

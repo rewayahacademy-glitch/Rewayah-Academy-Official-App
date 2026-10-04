@@ -49,6 +49,7 @@ import '../../../core/widgets/pastilles_comptable.dart';
 import '../../../core/widgets/section_header.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/status_pill.dart';
+import 'confirmation/confirmation_payout.dart';
 import 'ligne_obligation.dart';
 import 'paiements_donnees.dart';
 import 'signaler_ecart.dart';
@@ -63,6 +64,10 @@ class DetailPaiementPage extends ConsumerStatefulWidget {
 
   /// La cle du bouton « Signaler un ecart ».
   static const Key cleSignaler = ValueKey<String>('detail-signaler-ecart');
+
+  /// La cle de l'action principale (« Payer maintenant » ou « Demander
+  /// validation »).
+  static const Key clePayer = ValueKey<String>('detail-payer');
 
   /// La cle de l'encart permanent §31.
   static const Key cleEncart = ValueKey<String>('detail-encart-31');
@@ -80,6 +85,19 @@ class _DetailPaiementPageState extends ConsumerState<DetailPaiementPage> {
     if (depose != null && mounted) {
       setState(() => _signalement = depose);
       ref.invalidate(journalObligationProvider(o.id));
+    }
+  }
+
+  /// Ouvre la confirmation (CPT-PAY-2), puis relit le detail et le journal :
+  /// l'etat affiche est celui que rend la source apres l'envoi.
+  Future<void> _payer(ObligationPayable o) async {
+    final bool change = await ouvrirConfirmationPayout(
+      context,
+      <ObligationPayable>[o],
+    );
+    if (change && mounted) {
+      _relire();
+      ref.invalidate(obligationsPayablesProvider);
     }
   }
 
@@ -110,6 +128,8 @@ class _DetailPaiementPageState extends ConsumerState<DetailPaiementPage> {
         construire: (ObligationPayable o) => _Contenu(
           obligation: o,
           signalement: _signalement,
+          horsLigne: horsLigne,
+          onPayer: () => _payer(o),
           onSignaler: o.permissions.permet(ActionFinance.signalerEcart)
               ? () => _signaler(o)
               : null,
@@ -140,12 +160,16 @@ class _Contenu extends StatelessWidget {
   const _Contenu({
     required this.obligation,
     required this.signalement,
+    required this.horsLigne,
+    required this.onPayer,
     required this.onSignaler,
     required this.onVoirProfil,
   });
 
   final ObligationPayable obligation;
   final SignalementEcart? signalement;
+  final bool horsLigne;
+  final VoidCallback onPayer;
   final VoidCallback? onSignaler;
   final VoidCallback onVoirProfil;
 
@@ -158,7 +182,15 @@ class _Contenu extends StatelessWidget {
     final Widget gauche = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        _CarteTotal(obligation: o),
+        _CarteTotal(
+          obligation: o,
+          action: _ActionPrincipaleDetail(
+            obligation: o,
+            horsLigne: horsLigne,
+            onPayer: onPayer,
+            onVoirProfil: onVoirProfil,
+          ),
+        ),
         Ecart.vLg,
         _CarteLignes(obligation: o, onSignaler: onSignaler),
       ],
@@ -298,12 +330,13 @@ class _Identite extends StatelessWidget {
   }
 }
 
-/// Le total, en grand, masquable ; l'action principale de la page vient
-/// s'y poser (CPT-PAY-2).
+/// Le total, en grand, masquable, et l'action principale de la page
+/// (CPT-PAY-2) : le montant exact ne s'affiche que dans la confirmation.
 class _CarteTotal extends StatelessWidget {
-  const _CarteTotal({required this.obligation});
+  const _CarteTotal({required this.obligation, required this.action});
 
   final ObligationPayable obligation;
+  final Widget action;
 
   @override
   Widget build(BuildContext context) {
@@ -330,9 +363,63 @@ class _CarteTotal extends StatelessWidget {
               textes.bodySmall ?? const TextStyle(),
             ),
           ),
+          Ecart.vLg,
+          action,
         ],
       ),
     );
+  }
+}
+
+/// L'unique bouton plein de W03, decide par les permissions rendues
+/// (DR-19) : « Payer maintenant », « Demander validation » pour un paiement
+/// sensible, « Relancer » quand les infos manquent, sinon la raison rendue
+/// en phrase (« Traitement par un autre responsable requis », R-FIN-15).
+/// Hors ligne, aucun bouton d'envoi : une phrase.
+class _ActionPrincipaleDetail extends StatelessWidget {
+  const _ActionPrincipaleDetail({
+    required this.obligation,
+    required this.horsLigne,
+    required this.onPayer,
+    required this.onVoirProfil,
+  });
+
+  final ObligationPayable obligation;
+  final bool horsLigne;
+  final VoidCallback onPayer;
+  final VoidCallback onVoirProfil;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = t.comptable.paiements;
+    final ObligationPayable o = obligation;
+    Widget phrase(String texte) => Text(
+      texte,
+      style: AppPalette.of(context).inkMuted
+          .applyTo(Theme.of(context).textTheme.bodyMedium ?? const TextStyle()),
+    );
+    final ActionLigne action = actionDe(o);
+    switch (action) {
+      case ActionLigne.payer:
+      case ActionLigne.demanderValidation:
+        if (horsLigne) return phrase(p.horsLigneCourt);
+        return ActionPrincipale(
+          key: DetailPaiementPage.clePayer,
+          libelle: action == ActionLigne.payer
+              ? p.confirmation.payerMaintenant
+              : p.actions.demanderValidation,
+          onPress: onPayer,
+        );
+      case ActionLigne.relancer:
+        return ActionPrincipale(
+          libelle: p.actions.relancer,
+          niveau: NiveauAction.secondaire,
+          onPress: onVoirProfil,
+        );
+      case ActionLigne.voir:
+        // La raison est deja dite par l'alerte rendue en tete (R-FIN-15).
+        return const SizedBox.shrink();
+    }
   }
 }
 
@@ -420,46 +507,57 @@ class _LigneDeCalcul extends StatelessWidget {
     final String? auteur = ligne.auteur;
     final String? validation = ligne.validation;
     final String? route = ligne.route;
+    final Widget montant = MontantSensible(
+      ligne.montant,
+      signe: ligne.montant.mineur < 0,
+    );
+    // A texte agrandi, le montant passe sous le libelle : jamais un nombre
+    // coupe ni une ligne qui deborde a 320 (§45).
+    final bool empile = MediaQuery.textScalerOf(context).scale(1) >= 1.5;
+    final Widget libelles = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          ligne.libelle,
+          style: palette.inkStrong.applyTo(
+            textes.bodyLarge ?? const TextStyle(),
+          ),
+        ),
+        Ecart.vXs,
+        Text(d.source(source: ligne.source), style: attenue),
+        if (auteur != null) ...<Widget>[
+          Ecart.vXs,
+          Text(d.auteur(auteur: auteur), style: attenue),
+        ],
+        if (validation != null) ...<Widget>[
+          Ecart.vXs,
+          Text(validation, style: attenue),
+        ],
+        if (route != null) ...<Widget>[
+          Ecart.vXs,
+          LienFleche(
+            libelle: d.voirSource,
+            legende: true,
+            onPress: () => context.push(route),
+          ),
+        ],
+      ],
+    );
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            child: Column(
+      child: empile
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[libelles, Ecart.vXs, montant],
+            )
+          : Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  ligne.libelle,
-                  style: palette.inkStrong.applyTo(
-                    textes.bodyLarge ?? const TextStyle(),
-                  ),
-                ),
-                Ecart.vXs,
-                Text(d.source(source: ligne.source), style: attenue),
-                if (auteur != null) ...<Widget>[
-                  Ecart.vXs,
-                  Text(d.auteur(auteur: auteur), style: attenue),
-                ],
-                if (validation != null) ...<Widget>[
-                  Ecart.vXs,
-                  Text(validation, style: attenue),
-                ],
-                if (route != null) ...<Widget>[
-                  Ecart.vXs,
-                  LienFleche(
-                    libelle: d.voirSource,
-                    legende: true,
-                    onPress: () => context.push(route),
-                  ),
-                ],
+                Expanded(child: libelles),
+                Ecart.hMd,
+                montant,
               ],
             ),
-          ),
-          Ecart.hMd,
-          MontantSensible(ligne.montant, signe: ligne.montant.mineur < 0),
-        ],
-      ),
     );
   }
 }

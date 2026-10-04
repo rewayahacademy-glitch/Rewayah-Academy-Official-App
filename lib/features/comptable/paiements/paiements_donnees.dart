@@ -4,7 +4,8 @@
 // (`PortObligationsPayables`, CPT-BR-01 ; DR-19).
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
+import 'package:flutter_riverpod/misc.dart'
+    show FutureProviderFamily, ProviderOrFamily;
 
 import '../../../core/capacites/port_obligations_payables.dart';
 import '../../../core/comptable/modeles_comptable.dart';
@@ -19,6 +20,7 @@ obligationsPayablesProvider = FutureProvider.autoDispose
       (Ref ref, FiltreObligations filtre) =>
           ref.watch(portObligationsPayablesProvider).liste(filtre),
       retry: _sansRetentative,
+      dependencies: <ProviderOrFamily>[portObligationsPayablesProvider],
     );
 
 /// Le detail W03 d'une obligation.
@@ -28,6 +30,7 @@ obligationPayableProvider = FutureProvider.autoDispose
       (Ref ref, String id) =>
           ref.watch(portObligationsPayablesProvider).detail(id),
       retry: _sansRetentative,
+      dependencies: <ProviderOrFamily>[portObligationsPayablesProvider],
     );
 
 /// Le journal d'une obligation (§48).
@@ -37,7 +40,12 @@ journalObligationProvider = FutureProvider.autoDispose
       (Ref ref, String id) =>
           ref.watch(portObligationsPayablesProvider).journal(id),
       retry: _sansRetentative,
+      dependencies: <ProviderOrFamily>[portObligationsPayablesProvider],
     );
+
+// Chaque lecture declare le port dont elle depend : une demonstration qui
+// surcharge le port dans une `ProviderScope` imbriquee (la coquille de
+// `/demo/comptable`) est alors lue dans cette portee, pas a la racine.
 
 /// Aucune retentative automatique : « Reessayer » est la seule relance, et
 /// une capacite absente ne revient pas en insistant (`BlocAsynchrone`).
