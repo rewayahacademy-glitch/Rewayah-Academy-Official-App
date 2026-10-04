@@ -32,6 +32,7 @@ import 'package:rewayah_academy/features/admin_acces_agents/acces_agents_page.da
 import 'package:rewayah_academy/features/admin_pedagogie_evaluations/evaluations_page.dart';
 import 'package:rewayah_academy/features/dossier/depot_piece_page.dart';
 
+import '../router/support_routeur.dart';
 import '../support/harnais.dart';
 import 'support_form_l2.dart';
 
@@ -138,6 +139,73 @@ void main() {
       expect(selecteur.demandes, <TypePiece>[TypePiece.autre]);
       expect(dossier.depots.single.type, TypePiece.autre);
       expect(dossier.depots.single.type.valeurSql, 'other');
+    });
+  });
+
+  group('L10 : le courriel de la connexion arrive a la recuperation', () {
+    String champRecuperation(WidgetTester tester) => tester
+        .widget<TextField>(
+          find.byKey(const ValueKey<String>('recuperation-courriel')),
+        )
+        .controller!
+        .text;
+
+    Future<void> versRecuperation(WidgetTester tester) async {
+      final Finder probleme = find.text(t.connexion.probleme);
+      await tester.ensureVisible(probleme);
+      await tester.pumpAndSettle();
+      await tester.tap(probleme);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('l\'adresse deja saisie est pre-remplie (et rognee)', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await monterRouteur(
+        tester,
+        Routes.connexion,
+        source: FausseSourceSession(),
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('connexion-courriel')),
+        '  awa@exemple.fr ',
+      );
+      await tester.pumpAndSettle();
+
+      await versRecuperation(tester);
+
+      expect(lieu(routeur), Routes.connexionRecuperation);
+      expect(champRecuperation(tester), 'awa@exemple.fr');
+    });
+
+    testWidgets('l\'adresse ne passe pas par l\'URL', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await monterRouteur(
+        tester,
+        Routes.connexion,
+        source: FausseSourceSession(),
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey<String>('connexion-courriel')),
+        'awa@exemple.fr',
+      );
+      await versRecuperation(tester);
+
+      expect(lieu(routeur), isNot(contains('awa')));
+    });
+
+    testWidgets('rien de saisi : le champ de recuperation reste vide', (
+      WidgetTester tester,
+    ) async {
+      await monterRouteur(
+        tester,
+        Routes.connexion,
+        source: FausseSourceSession(),
+      );
+      await versRecuperation(tester);
+
+      expect(champRecuperation(tester), isEmpty);
     });
   });
 

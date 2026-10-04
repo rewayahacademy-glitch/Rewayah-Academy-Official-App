@@ -220,6 +220,16 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
     }
   }
 
+  /// « Un probleme pour vous connecter ? » : la recuperation s'ouvre avec le
+  /// courriel deja saisi ici (FORM-L10), s'il y en a un.
+  void _versRecuperation() {
+    final String courriel = _courriel.text.trim();
+    GoRouter.of(context).go(
+      Routes.connexionRecuperation,
+      extra: courriel.isEmpty ? null : courriel,
+    );
+  }
+
   Future<void> _entreeEleve() async {
     final bool saisir = await ouvrirFeuilleAppareilEleve(context);
     if (saisir && mounted) {
@@ -272,9 +282,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
                                   _renvoye = false;
                                   _erreurRenvoi = null;
                                 }),
-                                onProbleme: () =>
-                                    GoRouter.of(context)
-                                        .go(Routes.connexionRecuperation),
+                                onProbleme: _versRecuperation,
                               )
                             : _Saisie(
                                 courriel: _courriel,
@@ -286,9 +294,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
                                 onSoumettre: () => unawaited(_soumettre()),
                                 onGoogle: () => unawaited(_google()),
                                 onEleve: () => unawaited(_entreeEleve()),
-                                onProbleme: () =>
-                                    GoRouter.of(context)
-                                        .go(Routes.connexionRecuperation),
+                                onProbleme: _versRecuperation,
                                 onDecouvrir: () =>
                                     GoRouter.of(context).go(Routes.bienvenue),
                               ),
