@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
@@ -13,11 +14,14 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/billet_salle.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/controleur/controle_page.dart';
 import 'package:rewayah_academy/features/controleur/mission_controle.dart';
 import 'package:rewayah_academy/features/demo/controleur_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
+
+import '../../support/harnais.dart' show FauxServiceVideo;
 
 void main() {
   BilletSalle? billet;
@@ -130,6 +134,64 @@ void main() {
       billet?.sessionId,
       DonneesControleurDemo.mission(EtatDemoControleur.enDirect)!.seanceId,
     );
+  });
+
+  // CTRL-BR-OBS-1 (BR-CT-19) : le chemin PAR DEFAUT de « Commencer » (sans
+  // la redirection de la demonstration) va a /salle avec le billet seul.
+  // Il n'inscrit pas la visite (`observerEnControle`, RPC
+  // `rejoindre_observation`) : a brancher a BR-1, sinon le jeton est refuse
+  // en reel et le passage n'est pas journalise. Ce test fixe l'etat actuel.
+  testWidgets('chemin par defaut : /salle avec le billet seul, aucune '
+      'inscription de visite avant BR-1 (BR-CT-19)', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final MissionControle mission = missionDemoControleur(
+      EtatDemoControleur.enDirect,
+    )!;
+    final FauxServiceVideo video = FauxServiceVideo();
+    BilletSalle? recu;
+    final GoRouter routeur = GoRouter(
+      routes: <RouteBase>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext _, GoRouterState _) =>
+              const Scaffold(body: ControleControleurPage()),
+        ),
+        GoRoute(
+          path: Routes.salle,
+          builder: (BuildContext _, GoRouterState e) {
+            recu = e.extra is BilletSalle ? e.extra! as BilletSalle : null;
+            return const Scaffold(body: Text('salle'));
+          },
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: <Override>[
+          missionControleProvider.overrideWith((Ref _) async => mission),
+          serviceVideoProvider.overrideWithValue(video),
+        ],
+        child: TranslationProvider(
+          child: MaterialApp.router(
+            theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+            locale: AppLocale.fr.flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            routerConfig: routeur,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(ControleControleurPage.commencerKey));
+    await tester.pumpAndSettle();
+    expect(routeur.state.uri.path, Routes.salle);
+    expect(recu?.sessionId, mission.seanceId);
+    expect(video.observations, isEmpty);
   });
 
   testWidgets('aucun debordement a 800x600, dans chaque situation', (

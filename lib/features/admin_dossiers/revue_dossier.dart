@@ -527,14 +527,21 @@ class _CartePiece extends StatelessWidget {
       EtatPieceRevue.disponible => LigneRubrique(
         icone: AppIcons.dossiers,
         libelle: type == null ? t.dossiers.revue.piece : libelleTypePiece(type),
+        // AD-M3-PROD : consultation fermee, la raison remplace le bouton
+        // (jamais de bouton grise).
+        legende: dossier.peutVoirPiece
+            ? null
+            : t.dossiers.revue.pieceIndisponible,
         // AD-7 : la visionneuse (lecture et zoom seulement).
-        controle: ActionPrincipale(
-          libelle: t.dossiers.revue.voirPiece,
-          niveau: NiveauAction.tertiaire,
-          pleineLargeur: false,
-          focusNode: focusNode,
-          onPress: dossier.peutVoirPiece ? onVoirPiece : null,
-        ),
+        controle: dossier.peutVoirPiece
+            ? ActionPrincipale(
+                libelle: t.dossiers.revue.voirPiece,
+                niveau: NiveauAction.tertiaire,
+                pleineLargeur: false,
+                focusNode: focusNode,
+                onPress: onVoirPiece,
+              )
+            : null,
       ),
       EtatPieceRevue.nonVisible => LigneRubrique(
         icone: AppIcons.dossiers,
@@ -634,6 +641,13 @@ class _RaisonsDecision extends StatelessWidget {
       textes.bodyMedium ?? const TextStyle(),
     );
     final List<BlocageRevue> b = dossier.blocagesValidation;
+    final bool refusIndisponible = dossier.blocagesRefus.contains(
+      BlocageRevue.decisionIndisponible,
+    );
+    final bool indisponibleDit =
+        _raisonValidationDite &&
+        !horsLigne &&
+        b.contains(BlocageRevue.decisionIndisponible);
     Widget? raison;
     if (!_raisonValidationDite) {
       raison = null;
@@ -674,9 +688,15 @@ class _RaisonsDecision extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         ?raison,
-        if (_refusFerme) ...<Widget>[
+        // AD-M3-PROD : refus ferme comme la validation, dit une seule fois.
+        if (_refusFerme && !(refusIndisponible && indisponibleDit)) ...<Widget>[
           if (raison != null) Ecart.vXs,
-          Text(t.dossiers.revue.etats.refusNonAutorise, style: style),
+          Text(
+            refusIndisponible
+                ? t.dossiers.revue.etats.decisionIndisponible
+                : t.dossiers.revue.etats.refusNonAutorise,
+            style: style,
+          ),
         ],
       ],
     );

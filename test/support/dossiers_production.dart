@@ -1,4 +1,9 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
+import 'package:rewayah_academy/core/capacites/revue_dossiers_depuis_validation.dart';
+import 'package:rewayah_academy/core/dossier/service_validation.dart';
 
 /// Tape la premiere ligne de la file `ADM-02A` (panneau unique), comme
 /// l'administrateur, pour ouvrir la revue du dossier. Sans file (vide,
@@ -11,3 +16,20 @@ Future<void> ouvrirPremierDossier(WidgetTester tester) async {
   await tester.tap(lignes.first);
   await tester.pumpAndSettle();
 }
+
+/// L'adaptateur de production tel que BR-1 le rebranchera : signature de la
+/// piece, `decider_dossier` et relecture de la file sur `ServiceValidation`.
+/// AD-M3-PROD ferme ces trois capacites dans `surchargeRevueDossiersProduction`
+/// jusqu'a BR-1 ; les tests du refus et de la visionneuse passent par ici.
+final Override surchargeRevueDossiersBrancheeBR1 = portRevueDossiersProvider
+    .overrideWith(
+      (Ref ref) => RevueDossiersDepuisValidation(
+        () => ref.read(dossiersEnAttenteProvider.future),
+        apercu: (String cle) => ref.read(serviceValidationProvider).apercu(cle),
+        deciderExistant: ref.read(serviceValidationProvider).decider,
+        relire: () {
+          ref.invalidate(dossiersEnAttenteProvider);
+          return ref.read(dossiersEnAttenteProvider.future);
+        },
+      ),
+    );
