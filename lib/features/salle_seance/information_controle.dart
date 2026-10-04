@@ -34,8 +34,14 @@ abstract final class InformationControle {
 
   /// Vrai si un texte existe pour ce role, avec ses valeurs : E-1 pour
   /// l'interface guidee, E-2 pour l'eleve (avec un contact). L'enseignant n'a
-  /// pas de texte sur le bandeau : sa politique de controle vit dans son
-  /// espace.
+  /// pas de texte sur le bandeau.
+  ///
+  /// **Sa politique de controle n'est pas encore dans l'application.** La
+  /// partie B de `POLITIQUE_CONTROLE_ENSEIGNANTS.md` est validee (02/10), mais
+  /// sa section 10 garde des champs non remplis (`{numero_societe}`,
+  /// `{adresse_siege}`, `{contact_confidentialite}`, `{representant_ue}`) :
+  /// elle n'est ni jointe au contrat ni dans l'espace enseignant tant que le
+  /// directeur ne les a pas fournis (reste de JUR-APP-1).
   static bool texteDisponible(RoleSeance role, {String? contact}) =>
       switch (role) {
         RoleSeance.guidee => true,
@@ -59,10 +65,15 @@ Future<void> ouvrirInformationControle(
         ? t.salle.informationControle.e1.titre
         : t.salle.informationControle.e2.titre,
     libelleFermer: t.commun.fermer,
-    constructeur: (BuildContext _) => TexteInformationControle(
-      role: role,
-      contact: contact,
-      signaler: signaler,
+    // La surface de lecture donne au corps la hauteur restante (plein ecran
+    // sous 840) : le texte y defile, jusqu'a sa derniere phrase, a 320 et a
+    // 200 % comme sur un grand ecran.
+    constructeur: (BuildContext _) => SingleChildScrollView(
+      child: TexteInformationControle(
+        role: role,
+        contact: contact,
+        signaler: signaler,
+      ),
     ),
   );
 }

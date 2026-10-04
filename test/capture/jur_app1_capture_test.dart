@@ -76,8 +76,14 @@ Future<void> _monterDossier(
   await stabiliser(tester);
 }
 
-Future<void> _monterSalle(WidgetTester tester, Size taille) async {
-  fixerVueCapture(tester, taille, 2);
+Future<void> _monterSalle(
+  WidgetTester tester,
+  Size taille, {
+  double densite = 2,
+  ThemeMode mode = ThemeMode.light,
+  double echelle = 1,
+}) async {
+  fixerVueCapture(tester, taille, densite);
   await tester.pumpWidget(
     hoteCapture(
       SalleDemo(
@@ -85,11 +91,18 @@ Future<void> _monterSalle(WidgetTester tester, Size taille) async {
         etat: EtatDemoSalle.repos,
         onSortir: () {},
       ),
+      themeMode: mode,
+      echelleTexte: echelle,
       interfaceMode: InterfaceMode.enfant,
     ),
   );
   await stabiliser(tester);
 }
+
+/// Le haut de la surface du cours (la carte « Chapitre 1 »), pour mesurer ce
+/// que la mention et son lien prennent en hauteur.
+double _hautCours(WidgetTester tester) =>
+    tester.getTopLeft(find.text('Chapitre 1').first).dy;
 
 void main() {
   group('Capture JUR-APP-1', skip: sautSansCapture, () {
@@ -97,26 +110,70 @@ void main() {
       await chargerPolicesDuDepot();
     });
 
-    for (final (String nom, Size taille) in <(String, Size)>[
-      ('390x844', const Size(390, 844)),
-      ('1440x900', const Size(1440, 900)),
-    ]) {
-      testWidgets('salle guidee, bandeau et lien, $nom', (
-        WidgetTester tester,
-      ) async {
-        await _monterSalle(tester, taille);
-        expect(find.text(t.salle.informationControle.lien), findsOneWidget);
-        debugPrint(
-          'PNG ${await capturer(tester, 'jur_app1_salle_guidee_bandeau_$nom')}',
-        );
+    // Le nom dit la largeur, puis « t200 » pour le texte a 200 %.
+    for (final (String nom, Size taille, double densite, double echelle)
+        in <(String, Size, double, double)>[
+          ('320x690', const Size(320, 690), 2, 1),
+          ('320x690_t200', const Size(320, 690), 2, 2),
+          ('390x844', const Size(390, 844), 2, 1),
+          ('1440x900', const Size(1440, 900), 1, 1),
+        ]) {
+      for (final ThemeMode mode in <ThemeMode>[
+        ThemeMode.light,
+        ThemeMode.dark,
+      ]) {
+        final String m = mode == ThemeMode.light ? 'clair' : 'sombre';
+        testWidgets('salle guidee, bandeau et lien, $nom $m', (
+          WidgetTester tester,
+        ) async {
+          await _monterSalle(
+            tester,
+            taille,
+            densite: densite,
+            mode: mode,
+            echelle: echelle,
+          );
+          expect(find.text(t.salle.informationControle.lien), findsOneWidget);
+          debugPrint('MESURE $nom $m haut du cours ${_hautCours(tester)}');
+          debugPrint(
+            'PNG ${await capturer(tester, 'jur_app1_salle_guidee_${nom}_$m')}',
+          );
+        });
 
-        await tester.tap(find.text(t.salle.informationControle.lien));
-        await stabiliser(tester);
-        expect(find.text(t.salle.informationControle.e1.titre), findsOneWidget);
-        debugPrint(
-          'PNG ${await capturer(tester, 'jur_app1_salle_guidee_e1_$nom')}',
-        );
-      });
+        testWidgets('lecture E-1, haut et bas, $nom $m', (
+          WidgetTester tester,
+        ) async {
+          await _monterSalle(
+            tester,
+            taille,
+            densite: densite,
+            mode: mode,
+            echelle: echelle,
+          );
+          await tester.tap(find.text(t.salle.informationControle.lien));
+          await stabiliser(tester);
+          expect(tester.takeException(), isNull);
+          expect(
+            find.text(t.salle.informationControle.e1.titre),
+            findsOneWidget,
+          );
+          debugPrint(
+            'PNG ${await capturer(tester, 'jur_app1_e1_${nom}_${m}_haut')}',
+          );
+          await tester.drag(
+            find.byType(SingleChildScrollView).last,
+            const Offset(0, -5000),
+          );
+          await stabiliser(tester);
+          expect(
+            tester.getRect(find.text(t.salle.informationControle.e1.p5)).bottom,
+            lessThanOrEqualTo(taille.height),
+          );
+          debugPrint(
+            'PNG ${await capturer(tester, 'jur_app1_e1_${nom}_${m}_bas')}',
+          );
+        });
+      }
     }
 
     testWidgets('accuse tuteur (A3)', (WidgetTester tester) async {

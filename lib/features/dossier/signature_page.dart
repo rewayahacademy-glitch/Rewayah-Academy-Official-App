@@ -49,9 +49,16 @@ List<ParagrapheTexte> paragraphesE1() => <ParagrapheTexte>[
   (titre: t.contrat.e1.refusTitre, corps: t.contrat.e1.refus),
 ];
 
-/// Le role lu dans l'etat du dossier ; tuteur par defaut.
+/// Le role lu dans l'etat du dossier ; tuteur par defaut. Il ne sert qu'a
+/// choisir la sorte de contrat ([SorteContrat.pour], dans le domaine) : la
+/// page lit ensuite cette sorte, jamais le role.
 AppRole _role(WidgetRef ref) =>
     ref.watch(etatDossierProvider).value?.role ?? AppRole.guardian;
+
+/// Vrai si le texte a signer est le contrat enseignant : c'est cette sorte,
+/// et non le role, qui porte E1, la clause des visites et la case art. 9.
+bool _contratEnseignant(WidgetRef ref) =>
+    SorteContrat.pour(_role(ref)) == SorteContrat.contratEnseignant;
 
 /// La carte a accuser une fois (ADR-011).
 ///
@@ -69,7 +76,7 @@ class AccusePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bool enseignant = _role(ref) == AppRole.teacher;
+    final bool enseignant = _contratEnseignant(ref);
     return _PageASigner(
       titre: t.contrat.a3.titre,
       libelleAction: t.contrat.a3.jaiLu,
@@ -98,8 +105,8 @@ class ContratPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AppRole role = _role(ref);
-    final bool enseignant = role == AppRole.teacher;
+    final SorteContrat sorte = SorteContrat.pour(_role(ref));
+    final bool enseignant = sorte == SorteContrat.contratEnseignant;
     String? pour;
     try {
       pour = GoRouterState.of(context).uri.queryParameters['pour'];
@@ -110,7 +117,7 @@ class ContratPage extends ConsumerWidget {
     return _PageASigner(
       titre: t.contrat.titre,
       libelleAction: t.contrat.accepter,
-      sorte: SorteContrat.pour(role),
+      sorte: sorte,
       paragraphes: <ParagrapheTexte>[
         ...enseignant ? paragraphesE1() : paragraphesA3(),
         // L'occultation des coordonnees ne concerne que l'enseignant : c'est ce

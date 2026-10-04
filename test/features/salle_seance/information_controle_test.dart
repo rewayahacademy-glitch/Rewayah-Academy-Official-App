@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart'
     show DisqueRetour;
@@ -196,5 +197,127 @@ void main() {
       expect(_lien, findsOneWidget);
       expect(tester.takeException(), isNull);
     });
+  });
+
+  group('Mise en page : la salle ne bouge pas, la lecture defile', () {
+    Future<void> salle(
+      WidgetTester tester,
+      Size taille,
+      double densite, {
+      ThemeMode mode = ThemeMode.light,
+      double echelle = 1,
+    }) async {
+      tester.view.physicalSize = taille * densite;
+      tester.view.devicePixelRatio = densite;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        hoteCapture(
+          SalleDemo(
+            role: RoleSeance.guidee,
+            etat: EtatDemoSalle.repos,
+            onSortir: () {},
+          ),
+          themeMode: mode,
+          echelleTexte: echelle,
+          interfaceMode: InterfaceMode.enfant,
+        ),
+      );
+      await stabiliser(tester);
+    }
+
+    double hautCours(WidgetTester tester) =>
+        tester.getTopLeft(find.text('Chapitre 1').first).dy;
+    Finder mention() => find.text(t.salle.bandeauPermanent);
+
+    // Le haut de la surface du cours SANS le lien (base, mesure du
+    // 04/10/2026 sur la branche commune) : 100 au telephone.
+    const double hautSansLien = 100;
+
+    testWidgets('390 : le lien suit la mention sur sa ligne, le cours ne '
+        'bouge pas', (WidgetTester tester) async {
+      await salle(tester, const Size(390, 844), 2);
+      expect(tester.takeException(), isNull);
+      expect(hautCours(tester), hautSansLien);
+      final Rect texte = tester.getRect(mention());
+      final Rect lien = tester.getRect(_lien);
+      expect(lien.center.dy, closeTo(texte.center.dy, 0.5));
+      expect(lien.left, greaterThan(texte.right));
+      expect(lien.right, lessThanOrEqualTo(390 - 16));
+      // Souligne : reconnaissable comme lien sans couleur ajoutee.
+      final Text widget = tester.widget<Text>(_lien);
+      expect(widget.style?.decoration, TextDecoration.underline);
+    });
+
+    testWidgets('320 : le lien passe sous le texte, avec la seule hauteur de '
+        'son texte', (WidgetTester tester) async {
+      await salle(tester, const Size(320, 690), 2);
+      expect(tester.takeException(), isNull);
+      final Rect texte = tester.getRect(mention());
+      final Rect lien = tester.getRect(_lien);
+      expect(lien.left, closeTo(texte.left, 0.5));
+      expect(lien.top, closeTo(texte.bottom, 0.5));
+      expect(hautCours(tester), hautSansLien + lien.height);
+    });
+
+    for (final double y in <double>[-30, -12, 0, 6]) {
+      testWidgets('la cible tactile deborde sans prendre de hauteur '
+          '(touche a ${y.toInt()} du centre du lien)', (
+        WidgetTester tester,
+      ) async {
+        await salle(tester, const Size(390, 844), 2);
+        final Offset centre = tester.getCenter(_lien);
+        await tester.tapAt(centre + Offset(0, y));
+        await stabiliser(tester);
+        expect(find.text(t.salle.informationControle.e1.titre), findsOneWidget);
+      });
+    }
+
+    testWidgets('une touche hors de la cible (sur la carte du cours) '
+        "n'ouvre rien", (WidgetTester tester) async {
+      await salle(tester, const Size(390, 844), 2);
+      final Offset centre = tester.getCenter(_lien);
+      await tester.tapAt(centre + const Offset(0, 24));
+      await stabiliser(tester);
+      expect(find.text(t.salle.informationControle.e1.titre), findsNothing);
+    });
+
+    for (final double densite in <double>[1, 2]) {
+      for (final double echelle in <double>[1, 2]) {
+        for (final ThemeMode mode in <ThemeMode>[
+          ThemeMode.light,
+          ThemeMode.dark,
+        ]) {
+          testWidgets('E-1 a 320, densite x${densite.toInt()}, texte '
+              '${(echelle * 100).toInt()} %, ${mode.name} : aucune erreur de '
+              'mise en page, la derniere phrase est atteinte', (
+            WidgetTester tester,
+          ) async {
+            await salle(
+              tester,
+              const Size(320, 690),
+              densite,
+              mode: mode,
+              echelle: echelle,
+            );
+            expect(tester.takeException(), isNull);
+            expect(_lien, findsOneWidget);
+            await tester.tap(_lien);
+            await stabiliser(tester);
+            expect(tester.takeException(), isNull);
+            final Finder fin = find.text(t.salle.informationControle.e1.p5);
+            await tester.scrollUntilVisible(
+              fin,
+              200,
+              scrollable: find.byType(Scrollable).last,
+            );
+            await stabiliser(tester);
+            expect(tester.takeException(), isNull);
+            final Rect derniere = tester.getRect(fin);
+            expect(derniere.bottom, lessThanOrEqualTo(690));
+            expect(derniere.top, greaterThanOrEqualTo(0));
+          });
+        }
+      }
+    }
   });
 }

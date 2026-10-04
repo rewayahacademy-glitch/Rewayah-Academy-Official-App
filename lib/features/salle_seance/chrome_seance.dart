@@ -17,6 +17,7 @@ import '../../core/widgets/entete_page.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/status_pill.dart';
 import 'actions_seance.dart';
+import 'cible_debordante.dart';
 import 'dock_seance.dart';
 import 'mention_seance.dart';
 import 'vue_seance.dart';
@@ -59,14 +60,18 @@ class ChromeSeance extends StatelessWidget {
           displayColor: palette.surfaceCanvas.onBackground,
         ),
       ),
-      child: gabarit == Gabarit.desktop
-          ? _Large(vue: vue, actions: actions)
-          : _Etroit(
-              vue: vue,
-              actions: actions,
-              gabarit: gabarit,
-              compacte: compacte,
-            ),
+      // La cible du lien « En savoir plus » de la mention deborde de sa
+      // ligne sans prendre de hauteur : l'en-tete entier recoit ses touches.
+      child: ZoneCiblesDebordantes(
+        child: gabarit == Gabarit.desktop
+            ? _Large(vue: vue, actions: actions)
+            : _Etroit(
+                vue: vue,
+                actions: actions,
+                gabarit: gabarit,
+                compacte: compacte,
+              ),
+      ),
     );
   }
 }
