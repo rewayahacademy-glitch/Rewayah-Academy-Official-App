@@ -129,6 +129,54 @@ void main() {
       await demonter(tester);
     });
 
+    testWidgets('le texte modifie apres un blocage : le verdict perime '
+        'disparait aussitot, sans rien envoyer', (WidgetTester tester) async {
+      final GardePromotionFixtures garde = DonneesCommunauteDemo.garde();
+      final BancCommunaute banc = await monterCommunaute(
+        tester,
+        autres: _avecGarde(garde),
+      );
+      await _publierMarque(tester, DonneesCommunauteDemo.brouillonAffilie);
+      expect(find.byKey(ComposerPublication.cleVerdict), findsOneWidget);
+      expect(find.text('Lien commercial interdit'), findsOneWidget);
+
+      // La personne retire le lien, sans toucher « Publier » : la carte ne
+      // doit plus contredire ce qui est ecrit.
+      await tester.enterText(
+        find.byKey(ComposerPublication.cleTexte),
+        "J'utilise un lecteur audio pour faire réécouter les sourates.",
+      );
+      await tester.pump();
+
+      expect(find.byKey(ComposerPublication.cleVerdict), findsNothing);
+      expect(find.byKey(GardePromotion.cleBlocage), findsNothing);
+      expect(find.text('Lien commercial interdit'), findsNothing);
+      expect(
+        find.byKey(LigneEtatLien.cle(DonneesCommunauteDemo.lienAffilieDemo)),
+        findsNothing,
+      );
+      // Rien n'est reparti tout seul : seul « Publier » relance le garde.
+      expect(garde.verifies, hasLength(1));
+      expect(banc.memoire.publicationsAcceptees, 0);
+      expect(find.byType(ComposerPublication), findsOneWidget);
+      await demonter(tester);
+    });
+
+    testWidgets('une autre categorie apres un blocage : le verdict perime '
+        'disparait aussi', (WidgetTester tester) async {
+      final GardePromotionFixtures garde = DonneesCommunauteDemo.garde();
+      await monterCommunaute(tester, autres: _avecGarde(garde));
+      await _publierMarque(tester, DonneesCommunauteDemo.brouillonAffilie);
+      expect(find.byKey(ComposerPublication.cleVerdict), findsOneWidget);
+      final String autre = DonneesCommunauteDemo.categories
+          .firstWhere((c) => c.id != DonneesCommunauteDemo.pedagogie.id)
+          .id;
+      await taper(tester, find.byKey(ComposerPublication.cleCategorie(autre)));
+      expect(find.byKey(ComposerPublication.cleVerdict), findsNothing);
+      expect(garde.verifies, hasLength(1));
+      await demonter(tester);
+    });
+
     testWidgets('le lien retire, la publication repart : elle est confirmee '
         'et le verdict disparait', (WidgetTester tester) async {
       final GardePromotionFixtures garde = DonneesCommunauteDemo.garde();

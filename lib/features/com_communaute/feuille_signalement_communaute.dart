@@ -17,7 +17,9 @@
 // Le texte d'echec n'est pas celui de la spec section 5.2 (« Le signalement
 // n'a pas pu etre envoye. Reessayez. ») : apres une coupure, l'app ne sait
 // pas si le signalement est arrive, elle dit donc « pas encore confirme »
-// (K-59, D5, regle `affirmation-reseau`).
+// (K-59, D5, regle `affirmation-reseau`). Ecart OUVERT, a trancher par le
+// directeur (amender la spec section 5.2 ou admettre une exception a
+// `verifier_revue`), puis a reporter dans COM-BR.md et QUESTIONS.md a COM-FUS.
 
 import 'package:flutter/material.dart';
 

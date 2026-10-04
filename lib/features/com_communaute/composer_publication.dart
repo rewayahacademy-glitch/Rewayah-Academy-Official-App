@@ -188,8 +188,10 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
     if (fichier == null || !mounted) return;
     final FichierChoisi f = fichier;
     setState(() {
-      // Une piece de plus est une autre publication : nouvelle cle.
+      // Une piece de plus est une autre publication : nouvelle cle, et le
+      // verdict du garde, qui portait sur l'ancien contenu, disparait.
       _cle = null;
+      _verdict = null;
       _numeroPiece++;
       _pieces.add(
         PieceJointe(
@@ -291,9 +293,16 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
 
   void _contenuModifie() {
     // Un contenu modifie (titre, texte, categorie, pieces) est une autre
-    // publication : nouvelle cle.
+    // publication : nouvelle cle, et le verdict du garde porte sur l'ancien
+    // contenu. Le garder affiche contredirait ce qui est ecrit : il
+    // disparait, et seul « Publier » relance le garde.
     _cle = null;
-    if (_erreur != null) setState(() => _erreur = null);
+    if (_erreur != null || _verdict != null) {
+      setState(() {
+        _erreur = null;
+        _verdict = null;
+      });
+    }
   }
 
   @override
@@ -356,11 +365,11 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
                 libelle: categorie.libelle,
               ),
           ],
-          onChange: (ReponseChoix reponse) => setState(() {
-            _categorie = reponse.valeurs.firstOrNull;
-            // Une autre categorie est une autre publication : nouvelle cle.
-            _cle = null;
-          }),
+          onChange: (ReponseChoix reponse) {
+            setState(() => _categorie = reponse.valeurs.firstOrNull);
+            // Une autre categorie est une autre publication.
+            _contenuModifie();
+          },
         ),
         if (manque(_categorie == null, c.categorieManquante)
             case final String texte) ...<Widget>[
@@ -435,10 +444,10 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
               for (final PieceJointe piece in _pieces)
                 CartePieceJointe(
                   piece: piece,
-                  onRetirer: () => setState(() {
-                    _pieces.remove(piece);
-                    _cle = null;
-                  }),
+                  onRetirer: () {
+                    setState(() => _pieces.remove(piece));
+                    _contenuModifie();
+                  },
                 ),
             ],
           ),
