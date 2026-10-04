@@ -90,8 +90,13 @@ class BoutonAppel extends StatelessWidget {
     this.bascule,
     this.focusNode,
     this.selectionne,
+    this.motGarde = false,
     super.key,
   });
+
+  /// TB-2 : le mot reste sous l'icone dans un dock compact (Quitter), voir
+  /// [CommandeSalle.motGarde].
+  final bool motGarde;
 
   /// Le noeud de focus du bouton : la salle y rend le focus a la fermeture
   /// d'une feuille ouverte par ce bouton (micro bloque, W2 2.4.3).
@@ -123,6 +128,7 @@ class BoutonAppel extends StatelessWidget {
     bascule: bascule,
     focusNode: focusNode,
     selectionne: selectionne,
+    motGarde: motGarde,
     fond: switch (fond) {
       FondBoutonAppel.surface => FondCommande.surface,
       FondBoutonAppel.alerte => FondCommande.alerte,
@@ -251,6 +257,8 @@ class DockSeance extends StatelessWidget {
           icone: AppIcons.raccrocher.actif,
           libelle: t.salle.quitter,
           libelleSemantique: t.salle.seance.sortir,
+          // TB-2 : la sortie garde son mot, meme en dock compact (MA, 390).
+          motGarde: true,
           fond: FondBoutonAppel.alerte,
           onPress: () => confirmerQuitterSeance(
             context,
@@ -271,9 +279,12 @@ class DockSeance extends StatelessWidget {
         ? null
         : StatutCameraInterdite(texte: texteCamera);
     final List<Widget> boutons = <Widget>[];
-    // Une bascule (Micro, Camera) porte son mot d'etat : sa case est plus
-    // large que celle d'une commande ordinaire (ETATS-BTN-1).
+    // Une bascule (Micro, Camera) porte son mot d'etat, Quitter son nom
+    // (TB-2) : leur case est plus large que celle d'une commande ordinaire
+    // (ETATS-BTN-1).
     final List<bool> bascules = <bool>[];
+    // TB-2 : la place de Quitter dans [boutons] (son mot reste visible).
+    int indexQuitter = -1;
     // TB-2 : Agrandir a quitte la barre de l'appel ; tant que le focus local
     // est actif ([agrandi]), sa sortie « Reduire » y reste, avant Quitter
     // (TB18 : la sortie du focus toujours atteignable, jusqu'a TB-4).
@@ -297,9 +308,12 @@ class DockSeance extends StatelessWidget {
       }
       final Widget? bouton = _bouton(context, commande);
       if (bouton == null) continue;
+      if (commande == CommandeDock.quitter) indexQuitter = boutons.length;
       boutons.add(bouton);
       bascules.add(
-        commande == CommandeDock.micro || commande == CommandeDock.camera,
+        commande == CommandeDock.micro ||
+            commande == CommandeDock.camera ||
+            commande == CommandeDock.quitter,
       );
     }
     final AppColorPair fond = palette.surfaceRaised;
@@ -353,18 +367,35 @@ class DockSeance extends StatelessWidget {
           ),
           child: LayoutBuilder(
             builder: (BuildContext contexte, BoxConstraints contraintes) {
+              // TB-2 (defaut TB-F, Quitter sans libelle) : le mot de Quitter
+              // ne se coupe jamais. Plus large que la part egale, il garde
+              // sa largeur ; les autres se partagent le reste.
+              final double motQuitter =
+                  indexQuitter < 0 || !motEtatVisible(contexte)
+                  ? 0
+                  : _largeurMot(contexte, t.salle.quitter);
+              final double partEgale = boutons.isEmpty
+                  ? 0
+                  : contraintes.maxWidth / boutons.length;
+              final bool quitterLarge =
+                  boutons.length > 1 && motQuitter > partEgale;
               final Widget rangee = Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 // Chaque bouton prend une part egale ; le mot d'etat d'une
                 // bascule passe a la ligne dans sa part.
                 children: <Widget>[
                   for (int i = 0; i < boutons.length; i++)
-                    Expanded(child: boutons[i]),
+                    if (quitterLarge && i == indexQuitter)
+                      SizedBox(width: motQuitter, child: boutons[i])
+                    else
+                      Expanded(child: boutons[i]),
                 ],
               );
               if (boutons.isEmpty) return rangee;
               final double diametre = diametreBoutonAppel(contexte);
-              final double parCase = contraintes.maxWidth / boutons.length;
+              final double parCase = quitterLarge
+                  ? (contraintes.maxWidth - motQuitter) / (boutons.length - 1)
+                  : partEgale;
               final bool serre = parCase < diametre + AppSpacing.sm;
               final bool texteAgrandi =
                   MediaQuery.textScalerOf(contexte).scale(1) > 1;
@@ -433,6 +464,23 @@ class DockSeance extends StatelessWidget {
       ],
     );
   }
+}
+
+/// La largeur d'un mot de commande, dans le style et a l'echelle de texte de
+/// [CommandeSalle] (labelMedium), arrondie au pixel superieur.
+double _largeurMot(BuildContext context, String mot) {
+  final TextPainter peintre = TextPainter(
+    text: TextSpan(
+      text: mot,
+      style: Theme.of(context).textTheme.labelMedium,
+    ),
+    textDirection: Directionality.of(context),
+    textScaler: MediaQuery.textScalerOf(context),
+    maxLines: 1,
+  )..layout();
+  final double largeur = peintre.width.ceilToDouble();
+  peintre.dispose();
+  return largeur;
 }
 
 /// Le statut « Camera desactivee pour ce profil. » de l'eleve standard

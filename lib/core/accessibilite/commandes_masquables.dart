@@ -32,10 +32,10 @@ import 'effacement_barre_basse.dart';
 /// contact est pose, rien ne se masque ; [libelleEntree] ouvre l'entree
 /// clavier nommee (« Commandes de l'appel ») ; [margeLecture] reserve sous
 /// le contenu la hauteur mesuree des commandes, sans relayout quand elles se
-/// masquent. Le clavier ne compte plus quand la derniere interaction dans la
-/// zone est la souris (mode de focus par defaut d'un bureau) : la barre se
-/// masque alors comme au toucher, mais jamais tant qu'une commande a le
-/// focus.
+/// masquent. Le clavier ne compte qu'apres une touche pressee dans la zone, et
+/// plus quand la derniere interaction y est la souris (mode de focus par
+/// defaut d'un bureau) : la barre se masque alors comme au toucher, mais
+/// jamais tant qu'une commande a le focus.
 class CommandesMasquables extends StatefulWidget {
   const CommandesMasquables({
     required this.contenu,
@@ -116,8 +116,13 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
   bool _focusDedans = false;
 
   /// TB-2 : la derniere interaction dans la zone est un pointeur (souris ou
-  /// doigt), pas le clavier.
-  bool _pointeur = false;
+  /// doigt), pas le clavier. Vrai a l'entree : le parcours clavier ne compte
+  /// qu'apres une touche pressee dans la zone ([_surTouche]). Sur un bureau
+  /// ouvert a la souris, le mode de focus vaut deja `traditional` : sans
+  /// cela, la barre ne se masquait jamais pour l'eleve qui regarde sans
+  /// toucher la souris (UX-06, revue TB-2). Au clavier, la premiere touche
+  /// la ramene et la garde (Quitter jamais masque au clavier).
+  bool _pointeur = true;
 
   /// TB-2 : les contacts poses (un trait, un zoom) : rien ne se masque.
   final Set<int> _contacts = <int>{};

@@ -8,6 +8,7 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -32,6 +33,7 @@ Future<GoRouter> _ouvrir(
   RoleSeance role, {
   SituationTb situation = SituationTb.vis01,
   Size taille = _telephone,
+  PointerDeviceKind appareil = PointerDeviceKind.touch,
 }) async {
   final GoRouter routeur = await monterRouteur(
     tester,
@@ -43,7 +45,7 @@ Future<GoRouter> _ouvrir(
   );
   await tester.ensureVisible(lien);
   await tester.pump();
-  await tester.tap(lien);
+  await tester.tap(lien, kind: appareil);
   await stabiliser(tester);
   expect(lieu(routeur), adresseDemoSalleTb(role, situation));
   expect(tester.takeException(), isNull);
@@ -268,6 +270,163 @@ void main() {
             tester.getRect(find.byKey(CommandesMasquables.commandesKey)),
             barre,
           );
+        });
+      }
+    }
+  });
+
+  // Revue TB-2 : un bureau ouvert a la SOURIS (Web bureau) est en mode de
+  // focus `traditional` des l'entree ; sans touche pressee, ce n'est pas un
+  // parcours clavier : l'eleve qui regarde sans toucher la souris voit la
+  // barre se masquer (UX-06). La premiere touche la ramene et la garde.
+  group('UX-06 : ouverte a la souris sur un bureau, sans interaction, la '
+      'barre se masque', () {
+    for (final RoleSeance role in RoleSeance.values) {
+      testWidgets(role.name, (WidgetTester tester) async {
+        await _ouvrir(
+          tester,
+          role,
+          taille: _bureau,
+          appareil: PointerDeviceKind.mouse,
+        );
+        expect(
+          FocusManager.instance.highlightMode,
+          FocusHighlightMode.traditional,
+        );
+        expect(_visible(tester), isTrue);
+        final Rect avant = _support(tester);
+        await _attendreDelai(tester);
+        await _fondre(tester);
+        expect(_visible(tester), isFalse);
+        expect(_ignorees(tester), isTrue);
+        expect(_support(tester), avant, reason: 'contenu et repere');
+        // Une touche : le parcours clavier commence, la barre revient et
+        // ne se masque plus (Quitter jamais masque au clavier).
+        await tester.sendKeyEvent(LogicalKeyboardKey.shiftLeft);
+        await _fondre(tester);
+        expect(_visible(tester), isTrue);
+        await _attendreDelai(tester);
+        await _attendreDelai(tester);
+        expect(_visible(tester), isTrue);
+        expect(_ignorees(tester), isFalse);
+      });
+    }
+  });
+
+  // Plan V2 §18.1 : lecteur d'ecran actif, la barre ne se masque pas.
+  group('lecteur d\'ecran : la barre reste visible et activable', () {
+    for (final RoleSeance role in RoleSeance.values) {
+      testWidgets(role.name, (WidgetTester tester) async {
+        tester.platformDispatcher.accessibilityFeaturesTestValue =
+            const FakeAccessibilityFeatures(accessibleNavigation: true);
+        addTearDown(
+          tester.platformDispatcher.clearAccessibilityFeaturesTestValue,
+        );
+        await _ouvrir(tester, role);
+        // Ouverte au doigt (mode tactile) : seul le lecteur d'ecran la
+        // retient.
+        expect(
+          FocusManager.instance.highlightMode,
+          FocusHighlightMode.touch,
+        );
+        await _attendreDelai(tester);
+        await _attendreDelai(tester);
+        await _fondre(tester);
+        expect(_visible(tester), isTrue);
+        expect(_ignorees(tester), isFalse);
+        await tester.tap(_quitter);
+        await _fondre(tester);
+        expect(_question, findsOneWidget);
+      });
+    }
+  });
+
+  // UX-07 (plan V2 §18.2) : quand la barre depasse le tiers de la hauteur
+  // (petit ecran, telephone couche), elle se pose PAR-DESSUS le contenu. Elle
+  // est peinte au-dessus de lui et c'est elle qui recoit le doigt : Quitter
+  // se tape a travers le chevauchement.
+  group('UX-07 : barre posee par-dessus le contenu, Quitter au-dessus', () {
+    for (final (RoleSeance, Size) cas in <(RoleSeance, Size)>[
+      (RoleSeance.enseignant, const Size(320, 568)),
+      (RoleSeance.eleve, const Size(844, 390)),
+    ]) {
+      final (RoleSeance role, Size taille) = cas;
+      testWidgets('${role.name} ${taille.width.toInt()}x'
+          '${taille.height.toInt()}', (WidgetTester tester) async {
+        await _ouvrir(tester, role, taille: taille);
+        final RenderCustomMultiChildLayoutBox pile = tester
+            .renderObject<RenderCustomMultiChildLayoutBox>(
+              find
+                  .descendant(
+                    of: find.byType(CommandesMasquables),
+                    matching: find.byType(CustomMultiChildLayout),
+                  )
+                  .first,
+            );
+        final RenderBox dessous = pile.firstChild!;
+        final RenderBox dessus = pile.lastChild!;
+        final Rect contenu =
+            dessous.localToGlobal(Offset.zero) & dessous.size;
+        final Rect barre = tester.getRect(
+          find.byKey(CommandesMasquables.commandesKey),
+        );
+        expect(
+          contenu.overlaps(barre),
+          isTrue,
+          reason: 'la barre depasse le tiers : elle chevauche le contenu',
+        );
+        // L'ordre de peinture : le contenu d'abord, la barre ensuite.
+        final RenderObject quitter = tester.renderObject(_quitter);
+        bool sous(RenderObject o, RenderObject parent) {
+          RenderObject? r = o;
+          while (r != null) {
+            if (identical(r, parent)) return true;
+            r = r.parent;
+          }
+          return false;
+        }
+
+        expect(sous(quitter, dessus), isTrue, reason: 'barre peinte dessus');
+        expect(sous(quitter, dessous), isFalse);
+        // Le doigt : la barre d'abord.
+        final Offset ou = tester.getCenter(_quitter);
+        expect(contenu.contains(ou), isTrue, reason: 'Quitter sur le contenu');
+        final HitTestResult touche = tester.hitTestOnBinding(ou);
+        expect(
+          touche.path.any((HitTestEntry e) => identical(e.target, quitter)),
+          isTrue,
+        );
+        await tester.tapAt(ou);
+        await _fondre(tester);
+        expect(_question, findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+    }
+  });
+
+  // Defaut TB-F (fiche TB-2) : a 390 x1, Quitter n'avait plus de libelle
+  // (guidee en Mode Accessibilite, enseignant en dock serre). La sortie garde
+  // son mot, entier, sur une ligne, dans l'ecran.
+  group('Quitter garde son libelle dans la barre', () {
+    for (final RoleSeance role in RoleSeance.values) {
+      for (final Size taille in <Size>[const Size(320, 700), _telephone]) {
+        testWidgets('${role.name} ${taille.width.toInt()} x1', (
+          WidgetTester tester,
+        ) async {
+          await _ouvrir(tester, role, taille: taille);
+          final Finder mot = find.descendant(
+            of: _quitter,
+            matching: find.text(t.salle.quitter),
+          );
+          expect(mot, findsOneWidget);
+          final RenderParagraph p = tester.renderObject<RenderParagraph>(mot);
+          expect(p.didExceedMaxLines, isFalse, reason: 'mot coupe');
+          final Rect r = tester.getRect(mot);
+          expect(r.left, greaterThanOrEqualTo(0));
+          expect(r.right, lessThanOrEqualTo(taille.width));
+          expect(r.bottom, lessThanOrEqualTo(taille.height));
+          expect(tester.getRect(_quitter).height, greaterThanOrEqualTo(48));
+          expect(tester.takeException(), isNull);
         });
       }
     }

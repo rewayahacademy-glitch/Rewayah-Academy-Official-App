@@ -103,8 +103,16 @@ class CommandeSalle extends StatelessWidget {
     this.focusNode,
     this.selectionne,
     this.encreLibelle,
+    this.motGarde = false,
     super.key,
   });
+
+  /// TB-2 (fiche TB-2, defaut TB-F « Quitter sans libelle ») : vrai, la
+  /// commande garde son mot dans une rangee compacte, comme une bascule
+  /// (Quitter, la sortie de l'appel). Il ne cede, comme le mot d'etat, que
+  /// devant un texte tres agrandi ([motEtatVisible]) : il passe alors en
+  /// infobulle et dans la voix du lecteur d'ecran.
+  final bool motGarde;
 
   /// L'icone : pour une bascule, celle de l'etat courant (micro / micro
   /// barre).
@@ -154,7 +162,8 @@ class CommandeSalle extends StatelessWidget {
     // passe alors en infobulle et dans la voix du lecteur d'ecran, comme les
     // libelles du Teaching Dock (`BoutonOutil`).
     final bool iconeSeule =
-        compacte != null && (!estBascule || !motEtatVisible(context));
+        compacte != null &&
+        (!(estBascule || motGarde) || !motEtatVisible(context));
     final double diametre =
         compacte?.diametre ?? diametreCommandeSalle(context);
     final double tailleIcone =
