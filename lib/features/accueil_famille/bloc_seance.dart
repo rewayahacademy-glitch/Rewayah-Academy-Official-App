@@ -189,16 +189,24 @@ class AffichageSeance {
       return e.prevue;
     }
     final int minutes = restant.inMinutes;
+    // DUREE-INSECABLE-1 : « Dans 3 h 28 » ne se scinde jamais.
     if (minutes < Duration.minutesPerHour) {
-      return e.dansMinutes(minutes: minutes < 1 ? 1 : minutes);
-    }
-    if (minutes < Duration.minutesPerDay) {
-      return e.dansHeures(
-        heures: minutes ~/ Duration.minutesPerHour,
-        minutes: (minutes % Duration.minutesPerHour).toString().padLeft(2, '0'),
+      return LibellesGroupe.insecable(
+        e.dansMinutes(minutes: minutes < 1 ? 1 : minutes),
       );
     }
-    return e.dansJours(jours: restant.inDays);
+    if (minutes < Duration.minutesPerDay) {
+      return LibellesGroupe.insecable(
+        e.dansHeures(
+          heures: minutes ~/ Duration.minutesPerHour,
+          minutes: (minutes % Duration.minutesPerHour).toString().padLeft(
+            2,
+            '0',
+          ),
+        ),
+      );
+    }
+    return LibellesGroupe.insecable(e.dansJours(jours: restant.inDays));
   }
 }
 

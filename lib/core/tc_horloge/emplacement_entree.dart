@@ -310,11 +310,16 @@ class EmplacementEntree {
 /// (ENSEIGNANT-2026-09-26, E11), et non « Cours dans 1 h 24 ».
 String _dansEnseignant(Duration reste) {
   final int minutes = reste.inMinutes;
+  // DUREE-INSECABLE-1 : la duree ne se scinde jamais sur deux lignes.
   if (minutes < Duration.minutesPerHour) {
-    return t.enseignant.journee.minuteurMinutes(minutes: minutes);
+    return LibellesGroupe.insecable(
+      t.enseignant.journee.minuteurMinutes(minutes: minutes),
+    );
   }
-  return t.enseignant.journee.minuteurHeures(
-    heures: minutes ~/ Duration.minutesPerHour,
-    minutes: (minutes % Duration.minutesPerHour).toString().padLeft(2, '0'),
+  return LibellesGroupe.insecable(
+    t.enseignant.journee.minuteurHeures(
+      heures: minutes ~/ Duration.minutesPerHour,
+      minutes: (minutes % Duration.minutesPerHour).toString().padLeft(2, '0'),
+    ),
   );
 }

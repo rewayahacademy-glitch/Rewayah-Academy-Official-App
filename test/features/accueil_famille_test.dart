@@ -853,6 +853,57 @@ void main() {
     }
   });
 
+  group('DUREE-INSECABLE-1 : 320 px, texte x2', () {
+    setUpAll(chargerPolicesDuDepot);
+
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets('${sens.name} : « Cours dans 3 h 28 » et « Dans 3 h 28 » '
+          'sur une ligne, « Aucune séance » entier a l ecran', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          depart: Routes.tuteurAccueil,
+          taille: const Size(320, 3000),
+          echelle: 2,
+          direction: sens,
+          seances: <SeanceFamille>[
+            _prochaine(
+              avant: const Duration(hours: 3, minutes: 28, seconds: 30),
+            ),
+          ],
+        );
+        expect(tester.takeException(), isNull);
+        // Les durees de tout l'ecran : bloc de seance (« Cours dans 3 h 28 »,
+        // « 45 min ») et selecteur (« Dans 3 h 28 »).
+        final ({List<String> mesurees, List<String> coupees}) r = mesurerDurees(
+          tester,
+          find.byType(AccueilFamillePage),
+        );
+        expect(
+          r.mesurees.where(
+            (String m) => RegExp(r': 3[ \u00A0]h[ \u00A0]28$').hasMatch(m),
+          ),
+          hasLength(greaterThanOrEqualTo(2)),
+        );
+        expect(r.coupees, isEmpty, reason: 'Une duree scindee');
+        // Le selecteur : aucun mot coupe, et l'etat « Aucune séance » de
+        // l'eleve A2 (sans seance) tient entier dans l'ecran, sans etre rogne
+        // au bord de la rangee.
+        final Finder selecteur = find.byType(SelecteurProfils);
+        verifierAucunMotCoupe(tester, selecteur);
+        final Finder aucune = find.descendant(
+          of: selecteur,
+          matching: find.text(t.tuteur.accueil.etatCourt.aucune),
+        );
+        expect(aucune, findsOneWidget);
+        final Rect zone = tester.getRect(aucune);
+        expect(zone.left, greaterThanOrEqualTo(0));
+        expect(zone.right, lessThanOrEqualTo(320));
+      });
+    }
+  });
+
   group('Accueil : lectures en echec ou en cours', () {
     testWidgets('profils illisibles : etat d echec avec Reessayer', (
       WidgetTester tester,
@@ -918,7 +969,10 @@ void main() {
       expect(loin.ligneEtat, LibellesGroupe.dansHeures(heures: 3, minutes: 28));
       expect(
         loin.etatCourt,
-        t.tuteur.accueil.etatCourt.dansHeures(heures: 3, minutes: '28'),
+        // DUREE-INSECABLE-1 : la duree est insecable.
+        LibellesGroupe.insecable(
+          t.tuteur.accueil.etatCourt.dansHeures(heures: 3, minutes: '28'),
+        ),
       );
       expect(loin.point, PointStatut.attention);
     });

@@ -106,14 +106,16 @@ abstract final class LibellesGroupe {
 
   /// Compte a rebours court.
   static String dansMinutes(int minutes) =>
-      t.tc.groupe.temps.dansMinutes(minutes: minutes);
+      insecable(t.tc.groupe.temps.dansMinutes(minutes: minutes));
 
   /// Compte a rebours long.
-  static String dansHeures({required int heures, required int minutes}) => t
-      .tc
-      .groupe
-      .temps
-      .dansHeures(heures: heures, minutes: minutes.toString().padLeft(2, '0'));
+  static String dansHeures({required int heures, required int minutes}) =>
+      insecable(
+        t.tc.groupe.temps.dansHeures(
+          heures: heures,
+          minutes: minutes.toString().padLeft(2, '0'),
+        ),
+      );
 
   /// Moins d'une minute.
   static String get imminent => t.tc.groupe.temps.imminent;
@@ -130,14 +132,16 @@ abstract final class LibellesGroupe {
 
   /// Le temps restant, court.
   static String resteMinutes(int minutes) =>
-      t.tc.groupe.temps.resteMinutes(minutes: minutes);
+      insecable(t.tc.groupe.temps.resteMinutes(minutes: minutes));
 
   /// Le temps restant, long.
-  static String resteHeures({required int heures, required int minutes}) => t
-      .tc
-      .groupe
-      .temps
-      .resteHeures(heures: heures, minutes: minutes.toString().padLeft(2, '0'));
+  static String resteHeures({required int heures, required int minutes}) =>
+      insecable(
+        t.tc.groupe.temps.resteHeures(
+          heures: heures,
+          minutes: minutes.toString().padLeft(2, '0'),
+        ),
+      );
 
   /// Le cours se tient.
   static String enCours(String reste) =>
@@ -250,6 +254,29 @@ abstract final class LibellesGroupe {
   static String get emplacementNonBrancheDetail =>
       t.tc.groupe.emplacement.nonBrancheDetail;
 
+  /// DUREE-INSECABLE-1 : une duree ne se scinde jamais sur deux lignes.
+  ///
+  /// **Le seul endroit** ou une duree devient insecable : l'espace entre un
+  /// nombre et son unite (« 3 h », « 45 min ») et celui entre l'unite et les
+  /// minutes qui la suivent (« h 28 ») deviennent des espaces insecables
+  /// (U+00A0). La phrase autour reste secable : « Cours dans » passe a la
+  /// ligne AVANT « 3 h 28 », jamais « Cours dans 3 h / 28 ». Toute duree
+  /// rendue en clair (compte a rebours, temps restant, duree prevue, etat
+  /// court du selecteur de profils, minuteur de l'enseignant) passe par ici.
+  static String insecable(String texte) => texte
+      .replaceAllMapped(_espaceApresNombre, (Match m) => '${m[1]}$_insecable')
+      .replaceAllMapped(_espaceAvantMinutes, (Match m) => '${m[1]}$_insecable');
+
+  static const String _insecable = '\u00A0';
+
+  /// « 3 h », « 45 min » : l'espace qui suit un nombre.
+  static final RegExp _espaceApresNombre = RegExp(r'(\d) (?=\S)');
+
+  /// « 3\u00A0h 28 » : l'espace entre l'unite et les minutes.
+  static final RegExp _espaceAvantMinutes = RegExp(
+    r'(\d\u00A0[^\s\d]+) (?=\d)',
+  );
+
   /// Le compte a rebours avant le debut, en clair.
   ///
   /// La coupure a une heure et le remplissage des minutes suivent
@@ -288,16 +315,18 @@ abstract final class LibellesGroupe {
   static String dureeLisible(Duration duree) {
     final int minutes = duree.inMinutes;
     if (minutes < Duration.minutesPerHour) {
-      return t.tc.groupe.duree.minutes(minutes: minutes);
+      return insecable(t.tc.groupe.duree.minutes(minutes: minutes));
     }
     final int heures = minutes ~/ Duration.minutesPerHour;
     final int reste = minutes % Duration.minutesPerHour;
-    return reste == 0
-        ? t.tc.groupe.duree.heures(heures: heures)
-        : t.tc.groupe.duree.heuresMinutes(
-            heures: heures,
-            minutes: reste.toString().padLeft(2, '0'),
-          );
+    return insecable(
+      reste == 0
+          ? t.tc.groupe.duree.heures(heures: heures)
+          : t.tc.groupe.duree.heuresMinutes(
+              heures: heures,
+              minutes: reste.toString().padLeft(2, '0'),
+            ),
+    );
   }
 
   /// La ligne d'etat de la Session Card, deduite de l'horloge.

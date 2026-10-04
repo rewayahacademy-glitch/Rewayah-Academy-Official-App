@@ -16,6 +16,7 @@ import '../../core/priere/service_priere.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_mouvement.dart';
@@ -742,12 +743,17 @@ String _compteARebours(Duration reste) {
   if (minutes <= 0) {
     return t.eleve.accueil.imminent;
   }
+  // DUREE-INSECABLE-1 : la duree ne se scinde jamais sur deux lignes.
   if (minutes < Duration.minutesPerHour) {
-    return t.eleve.accueil.dansMinutes(minutes: '$minutes');
+    return LibellesGroupe.insecable(
+      t.eleve.accueil.dansMinutes(minutes: '$minutes'),
+    );
   }
-  return t.eleve.accueil.dansHeures(
-    heures: '${minutes ~/ Duration.minutesPerHour}',
-    minutes: (minutes % Duration.minutesPerHour).toString().padLeft(2, '0'),
+  return LibellesGroupe.insecable(
+    t.eleve.accueil.dansHeures(
+      heures: '${minutes ~/ Duration.minutesPerHour}',
+      minutes: (minutes % Duration.minutesPerHour).toString().padLeft(2, '0'),
+    ),
   );
 }
 

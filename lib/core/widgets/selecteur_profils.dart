@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
@@ -188,6 +189,13 @@ class _Item extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final PointStatut? point = profil.point;
+    final TextStyle styleNom = palette.inkStrong.applyTo(
+      textes.labelLarge ?? const TextStyle(),
+    );
+    final TextStyle styleEtat =
+        (selectionne ? palette.inkAccent : palette.inkMuted).applyTo(
+          textes.bodySmall ?? const TextStyle(),
+        );
 
     return Semantics(
       selected: selectionne,
@@ -202,53 +210,98 @@ class _Item extends StatelessWidget {
           // AVATAR-1 : avatar centre, prenom et etat centres dessous sur le
           // meme axe (composant partage). L'anneau de selection et le point de
           // statut habillent le cercle sans le deformer.
-          child: AvatarNom.vertical(
-            prenom: profil.prenom,
-            urlSignee: profil.urlPhoto,
-            diametre: diametre,
-            role: profil.etat,
-            styleRole: (selectionne ? palette.inkAccent : palette.inkMuted)
-                .applyTo(textes.bodySmall ?? const TextStyle()),
-            enveloppeAvatar: (Widget avatar) => Stack(
-              clipBehavior: Clip.none,
-              children: <Widget>[
-                _Couronne(
-                  diametre: diametre,
-                  anneau: selectionne
-                      ? BorderSide(
-                          color: palette.surfacePrimary.background,
-                          width: SelecteurProfils.epaisseurAnneau,
-                        )
-                      : null,
-                  child: avatar,
-                ),
-                if (point != null)
-                  PositionedDirectional(
-                    end: AppSpacing.xs,
-                    bottom: AppSpacing.xs,
-                    child: profil.annulee
-                        ? PointAnnulation(cerclage: palette.surfaceCanvas)
-                        : profil.enDirect
-                        ? PointDirect(
-                            diametre: SelecteurProfils.diametrePoint,
-                            cerclage: palette.surfaceCanvas,
+          //
+          // DUREE-INSECABLE-1 : l'item a la largeur de sa couronne, de son
+          // prenom entier ou du plus long mot de son etat. L'etat passe a la
+          // ligne entre ses mots (« Aucune / séance ») au lieu de deborder
+          // de la rangee et d'etre rogne au bord de l'ecran (« Aucune séan »).
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: _largeurItem(context, styleNom, styleEtat),
+            ),
+            child: AvatarNom.vertical(
+              prenom: profil.prenom,
+              urlSignee: profil.urlPhoto,
+              diametre: diametre,
+              role: profil.etat,
+              styleNom: styleNom,
+              styleRole: styleEtat,
+              enveloppeAvatar: (Widget avatar) => Stack(
+                clipBehavior: Clip.none,
+                children: <Widget>[
+                  _Couronne(
+                    diametre: diametre,
+                    anneau: selectionne
+                        ? BorderSide(
+                            color: palette.surfacePrimary.background,
+                            width: SelecteurProfils.epaisseurAnneau,
                           )
-                        : SizedBox.square(
-                            dimension: SelecteurProfils.diametrePoint,
-                            child: DecoratedBox(
-                              decoration: _couleurPoint(
-                                palette,
-                                point,
-                              ).pastille(cerclage: palette.surfaceCanvas),
-                            ),
-                          ),
+                        : null,
+                    child: avatar,
                   ),
-              ],
+                  if (point != null)
+                    PositionedDirectional(
+                      end: AppSpacing.xs,
+                      bottom: AppSpacing.xs,
+                      child: profil.annulee
+                          ? PointAnnulation(cerclage: palette.surfaceCanvas)
+                          : profil.enDirect
+                          ? PointDirect(
+                              diametre: SelecteurProfils.diametrePoint,
+                              cerclage: palette.surfaceCanvas,
+                            )
+                          : SizedBox.square(
+                              dimension: SelecteurProfils.diametrePoint,
+                              child: DecoratedBox(
+                                decoration: _couleurPoint(
+                                  palette,
+                                  point,
+                                ).pastille(cerclage: palette.surfaceCanvas),
+                              ),
+                            ),
+                    ),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  /// La largeur maximale de l'item : couronne, prenom entier (une ligne,
+  /// comme avant), plus long mot de l'etat, a l'echelle de texte courante.
+  double _largeurItem(
+    BuildContext context,
+    TextStyle styleNom,
+    TextStyle styleEtat,
+  ) {
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    final TextPainter nom = TextPainter(
+      text: TextSpan(
+        text: profil.prenom,
+        style: DefaultTextStyle.of(context).style.merge(styleNom),
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: echelle,
+      maxLines: 1,
+    )..layout();
+    final double largeurNom = nom.width;
+    nom.dispose();
+    final double motEtat = largeurMotLePlusLong(
+      context,
+      profil.etat,
+      styleEtat,
+      echelle,
+    );
+    final double couronne = diametre + 2 * AppSpacing.xs;
+    // La marge d'arrondi des glyphes (comme `TexteSansCoupure`).
+    const double marge = 2;
+    return <double>[
+      couronne,
+      largeurNom + marge,
+      motEtat + marge,
+    ].reduce((double a, double b) => a > b ? a : b);
   }
 
   static AppIndicatorColor _couleurPoint(
