@@ -102,7 +102,26 @@ class DataCollection<T> extends StatelessWidget {
     this.piedDePage,
     this.cle,
     this.onSelectionner,
+    this.defileAvecLaPage = false,
   });
+
+  /// Vrai quand la collection se rend en tableau (desktop), faux quand elle
+  /// se replie en cartes. Le seul endroit qui compare le gabarit : une page
+  /// qui choisit entre son propre defilement et celui de la collection lit
+  /// cette regle-ci.
+  static bool enTableau(BuildContext context) =>
+      AppGabarit.de(context) == Gabarit.desktop;
+
+  /// Vrai : la collection **ne defile pas elle-meme**, elle prend la hauteur
+  /// de ses lignes et defile avec la page (`PageShell(defilante: true)`).
+  ///
+  /// Pourquoi (ONGLETS-COUPE-1) : en cartes, il n'y a pas d'en-tete de
+  /// colonnes a garder colle. Une page qui pose une introduction, des actions
+  /// et des filtres au-dessus d'une collection qui defile seule ne laissait,
+  /// a 320 px et au texte agrandi, plus aucune hauteur a la liste : la
+  /// colonne debordait de 52 a 480 px. En cartes, tout defile donc ensemble ;
+  /// en tableau, l'en-tete reste colle et la collection defile seule.
+  final bool defileAvecLaPage;
 
   /// Les colonnes, dans l'ordre d'affichage.
   final List<ColonneDonnees<T>> colonnes;
@@ -124,10 +143,11 @@ class DataCollection<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool tableau = AppGabarit.de(context) == Gabarit.desktop;
+    final bool tableau = enTableau(context);
 
     if (!tableau) {
       return _Defilement<T>(
+        enBloc: defileAvecLaPage,
         lignes: lignes,
         piedDePage: piedDePage,
         cle: cle,
@@ -155,11 +175,14 @@ class DataCollection<T> extends StatelessWidget {
       child: ClipRRect(
         borderRadius: metriques.arrondi,
         child: Column(
+          mainAxisSize: defileAvecLaPage ? MainAxisSize.min : MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             _EnTeteTableau<T>(colonnes: colonnes),
-            Expanded(
+            Flexible(
+              fit: defileAvecLaPage ? FlexFit.loose : FlexFit.tight,
               child: _Defilement<T>(
+                enBloc: defileAvecLaPage,
                 lignes: lignes,
                 piedDePage: piedDePage,
                 cle: cle,
@@ -185,9 +208,14 @@ class _Defilement<T> extends StatelessWidget {
     required this.lignes,
     required this.constructeur,
     required this.espacement,
+    required this.enBloc,
     this.piedDePage,
     this.cle,
   });
+
+  /// Vrai : toutes les lignes sont posees, sans defilement propre (voir
+  /// [DataCollection.defileAvecLaPage]).
+  final bool enBloc;
 
   final List<T> lignes;
   final Widget Function(BuildContext context, T ligne) constructeur;
@@ -200,6 +228,10 @@ class _Defilement<T> extends StatelessWidget {
     final int total = lignes.length + (piedDePage == null ? 0 : 1);
 
     return ListView.builder(
+      shrinkWrap: enBloc,
+      primary: enBloc ? false : null,
+      physics: enBloc ? const NeverScrollableScrollPhysics() : null,
+      padding: enBloc ? EdgeInsets.zero : null,
       itemCount: total,
       itemBuilder: (BuildContext contexte, int index) {
         if (index >= lignes.length) {
@@ -447,4 +479,22 @@ class _Carte<T> extends StatelessWidget {
       ),
     );
   }
+}
+
+/// La place d'une zone qui porte une [DataCollection] dans la colonne d'une
+/// page : **etiree** (`Expanded`) quand la collection defile seule (tableau,
+/// en-tete colle), **a sa hauteur** quand elle defile avec la page (cartes,
+/// voir [DataCollection.defileAvecLaPage]).
+///
+/// A poser directement dans un `Column`, la ou la page posait un `Expanded`.
+class PlaceCollection extends StatelessWidget {
+  /// Cree la place.
+  const PlaceCollection({required this.child, super.key});
+
+  /// La zone : la collection, ou ce qui la contient.
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) =>
+      DataCollection.enTableau(context) ? Expanded(child: child) : child;
 }

@@ -56,7 +56,10 @@ class _ProgrammesPageEtat extends ConsumerState<ProgrammesPage> {
     return PageShell(
       titre: t.admin.programmes.titre,
       entete: SousNavigationDomaine(onglets: ongletsPedagogie(), indexActif: 3),
-      defilante: false,
+      // ONGLETS-COUPE-1 : en cartes (telephone, tablette), l'introduction,
+      // les filtres et la liste defilent ensemble ; en tableau, la liste
+      // defile seule sous son en-tete colle.
+      defilante: !DataCollection.enTableau(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -78,7 +81,7 @@ class _ProgrammesPageEtat extends ConsumerState<ProgrammesPage> {
                       icone: AppIcons.rienAAfficher,
                       registre: RegistreVide.subi,
                     )
-                  : Expanded(
+                  : PlaceCollection(
                       child: _Corps(
                         versions: versions.requireValue,
                         versionId:
@@ -222,7 +225,7 @@ class _Corps extends StatelessWidget {
           ],
         ),
         Ecart.vLg,
-        Expanded(
+        PlaceCollection(
           child: _Niveaux(
             version: selectionnee,
             onModifier: (NiveauProgramme n) =>
@@ -265,6 +268,7 @@ class _Niveaux extends ConsumerWidget {
                 registre: RegistreVide.subi,
               )
             : DataCollection<NiveauProgramme>(
+                defileAvecLaPage: !DataCollection.enTableau(context),
                 lignes: niveaux.requireValue,
                 cle: (NiveauProgramme n) => ValueKey<String>(n.id),
                 colonnes: <ColonneDonnees<NiveauProgramme>>[
