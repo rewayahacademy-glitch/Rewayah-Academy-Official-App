@@ -68,10 +68,7 @@ void main() {
     expect(find.byKey(FeuilleReprise.versetKey(40)), findsOneWidget);
     expect(find.byKey(FeuilleReprise.versetKey(41)), findsNothing);
 
-    await tester.enterText(
-      find.widgetWithText(TextField, t.enseignant.cahier.repriseRecherche),
-      'kahf',
-    );
+    await tester.enterText(find.byKey(FeuilleReprise.rechercheKey), 'kahf');
     await stabiliser(tester);
     await _toucher(tester, find.byKey(FeuilleReprise.sourateKey(18)));
     // Changer de sourate relache le verset : il faut le choisir.
@@ -97,10 +94,7 @@ void main() {
   ) async {
     await monterCahier(tester, CorpusSourates(sourates));
     await _toucher(tester, find.byKey(ChampReprise.champKey));
-    final Finder recherche = find.widgetWithText(
-      TextField,
-      t.enseignant.cahier.repriseRecherche,
-    );
+    final Finder recherche = find.byKey(FeuilleReprise.rechercheKey);
     await tester.enterText(recherche, '112');
     await stabiliser(tester);
     expect(find.byKey(FeuilleReprise.sourateKey(112)), findsOneWidget);
@@ -118,6 +112,62 @@ void main() {
     expect(tester.widget(champ), isA<TextField>());
     expect(
       find.byKey(const ValueKey<String>('cahier-reprise-sans-liste')),
+      findsOneWidget,
+    );
+  });
+
+  for (final (double, String) c in <(double, String)>[(1, 'x1'), (2, 'x2')]) {
+    testWidgets('la recherche de la feuille garde une ligne avec du texte, '
+        'texte et loupe alignes ($c)', (WidgetTester tester) async {
+      await monterCahier(
+        tester,
+        CorpusSourates(sourates),
+        taille: const Size(320, 2200),
+        densite: 2,
+        echelleTexte: c.$1,
+      );
+      await _toucher(tester, find.byKey(ChampReprise.champKey));
+      final Finder recherche = find.byKey(FeuilleReprise.rechercheKey);
+      final Size vide = tester.getSize(recherche);
+
+      await tester.enterText(recherche, 'kahf');
+      await stabiliser(tester);
+      final Size plein = tester.getSize(recherche);
+      // Une ligne de texte + les marges du champ, pas la hauteur de l'indice.
+      final Finder texte = find.descendant(
+        of: recherche,
+        matching: find.byType(EditableText),
+      );
+      final double ligne = tester.getSize(texte).height;
+      expect(plein.height, lessThanOrEqualTo(ligne + 2 * 16 + 4));
+      expect(plein.height, lessThanOrEqualTo(vide.height));
+
+      final double yTexte = tester
+          .getCenter(
+            find.descendant(of: recherche, matching: find.byType(EditableText)),
+          )
+          .dy;
+      final double yLoupe = tester
+          .getCenter(
+            find.descendant(of: recherche, matching: find.byType(Icon)),
+          )
+          .dy;
+      expect((yTexte - yLoupe).abs(), lessThanOrEqualTo(2));
+    });
+  }
+
+  testWidgets('taper un numero de verset le choisit', (
+    WidgetTester tester,
+  ) async {
+    await monterCahier(tester, CorpusSourates(sourates));
+    await _toucher(tester, find.byKey(ChampReprise.champKey));
+    await tester.enterText(find.byKey(FeuilleReprise.versetSaisieKey), '25');
+    await stabiliser(tester);
+    await _toucher(tester, find.byKey(FeuilleReprise.retenirKey));
+    expect(
+      find.text(
+        t.enseignant.cahier.repriseProposee(sourate: '78', verset: '25'),
+      ),
       findsOneWidget,
     );
   });

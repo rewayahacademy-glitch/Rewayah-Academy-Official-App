@@ -112,10 +112,7 @@ void main() {
           await monterCahierCapture(tester);
           await _toucher(tester, find.byKey(ChampReprise.champKey));
           await tester.enterText(
-            find.widgetWithText(
-              TextField,
-              t.enseignant.cahier.repriseRecherche,
-            ),
+            find.byKey(FeuilleReprise.rechercheKey),
             'kahf',
           );
           await stabiliser(tester);
@@ -125,12 +122,7 @@ void main() {
           await stabiliser(tester);
           // Le haut de la feuille : la recherche, la sourate retenue, le
           // debut des versets.
-          await tester.ensureVisible(
-            find.widgetWithText(
-              TextField,
-              t.enseignant.cahier.repriseRecherche,
-            ),
-          );
+          await tester.ensureVisible(find.byKey(FeuilleReprise.rechercheKey));
           await stabiliser(tester);
           expect(tester.takeException(), isNull);
           // ignore: avoid_print
@@ -141,10 +133,7 @@ void main() {
           await monterCahierCapture(tester);
           await _toucher(tester, find.byKey(ChampReprise.champKey));
           await tester.enterText(
-            find.widgetWithText(
-              TextField,
-              t.enseignant.cahier.repriseRecherche,
-            ),
+            find.byKey(FeuilleReprise.rechercheKey),
             'kahf',
           );
           await stabiliser(tester);

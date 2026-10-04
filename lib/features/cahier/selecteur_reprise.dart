@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/i18n/strings.g.dart';
@@ -143,6 +144,12 @@ class FeuilleReprise extends ConsumerStatefulWidget {
   /// Cle de la puce d'un verset.
   static Key versetKey(int numero) => ValueKey<String>('reprise-v$numero');
 
+  /// Cle du champ de recherche d'une sourate.
+  static const Key rechercheKey = ValueKey<String>('reprise-recherche');
+
+  /// Cle de la saisie du numero de verset.
+  static const Key versetSaisieKey = ValueKey<String>('reprise-verset-saisie');
+
   @override
   ConsumerState<FeuilleReprise> createState() => _FeuilleRepriseEtat();
 }
@@ -151,11 +158,13 @@ class _FeuilleRepriseEtat extends ConsumerState<FeuilleReprise> {
   final TextEditingController _recherche = TextEditingController();
   late int? _sourate = widget.initiale?.sourate;
   late int? _verset = widget.initiale?.verset;
+  final TextEditingController _numero = TextEditingController();
   bool _incomplete = false;
 
   @override
   void dispose() {
     _recherche.dispose();
+    _numero.dispose();
     super.dispose();
   }
 
@@ -225,10 +234,15 @@ class _FeuilleRepriseEtat extends ConsumerState<FeuilleReprise> {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         TextField(
+          key: FeuilleReprise.rechercheKey,
           controller: _recherche,
           onChanged: (String _) => setState(() {}),
           decoration: InputDecoration(
-            hintText: s.repriseRecherche,
+            // L'indice n'existe que tant que le champ est vide : un indice
+            // pose dans l'arbre (meme invisible) impose sa hauteur de quatre
+            // lignes au champ, texte saisi compris. Il peut grandir (rien
+            // n'est coupe en « ... »), mais une saisie le ramene a une ligne.
+            hintText: _recherche.text.isEmpty ? s.repriseRecherche : null,
             hintMaxLines: 4,
             prefixIcon: Icon(AppIcons.recherche.repos),
           ),
@@ -271,6 +285,7 @@ class _FeuilleRepriseEtat extends ConsumerState<FeuilleReprise> {
             if (choisie != _sourate) {
               _sourate = choisie;
               _verset = null;
+              _numero.clear();
             }
           }),
         ),
@@ -279,8 +294,28 @@ class _FeuilleRepriseEtat extends ConsumerState<FeuilleReprise> {
           Ecart.vLg,
         ],
         if (retenue != null) ...<Widget>[
-          Text(s.repriseVerset, style: textes.titleSmall),
-          Ecart.vSm,
+          // Le numero se tape aussi : 286 puces pour Al-Baqara, c'est long a
+          // parcourir, surtout en texte agrandi. Meme mot « Verset », aucune
+          // phrase nouvelle.
+          TextField(
+            key: FeuilleReprise.versetSaisieKey,
+            controller: _numero,
+            keyboardType: TextInputType.number,
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.digitsOnly,
+            ],
+            onChanged: (String v) {
+              final int? n = int.tryParse(v);
+              setState(() {
+                if (n != null && n >= 1 && n <= retenue.nombreVersets) {
+                  _verset = n;
+                  _incomplete = false;
+                }
+              });
+            },
+            decoration: InputDecoration(labelText: s.repriseVerset),
+          ),
+          Ecart.vMd,
           Wrap(
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.sm,
@@ -292,6 +327,7 @@ class _FeuilleRepriseEtat extends ConsumerState<FeuilleReprise> {
                   retenue: n == _verset,
                   onPress: () => setState(() {
                     _verset = n;
+                    _numero.text = '$n';
                     _incomplete = false;
                   }),
                 ),
