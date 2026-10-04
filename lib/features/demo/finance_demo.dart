@@ -61,8 +61,11 @@ enum JeuRevenusEnseignant {
   /// Classe pleine, classe a 80 %, classe d'adultes au minimum d'ouverture.
   nominal,
 
-  /// Une place de la classe a 80 % tenue par un eleve en essai present : il
-  /// compte, la classe passe a 5 sieges eligibles.
+  /// Une place de la classe a 80 % tenue par un eleve en essai present a
+  /// chaque seance du mois : il compte, la classe passe a 5 sieges eligibles
+  /// sur tout le mois. Le port rend un nombre de sieges par Classe et par
+  /// mois ; un essai sur une seule seance attend le detail par seance du
+  /// serveur (FI-BR-11).
   essaiDansLaSeance,
 
   /// Un eleve finance absent dans la classe pleine : il compte, la classe
@@ -1059,8 +1062,8 @@ abstract final class DonneesFinanceDemo {
                     SiegeSeance.financePresent,
                   SiegeSeance.financeAbsent,
                 ], capacite: c.capacite),
-              // La place d'Ibrahim tenue par un eleve en essai present : il
-              // compte pour cette seance.
+              // La place d'Ibrahim tenue, a chaque seance du mois, par un
+              // eleve en essai present : il compte sur tout le mois.
               (JeuRevenusEnseignant.essaiDansLaSeance, 'demo-fi-classe-huda') =>
                 siegesEligibles(<SiegeSeance>[
                   for (int i = 1; i < c.capacite; i++)

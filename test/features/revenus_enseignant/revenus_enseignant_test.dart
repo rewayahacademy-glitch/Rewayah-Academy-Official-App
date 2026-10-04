@@ -1,9 +1,10 @@
 // FI-10 : Mes revenus de l'enseignant (/enseignant/revenus, guide Finance V4
 // §1.4, §5.5, §8 F6 ; jeux F6 : plein, 80 %, minimum, essai dans la seance,
-// finance absent, remplacement ; tableau a 1440 ; releve indisponible). Le chemin part de la VRAIE coquille enseignant (vrai
-// routeur, `app_router.dart`) et de la demonstration ; les six etats ;
-// le taux ne depasse jamais le plafond de la politique ; aucune donnee de
-// famille ; 320 a texte x2 et 1440 ; clair et sombre ; LTR et RTL.
+// finance absent, remplacement ; tableau a 1440 ; releve indisponible). Le
+// chemin part de la VRAIE coquille enseignant (vrai routeur,
+// `app_router.dart`) et de la demonstration ; les six etats ; le taux ne
+// depasse jamais le plafond de la politique ; aucune donnee de famille ; 320
+// a texte x2 et 1440 ; clair et sombre ; LTR et RTL.
 
 import 'dart:async';
 
@@ -602,6 +603,62 @@ void main() {
       // La page garde son contenu, seul le releve echoue.
       expect(find.text(t.enseignant.revenus.estimation), findsOneWidget);
       expect(find.text(t.commun.reessayer), findsOneWidget);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('releve en echec : « Reessayer » relit le port', (
+      WidgetTester tester,
+    ) async {
+      final RevenusEnseignant base = DonneesFinanceDemo.revenus();
+      int lectures = 0;
+      await monterPage(
+        tester,
+        _PortFige(
+          Future<RevenusEnseignant>.value(base),
+          lignes: () async {
+            lectures++;
+            if (lectures == 1) throw Exception('reseau');
+            return <LigneReleve>[];
+          },
+        ),
+      );
+      await _attendre(tester);
+      final Finder reessayer = find.text(t.commun.reessayer);
+      await tester.scrollUntilVisible(reessayer, 200);
+      expect(find.text(t.enseignant.revenus.releveVide), findsNothing);
+      await tester.tap(reessayer);
+      await _attendre(tester);
+      expect(lectures, 2);
+      expect(find.text(t.enseignant.revenus.releveVide), findsOneWidget);
+      expect(find.text(t.commun.reessayer), findsNothing);
+      await tester.pumpWidget(const SizedBox());
+    });
+
+    testWidgets('releve hors ligne : la section se dit hors ligne, la page '
+        'garde son contenu', (WidgetTester tester) async {
+      final RevenusEnseignant base = DonneesFinanceDemo.revenus();
+      await monterPage(
+        tester,
+        _PortFige(
+          Future<RevenusEnseignant>.value(base),
+          lignes: () async => throw Exception('reseau'),
+        ),
+        horsLigne: true,
+      );
+      await _attendre(tester);
+      expect(find.text(t.enseignant.revenus.estimation), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.text(t.enseignant.revenus.releveSection),
+        200,
+      );
+      final Iterable<EtatSysteme> etats = find
+          .byType(EtatSysteme, skipOffstage: false)
+          .evaluate()
+          .map((Element e) => e.widget as EtatSysteme);
+      expect(etats, hasLength(1));
+      expect(etats.single.nature, NatureEtat.horsLigne);
+      expect(etats.single.onAction, isNotNull);
+      await tester.pumpWidget(const SizedBox());
     });
 
     testWidgets('remplacement : la Classe du collegue, marquee comme telle', (
