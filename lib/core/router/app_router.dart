@@ -740,6 +740,18 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     builder: (BuildContext _, GoRouterState _) =>
                         const ListeATerminerPage(),
                   ),
+                  // DASH-ENS-LISTES : les remplacements au-dela de trois.
+                  GoRoute(
+                    path: 'remplacements',
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const ListeRemplacementsPage(),
+                  ),
+                  // DASH-ENS-LISTES : toutes les « Alertes utiles ».
+                  GoRoute(
+                    path: 'alertes',
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const ListeAlertesPage(),
+                  ),
                 ],
               ),
             ],

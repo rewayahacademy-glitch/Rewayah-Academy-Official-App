@@ -4,11 +4,13 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/enseignant/absence_remplacement.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
+import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -18,6 +20,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/bienvenue_enseignant/bienvenue_page.dart';
@@ -25,10 +28,13 @@ import 'package:rewayah_academy/features/cahier/cahier_page.dart';
 import 'package:rewayah_academy/features/creneaux/creneaux_page.dart';
 import 'package:rewayah_academy/features/enseignant_classes/mes_classes_page.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_groupe_page.dart';
+import 'package:rewayah_academy/features/journee/absence_remplacement_vue.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 import 'package:rewayah_academy/features/profil_enseignant/profil_enseignant_page.dart';
 import 'package:rewayah_academy/features/revue_groupe/revue_groupe_page.dart';
 
+import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
 
 /// Le chemin de bout en bout du role Enseignant, prouve sur le **routeur reel**.
@@ -92,6 +98,7 @@ void main() {
     WidgetTester tester,
     String depart, {
     List<Override>? avec,
+    double echelleTexte = 1,
   }) async {
     late GoRouter routeur;
     await tester.pumpWidget(
@@ -105,6 +112,11 @@ void main() {
               return MaterialApp.router(
                 theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
                 routerConfig: routeur,
+                builder: (BuildContext contexte, Widget? enfant) => MediaQuery(
+                  data: MediaQuery.of(contexte)
+                      .copyWith(textScaler: TextScaler.linear(echelleTexte)),
+                  child: enfant!,
+                ),
               );
             },
           ),
@@ -392,4 +404,336 @@ void main() {
       await tester.pump(const Duration(seconds: 5));
     });
   });
+
+  // DASH-ENS-LISTES : les remplacements au-dela de trois et toutes les
+  // « Alertes utiles » ont leur adresse, sous-routes de la Journee
+  // (DASH_STRATEGIE §5, lignes DASH-ENS-REMPL et DASH-ENS-ALERTES).
+  group('DASH-ENS-LISTES : remplacements et alertes ont leur adresse', () {
+    setUpAll(chargerPolicesDuDepot);
+
+    // Lundi 28 septembre 2026, 16 h 10 : la seance d'Al-Badr est en cours.
+    final DateTime maintenant = DateTime(2026, 9, 28, 16, 10);
+    final SeanceEnseignant enDirect = SeanceEnseignant(
+      id: 'live',
+      debut: DateTime(2026, 9, 28, 16),
+      fin: DateTime(2026, 9, 28, 16, 45),
+      statut: StatutSeance.enCours,
+      nbParticipants: 6,
+      cahierDepose: false,
+      groupeId: 'g-live',
+      groupeLibelle: 'Al-Badr',
+    );
+    PresenceParticipant eleve(String prenom, EtatPresence etat) =>
+        PresenceParticipant(
+          profilId: 'p-$prenom',
+          role: 'student',
+          prenom: prenom,
+          identifiantImmuable: 'id-$prenom',
+          etat: etat,
+          consolide: false,
+        );
+    final List<PresenceParticipant> cinqManquants = <PresenceParticipant>[
+      eleve('Yasmine', EtatPresence.absente),
+      eleve('Ilyas', EtatPresence.deconnectee),
+      eleve('Maryam', EtatPresence.absente),
+      eleve('Souhayl', EtatPresence.absente),
+      eleve('Khadija', EtatPresence.deconnectee),
+    ];
+    OffreRemplacement remplacement(String classe, int mois, int jour) =>
+        OffreRemplacement(
+          seanceId: 'r-$classe',
+          classe: classe,
+          debut: DateTime(2026, mois, jour, 18),
+          fin: DateTime(2026, mois, jour, 18, 45),
+          nbEleves: 4,
+          groupeId: 'g-$classe',
+        );
+    // Donnes dans le desordre : la Journee montre les trois plus proches.
+    final List<OffreRemplacement> cinqRemplacements = <OffreRemplacement>[
+      remplacement('An-Nour', 10, 2),
+      remplacement('Al-Fatiha', 9, 29),
+      remplacement('Al-Ikhlas', 10, 4),
+      remplacement('As-Salam', 9, 30),
+      remplacement('Al-Kawthar', 10, 1),
+    ];
+    const List<String> troisPlusProches = <String>[
+      'Al-Fatiha',
+      'As-Salam',
+      'Al-Kawthar',
+    ];
+
+    List<Override> avec({
+      List<OffreRemplacement> remplacements = const <OffreRemplacement>[],
+      List<PresenceParticipant>? presence = const <PresenceParticipant>[],
+      List<SeanceEnseignant>? seances,
+      List<Override> plus = const <Override>[],
+    }) => <Override>[
+      ...surcharges(
+        enseignant: FauxServiceEnseignant()
+          ..seancesRendues = seances ?? <SeanceEnseignant>[enDirect],
+      ),
+      maintenantJourneeProvider.overrideWithValue(() => maintenant),
+      remplacementsConfirmesProvider.overrideWith(
+        () => _RemplacementsFixes(remplacements),
+      ),
+      presenceSeanceProvider('live').overrideWith(
+        (Ref _) => Stream<List<PresenceParticipant>?>.value(presence),
+      ),
+      ...plus,
+    ];
+
+    void vueHaute(WidgetTester tester, {double largeur = 390}) {
+      tester.view.physicalSize = Size(largeur, 6000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+    }
+
+    Future<void> toucher(WidgetTester tester, Finder cible) async {
+      await tester.ensureVisible(cible);
+      await tester.pumpAndSettle();
+      await tester.tap(cible);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('la Journee montre 3 remplacements sur 5, les plus proches', (
+      WidgetTester tester,
+    ) async {
+      vueHaute(tester);
+      await monter(
+        tester,
+        Routes.enseignantJournee,
+        avec: avec(remplacements: cinqRemplacements),
+      );
+      expect(find.byType(CarteRemplacement), findsNWidgets(3));
+      for (final String classe in troisPlusProches) {
+        expect(find.text(classe), findsOneWidget, reason: classe);
+      }
+      expect(find.text('Al-Ikhlas'), findsNothing);
+      expect(find.text('An-Nour'), findsNothing);
+      expect(
+        find.byKey(const ValueKey<String>('journee-remplacements-voir-tout')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('trois remplacements ou moins : aucun lien', (
+      WidgetTester tester,
+    ) async {
+      vueHaute(tester);
+      await monter(
+        tester,
+        Routes.enseignantJournee,
+        avec: avec(remplacements: cinqRemplacements.take(3).toList()),
+      );
+      expect(find.byType(CarteRemplacement), findsNWidgets(3));
+      expect(
+        find.byKey(const ValueKey<String>('journee-remplacements-voir-tout')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('« Voir tout » ouvre l adresse des remplacements, tous', (
+      WidgetTester tester,
+    ) async {
+      vueHaute(tester);
+      final GoRouter routeur = await monter(
+        tester,
+        Routes.enseignantJournee,
+        avec: avec(remplacements: cinqRemplacements),
+      );
+      await toucher(
+        tester,
+        find.byKey(const ValueKey<String>('journee-remplacements-voir-tout')),
+      );
+      expect(routeur.state.matchedLocation, Routes.enseignantRemplacements);
+      expect(find.byType(ListeRemplacementsPage), findsOneWidget);
+      expect(find.byType(CarteRemplacement), findsNWidgets(5));
+      // Les plus proches d'abord.
+      final List<double> ordre = <String>[
+        'Al-Fatiha',
+        'As-Salam',
+        'Al-Kawthar',
+        'An-Nour',
+        'Al-Ikhlas',
+      ].map((String c) => tester.getTopLeft(find.text(c)).dy).toList();
+      expect(ordre, orderedEquals(List<double>.of(ordre)..sort()));
+    });
+
+    testWidgets('l adresse des remplacements ouverte directement, et retour', (
+      WidgetTester tester,
+    ) async {
+      vueHaute(tester);
+      final GoRouter routeur = await monter(
+        tester,
+        Routes.enseignantRemplacements,
+        avec: avec(remplacements: cinqRemplacements),
+      );
+      expect(routeur.state.matchedLocation, Routes.enseignantRemplacements);
+      expect(find.byType(CarteRemplacement), findsNWidgets(5));
+      await tester.tap(find.byType(DisqueRetour));
+      await tester.pumpAndSettle();
+      expect(routeur.state.matchedLocation, Routes.enseignantJournee);
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('aucun remplacement : une phrase, pas une page vide', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, Routes.enseignantRemplacements, avec: avec());
+      expect(find.text(t.enseignant.journee.remplacementsVide), findsOneWidget);
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('la Journee montre 2 alertes et un lien vers les 3 autres', (
+      WidgetTester tester,
+    ) async {
+      vueHaute(tester);
+      final GoRouter routeur = await monter(
+        tester,
+        Routes.enseignantJournee,
+        avec: avec(presence: cinqManquants),
+      );
+      expect(find.textContaining('Yasmine'), findsOneWidget);
+      expect(find.textContaining('Ilyas'), findsOneWidget);
+      expect(find.textContaining('Khadija'), findsNothing);
+      final Finder lien = find.byKey(
+        const ValueKey<String>('journee-alertes-voir-autres'),
+      );
+      expect(
+        find.descendant(
+          of: lien,
+          matching: find.text(
+            t.enseignant.journee.voirAutresAlertes(nombre: '3'),
+          ),
+        ),
+        findsOneWidget,
+      );
+      await toucher(tester, lien);
+      expect(routeur.state.matchedLocation, Routes.enseignantAlertes);
+      expect(find.byType(ListeAlertesPage), findsOneWidget);
+      for (final String prenom in <String>[
+        'Yasmine',
+        'Ilyas',
+        'Maryam',
+        'Souhayl',
+        'Khadija',
+      ]) {
+        expect(find.textContaining(prenom), findsOneWidget, reason: prenom);
+      }
+    });
+
+    testWidgets('deux alertes ou moins : aucun lien', (
+      WidgetTester tester,
+    ) async {
+      vueHaute(tester);
+      await monter(
+        tester,
+        Routes.enseignantJournee,
+        avec: avec(presence: cinqManquants.take(2).toList()),
+      );
+      expect(find.textContaining('Ilyas'), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('journee-alertes-voir-autres')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('l adresse des alertes ouverte directement rend la liste', (
+      WidgetTester tester,
+    ) async {
+      vueHaute(tester);
+      final GoRouter routeur = await monter(
+        tester,
+        Routes.enseignantAlertes,
+        avec: avec(presence: cinqManquants),
+      );
+      expect(routeur.state.matchedLocation, Routes.enseignantAlertes);
+      expect(find.textContaining('Khadija'), findsOneWidget);
+      await tester.tap(find.byType(DisqueRetour));
+      await tester.pumpAndSettle();
+      expect(routeur.state.matchedLocation, Routes.enseignantJournee);
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('aucune alerte : une phrase, pas une page vide', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, Routes.enseignantAlertes, avec: avec());
+      expect(find.text(t.enseignant.journee.alertesVide), findsOneWidget);
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('seances illisibles : l echec le dit, puis la relecture', (
+      WidgetTester tester,
+    ) async {
+      int lectures = 0;
+      await monter(
+        tester,
+        Routes.enseignantAlertes,
+        avec: avec(
+          presence: cinqManquants,
+          plus: <Override>[
+            seancesEnseignantProvider.overrideWith((Ref _) async {
+              lectures++;
+              if (lectures == 1) throw StateError('reseau');
+              return <SeanceEnseignant>[enDirect];
+            }),
+          ],
+        ),
+      );
+      expect(find.text(t.enseignant.journee.alertesErreur), findsOneWidget);
+      expect(find.text(t.enseignant.journee.alertesVide), findsNothing);
+      await tester.tap(
+        find.text(EtatSysteme.libelleActionPar(NatureEtat.echecServeur)),
+      );
+      await tester.pumpAndSettle();
+      expect(lectures, 2);
+      expect(find.textContaining('Khadija'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('presence illisible : jamais « aucune alerte » (J3, D10)', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        Routes.enseignantAlertes,
+        avec: avec(presence: null),
+      );
+      expect(find.text(t.enseignant.journee.alertesErreur), findsOneWidget);
+      expect(find.text(t.enseignant.journee.alertesVide), findsNothing);
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    for (final String adresse in <String>[
+      Routes.enseignantJournee,
+      Routes.enseignantRemplacements,
+      Routes.enseignantAlertes,
+    ]) {
+      testWidgets('$adresse a 320 px, texte double : aucun mot coupe', (
+        WidgetTester tester,
+      ) async {
+        vueHaute(tester, largeur: 320);
+        await monter(
+          tester,
+          adresse,
+          avec: avec(remplacements: cinqRemplacements, presence: cinqManquants),
+          echelleTexte: 2,
+        );
+        expect(tester.takeException(), isNull);
+        verifierEcranSansMotCoupe(tester);
+        await tester.pump(const Duration(seconds: 5));
+      });
+    }
+  });
+}
+
+/// Des remplacements deja confirmes par le serveur, pour le test.
+class _RemplacementsFixes extends RemplacementsControleur {
+  _RemplacementsFixes(this._depart);
+
+  final List<OffreRemplacement> _depart;
+
+  @override
+  List<OffreRemplacement> build() => _depart;
 }

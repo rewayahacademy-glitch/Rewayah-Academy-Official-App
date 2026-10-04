@@ -8553,6 +8553,27 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Alertes utiles'
 	String get alertesUtiles => 'Alertes utiles';
 
+	/// fr: 'Aucune alerte utile en ce moment.'
+	String get alertesVide => 'Aucune alerte utile en ce moment.';
+
+	/// fr: 'Les alertes de présence n'ont pas pu être lues : la connexion ou le serveur n'a pas répondu. Réessayez dans un instant.'
+	String get alertesErreur => 'Les alertes de présence n\'ont pas pu être lues : la connexion ou le serveur n\'a pas répondu. Réessayez dans un instant.';
+
+	/// fr: 'Voir l'autre alerte'
+	String get voirAutreAlerte => 'Voir l\'autre alerte';
+
+	/// fr: 'Voir les {nombre} autres alertes'
+	String voirAutresAlertes({required Object nombre}) => 'Voir les ${nombre} autres alertes';
+
+	/// fr: 'Remplacements confirmés'
+	String get remplacementsTitre => 'Remplacements confirmés';
+
+	/// fr: 'Aucun remplacement confirmé pour le moment.'
+	String get remplacementsVide => 'Aucun remplacement confirmé pour le moment.';
+
+	/// fr: 'Voir les {nombre} remplacements confirmés'
+	String voirTousRemplacements({required Object nombre}) => 'Voir les ${nombre} remplacements confirmés';
+
 	/// fr: 'Heure'
 	String get heure => 'Heure';
 
@@ -18012,6 +18033,13 @@ extension on Traductions {
 			'enseignant.journee.cahierLigne' => ({required Object classe}) => 'Cahier de transmission ${classe}',
 			'enseignant.journee.cahierDetail' => ({required Object jour, required Object numero, required Object mois, required Object heure}) => 'Séance du ${jour} ${numero} ${mois} à ${heure}',
 			'enseignant.journee.alertesUtiles' => 'Alertes utiles',
+			'enseignant.journee.alertesVide' => 'Aucune alerte utile en ce moment.',
+			'enseignant.journee.alertesErreur' => 'Les alertes de présence n\'ont pas pu être lues : la connexion ou le serveur n\'a pas répondu. Réessayez dans un instant.',
+			'enseignant.journee.voirAutreAlerte' => 'Voir l\'autre alerte',
+			'enseignant.journee.voirAutresAlertes' => ({required Object nombre}) => 'Voir les ${nombre} autres alertes',
+			'enseignant.journee.remplacementsTitre' => 'Remplacements confirmés',
+			'enseignant.journee.remplacementsVide' => 'Aucun remplacement confirmé pour le moment.',
+			'enseignant.journee.voirTousRemplacements' => ({required Object nombre}) => 'Voir les ${nombre} remplacements confirmés',
 			'enseignant.journee.heure' => 'Heure',
 			'enseignant.journee.eleves' => 'Élèves',
 			'enseignant.journee.classe' => 'Classe',
@@ -18441,6 +18469,8 @@ extension on Traductions {
 			'controleur.echanges.contexte' => 'Contexte de la visite, joint automatiquement',
 			'controleur.echanges.cleClasse' => 'Classe',
 			'controleur.echanges.cleDate' => 'Date',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.echanges.cleHeure' => 'Heure',
 			'controleur.echanges.auteurVous' => 'Vous',
 			'controleur.echanges.auteurAdmin' => 'Administration',
@@ -18448,8 +18478,6 @@ extension on Traductions {
 			'controleur.echanges.champLibelle' => 'Répondre à l\'administration',
 			'controleur.echanges.envoyer' => 'Envoyer',
 			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.echanges.enCours' => 'Envoi en cours.',
 			'controleur.echanges.envoye' => 'Envoyé.',
 			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
@@ -18955,6 +18983,8 @@ extension on Traductions {
 			'tc.parcours.feedback.merci' => 'Merci.',
 			'tc.parcours.feedback.tendance.titre' => 'Retour des élèves',
 			'tc.parcours.feedback.tendance.sousSeuil' => 'Pas encore assez de retours pour dégager une tendance.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.feedback.tendance.anonyme' => 'Les retours sont anonymes et agrégés. Ils ne suffisent jamais, seuls, à une décision.',
 			'tc.parcours.signalement.titre' => 'Signaler un besoin',
 			'tc.parcours.signalement.categorie' => 'De quoi s\'agit-il ?',
@@ -18962,8 +18992,6 @@ extension on Traductions {
 			'tc.parcours.signalement.categorieValeur.presence' => 'Présence',
 			'tc.parcours.signalement.categorieValeur.technique' => 'Technique',
 			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
 			'tc.parcours.signalement.interne' => 'Note interne',
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
