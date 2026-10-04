@@ -18,8 +18,10 @@
 // informations legales), avec un retour vers Mon espace ; « Mes accords » et
 // « Cours et acces », sans source, disent qu'ils sont indisponibles. Forfait
 // famille porte « Quitter le forfait famille » (EA-8) et le lien « Demande de
-// reprise du foyer » (EA-11). Coran ouvre la VRAIE page Coran de l'eleve
-// (`MushafPage`, PT-B-CORAN-ADULTE), dans un conteneur isole sans serveur.
+// reprise du foyer » (EA-11). Coran (PT-B-CORAN-ADULTE) : la VRAIE page Coran
+// de l'eleve (`MushafPage`) quand un corpus est pose (tests, captures) ; sans
+// corpus hors serveur, la demonstration dit la vraie cause (texte non charge
+// dans la demonstration), jamais une panne de reseau (K-59).
 //
 // EA-11 : la demande de reprise du second adulte (`ecran=repriseFoyer`), la
 // notification du titulaire et sa decision (`ecran=repriseTitulaire`, aussi
@@ -89,7 +91,6 @@ import '../notifications/notifications_page.dart';
 import '../tc_mushaf/mushaf_page.dart';
 import 'adulte_demo.dart';
 import 'classe_demo.dart';
-import 'coran_demo_accessibilite.dart';
 import 'demo_classe_page.dart'
     show PreparationEleveDemo, adressePreparationEleveDemo, surchargesEleveDemo;
 import 'mode_demonstration.dart';
@@ -1028,8 +1029,8 @@ class CoquilleAdulteDemo extends StatelessWidget {
                 adressePreparationEleveDemo(PreparationEleveDemo.pret),
               ),
             ),
-            // La VRAIE page Coran de l'eleve (celle de /eleve/coran), sans
-            // aucun appel serveur (K-28) : le rendu du Coran n'est pas touche.
+            // Sans aucun appel serveur (K-28) ; sans corpus, l'etat honnete de
+            // la demonstration (K-59). Le rendu du Coran n'est pas touche.
             EcranDemoAdulte.coran => const CoranDemoAdulte(),
             // Chaque rubrique ouvre la VRAIE sous-page du Compte, retour vers
             // Mon espace (sans fork) ; « Mes accords » et « Cours et acces »,
@@ -1696,36 +1697,96 @@ class _RepriseDemo implements PortRepriseFoyer {
 /// jeton de mouvement le plus long (EA-6c), assez pour voir l'attente.
 const Duration latenceSimulee = Mouvement.maximum;
 
-/// La page Coran de l'eleve adulte en demonstration : la VRAIE [MushafPage]
-/// de `/eleve/coran`, dans un conteneur ISOLE (corpus absent, navigation sans
-/// lecture ni ecriture de position) : aucun fournisseur du lecteur ne remonte
-/// jusqu'au service serveur de la racine (K-28, comme le Coran de la
-/// demonstration du Mode Accessibilite, MA-7). Sans corpus hors serveur, le
-/// lecteur dit honnetement que le texte n'a pas pu etre charge.
+/// La page Coran de l'eleve adulte en demonstration.
+///
+/// Avec un corpus ([surchargesCoran], tests et captures) : la VRAIE
+/// [MushafPage] de `/eleve/coran`, dans un conteneur ISOLE (aucun fournisseur
+/// du lecteur ne remonte jusqu'au service serveur de la racine, K-28).
+///
+/// Sans corpus (la demonstration elle-meme : aucun texte du Coran n'existe
+/// hors serveur), le lecteur ne pourrait afficher que son etat d'erreur
+/// generique, qui invoque le reseau et propose un « Reessayer » voue a
+/// l'echec. La page dit donc la vraie cause, en vouvoyant l'adulte, sans
+/// aucun bouton qui ne pourrait pas aboutir (K-59), comme le Coran de la
+/// demonstration du Mode Accessibilite (`CoranAccessibilite(demonstration:
+/// true)`, MA-7). Le rendu du Coran n'est pas touche.
 class CoranDemoAdulte extends StatefulWidget {
-  /// Cree la page. [surchargesCoran] remplace les surcharges de la
-  /// demonstration (tests et captures : le corpus de reference).
+  /// Cree la page. [surchargesCoran] pose un corpus (tests et captures) et
+  /// ouvre alors le vrai lecteur ; nul : la demonstration sans texte.
   const CoranDemoAdulte({super.key, this.surchargesCoran});
 
-  /// Les surcharges du conteneur isole ; par defaut, aucun serveur.
+  /// Les surcharges du conteneur isole du lecteur (corpus, mise en page,
+  /// navigation, tous sans serveur) ; nul : aucun corpus.
   final List<Override>? surchargesCoran;
+
+  /// La cle de l'etat honnete de la demonstration sans texte.
+  static const Key sansTexteKey = ValueKey<String>(
+    'coran-adulte-demo-sans-texte',
+  );
 
   @override
   State<CoranDemoAdulte> createState() => _CoranDemoAdulteEtat();
 }
 
 class _CoranDemoAdulteEtat extends State<CoranDemoAdulte> {
-  late final ProviderContainer _coran = ProviderContainer(
-    overrides: widget.surchargesCoran ?? surchargesCoranDemoAccessibilite(),
-  );
+  /// Le conteneur isole du lecteur, seulement quand un corpus est pose.
+  late final ProviderContainer? _coran = switch (widget.surchargesCoran) {
+    final List<Override> surcharges => ProviderContainer(overrides: surcharges),
+    null => null,
+  };
 
   @override
   void dispose() {
-    _coran.dispose();
+    _coran?.dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) =>
-      UncontrolledProviderScope(container: _coran, child: const MushafPage());
+  Widget build(BuildContext context) {
+    final ProviderContainer? coran = _coran;
+    if (coran != null) {
+      return UncontrolledProviderScope(
+        container: coran,
+        child: const MushafPage(),
+      );
+    }
+    // Un etat « indisponible » (ni un echec, ni un vide), sans action. Le
+    // titre est en `titleMedium`, pas dans le grand titre d'`EtatSysteme` :
+    // a 320 px et texte double, « demonstration » n'y tiendrait pas entier.
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    return PageShell(
+      titre: t.eleve.coran.titre,
+      child: Padding(
+        key: CoranDemoAdulte.sansTexteKey,
+        padding: const EdgeInsets.only(top: AppSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            IconTheme(
+              data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
+              child: Icon(AppIcons.info.repos),
+            ),
+            Ecart.vMd,
+            Semantics(
+              header: true,
+              child: Text(
+                t.accessibilite.coran.demoSansTexte,
+                style: palette.inkStrong.applyTo(
+                  textes.titleMedium ?? const TextStyle(),
+                ),
+              ),
+            ),
+            Ecart.vSm,
+            Text(
+              t.accessibilite.coran.demoSansTexteDetailVous,
+              style: palette.inkMuted.applyTo(
+                textes.bodyLarge ?? const TextStyle(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

@@ -3,8 +3,11 @@
 // - `reel_*` : route reelle (vrai routeur, session d'eleve, capacite vraie),
 //   `/eleve/adulte` -> onglet Coran -> `/eleve/coran`, la vraie page Coran
 //   avec le corpus de reference des tests (aucun serveur).
-// - `demo_*` : `/demo/adulte`, onglet Coran -> la vraie page Coran dans son
-//   conteneur isole, sans corpus hors serveur : l'etat honnete du lecteur.
+// - `demo_*` : `/demo/adulte`, onglet Coran -> sans corpus hors serveur, la
+//   demonstration dit la vraie cause (texte non charge DANS la
+//   demonstration, adulte vouvoye, aucun bouton voue a l'echec), jamais
+//   l'erreur reseau du lecteur (K-59). Le vrai lecteur, avec corpus, est
+//   capture par `reel_*`.
 // 320 px texte x2, 390 clair et sombre, 1440.
 // Saute sans CAPTURE_DIR (voir LISEZ-MOI.md). A copier dans test/capture/.
 
@@ -127,7 +130,9 @@ void main() {
         await stabiliser(tester);
         await tester.tap(_onglet(t.adulte.nav.coran));
         await stabiliser(tester);
-        expect(find.byType(MushafPage), findsOneWidget);
+        expect(find.byKey(CoranDemoAdulte.sansTexteKey), findsOneWidget);
+        expect(find.byType(MushafPage), findsNothing);
+        expect(find.text(t.eleve.coran.indisponible), findsNothing);
         await capturer(tester, 'demo_coran_${f.key}');
       });
     }

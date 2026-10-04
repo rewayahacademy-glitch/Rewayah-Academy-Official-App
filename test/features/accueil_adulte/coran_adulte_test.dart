@@ -5,9 +5,11 @@
 //
 // Route reelle : `/eleve/adulte` vit dans la branche 0 de la coquille eleve ;
 // l'onglet Coran rejoint la branche 2 (`/eleve/coran`), Accueil y ramene.
-// Demonstration : la page provisoire est remplacee par `MushafPage` dans un
-// conteneur isole, sans serveur (K-28) : sans corpus, elle dit honnetement
-// que le texte n'a pas pu etre charge.
+// Demonstration : la page provisoire est remplacee par `CoranDemoAdulte`.
+// Avec un corpus (tests, captures), c'est la vraie `MushafPage` dans un
+// conteneur isole, sans serveur (K-28). Sans corpus (la demonstration
+// elle-meme), la page dit la vraie cause, vouvoie l'adulte et ne propose
+// aucun bouton voue a l'echec : jamais l'erreur reseau du lecteur (K-59).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -17,6 +19,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_coran/corpus_service_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/layout_lignes_indisponible.dart';
@@ -55,6 +58,37 @@ Future<void> _poser(WidgetTester tester) async {
   for (int i = 0; i < 8; i++) {
     await tester.pump(const Duration(milliseconds: 100));
   }
+}
+
+/// La demonstration sans corpus dit la vraie cause (K-59) : texte non charge
+/// DANS la demonstration, adulte vouvoye, aucun bouton voue a l'echec, jamais
+/// l'erreur reseau du lecteur ni l'ancienne page provisoire.
+void _verifierDemoHonnete() {
+  expect(find.byKey(CoranDemoAdulte.sansTexteKey), findsOneWidget);
+  expect(find.text(t.accessibilite.coran.demoSansTexte), findsOneWidget);
+  expect(
+    find.text(t.accessibilite.coran.demoSansTexteDetailVous),
+    findsOneWidget,
+  );
+  expect(find.text(t.accessibilite.coran.demoSansTexteDetail), findsNothing);
+  expect(find.text(t.eleve.coran.indisponible), findsNothing);
+  expect(find.text(t.eleve.coran.indisponibleDetail), findsNothing);
+  expect(find.text(t.eleve.coran.reessayer), findsNothing);
+  expect(find.byIcon(AppIcons.horsLigne.repos), findsNothing);
+  expect(find.byType(MushafPage), findsNothing);
+  expect(find.text(_phraseProvisoire), findsNothing);
+}
+
+/// Vrai si [cible] est entierement visible dans la fenetre, au-dessus de la
+/// barre de navigation (rien de rogne, rien sous la barre).
+void _entierementVisible(WidgetTester tester, Finder cible) {
+  final Rect zone = tester.getRect(cible);
+  final Rect barre = tester.getRect(find.byKey(NavShell.barreBasseKey));
+  final Size fenetre = tester.view.physicalSize / tester.view.devicePixelRatio;
+  expect(zone.top, greaterThanOrEqualTo(0));
+  expect(zone.left, greaterThanOrEqualTo(0));
+  expect(zone.right, lessThanOrEqualTo(fenetre.width));
+  expect(zone.bottom, lessThanOrEqualTo(barre.top));
 }
 
 void main() {
@@ -195,11 +229,7 @@ void main() {
 
         expect(lieu(routeur), adresseDemoAdulte(EcranDemoAdulte.coran));
         expect(find.byType(CoranDemoAdulte), findsOneWidget);
-        expect(find.byType(MushafPage), findsOneWidget);
-        // Aucun corpus hors serveur : l'etat honnete du lecteur (K-59), jamais
-        // un texte invente, jamais l'ancienne page provisoire.
-        expect(find.text(t.eleve.coran.indisponible), findsOneWidget);
-        expect(find.text(_phraseProvisoire), findsNothing);
+        _verifierDemoHonnete();
         expect(_actif(tester), 2);
         expect(
           tester.widget<NavShell>(find.byType(NavShell)).destinations,
@@ -236,6 +266,25 @@ void main() {
         expect(find.text(t.eleve.coran.indisponible), findsNothing);
       });
 
+      testWidgets('demo 320 x2 (fenetre de capture) : titre et explication '
+          'entiers, atteignables, jamais rognes', (WidgetTester tester) async {
+        await monterDemo(tester, taille: const Size(320, 900), echelle: 2);
+        await tester.tap(_onglet(t.adulte.nav.coran));
+        await _poser(tester);
+        _verifierDemoHonnete();
+        for (final String texte in <String>[
+          t.accessibilite.coran.demoSansTexte,
+          t.accessibilite.coran.demoSansTexteDetailVous,
+        ]) {
+          final Finder cible = find.text(texte);
+          await tester.ensureVisible(cible);
+          await _poser(tester);
+          _entierementVisible(tester, cible);
+        }
+        verifierEcranSansMotCoupe(tester);
+        expect(tester.takeException(), isNull);
+      });
+
       // Aucun mot coupe : 320 x2 et 1440, LTR et RTL, demo et route reelle.
       for (final (String nom, Size taille, double echelle)
           in <(String, Size, double)>[
@@ -254,7 +303,7 @@ void main() {
             );
             await tester.tap(_onglet(t.adulte.nav.coran));
             await _poser(tester);
-            expect(find.byType(MushafPage), findsOneWidget);
+            _verifierDemoHonnete();
             verifierEcranSansMotCoupe(tester);
             expect(tester.takeException(), isNull);
           });
