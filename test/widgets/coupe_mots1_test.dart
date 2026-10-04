@@ -151,6 +151,25 @@ void main() {
       expect(_echelles(tester, find.byKey(NavShell.railKey)), hasLength(1));
     });
 
+    // Revue COUPE-MOTS-1-R (M1) : texte agrandi, le rail enseignant ne
+    // ramene plus ses libelles sous la taille du theme (0,877 auparavant,
+    // a x1 comme a x2) ; il s'elargit pour tenir « Disponibilites ».
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets('rail enseignant a 768, x2, ${sens.name} : libelles jamais '
+          'sous la taille du theme, rail elargi', (WidgetTester tester) async {
+        _vue(tester, const Size(768, 1024), 2);
+        await tester.pumpWidget(hote(_coquille(AppRole.teacher, sens: sens)));
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        final Finder rail = find.byKey(NavShell.railKey);
+        verifierAucunMotCoupe(tester, rail);
+        final Set<double> echelles = _echelles(tester, rail);
+        expect(echelles, hasLength(1));
+        expect(echelles.single, greaterThanOrEqualTo(1));
+        expect(tester.getSize(rail).width, greaterThan(AppGabarit.largeurRail));
+      });
+    }
+
     testWidgets('barre laterale tuteur a 1440, x2 : le nom de l application '
         'entier, libelles a une seule echelle', (WidgetTester tester) async {
       _vue(tester, const Size(1440, 900), 2);
