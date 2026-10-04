@@ -117,9 +117,10 @@ class EmptyState extends StatelessWidget {
             ),
             Ecart.vXl,
             // Aucun mot coupe, meme a 320 px et texte x2 (« aujourd'hu / i »,
-            // ELV-VIDE-COUPE-1, et « l'acadé / mie », DASH-MA-PROD) : le constat et l'invitation passent a la
-            // ligne entre les mots ; le mot le plus long se reduit juste
-            // assez pour tenir. A l'echelle 1, rien ne change.
+            // ELV-VIDE-COUPE-1 ; « l'acadé / mie », DASH-MA-PROD) : le
+            // constat et l'invitation passent a la ligne entre les mots ; le
+            // mot le plus long se reduit juste assez pour tenir. A l'echelle
+            // 1, rien ne change.
             TexteSansCoupure(
               message,
               textAlign: TextAlign.center,

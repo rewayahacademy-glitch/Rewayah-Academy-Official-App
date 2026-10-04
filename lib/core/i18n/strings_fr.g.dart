@@ -2376,7 +2376,7 @@ class Traductions$adulte$fr {
 	late final Traductions$adulte$historique$fr historique = Traductions$adulte$historique$fr.internal(_root);
 	late final Traductions$adulte$maClasse$fr maClasse = Traductions$adulte$maClasse$fr.internal(_root);
 	late final Traductions$adulte$monEspace$fr monEspace = Traductions$adulte$monEspace$fr.internal(_root);
-	late final Traductions$adulte$provisoire$fr provisoire = Traductions$adulte$provisoire$fr.internal(_root);
+	late final Traductions$adulte$coranDemo$fr coranDemo = Traductions$adulte$coranDemo$fr.internal(_root);
 	late final Traductions$adulte$recharge$fr recharge = Traductions$adulte$recharge$fr.internal(_root);
 	late final Traductions$adulte$paiements$fr paiements = Traductions$adulte$paiements$fr.internal(_root);
 	late final Traductions$adulte$famille$fr famille = Traductions$adulte$famille$fr.internal(_root);
@@ -10413,16 +10413,19 @@ class Traductions$adulte$monEspace$fr {
 	late final Traductions$adulte$monEspace$pageCoursAcces$fr pageCoursAcces = Traductions$adulte$monEspace$pageCoursAcces$fr.internal(_root);
 }
 
-// Path: adulte.provisoire
-class Traductions$adulte$provisoire$fr {
-	Traductions$adulte$provisoire$fr.internal(this._root);
+// Path: adulte.coranDemo
+class Traductions$adulte$coranDemo$fr {
+	Traductions$adulte$coranDemo$fr.internal(this._root);
 
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
 
-	/// fr: 'Le Coran de votre espace élève s'affichera ici.'
-	String get coran => 'Le Coran de votre espace élève s\'affichera ici.';
+	/// fr: 'Disponible après connexion'
+	String get titre => 'Disponible après connexion';
+
+	/// fr: 'Ce n'est pas une panne : la démonstration ne contient pas le texte du Coran. Après connexion à votre espace élève, il s'ouvre ici.'
+	String get phrase => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte du Coran. Après connexion à votre espace élève, il s\'ouvre ici.';
 }
 
 // Path: adulte.recharge
@@ -17998,18 +18001,13 @@ extension on Traductions {
 			'enseignant.bienvenue.sousTitre' => 'Préparez votre espace avant votre première Classe.',
 			'enseignant.bienvenue.aCompleter' => 'À compléter',
 			'enseignant.bienvenue.compteur' => ({required Object fait, required Object total}) => '${fait} sur ${total}',
-			'enseignant.bienvenue.prerequisPhoto' => 'Ajouter ma photo professionnelle',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.bienvenue.prerequisPhoto' => 'Ajouter ma photo professionnelle',
 			'enseignant.bienvenue.prerequisLangues' => 'Vérifier mes langues d\'enseignement',
 			'enseignant.bienvenue.prerequisFuseau' => 'Vérifier mon fuseau horaire',
 			'enseignant.bienvenue.ctaPhoto' => 'Ajouter ma photo',
 			'enseignant.bienvenue.ctaInformations' => 'Vérifier mes informations',
-<<<<<<< HEAD
-=======
-			_ => null,
-		} ?? switch (path) {
->>>>>>> origin/corrections/c2-elv-vide
 			'enseignant.bienvenue.ctaJournee' => 'Voir ma journée',
 			'enseignant.bienvenue.rappels' => 'Deux choses à ne pas découvrir en cours de route',
 			'enseignant.bienvenue.declarer' => 'Déclarer mes disponibilités',
@@ -18517,9 +18515,9 @@ extension on Traductions {
 			'controleur.echanges.titre' => 'Échanges',
 			'controleur.echanges.titreFil' => ({required Object classe, required Object date}) => '${classe} · ${date}',
 			'controleur.echanges.derniereActivite' => ({required Object date}) => 'Dernière activité : ${date}',
-			'controleur.echanges.reponseRecue' => 'Réponse reçue',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.echanges.reponseRecue' => 'Réponse reçue',
 			'controleur.echanges.enAttente' => 'En attente',
 			'controleur.echanges.vide' => 'Aucun échange avec l\'administration pour le moment.',
 			'controleur.echanges.contexte' => 'Contexte de la visite, joint automatiquement',
@@ -18532,11 +18530,6 @@ extension on Traductions {
 			'controleur.echanges.champLibelle' => 'Répondre à l\'administration',
 			'controleur.echanges.envoyer' => 'Envoyer',
 			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
-<<<<<<< HEAD
-=======
-			_ => null,
-		} ?? switch (path) {
->>>>>>> origin/corrections/c2-elv-vide
 			'controleur.echanges.enCours' => 'Envoi en cours.',
 			'controleur.echanges.envoye' => 'Envoyé.',
 			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
@@ -19036,9 +19029,9 @@ extension on Traductions {
 			'tc.parcours.feedback.technique.bien' => 'Corrects',
 			'tc.parcours.feedback.technique.tresBien' => 'Très bons',
 			'tc.parcours.feedback.confiance.intitule' => 'Vous sentez-vous prêt pour le prochain cours ?',
-			'tc.parcours.feedback.confiance.difficile' => 'Pas encore',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.feedback.confiance.difficile' => 'Pas encore',
 			'tc.parcours.feedback.confiance.bien' => 'Plutôt',
 			'tc.parcours.feedback.confiance.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.merci' => 'Merci.',
@@ -19051,11 +19044,6 @@ extension on Traductions {
 			'tc.parcours.signalement.categorieValeur.presence' => 'Présence',
 			'tc.parcours.signalement.categorieValeur.technique' => 'Technique',
 			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
-<<<<<<< HEAD
-=======
-			_ => null,
-		} ?? switch (path) {
->>>>>>> origin/corrections/c2-elv-vide
 			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
 			'tc.parcours.signalement.interne' => 'Note interne',
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
@@ -19113,7 +19101,8 @@ extension on Traductions {
 			'adulte.monEspace.pageAccords.indisponiblePhrase' => 'Accepter, refuser ou retirer chacun de vos accords n\'est pas encore possible dans l\'application. Aucun accord ne vous est demandé ici.',
 			'adulte.monEspace.pageCoursAcces.indisponibleTitre' => 'Cours et accès pas encore consultables',
 			'adulte.monEspace.pageCoursAcces.indisponiblePhrase' => 'Le détail de vos cours, de vos séances et de votre accès n\'est pas encore disponible dans l\'application.',
-			'adulte.provisoire.coran' => 'Le Coran de votre espace élève s\'affichera ici.',
+			'adulte.coranDemo.titre' => 'Disponible après connexion',
+			'adulte.coranDemo.phrase' => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte du Coran. Après connexion à votre espace élève, il s\'ouvre ici.',
 			'adulte.recharge.titre' => 'Nouvelle recharge',
 			'adulte.recharge.phrase' => 'Sélectionnez un ou plusieurs bénéficiaires, puis choisissez une offre pour chacun.',
 			'adulte.recharge.toutSelectionner' => 'Tout sélectionner',

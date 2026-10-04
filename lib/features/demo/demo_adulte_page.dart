@@ -18,7 +18,9 @@
 // informations legales), avec un retour vers Mon espace ; « Mes accords » et
 // « Cours et acces », sans source, disent qu'ils sont indisponibles. Forfait
 // famille porte « Quitter le forfait famille » (EA-8) et le lien « Demande de
-// reprise du foyer » (EA-11). Coran reste PROVISOIRE.
+// reprise du foyer » (EA-11). Coran (PT-B) : aucun corpus n'est embarque
+// dans la demonstration ; l'onglet dit que le Coran est disponible apres
+// connexion (`CoranDemoAdulte`), sans serveur.
 //
 // EA-11 : la demande de reprise du second adulte (`ecran=repriseFoyer`), la
 // notification du titulaire et sa decision (`ecran=repriseTitulaire`, aussi
@@ -87,6 +89,7 @@ import '../mon_espace_adulte/mon_espace_adulte_page.dart';
 import '../notifications/notifications_page.dart';
 import 'adulte_demo.dart';
 import 'classe_demo.dart';
+import 'coran_demo_adulte.dart';
 import 'demo_classe_page.dart'
     show PreparationEleveDemo, adressePreparationEleveDemo, surchargesEleveDemo;
 import 'mode_demonstration.dart';
@@ -1025,10 +1028,9 @@ class CoquilleAdulteDemo extends StatelessWidget {
                 adressePreparationEleveDemo(PreparationEleveDemo.pret),
               ),
             ),
-            EcranDemoAdulte.coran => _PageProvisoire(
-              titre: t.adulte.nav.coran,
-              phrase: t.adulte.provisoire.coran,
-            ),
+            // Aucun corpus en demonstration (PT-B) : disponible apres
+            // connexion, sans aucun appel serveur (K-28).
+            EcranDemoAdulte.coran => const CoranDemoAdulte(),
             // Chaque rubrique ouvre la VRAIE sous-page du Compte, retour vers
             // Mon espace (sans fork) ; « Mes accords » et « Cours et acces »,
             // qui n'ont aucune source, disent qu'ils sont indisponibles.
@@ -1693,25 +1695,3 @@ class _RepriseDemo implements PortRepriseFoyer {
 /// La latence reseau simulee de la situation « Double soumission » : le
 /// jeton de mouvement le plus long (EA-6c), assez pour voir l'attente.
 const Duration latenceSimulee = Mouvement.maximum;
-
-/// Une page provisoire : son titre et une phrase qui dit ce qui viendra.
-class _PageProvisoire extends StatelessWidget {
-  const _PageProvisoire({required this.titre, required this.phrase});
-
-  final String titre;
-  final String phrase;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    return PageShell(
-      titre: titre,
-      child: Text(
-        phrase,
-        style: palette.inkMuted.applyTo(
-          Theme.of(context).textTheme.bodyLarge ?? const TextStyle(),
-        ),
-      ),
-    );
-  }
-}
