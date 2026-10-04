@@ -1078,44 +1078,84 @@ void main() {
     });
   });
 
-  group('BENTO-2b : « A terminer » ne coupe aucun mot', () {
+  group('BENTO-2b/2c : « A terminer » ne coupe aucun mot', () {
     // Les mesures de texte n'ont de sens qu'avec les vraies polices.
     setUpAll(chargerPolicesDuDepot);
 
-    for (final (double, double) cas in const <(double, double)>[
-      (320, 2),
-      (390, 2),
-      (768, 1),
-      (768, 2),
-    ]) {
-      for (final TextDirection sens in TextDirection.values) {
-        testWidgets('${cas.$1.toInt()} px, texte x${cas.$2.toInt()}, '
-            '${sens.name}', (WidgetTester tester) async {
-          _fenetre(tester, Size(cas.$1, 3000));
-          await tester.pumpWidget(
-            _hoteCarte(
-              luminosite: Brightness.light,
-              echelleTexte: cas.$2,
-              direction: sens,
-              surcharges: _surcharges(
-                enseignant: FauxServiceEnseignant()
-                  ..seancesRendues = <SeanceEnseignant>[_anNour()]
-                  ..retardsRendus = <CahierEnRetard>[
-                    _cahier('a', 'Al-Badr', 26),
-                    _cahier('b', 'As-Salam', 25),
-                  ],
+    // BENTO-2c (M1 de BENTO-2b-R) : avec 4 cahiers, « Voir tout » s'affiche
+    // et ne laissait au titre que ~160 px a 320 x2 (« termi/ner »,
+    // « Obligatoi/re »). On mesure tout le bloc (la `Column` de
+    // « A terminer », qui existait deja avant le correctif), pas seulement
+    // l'en-tete.
+    final List<CahierEnRetard> quatre = <CahierEnRetard>[
+      _cahier('a', 'Al-Badr', 26),
+      _cahier('b', 'As-Salam', 25),
+      _cahier('c', 'Al-Fatiha', 23),
+      _cahier('d', 'Al-Ikhlas', 22),
+    ];
+    for (final int nombre in const <int>[2, 4]) {
+      for (final (double, double) cas in const <(double, double)>[
+        (320, 1),
+        (320, 2),
+        (390, 2),
+        (768, 1),
+        (768, 2),
+      ]) {
+        for (final TextDirection sens in TextDirection.values) {
+          testWidgets('$nombre cahiers, ${cas.$1.toInt()} px, '
+              'texte x${cas.$2.toInt()}, ${sens.name}', (
+            WidgetTester tester,
+          ) async {
+            _fenetre(tester, Size(cas.$1, 3000));
+            await tester.pumpWidget(
+              _hoteCarte(
+                luminosite: Brightness.light,
+                echelleTexte: cas.$2,
+                direction: sens,
+                surcharges: _surcharges(
+                  enseignant: FauxServiceEnseignant()
+                    ..seancesRendues = <SeanceEnseignant>[_anNour()]
+                    ..retardsRendus = quatre.take(nombre).toList(),
+                ),
               ),
-            ),
-          );
-          await tester.pumpAndSettle();
-          expect(tester.takeException(), isNull);
-          final Finder titre = find.text(t.enseignant.journee.aTerminer);
-          expect(titre, findsOneWidget);
-          verifierAucunMotCoupe(
-            tester,
-            find.ancestor(of: titre, matching: find.byType(Wrap)).first,
-          );
-        });
+            );
+            await tester.pumpAndSettle();
+            expect(tester.takeException(), isNull);
+            final Finder titre = find.text(t.enseignant.journee.aTerminer);
+            expect(titre, findsOneWidget);
+            final Finder voirTout = find.byKey(
+              const ValueKey<String>('journee-a-terminer-voir-tout'),
+            );
+            expect(voirTout, nombre > 3 ? findsOneWidget : findsNothing);
+            final Finder bloc = find
+                .ancestor(of: titre, matching: find.byType(Column))
+                .first;
+            expect(bloc, findsOneWidget);
+            // Le bloc contient bien ce qu'on mesure : titre, pastille,
+            // lignes de cahier et, avec 4 cahiers, « Voir tout ».
+            expect(
+              find.descendant(
+                of: bloc,
+                matching: find.text(t.enseignant.cahier.obligatoire),
+              ),
+              findsOneWidget,
+            );
+            if (nombre > 3) {
+              expect(
+                find.descendant(of: bloc, matching: voirTout),
+                findsOneWidget,
+              );
+            }
+            verifierAucunMotCoupe(tester, bloc);
+            // « Voir tout » ne sort pas du bloc et reste une cible entiere.
+            if (nombre > 3) {
+              final Rect rBloc = tester.getRect(bloc);
+              final Rect rLien = tester.getRect(voirTout);
+              expect(rLien.left, greaterThanOrEqualTo(rBloc.left - 0.5));
+              expect(rLien.right, lessThanOrEqualTo(rBloc.right + 0.5));
+            }
+          });
+        }
       }
     }
   });
