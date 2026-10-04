@@ -5145,7 +5145,6 @@
       "fondsProteges": "Fonds protégés",
       "enTransit": "En transit",
       "tresorerieLibreDetail": "Ce qui reste réellement disponible après les fonds protégés, les obligations et le transit.",
-      "objectif": "Objectif",
       "objectifFixe": "Objectif : montant fixe",
       "objectifMois": "Objectif actuel : {n} mois de charges essentielles",
       "montantActuel": "Montant actuel",

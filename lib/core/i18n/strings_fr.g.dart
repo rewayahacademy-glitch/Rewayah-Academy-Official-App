@@ -11798,9 +11798,6 @@ class Traductions$comptable$commun$fr {
 	/// fr: 'Ce qui reste réellement disponible après les fonds protégés, les obligations et le transit.'
 	String get tresorerieLibreDetail => 'Ce qui reste réellement disponible après les fonds protégés, les obligations et le transit.';
 
-	/// fr: 'Objectif'
-	String get objectif => 'Objectif';
-
 	/// fr: 'Objectif : montant fixe'
 	String get objectifFixe => 'Objectif : montant fixe';
 
@@ -22027,7 +22024,6 @@ extension on Traductions {
 			'comptable.commun.fondsProteges' => 'Fonds protégés',
 			'comptable.commun.enTransit' => 'En transit',
 			'comptable.commun.tresorerieLibreDetail' => 'Ce qui reste réellement disponible après les fonds protégés, les obligations et le transit.',
-			'comptable.commun.objectif' => 'Objectif',
 			'comptable.commun.objectifFixe' => 'Objectif : montant fixe',
 			'comptable.commun.objectifMois' => ({required Object n}) => 'Objectif actuel : ${n} mois de charges essentielles',
 			'comptable.commun.montantActuel' => 'Montant actuel',
