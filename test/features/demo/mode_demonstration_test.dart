@@ -76,6 +76,38 @@ void main() {
     test('la compilation de test (developpement) sans adresse : fermee', () {
       expect(demoTuteurActiveIci, isFalse);
     });
+
+    // DEMO-ENV-1 (AD-R m13) : une publication sans ENVIRONNEMENT declare
+    // vaudrait « developpement » par defaut ; elle ferme toutes les demos.
+    test('publication sans environnement declare : fermee', () {
+      for (final String env in <String>['developpement', 'staging']) {
+        expect(
+          environnementAutoriseDemo(env, declare: false, publication: true),
+          isFalse,
+          reason: env,
+        );
+        // Declaree, la publication d'apercu reste ouverte ; en debogage,
+        // l'environnement par defaut aussi (postes et tests).
+        expect(
+          environnementAutoriseDemo(env, declare: true, publication: true),
+          isTrue,
+          reason: env,
+        );
+        expect(
+          environnementAutoriseDemo(env, declare: false, publication: false),
+          isTrue,
+          reason: env,
+        );
+      }
+      expect(
+        environnementAutoriseDemo(
+          'production',
+          declare: true,
+          publication: true,
+        ),
+        isFalse,
+      );
+    });
   });
 
   group('garde de la demonstration admin', () {

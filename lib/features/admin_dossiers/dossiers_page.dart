@@ -49,8 +49,8 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
   /// Le message du retour local apres une decision (AD-8).
   String? _retour;
 
-  /// Le titre de la page : il recoit le focus quand une decision vide la
-  /// file en panneau unique (plus aucune ligne ou le poser).
+  /// Le titre de la page : il recoit le focus apres une decision sans
+  /// dossier suivant (AD-FOCUS-MD).
   final FocusNode _focusTitre = FocusNode(debugLabel: 'adm02a-titre');
 
   @override
@@ -114,22 +114,27 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
       );
     } else if (maitreDetail) {
       selection.retirer();
+      _focusAuTitre();
     } else {
       setState(() => _retourDetail = true);
       if (suivant != null) {
         selection.choisir(suivant.dossierId);
       } else {
         selection.retirer();
-        if (avant.length <= 1) {
-          // La file est vide : le focus va au titre de la page.
-          WidgetsBinding.instance.addPostFrameCallback((Duration _) {
-            if (mounted) {
-              _focusTitre.requestFocus();
-            }
-          });
-        }
+        _focusAuTitre();
       }
     }
+  }
+
+  /// AD-FOCUS-MD : sans dossier suivant (file videe, ou dernier dossier
+  /// d'une file non vide), aucune ligne n'est selectionnee : le focus va au
+  /// titre de la page, dans les deux mises en page, au lieu de se perdre.
+  void _focusAuTitre() {
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted) {
+        _focusTitre.requestFocus();
+      }
+    });
   }
 
   /// Le mode mesure dans le corps (largeur utile du PageShell), retenu pour

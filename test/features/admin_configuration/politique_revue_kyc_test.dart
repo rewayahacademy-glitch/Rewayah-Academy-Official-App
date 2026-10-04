@@ -350,6 +350,8 @@ void main() {
     routeur.go(Routes.adminConfigurationPolitiqueRevueKyc);
     await _stabiliser(tester);
     expect(find.text(t.commun.etats.echecServeur.titre), findsOneWidget);
+    // AD-9-ONGLET-PROD : capacite inconnue, ni titre ni onglet reserve.
+    expect(find.text(t.admin.politiqueRevueKyc.titre), findsNothing);
     final int avant = port.lectures;
     await tester.tap(find.text(t.commun.etats.actions.reessayer));
     await _stabiliser(tester);
@@ -368,9 +370,13 @@ void main() {
     await _stabiliser(tester);
     expect(find.byType(Skeleton), findsWidgets);
     expect(find.byType(Switch), findsNothing);
+    // AD-9-ONGLET-PROD : pendant le chargement, rien du reglage reserve.
+    expect(find.text(t.admin.politiqueRevueKyc.titre), findsNothing);
     port.porteLecture!.complete();
     await _stabiliser(tester);
     expect(find.byType(Switch), findsOneWidget);
+    // Capacite connue et vraie : le titre et le 4e onglet reviennent.
+    expect(find.text(t.admin.politiqueRevueKyc.titre), findsWidgets);
   });
 
   testWidgets('G12 : port de production, aucun onglet, pas encore disponible', (
@@ -387,6 +393,8 @@ void main() {
     await _stabiliser(tester);
     expect(find.text(t.commun.etats.indisponible.titre), findsOneWidget);
     expect(find.byType(Switch), findsNothing);
+    // AD-9-ONGLET-PROD : sur la ROUTE aussi, aucun onglet reserve.
+    expect(find.text(t.admin.politiqueRevueKyc.titre), findsNothing);
   });
 
   testWidgets('G13 : coque de production (sans ?demo=admin), port par defaut', (
@@ -443,5 +451,7 @@ void main() {
     expect(find.text(t.commun.etats.indisponible.titre), findsOneWidget);
     expect(find.text(t.admin.politiqueRevueKyc.libelle), findsNothing);
     expect(find.byType(Switch), findsNothing);
+    // AD-9-ONGLET-PROD : la route tapee a la main ne montre pas l'onglet.
+    expect(find.text(t.admin.politiqueRevueKyc.titre), findsNothing);
   });
 }

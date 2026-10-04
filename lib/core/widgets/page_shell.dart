@@ -327,6 +327,40 @@ class _BasculeState extends State<_Bascule> {
   final GlobalKey _cleTete = GlobalKey(debugLabel: 'PageShell.tete');
   final GlobalKey _cleCorps = GlobalKey(debugLabel: 'PageShell.corps');
 
+  /// AD-M4-DEFIL : le defileur d'une page defilante, recree a chaque bascule
+  /// avec la position de l'ancien. Le meme decalage garde le meme contenu
+  /// sous la tete dans les deux branches : en tete fixe, le haut du corps
+  /// visible est a l'offset du corps ; en defilement global, le corps est
+  /// pose sous la tete et defile du meme offset.
+  ScrollController? _defileur;
+
+  /// La branche du dernier rendu : nul avant le premier.
+  bool? _teteDefilait;
+
+  ScrollController _defileurPour(bool teteDefile) {
+    final ScrollController? ancien = _defileur;
+    if (ancien != null && _teteDefilait == teteDefile) {
+      return ancien;
+    }
+    final double offset = ancien != null && ancien.hasClients
+        ? ancien.offset
+        : ancien?.initialScrollOffset ?? 0;
+    _teteDefilait = teteDefile;
+    if (ancien != null) {
+      // L'ancien defileur reste attache jusqu'a la fin de cette image.
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        ancien.dispose();
+      });
+    }
+    return _defileur = ScrollController(initialScrollOffset: offset);
+  }
+
+  @override
+  void dispose() {
+    _defileur?.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     // La tete garde sa mise en page d'avant : une colonne etiree de hauteur
@@ -343,35 +377,45 @@ class _BasculeState extends State<_Bascule> {
     final Widget corps = KeyedSubtree(key: _cleCorps, child: widget.corps);
 
     return LayoutBuilder(
-      builder: (BuildContext _, BoxConstraints contraintes) =>
-          widget.teteDefilante(contraintes.maxHeight)
-          ? SingleChildScrollView(
-              // Un corps non defilant (liste paresseuse) garde le defileur
-              // principal de la page dans les deux branches : sur mobile, sa
-              // liste reste attachee au meme controleur et garde sa position.
-              primary: widget.defilante ? null : false,
-              child: Column(
+      builder: (BuildContext _, BoxConstraints contraintes) {
+        final bool teteDefile = widget.teteDefilante(contraintes.maxHeight);
+        final ScrollController? defileur = widget.defilante
+            ? _defileurPour(teteDefile)
+            : null;
+        return teteDefile
+            ? SingleChildScrollView(
+                // Un corps non defilant (liste paresseuse) garde le defileur
+                // principal de la page dans les deux branches : sur mobile,
+                // sa liste reste attachee au meme controleur et garde sa
+                // position.
+                controller: defileur,
+                primary: widget.defilante ? null : false,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    tete,
+                    if (widget.defilante)
+                      corps
+                    else
+                      SizedBox(height: contraintes.maxHeight, child: corps),
+                  ],
+                ),
+              )
+            : Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   tete,
-                  if (widget.defilante)
-                    corps
-                  else
-                    SizedBox(height: contraintes.maxHeight, child: corps),
+                  Expanded(
+                    child: widget.defilante
+                        ? SingleChildScrollView(
+                            controller: defileur,
+                            child: corps,
+                          )
+                        : corps,
+                  ),
                 ],
-              ),
-            )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                tete,
-                Expanded(
-                  child: widget.defilante
-                      ? SingleChildScrollView(child: corps)
-                      : corps,
-                ),
-              ],
-            ),
+              );
+      },
     );
   }
 }
