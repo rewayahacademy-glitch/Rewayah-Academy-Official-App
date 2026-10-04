@@ -91,37 +91,121 @@ class _CorpsFinances extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<FinancesFoyer> lecture = ref.watch(financesFoyerProvider);
-    void relire() => ref.invalidate(financesFoyerProvider);
+    // L'echec d'abord : pendant les nouvelles tentatives de Riverpod, la
+    // valeur reste en chargement avec son erreur, que l'ecran doit dire.
+    final AsyncValue<FinancesFoyer> foyer = ref.watch(financesFoyerProvider);
+    final AsyncValue<FinancesProfil?> lecture = foyer.hasError
+        ? AsyncValue<FinancesProfil?>.error(
+            foyer.error!,
+            foyer.stackTrace ?? StackTrace.empty,
+          )
+        : foyer.hasValue
+        ? AsyncValue<FinancesProfil?>.data(
+            financesParProfil(foyer)[profil.eleveId],
+          )
+        : const AsyncValue<FinancesProfil?>.loading();
+    return EtatsFinancesProfil(
+      lecture: lecture,
+      onRelire: () => ref.invalidate(financesFoyerProvider),
+      textes: (
+        indisponibleTitre: t.ficheEleve.finances.indisponibleTitre,
+        indisponiblePhrase: t.ficheEleve.finances.indisponiblePhrase(
+          prenom: profil.prenom,
+        ),
+        erreurTitre: t.ficheEleve.finances.erreurTitre(prenom: profil.prenom),
+        videTitre: t.ficheEleve.finances.videTitre(prenom: profil.prenom),
+        videPhrase: t.ficheEleve.finances.videPhrase,
+      ),
+      construire: (FinancesProfil finance) => VueFinancesProfil(
+        finance: finance,
+        avatar: PhotoEleve(
+          prenom: profil.prenom,
+          cleAvatar: profil.cleAvatar,
+          diametre: TailleIdentite.entete.diametre,
+        ),
+        libelleRecharger: t.foyer.finances.rechargerPour(
+          prenom: finance.prenom,
+        ),
+        onRecharger: () =>
+            GoRouter.of(context)
+                .go(Routes.rechargePour(<String>[finance.profilId])),
+        semantiqueMouvements: t.ficheEleve.finances.voirMouvementsSemantique(
+          prenom: finance.prenom,
+        ),
+        onMouvements: () =>
+            GoRouter.of(context)
+                .go(Routes.ficheEleveSousPage(finance.profilId, 'mouvements')),
+      ),
+    );
+  }
+}
+
+/// Les textes des etats des finances d'un profil, selon qui les lit : le
+/// tuteur (le prenom du profil) ou l'eleve adulte (FI-9b, « vos »).
+typedef TextesEtatsFinances = ({
+  String indisponibleTitre,
+  String indisponiblePhrase,
+  String erreurTitre,
+  String videTitre,
+  String videPhrase,
+});
+
+/// Les etats des finances d'un profil (FI-6a, repris par FI-9b) :
+/// chargement, contenu, vide (aucune finance rendue), erreur, hors ligne, et
+/// production (`CapaciteIndisponible`), qui n'est ni un echec ni un vide.
+class EtatsFinancesProfil extends ConsumerWidget {
+  /// Cree les etats.
+  const EtatsFinancesProfil({
+    required this.lecture,
+    required this.onRelire,
+    required this.textes,
+    required this.construire,
+    super.key,
+  });
+
+  /// La finance lue ; une valeur `null` : aucune finance rendue.
+  final AsyncValue<FinancesProfil?> lecture;
+
+  /// Relit la source.
+  final VoidCallback onRelire;
+
+  /// Les textes des etats.
+  final TextesEtatsFinances textes;
+
+  /// Le contenu, une fois la finance lue.
+  final Widget Function(FinancesProfil finance) construire;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final Object? erreur = lecture.hasError ? lecture.error : null;
     if (erreur is CapaciteIndisponible) {
       return EtatSysteme(
         nature: NatureEtat.indisponible,
         portee: PorteeEtat.page,
-        titre: t.ficheEleve.finances.indisponibleTitre,
-        phrase: t.ficheEleve.finances.indisponiblePhrase(prenom: profil.prenom),
+        titre: textes.indisponibleTitre,
+        phrase: textes.indisponiblePhrase,
         dependance: erreur.dependance,
       );
     }
     if (erreur != null) {
       return (ref.watch(horsLigneProvider).value ?? false)
-          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire)
+          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: onRelire)
           : EtatSysteme(
               nature: NatureEtat.echecServeur,
-              titre: t.ficheEleve.finances.erreurTitre(prenom: profil.prenom),
-              onAction: relire,
+              titre: textes.erreurTitre,
+              onAction: onRelire,
             );
     }
     if (!lecture.hasValue) return const Skeleton.liste(lignes: 4);
-    final FinancesProfil? finance = financesParProfil(lecture)[profil.eleveId];
+    final FinancesProfil? finance = lecture.requireValue;
     if (finance == null) {
       return EtatSysteme(
         nature: NatureEtat.aucunResultat,
-        titre: t.ficheEleve.finances.videTitre(prenom: profil.prenom),
-        phrase: t.ficheEleve.finances.videPhrase,
+        titre: textes.videTitre,
+        phrase: textes.videPhrase,
       );
     }
-    return _ContenuFinances(profil: profil, finance: finance);
+    return construire(finance);
   }
 }
 
@@ -179,11 +263,40 @@ String _libelleLigne(NatureLigneMensualite nature, {required bool adulte}) =>
       NatureLigneMensualite.taxe => t.ficheEleve.finances.taxe,
     };
 
-class _ContenuFinances extends ConsumerWidget {
-  const _ContenuFinances({required this.profil, required this.finance});
+/// La vue financiere d'un profil (FI-6a, repris par FI-9b pour l'eleve
+/// adulte) : identite, etat et periode, bandeau d'attention, solde, prochain
+/// debit, mensualite et ses lignes rendues ; le lien vers les mouvements et
+/// le seul bouton plein, la recharge. Rien n'est calcule : chaque valeur est
+/// rendue par la source. Les destinations sont passees par l'appelant.
+class VueFinancesProfil extends ConsumerWidget {
+  /// Cree la vue.
+  const VueFinancesProfil({
+    required this.finance,
+    required this.avatar,
+    required this.libelleRecharger,
+    required this.onRecharger,
+    required this.semantiqueMouvements,
+    required this.onMouvements,
+    super.key,
+  });
 
-  final ProfilEleveFoyer profil;
+  /// La finance rendue du profil.
   final FinancesProfil finance;
+
+  /// La photo du profil (initiales en repli).
+  final Widget avatar;
+
+  /// Le libelle du bouton de recharge.
+  final String libelleRecharger;
+
+  /// Ouvre LA recharge, ce profil coche (un seul moteur, guide §4).
+  final VoidCallback onRecharger;
+
+  /// Ce que le lecteur d'ecran dit du lien « Mouvements ».
+  final String semantiqueMouvements;
+
+  /// Ouvre les mouvements du profil.
+  final VoidCallback onMouvements;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -225,11 +338,7 @@ class _ContenuFinances extends ConsumerWidget {
             classe: finance.classe,
             taille: TailleIdentite.entete,
             remontee: SurfaceFiche.marge,
-            avatar: PhotoEleve(
-              prenom: profil.prenom,
-              cleAvatar: profil.cleAvatar,
-              diametre: TailleIdentite.entete.diametre,
-            ),
+            avatar: avatar,
           ),
           Ecart.vLg,
           Wrap(
@@ -340,13 +449,11 @@ class _ContenuFinances extends ConsumerWidget {
 
     final Widget recharger = ActionPrincipale(
       key: FinancesElevePage.rechargerKey,
-      libelle: t.foyer.finances.rechargerPour(prenom: finance.prenom),
+      libelle: libelleRecharger,
       // Sur bureau, jamais un bouton pleine largeur (contrat B) : au bord
       // de fin, largeur du contenu.
       pleineLargeur: !bureau,
-      onPress: () =>
-          GoRouter.of(context)
-              .go(Routes.rechargePour(<String>[finance.profilId])),
+      onPress: onRecharger,
     );
 
     final List<Widget> finances = <Widget>[
@@ -386,11 +493,8 @@ class _ContenuFinances extends ConsumerWidget {
           child: LienFleche(
             key: FinancesElevePage.mouvementsKey,
             libelle: t.ficheEleve.finances.voirMouvements,
-            libelleSemantique: t.ficheEleve.finances.voirMouvementsSemantique(
-              prenom: finance.prenom,
-            ),
-            onPress: () => GoRouter.of(context)
-                .go(Routes.ficheEleveSousPage(finance.profilId, 'mouvements')),
+            libelleSemantique: semantiqueMouvements,
+            onPress: onMouvements,
           ),
         ),
         // Pendant une confirmation, payer encore serait payer deux fois

@@ -123,38 +123,88 @@ class _CorpsMouvements extends ConsumerWidget {
   final ProfilEleveFoyer profil;
 
   @override
+  Widget build(BuildContext context, WidgetRef ref) => HistoriqueMouvements(
+    lecture: ref.watch(mouvementsProfilProvider(profil.eleveId)),
+    onRelire: () => ref.invalidate(mouvementsProfilProvider(profil.eleveId)),
+    textes: (
+      contexte: t.ficheEleve.mouvements.contexte(prenom: profil.prenom),
+      indisponibleTitre: t.ficheEleve.mouvements.indisponibleTitre,
+      indisponiblePhrase: t.ficheEleve.mouvements.indisponiblePhrase(
+        prenom: profil.prenom,
+      ),
+      erreurTitre: t.ficheEleve.mouvements.erreurTitre(prenom: profil.prenom),
+      videTitre: t.ficheEleve.mouvements.videTitre,
+      videPhrase: t.ficheEleve.mouvements.videPhrase(prenom: profil.prenom),
+    ),
+    filtre: _FiltrePersonne(profil: profil),
+  );
+}
+
+/// Les textes de l'historique, selon qui le lit : le tuteur (le prenom du
+/// profil) ou l'eleve adulte (FI-9b, « vos »).
+typedef TextesHistoriqueMouvements = ({
+  String contexte,
+  String indisponibleTitre,
+  String indisponiblePhrase,
+  String erreurTitre,
+  String videTitre,
+  String videPhrase,
+});
+
+/// L'historique des mouvements d'un profil (FI-6b, repris par FI-9b) : la
+/// phrase de contexte (K-58), le filtre eventuel, puis la liste (telephone)
+/// ou le tableau (bureau), et les etats : chargement, contenu, vide, erreur,
+/// hors ligne, production (`CapaciteIndisponible`).
+class HistoriqueMouvements extends ConsumerWidget {
+  /// Cree l'historique.
+  const HistoriqueMouvements({
+    required this.lecture,
+    required this.onRelire,
+    required this.textes,
+    super.key,
+    this.filtre,
+  });
+
+  /// Les mouvements lus.
+  final AsyncValue<List<MouvementProfil>> lecture;
+
+  /// Relit la source.
+  final VoidCallback onRelire;
+
+  /// Les textes de la page et de ses etats.
+  final TextesHistoriqueMouvements textes;
+
+  /// Le filtre par personne ; `null` : aucun (l'eleve adulte n'a que son
+  /// profil).
+  final Widget? filtre;
+
+  @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<List<MouvementProfil>> lecture = ref.watch(
-      mouvementsProfilProvider(profil.eleveId),
-    );
-    void relire() => ref.invalidate(mouvementsProfilProvider(profil.eleveId));
     final Object? erreur = lecture.hasError ? lecture.error : null;
     final Widget corps;
     if (erreur is CapaciteIndisponible) {
       corps = EtatSysteme(
         nature: NatureEtat.indisponible,
         portee: PorteeEtat.page,
-        titre: t.ficheEleve.mouvements.indisponibleTitre,
-        phrase: t.ficheEleve.mouvements.indisponiblePhrase(
-          prenom: profil.prenom,
-        ),
+        titre: textes.indisponibleTitre,
+        phrase: textes.indisponiblePhrase,
         dependance: erreur.dependance,
       );
     } else if (erreur != null) {
       corps = (ref.watch(horsLigneProvider).value ?? false)
-          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire)
+          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: onRelire)
           : EtatSysteme(
               nature: NatureEtat.echecServeur,
-              titre: t.ficheEleve.mouvements.erreurTitre(prenom: profil.prenom),
-              onAction: relire,
+              titre: textes.erreurTitre,
+              onAction: onRelire,
             );
     } else if (!lecture.hasValue) {
       corps = const Skeleton.liste(lignes: 4);
     } else if (lecture.requireValue.isEmpty) {
       corps = EtatSysteme(
         nature: NatureEtat.aucunResultat,
-        titre: t.ficheEleve.mouvements.videTitre,
-        phrase: t.ficheEleve.mouvements.videPhrase(prenom: profil.prenom),
+        titre: textes.videTitre,
+        phrase: textes.videPhrase,
       );
     } else {
       final List<MouvementProfil> mouvements = lecture.requireValue;
@@ -163,20 +213,20 @@ class _CorpsMouvements extends ConsumerWidget {
           : _Liste(mouvements: mouvements);
     }
     final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
+    final TextTheme textesTheme = Theme.of(context).textTheme;
+    final Widget? choix = filtre;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         // K-58 : une phrase de contexte d'abord.
         Text(
-          t.ficheEleve.mouvements.contexte(prenom: profil.prenom),
+          textes.contexte,
           style: palette.inkMuted.applyTo(
-            textes.bodyMedium ?? const TextStyle(),
+            textesTheme.bodyMedium ?? const TextStyle(),
           ),
         ),
         Ecart.vLg,
-        _FiltrePersonne(profil: profil),
-        Ecart.vLg,
+        if (choix != null) ...<Widget>[choix, Ecart.vLg],
         corps,
       ],
     );

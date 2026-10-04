@@ -740,6 +740,13 @@ abstract final class DonneesAdulteDemo {
   static String idTitulaire(GenreTitulaireDemo genre) =>
       genre == GenreTitulaireDemo.homme ? mamadouId : mariamaId;
 
+  /// L'identifiant de la personne qui regarde : le titulaire, ou le second
+  /// adulte, de l'autre genre.
+  static String idVue(GenreTitulaireDemo genre, VueDemoAdulte vue) =>
+      (genre == GenreTitulaireDemo.homme) == (vue == VueDemoAdulte.titulaire)
+      ? mamadouId
+      : mariamaId;
+
   /// Ma classe de la personne qui regarde, ou `null` quand la demonstration
   /// n'a pas sa Classe.
   ///
