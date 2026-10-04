@@ -447,6 +447,55 @@ void main() {
     }
   });
 
+  // SALLE-CORR-4 (m10) : le bandeau permanent « Cours enregistre, visite de
+  // controle possible » prend l'encre du registre `salle` (enseignant, eleve) ;
+  // le controleur, qui n'a pas la mention, garde son rappel lisible.
+  group('SALLE-CORR-4 m10 : bandeau permanent lisible', () {
+    for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
+      for (final double largeur in <double>[320, 390, 1440]) {
+        for (final String role in <String>[
+          'teacher',
+          'student',
+          'masked_controller',
+        ]) {
+          testWidgets('$role, $largeur px, ${mode.name}', (
+            WidgetTester tester,
+          ) async {
+            await _monter(
+              tester,
+              role,
+              largeur,
+              1,
+              themeMode: mode,
+              hauteur: largeur > 1000 ? 900 : 844,
+            );
+            expect(tester.takeException(), isNull);
+            final AppColorPair salle = AppPalette.of(
+              tester.element(find.byType(SallePage)),
+            ).surfaceInverse;
+            if (role == 'masked_controller') {
+              expect(find.text(t.salle.bandeauPermanent), findsNothing);
+              _lisible(
+                tester,
+                find.text(t.salle.bandeauControle),
+                'rappel du controleur',
+              );
+              return;
+            }
+            final Finder bandeau = find.text(t.salle.bandeauPermanent);
+            _lisible(tester, bandeau, 'bandeau permanent ($role)');
+            expect(
+              _couleurRendue(tester, bandeau.first),
+              salle.onBackground,
+              reason: 'encre du registre salle',
+            );
+            expect(_fondSous(tester, bandeau.first), salle.background);
+          });
+        }
+      }
+    }
+  });
+
   group('SALLE-ENCRE-1 : captures', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
     for (final (String role, String nom) in <(String, String)>[
@@ -492,6 +541,51 @@ void main() {
     }
   });
 
+  group('SALLE-CORR-4 m10 : captures', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String role, String nom) in <(String, String)>[
+      ('teacher', 'enseignant'),
+      ('student', 'eleve'),
+      ('masked_controller', 'controleur'),
+    ]) {
+      for (final (
+            String l,
+            double largeur,
+            double hauteur,
+            double texte,
+            double densite,
+          )
+          in <(String, double, double, double, double)>[
+            ('320_x1', 320, 700, 1, 2),
+            ('320_x2', 320, 700, 2, 2),
+            ('390', 390, 844, 1, 3),
+            ('1440', 1440, 900, 1, 1),
+          ]) {
+        for (final (String m, ThemeMode mode) in <(String, ThemeMode)>[
+          ('clair', ThemeMode.light),
+          ('sombre', ThemeMode.dark),
+        ]) {
+          testWidgets('salle_corr4_m10_${nom}_${l}_$m', (
+            WidgetTester tester,
+          ) async {
+            await _monter(
+              tester,
+              role,
+              largeur,
+              texte,
+              densite: densite,
+              themeMode: mode,
+              hauteur: hauteur,
+            );
+            expect(tester.takeException(), isNull);
+            debugPrint(
+              'PNG ${await capturer(tester, 'salle_corr4_m10_${nom}_${l}_$m')}',
+            );
+          });
+        }
+      }
+    }
+  });
   group('SALLE-CORR-3 : captures', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
     for (final (String role, String nom) in <(String, String)>[

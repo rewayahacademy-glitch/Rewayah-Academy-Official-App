@@ -1069,7 +1069,9 @@ class _Bandeaux extends StatelessWidget {
           ),
           child: _SurLaSalle(
             active: encreAccessible,
-            child: const PermanentNotice(),
+            child: encreAccessible
+                ? const PermanentNotice()
+                : const _EncreDeLaSalle(child: PermanentNotice()),
           ),
         ),
       ],
@@ -2202,6 +2204,39 @@ class _PreparationEleveBranchee extends ConsumerWidget {
 /// claires, sombre sur sombre en clair, clair sur clair en sombre.
 TextStyle _encreSalle(BuildContext context, TextStyle? style) =>
     AppPalette.of(context).surfaceInverse.applyTo(style ?? const TextStyle());
+
+/// SALLE-CORR-4 (m10) : la mention permanente se lit sur le fond de la salle.
+///
+/// `PermanentNotice` n'a aucun parametre (ADR-011) et ecrit en `inkMuted`, l'encre
+/// secondaire des surfaces claires : grise sur le fond sombre de la salle en
+/// clair, peu lisible dans les deux themes. Plutot que de toucher son API, la
+/// salle lui prete, pour ses descendants seulement, une palette dont l'encre
+/// secondaire est celle du registre `salle` (`surfaceInverse`), comme
+/// `_encreSalle` pour les autres textes. Aucune couleur nouvelle.
+class _EncreDeLaSalle extends StatelessWidget {
+  const _EncreDeLaSalle({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final AppPalette palette = AppPalette.of(context);
+    final List<ThemeExtension<ThemeExtension<dynamic>>> extensions =
+        <ThemeExtension<ThemeExtension<dynamic>>>[
+          ...theme.extensions.values
+              .where((ThemeExtension<dynamic> e) => e is! AppPalette)
+              .cast<ThemeExtension<ThemeExtension<dynamic>>>(),
+          palette.copyWith(
+            inkMuted: AppInkColor(palette.surfaceInverse.onBackground),
+          ),
+        ];
+    return Theme(
+      data: theme.copyWith(extensions: extensions),
+      child: child,
+    );
+  }
+}
 
 /// MA-5 : un composant partage fait pour une surface claire se pose, pour
 /// l'eleve en Mode Accessibilite, sur la surface des vignettes
