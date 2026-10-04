@@ -36,7 +36,7 @@ Périmètre : écrans en **démonstration**, sans serveur (K-28, K-35). Chaque b
   - `ui/enseignant-v1` n'a que 2 commits de plus (cahier EN-IND, EN-7c) : aucun fichier de salle.
   - `ui/controleur-v1` (19 commits de plus) ne touche la salle qu'en 7 lignes de `salle_page.dart`.
   - `ui/accessibilite-v1` (31 commits de plus, 20:30) porte la **dernière version de la salle en Mode Accessibilité** et surtout `CommandesMasquables` (MA-CMD-1, délai 4 s, révélation au toucher, toujours visibles au clavier et au lecteur d'écran). C'est exactement la politique de révélation demandée (§4.1, §18). Elle n'est **pas** dans la branche de corrections.
-  - Essai à blanc (`git merge-tree`, sans toucher aux worktrees) : fusionner `ui/accessibilite-v1` dans les corrections donne 12 fichiers en conflit, dont `dock_seance.dart`, `nav_shell.dart`, `page_shell.dart`, `setting_row.dart`, `groupe_reglages.dart`, les fichiers slang générés et 4 tests.
+  - Essai à blanc (`git merge-tree`, sans toucher aux worktrees) : fusionner `ui/accessibilite-v1` dans les corrections donne ~~12 fichiers en conflit~~ (sans objet depuis INTEG-RC-1 ; compte corrigé : 14, `git merge-tree 0796f75 7885b35b`), dont `dock_seance.dart`, `nav_shell.dart`, `page_shell.dart`, `setting_row.dart`, `groupe_reglages.dart`, les fichiers slang générés et 4 tests.
   - D'où l'étape **TB-F** (fusion préalable dans la branche TB, jamais dans `main`), soumise à la question Q2. Sans elle, TB-2 devrait recopier `CommandesMasquables` (interdit, K-10).
 
 ## 4. Existant à réutiliser (K-10, K-51 : jamais recréer)
@@ -157,7 +157,7 @@ Chaque règle cite le plan V2. Elles s'ajoutent à R1–R21 (K-40), E1–E20 (K-
 18. **TB18** Focus local, jamais diffusé ; « Quitter le focus » toujours atteignable ; sortie = composition précédente si elle tient (§6, §18.1, §20).
 19. **TB19** Géométrie : page normalisée après `BoxFit.contain` et transformation inverse du zoom ; geste hors page rejeté ; image et encre transformées ensemble ; l'épaisseur suit la page, les poignées non (§9).
 20. **TB20** Pas d'encre libre sur un texte qui se recompose (verset agrandi) : marqueurs existants (§9).
-21. **TB21** Gestes : un doigt dessine seulement en Écrire, deux doigts déplacent ; le stylet écrit s'il est détecté (`PolitiqueSaisie`) ; pas de tour de page par balayage pendant un trait (§7).
+21. **TB21** Gestes : un doigt dessine seulement en Écrire, deux doigts déplacent ; le stylet détecté n'écrit que lorsque l'outil Écrire est actif (plan §7, `V/REWAYAH_PLAN_SUPPORTS_TABLEAU_V2.md:164`) ; aujourd'hui `PolitiqueSaisie` le laisse écrire toujours (`couche_annotation.dart:38-39`, `:55-58`), à corriger et prouver en TB-7b ; pas de tour de page par balayage pendant un trait (§7).
 22. **TB22** Textes du §12 et du §20 mot pour mot, par clés i18n ; Sayyid ou Sayyida selon le profil ; « Séance en direct », jamais « Cours en cours » (§5, §20).
 23. **TB23** Aucun faux succès : jamais « Sauvegardé » sur un envoi ; en démonstration « Les notes sont conservées dans cette séance uniquement. » ; ce qui est simulé est marqué (§11, §12, §22).
 24. **TB24** Synchronisation honnête : « Vos nouvelles notes ne sont pas partagées. », « Le tableau se reconnecte. », écriture suspendue jusqu'à la reprise ; en démonstration, des situations nommées (§10, §12, §19.5).

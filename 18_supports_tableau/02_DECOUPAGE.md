@@ -56,7 +56,7 @@
 
 ### TB-F — Branche et fusion préalable
 - **Lire** : `00_REPRISE.md` §3 ; `13_fusion/PLAN_FUSION_ADMIN_ENSEIGNANT.md` (méthode) ; MA-CMD-1, MA-TITRE-1 au tableau.
-- **Faire** : créer `ui/supports-tableau-v1` et `D:\RA_TUTEUR\tableau` ; si Q2 = oui, `git merge --no-ff origin/ui/accessibilite-v1` ; 12 conflits attendus (`dock_seance.dart`, `nav_shell.dart`, `page_shell.dart`, `setting_row.dart`, `groupe_reglages.dart`, `compte_page.dart`, `demo_accessibilite_page.dart`, `module_reglages_observation.dart`, slang générés, 4 tests) ; union des deux intentions, slang régénéré par le verrou, jamais à la main.
+- **Faire** : créer `ui/supports-tableau-v1` et `D:\RA_TUTEUR\tableau` ; si Q2 = oui, `git merge --no-ff origin/ui/accessibilite-v1` ; ~~12 conflits attendus~~ (sans objet depuis INTEG-RC-1, compte corrigé : 14) (`dock_seance.dart`, `nav_shell.dart`, `page_shell.dart`, `setting_row.dart`, `groupe_reglages.dart`, `compte_page.dart`, `demo_accessibilite_page.dart`, `module_reglages_observation.dart`, slang générés, 4 tests) ; union des deux intentions, slang régénéré par le verrou, jamais à la main.
 - **Fait** : aucun marqueur de conflit ; analyze 0 ; dossiers `test/core`, `test/features`, `test/accessibilite`, `test/widgets` verts, cités ; `salle_200_test.dart` vert ; captures 390 ×1 et ×2 de la salle élève, guidée, enseignant identiques à celles des deux branches d'origine (relues). Poussé sur la branche TB seulement.
 - **Pièges** : ne jamais fusionner dans `main` ni dans `corrections/…` ; ETATS-BTN-1 (3 signaux d'état) et MA-CMD-1 (icônes seules en MA) doivent survivre ensemble dans `dock_seance.dart`.
 
@@ -111,7 +111,7 @@
 ### TB-7b — Écrire (CMD-02, CMD-03)
 - **Lire** : plan §4.2, §7, §19.1, §20 (outils, options) ; `BarreStylet`, `PolitiqueSaisie`, `OutilsEnseignement`.
 - **Faire** : Pointeur (temporaire, sans trace), Écrire → Stylo, Surligner, Gomme par trait, Annuler (dernière opération personnelle) ; Couleur et Épaisseur en choix courts lisibles par forme, texte et couleur (couleurs des jetons existants seulement) ; téléphone : panneau fermé → palette courte (outil actif, Annuler, Terminer) ; Terminer revient à la lecture ; changement de page pendant un trait = trait résolu dans son contexte.
-- **Fait** : K-07 ; tests : un doigt ne dessine qu'en Écrire ; deux doigts déplacent ; Annuler ne retire pas le trait d'un autre ; captures palette courte 390 et panneau ouvert 1440.
+- **Fait** : K-07 ; tests : un doigt ne dessine qu'en Écrire ; le stylet n'écrit que si Écrire est actif (TB21) ; deux doigts déplacent ; Annuler ne retire pas le trait d'un autre ; captures palette courte 390, panneau ouvert 1440 et « le stylet n'écrit que si Écrire est actif » (trait au stylet refusé en lecture).
 - **Pièges** : pas de nouvelle couleur (TH-2) ; pas de perfect_freehand (pubspec interdit) ; repaint ciblé, traits terminés mis en cache (§13).
 
 ### TB-8 — Bibliothèque en séance (LIB-01 à LIB-04)

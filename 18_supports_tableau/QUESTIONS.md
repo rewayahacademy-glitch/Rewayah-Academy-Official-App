@@ -11,5 +11,5 @@ Relu contre `DECISIONS_DELEGUEES_2026-10-02.md`, K-53 et K-61 : rien de déjà t
 ## Q2 (orchestrateur) — Réunir `ui/accessibilite-v1` dans la branche du chantier ?
 
 - **Question** : peut-on fusionner `ui/accessibilite-v1` dans `ui/supports-tableau-v1` dès sa création, pour réutiliser les commandes qui se masquent et reviennent au toucher (MA-CMD-1) ?
-- **Choix recommandé** : oui, en étape TB-F, sur la seule branche du chantier (12 conflits connus, jamais dans `main`) ; sinon TB-2 devrait recopier ce composant, ce que K-10 interdit.
+- **Choix recommandé** : oui, en étape TB-F, sur la seule branche du chantier (~~12 conflits connus~~ sans objet depuis INTEG-RC-1, compte corrigé : 14 ; jamais dans `main`) ; sinon TB-2 devrait recopier ce composant, ce que K-10 interdit.
 - **Bloque** : TB-F, donc TB-1b et toutes les étapes d'écran.
