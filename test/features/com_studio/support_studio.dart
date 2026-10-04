@@ -1,5 +1,7 @@
-// Le support des tests COM-STU-1 : la vraie `StudioPage` sous un routeur
-// minimal (`/admin`, `/admin/studio`, `/admin/studio/canaux/:canalId`), dans
+// Le support des tests COM-STU-1 et COM-STU-2 : la vraie `StudioPage` sous un
+// routeur minimal (`/admin`, `/admin/studio`, `/admin/studio/canaux/:canalId`
+// et les modules canoniques qu'Aujourd'hui ouvre, chacun une page temoin qui
+// dit son chemin et son argument), dans
 // le vrai theme, a une taille, une langue, une echelle de texte et un reseau
 // donnes ; et un port double qui sait echouer, attendre ou laisser passer un
 // canal absent (pour prouver la defense de surface, R-COM-08).
@@ -13,12 +15,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/communications/port_brouillons.dart';
 import 'package:rewayah_academy/core/communications/port_elements_enregistres.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/features/com_studio/port_activite_studio.dart';
 import 'package:rewayah_academy/features/com_studio/port_studio.dart';
 import 'package:rewayah_academy/features/com_studio/studio_page.dart';
 import 'package:rewayah_academy/features/demo/communications/com_studio_demo.dart';
@@ -33,15 +37,36 @@ StudioDemo portDemo({
   SituationDemoStudio situation = SituationDemoStudio.normale,
 }) => StudioDemo(situation: situation, maintenant: maintenantTest);
 
+/// Les modules canoniques qu'Aujourd'hui peut ouvrir, montes comme pages
+/// temoins.
+const List<String> modulesTemoins = <String>[
+  Routes.adminPersonnesDossiers,
+  Routes.adminOperationsGroupes,
+  Routes.adminOperationsDemandes,
+  Routes.adminCommunicationsAnnonces,
+  Routes.adminCommunicationsMessages,
+];
+
+/// Le texte d'une page temoin : son chemin et son argument de navigation.
+String temoinModule(String chemin, Object? argument) =>
+    'module:$chemin:${argument ?? '-'}';
+
+/// L'adresse de la vue des canaux (Aujourd'hui est l'accueil du Studio).
+final String adresseCanaux = adresseVueStudio(VueStudio.canaux);
+
 /// Monte la vraie `StudioPage` sur [depart], et rend son routeur.
 ///
 /// [enregistres] : nul, le port neutre de production (indisponible) ; sinon
-/// le double en memoire.
+/// le double en memoire. [activite] : nul, le port neutre de production
+/// (indisponible). [brouillons] : nul, une memoire de session neuve (le
+/// comportement de production).
 Future<GoRouter> monterStudio(
   WidgetTester tester, {
   required PortStudio port,
-  String depart = Routes.adminStudio,
+  String? depart,
   PortElementsEnregistres? enregistres,
+  PortActiviteStudio? activite,
+  PortBrouillons? brouillons,
   Size taille = const Size(1440, 900),
   AppLocale langue = AppLocale.fr,
   double echelleTexte = 1,
@@ -55,7 +80,7 @@ Future<GoRouter> monterStudio(
   await tester.runAsync(() => LocaleSettings.setLocale(langue));
   addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
   final GoRouter routeur = GoRouter(
-    initialLocation: depart,
+    initialLocation: depart ?? adresseCanaux,
     routes: <RouteBase>[
       GoRoute(
         path: Routes.admin,
@@ -71,10 +96,17 @@ Future<GoRouter> monterStudio(
         builder: (BuildContext _, GoRouterState etat) =>
             StudioPage(canalId: etat.pathParameters['canalId']),
       ),
+      for (final String chemin in modulesTemoins)
+        GoRoute(
+          path: chemin,
+          builder: (BuildContext _, GoRouterState etat) =>
+              Scaffold(body: Text(temoinModule(chemin, etat.extra))),
+        ),
     ],
   );
   addTearDown(routeur.dispose);
   final PortElementsEnregistres? memoire = enregistres;
+  final PortActiviteStudio? activiteDonnee = activite;
   await tester.pumpWidget(
     ProviderScope(
       overrides: <Override>[
@@ -84,6 +116,11 @@ Future<GoRouter> monterStudio(
         portStudioProvider.overrideWithValue(port),
         if (memoire != null)
           portElementsEnregistresProvider.overrideWithValue(memoire),
+        if (activiteDonnee != null)
+          portActiviteStudioProvider.overrideWithValue(activiteDonnee),
+        portBrouillonsProvider.overrideWithValue(
+          brouillons ?? BrouillonsMemoire(),
+        ),
       ],
       child: TranslationProvider(
         child: MaterialApp.router(

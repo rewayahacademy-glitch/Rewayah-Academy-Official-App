@@ -1,15 +1,19 @@
-// Le Studio (COM-M03, COM-W03 ; spec section 6, section 9, section 18,
-// section 23, section 25 ; QUESTIONS Q1).
+// Le Studio (COM-M03, COM-W03, COM-M04, COM-W00 ; spec section 6, section 7,
+// section 8, section 9, section 14, section 15, section 18, section 23,
+// section 25 ; QUESTIONS Q1).
 //
-// `/admin/studio` (les canaux) et `/admin/studio/canaux/:canalId` (un
-// canal), ouverts par l'action « Le Studio » de l'en-tete de l'`AdminShell`
-// (et du tiroir sous 600). En V1, seule la direction (admin) y entre : la
-// garde est celle du routeur, la page ne lit aucun role.
+// `/admin/studio` (Aujourd'hui, l'accueil du Studio, spec section 14),
+// `/admin/studio?vue=canaux|enregistres|brouillons` (les autres vues) et
+// `/admin/studio/canaux/:canalId` (un canal), ouverts par l'action « Le
+// Studio » de l'en-tete de l'`AdminShell` (et du tiroir sous 600). En V1,
+// seule la direction (admin) y entre : la garde est celle du routeur, la page
+// ne lit aucun role.
 //
 // Hors de la coquille admin : Le Studio a SA coquille, posee ici sur les
 // composants du depot (`NavShell`, `PageShell`), avec sa navigation propre
-// (Canaux, Elements enregistres ; Aujourd'hui et Brouillons arrivent avec
-// COM-STU-2). La sortie (disque retour) ramene a l'Accueil admin. Rien de la
+// (Aujourd'hui, Canaux, Elements enregistres, Brouillons : spec section 15 ;
+// la recherche est un etat des Canaux, le Focus un etat du canal). La sortie
+// (disque retour) ramene a l'Accueil admin. Rien de la
 // maquette sombre n'est repris hors du perimetre : ni Taches, ni visio, ni
 // « Nouvel espace », ni Projets, ni favoris (UX_REVIEW L0, ecart 14).
 //
@@ -55,29 +59,39 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
+import 'aujourdhui_page.dart';
+import 'brouillons_studio.dart';
 import 'canal_page.dart';
 import 'elements_enregistres_studio.dart';
 import 'liste_canaux.dart';
 import 'panneau_partages.dart';
+import 'port_activite_studio.dart' show DestinationStudio;
 import 'port_studio.dart';
 import 'recherche_studio.dart';
 import 'visibilite_canal.dart';
 
-/// Les vues de premier niveau du Studio (sa navigation propre).
+/// Les vues de premier niveau du Studio (sa navigation propre), dans
+/// l'ordre de la navigation.
 enum VueStudio {
+  /// Aujourd'hui : l'accueil du Studio (COM-W00, COM-M04).
+  aujourdhui,
+
   /// Les canaux, et le canal ouvert.
   canaux,
 
   /// Les elements enregistres.
   enregistres,
+
+  /// Les brouillons.
+  brouillons,
 }
 
-/// La vue demandee par l'adresse (`?vue=enregistres`) ; les canaux sinon.
+/// La vue demandee par l'adresse (`?vue=canaux`) ; Aujourd'hui sinon.
 VueStudio vueStudioDepuis(String? nom) {
   for (final VueStudio v in VueStudio.values) {
     if (v.name == nom) return v;
   }
-  return VueStudio.canaux;
+  return VueStudio.aujourdhui;
 }
 
 /// L'adresse d'un canal du Studio, son identifiant encode.
@@ -86,12 +100,18 @@ String cheminCanalStudio(String canalId) =>
 
 /// L'adresse d'une vue du Studio.
 String adresseVueStudio(VueStudio vue) => switch (vue) {
-  VueStudio.canaux => Routes.adminStudio,
-  VueStudio.enregistres => Uri(
+  VueStudio.aujourdhui => Routes.adminStudio,
+  VueStudio.canaux || VueStudio.enregistres || VueStudio.brouillons => Uri(
     path: Routes.adminStudio,
     queryParameters: <String, String>{'vue': vue.name},
   ).toString(),
 };
+
+/// Ouvre une destination du Studio : son chemin, et l'argument de
+/// navigation qui ne passe jamais par l'adresse (l'identifiant d'un
+/// dossier).
+void ouvrirDestinationStudio(GoRouter routeur, DestinationStudio d) =>
+    routeur.go(d.chemin, extra: d.argument);
 
 /// Le Studio, page routee de la direction.
 class StudioPage extends StatelessWidget {
@@ -115,22 +135,34 @@ class StudioPage extends StatelessWidget {
       onQuitter: () => routeur.go(Routes.admin),
       onRetourListe: canal == null
           ? null
-          : () => routeur.go(Routes.adminStudio),
+          : () => routeur.go(adresseVueStudio(VueStudio.canaux)),
       child: switch (vue) {
+        VueStudio.aujourdhui => TableauAujourdhui(
+          onOuvrir: (DestinationStudio d) =>
+              ouvrirDestinationStudio(routeur, d),
+          onVoirBrouillons: () =>
+              routeur.go(adresseVueStudio(VueStudio.brouillons)),
+          destinationCanal: cheminCanalStudio,
+        ),
         VueStudio.canaux => EspaceStudio(
           canalId: canal,
           onOuvrirCanal: (String id) => routeur.go(cheminCanalStudio(id)),
           onOuvrir: routeur.go,
         ),
         VueStudio.enregistres => VueElementsEnregistres(onOuvrir: routeur.go),
+        VueStudio.brouillons => VueBrouillonsStudio(
+          onOuvrir: (DestinationStudio d) =>
+              ouvrirDestinationStudio(routeur, d),
+          destinationCanal: cheminCanalStudio,
+        ),
       },
     );
   }
 }
 
-/// La coquille du Studio : sa navigation (Canaux, Elements enregistres),
-/// son titre et sa sortie. Posee par la page routee et par la
-/// demonstration, chacune avec sa facon de changer de vue.
+/// La coquille du Studio : sa navigation (Aujourd'hui, Canaux, Elements
+/// enregistres, Brouillons), son titre et sa sortie. Posee par la page
+/// routee et par la demonstration, chacune avec sa facon de changer de vue.
 class CoquilleStudio extends StatelessWidget {
   /// Cree la coquille.
   const CoquilleStudio({
@@ -164,23 +196,38 @@ class CoquilleStudio extends StatelessWidget {
   /// defilement.
   final Widget child;
 
-  /// Un sous-titre ; par defaut, « Espace de travail de l'equipe ».
+  /// Un sous-titre ; par defaut, celui de la vue (« Espace de travail de
+  /// l'equipe » pour les canaux, « Le Studio » ailleurs).
   final String? sousTitre;
 
-  /// Les destinations de la navigation du Studio, dans l'ordre.
+  /// Les destinations de la navigation du Studio, dans l'ordre de
+  /// [VueStudio].
   static List<Destination> destinations() {
     final n = t.com.studio.navigation;
     return <Destination>[
-      Destination(
-        libelle: n.canaux,
-        icone: AppIcons.discussion,
-        chemin: VueStudio.canaux.name,
-      ),
-      Destination(
-        libelle: n.enregistres,
-        icone: AppIcons.cahier,
-        chemin: VueStudio.enregistres.name,
-      ),
+      for (final VueStudio v in VueStudio.values)
+        switch (v) {
+          VueStudio.aujourdhui => Destination(
+            libelle: n.aujourdhui,
+            icone: AppIcons.journee,
+            chemin: v.name,
+          ),
+          VueStudio.canaux => Destination(
+            libelle: n.canaux,
+            icone: AppIcons.discussion,
+            chemin: v.name,
+          ),
+          VueStudio.enregistres => Destination(
+            libelle: n.enregistres,
+            icone: AppIcons.cahier,
+            chemin: v.name,
+          ),
+          VueStudio.brouillons => Destination(
+            libelle: n.brouillons,
+            icone: AppIcons.crayon,
+            chemin: v.name,
+          ),
+        },
     ];
   }
 
@@ -197,13 +244,19 @@ class CoquilleStudio extends StatelessWidget {
       masquerBarreBasse: onRetourListe != null,
       child: PageShell(
         titre: switch (vue) {
+          VueStudio.aujourdhui => t.com.studio.aujourdhui.titre,
           VueStudio.canaux => t.com.studio.titre,
           VueStudio.enregistres => t.com.studio.navigation.enregistres,
+          VueStudio.brouillons => t.com.studio.brouillons.titre,
         },
-        sousTitre: switch (vue) {
-          VueStudio.canaux => sousTitre ?? t.com.studio.sousTitre,
-          VueStudio.enregistres => t.com.studio.titre,
-        },
+        sousTitre:
+            sousTitre ??
+            switch (vue) {
+              VueStudio.aujourdhui => t.com.studio.aujourdhui.sousTitre,
+              VueStudio.canaux => t.com.studio.sousTitre,
+              VueStudio.enregistres ||
+              VueStudio.brouillons => t.com.studio.titre,
+            },
         onRetour: switch (onRetourListe) {
           final VoidCallback retour
               when AppGabarit.de(context) == Gabarit.mobile =>

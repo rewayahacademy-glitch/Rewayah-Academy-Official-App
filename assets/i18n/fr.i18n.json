@@ -4805,8 +4805,76 @@
       "vide": "Aucune publication dans cette catégorie."
     },
     "studio": {
+      "aujourdhui": {
+        "titre": "@:com.socle.lexique.aujourdhui",
+        "sousTitre": "Ce qui mérite votre attention dans Le Studio",
+        "indicateurs": {
+          "titre": "Indicateurs d'attention",
+          "aTraiter": "@:com.socle.lexique.aTraiter",
+          "mentions": "Mentions et réponses",
+          "decisions": "Décisions en attente",
+          "nonLus": "Non lus"
+        },
+        "blocs": {
+          "aTraiter": "À traiter aujourd'hui",
+          "mentions": "Mentions et réponses",
+          "decisions": "Décisions en attente",
+          "echeances": "Échéances proches",
+          "activite": "Activité récente",
+          "brouillons": "Brouillons",
+          "acces": "Accès rapides"
+        },
+        "videsBlocs": {
+          "aTraiter": "Rien à traiter aujourd'hui.",
+          "mentions": "Aucune mention ni réponse en attente.",
+          "decisions": "Aucune décision en attente.",
+          "echeances": "Aucune échéance proche.",
+          "activite": "Aucune activité récente."
+        },
+        "videTitre": "Rien à traiter pour le moment",
+        "dansCanal": "Dans {nom}",
+        "echeance": "Échéance le {date}",
+        "seTraiteDans": "Se traite dans {module}",
+        "ouvrirDans": "Ouvrir dans {module} : {libelle}",
+        "modules": {
+          "studio": "@:com.socle.lexique.studio",
+          "finance": "Finance",
+          "planning": "Planning",
+          "dossiers": "Dossiers",
+          "classes": "Classes",
+          "admissions": "Admissions",
+          "communications": "Administration des communications"
+        },
+        "acces": {
+          "messages": "@:com.socle.lexique.messagesMetier",
+          "messagesDetail": "Les fils avec les familles, les enseignants et les contrôleurs",
+          "annonces": "Annonces",
+          "annoncesDetail": "Publier et suivre les annonces",
+          "dossiers": "Dossiers à valider",
+          "dossiersDetail": "Les dossiers prêts pour une décision",
+          "classes": "Classes",
+          "classesDetail": "Les Classes, leurs horaires et leurs enseignants",
+          "demandes": "Demandes à trancher",
+          "demandesDetail": "Les demandes de changement en attente"
+        }
+      },
+      "brouillons": {
+        "titre": "Brouillons",
+        "detail": "Les messages commencés dans un canal et pas encore envoyés. Ils restent sur cet appareil le temps de la session, sans synchronisation.",
+        "dansCanal": "Brouillon dans {nom}",
+        "canalInconnu": "Brouillon dans un canal",
+        "canalIndisponible": "Brouillon dans un canal qui n'est plus disponible",
+        "modifie": "Modifié le {moment}",
+        "reprendre": "Reprendre le brouillon dans {nom}",
+        "videTitre": "Aucun brouillon",
+        "vide": "Un message commencé dans un canal et pas encore envoyé apparaîtra ici.",
+        "tous": "Voir tous les brouillons ({nombre})",
+        "restaure": "Brouillon restauré. Vous pouvez reprendre votre message."
+      },
       "sousTitre": "Espace de travail de l'équipe",
       "navigation": {
+        "aujourdhui": "@:com.socle.lexique.aujourdhui",
+        "brouillons": "Brouillons",
         "canaux": "Canaux",
         "enregistres": "Éléments enregistrés"
       },
@@ -4903,6 +4971,8 @@
         "messageDe": "{auteur}, dans {canal}"
       },
       "demo": {
+        "aujourdhuiVide": "Aujourd'hui sans activité",
+        "horsDemo": "Dans l'application, cette ligne ouvre {module}. La démonstration reste sur cette page.",
         "choisir": "Choisissez une situation à essayer.",
         "normale": "Le Studio et ses canaux",
         "echec": "Envoi non confirmé",

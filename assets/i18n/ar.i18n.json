@@ -293,8 +293,76 @@
       "vide": "لا توجد منشورات في هذه الفئة."
     },
     "studio": {
+      "aujourdhui": {
+        "titre": "@:com.socle.lexique.aujourdhui",
+        "sousTitre": "ما يستحق انتباهك في الاستوديو",
+        "indicateurs": {
+          "titre": "مؤشرات الانتباه",
+          "aTraiter": "@:com.socle.lexique.aTraiter",
+          "mentions": "الإشارات والردود",
+          "decisions": "قرارات معلّقة",
+          "nonLus": "غير مقروءة"
+        },
+        "blocs": {
+          "aTraiter": "للمعالجة اليوم",
+          "mentions": "الإشارات والردود",
+          "decisions": "قرارات معلّقة",
+          "echeances": "مواعيد قريبة",
+          "activite": "النشاط الأخير",
+          "brouillons": "المسودات",
+          "acces": "وصول سريع"
+        },
+        "videsBlocs": {
+          "aTraiter": "لا شيء للمعالجة اليوم.",
+          "mentions": "لا توجد إشارات أو ردود في الانتظار.",
+          "decisions": "لا توجد قرارات معلّقة.",
+          "echeances": "لا توجد مواعيد قريبة.",
+          "activite": "لا يوجد نشاط حديث."
+        },
+        "videTitre": "لا شيء للمعالجة حاليًا",
+        "dansCanal": "في {nom}",
+        "echeance": "الموعد {date}",
+        "seTraiteDans": "يُعالَج في {module}",
+        "ouvrirDans": "فتح في {module}: {libelle}",
+        "modules": {
+          "studio": "@:com.socle.lexique.studio",
+          "finance": "المالية",
+          "planning": "الجدولة",
+          "dossiers": "الملفات",
+          "classes": "الفصول",
+          "admissions": "القبول",
+          "communications": "إدارة الاتصالات"
+        },
+        "acces": {
+          "messages": "@:com.socle.lexique.messagesMetier",
+          "messagesDetail": "المحادثات مع الأسر والمعلّمين والمراقبين",
+          "annonces": "الإعلانات",
+          "annoncesDetail": "نشر الإعلانات ومتابعتها",
+          "dossiers": "ملفات للتصديق",
+          "dossiersDetail": "الملفات الجاهزة لاتخاذ قرار",
+          "classes": "الفصول",
+          "classesDetail": "الفصول ومواعيدها ومعلّموها",
+          "demandes": "طلبات بانتظار القرار",
+          "demandesDetail": "طلبات التغيير المنتظرة"
+        }
+      },
+      "brouillons": {
+        "titre": "المسودات",
+        "detail": "الرسائل التي بدأتها في قناة ولم تُرسل بعد. تبقى على هذا الجهاز طوال الجلسة، دون مزامنة.",
+        "dansCanal": "مسودة في {nom}",
+        "canalInconnu": "مسودة في قناة",
+        "canalIndisponible": "مسودة في قناة لم تعد متاحة",
+        "modifie": "عُدّلت في {moment}",
+        "reprendre": "متابعة المسودة في {nom}",
+        "videTitre": "لا توجد مسودات",
+        "vide": "ستظهر هنا أي رسالة بدأتها في قناة ولم تُرسل بعد.",
+        "tous": "عرض كل المسودات ({nombre})",
+        "restaure": "استُعيدت المسودة. يمكنك متابعة رسالتك."
+      },
       "sousTitre": "مساحة عمل الفريق",
       "navigation": {
+        "aujourdhui": "@:com.socle.lexique.aujourdhui",
+        "brouillons": "المسودات",
         "canaux": "القنوات",
         "enregistres": "العناصر المحفوظة"
       },
@@ -391,6 +459,8 @@
         "messageDe": "{auteur}، في {canal}"
       },
       "demo": {
+        "aujourdhuiVide": "اليوم دون نشاط",
+        "horsDemo": "في التطبيق، يفتح هذا السطر {module}. يبقى العرض التجريبي على هذه الصفحة.",
         "choisir": "اختر حالة لتجربتها.",
         "normale": "الاستوديو وقنواته",
         "echec": "إرسال غير مؤكد",

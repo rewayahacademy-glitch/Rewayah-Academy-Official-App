@@ -1,7 +1,8 @@
-// COM-STU-1 : la demonstration du Studio (hors production, spec section 26) :
-// l'index des Communications mene au Studio, chaque situation s'ouvre, et le
-// port de demonstration se comporte comme le serveur attendu (jamais un
-// canal absent, R-COM-08).
+// COM-STU-1 et COM-STU-2 : la demonstration du Studio (hors production, spec
+// section 26) : l'index des Communications mene au Studio, chaque situation
+// s'ouvre (Aujourd'hui avec activite et vide compris), et les ports de
+// demonstration se comportent comme le serveur attendu (jamais un canal
+// absent, R-COM-08).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,6 +17,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
+import 'package:rewayah_academy/features/com_studio/aujourdhui_page.dart';
 import 'package:rewayah_academy/features/com_studio/canal_page.dart';
 import 'package:rewayah_academy/features/com_studio/elements_enregistres_studio.dart';
 import 'package:rewayah_academy/features/com_studio/liste_canaux.dart';
@@ -85,6 +87,10 @@ void main() {
     ) async {
       await _monter(tester, adresseDemoStudio());
       expect(find.byType(CoquilleStudio), findsOneWidget);
+      // Le Studio s'ouvre sur son accueil, Aujourd'hui.
+      expect(find.byType(TableauAujourdhui), findsOneWidget);
+      await tester.tap(find.text(t.com.studio.navigation.canaux).first);
+      await tester.pumpAndSettle();
       expect(find.byType(ListeCanaux), findsOneWidget);
       await tester.tap(find.text('Suivi qualité'));
       await tester.pumpAndSettle();
@@ -108,6 +114,52 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets("Aujourd'hui de la demonstration : une mention ouvre son "
+        'canal ici ; un module hors du Studio est nomme, la demonstration '
+        'reste', (WidgetTester tester) async {
+      await _monter(tester, adresseDemoStudio());
+      expect(find.byType(TableauAujourdhui), findsOneWidget);
+      expect(find.byKey(cleAvisHorsDemoStudio), findsNothing);
+      final Finder dossier = find.text(
+        'Dossier de la famille Karim prêt pour une décision',
+      );
+      await tester.ensureVisible(dossier);
+      await tester.pumpAndSettle();
+      await tester.tap(dossier);
+      await tester.pumpAndSettle();
+      expect(
+        find.text(
+          t.com.studio.demo.horsDemo(
+            module: t.com.studio.aujourdhui.modules.dossiers,
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(find.byType(TableauAujourdhui), findsOneWidget);
+      final Finder mention = find.text('Samira vous a mentionnée');
+      await tester.ensureVisible(mention);
+      await tester.pumpAndSettle();
+      await tester.tap(mention);
+      await tester.pumpAndSettle();
+      expect(find.byType(CanalStudio), findsOneWidget);
+      expect(find.byKey(cleAvisHorsDemoStudio), findsNothing);
+      // Le brouillon de la demonstration est remis dans le canal Admissions.
+      expect(find.byKey(CanalStudio.cleBrouillonRestaure), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets("Aujourd'hui sans activite : l etat vide de la spec", (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        adresseDemoStudio(situation: SituationDemoStudio.aujourdhuiVide),
+      );
+      expect(find.text(t.com.studio.vide), findsOneWidget);
+      expect(find.text(t.com.studio.brouillons.vide), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('canal prive demande par l adresse : non rendu (R-COM-08)', (
       WidgetTester tester,
     ) async {
@@ -124,6 +176,8 @@ void main() {
         tester,
         adresseDemoStudio(situation: SituationDemoStudio.sansCanaux),
       );
+      await tester.tap(find.text(t.com.studio.navigation.canaux).first);
+      await tester.pumpAndSettle();
       expect(find.text(t.com.studio.aucunCanalTitre), findsOneWidget);
     });
 
@@ -134,6 +188,8 @@ void main() {
         adresseDemoStudio(),
         taille: const Size(390, 844),
       );
+      await tester.tap(find.text(t.com.studio.navigation.canaux).first);
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Organisation générale'));
       await tester.pumpAndSettle();
       expect(find.byType(FilDiscussion), findsOneWidget);

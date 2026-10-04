@@ -11085,6 +11085,8 @@ class Traductions$com$studio$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$com$studio$aujourdhui$fr aujourdhui = Traductions$com$studio$aujourdhui$fr.internal(_root);
+	late final Traductions$com$studio$brouillons$fr brouillons = Traductions$com$studio$brouillons$fr.internal(_root);
 
 	/// fr: 'Espace de travail de l'équipe'
 	String get sousTitre => 'Espace de travail de l\'équipe';
@@ -15273,6 +15275,85 @@ class Traductions$com$socle$navigation$fr {
 	late final Traductions$com$socle$navigation$demo$fr demo = Traductions$com$socle$navigation$demo$fr.internal(_root);
 }
 
+// Path: com.studio.aujourdhui
+class Traductions$com$studio$aujourdhui$fr {
+	Traductions$com$studio$aujourdhui$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aujourd'hui'
+	String get titre => _root.com.socle.lexique.aujourdhui;
+
+	/// fr: 'Ce qui mérite votre attention dans Le Studio'
+	String get sousTitre => 'Ce qui mérite votre attention dans Le Studio';
+
+	late final Traductions$com$studio$aujourdhui$indicateurs$fr indicateurs = Traductions$com$studio$aujourdhui$indicateurs$fr.internal(_root);
+	late final Traductions$com$studio$aujourdhui$blocs$fr blocs = Traductions$com$studio$aujourdhui$blocs$fr.internal(_root);
+	late final Traductions$com$studio$aujourdhui$videsBlocs$fr videsBlocs = Traductions$com$studio$aujourdhui$videsBlocs$fr.internal(_root);
+
+	/// fr: 'Rien à traiter pour le moment'
+	String get videTitre => 'Rien à traiter pour le moment';
+
+	/// fr: 'Dans {nom}'
+	String dansCanal({required Object nom}) => 'Dans ${nom}';
+
+	/// fr: 'Échéance le {date}'
+	String echeance({required Object date}) => 'Échéance le ${date}';
+
+	/// fr: 'Se traite dans {module}'
+	String seTraiteDans({required Object module}) => 'Se traite dans ${module}';
+
+	/// fr: 'Ouvrir dans {module} : {libelle}'
+	String ouvrirDans({required Object module, required Object libelle}) => 'Ouvrir dans ${module} : ${libelle}';
+
+	late final Traductions$com$studio$aujourdhui$modules$fr modules = Traductions$com$studio$aujourdhui$modules$fr.internal(_root);
+	late final Traductions$com$studio$aujourdhui$acces$fr acces = Traductions$com$studio$aujourdhui$acces$fr.internal(_root);
+}
+
+// Path: com.studio.brouillons
+class Traductions$com$studio$brouillons$fr {
+	Traductions$com$studio$brouillons$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Brouillons'
+	String get titre => 'Brouillons';
+
+	/// fr: 'Les messages commencés dans un canal et pas encore envoyés. Ils restent sur cet appareil le temps de la session, sans synchronisation.'
+	String get detail => 'Les messages commencés dans un canal et pas encore envoyés. Ils restent sur cet appareil le temps de la session, sans synchronisation.';
+
+	/// fr: 'Brouillon dans {nom}'
+	String dansCanal({required Object nom}) => 'Brouillon dans ${nom}';
+
+	/// fr: 'Brouillon dans un canal'
+	String get canalInconnu => 'Brouillon dans un canal';
+
+	/// fr: 'Brouillon dans un canal qui n'est plus disponible'
+	String get canalIndisponible => 'Brouillon dans un canal qui n\'est plus disponible';
+
+	/// fr: 'Modifié le {moment}'
+	String modifie({required Object moment}) => 'Modifié le ${moment}';
+
+	/// fr: 'Reprendre le brouillon dans {nom}'
+	String reprendre({required Object nom}) => 'Reprendre le brouillon dans ${nom}';
+
+	/// fr: 'Aucun brouillon'
+	String get videTitre => 'Aucun brouillon';
+
+	/// fr: 'Un message commencé dans un canal et pas encore envoyé apparaîtra ici.'
+	String get vide => 'Un message commencé dans un canal et pas encore envoyé apparaîtra ici.';
+
+	/// fr: 'Voir tous les brouillons ({nombre})'
+	String tous({required Object nombre}) => 'Voir tous les brouillons (${nombre})';
+
+	/// fr: 'Brouillon restauré. Vous pouvez reprendre votre message.'
+	String get restaure => 'Brouillon restauré. Vous pouvez reprendre votre message.';
+}
+
 // Path: com.studio.navigation
 class Traductions$com$studio$navigation$fr {
 	Traductions$com$studio$navigation$fr.internal(this._root);
@@ -15280,6 +15361,12 @@ class Traductions$com$studio$navigation$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+
+	/// fr: 'Aujourd'hui'
+	String get aujourdhui => _root.com.socle.lexique.aujourdhui;
+
+	/// fr: 'Brouillons'
+	String get brouillons => 'Brouillons';
 
 	/// fr: 'Canaux'
 	String get canaux => 'Canaux';
@@ -15564,6 +15651,12 @@ class Traductions$com$studio$demo$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+
+	/// fr: 'Aujourd'hui sans activité'
+	String get aujourdhuiVide => 'Aujourd\'hui sans activité';
+
+	/// fr: 'Dans l'application, cette ligne ouvre {module}. La démonstration reste sur cette page.'
+	String horsDemo({required Object module}) => 'Dans l\'application, cette ligne ouvre ${module}. La démonstration reste sur cette page.';
 
 	/// fr: 'Choisissez une situation à essayer.'
 	String get choisir => 'Choisissez une situation à essayer.';
@@ -16263,6 +16356,153 @@ class Traductions$com$socle$navigation$demo$fr {
 
 	/// fr: 'Choisissez un espace à essayer.'
 	String get choisir => 'Choisissez un espace à essayer.';
+}
+
+// Path: com.studio.aujourdhui.indicateurs
+class Traductions$com$studio$aujourdhui$indicateurs$fr {
+	Traductions$com$studio$aujourdhui$indicateurs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Indicateurs d'attention'
+	String get titre => 'Indicateurs d\'attention';
+
+	/// fr: 'À traiter'
+	String get aTraiter => _root.com.socle.lexique.aTraiter;
+
+	/// fr: 'Mentions et réponses'
+	String get mentions => 'Mentions et réponses';
+
+	/// fr: 'Décisions en attente'
+	String get decisions => 'Décisions en attente';
+
+	/// fr: 'Non lus'
+	String get nonLus => 'Non lus';
+}
+
+// Path: com.studio.aujourdhui.blocs
+class Traductions$com$studio$aujourdhui$blocs$fr {
+	Traductions$com$studio$aujourdhui$blocs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À traiter aujourd'hui'
+	String get aTraiter => 'À traiter aujourd\'hui';
+
+	/// fr: 'Mentions et réponses'
+	String get mentions => 'Mentions et réponses';
+
+	/// fr: 'Décisions en attente'
+	String get decisions => 'Décisions en attente';
+
+	/// fr: 'Échéances proches'
+	String get echeances => 'Échéances proches';
+
+	/// fr: 'Activité récente'
+	String get activite => 'Activité récente';
+
+	/// fr: 'Brouillons'
+	String get brouillons => 'Brouillons';
+
+	/// fr: 'Accès rapides'
+	String get acces => 'Accès rapides';
+}
+
+// Path: com.studio.aujourdhui.videsBlocs
+class Traductions$com$studio$aujourdhui$videsBlocs$fr {
+	Traductions$com$studio$aujourdhui$videsBlocs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Rien à traiter aujourd'hui.'
+	String get aTraiter => 'Rien à traiter aujourd\'hui.';
+
+	/// fr: 'Aucune mention ni réponse en attente.'
+	String get mentions => 'Aucune mention ni réponse en attente.';
+
+	/// fr: 'Aucune décision en attente.'
+	String get decisions => 'Aucune décision en attente.';
+
+	/// fr: 'Aucune échéance proche.'
+	String get echeances => 'Aucune échéance proche.';
+
+	/// fr: 'Aucune activité récente.'
+	String get activite => 'Aucune activité récente.';
+}
+
+// Path: com.studio.aujourdhui.modules
+class Traductions$com$studio$aujourdhui$modules$fr {
+	Traductions$com$studio$aujourdhui$modules$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le Studio'
+	String get studio => _root.com.socle.lexique.studio;
+
+	/// fr: 'Finance'
+	String get finance => 'Finance';
+
+	/// fr: 'Planning'
+	String get planning => 'Planning';
+
+	/// fr: 'Dossiers'
+	String get dossiers => 'Dossiers';
+
+	/// fr: 'Classes'
+	String get classes => 'Classes';
+
+	/// fr: 'Admissions'
+	String get admissions => 'Admissions';
+
+	/// fr: 'Administration des communications'
+	String get communications => 'Administration des communications';
+}
+
+// Path: com.studio.aujourdhui.acces
+class Traductions$com$studio$aujourdhui$acces$fr {
+	Traductions$com$studio$aujourdhui$acces$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Messages métier'
+	String get messages => _root.com.socle.lexique.messagesMetier;
+
+	/// fr: 'Les fils avec les familles, les enseignants et les contrôleurs'
+	String get messagesDetail => 'Les fils avec les familles, les enseignants et les contrôleurs';
+
+	/// fr: 'Annonces'
+	String get annonces => 'Annonces';
+
+	/// fr: 'Publier et suivre les annonces'
+	String get annoncesDetail => 'Publier et suivre les annonces';
+
+	/// fr: 'Dossiers à valider'
+	String get dossiers => 'Dossiers à valider';
+
+	/// fr: 'Les dossiers prêts pour une décision'
+	String get dossiersDetail => 'Les dossiers prêts pour une décision';
+
+	/// fr: 'Classes'
+	String get classes => 'Classes';
+
+	/// fr: 'Les Classes, leurs horaires et leurs enseignants'
+	String get classesDetail => 'Les Classes, leurs horaires et leurs enseignants';
+
+	/// fr: 'Demandes à trancher'
+	String get demandes => 'Demandes à trancher';
+
+	/// fr: 'Les demandes de changement en attente'
+	String get demandesDetail => 'Les demandes de changement en attente';
 }
 
 // Path: com.studio.enregistres.types
@@ -20343,13 +20583,69 @@ extension on Traductions {
 			'com.vocal.titre' => 'Message vocal',
 			'com.communaute.titre' => _root.com.socle.lexique.communaute,
 			'com.communaute.vide' => 'Aucune publication dans cette catégorie.',
+			'com.studio.aujourdhui.titre' => _root.com.socle.lexique.aujourdhui,
+			'com.studio.aujourdhui.sousTitre' => 'Ce qui mérite votre attention dans Le Studio',
+			'com.studio.aujourdhui.indicateurs.titre' => 'Indicateurs d\'attention',
+			'com.studio.aujourdhui.indicateurs.aTraiter' => _root.com.socle.lexique.aTraiter,
+			'com.studio.aujourdhui.indicateurs.mentions' => 'Mentions et réponses',
+			'com.studio.aujourdhui.indicateurs.decisions' => 'Décisions en attente',
+			'com.studio.aujourdhui.indicateurs.nonLus' => 'Non lus',
+			'com.studio.aujourdhui.blocs.aTraiter' => 'À traiter aujourd\'hui',
+			'com.studio.aujourdhui.blocs.mentions' => 'Mentions et réponses',
+			'com.studio.aujourdhui.blocs.decisions' => 'Décisions en attente',
+			'com.studio.aujourdhui.blocs.echeances' => 'Échéances proches',
+			'com.studio.aujourdhui.blocs.activite' => 'Activité récente',
+			'com.studio.aujourdhui.blocs.brouillons' => 'Brouillons',
+			'com.studio.aujourdhui.blocs.acces' => 'Accès rapides',
+			'com.studio.aujourdhui.videsBlocs.aTraiter' => 'Rien à traiter aujourd\'hui.',
+			'com.studio.aujourdhui.videsBlocs.mentions' => 'Aucune mention ni réponse en attente.',
+			'com.studio.aujourdhui.videsBlocs.decisions' => 'Aucune décision en attente.',
+			'com.studio.aujourdhui.videsBlocs.echeances' => 'Aucune échéance proche.',
+			'com.studio.aujourdhui.videsBlocs.activite' => 'Aucune activité récente.',
+			'com.studio.aujourdhui.videTitre' => 'Rien à traiter pour le moment',
+			'com.studio.aujourdhui.dansCanal' => ({required Object nom}) => 'Dans ${nom}',
+			'com.studio.aujourdhui.echeance' => ({required Object date}) => 'Échéance le ${date}',
+			'com.studio.aujourdhui.seTraiteDans' => ({required Object module}) => 'Se traite dans ${module}',
+			'com.studio.aujourdhui.ouvrirDans' => ({required Object module, required Object libelle}) => 'Ouvrir dans ${module} : ${libelle}',
+			'com.studio.aujourdhui.modules.studio' => _root.com.socle.lexique.studio,
+			'com.studio.aujourdhui.modules.finance' => 'Finance',
+			'com.studio.aujourdhui.modules.planning' => 'Planning',
+			'com.studio.aujourdhui.modules.dossiers' => 'Dossiers',
+			'com.studio.aujourdhui.modules.classes' => 'Classes',
+			'com.studio.aujourdhui.modules.admissions' => 'Admissions',
+			'com.studio.aujourdhui.modules.communications' => 'Administration des communications',
+			'com.studio.aujourdhui.acces.messages' => _root.com.socle.lexique.messagesMetier,
+			'com.studio.aujourdhui.acces.messagesDetail' => 'Les fils avec les familles, les enseignants et les contrôleurs',
+			'com.studio.aujourdhui.acces.annonces' => 'Annonces',
+			'com.studio.aujourdhui.acces.annoncesDetail' => 'Publier et suivre les annonces',
+			'com.studio.aujourdhui.acces.dossiers' => 'Dossiers à valider',
+			'com.studio.aujourdhui.acces.dossiersDetail' => 'Les dossiers prêts pour une décision',
+			'com.studio.aujourdhui.acces.classes' => 'Classes',
+			'com.studio.aujourdhui.acces.classesDetail' => 'Les Classes, leurs horaires et leurs enseignants',
+			'com.studio.aujourdhui.acces.demandes' => 'Demandes à trancher',
+			'com.studio.aujourdhui.acces.demandesDetail' => 'Les demandes de changement en attente',
+			'com.studio.brouillons.titre' => 'Brouillons',
+			'com.studio.brouillons.detail' => 'Les messages commencés dans un canal et pas encore envoyés. Ils restent sur cet appareil le temps de la session, sans synchronisation.',
+			'com.studio.brouillons.dansCanal' => ({required Object nom}) => 'Brouillon dans ${nom}',
+			'com.studio.brouillons.canalInconnu' => 'Brouillon dans un canal',
+			'com.studio.brouillons.canalIndisponible' => 'Brouillon dans un canal qui n\'est plus disponible',
+			'com.studio.brouillons.modifie' => ({required Object moment}) => 'Modifié le ${moment}',
+			'com.studio.brouillons.reprendre' => ({required Object nom}) => 'Reprendre le brouillon dans ${nom}',
+			'com.studio.brouillons.videTitre' => 'Aucun brouillon',
+			'com.studio.brouillons.vide' => 'Un message commencé dans un canal et pas encore envoyé apparaîtra ici.',
+			'com.studio.brouillons.tous' => ({required Object nombre}) => 'Voir tous les brouillons (${nombre})',
+			'com.studio.brouillons.restaure' => 'Brouillon restauré. Vous pouvez reprendre votre message.',
 			'com.studio.sousTitre' => 'Espace de travail de l\'équipe',
+			'com.studio.navigation.aujourdhui' => _root.com.socle.lexique.aujourdhui,
+			'com.studio.navigation.brouillons' => 'Brouillons',
 			'com.studio.navigation.canaux' => 'Canaux',
 			'com.studio.navigation.enregistres' => 'Éléments enregistrés',
 			'com.studio.choisirTitre' => 'Choisissez un canal',
 			'com.studio.choisir' => 'Choisissez un canal dans la liste pour lire la discussion et y écrire.',
 			'com.studio.aucunCanalTitre' => 'Aucun canal pour le moment',
 			'com.studio.aucunCanal' => 'Les canaux qui vous sont ouverts apparaîtront ici.',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.sections.organisation' => 'Organisation',
 			'com.studio.sections.admissionsFamilles' => 'Admissions & familles',
 			'com.studio.sections.pedagogieQualite' => 'Pédagogie & qualité',
@@ -20404,8 +20700,6 @@ extension on Traductions {
 			'com.studio.enregistres.sansDestination' => ({required Object type}) => '${type}, ne s\'ouvre plus d\'ici',
 			'com.studio.enregistres.types.canal' => 'Canal',
 			'com.studio.enregistres.types.publication' => 'Publication',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.enregistres.types.message' => 'Message',
 			'com.studio.enregistres.types.element' => 'Élément du Studio',
 			'com.studio.recherche.champ' => 'Rechercher dans Le Studio',
@@ -20424,6 +20718,8 @@ extension on Traductions {
 			'com.studio.recherche.fichiers' => 'Fichiers',
 			'com.studio.recherche.dansCanal' => ({required Object canal}) => 'Dans ${canal}',
 			'com.studio.recherche.messageDe' => ({required Object auteur, required Object canal}) => '${auteur}, dans ${canal}',
+			'com.studio.demo.aujourdhuiVide' => 'Aujourd\'hui sans activité',
+			'com.studio.demo.horsDemo' => ({required Object module}) => 'Dans l\'application, cette ligne ouvre ${module}. La démonstration reste sur cette page.',
 			'com.studio.demo.choisir' => 'Choisissez une situation à essayer.',
 			'com.studio.demo.normale' => 'Le Studio et ses canaux',
 			'com.studio.demo.echec' => 'Envoi non confirmé',

@@ -17,6 +17,10 @@
 // reactions secondaires se branchent a COM-FUS : `FilDiscussion` (socle) ne
 // porte encore que du texte.
 //
+// Le texte du champ est garde comme brouillon le temps de la session et
+// remis a la reouverture du canal, avec la phrase « Brouillon restaure »
+// (COM-STU-2, spec section 8.2, `brouillons_studio.dart`).
+//
 // Un canal ou la personne ne peut pas ecrire (capacite `ecrire` absente du
 // canal rendu, COM-BR-16) se lit sans champ ni bouton : une phrase dit la
 // limite, aucun bouton grise.
@@ -36,6 +40,7 @@ import '../../core/widgets/fil_discussion.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../accueil_famille/bloc_seance.dart'
     show dateDeLAppareil, heureDeLAppareil;
+import 'brouillons_studio.dart';
 import 'liste_canaux.dart';
 import 'panneau_partages.dart' show libelleMembres;
 import 'port_studio.dart';
@@ -163,6 +168,11 @@ class CanalStudio extends StatefulWidget {
     'studio-canal-lecture-seule',
   );
 
+  /// La cle de la phrase « Brouillon restaure », pour les tests.
+  static const ValueKey<String> cleBrouillonRestaure = ValueKey<String>(
+    'studio-canal-brouillon-restaure',
+  );
+
   /// La cle de l'etat vide d'un canal en lecture seule, pour les tests.
   static const ValueKey<String> cleAucunMessage = ValueKey<String>(
     'studio-canal-aucun-message',
@@ -271,32 +281,57 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
     }
   }
 
+  /// L'en-tete du canal ; avec [restaure], la phrase « Brouillon
+  /// restaure » dessous.
+  Widget _entete(Canal canal, {bool restaure = false}) => Padding(
+    padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        EnteteCanal(canal: canal),
+        if (restaure) ...<Widget>[
+          Ecart.vSm,
+          Text(
+            t.com.studio.brouillons.restaure,
+            key: CanalStudio.cleBrouillonRestaure,
+            style: AppPalette.of(context).inkMuted.applyTo(
+              Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+            ),
+          ),
+        ],
+      ],
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     final Canal canal = widget.canal;
-    final Widget entete = Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-      child: EnteteCanal(canal: canal),
-    );
     if (!canal.peut(CapaciteCanal.ecrire)) {
-      return _CanalEnLecture(canal: canal, entete: entete);
+      return _CanalEnLecture(canal: canal, entete: _entete(canal));
     }
     final String soi = t.com.socle.composants.composer.auteurSoi;
-    return FilDiscussion(
-      key: ValueKey<String>('studio-fil-${canal.id}'),
-      entete: entete,
-      messages: <MessageFil>[
-        for (final MessageCommunication m in canal.messages)
-          MessageFil(
-            id: m.id,
-            auteur: m.deSoi ? soi : m.auteur.nomAffiche,
-            texte: texteMessageCanal(m),
-            horodatage: horodatageCanal(m.envoyeLe),
-            deSoi: m.deSoi,
-          ),
-      ],
-      textes: textesCanal(canal.resume),
-      onEnvoyer: _envoyer,
+    // Le texte du champ est garde comme brouillon (memoire de session,
+    // spec section 8.2) et remis a la reouverture du canal (COM-STU-2).
+    return PersistanceBrouillonCanal(
+      key: ValueKey<String>('studio-brouillon-${canal.id}'),
+      canalId: canal.id,
+      constructeur: (BuildContext _, bool restaure) => FilDiscussion(
+        key: ValueKey<String>('studio-fil-${canal.id}'),
+        entete: _entete(canal, restaure: restaure),
+        messages: <MessageFil>[
+          for (final MessageCommunication m in canal.messages)
+            MessageFil(
+              id: m.id,
+              auteur: m.deSoi ? soi : m.auteur.nomAffiche,
+              texte: texteMessageCanal(m),
+              horodatage: horodatageCanal(m.envoyeLe),
+              deSoi: m.deSoi,
+            ),
+        ],
+        textes: textesCanal(canal.resume),
+        onEnvoyer: _envoyer,
+      ),
     );
   }
 }

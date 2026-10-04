@@ -366,6 +366,8 @@ class _Traductions$com$studio$ar extends Traductions$com$studio$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$com$studio$aujourdhui$ar aujourdhui = _Traductions$com$studio$aujourdhui$ar._(_root);
+	@override late final _Traductions$com$studio$brouillons$ar brouillons = _Traductions$com$studio$brouillons$ar._(_root);
 	@override String get sousTitre => 'مساحة عمل الفريق';
 	@override late final _Traductions$com$studio$navigation$ar navigation = _Traductions$com$studio$navigation$ar._(_root);
 	@override String get choisirTitre => 'اختر قناة';
@@ -537,6 +539,47 @@ class _Traductions$com$socle$navigation$ar extends Traductions$com$socle$navigat
 	@override late final _Traductions$com$socle$navigation$demo$ar demo = _Traductions$com$socle$navigation$demo$ar._(_root);
 }
 
+// Path: com.studio.aujourdhui
+class _Traductions$com$studio$aujourdhui$ar extends Traductions$com$studio$aujourdhui$fr {
+	_Traductions$com$studio$aujourdhui$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => _root.com.socle.lexique.aujourdhui;
+	@override String get sousTitre => 'ما يستحق انتباهك في الاستوديو';
+	@override late final _Traductions$com$studio$aujourdhui$indicateurs$ar indicateurs = _Traductions$com$studio$aujourdhui$indicateurs$ar._(_root);
+	@override late final _Traductions$com$studio$aujourdhui$blocs$ar blocs = _Traductions$com$studio$aujourdhui$blocs$ar._(_root);
+	@override late final _Traductions$com$studio$aujourdhui$videsBlocs$ar videsBlocs = _Traductions$com$studio$aujourdhui$videsBlocs$ar._(_root);
+	@override String get videTitre => 'لا شيء للمعالجة حاليًا';
+	@override String dansCanal({required Object nom}) => 'في ${nom}';
+	@override String echeance({required Object date}) => 'الموعد ${date}';
+	@override String seTraiteDans({required Object module}) => 'يُعالَج في ${module}';
+	@override String ouvrirDans({required Object module, required Object libelle}) => 'فتح في ${module}: ${libelle}';
+	@override late final _Traductions$com$studio$aujourdhui$modules$ar modules = _Traductions$com$studio$aujourdhui$modules$ar._(_root);
+	@override late final _Traductions$com$studio$aujourdhui$acces$ar acces = _Traductions$com$studio$aujourdhui$acces$ar._(_root);
+}
+
+// Path: com.studio.brouillons
+class _Traductions$com$studio$brouillons$ar extends Traductions$com$studio$brouillons$fr {
+	_Traductions$com$studio$brouillons$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'المسودات';
+	@override String get detail => 'الرسائل التي بدأتها في قناة ولم تُرسل بعد. تبقى على هذا الجهاز طوال الجلسة، دون مزامنة.';
+	@override String dansCanal({required Object nom}) => 'مسودة في ${nom}';
+	@override String get canalInconnu => 'مسودة في قناة';
+	@override String get canalIndisponible => 'مسودة في قناة لم تعد متاحة';
+	@override String modifie({required Object moment}) => 'عُدّلت في ${moment}';
+	@override String reprendre({required Object nom}) => 'متابعة المسودة في ${nom}';
+	@override String get videTitre => 'لا توجد مسودات';
+	@override String get vide => 'ستظهر هنا أي رسالة بدأتها في قناة ولم تُرسل بعد.';
+	@override String tous({required Object nombre}) => 'عرض كل المسودات (${nombre})';
+	@override String get restaure => 'استُعيدت المسودة. يمكنك متابعة رسالتك.';
+}
+
 // Path: com.studio.navigation
 class _Traductions$com$studio$navigation$ar extends Traductions$com$studio$navigation$fr {
 	_Traductions$com$studio$navigation$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -544,6 +587,8 @@ class _Traductions$com$studio$navigation$ar extends Traductions$com$studio$navig
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get aujourdhui => _root.com.socle.lexique.aujourdhui;
+	@override String get brouillons => 'المسودات';
 	@override String get canaux => 'القنوات';
 	@override String get enregistres => 'العناصر المحفوظة';
 }
@@ -687,6 +732,8 @@ class _Traductions$com$studio$demo$ar extends Traductions$com$studio$demo$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get aujourdhuiVide => 'اليوم دون نشاط';
+	@override String horsDemo({required Object module}) => 'في التطبيق، يفتح هذا السطر ${module}. يبقى العرض التجريبي على هذه الصفحة.';
 	@override String get choisir => 'اختر حالة لتجربتها.';
 	@override String get normale => 'الاستوديو وقنواته';
 	@override String get echec => 'إرسال غير مؤكد';
@@ -825,6 +872,85 @@ class _Traductions$com$socle$navigation$demo$ar extends Traductions$com$socle$na
 	@override String get titre => 'عرض توضيحي للاتصالات';
 	@override String get detail => 'بيانات وهمية، غير موجودة في نسخ الإنتاج.';
 	@override String get choisir => 'اختر مساحة لتجربتها.';
+}
+
+// Path: com.studio.aujourdhui.indicateurs
+class _Traductions$com$studio$aujourdhui$indicateurs$ar extends Traductions$com$studio$aujourdhui$indicateurs$fr {
+	_Traductions$com$studio$aujourdhui$indicateurs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'مؤشرات الانتباه';
+	@override String get aTraiter => _root.com.socle.lexique.aTraiter;
+	@override String get mentions => 'الإشارات والردود';
+	@override String get decisions => 'قرارات معلّقة';
+	@override String get nonLus => 'غير مقروءة';
+}
+
+// Path: com.studio.aujourdhui.blocs
+class _Traductions$com$studio$aujourdhui$blocs$ar extends Traductions$com$studio$aujourdhui$blocs$fr {
+	_Traductions$com$studio$aujourdhui$blocs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get aTraiter => 'للمعالجة اليوم';
+	@override String get mentions => 'الإشارات والردود';
+	@override String get decisions => 'قرارات معلّقة';
+	@override String get echeances => 'مواعيد قريبة';
+	@override String get activite => 'النشاط الأخير';
+	@override String get brouillons => 'المسودات';
+	@override String get acces => 'وصول سريع';
+}
+
+// Path: com.studio.aujourdhui.videsBlocs
+class _Traductions$com$studio$aujourdhui$videsBlocs$ar extends Traductions$com$studio$aujourdhui$videsBlocs$fr {
+	_Traductions$com$studio$aujourdhui$videsBlocs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get aTraiter => 'لا شيء للمعالجة اليوم.';
+	@override String get mentions => 'لا توجد إشارات أو ردود في الانتظار.';
+	@override String get decisions => 'لا توجد قرارات معلّقة.';
+	@override String get echeances => 'لا توجد مواعيد قريبة.';
+	@override String get activite => 'لا يوجد نشاط حديث.';
+}
+
+// Path: com.studio.aujourdhui.modules
+class _Traductions$com$studio$aujourdhui$modules$ar extends Traductions$com$studio$aujourdhui$modules$fr {
+	_Traductions$com$studio$aujourdhui$modules$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get studio => _root.com.socle.lexique.studio;
+	@override String get finance => 'المالية';
+	@override String get planning => 'الجدولة';
+	@override String get dossiers => 'الملفات';
+	@override String get classes => 'الفصول';
+	@override String get admissions => 'القبول';
+	@override String get communications => 'إدارة الاتصالات';
+}
+
+// Path: com.studio.aujourdhui.acces
+class _Traductions$com$studio$aujourdhui$acces$ar extends Traductions$com$studio$aujourdhui$acces$fr {
+	_Traductions$com$studio$aujourdhui$acces$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get messages => _root.com.socle.lexique.messagesMetier;
+	@override String get messagesDetail => 'المحادثات مع الأسر والمعلّمين والمراقبين';
+	@override String get annonces => 'الإعلانات';
+	@override String get annoncesDetail => 'نشر الإعلانات ومتابعتها';
+	@override String get dossiers => 'ملفات للتصديق';
+	@override String get dossiersDetail => 'الملفات الجاهزة لاتخاذ قرار';
+	@override String get classes => 'الفصول';
+	@override String get classesDetail => 'الفصول ومواعيدها ومعلّموها';
+	@override String get demandes => 'طلبات بانتظار القرار';
+	@override String get demandesDetail => 'طلبات التغيير المنتظرة';
 }
 
 // Path: com.studio.enregistres.types
@@ -1068,7 +1194,61 @@ extension on TraductionsAr {
 			'com.vocal.titre' => 'رسالة صوتية',
 			'com.communaute.titre' => _root.com.socle.lexique.communaute,
 			'com.communaute.vide' => 'لا توجد منشورات في هذه الفئة.',
+			'com.studio.aujourdhui.titre' => _root.com.socle.lexique.aujourdhui,
+			'com.studio.aujourdhui.sousTitre' => 'ما يستحق انتباهك في الاستوديو',
+			'com.studio.aujourdhui.indicateurs.titre' => 'مؤشرات الانتباه',
+			'com.studio.aujourdhui.indicateurs.aTraiter' => _root.com.socle.lexique.aTraiter,
+			'com.studio.aujourdhui.indicateurs.mentions' => 'الإشارات والردود',
+			'com.studio.aujourdhui.indicateurs.decisions' => 'قرارات معلّقة',
+			'com.studio.aujourdhui.indicateurs.nonLus' => 'غير مقروءة',
+			'com.studio.aujourdhui.blocs.aTraiter' => 'للمعالجة اليوم',
+			'com.studio.aujourdhui.blocs.mentions' => 'الإشارات والردود',
+			'com.studio.aujourdhui.blocs.decisions' => 'قرارات معلّقة',
+			'com.studio.aujourdhui.blocs.echeances' => 'مواعيد قريبة',
+			'com.studio.aujourdhui.blocs.activite' => 'النشاط الأخير',
+			'com.studio.aujourdhui.blocs.brouillons' => 'المسودات',
+			'com.studio.aujourdhui.blocs.acces' => 'وصول سريع',
+			'com.studio.aujourdhui.videsBlocs.aTraiter' => 'لا شيء للمعالجة اليوم.',
+			'com.studio.aujourdhui.videsBlocs.mentions' => 'لا توجد إشارات أو ردود في الانتظار.',
+			'com.studio.aujourdhui.videsBlocs.decisions' => 'لا توجد قرارات معلّقة.',
+			'com.studio.aujourdhui.videsBlocs.echeances' => 'لا توجد مواعيد قريبة.',
+			'com.studio.aujourdhui.videsBlocs.activite' => 'لا يوجد نشاط حديث.',
+			'com.studio.aujourdhui.videTitre' => 'لا شيء للمعالجة حاليًا',
+			'com.studio.aujourdhui.dansCanal' => ({required Object nom}) => 'في ${nom}',
+			'com.studio.aujourdhui.echeance' => ({required Object date}) => 'الموعد ${date}',
+			'com.studio.aujourdhui.seTraiteDans' => ({required Object module}) => 'يُعالَج في ${module}',
+			'com.studio.aujourdhui.ouvrirDans' => ({required Object module, required Object libelle}) => 'فتح في ${module}: ${libelle}',
+			'com.studio.aujourdhui.modules.studio' => _root.com.socle.lexique.studio,
+			'com.studio.aujourdhui.modules.finance' => 'المالية',
+			'com.studio.aujourdhui.modules.planning' => 'الجدولة',
+			'com.studio.aujourdhui.modules.dossiers' => 'الملفات',
+			'com.studio.aujourdhui.modules.classes' => 'الفصول',
+			'com.studio.aujourdhui.modules.admissions' => 'القبول',
+			'com.studio.aujourdhui.modules.communications' => 'إدارة الاتصالات',
+			'com.studio.aujourdhui.acces.messages' => _root.com.socle.lexique.messagesMetier,
+			'com.studio.aujourdhui.acces.messagesDetail' => 'المحادثات مع الأسر والمعلّمين والمراقبين',
+			'com.studio.aujourdhui.acces.annonces' => 'الإعلانات',
+			'com.studio.aujourdhui.acces.annoncesDetail' => 'نشر الإعلانات ومتابعتها',
+			'com.studio.aujourdhui.acces.dossiers' => 'ملفات للتصديق',
+			'com.studio.aujourdhui.acces.dossiersDetail' => 'الملفات الجاهزة لاتخاذ قرار',
+			'com.studio.aujourdhui.acces.classes' => 'الفصول',
+			'com.studio.aujourdhui.acces.classesDetail' => 'الفصول ومواعيدها ومعلّموها',
+			'com.studio.aujourdhui.acces.demandes' => 'طلبات بانتظار القرار',
+			'com.studio.aujourdhui.acces.demandesDetail' => 'طلبات التغيير المنتظرة',
+			'com.studio.brouillons.titre' => 'المسودات',
+			'com.studio.brouillons.detail' => 'الرسائل التي بدأتها في قناة ولم تُرسل بعد. تبقى على هذا الجهاز طوال الجلسة، دون مزامنة.',
+			'com.studio.brouillons.dansCanal' => ({required Object nom}) => 'مسودة في ${nom}',
+			'com.studio.brouillons.canalInconnu' => 'مسودة في قناة',
+			'com.studio.brouillons.canalIndisponible' => 'مسودة في قناة لم تعد متاحة',
+			'com.studio.brouillons.modifie' => ({required Object moment}) => 'عُدّلت في ${moment}',
+			'com.studio.brouillons.reprendre' => ({required Object nom}) => 'متابعة المسودة في ${nom}',
+			'com.studio.brouillons.videTitre' => 'لا توجد مسودات',
+			'com.studio.brouillons.vide' => 'ستظهر هنا أي رسالة بدأتها في قناة ولم تُرسل بعد.',
+			'com.studio.brouillons.tous' => ({required Object nombre}) => 'عرض كل المسودات (${nombre})',
+			'com.studio.brouillons.restaure' => 'استُعيدت المسودة. يمكنك متابعة رسالتك.',
 			'com.studio.sousTitre' => 'مساحة عمل الفريق',
+			'com.studio.navigation.aujourdhui' => _root.com.socle.lexique.aujourdhui,
+			'com.studio.navigation.brouillons' => 'المسودات',
 			'com.studio.navigation.canaux' => 'القنوات',
 			'com.studio.navigation.enregistres' => 'العناصر المحفوظة',
 			'com.studio.choisirTitre' => 'اختر قناة',
@@ -1147,6 +1327,8 @@ extension on TraductionsAr {
 			'com.studio.recherche.fichiers' => 'الملفات',
 			'com.studio.recherche.dansCanal' => ({required Object canal}) => 'في ${canal}',
 			'com.studio.recherche.messageDe' => ({required Object auteur, required Object canal}) => '${auteur}، في ${canal}',
+			'com.studio.demo.aujourdhuiVide' => 'اليوم دون نشاط',
+			'com.studio.demo.horsDemo' => ({required Object module}) => 'في التطبيق، يفتح هذا السطر ${module}. يبقى العرض التجريبي على هذه الصفحة.',
 			'com.studio.demo.choisir' => 'اختر حالة لتجربتها.',
 			'com.studio.demo.normale' => 'الاستوديو وقنواته',
 			'com.studio.demo.echec' => 'إرسال غير مؤكد',
