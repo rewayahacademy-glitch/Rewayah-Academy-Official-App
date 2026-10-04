@@ -2,7 +2,10 @@
 // de fin de la ligne quand libelle et valeur tiennent sur une ligne ; sinon
 // elle passe dessous, sans mot coupe ni debordement.
 
+import 'dart:ui' show CheckedState, Tristate;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
@@ -25,6 +28,42 @@ Widget _groupe() => const GroupeReglages(
 );
 
 void main() {
+  // AD-NETTOYAGE (m16) : une verification non modifiable (case sans onPress)
+  // est annoncee cochee ET inactive ; une case qui se presse reste active.
+  testWidgets('une case sans geste est annoncee inactive', (
+    WidgetTester tester,
+  ) async {
+    final SemanticsHandle sem = tester.ensureSemantics();
+    fixerVue(tester, vueMobile);
+    await tester.pumpWidget(
+      hoteTheme(
+        GroupeReglages(
+          lignes: <LigneRubrique>[
+            const LigneRubrique(
+              icone: AppIcons.reglages,
+              libelle: 'Pièce lue',
+              cochee: true,
+            ),
+            LigneRubrique(
+              icone: AppIcons.reglages,
+              libelle: 'Genre vérifié',
+              cochee: false,
+              onPress: () {},
+            ),
+          ],
+        ),
+      ),
+    );
+
+    final SemanticsData inactive = tester
+        .getSemantics(find.text('Pièce lue'))
+        .getSemanticsData();
+    expect(inactive.flagsCollection.isChecked, CheckedState.isTrue);
+    expect(inactive.flagsCollection.isEnabled, Tristate.isFalse);
+
+    sem.dispose();
+  });
+
   testWidgets('1440 : la valeur est collee au bord de fin de la ligne', (
     WidgetTester tester,
   ) async {

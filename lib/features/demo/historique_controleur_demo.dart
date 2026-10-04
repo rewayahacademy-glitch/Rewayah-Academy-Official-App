@@ -3,6 +3,7 @@
 // complements, en memoire. L'ajout d'un complement (CT-8) est simule : rien
 // ne part (K-28).
 
+import '../../core/mouvement/mouvement.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../controleur/compte_rendu_controle.dart';
@@ -17,7 +18,7 @@ class HistoriqueDemo implements PortHistorique {
 
   @override
   Future<List<RapportControle>> rapports() async {
-    await Future<void>.delayed(const Duration(milliseconds: 400));
+    await Future<void>.delayed(Mouvement.maximum);
     return <RapportControle>[
       for (final RapportControleurDemo r in DonneesControleurDemo.rapports)
         _rapport(r),
@@ -31,7 +32,7 @@ class HistoriqueDemo implements PortHistorique {
     required String texte,
     String? motif,
   }) async {
-    await Future<void>.delayed(const Duration(milliseconds: 400));
+    await Future<void>.delayed(Mouvement.maximum);
     return ComplementRapport(date: DateTime.now(), texte: texte, motif: motif);
   }
 

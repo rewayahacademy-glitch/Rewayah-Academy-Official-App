@@ -160,7 +160,7 @@ class SalleSeance extends StatelessWidget {
               Expanded(
                 child: CommandesMasquables(
                   contenu: Padding(
-                    padding: EdgeInsets.fromLTRB(
+                    padding: EdgeInsetsDirectional.fromSTEB(
                       gouttiere,
                       AppSpacing.xs,
                       gouttiere,
@@ -173,7 +173,7 @@ class SalleSeance extends StatelessWidget {
                     ),
                   ),
                   commandes: Padding(
-                    padding: EdgeInsets.fromLTRB(
+                    padding: EdgeInsetsDirectional.fromSTEB(
                       gouttiere,
                       0,
                       gouttiere,

@@ -4531,15 +4531,6 @@ class Traductions$dossiers$revue$fr {
 	/// fr: 'Prénom'
 	String get prenom => 'Prénom';
 
-	/// fr: 'Type de dossier'
-	String get typeDossier => 'Type de dossier';
-
-	/// fr: 'Date de dépôt'
-	String get dateDepot => 'Date de dépôt';
-
-	/// fr: 'État du dossier'
-	String get etatDossier => 'État du dossier';
-
 	/// fr: 'Date de dépôt indisponible'
 	String get dateIndisponible => 'Date de dépôt indisponible';
 
@@ -6346,6 +6337,12 @@ class Traductions$admin$comptes$fr {
 
 	/// fr: '{nombre} personnes attendent une décision.'
 	String attentePlusieurs({required Object nombre}) => '${nombre} personnes attendent une décision.';
+
+	/// fr: 'Le rôle d'un compte en attente n'a pas pu être lu : il n'est compté nulle part et sa nature n'est pas confirmée. Rechargez la page pour réessayer.'
+	String get roleIllisibleUn => 'Le rôle d\'un compte en attente n\'a pas pu être lu : il n\'est compté nulle part et sa nature n\'est pas confirmée. Rechargez la page pour réessayer.';
+
+	/// fr: 'Le rôle de {nombre} comptes en attente n'a pas pu être lu : ils ne sont comptés nulle part et leur nature n'est pas confirmée. Rechargez la page pour réessayer.'
+	String roleIllisiblePlusieurs({required Object nombre}) => 'Le rôle de ${nombre} comptes en attente n\'a pas pu être lu : ils ne sont comptés nulle part et leur nature n\'est pas confirmée. Rechargez la page pour réessayer.';
 
 	/// fr: 'Tous'
 	String get filtreTousEtats => 'Tous';
@@ -8508,6 +8505,12 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Les horaires de prière et vos pauses n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.'
 	String get erreurPartielle => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.';
 
+	/// fr: 'Vos cahiers de transmission à terminer n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.'
+	String get erreurPartielleCahiers => 'Vos cahiers de transmission à terminer n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.';
+
+	/// fr: 'Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.'
+	String get erreurPartielleTout => 'Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.';
+
 	/// fr: '{eleve} n'est pas entré en salle.'
 	String absenceDetectee({required Object eleve}) => '${eleve} n\'est pas entré en salle.';
 
@@ -8820,14 +8823,14 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Point de prononciation noté'
 	String get pointPhonetiqueNote => 'Point de prononciation noté';
 
-	/// fr: 'Objectif de {eleve}'
-	String objectif({required Object eleve}) => 'Objectif de ${eleve}';
+	/// fr: 'Objectif {deEleve}'
+	String objectif({required Object deEleve}) => 'Objectif ${deEleve}';
 
-	/// fr: 'Ce que {eleve} doit atteindre, dans le cadre du programme de l'académie.'
-	String objectifDetail({required Object eleve}) => 'Ce que ${eleve} doit atteindre, dans le cadre du programme de l\'académie.';
+	/// fr: 'Ce {queEleve} doit atteindre, dans le cadre du programme de l'académie.'
+	String objectifDetail({required Object queEleve}) => 'Ce ${queEleve} doit atteindre, dans le cadre du programme de l\'académie.';
 
-	/// fr: 'Devoir de {eleve}'
-	String travailMaison({required Object eleve}) => 'Devoir de ${eleve}';
+	/// fr: 'Devoir {deEleve}'
+	String travailMaison({required Object deEleve}) => 'Devoir ${deEleve}';
 
 	/// fr: 'Ajustez la suggestion, ou laissez-la telle quelle.'
 	String get travailMaisonDetail => 'Ajustez la suggestion, ou laissez-la telle quelle.';
@@ -9126,8 +9129,8 @@ class Traductions$enseignant$profil$fr {
 	/// fr: 'Me déconnecter maintenant'
 	String get deconnexionConfirmer => 'Me déconnecter maintenant';
 
-	/// fr: 'Votre journée, vos créneaux et vos cahiers restent enregistrés. Il faudra un nouveau lien de connexion pour revenir.'
-	String get deconnexionConsequence => 'Votre journée, vos créneaux et vos cahiers restent enregistrés. Il faudra un nouveau lien de connexion pour revenir.';
+	/// fr: 'Votre journée, vos créneaux et vos cahiers de transmission restent enregistrés. Il faudra un nouveau lien de connexion pour revenir.'
+	String get deconnexionConsequence => 'Votre journée, vos créneaux et vos cahiers de transmission restent enregistrés. Il faudra un nouveau lien de connexion pour revenir.';
 
 	/// fr: 'Votre profil n'a pas pu être lu. Réessayez dans un instant.'
 	String get erreur => 'Votre profil n\'a pas pu être lu. Réessayez dans un instant.';
@@ -11805,9 +11808,6 @@ class Traductions$dossiers$revue$etats$fr {
 
 	/// fr: 'La décision est indisponible pour le moment.'
 	String get decisionIndisponible => 'La décision est indisponible pour le moment.';
-
-	/// fr: 'Ce dossier a changé depuis son ouverture.'
-	String get modifie => 'Ce dossier a changé depuis son ouverture.';
 
 	/// fr: 'Actualiser le dossier'
 	String get actualiserDossier => 'Actualiser le dossier';
@@ -16432,9 +16432,6 @@ extension on Traductions {
 			'dossiers.revue.accords' => 'Accords et éléments soumis',
 			'dossiers.revue.nom' => 'Nom',
 			'dossiers.revue.prenom' => 'Prénom',
-			'dossiers.revue.typeDossier' => 'Type de dossier',
-			'dossiers.revue.dateDepot' => 'Date de dépôt',
-			'dossiers.revue.etatDossier' => 'État du dossier',
 			'dossiers.revue.dateIndisponible' => 'Date de dépôt indisponible',
 			'dossiers.revue.pasPret' => 'Ce dossier n\'est pas encore prêt à être validé.',
 			'dossiers.revue.erreurChargement' => 'Impossible de charger ce dossier.',
@@ -16446,7 +16443,6 @@ extension on Traductions {
 			'dossiers.revue.etats.verificationsIncompletes' => 'Terminez les vérifications requises.',
 			'dossiers.revue.etats.accordManquant' => 'Un accord requis manque à ce dossier.',
 			'dossiers.revue.etats.decisionIndisponible' => 'La décision est indisponible pour le moment.',
-			'dossiers.revue.etats.modifie' => 'Ce dossier a changé depuis son ouverture.',
 			'dossiers.revue.etats.actualiserDossier' => 'Actualiser le dossier',
 			'dossiers.revue.etats.refusNonAutorise' => 'Ce dossier ne peut pas être refusé dans son état actuel.',
 			'dossiers.restantUn' => '1 dossier en attente',
@@ -16927,12 +16923,12 @@ extension on Traductions {
 			'admin.journal.roleComptable' => 'Comptable',
 			'admin.journal.roleAucun' => 'Hors session',
 			'admin.journal.evtKycLu' => 'Dossier d\'identité consulté',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.evtKycTranche' => 'Dossier d\'identité tranché',
 			'admin.journal.evtProfilCree' => 'Profil créé',
 			'admin.journal.evtProfilEnfantCree' => 'Profil enfant créé',
 			'admin.journal.evtCodeCree' => 'Code d\'appairage créé',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.evtAppareilAppaire' => 'Appareil appairé',
 			'admin.journal.evtAppareilRevoque' => 'Appareil révoqué',
 			'admin.journal.evtPedagogie' => 'Réglages pédagogiques modifiés',
@@ -17011,6 +17007,8 @@ extension on Traductions {
 			'admin.comptes.attenteUneUnJour' => 'Une personne attend une décision depuis 1 jour.',
 			'admin.comptes.attenteUne' => ({required Object jours}) => 'Une personne attend une décision depuis ${jours} jours.',
 			'admin.comptes.attentePlusieurs' => ({required Object nombre}) => '${nombre} personnes attendent une décision.',
+			'admin.comptes.roleIllisibleUn' => 'Le rôle d\'un compte en attente n\'a pas pu être lu : il n\'est compté nulle part et sa nature n\'est pas confirmée. Rechargez la page pour réessayer.',
+			'admin.comptes.roleIllisiblePlusieurs' => ({required Object nombre}) => 'Le rôle de ${nombre} comptes en attente n\'a pas pu être lu : ils ne sont comptés nulle part et leur nature n\'est pas confirmée. Rechargez la page pour réessayer.',
 			'admin.comptes.filtreTousEtats' => 'Tous',
 			'admin.comptes.filtreTousRoles' => 'Tous les rôles',
 			'admin.comptes.filtreRole' => 'Rôle',
@@ -17441,10 +17439,10 @@ extension on Traductions {
 			'compte.tuteur.pageApparence.texte' => 'Taille du texte',
 			'compte.tuteur.pageApparence.texteDetail' => 'Suit la taille du système',
 			'compte.tuteur.pageAide.titre' => 'Aide et support',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageAide.indisponibleTitre' => 'Aide pas encore disponible',
 			'compte.tuteur.pageAide.indisponiblePhrase' => 'Les questions fréquentes et le contact de l\'académie ne sont pas encore ouverts dans l\'application.',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageAide.canalCourriel' => 'Courriel de l\'académie',
 			'compte.tuteur.pageAide.canalLien' => 'Page d\'aide de l\'académie',
 			'compte.tuteur.pageAide.aucunCanal' => 'Aucun canal d\'aide n\'est publié pour le moment.',
@@ -17955,10 +17953,10 @@ extension on Traductions {
 			'enseignant.bienvenue.aCompleter' => 'À compléter',
 			'enseignant.bienvenue.compteur' => ({required Object fait, required Object total}) => '${fait} sur ${total}',
 			'enseignant.bienvenue.prerequisPhoto' => 'Ajouter ma photo professionnelle',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.bienvenue.prerequisLangues' => 'Vérifier mes langues d\'enseignement',
 			'enseignant.bienvenue.prerequisFuseau' => 'Vérifier mon fuseau horaire',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.bienvenue.ctaPhoto' => 'Ajouter ma photo',
 			'enseignant.bienvenue.ctaInformations' => 'Vérifier mes informations',
 			'enseignant.bienvenue.ctaJournee' => 'Voir ma journée',
@@ -18018,6 +18016,8 @@ extension on Traductions {
 			'enseignant.journee.preflightIndisponible' => 'La vérification du matériel n\'a pas abouti. Réessayez avant de lancer le cours.',
 			'enseignant.journee.lancerHorsLigne' => 'Sans réseau, la salle ne peut pas s\'ouvrir. Reconnectez-vous pour lancer le cours.',
 			'enseignant.journee.erreurPartielle' => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.',
+			'enseignant.journee.erreurPartielleCahiers' => 'Vos cahiers de transmission à terminer n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.',
+			'enseignant.journee.erreurPartielleTout' => 'Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.',
 			'enseignant.journee.absenceDetectee' => ({required Object eleve}) => '${eleve} n\'est pas entré en salle.',
 			'enseignant.journee.coupureDetectee' => ({required Object eleve}) => '${eleve} a perdu la connexion.',
 			'enseignant.journee.autresAbsences' => ({required Object nombre}) => 'et ${nombre} autres élèves.',
@@ -18131,9 +18131,9 @@ extension on Traductions {
 			'enseignant.cahier.pointPhonetique' => 'Point de prononciation',
 			'enseignant.cahier.pointPhonetiqueDetail' => 'Une paire, pas un bilan. Laissez vide s\'il n\'y a rien à dire.',
 			'enseignant.cahier.pointPhonetiqueNote' => 'Point de prononciation noté',
-			'enseignant.cahier.objectif' => ({required Object eleve}) => 'Objectif de ${eleve}',
-			'enseignant.cahier.objectifDetail' => ({required Object eleve}) => 'Ce que ${eleve} doit atteindre, dans le cadre du programme de l\'académie.',
-			'enseignant.cahier.travailMaison' => ({required Object eleve}) => 'Devoir de ${eleve}',
+			'enseignant.cahier.objectif' => ({required Object deEleve}) => 'Objectif ${deEleve}',
+			'enseignant.cahier.objectifDetail' => ({required Object queEleve}) => 'Ce ${queEleve} doit atteindre, dans le cadre du programme de l\'académie.',
+			'enseignant.cahier.travailMaison' => ({required Object deEleve}) => 'Devoir ${deEleve}',
 			'enseignant.cahier.travailMaisonDetail' => 'Ajustez la suggestion, ou laissez-la telle quelle.',
 			'enseignant.cahier.travailMaisonSaisi' => 'Vous avez déjà noté ce devoir. Modifiez-le ou laissez-le tel quel.',
 			'enseignant.cahier.suite' => ({required Object eleve}) => 'La suite pour ${eleve}',
@@ -18230,7 +18230,7 @@ extension on Traductions {
 			'enseignant.profil.personnel' => 'Mes réglages',
 			'enseignant.profil.deconnexionQuestion' => 'Se déconnecter de cet appareil ?',
 			'enseignant.profil.deconnexionConfirmer' => 'Me déconnecter maintenant',
-			'enseignant.profil.deconnexionConsequence' => 'Votre journée, vos créneaux et vos cahiers restent enregistrés. Il faudra un nouveau lien de connexion pour revenir.',
+			'enseignant.profil.deconnexionConsequence' => 'Votre journée, vos créneaux et vos cahiers de transmission restent enregistrés. Il faudra un nouveau lien de connexion pour revenir.',
 			'enseignant.profil.erreur' => 'Votre profil n\'a pas pu être lu. Réessayez dans un instant.',
 			'enseignant.profil.vide' => 'Aucun profil enseignant',
 			'enseignant.profil.videDetail' => 'Ce compte n\'a pas de profil enseignant. Seule l\'académie peut en créer un.',

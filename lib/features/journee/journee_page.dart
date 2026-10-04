@@ -234,8 +234,15 @@ class _Corps extends ConsumerWidget {
     ];
     // LIB-ERR-1 : l'echec partiel dit ce qui manque, que les seances sont a
     // jour, et se relance d'un bouton.
-    final bool partielle =
-        reglages.hasError || pause.hasError || retards.hasError;
+    final bool echecPrieres = reglages.hasError || pause.hasError;
+    final bool echecCahiers = retards.hasError;
+    final bool partielle = echecPrieres || echecCahiers;
+    // Le texte dit exactement ce qui a echoue, pas davantage.
+    final String messagePartiel = echecPrieres && echecCahiers
+        ? t.enseignant.journee.erreurPartielleTout
+        : echecCahiers
+        ? t.enseignant.journee.erreurPartielleCahiers
+        : t.enseignant.journee.erreurPartielle;
 
     // ENS-13B : les offres arrivent en Alerte utile ; une offre acceptee et
     // confirmee par le serveur devient la carte « Remplacement » (EN-8).
@@ -285,6 +292,7 @@ class _Corps extends ConsumerWidget {
               alertes: alertes,
               offres: offres,
               coursAnnule: annulee == null ? null : parId[annulee.id],
+              messagePartiel: messagePartiel,
               onReessayerPartiel: partielle
                   ? () {
                       ref
@@ -1016,7 +1024,11 @@ class _AlertesUtiles extends ConsumerWidget {
     this.offres = const <OffreRemplacement>[],
     this.coursAnnule,
     this.onReessayerPartiel,
+    this.messagePartiel,
   });
+
+  /// Ce qui n'a pas pu etre lu, dit exactement (LIB-ERR-1).
+  final String? messagePartiel;
 
   /// Relance des lectures secondaires (prieres, pauses, cahiers en retard)
   /// quand elles ont echoue, ou `null` si tout a ete lu (LIB-ERR-1).
@@ -1077,7 +1089,7 @@ class _AlertesUtiles extends ConsumerWidget {
           if (coursAnnule != null || alertes.isNotEmpty || offres.isNotEmpty)
             Ecart.vLg,
           Text(
-            t.enseignant.journee.erreurPartielle,
+            messagePartiel ?? t.enseignant.journee.erreurPartielle,
             key: const ValueKey<String>('journee-erreur-partielle'),
             style: Theme.of(context).textTheme.bodyMedium,
           ),

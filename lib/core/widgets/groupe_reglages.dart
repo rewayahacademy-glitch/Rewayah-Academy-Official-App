@@ -173,6 +173,11 @@ class _Ligne extends StatelessWidget {
       return MergeSemantics(
         child: Semantics(
           checked: ligne.cochee,
+          // m16 (AD-NETTOYAGE) : une case sans geste (ni controle ni
+          // `onPress`) est dite inactive au lecteur d'ecran.
+          enabled: ligne.cochee != null && ligne.controle == null
+              ? false
+              : null,
           child: _contenu(context, const EtatPression()),
         ),
       );

@@ -19,6 +19,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/mouvement/mouvement.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/billet_salle.dart';
@@ -235,17 +236,17 @@ class EnvoiCompteRenduDemo implements EnvoiCompteRendu {
 
   @override
   Future<void> transmettreVisite(String seanceId) =>
-      Future<void>.delayed(const Duration(milliseconds: 400));
+      Future<void>.delayed(Mouvement.maximum);
 
   @override
   Future<void> envoyer(String seanceId, ChoixCompteRendu choix) =>
-      Future<void>.delayed(const Duration(milliseconds: 400));
+      Future<void>.delayed(Mouvement.maximum);
 
   @override
   Future<void> envoyerObservation(
     String seanceId,
     ObservationControle observation,
-  ) => Future<void>.delayed(const Duration(milliseconds: 400));
+  ) => Future<void>.delayed(Mouvement.maximum);
 }
 
 /// La salle du controleur en demonstration.
@@ -359,7 +360,7 @@ class EchangesDemo implements PortEchanges {
 
   final List<FilEchange> _fils;
 
-  static const Duration _delai = Duration(milliseconds: 400);
+  static const Duration _delai = Mouvement.maximum;
 
   @override
   Future<List<FilEchange>> fils() async {

@@ -196,6 +196,20 @@ List<RouteBase> _routes() => <RouteBase>[
   ),
 ];
 
+/// Un service dont seule la lecture des cahiers en retard echoue.
+class _EnseignantRetardsEnEchec extends FauxServiceEnseignant {
+  @override
+  Future<List<CahierEnRetard>> cahiersEnRetard() async =>
+      throw StateError('cahiers en retard indisponibles');
+}
+
+/// Un service dont seule la lecture des horaires de priere echoue.
+class _PriereEnEchec extends FauxServicePriere {
+  @override
+  Future<ReglagesPriere?> reglages(String enseignantId) async =>
+      throw StateError('horaires de priere indisponibles');
+}
+
 Future<void> _ouvrir(
   WidgetTester tester, {
   FauxServiceEnseignant? enseignant,
@@ -405,6 +419,67 @@ void main() {
       expect(find.text(t.enseignant.journee.coursIndividuel), findsNothing);
       // Une seance sans nom de Classe dit « Classe », rien d'autre.
       expect(find.text(t.enseignant.journee.classe), findsOneWidget);
+    });
+  });
+
+  // LIB-ERR-1 : le texte de l'echec partiel dit exactement ce qui a echoue.
+  group('LIB-ERR-1 : echec partiel de la journee', () {
+    final Finder message = find.byKey(
+      const ValueKey<String>('journee-erreur-partielle'),
+    );
+
+    testWidgets('seuls les cahiers en retard echouent : le texte les nomme, '
+        'pas les prieres', (WidgetTester tester) async {
+      await _ouvrir(tester, enseignant: _EnseignantRetardsEnEchec());
+      expect(message, findsOneWidget);
+      expect(
+        tester.widget<Text>(message).data,
+        t.enseignant.journee.erreurPartielleCahiers,
+      );
+      expect(tester.widget<Text>(message).data, contains('cahiers'));
+      expect(tester.widget<Text>(message).data, isNot(contains('prière')));
+      expect(tester.widget<Text>(message).data, isNot(contains('pauses')));
+      expect(
+        find.byKey(
+          const ValueKey<String>('journee-erreur-partielle-reessayer'),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('seuls les horaires de priere echouent : le texte les nomme, '
+        'pas les cahiers', (WidgetTester tester) async {
+      await _ouvrir(tester, priere: _PriereEnEchec());
+      expect(message, findsOneWidget);
+      expect(
+        tester.widget<Text>(message).data,
+        t.enseignant.journee.erreurPartielle,
+      );
+      expect(tester.widget<Text>(message).data, contains('prière'));
+      expect(tester.widget<Text>(message).data, isNot(contains('cahiers')));
+    });
+
+    testWidgets('priere et cahiers echouent : le texte dit les deux', (
+      WidgetTester tester,
+    ) async {
+      await _ouvrir(
+        tester,
+        enseignant: _EnseignantRetardsEnEchec(),
+        priere: _PriereEnEchec(),
+      );
+      expect(
+        tester.widget<Text>(message).data,
+        t.enseignant.journee.erreurPartielleTout,
+      );
+      expect(tester.widget<Text>(message).data, contains('prière'));
+      expect(tester.widget<Text>(message).data, contains('cahiers'));
+    });
+
+    testWidgets('tout est lu : aucun message d echec', (
+      WidgetTester tester,
+    ) async {
+      await _ouvrir(tester);
+      expect(message, findsNothing);
     });
   });
 

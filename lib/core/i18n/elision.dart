@@ -8,11 +8,17 @@
 
 /// Compose « de {nom} » ou « d'{nom} » selon que [nom] commence par un son
 /// de voyelle (a, e, i, o, u, y, leurs formes accentuees, et h).
-String deDevant(String nom) {
+String deDevant(String nom) => _elide('de', 'd', nom);
+
+/// Compose « que {nom} » ou « qu'{nom} » (LIB-OBJ-1 : « Ce qu'Aya doit
+/// atteindre »), selon la meme regle que [deDevant].
+String queDevant(String nom) => _elide('que', 'qu', nom);
+
+String _elide(String mot, String elide, String nom) {
   if (nom.isEmpty) {
-    return 'de $nom';
+    return '$mot $nom';
   }
   const String voyelles = 'aeiouyàâäéèêëïîôöùûüh';
   final String premiere = nom[0].toLowerCase();
-  return voyelles.contains(premiere) ? "d'$nom" : 'de $nom';
+  return voyelles.contains(premiere) ? "$elide'$nom" : '$mot $nom';
 }

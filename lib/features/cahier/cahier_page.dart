@@ -592,7 +592,7 @@ class _Constat extends StatelessWidget {
         : niveau != null
         ? libelleNiveau(niveau)
         : devoir != null
-        ? '${t.enseignant.cahier.travailMaison(eleve: p.membre.libelle)} : $devoir'
+        ? '${t.enseignant.cahier.travailMaison(deEleve: deDevant(p.membre.libelle))} : $devoir'
         : p.unite?.nomHumain;
     return LigneRubrique(
       // La photo s'affiche chez l'enseignant (E5, K-44) ; les initiales en
@@ -1080,7 +1080,9 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
         Ecart.vSection,
         ExcludeSemantics(
           child: Text(
-            t.enseignant.cahier.objectif(eleve: participant.membre.libelle),
+            t.enseignant.cahier.objectif(
+              deEleve: deDevant(participant.membre.libelle),
+            ),
             style: textes.titleSmall,
           ),
         ),
@@ -1091,7 +1093,9 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
         // inventee ; il dit ce qui encadre l'objectif
         // (`CONTRACT_REQUEST_C.md`).
         Text(
-          t.enseignant.cahier.objectifDetail(eleve: participant.membre.libelle),
+          t.enseignant.cahier.objectifDetail(
+            queEleve: queDevant(participant.membre.libelle),
+          ),
           style: discret,
         ),
         Ecart.vMd,
@@ -1101,7 +1105,7 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
         // par la semantique du champ.
         Semantics(
           label: t.enseignant.cahier.objectif(
-            eleve: participant.membre.libelle,
+            deEleve: deDevant(participant.membre.libelle),
           ),
           child: TextField(
             key: const ValueKey<String>('cahier-objectif'),
@@ -1117,7 +1121,7 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
         ExcludeSemantics(
           child: Text(
             t.enseignant.cahier.travailMaison(
-              eleve: participant.membre.libelle,
+              deEleve: deDevant(participant.membre.libelle),
             ),
             style: textes.titleSmall,
           ),
@@ -1144,7 +1148,7 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
         Ecart.vMd,
         Semantics(
           label: t.enseignant.cahier.travailMaison(
-            eleve: participant.membre.libelle,
+            deEleve: deDevant(participant.membre.libelle),
           ),
           child: TextField(
             key: const ValueKey<String>('cahier-devoir'),
