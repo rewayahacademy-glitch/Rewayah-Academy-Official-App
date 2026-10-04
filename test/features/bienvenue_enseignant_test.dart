@@ -224,8 +224,11 @@ void main() {
       await _monter(tester);
       await tester.pumpAndSettle();
 
-      expect(find.text(t.contrat.pointEnregistrement), findsOneWidget);
-      expect(find.text(t.contrat.pointControle), findsOneWidget);
+      // Texte E1 valide le 02/10/2026 : l'enregistrement et la visite de
+      // controle sont dits dans le meme paragraphe, puis qui peut ecouter.
+      expect(find.text(t.contrat.e1.quoi), findsOneWidget);
+      expect(find.text(t.contrat.a3.qui), findsOneWidget);
+      expect(find.text(t.contrat.pointEnregistrement), findsNothing);
     });
   });
 

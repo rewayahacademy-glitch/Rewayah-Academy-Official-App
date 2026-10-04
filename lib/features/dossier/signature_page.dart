@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/domain/enums.dart';
-import '../../core/dossier/etat_dossier.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/dossier/versions_contrat.dart';
 import '../../core/i18n/strings.g.dart';
@@ -20,6 +19,40 @@ import '../connexion/recuperation_page.dart'
     show IssueEnvoiLien, issueEchecEnvoi;
 import '../consentements/texte_observation.dart';
 
+/// Un paragraphe d'un texte a signer : son titre en gras, puis son corps.
+typedef ParagrapheTexte = ({String titre, String? corps});
+
+/// Le texte A3 valide le 02/10/2026 (tuteur, eleve adulte), paragraphe par
+/// paragraphe, mot pour mot (`t.contrat.a3`).
+List<ParagrapheTexte> paragraphesA3() => <ParagrapheTexte>[
+  (titre: t.contrat.a3.quoiTitre, corps: t.contrat.a3.quoi),
+  (titre: t.contrat.a3.pourquoiTitre, corps: t.contrat.a3.pourquoi),
+  (titre: t.contrat.a3.quiTitre, corps: t.contrat.a3.qui),
+  (
+    titre: t.contrat.a3.dureeTitre,
+    corps: t.contrat.a3.duree(duree: VersionsContrat.dureeEnregistrementJours),
+  ),
+  (titre: t.contrat.a3.desaccordTitre, corps: t.contrat.a3.desaccord),
+];
+
+/// La version enseignant E1 : le texte A3 corrige, la phrase du compte rendu
+/// ajoutee au controle, le « Pourquoi » complete et « Si vous refusez » propre
+/// a l'enseignant (`t.contrat.e1`).
+List<ParagrapheTexte> paragraphesE1() => <ParagrapheTexte>[
+  (titre: t.contrat.a3.quoiTitre, corps: t.contrat.e1.quoi),
+  (titre: t.contrat.a3.pourquoiTitre, corps: t.contrat.e1.pourquoi),
+  (titre: t.contrat.a3.quiTitre, corps: t.contrat.a3.qui),
+  (
+    titre: t.contrat.a3.dureeTitre,
+    corps: t.contrat.a3.duree(duree: VersionsContrat.dureeEnregistrementJours),
+  ),
+  (titre: t.contrat.e1.refusTitre, corps: t.contrat.e1.refus),
+];
+
+/// Le role lu dans l'etat du dossier ; tuteur par defaut.
+AppRole _role(WidgetRef ref) =>
+    ref.watch(etatDossierProvider).value?.role ?? AppRole.guardian;
+
 /// La carte a accuser une fois (ADR-011).
 ///
 /// **Elle vient avant le contrat, pas apres.** Les deux dispositifs qu'elle
@@ -27,17 +60,21 @@ import '../consentements/texte_observation.dart';
 /// le contrat ; mais une clause signee au milieu d'un texte long n'informe
 /// personne, et « un enseignant qui decouvre le dispositif apres coup est un
 /// litige » (ADR-011). Cette carte est courte pour etre lue.
+///
+/// Depuis la version [VersionsContrat.textesJuridiques], elle porte le texte
+/// A3 valide (E1 pour l'enseignant).
 class AccusePage extends ConsumerWidget {
   /// Cree la carte d'accuse.
   const AccusePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final bool enseignant = _role(ref) == AppRole.teacher;
     return _PageASigner(
-      titre: t.accuse.titre,
-      libelleAction: t.accuse.compris,
+      titre: t.contrat.a3.titre,
+      libelleAction: t.contrat.a3.jaiLu,
       sorte: SorteContrat.accuseEnregistrementControle,
-      points: <String>[t.contrat.pointEnregistrement, t.contrat.pointControle],
+      paragraphes: enseignant ? paragraphesE1() : paragraphesA3(),
     );
   }
 }
@@ -47,16 +84,22 @@ class AccusePage extends ConsumerWidget {
 ///
 /// Pour le tuteur, la version signee est celle qui ajoute le paragraphe des
 /// visites d'observation (03 section 1 bis-2 et 3) au texte existant, notice
-/// d'enregistrement comprise ; la case d'accord n'est jamais precochee.
-/// `?pour=moi` donne la variante eleve adulte.
+/// d'enregistrement comprise (texte A3 valide le 02/10) ; la case d'accord
+/// n'est jamais precochee. `?pour=moi` donne la variante eleve adulte.
+///
+/// Pour l'enseignant : le texte E1, l'occultation des coordonnees, puis la
+/// clause des visites de controle en paragraphe separe au-dessus de la
+/// signature, et la case separee de l'article 9, jamais precochee, sans
+/// laquelle la signature reste fermee (`POLITIQUE_CONTROLE_ENSEIGNANTS.md`,
+/// partie A).
 class ContratPage extends ConsumerWidget {
   /// Cree la page de contrat.
   const ContratPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<EtatDossier> etat = ref.watch(etatDossierProvider);
-    final AppRole role = etat.value?.role ?? AppRole.guardian;
+    final AppRole role = _role(ref);
+    final bool enseignant = role == AppRole.teacher;
     String? pour;
     try {
       pour = GoRouterState.of(context).uri.queryParameters['pour'];
@@ -66,41 +109,52 @@ class ContratPage extends ConsumerWidget {
 
     return _PageASigner(
       titre: t.contrat.titre,
-      introduction: t.contrat.intro,
       libelleAction: t.contrat.accepter,
       sorte: SorteContrat.pour(role),
-      points: <String>[
-        t.contrat.pointEnregistrement,
-        t.contrat.pointControle,
+      paragraphes: <ParagrapheTexte>[
+        ...enseignant ? paragraphesE1() : paragraphesA3(),
         // L'occultation des coordonnees ne concerne que l'enseignant : c'est ce
         // qu'il accepte, et c'est aussi le controle anti-pillage central de
         // l'ADR-008.
-        if (role == AppRole.teacher) t.contrat.pointCoordonnees,
+        if (enseignant) (titre: t.contrat.pointCoordonnees, corps: null),
       ],
-      observation: role == AppRole.teacher
+      clause: enseignant
+          ? (
+              titre: t.contrat.clauseControle.titre,
+              corps: t.contrat.clauseControle.texte,
+            )
+          : null,
+      caseReligion: enseignant,
+      observation: enseignant
           ? null
           : VarianteObservation.depuisParametre(pour),
     );
   }
 }
 
-/// La coquille commune : des points en clair dans UNE carte groupee, un
-/// bouton, rien d'autre.
+/// La coquille commune : les paragraphes en clair dans UNE carte groupee, la
+/// clause et les cases s'il y en a, un bouton, rien d'autre.
 class _PageASigner extends ConsumerStatefulWidget {
   const _PageASigner({
     required this.titre,
     required this.libelleAction,
     required this.sorte,
-    required this.points,
-    this.introduction,
+    required this.paragraphes,
+    this.clause,
+    this.caseReligion = false,
     this.observation,
   });
 
   final String titre;
-  final String? introduction;
   final String libelleAction;
   final SorteContrat sorte;
-  final List<String> points;
+  final List<ParagrapheTexte> paragraphes;
+
+  /// Un paragraphe separe, au-dessus de la signature (clause enseignant).
+  final ParagrapheTexte? clause;
+
+  /// Vrai : la case separee de l'article 9 (enseignant), requise pour signer.
+  final bool caseReligion;
 
   /// Avec une variante, le paragraphe des visites d'observation et sa case.
   final VarianteObservation? observation;
@@ -112,9 +166,12 @@ class _PageASigner extends ConsumerStatefulWidget {
 class _PageASignerState extends ConsumerState<_PageASigner> {
   bool _envoi = false;
   bool _cochee = false;
+  bool _religionCochee = false;
   String? _erreur;
 
-  bool get _signable => widget.observation == null || _cochee;
+  bool get _signable =>
+      (widget.observation == null || _cochee) &&
+      (!widget.caseReligion || _religionCochee);
 
   Future<void> _signer() async {
     setState(() {
@@ -149,6 +206,7 @@ class _PageASignerState extends ConsumerState<_PageASigner> {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final VarianteObservation? observation = widget.observation;
+    final ParagrapheTexte? clause = widget.clause;
 
     return PageShell(
       titre: widget.titre,
@@ -180,16 +238,38 @@ class _PageASignerState extends ConsumerState<_PageASigner> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          if (widget.introduction != null) ...<Widget>[
-            Text(widget.introduction!, style: textes.bodyMedium),
-            Ecart.vXl,
-          ],
           GroupeReglages(
             lignes: <LigneRubrique>[
-              for (final String point in widget.points)
-                LigneRubrique(icone: AppIcons.controleQualite, libelle: point),
+              for (final ParagrapheTexte p in widget.paragraphes)
+                LigneRubrique(
+                  icone: AppIcons.controleQualite,
+                  libelle: p.titre,
+                  legende: p.corps,
+                ),
             ],
           ),
+          if (clause != null) ...<Widget>[
+            Ecart.vXl,
+            GroupeReglages(
+              lignes: <LigneRubrique>[
+                LigneRubrique(
+                  icone: AppIcons.controleQualite,
+                  libelle: clause.titre,
+                  legende: clause.corps,
+                ),
+              ],
+            ),
+          ],
+          if (widget.caseReligion) ...<Widget>[
+            Ecart.vXl,
+            CaseAccordTexte(
+              libelle: t.contrat.clauseControle.caseReligion,
+              cochee: _religionCochee,
+              onChanged: _envoi
+                  ? null
+                  : (bool v) => setState(() => _religionCochee = v),
+            ),
+          ],
           if (observation != null) ...<Widget>[
             Ecart.vXxl,
             Text(t.consentement.texte.titre, style: textes.titleMedium),

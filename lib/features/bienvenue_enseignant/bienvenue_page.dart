@@ -214,17 +214,20 @@ class _Corps extends StatelessWidget {
         ],
         Ecart.vSection,
         // **Les deux dispositifs de l'ADR-011, nommes en clair**, une ligne
-        // chacun. Ils ont deja ete accuses a l'inscription.
+        // chacun. Ils ont deja ete accuses a l'inscription. Le texte est celui
+        // de l'accuse E1 valide le 02/10/2026, mot pour mot.
         GroupeReglages(
           titre: t.enseignant.bienvenue.rappels,
           lignes: <LigneRubrique>[
             LigneRubrique(
               icone: AppIcons.micro,
-              libelle: t.contrat.pointEnregistrement,
+              libelle: t.contrat.a3.quoiTitre,
+              legende: t.contrat.e1.quoi,
             ),
             LigneRubrique(
               icone: AppIcons.controleQualite,
-              libelle: t.contrat.pointControle,
+              libelle: t.contrat.a3.quiTitre,
+              legende: t.contrat.a3.qui,
             ),
           ],
         ),

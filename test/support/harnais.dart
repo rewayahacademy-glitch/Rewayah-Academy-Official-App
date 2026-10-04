@@ -98,6 +98,9 @@ class FauxServiceDossier implements ServiceDossier {
   /// Les contrats acceptes.
   final List<SorteContrat> contratsAcceptes = <SorteContrat>[];
 
+  /// Les versions acceptees, dans le meme ordre que [contratsAcceptes].
+  final List<String> versionsAcceptees = <String>[];
+
   /// Les pieces deposees.
   final List<PieceAEnvoyer> depots = <PieceAEnvoyer>[];
 
@@ -134,6 +137,7 @@ class FauxServiceDossier implements ServiceDossier {
   Future<void> accepterContrat(SorteContrat sorte, String version) async {
     _peutEchouer();
     contratsAcceptes.add(sorte);
+    versionsAcceptees.add(version);
   }
 
   @override
