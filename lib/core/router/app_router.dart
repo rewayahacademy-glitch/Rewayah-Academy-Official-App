@@ -38,6 +38,11 @@ import '../../features/classe_tuteur/planning_classe_page.dart';
 import '../../features/classe_tuteur/progression_classe_page.dart';
 import '../../features/classe_tuteur/ressources_classe_page.dart';
 import '../../features/classe_tuteur/travail_classe_page.dart';
+import '../../features/com_annonces/administration_communications_page.dart';
+import '../../features/com_annonces/publier_annonce_classe_page.dart';
+import '../../features/com_communaute/communaute_page.dart';
+import '../../features/com_messages/messages_page.dart';
+import '../../features/com_studio/studio_page.dart';
 import '../../features/compte/acces_page.dart';
 import '../../features/compte/aide_page.dart';
 import '../../features/compte/apparence_page.dart';
@@ -61,6 +66,7 @@ import '../../features/controleur/garde_controle.dart';
 import '../../features/controleur/historique_controleur_page.dart';
 import '../../features/controleur/observation_controle_page.dart';
 import '../../features/creneaux/creneaux_page.dart';
+import '../../features/demo/communications/demo_communications_page.dart';
 import '../../features/demo/demo_accessibilite_page.dart';
 import '../../features/demo/demo_adulte_page.dart';
 import '../../features/demo/demo_classe_page.dart';
@@ -501,6 +507,26 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   ),
                 ],
               ),
+              // COM-F : les Messages metier, une pose de l'Accueil (aucune
+              // cinquieme destination) ; la voie COM-MSG remplit l'ecran.
+              GoRoute(
+                path: Routes.tuteurMessages,
+                pageBuilder: glissee(
+                  (GoRouterState _) =>
+                      const MessagesPage(cheminRetour: Routes.tuteurAccueil),
+                ),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: ':filId',
+                    pageBuilder: glissee(
+                      (GoRouterState etat) => MessagesPage(
+                        filId: _parametre(etat, 'filId'),
+                        cheminRetour: Routes.tuteurMessages,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
           // Foyer : ajout de profil, appareils, emetteur QR, fiche et ses
@@ -734,6 +760,32 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 builder: (BuildContext _, GoRouterState _) =>
                     const JourneePage(),
               ),
+              // COM-F : poses de la branche Aujourd'hui (aucune destination
+              // ajoutee, E10) : les notifications de la cloche, la
+              // `NotificationsPage` existante, et la Communaute enseignants,
+              // raccourci d'Aujourd'hui (Q2).
+              GoRoute(
+                path: Routes.enseignantNotifications,
+                builder: (BuildContext contexte, GoRouterState _) =>
+                    NotificationsPage(
+                      onRetour: () =>
+                          GoRouter.of(contexte).go(Routes.enseignantJournee),
+                    ),
+              ),
+              GoRoute(
+                path: Routes.enseignantCommunaute,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const CommunautePage(),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: ':publicationId',
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        CommunautePage(
+                          publicationId: _parametre(etat, 'publicationId'),
+                        ),
+                  ),
+                ],
+              ),
             ],
           ),
           // Classes, deuxieme branche (E10) : l'ordre des branches est celui
@@ -744,6 +796,23 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 path: Routes.enseignantClasses,
                 builder: (BuildContext _, GoRouterState _) =>
                     const MesClassesPage(),
+              ),
+              // COM-F : les Messages metier de l'enseignant, une pose de la
+              // branche Classes (aucune destination ajoutee, E10).
+              GoRoute(
+                path: Routes.enseignantMessages,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const MessagesPage(cheminRetour: Routes.enseignantClasses),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: ':filId',
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        MessagesPage(
+                          filId: _parametre(etat, 'filId'),
+                          cheminRetour: Routes.enseignantMessages,
+                        ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -802,6 +871,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState etat) =>
             RevueGroupePage(groupeId: etat.pathParameters['groupeId'] ?? ''),
       ),
+      // COM-F : publier une annonce de Classe, tache focalisee hors de la
+      // coquille comme l'Espace Classe d'ou elle part (voie COM-ANN).
+      GoRoute(
+        path: '${Routes.enseignantGroupe}/:groupeId/annonce',
+        builder: (BuildContext _, GoRouterState etat) =>
+            PublierAnnonceClassePage(groupeId: _parametre(etat, 'groupeId')),
+      ),
 
       // Controleur : quatre destinations, Controle, Historique, Echanges,
       // Compte (C13, document 08 du 27/09/2026, qui remplace « une seule
@@ -824,6 +900,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 path: Routes.controleur,
                 builder: (BuildContext _, GoRouterState _) =>
                     const ControleControleurPage(),
+              ),
+              // COM-F : les notifications de la cloche du controleur, la
+              // `NotificationsPage` existante, pose de la branche Controle.
+              GoRoute(
+                path: Routes.controleurNotifications,
+                builder: (BuildContext contexte, GoRouterState _) =>
+                    NotificationsPage(
+                      onRetour: () =>
+                          GoRouter.of(contexte).go(Routes.controleur),
+                    ),
               ),
             ],
           ),
@@ -899,6 +985,80 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           domaine: AdminDomaine.operations,
           child: DemandesPage(),
         ),
+      ),
+      // COM-F : l'Administration des communications, sous Operations
+      // (QUESTIONS Q4), jamais un neuvieme domaine. Trois onglets pairs
+      // (`ongletsCommunications`) ; la racine renvoie au premier.
+      GoRoute(
+        path: Routes.adminOperationsCommunications,
+        redirect: (BuildContext _, GoRouterState _) =>
+            Routes.adminCommunicationsAnnonces,
+      ),
+      GoRoute(
+        path: Routes.adminCommunicationsAnnonces,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: AdministrationCommunicationsPage(
+            onglet: OngletCommunications.annonces,
+          ),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminCommunicationsModeration,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: AdministrationCommunicationsPage(
+            onglet: OngletCommunications.moderation,
+          ),
+        ),
+      ),
+      GoRoute(
+        path: Routes.adminCommunicationsMessages,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: AdministrationCommunicationsPage(
+            onglet: OngletCommunications.messages,
+          ),
+        ),
+        routes: <RouteBase>[
+          GoRoute(
+            path: ':filId',
+            builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
+              domaine: AdminDomaine.operations,
+              child: AdministrationCommunicationsPage(
+                onglet: OngletCommunications.messages,
+                filId: _parametre(etat, 'filId'),
+              ),
+            ),
+          ),
+        ],
+      ),
+      // COM-F : la cloche de l'en-tete admin ouvre la `NotificationsPage`
+      // existante, transverse aux domaines (aucun domaine actif).
+      GoRoute(
+        path: Routes.adminNotifications,
+        builder: (BuildContext contexte, GoRouterState _) => _CoquilleAdmin(
+          domaine: null,
+          child: NotificationsPage(
+            onRetour: () => GoRouter.of(contexte).go(Routes.admin),
+          ),
+        ),
+      ),
+      // COM-F : Le Studio (QUESTIONS Q1), hors de l'`AdminShell` : sa propre
+      // navigation viendra de la voie COM-STU, la sortie ramene a `/admin`.
+      // `/admin/studio/canaux` n'a pas de page : elle renvoie au Studio.
+      GoRoute(
+        path: Routes.adminStudio,
+        builder: (BuildContext _, GoRouterState _) => const StudioPage(),
+      ),
+      GoRoute(
+        path: Routes.adminStudioCanaux,
+        redirect: (BuildContext _, GoRouterState _) => Routes.adminStudio,
+      ),
+      GoRoute(
+        path: '${Routes.adminStudioCanaux}/:canalId',
+        builder: (BuildContext _, GoRouterState etat) =>
+            StudioPage(canalId: _parametre(etat, 'canalId')),
       ),
       GoRoute(
         path: Routes.adminPersonnes,
@@ -1167,6 +1327,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ...routesDemoControleur(Env.environnement),
       ...routesDemoAccessibilite(Env.environnement),
       ...routesDemoAdulte(Env.environnement),
+      ...routesDemoCommunications(Env.environnement),
     ],
   );
 });
@@ -1312,6 +1473,9 @@ class _CoquilleSecondaire extends ConsumerWidget {
         onCompte: () => aller(Routes.compte),
         // Retour vers l'Accueil admin partout (spec section 26 ter, Q14).
         onRetour: () => aller(Routes.admin),
+        // COM-F : la cloche et Le Studio, comme sur toute page admin.
+        onNotifications: () => aller(Routes.adminNotifications),
+        onStudio: () => aller(Routes.adminStudio),
         child: child,
       );
     }
@@ -1425,10 +1589,30 @@ class _CoquilleNavigation extends ConsumerWidget {
     );
 
     if (role != AppRole.guardian) {
+      // COM-F : la cloche des notifications, posee par la coquille du role
+      // quand ce role en a une (`Routes.notificationsPour` : enseignant et
+      // controleur ; jamais l'eleve). Sans point tant que le port est
+      // indisponible, comme le tuteur. Elle s'ajoute, en dernier, aux
+      // actions deja posees au-dessus (le raccourci Espaces de CT-9).
+      final String? cheminCloche = Routes.notificationsPour(role);
+      final Widget avecCloche = cheminCloche == null
+          ? coquille
+          : Builder(
+              builder: (BuildContext contexte) => ActionsEnteteCoquille(
+                actions: <Widget>[
+                  ...ActionsEnteteCoquille.de(contexte),
+                  ClocheNotifications(
+                    onPress: () => GoRouter.of(contexte).go(cheminCloche),
+                  ),
+                ],
+                onRetour: ActionsEnteteCoquille.retourDe(contexte),
+                child: coquille,
+              ),
+            );
       // CT-9 : le raccourci d'en-tete vers `Compte > Espaces`, seulement
       // quand le compte a plus d'un espace (jamais le tuteur, C6) ; l'espace
       // Controle est garde, refus generique si la capacite manque (C7).
-      final Widget avecEspaces = EnteteEspaces(child: coquille);
+      final Widget avecEspaces = EnteteEspaces(child: avecCloche);
       return role == AppRole.controller
           ? GardeControle(child: avecEspaces)
           : avecEspaces;
@@ -1467,8 +1651,9 @@ class _CoquilleNavigation extends ConsumerWidget {
 class _CoquilleAdmin extends ConsumerWidget {
   const _CoquilleAdmin({required this.domaine, required this.child});
 
-  /// Le domaine que revendique cette route.
-  final AdminDomaine domaine;
+  /// Le domaine que revendique cette route ; nul pour une page transverse
+  /// (les notifications), qui n'allume aucun domaine.
+  final AdminDomaine? domaine;
 
   final Widget child;
 
@@ -1490,6 +1675,12 @@ class _CoquilleAdmin extends ConsumerWidget {
       onRetour: domaine == AdminDomaine.accueil
           ? null
           : () => aller(Routes.admin),
+      // COM-F : la cloche mene a la `NotificationsPage` existante, l'action
+      // « Le Studio » au Studio (Q1). Posees par la route, sous le prefixe
+      // `/admin` que la garde reserve a l'admin : la coquille ne lit aucun
+      // role.
+      onNotifications: () => aller(Routes.adminNotifications),
+      onStudio: () => aller(Routes.adminStudio),
       child: child,
     );
   }

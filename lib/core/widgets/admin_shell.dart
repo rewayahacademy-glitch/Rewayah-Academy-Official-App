@@ -14,6 +14,8 @@ import '../theme/app_spacing.dart';
 import 'app_bottom_sheet.dart';
 import 'avatar_nom.dart';
 import 'bascule_theme.dart';
+import 'entete_page.dart';
+import 'lien_fleche.dart';
 import 'page_shell.dart';
 import 'pressable.dart';
 
@@ -45,8 +47,16 @@ import 'pressable.dart';
 /// compte) se posent a droite de l'en-tete de chaque page par
 /// [ActionsEnteteCoquille], a cote du titre et du sous-titre de la page.
 /// Sous 600, une barre mobile garde Menu, le champ de recherche et le
-/// compte. Pas de cloche tant qu'aucun service de notifications n'existe
-/// (Q5). Chaque page recoit aussi le retour vers l'Accueil ([onRetour]).
+/// compte. Chaque page recoit aussi le retour vers l'Accueil ([onRetour]).
+///
+/// **Communications (COM-F)** : la cloche ([onNotifications]) mene a la
+/// `NotificationsPage` existante, sans point tant que le port est
+/// indisponible (comme le tuteur) ; l'action « Le Studio » ([onStudio])
+/// ouvre l'espace de travail interne (QUESTIONS Q1), jamais un neuvieme
+/// domaine. **La coquille ne lit aucun role** : elle rend ces deux entrees
+/// seulement quand son appelant les lui donne (le routeur, sous le prefixe
+/// `/admin` que la garde reserve a l'admin). Sous 600, la cloche passe dans
+/// l'en-tete de page et Le Studio en lien au pied du tiroir.
 class AdminShell extends StatelessWidget {
   /// Cree la coquille admin.
   ///
@@ -62,6 +72,8 @@ class AdminShell extends StatelessWidget {
     required this.child,
     super.key,
     this.onRetour,
+    this.onNotifications,
+    this.onStudio,
   }) : assert(
          domaines.length <= maxDomaines,
          'La sidebar admin ne contient jamais plus de $maxDomaines domaines '
@@ -85,6 +97,12 @@ class AdminShell extends StatelessWidget {
   /// Le retour pose sur chaque page de la coquille (spec section 26 ter,
   /// Q14) : vers l'Accueil, nul sur l'Accueil lui-meme.
   final VoidCallback? onRetour;
+
+  /// Ouvre les notifications (`/admin/notifications`). Nul : aucune cloche.
+  final VoidCallback? onNotifications;
+
+  /// Ouvre Le Studio (`/admin/studio`). Nul : aucune action Studio.
+  final VoidCallback? onStudio;
 
   /// L'ecran affiche.
   final Widget child;
@@ -129,15 +147,21 @@ class AdminShell extends StatelessWidget {
       }
     }
 
-    // Les actions de l'en-tete de page, a partir de 600 : Recherche, theme,
-    // compte, dans cet ordre (maquette 02A).
+    // Les actions de l'en-tete de page, a partir de 600 : Recherche, Le
+    // Studio, theme, compte, dans cet ordre (maquette 02A), puis la cloche en
+    // dernier (`ActionsEnteteCoquille`). Sous 600, la cloche seule : la
+    // barre mobile garde Menu, Recherche et compte.
+    final VoidCallback? notifications = onNotifications;
+    final VoidCallback? studio = onStudio;
     Widget contenu({required bool avecActions}) => ActionsEnteteCoquille(
       actions: <Widget>[
         if (avecActions) ...<Widget>[
           _BoutonRecherche(onRecherche: onAller),
+          if (studio != null) _BoutonStudio(onStudio: studio),
           const BasculeTheme(),
           _BoutonCompte(onCompte: onCompte),
         ],
+        if (notifications != null) ClocheNotifications(onPress: notifications),
       ],
       onRetour: onRetour,
       child: child,
@@ -153,6 +177,7 @@ class AdminShell extends StatelessWidget {
               indexActif: actif,
               onChoisir: choisir,
               onCompte: onCompte,
+              onStudio: studio,
             )
           : null,
       body: switch (chrome) {
@@ -326,12 +351,16 @@ class _Tiroir extends StatelessWidget {
     required this.indexActif,
     required this.onChoisir,
     required this.onCompte,
+    this.onStudio,
   });
 
   final List<AdminDomaine> domaines;
   final int? indexActif;
   final void Function(int index) onChoisir;
   final VoidCallback onCompte;
+
+  /// Ouvre Le Studio ; nul, aucun lien (COM-F).
+  final VoidCallback? onStudio;
 
   @override
   Widget build(BuildContext context) {
@@ -384,6 +413,26 @@ class _Tiroir extends StatelessWidget {
               ),
             ),
           Ecart.vLg,
+          // Le Studio n'est pas un domaine (Q1) : un lien sous la liste,
+          // jamais une neuvieme destination du tiroir.
+          if (onStudio case final VoidCallback ouvrir)
+            Padding(
+              padding: const EdgeInsetsDirectional.symmetric(
+                horizontal: AppSpacing.lg,
+              ),
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: LienFleche(
+                  libelle: t.com.socle.navigation.studio,
+                  libelleSemantique: t.com.socle.navigation.ouvrirStudio,
+                  icone: AppIcons.discussion,
+                  onPress: () {
+                    Navigator.of(context).pop();
+                    ouvrir();
+                  },
+                ),
+              ),
+            ),
           _PiedUtilisateur(
             onCompte: () {
               Navigator.of(context).pop();
@@ -644,6 +693,25 @@ class _BoutonIcone extends StatelessWidget {
       ),
     );
   }
+}
+
+/// « Le Studio » (QUESTIONS Q1) : une action de l'en-tete, jamais un
+/// domaine. Icone et info-bulle « Le Studio », lue « Ouvrir Le Studio ».
+class _BoutonStudio extends StatelessWidget {
+  const _BoutonStudio({required this.onStudio});
+
+  final VoidCallback onStudio;
+
+  @override
+  Widget build(BuildContext context) => Tooltip(
+    message: t.com.socle.navigation.studio,
+    excludeFromSemantics: true,
+    child: _BoutonIcone(
+      icone: AppIcons.discussion.repos,
+      libelle: t.com.socle.navigation.ouvrirStudio,
+      onPress: onStudio,
+    ),
+  );
 }
 
 /// « Mon compte » : la deconnexion y est, donc atteignable partout.

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/communications/modeles_communication.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
@@ -12,6 +13,8 @@ import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../accueil_famille/ancre_horloge_serveur.dart';
+import '../com_annonces/annonces_de_classe.dart';
+import '../com_messages/entree_messages_contexte.dart';
 import 'carte_seance_classe.dart';
 import 'contexte_classe.dart';
 
@@ -143,21 +146,44 @@ class _Contenu extends ConsumerWidget {
       ],
     );
 
+    // COM-F : les emplacements des Communications, vides tant que leurs
+    // voies ne les remplissent pas (annonces de la Classe en tete, entree
+    // des Messages apres les rubriques) ; ils portent leur propre ecart.
+    final Widget annonces = AnnoncesDeClasse(classeId: classeId);
+    final Widget messages = EntreeMessagesContexte(
+      type: TypeObjetLie.classe,
+      objetId: classeId,
+    );
+
     if (!large) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
-        children: <Widget>[carte, Ecart.vLg, rubriques],
+        children: <Widget>[annonces, carte, Ecart.vLg, rubriques, messages],
       );
     }
     // Tablette large et bureau : deux colonnes, environ 62 / 38, comme
     // l'Accueil bureau (V2 A) ; la carte a gauche, les rubriques a droite.
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Expanded(flex: 62, child: carte),
-        Ecart.hLg,
-        Expanded(flex: 38, child: rubriques),
+        annonces,
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(flex: 62, child: carte),
+            Ecart.hLg,
+            Expanded(
+              flex: 38,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[rubriques, messages],
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }
