@@ -4564,6 +4564,18 @@
       "aucunBeneficiaireTitre": "Aucun bénéficiaire",
       "aucunBeneficiairePhrase": "Aucun profil élève de votre foyer n'a de solde à recharger pour l'instant."
     },
+    "finances": {
+      "indisponibleTitre": "Vos finances ne sont pas encore disponibles",
+      "indisponiblePhrase": "Votre solde, votre période financée et votre mensualité s'afficheront ici dès leur mise en service.",
+      "erreurTitre": "Vos finances ne peuvent pas être lues",
+      "videTitre": "Aucune finance enregistrée",
+      "videPhrase": "Aucun solde ni aucune mensualité n'est encore rendu pour votre profil. Ils apparaîtront ici après votre inscription à une classe.",
+      "voirMouvementsSemantique": "Voir vos mouvements",
+      "mouvementsContexte": "Vos recharges, mensualités, remises et avoirs, du plus récent au plus ancien. Rien ne s'efface : une correction s'ajoute comme un nouveau mouvement.",
+      "mouvementsErreurTitre": "Vos mouvements ne peuvent pas être lus",
+      "mouvementsIndisponiblePhrase": "Vos recharges et vos mensualités s'afficheront ici dès leur mise en service.",
+      "mouvementsVidePhrase": "Aucune recharge ni aucune mensualité n'est encore enregistrée pour votre profil. Les mouvements apparaîtront ici après le premier paiement."
+    },
     "famille": {
       "ajouter": "Ajouter ma famille",
       "ajouterLegende": "Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.",

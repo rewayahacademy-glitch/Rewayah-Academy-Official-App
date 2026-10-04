@@ -2386,6 +2386,7 @@ class Traductions$adulte$fr {
 	late final Traductions$adulte$provisoire$fr provisoire = Traductions$adulte$provisoire$fr.internal(_root);
 	late final Traductions$adulte$recharge$fr recharge = Traductions$adulte$recharge$fr.internal(_root);
 	late final Traductions$adulte$paiements$fr paiements = Traductions$adulte$paiements$fr.internal(_root);
+	late final Traductions$adulte$finances$fr finances = Traductions$adulte$finances$fr.internal(_root);
 	late final Traductions$adulte$famille$fr famille = Traductions$adulte$famille$fr.internal(_root);
 	late final Traductions$adulte$invitation$fr invitation = Traductions$adulte$invitation$fr.internal(_root);
 	late final Traductions$adulte$acceptation$fr acceptation = Traductions$adulte$acceptation$fr.internal(_root);
@@ -10931,6 +10932,45 @@ class Traductions$adulte$paiements$fr {
 
 	/// fr: 'Aucun profil élève de votre foyer n'a de solde à recharger pour l'instant.'
 	String get aucunBeneficiairePhrase => 'Aucun profil élève de votre foyer n\'a de solde à recharger pour l\'instant.';
+}
+
+// Path: adulte.finances
+class Traductions$adulte$finances$fr {
+	Traductions$adulte$finances$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vos finances ne sont pas encore disponibles'
+	String get indisponibleTitre => 'Vos finances ne sont pas encore disponibles';
+
+	/// fr: 'Votre solde, votre période financée et votre mensualité s'afficheront ici dès leur mise en service.'
+	String get indisponiblePhrase => 'Votre solde, votre période financée et votre mensualité s\'afficheront ici dès leur mise en service.';
+
+	/// fr: 'Vos finances ne peuvent pas être lues'
+	String get erreurTitre => 'Vos finances ne peuvent pas être lues';
+
+	/// fr: 'Aucune finance enregistrée'
+	String get videTitre => 'Aucune finance enregistrée';
+
+	/// fr: 'Aucun solde ni aucune mensualité n'est encore rendu pour votre profil. Ils apparaîtront ici après votre inscription à une classe.'
+	String get videPhrase => 'Aucun solde ni aucune mensualité n\'est encore rendu pour votre profil. Ils apparaîtront ici après votre inscription à une classe.';
+
+	/// fr: 'Voir vos mouvements'
+	String get voirMouvementsSemantique => 'Voir vos mouvements';
+
+	/// fr: 'Vos recharges, mensualités, remises et avoirs, du plus récent au plus ancien. Rien ne s'efface : une correction s'ajoute comme un nouveau mouvement.'
+	String get mouvementsContexte => 'Vos recharges, mensualités, remises et avoirs, du plus récent au plus ancien. Rien ne s\'efface : une correction s\'ajoute comme un nouveau mouvement.';
+
+	/// fr: 'Vos mouvements ne peuvent pas être lus'
+	String get mouvementsErreurTitre => 'Vos mouvements ne peuvent pas être lus';
+
+	/// fr: 'Vos recharges et vos mensualités s'afficheront ici dès leur mise en service.'
+	String get mouvementsIndisponiblePhrase => 'Vos recharges et vos mensualités s\'afficheront ici dès leur mise en service.';
+
+	/// fr: 'Aucune recharge ni aucune mensualité n'est encore enregistrée pour votre profil. Les mouvements apparaîtront ici après le premier paiement.'
+	String get mouvementsVidePhrase => 'Aucune recharge ni aucune mensualité n\'est encore enregistrée pour votre profil. Les mouvements apparaîtront ici après le premier paiement.';
 }
 
 // Path: adulte.famille
@@ -19956,6 +19996,16 @@ extension on Traductions {
 			'adulte.paiements.soldesIndisponiblesPhrase' => 'Le solde de chaque bénéficiaire n\'est pas encore disponible dans l\'application. Aucune recharge n\'est possible ici pour l\'instant.',
 			'adulte.paiements.aucunBeneficiaireTitre' => 'Aucun bénéficiaire',
 			'adulte.paiements.aucunBeneficiairePhrase' => 'Aucun profil élève de votre foyer n\'a de solde à recharger pour l\'instant.',
+			'adulte.finances.indisponibleTitre' => 'Vos finances ne sont pas encore disponibles',
+			'adulte.finances.indisponiblePhrase' => 'Votre solde, votre période financée et votre mensualité s\'afficheront ici dès leur mise en service.',
+			'adulte.finances.erreurTitre' => 'Vos finances ne peuvent pas être lues',
+			'adulte.finances.videTitre' => 'Aucune finance enregistrée',
+			'adulte.finances.videPhrase' => 'Aucun solde ni aucune mensualité n\'est encore rendu pour votre profil. Ils apparaîtront ici après votre inscription à une classe.',
+			'adulte.finances.voirMouvementsSemantique' => 'Voir vos mouvements',
+			'adulte.finances.mouvementsContexte' => 'Vos recharges, mensualités, remises et avoirs, du plus récent au plus ancien. Rien ne s\'efface : une correction s\'ajoute comme un nouveau mouvement.',
+			'adulte.finances.mouvementsErreurTitre' => 'Vos mouvements ne peuvent pas être lus',
+			'adulte.finances.mouvementsIndisponiblePhrase' => 'Vos recharges et vos mensualités s\'afficheront ici dès leur mise en service.',
+			'adulte.finances.mouvementsVidePhrase' => 'Aucune recharge ni aucune mensualité n\'est encore enregistrée pour votre profil. Les mouvements apparaîtront ici après le premier paiement.',
 			'adulte.famille.ajouter' => 'Ajouter ma famille',
 			'adulte.famille.ajouterLegende' => 'Inscrivez vos enfants et invitez un conjoint ou une conjointe à rejoindre votre forfait famille.',
 			'adulte.famille.ajouterPhrase' => 'Vous pouvez ajouter vos enfants et inviter un conjoint ou une conjointe à rejoindre votre forfait famille. Votre espace élève reste inchangé.',
@@ -20205,6 +20255,8 @@ extension on Traductions {
 			'argent.etat.pause' => 'En pause',
 			'argent.etat.aRegulariser' => 'À régulariser',
 			'argent.periode.jusquau' => ({required Object date}) => 'Financé jusqu\'au ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'argent.periode.aucune' => 'Aucune période financée',
 			'argent.moyen.webStripe' => 'Carte bancaire',
 			'argent.moyen.webStripeDetail' => 'Paiement web sécurisé. Aucun débit avant votre confirmation.',
@@ -20215,8 +20267,6 @@ extension on Traductions {
 			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} sur ${total}',
 			'argent.soldes.paiements' => 'Paiements du mois',
 			'identiteProfil.age' => ({required Object n}) => '${n} ans',
-			_ => null,
-		} ?? switch (path) {
 			'identiteProfil.classe' => ({required Object classe}) => 'Classe ${classe}',
 			'identiteProfil.ageEtClasse' => ({required Object age, required Object classe}) => '${age} · ${classe}',
 			'identiteProfil.lecteurEnfant' => ({required Object prenom}) => '${prenom}, profil enfant',

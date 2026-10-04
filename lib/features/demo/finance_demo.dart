@@ -23,6 +23,7 @@
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_finance_direction.dart';
+import '../../core/capacites/port_mes_finances.dart';
 import '../../core/capacites/port_paiements_foyer.dart';
 import '../../core/capacites/port_politiques_commerciales.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
@@ -85,7 +86,7 @@ class _ProfilDemo {
   final String id;
   final String prenom;
   final String cleAccent;
-  final String classe;
+  final String? classe;
   final int? age;
 }
 
@@ -224,10 +225,11 @@ abstract final class DonneesFinanceDemo {
     bool finance = true,
     int? essais,
     int? manque,
+    bool adulte = false,
   }) {
     final List<LigneMensualite> lignes = essais != null
         ? const <LigneMensualite>[]
-        : lignesPourRang(rang);
+        : lignesPourRang(rang, adulte: adulte);
     final Montant mensualite = _somme(
       lignes.map((LigneMensualite l) => l.montant),
     );
@@ -235,7 +237,7 @@ abstract final class DonneesFinanceDemo {
       profilId: p.id,
       prenom: p.prenom,
       cleAccent: p.cleAccent,
-      estAdulte: false,
+      estAdulte: adulte,
       classe: p.classe,
       age: p.age,
       etat: etat,
@@ -320,6 +322,22 @@ abstract final class DonneesFinanceDemo {
       _finance(_khadija, rang: 5, etat: EtatFinancier.finance, solde: 3),
     ],
   };
+
+  /// Les finances de l'eleve adulte autonome (FI-9b, FI-BR-17) : son seul
+  /// profil, seul membre payant (rang 1, sans remise) au tarif adulte, le
+  /// mois de reference finance. [classe] `null` : la demonstration n'a pas
+  /// sa Classe (rien d'invente).
+  static FinancesProfil financesAdulte({
+    required String profilId,
+    required String prenom,
+    String? classe,
+  }) => _finance(
+    _ProfilDemo(profilId, prenom, 'accent-adulte', classe),
+    rang: 1,
+    etat: EtatFinancier.finance,
+    solde: 15,
+    adulte: true,
+  );
 
   /// Le nombre de paiements du mois dans le jeu [jeu].
   static int paiementsDuMois(JeuFoyerFinance jeu) => switch (jeu) {
@@ -456,9 +474,13 @@ abstract final class DonneesFinanceDemo {
   /// Le recu du paiement de demonstration du jeu [jeu] : un seul paiement
   /// externe, reparti par profil (guide §1.6), `null` quand aucun profil
   /// n'a ete recharge (aucun paiement, essai seul).
-  static RecuPaiement? recu(JeuFoyerFinance jeu) {
+  static RecuPaiement? recu(JeuFoyerFinance jeu) => _recuDe(profils(jeu));
+
+  /// Le recu du paiement qui a recharge [liste] : une allocation par profil
+  /// recharge, `null` sans aucun.
+  static RecuPaiement? _recuDe(List<FinancesProfil> liste) {
     final List<AllocationProfil> allocations = <AllocationProfil>[
-      for (final FinancesProfil p in profils(jeu))
+      for (final FinancesProfil p in liste)
         if (_rechargeDe(p).mineur > 0)
           AllocationProfil(
             profilId: p.profilId,
@@ -487,6 +509,18 @@ abstract final class DonneesFinanceDemo {
         .where((FinancesProfil f) => f.profilId == profilId)
         .firstOrNull;
     if (p == null) return const <MouvementProfil>[];
+    return _mouvementsDe(p, recu(jeu));
+  }
+
+  /// Les mouvements de l'eleve adulte autonome [p] (FI-9b, FI-BR-17) : son
+  /// recu ne repartit le paiement que sur lui.
+  static List<MouvementProfil> mouvementsAdulte(FinancesProfil p) =>
+      _mouvementsDe(p, _recuDe(<FinancesProfil>[p]));
+
+  static List<MouvementProfil> _mouvementsDe(
+    FinancesProfil p,
+    RecuPaiement? recuPaiement,
+  ) {
     final Montant recharge = _rechargeDe(p);
     return <MouvementProfil>[
       ..._mouvementsPeriode(p),
@@ -496,7 +530,7 @@ abstract final class DonneesFinanceDemo {
           date: dateRecharge,
           nature: NatureMouvement.recharge,
           montant: recharge,
-          recu: recu(jeu),
+          recu: recuPaiement,
         ),
     ];
   }
@@ -551,8 +585,14 @@ abstract final class DonneesFinanceDemo {
   /// financer le mois, ce manque suggere en premier montant (guide §5.3).
   static List<BeneficiaireRecharge> beneficiairesRecharge(
     JeuFoyerFinance jeu,
+  ) => beneficiairesDe(profils(jeu));
+
+  /// Les beneficiaires de la recharge de [liste], dans son ordre ; pour
+  /// l'eleve adulte autonome, son seul profil (FI-9b, FI-BR-17).
+  static List<BeneficiaireRecharge> beneficiairesDe(
+    List<FinancesProfil> liste,
   ) => <BeneficiaireRecharge>[
-    for (final FinancesProfil p in profils(jeu))
+    for (final FinancesProfil p in liste)
       BeneficiaireRecharge(
         id: p.profilId,
         prenom: p.prenom,
@@ -573,11 +613,16 @@ abstract final class DonneesFinanceDemo {
   static RecapitulatifRecharge recapitulatifMontants(
     JeuFoyerFinance jeu,
     List<MontantRecharge> choix,
+  ) => recapitulatifDe(beneficiairesRecharge(jeu), choix);
+
+  /// Le recapitulatif de ces montants pour les beneficiaires [liste].
+  static RecapitulatifRecharge recapitulatifDe(
+    List<BeneficiaireRecharge> liste,
+    List<MontantRecharge> choix,
   ) {
     final Map<String, Montant> montantDe = <String, Montant>{
       for (final MontantRecharge c in choix) c.beneficiaireId: c.montant,
     };
-    final List<BeneficiaireRecharge> liste = beneficiairesRecharge(jeu);
     if (choix.isEmpty ||
         montantDe.length != choix.length ||
         montantDe.entries.any(
@@ -866,6 +911,64 @@ class RechargeFoyerFinanceDemo implements PortRechargeFoyer {
     required String recapitulatifId,
     required String cle,
   }) => Future<String>.error(const CapaciteIndisponible('FI-BR-06'));
+}
+
+/// Mes finances en demonstration (FI-9b, FI-BR-17) : le seul profil de
+/// l'eleve adulte autonome, jamais un autre membre.
+class MesFinancesDemo implements PortMesFinances {
+  /// Cree le double pour la finance [finance].
+  const MesFinancesDemo(this.finance);
+
+  /// La finance de l'adulte.
+  final FinancesProfil finance;
+
+  @override
+  Future<FinancesProfil?> finances() async => finance;
+
+  @override
+  Future<List<MouvementProfil>> mouvements() async =>
+      DonneesFinanceDemo.mouvementsAdulte(finance);
+}
+
+/// La recharge de l'eleve adulte autonome en demonstration (FI-9b,
+/// FI-BR-17) : le MEME moteur que celle du foyer, avec son seul profil pour
+/// beneficiaire. Le paiement n'a pas de prestataire : l'etat honnete
+/// (`CapaciteIndisponible`).
+class RechargeAdulteDemo implements PortRechargeFoyer {
+  /// Cree le double pour la finance [finance].
+  const RechargeAdulteDemo(this.finance);
+
+  /// La finance de l'adulte.
+  final FinancesProfil finance;
+
+  @override
+  Future<List<BeneficiaireRecharge>> beneficiaires() async =>
+      DonneesFinanceDemo.beneficiairesDe(<FinancesProfil>[finance]);
+
+  @override
+  Future<RecapitulatifRecharge> verifierMontants(
+    List<MontantRecharge> choix,
+  ) async => DonneesFinanceDemo.recapitulatifDe(
+    DonneesFinanceDemo.beneficiairesDe(<FinancesProfil>[finance]),
+    choix,
+  );
+
+  // Le contrat par offres (EA-10) n'a pas de source dans la Finance V4.
+  @override
+  Future<RecapitulatifRecharge> verifier(List<ChoixRecharge> choix) =>
+      Future<RecapitulatifRecharge>.error(
+        const CapaciteIndisponible('FI-BR-17'),
+      );
+
+  @override
+  Future<String> payer({
+    required String recapitulatifId,
+    required String cle,
+  }) => Future<String>.error(const CapaciteIndisponible('FI-BR-17'));
+
+  @override
+  Future<SuiviPaiement> suivre(String commandeId) =>
+      Future<SuiviPaiement>.error(const CapaciteIndisponible('FI-BR-17'));
 }
 
 /// L'acces du foyer en demonstration (FI-BR-08).
