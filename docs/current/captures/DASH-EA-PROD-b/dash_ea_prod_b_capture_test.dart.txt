@@ -1,0 +1,111 @@
+// DASH-EA-PROD-b : captures des corrections de la revue DASH-EA-PROD-R sur
+// la route reelle (`/eleve/adulte`, vrai routeur, session d'eleve) :
+// « Voir tout » des dernieres seances place comme celui des ressources, et
+// squelette aux hauteurs composees de jetons. 320 px texte x2, 390 clair,
+// sombre et RTL, 1440.
+// Saute sans CAPTURE_DIR (voir LISEZ-MOI.md). A copier dans test/capture/.
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart';
+import 'package:rewayah_academy/features/demo/adulte_demo.dart';
+
+import '../features/accueil_adulte/support_accueil_adulte_route.dart';
+import 'outil_capture.dart';
+
+void main() {
+  group('Capture : DASH-EA-PROD-b', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    // nom : (adresse, doubles, hauteur 320 x2, hauteur 390, hauteur 1440)
+    final Map<String, (String, List<Override>, double, double, double)> etats =
+        <String, (String, List<Override>, double, double, double)>{
+          'contenu': (
+            Routes.eleve,
+            surchargesAccueilAdulte(
+              accueil: Valeur(accueilDemo()),
+              historique: Valeur(DonneesAdulteDemo.historiqueSeances()),
+            ),
+            5400,
+            2700,
+            1500,
+          ),
+          'chargement': (
+            Routes.eleveAdulte,
+            surchargesAccueilAdulte(accueil: const Attente<AccueilAdulteVM>()),
+            3000,
+            1800,
+            1000,
+          ),
+        };
+
+    for (final MapEntry<
+          String,
+          (String, List<Override>, double, double, double)
+        >
+        etat
+        in etats.entries) {
+      final (
+        String adresse,
+        List<Override> doubles,
+        double h320,
+        double h390,
+        double h1440,
+      ) = etat.value;
+      for (final (
+            String nom,
+            Size vue,
+            double echelle,
+            ThemeMode mode,
+            TextDirection sens,
+          )
+          in <(String, Size, double, ThemeMode, TextDirection)>[
+            (
+              '320x2_clair',
+              Size(320, h320),
+              2,
+              ThemeMode.light,
+              TextDirection.ltr,
+            ),
+            (
+              '390_clair',
+              Size(390, h390),
+              1,
+              ThemeMode.light,
+              TextDirection.ltr,
+            ),
+            (
+              '390_sombre',
+              Size(390, h390),
+              1,
+              ThemeMode.dark,
+              TextDirection.ltr,
+            ),
+            ('390_rtl', Size(390, h390), 1, ThemeMode.light, TextDirection.rtl),
+            (
+              '1440_clair',
+              Size(1440, h1440),
+              1,
+              ThemeMode.light,
+              TextDirection.ltr,
+            ),
+          ]) {
+        testWidgets('${etat.key} $nom', (WidgetTester tester) async {
+          await monterAccueilAdulteReel(
+            tester,
+            taille: vue,
+            echelle: echelle,
+            theme: mode,
+            direction: sens,
+            surcharges: doubles,
+            depart: adresse,
+          );
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, '${etat.key}_$nom')}');
+        });
+      }
+    }
+  });
+}
