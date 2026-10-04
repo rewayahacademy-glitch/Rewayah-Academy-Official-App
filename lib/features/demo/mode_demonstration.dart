@@ -6,10 +6,12 @@
 // L'interrupteur se lit a l'execution (`?demo=tuteur` dans l'adresse) parce
 // que le deploiement force `PLAYGROUND=false` et qu'on ne touche pas au
 // workflow. La garde, elle, est compilee : `ENVIRONNEMENT=production` la
-// ferme quelle que soit l'adresse.
+// ferme quelle que soit l'adresse, et une compilation de publication sans
+// `ENVIRONNEMENT` declare aussi (DEMO-ENV-1).
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -59,8 +61,20 @@ const String valeurDemoTuteur = 'tuteur';
 /// Vrai si l'environnement compile autorise la demonstration.
 ///
 /// Tout ce qui ressemble a `production` (casse, espaces) ferme la porte, et un
-/// environnement vide aussi : une compilation mal declaree ne l'ouvre jamais.
-bool environnementAutoriseDemo(String environnement) {
+/// environnement vide aussi. DEMO-ENV-1 (AD-R m13) : une compilation de
+/// publication qui ne declare pas `ENVIRONNEMENT` la ferme aussi, car
+/// [Env.environnement] y vaudrait `developpement` par defaut et ouvrirait
+/// toutes les demonstrations. [declare] et [publication] sont injectables
+/// pour les tests ; en debogage et en test, l'environnement par defaut reste
+/// ouvert.
+bool environnementAutoriseDemo(
+  String environnement, {
+  bool declare = Env.environnementDeclare,
+  bool publication = kReleaseMode,
+}) {
+  if (publication && !declare) {
+    return false;
+  }
   final String normalise = environnement.trim().toLowerCase();
   return normalise.isNotEmpty && !normalise.contains('prod');
 }

@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
@@ -224,10 +226,12 @@ String dateDeLAppareil(DateTime local) => t.commun.dates.jourDate(
 ///
 /// - [compact] (telephone) : zone imbriquee `surfaceSunken` sans bordure, la
 ///   seule imbrication admise ; la date en tete, « Votre heure » et « Duree »
-///   en deux colonnes ;
+///   en deux colonnes quand leurs libelles y tiennent sans couper de mot,
+///   sinon la duree sous l'heure (320 px, texte double) ;
 /// - large (tablette, bureau) : a meme la carte mise en avant, « Prochaine
 ///   seance » en tete, l'heure en grand chiffre tabulaire, la date et le
-///   fuseau dessous.
+///   fuseau dessous ; la duree a droite, ou dessous si elle n'y tient pas
+///   entiere.
 class BlocSeance extends StatelessWidget {
   /// Cree le bloc.
   const BlocSeance({required this.affichage, required this.compact, super.key});
@@ -387,7 +391,8 @@ class _LigneIcone extends StatelessWidget {
 }
 
 /// Telephone : « Votre heure / 13:45 Paris » et « Duree / 1 h 30 », separes
-/// par un filet vertical.
+/// par un filet vertical ; la duree passe sous l'heure, sans filet, quand
+/// un libelle ne tiendrait pas entier dans sa colonne.
 class _HeuresCompactes extends StatelessWidget {
   const _HeuresCompactes({required this.affichage});
 
@@ -403,25 +408,21 @@ class _HeuresCompactes extends StatelessWidget {
     final TextStyle valeur = AppTypography.tabulaire(
       palette.inkStrong.applyTo(textes.titleMedium ?? const TextStyle()),
     );
+    final String libelleHeure = affichage.ville == null
+        ? affichage.fuseau
+        : LibellesGroupe.votreHeure;
+    final String valeurHeure = affichage.ville == null
+        ? affichage.heure
+        : LibellesGroupe.heureEtVille(
+            heure: affichage.heure,
+            ville: affichage.ville!,
+          );
     final Widget heure = MergeSemantics(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            affichage.ville == null
-                ? affichage.fuseau
-                : LibellesGroupe.votreHeure,
-            style: libelle,
-          ),
-          Text(
-            affichage.ville == null
-                ? affichage.heure
-                : LibellesGroupe.heureEtVille(
-                    heure: affichage.heure,
-                    ville: affichage.ville!,
-                  ),
-            style: valeur,
-          ),
+          Text(libelleHeure, style: libelle),
+          Text(valeurHeure, style: valeur),
         ],
       ),
     );
@@ -434,14 +435,22 @@ class _HeuresCompactes extends StatelessWidget {
         ],
       ),
     );
-    final double echelle = MediaQuery.textScalerOf(context).scale(1);
+    final double retrait = _ColonneFiletee.retrait(palette);
     return LayoutBuilder(
       builder: (BuildContext _, BoxConstraints c) {
-        // BENTO-2b : a 320 px et texte double, la demi-colonne coupait
-        // « Duré/e ». Sous [_largeurMinColonne] x echelle par moitie (filet
-        // compris), la duree passe sous l'heure, sans filet.
-        final double moitie = (c.maxWidth - AppSpacing.lg * 2) / 2;
-        if (moitie < _largeurMinColonne * (echelle < 1 ? 1 : echelle)) {
+        // BENTO-2b/2c : a 320 px (texte x1 ou x2), la demi-colonne coupait
+        // « Duré/e ». Deux colonnes seulement si chaque libelle y tient sans
+        // couper de mot, mesure sur la largeur REELLE de chaque colonne (la
+        // duree perd le filet et ses deux marges) ; sinon la duree passe
+        // sous l'heure, sans filet (320 px, texte double).
+        final double colonne = c.maxWidth / 2;
+        final bool deuxColonnes =
+            _motLePlusLong(context, libelleHeure, libelle) <= colonne &&
+            _motLePlusLong(context, valeurHeure, valeur) <= colonne &&
+            _surUneLigne(context, LibellesGroupe.dureeLibelle, libelle) <=
+                colonne - retrait &&
+            _surUneLigne(context, affichage.duree, valeur) <= colonne - retrait;
+        if (!deuxColonnes) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[heure, Ecart.vSm, duree],
@@ -459,15 +468,11 @@ class _HeuresCompactes extends StatelessWidget {
       },
     );
   }
-
-  /// Largeur minimale d'une demi-colonne a texte 100 % : « Durée », « Votre
-  /// heure », « 18:10 Paris » y tiennent sans couper de mot. Sans source
-  /// externe, mesuree par `accueil_famille_test.dart`.
-  static const double _largeurMinColonne = 96;
 }
 
 /// Tablette et bureau : l'heure en grand, la date et le fuseau dessous ; la
-/// duree a droite du filet vertical.
+/// duree a droite du filet vertical, ou sous l'heure quand elle n'y tient
+/// pas entiere.
 class _HeuresLarges extends StatelessWidget {
   const _HeuresLarges({required this.affichage});
 
@@ -477,66 +482,103 @@ class _HeuresLarges extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+    final TextStyle styleHeure = palette.inkStrong.applyTo(
+      textes.displaySmall ?? const TextStyle(),
+    );
+    final TextStyle styleDate = palette.inkMuted.applyTo(
+      textes.bodyLarge ?? const TextStyle(),
+    );
+    final TextStyle styleLibelle = palette.inkMuted.applyTo(
+      textes.bodyMedium ?? const TextStyle(),
+    );
+    final TextStyle styleDuree = AppTypography.tabulaire(
+      palette.inkStrong.applyTo(textes.titleLarge ?? const TextStyle()),
+    );
+    final String dateEtFuseau = t.tuteur.accueil.dateEtFuseau(
+      date: affichage.date,
+      fuseau: affichage.fuseau,
+    );
+    final Widget heure = MergeSemantics(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Expanded(
-            flex: 3,
-            child: MergeSemantics(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    affichage.heure,
-                    style: palette.inkStrong.applyTo(
-                      textes.displaySmall ?? const TextStyle(),
-                    ),
-                  ),
-                  Text(
-                    t.tuteur.accueil.dateEtFuseau(
-                      date: affichage.date,
-                      fuseau: affichage.fuseau,
-                    ),
-                    style: palette.inkMuted.applyTo(
-                      textes.bodyLarge ?? const TextStyle(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Expanded(
-            child: _ColonneFiletee(
-              child: MergeSemantics(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      LibellesGroupe.dureeLibelle,
-                      style: palette.inkMuted.applyTo(
-                        textes.bodyMedium ?? const TextStyle(),
-                      ),
-                    ),
-                    Text(
-                      affichage.duree,
-                      style: AppTypography.tabulaire(
-                        palette.inkStrong.applyTo(
-                          textes.titleLarge ?? const TextStyle(),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          Text(affichage.heure, style: styleHeure),
+          Text(dateEtFuseau, style: styleDate),
         ],
       ),
     );
+    final Widget duree = MergeSemantics(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(LibellesGroupe.dureeLibelle, style: styleLibelle),
+          Text(affichage.duree, style: styleDuree),
+        ],
+      ),
+    );
+    final double retrait = _ColonneFiletee.retrait(palette);
+    return LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints c) {
+        // BENTO-2c (m1 de BENTO-2b-R) : de 600 a 630 px, texte x2, la
+        // colonne de la duree (un quart, moins le filet) coupait « Duré/e »
+        // et « 45 / min ». Meme regle que sur telephone : la duree a droite
+        // seulement si tout y tient entier, sinon sous l'heure, sans filet.
+        final double colonneHeure = c.maxWidth * 3 / 4;
+        final double colonneDuree = c.maxWidth / 4 - retrait;
+        final bool deuxColonnes =
+            _surUneLigne(context, affichage.heure, styleHeure) <=
+                colonneHeure &&
+            _motLePlusLong(context, dateEtFuseau, styleDate) <= colonneHeure &&
+            _surUneLigne(context, LibellesGroupe.dureeLibelle, styleLibelle) <=
+                colonneDuree &&
+            _surUneLigne(context, affichage.duree, styleDuree) <= colonneDuree;
+        if (!deuxColonnes) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[heure, Ecart.vMd, duree],
+          );
+        }
+        return IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Expanded(flex: 3, child: heure),
+              Expanded(child: _ColonneFiletee(child: duree)),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
+
+/// La largeur de [texte] sur une seule ligne, au style que `Text` lui
+/// donnerait ici (style par defaut, echelle du texte, sens de lecture).
+double _surUneLigne(BuildContext context, String texte, TextStyle style) {
+  final TextPainter peintre = TextPainter(
+    text: TextSpan(
+      text: texte,
+      style: DefaultTextStyle.of(context).style.merge(style),
+    ),
+    textDirection: Directionality.of(context),
+    textScaler: MediaQuery.textScalerOf(context),
+    locale: Localizations.maybeLocaleOf(context),
+    maxLines: 1,
+  )..layout();
+  final double largeur = peintre.width;
+  peintre.dispose();
+  return largeur;
+}
+
+/// La largeur du mot le plus long de [texte] : la ligne peut passer a la
+/// ligne entre deux mots, jamais au milieu d'un mot.
+double _motLePlusLong(BuildContext context, String texte, TextStyle style) =>
+    texte
+        .split(RegExp(r'\s+'))
+        .where((String mot) => mot.isNotEmpty)
+        .map((String mot) => _surUneLigne(context, mot, style))
+        .fold(0, math.max);
 
 /// La colonne de droite des heures : un filet vertical a son debut, comme
 /// les autres separateurs (`contourCarte`), jamais plus fonce (manifeste,
@@ -545,6 +587,10 @@ class _ColonneFiletee extends StatelessWidget {
   const _ColonneFiletee({required this.child});
 
   final Widget child;
+
+  /// Ce que la colonne prend a son contenu : deux marges et le filet.
+  static double retrait(AppPalette palette) =>
+      AppSpacing.lg * 2 + palette.contourCarte.asBorderSide().width;
 
   @override
   Widget build(BuildContext context) {

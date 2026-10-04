@@ -264,15 +264,12 @@ void main() {
       const Size(1440, 900),
       Routes.admin,
     );
-    final Finder lignes = find.textContaining(
-      t.admin.tableau.ligneDossier(prenom: '').trim(),
-    );
+    // DASH-ADM-1 : les lignes sont celles de l'apercu de la tuile Dossiers
+    // (« Prenom · anciennete »), chacune vers son dossier (D4 (a)).
+    final Finder lignes = find.textContaining(' · ');
     expect(lignes, findsAtLeastNWidgets(2));
-    String prenomDe(int i) => tester
-        .widget<Text>(lignes.at(i))
-        .data!
-        .replaceFirst(t.admin.tableau.ligneDossier(prenom: '').trim(), '')
-        .trim();
+    String prenomDe(int i) =>
+        tester.widget<Text>(lignes.at(i)).data!.split(' · ').first.trim();
     final String premier = prenomDe(0);
     final String second = prenomDe(1);
     expect(second, isNot(premier));

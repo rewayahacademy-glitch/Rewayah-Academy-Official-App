@@ -35,6 +35,7 @@ import 'package:rewayah_academy/core/session/source_session.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
+import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/admin_dossiers/etat_file_dossiers.dart';
 import 'package:rewayah_academy/features/admin_dossiers/textes_dossier.dart';
@@ -176,10 +177,14 @@ Future<void> _barre(WidgetTester tester, AdminDomaine d) async {
 
 /// La grande tuile « Dossiers a valider » du Centre de commande (BENTO-1),
 /// trouvee par ce qu'elle lit : le chiffre [valeur] ET ce qu'il compte.
+// DASH-ADM-1 : avec des noms cliquables dans l'apercu, la tuile n'est plus un
+// seul bouton ; son en-tete (chiffre et libelle) est le lien vers la file.
 Finder _tuileDossiers(int valeur) => find.byWidgetPredicate(
   (Widget w) =>
-      w is AppCard &&
-      w.libelleSemantique == '$valeur ${t.admin.tableau.dossiers}',
+      (w is AppCard &&
+          w.libelleSemantique == '$valeur ${t.admin.tableau.dossiers}') ||
+      (w is Pressable &&
+          w.libelleSemantique == '$valeur ${t.admin.tableau.dossiers}'),
 );
 
 Future<void> _capture(WidgetTester tester, String nom) async {

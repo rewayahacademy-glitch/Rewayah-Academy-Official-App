@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/admin/admin_domaine.dart';
 import '../../../core/admin/service_programme.dart';
@@ -30,6 +31,7 @@ import '../../../core/widgets/bouton_icone.dart';
 import '../../../core/widgets/bouton_outil.dart';
 import '../../../core/widgets/carte_groupee.dart';
 import '../../../core/widgets/carte_lignes.dart';
+import '../../../core/widgets/champ_date.dart';
 import '../../../core/widgets/child_card.dart';
 import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/commande_salle.dart';
@@ -66,6 +68,7 @@ import '../../../core/widgets/rosace_verset.dart';
 import '../../../core/widgets/schedule_option.dart';
 import '../../../core/widgets/section_header.dart';
 import '../../../core/widgets/selecteur_niveau_programme.dart';
+import '../../../core/widgets/selecteur_personne.dart';
 import '../../../core/widgets/selecteur_section.dart';
 import '../../../core/widgets/selecteur_theme.dart';
 import '../../../core/widgets/setting_row.dart';
@@ -225,16 +228,25 @@ List<Destination> _destinationsExemple() =>
 /// des trois plus anciens dossiers, comme dans tableau_de_bord_page.dart.
 List<TuileBento> _tuilesBentoPrincipales() => <TuileBento>[
   TuileBento(
-    etendue: EtendueBento.large,
-    etendueLarge: EtendueBento.grande,
+    etendue: EtendueBento.grande,
     child: TuileCompteur(
       valeur: 5,
       libelle: t.admin.tableau.dossiers,
       detail: t.admin.tableau.dossiersDetail,
-      apercu: <String>[
-        'Aicha · ${t.admin.tableau.attenteJours(jours: '4')}',
-        'Ibrahim · ${t.admin.tableau.attenteUnJour}',
-        'Youssef · ${t.admin.tableau.attenteAujourdhui}',
+      // Chaque nom ouvre son dossier (DASH-ADM-1, D4 (a)).
+      apercu: <LigneApercu>[
+        LigneApercu(
+          'Aicha · ${t.admin.tableau.attenteJours(jours: '4')}',
+          onPress: _rien,
+        ),
+        LigneApercu(
+          'Ibrahim · ${t.admin.tableau.attenteUnJour}',
+          onPress: _rien,
+        ),
+        LigneApercu(
+          'Youssef · ${t.admin.tableau.attenteAujourdhui}',
+          onPress: _rien,
+        ),
       ],
       enLigne: true,
       onPress: _rien,
@@ -2092,6 +2104,95 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
     ],
   ),
 
+  // FORM-L2 : le choix d'une personne dans une liste cherchable, qui remplace
+  // l'identifiant tape a la main. Donnees de demonstration, aucune lecture.
+  EntreeGalerie(
+    nom: 'SelecteurPersonne',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'liste, rien de choisi',
+        (BuildContext _) => _surfaceMaterielle(
+          const SelecteurPersonne(
+            sorte: SortePersonne.eleve,
+            personnes: AsyncData<List<PersonneProposee>>(_personnesExemple),
+            choisie: null,
+            onChoix: _personneIgnoree,
+            onReessayer: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'choix fait',
+        (BuildContext _) => _surfaceMaterielle(
+          const SelecteurPersonne(
+            sorte: SortePersonne.enseignant,
+            personnes: AsyncData<List<PersonneProposee>>(_personnesExemple),
+            choisie: 'p2',
+            onChoix: _personneIgnoree,
+            onReessayer: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'liste vide',
+        (BuildContext _) => _surfaceMaterielle(
+          const SelecteurPersonne(
+            sorte: SortePersonne.eleve,
+            personnes: AsyncData<List<PersonneProposee>>(<PersonneProposee>[]),
+            choisie: null,
+            onChoix: _personneIgnoree,
+            onReessayer: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'erreur : Reessayer',
+        (BuildContext _) => _surfaceMaterielle(
+          const SelecteurPersonne(
+            sorte: SortePersonne.eleve,
+            personnes: AsyncError<List<PersonneProposee>>(
+              FormatException('lecture'),
+              StackTrace.empty,
+            ),
+            choisie: null,
+            onChoix: _personneIgnoree,
+            onReessayer: _rien,
+          ),
+        ),
+      ),
+    ],
+  ),
+  // FORM-L4 : un champ date a choisir dans un calendrier, jamais a taper.
+  EntreeGalerie(
+    nom: 'ChampDate',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'vide',
+        (BuildContext _) => _surfaceMaterielle(
+          ChampDate(
+            libelle: 'Date de debut',
+            valeur: null,
+            onChoix: _dateIgnoree,
+            aujourdhui: DateTime(2026, 10, 4),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'date choisie',
+        (BuildContext _) => _surfaceMaterielle(
+          ChampDate(
+            libelle: 'Date de debut',
+            valeur: DateTime(2026, 10, 12),
+            onChoix: _dateIgnoree,
+            aujourdhui: DateTime(2026, 10, 4),
+          ),
+        ),
+      ),
+    ],
+  ),
+
   // --- Composants partages du chantier Tuteur V1 (phase 0c1) ---------------
   EntreeGalerie(
     nom: 'EcranResultat',
@@ -2758,6 +2859,42 @@ void _acteurIgnore(String? acteur) {}
 
 void _niveauIgnore(String niveauId) {}
 
+void _personneIgnoree(PersonneProposee personne) {}
+
+void _dateIgnoree(DateTime jour) {}
+
+/// Sept personnes factices : une de plus que `maximumAffiche`, pour que la
+/// phrase « et N autres » se voie. Identifiants au format `[ROLE]-[INITIALES]-[SEQ]`.
+const List<PersonneProposee> _personnesExemple = <PersonneProposee>[
+  PersonneProposee(
+    id: 'p1',
+    nom: 'Aicha Benali',
+    identifiant: 'STUD-AB-000001',
+  ),
+  PersonneProposee(id: 'p2', nom: 'Omar Said', identifiant: 'STUD-OS-000002'),
+  PersonneProposee(
+    id: 'p3',
+    nom: 'Youssef Haddad',
+    identifiant: 'STUD-YH-000003',
+  ),
+  PersonneProposee(
+    id: 'p4',
+    nom: 'Maryam Idrissi',
+    identifiant: 'STUD-MI-000004',
+  ),
+  PersonneProposee(
+    id: 'p5',
+    nom: 'Ilyas Cherif',
+    identifiant: 'STUD-IC-000005',
+  ),
+  PersonneProposee(
+    id: 'p6',
+    nom: 'Zineb Amrani',
+    identifiant: 'STUD-ZA-000006',
+  ),
+  PersonneProposee(id: 'p7', nom: 'Adam Tazi', identifiant: 'STUD-AT-000007'),
+];
+
 void _codeIgnore(String code) {}
 
 void _choixIgnore(ReponseChoix reponse) {}
@@ -2778,3 +2915,7 @@ final TextesFilDiscussion _textesFil = TextesFilDiscussion(
   annonce: (String auteur, String texte) =>
       t.controleur.echanges.nouveauMessage(auteur: auteur, texte: texte),
 );
+
+/// Une surface Material de demonstration : `TextField` et `InkWell` en exigent une, que la page hote fournit dans le produit.
+Widget _surfaceMaterielle(Widget enfant) =>
+    Material(type: MaterialType.transparency, child: enfant);

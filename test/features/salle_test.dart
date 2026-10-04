@@ -25,14 +25,14 @@ import '../teaching_core/e/faux/faux_classe.dart';
 const String _seance = 's1';
 
 /// L'acces tel que `create-room-token` le rend pour chacun des quatre roles.
-AccesSalle _acces(String role, {bool camera = false}) => AccesSalle(
+AccesSalle _acces(String role, {bool camera = false, bool? voix}) => AccesSalle(
   urlServeur: 'wss://exemple.invalid',
   jeton: 'jeton.signe',
   nomSalle: 'r_0123456789abcdef0123456789abcdef',
   fournisseur: FournisseurVideo.cloud,
   role: role,
   capacites: CapacitesSalle(
-    peutPublier: role == 'teacher' || role == 'student',
+    peutPublier: voix ?? (role == 'teacher' || role == 'student'),
     peutPublierVideo: role == 'teacher' || (role == 'student' && camera),
     peutPublierDonnees: role == 'teacher',
     peutRecevoir: true,
@@ -216,6 +216,85 @@ void main() {
       expect(video.demandes, isEmpty);
       expect(find.text(t.salle.refusMateriel), findsOneWidget);
     });
+
+    // CTRL-PREVOL-1 (releve VERIF-CT-1 ; P-CTR-03 point 4, R8, R13) : le micro
+    // n'est exige que de qui parle.
+    testWidgets('un controleur sans micro entre, et lit sa zone de controle', (
+      WidgetTester tester,
+    ) async {
+      final FauxServicePreVol preVol = FauxServicePreVol(
+        microDisponible: false,
+      );
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('masked_controller')),
+          moteur: moteur,
+          preVol: preVol,
+          role: AppRole.controller,
+        ),
+      );
+
+      expect(find.text(t.salle.refusMateriel), findsNothing);
+      expect(moteur.entrees.length, 1);
+      // Aucune demande de permission injustifiee : il n'ouvrira aucun micro.
+      expect(preVol.verifications, 0);
+      expect(find.text(t.salle.bandeauControle), findsOneWidget);
+      expect(find.text(t.salle.quitter), findsOneWidget);
+    });
+
+    testWidgets(
+      'tuteur temoin et administration en observation entrent muets',
+      (WidgetTester tester) async {
+        for (final (AppRole compte, String jeton) in <(AppRole, String)>[
+          (AppRole.guardian, 'guardian_observer'),
+          (AppRole.admin, 'admin_masked'),
+        ]) {
+          final FauxMoteurSalle moteur = FauxMoteurSalle();
+          await _monterSalle(
+            tester,
+            surcharges: _surcharges(
+              video: FauxServiceVideo(acces0: _acces(jeton)),
+              moteur: moteur,
+              preVol: FauxServicePreVol(microDisponible: false),
+              role: compte,
+            ),
+          );
+          expect(find.text(t.salle.refusMateriel), findsNothing, reason: jeton);
+          expect(moteur.entrees.length, 1, reason: jeton);
+        }
+      },
+    );
+
+    testWidgets(
+      'enseignant, eleve et administration qui parle restent bloques',
+      (WidgetTester tester) async {
+        for (final (AppRole compte, AccesSalle acces)
+            in <(AppRole, AccesSalle)>[
+              (AppRole.teacher, _acces('teacher')),
+              (AppRole.student, _acces('student')),
+              (AppRole.admin, _acces('admin_visible', voix: true)),
+            ]) {
+          final FauxMoteurSalle moteur = FauxMoteurSalle();
+          await _monterSalle(
+            tester,
+            surcharges: _surcharges(
+              video: FauxServiceVideo(acces0: acces),
+              moteur: moteur,
+              preVol: FauxServicePreVol(microDisponible: false),
+              role: compte,
+            ),
+          );
+          expect(
+            find.text(t.salle.refusMateriel),
+            findsOneWidget,
+            reason: acces.role,
+          );
+          expect(moteur.entrees, isEmpty, reason: acces.role);
+        }
+      },
+    );
 
     testWidgets('rien ne publie a l entree, pour aucun role', (
       WidgetTester tester,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/age_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_classe/controleur_recitation.dart';
@@ -677,6 +678,8 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
                     pages: 1,
                   )),
         panneau: _panneau,
+        // MA-TUTOIEMENT-1 : port neutre (K-09) avant BR-1, aucun appel.
+        age: ref.watch(portAgeEleveProvider).ageDeLEleve(),
       );
       if (seance != null) {
         return _salleSeance(

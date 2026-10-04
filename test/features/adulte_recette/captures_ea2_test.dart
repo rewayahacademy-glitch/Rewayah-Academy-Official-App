@@ -4,7 +4,7 @@
 //
 // Chaque capture passe par la VRAIE route /demo/adulte (`adresseDemoAdulte`)
 // sous un GoRouter, comme `captures_ea_test.dart`, et montre la page
-// ENTIERE : la hauteur de la vue suffit a آ« Ressources de la classe آ», en
+// ENTIERE : la hauteur de la vue suffit a « Ressources de la classe », en
 // bas de page (390 et 768 en clair et en sombre, 1440, 200 %). L'etat porte
 // ouverte (`seance=fenetreOuverte`) montre le bouton dominant de
 // l'emplacement d'entree (pleine largeur sur telephone, au bord de fin

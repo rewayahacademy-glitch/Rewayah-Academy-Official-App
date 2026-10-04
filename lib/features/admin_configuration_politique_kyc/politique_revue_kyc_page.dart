@@ -148,35 +148,29 @@ class _PolitiqueRevueKycPageState extends ConsumerState<PolitiqueRevueKycPage> {
         ),
       );
     }
-    // Chargement et erreurs gardent l'en-tete de la page chargee : rien ne
-    // saute a l'arrivee (skeleton fidele). Pas pour un refus d'acces : on ne
-    // montre pas l'onglet reserve a qui n'y a pas droit.
-    Widget avecEntete(Widget child) => PageShell(
-      titre: t.admin.politiqueRevueKyc.titre,
-      entete: SousNavigationDomaine(
-        onglets: ongletsConfiguration(politiqueRevueKyc: true),
-        indexActif: 3,
-      ),
-      child: child,
-    );
+    // AD-9-ONGLET-PROD : tant que la capacite n'est pas connue ET vraie
+    // (chargement, indisponible, echec), ni le titre ni l'onglet reserve ne
+    // sont montres : un administrateur sans la capacite qui tape l'adresse ne
+    // les voit jamais, meme avant le refus d'acces (fiche AD-9).
     if (lue.hasError) {
       final Object erreur = lue.error!;
-      return switch (erreur) {
-        CapaciteIndisponible(:final String dependance) => avecEntete(
-          EtatSysteme(nature: NatureEtat.indisponible, dependance: dependance),
-        ),
-        ErreurRevueDossier(
-          code: CodeErreurRevue.interdit || CodeErreurRevue.nonAutorise,
-        ) =>
-          const PageShell(child: EtatSysteme(nature: NatureEtat.accesRefuse)),
-        _ => avecEntete(
-          EtatSysteme(
+      return PageShell(
+        child: switch (erreur) {
+          CapaciteIndisponible(:final String dependance) => EtatSysteme(
+            nature: NatureEtat.indisponible,
+            dependance: dependance,
+          ),
+          ErreurRevueDossier(
+            code: CodeErreurRevue.interdit || CodeErreurRevue.nonAutorise,
+          ) =>
+            const EtatSysteme(nature: NatureEtat.accesRefuse),
+          _ => EtatSysteme(
             nature: NatureEtat.echecServeur,
             onAction: () => ref.invalidate(politiqueRevueKycProvider),
           ),
-        ),
-      };
+        },
+      );
     }
-    return avecEntete(const Skeleton.liste(lignes: 1));
+    return const PageShell(child: Skeleton.liste(lignes: 1));
   }
 }

@@ -4,10 +4,9 @@
 // Aucun composant neuf (K-51) : l'en-tete (`EntetePage`,
 // `ClocheNotifications`), la lecture du groupe et sa carte de seance CL-4
 // (`LecteurGroupe`, `LectureGroupe.identiteEtCarte`, donc `IdentiteGroupe`,
-// `CarteSession` et `EmplacementEntree`) et la disposition par rangees
-// (`ColonnesParRangees`) sont ceux de l'Espace Classe, extraits de
-// `tc_espace_groupe/espace_groupe_page.dart` et employes par les deux
-// pages ; « Avant le prochain cours » (`EmplacementAvantProchainCours`, R17),
+// `CarteSession` et `EmplacementEntree`) sont ceux de l'Espace Classe,
+// extraits de `tc_espace_groupe/espace_groupe_page.dart` ; la disposition
+// est la grille Bento partagee (`GrilleBento`, BENTO-3) ; « Avant le prochain cours » (`EmplacementAvantProchainCours`, R17),
 // les seances passees (`GroupeReglages` : la date, puis une seule ligne, la
 // plage ; une pastille pour une absence) et la Bibliotheque unique
 // (`BlocBibliotheque`, trois au plus).
@@ -29,6 +28,8 @@
 // source serveur : il rend `CapaciteIndisponible` (EA-BR-04), la
 // demonstration le surcharge (K-28).
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -45,14 +46,17 @@ import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/entete_page.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../accueil_famille/accueil_famille_page.dart'
+    show largeurMinCarteClasse;
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart'
-    show ColonnesParRangees, LecteurGroupe, LectureGroupe, SqueletteGroupe;
+    show LecteurGroupe, LectureGroupe, SqueletteGroupe;
 
 /// Une seance passee, telle que le serveur la rendrait : la seance, sa date
 /// deja rendue, et l'absence seule (une presence est l'etat normal et ne
@@ -117,7 +121,7 @@ final FutureProvider<AccueilAdulteVM> accueilAdulteProvider =
 /// L'accueil de l'eleve adulte : salutation et cloche, prochaine seance,
 /// « Avant le prochain cours » (s'il y a quelque chose a faire), « Mon
 /// parcours » en une ligne, dernieres seances (3) et ressources de la
-/// Classe (3). Deux colonnes par rangees, comme l'Espace Classe.
+/// Classe (3). Grille Bento en hauteur de contenu (DASH_STRATEGIE.md §3.7).
 class AccueilAdultePage extends ConsumerWidget {
   /// Cree l'accueil.
   const AccueilAdultePage({
@@ -358,21 +362,66 @@ class _Sections extends StatelessWidget {
       onVoirTout: voir == null ? null : () => voir(groupeId),
     );
 
-    List<Widget> bloc(List<List<Widget>> sections) => <Widget>[
-      for (final (int i, List<Widget> s)
-          in sections
-              .where((List<Widget> s) => s.isNotEmpty)
-              .indexed) ...<Widget>[if (i > 0) Ecart.vSection, ...s],
-    ];
-
-    return ColonnesParRangees(
-      rangees: <(List<Widget>, List<Widget>)>[
-        (seance, bloc(<List<Widget>>[avant, ligneParcours])),
-        if (dernieres.isEmpty)
-          (<Widget>[ressources], const <Widget>[])
-        else
-          (dernieres, <Widget>[ressources]),
-      ],
+    // BENTO-3 : la grille Bento partagee, disposition de DASH_STRATEGIE.md
+    // §3.7, en hauteur de contenu (comme l'accueil famille, BENTO-2). Rang 1
+    // Prochaine seance, rang 2 « Avant le prochain cours » (s'il y en a), en
+    // grandes tuiles ; rang 3 « Mon parcours » en large ; rangs 4 et 5
+    // dernieres seances et ressources en grandes tuiles. Deux grandes tuiles
+    // ne partagent leur bande que si chaque moitie offre
+    // [largeurMinCarteClasse] x echelle du texte (regle BENTO-2b de la carte
+    // classe famille) ; sinon chacune passe en pleine largeur et aucun mot
+    // n'est coupe. Une tuile seule dans sa bande s'y etire (placerBento).
+    final double echelle = MediaQuery.textScalerOf(context).scale(1);
+    Widget section(List<Widget> enfants) => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: enfants,
+    );
+    return LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints contraintes) {
+        final bool coteACote =
+            (contraintes.maxWidth - GrilleBento.ecart) / 2 >=
+            largeurMinCarteClasse * math.max(1, echelle);
+        final EtendueBento? grande = coteACote
+            ? null
+            : const EtendueBento(4, 1);
+        TuileBento tuileGrande(List<Widget> enfants, {bool seule = false}) =>
+            TuileBento(
+              etendue: EtendueBento.grande,
+              etendueLarge: seule ? const EtendueBento(4, 1) : grande,
+              child: section(enfants),
+            );
+        final List<TuileBento> tuiles = <TuileBento>[
+          // Sans « Avant », la seance prend toute sa bande : sinon la tuile
+          // suivante (dernieres seances) monterait a cote d'elle, avant
+          // « Mon parcours » (ordre de §3.7, D2).
+          tuileGrande(seance, seule: avant.isEmpty),
+          if (avant.isNotEmpty) tuileGrande(avant),
+          if (ligneParcours.isNotEmpty)
+            TuileBento(
+              etendue: EtendueBento.large,
+              etendueLarge: const EtendueBento(4, 1),
+              child: section(ligneParcours),
+            ),
+          if (dernieres.isNotEmpty) tuileGrande(dernieres),
+          tuileGrande(<Widget>[ressources]),
+        ];
+        // D14 : deux tuiles ou moins, pas de Bento ; une colonne, ecart 16.
+        if (tuiles.length <= 2) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              for (final (int i, TuileBento tuile)
+                  in tuiles.indexed) ...<Widget>[
+                if (i > 0) const SizedBox(height: GrilleBento.ecart),
+                tuile.child,
+              ],
+            ],
+          );
+        }
+        return GrilleBento(hauteurContenu: true, tuiles: tuiles);
+      },
     );
   }
 }

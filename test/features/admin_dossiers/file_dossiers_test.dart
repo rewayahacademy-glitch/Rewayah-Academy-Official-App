@@ -372,6 +372,50 @@ void main() {
     expect(find.text(t.dossiers.aucun), findsOneWidget);
     expect(FocusManager.instance.primaryFocus?.debugLabel, 'adm02a-titre');
   });
+
+  // AD-FOCUS-MD (VERIF-AD-2 LOT-1) : sans dossier suivant, le focus ne se
+  // perd plus (il restait sur le Focus Scope, aucun element) : il va au
+  // titre, a 390 comme a 1440, file videe ou dernier d'une file non vide.
+  for (final Size taille in const <Size>[Size(390, 844), Size(1440, 900)]) {
+    for (final bool fileVidee in <bool>[true, false]) {
+      final String cas = fileVidee ? 'file videe' : 'dernier, file non vide';
+      testWidgets('${taille.width.toInt()} : $cas, le focus va au titre', (
+        WidgetTester tester,
+      ) async {
+        // Omar (le plus ancien) puis Amina : decider Amina laisse Omar.
+        final Set<String> gardes = <String>{
+          DonneesDossiersDemo.enseignantDocumentaire,
+          if (!fileVidee) DonneesDossiersDemo.enseignantNominal,
+        };
+        final EtatRevueDemo etat = EtatRevueDemo.initial();
+        for (final String id in etat.dossiers.keys) {
+          if (!gardes.contains(id)) {
+            etat.dossiers[id]!.statut = StatutRevue.valide;
+          }
+        }
+        await _monter(tester, taille, etat: etat);
+        await _ouvrirDossiers(tester);
+        await tester.tap(_ligne('Amina'));
+        await _stabiliser(tester);
+        for (final String point in <String>[
+          t.dossiers.pointLisible,
+          t.dossiers.pointNom,
+          t.dossiers.pointValidite,
+        ]) {
+          await _taperTexte(tester, point);
+          await _stabiliser(tester);
+        }
+        await tester.ensureVisible(find.text(t.dossiers.approuver));
+        await tester.tap(find.text(t.dossiers.approuver));
+        await _stabiliser(tester);
+        await tester.tap(find.text(t.dossiers.approuver).last);
+        await _stabiliser(tester);
+        expect(_ligne('Amina'), findsNothing);
+        expect(_ligne('Omar'), fileVidee ? findsNothing : findsOneWidget);
+        expect(FocusManager.instance.primaryFocus?.debugLabel, 'adm02a-titre');
+      });
+    }
+  }
 }
 
 /// Ouvre Personnes > Dossiers depuis la coque, comme l'administrateur : le

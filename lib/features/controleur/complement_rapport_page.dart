@@ -23,6 +23,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
+import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/choice_card_group.dart';
@@ -116,6 +117,20 @@ class _ComplementRapportPageState extends ConsumerState<ComplementRapportPage> {
     _Etape.envoye => null,
   };
 
+  // CTRL-RETOUR-1 : le retour systeme (Android, navigateur) fait comme
+  // « Retour » a l'ecran : il recule d'une etape et garde la saisie ; il ne
+  // ferme le complement qu'a la premiere etape. Apres l'envoi, il rend le
+  // detail a jour ; pendant l'envoi, il attend.
+  void _retourSysteme() {
+    if (_enCours) return;
+    final RapportControle? fait = _resultat;
+    if (_etape == _Etape.envoye && fait != null) {
+      widget.onTermine(fait);
+      return;
+    }
+    _precedent();
+  }
+
   void _validerTexte() {
     if (_texte.text.trim().isEmpty) {
       setState(() => _texteManquant = true);
@@ -146,7 +161,9 @@ class _ComplementRapportPageState extends ConsumerState<ComplementRapportPage> {
             widget.rapport.id,
             texte: texte,
             motif: m == null ? null : ComplementRapportPage.libelleMotif(m),
-          );
+          )
+          // Serveur muet : « non confirme » et Reessayer (CTRL-DELAI-1).
+          .timeout(AppDelais.requeteMax);
       if (!mounted) return;
       setState(() {
         _enCours = false;
@@ -163,7 +180,15 @@ class _ComplementRapportPageState extends ConsumerState<ComplementRapportPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => PopScope(
+    canPop: false,
+    onPopInvokedWithResult: (bool fait, Object? _) {
+      if (!fait) _retourSysteme();
+    },
+    child: _corps(context),
+  );
+
+  Widget _corps(BuildContext context) {
     final c = t.controleur.complement;
     final RapportControle? fait = _resultat;
     if (_etape == _Etape.envoye && fait != null) {

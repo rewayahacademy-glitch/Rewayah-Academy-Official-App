@@ -45,10 +45,11 @@ List<String> motsCoupes(
       final List<TextBox> boites = p.getBoxesForSelection(
         TextSelection(baseOffset: m.start, extentOffset: m.end),
       );
-      final Set<int> lignes = <int>{
-        for (final TextBox b in boites) b.top.round(),
-      };
-      if (lignes.length > 1) {
+      // Deux boites sont sur la meme ligne quand leurs hauteurs se
+      // recouvrent : un glyphe d'une police de repli (le trait d'union
+      // insecable U+2011 de « An‑Nour ») a une boite plus haute sur la MEME
+      // ligne (BENTO-3) ; un mot coupe a deux boites l'une sous l'autre.
+      if (_lignesDistinctes(boites) > 1) {
         fautes.add('$texte : ${m.group(0)}');
       }
     }
@@ -78,6 +79,26 @@ void verifierEcranSansMotCoupe(
   final Finder ecrans = find.byType(Scaffold);
   expect(ecrans, findsWidgets, reason: 'Aucun ecran monte a mesurer');
   verifierAucunMotCoupe(tester, ecrans, exceptions: exceptions);
+}
+
+/// Le nombre de lignes occupees par [boites] : une boite appartient a une
+/// ligne deja vue quand son milieu vertical tombe dans la hauteur d'une
+/// boite de cette ligne ; sinon elle ouvre une nouvelle ligne.
+int _lignesDistinctes(List<TextBox> boites) {
+  final List<TextBox> lignes = <TextBox>[];
+  for (final TextBox b in boites) {
+    final double milieu = (b.top + b.bottom) / 2;
+    final bool connue = lignes.any(
+      (TextBox l) =>
+          (milieu >= l.top && milieu <= l.bottom) ||
+          ((l.top + l.bottom) / 2 >= b.top &&
+              (l.top + l.bottom) / 2 <= b.bottom),
+    );
+    if (!connue) {
+      lignes.add(b);
+    }
+  }
+  return lignes.length;
 }
 
 Iterable<RenderParagraph> _paragraphesSous(RenderObject racine) {

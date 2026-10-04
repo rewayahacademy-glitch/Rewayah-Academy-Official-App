@@ -36,7 +36,7 @@ Fiche de passage pour tout agent qui prend la suite. Elle se suffit à elle-mêm
 
 1. Harnais automatique de balayage (tous rôles, 320/390/1440, texte ×1 et ×2, clavier) : débordement, chevauchement, centrage, écart des cartes, plusieurs boutons pleins. S'appuyer sur `test/support/garde_interface.dart` et `test/capture/`.
 2. SUPERPOS-1, BUG-PROG-1 (test qui reproduit le double clic sur « Créer une version » AVANT la correction), FILTRES-1, CTRL-SALLE-1 (interface).
-3. BENTO-1 / DASH-1 : note de stratégie avec sources, puis fiches catalogue, puis code.
+3. BENTO-1 / DASH-1 : note de stratégie avec sources, puis fiches catalogue, puis code. (DASH-1 : faute de catalogue actif dans `docs/current`, les fiches vivent en annexe A de `DASH_STRATEGIE.md`.)
 4. Appliquer partout les composants du lot 1 (liste dans `lib/CLAUDE.md`, section « Interdits d'interface »).
 
 Lot 3 (libellés : LIB-ABS-1, LIB-CAHIER-1, LIB-OBJ-1, LIB-ERR-1, FOYER-ADMIN-1, KYC-PHOTO-1, K-58, « groupe » → « classe » ; chaque libellé déclaré dans `tool/libelles_sources.json` avec le commentaire du directeur comme source). Lot 4 (formulaires : FORM-AUTO-1, DISPO-1, partie interface de CLASSE-FORM-1). Lot 5 (serveur : seulement après validation des fiches par le directeur ; migrations avec RLS et `search_path = ''`, tests dans `supabase/tests`).

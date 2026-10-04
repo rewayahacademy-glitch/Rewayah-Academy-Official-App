@@ -291,7 +291,7 @@ class _Corps extends ConsumerWidget {
           : _AlertesUtiles(
               alertes: alertes,
               offres: offres,
-              coursAnnule: annulee,
+              coursAnnule: annulee == null ? null : parId[annulee.id],
               messagePartiel: messagePartiel,
               onReessayerPartiel: partielle
                   ? () {
@@ -844,49 +844,63 @@ class _ATerminer extends ConsumerWidget {
     // Doc 04 §11.4 et §33 n. 9 : du plus ancien au plus recent, trois au
     // plus ; au-dela, « Voir tout » ouvre la liste complete.
     final List<CahierEnRetard> tries = trierCahiersATerminer(cahiers);
+    final Widget entete = Wrap(
+      spacing: AppSpacing.xs,
+      runSpacing: AppSpacing.xs,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: <Widget>[
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Flexible(
+              child: Semantics(
+                header: true,
+                child: Text(
+                  t.enseignant.journee.aTerminer,
+                  // Un titre de section : `titleLarge`, comme
+                  // `SectionHeader` ; la page porte son titre d'ecran au
+                  // rang `headline*` (HIER-1).
+                  style: palette.surfaceCanvas.applyTo(
+                    textes.titleLarge ?? const TextStyle(),
+                  ),
+                ),
+              ),
+            ),
+            Ecart.hXs,
+            PointRappel(
+              key: const ValueKey<String>('journee-point-rappel'),
+              libelle: t.enseignant.journee.rappelCahier,
+            ),
+          ],
+        ),
+        // LIB-CAHIER-1 : le caractere obligatoire se voit sur la carte.
+        StatusPill(
+          key: const ValueKey<String>('journee-cahier-obligatoire'),
+          libelle: t.enseignant.cahier.obligatoire,
+          ton: TonEtat.avertissement,
+        ),
+      ],
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         // Le titre au style de `SectionHeader`, le point colle a lui : dans
         // `SectionHeader`, qui occupe toute la ligne, il partirait au bout.
-        // BENTO-2b : un `Wrap` et non une `Row` : a 390 px et texte double, la
-        // pastille passe a la ligne au lieu de serrer le titre (« À termi/ner »).
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: Wrap(
-                spacing: AppSpacing.xs,
-                runSpacing: AppSpacing.xs,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: <Widget>[
-                  Semantics(
-                    header: true,
-                    child: Text(
-                      t.enseignant.journee.aTerminer,
-                      // Un titre de section : `titleLarge`, comme
-                      // `SectionHeader` ; la page porte son titre d'ecran au
-                      // rang `headline*` (HIER-1).
-                      style: palette.surfaceCanvas.applyTo(
-                        textes.titleLarge ?? const TextStyle(),
-                      ),
-                    ),
-                  ),
-                  PointRappel(
-                    key: const ValueKey<String>('journee-point-rappel'),
-                    libelle: t.enseignant.journee.rappelCahier,
-                  ),
-                  // LIB-CAHIER-1 : le caractere obligatoire se voit sur la
-                  // carte.
-                  StatusPill(
-                    key: const ValueKey<String>('journee-cahier-obligatoire'),
-                    libelle: t.enseignant.cahier.obligatoire,
-                    ton: TonEtat.avertissement,
-                  ),
-                ],
-              ),
-            ),
-            if (tries.length > maximumATerminer) ...<Widget>[
-              Ecart.hXs,
+        // Titre et point forment UN enfant du `Wrap` (le point ne reste
+        // jamais seul en tete de ligne) ; la pastille passe a la ligne au
+        // lieu de serrer le titre (« À termi/ner », BENTO-2b).
+        // BENTO-2c : « Voir tout » n'est plus dans une `Row` qui laissait au
+        // titre ce qu'il restait (320 px, texte double : « termi/ner »,
+        // « Obligatoi/re ») : un `OverflowBar` le met au bout de la ligne
+        // quand tout tient, sous l'en-tete sinon, comme `SectionHeader`.
+        if (tries.length > maximumATerminer)
+          OverflowBar(
+            key: const ValueKey<String>('journee-a-terminer-entete'),
+            alignment: MainAxisAlignment.spaceBetween,
+            spacing: AppSpacing.lg,
+            overflowSpacing: AppSpacing.sm,
+            children: <Widget>[
+              entete,
               LienFleche(
                 key: const ValueKey<String>('journee-a-terminer-voir-tout'),
                 libelle: t.tuteur.accueil.voirTout,
@@ -899,8 +913,12 @@ class _ATerminer extends ConsumerWidget {
                 ),
               ),
             ],
-          ],
-        ),
+          )
+        else
+          KeyedSubtree(
+            key: const ValueKey<String>('journee-a-terminer-entete'),
+            child: entete,
+          ),
         Ecart.vXs,
         Text(
           t.enseignant.journee.aTerminerAide,
@@ -1019,7 +1037,7 @@ class _AlertesUtiles extends ConsumerWidget {
   /// Le cours annule du jour : une carte attenuee avant toute autre alerte,
   /// avec la pastille « Annulee », l'horaire barre et la ligne « pourquoi »
   /// (ANNUL-VIS-1).
-  final Seance? coursAnnule;
+  final SeanceEnseignant? coursAnnule;
   final List<String> alertes;
   final List<OffreRemplacement> offres;
 
@@ -1103,15 +1121,20 @@ class _AlertesUtiles extends ConsumerWidget {
 /// Le serveur ne rend pas encore le motif de l'annulation : la ligne le dit
 /// (« Motif non communique ») plutot que d'en inventer un. La suite (« seance
 /// non facturee », remplacant) viendra avec la donnee (BR-1).
+///
+/// SALLE-CORR-3 (releve VERIF-CORR-2) : comme la carte de seance, elle nomme
+/// sa Classe et y mene par « Voir la Classe » (un lien, K-56 : le seul
+/// bouton plein de la page reste celui de la carte de seance).
 class _CarteCoursAnnule extends StatelessWidget {
   const _CarteCoursAnnule({required this.cours});
 
-  final Seance cours;
+  final SeanceEnseignant cours;
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
+    final String nom = _nomClasse(cours.groupeLibelle);
     return AppCard(
       key: const ValueKey<String>('journee-cours-annule'),
       surface: surfaceCarteSeance(palette, annulee: true),
@@ -1121,6 +1144,16 @@ class _CarteCoursAnnule extends StatelessWidget {
         children: <Widget>[
           const PastilleEtatSeance(etat: EtatPastilleSeance.annulee),
           Ecart.vMd,
+          Semantics(
+            header: true,
+            child: Text(
+              nom,
+              style: palette.inkStrong.applyTo(
+                textes.titleMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+          Ecart.vXs,
           TexteHeureSeance(
             heure: t.enseignant.journee.plage(
               debut: _hhmm(cours.debut),
@@ -1135,6 +1168,26 @@ class _CarteCoursAnnule extends StatelessWidget {
           ),
           Ecart.vXs,
           LigneRaisonSeance(raison: t.etat.motifNonCommunique),
+          Ecart.vMd,
+          LienFleche(
+            key: const ValueKey<String>('journee-cours-annule-classe'),
+            libelle: t.enseignant.journee.voirClasse,
+            libelleSemantique: t.enseignant.journee.voirClasseLecteur(
+              classe: nom,
+            ),
+            onPress: () {
+              final String? idGroupe = cours.groupeId;
+              if (idGroupe == null) {
+                GoRouter.of(context).go(Routes.enseignantClasses);
+                return;
+              }
+              // `push` : le retour de l'Espace Classe se referme sur
+              // Aujourd'hui (R1), comme la carte de seance.
+              unawaited(
+                GoRouter.of(context).push<void>(Routes.groupePour(idGroupe)),
+              );
+            },
+          ),
         ],
       ),
     );

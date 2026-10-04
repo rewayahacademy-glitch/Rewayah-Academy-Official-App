@@ -1,10 +1,10 @@
 // CT-3 : CTR-02 Observation, depuis la VRAIE route de demonstration.
 // « Commencer le controle » -> la salle en role controleur (zone haute,
-// Son recu, Agrandir, Quitter) ; aucune commande interdite rendue, pas meme
-// grisee ; « Quitter » -> le compte rendu (CTR-03, provisoire).
+// Quitter ; « Son reçu » retire jusqu'a BR-1, CTRL-SON-1 ; « Agrandir »
+// retire tant qu'aucun support n'est rendu, CTRL-AGRANDIR-1) ; aucune
+// commande interdite rendue, pas meme grisee ; « Quitter » -> le compte rendu (CTR-03, provisoire).
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -18,8 +18,9 @@ import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.d
 import 'package:rewayah_academy/features/controleur/controle_page.dart';
 import 'package:rewayah_academy/features/demo/controleur_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
+import 'package:rewayah_academy/features/salle/salle_page.dart';
 
-Future<void> _monter(WidgetTester tester) async {
+Future<GoRouter> _monter(WidgetTester tester) async {
   tester.view.physicalSize = const Size(1280, 900);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
@@ -41,6 +42,7 @@ Future<void> _monter(WidgetTester tester) async {
     ),
   );
   await tester.pumpAndSettle();
+  return routeur;
 }
 
 Finder _parSens(String libelle) => find.bySemanticsLabel(RegExp(libelle));
@@ -62,9 +64,31 @@ void main() {
     // possible », pour les participants seulement (CTRL-SALLE-1).
     expect(find.text(t.salle.bandeauControle), findsOneWidget);
     expect(find.text(t.salle.bandeauPermanent), findsNothing);
-    // Les deux commandes.
-    expect(_parSens(t.salle.visiteControle.couperSon), findsOneWidget);
-    expect(_parSens(t.salle.visiteControle.agrandir), findsOneWidget);
+    // Aucune commande en bas. « Agrandir le support » est retire tant
+    // qu'aucun support n'est rendu : il agrandissait l'enseignant
+    // (CTRL-AGRANDIR-1, releve VERIF-CT-1).
+    for (final String agrandir in <String>[
+      t.salle.visiteControle.agrandir,
+      t.salle.visiteControle.reduire,
+    ]) {
+      expect(find.text(agrandir), findsNothing, reason: agrandir);
+      expect(_parSens(agrandir), findsNothing, reason: agrandir);
+    }
+    expect(find.byTooltip(t.tc.observation.visite.agrandir), findsNothing);
+    // Les eleves restent a la vue (la colonne de presence n'est pas
+    // remplacee par un cadre agrandi).
+    expect(find.text(t.presence.titre), findsWidgets);
+    // « Son reçu » est retire jusqu'a BR-1 (CTRL-SON-1, decision C5 = a) :
+    // la bascule locale ne coupait rien.
+    for (final String son in <String>[
+      t.salle.visiteControle.sonRecu,
+      t.salle.visiteControle.sonCoupe,
+      t.salle.visiteControle.couperSon,
+      t.salle.visiteControle.retablirSon,
+    ]) {
+      expect(find.text(son), findsNothing, reason: son);
+      expect(_parSens(son), findsNothing, reason: son);
+    }
 
     // Aucune commande interdite, ni rendue ni grisee.
     for (final String interdit in <String>[
@@ -104,21 +128,6 @@ void main() {
       expect(a.urlSignee, isNull);
     }
 
-    // Son recu : icone et mot changent ensemble.
-    await tester.tap(_parSens(t.salle.visiteControle.couperSon));
-    await tester.pumpAndSettle();
-    expect(find.text(t.salle.visiteControle.sonCoupe), findsOneWidget);
-    expect(_parSens(t.salle.visiteControle.retablirSon), findsOneWidget);
-
-    // Agrandir, puis Echap rend la vue.
-    await tester.tap(_parSens(t.salle.visiteControle.agrandir));
-    await tester.pumpAndSettle();
-    expect(_parSens(t.salle.visiteControle.reduire), findsOneWidget);
-    expect(find.text(t.presence.titre), findsNothing);
-    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
-    await tester.pumpAndSettle();
-    expect(_parSens(t.salle.visiteControle.agrandir), findsOneWidget);
-
     // Quitter, sans fenetre de confirmation, mene au compte rendu.
     await tester.tap(find.text(t.salle.quitter));
     await tester.pumpAndSettle();
@@ -129,5 +138,28 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
     await tester.pumpAndSettle();
     expect(find.text(t.controleur.compteRendu.visiteTransmise), findsOneWidget);
+  });
+
+  // CTRL-RETOUR-1 : la sortie de salle porte `?seance=` (salle_page.dart,
+  // `_quitterControle`). La demonstration retombe sur sa visite par defaut
+  // sans ce parametre : seule l'adresse prouve que la visite voyage.
+  testWidgets('Quitter : l adresse du compte rendu porte la seance', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter routeur = await _monter(tester);
+    await tester.tap(find.byKey(ControleControleurPage.commencerKey));
+    await tester.pumpAndSettle();
+    final String seance = tester
+        .widget<SallePage>(find.byType(SallePage))
+        .seanceId;
+    expect(seance, isNotEmpty);
+
+    await tester.tap(find.text(t.salle.quitter));
+    await tester.pumpAndSettle();
+    expect(find.byType(CompteRenduControlePage), findsOneWidget);
+    expect(routeur.state.uri.path, cheminDemoCompteRenduControleur);
+    expect(routeur.state.uri.queryParameters['seance'], seance);
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pumpAndSettle();
   });
 }

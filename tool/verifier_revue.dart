@@ -103,7 +103,9 @@ final RegExp _phraseAction = RegExp(
   r'précisez|precisez|sélectionnez|selectionnez|corrigez|activez|'
   r'autorisez|acceptez|accordez|rendez-vous|voir |voyez|'
   // LIB-ERR-1 : « vous pouvez les lancer normalement » dit quoi faire.
-  r'lancer|lancez',
+  r'lancer|lancez|'
+  // DASH-ELV-ERR : le tutoiement des ecrans eleve (« Reessaie »).
+  r'réessaie|reessaie',
   caseSensitive: false,
 );
 

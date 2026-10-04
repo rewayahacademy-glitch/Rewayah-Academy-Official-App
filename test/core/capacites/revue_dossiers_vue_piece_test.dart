@@ -44,6 +44,12 @@ void main() {
       }
       return 'https://exemple.test/signe';
     },
+    // Decision branchee comme apres BR-1 (AD-M3-PROD la ferme sinon).
+    deciderExistant: ({
+      required String documentId,
+      required bool approuve,
+      String? motif,
+    }) async {},
     horloge: () => maintenant,
   );
 

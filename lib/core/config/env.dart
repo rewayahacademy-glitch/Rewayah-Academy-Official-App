@@ -99,6 +99,11 @@ abstract final class Env {
     defaultValue: 'developpement',
   );
 
+  /// Vrai quand la compilation declare `ENVIRONNEMENT`. Faux, [environnement]
+  /// n'est que la valeur par defaut : les demonstrations restent fermees en
+  /// publication (DEMO-ENV-1).
+  static const bool environnementDeclare = bool.hasEnvironment('ENVIRONNEMENT');
+
   /// Vrai quand la configuration minimale est presente et plausible.
   static bool get configuree =>
       _urlSupabaseValide(supabaseUrl) && cleSupabaseValide(supabaseAnonKey);

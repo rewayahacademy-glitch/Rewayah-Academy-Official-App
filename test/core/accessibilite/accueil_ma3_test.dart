@@ -82,10 +82,8 @@ void main() {
         await tester.tap(_dans(forme, t.nav.eleve.accueil));
         await stabiliser(tester);
         expect(find.byType(AccueilAccessibilite), findsOneWidget);
-        expect(
-          find.text(t.accessibilite.accueil.salutation(prenom: 'Mariam')),
-          findsOneWidget,
-        );
+        // MA-DEC-1 : graphie choisie par le directeur (A3 = c du 27/09).
+        expect(find.text('Assalamou alaykoum, Mariam.'), findsOneWidget);
         // Avant la seance : une ligne d'etat et un seul bouton, jamais
         // « Rejoindre ».
         expect(find.byType(ActionPrincipale), findsOneWidget);
@@ -125,10 +123,7 @@ void main() {
     );
     await tester.tap(_dans(NavShell.barreBasseKey, t.nav.eleve.accueil));
     await stabiliser(tester);
-    expect(
-      find.text(t.accessibilite.accueil.salutation(prenom: 'Idriss')),
-      findsOneWidget,
-    );
+    expect(find.text('Assalamou alaykoum, Idriss.'), findsOneWidget);
     final Finder coran = find.text(t.accessibilite.accueil.lireCoran);
     await tester.ensureVisible(coran);
     await tester.tap(coran);
@@ -140,7 +135,16 @@ void main() {
       tester.widget<NavShell>(find.byType(NavShell)).indexActif,
       EcranAccessibiliteDemo.indexCoran,
     );
-    expect(find.text(t.accessibilite.accueil.lireCoran), findsNothing);
+    expect(find.byType(AccueilAccessibilite), findsNothing);
+    // MA-DEC-1 (A8 = a, MA9) : l'entree du Coran nomme l'action comme
+    // l'Accueil, « Lire le Coran ».
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey<String>('coran-ma-principale')),
+        matching: find.text(t.accessibilite.accueil.lireCoran),
+      ),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
   });
 

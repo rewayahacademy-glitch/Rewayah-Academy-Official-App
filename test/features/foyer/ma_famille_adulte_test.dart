@@ -620,7 +620,7 @@ void main() {
       'Yusuf',
     );
     await tester.enterText(find.byKey(FormulaireProfilEleve.nomKey), 'Diallo');
-    await tester.enterText(find.byKey(FormulaireProfilEleve.ageKey), '8');
+    await toucher(find.byKey(FormulaireProfilEleve.ageChoixKey(8)));
     await tester.pumpAndSettle();
     await toucher(find.byKey(FormulaireProfilEleve.actionKey));
 

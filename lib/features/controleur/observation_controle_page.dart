@@ -20,6 +20,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -137,6 +138,11 @@ class _ObservationControlePageState
     widget.seanceId,
   );
 
+  /// Le roster de CETTE seance, jamais celui d'une autre Classe
+  /// (CTRL-SEANCE-1). Lu seulement quand la visite est connue.
+  FutureProvider<List<EleveRoster>> get _roster =>
+      rosterControleProvider(_visite!.seanceId);
+
   bool get _important => widget.choix == ChoixCompteRendu.pointImportant;
 
   bool get _texteRequis =>
@@ -224,7 +230,9 @@ class _ObservationControlePageState
                   : null,
               texte: _texte.text.trim(),
             ),
-          );
+          )
+          // Serveur muet : « non confirme » et Reessayer (CTRL-DELAI-1).
+          .timeout(AppDelais.requeteMax);
       if (!mounted) return;
       ref.read(compteRenduATerminerProvider.notifier).terminer(visite.seanceId);
       setState(() {
@@ -269,12 +277,13 @@ class _ObservationControlePageState
       );
     }
     if (_visite == null) {
-      // Seance inconnue (rechargement, lien direct) : le message generique,
-      // jamais une autre mission (C7, revue CT-R B1).
+      // Seance inconnue (rechargement, lien direct) : la visite n'est plus en
+      // memoire, jamais une autre mission (C7, revue CT-R B1, CTRL-MSG-1).
       return PageShell(
         titre: t.controleur.compteRendu.titre,
         child: EmptyState(
-          message: t.controleur.controle.indisponible,
+          message: t.controleur.compteRendu.visiteInconnue,
+          invitation: t.controleur.compteRendu.visiteInconnueAide,
           registre: RegistreVide.subi,
           libelleAction: t.controleur.compteRendu.revenir,
           onAction:
@@ -369,7 +378,7 @@ class _ObservationControlePageState
       onRetour: _enCours ? null : _precedent,
       enCours: _enCours,
       souscription: _etape == _Etape.recapitulatif
-          ? _Souscription(echec: _echec)
+          ? _Souscription(echec: _echec, sansTexte: _texte.text.trim().isEmpty)
           : null,
     );
   }
@@ -405,9 +414,7 @@ class _ObservationControlePageState
   );
 
   Widget _personneEtRoster() {
-    final AsyncValue<List<EleveRoster>> etatRoster = ref.watch(
-      rosterControleProvider,
-    );
+    final AsyncValue<List<EleveRoster>> etatRoster = ref.watch(_roster);
     final List<EleveRoster> roster = etatRoster.hasError
         ? const <EleveRoster>[]
         : etatRoster.value ?? const <EleveRoster>[];
@@ -480,7 +487,7 @@ class _ObservationControlePageState
                       libelle: t.commun.reessayer,
                       niveau: NiveauAction.secondaire,
                       pleineLargeur: false,
-                      onPress: () => ref.invalidate(rosterControleProvider),
+                      onPress: () => ref.invalidate(_roster),
                     ),
                   ),
                 ],
@@ -538,7 +545,7 @@ class _ObservationControlePageState
   Widget _recapitulatif() {
     final o = t.controleur.observation;
     final List<EleveRoster> roster =
-        ref.watch(rosterControleProvider).value ?? const <EleveRoster>[];
+        ref.watch(_roster).value ?? const <EleveRoster>[];
     final PersonneConcernee? p = _personne;
     final NatureObservation? n = _nature;
     final DomaineObservation? d = _domaine;
@@ -575,9 +582,13 @@ class _ObservationControlePageState
 
 /// La notice de transmission, au-dessus du bouton, et l'echec honnete.
 class _Souscription extends StatelessWidget {
-  const _Souscription({required this.echec});
+  const _Souscription({required this.echec, required this.sansTexte});
 
   final bool echec;
+
+  /// Texte facultatif laisse vide : l'echec ne parle pas d'un texte garde
+  /// (CTRL-MSG-1).
+  final bool sansTexte;
 
   @override
   Widget build(BuildContext context) {
@@ -611,7 +622,9 @@ class _Souscription extends StatelessWidget {
               ? Padding(
                   padding: const EdgeInsets.only(top: AppSpacing.md),
                   child: Text(
-                    t.controleur.observation.echec,
+                    sansTexte
+                        ? t.controleur.observation.echecSansTexte
+                        : t.controleur.observation.echec,
                     style: palette.inkStrong.applyTo(
                       textes.bodyMedium ?? const TextStyle(),
                     ),

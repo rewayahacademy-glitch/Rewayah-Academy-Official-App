@@ -1,10 +1,11 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/age_eleve.dart';
 import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/domain/enums.dart';
@@ -40,6 +41,7 @@ import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/permanent_notice.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/status_pill.dart';
+import '../accueil_eleve/apres_seance_accessibilite.dart';
 import '../controleur/compte_rendu_controle.dart' show adresseCompteRendu;
 import '../fiche_groupe/preparation_seance.dart';
 import '../salle_enseignant/panneau_enseignant.dart';
@@ -143,12 +145,15 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// L'eleve sorti de la salle (CLV-09).
   IssueSeance? _sortieEleve;
 
-  /// CTR-02 : le support occupe toute la scene (« Agrandir le support »).
-  bool _agrandi = false;
+  // CTRL-AGRANDIR-1 (releve VERIF-CT-1) : pas de commande « Agrandir le
+  // support » dans la salle du controleur tant qu'aucun support n'y est
+  // rendu. Elle agrandissait l'enseignant (la personne dominante), pas un
+  // support. Elle reviendra avec le rendu du support partage.
 
-  /// CTR-02 : le son recu est ecoute. Bascule locale ; le reglage du moteur
-  /// (couper la lecture des pistes recues) se branche a BR-1.
-  bool _sonRecu = true;
+  // CTRL-SON-1 (decision du directeur C5 = a) : pas de commande « Son reçu »
+  // dans la salle du controleur jusqu'a BR-1. Une bascule locale changeait le
+  // mot sans rien couper ; le moteur doit d'abord savoir couper la lecture
+  // des pistes recues (ligne BR de CT-BR.md).
 
   @override
   void initState() {
@@ -216,13 +221,32 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // choisi un au hasard. `refresh` et non `read` : le materiel a pu changer
     // depuis la derniere mesure, et un casque branche apres un « Reessayer » ne
     // servirait a rien si l'on relisait une valeur en cache.
-    final ResultatPreVol preVol = await ref.refresh(preVolProvider.future);
+    //
+    // CTRL-PREVOL-1 (releve VERIF-CT-1, P-CTR-03 point 4, R8, R13) : le micro
+    // n'est exige que de qui parle. Le controleur, le tuteur temoin et
+    // l'administration en observation entrent muets : leur jeton le leur
+    // impose. Un compte qui n'est ni eleve ni enseignant n'est donc pas
+    // mesure avant le jeton (aucune demande de permission injustifiee, comme
+    // `DetailPreCours.aucun`) ; c'est le jeton qui dit ensuite s'il parlera
+    // (l'administration visible, elle, a le micro et repasse par le pre-vol).
+    // Un compte illisible reste traite comme qui parle : le repli est ferme.
+    final AppRole? compte = await _roleDuCompte();
     if (!mounted) {
       return;
     }
-    if (!preVol.peutEntrer && !_sansMicro) {
-      setState(() => _impasse = CauseImpasse.materiel);
-      return;
+    final bool observateur =
+        compte != null &&
+        compte != AppRole.student &&
+        compte != AppRole.teacher;
+    if (!observateur) {
+      final ResultatPreVol mesure = await ref.refresh(preVolProvider.future);
+      if (!mounted) {
+        return;
+      }
+      if (!mesure.peutEntrer && !_sansMicro) {
+        setState(() => _impasse = CauseImpasse.materiel);
+        return;
+      }
     }
     setState(() => _materielPret = true);
 
@@ -238,6 +262,19 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (!mounted) {
       return;
     }
+    // Le jeton tranche pour l'observateur presume (l'administration peut
+    // entrer visible, micro permis) : s'il autorise la voix, le micro
+    // redevient exige, avant toute connexion.
+    if (observateur && acces.capacites.peutPublier) {
+      final ResultatPreVol mesure = await ref.refresh(preVolProvider.future);
+      if (!mounted) {
+        return;
+      }
+      if (!mesure.peutEntrer) {
+        setState(() => _impasse = CauseImpasse.materiel);
+        return;
+      }
+    }
     setState(() => _acces = acces);
 
     try {
@@ -250,6 +287,33 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       if (mounted) {
         setState(() => _impasse = CauseImpasse.reseau);
       }
+    }
+  }
+
+  /// Le role du compte, une fois la session lue.
+  ///
+  /// L'entree part de `initState`, ou la session peut n'etre pas encore lue :
+  /// decider sur un role absent ferait d'un controleur un eleve (bloque sans
+  /// micro), ou l'inverse. On attend donc la premiere session resolue.
+  Future<AppRole?> _roleDuCompte() async {
+    final SessionState lue = ref.read(sessionProvider);
+    if (lue.resolue) {
+      return lue.role;
+    }
+    final Completer<AppRole?> resolue = Completer<AppRole?>();
+    final ProviderSubscription<SessionState> abonnement = ref
+        .listenManual<SessionState>(sessionProvider, (
+          SessionState? _,
+          SessionState etat,
+        ) {
+          if (etat.resolue && !resolue.isCompleted) {
+            resolue.complete(etat.role);
+          }
+        });
+    try {
+      return await resolue.future;
+    } finally {
+      abonnement.close();
     }
   }
 
@@ -482,6 +546,29 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     }
     final IssueSeance? sortie = _sortieEleve;
     if (sortie != null) {
+      // MA-APRES-1 (decision A7 = a) : en Mode Accessibilite, UN SEUL ecran
+      // de fin, celui de MA-6, monte ici par la vraie salle.
+      if (ref.watch(modeAccessibiliteActifProvider)) {
+        final String? groupe = widget.groupeId;
+        return ApresSeanceSalle(
+          groupeId: groupe,
+          quittee: sortie == IssueSeance.quittee,
+          // MA-TUTOIEMENT-1 : le tutoiement suit l'age, jamais la
+          // presentation ; port neutre (K-09) avant BR-1, age inconnu :
+          // vouvoiement.
+          tutoiement: ref.watch(portAgeEleveProvider).ageDeLEleve().tutoiement,
+          // « Retour a la Classe » : la destination Ma classe du Mode
+          // Accessibilite.
+          onRetourClasse: () => GoRouter.of(context).go(Routes.eleveSuivi),
+          onClasse: () => GoRouter.of(context).go(
+            groupe == null
+                ? Routes.eleveSuivi
+                : CheminsTcA.espaceGroupe(groupe),
+          ),
+          // L'aide vit dans Mon espace (MA14, MA-8).
+          onAide: () => GoRouter.of(context).go(Routes.compte),
+        );
+      }
       return ResultatSeance(issue: sortie, onRetour: _retourClasse);
     }
 
@@ -545,38 +632,19 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         : const <AnnonceObservation>[];
 
     // CTR-02 : la salle du controleur, la MEME salle (R-salle unique), avec
-    // sa zone haute et ses deux commandes. Aucune commande interdite n'est
-    // rendue, pas meme grisee (UX_REVIEW_08 n° 4 f).
+    // sa zone haute (« Quitter » y vit). Aucune commande en bas : « Son reçu »
+    // attend BR-1 (CTRL-SON-1), « Agrandir le support » attend le rendu d'un
+    // support (CTRL-AGRANDIR-1). Aucune commande interdite n'est rendue, pas
+    // meme grisee (UX_REVIEW_08 n° 4 f).
     if (vue.role == RoleSalle.controleur && !enImpasse) {
-      return CallbackShortcuts(
-        bindings: <ShortcutActivator, VoidCallback>{
-          // Echap rend la vue quand le support est agrandi (n° 4 c).
-          const SingleActivator(LogicalKeyboardKey.escape): () {
-            if (_agrandi) setState(() => _agrandi = false);
-          },
-        },
-        // Le focus de la page, pour qu'Echap soit entendu meme quand la
-        // commande a ete touchee du doigt plutot qu'au clavier.
-        child: Focus(
-          autofocus: true,
-          child: PageImmersive(
-            registre: RegistreImmersif.salle,
-            entete: _EnteteControle(
-              vue: vue,
-              onQuitter: () => unawaited(_quitter(vue)),
-            ),
-            bandeau: _Bandeaux(vue: vue),
-            commandes: _CommandesControle(
-              sonRecu: _sonRecu,
-              agrandi: _agrandi,
-              onSon: () => setState(() => _sonRecu = !_sonRecu),
-              onAgrandir: () => setState(() => _agrandi = !_agrandi),
-            ),
-            child: _agrandi
-                ? _SupportAgrandi(vue: vue)
-                : _Corps(vue: vue, lignes: lignes),
-          ),
+      return PageImmersive(
+        registre: RegistreImmersif.salle,
+        entete: _EnteteControle(
+          vue: vue,
+          onQuitter: () => unawaited(_quitter(vue)),
         ),
+        bandeau: _Bandeaux(vue: vue),
+        child: _Corps(vue: vue, lignes: lignes),
       );
     }
 
@@ -610,7 +678,6 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           ? null
           : _Commandes(
               vue: vue,
-              encreAccessible: encreAccessible,
               onMicro: _basculerMicro,
               onCamera: _basculerCamera,
               onQuitter: () => _quitter(vue),
@@ -996,82 +1063,6 @@ class _EnteteControle extends StatelessWidget {
   }
 }
 
-/// CTR-02 : les deux commandes du controleur, et rien d'autre.
-///
-/// « Son reçu » (bascule locale : icone, remplissage et mot changent
-/// ensemble, jamais la couleur seule) et « Agrandir le support ». Micro,
-/// camera, main levee, discussion, annotation, changement de support : non
-/// rendus du tout (UX_REVIEW_08 n° 4 f). « Quitter » vit dans la zone haute.
-class _CommandesControle extends StatelessWidget {
-  const _CommandesControle({
-    required this.sonRecu,
-    required this.agrandi,
-    required this.onSon,
-    required this.onAgrandir,
-  });
-
-  final bool sonRecu;
-  final bool agrandi;
-  final VoidCallback onSon;
-  final VoidCallback onAgrandir;
-
-  @override
-  Widget build(BuildContext context) {
-    return _RangeeCompacte(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          _Commande(
-            icone: AppIcons.libelleAudio,
-            libelle: sonRecu
-                ? t.salle.visiteControle.sonRecu
-                : t.salle.visiteControle.sonCoupe,
-            acte: sonRecu
-                ? t.salle.visiteControle.couperSon
-                : t.salle.visiteControle.retablirSon,
-            bascule: sonRecu,
-            onPress: onSon,
-            encreDuRegistre: true,
-          ),
-          _Commande(
-            icone: agrandi ? AppIcons.reduire : AppIcons.agrandir,
-            libelle: agrandi
-                ? t.tc.observation.visite.reduire
-                : t.tc.observation.visite.agrandir,
-            acte: agrandi
-                ? t.salle.visiteControle.reduire
-                : t.salle.visiteControle.agrandir,
-            bascule: agrandi,
-            onPress: onAgrandir,
-            encreDuRegistre: true,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// CTR-02 : le support seul, sur toute la scene. Tant qu'aucun support
-/// partage n'est projete, c'est la personne dominante (l'enseignant).
-class _SupportAgrandi extends StatelessWidget {
-  const _SupportAgrandi({required this.vue});
-
-  final VueSalle vue;
-
-  @override
-  Widget build(BuildContext context) {
-    final ParticipantSalle? dominant = vue.dominant;
-    if (dominant == null) {
-      return _Seul(role: vue.role);
-    }
-    return _Cadre(
-      key: ValueKey<String>(dominant.identite),
-      participant: dominant,
-      moi: false,
-    );
-  }
-}
-
 /// Le bandeau permanent, et le rappel propre a qui observe.
 class _Bandeaux extends StatelessWidget {
   const _Bandeaux({required this.vue, this.encreAccessible = false});
@@ -1093,6 +1084,7 @@ class _Bandeaux extends StatelessWidget {
     if (vue.role == RoleSalle.controleur) {
       return _Rappel(
         texte: t.salle.bandeauControle,
+        titre: t.salle.bandeauControleTitre,
         ton: TonEtat.avertissement,
         icone: AppIcons.controleQualite,
       );
@@ -1109,10 +1101,22 @@ class _Bandeaux extends StatelessWidget {
         if (vue.role == RoleSalle.tuteurObservateur)
           _Rappel(
             texte: t.salle.observationMuette,
+            titre: t.salle.observationMuetteTitre,
             ton: TonEtat.accent,
             icone: AppIcons.microCoupe,
           ),
-        _SurLaSalle(active: encreAccessible, child: const PermanentNotice()),
+        // SALLE-CORR-3 (releve VERIF-CORR-2) : la mention se pose dans la
+        // gouttiere du gabarit, comme l'entete et les commandes, jamais
+        // collee au bord de l'ecran.
+        Padding(
+          padding: EdgeInsetsDirectional.symmetric(
+            horizontal: AppGabarit.de(context).gouttiere,
+          ),
+          child: _SurLaSalle(
+            active: encreAccessible,
+            child: const PermanentNotice(),
+          ),
+        ),
       ],
     );
   }
@@ -1120,9 +1124,17 @@ class _Bandeaux extends StatelessWidget {
 
 /// Une ligne de rappel pleine largeur, en registre doux.
 class _Rappel extends StatelessWidget {
-  const _Rappel({required this.texte, required this.ton, required this.icone});
+  const _Rappel({
+    required this.texte,
+    required this.titre,
+    required this.ton,
+    required this.icone,
+  });
 
   final String texte;
+
+  /// La premiere phrase de [texte], seule montree en texte tres agrandi.
+  final String titre;
   final TonEtat ton;
   final AppIcon icone;
 
@@ -1141,47 +1153,20 @@ class _Rappel extends StatelessWidget {
     };
     final TextTheme textes = Theme.of(context).textTheme;
 
-    // SALLE-200-1 : texte tres agrandi, le rappel propre a qui observe
-    // (controleur, tuteur) se replie sur son icone, dans sa bande douce : la
-    // phrase entiere est lue par le lecteur d'ecran et montree d'une touche
-    // en infobulle. Le bandeau permanent, lui, reste toujours en toutes
-    // lettres.
-    if (!motEtatVisible(context)) {
-      return DecoratedBox(
-        decoration: paire.decoration(),
-        child: Semantics(
-          label: texte,
-          excludeSemantics: true,
-          child: Tooltip(
-            message: texte,
-            triggerMode: TooltipTriggerMode.tap,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.lg,
-                vertical: AppSpacing.md,
-              ),
-              child: Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: IconTheme(
-                  data: IconThemeData(
-                    color: paire.onBackground,
-                    size: AppSpacing.xl,
-                  ),
-                  child: Icon(icone.repos),
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-    }
-
-    return DecoratedBox(
+    // SALLE-CORR-3 (releve VERIF-CORR-2) : le rappel propre a qui observe
+    // (controleur, tuteur) garde TOUJOURS son titre, meme en texte tres
+    // agrandi : la reduction a la seule icone (SALLE-200-1, 642bb5a) rendait
+    // le rappel muet. Au-dela du seuil, il se reduit a son titre (la premiere
+    // phrase), en toutes lettres et passant a la ligne, dans une bande
+    // serree ; la phrase entiere est lue par le lecteur d'ecran et montree
+    // d'une touche en infobulle. Le support garde ainsi sa moitie d'ecran.
+    final bool serre = !motEtatVisible(context);
+    final Widget bande = DecoratedBox(
       decoration: paire.decoration(),
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.md,
+        padding: EdgeInsets.symmetric(
+          horizontal: serre ? AppSpacing.md : AppSpacing.lg,
+          vertical: serre ? AppSpacing.xs : AppSpacing.md,
         ),
         child: Row(
           children: <Widget>[
@@ -1195,12 +1180,23 @@ class _Rappel extends StatelessWidget {
             Ecart.hSm,
             Flexible(
               child: Text(
-                texte,
+                serre ? titre : texte,
                 style: paire.applyTo(textes.bodySmall ?? const TextStyle()),
               ),
             ),
           ],
         ),
+      ),
+    );
+    if (!serre) return bande;
+    return Semantics(
+      label: texte,
+      excludeSemantics: true,
+      child: Tooltip(
+        message: texte,
+        triggerMode: TooltipTriggerMode.tap,
+        excludeFromSemantics: true,
+        child: bande,
       ),
     );
   }
@@ -1927,14 +1923,9 @@ class _Commandes extends StatelessWidget {
     required this.onMicro,
     required this.onCamera,
     required this.onQuitter,
-    this.encreAccessible = false,
   });
 
   final VueSalle vue;
-
-  /// MA-5 : l'eleve en Mode Accessibilite lit la salle avec l'encre du
-  /// registre (`surfaceInverse`) ; les autres gardent leur rendu (HU-1).
-  final bool encreAccessible;
   final Future<void> Function(bool ouvert) onMicro;
   final Future<void> Function(bool ouverte) onCamera;
   final Future<void> Function() onQuitter;
@@ -1947,61 +1938,101 @@ class _Commandes extends StatelessWidget {
     // instable ou un retour de coupure ne ferme pas un micro.
     final bool enSalle = vue.dansLaSalle;
 
-    return _RangeeCompacte(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          // Un controle que le jeton refuse n'est PAS rendu, et n'est jamais
-          // grise : un bouton visible mais inactif invite a appuyer dessus, son
-          // absence ne pose pas la question.
-          if (vue.peutParler)
-            _Commande(
-              encreDuRegistre: encreAccessible,
-              icone: microOuvert ? AppIcons.micro : AppIcons.microCoupe,
-              libelle: microOuvert ? t.salle.microOuvert : t.salle.microCoupe,
-              acte: microOuvert ? t.salle.fermerMicro : t.salle.ouvrirMicro,
-              bascule: microOuvert,
-              onPress: enSalle ? () => unawaited(onMicro(microOuvert)) : null,
-            ),
-          if (vue.peutMontrer)
-            _Commande(
-              encreDuRegistre: encreAccessible,
-              icone: cameraOuverte ? AppIcons.camera : AppIcons.cameraCoupee,
-              libelle: cameraOuverte
-                  ? t.salle.cameraAllumee
-                  : t.salle.cameraCoupee,
-              acte: cameraOuverte ? t.salle.fermerCamera : t.salle.ouvrirCamera,
-              bascule: cameraOuverte,
-              onPress: enSalle
-                  ? () => unawaited(onCamera(cameraOuverte))
-                  : null,
-            ),
-          _Commande(
-            encreDuRegistre: encreAccessible,
-            icone: AppIcons.sortie,
-            libelle: t.salle.quitter,
-            acte: t.salle.quitterLeCours,
-            onPress: () => unawaited(onQuitter()),
-          ),
-        ],
-      ),
+    // SALLE-CORR-3 (releve VERIF-CORR-2) : a 320 px, la rangee de
+    // l'enseignant (micro, camera, quitter) debordait de 8 px. Elle se serre
+    // d'abord (ecart reduit entre les disques, libelles intacts) ; si cela ne
+    // suffit pas encore, elle passe en rangee compacte (EN-12 : « Quitter »
+    // en icone, nom en infobulle et lu ; les bascules gardent leur mot).
+    final int bascules = (vue.peutParler ? 1 : 0) + (vue.peutMontrer ? 1 : 0);
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) {
+        // La largeur de la rangee, avec [cotes] d'ecart autour de chaque disque.
+        double besoin(double cotes) =>
+            bascules * (largeurCaseCommande(context, bascule: true) + cotes) +
+            math.max(
+              diametreCommandeSalle(context),
+              _largeurMot(context, t.salle.quitter),
+            ) +
+            cotes;
+        final double ecart = besoin(2 * AppSpacing.sm) <= contraintes.maxWidth
+            ? AppSpacing.sm
+            : AppSpacing.xs;
+        return _RangeeCompacte(
+          serree: besoin(2 * ecart) > contraintes.maxWidth,
+          child: _rangee(microOuvert, cameraOuverte, enSalle, ecart),
+        );
+      },
     );
   }
+
+  Widget _rangee(
+    bool microOuvert,
+    bool cameraOuverte,
+    bool enSalle,
+    double ecart,
+  ) => Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: <Widget>[
+      // Un controle que le jeton refuse n'est PAS rendu, et n'est jamais
+      // grise : un bouton visible mais inactif invite a appuyer dessus, son
+      // absence ne pose pas la question.
+      if (vue.peutParler)
+        _Commande(
+          ecart: ecart,
+          icone: microOuvert ? AppIcons.micro : AppIcons.microCoupe,
+          libelle: microOuvert ? t.salle.microOuvert : t.salle.microCoupe,
+          acte: microOuvert ? t.salle.fermerMicro : t.salle.ouvrirMicro,
+          bascule: microOuvert,
+          onPress: enSalle ? () => unawaited(onMicro(microOuvert)) : null,
+        ),
+      if (vue.peutMontrer)
+        _Commande(
+          ecart: ecart,
+          icone: cameraOuverte ? AppIcons.camera : AppIcons.cameraCoupee,
+          libelle: cameraOuverte ? t.salle.cameraAllumee : t.salle.cameraCoupee,
+          acte: cameraOuverte ? t.salle.fermerCamera : t.salle.ouvrirCamera,
+          bascule: cameraOuverte,
+          onPress: enSalle ? () => unawaited(onCamera(cameraOuverte)) : null,
+        ),
+      _Commande(
+        ecart: ecart,
+        icone: AppIcons.sortie,
+        libelle: t.salle.quitter,
+        acte: t.salle.quitterLeCours,
+        onPress: () => unawaited(onQuitter()),
+      ),
+    ],
+  );
+}
+
+/// La largeur d'un mot de commande, au style et a l'echelle de texte courants.
+double _largeurMot(BuildContext context, String mot) {
+  final TextPainter peintre = TextPainter(
+    text: TextSpan(text: mot, style: Theme.of(context).textTheme.labelMedium),
+    textDirection: Directionality.of(context),
+    textScaler: MediaQuery.textScalerOf(context),
+    maxLines: 1,
+  )..layout();
+  final double largeur = peintre.width;
+  peintre.dispose();
+  return largeur;
 }
 
 /// SALLE-200-1 (revue du directeur, constat CTRL-SALLE-1) : texte agrandi
 /// au-dela du seuil, les commandes de la salle passent en icones seules,
 /// compactes, a la cible tactile (le nom reste lu et montre en infobulle,
 /// [CommandeSalle]). Elles laissent la hauteur au support partage. A x1 et
-/// jusqu'au seuil, rien ne change.
+/// jusqu'au seuil, rien ne change. [serree] : la rangee ne tient pas sa
+/// largeur meme a ecart reduit (SALLE-CORR-3), meme repli.
 class _RangeeCompacte extends StatelessWidget {
-  const _RangeeCompacte({required this.child});
+  const _RangeeCompacte({required this.child, this.serree = false});
 
   final Widget child;
+  final bool serree;
 
   @override
   Widget build(BuildContext context) {
-    if (motEtatVisible(context)) return child;
+    if (motEtatVisible(context) && !serree) return child;
     return CommandeSalleCompacte(
       diametre: AppMetriques.of(context).cibleTactile,
       child: child,
@@ -2027,7 +2058,7 @@ class _Commande extends StatelessWidget {
     required this.acte,
     required this.onPress,
     this.bascule,
-    this.encreDuRegistre = false,
+    this.ecart = AppSpacing.sm,
   });
 
   final AppIcon icone;
@@ -2038,25 +2069,26 @@ class _Commande extends StatelessWidget {
   final bool? bascule;
   final VoidCallback? onPress;
 
-  /// Le mot sous le disque prend l'encre de la paire du registre `salle`
-  /// (`surfaceInverse`), lisible sur le fond de la salle en clair comme en
-  /// sombre. Reserve aux commandes du controleur (CT-3) et a l'eleve en Mode
-  /// Accessibilite (MA-5) : les autres roles gardent leur rendu (HU-1).
-  final bool encreDuRegistre;
+  /// L'ecart de chaque cote du disque (reduit quand la rangee est serree).
+  final double ecart;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+      padding: EdgeInsets.symmetric(horizontal: ecart),
       child: CommandeSalle(
         icone: icone.resoudre(selectionne: bascule ?? false),
         libelle: libelle,
         libelleSemantique: acte,
         bascule: bascule,
         onPress: onPress,
-        encreLibelle: encreDuRegistre
-            ? AppPalette.of(context).surfaceInverse
-            : null,
+        // SALLE-CORR-3 (releve VERIF-CORR-2) : la rangee se pose TOUJOURS sur
+        // le fond du registre `salle` (`surfaceInverse`, `PageImmersive`).
+        // L'encre du theme (`inkStrong`) y ecrivait sombre sur sombre en
+        // clair, clair sur clair en sombre ; le mot et l'icone d'une bascule
+        // a contour seul prennent donc l'encre de la paire du registre, pour
+        // tous les roles (avant : controleur et Mode Accessibilite seuls).
+        encreLibelle: AppPalette.of(context).surfaceInverse,
       ),
     );
   }

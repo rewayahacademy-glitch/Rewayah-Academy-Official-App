@@ -137,23 +137,32 @@ void main() {
     },
   );
 
-  testWidgets('une piece a verifier garde la checklist et les deux verdicts', (
-    WidgetTester tester,
-  ) async {
-    await monter(tester, <DossierAValider>[
-      _dossier(
-        piece: EtatPiece.aVerifier,
-        documentId: 'doc-1',
-        cleObjet: 'kyc/doc-1.jpg',
-      ),
-    ]);
+  testWidgets('une piece a verifier garde la checklist ; en production, '
+      'aucun verdict avant BR-1 (AD-M3-PROD)', (WidgetTester tester) async {
+    final FauxServiceValidation service = await monter(
+      tester,
+      <DossierAValider>[
+        _dossier(
+          piece: EtatPiece.aVerifier,
+          documentId: 'doc-1',
+          cleObjet: 'kyc/doc-1.jpg',
+        ),
+      ],
+    );
 
     expect(tester.takeException(), isNull);
     expect(find.text('Vérifications'), findsOneWidget);
-    // Valider n'apparait qu'une fois la piece lue et verifiee (HL-A-5) ;
-    // d'ici la, sa raison tient sa place.
-    expect(find.text('Valider le dossier'), findsNothing);
-    expect(find.text('Refuser le dossier'), findsWidgets);
     expect(find.text('Aucune pièce déposée'), findsNothing);
+    // Decision du 27/09 (S1 -> a) : refus et piece fermes comme la
+    // validation ; la raison est dite une fois a la place des boutons.
+    expect(find.text('Valider le dossier'), findsNothing);
+    expect(find.text('Refuser le dossier'), findsNothing);
+    expect(find.text('Voir la pièce'), findsNothing);
+    expect(
+      find.text('La décision est indisponible pour le moment.'),
+      findsOneWidget,
+    );
+    expect(service.apercus, isEmpty);
+    expect(service.verdicts, isEmpty);
   });
 }
