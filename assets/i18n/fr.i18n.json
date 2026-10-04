@@ -4815,12 +4815,15 @@
       "noms": {
         "avecFonction": "{nom}, {fonction}",
         "deux": "{premier} et {second}",
-        "plusieurs": "{premier} et {nombre} autres personnes"
+        "plusieurs": "{premier} et {nombre} autres personnes",
+        "surObjet": "Conversation sur {objet}",
+        "sansObjet": "Conversation"
       },
       "entete": {
         "avecAttention": "{entete}. {attention}",
         "deuxObjets": "{premier} · {second}",
-        "semantique": "Conversation avec {noms}, à propos de {objets}"
+        "semantique": "Conversation avec {noms}, à propos de {objets}",
+        "semantiqueSansNoms": "Conversation à propos de {objets}"
       },
       "types": {
         "classe": "Classe",

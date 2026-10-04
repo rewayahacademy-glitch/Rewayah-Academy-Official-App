@@ -54,6 +54,7 @@ class ListeFils extends StatefulWidget {
     this.filSelectionne,
     this.rechercheEnSurface = false,
     this.horloge = DateTime.now,
+    this.recherche,
   });
 
   /// Les fils autorises, le plus recent d'abord.
@@ -72,6 +73,10 @@ class ListeFils extends StatefulWidget {
   /// L'heure courante, pour dire « 10:24 » ou « 12 novembre ».
   final DateTime Function() horloge;
 
+  /// L'etat de la recherche, tenu par l'appelant pour qu'il survive a un
+  /// changement d'adresse ; `null` : la liste tient le sien.
+  final RechercheFilsControleur? recherche;
+
   /// La cle du lien qui ouvre la recherche sur telephone, pour les tests.
   static const ValueKey<String> cleOuvrirRecherche = ValueKey<String>(
     'liste-fils-ouvrir-recherche',
@@ -86,39 +91,68 @@ class ListeFils extends StatefulWidget {
 }
 
 class _ListeFilsState extends State<ListeFils> {
-  final TextEditingController _recherche = TextEditingController();
-  bool _surfaceOuverte = false;
+  RechercheFilsControleur? _propre;
+  late RechercheFilsControleur _etat;
+
+  TextEditingController get _recherche => _etat.texte;
 
   @override
   void initState() {
     super.initState();
-    _recherche.addListener(_auChangement);
+    _etat = widget.recherche ?? (_propre = RechercheFilsControleur());
+    _ecouter(_etat);
+  }
+
+  @override
+  void didUpdateWidget(ListeFils ancien) {
+    super.didUpdateWidget(ancien);
+    final RechercheFilsControleur nouveau =
+        widget.recherche ?? (_propre ??= RechercheFilsControleur());
+    if (identical(nouveau, _etat)) return;
+    _oublier(_etat);
+    _etat = nouveau;
+    _ecouter(_etat);
   }
 
   @override
   void dispose() {
-    _recherche
-      ..removeListener(_auChangement)
-      ..dispose();
+    _oublier(_etat);
+    _propre?.dispose();
     super.dispose();
   }
 
-  void _auChangement() => setState(() {});
+  void _ecouter(RechercheFilsControleur etat) {
+    etat.addListener(_auChangement);
+    etat.texte.addListener(_auChangement);
+  }
 
-  void _fermerSurface() {
-    _recherche.clear();
-    setState(() => _surfaceOuverte = false);
+  void _oublier(RechercheFilsControleur etat) {
+    etat.removeListener(_auChangement);
+    etat.texte.removeListener(_auChangement);
+  }
+
+  void _auChangement() {
+    if (mounted) setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     final r = t.com.messages.recherche;
     if (widget.rechercheEnSurface) {
-      if (_surfaceOuverte) {
-        return SurfaceRechercheFils(
-          controleur: _recherche,
-          onFermer: _fermerSurface,
-          resultats: _resultats(),
+      if (_etat.surfaceOuverte) {
+        // La surface est temporaire : le retour du systeme (ou celui de la
+        // page, qui passe par le meme chemin) la referme et rend la liste,
+        // au lieu de quitter les Messages.
+        return PopScope<Object?>(
+          canPop: false,
+          onPopInvokedWithResult: (bool sortie, Object? _) {
+            if (!sortie) _etat.fermerSurface();
+          },
+          child: SurfaceRechercheFils(
+            controleur: _recherche,
+            onFermer: _etat.fermerSurface,
+            resultats: _resultats(),
+          ),
         );
       }
       return Column(
@@ -129,7 +163,7 @@ class _ListeFilsState extends State<ListeFils> {
             libelle: r.champ,
             icone: AppIcons.recherche,
             fleche: false,
-            onPress: () => setState(() => _surfaceOuverte = true),
+            onPress: _etat.ouvrirSurface,
           ),
           Ecart.vSm,
           Expanded(child: _resultats()),
@@ -205,7 +239,7 @@ class _ListeFilsState extends State<ListeFils> {
           diametre: AppAvatar.petit,
         ),
       ),
-      libelle: nomsInterlocuteurs(f.interlocuteurs),
+      libelle: titreFil(f.interlocuteurs, f.objet.libelle),
       legende: l.legende(
         objet: f.objet.libelle,
         apercu: f.apercu ?? l.sansApercu,

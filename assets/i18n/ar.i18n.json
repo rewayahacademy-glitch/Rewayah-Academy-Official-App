@@ -303,12 +303,15 @@
       "noms": {
         "avecFonction": "{nom}، {fonction}",
         "deux": "{premier} و{second}",
-        "plusieurs": "{premier} و{nombre} أشخاص آخرين"
+        "plusieurs": "{premier} و{nombre} أشخاص آخرين",
+        "surObjet": "محادثة بخصوص {objet}",
+        "sansObjet": "محادثة"
       },
       "entete": {
         "avecAttention": "{entete}. {attention}",
         "deuxObjets": "{premier} · {second}",
-        "semantique": "محادثة مع {noms}، بخصوص {objets}"
+        "semantique": "محادثة مع {noms}، بخصوص {objets}",
+        "semantiqueSansNoms": "محادثة بخصوص {objets}"
       },
       "types": {
         "classe": "الفصل",

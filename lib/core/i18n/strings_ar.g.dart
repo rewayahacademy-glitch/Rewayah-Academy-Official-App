@@ -573,6 +573,8 @@ class _Traductions$com$messages$noms$ar extends Traductions$com$messages$noms$fr
 	@override String avecFonction({required Object nom, required Object fonction}) => '${nom}، ${fonction}';
 	@override String deux({required Object premier, required Object second}) => '${premier} و${second}';
 	@override String plusieurs({required Object premier, required Object nombre}) => '${premier} و${nombre} أشخاص آخرين';
+	@override String surObjet({required Object objet}) => 'محادثة بخصوص ${objet}';
+	@override String get sansObjet => 'محادثة';
 }
 
 // Path: com.messages.entete
@@ -585,6 +587,7 @@ class _Traductions$com$messages$entete$ar extends Traductions$com$messages$entet
 	@override String avecAttention({required Object entete, required Object attention}) => '${entete}. ${attention}';
 	@override String deuxObjets({required Object premier, required Object second}) => '${premier} · ${second}';
 	@override String semantique({required Object noms, required Object objets}) => 'محادثة مع ${noms}، بخصوص ${objets}';
+	@override String semantiqueSansNoms({required Object objets}) => 'محادثة بخصوص ${objets}';
 }
 
 // Path: com.messages.types
@@ -1033,9 +1036,12 @@ extension on TraductionsAr {
 			'com.messages.noms.avecFonction' => ({required Object nom, required Object fonction}) => '${nom}، ${fonction}',
 			'com.messages.noms.deux' => ({required Object premier, required Object second}) => '${premier} و${second}',
 			'com.messages.noms.plusieurs' => ({required Object premier, required Object nombre}) => '${premier} و${nombre} أشخاص آخرين',
+			'com.messages.noms.surObjet' => ({required Object objet}) => 'محادثة بخصوص ${objet}',
+			'com.messages.noms.sansObjet' => 'محادثة',
 			'com.messages.entete.avecAttention' => ({required Object entete, required Object attention}) => '${entete}. ${attention}',
 			'com.messages.entete.deuxObjets' => ({required Object premier, required Object second}) => '${premier} · ${second}',
 			'com.messages.entete.semantique' => ({required Object noms, required Object objets}) => 'محادثة مع ${noms}، بخصوص ${objets}',
+			'com.messages.entete.semantiqueSansNoms' => ({required Object objets}) => 'محادثة بخصوص ${objets}',
 			'com.messages.types.classe' => 'الفصل',
 			'com.messages.types.eleve' => 'الطالب',
 			'com.messages.types.dossier' => 'الملف',

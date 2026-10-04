@@ -86,10 +86,19 @@ class FilContextuel extends StatefulWidget {
 
 class _FilContextuelState extends State<FilContextuel>
     with WidgetsBindingObserver {
-  /// Les cles des envois pas encore confirmes, par texte : un nouvel essai
-  /// (« Reessayer ») rejoue la meme cle, et le serveur ne compte pas deux
-  /// fois le meme message. La cle part avec la confirmation.
-  final Map<String, String> _clesEnAttente = <String, String>{};
+  /// Les cles des envois en echec, par texte, la plus ancienne d'abord : un
+  /// nouvel essai (« Reessayer ») rejoue une cle en echec, et le serveur ne
+  /// compte pas deux fois le meme message.
+  ///
+  /// Un envoi EN COURS ne prete jamais sa cle : deux messages identiques
+  /// envoyes coup sur coup partent sous deux cles, et le serveur les garde
+  /// tous les deux (R-COM-13 : jamais deux bulles « Envoye » pour un seul
+  /// message enregistre). `FilDiscussion` (socle) ne transmet que le texte,
+  /// pas l'identifiant de la bulle : un nouveau message identique a un
+  /// message en echec reprend sa cle ; le serveur n'en garde qu'un, la bulle
+  /// en echec le dit encore et son « Reessayer » repart sous une cle neuve.
+  /// Indexer par l'identifiant de la bulle : ligne COM-FUS (socle).
+  final Map<String, List<String>> _clesEnEchec = <String, List<String>>{};
   int _compteur = 0;
 
   /// La hauteur du clavier logiciel au dernier releve, en points logiques.
@@ -161,11 +170,17 @@ class _FilContextuelState extends State<FilContextuel>
   }
 
   Future<void> _envoyer(String texte) async {
-    final String cle = _clesEnAttente[texte] ??=
-        '${widget.fil.id}-${DateTime.now().microsecondsSinceEpoch}-'
-        '${_compteur++}';
-    await widget.onEnvoyer(texte, cle);
-    _clesEnAttente.remove(texte);
+    final List<String>? enEchec = _clesEnEchec[texte];
+    final String cle = enEchec != null && enEchec.isNotEmpty
+        ? enEchec.removeAt(0)
+        : '${widget.fil.id}-${DateTime.now().microsecondsSinceEpoch}-'
+              '${_compteur++}';
+    try {
+      await widget.onEnvoyer(texte, cle);
+    } on Object {
+      (_clesEnEchec[texte] ??= <String>[]).add(cle);
+      rethrow;
+    }
   }
 
   @override

@@ -43,6 +43,7 @@ import 'fil_contextuel.dart';
 import 'liste_fils.dart';
 import 'panneau_contexte_fil.dart';
 import 'port_messages_metier.dart';
+import 'recherche_fils.dart';
 
 /// Le chemin de la liste des Messages, depuis l'adresse courante : l'adresse
 /// elle-meme pour la liste, sans son dernier segment pour un fil.
@@ -51,6 +52,31 @@ String cheminListeMessages(Uri adresse, {required bool filOuvert}) {
   final List<String> segments = adresse.pathSegments;
   return '/${segments.take(segments.length - 1).join('/')}';
 }
+
+/// Ce que l'espace des Messages garde d'une adresse a l'autre : la liste
+/// deja lue et la recherche en cours.
+///
+/// Ouvrir un fil depuis la liste (`/messages` vers `/messages/:filId`) pose
+/// une nouvelle page au-dessus de celle de la liste ; sans cette memoire, sa
+/// colonne de liste repartirait du squelette avec une recherche vide. Elle
+/// vit tant qu'un espace des Messages est monte, et repart a zero avec le
+/// port (changement de session ou de demonstration).
+class MemoireMessages {
+  /// La recherche des fils, partagee par les listes de chaque adresse.
+  final RechercheFilsControleur recherche = RechercheFilsControleur();
+
+  /// La derniere liste lue, ou `null` avant la premiere lecture reussie.
+  List<ResumeFil>? liste;
+}
+
+/// La memoire de l'espace des Messages (voir [MemoireMessages]).
+final Provider<MemoireMessages> memoireMessagesProvider =
+    Provider.autoDispose<MemoireMessages>((Ref ref) {
+      ref.watch(portMessagesMetierProvider);
+      final MemoireMessages memoire = MemoireMessages();
+      ref.onDispose(memoire.recherche.dispose);
+      return memoire;
+    });
 
 /// Les Messages metier, page routee du tuteur et de l'enseignant.
 class MessagesPage extends StatelessWidget {
@@ -73,12 +99,21 @@ class MessagesPage extends StatelessWidget {
     GoRouter.of(context).go('$liste/${Uri.encodeComponent(id)}');
   }
 
+  /// Le retour de la page passe d'abord par le chemin du retour systeme :
+  /// une recherche plein ecran ouverte sur la liste (telephone) l'intercepte
+  /// et se referme ; sinon, la page mene a [chemin].
+  Future<void> _retour(BuildContext context, String chemin) async {
+    if (filId == null && await Navigator.of(context).maybePop()) return;
+    if (!context.mounted) return;
+    GoRouter.of(context).go(chemin);
+  }
+
   @override
   Widget build(BuildContext context) {
     return PageShell(
       titre: t.com.messages.titre,
       onRetour: switch (cheminRetour) {
-        final String chemin => () => GoRouter.of(context).go(chemin),
+        final String chemin => () => unawaited(_retour(context, chemin)),
         null => null,
       },
       defilante: false,
@@ -136,7 +171,15 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
   @override
   void initState() {
     super.initState();
-    _chargerListe();
+    // Une liste deja lue a une autre adresse se montre tout de suite, puis se
+    // relit sans squelette.
+    final List<ResumeFil>? connue = ref.read(memoireMessagesProvider).liste;
+    if (connue == null) {
+      _chargerListe();
+    } else {
+      _liste = AsyncValue<List<ResumeFil>>.data(connue);
+      _chargerListe(silencieux: true);
+    }
     final String? id = widget.filId;
     if (id != null) _chargerFil(id);
   }
@@ -166,6 +209,9 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
         });
     if (!mounted) return;
     if (silencieux && lue.hasError) return;
+    if (lue.value case final List<ResumeFil> fils) {
+      ref.read(memoireMessagesProvider).liste = fils;
+    }
     setState(() => _liste = lue);
   }
 
@@ -203,9 +249,18 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
   @override
   Widget build(BuildContext context) {
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    final RechercheFilsControleur recherche = ref
+        .watch(memoireMessagesProvider)
+        .recherche;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        // Ligne COM-FUS (socle) : le bandeau hors ligne global
+        // (`OfflineBanner`, texte `reseau.horsLigne`) s'affiche aussi et dit
+        // « l'envoi attendra », alors qu'un message n'est pas mis en file :
+        // il passe en « non confirme » avec « Reessayer ». Le masquer sur les
+        // surfaces Communications ou adapter son texte se decide a COM-FUS,
+        // hors de cette voie.
         if (horsLigne) ...<Widget>[
           const BandeauHorsLigneCommunication(encadre: true),
           Ecart.vLg,
@@ -213,14 +268,22 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
         Expanded(
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints contraintes) =>
-                _espace(colonnesPour(contraintes.maxWidth), horsLigne),
+                _espace(
+                  colonnesPour(contraintes.maxWidth),
+                  horsLigne,
+                  recherche,
+                ),
           ),
         ),
       ],
     );
   }
 
-  Widget _espace(int colonnes, bool horsLigne) {
+  Widget _espace(
+    int colonnes,
+    bool horsLigne,
+    RechercheFilsControleur recherche,
+  ) {
     final String? filId = widget.filId;
     final List<ResumeFil>? fils = _liste.hasValue && !_liste.isLoading
         ? _liste.value
@@ -233,6 +296,7 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
             filSelectionne: colonnes > 1 ? filId : null,
             rechercheEnSurface: colonnes == 1,
             horloge: widget.horloge,
+            recherche: recherche,
           )
         : null;
     final Widget etatListe = _etatListe(horsLigne);

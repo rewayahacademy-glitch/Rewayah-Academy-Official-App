@@ -46,6 +46,16 @@ String nomsInterlocuteurs(List<Participant> interlocuteurs) {
   };
 }
 
+/// Le titre d'un fil : ses interlocuteurs ([nomsInterlocuteurs]) ; sans
+/// autre participant que soi (une equipe non nominative, par exemple),
+/// « Conversation sur Dossier d'inscription d'Adam », et « Conversation »
+/// s'il n'a pas non plus d'objet. Jamais un libelle vide.
+String titreFil(List<Participant> interlocuteurs, String objets) {
+  if (interlocuteurs.isNotEmpty) return nomsInterlocuteurs(interlocuteurs);
+  final n = t.com.messages.noms;
+  return objets.isEmpty ? n.sansObjet : n.surObjet(objet: objets);
+}
+
 /// Les objets d'un fil, en une ligne : « Classe An-Nour · Adam ».
 String libelleObjets(List<ObjetLie> objets) {
   if (objets.isEmpty) return '';
@@ -132,8 +142,8 @@ class EnteteFilContexte extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final String noms = nomsInterlocuteurs(interlocuteurs);
     final String ligneObjets = libelleObjets(objets);
+    final String noms = titreFil(interlocuteurs, ligneObjets);
     final String prenom = interlocuteurs.isEmpty
         ? ligneObjets
         : interlocuteurs.first.nomAffiche;
@@ -147,10 +157,17 @@ class EnteteFilContexte extends StatelessWidget {
       mention: attention.mention,
     );
     final String? phraseAttention = BadgeNonLu.phraseSemantique(reste);
-    final String phrase = t.com.messages.entete.semantique(
-      noms: noms,
-      objets: ligneObjets,
-    );
+    // Sans interlocuteur nomme, la phrase ne dit pas « avec » un nom vide.
+    final String phrase = switch ((interlocuteurs.isEmpty, ligneObjets)) {
+      (true, '') => noms,
+      (true, _) => t.com.messages.entete.semantiqueSansNoms(
+        objets: ligneObjets,
+      ),
+      (false, _) => t.com.messages.entete.semantique(
+        noms: noms,
+        objets: ligneObjets,
+      ),
+    };
     return Semantics(
       key: cle,
       container: true,

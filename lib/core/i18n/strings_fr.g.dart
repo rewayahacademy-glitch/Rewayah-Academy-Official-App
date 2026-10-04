@@ -15332,6 +15332,12 @@ class Traductions$com$messages$noms$fr {
 
 	/// fr: '{premier} et {nombre} autres personnes'
 	String plusieurs({required Object premier, required Object nombre}) => '${premier} et ${nombre} autres personnes';
+
+	/// fr: 'Conversation sur {objet}'
+	String surObjet({required Object objet}) => 'Conversation sur ${objet}';
+
+	/// fr: 'Conversation'
+	String get sansObjet => 'Conversation';
 }
 
 // Path: com.messages.entete
@@ -15350,6 +15356,9 @@ class Traductions$com$messages$entete$fr {
 
 	/// fr: 'Conversation avec {noms}, à propos de {objets}'
 	String semantique({required Object noms, required Object objets}) => 'Conversation avec ${noms}, à propos de ${objets}';
+
+	/// fr: 'Conversation à propos de {objets}'
+	String semantiqueSansNoms({required Object objets}) => 'Conversation à propos de ${objets}';
 }
 
 // Path: com.messages.types
@@ -20233,9 +20242,12 @@ extension on Traductions {
 			'com.messages.noms.avecFonction' => ({required Object nom, required Object fonction}) => '${nom}, ${fonction}',
 			'com.messages.noms.deux' => ({required Object premier, required Object second}) => '${premier} et ${second}',
 			'com.messages.noms.plusieurs' => ({required Object premier, required Object nombre}) => '${premier} et ${nombre} autres personnes',
+			'com.messages.noms.surObjet' => ({required Object objet}) => 'Conversation sur ${objet}',
+			'com.messages.noms.sansObjet' => 'Conversation',
 			'com.messages.entete.avecAttention' => ({required Object entete, required Object attention}) => '${entete}. ${attention}',
 			'com.messages.entete.deuxObjets' => ({required Object premier, required Object second}) => '${premier} · ${second}',
 			'com.messages.entete.semantique' => ({required Object noms, required Object objets}) => 'Conversation avec ${noms}, à propos de ${objets}',
+			'com.messages.entete.semantiqueSansNoms' => ({required Object objets}) => 'Conversation à propos de ${objets}',
 			'com.messages.types.classe' => 'Classe',
 			'com.messages.types.eleve' => 'Élève',
 			'com.messages.types.dossier' => 'Dossier',

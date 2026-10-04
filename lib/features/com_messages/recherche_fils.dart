@@ -51,6 +51,45 @@ String _texteCherchable(ResumeFil f) => RechercheCatalogue.normaliser(
 bool _contientTout(String cible, List<String> mots) =>
     mots.every((String m) => cible.contains(m));
 
+/// L'etat de la recherche des fils : le texte cherche et, sur telephone,
+/// l'ouverture de la surface plein ecran.
+///
+/// Il vit hors de la liste pour survivre a un changement d'adresse : ouvrir
+/// un fil a cote de la liste (`/messages/:filId`) pose une nouvelle page,
+/// et la liste de cette page reprend la meme recherche (spec section 18 :
+/// la recherche est un etat de la liste, pas de la page).
+class RechercheFilsControleur extends ChangeNotifier {
+  /// Le texte cherche.
+  final TextEditingController texte = TextEditingController();
+
+  bool _surfaceOuverte = false;
+
+  /// Vrai quand la surface plein ecran du telephone est ouverte, ou qu'une
+  /// recherche est en cours : un filtre n'est jamais applique sans que son
+  /// champ soit visible.
+  bool get surfaceOuverte => _surfaceOuverte || texte.text.isNotEmpty;
+
+  /// Ouvre la surface plein ecran.
+  void ouvrirSurface() {
+    if (_surfaceOuverte) return;
+    _surfaceOuverte = true;
+    notifyListeners();
+  }
+
+  /// Ferme la surface et efface la recherche : la liste revient entiere.
+  void fermerSurface() {
+    _surfaceOuverte = false;
+    texte.clear();
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    texte.dispose();
+    super.dispose();
+  }
+}
+
 /// Le champ de recherche des fils.
 ///
 /// Etiquete (« Rechercher une conversation »), avec l'aide « Nom, Classe ou
