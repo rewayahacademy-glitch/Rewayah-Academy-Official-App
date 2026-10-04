@@ -1,5 +1,8 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_color_pair.dart';
@@ -57,12 +60,40 @@ class BarreCommandesObservation extends StatelessWidget {
   final bool large;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (BuildContext context, BoxConstraints c) =>
+        _barre(context, c.maxWidth),
+  );
+
+  /// Vrai quand le mot le plus long des libelles affiches ne tient pas a
+  /// cote de son medaillon dans un tiers de la barre, meme reduit au plancher
+  /// lisible de [TexteSansCoupure] (OBS-COUPE-1 : a 320 px, texte a 100 %, il
+  /// restait environ 28 px pour « Agrandir »). La barre passe alors en deux
+  /// rangees, comme a texte tres agrandi.
+  bool _troisTropEtroits(BuildContext context, double largeur) {
+    if (!largeur.isFinite) return false;
+    final v = t.tc.observation.visite;
+    final TextStyle style = _style(context, Theme.of(context).textTheme);
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    final double motLong =
+        <String>[
+              if (sonRecu) v.sonRecu else v.sonInterrompu,
+              if (agrandi) v.reduire else v.agrandir,
+            ]
+            .map((String l) => largeurMotLePlusLong(context, l, style, echelle))
+            .reduce(math.max);
+    final double tiers = (largeur - 2 * AppSpacing.sm - 2 * AppSpacing.xs) / 3;
+    return tiers - _Medaillon.diametre - AppSpacing.sm <
+        motLong * echelleMinimaleLisible;
+  }
+
+  Widget _barre(BuildContext context, double largeur) {
     final AppPalette palette = AppPalette.of(context);
     final bool empile =
         !large &&
-        MediaQuery.textScalerOf(context).scale(AppSpacing.lg) / AppSpacing.lg >
-            seuilTexteEmpile;
+        (MediaQuery.textScalerOf(context).scale(AppSpacing.lg) / AppSpacing.lg >
+                seuilTexteEmpile ||
+            _troisTropEtroits(context, largeur));
     final Widget son = _TemoinSon(sonRecu: sonRecu, empile: empile);
     final Widget agrandir = _Agrandir(
       agrandi: agrandi,
@@ -96,15 +127,35 @@ class BarreCommandesObservation extends StatelessWidget {
                   ),
                 ],
               )
+            // OBS-COUPE-1 : tres agrandie, « Quitter » passe sur sa propre
+            // rangee, pleine largeur, sous le son et agrandir. Dans un tiers
+            // de 320 px, il se lisait lettre par lettre (« Q/u/i/t/t/e/r »)
+            // et la barre mangeait la salle.
+            : empile
+            ? Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Expanded(child: son),
+                      Ecart.hXs,
+                      Expanded(child: agrandir),
+                    ],
+                  ),
+                  Ecart.vSm,
+                  quitter,
+                ],
+              )
             : Row(
                 children: <Widget>[
                   Expanded(child: son),
                   Ecart.hXs,
                   Expanded(child: agrandir),
                   Ecart.hXs,
-                  // La pilule garde sa largeur (M4) ; tres agrandie, elle
-                  // prend un tiers comme les deux autres.
-                  if (empile) Expanded(child: quitter) else quitter,
+                  // La pilule garde sa largeur (M4).
+                  quitter,
                 ],
               ),
       ),
@@ -115,7 +166,9 @@ class BarreCommandesObservation extends StatelessWidget {
 /// Le style des libelles : `labelMedium` sur telephone (trois commandes sur
 /// 390 points, M4), `labelLarge` des la tablette (D1).
 TextStyle _style(BuildContext context, TextTheme textes) =>
-    (AppGabarit.de(context).estLarge ? textes.labelLarge : textes.labelMedium) ??
+    (AppGabarit.de(context).estLarge
+        ? textes.labelLarge
+        : textes.labelMedium) ??
     const TextStyle();
 
 /// Une icone et son libelle : cote a cote (M4, D1), ou l'icone au-dessus quand
@@ -162,7 +215,10 @@ class _Medaillon extends StatelessWidget {
   Widget build(BuildContext context) => SizedBox.square(
     dimension: diametre,
     child: DecoratedBox(
-      decoration: BoxDecoration(shape: BoxShape.circle, color: paire.background),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: paire.background,
+      ),
       child: Center(
         child: IconTheme(
           data: IconThemeData(color: paire.onBackground, size: AppSpacing.xl),
@@ -197,7 +253,9 @@ class _TemoinSon extends StatelessWidget {
           icone: AppIcons.libelleAudio,
           paire: sonRecu ? palette.washSuccess : palette.surfaceSunken,
         ),
-        libelle: Text(
+        // OBS-COUPE-1 : jamais « Son interr/ompu » ; le mot se reduit ou
+        // passe a la ligne entier.
+        libelle: TexteSansCoupure(
           libelle,
           textAlign: empile ? TextAlign.center : TextAlign.start,
           style: (sonRecu ? palette.inkStrong : palette.inkMuted).applyTo(
@@ -236,12 +294,10 @@ class _Agrandir extends StatelessWidget {
       child: _IconeEtLibelle(
         empile: empile,
         icone: _Medaillon(icone: AppIcons.focus, paire: palette.washAccent),
-        libelle: Text(
+        libelle: TexteSansCoupure(
           libelle,
           textAlign: empile ? TextAlign.center : TextAlign.start,
-          style: palette.inkStrong.applyTo(
-            _style(context, textes),
-          ),
+          style: palette.inkStrong.applyTo(_style(context, textes)),
         ),
       ),
     );
