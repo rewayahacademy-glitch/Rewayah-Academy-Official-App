@@ -1627,7 +1627,44 @@
     },
     "finance": {
       "vueGlobale": "Vue globale",
-      "politiques": "Politiques commerciales"
+      "politiques": "Politiques commerciales",
+      "vue": {
+        "moisAnnee": "{mois} {annee}",
+        "contexte": "Les chiffres de {mois}, chacun à part : ce qui est encaissé, ce qui est reconnu comme revenu, ce qui est dû aux enseignants et ce qui reste sur les profils des familles.",
+        "indicateurs": "Indicateurs du mois",
+        "encaisse": "Chiffre encaissé",
+        "encaisseDetail": "Paiements reçus ce mois. Un encaissement n'est pas encore un revenu.",
+        "revenu": "Revenu académique",
+        "revenuDetail": "Revenu reconnu ce mois, hors taxes collectées.",
+        "paie": "Paie enseignants",
+        "paieDetail": "Estimée pour le mois : une charge à venir, pas un paiement fait.",
+        "marge": "Marge projetée",
+        "margeValeur": "{valeur} %",
+        "margeDetail": "Calculée sur la seule paie des enseignants, sans les autres charges : elle ne se compare pas à une marge nette.",
+        "margeSansActivite": "Aucune activité",
+        "impayes": "Impayés",
+        "impayesDetail": "Reste à financer sur les périodes du mois.",
+        "essais": "Essais en cours",
+        "essaisDetail": "Élèves en essai, jamais comptés comme payants.",
+        "soldes": "Soldes créditeurs",
+        "soldesDetail": "Argent disponible sur les profils des familles : ni un revenu, ni une marge.",
+        "sansActivite": "Aucune activité financière en {mois} : les indicateurs sont à zéro.",
+        "alertes": "Alertes",
+        "aucuneAlerte": "Aucune alerte ce mois.",
+        "alerte": {
+          "aRegulariser": "Période à régulariser",
+          "aRegulariserMontant": "{qui} : il manque {montant} pour financer la période en cours.",
+          "aRegulariserSansMontant": "{qui} : la période en cours n'est pas financée.",
+          "confirmation": "Paiement en attente de confirmation",
+          "confirmationMontant": "{qui} : un paiement de {montant} attend sa confirmation.",
+          "confirmationSansMontant": "{qui} : un paiement attend sa confirmation.",
+          "sousMinimum": "Classe sous le minimum d'ouverture",
+          "sousMinimumDetail": "{qui} : moins d'élèves inscrits que le minimum d'ouverture.",
+          "quiPrenomClasse": "{prenom}, classe {classe}",
+          "quiClasse": "Classe {classe}",
+          "quiInconnu": "Un profil"
+        }
+      }
     },
     "regles": {
       "titre": "Règles",

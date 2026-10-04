@@ -5520,6 +5520,8 @@ class Traductions$admin$finance$fr {
 
 	/// fr: 'Politiques commerciales'
 	String get politiques => 'Politiques commerciales';
+
+	late final Traductions$admin$finance$vue$fr vue = Traductions$admin$finance$vue$fr.internal(_root);
 }
 
 // Path: admin.regles
@@ -12162,6 +12164,83 @@ class Traductions$dossiers$revue$etats$fr {
 	String get refusNonAutorise => 'Ce dossier ne peut pas être refusé dans son état actuel.';
 }
 
+// Path: admin.finance.vue
+class Traductions$admin$finance$vue$fr {
+	Traductions$admin$finance$vue$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{mois} {annee}'
+	String moisAnnee({required Object mois, required Object annee}) => '${mois} ${annee}';
+
+	/// fr: 'Les chiffres de {mois}, chacun à part : ce qui est encaissé, ce qui est reconnu comme revenu, ce qui est dû aux enseignants et ce qui reste sur les profils des familles.'
+	String contexte({required Object mois}) => 'Les chiffres de ${mois}, chacun à part : ce qui est encaissé, ce qui est reconnu comme revenu, ce qui est dû aux enseignants et ce qui reste sur les profils des familles.';
+
+	/// fr: 'Indicateurs du mois'
+	String get indicateurs => 'Indicateurs du mois';
+
+	/// fr: 'Chiffre encaissé'
+	String get encaisse => 'Chiffre encaissé';
+
+	/// fr: 'Paiements reçus ce mois. Un encaissement n'est pas encore un revenu.'
+	String get encaisseDetail => 'Paiements reçus ce mois. Un encaissement n\'est pas encore un revenu.';
+
+	/// fr: 'Revenu académique'
+	String get revenu => 'Revenu académique';
+
+	/// fr: 'Revenu reconnu ce mois, hors taxes collectées.'
+	String get revenuDetail => 'Revenu reconnu ce mois, hors taxes collectées.';
+
+	/// fr: 'Paie enseignants'
+	String get paie => 'Paie enseignants';
+
+	/// fr: 'Estimée pour le mois : une charge à venir, pas un paiement fait.'
+	String get paieDetail => 'Estimée pour le mois : une charge à venir, pas un paiement fait.';
+
+	/// fr: 'Marge projetée'
+	String get marge => 'Marge projetée';
+
+	/// fr: '{valeur} %'
+	String margeValeur({required Object valeur}) => '${valeur} %';
+
+	/// fr: 'Calculée sur la seule paie des enseignants, sans les autres charges : elle ne se compare pas à une marge nette.'
+	String get margeDetail => 'Calculée sur la seule paie des enseignants, sans les autres charges : elle ne se compare pas à une marge nette.';
+
+	/// fr: 'Aucune activité'
+	String get margeSansActivite => 'Aucune activité';
+
+	/// fr: 'Impayés'
+	String get impayes => 'Impayés';
+
+	/// fr: 'Reste à financer sur les périodes du mois.'
+	String get impayesDetail => 'Reste à financer sur les périodes du mois.';
+
+	/// fr: 'Essais en cours'
+	String get essais => 'Essais en cours';
+
+	/// fr: 'Élèves en essai, jamais comptés comme payants.'
+	String get essaisDetail => 'Élèves en essai, jamais comptés comme payants.';
+
+	/// fr: 'Soldes créditeurs'
+	String get soldes => 'Soldes créditeurs';
+
+	/// fr: 'Argent disponible sur les profils des familles : ni un revenu, ni une marge.'
+	String get soldesDetail => 'Argent disponible sur les profils des familles : ni un revenu, ni une marge.';
+
+	/// fr: 'Aucune activité financière en {mois} : les indicateurs sont à zéro.'
+	String sansActivite({required Object mois}) => 'Aucune activité financière en ${mois} : les indicateurs sont à zéro.';
+
+	/// fr: 'Alertes'
+	String get alertes => 'Alertes';
+
+	/// fr: 'Aucune alerte ce mois.'
+	String get aucuneAlerte => 'Aucune alerte ce mois.';
+
+	late final Traductions$admin$finance$vue$alerte$fr alerte = Traductions$admin$finance$vue$alerte$fr.internal(_root);
+}
+
 // Path: admin.journal.evenements
 class Traductions$admin$journal$evenements$fr {
 	Traductions$admin$journal$evenements$fr.internal(this._root);
@@ -15458,6 +15537,48 @@ class Traductions$salle$seance$demo$etats$fr {
 	String get accesRetire => 'Accès retiré';
 }
 
+// Path: admin.finance.vue.alerte
+class Traductions$admin$finance$vue$alerte$fr {
+	Traductions$admin$finance$vue$alerte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Période à régulariser'
+	String get aRegulariser => 'Période à régulariser';
+
+	/// fr: '{qui} : il manque {montant} pour financer la période en cours.'
+	String aRegulariserMontant({required Object qui, required Object montant}) => '${qui} : il manque ${montant} pour financer la période en cours.';
+
+	/// fr: '{qui} : la période en cours n'est pas financée.'
+	String aRegulariserSansMontant({required Object qui}) => '${qui} : la période en cours n\'est pas financée.';
+
+	/// fr: 'Paiement en attente de confirmation'
+	String get confirmation => 'Paiement en attente de confirmation';
+
+	/// fr: '{qui} : un paiement de {montant} attend sa confirmation.'
+	String confirmationMontant({required Object qui, required Object montant}) => '${qui} : un paiement de ${montant} attend sa confirmation.';
+
+	/// fr: '{qui} : un paiement attend sa confirmation.'
+	String confirmationSansMontant({required Object qui}) => '${qui} : un paiement attend sa confirmation.';
+
+	/// fr: 'Classe sous le minimum d'ouverture'
+	String get sousMinimum => 'Classe sous le minimum d\'ouverture';
+
+	/// fr: '{qui} : moins d'élèves inscrits que le minimum d'ouverture.'
+	String sousMinimumDetail({required Object qui}) => '${qui} : moins d\'élèves inscrits que le minimum d\'ouverture.';
+
+	/// fr: '{prenom}, classe {classe}'
+	String quiPrenomClasse({required Object prenom, required Object classe}) => '${prenom}, classe ${classe}';
+
+	/// fr: 'Classe {classe}'
+	String quiClasse({required Object classe}) => 'Classe ${classe}';
+
+	/// fr: 'Un profil'
+	String get quiInconnu => 'Un profil';
+}
+
 // Path: classe.entree.demo.roles
 class Traductions$classe$entree$demo$roles$fr {
 	Traductions$classe$entree$demo$roles$fr.internal(this._root);
@@ -17083,6 +17204,39 @@ extension on Traductions {
 			'admin.qualite.traiterErreur' => ({required Object message}) => 'Le traitement n\'a pas abouti : ${message}',
 			'admin.finance.vueGlobale' => 'Vue globale',
 			'admin.finance.politiques' => 'Politiques commerciales',
+			'admin.finance.vue.moisAnnee' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
+			'admin.finance.vue.contexte' => ({required Object mois}) => 'Les chiffres de ${mois}, chacun à part : ce qui est encaissé, ce qui est reconnu comme revenu, ce qui est dû aux enseignants et ce qui reste sur les profils des familles.',
+			'admin.finance.vue.indicateurs' => 'Indicateurs du mois',
+			'admin.finance.vue.encaisse' => 'Chiffre encaissé',
+			'admin.finance.vue.encaisseDetail' => 'Paiements reçus ce mois. Un encaissement n\'est pas encore un revenu.',
+			'admin.finance.vue.revenu' => 'Revenu académique',
+			'admin.finance.vue.revenuDetail' => 'Revenu reconnu ce mois, hors taxes collectées.',
+			'admin.finance.vue.paie' => 'Paie enseignants',
+			'admin.finance.vue.paieDetail' => 'Estimée pour le mois : une charge à venir, pas un paiement fait.',
+			'admin.finance.vue.marge' => 'Marge projetée',
+			'admin.finance.vue.margeValeur' => ({required Object valeur}) => '${valeur} %',
+			'admin.finance.vue.margeDetail' => 'Calculée sur la seule paie des enseignants, sans les autres charges : elle ne se compare pas à une marge nette.',
+			'admin.finance.vue.margeSansActivite' => 'Aucune activité',
+			'admin.finance.vue.impayes' => 'Impayés',
+			'admin.finance.vue.impayesDetail' => 'Reste à financer sur les périodes du mois.',
+			'admin.finance.vue.essais' => 'Essais en cours',
+			'admin.finance.vue.essaisDetail' => 'Élèves en essai, jamais comptés comme payants.',
+			'admin.finance.vue.soldes' => 'Soldes créditeurs',
+			'admin.finance.vue.soldesDetail' => 'Argent disponible sur les profils des familles : ni un revenu, ni une marge.',
+			'admin.finance.vue.sansActivite' => ({required Object mois}) => 'Aucune activité financière en ${mois} : les indicateurs sont à zéro.',
+			'admin.finance.vue.alertes' => 'Alertes',
+			'admin.finance.vue.aucuneAlerte' => 'Aucune alerte ce mois.',
+			'admin.finance.vue.alerte.aRegulariser' => 'Période à régulariser',
+			'admin.finance.vue.alerte.aRegulariserMontant' => ({required Object qui, required Object montant}) => '${qui} : il manque ${montant} pour financer la période en cours.',
+			'admin.finance.vue.alerte.aRegulariserSansMontant' => ({required Object qui}) => '${qui} : la période en cours n\'est pas financée.',
+			'admin.finance.vue.alerte.confirmation' => 'Paiement en attente de confirmation',
+			'admin.finance.vue.alerte.confirmationMontant' => ({required Object qui, required Object montant}) => '${qui} : un paiement de ${montant} attend sa confirmation.',
+			'admin.finance.vue.alerte.confirmationSansMontant' => ({required Object qui}) => '${qui} : un paiement attend sa confirmation.',
+			'admin.finance.vue.alerte.sousMinimum' => 'Classe sous le minimum d\'ouverture',
+			'admin.finance.vue.alerte.sousMinimumDetail' => ({required Object qui}) => '${qui} : moins d\'élèves inscrits que le minimum d\'ouverture.',
+			'admin.finance.vue.alerte.quiPrenomClasse' => ({required Object prenom, required Object classe}) => '${prenom}, classe ${classe}',
+			'admin.finance.vue.alerte.quiClasse' => ({required Object classe}) => 'Classe ${classe}',
+			'admin.finance.vue.alerte.quiInconnu' => 'Un profil',
 			'admin.regles.titre' => 'Règles',
 			'admin.regles.intro' => 'Les valeurs par défaut de toute la plateforme. Une exception pour un profil précis se pose depuis Opérations > Règles individuelles, jamais ici.',
 			'admin.regles.erreur' => 'Les règles n\'ont pas pu être lues. Réessayez dans un instant.',
@@ -17240,6 +17394,8 @@ extension on Traductions {
 			'admin.programmes.creerVersionDepuisPubliee' => 'Créer une nouvelle version à partir de celle-ci',
 			'admin.programmes.creerVersionErreur' => ({required Object message}) => 'La création n\'a pas abouti : ${message}',
 			'admin.programmes.niveauxTitre' => 'Niveaux',
+			_ => null,
+		} ?? switch (path) {
 			'admin.programmes.niveauAucun' => 'Aucun niveau dans cette version',
 			'admin.programmes.niveauAucunDetail' => 'Ajoutez un premier niveau pour commencer à composer cette version.',
 			'admin.programmes.codeTechnique' => ({required Object code}) => 'Code : ${code}',
@@ -17273,8 +17429,6 @@ extension on Traductions {
 			'admin.journal.chaineIntacteDetail' => ({required Object nombre}) => '${nombre} entrées relues une à une : aucune n\'a été modifiée ni retirée depuis son écriture.',
 			'admin.journal.chaineRompue' => 'Journal altéré',
 			'admin.journal.chaineRompueUne' => ({required Object entree}) => 'Une entrée ne correspond plus à son empreinte, la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.chaineRompueDetail' => ({required Object nombre, required Object entree}) => '${nombre} entrées ne correspondent plus à leur empreinte, à partir de la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.',
 			'admin.journal.chaineInconnue' => 'Intégrité inconnue',
 			'admin.journal.chaineInconnueDetail' => 'La vérification n\'a pas abouti. Les entrées ci-dessous restent lisibles, mais rien ne garantit pour l\'instant qu\'elles sont complètes.',
@@ -17754,6 +17908,8 @@ extension on Traductions {
 			'compte.tuteur.informations.langueFuseau' => ({required Object ville}) => 'Français · ${ville}',
 			'compte.tuteur.informations.consulter' => 'Consulter mes informations',
 			'compte.tuteur.foyer.titre' => 'Mon foyer',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.foyer.aucun' => 'Aucun profil élève pour le moment',
 			'compte.tuteur.foyer.un' => '1 profil élève',
 			'compte.tuteur.foyer.plusieurs' => ({required Object nombre}) => '${nombre} profils élèves',
@@ -17787,8 +17943,6 @@ extension on Traductions {
 			'compte.tuteur.pageAcces.expire' => ({required Object date}) => 'Terminé le ${date}',
 			'compte.tuteur.pageAcces.pastilleActif' => 'Actif',
 			'compte.tuteur.pageAcces.pastilleExpire' => 'Terminé',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageAcces.aucunTitre' => 'Aucun profil élève',
 			'compte.tuteur.pageAcces.aucunePhrase' => 'L\'accès de chaque profil élève s\'affichera ici.',
 			'compte.tuteur.pageAcces.titulaire' => 'Votre compte de titulaire n\'a pas d\'échéance propre : l\'accès se règle profil par profil.',
@@ -18268,6 +18422,8 @@ extension on Traductions {
 			'classe.pageCatalogue.resultat.retourAccueil' => 'Retour à l\'accueil',
 			'enseignant.classes.titre' => 'Classes',
 			'enseignant.classes.vide' => 'Aucune Classe attribuée',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.classes.videDetail' => 'Les Classes confirmées apparaîtront ici.',
 			'enseignant.classes.erreur' => 'Vos Classes n\'ont pas pu être lues. Réessayez dans un instant.',
 			'enseignant.classes.chargement' => 'Chargement de vos Classes.',
@@ -18301,8 +18457,6 @@ extension on Traductions {
 			'enseignant.signalement.categories.changement' => 'Changement',
 			'enseignant.signalement.categories.autre' => 'Autre',
 			'enseignant.signalement.details' => 'Détails internes',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.signalement.detailsAide' => 'Lu par l\'équipe de l\'académie seulement.',
 			'enseignant.signalement.resume' => 'Résumé partageable',
 			'enseignant.signalement.resumeAide' => 'Peut être partagé avec la famille par l\'académie.',
@@ -18782,6 +18936,8 @@ extension on Traductions {
 			'controleur.compteRendu.faits' => 'Relevé automatique de la séance',
 			'controleur.compteRendu.faitsReplies' => 'Relevé automatique de la séance, replié',
 			'controleur.compteRendu.faitsDeplies' => 'Relevé automatique de la séance, déplié',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.compteRendu.faitsChargement' => 'Lecture du relevé automatique de la séance : heures, élèves présents, reconnexions.',
 			'controleur.compteRendu.faitsAbsents' => 'Le relevé automatique de la séance (heures, élèves présents, reconnexions) n\'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Vous pouvez répondre sans lui ; il sera joint au rapport dès sa réception.',
 			'controleur.compteRendu.cleHoraire' => 'Heure prévue',
@@ -18815,8 +18971,6 @@ extension on Traductions {
 			'controleur.compteRendu.visiteEchec' => 'La transmission de la visite n\'est pas confirmée : la connexion ou le serveur n\'a pas répondu. Réessayez ; le relevé de la visite reste enregistré sur le serveur.',
 			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
 			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.important' => 'Vous signalez un point important : votre texte sera demandé.',
 			'controleur.observation.questionNature' => 'Quelle est la nature de votre observation ?',
 			'controleur.observation.contexteNature' => 'Votre observation rejoint le compte rendu de cette visite, transmis à l\'administration.',
@@ -19296,6 +19450,8 @@ extension on Traductions {
 			'tc.observation.visite.sonInterrompu' => 'Son interrompu',
 			'tc.observation.visite.agrandir' => 'Agrandir',
 			'tc.observation.visite.reduire' => 'Réduire',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.visite.cameraFermee' => 'Caméra fermée',
 			'tc.observation.visite.pasEncoreLa' => 'Pas encore dans la salle',
 			'tc.observation.visite.parle' => ({required Object nom}) => '${nom} parle',
@@ -19329,8 +19485,6 @@ extension on Traductions {
 			'tc.observation.annonce.enfantIndicateur' => 'Ton tuteur regarde le cours',
 			'tc.observation.annonce.tuteursObservent' => ({required Object nombre}) => '${nombre} tuteurs observent',
 			'tc.observation.reglages.titre' => 'Observation par les tuteurs',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.reglages.intro' => 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s\'applique à ce groupe.',
 			'tc.observation.reglages.heriter' => 'Hériter de l\'Académie',
 			'tc.observation.reglages.personnaliser' => 'Personnaliser pour ce groupe',

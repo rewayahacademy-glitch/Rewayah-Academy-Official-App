@@ -4,6 +4,7 @@ import '../../core/admin/admin_domaine.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
+import 'vue_globale_finance.dart';
 
 /// Les deux onglets du domaine Finance, dans l'ordre de `ongletsFinance()`.
 enum OngletFinance {
@@ -18,10 +19,13 @@ enum OngletFinance {
 /// Le domaine Finance de la direction (FI-1b) : un onglet, dans la vraie
 /// coquille admin.
 ///
-/// **Page neutre honnete** : aucun port Finance n'existe encore (ils
-/// arrivent en FI-1c, branches en BR-1), donc l'onglet dit « Pas encore
-/// disponible » (`NatureEtat.indisponible`), sans chiffre, sans bouton qui
-/// ne mene nulle part. Le contenu des ecrans viendra en FI-11a et FI-11b.
+/// - **Vue globale** (FI-11a) : lit `PortFinanceDirection`
+///   ([VueGlobaleFinanceBloc]). En production le port rend
+///   `CapaciteIndisponible` (FI-BR-12) : l'onglet dit honnetement « Pas
+///   encore disponible », sans chiffre ; la demonstration le surcharge.
+/// - **Politiques commerciales** : page neutre honnete (« Pas encore
+///   disponible », `NatureEtat.indisponible`), sans chiffre, sans bouton qui
+///   ne mene nulle part, jusqu'a FI-11b.
 class FinancePage extends StatelessWidget {
   /// Cree l'onglet [onglet].
   const FinancePage({required this.onglet, this.onglets, super.key});
@@ -41,13 +45,13 @@ class FinancePage extends StatelessWidget {
     return PageShell(
       titre: liste[onglet.index].libelle,
       entete: SousNavigationDomaine(onglets: liste, indexActif: onglet.index),
-      child: EtatSysteme(
-        nature: NatureEtat.indisponible,
-        dependance: switch (onglet) {
-          OngletFinance.vueGlobale => 'FI-1c, FI-11a, FI-BR-12',
-          OngletFinance.politiques => 'FI-1c, FI-11b, FI-BR-02',
-        },
-      ),
+      child: switch (onglet) {
+        OngletFinance.vueGlobale => const VueGlobaleFinanceBloc(),
+        OngletFinance.politiques => const EtatSysteme(
+          nature: NatureEtat.indisponible,
+          dependance: 'FI-1c, FI-11b, FI-BR-02',
+        ),
+      },
     );
   }
 }
