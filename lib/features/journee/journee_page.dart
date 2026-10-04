@@ -76,6 +76,7 @@ import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/timeline_row.dart';
+import '../com_communaute/entree_communaute.dart';
 import '../tc_espace_groupe/carte_session.dart' show EmplacementEntreeVue;
 import 'absence_remplacement_vue.dart';
 
@@ -815,6 +816,10 @@ class _MaJournee extends StatelessWidget {
             ),
           ),
         ],
+        // L'emplacement de la Communaute enseignants (Q2 du 04/10) : une
+        // ligne de ce bloc toujours rendu, jamais un cinquieme bloc (K-42).
+        // Son contenu appartient a la voie COM-COMU.
+        const EntreeCommunaute(),
       ],
     );
   }

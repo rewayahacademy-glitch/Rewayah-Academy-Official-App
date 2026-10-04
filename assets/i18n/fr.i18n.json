@@ -4801,6 +4801,117 @@
       "titre": "Message vocal"
     },
     "communaute": {
+      "sousTitre": "Échanges et entraide entre enseignants",
+      "sections": "Catégories de la Communauté enseignants",
+      "toutes": "Toutes",
+      "videTitre": "Aucune publication",
+      "rechercheVideTitre": "Aucun résultat",
+      "rechercheVide": "Aucune publication ne correspond à votre recherche. Essayez un autre mot.",
+      "flux": {
+        "ouvrir": "Ouvrir la publication {titre}",
+        "reponseUne": "1 réponse",
+        "reponses": "{nombre} réponses",
+        "aucuneReponse": "Aucune réponse",
+        "categorie": "Catégorie {categorie}"
+      },
+      "recherche": {
+        "ouvrir": "Rechercher une publication",
+        "champ": "Rechercher une publication",
+        "aide": "Un mot du titre ou du texte",
+        "fermer": "Fermer la recherche"
+      },
+      "moment": {
+        "instant": "À l'instant",
+        "minutes": "Il y a {nombre} min",
+        "heures": "Il y a {nombre} h",
+        "jours": "Il y a {nombre} j",
+        "date": "Le {jour}/{mois}"
+      },
+      "publication": {
+        "auteur": "{fonction}, {moment}",
+        "enregistrer": "Enregistrer la publication",
+        "enregistree": "Publication enregistrée",
+        "retirer": "Retirer des éléments enregistrés",
+        "menu": "Actions sur la publication {titre}",
+        "signaler": "Signaler la publication",
+        "signalee": "Vous avez signalé cette publication. L'équipe de modération va l'examiner.",
+        "choisirTitre": "Aucune publication ouverte",
+        "choisir": "Choisissez une publication dans la liste pour la lire et y répondre.",
+        "introuvableTitre": "Publication indisponible",
+        "introuvable": "Cette publication a été retirée ou ne vous est plus accessible. Revenez aux publications pour en choisir une autre.",
+        "revenir": "Revenir aux publications"
+      },
+      "reponses": {
+        "titre": "Réponses ({nombre})",
+        "vide": "Aucune réponse pour le moment.",
+        "erreurTitre": "Impossible de charger les réponses.",
+        "champ": "Votre réponse",
+        "aide": "Écrire une réponse",
+        "envoyer": "Envoyer la réponse",
+        "champVide": "Écrivez une réponse pour l'envoyer.",
+        "enCours": "Envoi en cours",
+        "nonConfirmee": "Cette réponse n'a pas encore été confirmée.",
+        "reessayer": "Renvoyer la réponse",
+        "indisponible": "Les réponses ne sont pas encore disponibles ici.",
+        "menu": "Actions sur la réponse de {nom}",
+        "signaler": "Signaler la réponse",
+        "signalee": "Vous avez signalé cette réponse."
+      },
+      "signalement": {
+        "motifManquant": "Choisissez un motif pour envoyer le signalement."
+      },
+      "composer": {
+        "nouvelle": "Nouvelle publication",
+        "contexte": "Partagez une question, une méthode ou une ressource utile à l'enseignement.",
+        "categorie": "Catégorie",
+        "categorieManquante": "Choisissez une catégorie pour publier.",
+        "champTitre": "Titre",
+        "aideTitre": "Le sujet en quelques mots",
+        "titreManquant": "Écrivez un titre pour publier.",
+        "champTexte": "Texte",
+        "aideTexte": "Votre question ou votre retour d'expérience",
+        "texteManquant": "Écrivez le texte de la publication pour publier.",
+        "pieces": "Pièces jointes",
+        "pieceRefusee": "Retirez les fichiers refusés avant de publier.",
+        "choixIndisponible": "Le choix d'un fichier n'est pas encore disponible ici.",
+        "publier": "Publier",
+        "fermer": "Fermer la nouvelle publication",
+        "confirmee": "Votre publication est en ligne.",
+        "erreurEnvoi": "Votre publication n'a pas encore été confirmée. Vérifiez votre connexion, puis réessayez.",
+        "indisponible": "La publication n'est pas encore disponible ici."
+      },
+      "regles": {
+        "panneau": "Aide et règles",
+        "aProposTitre": "À propos de cet espace",
+        "aPropos": "Un espace d'entraide entre enseignants pour poser des questions, partager des méthodes et des ressources pédagogiques.",
+        "titre": "Partage pédagogique uniquement",
+        "corps": "Cette communauté est réservée aux échanges professionnels entre enseignants.",
+        "reglesTitre": "Règles de publication",
+        "pasPublicite": "Aucune publicité",
+        "pasAffilie": "Aucun lien affilié",
+        "pasVente": "Aucune vente de produit ou de service",
+        "pasSollicitation": "Aucune sollicitation commerciale",
+        "pasDonnees": "Aucune donnée personnelle d'un élève ou d'une famille",
+        "signaler": "Un contenu inapproprié se signale depuis le menu de la publication.",
+        "voir": "Voir les règles"
+      },
+      "entree": {
+        "lecteur": "Ouvrir la Communauté enseignants",
+        "detail": "Questions, méthodes et ressources entre enseignants"
+      },
+      "demo": {
+        "choisir": "Choisissez une situation à essayer, dans la coquille Enseignant.",
+        "aujourdhui": "Aujourd'hui, avec le raccourci",
+        "nominal": "Six publications",
+        "publication": "Une publication ouverte",
+        "vide": "Aucune publication",
+        "lectureEchouee": "Lecture en échec",
+        "indisponible": "Service pas encore disponible",
+        "horsLigne": "Hors ligne",
+        "envoiNonConfirme": "Envoi non confirmé",
+        "moderationIndisponible": "Modération indisponible",
+        "lecteurSeul": "Lecture seule, sans publication"
+      },
       "titre": "@:com.socle.lexique.communaute",
       "vide": "Aucune publication dans cette catégorie."
     },

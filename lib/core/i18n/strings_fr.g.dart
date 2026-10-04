@@ -11071,6 +11071,35 @@ class Traductions$com$communaute$fr {
 
 	// Translations
 
+	/// fr: 'Échanges et entraide entre enseignants'
+	String get sousTitre => 'Échanges et entraide entre enseignants';
+
+	/// fr: 'Catégories de la Communauté enseignants'
+	String get sections => 'Catégories de la Communauté enseignants';
+
+	/// fr: 'Toutes'
+	String get toutes => 'Toutes';
+
+	/// fr: 'Aucune publication'
+	String get videTitre => 'Aucune publication';
+
+	/// fr: 'Aucun résultat'
+	String get rechercheVideTitre => 'Aucun résultat';
+
+	/// fr: 'Aucune publication ne correspond à votre recherche. Essayez un autre mot.'
+	String get rechercheVide => 'Aucune publication ne correspond à votre recherche. Essayez un autre mot.';
+
+	late final Traductions$com$communaute$flux$fr flux = Traductions$com$communaute$flux$fr.internal(_root);
+	late final Traductions$com$communaute$recherche$fr recherche = Traductions$com$communaute$recherche$fr.internal(_root);
+	late final Traductions$com$communaute$moment$fr moment = Traductions$com$communaute$moment$fr.internal(_root);
+	late final Traductions$com$communaute$publication$fr publication = Traductions$com$communaute$publication$fr.internal(_root);
+	late final Traductions$com$communaute$reponses$fr reponses = Traductions$com$communaute$reponses$fr.internal(_root);
+	late final Traductions$com$communaute$signalement$fr signalement = Traductions$com$communaute$signalement$fr.internal(_root);
+	late final Traductions$com$communaute$composer$fr composer = Traductions$com$communaute$composer$fr.internal(_root);
+	late final Traductions$com$communaute$regles$fr regles = Traductions$com$communaute$regles$fr.internal(_root);
+	late final Traductions$com$communaute$entree$fr entree = Traductions$com$communaute$entree$fr.internal(_root);
+	late final Traductions$com$communaute$demo$fr demo = Traductions$com$communaute$demo$fr.internal(_root);
+
 	/// fr: 'Communauté enseignants'
 	String get titre => _root.com.socle.lexique.communaute;
 
@@ -15245,6 +15274,351 @@ class Traductions$com$socle$navigation$fr {
 
 	late final Traductions$com$socle$navigation$provisoire$fr provisoire = Traductions$com$socle$navigation$provisoire$fr.internal(_root);
 	late final Traductions$com$socle$navigation$demo$fr demo = Traductions$com$socle$navigation$demo$fr.internal(_root);
+}
+
+// Path: com.communaute.flux
+class Traductions$com$communaute$flux$fr {
+	Traductions$com$communaute$flux$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ouvrir la publication {titre}'
+	String ouvrir({required Object titre}) => 'Ouvrir la publication ${titre}';
+
+	/// fr: '1 réponse'
+	String get reponseUne => '1 réponse';
+
+	/// fr: '{nombre} réponses'
+	String reponses({required Object nombre}) => '${nombre} réponses';
+
+	/// fr: 'Aucune réponse'
+	String get aucuneReponse => 'Aucune réponse';
+
+	/// fr: 'Catégorie {categorie}'
+	String categorie({required Object categorie}) => 'Catégorie ${categorie}';
+}
+
+// Path: com.communaute.recherche
+class Traductions$com$communaute$recherche$fr {
+	Traductions$com$communaute$recherche$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Rechercher une publication'
+	String get ouvrir => 'Rechercher une publication';
+
+	/// fr: 'Rechercher une publication'
+	String get champ => 'Rechercher une publication';
+
+	/// fr: 'Un mot du titre ou du texte'
+	String get aide => 'Un mot du titre ou du texte';
+
+	/// fr: 'Fermer la recherche'
+	String get fermer => 'Fermer la recherche';
+}
+
+// Path: com.communaute.moment
+class Traductions$com$communaute$moment$fr {
+	Traductions$com$communaute$moment$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À l'instant'
+	String get instant => 'À l\'instant';
+
+	/// fr: 'Il y a {nombre} min'
+	String minutes({required Object nombre}) => 'Il y a ${nombre} min';
+
+	/// fr: 'Il y a {nombre} h'
+	String heures({required Object nombre}) => 'Il y a ${nombre} h';
+
+	/// fr: 'Il y a {nombre} j'
+	String jours({required Object nombre}) => 'Il y a ${nombre} j';
+
+	/// fr: 'Le {jour}/{mois}'
+	String date({required Object jour, required Object mois}) => 'Le ${jour}/${mois}';
+}
+
+// Path: com.communaute.publication
+class Traductions$com$communaute$publication$fr {
+	Traductions$com$communaute$publication$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{fonction}, {moment}'
+	String auteur({required Object fonction, required Object moment}) => '${fonction}, ${moment}';
+
+	/// fr: 'Enregistrer la publication'
+	String get enregistrer => 'Enregistrer la publication';
+
+	/// fr: 'Publication enregistrée'
+	String get enregistree => 'Publication enregistrée';
+
+	/// fr: 'Retirer des éléments enregistrés'
+	String get retirer => 'Retirer des éléments enregistrés';
+
+	/// fr: 'Actions sur la publication {titre}'
+	String menu({required Object titre}) => 'Actions sur la publication ${titre}';
+
+	/// fr: 'Signaler la publication'
+	String get signaler => 'Signaler la publication';
+
+	/// fr: 'Vous avez signalé cette publication. L'équipe de modération va l'examiner.'
+	String get signalee => 'Vous avez signalé cette publication. L\'équipe de modération va l\'examiner.';
+
+	/// fr: 'Aucune publication ouverte'
+	String get choisirTitre => 'Aucune publication ouverte';
+
+	/// fr: 'Choisissez une publication dans la liste pour la lire et y répondre.'
+	String get choisir => 'Choisissez une publication dans la liste pour la lire et y répondre.';
+
+	/// fr: 'Publication indisponible'
+	String get introuvableTitre => 'Publication indisponible';
+
+	/// fr: 'Cette publication a été retirée ou ne vous est plus accessible. Revenez aux publications pour en choisir une autre.'
+	String get introuvable => 'Cette publication a été retirée ou ne vous est plus accessible. Revenez aux publications pour en choisir une autre.';
+
+	/// fr: 'Revenir aux publications'
+	String get revenir => 'Revenir aux publications';
+}
+
+// Path: com.communaute.reponses
+class Traductions$com$communaute$reponses$fr {
+	Traductions$com$communaute$reponses$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Réponses ({nombre})'
+	String titre({required Object nombre}) => 'Réponses (${nombre})';
+
+	/// fr: 'Aucune réponse pour le moment.'
+	String get vide => 'Aucune réponse pour le moment.';
+
+	/// fr: 'Impossible de charger les réponses.'
+	String get erreurTitre => 'Impossible de charger les réponses.';
+
+	/// fr: 'Votre réponse'
+	String get champ => 'Votre réponse';
+
+	/// fr: 'Écrire une réponse'
+	String get aide => 'Écrire une réponse';
+
+	/// fr: 'Envoyer la réponse'
+	String get envoyer => 'Envoyer la réponse';
+
+	/// fr: 'Écrivez une réponse pour l'envoyer.'
+	String get champVide => 'Écrivez une réponse pour l\'envoyer.';
+
+	/// fr: 'Envoi en cours'
+	String get enCours => 'Envoi en cours';
+
+	/// fr: 'Cette réponse n'a pas encore été confirmée.'
+	String get nonConfirmee => 'Cette réponse n\'a pas encore été confirmée.';
+
+	/// fr: 'Renvoyer la réponse'
+	String get reessayer => 'Renvoyer la réponse';
+
+	/// fr: 'Les réponses ne sont pas encore disponibles ici.'
+	String get indisponible => 'Les réponses ne sont pas encore disponibles ici.';
+
+	/// fr: 'Actions sur la réponse de {nom}'
+	String menu({required Object nom}) => 'Actions sur la réponse de ${nom}';
+
+	/// fr: 'Signaler la réponse'
+	String get signaler => 'Signaler la réponse';
+
+	/// fr: 'Vous avez signalé cette réponse.'
+	String get signalee => 'Vous avez signalé cette réponse.';
+}
+
+// Path: com.communaute.signalement
+class Traductions$com$communaute$signalement$fr {
+	Traductions$com$communaute$signalement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Choisissez un motif pour envoyer le signalement.'
+	String get motifManquant => 'Choisissez un motif pour envoyer le signalement.';
+}
+
+// Path: com.communaute.composer
+class Traductions$com$communaute$composer$fr {
+	Traductions$com$communaute$composer$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nouvelle publication'
+	String get nouvelle => 'Nouvelle publication';
+
+	/// fr: 'Partagez une question, une méthode ou une ressource utile à l'enseignement.'
+	String get contexte => 'Partagez une question, une méthode ou une ressource utile à l\'enseignement.';
+
+	/// fr: 'Catégorie'
+	String get categorie => 'Catégorie';
+
+	/// fr: 'Choisissez une catégorie pour publier.'
+	String get categorieManquante => 'Choisissez une catégorie pour publier.';
+
+	/// fr: 'Titre'
+	String get champTitre => 'Titre';
+
+	/// fr: 'Le sujet en quelques mots'
+	String get aideTitre => 'Le sujet en quelques mots';
+
+	/// fr: 'Écrivez un titre pour publier.'
+	String get titreManquant => 'Écrivez un titre pour publier.';
+
+	/// fr: 'Texte'
+	String get champTexte => 'Texte';
+
+	/// fr: 'Votre question ou votre retour d'expérience'
+	String get aideTexte => 'Votre question ou votre retour d\'expérience';
+
+	/// fr: 'Écrivez le texte de la publication pour publier.'
+	String get texteManquant => 'Écrivez le texte de la publication pour publier.';
+
+	/// fr: 'Pièces jointes'
+	String get pieces => 'Pièces jointes';
+
+	/// fr: 'Retirez les fichiers refusés avant de publier.'
+	String get pieceRefusee => 'Retirez les fichiers refusés avant de publier.';
+
+	/// fr: 'Le choix d'un fichier n'est pas encore disponible ici.'
+	String get choixIndisponible => 'Le choix d\'un fichier n\'est pas encore disponible ici.';
+
+	/// fr: 'Publier'
+	String get publier => 'Publier';
+
+	/// fr: 'Fermer la nouvelle publication'
+	String get fermer => 'Fermer la nouvelle publication';
+
+	/// fr: 'Votre publication est en ligne.'
+	String get confirmee => 'Votre publication est en ligne.';
+
+	/// fr: 'Votre publication n'a pas encore été confirmée. Vérifiez votre connexion, puis réessayez.'
+	String get erreurEnvoi => 'Votre publication n\'a pas encore été confirmée. Vérifiez votre connexion, puis réessayez.';
+
+	/// fr: 'La publication n'est pas encore disponible ici.'
+	String get indisponible => 'La publication n\'est pas encore disponible ici.';
+}
+
+// Path: com.communaute.regles
+class Traductions$com$communaute$regles$fr {
+	Traductions$com$communaute$regles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aide et règles'
+	String get panneau => 'Aide et règles';
+
+	/// fr: 'À propos de cet espace'
+	String get aProposTitre => 'À propos de cet espace';
+
+	/// fr: 'Un espace d'entraide entre enseignants pour poser des questions, partager des méthodes et des ressources pédagogiques.'
+	String get aPropos => 'Un espace d\'entraide entre enseignants pour poser des questions, partager des méthodes et des ressources pédagogiques.';
+
+	/// fr: 'Partage pédagogique uniquement'
+	String get titre => 'Partage pédagogique uniquement';
+
+	/// fr: 'Cette communauté est réservée aux échanges professionnels entre enseignants.'
+	String get corps => 'Cette communauté est réservée aux échanges professionnels entre enseignants.';
+
+	/// fr: 'Règles de publication'
+	String get reglesTitre => 'Règles de publication';
+
+	/// fr: 'Aucune publicité'
+	String get pasPublicite => 'Aucune publicité';
+
+	/// fr: 'Aucun lien affilié'
+	String get pasAffilie => 'Aucun lien affilié';
+
+	/// fr: 'Aucune vente de produit ou de service'
+	String get pasVente => 'Aucune vente de produit ou de service';
+
+	/// fr: 'Aucune sollicitation commerciale'
+	String get pasSollicitation => 'Aucune sollicitation commerciale';
+
+	/// fr: 'Aucune donnée personnelle d'un élève ou d'une famille'
+	String get pasDonnees => 'Aucune donnée personnelle d\'un élève ou d\'une famille';
+
+	/// fr: 'Un contenu inapproprié se signale depuis le menu de la publication.'
+	String get signaler => 'Un contenu inapproprié se signale depuis le menu de la publication.';
+
+	/// fr: 'Voir les règles'
+	String get voir => 'Voir les règles';
+}
+
+// Path: com.communaute.entree
+class Traductions$com$communaute$entree$fr {
+	Traductions$com$communaute$entree$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ouvrir la Communauté enseignants'
+	String get lecteur => 'Ouvrir la Communauté enseignants';
+
+	/// fr: 'Questions, méthodes et ressources entre enseignants'
+	String get detail => 'Questions, méthodes et ressources entre enseignants';
+}
+
+// Path: com.communaute.demo
+class Traductions$com$communaute$demo$fr {
+	Traductions$com$communaute$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Choisissez une situation à essayer, dans la coquille Enseignant.'
+	String get choisir => 'Choisissez une situation à essayer, dans la coquille Enseignant.';
+
+	/// fr: 'Aujourd'hui, avec le raccourci'
+	String get aujourdhui => 'Aujourd\'hui, avec le raccourci';
+
+	/// fr: 'Six publications'
+	String get nominal => 'Six publications';
+
+	/// fr: 'Une publication ouverte'
+	String get publication => 'Une publication ouverte';
+
+	/// fr: 'Aucune publication'
+	String get vide => 'Aucune publication';
+
+	/// fr: 'Lecture en échec'
+	String get lectureEchouee => 'Lecture en échec';
+
+	/// fr: 'Service pas encore disponible'
+	String get indisponible => 'Service pas encore disponible';
+
+	/// fr: 'Hors ligne'
+	String get horsLigne => 'Hors ligne';
+
+	/// fr: 'Envoi non confirmé'
+	String get envoiNonConfirme => 'Envoi non confirmé';
+
+	/// fr: 'Modération indisponible'
+	String get moderationIndisponible => 'Modération indisponible';
+
+	/// fr: 'Lecture seule, sans publication'
+	String get lecteurSeul => 'Lecture seule, sans publication';
 }
 
 // Path: salle.preparation.eleve.guidee
@@ -19980,6 +20354,99 @@ extension on Traductions {
 			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
 			'com.messages.vide' => 'Aucune conversation pour le moment.',
 			'com.vocal.titre' => 'Message vocal',
+			'com.communaute.sousTitre' => 'Échanges et entraide entre enseignants',
+			'com.communaute.sections' => 'Catégories de la Communauté enseignants',
+			'com.communaute.toutes' => 'Toutes',
+			'com.communaute.videTitre' => 'Aucune publication',
+			'com.communaute.rechercheVideTitre' => 'Aucun résultat',
+			'com.communaute.rechercheVide' => 'Aucune publication ne correspond à votre recherche. Essayez un autre mot.',
+			'com.communaute.flux.ouvrir' => ({required Object titre}) => 'Ouvrir la publication ${titre}',
+			'com.communaute.flux.reponseUne' => '1 réponse',
+			'com.communaute.flux.reponses' => ({required Object nombre}) => '${nombre} réponses',
+			'com.communaute.flux.aucuneReponse' => 'Aucune réponse',
+			'com.communaute.flux.categorie' => ({required Object categorie}) => 'Catégorie ${categorie}',
+			'com.communaute.recherche.ouvrir' => 'Rechercher une publication',
+			'com.communaute.recherche.champ' => 'Rechercher une publication',
+			'com.communaute.recherche.aide' => 'Un mot du titre ou du texte',
+			'com.communaute.recherche.fermer' => 'Fermer la recherche',
+			'com.communaute.moment.instant' => 'À l\'instant',
+			'com.communaute.moment.minutes' => ({required Object nombre}) => 'Il y a ${nombre} min',
+			'com.communaute.moment.heures' => ({required Object nombre}) => 'Il y a ${nombre} h',
+			'com.communaute.moment.jours' => ({required Object nombre}) => 'Il y a ${nombre} j',
+			'com.communaute.moment.date' => ({required Object jour, required Object mois}) => 'Le ${jour}/${mois}',
+			'com.communaute.publication.auteur' => ({required Object fonction, required Object moment}) => '${fonction}, ${moment}',
+			'com.communaute.publication.enregistrer' => 'Enregistrer la publication',
+			'com.communaute.publication.enregistree' => 'Publication enregistrée',
+			'com.communaute.publication.retirer' => 'Retirer des éléments enregistrés',
+			'com.communaute.publication.menu' => ({required Object titre}) => 'Actions sur la publication ${titre}',
+			'com.communaute.publication.signaler' => 'Signaler la publication',
+			'com.communaute.publication.signalee' => 'Vous avez signalé cette publication. L\'équipe de modération va l\'examiner.',
+			'com.communaute.publication.choisirTitre' => 'Aucune publication ouverte',
+			'com.communaute.publication.choisir' => 'Choisissez une publication dans la liste pour la lire et y répondre.',
+			'com.communaute.publication.introuvableTitre' => 'Publication indisponible',
+			'com.communaute.publication.introuvable' => 'Cette publication a été retirée ou ne vous est plus accessible. Revenez aux publications pour en choisir une autre.',
+			'com.communaute.publication.revenir' => 'Revenir aux publications',
+			'com.communaute.reponses.titre' => ({required Object nombre}) => 'Réponses (${nombre})',
+			'com.communaute.reponses.vide' => 'Aucune réponse pour le moment.',
+			'com.communaute.reponses.erreurTitre' => 'Impossible de charger les réponses.',
+			'com.communaute.reponses.champ' => 'Votre réponse',
+			'com.communaute.reponses.aide' => 'Écrire une réponse',
+			'com.communaute.reponses.envoyer' => 'Envoyer la réponse',
+			'com.communaute.reponses.champVide' => 'Écrivez une réponse pour l\'envoyer.',
+			'com.communaute.reponses.enCours' => 'Envoi en cours',
+			'com.communaute.reponses.nonConfirmee' => 'Cette réponse n\'a pas encore été confirmée.',
+			'com.communaute.reponses.reessayer' => 'Renvoyer la réponse',
+			'com.communaute.reponses.indisponible' => 'Les réponses ne sont pas encore disponibles ici.',
+			'com.communaute.reponses.menu' => ({required Object nom}) => 'Actions sur la réponse de ${nom}',
+			'com.communaute.reponses.signaler' => 'Signaler la réponse',
+			'com.communaute.reponses.signalee' => 'Vous avez signalé cette réponse.',
+			'com.communaute.signalement.motifManquant' => 'Choisissez un motif pour envoyer le signalement.',
+			'com.communaute.composer.nouvelle' => 'Nouvelle publication',
+			'com.communaute.composer.contexte' => 'Partagez une question, une méthode ou une ressource utile à l\'enseignement.',
+			'com.communaute.composer.categorie' => 'Catégorie',
+			'com.communaute.composer.categorieManquante' => 'Choisissez une catégorie pour publier.',
+			'com.communaute.composer.champTitre' => 'Titre',
+			'com.communaute.composer.aideTitre' => 'Le sujet en quelques mots',
+			'com.communaute.composer.titreManquant' => 'Écrivez un titre pour publier.',
+			'com.communaute.composer.champTexte' => 'Texte',
+			'com.communaute.composer.aideTexte' => 'Votre question ou votre retour d\'expérience',
+			'com.communaute.composer.texteManquant' => 'Écrivez le texte de la publication pour publier.',
+			'com.communaute.composer.pieces' => 'Pièces jointes',
+			'com.communaute.composer.pieceRefusee' => 'Retirez les fichiers refusés avant de publier.',
+			'com.communaute.composer.choixIndisponible' => 'Le choix d\'un fichier n\'est pas encore disponible ici.',
+			'com.communaute.composer.publier' => 'Publier',
+			'com.communaute.composer.fermer' => 'Fermer la nouvelle publication',
+			'com.communaute.composer.confirmee' => 'Votre publication est en ligne.',
+			_ => null,
+		} ?? switch (path) {
+			'com.communaute.composer.erreurEnvoi' => 'Votre publication n\'a pas encore été confirmée. Vérifiez votre connexion, puis réessayez.',
+			'com.communaute.composer.indisponible' => 'La publication n\'est pas encore disponible ici.',
+			'com.communaute.regles.panneau' => 'Aide et règles',
+			'com.communaute.regles.aProposTitre' => 'À propos de cet espace',
+			'com.communaute.regles.aPropos' => 'Un espace d\'entraide entre enseignants pour poser des questions, partager des méthodes et des ressources pédagogiques.',
+			'com.communaute.regles.titre' => 'Partage pédagogique uniquement',
+			'com.communaute.regles.corps' => 'Cette communauté est réservée aux échanges professionnels entre enseignants.',
+			'com.communaute.regles.reglesTitre' => 'Règles de publication',
+			'com.communaute.regles.pasPublicite' => 'Aucune publicité',
+			'com.communaute.regles.pasAffilie' => 'Aucun lien affilié',
+			'com.communaute.regles.pasVente' => 'Aucune vente de produit ou de service',
+			'com.communaute.regles.pasSollicitation' => 'Aucune sollicitation commerciale',
+			'com.communaute.regles.pasDonnees' => 'Aucune donnée personnelle d\'un élève ou d\'une famille',
+			'com.communaute.regles.signaler' => 'Un contenu inapproprié se signale depuis le menu de la publication.',
+			'com.communaute.regles.voir' => 'Voir les règles',
+			'com.communaute.entree.lecteur' => 'Ouvrir la Communauté enseignants',
+			'com.communaute.entree.detail' => 'Questions, méthodes et ressources entre enseignants',
+			'com.communaute.demo.choisir' => 'Choisissez une situation à essayer, dans la coquille Enseignant.',
+			'com.communaute.demo.aujourdhui' => 'Aujourd\'hui, avec le raccourci',
+			'com.communaute.demo.nominal' => 'Six publications',
+			'com.communaute.demo.publication' => 'Une publication ouverte',
+			'com.communaute.demo.vide' => 'Aucune publication',
+			'com.communaute.demo.lectureEchouee' => 'Lecture en échec',
+			'com.communaute.demo.indisponible' => 'Service pas encore disponible',
+			'com.communaute.demo.horsLigne' => 'Hors ligne',
+			'com.communaute.demo.envoiNonConfirme' => 'Envoi non confirmé',
+			'com.communaute.demo.moderationIndisponible' => 'Modération indisponible',
+			'com.communaute.demo.lecteurSeul' => 'Lecture seule, sans publication',
 			'com.communaute.titre' => _root.com.socle.lexique.communaute,
 			'com.communaute.vide' => 'Aucune publication dans cette catégorie.',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
