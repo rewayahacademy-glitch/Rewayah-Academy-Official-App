@@ -2,8 +2,9 @@
 // de demonstration /demo/accessibilite, on tape « Accueil » dans la vraie
 // coquille, puis l'action principale de l'Accueil (« Voir ma classe ») : on
 // arrive sur Ma classe (le vrai Espace Classe). Un seul emplacement d'entree,
-// jamais « Rejoindre » a cote d'une ligne d'etat, trois taches au plus, une
-// seule colonne a toute largeur (DASH-MA-PROD, Q3).
+// jamais « Rejoindre » a cote d'une ligne d'etat, trois taches au plus, deux
+// colonnes seulement sur bureau et jamais a 200 % (MA-3, retablies par
+// MA-2COL-1 selon la fiche ELV-02-MA).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -75,6 +76,7 @@ Finder _dans(Key forme, String libelle) =>
 /// Une seule colonne : « Lire le Coran » commence sous « Avant le prochain
 /// cours », au meme bord de debut.
 void _uneColonne(WidgetTester tester) {
+  expect(find.byKey(AccueilAccessibilite.cleDeuxColonnes), findsNothing);
   final Rect taches = tester.getRect(
     find.text(LibellesGroupe.avantProchainCours),
   );
@@ -105,9 +107,16 @@ void main() {
         // Trois taches au plus, le Coran, l'aide.
         expect(find.text(t.accessibilite.accueil.lireCoran), findsOneWidget);
         expect(find.text(t.accessibilite.accueil.aide), findsOneWidget);
-        // DASH-MA-PROD (DASH-1, Q3) : une seule colonne a toute largeur,
-        // le Coran vient SOUS les taches, jamais a cote.
-        _uneColonne(tester);
+        // Deux colonnes seulement sur bureau (fiche ELV-02-MA, MA-2COL-1) :
+        // le Coran a cote des taches ; sinon dessous.
+        if (taille.width >= 1200) {
+          expect(
+            find.byKey(AccueilAccessibilite.cleDeuxColonnes),
+            findsOneWidget,
+          );
+        } else {
+          _uneColonne(tester);
+        }
 
         await tester.ensureVisible(
           find.byKey(AccueilAccessibilite.cleVoirClasse),
