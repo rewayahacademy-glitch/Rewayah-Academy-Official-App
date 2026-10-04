@@ -18,7 +18,10 @@
 | `flutter test test/features/finance test/features/foyer` | **302 verts, 0 échec**, 37 ignorés |
 | `flutter test test/core` | **639 / 0** |
 | `flutter test test/router` | **277 / 0** |
-| Autres dossiers | voir « Suite par dossiers » plus bas |
+| `flutter test test/widgets` | **230 / 0** |
+| `flutter test test/features` | **2464 / 0** (2076 ignorés : captures sans `CAPTURE_DIR`) |
+| 23 autres dossiers | **1699 / 0** (`test/capture` : 583 ignorés) |
+| **Total, un dossier à la fois** | **5309 verts, 0 échec**, identique au chiffre de l'auteur |
 | `dart run tool/verifier_jetons.dart` | 39 relevés à la tête, **39 à la base `af9f408b`, diff vide** : FI-1c n'en ajoute aucun |
 
 ## Points de la fiche, un par un
@@ -63,6 +66,14 @@ Une fois affichée (FI-11a), la démonstration montrerait au directeur une marge
 - **m4** — `unARegulariser` : Ibrahim, dont octobre n'est pas financé, a quand même un `prochainDebit` le 1er novembre à 50 USD. `paiementsDuMois` vaut 2 paiements de 50 USD pour trois mois financés à 145 USD. Ce sont des incohérences de démonstration sans effet de calcul.
 - **m5** — Les revenus de démonstration ne couvrent pas encore les jeux du lot F6 du guide : essai dans la séance, financé absent, remplacement, aide Internet oui/non. L'auteur le signale (`allocationInternet` nulle). → FI-10.
 
-## Suite par dossiers
+## Suite par dossiers (un dossier à la fois, jamais deux suites en même temps)
 
-Voir le bloc complété en fin de revue.
+```
+test/core 639 · test/router 277 · test/widgets 230 · test/features 2464 (~2076)
+test/accessibilite 314 · test/teaching_core 912 (~55) · test/theme 70 · test/video 43
+test/parcours 44 · test/capacites 37 · test/tool 32 · test/coran 25 · test/seance_famille 25
+test/planning 23 · test/presence 20 · test/tc_observation 19 · test/agent 18 · test/foyer 18
+test/suivi 16 · test/priere 15 · test/mouvement 13 · test/appairage 12 · test/cache 11
+test/config 11 · test/observabilite 10 · test/i18n 7 · test/icons 4 · test/capture 0 (~583)
+Total : 5309 verts, 0 échec.
+```
