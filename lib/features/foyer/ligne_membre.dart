@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_classes_foyer.dart';
+import '../../core/finance/finances_profil.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -14,6 +15,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/identite_profil.dart';
+import 'finances_foyer.dart';
 import 'photo_eleve.dart';
 
 /// Ce que le Foyer sait de la classe d'un membre.
@@ -189,6 +191,7 @@ class CarteMembre extends StatelessWidget {
     required this.onPress,
     super.key,
     this.accent,
+    this.finance,
   });
 
   /// La marge interne de la carte, donc la remontee du bandeau.
@@ -206,41 +209,57 @@ class CarteMembre extends StatelessWidget {
   /// La couleur choisie par le tuteur, `null` sans bandeau.
   final AccentProfil? accent;
 
+  /// La finance rendue du profil (FI-4) : son etat, son solde et son
+  /// prochain debit sous l'identite ; `null` sans source, la carte d'avant.
+  final FinancesProfil? finance;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final Widget identite = AvatarNom.enLigne(
+      prenom: profil.prenom,
+      diametre: AppAvatar.grand,
+      cercleEnHaut: true,
+      // La fleche au bout de la carte, a toute largeur (revue FI-2-R M1).
+      texteEtire: true,
+      avatar: PhotoEleve(
+        prenom: profil.prenom,
+        cleAvatar: profil.cleAvatar,
+        diametre: AppAvatar.grand,
+      ),
+      enveloppeAvatar: BandeauProfil.enveloppe(
+        diametre: AppAvatar.grand,
+        accent: accent,
+        remontee: marge,
+      ),
+      role: legende,
+      styleNom: palette.inkStrong.applyTo(
+        textes.titleMedium ?? const TextStyle(),
+      ),
+      styleRole: palette.inkMuted.applyTo(
+        textes.bodyMedium ?? const TextStyle(),
+      ),
+      fin: IconTheme(
+        data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
+        child: Icon(AppIcons.chevron.repos),
+      ),
+    );
+    final FinancesProfil? f = finance;
     return AppCard(
       marge: marge,
       onPress: onPress,
-      child: AvatarNom.enLigne(
-        prenom: profil.prenom,
-        diametre: AppAvatar.grand,
-        cercleEnHaut: true,
-        // La fleche au bout de la carte, a toute largeur (revue FI-2-R M1).
-        texteEtire: true,
-        avatar: PhotoEleve(
-          prenom: profil.prenom,
-          cleAvatar: profil.cleAvatar,
-          diametre: AppAvatar.grand,
-        ),
-        enveloppeAvatar: BandeauProfil.enveloppe(
-          diametre: AppAvatar.grand,
-          accent: accent,
-          remontee: marge,
-        ),
-        role: legende,
-        styleNom: palette.inkStrong.applyTo(
-          textes.titleMedium ?? const TextStyle(),
-        ),
-        styleRole: palette.inkMuted.applyTo(
-          textes.bodyMedium ?? const TextStyle(),
-        ),
-        fin: IconTheme(
-          data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
-          child: Icon(AppIcons.chevron.repos),
-        ),
-      ),
+      child: f == null
+          ? identite
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                identite,
+                Ecart.vMd,
+                BlocFinanceMembre(finance: f),
+              ],
+            ),
     );
   }
 }

@@ -10,6 +10,7 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_accents_profils.dart';
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/capacites/port_identite_titulaire.dart';
+import '../../core/finance/finances_profil.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -32,6 +33,7 @@ import '../../core/widgets/skeleton.dart';
 import '../compte/compte_tuteur_page.dart' show CarteIdentiteCompte;
 import '../compte/donnees_compte.dart' show identiteTitulaireProvider;
 import '../compte/soldes_foyer.dart';
+import 'finances_foyer.dart';
 import 'ligne_membre.dart';
 import 'photo_eleve.dart';
 import 'place_adulte.dart';
@@ -112,6 +114,10 @@ class FoyerPage extends ConsumerWidget {
 
   /// La carte du titulaire.
   static const Key titulaireKey = Key('foyer.titulaire');
+
+  /// « Recharger {prenom} » sous la carte d'un enfant (FI-4).
+  static Key rechargerPourKey(String eleveId) =>
+      Key('foyer.finances.recharger.$eleveId');
 
   /// L'action « Ajouter un profil eleve » de l'en-tete.
   static const Key ajouterKey = Key('foyer.ajouter');
@@ -429,6 +435,10 @@ class _ListeMembres extends ConsumerWidget {
     final AsyncValue<Map<String, AccentProfil>> accents = ref.watch(
       accentsProfilsProvider,
     );
+    // FI-4 : la finance de chaque enfant, quand la source la rend.
+    final Map<String, FinancesProfil> finances = financesParProfil(
+      ref.watch(financesFoyerProvider),
+    );
     for (final ProfilEleveFoyer profil in profils) {
       final ClasseMembre classe = classeMembreLue(
         ref.watch(classesMembreProvider(profil.eleveId)),
@@ -439,18 +449,44 @@ class _ListeMembres extends ConsumerWidget {
       if (classeEnEchec(classe)) {
         classesEnEchec.add(profil.eleveId);
       }
-      cartes.add(
-        CarteMembre(
+      final FinancesProfil? finance = finances[profil.eleveId];
+      final Widget carte = CarteMembre(
+        profil: profil,
+        legende: legendeMembre(
           profil: profil,
-          legende: legendeMembre(
-            profil: profil,
-            classe: classe,
-            maintenant: maintenant,
-            inscription: etapeInscriptionLue(parcours, profil.eleveId),
-          ),
-          accent: accentLu(accents, profil.eleveId),
-          onPress: () => aller(Routes.ficheElevePour(profil.eleveId)),
+          classe: classe,
+          maintenant: maintenant,
+          inscription: etapeInscriptionLue(parcours, profil.eleveId),
         ),
+        accent: accentLu(accents, profil.eleveId),
+        finance: finance,
+        onPress: () => aller(Routes.ficheElevePour(profil.eleveId)),
+      );
+      // « Recharger Ibrahim » sous sa carte, jamais dedans (aucun bouton dans
+      // un bouton : toute la carte ouvre la fiche). Le meme flux que la
+      // recharge de plusieurs profils, Ibrahim coche (guide V4 §4).
+      cartes.add(
+        finance != null && aRecharger(finance)
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  carte,
+                  Ecart.vSm,
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: LienFleche(
+                      key: FoyerPage.rechargerPourKey(profil.eleveId),
+                      libelle: t.foyer.finances.rechargerPour(
+                        prenom: profil.prenom,
+                      ),
+                      onPress: () =>
+                          aller(Routes.rechargePour(<String>[profil.eleveId])),
+                    ),
+                  ),
+                ],
+              )
+            : carte,
       );
     }
 
@@ -461,6 +497,11 @@ class _ListeMembres extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        // FI-4 (guide V4 §5.1, maquette 03) : la synthese des soldes en tete,
+        // puis les cartes des enfants.
+        SyntheseSoldesFoyer(
+          onRechargerPlusieurs: () => aller(Routes.tuteurFoyerRecharge),
+        ),
         // Une carte par enfant (maquette 11, K-62), separees par l'ecart des
         // jetons (K-55).
         Semantics(

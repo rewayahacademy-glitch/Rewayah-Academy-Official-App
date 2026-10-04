@@ -42,7 +42,14 @@ class RechargeFoyerPage extends ConsumerStatefulWidget {
     required this.onAbandon,
     required this.onTerminee,
     super.key,
+    this.preselection = const <String>{},
   });
+
+  /// Les profils deja coches a l'ouverture : « Recharger Mariam » ouvre le
+  /// MEME flux que la recharge de plusieurs profils, Mariam cochee (guide
+  /// Finance V4 §4, FI-4). Un identifiant qui n'est pas un beneficiaire
+  /// rendu ne coche rien.
+  final Set<String> preselection;
 
   /// Quitter depuis la premiere etape : retour aux paiements du foyer.
   final VoidCallback onAbandon;
@@ -99,6 +106,12 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
   /// recoche aussi.
   final Set<String> _selection = <String>{};
   final Map<String, String> _offres = <String, String>{};
+
+  @override
+  void initState() {
+    super.initState();
+    _selection.addAll(widget.preselection);
+  }
 
   bool _verification = false;
   bool _verifEnCours = false;

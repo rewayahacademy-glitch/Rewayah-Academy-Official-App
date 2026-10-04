@@ -887,6 +887,19 @@
     "renvoiLegende": "Dans la fiche de {prenom}"
   },
   "foyer": {
+    "finances": {
+      "titre": "Soldes et paiements",
+      "rechargerPlusieurs": "Recharger plusieurs profils",
+      "rechargerPour": "Recharger {prenom}",
+      "soldeActuel": "Solde actuel",
+      "prochainDebit": "Prochain débit",
+      "prochainDebitValeur": "{date} · {montant}",
+      "aucunDebit": "Aucun débit prévu",
+      "essai": "Essai : {n} sur {max} séances",
+      "essaiSansMax": "Essai : {n} séance(s) utilisée(s)",
+      "manque": "Il manque {montant} pour la prochaine période.",
+      "indisponibleTitre": "Les soldes ne peuvent pas être lus"
+    },
     "titre": "Foyer",
     "ajouterProfil": "Ajouter un profil élève",
     "sousTitre": "Les profils élèves de votre foyer",

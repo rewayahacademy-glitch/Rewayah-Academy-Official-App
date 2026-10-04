@@ -122,6 +122,17 @@ abstract final class Routes {
   /// declare avant `:eleveId` (contrainte R5).
   static const String tuteurFoyerAppareils = '/tuteur/foyer/appareils';
 
+  /// La recharge d'un ou plusieurs profils (guide Finance V4 §4, FI-4), sur
+  /// un chemin statique declare avant `:eleveId` (contrainte R5). Un seul
+  /// moteur de recharge (`RechargeFoyerPage`).
+  static const String tuteurFoyerRecharge = '/tuteur/foyer/recharge';
+
+  /// La recharge avec [profils] deja coches (`?profils=a,b`).
+  static String rechargePour(Iterable<String> profils) => Uri(
+    path: tuteurFoyerRecharge,
+    queryParameters: <String, String>{'profils': profils.join(',')},
+  ).toString();
+
   /// La fiche d'un profil eleve du foyer.
   static String ficheElevePour(String eleveId) => '$tuteurFoyer/$eleveId';
 

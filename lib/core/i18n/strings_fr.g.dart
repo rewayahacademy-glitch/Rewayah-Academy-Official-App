@@ -1005,6 +1005,7 @@ class Traductions$foyer$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$foyer$finances$fr finances = Traductions$foyer$finances$fr.internal(_root);
 
 	/// fr: 'Foyer'
 	String get titre => 'Foyer';
@@ -3718,6 +3719,48 @@ class Traductions$appareils$emetteur$fr {
 	late final Traductions$appareils$emetteur$dejaActif$fr dejaActif = Traductions$appareils$emetteur$dejaActif$fr.internal(_root);
 	late final Traductions$appareils$emetteur$horsLigne$fr horsLigne = Traductions$appareils$emetteur$horsLigne$fr.internal(_root);
 	late final Traductions$appareils$emetteur$erreur$fr erreur = Traductions$appareils$emetteur$erreur$fr.internal(_root);
+}
+
+// Path: foyer.finances
+class Traductions$foyer$finances$fr {
+	Traductions$foyer$finances$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Soldes et paiements'
+	String get titre => 'Soldes et paiements';
+
+	/// fr: 'Recharger plusieurs profils'
+	String get rechargerPlusieurs => 'Recharger plusieurs profils';
+
+	/// fr: 'Recharger {prenom}'
+	String rechargerPour({required Object prenom}) => 'Recharger ${prenom}';
+
+	/// fr: 'Solde actuel'
+	String get soldeActuel => 'Solde actuel';
+
+	/// fr: 'Prochain débit'
+	String get prochainDebit => 'Prochain débit';
+
+	/// fr: '{date} · {montant}'
+	String prochainDebitValeur({required Object date, required Object montant}) => '${date} · ${montant}';
+
+	/// fr: 'Aucun débit prévu'
+	String get aucunDebit => 'Aucun débit prévu';
+
+	/// fr: 'Essai : {n} sur {max} séances'
+	String essai({required Object n, required Object max}) => 'Essai : ${n} sur ${max} séances';
+
+	/// fr: 'Essai : {n} séance(s) utilisée(s)'
+	String essaiSansMax({required Object n}) => 'Essai : ${n} séance(s) utilisée(s)';
+
+	/// fr: 'Il manque {montant} pour la prochaine période.'
+	String manque({required Object montant}) => 'Il manque ${montant} pour la prochaine période.';
+
+	/// fr: 'Les soldes ne peuvent pas être lus'
+	String get indisponibleTitre => 'Les soldes ne peuvent pas être lus';
 }
 
 // Path: foyer.vide
@@ -16273,6 +16316,17 @@ extension on Traductions {
 			'reglagesEnfant.intro' => 'La photo, la caméra et l\'interface de chaque élève se règlent dans sa fiche, depuis le Foyer. Les demandes à l\'administration restent ici.',
 			'reglagesEnfant.renvoi' => 'Photo, caméra et interface',
 			'reglagesEnfant.renvoiLegende' => ({required Object prenom}) => 'Dans la fiche de ${prenom}',
+			'foyer.finances.titre' => 'Soldes et paiements',
+			'foyer.finances.rechargerPlusieurs' => 'Recharger plusieurs profils',
+			'foyer.finances.rechargerPour' => ({required Object prenom}) => 'Recharger ${prenom}',
+			'foyer.finances.soldeActuel' => 'Solde actuel',
+			'foyer.finances.prochainDebit' => 'Prochain débit',
+			'foyer.finances.prochainDebitValeur' => ({required Object date, required Object montant}) => '${date} · ${montant}',
+			'foyer.finances.aucunDebit' => 'Aucun débit prévu',
+			'foyer.finances.essai' => ({required Object n, required Object max}) => 'Essai : ${n} sur ${max} séances',
+			'foyer.finances.essaiSansMax' => ({required Object n}) => 'Essai : ${n} séance(s) utilisée(s)',
+			'foyer.finances.manque' => ({required Object montant}) => 'Il manque ${montant} pour la prochaine période.',
+			'foyer.finances.indisponibleTitre' => 'Les soldes ne peuvent pas être lus',
 			'foyer.titre' => 'Foyer',
 			'foyer.ajouterProfil' => 'Ajouter un profil élève',
 			'foyer.sousTitre' => 'Les profils élèves de votre foyer',
@@ -16584,6 +16638,8 @@ extension on Traductions {
 			'dossiers.file.erreur' => 'Impossible de charger les dossiers.',
 			'dossiers.file.horsLigne' => 'Vous êtes hors ligne. Les dossiers ne peuvent pas être actualisés.',
 			'dossiers.file.accesRefuse' => 'Vous n\'avez pas accès aux dossiers à valider.',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.file.actualisation' => 'Actualisation des dossiers…',
 			'dossiers.file.chargementProlonge' => 'Le chargement prend plus de temps que prévu.',
 			'dossiers.file.suivantsErreur' => 'Impossible de charger les dossiers suivants.',
@@ -16595,8 +16651,6 @@ extension on Traductions {
 			'dossiers.file.ouvrirDe' => ({required Object nom}) => 'Ouvrir le dossier de ${nom}',
 			'dossiers.file.ouvrirElide' => ({required Object nom}) => 'Ouvrir le dossier d\'${nom}',
 			'dossiers.file.enVerification' => 'En cours de vérification',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.file.sansNom' => 'Dossier sans nom disponible',
 			'dossiers.file.legende' => ({required Object type, required Object date}) => '${type} · ${date}',
 			'dossiers.file.dateHeure' => ({required Object date, required Object heure, required Object zone}) => '${date} à ${heure} (${zone})',
@@ -17098,6 +17152,8 @@ extension on Traductions {
 			'admin.journal.chaineIntacteDetail' => ({required Object nombre}) => '${nombre} entrées relues une à une : aucune n\'a été modifiée ni retirée depuis son écriture.',
 			'admin.journal.chaineRompue' => 'Journal altéré',
 			'admin.journal.chaineRompueUne' => ({required Object entree}) => 'Une entrée ne correspond plus à son empreinte, la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.chaineRompueDetail' => ({required Object nombre, required Object entree}) => '${nombre} entrées ne correspondent plus à leur empreinte, à partir de la n° ${entree}. Quelque chose a touché la base en dehors de l\'application.',
 			'admin.journal.chaineInconnue' => 'Intégrité inconnue',
 			'admin.journal.chaineInconnueDetail' => 'La vérification n\'a pas abouti. Les entrées ci-dessous restent lisibles, mais rien ne garantit pour l\'instant qu\'elles sont complètes.',
@@ -17109,8 +17165,6 @@ extension on Traductions {
 			'admin.journal.tousTypes' => 'Tous les événements',
 			'admin.journal.tousActeurs' => 'Tout le monde',
 			'admin.journal.colonneQuand' => 'Quand',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.colonneQui' => 'Qui',
 			'admin.journal.colonneRole' => 'À quel titre',
 			'admin.journal.colonneQuoi' => 'Ce qui a été fait',
@@ -17612,6 +17666,8 @@ extension on Traductions {
 			'compte.tuteur.pageAcces.expire' => ({required Object date}) => 'Terminé le ${date}',
 			'compte.tuteur.pageAcces.pastilleActif' => 'Actif',
 			'compte.tuteur.pageAcces.pastilleExpire' => 'Terminé',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageAcces.aucunTitre' => 'Aucun profil élève',
 			'compte.tuteur.pageAcces.aucunePhrase' => 'L\'accès de chaque profil élève s\'affichera ici.',
 			'compte.tuteur.pageAcces.titulaire' => 'Votre compte de titulaire n\'a pas d\'échéance propre : l\'accès se règle profil par profil.',
@@ -17623,8 +17679,6 @@ extension on Traductions {
 			'compte.tuteur.pagePaiements.paiementDu' => ({required Object date}) => 'Paiement du ${date}',
 			'compte.tuteur.pagePaiements.justificatif' => 'Justificatif disponible',
 			'compte.tuteur.pagePreferences.titre' => 'Préférences',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pagePreferences.sousTitre' => 'Personnalisez votre expérience sur cet appareil.',
 			'compte.tuteur.pagePreferences.apparence' => 'Apparence',
 			'compte.tuteur.pagePreferences.apparenceDetail' => 'Thème et confort visuel',
@@ -18126,6 +18180,8 @@ extension on Traductions {
 			'enseignant.signalement.categories.changement' => 'Changement',
 			'enseignant.signalement.categories.autre' => 'Autre',
 			'enseignant.signalement.details' => 'Détails internes',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.signalement.detailsAide' => 'Lu par l\'équipe de l\'académie seulement.',
 			'enseignant.signalement.resume' => 'Résumé partageable',
 			'enseignant.signalement.resumeAide' => 'Peut être partagé avec la famille par l\'académie.',
@@ -18137,8 +18193,6 @@ extension on Traductions {
 			'enseignant.signalement.demoSuccesDetail' => 'Dans l\'application reliée, il partira vers l\'équipe de l\'académie.',
 			'enseignant.signalement.fermer' => 'Fermer',
 			'enseignant.demo.titre' => 'Démonstration enseignant',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.demo.mention' => 'Données fictives, aucun envoi.',
 			'enseignant.demo.intro' => 'Choisissez un écran de Sayyid Ibrahim.',
 			'enseignant.demo.ecrans' => 'Écrans',
@@ -18640,6 +18694,8 @@ extension on Traductions {
 			'controleur.observation.rosterChargement' => 'Lecture de la liste des élèves présents.',
 			'controleur.observation.rosterIndisponible' => 'La liste des élèves présents n\'est pas reçue, sans doute à cause de la connexion. Réessayez, ou choisissez « Classe entière » ou « Aucun participant précis ». Vos autres réponses sont gardées.',
 			'controleur.observation.rosterVide' => 'Aucun élève présent n\'apparaît dans la liste de cette visite. Choisissez « Classe entière » ou « Aucun participant précis ».',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.questionTexte' => 'Qu\'avez-vous observé ?',
 			'controleur.observation.texteObligatoire' => 'Votre texte est nécessaire pour cette observation.',
 			'controleur.observation.texteFacultatif' => 'Ce texte est facultatif.',
@@ -18651,8 +18707,6 @@ extension on Traductions {
 			'controleur.observation.cleDomaine' => 'Domaine',
 			'controleur.observation.clePersonne' => 'Personne concernée',
 			'controleur.observation.cleTexte' => 'Remarque',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.sansTexte' => 'Aucun texte',
 			'controleur.observation.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.titre' => 'Échanges',
@@ -19154,6 +19208,8 @@ extension on Traductions {
 			'tc.parcours.plage.section' => ({required Object section}) => 'Section ${section}',
 			'tc.parcours.plage.ressource' => 'Tout le support',
 			'tc.parcours.feedback.cours.intitule' => 'Comment était le cours aujourd\'hui ?',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.feedback.cours.difficile' => 'Difficile',
 			'tc.parcours.feedback.cours.bien' => 'Bien',
 			'tc.parcours.feedback.cours.tresBien' => 'Très bien',
@@ -19165,8 +19221,6 @@ extension on Traductions {
 			'tc.parcours.feedback.rythme.difficile' => 'Trop rapide',
 			'tc.parcours.feedback.rythme.bien' => 'Convenable',
 			'tc.parcours.feedback.rythme.tresBien' => 'Très confortable',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.feedback.technique.intitule' => 'Le son et l\'image étaient-ils confortables ?',
 			'tc.parcours.feedback.technique.difficile' => 'Gênants',
 			'tc.parcours.feedback.technique.bien' => 'Corrects',

@@ -86,6 +86,7 @@ import '../../features/foyer/fiche/inscription_page.dart';
 import '../../features/foyer/fiche/interface_page.dart';
 import '../../features/foyer/fiche_eleve_page.dart';
 import '../../features/foyer/foyer_page.dart';
+import '../../features/foyer/invitation_conjoint.dart';
 import '../../features/inscription/etapes/genre_etape.dart';
 import '../../features/inscription/etapes/identite_etape.dart';
 import '../../features/inscription/etapes/recapitulatif_etape.dart';
@@ -530,6 +531,25 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     path: 'appareils',
                     pageBuilder: glissee(
                       (GoRouterState _) => const AppareilsPage(),
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'recharge',
+                    pageBuilder: glissee(
+                      (GoRouterState etat) => Builder(
+                        builder: (BuildContext context) => RechargeFoyerPage(
+                          preselection: <String>{
+                            for (final String id
+                                in (etat.uri.queryParameters['profils'] ?? '')
+                                    .split(','))
+                              if (id.isNotEmpty) id,
+                          },
+                          onAbandon: () =>
+                              GoRouter.of(context).go(Routes.tuteurFoyer),
+                          onTerminee: () =>
+                              GoRouter.of(context).go(Routes.tuteurFoyer),
+                        ),
+                      ),
                     ),
                   ),
                   GoRoute(

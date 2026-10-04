@@ -20,13 +20,17 @@ import '../../core/capacites/port_accents_profils.dart';
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_catalogue_classes.dart';
 import '../../core/capacites/port_classes_foyer.dart';
+import '../../core/capacites/port_paiements_foyer.dart';
 import '../../core/capacites/port_politique_revue_kyc.dart';
+import '../../core/capacites/port_politiques_commerciales.dart';
+import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/config/env.dart';
 import '../../core/domain/enums.dart';
 import '../../core/dossier/selecteur_fichier.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/dossier/service_validation.dart';
+import '../../core/finance/finances_profil.dart';
 import '../../core/matching/service_matching.dart';
 import '../../core/offres/offre_horaire.dart';
 import '../../core/offres/service_offres.dart';
@@ -48,6 +52,7 @@ import '../../core/tc_observation/port_visite_observation.dart';
 import '../../core/theme/accent_profil.dart';
 import 'catalogue_demo.dart';
 import 'dossiers_demo.dart';
+import 'finance_demo.dart';
 import 'observation_demo.dart';
 import 'presence_demo.dart';
 import 'services_admin_demo.dart';
@@ -94,11 +99,18 @@ List<Override> surchargesDemoTuteur({
   List<EleveDuFoyer>? eleves,
   EtatRevueDemo? dossiers,
   String? titulaire,
+  JeuFoyerFinance? finances,
 }) {
   if (!environnementAutoriseDemo(environnement ?? Env.environnement)) {
     throw StateError('Demonstration interdite en production.');
   }
   final bool avecDossier = dossiers != null && titulaire != null;
+  // FI-4 : avec un jeu Finance, le foyer est celui du jeu (memes
+  // identifiants que ses finances), avec ses couleurs de profil.
+  final JeuFoyerFinance? jeu = finances;
+  final List<FinancesProfil> profilsFinance = jeu == null
+      ? const <FinancesProfil>[]
+      : DonneesFinanceDemo.profils(jeu);
   return <Override>[
     if (avecDossier) ...<Override>[
       sourceSessionProvider.overrideWithValue(
@@ -113,9 +125,36 @@ List<Override> surchargesDemoTuteur({
     // Un titulaire tout juste valide n'a ni eleve ni classe (P-ADM-08.6,
     // 11.3) : la validation ne donne rien de plus que l'arrivee a /tuteur.
     elevesDuFoyerProvider.overrideWith(
-      (Ref ref) async =>
-          avecDossier ? const <EleveDuFoyer>[] : eleves ?? DonneesDemo.eleves,
+      (Ref ref) async => avecDossier
+          ? const <EleveDuFoyer>[]
+          : eleves ??
+                (jeu == null
+                    ? DonneesDemo.eleves
+                    : <EleveDuFoyer>[
+                        for (final FinancesProfil p in profilsFinance)
+                          EleveDuFoyer(
+                            id: p.profilId,
+                            prenom: p.prenom,
+                            identifiantImmuable: 'STUD-FI-${p.profilId}',
+                            mode: InterfaceMode.standard,
+                            camera: CameraPolicy.allowed,
+                            // L'echeance d'acces du meme jeu (FI-1c-CORR) :
+                            // jamais « sans echeance » pour un payant.
+                            finAcces: _finAccesDemo(jeu, p.profilId),
+                          ),
+                      ]),
     ),
+    if (jeu != null) ...<Override>[
+      portPaiementsFoyerProvider.overrideWithValue(
+        PaiementsFoyerFinanceDemo(jeu),
+      ),
+      portPolitiquesCommercialesProvider.overrideWithValue(
+        const PolitiquesCommercialesDemo(),
+      ),
+      portRechargeFoyerProvider.overrideWithValue(
+        const RechargeFoyerFinanceDemo(),
+      ),
+    ],
     portAccesFoyerProvider.overrideWithValue(const AccesFoyerDemo()),
     // La couleur de profil choisie par le tuteur (K-62) : gardee en memoire,
     // rien n'est envoye (FI-BR-19).
@@ -123,6 +162,12 @@ List<Override> surchargesDemoTuteur({
       AccentsProfilsEnMemoire(<String, AccentProfil>{
         DonneesDemo.aichaId: AccentProfil.menthe,
         DonneesDemo.yusufId: AccentProfil.rose,
+        // Les couleurs de la maquette 03 (choix du tuteur de la demo).
+        if (jeu != null) ...<String, AccentProfil>{
+          DonneesFinanceDemo.mariamId: AccentProfil.rose,
+          DonneesFinanceDemo.ibrahimId: AccentProfil.ciel,
+          DonneesFinanceDemo.aichaId: AccentProfil.lavande,
+        },
       }),
     ),
     portClassesFoyerProvider.overrideWithValue(const ClassesFoyerDemo()),
@@ -546,4 +591,12 @@ class SeancesFamilleDemo implements PortSeancesFamille {
     }
     yield s;
   }
+}
+
+/// L'echeance d'acces de [profilId] dans le jeu Finance [jeu].
+DateTime? _finAccesDemo(JeuFoyerFinance jeu, String profilId) {
+  for (final AccesBeneficiaire a in DonneesFinanceDemo.acces(jeu)) {
+    if (a.eleveId == profilId) return a.finAcces;
+  }
+  return null;
 }

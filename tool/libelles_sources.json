@@ -103,5 +103,16 @@
   "argent.soldes.aPayer": "guide Finance V4 du directeur (02/10) §5.1 « montant à financer ce mois », etape FI-3b",
   "argent.soldes.profilsFinances": "guide Finance V4 du directeur (02/10) §5.1 « nombre de profils financés », etape FI-3b",
   "argent.soldes.profilsFinancesValeur": "guide Finance V4 du directeur (02/10) §5.1, etape FI-3b",
-  "argent.soldes.paiements": "guide Finance V4 du directeur (02/10) §5.1 « paiements du mois », etape FI-3b"
+  "argent.soldes.paiements": "guide Finance V4 du directeur (02/10) §5.1 « paiements du mois », etape FI-3b",
+  "foyer.finances.titre": "guide Finance V4 du directeur (02/10), §5.1 « Tuteur - Foyer / Soldes et paiements » et maquette 03, etape FI-4",
+  "foyer.finances.rechargerPlusieurs": "guide Finance V4 du directeur (02/10), §5.1 « Tuteur - Foyer / Soldes et paiements » et maquette 03 (CTA « Recharger plusieurs profils »), etape FI-4",
+  "foyer.finances.rechargerPour": "guide V4 §4 : « Recharger Mariam » ouvre le même flux avec Mariam présélectionnée, etape FI-4",
+  "foyer.finances.soldeActuel": "guide Finance V4 du directeur (02/10), §5.1 « Tuteur - Foyer / Soldes et paiements » et maquette 03 (« Solde actuel »), etape FI-4",
+  "foyer.finances.prochainDebit": "guide Finance V4 du directeur (02/10), §5.1 « Tuteur - Foyer / Soldes et paiements » et maquette 03 (« Prochain débit »), etape FI-4",
+  "foyer.finances.prochainDebitValeur": "guide Finance V4 du directeur (02/10), §5.1 « Tuteur - Foyer / Soldes et paiements » et maquette 03, etape FI-4",
+  "foyer.finances.aucunDebit": "guide Finance V4 du directeur (02/10), §5.1 « Tuteur - Foyer / Soldes et paiements » et maquette 03, absence de prochain débit rendue par la source, etape FI-4",
+  "foyer.finances.essai": "guide V4 §1.2 (séances d'essai de la politique) et maquette 03 (« Essai : 1/2 séance utilisée »), etape FI-4",
+  "foyer.finances.manque": "guide V4 §1.7 copie tuteur (« Il manque 8 USD pour financer janvier »), phrase de conséquence K-58, etape FI-4",
+  "foyer.finances.indisponibleTitre": "état d'erreur de lecture des soldes (D11, une source en échec n'emporte que ce qu'elle remplit), etape FI-4",
+  "foyer.finances.essaiSansMax": "guide V4 §1.2 ; politique non lue, le nombre maximal n'est pas inventé, etape FI-4"
 }
