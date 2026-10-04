@@ -1,6 +1,7 @@
 // ONGLETS-1 : captures de `SelecteurSection` (sous-navigation de Pedagogie et
 // de Configuration) sur le VRAI routeur, en demonstration admin, a 320 et
-// 1440 px, texte x1 et x2, clair et sombre. Sautee sans CAPTURE_DIR.
+// 1440 px, texte x1 et x2, clair et sombre, puis les quatre autres pages de
+// Pedagogie a 320 px (ONGLETS-COUPE-1). Sautee sans CAPTURE_DIR.
 //
 //   CAPTURE_DIR=docs/current/captures/l1-onglets flutter test \
 //     test/capture/onglets1_capture_test.dart
@@ -114,6 +115,30 @@ void main() {
               });
             }
           }
+        }
+      }
+    }
+
+    // ONGLETS-COUPE-1 : les quatre autres pages de Pedagogie a 320 px, ou la
+    // colonne debordait de 52 a 480 px (texte x1 et x2, clair et sombre).
+    for (final (String nom, String route) p in <(String, String)>[
+      ('progression', Routes.adminPedagogieProgression),
+      ('evaluations', Routes.adminPedagogieEvaluations),
+      ('programmes', Routes.adminPedagogieProgrammes),
+      ('qualite', Routes.adminPedagogieQualite),
+    ]) {
+      for (final double echelle in const <double>[1, 2]) {
+        for (final ThemeMode mode in <ThemeMode>[
+          ThemeMode.light,
+          ThemeMode.dark,
+        ]) {
+          final String suffixe = '320_x${echelle.toInt()}_${mode.name}';
+          testWidgets('${p.$1} $suffixe', (WidgetTester tester) async {
+            fixerVueCapture(tester, const Size(320, 640), 1);
+            await _monter(tester, p.$2, mode, echelle);
+            expect(tester.takeException(), isNull);
+            debugPrint('PNG ${await capturer(tester, '${p.$1}_$suffixe')}');
+          });
         }
       }
     }
