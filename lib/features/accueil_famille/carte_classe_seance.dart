@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
@@ -18,17 +20,18 @@ import '../../core/widgets/skeleton.dart';
 import 'bloc_seance.dart';
 
 /// La carte classe de l'Accueil : l'eleve, sa classe et son enseignant, la
-/// prochaine seance, puis le CTA dominant « Voir la classe → ».
+/// prochaine seance ; **la carte entiere est le lien** vers la classe
+/// (DASH-TUT-CTA, DASH_STRATEGIE §3.4, D4, D5) : plus de bouton plein
+/// « Voir la classe », pour qu'un blocage puisse porter le seul bouton
+/// primaire de l'ecran.
 ///
 /// Maquettes V1 (telephone) et V2 (tablette, bureau) ; manifeste, composants
-/// « Carte classe » et « Bloc seance ». Une seule carte, un seul CTA dominant
-/// (`ActionPrincipale` principale), aucune action concurrente : le lien
+/// « Carte classe » et « Bloc seance ». Aucune action concurrente : le lien
 /// « fournir une photo » de la maquette V1 n'est pas repris (defaut C3, un
 /// seul blocage, et aucune regle de photo en base, point P6).
 ///
-/// **Le CTA n'est rendu que si la classe est connue** : sans identifiant de
-/// classe, « Voir la classe » ne pourrait mener nulle part (un bouton qui ne
-/// peut pas aboutir n'est pas rendu, `lib/CLAUDE.md`).
+/// **La carte n'est un lien que si la classe est connue** : sans identifiant
+/// de classe, elle ne pourrait mener nulle part (`lib/CLAUDE.md`).
 class CarteClasseSeance extends StatelessWidget {
   /// Cree la carte.
   const CarteClasseSeance({
@@ -75,8 +78,21 @@ class CarteClasseSeance extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final ClasseFoyer? laClasse = classe.value;
+    // La carte n'est un lien que sans bouton « Reessayer » dedans : jamais un
+    // bouton dans un bouton.
+    final bool lien = laClasse != null && !classe.hasError && !seance.hasError;
+    // Sans classe lisible, la carte n'est pas un bouton grise : elle n'est
+    // simplement pas un lien (lib/CLAUDE.md).
+    VoidCallback? ouvrir;
+    if (lien) {
+      ouvrir = () => onVoirClasse(laClasse.classe.groupeId);
+    }
 
     return AppCard(
+      onPress: ouvrir,
+      libelleSemantique: lien ? t.tuteur.accueil.voirLaClasse : null,
+      // Elle mene a la classe, elle n'engage rien : un lien, pas un bouton.
+      lien: lien,
       // Bureau et tablette : la carte mise en avant (V2) ; telephone : la
       // surface elevee, avec la seance en zone imbriquee (V1).
       surface: compact ? palette.surfaceRaised : palette.surfaceMiseEnAvant,
@@ -102,17 +118,36 @@ class CarteClasseSeance extends StatelessWidget {
             compact: compact,
             onReessayer: onReessayerSeance,
           ),
-          if (laClasse != null) ...<Widget>[
-            Ecart.vXl,
-            ActionPrincipale(
-              libelle: t.tuteur.accueil.voirLaClasse,
-              fleche: true,
-              onPress: () => onVoirClasse(laClasse.classe.groupeId),
-            ),
-          ],
           if (!compact && seance.value != null) ...<Widget>[
             Ecart.vLg,
             const ConseilAppareil(),
+          ],
+          // L'indice du lien, pas un bouton : la carte entiere s'ouvre. Il ferme
+          // la carte, sous le conseil appareil du bureau (DASH-TUT-CTA-b).
+          if (lien) ...<Widget>[
+            Ecart.vXl,
+            ExcludeSemantics(
+              child: Row(
+                key: const ValueKey<String>('carte-classe-indice-lien'),
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Flexible(
+                    child: TexteSansCoupure(
+                      t.tuteur.accueil.voirLaClasse,
+                      style: palette.inkAccent.applyTo(
+                        Theme.of(context).textTheme.labelLarge ??
+                            const TextStyle(),
+                      ),
+                    ),
+                  ),
+                  Ecart.hXs,
+                  IconTheme(
+                    data: palette.inkAccent.asIconTheme(size: AppSpacing.lg),
+                    child: Icon(AppIcons.flecheAction.repos),
+                  ),
+                ],
+              ),
+            ),
           ],
         ],
       ),

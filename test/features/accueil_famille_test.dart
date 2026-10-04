@@ -25,6 +25,8 @@ import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_parcours/port_travail_a_venir.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/grille_bento.dart';
 import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
@@ -111,6 +113,21 @@ AppareilAppaire _appareilA1() => AppareilAppaire(
   appaireA: DateTime.utc(2026, 9, 1),
 );
 
+/// Des classes illisibles (echec reseau) : la carte propose « Reessayer ».
+class _ClassesEnEchec implements PortClassesFoyer {
+  const _ClassesEnEchec();
+
+  @override
+  Future<List<ClasseFoyer>> classesDe(String eleveId) =>
+      Future<List<ClasseFoyer>>.error(StateError('reseau fictif'));
+
+  @override
+  Future<ClasseFoyer?> classe({
+    required String groupeId,
+    required String eleveId,
+  }) => Future<ClasseFoyer?>.error(StateError('reseau fictif'));
+}
+
 /// Le travail a venir, en memoire.
 class _FauxTravail implements PortTravailAVenir {
   const _FauxTravail(this.actions);
@@ -137,6 +154,7 @@ Future<GoRouter> _monter(
   PortTravailAVenir? travail,
   DateTime? maintenant,
   bool horlogeAbsente = false,
+  Object? erreurSeances,
   Size taille = const Size(390, 844),
   List<Override> autres = const <Override>[],
   double echelle = 1,
@@ -155,6 +173,7 @@ Future<GoRouter> _monter(
   if (horlogeAbsente) {
     faux.maintenant = null;
   }
+  faux.erreurAJeter = erreurSeances;
   late GoRouter routeur;
   await tester.pumpWidget(
     ProviderScope(
@@ -429,6 +448,177 @@ void main() {
         _lieu(routeur),
         '${Routes.classeSousPage('classe-a', 'travail')}?eleve=$_a1',
       );
+    });
+  });
+
+  // DASH-TUT-CTA (DASH_STRATEGIE §3.4, D4, D5) : un seul bouton primaire au
+  // plus ; avec blocage, c'est « Connecter un appareil » ; sans blocage,
+  // aucun, et la carte classe est le lien.
+  group('DASH-TUT-CTA : un seul bouton dominant', () {
+    Iterable<ActionPrincipale> principales(WidgetTester tester) => tester
+        .widgetList<ActionPrincipale>(find.byType(ActionPrincipale))
+        .where((ActionPrincipale a) => a.niveau == NiveauAction.principale);
+
+    testWidgets('sans blocage : aucun bouton plein, la carte ouvre la classe', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monter(tester);
+      await _ouvrirAccueilParLaBarre(tester);
+
+      expect(find.byType(BandeauBlocage), findsNothing);
+      expect(principales(tester), isEmpty);
+      // Toucher la carte ailleurs que sur l'indice : le nom de l'eleve.
+      await _toucher(
+        tester,
+        find
+            .descendant(
+              of: find.byType(CarteClasseSeance),
+              matching: find.text('Eleve A1'),
+            )
+            .first,
+      );
+      expect(_lieu(routeur), Routes.classePour('classe-a', eleveId: _a1));
+    });
+
+    testWidgets('avec blocage : « Connecter un appareil » est le seul '
+        'bouton primaire', (WidgetTester tester) async {
+      await _monter(tester, appareils: <AppareilAppaire>[]);
+      await _ouvrirAccueilParLaBarre(tester);
+
+      final List<ActionPrincipale> seules = principales(tester).toList();
+      expect(seules, hasLength(1));
+      expect(seules.single.libelle, t.tuteur.accueil.connecterAppareil);
+    });
+
+    // DASH-TUT-CTA-b (defaut 1 de DASH-TUT-CTA-R) : D5 ne prevoit aucune
+    // exception pour la tablette ni le bureau.
+    for (final Size taille in const <Size>[Size(1440, 900), Size(900, 1000)]) {
+      testWidgets('avec blocage, gabarit ${taille.width.toInt()} : « Connecter '
+          'un appareil » est le seul bouton primaire', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          depart: Routes.tuteurAccueil,
+          taille: taille,
+          appareils: <AppareilAppaire>[],
+        );
+        expect(find.byType(BandeauBlocage), findsOneWidget);
+        final List<ActionPrincipale> seules = principales(tester).toList();
+        expect(seules, hasLength(1));
+        expect(seules.single.libelle, t.tuteur.accueil.connecterAppareil);
+      });
+    }
+
+    testWidgets('bureau sans blocage : aucun bouton plein', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        depart: Routes.tuteurAccueil,
+        taille: const Size(1440, 900),
+      );
+      expect(find.byType(BandeauBlocage), findsNothing);
+      expect(principales(tester), isEmpty);
+    });
+
+    // Defaut 2 : la carte mene a un endroit, elle s'annonce comme lien.
+    testWidgets('la carte classe est annoncee comme lien, pas comme bouton', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, depart: Routes.tuteurAccueil);
+      expect(
+        tester.getSemantics(
+          find.bySemanticsLabel(RegExp(t.tuteur.accueil.voirLaClasse)),
+        ),
+        isSemantics(isLink: true, isButton: false),
+      );
+    });
+
+    AppCard carte(WidgetTester tester) => tester.widget<AppCard>(
+      find
+          .descendant(
+            of: find.byType(CarteClasseSeance),
+            matching: find.byType(AppCard),
+          )
+          .first,
+    );
+
+    // Defaut 3 : jamais un bouton dans un bouton, jamais un lien vers rien.
+    testWidgets('classe illisible : « Reessayer » dans la carte, la carte '
+        'n est pas un lien', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        depart: Routes.tuteurAccueil,
+        portClasses: const _ClassesEnEchec(),
+      );
+      expect(find.text(t.tuteur.accueil.classeIllisible), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(CarteClasseSeance),
+          matching: find.text(t.commun.reessayer),
+        ),
+        findsOneWidget,
+      );
+      expect(carte(tester).onPress, isNull);
+      expect(
+        find.byKey(const ValueKey<String>('carte-classe-indice-lien')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('seance illisible, classe connue : « Reessayer » dans la '
+        'carte, la carte n est pas un lien', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        depart: Routes.tuteurAccueil,
+        erreurSeances: StateError('reseau fictif'),
+      );
+      expect(find.text('Classe fictive A'), findsOneWidget);
+      expect(find.text(t.tuteur.accueil.seanceIllisible), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(CarteClasseSeance),
+          matching: find.text(t.commun.reessayer),
+        ),
+        findsOneWidget,
+      );
+      expect(carte(tester).onPress, isNull);
+      expect(
+        find.byKey(const ValueKey<String>('carte-classe-indice-lien')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('classe inconnue : la carte n est pas un lien', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        depart: Routes.tuteurAccueil,
+        classes: const <ClasseFoyer>[],
+      );
+      expect(find.byType(CarteClasseSeance), findsOneWidget);
+      expect(carte(tester).onPress, isNull);
+      expect(
+        find.byKey(const ValueKey<String>('carte-classe-indice-lien')),
+        findsNothing,
+      );
+    });
+
+    // Defaut 4 : sur bureau, l'indice « Voir la classe » ferme la carte.
+    testWidgets('bureau : l indice « Voir la classe » ferme la carte, sous '
+        'le conseil appareil', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        depart: Routes.tuteurAccueil,
+        taille: const Size(1440, 900),
+      );
+      final Rect indice = tester.getRect(
+        find.byKey(const ValueKey<String>('carte-classe-indice-lien')),
+      );
+      final Rect conseil = tester.getRect(find.byType(ConseilAppareil));
+      expect(indice.top, greaterThanOrEqualTo(conseil.bottom));
     });
   });
 

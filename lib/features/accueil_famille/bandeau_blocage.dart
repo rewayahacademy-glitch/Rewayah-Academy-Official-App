@@ -7,7 +7,6 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/lien_fleche.dart';
 
 /// Vrai quand les donnees **confirment** qu'aucun appareil n'est pret pour
 /// [eleveId] : la liste des appareils du foyer est lue, et aucun appareil
@@ -33,7 +32,9 @@ bool aucunAppareilPret(List<AppareilAppaire> appareils, String eleveId) =>
 ///   de [echelleActionADroite] (texte x2 : la colonne de texte resterait trop
 ///   etroite a cote du bouton).
 /// - Tablette et bureau : tete de la colonne de droite, icone d'appareil,
-///   titre, phrase et lien fleche (V2).
+///   titre, phrase et le meme bouton primaire sous le texte (DASH-TUT-CTA-b :
+///   D5 ne fait aucune exception au gabarit, le lien fleche de la maquette V2
+///   est abandonne).
 class BandeauBlocage extends StatelessWidget {
   /// Cree le bandeau.
   const BandeauBlocage({
@@ -74,7 +75,9 @@ class BandeauBlocage extends StatelessWidget {
     final Widget action = ActionPrincipale(
       libelle: t.tuteur.accueil.connecterAppareil,
       onPress: onConnecter,
-      niveau: NiveauAction.secondaire,
+      // DASH-TUT-CTA (D5) : la tache immediate porte le seul bouton primaire
+      // de l'Accueil ; la carte classe n'est plus qu'un lien.
+      niveau: NiveauAction.principale,
       pleineLargeur: false,
     );
 
@@ -98,16 +101,9 @@ class BandeauBlocage extends StatelessWidget {
             textes.bodyMedium ?? const TextStyle(),
           ),
         ),
-        if (!actionADroite) ...<Widget>[
-          Ecart.vMd,
-          if (compact)
-            action
-          else
-            LienFleche(
-              libelle: t.tuteur.accueil.connecterAppareil,
-              onPress: onConnecter,
-            ),
-        ],
+        // Sur tous les gabarits, la tache immediate est le bouton primaire
+        // (D5, §3.4, annexe TUT-01) : plus de lien fleche sur bureau.
+        if (!actionADroite) ...<Widget>[Ecart.vMd, action],
       ],
     );
 

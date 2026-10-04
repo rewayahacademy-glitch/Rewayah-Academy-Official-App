@@ -40,6 +40,7 @@ class AppCard extends StatelessWidget {
     this.entete,
     this.actions,
     this.focusNode,
+    this.lien = false,
   });
 
   /// Le contenu de la carte.
@@ -82,6 +83,10 @@ class AppCard extends StatelessWidget {
   /// focus a la fermeture d'un panneau ouvert par elle (W2 2.4.3).
   final FocusNode? focusNode;
 
+  /// Vrai quand la carte entiere mene a un endroit : elle s'annonce alors
+  /// comme lien (`Semantics.link`) et non comme bouton, comme [Pressable.lien].
+  final bool lien;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -104,6 +109,7 @@ class AppCard extends StatelessWidget {
       onPress: onPress,
       libelleSemantique: libelleSemantique,
       focusNode: focusNode,
+      lien: lien,
       respecterCibleTactile: false,
       arrondiFocus: dominante ? AppRadius.arrondiLg : AppRadius.arrondiMd,
       constructeur: (BuildContext contexte, EtatPression etat) =>
