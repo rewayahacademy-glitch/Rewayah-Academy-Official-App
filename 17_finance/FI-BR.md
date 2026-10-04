@@ -25,3 +25,33 @@ Rien n'est branché dans cette vague (guide §15, K-28). Chaque ligne dit ce qu'
 | FI-BR-17 | FI-9b | **Finances de l'élève adulte autonome** : les mêmes données que FI-BR-03, FI-BR-05 et FI-BR-06 pour son seul profil. | Vue personnelle de démonstration. |
 | FI-BR-18 | FI-4, FI-7 | **Second adulte du foyer** : il lit les paiements (K-53.8) ; la recharge reste au titulaire tant que le directeur ne dit pas autre chose. | Vue du conjoint sans bouton de recharge. |
 | FI-BR-19 | FI-2 | **Couleur d'accent du profil choisie par le tuteur** (décision du directeur 04/10) : une clé de jeton par profil élève, écrite par le titulaire seulement, lue par tous les écrans du foyer ; jamais une couleur libre (hex), seulement une clé de la liste des jetons d'accent de profil. | Choix gardé en mémoire de la démonstration ; port neutre en production. |
+
+## Relu par FI-12 (04/10)
+
+Relecture faite le 04/10/2026 sur le worktree `rc-2` (commit de base `930cf21f`), par `grep -rn "CapaciteIndisponible('" lib/core/capacites` : chaque port neutre de production dit la référence qu'il attend. Le détail par fichier et par ligne est dans `05_recette/FI/FI_RAPPORT.md` §8.
+
+### FI-BR utilisés par les ports, et ce qui manque côté serveur
+
+| Réf. | Port (méthodes) | Écrans qui l'attendent | Ce qui manque côté serveur |
+|---|---|---|---|
+| FI-BR-01 | `port_politiques_commerciales.dart` : `active()`, `apercuFamille()`, `apercuEnseignant()` | Foyer, Recharge, Politiques | La politique effective versionnée, lisible par tous les écrans qui en dépendent ; le calcul des aperçus (famille 1 à 5 enfants, taux enseignant) fait par le serveur. |
+| FI-BR-02 | `port_politiques_commerciales.dart` : `versions()`, `publier()` | Politiques (brouillon, comparaison, historique, Publier) | Brouillon, publication datée non rétroactive, historique en ajout seul, écriture réservée à la direction et auditée, réponse de publication confirmée. |
+| FI-BR-03 | `port_paiements_foyer.dart` : `finances()` | Foyer, Fiche > Finances, Fiche > Accès, Compte > Accès | La finance de chaque profil (solde, période, prochain débit, mensualité détaillée, état, manque, fin de conservation) et la synthèse du foyer. FI-BR-04 n'a pas de méthode propre : la synthèse arrive par `finances()`. Jamais rendue au second adulte ni à l'enfant (lecture par rôle, `UX_REVIEW_08_FINANCE.md:96-106`). |
+| FI-BR-05 | `port_paiements_foyer.dart` : `mouvements()`, `derniersMouvements()` | Fiche > Mouvements, reçu, Foyer à 1440 | Mouvements par profil en ajout seul, reçu avec sa répartition, les trois derniers mouvements du foyer. |
+| FI-BR-06 | `port_recharge_foyer.dart` : `verifierMontants()`, `suivre()` | Recharge, Résultat (8 états) | Commande multi-profils, total et taxe arrêtés avant paiement, idempotence, huit états, crédit seulement après le webhook, reprise d'une commande en attente. |
+| FI-BR-11 | `port_revenus_enseignant.dart` : `moisEnCours()` | Revenus | Revenus estimés par séance assurée, sièges éligibles, taux plafonné, aide Internet à part, aucune donnée de famille. |
+| FI-BR-12 | `port_finance_direction.dart` : `vueGlobale()` | Vue globale | Les sept indicateurs du mois et les alertes, chacun séparé. |
+| FI-BR-17 | `port_mes_finances.dart` : `finances()`, `mouvements()` | Mes finances de l'adulte autonome | Les données de FI-BR-03, 05 et 06 limitées au seul profil de la session. |
+| FI-BR-19 | `port_accents_profils.dart` (lecture et écriture) | Foyer, fiche, recharge, résultat, reçu, toute carte de profil | La clé d'accent par profil, écrite par le titulaire seul, une clé de la liste des jetons, jamais une couleur libre. |
+
+FI-BR sans port aujourd'hui (aucune référence dans `lib/core/capacites`) : 04 (passe par 03), 07, 08, 09, 10, 13, 14, 15, 16, 18. FI-BR-18 (second adulte) est une règle de lecture du serveur, sans port propre : la recette FI-12 la constate à l'écran (`fi12_compte_paiements_second_adulte_*`, aucun solde ni recharge).
+
+### Corrections proposées, reportées ici (non faites dans le code)
+
+| Où | Aujourd'hui | Proposé | Pourquoi |
+|---|---|---|---|
+| `port_acces_foyer.dart`, `AccesFoyerIndisponible.acces()` | `CapaciteIndisponible('LOT-E')` | `CapaciteIndisponible('FI-BR-08')` | L'accès par période financée (Rejoindre, essais, conservation de place, copie neutre de l'enfant) est le besoin FI-BR-08 ; LOT-E n'est que le lot qui devait écrire l'adaptateur. |
+| `port_recharge_foyer.dart`, `beneficiaires()`, `verifier()`, `payer()` | `CapaciteIndisponible('EA-BR-24')` et `('EA-BR-25')` | `CapaciteIndisponible('FI-BR-06')` | FI-BR-06 remplace EA-BR-24, 25 et 26 (ligne FI-BR-06 ci-dessus) : la table doit dire la même chose que les ports. |
+| `port_paiements_foyer.dart`, `soldes()` | `CapaciteIndisponible('EA-BR-23')` | `CapaciteIndisponible('FI-BR-03')` | FI-BR-03 remplace EA-BR-23 (ligne FI-BR-03 ci-dessus). |
+
+Ces trois changements sont une petite étape de code (une ligne par méthode, plus les tests qui lisent la référence) : à ranger dans FI-RC ou BR-1, pas dans FI-12, qui ne touche que la recette.
