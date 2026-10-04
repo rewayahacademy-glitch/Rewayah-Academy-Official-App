@@ -22,17 +22,23 @@ Pastille « En attente » de Comptes, m4, m5, n4, m13 (decision), n9 (supabase/)
 
 ## AD-M2-CAPT
 Captures dans `docs/current/captures/ad-m2-capt/` (96 HL-A-5 = 16 ecrans x 6 + 6 production + 2 ad9_14).
-- Ecran 3 : la carte Vérifications est deja a l'ecran quand on touche le lien (le lien ne fait que poser le focus) ;
-  la capture 3 est prise en mode de focus « clavier » : elle differe de la fiche par l'anneau de focus sur la premiere case
-  (difference mince sur telephone). Hash differents pour les 6 paires (voir ci-dessous).
+- Ecran 3 (refait, K-61.1) : « fiche_dossier » est prise a l'ouverture de la fiche (haut de la fiche), « verifications_incompletes »
+  apres defilement jusqu'au lien et toucher (focus « clavier » : anneau sur la premiere case).
+  Telephone : avant = en-tete, identite, piece, carte Verifications coupee en bas ; apres = page defilee, carte Verifications entiere,
+  lien et « Refuser » visibles, trait de focus sous la premiere case (difference visible a l'oeil).
+  Ordinateur : avant = haut de la fiche (Verifications dans le tiers bas) ; apres = panneau defile (titre sorti), Verifications au centre,
+  lien visible, trait de focus.
+  Tablette : la fiche entiere tient a l'ecran, aucun defilement possible : fiche = apres au pixel pres, sauf le trait de focus de 1 px sous
+  la premiere case (fiche non refaite, hash inchanges). L'effet reel du lien y est donc mince ; l'anneau de focus est rogne par la carte
+  (defaut de lib, non touche).
 - portail_apres_refus_* : refaits (hash differents des anciens a8dfcb3, ex. telephone clair 6249d9bd -> c23e7f34).
 - Ecran 16 capture sans le repere « Demonstration » (n5).
-- Production : `test/capture/ad_m2_production_capture_test.dart` (390, 1440, 320 clair et sombre).
+- Production : `test/capture/ad_m2_production_capture_test.dart` (390, 1440, 320 clair et sombre) ; la phrase « La decision est indisponible pour le moment. » est ramenee a l'ecran (ensureVisible), une seule fois, ni Refuser ni Valider. Hash : 390 clair 0bfc5807482b, sombre c3ba17d16503 ; 1440 clair 49a42a20996d, sombre 3d8bffa2cfb2 ; 320 clair fc6c5ddaee43, sombre a527241afd3f.
 - ad9_14_indisponible_1440 : refait (clair et sombre).
 Comptes a aligner dans HL-A-5.md, AD-11.md, AD-RC.md l.36 (fichiers de pilotage, non touches) : 16 ecrans, 96 PNG.
-telephone clair fiche=d322f08c2f64 verif=7ce836c1a3b8
-telephone sombre fiche=ca073717a260 verif=9cd7de7f29a4
+telephone clair fiche=77ff1e831583 verif=7ce836c1a3b8
+telephone sombre fiche=60a4163ffcf9 verif=9cd7de7f29a4
 tablette clair fiche=e6c82c8d8717 verif=9c2a4a834b4f
 tablette sombre fiche=01483734caa9 verif=ffa22f4d9c89
-ordinateur clair fiche=e90397fb9844 verif=448b071b36b3
-ordinateur sombre fiche=ac5da2c4dfa8 verif=1074c22c34a4
+ordinateur clair fiche=dae4f072e74c verif=448b071b36b3
+ordinateur sombre fiche=e317e48a13f1 verif=1074c22c34a4

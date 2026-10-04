@@ -208,10 +208,9 @@ void main() {
           // 2. Fiche du dossier (revue nominale, Omar).
           await tester.tap(_ligne('Omar'));
           await _stabiliser(tester);
-          // Cadrage propre : defilee jusqu'a l'emplacement de decision (la
-          // capture a l'ouverture etait identique a « coque et file »).
-          await tester.ensureVisible(find.text(t.dossiers.refuser).first);
-          await _stabiliser(tester);
+          // K-61.1 : la fiche est prise a l'ouverture (haut de la fiche, la
+          // carte Verifications hors ecran sur telephone), pas defilee
+          // jusqu'a la decision : c'est l'etat « avant » du lien de l'ecran 3.
           debugPrint('PNG ${await capturer(tester, fichier('fiche_dossier'))}');
 
           // 3. Verifications incompletes : ce que fait le lien. La capture 2
@@ -225,6 +224,8 @@ void main() {
           const String lien = 'Terminez les vérifications requises.';
           await tester.ensureVisible(find.text(lien));
           await _stabiliser(tester);
+          // Le lien est a l'ecran, la carte Verifications peut en etre sortie
+          // (telephone) : le toucher la ramene a l'ecran et pose le focus.
           FocusManager.instance.highlightStrategy =
               FocusHighlightStrategy.alwaysTraditional;
           addTearDown(

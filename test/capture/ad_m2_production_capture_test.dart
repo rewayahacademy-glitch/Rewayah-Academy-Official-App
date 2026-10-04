@@ -83,6 +83,12 @@ void main() {
           expect(find.text(t.dossiers.revue.voirPiece), findsNothing);
           expect(find.text(t.dossiers.refuser), findsNothing);
           expect(find.text(t.dossiers.approuver), findsNothing);
+          // Cadrage : la phrase de decision est la derniere de la fiche ; on la
+          // ramene a l'ecran (a 320 elle etait hors cadre).
+          await tester.ensureVisible(
+            find.text(t.dossiers.revue.etats.decisionIndisponible),
+          );
+          await stabiliser(tester);
           final String suffixe = mode == ThemeMode.light ? 'light' : 'dark';
           debugPrint(
             'PNG ${await capturer(tester, 'ad_m2_production_${nom}_$suffixe')}',
