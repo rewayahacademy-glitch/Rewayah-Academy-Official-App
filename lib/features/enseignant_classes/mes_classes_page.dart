@@ -226,23 +226,33 @@ LigneRubrique _ligne(ClasseListee l, VoidCallback? onPress) {
   final int? niveau = l.detail.niveau;
   final String? langue = l.detail.langue;
   final int n = l.groupe.nbMembres;
-  final String contexte = <String>[
-    if (niveau != null) t.enseignant.classes.niveau(niveau: '$niveau'),
-    if (langue != null && langue.trim().isNotEmpty) langue.trim(),
-    if (n == 1)
-      t.enseignant.classes.eleveUn
-    else
-      t.enseignant.classes.eleves(nombre: '$n'),
-  ].join(' · ');
+  // COUPE-MOTS-2 : chaque ligne de la legende dans un isolat a sens detecte
+  // (U+2068 ... U+2069). En arabe, un libelle encore en francais (repli sur
+  // la langue de base) qui commence par un chiffre se retournait : « 3
+  // élèves » se lisait « élèves 3 ». La ligne entiere, et non chaque segment :
+  // isolee segment par segment, une legende qui passe a la ligne a 320 px se
+  // lisait dans le desordre (« · Niveau 2 / 3 · Français / élèves »).
+  final String contexte = _isole(
+    <String>[
+      if (niveau != null) t.enseignant.classes.niveau(niveau: '$niveau'),
+      if (langue != null && langue.trim().isNotEmpty) langue.trim(),
+      if (n == 1)
+        t.enseignant.classes.eleveUn
+      else
+        t.enseignant.classes.eleves(nombre: '$n'),
+    ].join(' · '),
+  );
   final DateTime? p = l.prochaine;
-  final String quand = p == null
-      ? t.enseignant.classes.sansProchaine
-      : t.enseignant.classes.prochaine(
-          jour: t.disponibilites.joursLongs[p.weekday - 1],
-          heure:
-              '${p.hour.toString().padLeft(2, '0')}:'
-              '${p.minute.toString().padLeft(2, '0')}',
-        );
+  final String quand = _isole(
+    p == null
+        ? t.enseignant.classes.sansProchaine
+        : t.enseignant.classes.prochaine(
+            jour: t.disponibilites.joursLongs[p.weekday - 1],
+            heure:
+                '${p.hour.toString().padLeft(2, '0')}:'
+                '${p.minute.toString().padLeft(2, '0')}',
+          ),
+  );
 
   final List<Widget> marques = <Widget>[
     if (l.cahierAValider) const _CahierAValider(),
@@ -308,3 +318,7 @@ class _CahierAValider extends StatelessWidget {
     );
   }
 }
+
+/// Isole [texte] dans son propre sens de lecture (premier caractere fort),
+/// sans changer l'ordre des segments voisins.
+String _isole(String texte) => '\u2068$texte\u2069';

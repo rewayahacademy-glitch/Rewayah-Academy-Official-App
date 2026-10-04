@@ -316,4 +316,73 @@ void main() {
       expect(tester.hasRunningAnimations, isFalse);
     });
   });
+
+  // COUPE-MOTS-2 (point 3) : en arabe, les libelles encore en francais
+  // (repli sur la langue de base) s'affichent de droite a gauche. Sans isolat,
+  // la legende « Niveau 2 · Français · 3 élèves » se lisait « élèves 3 » :
+  // chaque segment garde son propre sens de lecture, seul leur ordre suit
+  // celui de l'ecran.
+  group('COUPE-MOTS-2 : la legende garde « 3 élèves » en arabe', () {
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets(sens.name, (WidgetTester tester) async {
+        _fenetre(tester, const Size(1280, 1600));
+        final GroupeEnseignant nour = DonneesEnseignantDemo.groupes()
+            .firstWhere((GroupeEnseignant g) => g.libelle == 'An-Nour');
+        await tester.pumpWidget(
+          hote(
+            Directionality(textDirection: sens, child: const MesClassesPage()),
+            surcharges: <Override>[
+              maintenantJourneeProvider.overrideWithValue(
+                () => DonneesEnseignantDemo.maintenant,
+              ),
+              groupesEnseignantProvider.overrideWith(
+                (Ref _) async => DonneesEnseignantDemo.groupes(),
+              ),
+              seancesEnseignantProvider.overrideWith(
+                (Ref _) async =>
+                    DonneesEnseignantDemo.seances(EtatDemoEnseignant.nominal),
+              ),
+              cahiersEnRetardProvider.overrideWith(
+                (Ref _) async => DonneesEnseignantDemo.cahiersEnRetard(
+                  EtatDemoEnseignant.nominal,
+                ),
+              ),
+              // Sans niveau ni langue (donnees de demonstration) : la
+              // legende commence par le chiffre, cas qui se retournait.
+              detailsClassesProvider.overrideWithValue(
+                const <String, DetailClasse>{},
+              ),
+            ],
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final String effectif = t.enseignant.classes.eleves(
+          nombre: '${nour.nbMembres}',
+        );
+        final RenderParagraph p = tester
+            .renderObjectList<RenderParagraph>(find.byType(RichText))
+            .firstWhere(
+              (RenderParagraph r) =>
+                  r.text.toPlainText().contains(effectif.split(' ').last) &&
+                  r.text.toPlainText().contains('${nour.nbMembres}'),
+            );
+        final String texte = p.text.toPlainText();
+        final int chiffre = texte.indexOf('${nour.nbMembres} ');
+        final int mot = texte.indexOf(effectif.split(' ').last);
+        Rect boite(int debut, int fin) => p
+            .getBoxesForSelection(
+              TextSelection(baseOffset: debut, extentOffset: fin),
+            )
+            .first
+            .toRect();
+        // Le chiffre avant le mot, dans le sens du francais, quel que soit
+        // le sens de l'ecran.
+        expect(
+          boite(chiffre, chiffre + 1).left,
+          lessThan(boite(mot, mot + 1).left),
+        );
+      });
+    }
+  });
 }
