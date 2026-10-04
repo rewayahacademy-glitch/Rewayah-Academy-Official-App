@@ -10,6 +10,7 @@ import '../../../core/finance/mouvements_profil.dart';
 import '../../../core/finance/periode_a_financer.dart';
 import '../../../core/finance/politique_commerciale.dart';
 import '../../../core/foyer/selection_eleve.dart';
+import '../../../core/i18n/elision.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/reseau/service_reseau.dart';
@@ -145,9 +146,11 @@ class _CorpsFinances extends ConsumerWidget {
       textes: (
         indisponibleTitre: t.ficheEleve.finances.indisponibleTitre,
         indisponiblePhrase: t.ficheEleve.finances.indisponiblePhrase(
-          prenom: profil.prenom,
+          dePrenom: deDevant(profil.prenom),
         ),
-        erreurTitre: t.ficheEleve.finances.erreurTitre(prenom: profil.prenom),
+        erreurTitre: t.ficheEleve.finances.erreurTitre(
+          dePrenom: deDevant(profil.prenom),
+        ),
         videTitre: t.ficheEleve.finances.videTitre(prenom: profil.prenom),
         videPhrase: t.ficheEleve.finances.videPhrase,
       ),
@@ -165,7 +168,7 @@ class _CorpsFinances extends ConsumerWidget {
             GoRouter.of(context)
                 .go(Routes.rechargePour(<String>[finance.profilId])),
         semantiqueMouvements: t.ficheEleve.finances.voirMouvementsSemantique(
-          prenom: finance.prenom,
+          dePrenom: deDevant(finance.prenom),
         ),
         onMouvements: () =>
             GoRouter.of(context)
@@ -234,7 +237,7 @@ class _HistoriqueProfil extends ConsumerWidget {
         nature: NatureEtat.indisponible,
         titre: t.ficheEleve.mouvements.indisponibleTitre,
         phrase: t.ficheEleve.mouvements.indisponiblePhrase(
-          prenom: profil.prenom,
+          dePrenom: deDevant(profil.prenom),
         ),
         dependance: erreur.dependance,
       );
@@ -243,7 +246,9 @@ class _HistoriqueProfil extends ConsumerWidget {
           ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire)
           : EtatSysteme(
               nature: NatureEtat.echecServeur,
-              titre: t.ficheEleve.mouvements.erreurTitre(prenom: profil.prenom),
+              titre: t.ficheEleve.mouvements.erreurTitre(
+                dePrenom: deDevant(profil.prenom),
+              ),
               onAction: relire,
             );
     } else if (!lecture.hasValue) {
@@ -297,7 +302,7 @@ class _HistoriqueProfil extends ConsumerWidget {
                 key: FinancesElevePage.voirToutKey,
                 libelle: t.ficheEleve.finances.voirTout,
                 libelleSemantique: t.ficheEleve.finances.voirToutSemantique(
-                  prenom: profil.prenom,
+                  dePrenom: deDevant(profil.prenom),
                 ),
                 onPress: () => GoRouter.of(
                   context,
@@ -408,7 +413,7 @@ class EtatsFinancesProfil extends ConsumerWidget {
       ),
     (final String m, null, null) => t.foyer.finances.manque(montant: m),
     (null, _, final String mo) => t.ficheEleve.finances.moisNonFinance(
-      mois: mo,
+      deMois: deDevant(mo),
     ),
     _ => t.ficheEleve.finances.sansManque,
   };

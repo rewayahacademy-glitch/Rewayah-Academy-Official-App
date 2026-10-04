@@ -50,6 +50,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../acces_finance/acces_finance.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart'
     show ColonnesParRangees, LecteurGroupe, LectureGroupe, SqueletteGroupe;
@@ -146,6 +147,13 @@ class AccueilAdultePage extends ConsumerWidget {
     );
     final AccueilAdulteVM? vue = lecture.value;
     void relire() => ref.invalidate(accueilAdulteProvider);
+    // Son acces, borne a sa session (FI-9a, FI-BR-08, revue FI-VAGUE-R
+    // R4-01) : seances fermees, Rejoindre est retire et la copie le dit ;
+    // en lecture, Rejoindre reste inerte. Production (port neutre), echec :
+    // rien ne change, et jamais selon un solde.
+    final ({bool ferme, bool enLecture}) acces = rejoindreSelonAcces(
+      ref.watch(accesAppelantProvider),
+    );
     // Sans reseau, un echec se dit « hors ligne », comme les soldes du foyer
     // et Mon espace ; une capacite absente reste dite indisponible.
     final Object? erreur = lecture.hasError ? lecture.error : null;
@@ -178,6 +186,7 @@ class AccueilAdultePage extends ConsumerWidget {
               onReessayer: relire,
               construire: (AccueilAdulteVM vue) => _Corps(
                 vue: vue,
+                acces: acces,
                 onRejoindre: onRejoindre,
                 onVoirRessources: onVoirRessources,
               ),
@@ -225,9 +234,15 @@ class _Salutation extends StatelessWidget {
 }
 
 class _Corps extends StatelessWidget {
-  const _Corps({required this.vue, this.onRejoindre, this.onVoirRessources});
+  const _Corps({
+    required this.vue,
+    required this.acces,
+    this.onRejoindre,
+    this.onVoirRessources,
+  });
 
   final AccueilAdulteVM vue;
+  final ({bool ferme, bool enLecture}) acces;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
   final void Function(String groupeId)? onVoirRessources;
 
@@ -252,6 +267,7 @@ class _Corps extends StatelessWidget {
         vue: vue,
         groupeId: groupeId,
         lecture: lecture,
+        acces: acces,
         onRejoindre: onRejoindre,
         onVoirRessources: onVoirRessources,
       ),
@@ -264,6 +280,7 @@ class _Sections extends StatelessWidget {
     required this.vue,
     required this.groupeId,
     required this.lecture,
+    required this.acces,
     this.onRejoindre,
     this.onVoirRessources,
   });
@@ -271,6 +288,7 @@ class _Sections extends StatelessWidget {
   final AccueilAdulteVM vue;
   final String groupeId;
   final LectureGroupe lecture;
+  final ({bool ferme, bool enLecture}) acces;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
   final void Function(String groupeId)? onVoirRessources;
 
@@ -283,12 +301,17 @@ class _Sections extends StatelessWidget {
     final String? parcours = vue.ligneParcours;
 
     final List<Widget> seance = <Widget>[
+      if (acces.ferme) ...<Widget>[const BandeauAccesAdulte(), Ecart.vLg],
       SectionHeader(
         key: const ValueKey<String>('accueil-adulte-prochaine-seance'),
         titre: t.adulte.accueil.prochaineSeance,
       ),
       Ecart.vMd,
-      ...lecture.identiteEtCarte(onRejoindre: onRejoindre),
+      ...lecture.identiteEtCarte(
+        onRejoindre: onRejoindre,
+        accesFerme: acces.ferme,
+        accesEnLecture: acces.enLecture,
+      ),
     ];
 
     // Seulement ce que les donnees demandent : sans action, pas de section.

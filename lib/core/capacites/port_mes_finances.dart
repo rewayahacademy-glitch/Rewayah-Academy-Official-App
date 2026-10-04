@@ -49,14 +49,17 @@ class MesFinancesIndisponible implements PortMesFinances {
 final Provider<PortMesFinances> portMesFinancesProvider =
     Provider<PortMesFinances>((Ref _) => const MesFinancesIndisponible());
 
-/// Mes finances, relues a chaque ouverture.
+/// Mes finances, relues a chaque ouverture : `autoDispose`, la lecture est
+/// liberee des que plus aucun ecran ne la regarde (revue FI-VAGUE-R R4-05),
+/// et un retour de recharge relit donc le solde au lieu de montrer l'ancien.
 final FutureProvider<FinancesProfil?> mesFinancesProvider =
-    FutureProvider<FinancesProfil?>(
+    FutureProvider.autoDispose<FinancesProfil?>(
       (Ref ref) => ref.watch(portMesFinancesProvider).finances(),
     );
 
-/// Mes mouvements, relus a chaque ouverture.
+/// Mes mouvements, relus a chaque ouverture (`autoDispose`, comme
+/// [mesFinancesProvider]).
 final FutureProvider<List<MouvementProfil>> mesMouvementsProvider =
-    FutureProvider<List<MouvementProfil>>(
+    FutureProvider.autoDispose<List<MouvementProfil>>(
       (Ref ref) => ref.watch(portMesFinancesProvider).mouvements(),
     );

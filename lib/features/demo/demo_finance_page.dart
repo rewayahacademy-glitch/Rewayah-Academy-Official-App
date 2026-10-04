@@ -77,6 +77,12 @@ class DemoFinancePage extends StatelessWidget {
         politiquesCommercialesProvider.overrideWith(
           (Ref _) => lirePolitiques(const PolitiquesCommercialesDemo()),
         ),
+        // Le lien d'une alerte ouvre une page de Personnes ou d'Operations,
+        // domaines sans demonstration ici : il reste en place (K-28), comme
+        // `onAller` plus bas, au lieu de sortir vers une route reelle gardee.
+        ouvrirCibleAlerteFinanceProvider.overrideWithValue(
+          (BuildContext _, CibleAlerteFinance _) {},
+        ),
       ],
       child: RepereDemonstration(
         child: AdminShell(

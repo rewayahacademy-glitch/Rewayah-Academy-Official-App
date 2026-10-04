@@ -14,16 +14,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/port_finance_direction.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
 import 'package:rewayah_academy/core/finance/montant.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/bandeau_attention.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
+import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_finance/vue_globale_finance.dart';
 import 'package:rewayah_academy/features/demo/finance_demo.dart';
@@ -87,10 +91,30 @@ final VueGlobaleFinance _chargee = VueGlobaleFinance(
       AlerteFinance(
         id: 'a$i',
         nature: NatureAlerteFinance.values[i % 3],
+        cible: i % 3 == 2
+            ? CibleAlerteFinance.classes
+            : CibleAlerteFinance.comptes,
         prenom: i.isEven ? 'Abderrahmane-Mohamed $i' : null,
         classe: i % 3 == 0 ? null : 'Al-Ikhlass du soir $i',
         montant: i % 4 == 0 ? null : _usd(10 + i),
       ),
+  ],
+  encaisseParMois: <MontantMensuel>[
+    for (int m = 6; m <= 11; m++)
+      MontantMensuel(mois: DateTime(2026, m), montant: _usd(1000 * m + 7)),
+  ],
+  paieParMois: <MontantMensuel>[
+    for (int m = 6; m <= 11; m++)
+      MontantMensuel(mois: DateTime(2026, m), montant: _usd(400 * m + 1)),
+  ],
+  margeParMois: <MargeMensuelle>[
+    for (int m = 6; m <= 10; m++)
+      MargeMensuelle(mois: DateTime(2026, m), pourMille: 600 + 13 * m),
+    MargeMensuelle(mois: DateTime(2026, 11), pourMille: null),
+  ],
+  revenuParType: <PartRevenu>[
+    PartRevenu(type: TypeEleveRevenu.enfant, montant: _usd(8000)),
+    PartRevenu(type: TypeEleveRevenu.adulte, montant: _usd(3000)),
   ],
 );
 
@@ -181,22 +205,73 @@ void main() {
       ]) {
         expect(find.text(libelle), findsOneWidget, reason: libelle);
       }
+      // Les indicateurs seuls : les graphiques repetent les nombres du mois.
+      Finder carte(Finder f) => find.descendant(
+        of: find.byKey(VueGlobaleFinanceContenu.indicateursKey),
+        matching: f,
+      );
       // 690 USD encaisses ET 690 USD de revenu : deux cartes, jamais une.
       expect(formaterMontant(DonneesFinanceDemo.usd(690)), '690\u00a0\$');
       expect(
-        find.text(formaterMontant(DonneesFinanceDemo.usd(690))),
+        carte(find.text(formaterMontant(DonneesFinanceDemo.usd(690)))),
         findsNWidgets(2),
       );
       expect(formaterMontant(demo.paieEnseignants), '143,20\u00a0\$');
-      expect(find.text(formaterMontant(demo.paieEnseignants)), findsOneWidget);
+      expect(
+        carte(find.text(formaterMontant(demo.paieEnseignants))),
+        findsOneWidget,
+      );
       // La marge du port, 792 pour mille, jamais recalculee.
       expect(demo.margeProjeteePourMille, 792);
-      expect(find.text(vue.margeValeur(valeur: '79,2')), findsOneWidget);
+      expect(carte(find.text(vue.margeValeur(valeur: '79,2'))), findsOneWidget);
       expect(find.text(vue.margeDetail), findsOneWidget);
       expect(find.text(formaterMontant(demo.impayes)), findsOneWidget);
       expect(formaterMontant(demo.impayes), '8\u00a0\$');
       expect(find.text('${demo.essaisEnCours}'), findsOneWidget);
       expect(find.text(formaterMontant(demo.soldesCrediteurs)), findsOneWidget);
+      // Les graphiques de la demonstration : le seul mois depuis le
+      // lancement (octobre 2026), avec ses nombres exacts.
+      Finder graphique(Key cle, Finder f) =>
+          find.descendant(of: find.byKey(cle), matching: f);
+      expect(
+        graphique(
+          VueGlobaleFinanceContenu.graphiqueEncaisseKey,
+          find.text(formaterMontant(DonneesFinanceDemo.usd(690))),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        graphique(
+          VueGlobaleFinanceContenu.graphiquePaieKey,
+          find.text(formaterMontant(demo.paieEnseignants)),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        graphique(
+          VueGlobaleFinanceContenu.graphiqueMargeKey,
+          find.text(vue.margeValeur(valeur: '79,2')),
+        ),
+        findsOneWidget,
+      );
+      // La repartition : enfants et adultes, dont la somme est le revenu.
+      expect(demo.revenuParType, hasLength(2));
+      expect(
+        demo.revenuParType.fold<int>(
+          0,
+          (int s, PartRevenu p) => s + p.montant.mineur,
+        ),
+        demo.revenuAcademique.mineur,
+      );
+      for (final PartRevenu p in demo.revenuParType) {
+        expect(
+          graphique(
+            VueGlobaleFinanceContenu.graphiqueRepartitionKey,
+            find.text(formaterMontant(p.montant)),
+          ),
+          findsOneWidget,
+        );
+      }
       // L'alerte de la demonstration : Ibrahim, le meme manque de 8 USD.
       final AlerteFinance alerte = demo.alertes.single;
       expect(find.byType(BandeauAttention), findsOneWidget);
@@ -217,7 +292,7 @@ void main() {
       expect(
         find.text(
           vue.contexte(
-            mois: vue.moisAnnee(mois: 'octobre', annee: '2026'),
+            deMois: deDevant(vue.moisAnnee(mois: 'octobre', annee: '2026')),
           ),
         ),
         findsOneWidget,
@@ -229,7 +304,7 @@ void main() {
           tester,
           estCarte: (Widget w) => w is AppCard || w is BandeauAttention,
         ),
-        8,
+        12,
       );
       expect(tester.takeException(), isNull);
     });
@@ -446,6 +521,176 @@ void main() {
       );
       expect(tester.takeException(), isNull);
     });
+  });
+
+  group('contre-revue FI-VAGUE-R', () {
+    Finder dans(Key cle, Finder f) =>
+        find.descendant(of: find.byKey(cle), matching: f);
+
+    testWidgets('R6-01 : un graphique par notion, chaque barre avec son '
+        'nombre exact, aucune notion melee', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 2400));
+      await tester.pumpWidget(_hote(surcharges: _avec(_Port(vue: _chargee))));
+      await tester.pumpAndSettle();
+      final vue = t.admin.finance.vue;
+      for (final String titre in <String>[
+        vue.graphiqueEncaisse,
+        vue.graphiquePaie,
+        vue.graphiqueMarge,
+        vue.graphiqueRepartition,
+      ]) {
+        expect(find.text(titre), findsOneWidget, reason: titre);
+      }
+      for (final MontantMensuel p in _chargee.encaisseParMois) {
+        final String n = formaterMontant(p.montant);
+        expect(
+          dans(VueGlobaleFinanceContenu.graphiqueEncaisseKey, find.text(n)),
+          findsOneWidget,
+          reason: n,
+        );
+        // Jamais dans le graphique de la charge.
+        expect(
+          dans(VueGlobaleFinanceContenu.graphiquePaieKey, find.text(n)),
+          findsNothing,
+        );
+      }
+      for (final MontantMensuel p in _chargee.paieParMois) {
+        expect(
+          dans(
+            VueGlobaleFinanceContenu.graphiquePaieKey,
+            find.text(formaterMontant(p.montant)),
+          ),
+          findsOneWidget,
+        );
+      }
+      // Les mois, en mots, dans l'ordre du port.
+      expect(
+        dans(
+          VueGlobaleFinanceContenu.graphiqueEncaisseKey,
+          find.text(vue.moisAnnee(mois: 'juin', annee: '2026')),
+        ),
+        findsOneWidget,
+      );
+      // La marge : 67,8 % en juin ; novembre sans revenu, non calculable.
+      expect(
+        dans(
+          VueGlobaleFinanceContenu.graphiqueMargeKey,
+          find.text(vue.margeValeur(valeur: '67,8')),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        dans(
+          VueGlobaleFinanceContenu.graphiqueMargeKey,
+          find.text(vue.margeNonCalculable),
+        ),
+        findsOneWidget,
+      );
+      // La repartition par type d'eleve, seules categories du modele.
+      expect(
+        dans(
+          VueGlobaleFinanceContenu.graphiqueRepartitionKey,
+          find.text(vue.repartitionEnfants),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        dans(
+          VueGlobaleFinanceContenu.graphiqueRepartitionKey,
+          find.text(formaterMontant(_usd(3000))),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(vue.sansHistorique), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('R6-01 : sans serie rendue, chaque graphique le dit', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 2400));
+      await tester.pumpWidget(
+        _hote(surcharges: _avec(_Port(vue: _sansActivite))),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(t.admin.finance.vue.sansHistorique), findsNWidgets(4));
+      expect(tester.takeException(), isNull);
+    });
+
+    test('R6-01 : longueurs de barres, une geometrie bornee a 0..1', () {
+      expect(longueursDeBarres(<int>[50, 100, 0]), <double>[0.5, 1, 0]);
+      expect(longueursDeBarres(<int>[0, 0]), <double>[0, 0]);
+      expect(longueursDeBarres(<int>[-10, 20]), <double>[0, 1]);
+      expect(longueursDeBarres(<int>[]), isEmpty);
+    });
+
+    for (final (CibleAlerteFinance cible, String route, int index)
+        in <(CibleAlerteFinance, String, int)>[
+          (CibleAlerteFinance.comptes, Routes.adminPersonnesComptes, 0),
+          (CibleAlerteFinance.classes, Routes.adminOperationsGroupes, 2),
+        ]) {
+      testWidgets('R6-04 : chaque alerte a un seul lien, qui ouvre sa cible '
+          '(${cible.name})', (WidgetTester tester) async {
+        _taille(tester, const Size(1440, 2400));
+        final GoRouter routeur = GoRouter(
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/',
+              builder: (BuildContext _, GoRouterState _) => const Scaffold(
+                body: SingleChildScrollView(child: VueGlobaleFinanceBloc()),
+              ),
+            ),
+            for (final String r in <String>[
+              Routes.adminPersonnesComptes,
+              Routes.adminOperationsGroupes,
+            ])
+              GoRoute(
+                path: r,
+                builder: (BuildContext _, GoRouterState _) =>
+                    Scaffold(body: Text('page $r')),
+              ),
+          ],
+        );
+        addTearDown(routeur.dispose);
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: <Override>[
+              serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+              horsLigneProvider.overrideWith(
+                (Ref _) => Stream<bool>.value(false),
+              ),
+              ..._avec(_Port(vue: _chargee)),
+            ],
+            child: TranslationProvider(
+              child: MaterialApp.router(
+                theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+                routerConfig: routeur,
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        // Une action secondaire par alerte, jamais deux.
+        for (final AlerteFinance a in _chargee.alertes) {
+          expect(
+            find.descendant(
+              of: find.byKey(ValueKey<String>(a.id), skipOffstage: false),
+              matching: find.byType(LienFleche, skipOffstage: false),
+            ),
+            findsOneWidget,
+            reason: a.id,
+          );
+        }
+        final AlerteFinance alerte = _chargee.alertes[index];
+        expect(alerte.cible, cible);
+        final Finder lien = find.byKey(ValueKey<String>('${alerte.id}-cible'));
+        await tester.ensureVisible(lien);
+        await tester.pumpAndSettle();
+        await tester.tap(lien);
+        await tester.pumpAndSettle();
+        expect(find.text('page $route'), findsOneWidget);
+      });
+    }
   });
 
   group('gabarits', () {

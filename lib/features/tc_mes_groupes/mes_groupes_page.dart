@@ -113,7 +113,11 @@ class _Corps extends ConsumerWidget {
     if (!accesFerme) return grille;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[const BandeauAccesEnfant(), Ecart.vLg, grille],
+      children: <Widget>[
+        BandeauAccesFerme(acces: acces.value),
+        Ecart.vLg,
+        grille,
+      ],
     );
   }
 }

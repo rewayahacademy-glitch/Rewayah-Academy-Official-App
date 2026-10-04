@@ -3,7 +3,7 @@
 //
 // Une politique est versionnee : l'en-tete dit le statut (brouillon ou
 // publiee) et la date d'effet. Les sections du guide (Tarifs, Essai, Remises,
-// Enseignants, Groupes, Paiement, Pilotage) LISENT les valeurs du port ; dans
+// Enseignants, Classes, Paiement, Pilotage) LISENT les valeurs du port ; dans
 // un brouillon, les valeurs reglables deviennent des champs, prerempli avec
 // la valeur du brouillon (K-57 : deduit), et la valeur de la version active
 // s'affiche sous un champ des qu'elle differe.
@@ -32,7 +32,7 @@
 // partir du brouillon a l'ecran, relus a chaque saisie valide ; jamais
 // calcules ici (garde de source dans le test).
 
-import 'package:flutter/foundation.dart' show setEquals;
+import 'package:flutter/foundation.dart' show listEquals, setEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -139,7 +139,7 @@ enum _Nature {
   remise,
   eleves,
   seances,
-  groupes,
+  classes,
   jours,
 }
 
@@ -292,6 +292,10 @@ class _PolitiquesCommercialesContenuState
   _Publication _publication = _Publication.aucune;
   bool _enCours = false;
 
+  /// L'activation de l'essai a l'ecran, dans un brouillon (guide §5.7,
+  /// ECARTS D8 : un interrupteur).
+  late bool _essaiActif = _lue.essaiActif;
+
   PolitiqueCommerciale get _lue => widget.brouillon ?? widget.active;
   bool get _estBrouillon => widget.brouillon != null;
 
@@ -354,10 +358,10 @@ class _PolitiquesCommercialesContenuState
             when v is Montant && v.mineur < base.mineur) {
           return pol.erreurPlafond(base: _texteValeur(base, c.nature));
         }
-      case 'groupesMax':
-        if (autre('groupesObjectif') case final int objectif
+      case 'classesMax':
+        if (autre('classesObjectif') case final int objectif
             when s < objectif) {
-          return pol.erreurGroupesMax(objectif: pol.groupes(n: objectif));
+          return pol.erreurClassesMax(objectif: pol.classes(n: objectif));
         }
       case 'minimum':
         final List<int> capacites = <int>[
@@ -495,20 +499,20 @@ class _PolitiquesCommercialesContenuState
         active: a.plafondHoraire,
       ),
       _Champ(
-        id: 'groupesObjectif',
-        libelle: pol.groupesObjectif,
-        consequence: pol.groupesObjectifDetail,
-        nature: _Nature.groupes,
-        lue: _lue.groupesObjectif,
-        active: a.groupesObjectif,
+        id: 'classesObjectif',
+        libelle: pol.classesObjectif,
+        consequence: pol.classesObjectifDetail,
+        nature: _Nature.classes,
+        lue: _lue.classesObjectif,
+        active: a.classesObjectif,
       ),
       _Champ(
-        id: 'groupesMax',
-        libelle: pol.groupesMax,
-        consequence: pol.groupesMaxDetail,
-        nature: _Nature.groupes,
-        lue: _lue.groupesMax,
-        active: a.groupesMax,
+        id: 'classesMax',
+        libelle: pol.classesMax,
+        consequence: pol.classesMaxDetail,
+        nature: _Nature.classes,
+        lue: _lue.classesMax,
+        active: a.classesMax,
       ),
       _Champ(
         id: 'internet',
@@ -523,7 +527,7 @@ class _PolitiquesCommercialesContenuState
     ];
   }
 
-  List<_Champ> _groupes() {
+  List<_Champ> _classes() {
     final pol = t.admin.finance.pol;
     final PolitiqueCommerciale a = widget.active;
     return <_Champ>[
@@ -581,7 +585,7 @@ class _PolitiquesCommercialesContenuState
     ..._essai(),
     ..._remises(),
     ..._enseignants(),
-    ..._groupes(),
+    ..._classes(),
     ..._paiement(),
   ];
 
@@ -598,6 +602,7 @@ class _PolitiquesCommercialesContenuState
       tarifEnfant: v['tarifEnfant']! as Montant,
       tarifAdulte: v['tarifAdulte']! as Montant,
       essaisMax: v['essais']! as int,
+      essaiActif: _essaiActif,
       remisesParRang: <RemiseRang>[
         for (final RemiseRang r in b.remisesParRang)
           RemiseRang(
@@ -611,12 +616,14 @@ class _PolitiquesCommercialesContenuState
       capaciteAdulte: v['capaciteAdulte']! as int,
       capaciteDebutant: v['capaciteDebutant']! as int,
       minimumOuverture: v['minimum']! as int,
-      groupesObjectif: v['groupesObjectif']! as int,
-      groupesMax: v['groupesMax']! as int,
+      classesObjectif: v['classesObjectif']! as int,
+      classesMax: v['classesMax']! as int,
       joursConservationPlace: v['conservation']! as int,
       margeReferencePourMille: b.margeReferencePourMille,
       railsActifs: b.railsActifs,
       allocationInternet: v['internet'] as Montant?,
+      joursRelance: b.joursRelance,
+      budgets: b.budgets,
     );
   }
 
@@ -655,8 +662,11 @@ class _PolitiquesCommercialesContenuState
     // Les champs, puis la marge et les rails, lus sans champ.
     final int differences = _estBrouillon
         ? _tousLesChamps().where(_differe).length +
+              (_essaiDiffere ? 1 : 0) +
               (_margeDiffere ? 1 : 0) +
-              (_railsDifferent ? 1 : 0)
+              (_railsDifferent ? 1 : 0) +
+              (_relancesDifferent ? 1 : 0) +
+              (_budgetsDifferent ? 1 : 0)
         : 0;
 
     final List<Widget> sections = <Widget>[
@@ -664,6 +674,7 @@ class _PolitiquesCommercialesContenuState
         for (final _Champ c in _tarifs()) _ligne(c),
       ]),
       _section(pol.essai, pol.essaiDetail, <Widget>[
+        _ligneActivationEssai(),
         for (final _Champ c in _essai()) _ligne(c),
       ]),
       _section(pol.remises, pol.remisesDetail, <Widget>[
@@ -687,8 +698,8 @@ class _PolitiquesCommercialesContenuState
         ),
         for (final _Champ c in _enseignants().skip(2)) _ligne(c),
       ]),
-      _section(pol.sectionGroupes, pol.sectionGroupesDetail, <Widget>[
-        for (final _Champ c in _groupes()) _ligne(c),
+      _section(pol.sectionClasses, pol.sectionClassesDetail, <Widget>[
+        for (final _Champ c in _classes()) _ligne(c),
       ]),
       _section(pol.paiement, pol.paiementDetail, <Widget>[
         LigneCleValeur(
@@ -705,8 +716,12 @@ class _PolitiquesCommercialesContenuState
               : null,
         ),
         for (final _Champ c in _paiement()) _ligne(c),
+        ..._lignesRelance(),
       ]),
-      _section(pol.pilotage, pol.pilotageDetail, <Widget>[_ligneMarge()]),
+      _section(pol.pilotage, pol.pilotageDetail, <Widget>[
+        _ligneMarge(),
+        ..._lignesBudgets(),
+      ]),
       _invariants(),
     ];
 
@@ -891,6 +906,168 @@ class _PolitiquesCommercialesContenuState
     );
   }
 
+  /// Vrai quand l'activation de l'essai a l'ecran differe de l'active.
+  bool get _essaiDiffere =>
+      _estBrouillon && _essaiActif != widget.active.essaiActif;
+
+  /// Vrai quand les relances du brouillon different de l'active.
+  bool get _relancesDifferent =>
+      _estBrouillon &&
+      !listEquals(_lue.joursRelance, widget.active.joursRelance);
+
+  /// Vrai quand les budgets du brouillon different de l'active.
+  bool get _budgetsDifferent =>
+      _estBrouillon && !listEquals(_lue.budgets, widget.active.budgets);
+
+  /// L'activation de l'essai en mots.
+  String _texteEssai(bool actif) => actif
+      ? t.admin.finance.pol.essaiActive
+      : t.admin.finance.pol.essaiDesactive;
+
+  /// L'activation de l'essai : un interrupteur dans un brouillon (ECARTS
+  /// D8), une ligne lue sinon (revue FI-VAGUE-R R6-06).
+  Widget _ligneActivationEssai() {
+    final pol = t.admin.finance.pol;
+    final Widget? comparaison = _essaiDiffere
+        ? _texteComparaison(
+            'essaiActif',
+            _texteEssai(widget.active.essaiActif),
+            chiffres: false,
+          )
+        : null;
+    if (!_estBrouillon) {
+      return LigneCleValeur(
+        key: PolitiquesCommercialesContenu.champKey('essaiActif'),
+        cle: pol.essaiActivation,
+        detailCle: pol.essaiActivationDetail,
+        valeur: _texteEssai(_lue.essaiActif),
+      );
+    }
+    return _InterrupteurPolitique(
+      key: PolitiquesCommercialesContenu.champKey('essaiActif'),
+      libelle: pol.essaiActivation,
+      consequence: pol.essaiActivationDetail,
+      etat: _texteEssai(_essaiActif),
+      valeur: _essaiActif,
+      onChanged: (bool v) => setState(() {
+        _essaiActif = v;
+        if (_publication == _Publication.champsACorriger) {
+          _publication = _Publication.aucune;
+        }
+      }),
+      comparaison: comparaison,
+    );
+  }
+
+  /// Les regles de relance (guide §5.7 « regles de relance visibles »,
+  /// ECARTS D7) : une ligne par relance, ou « Pas encore fixées ». Lues,
+  /// jamais un champ sur cet ecran pour l'instant (question 21).
+  List<Widget> _lignesRelance() {
+    final pol = t.admin.finance.pol;
+    final List<int>? jours = _lue.joursRelance;
+    final Widget? comparaison = _relancesDifferent
+        ? _texteComparaison(
+            'relances',
+            _texteRelances(widget.active.joursRelance),
+            chiffres: false,
+          )
+        : null;
+    if (jours == null || jours.isEmpty) {
+      return <Widget>[
+        LigneCleValeur(
+          key: PolitiquesCommercialesContenu.champKey('relances'),
+          cle: pol.relances,
+          detailCle: pol.relancesDetail,
+          valeur: pol.relancesNonFixees,
+          complement: comparaison,
+        ),
+      ];
+    }
+    return <Widget>[
+      for (int i = 0; i < jours.length; i++)
+        LigneCleValeur(
+          key: PolitiquesCommercialesContenu.champKey('relance-${i + 1}'),
+          cle: pol.relanceRang(rang: '${i + 1}'),
+          detailCle: i == 0 ? pol.relancesDetail : null,
+          valeur: pol.relanceApres(jours: pol.jours(n: jours[i])),
+          chiffres: true,
+          complement: i == jours.length - 1 ? comparaison : null,
+        ),
+    ];
+  }
+
+  /// Les relances de [jours] en une phrase, pour la comparaison.
+  String _texteRelances(List<int>? jours) {
+    final pol = t.admin.finance.pol;
+    if (jours == null || jours.isEmpty) return pol.relancesNonFixees;
+    return <String>[
+      for (int i = 0; i < jours.length; i++)
+        pol.relanceComparaison(
+          rang: pol.relanceRang(rang: '${i + 1}'),
+          apres: pol.relanceApres(jours: pol.jours(n: jours[i])),
+        ),
+    ].join(pol.separateurComparaison);
+  }
+
+  /// Les budgets de pilotage, **non contraignants** (guide §5.7, ECARTS
+  /// D5) : une ligne par budget, ou « Pas encore fixés ». Lus, jamais un
+  /// champ sur cet ecran pour l'instant (question 21).
+  List<Widget> _lignesBudgets() {
+    final pol = t.admin.finance.pol;
+    final List<BudgetPilotage> budgets = _lue.budgets;
+    final Widget? comparaison = _budgetsDifferent
+        ? _texteComparaison(
+            'budgets',
+            _texteBudgets(widget.active.budgets),
+            chiffres: false,
+          )
+        : null;
+    if (budgets.isEmpty) {
+      return <Widget>[
+        LigneCleValeur(
+          key: PolitiquesCommercialesContenu.champKey('budgets'),
+          cle: pol.budgets,
+          detailCle: pol.budgetsDetail,
+          valeur: pol.budgetsNonFixes,
+          complement: comparaison,
+        ),
+      ];
+    }
+    return <Widget>[
+      for (int i = 0; i < budgets.length; i++)
+        LigneCleValeur(
+          key: PolitiquesCommercialesContenu.champKey(
+            'budget-${budgets[i].nature.name}',
+          ),
+          cle: _libelleBudget(budgets[i].nature),
+          detailCle: i == 0 ? pol.budgetsDetail : null,
+          valeur: pol.budgetValeur(
+            valeur: pourMilleEnTexte(budgets[i].pourMille),
+          ),
+          chiffres: true,
+          complement: i == budgets.length - 1 ? comparaison : null,
+        ),
+    ];
+  }
+
+  String _libelleBudget(NatureBudget nature) => switch (nature) {
+    NatureBudget.marketing => t.admin.finance.pol.budgetMarketing,
+    NatureBudget.operationnel => t.admin.finance.pol.budgetOperationnel,
+  };
+
+  /// Les budgets de [budgets] en une phrase, pour la comparaison.
+  String _texteBudgets(List<BudgetPilotage> budgets) {
+    final pol = t.admin.finance.pol;
+    if (budgets.isEmpty) return pol.budgetsNonFixes;
+    return <String>[
+      for (final BudgetPilotage b in budgets)
+        pol.budgetComparaison(
+          libelle: _libelleBudget(b.nature),
+          valeur: pol.budgetValeur(valeur: pourMilleEnTexte(b.pourMille)),
+        ),
+    ].join(pol.separateurComparaison);
+  }
+
   /// Vrai quand la marge de reference du brouillon differe de l'active.
   bool get _margeDiffere =>
       _estBrouillon &&
@@ -918,7 +1095,7 @@ class _PolitiquesCommercialesContenuState
       _Nature.remise => pol.suffixeRemise(symbole: symbole),
       _Nature.eleves => pol.uniteEleves,
       _Nature.seances => pol.uniteSeances,
-      _Nature.groupes => pol.uniteGroupes,
+      _Nature.classes => pol.uniteClasses,
       _Nature.jours => pol.uniteJours,
     };
   }
@@ -1005,7 +1182,7 @@ String _texteValeur(Object? valeur, _Nature nature) {
     final int n => switch (nature) {
       _Nature.eleves => pol.eleves(n: n),
       _Nature.seances => pol.seances(n: n),
-      _Nature.groupes => pol.groupes(n: n),
+      _Nature.classes => pol.classes(n: n),
       _ => pol.jours(n: n),
     },
     _ => '$valeur',
@@ -1093,6 +1270,69 @@ class _EnteteVersion extends StatelessWidget {
           )
         else
           Text(pol.sansBrouillon, style: textes.bodyLarge),
+      ],
+    );
+  }
+}
+
+/// Un reglage oui ou non d'un brouillon (activation de l'essai) : libelle,
+/// consequence (K-58), etat en mots et interrupteur, en un seul noeud pour
+/// le lecteur d'ecran.
+class _InterrupteurPolitique extends StatelessWidget {
+  const _InterrupteurPolitique({
+    required this.libelle,
+    required this.consequence,
+    required this.etat,
+    required this.valeur,
+    required this.onChanged,
+    required this.comparaison,
+    super.key,
+  });
+
+  final String libelle;
+  final String consequence;
+
+  /// L'etat en mots (« Activé », « Désactivé ») : jamais l'interrupteur seul.
+  final String etat;
+  final bool valeur;
+  final ValueChanged<bool> onChanged;
+  final Widget? comparaison;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        MergeSemantics(
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(libelle, style: textes.titleSmall),
+                    Ecart.vXs,
+                    Text(
+                      consequence,
+                      style: palette.inkMuted.applyTo(
+                        textes.bodySmall ?? const TextStyle(),
+                      ),
+                    ),
+                    Ecart.vXs,
+                    Text(etat, style: textes.bodyMedium),
+                  ],
+                ),
+              ),
+              Ecart.hMd,
+              Switch.adaptive(value: valeur, onChanged: onChanged),
+            ],
+          ),
+        ),
+        if (comparaison case final Widget c) ...<Widget>[Ecart.vXs, c],
       ],
     );
   }

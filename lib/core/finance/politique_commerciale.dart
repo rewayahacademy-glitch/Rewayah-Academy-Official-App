@@ -50,6 +50,39 @@ class RemiseRang {
   final Montant remise;
 }
 
+/// La nature d'un budget de pilotage (guide §5.7 « budgets non
+/// contraignants » ; ECARTS D5).
+enum NatureBudget {
+  /// Le budget marketing.
+  marketing,
+
+  /// Le budget operationnel.
+  operationnel,
+}
+
+/// Un budget de pilotage, en pour mille. **Non contraignant** : un repere
+/// de depense, jamais un blocage ni une sanction (guide §1.5, §5.7).
+@immutable
+class BudgetPilotage {
+  /// Cree le budget.
+  const BudgetPilotage({required this.nature, required this.pourMille});
+
+  /// Sa nature.
+  final NatureBudget nature;
+
+  /// Sa valeur, en pour mille (80 = 8 %).
+  final int pourMille;
+
+  @override
+  bool operator ==(Object other) =>
+      other is BudgetPilotage &&
+      other.nature == nature &&
+      other.pourMille == pourMille;
+
+  @override
+  int get hashCode => Object.hash(nature, pourMille);
+}
+
 /// Une version de la politique commerciale.
 @immutable
 class PolitiqueCommerciale {
@@ -61,6 +94,7 @@ class PolitiqueCommerciale {
     required this.tarifEnfant,
     required this.tarifAdulte,
     required this.essaisMax,
+    required this.essaiActif,
     required this.remisesParRang,
     required this.baseHoraire,
     required this.plafondHoraire,
@@ -68,12 +102,14 @@ class PolitiqueCommerciale {
     required this.capaciteAdulte,
     required this.capaciteDebutant,
     required this.minimumOuverture,
-    required this.groupesObjectif,
-    required this.groupesMax,
+    required this.classesObjectif,
+    required this.classesMax,
     required this.joursConservationPlace,
     required this.margeReferencePourMille,
     required this.railsActifs,
     this.allocationInternet,
+    this.joursRelance,
+    this.budgets = const <BudgetPilotage>[],
   });
 
   /// L'identifiant de la version, tel que rendu.
@@ -93,6 +129,10 @@ class PolitiqueCommerciale {
 
   /// Le nombre maximal de seances d'essai par nouveau profil (§1.2).
   final int essaisMax;
+
+  /// Vrai quand l'essai est propose aux nouveaux profils (guide §5.7
+  /// « activation », ECARTS D8).
+  final bool essaiActif;
 
   /// Les remises par rang, dans l'ordre croissant des rangs. Un rang absent
   /// n'a aucune remise (rangs 1 et 2 au lancement).
@@ -117,10 +157,10 @@ class PolitiqueCommerciale {
   final int minimumOuverture;
 
   /// L'objectif courant de classes actives par enseignant.
-  final int groupesObjectif;
+  final int classesObjectif;
 
   /// Le maximum normal de classes actives par enseignant.
-  final int groupesMax;
+  final int classesMax;
 
   /// La duree de conservation d'une place non financee, en jours (§1.7).
   final int joursConservationPlace;
@@ -136,6 +176,17 @@ class PolitiqueCommerciale {
   /// L'allocation Internet par enseignant eligible, ou `null` quand la
   /// politique ne la fixe pas encore (montant configurable, §1.4).
   final Montant? allocationInternet;
+
+  /// Les regles de relance d'une periode non financee (guide §1.7, §5.7
+  /// « regles de relance visibles », FI-BR-16) : les jours, comptes depuis
+  /// le debut de la periode, ou un rappel part vers le tuteur ou l'adulte
+  /// autonome, jamais vers l'enfant. `null` quand la politique ne les fixe
+  /// pas encore.
+  final List<int>? joursRelance;
+
+  /// Les budgets de pilotage, **non contraignants** (guide §5.7, ECARTS D5).
+  /// Vide quand la politique n'en fixe aucun.
+  final List<BudgetPilotage> budgets;
 
   /// La remise du membre payant de rang [rang] (1 = premier), ou `null`
   /// quand ce rang n'en a aucune. Lecture de la politique, jamais un calcul

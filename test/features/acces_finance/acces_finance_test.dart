@@ -28,6 +28,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
 import 'package:rewayah_academy/core/finance/mouvements_profil.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
@@ -36,19 +37,25 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
+import 'package:rewayah_academy/core/tc_horloge/demonstration_horloge.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/bandeau_attention.dart';
 import 'package:rewayah_academy/core/widgets/pastille_financiere.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/acces_finance/acces_finance.dart';
+import 'package:rewayah_academy/features/accueil_eleve/accueil_accessibilite.dart';
 import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
 import 'package:rewayah_academy/features/compte/acces_page.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart';
+import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
+import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 import 'package:rewayah_academy/features/demo/finance_demo.dart';
 import 'package:rewayah_academy/features/foyer/fiche/acces_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
+import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
+import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/carte_groupe.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/mes_groupes_page.dart';
 
@@ -59,28 +66,68 @@ import '../../teaching_core/a/support/hote_tc_a.dart';
 /// L'instant de reference : le 4 octobre 2026, jour de la demonstration.
 final DateTime _maintenant = DateTime(2026, 10, 4, 17);
 
-/// Les acces rendus tels quels, ou un echec.
+/// Les acces du foyer rendus tels quels.
 class _AccesFixes implements PortAccesFoyer {
-  const _AccesFixes(this.rendus, {this.echec = false});
+  const _AccesFixes(this.rendus);
 
   final List<AccesBeneficiaire> rendus;
+
+  @override
+  Future<List<AccesBeneficiaire>> acces() async => rendus;
+}
+
+/// L'acces de l'eleve connecte, borne a sa session (FI-BR-08, revue
+/// FI-VAGUE-R R4-02) : sa seule ligne, aucune, ou un echec.
+class _MonAccesFixe implements PortMonAcces {
+  const _MonAccesFixe(this.rendu, {this.echec = false});
+
+  final AccesBeneficiaire? rendu;
   final bool echec;
 
   @override
-  Future<List<AccesBeneficiaire>> acces() async {
-    if (echec) throw Exception('lecture des acces refusee');
-    return rendus;
+  Future<AccesBeneficiaire?> monAcces() async {
+    if (echec) throw Exception('lecture de l acces refusee');
+    return rendu;
   }
 }
 
-/// Des acces qui ne se rendent qu'a la demande du test : l'ecran se lit
-/// pendant le chargement (revue FI-9a).
-class _AccesEnAttente implements PortAccesFoyer {
-  final Completer<List<AccesBeneficiaire>> reponse =
-      Completer<List<AccesBeneficiaire>>();
+/// L'acces de l'eleve connecte, rendu a la demande du test.
+class _MonAccesEnAttente implements PortMonAcces {
+  final Completer<AccesBeneficiaire?> reponse = Completer<AccesBeneficiaire?>();
 
   @override
-  Future<List<AccesBeneficiaire>> acces() => reponse.future;
+  Future<AccesBeneficiaire?> monAcces() => reponse.future;
+}
+
+/// L'acces de la personne connectee, qui compte ses lectures et rend une
+/// ligne distincte a chacune : une ligne lue pour une autre personne ne doit
+/// jamais survivre a un changement de session.
+class _MonAccesCompte implements PortMonAcces {
+  int lectures = 0;
+
+  @override
+  Future<AccesBeneficiaire?> monAcces() async {
+    lectures++;
+    return AccesBeneficiaire(
+      eleveId: 'lecture-$lectures',
+      prenom: 'Aïcha',
+      etatAffiche: EtatAccesAffiche.sansEcheance,
+      seancesPayantesOuvertes: true,
+    );
+  }
+}
+
+/// Un port de l'acces du FOYER qui compte ses lectures : un ecran d'eleve ne
+/// doit jamais en faire une (revue FI-VAGUE-R R4-02). Il rend les seances
+/// d'Ibrahim fermees : si l'ecran le lisait, il le montrerait.
+class _AccesFoyerEspion implements PortAccesFoyer {
+  int lectures = 0;
+
+  @override
+  Future<List<AccesBeneficiaire>> acces() async {
+    lectures++;
+    return DonneesFinanceDemo.acces(JeuFoyerFinance.unARegulariser);
+  }
 }
 
 /// Un port des paiements qui compte ses lectures de finance : l'ecran de
@@ -225,7 +272,8 @@ Seance _coursEnDirect(String eleveId) => Seance(
 
 List<Override> _surchargesEnfant({
   required String eleveId,
-  PortAccesFoyer? acces,
+  PortMonAcces? acces,
+  PortAccesFoyer? foyer,
   PortPaiementsFoyer? paiements,
   bool horsLigne = false,
 }) => <Override>[
@@ -236,10 +284,19 @@ List<Override> _surchargesEnfant({
   serviceReseauProvider.overrideWithValue(
     FauxServiceReseau(horsLigneRendu: horsLigne),
   ),
-  if (acces != null) portAccesFoyerProvider.overrideWithValue(acces),
+  // L'acces est relu par personne connectee : la session la nomme.
+  sourceSessionProvider.overrideWithValue(
+    FausseSourceSession(sessionActive(AppRole.student)),
+  ),
+  if (acces != null) portMonAccesProvider.overrideWithValue(acces),
+  if (foyer != null) portAccesFoyerProvider.overrideWithValue(foyer),
   if (paiements != null)
     portPaiementsFoyerProvider.overrideWithValue(paiements),
 ];
+
+/// L'acces d'Ibrahim, connecte, dans le jeu [jeu].
+MonAccesFinanceDemo _ibrahim(JeuFoyerFinance jeu, {EtatPlace? place}) =>
+    MonAccesFinanceDemo(jeu, DonneesFinanceDemo.ibrahimId, place: place);
 
 Widget _accueil() => AccueilElevePage(horloge: () => _maintenant);
 
@@ -260,6 +317,106 @@ void _verifierSansCauseFinanciere(WidgetTester tester) {
     expect(interdit.hasMatch(texte), isFalse, reason: texte);
   }
 }
+
+/// La fiche eleve > Acces sur le vrai routeur, session tuteur (FI-9a).
+Future<void> _monterFicheAcces(
+  WidgetTester tester, {
+  required JeuFoyerFinance jeu,
+  required String eleveId,
+  bool finance = true,
+  Size taille = const Size(390, 844),
+  PortAccesFoyer? acces,
+  PortPaiementsFoyer? paiements,
+  Map<String, EtatPlace> places = const <String, EtatPlace>{},
+  double echelle = 1,
+  TextDirection sens = TextDirection.ltr,
+}) async {
+  _taille(tester, taille);
+  final FinancesProfil profil = _finance(jeu, eleveId);
+  final FauxServiceAppairage appairage = FauxServiceAppairage()
+    ..elevesRendus = <EleveDuFoyer>[
+      EleveDuFoyer(
+        id: eleveId,
+        prenom: profil.prenom,
+        identifiantImmuable: 'STUD-FI-000002',
+        mode: InterfaceMode.standard,
+        camera: CameraPolicy.forbidden,
+        finAcces: _acces(jeu, eleveId).finAcces,
+      ),
+    ];
+  late GoRouter routeur;
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: <Override>[
+        ...surchargesRouteur(
+          FausseSourceSession(sessionActive(AppRole.guardian)),
+          appairage: appairage,
+        ),
+        horlogeFoyerProvider.overrideWithValue(() => _maintenant),
+        portAccesFoyerProvider.overrideWithValue(
+          acces ?? AccesFoyerFinanceDemo(jeu, places: places),
+        ),
+        if (finance)
+          portPaiementsFoyerProvider.overrideWithValue(
+            paiements ?? PaiementsFoyerFinanceDemo(jeu),
+          ),
+      ],
+      child: TranslationProvider(
+        child: Consumer(
+          builder: (BuildContext _, WidgetRef ref, Widget? _) {
+            routeur = ref.read(routeurProvider);
+            return MaterialApp.router(
+              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              routerConfig: routeur,
+              builder: (BuildContext context, Widget? enfant) => MediaQuery(
+                data: MediaQuery.of(context)
+                    .copyWith(textScaler: TextScaler.linear(echelle)),
+                child: Directionality(
+                  textDirection: sens,
+                  child: enfant ?? const SizedBox.shrink(),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    ),
+  );
+  await stabiliser(tester);
+  routeur.go(Routes.ficheEleveSousPage(eleveId, 'acces'));
+  await stabiliser(tester);
+}
+
+/// L'eleve adulte autonome dans Mon espace (FI-9b).
+List<Override> _surchargesAdulte({
+  PortPaiementsFoyer? paiements,
+  PortMonAcces? acces,
+  PortAccesFoyer? foyer,
+  LigneFamilleAdulte? ligne = LigneFamilleAdulte.ajouterMaFamille,
+}) => <Override>[
+  horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
+  identiteTitulaireProvider.overrideWith(
+    (Ref _) async => const IdentiteTitulaire(
+      prenom: 'Youssouf',
+      nom: 'Diallo',
+      methodeConnexion: MethodeConnexion.lienCourriel,
+    ),
+  ),
+  monEspaceAdulteProvider.overrideWith(
+    (Ref _) async => MonEspaceAdulteVM(ligneFamille: ligne),
+  ),
+  if (paiements != null) ...<Override>[
+    portPaiementsFoyerProvider.overrideWithValue(paiements),
+    // FI-9b : l'adulte seul lit ses finances par son propre port.
+    portMesFinancesProvider.overrideWithValue(_MesFinancesDe(paiements)),
+  ],
+  // L'acces est relu par personne connectee : la session la nomme.
+  sourceSessionProvider.overrideWithValue(
+    FausseSourceSession(sessionActive(AppRole.student)),
+  ),
+  if (acces != null) portMonAccesProvider.overrideWithValue(acces),
+  if (foyer != null) portAccesFoyerProvider.overrideWithValue(foyer),
+];
 
 void main() {
   group('regles pures', () {
@@ -355,12 +512,14 @@ void main() {
       final _PaiementsEspion espion = _PaiementsEspion(
         DonneesFinanceDemo.finances(JeuFoyerFinance.unARegulariser),
       );
+      final _AccesFoyerEspion foyer = _AccesFoyerEspion();
       await tester.pumpWidget(
         _hote(
           _accueil(),
           surcharges: _surchargesEnfant(
             eleveId: DonneesFinanceDemo.ibrahimId,
-            acces: const AccesFoyerFinanceDemo(JeuFoyerFinance.unARegulariser),
+            acces: _ibrahim(JeuFoyerFinance.unARegulariser),
+            foyer: foyer,
             paiements: espion,
           ),
         ),
@@ -375,6 +534,9 @@ void main() {
       expect(find.text(t.eleve.accueil.coran), findsOneWidget);
       _verifierSansCauseFinanciere(tester);
       expect(espion.lecturesFinances, 0);
+      // R4-02 : l'acces du foyer entier n'est jamais charge sur l'appareil
+      // de l'enfant ; sa seule ligne vient du port borne a sa session.
+      expect(foyer.lectures, 0);
     });
 
     testWidgets('essais epuises (2/2) : la meme copie neutre', (
@@ -385,7 +547,7 @@ void main() {
           _accueil(),
           surcharges: _surchargesEnfant(
             eleveId: DonneesFinanceDemo.aichaId,
-            acces: const _AccesFixes(<AccesBeneficiaire>[_essaisEpuises]),
+            acces: const _MonAccesFixe(_essaisEpuises),
           ),
         ),
       );
@@ -395,27 +557,37 @@ void main() {
       _verifierSansCauseFinanciere(tester);
     });
 
-    final Map<String, (String, PortAccesFoyer?)> ouverts =
-        <String, (String, PortAccesFoyer?)>{
+    final Map<String, (String, PortMonAcces?)> ouverts =
+        <String, (String, PortMonAcces?)>{
           'mois finance a solde nul': (
             DonneesFinanceDemo.ibrahimId,
-            const AccesFoyerFinanceDemo(JeuFoyerFinance.tousFinances),
+            _ibrahim(JeuFoyerFinance.tousFinances),
           ),
           'essai 1/2': (
             DonneesFinanceDemo.aichaId,
-            const AccesFoyerFinanceDemo(JeuFoyerFinance.unEnEssai),
+            const MonAccesFinanceDemo(
+              JeuFoyerFinance.unEnEssai,
+              DonneesFinanceDemo.aichaId,
+            ),
+          ),
+          'acces reactive': (
+            DonneesFinanceDemo.ibrahimId,
+            _ibrahim(
+              JeuFoyerFinance.unARegulariser,
+              place: EtatPlace.reactivee,
+            ),
           ),
           'production (port neutre)': (DonneesFinanceDemo.ibrahimId, null),
           'lecture en echec': (
             DonneesFinanceDemo.ibrahimId,
-            const _AccesFixes(<AccesBeneficiaire>[], echec: true),
+            const _MonAccesFixe(null, echec: true),
           ),
-          'eleve absent de la reponse': (
-            'inconnu',
-            const AccesFoyerFinanceDemo(JeuFoyerFinance.unARegulariser),
+          'aucune ligne pour l appelant': (
+            DonneesFinanceDemo.ibrahimId,
+            const _MonAccesFixe(null),
           ),
         };
-    for (final MapEntry<String, (String, PortAccesFoyer?)> cas
+    for (final MapEntry<String, (String, PortMonAcces?)> cas
         in ouverts.entries) {
       testWidgets('${cas.key} : Rejoindre rendu et actif, aucun bandeau', (
         WidgetTester tester,
@@ -438,7 +610,7 @@ void main() {
 
     testWidgets('acces en lecture : Rejoindre present et inerte, puis actif '
         'une fois l acces ouvert rendu', (WidgetTester tester) async {
-      final _AccesEnAttente port = _AccesEnAttente();
+      final _MonAccesEnAttente port = _MonAccesEnAttente();
       await tester.pumpWidget(
         _hote(
           _accueil(),
@@ -458,7 +630,7 @@ void main() {
       expect(find.text(t.eleve.accueil.horsLigne), findsNothing);
 
       port.reponse.complete(
-        DonneesFinanceDemo.acces(JeuFoyerFinance.tousFinances),
+        _acces(JeuFoyerFinance.tousFinances, DonneesFinanceDemo.ibrahimId),
       );
       await tester.pumpAndSettle();
       expect(tester.widget<ActionPrincipale>(_rejoindre).onPress, isNotNull);
@@ -466,7 +638,7 @@ void main() {
 
     testWidgets('acces en lecture puis ferme : Rejoindre inerte puis retire, '
         'jamais actif entre les deux', (WidgetTester tester) async {
-      final _AccesEnAttente port = _AccesEnAttente();
+      final _MonAccesEnAttente port = _MonAccesEnAttente();
       await tester.pumpWidget(
         _hote(
           _accueil(),
@@ -480,7 +652,7 @@ void main() {
       await tester.pump();
       expect(tester.widget<ActionPrincipale>(_rejoindre).onPress, isNull);
 
-      port.reponse.complete(<AccesBeneficiaire>[_essaisEpuises]);
+      port.reponse.complete(_essaisEpuises);
       await tester.pumpAndSettle();
       expect(_rejoindre, findsNothing);
       expect(find.byKey(BandeauAccesEnfant.cle), findsOneWidget);
@@ -493,7 +665,7 @@ void main() {
           _accueil(),
           surcharges: _surchargesEnfant(
             eleveId: DonneesFinanceDemo.ibrahimId,
-            acces: const AccesFoyerFinanceDemo(JeuFoyerFinance.tousFinances),
+            acces: _ibrahim(JeuFoyerFinance.tousFinances),
             horsLigne: true,
           ),
         ),
@@ -510,7 +682,7 @@ void main() {
           _accueil(),
           surcharges: _surchargesEnfant(
             eleveId: DonneesFinanceDemo.ibrahimId,
-            acces: const AccesFoyerFinanceDemo(JeuFoyerFinance.unARegulariser),
+            acces: _ibrahim(JeuFoyerFinance.unARegulariser),
             horsLigne: true,
           ),
         ),
@@ -518,6 +690,50 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(BandeauAccesEnfant.cle), findsOneWidget);
       expect(_rejoindre, findsNothing);
+    });
+
+    testWidgets('R4-02 : l acces du foyer dit « ferme », le sien « ouvert » : '
+        'seul le sien compte, le foyer n est jamais lu', (
+      WidgetTester tester,
+    ) async {
+      final _AccesFoyerEspion foyer = _AccesFoyerEspion();
+      await tester.pumpWidget(
+        _hote(
+          _accueil(),
+          surcharges: _surchargesEnfant(
+            eleveId: DonneesFinanceDemo.ibrahimId,
+            acces: _ibrahim(JeuFoyerFinance.tousFinances),
+            foyer: foyer,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(BandeauAccesEnfant.cle), findsNothing);
+      expect(tester.widget<ActionPrincipale>(_rejoindre).onPress, isNotNull);
+      expect(foyer.lectures, 0);
+    });
+
+    testWidgets('R4-04 : place liberee (acces suspendu) : la meme copie '
+        'neutre, jamais « libérée » ni une date', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        _hote(
+          _accueil(),
+          surcharges: _surchargesEnfant(
+            eleveId: DonneesFinanceDemo.ibrahimId,
+            acces: _ibrahim(
+              JeuFoyerFinance.unARegulariser,
+              place: EtatPlace.liberee,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(BandeauAccesEnfant.cle), findsOneWidget);
+      expect(find.byKey(BandeauPlace.suspenduKey), findsNothing);
+      expect(_rejoindre, findsNothing);
+      expect(find.textContaining('libérée'), findsNothing);
+      expect(find.textContaining('suspendu'), findsNothing);
+      _verifierSansCauseFinanciere(tester);
     });
 
     for (final TextDirection sens in TextDirection.values) {
@@ -533,9 +749,7 @@ void main() {
               luminosite: luminosite,
               surcharges: _surchargesEnfant(
                 eleveId: DonneesFinanceDemo.ibrahimId,
-                acces: const AccesFoyerFinanceDemo(
-                  JeuFoyerFinance.unARegulariser,
-                ),
+                acces: _ibrahim(JeuFoyerFinance.unARegulariser),
               ),
             ),
           );
@@ -564,13 +778,18 @@ void main() {
     Finder rejoindreGroupe() =>
         find.widgetWithText(ActionPrincipale, LibellesGroupe.rejoindre);
 
-    Future<void> poser(WidgetTester tester, PortAccesFoyer acces) async {
+    Future<void> poser(
+      WidgetTester tester,
+      PortMonAcces acces, {
+      PortAccesFoyer? foyer,
+    }) async {
       await tester.pumpWidget(
         hoteTcA(
           MesGroupesPage(onRejoindre: (_) {}),
           surcharges: <Override>[
             ...surchargesDemonstration(),
-            portAccesFoyerProvider.overrideWithValue(acces),
+            portMonAccesProvider.overrideWithValue(acces),
+            if (foyer != null) portAccesFoyerProvider.overrideWithValue(foyer),
             sourceSessionProvider.overrideWithValue(
               FausseSourceSession(sessionActive(AppRole.student)),
             ),
@@ -586,10 +805,7 @@ void main() {
     testWidgets('seances fermees : aucun Rejoindre, la copie neutre, aucun '
         'mot financier', (WidgetTester tester) async {
       await avecLargeur(tester, largeurMobile, () async {
-        await poser(
-          tester,
-          _AccesFixes(<AccesBeneficiaire>[accesDeMoi(ouvert: false)]),
-        );
+        await poser(tester, _MonAccesFixe(accesDeMoi(ouvert: false)));
         expect(find.byType(CarteGroupe), findsWidgets);
         expect(rejoindreGroupe(), findsNothing);
         expect(find.byKey(BandeauAccesEnfant.cle), findsOneWidget);
@@ -611,10 +827,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await avecLargeur(tester, largeurMobile, () async {
-        await poser(
-          tester,
-          _AccesFixes(<AccesBeneficiaire>[accesDeMoi(ouvert: true)]),
-        );
+        await poser(tester, _MonAccesFixe(accesDeMoi(ouvert: true)));
         expect(find.byKey(BandeauAccesEnfant.cle), findsNothing);
         expect(rejoindreGroupe(), findsWidgets);
         for (final ActionPrincipale b in tester.widgetList<ActionPrincipale>(
@@ -629,7 +842,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await avecLargeur(tester, largeurMobile, () async {
-        final _AccesEnAttente port = _AccesEnAttente();
+        final _MonAccesEnAttente port = _MonAccesEnAttente();
         await poser(tester, port);
         expect(find.byKey(BandeauAccesEnfant.cle), findsNothing);
         expect(rejoindreGroupe(), findsWidgets);
@@ -638,7 +851,7 @@ void main() {
         )) {
           expect(b.onPress, isNull);
         }
-        port.reponse.complete(<AccesBeneficiaire>[accesDeMoi(ouvert: false)]);
+        port.reponse.complete(accesDeMoi(ouvert: false));
         await tester.pump();
         await tester.pump();
         expect(rejoindreGroupe(), findsNothing);
@@ -646,19 +859,33 @@ void main() {
       });
     });
 
-    testWidgets(
-      'acces d un autre profil ou lecture en echec : rien ne change',
-      (WidgetTester tester) async {
+    for (final (String nom, PortMonAcces port) in <(String, PortMonAcces)>[
+      ('aucune ligne pour l appelant', const _MonAccesFixe(null)),
+      ('lecture en echec', const _MonAccesFixe(null, echec: true)),
+    ]) {
+      testWidgets('$nom : rien ne change', (WidgetTester tester) async {
         await avecLargeur(tester, largeurMobile, () async {
-          await poser(
-            tester,
-            const _AccesFixes(<AccesBeneficiaire>[_essaisEpuises]),
-          );
+          await poser(tester, port);
           expect(find.byKey(BandeauAccesEnfant.cle), findsNothing);
           expect(rejoindreGroupe(), findsWidgets);
         });
-      },
-    );
+      });
+    }
+
+    testWidgets('R4-02 : le foyer n est jamais lu, meme quand il dirait '
+        '« ferme »', (WidgetTester tester) async {
+      await avecLargeur(tester, largeurMobile, () async {
+        final _AccesFoyerEspion foyer = _AccesFoyerEspion();
+        await poser(
+          tester,
+          _MonAccesFixe(accesDeMoi(ouvert: true)),
+          foyer: foyer,
+        );
+        expect(find.byKey(BandeauAccesEnfant.cle), findsNothing);
+        expect(rejoindreGroupe(), findsWidgets);
+        expect(foyer.lectures, 0);
+      });
+    });
   });
 
   group('tuteur : Compte > Acces', () {
@@ -756,57 +983,15 @@ void main() {
       Size taille = const Size(390, 844),
       PortAccesFoyer? acces,
       PortPaiementsFoyer? paiements,
-    }) async {
-      _taille(tester, taille);
-      final FinancesProfil profil = _finance(jeu, eleveId);
-      final FauxServiceAppairage appairage = FauxServiceAppairage()
-        ..elevesRendus = <EleveDuFoyer>[
-          EleveDuFoyer(
-            id: eleveId,
-            prenom: profil.prenom,
-            identifiantImmuable: 'STUD-FI-000002',
-            mode: InterfaceMode.standard,
-            camera: CameraPolicy.forbidden,
-            finAcces: _acces(jeu, eleveId).finAcces,
-          ),
-        ];
-      late GoRouter routeur;
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: <Override>[
-            ...surchargesRouteur(
-              FausseSourceSession(sessionActive(AppRole.guardian)),
-              appairage: appairage,
-            ),
-            horlogeFoyerProvider.overrideWithValue(() => _maintenant),
-            portAccesFoyerProvider.overrideWithValue(
-              acces ?? AccesFoyerFinanceDemo(jeu),
-            ),
-            if (finance)
-              portPaiementsFoyerProvider.overrideWithValue(
-                paiements ?? PaiementsFoyerFinanceDemo(jeu),
-              ),
-          ],
-          child: TranslationProvider(
-            child: Consumer(
-              builder: (BuildContext _, WidgetRef ref, Widget? _) {
-                routeur = ref.read(routeurProvider);
-                return MaterialApp.router(
-                  theme: AppTheme.pour(
-                    InterfaceMode.standard,
-                    Brightness.light,
-                  ),
-                  routerConfig: routeur,
-                );
-              },
-            ),
-          ),
-        ),
-      );
-      await stabiliser(tester);
-      routeur.go(Routes.ficheEleveSousPage(eleveId, 'acces'));
-      await stabiliser(tester);
-    }
+    }) => _monterFicheAcces(
+      tester,
+      jeu: jeu,
+      eleveId: eleveId,
+      finance: finance,
+      taille: taille,
+      acces: acces,
+      paiements: paiements,
+    );
 
     testWidgets('a regulariser : « Accès à régulariser », le manque exact, la '
         'place conservee ; jamais « ne peut plus entrer »', (
@@ -978,27 +1163,15 @@ void main() {
   group('adulte autonome : Mon espace', () {
     List<Override> surcharges({
       PortPaiementsFoyer? paiements,
-      PortAccesFoyer? acces,
+      PortMonAcces? acces,
+      PortAccesFoyer? foyer,
       LigneFamilleAdulte? ligne = LigneFamilleAdulte.ajouterMaFamille,
-    }) => <Override>[
-      horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(false)),
-      identiteTitulaireProvider.overrideWith(
-        (Ref _) async => const IdentiteTitulaire(
-          prenom: 'Youssouf',
-          nom: 'Diallo',
-          methodeConnexion: MethodeConnexion.lienCourriel,
-        ),
-      ),
-      monEspaceAdulteProvider.overrideWith(
-        (Ref _) async => MonEspaceAdulteVM(ligneFamille: ligne),
-      ),
-      if (paiements != null) ...<Override>[
-        portPaiementsFoyerProvider.overrideWithValue(paiements),
-        // FI-9b : l'adulte seul lit ses finances par son propre port.
-        portMesFinancesProvider.overrideWithValue(_MesFinancesDe(paiements)),
-      ],
-      if (acces != null) portAccesFoyerProvider.overrideWithValue(acces),
-    ];
+    }) => _surchargesAdulte(
+      paiements: paiements,
+      acces: acces,
+      foyer: foyer,
+      ligne: ligne,
+    );
 
     testWidgets('a regulariser : « Accès à régulariser » et « Il manque 8 \$ '
         'pour financer janvier. »', (WidgetTester tester) async {
@@ -1032,9 +1205,9 @@ void main() {
         _hote(
           const MonEspaceAdultePage(),
           surcharges: surcharges(
-            acces: _AccesFixes(<AccesBeneficiaire>[
+            acces: _MonAccesFixe(
               _acces(JeuFoyerFinance.unEnEssai, DonneesFinanceDemo.aichaId),
-            ]),
+            ),
           ),
         ),
       );
@@ -1098,6 +1271,643 @@ void main() {
       });
     }
   });
+
+  group('R4-04 : place liberee (acces suspendu) et reactivation', () {
+    final AccesBeneficiaire libere = _acces(
+      JeuFoyerFinance.unARegulariser,
+      DonneesFinanceDemo.ibrahimId,
+    );
+
+    AccesBeneficiaire avec(EtatPlace place, {DateTime? jour}) =>
+        AccesBeneficiaire(
+          eleveId: libere.eleveId,
+          prenom: libere.prenom,
+          etatAffiche: libere.etatAffiche,
+          seancesPayantesOuvertes: place == EtatPlace.reactivee,
+          place: place,
+          datePlace: jour,
+        );
+
+    test('les phrases du tuteur et de l adulte, avec et sans date rendue', () {
+      final DateTime jour = DateTime(2026, 10, 9);
+      expect(
+        phrasePlace(avec(EtatPlace.liberee, jour: jour), prenom: 'Ibrahim'),
+        'La place réservée à Ibrahim a été libérée le 9 octobre 2026. '
+        'Son compte et ses contenus restent accessibles.',
+      );
+      expect(
+        phrasePlace(avec(EtatPlace.liberee), prenom: 'Ibrahim'),
+        t.argent.acces.suspenduTuteurSansDate(prenom: 'Ibrahim'),
+      );
+      expect(
+        phrasePlace(avec(EtatPlace.liberee, jour: jour)),
+        'Votre place a été libérée le 9 octobre 2026. Votre compte et vos '
+        'contenus restent accessibles.',
+      );
+      expect(
+        phrasePlace(avec(EtatPlace.reactivee, jour: jour), prenom: 'Ibrahim'),
+        'Ibrahim peut de nouveau rejoindre ses séances depuis le 9 octobre '
+        '2026.',
+      );
+      expect(
+        phrasePlace(avec(EtatPlace.reactivee)),
+        t.argent.acces.reactiveAdulteSansDate,
+      );
+      // Sans etat de place rendu, rien n'est dit.
+      expect(phrasePlace(libere, prenom: 'Ibrahim'), isNull);
+      expect(phrasePlace(null), isNull);
+    });
+
+    test('le contrat de demonstration : liberee ferme, reactivee rouvre, '
+        'jamais de compte ferme', () {
+      final AccesBeneficiaire l = DonneesFinanceDemo.acces(
+        JeuFoyerFinance.unARegulariser,
+        places: <String, EtatPlace>{
+          DonneesFinanceDemo.ibrahimId: EtatPlace.liberee,
+        },
+      ).firstWhere((AccesBeneficiaire a) => a.eleveId == libere.eleveId);
+      expect(l.place, EtatPlace.liberee);
+      expect(l.datePlace, DonneesFinanceDemo.jourPlaceLiberee);
+      expect(ouvertureSeances(l), OuvertureSeances.fermees);
+      final AccesBeneficiaire r = DonneesFinanceDemo.acces(
+        JeuFoyerFinance.unARegulariser,
+        places: <String, EtatPlace>{
+          DonneesFinanceDemo.ibrahimId: EtatPlace.reactivee,
+        },
+      ).firstWhere((AccesBeneficiaire a) => a.eleveId == libere.eleveId);
+      expect(r.place, EtatPlace.reactivee);
+      expect(ouvertureSeances(r), OuvertureSeances.ouvertes);
+      // Sans etat demande, le jeu reste celui d'avant.
+      expect(
+        DonneesFinanceDemo.acces(JeuFoyerFinance.unARegulariser)
+            .every((AccesBeneficiaire a) => a.place == null),
+        isTrue,
+      );
+    });
+
+    testWidgets('tuteur, Compte > Acces : la place liberee se lit dans la '
+        'ligne, pastille « Suspendu »', (WidgetTester tester) async {
+      _taille(tester, const Size(390, 844));
+      await tester.pumpWidget(
+        _hote(
+          const AccesComptePage(),
+          surcharges: <Override>[
+            portAccesFoyerProvider.overrideWithValue(
+              const AccesFoyerFinanceDemo(
+                JeuFoyerFinance.unARegulariser,
+                places: <String, EtatPlace>{
+                  DonneesFinanceDemo.ibrahimId: EtatPlace.liberee,
+                  DonneesFinanceDemo.mariamId: EtatPlace.reactivee,
+                },
+              ),
+            ),
+            portPaiementsFoyerProvider.overrideWithValue(
+              const PaiementsFoyerFinanceDemo(JeuFoyerFinance.unARegulariser),
+            ),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.text(
+          t.argent.acces.suspenduTuteur(
+            prenom: 'Ibrahim',
+            date: '9 octobre 2026',
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(t.argent.acces.pastilleSuspendu), findsOneWidget);
+      expect(
+        find.text(
+          t.argent.acces.reactiveTuteur(
+            prenom: 'Mariam',
+            date: '3 octobre 2026',
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(t.argent.acces.pastilleReactive), findsOneWidget);
+    });
+
+    testWidgets('tuteur, fiche > Acces : « Accès suspendu » avant le manque', (
+      WidgetTester tester,
+    ) async {
+      await _monterFicheAcces(
+        tester,
+        jeu: JeuFoyerFinance.unARegulariser,
+        eleveId: DonneesFinanceDemo.ibrahimId,
+        places: <String, EtatPlace>{
+          DonneesFinanceDemo.ibrahimId: EtatPlace.liberee,
+        },
+      );
+      final BandeauAttention bandeau = tester.widget<BandeauAttention>(
+        find.byKey(BandeauPlace.suspenduKey),
+      );
+      expect(bandeau.titre, 'Accès suspendu');
+      expect(
+        bandeau.message,
+        t.argent.acces.suspenduTuteur(
+          prenom: 'Ibrahim',
+          date: '9 octobre 2026',
+        ),
+      );
+      expect(find.byKey(AccesElevePage.pastilleSuspenduKey), findsOneWidget);
+      expect(find.byKey(AccesElevePage.bandeauKey), findsNothing);
+    });
+
+    testWidgets('tuteur, fiche > Acces : « Accès réactivé »', (
+      WidgetTester tester,
+    ) async {
+      await _monterFicheAcces(
+        tester,
+        jeu: JeuFoyerFinance.tousFinances,
+        eleveId: DonneesFinanceDemo.ibrahimId,
+        places: <String, EtatPlace>{
+          DonneesFinanceDemo.ibrahimId: EtatPlace.reactivee,
+        },
+      );
+      final BandeauAttention bandeau = tester.widget<BandeauAttention>(
+        find.byKey(BandeauPlace.reactiveKey),
+      );
+      expect(bandeau.titre, 'Accès réactivé');
+      expect(bandeau.ton, TonEtat.succes);
+      expect(find.byKey(BandeauPlace.suspenduKey), findsNothing);
+    });
+
+    testWidgets('adulte autonome, Mon espace : « Votre place a été libérée », '
+        'puis « Accès réactivé »', (WidgetTester tester) async {
+      for (final (EtatPlace place, Key cle, String phrase)
+          in <(EtatPlace, Key, String)>[
+            (
+              EtatPlace.liberee,
+              BandeauPlace.suspenduKey,
+              t.argent.acces.suspenduAdulte(date: '9 octobre 2026'),
+            ),
+            (
+              EtatPlace.reactivee,
+              BandeauPlace.reactiveKey,
+              t.argent.acces.reactiveAdulte(date: '9 octobre 2026'),
+            ),
+          ]) {
+        _taille(tester, const Size(390, 1400));
+        await tester.pumpWidget(
+          _hote(
+            const MonEspaceAdultePage(),
+            // La finance rendue dit encore « a regulariser » : la place
+            // liberee passe avant, et la reactivation n'a plus de manque.
+            surcharges: _surchargesAdulte(
+              paiements: place == EtatPlace.liberee
+                  ? _PaiementsEspion(_foyerDe(_adulteARegulariser))
+                  : null,
+              acces: _MonAccesFixe(avec(place, jour: DateTime(2026, 10, 9))),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(find.byKey(cle), findsOneWidget, reason: place.name);
+        expect(find.text(phrase), findsOneWidget, reason: place.name);
+        expect(
+          find.byKey(BandeauRegularisation.cle),
+          findsNothing,
+          reason: place.name,
+        );
+        expect(find.text(t.adulte.monEspace.monCompte), findsOneWidget);
+        await tester.pumpWidget(const SizedBox.shrink());
+      }
+    });
+
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets('320 px, texte 200 %, ${sens.name} : aucun debordement', (
+        WidgetTester tester,
+      ) async {
+        await _monterFicheAcces(
+          tester,
+          jeu: JeuFoyerFinance.unARegulariser,
+          eleveId: DonneesFinanceDemo.ibrahimId,
+          places: <String, EtatPlace>{
+            DonneesFinanceDemo.ibrahimId: EtatPlace.liberee,
+          },
+          taille: const Size(320, 1200),
+          echelle: 2,
+          sens: sens,
+        );
+        expect(find.byKey(BandeauPlace.suspenduKey), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+    }
+  });
+
+  group('R4-01 : Rejoindre selon l acces, partout ou une carte le propose', () {
+    final String moi = sessionActive(AppRole.student).profileId!;
+    AccesBeneficiaire accesDeMoi({required bool ouvert}) => AccesBeneficiaire(
+      eleveId: moi,
+      prenom: 'Aïcha',
+      etatAffiche: EtatAccesAffiche.sansEcheance,
+      seancesPayantesOuvertes: ouvert,
+      essaisUtilises: ouvert ? null : 2,
+      essaisMax: ouvert ? null : 2,
+    );
+
+    Finder rejoindre() =>
+        find.widgetWithText(ActionPrincipale, LibellesGroupe.rejoindre);
+
+    Future<void> espaceGroupe(WidgetTester tester, PortMonAcces acces) async {
+      await tester.pumpWidget(
+        hoteTcA(
+          EspaceGroupePage(
+            groupeId: GroupesDemonstration.anNour,
+            onRejoindre: (_) {},
+          ),
+          surcharges: <Override>[
+            ...surchargesDemonstration(),
+            sourceSessionProvider.overrideWithValue(
+              FausseSourceSession(sessionActive(AppRole.student)),
+            ),
+            portMonAccesProvider.overrideWithValue(acces),
+          ],
+        ),
+      );
+      for (int i = 0; i < 4; i++) {
+        await tester.pump();
+      }
+    }
+
+    testWidgets('Espace groupe ouvert avec l acces ferme : Rejoindre retire, '
+        'la copie neutre, aucun mot financier', (WidgetTester tester) async {
+      await avecLargeur(tester, largeurMobile, () async {
+        await espaceGroupe(tester, _MonAccesFixe(accesDeMoi(ouvert: false)));
+        expect(find.byType(CarteSession), findsOneWidget);
+        expect(rejoindre(), findsNothing);
+        expect(find.byKey(BandeauAccesEnfant.cle), findsOneWidget);
+        final RegExp interdit = RegExp(
+          r'pay|manque|usd|\$|€|solde|régularis|financ',
+          caseSensitive: false,
+        );
+        for (final String texte in _textes(tester)) {
+          expect(interdit.hasMatch(texte), isFalse, reason: texte);
+        }
+      });
+    });
+
+    testWidgets('Espace groupe, adulte autonome, acces ferme : sa copie, '
+        'jamais celle du tuteur (contre-revue FI-VAGUE-CORR)', (
+      WidgetTester tester,
+    ) async {
+      await avecLargeur(tester, largeurMobile, () async {
+        await espaceGroupe(
+          tester,
+          _MonAccesFixe(
+            AccesBeneficiaire(
+              eleveId: moi,
+              prenom: 'Youssef',
+              etatAffiche: EtatAccesAffiche.sansEcheance,
+              seancesPayantesOuvertes: false,
+              gereSonAcces: true,
+            ),
+          ),
+        );
+        expect(rejoindre(), findsNothing);
+        expect(find.byKey(BandeauAccesAdulte.cle), findsOneWidget);
+        expect(find.byKey(BandeauAccesEnfant.cle), findsNothing);
+        expect(find.text(t.argent.acces.enfantMessage), findsNothing);
+        for (final String texte in _textes(tester)) {
+          expect(
+            texte.toLowerCase().contains('tuteur'),
+            isFalse,
+            reason: texte,
+          );
+        }
+      });
+    });
+
+    testWidgets('Mes groupes, adulte autonome, acces ferme : jamais la copie '
+        'du tuteur (contre-revue FI-VAGUE-CORR)', (WidgetTester tester) async {
+      await avecLargeur(tester, largeurMobile, () async {
+        await tester.pumpWidget(
+          hoteTcA(
+            const MesGroupesPage(),
+            surcharges: <Override>[
+              ...surchargesDemonstration(),
+              sourceSessionProvider.overrideWithValue(
+                FausseSourceSession(sessionActive(AppRole.student)),
+              ),
+              portMonAccesProvider.overrideWithValue(
+                _MonAccesFixe(
+                  AccesBeneficiaire(
+                    eleveId: moi,
+                    prenom: 'Youssef',
+                    etatAffiche: EtatAccesAffiche.sansEcheance,
+                    seancesPayantesOuvertes: false,
+                    gereSonAcces: true,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+        for (int i = 0; i < 4; i++) {
+          await tester.pump();
+        }
+        expect(find.byKey(BandeauAccesAdulte.cle), findsOneWidget);
+        expect(find.text(t.argent.acces.enfantMessage), findsNothing);
+      });
+    });
+
+    testWidgets('Espace groupe, ligne sans la capacite (enfant) : la copie '
+        'de l enfant reste', (WidgetTester tester) async {
+      await avecLargeur(tester, largeurMobile, () async {
+        await espaceGroupe(tester, _MonAccesFixe(accesDeMoi(ouvert: false)));
+        expect(find.byKey(BandeauAccesEnfant.cle), findsOneWidget);
+        expect(find.byKey(BandeauAccesAdulte.cle), findsNothing);
+      });
+    });
+
+    testWidgets('Espace groupe, acces ouvert : Rejoindre rendu et actif', (
+      WidgetTester tester,
+    ) async {
+      await avecLargeur(tester, largeurMobile, () async {
+        await espaceGroupe(tester, _MonAccesFixe(accesDeMoi(ouvert: true)));
+        expect(find.byKey(BandeauAccesEnfant.cle), findsNothing);
+        expect(rejoindre(), findsOneWidget);
+        expect(tester.widget<ActionPrincipale>(rejoindre()).onPress, isNotNull);
+      });
+    });
+
+    testWidgets('Espace groupe, acces en lecture : Rejoindre present et '
+        'inerte, puis retire', (WidgetTester tester) async {
+      await avecLargeur(tester, largeurMobile, () async {
+        final _MonAccesEnAttente port = _MonAccesEnAttente();
+        await espaceGroupe(tester, port);
+        expect(rejoindre(), findsOneWidget);
+        expect(tester.widget<ActionPrincipale>(rejoindre()).onPress, isNull);
+        port.reponse.complete(accesDeMoi(ouvert: false));
+        await tester.pump();
+        await tester.pump();
+        expect(rejoindre(), findsNothing);
+        expect(find.byKey(BandeauAccesEnfant.cle), findsOneWidget);
+      });
+    });
+
+    testWidgets('Espace groupe en production (port neutre) : rien ne change', (
+      WidgetTester tester,
+    ) async {
+      await avecLargeur(tester, largeurMobile, () async {
+        await espaceGroupe(tester, const MonAccesIndisponible());
+        expect(find.byKey(BandeauAccesEnfant.cle), findsNothing);
+        expect(rejoindre(), findsOneWidget);
+        expect(tester.widget<ActionPrincipale>(rejoindre()).onPress, isNotNull);
+      });
+    });
+
+    testWidgets('Accueil du Mode Accessibilite : acces ferme, Rejoindre '
+        'retire, « Voir ma classe » reste', (WidgetTester tester) async {
+      _taille(tester, const Size(390, 1600));
+      await tester.pumpWidget(
+        _hote(
+          AccueilAccessibilite(
+            prenom: 'Mariam',
+            espace: DonneesAccessibiliteDemo.espaceAccueil(
+              MomentDemoAccessibilite.pendant,
+            ),
+            onVoirClasse: () {},
+            onRejoindre: () {},
+            onCoran: () {},
+            onAide: () {},
+            tutoiement: true,
+            accesFerme: true,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(BandeauAccesEnfant.cle), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(CarteSession),
+          matching: find.byType(EmplacementEntreeVue),
+        ),
+        findsNothing,
+      );
+      expect(find.byKey(AccueilAccessibilite.cleVoirClasse), findsOneWidget);
+    });
+
+    testWidgets('Accueil du Mode Accessibilite, eleve adulte (vouvoye) : '
+        'acces ferme, la copie de l adulte, jamais celle de l enfant', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(390, 1600));
+      await tester.pumpWidget(
+        _hote(
+          AccueilAccessibilite(
+            prenom: 'Idriss',
+            espace: DonneesAccessibiliteDemo.espaceAccueil(
+              MomentDemoAccessibilite.pendant,
+            ),
+            onVoirClasse: () {},
+            onRejoindre: () {},
+            onCoran: () {},
+            onAide: () {},
+            tutoiement: false,
+            accesFerme: true,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(BandeauAccesAdulte.cle), findsOneWidget);
+      expect(find.byKey(BandeauAccesEnfant.cle), findsNothing);
+      expect(find.text(t.argent.acces.enfantMessage), findsNothing);
+      expect(find.byKey(AccueilAccessibilite.cleVoirClasse), findsOneWidget);
+    });
+
+    testWidgets('demonstration du Mode Accessibilite : l hote lit l acces de '
+        'l eleve et le passe a l Accueil', (WidgetTester tester) async {
+      _taille(tester, const Size(390, 844));
+      final GoRouter routeur = GoRouter(
+        initialLocation: adresseDemoAccessibilite(
+          EleveDemoAccessibilite.mariam,
+        ),
+        routes: routesDemoAccessibilite('local'),
+      );
+      addTearDown(routeur.dispose);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: <Override>[
+            sourceSessionProvider.overrideWithValue(
+              FausseSourceSession(sessionActive(AppRole.student)),
+            ),
+            portMonAccesProvider.overrideWithValue(
+              _MonAccesFixe(accesDeMoi(ouvert: false)),
+            ),
+          ],
+          child: TranslationProvider(
+            child: MaterialApp.router(
+              routerConfig: routeur,
+              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              locale: AppLocale.fr.flutterLocale,
+              supportedLocales: AppLocaleUtils.supportedLocales,
+              localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            ),
+          ),
+        ),
+      );
+      await stabiliser(tester);
+      await tester.tap(find.text(t.nav.eleve.accueil).last);
+      await stabiliser(tester);
+      expect(
+        tester
+            .widget<AccueilAccessibilite>(find.byType(AccueilAccessibilite))
+            .accesFerme,
+        isTrue,
+      );
+      expect(find.byKey(BandeauAccesEnfant.cle), findsOneWidget);
+    });
+  });
+
+  test('contre-revue : l acces de la personne connectee est relu quand la '
+      'personne change, jamais garde de la precedente', () async {
+    final _MonAccesCompte port = _MonAccesCompte();
+    final ProviderContainer conteneur = ProviderContainer(
+      overrides: <Override>[
+        demoAuthActiveProvider.overrideWithValue(true),
+        sourceSessionProvider.overrideWithValue(FausseSourceSession()),
+        portMonAccesProvider.overrideWithValue(port),
+      ],
+    );
+    addTearDown(conteneur.dispose);
+    final ProviderSubscription<AsyncValue<AccesBeneficiaire?>> abonnement =
+        conteneur.listen(monAccesProvider, (_, _) {});
+    addTearDown(abonnement.close);
+    final SessionControleur session = conteneur.read(sessionProvider.notifier)
+      ..ouvrirDemo((role: AppRole.guardian, mode: InterfaceMode.standard));
+    final String? avant = (await conteneur.read(monAccesProvider.future))
+        ?.eleveId;
+    final int lecturesAvant = port.lectures;
+    // Meme personne : aucune relecture.
+    await conteneur.read(monAccesProvider.future);
+    expect(port.lectures, lecturesAvant);
+    session
+      ..fermerDemo()
+      ..ouvrirDemo((role: AppRole.student, mode: InterfaceMode.enfant));
+    final String? apres = (await conteneur.read(monAccesProvider.future))
+        ?.eleveId;
+    expect(port.lectures, greaterThan(lecturesAvant));
+    expect(apres, isNot(avant));
+  });
+
+  group('R4-05, R4-07, R4-08 : adulte autonome et elision', () {
+    test('R4-05 : mes finances et mes mouvements sont relus a chaque '
+        'ouverture (autoDispose)', () async {
+      final _MesFinancesComptees port = _MesFinancesComptees();
+      final ProviderContainer conteneur = ProviderContainer(
+        overrides: <Override>[portMesFinancesProvider.overrideWithValue(port)],
+      );
+      addTearDown(conteneur.dispose);
+      for (int ouverture = 1; ouverture <= 2; ouverture++) {
+        final ProviderSubscription<AsyncValue<FinancesProfil?>> f = conteneur
+            .listen(mesFinancesProvider, (_, _) {});
+        final ProviderSubscription<AsyncValue<List<MouvementProfil>>> m =
+            conteneur.listen(mesMouvementsProvider, (_, _) {});
+        await conteneur.read(mesFinancesProvider.future);
+        await conteneur.read(mesMouvementsProvider.future);
+        expect(port.lecturesFinances, ouverture);
+        expect(port.lecturesMouvements, ouverture);
+        // L'ecran se ferme : plus personne ne regarde, la lecture part.
+        f.close();
+        m.close();
+        await Future<void>.delayed(Duration.zero);
+      }
+    });
+
+    testWidgets('R4-07 : la legende de « Paiements » de l adulte autonome dit '
+        'ce que la page ouvre', (WidgetTester tester) async {
+      _taille(tester, const Size(390, 1400));
+      await tester.pumpWidget(
+        _hote(
+          const MonEspaceAdultePage(),
+          surcharges: _surchargesAdulte(
+            paiements: _PaiementsEspion(_foyerDe(_adulteARegulariser)),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.text(t.adulte.monEspace.paiementsLegendeAutonome),
+        findsOneWidget,
+      );
+      expect(find.text(t.adulte.monEspace.paiementsLegende), findsNothing);
+    });
+
+    testWidgets('R4-07 : ailleurs (« Ma famille »), la legende des paiements '
+        'du foyer reste', (WidgetTester tester) async {
+      _taille(tester, const Size(390, 1400));
+      await tester.pumpWidget(
+        _hote(
+          const MonEspaceAdultePage(),
+          surcharges: _surchargesAdulte(
+            paiements: _PaiementsEspion(_foyerDe(_adulteARegulariser)),
+            ligne: LigneFamilleAdulte.maFamille,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(t.adulte.monEspace.paiementsLegende), findsOneWidget);
+      expect(
+        find.text(t.adulte.monEspace.paiementsLegendeAutonome),
+        findsNothing,
+      );
+    });
+
+    test('R4-08 : « d\' » devant voyelle ou h muet, « de » ailleurs', () {
+      expect(
+        t.ficheEleve.acces.ligne(dePrenom: deDevant('Aïcha')),
+        "Accès d'Aïcha",
+      );
+      expect(
+        t.ficheEleve.acces.ligne(dePrenom: deDevant('Ibrahim')),
+        "Accès d'Ibrahim",
+      );
+      expect(
+        t.ficheEleve.acces.ligne(dePrenom: deDevant('Mariam')),
+        'Accès de Mariam',
+      );
+      expect(
+        t.ficheEleve.finances.moisNonFinance(deMois: deDevant('octobre')),
+        "La période d'octobre n'est pas encore financée.",
+      );
+      expect(
+        t.ficheEleve.mouvements.erreurTitre(dePrenom: deDevant('Ousmane')),
+        "Les mouvements d'Ousmane ne peuvent pas être lus",
+      );
+    });
+
+    test('R4-08 : « y » suivi d une voyelle est une consonne, « de » '
+        '(contre-revue FI-VAGUE-CORR)', () {
+      expect(deDevant('Youssef'), 'de Youssef');
+      expect(deDevant('Yasmine'), 'de Yasmine');
+      expect(deDevant('Yahya'), 'de Yahya');
+      expect(deDevant('Yusuf'), 'de Yusuf');
+      expect(deDevant('Yanis'), 'de Yanis');
+      expect(deDevant('Yacine'), 'de Yacine');
+      expect(
+        t.ficheEleve.acces.ligne(dePrenom: deDevant('Youssef')),
+        'Accès de Youssef',
+      );
+      // Suivi d'une consonne, « y » se prononce « i » : il elide.
+      expect(deDevant('Yvette'), "d'Yvette");
+    });
+
+    testWidgets('R4-08 : la fiche > Acces d Aicha dit « Accès d\'Aïcha »', (
+      WidgetTester tester,
+    ) async {
+      await _monterFicheAcces(
+        tester,
+        jeu: JeuFoyerFinance.unEnEssai,
+        eleveId: DonneesFinanceDemo.aichaId,
+      );
+      expect(find.text("Accès d'Aïcha"), findsOneWidget);
+      expect(find.text('Accès de Aïcha'), findsNothing);
+    });
+  });
 }
 
 /// Les finances du seul profil d'un foyer d'un profil (adulte autonome),
@@ -1115,4 +1925,22 @@ class _MesFinancesDe implements PortMesFinances {
 
   @override
   Future<List<MouvementProfil>> mouvements() async => const <MouvementProfil>[];
+}
+
+/// Un port des finances de l'adulte qui compte ses lectures (R4-05).
+class _MesFinancesComptees implements PortMesFinances {
+  int lecturesFinances = 0;
+  int lecturesMouvements = 0;
+
+  @override
+  Future<FinancesProfil?> finances() async {
+    lecturesFinances++;
+    return null;
+  }
+
+  @override
+  Future<List<MouvementProfil>> mouvements() async {
+    lecturesMouvements++;
+    return const <MouvementProfil>[];
+  }
 }

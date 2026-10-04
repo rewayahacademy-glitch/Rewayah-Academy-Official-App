@@ -1507,8 +1507,9 @@ void main() {
         profilId: _ibrahim,
         seances: <Seance>[_coursEnDirect(_ibrahim)],
         surcharges: <Override>[
-          portAccesFoyerProvider.overrideWithValue(
-            const AccesFoyerFinanceDemo(JeuFoyerFinance.unARegulariser),
+          // L'acces de l'enfant, borne a sa session (FI-BR-08, R4-02).
+          portMonAccesProvider.overrideWithValue(
+            const MonAccesFinanceDemo(JeuFoyerFinance.unARegulariser, _ibrahim),
           ),
           portPaiementsFoyerProvider.overrideWithValue(espion),
         ],
@@ -1676,8 +1677,9 @@ void main() {
           profilId: _ibrahim,
           seances: <Seance>[_coursEnDirect(_ibrahim)],
           surcharges: <Override>[
-            portAccesFoyerProvider.overrideWithValue(
-              AccesFoyerFinanceDemo(jeu),
+            // L'acces de l'enfant, borne a sa session (FI-BR-08, R4-02).
+            portMonAccesProvider.overrideWithValue(
+              MonAccesFinanceDemo(jeu, _ibrahim),
             ),
             portPaiementsFoyerProvider.overrideWithValue(espion),
           ],
@@ -1889,6 +1891,7 @@ void main() {
         tarifEnfant: l.tarifEnfant,
         tarifAdulte: l.tarifAdulte,
         essaisMax: 3,
+        essaiActif: l.essaiActif,
         remisesParRang: l.remisesParRang,
         baseHoraire: l.baseHoraire,
         plafondHoraire: l.plafondHoraire,
@@ -1896,8 +1899,8 @@ void main() {
         capaciteAdulte: l.capaciteAdulte,
         capaciteDebutant: l.capaciteDebutant,
         minimumOuverture: l.minimumOuverture,
-        groupesObjectif: l.groupesObjectif,
-        groupesMax: l.groupesMax,
+        classesObjectif: l.classesObjectif,
+        classesMax: l.classesMax,
         joursConservationPlace: l.joursConservationPlace,
         margeReferencePourMille: l.margeReferencePourMille,
         railsActifs: l.railsActifs,

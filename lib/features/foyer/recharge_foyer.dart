@@ -407,12 +407,19 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
       child: PageShell(
         actionsCoquille: false,
         titre: t.adulte.recharge.titre,
-        sousTitre: t.adulte.recharge.phrase,
+        // Un seul beneficiaire rendu (adulte autonome, foyer d'un enfant) :
+        // la phrase au singulier (revue FI-VAGUE-R R4-06).
+        sousTitre: _unSeul(ref.watch(beneficiairesRechargeProvider).value)
+            ? t.adulte.recharge.phraseUnique
+            : t.adulte.recharge.phrase,
         onRetour: _retour,
         child: _corps(context, horsLigne),
       ),
     );
   }
+
+  /// Vrai quand la source ne rend qu'un beneficiaire : rien a repartir.
+  static bool _unSeul(List<BeneficiaireRecharge>? liste) => liste?.length == 1;
 
   /// L'accent de profil choisi par le tuteur (K-62), `null` sans choix.
   AccentProfil? _accent(String id) =>
@@ -470,12 +477,15 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         ClasseLargeur.large;
     final Widget profils = _profils(context, liste);
     // La repartition (guide §5.3) : un seul paiement, chaque montant au
-    // solde de son profil, jamais un solde commun.
-    final Widget repartition = _Note(
-      key: RechargeFoyerPage.repartitionKey,
-      texte: t.adulte.recharge.repartition,
-      attenuee: true,
-    );
+    // solde de son profil, jamais un solde commun. Sans objet pour un seul
+    // profil (revue FI-VAGUE-R R4-06).
+    final Widget? repartition = _unSeul(liste)
+        ? null
+        : _Note(
+            key: RechargeFoyerPage.repartitionKey,
+            texte: t.adulte.recharge.repartition,
+            attenuee: true,
+          );
     final Widget? bandeau = _bandeau(liste);
     final Widget paiement = _paiement(
       context,
@@ -505,8 +515,10 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
           children: <Widget>[
             Expanded(flex: 5, child: profils),
             Ecart.hXl,
-            Expanded(flex: 3, child: _Carte(lignes: <Widget>[repartition])),
-            Ecart.hXl,
+            if (repartition != null) ...<Widget>[
+              Expanded(flex: 3, child: _Carte(lignes: <Widget>[repartition])),
+              Ecart.hXl,
+            ],
             Expanded(flex: 4, child: paiement),
           ],
         ),
@@ -540,7 +552,13 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        _titreGroupe(context, t.adulte.recharge.profils),
+        // Le titre au singulier pour un seul profil (revue FI-VAGUE-R R4-06).
+        _titreGroupe(
+          context,
+          _unSeul(liste)
+              ? t.adulte.recharge.profilUnique
+              : t.adulte.recharge.profils,
+        ),
         Ecart.vSm,
         KeyedSubtree(
           key: RechargeFoyerPage.profilsKey,

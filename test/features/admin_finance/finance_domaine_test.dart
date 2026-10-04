@@ -100,9 +100,13 @@ void _verifierVueGlobaleDemo() {
   expect(find.byType(FinancePage), findsOneWidget);
   expect(find.byType(VueGlobaleFinanceContenu), findsOneWidget);
   expect(find.byType(EtatSysteme), findsNothing);
-  // 690 USD encaisses et 690 USD de revenu, deux indicateurs separes.
+  // 690 USD encaisses et 690 USD de revenu, deux indicateurs separes (le
+  // graphique de l'encaisse repete le mois, hors de la grille).
   expect(
-    find.text(formaterMontant(DonneesFinanceDemo.usd(690))),
+    find.descendant(
+      of: find.byKey(VueGlobaleFinanceContenu.indicateursKey),
+      matching: find.text(formaterMontant(DonneesFinanceDemo.usd(690))),
+    ),
     findsNWidgets(2),
   );
   expect(find.text(t.admin.finance.vue.marge), findsOneWidget);
@@ -295,6 +299,58 @@ void main() {
       expect(adresse.path, Routes.demoFinance);
       expect(adresse.queryParameters['ecran'], OngletFinance.politiques.name);
       _verifierPolitiquesDemo();
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('R6-04 : le lien d une alerte reste dans la demonstration '
+        '(K-28), jamais vers une route reelle gardee', (
+      WidgetTester tester,
+    ) async {
+      tester.view.physicalSize = const Size(1440, 2400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final GoRouter routeur = GoRouter(
+        initialLocation: Routes.demoFinance,
+        routes: <RouteBase>[
+          ...routesDemoFinance('staging'),
+          GoRoute(
+            path: Routes.adminPersonnesComptes,
+            builder: (BuildContext _, GoRouterState _) =>
+                const Scaffold(body: Text('route reelle')),
+          ),
+        ],
+      );
+      addTearDown(routeur.dispose);
+      await tester.pumpWidget(
+        ProviderScope(
+          child: TranslationProvider(
+            child: MaterialApp.router(
+              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              locale: AppLocale.fr.flutterLocale,
+              supportedLocales: AppLocaleUtils.supportedLocales,
+              localizationsDelegates: GlobalMaterialLocalizations.delegates,
+              routerConfig: routeur,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final Finder lien = find.byKey(
+        const ValueKey<String>('demo-fi-alerte-ibrahim-cible'),
+      );
+      expect(lien, findsOneWidget);
+      expect(find.text(t.admin.finance.vue.alerte.ouvrirComptes), findsOne);
+      await tester.ensureVisible(lien);
+      await tester.pumpAndSettle();
+      await tester.tap(lien);
+      await tester.pumpAndSettle();
+      expect(
+        routeur.routerDelegate.currentConfiguration.uri.path,
+        Routes.demoFinance,
+      );
+      expect(find.text('route reelle'), findsNothing);
+      expect(find.byType(AdminShell), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   });

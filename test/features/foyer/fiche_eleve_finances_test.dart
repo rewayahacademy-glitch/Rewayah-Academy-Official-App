@@ -21,6 +21,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
 import 'package:rewayah_academy/core/finance/mouvements_profil.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
@@ -840,7 +841,7 @@ void main() {
       expect(bandeau.titre, t.ficheEleve.finances.expireTitre);
       expect(
         bandeau.message,
-        t.ficheEleve.finances.moisNonFinance(mois: octobre),
+        t.ficheEleve.finances.moisNonFinance(deMois: deDevant(octobre)),
       );
       expect(_ligneDebit(tester).$1, t.ficheEleve.finances.periodeAFinancer);
       expect(find.byKey(FinancesElevePage.rechargerKey), findsOneWidget);
@@ -905,7 +906,7 @@ void main() {
       );
       expect(_etat(NatureEtat.echecServeur), findsOneWidget);
       expect(
-        find.text(t.ficheEleve.finances.erreurTitre(prenom: 'Mariam')),
+        find.text(t.ficheEleve.finances.erreurTitre(dePrenom: 'de Mariam')),
         findsOneWidget,
       );
       expect(find.byKey(FinancesElevePage.rechargerKey), findsNothing);

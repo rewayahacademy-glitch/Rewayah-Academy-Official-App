@@ -32,6 +32,23 @@ EtatAccesAffiche etatAccesAffiche({
       : EtatAccesAffiche.expire;
 }
 
+/// Ce que la source dit de la place d'un eleve apres une periode non
+/// financee (FI-BR-08, guide Finance V4 §1.7, §8 F5). **Rendu par le serveur,
+/// jamais deduit par l'ecran** : ni d'une date, ni d'un solde. `null` (cas
+/// ordinaire, et toujours en production tant que FI-BR-08 manque) : rien a
+/// dire de plus que l'ouverture des seances.
+enum EtatPlace {
+  /// La conservation de la place (7 jours au lancement, selon la politique)
+  /// est terminee : la place est liberee et l'acces aux seances payantes est
+  /// suspendu. **Le compte reste ouvert** (guide §1.7) : historique, contenus
+  /// acquis et paiements restent lisibles.
+  liberee,
+
+  /// Une periode est de nouveau financee apres une suspension : l'acces aux
+  /// seances payantes est reactive.
+  reactivee,
+}
+
 /// L'acces d'un eleve du foyer.
 ///
 /// **Jamais « abonnement »** : un acces date n'est pas un paiement recurrent.
@@ -48,6 +65,9 @@ class AccesBeneficiaire {
     this.seancesPayantesOuvertes,
     this.essaisUtilises,
     this.essaisMax,
+    this.place,
+    this.datePlace,
+    this.gereSonAcces,
   });
 
   /// L'eleve.
@@ -63,7 +83,8 @@ class AccesBeneficiaire {
   final EtatAccesAffiche etatAffiche;
 
   /// **Reserve**, toujours `null` : le statut detaille (offert, paye hors
-  /// application, suspendu) attend DB-FOY-05. Jamais affiche brut.
+  /// application) attend DB-FOY-05. Jamais affiche brut. La suspension et la
+  /// reactivation passent par [place] (FI-BR-08).
   final String? statutServeur;
 
   /// **Reserve**, toujours `null` (DB-FOY-05). Jamais affiche brut.
@@ -80,6 +101,23 @@ class AccesBeneficiaire {
 
   /// Le nombre maximal d'essais rendu par la politique, `null` hors essai.
   final int? essaisMax;
+
+  /// Place liberee (acces suspendu) ou acces reactive, rendu par la source
+  /// (FI-BR-08) ; `null` sinon. Le tuteur et l'adulte autonome le lisent ;
+  /// l'enfant n'en lit que l'ouverture des seances, sa copie reste neutre.
+  final EtatPlace? place;
+
+  /// Le jour ou la place a ete liberee ou l'acces reactive, quand la source
+  /// le rend.
+  final DateTime? datePlace;
+
+  /// Vrai quand la personne qui lit cette ligne gere elle-meme son acces
+  /// (eleve adulte autonome, son propre tuteur, ADR-009) ; faux pour un
+  /// enfant, que son tuteur gere ; `null` quand la source ne le rend pas
+  /// encore (FI-BR-08). **Une capacite de la ligne, jamais un role** : elle
+  /// choisit seulement la copie des seances fermees (guide §1.7), et
+  /// `null` garde la copie de l'enfant (contre-revue FI-VAGUE-CORR).
+  final bool? gereSonAcces;
 }
 
 /// L'acces des eleves du foyer (contrat K6, consommateurs : Compte, fiche
@@ -110,3 +148,36 @@ class AccesFoyerIndisponible implements PortAccesFoyer {
 /// L'acces du foyer employe par l'application.
 final Provider<PortAccesFoyer> portAccesFoyerProvider =
     Provider<PortAccesFoyer>((Ref ref) => const AccesFoyerIndisponible());
+
+/// L'acces de la personne connectee, eleve (enfant ou adulte autonome) :
+/// contrat FI-BR-08, revue FI-VAGUE-R (R4-02).
+///
+/// Pourquoi un port a part plutot qu'un filtre a l'ecran : [PortAccesFoyer]
+/// rend le foyer entier, pour le titulaire. Filtrer a l'ecran chargerait
+/// quand meme les prenoms et l'ouverture des freres et soeurs sur l'appareil
+/// de l'enfant. Ici, le perimetre est celui de la session, comme
+/// `PortMesFinances` : le serveur ne rend que la ligne de la personne
+/// connectee, et l'ecran n'a aucun identifiant a fournir (donc aucun a
+/// falsifier). **Sans montant ni cause** : la meme ligne que
+/// [AccesBeneficiaire].
+abstract interface class PortMonAcces {
+  /// L'acces de la seule personne connectee, `null` quand elle n'a pas de
+  /// ligne d'acces (tuteur, enseignant, eleve pas encore inscrit).
+  Future<AccesBeneficiaire?> monAcces();
+}
+
+/// **Aucune source serveur a ce jour** (FI-BR-08).
+class MonAccesIndisponible implements PortMonAcces {
+  /// Cree l'implementation.
+  const MonAccesIndisponible();
+
+  @override
+  Future<AccesBeneficiaire?> monAcces() =>
+      Future<AccesBeneficiaire?>.error(const CapaciteIndisponible('FI-BR-08'));
+}
+
+/// L'acces de la personne connectee employe par l'application ; la
+/// demonstration et les tests le surchargent.
+final Provider<PortMonAcces> portMonAccesProvider = Provider<PortMonAcces>(
+  (Ref ref) => const MonAccesIndisponible(),
+);

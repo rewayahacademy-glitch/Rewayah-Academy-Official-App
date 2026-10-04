@@ -301,7 +301,12 @@ class MonEspaceAdultePage extends ConsumerWidget {
             AppIcons.finance,
             t.adulte.monEspace.paiements,
             // `paiementsLegende` : libelle provisoire, lexique D4.
-            legende: t.adulte.monEspace.paiementsLegende,
+            // L'adulte autonome arrive sur SES finances (FI-9b) : solde,
+            // periode et recharge, pas un historique de recus (revue
+            // FI-VAGUE-R R4-07).
+            legende: vue.ligneFamille == LigneFamilleAdulte.ajouterMaFamille
+                ? t.adulte.monEspace.paiementsLegendeAutonome
+                : t.adulte.monEspace.paiementsLegende,
             valeur: paiementsValeur,
           ),
         // Aucune source (EA-BR-08) : la page d'arrivee le dit toujours.

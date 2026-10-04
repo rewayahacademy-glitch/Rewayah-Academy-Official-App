@@ -224,6 +224,7 @@ class _PolitiqueTousRails implements PortPolitiquesCommerciales {
       tarifEnfant: l.tarifEnfant,
       tarifAdulte: l.tarifAdulte,
       essaisMax: l.essaisMax,
+      essaiActif: l.essaiActif,
       remisesParRang: l.remisesParRang,
       baseHoraire: l.baseHoraire,
       plafondHoraire: l.plafondHoraire,
@@ -231,8 +232,8 @@ class _PolitiqueTousRails implements PortPolitiquesCommerciales {
       capaciteAdulte: l.capaciteAdulte,
       capaciteDebutant: l.capaciteDebutant,
       minimumOuverture: l.minimumOuverture,
-      groupesObjectif: l.groupesObjectif,
-      groupesMax: l.groupesMax,
+      classesObjectif: l.classesObjectif,
+      classesMax: l.classesMax,
       joursConservationPlace: l.joursConservationPlace,
       margeReferencePourMille: l.margeReferencePourMille,
       railsActifs: RailPaiement.values.toSet(),
@@ -275,8 +276,14 @@ void main() {
     await _monter(tester, jeu: JeuFoyerFinance.unProfil);
     expect(find.byType(RechargeFoyerPage), findsOneWidget);
     expect(find.text(t.adulte.recharge.titre), findsOneWidget);
-    expect(find.text(t.adulte.recharge.profils), findsOneWidget);
-    expect(find.byKey(RechargeFoyerPage.repartitionKey), findsOneWidget);
+    // Un seul beneficiaire rendu (revue FI-VAGUE-R R4-06) : le singulier,
+    // sans note de repartition.
+    expect(find.text(t.adulte.recharge.phraseUnique), findsOneWidget);
+    expect(find.text(t.adulte.recharge.phrase), findsNothing);
+    expect(find.text(t.adulte.recharge.profilUnique), findsOneWidget);
+    expect(find.text(t.adulte.recharge.profils), findsNothing);
+    expect(find.byKey(RechargeFoyerPage.repartitionKey), findsNothing);
+    expect(find.text(t.adulte.recharge.repartition), findsNothing);
     // Non coche : montant desactive, « 0 $ », la raison du bouton inactif.
     expect(_coche(tester, _mariam), isFalse);
     expect(_actif(tester, RechargeFoyerPage.plusDe(_mariam)), isFalse);
@@ -310,13 +317,8 @@ void main() {
       _dans(RechargeFoyerPage.totalKey, find.text(total)),
       findsNWidgets(2),
     );
-    expect(
-      _dans(
-        RechargeFoyerPage.totalKey,
-        find.text(t.adulte.recharge.repartition),
-      ),
-      findsOneWidget,
-    );
+    // Une seule ligne au recapitulatif : rien a repartir (R4-06).
+    expect(find.text(t.adulte.recharge.repartition), findsNothing);
     expect(find.byType(LigneMoyenPaiement), findsOneWidget);
     // Q-FI-4 (R3-05) : aucune promesse « sécurisé » tant que le rail n'est
     // pas branche.

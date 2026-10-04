@@ -223,6 +223,9 @@ class _RevenusEnEchec implements PortRevenusEnseignant {
   @override
   Future<RevenusEnseignant> moisEnCours() =>
       Future<RevenusEnseignant>.error(_echec);
+
+  @override
+  Future<List<LigneReleve>> releve() => Future<List<LigneReleve>>.error(_echec);
 }
 
 /// Les finances de l'adulte autonome, rendues par [lire].
@@ -308,7 +311,10 @@ List<Override> _enfant(
   serviceReseauProvider.overrideWithValue(
     FauxServiceReseau(horsLigneRendu: horsLigne),
   ),
-  portAccesFoyerProvider.overrideWithValue(AccesFoyerFinanceDemo(jeu)),
+  // L'acces de l'enfant, borne a sa session (FI-BR-08, R4-02).
+  portMonAccesProvider.overrideWithValue(
+    MonAccesFinanceDemo(jeu, DonneesFinanceDemo.ibrahimId),
+  ),
 ];
 
 /// L'adulte autonome de la page seule.
@@ -848,23 +854,22 @@ List<Override> _toutEnEchec() => <Override>[
   portAccesFoyerProvider.overrideWithValue(const _AccesEnEchec()),
 ];
 
-/// L'acces de l'eleve connecte ([sessionActive] : `p-student`).
-class _AccesEleve implements PortAccesFoyer {
+/// L'acces de l'eleve connecte ([sessionActive] : `p-student`), borne a sa
+/// session (FI-BR-08).
+class _AccesEleve implements PortMonAcces {
   const _AccesEleve({required this.ouvert});
 
   final bool ouvert;
 
   @override
-  Future<List<AccesBeneficiaire>> acces() async => <AccesBeneficiaire>[
-    AccesBeneficiaire(
-      eleveId: 'p-${AppRole.student.valeurSql}',
-      prenom: 'Ibrahim',
-      etatAffiche: EtatAccesAffiche.sansEcheance,
-      seancesPayantesOuvertes: ouvert,
-      essaisUtilises: ouvert ? null : 2,
-      essaisMax: ouvert ? null : 2,
-    ),
-  ];
+  Future<AccesBeneficiaire?> monAcces() async => AccesBeneficiaire(
+    eleveId: 'p-${AppRole.student.valeurSql}',
+    prenom: 'Ibrahim',
+    etatAffiche: EtatAccesAffiche.sansEcheance,
+    seancesPayantesOuvertes: ouvert,
+    essaisUtilises: ouvert ? null : 2,
+    essaisMax: ouvert ? null : 2,
+  );
 }
 
 /// L'enfant sur le VRAI routeur, session eleve en mode enfant, groupes de
@@ -878,7 +883,7 @@ List<Override> _enfantRouteur({required bool ouvert}) => _remplacer(
   <Override>[
     ...surchargesDemonstration(maintenant: _maintenant),
     _reseau(false),
-    portAccesFoyerProvider.overrideWithValue(_AccesEleve(ouvert: ouvert)),
+    portMonAccesProvider.overrideWithValue(_AccesEleve(ouvert: ouvert)),
   ],
 );
 
