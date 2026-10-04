@@ -56,6 +56,42 @@ enum JeuFoyerFinance {
   cinqProfils,
 }
 
+/// Les jeux des revenus de l'enseignant de demonstration (guide §8 F6).
+enum JeuRevenusEnseignant {
+  /// Classe pleine, classe a 80 %, classe d'adultes au minimum d'ouverture.
+  nominal,
+
+  /// Une place de la classe a 80 % tenue par un eleve en essai present : il
+  /// compte, la classe passe a 5 sieges eligibles.
+  essaiDansLaSeance,
+
+  /// Un eleve finance absent dans la classe pleine : il compte, la classe
+  /// reste pleine et le montant ne bouge pas.
+  financeAbsent,
+
+  /// Le nominal, plus une seance assuree en remplacement d'un collegue.
+  remplacement,
+}
+
+/// L'etat d'une place pendant une seance (guide §1.4, definition des sieges
+/// eligibles).
+enum SiegeSeance {
+  /// Eleve dont la periode est financee, present.
+  financePresent,
+
+  /// Eleve dont la periode est financee, absent : il compte.
+  financeAbsent,
+
+  /// Eleve en essai valide, present : il compte.
+  essaiPresent,
+
+  /// Eleve en essai, absent : il ne compte pas.
+  essaiAbsent,
+
+  /// Place non attribuee : elle ne compte pas.
+  placeVide,
+}
+
 /// Une classe de l'enseignant de demonstration (revue FI-1c-R M2).
 ///
 /// `eligibles` : les sieges dont la periode est financee (guide §1.4) ;
@@ -71,6 +107,7 @@ typedef _ClasseDemo = ({
   int eligibles,
   List<int> manques,
   bool adulte,
+  TypeClasseRevenus type,
 });
 
 /// Un profil de demonstration, avant ses donnees financieres.
@@ -907,9 +944,11 @@ abstract final class DonneesFinanceDemo {
   static RevenusClasse _classe(
     String id,
     String nom, {
+    required TypeClasseRevenus type,
     required int minutes,
     required int capacite,
     required int eligibles,
+    bool enRemplacement = false,
   }) {
     final Montant taux = tauxEffectif(
       siegesEligibles: eligibles,
@@ -918,12 +957,32 @@ abstract final class DonneesFinanceDemo {
     return RevenusClasse(
       classeId: id,
       classe: nom,
+      type: type,
       minutesAssurees: minutes,
       capacite: capacite,
       siegesEligibles: eligibles > capacite ? capacite : eligibles,
       tauxHoraireEffectif: taux,
       montantEstime: Montant(minutes * taux.mineur ~/ 60, devise),
+      enRemplacement: enRemplacement,
     );
+  }
+
+  /// Les sieges eligibles d'une seance (guide §1.4) : un eleve finance
+  /// compte, present ou absent ; un eleve en essai compte s'il est present ;
+  /// une place vide ne compte pas ; jamais au-dela de la capacite.
+  static int siegesEligibles(
+    List<SiegeSeance> sieges, {
+    required int capacite,
+  }) {
+    final int n = sieges
+        .where(
+          (SiegeSeance s) =>
+              s == SiegeSeance.financePresent ||
+              s == SiegeSeance.financeAbsent ||
+              s == SiegeSeance.essaiPresent,
+        )
+        .length;
+    return n > capacite ? capacite : n;
   }
 
   /// Les classes de l'enseignant de demonstration : une classe pleine, une
@@ -942,6 +1001,7 @@ abstract final class DonneesFinanceDemo {
         eligibles: p.capaciteEnfant,
         manques: const <int>[],
         adulte: false,
+        type: TypeClasseRevenus.enfants,
       ),
       // Quatre sieges finances et Ibrahim, dont la periode n'est pas financee
       // : 42 sur 50, il manque 8 (jeu `unARegulariser`, FIN4-09).
@@ -953,6 +1013,7 @@ abstract final class DonneesFinanceDemo {
         eligibles: 4,
         manques: const <int>[8],
         adulte: false,
+        type: TypeClasseRevenus.enfants,
       ),
       (
         id: 'demo-fi-classe-salam',
@@ -962,35 +1023,103 @@ abstract final class DonneesFinanceDemo {
         eligibles: p.minimumOuverture,
         manques: const <int>[],
         adulte: true,
+        type: TypeClasseRevenus.adultes,
       ),
     ];
   }
 
   /// Les revenus estimes de l'enseignant de demonstration (jeux du guide §8
-  /// F6 : classe pleine, classe a 80 %, classe au minimum). L'aide Internet
-  /// est celle de la politique : aucune tant qu'elle n'en fixe pas le montant
-  /// (§1.4), la demonstration n'en invente pas. [vide] : aucune heure
-  /// assuree sur le mois.
-  static RevenusEnseignant revenus({bool vide = false}) {
+  /// F6, [JeuRevenusEnseignant]). L'aide Internet est celle de la politique :
+  /// aucune tant qu'elle n'en fixe pas le montant (§1.4), la demonstration
+  /// n'en invente pas. [vide] : aucune heure assuree sur le mois.
+  ///
+  /// Seul le jeu nominal porte les sieges de [vueGlobale] (revues FI-1c-R M2,
+  /// FI-1c-CORR-R m5) ; les autres jeux sont des variantes de fixture, que la
+  /// vue globale de la direction ne lit pas.
+  static RevenusEnseignant revenus({
+    bool vide = false,
+    JeuRevenusEnseignant jeu = JeuRevenusEnseignant.nominal,
+  }) {
+    final PolitiqueCommerciale p = politiqueLancement;
     final List<RevenusClasse> classes = <RevenusClasse>[
-      if (!vide)
+      if (!vide) ...<RevenusClasse>[
         for (final _ClasseDemo c in _classesDemo())
           _classe(
             c.id,
             c.nom,
+            type: c.type,
             minutes: c.minutes,
             capacite: c.capacite,
-            eligibles: c.eligibles,
+            eligibles: switch ((jeu, c.id)) {
+              // Mariam absente a une seance : financee, elle compte, la
+              // Classe reste pleine (guide §1.4).
+              (JeuRevenusEnseignant.financeAbsent, 'demo-fi-classe-nour') =>
+                siegesEligibles(<SiegeSeance>[
+                  for (int i = 1; i < c.capacite; i++)
+                    SiegeSeance.financePresent,
+                  SiegeSeance.financeAbsent,
+                ], capacite: c.capacite),
+              // La place d'Ibrahim tenue par un eleve en essai present : il
+              // compte pour cette seance.
+              (JeuRevenusEnseignant.essaiDansLaSeance, 'demo-fi-classe-huda') =>
+                siegesEligibles(<SiegeSeance>[
+                  for (int i = 1; i < c.capacite; i++)
+                    SiegeSeance.financePresent,
+                  SiegeSeance.essaiPresent,
+                ], capacite: c.capacite),
+              _ => c.eligibles,
+            },
           ),
+        // Une seance d'une heure assuree pour un collegue, dans une Classe de
+        // debutants qu'il tient : elle est remuneree a celui qui l'assure.
+        if (jeu == JeuRevenusEnseignant.remplacement)
+          _classe(
+            'demo-fi-classe-fajr',
+            'Al-Fajr',
+            type: TypeClasseRevenus.debutants,
+            minutes: 60,
+            capacite: p.capaciteDebutant,
+            eligibles: siegesEligibles(<SiegeSeance>[
+              for (int i = 1; i < p.capaciteDebutant; i++)
+                SiegeSeance.financePresent,
+              SiegeSeance.placeVide,
+            ], capacite: p.capaciteDebutant),
+            enRemplacement: true,
+          ),
+      ],
     ];
+    final Montant total = _somme(
+      classes.map((RevenusClasse c) => c.montantEstime),
+    );
+    final int minutes = classes.fold<int>(
+      0,
+      (int s, RevenusClasse c) => s + c.minutesAssurees,
+    );
     return RevenusEnseignant(
       debut: debutMois,
       fin: finMois,
       classes: classes,
-      totalEstime: _somme(classes.map((RevenusClasse c) => c.montantEstime)),
-      baseHoraire: politiqueLancement.baseHoraire,
-      plafondHoraire: politiqueLancement.plafondHoraire,
-      allocationInternet: politiqueLancement.allocationInternet,
+      total: TotalRevenus(
+        minutesAssurees: minutes,
+        capacite: classes.fold<int>(
+          0,
+          (int s, RevenusClasse c) => s + c.capacite,
+        ),
+        siegesEligibles: classes.fold<int>(
+          0,
+          (int s, RevenusClasse c) => s + c.siegesEligibles,
+        ),
+        // Le total rapporte aux heures assurees, arrondi a l'unite mineure
+        // inferieure : il ne depasse donc jamais le plus haut taux effectif.
+        tauxHoraireMoyen: Montant(
+          minutes == 0 ? 0 : total.mineur * 60 ~/ minutes,
+          devise,
+        ),
+      ),
+      totalEstime: total,
+      baseHoraire: p.baseHoraire,
+      plafondHoraire: p.plafondHoraire,
+      allocationInternet: p.allocationInternet,
     );
   }
 
@@ -1354,14 +1483,27 @@ class PolitiquesCommercialesDemo implements PortPolitiquesCommerciales {
 /// Les revenus de l'enseignant en demonstration (FI-BR-11).
 class RevenusEnseignantDemo implements PortRevenusEnseignant {
   /// Cree le double ; [vide] rend un mois sans heure assuree.
-  const RevenusEnseignantDemo({this.vide = false});
+  const RevenusEnseignantDemo({
+    this.vide = false,
+    this.jeu = JeuRevenusEnseignant.nominal,
+  });
 
   /// Vrai pour un mois sans heure assuree.
   final bool vide;
 
+  /// Le jeu du guide §8 F6.
+  final JeuRevenusEnseignant jeu;
+
   @override
   Future<RevenusEnseignant> moisEnCours() async =>
-      DonneesFinanceDemo.revenus(vide: vide);
+      DonneesFinanceDemo.revenus(vide: vide, jeu: jeu);
+
+  /// Le releve est arrete par l'academie, a partir de la paie reelle, hors
+  /// lot (ADR-007) : la demonstration n'invente pas un mois arrete, elle dit
+  /// le releve indisponible, comme la production (FI-BR-11).
+  @override
+  Future<List<LigneReleve>> releve() =>
+      Future<List<LigneReleve>>.error(const CapaciteIndisponible('FI-BR-11'));
 }
 
 /// La vue globale de la direction en demonstration (FI-BR-12).

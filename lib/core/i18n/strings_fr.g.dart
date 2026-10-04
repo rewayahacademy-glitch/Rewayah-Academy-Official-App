@@ -9567,6 +9567,33 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: 'Montant estimé'
 	String get montantClasse => 'Montant estimé';
 
+	/// fr: 'Classe'
+	String get classeColonne => 'Classe';
+
+	/// fr: 'Type'
+	String get type => 'Type';
+
+	/// fr: 'Enfants'
+	String get typeEnfants => 'Enfants';
+
+	/// fr: 'Enfants débutants'
+	String get typeDebutants => 'Enfants débutants';
+
+	/// fr: 'Adultes'
+	String get typeAdultes => 'Adultes';
+
+	/// fr: 'Remplacement'
+	String get remplacement => 'Remplacement';
+
+	/// fr: 'Taux par heure'
+	String get tauxColonne => 'Taux par heure';
+
+	/// fr: 'Taux horaire moyen'
+	String get tauxMoyen => 'Taux horaire moyen';
+
+	/// fr: 'Total'
+	String get total => 'Total';
+
 	/// fr: 'Comment l'estimation se calcule'
 	String get calculSection => 'Comment l\'estimation se calcule';
 
@@ -9599,6 +9626,21 @@ class Traductions$enseignant$revenus$fr {
 
 	/// fr: 'Aucune aide Internet n'est prévue ce mois-ci.'
 	String get internetAucune => 'Aucune aide Internet n\'est prévue ce mois-ci.';
+
+	/// fr: 'Relevé'
+	String get releveSection => 'Relevé';
+
+	/// fr: 'Le relevé n'est pas encore disponible'
+	String get releveIndisponibleTitre => 'Le relevé n\'est pas encore disponible';
+
+	/// fr: 'Les mois arrêtés par l'académie s'afficheront ici dès sa mise en service. D'ici là, seule l'estimation du mois en cours est montrée.'
+	String get releveIndisponiblePhrase => 'Les mois arrêtés par l\'académie s\'afficheront ici dès sa mise en service. D\'ici là, seule l\'estimation du mois en cours est montrée.';
+
+	/// fr: 'Aucun mois arrêté pour l'instant'
+	String get releveVide => 'Aucun mois arrêté pour l\'instant';
+
+	/// fr: 'Chaque mois apparaîtra ici une fois arrêté par l'académie.'
+	String get releveVideDetail => 'Chaque mois apparaîtra ici une fois arrêté par l\'académie.';
 
 	/// fr: 'Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l'académie fait foi.'
 	String get mention => 'Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l\'académie fait foi.';
@@ -20043,6 +20085,15 @@ extension on Traductions {
 			'enseignant.revenus.taux' => 'Taux horaire effectif',
 			'enseignant.revenus.tauxValeur' => ({required Object montant}) => '${montant} par heure',
 			'enseignant.revenus.montantClasse' => 'Montant estimé',
+			'enseignant.revenus.classeColonne' => 'Classe',
+			'enseignant.revenus.type' => 'Type',
+			'enseignant.revenus.typeEnfants' => 'Enfants',
+			'enseignant.revenus.typeDebutants' => 'Enfants débutants',
+			'enseignant.revenus.typeAdultes' => 'Adultes',
+			'enseignant.revenus.remplacement' => 'Remplacement',
+			'enseignant.revenus.tauxColonne' => 'Taux par heure',
+			'enseignant.revenus.tauxMoyen' => 'Taux horaire moyen',
+			'enseignant.revenus.total' => 'Total',
 			'enseignant.revenus.calculSection' => 'Comment l\'estimation se calcule',
 			'enseignant.revenus.base' => '1. Base garantie',
 			'enseignant.revenus.baseDetail' => ({required Object base}) => '${base} par heure assurée, quelle que soit l\'occupation de la Classe.',
@@ -20054,6 +20105,11 @@ extension on Traductions {
 			'enseignant.revenus.internet' => 'Aide Internet du mois',
 			'enseignant.revenus.internetDetail' => 'Une seule aide par mois, versée à part de la rémunération pédagogique.',
 			'enseignant.revenus.internetAucune' => 'Aucune aide Internet n\'est prévue ce mois-ci.',
+			'enseignant.revenus.releveSection' => 'Relevé',
+			'enseignant.revenus.releveIndisponibleTitre' => 'Le relevé n\'est pas encore disponible',
+			'enseignant.revenus.releveIndisponiblePhrase' => 'Les mois arrêtés par l\'académie s\'afficheront ici dès sa mise en service. D\'ici là, seule l\'estimation du mois en cours est montrée.',
+			'enseignant.revenus.releveVide' => 'Aucun mois arrêté pour l\'instant',
+			'enseignant.revenus.releveVideDetail' => 'Chaque mois apparaîtra ici une fois arrêté par l\'académie.',
 			'enseignant.revenus.mention' => 'Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l\'académie fait foi.',
 			'enseignant.revenus.vide' => 'Aucune heure assurée ce mois-ci',
 			'enseignant.revenus.videDetail' => 'L\'estimation apparaîtra après votre première séance assurée du mois.',
@@ -20470,6 +20526,8 @@ extension on Traductions {
 			'tc.coran.reprise.groupe' => 'Reprendre le cours',
 			'tc.coran.reprise.groupeDetail' => ({required Object page}) => 'La Classe en était page ${page}',
 			'tc.coran.focus.aucunePlage' => 'Aucun passage mis en avant',
+			_ => null,
+		} ?? switch (path) {
 			'tc.coran.focus.aucunePlageDetail' => 'Le focus suit le passage que l\'enseignant désigne. Hors classe, il centre la page ouverte.',
 			'tc.coran.focus.quitter' => 'Quitter le focus',
 			'tc.outils.dock.titre' => 'Outils',
@@ -20484,8 +20542,6 @@ extension on Traductions {
 			'tc.outils.dock.stylet' => 'Stylet',
 			'tc.outils.dock.pointeur' => 'Pointeur',
 			'tc.outils.dock.revision' => 'Révision',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.intention.aApprendre' => 'À apprendre',
 			'tc.outils.intention.aRevoir' => 'À revoir',
 			'tc.outils.intention.aRenforcer' => 'À renforcer',
@@ -20984,6 +21040,8 @@ extension on Traductions {
 			'adulte.famille.place.nouvelleDemande' => 'Faire une nouvelle demande',
 			'adulte.famille.place.nouvelleInvitation' => ({required Object date}) => 'Nouvelle invitation possible à partir du ${date}',
 			'adulte.famille.place.envoyeeA' => ({required Object courriel}) => 'Envoyée à ${courriel}',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.famille.place.expiree' => 'L\'invitation précédente a expiré. Vous pouvez en envoyer une nouvelle.',
 			'adulte.famille.place.annulee' => 'L\'invitation a été annulée et ne peut plus être acceptée. Vous pouvez en envoyer une nouvelle.',
 			'adulte.invitation.titreElle' => 'Inviter ma conjointe',
@@ -20998,8 +21056,6 @@ extension on Traductions {
 			'adulte.invitation.courriel' => 'Adresse e-mail',
 			'adulte.invitation.courrielAideElle' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjointe l\'invitation à rejoindre Rewayah.',
 			'adulte.invitation.courrielAideLui' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjoint l\'invitation à rejoindre Rewayah.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.prenomRequis' => 'Indiquez son prénom.',
 			'adulte.invitation.courrielRequis' => 'Indiquez son adresse e-mail.',
 			'adulte.invitation.courrielInvalide' => 'Vérifiez l\'adresse e-mail : elle doit ressembler à nom@exemple.com.',

@@ -3,17 +3,23 @@
 //
 // **Une estimation, jamais une paie definitive** : le mot est ecrit en tete,
 // et la mention de bas de page dit que le releve de l'academie fait foi.
-// Par Classe : heures assurees, capacite, sieges eligibles, taux horaire
-// effectif, montant estime ; puis l'explication simple (base garantie,
-// composante d'occupation, plafond) et l'aide Internet, a part.
+// Synthese : revenu estime, heures assurees, Classes, taux horaire moyen.
+// Par Classe : type, capacite, sieges eligibles, heures assurees, taux
+// horaire effectif, montant estime ; un tableau compact avec sa ligne de
+// total sur bureau, des lignes groupees sur telephone. Puis l'explication
+// simple (base garantie, composante d'occupation, plafond), l'aide Internet,
+// a part, et le releve des mois arretes par l'academie (guide §4), lu au
+// port : indisponible tant que le serveur ne le rend pas (FI-BR-11), jamais
+// un mois « paye » invente.
 //
-// Tout chiffre d'argent vient du port (`PortRevenusEnseignant`) : l'ecran ne
-// calcule ni taux ni montant (FI6). Aucune donnee de famille : ni prenom
-// d'eleve, ni solde, ni montant paye par un eleve (guide §5.5).
+// Tout chiffre d'argent vient du port (`PortRevenusEnseignant`), totaux et
+// taux moyen compris : l'ecran ne calcule ni taux ni montant (FI6). Aucune
+// donnee de famille : ni prenom d'eleve, ni solde, ni montant paye par un
+// eleve (guide §5.5).
 //
-// Hors de la maquette, et pour cause : l'historique des paiements et les
-// variations « vs mois precedent » n'existent dans aucun contrat (FI-BR-11) ;
-// ils ne sont pas inventes.
+// Hors de l'ecran, et pour cause : les variations « vs mois precedent » et
+// le choix d'un autre mois n'existent dans aucun contrat (FI-BR-11) ; ils ne
+// sont pas inventes (selecteur de mois : selon la reponse du directeur).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,8 +34,10 @@ import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_typography.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/carte_groupee.dart';
@@ -49,6 +57,14 @@ import '../../core/widgets/status_pill.dart';
 final FutureProvider<RevenusEnseignant> revenusEnseignantProvider =
     FutureProvider<RevenusEnseignant>(
       (Ref ref) => ref.watch(portRevenusEnseignantProvider).moisEnCours(),
+      retry: (int retryCount, Object error) => null,
+    );
+
+/// Le releve des mois arretes par l'academie, lu par le port (FI-BR-11). Meme
+/// regle de relance que [revenusEnseignantProvider].
+final FutureProvider<List<LigneReleve>> releveEnseignantProvider =
+    FutureProvider<List<LigneReleve>>(
+      (Ref ref) => ref.watch(portRevenusEnseignantProvider).releve(),
       retry: (int retryCount, Object error) => null,
     );
 
@@ -118,7 +134,19 @@ class _Corps extends StatelessWidget {
         _Resume(revenus: revenus),
         Ecart.vSection,
         SectionHeader(titre: t.enseignant.revenus.detailSection),
-        _DetailClasses(classes: revenus.classes),
+        // La definition des sieges eligibles, dite une seule fois pour
+        // toutes les Classes (revue FI-VAGUE-R, R5-06).
+        Text(
+          t.enseignant.revenus.siegesDetail,
+          style: AppPalette.of(context).inkMuted.applyTo(
+            Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+          ),
+        ),
+        Ecart.vSm,
+        if (AppGabarit.de(context) == Gabarit.desktop)
+          _TableauClasses(revenus: revenus)
+        else
+          _DetailClasses(classes: revenus.classes),
       ],
     );
     final Widget annexe = Column(
@@ -129,6 +157,9 @@ class _Corps extends StatelessWidget {
         Ecart.vSection,
         SectionHeader(titre: t.enseignant.revenus.internetSection),
         _Internet(allocation: revenus.allocationInternet),
+        Ecart.vSection,
+        SectionHeader(titre: t.enseignant.revenus.releveSection),
+        const _Releve(),
       ],
     );
     // [RESPONSIVE] Le gabarit decide, jamais une largeur comparee a un nombre.
@@ -162,7 +193,7 @@ String _duree(int minutes) {
 }
 
 /// Le resume : « Estimation », la periode, le total estime, les heures
-/// assurees et le nombre de Classes, puis la mention qui dit que le releve
+/// assurees, le nombre de Classes et le taux horaire moyen, puis la mention qui dit que le releve
 /// de l'academie fait foi.
 class _Resume extends StatelessWidget {
   const _Resume({required this.revenus});
@@ -175,11 +206,6 @@ class _Resume extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final TextStyle attenue = palette.inkMuted.applyTo(
       textes.bodySmall ?? const TextStyle(),
-    );
-    // Une somme de durees, jamais d'argent : le total estime vient du port.
-    final int minutes = revenus.classes.fold<int>(
-      0,
-      (int s, RevenusClasse c) => s + c.minutesAssurees,
     );
     return AppCard(
       dominante: true,
@@ -227,13 +253,23 @@ class _Resume extends StatelessWidget {
           Ecart.vMd,
           LigneCleValeur(
             cle: t.enseignant.revenus.heuresAssurees,
-            valeur: _duree(minutes),
+            valeur: _duree(revenus.total.minutesAssurees),
             chiffres: true,
+            valeurEnFin: true,
           ),
           LigneCleValeur(
             cle: t.enseignant.revenus.classesActives,
             valeur: '${revenus.classes.length}',
             chiffres: true,
+            valeurEnFin: true,
+          ),
+          LigneCleValeur(
+            cle: t.enseignant.revenus.tauxMoyen,
+            valeur: t.enseignant.revenus.tauxValeur(
+              montant: formaterMontant(revenus.total.tauxHoraireMoyen),
+            ),
+            chiffres: true,
+            valeurEnFin: true,
           ),
           Ecart.vMd,
           Text(t.enseignant.revenus.mention, style: attenue),
@@ -278,7 +314,22 @@ class _SectionClasse extends StatelessWidget {
             textes.titleMedium ?? const TextStyle(),
           ),
         ),
+        if (classe.enRemplacement) ...<Widget>[
+          Ecart.vXs,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: StatusPill(
+              libelle: t.enseignant.revenus.remplacement,
+              ton: TonEtat.neutre,
+            ),
+          ),
+        ],
         Ecart.vSm,
+        LigneCleValeur(
+          cle: t.enseignant.revenus.type,
+          valeur: _type(classe.type),
+          valeurEnFin: true,
+        ),
         LigneCleValeur(
           cle: t.enseignant.revenus.heuresAssurees,
           valeur: _duree(classe.minutesAssurees),
@@ -294,9 +345,9 @@ class _SectionClasse extends StatelessWidget {
         // Un nombre par Classe pour le mois, tel que la source le rend ; le
         // guide parle d'une moyenne ou d'un detail par seance, qu'aucun
         // contrat ne porte encore (ecart FI-BR-11) : rien n'est recalcule ici.
+        // Sa definition est dite une fois, sous « Detail par Classe ».
         LigneCleValeur(
           cle: t.enseignant.revenus.sieges,
-          detailCle: t.enseignant.revenus.siegesDetail,
           valeur: t.enseignant.revenus.siegesValeur(
             nombre: classe.siegesEligibles,
             capacite: classe.capacite,
@@ -318,6 +369,292 @@ class _SectionClasse extends StatelessWidget {
           total: true,
         ),
       ],
+    );
+  }
+}
+
+/// Le nom du type d'une Classe.
+String _type(TypeClasseRevenus type) => switch (type) {
+  TypeClasseRevenus.enfants => t.enseignant.revenus.typeEnfants,
+  TypeClasseRevenus.debutants => t.enseignant.revenus.typeDebutants,
+  TypeClasseRevenus.adultes => t.enseignant.revenus.typeAdultes,
+};
+
+/// Le detail par Classe en tableau compact, sur bureau (revue 11 e) : une
+/// ligne par Classe et la ligne de total rendue par le port. Les memes
+/// colonnes que les lignes groupees du telephone.
+class _TableauClasses extends StatelessWidget {
+  const _TableauClasses({required this.revenus});
+
+  final RevenusEnseignant revenus;
+
+  /// La part de largeur de chaque colonne, dans l'ordre d'affichage.
+  static const List<int> _parts = <int>[3, 3, 2, 2, 2, 2, 3];
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final AppMetriques metriques = AppMetriques.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle base = AppTypography.tabulaire(
+      palette.inkStrong.applyTo(textes.bodySmall ?? const TextStyle()),
+    );
+    final TextStyle entete = palette.inkMuted.applyTo(
+      textes.labelMedium ?? const TextStyle(),
+    );
+    final TextStyle fort = AppTypography.tabulaire(
+      palette.inkStrong.applyTo(textes.labelMedium ?? const TextStyle()),
+    );
+    final r = t.enseignant.revenus;
+    final List<String> titres = <String>[
+      r.classeColonne,
+      r.type,
+      r.capacite,
+      r.sieges,
+      r.heuresAssurees,
+      r.tauxColonne,
+      r.montantClasse,
+    ];
+    final TotalRevenus total = revenus.total;
+    return DecoratedBox(
+      key: const ValueKey<String>('revenus-tableau'),
+      decoration: palette.surfaceRaised.decoration(
+        borderRadius: metriques.arrondi,
+        side: palette.borderHairline.asBorderSide(),
+      ),
+      child: ClipRRect(
+        borderRadius: metriques.arrondi,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            // Les en-tetes sont exclus de l'arbre semantique : chaque cellule
+            // porte deja le titre de sa colonne dans son libelle parle.
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: palette.surfaceSunken.background,
+                border: Border(bottom: palette.borderHairline.asBorderSide()),
+              ),
+              child: ExcludeSemantics(
+                child: _Rangee(
+                  parts: _parts,
+                  cellules: <Widget>[
+                    for (final String titre in titres)
+                      Text(titre, style: entete),
+                  ],
+                ),
+              ),
+            ),
+            for (final RevenusClasse c in revenus.classes)
+              DecoratedBox(
+                key: ValueKey<String>('revenus-classe-${c.classeId}'),
+                decoration: BoxDecoration(
+                  border: Border(bottom: palette.borderHairline.asBorderSide()),
+                ),
+                child: _Rangee(
+                  parts: _parts,
+                  cellules: <Widget>[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        _Cellule(
+                          titre: titres[0],
+                          texte: r.classe(nom: c.classe),
+                          style: base,
+                        ),
+                        if (c.enRemplacement) ...<Widget>[
+                          Ecart.vXs,
+                          StatusPill(
+                            libelle: r.remplacement,
+                            ton: TonEtat.neutre,
+                          ),
+                        ],
+                      ],
+                    ),
+                    _Cellule(
+                      titre: titres[1],
+                      texte: _type(c.type),
+                      style: base,
+                    ),
+                    _Cellule(
+                      titre: titres[2],
+                      texte: '${c.capacite}',
+                      style: base,
+                    ),
+                    _Cellule(
+                      titre: titres[3],
+                      texte: r.siegesValeur(
+                        nombre: c.siegesEligibles,
+                        capacite: c.capacite,
+                      ),
+                      style: base,
+                    ),
+                    _Cellule(
+                      titre: titres[4],
+                      texte: _duree(c.minutesAssurees),
+                      style: base,
+                    ),
+                    _Cellule(
+                      titre: titres[5],
+                      texte: formaterMontant(c.tauxHoraireEffectif),
+                      style: base,
+                    ),
+                    _Cellule(
+                      titre: titres[6],
+                      texte: formaterMontant(c.montantEstime),
+                      style: base,
+                    ),
+                  ],
+                ),
+              ),
+            DecoratedBox(
+              key: const ValueKey<String>('revenus-total'),
+              decoration: BoxDecoration(
+                color: palette.surfaceSunken.background,
+              ),
+              child: _Rangee(
+                parts: _parts,
+                cellules: <Widget>[
+                  Text(r.total, style: fort),
+                  const SizedBox.shrink(),
+                  _Cellule(
+                    titre: titres[2],
+                    texte: '${total.capacite}',
+                    style: fort,
+                  ),
+                  _Cellule(
+                    titre: titres[3],
+                    texte: r.siegesValeur(
+                      nombre: total.siegesEligibles,
+                      capacite: total.capacite,
+                    ),
+                    style: fort,
+                  ),
+                  _Cellule(
+                    titre: titres[4],
+                    texte: _duree(total.minutesAssurees),
+                    style: fort,
+                  ),
+                  _Cellule(
+                    titre: r.tauxMoyen,
+                    texte: formaterMontant(total.tauxHoraireMoyen),
+                    style: fort,
+                  ),
+                  _Cellule(
+                    titre: titres[6],
+                    texte: formaterMontant(revenus.totalEstime),
+                    style: fort,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Une rangee du tableau : des cellules aux parts de largeur [parts].
+class _Rangee extends StatelessWidget {
+  const _Rangee({required this.parts, required this.cellules});
+
+  final List<int> parts;
+  final List<Widget> cellules;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsetsDirectional.symmetric(
+      horizontal: AppSpacing.lg,
+      vertical: AppSpacing.md,
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        for (int i = 0; i < cellules.length; i++)
+          Expanded(
+            flex: parts[i],
+            child: Padding(
+              padding: const EdgeInsetsDirectional.only(end: AppSpacing.sm),
+              child: cellules[i],
+            ),
+          ),
+      ],
+    ),
+  );
+}
+
+/// Une cellule, avec le titre de sa colonne dans son libelle parle : sans
+/// lui, un lecteur d'ecran enoncerait des valeurs sans dire de quoi.
+class _Cellule extends StatelessWidget {
+  const _Cellule({
+    required this.titre,
+    required this.texte,
+    required this.style,
+  });
+
+  final String titre;
+  final String texte;
+  final TextStyle style;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    label: '$titre : $texte',
+    excludeSemantics: true,
+    child: Text(texte, style: style),
+  );
+}
+
+/// Le releve des mois arretes par l'academie (guide §4, revue 11 g), lu au
+/// port. Indisponible tant que le serveur ne le rend pas (FI-BR-11) : la
+/// section le dit, sans « Reessayer » ; jamais un statut « paye ».
+class _Releve extends ConsumerWidget {
+  const _Releve();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<List<LigneReleve>> releve = ref.watch(
+      releveEnseignantProvider,
+    );
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    void relire() => ref.invalidate(releveEnseignantProvider);
+    final r = t.enseignant.revenus;
+    return BlocAsynchrone<List<LigneReleve>>(
+      valeur: releve,
+      squelette: const Skeleton.liste(lignes: 2),
+      onReessayer: relire,
+      erreurVersEtat: (Object erreur, VoidCallback? reessayer) {
+        if (erreur is CapaciteIndisponible) {
+          return EtatSysteme(
+            nature: NatureEtat.indisponible,
+            titre: r.releveIndisponibleTitre,
+            phrase: r.releveIndisponiblePhrase,
+          );
+        }
+        return horsLigne
+            ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: reessayer)
+            : null;
+      },
+      vide: EmptyState(
+        message: r.releveVide,
+        invitation: r.releveVideDetail,
+        icone: AppIcons.finance,
+        registre: RegistreVide.subi,
+      ),
+      construire: (List<LigneReleve> lignes) => CarteGroupee(
+        sections: <Widget>[
+          for (final LigneReleve l in lignes)
+            LigneFinance(
+              libelle: r.periode(
+                mois: t.commun.dates.mois[l.mois.month - 1],
+                annee: l.mois.year,
+              ),
+              detail: _duree(l.minutesAssurees),
+              montant: l.montant,
+            ),
+        ],
+      ),
     );
   }
 }

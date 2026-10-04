@@ -223,6 +223,9 @@ class _RevenusEnEchec implements PortRevenusEnseignant {
   @override
   Future<RevenusEnseignant> moisEnCours() =>
       Future<RevenusEnseignant>.error(_echec);
+
+  @override
+  Future<List<LigneReleve>> releve() => Future<List<LigneReleve>>.error(_echec);
 }
 
 /// Les finances de l'adulte autonome, rendues par [lire].
