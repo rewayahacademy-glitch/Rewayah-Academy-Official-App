@@ -4,7 +4,11 @@
 /// To regenerate, run: `dart run slang`
 ///
 /// Locales: 2
+<<<<<<< HEAD
 /// Strings: 4018 (2009 per locale)
+=======
+/// Strings: 4019 (2009 per locale)
+>>>>>>> origin/corrections/c1-ctrl
 
 // coverage:ignore-file
 // ignore_for_file: type=lint, unused_import

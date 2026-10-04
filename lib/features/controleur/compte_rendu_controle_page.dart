@@ -25,6 +25,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
 import '../../core/mouvement/mouvement.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -146,7 +147,13 @@ class _CompteRenduControlePageState
       _echec = false;
     });
     try {
-      await ref.read(envoiCompteRenduProvider).envoyer(visite.seanceId, choix);
+      // Un serveur muet ne bloque pas l'ecran (CTRL-DELAI-1, K-59) : passe
+      // le delai maximal, l'envoi est « non confirme », Reessayer et
+      // « Plus tard » redeviennent disponibles.
+      await ref
+          .read(envoiCompteRenduProvider)
+          .envoyer(visite.seanceId, choix)
+          .timeout(AppDelais.requeteMax);
       if (!mounted) return;
       ref.read(compteRenduATerminerProvider.notifier).terminer(visite.seanceId);
       setState(() {
@@ -166,12 +173,14 @@ class _CompteRenduControlePageState
   Widget build(BuildContext context) {
     final CompteRenduEnSuspens? visite = _visite;
     if (visite == null) {
-      // Seance inconnue (rechargement, lien direct) : le message generique,
-      // jamais une autre mission (C7, revue CT-R B1).
+      // Seance inconnue (rechargement, lien direct) : la visite n'est plus en
+      // memoire, jamais une autre mission (C7, revue CT-R B1). Ni annulation
+      // ni changement de controleur : la vraie cause (CTRL-MSG-1, K-59).
       return PageShell(
         titre: t.controleur.compteRendu.titre,
         child: EmptyState(
-          message: t.controleur.controle.indisponible,
+          message: t.controleur.compteRendu.visiteInconnue,
+          invitation: t.controleur.compteRendu.visiteInconnueAide,
           registre: RegistreVide.subi,
           libelleAction: t.controleur.compteRendu.revenir,
           onAction: _revenir,
@@ -235,7 +244,7 @@ class _CompteRenduControlePageState
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                const _FaitsAutomatiques(),
+                _FaitsAutomatiques(seanceId: visite.seanceId),
                 Ecart.vMd,
                 LigneTransmissionVisite(seanceId: visite.seanceId),
                 Ecart.vXxl,
@@ -479,7 +488,11 @@ class LigneTransmissionVisite extends ConsumerWidget {
 /// Les faits automatiques de la visite, en lecture seule, replies par
 /// defaut ; les deplier ne quitte pas la page (UX_REVIEW_08 n° 5 a).
 class _FaitsAutomatiques extends ConsumerStatefulWidget {
-  const _FaitsAutomatiques();
+  const _FaitsAutomatiques({required this.seanceId});
+
+  /// La seance de la visite : ses faits, jamais ceux d'une autre Classe
+  /// (CTRL-SEANCE-1).
+  final String seanceId;
 
   @override
   ConsumerState<_FaitsAutomatiques> createState() => _FaitsAutomatiquesState();
@@ -492,7 +505,9 @@ class _FaitsAutomatiquesState extends ConsumerState<_FaitsAutomatiques> {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final AsyncValue<FaitsVisite?> faits = ref.watch(faitsVisiteProvider);
+    final AsyncValue<FaitsVisite?> faits = ref.watch(
+      faitsVisiteProvider(widget.seanceId),
+    );
     final TextStyle doux = palette.inkMuted.applyTo(
       textes.bodyMedium ?? const TextStyle(),
     );

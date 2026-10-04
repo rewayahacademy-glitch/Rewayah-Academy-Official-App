@@ -108,8 +108,13 @@ List<RouteBase> routesDemoControleur(String environnement) {
               profil: espaces.controleur,
             ),
             ...surchargesEspacesDemo(espaces.enMission()),
+            // Les faits de la visite de demonstration seulement, lus par
+            // seance (CTRL-SEANCE-1).
             faitsVisiteProvider.overrideWith(
-              (Ref _) async => faitsVisiteDemoControleur(),
+              (Ref _, String seance) async =>
+                  seance == visiteDemoControleur().seanceId
+                  ? faitsVisiteDemoControleur()
+                  : null,
             ),
             ..._visitesDemo(),
           ],
@@ -147,7 +152,10 @@ List<RouteBase> routesDemoControleur(String environnement) {
         overrides: <Override>[
           ...surchargesCoquilleControleurDemo(EtatDemoControleur.enDirect),
           rosterControleProvider.overrideWith(
-            (Ref _) async => rosterDemoControleur(),
+            (Ref _, String seance) async =>
+                seance == visiteDemoControleur().seanceId
+                ? rosterDemoControleur()
+                : const <EleveRoster>[],
           ),
           ..._visitesDemo(),
         ],

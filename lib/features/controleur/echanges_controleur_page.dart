@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
@@ -173,7 +174,10 @@ class _EchangesControleurPageState
               annonce: (String auteur, String texte) =>
                   e.nouveauMessage(auteur: auteur, texte: texte),
             ),
-            onEnvoyer: (String texte) => _port.envoyer(f.id, texte),
+            // Serveur muet : le message passe « non envoye », avec un
+            // nouvel essai, au lieu de rester « en cours » (CTRL-DELAI-1).
+            onEnvoyer: (String texte) =>
+                _port.envoyer(f.id, texte).timeout(AppDelais.requeteMax),
           ),
         ),
       ),

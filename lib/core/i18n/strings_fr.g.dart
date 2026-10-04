@@ -9698,6 +9698,12 @@ class Traductions$controleur$compteRendu$fr {
 
 	/// fr: 'Reprendre le compte rendu'
 	String get reprendre => 'Reprendre le compte rendu';
+
+	/// fr: 'Ce compte rendu ne peut plus être repris ici.'
+	String get visiteInconnue => 'Ce compte rendu ne peut plus être repris ici.';
+
+	/// fr: 'Cet appareil n'a plus la visite en mémoire, sans doute après un rechargement de la page. La visite reste transmise à l'administration avec son relevé automatique ; ce point n'est pas confirmé depuis cet écran. Pour ajouter une remarque, écrivez à l'administration.'
+	String get visiteInconnueAide => 'Cet appareil n\'a plus la visite en mémoire, sans doute après un rechargement de la page. La visite reste transmise à l\'administration avec son relevé automatique ; ce point n\'est pas confirmé depuis cet écran. Pour ajouter une remarque, écrivez à l\'administration.';
 }
 
 // Path: controleur.observation
@@ -9857,6 +9863,9 @@ class Traductions$controleur$observation$fr {
 
 	/// fr: 'L'envoi n'est pas confirmé : la connexion ou le serveur n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
 	String get echec => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
+
+	/// fr: 'L'envoi n'est pas confirmé : la connexion ou le serveur n'a pas répondu. Vos réponses restent choisies ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.'
+	String get echecSansTexte => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Vos réponses restent choisies ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.';
 }
 
 // Path: controleur.echanges
@@ -18382,6 +18391,8 @@ extension on Traductions {
 			'controleur.compteRendu.visiteEchec' => 'La transmission de la visite n\'est pas confirmée : la connexion ou le serveur n\'a pas répondu. Réessayez ; le relevé de la visite reste enregistré sur le serveur.',
 			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
 			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
+			'controleur.compteRendu.visiteInconnue' => 'Ce compte rendu ne peut plus être repris ici.',
+			'controleur.compteRendu.visiteInconnueAide' => 'Cet appareil n\'a plus la visite en mémoire, sans doute après un rechargement de la page. La visite reste transmise à l\'administration avec son relevé automatique ; ce point n\'est pas confirmé depuis cet écran. Pour ajouter une remarque, écrivez à l\'administration.',
 			'controleur.observation.important' => 'Vous signalez un point important : votre texte sera demandé.',
 			'controleur.observation.questionNature' => 'Quelle est la nature de votre observation ?',
 			'controleur.observation.contexteNature' => 'Votre observation rejoint le compte rendu de cette visite, transmis à l\'administration.',
@@ -18432,6 +18443,7 @@ extension on Traductions {
 			'controleur.observation.cleTexte' => 'Remarque',
 			'controleur.observation.sansTexte' => 'Aucun texte',
 			'controleur.observation.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
+			'controleur.observation.echecSansTexte' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Vos réponses restent choisies ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.titre' => 'Échanges',
 			'controleur.echanges.titreFil' => ({required Object classe, required Object date}) => '${classe} · ${date}',
 			'controleur.echanges.derniereActivite' => ({required Object date}) => 'Dernière activité : ${date}',
@@ -18447,9 +18459,14 @@ extension on Traductions {
 			'controleur.echanges.champ' => 'Répondre à l\'administration…',
 			'controleur.echanges.champLibelle' => 'Répondre à l\'administration',
 			'controleur.echanges.envoyer' => 'Envoyer',
-			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
+<<<<<<< HEAD
+			_ => null,
+		} ?? switch (path) {
+=======
+>>>>>>> origin/corrections/c1-ctrl
 			'controleur.echanges.enCours' => 'Envoi en cours.',
 			'controleur.echanges.envoye' => 'Envoyé.',
 			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
@@ -18961,9 +18978,14 @@ extension on Traductions {
 			'tc.parcours.signalement.categorieValeur.pedagogique' => 'Pédagogique',
 			'tc.parcours.signalement.categorieValeur.presence' => 'Présence',
 			'tc.parcours.signalement.categorieValeur.technique' => 'Technique',
-			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
+<<<<<<< HEAD
+			_ => null,
+		} ?? switch (path) {
+=======
+>>>>>>> origin/corrections/c1-ctrl
 			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
 			'tc.parcours.signalement.interne' => 'Note interne',
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
