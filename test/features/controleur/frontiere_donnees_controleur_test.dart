@@ -621,8 +621,15 @@ void main() {
     for (final EleveProjectionDemo e in DonneesClasseDemo.eleves) {
       expect(unMot(e.prenom), isTrue, reason: e.prenom);
     }
+    // La liste de l'observation : le prenom et l'initiale du nom (decision
+    // C7 = a), jamais le nom entier.
     for (final EleveRoster e in rosterDemoControleur()) {
       expect(unMot(e.prenom), isTrue, reason: e.prenom);
+      expect(
+        RegExp(r'^\S+ \S\.$').hasMatch(e.nomAffiche),
+        isTrue,
+        reason: e.nomAffiche,
+      );
     }
     // Dans la salle, chaque eleve porte son prenom seul.
     for (final ParticipantSalle p in participantsControleurDemo()) {

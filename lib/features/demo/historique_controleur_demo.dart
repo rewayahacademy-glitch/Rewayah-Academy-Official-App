@@ -65,7 +65,12 @@ class HistoriqueDemo implements PortHistorique {
           personne: PersonneConcernee.enseignant,
           texte: 'La séance a commencé avec huit minutes de retard.',
         ),
-        presents: const <String>['Bilal K.', 'Hafsa D.', 'Ilyas M.', 'Sara T.'],
+        presents: <String>[
+          prenomEtInitiale('Bilal', 'K'),
+          prenomEtInitiale('Hafsa', 'D'),
+          prenomEtInitiale('Ilyas', 'M'),
+          prenomEtInitiale('Sara', 'T'),
+        ],
         complements: <ComplementRapport>[
           ComplementRapport(
             date: DateTime(2026, 9, 24, 17, 55),
@@ -94,7 +99,11 @@ class HistoriqueDemo implements PortHistorique {
           reconnexions: 0,
         ),
         choix: ChoixCompteRendu.rienASignaler,
-        presents: const <String>['Aïcha N.', 'Mariam S.', 'Yusuf B.'],
+        // Le roster d'An-Nour, au meme format que la liste de l'observation.
+        presents: <String>[
+          for (final String p in DonneesControleurDemo.roster)
+            prenomEtInitiale(p, DonneesControleurDemo.initialesNom[p]),
+        ]..sort(),
       ),
       // A terminer : pas de detail, la ligne reprend le compte rendu.
       _ => RapportControle(

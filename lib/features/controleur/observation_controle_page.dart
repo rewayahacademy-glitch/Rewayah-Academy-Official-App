@@ -4,8 +4,9 @@
 //
 // UX_REVIEW_08 n° 7 :
 // - cartes de choix (`ChoiceCardGroup`), jamais de liste deroulante ;
-// - « Eleve precis » ouvre le roster autorise : prenom seul, une ligne par
-//   eleve, aucun champ de recherche ni saisie libre (C8) ;
+// - « Eleve precis » ouvre le roster autorise : prenom et initiale du nom
+//   (decision C7 = a), une ligne par eleve, aucun champ de recherche ni
+//   saisie libre (C8) ;
 // - l'erreur « texte requis » apparait a la validation de l'etape et
 //   disparait des la saisie ; aucun compteur (C15) ;
 // - le retour d'etape garde toutes les reponses, en memoire seulement (C12) ;
@@ -497,7 +498,7 @@ class _ObservationControlePageState
                         OptionChoix(
                           cle: ObservationControlePage.cleEleve(e.id),
                           valeur: e.id,
-                          libelle: e.prenom,
+                          libelle: e.nomAffiche,
                         ),
                     ],
                     onChange: (ReponseChoix r) => setState(
@@ -547,7 +548,7 @@ class _ObservationControlePageState
         : ObservationControlePage.libellePersonne(p);
     if (p == PersonneConcernee.elevePrecis) {
       for (final EleveRoster e in roster) {
-        if (e.id == _eleveId) personne = '$personne · ${e.prenom}';
+        if (e.id == _eleveId) personne = '$personne · ${e.nomAffiche}';
       }
     }
     final String texte = _texte.text.trim();
