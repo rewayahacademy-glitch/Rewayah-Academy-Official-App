@@ -533,6 +533,7 @@ class _Traductions$com$socle$composants$badge$ar extends Traductions$com$socle$c
 	@override String get nonLuUn => '1 غير مقروء';
 	@override String nonLus({required Object nombre}) => '${nombre} غير مقروءة';
 	@override String nonLusSemantique({required Object nombre}) => '${nombre} عناصر غير مقروءة';
+	@override String get nonLuUnSemantique => 'عنصر واحد غير مقروء';
 	@override String get information => 'للعلم';
 	@override String get aLire => 'للقراءة';
 	@override String get actionRequise => _root.com.socle.lexique.actionRequise;
@@ -586,6 +587,7 @@ class _Traductions$com$socle$composants$composer$ar extends Traductions$com$socl
 	@override String get nonConfirme => 'لم يُؤكَّد إرسال هذه الرسالة بعد.';
 	@override String get reessayer => 'إعادة المحاولة';
 	@override String get auteurSoi => 'أنت';
+	@override String annonce({required Object auteur, required Object texte}) => 'رسالة جديدة من ${auteur}: ${texte}';
 	@override String get brouillon => _root.com.socle.lexique.brouillon;
 	@override String get brouillonRestaure => 'تمت استعادة المسودة';
 }
@@ -761,6 +763,7 @@ extension on TraductionsAr {
 			'com.socle.composants.badge.nonLuUn' => '1 غير مقروء',
 			'com.socle.composants.badge.nonLus' => ({required Object nombre}) => '${nombre} غير مقروءة',
 			'com.socle.composants.badge.nonLusSemantique' => ({required Object nombre}) => '${nombre} عناصر غير مقروءة',
+			'com.socle.composants.badge.nonLuUnSemantique' => 'عنصر واحد غير مقروء',
 			'com.socle.composants.badge.information' => 'للعلم',
 			'com.socle.composants.badge.aLire' => 'للقراءة',
 			'com.socle.composants.badge.actionRequise' => _root.com.socle.lexique.actionRequise,
@@ -796,6 +799,7 @@ extension on TraductionsAr {
 			'com.socle.composants.composer.nonConfirme' => 'لم يُؤكَّد إرسال هذه الرسالة بعد.',
 			'com.socle.composants.composer.reessayer' => 'إعادة المحاولة',
 			'com.socle.composants.composer.auteurSoi' => 'أنت',
+			'com.socle.composants.composer.annonce' => ({required Object auteur, required Object texte}) => 'رسالة جديدة من ${auteur}: ${texte}',
 			'com.socle.composants.composer.brouillon' => _root.com.socle.lexique.brouillon,
 			'com.socle.composants.composer.brouillonRestaure' => 'تمت استعادة المسودة',
 			'com.socle.composants.etats.chargement' => 'جارٍ التحميل',
