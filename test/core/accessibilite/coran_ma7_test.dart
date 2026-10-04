@@ -20,6 +20,7 @@ import 'package:rewayah_academy/core/tc_coran/corpus_service_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/etat_lecture_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/layout_lignes_indisponible.dart';
 import 'package:rewayah_academy/core/tc_coran/navigation_coran.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
@@ -431,6 +432,95 @@ void main() {
       }
       expect(tester.takeException(), isNull);
     });
+  }
+
+  // MA-CORAN-TETE-1 : a texte x2, a 390 comme a 320, l'en-tete du lecteur
+  // (« Al-Faatiha . Page 1 sur 604 ») tient sur UNE ligne, en entier (sans
+  // points de suspension), dans l'ecran ; le titre se reduit au besoin
+  // (meme principe que MA-TITRE-1). Le rendu du Coran n'est pas concerne.
+  for (final double largeur in <double>[390, 320]) {
+    for (final bool grande in <bool>[false, true]) {
+      testWidgets('MA-CORAN-TETE-1 : ${largeur.toInt()}, texte x2, grand '
+          'texte = $grande, en-tete sur une ligne et en entier', (
+        WidgetTester tester,
+      ) async {
+        await _taille(tester, Size(largeur, 844));
+        final ProviderContainer racine = ProviderContainer();
+        addTearDown(racine.dispose);
+        racine.read(preferencesLocalesProvider.notifier).lectureGrande(grande);
+        tester.platformDispatcher.textScaleFactorTestValue = 2;
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+        await tester.pumpWidget(
+          _hote(
+            EcranAccessibiliteDemo(
+              eleve: EleveDemoAccessibilite.mariam,
+              destinationInitiale: EcranAccessibiliteDemo.indexCoran,
+              surchargesCoran: corpus(
+                personnelle: const PositionLecture(
+                  page: 1,
+                  sourate: 1,
+                  verset: 1,
+                ),
+              ),
+            ),
+            racine: racine,
+          ),
+        );
+        await poser(tester);
+        await tester.tap(find.byKey(_principale));
+        await poser(tester);
+        final Finder entete = find.byKey(LecteurCoranAccessibilite.enteteKey);
+        expect(entete, findsOneWidget);
+        final String titre = tester
+            .widget<EnteteLecteurCoranAccessibilite>(entete)
+            .titre;
+        expect(titre, contains(t.eleve.coran.page(page: '1', total: '604')));
+        // Le seul texte de l'en-tete est le titre (le retour est une icone).
+        final Finder texte = find.descendant(
+          of: entete,
+          matching: find.byType(Text),
+        );
+        expect(texte, findsOneWidget);
+        final RenderParagraph paragraphe = tester.renderObject<RenderParagraph>(
+          find.descendant(of: texte, matching: find.byType(RichText)),
+        );
+        // En entier : ni points de suspension ni texte tronque.
+        expect(paragraphe.text.toPlainText(), titre);
+        expect(paragraphe.didExceedMaxLines, isFalse);
+        // Une seule ligne, a la largeur ou le texte est pose.
+        final TextPainter mesure = TextPainter(
+          text: paragraphe.text,
+          textScaler: paragraphe.textScaler,
+          textDirection: paragraphe.textDirection,
+        )..layout(maxWidth: paragraphe.size.width);
+        final int lignes = mesure.computeLineMetrics().length;
+        mesure.dispose();
+        expect(lignes, 1, reason: 'titre « $titre » sur $lignes lignes');
+        expect(paragraphe.overflow, isNot(TextOverflow.ellipsis));
+        // Dans l'ecran et dans l'en-tete, sur les quatre bords.
+        final Rect boite = tester.getRect(texte);
+        final Rect cadre = tester.getRect(entete);
+        expect(boite.left, greaterThanOrEqualTo(0));
+        expect(boite.right, lessThanOrEqualTo(largeur));
+        expect(boite.top, greaterThanOrEqualTo(cadre.top));
+        expect(boite.bottom, lessThanOrEqualTo(cadre.bottom));
+        // Le retour reste atteignable, et l'en-tete ne grossit pas au-dela
+        // d'une rangee de cible tactile et de ses marges.
+        expect(find.byTooltip(t.accessibilite.coran.retour), findsOneWidget);
+        expect(
+          cadre.height,
+          lessThanOrEqualTo(
+            tester
+                    .getSize(
+                      find.byKey(const ValueKey<String>('coran-ma-retour')),
+                    )
+                    .height +
+                2 * AppSpacing.xs,
+          ),
+        );
+        expect(tester.takeException(), isNull);
+      });
+    }
   }
 
   // MA-CMD-1 (finition, directeur 02/10/2026 : « le support partage n'a plus

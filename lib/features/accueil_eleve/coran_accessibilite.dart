@@ -590,7 +590,8 @@ class AttributionCoranCompacte extends StatelessWidget {
 }
 
 /// L'en-tete minimal du lecteur, sur une ligne : le retour en icone seule
-/// (nom lu « Retour », infobulle) et le titre en petit.
+/// (nom lu « Retour », infobulle) et le titre en petit, reduit si besoin
+/// pour tenir en entier sur cette ligne (MA-CORAN-TETE-1).
 class EnteteLecteurCoranAccessibilite extends StatelessWidget {
   /// Cree l'en-tete.
   const EnteteLecteurCoranAccessibilite({
@@ -604,6 +605,9 @@ class EnteteLecteurCoranAccessibilite extends StatelessWidget {
 
   /// Le retour a l'entree ; nul : pas de bouton.
   final VoidCallback? onRetour;
+
+  /// La cle du titre (tests, captures).
+  static const Key titreKey = ValueKey<String>('coran-ma-entete-titre');
 
   @override
   Widget build(BuildContext context) {
@@ -630,13 +634,21 @@ class EnteteLecteurCoranAccessibilite extends StatelessWidget {
             ),
             Ecart.hXs,
           ],
+          // MA-CORAN-TETE-1 (meme principe que MA-TITRE-1) : l'en-tete reste
+          // sur une ligne (MA-CMD-1) a texte x2 ; jamais de points de
+          // suspension, le titre se reduit juste assez pour tenir en entier.
           Expanded(
-            child: Text(
-              titre,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: palette.inkStrong.applyTo(
-                textes.labelMedium ?? const TextStyle(),
+            child: FittedBox(
+              key: titreKey,
+              fit: BoxFit.scaleDown,
+              alignment: AlignmentDirectional.centerStart,
+              child: Text(
+                titre,
+                maxLines: 1,
+                softWrap: false,
+                style: palette.inkStrong.applyTo(
+                  textes.labelMedium ?? const TextStyle(),
+                ),
               ),
             ),
           ),
