@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../finance/finances_profil.dart';
 import 'capacite_indisponible.dart';
 
 /// Un paiement du foyer, tel qu'une future source le rendra.
@@ -110,6 +111,13 @@ abstract interface class PortPaiementsFoyer {
   /// Les soldes des beneficiaires autorises, pour le titulaire seulement
   /// (EA-BR-23).
   Future<SoldesFoyer> soldes();
+
+  /// Les finances du foyer (FI-1c, FI-BR-03, FI-BR-04) : par profil, solde
+  /// individuel en unites mineures + ISO, periode financee, prochain debit,
+  /// lignes de mensualite et etat ; synthese du foyer en lecture. Pour le
+  /// titulaire seulement : jamais rendu a l'enfant ni au second adulte
+  /// (lecon 15).
+  Future<FinancesFoyer> finances();
 }
 
 /// Les paiements tant qu'aucune source n'existe : une page, une phrase, aucun
@@ -131,6 +139,10 @@ class PaiementsFoyerIndisponible implements PortPaiementsFoyer {
   @override
   Future<SoldesFoyer> soldes() =>
       Future<SoldesFoyer>.error(const CapaciteIndisponible('EA-BR-23'));
+
+  @override
+  Future<FinancesFoyer> finances() =>
+      Future<FinancesFoyer>.error(const CapaciteIndisponible('FI-BR-03'));
 }
 
 /// Les paiements employes par l'application.

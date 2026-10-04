@@ -45,6 +45,9 @@ class AccesBeneficiaire {
     this.finAcces,
     this.statutServeur,
     this.motif,
+    this.seancesPayantesOuvertes,
+    this.essaisUtilises,
+    this.essaisMax,
   });
 
   /// L'eleve.
@@ -65,6 +68,18 @@ class AccesBeneficiaire {
 
   /// **Reserve**, toujours `null` (DB-FOY-05). Jamais affiche brut.
   final String? motif;
+
+  /// Vrai quand les seances payantes sont ouvertes (periode financee, FI2,
+  /// FI-BR-08), faux sinon, `null` quand la source ne le rend pas encore.
+  /// **Aucune cause ni montant** : l'enfant lit cet etat, jamais pourquoi
+  /// (FI12, guide §1.7).
+  final bool? seancesPayantesOuvertes;
+
+  /// Les seances d'essai deja utilisees, `null` hors essai (FI4).
+  final int? essaisUtilises;
+
+  /// Le nombre maximal d'essais rendu par la politique, `null` hors essai.
+  final int? essaisMax;
 }
 
 /// L'acces des eleves du foyer (contrat K6, consommateurs : Compte, fiche

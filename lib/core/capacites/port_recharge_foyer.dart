@@ -15,6 +15,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../finance/montant.dart';
+import '../finance/suivi_paiement.dart';
 import 'capacite_indisponible.dart';
 
 /// Une offre de recharge, telle que le serveur la rend pour un beneficiaire.
@@ -75,6 +77,21 @@ class ChoixRecharge {
 
   /// L'offre choisie pour lui.
   final String offreId;
+}
+
+/// Le montant choisi par le titulaire pour un beneficiaire (FI-1c, guide
+/// Finance V4 §5.3, revue FI-1a E-1) : il remplace l'offre unique de F11.
+/// Le serveur arrete ensuite le total (FI8).
+@immutable
+class MontantRecharge {
+  /// Cree le montant choisi.
+  const MontantRecharge({required this.beneficiaireId, required this.montant});
+
+  /// Le beneficiaire.
+  final String beneficiaireId;
+
+  /// Le montant choisi pour lui, en unites mineures + ISO.
+  final Montant montant;
 }
 
 /// Une remise, seulement quand le serveur la rend, avec SON libelle (F12).
@@ -161,6 +178,15 @@ abstract interface class PortRechargeFoyer {
   /// Rend l'etat du paiement DEJA REDIGE par le serveur, affiche tel quel :
   /// l'ecran n'en deduit jamais une reussite (F13).
   Future<String> payer({required String recapitulatifId, required String cle});
+
+  /// Le recapitulatif d'une recharge par montants choisis (FI-1c, FI-BR-06) :
+  /// un montant par profil, le total et la taxe arretes par le serveur avant
+  /// le paiement.
+  Future<RecapitulatifRecharge> verifierMontants(List<MontantRecharge> choix);
+
+  /// L'etat de la commande [commandeId], tel que la source le rend (FI-1c,
+  /// FI-BR-06) : l'un des huit etats, jamais deduit par l'ecran (FI9).
+  Future<SuiviPaiement> suivre(String commandeId);
 }
 
 /// **Aucune source serveur a ce jour** (EA-BR-24, EA-BR-25).
@@ -185,6 +211,16 @@ class RechargeFoyerIndisponible implements PortRechargeFoyer {
     required String recapitulatifId,
     required String cle,
   }) => Future<String>.error(const CapaciteIndisponible('EA-BR-25'));
+
+  @override
+  Future<RecapitulatifRecharge> verifierMontants(List<MontantRecharge> choix) =>
+      Future<RecapitulatifRecharge>.error(
+        const CapaciteIndisponible('FI-BR-06'),
+      );
+
+  @override
+  Future<SuiviPaiement> suivre(String commandeId) =>
+      Future<SuiviPaiement>.error(const CapaciteIndisponible('FI-BR-06'));
 }
 
 /// Le port de la recharge ; la demonstration le surcharge.

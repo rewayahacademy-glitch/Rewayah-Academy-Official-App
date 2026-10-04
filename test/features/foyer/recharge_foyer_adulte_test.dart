@@ -17,6 +17,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/finance/suivi_paiement.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
@@ -811,6 +812,14 @@ class _Port implements PortRechargeFoyer {
     if (paiementSuspendu) return reponse.future;
     return Future<String>.value('etat redige par le serveur');
   }
+
+  @override
+  Future<RecapitulatifRecharge> verifierMontants(List<MontantRecharge> choix) =>
+      Future<RecapitulatifRecharge>.error(StateError('FI-7'));
+
+  @override
+  Future<SuiviPaiement> suivre(String commandeId) =>
+      Future<SuiviPaiement>.error(StateError('FI-8'));
 }
 
 Widget _page({

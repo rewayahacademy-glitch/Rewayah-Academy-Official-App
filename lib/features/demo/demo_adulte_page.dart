@@ -44,6 +44,7 @@ import '../../core/capacites/port_notifications.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/config/env.dart';
 import '../../core/domain/enums.dart';
+import '../../core/finance/suivi_paiement.dart';
 import '../../core/foyer/port_creation_profil_eleve.dart';
 import '../../core/foyer/profil_eleve_brouillon.dart';
 import '../../core/foyer/selection_eleve.dart';
@@ -1638,6 +1639,18 @@ class _RechargeDemo implements PortRechargeFoyer {
     }
     throw const CapaciteIndisponible('EA-BR-25');
   }
+
+  // La recharge par montants et le suivi des huit etats arrivent avec FI-7 et
+  // FI-8 ; la demonstration EA reste sur ses offres (EA-10).
+  @override
+  Future<RecapitulatifRecharge> verifierMontants(List<MontantRecharge> choix) =>
+      Future<RecapitulatifRecharge>.error(
+        const CapaciteIndisponible('FI-BR-06'),
+      );
+
+  @override
+  Future<SuiviPaiement> suivre(String commandeId) =>
+      Future<SuiviPaiement>.error(const CapaciteIndisponible('FI-BR-06'));
 }
 
 /// La reprise du foyer en demonstration (EA-11, EA-BR-27 et 28) : rien n'est
