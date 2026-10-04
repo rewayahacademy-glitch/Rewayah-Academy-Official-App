@@ -207,7 +207,19 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
           children: <Widget>[
             _entete(),
             Ecart.vMd,
-            SizedBox(height: _hauteurMinSupport, child: _support()),
+            // OBS-COUPE-1b : sans support partage, la ligne d'attente prend
+            // la hauteur qu'il lui faut (a 320 px et 200 %, « s'affiche ici »
+            // etait rogne a mi-texte dans 200 points) ; un support reel garde
+            // sa hauteur fixe, il ne sait pas se mesurer seul.
+            if (widget.supportPartage == null)
+              ConstrainedBox(
+                constraints: const BoxConstraints(
+                  minHeight: _hauteurMinSupport,
+                ),
+                child: _support(),
+              )
+            else
+              SizedBox(height: _hauteurMinSupport, child: _support()),
             ...vignettes,
           ],
         ),
@@ -509,10 +521,7 @@ class _Vignette extends StatelessWidget {
       // TUILE-TUTEUR-1b : sans image, le cadre dit tout en un seul noeud
       // (« Mariam, Camera fermee ») ; la tuile partagee ne le redit pas
       // dessous, sinon le nom est annonce deux fois.
-      label: <String>[
-        if (parle) nomQuiParle else nom,
-        ?sansImage,
-      ].join(', '),
+      label: <String>[if (parle) nomQuiParle else nom, ?sansImage].join(', '),
       excludeSemantics: sansImage != null,
       child: DecoratedBox(
         position: DecorationPosition.foreground,

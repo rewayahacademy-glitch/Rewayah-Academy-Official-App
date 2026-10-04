@@ -616,6 +616,14 @@ void main() {
           );
           expect(_noeudsNommant(tester, cadre, vignette.$2), 1);
         }
+        // OBS-COUPE-1b : la ligne d'attente du support se lit en entier,
+        // jamais rognee par sa carte.
+        final Rect support = tester.getRect(
+          find.byKey(const ValueKey<String>('support-observation')),
+        );
+        final Rect attente = tester.getRect(find.text(v.supportIndisponible));
+        expect(attente.top, greaterThanOrEqualTo(support.top));
+        expect(attente.bottom, lessThanOrEqualTo(support.bottom));
         // TUILE-TUTEUR-1b : la vignette se voit vraiment, une fois amenee a
         // l'ecran (a 320 px et 200 %, elle est sous le pli) : son cercle est
         // dans la fenetre, pas seulement dans son cadre.
