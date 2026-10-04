@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/i18n/cle_audio.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -204,12 +205,15 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
     // lecture absente ou en echec ne change rien a l'ecran (port neutre en
     // production) : Rejoindre ne disparait que sur un « ferme » explicite,
     // et jamais selon un solde, que ce port ne porte pas.
+    final AsyncValue<AccesBeneficiaire?>? acces = prochain == null
+        ? null
+        : ref.watch(accesEleveProvider(prochain.eleveId));
     final bool accesFerme =
-        prochain != null &&
-        ouvertureSeances(
-              ref.watch(accesEleveProvider(prochain.eleveId)).value,
-            ) ==
-            OuvertureSeances.fermees;
+        ouvertureSeances(acces?.value) == OuvertureSeances.fermees;
+    // Tant que l'acces se lit, Rejoindre reste present et inerte (revue
+    // FI-9a) : un bouton actif qui disparaitrait ensuite serait une promesse
+    // retiree.
+    final bool accesEnLecture = acces != null && accesEnAttente(acces);
 
     // `PageShell` porte le fond creme, la gouttiere du gabarit courant, la
     // colonne centree et bornee a 1200 (« centre et borne, on n'ajoute rien »,
@@ -240,6 +244,7 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
                   interruptions: interruptions,
                   maintenant: _maintenant,
                   accesFerme: accesFerme,
+                  accesEnLecture: accesEnLecture,
                 ),
                 Ecart.vXl,
                 const _BlocCoran(),
@@ -257,6 +262,7 @@ class _BlocPrincipal extends StatelessWidget {
     required this.interruptions,
     required this.maintenant,
     this.accesFerme = false,
+    this.accesEnLecture = false,
   });
 
   final EtatAccueilEleve etat;
@@ -266,6 +272,9 @@ class _BlocPrincipal extends StatelessWidget {
 
   /// Seances fermees (FI-9a) : Rejoindre n'est pas rendu.
   final bool accesFerme;
+
+  /// L'acces se lit encore : Rejoindre est rendu inerte.
+  final bool accesEnLecture;
 
   @override
   Widget build(BuildContext context) {
@@ -301,8 +310,9 @@ class _BlocPrincipal extends StatelessWidget {
           seance: prochain!,
           paire: paire,
           interruptions: interruptions,
-          joignable: etat == EtatAccueilEleve.coursEnDirect,
+          joignable: etat == EtatAccueilEleve.coursEnDirect && !accesEnLecture,
           accesFerme: accesFerme,
+          accesEnLecture: accesEnLecture,
         ),
         EtatAccueilEleve.seanceAnnulee => _SansCoursAujourdhui(
           message: t.eleve.accueil.annulee,
@@ -380,6 +390,7 @@ class _CoursEnDirect extends StatelessWidget {
     required this.interruptions,
     required this.joignable,
     this.accesFerme = false,
+    this.accesEnLecture = false,
   });
 
   final Seance seance;
@@ -391,6 +402,11 @@ class _CoursEnDirect extends StatelessWidget {
   /// est absent, jamais grise ; le bandeau au-dessus du bloc dit l'etat, sans
   /// cause (guide §1.7).
   final bool accesFerme;
+
+  /// L'acces se lit encore (revue FI-9a) : le bouton est present et inerte
+  /// ([joignable] est alors faux), sans le message hors ligne, le temps que
+  /// la lecture aboutisse.
+  final bool accesEnLecture;
 
   @override
   Widget build(BuildContext context) {
@@ -435,7 +451,7 @@ class _CoursEnDirect extends StatelessWidget {
                   )
                 : null,
           ),
-          if (!joignable) ...<Widget>[
+          if (!joignable && !accesEnLecture) ...<Widget>[
             Ecart.vSm,
             Row(
               children: <Widget>[

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
@@ -12,6 +13,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../acces_finance/acces_finance.dart';
 import 'carte_groupe.dart';
 import 'chemins_tc_a.dart';
 
@@ -92,10 +94,26 @@ class _Corps extends ConsumerWidget {
     // Le hors ligne se lit d'une seule source, `horsLigneProvider` : ouvrir un
     // second abonnement `Connectivity` ferait diverger le bandeau de la page.
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
-    return _Grille(
+    // L'acces de l'eleve connecte (FI-9a), la meme regle que son accueil :
+    // seances fermees, Rejoindre est retire et la copie neutre le dit, sans
+    // cause ni montant (guide §1.7, lecon 15) ; tant que l'acces se lit, le
+    // bouton reste present et inerte. Une lecture absente ou en echec (port
+    // neutre en production) ne change rien, et jamais selon un solde.
+    final AsyncValue<AccesBeneficiaire?> acces = ref.watch(
+      accesAppelantProvider,
+    );
+    final bool accesFerme =
+        ouvertureSeances(acces.value) == OuvertureSeances.fermees;
+    final Widget grille = _Grille(
       groupes: liste,
-      horsLigne: horsLigne,
+      horsLigne: horsLigne || accesEnAttente(acces),
+      accesFerme: accesFerme,
       onRejoindre: onRejoindre,
+    );
+    if (!accesFerme) return grille;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[const BandeauAccesEnfant(), Ecart.vLg, grille],
     );
   }
 }
@@ -109,11 +127,17 @@ class _Grille extends StatelessWidget {
   const _Grille({
     required this.groupes,
     required this.horsLigne,
+    required this.accesFerme,
     this.onRejoindre,
   });
 
   final List<GroupSummaryVM> groupes;
+
+  /// Hors ligne, ou acces encore en lecture : la porte reste inerte.
   final bool horsLigne;
+
+  /// Seances fermees (FI-9a) : Rejoindre est retire de chaque carte.
+  final bool accesFerme;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
 
   @override
@@ -124,6 +148,7 @@ class _Grille extends StatelessWidget {
         _CarteRoutee(
           groupe: groupe,
           horsLigne: horsLigne,
+          accesFerme: accesFerme,
           onRejoindre: onRejoindre,
         ),
     ];
@@ -167,11 +192,13 @@ class _CarteRoutee extends StatelessWidget {
   const _CarteRoutee({
     required this.groupe,
     required this.horsLigne,
+    required this.accesFerme,
     this.onRejoindre,
   });
 
   final GroupSummaryVM groupe;
   final bool horsLigne;
+  final bool accesFerme;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
 
   @override
@@ -185,6 +212,7 @@ class _CarteRoutee extends StatelessWidget {
       // fermee : proposer une entree que le reseau ne peut pas honorer serait
       // une promesse en l'air.
       onRejoindre: horsLigne || rappel == null ? null : () => rappel(groupe),
+      rejoindreRetire: accesFerme,
     );
   }
 }

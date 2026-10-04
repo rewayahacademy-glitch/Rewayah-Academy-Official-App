@@ -34,7 +34,9 @@ import '../ligne_membre.dart';
 /// conservation de la place, et le bandeau « Accès à régulariser » dit le
 /// manque exact ; pendant l'essai, la pastille dit « Essai : n/2 ». Sans
 /// finance lue (chargement, echec, production), la carte reste celle de
-/// l'echeance : rien n'est invente.
+/// l'echeance : rien n'est invente. Seances fermees sans « a regulariser »
+/// (essais epuises, FIN4-13) : le bandeau dit le manque quand la finance le
+/// rend, sinon une phrase neutre (revue FI-9a).
 class AccesElevePage extends StatelessWidget {
   /// Cree la page.
   const AccesElevePage({required this.eleveId, super.key});
@@ -50,6 +52,9 @@ class AccesElevePage extends StatelessWidget {
 
   /// Le bandeau « Accès à régulariser ».
   static const Key bandeauKey = Key('ficheEleve.acces.regulariser');
+
+  /// Le bandeau neutre des seances fermees sans manque rendu.
+  static const Key bandeauFermeKey = Key('ficheEleve.acces.fermees');
 
   @override
   Widget build(BuildContext context) {
@@ -80,9 +85,32 @@ class _Acces extends ConsumerWidget {
         .watch(financesProfilProvider(profil.eleveId))
         .value;
     final bool regulariser = aRegulariser(finances);
-    final String? essai = libelleEssai(
-      ref.watch(accesEleveProvider(profil.eleveId)).value,
-    );
+    final AccesBeneficiaire? acces = ref
+        .watch(accesEleveProvider(profil.eleveId))
+        .value;
+    final String? essai = libelleEssai(acces);
+    // Seances fermees sans etat « a regulariser » (revue FI-9a) : essais
+    // epuises (2/2) avant la premiere periode financee (FIN4-13). L'enfant lit
+    // sa copie neutre ; le tuteur lit la cause utile des que la finance rend
+    // un manque, sinon une phrase neutre qui dit l'etat sans l'inventer.
+    final bool fermeSansRegulariser =
+        !regulariser && ouvertureSeances(acces) == OuvertureSeances.fermees;
+    final bool causeRendue =
+        regulariser || (fermeSansRegulariser && finances?.manque != null);
+    final Widget? bandeau = causeRendue
+        ? BandeauAttention(
+            key: AccesElevePage.bandeauKey,
+            titre: t.argent.acces.regulariserTitre,
+            message: messageRegularisation(finances!),
+          )
+        : !fermeSansRegulariser
+        ? null
+        : BandeauAttention(
+            key: AccesElevePage.bandeauFermeKey,
+            titre: t.argent.acces.seancesFermeesTitre,
+            message: t.argent.acces.seancesFermees(prenom: profil.prenom),
+            ton: TonEtat.accent,
+          );
     final (String pastille, TonEtat ton, String legende) = switch (etat) {
       EtatAccesAffiche.sansEcheance => (
         t.ficheEleve.acces.pastilleSansEcheance,
@@ -171,21 +199,13 @@ class _Acces extends ConsumerWidget {
     );
 
     return ColonnesFiche(
-      principal: regulariser
-          ? Column(
+      principal: bandeau == null
+          ? carte
+          : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                BandeauAttention(
-                  key: AccesElevePage.bandeauKey,
-                  titre: t.argent.acces.regulariserTitre,
-                  message: messageRegularisation(finances!),
-                ),
-                Ecart.vLg,
-                carte,
-              ],
-            )
-          : carte,
+              children: <Widget>[bandeau, Ecart.vLg, carte],
+            ),
       annexe: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,

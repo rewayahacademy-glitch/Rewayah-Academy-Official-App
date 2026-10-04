@@ -11,6 +11,8 @@
 // - production (ports neutres), echec, hors ligne : rien n'est invente ;
 // - 320 px, texte 200 %, clair et sombre, LTR et RTL, sans debordement.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,6 +33,8 @@ import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/bandeau_attention.dart';
@@ -44,9 +48,12 @@ import 'package:rewayah_academy/features/demo/finance_demo.dart';
 import 'package:rewayah_academy/features/foyer/fiche/acces_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
+import 'package:rewayah_academy/features/tc_mes_groupes/carte_groupe.dart';
+import 'package:rewayah_academy/features/tc_mes_groupes/mes_groupes_page.dart';
 
 import '../../router/support_routeur.dart';
 import '../../support/harnais.dart';
+import '../../teaching_core/a/support/hote_tc_a.dart';
 
 /// L'instant de reference : le 4 octobre 2026, jour de la demonstration.
 final DateTime _maintenant = DateTime(2026, 10, 4, 17);
@@ -63,6 +70,16 @@ class _AccesFixes implements PortAccesFoyer {
     if (echec) throw Exception('lecture des acces refusee');
     return rendus;
   }
+}
+
+/// Des acces qui ne se rendent qu'a la demande du test : l'ecran se lit
+/// pendant le chargement (revue FI-9a).
+class _AccesEnAttente implements PortAccesFoyer {
+  final Completer<List<AccesBeneficiaire>> reponse =
+      Completer<List<AccesBeneficiaire>>();
+
+  @override
+  Future<List<AccesBeneficiaire>> acces() => reponse.future;
 }
 
 /// Un port des paiements qui compte ses lectures de finance : l'ecran de
@@ -414,6 +431,56 @@ void main() {
       });
     }
 
+    testWidgets('acces en lecture : Rejoindre present et inerte, puis actif '
+        'une fois l acces ouvert rendu', (WidgetTester tester) async {
+      final _AccesEnAttente port = _AccesEnAttente();
+      await tester.pumpWidget(
+        _hote(
+          _accueil(),
+          surcharges: _surchargesEnfant(
+            eleveId: DonneesFinanceDemo.ibrahimId,
+            acces: port,
+          ),
+        ),
+      );
+      // Les seances sont rendues, l'acces ne l'est pas encore.
+      await tester.pump();
+      await tester.pump();
+      expect(find.byKey(BandeauAccesEnfant.cle), findsNothing);
+      expect(_rejoindre, findsOneWidget);
+      expect(tester.widget<ActionPrincipale>(_rejoindre).onPress, isNull);
+      // Inerte sans message hors ligne : ce n'est pas une panne de reseau.
+      expect(find.text(t.eleve.accueil.horsLigne), findsNothing);
+
+      port.reponse.complete(
+        DonneesFinanceDemo.acces(JeuFoyerFinance.tousFinances),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.widget<ActionPrincipale>(_rejoindre).onPress, isNotNull);
+    });
+
+    testWidgets('acces en lecture puis ferme : Rejoindre inerte puis retire, '
+        'jamais actif entre les deux', (WidgetTester tester) async {
+      final _AccesEnAttente port = _AccesEnAttente();
+      await tester.pumpWidget(
+        _hote(
+          _accueil(),
+          surcharges: _surchargesEnfant(
+            eleveId: DonneesFinanceDemo.aichaId,
+            acces: port,
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(tester.widget<ActionPrincipale>(_rejoindre).onPress, isNull);
+
+      port.reponse.complete(<AccesBeneficiaire>[_essaisEpuises]);
+      await tester.pumpAndSettle();
+      expect(_rejoindre, findsNothing);
+      expect(find.byKey(BandeauAccesEnfant.cle), findsOneWidget);
+    });
+
     testWidgets('hors ligne et periode financee : Rejoindre present, inerte '
         '(panne, pas une limite de droit)', (WidgetTester tester) async {
       await tester.pumpWidget(
@@ -473,6 +540,120 @@ void main() {
         });
       }
     }
+  });
+
+  group('enfant : Mes groupes', () {
+    /// L'eleve connecte : son identifiant de session est celui de sa ligne
+    /// d'acces.
+    final String moi = sessionActive(AppRole.student).profileId!;
+
+    AccesBeneficiaire accesDeMoi({required bool ouvert}) => AccesBeneficiaire(
+      eleveId: moi,
+      prenom: 'Aïcha',
+      etatAffiche: EtatAccesAffiche.sansEcheance,
+      seancesPayantesOuvertes: ouvert,
+      essaisUtilises: ouvert ? null : 2,
+      essaisMax: ouvert ? null : 2,
+    );
+
+    Finder rejoindreGroupe() =>
+        find.widgetWithText(ActionPrincipale, LibellesGroupe.rejoindre);
+
+    Future<void> poser(WidgetTester tester, PortAccesFoyer acces) async {
+      await tester.pumpWidget(
+        hoteTcA(
+          MesGroupesPage(onRejoindre: (_) {}),
+          surcharges: <Override>[
+            ...surchargesDemonstration(),
+            portAccesFoyerProvider.overrideWithValue(acces),
+            sourceSessionProvider.overrideWithValue(
+              FausseSourceSession(sessionActive(AppRole.student)),
+            ),
+          ],
+        ),
+      );
+      // Les groupes, la session puis les acces se rendent chacun a leur tour.
+      for (int i = 0; i < 4; i++) {
+        await tester.pump();
+      }
+    }
+
+    testWidgets('seances fermees : aucun Rejoindre, la copie neutre, aucun '
+        'mot financier', (WidgetTester tester) async {
+      await avecLargeur(tester, largeurMobile, () async {
+        await poser(
+          tester,
+          _AccesFixes(<AccesBeneficiaire>[accesDeMoi(ouvert: false)]),
+        );
+        expect(find.byType(CarteGroupe), findsWidgets);
+        expect(rejoindreGroupe(), findsNothing);
+        expect(find.byKey(BandeauAccesEnfant.cle), findsOneWidget);
+        expect(find.text(t.argent.acces.enfantTitre), findsOneWidget);
+        expect(find.text(t.argent.acces.enfantMessage), findsOneWidget);
+        // Les heures et capacites des cartes sont des chiffres : seuls les
+        // mots d'argent sont interdits ici.
+        final RegExp interdit = RegExp(
+          r'pay|manque|usd|\$|€|solde|régularis|financ',
+          caseSensitive: false,
+        );
+        for (final String texte in _textes(tester)) {
+          expect(interdit.hasMatch(texte), isFalse, reason: texte);
+        }
+      });
+    });
+
+    testWidgets('seances ouvertes : Rejoindre rendu et actif, aucun bandeau', (
+      WidgetTester tester,
+    ) async {
+      await avecLargeur(tester, largeurMobile, () async {
+        await poser(
+          tester,
+          _AccesFixes(<AccesBeneficiaire>[accesDeMoi(ouvert: true)]),
+        );
+        expect(find.byKey(BandeauAccesEnfant.cle), findsNothing);
+        expect(rejoindreGroupe(), findsWidgets);
+        for (final ActionPrincipale b in tester.widgetList<ActionPrincipale>(
+          rejoindreGroupe(),
+        )) {
+          expect(b.onPress, isNotNull);
+        }
+      });
+    });
+
+    testWidgets('acces en lecture : Rejoindre present et inerte', (
+      WidgetTester tester,
+    ) async {
+      await avecLargeur(tester, largeurMobile, () async {
+        final _AccesEnAttente port = _AccesEnAttente();
+        await poser(tester, port);
+        expect(find.byKey(BandeauAccesEnfant.cle), findsNothing);
+        expect(rejoindreGroupe(), findsWidgets);
+        for (final ActionPrincipale b in tester.widgetList<ActionPrincipale>(
+          rejoindreGroupe(),
+        )) {
+          expect(b.onPress, isNull);
+        }
+        port.reponse.complete(<AccesBeneficiaire>[accesDeMoi(ouvert: false)]);
+        await tester.pump();
+        await tester.pump();
+        expect(rejoindreGroupe(), findsNothing);
+        expect(find.byKey(BandeauAccesEnfant.cle), findsOneWidget);
+      });
+    });
+
+    testWidgets(
+      'acces d un autre profil ou lecture en echec : rien ne change',
+      (WidgetTester tester) async {
+        await avecLargeur(tester, largeurMobile, () async {
+          await poser(
+            tester,
+            const _AccesFixes(<AccesBeneficiaire>[_essaisEpuises]),
+          );
+          expect(find.byKey(BandeauAccesEnfant.cle), findsNothing);
+          expect(rejoindreGroupe(), findsWidgets);
+        });
+      },
+    );
   });
 
   group('tuteur : Compte > Acces', () {
@@ -568,6 +749,8 @@ void main() {
       required String eleveId,
       bool finance = true,
       Size taille = const Size(390, 844),
+      PortAccesFoyer? acces,
+      PortPaiementsFoyer? paiements,
     }) async {
       _taille(tester, taille);
       final FinancesProfil profil = _finance(jeu, eleveId);
@@ -592,11 +775,11 @@ void main() {
             ),
             horlogeFoyerProvider.overrideWithValue(() => _maintenant),
             portAccesFoyerProvider.overrideWithValue(
-              AccesFoyerFinanceDemo(jeu),
+              acces ?? AccesFoyerFinanceDemo(jeu),
             ),
             if (finance)
               portPaiementsFoyerProvider.overrideWithValue(
-                PaiementsFoyerFinanceDemo(jeu),
+                paiements ?? PaiementsFoyerFinanceDemo(jeu),
               ),
           ],
           child: TranslationProvider(
@@ -664,6 +847,99 @@ void main() {
         'Essai : 1/2',
       );
       expect(find.byKey(AccesElevePage.bandeauKey), findsNothing);
+    });
+
+    /// Aicha apres ses deux essais, sans periode financee : la finance dit
+    /// « essai », pas « a regulariser », avec ou sans manque rendu.
+    FinancesProfil aichaEssaisEpuises({required bool avecManque}) =>
+        FinancesProfil(
+          profilId: DonneesFinanceDemo.aichaId,
+          prenom: 'Aïcha',
+          cleAccent: 'accent-aicha',
+          estAdulte: false,
+          etat: EtatFinancier.essai,
+          solde: DonneesFinanceDemo.usd(0),
+          mensualite: DonneesFinanceDemo.usd(50),
+          essaisUtilises: 2,
+          prochainDebit: avecManque
+              ? ProchainDebit(
+                  date: DateTime(2026, 11),
+                  montant: DonneesFinanceDemo.usd(50),
+                )
+              : null,
+          manque: avecManque ? DonneesFinanceDemo.usd(50) : null,
+        );
+
+    testWidgets('essais epuises (2/2) avec manque rendu : la cause utile, '
+        'meme hors « a regulariser »', (WidgetTester tester) async {
+      await monter(
+        tester,
+        jeu: JeuFoyerFinance.unEnEssai,
+        eleveId: DonneesFinanceDemo.aichaId,
+        acces: const _AccesFixes(<AccesBeneficiaire>[_essaisEpuises]),
+        paiements: _PaiementsEspion(
+          _foyerDe(aichaEssaisEpuises(avecManque: true)),
+        ),
+      );
+      final BandeauAttention bandeau = tester.widget<BandeauAttention>(
+        find.byKey(AccesElevePage.bandeauKey),
+      );
+      expect(bandeau.titre, t.argent.acces.regulariserTitre);
+      expect(
+        bandeau.message,
+        t.argent.acces.regulariserManque(
+          montant: formaterMontant(DonneesFinanceDemo.usd(50)),
+          mois: 'novembre',
+        ),
+      );
+      expect(find.byKey(AccesElevePage.bandeauFermeKey), findsNothing);
+      expect(
+        tester.widget<StatusPill>(find.byType(StatusPill)).libelle,
+        'Essai : 2/2',
+      );
+    });
+
+    testWidgets('essais epuises (2/2) sans manque rendu : la phrase neutre', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        jeu: JeuFoyerFinance.unEnEssai,
+        eleveId: DonneesFinanceDemo.aichaId,
+        acces: const _AccesFixes(<AccesBeneficiaire>[_essaisEpuises]),
+        paiements: _PaiementsEspion(
+          _foyerDe(aichaEssaisEpuises(avecManque: false)),
+        ),
+      );
+      expect(find.byKey(AccesElevePage.bandeauKey), findsNothing);
+      final BandeauAttention bandeau = tester.widget<BandeauAttention>(
+        find.byKey(AccesElevePage.bandeauFermeKey),
+      );
+      expect(bandeau.titre, t.argent.acces.seancesFermeesTitre);
+      expect(
+        bandeau.message,
+        t.argent.acces.seancesFermees(
+          prenom: _finance(
+            JeuFoyerFinance.unEnEssai,
+            DonneesFinanceDemo.aichaId,
+          ).prenom,
+        ),
+      );
+      expect(find.textContaining('manque'), findsNothing);
+    });
+
+    testWidgets('essais epuises, finance indisponible : la phrase neutre, '
+        'aucune cause inventee', (WidgetTester tester) async {
+      await monter(
+        tester,
+        jeu: JeuFoyerFinance.unEnEssai,
+        eleveId: DonneesFinanceDemo.aichaId,
+        acces: const _AccesFixes(<AccesBeneficiaire>[_essaisEpuises]),
+        finance: false,
+      );
+      expect(find.byKey(AccesElevePage.bandeauFermeKey), findsOneWidget);
+      expect(find.byKey(AccesElevePage.bandeauKey), findsNothing);
+      expect(find.textContaining('manque'), findsNothing);
     });
 
     testWidgets('finance indisponible : la carte de l echeance seule', (

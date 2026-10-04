@@ -24,13 +24,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
+import 'package:flutter_riverpod/misc.dart'
+    show FutureProviderFamily, ProviderFamily;
 
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/finance/finances_profil.dart';
 import '../../core/finance/format_montant.dart';
 import '../../core/finance/montant.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bandeau_attention.dart';
@@ -43,19 +45,55 @@ import '../foyer/finances_foyer.dart' show financesFoyerProvider;
 export '../foyer/finances_foyer.dart' show financesFoyerProvider;
 
 /// L'acces d'un eleve, `null` quand le port ne le rend pas.
-final FutureProviderFamily<AccesBeneficiaire?, String> accesEleveProvider =
-    FutureProvider.family<AccesBeneficiaire?, String>((
-      Ref ref,
-      String eleveId,
-    ) async {
-      final List<AccesBeneficiaire> acces = await ref.watch(
-        accesFoyerProvider.future,
-      );
-      for (final AccesBeneficiaire a in acces) {
-        if (a.eleveId == eleveId) return a;
-      }
-      return null;
-    });
+///
+/// Lu de l'etat de `accesFoyerProvider`, jamais de son `future` : Riverpod
+/// relance une lecture en echec et son `future` reste alors en attente, ce
+/// qui laisserait l'ecran croire a un chargement sans fin (port neutre en
+/// production). Ici l'echec se dit tout de suite, la relance comprise.
+final ProviderFamily<AsyncValue<AccesBeneficiaire?>, String>
+accesEleveProvider = Provider.family<AsyncValue<AccesBeneficiaire?>, String>(
+  (Ref ref, String eleveId) =>
+      _accesDe(ref.watch(accesFoyerProvider), () => eleveId),
+);
+
+/// L'acces de [eleveId] dans une lecture des acces : en attente tant que
+/// rien n'est rendu, en echec des que la lecture echoue. [eleveId] n'est
+/// demande qu'une fois des acces rendus.
+AsyncValue<AccesBeneficiaire?> _accesDe(
+  AsyncValue<List<AccesBeneficiaire>> lecture,
+  String? Function() eleveId,
+) {
+  final List<AccesBeneficiaire>? acces = lecture.value;
+  if (acces == null) {
+    final Object? erreur = lecture.error;
+    return erreur == null
+        ? const AsyncValue<AccesBeneficiaire?>.loading()
+        : AsyncValue<AccesBeneficiaire?>.error(
+            erreur,
+            lecture.stackTrace ?? StackTrace.empty,
+          );
+  }
+  if (acces.isEmpty) return const AsyncValue<AccesBeneficiaire?>.data(null);
+  final String? id = eleveId();
+  for (final AccesBeneficiaire a in acces) {
+    if (a.eleveId == id) return AsyncValue<AccesBeneficiaire?>.data(a);
+  }
+  return const AsyncValue<AccesBeneficiaire?>.data(null);
+}
+
+/// L'acces de l'eleve connecte, lu par son identifiant de session, pour les
+/// ecrans qui n'ont pas de seance sous la main (Mes groupes). `null` quand le
+/// port ne le rend pas ou qu'il ne parle pas de l'appelant : un tuteur ou un
+/// enseignant n'a pas de ligne d'acces a son identifiant, son ecran ne change
+/// donc pas (aucun role lu). La session n'est lue qu'une fois des acces
+/// rendus : en production (port neutre) ou en echec, rien d'autre n'est lu.
+final Provider<AsyncValue<AccesBeneficiaire?>> accesAppelantProvider =
+    Provider<AsyncValue<AccesBeneficiaire?>>(
+      (Ref ref) => _accesDe(
+        ref.watch(accesFoyerProvider),
+        () => ref.watch(sessionProvider).profileId,
+      ),
+    );
 
 /// La finance d'un profil, `null` quand la source ne la rend pas.
 final FutureProviderFamily<FinancesProfil?, String> financesProfilProvider =
@@ -101,6 +139,13 @@ OuvertureSeances ouvertureSeances(AccesBeneficiaire? acces) {
       ? OuvertureSeances.fermees
       : OuvertureSeances.inconnue;
 }
+
+/// Vrai tant que la lecture de l'acces n'a rendu ni valeur ni echec (revue
+/// FI-9a) : Rejoindre reste alors present et inerte, comme hors ligne, au
+/// lieu d'etre actif puis de disparaitre. Une relance apres echec garde son
+/// erreur et n'est pas une attente : l'ecran garde son affichage d'avant.
+bool accesEnAttente(AsyncValue<Object?> lecture) =>
+    lecture.isLoading && !lecture.hasValue && !lecture.hasError;
 
 /// « Essai : n/2 », `null` hors essai. Les deux nombres sont rendus par la
 /// source (FIN4-10), jamais supposes.

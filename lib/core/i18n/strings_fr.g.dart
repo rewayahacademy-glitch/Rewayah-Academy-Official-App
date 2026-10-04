@@ -11582,6 +11582,12 @@ class Traductions$argent$acces$fr {
 
 	/// fr: 'Essai : {n}/{max}'
 	String essai({required Object n, required Object max}) => 'Essai : ${n}/${max}';
+
+	/// fr: 'Nouvelles séances indisponibles'
+	String get seancesFermeesTitre => 'Nouvelles séances indisponibles';
+
+	/// fr: '{prenom} ne peut pas rejoindre de nouvelle séance pour le moment. Son compte et ses contenus restent accessibles.'
+	String seancesFermees({required Object prenom}) => '${prenom} ne peut pas rejoindre de nouvelle séance pour le moment. Son compte et ses contenus restent accessibles.';
 }
 
 // Path: commun.etats.chargementProlonge
@@ -21013,6 +21019,8 @@ extension on Traductions {
 			'argent.acces.regulariserSansManque' => 'La nouvelle période n\'est pas encore financée.',
 			'argent.acces.placeConservee' => ({required Object date}) => 'Place conservée jusqu\'au ${date}.',
 			'argent.acces.essai' => ({required Object n, required Object max}) => 'Essai : ${n}/${max}',
+			'argent.acces.seancesFermeesTitre' => 'Nouvelles séances indisponibles',
+			'argent.acces.seancesFermees' => ({required Object prenom}) => '${prenom} ne peut pas rejoindre de nouvelle séance pour le moment. Son compte et ses contenus restent accessibles.',
 			'identiteProfil.age' => ({required Object n}) => '${n} ans',
 			'identiteProfil.classe' => ({required Object classe}) => 'Classe ${classe}',
 			'identiteProfil.ageEtClasse' => ({required Object age, required Object classe}) => '${age} · ${classe}',
