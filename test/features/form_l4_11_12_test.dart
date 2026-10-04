@@ -20,12 +20,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/agent/service_agent.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/champ_date.dart';
+import 'package:rewayah_academy/features/admin_acces_agents/acces_agents_page.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_evaluations/evaluations_page.dart';
 import 'package:rewayah_academy/features/dossier/depot_piece_page.dart';
 
@@ -138,6 +141,78 @@ void main() {
     });
   });
 
+  group('L12 : le libelle du jeton d\'acces agent est prerempli', () {
+    testWidgets('choisir une personne propose « Observation de <prenom>, le '
+        '<date>, <duree> h », et la duree le met a jour', (
+      WidgetTester tester,
+    ) async {
+      await _ouvrirAgents(tester);
+      expect(_libelleJeton(tester), isEmpty);
+
+      await _presser(tester, _personne('Maryam Sow (ELV-MS-010)'));
+      expect(
+        _libelleJeton(tester),
+        'Observation de Maryam, le 04/10/2026, 8 h',
+      );
+
+      await _presser(tester, find.text(t.admin.agents.dureeHeure(nombre: 4)));
+      expect(
+        _libelleJeton(tester),
+        'Observation de Maryam, le 04/10/2026, 4 h',
+      );
+
+      await _presser(tester, _personne('Yacine Benali (ENS-YB-002)'));
+      expect(
+        _libelleJeton(tester),
+        'Observation de Yacine, le 04/10/2026, 4 h',
+      );
+    });
+
+    testWidgets('un libelle ecrit a la main n\'est jamais ecrase', (
+      WidgetTester tester,
+    ) async {
+      final _AgentsQuiRetient agents = await _ouvrirAgents(tester);
+      await _presser(tester, _personne('Maryam Sow (ELV-MS-010)'));
+
+      await tester.enterText(
+        find.byType(TextField).first,
+        'Relecture du suivi',
+      );
+      await tester.pumpAndSettle();
+      await _presser(tester, find.text(t.admin.agents.dureeHeure(nombre: 1)));
+      await _presser(tester, _personne('Yacine Benali (ENS-YB-002)'));
+      expect(_libelleJeton(tester), 'Relecture du suivi');
+
+      await _presser(tester, find.text(t.admin.agents.emettre));
+      expect(agents.emissions.single.libelle, 'Relecture du suivi');
+      expect(agents.emissions.single.profil, 'p-yacine');
+      expect(agents.emissions.single.duree, 1);
+    });
+
+    testWidgets('emettre envoie le libelle propose, tel quel', (
+      WidgetTester tester,
+    ) async {
+      final _AgentsQuiRetient agents = await _ouvrirAgents(tester);
+      await _presser(tester, _personne('Maryam Sow (ELV-MS-010)'));
+      await _presser(tester, find.text(t.admin.agents.emettre));
+
+      expect(
+        agents.emissions.single.libelle,
+        'Observation de Maryam, le 04/10/2026, 8 h',
+      );
+    });
+
+    testWidgets('sans personne, le bouton dit ce qui manque et n\'emet rien', (
+      WidgetTester tester,
+    ) async {
+      final _AgentsQuiRetient agents = await _ouvrirAgents(tester);
+      await _presser(tester, find.text(t.admin.agents.emettre));
+
+      expect(find.text(t.admin.agents.manquePersonne), findsOneWidget);
+      expect(agents.emissions, isEmpty);
+    });
+  });
+
   group('L4 : la date d\'une evaluation se choisit dans un calendrier', () {
     testWidgets('plus aucun champ texte pour la date, un champ a toucher', (
       WidgetTester tester,
@@ -210,5 +285,78 @@ class _SelecteurQuiRetient implements SelecteurFichier {
     );
   }
 }
+
+/// Un service d'agents qui retient les emissions.
+class _AgentsQuiRetient implements ServiceAgent {
+  final List<({String libelle, String profil, int duree})> emissions =
+      <({String libelle, String profil, int duree})>[];
+
+  @override
+  Future<List<JetonAgent>> lister() async => const <JetonAgent>[];
+
+  @override
+  Future<List<PersonneObservable>> personnes() async =>
+      const <PersonneObservable>[
+        PersonneObservable(
+          id: 'p-maryam',
+          identifiant: 'ELV-MS-010',
+          prenom: 'Maryam',
+          nom: 'Sow',
+          role: AppRole.student,
+        ),
+        PersonneObservable(
+          id: 'p-yacine',
+          identifiant: 'ENS-YB-002',
+          prenom: 'Yacine',
+          nom: 'Benali',
+          role: AppRole.teacher,
+        ),
+      ];
+
+  @override
+  Future<JetonEmis> emettre({
+    required String libelle,
+    required String profilObserve,
+    required int dureeHeures,
+    required bool identiteMasquee,
+  }) async {
+    emissions.add((
+      libelle: libelle,
+      profil: profilObserve,
+      duree: dureeHeures,
+    ));
+    return JetonEmis(
+      secret: 'secret',
+      id: 'j1',
+      expireLe: DateTime(2026, 10, 4, 18),
+    );
+  }
+
+  @override
+  Future<bool> revoquer(String id) async => true;
+}
+
+Future<_AgentsQuiRetient> _ouvrirAgents(WidgetTester tester) async {
+  tester.view.physicalSize = const Size(1440, 2000);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+  final _AgentsQuiRetient agents = _AgentsQuiRetient();
+  await tester.pumpWidget(
+    hote(
+      const AccesAgentsPage(),
+      surcharges: <Override>[
+        serviceAgentProvider.overrideWithValue(agents),
+        horlogeFormulairesProvider.overrideWithValue(() => aujourdhuiFormL2),
+      ],
+    ),
+  );
+  await tester.pumpAndSettle();
+  return agents;
+}
+
+String _libelleJeton(WidgetTester tester) =>
+    tester.widget<TextField>(find.byType(TextField).first).controller!.text;
+
+Finder _personne(String libelle) => find.text(libelle);
 
 Finder _carte(String id) => find.byKey(ValueKey<String>('personne-$id'));
