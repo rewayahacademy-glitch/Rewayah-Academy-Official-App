@@ -127,4 +127,46 @@ void main() {
       expect(tester.state<ScrollableState>(defileur).position.pixels, 400);
     },
   );
+
+  testWidgets(
+    'une page defilante garde son decalage a chaque bascule de structure',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(800, 800);
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(
+        hotePage(
+          PageShell(
+            titre: 'Journal',
+            child: Column(
+              children: <Widget>[
+                for (int i = 0; i < 60; i++)
+                  SizedBox(height: 40, child: Text('ligne $i')),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      ScrollableState defileur() =>
+          tester.state<ScrollableState>(find.byType(Scrollable).first);
+      defileur().position.jumpTo(400);
+      await tester.pump();
+      expect(defileur().position.pixels, 400);
+
+      // Vue basse : la tete defile avec le corps.
+      tester.view.physicalSize = const Size(800, 300);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(defileur().position.pixels, 400);
+
+      // Retour a la tete fixe.
+      tester.view.physicalSize = const Size(800, 800);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(defileur().position.pixels, 400);
+    },
+  );
 }

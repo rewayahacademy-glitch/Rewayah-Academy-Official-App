@@ -31,6 +31,7 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
+import 'package:rewayah_academy/features/admin_dossiers/textes_dossier.dart';
 import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
@@ -311,9 +312,7 @@ void main() {
           await _stabiliser(tester);
           expect(find.text(t.dossiers.validation.titre), findsOneWidget);
           expect(
-            find.text(
-              t.dossiers.validation.corpsActivation(nom: 'Omar Haddad'),
-            ),
+            find.text(corpsValidation('Omar Haddad', activation: true)),
             findsOneWidget,
           );
           debugPrint(

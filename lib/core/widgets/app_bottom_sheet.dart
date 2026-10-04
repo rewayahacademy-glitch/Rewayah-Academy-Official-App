@@ -382,6 +382,12 @@ class _GardeGlissement extends StatelessWidget {
 
   final Widget child;
 
+  /// Part de la hauteur a descendre pour fermer (`BottomSheet` : 0,5).
+  static const double _seuilDescente = 0.5;
+
+  /// Vitesse (px/s) au-dela de laquelle un geste ferme (`BottomSheet` : 700).
+  static const double _vitesseGeste = 700;
+
   @override
   Widget build(BuildContext context) {
     final ModalRoute<Object?>? route = ModalRoute.of(context);
@@ -397,7 +403,13 @@ class _GardeGlissement extends StatelessWidget {
                 ..onStart = ((DragStartDetails _) => descente = 0)
                 ..onUpdate = ((DragUpdateDetails d) => descente += d.delta.dy)
                 ..onEnd = (DragEndDetails d) {
-                  if (descente > 0 || (d.primaryVelocity ?? 0) > 0) {
+                  // AD-NETTOYAGE-2 (n7) : memes seuils que `BottomSheet` :
+                  // une descente d'au moins la moitie de la feuille, ou un
+                  // geste rapide. Un simple effleurement ne pose plus la
+                  // question d'abandon.
+                  final double hauteur = context.size?.height ?? 0;
+                  if ((hauteur > 0 && descente >= hauteur * _seuilDescente) ||
+                      (d.primaryVelocity ?? 0) > _vitesseGeste) {
                     unawaited(Navigator.of(context).maybePop());
                   }
                 },

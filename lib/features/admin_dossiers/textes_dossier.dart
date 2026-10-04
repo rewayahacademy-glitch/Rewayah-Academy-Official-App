@@ -17,6 +17,16 @@ String titreDossier(String nom) => elide(nom)
     ? t.dossiers.detail.titreElide(nom: nom)
     : t.dossiers.detail.titreDe(nom: nom);
 
+/// Le corps de la confirmation de validation : « Le dossier de/d'{nom} sera
+/// validé… », elision choisie par la meme fonction que [ouvrirDossier].
+String corpsValidation(String nom, {required bool activation}) => activation
+    ? (elide(nom)
+          ? t.dossiers.validation.corpsActivationElide(nom: nom)
+          : t.dossiers.validation.corpsActivation(nom: nom))
+    : (elide(nom)
+          ? t.dossiers.validation.corpsDocumentaireElide(nom: nom)
+          : t.dossiers.validation.corpsDocumentaire(nom: nom));
+
 /// Le nom affiche, ou « Dossier sans nom disponible ».
 String nomOuDefaut(String nom) =>
     nom.trim().isEmpty ? t.dossiers.file.sansNom : nom;

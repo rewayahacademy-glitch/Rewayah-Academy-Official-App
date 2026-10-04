@@ -308,10 +308,9 @@ LigneRubrique ligneDossier(
     autofocus: autofocus,
     pastille: StatusPill(libelle: libellePastille, ton: ton),
     pastilleSousLibelle: pastilleSous,
-    legende: t.dossiers.file.legende(
-      type: typeDossier(),
-      date: dateRevue(d.soumisLeUtc),
-    ),
+    // AD-NETTOYAGE-2 (m9) : la file ne contient que des enseignants (K-47),
+    // le type est constant ; la ligne ne garde que la date.
+    legende: dateRevue(d.soumisLeUtc),
     onPress: onPress,
   );
 }

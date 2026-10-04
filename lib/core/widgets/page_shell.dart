@@ -327,6 +327,29 @@ class _BasculeState extends State<_Bascule> {
   final GlobalKey _cleTete = GlobalKey(debugLabel: 'PageShell.tete');
   final GlobalKey _cleCorps = GlobalKey(debugLabel: 'PageShell.corps');
 
+  /// AD-NETTOYAGE-2 : le defileur d'une page defilante. Les deux structures
+  /// ont chacune leur `SingleChildScrollView` : sans controleur commun, la
+  /// page repartait du haut a chaque bascule. Le meme controleur sert aux deux
+  /// et la nouvelle position naitra au decalage que l'ancienne avait.
+  final _Defileur _defileur = _Defileur();
+  bool? _teteDefilante;
+
+  @override
+  void dispose() {
+    _defileur.dispose();
+    super.dispose();
+  }
+
+  /// Note la structure choisie ; si elle change, retient le decalage courant
+  /// pour la position de la nouvelle structure.
+  void _noter(bool teteDefilante) {
+    final bool? avant = _teteDefilante;
+    _teteDefilante = teteDefilante;
+    if (avant == null || avant == teteDefilante || !widget.defilante) return;
+    _defileur.reprise = _defileur.hasClients ? _defileur.offset : 0;
+    WidgetsBinding.instance.addPostFrameCallback((_) => _defileur.reprise = 0);
+  }
+
   @override
   Widget build(BuildContext context) {
     // La tete garde sa mise en page d'avant : une colonne etiree de hauteur
@@ -342,38 +365,74 @@ class _BasculeState extends State<_Bascule> {
     );
     final Widget corps = KeyedSubtree(key: _cleCorps, child: widget.corps);
 
-    return LayoutBuilder(
-      builder: (BuildContext _, BoxConstraints contraintes) =>
-          widget.teteDefilante(contraintes.maxHeight)
-          ? SingleChildScrollView(
-              // Un corps non defilant (liste paresseuse) garde le defileur
-              // principal de la page dans les deux branches : sur mobile, sa
-              // liste reste attachee au meme controleur et garde sa position.
-              primary: widget.defilante ? null : false,
-              child: Column(
+    final Widget bascule = LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints contraintes) {
+        final bool teteDefile = widget.teteDefilante(contraintes.maxHeight);
+        _noter(teteDefile);
+        return teteDefile
+            ? SingleChildScrollView(
+                // Un corps non defilant (liste paresseuse) garde le defileur
+                // principal de la page dans les deux branches : sur mobile,
+                // sa liste reste attachee au meme controleur et garde sa
+                // position.
+                primary: widget.defilante,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    tete,
+                    if (widget.defilante)
+                      corps
+                    else
+                      SizedBox(height: contraintes.maxHeight, child: corps),
+                  ],
+                ),
+              )
+            : Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   tete,
-                  if (widget.defilante)
-                    corps
-                  else
-                    SizedBox(height: contraintes.maxHeight, child: corps),
+                  Expanded(
+                    child: widget.defilante
+                        ? SingleChildScrollView(primary: true, child: corps)
+                        : corps,
+                  ),
                 ],
-              ),
-            )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                tete,
-                Expanded(
-                  child: widget.defilante
-                      ? SingleChildScrollView(child: corps)
-                      : corps,
-                ),
-              ],
-            ),
+              );
+      },
     );
+    // Les deux `SingleChildScrollView` d'une page defilante sont « primaires »
+    // (ils lisent le controleur principal) : le poser ici les fait partager
+    // le meme decalage.
+    return widget.defilante
+        ? PrimaryScrollController(
+            controller: _defileur,
+            // Toutes les plateformes : le defileur commun ne doit pas
+            // dependre de la plateforme pour etre rendu aux deux structures.
+            automaticallyInheritForPlatforms: TargetPlatform.values.toSet(),
+            child: bascule,
+          )
+        : bascule;
   }
+}
+
+/// Le controleur commun aux deux structures de [PageShell] : sa prochaine
+/// position naitra au decalage [reprise] (zero hors bascule).
+class _Defileur extends ScrollController {
+  double reprise = 0;
+
+  @override
+  ScrollPosition createScrollPosition(
+    ScrollPhysics physics,
+    ScrollContext context,
+    ScrollPosition? oldPosition,
+  ) => ScrollPositionWithSingleContext(
+    physics: physics,
+    context: context,
+    initialPixels: reprise,
+    keepScrollOffset: keepScrollOffset,
+    oldPosition: oldPosition,
+    debugLabel: debugLabel,
+  );
 }
 
 /// La colonne de contenu : gouttiere du gabarit, largeur bornee, centree.

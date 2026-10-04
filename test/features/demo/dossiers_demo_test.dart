@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_politique_revue_kyc.dart';
 import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
@@ -537,24 +538,35 @@ void main() {
       expect(ids, contains(DonneesDossiersDemo.reponsePerdue));
     });
 
-    test('reponse perdue : meme commande, succes relu', () async {
+    test('le pont ne decide plus : il refuse, sans rien enregistrer', () async {
       final (EtatRevueDemo etat, _, _) = _doubles();
-      final ServiceValidationDemo pont = ServiceValidationDemo(etat);
-      const String doc = 'demo-piece-07';
-      // Premier tap : decision enregistree, relecture « en attente ».
       await expectLater(
-        pont.decider(documentId: doc, approuve: true),
-        _erreur(CodeErreurRevue.reponsePerdue),
+        ServiceValidationDemo(etat)
+            .decider(documentId: 'demo-piece-07', approuve: true),
+        throwsA(isA<CapaciteIndisponible>()),
       );
-      expect(etat.nombreDecisions, 1);
-      // Second tap : la meme commande est rejouee, aucun « deja decide ».
-      await pont.decider(documentId: doc, approuve: true);
-      expect(etat.nombreDecisions, 1);
-      expect(
-        etat.dossiers[DonneesDossiersDemo.reponsePerdue]!.statut,
-        StatutRevue.valide,
+      expect(etat.nombreDecisions, 0);
+    });
+  });
+
+  group('port de revue : reponse perdue', () {
+    test('meme commande rejouee, succes relu', () async {
+      final (EtatRevueDemo etat, RevueDossiersDemo revue, _) = _doubles();
+      const String id = DonneesDossiersDemo.reponsePerdue;
+      Future<ResultatDecision> decider() => revue.decider(
+        dossierId: id,
+        revisionAttendue: etat.dossiers[id]!.revision,
+        decision: DecisionDossier.valider,
+        commandeId: 'demo-reponse-perdue',
+        verificationsFaites: verificationsDemo.toSet(),
       );
-      expect(etat.commandes.keys.single, startsWith('demo-demo-dossier-07-r1'));
+      // Premier tap : decision enregistree, la reponse se perd.
+      await expectLater(decider(), _erreur(CodeErreurRevue.reponsePerdue));
+      expect(etat.nombreDecisions, 1);
+      // Relecture : « en attente » une fois, puis reussie ; jamais deux
+      // decisions.
+      expect(etat.dossiers[id]!.statut, StatutRevue.valide);
+      expect(etat.commandes.keys.single, 'demo-reponse-perdue');
     });
   });
 }

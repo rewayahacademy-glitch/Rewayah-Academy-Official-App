@@ -143,6 +143,50 @@ void main() {
       expect(nettoye.exceptions!.single.value, contains('statusCode: 403'));
     });
 
+    test(
+      'masque aussi modele, parametres, requete, extra et contextes (n6)',
+      () {
+        final SentryEvent? nettoye = Supervision.nettoyer(
+          SentryEvent(
+            message: const SentryMessage(
+              'Echec %s',
+              template: 'Echec de $urlSignee',
+              params: <dynamic>[urlSignee, 'ok'],
+            ),
+            request: SentryRequest(url: urlSignee, queryString: urlSignee),
+            // ignore: deprecated_member_use
+            extra: const <String, dynamic>{
+              'lien': urlSignee,
+              'profond': <String, dynamic>{
+                'liste': <dynamic>[urlSignee, 3],
+              },
+              'compte': 7,
+            },
+            contexts: Contexts()
+              ..['reseau'] = <String, dynamic>{'url': urlSignee},
+          ),
+          Hint(),
+        );
+        sansPiece(nettoye!.message!.template);
+        sansPiece(nettoye.message!.params!.first as String);
+        expect(nettoye.message!.params!.last, 'ok');
+        sansPiece(nettoye.request!.url);
+        sansPiece(nettoye.request!.queryString);
+        // ignore: deprecated_member_use
+        final Map<String, dynamic> extra = nettoye.extra!;
+        sansPiece(extra['lien'] as String);
+        final List<dynamic> liste =
+            (extra['profond'] as Map<String, dynamic>)['liste']
+                as List<dynamic>;
+        sansPiece(liste.first as String);
+        expect(liste.last, 3);
+        expect(extra['compte'], 7);
+        sansPiece(
+          (nettoye.contexts['reseau'] as Map<String, dynamic>)['url'] as String,
+        );
+      },
+    );
+
     test('supporte une miette sans donnees et un evenement sans miette', () {
       expect(
         Supervision.nettoyer(

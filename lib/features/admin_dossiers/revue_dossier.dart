@@ -158,6 +158,11 @@ class _RevueDossierState extends ConsumerState<RevueDossier> {
 
   /// Ouvre 02D ou 02E, puis rend le focus au declencheur (repli : titre).
   Future<void> _ouvrir(DecisionDossier decision) async {
+    // AD-NETTOYAGE-2 (n8) : pas de reentrance (double geste avant que la
+    // surface ne s'affiche) : une seule surface de decision a la fois.
+    if (_surfaceOuverte) {
+      return;
+    }
     final bool refus = decision == DecisionDossier.refuser;
     // Une commande close (echec, conflit...) laissee par une surface fermee
     // est oubliee : la nouvelle ouverture repart d'une confirmation neuve.
@@ -667,6 +672,10 @@ class _RaisonsDecision extends StatelessWidget {
         onPress: onAllerPremiere,
         fleche: false,
         annonceLien: true,
+        // AD-NETTOYAGE-2 (m12) : meme encre douce que les autres raisons ; le
+        // lien reste pressable (saut vers la premiere verification), sans
+        // l'accent qui le ferait passer pour l'action principale.
+        encre: palette.inkMuted.applyTo,
       );
     }
     return Column(

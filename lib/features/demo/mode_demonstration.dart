@@ -65,10 +65,23 @@ bool environnementAutoriseDemo(String environnement) {
   return normalise.isNotEmpty && !normalise.contains('prod');
 }
 
-/// Vrai si l'adresse demande la demonstration tuteur.
-bool demoTuteurDemandee(Uri adresse) =>
-    adresse.queryParameters[parametreDemo]?.trim().toLowerCase() ==
-    valeurDemoTuteur;
+/// Valeur du parametre qui nomme la demonstration d'un dossier d'enseignant
+/// (AD-NETTOYAGE-2, n1) : `?demo=enseignant&dossier=...`, alias de
+/// `?demo=tuteur&dossier=...` qui reste accepte. Sans `dossier`, elle ne
+/// montre rien d'enseignant et n'ouvre donc pas la demonstration.
+const String valeurDemoEnseignant = 'enseignant';
+
+/// Vrai si l'adresse demande la demonstration tuteur, ou celle d'un dossier
+/// d'enseignant (`demo=enseignant` avec un `dossier`).
+bool demoTuteurDemandee(Uri adresse) {
+  final String? demo = adresse.queryParameters[parametreDemo]
+      ?.trim()
+      .toLowerCase();
+  if (demo == valeurDemoTuteur) return true;
+  return demo == valeurDemoEnseignant &&
+      (adresse.queryParameters[parametreDossierDemo]?.trim().isNotEmpty ??
+          false);
+}
 
 /// La garde complete, pure pour etre testee sans compilation dediee.
 bool demoTuteurActive({required Uri adresse, required String environnement}) =>
@@ -108,8 +121,9 @@ List<Override> surchargesDemoTuteur({
       selecteurFichierProvider.overrideWithValue(const SelecteurFichierDemo()),
     ] else
       sourceSessionProvider.overrideWithValue(const SourceSessionDemo()),
-    // Un titulaire tout juste valide n'a ni eleve ni classe (P-ADM-08.6,
-    // 11.3) : la validation ne donne rien de plus que l'arrivee a /tuteur.
+    // Avec un dossier, la titulaire est une enseignante (K-47) : elle n'a pas
+    // de foyer, donc ni eleve ni classe ; le foyer vide est sa vraie valeur
+    // (et evite tout appel serveur). Sans dossier, le foyer de demonstration.
     elevesDuFoyerProvider.overrideWith(
       (Ref ref) async =>
           avecDossier ? const <EleveDuFoyer>[] : eleves ?? DonneesDemo.eleves,

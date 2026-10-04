@@ -74,7 +74,11 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await ouvrirPremierDossier(tester);
+    expect(
+      await ouvrirPremierDossier(tester),
+      isTrue,
+      reason: 'la file ADM-02A est vide ou en erreur : aucun dossier a ouvrir',
+    );
     return service;
   }
 
@@ -104,8 +108,8 @@ void main() {
         find.text('Ce dossier ne peut pas être refusé dans son état actuel.'),
         findsOneWidget,
       );
-      // AD-6 : les deux decisions sont presentes mais fermees, avec leur
-      // raison ; la base refuserait un verdict sans piece.
+      // AD-6 : sans piece transmise, valider et refuser sont presents mais
+      // fermes, chacun avec sa raison (les deux messages ci-dessus).
       expect(_actif(tester, 'Valider le dossier'), isFalse);
       expect(_actif(tester, 'Refuser le dossier'), isFalse);
       // La carte des verifications reste (§10.4, §26 ter, AD-6), mais

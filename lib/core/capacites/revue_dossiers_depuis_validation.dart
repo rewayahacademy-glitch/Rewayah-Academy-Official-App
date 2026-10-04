@@ -325,6 +325,11 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
     if (documentId == null) {
       throw const ErreurRevueDossier(CodeErreurRevue.dejaDecide);
     }
+    // AD-NETTOYAGE-2 : depuis la garde ci-dessus, `decision` ne peut plus etre
+    // `valider` ici ; `approuve` est donc toujours faux et les branches
+    // `approuve ? ...` ci-dessous ne s'executent pas. Elles restent pour que
+    // la reouverture de la validation (BR-1) ne demande que le retrait de la
+    // garde, pas une reecriture de l'appel et de la reponse.
     final bool approuve = decision == DecisionDossier.valider;
     try {
       await rpc(
