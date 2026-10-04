@@ -1,9 +1,10 @@
 # Communications V1 : questions au directeur
 
-Seulement ce qui bloque, une phrase, avec recommandation (K-53). COM-0 confirme ou retire chaque point ; l'étape du tableau est COM-Q (voie ATTEND).
+Seulement ce qui bloque, une phrase, avec recommandation (K-53). COM-0 a confirmé, modifié ou retiré chaque point (preuves dans `UX_REVIEW_COMMUNICATIONS_L0.md`) ; l'étape du tableau est COM-Q (voie ATTEND).
 
 | # | Question | Recommandation | Bloque | État |
 |---|---|---|---|---|
-| Q1 | Qui entre dans Le Studio parmi les rôles existants, et par quelle porte ? | L'admin (et le contrôleur ?) depuis son shell, en attendant un rôle « équipe interne » à BR-1 | COM-STU-1 | à confirmer par COM-0 |
-| Q2 | La Communauté enseignants devient-elle une destination du shell Enseignant ? | Oui si le shell a la place, sinon un raccourci depuis l'accueil Enseignant | COM-COMU-1 | à confirmer par COM-0 |
-| Q3 | Maquettes citées par la spec mais absentes : planche B mobile (COM-M04, M05, M06), COM-W00 pastel, COM-W03F focus. | On construit d'après le texte de la spec ; envoyez-les si vous les avez | non bloquant | ouvert |
+| Q1 | Aucun rôle « équipe interne » n'existe (`enums.dart:9`) et le contrôleur ne peut pas atteindre `/admin/*` : qui entre dans Le Studio en V1, et par où ? | L'admin seul, route `/admin/studio`, ouverte par une action « Le Studio » dans l'en-tête de l'`AdminShell` (pas un 9e domaine), avec sa propre navigation Aujourd'hui / Canaux ; contrôleur et comptable hors Studio jusqu'au rôle « équipe interne » de BR-1 (COM-BR-13) | COM-F (route), COM-STU-1 | confirmée et précisée par COM-0, en attente du directeur |
+| Q2 | Le shell Enseignant a déjà quatre destinations sur quatre (E10, `nav_shell.dart:158-177`, maximum 4 par assertion) : la Communauté remplace-t-elle une destination, ou reste-t-elle un raccourci ? | Raccourci : une ligne « Communauté enseignants » sur Aujourd'hui (`JourneePage`), plus l'ouverture depuis une notification ; aucune destination remplacée | COM-COMU-1 | confirmée par COM-0, en attente du directeur |
+| Q3 | Maquettes citées par la spec mais absentes (planche B mobile, COM-W00 pastel, COM-W03F focus). | — | non bloquant | **retirée** par COM-0 : on construit d'après le texte de la spec (§7, §10, §13, §16) et la navigation de la maquette sombre ; le manque reste noté dans 00_REPRISE §2. Si les images arrivent, elles s'ajoutent à `V/` sans question. |
+| Q4 | L'admin est gelé à huit domaines (`admin_shell.dart:20`, `admin_domaine.dart:12`) : où vit l'Administration des communications (COM-W04) ? | Sous Opérations : `/admin/operations/communications`, onglets Annonces, Modération, Messages (`SousNavigationDomaine`, comme Pédagogie), plus une carte sur le tableau de bord ; aucun 9e domaine | COM-F (routes), COM-ANN-2, COM-MSG-2 (admin) | nouvelle, COM-0 |
