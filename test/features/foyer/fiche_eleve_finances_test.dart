@@ -3,8 +3,8 @@
 // sur le vrai routeur ; les huit cas du lot F3 (aucune remise, 3e membre,
 // 4e membre, prorata, avoir, taxe, periode financee a solde nul, solde
 // positif sans periode financee) ; « Recharger Mariam » ouvre la recharge
-// avec Mariam cochee ; etats chargement, contenu, vide, erreur, hors ligne
-// et production ; 320 px texte x2 et 1440 px, clair et sombre, LTR et RTL.
+// avec Mariam cochee ; le lien « Mouvements » (FI-6b) ; etats chargement,
+// contenu, vide, erreur, hors ligne et production ; 320 px texte x2 et 1440 px, clair et sombre, LTR et RTL.
 
 import 'dart:async';
 
@@ -20,6 +20,7 @@ import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
+import 'package:rewayah_academy/core/finance/mouvements_profil.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
@@ -81,6 +82,10 @@ class _PortFinances implements PortPaiementsFoyer {
   @override
   Future<SoldesFoyer> soldes() async =>
       const SoldesFoyer(beneficiaires: <SoldeBeneficiaire>[]);
+
+  @override
+  Future<List<MouvementProfil>> mouvements(String profilId) async =>
+      <MouvementProfil>[];
 }
 
 /// Mariam avec des lignes injectees (prorata, avoir, taxe) : le total est
@@ -259,10 +264,12 @@ void main() {
       );
     });
 
-    testWidgets('aucun lien vers les mouvements tant que leur route manque '
-        '(FI-6b)', (WidgetTester tester) async {
-      await _monter(tester, depart: _chemin(_mariam));
-      expect(find.textContaining('ouvements'), findsNothing);
+    testWidgets('le lien « Mouvements » ouvre l historique du profil (FI-6b)', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monter(tester, depart: _chemin(_mariam));
+      await _toucher(tester, find.byKey(FinancesElevePage.mouvementsKey));
+      expect(lieu(routeur), Routes.ficheEleveSousPage(_mariam, 'mouvements'));
     });
 
     testWidgets('sans source (production, second adulte) : aucune ligne '

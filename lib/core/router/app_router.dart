@@ -85,6 +85,7 @@ import '../../features/foyer/fiche/finances_page.dart';
 import '../../features/foyer/fiche/informations_page.dart';
 import '../../features/foyer/fiche/inscription_page.dart';
 import '../../features/foyer/fiche/interface_page.dart';
+import '../../features/foyer/fiche/mouvements_page.dart';
 import '../../features/foyer/fiche_eleve_page.dart';
 import '../../features/foyer/foyer_page.dart';
 import '../../features/foyer/invitation_conjoint.dart';
@@ -620,6 +621,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                         path: 'finances',
                         pageBuilder: glissee(
                           (GoRouterState etat) => FinancesElevePage(
+                            eleveId: _parametre(etat, 'eleveId'),
+                          ),
+                        ),
+                      ),
+                      GoRoute(
+                        path: 'mouvements',
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => MouvementsElevePage(
                             eleveId: _parametre(etat, 'eleveId'),
                           ),
                         ),

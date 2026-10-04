@@ -20,6 +20,7 @@ import '../../../core/widgets/bandeau_attention.dart';
 import '../../../core/widgets/carte_groupee.dart';
 import '../../../core/widgets/etat_systeme.dart';
 import '../../../core/widgets/identite_profil.dart';
+import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
 import '../../../core/widgets/ligne_finance.dart';
 import '../../../core/widgets/montant_argent.dart';
@@ -44,8 +45,8 @@ import '../photo_eleve.dart';
 /// Etats : chargement, contenu, vide (aucune finance rendue pour ce profil),
 /// erreur, hors ligne, et production (`CapaciteIndisponible`), qui n'est ni
 /// un echec ni un vide. Un seul bouton plein, « Recharger {prenom} », qui
-/// ouvre la recharge avec ce profil coche. Les mouvements (FI-6b) n'ont pas
-/// encore de route : aucun lien inerte.
+/// ouvre la recharge avec ce profil coche ; le lien « Mouvements » mene a
+/// l'historique du profil (FI-6b).
 class FinancesElevePage extends ConsumerWidget {
   /// Cree la page.
   const FinancesElevePage({required this.eleveId, super.key});
@@ -67,6 +68,9 @@ class FinancesElevePage extends ConsumerWidget {
 
   /// « Recharger {prenom} ».
   static const Key rechargerKey = Key('ficheEleve.finances.recharger');
+
+  /// Le lien « Mouvements » (FI-6b).
+  static const Key mouvementsKey = Key('ficheEleve.finances.mouvements');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -374,6 +378,21 @@ class _ContenuFinances extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         composition,
+        Ecart.vLg,
+        // L'historique du profil (FI-6b) : un lien, jamais un second bouton
+        // plein (K-56).
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: LienFleche(
+            key: FinancesElevePage.mouvementsKey,
+            libelle: t.ficheEleve.finances.voirMouvements,
+            libelleSemantique: t.ficheEleve.finances.voirMouvementsSemantique(
+              prenom: finance.prenom,
+            ),
+            onPress: () => GoRouter.of(context)
+                .go(Routes.ficheEleveSousPage(finance.profilId, 'mouvements')),
+          ),
+        ),
         // Pendant une confirmation, payer encore serait payer deux fois
         // (guide §5.4) : aucune recharge proposee.
         if (finance.etat != EtatFinancier.enConfirmation) ...<Widget>[
