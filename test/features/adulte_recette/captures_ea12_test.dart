@@ -152,7 +152,11 @@ Future<void> _capturerRechargeHorsLigne(
   fixerVueCapture(tester, taille, 1);
   await tester.pumpWidget(
     hoteCapture(
-      RechargeFoyerPage(onAbandon: () {}, onTerminee: () {}),
+      RechargeFoyerPage(
+        onAbandon: () {},
+        onTerminee: () {},
+        onPaye: (String _) {},
+      ),
       surcharges: <Override>[
         horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
         portRechargeFoyerProvider.overrideWithValue(

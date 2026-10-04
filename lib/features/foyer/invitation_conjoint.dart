@@ -30,30 +30,44 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/capacites/port_accents_profils.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
+import '../../core/finance/format_montant.dart';
+import '../../core/finance/montant.dart';
+import '../../core/finance/politique_commerciale.dart';
+import '../../core/finance/suivi_paiement.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/theme/accent_profil.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
-import '../../core/widgets/choice_card_group.dart';
+import '../../core/widgets/bouton_icone.dart';
+import '../../core/widgets/carte_groupee.dart';
+import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/ecran_resultat.dart';
 import '../../core/widgets/etat_systeme.dart';
-import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/identite_profil.dart' show BandeauProfil;
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/ligne_allocation.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
+import '../../core/widgets/ligne_moyen_paiement.dart';
+import '../../core/widgets/montant_argent.dart';
 import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
 import '../compte/donnees_compte.dart' show dateLongue;
+import 'finances_foyer.dart' show politiqueActiveProvider;
 import 'ligne_membre.dart' show dateEcheance;
 import 'photo_eleve.dart';
 import 'place_adulte.dart';
@@ -67,6 +81,9 @@ part 'sortie_forfait.dart';
 
 // La recharge du foyer (EA-10) aussi.
 part 'recharge_foyer.dart';
+
+// Et son resultat, les huit etats du paiement (FI-8).
+part 'resultat_recharge.dart';
 
 // La reprise du foyer (EA-11) aussi.
 part 'reprise_foyer.dart';

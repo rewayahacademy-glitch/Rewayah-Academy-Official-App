@@ -13,6 +13,7 @@ import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/capacites/port_paiements_foyer.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/domain/enums.dart';
+import '../../core/finance/montant.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart' show Seance;
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
@@ -645,8 +646,37 @@ abstract final class DonneesAdulteDemo {
         cleAvatar: s.cleAvatar,
         soldeRendu: s.soldeRendu,
         offres: _offresRecharge,
+        montantsProposes: const <Montant>[montantOffreA, montantOffreB],
       ),
   ];
+
+  /// Le montant de l'offre A, en unites mineures (FI-7) : la recharge se
+  /// choisit par montants, chaque montant de la demonstration reprend le
+  /// prix d'une offre de la planche 4.3.
+  static const Montant montantOffreA = Montant(500, 'EUR');
+
+  /// Le montant de l'offre B, en unites mineures (FI-7).
+  static const Montant montantOffreB = Montant(1000, 'EUR');
+
+  /// Le recapitulatif de montants choisis (FI-7) : chaque montant est
+  /// ramene a l'offre de meme prix, puis le recapitulatif des offres ; un
+  /// montant que la demonstration ne propose pas est refuse.
+  static RecapitulatifRecharge recapitulatifMontants(
+    EtatDemoAdulte etat,
+    GenreTitulaireDemo genre,
+    List<MontantRecharge> choix, {
+    bool foyerNouveau = false,
+  }) => recapitulatifRecharge(etat, genre, <ChoixRecharge>[
+    for (final MontantRecharge c in choix)
+      ChoixRecharge(
+        beneficiaireId: c.beneficiaireId,
+        offreId: switch (c.montant) {
+          montantOffreA => offreA,
+          montantOffreB => offreB,
+          _ => throw ArgumentError.value(c.montant, 'montant'),
+        },
+      ),
+  ], foyerNouveau: foyerNouveau);
 
   /// Le recapitulatif que le SERVEUR de demonstration arrete pour ces choix
   /// (EA-10, EA-BR-24) : une ligne par beneficiaire choisi, dans l'ordre des

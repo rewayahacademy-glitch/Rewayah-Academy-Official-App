@@ -1,4 +1,5 @@
 import '../domain/enums.dart';
+import '../finance/montant.dart';
 
 /// Les chemins de l'application.
 ///
@@ -131,6 +132,45 @@ abstract final class Routes {
   static String rechargePour(Iterable<String> profils) => Uri(
     path: tuteurFoyerRecharge,
     queryParameters: <String, String>{'profils': profils.join(',')},
+  ).toString();
+
+  /// La recharge reprise apres un echec (FI-8, guide §5.4 : « ne pas perdre
+  /// la selection ») : les profils coches et le montant de chacun
+  /// (`?profils=a,b&montants=a:1000:USD,b:4000:USD`). Le montant n'est
+  /// qu'un rappel : l'ecran ne le retient que s'il fait partie des montants
+  /// que la source propose.
+  static String rechargeReprise(Map<String, Montant> montants) => Uri(
+    path: tuteurFoyerRecharge,
+    queryParameters: <String, String>{
+      'profils': montants.keys.join(','),
+      'montants': <String>[
+        for (final MapEntry<String, Montant> e in montants.entries)
+          '${e.key}:${e.value.mineur}:${e.value.devise}',
+      ].join(','),
+    },
+  ).toString();
+
+  /// Relit `?montants=` ([rechargeReprise]) ; une entree illisible est
+  /// ignoree, jamais devinee.
+  static Map<String, Montant> montantsDe(String? brut) => <String, Montant>{
+    for (final String entree in (brut ?? '').split(','))
+      if (entree.split(':')
+          case [final String id, final String mineur, final String devise]
+          when id.isNotEmpty && devise.isNotEmpty)
+        if (int.tryParse(mineur) case final int m) id: Montant(m, devise),
+  };
+
+  /// Le resultat d'une recharge (FI-8, guide §1.6 et §5.4) : l'etat de la
+  /// commande tel que la source le rend, sur un chemin statique declare sous
+  /// la recharge, avant `:eleveId` (contrainte R5).
+  static const String tuteurFoyerRechargeResultat =
+      '$tuteurFoyerRecharge/result';
+
+  /// Le resultat de la commande [commandeId] (`?commande=`) : une adresse
+  /// rouverte relit l'etat, elle ne rejoue jamais le paiement.
+  static String resultatRechargePour(String commandeId) => Uri(
+    path: tuteurFoyerRechargeResultat,
+    queryParameters: <String, String>{'commande': commandeId},
   ).toString();
 
   /// La fiche d'un profil eleve du foyer.

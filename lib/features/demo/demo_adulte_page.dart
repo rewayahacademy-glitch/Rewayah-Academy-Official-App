@@ -1249,6 +1249,10 @@ class CoquilleAdulteDemo extends StatelessWidget {
       EcranDemoAdulte.recharge => RechargeFoyerPage(
         onAbandon: () => context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
         onTerminee: () => context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
+        // Le paiement EA ne rend jamais de commande (F13) : par surete, une
+        // commande rendue ramenerait aux paiements, ou l'on verifie.
+        onPaye: (String _) =>
+            context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
       ),
       EcranDemoAdulte.inviterConjoint => InviterConjointPage(
         placeFeminine: titulaire.placeFeminine,
@@ -1640,13 +1644,17 @@ class _RechargeDemo implements PortRechargeFoyer {
     throw const CapaciteIndisponible('EA-BR-25');
   }
 
-  // La recharge par montants et le suivi des huit etats arrivent avec FI-7 et
-  // FI-8 ; la demonstration EA reste sur ses offres (EA-10).
+  // La recharge se choisit par montants depuis FI-7 (un seul moteur) ; le
+  // suivi des huit etats arrive avec FI-8.
   @override
-  Future<RecapitulatifRecharge> verifierMontants(List<MontantRecharge> choix) =>
-      Future<RecapitulatifRecharge>.error(
-        const CapaciteIndisponible('FI-BR-06'),
-      );
+  Future<RecapitulatifRecharge> verifierMontants(
+    List<MontantRecharge> choix,
+  ) async => DonneesAdulteDemo.recapitulatifMontants(
+    etat,
+    genre,
+    choix,
+    foyerNouveau: foyerNouveau,
+  );
 
   @override
   Future<SuiviPaiement> suivre(String commandeId) =>

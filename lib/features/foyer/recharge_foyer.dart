@@ -1,34 +1,42 @@
-// La recharge du foyer (EA-10, planches 4.2 et 4.3, UX_REVIEW_07 lignes 15 et
-// 16) : deux etapes, puis le paiement qui s'arrete sur un etat honnete.
+// La recharge du foyer, un seul moteur (EA-10 puis FI-7 : guide Finance V4
+// §1.6, §4, §5.3, maquettes 04 et 07) : deux etapes, puis le paiement qui
+// s'arrete sur un etat honnete. « Recharger Mariam » (Foyer), « Recharger
+// plusieurs profils » (carte de synthese) et « Recharger » (Compte >
+// Paiements) ouvrent tous CETTE page, sur `/tuteur/foyer/recharge`.
 //
-// 1. « Nouvelle recharge » : un, plusieurs ou tous les beneficiaires (une case
-//    par ligne, « Tout selectionner » au-dessus de la liste), et, pour chaque
-//    beneficiaire coche, l'offre que le serveur rend pour lui (F11 : rien
-//    n'est reparti, aucune offre n'est proposee d'avance). « Verifier la
-//    recharge » reste inactif tant qu'un beneficiaire coche n'a pas d'offre,
-//    avec une phrase qui dit pourquoi.
-// 2. « Verifier la recharge » : le recapitulatif SEPARE par beneficiaire que
-//    le serveur arrete (qui recoit, montant paye, solde attribue, remise
-//    seulement si rendue avec son libelle, statut de l'attribution), un lien
-//    « Modifier » par beneficiaire qui revient a l'etape 1 sans rien perdre,
-//    le total rendu, puis « Payer {total} » au bord de fin.
-// 3. Le paiement n'a aucune source (EA-BR-25, prestataire non choisi, doc
-//    section 20.8) : « Paiement pas encore disponible », jamais « Paiement
-//    reussi » (F13). Une coupure dit seulement que le paiement n'a pas ete
-//    confirme (D5) ; la meme cle rend une nouvelle tentative sure.
+// 1. « Recharge » : un, plusieurs ou tous les profils (une case par ligne,
+//    « Tout selectionner » au-dessus de la liste), chacun avec son avatar,
+//    son accent (K-62), son solde, et le montant qu'il recevra. Le montant se
+//    choisit parmi ceux que la source rend (moins / plus), jamais saisi ni
+//    calcule (K-57, FI6) ; il est desactive tant que le profil n'est pas
+//    coche (§5.3). Le montant suggere par la source (le manque du mois) est
+//    retenu a la coche. « Verifier la recharge » reste inactif tant qu'un
+//    profil coche n'a pas de montant, avec une phrase qui dit pourquoi. La
+//    repartition s'explique : un seul paiement, pas de solde commun.
+// 2. « Verifier la recharge » : le recapitulatif SEPARE par profil que la
+//    source arrete (`verifierMontants`, FI-BR-06 : qui recoit, montant paye,
+//    solde attribue, remise seulement si rendue avec son libelle, statut), un
+//    lien « Modifier » par profil qui revient a l'etape 1 sans rien perdre,
+//    le total RENDU (jamais additionne ici), le moyen de paiement (seul le
+//    paiement web, §1.6 : ni App Store ni Play), puis « Payer {total} ».
+// 3. « Payer » : le port rend l'identifiant de la commande et l'ecran
+//    ouvre son resultat (`ResultatRechargePage`, FI-8), qui relit l'etat ;
+//    jamais un succes local (F13). Sans prestataire branche (production) :
+//    « Paiement pas encore disponible ». Une coupure dit seulement que le
+//    paiement n'a pas ete confirme (D5) ; la meme cle rend une nouvelle
+//    tentative sure, et la meme commande.
 //
-// **Aucun chiffre economique ici** (F12) : ni prix, ni pack, ni taux, ni
-// remise, ni total ; tout est lu tel que rendu. Aucun moyen de paiement n'est
-// montre, meme masque (F13). Rien sur le second adulte au-dela de ce que la
-// recharge exige (F6, F10) : ni Classe, ni photo (Q4).
+// **Aucun chiffre economique calcule ici** (FI6) : les montants proposes,
+// le recapitulatif et le total viennent du port. Rien sur le second adulte
+// au-dela de ce que la recharge exige (F6, F10) : ni Classe, ni photo (Q4).
 //
-// Rien de recree (K-51) : `PageEtape`, `GroupeReglages` (case native en
-// controle de ligne), `PhotoEleve` (K-44), `ChoiceCardGroup` (seul point
-// d'entree d'un choix, ADR-013), `LigneCleValeur`, `ActionPrincipale`,
-// `EtatSysteme`, `BlocAsynchrone`, `Skeleton`, `LienFleche`, et les briques
-// privees de l'invitation du titulaire (ce fichier en est une partie, comme
-// l'acceptation d'EA-7 et la sortie d'EA-8). Les libelles sans source (spec,
-// planche) sont marques « libelle provisoire, lexique D4 » la ou ils sont lus.
+// Rien de recree (K-51) : `PageEtape`, `CarteGroupee`, `AvatarNom` et
+// `BandeauProfil` (identite, K-62), `PhotoEleve` (K-44), `BoutonIcone`,
+// `MontantArgent`, `LigneMoyenPaiement`, `LigneCleValeur`,
+// `ActionPrincipale`, `EtatSysteme`, `BlocAsynchrone`, `Skeleton`,
+// `LienFleche`, et les briques privees de l'invitation du titulaire (ce
+// fichier en est une partie, comme l'acceptation d'EA-7 et la sortie
+// d'EA-8).
 
 part of 'invitation_conjoint.dart';
 
@@ -41,8 +49,10 @@ class RechargeFoyerPage extends ConsumerStatefulWidget {
   const RechargeFoyerPage({
     required this.onAbandon,
     required this.onTerminee,
+    required this.onPaye,
     super.key,
     this.preselection = const <String>{},
+    this.montantsInitiaux = const <String, Montant>{},
   });
 
   /// Les profils deja coches a l'ouverture : « Recharger Mariam » ouvre le
@@ -50,6 +60,14 @@ class RechargeFoyerPage extends ConsumerStatefulWidget {
   /// Finance V4 §4, FI-4). Un identifiant qui n'est pas un beneficiaire
   /// rendu ne coche rien.
   final Set<String> preselection;
+
+  /// Les montants rappeles a l'ouverture (« Reessayer » apres un echec,
+  /// FI-8) : un montant n'est retenu que s'il fait partie de ceux que la
+  /// source propose a ce profil ; sinon le montant suggere s'applique.
+  final Map<String, Montant> montantsInitiaux;
+
+  /// Le paiement a rendu la commande [commandeId] : ouvrir son resultat.
+  final ValueChanged<String> onPaye;
 
   /// Quitter depuis la premiere etape : retour aux paiements du foyer.
   final VoidCallback onAbandon;
@@ -59,6 +77,12 @@ class RechargeFoyerPage extends ConsumerStatefulWidget {
 
   /// « Tout selectionner » ou « Tout deselectionner ».
   static const Key toutSelectionnerKey = Key('recharge.toutSelectionner');
+
+  /// La carte des profils a recharger (etape 1).
+  static const Key profilsKey = Key('recharge.profils');
+
+  /// L'explication de la repartition (« pas de solde commun »).
+  static const Key repartitionKey = Key('recharge.repartition');
 
   /// « Verifier la recharge » (etape 1).
   static const Key verifierKey = Key('recharge.verifier');
@@ -72,8 +96,14 @@ class RechargeFoyerPage extends ConsumerStatefulWidget {
   /// Le total rendu (etape 2).
   static const Key totalKey = Key('recharge.total');
 
+  /// Le moyen de paiement (etape 2).
+  static const Key moyenKey = Key('recharge.moyen');
+
   /// « Payer {total} » (etape 2).
   static const Key payerKey = Key('recharge.payer');
+
+  /// « Suivre le paiement », une fois la commande rendue (etape 2).
+  static const Key suivreKey = Key('recharge.suivre');
 
   /// Le titre de l'etape 2, qui prend le focus a son apparition.
   static const Key focusEtape2Key = Key('recharge.focusEtape2');
@@ -84,9 +114,20 @@ class RechargeFoyerPage extends ConsumerStatefulWidget {
   /// La case d'un beneficiaire.
   static Key caseDe(String beneficiaire) => Key('recharge.case.$beneficiaire');
 
-  /// La carte d'une offre d'un beneficiaire.
-  static Key offreDe(String beneficiaire, String offre) =>
-      Key('recharge.offre.$beneficiaire.$offre');
+  /// La ligne d'un beneficiaire a l'etape 1.
+  static Key profilDe(String beneficiaire) =>
+      Key('recharge.profil.$beneficiaire');
+
+  /// Le montant choisi pour un beneficiaire (etape 1).
+  static Key montantDe(String beneficiaire) =>
+      Key('recharge.montant.$beneficiaire');
+
+  /// « Diminuer le montant » d'un beneficiaire.
+  static Key moinsDe(String beneficiaire) =>
+      Key('recharge.moins.$beneficiaire');
+
+  /// « Augmenter le montant » d'un beneficiaire.
+  static Key plusDe(String beneficiaire) => Key('recharge.plus.$beneficiaire');
 
   /// La ligne du recapitulatif d'un beneficiaire.
   static Key ligneDe(String beneficiaire) =>
@@ -101,11 +142,12 @@ class RechargeFoyerPage extends ConsumerStatefulWidget {
 }
 
 class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
-  /// Les beneficiaires coches, et l'offre choisie pour chacun : gardes au
-  /// retour de l'etape 2 (W-337), et l'offre d'un beneficiaire decoche puis
-  /// recoche aussi.
+  /// Les beneficiaires coches, et le montant choisi pour chacun : gardes au
+  /// retour de l'etape 2 (W-337), et le montant d'un beneficiaire decoche
+  /// puis recoche aussi. Une entree `null` : le titulaire a retire le
+  /// montant suggere ; aucune entree : le montant suggere s'applique.
   final Set<String> _selection = <String>{};
-  final Map<String, String> _offres = <String, String>{};
+  final Map<String, Montant?> _montants = <String, Montant?>{};
 
   @override
   void initState() {
@@ -116,7 +158,11 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
   bool _verification = false;
   bool _verifEnCours = false;
   _EchecRecharge? _echecVerif;
+  String? _dependanceVerif;
   RecapitulatifRecharge? _recapitulatif;
+
+  /// Le moyen de paiement retenu : le seul rendu au lancement (guide §1.6).
+  RailPaiement _rail = RailPaiement.webStripe;
 
   /// Une cle par recapitulatif : une nouvelle tentative apres une coupure
   /// reprend la meme ; un autre recapitulatif en tire une autre.
@@ -124,8 +170,9 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
   bool _paiementEnCours = false;
   _EchecRecharge? _echecPaiement;
 
-  /// L'etat du paiement tel que le serveur le redige (jamais deduit ici).
-  String? _etatPaiement;
+  /// La commande rendue par le paiement : plus de « Payer » sur cette page,
+  /// seulement son suivi (FI-8, « Ne payez pas une seconde fois »).
+  String? _commande;
 
   bool get _occupe => _verifEnCours || _paiementEnCours;
 
@@ -137,17 +184,34 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
   /// peut alors reconnaitre le paiement en suspens (EA-BR-26).
   bool get _paiementIncertain => _echecPaiement == _EchecRecharge.reseau;
 
-  List<ChoixRecharge> _choix(List<BeneficiaireRecharge> liste) =>
-      <ChoixRecharge>[
+  /// Le montant retenu pour [b] : celui que le titulaire a choisi, sinon le
+  /// montant rappele s'il est propose (FI-8), sinon le montant suggere par
+  /// la source. Un montant nul n'est jamais retenu.
+  Montant? _montantDe(BeneficiaireRecharge b) {
+    final Montant? rappele = widget.montantsInitiaux[b.id];
+    final Montant? m = _montants.containsKey(b.id)
+        ? _montants[b.id]
+        : rappele != null && b.montantsProposes.contains(rappele)
+        ? rappele
+        : b.montantSuggere;
+    return m == null || m.estNul ? null : m;
+  }
+
+  List<MontantRecharge> _choix(List<BeneficiaireRecharge> liste) =>
+      <MontantRecharge>[
         for (final BeneficiaireRecharge b in liste)
           if (_selection.contains(b.id))
-            if (_offres[b.id] case final String offre)
-              ChoixRecharge(beneficiaireId: b.id, offreId: offre),
+            if (_montantDe(b) case final Montant m)
+              MontantRecharge(beneficiaireId: b.id, montant: m),
       ];
 
-  /// Au moins un beneficiaire coche, et une offre pour chacun.
-  bool _pret(List<BeneficiaireRecharge> liste) =>
-      _selection.isNotEmpty && _choix(liste).length == _selection.length;
+  /// Au moins un beneficiaire coche, et un montant pour chacun.
+  bool _pret(List<BeneficiaireRecharge> liste) {
+    final int coches = liste
+        .where((BeneficiaireRecharge b) => _selection.contains(b.id))
+        .length;
+    return coches > 0 && _choix(liste).length == coches;
+  }
 
   void _basculer(String id, bool coche) => setState(() {
     if (coche) {
@@ -169,13 +233,19 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         _echecVerif = null;
       });
 
-  void _choisirOffre(String beneficiaire, ReponseChoix r) => setState(() {
-    final String? offre = r.valeurs.firstOrNull;
-    if (offre == null) {
-      _offres.remove(beneficiaire);
-    } else {
-      _offres[beneficiaire] = offre;
-    }
+  /// Le montant voisin dans la liste rendue : le suivant ([pas] = 1) ou le
+  /// precedent ([pas] = -1) ; avant le premier, aucun montant. Rien n'est
+  /// additionne : l'ecran se deplace dans la liste de la source (FI6).
+  void _deplacer(BeneficiaireRecharge b, int pas) => setState(() {
+    final List<Montant> proposes = b.montantsProposes;
+    final int i = switch (_montantDe(b)) {
+      final Montant m => proposes.indexOf(m),
+      null => -1,
+    };
+    final int cible = i + pas;
+    _montants[b.id] = cible < 0 || cible >= proposes.length
+        ? null
+        : proposes[cible];
     _echecVerif = null;
   });
 
@@ -189,12 +259,13 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     try {
       recapitulatif = await ref
           .read(portRechargeFoyerProvider)
-          .verifier(_choix(liste));
-    } on CapaciteIndisponible {
+          .verifierMontants(_choix(liste));
+    } on CapaciteIndisponible catch (e) {
       if (mounted) {
         setState(() {
           _verifEnCours = false;
           _echecVerif = _EchecRecharge.indisponible;
+          _dependanceVerif = e.dependance;
         });
       }
       return;
@@ -214,24 +285,23 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
       _verification = true;
       _cle = const Uuid().v4();
       _echecPaiement = null;
-      _etatPaiement = null;
+      _commande = null;
     });
   }
 
   void _retour() {
     if (_occupe) return;
-    if (_verification && _paiementIncertain) {
+    if (_verification && (_paiementIncertain || _commande != null)) {
       // Paiement non confirme (D5) : pas de retour aux choix, qui tirerait
       // une autre cle ; le retour mene la ou l'on verifie.
       widget.onTerminee();
       return;
     }
     if (_verification) {
-      // Retour sans perte : les cases et les offres restent (W-337).
+      // Retour sans perte : les cases et les montants restent (W-337).
       setState(() {
         _verification = false;
         _echecPaiement = null;
-        _etatPaiement = null;
       });
       return;
     }
@@ -239,16 +309,17 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
   }
 
   Future<void> _payer(RecapitulatifRecharge recapitulatif) async {
-    // Double envoi : un seul appel part, le bouton attend la reponse.
-    if (_occupe) return;
+    // Double envoi : un seul appel part, le bouton attend la reponse ; une
+    // commande deja rendue ne se repaie pas (FI-8).
+    if (_occupe || _commande != null) return;
     setState(() {
       _paiementEnCours = true;
       _echecPaiement = null;
     });
     _EchecRecharge? echec;
-    String? etat;
+    String? commande;
     try {
-      etat = await ref
+      commande = await ref
           .read(portRechargeFoyerProvider)
           .payer(recapitulatifId: recapitulatif.id, cle: _cle);
     } on CapaciteIndisponible {
@@ -260,8 +331,10 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     setState(() {
       _paiementEnCours = false;
       _echecPaiement = echec;
-      _etatPaiement = etat;
+      _commande = commande;
     });
+    // Le resultat relit l'etat de la commande (FI-8) : rien n'est conclu ici.
+    if (commande != null) widget.onPaye(commande);
   }
 
   @override
@@ -287,6 +360,10 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     );
   }
 
+  /// L'accent de profil choisi par le tuteur (K-62), `null` sans choix.
+  AccentProfil? _accent(String id) =>
+      accentLu(ref.watch(accentsProfilsProvider), id);
+
   Widget _pageBeneficiaires(BuildContext context, bool horsLigne) {
     final AsyncValue<List<BeneficiaireRecharge>> lecture = ref.watch(
       beneficiairesRechargeProvider,
@@ -295,7 +372,6 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     final Object? erreur = lecture.hasError ? lecture.error : null;
     final Widget corps;
     if (erreur is CapaciteIndisponible) {
-      // Libelles provisoires, lexique D4.
       corps = EtatSysteme(
         nature: NatureEtat.indisponible,
         titre: t.adulte.recharge.indisponibleTitre,
@@ -324,8 +400,8 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        // « Nouvelle recharge » (planche 4.2) ; sa phrase reprend la carte de
-        // la planche, sans « montant » : libelle provisoire, lexique D4.
+        // « Recharge » et « Choisissez les profils et les montants »
+        // (maquette 04).
         _Titre(
           titre: t.adulte.recharge.titre,
           phrase: t.adulte.recharge.phrase,
@@ -347,21 +423,22 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
       (BeneficiaireRecharge b) => _selection.contains(b.id),
     );
     final bool pret = _pret(liste);
-    // Pourquoi le bouton attend : libelles provisoires, lexique D4.
-    final String? raison = _selection.isEmpty
+    final bool aucun = !liste.any(
+      (BeneficiaireRecharge b) => _selection.contains(b.id),
+    );
+    // Pourquoi le bouton attend (K-59).
+    final String? raison = aucun
         ? t.adulte.recharge.raisonAucun
         : pret
         ? null
-        : t.adulte.recharge.raisonOffre;
-    Widget titre(String texte) => Semantics(
-      header: true,
-      child: Text(
-        texte,
-        style: palette.inkStrong.applyTo(
-          textes.titleMedium ?? const TextStyle(),
-        ),
-      ),
-    );
+        : t.adulte.recharge.raisonMontant;
+    // Le montant en bout de ligne quand la place le permet (tablette,
+    // bureau, texte peu agrandi) ; sinon sous la ligne, au bord de fin.
+    final bool enLigne =
+        AppGabarit.classe(MediaQuery.sizeOf(context).width) !=
+            ClasseLargeur.compacte &&
+        MediaQuery.textScalerOf(context).scale(1) <=
+            AppGabarit.seuilTexteColonne;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -373,10 +450,17 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
           crossAxisAlignment: WrapCrossAlignment.center,
           spacing: AppSpacing.md,
           children: <Widget>[
-            titre(t.adulte.paiements.beneficiaires),
+            Semantics(
+              header: true,
+              child: Text(
+                t.adulte.recharge.profils,
+                style: palette.inkStrong.applyTo(
+                  textes.titleMedium ?? const TextStyle(),
+                ),
+              ),
+            ),
             LienFleche(
               key: RechargeFoyerPage.toutSelectionnerKey,
-              // « Tout deselectionner » : libelle provisoire, lexique D4.
               libelle: tout
                   ? t.adulte.recharge.toutDeselectionner
                   : t.adulte.recharge.toutSelectionner,
@@ -386,56 +470,31 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
           ],
         ),
         Ecart.vSm,
-        // L'offre de chaque beneficiaire coche JUSTE SOUS sa ligne (UX_REVIEW_07
-        // ligne 15 a, planche 4.2). `GroupeReglages` (partage, K-51) n'a pas
-        // de place sous une ligne : le groupe se coupe apres chaque ligne
-        // cochee, ses offres suivent, puis le groupe reprend (harmonisation
-        // notee au tableau).
-        for (final (int i, List<BeneficiaireRecharge> troncon) in _troncons(
-          liste,
-        ).indexed) ...<Widget>[
-          if (i > 0) Ecart.vLg,
-          GroupeReglages(
-            lignes: <LigneRubrique>[
-              for (final BeneficiaireRecharge b in troncon)
-                LigneRubrique(
-                  meneur: PhotoEleve(
-                    prenom: b.prenom,
-                    cleAvatar: b.cleAvatar,
-                    diametre: AppSpacing.section,
-                  ),
-                  libelle: b.prenom,
-                  // Le solde tel que rendu (E2), sans Classe (F6).
-                  valeur: b.soldeRendu,
-                  controle: Checkbox(
-                    key: RechargeFoyerPage.caseDe(b.id),
-                    value: _selection.contains(b.id),
-                    // Sans libelle propre : la ligne entiere (prenom, solde,
-                    // case) est lue d'un bloc par `GroupeReglages`.
-                    onChanged: _occupe
-                        ? null
-                        : (bool? coche) => _basculer(b.id, coche ?? false),
-                  ),
-                ),
+        // Une seule carte a lignes fines : les profils sont lies par le
+        // meme paiement (K-55).
+        KeyedSubtree(
+          key: RechargeFoyerPage.profilsKey,
+          child: CarteGroupee(
+            sections: <Widget>[
+              for (final BeneficiaireRecharge b in liste)
+                _ligneProfil(context, b, enLigne: enLigne),
             ],
           ),
-          // Une offre par beneficiaire coche, lue telle que rendue ; aucune
-          // n'est choisie d'avance (F11, ligne 15 a).
-          if (_selection.contains(troncon.last.id)) ...<Widget>[
-            Ecart.vMd,
-            // « Offre pour {prenom} » : libelle provisoire, lexique D4.
-            titre(t.adulte.recharge.offrePour(prenom: troncon.last.prenom)),
-            Ecart.vSm,
-            _offresDe(troncon.last),
-          ],
-        ],
+        ),
+        Ecart.vLg,
+        // La repartition (guide §5.3) : un seul paiement, chaque montant au
+        // solde de son profil, jamais un solde commun.
+        _Note(
+          key: RechargeFoyerPage.repartitionKey,
+          texte: t.adulte.recharge.repartition,
+          attenuee: true,
+        ),
         if (_echecVerif case final _EchecRecharge echec) ...<Widget>[
           Ecart.vLg,
           _FocusALApparition(
             key: RechargeFoyerPage.focusEtatKey,
             child: switch (echec) {
               // Une lecture manquee : rien n'a ete paye, les choix restent.
-              // Libelles provisoires, lexique D4.
               _EchecRecharge.reseau => EtatSysteme(
                 nature: NatureEtat.echecServeur,
                 titre: t.adulte.recharge.verificationEchecTitre,
@@ -445,12 +504,12 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
                 nature: NatureEtat.indisponible,
                 titre: t.adulte.recharge.indisponibleTitre,
                 phrase: t.adulte.recharge.indisponiblePhrase,
-                dependance: 'EA-BR-24',
+                dependance: _dependanceVerif,
               ),
             },
           ),
         ],
-        // Hors ligne : rien ne part tout seul. Libelle provisoire, lexique D4.
+        // Hors ligne : rien ne part tout seul.
         if (horsLigne) ...<Widget>[
           Ecart.vLg,
           _Note(texte: t.adulte.recharge.horsLigneVerifier),
@@ -480,37 +539,150 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     );
   }
 
-  /// La liste coupee apres chaque beneficiaire coche : chaque troncon finit
-  /// par une ligne cochee (ses offres suivent) ou par la fin de la liste.
-  List<List<BeneficiaireRecharge>> _troncons(List<BeneficiaireRecharge> liste) {
-    final List<List<BeneficiaireRecharge>> troncons =
-        <List<BeneficiaireRecharge>>[<BeneficiaireRecharge>[]];
-    for (final BeneficiaireRecharge b in liste) {
-      troncons.last.add(b);
-      if (_selection.contains(b.id)) troncons.add(<BeneficiaireRecharge>[]);
-    }
-    if (troncons.last.isEmpty) troncons.removeLast();
-    return troncons;
+  /// La ligne d'un profil : sa case, son identite (avatar, accent, prenom,
+  /// solde, montant suggere) et son montant, desactive tant qu'il n'est pas
+  /// coche (guide §5.3).
+  Widget _ligneProfil(
+    BuildContext context,
+    BeneficiaireRecharge b, {
+    required bool enLigne,
+  }) {
+    final bool coche = _selection.contains(b.id);
+    final String? solde = switch (b.solde) {
+      final Montant m => t.adulte.recharge.soldeActuel(
+        montant: formaterMontant(m),
+      ),
+      null => b.soldeRendu,
+    };
+    final String? suggere = switch (b.montantSuggere) {
+      final Montant m => t.adulte.recharge.montantSuggere(
+        montant: formaterMontant(m),
+      ),
+      null => null,
+    };
+    final TextStyle styleRole = AppPalette.of(context).inkMuted
+        .applyTo(Theme.of(context).textTheme.bodyMedium ?? const TextStyle());
+    // La case et l'identite se lisent d'un bloc : « Mariam, Solde actuel :
+    // 12 $, case cochee ». Le montant se lit a part, avec ses boutons.
+    final Widget identite = MergeSemantics(
+      child: Row(
+        children: <Widget>[
+          Checkbox(
+            key: RechargeFoyerPage.caseDe(b.id),
+            value: coche,
+            onChanged: _occupe
+                ? null
+                : (bool? valeur) => _basculer(b.id, valeur ?? false),
+          ),
+          Ecart.hSm,
+          Expanded(
+            child: AvatarNom.enLigne(
+              prenom: b.prenom,
+              avatar: PhotoEleve(
+                prenom: b.prenom,
+                cleAvatar: b.cleAvatar,
+                diametre: AppAvatar.moyen,
+              ),
+              enveloppeAvatar: BandeauProfil.enveloppe(
+                diametre: AppAvatar.moyen,
+                accent: _accent(b.id),
+              ),
+              texteEtire: true,
+              styleNom: AppPalette.of(context).inkStrong.applyTo(
+                Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
+              ),
+              roleWidget: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  if (solde != null) Text(solde, style: styleRole),
+                  if (suggere != null) Text(suggere, style: styleRole),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    final Widget montant = _montantProfil(b, actif: coche && !_occupe);
+    return KeyedSubtree(
+      key: RechargeFoyerPage.profilDe(b.id),
+      child: enLigne
+          ? Row(
+              children: <Widget>[
+                Expanded(child: identite),
+                Ecart.hMd,
+                montant,
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                identite,
+                Ecart.vSm,
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: montant,
+                ),
+              ],
+            ),
+    );
   }
 
-  Widget _offresDe(BeneficiaireRecharge b) => ChoiceCardGroup(
-    key: ValueKey<String>('recharge.offres.${b.id}'),
-    autoriserSaisieLibre: false,
-    valeurInitiale: switch (_offres[b.id]) {
-      final String offre => ReponseChoix(valeurs: <String>{offre}),
-      null => null,
-    },
-    options: <OptionChoix>[
-      for (final OffreRecharge o in b.offres)
-        OptionChoix(
-          cle: RechargeFoyerPage.offreDe(b.id, o.id),
-          valeur: o.id,
-          libelle: o.libelle,
-          description: o.detail,
+  /// Moins, le montant, plus. Desactive (profil non coche) : le montant se
+  /// lit « 0 » attenue, comme la maquette 04, sans bouton. Un bouton qui ne
+  /// peut pas aboutir n'est jamais grise (K-56) : au premier et au dernier
+  /// montant, comme les fleches de `BarrePrecedentSuivant`, il disparait et
+  /// sa place reste, pour que le montant ne bouge pas.
+  Widget _montantProfil(BeneficiaireRecharge b, {required bool actif}) {
+    final List<Montant> proposes = b.montantsProposes;
+    final Montant? choisi = _montantDe(b);
+    final int i = choisi == null ? -1 : proposes.indexOf(choisi);
+    final String? devise = proposes.firstOrNull?.devise;
+    final Montant? zero = devise == null ? null : Montant(0, devise);
+    final Montant? affiche = actif ? choisi ?? zero : zero;
+    const Widget place = SizedBox.square(dimension: AppTouchTarget.standard);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        if (actif && choisi != null)
+          BoutonIcone(
+            key: RechargeFoyerPage.moinsDe(b.id),
+            icone: AppIcons.moins,
+            libelle: t.adulte.recharge.diminuer(prenom: b.prenom),
+            onPress: () => _deplacer(b, -1),
+          )
+        else
+          place,
+        ConstrainedBox(
+          constraints: const BoxConstraints(minWidth: AppSpacing.respiration),
+          child: Semantics(
+            label: t.adulte.recharge.montantPour(prenom: b.prenom),
+            liveRegion: actif,
+            child: Center(
+              widthFactor: 1,
+              child: KeyedSubtree(
+                key: RechargeFoyerPage.montantDe(b.id),
+                child: affiche == null
+                    ? const SizedBox.shrink()
+                    : MontantArgent(affiche, attenue: !actif || choisi == null),
+              ),
+            ),
+          ),
         ),
-    ],
-    onChange: (ReponseChoix r) => _choisirOffre(b.id, r),
-  );
+        if (actif && i + 1 < proposes.length)
+          BoutonIcone(
+            key: RechargeFoyerPage.plusDe(b.id),
+            icone: AppIcons.ajouter,
+            libelle: t.adulte.recharge.augmenter(prenom: b.prenom),
+            onPress: () => _deplacer(b, 1),
+          )
+        else
+          place,
+      ],
+    );
+  }
 
   Widget _pageVerification(
     BuildContext context,
@@ -519,10 +691,28 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
   ) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final String? etatPaiement = _etatPaiement;
+    final String? commande = _commande;
     final bool arrete =
-        etatPaiement != null || _echecPaiement == _EchecRecharge.indisponible;
-    final Widget? etat = switch ((_echecPaiement, etatPaiement)) {
+        commande != null || _echecPaiement == _EchecRecharge.indisponible;
+    // Les moyens que la politique active ouvre, sinon le seul paiement web
+    // du lancement (guide §1.6) ; jamais un rail StoreKit ou Play.
+    final Set<RailPaiement> ouverts =
+        ref.watch(politiqueActiveProvider).value?.railsActifs ??
+        const <RailPaiement>{RailPaiement.webStripe};
+    final List<RailPaiement> rails = <RailPaiement>[
+      for (final RailPaiement r in RailPaiement.values)
+        if (ouverts.contains(r) && LigneMoyenPaiement.estMontre(r)) r,
+    ];
+    Widget titre(String texte) => Semantics(
+      header: true,
+      child: Text(
+        texte,
+        style: palette.inkStrong.applyTo(
+          textes.titleMedium ?? const TextStyle(),
+        ),
+      ),
+    );
+    final Widget? etat = switch ((_echecPaiement, commande)) {
       // D5 : l'ecran ne dit que ce qu'il sait, le paiement n'est pas
       // confirme ; la meme cle rend une nouvelle tentative sure.
       (_EchecRecharge.reseau, _) => EtatSysteme(
@@ -530,8 +720,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         titre: t.adulte.recharge.paiementEchecTitre,
         phrase: t.adulte.recharge.paiementEchecPhrase,
       ),
-      // L'etat honnete (F13) : aucun paiement, jamais « reussi ». Titre,
-      // phrase et retour : libelles provisoires, lexique D4.
+      // L'etat honnete (F13) : aucun paiement, jamais « reussi ».
       (_EchecRecharge.indisponible, _) => EtatSysteme(
         nature: NatureEtat.indisponible,
         titre: t.adulte.recharge.paiementIndisponibleTitre,
@@ -540,11 +729,8 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         libelleAction: t.adulte.recharge.revenirPaiements,
         onAction: widget.onTerminee,
       ),
-      // L'etat que le serveur redige, tel quel (EA-BR-25).
-      (null, final String rendu) => Semantics(
-        liveRegion: true,
-        child: _Note(texte: rendu),
-      ),
+      // La commande est rendue : son suivi, jamais un second paiement.
+      (null, String()) => _Note(texte: t.adulte.recharge.commandeRendue),
       (null, null) => null,
     };
     return Column(
@@ -559,15 +745,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
           ),
         ),
         Ecart.vXxl,
-        Semantics(
-          header: true,
-          child: Text(
-            t.adulte.recharge.recapitulatif,
-            style: palette.inkStrong.applyTo(
-              textes.titleMedium ?? const TextStyle(),
-            ),
-          ),
-        ),
+        titre(t.adulte.recharge.recapitulatif),
         Ecart.vSm,
         Column(
           key: RechargeFoyerPage.recapitulatifKey,
@@ -580,29 +758,26 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
               _Carte(
                 key: RechargeFoyerPage.ligneDe(l.beneficiaireId),
                 lignes: <Widget>[
-                  // Qui recoit : sa photo ou ses initiales (K-44), sans
-                  // Classe (F6).
+                  // Qui recoit : sa photo ou ses initiales (K-44) et son
+                  // accent (K-62), sans Classe (F6).
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       vertical: AppSpacing.sm,
                     ),
-                    child: Row(
-                      children: <Widget>[
-                        PhotoEleve(
-                          prenom: l.prenom,
-                          cleAvatar: l.cleAvatar,
-                          diametre: AppSpacing.section,
-                        ),
-                        Ecart.hMd,
-                        Expanded(
-                          child: Text(
-                            l.prenom,
-                            style: palette.inkStrong.applyTo(
-                              textes.titleMedium ?? const TextStyle(),
-                            ),
-                          ),
-                        ),
-                      ],
+                    child: AvatarNom.enLigne(
+                      prenom: l.prenom,
+                      avatar: PhotoEleve(
+                        prenom: l.prenom,
+                        cleAvatar: l.cleAvatar,
+                        diametre: AppAvatar.moyen,
+                      ),
+                      enveloppeAvatar: BandeauProfil.enveloppe(
+                        diametre: AppAvatar.moyen,
+                        accent: _accent(l.beneficiaireId),
+                      ),
+                      styleNom: palette.inkStrong.applyTo(
+                        textes.titleMedium ?? const TextStyle(),
+                      ),
                     ),
                   ),
                   // Chaque valeur telle que rendue (F11, F12).
@@ -639,7 +814,8 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
           ],
         ),
         Ecart.vLg,
-        // Le total rendu, jamais additionne ici (ligne 16 b).
+        // Le total rendu, jamais additionne ici (ligne 16 b, FI6), et la
+        // repartition dite a cote (guide §5.3).
         _Carte(
           key: RechargeFoyerPage.totalKey,
           lignes: <Widget>[
@@ -648,6 +824,29 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
               valeur: recapitulatif.total,
               chiffres: true,
             ),
+            Ecart.vSm,
+            _Note(texte: t.adulte.recharge.repartition, attenuee: true),
+          ],
+        ),
+        Ecart.vLg,
+        // Le moyen de paiement (guide §1.6, §5.3) : seul le paiement web.
+        titre(t.adulte.recharge.moyen),
+        Ecart.vSm,
+        Column(
+          key: RechargeFoyerPage.moyenKey,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            for (final (int i, RailPaiement r) in rails.indexed) ...<Widget>[
+              if (i > 0) Ecart.vLg,
+              LigneMoyenPaiement(
+                rail: r,
+                retenu: r == _rail,
+                // Le rail retenu ne part pas avec le paiement : le choisir
+                // reste sans effet sur une tentative en cours.
+                onPress: () => setState(() => _rail = r),
+              ),
+            ],
           ],
         ),
         if (etat != null) ...<Widget>[
@@ -656,19 +855,20 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         ],
         // Hors ligne : pourquoi « Payer » attend, sans jamais dire que rien
         // n'est paye (D5 : apres une coupure, l'ecran ne le sait pas).
-        // Libelle provisoire, lexique D4.
         if (horsLigne && !arrete) ...<Widget>[
           Ecart.vLg,
           _Note(texte: t.adulte.recharge.horsLignePayer),
         ],
-        // Un seul bouton dominant, 16 sous le total (ligne 16 d). Apres
-        // l'etat honnete, le seul geste est le retour qu'il porte.
-        if (etatPaiement != null) ...<Widget>[
+        // Un seul bouton dominant, 16 sous le moyen de paiement. Une fois la
+        // commande rendue, le seul geste est son suivi (FI-8).
+        if (commande != null) ...<Widget>[
           Ecart.vLg,
           _Actions(
             principale: ActionPrincipale(
-              libelle: t.adulte.recharge.revenirPaiements,
-              onPress: widget.onTerminee,
+              key: RechargeFoyerPage.suivreKey,
+              libelle: t.adulte.recharge.suivrePaiement,
+              fleche: true,
+              onPress: () => widget.onPaye(commande),
               pleineLargeur: false,
             ),
           ),
@@ -678,7 +878,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
             principale: ActionPrincipale(
               key: RechargeFoyerPage.payerKey,
               libelle: t.adulte.recharge.payer(montant: recapitulatif.total),
-              onPress: horsLigne
+              onPress: horsLigne || rails.isEmpty
                   ? null
                   : () => unawaited(_payer(recapitulatif)),
               enCours: _paiementEnCours,

@@ -206,12 +206,7 @@ void main() {
       );
       await _taper(
         tester,
-        find.byKey(
-          RechargeFoyerPage.offreDe(
-            DonneesAdulteDemo.aichaId,
-            DonneesAdulteDemo.offreA,
-          ),
-        ),
+        find.byKey(RechargeFoyerPage.plusDe(DonneesAdulteDemo.aichaId)),
       );
       expect(tester.takeException(), isNull);
       await _taper(tester, find.byKey(RechargeFoyerPage.verifierKey));

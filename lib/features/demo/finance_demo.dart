@@ -28,6 +28,7 @@ import '../../core/capacites/port_politiques_commerciales.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/capacites/port_revenus_enseignant.dart';
 import '../../core/finance/finances_profil.dart';
+import '../../core/finance/format_montant.dart';
 import '../../core/finance/montant.dart';
 import '../../core/finance/mouvements_profil.dart';
 import '../../core/finance/politique_commerciale.dart';
@@ -549,6 +550,8 @@ abstract final class DonneesFinanceDemo {
       total: usd(50),
       reference: 'RWY-123',
       date: aujourdhui,
+      moyen: RailPaiement.webStripe,
+      motif: etat == EtatPaiement.echec ? motifEchecDemo : null,
       allocations: <AllocationProfil>[
         AllocationProfil(
           profilId: mariamId,
@@ -563,6 +566,129 @@ abstract final class DonneesFinanceDemo {
           nouveauSolde: termine ? usd(40) : null,
         ),
       ],
+    );
+  }
+
+  /// Le motif d'echec que la source de demonstration redige pour
+  /// l'utilisateur (guide §5.4, « motif utilisateur lorsque disponible »).
+  static const String motifEchecDemo =
+      "La banque a refusé la carte. Aucun montant n'a été débité.";
+
+  /// L'ordre des etats que parcourt une commande payee en demonstration
+  /// (FI-8) : une lecture de plus, un etat de plus, jusqu'a `termine`.
+  static const List<EtatPaiement> progressionDemo = <EtatPaiement>[
+    EtatPaiement.attenteConfirmation,
+    EtatPaiement.confirme,
+    EtatPaiement.allocationEnCours,
+    EtatPaiement.termine,
+  ];
+
+  /// L'identifiant de la commande payee sous la cle d'idempotence [cle] :
+  /// la meme cle rend la meme commande (double confirmation, un seul
+  /// credit, FI-8).
+  static String commandePayee(String cle) => 'demo-fi-paye-$cle';
+
+  /// Le suivi d'une commande payee en demonstration (FI-8) : les montants
+  /// choisis [choix] du jeu [jeu], dans l'etat [etat]. Le nouveau solde de
+  /// chaque profil (son solde plus SA part, une seule fois) n'est rendu
+  /// qu'a `termine`. Calcul du double de demonstration, jamais a l'ecran.
+  static SuiviPaiement suiviPaye(
+    JeuFoyerFinance jeu,
+    String commandeId,
+    List<MontantRecharge> choix,
+    EtatPaiement etat,
+  ) {
+    final bool termine = etat == EtatPaiement.termine;
+    final Map<String, Montant> montantDe = <String, Montant>{
+      for (final MontantRecharge c in choix) c.beneficiaireId: c.montant,
+    };
+    return SuiviPaiement(
+      commandeId: commandeId,
+      etat: etat,
+      total: _somme(montantDe.values),
+      reference: 'RWY-124',
+      date: aujourdhui,
+      moyen: RailPaiement.webStripe,
+      allocations: <AllocationProfil>[
+        for (final FinancesProfil p in profils(jeu))
+          if (montantDe[p.profilId] case final Montant m)
+            AllocationProfil(
+              profilId: p.profilId,
+              prenom: p.prenom,
+              montant: m,
+              nouveauSolde: termine ? _somme(<Montant>[p.solde, m]) : null,
+            ),
+      ],
+    );
+  }
+
+  /// Les montants de recharge proposes a chaque profil (FI-7, guide §5.3),
+  /// en dollars : choisis plutot que saisis (K-57).
+  static List<Montant> get paliersRecharge => <Montant>[
+    for (final int u in const <int>[10, 20, 30, 40, 50]) usd(u),
+  ];
+
+  /// Le statut d'une attribution avant le paiement, tel que la source de
+  /// demonstration le rend.
+  static const String statutAvantPaiement = 'En attente du paiement';
+
+  /// Les beneficiaires de la recharge du jeu [jeu] (FI-7) : les profils du
+  /// foyer, leur solde, les montants proposes et, quand il manque de quoi
+  /// financer le mois, ce manque suggere en premier montant (guide §5.3).
+  static List<BeneficiaireRecharge> beneficiairesRecharge(
+    JeuFoyerFinance jeu,
+  ) => <BeneficiaireRecharge>[
+    for (final FinancesProfil p in profils(jeu))
+      BeneficiaireRecharge(
+        id: p.profilId,
+        prenom: p.prenom,
+        solde: p.solde,
+        montantSuggere: p.manque,
+        montantsProposes: <Montant>[
+          if (p.manque case final Montant m when !paliersRecharge.contains(m))
+            m,
+          ...paliersRecharge,
+        ],
+      ),
+  ];
+
+  /// Le recapitulatif que la source de demonstration arrete pour ces montants
+  /// (FI-7, FI-BR-06) : une ligne par profil choisi, dans l'ordre du foyer,
+  /// et le total, additionne ICI, jamais dans l'ecran (FI6). Un profil
+  /// inconnu, un montant nul ou non propose est refuse.
+  static RecapitulatifRecharge recapitulatifMontants(
+    JeuFoyerFinance jeu,
+    List<MontantRecharge> choix,
+  ) {
+    final Map<String, Montant> montantDe = <String, Montant>{
+      for (final MontantRecharge c in choix) c.beneficiaireId: c.montant,
+    };
+    final List<BeneficiaireRecharge> liste = beneficiairesRecharge(jeu);
+    if (choix.isEmpty ||
+        montantDe.length != choix.length ||
+        montantDe.entries.any(
+          (MapEntry<String, Montant> e) => !liste.any(
+            (BeneficiaireRecharge b) =>
+                b.id == e.key && b.montantsProposes.contains(e.value),
+          ),
+        )) {
+      throw ArgumentError.value(choix, 'choix');
+    }
+    final List<LigneRecapitulatif> lignes = <LigneRecapitulatif>[
+      for (final BeneficiaireRecharge b in liste)
+        if (montantDe[b.id] case final Montant m)
+          LigneRecapitulatif(
+            beneficiaireId: b.id,
+            prenom: b.prenom,
+            montantPaye: formaterMontant(m),
+            soldeAttribue: formaterMontant(m, signe: true),
+            statut: statutAvantPaiement,
+          ),
+    ];
+    return RecapitulatifRecharge(
+      id: 'demo-fi-recapitulatif',
+      lignes: lignes,
+      total: formaterMontant(_somme(montantDe.values)),
     );
   }
 
@@ -851,39 +977,91 @@ class PaiementsFoyerFinanceDemo implements PortPaiementsFoyer {
       Future<SoldesFoyer>.error(const CapaciteIndisponible('FI-BR-03'));
 }
 
-/// La recharge du foyer en demonstration : le suivi parcourt les huit etats
-/// (FI-BR-06). La recharge par montants arrive avec son ecran (FI-7).
+/// La recharge du foyer en demonstration (FI-7) : les profils du jeu et
+/// leurs montants proposes, le recapitulatif arrete par la demonstration,
+/// et le suivi qui parcourt les huit etats (FI-BR-06). Le paiement (FI-8)
+/// rend une commande de demonstration, la meme pour la meme cle ; son suivi
+/// avance d'un etat a chaque lecture, jusqu'a `termine`. Rien n'est envoye
+/// (K-28).
+///
+/// Les commandes payees vivent dans des tables statiques : une portee de
+/// demonstration reconstruite (bascule de theme) cree un autre double, sans
+/// perdre la commande en cours ni payer une seconde fois.
 class RechargeFoyerFinanceDemo implements PortRechargeFoyer {
-  /// Cree le double.
-  const RechargeFoyerFinanceDemo();
+  /// Cree le double pour le jeu [jeu].
+  const RechargeFoyerFinanceDemo([this.jeu = JeuFoyerFinance.tousFinances]);
+
+  /// Le jeu du foyer.
+  final JeuFoyerFinance jeu;
+
+  /// Les derniers montants verifies, par jeu : ce que le paiement reprend.
+  static final Map<JeuFoyerFinance, List<MontantRecharge>> _verifies =
+      <JeuFoyerFinance, List<MontantRecharge>>{};
+
+  /// Les montants de chaque commande payee, figes au premier paiement.
+  static final Map<String, List<MontantRecharge>> _payees =
+      <String, List<MontantRecharge>>{};
+
+  /// Le nombre de lectures de chaque commande payee.
+  static final Map<String, int> _lectures = <String, int>{};
 
   @override
-  Future<SuiviPaiement> suivre(String commandeId) async =>
-      DonneesFinanceDemo.suivi(commandeId);
+  Future<SuiviPaiement> suivre(String commandeId) async {
+    final List<MontantRecharge>? choix = _payees[commandeId];
+    if (choix == null) return DonneesFinanceDemo.suivi(commandeId);
+    final int n = _lectures.update(
+      commandeId,
+      (int v) => v + 1,
+      ifAbsent: () => 0,
+    );
+    const List<EtatPaiement> etapes = DonneesFinanceDemo.progressionDemo;
+    return DonneesFinanceDemo.suiviPaye(
+      jeu,
+      commandeId,
+      choix,
+      etapes[n < etapes.length ? n : etapes.length - 1],
+    );
+  }
 
   @override
-  Future<RecapitulatifRecharge> verifierMontants(List<MontantRecharge> choix) =>
-      Future<RecapitulatifRecharge>.error(
-        const CapaciteIndisponible('FI-BR-06'),
-      );
+  Future<RecapitulatifRecharge> verifierMontants(
+    List<MontantRecharge> choix,
+  ) async {
+    final RecapitulatifRecharge r = DonneesFinanceDemo.recapitulatifMontants(
+      jeu,
+      choix,
+    );
+    _verifies[jeu] = List<MontantRecharge>.unmodifiable(choix);
+    return r;
+  }
 
   @override
-  Future<List<BeneficiaireRecharge>> beneficiaires() =>
-      Future<List<BeneficiaireRecharge>>.error(
-        const CapaciteIndisponible('FI-BR-06'),
-      );
+  Future<List<BeneficiaireRecharge>> beneficiaires() async =>
+      DonneesFinanceDemo.beneficiairesRecharge(jeu);
 
+  // Le contrat par offres (EA-10) n'a pas de source dans la Finance V4.
   @override
   Future<RecapitulatifRecharge> verifier(List<ChoixRecharge> choix) =>
       Future<RecapitulatifRecharge>.error(
         const CapaciteIndisponible('FI-BR-06'),
       );
 
+  /// Idempotent par [cle] : une seconde confirmation sous la meme cle rend
+  /// la meme commande et ne fige pas d'autres montants (un seul credit).
   @override
   Future<String> payer({
     required String recapitulatifId,
     required String cle,
-  }) => Future<String>.error(const CapaciteIndisponible('FI-BR-06'));
+  }) async {
+    final String commande = DonneesFinanceDemo.commandePayee(cle);
+    if (_payees.containsKey(commande)) return commande;
+    final List<MontantRecharge>? choix = _verifies[jeu];
+    if (choix == null || choix.isEmpty) {
+      throw ArgumentError.value(recapitulatifId, 'recapitulatifId');
+    }
+    _payees[commande] = choix;
+    return commande;
+  }
 }
 
 /// L'acces du foyer en demonstration (FI-BR-08).

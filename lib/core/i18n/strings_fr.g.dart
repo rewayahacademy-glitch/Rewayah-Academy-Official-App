@@ -10790,11 +10790,35 @@ class Traductions$adulte$recharge$fr {
 
 	// Translations
 
-	/// fr: 'Nouvelle recharge'
-	String get titre => 'Nouvelle recharge';
+	/// fr: 'Recharge'
+	String get titre => 'Recharge';
 
-	/// fr: 'Sélectionnez un ou plusieurs bénéficiaires, puis choisissez une offre pour chacun.'
-	String get phrase => 'Sélectionnez un ou plusieurs bénéficiaires, puis choisissez une offre pour chacun.';
+	/// fr: 'Choisissez les profils et les montants.'
+	String get phrase => 'Choisissez les profils et les montants.';
+
+	/// fr: 'Profils à recharger'
+	String get profils => 'Profils à recharger';
+
+	/// fr: 'Solde actuel : {montant}'
+	String soldeActuel({required Object montant}) => 'Solde actuel : ${montant}';
+
+	/// fr: 'Montant suggéré : {montant}'
+	String montantSuggere({required Object montant}) => 'Montant suggéré : ${montant}';
+
+	/// fr: 'Montant pour {prenom}'
+	String montantPour({required Object prenom}) => 'Montant pour ${prenom}';
+
+	/// fr: 'Diminuer le montant pour {prenom}'
+	String diminuer({required Object prenom}) => 'Diminuer le montant pour ${prenom}';
+
+	/// fr: 'Augmenter le montant pour {prenom}'
+	String augmenter({required Object prenom}) => 'Augmenter le montant pour ${prenom}';
+
+	/// fr: 'Un seul paiement sera effectué. Chaque montant va au solde de son profil : il n'y a pas de solde commun.'
+	String get repartition => 'Un seul paiement sera effectué. Chaque montant va au solde de son profil : il n\'y a pas de solde commun.';
+
+	/// fr: 'Moyen de paiement'
+	String get moyen => 'Moyen de paiement';
 
 	/// fr: 'Tout sélectionner'
 	String get toutSelectionner => 'Tout sélectionner';
@@ -10802,17 +10826,14 @@ class Traductions$adulte$recharge$fr {
 	/// fr: 'Tout désélectionner'
 	String get toutDeselectionner => 'Tout désélectionner';
 
-	/// fr: 'Offre pour {prenom}'
-	String offrePour({required Object prenom}) => 'Offre pour ${prenom}';
-
 	/// fr: 'Vérifier la recharge'
 	String get verifier => 'Vérifier la recharge';
 
-	/// fr: 'Sélectionnez au moins un bénéficiaire pour continuer.'
-	String get raisonAucun => 'Sélectionnez au moins un bénéficiaire pour continuer.';
+	/// fr: 'Sélectionnez au moins un profil pour continuer.'
+	String get raisonAucun => 'Sélectionnez au moins un profil pour continuer.';
 
-	/// fr: 'Choisissez une offre pour chaque bénéficiaire sélectionné.'
-	String get raisonOffre => 'Choisissez une offre pour chaque bénéficiaire sélectionné.';
+	/// fr: 'Choisissez un montant pour chaque profil sélectionné.'
+	String get raisonMontant => 'Choisissez un montant pour chaque profil sélectionné.';
 
 	/// fr: 'Vous êtes hors ligne. Vous pourrez vérifier la recharge quand la connexion sera revenue.'
 	String get horsLigneVerifier => 'Vous êtes hors ligne. Vous pourrez vérifier la recharge quand la connexion sera revenue.';
@@ -10820,8 +10841,8 @@ class Traductions$adulte$recharge$fr {
 	/// fr: 'Recharge pas encore disponible'
 	String get indisponibleTitre => 'Recharge pas encore disponible';
 
-	/// fr: 'Les offres de recharge ne sont pas encore disponibles dans l'application. Aucun paiement n'est possible ici pour l'instant.'
-	String get indisponiblePhrase => 'Les offres de recharge ne sont pas encore disponibles dans l\'application. Aucun paiement n\'est possible ici pour l\'instant.';
+	/// fr: 'La recharge n'est pas encore disponible dans l'application. Aucun paiement n'est possible ici pour l'instant.'
+	String get indisponiblePhrase => 'La recharge n\'est pas encore disponible dans l\'application. Aucun paiement n\'est possible ici pour l\'instant.';
 
 	/// fr: 'La vérification n'a pas abouti.'
 	String get verificationEchecTitre => 'La vérification n\'a pas abouti.';
@@ -10835,8 +10856,8 @@ class Traductions$adulte$recharge$fr {
 	/// fr: 'Vérifiez les détails avant de procéder au paiement.'
 	String get verifierPhrase => 'Vérifiez les détails avant de procéder au paiement.';
 
-	/// fr: 'Récapitulatif par bénéficiaire'
-	String get recapitulatif => 'Récapitulatif par bénéficiaire';
+	/// fr: 'Récapitulatif par profil'
+	String get recapitulatif => 'Récapitulatif par profil';
 
 	/// fr: 'Montant payé'
 	String get montantPaye => 'Montant payé';
@@ -10873,6 +10894,14 @@ class Traductions$adulte$recharge$fr {
 
 	/// fr: 'Revenir aux paiements du foyer'
 	String get revenirPaiements => 'Revenir aux paiements du foyer';
+
+	/// fr: 'Le paiement est envoyé. Ne payez pas une seconde fois : suivez son état.'
+	String get commandeRendue => 'Le paiement est envoyé. Ne payez pas une seconde fois : suivez son état.';
+
+	/// fr: 'Suivre le paiement'
+	String get suivrePaiement => 'Suivre le paiement';
+
+	late final Traductions$adulte$recharge$resultat$fr resultat = Traductions$adulte$recharge$resultat$fr.internal(_root);
 }
 
 // Path: adulte.paiements
@@ -15751,6 +15780,129 @@ class Traductions$adulte$monEspace$pageCoursAcces$fr {
 	String get indisponiblePhrase => 'Le détail de vos cours, de vos séances et de votre accès n\'est pas encore disponible dans l\'application.';
 }
 
+// Path: adulte.recharge.resultat
+class Traductions$adulte$recharge$resultat$fr {
+	Traductions$adulte$recharge$resultat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Paiement en préparation'
+	String get preparationTitre => 'Paiement en préparation';
+
+	/// fr: 'Vérifiez la répartition avant de payer.'
+	String get preparationPhrase => 'Vérifiez la répartition avant de payer.';
+
+	/// fr: 'Paiement en cours de confirmation'
+	String get attenteTitre => 'Paiement en cours de confirmation';
+
+	/// fr: 'Le prestataire de paiement n'a pas encore confirmé. Les soldes ne changent qu'après sa confirmation.'
+	String get attentePhrase => 'Le prestataire de paiement n\'a pas encore confirmé. Les soldes ne changent qu\'après sa confirmation.';
+
+	/// fr: 'Ne payez pas une seconde fois.'
+	String get attenteBandeauTitre => 'Ne payez pas une seconde fois.';
+
+	/// fr: 'Ce paiement est peut-être déjà passé. Actualisez dans quelques instants pour voir son état.'
+	String get attenteBandeauPhrase => 'Ce paiement est peut-être déjà passé. Actualisez dans quelques instants pour voir son état.';
+
+	/// fr: 'Paiement confirmé'
+	String get confirmeTitre => 'Paiement confirmé';
+
+	/// fr: 'Le paiement est confirmé. Les soldes vont être mis à jour.'
+	String get confirmePhrase => 'Le paiement est confirmé. Les soldes vont être mis à jour.';
+
+	/// fr: 'Mise à jour des soldes...'
+	String get allocationPhrase => 'Mise à jour des soldes...';
+
+	/// fr: 'Votre paiement de {montant} a bien été effectué et réparti entre les profils sélectionnés.'
+	String terminePhrase({required Object montant}) => 'Votre paiement de ${montant} a bien été effectué et réparti entre les profils sélectionnés.';
+
+	/// fr: 'Détails du paiement'
+	String get details => 'Détails du paiement';
+
+	/// fr: 'Référence'
+	String get reference => 'Référence';
+
+	/// fr: 'Date'
+	String get date => 'Date';
+
+	/// fr: 'Moyen de paiement'
+	String get moyen => 'Moyen de paiement';
+
+	/// fr: 'Montant total'
+	String get total => 'Montant total';
+
+	/// fr: 'Répartition par profil'
+	String get repartition => 'Répartition par profil';
+
+	/// fr: 'Nouveau solde : {montant}'
+	String nouveauSolde({required Object montant}) => 'Nouveau solde : ${montant}';
+
+	/// fr: 'Soldes mis à jour'
+	String get soldesTitre => 'Soldes mis à jour';
+
+	/// fr: 'Les nouveaux soldes sont disponibles pour chaque profil concerné.'
+	String get soldesPhrase => 'Les nouveaux soldes sont disponibles pour chaque profil concerné.';
+
+	/// fr: 'Retour aux soldes'
+	String get retourSoldes => 'Retour aux soldes';
+
+	/// fr: 'Le paiement a échoué'
+	String get echecTitre => 'Le paiement a échoué';
+
+	/// fr: 'Aucun solde n'a été crédité. Votre sélection est conservée : vous pouvez réessayer ou changer de moyen de paiement.'
+	String get echecPhrase => 'Aucun solde n\'a été crédité. Votre sélection est conservée : vous pouvez réessayer ou changer de moyen de paiement.';
+
+	/// fr: 'Motif'
+	String get echecMotif => 'Motif';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+
+	/// fr: 'Changer de moyen de paiement'
+	String get changerMoyen => 'Changer de moyen de paiement';
+
+	/// fr: 'Paiement annulé'
+	String get annuleTitre => 'Paiement annulé';
+
+	/// fr: 'Le paiement a été annulé avant sa confirmation. Aucun solde n'a été crédité. Vous pouvez recommencer avec la même sélection.'
+	String get annulePhrase => 'Le paiement a été annulé avant sa confirmation. Aucun solde n\'a été crédité. Vous pouvez recommencer avec la même sélection.';
+
+	/// fr: 'Commande expirée'
+	String get perimeTitre => 'Commande expirée';
+
+	/// fr: 'Le délai de paiement de cette commande est dépassé. Aucun solde n'a été crédité. Recommencez la recharge pour obtenir une nouvelle commande.'
+	String get perimePhrase => 'Le délai de paiement de cette commande est dépassé. Aucun solde n\'a été crédité. Recommencez la recharge pour obtenir une nouvelle commande.';
+
+	/// fr: 'Recommencer la recharge'
+	String get recommencer => 'Recommencer la recharge';
+
+	/// fr: 'Actualiser'
+	String get actualiser => 'Actualiser';
+
+	/// fr: 'Vous êtes hors ligne. L'état affiché peut avoir changé depuis : actualisez quand la connexion sera revenue.'
+	String get horsLigne => 'Vous êtes hors ligne. L\'état affiché peut avoir changé depuis : actualisez quand la connexion sera revenue.';
+
+	/// fr: 'Aucun paiement à suivre'
+	String get videTitre => 'Aucun paiement à suivre';
+
+	/// fr: 'Cette adresse ne désigne aucune commande. Revenez aux paiements du foyer pour retrouver vos recharges.'
+	String get videPhrase => 'Cette adresse ne désigne aucune commande. Revenez aux paiements du foyer pour retrouver vos recharges.';
+
+	/// fr: 'Suivi du paiement pas encore disponible'
+	String get indisponibleTitre => 'Suivi du paiement pas encore disponible';
+
+	/// fr: 'L'état des paiements n'est pas encore disponible dans l'application. Aucun paiement n'a été effectué ici.'
+	String get indisponiblePhrase => 'L\'état des paiements n\'est pas encore disponible dans l\'application. Aucun paiement n\'a été effectué ici.';
+
+	/// fr: 'L'état du paiement n'a pas pu être lu.'
+	String get lectureEchecTitre => 'L\'état du paiement n\'a pas pu être lu.';
+
+	/// fr: 'Le paiement n'est pas annulé pour autant. Ne payez pas une seconde fois : réessayez la lecture.'
+	String get lectureEchecPhrase => 'Le paiement n\'est pas annulé pour autant. Ne payez pas une seconde fois : réessayez la lecture.';
+}
+
 // Path: adulte.famille.place
 class Traductions$adulte$famille$place$fr {
 	Traductions$adulte$famille$place$fr.internal(this._root);
@@ -20508,22 +20660,29 @@ extension on Traductions {
 			'adulte.monEspace.pageCoursAcces.indisponibleTitre' => 'Cours et accès pas encore consultables',
 			'adulte.monEspace.pageCoursAcces.indisponiblePhrase' => 'Le détail de vos cours, de vos séances et de votre accès n\'est pas encore disponible dans l\'application.',
 			'adulte.provisoire.coran' => 'Le Coran de votre espace élève s\'affichera ici.',
-			'adulte.recharge.titre' => 'Nouvelle recharge',
-			'adulte.recharge.phrase' => 'Sélectionnez un ou plusieurs bénéficiaires, puis choisissez une offre pour chacun.',
+			'adulte.recharge.titre' => 'Recharge',
+			'adulte.recharge.phrase' => 'Choisissez les profils et les montants.',
+			'adulte.recharge.profils' => 'Profils à recharger',
+			'adulte.recharge.soldeActuel' => ({required Object montant}) => 'Solde actuel : ${montant}',
+			'adulte.recharge.montantSuggere' => ({required Object montant}) => 'Montant suggéré : ${montant}',
+			'adulte.recharge.montantPour' => ({required Object prenom}) => 'Montant pour ${prenom}',
+			'adulte.recharge.diminuer' => ({required Object prenom}) => 'Diminuer le montant pour ${prenom}',
+			'adulte.recharge.augmenter' => ({required Object prenom}) => 'Augmenter le montant pour ${prenom}',
+			'adulte.recharge.repartition' => 'Un seul paiement sera effectué. Chaque montant va au solde de son profil : il n\'y a pas de solde commun.',
+			'adulte.recharge.moyen' => 'Moyen de paiement',
 			'adulte.recharge.toutSelectionner' => 'Tout sélectionner',
 			'adulte.recharge.toutDeselectionner' => 'Tout désélectionner',
-			'adulte.recharge.offrePour' => ({required Object prenom}) => 'Offre pour ${prenom}',
 			'adulte.recharge.verifier' => 'Vérifier la recharge',
-			'adulte.recharge.raisonAucun' => 'Sélectionnez au moins un bénéficiaire pour continuer.',
-			'adulte.recharge.raisonOffre' => 'Choisissez une offre pour chaque bénéficiaire sélectionné.',
+			'adulte.recharge.raisonAucun' => 'Sélectionnez au moins un profil pour continuer.',
+			'adulte.recharge.raisonMontant' => 'Choisissez un montant pour chaque profil sélectionné.',
 			'adulte.recharge.horsLigneVerifier' => 'Vous êtes hors ligne. Vous pourrez vérifier la recharge quand la connexion sera revenue.',
 			'adulte.recharge.indisponibleTitre' => 'Recharge pas encore disponible',
-			'adulte.recharge.indisponiblePhrase' => 'Les offres de recharge ne sont pas encore disponibles dans l\'application. Aucun paiement n\'est possible ici pour l\'instant.',
+			'adulte.recharge.indisponiblePhrase' => 'La recharge n\'est pas encore disponible dans l\'application. Aucun paiement n\'est possible ici pour l\'instant.',
 			'adulte.recharge.verificationEchecTitre' => 'La vérification n\'a pas abouti.',
 			'adulte.recharge.verificationEchecPhrase' => 'Vos choix sont conservés. Vous pouvez réessayer.',
 			'adulte.recharge.verifierTitre' => 'Vérifier la recharge',
 			'adulte.recharge.verifierPhrase' => 'Vérifiez les détails avant de procéder au paiement.',
-			'adulte.recharge.recapitulatif' => 'Récapitulatif par bénéficiaire',
+			'adulte.recharge.recapitulatif' => 'Récapitulatif par profil',
 			'adulte.recharge.montantPaye' => 'Montant payé',
 			'adulte.recharge.soldeAttribue' => 'Solde attribué',
 			'adulte.recharge.statut' => 'Statut de l\'attribution',
@@ -20536,6 +20695,46 @@ extension on Traductions {
 			'adulte.recharge.paiementIndisponibleTitre' => 'Paiement pas encore disponible',
 			'adulte.recharge.paiementIndisponiblePhrase' => 'Aucun paiement n\'a été effectué. Le paiement en ligne n\'est pas encore ouvert dans l\'application.',
 			'adulte.recharge.revenirPaiements' => 'Revenir aux paiements du foyer',
+			'adulte.recharge.commandeRendue' => 'Le paiement est envoyé. Ne payez pas une seconde fois : suivez son état.',
+			'adulte.recharge.suivrePaiement' => 'Suivre le paiement',
+			'adulte.recharge.resultat.preparationTitre' => 'Paiement en préparation',
+			'adulte.recharge.resultat.preparationPhrase' => 'Vérifiez la répartition avant de payer.',
+			'adulte.recharge.resultat.attenteTitre' => 'Paiement en cours de confirmation',
+			'adulte.recharge.resultat.attentePhrase' => 'Le prestataire de paiement n\'a pas encore confirmé. Les soldes ne changent qu\'après sa confirmation.',
+			'adulte.recharge.resultat.attenteBandeauTitre' => 'Ne payez pas une seconde fois.',
+			'adulte.recharge.resultat.attenteBandeauPhrase' => 'Ce paiement est peut-être déjà passé. Actualisez dans quelques instants pour voir son état.',
+			'adulte.recharge.resultat.confirmeTitre' => 'Paiement confirmé',
+			'adulte.recharge.resultat.confirmePhrase' => 'Le paiement est confirmé. Les soldes vont être mis à jour.',
+			'adulte.recharge.resultat.allocationPhrase' => 'Mise à jour des soldes...',
+			'adulte.recharge.resultat.terminePhrase' => ({required Object montant}) => 'Votre paiement de ${montant} a bien été effectué et réparti entre les profils sélectionnés.',
+			'adulte.recharge.resultat.details' => 'Détails du paiement',
+			'adulte.recharge.resultat.reference' => 'Référence',
+			'adulte.recharge.resultat.date' => 'Date',
+			'adulte.recharge.resultat.moyen' => 'Moyen de paiement',
+			'adulte.recharge.resultat.total' => 'Montant total',
+			'adulte.recharge.resultat.repartition' => 'Répartition par profil',
+			'adulte.recharge.resultat.nouveauSolde' => ({required Object montant}) => 'Nouveau solde : ${montant}',
+			'adulte.recharge.resultat.soldesTitre' => 'Soldes mis à jour',
+			'adulte.recharge.resultat.soldesPhrase' => 'Les nouveaux soldes sont disponibles pour chaque profil concerné.',
+			'adulte.recharge.resultat.retourSoldes' => 'Retour aux soldes',
+			'adulte.recharge.resultat.echecTitre' => 'Le paiement a échoué',
+			'adulte.recharge.resultat.echecPhrase' => 'Aucun solde n\'a été crédité. Votre sélection est conservée : vous pouvez réessayer ou changer de moyen de paiement.',
+			'adulte.recharge.resultat.echecMotif' => 'Motif',
+			'adulte.recharge.resultat.reessayer' => 'Réessayer',
+			'adulte.recharge.resultat.changerMoyen' => 'Changer de moyen de paiement',
+			'adulte.recharge.resultat.annuleTitre' => 'Paiement annulé',
+			'adulte.recharge.resultat.annulePhrase' => 'Le paiement a été annulé avant sa confirmation. Aucun solde n\'a été crédité. Vous pouvez recommencer avec la même sélection.',
+			'adulte.recharge.resultat.perimeTitre' => 'Commande expirée',
+			'adulte.recharge.resultat.perimePhrase' => 'Le délai de paiement de cette commande est dépassé. Aucun solde n\'a été crédité. Recommencez la recharge pour obtenir une nouvelle commande.',
+			'adulte.recharge.resultat.recommencer' => 'Recommencer la recharge',
+			'adulte.recharge.resultat.actualiser' => 'Actualiser',
+			'adulte.recharge.resultat.horsLigne' => 'Vous êtes hors ligne. L\'état affiché peut avoir changé depuis : actualisez quand la connexion sera revenue.',
+			'adulte.recharge.resultat.videTitre' => 'Aucun paiement à suivre',
+			'adulte.recharge.resultat.videPhrase' => 'Cette adresse ne désigne aucune commande. Revenez aux paiements du foyer pour retrouver vos recharges.',
+			'adulte.recharge.resultat.indisponibleTitre' => 'Suivi du paiement pas encore disponible',
+			'adulte.recharge.resultat.indisponiblePhrase' => 'L\'état des paiements n\'est pas encore disponible dans l\'application. Aucun paiement n\'a été effectué ici.',
+			'adulte.recharge.resultat.lectureEchecTitre' => 'L\'état du paiement n\'a pas pu être lu.',
+			'adulte.recharge.resultat.lectureEchecPhrase' => 'Le paiement n\'est pas annulé pour autant. Ne payez pas une seconde fois : réessayez la lecture.',
 			'adulte.paiements.beneficiaires' => 'Bénéficiaires',
 			'adulte.paiements.recharger' => 'Recharger',
 			'adulte.paiements.recapitulatif' => ({required Object valeur}) => 'Récapitulatif du foyer : ${valeur}. Chaque solde reste celui de son bénéficiaire.',
@@ -20626,6 +20825,8 @@ extension on Traductions {
 			'adulte.acceptation.verraTitre' => ({required Object prenom}) => 'Ce que ${prenom} verra',
 			'adulte.acceptation.verraElle' => 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L\'offre qui vous concerne. L\'état de votre accès, s\'il empêche de payer. Elle saura aussi si vous quittez le forfait famille.',
 			'adulte.acceptation.verraLui' => 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L\'offre qui vous concerne. L\'état de votre accès, s\'il empêche de payer. Il saura aussi si vous quittez le forfait famille.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.acceptation.verraPasTitre' => ({required Object prenom}) => 'Ce que ${prenom} ne verra pas',
 			'adulte.acceptation.verraPas' => 'Votre Classe. Votre niveau. Vos séances et votre présence. Vos progrès. Vos messages. Vos notifications. Vos moyens de paiement personnels. Vos pièces d\'identité.',
 			'adulte.acceptation.vousTitre' => 'Ce que vous ne verrez pas',
@@ -20673,8 +20874,6 @@ extension on Traductions {
 			'adulte.sortie.resultatSecondAdulte' => 'Votre compte, vos cours, votre historique et votre solde restent disponibles.',
 			'adulte.sortie.compris' => 'Compris',
 			'adulte.sortie.retraitEchecTitre' => 'Le retrait n\'a pas été confirmé.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.sortie.departEchecTitre' => 'Le départ n\'a pas été confirmé.',
 			'adulte.sortie.echecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.sortie.horsLigne' => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez réessayer vous-même quand la connexion sera revenue.',
