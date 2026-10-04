@@ -134,8 +134,9 @@ String? deciderRedirection({
     case PorteAcces.suspendu:
       // K-47 (HL-A-6) : la piece d'identite ne concerne que l'enseignant. Un
       // tuteur ne depose aucune piece : le depot lui reste ferme, meme par
-      // une adresse tapee a la main.
-      if (session.role == AppRole.guardian &&
+      // une adresse tapee a la main. Regle ecrite en positif : tout role
+      // autre que l'enseignant, y compris un role illisible (nul), est ferme.
+      if (session.role != AppRole.teacher &&
           _dansLeSousArbre(cheminDemande, Routes.attentePiece)) {
         return Routes.attente;
       }

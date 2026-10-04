@@ -63,5 +63,7 @@
   "enseignant.cahier.travailMaisonSaisi": "revue du directeur 10/2026, etape EN-7c-SUGG-T : aucune source de devoir suggere n'existe (brouillon_cahier ne rend que le devoir precedent) ; « Ajustez la suggestion » est reservee a une vraie suggestion, ce texte dit le devoir deja saisi par l'enseignant (K-57) ; a valider par le directeur",
   "enseignant.journee.erreurPartielleCahiers": "revue du directeur 01-02/10, etape LIB-LOT3-2 (LIB-ERR-1) : le texte dit exactement ce qui a echoue quand seuls les cahiers de transmission en retard echouent ; a valider par le directeur",
   "enseignant.journee.erreurPartielleTout": "revue du directeur 01-02/10, etape LIB-LOT3-2 (LIB-ERR-1) : le texte dit exactement ce qui a echoue quand prieres, pauses et cahiers de transmission echouent ensemble ; a valider par le directeur",
+  "admin.comptes.roleIllisibleUn": "etape AD-NETTOYAGE (mineur AD-RC : compte en attente au role illisible, signale au lieu d'etre ignore) ; a valider par le directeur",
+  "admin.comptes.roleIllisiblePlusieurs": "etape AD-NETTOYAGE (mineur AD-RC : comptes en attente au role illisible, signales au lieu d'etre ignores) ; a valider par le directeur",
   "enseignant.profil.deconnexionConsequence": "revue du directeur 01-02/10, etape LIB-LOT3-2 (LIB-CAHIER-1) : « cahiers » devient « cahiers de transmission » ; decision deleguee du 02/10"
 }

@@ -4513,15 +4513,6 @@ class Traductions$dossiers$revue$fr {
 	/// fr: 'Prénom'
 	String get prenom => 'Prénom';
 
-	/// fr: 'Type de dossier'
-	String get typeDossier => 'Type de dossier';
-
-	/// fr: 'Date de dépôt'
-	String get dateDepot => 'Date de dépôt';
-
-	/// fr: 'État du dossier'
-	String get etatDossier => 'État du dossier';
-
 	/// fr: 'Date de dépôt indisponible'
 	String get dateIndisponible => 'Date de dépôt indisponible';
 
@@ -6331,6 +6322,12 @@ class Traductions$admin$comptes$fr {
 
 	/// fr: '{nombre} personnes attendent une décision.'
 	String attentePlusieurs({required Object nombre}) => '${nombre} personnes attendent une décision.';
+
+	/// fr: 'Le rôle d'un compte en attente n'a pas pu être lu : il n'est compté nulle part et sa nature n'est pas confirmée. Rechargez la page pour réessayer.'
+	String get roleIllisibleUn => 'Le rôle d\'un compte en attente n\'a pas pu être lu : il n\'est compté nulle part et sa nature n\'est pas confirmée. Rechargez la page pour réessayer.';
+
+	/// fr: 'Le rôle de {nombre} comptes en attente n'a pas pu être lu : ils ne sont comptés nulle part et leur nature n'est pas confirmée. Rechargez la page pour réessayer.'
+	String roleIllisiblePlusieurs({required Object nombre}) => 'Le rôle de ${nombre} comptes en attente n\'a pas pu être lu : ils ne sont comptés nulle part et leur nature n\'est pas confirmée. Rechargez la page pour réessayer.';
 
 	/// fr: 'Tous'
 	String get filtreTousEtats => 'Tous';
@@ -11785,9 +11782,6 @@ class Traductions$dossiers$revue$etats$fr {
 	/// fr: 'La décision est indisponible pour le moment.'
 	String get decisionIndisponible => 'La décision est indisponible pour le moment.';
 
-	/// fr: 'Ce dossier a changé depuis son ouverture.'
-	String get modifie => 'Ce dossier a changé depuis son ouverture.';
-
 	/// fr: 'Actualiser le dossier'
 	String get actualiserDossier => 'Actualiser le dossier';
 
@@ -16405,9 +16399,6 @@ extension on Traductions {
 			'dossiers.revue.accords' => 'Accords et éléments soumis',
 			'dossiers.revue.nom' => 'Nom',
 			'dossiers.revue.prenom' => 'Prénom',
-			'dossiers.revue.typeDossier' => 'Type de dossier',
-			'dossiers.revue.dateDepot' => 'Date de dépôt',
-			'dossiers.revue.etatDossier' => 'État du dossier',
 			'dossiers.revue.dateIndisponible' => 'Date de dépôt indisponible',
 			'dossiers.revue.pasPret' => 'Ce dossier n\'est pas encore prêt à être validé.',
 			'dossiers.revue.erreurChargement' => 'Impossible de charger ce dossier.',
@@ -16419,7 +16410,6 @@ extension on Traductions {
 			'dossiers.revue.etats.verificationsIncompletes' => 'Terminez les vérifications requises.',
 			'dossiers.revue.etats.accordManquant' => 'Un accord requis manque à ce dossier.',
 			'dossiers.revue.etats.decisionIndisponible' => 'La décision est indisponible pour le moment.',
-			'dossiers.revue.etats.modifie' => 'Ce dossier a changé depuis son ouverture.',
 			'dossiers.revue.etats.actualiserDossier' => 'Actualiser le dossier',
 			'dossiers.revue.etats.refusNonAutorise' => 'Ce dossier ne peut pas être refusé dans son état actuel.',
 			'dossiers.restantUn' => '1 dossier en attente',
@@ -16906,12 +16896,12 @@ extension on Traductions {
 			'admin.journal.evtProfilEnfantCree' => 'Profil enfant créé',
 			'admin.journal.evtCodeCree' => 'Code d\'appairage créé',
 			'admin.journal.evtAppareilAppaire' => 'Appareil appairé',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.evtAppareilRevoque' => 'Appareil révoqué',
 			'admin.journal.evtPedagogie' => 'Réglages pédagogiques modifiés',
 			'admin.journal.evtAffectationPrise' => 'Élève pris par un enseignant',
 			'admin.journal.evtAffectationAttribuee' => 'Élève attribué par l\'administration',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.evtDemandeCreee' => 'Demande déposée',
 			'admin.journal.evtDemandeTranchee' => 'Demande tranchée',
 			'admin.journal.evtReglePosee' => 'Règle posée',
@@ -16985,6 +16975,8 @@ extension on Traductions {
 			'admin.comptes.attenteUneUnJour' => 'Une personne attend une décision depuis 1 jour.',
 			'admin.comptes.attenteUne' => ({required Object jours}) => 'Une personne attend une décision depuis ${jours} jours.',
 			'admin.comptes.attentePlusieurs' => ({required Object nombre}) => '${nombre} personnes attendent une décision.',
+			'admin.comptes.roleIllisibleUn' => 'Le rôle d\'un compte en attente n\'a pas pu être lu : il n\'est compté nulle part et sa nature n\'est pas confirmée. Rechargez la page pour réessayer.',
+			'admin.comptes.roleIllisiblePlusieurs' => ({required Object nombre}) => 'Le rôle de ${nombre} comptes en attente n\'a pas pu être lu : ils ne sont comptés nulle part et leur nature n\'est pas confirmée. Rechargez la page pour réessayer.',
 			'admin.comptes.filtreTousEtats' => 'Tous',
 			'admin.comptes.filtreTousRoles' => 'Tous les rôles',
 			'admin.comptes.filtreRole' => 'Rôle',
@@ -17420,10 +17412,10 @@ extension on Traductions {
 			'compte.tuteur.pageAide.canalCourriel' => 'Courriel de l\'académie',
 			'compte.tuteur.pageAide.canalLien' => 'Page d\'aide de l\'académie',
 			'compte.tuteur.pageAide.aucunCanal' => 'Aucun canal d\'aide n\'est publié pour le moment.',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageLegal.titre' => 'Informations légales',
 			'compte.tuteur.pageLegal.documents' => 'Documents acceptés',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageLegal.conditionsTuteur' => 'Conditions du tuteur',
 			'compte.tuteur.pageLegal.contratEnseignant' => 'Contrat enseignant',
 			'compte.tuteur.pageLegal.accuseEnregistrement' => 'Accusé d\'enregistrement des cours',
@@ -17934,10 +17926,10 @@ extension on Traductions {
 			'enseignant.bienvenue.ctaInformations' => 'Vérifier mes informations',
 			'enseignant.bienvenue.ctaJournee' => 'Voir ma journée',
 			'enseignant.bienvenue.rappels' => 'Deux choses à ne pas découvrir en cours de route',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.bienvenue.declarer' => 'Déclarer mes disponibilités',
 			'enseignant.bienvenue.versJournee' => 'Aller à ma journée',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.bienvenue.horsLigne' => 'Sans réseau, vos créneaux ne pourront pas être enregistrés.',
 			'enseignant.bienvenue.dossierIncomplet' => 'Votre dossier n\'est pas encore validé.',
 			'enseignant.bienvenue.dossierIncompletDetail' => 'Le portail d\'attente vous dit ce qu\'il reste à fournir.',
@@ -18448,10 +18440,10 @@ extension on Traductions {
 			'controleur.echanges.champLibelle' => 'Répondre à l\'administration',
 			'controleur.echanges.envoyer' => 'Envoyer',
 			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.echanges.enCours' => 'Envoi en cours.',
 			'controleur.echanges.envoye' => 'Envoyé.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.reessayer' => 'Réessayer',
 			'controleur.echanges.nouveauMessage' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
@@ -18962,10 +18954,10 @@ extension on Traductions {
 			'tc.parcours.signalement.categorieValeur.presence' => 'Présence',
 			'tc.parcours.signalement.categorieValeur.technique' => 'Technique',
 			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
 			'tc.parcours.signalement.interne' => 'Note interne',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',

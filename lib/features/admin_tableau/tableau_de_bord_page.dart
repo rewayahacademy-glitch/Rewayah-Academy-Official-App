@@ -170,7 +170,19 @@ class TableauDeBordPage extends ConsumerWidget {
           // 1. LES SIX COMPTEURS. Ils sont rendus des que la lecture aboutit,
           // zeros compris.
           if (indicateurs.hasValue)
-            _Compteurs(indicateurs: indicateurs.requireValue, apercu: apercu)
+            _Compteurs(
+              indicateurs: indicateurs.requireValue,
+              apercu: apercu,
+              // m1 (AD-NETTOYAGE) : la tuile compte comme la liste « A
+              // traiter » (enseignants seulement, meme cache). Tant que la
+              // liste n'est pas lue, le compteur serveur reste la valeur
+              // (il compte encore les tuteurs : BR-1.c).
+              dossiersEnAttente: dossiers.hasValue
+                  ? RevueDossiersDepuisValidation.enseignantsSeulement(
+                      dossiers.requireValue,
+                    ).length
+                  : null,
+            )
           else if (indicateurs.hasError)
             Text(
               t.admin.tableau.compteursErreur,
@@ -284,9 +296,17 @@ class TableauDeBordPage extends ConsumerWidget {
 /// aucune fonction Securite/Personnes reelle a filtrer : une tuile sans
 /// [onPress] est un rapport, jamais un bouton grise.
 class _Compteurs extends StatelessWidget {
-  const _Compteurs({required this.indicateurs, this.apercu = const <String>[]});
+  const _Compteurs({
+    required this.indicateurs,
+    this.apercu = const <String>[],
+    this.dossiersEnAttente,
+  });
 
   final IndicateursAdmin indicateurs;
+
+  /// Le nombre de dossiers de la tuile, quand la liste est lue ; sinon le
+  /// compteur du serveur.
+  final int? dossiersEnAttente;
 
   /// Les plus anciens dossiers, nom et delai, pour la grande tuile.
   final List<String> apercu;
@@ -302,7 +322,7 @@ class _Compteurs extends StatelessWidget {
           etendue: EtendueBento.large,
           etendueLarge: EtendueBento.grande,
           child: TuileCompteur(
-            valeur: indicateurs.dossiersEnAttente,
+            valeur: dossiersEnAttente ?? indicateurs.dossiersEnAttente,
             libelle: t.admin.tableau.dossiers,
             detail: t.admin.tableau.dossiersDetail,
             apercu: apercu,

@@ -160,11 +160,38 @@ void main() {
             incidents: 2,
             demandes: 4,
           ),
+        validation: FauxServiceValidation()
+          ..file = <DossierAValider>[
+            _dossier(id: 'd1'),
+            _dossier(id: 'd2'),
+            _dossier(id: 'd3'),
+          ],
       );
 
       expect(find.text('3'), findsOneWidget);
       expect(find.text('4'), findsOneWidget);
       expect(find.text('0'), findsNWidgets(2));
+    });
+
+    // AD-NETTOYAGE (m1) : le compteur serveur compte encore les tuteurs
+    // `pending_kyc` (BR-1.c) ; la tuile compte comme la liste « A traiter ».
+    testWidgets('la tuile Dossiers ne compte pas les tuteurs', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        admin: FauxServiceAdmin()
+          ..indicateursRendus = _indicateurs(dossiers: 3),
+        validation: FauxServiceValidation()
+          ..file = <DossierAValider>[
+            _dossier(),
+            _dossier(id: 'd2', role: AppRole.guardian),
+            _dossier(id: 'd3', role: AppRole.guardian),
+          ],
+      );
+
+      expect(find.text('1'), findsOneWidget);
+      expect(find.text('3'), findsNothing);
     });
 
     testWidgets('une lecture en echec le dit, et ne rend pas six zeros', (

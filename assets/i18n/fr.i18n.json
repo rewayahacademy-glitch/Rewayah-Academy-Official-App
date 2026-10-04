@@ -1287,9 +1287,6 @@
       "accords": "Accords et éléments soumis",
       "nom": "Nom",
       "prenom": "Prénom",
-      "typeDossier": "Type de dossier",
-      "dateDepot": "Date de dépôt",
-      "etatDossier": "État du dossier",
       "dateIndisponible": "Date de dépôt indisponible",
       "pasPret": "Ce dossier n'est pas encore prêt à être validé.",
       "erreurChargement": "Impossible de charger ce dossier.",
@@ -1302,7 +1299,6 @@
         "verificationsIncompletes": "Terminez les vérifications requises.",
         "accordManquant": "Un accord requis manque à ce dossier.",
         "decisionIndisponible": "La décision est indisponible pour le moment.",
-        "modifie": "Ce dossier a changé depuis son ouverture.",
         "actualiserDossier": "Actualiser le dossier",
         "refusNonAutorise": "Ce dossier ne peut pas être refusé dans son état actuel."
       }
@@ -1911,6 +1907,8 @@
       "attenteUneUnJour": "Une personne attend une décision depuis 1 jour.",
       "attenteUne": "Une personne attend une décision depuis {jours} jours.",
       "attentePlusieurs": "{nombre} personnes attendent une décision.",
+      "roleIllisibleUn": "Le rôle d'un compte en attente n'a pas pu être lu : il n'est compté nulle part et sa nature n'est pas confirmée. Rechargez la page pour réessayer.",
+      "roleIllisiblePlusieurs": "Le rôle de {nombre} comptes en attente n'a pas pu être lu : ils ne sont comptés nulle part et leur nature n'est pas confirmée. Rechargez la page pour réessayer.",
       "filtreTousEtats": "Tous",
       "filtreTousRoles": "Tous les rôles",
       "filtreRole": "Rôle",
