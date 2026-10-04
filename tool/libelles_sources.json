@@ -62,6 +62,6 @@
   "enseignant.photo.voile": "commentaire du directeur, revue du 01-02/10, etape KYC-PHOTO-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
   "enseignant.cahier.travailMaisonSaisi": "revue du directeur 10/2026, etape EN-7c-SUGG-T : aucune source de devoir suggere n'existe (brouillon_cahier ne rend que le devoir precedent) ; « Ajustez la suggestion » est reservee a une vraie suggestion, ce texte dit le devoir deja saisi par l'enseignant (K-57) ; a valider par le directeur",
   "controleur.compteRendu.visiteInconnue": "revue du directeur 10/2026, etape CTRL-MSG-1 (K-59) : seance inconnue apres rechargement, la cause vraie remplace « annulee ou confiee a un autre controleur » ; a valider par le directeur",
-  "controleur.compteRendu.visiteInconnueAide": "revue du directeur 10/2026, etape CTRL-MSG-1 (K-59) : la cause, ce qui reste fiable (non confirme) et quoi faire, sous visiteInconnue ; a valider par le directeur",
+  "controleur.compteRendu.visiteInconnueAide": "revue du directeur 10/2026, etape CTRL-MSG-1 (K-59) puis CTRL-MSG-2 (revue C1-CTRL-R m1, reformulation du relecteur) : la cause, ce que l'ecran ne peut pas confirmer et quoi faire (bouton « Ecrire a l'administration » sous le texte), sous visiteInconnue ; a valider par le directeur",
   "controleur.observation.echecSansTexte": "revue du directeur 10/2026, etape CTRL-MSG-1 (K-59) : echec d'envoi d'une observation sans texte, ne parle pas d'un texte garde ; a valider par le directeur"
 }

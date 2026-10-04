@@ -9696,8 +9696,8 @@ class Traductions$controleur$compteRendu$fr {
 	/// fr: 'Ce compte rendu ne peut plus être repris ici.'
 	String get visiteInconnue => 'Ce compte rendu ne peut plus être repris ici.';
 
-	/// fr: 'Cet appareil n'a plus la visite en mémoire, sans doute après un rechargement de la page. La visite reste transmise à l'administration avec son relevé automatique ; ce point n'est pas confirmé depuis cet écran. Pour ajouter une remarque, écrivez à l'administration.'
-	String get visiteInconnueAide => 'Cet appareil n\'a plus la visite en mémoire, sans doute après un rechargement de la page. La visite reste transmise à l\'administration avec son relevé automatique ; ce point n\'est pas confirmé depuis cet écran. Pour ajouter une remarque, écrivez à l\'administration.';
+	/// fr: 'Cet appareil n'a plus la visite en mémoire, sans doute après un rechargement de la page. Le serveur transmet la visite et son relevé automatique dès la sortie de la salle ; cet écran ne peut pas le confirmer. Pour ajouter une remarque, écrivez à l'administration.'
+	String get visiteInconnueAide => 'Cet appareil n\'a plus la visite en mémoire, sans doute après un rechargement de la page. Le serveur transmet la visite et son relevé automatique dès la sortie de la salle ; cet écran ne peut pas le confirmer. Pour ajouter une remarque, écrivez à l\'administration.';
 }
 
 // Path: controleur.observation
@@ -18384,7 +18384,7 @@ extension on Traductions {
 			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
 			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
 			'controleur.compteRendu.visiteInconnue' => 'Ce compte rendu ne peut plus être repris ici.',
-			'controleur.compteRendu.visiteInconnueAide' => 'Cet appareil n\'a plus la visite en mémoire, sans doute après un rechargement de la page. La visite reste transmise à l\'administration avec son relevé automatique ; ce point n\'est pas confirmé depuis cet écran. Pour ajouter une remarque, écrivez à l\'administration.',
+			'controleur.compteRendu.visiteInconnueAide' => 'Cet appareil n\'a plus la visite en mémoire, sans doute après un rechargement de la page. Le serveur transmet la visite et son relevé automatique dès la sortie de la salle ; cet écran ne peut pas le confirmer. Pour ajouter une remarque, écrivez à l\'administration.',
 			'controleur.observation.important' => 'Vous signalez un point important : votre texte sera demandé.',
 			'controleur.observation.questionNature' => 'Quelle est la nature de votre observation ?',
 			'controleur.observation.contexteNature' => 'Votre observation rejoint le compte rendu de cette visite, transmis à l\'administration.',

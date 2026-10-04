@@ -17,12 +17,15 @@
 // (`RapportControle.avecComplement`). Echec honnete (D5, K-59) : « non
 // confirme », la saisie reste, « Reessayer ». Aucun serveur (K-28).
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
+import '../../core/mouvement/mouvement.dart';
 import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -99,6 +102,9 @@ class _ComplementRapportPageState extends ConsumerState<ComplementRapportPage> {
   bool _echec = false;
   RapportControle? _resultat;
 
+  /// Le paragraphe d'echec, amene a l'ecran quand il apparait.
+  final GlobalKey _cleEchec = GlobalKey();
+
   @override
   void dispose() {
     _texte.dispose();
@@ -139,6 +145,23 @@ class _ComplementRapportPageState extends ConsumerState<ComplementRapportPage> {
     _aller(_Etape.recapitulatif);
   }
 
+  /// Amene le debut de l'echec en haut de la vue apres son rendu : sous un
+  /// recapitulatif long, il naitrait hors de la vue, et a 320 px et texte x2
+  /// il est plus haut que l'ecran, sa lecture commence donc par son debut
+  /// (revue C1-CTRL-R M2).
+  void _montrerEchec() =>
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        final BuildContext? c = _cleEchec.currentContext;
+        if (!mounted || c == null) return;
+        unawaited(
+          Scrollable.ensureVisible(
+            c,
+            duration: Mouvement.duree(context, Mouvement.moyen),
+            curve: Mouvement.entree,
+          ),
+        );
+      });
+
   Future<void> _envoyer() async {
     final String texte = _texte.text.trim();
     if (_enCours) return;
@@ -176,6 +199,7 @@ class _ComplementRapportPageState extends ConsumerState<ComplementRapportPage> {
         _enCours = false;
         _echec = true;
       });
+      _montrerEchec();
     }
   }
 
@@ -243,14 +267,14 @@ class _ComplementRapportPageState extends ConsumerState<ComplementRapportPage> {
           const _Bandeau(key: ComplementRapportPage.bandeauKey),
           Ecart.vLg,
           ApparitionDouce(key: ValueKey<_Etape>(_etape), child: corps),
-        ],
-      ),
-      libelleAction: libelle,
-      onAction: _enCours ? null : action,
-      onRetour: _enCours ? null : _precedent,
-      enCours: _enCours,
-      souscription: _etape == _Etape.recapitulatif && _echec
-          ? Semantics(
+          // L'echec est dans le corps qui defile, sous le recapitulatif,
+          // jamais dans la zone fixe du bouton : a 320 px et texte x2, il y
+          // coupait le bouton (revue C1-CTRL-R M2, meme defaut que
+          // l'observation).
+          if (_etape == _Etape.recapitulatif && _echec) ...<Widget>[
+            Ecart.vXl,
+            Semantics(
+              key: _cleEchec,
               liveRegion: true,
               child: Text(
                 c.echec,
@@ -258,8 +282,14 @@ class _ComplementRapportPageState extends ConsumerState<ComplementRapportPage> {
                   Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
                 ),
               ),
-            )
-          : null,
+            ),
+          ],
+        ],
+      ),
+      libelleAction: libelle,
+      onAction: _enCours ? null : action,
+      onRetour: _enCours ? null : _precedent,
+      enCours: _enCours,
     );
   }
 

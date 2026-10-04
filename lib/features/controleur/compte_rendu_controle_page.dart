@@ -33,7 +33,6 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/ecran_resultat.dart';
-import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
@@ -176,15 +175,11 @@ class _CompteRenduControlePageState
       // Seance inconnue (rechargement, lien direct) : la visite n'est plus en
       // memoire, jamais une autre mission (C7, revue CT-R B1). Ni annulation
       // ni changement de controleur : la vraie cause (CTRL-MSG-1, K-59).
-      return PageShell(
-        titre: t.controleur.compteRendu.titre,
-        child: EmptyState(
-          message: t.controleur.compteRendu.visiteInconnue,
-          invitation: t.controleur.compteRendu.visiteInconnueAide,
-          registre: RegistreVide.subi,
-          libelleAction: t.controleur.compteRendu.revenir,
-          onAction: _revenir,
-        ),
+      return VisiteInconnue(
+        onEcrireAdmin: () => widget.onEcrireAdmin == null
+            ? GoRouter.of(context).go(Routes.controleurEcrireAdmin(null))
+            : widget.onEcrireAdmin!(null),
+        onRevenir: _revenir,
       );
     }
     final String sousTitre = t.controleur.compteRendu.sousTitre(
@@ -356,7 +351,10 @@ class _CompteRenduControlePageState
                             // Seul « Rien a signaler » envoie depuis cet
                             // ecran : aucun texte a garder (revue CT-R m1).
                             t.controleur.compteRendu.echecRien,
-                            textAlign: TextAlign.end,
+                            // Au bord de debut, comme tout paragraphe : a
+                            // 320 px, un bord gauche irregulier se lit mal
+                            // (revue C1-CTRL-R m5).
+                            textAlign: TextAlign.start,
                             style: palette.inkStrong.applyTo(
                               textes.bodyMedium ?? const TextStyle(),
                             ),
@@ -371,6 +369,50 @@ class _CompteRenduControlePageState
       ),
     );
   }
+}
+
+/// La visite qui n'est plus en memoire (rechargement, lien direct), sur le
+/// compte rendu comme sur l'observation (C7, CTRL-MSG-1, CTRL-MSG-2).
+///
+/// Jamais une impasse (revue C1-CTRL-R M1, K-59) : la route est sans
+/// coquille, sans barre ni rail, et apres un rechargement l'historique est
+/// vide. L'ecran donne donc lui-meme la suite que son texte annonce :
+/// « Ecrire a l'administration » (la liste des Echanges, la mission n'etant
+/// pas connue) et « Revenir au controle ». `EcranResultat` et non
+/// `EmptyState` : un vide actionnable a deux sorties (manifeste section
+/// 6.3), et `EmptyState` n'en porte qu'une.
+class VisiteInconnue extends StatelessWidget {
+  /// Cree l'ecran.
+  const VisiteInconnue({
+    required this.onEcrireAdmin,
+    required this.onRevenir,
+    super.key,
+  });
+
+  /// L'ouverture des Echanges avec l'administration.
+  final VoidCallback onEcrireAdmin;
+
+  /// Le retour au Controle.
+  final VoidCallback onRevenir;
+
+  /// La cle de « Ecrire a l'administration ».
+  static const Key ecrireAdminKey = ValueKey<String>('ctr03-inconnue-ecrire');
+
+  @override
+  Widget build(BuildContext context) => PageShell(
+    titre: t.controleur.compteRendu.titre,
+    child: EcranResultat(
+      icone: AppIcons.rienAAfficher,
+      ton: TonEtat.neutre,
+      titre: t.controleur.compteRendu.visiteInconnue,
+      phrase: t.controleur.compteRendu.visiteInconnueAide,
+      cleAction: ecrireAdminKey,
+      libelleAction: t.controleur.compteRendu.ecrireAdmin,
+      onAction: onEcrireAdmin,
+      libelleSecondaire: t.controleur.compteRendu.revenir,
+      onSecondaire: onRevenir,
+    ),
+  );
 }
 
 /// « Plus tard » et le bouton dominant : cote a cote au bord de fin sur

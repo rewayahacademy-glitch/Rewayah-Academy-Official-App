@@ -3484,7 +3484,7 @@
       "aTerminer": "Compte rendu à terminer",
       "reprendre": "Reprendre le compte rendu",
       "visiteInconnue": "Ce compte rendu ne peut plus être repris ici.",
-      "visiteInconnueAide": "Cet appareil n'a plus la visite en mémoire, sans doute après un rechargement de la page. La visite reste transmise à l'administration avec son relevé automatique ; ce point n'est pas confirmé depuis cet écran. Pour ajouter une remarque, écrivez à l'administration."
+      "visiteInconnueAide": "Cet appareil n'a plus la visite en mémoire, sans doute après un rechargement de la page. Le serveur transmet la visite et son relevé automatique dès la sortie de la salle ; cet écran ne peut pas le confirmer. Pour ajouter une remarque, écrivez à l'administration."
     },
     "observation": {
       "important": "Vous signalez un point important : votre texte sera demandé.",

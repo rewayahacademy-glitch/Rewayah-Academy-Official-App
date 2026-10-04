@@ -601,7 +601,10 @@ void main() {
     expect(find.textContaining('autre contrôleur'), findsNothing);
     final String aide = t.controleur.compteRendu.visiteInconnueAide;
     expect(find.text(aide), findsOneWidget);
-    expect(aide, contains("n'est pas confirmé"));
+    // CTRL-MSG-2 (m1) : ce que l'ecran ne peut pas confirmer, sans affirmer
+    // d'abord que la visite « reste transmise ».
+    expect(aide, contains('ne peut pas le confirmer'));
+    expect(aide, isNot(contains('reste transmise')));
     expect(port.transmises, isEmpty);
     expect(find.textContaining('Al-Qamar'), findsNothing);
   });

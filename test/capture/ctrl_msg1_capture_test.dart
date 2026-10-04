@@ -1,6 +1,6 @@
 // CTRL-MSG-1 : le message d'une visite qui n'est plus en memoire (compte
-// rendu), et l'echec d'envoi d'une observation sans texte, a 320 x2, 390 et
-// 1440, clair et sombre. Jamais sans `CAPTURE_DIR` (voir
+// rendu), et l'echec d'envoi d'une observation sans texte, a 320 et texte x2
+// (densite 1), 390 et 1440, clair et sombre. Jamais sans `CAPTURE_DIR` (voir
 // test/capture/LISEZ-MOI.md).
 
 import 'package:flutter/material.dart';
@@ -31,11 +31,13 @@ Future<void> _toucher(WidgetTester tester, Finder cible) async {
 void main() {
   group('Capture : CTRL-MSG-1, messages du controleur', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
-    for (final (String l, Size taille, double densite)
-        in <(String, Size, double)>[
-          ('320x2', const Size(320, 700), 2),
-          ('390', const Size(390, 844), 1),
-          ('1440', const Size(1440, 900), 1),
+    // « 320x2 » est un vrai texte x2 a densite 1 (revue C1-CTRL-R m4) : a
+    // densite 2 et texte x1, le debordement de l'echec ne se voyait pas.
+    for (final (String l, Size taille, double densite, double echelle)
+        in <(String, Size, double, double)>[
+          ('320x2', const Size(320, 700), 1, 2),
+          ('390', const Size(390, 844), 1, 1),
+          ('1440', const Size(1440, 900), 1, 1),
         ]) {
       for (final (String th, ThemeMode mode) in <(String, ThemeMode)>[
         ('clair', ThemeMode.light),
@@ -47,6 +49,7 @@ void main() {
             hoteCapture(
               const CompteRenduControlePage(seanceId: 'seance-inconnue'),
               themeMode: mode,
+              echelleTexte: echelle,
             ),
           );
           await stabiliser(tester);
@@ -67,6 +70,7 @@ void main() {
             hoteCapture(
               ObservationControlePage(seanceId: _visite.seanceId),
               themeMode: mode,
+              echelleTexte: echelle,
               surcharges: <Override>[
                 visitesObserveesProvider.overrideWith(
                   () => VisitesObservees(<String, CompteRenduEnSuspens>{

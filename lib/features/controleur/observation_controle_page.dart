@@ -12,6 +12,8 @@
 // - aucun interrupteur de partage : la notice dit la transmission (C2) ;
 // - aucun succes sans reponse du serveur ; en cas d'echec, la saisie reste.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +21,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
+import '../../core/mouvement/mouvement.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_palette.dart';
@@ -26,12 +29,12 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/ecran_resultat.dart';
-import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_parcours.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
 import 'compte_rendu_controle.dart';
+import 'compte_rendu_controle_page.dart' show VisiteInconnue;
 import 'observation_controle.dart';
 
 enum _Etape { nature, domaine, personne, texte, recapitulatif, envoye }
@@ -132,6 +135,10 @@ class _ObservationControlePageState
   bool _enCours = false;
   bool _echec = false;
 
+  /// Le paragraphe d'echec, amene a l'ecran quand il apparait sous un
+  /// recapitulatif long.
+  final GlobalKey _cleEchec = GlobalKey();
+
   /// La visite, retrouvee par sa seance ; nulle si inconnue.
   late final CompteRenduEnSuspens? _visite = visiteDeSeance(
     ref,
@@ -142,6 +149,23 @@ class _ObservationControlePageState
   /// (CTRL-SEANCE-1). Lu seulement quand la visite est connue.
   FutureProvider<List<EleveRoster>> get _roster =>
       rosterControleProvider(_visite!.seanceId);
+
+  /// Amene le debut de l'echec en haut de la vue apres son rendu : sous un
+  /// recapitulatif long, il naitrait hors de la vue, et a 320 px et texte x2
+  /// il est plus haut que l'ecran, sa lecture commence donc par son debut
+  /// (revue C1-CTRL-R M2).
+  void _montrerEchec() =>
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        final BuildContext? c = _cleEchec.currentContext;
+        if (!mounted || c == null) return;
+        unawaited(
+          Scrollable.ensureVisible(
+            c,
+            duration: Mouvement.duree(context, Mouvement.moyen),
+            curve: Mouvement.entree,
+          ),
+        );
+      });
 
   bool get _important => widget.choix == ChoixCompteRendu.pointImportant;
 
@@ -245,6 +269,7 @@ class _ObservationControlePageState
         _enCours = false;
         _echec = true;
       });
+      _montrerEchec();
     }
   }
 
@@ -279,17 +304,13 @@ class _ObservationControlePageState
     if (_visite == null) {
       // Seance inconnue (rechargement, lien direct) : la visite n'est plus en
       // memoire, jamais une autre mission (C7, revue CT-R B1, CTRL-MSG-1).
-      return PageShell(
-        titre: t.controleur.compteRendu.titre,
-        child: EmptyState(
-          message: t.controleur.compteRendu.visiteInconnue,
-          invitation: t.controleur.compteRendu.visiteInconnueAide,
-          registre: RegistreVide.subi,
-          libelleAction: t.controleur.compteRendu.revenir,
-          onAction:
-              widget.onRevenir ??
-              () => GoRouter.of(context).go(Routes.controleur),
-        ),
+      return VisiteInconnue(
+        onEcrireAdmin: () => widget.onEcrireAdmin == null
+            ? GoRouter.of(context).go(Routes.controleurEcrireAdmin(null))
+            : widget.onEcrireAdmin!(null),
+        onRevenir:
+            widget.onRevenir ??
+            () => GoRouter.of(context).go(Routes.controleur),
       );
     }
 
@@ -372,14 +393,29 @@ class _ObservationControlePageState
       total: 5,
       question: question,
       explication: explication,
-      enfant: ApparitionDouce(key: ValueKey<_Etape>(_etape), child: corps),
+      // La notice et l'echec sont dans le corps qui defile, sous le
+      // recapitulatif, jamais dans la zone fixe du bouton : a 320 px et texte
+      // x2, un echec de onze lignes y remplissait l'ecran et coupait
+      // « Envoyer le compte rendu » (revue C1-CTRL-R M2).
+      enfant: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          ApparitionDouce(key: ValueKey<_Etape>(_etape), child: corps),
+          if (_etape == _Etape.recapitulatif) ...<Widget>[
+            Ecart.vXl,
+            _Souscription(
+              echec: _echec,
+              sansTexte: _texte.text.trim().isEmpty,
+              cleEchec: _cleEchec,
+            ),
+          ],
+        ],
+      ),
       libelleAction: libelle,
       onAction: _enCours ? null : action,
       onRetour: _enCours ? null : _precedent,
       enCours: _enCours,
-      souscription: _etape == _Etape.recapitulatif
-          ? _Souscription(echec: _echec, sansTexte: _texte.text.trim().isEmpty)
-          : null,
     );
   }
 
@@ -582,9 +618,16 @@ class _ObservationControlePageState
 
 /// La notice de transmission, au-dessus du bouton, et l'echec honnete.
 class _Souscription extends StatelessWidget {
-  const _Souscription({required this.echec, required this.sansTexte});
+  const _Souscription({
+    required this.echec,
+    required this.sansTexte,
+    required this.cleEchec,
+  });
 
   final bool echec;
+
+  /// La cle du paragraphe d'echec.
+  final Key cleEchec;
 
   /// Texte facultatif laisse vide : l'echec ne parle pas d'un texte garde
   /// (CTRL-MSG-1).
@@ -620,6 +663,7 @@ class _Souscription extends StatelessWidget {
           liveRegion: true,
           child: echec
               ? Padding(
+                  key: cleEchec,
                   padding: const EdgeInsets.only(top: AppSpacing.md),
                   child: Text(
                     sansTexte
