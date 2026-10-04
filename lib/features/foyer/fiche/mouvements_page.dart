@@ -127,7 +127,10 @@ String dateHeureMouvement(DateTime date) {
   final DateTime locale = date.toLocal();
   return t.ficheEleve.mouvements.dateHeure(
     date: dateEcheance(locale),
-    heure: '${_deuxChiffres(locale.hour)}:${_deuxChiffres(locale.minute)}',
+    heure: t.ficheEleve.mouvements.heureChiffres(
+      heures: _deuxChiffres(locale.hour),
+      minutes: _deuxChiffres(locale.minute),
+    ),
   );
 }
 

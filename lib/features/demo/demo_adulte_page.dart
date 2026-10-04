@@ -1495,6 +1495,8 @@ class CoquilleAdulteDemo extends StatelessWidget {
         eleveId: eleve ?? DonneesAdulteDemo.aichaId,
         onAller: allerFoyer,
         onRetour: versMaFamille,
+        // Aucune page Finances de demonstration : pas d'onglets.
+        avecPageFinances: false,
       ),
       EcranDemoAdulte.appareils => AppareilsPage(
         onAller: allerFoyer,

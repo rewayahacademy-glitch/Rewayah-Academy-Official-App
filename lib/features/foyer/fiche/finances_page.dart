@@ -192,11 +192,13 @@ class _CorpsFinances extends ConsumerWidget {
       ),
     );
     // Sous 1200, les onglets Général / Finances (Q-FI-1, revue 3 a) ; a 1200
-    // et plus, aucun segmente (revue 4 b). Sans source (production), la
-    // fiche n'en montre aucun : la page ouverte par son adresse non plus.
+    // et plus, aucun segmente (revue 4 b). La regle de la fiche, la meme
+    // fonction (`legendeFinances`) : aucun onglet pendant la lecture ni sans
+    // source (production) ; des onglets des que les finances sont lues, ou
+    // que leur lecture a echoue.
     final bool avecOnglets =
         AppGabarit.de(context) != Gabarit.desktop &&
-        lecture.error is! CapaciteIndisponible;
+        legendeFinances(foyer, profil.eleveId) != null;
     if (!avecOnglets) return etats;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

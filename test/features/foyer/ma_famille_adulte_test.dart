@@ -702,6 +702,26 @@ void main() {
     expect(find.byType(FoyerPage), findsOneWidget);
   });
 
+  testWidgets('fiche d\'un enfant sous 1200 : aucun onglet Général / '
+      'Finances, la demonstration n\'a pas de page Finances', (
+    WidgetTester tester,
+  ) async {
+    taille(tester, const Size(390, 844));
+    await monterCoquille(
+      tester,
+      adresseDemoAdulte(
+        EcranDemoAdulte.ficheEleve,
+        eleve: DonneesAdulteDemo.aichaId,
+      ),
+    );
+    expect(find.byType(FicheElevePage), findsOneWidget);
+    // Les finances du foyer sont bien rendues (la carte de Ma famille les
+    // montre) : seul l'absence de page retire le segment.
+    expect(find.text('Aïcha'), findsWidgets);
+    expect(find.byKey(OngletsFiche.cle), findsNothing);
+    expect(find.text(t.ficheEleve.onglets.finances), findsNothing);
+  });
+
   testWidgets('Accueil de la conjointe : jamais la Classe An-Nour du '
       'titulaire (EA-BR-13)', (WidgetTester tester) async {
     taille(tester, const Size(390, 844));

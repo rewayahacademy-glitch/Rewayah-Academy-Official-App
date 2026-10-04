@@ -318,6 +318,7 @@ class FicheElevePage extends ConsumerWidget {
     super.key,
     this.onAller,
     this.onRetour,
+    this.avecPageFinances = true,
   });
 
   /// L'eleve affiche. Un identifiant de chemin, jamais une autorisation : la
@@ -330,6 +331,12 @@ class FicheElevePage extends ConsumerWidget {
 
   /// Le retour ; par defaut, le Foyer par le routeur.
   final VoidCallback? onRetour;
+
+  /// Vrai quand la page Finances de l'eleve existe derriere `onAller`. La
+  /// demonstration adulte n'en a pas (ses sous-pages ramenent a la fiche) :
+  /// sans elle, aucun onglet Général / Finances, un segment qui ne mene
+  /// nulle part n'est pas pose.
+  final bool avecPageFinances;
 
   /// La carte d'identite.
   static const Key enteteKey = Key('ficheEleve.entete');
@@ -346,17 +353,27 @@ class FicheElevePage extends ConsumerWidget {
       eleveId: eleveId,
       onRetour: onRetour ?? () => GoRouter.of(context).go(Routes.tuteurFoyer),
       construire: (BuildContext context, ProfilEleveFoyer profil) =>
-          _ContenuFiche(profil: profil, onAller: onAller),
+          _ContenuFiche(
+            profil: profil,
+            onAller: onAller,
+            avecPageFinances: avecPageFinances,
+          ),
     );
   }
 }
 
 class _ContenuFiche extends ConsumerWidget {
-  const _ContenuFiche({required this.profil, this.onAller});
+  const _ContenuFiche({
+    required this.profil,
+    required this.avecPageFinances,
+    this.onAller,
+  });
 
   final ProfilEleveFoyer profil;
 
   final void Function(String chemin)? onAller;
+
+  final bool avecPageFinances;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -371,8 +388,9 @@ class _ContenuFiche extends ConsumerWidget {
     // revue 3 a) ; a 1200 et plus, sans segmente (revue 4 b), par la ligne.
     final bool bureau = AppGabarit.de(context) == Gabarit.desktop;
     final bool avecFinances =
+        avecPageFinances &&
         legendeFinances(ref.watch(financesFoyerProvider), profil.eleveId) !=
-        null;
+            null;
 
     final Widget parametres = ParametresEleve(
       profil: profil,

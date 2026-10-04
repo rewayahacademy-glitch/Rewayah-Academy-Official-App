@@ -1173,6 +1173,7 @@
     "mouvements": {
       "titre": "Mouvements",
       "dateHeure": "{date} à {heure}",
+      "heureChiffres": "{heures}:{minutes}",
       "contexte": "Les recharges, mensualités, remises et avoirs de {prenom}, du plus récent au plus ancien. Rien ne s'efface : une correction s'ajoute comme un nouveau mouvement.",
       "personne": "Personne",
       "colonne": {

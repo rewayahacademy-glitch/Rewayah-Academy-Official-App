@@ -4473,6 +4473,9 @@ class Traductions$ficheEleve$mouvements$fr {
 	/// fr: '{date} à {heure}'
 	String dateHeure({required Object date, required Object heure}) => '${date} à ${heure}';
 
+	/// fr: '{heures}:{minutes}'
+	String heureChiffres({required Object heures, required Object minutes}) => '${heures}:${minutes}';
+
 	/// fr: 'Les recharges, mensualités, remises et avoirs de {prenom}, du plus récent au plus ancien. Rien ne s'efface : une correction s'ajoute comme un nouveau mouvement.'
 	String contexte({required Object prenom}) => 'Les recharges, mensualités, remises et avoirs de ${prenom}, du plus récent au plus ancien. Rien ne s\'efface : une correction s\'ajoute comme un nouveau mouvement.';
 
@@ -17867,6 +17870,7 @@ extension on Traductions {
 			'ficheEleve.finances.voirMouvementsSemantique' => ({required Object prenom}) => 'Voir les mouvements de ${prenom}',
 			'ficheEleve.mouvements.titre' => 'Mouvements',
 			'ficheEleve.mouvements.dateHeure' => ({required Object date, required Object heure}) => '${date} à ${heure}',
+			'ficheEleve.mouvements.heureChiffres' => ({required Object heures, required Object minutes}) => '${heures}:${minutes}',
 			'ficheEleve.mouvements.contexte' => ({required Object prenom}) => 'Les recharges, mensualités, remises et avoirs de ${prenom}, du plus récent au plus ancien. Rien ne s\'efface : une correction s\'ajoute comme un nouveau mouvement.',
 			'ficheEleve.mouvements.personne' => 'Personne',
 			'ficheEleve.mouvements.colonne.date' => 'Date',
@@ -17951,9 +17955,9 @@ extension on Traductions {
 			'priere.maghrib' => 'Maghrib',
 			'priere.isha' => 'Isha',
 			'priere.entree' => ({required Object priere, required Object minutes}) => '${priere}, ${minutes} min',
-			'priere.annonce' => ({required Object priere, required Object heure}) => 'Ce cours sera interrompu pour ${priere}, vers ${heure}.',
 			_ => null,
 		} ?? switch (path) {
+			'priere.annonce' => ({required Object priere, required Object heure}) => 'Ce cours sera interrompu pour ${priere}, vers ${heure}.',
 			'priere.annonceAucune' => 'Aucune interruption prévue pendant ce cours.',
 			'priere.alerte' => ({required Object priere, required Object minutes}) => '${priere} dans ${minutes} min',
 			'priere.alerteMaintenant' => ({required Object priere, required Object heure}) => 'Pause pour ${priere}, reprise à ${heure}',
@@ -18465,9 +18469,9 @@ extension on Traductions {
 			'admin.finance.pol.groupesMax' => 'Maximum normal de groupes',
 			'admin.finance.pol.groupesMaxDetail' => 'La charge maximale conseillée pour un enseignant.',
 			'admin.finance.pol.internet' => 'Aide Internet',
-			'admin.finance.pol.internetDetail' => 'Une seule aide par enseignant éligible, jamais multipliée par classe ni par élève.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.finance.pol.internetDetail' => 'Une seule aide par enseignant éligible, jamais multipliée par classe ni par élève.',
 			'admin.finance.pol.internetNonFixee' => 'Pas encore fixée',
 			'admin.finance.pol.sectionGroupes' => 'Groupes',
 			'admin.finance.pol.sectionGroupesDetail' => 'La taille des classes et le seuil pour en ouvrir une.',
@@ -18979,9 +18983,9 @@ extension on Traductions {
 			'parcours.chargement' => 'Nous préparons vos options.',
 			'parcours.pourPrenom' => ({required Object prenom}) => 'Pour ${prenom}',
 			'parcours.retourAccueil' => 'Retour à l\'accueil',
-			'parcours.retourFoyer' => 'Retour au Foyer',
 			_ => null,
 		} ?? switch (path) {
+			'parcours.retourFoyer' => 'Retour au Foyer',
 			'parcours.reessayer' => 'Réessayer',
 			'parcours.indisponibleTitre' => 'Le questionnaire n\'est pas encore disponible',
 			'parcours.indisponibleDetail' => 'Cette étape n\'est pas encore ouverte par l\'académie. Vous n\'avez rien à faire pour l\'instant : rien n\'est perdu, et vous pourrez la remplir dès qu\'elle sera ouverte.',
@@ -19493,9 +19497,9 @@ extension on Traductions {
 			'tuteur.accueil.connecterAppareil' => 'Connecter un appareil',
 			'tuteur.accueil.avantProchainCours' => 'Avant le prochain cours',
 			'tuteur.accueil.voirTout' => 'Voir tout',
-			'tuteur.accueil.travailIndisponible' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			_ => null,
 		} ?? switch (path) {
+			'tuteur.accueil.travailIndisponible' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'tuteur.accueil.travailIllisible' => 'Le travail à préparer n\'a pas pu être lu.',
 			'tuteur.accueil.rienAPreparer' => 'Rien à préparer pour l\'instant',
 			'tuteur.accueil.derniereSeance' => 'Dernière séance',
@@ -20007,9 +20011,9 @@ extension on Traductions {
 			'enseignant.cahier.niveauMaitrise' => 'Maîtrisé',
 			'enseignant.cahier.faiblesseMakharij' => 'Makharij',
 			'enseignant.cahier.faiblesseMadd' => 'Madd',
-			'enseignant.cahier.faiblesseGhunna' => 'Ghunna',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.cahier.faiblesseGhunna' => 'Ghunna',
 			'enseignant.cahier.faiblesseWaqf' => 'Waqf',
 			'enseignant.cahier.faiblesseFluidite' => 'Fluidité',
 			'enseignant.cahier.faiblesseMemorisation' => 'Mémorisation',
@@ -20521,9 +20525,9 @@ extension on Traductions {
 			'tc.coran.zoom.renvoiLectureAgrandie' => 'Pour grossir le texte, passez en lecture agrandie : la page du mushaf garde sa géométrie.',
 			'tc.coran.navigation.titre' => 'Aller à',
 			'tc.coran.navigation.ouvrir' => 'Aller à une page',
-			'tc.coran.navigation.champ' => 'Page, sourate, juz ou référence',
 			_ => null,
 		} ?? switch (path) {
+			'tc.coran.navigation.champ' => 'Page, sourate, juz ou référence',
 			'tc.coran.navigation.indice' => 'Par exemple 18, Al-Kahf, juz 15, 2:255',
 			'tc.coran.navigation.limite' => 'La recherche porte sur les numéros de page, les références et les noms de sourate. La recherche dans le texte du Coran n\'est pas encore disponible.',
 			'tc.coran.navigation.aucunResultat' => 'Aucune référence trouvée',
@@ -21035,9 +21039,9 @@ extension on Traductions {
 			'adulte.famille.place.inviterConjoint' => 'Invitez votre conjoint à rejoindre Rewayah avec son propre compte.',
 			'adulte.famille.place.invitationEnvoyee' => 'Invitation envoyée',
 			'adulte.famille.place.maConjointe' => ({required Object prenom}) => '${prenom}, votre conjointe',
-			'adulte.famille.place.monConjoint' => ({required Object prenom}) => '${prenom}, votre conjoint',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.famille.place.monConjoint' => ({required Object prenom}) => '${prenom}, votre conjoint',
 			'adulte.famille.place.validationEnAttente' => 'En attente de validation administrative',
 			'adulte.famille.place.validationRefusee' => 'Validation refusée par la direction',
 			'adulte.famille.place.nouvelleDemande' => 'Faire une nouvelle demande',
