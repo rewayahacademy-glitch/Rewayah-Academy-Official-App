@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart' show SemanticsNode;
+import 'package:flutter/semantics.dart' show SemanticsAction, SemanticsNode;
+import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -15,6 +16,7 @@ import 'package:rewayah_academy/core/priere/reglages_priere.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/theme/app_metriques.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
@@ -705,6 +707,9 @@ void main() {
   // separe ses elements. Le livre et le haut-parleur aux deux bouts d'un
   // en-tete sans texte ; titre, phrase et chevron dans une zone qui ouvre le
   // Coran. Deux cibles soeurs, jamais l'une dans l'autre.
+  // CORAN-CARTE-2 : deux colonnes nettes (livre, titre et phrase au bord de
+  // debut ; haut-parleur et chevron au bord de fin), air egal en haut et en
+  // bas, et chaque arret du clavier porte un nom.
   //
   // Ce groupe charge les vraies polices : il reste le DERNIER du fichier, pour
   // ne pas changer les mesures des groupes qui le precedent.
@@ -760,8 +765,17 @@ void main() {
     );
     Finder titre() => dans(find.text(t.eleve.accueil.coran));
     Finder phrase() => dans(find.text(t.eleve.accueil.coranDetail));
+    Finder hautParleur() => dans(find.byIcon(AppIcons.libelleAudio.repos));
+    Finder chevron() => dans(find.byIcon(AppIcons.chevron.repos));
 
-    /// Les quatre elements : aucun ne chevauche un autre, et chaque paire
+    /// Le rectangle du contenu de la tuile : la tuile moins sa marge.
+    Rect contenu(WidgetTester tester) {
+      final Rect tuile = tester.getRect(carte());
+      final double marge = AppMetriques.of(tester.element(carte())).marge;
+      return tuile.deflate(marge);
+    }
+
+    /// Les cinq elements : aucun ne chevauche un autre, et chaque paire
     /// garde au moins un jeton d'ecart (8) sur l'un des deux axes.
     void verifierSepares(WidgetTester tester) {
       final Map<String, Rect> r = <String, Rect>{
@@ -769,6 +783,7 @@ void main() {
         'audio': tester.getRect(audio().first),
         'titre': tester.getRect(titre()),
         'phrase': tester.getRect(phrase()),
+        'chevron': tester.getRect(chevron()),
       };
       final List<String> noms = r.keys.toList();
       for (int i = 0; i < noms.length; i++) {
@@ -809,6 +824,68 @@ void main() {
       );
       // Le titre et la phrase partent du meme bord.
       expect(tester.getRect(titre()).left, tester.getRect(phrase()).left);
+    });
+
+    /// Deux colonnes : livre, titre et phrase partent du bord de debut du
+    /// contenu ; le glyphe du haut-parleur et le chevron finissent au bord de
+    /// fin. En RTL, les deux bords s'echangent.
+    void verifierColonnes(WidgetTester tester, TextDirection sens) {
+      final Rect c = contenu(tester);
+      final bool ltr = sens == TextDirection.ltr;
+      double debut(Rect r) => ltr ? r.left : r.right;
+      double fin(Rect r) => ltr ? r.right : r.left;
+      for (final (String, Finder) e in <(String, Finder)>[
+        ('livre', livre()),
+        ('titre', titre()),
+        ('phrase', phrase()),
+      ]) {
+        expect(
+          debut(tester.getRect(e.$2)),
+          moreOrLessEquals(debut(c), epsilon: 1),
+          reason: '${e.$1} hors du bord de debut',
+        );
+      }
+      expect(
+        fin(tester.getRect(hautParleur())),
+        moreOrLessEquals(fin(c), epsilon: 1),
+        reason: 'haut-parleur hors du bord de fin',
+      );
+      expect(
+        fin(tester.getRect(chevron())),
+        moreOrLessEquals(fin(tester.getRect(hautParleur())), epsilon: 1),
+        reason: 'chevron et haut-parleur ne finissent pas au meme bord',
+      );
+      // Le chevron est sous le haut-parleur, pas sur la meme ligne.
+      expect(
+        tester.getRect(chevron()).top,
+        greaterThanOrEqualTo(tester.getRect(hautParleur()).bottom),
+      );
+    }
+
+    for (final (InterfaceMode, TextDirection) cas
+        in <(InterfaceMode, TextDirection)>[
+          (InterfaceMode.standard, TextDirection.ltr),
+          (InterfaceMode.standard, TextDirection.rtl),
+          (InterfaceMode.enfant, TextDirection.ltr),
+          (InterfaceMode.enfant, TextDirection.rtl),
+        ]) {
+      testWidgets(
+        '${cas.$1.name}, ${cas.$2.name} : deux colonnes alignees au bord',
+        (WidgetTester tester) async {
+          await monter(tester, mode: cas.$1, sens: cas.$2);
+          verifierColonnes(tester, cas.$2);
+        },
+      );
+    }
+
+    testWidgets('autant d air au-dessus des icones que sous la phrase', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester);
+      final Rect tuile = tester.getRect(carte());
+      final double haut = tester.getRect(livre()).top - tuile.top;
+      final double bas = tuile.bottom - tester.getRect(phrase()).bottom;
+      expect(bas, moreOrLessEquals(haut, epsilon: 2));
     });
 
     testWidgets('aucune cible n est posee dans une autre', (
@@ -864,27 +941,78 @@ void main() {
       expect(tester.getSize(ouvrir).height, greaterThanOrEqualTo(48));
     });
 
-    testWidgets('le lecteur d ecran entend « Le Coran » une fois, un lien', (
+    testWidgets('lecteur d ecran : un lien qui ouvre, un bouton qui parle', (
       WidgetTester tester,
     ) async {
       final SemanticsHandle poignee = tester.ensureSemantics();
       await monter(tester);
+      final String coran = t.eleve.accueil.coran;
+      // Le lien : « Le Coran », puis la phrase ; le chevron n'est pas lu.
       final Finder lien = find.bySemanticsLabel(
-        RegExp('^${RegExp.escape(t.eleve.accueil.coran)}'),
+        '$coran\n${t.eleve.accueil.coranDetail}',
       );
       expect(lien, findsOneWidget);
-      final SemanticsNode noeud = tester.getSemantics(lien);
-      expect(
-        noeud.label,
-        '${t.eleve.accueil.coran}\n${t.eleve.accueil.coranDetail}',
-      );
-      expect(noeud.flagsCollection.isLink, isTrue);
-      expect(noeud.flagsCollection.isButton, isFalse);
-      // Le haut-parleur n'ajoute pas de second « Le Coran ».
-      expect(
-        find.bySemanticsLabel(RegExp(RegExp.escape(t.eleve.accueil.coran))),
-        findsOneWidget,
-      );
+      final SemanticsNode noeudLien = tester.getSemantics(lien);
+      expect(noeudLien.flagsCollection.isLink, isTrue);
+      expect(noeudLien.flagsCollection.isButton, isFalse);
+      // Le haut-parleur : un bouton nomme, distinct du lien par son role.
+      final SemanticsNode noeudAudio = tester.getSemantics(audio().first);
+      expect(noeudAudio.label, coran);
+      expect(noeudAudio.flagsCollection.isButton, isTrue);
+      expect(noeudAudio.flagsCollection.isLink, isFalse);
+      // Un seul lien « Le Coran » dans tout l'ecran.
+      final Set<int> liens = <int>{
+        for (final Element e
+            in find
+                .bySemanticsLabel(RegExp('^${RegExp.escape(coran)}'))
+                .evaluate())
+          if (tester
+              .getSemantics(find.byElementPredicate((Element x) => x == e))
+              .flagsCollection
+              .isLink)
+            tester
+                .getSemantics(find.byElementPredicate((Element x) => x == e))
+                .id,
+      };
+      expect(liens, hasLength(1));
+      poignee.dispose();
+    });
+
+    testWidgets('clavier : chaque arret de la carte a un nom et une action', (
+      WidgetTester tester,
+    ) async {
+      final SemanticsHandle poignee = tester.ensureSemantics();
+      await monter(tester);
+      final Set<Element> cibles = dans(find.byType(Pressable))
+          .evaluate()
+          .toSet();
+      final Set<Element> atteintes = <Element>{};
+      for (int i = 0; i < 30 && atteintes.length < cibles.length; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        final BuildContext? focus = FocusManager.instance.primaryFocus?.context;
+        if (focus == null) continue;
+        Element? cible;
+        (focus as Element).visitAncestorElements((Element a) {
+          if (cibles.contains(a)) {
+            cible = a;
+            return false;
+          }
+          return true;
+        });
+        if (cible == null) continue;
+        atteintes.add(cible!);
+        final SemanticsNode noeud = tester.getSemantics(
+          find.byElementPredicate((Element e) => e == focus),
+        );
+        expect(noeud.label, isNotEmpty, reason: 'arret de focus sans nom');
+        expect(
+          noeud.getSemanticsData().hasAction(SemanticsAction.tap),
+          isTrue,
+          reason: 'arret de focus sans action',
+        );
+      }
+      expect(atteintes, hasLength(2), reason: 'haut-parleur puis lien');
       poignee.dispose();
     });
 
@@ -906,6 +1034,11 @@ void main() {
       expect(
         tester.getRect(livre()).left,
         greaterThan(tester.getRect(audio().first).right),
+      );
+      // Le chevron passe a gauche, au bout de la ligne qui ouvre le Coran.
+      expect(
+        tester.getRect(chevron()).right,
+        lessThan(tester.getRect(titre()).left),
       );
       verifierSepares(tester);
     });
@@ -934,9 +1067,9 @@ void main() {
     ) async {
       await monter(tester);
       // Mode standard, echelle 1, vraies polices : la hauteur que le squelette
-      // du second bloc reserve (`Skeleton.tuileBento(hauteur: 144)`). Si ce
+      // du second bloc reserve (`Skeleton.tuileBento(hauteur: 156)`). Si ce
       // test change, changer le squelette avec lui.
-      expect(tester.getSize(carte()).height, 144);
+      expect(tester.getSize(carte()).height, 156);
     });
   });
 }

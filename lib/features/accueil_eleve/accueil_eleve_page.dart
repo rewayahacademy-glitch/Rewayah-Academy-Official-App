@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/cle_audio.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -27,9 +26,9 @@ import '../../core/widgets/audio_label.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/ligne_lien.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
-import '../../core/widgets/pressable.dart';
 import '../../core/widgets/skeleton.dart';
 
 /// Ce que le bloc principal de `ELV-02` annonce.
@@ -214,7 +213,7 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
               children: <Widget>[
                 Skeleton.tuileBento(hauteur: 160),
                 Ecart.vXl,
-                Skeleton.tuileBento(hauteur: 144),
+                Skeleton.tuileBento(hauteur: 156),
               ],
             )
           : Column(
@@ -582,14 +581,19 @@ class _Interruptions extends StatelessWidget {
 ///
 /// Deux etages, une action par zone (demande du directeur du 04/10/2026 :
 /// « chaque element a part et lisible ») :
-/// - en-tete sans texte : le livre au debut de la ligne, le haut-parleur a la
-///   fin ; toute la largeur de la carte les separe ;
-/// - zone d'ouverture : titre, phrase et chevron, qui ouvre le Coran (`ELV-04`).
+/// - en-tete sans texte : le livre au bord de debut, le haut-parleur au bord
+///   de fin ; toute la largeur de la carte les separe ;
+/// - [LigneLien] : titre, phrase et chevron, qui ouvre le Coran (`ELV-04`).
 ///
-/// La tuile ne se presse plus : les deux [Pressable] sont freres, jamais l'un
-/// dans l'autre, sur le modele de `_BlocPrincipal`. Le haut-parleur sert a qui
-/// ne lit pas encore ; il est exclu de la semantique, ou il doublerait le
-/// lien « Le Coran ». Il garde son arret de focus au clavier.
+/// Deux colonnes nettes : le livre part du meme bord que le titre et la
+/// phrase ; le haut-parleur finit au meme bord que le chevron
+/// (`AudioLabel.alignerEnFin`). La tuile ne se presse pas : les deux cibles
+/// sont soeurs, jamais l'une dans l'autre.
+///
+/// Le haut-parleur dit « Le Coran » a qui ne lit pas encore. Il reste un
+/// bouton nomme pour le clavier et le lecteur d'ecran (« Le Coran, bouton »),
+/// a cote du lien qui ouvre le Coran (« Le Coran, A lire quand tu veux,
+/// lien ») : deux roles distincts, comme chaque `AudioLabel` de l'accueil.
 class _BlocCoran extends StatelessWidget {
   const _BlocCoran();
 
@@ -597,16 +601,13 @@ class _BlocCoran extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppMetriques metriques = AppMetriques.of(context);
     final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    final TextStyle styleTitre = textes.titleMedium ?? const TextStyle();
-    final TextStyle styleSecondaire = palette.inkMuted.applyTo(
-      textes.bodyMedium ?? const TextStyle(),
-    );
-    // Texte agrandi : aucun mot n'est coupe au milieu ; a l'echelle 1, un
-    // simple texte, sans mesure (meme regle que `SettingRow`).
-    final bool agrandi = MediaQuery.textScalerOf(context).scale(1) > 1;
-    Widget texte(String s, TextStyle style) =>
-        agrandi ? TexteSansCoupure(s, style: style) : Text(s, style: style);
+    final double tailleLivre = metriques.estEnfant
+        ? AppSpacing.xxxl
+        : AppSpacing.xxl;
+    // La cible du haut-parleur donne sa hauteur a l'en-tete : le livre y est
+    // centre, avec cet air au-dessus de lui. Le meme air est rendu sous la
+    // phrase, pour que la carte respire autant en haut qu'en bas.
+    final double airEntete = (metriques.cibleTactile - tailleLivre) / 2;
 
     return BentoTile(
       child: Column(
@@ -616,51 +617,24 @@ class _BlocCoran extends StatelessWidget {
           Row(
             children: <Widget>[
               IconTheme(
-                data: palette.inkAccent.asIconTheme(
-                  size: metriques.estEnfant ? AppSpacing.xxxl : AppSpacing.xxl,
-                ),
+                data: palette.inkAccent.asIconTheme(size: tailleLivre),
                 child: Icon(AppIcons.coran.repos),
               ),
               const Spacer(),
-              const ExcludeSemantics(
-                child: AudioLabel(
-                  cle: ClesAudio.eleveAccueilCoran,
-                  afficherTexte: false,
-                ),
+              const AudioLabel(
+                cle: ClesAudio.eleveAccueilCoran,
+                afficherTexte: false,
+                alignerEnFin: true,
               ),
             ],
           ),
           Ecart.vSm,
-          Pressable(
+          LigneLien(
+            titre: t.eleve.accueil.coran,
+            legende: t.eleve.accueil.coranDetail,
             onPress: () => GoRouter.of(context).go(Routes.eleveCoran),
-            libelleSemantique: t.eleve.accueil.coran,
-            lien: true,
-            arrondiFocus: metriques.arrondi,
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      // Le lien porte deja « Le Coran » : le titre n'est
-                      // pas lu une seconde fois.
-                      ExcludeSemantics(
-                        child: texte(t.eleve.accueil.coran, styleTitre),
-                      ),
-                      Ecart.vSm,
-                      texte(t.eleve.accueil.coranDetail, styleSecondaire),
-                    ],
-                  ),
-                ),
-                Ecart.hSm,
-                IconTheme(
-                  data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
-                  child: Icon(AppIcons.chevron.repos),
-                ),
-              ],
-            ),
           ),
+          SizedBox(height: airEntete),
         ],
       ),
     );

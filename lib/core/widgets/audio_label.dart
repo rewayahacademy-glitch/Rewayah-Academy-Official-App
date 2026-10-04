@@ -27,6 +27,7 @@ class AudioLabel extends StatefulWidget {
     super.key,
     this.afficherTexte = true,
     this.surface,
+    this.alignerEnFin = false,
   });
 
   /// La cle du libelle, commune au texte et au son.
@@ -34,6 +35,14 @@ class AudioLabel extends StatefulWidget {
 
   /// Faux pour n'afficher que le haut-parleur, sans le texte.
   final bool afficherTexte;
+
+  /// Vrai : le haut-parleur se range au bord de fin de sa cible tactile, au
+  /// lieu du bord de debut. Pour un haut-parleur seul pose en fin de ligne
+  /// (en-tete d'une carte) : son glyphe tombe alors sur le bord de fin du
+  /// contenu, aligne sur un chevron ou une valeur pose dessous, comme
+  /// `LienFleche.alignerEnFin`. La cible reste de 48 (72 en mode enfant), en
+  /// RTL le bord de fin passe a gauche. Faux (defaut) : rendu inchange.
+  final bool alignerEnFin;
 
   /// La paire de la surface qui porte ce libelle.
   ///
@@ -98,6 +107,9 @@ class _AudioLabelState extends State<AudioLabel> {
       libelleSemantique: texte,
       child: Row(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: widget.alignerEnFin
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         children: <Widget>[
           IconTheme(
             data: paire == null
