@@ -1,6 +1,6 @@
 # Contrôleur : bloquants avant la mise en service et impacts sur les autres rôles
 
-Créé en CT-10 (02/10/2026). Sources : document 08 (`08_CONTROLEUR_V1_UX_SECURITE.md`) §3.4, §12, §13, §15 ; décisions du directeur du 27/09 (`00_DECISIONS_DIRECTEUR.md`, qui priment : C1 la visite a lieu pendant le cours, C2 le rapport part automatiquement à l'administration). Couverture serveur : `CT-BR.md` (BR-CT-01 à 17). Revue UX : `UX_REVIEW_08_CONTROLEUR.md`.
+Créé en CT-10 (02/10/2026). Sources : document 08 (`08_CONTROLEUR_V1_UX_SECURITE.md`) §3.4, §12, §13, §15 ; décisions du directeur du 27/09 (`00_DECISIONS_DIRECTEUR.md`, qui priment : C1 la visite a lieu pendant le cours, C2 le rapport part automatiquement à l'administration). Couverture serveur : `CT-BR.md` (BR-CT-01 à 19). Revue UX : `UX_REVIEW_08_CONTROLEUR.md`.
 
 Cadre juridique : l'académie est une LTD anglaise, donc le droit du Royaume-Uni passe d'abord (UK GDPR, Data Protection Act 2018, ICO, Children's Code). Le RGPD européen reste un complément. Rien ici ne tranche un point légal : la démonstration ne fait que simuler (C21).
 
@@ -49,6 +49,12 @@ Le directeur a répondu point par point. Il a confié le reste à l'orchestrateu
 | B13 | Lecture d'un rapport brut : **l'administration** (et le contrôleur auteur, pour son propre rapport). | BR-CT-14 déjà conforme. |
 | B14 | Export : **l'administration seulement**. | Export tracé au journal d'audit (BR-CT-08). |
 | B15 | Identité du contrôleur après la synthèse mensuelle : **jamais révélée**. | La synthèse enseignant n'affiche aucun nom de contrôleur. |
+
+### 1 ter. Bloquant technique du branchement (BR-1)
+
+| N° | Bloquant | Pourquoi | Ce qu'il faudra faire (BR-1) |
+|---|---|---|---|
+| BR-CT-19 | « Commencer le contrôle » n'inscrit pas la visite : `observerEnControle` (RPC `rejoindre_observation`) n'est appelé nulle part ; le chemin par défaut va à `/salle` avec le billet seul (CTRL-BR-OBS-1, 04/10). | Sans inscription, le jeton de salle du contrôleur est refusé en réel et le passage n'est pas journalisé (BR-CT-08, B3, B13). | Appeler `observerEnControle` avant `/salle` ; n'entrer qu'en cas de succès ; un refus reste sur CTR-01 avec un message K-59. Détail : `CT-BR.md`, BR-CT-19. |
 
 ## 2. Ce que le Contrôleur change pour les autres rôles
 
@@ -116,6 +122,7 @@ CT-BLQ-12 | Information légale élèves, parents, enseignants | Contrôleur (pr
 CT-BLQ-13 | Qui lit un rapport brut | Contrôleur (production) | directeur | doc 08 §15.13 ; BR-CT-14 couvre auteur et administration seulement
 CT-BLQ-14 | Qui peut exporter un rapport | Contrôleur (production) | directeur | doc 08 §15.14 ; non couvert
 CT-BLQ-15 | Identité du Contrôleur après publication mensuelle | Contrôleur (production) | directeur | doc 08 §15.15 et §3.4 ; avis juriste
+CT-BLQ-19 | Inscrire la visite (observerEnControle) avant /salle | Contrôleur (production) | BR-1 | BR-CT-19 ; CTRL-BR-OBS-1 ; sans elle, jeton refusé en réel et passage non journalisé
 CT-IMP-EN-01 | Synthèse mensuelle de l'enseignant | Enseignant (à faire) | BR-1 | doc 08 §12 et §3.4 ; publication différée en fin de mois ; positifs et points à suivre
 CT-IMP-EN-02 | Réponses et échanges autorisés de l'enseignant | Enseignant (à faire) | directeur | doc 08 §12 ; périmètre des réponses à décider
 CT-IMP-EN-03 | Historique qualité, badges, promotions | Enseignant (à faire) | directeur | doc 08 §12 ; règles de badge et d'éligibilité à fixer
