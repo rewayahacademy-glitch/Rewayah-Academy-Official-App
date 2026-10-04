@@ -553,6 +553,84 @@ void main() {
       });
     }
 
+    // BENTO-3c (ORD-2 de BENTO-3b-R) : le seuil croit avec l'echelle du
+    // texte. A 1440 px, texte x2, la grille fait 1120 px : chaque moitie
+    // offrirait (1120 - 16) / 2 = 552 px, moins que 360 x 2 = 720. Seance et
+    // « Avant » s'empilent ; sans le facteur d'echelle, ils resteraient cote
+    // a cote et le controle « aucun mot coupe » ne le verrait pas.
+    group('polices du depot (BENTO-3c)', () {
+      setUpAll(chargerPolicesDuDepot);
+
+      // BENTO-3c (ORD-3 de BENTO-3b-R) : la bascule cote a cote a texte x1.
+      // Avec les polices du depot (la largeur du rail suit ses libelles), la
+      // grille de l'accueil adulte fait l'ecran moins 128 px (rail et
+      // gouttieres) : 736 px a 864 px d'ecran, soit deux moities de
+      // 360 = [largeurMinCarteClasse] plus l'ecart de 16. Un pixel de moins et
+      // les deux grandes tuiles s'empilent. A 390 et 768 la geometrie est celle
+      // d'une colonne : ces deux cas-ci prouvent que la grille bascule bien.
+      for (final (double, bool) cas in const <(double, bool)>[
+        (863, false),
+        (864, true),
+      ]) {
+        testWidgets('${cas.$1.toInt()} px, texte x1 : seance et « Avant » '
+            '${cas.$2 ? 'cote a cote' : 'empiles'} (grille de '
+            '${cas.$1.toInt() - 128} px)', (WidgetTester tester) async {
+          taille(tester, Size(cas.$1, 3000));
+          await monterCoquille(
+            tester,
+            adresseDemoAdulte(EcranDemoAdulte.accueil),
+          );
+          // Contexte : la grille a bien la largeur annoncee, de part et
+          // d'autre du seuil 2 x largeurMinCarteClasse + ecart.
+          expect(tester.getSize(find.byType(GrilleBento)).width, cas.$1 - 128);
+          expect(
+            largeurMinCarteClasse * 2 + GrilleBento.ecart,
+            736,
+            reason: 'seuil de la bascule',
+          );
+          final Rect s = rect(tester, seance);
+          final Rect a = rect(tester, avant);
+          final Rect p = rect(tester, parcours);
+          if (cas.$2) {
+            expect(a.left, greaterThanOrEqualTo(s.right));
+            expect(a.top, moreOrLessEquals(s.top, epsilon: 1));
+            // Chaque moitie : exactement 360 px.
+            expect(
+              a.width,
+              moreOrLessEquals(largeurMinCarteClasse, epsilon: 1),
+            );
+          } else {
+            expect(a.top, greaterThan(s.bottom));
+            expect(a.left, moreOrLessEquals(s.left, epsilon: 1));
+            // « Avant » seul dans sa bande, en pleine largeur.
+            expect(a.width, moreOrLessEquals(cas.$1 - 128, epsilon: 1));
+          }
+          expect(p.top, greaterThan(math.max(s.bottom, a.bottom)));
+        });
+      }
+
+      for (final TextDirection sens in TextDirection.values) {
+        testWidgets('1440 px, texte x2, ${sens.name} : seance puis « Avant » '
+            'empiles, chacun en pleine largeur', (WidgetTester tester) async {
+          taille(tester, const Size(1440, 4000));
+          await monterCoquille(
+            tester,
+            adresseDemoAdulte(EcranDemoAdulte.accueil),
+            echelle: 2,
+            direction: sens,
+          );
+          expect(tester.takeException(), isNull);
+          final Rect grille = tester.getRect(find.byType(GrilleBento));
+          expect(grille.width, 1120);
+          final Rect s = rect(tester, seance);
+          final Rect a = rect(tester, avant);
+          expect(a.top, greaterThan(s.bottom), reason: '« Avant » dessous');
+          expect(s.width, moreOrLessEquals(grille.width, epsilon: 1));
+          expect(a.width, moreOrLessEquals(grille.width, epsilon: 1));
+        });
+      }
+    });
+
     // Tuiles absentes (revue BENTO-3-R) : la Classe de demonstration, sans
     // « Avant le prochain cours », avec ou sans parcours et seances passees.
     Future<void> monterSans(

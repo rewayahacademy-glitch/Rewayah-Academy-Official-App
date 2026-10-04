@@ -64,8 +64,6 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
-import '../accueil_famille/accueil_famille_page.dart'
-    show largeurMinCarteClasse;
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart'
     show LecteurGroupe, LectureGroupe;
