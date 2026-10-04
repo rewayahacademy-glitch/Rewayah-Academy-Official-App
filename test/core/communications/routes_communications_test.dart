@@ -305,6 +305,32 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    // COM-F-Q5-R : sous 600, la page est decoupee du padding sous le
+    // Scaffold ; le clavier, deja evite par le Scaffold, ne doit pas
+    // l'etre une seconde fois par la page.
+    testWidgets('390, clavier ouvert : le clavier n est compte qu une fois', (
+      WidgetTester tester,
+    ) async {
+      tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+      addTearDown(tester.view.resetViewInsets);
+      await _monterAdmin(tester, Routes.admin, taille: const Size(390, 844));
+      // Le MediaQuery pose par `removePadding`, juste sous la barre mobile :
+      // c'est lui que la page lit, avant tout Scaffold de la page.
+      final Finder decoupe = find
+          .descendant(
+            of: find.descendant(
+              of: find.byType(AdminShell),
+              matching: find.byType(Expanded),
+            ),
+            matching: find.byType(MediaQuery),
+          )
+          .first;
+      final MediaQueryData donnees = tester.widget<MediaQuery>(decoupe).data;
+      expect(donnees.viewInsets.bottom, 0);
+      expect(donnees.padding.top, 0);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('390 : cloche dans l en-tete, Le Studio au pied du tiroir', (
       WidgetTester tester,
     ) async {
