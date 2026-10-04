@@ -689,7 +689,16 @@
     "apres": {
       "revoirSupport": "Revoir le support du cours",
       "revoirSupportDetail": "Le support reste dans ta Classe.",
-      "revoirSupportDetailVous": "Le support reste dans votre Classe."
+      "revoirSupportDetailVous": "Le support reste dans votre Classe.",
+      "quitteTitre": "Tu as quitté la séance.",
+      "quittePhrase": "Tu pourras revenir tant qu'elle reste ouverte.",
+      "prochaineDateHeure": "{date} à {heure}",
+      "vide": "Ta prochaine séance n'est pas encore programmée. Elle s'affichera ici et dans ta Classe.",
+      "videVous": "Votre prochaine séance n'est pas encore programmée. Elle s'affichera ici et dans votre Classe.",
+      "erreur": "Ta prochaine séance et ton travail n'ont pas pu être chargés, sans doute à cause de la connexion. Réessaie, ou retrouve-les dans ta Classe.",
+      "erreurVous": "Votre prochaine séance et votre travail n'ont pas pu être chargés, sans doute à cause de la connexion. Réessayez, ou retrouvez-les dans votre Classe.",
+      "horsLigne": "Tu es hors ligne : ta prochaine séance et ton travail s'afficheront quand la connexion reviendra.",
+      "horsLigneVous": "Vous êtes hors ligne : votre prochaine séance et votre travail s'afficheront quand la connexion reviendra."
     },
     "monEspace": {
       "titre": "Mon espace",

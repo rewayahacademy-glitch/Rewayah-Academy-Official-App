@@ -60,5 +60,14 @@
   "enseignant.photo.aide": "commentaire du directeur, revue du 01-02/10, etape KYC-PHOTO-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
   "enseignant.photo.obligatoireLecteur": "commentaire du directeur, revue du 01-02/10, etape KYC-PHOTO-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
   "enseignant.photo.voile": "commentaire du directeur, revue du 01-02/10, etape KYC-PHOTO-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
-  "enseignant.cahier.travailMaisonSaisi": "revue du directeur 10/2026, etape EN-7c-SUGG-T : aucune source de devoir suggere n'existe (brouillon_cahier ne rend que le devoir precedent) ; « Ajustez la suggestion » est reservee a une vraie suggestion, ce texte dit le devoir deja saisi par l'enseignant (K-57) ; a valider par le directeur"
+  "enseignant.cahier.travailMaisonSaisi": "revue du directeur 10/2026, etape EN-7c-SUGG-T : aucune source de devoir suggere n'existe (brouillon_cahier ne rend que le devoir precedent) ; « Ajustez la suggestion » est reservee a une vraie suggestion, ce texte dit le devoir deja saisi par l'enseignant (K-57) ; a valider par le directeur",
+  "accessibilite.apres.quitteTitre": "etape MA-APRES-1 (decision A7 = a, un seul ecran de fin) : tutoiement de « Vous avez quitté la séance. » (salle.fin.quitteTitre) pour la mineure ; a valider par le directeur",
+  "accessibilite.apres.quittePhrase": "etape MA-APRES-1 : tutoiement de salle.fin.quittePhrase ; a valider par le directeur",
+  "accessibilite.apres.prochaineDateHeure": "etape MA-APRES-1 : la prochaine seance porte l'heure (mineur de la revue MA-6, VERIF-MA-1)",
+  "accessibilite.apres.vide": "etape MA-APRES-1 : etat vide de l'ecran apres la seance (cinq etats, VERIF-MA-1) ; a valider par le directeur",
+  "accessibilite.apres.videVous": "etape MA-APRES-1 : etat vide, vouvoiement ; a valider par le directeur",
+  "accessibilite.apres.erreur": "etape MA-APRES-1 : etat d'erreur (ce qui manque, cause probable, quoi faire, K-57) ; a valider par le directeur",
+  "accessibilite.apres.erreurVous": "etape MA-APRES-1 : etat d'erreur, vouvoiement ; a valider par le directeur",
+  "accessibilite.apres.horsLigne": "etape MA-APRES-1 : etat hors ligne ; a valider par le directeur",
+  "accessibilite.apres.horsLigneVous": "etape MA-APRES-1 : etat hors ligne, vouvoiement ; a valider par le directeur"
 }
