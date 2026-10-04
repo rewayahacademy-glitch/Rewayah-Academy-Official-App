@@ -12,6 +12,7 @@ import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/finance/finances_profil.dart';
 import '../../core/foyer/selection_eleve.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/offres/offre_horaire.dart';
@@ -653,7 +654,7 @@ class _ListeMembres extends ConsumerWidget {
               key: FoyerPage.voirDetailKey(profil.eleveId),
               libelle: t.foyer.finances.voirDetail,
               libelleSemantique: t.foyer.finances.voirDetailSemantique(
-                prenom: profil.prenom,
+                dePrenom: deDevant(profil.prenom),
               ),
               onPress: () =>
                   aller(Routes.ficheEleveSousPage(profil.eleveId, 'finances')),

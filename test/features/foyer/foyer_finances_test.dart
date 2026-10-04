@@ -20,6 +20,7 @@ import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -301,7 +302,7 @@ void main() {
     final SemanticsHandle semantique = tester.ensureSemantics();
     expect(
       tester.getSemantics(lien).label,
-      t.foyer.finances.voirDetailSemantique(prenom: mariam.prenom),
+      t.foyer.finances.voirDetailSemantique(dePrenom: deDevant(mariam.prenom)),
     );
     semantique.dispose();
     expect(

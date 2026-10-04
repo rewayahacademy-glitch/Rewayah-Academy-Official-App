@@ -3756,8 +3756,8 @@ class Traductions$foyer$finances$fr {
 	/// fr: 'Voir le détail'
 	String get voirDetail => 'Voir le détail';
 
-	/// fr: 'Voir le détail des finances de {prenom}'
-	String voirDetailSemantique({required Object prenom}) => 'Voir le détail des finances de ${prenom}';
+	/// fr: 'Voir le détail des finances {dePrenom}'
+	String voirDetailSemantique({required Object dePrenom}) => 'Voir le détail des finances ${dePrenom}';
 
 	/// fr: 'Chaque enfant a un solde et une période financée individuels. Les accès sont liés à la période financée, pas simplement au solde.'
 	String get noteSoldes => 'Chaque enfant a un solde et une période financée individuels. Les accès sont liés à la période financée, pas simplement au solde.';
@@ -17816,7 +17816,7 @@ extension on Traductions {
 			'foyer.finances.rechargerPour' => ({required Object prenom}) => 'Recharger ${prenom}',
 			'foyer.finances.recharger' => 'Recharger',
 			'foyer.finances.voirDetail' => 'Voir le détail',
-			'foyer.finances.voirDetailSemantique' => ({required Object prenom}) => 'Voir le détail des finances de ${prenom}',
+			'foyer.finances.voirDetailSemantique' => ({required Object dePrenom}) => 'Voir le détail des finances ${dePrenom}',
 			'foyer.finances.noteSoldes' => 'Chaque enfant a un solde et une période financée individuels. Les accès sont liés à la période financée, pas simplement au solde.',
 			'foyer.finances.vueFinanciere' => 'Vue financière du foyer',
 			'foyer.finances.vueFinancierePeriode' => 'Ce mois-ci',

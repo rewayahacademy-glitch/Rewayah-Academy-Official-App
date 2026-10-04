@@ -893,7 +893,7 @@
       "rechargerPour": "Recharger {prenom}",
       "recharger": "Recharger",
       "voirDetail": "Voir le détail",
-      "voirDetailSemantique": "Voir le détail des finances de {prenom}",
+      "voirDetailSemantique": "Voir le détail des finances {dePrenom}",
       "noteSoldes": "Chaque enfant a un solde et une période financée individuels. Les accès sont liés à la période financée, pas simplement au solde.",
       "vueFinanciere": "Vue financière du foyer",
       "vueFinancierePeriode": "Ce mois-ci",
