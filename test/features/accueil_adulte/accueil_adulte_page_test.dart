@@ -483,6 +483,15 @@ void main() {
           ])
             rect(tester, f),
         ];
+        // BENTO-3b (m3 de BENTO-3-R) : la disposition vient bien de la
+        // grille, pas d'une colonne qui donnerait le meme ordre.
+        expect(
+          find.descendant(
+            of: find.byType(AccueilAdultePage),
+            matching: find.byType(GrilleBento),
+          ),
+          findsOneWidget,
+        );
         for (int i = 1; i < r.length; i++) {
           // Chaque tuile sous la precedente, avec au moins l'ecart de 16.
           expect(r[i].top, greaterThanOrEqualTo(r[i - 1].bottom));
@@ -509,7 +518,21 @@ void main() {
         final Rect p = rect(tester, parcours);
         final Rect d = rect(tester, dernieres);
         final Rect b = rect(tester, ressources);
+        // BENTO-3b (m3 de BENTO-3-R) : la disposition vient bien de la
+        // grille, pas d'une colonne qui donnerait le meme ordre.
+        expect(
+          find.descendant(
+            of: find.byType(AccueilAdultePage),
+            matching: find.byType(GrilleBento),
+          ),
+          findsOneWidget,
+        );
         expect(apres(s, a), isTrue, reason: '« Avant » apres la seance');
+        // Le parcours s'etend sous la seance ET sous « Avant » (etendue
+        // large), ce qu'aucune colonne ne donne.
+        bool sous(Rect haut) => p.left < haut.right && p.right > haut.left;
+        expect(sous(s), isTrue, reason: 'parcours sous la seance');
+        expect(sous(a), isTrue, reason: 'parcours sous « Avant »');
         expect(a.top, moreOrLessEquals(s.top, epsilon: 1));
         expect(p.top, greaterThan(math.max(s.bottom, a.bottom)));
         expect(d.top, greaterThan(p.bottom));
