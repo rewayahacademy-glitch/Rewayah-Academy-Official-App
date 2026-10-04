@@ -2,7 +2,10 @@
 ///
 /// **Quatre blocs, pas un de plus** (K-42) : la carte « Prochaine seance »,
 /// « Ma journee », « A terminer » (trois au plus) et « Alertes utiles », cette
-/// derniere rendue seulement quand elle n'est pas vide. Sur bureau, deux
+/// derniere rendue seulement quand elle n'est pas vide. La ligne
+/// « Communaute enseignants » (QUESTIONS Q2) n'est pas un bloc : son
+/// emplacement ([EntreeCommunaute], voie COM-COMU) est pose a la fin de « Ma
+/// journee », toujours rendu. Sur bureau, deux
 /// colonnes a partir de 840 de largeur utile divisee par le facteur de texte :
 /// a gauche ce qui vient (carte puis journee), a droite ce qui reste a faire.
 /// L'ordre de lecture reste celui du mobile.
@@ -78,6 +81,7 @@ import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/timeline_row.dart';
+import '../com_communaute/entree_communaute.dart';
 import '../tc_espace_groupe/carte_session.dart' show EmplacementEntreeVue;
 import 'absence_remplacement_vue.dart';
 
@@ -817,6 +821,10 @@ class _MaJournee extends StatelessWidget {
             ),
           ),
         ],
+        // Q2 (COM-F-b) : la ligne « Communaute enseignants », dans ce bloc
+        // toujours rendu, jamais un cinquieme bloc (K-42). Vide tant que
+        // COM-COMU-1 ne la remplit pas.
+        const EntreeCommunaute(ecartAvant: Ecart.vMd),
       ],
     );
   }

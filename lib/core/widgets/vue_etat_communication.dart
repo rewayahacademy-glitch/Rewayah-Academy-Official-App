@@ -9,13 +9,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../capacites/capacite_indisponible.dart';
-import '../../i18n/strings.g.dart';
-import '../../reseau/service_reseau.dart';
-import '../bloc_asynchrone.dart';
-import '../etat_systeme.dart';
-import '../offline_banner.dart';
-import '../skeleton.dart';
+import '../capacites/capacite_indisponible.dart';
+import '../i18n/strings.g.dart';
+import '../reseau/service_reseau.dart';
+import 'bloc_asynchrone.dart';
+import 'etat_systeme.dart';
+import 'offline_banner.dart';
+import 'skeleton.dart';
 
 /// Les etats qu'un ecran de communication rend hors de son contenu.
 enum EtatCommunication {

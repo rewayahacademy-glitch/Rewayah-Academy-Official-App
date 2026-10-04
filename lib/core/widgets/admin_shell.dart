@@ -452,7 +452,7 @@ class _Tiroir extends StatelessWidget {
                 child: LienFleche(
                   libelle: t.com.socle.navigation.studio,
                   libelleSemantique: t.com.socle.navigation.ouvrirStudio,
-                  icone: AppIcons.discussion,
+                  icone: AppIcons.studio,
                   onPress: () {
                     Navigator.of(context).pop();
                     ouvrir();
@@ -734,7 +734,7 @@ class _BoutonStudio extends StatelessWidget {
     message: t.com.socle.navigation.studio,
     excludeFromSemantics: true,
     child: _BoutonIcone(
-      icone: AppIcons.discussion.repos,
+      icone: AppIcons.studio.repos,
       libelle: t.com.socle.navigation.ouvrirStudio,
       onPress: onStudio,
     ),

@@ -14,6 +14,7 @@ import 'package:rewayah_academy/app.dart';
 import 'package:rewayah_academy/core/admin/admin_domaine.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/redirection.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -22,6 +23,7 @@ import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/sous_navigation_domaine.dart';
+import 'package:rewayah_academy/features/admin_tableau/tableau_de_bord_page.dart';
 import 'package:rewayah_academy/features/com_annonces/administration_communications_page.dart';
 import 'package:rewayah_academy/features/com_annonces/publier_annonce_classe_page.dart';
 import 'package:rewayah_academy/features/com_communaute/communaute_page.dart';
@@ -395,6 +397,73 @@ void main() {
       );
       expect(tester.takeException(), isNull);
     });
+
+    // COM-F-b (UX_REV-03) : la seconde entree reelle de COM-W04, avec la
+    // recherche. La racine Operations mene a Groupes, jamais ici.
+    testWidgets(
+      'tableau de bord : la ligne Communications, Operations allume',
+      (WidgetTester tester) async {
+        final GoRouter routeur = await _monterAdmin(tester, Routes.admin);
+        final Finder ligne = find.byKey(
+          const ValueKey<String>('tableau-communications'),
+        );
+        await tester.scrollUntilVisible(
+          ligne,
+          200,
+          scrollable: find
+              .descendant(
+                of: find.byType(TableauDeBordPage),
+                matching: find.byType(Scrollable),
+              )
+              .first,
+        );
+        await stabiliser(tester);
+        expect(
+          find.descendant(
+            of: ligne,
+            matching: find.text(t.com.socle.navigation.communications),
+          ),
+          findsOneWidget,
+        );
+        await tester.tap(ligne);
+        await stabiliser(tester);
+        expect(_chemin(routeur), Routes.adminCommunicationsAnnonces);
+        expect(find.byType(AdministrationCommunicationsPage), findsOneWidget);
+        final NavigationDrawer tiroir = tester.widget<NavigationDrawer>(
+          _dans(AdminShell.barreLateraleKey, find.byType(NavigationDrawer)),
+        );
+        expect(
+          tiroir.selectedIndex,
+          domainesAdmin(voitDirection: false).indexOf(AdminDomaine.operations),
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    // COM-F-b (02_DEC-01) : Le Studio a son icone ; il n'emprunte plus celle
+    // des Echanges du controleur.
+    for (final Size taille in <Size>[
+      const Size(1440, 900),
+      const Size(390, 844),
+    ]) {
+      testWidgets('${taille.width.toInt()} : Le Studio porte AppIcons.studio', (
+        WidgetTester tester,
+      ) async {
+        await _monterAdmin(tester, Routes.admin, taille: taille);
+        if (taille.width < 600) {
+          await tester.tap(find.bySemanticsLabel(t.nav.admin.menu));
+          await stabiliser(tester);
+        }
+        Finder icone(AppIcon i) => find.descendant(
+          of: find.byType(AdminShell),
+          matching: find.byWidgetPredicate(
+            (Widget w) => w is Icon && (w.icon == i.repos || w.icon == i.actif),
+          ),
+        );
+        expect(icone(AppIcons.studio), findsOneWidget);
+        expect(icone(AppIcons.discussion), findsNothing);
+      });
+    }
 
     testWidgets('la recherche de l en-tete trouve les Communications', (
       WidgetTester tester,

@@ -9,8 +9,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/communications/textes_fil_communication.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/widgets/communications/composer_texte.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 
 import '../../support/hote_theme.dart';
