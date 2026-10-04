@@ -69,5 +69,19 @@
   "eleve.accueil.erreurCours": "DASH_STRATEGIE.md annexe B (DASH-1, 02/10) « Vos cours n'ont pas pu être lus. Réessayez dans un instant. », au tutoiement de l'accueil eleve (eleve.accueil.*) ; code a l'etape DASH-ELV-ERR (04/10) ; format K-59 ; a faire valider par le directeur (DASH-LIB)",
   "controleur.compteRendu.visiteInconnue": "revue du directeur 10/2026, etape CTRL-MSG-1 (K-59) : seance inconnue apres rechargement, la cause vraie remplace « annulee ou confiee a un autre controleur » ; a valider par le directeur",
   "controleur.compteRendu.visiteInconnueAide": "revue du directeur 10/2026, etape CTRL-MSG-1 (K-59) : la cause, ce qui reste fiable (non confirme) et quoi faire, sous visiteInconnue ; a valider par le directeur",
-  "controleur.observation.echecSansTexte": "revue du directeur 10/2026, etape CTRL-MSG-1 (K-59) : echec d'envoi d'une observation sans texte, ne parle pas d'un texte garde ; a valider par le directeur"
+  "controleur.observation.echecSansTexte": "revue du directeur 10/2026, etape CTRL-MSG-1 (K-59) : echec d'envoi d'une observation sans texte, ne parle pas d'un texte garde ; a valider par le directeur",
+  "accessibilite.apres.quitteTitre": "etape MA-APRES-1 (decision A7 = a, un seul ecran de fin) : tutoiement de « Vous avez quitté la séance. » (salle.fin.quitteTitre) pour la mineure ; a valider par le directeur",
+  "accessibilite.apres.quittePhrase": "etape MA-APRES-1 : tutoiement de salle.fin.quittePhrase ; a valider par le directeur",
+  "accessibilite.apres.prochaineDateHeure": "etape MA-APRES-1 : la prochaine seance porte l'heure (mineur de la revue MA-6, VERIF-MA-1)",
+  "accessibilite.apres.vide": "etape MA-APRES-1 : etat vide de l'ecran apres la seance (cinq etats, VERIF-MA-1) ; a valider par le directeur",
+  "accessibilite.apres.videVous": "etape MA-APRES-1 : etat vide, vouvoiement ; a valider par le directeur",
+  "accessibilite.apres.erreur": "etape MA-APRES-1 : etat d'erreur (ce qui manque, cause probable, quoi faire, K-57) ; a valider par le directeur",
+  "accessibilite.apres.erreurVous": "etape MA-APRES-1 : etat d'erreur, vouvoiement ; a valider par le directeur",
+  "accessibilite.apres.horsLigne": "etape MA-APRES-1 : etat hors ligne ; a valider par le directeur",
+  "accessibilite.apres.horsLigneVous": "etape MA-APRES-1 : etat hors ligne, vouvoiement ; a valider par le directeur",
+  "accessibilite.accueil.salutation": "decision du directeur A3 = c du 27/09 (graphie courante « Assalamou alaykoum, {prenom}. »), etape MA-DEC-1",
+  "accessibilite.coran.reprendreVous": "decision du directeur A8 = a du 27/09 : vouvoiement (decision A4 = a) du libelle existant eleve.coran.reprendre « Reprendre ta lecture », etape MA-DEC-1",
+  "accessibilite.coran.reprendreDetailVous": "decision du directeur A8 = a du 27/09 : vouvoiement (decision A4 = a) du libelle existant eleve.coran.reprendreDetail « Tu en etais page {page} », etape MA-DEC-1",
+  "accessibilite.coran.indisponibleDetailVous": "etape MA-TUTOIEMENT-1 (decision A4 = a) : vouvoiement du libelle existant eleve.coran.indisponibleDetail dans le lecteur du Mode Accessibilite",
+  "accessibilite.coran.absentDetailVous": "etape MA-TUTOIEMENT-1 (decision A4 = a) : vouvoiement du libelle existant eleve.coran.absentDetail dans le lecteur du Mode Accessibilite"
 }

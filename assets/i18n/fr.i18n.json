@@ -650,7 +650,7 @@
       "etatApres": "Après la séance"
     },
     "accueil": {
-      "salutation": "As-salāmu ’alaykum, {prenom}.",
+      "salutation": "Assalamou alaykoum, {prenom}.",
       "prochaineSeance": "Prochaine séance",
       "avec": "avec {nomme}",
       "voirMaClasse": "Voir ma classe",
@@ -659,20 +659,15 @@
       "aide": "Besoin d'aide ?"
     },
     "coran": {
-      "ouvrir": "Ouvrir le Coran",
-      "reprendre": "Reprendre à ta dernière page",
-      "reprendreVous": "Reprendre à votre dernière page",
-      "reprendreDetail": "Tu en étais page {page}.",
-      "reprendreDetailVous": "Vous en étiez page {page}.",
-      "repriseRecherche": "Recherche de ta dernière page…",
-      "repriseRechercheVous": "Recherche de votre dernière page…",
+      "reprendreVous": "Reprendre votre lecture",
+      "reprendreDetailVous": "Vous en étiez page {page}",
       "repriseErreur": "Ta dernière page n'a pas pu être retrouvée, sans doute à cause de la connexion. Ouvre le Coran et choisis ta page dans le lecteur. Tes réglages de lecture restent enregistrés.",
       "repriseErreurVous": "Votre dernière page n'a pas pu être retrouvée, sans doute à cause de la connexion. Ouvrez le Coran et choisissez votre page dans le lecteur. Vos réglages de lecture restent enregistrés.",
-      "lectureGrande": "Le Coran s'ouvre en lecture agrandie, verset par verset.",
-      "retour": "Retour à l'entrée du Coran",
       "demoSansTexte": "Le texte du Coran n'est pas chargé dans la démonstration",
       "demoSansTexteDetail": "Ce n'est pas une panne : la démonstration ne contient pas le texte. Tu n'as rien à faire. Dans l'application, le Coran s'ouvre ici, à ta page, et tes réglages de lecture restent enregistrés.",
-      "demoSansTexteDetailVous": "Ce n'est pas une panne : la démonstration ne contient pas le texte. Vous n'avez rien à faire. Dans l'application, le Coran s'ouvre ici, à votre page, et vos réglages de lecture restent enregistrés."
+      "demoSansTexteDetailVous": "Ce n'est pas une panne : la démonstration ne contient pas le texte. Vous n'avez rien à faire. Dans l'application, le Coran s'ouvre ici, à votre page, et vos réglages de lecture restent enregistrés.",
+      "indisponibleDetailVous": "Dès que le réseau revient, votre page se rouvre ici.",
+      "absentDetailVous": "Le texte n'a pas été installé sur cette page. Signalez-le : ce n'est pas vous."
     },
     "maClasse": {
       "titre": "Ma classe",
@@ -691,7 +686,16 @@
     "apres": {
       "revoirSupport": "Revoir le support du cours",
       "revoirSupportDetail": "Le support reste dans ta Classe.",
-      "revoirSupportDetailVous": "Le support reste dans votre Classe."
+      "revoirSupportDetailVous": "Le support reste dans votre Classe.",
+      "quitteTitre": "Tu as quitté la séance.",
+      "quittePhrase": "Tu pourras revenir tant qu'elle reste ouverte.",
+      "prochaineDateHeure": "{date} à {heure}",
+      "vide": "Ta prochaine séance n'est pas encore programmée. Elle s'affichera ici et dans ta Classe.",
+      "videVous": "Votre prochaine séance n'est pas encore programmée. Elle s'affichera ici et dans votre Classe.",
+      "erreur": "Ta prochaine séance et ton travail n'ont pas pu être chargés, sans doute à cause de la connexion. Réessaie, ou retrouve-les dans ta Classe.",
+      "erreurVous": "Votre prochaine séance et votre travail n'ont pas pu être chargés, sans doute à cause de la connexion. Réessayez, ou retrouvez-les dans votre Classe.",
+      "horsLigne": "Tu es hors ligne : ta prochaine séance et ton travail s'afficheront quand la connexion reviendra.",
+      "horsLigneVous": "Vous êtes hors ligne : votre prochaine séance et votre travail s'afficheront quand la connexion reviendra."
     },
     "monEspace": {
       "titre": "Mon espace",

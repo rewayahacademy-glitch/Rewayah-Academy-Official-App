@@ -10,6 +10,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
@@ -91,7 +92,9 @@ class AccueilAccessibilite extends StatelessWidget {
 
     final Widget salutation = Semantics(
       header: true,
-      child: Text(
+      // MA-DEC-1 (A3 = c) : « Assalamou alaykoum » passe a la ligne entre
+      // ses mots, jamais dans un mot (320 px a 200 %, COUPE-MOTS-1).
+      child: TexteSansCoupure(
         t.accessibilite.accueil.salutation(prenom: prenom),
         style: palette.inkStrong.applyTo(
           textes.headlineSmall ?? const TextStyle(),

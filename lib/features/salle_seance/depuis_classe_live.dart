@@ -8,6 +8,7 @@
 
 import 'dart:math' as math;
 
+import '../../core/accessibilite/age_eleve.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
@@ -36,6 +37,7 @@ abstract final class DepuisClasseLive {
     List<AnnonceObservation> annonces = const <AnnonceObservation>[],
     SupportSeance? support,
     PanneauOuvert panneau = PanneauOuvert.aucun,
+    AgeEleve age = AgeEleve.inconnu,
   }) {
     final RoleSeance? role = RoleSeance.resoudre(salle.role, mode);
     if (role == null) return null;
@@ -87,6 +89,9 @@ abstract final class DepuisClasseLive {
       elevesConnus: roster.disponible,
       panneau: enseignant ? panneau : PanneauOuvert.aucun,
       groupeId: groupeId,
+      // MA-TUTOIEMENT-1 : le registre suit l'age, jamais la presentation ;
+      // un age inconnu (avant BR-1) vouvoie.
+      tutoiement: age.tutoiement,
     );
   }
 
