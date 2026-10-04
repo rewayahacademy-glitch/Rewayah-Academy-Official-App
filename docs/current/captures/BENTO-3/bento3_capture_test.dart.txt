@@ -80,7 +80,12 @@ void main() {
           final String nom =
               '${l.toInt()}${e == 1 ? '' : 'x2'}_'
               '${m == ThemeMode.light ? 'clair' : 'sombre'}';
-          final Size vue = Size(l, l < 600 ? 2600 : 1500);
+          // BENTO-3b (m1 de BENTO-3-R) : vue assez haute pour « Ressources de la
+          // classe » a texte double.
+          final Size vue = Size(
+            l,
+            l < 600 ? (e == 2 ? 4400 : 2600) : (e == 2 ? 2800 : 1500),
+          );
           for (final MapEntry<String, String> ecran in ecrans.entries) {
             testWidgets('${ecran.key} $nom', (WidgetTester tester) async {
               fixerVueCapture(tester, vue, 1);
