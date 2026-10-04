@@ -207,14 +207,13 @@ class _CoranAccessibiliteEtat extends ConsumerState<CoranAccessibilite> {
     final TextTheme textes = Theme.of(context).textTheme;
     final bool tu = widget.tutoiement;
     final PositionLecture? reprise = _reprise;
-    final bool grande =
-        widget.lectureGrande ??
-        ref.watch(
-          preferencesLocalesProvider.select(
-            (PreferencesLocales p) => p.lectureGrande,
-          ),
-        );
+    final bool recherche = _etatReprise == EtatRepriseCoran.recherche;
 
+    // MA-DEC-1 (decision A8 = a du 27/09) : les libelles existants sont
+    // reutilises, rien n'est ajoute. « Reprendre ta lecture » et « Tu en
+    // etais page {page} » sont ceux du Coran standard (`MushafPage`) ;
+    // « Lire le Coran » est le nom de la meme action a l'Accueil (MA9) ;
+    // « Chargement » et « Retour » sont communs.
     return PageShell(
       key: const ValueKey<String>('coran-ma-entree'),
       titre: t.eleve.coran.titre,
@@ -228,17 +227,14 @@ class _CoranAccessibiliteEtat extends ConsumerState<CoranAccessibilite> {
               liveRegion: true,
               child: Text(
                 switch (_etatReprise) {
-                  EtatRepriseCoran.recherche =>
-                    tu
-                        ? t.accessibilite.coran.repriseRecherche
-                        : t.accessibilite.coran.repriseRechercheVous,
+                  EtatRepriseCoran.recherche => t.commun.chargement,
                   EtatRepriseCoran.echec =>
                     tu
                         ? t.accessibilite.coran.repriseErreur
                         : t.accessibilite.coran.repriseErreurVous,
                   EtatRepriseCoran.connue =>
                     tu
-                        ? t.accessibilite.coran.reprendreDetail(
+                        ? t.eleve.coran.reprendreDetail(
                             page: '${reprise?.page}',
                           )
                         : t.accessibilite.coran.reprendreDetailVous(
@@ -253,31 +249,23 @@ class _CoranAccessibiliteEtat extends ConsumerState<CoranAccessibilite> {
             ),
             const SizedBox(height: AppSpacing.md),
           ],
-          Align(
-            alignment: AlignmentDirectional.centerEnd,
-            child: ActionPrincipale(
-              key: const ValueKey<String>('coran-ma-principale'),
-              libelle: reprise == null
-                  ? t.accessibilite.coran.ouvrir
-                  : tu
-                  ? t.accessibilite.coran.reprendre
-                  : t.accessibilite.coran.reprendreVous,
-              pleineLargeur: false,
-              // Pas cliquable avant l'arrivee de la reprise (revue MA-7).
-              onPress: _etatReprise == EtatRepriseCoran.recherche
-                  ? null
-                  : _ouvrir,
-            ),
-          ),
-          if (grande) ...<Widget>[
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              t.accessibilite.coran.lectureGrande,
-              style: palette.inkMuted.applyTo(
-                textes.bodyMedium ?? const TextStyle(),
+          // Pas d'action avant l'arrivee de la reprise (revue MA-7), et jamais
+          // de bouton grise (K-54) : pendant la lecture, seule la ligne
+          // « Chargement » est montree, au plus le delai de reprise.
+          if (!recherche)
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: ActionPrincipale(
+                key: const ValueKey<String>('coran-ma-principale'),
+                libelle: reprise == null
+                    ? t.accessibilite.accueil.lireCoran
+                    : tu
+                    ? t.eleve.coran.reprendre
+                    : t.accessibilite.coran.reprendreVous,
+                pleineLargeur: false,
+                onPress: _ouvrir,
               ),
             ),
-          ],
           const SizedBox(height: AppSpacing.xxl),
           GroupeReglages(
             lignes: <LigneRubrique>[
@@ -628,7 +616,7 @@ class EnteteLecteurCoranAccessibilite extends StatelessWidget {
             _BoutonIcone(
               key: const ValueKey<String>('coran-ma-retour'),
               icone: AppIcons.retour,
-              libelle: t.accessibilite.coran.retour,
+              libelle: t.commun.retour,
               onPress: retour,
               disque: false,
             ),

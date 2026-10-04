@@ -648,7 +648,7 @@
       "etatApres": "Après la séance"
     },
     "accueil": {
-      "salutation": "As-salāmu ’alaykum, {prenom}.",
+      "salutation": "Assalamou alaykoum, {prenom}.",
       "prochaineSeance": "Prochaine séance",
       "avec": "avec {nomme}",
       "voirMaClasse": "Voir ma classe",
@@ -657,17 +657,10 @@
       "aide": "Besoin d'aide ?"
     },
     "coran": {
-      "ouvrir": "Ouvrir le Coran",
-      "reprendre": "Reprendre à ta dernière page",
-      "reprendreVous": "Reprendre à votre dernière page",
-      "reprendreDetail": "Tu en étais page {page}.",
-      "reprendreDetailVous": "Vous en étiez page {page}.",
-      "repriseRecherche": "Recherche de ta dernière page…",
-      "repriseRechercheVous": "Recherche de votre dernière page…",
+      "reprendreVous": "Reprendre votre lecture",
+      "reprendreDetailVous": "Vous en étiez page {page}",
       "repriseErreur": "Ta dernière page n'a pas pu être retrouvée, sans doute à cause de la connexion. Ouvre le Coran et choisis ta page dans le lecteur. Tes réglages de lecture restent enregistrés.",
       "repriseErreurVous": "Votre dernière page n'a pas pu être retrouvée, sans doute à cause de la connexion. Ouvrez le Coran et choisissez votre page dans le lecteur. Vos réglages de lecture restent enregistrés.",
-      "lectureGrande": "Le Coran s'ouvre en lecture agrandie, verset par verset.",
-      "retour": "Retour à l'entrée du Coran",
       "demoSansTexte": "Le texte du Coran n'est pas chargé dans la démonstration",
       "demoSansTexteDetail": "Ce n'est pas une panne : la démonstration ne contient pas le texte. Tu n'as rien à faire. Dans l'application, le Coran s'ouvre ici, à ta page, et tes réglages de lecture restent enregistrés.",
       "demoSansTexteDetailVous": "Ce n'est pas une panne : la démonstration ne contient pas le texte. Vous n'avez rien à faire. Dans l'application, le Coran s'ouvre ici, à votre page, et vos réglages de lecture restent enregistrés."

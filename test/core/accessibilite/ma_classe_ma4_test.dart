@@ -82,6 +82,13 @@ void _attendrePile(WidgetTester tester) {
   );
 }
 
+/// MA-DEC-1 (decision A5 = a du 27/09) : l'eleve voit sa progression, pas
+/// le nombre de places (« 3 eleves sur 6 places »).
+void _attendreProgressionSansPlaces() {
+  expect(find.textContaining('places'), findsNothing);
+  expect(find.textContaining('Progression'), findsWidgets);
+}
+
 void main() {
   for (final double echelle in <double>[1, 2]) {
     testWidgets(
@@ -110,6 +117,7 @@ void main() {
         expect(find.text(LibellesGroupe.rejoindre), findsNothing);
         // Tutoiement de l'eleve mineure (MA4).
         expect(find.text(t.accessibilite.tutoiement.tonHeure), findsWidgets);
+        _attendreProgressionSansPlaces();
 
         // L'action de la page : le Suivi reste atteignable.
         final Finder suivi = find.text(t.accessibilite.maClasse.suivi);
@@ -136,6 +144,7 @@ void main() {
     );
     expect(find.text(t.accessibilite.tutoiement.tonHeure), findsNothing);
     _attendrePile(tester);
+    _attendreProgressionSansPlaces();
   });
 
   testWidgets('hors Mode Accessibilite a 100 % : identite en ligne '
@@ -182,5 +191,8 @@ void main() {
       tester.getTopLeft(find.text(DonneesAccessibiliteDemo.classe)).dy,
       lessThan(tester.getTopLeft(photo).dy),
     );
+    // Hors Mode Accessibilite, la pastille des places reste (A5 ne vise que
+    // l'eleve en Mode Accessibilite).
+    expect(find.textContaining('places'), findsOneWidget);
   });
 }

@@ -127,19 +127,20 @@ void main() {
           EcranAccessibiliteDemo.indexCoran,
         );
         // Une seule action dominante ; la demonstration ne connait aucune
-        // position : « Ouvrir le Coran ».
+        // position : « Lire le Coran », le nom de la meme action a l'Accueil
+        // (MA-DEC-1, decision A8 = a : libelles existants, rien d'ajoute).
         final Finder action = find.byKey(_principale);
         expect(action, findsOneWidget);
         expect(
-          find.descendant(
-            of: action,
-            matching: find.text(t.accessibilite.coran.ouvrir),
-          ),
+          find.descendant(of: action, matching: find.text('Lire le Coran')),
           findsOneWidget,
         );
+        expect(find.text('Ouvrir le Coran'), findsNothing);
         expect(
-          find.text(t.accessibilite.coran.lectureGrande),
-          grande ? findsOneWidget : findsNothing,
+          find.text(
+            'Le Coran s\'ouvre en lecture agrandie, verset par verset.',
+          ),
+          findsNothing,
         );
         expect(find.text(t.accessibilite.accueil.aide), findsOneWidget);
         await tester.tap(action);
@@ -161,7 +162,7 @@ void main() {
         expect(find.text(t.eleve.coran.reessayer), findsNothing);
         expect(find.byType(LecteurCoranAccessibilite), findsNothing);
         // Retour a l'entree (MA-CMD-1 : icone seule, trouvee par son nom).
-        await tester.tap(find.byTooltip(t.accessibilite.coran.retour));
+        await tester.tap(find.byTooltip(t.commun.retour));
         await poser(tester);
         expect(find.byKey(_principale), findsOneWidget);
         expect(tester.takeException(), isNull);
@@ -188,9 +189,12 @@ void main() {
         ),
       );
       await poser(tester);
+      // MA-DEC-1 (A8 = a) : le libelle existant du Coran standard
+      // (« Reprendre ta lecture »), vouvoye pour l'adulte (A4 = a).
       final String libelle = tu
-          ? t.accessibilite.coran.reprendre
-          : t.accessibilite.coran.reprendreVous;
+          ? 'Reprendre ta lecture'
+          : 'Reprendre votre lecture';
+      if (tu) expect(libelle, t.eleve.coran.reprendre);
       expect(
         find.descendant(
           of: find.byKey(_principale),
@@ -199,11 +203,7 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text(
-          tu
-              ? t.accessibilite.coran.reprendreDetail(page: '$page')
-              : t.accessibilite.coran.reprendreDetailVous(page: '$page'),
-        ),
+        find.text(tu ? 'Tu en étais page $page' : 'Vous en étiez page $page'),
         findsOneWidget,
       );
       await tester.tap(find.byKey(_principale));
@@ -393,8 +393,8 @@ void main() {
         tester.getRect(find.byType(CommandesMasquables)).bottom,
       );
       // L'en-tete : le retour en icone seule, sans libelle visible.
-      expect(find.text(t.accessibilite.coran.retour), findsNothing);
-      expect(find.byTooltip(t.accessibilite.coran.retour), findsOneWidget);
+      expect(find.text(t.commun.retour), findsNothing);
+      expect(find.byTooltip(t.commun.retour), findsOneWidget);
       expect(find.text(t.eleve.coran.pageSuivante), findsNothing);
 
       double opacite() => tester
@@ -506,7 +506,7 @@ void main() {
         expect(boite.bottom, lessThanOrEqualTo(cadre.bottom));
         // Le retour reste atteignable, et l'en-tete ne grossit pas au-dela
         // d'une rangee de cible tactile et de ses marges.
-        expect(find.byTooltip(t.accessibilite.coran.retour), findsOneWidget);
+        expect(find.byTooltip(t.commun.retour), findsOneWidget);
         expect(
           cadre.height,
           lessThanOrEqualTo(
@@ -631,7 +631,7 @@ void main() {
         await tester.pump(CommandesMasquables.delaiParDefaut);
         await tester.pump(const Duration(seconds: 1));
         expect(find.byKey(NavShell.barreBasseKey), findsNothing);
-        await tester.tap(find.byTooltip(t.accessibilite.coran.retour));
+        await tester.tap(find.byTooltip(t.commun.retour));
         await poser(tester);
         expect(find.byKey(_principale), findsOneWidget);
         expect(find.byKey(NavShell.barreBasseKey), findsOneWidget);
