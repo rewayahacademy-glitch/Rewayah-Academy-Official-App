@@ -143,6 +143,8 @@ const List<String> composantsDuCatalogue = <String>[
   'SelecteurPersonne',
   // FORM-L4 : le champ date a choisir dans un calendrier, jamais a taper.
   'ChampDate',
+  // FORM-CORR-1 : l'etiquette d'un champ de texte passe a la ligne.
+  'ChampEtiquete',
 ];
 
 /// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.

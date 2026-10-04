@@ -13,6 +13,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/champ_date.dart';
+import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
@@ -565,12 +566,10 @@ class _FeuilleResultatEtat extends State<_FeuilleResultat> {
             ],
           ),
           Ecart.vMd,
-          TextField(
+          ChampEtiquete(
+            libelle: t.admin.evaluations.champNotes,
             controller: _notes,
             maxLines: 2,
-            decoration: InputDecoration(
-              labelText: t.admin.evaluations.champNotes,
-            ),
           ),
           if (_erreur != null) ...<Widget>[
             Ecart.vMd,

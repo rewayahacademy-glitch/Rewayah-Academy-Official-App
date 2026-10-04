@@ -13,6 +13,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/champ_date.dart';
+import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
@@ -291,7 +292,8 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          TextField(
+          ChampEtiquete(
+            libelle: t.admin.agents.libelle,
             controller: _libelle,
             onChanged: (String texte) => setState(() {
               // Vider le champ rend la main a la proposition automatique.
@@ -299,11 +301,11 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
               _erreurFormulaire = null;
             }),
             textCapitalization: TextCapitalization.sentences,
-            decoration: InputDecoration(
-              labelText: t.admin.agents.libelle,
-              helperText: t.admin.agents.libelleAide,
-              hintText: t.admin.agents.libelleExemple,
-            ),
+            // Le libelle prerempli (« Observation de ..., le ..., 24 h ») est long :
+            // il passe a la ligne au lieu de se couper (FORM-MINEURS).
+            maxLines: 6,
+            aide: t.admin.agents.libelleAide,
+            indice: t.admin.agents.libelleExemple,
           ),
           Ecart.vXxl,
 
@@ -315,7 +317,10 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
             controller: _recherche,
             onChanged: (String _) => setState(() {}),
             decoration: InputDecoration(
-              labelText: t.admin.agents.chercher,
+              // Une indication sur plusieurs lignes, pas une etiquette qui se
+              // coupe a 320 en texte x2 (FORM-MINEURS).
+              hintText: t.admin.agents.chercher,
+              hintMaxLines: 6,
               prefixIcon: Icon(AppIcons.dossiers.repos),
             ),
           ),

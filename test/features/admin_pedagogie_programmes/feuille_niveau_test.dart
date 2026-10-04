@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/service_programme.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/widgets/champ_etiquete.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_programmes/programmes_page.dart';
 
@@ -130,10 +131,33 @@ Future<void> _ouvrir(WidgetTester tester, _Faux service, Size cadre) async {
 
 String _ordre(WidgetTester tester) => tester
     .widget<TextField>(
-      find.widgetWithText(TextField, t.admin.programmes.champOrdre),
+      find.descendant(
+        of: find.widgetWithText(ChampEtiquete, t.admin.programmes.champOrdre),
+        matching: find.byType(TextField),
+      ),
     )
     .controller!
     .text;
+
+/// Fait defiler la feuille jusqu'au bouton d'envoi : avec les etiquettes au
+/// dessus des champs (FORM-CORR-1), le formulaire depasse un ecran de 390 x 844.
+Future<void> _envoyer(WidgetTester tester, String libelle) async {
+  final Element defilant = find
+      .ancestor(of: find.text(libelle), matching: find.byType(Scrollable))
+      .first
+      .evaluate()
+      .single;
+  final ScrollPosition position =
+      ((defilant as StatefulElement).state as ScrollableState).position;
+  // Le champ qui a le focus ramene sa frappe a l'ecran : sans lacher le focus,
+  // la feuille revient en haut juste apres le defilement.
+  FocusManager.instance.primaryFocus?.unfocus();
+  await tester.pumpAndSettle();
+  position.jumpTo(position.maxScrollExtent);
+  await tester.pumpAndSettle();
+  await tester.tap(find.text(libelle));
+  await tester.pumpAndSettle();
+}
 
 /// FORM-L5 : cycle en puces, ordre deduit, code genere depuis le nom.
 void main() {
@@ -165,7 +189,13 @@ void main() {
       expect(find.text(t.admin.programmes.nouveauCycle), findsOneWidget);
       // Pas de saisie libre du cycle tant qu'on n'ouvre pas « Nouveau cycle ».
       expect(
-        find.widgetWithText(TextField, t.admin.programmes.champNouveauCycle),
+        find.descendant(
+          of: find.widgetWithText(
+            ChampEtiquete,
+            t.admin.programmes.champNouveauCycle,
+          ),
+          matching: find.byType(TextField),
+        ),
         findsNothing,
       );
       // Cycle propose : celui du dernier niveau, ordre = 5 + 1.
@@ -186,7 +216,13 @@ void main() {
 
       // Le code se genere depuis le nom, sans champ code a remplir.
       await tester.enterText(
-        find.widgetWithText(TextField, t.admin.programmes.champNomHumain),
+        find.descendant(
+          of: find.widgetWithText(
+            ChampEtiquete,
+            t.admin.programmes.champNomHumain,
+          ),
+          matching: find.byType(TextField),
+        ),
         'Éléments de Tajwîd',
       );
       await tester.pumpAndSettle();
@@ -195,12 +231,17 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.widgetWithText(TextField, t.admin.programmes.champCodeTechnique),
+        find.descendant(
+          of: find.widgetWithText(
+            ChampEtiquete,
+            t.admin.programmes.champCodeTechnique,
+          ),
+          matching: find.byType(TextField),
+        ),
         findsNothing,
       );
 
-      await tester.tap(find.text(t.admin.programmes.ajouterNiveauEnvoyer));
-      await tester.pumpAndSettle();
+      await _envoyer(tester, t.admin.programmes.ajouterNiveauEnvoyer);
       expect(service.ajouts, hasLength(1));
       expect(service.ajouts.single, <String, Object?>{
         'code': 'elements-de-tajwid',
@@ -220,20 +261,37 @@ void main() {
       await tester.tap(find.text(t.admin.programmes.nouveauCycle));
       await tester.pumpAndSettle();
       expect(
-        find.widgetWithText(TextField, t.admin.programmes.champNouveauCycle),
+        find.descendant(
+          of: find.widgetWithText(
+            ChampEtiquete,
+            t.admin.programmes.champNouveauCycle,
+          ),
+          matching: find.byType(TextField),
+        ),
         findsOneWidget,
       );
       expect(_ordre(tester), '6');
       await tester.enterText(
-        find.widgetWithText(TextField, t.admin.programmes.champNouveauCycle),
+        find.descendant(
+          of: find.widgetWithText(
+            ChampEtiquete,
+            t.admin.programmes.champNouveauCycle,
+          ),
+          matching: find.byType(TextField),
+        ),
         'Avance',
       );
       await tester.enterText(
-        find.widgetWithText(TextField, t.admin.programmes.champNomHumain),
+        find.descendant(
+          of: find.widgetWithText(
+            ChampEtiquete,
+            t.admin.programmes.champNomHumain,
+          ),
+          matching: find.byType(TextField),
+        ),
         'Waqf',
       );
-      await tester.tap(find.text(t.admin.programmes.ajouterNiveauEnvoyer));
-      await tester.pumpAndSettle();
+      await _envoyer(tester, t.admin.programmes.ajouterNiveauEnvoyer);
       expect(service.ajouts.single['cycle'], 'Avance');
       expect(service.ajouts.single['code'], 'waqf');
     });
@@ -247,17 +305,28 @@ void main() {
       await tester.tap(find.text(t.admin.programmes.ajouterNiveau));
       await tester.pumpAndSettle();
       await tester.enterText(
-        find.widgetWithText(TextField, t.admin.programmes.champNomHumain),
+        find.descendant(
+          of: find.widgetWithText(
+            ChampEtiquete,
+            t.admin.programmes.champNomHumain,
+          ),
+          matching: find.byType(TextField),
+        ),
         'Lettres',
       );
       await tester.tap(find.text(t.admin.programmes.codeModifier));
       await tester.pumpAndSettle();
       expect(
-        find.widgetWithText(TextField, t.admin.programmes.champCodeTechnique),
+        find.descendant(
+          of: find.widgetWithText(
+            ChampEtiquete,
+            t.admin.programmes.champCodeTechnique,
+          ),
+          matching: find.byType(TextField),
+        ),
         findsOneWidget,
       );
-      await tester.tap(find.text(t.admin.programmes.ajouterNiveauEnvoyer));
-      await tester.pumpAndSettle();
+      await _envoyer(tester, t.admin.programmes.ajouterNiveauEnvoyer);
       expect(find.textContaining('pas été confirmé'), findsOneWidget);
       expect(find.textContaining('modifiez-le'), findsOneWidget);
       expect(service.ajouts, isEmpty);
@@ -269,8 +338,7 @@ void main() {
       await _ouvrir(tester, service, cadre);
       await tester.tap(find.text(t.admin.programmes.ajouterNiveau));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.admin.programmes.ajouterNiveauEnvoyer));
-      await tester.pumpAndSettle();
+      await _envoyer(tester, t.admin.programmes.ajouterNiveauEnvoyer);
       expect(
         find.text(
           t.admin.programmes.manque(
@@ -300,8 +368,7 @@ void main() {
     await tester.tap(find.widgetWithText(FilterPill, 'Intermediaire').last);
     await tester.pumpAndSettle();
     expect(_ordre(tester), '6');
-    await tester.tap(find.text(t.admin.programmes.modifierNiveauEnvoyer));
-    await tester.pumpAndSettle();
+    await _envoyer(tester, t.admin.programmes.modifierNiveauEnvoyer);
     expect(service.modifications.single, <String, Object?>{
       'id': 'a',
       'cycle': 'Intermediaire',

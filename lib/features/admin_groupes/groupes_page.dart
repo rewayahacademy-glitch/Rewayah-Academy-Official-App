@@ -11,6 +11,7 @@ import '../../core/planning/service_planning.dart' show Creneau;
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
+import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
@@ -505,31 +506,27 @@ class _FeuilleCreationEtat extends State<_FeuilleCreation> {
           Row(
             children: <Widget>[
               Expanded(
-                child: TextField(
+                child: ChampEtiquete(
+                  libelle: t.admin.groupes.champJour,
                   controller: _jour,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: t.admin.groupes.champJour,
-                  ),
                 ),
               ),
               Ecart.hMd,
               Expanded(
-                child: TextField(
+                child: ChampEtiquete(
+                  libelle: t.admin.groupes.champHeure,
                   controller: _heure,
                   keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: t.admin.groupes.champHeure,
-                  ),
                 ),
               ),
             ],
           ),
           Ecart.vMd,
-          TextField(
+          ChampEtiquete(
+            libelle: t.admin.groupes.champSeuil,
             controller: _seuil,
             keyboardType: TextInputType.number,
-            decoration: InputDecoration(labelText: t.admin.groupes.champSeuil),
           ),
           if (_erreur != null) ...<Widget>[
             Ecart.vMd,

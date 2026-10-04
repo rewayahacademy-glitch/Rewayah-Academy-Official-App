@@ -32,6 +32,7 @@ import '../../../core/widgets/bouton_outil.dart';
 import '../../../core/widgets/carte_groupee.dart';
 import '../../../core/widgets/carte_lignes.dart';
 import '../../../core/widgets/champ_date.dart';
+import '../../../core/widgets/champ_etiquete.dart';
 import '../../../core/widgets/child_card.dart';
 import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/commande_salle.dart';
@@ -2187,6 +2188,33 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             valeur: DateTime(2026, 10, 12),
             onChoix: _dateIgnoree,
             aujourdhui: DateTime(2026, 10, 4),
+          ),
+        ),
+      ),
+    ],
+  ),
+  // FORM-CORR-1 : un champ de texte a etiquette au-dessus, sur plusieurs lignes.
+  EntreeGalerie(
+    nom: 'ChampEtiquete',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'vide, etiquette longue',
+        (BuildContext _) => _surfaceMaterielle(
+          ChampEtiquete(
+            libelle: 'Description du niveau (facultative, une phrase)',
+            controller: TextEditingController(),
+            maxLines: 2,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'rempli, aide',
+        (BuildContext _) => _surfaceMaterielle(
+          ChampEtiquete(
+            libelle: 'Nom du nouveau cycle',
+            controller: TextEditingController(text: 'Avance'),
+            aide: 'Une phrase sous le champ.',
           ),
         ),
       ),

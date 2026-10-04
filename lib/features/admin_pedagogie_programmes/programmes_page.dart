@@ -9,6 +9,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/bouton_icone.dart';
+import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
@@ -727,26 +728,22 @@ class _FeuilleNiveauEtat extends State<_FeuilleNiveau> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        TextField(
+        ChampEtiquete(
+          libelle: t.admin.programmes.champNomHumain,
           controller: _nomHumain,
           onChanged: (String nom) => setState(() {
             if (widget.avecCodeTechnique && !_codeManuel) {
               _codeTechnique.text = codeDepuisNom(nom);
             }
           }),
-          decoration: InputDecoration(
-            labelText: t.admin.programmes.champNomHumain,
-          ),
         ),
         Ecart.vMd,
         if (widget.avecCodeTechnique) ...<Widget>[
           if (_codeAffiche)
-            TextField(
+            ChampEtiquete(
+              libelle: t.admin.programmes.champCodeTechnique,
               controller: _codeTechnique,
               onChanged: (String _) => setState(() => _codeManuel = true),
-              decoration: InputDecoration(
-                labelText: t.admin.programmes.champCodeTechnique,
-              ),
             )
           else ...<Widget>[
             if (_codeTechnique.text.isNotEmpty)
@@ -788,12 +785,10 @@ class _FeuilleNiveauEtat extends State<_FeuilleNiveau> {
         ),
         if (_nouveauCycle) ...<Widget>[
           Ecart.vMd,
-          TextField(
+          ChampEtiquete(
+            libelle: t.admin.programmes.champNouveauCycle,
             controller: _cycle,
             onChanged: (String _) => setState(() {}),
-            decoration: InputDecoration(
-              labelText: t.admin.programmes.champNouveauCycle,
-            ),
           ),
         ],
         Ecart.vMd,
@@ -807,14 +802,12 @@ class _FeuilleNiveauEtat extends State<_FeuilleNiveau> {
             ),
             Ecart.hSm,
             Expanded(
-              child: TextField(
+              child: ChampEtiquete(
+                libelle: t.admin.programmes.champOrdre,
                 controller: _ordre,
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
                 onChanged: (String _) => setState(() {}),
-                decoration: InputDecoration(
-                  labelText: t.admin.programmes.champOrdre,
-                ),
               ),
             ),
             Ecart.hSm,
@@ -831,12 +824,10 @@ class _FeuilleNiveauEtat extends State<_FeuilleNiveau> {
           style: Theme.of(context).textTheme.bodySmall,
         ),
         Ecart.vMd,
-        TextField(
+        ChampEtiquete(
+          libelle: t.admin.programmes.champDescription,
           controller: _description,
           maxLines: 2,
-          decoration: InputDecoration(
-            labelText: t.admin.programmes.champDescription,
-          ),
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,

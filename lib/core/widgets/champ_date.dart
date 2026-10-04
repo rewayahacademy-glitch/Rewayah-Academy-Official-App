@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../i18n/strings.g.dart';
+import '../theme/app_radius.dart';
+import 'pressable.dart';
 
 /// L'heure que les formulaires lisent pour borner une date a venir.
 ///
@@ -65,13 +67,16 @@ class ChampDate extends StatelessWidget {
       firstDate: premierJour,
       lastDate: dernierJour,
       helpText: libelle,
-      // L'en-tete du calendrier de Material a une hauteur fixe : a 320 de large
-      // et texte a 200 %, la date y deborde de 36 points. On plafonne le texte
-      // du seul calendrier a 150 % ; le champ, lui, suit le reglage en entier.
+      // Le calendrier de Material a des cellules et un en-tete de taille
+      // fixe : a 320 de large, des 150 % le jour 20 passe sur deux lignes et
+      // « dim. 4 octobre » est tronque (mesure FORM-CORR-1). On plafonne donc
+      // le texte du seul calendrier a 100 % sous 360 de large et a 150 %
+      // au-dela ; le champ, lui, suit le reglage en entier.
       builder: (BuildContext contexte, Widget? dialogue) => MediaQuery(
         data: MediaQuery.of(contexte).copyWith(
-          textScaler: MediaQuery.textScalerOf(contexte)
-              .clamp(maxScaleFactor: 1.5),
+          textScaler: MediaQuery.textScalerOf(contexte).clamp(
+            maxScaleFactor: MediaQuery.sizeOf(contexte).width < 360 ? 1.0 : 1.5,
+          ),
         ),
         child: dialogue ?? const SizedBox.shrink(),
       ),
@@ -84,20 +89,20 @@ class ChampDate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DateTime? jour = valeur;
-    return Semantics(
-      button: true,
-      child: InkWell(
-        key: const ValueKey<String>('champ-date'),
-        onTap: () => _ouvrir(context),
-        child: InputDecorator(
-          decoration: InputDecoration(
-            labelText: libelle,
-            helperText: t.commun.champDate.aide,
-          ),
-          child: Text(
-            jour == null ? t.commun.champDate.choisir : ecrire(jour),
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
+    return Pressable(
+      key: const ValueKey<String>('champ-date'),
+      onPress: () => _ouvrir(context),
+      libelleSemantique: libelle,
+      arrondiFocus: AppRadius.arrondiSm,
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: libelle,
+          helperText: t.commun.champDate.aide,
+          helperMaxLines: 3,
+        ),
+        child: Text(
+          jour == null ? t.commun.champDate.choisir : ecrire(jour),
+          style: Theme.of(context).textTheme.bodyLarge,
         ),
       ),
     );
