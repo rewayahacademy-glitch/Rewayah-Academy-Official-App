@@ -18,6 +18,7 @@ import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../compte/carte_rubriques.dart';
@@ -191,6 +192,9 @@ class _Contenu extends ConsumerWidget {
                   LigneCleValeur(
                     cle: t.historique.observation.enseignant,
                     valeur: enseignantAffiche(seance, classe),
+                    complement: PaysEnseignant.siDeclare(
+                      paysEnseignantAffiche(seance, classe),
+                    ),
                   ),
                 LigneCleValeur(
                   cle: t.historique.observation.dureeTotale,

@@ -58,6 +58,7 @@ import '../../../core/widgets/page_immersive.dart';
 import '../../../core/widgets/page_parcours.dart';
 import '../../../core/widgets/page_shell.dart';
 import '../../../core/widgets/pastille_etat_seance.dart';
+import '../../../core/widgets/pays_enseignant.dart';
 import '../../../core/widgets/permanent_notice.dart';
 import '../../../core/widgets/pile_cartes.dart';
 import '../../../core/widgets/pin_pad.dart';
@@ -2187,6 +2188,47 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             valeur: DateTime(2026, 10, 12),
             onChoix: _dateIgnoree,
             aujourdhui: DateTime(2026, 10, 4),
+          ),
+        ),
+      ),
+    ],
+  ),
+
+  // ENS-PAYS-1 : le pays de l'enseignant, sous son nom, pour tous les roles.
+  // Le drapeau ne se dessine que si l'appareil le peut (mesure) ; le nom est
+  // toujours ecrit ; rien quand le pays n'est pas declare.
+  EntreeGalerie(
+    nom: 'PaysEnseignant',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'pays de la liste (drapeau si dessinable)',
+        (BuildContext _) =>
+            _surfaceMaterielle(const PaysEnseignant(pays: 'Guinée')),
+      ),
+      EtatGalerie(
+        'sous un avatar en ligne',
+        (BuildContext _) => _surfaceMaterielle(
+          const AvatarNom.enLigne(
+            prenom: 'Ibrahim',
+            nom: 'Sayyid Ibrahim',
+            pays: "Côte d'Ivoire",
+            role: 'Coran, niveau 2',
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'pays ecrit dans Autre (nom seul)',
+        (BuildContext _) =>
+            _surfaceMaterielle(const PaysEnseignant(pays: 'Comores')),
+      ),
+      EtatGalerie(
+        'non declare : rien',
+        (BuildContext _) => _surfaceMaterielle(
+          const AvatarNom.enLigne(
+            prenom: 'Khadija',
+            nom: 'Sayyida Khadija',
+            role: 'Coran, niveau 3',
           ),
         ),
       ),

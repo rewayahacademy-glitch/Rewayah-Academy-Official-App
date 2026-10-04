@@ -121,6 +121,7 @@ abstract final class DonneesClasseDemo {
     enseignantId: 'demo-ens-ibrahim',
     titre: TitreEnseignant.sayyid,
     nomAffichage: 'Ibrahim',
+    pays: 'France',
   );
 
   /// La variante Sayyida, choisie par `&titre=sayyida`.
@@ -128,6 +129,7 @@ abstract final class DonneesClasseDemo {
     enseignantId: 'demo-ens-amina',
     titre: TitreEnseignant.sayyida,
     nomAffichage: 'Amina',
+    pays: 'Sénégal',
   );
 
   /// L'enseignant de la demonstration selon le titre choisi.

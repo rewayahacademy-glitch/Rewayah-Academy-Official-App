@@ -33,6 +33,7 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
@@ -332,6 +333,7 @@ class _HistoriqueControleurPageState
       meta: h.meta(heure: heureDeLAppareil(r.debut), duree: duree),
       titre: r.classe,
       sousTitre: r.enseignant,
+      pays: r.paysEnseignant,
       statut: statut,
       ton: tonStatutRapport(r.statut),
       semantique: h.ligne(
@@ -393,7 +395,11 @@ class _DetailRapport extends StatelessWidget {
               titre: h.sectionMission,
               enfants: <Widget>[
                 LigneCleValeur(cle: h.cleClasse, valeur: r.classe),
-                LigneCleValeur(cle: h.cleEnseignant, valeur: r.enseignant),
+                LigneCleValeur(
+                  cle: h.cleEnseignant,
+                  valeur: r.enseignant,
+                  complement: PaysEnseignant.siDeclare(r.paysEnseignant),
+                ),
                 LigneCleValeur(
                   cle: h.cleDate,
                   // Ordre et virgule traduisibles (revue CT-R m9).

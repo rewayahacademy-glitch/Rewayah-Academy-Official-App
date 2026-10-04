@@ -28,6 +28,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
+import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/skeleton.dart';
 
 /// Ce que le bloc principal de `ELV-02` annonce.
@@ -356,6 +357,12 @@ class _CoursAVenir extends StatelessWidget {
           t.eleve.accueil.avec(prenom: seance.enseignantPrenom),
           style: paire.applyTo(textes.titleMedium ?? const TextStyle()),
         ),
+        // ENS-PAYS-1 : le pays de l'enseignant sous son prenom, rien s'il
+        // n'est pas declare.
+        PaysEnseignant(
+          pays: seance.enseignantPays,
+          style: paire.applyTo(textes.bodyMedium ?? const TextStyle()),
+        ),
         _Interruptions(interruptions: interruptions, paire: paire),
       ],
     );
@@ -396,6 +403,12 @@ class _CoursEnDirect extends StatelessWidget {
         Text(
           t.eleve.accueil.avec(prenom: seance.enseignantPrenom),
           style: paire.applyTo(textes.titleMedium ?? const TextStyle()),
+        ),
+        // ENS-PAYS-1 : le pays de l'enseignant sous son prenom, rien s'il
+        // n'est pas declare.
+        PaysEnseignant(
+          pays: seance.enseignantPays,
+          style: paire.applyTo(textes.bodyMedium ?? const TextStyle()),
         ),
         _Interruptions(interruptions: interruptions, paire: paire),
         Ecart.vLg,

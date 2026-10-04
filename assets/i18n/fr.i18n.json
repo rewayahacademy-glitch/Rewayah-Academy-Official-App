@@ -1517,6 +1517,7 @@
       "intro": "Chaque groupe réunit un enseignant et ses élèves autour d'un créneau commun : c'est là que se donne le cours.",
       "colonneGroupe": "Groupe",
       "colonneEnseignant": "Enseignant",
+      "colonnePays": "Pays de l'enseignant",
       "colonneType": "Public",
       "colonneMembres": "Membres",
       "colonneCreneau": "Créneau",
@@ -1964,6 +1965,7 @@
       "colonnePersonne": "Personne",
       "colonneIdentifiant": "Identifiant",
       "colonneRole": "Rôle",
+      "colonnePays": "Pays de l'enseignant",
       "colonneEtat": "État",
       "colonnePiece": "Pièce d'identité",
       "colonneAttente": "Inscrit depuis",
@@ -2979,6 +2981,9 @@
     }
   },
   "enseignant": {
+    "pays": {
+      "semantique": "Pays : {pays}"
+    },
     "classes": {
       "titre": "Classes",
       "vide": "Aucune Classe attribuée",

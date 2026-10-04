@@ -43,6 +43,7 @@ class MissionControle {
     required this.finPrevue,
     required this.etat,
     this.id,
+    this.paysEnseignant,
   });
 
   /// L'identifiant de la mission, qui nomme son fil d'echanges (un seul fil
@@ -58,6 +59,10 @@ class MissionControle {
 
   /// L'enseignant, precede de son titre (« Sayyid Ibrahim »).
   final String enseignant;
+
+  /// Le pays declare par l'enseignant (ENS-PAYS-1), affiche sous son nom.
+  /// Nul s'il ne l'est pas ou tant que le serveur ne le rend pas (BR-1).
+  final String? paysEnseignant;
 
   /// Le nombre d'eleves attendus.
   final int nombreEleves;

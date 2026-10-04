@@ -16,6 +16,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/selecteur_personne.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
@@ -180,6 +181,19 @@ class _Corps extends StatelessWidget {
                   titre: t.admin.groupes.colonneEnseignant,
                   texte: (GroupeAdmin g) => g.teacherLibelle,
                 ),
+                // ENS-PAYS-1 : le pays de l'enseignant, seulement quand une
+                // ligne au moins le porte (pas de colonne vide avant BR-1).
+                if (visibles.any(
+                  (GroupeAdmin g) =>
+                      PaysEnseignant.nomAffichable(g.teacherPays) != null,
+                ))
+                  ColonneDonnees<GroupeAdmin>(
+                    titre: t.admin.groupes.colonnePays,
+                    texte: (GroupeAdmin g) =>
+                        PaysEnseignant.nomAffichable(g.teacherPays) ?? '',
+                    rendu: (BuildContext _, GroupeAdmin g) =>
+                        PaysEnseignant(pays: g.teacherPays),
+                  ),
                 ColonneDonnees<GroupeAdmin>(
                   titre: t.admin.groupes.colonneType,
                   texte: (GroupeAdmin g) => _nomType(g.type),

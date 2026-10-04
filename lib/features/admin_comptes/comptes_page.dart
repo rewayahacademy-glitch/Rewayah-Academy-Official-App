@@ -12,6 +12,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
@@ -279,6 +280,19 @@ class _Corps extends StatelessWidget {
                   ColonneDonnees<CompteAdmin>(
                     titre: t.admin.comptes.colonneIdentifiant,
                     texte: (CompteAdmin c) => c.identifiant,
+                  ),
+                // ENS-PAYS-1 : le pays des comptes enseignants, seulement
+                // quand une ligne au moins le porte (pas de colonne vide).
+                if (visibles.any(
+                  (CompteAdmin c) =>
+                      PaysEnseignant.nomAffichable(c.paysEnseignant) != null,
+                ))
+                  ColonneDonnees<CompteAdmin>(
+                    titre: t.admin.comptes.colonnePays,
+                    texte: (CompteAdmin c) =>
+                        PaysEnseignant.nomAffichable(c.paysEnseignant) ?? '',
+                    rendu: (BuildContext _, CompteAdmin c) =>
+                        PaysEnseignant(pays: c.paysEnseignant),
                   ),
                 ColonneDonnees<CompteAdmin>(
                   titre: t.admin.comptes.colonneRole,

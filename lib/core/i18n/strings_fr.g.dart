@@ -2275,6 +2275,7 @@ class Traductions$enseignant$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$enseignant$pays$fr pays = Traductions$enseignant$pays$fr.internal(_root);
 	late final Traductions$enseignant$classes$fr classes = Traductions$enseignant$classes$fr.internal(_root);
 	late final Traductions$enseignant$eleve$fr eleve = Traductions$enseignant$eleve$fr.internal(_root);
 	late final Traductions$enseignant$signalement$fr signalement = Traductions$enseignant$signalement$fr.internal(_root);
@@ -5138,6 +5139,9 @@ class Traductions$admin$groupes$fr {
 	/// fr: 'Enseignant'
 	String get colonneEnseignant => 'Enseignant';
 
+	/// fr: 'Pays de l'enseignant'
+	String get colonnePays => 'Pays de l\'enseignant';
+
 	/// fr: 'Public'
 	String get colonneType => 'Public';
 
@@ -6501,6 +6505,9 @@ class Traductions$admin$comptes$fr {
 
 	/// fr: 'Rôle'
 	String get colonneRole => 'Rôle';
+
+	/// fr: 'Pays de l'enseignant'
+	String get colonnePays => 'Pays de l\'enseignant';
 
 	/// fr: 'État'
 	String get colonneEtat => 'État';
@@ -8228,6 +8235,18 @@ class Traductions$classe$pageCatalogue$fr {
 	String get envoiIndisponible => 'L\'inscription en ligne n\'est pas encore ouverte : aucune place n\'a été réservée.';
 
 	late final Traductions$classe$pageCatalogue$resultat$fr resultat = Traductions$classe$pageCatalogue$resultat$fr.internal(_root);
+}
+
+// Path: enseignant.pays
+class Traductions$enseignant$pays$fr {
+	Traductions$enseignant$pays$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pays : {pays}'
+	String semantique({required Object pays}) => 'Pays : ${pays}';
 }
 
 // Path: enseignant.classes
@@ -16838,6 +16857,7 @@ extension on Traductions {
 			'admin.groupes.intro' => 'Chaque groupe réunit un enseignant et ses élèves autour d\'un créneau commun : c\'est là que se donne le cours.',
 			'admin.groupes.colonneGroupe' => 'Groupe',
 			'admin.groupes.colonneEnseignant' => 'Enseignant',
+			'admin.groupes.colonnePays' => 'Pays de l\'enseignant',
 			'admin.groupes.colonneType' => 'Public',
 			'admin.groupes.colonneMembres' => 'Membres',
 			'admin.groupes.colonneCreneau' => 'Créneau',
@@ -17132,9 +17152,9 @@ extension on Traductions {
 			'admin.programmes.manque' => ({required Object elements}) => 'Rien n\'a été enregistré : il manque ${elements}. Complétez-le, puis réessayez.',
 			'admin.programmes.champDescription' => 'Description (optionnelle)',
 			'admin.programmes.champMotif' => 'Motif',
-			'admin.programmes.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.programmes.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
 			'admin.programmes.journalisation' => 'Chaque création, modification, suppression et publication est inscrite au journal d\'audit.',
 			'admin.journal.titre' => 'Journal',
 			'admin.journal.chaineIntacte' => 'Journal intact',
@@ -17261,6 +17281,7 @@ extension on Traductions {
 			'admin.comptes.colonnePersonne' => 'Personne',
 			'admin.comptes.colonneIdentifiant' => 'Identifiant',
 			'admin.comptes.colonneRole' => 'Rôle',
+			'admin.comptes.colonnePays' => 'Pays de l\'enseignant',
 			'admin.comptes.colonneEtat' => 'État',
 			'admin.comptes.colonnePiece' => 'Pièce d\'identité',
 			'admin.comptes.colonneAttente' => 'Inscrit depuis',
@@ -17645,10 +17666,10 @@ extension on Traductions {
 			'compte.tuteur.pageInformations.fuseau' => 'Fuseau des séances',
 			'compte.tuteur.pageInformations.fuseauIndisponible' => 'Non disponible pour le moment',
 			'compte.tuteur.pageInformations.note' => 'Ces informations sont tenues par l\'académie. Elles ne se modifient pas encore depuis l\'application.',
-			'compte.tuteur.pageSecurite.titre' => 'Connexion et sécurité',
-			'compte.tuteur.pageSecurite.sousTitre' => 'Comment vous accédez à votre compte.',
 			_ => null,
 		} ?? switch (path) {
+			'compte.tuteur.pageSecurite.titre' => 'Connexion et sécurité',
+			'compte.tuteur.pageSecurite.sousTitre' => 'Comment vous accédez à votre compte.',
 			'compte.tuteur.pageSecurite.methode' => 'Méthode de connexion',
 			'compte.tuteur.pageSecurite.adresse' => 'Adresse de connexion',
 			'compte.tuteur.pageSecurite.appareils' => 'Les appareils connectés à votre compte ne sont pas encore listés dans l\'application.',
@@ -18138,6 +18159,7 @@ extension on Traductions {
 			'classe.pageCatalogue.resultat.refusePhrase' => ({required Object prenom}) => 'Aucune place n\'a été réservée pour ${prenom}. Vous pouvez choisir une autre classe.',
 			'classe.pageCatalogue.resultat.autresClasses' => 'Voir les autres classes',
 			'classe.pageCatalogue.resultat.retourAccueil' => 'Retour à l\'accueil',
+			'enseignant.pays.semantique' => ({required Object pays}) => 'Pays : ${pays}',
 			'enseignant.classes.titre' => 'Classes',
 			'enseignant.classes.vide' => 'Aucune Classe attribuée',
 			'enseignant.classes.videDetail' => 'Les Classes confirmées apparaîtront ici.',
@@ -18158,11 +18180,11 @@ extension on Traductions {
 			'enseignant.eleve.niveau' => 'Niveau',
 			'enseignant.eleve.objectif' => 'Objectif',
 			'enseignant.eleve.presence' => 'Présence récente',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.eleve.travail' => 'Travail',
 			'enseignant.eleve.travailReprise' => ({required Object page}) => 'Reprise à la ${page}',
 			'enseignant.eleve.derniereSeance' => 'Dernière séance',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.eleve.nonRenseigne' => 'Non renseigné',
 			'enseignant.eleve.signaler' => 'Signaler un besoin',
 			'enseignant.eleve.signalerAide' => 'Un besoin à remonter à l\'académie, sans recopier le contexte.',
@@ -18672,11 +18694,11 @@ extension on Traductions {
 			'controleur.compteRendu.visiteEnCours' => 'Transmission de la visite à l\'administration en cours.',
 			'controleur.compteRendu.visiteTransmise' => 'La visite et son relevé automatique sont transmis à l\'administration.',
 			'controleur.compteRendu.visiteEchec' => 'La transmission de la visite n\'est pas confirmée : la connexion ou le serveur n\'a pas répondu. Réessayez ; le relevé de la visite reste enregistré sur le serveur.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
 			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
 			'controleur.compteRendu.visiteInconnue' => 'Ce compte rendu ne peut plus être repris ici.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.compteRendu.visiteInconnueAide' => 'Cet appareil n\'a plus la visite en mémoire, sans doute après un rechargement de la page. La visite reste transmise à l\'administration avec son relevé automatique ; ce point n\'est pas confirmé depuis cet écran. Pour ajouter une remarque, écrivez à l\'administration.',
 			'controleur.observation.important' => 'Vous signalez un point important : votre texte sera demandé.',
 			'controleur.observation.questionNature' => 'Quelle est la nature de votre observation ?',
@@ -19186,11 +19208,11 @@ extension on Traductions {
 			'tc.observation.resultat.verification' => 'Vérification de vos visites restantes',
 			'tc.observation.resultat.inconnues' => 'Vos visites restantes n\'ont pas pu être vérifiées. Elles le seront de nouveau dans la classe.',
 			'tc.observation.resultat.voirObservations' => 'Voir mes observations',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.annonce.tuteurObserve' => ({required Object prenomEnfant}) => 'Tuteur de ${prenomEnfant} observe',
 			'tc.observation.annonce.restant' => ({required Object secondes}) => '${secondes} s',
 			'tc.observation.annonce.enfantIndicateur' => 'Ton tuteur regarde le cours',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.annonce.tuteursObservent' => ({required Object nombre}) => '${nombre} tuteurs observent',
 			'tc.observation.reglages.titre' => 'Observation par les tuteurs',
 			'tc.observation.reglages.intro' => 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s\'applique à ce groupe.',

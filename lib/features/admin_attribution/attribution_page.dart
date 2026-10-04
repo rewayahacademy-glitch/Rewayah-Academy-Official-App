@@ -16,6 +16,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
@@ -614,6 +615,10 @@ class _CarteEnseignant extends StatelessWidget {
           Text(candidat.libelle, style: textes.titleMedium),
           if (candidat.identiteConnue)
             Text(candidat.identifiantImmuable, style: textes.bodySmall),
+          // ENS-PAYS-1 : le pays sous le nom, comme sur toutes les cartes
+          // d'enseignant. Masque comme le prenom quand l'identite l'est :
+          // l'agent en observation masquee ne lit que l'identifiant.
+          if (candidat.identiteConnue) PaysEnseignant(pays: candidat.pays),
           Ecart.vSm,
           Text(
             t.admin.attribution.charge(

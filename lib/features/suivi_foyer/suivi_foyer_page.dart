@@ -285,6 +285,7 @@ class _Liste extends ConsumerWidget {
       meta: plageHoraire(l.seance.debut, l.seance.fin),
       titre: nom,
       sousTitre: enseignantAffiche(l.seance, classe),
+      pays: paysEnseignantAffiche(l.seance, classe),
       statut: statut,
       ton: statutDe(l).ton,
       annulee: statutDe(l) == StatutHistorique.annule,

@@ -9,6 +9,7 @@ import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../controleur/compte_rendu_controle.dart';
 import '../controleur/historique_controleur.dart';
 import '../controleur/observation_controle.dart';
+import 'classe_demo.dart';
 import 'controleur_demo.dart';
 
 /// Le port de demonstration : la lecture repond apres un court delai.
@@ -54,6 +55,7 @@ class HistoriqueDemo implements PortHistorique {
         missionId: r.missionId,
         classe: r.classe,
         enseignant: enseignant,
+        paysEnseignant: DonneesClasseDemo.enseignant.pays,
         debut: r.date,
         dureeObservee: r.dureeObservee,
         statut: statut,
@@ -82,6 +84,7 @@ class HistoriqueDemo implements PortHistorique {
         missionId: r.missionId,
         classe: r.classe,
         enseignant: enseignant,
+        paysEnseignant: DonneesClasseDemo.enseignant.pays,
         debut: r.date,
         dureeObservee: r.dureeObservee,
         statut: statut,
@@ -104,6 +107,7 @@ class HistoriqueDemo implements PortHistorique {
         seanceId: 'demo-seance-${r.id}',
         classe: r.classe,
         enseignant: enseignant,
+        paysEnseignant: DonneesClasseDemo.enseignant.pays,
         debut: r.date,
         dureeObservee: r.dureeObservee,
         statut: statut,

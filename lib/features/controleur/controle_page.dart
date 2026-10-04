@@ -304,6 +304,7 @@ class _CarteMission extends StatelessWidget {
           // partage, avec au plus une ligne de role (horaire, duree, effectif).
           AvatarNom.enLigne(
             prenom: mission.enseignant,
+            pays: mission.paysEnseignant,
             role: details,
             styleNom: palette.inkStrong.applyTo(
               textes.titleMedium ?? const TextStyle(),

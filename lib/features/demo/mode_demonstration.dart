@@ -351,12 +351,14 @@ abstract final class DonneesDemo {
     enseignantId: 'demo-enseignante',
     titre: TitreEnseignant.sayyida,
     nomAffichage: 'Maryam',
+    pays: 'Maroc',
   );
 
   static const EnseignantVM enseignant = EnseignantVM(
     enseignantId: 'demo-enseignant',
     titre: TitreEnseignant.sayyid,
     nomAffichage: 'Ibrahim',
+    pays: 'France',
   );
 
   static const Map<String, GroupSummaryVM> classes = <String, GroupSummaryVM>{

@@ -16,6 +16,7 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
+import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../compte/carte_rubriques.dart';
@@ -198,6 +199,9 @@ class _Contenu extends ConsumerWidget {
           LigneCleValeur(
             cle: t.historique.seance.enseignant,
             valeur: enseignantAffiche(seance, classe),
+            complement: PaysEnseignant.siDeclare(
+              paysEnseignantAffiche(seance, classe),
+            ),
           ),
         ], annulee: statut == StatutHistorique.annule),
         Ecart.vXl,

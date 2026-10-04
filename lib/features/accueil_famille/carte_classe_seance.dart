@@ -223,6 +223,7 @@ class _Identite extends StatelessWidget {
         child: AvatarNom.enLigne(
           prenom: c.enseignant.nomAffichage,
           nom: LibellesGroupe.enseignantNomme(c.enseignant),
+          pays: c.enseignant.pays,
           diametre: AppAvatar.petit,
           ecart: AppSpacing.sm,
           styleNom: palette.inkMuted.applyTo(
