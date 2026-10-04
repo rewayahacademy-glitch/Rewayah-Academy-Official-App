@@ -66,11 +66,10 @@ Widget _page(
   bool affiches = false,
   List<Override> plus = const <Override>[],
 }) => ProviderScope(
-  overrides: <Override>[
-    ...surchargesCoquilleComptableDemo(montantsAffiches: affiches),
-    ...plus,
-  ],
-  child: page,
+  overrides: surchargesCoquilleComptableDemo(montantsAffiches: affiches),
+  // Un port remplace dans un conteneur enfant : jamais deux surcharges du
+  // meme fournisseur dans un seul conteneur.
+  child: plus.isEmpty ? page : ProviderScope(overrides: plus, child: page),
 );
 
 void main() {

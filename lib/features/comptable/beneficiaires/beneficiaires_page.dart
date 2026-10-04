@@ -25,6 +25,7 @@ import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
+import '../../../core/theme/app_gabarit.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/bascule_montants.dart';
@@ -77,6 +78,9 @@ class _BeneficiairesPageEtat extends ConsumerState<BeneficiairesPage> {
     void relire() => ref.invalidate(beneficiairesProvider);
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final TextTheme textes = Theme.of(context).textTheme;
+    final bool empiler =
+        MediaQuery.textScalerOf(context).scale(AppSpacing.lg) / AppSpacing.lg >=
+        AppGabarit.seuilTexteColonne;
     return PageShell(
       titre: b.titre,
       sousTitre: b.sousTitre,
@@ -87,59 +91,80 @@ class _BeneficiairesPageEtat extends ConsumerState<BeneficiairesPage> {
       actionsEntete: const <Widget>[BasculeMontants()],
       // `DataCollection` defile lui-meme (en-tete de colonnes colle).
       defilante: false,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text(
-            b.intro,
-            style: AppPalette.of(context).inkMuted
-                .applyTo(textes.bodyMedium ?? const TextStyle()),
-          ),
-          Ecart.vLg,
-          Expanded(
-            child: BlocAsynchrone<List<ProfilPaiementBeneficiaire>>(
-              valeur: liste,
-              squelette: const SingleChildScrollView(
-                child: Skeleton.liste(lignes: 6),
-              ),
-              onReessayer: relire,
-              vide: SingleChildScrollView(
-                child: EmptyState(
-                  message: b.vide,
-                  invitation: b.videDetail,
-                  icone: AppIcons.beneficiaire,
-                  registre: RegistreVide.subi,
-                ),
-              ),
-              erreurVersEtat: (Object erreur, VoidCallback? reessayer) {
-                // Source absente : l'ecran reste « en preparation ».
-                if (erreur is CapaciteIndisponible) {
-                  return SingleChildScrollView(
-                    child: EmptyState(
-                      message: t.comptable.commun.enPreparationTitre,
-                      invitation: t.comptable.commun.enPreparationPhrase,
-                    ),
-                  );
-                }
-                if (horsLigne) {
-                  return SingleChildScrollView(
-                    child: EtatSysteme(
-                      nature: NatureEtat.horsLigne,
-                      onAction: reessayer,
-                    ),
-                  );
-                }
-                return null;
-              },
-              construire: (List<ProfilPaiementBeneficiaire> profils) => _Corps(
-                profils: profils,
-                filtre: _filtre,
-                onFiltre: (FiltreListeBeneficiaires f) =>
-                    setState(() => _filtre = f),
+      // Texte agrandi (`AppGabarit.seuilTexteColonne`) : l'introduction
+      // defile avec la page et les filtres tiennent sur une ligne qu'on fait
+      // glisser ; la collection garde toute la hauteur de la vue.
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints contraintes) {
+          final Widget bloc = BlocAsynchrone<List<ProfilPaiementBeneficiaire>>(
+            valeur: liste,
+            squelette: const SingleChildScrollView(
+              child: Skeleton.liste(lignes: 6),
+            ),
+            onReessayer: relire,
+            vide: SingleChildScrollView(
+              child: EmptyState(
+                message: b.vide,
+                invitation: b.videDetail,
+                icone: AppIcons.beneficiaire,
+                registre: RegistreVide.subi,
               ),
             ),
-          ),
-        ],
+            erreurVersEtat: (Object erreur, VoidCallback? reessayer) {
+              // Source absente : l'ecran reste « en preparation ».
+              if (erreur is CapaciteIndisponible) {
+                return SingleChildScrollView(
+                  child: EmptyState(
+                    message: t.comptable.commun.enPreparationTitre,
+                    invitation: t.comptable.commun.enPreparationPhrase,
+                  ),
+                );
+              }
+              if (horsLigne) {
+                return SingleChildScrollView(
+                  child: EtatSysteme(
+                    nature: NatureEtat.horsLigne,
+                    onAction: reessayer,
+                  ),
+                );
+              }
+              return null;
+            },
+            construire: (List<ProfilPaiementBeneficiaire> profils) => _Corps(
+              profils: profils,
+              filtre: _filtre,
+              filtresEnLigne: empiler,
+              onFiltre: (FiltreListeBeneficiaires f) =>
+                  setState(() => _filtre = f),
+            ),
+          );
+          final List<Widget> tete = <Widget>[
+            Text(
+              b.intro,
+              style: AppPalette.of(context).inkMuted
+                  .applyTo(textes.bodyMedium ?? const TextStyle()),
+            ),
+            Ecart.vLg,
+          ];
+          if (!empiler) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                ...tete,
+                Expanded(child: bloc),
+              ],
+            );
+          }
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                ...tete,
+                SizedBox(height: contraintes.maxHeight, child: bloc),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -151,11 +176,15 @@ class _Corps extends StatelessWidget {
     required this.profils,
     required this.filtre,
     required this.onFiltre,
+    this.filtresEnLigne = false,
   });
 
   final List<ProfilPaiementBeneficiaire> profils;
   final FiltreListeBeneficiaires filtre;
   final ValueChanged<FiltreListeBeneficiaires> onFiltre;
+
+  /// Vrai a texte agrandi : les filtres sur une seule ligne glissante.
+  final bool filtresEnLigne;
 
   @override
   Widget build(BuildContext context) {
@@ -169,23 +198,38 @@ class _Corps extends StatelessWidget {
       children: <Widget>[
         // Seuls les filtres qui retiennent quelqu'un (et « Tous », et le
         // filtre courant) : une pastille a zero n'appelle aucun geste.
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: <Widget>[
-            for (final FiltreListeBeneficiaires f
-                in FiltreListeBeneficiaires.values)
-              if (f == FiltreListeBeneficiaires.tous ||
-                  f == filtre ||
-                  nombre(f) > 0)
-                FilterPill(
-                  key: ValueKey<String>('cpt-ben-filtre-${f.name}'),
-                  libelle: f.libelle,
-                  compteur: nombre(f),
-                  retenue: f == filtre,
-                  onPress: () => onFiltre(f),
-                ),
-          ],
+        Builder(
+          builder: (BuildContext _) {
+            final List<Widget> pastilles = <Widget>[
+              for (final FiltreListeBeneficiaires f
+                  in FiltreListeBeneficiaires.values)
+                if (f == FiltreListeBeneficiaires.tous ||
+                    f == filtre ||
+                    nombre(f) > 0)
+                  FilterPill(
+                    key: ValueKey<String>('cpt-ben-filtre-${f.name}'),
+                    libelle: f.libelle,
+                    compteur: nombre(f),
+                    retenue: f == filtre,
+                    onPress: () => onFiltre(f),
+                  ),
+            ];
+            if (!filtresEnLigne) {
+              return Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.sm,
+                children: pastilles,
+              );
+            }
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: <Widget>[
+                  for (final Widget p in pastilles) ...<Widget>[p, Ecart.hSm],
+                ],
+              ),
+            );
+          },
         ),
         Ecart.vLg,
         if (visibles.isEmpty)
