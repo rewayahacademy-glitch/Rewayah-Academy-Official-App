@@ -363,8 +363,15 @@ const double rapportMinimalTitreSousTitre = 1.15;
 /// l'echelle de l'appareil.
 double plancherTitreSeance(BuildContext context, TextStyle? style) {
   final TextTheme textes = Theme.of(context).textTheme;
-  final double titre = style?.fontSize ?? textes.titleLarge?.fontSize ?? 22;
-  final double sousTitre = textes.bodyMedium?.fontSize ?? 14;
+  // Secours : l'echelle typographique elle-meme (AppTypography), jamais une
+  // copie de ses valeurs.
+  final double titre =
+      style?.fontSize ??
+      textes.titleLarge?.fontSize ??
+      AppTypography.standard.titleLarge!.fontSize!;
+  final double sousTitre =
+      textes.bodyMedium?.fontSize ??
+      AppTypography.standard.bodyMedium!.fontSize!;
   final double facteur = MediaQuery.textScalerOf(context).scale(1);
   final double p = facteur * rapportMinimalTitreSousTitre * sousTitre / titre;
   if (p > facteur) return facteur;

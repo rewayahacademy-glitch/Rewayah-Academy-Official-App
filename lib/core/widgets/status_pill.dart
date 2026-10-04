@@ -112,7 +112,8 @@ class StatusPill extends StatelessWidget {
             Ecart.hSm,
             // PASTILLE-COUPE-1 : le libelle passe a la ligne entre les mots,
             // jamais dans un mot (« Remplacem / ent » a 200 %) ; un mot trop
-            // long pour la place reduit son echelle, jamais sous 1.
+            // long pour la place reduit son echelle, jamais sous
+            // [echelleMinimaleLisible] (0,85).
             Flexible(
               child: TexteSansCoupure(
                 libelle,
