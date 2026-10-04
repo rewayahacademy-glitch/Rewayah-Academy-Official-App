@@ -1,5 +1,5 @@
 // EA-2 : l'accueil de l'eleve adulte, atteint depuis la VRAIE coquille adulte
-// en tapant la VRAIE destination آ« Accueil آ» (K-07), puis ses etats.
+// en tapant la VRAIE destination « Accueil » (K-07), puis ses etats.
 
 import 'dart:async';
 import 'dart:math' as math;
@@ -182,7 +182,7 @@ void main() {
     });
   });
 
-  testWidgets('bureau : seance et آ« Avant آ» cote a cote, a la meme hauteur', (
+  testWidgets('bureau : seance et « Avant » cote a cote, a la meme hauteur', (
     WidgetTester tester,
   ) async {
     taille(tester, const Size(1440, 1000));
@@ -278,7 +278,7 @@ void main() {
       w is EtatSysteme && w.nature == NatureEtat.horsLigne;
 
   testWidgets('reseau coupe (revue EA-R M5) : depuis la liste de la vraie '
-      'route, l\'Accueil dit آ« hors ligne آ», la cloche reste', (
+      'route, l\'Accueil dit « hors ligne », la cloche reste', (
     WidgetTester tester,
   ) async {
     taille(tester, const Size(390, 844));
@@ -297,7 +297,7 @@ void main() {
     expect(find.byType(ClocheNotifications), findsOneWidget);
   });
 
-  testWidgets('sans آ« reseau=coupe آ» : l\'Accueil est inchange, aucun etat '
+  testWidgets('sans « reseau=coupe » : l\'Accueil est inchange, aucun etat '
       'hors ligne', (WidgetTester tester) async {
     taille(tester, const Size(390, 844));
     await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.accueil));
@@ -349,7 +349,7 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets('erreur : آ« Reessayer آ», et rien d\'invente', (
+  testWidgets('erreur : « Reessayer », et rien d\'invente', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
@@ -367,7 +367,7 @@ void main() {
     expect(find.byType(CarteSession), findsNothing);
   });
 
-  testWidgets('sans source serveur : indisponible, sans آ« Reessayer آ»', (
+  testWidgets('sans source serveur : indisponible, sans « Reessayer »', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(app(child: const AccueilAdultePage()));
@@ -399,7 +399,7 @@ void main() {
     );
   });
 
-  // BENTO-3 : la grille Bento de DASH_STRATEGIE.md آ§3.7.
+  // BENTO-3 : la grille Bento de DASH_STRATEGIE.md §3.7.
   group('BENTO-3 : grille Bento', () {
     testWidgets('vrai routeur : depuis /demo/adulte, le lien Accueil tape '
         'ouvre l\'accueil sur la grille Bento', (WidgetTester tester) async {
@@ -467,7 +467,7 @@ void main() {
 
     for (final double largeur in const <double>[390, 768]) {
       testWidgets('${largeur.toInt()} px : une tuile par bande, dans l\'ordre '
-          'de آ§3.7', (WidgetTester tester) async {
+          'de §3.7', (WidgetTester tester) async {
         taille(tester, Size(largeur, 3000));
         await monterCoquille(
           tester,
@@ -491,38 +491,37 @@ void main() {
     }
 
     for (final TextDirection sens in TextDirection.values) {
-      testWidgets(
-        '1440 px, ${sens.name} : seance puis آ« Avant آ» cote a cote, '
-        'parcours dessous, puis dernieres seances et ressources',
-        (WidgetTester tester) async {
-          taille(tester, const Size(1440, 3000));
-          await monterCoquille(
-            tester,
-            adresseDemoAdulte(EcranDemoAdulte.accueil),
-            direction: sens,
-          );
-          final bool ltr = sens == TextDirection.ltr;
-          bool apres(Rect a, Rect b) =>
-              ltr ? b.left >= a.right : b.right <= a.left;
-          final Rect s = rect(tester, seance);
-          final Rect a = rect(tester, avant);
-          final Rect p = rect(tester, parcours);
-          final Rect d = rect(tester, dernieres);
-          final Rect b = rect(tester, ressources);
-          expect(apres(s, a), isTrue, reason: 'آ« Avant آ» apres la seance');
-          expect(a.top, moreOrLessEquals(s.top, epsilon: 1));
-          expect(p.top, greaterThan(math.max(s.bottom, a.bottom)));
-          expect(d.top, greaterThan(p.bottom));
-          expect(apres(d, b), isTrue, reason: 'ressources apres les seances');
+      testWidgets('1440 px, ${sens.name} : seance puis « Avant » cote a cote, '
+          'parcours dessous, puis dernieres seances et ressources', (
+        WidgetTester tester,
+      ) async {
+        taille(tester, const Size(1440, 3000));
+        await monterCoquille(
+          tester,
+          adresseDemoAdulte(EcranDemoAdulte.accueil),
+          direction: sens,
+        );
+        final bool ltr = sens == TextDirection.ltr;
+        bool apres(Rect a, Rect b) =>
+            ltr ? b.left >= a.right : b.right <= a.left;
+        final Rect s = rect(tester, seance);
+        final Rect a = rect(tester, avant);
+        final Rect p = rect(tester, parcours);
+        final Rect d = rect(tester, dernieres);
+        final Rect b = rect(tester, ressources);
+        expect(apres(s, a), isTrue, reason: '« Avant » apres la seance');
+        expect(a.top, moreOrLessEquals(s.top, epsilon: 1));
+        expect(p.top, greaterThan(math.max(s.bottom, a.bottom)));
+        expect(d.top, greaterThan(p.bottom));
+        expect(apres(d, b), isTrue, reason: 'ressources apres les seances');
         // Meme bande : la liste des seances commence avant la fin des
         // ressources.
         expect(d.top, lessThan(b.bottom));
-        },
-      );
+      });
     }
 
     // Tuiles absentes (revue BENTO-3-R) : la Classe de demonstration, sans
-    // آ« Avant le prochain cours آ», avec ou sans parcours et seances passees.
+    // « Avant le prochain cours », avec ou sans parcours et seances passees.
     Future<void> monterSans(
       WidgetTester tester, {
       required bool parcoursEtDernieres,
@@ -556,7 +555,7 @@ void main() {
       expect(find.byType(CarteSession), findsOneWidget);
     }
 
-    testWidgets('1440 px sans آ« Avant آ» : la seance seule dans sa bande, '
+    testWidgets('1440 px sans « Avant » : la seance seule dans sa bande, '
         'puis parcours, puis dernieres seances et ressources', (
       WidgetTester tester,
     ) async {
