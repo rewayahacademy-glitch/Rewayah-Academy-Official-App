@@ -21,9 +21,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `Override` n'est pas exporte par l'entree principale de Riverpod 3.
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/communications/textes_fil_communication.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
-import 'package:rewayah_academy/core/widgets/communications/composer_texte.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/features/com_vocal/composer_vocal.dart';
 import 'package:rewayah_academy/features/com_vocal/lecteur_vocal.dart';

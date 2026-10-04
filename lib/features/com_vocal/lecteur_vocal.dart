@@ -29,7 +29,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
-import '../../core/widgets/communications/carte_piece_jointe.dart';
+import '../../core/widgets/carte_piece_jointe.dart';
 import '../../core/widgets/status_pill.dart';
 import 'etats_vocal.dart';
 import 'port_enregistreur_vocal.dart';
