@@ -1132,6 +1132,11 @@
       "expireTitre": "Accès expiré",
       "manqueEtConservation": "Il manque {montant} pour la prochaine période. La place est conservée jusqu'au {date}.",
       "sansManque": "La prochaine période n'est pas encore financée.",
+      "manquePourMois": "Il manque {montant} pour financer {mois}.",
+      "manquePourMoisEtConservation": "Il manque {montant} pour financer {mois}. La place est conservée jusqu'au {date}.",
+      "moisNonFinance": "La période de {mois} n'est pas encore financée.",
+      "periodeAFinancer": "Période à financer",
+      "periodeAFinancerValeur": "{mois} {annee} · {montant}",
       "confirmationTitre": "Paiement en cours de confirmation",
       "confirmationPhrase": "Ne payez pas une seconde fois : la période se met à jour dès la confirmation.",
       "indisponibleTitre": "Les finances ne sont pas encore disponibles",
@@ -1158,7 +1163,8 @@
         "mensualite": "Mensualité",
         "mensualiteDe": "Mensualité {mois} {annee}",
         "avoir": "Avoir",
-        "remise": "Remise"
+        "remise": "Remise",
+        "taxe": "Taxe applicable"
       },
       "statut": {
         "enregistre": "Enregistré",

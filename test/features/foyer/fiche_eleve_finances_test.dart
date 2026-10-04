@@ -30,9 +30,11 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/bandeau_attention.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
+import 'package:rewayah_academy/core/widgets/ligne_cle_valeur.dart';
 import 'package:rewayah_academy/core/widgets/ligne_finance.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/pastille_financiere.dart';
+import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/demo/finance_demo.dart';
 import 'package:rewayah_academy/features/foyer/fiche/finances_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
@@ -119,6 +121,52 @@ FinancesFoyer _mariamAvec(List<LigneMensualite> lignes, int totalUsd) {
     synthese: DonneesFinanceDemo.finances(JeuFoyerFinance.unProfil).synthese,
     profils: <FinancesProfil>[m],
   );
+}
+
+/// Mariam dans l'etat [etat], ecrit par la « source » : periode, manque,
+/// fin de conservation et debit attendu sont injectes, jamais calcules.
+FinancesFoyer _mariamEnEtat(
+  EtatFinancier etat, {
+  required bool periodeFinancee,
+  int? manqueUsd,
+  DateTime? finConservation,
+}) {
+  final FinancesProfil base = DonneesFinanceDemo.profils(
+    JeuFoyerFinance.unProfil,
+  ).single;
+  final FinancesProfil m = FinancesProfil(
+    profilId: base.profilId,
+    prenom: base.prenom,
+    cleAccent: base.cleAccent,
+    estAdulte: false,
+    classe: base.classe,
+    age: base.age,
+    etat: etat,
+    solde: base.solde,
+    periode: periodeFinancee ? base.periode : null,
+    prochainDebit: ProchainDebit(
+      date: periodeFinancee
+          ? DonneesFinanceDemo.moisSuivant
+          : DonneesFinanceDemo.debutMois,
+      montant: base.mensualite,
+    ),
+    mensualite: base.mensualite,
+    lignesMensualite: base.lignesMensualite,
+    manque: manqueUsd == null ? null : DonneesFinanceDemo.usd(manqueUsd),
+    finConservation: finConservation,
+  );
+  return FinancesFoyer(
+    synthese: DonneesFinanceDemo.finances(JeuFoyerFinance.unProfil).synthese,
+    profils: <FinancesProfil>[m],
+  );
+}
+
+/// La ligne du debit : sa cle et sa valeur affichees.
+(String, String) _ligneDebit(WidgetTester tester) {
+  final LigneCleValeur l = tester.widget<LigneCleValeur>(
+    find.byKey(FinancesElevePage.debitKey),
+  );
+  return (l.cle, l.valeur);
 }
 
 Future<GoRouter> _monter(
@@ -458,11 +506,139 @@ void main() {
       expect(bandeau.titre, t.ficheEleve.finances.regulariserTitre);
       expect(
         bandeau.message,
-        t.ficheEleve.finances.manqueEtConservation(
+        t.ficheEleve.finances.manquePourMoisEtConservation(
           montant: formaterMontant(i.manque!),
+          mois: t.commun.dates.mois[i.prochainDebit!.date.month - 1],
           date: dateEcheance(i.finConservation!),
         ),
       );
+      expect(find.byKey(FinancesElevePage.rechargerKey), findsOneWidget);
+    });
+
+    testWidgets('8 bis. sans periode financee : le mois a financer est '
+        'nomme, jamais un « prochain débit » a une date passee', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, depart: _chemin(DonneesFinanceDemo.ibrahimId));
+      final FinancesProfil i = _profil(
+        JeuFoyerFinance.unARegulariser,
+        DonneesFinanceDemo.ibrahimId,
+      );
+      final ProchainDebit debit = i.prochainDebit!;
+      // Le debit attendu est deja echu au 4 octobre : la periode en cours.
+      expect(debit.date.isBefore(_maintenant), isTrue);
+      final String octobre = t.commun.dates.mois[debit.date.month - 1];
+      expect(_ligneDebit(tester), (
+        t.ficheEleve.finances.periodeAFinancer,
+        t.ficheEleve.finances.periodeAFinancerValeur(
+          mois: octobre,
+          annee: '2026',
+          montant: formaterMontant(debit.montant),
+        ),
+      ));
+      expect(find.text(t.foyer.finances.prochainDebit), findsNothing);
+      expect(
+        tester
+            .widget<BandeauAttention>(find.byKey(FinancesElevePage.bandeauKey))
+            .message,
+        t.ficheEleve.finances.manquePourMoisEtConservation(
+          montant: formaterMontant(i.manque!),
+          mois: octobre,
+          date: dateEcheance(i.finConservation!),
+        ),
+      );
+    });
+
+    testWidgets('periode financee : « Prochain débit » garde sa date a venir', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, depart: _chemin(_mariam));
+      final FinancesProfil m = _profil(JeuFoyerFinance.unARegulariser, _mariam);
+      expect(_ligneDebit(tester), (
+        t.foyer.finances.prochainDebit,
+        t.foyer.finances.prochainDebitValeur(
+          date: dateEcheance(m.prochainDebit!.date),
+          montant: formaterMontant(m.prochainDebit!.montant),
+        ),
+      ));
+    });
+  });
+
+  group('Bandeaux par etat', () {
+    testWidgets('en confirmation : aucune recharge, « Ne payez pas une '
+        'seconde fois », aucun bouton plein', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        jeu: JeuFoyerFinance.unProfil,
+        port: _PortFinances(
+          () async => _mariamEnEtat(
+            EtatFinancier.enConfirmation,
+            periodeFinancee: true,
+          ),
+        ),
+        depart: _chemin(_mariam),
+      );
+      expect(find.byKey(FinancesElevePage.vueKey), findsOneWidget);
+      expect(find.byKey(FinancesElevePage.rechargerKey), findsNothing);
+      final BandeauAttention bandeau = tester.widget<BandeauAttention>(
+        find.byKey(FinancesElevePage.bandeauKey),
+      );
+      expect(bandeau.titre, t.ficheEleve.finances.confirmationTitre);
+      expect(bandeau.message, t.ficheEleve.finances.confirmationPhrase);
+      verifierUnSeulBoutonPlein(tester, maximum: 0);
+    });
+
+    testWidgets('manque, periode en cours financee : « Prochaine période à '
+        'financer », le mois suivant nomme', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        jeu: JeuFoyerFinance.unProfil,
+        port: _PortFinances(
+          () async => _mariamEnEtat(
+            EtatFinancier.manque,
+            periodeFinancee: true,
+            manqueUsd: 8,
+          ),
+        ),
+        depart: _chemin(_mariam),
+      );
+      final BandeauAttention bandeau = tester.widget<BandeauAttention>(
+        find.byKey(FinancesElevePage.bandeauKey),
+      );
+      expect(bandeau.titre, t.ficheEleve.finances.aFinancerTitre);
+      expect(
+        bandeau.message,
+        t.ficheEleve.finances.manquePourMois(
+          montant: formaterMontant(DonneesFinanceDemo.usd(8)),
+          mois: t.commun.dates.mois[DonneesFinanceDemo.moisSuivant.month - 1],
+        ),
+      );
+      expect(_ligneDebit(tester).$1, t.foyer.finances.prochainDebit);
+      expect(find.byKey(FinancesElevePage.rechargerKey), findsOneWidget);
+    });
+
+    testWidgets('expire, sans manque rendu : « Accès expiré », la periode '
+        'du mois nommee', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        jeu: JeuFoyerFinance.unProfil,
+        port: _PortFinances(
+          () async =>
+              _mariamEnEtat(EtatFinancier.expire, periodeFinancee: false),
+        ),
+        depart: _chemin(_mariam),
+      );
+      final String octobre =
+          t.commun.dates.mois[DonneesFinanceDemo.debutMois.month - 1];
+      final BandeauAttention bandeau = tester.widget<BandeauAttention>(
+        find.byKey(FinancesElevePage.bandeauKey),
+      );
+      expect(bandeau.titre, t.ficheEleve.finances.expireTitre);
+      expect(
+        bandeau.message,
+        t.ficheEleve.finances.moisNonFinance(mois: octobre),
+      );
+      expect(_ligneDebit(tester).$1, t.ficheEleve.finances.periodeAFinancer);
       expect(find.byKey(FinancesElevePage.rechargerKey), findsOneWidget);
     });
   });
@@ -499,11 +675,14 @@ void main() {
         depart: _chemin(_mariam),
       );
       expect(find.byKey(FinancesElevePage.vueKey), findsNothing);
+      expect(find.byType(Skeleton), findsOneWidget);
+      expect(find.byType(EtatSysteme), findsNothing);
       attente.complete(
         DonneesFinanceDemo.finances(JeuFoyerFinance.unARegulariser),
       );
       await stabiliser(tester);
       expect(find.byKey(FinancesElevePage.vueKey), findsOneWidget);
+      expect(find.byType(Skeleton), findsNothing);
     });
 
     testWidgets('erreur : titre, « Reessayer » relit la source', (
@@ -602,6 +781,45 @@ void main() {
               expect(tester.takeException(), isNull);
               expect(find.byKey(FinancesElevePage.vueKey), findsOneWidget);
               verifierUnSeulBoutonPlein(tester);
+              final bool bureau = cas.$1 >= 1440;
+              final Rect identite = tester.getRect(
+                find.byKey(FinancesElevePage.identiteKey),
+              );
+              final Rect vue = tester.getRect(
+                find.byKey(FinancesElevePage.vueKey),
+              );
+              final ActionPrincipale bouton = tester.widget<ActionPrincipale>(
+                find.byKey(FinancesElevePage.rechargerKey),
+              );
+              if (bureau) {
+                // Desktop compose : l'identite au debut de ligne (gauche en
+                // LTR, droite en RTL), la vue a cote, au meme niveau ; le
+                // bouton a sa largeur, jamais etire.
+                expect(
+                  sens == TextDirection.ltr
+                      ? identite.right <= vue.left
+                      : vue.right <= identite.left,
+                  isTrue,
+                  reason: 'identite $identite, vue $vue',
+                );
+                // La colonne de droite commence par le bandeau, s'il y en a.
+                final Finder bandeau = find.byKey(FinancesElevePage.bandeauKey);
+                final double hautColonne = bandeau.evaluate().isEmpty
+                    ? vue.top
+                    : tester.getRect(bandeau).top;
+                expect(identite.top, closeTo(hautColonne, 1));
+                expect(bouton.pleineLargeur, isFalse);
+                expect(
+                  tester
+                      .getSize(find.byKey(FinancesElevePage.rechargerKey))
+                      .width,
+                  lessThan(cas.$1 / 2),
+                );
+              } else {
+                // Telephone : l'identite au-dessus de la vue.
+                expect(identite.bottom, lessThanOrEqualTo(vue.top));
+                expect(bouton.pleineLargeur, isTrue);
+              }
             });
           }
         }

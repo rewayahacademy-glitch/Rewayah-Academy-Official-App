@@ -60,6 +60,10 @@ class FinancesElevePage extends ConsumerWidget {
   /// La vue financiere (solde, prochain debit, mensualite).
   static const Key vueKey = Key('ficheEleve.finances.vue');
 
+  /// La ligne du debit : « Prochain débit », ou « Période à financer »
+  /// quand la periode en cours n'est pas financee.
+  static const Key debitKey = Key('ficheEleve.finances.debit');
+
   /// Le detail de la mensualite.
   static const Key detailKey = Key('ficheEleve.finances.detail');
 
@@ -209,6 +213,26 @@ class EtatsFinancesProfil extends ConsumerWidget {
   }
 }
 
+/// Le mois que le debit attendu doit financer, en toutes lettres (guide
+/// §1.7 : « Il manque 8 USD pour financer janvier »), `null` sans debit.
+String? _moisAFinancer(FinancesProfil f) => switch (f.prochainDebit) {
+  final ProchainDebit d => t.commun.dates.mois[d.date.month - 1],
+  null => null,
+};
+
+/// Le debit attendu est celui d'une periode **non financee** (la periode
+/// en cours, guide §1.7) : il ne se dit pas « prochain débit », sa date
+/// pouvant etre deja passee.
+bool _periodeNonFinancee(FinancesProfil f) =>
+    f.periode == null &&
+    f.prochainDebit != null &&
+    switch (f.etat) {
+      EtatFinancier.aRegulariser ||
+      EtatFinancier.manque ||
+      EtatFinancier.expire => true,
+      _ => false,
+    };
+
 /// Le titre et la phrase du bandeau d'attention, `null` sans attention.
 ({String titre, String message, TonEtat ton})? _attention(FinancesProfil f) {
   final String? manque = switch (f.manque) {
@@ -216,13 +240,27 @@ class EtatsFinancesProfil extends ConsumerWidget {
     null => null,
   };
   final DateTime? conservation = f.finConservation;
-  final String message = switch ((manque, conservation)) {
-    (final String m, final DateTime d) =>
+  final String? mois = _moisAFinancer(f);
+  // Le mois a financer est nomme des que la source rend le debit attendu ;
+  // « la prochaine periode » ne reste qu'en repli, sans debit rendu.
+  final String message = switch ((manque, conservation, mois)) {
+    (final String m, final DateTime d, final String mo) =>
+      t.ficheEleve.finances.manquePourMoisEtConservation(
+        montant: m,
+        mois: mo,
+        date: dateEcheance(d),
+      ),
+    (final String m, null, final String mo) =>
+      t.ficheEleve.finances.manquePourMois(montant: m, mois: mo),
+    (final String m, final DateTime d, null) =>
       t.ficheEleve.finances.manqueEtConservation(
         montant: m,
         date: dateEcheance(d),
       ),
-    (final String m, null) => t.foyer.finances.manque(montant: m),
+    (final String m, null, null) => t.foyer.finances.manque(montant: m),
+    (null, _, final String mo) => t.ficheEleve.finances.moisNonFinance(
+      mois: mo,
+    ),
     _ => t.ficheEleve.finances.sansManque,
   };
   return switch (f.etat) {
@@ -395,16 +433,32 @@ class VueFinancesProfil extends ConsumerWidget {
                 ),
               ),
               Ecart.vMd,
-              LigneCleValeur(
-                cle: t.foyer.finances.prochainDebit,
-                valeur: debit == null
-                    ? t.foyer.finances.aucunDebit
-                    : t.foyer.finances.prochainDebitValeur(
-                        date: dateEcheance(debit.date),
-                        montant: formaterMontant(debit.montant),
-                      ),
-                chiffres: debit != null,
-              ),
+              // Periode en cours non financee : le debit attendu est celui
+              // du mois a financer, jamais un « prochain débit » a une date
+              // passee (guide §1.7).
+              if (debit != null && _periodeNonFinancee(finance))
+                LigneCleValeur(
+                  key: FinancesElevePage.debitKey,
+                  cle: t.ficheEleve.finances.periodeAFinancer,
+                  valeur: t.ficheEleve.finances.periodeAFinancerValeur(
+                    mois: t.commun.dates.mois[debit.date.month - 1],
+                    annee: debit.date.year.toString(),
+                    montant: formaterMontant(debit.montant),
+                  ),
+                  chiffres: true,
+                )
+              else
+                LigneCleValeur(
+                  key: FinancesElevePage.debitKey,
+                  cle: t.foyer.finances.prochainDebit,
+                  valeur: debit == null
+                      ? t.foyer.finances.aucunDebit
+                      : t.foyer.finances.prochainDebitValeur(
+                          date: dateEcheance(debit.date),
+                          montant: formaterMontant(debit.montant),
+                        ),
+                  chiffres: debit != null,
+                ),
               if (avecMensualite)
                 LigneCleValeur(
                   cle: t.ficheEleve.finances.mensualite,

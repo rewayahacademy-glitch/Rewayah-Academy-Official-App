@@ -453,29 +453,129 @@ void main() {
       expect(find.byType(LigneAllocation), findsNothing);
     });
 
-    testWidgets('en confirmation : la pastille le dit en mots', (
+    for (final (String nom, Size taille, Key cle) in <(String, Size, Key)>[
+      ('liste', const Size(390, 2400), MouvementsElevePage.listeKey),
+      ('tableau', const Size(1440, 2400), MouvementsElevePage.tableauKey),
+    ]) {
+      testWidgets('en confirmation ($nom) : la pastille le dit en mots, et '
+          'le recu rendu ne se montre pas (rien n est credite)', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          taille: taille,
+          port: _PortMouvements(
+            (_) async => <MouvementProfil>[
+              MouvementProfil(
+                id: 'm2',
+                date: DonneesFinanceDemo.aujourdhui,
+                nature: NatureMouvement.recharge,
+                montant: DonneesFinanceDemo.usd(10),
+                statut: StatutMouvement.enConfirmation,
+                // La source rend deja un recu : l'ecran ne doit pas le
+                // presenter comme un paiement reussi (guide §5.4).
+                recu: RecuPaiement(
+                  reference: 'REF-2',
+                  date: DonneesFinanceDemo.aujourdhui,
+                  rail:
+                      DonneesFinanceDemo.politiqueLancement.railsActifs.single,
+                  total: DonneesFinanceDemo.usd(10),
+                ),
+              ),
+            ],
+          ),
+          depart: _chemin(_mariam),
+        );
+        expect(find.byKey(cle), findsOneWidget);
+        expect(
+          find.text(t.ficheEleve.mouvements.statut.enConfirmation),
+          findsOneWidget,
+        );
+        expect(find.text(t.ficheEleve.mouvements.voirRecu), findsNothing);
+        expect(find.byKey(MouvementsElevePage.voirRecuKey('m2')), findsNothing);
+      });
+    }
+
+    testWidgets('taxe : son propre libelle, jamais une seconde mensualite', (
       WidgetTester tester,
     ) async {
+      final DateTime octobre = DonneesFinanceDemo.debutMois;
       await _monter(
         tester,
         port: _PortMouvements(
           (_) async => <MouvementProfil>[
             MouvementProfil(
-              id: 'm2',
-              date: DonneesFinanceDemo.aujourdhui,
-              nature: NatureMouvement.recharge,
-              montant: DonneesFinanceDemo.usd(10),
-              statut: StatutMouvement.enConfirmation,
+              id: 'tarif',
+              date: octobre,
+              nature: NatureMouvement.debitPeriode,
+              montant: DonneesFinanceDemo.usd(-50),
+              periode: octobre,
+            ),
+            MouvementProfil(
+              id: 'taxe',
+              date: octobre,
+              nature: NatureMouvement.taxe,
+              montant: DonneesFinanceDemo.usd(-3),
+              periode: octobre,
             ),
           ],
         ),
         depart: _chemin(_mariam),
       );
+      final String mensualite = t.ficheEleve.mouvements.nature.mensualiteDe(
+        mois: t.commun.dates.mois[octobre.month - 1],
+        annee: octobre.year.toString(),
+      );
+      final List<String> libelles = <String>[
+        for (final LigneTransaction l in tester.widgetList<LigneTransaction>(
+          find.byType(LigneTransaction),
+        ))
+          l.libelle,
+      ];
+      expect(libelles, <String>[
+        mensualite,
+        t.ficheEleve.mouvements.nature.taxe,
+      ]);
+    });
+
+    testWidgets('apres un paiement, l historique rouvert porte le nouveau '
+        'mouvement (jamais la liste gardee en memoire)', (
+      WidgetTester tester,
+    ) async {
+      final List<MouvementProfil> source = <MouvementProfil>[
+        MouvementProfil(
+          id: 'ancien',
+          date: DonneesFinanceDemo.dateRecharge,
+          nature: NatureMouvement.recharge,
+          montant: DonneesFinanceDemo.usd(20),
+        ),
+      ];
+      final GoRouter routeur = await _monter(
+        tester,
+        port: _PortMouvements((_) async => List<MouvementProfil>.of(source)),
+        depart: _chemin(_mariam),
+      );
+      expect(find.byType(LigneTransaction), findsOneWidget);
+      // La personne quitte l'historique (recharge, finances...) ; un
+      // paiement ajoute un mouvement a la source.
+      routeur.go(Routes.ficheEleveSousPage(_mariam, 'finances'));
+      await stabiliser(tester);
+      source.insert(
+        0,
+        MouvementProfil(
+          id: 'nouveau',
+          date: DonneesFinanceDemo.aujourdhui,
+          nature: NatureMouvement.recharge,
+          montant: DonneesFinanceDemo.usd(30),
+        ),
+      );
+      routeur.go(_chemin(_mariam));
+      await stabiliser(tester);
+      expect(find.byType(LigneTransaction), findsNWidgets(2));
       expect(
-        find.text(t.ficheEleve.mouvements.statut.enConfirmation),
+        find.text(formaterMontant(DonneesFinanceDemo.usd(30), signe: true)),
         findsOneWidget,
       );
-      expect(find.text(t.ficheEleve.mouvements.voirRecu), findsNothing);
     });
   });
 

@@ -26,6 +26,10 @@ enum NatureMouvement {
 
   /// Une remise (rang familial, reduction calendrier) : credit.
   remise,
+
+  /// La taxe applicable a la periode (guide §5.2) : debit, distinct de la
+  /// mensualite.
+  taxe,
 }
 
 /// L'etat d'un mouvement. Un etat se dit par un texte, jamais par la couleur
@@ -101,7 +105,9 @@ class MouvementProfil {
   /// Le premier jour du mois debite, pour un debit de periode.
   final DateTime? periode;
 
-  /// Le recu du paiement, quand il en existe un (une recharge).
+  /// Le recu du paiement, quand il en existe un (une recharge). Un
+  /// mouvement en confirmation ne le montre pas : il n'est pas encore
+  /// credite.
   final RecuPaiement? recu;
 }
 

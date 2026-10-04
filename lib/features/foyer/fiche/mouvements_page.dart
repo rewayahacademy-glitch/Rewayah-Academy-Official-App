@@ -33,12 +33,15 @@ import '../../../core/widgets/status_pill.dart';
 import '../fiche_eleve_page.dart';
 import '../ligne_membre.dart' show dateEcheance;
 
-/// Les mouvements d'un profil, relus a chaque ouverture (FI-BR-05).
+/// Les mouvements d'un profil, relus a chaque ouverture (FI-BR-05) : libere
+/// des que la page se ferme (`autoDispose`), pour qu'apres une recharge
+/// l'historique rouvert porte le nouveau mouvement, jamais l'ancienne liste.
 final FutureProviderFamily<List<MouvementProfil>, String>
-mouvementsProfilProvider = FutureProvider.family<List<MouvementProfil>, String>(
-  (Ref ref, String profilId) =>
-      ref.watch(portPaiementsFoyerProvider).mouvements(profilId),
-);
+mouvementsProfilProvider = FutureProvider.autoDispose
+    .family<List<MouvementProfil>, String>(
+      (Ref ref, String profilId) =>
+          ref.watch(portPaiementsFoyerProvider).mouvements(profilId),
+    );
 
 /// Les mouvements d'un profil eleve (`/tuteur/foyer/:eleveId/mouvements`,
 /// FI-6b ; guide Finance V4 §4, §5.2 ; maquettes 05 et 06).
@@ -101,6 +104,7 @@ String libelleMouvement(MouvementProfil m) => switch (m.nature) {
   },
   NatureMouvement.avoir => t.ficheEleve.mouvements.nature.avoir,
   NatureMouvement.remise => t.ficheEleve.mouvements.nature.remise,
+  NatureMouvement.taxe => t.ficheEleve.mouvements.nature.taxe,
 };
 
 /// Le statut d'un mouvement, en texte.
@@ -278,6 +282,14 @@ Widget? _pastille(MouvementProfil m) => switch (m.statut) {
   StatutMouvement.enregistre => null,
 };
 
+/// Le recu de [m], s'il peut se montrer : seul un mouvement enregistre en a
+/// un. En confirmation, rien n'est encore credite (FI9) : un recu le ferait
+/// lire comme un paiement reussi (guide §5.4).
+RecuPaiement? _recuMontrable(MouvementProfil m) => switch (m.statut) {
+  StatutMouvement.enregistre => m.recu,
+  StatutMouvement.enConfirmation => null,
+};
+
 /// Ouvre le recu de [m] en surface de lecture.
 Future<void> _ouvrirRecu(BuildContext context, RecuPaiement recu) =>
     AppBottomSheet.ouvrirLecture<void>(
@@ -321,7 +333,7 @@ class _Liste extends StatelessWidget {
                 montant: m.montant,
                 statut: _pastille(m),
               ),
-              if (m.recu case final RecuPaiement recu)
+              if (_recuMontrable(m) case final RecuPaiement recu)
                 Align(
                   alignment: AlignmentDirectional.centerStart,
                   child: _lienRecu(context, m, recu),
@@ -389,7 +401,7 @@ class _Tableau extends StatelessWidget {
                     _pastille(m) ??
                     Text(libelleStatut(m.statut), style: cellule),
               ),
-              recu: switch (m.recu) {
+              recu: switch (_recuMontrable(m)) {
                 final RecuPaiement recu => Align(
                   alignment: AlignmentDirectional.centerStart,
                   child: _lienRecu(context, m, recu),

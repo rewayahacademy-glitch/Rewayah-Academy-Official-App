@@ -480,8 +480,8 @@ abstract final class DonneesFinanceDemo {
           id: 'demo-fi-mvt-${p.profilId}-$i',
           date: debutMois,
           nature: switch (l.nature) {
-            NatureLigneMensualite.tarif ||
-            NatureLigneMensualite.taxe => NatureMouvement.debitPeriode,
+            NatureLigneMensualite.tarif => NatureMouvement.debitPeriode,
+            NatureLigneMensualite.taxe => NatureMouvement.taxe,
             NatureLigneMensualite.remiseRang ||
             NatureLigneMensualite.prorata => NatureMouvement.remise,
             NatureLigneMensualite.avoir => NatureMouvement.avoir,
