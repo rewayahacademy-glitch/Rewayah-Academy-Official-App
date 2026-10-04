@@ -157,7 +157,7 @@ void main() {
       await avecLargeur(tester, largeurMobile, () async {
         await _poser(tester);
         expect(find.text(LibellesGroupe.dureeLibelle), findsOneWidget);
-        expect(find.text('1 h 30'), findsOneWidget);
+        expect(find.text('1\u00A0h\u00A030'), findsOneWidget);
       });
     });
 

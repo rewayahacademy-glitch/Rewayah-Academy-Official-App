@@ -16,6 +16,7 @@ import 'package:rewayah_academy/core/priere/reglages_priere.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_metriques.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
@@ -175,7 +176,10 @@ void main() {
 
       expect(find.text(t.eleve.accueil.prochainCours), findsOneWidget);
       expect(
-        find.text(t.eleve.accueil.dansMinutes(minutes: '25')),
+        // DUREE-INSECABLE-1 : la duree est insecable.
+        find.text(
+          LibellesGroupe.insecable(t.eleve.accueil.dansMinutes(minutes: '25')),
+        ),
         findsOneWidget,
       );
       // Le prenom de l'enseignante, jamais son nom de famille (ADR-008).
