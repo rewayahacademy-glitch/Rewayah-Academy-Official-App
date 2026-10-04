@@ -135,6 +135,7 @@ abstract final class Routes {
     'informations',
     'inscription',
     'interface',
+    'couleur',
     'camera',
     'acces',
     'appareils',

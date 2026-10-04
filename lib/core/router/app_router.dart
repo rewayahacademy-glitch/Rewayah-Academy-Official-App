@@ -80,6 +80,7 @@ import '../../features/fiche_groupe/fiche_groupe_page.dart';
 import '../../features/foyer/creer_mon_profil_indisponible.dart';
 import '../../features/foyer/fiche/acces_page.dart';
 import '../../features/foyer/fiche/camera_page.dart';
+import '../../features/foyer/fiche/couleur_page.dart';
 import '../../features/foyer/fiche/informations_page.dart';
 import '../../features/foyer/fiche/inscription_page.dart';
 import '../../features/foyer/fiche/interface_page.dart';
@@ -565,6 +566,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                         path: 'interface',
                         pageBuilder: glissee(
                           (GoRouterState etat) => InterfaceElevePage(
+                            eleveId: _parametre(etat, 'eleveId'),
+                          ),
+                        ),
+                      ),
+                      GoRoute(
+                        path: 'couleur',
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => CouleurElevePage(
                             eleveId: _parametre(etat, 'eleveId'),
                           ),
                         ),

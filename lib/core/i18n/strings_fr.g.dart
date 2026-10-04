@@ -86,6 +86,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$galerie$fr galerie = Traductions$galerie$fr.internal(_root);
 	late final Traductions$tc$fr tc = Traductions$tc$fr.internal(_root);
 	late final Traductions$adulte$fr adulte = Traductions$adulte$fr.internal(_root);
+	late final Traductions$identiteProfil$fr identiteProfil = Traductions$identiteProfil$fr.internal(_root);
 }
 
 // Path: commun
@@ -1066,6 +1067,7 @@ class Traductions$ficheEleve$fr {
 
 	late final Traductions$ficheEleve$introuvable$fr introuvable = Traductions$ficheEleve$introuvable$fr.internal(_root);
 	late final Traductions$ficheEleve$lignes$fr lignes = Traductions$ficheEleve$lignes$fr.internal(_root);
+	late final Traductions$ficheEleve$couleur$fr couleur = Traductions$ficheEleve$couleur$fr.internal(_root);
 	late final Traductions$ficheEleve$informations$fr informations = Traductions$ficheEleve$informations$fr.internal(_root);
 	late final Traductions$ficheEleve$inscription$fr inscription = Traductions$ficheEleve$inscription$fr.internal(_root);
 	late final Traductions$ficheEleve$interface$fr interface = Traductions$ficheEleve$interface$fr.internal(_root);
@@ -2385,6 +2387,33 @@ class Traductions$adulte$fr {
 	late final Traductions$adulte$sortie$fr sortie = Traductions$adulte$sortie$fr.internal(_root);
 	late final Traductions$adulte$reprise$fr reprise = Traductions$adulte$reprise$fr.internal(_root);
 	late final Traductions$adulte$demo$fr demo = Traductions$adulte$demo$fr.internal(_root);
+}
+
+// Path: identiteProfil
+class Traductions$identiteProfil$fr {
+	Traductions$identiteProfil$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{n} ans'
+	String age({required Object n}) => '${n} ans';
+
+	/// fr: 'Classe {classe}'
+	String classe({required Object classe}) => 'Classe ${classe}';
+
+	/// fr: '{age} · {classe}'
+	String ageEtClasse({required Object age, required Object classe}) => '${age} · ${classe}';
+
+	/// fr: '{prenom}, profil enfant'
+	String lecteurEnfant({required Object prenom}) => '${prenom}, profil enfant';
+
+	/// fr: '{prenom}, profil adulte'
+	String lecteurAdulte({required Object prenom}) => '${prenom}, profil adulte';
+
+	/// fr: '{profil}, {classe}'
+	String lecteurAvecClasse({required Object profil, required Object classe}) => '${profil}, ${classe}';
 }
 
 // Path: commun.demonstration
@@ -3823,6 +3852,66 @@ class Traductions$ficheEleve$lignes$fr {
 
 	/// fr: 'Connecter un appareil, voir ceux qui sont reliés, en retirer un'
 	String get appareilsLegende => 'Connecter un appareil, voir ceux qui sont reliés, en retirer un';
+
+	/// fr: 'Couleur du profil'
+	String get couleur => 'Couleur du profil';
+
+	/// fr: 'Sans couleur'
+	String get couleurAucune => 'Sans couleur';
+}
+
+// Path: ficheEleve.couleur
+class Traductions$ficheEleve$couleur$fr {
+	Traductions$ficheEleve$couleur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Couleur du profil'
+	String get titre => 'Couleur du profil';
+
+	/// fr: 'Choisissez la couleur qui distingue {prenom} des autres profils du foyer. Elle s'affiche derrière sa photo sur les écrans du foyer. Ce n'est ni un statut, ni une classe.'
+	String contexte({required Object prenom}) => 'Choisissez la couleur qui distingue ${prenom} des autres profils du foyer. Elle s\'affiche derrière sa photo sur les écrans du foyer. Ce n\'est ni un statut, ni une classe.';
+
+	/// fr: 'Aperçu'
+	String get apercu => 'Aperçu';
+
+	/// fr: 'Menthe'
+	String get menthe => 'Menthe';
+
+	/// fr: 'Ciel'
+	String get ciel => 'Ciel';
+
+	/// fr: 'Lavande'
+	String get lavande => 'Lavande';
+
+	/// fr: 'Rose'
+	String get rose => 'Rose';
+
+	/// fr: 'Pêche'
+	String get peche => 'Pêche';
+
+	/// fr: 'Sable'
+	String get sable => 'Sable';
+
+	/// fr: 'Libre dans ce foyer.'
+	String get libre => 'Libre dans ce foyer.';
+
+	/// fr: 'Déjà choisie pour {prenom} : les deux profils auraient la même couleur.'
+	String dejaPrise({required Object prenom}) => 'Déjà choisie pour ${prenom} : les deux profils auraient la même couleur.';
+
+	/// fr: 'Sans couleur'
+	String get aucune => 'Sans couleur';
+
+	/// fr: 'Seuls la photo et le prénom distinguent {prenom}.'
+	String aucuneDetail({required Object prenom}) => 'Seuls la photo et le prénom distinguent ${prenom}.';
+
+	/// fr: 'Le changement de couleur n'est pas confirmé : la connexion a été coupée. Vérifiez la connexion, puis choisissez la couleur de nouveau.'
+	String get echec => 'Le changement de couleur n\'est pas confirmé : la connexion a été coupée. Vérifiez la connexion, puis choisissez la couleur de nouveau.';
+
+	/// fr: 'Vous êtes hors ligne : la couleur ne peut pas être changée maintenant. Elle se choisit de nouveau dès le retour de la connexion.'
+	String get horsLigne => 'Vous êtes hors ligne : la couleur ne peut pas être changée maintenant. Elle se choisit de nouveau dès le retour de la connexion.';
 }
 
 // Path: ficheEleve.informations
@@ -16151,6 +16240,23 @@ extension on Traductions {
 			'ficheEleve.lignes.acces' => 'Accès Rewayah',
 			'ficheEleve.lignes.appareils' => ({required Object prenom}) => 'Appareils de ${prenom}',
 			'ficheEleve.lignes.appareilsLegende' => 'Connecter un appareil, voir ceux qui sont reliés, en retirer un',
+			'ficheEleve.lignes.couleur' => 'Couleur du profil',
+			'ficheEleve.lignes.couleurAucune' => 'Sans couleur',
+			'ficheEleve.couleur.titre' => 'Couleur du profil',
+			'ficheEleve.couleur.contexte' => ({required Object prenom}) => 'Choisissez la couleur qui distingue ${prenom} des autres profils du foyer. Elle s\'affiche derrière sa photo sur les écrans du foyer. Ce n\'est ni un statut, ni une classe.',
+			'ficheEleve.couleur.apercu' => 'Aperçu',
+			'ficheEleve.couleur.menthe' => 'Menthe',
+			'ficheEleve.couleur.ciel' => 'Ciel',
+			'ficheEleve.couleur.lavande' => 'Lavande',
+			'ficheEleve.couleur.rose' => 'Rose',
+			'ficheEleve.couleur.peche' => 'Pêche',
+			'ficheEleve.couleur.sable' => 'Sable',
+			'ficheEleve.couleur.libre' => 'Libre dans ce foyer.',
+			'ficheEleve.couleur.dejaPrise' => ({required Object prenom}) => 'Déjà choisie pour ${prenom} : les deux profils auraient la même couleur.',
+			'ficheEleve.couleur.aucune' => 'Sans couleur',
+			'ficheEleve.couleur.aucuneDetail' => ({required Object prenom}) => 'Seuls la photo et le prénom distinguent ${prenom}.',
+			'ficheEleve.couleur.echec' => 'Le changement de couleur n\'est pas confirmé : la connexion a été coupée. Vérifiez la connexion, puis choisissez la couleur de nouveau.',
+			'ficheEleve.couleur.horsLigne' => 'Vous êtes hors ligne : la couleur ne peut pas être changée maintenant. Elle se choisit de nouveau dès le retour de la connexion.',
 			'ficheEleve.informations.titre' => 'Informations de l\'élève',
 			'ficheEleve.informations.identite' => 'Identité',
 			'ficheEleve.informations.prenom' => 'Prénom',
@@ -16382,6 +16488,8 @@ extension on Traductions {
 			'dossiers.file.enVerification' => 'En cours de vérification',
 			'dossiers.file.sansNom' => 'Dossier sans nom disponible',
 			'dossiers.file.legende' => ({required Object type, required Object date}) => '${type} · ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.file.dateHeure' => ({required Object date, required Object heure, required Object zone}) => '${date} à ${heure} (${zone})',
 			'dossiers.file.dateChiffres' => ({required Object jour, required Object mois, required Object annee}) => '${jour}/${mois}/${annee}',
 			'dossiers.file.heureChiffres' => ({required Object heures, required Object minutes}) => '${heures}:${minutes}',
@@ -16399,8 +16507,6 @@ extension on Traductions {
 			'dossiers.visionneuse.aucune' => 'Aucune pièce n’est disponible.',
 			'dossiers.visionneuse.fermerPiece' => 'Fermer la pièce',
 			'dossiers.visionneuse.agrandir' => 'Agrandir',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.visionneuse.reduire' => 'Réduire',
 			'dossiers.visionneuse.ajuster' => 'Ajuster à l’écran',
 			'dossiers.visionneuse.infoBulle' => ({required Object action, required Object touche}) => '${action} (touche ${touche})',
@@ -16896,6 +17002,8 @@ extension on Traductions {
 			'admin.journal.colonneQuand' => 'Quand',
 			'admin.journal.colonneQui' => 'Qui',
 			'admin.journal.colonneRole' => 'À quel titre',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.colonneQuoi' => 'Ce qui a été fait',
 			'admin.journal.colonneCible' => 'Sur quoi',
 			'admin.journal.colonneDetail' => 'Détail',
@@ -16913,8 +17021,6 @@ extension on Traductions {
 			'admin.journal.evtKycTranche' => 'Dossier d\'identité tranché',
 			'admin.journal.evtProfilCree' => 'Profil créé',
 			'admin.journal.evtProfilEnfantCree' => 'Profil enfant créé',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.evtCodeCree' => 'Code d\'appairage créé',
 			'admin.journal.evtAppareilAppaire' => 'Appareil appairé',
 			'admin.journal.evtAppareilRevoque' => 'Appareil révoqué',
@@ -17410,6 +17516,8 @@ extension on Traductions {
 			'compte.tuteur.pagePreferences.titre' => 'Préférences',
 			'compte.tuteur.pagePreferences.sousTitre' => 'Personnalisez votre expérience sur cet appareil.',
 			'compte.tuteur.pagePreferences.apparence' => 'Apparence',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pagePreferences.apparenceDetail' => 'Thème et confort visuel',
 			'compte.tuteur.pagePreferences.langue' => 'Langue et région',
 			'compte.tuteur.pagePreferences.notifications' => 'Notifications',
@@ -17427,8 +17535,6 @@ extension on Traductions {
 			'compte.tuteur.pageAide.indisponibleTitre' => 'Aide pas encore disponible',
 			'compte.tuteur.pageAide.indisponiblePhrase' => 'Les questions fréquentes et le contact de l\'académie ne sont pas encore ouverts dans l\'application.',
 			'compte.tuteur.pageAide.canalCourriel' => 'Courriel de l\'académie',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageAide.canalLien' => 'Page d\'aide de l\'académie',
 			'compte.tuteur.pageAide.aucunCanal' => 'Aucun canal d\'aide n\'est publié pour le moment.',
 			'compte.tuteur.pageLegal.titre' => 'Informations légales',
@@ -17924,6 +18030,8 @@ extension on Traductions {
 			'enseignant.demo.titre' => 'Démonstration enseignant',
 			'enseignant.demo.mention' => 'Données fictives, aucun envoi.',
 			'enseignant.demo.intro' => 'Choisissez un écran de Sayyid Ibrahim.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.demo.ecrans' => 'Écrans',
 			'enseignant.demo.etats' => 'Situations',
 			'enseignant.demo.etatNominal' => 'Journée ordinaire',
@@ -17941,8 +18049,6 @@ extension on Traductions {
 			'enseignant.bienvenue.prerequisFuseau' => 'Vérifier mon fuseau horaire',
 			'enseignant.bienvenue.ctaPhoto' => 'Ajouter ma photo',
 			'enseignant.bienvenue.ctaInformations' => 'Vérifier mes informations',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.bienvenue.ctaJournee' => 'Voir ma journée',
 			'enseignant.bienvenue.rappels' => 'Deux choses à ne pas découvrir en cours de route',
 			'enseignant.bienvenue.declarer' => 'Déclarer mes disponibilités',
@@ -18438,6 +18544,8 @@ extension on Traductions {
 			'controleur.observation.cleTexte' => 'Remarque',
 			'controleur.observation.sansTexte' => 'Aucun texte',
 			'controleur.observation.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.echanges.titre' => 'Échanges',
 			'controleur.echanges.titreFil' => ({required Object classe, required Object date}) => '${classe} · ${date}',
 			'controleur.echanges.derniereActivite' => ({required Object date}) => 'Dernière activité : ${date}',
@@ -18455,8 +18563,6 @@ extension on Traductions {
 			'controleur.echanges.envoyer' => 'Envoyer',
 			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
 			'controleur.echanges.enCours' => 'Envoi en cours.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.echanges.envoye' => 'Envoyé.',
 			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.reessayer' => 'Réessayer',
@@ -18952,6 +19058,8 @@ extension on Traductions {
 			'tc.parcours.feedback.rythme.tresBien' => 'Très confortable',
 			'tc.parcours.feedback.technique.intitule' => 'Le son et l\'image étaient-ils confortables ?',
 			'tc.parcours.feedback.technique.difficile' => 'Gênants',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.feedback.technique.bien' => 'Corrects',
 			'tc.parcours.feedback.technique.tresBien' => 'Très bons',
 			'tc.parcours.feedback.confiance.intitule' => 'Vous sentez-vous prêt pour le prochain cours ?',
@@ -18969,8 +19077,6 @@ extension on Traductions {
 			'tc.parcours.signalement.categorieValeur.technique' => 'Technique',
 			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
 			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.signalement.interne' => 'Note interne',
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
@@ -19302,6 +19408,12 @@ extension on Traductions {
 			'adulte.demo.etats.doubleSoumission' => 'La même action a été envoyée deux fois.',
 			'adulte.demo.etats.notificationDansLApplication' => 'La notification n\'a pas pu partir sur le téléphone, elle reste visible dans l\'application.',
 			'adulte.demo.etats.emancipation' => 'Émancipation d\'un élève devenu adulte : non construite dans cette vague.',
+			'identiteProfil.age' => ({required Object n}) => '${n} ans',
+			'identiteProfil.classe' => ({required Object classe}) => 'Classe ${classe}',
+			'identiteProfil.ageEtClasse' => ({required Object age, required Object classe}) => '${age} · ${classe}',
+			'identiteProfil.lecteurEnfant' => ({required Object prenom}) => '${prenom}, profil enfant',
+			'identiteProfil.lecteurAdulte' => ({required Object prenom}) => '${prenom}, profil adulte',
+			'identiteProfil.lecteurAvecClasse' => ({required Object profil, required Object classe}) => '${profil}, ${classe}',
 			_ => null,
 		};
 	}

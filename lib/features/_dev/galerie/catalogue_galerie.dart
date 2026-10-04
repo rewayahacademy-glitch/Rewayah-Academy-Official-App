@@ -12,6 +12,7 @@ import '../../../core/presence/service_presence.dart';
 import '../../../core/presence/vue_presence.dart';
 import '../../../core/priere/horaires_priere.dart';
 import '../../../core/session/session_state.dart';
+import '../../../core/theme/accent_profil.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -42,6 +43,7 @@ import '../../../core/widgets/fil_discussion.dart';
 import '../../../core/widgets/filter_pill.dart';
 import '../../../core/widgets/grille_bento.dart';
 import '../../../core/widgets/groupe_reglages.dart';
+import '../../../core/widgets/identite_profil.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
 import '../../../core/widgets/ligne_presence.dart';
@@ -984,6 +986,35 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           prenom: 'Youssef',
           nom: 'Sayyid Youssef',
           role: 'Coran, niveau 2',
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'IdentiteProfil',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'bandeau choisi par le tuteur, age et classe',
+        (BuildContext _) => const IdentiteProfil(
+          prenom: 'Mariam',
+          accent: AccentProfil.rose,
+          age: 10,
+          classe: 'An-Nour',
+        ),
+      ),
+      EtatGalerie(
+        'sans couleur choisie : le cercle seul',
+        (BuildContext _) =>
+            const IdentiteProfil(prenom: 'Ibrahim', accent: null),
+      ),
+      EtatGalerie(
+        'grand en-tete, profil adulte',
+        (BuildContext _) => const IdentiteProfil(
+          prenom: 'Fatimah',
+          accent: AccentProfil.lavande,
+          estAdulte: true,
+          taille: TailleIdentite.entete,
         ),
       ),
     ],

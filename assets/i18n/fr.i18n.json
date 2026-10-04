@@ -985,7 +985,26 @@
       "cameraNonAutorisee": "Non autorisée",
       "acces": "Accès Rewayah",
       "appareils": "Appareils de {prenom}",
-      "appareilsLegende": "Connecter un appareil, voir ceux qui sont reliés, en retirer un"
+      "appareilsLegende": "Connecter un appareil, voir ceux qui sont reliés, en retirer un",
+      "couleur": "Couleur du profil",
+      "couleurAucune": "Sans couleur"
+    },
+    "couleur": {
+      "titre": "Couleur du profil",
+      "contexte": "Choisissez la couleur qui distingue {prenom} des autres profils du foyer. Elle s'affiche derrière sa photo sur les écrans du foyer. Ce n'est ni un statut, ni une classe.",
+      "apercu": "Aperçu",
+      "menthe": "Menthe",
+      "ciel": "Ciel",
+      "lavande": "Lavande",
+      "rose": "Rose",
+      "peche": "Pêche",
+      "sable": "Sable",
+      "libre": "Libre dans ce foyer.",
+      "dejaPrise": "Déjà choisie pour {prenom} : les deux profils auraient la même couleur.",
+      "aucune": "Sans couleur",
+      "aucuneDetail": "Seuls la photo et le prénom distinguent {prenom}.",
+      "echec": "Le changement de couleur n'est pas confirmé : la connexion a été coupée. Vérifiez la connexion, puis choisissez la couleur de nouveau.",
+      "horsLigne": "Vous êtes hors ligne : la couleur ne peut pas être changée maintenant. Elle se choisit de nouveau dès le retour de la connexion."
     },
     "informations": {
       "titre": "Informations de l'élève",
@@ -4650,5 +4669,13 @@
         "emancipation": "Émancipation d'un élève devenu adulte : non construite dans cette vague."
       }
     }
+  },
+  "identiteProfil": {
+    "age": "{n} ans",
+    "classe": "Classe {classe}",
+    "ageEtClasse": "{age} · {classe}",
+    "lecteurEnfant": "{prenom}, profil enfant",
+    "lecteurAdulte": "{prenom}, profil adulte",
+    "lecteurAvecClasse": "{profil}, {classe}"
   }
 }

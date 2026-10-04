@@ -19,6 +19,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/appairage/service_avatar.dart';
+import 'package:rewayah_academy/core/capacites/port_accents_profils.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -27,9 +28,11 @@ import 'package:rewayah_academy/core/offres/service_offres.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/theme/accent_profil.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
+import 'package:rewayah_academy/core/widgets/identite_profil.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
@@ -38,6 +41,7 @@ import 'package:rewayah_academy/features/classe_tuteur/catalogue_classes_page.da
 import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/acces_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/camera_page.dart';
+import 'package:rewayah_academy/features/foyer/fiche/couleur_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/informations_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/inscription_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/interface_page.dart';
@@ -250,6 +254,7 @@ void main() {
         ),
         (t.ficheEleve.lignes.inscription, 'inscription', InscriptionElevePage),
         (t.ficheEleve.lignes.interface, 'interface', InterfaceElevePage),
+        (t.ficheEleve.lignes.couleur, 'couleur', CouleurElevePage),
         (t.ficheEleve.lignes.camera, 'camera', CameraElevePage),
         (t.ficheEleve.lignes.acces, 'acces', AccesElevePage),
       ];
@@ -1024,4 +1029,145 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   });
+
+  group('Couleur du profil, choisie par le tuteur (K-62)', () {
+    List<Override> accents(PortAccentsProfils port) => <Override>[
+      portAccentsProfilsProvider.overrideWithValue(port),
+    ];
+
+    Finder bandeau() => find.byKey(BandeauProfil.bandeauKey);
+
+    /// Le bandeau de l'apercu du profil (les cartes de choix portent aussi
+    /// le leur, en petit).
+    Finder bandeauApercu() => find.descendant(
+      of: find.byKey(CouleurElevePage.apercuKey),
+      matching: bandeau(),
+    );
+
+    testWidgets('sans source (production) : la page le dit, aucun choix, '
+        'la fiche dit « Sans couleur »', (WidgetTester tester) async {
+      await _monter(tester, appairage: _foyerA());
+      await _ouvrirFicheA1(tester);
+      expect(find.text(t.ficheEleve.lignes.couleurAucune), findsOneWidget);
+      expect(bandeau(), findsNothing);
+
+      await _ouvrirLigne(tester, t.ficheEleve.lignes.couleur);
+      expect(_etat(NatureEtat.indisponible), findsOneWidget);
+      expect(find.byKey(CouleurElevePage.choixKey), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('le tuteur choisit Menthe : relu, bandeau dans l apercu et '
+        'l en-tete de la fiche, legende de la ligne', (
+      WidgetTester tester,
+    ) async {
+      final AccentsProfilsEnMemoire port = AccentsProfilsEnMemoire(
+        <String, AccentProfil>{FoyersFictifs.a2.id: AccentProfil.rose},
+      );
+      final GoRouter routeur = await _monter(
+        tester,
+        appairage: _foyerA(),
+        autres: accents(port),
+      );
+      await _ouvrirFicheA1(tester);
+      await _ouvrirLigne(tester, t.ficheEleve.lignes.couleur);
+      expect(lieu(routeur), Routes.ficheEleveSousPage(a1, 'couleur'));
+
+      // Phrase de contexte (K-58), apercu sans bandeau, Rose deja prise.
+      expect(
+        find.text(t.ficheEleve.couleur.contexte(prenom: 'Eleve A1')),
+        findsOneWidget,
+      );
+      expect(bandeauApercu(), findsNothing);
+      expect(
+        find.text(t.ficheEleve.couleur.dejaPrise(prenom: 'Eleve A2')),
+        findsOneWidget,
+      );
+
+      await _toucher(
+        tester,
+        find.byKey(CouleurElevePage.carteDe(AccentProfil.menthe)),
+      );
+      expect((await port.lire())[a1], AccentProfil.menthe);
+      expect(
+        find.descendant(
+          of: find.byKey(CouleurElevePage.apercuKey),
+          matching: bandeau(),
+        ),
+        findsOneWidget,
+      );
+
+      await _toucher(tester, find.byType(DisqueRetour));
+      expect(lieu(routeur), Routes.ficheElevePour(a1));
+      expect(find.text(t.ficheEleve.couleur.menthe), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(FicheElevePage.enteteKey),
+          matching: bandeau(),
+        ),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('« Sans couleur » retire le bandeau', (
+      WidgetTester tester,
+    ) async {
+      final AccentsProfilsEnMemoire port = AccentsProfilsEnMemoire(
+        <String, AccentProfil>{a1: AccentProfil.ciel},
+      );
+      await _monter(
+        tester,
+        appairage: _foyerA(),
+        depart: Routes.ficheEleveSousPage(a1, 'couleur'),
+        autres: accents(port),
+      );
+      expect(bandeauApercu(), findsOneWidget);
+      await _toucher(tester, find.text(t.ficheEleve.couleur.aucune));
+      expect((await port.lire()).containsKey(a1), isFalse);
+      expect(bandeauApercu(), findsNothing);
+    });
+
+    testWidgets('hors ligne : rien n est envoye, une phrase dit pourquoi', (
+      WidgetTester tester,
+    ) async {
+      final AccentsProfilsEnMemoire port = AccentsProfilsEnMemoire();
+      await _monter(
+        tester,
+        appairage: _foyerA(),
+        depart: Routes.ficheEleveSousPage(a1, 'couleur'),
+        autres: <Override>[
+          ...accents(port),
+          horsLigneProvider.overrideWith((Ref ref) => Stream<bool>.value(true)),
+        ],
+      );
+      expect(find.byKey(CouleurElevePage.horsLigneKey), findsOneWidget);
+      await tester.tap(find.byKey(CouleurElevePage.carteDe(AccentProfil.rose)));
+      await stabiliser(tester);
+      expect(await port.lire(), isEmpty);
+    });
+
+    testWidgets('ecriture en echec : la phrase dit quoi faire, aucun bandeau '
+        'invente', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        appairage: _foyerA(),
+        depart: Routes.ficheEleveSousPage(a1, 'couleur'),
+        autres: accents(_AccentsQuiEchouent()),
+      );
+      await _toucher(
+        tester,
+        find.byKey(CouleurElevePage.carteDe(AccentProfil.peche)),
+      );
+      expect(find.byKey(CouleurElevePage.echecKey), findsOneWidget);
+      expect(bandeauApercu(), findsNothing);
+    });
+  });
+}
+
+/// Des accents lisibles dont l'ecriture echoue (coupure).
+class _AccentsQuiEchouent extends AccentsProfilsEnMemoire {
+  @override
+  Future<void> choisir(String profilId, AccentProfil? accent) async =>
+      throw Exception('coupure');
 }

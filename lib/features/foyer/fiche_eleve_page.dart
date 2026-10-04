@@ -4,12 +4,14 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/appairage/service_appairage.dart';
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/capacites/port_accents_profils.dart';
 import '../../core/domain/enums.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/accent_profil.dart';
 import '../../core/theme/app_elevation.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -19,8 +21,10 @@ import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/identite_profil.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import 'fiche/couleur_page.dart';
 import 'foyer_page.dart';
 import 'ligne_membre.dart';
 import 'photo_eleve.dart';
@@ -321,6 +325,18 @@ class _ContenuFiche extends ConsumerWidget {
             onPress: () => aller(sousPage('interface')),
           ),
           LigneRubrique(
+            icone: AppIcons.palette,
+            libelle: t.ficheEleve.lignes.couleur,
+            legende: switch (accentLu(
+              ref.watch(accentsProfilsProvider),
+              profil.eleveId,
+            )) {
+              final AccentProfil a => libelleAccent(a),
+              null => t.ficheEleve.lignes.couleurAucune,
+            },
+            onPress: () => aller(sousPage('couleur')),
+          ),
+          LigneRubrique(
             icone: AppIcons.camera,
             libelle: t.ficheEleve.lignes.camera,
             legende: profil.camera == CameraPolicy.allowed
@@ -367,7 +383,14 @@ class _ContenuFiche extends ConsumerWidget {
       children: <Widget>[
         KeyedSubtree(
           key: FicheElevePage.enteteKey,
-          child: _Entete(profil: profil, classe: texteClasse(classe)),
+          child: _Entete(
+            profil: profil,
+            classe: texteClasse(classe),
+            accent: accentLu(
+              ref.watch(accentsProfilsProvider),
+              profil.eleveId,
+            ),
+          ),
         ),
         Ecart.vXxl,
         ColonnesFiche(principal: parametres, annexe: appareils),
@@ -378,10 +401,17 @@ class _ContenuFiche extends ConsumerWidget {
 
 /// La carte d'identite : photo, prenom, classe quand elle est connue.
 class _Entete extends StatelessWidget {
-  const _Entete({required this.profil, required this.classe});
+  const _Entete({
+    required this.profil,
+    required this.classe,
+    required this.accent,
+  });
 
   final ProfilEleveFoyer profil;
   final String? classe;
+
+  /// La couleur choisie par le tuteur (K-62), `null` sans bandeau.
+  final AccentProfil? accent;
 
   @override
   Widget build(BuildContext context) {
@@ -396,6 +426,10 @@ class _Entete extends StatelessWidget {
         role: ligneClasse,
         diametre: AppAvatar.grand,
         ecart: AppSpacing.lg,
+        enveloppeAvatar: BandeauProfil.enveloppe(
+          diametre: AppAvatar.grand,
+          accent: accent,
+        ),
         avatar: PhotoEleve(
           prenom: profil.prenom,
           cleAvatar: profil.cleAvatar,

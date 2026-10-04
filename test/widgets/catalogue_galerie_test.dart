@@ -38,6 +38,9 @@ const List<String> composantsDuCatalogue = <String>[
   'BentoTile',
   'AvatarTile',
   'AvatarNom',
+  // FI-2 (decision du directeur du 04/10, K-62) : l'identite d'un profil,
+  // son bandeau de couleur choisi par le tuteur derriere l'avatar.
+  'IdentiteProfil',
   'AudioLabel',
   'PermanentNotice',
   'PinPad',

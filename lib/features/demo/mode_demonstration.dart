@@ -16,6 +16,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../../core/admin/service_admin.dart';
 import '../../core/appairage/service_appairage.dart';
+import '../../core/capacites/port_accents_profils.dart';
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_catalogue_classes.dart';
 import '../../core/capacites/port_classes_foyer.dart';
@@ -44,6 +45,7 @@ import '../../core/tc_observation/activation_observation.dart';
 import '../../core/tc_observation/port_historique_observations.dart';
 import '../../core/tc_observation/port_politique_observation.dart';
 import '../../core/tc_observation/port_visite_observation.dart';
+import '../../core/theme/accent_profil.dart';
 import 'catalogue_demo.dart';
 import 'dossiers_demo.dart';
 import 'observation_demo.dart';
@@ -115,6 +117,14 @@ List<Override> surchargesDemoTuteur({
           avecDossier ? const <EleveDuFoyer>[] : eleves ?? DonneesDemo.eleves,
     ),
     portAccesFoyerProvider.overrideWithValue(const AccesFoyerDemo()),
+    // La couleur de profil choisie par le tuteur (K-62) : gardee en memoire,
+    // rien n'est envoye (FI-BR-19).
+    portAccentsProfilsProvider.overrideWithValue(
+      AccentsProfilsEnMemoire(<String, AccentProfil>{
+        DonneesDemo.aichaId: AccentProfil.menthe,
+        DonneesDemo.yusufId: AccentProfil.rose,
+      }),
+    ),
     portClassesFoyerProvider.overrideWithValue(const ClassesFoyerDemo()),
     portSeancesFamilleProvider.overrideWithValue(SeancesFamilleDemo()),
     portCatalogueClassesProvider.overrideWithValue(
