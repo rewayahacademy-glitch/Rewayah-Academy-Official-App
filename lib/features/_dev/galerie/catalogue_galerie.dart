@@ -44,6 +44,7 @@ import '../../../core/widgets/grille_bento.dart';
 import '../../../core/widgets/groupe_reglages.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
+import '../../../core/widgets/ligne_lien.dart';
 import '../../../core/widgets/ligne_presence.dart';
 import '../../../core/widgets/local_feedback.dart';
 import '../../../core/widgets/marque_page.dart';
@@ -1012,6 +1013,17 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         (BuildContext _) => const AudioLabel(
           cle: ClesAudio.eleveAccueilRejoindre,
           afficherTexte: false,
+        ),
+      ),
+      EtatGalerie(
+        'sans texte, aligne en fin',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topEnd,
+          child: AudioLabel(
+            cle: ClesAudio.eleveAccueilRejoindre,
+            afficherTexte: false,
+            alignerEnFin: true,
+          ),
         ),
       ),
     ],
@@ -2162,6 +2174,29 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             onPress: _rien,
             fleche: false,
           ),
+        ),
+      ),
+    ],
+  ),
+  // CORAN-CARTE-2 : la ligne qui mene ailleurs, posee dans une carte.
+  EntreeGalerie(
+    nom: 'LigneLien',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'avec legende',
+        (BuildContext _) => const BentoTile(
+          child: LigneLien(
+            titre: 'Le Coran',
+            legende: 'À lire quand tu veux',
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'titre seul',
+        (BuildContext _) => const BentoTile(
+          child: LigneLien(titre: 'Le Coran', onPress: _rien),
         ),
       ),
     ],

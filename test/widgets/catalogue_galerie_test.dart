@@ -114,6 +114,9 @@ const List<String> composantsDuCatalogue = <String>[
   // manifeste visuel section 3.4 et contrat K5), sans cle i18n nouvelle.
   'EcranResultat',
   'LienFleche',
+  // CORAN-CARTE-2 (K-54) : la ligne titre, legende, chevron posee dans une
+  // carte, que l'accueil eleve recomposait autour d'un Pressable.
+  'LigneLien',
   // Revue du directeur 01-02/10 (K-54) : les boutons que les ecrans peignaient
   // eux-memes, rendus au core. Voir lib/CLAUDE.md, « Interdits d'interface ».
   'BoutonOutil',
