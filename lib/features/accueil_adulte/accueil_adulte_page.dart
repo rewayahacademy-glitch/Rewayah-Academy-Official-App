@@ -27,6 +27,13 @@
 // Le seul provider propre a l'ecran, [accueilAdulteProvider], n'a aucune
 // source serveur : il rend `CapaciteIndisponible` (EA-BR-04), la
 // demonstration le surcharge (K-28).
+//
+// DASH-EA-PROD : l'ecran a une route reelle, `/eleve/adulte`
+// (`routes_accueil_adulte.dart`), choisie par la capacite
+// [capaciteAccueilAdulteProvider], jamais par le role. « Voir tout » des
+// dernieres seances ouvre l'historique (`/eleve/adulte/seances`) ; sans
+// destination, aucun lien (D9). Le chargement a la forme de la grille Bento
+// (D11, revue BENTO-3-R m6).
 
 import 'dart:math' as math;
 
@@ -34,10 +41,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/session/session_controleur.dart';
+import '../../core/session/session_state.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/theme/app_spacing.dart';
@@ -56,7 +66,7 @@ import '../accueil_famille/accueil_famille_page.dart'
     show largeurMinCarteClasse;
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart'
-    show LecteurGroupe, LectureGroupe, SqueletteGroupe;
+    show LecteurGroupe, LectureGroupe;
 
 /// Une seance passee, telle que le serveur la rendrait : la seance, sa date
 /// deja rendue, et l'absence seule (une presence est l'etat normal et ne
@@ -116,7 +126,29 @@ final FutureProvider<AccueilAdulteVM> accueilAdulteProvider =
       (Ref _) => Future<AccueilAdulteVM>.error(
         const CapaciteIndisponible('accueil_eleve_adulte'),
       ),
+      // Aucune relance automatique (Riverpod 3) : une capacite absente ne
+      // revient pas en insistant ; « Reessayer » relit a la demande.
+      retry: (int _, Object _) => null,
     );
+
+/// La capacite « accueil de l'eleve adulte » du compte connecte
+/// (DASH-EA-PROD) : vraie quand le serveur sert `accueil_eleve_adulte`
+/// (EA-BR-04) a ce compte eleve. C'est elle, et non un role, qui fait ouvrir
+/// `/eleve` sur l'Accueil adulte (`routes_accueil_adulte.dart`).
+///
+/// Une lecture en echec ou indisponible la laisse fausse : `/eleve` garde
+/// l'accueil de l'eleve, rien n'est suppose. Elle n'est lue que pour un
+/// compte eleve : aucun autre compte n'atteint `/eleve` (garde de role).
+/// Quand EA-BR-04 sera servi, une capacite rendue avec la session evitera
+/// d'attendre cette lecture (ligne a ajouter a `EA-BR.md`, voir le rapport
+/// DASH-EA-PROD).
+final Provider<bool> capaciteAccueilAdulteProvider = Provider<bool>((Ref ref) {
+  final AppRole? role = ref.watch(
+    sessionProvider.select((SessionState s) => s.role),
+  );
+  if (role != AppRole.student) return false;
+  return ref.watch(accueilAdulteProvider).hasValue;
+});
 
 /// L'accueil de l'eleve adulte : salutation et cloche, prochaine seance,
 /// « Avant le prochain cours » (s'il y a quelque chose a faire), « Mon
@@ -129,10 +161,16 @@ class AccueilAdultePage extends ConsumerWidget {
     this.onNotifications,
     this.onRejoindre,
     this.onVoirRessources,
+    this.onVoirDernieresSeances,
   });
 
-  /// Ouvre le centre de notifications.
+  /// Ouvre le centre de notifications. Nul : pas de cloche (aucune cloche
+  /// inerte, D9).
   final VoidCallback? onNotifications;
+
+  /// Ouvre l'historique des seances passees (« Voir tout », D6). Nul : pas
+  /// de lien (D9).
+  final VoidCallback? onVoirDernieresSeances;
 
   /// Ce que fait le bouton de l'emplacement d'entree.
   final void Function(GroupSummaryVM groupe)? onRejoindre;
@@ -159,7 +197,11 @@ class AccueilAdultePage extends ConsumerWidget {
         (ref.watch(horsLigneProvider).value ?? false);
     // Pendant le chargement, l'en-tete garde sa place : une ligne de
     // squelette pour la salutation, et la cloche deja posee.
-    final Widget? entete = vue != null || lecture.isLoading
+    // Une lecture en echec que Riverpod relance reste `isLoading` : sans
+    // `hasError`, pas de ligne de squelette au-dessus d'un etat d'echec ou
+    // d'indisponibilite (DASH-EA-PROD).
+    final Widget? entete =
+        vue != null || (lecture.isLoading && !lecture.hasError)
         ? _Salutation(
             prenom: vue?.prenom,
             nonLues: vue?.notificationsNonLues,
@@ -178,12 +220,14 @@ class AccueilAdultePage extends ConsumerWidget {
           ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire)
           : BlocAsynchrone<AccueilAdulteVM>(
               valeur: lecture,
-              squelette: const SqueletteGroupe(),
+              squelette: const SqueletteAccueilAdulte(),
+              titreEchec: t.adulte.accueil.echec,
               onReessayer: relire,
               construire: (AccueilAdulteVM vue) => _Corps(
                 vue: vue,
                 onRejoindre: onRejoindre,
                 onVoirRessources: onVoirRessources,
+                onVoirDernieresSeances: onVoirDernieresSeances,
               ),
             ),
     );
@@ -205,10 +249,11 @@ class _Salutation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Widget cloche = ClocheNotifications(
-      onPress: onNotifications,
-      nonLues: nonLues,
-    );
+    // Sans destination, pas de cloche : jamais une cloche inerte (D9).
+    final VoidCallback? ouvrir = onNotifications;
+    final List<Widget> cloche = ouvrir == null
+        ? const <Widget>[]
+        : <Widget>[ClocheNotifications(onPress: ouvrir, nonLues: nonLues)];
     final String? p = prenom;
     if (p == null) {
       return Row(
@@ -216,24 +261,29 @@ class _Salutation extends StatelessWidget {
           const Expanded(
             child: ExcludeSemantics(child: Skeleton(hauteur: AppSpacing.xxxl)),
           ),
-          Ecart.hXs,
-          cloche,
+          if (cloche.isNotEmpty) ...<Widget>[Ecart.hXs, ...cloche],
         ],
       );
     }
     return EntetePage(
       titre: t.adulte.accueil.salutation(prenom: p),
-      actions: <Widget>[cloche],
+      actions: cloche,
     );
   }
 }
 
 class _Corps extends StatelessWidget {
-  const _Corps({required this.vue, this.onRejoindre, this.onVoirRessources});
+  const _Corps({
+    required this.vue,
+    this.onRejoindre,
+    this.onVoirRessources,
+    this.onVoirDernieresSeances,
+  });
 
   final AccueilAdulteVM vue;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
   final void Function(String groupeId)? onVoirRessources;
+  final VoidCallback? onVoirDernieresSeances;
 
   @override
   Widget build(BuildContext context) {
@@ -252,12 +302,14 @@ class _Corps extends StatelessWidget {
 
     return LecteurGroupe(
       groupeId: groupeId,
+      squelette: const SqueletteAccueilAdulte(),
       construire: (BuildContext contexte, LectureGroupe lecture) => _Sections(
         vue: vue,
         groupeId: groupeId,
         lecture: lecture,
         onRejoindre: onRejoindre,
         onVoirRessources: onVoirRessources,
+        onVoirDernieresSeances: onVoirDernieresSeances,
       ),
     );
   }
@@ -270,6 +322,7 @@ class _Sections extends StatelessWidget {
     required this.lecture,
     this.onRejoindre,
     this.onVoirRessources,
+    this.onVoirDernieresSeances,
   });
 
   final AccueilAdulteVM vue;
@@ -277,6 +330,7 @@ class _Sections extends StatelessWidget {
   final LectureGroupe lecture;
   final void Function(GroupSummaryVM groupe)? onRejoindre;
   final void Function(String groupeId)? onVoirRessources;
+  final VoidCallback? onVoirDernieresSeances;
 
   @override
   Widget build(BuildContext context) {
@@ -320,37 +374,24 @@ class _Sections extends StatelessWidget {
             ),
           ];
 
-    final MaterialLocalizations l10n = MaterialLocalizations.of(context);
-    String heure(DateTime quand) => l10n.formatTimeOfDay(
-      TimeOfDay.fromDateTime(quand),
-      alwaysUse24HourFormat: true,
-    );
     // K-42 point 4 : la date, puis une seule ligne, la plage ; la Classe et
     // l'enseignant sont deja nommes par la carte au-dessus.
     final List<Widget> dernieres = passees.isEmpty
         ? const <Widget>[]
         : <Widget>[
-            SectionHeader(titre: t.adulte.accueil.dernieresSeances),
+            // « Voir tout » (D6) ouvre l'historique ; sans destination, pas
+            // de lien (D9). Meme lien tertiaire que les ressources.
+            SectionHeader(
+              titre: t.adulte.accueil.dernieresSeances,
+              libelleAction: onVoirDernieresSeances == null
+                  ? null
+                  : t.tuteur.accueil.voirTout,
+              onAction: onVoirDernieresSeances,
+            ),
             Ecart.vMd,
-            GroupeReglages(
+            ListeSeancesPassees(
               key: const ValueKey<String>('accueil-adulte-dernieres'),
-              lignes: <LigneRubrique>[
-                for (final SeancePasseeAdulte s in passees)
-                  LigneRubrique(
-                    icone: AppIcons.cours,
-                    libelle: s.dateRendue,
-                    legende: t.enseignant.journee.plage(
-                      debut: heure(s.seance.debut),
-                      fin: heure(s.seance.fin),
-                    ),
-                    marque: s.absence
-                        ? StatusPill(
-                            libelle: t.adulte.accueil.absence,
-                            ton: TonEtat.avertissement,
-                          )
-                        : null,
-                  ),
-              ],
+              seances: passees,
             ),
           ];
 
@@ -422,6 +463,96 @@ class _Sections extends StatelessWidget {
         }
         return GrilleBento(hauteurContenu: true, tuiles: tuiles);
       },
+    );
+  }
+}
+
+/// Des seances passees en une carte groupee : la date, puis une seule
+/// ligne, la plage ; une pastille pour une absence seulement (K-42 point 4).
+/// La Classe et l'enseignant ne sont pas repetes. Partagee par l'Accueil
+/// (trois seances) et l'historique (toutes).
+class ListeSeancesPassees extends StatelessWidget {
+  /// Cree la liste.
+  const ListeSeancesPassees({required this.seances, super.key});
+
+  /// Les seances, les plus recentes d'abord.
+  final List<SeancePasseeAdulte> seances;
+
+  @override
+  Widget build(BuildContext context) {
+    final MaterialLocalizations l10n = MaterialLocalizations.of(context);
+    String heure(DateTime quand) => l10n.formatTimeOfDay(
+      TimeOfDay.fromDateTime(quand),
+      alwaysUse24HourFormat: true,
+    );
+    return GroupeReglages(
+      lignes: <LigneRubrique>[
+        for (final SeancePasseeAdulte s in seances)
+          LigneRubrique(
+            icone: AppIcons.cours,
+            libelle: s.dateRendue,
+            legende: t.enseignant.journee.plage(
+              debut: heure(s.seance.debut),
+              fin: heure(s.seance.fin),
+            ),
+            marque: s.absence
+                ? StatusPill(
+                    libelle: t.adulte.accueil.absence,
+                    ton: TonEtat.avertissement,
+                  )
+                : null,
+          ),
+      ],
+    );
+  }
+}
+
+/// Le chargement de l'Accueil adulte, a la forme de sa grille Bento (D11,
+/// DESIGN-GOV §4 bis.6 regle 3 ; revue BENTO-3-R m6) : la prochaine seance
+/// et « Avant le prochain cours » en grandes tuiles, cote a cote seulement
+/// quand chaque moitie offre [largeurMinCarteClasse] x echelle du texte,
+/// « Mon parcours » en large, puis dernieres seances et ressources. Aucune
+/// fausse donnee : des blocs seuls.
+class SqueletteAccueilAdulte extends StatelessWidget {
+  /// Cree le squelette.
+  const SqueletteAccueilAdulte({super.key});
+
+  /// Hauteur d'une grande tuile qui charge : un titre et une carte.
+  static const double hauteurGrande = 280;
+
+  /// Hauteur de la ligne « Mon parcours » qui charge.
+  static const double hauteurLarge = 96;
+
+  @override
+  Widget build(BuildContext context) {
+    final double echelle = MediaQuery.textScalerOf(context).scale(1);
+    return ExcludeSemantics(
+      child: LayoutBuilder(
+        builder: (BuildContext _, BoxConstraints contraintes) {
+          final bool coteACote =
+              (contraintes.maxWidth - GrilleBento.ecart) / 2 >=
+              largeurMinCarteClasse * math.max(1, echelle);
+          TuileBento grande() => TuileBento(
+            etendue: EtendueBento.grande,
+            etendueLarge: coteACote ? null : const EtendueBento(4, 1),
+            child: const Skeleton.tuileBento(hauteur: hauteurGrande),
+          );
+          return GrilleBento(
+            hauteurContenu: true,
+            tuiles: <TuileBento>[
+              grande(),
+              grande(),
+              const TuileBento(
+                etendue: EtendueBento.large,
+                etendueLarge: EtendueBento(4, 1),
+                child: Skeleton.tuileBento(hauteur: hauteurLarge),
+              ),
+              grande(),
+              grande(),
+            ],
+          );
+        },
+      ),
     );
   }
 }

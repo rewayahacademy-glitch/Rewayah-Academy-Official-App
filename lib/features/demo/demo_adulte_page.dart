@@ -63,6 +63,7 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
 import '../accueil_adulte/accueil_adulte_page.dart';
+import '../accueil_adulte/historique_seances_adulte_page.dart';
 import '../appareils/appareils_page.dart';
 import '../appareils/liste_appareils_eleve.dart'
     show donneesAppareilsFoyerProvider;
@@ -203,12 +204,17 @@ enum EcranDemoAdulte {
   /// La demande de reprise vue par le titulaire, ouverte depuis sa
   /// notification ou la ligne de la place de Ma famille (EA-11).
   repriseTitulaire,
+
+  /// L'historique des seances passees, ouvert par « Voir tout » des
+  /// dernieres seances de l'Accueil (DASH-EA-PROD).
+  seancesPassees,
 }
 
 /// Les ecrans ranges sous l'Accueil : la cloche y mene (EA-7).
 const Set<EcranDemoAdulte> _ecransSousAccueil = <EcranDemoAdulte>{
   EcranDemoAdulte.notifications,
   EcranDemoAdulte.invitationRecue,
+  EcranDemoAdulte.seancesPassees,
 };
 
 /// Les ecrans de l'espace foyer (coquille du tuteur), reserves au titulaire
@@ -441,6 +447,7 @@ String libelleEcranDemoAdulte(EcranDemoAdulte ecran) => switch (ecran) {
   EcranDemoAdulte.invitationSansCompte => t.adulte.demo.invitationSansCompte,
   EcranDemoAdulte.repriseFoyer ||
   EcranDemoAdulte.repriseTitulaire => t.adulte.reprise.titre,
+  EcranDemoAdulte.seancesPassees => t.adulte.historique.titre,
 };
 
 /// Le libelle d'une situation (doc section 18).
@@ -868,6 +875,18 @@ class CoquilleAdulteDemo extends StatelessWidget {
           horsLigneProvider.overrideWith(
             (Ref _) => Stream<bool>.value(reseauCoupe),
           ),
+          // L'historique des seances passees (DASH-EA-PROD) : celui de la
+          // Classe An-Nour ; le second adulte garde le fournisseur reel
+          // (indisponible, EA-BR-13), le reseau coupe fait echouer la lecture.
+          if (vu == EcranDemoAdulte.seancesPassees)
+            if (reseauCoupe)
+              historiqueSeancesAdulteProvider.overrideWith(
+                (Ref _) => Future<List<SeancePasseeAdulte>>.error(_reseauCoupe),
+              )
+            else if (vue == VueDemoAdulte.titulaire)
+              historiqueSeancesAdulteProvider.overrideWith(
+                (Ref _) async => DonneesAdulteDemo.historiqueSeances(),
+              ),
           // La cloche du second adulte : sa notification d'invitation, puis
           // l'invitation et sa reponse, ou rien n'est envoye (EA-7, K-28).
           // Sans invitation, les fournisseurs reels restent (indisponibles,
@@ -993,6 +1012,13 @@ class CoquilleAdulteDemo extends StatelessWidget {
               ),
               onVoirRessources: (_) =>
                   context.go(_adresse(EcranDemoAdulte.maClasse)),
+              onVoirDernieresSeances: () =>
+                  context.go(_adresse(EcranDemoAdulte.seancesPassees)),
+            ),
+            // « Voir tout » des dernieres seances (DASH-EA-PROD), retour a
+            // l'Accueil.
+            EcranDemoAdulte.seancesPassees => HistoriqueSeancesAdultePage(
+              onRetour: () => context.go(_adresse(EcranDemoAdulte.accueil)),
             ),
             EcranDemoAdulte.maClasse => MaClasseAdultePage(
               onRejoindre: (_) => context.go(

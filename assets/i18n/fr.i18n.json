@@ -4302,7 +4302,14 @@
       "ressources": "Ressources de la classe",
       "absence": "Absence",
       "aucuneClasse": "Aucune classe pour le moment.",
-      "aucuneClasseDetail": "Votre prochaine séance s'affichera ici dès que votre classe sera ouverte."
+      "aucuneClasseDetail": "Votre prochaine séance s'affichera ici dès que votre classe sera ouverte.",
+      "echec": "Votre prochaine séance et vos dernières séances n'ont pas pu être chargées : le serveur n'a pas répondu. Réessayez dans un instant."
+    },
+    "historique": {
+      "titre": "Mes séances passées",
+      "echec": "Vos séances passées n'ont pas pu être chargées : le serveur n'a pas répondu. Réessayez dans un instant.",
+      "vide": "Aucune séance passée pour le moment.",
+      "videDetail": "Vos séances s'afficheront ici après votre premier cours."
     },
     "maClasse": {
       "aPropos": "À propos de cette classe",

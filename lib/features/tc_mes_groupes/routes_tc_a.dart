@@ -47,7 +47,7 @@ List<RouteBase> routesTcA({RoleEspaceGroupe role = RoleEspaceGroupe.eleve}) =>
                 contenuRoster: RosterEnseignantSlot(groupeId: groupeId),
                 onRejoindre: (GroupSummaryVM groupe) =>
                     role == RoleEspaceGroupe.eleve
-                    ? _preparer(contexte, groupe)
+                    ? preparerSalleEleve(contexte, groupe)
                     : _rejoindre(contexte, groupe),
               );
             },
@@ -59,7 +59,8 @@ List<RouteBase> routesTcA({RoleEspaceGroupe role = RoleEspaceGroupe.eleve}) =>
 /// L'eleve : « Rejoindre » ouvre la salle canonique, qui montre d'abord
 /// sa preparation presque silencieuse (PRE-ELV-01, CL-4.6). Aucune nouvelle
 /// route : le billet passe par `extra`, jamais par l'URL (ADR-005).
-void _preparer(BuildContext contexte, GroupSummaryVM groupe) {
+/// Aussi le « Rejoindre » de l'Accueil adulte (DASH-EA-PROD).
+void preparerSalleEleve(BuildContext contexte, GroupSummaryVM groupe) {
   final String? sessionId = groupe.prochaineSeance?.sessionId;
   if (sessionId == null) {
     return;
