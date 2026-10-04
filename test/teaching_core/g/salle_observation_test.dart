@@ -35,6 +35,7 @@ import 'package:rewayah_academy/features/tc_observation_ui/panneau_observation_t
 import 'package:rewayah_academy/features/tc_observation_ui/routes_tc_g.dart';
 
 import '../../fixtures/tuteur/faux_classes_foyer.dart';
+import '../../support/aucun_mot_coupe.dart';
 import '../e/faux/faux_classe.dart'
     show FauxMoteurClasse, FauxServiceVideoClasse, accesDe, participantDe;
 import 'faux/faux_observation.dart';
@@ -549,6 +550,72 @@ void main() {
       await _presser(tester, find.text(v.quitter));
       expect(find.text(v.quitterQuestion), findsOneWidget);
     });
+  });
+  // PAGESHELL-200-1 (reserve 2 de la revue OBS-COUPE-1b) : des la
+  // tablette, la barre de D1 gardait « Agrandir » au centre a sa largeur
+  // propre ; de 680 a 840 px a texte agrandi, « Quitter » n'avait plus que
+  // quelques points et se lisait lettre par lettre (« Son recu » aussi a
+  // 300 %). Elle passe en deux rangees quand une seule ne tient pas.
+  group('PAGESHELL-200-1 : barre large sans mot coupe', () {
+    for (final double largeur in const <double>[
+      680,
+      700,
+      720,
+      768,
+      840,
+      1024,
+      1440,
+    ]) {
+      for (final double echelle in const <double>[1, 2, 3]) {
+        for (final TextDirection sens in TextDirection.values) {
+          testWidgets('${largeur.toInt()}x900, texte x${echelle.toInt()}, '
+              '${sens.name}', (WidgetTester tester) async {
+            final _Salle salle = await _entrerEnSalle(
+              tester,
+              taille: Size(largeur, 900),
+              echelleTexte: echelle,
+              sens: sens,
+            );
+            _publierParticipants(salle.moteur);
+            await tester.pumpAndSettle();
+            expect(tester.takeException(), isNull);
+
+            final Finder barre = find.byType(BarreCommandesObservation);
+            expect(barre, findsOneWidget);
+            final Rect cadre = tester.getRect(barre);
+            for (final String libelle in <String>[
+              v.sonRecu,
+              v.agrandir,
+              v.quitter,
+            ]) {
+              final Finder texte = find.descendant(
+                of: barre,
+                matching: find.text(libelle),
+              );
+              expect(texte, findsOneWidget);
+              final Rect r = tester.getRect(texte);
+              expect(
+                r.left >= cadre.left - 0.5 && r.right <= cadre.right + 0.5,
+                isTrue,
+                reason: '« $libelle » sort de la barre : $r dans $cadre',
+              );
+            }
+            verifierAucunMotCoupe(tester, barre);
+            // D1 reste tenue la ou elle tient : texte a 100 %, son, agrandir
+            // et quitter sur une seule rangee.
+            if (echelle == 1) {
+              expect(
+                tester.getCenter(find.text(v.quitter)).dy,
+                moreOrLessEquals(
+                  tester.getCenter(find.text(v.agrandir)).dy,
+                  epsilon: 4,
+                ),
+              );
+            }
+          });
+        }
+      }
+    }
   });
   // PAGESHELL-200-1 (reserve 1 de la revue OBS-COUPE-1b) : sur telephone a
   // 200 %, la tete de `PageShell` defile et le corps non defilant recevait
