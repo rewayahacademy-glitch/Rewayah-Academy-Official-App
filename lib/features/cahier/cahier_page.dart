@@ -379,6 +379,10 @@ class _CahierState extends ConsumerState<_Cahier> {
           controller: _reprise,
           focusNode: _focusReprise,
           textInputAction: TextInputAction.done,
+          // A 320 de large et texte x2, la phrase tient sur deux lignes
+          // plutot que d'etre coupee (capture FORM-L9).
+          minLines: 1,
+          maxLines: 3,
           onChanged: (String valeur) {
             if (_repriseManquante && valeur.trim().isNotEmpty) {
               setState(() => _repriseManquante = false);
@@ -386,7 +390,7 @@ class _CahierState extends ConsumerState<_Cahier> {
           },
           decoration: InputDecoration(
             helperText: t.enseignant.cahier.repriseDetail,
-            helperMaxLines: 2,
+            helperMaxLines: 4,
             errorText: _repriseManquante
                 ? t.enseignant.cahier.repriseRequise
                 : null,

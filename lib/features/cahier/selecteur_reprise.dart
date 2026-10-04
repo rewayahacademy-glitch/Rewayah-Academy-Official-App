@@ -14,6 +14,7 @@ import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/filter_pill.dart';
+import '../../core/widgets/pressable.dart';
 import '../../core/widgets/skeleton.dart';
 
 /// Une position de reprise choisie : une sourate et un verset.
@@ -96,26 +97,25 @@ class ChampReprise extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final PositionReprise? position = valeur;
-    return Semantics(
-      button: true,
-      label: t.enseignant.cahier.reprise,
-      child: InkWell(
-        key: champKey,
-        onTap: () => _ouvrir(context),
-        child: InputDecorator(
-          decoration: InputDecoration(
-            helperText: t.enseignant.cahier.repriseDetail,
-            helperMaxLines: 2,
-            errorText: erreur,
-            errorMaxLines: 3,
-            suffixIcon: Icon(AppIcons.chevron.repos),
-          ),
-          child: Text(
-            position == null
-                ? t.enseignant.cahier.repriseChoisir
-                : position.texte,
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
+    // `Pressable` et non un `InkWell` nu : focus, survol, cible tactile et
+    // semantique de bouton viennent du composant commun.
+    return Pressable(
+      key: champKey,
+      libelleSemantique: t.enseignant.cahier.reprise,
+      onPress: () => _ouvrir(context),
+      child: InputDecorator(
+        decoration: InputDecoration(
+          helperText: t.enseignant.cahier.repriseDetail,
+          helperMaxLines: 4,
+          errorText: erreur,
+          errorMaxLines: 3,
+          suffixIcon: Icon(AppIcons.chevron.repos),
+        ),
+        child: Text(
+          position == null
+              ? t.enseignant.cahier.repriseChoisir
+              : position.texte,
+          style: Theme.of(context).textTheme.bodyLarge,
         ),
       ),
     );

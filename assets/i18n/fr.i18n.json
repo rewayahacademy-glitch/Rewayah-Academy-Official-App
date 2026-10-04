@@ -3311,7 +3311,7 @@
       "repriseAucuneDetail": "Essayez un autre nom, ou son numéro de 1 à 114.",
       "repriseSansListe": "La liste des sourates n'a pas pu être lue",
       "repriseSansListeFeuille": "Fermez cette feuille : le cahier de transmission vous laisse écrire la position, ou réessayez.",
-      "repriseSansListeDetail": "Écrivez la position de reprise dans le champ ci-dessous, par exemple « Sourate 18, verset 10 ».",
+      "repriseSansListeDetail": "La liste des sourates n'a pas pu être lue : écrivez la position de reprise, par exemple « Sourate 18, verset 10 ».",
       "integrite": "Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.",
       "corriger": "Corriger le cahier de transmission",
       "corrigeLe": "Corrigé le {date}"

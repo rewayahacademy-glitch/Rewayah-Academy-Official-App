@@ -9173,8 +9173,8 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Fermez cette feuille : le cahier de transmission vous laisse écrire la position, ou réessayez.'
 	String get repriseSansListeFeuille => 'Fermez cette feuille : le cahier de transmission vous laisse écrire la position, ou réessayez.';
 
-	/// fr: 'Écrivez la position de reprise dans le champ ci-dessous, par exemple « Sourate 18, verset 10 ».'
-	String get repriseSansListeDetail => 'Écrivez la position de reprise dans le champ ci-dessous, par exemple « Sourate 18, verset 10 ».';
+	/// fr: 'La liste des sourates n'a pas pu être lue : écrivez la position de reprise, par exemple « Sourate 18, verset 10 ».'
+	String get repriseSansListeDetail => 'La liste des sourates n\'a pas pu être lue : écrivez la position de reprise, par exemple « Sourate 18, verset 10 ».';
 
 	/// fr: 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.'
 	String get integrite => 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.';
@@ -18447,7 +18447,7 @@ extension on Traductions {
 			'enseignant.cahier.repriseAucuneDetail' => 'Essayez un autre nom, ou son numéro de 1 à 114.',
 			'enseignant.cahier.repriseSansListe' => 'La liste des sourates n\'a pas pu être lue',
 			'enseignant.cahier.repriseSansListeFeuille' => 'Fermez cette feuille : le cahier de transmission vous laisse écrire la position, ou réessayez.',
-			'enseignant.cahier.repriseSansListeDetail' => 'Écrivez la position de reprise dans le champ ci-dessous, par exemple « Sourate 18, verset 10 ».',
+			'enseignant.cahier.repriseSansListeDetail' => 'La liste des sourates n\'a pas pu être lue : écrivez la position de reprise, par exemple « Sourate 18, verset 10 ».',
 			'enseignant.cahier.integrite' => 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.',
 			'enseignant.cahier.corriger' => 'Corriger le cahier de transmission',
 			'enseignant.cahier.corrigeLe' => ({required Object date}) => 'Corrigé le ${date}',
