@@ -151,6 +151,12 @@ class _ListeRetenue implements PortMessagesMetier {
       _source.filPourObjet(type, objetId);
 
   @override
+  Future<List<ConversationPossible>> conversationsPourObjet(
+    TypeObjetLie type,
+    String objetId,
+  ) => _source.conversationsPourObjet(type, objetId);
+
+  @override
   Future<void> marquerLu(String filId) => _source.marquerLu(filId);
 
   @override

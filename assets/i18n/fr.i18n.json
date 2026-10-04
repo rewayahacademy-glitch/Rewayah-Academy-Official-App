@@ -4797,6 +4797,24 @@
       }
     },
     "messages": {
+      "entree": {
+        "titreClasse": "Échanger sur cette Classe",
+        "titreDossier": "Échanger sur ce dossier",
+        "titreObjet": "Échanger à ce sujet",
+        "ecrireFamille": "Écrire à la famille",
+        "ecrireAdministration": "Écrire à l'Administration",
+        "ecrireA": "Écrire à {nom}",
+        "conversationAvec": "Conversation avec {nom}",
+        "voirTout": "Voir toutes les conversations",
+        "toutes": "Toutes vos conversations",
+        "aLireUne": "1 conversation à lire",
+        "aLire": "{nombre} conversations à lire",
+        "ouverture": "Ouverture de la conversation",
+        "inaccessibleTitre": "Conversation inaccessible",
+        "inaccessible": "Cette conversation n'est plus ouverte pour vous. Choisissez une autre personne dans la liste.",
+        "erreurOuvertureTitre": "Impossible d'ouvrir cette conversation.",
+        "ouvertureEchouee": "Vérifiez votre connexion, puis touchez à nouveau la ligne."
+      },
       "videDetail": "Une conversation s'ouvre depuis une Classe, un élève ou un dossier.",
       "choisirTitre": "Choisissez une conversation",
       "choisir": "Choisissez une conversation dans la liste pour la lire et y répondre.",

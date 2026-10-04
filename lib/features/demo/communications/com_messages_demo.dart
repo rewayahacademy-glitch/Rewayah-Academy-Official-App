@@ -269,13 +269,18 @@ class MessagesMetierDemo implements PortMessagesMetier {
            maintenant ?? DateTime.now(),
          ))
            f.id: f,
-       };
+       },
+       _aOuvrir = conversationsAOuvrirDemo(role);
 
   /// La situation mise en scene.
   final SituationDemoMessages situation;
 
   final Map<String, FilMetier> _fils;
   final Set<String> _clesEnEchec = <String>{};
+
+  /// Les conversations possibles sans fil encore ouvert, par objet de page
+  /// (`type:id`) : `filPourObjet` en cree le fil a la demande.
+  final Map<String, List<ConversationPossible>> _aOuvrir;
 
   /// Les cles d'idempotence recues, dans l'ordre (pour les tests).
   final List<String> clesRecues = <String>[];
@@ -296,13 +301,66 @@ class MessagesMetierDemo implements PortMessagesMetier {
   @override
   Future<FilMetier?> filPourObjet(TypeObjetLie type, String objetId) async {
     for (final FilMetier f in _fils.values) {
-      if (f.contexte.any(
-        (ElementContexteFil e) => e.objet.type == type && e.objet.id == objetId,
-      )) {
+      if (f.contexte.last.objet.type == type &&
+          f.contexte.last.objet.id == objetId) {
         return f;
       }
     }
+    // Une conversation possible sans fil : le fil est cree, vide, comme le
+    // ferait le serveur pour une paire autorisee (spec section 3.2).
+    for (final List<ConversationPossible> liste in _aOuvrir.values) {
+      for (final ConversationPossible c in liste) {
+        if (c.objet.type != type || c.objet.id != objetId) continue;
+        final FilMetier cree = FilMetier(
+          id: 'fil-${c.objet.id}',
+          contexte: <ElementContexteFil>[ElementContexteFil(objet: c.objet)],
+          participants: <Participant>[_soi(), c.interlocuteur],
+          messages: const <MessageCommunication>[],
+          capacites: const <CapaciteFil>{CapaciteFil.ecrire},
+        );
+        _fils[cree.id] = cree;
+        return cree;
+      }
+    }
     return null;
+  }
+
+  @override
+  Future<List<ConversationPossible>> conversationsPourObjet(
+    TypeObjetLie type,
+    String objetId,
+  ) async {
+    final List<ConversationPossible> existantes = <ConversationPossible>[
+      for (final FilMetier f in _fils.values)
+        if (f.contexte.any(
+          (ElementContexteFil e) =>
+              e.objet.type == type && e.objet.id == objetId,
+        ))
+          for (final Participant p in f.interlocuteurs)
+            ConversationPossible(
+              interlocuteur: p,
+              nature: natureInterlocuteurDemo(p),
+              objet: f.contexte.last.objet,
+              filId: f.id,
+              attention: f.attention,
+            ),
+    ];
+    return <ConversationPossible>[
+      ...existantes,
+      for (final ConversationPossible c
+          in _aOuvrir['${type.name}:$objetId'] ??
+              const <ConversationPossible>[])
+        if (!existantes.any((ConversationPossible e) => e.objet == c.objet)) c,
+    ];
+  }
+
+  Participant _soi() {
+    for (final FilMetier f in _fils.values) {
+      for (final Participant p in f.participants) {
+        if (p.estSoi) return p;
+      }
+    }
+    return const Participant(id: 'p-soi', nomAffiche: 'Vous', estSoi: true);
   }
 
   @override
@@ -382,6 +440,59 @@ class MessagesMetierDemo implements PortMessagesMetier {
     capacites: f.capacites,
   );
 }
+
+/// La nature d'un interlocuteur des fixtures (le serveur la rendra).
+NatureInterlocuteur natureInterlocuteurDemo(Participant p) => switch (p.id) {
+  'p-ahmed' || 'p-fatima' || 'p-karim' => NatureInterlocuteur.famille,
+  'p-direction' => NatureInterlocuteur.administration,
+  _ => NatureInterlocuteur.personne,
+};
+
+/// Les conversations possibles sans fil encore ouvert, vues par [role], par
+/// objet de page (`type:id`) : la famille de Yusuf dans la Classe An-Nour
+/// pour l'enseignante, l'Administration sur la Classe pour la famille.
+Map<String, List<ConversationPossible>> conversationsAOuvrirDemo(
+  RoleDemoCommunications role,
+) => switch (role) {
+  RoleDemoCommunications.enseignant => <String, List<ConversationPossible>>{
+    'classe:classe-an-nour': <ConversationPossible>[
+      ConversationPossible(
+        interlocuteur: const Participant(
+          id: 'p-karim',
+          nomAffiche: 'Karim',
+          fonction: 'Parent de Yusuf',
+        ),
+        nature: NatureInterlocuteur.famille,
+        objet: ObjetLie(
+          type: TypeObjetLie.eleve,
+          id: 'eleve-yusuf',
+          libelle: 'Yusuf',
+        ),
+      ),
+    ],
+  },
+  RoleDemoCommunications.tuteur => <String, List<ConversationPossible>>{
+    'classe:classe-an-nour': <ConversationPossible>[
+      ConversationPossible(
+        interlocuteur: const Participant(
+          id: 'p-direction',
+          nomAffiche: 'Administration',
+          fonction: 'Direction de Rewayah',
+        ),
+        nature: NatureInterlocuteur.administration,
+        objet: ObjetLie(
+          type: TypeObjetLie.classe,
+          id: 'classe-an-nour',
+          libelle: 'Classe An-Nour',
+        ),
+      ),
+    ],
+  },
+  RoleDemoCommunications.adulte ||
+  RoleDemoCommunications.admin ||
+  RoleDemoCommunications.controleur =>
+    const <String, List<ConversationPossible>>{},
+};
 
 /// Les fils de demonstration vus par [role] (spec section 26), dates par
 /// rapport a [maintenant].

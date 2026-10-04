@@ -138,6 +138,56 @@ class FilMetier {
   ];
 }
 
+/// Qui est l'interlocuteur, vu de l'objet de la page (COM-MSG-2) : un fait
+/// rendu par le serveur sur la personne a qui l'on ecrit, jamais le role de
+/// la personne qui lit. Il choisit seulement le libelle de l'entree.
+enum NatureInterlocuteur {
+  /// La famille d'un eleve (son tuteur).
+  famille,
+
+  /// L'Administration ou l'equipe autorisee.
+  administration,
+
+  /// Une autre personne (enseignant, eleve adulte, controleur) : l'entree
+  /// la nomme.
+  personne,
+}
+
+/// Une conversation qu'une page peut ouvrir sur son objet (COM-MSG-2 ; spec
+/// section 3.2, section 21) : l'interlocuteur deja autorise, l'objet precis
+/// du fil (la Classe, un eleve de la Classe, le dossier), et le fil s'il
+/// existe deja.
+///
+/// La liste est decidee par le SERVEUR (paires autorisees, section 3.2) :
+/// une famille d'un autre foyer n'y figure jamais (R-COM-02). Aucune
+/// coordonnee : le [Participant] du socle n'en porte pas.
+@immutable
+class ConversationPossible {
+  /// Cree la conversation possible.
+  const ConversationPossible({
+    required this.interlocuteur,
+    required this.objet,
+    this.nature = NatureInterlocuteur.personne,
+    this.filId,
+    this.attention = IndicateurAttention.aucun,
+  });
+
+  /// La personne a qui l'on ecrit, deja autorisee.
+  final Participant interlocuteur;
+
+  /// Ce que l'interlocuteur est vu de l'objet (libelle de l'entree).
+  final NatureInterlocuteur nature;
+
+  /// L'objet du fil : celui que `filPourObjet` recoit quand le fil manque.
+  final ObjetLie objet;
+
+  /// Le fil existant, ou `null` s'il reste a ouvrir.
+  final String? filId;
+
+  /// Ce que le badge doit dire du fil existant.
+  final IndicateurAttention attention;
+}
+
 /// Les Messages metier (COM-BR-01, COM-BR-02).
 abstract interface class PortMessagesMetier {
   /// Les fils que la personne a le droit de lire, le plus recent d'abord.
@@ -151,6 +201,14 @@ abstract interface class PortMessagesMetier {
   /// Le fil canonique de l'objet ([type], [objetId]), cree par le serveur
   /// s'il manque ; `null` si la paire n'est pas autorisee (spec section 3.2).
   Future<FilMetier?> filPourObjet(TypeObjetLie type, String objetId);
+
+  /// Les conversations que la page de l'objet ([type], [objetId]) peut
+  /// ouvrir (une Classe, un dossier), dans l'ordre du serveur (COM-MSG-2).
+  /// Vide : aucune paire autorisee sur cet objet.
+  Future<List<ConversationPossible>> conversationsPourObjet(
+    TypeObjetLie type,
+    String objetId,
+  );
 
   /// Marque le fil comme lu : ses non-lus baissent dans `fils()`.
   Future<void> marquerLu(String filId);
@@ -178,6 +236,14 @@ class MessagesMetierIndisponibles implements PortMessagesMetier {
   @override
   Future<FilMetier?> filPourObjet(TypeObjetLie type, String objetId) =>
       Future<FilMetier?>.error(const CapaciteIndisponible('COM-BR-01'));
+
+  @override
+  Future<List<ConversationPossible>> conversationsPourObjet(
+    TypeObjetLie type,
+    String objetId,
+  ) => Future<List<ConversationPossible>>.error(
+    const CapaciteIndisponible('COM-BR-01'),
+  );
 
   @override
   Future<void> marquerLu(String filId) =>

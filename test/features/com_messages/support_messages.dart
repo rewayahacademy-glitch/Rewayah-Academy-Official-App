@@ -159,7 +159,34 @@ class FauxMessagesMetier implements PortMessagesMetier {
     this.attenteListe,
     this.filSousUnAutreId,
     this.resumesEnPlus = const <ResumeFil>[],
+    this.conversations = const <String, List<ConversationPossible>>{},
+    this.filsParObjet = const <String, String>{},
+    this.erreurConversations,
+    this.attenteConversations,
+    this.erreurFilPourObjet,
   }) : _fils = <String, FilMetier>{for (final FilMetier f in fils) f.id: f};
+
+  /// `type:objetId` vers les conversations que l'objet ouvre.
+  final Map<String, List<ConversationPossible>> conversations;
+
+  /// `type:objetId` vers l'identifiant du fil que `filPourObjet` rend.
+  final Map<String, String> filsParObjet;
+
+  /// L'erreur rendue par `conversationsPourObjet`, tant qu'elle n'est pas
+  /// retiree.
+  Exception? erreurConversations;
+
+  /// Retient `conversationsPourObjet` jusqu'a sa completion.
+  Completer<void>? attenteConversations;
+
+  /// L'erreur rendue par `filPourObjet`.
+  Exception? erreurFilPourObjet;
+
+  /// Les objets demandes a `filPourObjet`, dans l'ordre.
+  final List<String> objetsDemandes = <String>[];
+
+  /// Le nombre de lectures des conversations d'un objet.
+  int lecturesConversations = 0;
 
   final Map<String, FilMetier> _fils;
 
@@ -215,8 +242,27 @@ class FauxMessagesMetier implements PortMessagesMetier {
   }
 
   @override
-  Future<FilMetier?> filPourObjet(TypeObjetLie type, String objetId) async =>
-      null;
+  Future<FilMetier?> filPourObjet(TypeObjetLie type, String objetId) async {
+    objetsDemandes.add(cleObjet(type, objetId));
+    final Exception? e = erreurFilPourObjet;
+    if (e != null) throw e;
+    final String? id = filsParObjet[cleObjet(type, objetId)];
+    return id == null ? null : _fils[id];
+  }
+
+  @override
+  Future<List<ConversationPossible>> conversationsPourObjet(
+    TypeObjetLie type,
+    String objetId,
+  ) async {
+    lecturesConversations++;
+    final Completer<void>? attente = attenteConversations;
+    if (attente != null) await attente.future;
+    final Exception? e = erreurConversations;
+    if (e != null) throw e;
+    return conversations[cleObjet(type, objetId)] ??
+        const <ConversationPossible>[];
+  }
 
   @override
   Future<void> marquerLu(String filId) async {}
@@ -226,6 +272,9 @@ class FauxMessagesMetier implements PortMessagesMetier {
     envois.add((filId, texte, cle));
   }
 }
+
+/// La cle d'un objet dans les tables du double : `type:objetId`.
+String cleObjet(TypeObjetLie type, String objetId) => '${type.name}:$objetId';
 
 /// Un fil simple pour les doubles : un interlocuteur, une Classe, un
 /// message.
@@ -281,3 +330,43 @@ List<String> textesRendus(WidgetTester tester) => <String>[
   ))
     w.controller.text,
 ];
+
+/// Un fil des tests d'entree (COM-MSG-2) : la personne qui lit, [autre], et
+/// le contexte [objets] (le principal d'abord).
+FilMetier filAvec({
+  required String id,
+  required Participant autre,
+  required List<ObjetLie> objets,
+  Set<String> objetsInaccessibles = const <String>{},
+  List<PieceJointe> pieces = const <PieceJointe>[],
+  IndicateurAttention attention = IndicateurAttention.aucun,
+  String texte = 'Bonjour, une question sur la séance de jeudi.',
+}) {
+  const Participant soi = Participant(
+    id: 'soi',
+    nomAffiche: 'Vous',
+    estSoi: true,
+  );
+  return FilMetier(
+    id: id,
+    contexte: <ElementContexteFil>[
+      for (final ObjetLie o in objets)
+        ElementContexteFil(
+          objet: o,
+          accessible: !objetsInaccessibles.contains(o.id),
+        ),
+    ],
+    participants: <Participant>[soi, autre],
+    messages: <MessageCommunication>[
+      MessageCommunication(
+        id: '$id-m1',
+        auteur: autre,
+        texte: texte,
+        envoyeLe: maintenantTest.subtract(const Duration(hours: 2)),
+        piecesJointes: pieces,
+      ),
+    ],
+    attention: attention,
+    capacites: const <CapaciteFil>{CapaciteFil.ecrire},
+  );
+}

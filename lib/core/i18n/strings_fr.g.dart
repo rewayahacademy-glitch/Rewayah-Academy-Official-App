@@ -11043,6 +11043,7 @@ class Traductions$com$messages$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$com$messages$entree$fr entree = Traductions$com$messages$entree$fr.internal(_root);
 
 	/// fr: 'Une conversation s'ouvre depuis une Classe, un élève ou un dossier.'
 	String get videDetail => 'Une conversation s\'ouvre depuis une Classe, un élève ou un dossier.';
@@ -15266,6 +15267,63 @@ class Traductions$com$socle$navigation$fr {
 
 	late final Traductions$com$socle$navigation$provisoire$fr provisoire = Traductions$com$socle$navigation$provisoire$fr.internal(_root);
 	late final Traductions$com$socle$navigation$demo$fr demo = Traductions$com$socle$navigation$demo$fr.internal(_root);
+}
+
+// Path: com.messages.entree
+class Traductions$com$messages$entree$fr {
+	Traductions$com$messages$entree$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Échanger sur cette Classe'
+	String get titreClasse => 'Échanger sur cette Classe';
+
+	/// fr: 'Échanger sur ce dossier'
+	String get titreDossier => 'Échanger sur ce dossier';
+
+	/// fr: 'Échanger à ce sujet'
+	String get titreObjet => 'Échanger à ce sujet';
+
+	/// fr: 'Écrire à la famille'
+	String get ecrireFamille => 'Écrire à la famille';
+
+	/// fr: 'Écrire à l'Administration'
+	String get ecrireAdministration => 'Écrire à l\'Administration';
+
+	/// fr: 'Écrire à {nom}'
+	String ecrireA({required Object nom}) => 'Écrire à ${nom}';
+
+	/// fr: 'Conversation avec {nom}'
+	String conversationAvec({required Object nom}) => 'Conversation avec ${nom}';
+
+	/// fr: 'Voir toutes les conversations'
+	String get voirTout => 'Voir toutes les conversations';
+
+	/// fr: 'Toutes vos conversations'
+	String get toutes => 'Toutes vos conversations';
+
+	/// fr: '1 conversation à lire'
+	String get aLireUne => '1 conversation à lire';
+
+	/// fr: '{nombre} conversations à lire'
+	String aLire({required Object nombre}) => '${nombre} conversations à lire';
+
+	/// fr: 'Ouverture de la conversation'
+	String get ouverture => 'Ouverture de la conversation';
+
+	/// fr: 'Conversation inaccessible'
+	String get inaccessibleTitre => 'Conversation inaccessible';
+
+	/// fr: 'Cette conversation n'est plus ouverte pour vous. Choisissez une autre personne dans la liste.'
+	String get inaccessible => 'Cette conversation n\'est plus ouverte pour vous. Choisissez une autre personne dans la liste.';
+
+	/// fr: 'Impossible d'ouvrir cette conversation.'
+	String get erreurOuvertureTitre => 'Impossible d\'ouvrir cette conversation.';
+
+	/// fr: 'Vérifiez votre connexion, puis touchez à nouveau la ligne.'
+	String get ouvertureEchouee => 'Vérifiez votre connexion, puis touchez à nouveau la ligne.';
 }
 
 // Path: com.messages.recherche
@@ -20237,6 +20295,22 @@ extension on Traductions {
 			'com.socle.navigation.demo.titre' => 'Démonstration des communications',
 			'com.socle.navigation.demo.detail' => 'Données fictives, absentes des versions de production.',
 			'com.socle.navigation.demo.choisir' => 'Choisissez un espace à essayer.',
+			'com.messages.entree.titreClasse' => 'Échanger sur cette Classe',
+			'com.messages.entree.titreDossier' => 'Échanger sur ce dossier',
+			'com.messages.entree.titreObjet' => 'Échanger à ce sujet',
+			'com.messages.entree.ecrireFamille' => 'Écrire à la famille',
+			'com.messages.entree.ecrireAdministration' => 'Écrire à l\'Administration',
+			'com.messages.entree.ecrireA' => ({required Object nom}) => 'Écrire à ${nom}',
+			'com.messages.entree.conversationAvec' => ({required Object nom}) => 'Conversation avec ${nom}',
+			'com.messages.entree.voirTout' => 'Voir toutes les conversations',
+			'com.messages.entree.toutes' => 'Toutes vos conversations',
+			'com.messages.entree.aLireUne' => '1 conversation à lire',
+			'com.messages.entree.aLire' => ({required Object nombre}) => '${nombre} conversations à lire',
+			'com.messages.entree.ouverture' => 'Ouverture de la conversation',
+			'com.messages.entree.inaccessibleTitre' => 'Conversation inaccessible',
+			'com.messages.entree.inaccessible' => 'Cette conversation n\'est plus ouverte pour vous. Choisissez une autre personne dans la liste.',
+			'com.messages.entree.erreurOuvertureTitre' => 'Impossible d\'ouvrir cette conversation.',
+			'com.messages.entree.ouvertureEchouee' => 'Vérifiez votre connexion, puis touchez à nouveau la ligne.',
 			'com.messages.videDetail' => 'Une conversation s\'ouvre depuis une Classe, un élève ou un dossier.',
 			'com.messages.choisirTitre' => 'Choisissez une conversation',
 			'com.messages.choisir' => 'Choisissez une conversation dans la liste pour la lire et y répondre.',
@@ -20284,6 +20358,8 @@ extension on Traductions {
 			'com.messages.demo.roles.adulte' => 'Élève adulte',
 			'com.messages.demo.roles.admin' => 'Direction',
 			'com.messages.demo.roles.controleur' => 'Contrôleur',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.demo.situations' => 'Situations à essayer',
 			'com.messages.demo.echec' => 'Envoi non confirmé, vu par l\'enseignant',
 			'com.messages.demo.horsLigne' => 'Hors ligne, vu par la famille',

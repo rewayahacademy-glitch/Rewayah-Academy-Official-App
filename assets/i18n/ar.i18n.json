@@ -285,6 +285,24 @@
       }
     },
     "messages": {
+      "entree": {
+        "titreClasse": "التواصل بشأن هذا الفصل",
+        "titreDossier": "التواصل بشأن هذا الملف",
+        "titreObjet": "التواصل بشأن هذا الموضوع",
+        "ecrireFamille": "مراسلة الأسرة",
+        "ecrireAdministration": "مراسلة الإدارة",
+        "ecrireA": "مراسلة {nom}",
+        "conversationAvec": "محادثة مع {nom}",
+        "voirTout": "عرض كل المحادثات",
+        "toutes": "كل محادثاتك",
+        "aLireUne": "محادثة واحدة للقراءة",
+        "aLire": "{nombre} محادثات للقراءة",
+        "ouverture": "جارٍ فتح المحادثة",
+        "inaccessibleTitre": "محادثة غير متاحة",
+        "inaccessible": "لم تعد هذه المحادثة متاحة لك. اختر شخصًا آخر من القائمة.",
+        "erreurOuvertureTitre": "تعذّر فتح هذه المحادثة.",
+        "ouvertureEchouee": "تحقّق من اتصالك ثم المس السطر مرة أخرى."
+      },
       "videDetail": "تُفتح المحادثة من فصل أو طالب أو ملف.",
       "choisirTitre": "اختر محادثة",
       "choisir": "اختر محادثة من القائمة لقراءتها والرد عليها.",

@@ -334,6 +334,7 @@ class _Traductions$com$messages$ar extends Traductions$com$messages$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$com$messages$entree$ar entree = _Traductions$com$messages$entree$ar._(_root);
 	@override String get videDetail => 'تُفتح المحادثة من فصل أو طالب أو ملف.';
 	@override String get choisirTitre => 'اختر محادثة';
 	@override String get choisir => 'اختر محادثة من القائمة لقراءتها والرد عليها.';
@@ -533,6 +534,31 @@ class _Traductions$com$socle$navigation$ar extends Traductions$com$socle$navigat
 	@override String get bientot => 'متاح قريبًا';
 	@override late final _Traductions$com$socle$navigation$provisoire$ar provisoire = _Traductions$com$socle$navigation$provisoire$ar._(_root);
 	@override late final _Traductions$com$socle$navigation$demo$ar demo = _Traductions$com$socle$navigation$demo$ar._(_root);
+}
+
+// Path: com.messages.entree
+class _Traductions$com$messages$entree$ar extends Traductions$com$messages$entree$fr {
+	_Traductions$com$messages$entree$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titreClasse => 'التواصل بشأن هذا الفصل';
+	@override String get titreDossier => 'التواصل بشأن هذا الملف';
+	@override String get titreObjet => 'التواصل بشأن هذا الموضوع';
+	@override String get ecrireFamille => 'مراسلة الأسرة';
+	@override String get ecrireAdministration => 'مراسلة الإدارة';
+	@override String ecrireA({required Object nom}) => 'مراسلة ${nom}';
+	@override String conversationAvec({required Object nom}) => 'محادثة مع ${nom}';
+	@override String get voirTout => 'عرض كل المحادثات';
+	@override String get toutes => 'كل محادثاتك';
+	@override String get aLireUne => 'محادثة واحدة للقراءة';
+	@override String aLire({required Object nombre}) => '${nombre} محادثات للقراءة';
+	@override String get ouverture => 'جارٍ فتح المحادثة';
+	@override String get inaccessibleTitre => 'محادثة غير متاحة';
+	@override String get inaccessible => 'لم تعد هذه المحادثة متاحة لك. اختر شخصًا آخر من القائمة.';
+	@override String get erreurOuvertureTitre => 'تعذّر فتح هذه المحادثة.';
+	@override String get ouvertureEchouee => 'تحقّق من اتصالك ثم المس السطر مرة أخرى.';
 }
 
 // Path: com.messages.recherche
@@ -1025,6 +1051,22 @@ extension on TraductionsAr {
 			'com.socle.navigation.demo.titre' => 'عرض توضيحي للاتصالات',
 			'com.socle.navigation.demo.detail' => 'بيانات وهمية، غير موجودة في نسخ الإنتاج.',
 			'com.socle.navigation.demo.choisir' => 'اختر مساحة لتجربتها.',
+			'com.messages.entree.titreClasse' => 'التواصل بشأن هذا الفصل',
+			'com.messages.entree.titreDossier' => 'التواصل بشأن هذا الملف',
+			'com.messages.entree.titreObjet' => 'التواصل بشأن هذا الموضوع',
+			'com.messages.entree.ecrireFamille' => 'مراسلة الأسرة',
+			'com.messages.entree.ecrireAdministration' => 'مراسلة الإدارة',
+			'com.messages.entree.ecrireA' => ({required Object nom}) => 'مراسلة ${nom}',
+			'com.messages.entree.conversationAvec' => ({required Object nom}) => 'محادثة مع ${nom}',
+			'com.messages.entree.voirTout' => 'عرض كل المحادثات',
+			'com.messages.entree.toutes' => 'كل محادثاتك',
+			'com.messages.entree.aLireUne' => 'محادثة واحدة للقراءة',
+			'com.messages.entree.aLire' => ({required Object nombre}) => '${nombre} محادثات للقراءة',
+			'com.messages.entree.ouverture' => 'جارٍ فتح المحادثة',
+			'com.messages.entree.inaccessibleTitre' => 'محادثة غير متاحة',
+			'com.messages.entree.inaccessible' => 'لم تعد هذه المحادثة متاحة لك. اختر شخصًا آخر من القائمة.',
+			'com.messages.entree.erreurOuvertureTitre' => 'تعذّر فتح هذه المحادثة.',
+			'com.messages.entree.ouvertureEchouee' => 'تحقّق من اتصالك ثم المس السطر مرة أخرى.',
 			'com.messages.videDetail' => 'تُفتح المحادثة من فصل أو طالب أو ملف.',
 			'com.messages.choisirTitre' => 'اختر محادثة',
 			'com.messages.choisir' => 'اختر محادثة من القائمة لقراءتها والرد عليها.',
