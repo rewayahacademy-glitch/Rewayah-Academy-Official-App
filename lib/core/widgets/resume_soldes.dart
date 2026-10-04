@@ -115,16 +115,19 @@ class ResumeSoldes extends StatelessWidget {
               cle: t.argent.soldes.aPayer,
               valeur: formaterMontant(synthese.aPayerCeMois),
               chiffres: true,
+              valeurEnFin: true,
             ),
             LigneCleValeur(
               cle: t.argent.soldes.profilsFinances,
               valeur: profilsFinances,
               chiffres: true,
+              valeurEnFin: true,
             ),
             LigneCleValeur(
               cle: t.argent.soldes.paiements,
               valeur: '${synthese.paiementsDuMois}',
               chiffres: true,
+              valeurEnFin: true,
             ),
           ],
         );

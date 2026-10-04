@@ -42,7 +42,12 @@ class LigneMoyenPaiement extends StatelessWidget {
     if (!estMontre(rail)) return const SizedBox.shrink();
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    // Hors ligne, le choix est impossible (revue FI-3-R m3) : le lecteur
+    // d'ecran l'annonce desactive, et l'icone et le nom passent en encre
+    // attenuee. Jamais la couleur seule : la semantique le dit aussi.
+    final bool actif = onPress != null;
     return Semantics(
+      enabled: actif,
       selected: retenu,
       inMutuallyExclusiveGroup: true,
       child: AppCard(
@@ -52,7 +57,8 @@ class LigneMoyenPaiement extends StatelessWidget {
           children: <Widget>[
             ExcludeSemantics(
               child: IconTheme(
-                data: palette.inkAccent.asIconTheme(size: AppSpacing.xxl),
+                data: (actif ? palette.inkAccent : palette.inkMuted)
+                    .asIconTheme(size: AppSpacing.xxl),
                 child: Icon(AppIcons.finance.repos),
               ),
             ),
@@ -64,9 +70,8 @@ class LigneMoyenPaiement extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     t.argent.moyen.webStripe,
-                    style: palette.inkStrong.applyTo(
-                      textes.titleSmall ?? const TextStyle(),
-                    ),
+                    style: (actif ? palette.inkStrong : palette.inkMuted)
+                        .applyTo(textes.titleSmall ?? const TextStyle()),
                   ),
                   Text(
                     t.argent.moyen.webStripeDetail,

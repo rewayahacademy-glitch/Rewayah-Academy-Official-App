@@ -4,6 +4,7 @@ import '../../../core/admin/admin_domaine.dart';
 import '../../../core/admin/service_programme.dart';
 import '../../../core/domain/enums.dart';
 import '../../../core/finance/finances_profil.dart';
+import '../../../core/finance/format_montant.dart';
 import '../../../core/finance/montant.dart';
 import '../../../core/finance/politique_commerciale.dart';
 import '../../../core/i18n/cle_audio.dart';
@@ -1045,7 +1046,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
               montant: Montant(-500, 'USD'),
             ),
             LigneFinance(
-              libelle: 'Total a financer',
+              libelle: 'Total à financer',
               montant: Montant(4500, 'USD'),
               total: true,
             ),
@@ -1076,7 +1077,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
               montant: Montant(14500, 'USD'),
             ),
             LigneTransaction(
-              libelle: 'Periode d octobre',
+              libelle: "Période d'octobre",
               date: '1er octobre',
               montant: Montant(-5000, 'USD'),
             ),
@@ -1122,7 +1123,8 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         'sans couleur choisie : le cercle seul',
         (BuildContext _) => const LigneAllocation(
           prenom: 'Ibrahim',
-          detail: 'Nouveau solde : 50 USD',
+          // Meme ecriture que le formateur : espace insecable avant la devise.
+          detail: 'Nouveau solde : 50\u00A0\$',
           montant: Montant(5000, 'USD'),
           avatar: BandeauProfil(
             avatar: AvatarTile(prenom: 'Ibrahim', diametre: AppAvatar.moyen),
@@ -1154,6 +1156,14 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         (BuildContext _) =>
             const PastilleFinanciere(etat: EtatFinancier.enConfirmation),
       ),
+      EtatGalerie(
+        'essai : le compteur rendu par la source',
+        (BuildContext _) => const PastilleFinanciere(
+          etat: EtatFinancier.essai,
+          essaisUtilises: 1,
+          essaisMax: 2,
+        ),
+      ),
     ],
   ),
   EntreeGalerie(
@@ -1181,9 +1191,11 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
     etats: <EtatGalerie>[
       EtatGalerie(
         'acces a regulariser',
-        (BuildContext _) => const BandeauAttention(
-          titre: 'Acces a regulariser',
-          message: 'Il manque 8 USD pour financer janvier.',
+        (BuildContext _) => BandeauAttention(
+          titre: 'Accès à régulariser',
+          message:
+              'Il manque ${formaterMontant(const Montant(800, 'USD'))} '
+              'pour financer janvier.',
         ),
       ),
       EtatGalerie(
@@ -1197,8 +1209,8 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'echec',
         (BuildContext _) => const BandeauAttention(
-          titre: 'Le paiement n a pas abouti',
-          message: 'Votre selection est gardee. Reessayez ou changez de moyen.',
+          titre: "Le paiement n'a pas abouti",
+          message: 'Votre sélection est gardée. Réessayez ou changez de moyen.',
           ton: TonEtat.alerte,
         ),
       ),

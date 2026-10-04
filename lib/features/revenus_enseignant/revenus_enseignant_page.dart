@@ -283,11 +283,13 @@ class _SectionClasse extends StatelessWidget {
           cle: t.enseignant.revenus.heuresAssurees,
           valeur: _duree(classe.minutesAssurees),
           chiffres: true,
+          valeurEnFin: true,
         ),
         LigneCleValeur(
           cle: t.enseignant.revenus.capacite,
           valeur: t.enseignant.revenus.capaciteValeur(nombre: classe.capacite),
           chiffres: true,
+          valeurEnFin: true,
         ),
         // Un nombre par Classe pour le mois, tel que la source le rend ; le
         // guide parle d'une moyenne ou d'un detail par seance, qu'aucun
@@ -300,6 +302,7 @@ class _SectionClasse extends StatelessWidget {
             capacite: classe.capacite,
           ),
           chiffres: true,
+          valeurEnFin: true,
         ),
         LigneCleValeur(
           cle: t.enseignant.revenus.taux,
@@ -307,6 +310,7 @@ class _SectionClasse extends StatelessWidget {
             montant: formaterMontant(classe.tauxHoraireEffectif),
           ),
           chiffres: true,
+          valeurEnFin: true,
         ),
         LigneFinance(
           libelle: t.enseignant.revenus.montantClasse,

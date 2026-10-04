@@ -188,7 +188,10 @@ class _Acces extends ConsumerWidget {
                 if (regulariser)
                   const PastilleFinanciere(etat: EtatFinancier.aRegulariser)
                 else if (essai != null)
-                  StatusPill(libelle: essai, ton: TonEtat.accent)
+                  StatusPill(
+                    libelle: essai,
+                    ton: PastilleFinanciere.tonDe(EtatFinancier.essai),
+                  )
                 else
                   StatusPill(libelle: pastille, ton: ton),
               ],

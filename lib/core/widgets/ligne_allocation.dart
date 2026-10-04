@@ -39,5 +39,6 @@ class LigneAllocation extends StatelessWidget {
     detailCle: detail,
     valeur: formaterMontant(montant),
     chiffres: true,
+    valeurEnFin: true,
   );
 }

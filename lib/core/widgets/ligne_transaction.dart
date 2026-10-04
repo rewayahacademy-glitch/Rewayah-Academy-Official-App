@@ -40,5 +40,6 @@ class LigneTransaction extends StatelessWidget {
     valeur: formaterMontant(montant, signe: true),
     chiffres: true,
     complement: statut,
+    valeurEnFin: true,
   );
 }

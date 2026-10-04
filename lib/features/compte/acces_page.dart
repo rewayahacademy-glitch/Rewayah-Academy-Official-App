@@ -101,7 +101,10 @@ class AccesComptePage extends ConsumerWidget {
       controle: regulariser
           ? const PastilleFinanciere(etat: EtatFinancier.aRegulariser)
           : essai != null
-          ? StatusPill(libelle: essai, ton: TonEtat.accent)
+          ? StatusPill(
+              libelle: essai,
+              ton: PastilleFinanciere.tonDe(EtatFinancier.essai),
+            )
           : StatusPill(
               libelle: a.etatAffiche == EtatAccesAffiche.expire
                   ? t.compte.tuteur.pageAcces.pastilleExpire

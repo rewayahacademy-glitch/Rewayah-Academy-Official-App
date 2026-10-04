@@ -29,6 +29,7 @@ class LigneCleValeur extends StatelessWidget {
     this.detailCle,
     this.meneur,
     this.valeurForte = false,
+    this.valeurEnFin = false,
   });
 
   /// Ce que la valeur designe : « Horaire », « Duree », « Presence ».
@@ -60,6 +61,15 @@ class LigneCleValeur extends StatelessWidget {
   /// et titres de carte (`titleMedium`) au lieu du corps.
   final bool valeurForte;
 
+  /// Vrai pour une valeur posee au bord de fin de la ligne (droite en LTR,
+  /// gauche en RTL) : les montants des lignes d'argent (revue FI-3-R, M1 ;
+  /// guide Finance V4 §7, §11.3 « colonnes calmes et stables »). Les fins de
+  /// montants d'une meme carte tombent alors sur un seul bord, et les
+  /// chiffres tabulaires alignent les decimales. Le complement (une
+  /// pastille) passe avant la valeur, pour que le montant reste au bord.
+  /// Faux par defaut : les autres lignes gardent leur valeur au debut.
+  final bool valeurEnFin;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -90,16 +100,22 @@ class LigneCleValeur extends StatelessWidget {
               ),
             ],
           );
+    final Widget texteValeur = annulee
+        ? TexteHeureSeance(heure: valeur, annulee: true, style: styleValeur)
+        : Text(
+            valeur,
+            style: styleValeur,
+            textAlign: valeurEnFin ? TextAlign.end : null,
+          );
     final Widget blocValeur = Wrap(
       spacing: AppSpacing.sm,
       runSpacing: AppSpacing.xs,
+      alignment: valeurEnFin ? WrapAlignment.end : WrapAlignment.start,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: <Widget>[
-        if (annulee)
-          TexteHeureSeance(heure: valeur, annulee: true, style: styleValeur)
-        else
-          Text(valeur, style: styleValeur),
-        ?complement,
+        if (valeurEnFin) ?complement,
+        texteValeur,
+        if (!valeurEnFin) ?complement,
       ],
     );
     final bool empiler =
@@ -110,7 +126,19 @@ class LigneCleValeur extends StatelessWidget {
         ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
-            children: <Widget>[texteCle, Ecart.vXs, blocValeur],
+            children: <Widget>[
+              texteCle,
+              Ecart.vXs,
+              // Empilee, la valeur garde son bord : celui de fin pour un
+              // montant, celui de la colonne des autres montants.
+              if (valeurEnFin)
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: blocValeur,
+                )
+              else
+                blocValeur,
+            ],
           )
         : Row(
             crossAxisAlignment: CrossAxisAlignment.start,

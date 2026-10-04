@@ -57,5 +57,6 @@ class LigneFinance extends StatelessWidget {
     chiffres: true,
     valeurForte: total,
     complement: complement,
+    valeurEnFin: true,
   );
 }

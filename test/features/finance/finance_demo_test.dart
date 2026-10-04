@@ -667,12 +667,34 @@ void main() {
     },
   );
 
+  test('le garde-fou voit un montant ecrit en unites ou calcule (revue '
+      'FI-3-R m5)', () {
+    // Contre-epreuve : chaque ecriture doit etre vue, sinon le garde-fou
+    // ci-dessous passerait a cote d'un montant recopie.
+    for (final String ligne in <String>[
+      'tarif: usd(50),',
+      'Montant(50 * 100, devise)',
+      "Montant(5000, 'USD')",
+      "Text('50 USD')",
+      "Text('50 \$')",
+      "Text('-5 \$')",
+      'remise: DonneesFinanceDemo.usd(-5),',
+    ]) {
+      expect(_montantEnDur.hasMatch(ligne), isTrue, reason: ligne);
+    }
+    for (final String ligne in <String>[
+      'formaterMontant(finance.solde)',
+      'Montant(-l.montant.mineur, devise)',
+      'const Duration(minutes: 50)',
+    ]) {
+      expect(_montantEnDur.hasMatch(ligne), isFalse, reason: ligne);
+    }
+  });
+
   test('aucune valeur commerciale de la politique hors finance_demo.dart', () {
     // Les montants de la politique en unites mineures, et les anciens
     // montants a ne jamais recopier (guide §1.4, §2).
-    final RegExp interdit = RegExp(
-      r'\b(5000|6000|4500|4300|1450|1880|14500|18800)\b|30 \$|-5 \$',
-    );
+    final RegExp interdit = _montantEnDur;
     final List<String> fautes = <String>[];
     for (final FileSystemEntity f in Directory(
       'lib',
@@ -694,9 +716,24 @@ void main() {
             l.contains('finance') ||
             l.contains('paiement') ||
             l.contains('recharge') ||
-            l.contains('solde'),
+            l.contains('solde') ||
+            l.contains('argent') ||
+            l.contains('revenus') ||
+            l.contains('foyer'),
       ),
       isEmpty,
     );
   });
 }
+
+/// Un montant ecrit en dur : les montants de la politique en unites
+/// mineures, les anciens montants a ne jamais recopier (guide §1.4, §2), et
+/// toute ecriture d'un montant en unites (revue FI-3-R m5) : `usd(50)`,
+/// `Montant(50 * 100, ...)`, « 50 USD », « 50 $ ».
+final RegExp _montantEnDur = RegExp(
+  r'\b(5000|6000|4500|4300|1450|1880|14500|18800)\b'
+  r'|\busd\(\s*-?\d'
+  r'|Montant\(\s*-?\d+\s*\*'
+  r'|\b\d+(\s|\\u00A0)?(USD|EUR|GBP|XOF|GNF)\b'
+  r'|\d(\s|\\u00A0)?\\?\$',
+);

@@ -37,6 +37,7 @@ import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bandeau_attention.dart';
+import '../../core/widgets/pastille_financiere.dart';
 import '../../core/widgets/status_pill.dart';
 import '../compte/donnees_compte.dart' show accesFoyerProvider, dateLongue;
 import '../foyer/finances_foyer.dart' show financesFoyerProvider;
@@ -154,7 +155,7 @@ String? libelleEssai(AccesBeneficiaire? acces) {
   final int? utilises = acces?.essaisUtilises;
   final int? max = acces?.essaisMax;
   if (utilises == null || max == null) return null;
-  return t.argent.acces.essai(n: utilises, max: max);
+  return PastilleFinanciere.libelleEssai(utilises: utilises, max: max);
 }
 
 /// Vrai quand la finance du profil dit « a regulariser » (FI11).
@@ -285,7 +286,10 @@ class AccesAdulte extends ConsumerWidget {
         ? Align(
             key: essaiKey,
             alignment: AlignmentDirectional.centerStart,
-            child: StatusPill(libelle: essai, ton: TonEtat.accent),
+            child: StatusPill(
+              libelle: essai,
+              ton: PastilleFinanciere.tonDe(EtatFinancier.essai),
+            ),
           )
         : null;
     if (contenu == null) return const SizedBox.shrink();

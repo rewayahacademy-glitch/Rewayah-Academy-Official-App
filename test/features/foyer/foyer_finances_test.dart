@@ -291,23 +291,24 @@ void main() {
     expect(_liensRecharger, findsNothing);
   });
 
-  testWidgets('essai : « n sur 2 », le maximum lu dans la politique', (
-    WidgetTester tester,
-  ) async {
-    await _monter(tester, jeu: JeuFoyerFinance.unEnEssai);
-    final FinancesProfil essai = DonneesFinanceDemo.profils(
-      JeuFoyerFinance.unEnEssai,
-    ).firstWhere((FinancesProfil p) => p.etat == EtatFinancier.essai);
-    expect(
-      find.text(
-        t.foyer.finances.essai(
-          n: essai.essaisUtilises!,
-          max: DonneesFinanceDemo.politiqueLancement.essaisMax,
+  testWidgets(
+    'essai : « Essai : n/2 » dans la pastille, le maximum lu dans la politique',
+    (WidgetTester tester) async {
+      await _monter(tester, jeu: JeuFoyerFinance.unEnEssai);
+      final FinancesProfil essai = DonneesFinanceDemo.profils(
+        JeuFoyerFinance.unEnEssai,
+      ).firstWhere((FinancesProfil p) => p.etat == EtatFinancier.essai);
+      expect(
+        find.text(
+          t.argent.etat.essaiCompte(
+            n: essai.essaisUtilises!,
+            max: DonneesFinanceDemo.politiqueLancement.essaisMax,
+          ),
         ),
-      ),
-      findsOneWidget,
-    );
-  });
+        findsOneWidget,
+      );
+    },
+  );
 
   testWidgets('1440 (FI-5) : les quatre indicateurs cote a cote, le bouton '
       'compact au bord de fin', (WidgetTester tester) async {

@@ -467,21 +467,25 @@ class _ContenuRecu extends ConsumerWidget {
           LigneCleValeur(
             cle: t.ficheEleve.mouvements.recu.date,
             valeur: dateEcheance(recu.date),
+            valeurEnFin: true,
           ),
           LigneCleValeur(
             cle: t.ficheEleve.mouvements.recu.reference,
             valeur: recu.reference,
             chiffres: true,
+            valeurEnFin: true,
           ),
           if (moyen != null)
             LigneCleValeur(
               cle: t.ficheEleve.mouvements.recu.moyen,
               valeur: moyen,
+              valeurEnFin: true,
             ),
           LigneCleValeur(
             cle: t.ficheEleve.mouvements.recu.montant,
             valeur: formaterMontant(recu.total),
             chiffres: true,
+            valeurEnFin: true,
           ),
           if (recu.allocations.isNotEmpty) ...<Widget>[
             Ecart.vLg,

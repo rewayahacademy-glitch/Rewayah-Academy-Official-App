@@ -384,18 +384,19 @@ class VueFinancesProfil extends ConsumerWidget {
             runSpacing: AppSpacing.xs,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: <Widget>[
-              PastilleFinanciere(etat: finance.etat),
+              PastilleFinanciere(
+                etat: finance.etat,
+                essaisUtilises: essais,
+                essaisMax: essaisMax,
+              ),
               BadgePeriodeFinancee(periode: finance.periode),
             ],
           ),
-          if (essais != null) ...<Widget>[
+          // Le maximum lu, la pastille dit « Essai : n/max » ; sans politique
+          // lue, le compteur seul, jamais un maximum suppose.
+          if (essais != null && essaisMax == null) ...<Widget>[
             Ecart.vXs,
-            Text(
-              essaisMax == null
-                  ? t.foyer.finances.essaiSansMax(n: essais)
-                  : t.foyer.finances.essai(n: essais, max: essaisMax),
-              style: note,
-            ),
+            Text(t.foyer.finances.essaiSansMax(n: essais), style: note),
           ],
         ],
       ),

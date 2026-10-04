@@ -61,11 +61,21 @@ class MontantArgent extends StatelessWidget {
           TailleMontant.grand => textes.displaySmall,
         } ??
         const TextStyle();
-    return Text(
+    final Widget texte = Text(
       formaterMontant(montant, signe: signe),
       style: (attenue ? palette.inkMuted : palette.inkStrong).applyTo(
         AppTypography.tabulaire(base),
       ),
+    );
+    // Un montant ne se coupe jamais dans le nombre (revue FI-3-R m1) : le
+    // grand chiffre d'un resume, trop large pour la ligne (320 px, texte
+    // 200 %), se reduit d'un seul tenant au lieu de passer a la ligne dans
+    // « 234,56 ». Les autres tailles tiennent sur la ligne des 320 px.
+    if (taille != TailleMontant.grand) return texte;
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: AlignmentDirectional.centerStart,
+      child: texte,
     );
   }
 }

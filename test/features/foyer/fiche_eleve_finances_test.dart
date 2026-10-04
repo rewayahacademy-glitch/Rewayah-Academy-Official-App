@@ -644,7 +644,7 @@ void main() {
   });
 
   group('Etats', () {
-    testWidgets('essai : ni mensualite ni detail, « n sur 2 »', (
+    testWidgets('essai : ni mensualite ni detail, « Essai : n/2 »', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -656,7 +656,7 @@ void main() {
       expect(find.text(t.ficheEleve.finances.mensualite), findsNothing);
       expect(
         find.text(
-          t.foyer.finances.essai(
+          t.argent.etat.essaiCompte(
             n: 1,
             max: DonneesFinanceDemo.politiqueLancement.essaisMax,
           ),

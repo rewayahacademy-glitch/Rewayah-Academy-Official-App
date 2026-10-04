@@ -1639,6 +1639,7 @@ class _ApercuState extends ConsumerState<_Apercu> {
           cle: pol.apercuBase,
           valeur: parHeure(a.baseHoraire),
           chiffres: true,
+          valeurEnFin: true,
         ),
         LigneCleValeur(
           cle: pol.apercuOccupation,
@@ -1648,6 +1649,7 @@ class _ApercuState extends ConsumerState<_Apercu> {
           ),
           valeur: parHeure(a.occupation),
           chiffres: true,
+          valeurEnFin: true,
         ),
         LigneCleValeur(
           key: PolitiquesCommercialesContenu.apercuTauxKey,
@@ -1656,6 +1658,7 @@ class _ApercuState extends ConsumerState<_Apercu> {
           valeur: parHeure(a.tauxHoraire),
           chiffres: true,
           valeurForte: true,
+          valeurEnFin: true,
         ),
       ]),
     );
