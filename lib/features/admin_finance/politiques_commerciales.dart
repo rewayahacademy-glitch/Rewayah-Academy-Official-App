@@ -45,6 +45,7 @@ import '../../core/i18n/jour_du_mois.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -91,11 +92,10 @@ Future<PolitiquesLues> lirePolitiques(PortPolitiquesCommerciales port) async {
 /// Les politiques lues sur le port. `retry` nul : pas de retentative
 /// silencieuse derriere « Reessayer » (meme reglage que la Vue globale).
 final FutureProvider<PolitiquesLues> politiquesCommercialesProvider =
-    FutureProvider<PolitiquesLues>(
-      (Ref ref) =>
-          lirePolitiques(ref.watch(portPolitiquesCommercialesProvider)),
-      retry: (int retryCount, Object error) => null,
-    );
+    FutureProvider<PolitiquesLues>((Ref ref) {
+      surveillerPersonneConnectee(ref);
+      return lirePolitiques(ref.watch(portPolitiquesCommercialesProvider));
+    }, retry: (int retryCount, Object error) => null);
 
 /// L'onglet Politiques commerciales : chargement, contenu, sans brouillon
 /// (vide), erreur, hors ligne, et « Pas encore disponible » tant que le port

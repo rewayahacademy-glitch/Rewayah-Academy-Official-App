@@ -128,6 +128,7 @@ Widget _hote({
   overrides: <Override>[
     serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
     horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(horsLigne)),
+    sansPersonneConnectee(),
     ...surcharges,
   ],
   child: TranslationProvider(
@@ -659,6 +660,7 @@ void main() {
               horsLigneProvider.overrideWith(
                 (Ref _) => Stream<bool>.value(false),
               ),
+              sansPersonneConnectee(),
               ..._avec(_Port(vue: _chargee)),
             ],
             child: TranslationProvider(

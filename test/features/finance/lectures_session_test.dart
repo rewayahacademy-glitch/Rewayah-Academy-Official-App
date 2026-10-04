@@ -9,14 +9,19 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override, ProviderListenable;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/capacites/port_finance_direction.dart';
 import 'package:rewayah_academy/core/capacites/port_mes_finances.dart';
 import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
+import 'package:rewayah_academy/core/capacites/port_politiques_commerciales.dart';
 import 'package:rewayah_academy/core/capacites/port_recharge_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_revenus_enseignant.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/finance/mouvements_profil.dart';
+import 'package:rewayah_academy/core/finance/politique_commerciale.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/features/admin_finance/politiques_commerciales.dart';
+import 'package:rewayah_academy/features/admin_finance/vue_globale_finance.dart';
 import 'package:rewayah_academy/features/demo/finance_demo.dart';
 import 'package:rewayah_academy/features/foyer/fiche/mouvements_page.dart';
 import 'package:rewayah_academy/features/foyer/finances_foyer.dart';
@@ -99,17 +104,47 @@ class _Revenus extends RevenusEnseignantDemo {
   }
 }
 
+/// La vue globale de la direction, lectures comptees.
+class _Direction extends FinanceDirectionDemo {
+  _Direction();
+
+  int lectures = 0;
+
+  @override
+  Future<VueGlobaleFinance> vueGlobale() {
+    lectures++;
+    return super.vueGlobale();
+  }
+}
+
+/// Les politiques commerciales, lectures comptees.
+class _Politiques extends PolitiquesCommercialesDemo {
+  _Politiques();
+
+  int lectures = 0;
+
+  @override
+  Future<PolitiqueCommerciale> active() {
+    lectures++;
+    return super.active();
+  }
+}
+
 void main() {
   late _Paiements paiements;
   late _Recharge recharge;
   late _MesFinances mesFinances;
   late _Revenus revenus;
+  late _Direction direction;
+  late _Politiques politiques;
 
   setUp(() {
     paiements = _Paiements();
     recharge = _Recharge();
     mesFinances = _MesFinances();
     revenus = _Revenus();
+    direction = _Direction();
+    politiques = _Politiques();
   });
 
   final List<(String, ProviderListenable<AsyncValue<Object?>>, int Function())>
@@ -142,6 +177,16 @@ void main() {
       releveEnseignantProvider,
       () => revenus.lectures,
     ),
+    (
+      'vue globale de la direction',
+      vueGlobaleFinanceProvider,
+      () => direction.lectures,
+    ),
+    (
+      'politiques commerciales de la direction',
+      politiquesCommercialesProvider,
+      () => politiques.lectures,
+    ),
   ];
 
   for (final (
@@ -160,6 +205,8 @@ void main() {
           portRechargeFoyerProvider.overrideWithValue(recharge),
           portMesFinancesProvider.overrideWithValue(mesFinances),
           portRevenusEnseignantProvider.overrideWithValue(revenus),
+          portFinanceDirectionProvider.overrideWithValue(direction),
+          portPolitiquesCommercialesProvider.overrideWithValue(politiques),
         ],
       );
       addTearDown(conteneur.dispose);

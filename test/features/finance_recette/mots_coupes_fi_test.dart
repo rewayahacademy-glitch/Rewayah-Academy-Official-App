@@ -229,7 +229,7 @@ final List<_Cas> _cas = <_Cas>[
     surcharges: _productionTuteur,
   ),
   // Recharge (FI-7).
-  _tuteur('Recharge, etape 1', Routes.rechargePour(<String>[_ibrahim])),
+  _tuteur('Recharge, une seule page', Routes.rechargePour(<String>[_ibrahim])),
   _tuteur(
     'Recharge, production',
     Routes.tuteurFoyerRecharge,

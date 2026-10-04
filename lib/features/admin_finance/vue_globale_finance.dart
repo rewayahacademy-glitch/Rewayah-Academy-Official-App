@@ -37,6 +37,7 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
@@ -59,10 +60,10 @@ import '../../core/widgets/status_pill.dart';
 /// bouton « Reessayer » de l'ecran (meme reglage que
 /// `dossiersEnAttenteProvider`).
 final FutureProvider<VueGlobaleFinance> vueGlobaleFinanceProvider =
-    FutureProvider<VueGlobaleFinance>(
-      (Ref ref) => ref.watch(portFinanceDirectionProvider).vueGlobale(),
-      retry: (int retryCount, Object error) => null,
-    );
+    FutureProvider<VueGlobaleFinance>((Ref ref) {
+      surveillerPersonneConnectee(ref);
+      return ref.watch(portFinanceDirectionProvider).vueGlobale();
+    }, retry: (int retryCount, Object error) => null);
 
 /// Ce que fait le lien d'une alerte (R6-04) : ouvrir sa cible dans le routeur
 /// de la direction ([VueGlobaleFinanceContenu.routeDe]). La page hote decide

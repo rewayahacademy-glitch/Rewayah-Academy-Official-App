@@ -193,6 +193,31 @@ class _PortEspion extends RechargeFoyerFinanceDemo {
   }
 }
 
+/// Un port qui arrete un total qui n'est PAS la somme choisie : une remise
+/// de [remise] sur la somme des montants recus (revue FI-VAGUE-R R3-01,
+/// « Payer {total rendu par le port} »).
+class _PortRemise extends RechargeFoyerFinanceDemo {
+  _PortRemise() : super(JeuFoyerFinance.tousFinances);
+
+  static final Montant remise = DonneesFinanceDemo.usd(5);
+
+  @override
+  Future<RecapitulatifRecharge> verifierMontants(
+    List<MontantRecharge> choix,
+  ) async {
+    final RecapitulatifRecharge r = await super.verifierMontants(choix);
+    final int somme = choix.fold<int>(
+      0,
+      (int s, MontantRecharge m) => s + m.montant.mineur,
+    );
+    return RecapitulatifRecharge(
+      id: r.id,
+      lignes: r.lignes,
+      total: formaterMontant(Montant(somme - remise.mineur, remise.devise)),
+    );
+  }
+}
+
 /// Un port dont la verification attend [verrou] tant que [lente] est
 /// vrai : l'ecran reste en attente du recapitulatif.
 class _PortLent extends RechargeFoyerFinanceDemo {
@@ -409,6 +434,32 @@ void main() {
       formaterMontant(DonneesFinanceDemo.usd(40)),
     );
     expect(find.byKey(RechargeFoyerPage.ligneDe(_ibrahim)), findsOneWidget);
+  });
+
+  testWidgets('remise : le port rend un total different de la somme choisie, '
+      'le bouton dit « Payer {total rendu} », jamais la somme', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, port: _PortRemise());
+    await _cocher(tester, _mariam);
+    await _plus(tester, _mariam, 1);
+    await _cocher(tester, _ibrahim);
+    await _plus(tester, _ibrahim, 4);
+
+    final String somme = formaterMontant(DonneesFinanceDemo.usd(50));
+    final String rendu = formaterMontant(DonneesFinanceDemo.usd(45));
+    expect(rendu, isNot(somme));
+    expect(_payer(tester), isNotNull);
+    expect(
+      tester
+          .widget<ActionPrincipale>(find.byKey(RechargeFoyerPage.payerKey))
+          .libelle,
+      t.adulte.recharge.payer(montant: rendu),
+    );
+    expect(find.text(t.adulte.recharge.payer(montant: somme)), findsNothing);
+    // La carte du total dit le meme total rendu, jamais la somme.
+    expect(_dans(RechargeFoyerPage.totalKey, find.text(rendu)), findsOneWidget);
+    expect(find.text(somme), findsNothing);
   });
 
   testWidgets('tous les profils : chacun coche (sans « Tout selectionner », '
