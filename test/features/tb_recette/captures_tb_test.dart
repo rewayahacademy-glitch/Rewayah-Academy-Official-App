@@ -24,6 +24,7 @@ import 'package:rewayah_academy/core/accessibilite/commandes_masquables.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/zone_support.dart';
 
 import '../../capture/outil_capture.dart';
 
@@ -62,6 +63,16 @@ const Map<RoleSeance, List<SituationTb>> _situationsCapturees =
       RoleSeance.guidee: <SituationTb>[SituationTb.sal00],
       RoleSeance.enseignant: <SituationTb>[SituationTb.sal00],
     };
+
+/// L'opacite visee par le fondu de la barre de l'appel.
+double _opaciteBarre(WidgetTester tester) => tester
+    .widget<AnimatedOpacity>(
+      find.ancestor(
+        of: find.byKey(CommandesMasquables.commandesKey),
+        matching: find.byType(AnimatedOpacity),
+      ),
+    )
+    .opacity;
 
 void main() {
   test('le delai de masquage est celui de CommandesMasquables (4 s)', () {
@@ -102,13 +113,24 @@ void main() {
               await tester.pump(CommandesMasquables.delaiParDefaut);
               await tester.pump(const Duration(seconds: 1));
               if (revelee) {
-                // Une touche sur le contenu, au tiers de la hauteur : la barre
-                // revient, rien d'autre ne change.
-                await tester.tapAt(Offset(cas.$2.width / 2, cas.$2.height / 3));
+                // Une touche au centre du support (pas un point fixe de
+                // l'ecran : a texte x2, le tiers de la hauteur tombe dans
+                // l'en-tete, hors de CommandesMasquables, et rien ne se
+                // revelait) : la barre revient, rien d'autre ne change.
+                await tester.tapAt(
+                  tester.getCenter(find.byType(ZoneSupport).first),
+                );
                 // Un cadre pour lancer le fondu, puis sa duree.
                 await tester.pump();
                 await tester.pump(const Duration(milliseconds: 400));
               }
+              // La capture prouve ce qu'elle nomme : barre a pleine opacite
+              // une fois revelee, effacee au repos.
+              expect(
+                _opaciteBarre(tester),
+                revelee ? 1 : 0,
+                reason: '$nom : opacite de la barre',
+              );
               expect(tester.takeException(), isNull);
               debugPrint('PNG ${await capturer(tester, nom)}');
             });
