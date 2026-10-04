@@ -17,9 +17,11 @@ import '../theme/app_spacing.dart';
 /// (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-2-core-flutter.md` section 2).
 ///
 /// Le hors ligne ne bloque qu'une chose : l'entree en seance et la validation
-/// d'un rapport. Le reste reste consultable depuis le cache, et un rapport se
+/// d'un rapport. Ce qui est deja affiche reste consultable, et un rapport se
 /// met en file d'attente au lieu d'echouer. Le texte du bandeau dit donc ce qui
-/// continue de marcher, pas seulement ce qui est casse.
+/// continue de marcher, et rien de plus : aucun ecran ne relit encore le cache
+/// persistant, et une page qui n'envoie rien hors ligne le dit elle-meme
+/// (EA-HORS-LIGNE-1b).
 ///
 /// L'etat vient de [horsLigneProvider] et non d'un abonnement propre a ce
 /// widget : `ELV-02` grise son bloc « Rejoindre » sur le meme fait, et deux

@@ -4917,8 +4917,8 @@ class Traductions$admin$demandes$fr {
 	/// fr: 'Clore la surcharge'
 	String get cloreEnvoyer => 'Clore la surcharge';
 
-	/// fr: 'La file des demandes n'a pas pu se charger.'
-	String get erreurFile => 'La file des demandes n\'a pas pu se charger.';
+	/// fr: 'La file des demandes n'a pas pu se charger. Réessayez dans un instant.'
+	String get erreurFile => 'La file des demandes n\'a pas pu se charger. Réessayez dans un instant.';
 }
 
 // Path: admin.attribution
@@ -16542,7 +16542,7 @@ extension on Traductions {
 			'admin.demandes.poserMotifRequis' => 'Une règle sans motif ne se relit pas six mois plus tard.',
 			'admin.demandes.poserEnvoyer' => 'Poser la règle',
 			'admin.demandes.cloreEnvoyer' => 'Clore la surcharge',
-			'admin.demandes.erreurFile' => 'La file des demandes n\'a pas pu se charger.',
+			'admin.demandes.erreurFile' => 'La file des demandes n\'a pas pu se charger. Réessayez dans un instant.',
 			'admin.attribution.titre' => 'Attribution',
 			'admin.attribution.intro' => 'Quand aucun enseignant n\'a pris un enfant, c\'est ici qu\'on lui en donne un.',
 			'admin.attribution.colonneEleves' => 'Élèves sans enseignant',

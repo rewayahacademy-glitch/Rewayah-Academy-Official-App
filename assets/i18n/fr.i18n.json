@@ -1449,7 +1449,7 @@
       "poserMotifRequis": "Une règle sans motif ne se relit pas six mois plus tard.",
       "poserEnvoyer": "Poser la règle",
       "cloreEnvoyer": "Clore la surcharge",
-      "erreurFile": "La file des demandes n'a pas pu se charger."
+      "erreurFile": "La file des demandes n'a pas pu se charger. Réessayez dans un instant."
     },
     "attribution": {
       "titre": "Attribution",
