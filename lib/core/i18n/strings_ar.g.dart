@@ -345,6 +345,9 @@ class _Traductions$com$vocal$ar extends Traductions$com$vocal$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$com$vocal$composer$ar composer = _Traductions$com$vocal$composer$ar._(_root);
+	@override late final _Traductions$com$vocal$lecteur$ar lecteur = _Traductions$com$vocal$lecteur$ar._(_root);
+	@override late final _Traductions$com$vocal$demo$ar demo = _Traductions$com$vocal$demo$ar._(_root);
 	@override String get titre => 'رسالة صوتية';
 }
 
@@ -521,6 +524,98 @@ class _Traductions$com$socle$navigation$ar extends Traductions$com$socle$navigat
 	@override String get bientot => 'متاح قريبًا';
 	@override late final _Traductions$com$socle$navigation$provisoire$ar provisoire = _Traductions$com$socle$navigation$provisoire$ar._(_root);
 	@override late final _Traductions$com$socle$navigation$demo$ar demo = _Traductions$com$socle$navigation$demo$ar._(_root);
+}
+
+// Path: com.vocal.composer
+class _Traductions$com$vocal$composer$ar extends Traductions$com$vocal$composer$fr {
+	_Traductions$com$vocal$composer$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'رسالة صوتية';
+	@override String get enregistrer => 'تسجيل رسالة صوتية';
+	@override String get indisponible => 'الرسالة الصوتية غير متاحة هنا بعد. اكتب رسالتك في الحقل أعلاه.';
+	@override String get erreurVerificationTitre => 'تعذّر التحقق من الميكروفون.';
+	@override String get erreurVerificationAction => 'إعادة المحاولة';
+	@override String get erreurDemarrage => 'تعذّر بدء التسجيل. تحقّق من أن الميكروفون لا يستخدمه تطبيق آخر، ثم أعد المحاولة.';
+	@override String get erreurInterrompu => 'توقف التسجيل. تحقّق من الميكروفون، ثم أعد المحاولة.';
+	@override String get permissionTitre => 'الميكروفون مطلوب';
+	@override String get permissionPhrase => 'يحتاج رواية إلى الميكروفون لتسجيل رسالتك الصوتية. لا يُرسل شيء دون موافقتك.';
+	@override String get autoriser => 'السماح باستخدام الميكروفون';
+	@override String get annuler => 'إلغاء';
+	@override String get refuse => 'الميكروفون غير مسموح به لتطبيق رواية.';
+	@override String get refuseAide => 'لإرسال رسالة صوتية، اسمح باستخدام الميكروفون من إعدادات جهازك، ثم عد إلى هنا.';
+	@override String get fermer => 'إغلاق';
+	@override String get enregistrement => 'التسجيل جارٍ';
+	@override String get pause => 'التسجيل متوقف مؤقتًا';
+	@override String get reprise => 'استُؤنف التسجيل';
+	@override String limiteProche({required Object restant, required Object max}) => 'بقي ${restant} قبل الحد الأقصى ${max}';
+	@override String limiteAtteinte({required Object max}) => 'بلغت المدة القصوى (${max}). استمع إلى رسالتك، ثم أرسلها أو احذفها.';
+	@override String ecoule({required Object ecoule, required Object max}) => '${ecoule} من ${max}';
+	@override String get preEcoute => 'الاستماع قبل الإرسال';
+	@override String get preEcouteAide => 'استمع إلى رسالتك قبل إرسالها. لا يُرسل شيء دون موافقتك.';
+	@override String duree({required Object duree}) => 'المدة: ${duree}';
+	@override String get actionPause => 'إيقاف مؤقت';
+	@override String get actionReprendre => 'استئناف';
+	@override String get actionArreter => 'إيقاف';
+	@override String get actionSupprimer => 'حذف';
+	@override String get actionEnvoyer => 'إرسال';
+	@override String get confirmerTitre => 'حذف هذه الرسالة الصوتية؟';
+	@override String get confirmerPhrase => 'ستُمحى من هذا الجهاز. لا يمكن التراجع عن هذا الإجراء.';
+	@override String get garder => 'الاحتفاظ بها';
+	@override String get envoi => 'جارٍ إرسال الرسالة الصوتية';
+	@override String get nonConfirme => 'لم يتم تأكيد هذه الرسالة الصوتية بعد.';
+	@override String get nonConfirmeAide => 'تحقّق من اتصالك، ثم أعد المحاولة. الرسالة الصوتية محفوظة هنا.';
+	@override String get reessayer => 'إعادة المحاولة';
+	@override String get envoye => 'أُرسلت الرسالة الصوتية.';
+	@override String get horsLigne => 'أنت غير متصل. الرسالة الصوتية محفوظة هنا: أرسلها عند عودة الاتصال.';
+}
+
+// Path: com.vocal.lecteur
+class _Traductions$com$vocal$lecteur$ar extends Traductions$com$vocal$lecteur$fr {
+	_Traductions$com$vocal$lecteur$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String libelleAuteur({required Object auteur, required Object duree}) => 'رسالة صوتية من ${auteur}، ${duree}';
+	@override String libelle({required Object duree}) => 'رسالة صوتية، ${duree}';
+	@override String get ecouter => 'استماع';
+	@override String get pause => 'إيقاف مؤقت';
+	@override String get reprendre => 'استئناف';
+	@override String get reecouter => 'إعادة الاستماع';
+	@override String get nonEcoute => 'لم يُستمع إليها بعد';
+	@override String get lecture => 'التشغيل جارٍ';
+	@override String get enPause => 'التشغيل متوقف مؤقتًا';
+	@override String get fin => 'استُمع إليها كاملة';
+	@override String position({required Object position, required Object duree}) => '${position} من ${duree}';
+	@override String get indisponible => 'التشغيل غير متاح هنا بعد. تبقى الرسالة في المحادثة: عد لاحقًا للاستماع إليها.';
+	@override String get erreurLectureTitre => 'تعذّر تشغيل هذه الرسالة الصوتية.';
+	@override String get erreurLectureAction => 'إعادة المحاولة';
+}
+
+// Path: com.vocal.demo
+class _Traductions$com$vocal$demo$ar extends Traductions$com$vocal$demo$fr {
+	_Traductions$com$vocal$demo$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get contexte => 'عرض توضيحي للرسالة الصوتية: لا يُستخدم ميكروفون حقيقي، والتسجيل محاكى.';
+	@override String get situations => 'حالات العرض التوضيحي';
+	@override String get autorise => 'الميكروفون مسموح';
+	@override String get aDemander => 'يُطلب الإذن';
+	@override String get refuse => 'الميكروفون مرفوض';
+	@override String get nonConfirme => 'غير مؤكد';
+	@override String get indisponible => 'غير متاح';
+	@override String get recu => 'رسالة صوتية واردة';
+	@override String get repondre => 'الرد في المحادثة';
+	@override String get envoyes => 'الرسائل الصوتية المرسلة';
+	@override String get auteurEnseignante => 'الأستاذة مريم، معلمة';
+	@override String get auteurParent => 'أحمد، ولي أمر آدم';
+	@override String get messageRecu => 'السلام عليكم، هذه ملاحظاتي على تلاوة هذا الأسبوع.';
+	@override String get horodatage => 'اليوم، 10:28';
 }
 
 // Path: com.socle.composants.badge
@@ -879,6 +974,71 @@ extension on TraductionsAr {
 			'com.socle.navigation.demo.choisir' => 'اختر مساحة لتجربتها.',
 			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
 			'com.messages.vide' => 'لا توجد محادثات حاليًا.',
+			'com.vocal.composer.libelle' => 'رسالة صوتية',
+			'com.vocal.composer.enregistrer' => 'تسجيل رسالة صوتية',
+			'com.vocal.composer.indisponible' => 'الرسالة الصوتية غير متاحة هنا بعد. اكتب رسالتك في الحقل أعلاه.',
+			'com.vocal.composer.erreurVerificationTitre' => 'تعذّر التحقق من الميكروفون.',
+			'com.vocal.composer.erreurVerificationAction' => 'إعادة المحاولة',
+			'com.vocal.composer.erreurDemarrage' => 'تعذّر بدء التسجيل. تحقّق من أن الميكروفون لا يستخدمه تطبيق آخر، ثم أعد المحاولة.',
+			'com.vocal.composer.erreurInterrompu' => 'توقف التسجيل. تحقّق من الميكروفون، ثم أعد المحاولة.',
+			'com.vocal.composer.permissionTitre' => 'الميكروفون مطلوب',
+			'com.vocal.composer.permissionPhrase' => 'يحتاج رواية إلى الميكروفون لتسجيل رسالتك الصوتية. لا يُرسل شيء دون موافقتك.',
+			'com.vocal.composer.autoriser' => 'السماح باستخدام الميكروفون',
+			'com.vocal.composer.annuler' => 'إلغاء',
+			'com.vocal.composer.refuse' => 'الميكروفون غير مسموح به لتطبيق رواية.',
+			'com.vocal.composer.refuseAide' => 'لإرسال رسالة صوتية، اسمح باستخدام الميكروفون من إعدادات جهازك، ثم عد إلى هنا.',
+			'com.vocal.composer.fermer' => 'إغلاق',
+			'com.vocal.composer.enregistrement' => 'التسجيل جارٍ',
+			'com.vocal.composer.pause' => 'التسجيل متوقف مؤقتًا',
+			'com.vocal.composer.reprise' => 'استُؤنف التسجيل',
+			'com.vocal.composer.limiteProche' => ({required Object restant, required Object max}) => 'بقي ${restant} قبل الحد الأقصى ${max}',
+			'com.vocal.composer.limiteAtteinte' => ({required Object max}) => 'بلغت المدة القصوى (${max}). استمع إلى رسالتك، ثم أرسلها أو احذفها.',
+			'com.vocal.composer.ecoule' => ({required Object ecoule, required Object max}) => '${ecoule} من ${max}',
+			'com.vocal.composer.preEcoute' => 'الاستماع قبل الإرسال',
+			'com.vocal.composer.preEcouteAide' => 'استمع إلى رسالتك قبل إرسالها. لا يُرسل شيء دون موافقتك.',
+			'com.vocal.composer.duree' => ({required Object duree}) => 'المدة: ${duree}',
+			'com.vocal.composer.actionPause' => 'إيقاف مؤقت',
+			'com.vocal.composer.actionReprendre' => 'استئناف',
+			'com.vocal.composer.actionArreter' => 'إيقاف',
+			'com.vocal.composer.actionSupprimer' => 'حذف',
+			'com.vocal.composer.actionEnvoyer' => 'إرسال',
+			'com.vocal.composer.confirmerTitre' => 'حذف هذه الرسالة الصوتية؟',
+			'com.vocal.composer.confirmerPhrase' => 'ستُمحى من هذا الجهاز. لا يمكن التراجع عن هذا الإجراء.',
+			'com.vocal.composer.garder' => 'الاحتفاظ بها',
+			'com.vocal.composer.envoi' => 'جارٍ إرسال الرسالة الصوتية',
+			'com.vocal.composer.nonConfirme' => 'لم يتم تأكيد هذه الرسالة الصوتية بعد.',
+			'com.vocal.composer.nonConfirmeAide' => 'تحقّق من اتصالك، ثم أعد المحاولة. الرسالة الصوتية محفوظة هنا.',
+			'com.vocal.composer.reessayer' => 'إعادة المحاولة',
+			'com.vocal.composer.envoye' => 'أُرسلت الرسالة الصوتية.',
+			'com.vocal.composer.horsLigne' => 'أنت غير متصل. الرسالة الصوتية محفوظة هنا: أرسلها عند عودة الاتصال.',
+			'com.vocal.lecteur.libelleAuteur' => ({required Object auteur, required Object duree}) => 'رسالة صوتية من ${auteur}، ${duree}',
+			'com.vocal.lecteur.libelle' => ({required Object duree}) => 'رسالة صوتية، ${duree}',
+			'com.vocal.lecteur.ecouter' => 'استماع',
+			'com.vocal.lecteur.pause' => 'إيقاف مؤقت',
+			'com.vocal.lecteur.reprendre' => 'استئناف',
+			'com.vocal.lecteur.reecouter' => 'إعادة الاستماع',
+			'com.vocal.lecteur.nonEcoute' => 'لم يُستمع إليها بعد',
+			'com.vocal.lecteur.lecture' => 'التشغيل جارٍ',
+			'com.vocal.lecteur.enPause' => 'التشغيل متوقف مؤقتًا',
+			'com.vocal.lecteur.fin' => 'استُمع إليها كاملة',
+			'com.vocal.lecteur.position' => ({required Object position, required Object duree}) => '${position} من ${duree}',
+			'com.vocal.lecteur.indisponible' => 'التشغيل غير متاح هنا بعد. تبقى الرسالة في المحادثة: عد لاحقًا للاستماع إليها.',
+			'com.vocal.lecteur.erreurLectureTitre' => 'تعذّر تشغيل هذه الرسالة الصوتية.',
+			'com.vocal.lecteur.erreurLectureAction' => 'إعادة المحاولة',
+			'com.vocal.demo.contexte' => 'عرض توضيحي للرسالة الصوتية: لا يُستخدم ميكروفون حقيقي، والتسجيل محاكى.',
+			'com.vocal.demo.situations' => 'حالات العرض التوضيحي',
+			'com.vocal.demo.autorise' => 'الميكروفون مسموح',
+			'com.vocal.demo.aDemander' => 'يُطلب الإذن',
+			'com.vocal.demo.refuse' => 'الميكروفون مرفوض',
+			'com.vocal.demo.nonConfirme' => 'غير مؤكد',
+			'com.vocal.demo.indisponible' => 'غير متاح',
+			'com.vocal.demo.recu' => 'رسالة صوتية واردة',
+			'com.vocal.demo.repondre' => 'الرد في المحادثة',
+			'com.vocal.demo.envoyes' => 'الرسائل الصوتية المرسلة',
+			'com.vocal.demo.auteurEnseignante' => 'الأستاذة مريم، معلمة',
+			'com.vocal.demo.auteurParent' => 'أحمد، ولي أمر آدم',
+			'com.vocal.demo.messageRecu' => 'السلام عليكم، هذه ملاحظاتي على تلاوة هذا الأسبوع.',
+			'com.vocal.demo.horodatage' => 'اليوم، 10:28',
 			'com.vocal.titre' => 'رسالة صوتية',
 			'com.communaute.titre' => _root.com.socle.lexique.communaute,
 			'com.communaute.vide' => 'لا توجد منشورات في هذه الفئة.',

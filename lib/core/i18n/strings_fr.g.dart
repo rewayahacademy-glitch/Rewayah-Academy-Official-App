@@ -11058,6 +11058,9 @@ class Traductions$com$vocal$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$com$vocal$composer$fr composer = Traductions$com$vocal$composer$fr.internal(_root);
+	late final Traductions$com$vocal$lecteur$fr lecteur = Traductions$com$vocal$lecteur$fr.internal(_root);
+	late final Traductions$com$vocal$demo$fr demo = Traductions$com$vocal$demo$fr.internal(_root);
 
 	/// fr: 'Message vocal'
 	String get titre => 'Message vocal';
@@ -15245,6 +15248,228 @@ class Traductions$com$socle$navigation$fr {
 
 	late final Traductions$com$socle$navigation$provisoire$fr provisoire = Traductions$com$socle$navigation$provisoire$fr.internal(_root);
 	late final Traductions$com$socle$navigation$demo$fr demo = Traductions$com$socle$navigation$demo$fr.internal(_root);
+}
+
+// Path: com.vocal.composer
+class Traductions$com$vocal$composer$fr {
+	Traductions$com$vocal$composer$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Message vocal'
+	String get libelle => 'Message vocal';
+
+	/// fr: 'Enregistrer un message vocal'
+	String get enregistrer => 'Enregistrer un message vocal';
+
+	/// fr: 'Le message vocal n'est pas encore disponible ici. Écrivez votre message dans le champ ci-dessus.'
+	String get indisponible => 'Le message vocal n\'est pas encore disponible ici. Écrivez votre message dans le champ ci-dessus.';
+
+	/// fr: 'Impossible de vérifier le microphone.'
+	String get erreurVerificationTitre => 'Impossible de vérifier le microphone.';
+
+	/// fr: 'Réessayer'
+	String get erreurVerificationAction => 'Réessayer';
+
+	/// fr: 'Impossible de démarrer l'enregistrement. Vérifiez que le microphone n'est pas utilisé par une autre application, puis réessayez.'
+	String get erreurDemarrage => 'Impossible de démarrer l\'enregistrement. Vérifiez que le microphone n\'est pas utilisé par une autre application, puis réessayez.';
+
+	/// fr: 'L'enregistrement s'est interrompu. Vérifiez le microphone, puis recommencez.'
+	String get erreurInterrompu => 'L\'enregistrement s\'est interrompu. Vérifiez le microphone, puis recommencez.';
+
+	/// fr: 'Le microphone est nécessaire'
+	String get permissionTitre => 'Le microphone est nécessaire';
+
+	/// fr: 'Rewayah a besoin du microphone pour enregistrer votre message vocal. Rien ne part sans votre accord.'
+	String get permissionPhrase => 'Rewayah a besoin du microphone pour enregistrer votre message vocal. Rien ne part sans votre accord.';
+
+	/// fr: 'Autoriser le microphone'
+	String get autoriser => 'Autoriser le microphone';
+
+	/// fr: 'Annuler'
+	String get annuler => 'Annuler';
+
+	/// fr: 'Le microphone n'est pas autorisé pour Rewayah.'
+	String get refuse => 'Le microphone n\'est pas autorisé pour Rewayah.';
+
+	/// fr: 'Pour envoyer un message vocal, autorisez le microphone dans les réglages de votre appareil, puis revenez ici.'
+	String get refuseAide => 'Pour envoyer un message vocal, autorisez le microphone dans les réglages de votre appareil, puis revenez ici.';
+
+	/// fr: 'Fermer'
+	String get fermer => 'Fermer';
+
+	/// fr: 'Enregistrement en cours'
+	String get enregistrement => 'Enregistrement en cours';
+
+	/// fr: 'Enregistrement en pause'
+	String get pause => 'Enregistrement en pause';
+
+	/// fr: 'Enregistrement repris'
+	String get reprise => 'Enregistrement repris';
+
+	/// fr: 'Plus que {restant} avant la limite de {max}'
+	String limiteProche({required Object restant, required Object max}) => 'Plus que ${restant} avant la limite de ${max}';
+
+	/// fr: 'Durée maximale atteinte ({max}). Écoutez votre message, puis envoyez-le ou supprimez-le.'
+	String limiteAtteinte({required Object max}) => 'Durée maximale atteinte (${max}). Écoutez votre message, puis envoyez-le ou supprimez-le.';
+
+	/// fr: '{ecoule} sur {max}'
+	String ecoule({required Object ecoule, required Object max}) => '${ecoule} sur ${max}';
+
+	/// fr: 'Pré-écoute'
+	String get preEcoute => 'Pré-écoute';
+
+	/// fr: 'Écoutez votre message avant de l'envoyer. Rien ne part sans votre accord.'
+	String get preEcouteAide => 'Écoutez votre message avant de l\'envoyer. Rien ne part sans votre accord.';
+
+	/// fr: 'Durée : {duree}'
+	String duree({required Object duree}) => 'Durée : ${duree}';
+
+	/// fr: 'Pause'
+	String get actionPause => 'Pause';
+
+	/// fr: 'Reprendre'
+	String get actionReprendre => 'Reprendre';
+
+	/// fr: 'Arrêter'
+	String get actionArreter => 'Arrêter';
+
+	/// fr: 'Supprimer'
+	String get actionSupprimer => 'Supprimer';
+
+	/// fr: 'Envoyer'
+	String get actionEnvoyer => 'Envoyer';
+
+	/// fr: 'Supprimer ce message vocal ?'
+	String get confirmerTitre => 'Supprimer ce message vocal ?';
+
+	/// fr: 'Il sera effacé de cet appareil. Cette action est définitive.'
+	String get confirmerPhrase => 'Il sera effacé de cet appareil. Cette action est définitive.';
+
+	/// fr: 'Garder'
+	String get garder => 'Garder';
+
+	/// fr: 'Envoi du message vocal en cours'
+	String get envoi => 'Envoi du message vocal en cours';
+
+	/// fr: 'Ce message vocal n'a pas encore été confirmé.'
+	String get nonConfirme => 'Ce message vocal n\'a pas encore été confirmé.';
+
+	/// fr: 'Vérifiez votre connexion, puis réessayez. Le message vocal est gardé ici.'
+	String get nonConfirmeAide => 'Vérifiez votre connexion, puis réessayez. Le message vocal est gardé ici.';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+
+	/// fr: 'Message vocal envoyé.'
+	String get envoye => 'Message vocal envoyé.';
+
+	/// fr: 'Vous êtes hors ligne. Le message vocal est gardé ici : envoyez-le quand la connexion revient.'
+	String get horsLigne => 'Vous êtes hors ligne. Le message vocal est gardé ici : envoyez-le quand la connexion revient.';
+}
+
+// Path: com.vocal.lecteur
+class Traductions$com$vocal$lecteur$fr {
+	Traductions$com$vocal$lecteur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Message vocal de {auteur}, {duree}'
+	String libelleAuteur({required Object auteur, required Object duree}) => 'Message vocal de ${auteur}, ${duree}';
+
+	/// fr: 'Message vocal, {duree}'
+	String libelle({required Object duree}) => 'Message vocal, ${duree}';
+
+	/// fr: 'Écouter'
+	String get ecouter => 'Écouter';
+
+	/// fr: 'Pause'
+	String get pause => 'Pause';
+
+	/// fr: 'Reprendre'
+	String get reprendre => 'Reprendre';
+
+	/// fr: 'Réécouter'
+	String get reecouter => 'Réécouter';
+
+	/// fr: 'Pas encore écouté'
+	String get nonEcoute => 'Pas encore écouté';
+
+	/// fr: 'Lecture en cours'
+	String get lecture => 'Lecture en cours';
+
+	/// fr: 'Lecture en pause'
+	String get enPause => 'Lecture en pause';
+
+	/// fr: 'Écouté en entier'
+	String get fin => 'Écouté en entier';
+
+	/// fr: '{position} sur {duree}'
+	String position({required Object position, required Object duree}) => '${position} sur ${duree}';
+
+	/// fr: 'La lecture n'est pas encore disponible ici. Le message reste dans la conversation : revenez plus tard pour l'écouter.'
+	String get indisponible => 'La lecture n\'est pas encore disponible ici. Le message reste dans la conversation : revenez plus tard pour l\'écouter.';
+
+	/// fr: 'Impossible de lire ce message vocal.'
+	String get erreurLectureTitre => 'Impossible de lire ce message vocal.';
+
+	/// fr: 'Réessayer'
+	String get erreurLectureAction => 'Réessayer';
+}
+
+// Path: com.vocal.demo
+class Traductions$com$vocal$demo$fr {
+	Traductions$com$vocal$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Démonstration du message vocal : aucun microphone réel n'est utilisé, l'enregistrement est simulé.'
+	String get contexte => 'Démonstration du message vocal : aucun microphone réel n\'est utilisé, l\'enregistrement est simulé.';
+
+	/// fr: 'Situations de démonstration'
+	String get situations => 'Situations de démonstration';
+
+	/// fr: 'Micro autorisé'
+	String get autorise => 'Micro autorisé';
+
+	/// fr: 'À demander'
+	String get aDemander => 'À demander';
+
+	/// fr: 'Micro refusé'
+	String get refuse => 'Micro refusé';
+
+	/// fr: 'Non confirmé'
+	String get nonConfirme => 'Non confirmé';
+
+	/// fr: 'Indisponible'
+	String get indisponible => 'Indisponible';
+
+	/// fr: 'Message vocal reçu'
+	String get recu => 'Message vocal reçu';
+
+	/// fr: 'Répondre dans la conversation'
+	String get repondre => 'Répondre dans la conversation';
+
+	/// fr: 'Messages vocaux envoyés'
+	String get envoyes => 'Messages vocaux envoyés';
+
+	/// fr: 'Mme Mariam, enseignante'
+	String get auteurEnseignante => 'Mme Mariam, enseignante';
+
+	/// fr: 'Ahmed, parent d'Adam'
+	String get auteurParent => 'Ahmed, parent d\'Adam';
+
+	/// fr: 'Bonjour, voici mes remarques sur la récitation de cette semaine.'
+	String get messageRecu => 'Bonjour, voici mes remarques sur la récitation de cette semaine.';
+
+	/// fr: 'Aujourd'hui, 10:28'
+	String get horodatage => 'Aujourd\'hui, 10:28';
 }
 
 // Path: salle.preparation.eleve.guidee
@@ -19979,6 +20204,73 @@ extension on Traductions {
 			'com.socle.navigation.demo.choisir' => 'Choisissez un espace à essayer.',
 			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
 			'com.messages.vide' => 'Aucune conversation pour le moment.',
+			'com.vocal.composer.libelle' => 'Message vocal',
+			'com.vocal.composer.enregistrer' => 'Enregistrer un message vocal',
+			'com.vocal.composer.indisponible' => 'Le message vocal n\'est pas encore disponible ici. Écrivez votre message dans le champ ci-dessus.',
+			'com.vocal.composer.erreurVerificationTitre' => 'Impossible de vérifier le microphone.',
+			'com.vocal.composer.erreurVerificationAction' => 'Réessayer',
+			'com.vocal.composer.erreurDemarrage' => 'Impossible de démarrer l\'enregistrement. Vérifiez que le microphone n\'est pas utilisé par une autre application, puis réessayez.',
+			'com.vocal.composer.erreurInterrompu' => 'L\'enregistrement s\'est interrompu. Vérifiez le microphone, puis recommencez.',
+			'com.vocal.composer.permissionTitre' => 'Le microphone est nécessaire',
+			'com.vocal.composer.permissionPhrase' => 'Rewayah a besoin du microphone pour enregistrer votre message vocal. Rien ne part sans votre accord.',
+			'com.vocal.composer.autoriser' => 'Autoriser le microphone',
+			'com.vocal.composer.annuler' => 'Annuler',
+			'com.vocal.composer.refuse' => 'Le microphone n\'est pas autorisé pour Rewayah.',
+			'com.vocal.composer.refuseAide' => 'Pour envoyer un message vocal, autorisez le microphone dans les réglages de votre appareil, puis revenez ici.',
+			'com.vocal.composer.fermer' => 'Fermer',
+			'com.vocal.composer.enregistrement' => 'Enregistrement en cours',
+			'com.vocal.composer.pause' => 'Enregistrement en pause',
+			'com.vocal.composer.reprise' => 'Enregistrement repris',
+			'com.vocal.composer.limiteProche' => ({required Object restant, required Object max}) => 'Plus que ${restant} avant la limite de ${max}',
+			'com.vocal.composer.limiteAtteinte' => ({required Object max}) => 'Durée maximale atteinte (${max}). Écoutez votre message, puis envoyez-le ou supprimez-le.',
+			'com.vocal.composer.ecoule' => ({required Object ecoule, required Object max}) => '${ecoule} sur ${max}',
+			'com.vocal.composer.preEcoute' => 'Pré-écoute',
+			'com.vocal.composer.preEcouteAide' => 'Écoutez votre message avant de l\'envoyer. Rien ne part sans votre accord.',
+			'com.vocal.composer.duree' => ({required Object duree}) => 'Durée : ${duree}',
+			'com.vocal.composer.actionPause' => 'Pause',
+			'com.vocal.composer.actionReprendre' => 'Reprendre',
+			'com.vocal.composer.actionArreter' => 'Arrêter',
+			'com.vocal.composer.actionSupprimer' => 'Supprimer',
+			'com.vocal.composer.actionEnvoyer' => 'Envoyer',
+			'com.vocal.composer.confirmerTitre' => 'Supprimer ce message vocal ?',
+			'com.vocal.composer.confirmerPhrase' => 'Il sera effacé de cet appareil. Cette action est définitive.',
+			'com.vocal.composer.garder' => 'Garder',
+			'com.vocal.composer.envoi' => 'Envoi du message vocal en cours',
+			'com.vocal.composer.nonConfirme' => 'Ce message vocal n\'a pas encore été confirmé.',
+			'com.vocal.composer.nonConfirmeAide' => 'Vérifiez votre connexion, puis réessayez. Le message vocal est gardé ici.',
+			'com.vocal.composer.reessayer' => 'Réessayer',
+			'com.vocal.composer.envoye' => 'Message vocal envoyé.',
+			'com.vocal.composer.horsLigne' => 'Vous êtes hors ligne. Le message vocal est gardé ici : envoyez-le quand la connexion revient.',
+			'com.vocal.lecteur.libelleAuteur' => ({required Object auteur, required Object duree}) => 'Message vocal de ${auteur}, ${duree}',
+			'com.vocal.lecteur.libelle' => ({required Object duree}) => 'Message vocal, ${duree}',
+			'com.vocal.lecteur.ecouter' => 'Écouter',
+			'com.vocal.lecteur.pause' => 'Pause',
+			'com.vocal.lecteur.reprendre' => 'Reprendre',
+			'com.vocal.lecteur.reecouter' => 'Réécouter',
+			'com.vocal.lecteur.nonEcoute' => 'Pas encore écouté',
+			'com.vocal.lecteur.lecture' => 'Lecture en cours',
+			'com.vocal.lecteur.enPause' => 'Lecture en pause',
+			'com.vocal.lecteur.fin' => 'Écouté en entier',
+			'com.vocal.lecteur.position' => ({required Object position, required Object duree}) => '${position} sur ${duree}',
+			'com.vocal.lecteur.indisponible' => 'La lecture n\'est pas encore disponible ici. Le message reste dans la conversation : revenez plus tard pour l\'écouter.',
+			'com.vocal.lecteur.erreurLectureTitre' => 'Impossible de lire ce message vocal.',
+			'com.vocal.lecteur.erreurLectureAction' => 'Réessayer',
+			'com.vocal.demo.contexte' => 'Démonstration du message vocal : aucun microphone réel n\'est utilisé, l\'enregistrement est simulé.',
+			'com.vocal.demo.situations' => 'Situations de démonstration',
+			'com.vocal.demo.autorise' => 'Micro autorisé',
+			'com.vocal.demo.aDemander' => 'À demander',
+			'com.vocal.demo.refuse' => 'Micro refusé',
+			'com.vocal.demo.nonConfirme' => 'Non confirmé',
+			'com.vocal.demo.indisponible' => 'Indisponible',
+			'com.vocal.demo.recu' => 'Message vocal reçu',
+			'com.vocal.demo.repondre' => 'Répondre dans la conversation',
+			'com.vocal.demo.envoyes' => 'Messages vocaux envoyés',
+			'com.vocal.demo.auteurEnseignante' => 'Mme Mariam, enseignante',
+			'com.vocal.demo.auteurParent' => 'Ahmed, parent d\'Adam',
+			'com.vocal.demo.messageRecu' => 'Bonjour, voici mes remarques sur la récitation de cette semaine.',
+			_ => null,
+		} ?? switch (path) {
+			'com.vocal.demo.horodatage' => 'Aujourd\'hui, 10:28',
 			'com.vocal.titre' => 'Message vocal',
 			'com.communaute.titre' => _root.com.socle.lexique.communaute,
 			'com.communaute.vide' => 'Aucune publication dans cette catégorie.',
