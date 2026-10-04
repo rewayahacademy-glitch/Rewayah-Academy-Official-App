@@ -1,0 +1,310 @@
+From 8ed459c4dcf24ebbe8762ee75f516d78f974341d Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 4 Oct 2026 05:51:50 +0000
+Subject: [PATCH] FI-1c-CORR : reserves M1 et M2 de la revue FI-1c-R
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+M1 : un profil payant sans periode financee (a regulariser, aucun paiement)
+n'est plus rendu en EtatAccesAffiche.sansEcheance, le cas ordinaire d'un
+compte valide que la page Acces affiche « Actif ». Son acces porte la fin
+de sa derniere periode (finDernierAcces, 30/09) et se lit « expire », par
+la meme regle que les ecrans (etatAccesAffiche). Seul l'essai en cours reste
+sans echeance.
+
+M2 : la vue globale de demonstration additionnait le revenu d'un foyer
+(145 USD) et la paie de treize sieges (143,20 USD), soit une marge de
+12 pour mille. Revenu et paie portent maintenant sur les memes classes
+(_classesDemo : 9 enfants a 50, 4 adultes a 60 = 690 USD ; paie 143,20) :
+marge de la paie seule 792 pour mille, jamais presentee comme une marge
+nette (guide §1.5).
+
+Tests : finance_demo_test.dart 31/0 (+2 : acces de chaque profil de chaque
+jeu, vue globale sur les memes sieges) ; chaque nouveau test echoue sur
+l'ancien comportement (mutation verifiee).
+
+@Y RELAIS FI-1c-CORR DEV_OK commit=local tests=finance 31/0 | patch sur claude/collaborative-task-tracking-r47ieu
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01KyPAZgbV8t4qqEZykWJLFc
+---
+ lib/features/demo/finance_demo.dart          | 127 ++++++++++++++-----
+ test/features/finance/finance_demo_test.dart |  71 +++++++++++
+ 2 files changed, 164 insertions(+), 34 deletions(-)
+
+diff --git a/lib/features/demo/finance_demo.dart b/lib/features/demo/finance_demo.dart
+index 367295a4..76664a80 100644
+--- a/lib/features/demo/finance_demo.dart
++++ b/lib/features/demo/finance_demo.dart
+@@ -53,6 +53,16 @@ enum JeuFoyerFinance {
+   cinqProfils,
+ }
+ 
++/// Une classe de l'enseignant de demonstration (revue FI-1c-R M2).
++typedef _ClasseDemo = ({
++  String id,
++  String nom,
++  int minutes,
++  int capacite,
++  int eligibles,
++  bool adulte,
++});
++
+ /// Un profil de demonstration, avant ses donnees financieres.
+ class _ProfilDemo {
+   const _ProfilDemo(
+@@ -328,27 +338,41 @@ abstract final class DonneesFinanceDemo {
+     );
+   }
+ 
++  /// La fin du dernier acces d'un profil payant sans periode financee : la
++  /// fin de sa derniere periode, ou celle de son essai (FIN4-13). Elle est
++  /// passee, donc l'acces se lit « expire », jamais « sans echeance », qui
++  /// est le cas ordinaire d'un compte valide (revue FI-1c-R M1).
++  static final DateTime finDernierAcces = DateTime(2026, 9, 30, 23, 59);
++
+   /// L'acces des profils du jeu [jeu], tel que l'enfant peut le lire :
+   /// seances payantes ouvertes ou non, essais ; **jamais un montant ni une
+-  /// cause** (FI12).
++  /// cause** (FI12). L'etat affiche vient de l'echeance, par la meme regle
++  /// que les ecrans (`etatAccesAffiche`) : un profil payant non finance est
++  /// « expire » ; seul l'essai en cours reste sans echeance.
+   static List<AccesBeneficiaire> acces(JeuFoyerFinance jeu) =>
+       <AccesBeneficiaire>[
+-        for (final FinancesProfil p in profils(jeu))
+-          AccesBeneficiaire(
+-            eleveId: p.profilId,
+-            prenom: p.prenom,
+-            finAcces: p.periode?.fin,
+-            etatAffiche: p.periode == null
+-                ? EtatAccesAffiche.sansEcheance
+-                : EtatAccesAffiche.actif,
+-            seancesPayantesOuvertes: p.periode != null,
+-            essaisUtilises: p.essaisUtilises,
+-            essaisMax: p.essaisUtilises == null
+-                ? null
+-                : politiqueLancement.essaisMax,
+-          ),
++        for (final FinancesProfil p in profils(jeu)) _acces(p),
+       ];
+ 
++  static AccesBeneficiaire _acces(FinancesProfil p) {
++    final DateTime? fin = switch (p.etat) {
++      EtatFinancier.essai => null,
++      _ => p.periode?.fin ?? finDernierAcces,
++    };
++    return AccesBeneficiaire(
++      eleveId: p.profilId,
++      prenom: p.prenom,
++      finAcces: fin,
++      etatAffiche: etatAccesAffiche(
++        finAcces: fin,
++        maintenantUtc: aujourdhui.toUtc(),
++      ),
++      seancesPayantesOuvertes: p.periode != null,
++      essaisUtilises: p.essaisUtilises,
++      essaisMax: p.essaisUtilises == null ? null : politiqueLancement.essaisMax,
++    );
++  }
++
+   /// L'identifiant de la commande de demonstration dans l'etat [etat] : la
+   /// demonstration parcourt les huit etats (revue FI-1a E-10).
+   static String commandeDemo(EtatPaiement etat) => 'demo-fi-cmd-${etat.name}';
+@@ -424,50 +448,85 @@ abstract final class DonneesFinanceDemo {
+     );
+   }
+ 
+-  /// Les revenus estimes de l'enseignant de demonstration : une classe
+-  /// pleine, une classe a 80 %, une classe d'adultes au minimum d'ouverture.
+-  static RevenusEnseignant revenus() {
++  /// Les classes de l'enseignant de demonstration : une classe pleine, une
++  /// classe a 80 %, une classe d'adultes au minimum d'ouverture. Les MEMES
++  /// sieges font ses revenus et le revenu de la vue globale (revue FI-1c-R
++  /// M2) : jamais deux populations qui ne se correspondent pas.
++  static List<_ClasseDemo> _classesDemo() {
+     final PolitiqueCommerciale p = politiqueLancement;
+-    final List<RevenusClasse> classes = <RevenusClasse>[
+-      _classe(
+-        'demo-fi-classe-nour',
+-        'An-Nour',
++    return <_ClasseDemo>[
++      (
++        id: 'demo-fi-classe-nour',
++        nom: 'An-Nour',
+         minutes: 480,
+         capacite: p.capaciteEnfant,
+         eligibles: p.capaciteEnfant,
++        adulte: false,
+       ),
+-      _classe(
+-        'demo-fi-classe-huda',
+-        'Al-Huda',
++      (
++        id: 'demo-fi-classe-huda',
++        nom: 'Al-Huda',
+         minutes: 480,
+         capacite: p.capaciteEnfant,
+         eligibles: 4,
++        adulte: false,
+       ),
+-      _classe(
+-        'demo-fi-classe-salam',
+-        'As-Salam',
++      (
++        id: 'demo-fi-classe-salam',
++        nom: 'As-Salam',
+         minutes: 360,
+         capacite: p.capaciteAdulte,
+         eligibles: p.minimumOuverture,
++        adulte: true,
+       ),
+     ];
++  }
++
++  /// Les revenus estimes de l'enseignant de demonstration.
++  static RevenusEnseignant revenus() {
++    final List<RevenusClasse> classes = <RevenusClasse>[
++      for (final _ClasseDemo c in _classesDemo())
++        _classe(
++          c.id,
++          c.nom,
++          minutes: c.minutes,
++          capacite: c.capacite,
++          eligibles: c.eligibles,
++        ),
++    ];
+     return RevenusEnseignant(
+       debut: debutMois,
+       fin: finMois,
+       classes: classes,
+       totalEstime: _somme(classes.map((RevenusClasse c) => c.montantEstime)),
+-      allocationInternet: p.allocationInternet,
++      allocationInternet: politiqueLancement.allocationInternet,
+     );
+   }
+ 
+-  /// La vue globale de la direction pour le mois de reference, tiree des
+-  /// jeux du foyer (un foyer finance, un a regulariser, un en essai).
++  /// Le revenu academique du mois de reference : un tarif par siege eligible
++  /// des classes de l'enseignant de demonstration, enfant ou adulte, hors
++  /// taxe (FI13). Les remises de rang dependent des foyers, que ces sieges ne
++  /// disent pas : la demonstration n'en invente pas.
++  static Montant revenuDemo() {
++    final PolitiqueCommerciale p = politiqueLancement;
++    return _somme(<Montant>[
++      for (final _ClasseDemo c in _classesDemo())
++        Montant(
++          (c.adulte ? p.tarifAdulte : p.tarifEnfant).mineur *
++              (c.eligibles > c.capacite ? c.capacite : c.eligibles),
++          devise,
++        ),
++    ]);
++  }
++
++  /// La vue globale de la direction pour le mois de reference. Revenu et
++  /// paie portent sur les memes sieges (revue FI-1c-R M2) ; la marge est
++  /// celle de la paie des enseignants seule, jamais une marge nette, qui
++  /// demande des charges que la demonstration ne connait pas (guide §1.5).
+   static VueGlobaleFinance vueGlobale() {
+     final FinancesFoyer finance = finances(JeuFoyerFinance.tousFinances);
+     final FinancesFoyer aRegulariser = finances(JeuFoyerFinance.unARegulariser);
+-    final Montant revenu = _somme(
+-      finance.profils.map((FinancesProfil p) => p.mensualite),
+-    );
++    final Montant revenu = revenuDemo();
+     final Montant paie = revenus().totalEstime;
+     return VueGlobaleFinance(
+       mois: debutMois,
+diff --git a/test/features/finance/finance_demo_test.dart b/test/features/finance/finance_demo_test.dart
+index 3de0cb03..72457bdd 100644
+--- a/test/features/finance/finance_demo_test.dart
++++ b/test/features/finance/finance_demo_test.dart
+@@ -285,6 +285,47 @@ void main() {
+       expect(essai.essaisUtilises, 1);
+       expect(essai.essaisMax, 2);
+     });
++
++    // Revue FI-1c-R M1 : `sansEcheance` est le cas ordinaire d'un compte
++    // valide, et la page Acces affiche « Actif » pour tout etat qui n'est pas
++    // `expire`. Un profil payant sans periode financee ne peut donc etre ni
++    // `sansEcheance` ni `actif`.
++    test('acces : un profil payant non finance se lit « expire », dans '
++        'chaque jeu ; seul l essai reste sans echeance', () {
++      for (final JeuFoyerFinance jeu in JeuFoyerFinance.values) {
++        final List<FinancesProfil> finances = DonneesFinanceDemo.profils(jeu);
++        final List<AccesBeneficiaire> acces = DonneesFinanceDemo.acces(jeu);
++        expect(acces, hasLength(finances.length), reason: jeu.name);
++        for (int i = 0; i < finances.length; i++) {
++          final FinancesProfil f = finances[i];
++          final AccesBeneficiaire a = acces[i];
++          final String cas = '${jeu.name} ${f.prenom}';
++          expect(a.eleveId, f.profilId, reason: cas);
++          expect(a.seancesPayantesOuvertes, f.periode != null, reason: cas);
++          final EtatAccesAffiche attendu = switch (f) {
++            FinancesProfil(etat: EtatFinancier.essai) =>
++              EtatAccesAffiche.sansEcheance,
++            FinancesProfil(periode: null) => EtatAccesAffiche.expire,
++            _ => EtatAccesAffiche.actif,
++          };
++          expect(a.etatAffiche, attendu, reason: cas);
++          // L'etat rendu est celui que les ecrans recalculent (DB-FOY-05).
++          expect(
++            a.etatAffiche,
++            etatAccesAffiche(
++              finAcces: a.finAcces,
++              maintenantUtc: DonneesFinanceDemo.aujourdhui.toUtc(),
++            ),
++            reason: cas,
++          );
++        }
++      }
++      final AccesBeneficiaire ibrahim = DonneesFinanceDemo.acces(
++        JeuFoyerFinance.unARegulariser,
++      )[1];
++      expect(ibrahim.etatAffiche, EtatAccesAffiche.expire);
++      expect(ibrahim.finAcces, DonneesFinanceDemo.finDernierAcces);
++    });
+   });
+ 
+   group('paiement : les huit etats en demonstration (FI9)', () {
+@@ -335,6 +376,36 @@ void main() {
+       );
+     });
+ 
++    // Revue FI-1c-R M2 : la vue globale additionnait le revenu d'un foyer et
++    // la paie de treize sieges (marge 12 pour mille). Revenu et paie portent
++    // maintenant sur les memes sieges.
++    test('vue globale : revenu et paie sur les memes sieges', () {
++      final PolitiqueCommerciale p = DonneesFinanceDemo.politiqueLancement;
++      final RevenusEnseignant r = DonneesFinanceDemo.revenus();
++      final VueGlobaleFinance v = DonneesFinanceDemo.vueGlobale();
++      final int sieges = r.classes.fold<int>(
++        0,
++        (int s, RevenusClasse c) => s + c.siegesEligibles,
++      );
++      expect(sieges, 13);
++      // 9 enfants a 50 et 4 adultes (As-Salam, capacite adulte) a 60.
++      expect(
++        v.revenuAcademique,
++        Montant(9 * p.tarifEnfant.mineur + 4 * p.tarifAdulte.mineur, 'USD'),
++      );
++      expect(v.revenuAcademique, _usd(690));
++      expect(v.paieEnseignants, r.totalEstime);
++      expect(v.paieEnseignants, const Montant(14320, 'USD'));
++      expect(
++        v.margeProjeteePourMille,
++        (v.revenuAcademique.mineur - v.paieEnseignants.mineur) *
++            1000 ~/
++            v.revenuAcademique.mineur,
++      );
++      expect(v.margeProjeteePourMille, 792);
++      expect(v.paieEnseignants.mineur, lessThan(v.revenuAcademique.mineur));
++    });
++
+     test('total = somme des classes, aide Internet a part', () {
+       final RevenusEnseignant r = DonneesFinanceDemo.revenus();
+       expect(r.classes, hasLength(3));
+-- 
+2.43.0
+

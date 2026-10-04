@@ -56,7 +56,9 @@ Le test `finance_demo_test.dart:274` ne vérifie pas `etatAffiche`, d'où le dé
 
 Une fois affichée (FI-11a), la démonstration montrerait au directeur une marge de 1,2 % face à une cible de 30 %. C'est un chiffre faux et alarmant, issu de deux populations qui ne se correspondent pas. Le guide §1.5 interdit d'en faire une sanction, mais le chiffre lui-même induit en erreur.
 
-**Correction proposée** : tirer le revenu des mêmes 13 sièges que la paie, ou assumer des valeurs cohérentes (autour de 30 %). Tester que la marge de démonstration se trouve dans la fourchette de référence.
+**Correction proposée** : tirer le revenu des mêmes 13 sièges que la paie, et tester que la marge en découle.
+
+> **Rectificatif (FI-1c-CORR, même session).** J'avais d'abord écrit « autour de 30 % » et « dans la fourchette de référence ». C'était faux. Une fois le revenu et la paie tirés des mêmes sièges (9 enfants à 50 USD, 4 adultes à 60 USD, soit 690 USD, pour une paie de 143,20 USD), la marge **sur la seule paie des enseignants** vaut 792 ‰. Le 30 % du guide §1.5 est une marge *nette*, après des charges que la démonstration ne connaît pas. FI-1c-CORR ne force donc aucune fourchette : elle teste que la marge découle des mêmes sièges.
 
 ## Mineurs (portés par l'étape d'écran concernée)
 
@@ -77,3 +79,14 @@ test/suivi 16 · test/priere 15 · test/mouvement 13 · test/appairage 12 · tes
 test/config 11 · test/observabilite 10 · test/i18n 7 · test/icons 4 · test/capture 0 (~583)
 Total : 5309 verts, 0 échec.
 ```
+
+## Suite : FI-1c-CORR
+
+La correction de M1 et M2 est livrée en patch, `docs/revues/FI-1c-CORR.patch`, sur cette branche. Elle n'est **pas** poussée sur `ui/finance-v1`, faute d'accord du directeur pour pousser sur la branche d'un rôle. Pour l'appliquer depuis `ui/finance-v1` :
+
+```
+git fetch origin claude/collaborative-task-tracking-r47ieu
+git show origin/claude/collaborative-task-tracking-r47ieu:docs/revues/FI-1c-CORR.patch | git am
+```
+
+Le patch touche deux fichiers : `lib/features/demo/finance_demo.dart` et `test/features/finance/finance_demo_test.dart`. Il a été construit sur `f58645d1`.
