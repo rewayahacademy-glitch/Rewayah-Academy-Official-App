@@ -1,8 +1,10 @@
 // FI-4 (guide Finance V4 §4, §5.1, §8 F2 ; maquette 03) : le Foyer du tuteur
 // porte la synthese des soldes et, dans la carte de chaque enfant, son etat,
 // son solde et son prochain debit ; « Recharger Ibrahim » ouvre la recharge
-// avec Ibrahim coche ; un seul bouton plein ; sans source (production, ou le
-// second adulte), aucun bloc d'argent ni bouton de recharge.
+// avec Ibrahim coche ; un seul bouton plein ; sans source (production),
+// aucun bloc d'argent ni bouton de recharge. L'invariant « jamais rendu au
+// second adulte » est porte par le port serveur (FI-BR-03), pas par l'ecran :
+// ce fichier ne le prouve pas.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -52,6 +54,7 @@ Future<GoRouter> _monter(
   WidgetTester tester, {
   required JeuFoyerFinance jeu,
   bool avecFinances = true,
+  PortPaiementsFoyer? paiements,
   Size taille = const Size(390, 2400),
   double echelle = 1,
 }) async {
@@ -69,7 +72,7 @@ Future<GoRouter> _monter(
         horlogeFoyerProvider.overrideWithValue(() => _maintenant),
         if (avecFinances) ...<Override>[
           portPaiementsFoyerProvider.overrideWithValue(
-            PaiementsFoyerFinanceDemo(jeu),
+            paiements ?? PaiementsFoyerFinanceDemo(jeu),
           ),
           portPolitiquesCommercialesProvider.overrideWithValue(
             const PolitiquesCommercialesDemo(),
@@ -102,6 +105,19 @@ Future<GoRouter> _monter(
   routeur.go(Routes.tuteurFoyer);
   await stabiliser(tester);
   return routeur;
+}
+
+/// Les finances de la demonstration, en comptant chaque lecture.
+class _PaiementsComptes extends PaiementsFoyerFinanceDemo {
+  _PaiementsComptes(super.jeu);
+
+  int lectures = 0;
+
+  @override
+  Future<FinancesFoyer> finances() {
+    lectures++;
+    return super.finances();
+  }
 }
 
 /// Les liens « Recharger {prenom} » poses sous les cartes.
@@ -197,6 +213,29 @@ void main() {
     expect(page.preselection, <String>{ibrahim.profilId});
   });
 
+  testWidgets('apres la recharge (onTerminee), le Foyer relit ses finances', (
+    WidgetTester tester,
+  ) async {
+    final _PaiementsComptes paiements = _PaiementsComptes(
+      JeuFoyerFinance.unARegulariser,
+    );
+    final GoRouter routeur = await _monter(
+      tester,
+      jeu: JeuFoyerFinance.unARegulariser,
+      paiements: paiements,
+    );
+    routeur.go(Routes.tuteurFoyerRecharge);
+    await stabiliser(tester);
+    final int avant = paiements.lectures;
+    expect(avant, greaterThan(0));
+    tester
+        .widget<RechargeFoyerPage>(find.byType(RechargeFoyerPage))
+        .onTerminee();
+    await stabiliser(tester);
+    expect(routeur.state.uri.path, Routes.tuteurFoyer);
+    expect(paiements.lectures, greaterThan(avant));
+  });
+
   testWidgets('« Recharger plusieurs profils » ouvre la meme recharge, rien '
       'de coche', (WidgetTester tester) async {
     final GoRouter routeur = await _monter(
@@ -235,8 +274,11 @@ void main() {
     );
   });
 
-  testWidgets('sans source (production, ou le second adulte) : aucun bloc '
-      'd argent, aucun bouton de recharge', (WidgetTester tester) async {
+  // L'invariant « jamais rendu au second adulte » est porte par le port
+  // serveur (FI-BR-03), pas par l'ecran : ce test ne prouve que l'absence de
+  // source (production).
+  testWidgets('sans source (production) : aucun bloc d argent, aucun bouton '
+      'de recharge', (WidgetTester tester) async {
     await _monter(
       tester,
       jeu: JeuFoyerFinance.unARegulariser,

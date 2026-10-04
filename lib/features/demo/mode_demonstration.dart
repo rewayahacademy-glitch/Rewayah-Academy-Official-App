@@ -168,6 +168,9 @@ List<Override> surchargesDemoTuteur({
           DonneesFinanceDemo.mariamId: AccentProfil.rose,
           DonneesFinanceDemo.ibrahimId: AccentProfil.ciel,
           DonneesFinanceDemo.aichaId: AccentProfil.lavande,
+          // Le jeu a cinq profils : aucun profil sans couleur.
+          DonneesFinanceDemo.youssefId: AccentProfil.peche,
+          DonneesFinanceDemo.khadijaId: AccentProfil.sable,
         },
       }),
     ),

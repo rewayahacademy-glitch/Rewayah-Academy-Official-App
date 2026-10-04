@@ -87,6 +87,7 @@ import '../../features/foyer/fiche/inscription_page.dart';
 import '../../features/foyer/fiche/interface_page.dart';
 import '../../features/foyer/fiche/mouvements_page.dart';
 import '../../features/foyer/fiche_eleve_page.dart';
+import '../../features/foyer/finances_foyer.dart' show financesFoyerProvider;
 import '../../features/foyer/foyer_page.dart';
 import '../../features/foyer/invitation_conjoint.dart';
 import '../../features/inscription/etapes/genre_etape.dart';
@@ -558,8 +559,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                           ),
                           onAbandon: () =>
                               GoRouter.of(context).go(Routes.tuteurFoyer),
-                          onTerminee: () =>
-                              GoRouter.of(context).go(Routes.tuteurFoyer),
+                          // Apres le paiement, le Foyer relit ses finances
+                          // (soldes, etats) au lieu de montrer les anciennes.
+                          onTerminee: () {
+                            ProviderScope.containerOf(
+                              context,
+                              listen: false,
+                            ).invalidate(financesFoyerProvider);
+                            GoRouter.of(context).go(Routes.tuteurFoyer);
+                          },
                           // Le paiement rend une commande : son resultat
                           // (FI-8), qui relit l'etat, jamais un succes local.
                           onPaye: (String commande) =>
@@ -579,9 +587,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                                   commandeId:
                                       etat.uri.queryParameters['commande'] ??
                                       '',
-                                  onRevenir: () =>
-                                      GoRouter.of(context)
-                                          .go(Routes.tuteurFoyer),
+                                  // Retour au Foyer : ses finances sont
+                                  // relues, jamais les soldes d'avant.
+                                  onRevenir: () {
+                                    ProviderScope.containerOf(
+                                      context,
+                                      listen: false,
+                                    ).invalidate(financesFoyerProvider);
+                                    GoRouter.of(context).go(Routes.tuteurFoyer);
+                                  },
                                   onReprendre: (Map<String, Montant> m) =>
                                       GoRouter.of(context)
                                           .go(Routes.rechargeReprise(m)),

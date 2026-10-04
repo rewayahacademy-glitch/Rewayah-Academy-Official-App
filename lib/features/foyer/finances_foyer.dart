@@ -31,7 +31,9 @@ import '../../core/widgets/resume_soldes.dart';
 import '../../core/widgets/skeleton.dart';
 import 'ligne_membre.dart' show dateEcheance;
 
-/// Les finances du foyer, relues a chaque retour sur le Foyer.
+/// Les finances du foyer, lues une fois puis gardees : la recharge les
+/// invalide avant de revenir au Foyer (route `recharge`), pour qu'il les
+/// relise.
 final FutureProvider<FinancesFoyer> financesFoyerProvider =
     FutureProvider<FinancesFoyer>(
       (Ref ref) => ref.watch(portPaiementsFoyerProvider).finances(),
