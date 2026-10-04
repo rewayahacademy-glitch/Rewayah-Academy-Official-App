@@ -133,17 +133,31 @@ EtapeParcours? etapeInscriptionLue(
 
 /// La legende d'un membre : sa classe quand on la connait, sinon son
 /// inscription en cours quand on la connait, puis son acces.
+///
+/// [avecAcces] faux : l'acces n'est pas repete, la carte le dit deja par la
+/// pastille de periode financee a la meme date (revue FI-VAGUE-R R1-11).
 String legendeMembre({
   required ProfilEleveFoyer profil,
   required ClasseMembre classe,
   required DateTime maintenant,
   EtapeParcours? inscription,
+  bool avecAcces = true,
 }) {
   final String? classeLue = classe is _Classes || inscription == null
       ? texteClasse(classe)
       : libelleEtapeFiche(inscription);
+  if (!avecAcces) return classeLue ?? '';
   final String acces = statutAcces(profil, maintenant);
   return classeLue == null ? acces : '$classeLue · $acces';
+}
+
+/// Vrai quand la fin de la periode financee et l'echeance d'acces tombent le
+/// meme jour (heure locale) : une seule echeance, dite une seule fois.
+bool memeEcheance(DateTime? finPeriode, DateTime? finAcces) {
+  if (finPeriode == null || finAcces == null) return false;
+  final DateTime a = finPeriode.toLocal();
+  final DateTime b = finAcces.toLocal();
+  return a.year == b.year && a.month == b.month && a.day == b.day;
 }
 
 /// Ce que la lecture du port des classes dit d'un membre.

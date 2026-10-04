@@ -32,7 +32,6 @@ import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/skeleton.dart';
 import '../compte/compte_tuteur_page.dart' show CarteIdentiteCompte;
 import '../compte/donnees_compte.dart' show identiteTitulaireProvider;
-import '../compte/soldes_foyer.dart';
 import 'finances_foyer.dart';
 import 'ligne_membre.dart';
 import 'photo_eleve.dart';
@@ -66,7 +65,8 @@ final FutureProviderFamily<List<ClasseFoyer>, String> classesMembreProvider =
 /// filets (prenom, classe quand elle est connue, statut d'acces en texte,
 /// chevron vers la fiche), les appareils partages en une ligne vers l'ecran
 /// du lot D, et l'option discrete « Creer mon profil eleve ». Aucun compteur
-/// decoratif. Sur bureau (a partir de 1200), deux colonnes comme le Compte.
+/// decoratif. Des la tablette, les cartes en grille et, sous elles, la vue
+/// financiere, les transactions et les annexes (FI-5b, R1-04).
 ///
 /// **Ma famille du titulaire adulte** (EA-5, EA-5c) : quand
 /// [foyerTitulaireProvider] rend une valeur, la meme page devient « Ma
@@ -86,7 +86,6 @@ class FoyerPage extends ConsumerWidget {
     this.onAller,
     this.onPlaceAdulte,
     this.onPaiementsFoyer,
-    this.onRecharger,
     this.onAProposForfait,
     this.onNouvelleDemande,
   });
@@ -101,10 +100,6 @@ class FoyerPage extends ConsumerWidget {
   /// Ouvre les paiements du foyer (EA-9).
   final VoidCallback? onPaiementsFoyer;
 
-  /// Ouvre la recharge depuis la section des soldes, sur bureau (EA-9,
-  /// planche 6 ; la recharge vient avec EA-10).
-  final VoidCallback? onRecharger;
-
   /// Ouvre « A propos du forfait famille » ; par defaut, la page est poussee
   /// sur le navigateur.
   final VoidCallback? onAProposForfait;
@@ -116,9 +111,15 @@ class FoyerPage extends ConsumerWidget {
   /// La carte du titulaire.
   static const Key titulaireKey = Key('foyer.titulaire');
 
-  /// « Recharger {prenom} » sous la carte d'un enfant (FI-4).
+  /// « Recharger » (nom lu « Recharger {prenom} ») sous la carte d'un
+  /// enfant (FI-4).
   static Key rechargerPourKey(String eleveId) =>
       Key('foyer.finances.recharger.$eleveId');
+
+  /// « Voir le détail » sous la carte d'un enfant finance : sa fiche
+  /// Finances (FI-4, revue FI-VAGUE-R R1-08).
+  static Key voirDetailKey(String eleveId) =>
+      Key('foyer.finances.voirDetail.$eleveId');
 
   /// L'action « Ajouter un profil eleve » de l'en-tete.
   static const Key ajouterKey = Key('foyer.ajouter');
@@ -157,7 +158,8 @@ class FoyerPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bool bureau = AppGabarit.de(context) == Gabarit.desktop;
+    final Gabarit gabarit = AppGabarit.de(context);
+    final bool bureau = gabarit == Gabarit.desktop;
     final GoRouter? routeur = GoRouter.maybeOf(context);
     void aller(String chemin) {
       final void Function(String chemin)? propre = onAller;
@@ -199,22 +201,34 @@ class FoyerPage extends ConsumerWidget {
     // titulaire qui reste en tete (planche 3.1, decision E6). Une seule
     // action, un seul endroit. CTA dominant « libelle + fleche » (03, section
     // 3 point 3).
+    //
+    // Avec les finances rendues, « Recharger plusieurs profils » est le seul
+    // bouton plein et l'ajout passe en secondaire, a sa place (Q-FI-2,
+    // E-17, revue FI-VAGUE-R R1-01). Sans source (production), en
+    // chargement ou en erreur, l'ajout reste plein : le cas sans source est
+    // la question 1 au directeur, le comportement d'avant est garde.
+    final AsyncValue<FinancesFoyer> finances = ref.watch(financesFoyerProvider);
+    final bool avecFinances = financesDisponibles(finances);
     final Widget ajouter = ActionPrincipale(
       key: ajouterKey,
       libelle: t.foyer.ajouterProfil,
+      niveau: rechargePosee(finances)
+          ? NiveauAction.secondaire
+          : NiveauAction.principale,
       fleche: true,
-      pleineLargeur: AppGabarit.de(context) == Gabarit.mobile,
+      pleineLargeur: gabarit == Gabarit.mobile,
       onPress: () => aller(Routes.tuteurAjouterEnfant),
     );
 
-    // FI-5b : sur bureau, le Foyer du tuteur pose la synthese et les cartes
-    // des enfants sur toute la largeur utile, les cartes en grille (guide V4
-    // §5.1 « Desktop », maquette 05). Le titulaire adulte garde ses deux
-    // colonnes (planche 6).
-    final bool compositionBureau = bureau && adulte == null;
+    // FI-5b : des la tablette, la synthese et les cartes des enfants sur
+    // toute la largeur utile, les cartes en grille (guide V4 §5.1
+    // « Desktop », maquette 05 ; revue FI-VAGUE-R R1-04). Le titulaire
+    // adulte a la meme composition (E-11, R1-06) : sa carte et sa place en
+    // tete, puis la meme synthese et les memes cartes.
+    final bool large = gabarit.estLarge;
     final Widget profils = KeyedSubtree(
       key: membresKey,
-      child: _Membres(aller, grille: compositionBureau),
+      child: _Membres(aller, grille: large, titulaireAdulte: adulte != null),
     );
     final VoidCallback? nouvelleDemande = onNouvelleDemande;
     final Widget membres = adulte == null
@@ -267,27 +281,17 @@ class FoyerPage extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        // Sur bureau, la colonne droite porte la section « Paiements du
-        // foyer » elle-meme (planche 6, UX_REVIEW_07 ligne 7 a) : les soldes
-        // et son seul bouton « Recharger » (un bouton dominant par colonne),
-        // puis l'historique en une ligne. Sur telephone, une ligne vers la
-        // page des paiements du foyer (EA-9).
-        if (adulte != null && bureau) ...<Widget>[
-          SoldesFoyerSection(
-            titre: t.adulte.famille.paiementsFoyer,
-            onRecharger: onRecharger,
-          ),
-          Ecart.vXl,
-        ],
+        // Une ligne vers la page des paiements du foyer (EA-9), sur tous
+        // les gabarits. Les soldes ne sont plus repetes ici : la synthese et
+        // les cartes des enfants les portent, comme pour le tuteur (E-11,
+        // revue FI-VAGUE-R R1-06 ; `SoldesFoyerSection` retiree du Foyer).
         if (adulte != null) ...<Widget>[
           GroupeReglages(
             key: paiementsFoyerKey,
             lignes: <LigneRubrique>[
               LigneRubrique(
                 icone: AppIcons.finance,
-                libelle: bureau
-                    ? t.adulte.paiements.historique
-                    : t.adulte.famille.paiementsFoyer,
+                libelle: t.adulte.famille.paiementsFoyer,
                 onPress: onPaiementsFoyer,
               ),
             ],
@@ -342,27 +346,29 @@ class FoyerPage extends ConsumerWidget {
       // En-tete sobre (K-42 point 5) : « Ma famille » pour le titulaire
       // adulte, comme sa ligne de Mon espace.
       titre: adulte == null ? t.foyer.titre : t.adulte.famille.maFamille,
-      sousTitre: adulte == null ? t.foyer.sousTitre : null,
+      // « Soldes et paiements » quand la source des finances existe
+      // (maquettes 03 et 05, R1-09) ; sinon le sous-titre d'avant.
+      sousTitre: avecFinances
+          ? t.foyer.finances.titre
+          : adulte == null
+          ? t.foyer.sousTitre
+          : null,
       actionsEntete: <Widget>[if (bureau) ajouter],
       entete: bureau || adulte != null
           ? null
           : Align(alignment: AlignmentDirectional.centerStart, child: ajouter),
-      child: compositionBureau
+      child: large
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 membres,
                 Ecart.vSection,
-                _RangeeBureau(aller: aller, annexes: annexes),
-              ],
-            )
-          : bureau
-          ? Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Expanded(flex: 3, child: membres),
-                Ecart.hXxl,
-                Expanded(flex: 2, child: annexes),
+                _RangeeBureau(
+                  aller: aller,
+                  annexes: annexes,
+                  bureau: bureau,
+                  onVoirTout: adulte == null ? null : onPaiementsFoyer,
+                ),
               ],
             )
           : Column(
@@ -373,33 +379,62 @@ class FoyerPage extends ConsumerWidget {
   }
 }
 
-/// Sous la grille, sur bureau : « Dernieres transactions » et les annexes
-/// (appareils partages, « Creer mon profil eleve »), cote a cote. Sans
-/// source de transactions (production), les annexes seules, a leur largeur
-/// de colonne : jamais une colonne etiree sur toute la page.
+/// Sous la grille, des la tablette : « Vue financiere du foyer », « Dernieres
+/// transactions » et les annexes (appareils partages, « Creer mon profil
+/// eleve »). Sur bureau, cote a cote (maquette 05) ; a la tablette, l'un sous
+/// l'autre, jamais trois colonnes serrees (R1-04). Sans source (production),
+/// les annexes seules, a leur largeur de colonne : jamais une colonne etiree
+/// sur toute la page.
 class _RangeeBureau extends ConsumerWidget {
-  const _RangeeBureau({required this.aller, required this.annexes});
+  const _RangeeBureau({
+    required this.aller,
+    required this.annexes,
+    required this.bureau,
+    this.onVoirTout,
+  });
 
   final void Function(String chemin) aller;
 
   final Widget annexes;
+
+  final bool bureau;
+
+  final VoidCallback? onVoirTout;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bool avecTransactions = transactionsDisponibles(
       ref.watch(derniersMouvementsFoyerProvider),
     );
+    final bool avecVue = financesDisponibles(ref.watch(financesFoyerProvider));
+    final Widget transactions = DernieresTransactionsFoyer(
+      aller: aller,
+      onVoirTout: onVoirTout,
+    );
+    if (!bureau) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          if (avecVue) ...<Widget>[const VueFinanciereFoyer(), Ecart.vSection],
+          if (avecTransactions) ...<Widget>[transactions, Ecart.vSection],
+          annexes,
+        ],
+      );
+    }
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        if (avecTransactions) ...<Widget>[
-          Expanded(flex: 3, child: DernieresTransactionsFoyer(aller: aller)),
+        if (avecVue) ...<Widget>[
+          const Expanded(flex: 2, child: VueFinanciereFoyer()),
           Ecart.hXxl,
-          Expanded(flex: 2, child: annexes),
-        ] else ...<Widget>[
-          Expanded(flex: 2, child: annexes),
-          const Spacer(flex: 3),
         ],
+        if (avecTransactions) ...<Widget>[
+          Expanded(flex: 3, child: transactions),
+          Ecart.hXxl,
+        ],
+        Expanded(flex: 2, child: annexes),
+        if (!avecVue && !avecTransactions) const Spacer(flex: 3),
       ],
     );
   }
@@ -409,7 +444,10 @@ class _RangeeBureau extends ConsumerWidget {
 /// prenom, la legende, les pastilles et les lignes solde / prochain debit
 /// sans coupure. Multipliee par l'echelle du texte : a texte agrandi, moins
 /// de colonnes, jamais une carte plus etroite que son contenu.
-const double _largeurMinCarte = 320;
+///
+/// 300 : deux colonnes des 632 px utiles (la tablette de 768, R1-04), trois
+/// a 1440.
+const double _largeurMinCarte = 300;
 
 /// Au plus trois cartes cote a cote (maquette 05).
 const int _colonnesMax = 3;
@@ -458,12 +496,19 @@ class _GrilleCartes extends StatelessWidget {
 
 /// Les membres : chargement, contenu, vide, erreur, hors ligne.
 class _Membres extends ConsumerWidget {
-  const _Membres(this.aller, {this.grille = false});
+  const _Membres(
+    this.aller, {
+    this.grille = false,
+    this.titulaireAdulte = false,
+  });
 
   final void Function(String chemin) aller;
 
-  /// Vrai sur bureau, pour le tuteur : les cartes en grille.
+  /// Vrai des la tablette : les cartes en grille.
   final bool grille;
+
+  /// Vrai pour « Ma famille » du titulaire adulte.
+  final bool titulaireAdulte;
 
   void _relire(WidgetRef ref) => ref.invalidate(elevesDuFoyerProvider);
 
@@ -506,20 +551,31 @@ class _Membres extends ConsumerWidget {
         titre: t.foyer.vide.titre,
         phrase: t.foyer.vide.phrase,
       ),
-      construire: (List<ProfilEleveFoyer> p) =>
-          _ListeMembres(p, aller, grille: grille),
+      construire: (List<ProfilEleveFoyer> p) => _ListeMembres(
+        p,
+        aller,
+        grille: grille,
+        titulaireAdulte: titulaireAdulte,
+      ),
     );
   }
 }
 
 class _ListeMembres extends ConsumerWidget {
-  const _ListeMembres(this.profils, this.aller, {required this.grille});
+  const _ListeMembres(
+    this.profils,
+    this.aller, {
+    required this.grille,
+    required this.titulaireAdulte,
+  });
 
   final List<ProfilEleveFoyer> profils;
 
   final void Function(String chemin) aller;
 
   final bool grille;
+
+  final bool titulaireAdulte;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -561,17 +617,46 @@ class _ListeMembres extends ConsumerWidget {
           classe: classe,
           maintenant: maintenant,
           inscription: etapeInscriptionLue(parcours, profil.eleveId),
+          // Une seule date pour une seule echeance (R1-11) : quand la
+          // pastille de periode dit deja « Financé jusqu'au » ce jour-la,
+          // la legende ne repete pas « Accès jusqu'au ».
+          avecAcces: !memeEcheance(finance?.periode?.fin, profil.finAcces),
         ),
         accent: accentLu(accents, profil.eleveId),
         finance: finance,
         onPress: () => aller(Routes.ficheElevePour(profil.eleveId)),
       );
-      // « Recharger Ibrahim » sous sa carte, jamais dedans (aucun bouton dans
-      // un bouton : toute la carte ouvre la fiche). Le meme flux que la
-      // recharge de plusieurs profils, Ibrahim coche (guide V4 §4).
+      // Une action sous la carte, jamais dedans (aucun bouton dans un
+      // bouton : toute la carte ouvre la fiche). « Recharger » quand le
+      // profil en a besoin, le meme flux que la recharge de plusieurs
+      // profils, l'enfant coche (guide V4 §4) ; sinon « Voir le détail »,
+      // sa fiche Finances (02_DECOUPAGE FI-4, R1-08). Le prenom est dans le
+      // nom lu, pas dans le libelle visible (R1-10).
+      final LienFleche? action = finance == null
+          ? null
+          : aRecharger(finance)
+          ? LienFleche(
+              key: FoyerPage.rechargerPourKey(profil.eleveId),
+              libelle: t.foyer.finances.recharger,
+              libelleSemantique: t.foyer.finances.rechargerPour(
+                prenom: profil.prenom,
+              ),
+              onPress: () =>
+                  aller(Routes.rechargePour(<String>[profil.eleveId])),
+            )
+          : LienFleche(
+              key: FoyerPage.voirDetailKey(profil.eleveId),
+              libelle: t.foyer.finances.voirDetail,
+              libelleSemantique: t.foyer.finances.voirDetailSemantique(
+                prenom: profil.prenom,
+              ),
+              onPress: () =>
+                  aller(Routes.ficheEleveSousPage(profil.eleveId, 'finances')),
+            );
       cartes.add(
-        finance != null && aRecharger(finance)
-            ? Column(
+        action == null
+            ? carte
+            : Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
@@ -579,18 +664,10 @@ class _ListeMembres extends ConsumerWidget {
                   Ecart.vSm,
                   Align(
                     alignment: AlignmentDirectional.centerStart,
-                    child: LienFleche(
-                      key: FoyerPage.rechargerPourKey(profil.eleveId),
-                      libelle: t.foyer.finances.rechargerPour(
-                        prenom: profil.prenom,
-                      ),
-                      onPress: () =>
-                          aller(Routes.rechargePour(<String>[profil.eleveId])),
-                    ),
+                    child: action,
                   ),
                 ],
-              )
-            : carte,
+              ),
       );
     }
 
@@ -611,7 +688,10 @@ class _ListeMembres extends ConsumerWidget {
         Semantics(
           header: true,
           child: Text(
-            t.foyer.membres,
+            // « Enfants du foyer » (E-7, R1-09) ; « Profils élèves » garde
+            // pour le titulaire adulte, lui-meme beneficiaire (question 3 au
+            // directeur).
+            titulaireAdulte ? t.foyer.membres : t.foyer.membresEnfants,
             style: palette.inkStrong.applyTo(
               Theme.of(context).textTheme.titleMedium ?? const TextStyle(),
             ),

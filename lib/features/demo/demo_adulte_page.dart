@@ -1517,7 +1517,6 @@ class CoquilleAdulteDemo extends StatelessWidget {
                 ),
                 onPaiementsFoyer: () =>
                     context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
-                onRecharger: versRecharge,
                 onAProposForfait: () =>
                     context.go(_adresse(EcranDemoAdulte.aProposForfait)),
                 // Validation refusee : la nouvelle demande relance

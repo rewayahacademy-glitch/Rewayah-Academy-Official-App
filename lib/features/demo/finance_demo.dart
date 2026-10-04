@@ -16,9 +16,13 @@
 // Les valeurs des maquettes (30 $, 2024, « Remise famille -5 $ » sur Mariam)
 // ne sont PAS recopiees : Mariam est au rang 1, sans remise (guide §1.3).
 //
-// L'affichage d'un montant de demonstration porte « (demonstration) »
-// (REVUE_EA-R m4) : c'est le composant d'argent qui l'ecrit (FI-3a), jamais
-// ces donnees.
+// « (demonstration) » sur chaque montant (REVUE_EA-R m4, 02_DECOUPAGE E-9) :
+// AUCUN composant ne l'ecrit aujourd'hui (`MontantArgent`, `formaterMontant`
+// rendent le montant nu) ; seul le ruban « Démonstration » de la coquille
+// (`RepereDemonstration`) marque l'ecran. Le ruban suffit-il, ou chaque
+// montant porte-t-il la marque : question 5 au directeur (revue FI-VAGUE-R,
+// R1-13 et R7-02). Le jour de la reponse, la marque se pose dans le composant
+// d'argent, jamais dans ces donnees.
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_acces_foyer.dart';

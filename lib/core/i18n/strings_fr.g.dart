@@ -1011,6 +1011,9 @@ class Traductions$foyer$fr {
 	/// fr: 'Foyer'
 	String get titre => 'Foyer';
 
+	/// fr: 'Enfants du foyer'
+	String get membresEnfants => 'Enfants du foyer';
+
 	/// fr: 'Ajouter un profil élève'
 	String get ajouterProfil => 'Ajouter un profil élève';
 
@@ -3744,6 +3747,24 @@ class Traductions$foyer$finances$fr {
 	/// fr: 'Recharger {prenom}'
 	String rechargerPour({required Object prenom}) => 'Recharger ${prenom}';
 
+	/// fr: 'Recharger'
+	String get recharger => 'Recharger';
+
+	/// fr: 'Voir le détail'
+	String get voirDetail => 'Voir le détail';
+
+	/// fr: 'Voir le détail des finances de {prenom}'
+	String voirDetailSemantique({required Object prenom}) => 'Voir le détail des finances de ${prenom}';
+
+	/// fr: 'Chaque enfant a un solde et une période financée individuels. Les accès sont liés à la période financée, pas simplement au solde.'
+	String get noteSoldes => 'Chaque enfant a un solde et une période financée individuels. Les accès sont liés à la période financée, pas simplement au solde.';
+
+	/// fr: 'Vue financière du foyer'
+	String get vueFinanciere => 'Vue financière du foyer';
+
+	/// fr: 'Ce mois-ci'
+	String get vueFinancierePeriode => 'Ce mois-ci';
+
 	/// fr: 'Solde actuel'
 	String get soldeActuel => 'Solde actuel';
 
@@ -3783,8 +3804,8 @@ class Traductions$foyer$transactions$fr {
 	/// fr: 'Voir tout'
 	String get voirTout => 'Voir tout';
 
-	/// fr: 'Voir tous les mouvements de {prenom}'
-	String voirToutSemantique({required Object prenom}) => 'Voir tous les mouvements de ${prenom}';
+	/// fr: 'Voir tout : historique des paiements du foyer'
+	String get voirToutSemantique => 'Voir tout : historique des paiements du foyer';
 
 	/// fr: 'Aucune transaction pour l'instant'
 	String get videTitre => 'Aucune transaction pour l\'instant';
@@ -11621,14 +11642,14 @@ class Traductions$argent$soldes$fr {
 
 	// Translations
 
-	/// fr: 'Total des soldes'
-	String get total => 'Total des soldes';
+	/// fr: 'Total des soldes (lecture)'
+	String get total => 'Total des soldes (lecture)';
 
 	/// fr: 'Une lecture : chaque solde reste celui de son profil.'
 	String get totalDetail => 'Une lecture : chaque solde reste celui de son profil.';
 
-	/// fr: 'À financer ce mois'
-	String get aPayer => 'À financer ce mois';
+	/// fr: 'À payer ce mois'
+	String get aPayer => 'À payer ce mois';
 
 	/// fr: 'Profils financés'
 	String get profilsFinances => 'Profils financés';
@@ -17553,6 +17574,12 @@ extension on Traductions {
 			'foyer.finances.titre' => 'Soldes et paiements',
 			'foyer.finances.rechargerPlusieurs' => 'Recharger plusieurs profils',
 			'foyer.finances.rechargerPour' => ({required Object prenom}) => 'Recharger ${prenom}',
+			'foyer.finances.recharger' => 'Recharger',
+			'foyer.finances.voirDetail' => 'Voir le détail',
+			'foyer.finances.voirDetailSemantique' => ({required Object prenom}) => 'Voir le détail des finances de ${prenom}',
+			'foyer.finances.noteSoldes' => 'Chaque enfant a un solde et une période financée individuels. Les accès sont liés à la période financée, pas simplement au solde.',
+			'foyer.finances.vueFinanciere' => 'Vue financière du foyer',
+			'foyer.finances.vueFinancierePeriode' => 'Ce mois-ci',
 			'foyer.finances.soldeActuel' => 'Solde actuel',
 			'foyer.finances.prochainDebit' => 'Prochain débit',
 			'foyer.finances.prochainDebitValeur' => ({required Object date, required Object montant}) => '${date} · ${montant}',
@@ -17563,11 +17590,12 @@ extension on Traductions {
 			'foyer.transactions.titre' => 'Dernières transactions',
 			'foyer.transactions.ligne' => ({required Object libelle, required Object prenom}) => '${libelle} · ${prenom}',
 			'foyer.transactions.voirTout' => 'Voir tout',
-			'foyer.transactions.voirToutSemantique' => ({required Object prenom}) => 'Voir tous les mouvements de ${prenom}',
+			'foyer.transactions.voirToutSemantique' => 'Voir tout : historique des paiements du foyer',
 			'foyer.transactions.videTitre' => 'Aucune transaction pour l\'instant',
 			'foyer.transactions.videPhrase' => 'Les recharges et les mensualités des profils apparaîtront ici.',
 			'foyer.transactions.erreurTitre' => 'Les dernières transactions ne peuvent pas être lues',
 			'foyer.titre' => 'Foyer',
+			'foyer.membresEnfants' => 'Enfants du foyer',
 			'foyer.ajouterProfil' => 'Ajouter un profil élève',
 			'foyer.sousTitre' => 'Les profils élèves de votre foyer',
 			'foyer.membres' => 'Profils élèves',
@@ -17865,6 +17893,8 @@ extension on Traductions {
 			'eleveConnexion.choisirProfil' => 'Qui es-tu ?',
 			'eleveConnexion.profils.phrase' => 'Touche ton prénom pour continuer.',
 			'eleveConnexion.profils.ajouter' => 'Ajouter un profil sur cet appareil',
+			_ => null,
+		} ?? switch (path) {
 			'eleveConnexion.profils.ajouterLegende' => 'Avec le code affiché par le tuteur',
 			'eleveConnexion.profils.profilLibelle' => ({required Object prenom}) => 'Continuer en tant que ${prenom}',
 			'eleveConnexion.profils.videTitre' => 'Aucun profil sur cet appareil',
@@ -17872,8 +17902,6 @@ extension on Traductions {
 			'eleveConnexion.profils.videAction' => 'Saisir un code',
 			'eleveConnexion.profils.retire' => ({required Object prenom}) => 'Cet appareil a été retiré pour ${prenom}. Demande au tuteur de le reconnecter avec un nouveau code.',
 			'eleveConnexion.profils.jetonAbsent' => ({required Object prenom}) => 'Cet appareil ne retrouve plus la connexion de ${prenom}. Demande au tuteur d\'afficher un nouveau code, puis saisis-le ici.',
-			_ => null,
-		} ?? switch (path) {
 			'eleveConnexion.pin.bonjour' => ({required Object prenom}) => 'Bonjour ${prenom}',
 			'eleveConnexion.pin.creer' => 'Choisis ton code personnel',
 			'eleveConnexion.pin.creerPhrase' => 'Quatre chiffres, rien que pour toi. Il reste sur cet appareil.',
@@ -18379,6 +18407,8 @@ extension on Traductions {
 			'admin.finance.pol.minimumDetail' => 'En dessous, une classe ne s\'ouvre pas et la direction en est alertée.',
 			'admin.finance.pol.paiement' => 'Paiement',
 			'admin.finance.pol.paiementDetail' => 'Le moyen de paiement et le délai de conservation d\'une place.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.railWeb' => 'Paiement web (Stripe)',
 			'admin.finance.pol.railActif' => 'Actif',
 			'admin.finance.pol.railInactif' => 'Inactif',
@@ -18386,8 +18416,6 @@ extension on Traductions {
 			'admin.finance.pol.conservation' => 'Conservation de la place',
 			'admin.finance.pol.conservationDetail' => 'Le délai pendant lequel la place d\'un élève reste réservée quand sa nouvelle période n\'est pas financée.',
 			'admin.finance.pol.pilotage' => 'Pilotage',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.pilotageDetail' => 'Des repères pour lire les chiffres, jamais des règles qui bloquent.',
 			'admin.finance.pol.marge' => 'Marge de référence',
 			'admin.finance.pol.margeValeur' => ({required Object objectif, required Object forte, required Object stretch}) => 'Objectif ${objectif} %, forte ${forte} %, stretch ${stretch} %',
@@ -18893,6 +18921,8 @@ extension on Traductions {
 			'parcours.finDetail' => 'Cet horaire est noté comme votre préférence. Il ne réserve pas encore de place.',
 			'parcours.finAjouterDetail' => 'Une autre personne du foyer souhaite apprendre ?',
 			'parcours.finAjouterProfil' => 'Ajouter un profil élève',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.ageQuestion' => ({required Object prenom}) => 'Quel âge a ${prenom} ?',
 			'parcours.ageRaison' => 'L\'âge décide de la durée des séances et du nombre d\'élèves par classe. Nous ne demandons pas de date de naissance : une tranche suffit.',
 			'parcours.langueQuestion' => 'Dans quelle langue le cours doit-il être donné ?',
@@ -18900,8 +18930,6 @@ extension on Traductions {
 			'parcours.lieuQuestion' => 'Où vous trouvez-vous ?',
 			'parcours.lieuRaison' => 'Nous nous en servons uniquement pour vous montrer les horaires à votre heure locale. Nous ne demandons jamais votre position exacte, et cette réponse ne quitte pas votre dossier.',
 			'parcours.lieuSuggere' => 'Proposé d\'après l\'heure de votre appareil',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.niveauQuestion' => ({required Object prenom}) => 'Où en est ${prenom} aujourd\'hui ?',
 			'parcours.niveauRaison' => 'Votre réponse oriente les premières propositions. Elle ne fixe pas le niveau officiel : celui-ci est attribué par l\'académie après un échange avec un enseignant.',
 			'parcours.niveauDebutLettres' => 'Nous commençons par les lettres',
@@ -19407,6 +19435,8 @@ extension on Traductions {
 			'tuteur.accueil.etatCourt.dansMinutes' => ({required Object minutes}) => 'Dans ${minutes} min',
 			'tuteur.accueil.etatCourt.dansHeures' => ({required Object heures, required Object minutes}) => 'Dans ${heures} h ${minutes}',
 			'tuteur.accueil.etatCourt.dansJours' => ({required Object jours}) => 'Dans ${jours} j',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.etatCourt.prevue' => 'Séance prévue',
 			'tuteur.accueil.etatCourt.annulee' => 'Séance annulée',
 			'tuteur.accueil.etatCourt.nonTenue' => 'Séance non tenue',
@@ -19414,8 +19444,6 @@ extension on Traductions {
 			'tuteur.accueil.etatCourt.aucune' => 'Aucune séance',
 			'tuteur.accueil.etatCourt.illisible' => 'Non disponible',
 			'tuteur.accueil.assister' => 'Assister',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.assisterRefuse' => 'Le cours n\'a pas pu être rejoint. Il vient peut-être de se terminer.',
 			'tuteur.accueil.enCours' => ({required Object prenom}) => 'En cours avec ${prenom}',
 			'tuteur.accueil.depuisMinutes' => ({required Object minutes}) => 'Commencé il y a ${minutes} min',
@@ -19921,6 +19949,8 @@ extension on Traductions {
 			'enseignant.cahier.faiblesseWaqfDetail' => 'Les arrêts.',
 			'enseignant.cahier.faiblesseFluiditeDetail' => 'La lecture sans hésitation.',
 			'enseignant.cahier.faiblesseMemorisationDetail' => 'La récitation de mémoire.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.reprise' => 'Où la Classe s\'est arrêtée',
 			'enseignant.cahier.repriseDetail' => 'C\'est la position de reprise d\'un remplaçant.',
 			'enseignant.cahier.repriseProposee' => ({required Object sourate, required Object verset}) => 'Sourate ${sourate}, verset ${verset}',
@@ -19928,8 +19958,6 @@ extension on Traductions {
 			'enseignant.cahier.integrite' => 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.',
 			'enseignant.cahier.corriger' => 'Corriger le cahier de transmission',
 			'enseignant.cahier.corrigeLe' => ({required Object date}) => 'Corrigé le ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.titre' => 'Profil',
 			'enseignant.profil.remuneration' => 'Rémunération',
 			'enseignant.profil.revenus' => 'Mes revenus',
@@ -20435,6 +20463,8 @@ extension on Traductions {
 			'tc.outils.dock.titre' => 'Outils',
 			'tc.outils.dock.deplacer' => 'Déplacer les outils',
 			'tc.outils.dock.position.bas' => 'En bas',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.dock.position.gauche' => 'À gauche',
 			'tc.outils.dock.position.droite' => 'À droite',
 			'tc.outils.dock.bibliotheque' => 'Bibliothèque',
@@ -20442,8 +20472,6 @@ extension on Traductions {
 			'tc.outils.dock.marquer' => 'Marquer',
 			'tc.outils.dock.masquer' => 'Masquer',
 			'tc.outils.dock.stylet' => 'Stylet',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.dock.pointeur' => 'Pointeur',
 			'tc.outils.dock.revision' => 'Révision',
 			'tc.outils.intention.aApprendre' => 'À apprendre',
@@ -20949,6 +20977,8 @@ extension on Traductions {
 			'adulte.invitation.enteteLui' => 'Un compte personnel pour lui',
 			'adulte.invitation.phraseElle' => 'Votre conjointe utilisera son propre compte. Elle ne pourra pas gérer votre foyer ni les profils élèves que vous avez créés.',
 			'adulte.invitation.phraseLui' => 'Votre conjoint utilisera son propre compte. Il ne pourra pas gérer votre foyer ni les profils élèves que vous avez créés.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.prenom' => 'Prénom',
 			'adulte.invitation.nom' => 'Nom',
 			'adulte.invitation.nomAide' => 'Facultatif.',
@@ -20956,8 +20986,6 @@ extension on Traductions {
 			'adulte.invitation.courrielAideElle' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjointe l\'invitation à rejoindre Rewayah.',
 			'adulte.invitation.courrielAideLui' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjoint l\'invitation à rejoindre Rewayah.',
 			'adulte.invitation.prenomRequis' => 'Indiquez son prénom.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.courrielRequis' => 'Indiquez son adresse e-mail.',
 			'adulte.invitation.courrielInvalide' => 'Vérifiez l\'adresse e-mail : elle doit ressembler à nom@exemple.com.',
 			'adulte.invitation.verifier' => 'Continuer',
@@ -21166,9 +21194,9 @@ extension on Traductions {
 			'argent.periode.aucune' => 'Aucune période financée',
 			'argent.moyen.webStripe' => 'Carte bancaire',
 			'argent.moyen.webStripeDetail' => 'Paiement web sécurisé. Aucun débit avant votre confirmation.',
-			'argent.soldes.total' => 'Total des soldes',
+			'argent.soldes.total' => 'Total des soldes (lecture)',
 			'argent.soldes.totalDetail' => 'Une lecture : chaque solde reste celui de son profil.',
-			'argent.soldes.aPayer' => 'À financer ce mois',
+			'argent.soldes.aPayer' => 'À payer ce mois',
 			'argent.soldes.profilsFinances' => 'Profils financés',
 			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} sur ${total}',
 			'argent.soldes.paiements' => 'Paiements du mois',

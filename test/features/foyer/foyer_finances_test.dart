@@ -171,15 +171,140 @@ void main() {
         findsOneWidget,
       );
     }
-    // Ibrahim : le manque exact, ecrit par le formateur, jamais calcule.
+    // Ibrahim : le manque exact, ecrit par le formateur, jamais calcule,
+    // pour le mois que son debit attendu finance (R1-05).
     final FinancesProfil ibrahim = profils.firstWhere(
       (FinancesProfil p) => p.etat == EtatFinancier.aRegulariser,
     );
     expect(
       find.text(
-        t.foyer.finances.manque(montant: formaterMontant(ibrahim.manque!)),
+        t.ficheEleve.finances.manquePourMois(
+          montant: formaterMontant(ibrahim.manque!),
+          mois: t.commun.dates.mois[ibrahim.prochainDebit!.date.month - 1],
+        ),
       ),
       findsOneWidget,
+    );
+  });
+
+  testWidgets('a regulariser (R1-05) : la carte dit « Période à financer », '
+      'jamais un « Prochain débit » deja echu, comme la fiche Finances', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, jeu: JeuFoyerFinance.unARegulariser);
+    final FinancesProfil ibrahim = DonneesFinanceDemo.profils(
+      JeuFoyerFinance.unARegulariser,
+    ).firstWhere((FinancesProfil p) => p.etat == EtatFinancier.aRegulariser);
+    final ProchainDebit debit = ibrahim.prochainDebit!;
+    // Le debit attendu est deja passe au jour de reference.
+    expect(debit.date.isBefore(_maintenant), isTrue);
+    final Finder carte = find.ancestor(
+      of: find.text(ibrahim.prenom).first,
+      matching: find.byType(CarteMembre),
+    );
+    Finder dans(String texte) =>
+        find.descendant(of: carte, matching: find.text(texte));
+    expect(dans(t.ficheEleve.finances.periodeAFinancer), findsOneWidget);
+    expect(
+      dans(
+        t.ficheEleve.finances.periodeAFinancerValeur(
+          mois: t.commun.dates.mois[debit.date.month - 1],
+          annee: debit.date.year.toString(),
+          montant: formaterMontant(debit.montant),
+        ),
+      ),
+      findsOneWidget,
+    );
+    expect(dans(t.foyer.finances.prochainDebit), findsNothing);
+    expect(
+      dans(t.foyer.finances.manque(montant: formaterMontant(ibrahim.manque!))),
+      findsNothing,
+    );
+  });
+
+  testWidgets('une seule date d echeance par carte (R1-11)', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, jeu: JeuFoyerFinance.tousFinances);
+    for (final FinancesProfil p in DonneesFinanceDemo.profils(
+      JeuFoyerFinance.tousFinances,
+    )) {
+      final Finder carte = find.ancestor(
+        of: find.text(p.prenom).first,
+        matching: find.byType(CarteMembre),
+      );
+      final String fin = dateEcheance(p.periode!.fin);
+      expect(
+        find.descendant(
+          of: carte,
+          matching: find.text(t.argent.periode.jusquau(date: fin)),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: carte, matching: find.textContaining(fin)),
+        findsOneWidget,
+        reason: '${p.prenom} : la date ne se dit qu une fois',
+      );
+    }
+  });
+
+  testWidgets('libelles de la fiche (R1-09) : « Soldes et paiements », '
+      '« Enfants du foyer », « Total des soldes (lecture) », « À payer ce '
+      'mois »', (WidgetTester tester) async {
+    await _monter(tester, jeu: JeuFoyerFinance.tousFinances);
+    expect(find.text('Soldes et paiements'), findsOneWidget);
+    expect(find.text('Enfants du foyer'), findsOneWidget);
+    expect(find.text('Total des soldes (lecture)'), findsOneWidget);
+    expect(find.text('À payer ce mois'), findsWidgets);
+    expect(find.text(t.foyer.sousTitre), findsNothing);
+  });
+
+  testWidgets('« Voir le détail » (R1-08) : la fiche Finances de l enfant '
+      'finance, en un geste, son prenom dans le nom lu', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter routeur = await _monter(
+      tester,
+      jeu: JeuFoyerFinance.unARegulariser,
+    );
+    final List<FinancesProfil> profils = DonneesFinanceDemo.profils(
+      JeuFoyerFinance.unARegulariser,
+    );
+    // Une action par carte : « Voir le détail » ou « Recharger ».
+    for (final FinancesProfil p in profils) {
+      expect(
+        find.byKey(FoyerPage.voirDetailKey(p.profilId)),
+        aRecharger(p) ? findsNothing : findsOneWidget,
+      );
+      expect(
+        find.byKey(FoyerPage.rechargerPourKey(p.profilId)),
+        aRecharger(p) ? findsOneWidget : findsNothing,
+      );
+    }
+    final FinancesProfil mariam = profils.firstWhere(
+      (FinancesProfil p) => !aRecharger(p),
+    );
+    final Finder lien = find.byKey(FoyerPage.voirDetailKey(mariam.profilId));
+    final SemanticsHandle semantique = tester.ensureSemantics();
+    expect(
+      tester.getSemantics(lien).label,
+      t.foyer.finances.voirDetailSemantique(prenom: mariam.prenom),
+    );
+    semantique.dispose();
+    expect(
+      find.descendant(
+        of: lien,
+        matching: find.text(t.foyer.finances.voirDetail),
+      ),
+      findsOneWidget,
+    );
+    await tester.ensureVisible(lien);
+    await tester.tap(lien);
+    await stabiliser(tester);
+    expect(
+      routeur.state.uri.path,
+      Routes.ficheEleveSousPage(mariam.profilId, 'finances'),
     );
   });
 
@@ -202,6 +327,20 @@ void main() {
     final Finder lien = find.byKey(
       FoyerPage.rechargerPourKey(ibrahim.profilId),
     );
+    // R1-10 : « Recharger » a l'ecran, « Recharger Ibrahim » au lecteur.
+    expect(
+      find.descendant(
+        of: lien,
+        matching: find.text(t.foyer.finances.recharger),
+      ),
+      findsOneWidget,
+    );
+    final SemanticsHandle semantique = tester.ensureSemantics();
+    expect(
+      tester.getSemantics(lien).label,
+      t.foyer.finances.rechargerPour(prenom: ibrahim.prenom),
+    );
+    semantique.dispose();
     await tester.ensureVisible(lien);
     await tester.tap(lien);
     await stabiliser(tester);
@@ -257,21 +396,52 @@ void main() {
     );
   });
 
-  testWidgets('un seul bouton plein : « Recharger plusieurs profils » est '
-      'secondaire', (WidgetTester tester) async {
-    await _monter(tester, jeu: JeuFoyerFinance.unARegulariser);
-    final Iterable<ActionPrincipale> pleins = tester
-        .widgetList<ActionPrincipale>(find.byType(ActionPrincipale))
-        .where((ActionPrincipale a) => a.niveau == NiveauAction.principale);
-    expect(pleins, hasLength(1));
-    expect(
-      tester
-          .widget<ActionPrincipale>(
-            find.byKey(SyntheseSoldesFoyer.rechargerKey),
-          )
-          .niveau,
-      NiveauAction.secondaire,
+  for (final double largeur in <double>[390, 1440]) {
+    testWidgets(
+      '${largeur.toInt()} : un seul bouton plein, « Recharger '
+      'plusieurs profils » ; « Ajouter un profil élève » secondaire (R1-01)',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          jeu: JeuFoyerFinance.unARegulariser,
+          taille: Size(largeur, 2400),
+        );
+        final Iterable<ActionPrincipale> pleins = tester
+            .widgetList<ActionPrincipale>(find.byType(ActionPrincipale))
+            .where((ActionPrincipale a) => a.niveau == NiveauAction.principale);
+        expect(pleins, hasLength(1));
+        expect(
+          tester
+              .widget<ActionPrincipale>(
+                find.byKey(SyntheseSoldesFoyer.rechargerKey),
+              )
+              .niveau,
+          NiveauAction.principale,
+        );
+        expect(
+          tester
+              .widget<ActionPrincipale>(find.byKey(FoyerPage.ajouterKey))
+              .niveau,
+          NiveauAction.secondaire,
+        );
+      },
     );
+  }
+
+  testWidgets('sans source (production) : « Ajouter un profil élève » reste '
+      'le seul bouton plein (question 1 au directeur, comportement garde)', (
+    WidgetTester tester,
+  ) async {
+    await _monter(
+      tester,
+      jeu: JeuFoyerFinance.unARegulariser,
+      avecFinances: false,
+    );
+    expect(
+      tester.widget<ActionPrincipale>(find.byKey(FoyerPage.ajouterKey)).niveau,
+      NiveauAction.principale,
+    );
+    expect(find.text(t.foyer.sousTitre), findsOneWidget);
   });
 
   // L'invariant « jamais rendu au second adulte » est porte par le port
@@ -310,27 +480,37 @@ void main() {
     },
   );
 
-  testWidgets('1440 (FI-5) : les quatre indicateurs cote a cote, le bouton '
-      'compact au bord de fin', (WidgetTester tester) async {
+  testWidgets('1440 (FI-5, R1-03) : quatre blocs cote a cote, le 4e = le '
+      'bouton puis la note', (WidgetTester tester) async {
     await _monter(
       tester,
       jeu: JeuFoyerFinance.unARegulariser,
       taille: const Size(1440, 2400),
     );
-    final double haut = tester.getTopLeft(find.text(t.argent.soldes.total)).dy;
+    final Finder synthese = find.byKey(SyntheseSoldesFoyer.cle);
+    Finder dans(String texte) =>
+        find.descendant(of: synthese, matching: find.text(texte));
+    final double haut = tester.getTopLeft(dans(t.argent.soldes.total)).dy;
     for (final String cle in <String>[
       t.argent.soldes.aPayer,
       t.argent.soldes.profilsFinances,
-      t.argent.soldes.paiements,
     ]) {
-      expect(tester.getTopLeft(find.text(cle)).dy, moreOrLessEquals(haut));
+      expect(tester.getTopLeft(dans(cle)).dy, moreOrLessEquals(haut));
     }
     final Rect bouton = tester.getRect(
       find.byKey(SyntheseSoldesFoyer.rechargerKey),
     );
-    final Rect synthese = tester.getRect(find.byKey(SyntheseSoldesFoyer.cle));
-    expect(bouton.width, lessThan(synthese.width * 0.8));
-    expect(bouton.right, moreOrLessEquals(synthese.right, epsilon: 1));
+    expect(bouton.top, moreOrLessEquals(haut, epsilon: 1));
+    final Rect profils = tester.getRect(dans(t.argent.soldes.profilsFinances));
+    expect(bouton.left, greaterThan(profils.right));
+    // La note sous le bouton, dans le meme bloc.
+    final Rect note = tester.getRect(dans(t.foyer.finances.noteSoldes));
+    expect(note.top, greaterThan(bouton.bottom));
+    expect(note.left, moreOrLessEquals(bouton.left, epsilon: 1));
+    // « Paiements du mois » cede sa place : il est dans la vue financiere.
+    expect(dans(t.argent.soldes.paiements), findsNothing);
+    final Rect blocSynthese = tester.getRect(synthese);
+    expect(bouton.width, lessThan(blocSynthese.width * 0.3));
   });
 
   for (final JeuFoyerFinance jeu in JeuFoyerFinance.values) {

@@ -897,9 +897,13 @@ void main() {
         ),
         findsOneWidget,
       );
+      // Le manque pour le mois que le debit attendu finance (R1-05).
       expect(
         find.text(
-          t.foyer.finances.manque(montant: formaterMontant(ibrahim.manque!)),
+          t.ficheEleve.finances.manquePourMois(
+            montant: formaterMontant(ibrahim.manque!),
+            mois: t.commun.dates.mois[ibrahim.prochainDebit!.date.month - 1],
+          ),
         ),
         findsOneWidget,
       );

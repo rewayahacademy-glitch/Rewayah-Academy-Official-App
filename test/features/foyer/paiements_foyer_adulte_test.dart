@@ -283,53 +283,39 @@ void main() {
     expect(find.byType(RechargeFoyerPage), findsNothing);
   });
 
-  testWidgets('bureau : la colonne droite de Ma famille porte les soldes et '
-      'son seul « Recharger », puis l\'historique en une ligne (planche 6)', (
+  testWidgets('bureau : Ma famille a la composition du Foyer du tuteur '
+      '(E-11, R1-06) : aucune section de soldes repetee, la ligne « Paiements '
+      'du foyer » mene aux soldes et a « Recharger »', (
     WidgetTester tester,
   ) async {
     taille(tester, const Size(1440, 1000));
     await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
 
-    final Finder section = find.byKey(SoldesFoyerSection.cle);
-    expect(section, findsOneWidget);
-    expect(
-      find.descendant(
-        of: section,
-        matching: find.text(t.adulte.famille.paiementsFoyer),
-      ),
-      findsOneWidget,
-    );
-    // A droite des membres.
-    expect(
-      tester.getTopLeft(section).dx,
-      greaterThan(tester.getTopRight(find.byKey(FoyerPage.membresKey)).dx),
-    );
-    // Un bouton dominant par colonne : « Ajouter un profil eleve » et
-    // « Recharger » (UX_REVIEW_07 ligne 7 a).
-    expect(find.byType(ActionPrincipale), findsNWidgets(2));
-    expect(
-      find.descendant(
-        of: section,
-        matching: find.byKey(SoldesFoyerSection.rechargerKey),
-      ),
-      findsOneWidget,
-    );
-    final Finder historique = find.descendant(
+    // Plus de colonne droite de soldes (planche 6 remplacee par E-11) : les
+    // profils sur toute la largeur, les annexes dessous.
+    expect(find.byKey(SoldesFoyerSection.cle), findsNothing);
+    expect(find.byKey(SoldesFoyerSection.rechargerKey), findsNothing);
+    final Rect membres = tester.getRect(find.byKey(FoyerPage.membresKey));
+    final Rect paiements = tester.getRect(find.byKey(paiementsFoyerKey));
+    expect(paiements.top, greaterThan(membres.bottom));
+    // Un seul bouton plein : « Ajouter un profil élève ».
+    expect(find.byType(ActionPrincipale), findsOneWidget);
+    final Finder ligne = find.descendant(
       of: find.byKey(paiementsFoyerKey),
-      matching: find.text(t.adulte.paiements.historique),
+      matching: find.text(t.adulte.famille.paiementsFoyer),
     );
-    expect(historique, findsOneWidget);
+    expect(ligne, findsOneWidget);
     rienDInvente();
 
-    await tester.tap(find.byKey(SoldesFoyerSection.rechargerKey));
-    await tester.pumpAndSettle();
-    expect(find.byType(RechargeFoyerPage), findsOneWidget);
-
-    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
-    await tester.tap(find.text(t.adulte.paiements.historique));
+    await tester.tap(ligne);
     await tester.pumpAndSettle();
     expect(find.byType(PaiementsComptePage), findsOneWidget);
     expect(find.byKey(PaiementsComptePage.historiqueKey), findsOneWidget);
+    final Finder recharger = find.byKey(SoldesFoyerSection.rechargerKey);
+    await tester.ensureVisible(recharger);
+    await tester.tap(recharger);
+    await tester.pumpAndSettle();
+    expect(find.byType(RechargeFoyerPage), findsOneWidget);
   });
 
   group('etats de la section des soldes', () {

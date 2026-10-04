@@ -6,6 +6,7 @@ import '../../../core/capacites/capacite_indisponible.dart';
 import '../../../core/capacites/port_accents_profils.dart';
 import '../../../core/finance/finances_profil.dart';
 import '../../../core/finance/format_montant.dart';
+import '../../../core/finance/periode_a_financer.dart';
 import '../../../core/finance/politique_commerciale.dart';
 import '../../../core/foyer/selection_eleve.dart';
 import '../../../core/i18n/strings.g.dart';
@@ -213,26 +214,6 @@ class EtatsFinancesProfil extends ConsumerWidget {
   }
 }
 
-/// Le mois que le debit attendu doit financer, en toutes lettres (guide
-/// §1.7 : « Il manque 8 USD pour financer janvier »), `null` sans debit.
-String? _moisAFinancer(FinancesProfil f) => switch (f.prochainDebit) {
-  final ProchainDebit d => t.commun.dates.mois[d.date.month - 1],
-  null => null,
-};
-
-/// Le debit attendu est celui d'une periode **non financee** (la periode
-/// en cours, guide §1.7) : il ne se dit pas « prochain débit », sa date
-/// pouvant etre deja passee.
-bool _periodeNonFinancee(FinancesProfil f) =>
-    f.periode == null &&
-    f.prochainDebit != null &&
-    switch (f.etat) {
-      EtatFinancier.aRegulariser ||
-      EtatFinancier.manque ||
-      EtatFinancier.expire => true,
-      _ => false,
-    };
-
 /// Le titre et la phrase du bandeau d'attention, `null` sans attention.
 ({String titre, String message, TonEtat ton})? _attention(FinancesProfil f) {
   final String? manque = switch (f.manque) {
@@ -240,7 +221,7 @@ bool _periodeNonFinancee(FinancesProfil f) =>
     null => null,
   };
   final DateTime? conservation = f.finConservation;
-  final String? mois = _moisAFinancer(f);
+  final String? mois = moisAFinancer(f);
   // Le mois a financer est nomme des que la source rend le debit attendu ;
   // « la prochaine periode » ne reste qu'en repli, sans debit rendu.
   final String message = switch ((manque, conservation, mois)) {
@@ -437,7 +418,7 @@ class VueFinancesProfil extends ConsumerWidget {
               // Periode en cours non financee : le debit attendu est celui
               // du mois a financer, jamais un « prochain débit » a une date
               // passee (guide §1.7).
-              if (debit != null && _periodeNonFinancee(finance))
+              if (debit != null && periodeNonFinancee(finance))
                 LigneCleValeur(
                   key: FinancesElevePage.debitKey,
                   cle: t.ficheEleve.finances.periodeAFinancer,
