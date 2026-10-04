@@ -229,7 +229,7 @@ void main() {
         'Observation de Maryam, le 04/10/2026, 4 h',
       );
 
-      await _presser(tester, _personne('Yacine Benali (ENS-YB-002)'));
+      await _presser(tester, _personne('Yacine Benali'));
       expect(
         _libelleJeton(tester),
         'Observation de Yacine, le 04/10/2026, 4 h',
@@ -248,7 +248,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       await _presser(tester, find.text(t.admin.agents.dureeHeure(nombre: 1)));
-      await _presser(tester, _personne('Yacine Benali (ENS-YB-002)'));
+      await _presser(tester, _personne('Yacine Benali'));
       expect(_libelleJeton(tester), 'Relecture du suivi');
 
       await _presser(tester, find.text(t.admin.agents.emettre));
