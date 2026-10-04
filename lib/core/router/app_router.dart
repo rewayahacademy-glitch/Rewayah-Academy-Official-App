@@ -1039,6 +1039,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.adminNotifications,
         builder: (BuildContext contexte, GoRouterState _) => _CoquilleAdmin(
           domaine: null,
+          notificationsOuvertes: true,
           child: NotificationsPage(
             onRetour: () => GoRouter.of(contexte).go(Routes.admin),
           ),
@@ -1539,16 +1540,24 @@ class _CoquilleNavigation extends ConsumerWidget {
       mode: InterfaceMode.standard,
     );
     final List<Destination> visibles = destinationsPour(role: role, mode: mode);
+    // COM-F-Q5 : sur la page des notifications, la cloche est la seule
+    // entree active. La page vit sous une branche (la Journee, l'Accueil),
+    // mais la barre ne surligne pas cet onglet : deux selections a la fois
+    // diraient deux endroits.
+    final String? cheminCloche = Routes.notificationsPour(role);
+    final bool surNotifications = chemin == cheminCloche;
 
     final Widget coquille = NavShell(
       destinations: visibles,
-      indexActif: indexDansBarre(
-        visibles: visibles,
-        completes: destinations,
-        indexComplet: navigationShell.currentIndex < destinations.length
-            ? navigationShell.currentIndex
-            : null,
-      ),
+      indexActif: surNotifications
+          ? null
+          : indexDansBarre(
+              visibles: visibles,
+              completes: destinations,
+              indexComplet: navigationShell.currentIndex < destinations.length
+                  ? navigationShell.currentIndex
+                  : null,
+            ),
       masquerBarreBasse: Routes.estTacheFocalisee(chemin),
       // Le rail replie a icones seules est la maquette du tuteur ; l'eleve et
       // l'enseignant gardent leurs libelles visibles sur tablette, comme avant
@@ -1593,10 +1602,10 @@ class _CoquilleNavigation extends ConsumerWidget {
     if (role != AppRole.guardian) {
       // COM-F : la cloche des notifications, posee par la coquille du role
       // quand ce role en a une (`Routes.notificationsPour` : enseignant et
-      // controleur ; jamais l'eleve). Sans point tant que le port est
-      // indisponible, comme le tuteur. Elle s'ajoute, en dernier, aux
-      // actions deja posees au-dessus (le raccourci Espaces de CT-9).
-      final String? cheminCloche = Routes.notificationsPour(role);
+      // controleur ; jamais l'eleve mineur, reponse Q5 du directeur du
+      // 04/10). Sans point tant que le port est indisponible, comme le
+      // tuteur. Elle s'ajoute, en dernier, aux actions deja posees au-dessus
+      // (le raccourci Espaces de CT-9), et se montre active sur sa page.
       final Widget avecCloche = cheminCloche == null
           ? coquille
           : Builder(
@@ -1604,6 +1613,7 @@ class _CoquilleNavigation extends ConsumerWidget {
                 actions: <Widget>[
                   ...ActionsEnteteCoquille.de(contexte),
                   ClocheNotifications(
+                    actif: surNotifications,
                     onPress: () => GoRouter.of(contexte).go(cheminCloche),
                   ),
                 ],
@@ -1628,6 +1638,7 @@ class _CoquilleNavigation extends ConsumerWidget {
       actions: <Widget>[
         if (large) const BasculeTheme(),
         ClocheNotifications(
+          actif: surNotifications,
           onPress: () => GoRouter.of(context).go(Routes.tuteurNotifications),
         ),
       ],
@@ -1651,13 +1662,21 @@ class _CoquilleNavigation extends ConsumerWidget {
 /// faisaient deja `ADM-06`, `ADM-07` et `ADM-08` avant ce lot. C'est le prix
 /// assume de la restructuration, pas un oubli.
 class _CoquilleAdmin extends ConsumerWidget {
-  const _CoquilleAdmin({required this.domaine, required this.child});
+  const _CoquilleAdmin({
+    required this.domaine,
+    required this.child,
+    this.notificationsOuvertes = false,
+  });
 
   /// Le domaine que revendique cette route ; nul pour une page transverse
   /// (les notifications), qui n'allume aucun domaine.
   final AdminDomaine? domaine;
 
   final Widget child;
+
+  /// La page ouverte est celle des notifications : la cloche s'y montre
+  /// active.
+  final bool notificationsOuvertes;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -1682,6 +1701,7 @@ class _CoquilleAdmin extends ConsumerWidget {
       // `/admin` que la garde reserve a l'admin : la coquille ne lit aucun
       // role.
       onNotifications: () => aller(Routes.adminNotifications),
+      notificationsActives: notificationsOuvertes,
       onStudio: () => aller(Routes.adminStudio),
       child: child,
     );

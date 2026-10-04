@@ -23,8 +23,8 @@ import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/communications/etats_communication.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/vue_etat_communication.dart';
 
 /// Le mot de la nature d'un objet enregistre.
 String libelleTypeEnregistre(TypeObjetLie type) {

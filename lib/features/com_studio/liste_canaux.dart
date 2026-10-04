@@ -19,7 +19,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/communications/badge_non_lu.dart';
+import '../../core/widgets/badge_non_lu.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import 'port_studio.dart';
 import 'visibilite_canal.dart';

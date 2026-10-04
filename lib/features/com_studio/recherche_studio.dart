@@ -25,12 +25,12 @@ import '../../core/tc_bibliotheque/recherche_catalogue.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bouton_icone.dart';
-import '../../core/widgets/communications/carte_piece_jointe.dart';
-import '../../core/widgets/communications/etats_communication.dart';
+import '../../core/widgets/carte_piece_jointe.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/selecteur_section.dart';
+import '../../core/widgets/vue_etat_communication.dart';
 import 'port_studio.dart';
 
 /// Les mots de [texte], normalises (sans majuscules ni accents) ; vide si

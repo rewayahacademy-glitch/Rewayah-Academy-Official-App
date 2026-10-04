@@ -17,7 +17,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/widgets/communications/badge_non_lu.dart';
+import '../../core/widgets/badge_non_lu.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../accueil_famille/bloc_seance.dart' show dateDeLAppareil;
 import 'canal_page.dart' show horodatageCanal;

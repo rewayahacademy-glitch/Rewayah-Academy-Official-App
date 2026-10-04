@@ -532,6 +532,7 @@ class _Traductions$com$socle$navigation$ar extends Traductions$com$socle$navigat
 	@override String get messages => _root.com.socle.lexique.messages;
 	@override String get communaute => _root.com.socle.lexique.communaute;
 	@override String get communications => 'الاتصالات';
+	@override String get communicationsDetail => 'الإعلانات والإشراف ورسائل الصفوف';
 	@override String get ongletAnnonces => 'الإعلانات';
 	@override String get ongletModeration => 'الإشراف';
 	@override String get ongletMessages => _root.com.socle.lexique.messages;
@@ -787,8 +788,10 @@ class _Traductions$com$socle$composants$pieceJointe$ar extends Traductions$com$s
 	// Translations
 	@override String get joindre => 'إرفاق ملف';
 	@override String get joindreIndisponible => 'إرفاق الملفات غير متاح هنا بعد.';
-	@override String ouvrir({required Object nom}) => 'فتح ${nom}';
-	@override String retirer({required Object nom}) => 'إزالة ${nom}';
+	@override String get ouvrir => 'فتح';
+	@override String ouvrirLecteur({required Object nom}) => 'فتح ${nom}';
+	@override String get retirer => 'إزالة';
+	@override String retirerLecteur({required Object nom}) => 'إزالة ${nom}';
 	@override String tailleOctets({required Object taille}) => '${taille} بايت';
 	@override String tailleKo({required Object taille}) => '${taille} كيلوبايت';
 	@override String tailleMo({required Object taille}) => '${taille} ميغابايت';
@@ -838,7 +841,7 @@ class _Traductions$com$socle$composants$etats$ar extends Traductions$com$socle$c
 	@override String get chargement => 'جارٍ التحميل';
 	@override String get videTitre => 'لا شيء هنا حاليًا';
 	@override String get erreurTitre => 'تعذّر تحميل هذا المحتوى.';
-	@override String get erreur => 'تعذّر تحميل هذا المحتوى. تحقّق من اتصالك ثم أعد المحاولة.';
+	@override String get erreur => 'تحقّق من اتصالك ثم أعد المحاولة.';
 	@override String get reessayer => 'إعادة المحاولة';
 	@override String get horsLigne => 'أنت غير متصل. لا يمكن تحديث الرسائل الجديدة.';
 	@override String get indisponibleTitre => 'غير متاح بعد';
@@ -1101,8 +1104,10 @@ extension on TraductionsAr {
 			'com.socle.composants.badge.mentionSemantique' => 'هناك إشارة تخصّك',
 			'com.socle.composants.pieceJointe.joindre' => 'إرفاق ملف',
 			'com.socle.composants.pieceJointe.joindreIndisponible' => 'إرفاق الملفات غير متاح هنا بعد.',
-			'com.socle.composants.pieceJointe.ouvrir' => ({required Object nom}) => 'فتح ${nom}',
-			'com.socle.composants.pieceJointe.retirer' => ({required Object nom}) => 'إزالة ${nom}',
+			'com.socle.composants.pieceJointe.ouvrir' => 'فتح',
+			'com.socle.composants.pieceJointe.ouvrirLecteur' => ({required Object nom}) => 'فتح ${nom}',
+			'com.socle.composants.pieceJointe.retirer' => 'إزالة',
+			'com.socle.composants.pieceJointe.retirerLecteur' => ({required Object nom}) => 'إزالة ${nom}',
 			'com.socle.composants.pieceJointe.tailleOctets' => ({required Object taille}) => '${taille} بايت',
 			'com.socle.composants.pieceJointe.tailleKo' => ({required Object taille}) => '${taille} كيلوبايت',
 			'com.socle.composants.pieceJointe.tailleMo' => ({required Object taille}) => '${taille} ميغابايت',
@@ -1134,7 +1139,7 @@ extension on TraductionsAr {
 			'com.socle.composants.etats.chargement' => 'جارٍ التحميل',
 			'com.socle.composants.etats.videTitre' => 'لا شيء هنا حاليًا',
 			'com.socle.composants.etats.erreurTitre' => 'تعذّر تحميل هذا المحتوى.',
-			'com.socle.composants.etats.erreur' => 'تعذّر تحميل هذا المحتوى. تحقّق من اتصالك ثم أعد المحاولة.',
+			'com.socle.composants.etats.erreur' => 'تحقّق من اتصالك ثم أعد المحاولة.',
 			'com.socle.composants.etats.reessayer' => 'إعادة المحاولة',
 			'com.socle.composants.etats.horsLigne' => 'أنت غير متصل. لا يمكن تحديث الرسائل الجديدة.',
 			'com.socle.composants.etats.indisponibleTitre' => 'غير متاح بعد',
@@ -1189,6 +1194,7 @@ extension on TraductionsAr {
 			'com.socle.navigation.messages' => _root.com.socle.lexique.messages,
 			'com.socle.navigation.communaute' => _root.com.socle.lexique.communaute,
 			'com.socle.navigation.communications' => 'الاتصالات',
+			'com.socle.navigation.communicationsDetail' => 'الإعلانات والإشراف ورسائل الصفوف',
 			'com.socle.navigation.ongletAnnonces' => 'الإعلانات',
 			'com.socle.navigation.ongletModeration' => 'الإشراف',
 			'com.socle.navigation.ongletMessages' => _root.com.socle.lexique.messages,

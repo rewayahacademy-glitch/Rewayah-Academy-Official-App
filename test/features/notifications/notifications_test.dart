@@ -110,7 +110,8 @@ void main() {
 
           expect(lieu(routeur), Routes.tuteurNotifications);
           expect(find.byType(NotificationsPage), findsOneWidget);
-          expect(_indexActif(tester), 0);
+          // COM-F-Q5 : la cloche est la seule entree active, aucun onglet.
+          expect(_indexActif(tester), -1);
           expect(find.text(t.notifications.indisponibleTitre), findsOneWidget);
           // Une capacite absente ne se reessaie pas, et n'est pas un vide.
           expect(find.text(t.commun.etats.actions.reessayer), findsNothing);

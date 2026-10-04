@@ -37,15 +37,15 @@ import 'dart:ui' show FlutterView;
 
 import 'package:flutter/material.dart';
 
+import '../../core/communications/textes_fil_communication.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_tile.dart';
-import '../../core/widgets/communications/carte_piece_jointe.dart';
-import '../../core/widgets/communications/composer_texte.dart';
-import '../../core/widgets/communications/etats_communication.dart';
+import '../../core/widgets/carte_piece_jointe.dart';
 import '../../core/widgets/fil_discussion.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/vue_etat_communication.dart';
 import '../accueil_famille/bloc_seance.dart'
     show dateDeLAppareil, heureDeLAppareil;
 import 'brouillons_studio.dart';

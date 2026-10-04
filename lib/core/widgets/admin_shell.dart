@@ -47,7 +47,9 @@ import 'pressable.dart';
 /// compte) se posent a droite de l'en-tete de chaque page par
 /// [ActionsEnteteCoquille], a cote du titre et du sous-titre de la page.
 /// Sous 600, une barre mobile garde Menu, le champ de recherche et le
-/// compte. Chaque page recoit aussi le retour vers l'Accueil ([onRetour]).
+/// compte ; le champ devient un bouton qui l'ouvre en feuille quand son
+/// indication ne tient plus sur une ligne (320, ou texte au-dela de 150 %).
+/// Chaque page recoit aussi le retour vers l'Accueil ([onRetour]).
 ///
 /// **Communications (COM-F)** : la cloche ([onNotifications]) mene a la
 /// `NotificationsPage` existante, sans point tant que le port est
@@ -56,7 +58,9 @@ import 'pressable.dart';
 /// domaine. **La coquille ne lit aucun role** : elle rend ces deux entrees
 /// seulement quand son appelant les lui donne (le routeur, sous le prefixe
 /// `/admin` que la garde reserve a l'admin). Sous 600, la cloche passe dans
-/// l'en-tete de page et Le Studio en lien au pied du tiroir.
+/// l'en-tete de page, comme pour l'enseignant, le controleur et le tuteur,
+/// et Le Studio en lien au pied du tiroir. Sur la page des notifications, la
+/// cloche se montre active ([notificationsActives], reponse Q5 du 04/10).
 class AdminShell extends StatelessWidget {
   /// Cree la coquille admin.
   ///
@@ -73,6 +77,7 @@ class AdminShell extends StatelessWidget {
     super.key,
     this.onRetour,
     this.onNotifications,
+    this.notificationsActives = false,
     this.onStudio,
   }) : assert(
          domaines.length <= maxDomaines,
@@ -100,6 +105,10 @@ class AdminShell extends StatelessWidget {
 
   /// Ouvre les notifications (`/admin/notifications`). Nul : aucune cloche.
   final VoidCallback? onNotifications;
+
+  /// La page ouverte est celle des notifications : la cloche s'y montre
+  /// active (icone pleine, etat selectionne), aucun domaine ne l'etant.
+  final bool notificationsActives;
 
   /// Ouvre Le Studio (`/admin/studio`). Nul : aucune action Studio.
   final VoidCallback? onStudio;
@@ -161,7 +170,11 @@ class AdminShell extends StatelessWidget {
           const BasculeTheme(),
           _BoutonCompte(onCompte: onCompte),
         ],
-        if (notifications != null) ClocheNotifications(onPress: notifications),
+        if (notifications != null)
+          ClocheNotifications(
+            onPress: notifications,
+            actif: notificationsActives,
+          ),
       ],
       onRetour: onRetour,
       child: child,
@@ -184,7 +197,21 @@ class AdminShell extends StatelessWidget {
         ChromeNavigation.barreBasse => Column(
           children: <Widget>[
             _BarreMobile(onRecherche: onAller, onCompte: onCompte),
-            Expanded(child: contenu(avecActions: false)),
+            // La barre a deja pose la zone sure du haut (encoche, barre
+            // d'etat) : la page en dessous ne la repose pas, sinon un vide
+            // de la hauteur de l'encoche separe la barre du titre.
+            // Lu SOUS le `Scaffold` (`Builder`) : celui-ci a deja retire du
+            // corps l'encart du clavier ; relire celui du dessus le ferait
+            // eviter deux fois.
+            Expanded(
+              child: Builder(
+                builder: (BuildContext corps) => MediaQuery.removePadding(
+                  context: corps,
+                  removeTop: true,
+                  child: contenu(avecActions: false),
+                ),
+              ),
+            ),
           ],
         ),
         ChromeNavigation.rail => Row(
@@ -425,7 +452,7 @@ class _Tiroir extends StatelessWidget {
                 child: LienFleche(
                   libelle: t.com.socle.navigation.studio,
                   libelleSemantique: t.com.socle.navigation.ouvrirStudio,
-                  icone: AppIcons.discussion,
+                  icone: AppIcons.studio,
                   onPress: () {
                     Navigator.of(context).pop();
                     ouvrir();
@@ -707,7 +734,7 @@ class _BoutonStudio extends StatelessWidget {
     message: t.com.socle.navigation.studio,
     excludeFromSemantics: true,
     child: _BoutonIcone(
-      icone: AppIcons.discussion.repos,
+      icone: AppIcons.studio.repos,
       libelle: t.com.socle.navigation.ouvrirStudio,
       onPress: onStudio,
     ),
@@ -806,7 +833,32 @@ class _BarreMobileState extends State<_BarreMobile> {
     // la place de montrer son indication entiere entre menu et compte ; la
     // barre prend alors le bouton qui ouvre le meme champ en feuille (motif
     // deja servi a partir de 600). Rendu inchange a 100 %.
-    final bool texteAgrandi = MediaQuery.textScalerOf(context).scale(1) > 1.5;
+    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    final bool texteAgrandi = echelle.scale(1) > 1.5;
+    // K-61 : a 320, l'indication ne tient plus sur une ligne entre menu et
+    // compte ; elle passait a la ligne et doublait la hauteur de la barre.
+    // La barre prend alors le meme bouton qu'au-dela de 150 %, l'indication
+    // entiere reste lisible dans la feuille (AD-11, jamais coupee).
+    final TextPainter indication = TextPainter(
+      text: TextSpan(
+        text: t.nav.admin.rechercheIndication,
+        style: Theme.of(context).inputDecorationTheme.hintStyle,
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: echelle,
+      maxLines: 1,
+    )..layout();
+    // Ce que l'`InputDecorator` Material 3 reserve autour de l'indication :
+    // l'icone de tete (cible tactile), son ecart au texte (4), la marge de
+    // fin du champ (`contentPadding`, lg) et l'ecart du contour (4). Les
+    // filets du contour ne prennent aucune place.
+    final double largeurChamp =
+        indication.width +
+        AppTouchTarget.standard +
+        AppSpacing.xs +
+        AppSpacing.lg +
+        AppSpacing.xs;
+    indication.dispose();
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -820,42 +872,51 @@ class _BarreMobileState extends State<_BarreMobile> {
             horizontal: AppSpacing.lg,
             vertical: AppSpacing.sm,
           ),
-          child: Row(
-            children: <Widget>[
-              Builder(
-                builder: (BuildContext contexte) => _BoutonIcone(
-                  icone: AppIcons.menu.repos,
-                  libelle: t.nav.admin.menu,
-                  onPress: () => Scaffold.of(contexte).openDrawer(),
-                ),
-              ),
-              Ecart.hSm,
-              if (texteAgrandi) ...<Widget>[
-                const Spacer(),
-                _BoutonRecherche(onRecherche: widget.onRecherche),
-              ] else
-                Expanded(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      maxWidth: AppPage.largeurFormulaire,
-                    ),
-                    child: TextField(
-                      controller: _recherche,
-                      onSubmitted: _lancer,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        hintText: t.nav.admin.rechercheIndication,
-                        // AD-11 (1.4.4) : a 200 %, l'indication passe a la
-                        // ligne au lieu d'etre coupee.
-                        hintMaxLines: 2,
-                        prefixIcon: Icon(AppIcons.recherche.repos),
-                      ),
+          child: LayoutBuilder(
+            builder: (BuildContext _, BoxConstraints contraintes) {
+              // Menu et compte, chacun suivi ou precede d'un ecart.
+              final double place =
+                  contraintes.maxWidth -
+                  2 * (AppTouchTarget.standard + AppSpacing.sm);
+              final bool enBouton = texteAgrandi || place < largeurChamp;
+              return Row(
+                children: <Widget>[
+                  Builder(
+                    builder: (BuildContext contexte) => _BoutonIcone(
+                      icone: AppIcons.menu.repos,
+                      libelle: t.nav.admin.menu,
+                      onPress: () => Scaffold.of(contexte).openDrawer(),
                     ),
                   ),
-                ),
-              Ecart.hSm,
-              _BoutonCompte(onCompte: widget.onCompte),
-            ],
+                  Ecart.hSm,
+                  if (enBouton) ...<Widget>[
+                    const Spacer(),
+                    _BoutonRecherche(onRecherche: widget.onRecherche),
+                  ] else
+                    Expanded(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: AppPage.largeurFormulaire,
+                        ),
+                        child: TextField(
+                          controller: _recherche,
+                          onSubmitted: _lancer,
+                          decoration: InputDecoration(
+                            isDense: true,
+                            hintText: t.nav.admin.rechercheIndication,
+                            // AD-11 (1.4.4) : a 200 %, l'indication passe a la
+                            // ligne au lieu d'etre coupee.
+                            hintMaxLines: 2,
+                            prefixIcon: Icon(AppIcons.recherche.repos),
+                          ),
+                        ),
+                      ),
+                    ),
+                  Ecart.hSm,
+                  _BoutonCompte(onCompte: widget.onCompte),
+                ],
+              );
+            },
           ),
         ),
       ),
