@@ -402,6 +402,19 @@ void main() {
       await _capturer(tester, 'o2_texte200_390x844@2_light');
     });
 
+    // PAGESHELL-200-1 : barre entiere dans la zone sure au premier affichage.
+    testWidgets('texte a 200 % 320x844 @2', (WidgetTester tester) async {
+      fixerVueCapture(tester, const Size(320, 844), 2, zoneSure: _zoneSure);
+      await _monterSalle(tester, echelleTexte: 2);
+      await _capturer(tester, 'o2_texte200_320x844@2_light');
+    });
+
+    testWidgets('texte a 200 % 390x844 @2, rtl', (WidgetTester tester) async {
+      fixerVueCapture(tester, const Size(390, 844), 2, zoneSure: _zoneSure);
+      await _monterSalle(tester, echelleTexte: 2, sens: TextDirection.rtl);
+      await _capturer(tester, 'o2_texte200_390x844@2_light_rtl');
+    });
+
     testWidgets(
       'planche : salle mobile claire contre la maquette V8 M4',
       skip: _maquetteM4 == null,
