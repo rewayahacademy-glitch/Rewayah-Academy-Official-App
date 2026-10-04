@@ -10,8 +10,8 @@
       "titre": "L'habillage général de l'espace admin (menu, recherche, thème)",
       "gabarit": "AdminShell sur PageShell",
       "composants_partages": ["AdminShell", "PageShell", "ActionsEnteteCoquille", "BasculeTheme"],
+      "note": "AD-M2-PLANCHE : AD-S\\coque_admin_dossiers_390x844@3_light.png est retirée d'ici, car elle est identique octet à octet (sha256 7940547e…) à AD-5\\ad5_file_390x844@3_light.png, gardée dans 02A_file. Le fichier reste sur le disque.",
       "captures": [
-        "AD-S\\coque_admin_dossiers_390x844@3_light.png",
         "AD-S\\coque_admin_dossiers_390x844@3_dark.png",
         "AD-S\\coque_admin_dossiers_1440x900@1_light.png",
         "AD-S\\coque_admin_dossiers_1440x900@1_dark.png"
@@ -58,6 +58,7 @@
       "titre": "La fiche quand des vérifications manquent encore",
       "gabarit": "PageShell (détail, carte Vérifications non cochée)",
       "composants_partages": ["PageShell", "LigneRubrique", "Pressable (case à cocher)", "EtatSysteme"],
+      "note": "AD-M2-PLANCHE : les captures HL-A-5/verifications_incompletes_* ne sont pas utilisées ici, car elles sont identiques octet à octet à HL-A-5/fiche_dossier_* (6 paires, sha256 vérifié). Les captures AD-6 listées ici sont distinctes de celles de la fiche (02B_revue). Voir NOTE_AD-M2-PLANCHE.md.",
       "captures": [
         "AD-6\\ad6_verifications_incompletes_390x844@3_light.png",
         "AD-6\\ad6_verifications_incompletes_390x844@3_dark.png",
@@ -175,26 +176,32 @@
     },
     {
       "id": "attente_refuse",
-      "titre": "Le portail d'attente après un refus",
-      "gabarit": "PageShell (portail d'attente du titulaire, motif public affiché)",
+      "titre": "Le portail d'attente après un refus (écran 13 de HL-A-5)",
+      "gabarit": "PageShell (portail /attente du titulaire, motif public affiché, Actualiser sous la carte d'état)",
       "composants_partages": ["PageShell", "EtatSysteme", "StatusPill"],
+      "note": "AD-M2-PLANCHE : remplace AD-10\\ad10_4_attente_refus_* (écran /attente d'avant K-42 et K-47) par captures/HL-A-5/portail_apres_refus_*, comme le demande REVUE_AD-R (M2).",
       "captures": [
-        "AD-10\\ad10_4_attente_refus_390x844@3_light.png",
-        "AD-10\\ad10_4_attente_refus_390x844@3_dark.png",
-        "AD-10\\ad10_4_attente_refus_1440x900@1_light.png",
-        "AD-10\\ad10_4_attente_refus_1440x900@1_dark.png"
+        "HL-A-5\\portail_apres_refus_telephone_clair.png",
+        "HL-A-5\\portail_apres_refus_telephone_sombre.png",
+        "HL-A-5\\portail_apres_refus_tablette_clair.png",
+        "HL-A-5\\portail_apres_refus_tablette_sombre.png",
+        "HL-A-5\\portail_apres_refus_ordinateur_clair.png",
+        "HL-A-5\\portail_apres_refus_ordinateur_sombre.png"
       ]
     },
     {
       "id": "retour_apres_validation",
-      "titre": "Le portail d'attente après une validation",
-      "gabarit": "PageShell (portail d'attente du titulaire, relecture au retour)",
-      "composants_partages": ["PageShell", "EtatSysteme", "LocalFeedback"],
+      "titre": "Le retour d'un enseignant sur son accueil après la validation de son dossier (écran 14 de HL-A-5)",
+      "gabarit": "Accueil enseignant /enseignant, atteint depuis /attente à la reprise en premier plan (hors du portail /attente)",
+      "composants_partages": ["PageShell"],
+      "note": "AD-M2-PLANCHE : remplace AD-10\\ad10_8_retour_valide_* (écran /attente d'avant K-42 et K-47) par captures/HL-A-5/retour_apres_validation_hors_portee_*, nom actuel de cet écran dans le test de capture (K-47 : le retour après validation est celui d'un enseignant). Les anciens HL-A-5/retour_apres_validation_* sans « hors_portee » ne sont plus produits depuis K-47 et ont été retirés. Cet écran manque à la planche publiée (VERIF-AD-2 LOT-3, écart 2) : voir NOTE_AD-M2-PLANCHE.md.",
       "captures": [
-        "AD-10\\ad10_8_retour_valide_390x844@3_light.png",
-        "AD-10\\ad10_8_retour_valide_390x844@3_dark.png",
-        "AD-10\\ad10_8_retour_valide_1440x900@1_light.png",
-        "AD-10\\ad10_8_retour_valide_1440x900@1_dark.png"
+        "HL-A-5\\retour_apres_validation_hors_portee_telephone_clair.png",
+        "HL-A-5\\retour_apres_validation_hors_portee_telephone_sombre.png",
+        "HL-A-5\\retour_apres_validation_hors_portee_tablette_clair.png",
+        "HL-A-5\\retour_apres_validation_hors_portee_tablette_sombre.png",
+        "HL-A-5\\retour_apres_validation_hors_portee_ordinateur_clair.png",
+        "HL-A-5\\retour_apres_validation_hors_portee_ordinateur_sombre.png"
       ]
     },
     {
