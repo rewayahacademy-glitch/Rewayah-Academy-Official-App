@@ -4646,5 +4646,168 @@
         "emancipation": "Émancipation d'un élève devenu adulte : non construite dans cette vague."
       }
     }
+  },
+  "com": {
+    "socle": {
+      "composants": {
+        "badge": {
+          "nonLuUn": "1 non lu",
+          "nonLus": "{nombre} non lus",
+          "nonLusSemantique": "{nombre} éléments non lus",
+          "information": "Information",
+          "aLire": "À lire",
+          "actionRequise": "@:com.socle.lexique.actionRequise",
+          "urgent": "Urgent",
+          "mention": "Mention",
+          "mentionSemantique": "Une mention vous concerne"
+        },
+        "pieceJointe": {
+          "joindre": "Joindre un fichier",
+          "joindreIndisponible": "L'ajout de fichiers n'est pas encore disponible ici.",
+          "ouvrir": "Ouvrir {nom}",
+          "retirer": "Retirer {nom}",
+          "tailleOctets": "{taille} octets",
+          "tailleKo": "{taille} Ko",
+          "tailleMo": "{taille} Mo",
+          "autorisee": "Prêt à envoyer",
+          "tropVolumineuse": "Fichier trop lourd",
+          "tropVolumineuseDetail": "Ce fichier dépasse la taille autorisée. Choisissez un fichier plus léger.",
+          "typeInterdit": "Type de fichier refusé",
+          "typeInterditDetail": "Ce type de fichier n'est pas accepté ici. Choisissez un autre format.",
+          "enCours": "Envoi en cours",
+          "envoyee": "Envoyé",
+          "echec": "Non confirmé",
+          "erreurEnvoi": "L'envoi de ce fichier n'a pas encore été confirmé. Réessayez dans un instant.",
+          "indisponible": "Pièce indisponible",
+          "indisponibleDetail": "Ce fichier n'est plus disponible. Demandez à la personne qui l'a partagé de le renvoyer."
+        },
+        "composer": {
+          "message": "Message",
+          "aide": "Écrire un message",
+          "envoyer": "Envoyer",
+          "champVide": "Écrivez un message pour l'envoyer.",
+          "vocal": "Message vocal",
+          "vocalAVenir": "Message vocal bientôt disponible",
+          "enCours": "Envoi en cours",
+          "envoye": "Envoyé",
+          "nonConfirme": "Ce message n'a pas encore été confirmé.",
+          "reessayer": "Réessayer",
+          "auteurSoi": "Vous",
+          "brouillon": "@:com.socle.lexique.brouillon",
+          "brouillonRestaure": "Brouillon restauré"
+        },
+        "etats": {
+          "chargement": "Chargement en cours",
+          "videTitre": "Rien ici pour le moment",
+          "erreurTitre": "Impossible de charger ce contenu.",
+          "erreur": "Impossible de charger ce contenu. Vérifiez votre connexion, puis réessayez.",
+          "reessayer": "Réessayer",
+          "horsLigne": "Vous êtes hors ligne. Les nouveaux messages ne peuvent pas être actualisés.",
+          "indisponibleTitre": "Pas encore disponible",
+          "indisponible": "Cette fonction n'est pas encore disponible ici. Elle s'ouvrira dès que le service sera prêt.",
+          "permissionRefusee": "Vous n'avez pas accès à ce contenu."
+        },
+        "espace": {
+          "ouvrirPanneau": "Ouvrir le panneau de contexte",
+          "fermerPanneau": "Fermer le panneau de contexte",
+          "panneauContexte": "Contexte",
+          "retourListe": "Retour à la liste"
+        }
+      },
+      "lexique": {
+        "messages": "Messages",
+        "messagesMetier": "Messages métier",
+        "communaute": "Communauté enseignants",
+        "studio": "Le Studio",
+        "aujourdhui": "Aujourd'hui",
+        "notifications": "Notifications",
+        "annonce": "Annonce",
+        "publication": "Publication",
+        "reponse": "Réponse",
+        "enregistrer": "Enregistrer",
+        "signaler": "Signaler",
+        "modeFocus": "Mode focus",
+        "quitterFocus": "Quitter le focus",
+        "aTraiter": "À traiter",
+        "actionRequise": "Action requise",
+        "brouillon": "Brouillon",
+        "elementsEpingles": "Éléments épinglés",
+        "fichiersPartages": "Fichiers partagés"
+      },
+      "motifs": {
+        "titre": "Pourquoi signalez-vous ce contenu ?",
+        "publicite": "Publicité",
+        "lienAffilie": "Lien affilié",
+        "venteNonAutorisee": "Vente non autorisée",
+        "sollicitationCommerciale": "Sollicitation commerciale",
+        "horsSujet": "Contenu sans rapport avec la communauté",
+        "harcelement": "Harcèlement ou langage inapproprié",
+        "donneesPersonnelles": "Données personnelles d'un élève ou d'une famille",
+        "autre": "Autre contenu à examiner"
+      },
+      "signalement": {
+        "titre": "Signaler ce contenu",
+        "precision": "Précision facultative",
+        "envoyer": "Envoyer le signalement",
+        "confirme": "Le contenu a été signalé. Il sera examiné.",
+        "erreur": "Le signalement n'a pas encore été confirmé. Réessayez dans un instant.",
+        "indisponible": "Le signalement n'est pas encore disponible ici."
+      },
+      "enregistrement": {
+        "enregistrer": "@:com.socle.lexique.enregistrer",
+        "retirer": "Retirer des éléments enregistrés",
+        "enregistre": "Enregistré",
+        "indisponible": "L'enregistrement n'est pas encore disponible ici."
+      },
+      "navigation": {
+        "notifications": "@:com.socle.lexique.notifications",
+        "ouvrirNotifications": "Ouvrir les notifications",
+        "studio": "@:com.socle.lexique.studio",
+        "ouvrirStudio": "Ouvrir Le Studio",
+        "quitterStudio": "Quitter Le Studio",
+        "messages": "@:com.socle.lexique.messages",
+        "communaute": "@:com.socle.lexique.communaute",
+        "communications": "Communications",
+        "ongletAnnonces": "Annonces",
+        "ongletModeration": "Modération",
+        "ongletMessages": "@:com.socle.lexique.messages",
+        "bientot": "Bientôt disponible",
+        "provisoire": {
+          "messagesTitre": "@:com.socle.lexique.messages",
+          "messagesDetail": "Les messages liés à vos Classes arriveront bientôt dans cet espace.",
+          "communauteTitre": "@:com.socle.lexique.communaute",
+          "communauteDetail": "L'espace d'échange entre enseignants arrivera bientôt ici.",
+          "studioTitre": "@:com.socle.lexique.studio",
+          "studioDetail": "L'espace de travail de l'équipe arrivera bientôt ici.",
+          "administrationTitre": "Communications",
+          "administrationDetail": "Les annonces, la modération et les messages se géreront bientôt ici.",
+          "publierAnnonceTitre": "Publier une annonce",
+          "publierAnnonceDetail": "La publication d'une annonce pour une Classe arrivera bientôt ici."
+        },
+        "demo": {
+          "titre": "Démonstration des communications",
+          "detail": "Données fictives, absentes des versions de production.",
+          "choisir": "Choisissez un espace à essayer."
+        }
+      }
+    },
+    "messages": {
+      "titre": "@:com.socle.lexique.messagesMetier",
+      "vide": "Aucune conversation pour le moment."
+    },
+    "vocal": {
+      "titre": "Message vocal"
+    },
+    "communaute": {
+      "titre": "@:com.socle.lexique.communaute",
+      "vide": "Aucune publication dans cette catégorie."
+    },
+    "studio": {
+      "titre": "@:com.socle.lexique.studio",
+      "vide": "Aucune activité à traiter ici."
+    },
+    "annonces": {
+      "titre": "Annonces"
+    }
   }
 }

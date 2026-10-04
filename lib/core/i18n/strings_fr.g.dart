@@ -86,6 +86,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$galerie$fr galerie = Traductions$galerie$fr.internal(_root);
 	late final Traductions$tc$fr tc = Traductions$tc$fr.internal(_root);
 	late final Traductions$adulte$fr adulte = Traductions$adulte$fr.internal(_root);
+	late final Traductions$com$fr com = Traductions$com$fr.internal(_root);
 }
 
 // Path: commun
@@ -2384,6 +2385,21 @@ class Traductions$adulte$fr {
 	late final Traductions$adulte$sortie$fr sortie = Traductions$adulte$sortie$fr.internal(_root);
 	late final Traductions$adulte$reprise$fr reprise = Traductions$adulte$reprise$fr.internal(_root);
 	late final Traductions$adulte$demo$fr demo = Traductions$adulte$demo$fr.internal(_root);
+}
+
+// Path: com
+class Traductions$com$fr {
+	Traductions$com$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$com$socle$fr socle = Traductions$com$socle$fr.internal(_root);
+	late final Traductions$com$messages$fr messages = Traductions$com$messages$fr.internal(_root);
+	late final Traductions$com$vocal$fr vocal = Traductions$com$vocal$fr.internal(_root);
+	late final Traductions$com$communaute$fr communaute = Traductions$com$communaute$fr.internal(_root);
+	late final Traductions$com$studio$fr studio = Traductions$com$studio$fr.internal(_root);
+	late final Traductions$com$annonces$fr annonces = Traductions$com$annonces$fr.internal(_root);
 }
 
 // Path: commun.demonstration
@@ -11005,6 +11021,90 @@ class Traductions$adulte$demo$fr {
 	late final Traductions$adulte$demo$etats$fr etats = Traductions$adulte$demo$etats$fr.internal(_root);
 }
 
+// Path: com.socle
+class Traductions$com$socle$fr {
+	Traductions$com$socle$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$com$socle$composants$fr composants = Traductions$com$socle$composants$fr.internal(_root);
+	late final Traductions$com$socle$lexique$fr lexique = Traductions$com$socle$lexique$fr.internal(_root);
+	late final Traductions$com$socle$motifs$fr motifs = Traductions$com$socle$motifs$fr.internal(_root);
+	late final Traductions$com$socle$signalement$fr signalement = Traductions$com$socle$signalement$fr.internal(_root);
+	late final Traductions$com$socle$enregistrement$fr enregistrement = Traductions$com$socle$enregistrement$fr.internal(_root);
+	late final Traductions$com$socle$navigation$fr navigation = Traductions$com$socle$navigation$fr.internal(_root);
+}
+
+// Path: com.messages
+class Traductions$com$messages$fr {
+	Traductions$com$messages$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Messages métier'
+	String get titre => _root.com.socle.lexique.messagesMetier;
+
+	/// fr: 'Aucune conversation pour le moment.'
+	String get vide => 'Aucune conversation pour le moment.';
+}
+
+// Path: com.vocal
+class Traductions$com$vocal$fr {
+	Traductions$com$vocal$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Message vocal'
+	String get titre => 'Message vocal';
+}
+
+// Path: com.communaute
+class Traductions$com$communaute$fr {
+	Traductions$com$communaute$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Communauté enseignants'
+	String get titre => _root.com.socle.lexique.communaute;
+
+	/// fr: 'Aucune publication dans cette catégorie.'
+	String get vide => 'Aucune publication dans cette catégorie.';
+}
+
+// Path: com.studio
+class Traductions$com$studio$fr {
+	Traductions$com$studio$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le Studio'
+	String get titre => _root.com.socle.lexique.studio;
+
+	/// fr: 'Aucune activité à traiter ici.'
+	String get vide => 'Aucune activité à traiter ici.';
+}
+
+// Path: com.annonces
+class Traductions$com$annonces$fr {
+	Traductions$com$annonces$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Annonces'
+	String get titre => 'Annonces';
+}
+
 // Path: commun.etats.chargementProlonge
 class Traductions$commun$etats$chargementProlonge$fr {
 	Traductions$commun$etats$chargementProlonge$fr.internal(this._root);
@@ -14938,6 +15038,215 @@ class Traductions$adulte$demo$etats$fr {
 	String get emancipation => 'Émancipation d\'un élève devenu adulte : non construite dans cette vague.';
 }
 
+// Path: com.socle.composants
+class Traductions$com$socle$composants$fr {
+	Traductions$com$socle$composants$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$com$socle$composants$badge$fr badge = Traductions$com$socle$composants$badge$fr.internal(_root);
+	late final Traductions$com$socle$composants$pieceJointe$fr pieceJointe = Traductions$com$socle$composants$pieceJointe$fr.internal(_root);
+	late final Traductions$com$socle$composants$composer$fr composer = Traductions$com$socle$composants$composer$fr.internal(_root);
+	late final Traductions$com$socle$composants$etats$fr etats = Traductions$com$socle$composants$etats$fr.internal(_root);
+	late final Traductions$com$socle$composants$espace$fr espace = Traductions$com$socle$composants$espace$fr.internal(_root);
+}
+
+// Path: com.socle.lexique
+class Traductions$com$socle$lexique$fr {
+	Traductions$com$socle$lexique$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Messages'
+	String get messages => 'Messages';
+
+	/// fr: 'Messages métier'
+	String get messagesMetier => 'Messages métier';
+
+	/// fr: 'Communauté enseignants'
+	String get communaute => 'Communauté enseignants';
+
+	/// fr: 'Le Studio'
+	String get studio => 'Le Studio';
+
+	/// fr: 'Aujourd'hui'
+	String get aujourdhui => 'Aujourd\'hui';
+
+	/// fr: 'Notifications'
+	String get notifications => 'Notifications';
+
+	/// fr: 'Annonce'
+	String get annonce => 'Annonce';
+
+	/// fr: 'Publication'
+	String get publication => 'Publication';
+
+	/// fr: 'Réponse'
+	String get reponse => 'Réponse';
+
+	/// fr: 'Enregistrer'
+	String get enregistrer => 'Enregistrer';
+
+	/// fr: 'Signaler'
+	String get signaler => 'Signaler';
+
+	/// fr: 'Mode focus'
+	String get modeFocus => 'Mode focus';
+
+	/// fr: 'Quitter le focus'
+	String get quitterFocus => 'Quitter le focus';
+
+	/// fr: 'À traiter'
+	String get aTraiter => 'À traiter';
+
+	/// fr: 'Action requise'
+	String get actionRequise => 'Action requise';
+
+	/// fr: 'Brouillon'
+	String get brouillon => 'Brouillon';
+
+	/// fr: 'Éléments épinglés'
+	String get elementsEpingles => 'Éléments épinglés';
+
+	/// fr: 'Fichiers partagés'
+	String get fichiersPartages => 'Fichiers partagés';
+}
+
+// Path: com.socle.motifs
+class Traductions$com$socle$motifs$fr {
+	Traductions$com$socle$motifs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pourquoi signalez-vous ce contenu ?'
+	String get titre => 'Pourquoi signalez-vous ce contenu ?';
+
+	/// fr: 'Publicité'
+	String get publicite => 'Publicité';
+
+	/// fr: 'Lien affilié'
+	String get lienAffilie => 'Lien affilié';
+
+	/// fr: 'Vente non autorisée'
+	String get venteNonAutorisee => 'Vente non autorisée';
+
+	/// fr: 'Sollicitation commerciale'
+	String get sollicitationCommerciale => 'Sollicitation commerciale';
+
+	/// fr: 'Contenu sans rapport avec la communauté'
+	String get horsSujet => 'Contenu sans rapport avec la communauté';
+
+	/// fr: 'Harcèlement ou langage inapproprié'
+	String get harcelement => 'Harcèlement ou langage inapproprié';
+
+	/// fr: 'Données personnelles d'un élève ou d'une famille'
+	String get donneesPersonnelles => 'Données personnelles d\'un élève ou d\'une famille';
+
+	/// fr: 'Autre contenu à examiner'
+	String get autre => 'Autre contenu à examiner';
+}
+
+// Path: com.socle.signalement
+class Traductions$com$socle$signalement$fr {
+	Traductions$com$socle$signalement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Signaler ce contenu'
+	String get titre => 'Signaler ce contenu';
+
+	/// fr: 'Précision facultative'
+	String get precision => 'Précision facultative';
+
+	/// fr: 'Envoyer le signalement'
+	String get envoyer => 'Envoyer le signalement';
+
+	/// fr: 'Le contenu a été signalé. Il sera examiné.'
+	String get confirme => 'Le contenu a été signalé. Il sera examiné.';
+
+	/// fr: 'Le signalement n'a pas encore été confirmé. Réessayez dans un instant.'
+	String get erreur => 'Le signalement n\'a pas encore été confirmé. Réessayez dans un instant.';
+
+	/// fr: 'Le signalement n'est pas encore disponible ici.'
+	String get indisponible => 'Le signalement n\'est pas encore disponible ici.';
+}
+
+// Path: com.socle.enregistrement
+class Traductions$com$socle$enregistrement$fr {
+	Traductions$com$socle$enregistrement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Enregistrer'
+	String get enregistrer => _root.com.socle.lexique.enregistrer;
+
+	/// fr: 'Retirer des éléments enregistrés'
+	String get retirer => 'Retirer des éléments enregistrés';
+
+	/// fr: 'Enregistré'
+	String get enregistre => 'Enregistré';
+
+	/// fr: 'L'enregistrement n'est pas encore disponible ici.'
+	String get indisponible => 'L\'enregistrement n\'est pas encore disponible ici.';
+}
+
+// Path: com.socle.navigation
+class Traductions$com$socle$navigation$fr {
+	Traductions$com$socle$navigation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Notifications'
+	String get notifications => _root.com.socle.lexique.notifications;
+
+	/// fr: 'Ouvrir les notifications'
+	String get ouvrirNotifications => 'Ouvrir les notifications';
+
+	/// fr: 'Le Studio'
+	String get studio => _root.com.socle.lexique.studio;
+
+	/// fr: 'Ouvrir Le Studio'
+	String get ouvrirStudio => 'Ouvrir Le Studio';
+
+	/// fr: 'Quitter Le Studio'
+	String get quitterStudio => 'Quitter Le Studio';
+
+	/// fr: 'Messages'
+	String get messages => _root.com.socle.lexique.messages;
+
+	/// fr: 'Communauté enseignants'
+	String get communaute => _root.com.socle.lexique.communaute;
+
+	/// fr: 'Communications'
+	String get communications => 'Communications';
+
+	/// fr: 'Annonces'
+	String get ongletAnnonces => 'Annonces';
+
+	/// fr: 'Modération'
+	String get ongletModeration => 'Modération';
+
+	/// fr: 'Messages'
+	String get ongletMessages => _root.com.socle.lexique.messages;
+
+	/// fr: 'Bientôt disponible'
+	String get bientot => 'Bientôt disponible';
+
+	late final Traductions$com$socle$navigation$provisoire$fr provisoire = Traductions$com$socle$navigation$provisoire$fr.internal(_root);
+	late final Traductions$com$socle$navigation$demo$fr demo = Traductions$com$socle$navigation$demo$fr.internal(_root);
+}
+
 // Path: salle.preparation.eleve.guidee
 class Traductions$salle$preparation$eleve$guidee$fr {
 	Traductions$salle$preparation$eleve$guidee$fr.internal(this._root);
@@ -15347,6 +15656,267 @@ class Traductions$tc$parcours$signalement$categorieValeur$fr {
 
 	/// fr: 'Autre'
 	String get autre => 'Autre';
+}
+
+// Path: com.socle.composants.badge
+class Traductions$com$socle$composants$badge$fr {
+	Traductions$com$socle$composants$badge$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '1 non lu'
+	String get nonLuUn => '1 non lu';
+
+	/// fr: '{nombre} non lus'
+	String nonLus({required Object nombre}) => '${nombre} non lus';
+
+	/// fr: '{nombre} éléments non lus'
+	String nonLusSemantique({required Object nombre}) => '${nombre} éléments non lus';
+
+	/// fr: 'Information'
+	String get information => 'Information';
+
+	/// fr: 'À lire'
+	String get aLire => 'À lire';
+
+	/// fr: 'Action requise'
+	String get actionRequise => _root.com.socle.lexique.actionRequise;
+
+	/// fr: 'Urgent'
+	String get urgent => 'Urgent';
+
+	/// fr: 'Mention'
+	String get mention => 'Mention';
+
+	/// fr: 'Une mention vous concerne'
+	String get mentionSemantique => 'Une mention vous concerne';
+}
+
+// Path: com.socle.composants.pieceJointe
+class Traductions$com$socle$composants$pieceJointe$fr {
+	Traductions$com$socle$composants$pieceJointe$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Joindre un fichier'
+	String get joindre => 'Joindre un fichier';
+
+	/// fr: 'L'ajout de fichiers n'est pas encore disponible ici.'
+	String get joindreIndisponible => 'L\'ajout de fichiers n\'est pas encore disponible ici.';
+
+	/// fr: 'Ouvrir {nom}'
+	String ouvrir({required Object nom}) => 'Ouvrir ${nom}';
+
+	/// fr: 'Retirer {nom}'
+	String retirer({required Object nom}) => 'Retirer ${nom}';
+
+	/// fr: '{taille} octets'
+	String tailleOctets({required Object taille}) => '${taille} octets';
+
+	/// fr: '{taille} Ko'
+	String tailleKo({required Object taille}) => '${taille} Ko';
+
+	/// fr: '{taille} Mo'
+	String tailleMo({required Object taille}) => '${taille} Mo';
+
+	/// fr: 'Prêt à envoyer'
+	String get autorisee => 'Prêt à envoyer';
+
+	/// fr: 'Fichier trop lourd'
+	String get tropVolumineuse => 'Fichier trop lourd';
+
+	/// fr: 'Ce fichier dépasse la taille autorisée. Choisissez un fichier plus léger.'
+	String get tropVolumineuseDetail => 'Ce fichier dépasse la taille autorisée. Choisissez un fichier plus léger.';
+
+	/// fr: 'Type de fichier refusé'
+	String get typeInterdit => 'Type de fichier refusé';
+
+	/// fr: 'Ce type de fichier n'est pas accepté ici. Choisissez un autre format.'
+	String get typeInterditDetail => 'Ce type de fichier n\'est pas accepté ici. Choisissez un autre format.';
+
+	/// fr: 'Envoi en cours'
+	String get enCours => 'Envoi en cours';
+
+	/// fr: 'Envoyé'
+	String get envoyee => 'Envoyé';
+
+	/// fr: 'Non confirmé'
+	String get echec => 'Non confirmé';
+
+	/// fr: 'L'envoi de ce fichier n'a pas encore été confirmé. Réessayez dans un instant.'
+	String get erreurEnvoi => 'L\'envoi de ce fichier n\'a pas encore été confirmé. Réessayez dans un instant.';
+
+	/// fr: 'Pièce indisponible'
+	String get indisponible => 'Pièce indisponible';
+
+	/// fr: 'Ce fichier n'est plus disponible. Demandez à la personne qui l'a partagé de le renvoyer.'
+	String get indisponibleDetail => 'Ce fichier n\'est plus disponible. Demandez à la personne qui l\'a partagé de le renvoyer.';
+}
+
+// Path: com.socle.composants.composer
+class Traductions$com$socle$composants$composer$fr {
+	Traductions$com$socle$composants$composer$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Message'
+	String get message => 'Message';
+
+	/// fr: 'Écrire un message'
+	String get aide => 'Écrire un message';
+
+	/// fr: 'Envoyer'
+	String get envoyer => 'Envoyer';
+
+	/// fr: 'Écrivez un message pour l'envoyer.'
+	String get champVide => 'Écrivez un message pour l\'envoyer.';
+
+	/// fr: 'Message vocal'
+	String get vocal => 'Message vocal';
+
+	/// fr: 'Message vocal bientôt disponible'
+	String get vocalAVenir => 'Message vocal bientôt disponible';
+
+	/// fr: 'Envoi en cours'
+	String get enCours => 'Envoi en cours';
+
+	/// fr: 'Envoyé'
+	String get envoye => 'Envoyé';
+
+	/// fr: 'Ce message n'a pas encore été confirmé.'
+	String get nonConfirme => 'Ce message n\'a pas encore été confirmé.';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+
+	/// fr: 'Vous'
+	String get auteurSoi => 'Vous';
+
+	/// fr: 'Brouillon'
+	String get brouillon => _root.com.socle.lexique.brouillon;
+
+	/// fr: 'Brouillon restauré'
+	String get brouillonRestaure => 'Brouillon restauré';
+}
+
+// Path: com.socle.composants.etats
+class Traductions$com$socle$composants$etats$fr {
+	Traductions$com$socle$composants$etats$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Chargement en cours'
+	String get chargement => 'Chargement en cours';
+
+	/// fr: 'Rien ici pour le moment'
+	String get videTitre => 'Rien ici pour le moment';
+
+	/// fr: 'Impossible de charger ce contenu.'
+	String get erreurTitre => 'Impossible de charger ce contenu.';
+
+	/// fr: 'Impossible de charger ce contenu. Vérifiez votre connexion, puis réessayez.'
+	String get erreur => 'Impossible de charger ce contenu. Vérifiez votre connexion, puis réessayez.';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+
+	/// fr: 'Vous êtes hors ligne. Les nouveaux messages ne peuvent pas être actualisés.'
+	String get horsLigne => 'Vous êtes hors ligne. Les nouveaux messages ne peuvent pas être actualisés.';
+
+	/// fr: 'Pas encore disponible'
+	String get indisponibleTitre => 'Pas encore disponible';
+
+	/// fr: 'Cette fonction n'est pas encore disponible ici. Elle s'ouvrira dès que le service sera prêt.'
+	String get indisponible => 'Cette fonction n\'est pas encore disponible ici. Elle s\'ouvrira dès que le service sera prêt.';
+
+	/// fr: 'Vous n'avez pas accès à ce contenu.'
+	String get permissionRefusee => 'Vous n\'avez pas accès à ce contenu.';
+}
+
+// Path: com.socle.composants.espace
+class Traductions$com$socle$composants$espace$fr {
+	Traductions$com$socle$composants$espace$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ouvrir le panneau de contexte'
+	String get ouvrirPanneau => 'Ouvrir le panneau de contexte';
+
+	/// fr: 'Fermer le panneau de contexte'
+	String get fermerPanneau => 'Fermer le panneau de contexte';
+
+	/// fr: 'Contexte'
+	String get panneauContexte => 'Contexte';
+
+	/// fr: 'Retour à la liste'
+	String get retourListe => 'Retour à la liste';
+}
+
+// Path: com.socle.navigation.provisoire
+class Traductions$com$socle$navigation$provisoire$fr {
+	Traductions$com$socle$navigation$provisoire$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Messages'
+	String get messagesTitre => _root.com.socle.lexique.messages;
+
+	/// fr: 'Les messages liés à vos Classes arriveront bientôt dans cet espace.'
+	String get messagesDetail => 'Les messages liés à vos Classes arriveront bientôt dans cet espace.';
+
+	/// fr: 'Communauté enseignants'
+	String get communauteTitre => _root.com.socle.lexique.communaute;
+
+	/// fr: 'L'espace d'échange entre enseignants arrivera bientôt ici.'
+	String get communauteDetail => 'L\'espace d\'échange entre enseignants arrivera bientôt ici.';
+
+	/// fr: 'Le Studio'
+	String get studioTitre => _root.com.socle.lexique.studio;
+
+	/// fr: 'L'espace de travail de l'équipe arrivera bientôt ici.'
+	String get studioDetail => 'L\'espace de travail de l\'équipe arrivera bientôt ici.';
+
+	/// fr: 'Communications'
+	String get administrationTitre => 'Communications';
+
+	/// fr: 'Les annonces, la modération et les messages se géreront bientôt ici.'
+	String get administrationDetail => 'Les annonces, la modération et les messages se géreront bientôt ici.';
+
+	/// fr: 'Publier une annonce'
+	String get publierAnnonceTitre => 'Publier une annonce';
+
+	/// fr: 'La publication d'une annonce pour une Classe arrivera bientôt ici.'
+	String get publierAnnonceDetail => 'La publication d\'une annonce pour une Classe arrivera bientôt ici.';
+}
+
+// Path: com.socle.navigation.demo
+class Traductions$com$socle$navigation$demo$fr {
+	Traductions$com$socle$navigation$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Démonstration des communications'
+	String get titre => 'Démonstration des communications';
+
+	/// fr: 'Données fictives, absentes des versions de production.'
+	String get detail => 'Données fictives, absentes des versions de production.';
+
+	/// fr: 'Choisissez un espace à essayer.'
+	String get choisir => 'Choisissez un espace à essayer.';
 }
 
 /// The flat map containing all translations for locale <fr>.
@@ -19284,6 +19854,129 @@ extension on Traductions {
 			'adulte.demo.etats.doubleSoumission' => 'La même action a été envoyée deux fois.',
 			'adulte.demo.etats.notificationDansLApplication' => 'La notification n\'a pas pu partir sur le téléphone, elle reste visible dans l\'application.',
 			'adulte.demo.etats.emancipation' => 'Émancipation d\'un élève devenu adulte : non construite dans cette vague.',
+			'com.socle.composants.badge.nonLuUn' => '1 non lu',
+			'com.socle.composants.badge.nonLus' => ({required Object nombre}) => '${nombre} non lus',
+			'com.socle.composants.badge.nonLusSemantique' => ({required Object nombre}) => '${nombre} éléments non lus',
+			'com.socle.composants.badge.information' => 'Information',
+			'com.socle.composants.badge.aLire' => 'À lire',
+			'com.socle.composants.badge.actionRequise' => _root.com.socle.lexique.actionRequise,
+			'com.socle.composants.badge.urgent' => 'Urgent',
+			'com.socle.composants.badge.mention' => 'Mention',
+			'com.socle.composants.badge.mentionSemantique' => 'Une mention vous concerne',
+			'com.socle.composants.pieceJointe.joindre' => 'Joindre un fichier',
+			'com.socle.composants.pieceJointe.joindreIndisponible' => 'L\'ajout de fichiers n\'est pas encore disponible ici.',
+			'com.socle.composants.pieceJointe.ouvrir' => ({required Object nom}) => 'Ouvrir ${nom}',
+			'com.socle.composants.pieceJointe.retirer' => ({required Object nom}) => 'Retirer ${nom}',
+			'com.socle.composants.pieceJointe.tailleOctets' => ({required Object taille}) => '${taille} octets',
+			'com.socle.composants.pieceJointe.tailleKo' => ({required Object taille}) => '${taille} Ko',
+			'com.socle.composants.pieceJointe.tailleMo' => ({required Object taille}) => '${taille} Mo',
+			'com.socle.composants.pieceJointe.autorisee' => 'Prêt à envoyer',
+			'com.socle.composants.pieceJointe.tropVolumineuse' => 'Fichier trop lourd',
+			'com.socle.composants.pieceJointe.tropVolumineuseDetail' => 'Ce fichier dépasse la taille autorisée. Choisissez un fichier plus léger.',
+			'com.socle.composants.pieceJointe.typeInterdit' => 'Type de fichier refusé',
+			'com.socle.composants.pieceJointe.typeInterditDetail' => 'Ce type de fichier n\'est pas accepté ici. Choisissez un autre format.',
+			'com.socle.composants.pieceJointe.enCours' => 'Envoi en cours',
+			'com.socle.composants.pieceJointe.envoyee' => 'Envoyé',
+			'com.socle.composants.pieceJointe.echec' => 'Non confirmé',
+			'com.socle.composants.pieceJointe.erreurEnvoi' => 'L\'envoi de ce fichier n\'a pas encore été confirmé. Réessayez dans un instant.',
+			'com.socle.composants.pieceJointe.indisponible' => 'Pièce indisponible',
+			'com.socle.composants.pieceJointe.indisponibleDetail' => 'Ce fichier n\'est plus disponible. Demandez à la personne qui l\'a partagé de le renvoyer.',
+			'com.socle.composants.composer.message' => 'Message',
+			'com.socle.composants.composer.aide' => 'Écrire un message',
+			'com.socle.composants.composer.envoyer' => 'Envoyer',
+			'com.socle.composants.composer.champVide' => 'Écrivez un message pour l\'envoyer.',
+			'com.socle.composants.composer.vocal' => 'Message vocal',
+			'com.socle.composants.composer.vocalAVenir' => 'Message vocal bientôt disponible',
+			'com.socle.composants.composer.enCours' => 'Envoi en cours',
+			'com.socle.composants.composer.envoye' => 'Envoyé',
+			'com.socle.composants.composer.nonConfirme' => 'Ce message n\'a pas encore été confirmé.',
+			'com.socle.composants.composer.reessayer' => 'Réessayer',
+			'com.socle.composants.composer.auteurSoi' => 'Vous',
+			'com.socle.composants.composer.brouillon' => _root.com.socle.lexique.brouillon,
+			'com.socle.composants.composer.brouillonRestaure' => 'Brouillon restauré',
+			'com.socle.composants.etats.chargement' => 'Chargement en cours',
+			'com.socle.composants.etats.videTitre' => 'Rien ici pour le moment',
+			'com.socle.composants.etats.erreurTitre' => 'Impossible de charger ce contenu.',
+			'com.socle.composants.etats.erreur' => 'Impossible de charger ce contenu. Vérifiez votre connexion, puis réessayez.',
+			'com.socle.composants.etats.reessayer' => 'Réessayer',
+			'com.socle.composants.etats.horsLigne' => 'Vous êtes hors ligne. Les nouveaux messages ne peuvent pas être actualisés.',
+			'com.socle.composants.etats.indisponibleTitre' => 'Pas encore disponible',
+			'com.socle.composants.etats.indisponible' => 'Cette fonction n\'est pas encore disponible ici. Elle s\'ouvrira dès que le service sera prêt.',
+			'com.socle.composants.etats.permissionRefusee' => 'Vous n\'avez pas accès à ce contenu.',
+			'com.socle.composants.espace.ouvrirPanneau' => 'Ouvrir le panneau de contexte',
+			'com.socle.composants.espace.fermerPanneau' => 'Fermer le panneau de contexte',
+			'com.socle.composants.espace.panneauContexte' => 'Contexte',
+			'com.socle.composants.espace.retourListe' => 'Retour à la liste',
+			'com.socle.lexique.messages' => 'Messages',
+			'com.socle.lexique.messagesMetier' => 'Messages métier',
+			'com.socle.lexique.communaute' => 'Communauté enseignants',
+			'com.socle.lexique.studio' => 'Le Studio',
+			'com.socle.lexique.aujourdhui' => 'Aujourd\'hui',
+			'com.socle.lexique.notifications' => 'Notifications',
+			'com.socle.lexique.annonce' => 'Annonce',
+			'com.socle.lexique.publication' => 'Publication',
+			'com.socle.lexique.reponse' => 'Réponse',
+			'com.socle.lexique.enregistrer' => 'Enregistrer',
+			'com.socle.lexique.signaler' => 'Signaler',
+			'com.socle.lexique.modeFocus' => 'Mode focus',
+			'com.socle.lexique.quitterFocus' => 'Quitter le focus',
+			'com.socle.lexique.aTraiter' => 'À traiter',
+			'com.socle.lexique.actionRequise' => 'Action requise',
+			'com.socle.lexique.brouillon' => 'Brouillon',
+			'com.socle.lexique.elementsEpingles' => 'Éléments épinglés',
+			'com.socle.lexique.fichiersPartages' => 'Fichiers partagés',
+			'com.socle.motifs.titre' => 'Pourquoi signalez-vous ce contenu ?',
+			'com.socle.motifs.publicite' => 'Publicité',
+			'com.socle.motifs.lienAffilie' => 'Lien affilié',
+			'com.socle.motifs.venteNonAutorisee' => 'Vente non autorisée',
+			'com.socle.motifs.sollicitationCommerciale' => 'Sollicitation commerciale',
+			'com.socle.motifs.horsSujet' => 'Contenu sans rapport avec la communauté',
+			'com.socle.motifs.harcelement' => 'Harcèlement ou langage inapproprié',
+			'com.socle.motifs.donneesPersonnelles' => 'Données personnelles d\'un élève ou d\'une famille',
+			'com.socle.motifs.autre' => 'Autre contenu à examiner',
+			'com.socle.signalement.titre' => 'Signaler ce contenu',
+			'com.socle.signalement.precision' => 'Précision facultative',
+			'com.socle.signalement.envoyer' => 'Envoyer le signalement',
+			'com.socle.signalement.confirme' => 'Le contenu a été signalé. Il sera examiné.',
+			'com.socle.signalement.erreur' => 'Le signalement n\'a pas encore été confirmé. Réessayez dans un instant.',
+			'com.socle.signalement.indisponible' => 'Le signalement n\'est pas encore disponible ici.',
+			'com.socle.enregistrement.enregistrer' => _root.com.socle.lexique.enregistrer,
+			'com.socle.enregistrement.retirer' => 'Retirer des éléments enregistrés',
+			'com.socle.enregistrement.enregistre' => 'Enregistré',
+			'com.socle.enregistrement.indisponible' => 'L\'enregistrement n\'est pas encore disponible ici.',
+			'com.socle.navigation.notifications' => _root.com.socle.lexique.notifications,
+			'com.socle.navigation.ouvrirNotifications' => 'Ouvrir les notifications',
+			'com.socle.navigation.studio' => _root.com.socle.lexique.studio,
+			'com.socle.navigation.ouvrirStudio' => 'Ouvrir Le Studio',
+			'com.socle.navigation.quitterStudio' => 'Quitter Le Studio',
+			'com.socle.navigation.messages' => _root.com.socle.lexique.messages,
+			'com.socle.navigation.communaute' => _root.com.socle.lexique.communaute,
+			'com.socle.navigation.communications' => 'Communications',
+			'com.socle.navigation.ongletAnnonces' => 'Annonces',
+			'com.socle.navigation.ongletModeration' => 'Modération',
+			'com.socle.navigation.ongletMessages' => _root.com.socle.lexique.messages,
+			'com.socle.navigation.bientot' => 'Bientôt disponible',
+			'com.socle.navigation.provisoire.messagesTitre' => _root.com.socle.lexique.messages,
+			'com.socle.navigation.provisoire.messagesDetail' => 'Les messages liés à vos Classes arriveront bientôt dans cet espace.',
+			'com.socle.navigation.provisoire.communauteTitre' => _root.com.socle.lexique.communaute,
+			'com.socle.navigation.provisoire.communauteDetail' => 'L\'espace d\'échange entre enseignants arrivera bientôt ici.',
+			'com.socle.navigation.provisoire.studioTitre' => _root.com.socle.lexique.studio,
+			'com.socle.navigation.provisoire.studioDetail' => 'L\'espace de travail de l\'équipe arrivera bientôt ici.',
+			'com.socle.navigation.provisoire.administrationTitre' => 'Communications',
+			'com.socle.navigation.provisoire.administrationDetail' => 'Les annonces, la modération et les messages se géreront bientôt ici.',
+			'com.socle.navigation.provisoire.publierAnnonceTitre' => 'Publier une annonce',
+			'com.socle.navigation.provisoire.publierAnnonceDetail' => 'La publication d\'une annonce pour une Classe arrivera bientôt ici.',
+			'com.socle.navigation.demo.titre' => 'Démonstration des communications',
+			'com.socle.navigation.demo.detail' => 'Données fictives, absentes des versions de production.',
+			'com.socle.navigation.demo.choisir' => 'Choisissez un espace à essayer.',
+			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
+			'com.messages.vide' => 'Aucune conversation pour le moment.',
+			'com.vocal.titre' => 'Message vocal',
+			'com.communaute.titre' => _root.com.socle.lexique.communaute,
+			'com.communaute.vide' => 'Aucune publication dans cette catégorie.',
+			'com.studio.titre' => _root.com.socle.lexique.studio,
+			'com.studio.vide' => 'Aucune activité à traiter ici.',
+			'com.annonces.titre' => 'Annonces',
 			_ => null,
 		};
 	}

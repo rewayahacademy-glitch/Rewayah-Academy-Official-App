@@ -47,6 +47,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$enseignant$ar enseignant = _Traductions$enseignant$ar._(_root);
 	@override late final _Traductions$compte$ar compte = _Traductions$compte$ar._(_root);
 	@override late final _Traductions$tc$ar tc = _Traductions$tc$ar._(_root);
+	@override late final _Traductions$com$ar com = _Traductions$com$ar._(_root);
 }
 
 // Path: commun
@@ -145,6 +146,21 @@ class _Traductions$tc$ar extends Traductions$tc$fr {
 	// Translations
 	@override late final _Traductions$tc$bibliotheque$ar bibliotheque = _Traductions$tc$bibliotheque$ar._(_root);
 	@override late final _Traductions$tc$groupe$ar groupe = _Traductions$tc$groupe$ar._(_root);
+}
+
+// Path: com
+class _Traductions$com$ar extends Traductions$com$fr {
+	_Traductions$com$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$com$socle$ar socle = _Traductions$com$socle$ar._(_root);
+	@override late final _Traductions$com$messages$ar messages = _Traductions$com$messages$ar._(_root);
+	@override late final _Traductions$com$vocal$ar vocal = _Traductions$com$vocal$ar._(_root);
+	@override late final _Traductions$com$communaute$ar communaute = _Traductions$com$communaute$ar._(_root);
+	@override late final _Traductions$com$studio$ar studio = _Traductions$com$studio$ar._(_root);
+	@override late final _Traductions$com$annonces$ar annonces = _Traductions$com$annonces$ar._(_root);
 }
 
 // Path: commun.sections
@@ -296,6 +312,74 @@ class _Traductions$tc$groupe$ar extends Traductions$tc$groupe$fr {
 	@override late final _Traductions$tc$groupe$enseignant$ar enseignant = _Traductions$tc$groupe$enseignant$ar._(_root);
 }
 
+// Path: com.socle
+class _Traductions$com$socle$ar extends Traductions$com$socle$fr {
+	_Traductions$com$socle$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$com$socle$composants$ar composants = _Traductions$com$socle$composants$ar._(_root);
+	@override late final _Traductions$com$socle$lexique$ar lexique = _Traductions$com$socle$lexique$ar._(_root);
+	@override late final _Traductions$com$socle$motifs$ar motifs = _Traductions$com$socle$motifs$ar._(_root);
+	@override late final _Traductions$com$socle$signalement$ar signalement = _Traductions$com$socle$signalement$ar._(_root);
+	@override late final _Traductions$com$socle$enregistrement$ar enregistrement = _Traductions$com$socle$enregistrement$ar._(_root);
+	@override late final _Traductions$com$socle$navigation$ar navigation = _Traductions$com$socle$navigation$ar._(_root);
+}
+
+// Path: com.messages
+class _Traductions$com$messages$ar extends Traductions$com$messages$fr {
+	_Traductions$com$messages$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => _root.com.socle.lexique.messagesMetier;
+	@override String get vide => 'لا توجد محادثات حاليًا.';
+}
+
+// Path: com.vocal
+class _Traductions$com$vocal$ar extends Traductions$com$vocal$fr {
+	_Traductions$com$vocal$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'رسالة صوتية';
+}
+
+// Path: com.communaute
+class _Traductions$com$communaute$ar extends Traductions$com$communaute$fr {
+	_Traductions$com$communaute$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => _root.com.socle.lexique.communaute;
+	@override String get vide => 'لا توجد منشورات في هذه الفئة.';
+}
+
+// Path: com.studio
+class _Traductions$com$studio$ar extends Traductions$com$studio$fr {
+	_Traductions$com$studio$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => _root.com.socle.lexique.studio;
+	@override String get vide => 'لا يوجد نشاط للمعالجة هنا.';
+}
+
+// Path: com.annonces
+class _Traductions$com$annonces$ar extends Traductions$com$annonces$fr {
+	_Traductions$com$annonces$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الإعلانات';
+}
+
 // Path: classe.entree.annonce
 class _Traductions$classe$entree$annonce$ar extends Traductions$classe$entree$annonce$fr {
 	_Traductions$classe$entree$annonce$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -327,6 +411,245 @@ class _Traductions$tc$groupe$enseignant$ar extends Traductions$tc$groupe$enseign
 	// Translations
 	@override String get sayyid => 'سيد';
 	@override String get sayyida => 'سيدة';
+}
+
+// Path: com.socle.composants
+class _Traductions$com$socle$composants$ar extends Traductions$com$socle$composants$fr {
+	_Traductions$com$socle$composants$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$com$socle$composants$badge$ar badge = _Traductions$com$socle$composants$badge$ar._(_root);
+	@override late final _Traductions$com$socle$composants$pieceJointe$ar pieceJointe = _Traductions$com$socle$composants$pieceJointe$ar._(_root);
+	@override late final _Traductions$com$socle$composants$composer$ar composer = _Traductions$com$socle$composants$composer$ar._(_root);
+	@override late final _Traductions$com$socle$composants$etats$ar etats = _Traductions$com$socle$composants$etats$ar._(_root);
+	@override late final _Traductions$com$socle$composants$espace$ar espace = _Traductions$com$socle$composants$espace$ar._(_root);
+}
+
+// Path: com.socle.lexique
+class _Traductions$com$socle$lexique$ar extends Traductions$com$socle$lexique$fr {
+	_Traductions$com$socle$lexique$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get messages => 'الرسائل';
+	@override String get messagesMetier => 'رسائل العمل';
+	@override String get communaute => 'مجتمع المعلّمين';
+	@override String get studio => 'الاستوديو';
+	@override String get aujourdhui => 'اليوم';
+	@override String get notifications => 'الإشعارات';
+	@override String get annonce => 'إعلان';
+	@override String get publication => 'منشور';
+	@override String get reponse => 'رد';
+	@override String get enregistrer => 'حفظ';
+	@override String get signaler => 'إبلاغ';
+	@override String get modeFocus => 'وضع التركيز';
+	@override String get quitterFocus => 'الخروج من التركيز';
+	@override String get aTraiter => 'للمعالجة';
+	@override String get actionRequise => 'إجراء مطلوب';
+	@override String get brouillon => 'مسودة';
+	@override String get elementsEpingles => 'العناصر المثبّتة';
+	@override String get fichiersPartages => 'الملفات المشتركة';
+}
+
+// Path: com.socle.motifs
+class _Traductions$com$socle$motifs$ar extends Traductions$com$socle$motifs$fr {
+	_Traductions$com$socle$motifs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'لماذا تبلّغ عن هذا المحتوى؟';
+	@override String get publicite => 'إعلان تجاري';
+	@override String get lienAffilie => 'رابط تسويق بالعمولة';
+	@override String get venteNonAutorisee => 'بيع غير مسموح به';
+	@override String get sollicitationCommerciale => 'استدراج تجاري';
+	@override String get horsSujet => 'محتوى لا علاقة له بالمجتمع';
+	@override String get harcelement => 'مضايقة أو لغة غير لائقة';
+	@override String get donneesPersonnelles => 'بيانات شخصية لطالب أو لعائلة';
+	@override String get autre => 'محتوى آخر يحتاج إلى فحص';
+}
+
+// Path: com.socle.signalement
+class _Traductions$com$socle$signalement$ar extends Traductions$com$socle$signalement$fr {
+	_Traductions$com$socle$signalement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الإبلاغ عن هذا المحتوى';
+	@override String get precision => 'توضيح اختياري';
+	@override String get envoyer => 'إرسال البلاغ';
+	@override String get confirme => 'تم الإبلاغ عن المحتوى. ستتم مراجعته.';
+	@override String get erreur => 'لم يُؤكَّد البلاغ بعد. أعد المحاولة بعد قليل.';
+	@override String get indisponible => 'الإبلاغ غير متاح هنا بعد.';
+}
+
+// Path: com.socle.enregistrement
+class _Traductions$com$socle$enregistrement$ar extends Traductions$com$socle$enregistrement$fr {
+	_Traductions$com$socle$enregistrement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get enregistrer => _root.com.socle.lexique.enregistrer;
+	@override String get retirer => 'إزالة من العناصر المحفوظة';
+	@override String get enregistre => 'محفوظ';
+	@override String get indisponible => 'الحفظ غير متاح هنا بعد.';
+}
+
+// Path: com.socle.navigation
+class _Traductions$com$socle$navigation$ar extends Traductions$com$socle$navigation$fr {
+	_Traductions$com$socle$navigation$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get notifications => _root.com.socle.lexique.notifications;
+	@override String get ouvrirNotifications => 'فتح الإشعارات';
+	@override String get studio => _root.com.socle.lexique.studio;
+	@override String get ouvrirStudio => 'فتح الاستوديو';
+	@override String get quitterStudio => 'الخروج من الاستوديو';
+	@override String get messages => _root.com.socle.lexique.messages;
+	@override String get communaute => _root.com.socle.lexique.communaute;
+	@override String get communications => 'الاتصالات';
+	@override String get ongletAnnonces => 'الإعلانات';
+	@override String get ongletModeration => 'الإشراف';
+	@override String get ongletMessages => _root.com.socle.lexique.messages;
+	@override String get bientot => 'متاح قريبًا';
+	@override late final _Traductions$com$socle$navigation$provisoire$ar provisoire = _Traductions$com$socle$navigation$provisoire$ar._(_root);
+	@override late final _Traductions$com$socle$navigation$demo$ar demo = _Traductions$com$socle$navigation$demo$ar._(_root);
+}
+
+// Path: com.socle.composants.badge
+class _Traductions$com$socle$composants$badge$ar extends Traductions$com$socle$composants$badge$fr {
+	_Traductions$com$socle$composants$badge$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get nonLuUn => '1 غير مقروء';
+	@override String nonLus({required Object nombre}) => '${nombre} غير مقروءة';
+	@override String nonLusSemantique({required Object nombre}) => '${nombre} عناصر غير مقروءة';
+	@override String get information => 'للعلم';
+	@override String get aLire => 'للقراءة';
+	@override String get actionRequise => _root.com.socle.lexique.actionRequise;
+	@override String get urgent => 'عاجل';
+	@override String get mention => 'إشارة';
+	@override String get mentionSemantique => 'هناك إشارة تخصّك';
+}
+
+// Path: com.socle.composants.pieceJointe
+class _Traductions$com$socle$composants$pieceJointe$ar extends Traductions$com$socle$composants$pieceJointe$fr {
+	_Traductions$com$socle$composants$pieceJointe$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get joindre => 'إرفاق ملف';
+	@override String get joindreIndisponible => 'إرفاق الملفات غير متاح هنا بعد.';
+	@override String ouvrir({required Object nom}) => 'فتح ${nom}';
+	@override String retirer({required Object nom}) => 'إزالة ${nom}';
+	@override String tailleOctets({required Object taille}) => '${taille} بايت';
+	@override String tailleKo({required Object taille}) => '${taille} كيلوبايت';
+	@override String tailleMo({required Object taille}) => '${taille} ميغابايت';
+	@override String get autorisee => 'جاهز للإرسال';
+	@override String get tropVolumineuse => 'الملف كبير جدًا';
+	@override String get tropVolumineuseDetail => 'هذا الملف يتجاوز الحجم المسموح به. اختر ملفًا أصغر.';
+	@override String get typeInterdit => 'نوع الملف مرفوض';
+	@override String get typeInterditDetail => 'هذا النوع من الملفات غير مقبول هنا. اختر صيغة أخرى.';
+	@override String get enCours => 'جارٍ الإرسال';
+	@override String get envoyee => 'أُرسل';
+	@override String get echec => 'لم يُؤكَّد';
+	@override String get erreurEnvoi => 'لم يُؤكَّد إرسال هذا الملف بعد. أعد المحاولة بعد قليل.';
+	@override String get indisponible => 'المرفق غير متاح';
+	@override String get indisponibleDetail => 'هذا الملف لم يعد متاحًا. اطلب من الشخص الذي شاركه أن يعيد إرساله.';
+}
+
+// Path: com.socle.composants.composer
+class _Traductions$com$socle$composants$composer$ar extends Traductions$com$socle$composants$composer$fr {
+	_Traductions$com$socle$composants$composer$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get message => 'رسالة';
+	@override String get aide => 'اكتب رسالة';
+	@override String get envoyer => 'إرسال';
+	@override String get champVide => 'اكتب رسالة لإرسالها.';
+	@override String get vocal => 'رسالة صوتية';
+	@override String get vocalAVenir => 'الرسالة الصوتية متاحة قريبًا';
+	@override String get enCours => 'جارٍ الإرسال';
+	@override String get envoye => 'أُرسلت';
+	@override String get nonConfirme => 'لم يُؤكَّد إرسال هذه الرسالة بعد.';
+	@override String get reessayer => 'إعادة المحاولة';
+	@override String get auteurSoi => 'أنت';
+	@override String get brouillon => _root.com.socle.lexique.brouillon;
+	@override String get brouillonRestaure => 'تمت استعادة المسودة';
+}
+
+// Path: com.socle.composants.etats
+class _Traductions$com$socle$composants$etats$ar extends Traductions$com$socle$composants$etats$fr {
+	_Traductions$com$socle$composants$etats$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get chargement => 'جارٍ التحميل';
+	@override String get videTitre => 'لا شيء هنا حاليًا';
+	@override String get erreurTitre => 'تعذّر تحميل هذا المحتوى.';
+	@override String get erreur => 'تعذّر تحميل هذا المحتوى. تحقّق من اتصالك ثم أعد المحاولة.';
+	@override String get reessayer => 'إعادة المحاولة';
+	@override String get horsLigne => 'أنت غير متصل. لا يمكن تحديث الرسائل الجديدة.';
+	@override String get indisponibleTitre => 'غير متاح بعد';
+	@override String get indisponible => 'هذه الميزة غير متاحة هنا بعد. ستُفتح حين تصبح الخدمة جاهزة.';
+	@override String get permissionRefusee => 'ليس لديك صلاحية الوصول إلى هذا المحتوى.';
+}
+
+// Path: com.socle.composants.espace
+class _Traductions$com$socle$composants$espace$ar extends Traductions$com$socle$composants$espace$fr {
+	_Traductions$com$socle$composants$espace$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get ouvrirPanneau => 'فتح لوحة السياق';
+	@override String get fermerPanneau => 'إغلاق لوحة السياق';
+	@override String get panneauContexte => 'السياق';
+	@override String get retourListe => 'العودة إلى القائمة';
+}
+
+// Path: com.socle.navigation.provisoire
+class _Traductions$com$socle$navigation$provisoire$ar extends Traductions$com$socle$navigation$provisoire$fr {
+	_Traductions$com$socle$navigation$provisoire$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get messagesTitre => _root.com.socle.lexique.messages;
+	@override String get messagesDetail => 'ستصل الرسائل المرتبطة بفصولك إلى هذه المساحة قريبًا.';
+	@override String get communauteTitre => _root.com.socle.lexique.communaute;
+	@override String get communauteDetail => 'ستصل مساحة التبادل بين المعلّمين إلى هنا قريبًا.';
+	@override String get studioTitre => _root.com.socle.lexique.studio;
+	@override String get studioDetail => 'ستصل مساحة عمل الفريق إلى هنا قريبًا.';
+	@override String get administrationTitre => 'الاتصالات';
+	@override String get administrationDetail => 'ستُدار الإعلانات والإشراف والرسائل من هنا قريبًا.';
+	@override String get publierAnnonceTitre => 'نشر إعلان';
+	@override String get publierAnnonceDetail => 'سيصل نشر إعلان لفصل ما إلى هنا قريبًا.';
+}
+
+// Path: com.socle.navigation.demo
+class _Traductions$com$socle$navigation$demo$ar extends Traductions$com$socle$navigation$demo$fr {
+	_Traductions$com$socle$navigation$demo$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'عرض توضيحي للاتصالات';
+	@override String get detail => 'بيانات وهمية، غير موجودة في نسخ الإنتاج.';
+	@override String get choisir => 'اختر مساحة لتجربتها.';
 }
 
 /// The flat map containing all translations for locale <ar>.
@@ -435,6 +758,129 @@ extension on TraductionsAr {
 			'tc.bibliotheque.sections.groupe' => 'المواد المعروضة',
 			'tc.groupe.enseignant.sayyid' => 'سيد',
 			'tc.groupe.enseignant.sayyida' => 'سيدة',
+			'com.socle.composants.badge.nonLuUn' => '1 غير مقروء',
+			'com.socle.composants.badge.nonLus' => ({required Object nombre}) => '${nombre} غير مقروءة',
+			'com.socle.composants.badge.nonLusSemantique' => ({required Object nombre}) => '${nombre} عناصر غير مقروءة',
+			'com.socle.composants.badge.information' => 'للعلم',
+			'com.socle.composants.badge.aLire' => 'للقراءة',
+			'com.socle.composants.badge.actionRequise' => _root.com.socle.lexique.actionRequise,
+			'com.socle.composants.badge.urgent' => 'عاجل',
+			'com.socle.composants.badge.mention' => 'إشارة',
+			'com.socle.composants.badge.mentionSemantique' => 'هناك إشارة تخصّك',
+			'com.socle.composants.pieceJointe.joindre' => 'إرفاق ملف',
+			'com.socle.composants.pieceJointe.joindreIndisponible' => 'إرفاق الملفات غير متاح هنا بعد.',
+			'com.socle.composants.pieceJointe.ouvrir' => ({required Object nom}) => 'فتح ${nom}',
+			'com.socle.composants.pieceJointe.retirer' => ({required Object nom}) => 'إزالة ${nom}',
+			'com.socle.composants.pieceJointe.tailleOctets' => ({required Object taille}) => '${taille} بايت',
+			'com.socle.composants.pieceJointe.tailleKo' => ({required Object taille}) => '${taille} كيلوبايت',
+			'com.socle.composants.pieceJointe.tailleMo' => ({required Object taille}) => '${taille} ميغابايت',
+			'com.socle.composants.pieceJointe.autorisee' => 'جاهز للإرسال',
+			'com.socle.composants.pieceJointe.tropVolumineuse' => 'الملف كبير جدًا',
+			'com.socle.composants.pieceJointe.tropVolumineuseDetail' => 'هذا الملف يتجاوز الحجم المسموح به. اختر ملفًا أصغر.',
+			'com.socle.composants.pieceJointe.typeInterdit' => 'نوع الملف مرفوض',
+			'com.socle.composants.pieceJointe.typeInterditDetail' => 'هذا النوع من الملفات غير مقبول هنا. اختر صيغة أخرى.',
+			'com.socle.composants.pieceJointe.enCours' => 'جارٍ الإرسال',
+			'com.socle.composants.pieceJointe.envoyee' => 'أُرسل',
+			'com.socle.composants.pieceJointe.echec' => 'لم يُؤكَّد',
+			'com.socle.composants.pieceJointe.erreurEnvoi' => 'لم يُؤكَّد إرسال هذا الملف بعد. أعد المحاولة بعد قليل.',
+			'com.socle.composants.pieceJointe.indisponible' => 'المرفق غير متاح',
+			'com.socle.composants.pieceJointe.indisponibleDetail' => 'هذا الملف لم يعد متاحًا. اطلب من الشخص الذي شاركه أن يعيد إرساله.',
+			'com.socle.composants.composer.message' => 'رسالة',
+			'com.socle.composants.composer.aide' => 'اكتب رسالة',
+			'com.socle.composants.composer.envoyer' => 'إرسال',
+			'com.socle.composants.composer.champVide' => 'اكتب رسالة لإرسالها.',
+			'com.socle.composants.composer.vocal' => 'رسالة صوتية',
+			'com.socle.composants.composer.vocalAVenir' => 'الرسالة الصوتية متاحة قريبًا',
+			'com.socle.composants.composer.enCours' => 'جارٍ الإرسال',
+			'com.socle.composants.composer.envoye' => 'أُرسلت',
+			'com.socle.composants.composer.nonConfirme' => 'لم يُؤكَّد إرسال هذه الرسالة بعد.',
+			'com.socle.composants.composer.reessayer' => 'إعادة المحاولة',
+			'com.socle.composants.composer.auteurSoi' => 'أنت',
+			'com.socle.composants.composer.brouillon' => _root.com.socle.lexique.brouillon,
+			'com.socle.composants.composer.brouillonRestaure' => 'تمت استعادة المسودة',
+			'com.socle.composants.etats.chargement' => 'جارٍ التحميل',
+			'com.socle.composants.etats.videTitre' => 'لا شيء هنا حاليًا',
+			'com.socle.composants.etats.erreurTitre' => 'تعذّر تحميل هذا المحتوى.',
+			'com.socle.composants.etats.erreur' => 'تعذّر تحميل هذا المحتوى. تحقّق من اتصالك ثم أعد المحاولة.',
+			'com.socle.composants.etats.reessayer' => 'إعادة المحاولة',
+			'com.socle.composants.etats.horsLigne' => 'أنت غير متصل. لا يمكن تحديث الرسائل الجديدة.',
+			'com.socle.composants.etats.indisponibleTitre' => 'غير متاح بعد',
+			'com.socle.composants.etats.indisponible' => 'هذه الميزة غير متاحة هنا بعد. ستُفتح حين تصبح الخدمة جاهزة.',
+			'com.socle.composants.etats.permissionRefusee' => 'ليس لديك صلاحية الوصول إلى هذا المحتوى.',
+			'com.socle.composants.espace.ouvrirPanneau' => 'فتح لوحة السياق',
+			'com.socle.composants.espace.fermerPanneau' => 'إغلاق لوحة السياق',
+			'com.socle.composants.espace.panneauContexte' => 'السياق',
+			'com.socle.composants.espace.retourListe' => 'العودة إلى القائمة',
+			'com.socle.lexique.messages' => 'الرسائل',
+			'com.socle.lexique.messagesMetier' => 'رسائل العمل',
+			'com.socle.lexique.communaute' => 'مجتمع المعلّمين',
+			'com.socle.lexique.studio' => 'الاستوديو',
+			'com.socle.lexique.aujourdhui' => 'اليوم',
+			'com.socle.lexique.notifications' => 'الإشعارات',
+			'com.socle.lexique.annonce' => 'إعلان',
+			'com.socle.lexique.publication' => 'منشور',
+			'com.socle.lexique.reponse' => 'رد',
+			'com.socle.lexique.enregistrer' => 'حفظ',
+			'com.socle.lexique.signaler' => 'إبلاغ',
+			'com.socle.lexique.modeFocus' => 'وضع التركيز',
+			'com.socle.lexique.quitterFocus' => 'الخروج من التركيز',
+			'com.socle.lexique.aTraiter' => 'للمعالجة',
+			'com.socle.lexique.actionRequise' => 'إجراء مطلوب',
+			'com.socle.lexique.brouillon' => 'مسودة',
+			'com.socle.lexique.elementsEpingles' => 'العناصر المثبّتة',
+			'com.socle.lexique.fichiersPartages' => 'الملفات المشتركة',
+			'com.socle.motifs.titre' => 'لماذا تبلّغ عن هذا المحتوى؟',
+			'com.socle.motifs.publicite' => 'إعلان تجاري',
+			'com.socle.motifs.lienAffilie' => 'رابط تسويق بالعمولة',
+			'com.socle.motifs.venteNonAutorisee' => 'بيع غير مسموح به',
+			'com.socle.motifs.sollicitationCommerciale' => 'استدراج تجاري',
+			'com.socle.motifs.horsSujet' => 'محتوى لا علاقة له بالمجتمع',
+			'com.socle.motifs.harcelement' => 'مضايقة أو لغة غير لائقة',
+			'com.socle.motifs.donneesPersonnelles' => 'بيانات شخصية لطالب أو لعائلة',
+			'com.socle.motifs.autre' => 'محتوى آخر يحتاج إلى فحص',
+			'com.socle.signalement.titre' => 'الإبلاغ عن هذا المحتوى',
+			'com.socle.signalement.precision' => 'توضيح اختياري',
+			'com.socle.signalement.envoyer' => 'إرسال البلاغ',
+			'com.socle.signalement.confirme' => 'تم الإبلاغ عن المحتوى. ستتم مراجعته.',
+			'com.socle.signalement.erreur' => 'لم يُؤكَّد البلاغ بعد. أعد المحاولة بعد قليل.',
+			'com.socle.signalement.indisponible' => 'الإبلاغ غير متاح هنا بعد.',
+			'com.socle.enregistrement.enregistrer' => _root.com.socle.lexique.enregistrer,
+			'com.socle.enregistrement.retirer' => 'إزالة من العناصر المحفوظة',
+			'com.socle.enregistrement.enregistre' => 'محفوظ',
+			'com.socle.enregistrement.indisponible' => 'الحفظ غير متاح هنا بعد.',
+			'com.socle.navigation.notifications' => _root.com.socle.lexique.notifications,
+			'com.socle.navigation.ouvrirNotifications' => 'فتح الإشعارات',
+			'com.socle.navigation.studio' => _root.com.socle.lexique.studio,
+			'com.socle.navigation.ouvrirStudio' => 'فتح الاستوديو',
+			'com.socle.navigation.quitterStudio' => 'الخروج من الاستوديو',
+			'com.socle.navigation.messages' => _root.com.socle.lexique.messages,
+			'com.socle.navigation.communaute' => _root.com.socle.lexique.communaute,
+			'com.socle.navigation.communications' => 'الاتصالات',
+			'com.socle.navigation.ongletAnnonces' => 'الإعلانات',
+			'com.socle.navigation.ongletModeration' => 'الإشراف',
+			'com.socle.navigation.ongletMessages' => _root.com.socle.lexique.messages,
+			'com.socle.navigation.bientot' => 'متاح قريبًا',
+			'com.socle.navigation.provisoire.messagesTitre' => _root.com.socle.lexique.messages,
+			'com.socle.navigation.provisoire.messagesDetail' => 'ستصل الرسائل المرتبطة بفصولك إلى هذه المساحة قريبًا.',
+			'com.socle.navigation.provisoire.communauteTitre' => _root.com.socle.lexique.communaute,
+			'com.socle.navigation.provisoire.communauteDetail' => 'ستصل مساحة التبادل بين المعلّمين إلى هنا قريبًا.',
+			'com.socle.navigation.provisoire.studioTitre' => _root.com.socle.lexique.studio,
+			'com.socle.navigation.provisoire.studioDetail' => 'ستصل مساحة عمل الفريق إلى هنا قريبًا.',
+			'com.socle.navigation.provisoire.administrationTitre' => 'الاتصالات',
+			'com.socle.navigation.provisoire.administrationDetail' => 'ستُدار الإعلانات والإشراف والرسائل من هنا قريبًا.',
+			'com.socle.navigation.provisoire.publierAnnonceTitre' => 'نشر إعلان',
+			'com.socle.navigation.provisoire.publierAnnonceDetail' => 'سيصل نشر إعلان لفصل ما إلى هنا قريبًا.',
+			'com.socle.navigation.demo.titre' => 'عرض توضيحي للاتصالات',
+			'com.socle.navigation.demo.detail' => 'بيانات وهمية، غير موجودة في نسخ الإنتاج.',
+			'com.socle.navigation.demo.choisir' => 'اختر مساحة لتجربتها.',
+			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
+			'com.messages.vide' => 'لا توجد محادثات حاليًا.',
+			'com.vocal.titre' => 'رسالة صوتية',
+			'com.communaute.titre' => _root.com.socle.lexique.communaute,
+			'com.communaute.vide' => 'لا توجد منشورات في هذه الفئة.',
+			'com.studio.titre' => _root.com.socle.lexique.studio,
+			'com.studio.vide' => 'لا يوجد نشاط للمعالجة هنا.',
+			'com.annonces.titre' => 'الإعلانات',
 			_ => null,
 		};
 	}

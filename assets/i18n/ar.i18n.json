@@ -134,5 +134,168 @@
         "sayyida": "سيدة"
       }
     }
+  },
+  "com": {
+    "socle": {
+      "composants": {
+        "badge": {
+          "nonLuUn": "1 غير مقروء",
+          "nonLus": "{nombre} غير مقروءة",
+          "nonLusSemantique": "{nombre} عناصر غير مقروءة",
+          "information": "للعلم",
+          "aLire": "للقراءة",
+          "actionRequise": "@:com.socle.lexique.actionRequise",
+          "urgent": "عاجل",
+          "mention": "إشارة",
+          "mentionSemantique": "هناك إشارة تخصّك"
+        },
+        "pieceJointe": {
+          "joindre": "إرفاق ملف",
+          "joindreIndisponible": "إرفاق الملفات غير متاح هنا بعد.",
+          "ouvrir": "فتح {nom}",
+          "retirer": "إزالة {nom}",
+          "tailleOctets": "{taille} بايت",
+          "tailleKo": "{taille} كيلوبايت",
+          "tailleMo": "{taille} ميغابايت",
+          "autorisee": "جاهز للإرسال",
+          "tropVolumineuse": "الملف كبير جدًا",
+          "tropVolumineuseDetail": "هذا الملف يتجاوز الحجم المسموح به. اختر ملفًا أصغر.",
+          "typeInterdit": "نوع الملف مرفوض",
+          "typeInterditDetail": "هذا النوع من الملفات غير مقبول هنا. اختر صيغة أخرى.",
+          "enCours": "جارٍ الإرسال",
+          "envoyee": "أُرسل",
+          "echec": "لم يُؤكَّد",
+          "erreurEnvoi": "لم يُؤكَّد إرسال هذا الملف بعد. أعد المحاولة بعد قليل.",
+          "indisponible": "المرفق غير متاح",
+          "indisponibleDetail": "هذا الملف لم يعد متاحًا. اطلب من الشخص الذي شاركه أن يعيد إرساله."
+        },
+        "composer": {
+          "message": "رسالة",
+          "aide": "اكتب رسالة",
+          "envoyer": "إرسال",
+          "champVide": "اكتب رسالة لإرسالها.",
+          "vocal": "رسالة صوتية",
+          "vocalAVenir": "الرسالة الصوتية متاحة قريبًا",
+          "enCours": "جارٍ الإرسال",
+          "envoye": "أُرسلت",
+          "nonConfirme": "لم يُؤكَّد إرسال هذه الرسالة بعد.",
+          "reessayer": "إعادة المحاولة",
+          "auteurSoi": "أنت",
+          "brouillon": "@:com.socle.lexique.brouillon",
+          "brouillonRestaure": "تمت استعادة المسودة"
+        },
+        "etats": {
+          "chargement": "جارٍ التحميل",
+          "videTitre": "لا شيء هنا حاليًا",
+          "erreurTitre": "تعذّر تحميل هذا المحتوى.",
+          "erreur": "تعذّر تحميل هذا المحتوى. تحقّق من اتصالك ثم أعد المحاولة.",
+          "reessayer": "إعادة المحاولة",
+          "horsLigne": "أنت غير متصل. لا يمكن تحديث الرسائل الجديدة.",
+          "indisponibleTitre": "غير متاح بعد",
+          "indisponible": "هذه الميزة غير متاحة هنا بعد. ستُفتح حين تصبح الخدمة جاهزة.",
+          "permissionRefusee": "ليس لديك صلاحية الوصول إلى هذا المحتوى."
+        },
+        "espace": {
+          "ouvrirPanneau": "فتح لوحة السياق",
+          "fermerPanneau": "إغلاق لوحة السياق",
+          "panneauContexte": "السياق",
+          "retourListe": "العودة إلى القائمة"
+        }
+      },
+      "lexique": {
+        "messages": "الرسائل",
+        "messagesMetier": "رسائل العمل",
+        "communaute": "مجتمع المعلّمين",
+        "studio": "الاستوديو",
+        "aujourdhui": "اليوم",
+        "notifications": "الإشعارات",
+        "annonce": "إعلان",
+        "publication": "منشور",
+        "reponse": "رد",
+        "enregistrer": "حفظ",
+        "signaler": "إبلاغ",
+        "modeFocus": "وضع التركيز",
+        "quitterFocus": "الخروج من التركيز",
+        "aTraiter": "للمعالجة",
+        "actionRequise": "إجراء مطلوب",
+        "brouillon": "مسودة",
+        "elementsEpingles": "العناصر المثبّتة",
+        "fichiersPartages": "الملفات المشتركة"
+      },
+      "motifs": {
+        "titre": "لماذا تبلّغ عن هذا المحتوى؟",
+        "publicite": "إعلان تجاري",
+        "lienAffilie": "رابط تسويق بالعمولة",
+        "venteNonAutorisee": "بيع غير مسموح به",
+        "sollicitationCommerciale": "استدراج تجاري",
+        "horsSujet": "محتوى لا علاقة له بالمجتمع",
+        "harcelement": "مضايقة أو لغة غير لائقة",
+        "donneesPersonnelles": "بيانات شخصية لطالب أو لعائلة",
+        "autre": "محتوى آخر يحتاج إلى فحص"
+      },
+      "signalement": {
+        "titre": "الإبلاغ عن هذا المحتوى",
+        "precision": "توضيح اختياري",
+        "envoyer": "إرسال البلاغ",
+        "confirme": "تم الإبلاغ عن المحتوى. ستتم مراجعته.",
+        "erreur": "لم يُؤكَّد البلاغ بعد. أعد المحاولة بعد قليل.",
+        "indisponible": "الإبلاغ غير متاح هنا بعد."
+      },
+      "enregistrement": {
+        "enregistrer": "@:com.socle.lexique.enregistrer",
+        "retirer": "إزالة من العناصر المحفوظة",
+        "enregistre": "محفوظ",
+        "indisponible": "الحفظ غير متاح هنا بعد."
+      },
+      "navigation": {
+        "notifications": "@:com.socle.lexique.notifications",
+        "ouvrirNotifications": "فتح الإشعارات",
+        "studio": "@:com.socle.lexique.studio",
+        "ouvrirStudio": "فتح الاستوديو",
+        "quitterStudio": "الخروج من الاستوديو",
+        "messages": "@:com.socle.lexique.messages",
+        "communaute": "@:com.socle.lexique.communaute",
+        "communications": "الاتصالات",
+        "ongletAnnonces": "الإعلانات",
+        "ongletModeration": "الإشراف",
+        "ongletMessages": "@:com.socle.lexique.messages",
+        "bientot": "متاح قريبًا",
+        "provisoire": {
+          "messagesTitre": "@:com.socle.lexique.messages",
+          "messagesDetail": "ستصل الرسائل المرتبطة بفصولك إلى هذه المساحة قريبًا.",
+          "communauteTitre": "@:com.socle.lexique.communaute",
+          "communauteDetail": "ستصل مساحة التبادل بين المعلّمين إلى هنا قريبًا.",
+          "studioTitre": "@:com.socle.lexique.studio",
+          "studioDetail": "ستصل مساحة عمل الفريق إلى هنا قريبًا.",
+          "administrationTitre": "الاتصالات",
+          "administrationDetail": "ستُدار الإعلانات والإشراف والرسائل من هنا قريبًا.",
+          "publierAnnonceTitre": "نشر إعلان",
+          "publierAnnonceDetail": "سيصل نشر إعلان لفصل ما إلى هنا قريبًا."
+        },
+        "demo": {
+          "titre": "عرض توضيحي للاتصالات",
+          "detail": "بيانات وهمية، غير موجودة في نسخ الإنتاج.",
+          "choisir": "اختر مساحة لتجربتها."
+        }
+      }
+    },
+    "messages": {
+      "titre": "@:com.socle.lexique.messagesMetier",
+      "vide": "لا توجد محادثات حاليًا."
+    },
+    "vocal": {
+      "titre": "رسالة صوتية"
+    },
+    "communaute": {
+      "titre": "@:com.socle.lexique.communaute",
+      "vide": "لا توجد منشورات في هذه الفئة."
+    },
+    "studio": {
+      "titre": "@:com.socle.lexique.studio",
+      "vide": "لا يوجد نشاط للمعالجة هنا."
+    },
+    "annonces": {
+      "titre": "الإعلانات"
+    }
   }
 }
