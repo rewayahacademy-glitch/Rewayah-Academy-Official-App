@@ -2,7 +2,8 @@
 // directeur du 04/10/2026, K-62, maquette 11), depuis le VRAI routeur et la
 // demonstration tuteur (Aicha en Menthe, Yusuf en Rose) : le Foyer, la fiche
 // d'Aicha et sa page « Couleur du profil ». 390x844 et 1440x900, clair et
-// sombre, texte a 200 % en 390.
+// sombre, texte a 200 % en 390 ; 320 (100 et 200 %) et droite-a-gauche en
+// 320, 390 et 1440 (FI-2-CORR-MINEURS).
 //
 // **Jamais execute sans `CAPTURE_DIR`** (`sautSansCapture`).
 
@@ -27,6 +28,7 @@ Future<void> _capturer(
   Size taille, {
   ThemeMode mode = ThemeMode.light,
   double echelle = 1,
+  TextDirection? sens,
 }) async {
   fixerVueCapture(tester, taille, 1);
   late GoRouter routeur;
@@ -51,11 +53,18 @@ Future<void> _capturer(
                 supportedLocales: AppLocaleUtils.supportedLocales,
                 localizationsDelegates: GlobalMaterialLocalizations.delegates,
                 routerConfig: routeur,
-                builder: (BuildContext contexte, Widget? app) => MediaQuery(
-                  data: MediaQuery.of(contexte)
-                      .copyWith(textScaler: TextScaler.linear(echelle)),
-                  child: app!,
-                ),
+                builder: (BuildContext contexte, Widget? app) {
+                  final Widget avecTexte = MediaQuery(
+                    data: MediaQuery.of(contexte)
+                        .copyWith(textScaler: TextScaler.linear(echelle)),
+                    child: app!,
+                  );
+                  // Le sens droite-a-gauche force, comme
+                  // `captures_fi12_test.dart` (FI-2-CORR-MINEURS).
+                  return sens == null
+                      ? avecTexte
+                      : Directionality(textDirection: sens, child: avecTexte);
+                },
               );
             },
           ),
@@ -103,6 +112,33 @@ void main() {
           echelle: 2,
         );
       });
+      // FI-2-CORR-MINEURS (revue FI-2-CORR-R) : le plus petit telephone, a
+      // 100 % et 200 %, et le droite-a-gauche, en 320 et 390.
+      for (final (
+            String suffixe,
+            Size taille,
+            double echelle,
+            TextDirection? sens,
+          )
+          in <(String, Size, double, TextDirection?)>[
+            ('320_light', const Size(320, 844), 1, null),
+            ('320_light_200pc', const Size(320, 844), 2, null),
+            ('320_light_200pc_rtl', const Size(320, 844), 2, TextDirection.rtl),
+            ('390_light_rtl', const Size(390, 844), 1, TextDirection.rtl),
+            ('1440_light_rtl', const Size(1440, 900), 1, TextDirection.rtl),
+          ]) {
+        final String fichier = 'fi2_${nom}_$suffixe';
+        testWidgets(fichier, (WidgetTester tester) async {
+          await _capturer(
+            tester,
+            fichier,
+            chemin,
+            taille,
+            echelle: echelle,
+            sens: sens,
+          );
+        });
+      }
     }
   });
 }

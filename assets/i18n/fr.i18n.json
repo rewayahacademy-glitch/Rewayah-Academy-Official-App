@@ -1010,6 +1010,7 @@
       "couleur": "Couleur du profil",
       "couleurAucune": "Sans couleur",
       "couleurIndisponible": "Pas encore disponible",
+      "couleurEchec": "Couleur non lue",
       "finances": "Finances"
     },
     "couleur": {

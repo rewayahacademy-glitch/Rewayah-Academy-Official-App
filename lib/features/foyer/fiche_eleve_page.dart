@@ -460,14 +460,19 @@ class _Entete extends StatelessWidget {
 /// La legende de la ligne « Couleur du profil » : le nom de la couleur, « Sans
 /// couleur », ou, sans source (production, FI-BR-19), « Pas encore
 /// disponible » plutot qu'un choix vide qui n'a jamais ete fait (revue FI-2-R
-/// m1).
-String legendeCouleur(
+/// m1). Tant que rien n'est lu, `null` (aucune legende, comme la classe) ;
+/// une lecture en echec dit « Couleur non lue », jamais « Sans couleur »
+/// faute de savoir (revue FI-2-CORR-R).
+String? legendeCouleur(
   AsyncValue<Map<String, AccentProfil>> accents,
   String profilId,
 ) {
-  if (accents.hasError && accents.error is CapaciteIndisponible) {
-    return t.ficheEleve.lignes.couleurIndisponible;
+  if (accents.hasError) {
+    return accents.error is CapaciteIndisponible
+        ? t.ficheEleve.lignes.couleurIndisponible
+        : t.ficheEleve.lignes.couleurEchec;
   }
+  if (!accents.hasValue) return null;
   return switch (accentLu(accents, profilId)) {
     final AccentProfil a => libelleAccent(a),
     null => t.ficheEleve.lignes.couleurAucune,

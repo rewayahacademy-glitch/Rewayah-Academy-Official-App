@@ -64,6 +64,7 @@ class AvatarNom extends StatelessWidget {
     this.roleWidget,
     this.cercleEnHaut = false,
     this.texteEtire = false,
+    this.nomSansCoupure = false,
   });
 
   /// Avatar centre, nom centre dessous.
@@ -112,6 +113,7 @@ class AvatarNom extends StatelessWidget {
     Widget? roleWidget,
     bool cercleEnHaut = false,
     bool texteEtire = false,
+    bool nomSansCoupure = false,
   }) : this(
          prenom: prenom,
          disposition: DispositionAvatar.enLigne,
@@ -130,6 +132,7 @@ class AvatarNom extends StatelessWidget {
          roleWidget: roleWidget,
          cercleEnHaut: cercleEnHaut,
          texteEtire: texteEtire,
+         nomSansCoupure: nomSansCoupure,
        );
 
   /// Le prenom, source des initiales de repli.
@@ -193,6 +196,11 @@ class AvatarNom extends StatelessWidget {
   /// Faux par defaut : [fin] suit le texte.
   final bool texteEtire;
 
+  /// En ligne seulement : vrai pour que le nom ne soit jamais coupe au milieu
+  /// d'un mot, meme a 200 % sur 320 px ([TexteSansCoupure]) ; carte d'un
+  /// membre du Foyer, revue FI-2-CORR-R. Faux par defaut : un `Text` simple.
+  final bool nomSansCoupure;
+
   /// En ligne seulement : l'espace entre le cercle et le texte
   /// (defaut [AppSpacing.md]).
   final double? ecart;
@@ -253,7 +261,10 @@ class AvatarNom extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(affiche, style: styleDuNom),
+                if (nomSansCoupure)
+                  TexteSansCoupure(affiche, style: styleDuNom)
+                else
+                  Text(affiche, style: styleDuNom),
                 if (roleWidget != null)
                   roleWidget!
                 else if (ligneRole != null)

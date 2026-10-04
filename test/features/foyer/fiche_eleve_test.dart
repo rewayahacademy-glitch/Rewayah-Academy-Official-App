@@ -121,6 +121,7 @@ Future<GoRouter> _monter(
   String depart = Routes.tuteurAccueil,
   List<Override> autres = const <Override>[],
   Size taille = const Size(390, 844),
+  TextDirection? sens,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -143,6 +144,11 @@ Future<GoRouter> _monter(
             return MaterialApp.router(
               theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
               routerConfig: routeur,
+              // Le droite-a-gauche force (FI-2-CORR-MINEURS).
+              builder: sens == null
+                  ? null
+                  : (BuildContext _, Widget? app) =>
+                        Directionality(textDirection: sens, child: app!),
             );
           },
         ),
@@ -1170,32 +1176,130 @@ void main() {
     });
 
     // Revue FI-2-R M1 : la fleche de chaque carte du Foyer va au bout de la
-    // carte a toute largeur, pas juste apres le texte.
+    // carte a toute largeur, pas juste apres le texte ; dans les deux sens de
+    // lecture (revue FI-2-CORR-R, mineur 4).
     for (final double largeur in const <double>[390, 1024, 1440]) {
-      testWidgets('Foyer ${largeur.toInt()} px : la fleche au bout de chaque '
-          'carte', (WidgetTester tester) async {
-        await _monter(
-          tester,
-          appairage: _foyerA(),
-          depart: Routes.tuteurFoyer,
-          taille: Size(largeur, 900),
-        );
-        final Finder cartes = find.byType(CarteMembre);
-        expect(cartes, findsAtLeastNWidgets(2));
-        for (int i = 0; i < 2; i++) {
-          final Finder carte = cartes.at(i);
-          final Rect rCarte = tester.getRect(carte);
-          final Rect rFleche = tester.getRect(
-            find.descendant(of: carte, matching: find.byType(Icon)).last,
+      for (final TextDirection sens in TextDirection.values) {
+        testWidgets('Foyer ${largeur.toInt()} px, ${sens.name} : la fleche au '
+            'bout de chaque carte', (WidgetTester tester) async {
+          await _monter(
+            tester,
+            appairage: _foyerA(),
+            depart: Routes.tuteurFoyer,
+            taille: Size(largeur, 900),
+            sens: sens,
           );
-          expect(
-            rCarte.right - rFleche.right,
-            moreOrLessEquals(CarteMembre.marge, epsilon: 1.5),
-          );
-        }
-        expect(tester.takeException(), isNull);
-      });
+          final Finder cartes = find.byType(CarteMembre);
+          expect(cartes, findsAtLeastNWidgets(2));
+          for (int i = 0; i < 2; i++) {
+            final Finder carte = cartes.at(i);
+            expect(
+              tester
+                  .widget<Directionality>(
+                    find
+                        .ancestor(
+                          of: carte,
+                          matching: find.byType(Directionality),
+                        )
+                        .first,
+                  )
+                  .textDirection,
+              sens,
+            );
+            final Rect rCarte = tester.getRect(carte);
+            final Rect rFleche = tester.getRect(
+              find.descendant(of: carte, matching: find.byType(Icon)).last,
+            );
+            final double ecartFin = sens == TextDirection.ltr
+                ? rCarte.right - rFleche.right
+                : rFleche.left - rCarte.left;
+            expect(ecartFin, moreOrLessEquals(CarteMembre.marge, epsilon: 1.5));
+          }
+          expect(tester.takeException(), isNull);
+        });
+      }
     }
+
+    // Revue FI-2-CORR-R, mineur 5 : la ligne « Couleur du profil » ne dit
+    // « Sans couleur » qu'une fois la lecture faite.
+    testWidgets('fiche, couleurs en cours de lecture : aucune legende, jamais '
+        '« Sans couleur »', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        appairage: _foyerA(),
+        depart: Routes.ficheElevePour(a1),
+        autres: accents(_AccentsEnAttente()),
+      );
+      expect(find.text(t.ficheEleve.lignes.couleur), findsOneWidget);
+      expect(find.text(t.ficheEleve.lignes.couleurAucune), findsNothing);
+      expect(find.text(t.ficheEleve.lignes.couleurEchec), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('fiche, lecture des couleurs en echec : « Couleur non lue », '
+        'jamais « Sans couleur »', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        appairage: _foyerA(),
+        depart: Routes.ficheElevePour(a1),
+        autres: accents(_AccentsIllisibles()),
+      );
+      expect(find.text(t.ficheEleve.lignes.couleurEchec), findsOneWidget);
+      expect(find.text(t.ficheEleve.lignes.couleurAucune), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    // Revue FI-2-CORR-R, mineur 2 : la page Couleur nomme TOUS les autres
+    // profils qui ont deja la couleur (prenomsJoints branche dans la page).
+    testWidgets('page Couleur : une couleur prise par deux autres profils les '
+        'nomme tous les deux', (WidgetTester tester) async {
+      const EleveDuFoyer a3 = EleveDuFoyer(
+        id: 'foyer-a-eleve-3',
+        prenom: 'Eleve A3',
+        identifiantImmuable: 'STUD-FA-000003',
+        mode: InterfaceMode.standard,
+        camera: CameraPolicy.allowed,
+      );
+      await _monter(
+        tester,
+        appairage: _AppairagePilote()
+          ..elevesRendus = <EleveDuFoyer>[...FoyersFictifs.foyerA, a3],
+        depart: Routes.ficheEleveSousPage(a1, 'couleur'),
+        autres: accents(
+          AccentsProfilsEnMemoire(<String, AccentProfil>{
+            FoyersFictifs.a2.id: AccentProfil.rose,
+            a3.id: AccentProfil.rose,
+            a1: AccentProfil.ciel,
+          }),
+        ),
+      );
+      expect(find.byType(CouleurElevePage), findsOneWidget);
+      final String tous = t.ficheEleve.couleur.priseLigne(
+        couleur: t.ficheEleve.couleur.rose,
+        prenom: 'Eleve A2 et Eleve A3',
+      );
+      expect(find.text(tous), findsOneWidget);
+      // Jamais le premier seul, et jamais le profil ouvert lui-meme.
+      expect(
+        find.text(
+          t.ficheEleve.couleur.priseLigne(
+            couleur: t.ficheEleve.couleur.rose,
+            prenom: 'Eleve A2',
+          ),
+        ),
+        findsNothing,
+      );
+      expect(
+        find.textContaining(
+          t.ficheEleve.couleur.priseLigne(
+            couleur: t.ficheEleve.couleur.ciel,
+            prenom: 'Eleve A1',
+          ),
+        ),
+        findsNothing,
+      );
+      expect(tester.takeException(), isNull);
+    });
 
     testWidgets('« Sans couleur » retire le bandeau', (
       WidgetTester tester,
@@ -1252,6 +1356,23 @@ void main() {
       expect(bandeauApercu(), findsNothing);
     });
   });
+}
+
+/// Des accents dont la lecture ne finit jamais (chargement).
+class _AccentsEnAttente extends AccentsProfilsEnMemoire {
+  final Completer<Map<String, AccentProfil>> _jamais =
+      Completer<Map<String, AccentProfil>>();
+
+  @override
+  Future<Map<String, AccentProfil>> lire() => _jamais.future;
+}
+
+/// Des accents dont la lecture echoue alors que le service existe (ce n'est
+/// pas `CapaciteIndisponible`).
+class _AccentsIllisibles extends AccentsProfilsEnMemoire {
+  @override
+  Future<Map<String, AccentProfil>> lire() async =>
+      throw Exception('lecture des couleurs refusee');
 }
 
 /// Des accents lisibles dont l'ecriture echoue (coupure).

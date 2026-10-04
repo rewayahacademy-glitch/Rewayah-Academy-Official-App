@@ -223,6 +223,8 @@ class CarteMembre extends StatelessWidget {
       cercleEnHaut: true,
       // La fleche au bout de la carte, a toute largeur (revue FI-2-R M1).
       texteEtire: true,
+      // « Abdourahmane » entier a 320 px et 200 % (revue FI-2-CORR-R).
+      nomSansCoupure: true,
       avatar: PhotoEleve(
         prenom: profil.prenom,
         cleAvatar: profil.cleAvatar,

@@ -2,8 +2,14 @@
 // bout de la carte a toute largeur, dans les deux sens de lecture (M1) ; la
 // ligne « Couleur du profil » dit l'indisponible en production (m1) ; une
 // couleur prise par plusieurs profils les nomme tous (m2).
+//
+// FI-2-CORR-MINEURS (revue FI-2-CORR-R) : a 320 px et texte a 200 %, aucun
+// mot de la carte n'est coupe (« Abdourahmane » entier), dans les deux sens ;
+// la legende « Couleur du profil » ne dit « Sans couleur » ni pendant la
+// lecture ni sur un echec.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
@@ -15,6 +21,7 @@ import 'package:rewayah_academy/features/foyer/fiche/couleur_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/ligne_membre.dart';
 
+import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/harnais.dart';
 
 const ProfilEleveFoyer _profil = ProfilEleveFoyer(
@@ -24,6 +31,29 @@ const ProfilEleveFoyer _profil = ProfilEleveFoyer(
   mode: InterfaceMode.standard,
   camera: CameraPolicy.allowed,
 );
+
+/// Les mots coupes au milieu sous [racine] : un mot dont les boites tombent
+/// sur plus d'une ligne.
+List<String> motsCoupes(WidgetTester tester, Finder racine) {
+  final List<String> coupes = <String>[];
+  for (final Element e
+      in find
+          .descendant(of: racine, matching: find.byType(RichText))
+          .evaluate()) {
+    final RenderParagraph p = e.renderObject! as RenderParagraph;
+    final String texte = p.text.toPlainText();
+    for (final RegExpMatch m in RegExp(r'\S+').allMatches(texte)) {
+      final Set<double> lignes = <double>{
+        for (final TextBox b in p.getBoxesForSelection(
+          TextSelection(baseOffset: m.start, extentOffset: m.end),
+        ))
+          b.top.roundToDouble(),
+      };
+      if (lignes.length > 1) coupes.add(m.group(0)!);
+    }
+  }
+  return coupes;
+}
 
 void main() {
   group('M1 : la fleche au bout de la carte', () {
@@ -74,6 +104,89 @@ void main() {
         });
       }
     }
+  });
+
+  group('mineur 1 : aucun mot coupe a 320 px et 200 %', () {
+    // Les mesures de texte n'ont de sens qu'avec les vraies polices.
+    setUpAll(chargerPolicesDuDepot);
+
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets('« Abdourahmane » entier, ${sens.name}', (
+        WidgetTester tester,
+      ) async {
+        tester.view.physicalSize = const Size(320, 844);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        const String prenom = 'Abdourahmane';
+        expect(prenom.length, 12);
+        await tester.pumpWidget(
+          hote(
+            Builder(
+              builder: (BuildContext context) => MediaQuery(
+                data: MediaQuery.of(context)
+                    .copyWith(textScaler: const TextScaler.linear(2)),
+                child: Directionality(
+                  textDirection: sens,
+                  child: Material(
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: CarteMembre(
+                          profil: const ProfilEleveFoyer(
+                            eleveId: 'e2',
+                            prenom: prenom,
+                            nature: NatureProfilEleve.membreDuFoyer,
+                            mode: InterfaceMode.standard,
+                            camera: CameraPolicy.allowed,
+                          ),
+                          legende: 'Coran, niveau 1 · Accès actif',
+                          accent: AccentProfil.menthe,
+                          onPress: () {},
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text(prenom), findsOneWidget);
+        expect(motsCoupes(tester, find.byType(CarteMembre)), isEmpty);
+      });
+    }
+  });
+
+  group('mineur 5 : « Sans couleur » seulement quand c\'est lu', () {
+    test('pendant la lecture : aucune legende', () {
+      expect(
+        legendeCouleur(
+          const AsyncValue<Map<String, AccentProfil>>.loading(),
+          'e1',
+        ),
+        isNull,
+      );
+    });
+
+    test('lecture en echec ordinaire : « Couleur non lue »', () {
+      expect(
+        legendeCouleur(
+          AsyncValue<Map<String, AccentProfil>>.error(
+            StateError('reseau'),
+            StackTrace.empty,
+          ),
+          'e1',
+        ),
+        t.ficheEleve.lignes.couleurEchec,
+      );
+      expect(
+        t.ficheEleve.lignes.couleurEchec,
+        isNot(t.ficheEleve.lignes.couleurAucune),
+      );
+    });
   });
 
   group('m1 : legende de la ligne « Couleur du profil »', () {
