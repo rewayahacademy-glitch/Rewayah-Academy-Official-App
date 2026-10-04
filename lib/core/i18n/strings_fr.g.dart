@@ -11973,6 +11973,66 @@ class Traductions$comptable$aujourdhui$fr {
 
 	// Translations
 
+	/// fr: 'Ce qui attend une action de votre part, puis les risques à surveiller.'
+	String get attentionSousTitre => 'Ce qui attend une action de votre part, puis les risques à surveiller.';
+
+	/// fr: '{libelle} : {n}'
+	String elementCompteur({required Object libelle, required Object n}) => '${libelle} : ${n}';
+
+	/// fr: 'En attente depuis le {date}'
+	String elementDepuis({required Object date}) => 'En attente depuis le ${date}';
+
+	/// fr: 'Rien à traiter aujourd'hui.'
+	String get aTraiterVide => 'Rien à traiter aujourd\'hui.';
+
+	/// fr: 'Les paiements, relances et rapprochements à faire apparaîtront ici.'
+	String get aTraiterVideDetail => 'Les paiements, relances et rapprochements à faire apparaîtront ici.';
+
+	/// fr: 'Aucune alerte en ce moment.'
+	String get alertesVide => 'Aucune alerte en ce moment.';
+
+	/// fr: 'Alertes à surveiller : {n}'
+	String alertesResume({required Object n}) => 'Alertes à surveiller : ${n}';
+
+	/// fr: 'Paiements à effectuer'
+	String get paiementsAEffectuer => 'Paiements à effectuer';
+
+	/// fr: 'Chaque paiement se vérifie dans sa liste avant d'être payé.'
+	String get paiementsAEffectuerDetail => 'Chaque paiement se vérifie dans sa liste avant d\'être payé.';
+
+	/// fr: 'Aucun paiement à effectuer.'
+	String get paiementsVide => 'Aucun paiement à effectuer.';
+
+	/// fr: 'Aucune échéance proche.'
+	String get echeancesVide => 'Aucune échéance proche.';
+
+	/// fr: 'Aucun encaissement récent.'
+	String get encaissementsVide => 'Aucun encaissement récent.';
+
+	/// fr: 'Aucune activité récente.'
+	String get activiteVide => 'Aucune activité récente.';
+
+	/// fr: 'Aucun prestataire activé.'
+	String get prestatairesVide => 'Aucun prestataire activé.';
+
+	/// fr: 'Les paiements sortants partiront quand la direction aura activé un prestataire.'
+	String get prestatairesVideDetail => 'Les paiements sortants partiront quand la direction aura activé un prestataire.';
+
+	/// fr: 'Voir les paiements à effectuer'
+	String get accesPaiements => 'Voir les paiements à effectuer';
+
+	/// fr: 'Gérer les obligations des contractuels'
+	String get accesContractuels => 'Gérer les obligations des contractuels';
+
+	/// fr: 'Voir les encaissements'
+	String get accesEncaissements => 'Voir les encaissements';
+
+	/// fr: 'Voir la trésorerie et les coffres'
+	String get accesTresorerie => 'Voir la trésorerie et les coffres';
+
+	/// fr: 'Alimenter la Réserve stratégique'
+	String get accesAlimenter => 'Alimenter la Réserve stratégique';
+
 	/// fr: 'Aujourd'hui'
 	String get titre => 'Aujourd\'hui';
 
@@ -22140,6 +22200,26 @@ extension on Traductions {
 			'comptable.alertes.methodeModifieeRecemment' => 'Méthode modifiée récemment',
 			'comptable.alertes.doublonPotentiel' => 'Doublon potentiel',
 			'comptable.alertes.validationRequise' => 'Validation supplémentaire requise',
+			'comptable.aujourdhui.attentionSousTitre' => 'Ce qui attend une action de votre part, puis les risques à surveiller.',
+			'comptable.aujourdhui.elementCompteur' => ({required Object libelle, required Object n}) => '${libelle} : ${n}',
+			'comptable.aujourdhui.elementDepuis' => ({required Object date}) => 'En attente depuis le ${date}',
+			'comptable.aujourdhui.aTraiterVide' => 'Rien à traiter aujourd\'hui.',
+			'comptable.aujourdhui.aTraiterVideDetail' => 'Les paiements, relances et rapprochements à faire apparaîtront ici.',
+			'comptable.aujourdhui.alertesVide' => 'Aucune alerte en ce moment.',
+			'comptable.aujourdhui.alertesResume' => ({required Object n}) => 'Alertes à surveiller : ${n}',
+			'comptable.aujourdhui.paiementsAEffectuer' => 'Paiements à effectuer',
+			'comptable.aujourdhui.paiementsAEffectuerDetail' => 'Chaque paiement se vérifie dans sa liste avant d\'être payé.',
+			'comptable.aujourdhui.paiementsVide' => 'Aucun paiement à effectuer.',
+			'comptable.aujourdhui.echeancesVide' => 'Aucune échéance proche.',
+			'comptable.aujourdhui.encaissementsVide' => 'Aucun encaissement récent.',
+			'comptable.aujourdhui.activiteVide' => 'Aucune activité récente.',
+			'comptable.aujourdhui.prestatairesVide' => 'Aucun prestataire activé.',
+			'comptable.aujourdhui.prestatairesVideDetail' => 'Les paiements sortants partiront quand la direction aura activé un prestataire.',
+			'comptable.aujourdhui.accesPaiements' => 'Voir les paiements à effectuer',
+			'comptable.aujourdhui.accesContractuels' => 'Gérer les obligations des contractuels',
+			'comptable.aujourdhui.accesEncaissements' => 'Voir les encaissements',
+			'comptable.aujourdhui.accesTresorerie' => 'Voir la trésorerie et les coffres',
+			'comptable.aujourdhui.accesAlimenter' => 'Alimenter la Réserve stratégique',
 			'comptable.aujourdhui.titre' => 'Aujourd\'hui',
 			'comptable.aujourdhui.sousTitre' => 'Que dois-je faire maintenant ?',
 			'comptable.aujourdhui.attention' => 'À traiter et alertes',

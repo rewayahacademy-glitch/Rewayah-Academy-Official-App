@@ -164,6 +164,36 @@ class AujourdhuiComptable {
   List<ElementAttention> get alertes => file
       .where((ElementAttention e) => e.listeEffective == ListeAttention.alerte)
       .toList();
+
+  /// Les elements « A traiter » qui sont des paiements a effectuer (zone 6
+  /// de §29 sur bureau) : enseignants a payer, contractuels a echeance.
+  /// Sur bureau, ils vivent dans « Paiements a effectuer » et nulle part
+  /// ailleurs (DR-10 : un probleme, un endroit) ; sur telephone et dans la
+  /// file complete, ils restent en tete de « A traiter ».
+  List<ElementAttention> get paiementsAEffectuer =>
+      aTraiter.where((ElementAttention e) => e.type.estPaiement).toList();
+
+  /// Les elements « A traiter » hors paiements a effectuer (zone 3 sur
+  /// bureau) : relancer, rapprocher, valider, reprendre un echec.
+  List<ElementAttention> get aTraiterHorsPaiements =>
+      aTraiter.where((ElementAttention e) => !e.type.estPaiement).toList();
+
+  /// Vrai quand rien n'attend le Comptable : aucune file, aucune echeance,
+  /// aucun encaissement ni activite recente. La tresorerie et la Reserve
+  /// restent affichees : un jour calme n'est pas un ecran vide de chiffres.
+  bool get estCalme =>
+      file.isEmpty &&
+      echeances.isEmpty &&
+      encaissementsRecents.isEmpty &&
+      activite.isEmpty;
+}
+
+/// Les familles de paiements a effectuer parmi les types d'alerte (§28).
+extension TypeAlertePaiement on TypeAlerteComptable {
+  /// Vrai pour « Enseignants a payer » et « Contractuels a echeance ».
+  bool get estPaiement =>
+      this == TypeAlerteComptable.enseignantsAPayer ||
+      this == TypeAlerteComptable.contractuelsAEcheance;
 }
 
 /// Aujourd'hui du Comptable (CPT-BR-03).
