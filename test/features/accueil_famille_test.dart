@@ -536,15 +536,27 @@ void main() {
     });
   });
 
-  group('BENTO-2b : la carte classe ne coupe aucun mot', () {
+  group('BENTO-2b/2c : la carte classe ne coupe aucun mot', () {
     // Les mesures de texte n'ont de sens qu'avec les vraies polices.
     setUpAll(chargerPolicesDuDepot);
 
     for (final (double, double) cas in const <(double, double)>[
+      (320, 1),
       (320, 2),
+      (390, 2),
+      // BENTO-2c (m1 de BENTO-2b-R) : carte pleine largeur, colonne de la
+      // duree trop etroite a texte double (« Duré/e », « 45 / min »).
+      (600, 2),
+      (620, 2),
       (768, 1),
       (768, 2),
+      // BENTO-2c (m3) : la bande 864-1023 (moitie de 360 a 439 px), 1024,
+      // 1200 (moitie 432) et 1280.
+      (864, 1),
+      (900, 1),
       (1024, 1),
+      (1200, 1),
+      (1280, 1),
       (1440, 1),
       (1440, 2),
     ]) {
@@ -559,36 +571,96 @@ void main() {
             direction: sens,
           );
           expect(tester.takeException(), isNull);
+          // BENTO-2c (m4) : la mesure porte sur quelque chose. La grille est
+          // la, et la ligne « Duree » qu'elle doit proteger aussi.
+          final Finder grille = find.byType(GrilleBento);
+          expect(grille, findsOneWidget);
+          expect(
+            find.descendant(
+              of: grille,
+              matching: find.text(LibellesGroupe.dureeLibelle),
+            ),
+            findsOneWidget,
+          );
           // La carte, « Avant le prochain cours » et « Derniere seance » ;
           // le selecteur de profils (qui defile) et la coquille sont hors
           // de cette mesure.
-          verifierAucunMotCoupe(tester, find.byType(GrilleBento));
+          verifierAucunMotCoupe(tester, grille);
         });
       }
     }
 
-    testWidgets('768 px : la carte classe passe en pleine largeur ; 1440 px : '
-        'cote a cote', (WidgetTester tester) async {
-      await _monter(
-        tester,
-        depart: Routes.tuteurAccueil,
-        taille: const Size(768, 1500),
-      );
-      final double grille = tester.getSize(find.byType(GrilleBento)).width;
-      expect(
-        tester.getSize(find.byType(CarteClasseSeance)).width,
-        moreOrLessEquals(grille),
-      );
-      await _monter(
-        tester,
-        depart: Routes.tuteurAccueil,
-        taille: const Size(1440, 1500),
-      );
-      expect(
-        tester.getSize(find.byType(CarteClasseSeance)).width,
-        lessThan(tester.getSize(find.byType(GrilleBento)).width / 2),
-      );
-    });
+    /// Vrai si la carte classe partage sa bande (moins de la moitie de la
+    /// grille).
+    bool coteACote(WidgetTester tester) =>
+        tester.getSize(find.byType(CarteClasseSeance)).width <
+        tester.getSize(find.byType(GrilleBento)).width / 2;
+
+    // BENTO-2c (m2, m3) : la carte partage sa bande des que chaque moitie de
+    // la grille offre 360 px x echelle. Avec le rail (80) et les gouttieres
+    // (2 x 24), la grille fait 736 px a 864 px d'ecran : bascule entre 863
+    // et 864 ; a 1024 px la carte est deja cote a cote ; a texte double, il
+    // faut une grille de 1472 px, donc 1440 reste en pleine largeur.
+    for (final (double, double, bool) cas in const <(double, double, bool)>[
+      (768, 1, false),
+      (863, 1, false),
+      (864, 1, true),
+      (1024, 1, true),
+      (1440, 1, true),
+      (1440, 2, false),
+    ]) {
+      testWidgets('${cas.$1.toInt()} px, texte x${cas.$2.toInt()} : '
+          '${cas.$3 ? 'cote a cote' : 'pleine largeur'}', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          depart: Routes.tuteurAccueil,
+          taille: Size(cas.$1, 3000),
+          echelle: cas.$2,
+        );
+        expect(find.byType(CarteClasseSeance), findsOneWidget);
+        expect(coteACote(tester), cas.$3);
+        if (!cas.$3) {
+          expect(
+            tester.getSize(find.byType(CarteClasseSeance)).width,
+            moreOrLessEquals(tester.getSize(find.byType(GrilleBento)).width),
+          );
+        }
+      });
+    }
+
+    // BENTO-2c (m8, m9) : la duree reste a droite du filet tant que
+    // (mesure, plus de seuil fixe de 96 px)
+    // « Duree » et sa valeur y tiennent entieres, sinon elle passe sous
+    // l'heure (dans la moitie de debut de la carte).
+    for (final (double, double, bool) cas in const <(double, double, bool)>[
+      (320, 1, true),
+      (320, 2, false),
+      (390, 1, true),
+      (390, 2, true),
+      (600, 2, false),
+      (1440, 1, true),
+    ]) {
+      testWidgets('${cas.$1.toInt()} px, texte x${cas.$2.toInt()} : duree '
+          '${cas.$3 ? 'a droite' : "sous l'heure"}', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          depart: Routes.tuteurAccueil,
+          taille: Size(cas.$1, 3000),
+          echelle: cas.$2,
+        );
+        final Finder duree = find.descendant(
+          of: find.byType(BlocSeance),
+          matching: find.text(LibellesGroupe.dureeLibelle),
+        );
+        expect(duree, findsOneWidget);
+        final Rect bloc = tester.getRect(find.byType(BlocSeance));
+        expect(tester.getTopLeft(duree).dx > bloc.center.dx, cas.$3);
+      });
+    }
   });
 
   group('Accueil : lectures en echec ou en cours', () {

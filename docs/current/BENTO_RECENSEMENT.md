@@ -1,4 +1,4 @@
-# BENTO-1 : recensement des tableaux de bord (02/10/2026)
+# Recensement des tableaux de bord en grille Bento (BENTO-1 à BENTO-2c, 04/10/2026)
 
 Composant partagé : `lib/core/widgets/grille_bento.dart` (`GrilleBento`,
 `TuileBento`, `EtendueBento`, `placerBento`) ; la règle des colonnes est la
@@ -12,14 +12,18 @@ largeur utile par colonne qui décide, pas l'échelle seule
 valider), la grille perd une colonne : 4, 3, 2, puis 1 colonne de hauteur
 libre (BENTO-1c). Cette règle ne joue qu'au-dessus de 100 % : à 100 % ou
 moins, rien ne change, même dans une place étroite. À trois colonnes et plus,
-une tuile prend son étendue large (`TuileBento.etendueLarge`) : la grande
-tuile 2×2 n'y garde une voisine qu'au Centre de commande ; Aujourd'hui et
-l'accueil famille restent en bandes pleine largeur, comme à deux colonnes
-(revue BENTO-1c-R, m-C). À 1440 px et
+une tuile prend son étendue large (`TuileBento.etendueLarge`). À trois
+colonnes (texte agrandi), la grande tuile 2×2 n'y garde une voisine qu'au
+Centre de commande ; Aujourd'hui et l'accueil famille restent en bandes
+pleine largeur, comme à deux colonnes (revue BENTO-1c-R, m-C). À quatre
+colonnes, deux grandes tuiles 2×2 peuvent se partager la bande : sur
+Aujourd'hui selon le placement de `placerBento` (captures 1440 de
+BENTO-2b), sur l'accueil famille seulement si chaque moitié offre 360 px ×
+échelle du texte (`largeurMinCarteClasse`, BENTO-2b ; revue BENTO-2b-R, m6). À 1440 px et
 texte × 2, le Centre de commande garde plusieurs colonnes ; à 320 px et
 texte × 2, une seule.
 
-## Fait dans ce lot
+## Fait (BENTO-1 à BENTO-2c)
 
 | Rôle | Écran | Fichier | Avant | Après |
 |---|---|---|---|---|

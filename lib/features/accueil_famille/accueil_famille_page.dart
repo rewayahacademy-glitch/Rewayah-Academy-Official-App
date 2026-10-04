@@ -54,10 +54,13 @@ final FutureProviderFamily<ClasseFoyer?, String> classeDeLEleveProvider =
 
 /// Largeur minimale (texte 100 %) de la carte classe pour qu'elle partage sa
 /// bande avec « Avant le prochain cours » (BENTO-2b, revue BENTO-2-R M1) :
-/// a 310 px, la colonne « Duree » coupait « Duré/e » et « 45 mi/n ». 360
-/// garde le cote a cote a 1280 et 1440 px et rend la pleine largeur sous
-/// ~1024 px. Elle croit avec l'echelle du texte. Mesuree par les tests de
-/// mots coupes de `accueil_famille_test.dart`, sans autre source.
+/// a 310 px, la colonne « Duree » coupait « Duré/e » et « 45 mi/n ». Elle
+/// croit avec l'echelle du texte. Cote a cote des que la grille fait
+/// 736 px x echelle (2 x 360 + l'ecart) : a texte 100 %, ecran de 864 px
+/// avec le rail replie (80 px, gouttieres 2 x 24), 1040 px avec la barre
+/// laterale depliee ; dessous (tablette de 600 a 863 px, texte agrandi),
+/// pleine largeur. Les bascules 863/864, 1024 et 1440 x2 sont mesurees par
+/// `accueil_famille_test.dart` (BENTO-2c), sans autre source.
 const double largeurMinCarteClasse = 360;
 
 /// La cle de lecture d'une presence : une seance, un eleve.
@@ -303,10 +306,11 @@ class _Contenu extends ConsumerWidget {
     // cote a cote sur quatre colonnes ; la derniere seance en large. Chaque
     // tuile garde la hauteur de son contenu ; sur telephone, une colonne.
     // BENTO-2b : cote a cote seulement si chaque moitie offre
-    // [largeurMinCarteClasse] x echelle du texte ; sinon (tablette de 600 a
-    // ~1024 px, texte agrandi) la carte et « Avant le prochain cours » passent
-    // en pleine largeur, comme avant BENTO-2 : la ligne « 18:10 | Duree
-    // 45 min » ne coupe plus aucun mot.
+    // [largeurMinCarteClasse] x echelle du texte (grille de 736 px x echelle,
+    // ecran de 864 px a texte 100 %) ; sinon (tablette de 600 a 863 px,
+    // texte agrandi) la carte et « Avant le prochain cours » passent en
+    // pleine largeur, comme avant BENTO-2. La ligne « 18:10 | Duree 45 min »
+    // se protege en plus elle-meme (BENTO-2c, `BlocSeance`).
     final double marge = compact ? AppSpacing.lg : AppSpacing.xxl;
     final double echelle = MediaQuery.textScalerOf(context).scale(1);
     return Column(
