@@ -26,6 +26,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/communications/modeles_communication.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -40,6 +41,8 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
+import '../com_annonces/annonces_de_classe.dart';
+import '../com_messages/entree_messages_contexte.dart';
 import '../foyer/photo_eleve.dart' show PhotoEleve;
 import '../tc_catalogue/routes_tc_b.dart' show RoutesTcB;
 import '../tc_espace_groupe/emplacements_groupe.dart' show BlocBibliotheque;
@@ -274,6 +277,11 @@ class _Sections extends StatelessWidget {
             ? GoRouter.of(context).go(RoutesTcB.avecGroupe(groupeId))
             : voir(groupeId),
       ),
+      // COM-F : les emplacements des Communications (annonces de la Classe,
+      // entree des Messages), vides tant que leurs voies ne les remplissent
+      // pas ; ils portent leur propre ecart.
+      AnnoncesDeClasse(classeId: groupeId),
+      EntreeMessagesContexte(type: TypeObjetLie.classe, objetId: groupeId),
     ];
 
     List<Widget> bloc(List<List<Widget>> sections) => <Widget>[

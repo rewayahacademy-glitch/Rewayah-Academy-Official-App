@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/admin/service_groupes.dart' show TypePublicGroupe;
+import '../../core/communications/modeles_communication.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
 import '../../core/i18n/strings.g.dart';
@@ -29,6 +30,8 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../com_annonces/annonces_de_classe.dart';
+import '../com_messages/entree_messages_contexte.dart';
 import '../foyer/photo_eleve.dart' show PhotoEleve;
 import '../tc_espace_groupe/carte_session.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart';
@@ -315,6 +318,11 @@ class _CorpsState extends ConsumerState<_Corps> {
       ],
       Ecart.vSection,
       ressources,
+      // COM-F : les emplacements des Communications (annonces de la Classe,
+      // entree des Messages), vides tant que leurs voies ne les remplissent
+      // pas ; ils portent leur propre ecart.
+      AnnoncesDeClasse(classeId: groupe.id),
+      EntreeMessagesContexte(type: TypeObjetLie.classe, objetId: groupe.id),
     ];
 
     // [RESPONSIVE] EN-3 (planche 2, rectification 5) : sur bureau, deux
