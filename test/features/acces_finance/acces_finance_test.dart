@@ -22,6 +22,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/port_acces_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
+import 'package:rewayah_academy/core/capacites/port_mes_finances.dart';
 import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
@@ -987,8 +988,11 @@ void main() {
       monEspaceAdulteProvider.overrideWith(
         (Ref _) async => MonEspaceAdulteVM(ligneFamille: ligne),
       ),
-      if (paiements != null)
+      if (paiements != null) ...<Override>[
         portPaiementsFoyerProvider.overrideWithValue(paiements),
+        // FI-9b : l'adulte seul lit ses finances par son propre port.
+        portMesFinancesProvider.overrideWithValue(_MesFinancesDe(paiements)),
+      ],
       if (acces != null) portAccesFoyerProvider.overrideWithValue(acces),
     ];
 
@@ -1090,4 +1094,21 @@ void main() {
       });
     }
   });
+}
+
+/// Les finances du seul profil d'un foyer d'un profil (adulte autonome),
+/// rendues par le port borne a la session (FI-9b).
+class _MesFinancesDe implements PortMesFinances {
+  _MesFinancesDe(this.foyer);
+
+  final PortPaiementsFoyer foyer;
+
+  @override
+  Future<FinancesProfil?> finances() async {
+    final List<FinancesProfil> p = (await foyer.finances()).profils;
+    return p.length == 1 ? p.single : null;
+  }
+
+  @override
+  Future<List<MouvementProfil>> mouvements() async => const <MouvementProfil>[];
 }

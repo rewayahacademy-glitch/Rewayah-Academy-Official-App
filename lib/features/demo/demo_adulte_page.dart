@@ -1129,6 +1129,9 @@ class CoquilleAdulteDemo extends StatelessWidget {
               preselection: <String>{?eleve},
               onAbandon: versPaiements,
               onTerminee: versPaiements,
+              // La demo de l'adulte seul ne rend aucune commande payee : par
+              // surete, une commande rendue ramenerait a ses paiements.
+              onPaye: (String _) => versPaiements(),
             ),
             EcranDemoAdulte.informations => InformationsComptePage(
               onRetour: versMonEspace,

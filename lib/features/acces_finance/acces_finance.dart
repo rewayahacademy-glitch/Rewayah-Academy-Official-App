@@ -28,6 +28,7 @@ import 'package:flutter_riverpod/misc.dart'
     show FutureProviderFamily, ProviderFamily;
 
 import '../../core/capacites/port_acces_foyer.dart';
+import '../../core/capacites/port_mes_finances.dart';
 import '../../core/finance/finances_profil.dart';
 import '../../core/finance/format_montant.dart';
 import '../../core/finance/montant.dart';
@@ -268,13 +269,12 @@ class AccesAdulte extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final List<FinancesProfil>? profils = ref
-        .watch(financesFoyerProvider)
-        .value
-        ?.profils;
+    // FI-9b : les finances du seul adulte (PortMesFinances, borne a la
+    // session), jamais celles du foyer entier chargees puis filtrees.
+    final AsyncValue<FinancesProfil?> miennes = ref.watch(mesFinancesProvider);
     final List<AccesBeneficiaire>? acces = ref.watch(accesFoyerProvider).value;
-    final FinancesProfil? finances = profils?.length == 1
-        ? profils!.single
+    final FinancesProfil? finances = miennes.hasValue && !miennes.hasError
+        ? miennes.requireValue
         : null;
     final String? essai = libelleEssai(
       acces?.length == 1 ? acces!.single : null,
