@@ -53,6 +53,16 @@ enum JeuFoyerFinance {
   cinqProfils,
 }
 
+/// Une classe de l'enseignant de demonstration (revue FI-1c-R M2).
+typedef _ClasseDemo = ({
+  String id,
+  String nom,
+  int minutes,
+  int capacite,
+  int eligibles,
+  bool adulte,
+});
+
 /// Un profil de demonstration, avant ses donnees financieres.
 class _ProfilDemo {
   const _ProfilDemo(
@@ -328,26 +338,40 @@ abstract final class DonneesFinanceDemo {
     );
   }
 
+  /// La fin du dernier acces d'un profil payant sans periode financee : la
+  /// fin de sa derniere periode, ou celle de son essai (FIN4-13). Elle est
+  /// passee, donc l'acces se lit « expire », jamais « sans echeance », qui
+  /// est le cas ordinaire d'un compte valide (revue FI-1c-R M1).
+  static final DateTime finDernierAcces = DateTime(2026, 9, 30, 23, 59);
+
   /// L'acces des profils du jeu [jeu], tel que l'enfant peut le lire :
   /// seances payantes ouvertes ou non, essais ; **jamais un montant ni une
-  /// cause** (FI12).
+  /// cause** (FI12). L'etat affiche vient de l'echeance, par la meme regle
+  /// que les ecrans (`etatAccesAffiche`) : un profil payant non finance est
+  /// « expire » ; seul l'essai en cours reste sans echeance.
   static List<AccesBeneficiaire> acces(JeuFoyerFinance jeu) =>
       <AccesBeneficiaire>[
-        for (final FinancesProfil p in profils(jeu))
-          AccesBeneficiaire(
-            eleveId: p.profilId,
-            prenom: p.prenom,
-            finAcces: p.periode?.fin,
-            etatAffiche: p.periode == null
-                ? EtatAccesAffiche.sansEcheance
-                : EtatAccesAffiche.actif,
-            seancesPayantesOuvertes: p.periode != null,
-            essaisUtilises: p.essaisUtilises,
-            essaisMax: p.essaisUtilises == null
-                ? null
-                : politiqueLancement.essaisMax,
-          ),
+        for (final FinancesProfil p in profils(jeu)) _acces(p),
       ];
+
+  static AccesBeneficiaire _acces(FinancesProfil p) {
+    final DateTime? fin = switch (p.etat) {
+      EtatFinancier.essai => null,
+      _ => p.periode?.fin ?? finDernierAcces,
+    };
+    return AccesBeneficiaire(
+      eleveId: p.profilId,
+      prenom: p.prenom,
+      finAcces: fin,
+      etatAffiche: etatAccesAffiche(
+        finAcces: fin,
+        maintenantUtc: aujourdhui.toUtc(),
+      ),
+      seancesPayantesOuvertes: p.periode != null,
+      essaisUtilises: p.essaisUtilises,
+      essaisMax: p.essaisUtilises == null ? null : politiqueLancement.essaisMax,
+    );
+  }
 
   /// L'identifiant de la commande de demonstration dans l'etat [etat] : la
   /// demonstration parcourt les huit etats (revue FI-1a E-10).
@@ -424,50 +448,85 @@ abstract final class DonneesFinanceDemo {
     );
   }
 
-  /// Les revenus estimes de l'enseignant de demonstration : une classe
-  /// pleine, une classe a 80 %, une classe d'adultes au minimum d'ouverture.
-  static RevenusEnseignant revenus() {
+  /// Les classes de l'enseignant de demonstration : une classe pleine, une
+  /// classe a 80 %, une classe d'adultes au minimum d'ouverture. Les MEMES
+  /// sieges font ses revenus et le revenu de la vue globale (revue FI-1c-R
+  /// M2) : jamais deux populations qui ne se correspondent pas.
+  static List<_ClasseDemo> _classesDemo() {
     final PolitiqueCommerciale p = politiqueLancement;
-    final List<RevenusClasse> classes = <RevenusClasse>[
-      _classe(
-        'demo-fi-classe-nour',
-        'An-Nour',
+    return <_ClasseDemo>[
+      (
+        id: 'demo-fi-classe-nour',
+        nom: 'An-Nour',
         minutes: 480,
         capacite: p.capaciteEnfant,
         eligibles: p.capaciteEnfant,
+        adulte: false,
       ),
-      _classe(
-        'demo-fi-classe-huda',
-        'Al-Huda',
+      (
+        id: 'demo-fi-classe-huda',
+        nom: 'Al-Huda',
         minutes: 480,
         capacite: p.capaciteEnfant,
         eligibles: 4,
+        adulte: false,
       ),
-      _classe(
-        'demo-fi-classe-salam',
-        'As-Salam',
+      (
+        id: 'demo-fi-classe-salam',
+        nom: 'As-Salam',
         minutes: 360,
         capacite: p.capaciteAdulte,
         eligibles: p.minimumOuverture,
+        adulte: true,
       ),
+    ];
+  }
+
+  /// Les revenus estimes de l'enseignant de demonstration.
+  static RevenusEnseignant revenus() {
+    final List<RevenusClasse> classes = <RevenusClasse>[
+      for (final _ClasseDemo c in _classesDemo())
+        _classe(
+          c.id,
+          c.nom,
+          minutes: c.minutes,
+          capacite: c.capacite,
+          eligibles: c.eligibles,
+        ),
     ];
     return RevenusEnseignant(
       debut: debutMois,
       fin: finMois,
       classes: classes,
       totalEstime: _somme(classes.map((RevenusClasse c) => c.montantEstime)),
-      allocationInternet: p.allocationInternet,
+      allocationInternet: politiqueLancement.allocationInternet,
     );
   }
 
-  /// La vue globale de la direction pour le mois de reference, tiree des
-  /// jeux du foyer (un foyer finance, un a regulariser, un en essai).
+  /// Le revenu academique du mois de reference : un tarif par siege eligible
+  /// des classes de l'enseignant de demonstration, enfant ou adulte, hors
+  /// taxe (FI13). Les remises de rang dependent des foyers, que ces sieges ne
+  /// disent pas : la demonstration n'en invente pas.
+  static Montant revenuDemo() {
+    final PolitiqueCommerciale p = politiqueLancement;
+    return _somme(<Montant>[
+      for (final _ClasseDemo c in _classesDemo())
+        Montant(
+          (c.adulte ? p.tarifAdulte : p.tarifEnfant).mineur *
+              (c.eligibles > c.capacite ? c.capacite : c.eligibles),
+          devise,
+        ),
+    ]);
+  }
+
+  /// La vue globale de la direction pour le mois de reference. Revenu et
+  /// paie portent sur les memes sieges (revue FI-1c-R M2) ; la marge est
+  /// celle de la paie des enseignants seule, jamais une marge nette, qui
+  /// demande des charges que la demonstration ne connait pas (guide §1.5).
   static VueGlobaleFinance vueGlobale() {
     final FinancesFoyer finance = finances(JeuFoyerFinance.tousFinances);
     final FinancesFoyer aRegulariser = finances(JeuFoyerFinance.unARegulariser);
-    final Montant revenu = _somme(
-      finance.profils.map((FinancesProfil p) => p.mensualite),
-    );
+    final Montant revenu = revenuDemo();
     final Montant paie = revenus().totalEstime;
     return VueGlobaleFinance(
       mois: debutMois,

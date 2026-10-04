@@ -285,6 +285,47 @@ void main() {
       expect(essai.essaisUtilises, 1);
       expect(essai.essaisMax, 2);
     });
+
+    // Revue FI-1c-R M1 : `sansEcheance` est le cas ordinaire d'un compte
+    // valide, et la page Acces affiche « Actif » pour tout etat qui n'est pas
+    // `expire`. Un profil payant sans periode financee ne peut donc etre ni
+    // `sansEcheance` ni `actif`.
+    test('acces : un profil payant non finance se lit « expire », dans '
+        'chaque jeu ; seul l essai reste sans echeance', () {
+      for (final JeuFoyerFinance jeu in JeuFoyerFinance.values) {
+        final List<FinancesProfil> finances = DonneesFinanceDemo.profils(jeu);
+        final List<AccesBeneficiaire> acces = DonneesFinanceDemo.acces(jeu);
+        expect(acces, hasLength(finances.length), reason: jeu.name);
+        for (int i = 0; i < finances.length; i++) {
+          final FinancesProfil f = finances[i];
+          final AccesBeneficiaire a = acces[i];
+          final String cas = '${jeu.name} ${f.prenom}';
+          expect(a.eleveId, f.profilId, reason: cas);
+          expect(a.seancesPayantesOuvertes, f.periode != null, reason: cas);
+          final EtatAccesAffiche attendu = switch (f) {
+            FinancesProfil(etat: EtatFinancier.essai) =>
+              EtatAccesAffiche.sansEcheance,
+            FinancesProfil(periode: null) => EtatAccesAffiche.expire,
+            _ => EtatAccesAffiche.actif,
+          };
+          expect(a.etatAffiche, attendu, reason: cas);
+          // L'etat rendu est celui que les ecrans recalculent (DB-FOY-05).
+          expect(
+            a.etatAffiche,
+            etatAccesAffiche(
+              finAcces: a.finAcces,
+              maintenantUtc: DonneesFinanceDemo.aujourdhui.toUtc(),
+            ),
+            reason: cas,
+          );
+        }
+      }
+      final AccesBeneficiaire ibrahim = DonneesFinanceDemo.acces(
+        JeuFoyerFinance.unARegulariser,
+      )[1];
+      expect(ibrahim.etatAffiche, EtatAccesAffiche.expire);
+      expect(ibrahim.finAcces, DonneesFinanceDemo.finDernierAcces);
+    });
   });
 
   group('paiement : les huit etats en demonstration (FI9)', () {
@@ -333,6 +374,36 @@ void main() {
         DonneesFinanceDemo.tauxEffectif(siegesEligibles: 4, capacite: 5),
         const Montant(640, 'USD'),
       );
+    });
+
+    // Revue FI-1c-R M2 : la vue globale additionnait le revenu d'un foyer et
+    // la paie de treize sieges (marge 12 pour mille). Revenu et paie portent
+    // maintenant sur les memes sieges.
+    test('vue globale : revenu et paie sur les memes sieges', () {
+      final PolitiqueCommerciale p = DonneesFinanceDemo.politiqueLancement;
+      final RevenusEnseignant r = DonneesFinanceDemo.revenus();
+      final VueGlobaleFinance v = DonneesFinanceDemo.vueGlobale();
+      final int sieges = r.classes.fold<int>(
+        0,
+        (int s, RevenusClasse c) => s + c.siegesEligibles,
+      );
+      expect(sieges, 13);
+      // 9 enfants a 50 et 4 adultes (As-Salam, capacite adulte) a 60.
+      expect(
+        v.revenuAcademique,
+        Montant(9 * p.tarifEnfant.mineur + 4 * p.tarifAdulte.mineur, 'USD'),
+      );
+      expect(v.revenuAcademique, _usd(690));
+      expect(v.paieEnseignants, r.totalEstime);
+      expect(v.paieEnseignants, const Montant(14320, 'USD'));
+      expect(
+        v.margeProjeteePourMille,
+        (v.revenuAcademique.mineur - v.paieEnseignants.mineur) *
+            1000 ~/
+            v.revenuAcademique.mineur,
+      );
+      expect(v.margeProjeteePourMille, 792);
+      expect(v.paieEnseignants.mineur, lessThan(v.revenuAcademique.mineur));
     });
 
     test('total = somme des classes, aide Internet a part', () {
