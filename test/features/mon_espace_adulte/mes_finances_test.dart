@@ -360,7 +360,6 @@ void main() {
         tester,
         find.byKey(RechargeFoyerPage.plusDe(DonneesAdulteDemo.mamadouId)),
       );
-      await toucher(tester, find.byKey(RechargeFoyerPage.verifierKey));
       expect(
         find.byKey(RechargeFoyerPage.ligneDe(DonneesAdulteDemo.mamadouId)),
         findsOneWidget,

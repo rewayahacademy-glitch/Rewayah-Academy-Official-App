@@ -489,7 +489,7 @@ final List<_Cas> _cas = <_Cas>[
     Routes.rechargeReprise(<String, Montant>{
       _mariam: DonneesFinanceDemo.usd(10),
       _ibrahim: DonneesFinanceDemo.usd(40),
-    }, verifier: true),
+    }),
     () => _tuteur(_reg),
   ),
   _route(
@@ -1435,7 +1435,7 @@ final List<_Complement> _complements = <_Complement>[
       Routes.rechargeReprise(<String, Montant>{
         _mariam: DonneesFinanceDemo.usd(10),
         _ibrahim: DonneesFinanceDemo.usd(40),
-      }, verifier: true),
+      }),
       () => _tuteur(_reg),
     ),
     <_Variante>[_t, _b, _rtl],

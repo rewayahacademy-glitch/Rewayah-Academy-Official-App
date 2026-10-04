@@ -1148,6 +1148,8 @@ class CoquilleAdulteDemo extends StatelessWidget {
             // `eleve=`, elle coche aussi son profil : il n'en a pas d'autre.
             EcranDemoAdulte.maRecharge => RechargeFoyerPage(
               preselection: <String>{mesFinances.profilId},
+              // Son seul profil : aucune finance du foyer lue (FI-9b).
+              regularisation: false,
               onAbandon: versPaiements,
               onTerminee: versPaiements,
               // La demo de l'adulte seul ne rend aucune commande payee : par

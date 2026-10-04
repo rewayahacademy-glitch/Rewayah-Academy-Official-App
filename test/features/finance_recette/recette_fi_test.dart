@@ -190,11 +190,11 @@ class _RechargeEspion extends RechargeFoyerFinanceDemo {
   }
 }
 
-/// Coche Mariam, prend le premier montant propose et passe a l'etape 2.
+/// Coche Mariam et prend le premier montant propose : le recapitulatif
+/// arrive sur la meme page (une seule page, R3-01).
 Future<void> _versEtape2(WidgetTester tester) async {
   await toucherFi(tester, find.byKey(RechargeFoyerPage.caseDe(_mariam)));
   await toucherFi(tester, find.byKey(RechargeFoyerPage.plusDe(_mariam)));
-  await toucherFi(tester, find.byKey(RechargeFoyerPage.verifierKey));
   expect(find.byKey(RechargeFoyerPage.recapitulatifKey), findsOneWidget);
 }
 
@@ -566,7 +566,8 @@ void main() {
   // « Suivre le paiement », « Revenir aux paiements » d'un paiement
   // indisponible (recharge_foyer_adulte_test.dart).
   group('(a) Recharge', () {
-    testWidgets('etape 2 : le retour ramene a l etape 1, les choix gardes', (
+    testWidgets('une seule page : decocher retire la ligne du recapitulatif, '
+        'les autres choix gardes ; le retour ramene au Foyer', (
       WidgetTester tester,
     ) async {
       final GoRouter routeur = await monterTuteurFi(
@@ -574,15 +575,17 @@ void main() {
         depart: Routes.tuteurFoyerRecharge,
       );
       await _versEtape2(tester);
+      await toucherFi(tester, find.byKey(RechargeFoyerPage.caseDe(_mariam)));
+      expect(cheminFi(routeur), Routes.tuteurFoyerRecharge);
+      expect(find.byKey(RechargeFoyerPage.recapitulatifKey), findsNothing);
+      expect(find.byKey(RechargeFoyerPage.payerKey), findsOneWidget);
+      expect(_coche(tester, _mariam), isFalse);
+      expect(_coche(tester, _ibrahim), isFalse);
       await toucherFi(
         tester,
         dansFi(find.byType(RechargeFoyerPage), find.byType(DisqueRetour)),
       );
-      expect(cheminFi(routeur), Routes.tuteurFoyerRecharge);
-      expect(find.byKey(RechargeFoyerPage.recapitulatifKey), findsNothing);
-      expect(find.byKey(RechargeFoyerPage.verifierKey), findsOneWidget);
-      expect(_coche(tester, _mariam), isTrue);
-      expect(_coche(tester, _ibrahim), isFalse);
+      expect(cheminFi(routeur), Routes.tuteurFoyer);
       expect(tester.takeException(), isNull);
     });
 
@@ -1003,7 +1006,6 @@ void main() {
         expect(_coche(tester, autre), isFalse, reason: autre);
       }
       await toucherFi(tester, find.byKey(RechargeFoyerPage.plusDe(_ibrahim)));
-      await toucherFi(tester, find.byKey(RechargeFoyerPage.verifierKey));
       expect(
         espion.verifies.last.map((MontantRecharge c) => c.beneficiaireId),
         <String>[_ibrahim],
@@ -1370,7 +1372,7 @@ void main() {
       );
       // Les boutons d'action ne s'etirent pas a la colonne.
       for (final (String chemin, Key bouton) in <(String, Key)>[
-        (Routes.tuteurFoyerRecharge, RechargeFoyerPage.verifierKey),
+        (Routes.tuteurFoyerRecharge, RechargeFoyerPage.payerKey),
         (
           Routes.resultatRechargePour(
             DonneesFinanceDemo.commandeDemo(EtatPaiement.termine),

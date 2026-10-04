@@ -5,16 +5,17 @@
 // huit etats, tel quel :
 //
 // - preparation : « Verifiez la repartition avant de payer. », et
-//   « Verifier la recharge » qui ouvre l'etape 2 avec la meme selection ;
+//   « Verifier la recharge » qui rouvre la recharge (une seule page, R3-01)
+//   avec la meme selection, son recapitulatif et son moyen de paiement ;
 // - attente de confirmation : « Paiement en cours de confirmation » et le
 //   bandeau « Ne payez pas une seconde fois. » ; aucun bouton « Payer » ;
 // - confirme puis allocation en cours : « Paiement confirme », « Mise a jour
 //   des soldes... » ;
 // - termine, **seul etat de reussite** : montant total, reference, moyen,
 //   date, repartition exacte et nouveau solde par profil (maquette 01) ;
-// - echec : le motif rendu, la selection gardee, « Reessayer » (etape 1),
-//   « Changer de moyen de paiement » (etape 2, ou se choisit le moyen) et le
-//   retour ;
+// - echec : le motif rendu, la selection gardee, « Reessayer »,
+//   « Changer de moyen de paiement » (la recharge, ou se choisit le moyen) et
+//   le retour (« Retour aux soldes » dans tous les etats, E-15, R3-06) ;
 // - annule, perime : ce qui s'est passe, rien de credite, recommencer avec
 //   la meme selection.
 //
@@ -50,7 +51,6 @@ class ResultatRechargePage extends ConsumerWidget {
     required this.commandeId,
     required this.onRevenir,
     required this.onReprendre,
-    required this.onVerifier,
     super.key,
   });
 
@@ -61,13 +61,10 @@ class ResultatRechargePage extends ConsumerWidget {
   final VoidCallback onRevenir;
 
   /// Revenir a la recharge avec la meme selection : les profils et le
-  /// montant de chacun, tels que la commande les rend.
+  /// montant de chacun, tels que la commande les rend. La recharge est une
+  /// seule page : « Reessayer », « Changer de moyen de paiement » et
+  /// « Verifier la recharge » y menent tous.
   final ValueChanged<Map<String, Montant>> onReprendre;
-
-  /// Ouvrir l'etape 2 de la recharge (verification et moyen de paiement)
-  /// avec la meme selection : « Changer de moyen de paiement », ou une
-  /// commande encore en preparation.
-  final ValueChanged<Map<String, Montant>> onVerifier;
 
   /// Le heros de l'etat [etat].
   static Key etatKey(EtatPaiement etat) => Key('resultat.etat.${etat.name}');
@@ -112,7 +109,7 @@ class ResultatRechargePage extends ConsumerWidget {
         nature: NatureEtat.aucunResultat,
         titre: t.adulte.recharge.resultat.videTitre,
         phrase: t.adulte.recharge.resultat.videPhrase,
-        libelleAction: t.adulte.recharge.revenirPaiements,
+        libelleAction: t.adulte.recharge.resultat.retourSoldes,
         onAction: onRevenir,
       );
     } else {
@@ -127,7 +124,7 @@ class ResultatRechargePage extends ConsumerWidget {
           titre: t.adulte.recharge.resultat.indisponibleTitre,
           phrase: t.adulte.recharge.resultat.indisponiblePhrase,
           dependance: erreur.dependance,
-          libelleAction: t.adulte.recharge.revenirPaiements,
+          libelleAction: t.adulte.recharge.resultat.retourSoldes,
           onAction: onRevenir,
         );
       } else if (erreur != null && horsLigne) {
@@ -150,7 +147,6 @@ class ResultatRechargePage extends ConsumerWidget {
             onActualiser: relire,
             onRevenir: onRevenir,
             onReprendre: onReprendre,
-            onVerifier: onVerifier,
           ),
         );
       }
@@ -175,7 +171,6 @@ class _ContenuResultat extends ConsumerWidget {
     required this.onActualiser,
     required this.onRevenir,
     required this.onReprendre,
-    required this.onVerifier,
   });
 
   final SuiviPaiement suivi;
@@ -183,7 +178,6 @@ class _ContenuResultat extends ConsumerWidget {
   final VoidCallback onActualiser;
   final VoidCallback onRevenir;
   final ValueChanged<Map<String, Montant>> onReprendre;
-  final ValueChanged<Map<String, Montant>> onVerifier;
 
   /// La selection de la commande : chaque profil et SA part.
   Map<String, Montant> get _selection => <String, Montant>{
@@ -302,7 +296,6 @@ class _ContenuResultat extends ConsumerWidget {
       _ => null,
     };
     void reprendre() => onReprendre(_selection);
-    void verifier() => onVerifier(_selection);
     // Un seul bouton plein par etat (K-56) : son geste, et au plus une
     // action secondaire a filet.
     final ({Key cle, String libelle, VoidCallback geste}) principale =
@@ -328,29 +321,29 @@ class _ContenuResultat extends ConsumerWidget {
           EtatPaiement.preparation => (
             cle: ResultatRechargePage.verifierKey,
             libelle: t.adulte.recharge.verifier,
-            geste: verifier,
+            geste: reprendre,
           ),
           // En cours : aucun « Payer », seulement le retour (ne pas payer
           // deux fois).
           _ => (
             cle: ResultatRechargePage.revenirKey,
-            libelle: t.adulte.recharge.revenirPaiements,
+            libelle: t.adulte.recharge.resultat.retourSoldes,
             geste: onRevenir,
           ),
         };
     final ({Key cle, String libelle, VoidCallback geste})? secondaire =
         switch (etat) {
-          // L'etape 2, ou le moyen se choisit ; « Reessayer » mene a la 1.
+          // La recharge, ou le moyen se choisit, la selection gardee.
           EtatPaiement.echec => (
             cle: ResultatRechargePage.changerMoyenKey,
             libelle: r.changerMoyen,
-            geste: verifier,
+            geste: reprendre,
           ),
           EtatPaiement.preparation ||
           EtatPaiement.annule ||
           EtatPaiement.perime => (
             cle: ResultatRechargePage.revenirKey,
-            libelle: t.adulte.recharge.revenirPaiements,
+            libelle: t.adulte.recharge.resultat.retourSoldes,
             geste: onRevenir,
           ),
           _ => null,
@@ -461,6 +454,9 @@ class _ContenuResultat extends ConsumerWidget {
                     ),
                     _ => null,
                   },
+                  // Credite, avec son « + », seulement quand la source rend
+                  // `termine` (maquette 01, R3-04).
+                  credite: termine,
                   avatar: BandeauProfil(
                     avatar: PhotoEleve(
                       prenom: a.prenom,
@@ -472,6 +468,10 @@ class _ContenuResultat extends ConsumerWidget {
                       ref.watch(accentsProfilsProvider),
                       a.profilId,
                     ),
+                    // Le bandeau remonte dans la marge de la ligne, le cercle
+                    // reste en haut : l'avatar a cote du prenom, rien ne
+                    // depasse la ligne (R3-03, FI12-E07).
+                    remontee: LigneCleValeur.margeVerticale,
                   ),
                 ),
             ],
@@ -483,7 +483,7 @@ class _ContenuResultat extends ConsumerWidget {
             alignment: AlignmentDirectional.centerEnd,
             child: LienFleche(
               key: ResultatRechargePage.revenirKey,
-              libelle: t.adulte.recharge.revenirPaiements,
+              libelle: t.adulte.recharge.resultat.retourSoldes,
               onPress: onRevenir,
             ),
           ),

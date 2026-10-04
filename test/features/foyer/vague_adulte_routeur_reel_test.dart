@@ -191,7 +191,7 @@ void main() {
       );
     });
 
-    testWidgets('recharge a 390 : les deux etapes sans debordement, « Payer » '
+    testWidgets('recharge a 390 : la page sans debordement, « Payer » '
         'au bord de fin (a gauche)', (WidgetTester tester) async {
       await _monter(
         tester,
@@ -209,8 +209,10 @@ void main() {
         find.byKey(RechargeFoyerPage.plusDe(DonneesAdulteDemo.aichaId)),
       );
       expect(tester.takeException(), isNull);
-      await _taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
+      // Une seule page (R3-01) : le recapitulatif arrive sur place.
       expect(tester.takeException(), isNull);
+      await tester.ensureVisible(find.byKey(RechargeFoyerPage.payerKey));
+      await tester.pumpAndSettle();
       expect(
         tester.getTopLeft(find.byKey(RechargeFoyerPage.payerKey)).dx,
         moreOrLessEquals(

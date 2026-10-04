@@ -562,9 +562,6 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                           montantsInitiaux: Routes.montantsDe(
                             etat.uri.queryParameters['montants'],
                           ),
-                          verifierALOuverture:
-                              etat.uri.queryParameters['etape'] ==
-                              Routes.etapeVerification,
                           // L'abandon ramene d'ou la recharge est partie :
                           // Compte > Paiements (`?depuis=compte`) ou le Foyer.
                           onAbandon: () => GoRouter.of(context).go(
@@ -620,17 +617,6 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                                           commande: etat
                                               .uri
                                               .queryParameters['commande'],
-                                        ),
-                                      ),
-                                  // L'etape 2, ou se choisit le moyen.
-                                  onVerifier: (Map<String, Montant> m) =>
-                                      GoRouter.of(context).go(
-                                        Routes.rechargeReprise(
-                                          m,
-                                          commande: etat
-                                              .uri
-                                              .queryParameters['commande'],
-                                          verifier: true,
                                         ),
                                       ),
                                 ),

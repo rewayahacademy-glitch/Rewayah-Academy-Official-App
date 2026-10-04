@@ -119,7 +119,7 @@ Future<void> _jusquALEtape2(WidgetTester tester) async {
     tester,
     find.byKey(RechargeFoyerPage.plusDe(DonneesAdulteDemo.aichaId)),
   );
-  await _taper(tester, find.byKey(RechargeFoyerPage.verifierKey));
+  // Une seule page (R3-01) : le recapitulatif arrive sur place.
 }
 
 /// L'etape 2, puis « Payer » : l'etat honnete (ou, selon l'etat de la

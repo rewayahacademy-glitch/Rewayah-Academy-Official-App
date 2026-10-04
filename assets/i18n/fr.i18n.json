@@ -4737,25 +4737,22 @@
       "augmenter": "Augmenter le montant pour {prenom}",
       "repartition": "Un seul paiement sera effectué. Chaque montant va au solde de son profil : il n'y a pas de solde commun.",
       "moyen": "Moyen de paiement",
-      "toutSelectionner": "Tout sélectionner",
-      "toutDeselectionner": "Tout désélectionner",
       "verifier": "Vérifier la recharge",
       "raisonAucun": "Sélectionnez au moins un profil pour continuer.",
       "raisonMontant": "Choisissez un montant pour chaque profil sélectionné.",
-      "horsLigneVerifier": "Vous êtes hors ligne. Vous pourrez vérifier la recharge quand la connexion sera revenue.",
       "indisponibleTitre": "Recharge pas encore disponible",
       "indisponiblePhrase": "La recharge n'est pas encore disponible dans l'application. Aucun paiement n'est possible ici pour l'instant.",
       "verificationEchecTitre": "La vérification n'a pas abouti.",
       "verificationEchecPhrase": "Vos choix sont conservés. Vous pouvez réessayer.",
-      "verifierTitre": "Vérifier la recharge",
-      "verifierPhrase": "Vérifiez les détails avant de procéder au paiement.",
       "recapitulatif": "Récapitulatif par profil",
       "montantPaye": "Montant payé",
       "soldeAttribue": "Solde attribué",
       "statut": "Statut de l'attribution",
-      "modifier": "Modifier",
       "total": "Total à payer",
       "payer": "Payer {montant}",
+      "payerSeul": "Payer",
+      "ajouter": "Ajouter {prenom} à la recharge",
+      "regularisationDe": "{prenom} : {message}",
       "horsLignePayer": "Vous êtes hors ligne. Vous pourrez payer quand la connexion sera revenue.",
       "paiementEchecTitre": "Le paiement n'a pas été confirmé.",
       "paiementEchecPhrase": "Vérifiez avant de réessayer.",
@@ -5116,9 +5113,12 @@
       "jusquau": "Financé jusqu'au {date}",
       "aucune": "Aucune période financée"
     },
+    "allocation": {
+      "credite": "Crédité"
+    },
     "moyen": {
       "webStripe": "Carte bancaire",
-      "webStripeDetail": "Paiement web sécurisé. Aucun débit avant votre confirmation."
+      "webStripeDetail": "Paiement par le web. Aucun débit avant votre confirmation."
     },
     "soldes": {
       "total": "Total des soldes (lecture)",

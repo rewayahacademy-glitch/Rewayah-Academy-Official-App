@@ -282,7 +282,7 @@ void main() {
       await stabiliser(tester);
       await toucherFi(tester, find.byKey(ResultatRechargePage.recommencerKey));
       expect(cheminFi(routeur), Routes.tuteurFoyerRecharge);
-      expect(find.byKey(RechargeFoyerPage.verifierKey), findsOneWidget);
+      expect(find.byKey(RechargeFoyerPage.payerKey), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   });
@@ -323,9 +323,7 @@ void main() {
         );
         expect(
           tester
-              .widget<ActionPrincipale>(
-                find.byKey(RechargeFoyerPage.verifierKey),
-              )
+              .widget<ActionPrincipale>(find.byKey(RechargeFoyerPage.payerKey))
               .onPress,
           isNotNull,
         );

@@ -2410,6 +2410,7 @@ class Traductions$argent$fr {
 	// Translations
 	late final Traductions$argent$etat$fr etat = Traductions$argent$etat$fr.internal(_root);
 	late final Traductions$argent$periode$fr periode = Traductions$argent$periode$fr.internal(_root);
+	late final Traductions$argent$allocation$fr allocation = Traductions$argent$allocation$fr.internal(_root);
 	late final Traductions$argent$moyen$fr moyen = Traductions$argent$moyen$fr.internal(_root);
 	late final Traductions$argent$soldes$fr soldes = Traductions$argent$soldes$fr.internal(_root);
 	late final Traductions$argent$acces$fr acces = Traductions$argent$acces$fr.internal(_root);
@@ -10950,12 +10951,6 @@ class Traductions$adulte$recharge$fr {
 	/// fr: 'Moyen de paiement'
 	String get moyen => 'Moyen de paiement';
 
-	/// fr: 'Tout sélectionner'
-	String get toutSelectionner => 'Tout sélectionner';
-
-	/// fr: 'Tout désélectionner'
-	String get toutDeselectionner => 'Tout désélectionner';
-
 	/// fr: 'Vérifier la recharge'
 	String get verifier => 'Vérifier la recharge';
 
@@ -10964,9 +10959,6 @@ class Traductions$adulte$recharge$fr {
 
 	/// fr: 'Choisissez un montant pour chaque profil sélectionné.'
 	String get raisonMontant => 'Choisissez un montant pour chaque profil sélectionné.';
-
-	/// fr: 'Vous êtes hors ligne. Vous pourrez vérifier la recharge quand la connexion sera revenue.'
-	String get horsLigneVerifier => 'Vous êtes hors ligne. Vous pourrez vérifier la recharge quand la connexion sera revenue.';
 
 	/// fr: 'Recharge pas encore disponible'
 	String get indisponibleTitre => 'Recharge pas encore disponible';
@@ -10980,12 +10972,6 @@ class Traductions$adulte$recharge$fr {
 	/// fr: 'Vos choix sont conservés. Vous pouvez réessayer.'
 	String get verificationEchecPhrase => 'Vos choix sont conservés. Vous pouvez réessayer.';
 
-	/// fr: 'Vérifier la recharge'
-	String get verifierTitre => 'Vérifier la recharge';
-
-	/// fr: 'Vérifiez les détails avant de procéder au paiement.'
-	String get verifierPhrase => 'Vérifiez les détails avant de procéder au paiement.';
-
 	/// fr: 'Récapitulatif par profil'
 	String get recapitulatif => 'Récapitulatif par profil';
 
@@ -10998,14 +10984,20 @@ class Traductions$adulte$recharge$fr {
 	/// fr: 'Statut de l'attribution'
 	String get statut => 'Statut de l\'attribution';
 
-	/// fr: 'Modifier'
-	String get modifier => 'Modifier';
-
 	/// fr: 'Total à payer'
 	String get total => 'Total à payer';
 
 	/// fr: 'Payer {montant}'
 	String payer({required Object montant}) => 'Payer ${montant}';
+
+	/// fr: 'Payer'
+	String get payerSeul => 'Payer';
+
+	/// fr: 'Ajouter {prenom} à la recharge'
+	String ajouter({required Object prenom}) => 'Ajouter ${prenom} à la recharge';
+
+	/// fr: '{prenom} : {message}'
+	String regularisationDe({required Object prenom, required Object message}) => '${prenom} : ${message}';
 
 	/// fr: 'Vous êtes hors ligne. Vous pourrez payer quand la connexion sera revenue.'
 	String get horsLignePayer => 'Vous êtes hors ligne. Vous pourrez payer quand la connexion sera revenue.';
@@ -11681,6 +11673,18 @@ class Traductions$argent$periode$fr {
 	String get aucune => 'Aucune période financée';
 }
 
+// Path: argent.allocation
+class Traductions$argent$allocation$fr {
+	Traductions$argent$allocation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Crédité'
+	String get credite => 'Crédité';
+}
+
 // Path: argent.moyen
 class Traductions$argent$moyen$fr {
 	Traductions$argent$moyen$fr.internal(this._root);
@@ -11692,8 +11696,8 @@ class Traductions$argent$moyen$fr {
 	/// fr: 'Carte bancaire'
 	String get webStripe => 'Carte bancaire';
 
-	/// fr: 'Paiement web sécurisé. Aucun débit avant votre confirmation.'
-	String get webStripeDetail => 'Paiement web sécurisé. Aucun débit avant votre confirmation.';
+	/// fr: 'Paiement par le web. Aucun débit avant votre confirmation.'
+	String get webStripeDetail => 'Paiement par le web. Aucun débit avant votre confirmation.';
 }
 
 // Path: argent.soldes
@@ -20930,25 +20934,22 @@ extension on Traductions {
 			'adulte.recharge.augmenter' => ({required Object prenom}) => 'Augmenter le montant pour ${prenom}',
 			'adulte.recharge.repartition' => 'Un seul paiement sera effectué. Chaque montant va au solde de son profil : il n\'y a pas de solde commun.',
 			'adulte.recharge.moyen' => 'Moyen de paiement',
-			'adulte.recharge.toutSelectionner' => 'Tout sélectionner',
-			'adulte.recharge.toutDeselectionner' => 'Tout désélectionner',
 			'adulte.recharge.verifier' => 'Vérifier la recharge',
 			'adulte.recharge.raisonAucun' => 'Sélectionnez au moins un profil pour continuer.',
 			'adulte.recharge.raisonMontant' => 'Choisissez un montant pour chaque profil sélectionné.',
-			'adulte.recharge.horsLigneVerifier' => 'Vous êtes hors ligne. Vous pourrez vérifier la recharge quand la connexion sera revenue.',
 			'adulte.recharge.indisponibleTitre' => 'Recharge pas encore disponible',
 			'adulte.recharge.indisponiblePhrase' => 'La recharge n\'est pas encore disponible dans l\'application. Aucun paiement n\'est possible ici pour l\'instant.',
 			'adulte.recharge.verificationEchecTitre' => 'La vérification n\'a pas abouti.',
 			'adulte.recharge.verificationEchecPhrase' => 'Vos choix sont conservés. Vous pouvez réessayer.',
-			'adulte.recharge.verifierTitre' => 'Vérifier la recharge',
-			'adulte.recharge.verifierPhrase' => 'Vérifiez les détails avant de procéder au paiement.',
 			'adulte.recharge.recapitulatif' => 'Récapitulatif par profil',
 			'adulte.recharge.montantPaye' => 'Montant payé',
 			'adulte.recharge.soldeAttribue' => 'Solde attribué',
 			'adulte.recharge.statut' => 'Statut de l\'attribution',
-			'adulte.recharge.modifier' => 'Modifier',
 			'adulte.recharge.total' => 'Total à payer',
 			'adulte.recharge.payer' => ({required Object montant}) => 'Payer ${montant}',
+			'adulte.recharge.payerSeul' => 'Payer',
+			'adulte.recharge.ajouter' => ({required Object prenom}) => 'Ajouter ${prenom} à la recharge',
+			'adulte.recharge.regularisationDe' => ({required Object prenom, required Object message}) => '${prenom} : ${message}',
 			'adulte.recharge.horsLignePayer' => 'Vous êtes hors ligne. Vous pourrez payer quand la connexion sera revenue.',
 			'adulte.recharge.paiementEchecTitre' => 'Le paiement n\'a pas été confirmé.',
 			'adulte.recharge.paiementEchecPhrase' => 'Vérifiez avant de réessayer.',
@@ -21039,11 +21040,11 @@ extension on Traductions {
 			'adulte.famille.place.inviterConjoint' => 'Invitez votre conjoint à rejoindre Rewayah avec son propre compte.',
 			'adulte.famille.place.invitationEnvoyee' => 'Invitation envoyée',
 			'adulte.famille.place.maConjointe' => ({required Object prenom}) => '${prenom}, votre conjointe',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.famille.place.monConjoint' => ({required Object prenom}) => '${prenom}, votre conjoint',
 			'adulte.famille.place.validationEnAttente' => 'En attente de validation administrative',
 			'adulte.famille.place.validationRefusee' => 'Validation refusée par la direction',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.famille.place.nouvelleDemande' => 'Faire une nouvelle demande',
 			'adulte.famille.place.nouvelleInvitation' => ({required Object date}) => 'Nouvelle invitation possible à partir du ${date}',
 			'adulte.famille.place.envoyeeA' => ({required Object courriel}) => 'Envoyée à ${courriel}',
@@ -21268,8 +21269,9 @@ extension on Traductions {
 			'argent.etat.aRegulariser' => 'À régulariser',
 			'argent.periode.jusquau' => ({required Object date}) => 'Financé jusqu\'au ${date}',
 			'argent.periode.aucune' => 'Aucune période financée',
+			'argent.allocation.credite' => 'Crédité',
 			'argent.moyen.webStripe' => 'Carte bancaire',
-			'argent.moyen.webStripeDetail' => 'Paiement web sécurisé. Aucun débit avant votre confirmation.',
+			'argent.moyen.webStripeDetail' => 'Paiement par le web. Aucun débit avant votre confirmation.',
 			'argent.soldes.total' => 'Total des soldes (lecture)',
 			'argent.soldes.totalDetail' => 'Une lecture : chaque solde reste celui de son profil.',
 			'argent.soldes.aPayer' => 'À payer ce mois',

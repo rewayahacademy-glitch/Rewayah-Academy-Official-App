@@ -144,21 +144,17 @@ abstract final class Routes {
   /// La valeur de `?depuis=` d'une recharge ouverte depuis le Compte.
   static const String origineCompte = 'compte';
 
-  /// La valeur de `?etape=` qui ouvre l'etape 2 (verification et moyen).
-  static const String etapeVerification = 'verification';
-
   /// La recharge reprise apres un echec (FI-8, guide §5.4 : « ne pas perdre
   /// la selection ») : les profils coches et le montant de chacun
   /// (`?profils=a,b&montants=a:1000:USD,b:4000:USD`). Le montant n'est
   /// qu'un rappel : l'ecran ne le retient que s'il fait partie des montants
   /// que la source propose. [commande] : la commande d'ou l'on reprend
-  /// (`&reprise=`), pour qu'une reprise ouvre toujours une recharge neuve ;
-  /// [verifier] : ouvrir l'etape 2 (`&etape=verification`, « Changer de
-  /// moyen de paiement »).
+  /// (`&reprise=`), pour qu'une reprise ouvre toujours une recharge neuve.
+  /// La recharge est une seule page (R3-01) : le recapitulatif et le moyen
+  /// de paiement s'y lisent des que la selection rappelee est complete.
   static String rechargeReprise(
     Map<String, Montant> montants, {
     String? commande,
-    bool verifier = false,
   }) => Uri(
     path: tuteurFoyerRecharge,
     queryParameters: <String, String>{
@@ -168,7 +164,6 @@ abstract final class Routes {
           '${e.key}:${e.value.mineur}:${e.value.devise}',
       ].join(','),
       if (commande != null && commande.isNotEmpty) 'reprise': commande,
-      if (verifier) 'etape': etapeVerification,
     },
   ).toString();
 
@@ -192,9 +187,7 @@ abstract final class Routes {
   /// rouverte relit l'etat, elle ne rejoue jamais le paiement. [recharge] :
   /// les parametres de la recharge qui a paye, gardes dans l'adresse pour
   /// que la recharge sous le resultat reste la meme page (sa commande, son
-  /// « Suivre le paiement »), y compris au retour du navigateur. `etape`
-  /// n'y passe pas : la recharge rouverte sous un resultat ne se verifie
-  /// jamais d'elle-meme.
+  /// « Suivre le paiement »), y compris au retour du navigateur.
   static String resultatRechargePour(
     String commandeId, {
     Map<String, String> recharge = const <String, String>{},
