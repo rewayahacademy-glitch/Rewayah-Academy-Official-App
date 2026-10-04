@@ -1079,6 +1079,7 @@ class Traductions$ficheEleve$fr {
 	late final Traductions$ficheEleve$interface$fr interface = Traductions$ficheEleve$interface$fr.internal(_root);
 	late final Traductions$ficheEleve$camera$fr camera = Traductions$ficheEleve$camera$fr.internal(_root);
 	late final Traductions$ficheEleve$acces$fr acces = Traductions$ficheEleve$acces$fr.internal(_root);
+	late final Traductions$ficheEleve$onglets$fr onglets = Traductions$ficheEleve$onglets$fr.internal(_root);
 	late final Traductions$ficheEleve$finances$fr finances = Traductions$ficheEleve$finances$fr.internal(_root);
 	late final Traductions$ficheEleve$mouvements$fr mouvements = Traductions$ficheEleve$mouvements$fr.internal(_root);
 }
@@ -4301,6 +4302,21 @@ class Traductions$ficheEleve$acces$fr {
 	String get detailIndisponible => 'Le début de l\'accès et son motif ne s\'affichent pas encore.';
 }
 
+// Path: ficheEleve.onglets
+class Traductions$ficheEleve$onglets$fr {
+	Traductions$ficheEleve$onglets$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Général'
+	String get general => 'Général';
+
+	/// fr: 'Finances'
+	String get finances => 'Finances';
+}
+
 // Path: ficheEleve.finances
 class Traductions$ficheEleve$finances$fr {
 	Traductions$ficheEleve$finances$fr.internal(this._root);
@@ -4311,6 +4327,12 @@ class Traductions$ficheEleve$finances$fr {
 
 	/// fr: 'Finances'
 	String get titre => 'Finances';
+
+	/// fr: '{prenom} · Finances'
+	String titreBureau({required Object prenom}) => '${prenom} · Finances';
+
+	/// fr: 'Foyer › {prenom}'
+	String filAriane({required Object prenom}) => 'Foyer › ${prenom}';
 
 	/// fr: 'Vue financière'
 	String get vueTitre => 'Vue financière';
@@ -4332,6 +4354,9 @@ class Traductions$ficheEleve$finances$fr {
 
 	/// fr: 'Remise familiale'
 	String get remiseRang => 'Remise familiale';
+
+	/// fr: 'Remise familiale {rang}e membre'
+	String remiseRangDe({required Object rang}) => 'Remise familiale ${rang}e membre';
 
 	/// fr: 'Réduction calendrier'
 	String get prorata => 'Réduction calendrier';
@@ -4396,8 +4421,26 @@ class Traductions$ficheEleve$finances$fr {
 	/// fr: 'Aucun solde ni aucune mensualité n'est encore rendu pour ce profil. Ils apparaîtront ici après son inscription à une classe.'
 	String get videPhrase => 'Aucun solde ni aucune mensualité n\'est encore rendu pour ce profil. Ils apparaîtront ici après son inscription à une classe.';
 
-	/// fr: 'Mouvements'
-	String get voirMouvements => 'Mouvements';
+	/// fr: 'Voir les mouvements'
+	String get voirMouvements => 'Voir les mouvements';
+
+	/// fr: 'Les absences ordinaires n'entraînent pas de réduction sur le mois une fois celui-ci financé. Vous pouvez consulter l'historique de présence dans l'onglet Historique.'
+	String get noteAbsences => 'Les absences ordinaires n\'entraînent pas de réduction sur le mois une fois celui-ci financé. Vous pouvez consulter l\'historique de présence dans l\'onglet Historique.';
+
+	/// fr: 'Pas de consommation par séance'
+	String get faitSeance => 'Pas de consommation par séance';
+
+	/// fr: 'Accès lié à la période financée'
+	String get faitPeriode => 'Accès lié à la période financée';
+
+	/// fr: 'Historique des transactions'
+	String get historiqueTitre => 'Historique des transactions';
+
+	/// fr: 'Voir tout'
+	String get voirTout => 'Voir tout';
+
+	/// fr: 'Voir tous les mouvements de {prenom}'
+	String voirToutSemantique({required Object prenom}) => 'Voir tous les mouvements de ${prenom}';
 
 	/// fr: 'Voir les mouvements de {prenom}'
 	String voirMouvementsSemantique({required Object prenom}) => 'Voir les mouvements de ${prenom}';
@@ -4413,6 +4456,9 @@ class Traductions$ficheEleve$mouvements$fr {
 
 	/// fr: 'Mouvements'
 	String get titre => 'Mouvements';
+
+	/// fr: '{date} à {heure}'
+	String dateHeure({required Object date, required Object heure}) => '${date} à ${heure}';
 
 	/// fr: 'Les recharges, mensualités, remises et avoirs de {prenom}, du plus récent au plus ancien. Rien ne s'efface : une correction s'ajoute comme un nouveau mouvement.'
 	String contexte({required Object prenom}) => 'Les recharges, mensualités, remises et avoirs de ${prenom}, du plus récent au plus ancien. Rien ne s\'efface : une correction s\'ajoute comme un nouveau mouvement.';
@@ -17763,7 +17809,11 @@ extension on Traductions {
 			'ficheEleve.acces.expireDepuis' => ({required Object date}) => 'Expiré depuis le ${date}',
 			'ficheEleve.acces.expirePhrase' => ({required Object prenom}) => 'Depuis cette date, ${prenom} ne peut plus entrer dans Rewayah.',
 			'ficheEleve.acces.detailIndisponible' => 'Le début de l\'accès et son motif ne s\'affichent pas encore.',
+			'ficheEleve.onglets.general' => 'Général',
+			'ficheEleve.onglets.finances' => 'Finances',
 			'ficheEleve.finances.titre' => 'Finances',
+			'ficheEleve.finances.titreBureau' => ({required Object prenom}) => '${prenom} · Finances',
+			'ficheEleve.finances.filAriane' => ({required Object prenom}) => 'Foyer › ${prenom}',
 			'ficheEleve.finances.vueTitre' => 'Vue financière',
 			'ficheEleve.finances.mensualite' => 'Mensualité',
 			'ficheEleve.finances.mensualiteValeur' => ({required Object montant}) => '${montant} / mois',
@@ -17771,6 +17821,7 @@ extension on Traductions {
 			'ficheEleve.finances.tarifEnfant' => 'Tarif enfant',
 			'ficheEleve.finances.tarifAdulte' => 'Tarif adulte',
 			'ficheEleve.finances.remiseRang' => 'Remise familiale',
+			'ficheEleve.finances.remiseRangDe' => ({required Object rang}) => 'Remise familiale ${rang}e membre',
 			'ficheEleve.finances.prorata' => 'Réduction calendrier',
 			'ficheEleve.finances.avoir' => 'Avoir',
 			'ficheEleve.finances.taxe' => 'Taxe applicable',
@@ -17792,9 +17843,16 @@ extension on Traductions {
 			'ficheEleve.finances.erreurTitre' => ({required Object prenom}) => 'Les finances de ${prenom} ne peuvent pas être lues',
 			'ficheEleve.finances.videTitre' => ({required Object prenom}) => 'Aucune finance enregistrée pour ${prenom}',
 			'ficheEleve.finances.videPhrase' => 'Aucun solde ni aucune mensualité n\'est encore rendu pour ce profil. Ils apparaîtront ici après son inscription à une classe.',
-			'ficheEleve.finances.voirMouvements' => 'Mouvements',
+			'ficheEleve.finances.voirMouvements' => 'Voir les mouvements',
+			'ficheEleve.finances.noteAbsences' => 'Les absences ordinaires n\'entraînent pas de réduction sur le mois une fois celui-ci financé. Vous pouvez consulter l\'historique de présence dans l\'onglet Historique.',
+			'ficheEleve.finances.faitSeance' => 'Pas de consommation par séance',
+			'ficheEleve.finances.faitPeriode' => 'Accès lié à la période financée',
+			'ficheEleve.finances.historiqueTitre' => 'Historique des transactions',
+			'ficheEleve.finances.voirTout' => 'Voir tout',
+			'ficheEleve.finances.voirToutSemantique' => ({required Object prenom}) => 'Voir tous les mouvements de ${prenom}',
 			'ficheEleve.finances.voirMouvementsSemantique' => ({required Object prenom}) => 'Voir les mouvements de ${prenom}',
 			'ficheEleve.mouvements.titre' => 'Mouvements',
+			'ficheEleve.mouvements.dateHeure' => ({required Object date, required Object heure}) => '${date} à ${heure}',
 			'ficheEleve.mouvements.contexte' => ({required Object prenom}) => 'Les recharges, mensualités, remises et avoirs de ${prenom}, du plus récent au plus ancien. Rien ne s\'efface : une correction s\'ajoute comme un nouveau mouvement.',
 			'ficheEleve.mouvements.personne' => 'Personne',
 			'ficheEleve.mouvements.colonne.date' => 'Date',
@@ -17881,6 +17939,8 @@ extension on Traductions {
 			'priere.entree' => ({required Object priere, required Object minutes}) => '${priere}, ${minutes} min',
 			'priere.annonce' => ({required Object priere, required Object heure}) => 'Ce cours sera interrompu pour ${priere}, vers ${heure}.',
 			'priere.annonceAucune' => 'Aucune interruption prévue pendant ce cours.',
+			_ => null,
+		} ?? switch (path) {
 			'priere.alerte' => ({required Object priere, required Object minutes}) => '${priere} dans ${minutes} min',
 			'priere.alerteMaintenant' => ({required Object priere, required Object heure}) => 'Pause pour ${priere}, reprise à ${heure}',
 			'priere.pause' => 'Pause',
@@ -17893,8 +17953,6 @@ extension on Traductions {
 			'eleveConnexion.choisirProfil' => 'Qui es-tu ?',
 			'eleveConnexion.profils.phrase' => 'Touche ton prénom pour continuer.',
 			'eleveConnexion.profils.ajouter' => 'Ajouter un profil sur cet appareil',
-			_ => null,
-		} ?? switch (path) {
 			'eleveConnexion.profils.ajouterLegende' => 'Avec le code affiché par le tuteur',
 			'eleveConnexion.profils.profilLibelle' => ({required Object prenom}) => 'Continuer en tant que ${prenom}',
 			'eleveConnexion.profils.videTitre' => 'Aucun profil sur cet appareil',
@@ -18395,6 +18453,8 @@ extension on Traductions {
 			'admin.finance.pol.internet' => 'Aide Internet',
 			'admin.finance.pol.internetDetail' => 'Une seule aide par enseignant éligible, jamais multipliée par classe ni par élève.',
 			'admin.finance.pol.internetNonFixee' => 'Pas encore fixée',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.sectionGroupes' => 'Groupes',
 			'admin.finance.pol.sectionGroupesDetail' => 'La taille des classes et le seuil pour en ouvrir une.',
 			'admin.finance.pol.capaciteEnfant' => 'Capacité d\'une classe d\'enfants',
@@ -18407,8 +18467,6 @@ extension on Traductions {
 			'admin.finance.pol.minimumDetail' => 'En dessous, une classe ne s\'ouvre pas et la direction en est alertée.',
 			'admin.finance.pol.paiement' => 'Paiement',
 			'admin.finance.pol.paiementDetail' => 'Le moyen de paiement et le délai de conservation d\'une place.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.railWeb' => 'Paiement web (Stripe)',
 			'admin.finance.pol.railActif' => 'Actif',
 			'admin.finance.pol.railInactif' => 'Inactif',
@@ -18909,6 +18967,8 @@ extension on Traductions {
 			'parcours.retourAccueil' => 'Retour à l\'accueil',
 			'parcours.retourFoyer' => 'Retour au Foyer',
 			'parcours.reessayer' => 'Réessayer',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.indisponibleTitre' => 'Le questionnaire n\'est pas encore disponible',
 			'parcours.indisponibleDetail' => 'Cette étape n\'est pas encore ouverte par l\'académie. Vous n\'avez rien à faire pour l\'instant : rien n\'est perdu, et vous pourrez la remplir dès qu\'elle sera ouverte.',
 			'parcours.horsLigneTitre' => 'Pas de connexion',
@@ -18921,8 +18981,6 @@ extension on Traductions {
 			'parcours.finDetail' => 'Cet horaire est noté comme votre préférence. Il ne réserve pas encore de place.',
 			'parcours.finAjouterDetail' => 'Une autre personne du foyer souhaite apprendre ?',
 			'parcours.finAjouterProfil' => 'Ajouter un profil élève',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.ageQuestion' => ({required Object prenom}) => 'Quel âge a ${prenom} ?',
 			'parcours.ageRaison' => 'L\'âge décide de la durée des séances et du nombre d\'élèves par classe. Nous ne demandons pas de date de naissance : une tranche suffit.',
 			'parcours.langueQuestion' => 'Dans quelle langue le cours doit-il être donné ?',
@@ -19423,6 +19481,8 @@ extension on Traductions {
 			'tuteur.accueil.voirTout' => 'Voir tout',
 			'tuteur.accueil.travailIndisponible' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'tuteur.accueil.travailIllisible' => 'Le travail à préparer n\'a pas pu être lu.',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.rienAPreparer' => 'Rien à préparer pour l\'instant',
 			'tuteur.accueil.derniereSeance' => 'Dernière séance',
 			'tuteur.accueil.voirHistorique' => 'Voir l\'historique',
@@ -19435,8 +19495,6 @@ extension on Traductions {
 			'tuteur.accueil.etatCourt.dansMinutes' => ({required Object minutes}) => 'Dans ${minutes} min',
 			'tuteur.accueil.etatCourt.dansHeures' => ({required Object heures, required Object minutes}) => 'Dans ${heures} h ${minutes}',
 			'tuteur.accueil.etatCourt.dansJours' => ({required Object jours}) => 'Dans ${jours} j',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.etatCourt.prevue' => 'Séance prévue',
 			'tuteur.accueil.etatCourt.annulee' => 'Séance annulée',
 			'tuteur.accueil.etatCourt.nonTenue' => 'Séance non tenue',
@@ -19937,6 +19995,8 @@ extension on Traductions {
 			'enseignant.cahier.faiblesseMadd' => 'Madd',
 			'enseignant.cahier.faiblesseGhunna' => 'Ghunna',
 			'enseignant.cahier.faiblesseWaqf' => 'Waqf',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.faiblesseFluidite' => 'Fluidité',
 			'enseignant.cahier.faiblesseMemorisation' => 'Mémorisation',
 			'enseignant.cahier.niveauARevoirDetail' => 'La leçon est à reprendre à la prochaine séance.',
@@ -19949,8 +20009,6 @@ extension on Traductions {
 			'enseignant.cahier.faiblesseWaqfDetail' => 'Les arrêts.',
 			'enseignant.cahier.faiblesseFluiditeDetail' => 'La lecture sans hésitation.',
 			'enseignant.cahier.faiblesseMemorisationDetail' => 'La récitation de mémoire.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.cahier.reprise' => 'Où la Classe s\'est arrêtée',
 			'enseignant.cahier.repriseDetail' => 'C\'est la position de reprise d\'un remplaçant.',
 			'enseignant.cahier.repriseProposee' => ({required Object sourate, required Object verset}) => 'Sourate ${sourate}, verset ${verset}',
@@ -20451,6 +20509,8 @@ extension on Traductions {
 			'tc.coran.navigation.ouvrir' => 'Aller à une page',
 			'tc.coran.navigation.champ' => 'Page, sourate, juz ou référence',
 			'tc.coran.navigation.indice' => 'Par exemple 18, Al-Kahf, juz 15, 2:255',
+			_ => null,
+		} ?? switch (path) {
 			'tc.coran.navigation.limite' => 'La recherche porte sur les numéros de page, les références et les noms de sourate. La recherche dans le texte du Coran n\'est pas encore disponible.',
 			'tc.coran.navigation.aucunResultat' => 'Aucune référence trouvée',
 			'tc.coran.navigation.aucunResultatDetail' => 'Essayez un numéro de page, un nom de sourate, ou une référence comme 2:255.',
@@ -20463,8 +20523,6 @@ extension on Traductions {
 			'tc.outils.dock.titre' => 'Outils',
 			'tc.outils.dock.deplacer' => 'Déplacer les outils',
 			'tc.outils.dock.position.bas' => 'En bas',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.dock.position.gauche' => 'À gauche',
 			'tc.outils.dock.position.droite' => 'À droite',
 			'tc.outils.dock.bibliotheque' => 'Bibliothèque',
@@ -20965,6 +21023,8 @@ extension on Traductions {
 			'adulte.famille.place.maConjointe' => ({required Object prenom}) => '${prenom}, votre conjointe',
 			'adulte.famille.place.monConjoint' => ({required Object prenom}) => '${prenom}, votre conjoint',
 			'adulte.famille.place.validationEnAttente' => 'En attente de validation administrative',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.famille.place.validationRefusee' => 'Validation refusée par la direction',
 			'adulte.famille.place.nouvelleDemande' => 'Faire une nouvelle demande',
 			'adulte.famille.place.nouvelleInvitation' => ({required Object date}) => 'Nouvelle invitation possible à partir du ${date}',
@@ -20977,8 +21037,6 @@ extension on Traductions {
 			'adulte.invitation.enteteLui' => 'Un compte personnel pour lui',
 			'adulte.invitation.phraseElle' => 'Votre conjointe utilisera son propre compte. Elle ne pourra pas gérer votre foyer ni les profils élèves que vous avez créés.',
 			'adulte.invitation.phraseLui' => 'Votre conjoint utilisera son propre compte. Il ne pourra pas gérer votre foyer ni les profils élèves que vous avez créés.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.prenom' => 'Prénom',
 			'adulte.invitation.nom' => 'Nom',
 			'adulte.invitation.nomAide' => 'Facultatif.',

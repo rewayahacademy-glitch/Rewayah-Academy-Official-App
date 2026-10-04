@@ -6,10 +6,12 @@ import '../../../core/capacites/capacite_indisponible.dart';
 import '../../../core/capacites/port_accents_profils.dart';
 import '../../../core/finance/finances_profil.dart';
 import '../../../core/finance/format_montant.dart';
+import '../../../core/finance/mouvements_profil.dart';
 import '../../../core/finance/periode_a_financer.dart';
 import '../../../core/finance/politique_commerciale.dart';
 import '../../../core/foyer/selection_eleve.dart';
 import '../../../core/i18n/strings.g.dart';
+import '../../../core/icons/app_icons.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/theme/app_gabarit.dart';
@@ -24,6 +26,7 @@ import '../../../core/widgets/identite_profil.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
 import '../../../core/widgets/ligne_finance.dart';
+import '../../../core/widgets/ligne_transaction.dart';
 import '../../../core/widgets/montant_argent.dart';
 import '../../../core/widgets/pastille_financiere.dart';
 import '../../../core/widgets/pile_cartes.dart';
@@ -33,6 +36,8 @@ import '../fiche_eleve_page.dart';
 import '../finances_foyer.dart';
 import '../ligne_membre.dart' show dateEcheance;
 import '../photo_eleve.dart';
+import '../transactions_foyer.dart' show nombreDernieresTransactions;
+import 'mouvements_page.dart';
 
 /// Les finances d'un profil eleve (`/tuteur/foyer/:eleveId/finances`, FI-6a ;
 /// guide Finance V4 §5.2, §8 F3 ; maquettes 02 et 06).
@@ -74,17 +79,52 @@ class FinancesElevePage extends ConsumerWidget {
   /// « Recharger {prenom} ».
   static const Key rechargerKey = Key('ficheEleve.finances.recharger');
 
-  /// Le lien « Mouvements » (FI-6b).
+  /// Le lien « Voir les mouvements » (FI-6b).
   static const Key mouvementsKey = Key('ficheEleve.finances.mouvements');
+
+  /// La periode financee, dans la vue financiere (une seule fois, revue 3 d).
+  static const Key periodeKey = Key('ficheEleve.finances.periode');
+
+  /// La note sur les absences (FIN4-04).
+  static const Key noteAbsencesKey = Key('ficheEleve.finances.noteAbsences');
+
+  /// La colonne d'identite sur bureau (identite et parametres).
+  static const Key colonneIdentiteKey = Key(
+    'ficheEleve.finances.colonneIdentite',
+  );
+
+  /// L'historique des transactions, troisieme colonne sur bureau.
+  static const Key historiqueKey = Key('ficheEleve.finances.historique');
+
+  /// « Voir tout » de l'historique des transactions.
+  static const Key voirToutKey = Key('ficheEleve.finances.voirTout');
+
+  /// Le bandeau du bas, sur bureau : trois faits.
+  static const Key bandeauBasKey = Key('ficheEleve.finances.bandeauBas');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return PageFiche(
       eleveId: eleveId,
       titre: t.ficheEleve.finances.titre,
+      // Maquette 06 : « Mariam · Finances », le chemin « Foyer › Mariam ».
+      titreBureau: (String prenom) =>
+          t.ficheEleve.finances.titreBureau(prenom: prenom),
+      sousTitreBureau: (String prenom) =>
+          t.ficheEleve.finances.filAriane(prenom: prenom),
       onRetour: retourVersFiche(context, eleveId),
-      construire: (BuildContext context, ProfilEleveFoyer profil) =>
+      construire: (BuildContext context, ProfilEleveFoyer profil) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          // Sous 1200, les onglets Général / Finances (Q-FI-1, revue 3 a) ;
+          // a 1200 et plus, aucun segmente (revue 4 b).
+          if (AppGabarit.de(context) != Gabarit.desktop) ...<Widget>[
+            OngletsFiche(eleveId: profil.eleveId, actif: OngletFiche.finances),
+            Ecart.vXxl,
+          ],
           _CorpsFinances(profil: profil),
+        ],
+      ),
     );
   }
 }
@@ -140,6 +180,127 @@ class _CorpsFinances extends ConsumerWidget {
         onMouvements: () =>
             GoRouter.of(context)
                 .go(Routes.ficheEleveSousPage(finance.profilId, 'mouvements')),
+        noteAbsences: t.ficheEleve.finances.noteAbsences,
+        // Maquette 06, revue 4 e : les trois faits du bas, sans la phrase de
+        // la recharge (fausse sur la fiche d'un seul enfant).
+        faitsBureau: <({AppIcon icone, String texte})>[
+          (icone: AppIcons.creneaux, texte: t.ficheEleve.finances.faitSeance),
+          (icone: AppIcons.horloge, texte: t.ficheEleve.finances.faitPeriode),
+          (
+            icone: AppIcons.historique,
+            texte: t.ficheEleve.finances.noteAbsences,
+          ),
+        ],
+        // Revue 4 b : le groupe existant, repris tel quel, sans la ligne
+        // « Finances » (la page elle-meme).
+        parametres: ParametresEleve(
+          profil: profil,
+          onAller: GoRouter.of(context).go,
+          avecFinances: false,
+        ),
+        historique: _HistoriqueProfil(profil: profil),
+      ),
+    );
+  }
+}
+
+/// L'historique des transactions du profil, troisieme colonne sur bureau
+/// (maquette 06, revue 4 a) : les derniers mouvements rendus, puis « Voir
+/// tout » vers la page des mouvements (FI-6b). Rien n'est trie ni filtre
+/// dans Flutter : les premiers de la liste rendue.
+class _HistoriqueProfil extends ConsumerWidget {
+  const _HistoriqueProfil({required this.profil});
+
+  final ProfilEleveFoyer profil;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AppPalette palette = AppPalette.of(context);
+    final AsyncValue<List<MouvementProfil>> lecture = ref.watch(
+      mouvementsProfilProvider(profil.eleveId),
+    );
+    void relire() => ref.invalidate(mouvementsProfilProvider(profil.eleveId));
+    final Object? erreur = lecture.hasError ? lecture.error : null;
+    final Widget corps;
+    if (erreur is CapaciteIndisponible) {
+      corps = EtatSysteme(
+        nature: NatureEtat.indisponible,
+        titre: t.ficheEleve.mouvements.indisponibleTitre,
+        phrase: t.ficheEleve.mouvements.indisponiblePhrase(
+          prenom: profil.prenom,
+        ),
+        dependance: erreur.dependance,
+      );
+    } else if (erreur != null) {
+      corps = (ref.watch(horsLigneProvider).value ?? false)
+          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire)
+          : EtatSysteme(
+              nature: NatureEtat.echecServeur,
+              titre: t.ficheEleve.mouvements.erreurTitre(prenom: profil.prenom),
+              onAction: relire,
+            );
+    } else if (!lecture.hasValue) {
+      corps = const Skeleton.liste(lignes: nombreDernieresTransactions);
+    } else if (lecture.requireValue.isEmpty) {
+      corps = EtatSysteme(
+        nature: NatureEtat.aucunResultat,
+        titre: t.ficheEleve.mouvements.videTitre,
+        phrase: t.ficheEleve.mouvements.videPhrase(prenom: profil.prenom),
+      );
+    } else {
+      // Une seule carte a lignes fines : des contenus lies (K-55).
+      corps = CarteGroupee(
+        sections: <Widget>[
+          for (final MouvementProfil m in lecture.requireValue.take(
+            nombreDernieresTransactions,
+          ))
+            LigneTransaction(
+              icone: iconeMouvement(m.nature),
+              libelle: libelleMouvement(m),
+              date: dateHeureMouvement(m.date),
+              montant: m.montant,
+            ),
+        ],
+      );
+    }
+    return KeyedSubtree(
+      key: FinancesElevePage.historiqueKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          // Le titre au debut, « Voir tout » au bord de fin ; a texte
+          // agrandi, le lien passe sous le titre plutot que de le couper.
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: AppSpacing.lg,
+            children: <Widget>[
+              Semantics(
+                header: true,
+                child: Text(
+                  t.ficheEleve.finances.historiqueTitre,
+                  style: palette.inkStrong.applyTo(
+                    Theme.of(context).textTheme.titleMedium ??
+                        const TextStyle(),
+                  ),
+                ),
+              ),
+              LienFleche(
+                key: FinancesElevePage.voirToutKey,
+                libelle: t.ficheEleve.finances.voirTout,
+                libelleSemantique: t.ficheEleve.finances.voirToutSemantique(
+                  prenom: profil.prenom,
+                ),
+                onPress: () => GoRouter.of(
+                  context,
+                ).go(Routes.ficheEleveSousPage(profil.eleveId, 'mouvements')),
+              ),
+            ],
+          ),
+          Ecart.vMd,
+          corps,
+        ],
       ),
     );
   }
@@ -270,13 +431,20 @@ class EtatsFinancesProfil extends ConsumerWidget {
 }
 
 /// Le libelle d'une ligne de mensualite, selon sa nature rendue.
-String _libelleLigne(NatureLigneMensualite nature, {required bool adulte}) =>
-    switch (nature) {
+/// Une remise de rang porte son rang quand la source le rend (« Remise
+/// familiale 3e membre », guide §5.2), jamais un rang suppose.
+String libelleLigneMensualite(LigneMensualite ligne, {required bool adulte}) =>
+    switch (ligne.nature) {
       NatureLigneMensualite.tarif =>
         adulte
             ? t.ficheEleve.finances.tarifAdulte
             : t.ficheEleve.finances.tarifEnfant,
-      NatureLigneMensualite.remiseRang => t.ficheEleve.finances.remiseRang,
+      NatureLigneMensualite.remiseRang => switch (ligne.rang) {
+        final int rang => t.ficheEleve.finances.remiseRangDe(
+          rang: rang.toString(),
+        ),
+        null => t.ficheEleve.finances.remiseRang,
+      },
       NatureLigneMensualite.prorata => t.ficheEleve.finances.prorata,
       NatureLigneMensualite.avoir => t.ficheEleve.finances.avoir,
       NatureLigneMensualite.taxe => t.ficheEleve.finances.taxe,
@@ -297,6 +465,10 @@ class VueFinancesProfil extends ConsumerWidget {
     required this.semantiqueMouvements,
     required this.onMouvements,
     super.key,
+    this.noteAbsences,
+    this.faitsBureau = const <({AppIcon icone, String texte})>[],
+    this.parametres,
+    this.historique,
   });
 
   /// La finance rendue du profil.
@@ -316,6 +488,24 @@ class VueFinancesProfil extends ConsumerWidget {
 
   /// Ouvre les mouvements du profil.
   final VoidCallback onMouvements;
+
+  /// La note sur les absences (FIN4-04), sous la vue financiere ; `null` :
+  /// aucune. Sur bureau, avec [faitsBureau], elle passe dans le bandeau du
+  /// bas.
+  final String? noteAbsences;
+
+  /// Les faits du bandeau du bas, sur bureau (maquette 06, revue 4 e) ;
+  /// vide : aucun bandeau.
+  final List<({AppIcon icone, String texte})> faitsBureau;
+
+  /// Sur bureau, sous l'identite : le groupe des parametres de l'eleve
+  /// (revue 4 b) ; `null` : aucun.
+  final Widget? parametres;
+
+  /// Sur bureau, la troisieme colonne : l'historique des transactions
+  /// (revue 4 a), qui porte alors l'acces aux mouvements ; `null` : deux
+  /// colonnes et le lien « Voir les mouvements ».
+  final Widget? historique;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -370,7 +560,6 @@ class VueFinancesProfil extends ConsumerWidget {
                 essaisUtilises: essais,
                 essaisMax: essaisMax,
               ),
-              BadgePeriodeFinancee(periode: finance.periode),
             ],
           ),
           // Le maximum lu, la pastille dit « Essai : n/max » ; sans politique
@@ -413,6 +602,13 @@ class VueFinancesProfil extends ConsumerWidget {
                     MontantArgent(finance.solde, taille: TailleMontant.grand),
                   ],
                 ),
+              ),
+              // La periode financee, une seule fois a l'ecran : ici, dans la
+              // vue financiere (revue 3 c, 3 d, 4 c), jamais sous l'identite.
+              Ecart.vSm,
+              BadgePeriodeFinancee(
+                key: FinancesElevePage.periodeKey,
+                periode: finance.periode,
               ),
               Ecart.vMd,
               // Periode en cours non financee : le debit attendu est celui
@@ -468,7 +664,10 @@ class VueFinancesProfil extends ConsumerWidget {
                 // Seules les lignes RENDUES, dans leur ordre (guide §5.2).
                 for (final LigneMensualite l in finance.lignesMensualite)
                   LigneFinance(
-                    libelle: _libelleLigne(l.nature, adulte: finance.estAdulte),
+                    libelle: libelleLigneMensualite(
+                      l,
+                      adulte: finance.estAdulte,
+                    ),
                     montant: l.montant,
                     signe: l.nature == NatureLigneMensualite.taxe,
                   ),
@@ -492,54 +691,149 @@ class VueFinancesProfil extends ConsumerWidget {
       onPress: onRecharger,
     );
 
-    final List<Widget> finances = <Widget>[
-      if (attention != null)
-        BandeauAttention(
-          key: FinancesElevePage.bandeauKey,
-          titre: attention.titre,
-          message: attention.message,
-          ton: attention.ton,
+    final Widget? colonneHistorique = bureau ? historique : null;
+    final bool bandeauBas = bureau && faitsBureau.isNotEmpty;
+    final String? noteSousVue = bandeauBas ? null : noteAbsences;
+
+    // Revue 3 g : « Recharger {prenom} » d'abord, 16 sous la note, puis
+    // « Voir les mouvements » 8 dessous. Sur bureau a trois colonnes,
+    // l'historique porte « Voir tout » : pas de second lien.
+    final Widget actions = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        // Pendant une confirmation, payer encore serait payer deux fois
+        // (guide §5.4) : aucune recharge proposee.
+        if (finance.etat != EtatFinancier.enConfirmation)
+          Align(alignment: AlignmentDirectional.centerEnd, child: recharger),
+        if (colonneHistorique == null) ...<Widget>[
+          if (finance.etat != EtatFinancier.enConfirmation) Ecart.vSm,
+          // L'historique du profil (FI-6b) : un lien, jamais un second
+          // bouton plein (K-56).
+          Align(
+            alignment: bureau
+                ? AlignmentDirectional.centerEnd
+                : AlignmentDirectional.centerStart,
+            child: LienFleche(
+              key: FinancesElevePage.mouvementsKey,
+              libelle: t.ficheEleve.finances.voirMouvements,
+              libelleSemantique: semantiqueMouvements,
+              onPress: onMouvements,
+            ),
+          ),
+        ],
+      ],
+    );
+
+    final Widget principal = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        PileCartes(
+          children: <Widget>[
+            if (!bureau) identite,
+            if (attention != null)
+              BandeauAttention(
+                key: FinancesElevePage.bandeauKey,
+                titre: attention.titre,
+                message: attention.message,
+                ton: attention.ton,
+              ),
+            vue,
+          ],
         ),
-      vue,
-    ];
+        if (noteSousVue != null) ...<Widget>[
+          Ecart.vLg,
+          KeyedSubtree(
+            key: FinancesElevePage.noteAbsencesKey,
+            child: NoteFiche(noteSousVue),
+          ),
+        ],
+        Ecart.vLg,
+        actions,
+      ],
+    );
 
-    // Maquettes 02 et 06 : l'identite d'abord (en tete sur telephone, a
-    // gauche sur bureau), puis la vue financiere. Jamais une colonne mobile
-    // etiree.
-    final Widget composition = bureau
-        ? Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Expanded(flex: 2, child: identite),
-              Ecart.hXxl,
-              Expanded(flex: 3, child: PileCartes(children: finances)),
-            ],
-          )
-        : PileCartes(children: <Widget>[identite, ...finances]);
+    if (!bureau) return principal;
 
+    // Maquette 06 : l'identite (et les parametres) a gauche, la vue
+    // financiere et ses actions au milieu, l'historique a droite. Jamais
+    // une colonne mobile etiree.
+    final Widget? reglages = parametres;
+    final Widget gauche = KeyedSubtree(
+      key: FinancesElevePage.colonneIdentiteKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          identite,
+          if (reglages != null) ...<Widget>[Ecart.vXxl, reglages],
+        ],
+      ),
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        composition,
-        Ecart.vLg,
-        // L'historique du profil (FI-6b) : un lien, jamais un second bouton
-        // plein (K-56).
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: LienFleche(
-            key: FinancesElevePage.mouvementsKey,
-            libelle: t.ficheEleve.finances.voirMouvements,
-            libelleSemantique: semantiqueMouvements,
-            onPress: onMouvements,
-          ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(flex: 2, child: gauche),
+            Ecart.hXxl,
+            Expanded(flex: 3, child: principal),
+            if (colonneHistorique != null) ...<Widget>[
+              Ecart.hXxl,
+              Expanded(flex: 3, child: colonneHistorique),
+            ],
+          ],
         ),
-        // Pendant une confirmation, payer encore serait payer deux fois
-        // (guide §5.4) : aucune recharge proposee.
-        if (finance.etat != EtatFinancier.enConfirmation) ...<Widget>[
+        if (bandeauBas) ...<Widget>[
           Ecart.vXxl,
-          Align(alignment: AlignmentDirectional.centerEnd, child: recharger),
+          _BandeauFaits(faits: faitsBureau),
         ],
       ],
+    );
+  }
+}
+
+/// Le bandeau du bas, sur bureau (maquette 06, revue 4 e) : des faits cote a
+/// cote, une icone decorative et une phrase chacun.
+class _BandeauFaits extends StatelessWidget {
+  const _BandeauFaits({required this.faits});
+
+  final List<({AppIcon icone, String texte})> faits;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextStyle style = palette.inkMuted.applyTo(
+      Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+    );
+    return SurfaceFiche(
+      key: FinancesElevePage.bandeauBasKey,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          for (final (int i, ({AppIcon icone, String texte}) f)
+              in faits.indexed) ...<Widget>[
+            if (i > 0) Ecart.hXxl,
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  ExcludeSemantics(
+                    child: IconTheme(
+                      data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
+                      child: Icon(f.icone.repos),
+                    ),
+                  ),
+                  Ecart.hSm,
+                  Expanded(child: Text(f.texte, style: style)),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

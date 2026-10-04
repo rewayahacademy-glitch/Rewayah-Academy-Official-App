@@ -239,6 +239,7 @@ abstract final class DonneesFinanceDemo {
         LigneMensualite(
           nature: NatureLigneMensualite.remiseRang,
           montant: remise,
+          rang: rang,
         ),
     ];
   }

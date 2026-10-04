@@ -12,6 +12,7 @@ import '../../../core/finance/politique_commerciale.dart';
 import '../../../core/finance/suivi_paiement.dart';
 import '../../../core/foyer/selection_eleve.dart';
 import '../../../core/i18n/strings.g.dart';
+import '../../../core/icons/app_icons.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/theme/app_gabarit.dart';
@@ -32,6 +33,7 @@ import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/status_pill.dart';
 import '../fiche_eleve_page.dart';
 import '../ligne_membre.dart' show dateEcheance;
+import '../photo_eleve.dart';
 
 /// Les mouvements d'un profil, relus a chaque ouverture (FI-BR-05) : libere
 /// des que la page se ferme (`autoDispose`), pour qu'apres une recharge
@@ -106,6 +108,28 @@ String libelleMouvement(MouvementProfil m) => switch (m.nature) {
   NatureMouvement.remise => t.ficheEleve.mouvements.nature.remise,
   NatureMouvement.taxe => t.ficheEleve.mouvements.nature.taxe,
 };
+
+/// L'icone du type d'un mouvement (guide §5.2, revue 5 b) : decorative, le
+/// libelle dit deja le type ; la couleur n'y porte rien.
+AppIcon iconeMouvement(NatureMouvement nature) => switch (nature) {
+  NatureMouvement.recharge => AppIcons.ajouter,
+  NatureMouvement.debitPeriode => AppIcons.creneaux,
+  NatureMouvement.avoir || NatureMouvement.remise => AppIcons.finance,
+  NatureMouvement.taxe => AppIcons.info,
+};
+
+String _deuxChiffres(int n) => n.toString().padLeft(2, '0');
+
+/// La date d'un mouvement avec son heure locale : « 1 octobre 2026 à
+/// 09:30 » (guide §5.2, revue 5 b). Jamais le jour seul : deux recharges du
+/// meme jour se distinguent.
+String dateHeureMouvement(DateTime date) {
+  final DateTime locale = date.toLocal();
+  return t.ficheEleve.mouvements.dateHeure(
+    date: dateEcheance(locale),
+    heure: '${_deuxChiffres(locale.hour)}:${_deuxChiffres(locale.minute)}',
+  );
+}
 
 /// Le statut d'un mouvement, en texte.
 String libelleStatut(StatutMouvement s) => switch (s) {
@@ -261,7 +285,20 @@ class _FiltrePersonne extends ConsumerWidget {
         valeur: profil.eleveId,
         entrees: <EntreeFiltre<String>>[
           for (final ProfilEleveFoyer p in profils)
-            EntreeFiltre<String>(valeur: p.eleveId, libelle: p.prenom),
+            EntreeFiltre<String>(
+              valeur: p.eleveId,
+              libelle: p.prenom,
+              // Guide §3.4 : la personne se reconnait a son portrait.
+              avatar: PhotoEleve(
+                prenom: p.prenom,
+                cleAvatar: p.cleAvatar,
+                diametre: AppAvatar.petit,
+              ),
+              enveloppeAvatar: BandeauProfil.enveloppe(
+                diametre: AppAvatar.petit,
+                accent: accentLu(ref.watch(accentsProfilsProvider), p.eleveId),
+              ),
+            ),
         ],
         onChoix: (String? id) {
           if (id == null || id == profil.eleveId) return;
@@ -328,8 +365,9 @@ class _Liste extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               LigneTransaction(
+                icone: iconeMouvement(m.nature),
                 libelle: libelleMouvement(m),
-                date: dateEcheance(m.date),
+                date: dateHeureMouvement(m.date),
                 montant: m.montant,
                 statut: _pastille(m),
               ),
@@ -388,8 +426,19 @@ class _Tableau extends StatelessWidget {
           ),
           for (final MouvementProfil m in mouvements)
             _LigneTableau(
-              date: Text(dateEcheance(m.date), style: chiffres),
-              libelle: Text(libelleMouvement(m), style: cellule),
+              date: Text(dateHeureMouvement(m.date), style: chiffres),
+              libelle: Row(
+                children: <Widget>[
+                  ExcludeSemantics(
+                    child: IconTheme(
+                      data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
+                      child: Icon(iconeMouvement(m.nature).repos),
+                    ),
+                  ),
+                  Ecart.hSm,
+                  Expanded(child: Text(libelleMouvement(m), style: cellule)),
+                ],
+              ),
               montant: Text(
                 formaterMontant(m.montant, signe: true),
                 style: chiffres,
@@ -513,6 +562,10 @@ class _ContenuRecu extends ConsumerWidget {
                     ref.watch(accentsProfilsProvider),
                     a.profilId,
                   ),
+                  // Le bandeau remonte dans la marge de la ligne, le cercle
+                  // reste en haut : rien ne depasse la ligne, et le prenom
+                  // s'aligne sur le cercle, pas sur le bandeau (R2-08).
+                  remontee: LigneCleValeur.margeVerticale,
                 ),
               ),
           ],

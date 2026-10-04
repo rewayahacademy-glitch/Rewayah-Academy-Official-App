@@ -20,6 +20,7 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
+import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/identite_profil.dart';
@@ -48,6 +49,8 @@ class PageFiche extends ConsumerWidget {
     required this.construire,
     super.key,
     this.titre,
+    this.titreBureau,
+    this.sousTitreBureau,
   });
 
   /// L'eleve demande par le chemin.
@@ -55,6 +58,14 @@ class PageFiche extends ConsumerWidget {
 
   /// Le titre de la page ; `null` : le prenom de l'eleve.
   final String? titre;
+
+  /// A 1200 et plus, une fois l'eleve retrouve : le titre de la page tire
+  /// de son prenom (« Mariam · Finances », maquette 06) ; `null` : [titre].
+  final String Function(String prenom)? titreBureau;
+
+  /// A 1200 et plus, avec [titreBureau] : la ligne sous le titre (« Foyer ›
+  /// Mariam », maquette 06) ; `null` : le prenom.
+  final String Function(String prenom)? sousTitreBureau;
 
   /// Le retour visible (niveau 2) : la fiche pour une sous-page, le Foyer
   /// pour la fiche.
@@ -122,6 +133,20 @@ class PageFiche extends ConsumerWidget {
     }
 
     final String? prenom = profil?.prenom;
+    final String Function(String prenom)? titreLarge =
+        AppGabarit.de(context) == Gabarit.desktop &&
+            prenom != null &&
+            prenom.isNotEmpty
+        ? titreBureau
+        : null;
+    if (titreLarge != null && prenom != null) {
+      return PageShell(
+        titre: titreLarge(prenom),
+        sousTitre: sousTitreBureau?.call(prenom) ?? prenom,
+        onRetour: onRetour,
+        child: corps,
+      );
+    }
     return PageShell(
       titre:
           titre ??
@@ -297,71 +322,22 @@ class _ContenuFiche extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final void Function(String chemin) aller =
         onAller ?? GoRouter.of(context).go;
-    final DateTime maintenant = ref.watch(horlogeFoyerProvider)();
     final ClasseMembre classe = classeMembreLue(
       ref.watch(classesMembreProvider(profil.eleveId)),
     );
     String sousPage(String segment) =>
         Routes.ficheEleveSousPage(profil.eleveId, segment);
+    // Sous 1200, les finances s'ouvrent par le segment « Finances » (Q-FI-1,
+    // revue 3 a) ; a 1200 et plus, sans segmente (revue 4 b), par la ligne.
+    final bool bureau = AppGabarit.de(context) == Gabarit.desktop;
+    final bool avecFinances =
+        legendeFinances(ref.watch(financesFoyerProvider), profil.eleveId) !=
+        null;
 
-    final Widget parametres = KeyedSubtree(
-      key: FicheElevePage.parametresKey,
-      child: GroupeReglages(
-        titre: t.ficheEleve.parametres,
-        lignes: <LigneRubrique>[
-          LigneRubrique(
-            icone: AppIcons.profil,
-            libelle: t.ficheEleve.lignes.informations,
-            legende: t.ficheEleve.lignes.informationsLegende,
-            onPress: () => aller(sousPage('informations')),
-          ),
-          LigneRubrique(
-            icone: AppIcons.lecon,
-            libelle: t.ficheEleve.lignes.inscription,
-            legende: t.ficheEleve.lignes.inscriptionLegende,
-            onPress: () => aller(sousPage('inscription')),
-          ),
-          LigneRubrique(
-            icone: AppIcons.tabletteOuOrdinateur,
-            libelle: t.ficheEleve.lignes.interface,
-            legende: libelleInterface(profil.mode),
-            onPress: () => aller(sousPage('interface')),
-          ),
-          LigneRubrique(
-            icone: AppIcons.palette,
-            libelle: t.ficheEleve.lignes.couleur,
-            legende: legendeCouleur(
-              ref.watch(accentsProfilsProvider),
-              profil.eleveId,
-            ),
-            onPress: () => aller(sousPage('couleur')),
-          ),
-          LigneRubrique(
-            icone: AppIcons.camera,
-            libelle: t.ficheEleve.lignes.camera,
-            legende: profil.camera == CameraPolicy.allowed
-                ? t.ficheEleve.lignes.cameraAutorisee
-                : t.ficheEleve.lignes.cameraNonAutorisee,
-            onPress: () => aller(sousPage('camera')),
-          ),
-          LigneRubrique(
-            icone: AppIcons.verrou,
-            libelle: t.ficheEleve.lignes.acces,
-            legende: statutAcces(profil, maintenant),
-            onPress: () => aller(sousPage('acces')),
-          ),
-          // FI-6a : la finance du profil, seulement quand une source la
-          // rend (jamais en production ni au second adulte, lecon 15).
-          if (legendeFinances(ref.watch(financesFoyerProvider), profil.eleveId)
-              case final ({String? legende}) finances)
-            LigneRubrique(
-              icone: AppIcons.finance,
-              libelle: t.ficheEleve.lignes.finances,
-              legende: finances.legende,
-              onPress: () => aller(sousPage('finances')),
-            ),
-        ],
-      ),
+    final Widget parametres = ParametresEleve(
+      profil: profil,
+      onAller: aller,
+      avecFinances: bureau,
     );
 
     final Widget appareils = KeyedSubtree(
@@ -391,6 +367,14 @@ class _ContenuFiche extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        if (avecFinances && !bureau) ...<Widget>[
+          OngletsFiche(
+            eleveId: profil.eleveId,
+            actif: OngletFiche.general,
+            onAller: aller,
+          ),
+          Ecart.vXxl,
+        ],
         KeyedSubtree(
           key: FicheElevePage.enteteKey,
           child: _Entete(
@@ -402,6 +386,161 @@ class _ContenuFiche extends ConsumerWidget {
         Ecart.vXxl,
         ColonnesFiche(principal: parametres, annexe: appareils),
       ],
+    );
+  }
+}
+
+/// Les onglets de la fiche d'un eleve (Q-FI-1, revue 3 a ;
+/// `02_DECOUPAGE` FI-6a) : « Général » et « Finances », chacun une route.
+/// Sous 1200 seulement : a 1200 et plus, la page Finances porte les
+/// parametres dans sa colonne d'identite, sans segmente (revue 4 b).
+enum OngletFiche {
+  /// La fiche elle-meme (`/tuteur/foyer/:eleveId`).
+  general,
+
+  /// Ses finances (`/tuteur/foyer/:eleveId/finances`).
+  finances,
+}
+
+/// Le controle segmente des onglets de la fiche. Ce n'est pas une
+/// navigation propre : chaque segment ouvre sa route.
+class OngletsFiche extends StatelessWidget {
+  /// Cree les onglets.
+  const OngletsFiche({
+    required this.eleveId,
+    required this.actif,
+    super.key,
+    this.onAller,
+  });
+
+  /// La cle du controle.
+  static const Key cle = Key('ficheEleve.onglets');
+
+  /// L'eleve de la fiche.
+  final String eleveId;
+
+  /// L'onglet de la page courante.
+  final OngletFiche actif;
+
+  /// Ouvre un chemin ; par defaut, le routeur.
+  final void Function(String chemin)? onAller;
+
+  @override
+  Widget build(BuildContext context) {
+    final void Function(String chemin) aller =
+        onAller ?? GoRouter.of(context).go;
+    return ControleSegmente<OngletFiche>(
+      key: cle,
+      segments: <Segment<OngletFiche>>[
+        Segment<OngletFiche>(
+          valeur: OngletFiche.general,
+          libelle: t.ficheEleve.onglets.general,
+        ),
+        Segment<OngletFiche>(
+          valeur: OngletFiche.finances,
+          libelle: t.ficheEleve.onglets.finances,
+        ),
+      ],
+      valeur: actif,
+      onChange: (OngletFiche onglet) => aller(switch (onglet) {
+        OngletFiche.general => Routes.ficheElevePour(eleveId),
+        OngletFiche.finances => Routes.ficheEleveSousPage(eleveId, 'finances'),
+      }),
+    );
+  }
+}
+
+/// Le groupe « Paramètres de l'élève » : informations, parcours et
+/// inscription, interface, couleur, camera, acces et, quand une source rend
+/// les finances, la ligne « Finances ». Un seul groupe, pose par la fiche et
+/// repris tel quel dans la colonne d'identite de la page Finances sur bureau
+/// (revue 4 b, K-51) : jamais recopie.
+class ParametresEleve extends ConsumerWidget {
+  /// Cree le groupe.
+  const ParametresEleve({
+    required this.profil,
+    required this.onAller,
+    super.key,
+    this.avecFinances = true,
+  });
+
+  /// L'eleve.
+  final ProfilEleveFoyer profil;
+
+  /// Ouvre une sous-page.
+  final void Function(String chemin) onAller;
+
+  /// Faux : aucune ligne « Finances » (la page Finances elle-meme, ou les
+  /// onglets qui la portent sous 1200).
+  final bool avecFinances;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final DateTime maintenant = ref.watch(horlogeFoyerProvider)();
+    String sousPage(String segment) =>
+        Routes.ficheEleveSousPage(profil.eleveId, segment);
+    return KeyedSubtree(
+      key: FicheElevePage.parametresKey,
+      child: GroupeReglages(
+        titre: t.ficheEleve.parametres,
+        lignes: <LigneRubrique>[
+          LigneRubrique(
+            icone: AppIcons.profil,
+            libelle: t.ficheEleve.lignes.informations,
+            legende: t.ficheEleve.lignes.informationsLegende,
+            onPress: () => onAller(sousPage('informations')),
+          ),
+          LigneRubrique(
+            icone: AppIcons.lecon,
+            libelle: t.ficheEleve.lignes.inscription,
+            legende: t.ficheEleve.lignes.inscriptionLegende,
+            onPress: () => onAller(sousPage('inscription')),
+          ),
+          LigneRubrique(
+            icone: AppIcons.tabletteOuOrdinateur,
+            libelle: t.ficheEleve.lignes.interface,
+            legende: libelleInterface(profil.mode),
+            onPress: () => onAller(sousPage('interface')),
+          ),
+          LigneRubrique(
+            icone: AppIcons.palette,
+            libelle: t.ficheEleve.lignes.couleur,
+            legende: legendeCouleur(
+              ref.watch(accentsProfilsProvider),
+              profil.eleveId,
+            ),
+            onPress: () => onAller(sousPage('couleur')),
+          ),
+          LigneRubrique(
+            icone: AppIcons.camera,
+            libelle: t.ficheEleve.lignes.camera,
+            legende: profil.camera == CameraPolicy.allowed
+                ? t.ficheEleve.lignes.cameraAutorisee
+                : t.ficheEleve.lignes.cameraNonAutorisee,
+            onPress: () => onAller(sousPage('camera')),
+          ),
+          LigneRubrique(
+            icone: AppIcons.verrou,
+            libelle: t.ficheEleve.lignes.acces,
+            legende: statutAcces(profil, maintenant),
+            onPress: () => onAller(sousPage('acces')),
+          ),
+          // FI-6a : la finance du profil, seulement quand une source la
+          // rend (jamais en production ni au second adulte, lecon 15).
+          if (avecFinances)
+            if (legendeFinances(
+                  ref.watch(financesFoyerProvider),
+                  profil.eleveId,
+                )
+                case final ({String? legende}) finances)
+              LigneRubrique(
+                icone: AppIcons.finance,
+                libelle: t.ficheEleve.lignes.finances,
+                legende: finances.legende,
+                onPress: () => onAller(sousPage('finances')),
+              ),
+        ],
+      ),
     );
   }
 }

@@ -1121,8 +1121,14 @@
       "expirePhrase": "Depuis cette date, {prenom} ne peut plus entrer dans Rewayah.",
       "detailIndisponible": "Le début de l'accès et son motif ne s'affichent pas encore."
     },
+    "onglets": {
+      "general": "Général",
+      "finances": "Finances"
+    },
     "finances": {
       "titre": "Finances",
+      "titreBureau": "{prenom} · Finances",
+      "filAriane": "Foyer › {prenom}",
       "vueTitre": "Vue financière",
       "mensualite": "Mensualité",
       "mensualiteValeur": "{montant} / mois",
@@ -1130,6 +1136,7 @@
       "tarifEnfant": "Tarif enfant",
       "tarifAdulte": "Tarif adulte",
       "remiseRang": "Remise familiale",
+      "remiseRangDe": "Remise familiale {rang}e membre",
       "prorata": "Réduction calendrier",
       "avoir": "Avoir",
       "taxe": "Taxe applicable",
@@ -1151,11 +1158,18 @@
       "erreurTitre": "Les finances de {prenom} ne peuvent pas être lues",
       "videTitre": "Aucune finance enregistrée pour {prenom}",
       "videPhrase": "Aucun solde ni aucune mensualité n'est encore rendu pour ce profil. Ils apparaîtront ici après son inscription à une classe.",
-      "voirMouvements": "Mouvements",
+      "voirMouvements": "Voir les mouvements",
+      "noteAbsences": "Les absences ordinaires n'entraînent pas de réduction sur le mois une fois celui-ci financé. Vous pouvez consulter l'historique de présence dans l'onglet Historique.",
+      "faitSeance": "Pas de consommation par séance",
+      "faitPeriode": "Accès lié à la période financée",
+      "historiqueTitre": "Historique des transactions",
+      "voirTout": "Voir tout",
+      "voirToutSemantique": "Voir tous les mouvements de {prenom}",
       "voirMouvementsSemantique": "Voir les mouvements de {prenom}"
     },
     "mouvements": {
       "titre": "Mouvements",
+      "dateHeure": "{date} à {heure}",
       "contexte": "Les recharges, mensualités, remises et avoirs de {prenom}, du plus récent au plus ancien. Rien ne s'efface : une correction s'ajoute comme un nouveau mouvement.",
       "personne": "Personne",
       "colonne": {

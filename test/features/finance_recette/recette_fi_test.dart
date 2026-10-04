@@ -339,10 +339,19 @@ final List<_EcranComposition> _ecransComposition = <_EcranComposition>[
   (
     nom: 'Fiche > Finances',
     monter: _tuteur(Routes.ficheEleveSousPage(_ibrahim, 'finances')),
-    blocs: () => <Finder>[
-      find.byKey(FinancesElevePage.identiteKey),
-      find.byKey(FinancesElevePage.vueKey),
-    ],
+    // R2-01 : sur bureau, trois colonnes (identite et parametres, vue
+    // financiere et actions, historique) ; sur telephone, une pile.
+    blocs: () {
+      final Finder colonne = find.byKey(FinancesElevePage.colonneIdentiteKey);
+      return <Finder>[
+        if (colonne.evaluate().isNotEmpty)
+          colonne
+        else
+          find.byKey(FinancesElevePage.identiteKey),
+        find.byKey(FinancesElevePage.vueKey),
+        find.byKey(FinancesElevePage.historiqueKey),
+      ];
+    },
     tacheFocalisee: false,
   ),
   (
@@ -412,10 +421,19 @@ final List<_EcranComposition> _ecransComposition = <_EcranComposition>[
         taille: taille,
       );
     },
-    blocs: () => <Finder>[
-      find.byKey(FinancesElevePage.identiteKey),
-      find.byKey(FinancesElevePage.vueKey),
-    ],
+    // R2-01 : sur bureau, trois colonnes (identite et parametres, vue
+    // financiere et actions, historique) ; sur telephone, une pile.
+    blocs: () {
+      final Finder colonne = find.byKey(FinancesElevePage.colonneIdentiteKey);
+      return <Finder>[
+        if (colonne.evaluate().isNotEmpty)
+          colonne
+        else
+          find.byKey(FinancesElevePage.identiteKey),
+        find.byKey(FinancesElevePage.vueKey),
+        find.byKey(FinancesElevePage.historiqueKey),
+      ];
+    },
     tacheFocalisee: false,
   ),
   (

@@ -5,6 +5,7 @@ import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
+import 'avatar_nom.dart';
 
 /// Une valeur proposee par un [MenuFiltre].
 @immutable
@@ -14,6 +15,8 @@ class EntreeFiltre<T> {
     required this.valeur,
     required this.libelle,
     this.compteur,
+    this.avatar,
+    this.enveloppeAvatar,
   });
 
   /// La valeur retenue. **Nulle pour l'entree « tous »**, qui relache le
@@ -26,6 +29,15 @@ class EntreeFiltre<T> {
   /// Combien d'elements portent cette valeur. Rendu a cote du libelle : c'est
   /// lui qui dit ou regarder.
   final int? compteur;
+
+  /// Le portrait de la personne, quand l'axe filtre des personnes (« par
+  /// personne », guide Finance V4 §3.4) : un cercle de `AppAvatar.petit`,
+  /// pose avec le libelle par `AvatarNom`, jamais recompose. `null` : le
+  /// libelle seul.
+  final Widget? avatar;
+
+  /// L'habit du cercle (le bandeau de couleur du profil, `BandeauProfil`).
+  final Widget Function(Widget avatar)? enveloppeAvatar;
 }
 
 /// Un axe de filtre **ouvert**, rendu en menu et non en pastilles.
@@ -109,7 +121,16 @@ class MenuFiltre<T> extends StatelessWidget {
             value: _Choix<T>(entree.valeur),
             child: Row(
               children: <Widget>[
-                Expanded(child: Text(entree.libelle)),
+                Expanded(
+                  child: entree.avatar == null
+                      ? Text(entree.libelle)
+                      : AvatarNom.enLigne(
+                          prenom: entree.libelle,
+                          diametre: AppAvatar.petit,
+                          avatar: entree.avatar,
+                          enveloppeAvatar: entree.enveloppeAvatar,
+                        ),
+                ),
                 if (selecteurDeSection && entree.valeur == valeur) ...<Widget>[
                   Ecart.hMd,
                   Icon(
