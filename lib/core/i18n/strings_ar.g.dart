@@ -445,6 +445,25 @@ class _Traductions$com$communaute$ar extends Traductions$com$communaute$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$com$communaute$garde$ar garde = _Traductions$com$communaute$garde$ar._(_root);
+	@override late final _Traductions$com$communaute$lien$ar lien = _Traductions$com$communaute$lien$ar._(_root);
+	@override String get sousTitre => 'تبادل وتعاون بين المعلّمين';
+	@override String get sections => 'فئات مجتمع المعلّمين';
+	@override String get toutes => 'الكل';
+	@override String get videTitre => 'لا توجد منشورات';
+	@override String get rechercheVideTitre => 'لا توجد نتائج';
+	@override String get rechercheVide => 'لا يوجد منشور يطابق بحثك. جرّب كلمة أخرى.';
+	@override String get videToutes => 'لا توجد منشورات حاليًا.';
+	@override late final _Traductions$com$communaute$flux$ar flux = _Traductions$com$communaute$flux$ar._(_root);
+	@override late final _Traductions$com$communaute$recherche$ar recherche = _Traductions$com$communaute$recherche$ar._(_root);
+	@override late final _Traductions$com$communaute$moment$ar moment = _Traductions$com$communaute$moment$ar._(_root);
+	@override late final _Traductions$com$communaute$publication$ar publication = _Traductions$com$communaute$publication$ar._(_root);
+	@override late final _Traductions$com$communaute$reponses$ar reponses = _Traductions$com$communaute$reponses$ar._(_root);
+	@override late final _Traductions$com$communaute$signalement$ar signalement = _Traductions$com$communaute$signalement$ar._(_root);
+	@override late final _Traductions$com$communaute$composer$ar composer = _Traductions$com$communaute$composer$ar._(_root);
+	@override late final _Traductions$com$communaute$regles$ar regles = _Traductions$com$communaute$regles$ar._(_root);
+	@override late final _Traductions$com$communaute$entree$ar entree = _Traductions$com$communaute$entree$ar._(_root);
+	@override late final _Traductions$com$communaute$demo$ar demo = _Traductions$com$communaute$demo$ar._(_root);
 	@override String get titre => _root.com.socle.lexique.communaute;
 	@override String get vide => 'لا توجد منشورات في هذه الفئة.';
 }
@@ -629,6 +648,218 @@ class _Traductions$com$socle$navigation$ar extends Traductions$com$socle$navigat
 	@override late final _Traductions$com$socle$navigation$demo$ar demo = _Traductions$com$socle$navigation$demo$ar._(_root);
 }
 
+// Path: com.communaute.garde
+class _Traductions$com$communaute$garde$ar extends Traductions$com$communaute$garde$fr {
+	_Traductions$com$communaute$garde$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get aide => 'لا إعلانات. لا روابط تسويق بالعمولة. لا بيع.';
+	@override String get avertissement => 'يبدو أن هذا المنشور يتضمّن ترويجًا تجاريًا. أزِل الرابط أو الرمز أو العرض قبل النشر.';
+	@override String get bloqueAffilie => 'روابط التسويق بالعمولة غير مسموح بها في مجتمع المعلّمين.';
+	@override String get bloqueVente => 'بيع المنتجات أو الخدمات غير مسموح به في هذه المساحة.';
+	@override String get titreAvertissement => 'منشور يحتاج إلى مراجعة';
+	@override String get titreBlocage => 'منشور محظور';
+	@override String motif({required Object motif}) => 'السبب: ${motif}';
+	@override String get liensTitre => 'روابط المنشور';
+	@override String get consigneBlocage => 'عدِّل المنشور ثم انشره من جديد.';
+}
+
+// Path: com.communaute.lien
+class _Traductions$com$communaute$lien$ar extends Traductions$com$communaute$lien$fr {
+	_Traductions$com$communaute$lien$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get interne => 'رابط داخلي في رواية';
+	@override String get ressourceExterne => 'مورد تعليمي خارجي';
+	@override String get commercialInterdit => 'رابط تجاري ممنوع';
+	@override String get nonVerifie => 'رابط غير مُتحقَّق منه';
+	@override String semantique({required Object adresse, required Object etat}) => '${adresse}، ${etat}';
+}
+
+// Path: com.communaute.flux
+class _Traductions$com$communaute$flux$ar extends Traductions$com$communaute$flux$fr {
+	_Traductions$com$communaute$flux$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String ouvrir({required Object titre}) => 'فتح المنشور ${titre}';
+	@override String get reponseUne => 'ردّ واحد';
+	@override String reponses({required Object nombre}) => '${nombre} ردود';
+	@override String get aucuneReponse => 'لا توجد ردود';
+	@override String categorie({required Object categorie}) => 'الفئة ${categorie}';
+}
+
+// Path: com.communaute.recherche
+class _Traductions$com$communaute$recherche$ar extends Traductions$com$communaute$recherche$fr {
+	_Traductions$com$communaute$recherche$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get ouvrir => 'البحث عن منشور';
+	@override String get champ => 'البحث عن منشور';
+	@override String get aide => 'كلمة من العنوان أو النص';
+	@override String get fermer => 'إغلاق البحث';
+}
+
+// Path: com.communaute.moment
+class _Traductions$com$communaute$moment$ar extends Traductions$com$communaute$moment$fr {
+	_Traductions$com$communaute$moment$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get instant => 'الآن';
+	@override String minutes({required Object nombre}) => 'منذ ${nombre} دقيقة';
+	@override String heures({required Object nombre}) => 'منذ ${nombre} ساعة';
+	@override String jours({required Object nombre}) => 'منذ ${nombre} يوم';
+	@override String date({required Object jour, required Object mois}) => 'في ${jour}/${mois}';
+}
+
+// Path: com.communaute.publication
+class _Traductions$com$communaute$publication$ar extends Traductions$com$communaute$publication$fr {
+	_Traductions$com$communaute$publication$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String auteur({required Object fonction, required Object moment}) => '${fonction}، ${moment}';
+	@override String get enregistrer => 'حفظ المنشور';
+	@override String get enregistree => 'منشور محفوظ';
+	@override String get retirer => 'إزالة من العناصر المحفوظة';
+	@override String menu({required Object titre}) => 'إجراءات على المنشور ${titre}';
+	@override String get signaler => 'الإبلاغ عن المنشور';
+	@override String get signalee => 'تم الإبلاغ عن المحتوى إلى فريق الإشراف.';
+	@override String get choisirTitre => 'لا يوجد منشور مفتوح';
+	@override String get choisir => 'اختر منشورًا من القائمة لقراءته والردّ عليه.';
+	@override String get introuvableTitre => 'المنشور غير متاح';
+	@override String get introuvable => 'تمت إزالة هذا المنشور أو لم يعد متاحًا لك. عد إلى المنشورات لاختيار منشور آخر.';
+	@override String get revenir => 'العودة إلى المنشورات';
+}
+
+// Path: com.communaute.reponses
+class _Traductions$com$communaute$reponses$ar extends Traductions$com$communaute$reponses$fr {
+	_Traductions$com$communaute$reponses$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String titre({required Object nombre}) => 'الردود (${nombre})';
+	@override String get vide => 'لا توجد ردود حاليًا.';
+	@override String get erreurTitre => 'تعذّر تحميل الردود.';
+	@override String get champ => 'ردّك';
+	@override String get aide => 'اكتب ردًّا';
+	@override String get envoyer => 'إرسال الردّ';
+	@override String get champVide => 'اكتب ردًّا لإرساله.';
+	@override String get enCours => 'جارٍ الإرسال';
+	@override String get nonConfirmee => 'لم يُؤكَّد هذا الردّ بعد.';
+	@override String get reessayer => 'إعادة إرسال الردّ';
+	@override String get indisponible => 'الردود غير متاحة هنا بعد.';
+	@override String menu({required Object nom}) => 'إجراءات على ردّ ${nom}';
+	@override String get signaler => 'الإبلاغ عن الردّ';
+	@override String get signalee => 'لقد أبلغت عن هذا الردّ.';
+}
+
+// Path: com.communaute.signalement
+class _Traductions$com$communaute$signalement$ar extends Traductions$com$communaute$signalement$fr {
+	_Traductions$com$communaute$signalement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$com$communaute$signalement$politique$ar politique = _Traductions$com$communaute$signalement$politique$ar._(_root);
+	@override String get motifManquant => 'اختر سببًا لإرسال البلاغ.';
+}
+
+// Path: com.communaute.composer
+class _Traductions$com$communaute$composer$ar extends Traductions$com$communaute$composer$fr {
+	_Traductions$com$communaute$composer$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get nouvelle => 'منشور جديد';
+	@override String get contexte => 'شارك سؤالًا أو طريقة أو موردًا مفيدًا للتعليم.';
+	@override String get categorie => 'الفئة';
+	@override String get categorieManquante => 'اختر فئة للنشر.';
+	@override String get champTitre => 'العنوان';
+	@override String get aideTitre => 'الموضوع في كلمات قليلة';
+	@override String get titreManquant => 'اكتب عنوانًا للنشر.';
+	@override String get champTexte => 'النص';
+	@override String get aideTexte => 'سؤالك أو خبرتك';
+	@override String get texteManquant => 'اكتب نص المنشور للنشر.';
+	@override String get pieces => 'المرفقات';
+	@override String get pieceRefusee => 'أزل الملفات المرفوضة قبل النشر.';
+	@override String get choixIndisponible => 'اختيار ملف غير متاح هنا بعد.';
+	@override String get publier => 'نشر';
+	@override String get fermer => 'إغلاق المنشور الجديد';
+	@override String get confirmee => 'منشورك متاح الآن.';
+	@override String get erreurEnvoi => 'لم يُؤكَّد منشورك بعد. تحقّق من اتصالك ثم أعد المحاولة.';
+	@override String get indisponible => 'النشر غير متاح هنا بعد.';
+}
+
+// Path: com.communaute.regles
+class _Traductions$com$communaute$regles$ar extends Traductions$com$communaute$regles$fr {
+	_Traductions$com$communaute$regles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get panneau => 'المساعدة والقواعد';
+	@override String get aProposTitre => 'حول هذه المساحة';
+	@override String get aPropos => 'مساحة تعاون بين المعلّمين لطرح الأسئلة وتبادل الطرق والموارد التعليمية.';
+	@override String get titre => 'مشاركة تعليمية فقط';
+	@override String get corps => 'هذا المجتمع مخصّص للتبادل المهني بين المعلّمين.';
+	@override String get reglesTitre => 'قواعد النشر';
+	@override String get pasPublicite => 'لا إعلانات';
+	@override String get pasAffilie => 'لا روابط تسويق بالعمولة';
+	@override String get pasVente => 'لا بيع لمنتج أو خدمة';
+	@override String get pasSollicitation => 'لا التماس تجاري';
+	@override String get pasDonnees => 'لا بيانات شخصية لطالب أو عائلة';
+	@override String get signaler => 'يُبلَّغ عن المحتوى غير المناسب من قائمة المنشور.';
+	@override String get voir => 'عرض القواعد';
+}
+
+// Path: com.communaute.entree
+class _Traductions$com$communaute$entree$ar extends Traductions$com$communaute$entree$fr {
+	_Traductions$com$communaute$entree$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get lecteur => 'فتح مجتمع المعلّمين';
+	@override String get detail => 'أسئلة وطرق وموارد بين المعلّمين';
+}
+
+// Path: com.communaute.demo
+class _Traductions$com$communaute$demo$ar extends Traductions$com$communaute$demo$fr {
+	_Traductions$com$communaute$demo$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get avertissement => 'منشور يحتاج إلى مراجعة: إعلان تجاري';
+	@override String get lienAffilie => 'رابط تسويق بالعمولة محظور';
+	@override String get vente => 'بيع محظور';
+	@override String get signalementNonConfirme => 'إبلاغ غير مؤكَّد';
+	@override String get choisir => 'اختر حالة لتجربتها داخل واجهة المعلّم.';
+	@override String get aujourdhui => 'اليوم، مع الاختصار';
+	@override String get nominal => 'ستة منشورات';
+	@override String get publication => 'منشور مفتوح';
+	@override String get vide => 'لا توجد منشورات';
+	@override String get lectureEchouee => 'فشل القراءة';
+	@override String get indisponible => 'الخدمة غير متاحة بعد';
+	@override String get horsLigne => 'غير متصل';
+	@override String get envoiNonConfirme => 'إرسال غير مؤكَّد';
+	@override String get moderationIndisponible => 'الإشراف غير متاح';
+	@override String get lecteurSeul => 'قراءة فقط، دون نشر';
+}
+
 // Path: com.annonces.demo
 class _Traductions$com$annonces$demo$ar extends Traductions$com$annonces$demo$fr {
 	_Traductions$com$annonces$demo$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -776,6 +1007,17 @@ class _Traductions$com$socle$navigation$demo$ar extends Traductions$com$socle$na
 	@override String get titre => 'عرض توضيحي للاتصالات';
 	@override String get detail => 'بيانات وهمية، غير موجودة في نسخ الإنتاج.';
 	@override String get choisir => 'اختر مساحة لتجربتها.';
+}
+
+// Path: com.communaute.signalement.politique
+class _Traductions$com$communaute$signalement$politique$ar extends Traductions$com$communaute$signalement$politique$fr {
+	_Traductions$com$communaute$signalement$politique$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get publicite => 'الإعلانات التجارية غير مسموح بها في مجتمع المعلّمين.';
+	@override String get sollicitation => 'الاستدراج التجاري غير مسموح به في هذه المساحة.';
 }
 
 // Path: com.annonces.demo.roles
@@ -1113,6 +1355,118 @@ extension on TraductionsAr {
 			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
 			'com.messages.vide' => 'لا توجد محادثات حاليًا.',
 			'com.vocal.titre' => 'رسالة صوتية',
+			'com.communaute.garde.aide' => 'لا إعلانات. لا روابط تسويق بالعمولة. لا بيع.',
+			'com.communaute.garde.avertissement' => 'يبدو أن هذا المنشور يتضمّن ترويجًا تجاريًا. أزِل الرابط أو الرمز أو العرض قبل النشر.',
+			'com.communaute.garde.bloqueAffilie' => 'روابط التسويق بالعمولة غير مسموح بها في مجتمع المعلّمين.',
+			'com.communaute.garde.bloqueVente' => 'بيع المنتجات أو الخدمات غير مسموح به في هذه المساحة.',
+			'com.communaute.garde.titreAvertissement' => 'منشور يحتاج إلى مراجعة',
+			'com.communaute.garde.titreBlocage' => 'منشور محظور',
+			'com.communaute.garde.motif' => ({required Object motif}) => 'السبب: ${motif}',
+			'com.communaute.garde.liensTitre' => 'روابط المنشور',
+			'com.communaute.garde.consigneBlocage' => 'عدِّل المنشور ثم انشره من جديد.',
+			'com.communaute.lien.interne' => 'رابط داخلي في رواية',
+			'com.communaute.lien.ressourceExterne' => 'مورد تعليمي خارجي',
+			'com.communaute.lien.commercialInterdit' => 'رابط تجاري ممنوع',
+			'com.communaute.lien.nonVerifie' => 'رابط غير مُتحقَّق منه',
+			'com.communaute.lien.semantique' => ({required Object adresse, required Object etat}) => '${adresse}، ${etat}',
+			'com.communaute.sousTitre' => 'تبادل وتعاون بين المعلّمين',
+			'com.communaute.sections' => 'فئات مجتمع المعلّمين',
+			'com.communaute.toutes' => 'الكل',
+			'com.communaute.videTitre' => 'لا توجد منشورات',
+			'com.communaute.rechercheVideTitre' => 'لا توجد نتائج',
+			'com.communaute.rechercheVide' => 'لا يوجد منشور يطابق بحثك. جرّب كلمة أخرى.',
+			'com.communaute.videToutes' => 'لا توجد منشورات حاليًا.',
+			'com.communaute.flux.ouvrir' => ({required Object titre}) => 'فتح المنشور ${titre}',
+			'com.communaute.flux.reponseUne' => 'ردّ واحد',
+			'com.communaute.flux.reponses' => ({required Object nombre}) => '${nombre} ردود',
+			'com.communaute.flux.aucuneReponse' => 'لا توجد ردود',
+			'com.communaute.flux.categorie' => ({required Object categorie}) => 'الفئة ${categorie}',
+			'com.communaute.recherche.ouvrir' => 'البحث عن منشور',
+			'com.communaute.recherche.champ' => 'البحث عن منشور',
+			'com.communaute.recherche.aide' => 'كلمة من العنوان أو النص',
+			'com.communaute.recherche.fermer' => 'إغلاق البحث',
+			'com.communaute.moment.instant' => 'الآن',
+			'com.communaute.moment.minutes' => ({required Object nombre}) => 'منذ ${nombre} دقيقة',
+			'com.communaute.moment.heures' => ({required Object nombre}) => 'منذ ${nombre} ساعة',
+			'com.communaute.moment.jours' => ({required Object nombre}) => 'منذ ${nombre} يوم',
+			'com.communaute.moment.date' => ({required Object jour, required Object mois}) => 'في ${jour}/${mois}',
+			'com.communaute.publication.auteur' => ({required Object fonction, required Object moment}) => '${fonction}، ${moment}',
+			'com.communaute.publication.enregistrer' => 'حفظ المنشور',
+			'com.communaute.publication.enregistree' => 'منشور محفوظ',
+			'com.communaute.publication.retirer' => 'إزالة من العناصر المحفوظة',
+			'com.communaute.publication.menu' => ({required Object titre}) => 'إجراءات على المنشور ${titre}',
+			'com.communaute.publication.signaler' => 'الإبلاغ عن المنشور',
+			'com.communaute.publication.signalee' => 'تم الإبلاغ عن المحتوى إلى فريق الإشراف.',
+			'com.communaute.publication.choisirTitre' => 'لا يوجد منشور مفتوح',
+			'com.communaute.publication.choisir' => 'اختر منشورًا من القائمة لقراءته والردّ عليه.',
+			'com.communaute.publication.introuvableTitre' => 'المنشور غير متاح',
+			'com.communaute.publication.introuvable' => 'تمت إزالة هذا المنشور أو لم يعد متاحًا لك. عد إلى المنشورات لاختيار منشور آخر.',
+			'com.communaute.publication.revenir' => 'العودة إلى المنشورات',
+			'com.communaute.reponses.titre' => ({required Object nombre}) => 'الردود (${nombre})',
+			'com.communaute.reponses.vide' => 'لا توجد ردود حاليًا.',
+			'com.communaute.reponses.erreurTitre' => 'تعذّر تحميل الردود.',
+			'com.communaute.reponses.champ' => 'ردّك',
+			'com.communaute.reponses.aide' => 'اكتب ردًّا',
+			'com.communaute.reponses.envoyer' => 'إرسال الردّ',
+			'com.communaute.reponses.champVide' => 'اكتب ردًّا لإرساله.',
+			'com.communaute.reponses.enCours' => 'جارٍ الإرسال',
+			'com.communaute.reponses.nonConfirmee' => 'لم يُؤكَّد هذا الردّ بعد.',
+			'com.communaute.reponses.reessayer' => 'إعادة إرسال الردّ',
+			'com.communaute.reponses.indisponible' => 'الردود غير متاحة هنا بعد.',
+			'com.communaute.reponses.menu' => ({required Object nom}) => 'إجراءات على ردّ ${nom}',
+			'com.communaute.reponses.signaler' => 'الإبلاغ عن الردّ',
+			'com.communaute.reponses.signalee' => 'لقد أبلغت عن هذا الردّ.',
+			'com.communaute.signalement.politique.publicite' => 'الإعلانات التجارية غير مسموح بها في مجتمع المعلّمين.',
+			'com.communaute.signalement.politique.sollicitation' => 'الاستدراج التجاري غير مسموح به في هذه المساحة.',
+			'com.communaute.signalement.motifManquant' => 'اختر سببًا لإرسال البلاغ.',
+			'com.communaute.composer.nouvelle' => 'منشور جديد',
+			'com.communaute.composer.contexte' => 'شارك سؤالًا أو طريقة أو موردًا مفيدًا للتعليم.',
+			'com.communaute.composer.categorie' => 'الفئة',
+			'com.communaute.composer.categorieManquante' => 'اختر فئة للنشر.',
+			'com.communaute.composer.champTitre' => 'العنوان',
+			'com.communaute.composer.aideTitre' => 'الموضوع في كلمات قليلة',
+			'com.communaute.composer.titreManquant' => 'اكتب عنوانًا للنشر.',
+			'com.communaute.composer.champTexte' => 'النص',
+			'com.communaute.composer.aideTexte' => 'سؤالك أو خبرتك',
+			'com.communaute.composer.texteManquant' => 'اكتب نص المنشور للنشر.',
+			'com.communaute.composer.pieces' => 'المرفقات',
+			'com.communaute.composer.pieceRefusee' => 'أزل الملفات المرفوضة قبل النشر.',
+			'com.communaute.composer.choixIndisponible' => 'اختيار ملف غير متاح هنا بعد.',
+			'com.communaute.composer.publier' => 'نشر',
+			'com.communaute.composer.fermer' => 'إغلاق المنشور الجديد',
+			'com.communaute.composer.confirmee' => 'منشورك متاح الآن.',
+			'com.communaute.composer.erreurEnvoi' => 'لم يُؤكَّد منشورك بعد. تحقّق من اتصالك ثم أعد المحاولة.',
+			'com.communaute.composer.indisponible' => 'النشر غير متاح هنا بعد.',
+			'com.communaute.regles.panneau' => 'المساعدة والقواعد',
+			'com.communaute.regles.aProposTitre' => 'حول هذه المساحة',
+			'com.communaute.regles.aPropos' => 'مساحة تعاون بين المعلّمين لطرح الأسئلة وتبادل الطرق والموارد التعليمية.',
+			'com.communaute.regles.titre' => 'مشاركة تعليمية فقط',
+			'com.communaute.regles.corps' => 'هذا المجتمع مخصّص للتبادل المهني بين المعلّمين.',
+			'com.communaute.regles.reglesTitre' => 'قواعد النشر',
+			'com.communaute.regles.pasPublicite' => 'لا إعلانات',
+			'com.communaute.regles.pasAffilie' => 'لا روابط تسويق بالعمولة',
+			'com.communaute.regles.pasVente' => 'لا بيع لمنتج أو خدمة',
+			'com.communaute.regles.pasSollicitation' => 'لا التماس تجاري',
+			'com.communaute.regles.pasDonnees' => 'لا بيانات شخصية لطالب أو عائلة',
+			'com.communaute.regles.signaler' => 'يُبلَّغ عن المحتوى غير المناسب من قائمة المنشور.',
+			'com.communaute.regles.voir' => 'عرض القواعد',
+			'com.communaute.entree.lecteur' => 'فتح مجتمع المعلّمين',
+			'com.communaute.entree.detail' => 'أسئلة وطرق وموارد بين المعلّمين',
+			'com.communaute.demo.avertissement' => 'منشور يحتاج إلى مراجعة: إعلان تجاري',
+			'com.communaute.demo.lienAffilie' => 'رابط تسويق بالعمولة محظور',
+			'com.communaute.demo.vente' => 'بيع محظور',
+			'com.communaute.demo.signalementNonConfirme' => 'إبلاغ غير مؤكَّد',
+			'com.communaute.demo.choisir' => 'اختر حالة لتجربتها داخل واجهة المعلّم.',
+			'com.communaute.demo.aujourdhui' => 'اليوم، مع الاختصار',
+			'com.communaute.demo.nominal' => 'ستة منشورات',
+			'com.communaute.demo.publication' => 'منشور مفتوح',
+			'com.communaute.demo.vide' => 'لا توجد منشورات',
+			'com.communaute.demo.lectureEchouee' => 'فشل القراءة',
+			'com.communaute.demo.indisponible' => 'الخدمة غير متاحة بعد',
+			'com.communaute.demo.horsLigne' => 'غير متصل',
+			'com.communaute.demo.envoiNonConfirme' => 'إرسال غير مؤكَّد',
+			'com.communaute.demo.moderationIndisponible' => 'الإشراف غير متاح',
+			'com.communaute.demo.lecteurSeul' => 'قراءة فقط، دون نشر',
 			'com.communaute.titre' => _root.com.socle.lexique.communaute,
 			'com.communaute.vide' => 'لا توجد منشورات في هذه الفئة.',
 			'com.studio.titre' => _root.com.socle.lexique.studio,

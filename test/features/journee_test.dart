@@ -25,6 +25,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
@@ -1231,7 +1232,7 @@ void main() {
       },
     );
 
-    testWidgets('vide tant que COM-COMU ne le remplit pas : aucune place', (
+    testWidgets('remplie par COM-COMU : l ecart du socle, puis la ligne', (
       WidgetTester tester,
     ) async {
       await _ouvrir(
@@ -1239,9 +1240,23 @@ void main() {
         enseignant: FauxServiceEnseignant()
           ..seancesRendues = <SeanceEnseignant>[_anNour()],
       );
-      // Etire en largeur par la colonne, mais d'aucune hauteur : l'ecart
-      // n'est pas rendu tant que l'emplacement est vide.
-      expect(tester.getSize(find.byType(EntreeCommunaute)).height, 0);
+      // La voie COM-COMU remplit l'emplacement : la ligne a une hauteur, et
+      // l'ecart fixe par la page (contrat du socle) la precede.
+      final Finder entree = find.byType(EntreeCommunaute);
+      expect(tester.getSize(entree).height, greaterThan(0));
+      expect(
+        find.descendant(
+          of: entree,
+          matching: find.byKey(EntreeCommunaute.cleLien),
+        ),
+        findsOneWidget,
+      );
+      final EntreeCommunaute widget = tester.widget<EntreeCommunaute>(entree);
+      expect(widget.ecartAvant, same(Ecart.vMd));
+      expect(
+        find.descendant(of: entree, matching: find.byWidget(Ecart.vMd)),
+        findsOneWidget,
+      );
     });
   });
 }
