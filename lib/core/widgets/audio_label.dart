@@ -28,6 +28,7 @@ class AudioLabel extends StatefulWidget {
     this.afficherTexte = true,
     this.surface,
     this.alignerEnFin = false,
+    this.libelleSemantique,
   });
 
   /// La cle du libelle, commune au texte et au son.
@@ -43,6 +44,14 @@ class AudioLabel extends StatefulWidget {
   /// `LienFleche.alignerEnFin`. La cible reste de 48 (72 en mode enfant), en
   /// RTL le bord de fin passe a gauche. Faux (defaut) : rendu inchange.
   final bool alignerEnFin;
+
+  /// Le nom du bouton pour le lecteur d'ecran, quand il differe du texte.
+  ///
+  /// Pour un haut-parleur seul ([afficherTexte] faux) pose pres d'un lien qui
+  /// porte deja le meme texte : « Ecouter : Le Coran » dit l'action et evite
+  /// deux arrets de meme nom de suite (CORAN-CARTE-3). Nul (defaut) : le
+  /// texte de la cle, rendu inchange.
+  final String? libelleSemantique;
 
   /// La paire de la surface qui porte ce libelle.
   ///
@@ -104,7 +113,7 @@ class _AudioLabelState extends State<AudioLabel> {
 
     return Pressable(
       onPress: () => unawaited(_jouer()),
-      libelleSemantique: texte,
+      libelleSemantique: widget.libelleSemantique ?? texte,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: widget.alignerEnFin

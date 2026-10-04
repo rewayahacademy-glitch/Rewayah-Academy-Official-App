@@ -24,6 +24,7 @@ import 'package:rewayah_academy/core/widgets/audio_label.dart';
 import 'package:rewayah_academy/core/widgets/bento_tile.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
+import 'package:rewayah_academy/core/widgets/raccourci_tactile.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
 
@@ -710,6 +711,9 @@ void main() {
   // CORAN-CARTE-2 : deux colonnes nettes (livre, titre et phrase au bord de
   // debut ; haut-parleur et chevron au bord de fin), air egal en haut et en
   // bas, et chaque arret du clavier porte un nom.
+  // CORAN-CARTE-3 : le livre ouvre aussi le Coran (raccourci tactile du
+  // lien), le haut-parleur se nomme « Ecouter : Le Coran », le contenu garde
+  // une colonne bornee sur grand ecran, l'air est egal dans les deux modes.
   //
   // Ce groupe charge les vraies polices : il reste le DERNIER du fichier, pour
   // ne pas changer les mesures des groupes qui le precedent.
@@ -878,22 +882,33 @@ void main() {
       );
     }
 
-    testWidgets('autant d air au-dessus des icones que sous la phrase', (
-      WidgetTester tester,
-    ) async {
-      await monter(tester);
-      final Rect tuile = tester.getRect(carte());
-      final double haut = tester.getRect(livre()).top - tuile.top;
-      final double bas = tuile.bottom - tester.getRect(phrase()).bottom;
-      expect(bas, moreOrLessEquals(haut, epsilon: 2));
-    });
+    for (final (InterfaceMode, double, double) cas
+        in <(InterfaceMode, double, double)>[
+          (InterfaceMode.standard, 390, 1),
+          (InterfaceMode.enfant, 390, 1),
+          (InterfaceMode.standard, 320, 2),
+          (InterfaceMode.enfant, 320, 2),
+        ]) {
+      testWidgets(
+        '${cas.$1.name}, ${cas.$2.toInt()} px, texte x${cas.$3.toInt()} : '
+        'autant d air au-dessus des icones que sous la phrase',
+        (WidgetTester tester) async {
+          await monter(tester, mode: cas.$1, largeur: cas.$2, echelle: cas.$3);
+          final Rect tuile = tester.getRect(carte());
+          final double haut = tester.getRect(livre()).top - tuile.top;
+          final double bas = tuile.bottom - tester.getRect(phrase()).bottom;
+          expect(bas, moreOrLessEquals(haut, epsilon: 2));
+        },
+      );
+    }
 
     testWidgets('aucune cible n est posee dans une autre', (
       WidgetTester tester,
     ) async {
       await monter(tester);
+      // Le livre (raccourci du lien), le haut-parleur, le lien.
       final Finder cibles = dans(find.byType(Pressable));
-      expect(cibles, findsNWidgets(2));
+      expect(cibles, findsNWidgets(3));
       for (final Element e in cibles.evaluate()) {
         expect(
           find.ancestor(
@@ -916,6 +931,52 @@ void main() {
       await tester.tap(titre());
       await tester.pumpAndSettle();
       expect(find.text('ELV-04'), findsOneWidget);
+    });
+
+    for (final InterfaceMode mode in <InterfaceMode>[
+      InterfaceMode.standard,
+      InterfaceMode.enfant,
+    ]) {
+      testWidgets('${mode.name} : toucher le livre ouvre le Coran', (
+        WidgetTester tester,
+      ) async {
+        await monter(tester, mode: mode);
+        // Le livre n'est pas une zone morte : sa cible a la taille du mode.
+        final Size cible = tester.getSize(
+          dans(find.ancestor(of: livre(), matching: find.byType(Pressable))),
+        );
+        final double minimum = AppMetriques.of(tester.element(carte()))
+            .cibleTactile;
+        expect(cible.width, greaterThanOrEqualTo(minimum));
+        expect(cible.height, greaterThanOrEqualTo(minimum));
+        await tester.tap(livre());
+        await tester.pumpAndSettle();
+        expect(find.text('ELV-04'), findsOneWidget);
+      });
+    }
+
+    testWidgets('1440 : le haut-parleur reste pres du titre qu il prononce', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, largeur: 1440);
+      final Rect tuile = tester.getRect(carte());
+      final Rect l = tester.getRect(livre());
+      final Rect h = tester.getRect(hautParleur());
+      final Rect ti = tester.getRect(titre());
+      // Une colonne bornee : du livre au haut-parleur, du titre au chevron,
+      // jamais plus que la colonne de l'etat vide.
+      expect(h.right - l.left, lessThanOrEqualTo(AppPage.largeurEtatVide));
+      expect(h.right - ti.left, lessThanOrEqualTo(AppPage.largeurEtatVide));
+      expect(
+        tester.getRect(chevron()).right,
+        moreOrLessEquals(h.right, epsilon: 1),
+      );
+      // Centree dans la carte.
+      expect(
+        (l.left - tuile.left) - (tuile.right - h.right),
+        moreOrLessEquals(0, epsilon: 1),
+      );
+      verifierSepares(tester);
     });
 
     testWidgets('toucher le haut-parleur ne quitte pas l accueil', (
@@ -944,6 +1005,9 @@ void main() {
     testWidgets('lecteur d ecran : un lien qui ouvre, un bouton qui parle', (
       WidgetTester tester,
     ) async {
+      // CORAN-CARTE-3 : le haut-parleur dit son action (« Ecouter : Le
+      // Coran ») ; un seul arret nomme « Le Coran », le lien. Le livre,
+      // raccourci tactile, n'est pas annonce.
       final SemanticsHandle poignee = tester.ensureSemantics();
       await monter(tester);
       final String coran = t.eleve.accueil.coran;
@@ -955,12 +1019,22 @@ void main() {
       final SemanticsNode noeudLien = tester.getSemantics(lien);
       expect(noeudLien.flagsCollection.isLink, isTrue);
       expect(noeudLien.flagsCollection.isButton, isFalse);
-      // Le haut-parleur : un bouton nomme, distinct du lien par son role.
+      // Le haut-parleur : un bouton nomme par son action, distinct du lien.
       final SemanticsNode noeudAudio = tester.getSemantics(audio().first);
-      expect(noeudAudio.label, coran);
+      expect(noeudAudio.label, t.eleve.accueil.coranEcouter);
       expect(noeudAudio.flagsCollection.isButton, isTrue);
       expect(noeudAudio.flagsCollection.isLink, isFalse);
-      // Un seul lien « Le Coran » dans tout l'ecran.
+      // Un seul noeud dont le nom commence par « Le Coran » : le lien.
+      final Set<int> noeuds = <int>{
+        for (final Element e
+            in find
+                .bySemanticsLabel(RegExp('^${RegExp.escape(coran)}'))
+                .evaluate())
+          tester
+              .getSemantics(find.byElementPredicate((Element x) => x == e))
+              .id,
+      };
+      expect(noeuds, hasLength(1));
       final Set<int> liens = <int>{
         for (final Element e
             in find
@@ -983,9 +1057,18 @@ void main() {
     ) async {
       final SemanticsHandle poignee = tester.ensureSemantics();
       await monter(tester);
+      // Le livre est un raccourci tactile, hors du clavier : restent le
+      // haut-parleur et le lien.
+      final Set<Element> raccourcis = dans(
+        find.descendant(
+          of: find.byType(RaccourciTactile),
+          matching: find.byType(Pressable),
+        ),
+      ).evaluate().toSet();
       final Set<Element> cibles = dans(find.byType(Pressable))
           .evaluate()
-          .toSet();
+          .toSet()
+          .difference(raccourcis);
       final Set<Element> atteintes = <Element>{};
       for (int i = 0; i < 30 && atteintes.length < cibles.length; i++) {
         await tester.sendKeyEvent(LogicalKeyboardKey.tab);

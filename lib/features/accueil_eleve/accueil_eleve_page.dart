@@ -26,9 +26,10 @@ import '../../core/widgets/audio_label.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/etat_systeme.dart';
-import '../../core/widgets/ligne_lien.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
+import '../../core/widgets/raccourci_tactile.dart';
+import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
 
 /// Ce que le bloc principal de `ELV-02` annonce.
@@ -582,18 +583,26 @@ class _Interruptions extends StatelessWidget {
 /// Deux etages, une action par zone (demande du directeur du 04/10/2026 :
 /// « chaque element a part et lisible ») :
 /// - en-tete sans texte : le livre au bord de debut, le haut-parleur au bord
-///   de fin ; toute la largeur de la carte les separe ;
-/// - [LigneLien] : titre, phrase et chevron, qui ouvre le Coran (`ELV-04`).
+///   de fin ;
+/// - une [SettingRow] nue : titre, phrase et chevron, le lien qui ouvre le
+///   Coran (`ELV-04`).
 ///
-/// Deux colonnes nettes : le livre part du meme bord que le titre et la
-/// phrase ; le haut-parleur finit au meme bord que le chevron
-/// (`AudioLabel.alignerEnFin`). La tuile ne se presse pas : les deux cibles
-/// sont soeurs, jamais l'une dans l'autre.
+/// Le livre ouvre aussi le Coran : c'est un [RaccourciTactile] du lien,
+/// touchable au doigt et a la souris, hors du clavier et du lecteur d'ecran
+/// (un seul lien « Le Coran »). La tuile ne se presse pas : les cibles sont
+/// soeurs, jamais l'une dans l'autre.
 ///
-/// Le haut-parleur dit « Le Coran » a qui ne lit pas encore. Il reste un
-/// bouton nomme pour le clavier et le lecteur d'ecran (« Le Coran, bouton »),
-/// a cote du lien qui ouvre le Coran (« Le Coran, A lire quand tu veux,
-/// lien ») : deux roles distincts, comme chaque `AudioLabel` de l'accueil.
+/// Le haut-parleur dit « Le Coran » a qui ne lit pas encore ; pour le lecteur
+/// d'ecran, c'est le bouton « Ecouter : Le Coran », distinct du lien.
+///
+/// Sur grand ecran, le contenu garde la largeur de la colonne de l'etat vide
+/// ([AppPage.largeurEtatVide]), centree dans la carte : le haut-parleur reste
+/// pres du titre qu'il prononce au lieu de partir au bout d'une carte de
+/// 1 100 points.
+///
+/// Les icones gardent leur taille quand le texte est agrandi (spec
+/// CORAN-CARTE-1, point 6) : elles vivent seules sur leur ligne et
+/// grandissent avec le mode enfant, pas avec l'echelle du texte.
 class _BlocCoran extends StatelessWidget {
   const _BlocCoran();
 
@@ -604,38 +613,56 @@ class _BlocCoran extends StatelessWidget {
     final double tailleLivre = metriques.estEnfant
         ? AppSpacing.xxxl
         : AppSpacing.xxl;
-    // La cible du haut-parleur donne sa hauteur a l'en-tete : le livre y est
-    // centre, avec cet air au-dessus de lui. Le meme air est rendu sous la
-    // phrase, pour que la carte respire autant en haut qu'en bas.
+    // L'en-tete a la hauteur de la cible tactile, le livre y est centre, avec
+    // cet air au-dessus de lui. Le meme air est rendu sous la phrase (la
+    // ligne nue pose son texte en bas de sa cible), pour que la carte
+    // respire autant en haut qu'en bas.
     final double airEntete = (metriques.cibleTactile - tailleLivre) / 2;
+    void ouvrir() => GoRouter.of(context).go(Routes.eleveCoran);
 
     return BentoTile(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Row(
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: AppPage.largeurEtatVide),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              IconTheme(
-                data: palette.inkAccent.asIconTheme(size: tailleLivre),
-                child: Icon(AppIcons.coran.repos),
+              Row(
+                children: <Widget>[
+                  RaccourciTactile(
+                    onPress: ouvrir,
+                    child: Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      widthFactor: 1,
+                      child: IconTheme(
+                        data: palette.inkAccent.asIconTheme(size: tailleLivre),
+                        child: Icon(AppIcons.coran.repos),
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  AudioLabel(
+                    cle: ClesAudio.eleveAccueilCoran,
+                    afficherTexte: false,
+                    alignerEnFin: true,
+                    libelleSemantique: t.eleve.accueil.coranEcouter,
+                  ),
+                ],
               ),
-              const Spacer(),
-              const AudioLabel(
-                cle: ClesAudio.eleveAccueilCoran,
-                afficherTexte: false,
-                alignerEnFin: true,
+              Ecart.vSm,
+              SettingRow(
+                title: t.eleve.accueil.coran,
+                description: t.eleve.accueil.coranDetail,
+                nue: true,
+                lien: true,
+                onPress: ouvrir,
               ),
+              SizedBox(height: airEntete),
             ],
           ),
-          Ecart.vSm,
-          LigneLien(
-            titre: t.eleve.accueil.coran,
-            legende: t.eleve.accueil.coranDetail,
-            onPress: () => GoRouter.of(context).go(Routes.eleveCoran),
-          ),
-          SizedBox(height: airEntete),
-        ],
+        ),
       ),
     );
   }
