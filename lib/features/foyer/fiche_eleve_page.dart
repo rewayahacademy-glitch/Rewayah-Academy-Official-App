@@ -23,8 +23,8 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/identite_profil.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/selecteur_couleur_profil.dart';
 import '../../core/widgets/skeleton.dart';
-import 'fiche/couleur_page.dart';
 import 'foyer_page.dart';
 import 'ligne_membre.dart';
 import 'photo_eleve.dart';
@@ -202,6 +202,9 @@ class SurfaceFiche extends StatelessWidget {
   /// Cree la surface.
   const SurfaceFiche({required this.child, super.key});
 
+  /// La marge interne de la surface.
+  static const double marge = AppSpacing.xl;
+
   /// Le contenu.
   final Widget child;
 
@@ -216,7 +219,7 @@ class SurfaceFiche extends StatelessWidget {
         arrondi: AppRadius.arrondiMd,
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
+        padding: const EdgeInsets.all(marge),
         child: child,
       ),
     );
@@ -426,9 +429,13 @@ class _Entete extends StatelessWidget {
         role: ligneClasse,
         diametre: AppAvatar.grand,
         ecart: AppSpacing.lg,
+        // Le bandeau part du bord haut de la surface (marge
+        // `SurfaceFiche.marge`, K-62) ; le cercle reste donc en haut.
+        cercleEnHaut: true,
         enveloppeAvatar: BandeauProfil.enveloppe(
           diametre: AppAvatar.grand,
           accent: accent,
+          remontee: SurfaceFiche.marge,
         ),
         avatar: PhotoEleve(
           prenom: profil.prenom,

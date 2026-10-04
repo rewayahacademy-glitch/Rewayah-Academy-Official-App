@@ -62,6 +62,7 @@ class AvatarNom extends StatelessWidget {
     this.afficherNom = true,
     this.ajuste = false,
     this.roleWidget,
+    this.cercleEnHaut = false,
   });
 
   /// Avatar centre, nom centre dessous.
@@ -108,6 +109,7 @@ class AvatarNom extends StatelessWidget {
     double? ecart,
     bool ajuste = false,
     Widget? roleWidget,
+    bool cercleEnHaut = false,
   }) : this(
          prenom: prenom,
          disposition: DispositionAvatar.enLigne,
@@ -124,6 +126,7 @@ class AvatarNom extends StatelessWidget {
          ecart: ecart,
          ajuste: ajuste,
          roleWidget: roleWidget,
+         cercleEnHaut: cercleEnHaut,
        );
 
   /// Le prenom, source des initiales de repli.
@@ -174,6 +177,13 @@ class AvatarNom extends StatelessWidget {
   /// contenu (en-tete, menu) au lieu de remplir celle de son parent.
   final bool ajuste;
 
+  /// En ligne seulement : vrai pour poser le cercle **en haut** de la rangee
+  /// au lieu de le centrer sur le texte. Pour une carte qui porte le bandeau
+  /// de couleur d'un profil (K-62) : le bandeau part du bord haut de la
+  /// carte et doit retrouver le cercle a la meme place quelle que soit la
+  /// hauteur du texte (texte agrandi, legende sur plusieurs lignes).
+  final bool cercleEnHaut;
+
   /// En ligne seulement : l'espace entre le cercle et le texte
   /// (defaut [AppSpacing.md]).
   final double? ecart;
@@ -222,7 +232,9 @@ class AvatarNom extends StatelessWidget {
       ),
       DispositionAvatar.enLigne => Row(
         mainAxisSize: ajuste ? MainAxisSize.min : MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: cercleEnHaut
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.center,
         children: <Widget>[
           cercleHabille,
           SizedBox(width: ecart ?? AppSpacing.md),

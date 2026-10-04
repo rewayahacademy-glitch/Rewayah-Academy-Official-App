@@ -27,6 +27,7 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/skeleton.dart';
 import '../compte/compte_tuteur_page.dart' show CarteIdentiteCompte;
 import '../compte/donnees_compte.dart' show identiteTitulaireProvider;
@@ -424,7 +425,7 @@ class _ListeMembres extends ConsumerWidget {
 
     bool classesIndisponibles = false;
     final List<String> classesEnEchec = <String>[];
-    final List<LigneRubrique> lignes = <LigneRubrique>[];
+    final List<Widget> cartes = <Widget>[];
     final AsyncValue<Map<String, AccentProfil>> accents = ref.watch(
       accentsProfilsProvider,
     );
@@ -438,12 +439,15 @@ class _ListeMembres extends ConsumerWidget {
       if (classeEnEchec(classe)) {
         classesEnEchec.add(profil.eleveId);
       }
-      lignes.add(
-        ligneMembre(
+      cartes.add(
+        CarteMembre(
           profil: profil,
-          classe: classe,
-          maintenant: maintenant,
-          inscription: etapeInscriptionLue(parcours, profil.eleveId),
+          legende: legendeMembre(
+            profil: profil,
+            classe: classe,
+            maintenant: maintenant,
+            inscription: etapeInscriptionLue(parcours, profil.eleveId),
+          ),
           accent: accentLu(accents, profil.eleveId),
           onPress: () => aller(Routes.ficheElevePour(profil.eleveId)),
         ),
@@ -457,7 +461,19 @@ class _ListeMembres extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        GroupeReglages(titre: t.foyer.membres, lignes: lignes),
+        // Une carte par enfant (maquette 11, K-62), separees par l'ecart des
+        // jetons (K-55).
+        Semantics(
+          header: true,
+          child: Text(
+            t.foyer.membres,
+            style: palette.inkStrong.applyTo(
+              Theme.of(context).textTheme.titleMedium ?? const TextStyle(),
+            ),
+          ),
+        ),
+        Ecart.vSm,
+        PileCartes(children: cartes),
         if (classesIndisponibles) ...<Widget>[
           Ecart.vSm,
           Text(t.foyer.classesIndisponibles, style: note),

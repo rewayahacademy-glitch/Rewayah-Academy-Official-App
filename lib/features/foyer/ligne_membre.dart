@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
@@ -6,10 +6,13 @@ import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
 import '../../core/offres/offre_horaire.dart';
 import '../../core/theme/accent_profil.dart';
+import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_nom.dart';
-import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/identite_profil.dart';
 import 'photo_eleve.dart';
 
@@ -172,37 +175,70 @@ String? texteClasse(ClasseMembre classe) => switch (classe) {
   _Inconnue() || _Indisponible() => null,
 };
 
-/// La ligne d'un membre du foyer dans le groupe des profils eleves.
-///
-/// Une rubrique du composant partage `GroupeReglages` : une surface pour tout
-/// le groupe, un filet en retrait entre les membres, un chevron vers la fiche.
-/// La tete de ligne est la photo de l'eleve, ou ses initiales sans photo, par
-/// le composant partage `AvatarTile` (via [PhotoEleve]), derriere laquelle
-/// se pose le bandeau de la couleur choisie par le tuteur ([accent], K-62,
-/// maquette 11) ; sans couleur choisie, le cercle seul.
-LigneRubrique ligneMembre({
-  required ProfilEleveFoyer profil,
-  required ClasseMembre classe,
-  required DateTime maintenant,
-  required VoidCallback onPress,
-  EtapeParcours? inscription,
-  AccentProfil? accent,
-}) => LigneRubrique(
-  meneur: BandeauProfil(
-    diametre: AppAvatar.moyen,
-    accent: accent,
-    avatar: PhotoEleve(
-      prenom: profil.prenom,
-      cleAvatar: profil.cleAvatar,
-      diametre: AppAvatar.moyen,
-    ),
-  ),
-  libelle: profil.prenom,
-  legende: legendeMembre(
-    profil: profil,
-    classe: classe,
-    maintenant: maintenant,
-    inscription: inscription,
-  ),
-  onPress: onPress,
-);
+/// La carte d'un membre du foyer (maquette 11 « Foyer », decision du
+/// directeur du 04/10/2026, K-62) : une carte par enfant, sa photo en cercle
+/// en haut a gauche, et derriere elle le bandeau de la couleur choisie par le
+/// tuteur, **colle au bord haut de la carte** ([marge] de la carte = la
+/// remontee du bandeau). Sans couleur choisie, le cercle seul. Toute la carte
+/// ouvre la fiche.
+class CarteMembre extends StatelessWidget {
+  /// Cree la carte.
+  const CarteMembre({
+    required this.profil,
+    required this.legende,
+    required this.onPress,
+    super.key,
+    this.accent,
+  });
+
+  /// La marge interne de la carte, donc la remontee du bandeau.
+  static const double marge = AppSpacing.xl;
+
+  /// Le membre.
+  final ProfilEleveFoyer profil;
+
+  /// La ligne sous le prenom (classe, acces, inscription).
+  final String legende;
+
+  /// Ouvre la fiche.
+  final VoidCallback onPress;
+
+  /// La couleur choisie par le tuteur, `null` sans bandeau.
+  final AccentProfil? accent;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    return AppCard(
+      marge: marge,
+      onPress: onPress,
+      child: AvatarNom.enLigne(
+        prenom: profil.prenom,
+        diametre: AppAvatar.grand,
+        cercleEnHaut: true,
+        avatar: PhotoEleve(
+          prenom: profil.prenom,
+          cleAvatar: profil.cleAvatar,
+          diametre: AppAvatar.grand,
+        ),
+        enveloppeAvatar: BandeauProfil.enveloppe(
+          diametre: AppAvatar.grand,
+          accent: accent,
+          remontee: marge,
+        ),
+        role: legende,
+        styleNom: palette.inkStrong.applyTo(
+          textes.titleMedium ?? const TextStyle(),
+        ),
+        styleRole: palette.inkMuted.applyTo(
+          textes.bodyMedium ?? const TextStyle(),
+        ),
+        fin: IconTheme(
+          data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
+          child: Icon(AppIcons.chevron.repos),
+        ),
+      ),
+    );
+  }
+}

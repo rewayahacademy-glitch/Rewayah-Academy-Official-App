@@ -30,10 +30,12 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/accent_profil.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/choice_card_group.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/identite_profil.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_couleur_profil.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/appareils/appareils_eleve_page.dart';
@@ -47,6 +49,7 @@ import 'package:rewayah_academy/features/foyer/fiche/inscription_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche/interface_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
+import 'package:rewayah_academy/features/foyer/ligne_membre.dart';
 import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 import 'package:rewayah_academy/features/parcours_offres/parcours_offres_page.dart';
 
@@ -1080,13 +1083,21 @@ void main() {
       );
       expect(bandeauApercu(), findsNothing);
       expect(
-        find.text(t.ficheEleve.couleur.dejaPrise(prenom: 'Eleve A2')),
+        find.text(
+          t.ficheEleve.couleur.priseLigne(
+            couleur: t.ficheEleve.couleur.rose,
+            prenom: 'Eleve A2',
+          ),
+        ),
         findsOneWidget,
       );
+      // Un simple selecteur de pastilles, jamais des cartes empilees.
+      expect(find.byType(SelecteurCouleurProfil), findsOneWidget);
+      expect(find.byType(ChoiceCardGroup), findsNothing);
 
       await _toucher(
         tester,
-        find.byKey(CouleurElevePage.carteDe(AccentProfil.menthe)),
+        find.byKey(SelecteurCouleurProfil.rondDe(AccentProfil.menthe)),
       );
       expect((await port.lire())[a1], AccentProfil.menthe);
       expect(
@@ -1107,6 +1118,20 @@ void main() {
         ),
         findsOneWidget,
       );
+      expect(
+        tester
+            .getRect(
+              find.descendant(
+                of: find.byKey(FicheElevePage.enteteKey),
+                matching: bandeau(),
+              ),
+            )
+            .top,
+        moreOrLessEquals(
+          tester.getRect(find.byKey(FicheElevePage.enteteKey)).top,
+          epsilon: 1.5,
+        ),
+      );
       expect(tester.takeException(), isNull);
     });
 
@@ -1126,6 +1151,15 @@ void main() {
       expect(find.byType(FoyerPage), findsOneWidget);
       // A1 a choisi Menthe, A2 rien : un seul bandeau, jamais au hasard.
       expect(bandeau(), findsOneWidget);
+      // Colle au bord haut de la carte de l'enfant (maquette 11).
+      final Rect carte = tester.getRect(
+        find.ancestor(of: bandeau(), matching: find.byType(CarteMembre)).first,
+      );
+      // Au plus le filet de 1 de la carte entre les deux.
+      expect(
+        tester.getRect(bandeau()).top,
+        moreOrLessEquals(carte.top, epsilon: 1.5),
+      );
       expect(tester.takeException(), isNull);
     });
 
@@ -1142,7 +1176,7 @@ void main() {
         autres: accents(port),
       );
       expect(bandeauApercu(), findsOneWidget);
-      await _toucher(tester, find.text(t.ficheEleve.couleur.aucune));
+      await _toucher(tester, find.byKey(SelecteurCouleurProfil.rondAucune));
       expect((await port.lire()).containsKey(a1), isFalse);
       expect(bandeauApercu(), findsNothing);
     });
@@ -1161,7 +1195,9 @@ void main() {
         ],
       );
       expect(find.byKey(CouleurElevePage.horsLigneKey), findsOneWidget);
-      await tester.tap(find.byKey(CouleurElevePage.carteDe(AccentProfil.rose)));
+      await tester.tap(
+        find.byKey(SelecteurCouleurProfil.rondDe(AccentProfil.rose)),
+      );
       await stabiliser(tester);
       expect(await port.lire(), isEmpty);
     });
@@ -1176,7 +1212,7 @@ void main() {
       );
       await _toucher(
         tester,
-        find.byKey(CouleurElevePage.carteDe(AccentProfil.peche)),
+        find.byKey(SelecteurCouleurProfil.rondDe(AccentProfil.peche)),
       );
       expect(find.byKey(CouleurElevePage.echecKey), findsOneWidget);
       expect(bandeauApercu(), findsNothing);

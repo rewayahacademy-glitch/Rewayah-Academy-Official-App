@@ -41,6 +41,9 @@ const List<String> composantsDuCatalogue = <String>[
   // FI-2 (decision du directeur du 04/10, K-62) : l'identite d'un profil,
   // son bandeau de couleur choisi par le tuteur derriere l'avatar.
   'IdentiteProfil',
+  // Revue du directeur du 04/10 : le choix de la couleur est un simple
+  // selecteur de pastilles, jamais des cartes empilees.
+  'SelecteurCouleurProfil',
   'AudioLabel',
   'PermanentNotice',
   'PinPad',

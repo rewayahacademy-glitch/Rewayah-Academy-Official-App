@@ -11,31 +11,20 @@ import '../../../core/reseau/service_reseau.dart';
 import '../../../core/theme/accent_profil.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/widgets/avatar_tile.dart';
 import '../../../core/widgets/bloc_asynchrone.dart';
-import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/identite_profil.dart';
+import '../../../core/widgets/selecteur_couleur_profil.dart';
 import '../../../core/widgets/skeleton.dart';
 import '../fiche_eleve_page.dart';
 import '../photo_eleve.dart';
 
-/// Le nom affiche d'un accent de profil.
-String libelleAccent(AccentProfil accent) => switch (accent) {
-  AccentProfil.menthe => t.ficheEleve.couleur.menthe,
-  AccentProfil.ciel => t.ficheEleve.couleur.ciel,
-  AccentProfil.lavande => t.ficheEleve.couleur.lavande,
-  AccentProfil.rose => t.ficheEleve.couleur.rose,
-  AccentProfil.peche => t.ficheEleve.couleur.peche,
-  AccentProfil.sable => t.ficheEleve.couleur.sable,
-};
-
 /// La couleur d'un profil eleve (`/tuteur/foyer/:eleveId/couleur`), choisie
 /// par le tuteur (decision du directeur du 04/10/2026, K-62 ; FI-2).
 ///
-/// Une phrase de contexte (K-58), l'apercu du profil avec son bandeau
-/// (maquette 11), puis un choix par cartes : six couleurs et « Sans
-/// couleur ». Chaque carte dit sa consequence : libre dans ce foyer, ou deja
-/// choisie pour un autre profil.
+/// Une phrase de contexte (K-58), l'apercu du profil avec son bandeau colle
+/// au bord haut de la carte (maquette 11), puis un **simple selecteur de
+/// pastilles** (`SelecteurCouleurProfil`, revue du directeur du 04/10) : six
+/// couleurs et « Sans couleur », la consequence dite dessous.
 ///
 /// **Aucun etat optimiste** : la carte retenue est celle que la relecture des
 /// accents rend apres l'ecriture. Frontend seulement : la source serveur
@@ -59,13 +48,6 @@ class CouleurElevePage extends StatelessWidget {
 
   /// La phrase d'echec.
   static const Key echecKey = Key('ficheEleve.couleur.echec');
-
-  /// La valeur de la carte « Sans couleur ».
-  static const String valeurAucune = 'aucune';
-
-  /// La cle de la carte d'un accent.
-  static Key carteDe(AccentProfil accent) =>
-      Key('ficheEleve.couleur.${accent.name}');
 
   @override
   Widget build(BuildContext context) {
@@ -92,14 +74,9 @@ class _ChoixCouleurState extends ConsumerState<_ChoixCouleur> {
   bool _enCours = false;
   bool _echec = false;
 
-  /// Change a chaque geste : le groupe se reconstruit depuis la valeur relue,
-  /// jamais depuis la carte touchee.
-  int _generation = 0;
-
   Future<void> _choisir(AccentProfil? accent, AccentProfil? actuel) async {
     if (_enCours || accent == actuel) return;
     setState(() {
-      _generation++;
       _enCours = true;
       _echec = false;
     });
@@ -169,6 +146,7 @@ class _ChoixCouleurState extends ConsumerState<_ChoixCouleur> {
             prenom: profil.prenom,
             accent: actuel,
             taille: TailleIdentite.entete,
+            remontee: SurfaceFiche.marge,
             avatar: PhotoEleve(
               prenom: profil.prenom,
               cleAvatar: profil.cleAvatar,
@@ -179,43 +157,16 @@ class _ChoixCouleurState extends ConsumerState<_ChoixCouleur> {
         Ecart.vLg,
         KeyedSubtree(
           key: CouleurElevePage.choixKey,
-          child: ChoiceCardGroup(
-            key: ValueKey<(AccentProfil?, int)>((actuel, _generation)),
-            autoriserSaisieLibre: false,
-            valeurInitiale: ReponseChoix(
-              valeurs: <String>{actuel?.name ?? CouleurElevePage.valeurAucune},
-            ),
-            options: <OptionChoix>[
+          child: SelecteurCouleurProfil(
+            valeur: actuel,
+            prenom: profil.prenom,
+            prises: <AccentProfil, String>{
               for (final AccentProfil a in AccentProfil.values)
-                OptionChoix(
-                  cle: CouleurElevePage.carteDe(a),
-                  valeur: a.name,
-                  libelle: libelleAccent(a),
-                  apercu: _Pastille(accent: a, prenom: profil.prenom),
-                  description: switch (priseePar(a)) {
-                    final String autre => t.ficheEleve.couleur.dejaPrise(
-                      prenom: autre,
-                    ),
-                    null => t.ficheEleve.couleur.libre,
-                  },
-                  disponible: !horsLigne,
-                ),
-              OptionChoix(
-                valeur: CouleurElevePage.valeurAucune,
-                libelle: t.ficheEleve.couleur.aucune,
-                description: t.ficheEleve.couleur.aucuneDetail(
-                  prenom: profil.prenom,
-                ),
-                disponible: !horsLigne,
-              ),
-            ],
-            onChange: (ReponseChoix reponse) {
-              final String? v = reponse.valeurs.isEmpty
-                  ? null
-                  : reponse.valeurs.first;
-              if (v == null) return;
-              unawaited(_choisir(AccentProfil.depuisCle(v), actuel));
+                if (priseePar(a) case final String autre) a: autre,
             },
+            onChoix: horsLigne
+                ? null
+                : (AccentProfil? a) => unawaited(_choisir(a, actuel)),
           ),
         ),
         if (horsLigne) ...<Widget>[
@@ -241,26 +192,6 @@ class _ChoixCouleurState extends ConsumerState<_ChoixCouleur> {
           ),
         ],
       ],
-    );
-  }
-}
-
-/// La pastille d'une couleur dans sa carte : le bandeau en petit derriere
-/// le cercle d'initiales du profil, comme sur le Foyer.
-class _Pastille extends StatelessWidget {
-  const _Pastille({required this.accent, required this.prenom});
-
-  final AccentProfil accent;
-  final String prenom;
-
-  @override
-  Widget build(BuildContext context) {
-    return ExcludeSemantics(
-      child: BandeauProfil(
-        diametre: AppAvatar.petit,
-        accent: accent,
-        avatar: AvatarTile(prenom: prenom, diametre: AppAvatar.petit),
-      ),
     );
   }
 }

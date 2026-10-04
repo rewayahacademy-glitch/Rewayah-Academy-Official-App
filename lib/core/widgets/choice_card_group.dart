@@ -19,7 +19,6 @@ class OptionChoix {
     required this.valeur,
     required this.libelle,
     this.icone,
-    this.apercu,
     this.description,
     this.disponible = true,
     this.raisonIndisponible,
@@ -38,11 +37,6 @@ class OptionChoix {
 
   /// Icone facultative.
   final AppIcon? icone;
-
-  /// Un apercu visuel a la place de l'icone (pastille de couleur d'un profil,
-  /// K-62), en disposition en liste seulement. Decoratif : le libelle dit le
-  /// choix.
-  final Widget? apercu;
 
   /// Une phrase sous le libelle, qui dit ce que l'option change (style liste
   /// avec description, planches V5 et V6 E1 ; demande B-3).
@@ -164,7 +158,6 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
     key: option.cle,
     libelle: option.libelle,
     icone: option.icone,
-    apercu: option.apercu,
     description: option.description,
     raisonIndisponible: option.disponible
         ? null
@@ -244,7 +237,6 @@ class _Carte extends StatelessWidget {
     required this.radio,
     super.key,
     this.icone,
-    this.apercu,
     this.description,
     this.raisonIndisponible,
     this.verticale = false,
@@ -264,7 +256,6 @@ class _Carte extends StatelessWidget {
   /// multiple, la coche garde ce role.
   final bool radio;
   final AppIcon? icone;
-  final Widget? apercu;
   final String? description;
 
   /// Non nul quand l'option est indisponible : la phrase affichee.
@@ -337,10 +328,7 @@ class _Carte extends StatelessWidget {
                     ? _contenuVertical(palette, paire, textes, styleSecondaire)
                     : Row(
                         children: <Widget>[
-                          if (apercu != null) ...<Widget>[
-                            apercu!,
-                            Ecart.hMd,
-                          ] else if (icone != null) ...<Widget>[
+                          if (icone != null) ...<Widget>[
                             IconTheme(
                               data: _disponible
                                   ? IconThemeData(

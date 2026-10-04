@@ -66,14 +66,12 @@
   "ficheEleve.lignes.couleurAucune": "decision du directeur du 04/10/2026 (K-62, maquette 11) : couleur de profil choisie par le tuteur dans les reglages du profil, etape FI-2",
   "ficheEleve.couleur.titre": "decision du directeur du 04/10/2026 (K-62, maquette 11) : couleur de profil choisie par le tuteur dans les reglages du profil, etape FI-2",
   "ficheEleve.couleur.contexte": "decision du directeur du 04/10/2026 (K-62, maquette 11) : couleur de profil choisie par le tuteur dans les reglages du profil, etape FI-2",
-  "ficheEleve.couleur.apercu": "decision du directeur du 04/10/2026 (K-62, maquette 11) : couleur de profil choisie par le tuteur dans les reglages du profil, etape FI-2",
   "ficheEleve.couleur.menthe": "decision du directeur du 04/10/2026 (K-62, maquette 11) : couleur de profil choisie par le tuteur dans les reglages du profil, etape FI-2",
   "ficheEleve.couleur.ciel": "decision du directeur du 04/10/2026 (K-62, maquette 11) : couleur de profil choisie par le tuteur dans les reglages du profil, etape FI-2",
   "ficheEleve.couleur.lavande": "decision du directeur du 04/10/2026 (K-62, maquette 11) : couleur de profil choisie par le tuteur dans les reglages du profil, etape FI-2",
   "ficheEleve.couleur.rose": "decision du directeur du 04/10/2026 (K-62, maquette 11) : couleur de profil choisie par le tuteur dans les reglages du profil, etape FI-2",
   "ficheEleve.couleur.peche": "decision du directeur du 04/10/2026 (K-62, maquette 11) : couleur de profil choisie par le tuteur dans les reglages du profil, etape FI-2",
   "ficheEleve.couleur.sable": "decision du directeur du 04/10/2026 (K-62, maquette 11) : couleur de profil choisie par le tuteur dans les reglages du profil, etape FI-2",
-  "ficheEleve.couleur.libre": "decision du directeur du 04/10/2026 (K-62, maquette 11) : couleur de profil choisie par le tuteur dans les reglages du profil, etape FI-2",
   "ficheEleve.couleur.dejaPrise": "decision du directeur du 04/10/2026 (K-62, maquette 11) : couleur de profil choisie par le tuteur dans les reglages du profil, etape FI-2",
   "ficheEleve.couleur.aucune": "decision du directeur du 04/10/2026 (K-62, maquette 11) : couleur de profil choisie par le tuteur dans les reglages du profil, etape FI-2",
   "ficheEleve.couleur.aucuneDetail": "decision du directeur du 04/10/2026 (K-62, maquette 11) : couleur de profil choisie par le tuteur dans les reglages du profil, etape FI-2",
@@ -84,5 +82,7 @@
   "identiteProfil.ageEtClasse": "guide Finance V4 §3.2, §3.7 et maquette 11 (prenom, age, classe ; libelle lu « Mariam, profil enfant, Classe An-Nour »), etape FI-2",
   "identiteProfil.lecteurEnfant": "guide Finance V4 §3.2, §3.7 et maquette 11 (prenom, age, classe ; libelle lu « Mariam, profil enfant, Classe An-Nour »), etape FI-2",
   "identiteProfil.lecteurAdulte": "guide Finance V4 §3.2, §3.7 et maquette 11 (prenom, age, classe ; libelle lu « Mariam, profil enfant, Classe An-Nour »), etape FI-2",
-  "identiteProfil.lecteurAvecClasse": "guide Finance V4 §3.2, §3.7 et maquette 11 (prenom, age, classe ; libelle lu « Mariam, profil enfant, Classe An-Nour »), etape FI-2"
+  "identiteProfil.lecteurAvecClasse": "guide Finance V4 §3.2, §3.7 et maquette 11 (prenom, age, classe ; libelle lu « Mariam, profil enfant, Classe An-Nour »), etape FI-2",
+  "ficheEleve.couleur.choisie": "revue du directeur du 04/10/2026 (K-62) : simple selecteur de couleur, pas des cartes empilees ; phrase de consequence K-58, etape FI-2",
+  "ficheEleve.couleur.priseLigne": "revue du directeur du 04/10/2026 (K-62) : simple selecteur de couleur, pas des cartes empilees ; phrase de consequence K-58, etape FI-2"
 }

@@ -67,6 +67,7 @@ import '../../../core/widgets/raccourci_tactile.dart';
 import '../../../core/widgets/rosace_verset.dart';
 import '../../../core/widgets/schedule_option.dart';
 import '../../../core/widgets/section_header.dart';
+import '../../../core/widgets/selecteur_couleur_profil.dart';
 import '../../../core/widgets/selecteur_niveau_programme.dart';
 import '../../../core/widgets/selecteur_section.dart';
 import '../../../core/widgets/selecteur_theme.dart';
@@ -1015,6 +1016,36 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           accent: AccentProfil.lavande,
           estAdulte: true,
           taille: TailleIdentite.entete,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'SelecteurCouleurProfil',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'Menthe retenue, Rose deja prise',
+        (BuildContext _) => SelecteurCouleurProfil(
+          valeur: AccentProfil.menthe,
+          prenom: 'Mariam',
+          prises: const <AccentProfil, String>{AccentProfil.rose: 'Yusuf'},
+          onChoix: (AccentProfil? _) {},
+        ),
+      ),
+      EtatGalerie(
+        'sans couleur',
+        (BuildContext _) => SelecteurCouleurProfil(
+          valeur: null,
+          prenom: 'Ibrahim',
+          onChoix: (AccentProfil? _) {},
+        ),
+      ),
+      EtatGalerie(
+        'hors ligne : les ronds ne se pressent plus',
+        (BuildContext _) => const SelecteurCouleurProfil(
+          valeur: AccentProfil.ciel,
+          prenom: 'Aicha',
         ),
       ),
     ],

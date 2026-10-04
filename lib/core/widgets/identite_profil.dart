@@ -13,11 +13,14 @@ import 'avatar_nom.dart';
 ///
 /// - un **rectangle vertical** de la couleur [accent], centre sur le cercle,
 ///   un peu moins large que lui ([largeurRelative]) ;
-/// - il part du **haut du bloc** et descend jusqu'a environ la moitie du
-///   cercle : le haut du bandeau depasse au-dessus de l'avatar
-///   ([depassementRelatif]), le reste passe **derriere** le cercle ;
+/// - dans une carte, il part **du bord haut de la carte, colle a lui**
+///   ([remontee] = la marge interne de la carte, revue du directeur du
+///   04/10) et descend jusqu'a la moitie du cercle ([recouvrementRelatif]),
+///   le reste passant **derriere** le cercle ;
+/// - hors carte (galerie), il depasse au-dessus du cercle
+///   ([depassementRelatif]) ;
 /// - le cercle reste un cercle entier, jamais masque ni deforme ; le bandeau
-///   reste dans le bloc (il ne deborde jamais de la carte).
+///   ne sort jamais de la carte.
 ///
 /// Sans [accent] (aucun choix, lecture en cours ou indisponible), le cercle
 /// est rendu seul, sans place reservee : jamais une couleur au hasard.
@@ -32,6 +35,7 @@ class BandeauProfil extends StatelessWidget {
     required this.diametre,
     required this.accent,
     super.key,
+    this.remontee = 0,
   });
 
   /// La part de la largeur du cercle prise par le bandeau.
@@ -40,8 +44,9 @@ class BandeauProfil extends StatelessWidget {
   /// La part du diametre dont le bandeau depasse au-dessus du cercle.
   static const double depassementRelatif = 0.35;
 
-  /// La part du diametre que le bandeau couvre derriere le cercle.
-  static const double recouvrementRelatif = 0.3;
+  /// La part du diametre que le bandeau couvre derriere le cercle : jusqu'a
+  /// son milieu, comme sur la maquette 11.
+  static const double recouvrementRelatif = 0.5;
 
   /// La cle du rectangle de couleur, pour les tests.
   static const Key bandeauKey = Key('identiteProfil.bandeau');
@@ -55,29 +60,43 @@ class BandeauProfil extends StatelessWidget {
   /// L'accent choisi par le tuteur, `null` sans bandeau.
   final AccentProfil? accent;
 
+  /// Dans une carte : la marge interne de la carte au-dessus du cercle. Le
+  /// bandeau remonte de cette hauteur pour toucher le bord haut de la carte,
+  /// et le cercle reste a sa place (aucun depassement au-dessus de lui).
+  /// Zero hors carte.
+  final double remontee;
+
   /// L'enveloppe a passer a `AvatarNom.enveloppeAvatar`.
   static Widget Function(Widget avatar) enveloppe({
     required double diametre,
     required AccentProfil? accent,
+    double remontee = 0,
   }) =>
-      (Widget avatar) =>
-          BandeauProfil(avatar: avatar, diametre: diametre, accent: accent);
+      (Widget avatar) => BandeauProfil(
+        avatar: avatar,
+        diametre: diametre,
+        accent: accent,
+        remontee: remontee,
+      );
 
   @override
   Widget build(BuildContext context) {
     final AccentProfil? a = accent;
     if (a == null) return avatar;
-    final double haut = diametre * depassementRelatif;
+    // Dans une carte, le cercle reste en haut du contenu et le bandeau
+    // remonte jusqu'au bord ; hors carte, le bandeau depasse au-dessus.
+    final double haut = remontee > 0 ? 0 : diametre * depassementRelatif;
     return SizedBox(
       width: diametre,
       height: diametre + haut,
       child: Stack(
+        clipBehavior: Clip.none,
         children: <Widget>[
           PositionedDirectional(
-            top: 0,
+            top: -remontee,
             start: diametre * (1 - largeurRelative) / 2,
             width: diametre * largeurRelative,
-            height: haut + diametre * recouvrementRelatif,
+            height: remontee + haut + diametre * recouvrementRelatif,
             child: ExcludeSemantics(
               child: DecoratedBox(
                 key: bandeauKey,
@@ -135,6 +154,7 @@ class IdentiteProfil extends StatelessWidget {
     this.classe,
     this.avatar,
     this.taille = TailleIdentite.ligne,
+    this.remontee = 0,
   });
 
   /// Le prenom.
@@ -157,6 +177,10 @@ class IdentiteProfil extends StatelessWidget {
 
   /// La taille.
   final TailleIdentite taille;
+
+  /// La marge interne de la carte qui porte l'identite : le bandeau remonte
+  /// jusqu'au bord haut de la carte ([BandeauProfil.remontee]).
+  final double remontee;
 
   /// La phrase lue par le lecteur d'ecran.
   String get libelleLu {
@@ -199,7 +223,12 @@ class IdentiteProfil extends StatelessWidget {
           prenom: prenom,
           diametre: d,
           avatar: avatar,
-          enveloppeAvatar: BandeauProfil.enveloppe(diametre: d, accent: accent),
+          enveloppeAvatar: BandeauProfil.enveloppe(
+            diametre: d,
+            accent: accent,
+            remontee: remontee,
+          ),
+          cercleEnHaut: remontee > 0,
           role: ligneDetail,
           styleNom: taille == TailleIdentite.ligne
               ? null

@@ -3874,9 +3874,6 @@ class Traductions$ficheEleve$couleur$fr {
 	/// fr: 'Choisissez la couleur qui distingue {prenom} des autres profils du foyer. Elle s'affiche derrière sa photo sur les écrans du foyer. Ce n'est ni un statut, ni une classe.'
 	String contexte({required Object prenom}) => 'Choisissez la couleur qui distingue ${prenom} des autres profils du foyer. Elle s\'affiche derrière sa photo sur les écrans du foyer. Ce n\'est ni un statut, ni une classe.';
 
-	/// fr: 'Aperçu'
-	String get apercu => 'Aperçu';
-
 	/// fr: 'Menthe'
 	String get menthe => 'Menthe';
 
@@ -3895,14 +3892,17 @@ class Traductions$ficheEleve$couleur$fr {
 	/// fr: 'Sable'
 	String get sable => 'Sable';
 
-	/// fr: 'Libre dans ce foyer.'
-	String get libre => 'Libre dans ce foyer.';
-
 	/// fr: 'Déjà choisie pour {prenom} : les deux profils auraient la même couleur.'
 	String dejaPrise({required Object prenom}) => 'Déjà choisie pour ${prenom} : les deux profils auraient la même couleur.';
 
 	/// fr: 'Sans couleur'
 	String get aucune => 'Sans couleur';
+
+	/// fr: 'Couleur choisie : {couleur}.'
+	String choisie({required Object couleur}) => 'Couleur choisie : ${couleur}.';
+
+	/// fr: '{couleur} : déjà choisie pour {prenom}.'
+	String priseLigne({required Object couleur, required Object prenom}) => '${couleur} : déjà choisie pour ${prenom}.';
 
 	/// fr: 'Seuls la photo et le prénom distinguent {prenom}.'
 	String aucuneDetail({required Object prenom}) => 'Seuls la photo et le prénom distinguent ${prenom}.';
@@ -16244,16 +16244,16 @@ extension on Traductions {
 			'ficheEleve.lignes.couleurAucune' => 'Sans couleur',
 			'ficheEleve.couleur.titre' => 'Couleur du profil',
 			'ficheEleve.couleur.contexte' => ({required Object prenom}) => 'Choisissez la couleur qui distingue ${prenom} des autres profils du foyer. Elle s\'affiche derrière sa photo sur les écrans du foyer. Ce n\'est ni un statut, ni une classe.',
-			'ficheEleve.couleur.apercu' => 'Aperçu',
 			'ficheEleve.couleur.menthe' => 'Menthe',
 			'ficheEleve.couleur.ciel' => 'Ciel',
 			'ficheEleve.couleur.lavande' => 'Lavande',
 			'ficheEleve.couleur.rose' => 'Rose',
 			'ficheEleve.couleur.peche' => 'Pêche',
 			'ficheEleve.couleur.sable' => 'Sable',
-			'ficheEleve.couleur.libre' => 'Libre dans ce foyer.',
 			'ficheEleve.couleur.dejaPrise' => ({required Object prenom}) => 'Déjà choisie pour ${prenom} : les deux profils auraient la même couleur.',
 			'ficheEleve.couleur.aucune' => 'Sans couleur',
+			'ficheEleve.couleur.choisie' => ({required Object couleur}) => 'Couleur choisie : ${couleur}.',
+			'ficheEleve.couleur.priseLigne' => ({required Object couleur, required Object prenom}) => '${couleur} : déjà choisie pour ${prenom}.',
 			'ficheEleve.couleur.aucuneDetail' => ({required Object prenom}) => 'Seuls la photo et le prénom distinguent ${prenom}.',
 			'ficheEleve.couleur.echec' => 'Le changement de couleur n\'est pas confirmé : la connexion a été coupée. Vérifiez la connexion, puis choisissez la couleur de nouveau.',
 			'ficheEleve.couleur.horsLigne' => 'Vous êtes hors ligne : la couleur ne peut pas être changée maintenant. Elle se choisit de nouveau dès le retour de la connexion.',
