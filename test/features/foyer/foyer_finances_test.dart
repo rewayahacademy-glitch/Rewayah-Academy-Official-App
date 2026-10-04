@@ -267,6 +267,29 @@ void main() {
     );
   });
 
+  testWidgets('1440 (FI-5) : les quatre indicateurs cote a cote, le bouton '
+      'compact au bord de fin', (WidgetTester tester) async {
+    await _monter(
+      tester,
+      jeu: JeuFoyerFinance.unARegulariser,
+      taille: const Size(1440, 2400),
+    );
+    final double haut = tester.getTopLeft(find.text(t.argent.soldes.total)).dy;
+    for (final String cle in <String>[
+      t.argent.soldes.aPayer,
+      t.argent.soldes.profilsFinances,
+      t.argent.soldes.paiements,
+    ]) {
+      expect(tester.getTopLeft(find.text(cle)).dy, moreOrLessEquals(haut));
+    }
+    final Rect bouton = tester.getRect(
+      find.byKey(SyntheseSoldesFoyer.rechargerKey),
+    );
+    final Rect synthese = tester.getRect(find.byKey(SyntheseSoldesFoyer.cle));
+    expect(bouton.width, lessThan(synthese.width * 0.8));
+    expect(bouton.right, moreOrLessEquals(synthese.right, epsilon: 1));
+  });
+
   for (final JeuFoyerFinance jeu in JeuFoyerFinance.values) {
     for (final (double, double) cas in const <(double, double)>[
       (320, 2),

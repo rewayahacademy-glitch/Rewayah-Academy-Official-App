@@ -19,6 +19,7 @@ import '../../core/finance/format_montant.dart';
 import '../../core/finance/politique_commerciale.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -115,12 +116,28 @@ class SyntheseSoldesFoyer extends ConsumerWidget {
           Ecart.vLg,
           // Secondaire : le seul bouton plein du Foyer reste « Ajouter un
           // profil eleve » (un bouton dominant par ecran, D5).
-          ActionPrincipale(
-            key: rechargerKey,
-            libelle: t.foyer.finances.rechargerPlusieurs,
-            niveau: NiveauAction.secondaire,
-            onPress: onRechargerPlusieurs,
-          ),
+          // FI-5 : pleine largeur sur telephone ; compacte au bord de fin
+          // ailleurs, jamais un bouton etire sur 650 px (K-42.6).
+          if (AppGabarit.de(context) == Gabarit.mobile)
+            ActionPrincipale(
+              key: rechargerKey,
+              libelle: t.foyer.finances.rechargerPlusieurs,
+              niveau: NiveauAction.secondaire,
+              onPress: onRechargerPlusieurs,
+            )
+          else
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: IntrinsicWidth(
+                child: ActionPrincipale(
+                  key: rechargerKey,
+                  libelle: t.foyer.finances.rechargerPlusieurs,
+                  niveau: NiveauAction.secondaire,
+                  pleineLargeur: false,
+                  onPress: onRechargerPlusieurs,
+                ),
+              ),
+            ),
         ],
       );
     }
