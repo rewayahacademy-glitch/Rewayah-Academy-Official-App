@@ -259,6 +259,11 @@ List<Override> surchargesDemoAdmin({
     portFinanceDirectionProvider.overrideWithValue(
       const FinanceDirectionDemo(),
     ),
+    // Les Politiques commerciales (FI-11b) : la version de lancement et un
+    // brouillon ; la publication reste indisponible, ici aussi.
+    portPolitiquesCommercialesProvider.overrideWithValue(
+      const PolitiquesCommercialesDemo(),
+    ),
     // Tous les autres services admin adosses a Supabase : « indisponible ».
     ...surchargesServicesAdminIndisponibles(),
   ];

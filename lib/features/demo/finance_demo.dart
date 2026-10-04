@@ -132,6 +132,31 @@ abstract final class DonneesFinanceDemo {
     railsActifs: const <RailPaiement>{RailPaiement.webStripe},
   );
 
+  /// Le brouillon de la version suivante (FI-11b) : les memes valeurs que la
+  /// politique de lancement, une date d'effet plus tardive. Aucune valeur
+  /// inventee ; la comparaison apparait des qu'un champ est modifie a l'ecran.
+  static final PolitiqueCommerciale politiqueBrouillon = PolitiqueCommerciale(
+    version: 'brouillon-2027-01',
+    statut: StatutPolitique.brouillon,
+    dateEffet: DateTime(2027),
+    tarifEnfant: politiqueLancement.tarifEnfant,
+    tarifAdulte: politiqueLancement.tarifAdulte,
+    essaisMax: politiqueLancement.essaisMax,
+    remisesParRang: politiqueLancement.remisesParRang,
+    baseHoraire: politiqueLancement.baseHoraire,
+    plafondHoraire: politiqueLancement.plafondHoraire,
+    capaciteEnfant: politiqueLancement.capaciteEnfant,
+    capaciteAdulte: politiqueLancement.capaciteAdulte,
+    capaciteDebutant: politiqueLancement.capaciteDebutant,
+    minimumOuverture: politiqueLancement.minimumOuverture,
+    groupesObjectif: politiqueLancement.groupesObjectif,
+    groupesMax: politiqueLancement.groupesMax,
+    joursConservationPlace: politiqueLancement.joursConservationPlace,
+    margeReferencePourMille: politiqueLancement.margeReferencePourMille,
+    railsActifs: politiqueLancement.railsActifs,
+    allocationInternet: politiqueLancement.allocationInternet,
+  );
+
   /// Mariam, premier profil du foyer.
   static const String mariamId = 'demo-fi-mariam';
 
@@ -727,10 +752,19 @@ class PolitiquesCommercialesDemo implements PortPolitiquesCommerciales {
   Future<PolitiqueCommerciale> active() async =>
       DonneesFinanceDemo.politiqueLancement;
 
+  /// Le brouillon d'abord, puis la version active (la plus recente
+  /// d'abord).
   @override
   Future<List<PolitiqueCommerciale>> versions() async => <PolitiqueCommerciale>[
+    DonneesFinanceDemo.politiqueBrouillon,
     DonneesFinanceDemo.politiqueLancement,
   ];
+
+  /// La demonstration ne publie rien non plus (FI-BR-02) : le meme etat
+  /// honnete qu'en production.
+  @override
+  Future<void> publier(PolitiqueCommerciale brouillon) =>
+      Future<void>.error(const CapaciteIndisponible('FI-BR-02'));
 }
 
 /// Les revenus de l'enseignant en demonstration (FI-BR-11).

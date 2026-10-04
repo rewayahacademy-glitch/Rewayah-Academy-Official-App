@@ -1,8 +1,9 @@
 // La politique commerciale effective et ses versions (FI-1c, guide Finance
 // V4 §1, §5.7 ; FI-BR-01, FI-BR-02).
 //
-// Lecture seule dans ce lot : le brouillon et la publication arrivent avec
-// FI-11b, et « Publier » restera sur un etat honnete jusqu'au branchement
+// Lecture des versions (FI-1c) ; FI-11b ajoute la publication d'un
+// brouillon, qui rend `CapaciteIndisponible` partout, demonstration comprise,
+// jusqu'au branchement : « Publier » mene a un etat honnete et n'ecrit rien
 // (K-28). Aucune source serveur a ce jour : la demonstration surcharge le
 // port (`finance_demo.dart`).
 
@@ -18,6 +19,11 @@ abstract interface class PortPolitiquesCommerciales {
 
   /// L'historique des versions, la plus recente d'abord (FI-BR-02).
   Future<List<PolitiqueCommerciale>> versions();
+
+  /// Publie [brouillon] a sa date d'effet (FI-BR-02). **Aucune
+  /// implementation n'ecrit a ce jour** : production et demonstration rendent
+  /// `CapaciteIndisponible`.
+  Future<void> publier(PolitiqueCommerciale brouillon);
 }
 
 /// **Aucune source serveur a ce jour** (FI-BR-01, FI-BR-02).
@@ -36,6 +42,10 @@ class PolitiquesCommercialesIndisponibles
       Future<List<PolitiqueCommerciale>>.error(
         const CapaciteIndisponible('FI-BR-02'),
       );
+
+  @override
+  Future<void> publier(PolitiqueCommerciale brouillon) =>
+      Future<void>.error(const CapaciteIndisponible('FI-BR-02'));
 }
 
 /// Le port des politiques ; la demonstration le surcharge.
