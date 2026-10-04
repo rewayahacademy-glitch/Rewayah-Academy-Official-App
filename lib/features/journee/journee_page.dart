@@ -51,6 +51,7 @@ import '../../core/presence/service_presence.dart';
 import '../../core/priere/reglages_priere.dart';
 import '../../core/priere/service_priere.dart';
 import '../../core/regles/service_regles.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
@@ -1038,6 +1039,7 @@ class ListeATerminerPage extends ConsumerWidget {
       corps = _EchecLecture(
         cle: 'a-terminer-erreur',
         phraseServeur: t.enseignant.journee.aTerminerErreur,
+        quoiHorsLigne: t.enseignant.journee.aTerminerSansDonnees,
         onReessayer: () => ref.invalidate(cahiersEnRetardProvider),
       );
     } else if (lecture.requireValue.isEmpty) {
@@ -1214,32 +1216,43 @@ class _ErreurAlertes extends StatelessWidget {
   Widget build(BuildContext context) => _EchecLecture(
     cle: 'alertes-erreur',
     phraseServeur: t.enseignant.journee.alertesErreur,
+    quoiHorsLigne: t.enseignant.journee.alertesSansDonnees,
     onReessayer: onReessayer,
   );
 }
 
-/// L'echec de lecture d'une liste de la Journee : « hors ligne » quand le
-/// reseau manque (la cause est connue), sinon l'echec serveur et sa phrase
-/// (K-59). Les deux proposent de relire ; aucun ne dit « rien a afficher »
-/// (D10).
+/// L'echec de lecture d'une liste de la Journee : quand le reseau manque,
+/// le bandeau de `PageShell` le dit deja et le bloc dit seulement ce qui
+/// manque ([quoiHorsLigne], EA-HL-DOUBLE-1) ; sinon l'echec serveur et sa
+/// phrase (K-59). Les deux proposent de relire ; aucun ne dit « rien a
+/// afficher » (D10).
 class _EchecLecture extends ConsumerWidget {
   const _EchecLecture({
     required this.cle,
     required this.phraseServeur,
+    required this.quoiHorsLigne,
     required this.onReessayer,
   });
 
   final String cle;
   final String phraseServeur;
+  final String quoiHorsLigne;
   final VoidCallback onReessayer;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    if (horsLigne) {
+      return EtatSansDonnees(
+        key: ValueKey<String>(cle),
+        quoi: quoiHorsLigne,
+        onAction: onReessayer,
+      );
+    }
     return EtatSysteme(
       key: ValueKey<String>(cle),
-      nature: horsLigne ? NatureEtat.horsLigne : NatureEtat.echecServeur,
-      phrase: horsLigne ? null : phraseServeur,
+      nature: NatureEtat.echecServeur,
+      phrase: phraseServeur,
       onAction: onReessayer,
     );
   }

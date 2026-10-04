@@ -51,6 +51,7 @@ import '../../fixtures/tuteur/foyers.dart';
 import '../../parcours/faux_service_offres.dart';
 import '../../router/support_routeur.dart';
 import '../../support/harnais.dart';
+import '../../support/hors_ligne_une_fois.dart';
 
 /// L'instant fixe des tests : le 24 septembre 2026 a midi.
 final DateTime _maintenant = DateTime(2026, 9, 24, 12);
@@ -343,6 +344,8 @@ void main() {
       expect(_etat(NatureEtat.horsLigne), findsOneWidget);
       expect(_etat(NatureEtat.echecServeur), findsNothing);
       expect(find.byType(DisqueRetour), findsOneWidget);
+      // EA-HL-DOUBLE-1 : le bandeau dit le reseau, le bloc dit ce qui manque.
+      expectSansDonnees(t.ficheEleve.sansDonnees);
     });
 
     testWidgets('identifiant inconnu : « introuvable », retour au foyer', (

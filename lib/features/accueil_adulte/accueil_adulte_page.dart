@@ -45,6 +45,7 @@ import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
@@ -57,7 +58,6 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/entete_page.dart';
-import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
@@ -189,20 +189,25 @@ class AccueilAdultePage extends ConsumerWidget {
   /// Le nombre de dernieres seances et de ressources montrees.
   static const int limite = 3;
 
+  /// La cle du bloc « rien a afficher » hors ligne (EA-HL-DOUBLE-1).
+  static const Key sansDonneesKey = Key('adulte.accueil.sansDonnees');
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<AccueilAdulteVM> lecture = ref.watch(
-      accueilAdulteProvider,
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    // Hors ligne se dit une fois (EA-HL-DOUBLE-1) : le bandeau de `PageShell`
+    // le dit ; une lecture deja faite reste affichee, et sans elle le bloc dit
+    // ce qui manque. Une capacite absente reste dite indisponible.
+    final AsyncValue<AccueilAdulteVM> lecture = lectureHorsLigne(
+      ref.watch(accueilAdulteProvider),
+      horsLigne: horsLigne,
     );
     final AccueilAdulteVM? vue = lecture.value;
     void relire() => ref.invalidate(accueilAdulteProvider);
-    // Sans reseau, un echec se dit « hors ligne », comme les soldes du foyer
-    // et Mon espace ; une capacite absente reste dite indisponible.
-    final Object? erreur = lecture.hasError ? lecture.error : null;
-    final bool echecHorsLigne =
-        erreur != null &&
-        erreur is! CapaciteIndisponible &&
-        (ref.watch(horsLigneProvider).value ?? false);
+    final bool echecHorsLigne = sansDonneesHorsLigne(
+      lecture,
+      horsLigne: horsLigne,
+    );
     // Pendant le chargement, l'en-tete garde sa place : une ligne de
     // squelette pour la salutation, et la cloche deja posee.
     // Une lecture en echec que Riverpod relance reste `isLoading` : sans
@@ -225,7 +230,11 @@ class AccueilAdultePage extends ConsumerWidget {
           ? <Widget>[ClocheNotifications(onPress: onNotifications)]
           : const <Widget>[],
       child: echecHorsLigne
-          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire)
+          ? EtatSansDonnees(
+              key: sansDonneesKey,
+              quoi: t.adulte.accueil.sansDonnees,
+              onAction: relire,
+            )
           : BlocAsynchrone<AccueilAdulteVM>(
               valeur: lecture,
               squelette: const SqueletteAccueilAdulte(),

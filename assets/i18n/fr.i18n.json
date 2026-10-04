@@ -69,6 +69,7 @@
         "phrase": "Cette fonction n'est pas encore ouverte."
       },
       "reessaisEpuises": "Toujours sans réponse. Réessayez un peu plus tard.",
+      "horsLigneDemarrageTitre": "Votre compte n'a pas pu être vérifié",
       "horsLigneDemarrage": "Rewayah a besoin d'Internet pour vérifier votre compte. Reconnectez cet appareil, puis réessayez.",
       "actions": {
         "reessayer": "Réessayer",
@@ -530,7 +531,7 @@
     "refuseDetail": "Pour relancer la vérification, commencez par cet élément : {element}.",
     "refuseSansElement": "Vous pouvez joindre l'académie pour connaître la marche à suivre.",
     "illisible": "L'état de votre dossier ne s'affiche pas pour le moment.",
-    "horsLigne": "Vous êtes hors ligne. L'état de votre dossier s'affichera dès le retour du réseau."
+    "horsLigne": "L'état de votre dossier s'affichera dès le retour du réseau."
   },
   "connexion": {
     "titre": "Se connecter",
@@ -551,7 +552,7 @@
     "renvoyer": "Renvoyer le lien",
     "renvoye": "Un nouveau lien est parti à {courriel}. Utilisez celui du message le plus récent.",
     "erreurTropTot": "Un lien vient déjà de partir. Attendez un moment avant d'en demander un autre.",
-    "horsLigne": "Vous êtes hors ligne : le lien ne peut pas partir pour l'instant.",
+    "horsLigne": "Le lien n'est pas parti. Réessayez quand la connexion sera revenue.",
     "probleme": "Lien expiré ou jamais reçu ?",
     "decouvrir": "Découvrir Rewayah Academy",
     "recuperation": {
@@ -632,7 +633,7 @@
     "accepter": "J'ai lu et j'accepte",
     "accepteLe": "Accepté le {date}",
     "erreur": "La signature n'a pas abouti. Réessayez dans un instant.",
-    "horsLigne": "Vous êtes hors ligne. Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.",
+    "horsLigne": "Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.",
     "caseRequise": "Cochez la case pour continuer."
   },
   "accessibilite": {
@@ -689,7 +690,7 @@
       "attente": "Tu es dans la salle. La séance commence dans {duree}.",
       "attenteImminent": "Tu es dans la salle. La séance commence dans moins d'une minute.",
       "annonceAttente": "Tu es dans la salle",
-      "horsLigne": "Tu es hors ligne. La séance nécessite une connexion.",
+      "horsLigne": "Tu pourras entrer dans la séance dès le retour de la connexion.",
       "finPhrase": "Tu peux retrouver ton travail dans ta Classe."
     },
     "apres": {
@@ -753,7 +754,7 @@
       "merci": "Merci, votre accord est enregistré.",
       "chargement": "Lecture de vos accords",
       "erreur": "Vos accords ne s'affichent pas pour le moment.",
-      "horsLigne": "Vous êtes hors ligne. Vos accords s'afficheront dès le retour du réseau.",
+      "horsLigne": "Vos accords s'afficheront dès le retour du réseau.",
       "sansProfil": "Aucun compte connecté : reconnectez-vous pour lire vos accords.",
       "invite": "Une nouvelle version à lire : les visites des parents",
       "inviteAction": "Lire"
@@ -786,6 +787,7 @@
       "plusieursAppareils": "{nombre} appareils connectés : {noms}",
       "partageTitre": "Appareil partagé",
       "partage": "Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel. Cet appareil apparaît alors sous chaque profil qui l'utilise.",
+      "sansDonnees": "Les appareils de votre foyer n'ont pas pu être chargés",
       "videTitre": "Aucun profil élève",
       "vide": "Ajoutez un profil élève pour lui connecter une tablette, un téléphone ou un ordinateur.",
       "videAction": "Ajouter un profil élève"
@@ -794,6 +796,7 @@
       "sousTitre": "Gérez les appareils autorisés pour {prenom}.",
       "groupe": "Appareils connectés",
       "connecter": "Connecter un appareil",
+      "sansDonnees": "Les appareils de ce profil n'ont pas pu être chargés",
       "videTitre": "Aucun appareil connecté",
       "vide": "Connectez la tablette, le téléphone ou l'ordinateur de {prenom} avec le code affiché par le bouton ci-dessous.",
       "introuvableTitre": "Profil élève introuvable",
@@ -823,7 +826,7 @@
       "enCours": "Retrait en cours",
       "reussi": "Appareil retiré. S'il est connecté en ce moment, il le reste jusqu'à sa prochaine déconnexion.",
       "echec": "Le retrait n'a pas abouti. L'appareil est toujours autorisé. Réessayez dans un instant.",
-      "horsLigne": "Pas de connexion internet : l'appareil n'a pas été retiré."
+      "horsLigne": "L'appareil n'a pas été retiré. Réessayez quand la connexion sera revenue."
     },
     "emetteur": {
       "titre": "Connecter un appareil",
@@ -912,6 +915,8 @@
     "classesIndisponibles": "La classe de chaque élève ne s'affiche pas encore sur cette page.",
     "classesEchec": "La classe de certains élèves n'a pas pu être lue.",
     "relireClasses": "Relire les classes",
+    "profilsSansDonnees": "Les profils élèves de votre foyer n'ont pas pu être chargés",
+    "titulaireSansDonnees": "Vos informations de titulaire n'ont pas pu être chargées",
     "inscriptionIllisible": "L'inscription en cours de chaque élève ne s'affiche pas encore sur cette page.",
     "appareilsPartages": "Appareils partagés",
     "appareilsFoyer": "Appareils du foyer",
@@ -927,6 +932,7 @@
       "suivant": "Suivant",
       "creer": "Créer le profil",
       "porte": {
+        "sansDonneesTitre": "Les profils que vous pouvez ajouter n'ont pas pu être vérifiés",
         "illisibleTitre": "Votre compte n'a pas pu être lu",
         "illisiblePhrase": "Nous ne savons pas encore quels profils vous pouvez ajouter. Réessayez dans un instant."
       },
@@ -968,10 +974,11 @@
         "voirFoyer": "Voir le foyer",
         "reessayer": "Réessayer quand même"
       },
-      "horsLigne": "Vous êtes hors ligne. Le profil pourra être créé quand la connexion reviendra."
+      "horsLigne": "Le profil pourra être créé quand la connexion reviendra."
     }
   },
   "ficheEleve": {
+    "sansDonnees": "Le profil de cet élève n'a pas pu être chargé",
     "titreRepli": "Profil élève",
     "parametres": "Paramètres de l'élève",
     "appareilsGroupe": "Appareils",
@@ -1019,7 +1026,7 @@
       "echecEnregistrement": "La photo est envoyée, mais elle n'a pas pu être enregistrée sur le profil.",
       "reprendre": "Réessayer",
       "selectionEchec": "La photo n'a pas pu être ouverte. Vérifiez l'accès aux photos de l'appareil, puis réessayez.",
-      "horsLigne": "Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra."
+      "horsLigne": "La photo pourra être envoyée quand la connexion reviendra."
     },
     "inscription": {
       "titre": "Parcours et inscription",
@@ -1052,7 +1059,7 @@
       "demandeEleve": "La demande de changement par l'élève lui-même n'est pas encore proposée.",
       "enCours": "Enregistrement en cours",
       "echec": "Le changement n'a pas été enregistré, probablement à cause d'une coupure de connexion avec Rewayah. Vérifiez votre connexion, puis touchez de nouveau votre choix. La présentation actuelle de {prenom} reste inchangée sur son appareil.",
-      "horsLigne": "Vous êtes hors ligne. La présentation pourra être changée quand la connexion reviendra."
+      "horsLigne": "La présentation pourra être changée quand la connexion reviendra."
     },
     "camera": {
       "titre": "Caméra en cours",
@@ -1062,7 +1069,7 @@
       "application": "Le changement compte à la prochaine entrée de {prenom} en séance.",
       "distincte": "Ce réglage ne change pas l'autorisation caméra de l'appareil, celle que le téléphone demande pour lire un QR code.",
       "echec": "Le changement n'a pas été enregistré. Réessayez.",
-      "horsLigne": "Vous êtes hors ligne. La caméra pourra être réglée quand la connexion reviendra."
+      "horsLigne": "La caméra pourra être réglée quand la connexion reviendra."
     },
     "acces": {
       "titre": "Accès Rewayah",
@@ -1173,7 +1180,7 @@
       "confirmer": "Entre-le encore une fois",
       "different": "Les deux codes ne sont pas les mêmes. Choisis ton code à nouveau.",
       "ouverture": "Connexion en cours",
-      "horsLigne": "Pas de connexion internet. Ton code est bon : réessaie quand internet revient.",
+      "horsLigne": "Ton code est bon : réessaie quand internet revient.",
       "tropDEssais": "Trop d'essais. Patiente un instant avant de réessayer.",
       "echec": "La connexion n'a pas abouti. Réessaie dans un instant.",
       "changerProfil": "Changer de profil",
@@ -1188,7 +1195,7 @@
       "aide": "Chiffres de 2 à 9 et lettres, sans I ni O.",
       "valider": "Connecter l'appareil",
       "scanner": "Scanner le QR code",
-      "horsLigne": "Pas de connexion internet. Le code pourra être vérifié au retour du réseau."
+      "horsLigne": "Le code pourra être vérifié au retour du réseau."
     },
     "lecteur": {
       "titre": "Scanner le QR code",
@@ -1228,8 +1235,8 @@
       "plafond": "Ce profil élève a atteint le nombre d'appareils autorisés. Le tuteur peut en retirer un dans Foyer, puis afficher un nouveau code.",
       "tropDEssaisTitre": "Trop d'essais",
       "tropDEssais": "Patientez un instant avant de réessayer.",
-      "horsLigneTitre": "Pas de connexion",
-      "horsLigne": "Le code n'a pas pu être vérifié. Vérifiez la connexion internet, puis réessayez.",
+      "horsLigneTitre": "Code pas encore vérifié",
+      "horsLigne": "Vérifiez la connexion internet, puis réessayez.",
       "nonEnregistreTitre": "Connexion non enregistrée",
       "nonEnregistre": "Cet appareil n'a pas pu garder la connexion. Le code a sans doute déjà servi : affichez un nouveau code sur l'appareil du tuteur, puis recommencez.",
       "generiqueTitre": "Connexion non aboutie",
@@ -1244,7 +1251,7 @@
     "file": {
       "chargement": "Chargement des dossiers…",
       "erreur": "Impossible de charger les dossiers.",
-      "horsLigne": "Vous êtes hors ligne. Les dossiers ne peuvent pas être actualisés.",
+      "horsLigne": "Les dossiers n'ont pas pu être actualisés.",
       "accesRefuse": "Vous n'avez pas accès aux dossiers à valider.",
       "actualisation": "Actualisation des dossiers…",
       "chargementProlonge": "Le chargement prend plus de temps que prévu.",
@@ -1276,7 +1283,7 @@
       "recharger": "Recharger la pièce",
       "formatNonPrisEnCharge": "Ce format de pièce ne peut pas être affiché.",
       "accesRetire": "Vous n’avez plus accès à cette pièce.",
-      "horsLigne": "Vous êtes hors ligne. La pièce ne peut pas être chargée.",
+      "horsLigne": "La pièce n'a pas pu être chargée.",
       "aucune": "Aucune pièce n’est disponible.",
       "fermerPiece": "Fermer la pièce",
       "agrandir": "Agrandir",
@@ -1302,7 +1309,7 @@
       "pieceIndisponible": "La consultation de la pièce est indisponible pour le moment.",
       "etats": {
         "chargement": "Chargement du dossier…",
-        "horsLigne": "Vous êtes hors ligne. Aucune décision ne peut être envoyée.",
+        "horsLigne": "Aucune décision ne peut être envoyée pour l'instant.",
         "accesPerdu": "Vous n’avez plus accès à ce dossier.",
         "retourDossiers": "Retour aux dossiers",
         "verificationsIncompletes": "Terminez les vérifications requises.",
@@ -1347,7 +1354,7 @@
       "tropLong": "Le motif dépasse la longueur autorisée.",
       "envoi": "Refus en cours…",
       "erreur": "Le dossier n'a pas pu être refusé.",
-      "horsLigne": "Vous êtes hors ligne. Le refus n’a pas été envoyé.",
+      "horsLigne": "Le refus n’a pas été envoyé. Réessayez quand la connexion sera revenue.",
       "inconnu": "Le résultat du refus n’est pas encore confirmé.",
       "interdit": "Vous ne pouvez plus refuser ce dossier.",
       "indisponible": "Le refus est indisponible pour le moment.",
@@ -1363,7 +1370,7 @@
       "indisponible": "La validation est indisponible pour le moment.",
       "envoi": "Validation en cours…",
       "erreur": "Le dossier n'a pas pu être validé.",
-      "horsLigne": "Vous êtes hors ligne. La validation n’a pas été envoyée.",
+      "horsLigne": "La validation n’a pas été envoyée. Réessayez quand la connexion sera revenue.",
       "inconnu": "Le résultat de la validation n’est pas encore confirmé.",
       "plusPret": "Ce dossier n’est plus prêt à être validé.",
       "interdit": "Vous ne pouvez plus valider ce dossier.",
@@ -2064,7 +2071,7 @@
     "reessayer": "Réessayer",
     "indisponibleTitre": "Le questionnaire n'est pas encore disponible",
     "indisponibleDetail": "Cette étape n'est pas encore ouverte par l'académie. Vous n'avez rien à faire pour l'instant : rien n'est perdu, et vous pourrez la remplir dès qu'elle sera ouverte.",
-    "horsLigneTitre": "Pas de connexion",
+    "horsLigneTitre": "Le parcours n'a pas pu être chargé",
     "horsLigneDetail": "Vérifiez votre connexion, puis réessayez. Vos réponses sont gardées.",
     "erreurChargement": "Le questionnaire n'a pas pu s'afficher",
     "erreurChargementDetail": "Une erreur est survenue de notre côté. Réessayez dans un instant ; vos réponses sont gardées.",
@@ -2574,7 +2581,7 @@
       "prochainDemain": "Ton prochain cours est demain.",
       "prochainDansJours": "Ton prochain cours est dans {jours} jours.",
       "annulee": "Ce cours n'aura pas lieu",
-      "horsLigne": "Pas de réseau",
+      "horsLigne": "Entrée en attente",
       "horsLigneDetail": "Tu pourras entrer dès que le réseau revient.",
       "pausePriere": "Pause pour la prière",
       "pausePriereDetail": "{priere}, vers {heure}"
@@ -2768,7 +2775,7 @@
       "terminee": "Séance terminée",
       "annulee": "Séance annulée",
       "aucune": "Aucune séance prévue",
-      "horsLigne": "Vous êtes hors ligne. La séance nécessite une connexion.",
+      "horsLigne": "Vous pourrez entrer dans la séance dès le retour de la connexion.",
       "indisponible": "L'information sur la séance est indisponible pour l'instant.",
       "accesInverifiable": "L'accès à la salle ne peut pas être vérifié pour le moment.",
       "reessayer": "Réessayer",
@@ -3039,7 +3046,7 @@
       "succes": "La photo est enregistrée.",
       "echec": "La photo n'a pas pu être envoyée. Rien n'a changé sur le profil.",
       "selectionEchec": "La photo n'a pas pu être ouverte. Vérifiez l'accès aux photos de l'appareil, puis réessayez.",
-      "horsLigne": "Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra."
+      "horsLigne": "La photo pourra être envoyée quand la connexion reviendra."
     },
     "journee": {
       "lancer": "Lancer le cours",
@@ -3089,6 +3096,7 @@
       "maJournee": "Ma journée",
       "aTerminer": "À terminer",
       "aTerminerVide": "Tous vos cahiers sont terminés.",
+      "aTerminerSansDonnees": "Les cahiers à terminer n'ont pas pu être lus",
       "aTerminerErreur": "Les cahiers à terminer n'ont pas pu être lus. Réessayez dans un instant.",
       "aTerminerAide": "Le cahier de transmission aide vos élèves et vous permet d'ajuster le prochain cours.",
       "rappelCahier": "Des cahiers de transmission attendent d'être terminés",
@@ -3096,6 +3104,7 @@
       "cahierDetail": "Séance du {jour} {numero} {mois} à {heure}",
       "alertesUtiles": "Alertes utiles",
       "alertesVide": "Aucune alerte utile en ce moment.",
+      "alertesSansDonnees": "Les alertes de présence n'ont pas pu être lues",
       "alertesErreur": "Les alertes de présence n'ont pas pu être lues : la connexion ou le serveur n'a pas répondu. Réessayez dans un instant.",
       "voirAutreAlerte": "Voir l'autre alerte",
       "voirAutresAlertes": "Voir les {nombre} autres alertes",
@@ -3311,7 +3320,7 @@
       "erreur": "Votre profil n'a pas pu être lu. Réessayez dans un instant.",
       "vide": "Aucun profil enseignant",
       "videDetail": "Ce compte n'a pas de profil enseignant. Seule l'académie peut en créer un.",
-      "horsLigne": "Pas de réseau : rien ne peut être modifié ici pour l'instant.",
+      "horsLigne": "Rien ne peut être modifié ici pour l'instant.",
       "modifierPays": "Modifier le pays",
       "modifierLangues": "Modifier les langues",
       "languesIndice": "Séparez les langues par une virgule",
@@ -4318,10 +4327,12 @@
       "absence": "Absence",
       "aucuneClasse": "Aucune classe pour le moment.",
       "aucuneClasseDetail": "Votre prochaine séance s'affichera ici dès que votre classe sera ouverte.",
+      "sansDonnees": "Votre prochaine séance et vos dernières séances n'ont pas pu être chargées",
       "echec": "Votre prochaine séance et vos dernières séances n'ont pas pu être chargées : le serveur n'a pas répondu. Réessayez dans un instant."
     },
     "historique": {
       "titre": "Mes séances passées",
+      "sansDonnees": "Vos séances passées n'ont pas pu être chargées",
       "echec": "Vos séances passées n'ont pas pu être chargées : le serveur n'a pas répondu. Réessayez dans un instant.",
       "vide": "Aucune séance passée pour le moment.",
       "videDetail": "Vos séances s'afficheront ici après votre premier cours."
@@ -4331,6 +4342,7 @@
       "participants": "Participants",
       "vous": "{prenom} (vous)",
       "progression": "Ma progression dans cette classe",
+      "sansDonnees": "Votre classe n'a pas pu être chargée",
       "aucuneClasseDetail": "Votre classe, ses participants et ses ressources s'afficheront ici dès qu'elle sera ouverte."
     },
     "monEspace": {
@@ -4343,6 +4355,8 @@
       "paiementsLegende": "Historique et reçus",
       "accords": "Mes accords",
       "accordsLegende": "Accords donnés à l'académie",
+      "sansDonneesCompte": "Vos informations de compte n'ont pas pu être chargées",
+      "sansDonneesFamille": "Les informations de votre famille n'ont pas pu être chargées",
       "securiteLegende": "Méthode et adresse de connexion",
       "pageAccords": {
         "indisponibleTitre": "Vos accords ne sont pas encore consultables",
@@ -4366,7 +4380,8 @@
       "verifier": "Vérifier la recharge",
       "raisonAucun": "Sélectionnez au moins un bénéficiaire pour continuer.",
       "raisonOffre": "Choisissez une offre pour chaque bénéficiaire sélectionné.",
-      "horsLigneVerifier": "Vous êtes hors ligne. Vous pourrez vérifier la recharge quand la connexion sera revenue.",
+      "horsLigneVerifier": "Vous pourrez vérifier la recharge quand la connexion sera revenue.",
+      "sansDonnees": "Les bénéficiaires à recharger n'ont pas pu être chargés",
       "indisponibleTitre": "Recharge pas encore disponible",
       "indisponiblePhrase": "Les offres de recharge ne sont pas encore disponibles dans l'application. Aucun paiement n'est possible ici pour l'instant.",
       "verificationEchecTitre": "La vérification n'a pas abouti.",
@@ -4380,7 +4395,7 @@
       "modifier": "Modifier",
       "total": "Total à payer",
       "payer": "Payer {montant}",
-      "horsLignePayer": "Vous êtes hors ligne. Vous pourrez payer quand la connexion sera revenue.",
+      "horsLignePayer": "Vous pourrez payer quand la connexion sera revenue.",
       "paiementEchecTitre": "Le paiement n'a pas été confirmé.",
       "paiementEchecPhrase": "Vérifiez avant de réessayer.",
       "paiementIndisponibleTitre": "Paiement pas encore disponible",
@@ -4394,6 +4409,7 @@
       "bientotEpuise": "Bientôt épuisé",
       "inactif": "Inactif",
       "historique": "Historique des paiements",
+      "soldesSansDonnees": "Les soldes de votre foyer n'ont pas pu être chargés",
       "soldesIndisponiblesTitre": "Soldes pas encore consultables",
       "soldesIndisponiblesPhrase": "Le solde de chaque bénéficiaire n'est pas encore disponible dans l'application. Aucune recharge n'est possible ici pour l'instant.",
       "aucunBeneficiaireTitre": "Aucun bénéficiaire",
@@ -4457,7 +4473,7 @@
         "nonRenseigne": "Non renseigné",
         "modifier": "Modifier",
         "envoyer": "Envoyer l'invitation",
-        "horsLigne": "Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez envoyer l'invitation vous-même quand la connexion sera revenue.",
+        "horsLigne": "Rien n'est envoyé. Vous pourrez envoyer l'invitation vous-même quand la connexion sera revenue.",
         "echecTitre": "L'envoi n'a pas été confirmé.",
         "echecPhrase": "Vérifiez avant de réessayer. Vos informations sont conservées.",
         "refusTitre": "Cette invitation ne peut pas être envoyée",
@@ -4469,7 +4485,7 @@
         "annuler": "Annuler l'invitation",
         "annulerQuestion": "Annuler l'invitation de {prenom} ?",
         "annulerQuestionSansPrenom": "Annuler cette invitation ?",
-        "annulerHorsLigne": "Vous êtes hors ligne. Rien n'est annulé. Vous pourrez annuler l'invitation vous-même quand la connexion sera revenue.",
+        "annulerHorsLigne": "Rien n'est annulé. Vous pourrez annuler l'invitation vous-même quand la connexion sera revenue.",
         "annulerConsequence": "L'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.",
         "garder": "Garder l'invitation",
         "annulationEchecTitre": "L'annulation n'a pas été confirmée.",
@@ -4502,7 +4518,7 @@
       "validation": "Ce rattachement doit être validé par l'administration de l'académie. En attendant, votre compte et vos cours fonctionnent normalement.",
       "refuser": "Refuser l'invitation",
       "accepter": "Accepter l'invitation",
-      "horsLigne": "Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez répondre vous-même quand la connexion sera revenue.",
+      "horsLigne": "Rien n'est envoyé. Vous pourrez répondre vous-même quand la connexion sera revenue.",
       "acceptationEchecTitre": "L'acceptation n'a pas été confirmée.",
       "refusEchecTitre": "Le refus n'a pas été confirmé.",
       "echecPhrase": "Vérifiez avant de réessayer.",
@@ -4537,7 +4553,7 @@
       "retraitEchecTitre": "Le retrait n'a pas été confirmé.",
       "departEchecTitre": "Le départ n'a pas été confirmé.",
       "echecPhrase": "Vérifiez avant de réessayer.",
-      "horsLigne": "Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez réessayer vous-même quand la connexion sera revenue.",
+      "horsLigne": "Rien n'est envoyé. Vous pourrez réessayer vous-même quand la connexion sera revenue.",
       "notificationQuitte": "{prenom} a quitté votre forfait famille.",
       "notificationRetiree": "Vous avez été retirée du forfait famille de {prenom}.",
       "notificationRetire": "Vous avez été retiré du forfait famille de {prenom}.",
@@ -4570,7 +4586,7 @@
       "deposer": "Déposer la demande",
       "deposerQuestion": "Déposer cette demande ?",
       "deposerConsequence": "Le titulaire du foyer en sera informé et pourra la refuser. L'administration examinera ensuite la demande et décidera.",
-      "horsLigne": "Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.",
+      "horsLigne": "Rien n'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.",
       "depotEchecTitre": "La demande n'a pas été confirmée.",
       "echecPhrase": "Vérifiez avant de réessayer.",
       "motif": "Motif",
@@ -4598,7 +4614,7 @@
         "refuser": "Refuser la demande",
         "ligne": "Une demande de reprise de votre foyer a été déposée.",
         "refusEchecTitre": "Le refus n'a pas été confirmé.",
-        "horsLigne": "Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez refuser la demande vous-même quand la connexion sera revenue.",
+        "horsLigne": "Rien n'est envoyé. Vous pourrez refuser la demande vous-même quand la connexion sera revenue.",
         "refusee": "Vous avez refusé cette demande. L'administration en est informée. Aucune permission de votre foyer n'est transférée."
       },
       "notifications": {

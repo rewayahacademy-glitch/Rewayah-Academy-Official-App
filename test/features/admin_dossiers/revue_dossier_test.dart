@@ -23,6 +23,8 @@ import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
 
+import '../../support/hors_ligne_une_fois.dart';
+
 Future<void> _stabiliser(WidgetTester tester) async {
   for (int i = 0; i < 8; i++) {
     await tester.pump(const Duration(milliseconds: 100));
@@ -408,10 +410,9 @@ void main() {
       ],
     );
     await _ouvrirDossiers(tester);
-    expect(
-      find.text('Vous êtes hors ligne. Aucune décision ne peut être envoyée.'),
-      findsOneWidget,
-    );
+    // EA-HL-DOUBLE-1 : le bandeau dit le reseau, la note dit ce qui manque.
+    expect(find.text(t.dossiers.revue.etats.horsLigne), findsOneWidget);
+    expectHorsLigneUneFois();
     expect(find.text('Valider le dossier'), findsNothing);
     expect(find.text('Refuser le dossier'), findsNothing);
     await _taperTexte(tester, t.commun.reessayer);

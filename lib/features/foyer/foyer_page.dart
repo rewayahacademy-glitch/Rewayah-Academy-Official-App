@@ -14,6 +14,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/offres/offre_horaire.dart';
 import '../../core/offres/service_offres.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -376,13 +377,12 @@ class _Membres extends ConsumerWidget {
         : ref.watch(profilsElevesFoyerProvider);
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
 
-    // Sans reseau, un echec se dit comme tel : « hors ligne », pas « le
-    // serveur n'a pas repondu ».
-    if (horsLigne &&
-        profils.hasError &&
-        profils.error is! CapaciteIndisponible) {
-      return EtatSysteme(
-        nature: NatureEtat.horsLigne,
+    // Sans reseau, un echec n'est pas « le serveur n'a pas repondu » : le
+    // bandeau de `PageShell` dit le reseau, le bloc dit ce qui manque
+    // (EA-HL-DOUBLE-1).
+    if (sansDonneesHorsLigne(profils, horsLigne: horsLigne)) {
+      return EtatSansDonnees(
+        quoi: t.foyer.profilsSansDonnees,
         onAction: () => _relire(ref),
       );
     }
@@ -498,14 +498,19 @@ class _CarteTitulaire extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<IdentiteTitulaire> identite = ref.watch(
-      identiteTitulaireProvider,
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    // Hors ligne, une identite deja lue reste affichee ; sans elle, le bloc
+    // dit ce qui manque, le bandeau dit le reseau (EA-HL-DOUBLE-1).
+    final AsyncValue<IdentiteTitulaire> identite = lectureHorsLigne(
+      ref.watch(identiteTitulaireProvider),
+      horsLigne: horsLigne,
     );
     void relire() => ref.invalidate(identiteTitulaireProvider);
-    if ((ref.watch(horsLigneProvider).value ?? false) &&
-        identite.hasError &&
-        identite.error is! CapaciteIndisponible) {
-      return EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire);
+    if (sansDonneesHorsLigne(identite, horsLigne: horsLigne)) {
+      return EtatSansDonnees(
+        quoi: t.foyer.titulaireSansDonnees,
+        onAction: relire,
+      );
     }
     return BlocAsynchrone<IdentiteTitulaire>(
       valeur: identite,

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -64,8 +65,10 @@ class AppareilsPage extends ConsumerWidget {
     final bool niveau2 = _cheminCourant(context) != Routes.tuteurFoyer;
 
     final Widget corps = horsLigne && !donnees.hasValue
-        ? EtatSysteme(
-            nature: NatureEtat.horsLigne,
+        // Le bandeau de `PageShell` dit le reseau, le bloc dit ce qui manque
+        // (EA-HL-DOUBLE-1).
+        ? EtatSansDonnees(
+            quoi: t.appareils.foyer.sansDonnees,
             onAction: () => relireAppareilsFoyer(ref),
           )
         : BlocAsynchrone<DonneesAppareilsFoyer>(

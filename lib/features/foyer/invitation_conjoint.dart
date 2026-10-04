@@ -33,6 +33,7 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';

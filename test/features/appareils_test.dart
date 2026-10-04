@@ -24,6 +24,7 @@ import 'package:rewayah_academy/features/appareils/appareils_page.dart';
 import 'package:rewayah_academy/features/appareils/liste_appareils_eleve.dart';
 
 import '../support/harnais.dart';
+import '../support/hors_ligne_une_fois.dart';
 import 'appareils/faux_appareils.dart';
 
 class _Montage {
@@ -98,9 +99,8 @@ Future<_Montage> _monter(
           theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
           routerConfig: routeur,
           builder: (BuildContext contexte, Widget? enfant) => MediaQuery(
-            data: MediaQuery.of(
-              contexte,
-            ).copyWith(textScaler: TextScaler.linear(echelleTexte)),
+            data: MediaQuery.of(contexte)
+                .copyWith(textScaler: TextScaler.linear(echelleTexte)),
             child: enfant ?? const SizedBox.shrink(),
           ),
         ),
@@ -238,7 +238,8 @@ void main() {
         service: _foyer()..attenteLecture = Completer<void>(),
         horsLigne: true,
       );
-      expect(find.text(t.commun.etats.horsLigne.titre), findsOneWidget);
+      // EA-HL-DOUBLE-1 : le bandeau dit le reseau, le bloc dit ce qui manque.
+      expectSansDonnees(t.appareils.foyer.sansDonnees);
     });
 
     testWidgets('bureau 1440 : le groupe a gauche, l explication a droite', (
@@ -398,6 +399,28 @@ void main() {
       expect(find.text(t.appareils.plateforme.android), findsOneWidget);
     });
 
+    testWidgets('hors ligne avec donnees : le bandeau seul dit le reseau '
+        '(EA-HL-DOUBLE-1)', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        service: _foyer(),
+        depart: _page('e1'),
+        horsLigne: true,
+      );
+      expectAvecDonnees();
+    });
+
+    testWidgets('hors ligne sans donnees : le bloc dit ce qui manque, sans '
+        'redire le reseau (EA-HL-DOUBLE-1)', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        service: _foyer()..attenteLecture = Completer<void>(),
+        depart: _page('e1'),
+        horsLigne: true,
+      );
+      expectSansDonnees(t.appareils.eleve.sansDonnees);
+    });
+
     testWidgets('vide : aucun appareil, une seule action : Connecter', (
       WidgetTester tester,
     ) async {
@@ -527,7 +550,9 @@ void main() {
         );
         expect(tester.takeException(), isNull);
         expect(find.byType(DisqueRetour).hitTestable(), findsOneWidget);
-        await tester.ensureVisible(find.byKey(ListeAppareilsEleve.retirerKey('d1')));
+        await tester.ensureVisible(
+          find.byKey(ListeAppareilsEleve.retirerKey('d1')),
+        );
         await tester.pump();
         expect(
           find.byKey(ListeAppareilsEleve.retirerKey('d1')).hitTestable(),

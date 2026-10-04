@@ -39,6 +39,7 @@ import 'package:rewayah_academy/features/tc_observation_ui/routes_tc_g.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/verification_prealable.dart';
 
 import '../../support/harnais.dart' show FauxServicePresence;
+import '../../support/hors_ligne_une_fois.dart';
 import 'faux/faux_observation.dart';
 import 'support/hote_tc_g.dart';
 
@@ -534,7 +535,8 @@ void main() {
       expect(_titreExplication, findsOneWidget);
     });
 
-    testWidgets('hors ligne : l\'etat systeme hors ligne, jamais une entree', (
+    testWidgets('hors ligne : le motif dit ce qui manque, le bandeau seul '
+        'dit le reseau (EA-HL-DOUBLE-1), jamais une entree', (
       WidgetTester tester,
     ) async {
       final FauxPortVisite visites = FauxPortVisite();
@@ -550,11 +552,12 @@ void main() {
 
       await _presser(tester, find.text(t.classe.observer));
 
-      expect(find.text(t.commun.etats.horsLigne.titre), findsWidgets);
+      expect(find.text(t.commun.etats.horsLigne.titre), findsNothing);
       expect(
         find.text(t.tc.observation.disponibilite.reseauTitre),
-        findsNothing,
+        findsOneWidget,
       );
+      expectHorsLigneUneFois();
       expect(visites.rolesDemandes, isEmpty);
     });
 

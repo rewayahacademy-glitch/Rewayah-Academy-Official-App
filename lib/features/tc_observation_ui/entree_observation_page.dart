@@ -675,13 +675,11 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
         : NatureEtat.echecServeur;
   }
 
-  /// Le titre et la phrase d'un motif. Hors ligne, ceux de l'etat systeme
-  /// (« Vous etes hors ligne ») : le motif `reseau` dit « verification
-  /// impossible », l'appareil sans reseau dit pourquoi.
+  /// Le titre et la phrase d'un motif. Hors ligne aussi, ceux du motif
+  /// (« Verification impossible ») : le bandeau de `PageShell` dit deja
+  /// l'absence de reseau, le bloc dit ce qui manque (EA-HL-DOUBLE-1) ; seuls
+  /// l'icone et le ton suivent la nature hors ligne.
   ({String? titre, String? phrase}) _textesDe(MotifIndisponibilite motif) {
-    if (_natureDe(motif) == NatureEtat.horsLigne) {
-      return (titre: null, phrase: null);
-    }
     final ({String titre, String phrase}) textes = textesIndisponibilite(motif);
     return (titre: textes.titre, phrase: textes.phrase);
   }

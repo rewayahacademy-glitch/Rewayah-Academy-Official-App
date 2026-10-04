@@ -17,6 +17,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_paiements_foyer.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -52,7 +53,12 @@ class SoldesFoyerSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<SoldesFoyer> soldes = ref.watch(soldesFoyerProvider);
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    // Hors ligne, des soldes deja lus restent affiches (EA-HL-DOUBLE-1).
+    final AsyncValue<SoldesFoyer> soldes = lectureHorsLigne(
+      ref.watch(soldesFoyerProvider),
+      horsLigne: horsLigne,
+    );
     void relire() => ref.invalidate(soldesFoyerProvider);
     final Object? erreur = soldes.hasError ? soldes.error : null;
     final Widget corps;
@@ -64,10 +70,13 @@ class SoldesFoyerSection extends ConsumerWidget {
         phrase: t.adulte.paiements.soldesIndisponiblesPhrase,
         dependance: erreur.dependance,
       );
-    } else if (erreur != null &&
-        (ref.watch(horsLigneProvider).value ?? false)) {
-      // Sans reseau, un echec se dit « hors ligne », comme Ma famille.
-      corps = EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire);
+    } else if (sansDonneesHorsLigne(soldes, horsLigne: horsLigne)) {
+      // Sans reseau ni soldes deja lus : le bandeau de `PageShell` dit le
+      // reseau, le bloc dit ce qui manque (EA-HL-DOUBLE-1).
+      corps = EtatSansDonnees(
+        quoi: t.adulte.paiements.soldesSansDonnees,
+        onAction: relire,
+      );
     } else {
       corps = BlocAsynchrone<SoldesFoyer>(
         valeur: soldes,

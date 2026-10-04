@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/chemin_retour.dart';
 import '../../core/router/routes.dart';
@@ -155,8 +156,10 @@ class _AppareilsElevePageState extends ConsumerState<AppareilsElevePage> {
 
     final Widget corps;
     if (horsLigne && !donnees.hasValue) {
-      corps = EtatSysteme(
-        nature: NatureEtat.horsLigne,
+      // Le bandeau de `PageShell` dit le reseau, le bloc dit ce qui manque
+      // (EA-HL-DOUBLE-1).
+      corps = EtatSansDonnees(
+        quoi: t.appareils.eleve.sansDonnees,
         onAction: () => relireAppareilsFoyer(ref),
       );
     } else {

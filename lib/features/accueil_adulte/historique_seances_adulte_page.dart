@@ -20,10 +20,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/empty_state.dart';
-import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import 'accueil_adulte_page.dart';
@@ -53,24 +53,34 @@ class HistoriqueSeancesAdultePage extends ConsumerWidget {
   /// Lignes du squelette : la forme d'une page de seances, sans fausse date.
   static const int lignesSquelette = 5;
 
+  /// La cle du bloc « rien a afficher » hors ligne (EA-HL-DOUBLE-1).
+  static const Key sansDonneesKey = Key('adulte.historique.sansDonnees');
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<List<SeancePasseeAdulte>> lecture = ref.watch(
-      historiqueSeancesAdulteProvider,
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    // Hors ligne se dit une fois (EA-HL-DOUBLE-1), comme l'Accueil : le
+    // bandeau de `PageShell` le dit ; des seances deja lues restent
+    // affichees, et sans elles le bloc dit ce qui manque. Une capacite
+    // absente reste dite indisponible.
+    final AsyncValue<List<SeancePasseeAdulte>> lecture = lectureHorsLigne(
+      ref.watch(historiqueSeancesAdulteProvider),
+      horsLigne: horsLigne,
     );
     void relire() => ref.invalidate(historiqueSeancesAdulteProvider);
-    // Sans reseau, un echec se dit « hors ligne », comme l'Accueil ; une
-    // capacite absente reste dite indisponible.
-    final Object? erreur = lecture.hasError ? lecture.error : null;
-    final bool echecHorsLigne =
-        erreur != null &&
-        erreur is! CapaciteIndisponible &&
-        (ref.watch(horsLigneProvider).value ?? false);
+    final bool echecHorsLigne = sansDonneesHorsLigne(
+      lecture,
+      horsLigne: horsLigne,
+    );
     return PageShell(
       titre: t.adulte.historique.titre,
       onRetour: onRetour,
       child: echecHorsLigne
-          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire)
+          ? EtatSansDonnees(
+              key: sansDonneesKey,
+              quoi: t.adulte.historique.sansDonnees,
+              onAction: relire,
+            )
           : BlocAsynchrone<List<SeancePasseeAdulte>>(
               valeur: lecture,
               squelette: const ExcludeSemantics(

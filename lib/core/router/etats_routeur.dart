@@ -117,8 +117,11 @@ class _PageHorsLigneState extends ConsumerState<PageHorsLigne> {
         unawaited(_reessayer());
       }
     });
+    // Le bandeau de `PageShell` dit l'absence de reseau ; le titre dit ce qui
+    // manque, sans le redire (EA-HL-DOUBLE-1).
     return PageEtat(
       nature: NatureEtat.horsLigne,
+      titre: t.commun.etats.horsLigneDemarrageTitre,
       phrase: t.commun.etats.horsLigneDemarrage,
       libelleAction: t.commun.etats.actions.reessayer,
       onAction: () => unawaited(_reessayer()),

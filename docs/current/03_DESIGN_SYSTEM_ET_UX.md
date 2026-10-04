@@ -19,6 +19,16 @@ Un titre compréhensible, une tâche dominante, un CTA principal proche de l'usa
 
 Rôle élève : prochain cours immédiatement, classe et travail ; enseignant : journée, prochaine classe, accès au support et roster ; tuteur : foyer, inscription et échéances ; admin : recherche, opérations et exceptions, densité progressive. Aucun code interne tel que `F1-PHO-01` ou `CORE24` dans les textes visibles. `Sayyid` et `Sayyida` en salle ; `Interface guidée` accessible aussi aux adultes. Photos publiques d'enseignants distinctes des pièces d'identité.
 
+## États
+Chaque écran tient ses états chargement, contenu, vide, erreur et hors ligne (`Skeleton`, `BlocAsynchrone`, `EmptyState`, `EtatSysteme`).
+
+**Hors ligne se dit une seule fois (décision du 04/10/2026, déléguée par le directeur, K-42 « un seul signal », étape EA-HL-DOUBLE-1).**
+- Le bandeau hors ligne de `PageShell` est **le** signal hors ligne d'une page. Aucun écran n'en ajoute un second, ni bloc, ni carte, ni note.
+- Ce qui est déjà lu reste affiché sous le bandeau : une lecture qui échoue hors ligne en gardant sa dernière valeur montre cette valeur, sans bloc (`lectureHorsLigne`).
+- Une page n'ajoute un bloc `EtatSysteme(horsLigne)` que si elle ne peut **rien** afficher (`sansDonneesHorsLigne`). Ce bloc (`EtatSansDonnees`) dit alors **ce qui manque** (« Votre classe n'a pas pu être chargée ») et propose de relire. Il ne redit jamais « hors ligne », « pas de réseau » ni « pas de connexion ».
+- Une note posée près d'une action que le réseau empêche dit ce qui ne peut pas se faire et quand ce sera possible (« Le profil pourra être créé quand la connexion reviendra »). Elle ne redit pas non plus « Vous êtes hors ligne ».
+- Exceptions : les écrans sans `PageShell`, donc sans bandeau, gardent leur propre signal. C'est le cas de la salle (`PageImmersive`, `OfflineBanner.message`) et du scanner, qui pose son propre bandeau. Une seule page porte un titre d'état à la place du bloc : celle du routeur au démarrage, qui dit « Votre compte n'a pas pu être vérifié ».
+
 ## Salle pédagogique
 Sur petit écran le document/Coran est le contenu principal ; vidéo secondaire ajustable, roster en panneau temporaire, dock des outils compact et atteignable. En paysage et sur tablette, utiliser la largeur pour document, participants et contexte sans réduire le texte du Coran. Afficher état micro/caméra, enregistrement réel, réseau, reconnexion et présence sans alarme visuelle permanente. Commandes enseignant au bon niveau : suivre, pointer, marquer, masquer, stylet, devoir ; paramétrage rare ailleurs. Le contenu en cours survit aux changements d'écran.
 

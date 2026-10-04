@@ -37,6 +37,7 @@ import '../../fixtures/tuteur/faux_creation_profil_eleve.dart';
 import '../../fixtures/tuteur/foyers.dart';
 import '../../router/support_routeur.dart';
 import '../../support/harnais.dart';
+import '../../support/hors_ligne_une_fois.dart';
 
 /// Un service d'appairage ou la creation ajoute vraiment un eleve au foyer :
 /// la relecture qui suit le montre, comme le ferait `profils_du_foyer_v`.
@@ -448,6 +449,8 @@ void main() {
       await _remplir(tester);
 
       expect(find.text(t.foyer.ajout.horsLigne), findsOneWidget);
+      // EA-HL-DOUBLE-1 : la note dit ce qui attend, le bandeau dit le reseau.
+      expectHorsLigneUneFois();
       expect(_action(tester), isNull);
       expect(service.enfantsCrees, isEmpty);
     });
