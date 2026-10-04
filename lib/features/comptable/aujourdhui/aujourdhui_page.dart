@@ -223,7 +223,7 @@ class _Telephone extends StatelessWidget {
               limite: _lignesTelephone,
             ),
             if (alertes > 0) ...<Widget>[
-              Ecart.vSm,
+              Ecart.vLg,
               SignalRow(
                 key: const ValueKey<String>('resume-alertes'),
                 phrase: a.alertesResume(n: alertes),

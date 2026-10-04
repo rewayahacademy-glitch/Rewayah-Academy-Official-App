@@ -146,7 +146,7 @@ class FileAttention extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         for (int i = 0; i < rendus.length; i++) ...<Widget>[
-          if (i > 0) Ecart.vSm,
+          if (i > 0) Ecart.vLg,
           LigneAttention(rendus[i]),
         ],
       ],
