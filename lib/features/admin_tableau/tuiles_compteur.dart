@@ -7,6 +7,21 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/grille_bento.dart';
+import '../../core/widgets/pressable.dart';
+
+/// Une ligne de l'apercu d'une tuile : ce qu'elle nomme et, quand elle nomme
+/// une personne, l'ecran de cette personne (DASH_STRATEGIE D4 (a)).
+@immutable
+class LigneApercu {
+  /// Cree une ligne.
+  const LigneApercu(this.libelle, {this.onPress});
+
+  /// Ce que la ligne nomme, avec son anciennete.
+  final String libelle;
+
+  /// Ouvre la fiche de ce que la ligne nomme, jamais la file entiere.
+  final VoidCallback? onPress;
+}
 
 /// Un compteur dans sa tuile : le chiffre, ce qu'il compte, et, pour les
 /// plus urgents, ce qu'un tap y fait.
@@ -22,7 +37,8 @@ class TuileCompteur extends StatelessWidget {
     this.detail,
     this.onPress,
     this.enLigne = false,
-    this.apercu = const <String>[],
+    this.apercu = const <LigneApercu>[],
+    this.apercuErreur,
   });
 
   /// Le chiffre, zero compris (invariant I9).
@@ -43,7 +59,15 @@ class TuileCompteur extends StatelessWidget {
 
   /// Un apercu de la file, montre seulement quand la tuile a la place
   /// (grande tuile, au moins une ligne et demie de grille).
-  final List<String> apercu;
+  ///
+  /// Des qu'une ligne a son propre appui, la tuile n'est plus un seul
+  /// bouton : le chiffre et le libelle menent a la file, chaque ligne a sa
+  /// fiche (DASH_STRATEGIE D4 (a)). Jamais un bouton dans un bouton.
+  final List<LigneApercu> apercu;
+
+  /// Dit a la place de l'apercu que sa lecture a echoue : le chiffre, lu
+  /// ailleurs, reste juste (DASH_STRATEGIE D11, erreur par source).
+  final String? apercuErreur;
 
   @override
   Widget build(BuildContext context) {
@@ -81,6 +105,85 @@ class TuileCompteur extends StatelessWidget {
         ],
       ],
     );
+    final bool lignesActives = apercu.any((LigneApercu l) => l.onPress != null);
+    final List<Widget> lignesApercu = <Widget>[
+      if (apercuErreur != null)
+        TexteSansCoupure(
+          apercuErreur!,
+          style: palette.inkAlert.applyTo(
+            textes.bodyMedium ?? const TextStyle(),
+          ),
+        )
+      else
+        for (final LigneApercu ligne in apercu)
+          if (ligne.onPress == null) ...<Widget>[
+            TexteSansCoupure(
+              ligne.libelle,
+              style: paire.applyTo(textes.bodyMedium ?? const TextStyle()),
+            ),
+            Ecart.vXs,
+          ] else
+            // La ligne nomme une personne : elle ouvre sa fiche, cible
+            // tactile entiere (48), jamais la file (modification UX n°2).
+            Pressable(
+              onPress: ligne.onPress,
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: TexteSansCoupure(
+                  ligne.libelle,
+                  style: palette.inkAccent.applyTo(
+                    textes.bodyMedium ?? const TextStyle(),
+                  ),
+                ),
+              ),
+            ),
+    ];
+    final bool aApercu = apercu.isNotEmpty || apercuErreur != null;
+
+    // Des lignes qui ouvrent chacune leur fiche : la carte n'est plus un seul
+    // bouton. Le chiffre et ce qu'il compte forment le lien vers la file, en
+    // haut ; les lignes suivent, chacune son appui.
+    if (lignesActives || apercuErreur != null) {
+      return AppCard(
+        surface: paire,
+        marge: AppSpacing.lg,
+        child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints c) {
+            final Widget entete = Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[chiffre, Ecart.vXs, texte],
+            );
+            // Une seule colonne : les noms suivent l'en-tete, au lieu d'etre
+            // repousses au bas de la grande tuile.
+            return ContenuTuileBento(
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    if (onPress == null)
+                      entete
+                    else
+                      Pressable(
+                        onPress: onPress,
+                        respecterCibleTactile: false,
+                        libelleSemantique: '$valeur $libelle',
+                        child: SizedBox(width: double.infinity, child: entete),
+                      ),
+                    if (_aLaPlace(context, c)) ...<Widget>[
+                      Ecart.vMd,
+                      ...lignesApercu,
+                    ],
+                  ],
+                ),
+              ],
+            );
+          },
+        ),
+      );
+    }
+
     return AppCard(
       surface: paire,
       marge: AppSpacing.lg,
@@ -92,31 +195,13 @@ class TuileCompteur extends StatelessWidget {
       // est libre et les deux se suivent.
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints c) {
-          final bool place =
-              apercu.isNotEmpty &&
-              c.hasBoundedHeight &&
-              c.maxHeight >=
-                  GrilleBento.hauteurLignePour(
-                        MediaQuery.textScalerOf(context).scale(1),
-                      ) *
-                      1.5;
           return ContenuTuileBento(
             children: <Widget>[
               chiffre,
-              if (place)
+              if (aApercu && _aLaPlace(context, c))
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    for (final String ligne in apercu) ...<Widget>[
-                      TexteSansCoupure(
-                        ligne,
-                        style: paire.applyTo(
-                          textes.bodyMedium ?? const TextStyle(),
-                        ),
-                      ),
-                      Ecart.vXs,
-                    ],
-                  ],
+                  children: lignesApercu,
                 ),
               Ecart.vXs,
               texte,
@@ -126,12 +211,31 @@ class TuileCompteur extends StatelessWidget {
       ),
     );
   }
+
+  /// L'apercu ne se montre que si la tuile a la place : une ligne et demie
+  /// de grille au moins, ou une hauteur libre (une colonne, texte agrandi).
+  static bool _aLaPlace(BuildContext context, BoxConstraints c) =>
+      !c.hasBoundedHeight ||
+      c.maxHeight >=
+          GrilleBento.hauteurLignePour(
+                MediaQuery.textScalerOf(context).scale(1),
+              ) *
+              1.5;
 }
 
-/// Deux compteurs calmes dans une seule tuile large, chacun avec son libelle.
+/// Deux compteurs de meme nature dans une seule tuile large, chacun avec son
+/// libelle, quelles que soient leurs valeurs (DASH_STRATEGIE D3).
 class TuileDouble extends StatelessWidget {
   /// Cree la tuile double.
-  const TuileDouble({super.key, required this.gauche, required this.droite});
+  const TuileDouble({
+    super.key,
+    required this.gauche,
+    required this.droite,
+    this.titre,
+  });
+
+  /// Ce que les deux compteurs ont en commun, au-dessus des chiffres.
+  final String? titre;
 
   /// Le premier compteur : chiffre et libelle.
   final (int, String) gauche;
@@ -161,10 +265,18 @@ class TuileDouble extends StatelessWidget {
     return AppCard(
       surface: paire,
       marge: AppSpacing.lg,
-      libelleSemantique: '${gauche.$1} ${gauche.$2}, ${droite.$1} ${droite.$2}',
+      libelleSemantique: <String>[
+        ?titre,
+        '${gauche.$1} ${gauche.$2}, ${droite.$1} ${droite.$2}',
+      ].join(', '),
       // Les chiffres en haut, leurs libelles en bas, chacun sous le sien.
       child: ContenuTuileBento(
         children: <Widget>[
+          if (titre != null)
+            TexteSansCoupure(
+              titre!,
+              style: paire.applyTo(textes.labelLarge ?? const TextStyle()),
+            ),
           Row(
             children: <Widget>[
               chiffre(gauche.$1),

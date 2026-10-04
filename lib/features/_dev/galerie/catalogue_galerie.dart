@@ -225,16 +225,25 @@ List<Destination> _destinationsExemple() =>
 /// des trois plus anciens dossiers, comme dans tableau_de_bord_page.dart.
 List<TuileBento> _tuilesBentoPrincipales() => <TuileBento>[
   TuileBento(
-    etendue: EtendueBento.large,
-    etendueLarge: EtendueBento.grande,
+    etendue: EtendueBento.grande,
     child: TuileCompteur(
       valeur: 5,
       libelle: t.admin.tableau.dossiers,
       detail: t.admin.tableau.dossiersDetail,
-      apercu: <String>[
-        'Aicha · ${t.admin.tableau.attenteJours(jours: '4')}',
-        'Ibrahim · ${t.admin.tableau.attenteUnJour}',
-        'Youssef · ${t.admin.tableau.attenteAujourdhui}',
+      // Chaque nom ouvre son dossier (DASH-ADM-1, D4 (a)).
+      apercu: <LigneApercu>[
+        LigneApercu(
+          'Aicha · ${t.admin.tableau.attenteJours(jours: '4')}',
+          onPress: _rien,
+        ),
+        LigneApercu(
+          'Ibrahim · ${t.admin.tableau.attenteUnJour}',
+          onPress: _rien,
+        ),
+        LigneApercu(
+          'Youssef · ${t.admin.tableau.attenteAujourdhui}',
+          onPress: _rien,
+        ),
       ],
       enLigne: true,
       onPress: _rien,

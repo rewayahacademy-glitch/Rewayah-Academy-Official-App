@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -10,9 +11,15 @@ import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/grille_bento.dart';
+import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_tableau/tableau_de_bord_page.dart';
+import 'package:rewayah_academy/features/admin_tableau/tuiles_compteur.dart';
 
+import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
 
 /// Un mardi de septembre, a dix-sept heures.
@@ -118,7 +125,8 @@ void main() {
     );
     await tester.pump();
 
-    expect(find.byType(Skeleton), findsOneWidget);
+    // Un bloc par tuile (DASH-ADM-1).
+    expect(find.byType(Skeleton), findsNWidgets(5));
     expect(find.text(t.commun.chargement), findsNothing);
 
     reponse.complete(_indicateurs());
@@ -182,114 +190,82 @@ void main() {
     });
   });
 
-  group('La liste a traiter, la plus ancienne en premier', () {
-    test('les deux sources se melangent, et seul l age les ordonne', () {
-      final List<ATraiter> lignes = aTraiter(
-        dossiers: <DossierAValider>[
-          _dossier(prenom: 'Recent', depose: DateTime(2026, 9, 7, 12)),
-          _dossier(id: 'doc2', prenom: 'Ancien', depose: DateTime(2026, 9, 1)),
-        ],
-        demandes: <Demande>[
-          _demande(prenom: 'Milieu', creee: DateTime(2026, 9, 4)),
-        ],
+  group('DASH-ADM-1 : resume et liens (DASH_STRATEGIE 3.1)', () {
+    testWidgets('la liste A traiter en premier a quitte le tableau de bord', (
+      WidgetTester tester,
+    ) async {
+      // Q1 : chaque file a sa page, la tuile y mene. Une demande ne se voit
+      // plus que par son chiffre.
+      await _monter(
+        tester,
+        admin: FauxServiceAdmin()
+          ..file = <Demande>[_demande()]
+          ..indicateursRendus = _indicateurs(demandes: 1),
       );
 
-      // Un dossier depose le 1er passe devant une demande du 4, qui passe
-      // devant un dossier du 7 : c'est l'anciennete qui ordonne, jamais la
-      // nature de la ligne.
-      expect(lignes.map((ATraiter l) => l.libelle).toList(), <String>[
-        t.admin.tableau.ligneDossier(prenom: 'Ancien'),
-        t.admin.tableau.ligneReaffectation(prenom: 'Milieu'),
-        t.admin.tableau.ligneDossier(prenom: 'Recent'),
-      ]);
+      expect(find.textContaining('Aissatou'), findsNothing);
+      expect(find.text('À traiter en premier'), findsNothing);
+      expect(find.text(t.admin.tableau.demandes), findsOneWidget);
     });
 
-    test('chaque sorte de demande mene a l ecran des demandes', () {
-      final List<ATraiter> lignes = aTraiter(
-        dossiers: <DossierAValider>[_dossier()],
-        demandes: <Demande>[
-          _demande(sorte: SorteDemande.plafond, creee: DateTime(2026, 9, 6)),
-          _demande(
-            id: 'req2',
-            sorte: SorteDemande.regle,
-            creee: DateTime(2026, 9, 6, 1),
-          ),
-        ],
-      );
-
-      expect(
-        lignes
-            .where(
-              (ATraiter l) => l.destination == Routes.adminOperationsDemandes,
-            )
-            .length,
-        2,
-      );
-      expect(
-        lignes
-            .where(
-              (ATraiter l) => l.destination == Routes.adminPersonnesDossiers,
-            )
-            .length,
-        1,
-      );
-    });
-
-    testWidgets('une ligne dit depuis quand elle attend', (
+    testWidgets('les trois plus anciens dossiers, chacun avec son anciennete', (
       WidgetTester tester,
     ) async {
       await _monter(
         tester,
         admin: FauxServiceAdmin()
-          ..file = <Demande>[_demande(creee: DateTime(2026, 9, 5, 17))],
+          ..indicateursRendus = _indicateurs(dossiers: 4),
+        validation: FauxServiceValidation()
+          ..file = <DossierAValider>[
+            _dossier(prenom: 'Recent', depose: DateTime(2026, 9, 8, 9)),
+            _dossier(id: 'd2', prenom: 'Ancien', depose: DateTime(2026, 9, 1)),
+            _dossier(id: 'd3', prenom: 'Hier', depose: DateTime(2026, 9, 7, 9)),
+            _dossier(id: 'd4', prenom: 'Milieu', depose: DateTime(2026, 9, 5)),
+          ],
       );
 
-      // Trois jours pleins entre le 5 a 17 h et le 8 a 17 h.
-      await _allerA(
-        tester,
-        find.text(t.admin.tableau.attenteJours(jours: '3')),
-      );
-      expect(
-        find.text(t.admin.tableau.attenteJours(jours: '3')),
-        findsOneWidget,
-      );
+      final List<String> lus = <String>[
+        for (final Text texte in tester.widgetList<Text>(
+          find.textContaining(' · '),
+        ))
+          texte.data ?? '',
+      ];
+      // Du plus ancien au plus recent ; le quatrieme reste dans la file.
+      expect(lus, <String>[
+        'Ancien · ${t.admin.tableau.attenteJours(jours: '7')}',
+        'Milieu · ${t.admin.tableau.attenteJours(jours: '3')}',
+        'Hier · ${t.admin.tableau.attenteUnJour}',
+      ]);
+      expect(find.textContaining('Recent'), findsNothing);
     });
 
     // K-47 (HL-A-6) : un tuteur pending_kyc n'est pas un dossier d'identite ;
-    // sa ligne ouvrirait une fiche que la file ADM-02 ecarte (lien mort).
-    testWidgets('la file A traiter ne porte que des enseignants', (
+    // son nom ouvrirait une fiche que la file ADM-02 ecarte (lien mort).
+    testWidgets('l apercu ne porte que des enseignants', (
       WidgetTester tester,
     ) async {
       await _monter(
         tester,
-        admin: FauxServiceAdmin(),
+        admin: FauxServiceAdmin()
+          ..indicateursRendus = _indicateurs(dossiers: 2),
         validation: FauxServiceValidation()
           ..file = <DossierAValider>[
             _dossier(prenom: 'Enseignante'),
-            _dossier(id: 'doc2', prenom: 'Famille', role: AppRole.guardian),
+            _dossier(id: 'doc2', prenom: 'Tutrice', role: AppRole.guardian),
           ],
       );
 
-      await _allerA(
-        tester,
-        find.text(t.admin.tableau.ligneDossier(prenom: 'Enseignante')),
-      );
-      expect(
-        find.text(t.admin.tableau.ligneDossier(prenom: 'Enseignante')),
-        findsOneWidget,
-      );
-      expect(
-        find.text(t.admin.tableau.ligneDossier(prenom: 'Famille')),
-        findsNothing,
-      );
+      expect(find.textContaining('Enseignante'), findsOneWidget);
+      expect(find.textContaining('Tutrice'), findsNothing);
     });
 
-    testWidgets('un tap sur une ligne ouvre son ecran d action', (
-      WidgetTester tester,
-    ) async {
-      final FauxServiceAdmin admin = FauxServiceAdmin()
-        ..file = <Demande>[_demande()];
-
+    /// Monte le centre de commande dans un routeur ou la file des dossiers
+    /// affiche ce qu'elle a recu par `extra`.
+    Future<void> monterRoutant(
+      WidgetTester tester, {
+      required FauxServiceAdmin admin,
+      FauxServiceValidation? validation,
+    }) async {
       await tester.pumpWidget(
         hoteRoutant(
           depart: Routes.admin,
@@ -300,87 +276,207 @@ void main() {
                   TableauDeBordPage(horloge: () => _maintenant),
             ),
             GoRoute(
-              path: Routes.adminOperationsDemandes,
-              builder: (BuildContext _, GoRouterState _) =>
-                  const Scaffold(body: Text('ADM-06')),
+              path: Routes.adminPersonnesDossiers,
+              builder: (BuildContext _, GoRouterState etat) =>
+                  Scaffold(body: Text('ADM-02 ${etat.extra}')),
             ),
+            for (final (String route, String code) in <(String, String)>[
+              (Routes.adminOperationsDemandes, 'ADM-06'),
+              (Routes.adminOperationsAttributions, 'ADM-05'),
+              (Routes.adminPedagogieQualite, 'ADM-14'),
+              (Routes.adminOperationsGroupes, 'GROUPES'),
+              (Routes.adminPersonnesComptes, 'ADM-08'),
+              (Routes.adminSecuriteAuditAccesAgents, 'ADM-07'),
+            ])
+              GoRoute(
+                path: route,
+                builder: (BuildContext _, GoRouterState _) =>
+                    Scaffold(body: Text(code)),
+              ),
           ],
           surcharges: <Override>[
             serviceAdminProvider.overrideWithValue(admin),
             serviceValidationProvider.overrideWithValue(
-              FauxServiceValidation(),
+              validation ?? FauxServiceValidation(),
             ),
           ],
         ),
       );
       await tester.pumpAndSettle();
+    }
 
-      await _allerA(
+    testWidgets('un nom de l apercu ouvre SON dossier, pas la file', (
+      WidgetTester tester,
+    ) async {
+      // Modification UX n°2, conservee par l'exception D4 (a).
+      await monterRoutant(
         tester,
-        find.text(t.admin.tableau.ligneReaffectation(prenom: 'Aissatou')),
+        admin: FauxServiceAdmin()
+          ..indicateursRendus = _indicateurs(dossiers: 2),
+        validation: FauxServiceValidation()
+          ..file = <DossierAValider>[
+            _dossier(prenom: 'Premier', depose: DateTime(2026, 9, 1)),
+            _dossier(id: 'doc2', prenom: 'Second'),
+          ],
       );
-      await tester.tap(
-        find.text(t.admin.tableau.ligneReaffectation(prenom: 'Aissatou')),
-      );
+
+      await tester.tap(find.textContaining('Second'));
       await tester.pumpAndSettle();
 
-      expect(find.text('ADM-06'), findsOneWidget);
+      expect(find.text('ADM-02 p-doc2'), findsOneWidget);
     });
 
-    testWidgets('un tap sur le compteur rapports manquants ouvre la qualite', (
+    testWidgets('le chiffre des dossiers ouvre la file entiere', (
       WidgetTester tester,
     ) async {
-      final FauxServiceAdmin admin = FauxServiceAdmin()
-        ..indicateursRendus = _indicateurs(rapports: 7);
+      await monterRoutant(
+        tester,
+        admin: FauxServiceAdmin()
+          ..indicateursRendus = _indicateurs(dossiers: 1),
+        validation: FauxServiceValidation()
+          ..file = <DossierAValider>[_dossier()],
+      );
 
+      await tester.tap(find.text(t.admin.tableau.dossiers));
+      await tester.pumpAndSettle();
+
+      expect(find.text('ADM-02 null'), findsOneWidget);
+    });
+
+    for (final (String Function() libelle, String code) cas
+        in <(String Function(), String)>[
+          (() => t.admin.tableau.demandes, 'ADM-06'),
+          (() => t.admin.tableau.foyers, 'ADM-05'),
+          (() => t.admin.tableau.rapports, 'ADM-14'),
+          (() => t.admin.groupes.titre, 'GROUPES'),
+          (() => t.admin.tableau.outilsComptes, 'ADM-08'),
+          (() => t.admin.tableau.outilsAccesAgents, 'ADM-07'),
+        ]) {
+      testWidgets('un tap ouvre ${cas.$2}', (WidgetTester tester) async {
+        await monterRoutant(
+          tester,
+          admin: FauxServiceAdmin()..indicateursRendus = _indicateurs(),
+        );
+
+        await _allerA(tester, find.text(cas.$1()));
+        await tester.tap(find.text(cas.$1()));
+        await tester.pumpAndSettle();
+
+        expect(find.text(cas.$2), findsOneWidget);
+      });
+    }
+
+    for (final IndicateursAdmin valeurs in <IndicateursAdmin>[
+      _indicateurs(),
+      _indicateurs(incidents: 3, comptes: 2),
+      _indicateurs(incidents: 3),
+    ]) {
+      testWidgets('Incidents et acces : une seule tuile, ses deux chiffres '
+          '(${valeurs.incidents24h} / ${valeurs.comptesEchus})', (
+        WidgetTester tester,
+      ) async {
+        // D3 : cinq indicateurs dans tous les cas ; la tuile ne s'eclate
+        // plus en deux quand l'un des chiffres n'est pas nul.
+        await _monter(
+          tester,
+          admin: FauxServiceAdmin()..indicateursRendus = valeurs,
+        );
+
+        expect(find.text(t.admin.tableau.incidentsEtAcces), findsOneWidget);
+        expect(find.byType(TuileDouble), findsOneWidget);
+        final Finder double = find.byType(TuileDouble);
+        for (final String libelle in <String>[
+          t.admin.tableau.incidents,
+          t.admin.tableau.comptes,
+        ]) {
+          expect(
+            find.descendant(of: double, matching: find.text(libelle)),
+            findsOneWidget,
+          );
+        }
+        // Un rapport sans page : aucun appui (D9).
+        expect(
+          find.descendant(of: double, matching: find.byType(Pressable)),
+          findsNothing,
+        );
+      });
+    }
+
+    for (final (IndicateursAdmin, bool) cas in <(IndicateursAdmin, bool)>[
+      (_indicateurs(), true),
+      // Incidents et acces echus sont des rapports, pas des files d'action.
+      (_indicateurs(incidents: 4, comptes: 1), true),
+      (_indicateurs(dossiers: 1), false),
+      (_indicateurs(demandes: 1), false),
+      (_indicateurs(foyers: 1), false),
+      (_indicateurs(rapports: 1), false),
+    ]) {
+      testWidgets('phrase calme : ${cas.$2 ? 'dite' : 'tue'} '
+          '(${cas.$1.dossiersEnAttente}, ${cas.$1.demandesEnAttente}, '
+          '${cas.$1.foyersSansEnseignant}, ${cas.$1.rapportsManquants}, '
+          '${cas.$1.incidents24h}, ${cas.$1.comptesEchus})', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          admin: FauxServiceAdmin()..indicateursRendus = cas.$1,
+        );
+
+        expect(
+          find.text(t.admin.tableau.calme),
+          cas.$2 ? findsOneWidget : findsNothing,
+        );
+      });
+    }
+
+    testWidgets('pas de phrase calme sur une lecture en echec', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        admin: FauxServiceAdmin()..erreurIndicateurs = StateError('reseau'),
+      );
+
+      expect(find.text(t.admin.tableau.calme), findsNothing);
+    });
+
+    testWidgets('le squelette a la forme de la grille', (
+      WidgetTester tester,
+    ) async {
+      final Completer<IndicateursAdmin> reponse = Completer<IndicateursAdmin>();
       await tester.pumpWidget(
-        hoteRoutant(
-          depart: Routes.admin,
-          routes: <RouteBase>[
-            GoRoute(
-              path: Routes.admin,
-              builder: (BuildContext _, GoRouterState _) =>
-                  TableauDeBordPage(horloge: () => _maintenant),
-            ),
-            GoRoute(
-              path: Routes.adminPedagogieQualite,
-              builder: (BuildContext _, GoRouterState _) =>
-                  const Scaffold(body: Text('ADM-14')),
-            ),
-          ],
+        hote(
+          TableauDeBordPage(horloge: () => _maintenant),
           surcharges: <Override>[
-            serviceAdminProvider.overrideWithValue(admin),
-            serviceValidationProvider.overrideWithValue(
-              FauxServiceValidation(),
-            ),
+            serviceAdminProvider.overrideWithValue(FauxServiceAdmin()),
+            indicateursProvider.overrideWith((_) => reponse.future),
           ],
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 300));
 
-      await _allerA(tester, find.text(t.admin.tableau.rapports));
-      await tester.tap(find.text(t.admin.tableau.rapports));
-      await tester.pumpAndSettle();
+      // Cinq blocs, un par tuile, dans une GrilleBento : la page ne saute
+      // pas quand les chiffres arrivent (D11).
+      expect(
+        find.descendant(
+          of: find.byType(GrilleBento),
+          matching: find.byType(Skeleton),
+        ),
+        findsNWidgets(5),
+      );
 
-      expect(find.text('ADM-14'), findsOneWidget);
+      reponse.complete(_indicateurs());
+      await tester.pumpAndSettle();
+      expect(find.byType(Skeleton), findsNothing);
     });
 
-    testWidgets('rien a traiter est une invitation, pas un ecran mort', (
-      WidgetTester tester,
-    ) async {
-      await _monter(tester, admin: FauxServiceAdmin());
-
-      await _allerA(tester, find.text(t.admin.tableau.aTraiterAucun));
-      expect(find.text(t.admin.tableau.aTraiterAucun), findsOneWidget);
-      expect(find.text(t.admin.tableau.aTraiterAucunDetail), findsOneWidget);
-    });
-
-    testWidgets('une file de dossiers illisible n emporte pas les compteurs', (
+    testWidgets('une file de dossiers illisible n emporte que les noms', (
       WidgetTester tester,
     ) async {
       // `read_kyc_documents()` refuse la lecture quand le genre du lecteur est
-      // inconnu. Les compteurs, eux, viennent d'une autre fonction : les perdre
-      // aussi ferait croire a une panne generale.
+      // inconnu. Les compteurs, eux, viennent d'une autre fonction : la tuile
+      // garde son chiffre et dit que la liste manque, jamais un apercu vide
+      // en silence.
       await _monter(
         tester,
         admin: FauxServiceAdmin()
@@ -390,8 +486,100 @@ void main() {
       );
 
       expect(find.text('2'), findsOneWidget);
-      await _allerA(tester, find.text(t.admin.tableau.listeErreur));
-      expect(find.text(t.admin.tableau.listeErreur), findsOneWidget);
+      expect(find.text(t.admin.tableau.apercuErreur), findsOneWidget);
     });
+  });
+
+  group('DASH-ADM-1 : aucun mot coupe dans la grille', () {
+    setUpAll(chargerPolicesDuDepot);
+
+    for (final (double, double) cas in const <(double, double)>[
+      (320, 1),
+      (320, 2),
+      (390, 1),
+      (390, 2),
+      (600, 2),
+      (768, 1),
+      (768, 2),
+      (1024, 1),
+      (1440, 1),
+      (1440, 2),
+    ]) {
+      for (final TextDirection sens in TextDirection.values) {
+        testWidgets('${cas.$1.toInt()} px, texte x${cas.$2.toInt()}, '
+            '${sens.name}', (WidgetTester tester) async {
+          tester.view.physicalSize = Size(cas.$1, 3000);
+          tester.view.devicePixelRatio = 1;
+          addTearDown(tester.view.reset);
+          await tester.pumpWidget(
+            ProviderScope(
+              overrides: <Override>[
+                serviceAdminProvider.overrideWithValue(
+                  FauxServiceAdmin()
+                    ..indicateursRendus = _indicateurs(
+                      dossiers: 12,
+                      demandes: 4,
+                      foyers: 3,
+                      rapports: 2,
+                      incidents: 1,
+                      comptes: 5,
+                    ),
+                ),
+                serviceValidationProvider.overrideWithValue(
+                  FauxServiceValidation()
+                    ..file = <DossierAValider>[
+                      _dossier(
+                        prenom: 'Abdourahmane',
+                        depose: DateTime(2026, 9, 1),
+                      ),
+                      _dossier(
+                        id: 'd2',
+                        prenom: 'Mariama',
+                        depose: DateTime(2026, 9, 7, 9),
+                      ),
+                      _dossier(id: 'd3', prenom: 'Ibrahima'),
+                    ],
+                ),
+              ],
+              child: TranslationProvider(
+                child: MaterialApp(
+                  theme: AppTheme.pour(
+                    InterfaceMode.standard,
+                    Brightness.light,
+                  ),
+                  builder: (BuildContext c, Widget? app) => MediaQuery(
+                    data: MediaQuery.of(c)
+                        .copyWith(textScaler: TextScaler.linear(cas.$2)),
+                    child: Directionality(textDirection: sens, child: app!),
+                  ),
+                  home: TableauDeBordPage(horloge: () => _maintenant),
+                ),
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          expect(tester.takeException(), isNull);
+          final Finder grille = find.byType(GrilleBento);
+          expect(grille, findsOneWidget);
+          // La mesure porte sur quelque chose : les noms et la tuile double.
+          expect(
+            find.descendant(
+              of: grille,
+              matching: find.textContaining('Mariama'),
+            ),
+            findsOneWidget,
+          );
+          expect(
+            find.descendant(
+              of: grille,
+              matching: find.text(t.admin.tableau.incidentsEtAcces),
+            ),
+            findsOneWidget,
+          );
+          verifierAucunMotCoupe(tester, grille);
+        });
+      }
+    }
   });
 }

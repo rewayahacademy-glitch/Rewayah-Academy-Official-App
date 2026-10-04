@@ -301,7 +301,9 @@ void main() {
           serviceAdminProvider.overrideWithValue(admin),
           serviceValidationProvider.overrideWithValue(validation),
         ],
-        minimumSurfaces: 8,
+        // DASH-ADM-1 : les cinq tuiles et la carte des raccourcis ; la liste
+        // « A traiter en premier » (trois lignes-cartes) a quitte l'ecran.
+        minimumSurfaces: 6,
       );
     });
 
