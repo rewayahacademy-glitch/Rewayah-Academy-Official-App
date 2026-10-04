@@ -241,6 +241,11 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
                     nature: horsLigne
                         ? NatureEtat.horsLigne
                         : NatureEtat.echecServeur,
+                    // Le titre commun hors ligne vouvoie ; l'accueil eleve
+                    // tutoie.
+                    titre: horsLigne
+                        ? t.eleve.accueil.erreurCoursHorsLigneTitre
+                        : null,
                     phrase: t.eleve.accueil.erreurCours,
                     onAction: () => ref.invalidate(seancesProvider),
                     actionEnCours: seances.isLoading,

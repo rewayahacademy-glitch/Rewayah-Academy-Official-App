@@ -804,9 +804,15 @@ void main() {
       );
       expect(bloc.nature, NatureEtat.horsLigne);
       expect(find.text(t.eleve.accueil.erreurCours), findsOneWidget);
+      // Au tutoiement, comme tout l'accueil eleve : jamais le titre commun
+      // « Vous etes hors ligne ».
+      expect(
+        find.text(t.eleve.accueil.erreurCoursHorsLigneTitre),
+        findsOneWidget,
+      );
       expect(
         find.text(EtatSysteme.textesPar(NatureEtat.horsLigne).titre),
-        findsOneWidget,
+        findsNothing,
       );
       expect(find.text(t.eleve.accueil.coran), findsOneWidget);
     });
