@@ -146,9 +146,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// CTR-02 : le support occupe toute la scene (« Agrandir le support »).
   bool _agrandi = false;
 
-  /// CTR-02 : le son recu est ecoute. Bascule locale ; le reglage du moteur
-  /// (couper la lecture des pistes recues) se branche a BR-1.
-  bool _sonRecu = true;
+  // CTRL-SON-1 (decision du directeur C5 = a) : pas de commande « Son reçu »
+  // dans la salle du controleur jusqu'a BR-1. Une bascule locale changeait le
+  // mot sans rien couper ; le moteur doit d'abord savoir couper la lecture
+  // des pistes recues (ligne BR de CT-BR.md).
 
   @override
   void initState() {
@@ -567,9 +568,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             ),
             bandeau: _Bandeaux(vue: vue),
             commandes: _CommandesControle(
-              sonRecu: _sonRecu,
               agrandi: _agrandi,
-              onSon: () => setState(() => _sonRecu = !_sonRecu),
               onAgrandir: () => setState(() => _agrandi = !_agrandi),
             ),
             child: _agrandi
@@ -996,23 +995,16 @@ class _EnteteControle extends StatelessWidget {
   }
 }
 
-/// CTR-02 : les deux commandes du controleur, et rien d'autre.
+/// CTR-02 : la commande du controleur, et rien d'autre.
 ///
-/// « Son reçu » (bascule locale : icone, remplissage et mot changent
-/// ensemble, jamais la couleur seule) et « Agrandir le support ». Micro,
-/// camera, main levee, discussion, annotation, changement de support : non
-/// rendus du tout (UX_REVIEW_08 n° 4 f). « Quitter » vit dans la zone haute.
+/// « Agrandir le support ». « Son reçu » est retire jusqu'a BR-1 (CTRL-SON-1,
+/// decision C5 = a) : une bascule qui ne coupe rien ment. Micro, camera, main
+/// levee, discussion, annotation, changement de support : non rendus du tout
+/// (UX_REVIEW_08 n° 4 f). « Quitter » vit dans la zone haute.
 class _CommandesControle extends StatelessWidget {
-  const _CommandesControle({
-    required this.sonRecu,
-    required this.agrandi,
-    required this.onSon,
-    required this.onAgrandir,
-  });
+  const _CommandesControle({required this.agrandi, required this.onAgrandir});
 
-  final bool sonRecu;
   final bool agrandi;
-  final VoidCallback onSon;
   final VoidCallback onAgrandir;
 
   @override
@@ -1021,18 +1013,6 @@ class _CommandesControle extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          _Commande(
-            icone: AppIcons.libelleAudio,
-            libelle: sonRecu
-                ? t.salle.visiteControle.sonRecu
-                : t.salle.visiteControle.sonCoupe,
-            acte: sonRecu
-                ? t.salle.visiteControle.couperSon
-                : t.salle.visiteControle.retablirSon,
-            bascule: sonRecu,
-            onPress: onSon,
-            encreDuRegistre: true,
-          ),
           _Commande(
             icone: agrandi ? AppIcons.reduire : AppIcons.agrandir,
             libelle: agrandi

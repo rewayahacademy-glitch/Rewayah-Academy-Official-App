@@ -1,7 +1,7 @@
 // CT-3 : CTR-02 Observation, depuis la VRAIE route de demonstration.
 // « Commencer le controle » -> la salle en role controleur (zone haute,
-// Son recu, Agrandir, Quitter) ; aucune commande interdite rendue, pas meme
-// grisee ; « Quitter » -> le compte rendu (CTR-03, provisoire).
+// Agrandir, Quitter ; « Son reçu » retire jusqu'a BR-1, CTRL-SON-1) ; aucune
+// commande interdite rendue, pas meme grisee ; « Quitter » -> le compte rendu (CTR-03, provisoire).
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -62,9 +62,18 @@ void main() {
     // possible », pour les participants seulement (CTRL-SALLE-1).
     expect(find.text(t.salle.bandeauControle), findsOneWidget);
     expect(find.text(t.salle.bandeauPermanent), findsNothing);
-    // Les deux commandes.
-    expect(_parSens(t.salle.visiteControle.couperSon), findsOneWidget);
+    // Une seule commande : Agrandir. « Son reçu » est retire jusqu'a BR-1
+    // (CTRL-SON-1, decision C5 = a) : la bascule locale ne coupait rien.
     expect(_parSens(t.salle.visiteControle.agrandir), findsOneWidget);
+    for (final String son in <String>[
+      t.salle.visiteControle.sonRecu,
+      t.salle.visiteControle.sonCoupe,
+      t.salle.visiteControle.couperSon,
+      t.salle.visiteControle.retablirSon,
+    ]) {
+      expect(find.text(son), findsNothing, reason: son);
+      expect(_parSens(son), findsNothing, reason: son);
+    }
 
     // Aucune commande interdite, ni rendue ni grisee.
     for (final String interdit in <String>[
@@ -103,12 +112,6 @@ void main() {
     )) {
       expect(a.urlSignee, isNull);
     }
-
-    // Son recu : icone et mot changent ensemble.
-    await tester.tap(_parSens(t.salle.visiteControle.couperSon));
-    await tester.pumpAndSettle();
-    expect(find.text(t.salle.visiteControle.sonCoupe), findsOneWidget);
-    expect(_parSens(t.salle.visiteControle.retablirSon), findsOneWidget);
 
     // Agrandir, puis Echap rend la vue.
     await tester.tap(_parSens(t.salle.visiteControle.agrandir));
