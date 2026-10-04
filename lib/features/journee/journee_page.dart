@@ -65,6 +65,7 @@ import '../../core/video/pre_vol.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
@@ -897,12 +898,10 @@ class _ATerminer extends ConsumerWidget {
                 key: const ValueKey<String>('journee-a-terminer-voir-tout'),
                 libelle: t.tuteur.accueil.voirTout,
                 legende: true,
-                onPress: () => Navigator.of(context).push<void>(
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext _) =>
-                        _ListeATerminer(cahiers: tries),
-                  ),
-                ),
+                // DASH-ENS-ROUTE : une adresse, pour qu'un rechargement Web ou
+                // un lien garde la liste (DASH_STRATEGIE §5).
+                onPress: () =>
+                    GoRouter.of(context).go(Routes.enseignantATerminer),
               ),
             ],
           )
@@ -934,28 +933,59 @@ List<CahierEnRetard> trierCahiersATerminer(List<CahierEnRetard> cahiers) =>
       cahiers,
     )..sort((CahierEnRetard a, CahierEnRetard b) => a.debut.compareTo(b.debut));
 
-/// La liste complete « A terminer », ouverte par « Voir tout » (§11.4).
-class _ListeATerminer extends ConsumerWidget {
-  const _ListeATerminer({required this.cahiers});
-
-  final List<CahierEnRetard> cahiers;
+/// La liste complete « A terminer » (§11.4), a son adresse
+/// [Routes.enseignantATerminer] (DASH-ENS-ROUTE) : ouverte par « Voir tout »,
+/// ou directement (rechargement, lien). Elle lit elle-meme les cahiers en
+/// retard, avec ses etats : chargement, erreur, vide, contenu ; le bandeau
+/// hors ligne vient de [PageShell].
+class ListeATerminerPage extends ConsumerWidget {
+  /// Cree la page.
+  const ListeATerminerPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<List<CahierEnRetard>> lecture = ref.watch(
+      cahiersEnRetardProvider,
+    );
+    final Widget corps;
+    if (!lecture.hasValue && lecture.isLoading) {
+      corps = const Skeleton.liste(lignes: 3);
+    } else if (lecture.hasError && !lecture.hasValue) {
+      // Jamais « rien a terminer » sur une lecture ratee (D10).
+      corps = EtatSysteme(
+        key: const ValueKey<String>('a-terminer-erreur'),
+        nature: NatureEtat.echecServeur,
+        phrase: t.enseignant.journee.aTerminerErreur,
+        onAction: () => ref.invalidate(cahiersEnRetardProvider),
+      );
+    } else if (lecture.requireValue.isEmpty) {
+      corps = EmptyState(
+        key: const ValueKey<String>('a-terminer-vide'),
+        message: t.enseignant.journee.aTerminerVide,
+        icone: AppIcons.cahier,
+      );
+    } else {
+      corps = _LignesATerminer(
+        // Relue au retour d'un cahier : une ligne validee disparait.
+        cahiers: trierCahiersATerminer(lecture.requireValue),
+        enFile: ref.watch(cahiersEnFileProvider).value ?? const <String>{},
+      );
+    }
     return PageShell(
       titre: t.enseignant.journee.aTerminer,
-      onRetour: () => Navigator.of(context).pop(),
+      onRetour: () {
+        final GoRouter routeur = GoRouter.of(context);
+        if (routeur.canPop()) {
+          routeur.pop();
+        } else {
+          routeur.go(Routes.enseignantJournee);
+        }
+      },
       child: Align(
         alignment: AlignmentDirectional.topStart,
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: AppPage.largeurReglages),
-          child: _LignesATerminer(
-            // Relue au retour d'un cahier : une ligne validee disparait.
-            cahiers: trierCahiersATerminer(
-              ref.watch(cahiersEnRetardProvider).value ?? cahiers,
-            ),
-            enFile: ref.watch(cahiersEnFileProvider).value ?? const <String>{},
-          ),
+          child: corps,
         ),
       ),
     );

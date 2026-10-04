@@ -733,6 +733,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 path: Routes.enseignantJournee,
                 builder: (BuildContext _, GoRouterState _) =>
                     const JourneePage(),
+                routes: <RouteBase>[
+                  // DASH-ENS-ROUTE : « Voir tout » de « A terminer ».
+                  GoRoute(
+                    path: 'a-terminer',
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const ListeATerminerPage(),
+                  ),
+                ],
               ),
             ],
           ),

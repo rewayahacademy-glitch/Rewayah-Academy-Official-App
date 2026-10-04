@@ -3082,6 +3082,8 @@
       "prochaineSeance": "Prochaine séance",
       "maJournee": "Ma journée",
       "aTerminer": "À terminer",
+      "aTerminerVide": "Aucun cahier de transmission à terminer.",
+      "aTerminerErreur": "Les cahiers à terminer n'ont pas pu être lus. Réessayez dans un instant.",
       "aTerminerAide": "Le cahier de transmission aide vos élèves et vous permet d'ajuster le prochain cours.",
       "rappelCahier": "Des cahiers de transmission attendent d'être terminés",
       "cahierLigne": "Cahier de transmission {classe}",

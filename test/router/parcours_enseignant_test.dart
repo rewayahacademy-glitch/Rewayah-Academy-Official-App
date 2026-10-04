@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
@@ -17,6 +18,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/bienvenue_enseignant/bienvenue_page.dart';
 import 'package:rewayah_academy/features/cahier/cahier_page.dart';
@@ -57,6 +59,7 @@ void main() {
   List<Override> surcharges({
     AppRole role = AppRole.teacher,
     AccountStatus statut = AccountStatus.active,
+    FauxServiceEnseignant? enseignant,
   }) => <Override>[
     sourceSessionProvider.overrideWithValue(
       FausseSourceSession(
@@ -71,7 +74,9 @@ void main() {
       ),
     ),
     serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
-    serviceEnseignantProvider.overrideWithValue(FauxServiceEnseignant()),
+    serviceEnseignantProvider.overrideWithValue(
+      enseignant ?? FauxServiceEnseignant(),
+    ),
     servicePlanningProvider.overrideWithValue(FauxServicePlanning()),
     serviceMatchingProvider.overrideWithValue(FauxServiceMatching()),
     serviceReglesProvider.overrideWithValue(FauxServiceRegles()),
@@ -275,6 +280,116 @@ void main() {
       // d'un groupe d'enfants.
       expect(routeur.state.matchedLocation, startsWith(Routes.attente));
       expect(find.byType(FicheGroupePage), findsNothing);
+    });
+  });
+
+  // DASH-ENS-ROUTE : « A terminer » a son adresse ; un rechargement Web ou un
+  // lien la garde, au lieu d'une page poussee sans adresse.
+  group('DASH-ENS-ROUTE : la liste « A terminer » a son adresse', () {
+    CahierEnRetard cahier(String id, String classe, int jour) => CahierEnRetard(
+      seanceId: id,
+      debut: DateTime(2026, 9, jour, 17),
+      fin: DateTime(2026, 9, jour, 17, 45),
+      nbParticipants: 3,
+      heuresDeRetard: 30,
+      groupeId: 'g-$id',
+      groupeLibelle: classe,
+    );
+    final List<CahierEnRetard> quatre = <CahierEnRetard>[
+      cahier('a', 'Al-Badr', 26),
+      cahier('b', 'As-Salam', 25),
+      cahier('c', 'Al-Fatiha', 23),
+      cahier('d', 'Al-Ikhlas', 22),
+    ];
+
+    List<Override> avecCahiers(List<CahierEnRetard> cahiers) => surcharges(
+      enseignant: FauxServiceEnseignant()..retardsRendus = cahiers,
+    );
+
+    testWidgets('« Voir tout » ouvre l adresse, et la liste entiere', (
+      WidgetTester tester,
+    ) async {
+      tester.view.physicalSize = const Size(390, 3000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final GoRouter routeur = await monter(
+        tester,
+        Routes.enseignantJournee,
+        avec: avecCahiers(quatre),
+      );
+      final Finder voirTout = find.byKey(
+        const ValueKey<String>('journee-a-terminer-voir-tout'),
+      );
+      await tester.ensureVisible(voirTout);
+      await tester.pumpAndSettle();
+      await tester.tap(voirTout);
+      await tester.pumpAndSettle();
+
+      expect(routeur.state.matchedLocation, Routes.enseignantATerminer);
+      expect(find.byType(ListeATerminerPage), findsOneWidget);
+      for (final String classe in <String>[
+        'Al-Badr',
+        'As-Salam',
+        'Al-Fatiha',
+        'Al-Ikhlas',
+      ]) {
+        expect(find.textContaining(classe), findsWidgets);
+      }
+    });
+
+    testWidgets('l adresse ouverte directement rend la liste', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await monter(
+        tester,
+        Routes.enseignantATerminer,
+        avec: avecCahiers(quatre),
+      );
+      expect(routeur.state.matchedLocation, Routes.enseignantATerminer);
+      expect(find.byType(ListeATerminerPage), findsOneWidget);
+      expect(find.textContaining('Al-Ikhlas'), findsWidgets);
+      // Laisse expirer les minuteries courtes de la coquille (premiere image
+      // ouverte sur une adresse profonde) avant le demontage.
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('rien a terminer : une phrase, pas une page vide', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        Routes.enseignantATerminer,
+        avec: avecCahiers(const <CahierEnRetard>[]),
+      );
+      expect(find.text(t.enseignant.journee.aTerminerVide), findsOneWidget);
+    });
+
+    testWidgets('une lecture ratee le dit et propose de relire', (
+      WidgetTester tester,
+    ) async {
+      int lectures = 0;
+      await monter(
+        tester,
+        Routes.enseignantATerminer,
+        avec: <Override>[
+          ...surcharges(),
+          cahiersEnRetardProvider.overrideWith((Ref _) async {
+            lectures++;
+            if (lectures == 1) throw StateError('reseau');
+            return quatre;
+          }),
+        ],
+      );
+      expect(find.text(t.enseignant.journee.aTerminerErreur), findsOneWidget);
+      expect(find.text(t.enseignant.journee.aTerminerVide), findsNothing);
+
+      await tester.tap(
+        find.text(EtatSysteme.libelleActionPar(NatureEtat.echecServeur)),
+      );
+      await tester.pumpAndSettle();
+      expect(lectures, 2);
+      expect(find.textContaining('Al-Ikhlas'), findsWidgets);
+      await tester.pump(const Duration(seconds: 5));
     });
   });
 }

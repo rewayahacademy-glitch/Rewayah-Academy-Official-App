@@ -8532,6 +8532,12 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'À terminer'
 	String get aTerminer => 'À terminer';
 
+	/// fr: 'Aucun cahier de transmission à terminer.'
+	String get aTerminerVide => 'Aucun cahier de transmission à terminer.';
+
+	/// fr: 'Les cahiers à terminer n'ont pas pu être lus. Réessayez dans un instant.'
+	String get aTerminerErreur => 'Les cahiers à terminer n\'ont pas pu être lus. Réessayez dans un instant.';
+
 	/// fr: 'Le cahier de transmission aide vos élèves et vous permet d'ajuster le prochain cours.'
 	String get aTerminerAide => 'Le cahier de transmission aide vos élèves et vous permet d\'ajuster le prochain cours.';
 
@@ -17999,6 +18005,8 @@ extension on Traductions {
 			'enseignant.journee.prochaineSeance' => 'Prochaine séance',
 			'enseignant.journee.maJournee' => 'Ma journée',
 			'enseignant.journee.aTerminer' => 'À terminer',
+			'enseignant.journee.aTerminerVide' => 'Aucun cahier de transmission à terminer.',
+			'enseignant.journee.aTerminerErreur' => 'Les cahiers à terminer n\'ont pas pu être lus. Réessayez dans un instant.',
 			'enseignant.journee.aTerminerAide' => 'Le cahier de transmission aide vos élèves et vous permet d\'ajuster le prochain cours.',
 			'enseignant.journee.rappelCahier' => 'Des cahiers de transmission attendent d\'être terminés',
 			'enseignant.journee.cahierLigne' => ({required Object classe}) => 'Cahier de transmission ${classe}',
@@ -18440,10 +18448,10 @@ extension on Traductions {
 			'controleur.echanges.champLibelle' => 'Répondre à l\'administration',
 			'controleur.echanges.envoyer' => 'Envoyer',
 			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
-			'controleur.echanges.enCours' => 'Envoi en cours.',
-			'controleur.echanges.envoye' => 'Envoyé.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.echanges.enCours' => 'Envoi en cours.',
+			'controleur.echanges.envoye' => 'Envoyé.',
 			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.reessayer' => 'Réessayer',
 			'controleur.echanges.nouveauMessage' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
@@ -18954,10 +18962,10 @@ extension on Traductions {
 			'tc.parcours.signalement.categorieValeur.presence' => 'Présence',
 			'tc.parcours.signalement.categorieValeur.technique' => 'Technique',
 			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
-			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
-			'tc.parcours.signalement.interne' => 'Note interne',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
+			'tc.parcours.signalement.interne' => 'Note interne',
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',

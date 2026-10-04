@@ -279,6 +279,10 @@ abstract final class Routes {
   /// La journee de cours.
   static const String enseignantJournee = '/enseignant/journee';
 
+  /// La liste complete « A terminer » de la Journee (DASH-ENS-ROUTE) : une
+  /// adresse, que le rechargement Web garde.
+  static const String enseignantATerminer = '$enseignantJournee/a-terminer';
+
   /// Mes Classes (ENS-09), deuxieme destination de la barre enseignant (E10,
   /// decision du directeur du 26/09/2026). Page provisoire jusqu'a EN-3.
   static const String enseignantClasses = '/enseignant/classes';
