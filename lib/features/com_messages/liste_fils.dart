@@ -18,7 +18,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_tile.dart';
-import '../../core/widgets/communications/badge_non_lu.dart';
+import '../../core/widgets/badge_non_lu.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';

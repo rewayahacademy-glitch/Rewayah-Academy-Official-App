@@ -25,7 +25,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_tile.dart';
-import '../../core/widgets/communications/carte_piece_jointe.dart';
+import '../../core/widgets/carte_piece_jointe.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/pile_cartes.dart';
 import 'entete_fil_contexte.dart';

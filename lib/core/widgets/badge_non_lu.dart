@@ -10,12 +10,12 @@
 
 import 'package:flutter/material.dart';
 
-import '../../communications/modeles_communication.dart';
-import '../../i18n/strings.g.dart';
-import '../../icons/app_icons.dart';
-import '../../theme/app_palette.dart';
-import '../../theme/app_spacing.dart';
-import '../status_pill.dart';
+import '../communications/modeles_communication.dart';
+import '../i18n/strings.g.dart';
+import '../icons/app_icons.dart';
+import '../theme/app_palette.dart';
+import '../theme/app_spacing.dart';
+import 'status_pill.dart';
 
 /// Ce qu'une pastille du badge dit : un mot, une icone, une famille.
 @immutable

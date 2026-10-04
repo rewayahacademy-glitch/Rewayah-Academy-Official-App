@@ -123,7 +123,8 @@ class TableauDeBordPage extends ConsumerWidget {
           ],
           Ecart.vXxl,
 
-          // 2. ALLER : les raccourcis vers Operations, Personnes et Securite.
+          // 2. ALLER : les raccourcis vers Operations (Groupes,
+          // Communications), Personnes et Securite.
           //
           // **Ni un menu, ni un ecran vide.** Le gel d'architecture retire le
           // regroupement autonome « Outils » (un deuxieme menu, doublon de la
@@ -145,6 +146,19 @@ class TableauDeBordPage extends ConsumerWidget {
                 icon: AppIcons.classes,
                 onPress: () =>
                     GoRouter.of(context).go(Routes.adminOperationsGroupes),
+              ),
+              // COM-F-b (UX_REV-03, QUESTIONS Q4) : la racine Operations
+              // redirige vers Groupes et n'a pas de sous-navigation ; sans
+              // cette ligne, les Communications ne s'atteignent que par la
+              // recherche. Le domaine Operations reste surligne.
+              SettingRow(
+                key: const ValueKey<String>('tableau-communications'),
+                title: t.com.socle.navigation.communications,
+                description: t.com.socle.navigation.communicationsDetail,
+                icon: AppIcons.annonce,
+                onPress: () =>
+                    GoRouter.of(context)
+                        .go(Routes.adminOperationsCommunications),
               ),
               SettingRow(
                 title: t.admin.tableau.outilsComptes,

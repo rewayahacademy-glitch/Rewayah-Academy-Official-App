@@ -29,13 +29,13 @@
 
 import 'package:flutter/material.dart';
 
-import '../../i18n/strings.g.dart';
-import '../../icons/app_icons.dart';
-import '../../theme/app_gabarit.dart';
-import '../../theme/app_palette.dart';
-import '../../theme/app_spacing.dart';
-import '../app_bottom_sheet.dart';
-import '../bouton_icone.dart';
+import '../i18n/strings.g.dart';
+import '../icons/app_icons.dart';
+import '../theme/app_gabarit.dart';
+import '../theme/app_palette.dart';
+import '../theme/app_spacing.dart';
+import 'app_bottom_sheet.dart';
+import 'bouton_icone.dart';
 
 /// La surface montree quand une seule colonne tient.
 enum SurfaceMobile {

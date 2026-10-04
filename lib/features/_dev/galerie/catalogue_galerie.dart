@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/admin/admin_domaine.dart';
 import '../../../core/admin/service_programme.dart';
+import '../../../core/communications/modeles_communication.dart';
+import '../../../core/communications/port_pieces_jointes.dart';
 import '../../../core/domain/enums.dart';
 import '../../../core/i18n/cle_audio.dart';
 import '../../../core/i18n/strings.g.dart';
@@ -23,6 +25,7 @@ import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/audio_label.dart';
 import '../../../core/widgets/avatar_nom.dart';
 import '../../../core/widgets/avatar_tile.dart';
+import '../../../core/widgets/badge_non_lu.dart';
 import '../../../core/widgets/bandeau_observation.dart';
 import '../../../core/widgets/barre_precedent_suivant.dart';
 import '../../../core/widgets/bento_tile.dart';
@@ -30,6 +33,7 @@ import '../../../core/widgets/bouton_icone.dart';
 import '../../../core/widgets/bouton_outil.dart';
 import '../../../core/widgets/carte_groupee.dart';
 import '../../../core/widgets/carte_lignes.dart';
+import '../../../core/widgets/carte_piece_jointe.dart';
 import '../../../core/widgets/child_card.dart';
 import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/commande_salle.dart';
@@ -38,6 +42,7 @@ import '../../../core/widgets/controle_segmente.dart';
 import '../../../core/widgets/data_collection.dart';
 import '../../../core/widgets/ecran_resultat.dart';
 import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/espace_travail_adaptatif.dart';
 import '../../../core/widgets/fil_discussion.dart';
 import '../../../core/widgets/filter_pill.dart';
 import '../../../core/widgets/grille_bento.dart';
@@ -75,6 +80,7 @@ import '../../../core/widgets/sous_navigation_domaine.dart';
 import '../../../core/widgets/stat_tile.dart';
 import '../../../core/widgets/status_pill.dart';
 import '../../../core/widgets/timeline_row.dart';
+import '../../../core/widgets/vue_etat_communication.dart';
 import '../../admin_tableau/tuiles_compteur.dart';
 import '../../disponibilites/grille_semaine.dart';
 import 'entrees_etats_tuteur.dart';
@@ -1445,6 +1451,109 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       ),
     ],
   ),
+  // COM-F, COM-F-b (02_DEC-13) : les quatre composants du socle des
+  // Communications, a la racine de `lib/core/widgets/` pour que le test de la
+  // galerie les voie.
+  EntreeGalerie(
+    nom: 'BadgeNonLu',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'urgent, non lus et mention : un mot et une icone chacun',
+        (BuildContext _) => const BadgeNonLu(
+          indicateur: IndicateurAttention(
+            nonLus: 3,
+            niveau: NiveauAttention.urgent,
+            mention: true,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'compact : la pastille la plus pressante seule',
+        (BuildContext _) => const BadgeNonLu(
+          compact: true,
+          indicateur: IndicateurAttention(
+            nonLus: 1,
+            niveau: NiveauAttention.actionRequise,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'a lire, sans compte',
+        (BuildContext _) => const BadgeNonLu(
+          indicateur: IndicateurAttention(niveau: NiveauAttention.aLire),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'CartePieceJointe',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'envoyee : Ouvrir, sans reference ni adresse',
+        (BuildContext _) => CartePieceJointe(
+          piece: _pieceJointe(EtatPieceJointe.envoyee),
+          onOuvrir: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'non confirmee : Retirer et Reessayer',
+        (BuildContext _) => CartePieceJointe(
+          piece: _pieceJointe(EtatPieceJointe.echec),
+          onRetirer: _rien,
+          onReessayer: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'trop lourde : la phrase dit quoi faire',
+        (BuildContext _) => CartePieceJointe(
+          piece: _pieceJointe(EtatPieceJointe.tropVolumineuse),
+          onRetirer: _rien,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'EspaceTravailAdaptatif',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'liste, contenu et contexte : 1, 2 ou 3 colonnes selon la largeur',
+        (BuildContext _) => const SizedBox(
+          height: _hauteurCollection,
+          child: EspaceTravailAdaptatif(
+            liste: _PanneauGalerie('Fils'),
+            principal: _PanneauGalerie('Fil'),
+            contexte: _PanneauGalerie('Contexte'),
+            surfaceMobile: SurfaceMobile.liste,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'contenu seul : aucune colonne vide',
+        (BuildContext _) => const SizedBox(
+          height: _hauteurCollection,
+          child: EspaceTravailAdaptatif(principal: _PanneauGalerie('Fil')),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'VueEtatCommunication',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      for (final EtatCommunication etat in EtatCommunication.values)
+        EtatGalerie(
+          etat.name,
+          (BuildContext _) => VueEtatCommunication(
+            etat: etat,
+            onReessayer: _rien,
+            dependance: 'COM-BR-00',
+          ),
+        ),
+    ],
+  ),
 
   // --- Ce que la refonte a produit en chemin ------------------------------
   EntreeGalerie(
@@ -2787,3 +2896,26 @@ final TextesFilDiscussion _textesFil = TextesFilDiscussion(
   annonce: (String auteur, String texte) =>
       t.controleur.echanges.nouveauMessage(auteur: auteur, texte: texte),
 );
+
+/// Une piece jointe de galerie : un nom long a tirets, pour voir le passage a
+/// la ligne a 320 et texte double (revue COM-F-R, m3).
+PieceJointe _pieceJointe(EtatPieceJointe etat) => PieceJointe(
+  reference: ReferencePieceJointe('pj_galerie'),
+  nom: 'devoir-sourate-al-mulk.pdf',
+  nature: NaturePieceJointe.document,
+  typeLisible: 'PDF',
+  tailleOctets: 655360,
+  etat: etat,
+  peutOuvrir: true,
+);
+
+/// Un panneau de l'espace de travail, dans la galerie : un titre centre.
+class _PanneauGalerie extends StatelessWidget {
+  const _PanneauGalerie(this.titre);
+
+  final String titre;
+
+  @override
+  Widget build(BuildContext context) =>
+      Padding(padding: const EdgeInsets.all(AppSpacing.md), child: Text(titre));
+}

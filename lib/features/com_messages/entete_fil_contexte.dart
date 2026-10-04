@@ -16,7 +16,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_nom.dart';
-import '../../core/widgets/communications/badge_non_lu.dart';
+import '../../core/widgets/badge_non_lu.dart';
 import 'port_messages_metier.dart';
 
 /// Le nom d'un participant, avec sa fonction quand le port la donne :

@@ -13,7 +13,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_gabarit.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/core/widgets/communications/espace_travail_adaptatif.dart';
+import 'package:rewayah_academy/core/widgets/espace_travail_adaptatif.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
 

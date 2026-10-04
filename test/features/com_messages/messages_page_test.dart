@@ -10,12 +10,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/widgets/communications/badge_non_lu.dart';
-import 'package:rewayah_academy/core/widgets/communications/carte_piece_jointe.dart';
-import 'package:rewayah_academy/core/widgets/communications/espace_travail_adaptatif.dart';
-import 'package:rewayah_academy/core/widgets/communications/etats_communication.dart';
+import 'package:rewayah_academy/core/widgets/badge_non_lu.dart';
+import 'package:rewayah_academy/core/widgets/carte_piece_jointe.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
+import 'package:rewayah_academy/core/widgets/espace_travail_adaptatif.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
+import 'package:rewayah_academy/core/widgets/vue_etat_communication.dart';
 import 'package:rewayah_academy/features/com_messages/entete_fil_contexte.dart';
 import 'package:rewayah_academy/features/com_messages/fil_contextuel.dart';
 import 'package:rewayah_academy/features/com_messages/liste_fils.dart';
@@ -550,6 +550,26 @@ void main() {
       expect(find.text(t.com.socle.composants.etats.reessayer), findsNothing);
       expect(find.byType(FilDiscussion), findsNothing);
     });
+
+    testWidgets(
+      'COM-BR-16 : port des capacites neutre, le fil inscriptible se lit '
+      'seulement',
+      (WidgetTester tester) async {
+        await monterMessages(
+          tester,
+          port: FauxMessagesMetier(fils: <FilMetier>[filSimple()]),
+          depart: cheminFilTest('fil-1'),
+          ecritureOuverte: false,
+        );
+        expect(find.byType(FilDiscussion), findsNothing);
+        expect(find.byKey(FilContextuel.cleLectureSeule), findsOneWidget);
+        expect(find.byKey(FilDiscussion.envoyerKey), findsNothing);
+        expect(
+          _dansPrincipal(find.textContaining('Bonjour, voici une question')),
+          findsOneWidget,
+        );
+      },
+    );
 
     testWidgets('lecture seule : aucun champ, la limite est dite', (
       WidgetTester tester,

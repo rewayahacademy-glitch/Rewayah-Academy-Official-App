@@ -47,6 +47,7 @@ Future<GoRouter> _monter(
           const ClassesFoyerIndisponible(),
         ),
         portMessagesMetierProvider.overrideWithValue(port),
+        capaciteEcrireOuverteTest,
       ],
       child: TranslationProvider(
         child: Consumer(

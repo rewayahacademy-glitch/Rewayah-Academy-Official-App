@@ -15,20 +15,22 @@
 // branchent a COM-FUS : `FilDiscussion` (socle) ne porte encore que du
 // texte.
 //
-// Un fil ou la personne ne peut pas ecrire (capacite `ecrire` absente du
-// fil rendu, COM-BR-16) se lit sans champ ni bouton : une phrase dit la
-// limite, aucun bouton grise.
+// Un fil ou la personne ne peut pas ecrire se lit sans champ ni bouton : une
+// phrase dit la limite, aucun bouton grise. Ecrire demande les deux
+// capacites de COM-BR-16 : `ecrireDansFil` du port neutre du socle
+// (`capacitesCommunicationProvider`, lu par la page et passe ici en
+// [FilContextuel.ecritureOuverte]) ET `ecrire` portee par CE fil rendu.
 
 import 'dart:ui' show FlutterView;
 
 import 'package:flutter/material.dart';
 
+import '../../core/communications/textes_fil_communication.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_tile.dart';
-import '../../core/widgets/communications/carte_piece_jointe.dart';
-import '../../core/widgets/communications/composer_texte.dart';
+import '../../core/widgets/carte_piece_jointe.dart';
 import '../../core/widgets/fil_discussion.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../accueil_famille/bloc_seance.dart'
@@ -66,10 +68,20 @@ String horodatageMessage(DateTime instant) {
 /// Le fil contextuel : en-tete, messages, champ et envoi honnete.
 class FilContextuel extends StatefulWidget {
   /// Cree le fil.
-  const FilContextuel({required this.fil, required this.onEnvoyer, super.key});
+  const FilContextuel({
+    required this.fil,
+    required this.ecritureOuverte,
+    required this.onEnvoyer,
+    super.key,
+  });
 
   /// Le fil ouvert.
   final FilMetier fil;
+
+  /// La capacite `ecrireDansFil` de la personne connectee (COM-BR-16), lue
+  /// par la page dans `capacitesCommunicationProvider` : fermee, le fil se
+  /// lit seulement, quelle que soit la capacite portee par le fil.
+  final bool ecritureOuverte;
 
   /// L'envoi d'un texte avec sa cle d'idempotence (COM-BR-02) : le futur se
   /// termine sur l'accuse du serveur, et echoue sinon.
@@ -190,7 +202,7 @@ class _FilContextuelState extends State<FilContextuel>
       padding: const EdgeInsets.only(bottom: AppSpacing.lg),
       child: EnteteFilContexte.duFil(fil),
     );
-    if (!fil.peut(CapaciteFil.ecrire)) {
+    if (!widget.ecritureOuverte || !fil.peut(CapaciteFil.ecrire)) {
       return _FilEnLecture(fil: fil, entete: entete);
     }
     final String soi = t.com.socle.composants.composer.auteurSoi;

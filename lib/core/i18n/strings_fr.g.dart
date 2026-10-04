@@ -15249,6 +15249,9 @@ class Traductions$com$socle$navigation$fr {
 	/// fr: 'Communications'
 	String get communications => 'Communications';
 
+	/// fr: 'Annonces, modération et messages des Classes'
+	String get communicationsDetail => 'Annonces, modération et messages des Classes';
+
 	/// fr: 'Annonces'
 	String get ongletAnnonces => 'Annonces';
 
@@ -15935,11 +15938,17 @@ class Traductions$com$socle$composants$pieceJointe$fr {
 	/// fr: 'L'ajout de fichiers n'est pas encore disponible ici.'
 	String get joindreIndisponible => 'L\'ajout de fichiers n\'est pas encore disponible ici.';
 
+	/// fr: 'Ouvrir'
+	String get ouvrir => 'Ouvrir';
+
 	/// fr: 'Ouvrir {nom}'
-	String ouvrir({required Object nom}) => 'Ouvrir ${nom}';
+	String ouvrirLecteur({required Object nom}) => 'Ouvrir ${nom}';
+
+	/// fr: 'Retirer'
+	String get retirer => 'Retirer';
 
 	/// fr: 'Retirer {nom}'
-	String retirer({required Object nom}) => 'Retirer ${nom}';
+	String retirerLecteur({required Object nom}) => 'Retirer ${nom}';
 
 	/// fr: '{taille} octets'
 	String tailleOctets({required Object taille}) => '${taille} octets';
@@ -16052,8 +16061,8 @@ class Traductions$com$socle$composants$etats$fr {
 	/// fr: 'Impossible de charger ce contenu.'
 	String get erreurTitre => 'Impossible de charger ce contenu.';
 
-	/// fr: 'Impossible de charger ce contenu. Vérifiez votre connexion, puis réessayez.'
-	String get erreur => 'Impossible de charger ce contenu. Vérifiez votre connexion, puis réessayez.';
+	/// fr: 'Vérifiez votre connexion, puis réessayez.'
+	String get erreur => 'Vérifiez votre connexion, puis réessayez.';
 
 	/// fr: 'Réessayer'
 	String get reessayer => 'Réessayer';
@@ -20120,8 +20129,10 @@ extension on Traductions {
 			'com.socle.composants.badge.mentionSemantique' => 'Une mention vous concerne',
 			'com.socle.composants.pieceJointe.joindre' => 'Joindre un fichier',
 			'com.socle.composants.pieceJointe.joindreIndisponible' => 'L\'ajout de fichiers n\'est pas encore disponible ici.',
-			'com.socle.composants.pieceJointe.ouvrir' => ({required Object nom}) => 'Ouvrir ${nom}',
-			'com.socle.composants.pieceJointe.retirer' => ({required Object nom}) => 'Retirer ${nom}',
+			'com.socle.composants.pieceJointe.ouvrir' => 'Ouvrir',
+			'com.socle.composants.pieceJointe.ouvrirLecteur' => ({required Object nom}) => 'Ouvrir ${nom}',
+			'com.socle.composants.pieceJointe.retirer' => 'Retirer',
+			'com.socle.composants.pieceJointe.retirerLecteur' => ({required Object nom}) => 'Retirer ${nom}',
 			'com.socle.composants.pieceJointe.tailleOctets' => ({required Object taille}) => '${taille} octets',
 			'com.socle.composants.pieceJointe.tailleKo' => ({required Object taille}) => '${taille} Ko',
 			'com.socle.composants.pieceJointe.tailleMo' => ({required Object taille}) => '${taille} Mo',
@@ -20153,7 +20164,7 @@ extension on Traductions {
 			'com.socle.composants.etats.chargement' => 'Chargement en cours',
 			'com.socle.composants.etats.videTitre' => 'Rien ici pour le moment',
 			'com.socle.composants.etats.erreurTitre' => 'Impossible de charger ce contenu.',
-			'com.socle.composants.etats.erreur' => 'Impossible de charger ce contenu. Vérifiez votre connexion, puis réessayez.',
+			'com.socle.composants.etats.erreur' => 'Vérifiez votre connexion, puis réessayez.',
 			'com.socle.composants.etats.reessayer' => 'Réessayer',
 			'com.socle.composants.etats.horsLigne' => 'Vous êtes hors ligne. Les nouveaux messages ne peuvent pas être actualisés.',
 			'com.socle.composants.etats.indisponibleTitre' => 'Pas encore disponible',
@@ -20208,6 +20219,7 @@ extension on Traductions {
 			'com.socle.navigation.messages' => _root.com.socle.lexique.messages,
 			'com.socle.navigation.communaute' => _root.com.socle.lexique.communaute,
 			'com.socle.navigation.communications' => 'Communications',
+			'com.socle.navigation.communicationsDetail' => 'Annonces, modération et messages des Classes',
 			'com.socle.navigation.ongletAnnonces' => 'Annonces',
 			'com.socle.navigation.ongletModeration' => 'Modération',
 			'com.socle.navigation.ongletMessages' => _root.com.socle.lexique.messages,

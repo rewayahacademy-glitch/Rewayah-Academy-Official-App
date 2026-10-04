@@ -17,6 +17,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
+import '../../../core/communications/capacites_communication.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
@@ -224,6 +225,16 @@ class _DemoMessagesState extends State<_DemoMessages> {
     return ProviderScope(
       overrides: <Override>[
         portMessagesMetierProvider.overrideWithValue(_port),
+        // Hors production seulement : la demonstration ouvre l'ecriture
+        // (COM-BR-16) ; le fil decide encore par sa propre capacite. Le
+        // provider lu par la page est surcharge lui-meme : sans
+        // `dependencies`, il se resoudrait dans la portee racine, sur le
+        // port neutre.
+        capacitesCommunicationProvider.overrideWith(
+          (Ref _) => const CapacitesCommunicationsFixes(<CapaciteCommunication>{
+            CapaciteCommunication.ecrireDansFil,
+          }).capacites(),
+        ),
         if (widget.situation == SituationDemoMessages.horsLigne)
           horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
       ],

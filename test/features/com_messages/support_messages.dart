@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/communications/capacites_communication.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -22,6 +23,15 @@ import 'package:rewayah_academy/features/demo/communications/com_messages_demo.d
 import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
 
 import '../../support/harnais.dart';
+
+/// La capacite `ecrireDansFil` ouverte (COM-BR-16), comme la demonstration :
+/// le port de production est neutre et ferme tout.
+final Override capaciteEcrireOuverteTest = portCapacitesCommunicationsProvider
+    .overrideWithValue(
+      const CapacitesCommunicationsFixes(<CapaciteCommunication>{
+        CapaciteCommunication.ecrireDansFil,
+      }),
+    );
 
 /// L'heure fixe des tests.
 final DateTime maintenantTest = DateTime.utc(2026, 10, 4, 12);
@@ -45,7 +55,9 @@ MessagesMetierDemo portDemo(
   maintenant: maintenantTest,
 );
 
-/// Monte la vraie `MessagesPage` sur [depart], et rend son routeur.
+/// Monte la vraie `MessagesPage` sur [depart], et rend son routeur. Sans
+/// [ecritureOuverte], le port des capacites reste celui de production
+/// (neutre, tout ferme : COM-BR-16).
 Future<GoRouter> monterMessages(
   WidgetTester tester, {
   required PortMessagesMetier port,
@@ -55,6 +67,7 @@ Future<GoRouter> monterMessages(
   double echelleTexte = 1,
   Brightness luminosite = Brightness.light,
   bool horsLigne = false,
+  bool ecritureOuverte = true,
   List<Override> surcharges = const <Override>[],
   bool stabiliser = true,
 }) async {
@@ -100,6 +113,7 @@ Future<GoRouter> monterMessages(
           FauxServiceReseau(horsLigneRendu: horsLigne),
         ),
         portMessagesMetierProvider.overrideWithValue(port),
+        if (ecritureOuverte) capaciteEcrireOuverteTest,
         ...surcharges,
       ],
       child: TranslationProvider(

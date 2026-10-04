@@ -7,8 +7,8 @@
 // Studio) n'aient pas a les recomposer. L'emplacement vocal reste vide tant
 // que COM-VOC ne le remplit pas (branchement a COM-FUS).
 
-import '../../i18n/strings.g.dart';
-import '../fil_discussion.dart';
+import '../i18n/strings.g.dart';
+import '../widgets/fil_discussion.dart';
 
 /// Les textes du fil des communications : « Envoyer », « Envoi en cours »,
 /// « Envoye » sur accuse seulement, « Ce message n'a pas encore ete

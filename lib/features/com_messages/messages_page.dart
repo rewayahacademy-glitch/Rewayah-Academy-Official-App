@@ -32,13 +32,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/communications/capacites_communication.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/communications/espace_travail_adaptatif.dart';
-import '../../core/widgets/communications/etats_communication.dart';
+import '../../core/widgets/espace_travail_adaptatif.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/vue_etat_communication.dart';
 import 'fil_contextuel.dart';
 import 'liste_fils.dart';
 import 'panneau_contexte_fil.dart';
@@ -407,6 +408,14 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
     return FilContextuel(
       key: ValueKey<String>('fil-contextuel-${fil.id}'),
       fil: fil,
+      // COM-BR-16 : la capacite globale vient du port neutre du socle ;
+      // tant qu'elle n'est pas lue (ou en echec), l'ecriture reste fermee.
+      ecritureOuverte:
+          ref
+              .watch(capacitesCommunicationProvider)
+              .value
+              ?.peut(CapaciteCommunication.ecrireDansFil) ??
+          false,
       onEnvoyer: (String texte, String cle) => _envoyer(fil.id, texte, cle),
     );
   }
