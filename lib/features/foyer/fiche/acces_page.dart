@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/capacites/port_acces_foyer.dart';
 import '../../../core/finance/finances_profil.dart';
 import '../../../core/foyer/selection_eleve.dart';
+import '../../../core/i18n/elision.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/theme/app_palette.dart';
@@ -56,6 +57,9 @@ class AccesElevePage extends StatelessWidget {
   /// Le bandeau neutre des seances fermees sans manque rendu.
   static const Key bandeauFermeKey = Key('ficheEleve.acces.fermees');
 
+  /// La pastille « Suspendu » d'une place liberee (FI-BR-08).
+  static const Key pastilleSuspenduKey = Key('ficheEleve.acces.suspendu');
+
   @override
   Widget build(BuildContext context) {
     return PageFiche(
@@ -97,14 +101,20 @@ class _Acces extends ConsumerWidget {
         !regulariser && ouvertureSeances(acces) == OuvertureSeances.fermees;
     final bool causeRendue =
         regulariser || (fermeSansRegulariser && finances?.manque != null);
-    final Widget? bandeau = causeRendue
+    // L'etat de la place rendu par la source (FI-BR-08) : la place liberee
+    // passe avant tout, elle dit ce qui a change ; la reactivation ne
+    // masque ni un nouveau manque ni des seances de nouveau fermees.
+    final BandeauPlace? place = BandeauPlace.pour(acces, prenom: profil.prenom);
+    final Widget? bandeau = acces?.place == EtatPlace.liberee
+        ? place
+        : causeRendue
         ? BandeauAttention(
             key: AccesElevePage.bandeauKey,
             titre: t.argent.acces.regulariserTitre,
             message: messageRegularisation(finances!),
           )
         : !fermeSansRegulariser
-        ? null
+        ? place
         : BandeauAttention(
             key: AccesElevePage.bandeauFermeKey,
             titre: t.argent.acces.seancesFermeesTitre,
@@ -170,7 +180,9 @@ class _Acces extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Text(
-                      t.ficheEleve.acces.ligne(prenom: profil.prenom),
+                      t.ficheEleve.acces.ligne(
+                        dePrenom: deDevant(profil.prenom),
+                      ),
                       style: palette.inkStrong.applyTo(
                         textes.titleMedium ?? const TextStyle(),
                       ),
@@ -185,7 +197,13 @@ class _Acces extends ConsumerWidget {
                     ),
                   ],
                 ),
-                if (regulariser)
+                if (acces?.place == EtatPlace.liberee)
+                  StatusPill(
+                    key: AccesElevePage.pastilleSuspenduKey,
+                    libelle: t.argent.acces.pastilleSuspendu,
+                    ton: TonEtat.avertissement,
+                  )
+                else if (regulariser)
                   const PastilleFinanciere(etat: EtatFinancier.aRegulariser)
                 else if (essai != null)
                   StatusPill(

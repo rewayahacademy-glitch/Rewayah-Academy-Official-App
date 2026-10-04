@@ -11,6 +11,7 @@ import '../../../core/finance/mouvements_profil.dart';
 import '../../../core/finance/politique_commerciale.dart';
 import '../../../core/finance/suivi_paiement.dart';
 import '../../../core/foyer/selection_eleve.dart';
+import '../../../core/i18n/elision.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
@@ -131,12 +132,16 @@ class _CorpsMouvements extends ConsumerWidget {
     lecture: ref.watch(mouvementsProfilProvider(profil.eleveId)),
     onRelire: () => ref.invalidate(mouvementsProfilProvider(profil.eleveId)),
     textes: (
-      contexte: t.ficheEleve.mouvements.contexte(prenom: profil.prenom),
+      contexte: t.ficheEleve.mouvements.contexte(
+        dePrenom: deDevant(profil.prenom),
+      ),
       indisponibleTitre: t.ficheEleve.mouvements.indisponibleTitre,
       indisponiblePhrase: t.ficheEleve.mouvements.indisponiblePhrase(
-        prenom: profil.prenom,
+        dePrenom: deDevant(profil.prenom),
       ),
-      erreurTitre: t.ficheEleve.mouvements.erreurTitre(prenom: profil.prenom),
+      erreurTitre: t.ficheEleve.mouvements.erreurTitre(
+        dePrenom: deDevant(profil.prenom),
+      ),
       videTitre: t.ficheEleve.mouvements.videTitre,
       videPhrase: t.ficheEleve.mouvements.videPhrase(prenom: profil.prenom),
     ),

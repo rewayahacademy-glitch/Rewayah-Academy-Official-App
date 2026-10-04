@@ -1475,8 +1475,9 @@ void main() {
         profilId: _ibrahim,
         seances: <Seance>[_coursEnDirect(_ibrahim)],
         surcharges: <Override>[
-          portAccesFoyerProvider.overrideWithValue(
-            const AccesFoyerFinanceDemo(JeuFoyerFinance.unARegulariser),
+          // L'acces de l'enfant, borne a sa session (FI-BR-08, R4-02).
+          portMonAccesProvider.overrideWithValue(
+            const MonAccesFinanceDemo(JeuFoyerFinance.unARegulariser, _ibrahim),
           ),
           portPaiementsFoyerProvider.overrideWithValue(espion),
         ],
@@ -1644,8 +1645,9 @@ void main() {
           profilId: _ibrahim,
           seances: <Seance>[_coursEnDirect(_ibrahim)],
           surcharges: <Override>[
-            portAccesFoyerProvider.overrideWithValue(
-              AccesFoyerFinanceDemo(jeu),
+            // L'acces de l'enfant, borne a sa session (FI-BR-08, R4-02).
+            portMonAccesProvider.overrideWithValue(
+              MonAccesFinanceDemo(jeu, _ibrahim),
             ),
             portPaiementsFoyerProvider.overrideWithValue(espion),
           ],

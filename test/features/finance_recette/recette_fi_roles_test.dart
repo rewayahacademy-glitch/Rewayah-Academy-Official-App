@@ -445,6 +445,10 @@ void main() {
         'seancesPayantesOuvertes': 'bool?',
         'essaisUtilises': 'int?',
         'essaisMax': 'int?',
+        // FI-BR-08 (revue FI-VAGUE-R R4-04) : un etat de place et son jour,
+        // jamais une cause ni un montant.
+        'place': 'EtatPlace?',
+        'datePlace': 'DateTime?',
       });
       // Aucun type d'argent, aucun nom de montant ou de cause financiere.
       for (final MapEntry<String, String> c in champs.entries) {
@@ -503,8 +507,9 @@ void main() {
             ),
           ],
           surcharges: <Override>[
-            portAccesFoyerProvider.overrideWithValue(
-              AccesFoyerFinanceDemo(jeu),
+            // L'acces de l'enfant, borne a sa session (FI-BR-08, R4-02).
+            portMonAccesProvider.overrideWithValue(
+              MonAccesFinanceDemo(jeu, _ibrahim),
             ),
             portPaiementsFoyerProvider.overrideWithValue(paiements),
             portRechargeFoyerProvider.overrideWithValue(recharge),

@@ -8,6 +8,7 @@ import '../../../core/finance/finances_profil.dart';
 import '../../../core/finance/format_montant.dart';
 import '../../../core/finance/politique_commerciale.dart';
 import '../../../core/foyer/selection_eleve.dart';
+import '../../../core/i18n/elision.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
@@ -114,9 +115,11 @@ class _CorpsFinances extends ConsumerWidget {
       textes: (
         indisponibleTitre: t.ficheEleve.finances.indisponibleTitre,
         indisponiblePhrase: t.ficheEleve.finances.indisponiblePhrase(
-          prenom: profil.prenom,
+          dePrenom: deDevant(profil.prenom),
         ),
-        erreurTitre: t.ficheEleve.finances.erreurTitre(prenom: profil.prenom),
+        erreurTitre: t.ficheEleve.finances.erreurTitre(
+          dePrenom: deDevant(profil.prenom),
+        ),
         videTitre: t.ficheEleve.finances.videTitre(prenom: profil.prenom),
         videPhrase: t.ficheEleve.finances.videPhrase,
       ),
@@ -134,7 +137,7 @@ class _CorpsFinances extends ConsumerWidget {
             GoRouter.of(context)
                 .go(Routes.rechargePour(<String>[finance.profilId])),
         semantiqueMouvements: t.ficheEleve.finances.voirMouvementsSemantique(
-          prenom: finance.prenom,
+          dePrenom: deDevant(finance.prenom),
         ),
         onMouvements: () =>
             GoRouter.of(context)
@@ -259,7 +262,7 @@ bool _periodeNonFinancee(FinancesProfil f) =>
       ),
     (final String m, null, null) => t.foyer.finances.manque(montant: m),
     (null, _, final String mo) => t.ficheEleve.finances.moisNonFinance(
-      mois: mo,
+      deMois: deDevant(mo),
     ),
     _ => t.ficheEleve.finances.sansManque,
   };

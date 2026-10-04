@@ -1010,7 +1010,7 @@ void main() {
       expect(
         find.descendant(
           of: carte,
-          matching: find.text(t.ficheEleve.acces.ligne(prenom: 'Eleve A1')),
+          matching: find.text(t.ficheEleve.acces.ligne(dePrenom: "d'Eleve A1")),
         ),
         findsOneWidget,
       );

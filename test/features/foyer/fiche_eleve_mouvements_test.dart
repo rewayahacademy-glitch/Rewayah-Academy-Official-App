@@ -628,7 +628,7 @@ void main() {
       );
       expect(_etat(NatureEtat.echecServeur), findsOneWidget);
       expect(
-        find.text(t.ficheEleve.mouvements.erreurTitre(prenom: 'Mariam')),
+        find.text(t.ficheEleve.mouvements.erreurTitre(dePrenom: 'de Mariam')),
         findsOneWidget,
       );
       await tester.tap(find.text(t.commun.etats.actions.reessayer));

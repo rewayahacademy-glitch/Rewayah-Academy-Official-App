@@ -382,6 +382,9 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     );
   }
 
+  /// Vrai quand la source ne rend qu'un beneficiaire : rien a repartir.
+  static bool _unSeul(List<BeneficiaireRecharge>? liste) => liste?.length == 1;
+
   /// L'accent de profil choisi par le tuteur (K-62), `null` sans choix.
   AccentProfil? _accent(String id) =>
       accentLu(ref.watch(accentsProfilsProvider), id);
@@ -426,7 +429,11 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         // (maquette 04).
         _Titre(
           titre: t.adulte.recharge.titre,
-          phrase: t.adulte.recharge.phrase,
+          // Un seul beneficiaire rendu (adulte autonome, foyer d'un enfant) :
+          // la phrase au singulier (revue FI-VAGUE-R R4-06).
+          phrase: _unSeul(lecture.value)
+              ? t.adulte.recharge.phraseUnique
+              : t.adulte.recharge.phrase,
         ),
         Ecart.vXxl,
         corps,
@@ -448,6 +455,9 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     final bool aucun = !liste.any(
       (BeneficiaireRecharge b) => _selection.contains(b.id),
     );
+    // Un seul profil : ni « Tout désélectionner », ni note de repartition,
+    // et le titre au singulier (revue FI-VAGUE-R R4-06).
+    final bool seul = _unSeul(liste);
     // Pourquoi le bouton attend (K-59).
     final String? raison = aucun
         ? t.adulte.recharge.raisonAucun
@@ -475,22 +485,25 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
             Semantics(
               header: true,
               child: Text(
-                t.adulte.recharge.profils,
+                seul
+                    ? t.adulte.recharge.profilUnique
+                    : t.adulte.recharge.profils,
                 style: palette.inkStrong.applyTo(
                   textes.titleMedium ?? const TextStyle(),
                 ),
               ),
             ),
-            LienFleche(
-              key: RechargeFoyerPage.toutSelectionnerKey,
-              libelle: tout
-                  ? t.adulte.recharge.toutDeselectionner
-                  : t.adulte.recharge.toutSelectionner,
-              fleche: false,
-              // Fige pendant la verification, comme les cases : la
-              // selection ne change pas sous le recapitulatif en calcul.
-              onPress: _occupe ? null : () => _toutSelectionner(liste, !tout),
-            ),
+            if (!seul)
+              LienFleche(
+                key: RechargeFoyerPage.toutSelectionnerKey,
+                libelle: tout
+                    ? t.adulte.recharge.toutDeselectionner
+                    : t.adulte.recharge.toutSelectionner,
+                fleche: false,
+                // Fige pendant la verification, comme les cases : la
+                // selection ne change pas sous le recapitulatif en calcul.
+                onPress: _occupe ? null : () => _toutSelectionner(liste, !tout),
+              ),
           ],
         ),
         Ecart.vSm,
@@ -505,14 +518,17 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
             ],
           ),
         ),
-        Ecart.vLg,
         // La repartition (guide §5.3) : un seul paiement, chaque montant au
-        // solde de son profil, jamais un solde commun.
-        _Note(
-          key: RechargeFoyerPage.repartitionKey,
-          texte: t.adulte.recharge.repartition,
-          attenuee: true,
-        ),
+        // solde de son profil, jamais un solde commun. Sans objet pour un
+        // seul profil.
+        if (!seul) ...<Widget>[
+          Ecart.vLg,
+          _Note(
+            key: RechargeFoyerPage.repartitionKey,
+            texte: t.adulte.recharge.repartition,
+            attenuee: true,
+          ),
+        ],
         if (_echecVerif case final _EchecRecharge echec) ...<Widget>[
           Ecart.vLg,
           _FocusALApparition(
@@ -881,8 +897,10 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
               valeur: recapitulatif.total,
               chiffres: true,
             ),
-            Ecart.vSm,
-            _Note(texte: t.adulte.recharge.repartition, attenuee: true),
+            if (recapitulatif.lignes.length > 1) ...<Widget>[
+              Ecart.vSm,
+              _Note(texte: t.adulte.recharge.repartition, attenuee: true),
+            ],
           ],
         ),
         Ecart.vLg,

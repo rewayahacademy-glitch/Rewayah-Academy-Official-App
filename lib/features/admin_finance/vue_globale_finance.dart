@@ -21,6 +21,7 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_finance_direction.dart';
 import '../../core/finance/format_montant.dart';
 import '../../core/finance/montant.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -184,7 +185,7 @@ class VueGlobaleFinanceContenu extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Text(
-          vueT.contexte(mois: mois),
+          vueT.contexte(deMois: deDevant(mois)),
           style: palette.inkMuted.applyTo(
             textes.bodyLarge ?? const TextStyle(),
           ),

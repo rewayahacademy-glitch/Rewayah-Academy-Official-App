@@ -200,14 +200,16 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
         ? const <InterruptionPriere>[]
         : interruptionsDe(prochain, reglages.value);
 
-    // L'acces de l'eleve de ce cours (FI-9a) : seances ouvertes, essai ou
-    // fermees, jamais une cause ni un montant (guide §1.7, lecon 15). Une
-    // lecture absente ou en echec ne change rien a l'ecran (port neutre en
+    // L'acces de l'eleve connecte (FI-9a) : seances ouvertes, essai ou
+    // fermees, jamais une cause ni un montant (guide §1.7, lecon 15). Lu
+    // borne a sa session (`PortMonAcces`, FI-BR-08, revue FI-VAGUE-R R4-02) :
+    // l'acces des freres et soeurs n'est jamais charge ici. Une lecture
+    // absente ou en echec ne change rien a l'ecran (port neutre en
     // production) : Rejoindre ne disparait que sur un « ferme » explicite,
     // et jamais selon un solde, que ce port ne porte pas.
     final AsyncValue<AccesBeneficiaire?>? acces = prochain == null
         ? null
-        : ref.watch(accesEleveProvider(prochain.eleveId));
+        : ref.watch(accesAppelantProvider);
     final bool accesFerme =
         ouvertureSeances(acces?.value) == OuvertureSeances.fermees;
     // Tant que l'acces se lit, Rejoindre reste present et inerte (revue

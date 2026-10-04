@@ -269,8 +269,15 @@ void main() {
     await _monter(tester, jeu: JeuFoyerFinance.unProfil);
     expect(find.byType(RechargeFoyerPage), findsOneWidget);
     expect(find.text(t.adulte.recharge.titre), findsOneWidget);
-    expect(find.text(t.adulte.recharge.profils), findsOneWidget);
-    expect(find.byKey(RechargeFoyerPage.repartitionKey), findsOneWidget);
+    // Un seul beneficiaire rendu (revue FI-VAGUE-R R4-06) : le singulier,
+    // ni « Tout désélectionner », ni note de repartition.
+    expect(find.text(t.adulte.recharge.phraseUnique), findsOneWidget);
+    expect(find.text(t.adulte.recharge.phrase), findsNothing);
+    expect(find.text(t.adulte.recharge.profilUnique), findsOneWidget);
+    expect(find.text(t.adulte.recharge.profils), findsNothing);
+    expect(find.byKey(RechargeFoyerPage.toutSelectionnerKey), findsNothing);
+    expect(find.byKey(RechargeFoyerPage.repartitionKey), findsNothing);
+    expect(find.text(t.adulte.recharge.repartition), findsNothing);
     // Non coche : montant desactive, « 0 $ », la raison du bouton inactif.
     expect(_coche(tester, _mariam), isFalse);
     expect(_actif(tester, RechargeFoyerPage.plusDe(_mariam)), isFalse);
@@ -295,13 +302,8 @@ void main() {
     expect(find.byKey(RechargeFoyerPage.ligneDe(_mariam)), findsOneWidget);
     final String total = formaterMontant(DonneesFinanceDemo.usd(10));
     expect(_dans(RechargeFoyerPage.totalKey, find.text(total)), findsOneWidget);
-    expect(
-      _dans(
-        RechargeFoyerPage.totalKey,
-        find.text(t.adulte.recharge.repartition),
-      ),
-      findsOneWidget,
-    );
+    // Une seule ligne au recapitulatif : rien a repartir (R4-06).
+    expect(find.text(t.adulte.recharge.repartition), findsNothing);
     expect(find.byType(LigneMoyenPaiement), findsOneWidget);
     expect(find.text(t.adulte.recharge.payer(montant: total)), findsOneWidget);
     verifierUnSeulBoutonPlein(tester);

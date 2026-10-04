@@ -27,13 +27,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart'
     show FutureProviderFamily, ProviderFamily;
 
+import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_mes_finances.dart';
 import '../../core/finance/finances_profil.dart';
 import '../../core/finance/format_montant.dart';
 import '../../core/finance/montant.dart';
 import '../../core/i18n/strings.g.dart';
-import '../../core/session/session_controleur.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bandeau_attention.dart';
@@ -46,7 +46,9 @@ import '../foyer/finances_foyer.dart' show financesFoyerProvider;
 // **jamais lue par un ecran d'enfant** (lecon 15).
 export '../foyer/finances_foyer.dart' show financesFoyerProvider;
 
-/// L'acces d'un eleve, `null` quand le port ne le rend pas.
+/// L'acces d'un eleve du foyer, `null` quand le port ne le rend pas. **Pour
+/// le titulaire** (fiche eleve, Compte) : un ecran d'eleve lit
+/// [accesAppelantProvider], borne a sa session (revue FI-VAGUE-R R4-02).
 ///
 /// Lu de l'etat de `accesFoyerProvider`, jamais de son `future` : Riverpod
 /// relance une lecture en echec et son `future` reste alors en attente, ce
@@ -83,19 +85,45 @@ AsyncValue<AccesBeneficiaire?> _accesDe(
   return const AsyncValue<AccesBeneficiaire?>.data(null);
 }
 
-/// L'acces de l'eleve connecte, lu par son identifiant de session, pour les
-/// ecrans qui n'ont pas de seance sous la main (Mes groupes). `null` quand le
-/// port ne le rend pas ou qu'il ne parle pas de l'appelant : un tuteur ou un
-/// enseignant n'a pas de ligne d'acces a son identifiant, son ecran ne change
-/// donc pas (aucun role lu). La session n'est lue qu'une fois des acces
-/// rendus : en production (port neutre) ou en echec, rien d'autre n'est lu.
+/// La lecture de l'acces de la personne connectee, **bornee a sa session**
+/// (`PortMonAcces`, FI-BR-08, revue FI-VAGUE-R R4-02) : jamais l'acces du
+/// foyer entier charge puis filtre sur l'appareil de l'enfant.
+///
+/// Une capacite absente (production, FI-BR-08) n'est jamais relancee : rien
+/// ne changera avant le branchement, et une relance silencieuse ferait
+/// tourner des minuteries sur chaque ecran d'eleve. Un autre echec garde la
+/// relance par defaut de Riverpod.
+final FutureProvider<AccesBeneficiaire?> monAccesProvider =
+    FutureProvider<AccesBeneficiaire?>(
+      (Ref ref) => ref.watch(portMonAccesProvider).monAcces(),
+      retry: (int essai, Object erreur) => erreur is CapaciteIndisponible
+          ? null
+          : ProviderContainer.defaultRetry(essai, erreur),
+    );
+
+/// L'acces de l'eleve connecte (enfant ou adulte autonome), pour ses ecrans :
+/// Accueil, Mes groupes, Espace groupe, Mon espace. `null` quand le port ne
+/// rend pas de ligne : un tuteur ou un enseignant n'en a pas, son ecran ne
+/// change donc pas (aucun role lu). Lu de l'etat de [monAccesProvider],
+/// jamais de son `future` : un echec se dit tout de suite, la relance
+/// comprise (port neutre en production).
 final Provider<AsyncValue<AccesBeneficiaire?>> accesAppelantProvider =
     Provider<AsyncValue<AccesBeneficiaire?>>(
-      (Ref ref) => _accesDe(
-        ref.watch(accesFoyerProvider),
-        () => ref.watch(sessionProvider).profileId,
-      ),
+      (Ref ref) => ref.watch(monAccesProvider),
     );
+
+/// Ce que l'eleve connecte peut faire de Rejoindre (FI-9a, revue FI-VAGUE-R
+/// R4-01) : la meme regle partout ou une carte de seance propose d'entrer
+/// (Accueil, Mes groupes, Espace groupe, accueils de demonstration).
+/// [ferme] : seances fermees, Rejoindre est retire et la copie le dit ;
+/// [enLecture] : l'acces se lit encore, Rejoindre reste present et inerte.
+/// Une lecture absente ou en echec ne change rien, et jamais selon un solde.
+({bool ferme, bool enLecture}) rejoindreSelonAcces(
+  AsyncValue<AccesBeneficiaire?> acces,
+) => (
+  ferme: ouvertureSeances(acces.value) == OuvertureSeances.fermees,
+  enLecture: accesEnAttente(acces),
+);
 
 /// La finance d'un profil, `null` quand la source ne la rend pas.
 final FutureProviderFamily<FinancesProfil?, String> financesProfilProvider =
@@ -190,6 +218,90 @@ String? phraseConservation(FinancesProfil finances) {
       : t.argent.acces.placeConservee(date: dateLongue(fin));
 }
 
+/// La phrase du tuteur (avec [prenom]) ou de l'adulte autonome (sans) sur
+/// la place rendue par la source (FI-BR-08, guide §8 F5) : place liberee,
+/// acces suspendu, ou acces reactive. `null` sans etat de place rendu.
+/// **Jamais pour l'enfant** : sa copie reste neutre, sans cause.
+String? phrasePlace(AccesBeneficiaire? acces, {String? prenom}) {
+  final EtatPlace? place = acces?.place;
+  if (place == null) return null;
+  final DateTime? jour = acces?.datePlace;
+  final String? date = jour == null ? null : dateLongue(jour);
+  return switch ((place, prenom, date)) {
+    (EtatPlace.liberee, final String p, final String d) =>
+      t.argent.acces.suspenduTuteur(prenom: p, date: d),
+    (EtatPlace.liberee, final String p, null) =>
+      t.argent.acces.suspenduTuteurSansDate(prenom: p),
+    (EtatPlace.liberee, null, final String d) => t.argent.acces.suspenduAdulte(
+      date: d,
+    ),
+    (EtatPlace.liberee, null, null) => t.argent.acces.suspenduAdulteSansDate,
+    (EtatPlace.reactivee, final String p, final String d) =>
+      t.argent.acces.reactiveTuteur(prenom: p, date: d),
+    (EtatPlace.reactivee, final String p, null) =>
+      t.argent.acces.reactiveTuteurSansDate(prenom: p),
+    (EtatPlace.reactivee, null, final String d) =>
+      t.argent.acces.reactiveAdulte(date: d),
+    (EtatPlace.reactivee, null, null) => t.argent.acces.reactiveAdulteSansDate,
+  };
+}
+
+/// Le bandeau de la place pour le tuteur ou l'adulte autonome : « Accès
+/// suspendu » (place liberee) ou « Accès réactivé ». Rien sans etat de place
+/// rendu. Le compte reste navigable : le bandeau s'ajoute, il ne ferme rien.
+class BandeauPlace extends StatelessWidget {
+  /// Cree le bandeau ; [prenom] nul pour l'adulte autonome (« Votre place »).
+  const BandeauPlace({required this.acces, super.key, this.prenom});
+
+  /// L'acces rendu, avec son etat de place.
+  final AccesBeneficiaire acces;
+
+  /// Le prenom de l'eleve, pour le tuteur.
+  final String? prenom;
+
+  /// La cle du bandeau « Accès suspendu ».
+  static const Key suspenduKey = Key('acces.place.suspendu');
+
+  /// La cle du bandeau « Accès réactivé ».
+  static const Key reactiveKey = Key('acces.place.reactive');
+
+  /// Le bandeau de [acces], `null` sans etat de place rendu.
+  static BandeauPlace? pour(AccesBeneficiaire? acces, {String? prenom}) =>
+      acces?.place == null ? null : BandeauPlace(acces: acces!, prenom: prenom);
+
+  @override
+  Widget build(BuildContext context) {
+    final bool liberee = acces.place == EtatPlace.liberee;
+    return BandeauAttention(
+      key: liberee ? suspenduKey : reactiveKey,
+      titre: liberee
+          ? t.argent.acces.suspenduTitre
+          : t.argent.acces.reactiveTitre,
+      message: phrasePlace(acces, prenom: prenom) ?? '',
+      ton: liberee ? TonEtat.avertissement : TonEtat.succes,
+    );
+  }
+}
+
+/// La copie de l'eleve adulte autonome quand ses seances sont fermees, sans
+/// etat de place ni manque rendus : neutre, au vouvoiement, sans cause
+/// inventee. La cause utile vit dans Mon espace > Paiements.
+class BandeauAccesAdulte extends StatelessWidget {
+  /// Cree le bandeau.
+  const BandeauAccesAdulte({super.key});
+
+  /// La cle du bandeau.
+  static const Key cle = Key('acces.adulte.ferme');
+
+  @override
+  Widget build(BuildContext context) => BandeauAttention(
+    key: cle,
+    titre: t.argent.acces.seancesFermeesTitre,
+    message: t.argent.acces.adulteSeancesFermees,
+    ton: TonEtat.accent,
+  );
+}
+
 /// La copie de l'enfant quand ses seances sont fermees (guide §1.7) : neutre,
 /// sans cause, sans montant, sans action. Le ton « accent » dit une attente,
 /// jamais une faute.
@@ -251,11 +363,11 @@ class BandeauRegularisation extends StatelessWidget {
   }
 }
 
-/// L'acces de l'eleve adulte autonome dans Mon espace : « Accès à
-/// régulariser » et le manque exact, ou « Essai : n/2 ». Ses ports ne
-/// rendent que son seul profil (revue FI-1a « Données financières par
-/// rôle ») : le bloc ne lit rien d'autre qu'une liste a un element, et ne
-/// rend rien sinon. Rien non plus tant que les lectures ne sont pas
+/// L'acces de l'eleve adulte autonome dans Mon espace : « Accès suspendu »
+/// ou « Accès réactivé » (FI-BR-08), « Accès à régulariser » et le manque
+/// exact, ou « Essai : n/2 ». Ses ports ne rendent que son seul profil
+/// (revue FI-1a « Données financières par rôle » ; `PortMesFinances`,
+/// `PortMonAcces`). Rien non plus tant que les lectures ne sont pas
 /// abouties, en echec ou en production (ports neutres) : Mon espace garde
 /// ses rubriques et ses propres etats.
 class AccesAdulte extends ConsumerWidget {
@@ -272,26 +384,33 @@ class AccesAdulte extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // FI-9b : les finances du seul adulte (PortMesFinances, borne a la
     // session), jamais celles du foyer entier chargees puis filtrees.
+    // L'acces aussi est borne a sa session (FI-BR-08, revue FI-VAGUE-R
+    // R4-02) : jamais la liste du foyer.
     final AsyncValue<FinancesProfil?> miennes = ref.watch(mesFinancesProvider);
-    final List<AccesBeneficiaire>? acces = ref.watch(accesFoyerProvider).value;
+    final AccesBeneficiaire? acces = ref.watch(accesAppelantProvider).value;
     final FinancesProfil? finances = miennes.hasValue && !miennes.hasError
         ? miennes.requireValue
         : null;
-    final String? essai = libelleEssai(
-      acces?.length == 1 ? acces!.single : null,
-    );
-    final Widget? contenu = aRegulariser(finances)
+    final String? essai = libelleEssai(acces);
+    // La place liberee passe avant le manque : elle dit ce qui a change
+    // (FI-BR-08, guide §8 F5) ; la reactivation ne masque pas un nouveau
+    // manque.
+    final BandeauPlace? place = BandeauPlace.pour(acces);
+    final Widget? contenu = acces?.place == EtatPlace.liberee
+        ? place
+        : aRegulariser(finances)
         ? BandeauRegularisation(finances: finances!)
-        : essai != null
-        ? Align(
-            key: essaiKey,
-            alignment: AlignmentDirectional.centerStart,
-            child: StatusPill(
-              libelle: essai,
-              ton: PastilleFinanciere.tonDe(EtatFinancier.essai),
-            ),
-          )
-        : null;
+        : place ??
+              (essai != null
+                  ? Align(
+                      key: essaiKey,
+                      alignment: AlignmentDirectional.centerStart,
+                      child: StatusPill(
+                        libelle: essai,
+                        ton: PastilleFinanciere.tonDe(EtatFinancier.essai),
+                      ),
+                    )
+                  : null);
     if (contenu == null) return const SizedBox.shrink();
     return Padding(
       padding: EdgeInsetsDirectional.only(bottom: ecartApres),

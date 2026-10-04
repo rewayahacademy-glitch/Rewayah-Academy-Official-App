@@ -903,7 +903,7 @@
       "titre": "Dernières transactions",
       "ligne": "{libelle} · {prenom}",
       "voirTout": "Voir tout",
-      "voirToutSemantique": "Voir tous les mouvements de {prenom}",
+      "voirToutSemantique": "Voir tous les mouvements {dePrenom}",
       "videTitre": "Aucune transaction pour l'instant",
       "videPhrase": "Les recharges et les mensualités des profils apparaîtront ici.",
       "erreurTitre": "Les dernières transactions ne peuvent pas être lues"
@@ -1104,7 +1104,7 @@
     },
     "acces": {
       "titre": "Accès Rewayah",
-      "ligne": "Accès de {prenom}",
+      "ligne": "Accès {dePrenom}",
       "pastilleSansEcheance": "Sans échéance",
       "pastilleEnCours": "En cours",
       "pastilleExpire": "Expiré",
@@ -1134,22 +1134,22 @@
       "sansManque": "La prochaine période n'est pas encore financée.",
       "manquePourMois": "Il manque {montant} pour financer {mois}.",
       "manquePourMoisEtConservation": "Il manque {montant} pour financer {mois}. La place est conservée jusqu'au {date}.",
-      "moisNonFinance": "La période de {mois} n'est pas encore financée.",
+      "moisNonFinance": "La période {deMois} n'est pas encore financée.",
       "periodeAFinancer": "Période à financer",
       "periodeAFinancerValeur": "{mois} {annee} · {montant}",
       "confirmationTitre": "Paiement en cours de confirmation",
       "confirmationPhrase": "Ne payez pas une seconde fois : la période se met à jour dès la confirmation.",
       "indisponibleTitre": "Les finances ne sont pas encore disponibles",
-      "indisponiblePhrase": "Le solde et la mensualité de {prenom} s'afficheront ici dès leur mise en service.",
-      "erreurTitre": "Les finances de {prenom} ne peuvent pas être lues",
+      "indisponiblePhrase": "Le solde et la mensualité {dePrenom} s'afficheront ici dès leur mise en service.",
+      "erreurTitre": "Les finances {dePrenom} ne peuvent pas être lues",
       "videTitre": "Aucune finance enregistrée pour {prenom}",
       "videPhrase": "Aucun solde ni aucune mensualité n'est encore rendu pour ce profil. Ils apparaîtront ici après son inscription à une classe.",
       "voirMouvements": "Mouvements",
-      "voirMouvementsSemantique": "Voir les mouvements de {prenom}"
+      "voirMouvementsSemantique": "Voir les mouvements {dePrenom}"
     },
     "mouvements": {
       "titre": "Mouvements",
-      "contexte": "Les recharges, mensualités, remises et avoirs de {prenom}, du plus récent au plus ancien. Rien ne s'efface : une correction s'ajoute comme un nouveau mouvement.",
+      "contexte": "Les recharges, mensualités, remises et avoirs {dePrenom}, du plus récent au plus ancien. Rien ne s'efface : une correction s'ajoute comme un nouveau mouvement.",
       "personne": "Personne",
       "colonne": {
         "date": "Date",
@@ -1183,9 +1183,9 @@
       },
       "videTitre": "Aucun mouvement",
       "videPhrase": "Aucune recharge ni aucune mensualité n'est encore enregistrée pour {prenom}. Les mouvements apparaîtront ici après le premier paiement.",
-      "erreurTitre": "Les mouvements de {prenom} ne peuvent pas être lus",
+      "erreurTitre": "Les mouvements {dePrenom} ne peuvent pas être lus",
       "indisponibleTitre": "Les mouvements ne sont pas encore disponibles",
-      "indisponiblePhrase": "Les recharges et mensualités de {prenom} s'afficheront ici dès leur mise en service."
+      "indisponiblePhrase": "Les recharges et mensualités {dePrenom} s'afficheront ici dès leur mise en service."
     }
   },
   "disponibilites": {
@@ -1713,7 +1713,7 @@
       "politiques": "Politiques commerciales",
       "vue": {
         "moisAnnee": "{mois} {annee}",
-        "contexte": "Les chiffres de {mois}, chacun à part : ce qui est encaissé, ce qui est reconnu comme revenu, ce qui est dû aux enseignants et ce qui reste sur les profils des familles.",
+        "contexte": "Les chiffres {deMois}, chacun à part : ce qui est encaissé, ce qui est reconnu comme revenu, ce qui est dû aux enseignants et ce qui reste sur les profils des familles.",
         "indicateurs": "Indicateurs du mois",
         "encaisse": "Chiffre encaissé",
         "encaisseDetail": "Paiements reçus ce mois. Un encaissement n'est pas encore un revenu.",
@@ -3030,8 +3030,8 @@
       "blocReglagesDetail": "Photo, caméra et affichage, enfant par enfant.",
       "blocGroupesDetail": "Le groupe, l'enseignant et le prochain cours de chaque enfant.",
       "acces": "Accès",
-      "accesJusqua": "Accès de {prenom} jusqu'au {date}",
-      "accesSansFin": "Accès de {prenom} sans date de fin",
+      "accesJusqua": "Accès {dePrenom} jusqu'au {date}",
+      "accesSansFin": "Accès {dePrenom} sans date de fin",
       "aucunEnfant": "Aucun enfant dans le foyer",
       "aucunEnfantDetail": "Ajoutez votre premier enfant pour commencer.",
       "erreur": "Le foyer n'a pas pu être lu en entier. Réessayez dans un instant."
@@ -4686,6 +4686,7 @@
       "coursAccesLegende": "Classe, séances et accès",
       "paiements": "Paiements",
       "paiementsLegende": "Historique et reçus",
+      "paiementsLegendeAutonome": "Solde, période et recharge",
       "accords": "Mes accords",
       "accordsLegende": "Accords donnés à l'académie",
       "securiteLegende": "Méthode et adresse de connexion",
@@ -4704,7 +4705,9 @@
     "recharge": {
       "titre": "Recharge",
       "phrase": "Choisissez les profils et les montants.",
+      "phraseUnique": "Choisissez le montant.",
       "profils": "Profils à recharger",
+      "profilUnique": "Profil à recharger",
       "soldeActuel": "Solde actuel : {montant}",
       "montantSuggere": "Montant suggéré : {montant}",
       "montantPour": "Montant pour {prenom}",
@@ -5112,7 +5115,20 @@
       "regulariserSansManque": "La nouvelle période n'est pas encore financée.",
       "placeConservee": "Place conservée jusqu'au {date}.",
       "seancesFermeesTitre": "Nouvelles séances indisponibles",
-      "seancesFermees": "{prenom} ne peut pas rejoindre de nouvelle séance pour le moment. Son compte et ses contenus restent accessibles."
+      "seancesFermees": "{prenom} ne peut pas rejoindre de nouvelle séance pour le moment. Son compte et ses contenus restent accessibles.",
+      "adulteSeancesFermees": "Vous ne pouvez pas rejoindre de nouvelle séance pour le moment. Votre compte et vos contenus restent accessibles.",
+      "suspenduTitre": "Accès suspendu",
+      "suspenduTuteur": "La place réservée à {prenom} a été libérée le {date}. Son compte et ses contenus restent accessibles.",
+      "suspenduTuteurSansDate": "La place réservée à {prenom} a été libérée. Son compte et ses contenus restent accessibles.",
+      "suspenduAdulte": "Votre place a été libérée le {date}. Votre compte et vos contenus restent accessibles.",
+      "suspenduAdulteSansDate": "Votre place a été libérée. Votre compte et vos contenus restent accessibles.",
+      "reactiveTitre": "Accès réactivé",
+      "reactiveTuteur": "{prenom} peut de nouveau rejoindre ses séances depuis le {date}.",
+      "reactiveTuteurSansDate": "{prenom} peut de nouveau rejoindre ses séances.",
+      "reactiveAdulte": "Vous pouvez de nouveau rejoindre vos séances depuis le {date}.",
+      "reactiveAdulteSansDate": "Vous pouvez de nouveau rejoindre vos séances.",
+      "pastilleSuspendu": "Suspendu",
+      "pastilleReactive": "Réactivé"
     }
   },
   "identiteProfil": {

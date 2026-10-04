@@ -420,10 +420,43 @@ abstract final class DonneesFinanceDemo {
   /// cause** (FI12). L'etat affiche vient de l'echeance, par la meme regle
   /// que les ecrans (`etatAccesAffiche`) : un profil payant non finance est
   /// « expire » ; seul l'essai en cours reste sans echeance.
-  static List<AccesBeneficiaire> acces(JeuFoyerFinance jeu) =>
-      <AccesBeneficiaire>[
-        for (final FinancesProfil p in profils(jeu)) _acces(p),
-      ];
+  static List<AccesBeneficiaire> acces(
+    JeuFoyerFinance jeu, {
+    Map<String, EtatPlace> places = const <String, EtatPlace>{},
+  }) => <AccesBeneficiaire>[
+    for (final FinancesProfil p in profils(jeu)) _avecPlace(_acces(p), places),
+  ];
+
+  /// Le jour de demonstration ou une place est liberee : le lendemain de la
+  /// fin de conservation (7 jours au lancement) du mois de reference.
+  static final DateTime jourPlaceLiberee = DateTime(2026, 10, 9);
+
+  /// Le jour de demonstration ou un acces suspendu est reactive.
+  static final DateTime jourReactivation = DateTime(2026, 10, 3);
+
+  /// L'etat de place de [a] selon [places] (FI-BR-08, guide §8 F5) : une
+  /// place liberee ferme les seances payantes (l'enfant lit la copie
+  /// neutre), une reactivation les rouvre. Le compte n'est jamais ferme.
+  static AccesBeneficiaire _avecPlace(
+    AccesBeneficiaire a,
+    Map<String, EtatPlace> places,
+  ) {
+    final EtatPlace? place = places[a.eleveId];
+    if (place == null) return a;
+    return AccesBeneficiaire(
+      eleveId: a.eleveId,
+      prenom: a.prenom,
+      finAcces: a.finAcces,
+      etatAffiche: a.etatAffiche,
+      seancesPayantesOuvertes: place == EtatPlace.reactivee,
+      essaisUtilises: a.essaisUtilises,
+      essaisMax: a.essaisMax,
+      place: place,
+      datePlace: place == EtatPlace.liberee
+          ? jourPlaceLiberee
+          : jourReactivation,
+    );
+  }
 
   // Revue FI-1c-CORR-R m2 : le guide §1.7 dit « Acces a regulariser » pour
   // un profil payant dont la nouvelle periode n'est pas financee. Cet etat
@@ -1225,17 +1258,55 @@ class RechargeAdulteDemo implements PortRechargeFoyer {
       Future<SuiviPaiement>.error(const CapaciteIndisponible('FI-BR-17'));
 }
 
-/// L'acces du foyer en demonstration (FI-BR-08).
+/// L'acces du foyer en demonstration (FI-BR-08), pour le titulaire.
 class AccesFoyerFinanceDemo implements PortAccesFoyer {
-  /// Cree le double pour le jeu [jeu].
-  const AccesFoyerFinanceDemo(this.jeu);
+  /// Cree le double pour le jeu [jeu] ; [places] : l'etat de place rendu
+  /// par eleve (place liberee, acces reactive).
+  const AccesFoyerFinanceDemo(
+    this.jeu, {
+    this.places = const <String, EtatPlace>{},
+  });
 
   /// Le jeu du foyer.
   final JeuFoyerFinance jeu;
 
+  /// L'etat de place par eleve.
+  final Map<String, EtatPlace> places;
+
   @override
   Future<List<AccesBeneficiaire>> acces() async =>
-      DonneesFinanceDemo.acces(jeu);
+      DonneesFinanceDemo.acces(jeu, places: places);
+}
+
+/// L'acces de l'eleve connecte en demonstration (FI-BR-08, revue
+/// FI-VAGUE-R R4-02) : **sa seule ligne**, comme le serveur la rendra pour
+/// sa session ; aucune autre ligne du foyer n'existe dans ce double.
+class MonAccesFinanceDemo implements PortMonAcces {
+  /// Cree le double pour l'eleve [eleveId] du jeu [jeu].
+  const MonAccesFinanceDemo(this.jeu, this.eleveId, {this.place});
+
+  /// Le jeu du foyer.
+  final JeuFoyerFinance jeu;
+
+  /// L'eleve connecte.
+  final String eleveId;
+
+  /// L'etat de place rendu pour lui.
+  final EtatPlace? place;
+
+  @override
+  Future<AccesBeneficiaire?> monAcces() async {
+    final EtatPlace? etat = place;
+    for (final AccesBeneficiaire a in DonneesFinanceDemo.acces(
+      jeu,
+      places: etat == null
+          ? const <String, EtatPlace>{}
+          : <String, EtatPlace>{eleveId: etat},
+    )) {
+      if (a.eleveId == eleveId) return a;
+    }
+    return null;
+  }
 }
 
 /// Les politiques commerciales en demonstration (FI-BR-01, FI-BR-02).

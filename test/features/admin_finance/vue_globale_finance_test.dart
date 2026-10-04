@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/capacites/port_finance_direction.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
 import 'package:rewayah_academy/core/finance/montant.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
@@ -217,7 +218,7 @@ void main() {
       expect(
         find.text(
           vue.contexte(
-            mois: vue.moisAnnee(mois: 'octobre', annee: '2026'),
+            deMois: deDevant(vue.moisAnnee(mois: 'octobre', annee: '2026')),
           ),
         ),
         findsOneWidget,

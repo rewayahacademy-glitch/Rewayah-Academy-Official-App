@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_paiements_foyer.dart';
 import '../../core/finance/mouvements_profil.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
@@ -134,7 +135,7 @@ class DernieresTransactionsFoyer extends ConsumerWidget {
                   key: voirToutKey,
                   libelle: t.foyer.transactions.voirTout,
                   libelleSemantique: t.foyer.transactions.voirToutSemantique(
-                    prenom: premier.prenom,
+                    dePrenom: deDevant(premier.prenom),
                   ),
                   onPress: () => aller(
                     Routes.ficheEleveSousPage(premier.profilId, 'mouvements'),
