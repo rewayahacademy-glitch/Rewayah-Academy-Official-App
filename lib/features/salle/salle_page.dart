@@ -218,13 +218,32 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // choisi un au hasard. `refresh` et non `read` : le materiel a pu changer
     // depuis la derniere mesure, et un casque branche apres un « Reessayer » ne
     // servirait a rien si l'on relisait une valeur en cache.
-    final ResultatPreVol preVol = await ref.refresh(preVolProvider.future);
+    //
+    // CTRL-PREVOL-1 (releve VERIF-CT-1, P-CTR-03 point 4, R8, R13) : le micro
+    // n'est exige que de qui parle. Le controleur, le tuteur temoin et
+    // l'administration en observation entrent muets : leur jeton le leur
+    // impose. Un compte qui n'est ni eleve ni enseignant n'est donc pas
+    // mesure avant le jeton (aucune demande de permission injustifiee, comme
+    // `DetailPreCours.aucun`) ; c'est le jeton qui dit ensuite s'il parlera
+    // (l'administration visible, elle, a le micro et repasse par le pre-vol).
+    // Un compte illisible reste traite comme qui parle : le repli est ferme.
+    final AppRole? compte = await _roleDuCompte();
     if (!mounted) {
       return;
     }
-    if (!preVol.peutEntrer && !_sansMicro) {
-      setState(() => _impasse = CauseImpasse.materiel);
-      return;
+    final bool observateur =
+        compte != null &&
+        compte != AppRole.student &&
+        compte != AppRole.teacher;
+    if (!observateur) {
+      final ResultatPreVol mesure = await ref.refresh(preVolProvider.future);
+      if (!mounted) {
+        return;
+      }
+      if (!mesure.peutEntrer && !_sansMicro) {
+        setState(() => _impasse = CauseImpasse.materiel);
+        return;
+      }
     }
     setState(() => _materielPret = true);
 
@@ -240,6 +259,19 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (!mounted) {
       return;
     }
+    // Le jeton tranche pour l'observateur presume (l'administration peut
+    // entrer visible, micro permis) : s'il autorise la voix, le micro
+    // redevient exige, avant toute connexion.
+    if (observateur && acces.capacites.peutPublier) {
+      final ResultatPreVol mesure = await ref.refresh(preVolProvider.future);
+      if (!mounted) {
+        return;
+      }
+      if (!mesure.peutEntrer) {
+        setState(() => _impasse = CauseImpasse.materiel);
+        return;
+      }
+    }
     setState(() => _acces = acces);
 
     try {
@@ -252,6 +284,33 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       if (mounted) {
         setState(() => _impasse = CauseImpasse.reseau);
       }
+    }
+  }
+
+  /// Le role du compte, une fois la session lue.
+  ///
+  /// L'entree part de `initState`, ou la session peut n'etre pas encore lue :
+  /// decider sur un role absent ferait d'un controleur un eleve (bloque sans
+  /// micro), ou l'inverse. On attend donc la premiere session resolue.
+  Future<AppRole?> _roleDuCompte() async {
+    final SessionState lue = ref.read(sessionProvider);
+    if (lue.resolue) {
+      return lue.role;
+    }
+    final Completer<AppRole?> resolue = Completer<AppRole?>();
+    final ProviderSubscription<SessionState> abonnement = ref
+        .listenManual<SessionState>(sessionProvider, (
+          SessionState? _,
+          SessionState etat,
+        ) {
+          if (etat.resolue && !resolue.isCompleted) {
+            resolue.complete(etat.role);
+          }
+        });
+    try {
+      return await resolue.future;
+    } finally {
+      abonnement.close();
     }
   }
 
