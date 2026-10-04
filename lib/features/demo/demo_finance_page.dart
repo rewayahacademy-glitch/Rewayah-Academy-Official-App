@@ -4,8 +4,9 @@
 // `?ecran=vueGlobale|politiques` (Vue globale par defaut) : la VRAIE coquille
 // admin (`AdminShell`, domaine Finance actif) sur la VRAIE page Finance. La
 // Vue globale lit le port de la direction, surcharge ici par la
-// demonstration (`FinanceDirectionDemo`, FI-11a) ; Politiques reste neutre
-// jusqu'a FI-11b. Les autres vues (tuteur, enfant, adulte, enseignant)
+// demonstration (`FinanceDirectionDemo`, FI-11a) ; Politiques lit
+// `PolitiquesCommercialesDemo` (FI-11b), dont la publication reste
+// indisponible. Les autres vues (tuteur, enfant, adulte, enseignant)
 // arrivent avec leurs ecrans.
 
 import 'package:flutter/material.dart';
@@ -15,9 +16,11 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/admin/admin_domaine.dart';
 import '../../core/capacites/port_finance_direction.dart';
+import '../../core/capacites/port_politiques_commerciales.dart';
 import '../../core/router/routes.dart';
 import '../../core/widgets/admin_shell.dart';
 import '../admin_finance/finance_page.dart';
+import '../admin_finance/politiques_commerciales.dart';
 import '../admin_finance/vue_globale_finance.dart';
 import 'finance_demo.dart';
 import 'mode_demonstration.dart';
@@ -67,6 +70,12 @@ class DemoFinancePage extends StatelessWidget {
         ),
         vueGlobaleFinanceProvider.overrideWith(
           (Ref _) => const FinanceDirectionDemo().vueGlobale(),
+        ),
+        portPolitiquesCommercialesProvider.overrideWithValue(
+          const PolitiquesCommercialesDemo(),
+        ),
+        politiquesCommercialesProvider.overrideWith(
+          (Ref _) => lirePolitiques(const PolitiquesCommercialesDemo()),
         ),
       ],
       child: RepereDemonstration(

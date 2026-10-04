@@ -6,7 +6,10 @@
 // FI-11a : en demonstration, la Vue globale rend les chiffres de
 // `FinanceDirectionDemo` ; sans la demonstration (port de production,
 // `CapaciteIndisponible`), elle dit toujours « Pas encore disponible ».
-// Politiques reste la page neutre jusqu'a FI-11b.
+//
+// FI-11b : en demonstration, Politiques commerciales rend la politique de
+// lancement et son brouillon ; sans la demonstration, « Pas encore
+// disponible », sans chiffre.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -28,6 +31,7 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/features/admin_finance/finance_page.dart';
+import 'package:rewayah_academy/features/admin_finance/politiques_commerciales.dart';
 import 'package:rewayah_academy/features/admin_finance/vue_globale_finance.dart';
 import 'package:rewayah_academy/features/demo/demo_finance_page.dart';
 import 'package:rewayah_academy/features/demo/finance_demo.dart';
@@ -104,6 +108,29 @@ void _verifierVueGlobaleDemo() {
   expect(find.text(t.admin.finance.vue.marge), findsOneWidget);
 }
 
+/// Les Politiques commerciales de la demonstration : le brouillon et la
+/// version active, les valeurs de lancement, aucun etat « indisponible ».
+void _verifierPolitiquesDemo() {
+  expect(find.byType(FinancePage), findsOneWidget);
+  expect(find.byType(PolitiquesCommercialesContenu), findsOneWidget);
+  expect(find.byType(EtatSysteme), findsNothing);
+  final pol = t.admin.finance.pol;
+  expect(
+    find.text(
+      pol.versionActive(version: DonneesFinanceDemo.politiqueLancement.version),
+    ),
+    findsOneWidget,
+  );
+  expect(
+    find.text(
+      pol.versionBrouillon(
+        version: DonneesFinanceDemo.politiqueBrouillon.version,
+      ),
+    ),
+    findsOneWidget,
+  );
+}
+
 void main() {
   test('ongletsFinance : Vue globale puis Politiques commerciales', () {
     expect(ongletsFinance(), <({String libelle, String chemin})>[
@@ -141,7 +168,7 @@ void main() {
     await choisirSection(tester, t.admin.finance.politiques);
     await _stabiliser(tester);
     expect(_chemin(routeur), Routes.adminFinancePolitiques);
-    _verifierPageNeutre(OngletFinance.politiques);
+    _verifierPolitiquesDemo();
     expect(tester.takeException(), isNull);
   });
 
@@ -177,6 +204,28 @@ void main() {
     expect(_chemin(routeur), Routes.adminFinance);
     _verifierPageNeutre(OngletFinance.vueGlobale);
     expect(find.byType(VueGlobaleFinanceContenu), findsNothing);
+    expect(find.textContaining('\$'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('production (port neutre) : Politiques commerciales dit « Pas '
+      'encore disponible », sans chiffre ni champ', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter routeur = await _monter(
+      tester,
+      const Size(1440, 900),
+      surcharges: <Override>[
+        sourceSessionProvider.overrideWithValue(const SourceSessionDemoAdmin()),
+        ...surchargesServicesAdminIndisponibles(),
+      ],
+    );
+    routeur.go(Routes.adminFinancePolitiques);
+    await _stabiliser(tester);
+    expect(_chemin(routeur), Routes.adminFinancePolitiques);
+    _verifierPageNeutre(OngletFinance.politiques);
+    expect(find.byType(PolitiquesCommercialesContenu), findsNothing);
+    expect(find.byType(TextField), findsNothing);
     expect(find.textContaining('\$'), findsNothing);
     expect(tester.takeException(), isNull);
   });
@@ -245,7 +294,7 @@ void main() {
       final Uri adresse = routeur.routerDelegate.currentConfiguration.uri;
       expect(adresse.path, Routes.demoFinance);
       expect(adresse.queryParameters['ecran'], OngletFinance.politiques.name);
-      _verifierPageNeutre(OngletFinance.politiques);
+      _verifierPolitiquesDemo();
       expect(tester.takeException(), isNull);
     });
   });

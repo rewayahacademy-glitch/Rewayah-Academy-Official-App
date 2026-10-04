@@ -38,6 +38,30 @@ int decimalesDe(String devise) => switch (devise) {
   _ => 2,
 };
 
+/// Le facteur des unites mineures d'une devise : 100 pour l'USD, 1 pour le
+/// franc guineen.
+int _facteurMineur(String devise) {
+  int facteur = 1;
+  for (int i = 0; i < decimalesDe(devise); i++) {
+    facteur *= 10;
+  }
+  return facteur;
+}
+
+/// Le montant d'une saisie en unites entieres (« 50 » dollars), converti en
+/// unites mineures sans passer par un `double` (FI-11b). Une conversion
+/// d'unite, jamais un calcul de prix.
+Montant montantDepuisUnites(int unites, String devise) =>
+    Montant(unites * _facteurMineur(devise), devise);
+
+/// [montant] en unites entieres pour preremplir une saisie (« 50 »), ou
+/// `null` quand il porte des centimes : une saisie entiere ne le
+/// representerait pas sans le changer.
+int? unitesEntieresDe(Montant montant) {
+  final int facteur = _facteurMineur(montant.devise);
+  return montant.mineur % facteur == 0 ? montant.mineur ~/ facteur : null;
+}
+
 /// Le symbole d'une devise quand il est sans ambiguite dans le produit, son
 /// code ISO sinon.
 String symboleDe(String devise) => switch (devise) {
@@ -52,10 +76,7 @@ String symboleDe(String devise) => switch (devise) {
 String formaterMontant(Montant montant, {bool signe = false}) {
   final int decimales = decimalesDe(montant.devise);
   final int absolu = montant.mineur.abs();
-  int diviseur = 1;
-  for (int i = 0; i < decimales; i++) {
-    diviseur *= 10;
-  }
+  final int diviseur = _facteurMineur(montant.devise);
   final int entier = absolu ~/ diviseur;
   final int reste = absolu % diviseur;
   final String partieEntiere = _grouper(entier);
