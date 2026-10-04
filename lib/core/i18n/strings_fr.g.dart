@@ -2934,6 +2934,8 @@ class Traductions$salle$seance$fr {
 	/// fr: 'Options du panneau {titre}'
 	String optionsPanneau({required Object titre}) => 'Options du panneau ${titre}';
 
+	late final Traductions$salle$seance$capsule$fr capsule = Traductions$salle$seance$capsule$fr.internal(_root);
+	late final Traductions$salle$seance$contexte$fr contexte = Traductions$salle$seance$contexte$fr.internal(_root);
 	late final Traductions$salle$seance$demo$fr demo = Traductions$salle$seance$demo$fr.internal(_root);
 	late final Traductions$salle$seance$statut$fr statut = Traductions$salle$seance$statut$fr.internal(_root);
 }
@@ -11468,6 +11470,72 @@ class Traductions$salle$seance$fiche$fr {
 	String seancesSemaine({required Object nombre}) => '${nombre} séances cette semaine';
 }
 
+// Path: salle.seance.capsule
+class Traductions$salle$seance$capsule$fr {
+	Traductions$salle$seance$capsule$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Afficher les informations de {nom}'
+	String avatar({required Object nom}) => 'Afficher les informations de ${nom}';
+
+	/// fr: 'Contrôle possible. Afficher les informations'
+	String get controlePossible => 'Contrôle possible. Afficher les informations';
+
+	/// fr: 'Contrôle actif. Afficher les informations'
+	String get controleActif => 'Contrôle actif. Afficher les informations';
+
+	/// fr: 'Enregistrement actif'
+	String get enregistrementActif => 'Enregistrement actif';
+}
+
+// Path: salle.seance.contexte
+class Traductions$salle$seance$contexte$fr {
+	Traductions$salle$seance$contexte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Informations de la séance'
+	String get titre => 'Informations de la séance';
+
+	/// fr: 'Réseau'
+	String get reseau => 'Réseau';
+
+	/// fr: 'Détail du réseau'
+	String get detailReseau => 'Détail du réseau';
+
+	/// fr: 'Enregistrement actif'
+	String get enregistrementActif => 'Enregistrement actif';
+
+	/// fr: 'Contrôle'
+	String get controle => 'Contrôle';
+
+	/// fr: 'Contrôle possible'
+	String get controlePossible => 'Contrôle possible';
+
+	/// fr: 'Contrôle actif'
+	String get controleActif => 'Contrôle actif';
+
+	/// fr: 'Une visite de contrôle peut avoir lieu. Cela ne veut pas dire que quelqu'un observe maintenant.'
+	String get controlePossibleDetail => 'Une visite de contrôle peut avoir lieu. Cela ne veut pas dire que quelqu\'un observe maintenant.';
+
+	/// fr: 'Une visite de contrôle a lieu en ce moment.'
+	String get controleActifDetail => 'Une visite de contrôle a lieu en ce moment.';
+
+	/// fr: 'Réduire'
+	String get reduire => 'Réduire';
+
+	/// fr: 'Réduire les participants'
+	String get reduireParticipants => 'Réduire les participants';
+
+	/// fr: 'Réduire les informations'
+	String get reduireInformations => 'Réduire les informations';
+}
+
 // Path: salle.seance.demo
 class Traductions$salle$seance$demo$fr {
 	Traductions$salle$seance$demo$fr.internal(this._root);
@@ -15793,6 +15861,22 @@ extension on Traductions {
 			'salle.seance.fiche.uneSeanceSemaine' => '1 séance cette semaine',
 			'salle.seance.fiche.seancesSemaine' => ({required Object nombre}) => '${nombre} séances cette semaine',
 			'salle.seance.optionsPanneau' => ({required Object titre}) => 'Options du panneau ${titre}',
+			'salle.seance.capsule.avatar' => ({required Object nom}) => 'Afficher les informations de ${nom}',
+			'salle.seance.capsule.controlePossible' => 'Contrôle possible. Afficher les informations',
+			'salle.seance.capsule.controleActif' => 'Contrôle actif. Afficher les informations',
+			'salle.seance.capsule.enregistrementActif' => 'Enregistrement actif',
+			'salle.seance.contexte.titre' => 'Informations de la séance',
+			'salle.seance.contexte.reseau' => 'Réseau',
+			'salle.seance.contexte.detailReseau' => 'Détail du réseau',
+			'salle.seance.contexte.enregistrementActif' => 'Enregistrement actif',
+			'salle.seance.contexte.controle' => 'Contrôle',
+			'salle.seance.contexte.controlePossible' => 'Contrôle possible',
+			'salle.seance.contexte.controleActif' => 'Contrôle actif',
+			'salle.seance.contexte.controlePossibleDetail' => 'Une visite de contrôle peut avoir lieu. Cela ne veut pas dire que quelqu\'un observe maintenant.',
+			'salle.seance.contexte.controleActifDetail' => 'Une visite de contrôle a lieu en ce moment.',
+			'salle.seance.contexte.reduire' => 'Réduire',
+			'salle.seance.contexte.reduireParticipants' => 'Réduire les participants',
+			'salle.seance.contexte.reduireInformations' => 'Réduire les informations',
 			'salle.seance.demo.titre' => 'Salle de démonstration',
 			'salle.seance.demo.intro' => 'Données fictives, aucun serveur. Choisissez un rôle et un état.',
 			'salle.seance.demo.groupes.seance' => 'Déroulé de la séance',
@@ -16038,6 +16122,8 @@ extension on Traductions {
 			'connexion.feuilleAppareil.etapesTitre' => 'Où trouver le code',
 			'connexion.feuilleAppareil.etape1' => 'Sur votre propre appareil, ouvrez Foyer, puis Appareils du foyer.',
 			'connexion.feuilleAppareil.etape2' => 'Touchez le profil de l\'élève, puis Connecter un appareil.',
+			_ => null,
+		} ?? switch (path) {
 			'connexion.feuilleAppareil.etape3' => 'Un QR code et un code de six caractères s\'affichent, avec leur heure de fin.',
 			'connexion.feuilleAppareil.etape4' => 'Sur l\'appareil de l\'élève, scannez le QR code ou saisissez le code.',
 			'connexion.feuilleAppareil.plafond' => 'Le nombre d\'appareils par élève est limité. Si la limite est atteinte, retirez-en un depuis Foyer, Appareils du foyer.',
@@ -16054,8 +16140,6 @@ extension on Traductions {
 			'inscription.identiteQuestion' => 'Comment vous appelez-vous ?',
 			'inscription.identiteRaison' => 'Ce nom doit être celui de votre pièce d\'identité.',
 			'inscription.prenom' => 'Prénom',
-			_ => null,
-		} ?? switch (path) {
 			'inscription.nom' => 'Nom',
 			'inscription.genreQuestion' => 'Vous êtes',
 			'inscription.genreHomme' => 'Un homme',
@@ -16552,6 +16636,8 @@ extension on Traductions {
 			'eleveConnexion.lecteur.erreurPhrase' => 'Réessayez, ou saisissez le code affiché sous le QR.',
 			'eleveConnexion.refus.format' => 'Un code compte six caractères : chiffres de 2 à 9 et lettres, sans I ni O.',
 			'eleveConnexion.refus.inconnuTitre' => 'Code non reconnu',
+			_ => null,
+		} ?? switch (path) {
 			'eleveConnexion.refus.inconnu' => 'Ce code n\'existe pas, ou un code plus récent l\'a remplacé. Vérifiez-le, ou affichez un nouveau code sur l\'appareil du tuteur.',
 			'eleveConnexion.refus.expireTitre' => 'Code expiré',
 			'eleveConnexion.refus.expire' => 'Ce code n\'est plus valable. Affichez un nouveau code sur l\'appareil du tuteur.',
@@ -16568,8 +16654,6 @@ extension on Traductions {
 			'eleveConnexion.refus.nonEnregistreTitre' => 'Connexion non enregistrée',
 			'eleveConnexion.refus.nonEnregistre' => 'Cet appareil n\'a pas pu garder la connexion. Le code a sans doute déjà servi : affichez un nouveau code sur l\'appareil du tuteur, puis recommencez.',
 			'eleveConnexion.refus.generiqueTitre' => 'Connexion non aboutie',
-			_ => null,
-		} ?? switch (path) {
 			'eleveConnexion.refus.generique' => 'La vérification du code n\'a pas abouti. Réessayez dans un instant.',
 			'dossiers.titre' => 'Dossiers à valider',
 			'dossiers.sousTitre' => 'Examinez les dossiers prêts pour une décision.',
@@ -17066,6 +17150,8 @@ extension on Traductions {
 			'admin.programmes.modifierNiveauTitre' => ({required Object nom}) => 'Modifier ${nom}',
 			'admin.programmes.modifierNiveauEnvoyer' => 'Enregistrer',
 			'admin.programmes.modifierNiveauErreur' => ({required Object message}) => 'La modification n\'a pas abouti : ${message}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.programmes.supprimerNiveau' => 'Supprimer',
 			'admin.programmes.supprimerNiveauTitre' => ({required Object nom}) => 'Supprimer ${nom}',
 			'admin.programmes.supprimerNiveauEnvoyer' => 'Supprimer',
@@ -17082,8 +17168,6 @@ extension on Traductions {
 			'admin.programmes.champDescription' => 'Description (optionnelle)',
 			'admin.programmes.champMotif' => 'Motif',
 			'admin.programmes.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.programmes.journalisation' => 'Chaque création, modification, suppression et publication est inscrite au journal d\'audit.',
 			'admin.journal.titre' => 'Journal',
 			'admin.journal.chaineIntacte' => 'Journal intact',
@@ -17580,6 +17664,8 @@ extension on Traductions {
 			'compte.tuteur.deconnexion.question' => 'Se déconnecter de Rewayah ?',
 			'compte.tuteur.deconnexion.consequence' => 'Vous devrez vous reconnecter pour revenir sur cet appareil. Vos autres appareils restent connectés.',
 			'compte.tuteur.deconnexion.confirmer' => 'Me déconnecter',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.deconnexion.echec' => 'La déconnexion n\'a pas abouti. Vérifiez votre connexion, puis réessayez.',
 			'compte.tuteur.pageInformations.titre' => 'Informations personnelles',
 			'compte.tuteur.pageInformations.prenom' => 'Prénom',
@@ -17596,8 +17682,6 @@ extension on Traductions {
 			'compte.tuteur.pageSecurite.appareils' => 'Les appareils connectés à votre compte ne sont pas encore listés dans l\'application.',
 			'compte.tuteur.pageSecurite.deconnexion' => 'Pour fermer la session de cet appareil, utilisez « Se déconnecter » en bas de Mon compte.',
 			'compte.tuteur.pageAcces.titre' => 'Accès des profils élèves',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageAcces.sousTitre' => 'Le statut de l\'accès de chaque profil élève.',
 			'compte.tuteur.pageAcces.sansEcheance' => 'Sans date de fin',
 			'compte.tuteur.pageAcces.jusqua' => ({required Object date}) => 'Ouvert jusqu\'au ${date}',
@@ -18094,6 +18178,8 @@ extension on Traductions {
 			'enseignant.classes.prochaine' => ({required Object jour, required Object heure}) => 'Prochaine séance : ${jour} à ${heure}',
 			'enseignant.classes.sansProchaine' => 'Aucune séance prévue',
 			'enseignant.classes.remplacement' => 'Remplacement',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.classes.rappelCahier' => 'Un cahier de transmission reste à valider',
 			'enseignant.classes.cahierAValider' => 'Cahier de transmission à valider',
 			'enseignant.eleve.titre' => ({required Object prenom}) => 'Fiche de ${prenom}',
@@ -18110,8 +18196,6 @@ extension on Traductions {
 			'enseignant.eleve.signaler' => 'Signaler un besoin',
 			'enseignant.eleve.signalerAide' => 'Un besoin à remonter à l\'académie, sans recopier le contexte.',
 			'enseignant.signalement.titre' => 'Signaler un besoin',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.signalement.contexte' => ({required Object prenom, required Object classe}) => 'Pour ${prenom} · ${classe}',
 			'enseignant.signalement.categorieTitre' => 'Catégorie',
 			'enseignant.signalement.categories.pedagogique' => 'Problème pédagogique',
@@ -18608,6 +18692,8 @@ extension on Traductions {
 			'controleur.observation.questionNature' => 'Quelle est la nature de votre observation ?',
 			'controleur.observation.contexteNature' => 'Votre observation rejoint le compte rendu de cette visite, transmis à l\'administration.',
 			'controleur.observation.pointPositif' => 'Point positif',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.pointPositifAide' => 'Quand une pratique mérite d\'être relevée · elle figure au rapport comme point positif',
 			'controleur.observation.aSuivre' => 'À suivre',
 			'controleur.observation.aSuivreAide' => 'Quand un point devra être revu lors d\'une prochaine visite · il figure au rapport comme point à suivre',
@@ -18624,8 +18710,6 @@ extension on Traductions {
 			'controleur.observation.respectCadre' => 'Respect du cadre',
 			'controleur.observation.respectCadreAide' => 'Quand il s\'agit des règles de l\'académie et de la séance',
 			'controleur.observation.climat' => 'Comportement / climat',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.climatAide' => 'Quand il s\'agit du comportement ou de l\'ambiance de la classe',
 			'controleur.observation.autre' => 'Autre',
 			'controleur.observation.autreAide' => 'Quand aucun autre domaine ne convient · précisez-le dans votre texte',
@@ -19122,6 +19206,8 @@ extension on Traductions {
 			'tc.observation.reglages.heriter' => 'Hériter de l\'Académie',
 			'tc.observation.reglages.personnaliser' => 'Personnaliser pour ce groupe',
 			'tc.observation.reglages.desactiver' => 'Désactiver pour ce groupe',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.reglages.maxVisites' => 'Visites par séance',
 			'tc.observation.reglages.tempsTotal' => 'Temps total par séance',
 			'tc.observation.reglages.plafondVisite' => 'Durée maximale d\'une visite',
@@ -19138,8 +19224,6 @@ extension on Traductions {
 			'tc.parcours.avant.titre' => 'Avant le prochain cours',
 			'tc.parcours.avant.rien' => 'Rien à préparer pour le prochain cours.',
 			'tc.parcours.avant.rienDetail' => 'Votre enseignant proposera le travail à la fin de la prochaine séance.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.avant.nonBranche' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'tc.parcours.avant.nonBrancheDetail' => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.',
 			'tc.parcours.avant.reprendre' => 'Reprendre le cours',

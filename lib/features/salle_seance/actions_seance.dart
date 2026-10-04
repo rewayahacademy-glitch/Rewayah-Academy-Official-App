@@ -44,7 +44,14 @@ class ActionsSeance {
     this.onReessayerConnexion,
     this.onContinuerSansMicro,
     this.onOuvrirReglages,
+    this.onContexte,
   });
+
+  /// TB-3 (CTX-01, CTX-02) : l'avatar de la capsule deplie le contexte de
+  /// l'enseignant, l'oeil le meme contexte a la section du controle ;
+  /// « Reduire » rend [ContexteOuvert.aucun]. `null` : l'avatar reste une
+  /// image, l'oeil un indicateur, rien n'est tapable.
+  final ValueChanged<ContexteOuvert>? onContexte;
 
   // Les ecrans de secours (lot CL-7). `null` : l'action n'est pas rendue.
 

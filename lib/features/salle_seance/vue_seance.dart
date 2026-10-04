@@ -223,6 +223,33 @@ enum VueSurface {
 /// defaut : un etat qu'on ne connait pas ne se montre pas (TB-BR-23).
 enum EtatEnregistrement { actif, inactif, inconnu }
 
+/// Le controle de la seance, quand la donnee existe (plan V2 §4.3, §19.6,
+/// TB12) : l'oeil informe, il ne declenche rien et ne donne aucun droit.
+/// Aucune valeur « inconnu » : sans donnee, [VueSeance.controle] est `null`
+/// et aucun oeil n'est rendu (jamais un etat fabrique). Donnee de
+/// demonstration seulement jusqu'au contrat d'observation (TB-BR-24).
+enum EtatControle {
+  /// « Controle possible » : une visite peut avoir lieu ; personne n'est
+  /// annonce comme observant maintenant.
+  possible,
+
+  /// « Controle actif » : le contrat dit qu'une visite a lieu.
+  actif,
+}
+
+/// Le contexte deplie depuis la capsule (CTX-01, CTX-02) : etat d'interface,
+/// jamais diffuse.
+enum ContexteOuvert {
+  /// La capsule seule (UI-01).
+  aucun,
+
+  /// L'avatar touche : le contexte de l'enseignant et de la seance (CTX-01).
+  enseignant,
+
+  /// L'oeil touche : le meme contexte, a la section du controle (CTX-02).
+  controle,
+}
+
 /// Un support a page fixe presente a la classe (plan V2 §8, etat partage) :
 /// support, version, page et total. Distinct de `SupportSeance`, diapositive
 /// de texte que la salle existante garde, et de `SupportPresente`
@@ -436,6 +463,8 @@ class VueSeance {
     this.supportPresente,
     this.tableauLibre,
     this.enregistrement = EtatEnregistrement.inconnu,
+    this.controle,
+    this.contexte = ContexteOuvert.aucun,
   });
 
   // --- Reponses retenues aux questions Q1 a Q8 (plan de code section 4) ---
@@ -561,6 +590,12 @@ class VueSeance {
   /// L'enregistrement, a trois valeurs (inconnu par defaut). La mention
   /// existante (`enregistrementConfirme`) n'est pas touchee (HU-1).
   final EtatEnregistrement enregistrement;
+
+  /// Le controle, ou `null` : la donnee manque, aucun oeil (TB-BR-24).
+  final EtatControle? controle;
+
+  /// Le contexte deplie depuis la capsule (TB-3), etat local d'interface.
+  final ContexteOuvert contexte;
 
   bool get _tutoie => tutoiement ?? _guidee;
 
@@ -842,8 +877,73 @@ class VueSeance {
   /// par le systeme, P09).
   bool get visioMaintenue =>
       (voitBoutonsPanneaux && panneau != PanneauOuvert.aucun) ||
+      // TB-3 : le contexte deplie est un panneau ouvert (TB7).
+      contexteOuvert ||
       !commandesPublicationActives ||
       microBloque;
+
+  // --- Capsule et contexte (TB-3 : UI-01, CTX-01, CTX-02 ; plan V2 §4.3) ---
+
+  /// Pendant le partage, la capsule compacte remplace la vignette video :
+  /// avatar statique, temoin d'enregistrement reel, oeil du controle. Hors
+  /// partage, la vignette reste (00_REPRISE §6.5).
+  ///
+  /// Le partage est celui du chantier (plan V2 §8) : un support PRESENTE a
+  /// la classe ([supportPresente], TB-1b), affiche par la surface
+  /// ([support]). Les etats anterieurs (diapositive seule) et la Classe
+  /// Live, qui ne portent pas encore [supportPresente] (TB-BR), gardent la
+  /// vignette.
+  bool get voitCapsule =>
+      supportPresente != null && support != null && !estFinie;
+
+  /// La vignette video de l'enseignant se pose sur la surface : jamais
+  /// pendant le partage (la capsule la remplace), et seulement si la camera
+  /// de l'enseignant publie.
+  bool get voitVignetteSurSupport => cameraEnseignantActive && !voitCapsule;
+
+  /// Le contexte deplie se montre : seulement depuis la capsule.
+  bool get contexteOuvert => voitCapsule && contexte != ContexteOuvert.aucun;
+
+  /// Le point rouge : seulement si l'enregistrement est ACTIF (UX-12, TB12).
+  /// Inactif ou inconnu : aucun point, jamais un voyant qui pretend.
+  bool get voitPointEnregistrement =>
+      enregistrement == EtatEnregistrement.actif && !estFinie;
+
+  /// L'oeil : seulement si la donnee du controle existe (§4.3).
+  bool get voitOeilControle => controle != null;
+
+  /// Le nom lu de l'avatar de la capsule (§20) : « Afficher les informations
+  /// de Sayyid Ibrahim » ; le nom n'est jamais ecrit dans la capsule.
+  String get libelleAvatarCapsule =>
+      t.salle.seance.capsule.avatar(nom: nomEnseignant);
+
+  /// Le nom lu de l'oeil (§20), ou `null` sans donnee.
+  String? get libelleOeilCapsule => switch (controle) {
+    EtatControle.possible => t.salle.seance.capsule.controlePossible,
+    EtatControle.actif => t.salle.seance.capsule.controleActif,
+    null => null,
+  };
+
+  /// L'etat du controle ecrit dans le contexte, ou `null` sans donnee.
+  String? get texteControle => switch (controle) {
+    EtatControle.possible => t.salle.seance.contexte.controlePossible,
+    EtatControle.actif => t.salle.seance.contexte.controleActif,
+    null => null,
+  };
+
+  /// L'explication sous l'etat du controle : un controle possible ne dit
+  /// pas qu'une personne observe maintenant (§19.6).
+  String? get explicationControle => switch (controle) {
+    EtatControle.possible => t.salle.seance.contexte.controlePossibleDetail,
+    EtatControle.actif => t.salle.seance.contexte.controleActifDetail,
+    null => null,
+  };
+
+  /// Le nom lu de « Reduire » (§20) : le panneau des participants de
+  /// l'enseignant, ou les informations de la seance d'un eleve.
+  String get libelleReduireContexte => _enseignant
+      ? t.salle.seance.contexte.reduireParticipants
+      : t.salle.seance.contexte.reduireInformations;
 
   // --- Surface pedagogique (TB-1b) ---
 
@@ -895,6 +995,9 @@ class VueSeance {
     bool sansSupportPresente = false,
     TableauLibre? tableauLibre,
     EtatEnregistrement? enregistrement,
+    EtatControle? controle,
+    bool sansControle = false,
+    ContexteOuvert? contexte,
   }) => VueSeance(
     role: role ?? this.role,
     nomClasse: nomClasse,
@@ -927,5 +1030,7 @@ class VueSeance {
         : supportPresente ?? this.supportPresente,
     tableauLibre: tableauLibre ?? this.tableauLibre,
     enregistrement: enregistrement ?? this.enregistrement,
+    controle: sansControle ? null : controle ?? this.controle,
+    contexte: contexte ?? this.contexte,
   );
 }

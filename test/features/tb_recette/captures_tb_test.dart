@@ -17,12 +17,21 @@
 // docs/current/captures/TB-2/ :
 //   CAPTURE_DIR=docs/current/captures/TB-2 flutter test \
 //     test/features/tb_recette/captures_tb_test.dart --name tb2_
+//
+// TB-3 (UI-01, CTX-01, CTX-02) : la capsule pendant le partage (UI-01) et le
+// contexte deplie a la section du controle (CTX-02), pour l'enseignant,
+// l'eleve et le Mode Accessibilite (guidee, pendant la visite du tuteur : la
+// notice de l'enfant reste visible), plus RTL. Rangees dans
+// docs/current/captures/TB-3/ :
+//   CAPTURE_DIR=docs/current/captures/TB-3 flutter test \
+//     test/features/tb_recette/captures_tb_test.dart --name tb3_
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/accessibilite/commandes_masquables.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
+import 'package:rewayah_academy/features/salle_seance/capsule_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/zone_support.dart';
 
@@ -139,6 +148,79 @@ void main() {
       }
     },
   );
+
+  group('TB-3 : capsule et contexte', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    // Les cadrages de « fait », plus le sens de lecture force (K-41 n. 12).
+    final List<(_Cadrage, TextDirection)> cadrages =
+        <(_Cadrage, TextDirection)>[
+          for (final _Cadrage c in _cadragesTb) (c, TextDirection.ltr),
+          (
+            (
+              '390_x1_clair_rtl',
+              const Size(390, 844),
+              3,
+              _zoneTelephone,
+              1,
+              ThemeMode.light,
+            ),
+            TextDirection.rtl,
+          ),
+          (
+            (
+              '320_x2_clair_rtl',
+              const Size(320, 700),
+              2,
+              EdgeInsets.zero,
+              2,
+              ThemeMode.light,
+            ),
+            TextDirection.rtl,
+          ),
+        ];
+    for (final RoleSeance role in RoleSeance.values) {
+      for (final SituationTb situation in <SituationTb>[
+        SituationTb.ui01,
+        SituationTb.ctx02,
+      ]) {
+        for (final (_Cadrage cas, TextDirection sens) in cadrages) {
+          final String nom = 'tb3_${role.name}_${situation.name}_${cas.$1}';
+          testWidgets(nom, (WidgetTester tester) async {
+            fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+            await tester.pumpWidget(
+              hoteCapture(
+                Directionality(
+                  textDirection: sens,
+                  child: DemoSallePage(
+                    role: role,
+                    situation: situation,
+                    // Mode Accessibilite : la visite du tuteur, pour que la
+                    // notice de l'enfant figure sur la capture.
+                    etat: role == RoleSeance.guidee
+                        ? EtatDemoSalle.visite
+                        : null,
+                  ),
+                ),
+                themeMode: cas.$6,
+                echelleTexte: cas.$5,
+              ),
+            );
+            await stabiliser(tester);
+            await tester.pump(const Duration(milliseconds: 1400));
+            // La capture prouve ce qu'elle nomme.
+            expect(find.byKey(CapsuleSeance.cle), findsOneWidget);
+            expect(
+              find.byKey(SectionContexte.cle),
+              situation == SituationTb.ctx02 ? findsOneWidget : findsNothing,
+            );
+            expect(tester.takeException(), isNull);
+            debugPrint('PNG ${await capturer(tester, nom)}');
+          });
+        }
+      }
+    }
+  });
 
   group('TB : captures de la salle', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);

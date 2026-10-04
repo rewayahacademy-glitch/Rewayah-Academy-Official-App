@@ -69,11 +69,17 @@ class PanneauEleves extends StatefulWidget {
     this.recitation,
     this.large = false,
     this.serre = false,
+    this.entete,
     super.key,
   });
 
   final List<EleveSeance> eleves;
   final ActionsSeance actions;
+
+  /// TB-3 (CTX-01, CTX-02) : le contexte de l'enseignant et de la seance,
+  /// deplie depuis la capsule, en tete du panneau de personnes (une seule
+  /// gestion des participants, plan V2 §4.3). `null` : rien.
+  final Widget? entete;
 
   /// La file de recitation (EN-9), en tete du panneau : l'eleve en cours,
   /// puis « A suivre ». `null` : pas de bloc.
@@ -109,7 +115,9 @@ class _PanneauElevesState extends State<PanneauEleves> {
   @override
   Widget build(BuildContext context) {
     final FileRecitation? file = widget.recitation;
-    final int tete = file == null ? 0 : 1;
+    final Widget? entete = widget.entete;
+    final int contexte = entete == null ? 0 : 1;
+    final int tete = contexte + (file == null ? 0 : 1);
     return ListView.separated(
       key: const ValueKey<String>('panneau-eleves'),
       // Colonne desktop : la liste se mesure, la colonne s'arrete apres elle
@@ -123,7 +131,8 @@ class _PanneauElevesState extends State<PanneauEleves> {
       itemCount: widget.eleves.length + tete,
       separatorBuilder: (BuildContext _, int _) => Ecart.vLg,
       itemBuilder: (BuildContext _, int index) {
-        if (file != null && index == 0) {
+        if (entete != null && index == 0) return entete;
+        if (file != null && index == contexte) {
           return FileRecitationSeance(file: file, eleves: widget.eleves);
         }
         final EleveSeance e = widget.eleves[index - tete];

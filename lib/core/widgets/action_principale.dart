@@ -66,7 +66,13 @@ class ActionPrincipale extends StatelessWidget {
     this.doux = false,
     this.autofocus = false,
     this.focusNode,
+    this.libelleSemantique,
   });
+
+  /// Ce que lit le lecteur d'ecran quand il precise le libelle visible
+  /// (« Reduire » visible, « Reduire les participants » lu, plan V2 §20).
+  /// `null` : le [libelle].
+  final String? libelleSemantique;
 
   /// Vrai pour prendre le focus clavier a l'ouverture de l'ecran : un ecran
   /// qui remplace la page sans geste (acces retire en salle) pose le focus
@@ -140,7 +146,7 @@ class ActionPrincipale extends StatelessWidget {
 
     return Pressable.selon(
       onPress: actif ? onPress : null,
-      libelleSemantique: libelle,
+      libelleSemantique: libelleSemantique ?? libelle,
       // Le format reduit est plus petit que la cible : `Pressable` l'y porte,
       // la pastille reste centree dedans.
       respecterCibleTactile: reduit,

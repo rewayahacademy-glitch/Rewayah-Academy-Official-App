@@ -330,6 +330,26 @@
         "seancesSemaine": "{nombre} séances cette semaine"
       },
       "optionsPanneau": "Options du panneau {titre}",
+      "capsule": {
+        "avatar": "Afficher les informations de {nom}",
+        "controlePossible": "Contrôle possible. Afficher les informations",
+        "controleActif": "Contrôle actif. Afficher les informations",
+        "enregistrementActif": "Enregistrement actif"
+      },
+      "contexte": {
+        "titre": "Informations de la séance",
+        "reseau": "Réseau",
+        "detailReseau": "Détail du réseau",
+        "enregistrementActif": "Enregistrement actif",
+        "controle": "Contrôle",
+        "controlePossible": "Contrôle possible",
+        "controleActif": "Contrôle actif",
+        "controlePossibleDetail": "Une visite de contrôle peut avoir lieu. Cela ne veut pas dire que quelqu'un observe maintenant.",
+        "controleActifDetail": "Une visite de contrôle a lieu en ce moment.",
+        "reduire": "Réduire",
+        "reduireParticipants": "Réduire les participants",
+        "reduireInformations": "Réduire les informations"
+      },
       "demo": {
         "titre": "Salle de démonstration",
         "intro": "Données fictives, aucun serveur. Choisissez un rôle et un état.",

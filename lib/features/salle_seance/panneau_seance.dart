@@ -10,6 +10,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_elevation.dart';
@@ -329,10 +330,11 @@ class _Titre extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Semantics(
     header: true,
-    child: Text(
+    // TB-3 : jamais de points de suspension (« Informations de la sea... »,
+    // COUPE-MOTS-1) ; le titre passe a la ligne entre les mots, un mot trop
+    // long se reduit juste assez pour tenir.
+    child: TexteSansCoupure(
       titre,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
       style: AppPalette.of(context).inkStrong
           .applyTo(Theme.of(context).textTheme.titleLarge ?? const TextStyle()),
     ),

@@ -423,16 +423,23 @@ abstract final class DonneesSeanceDemo {
   /// Toutes les situations partent de l'etat `repos` (ou `rienPartage`,
   /// `fin`) de la meme demonstration : meme Classe, meme enseignant, memes
   /// inscrits. Seules les donnees du chantier changent.
+  ///
+  /// Surcharges de demonstration (TB-3, aucun serveur) : [etat] remplace
+  /// l'etat de base (la visite du tuteur, pour la notice de l'enfant) ;
+  /// [enregistrement] remplace l'enregistrement actif par defaut (inactif
+  /// ou inconnu : aucun point rouge).
   static VueSeance vueTb(
     RoleSeance role,
     SituationTb situation, {
     TitreEnseignant titre = TitreEnseignant.sayyid,
     String prenomEleve = eleveCourant,
+    EtatDemoSalle? etat,
+    EtatEnregistrement enregistrement = EtatEnregistrement.actif,
   }) {
     final bool enseignant = role == RoleSeance.enseignant;
     final VueSeance base = vue(
       role,
-      etatBaseTb(situation),
+      etat ?? etatBaseTb(situation),
       titre: titre,
       prenomEleve: prenomEleve,
     );
@@ -460,7 +467,17 @@ abstract final class DonneesSeanceDemo {
     };
     return base.copyWith(
       eleves: inscrits,
-      enregistrement: EtatEnregistrement.actif,
+      enregistrement: enregistrement,
+      // TB-3 (CTX-02) : la donnee du controle n'existe pas encore (TB-BR-24).
+      // Demonstration seulement, dans la situation nommee : « Controle
+      // possible », jamais « Controle actif » fabrique.
+      controle: situation == SituationTb.ctx02 ? EtatControle.possible : null,
+      // CTX-01, CTX-02 : le contexte s'ouvre deplie ; ailleurs, la capsule.
+      contexte: switch (situation) {
+        SituationTb.ctx01 => ContexteOuvert.enseignant,
+        SituationTb.ctx02 => ContexteOuvert.controle,
+        _ => ContexteOuvert.aucun,
+      },
       tableauLibre: situation == SituationTb.effacementTableau
           ? const TableauLibre(
               largeurCanonique: largeurPage,

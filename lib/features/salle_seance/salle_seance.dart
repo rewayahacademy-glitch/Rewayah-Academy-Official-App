@@ -27,6 +27,7 @@ import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/offline_banner.dart';
 import 'actions_seance.dart';
 import 'barre_support.dart';
+import 'capsule_seance.dart';
 import 'chrome_seance.dart';
 import 'dock_seance.dart';
 import 'outils_enseignement.dart';
@@ -142,103 +143,41 @@ class SalleSeance extends StatelessWidget {
     // seules, sont posees en bas par-dessus le support, masquables d'une
     // touche (CommandesMasquables) : le support et la video gardent l'ecran.
     if (vue.role == RoleSeance.guidee && !large) {
-      return Material(
-        color: palette.surfaceCanvas.background,
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              if (!agrandi)
-                ChromeSeance(vue: vue, actions: actions, compacte: true),
-              BandeauSecours(vue: vue, actions: actions, gouttiere: gouttiere),
-              if (!agrandi) ?_appel(vue, gouttiere),
-              Expanded(
-                child: _visioRevelee(
-                  vue: vue,
-                  contenu: Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      gouttiere,
-                      AppSpacing.xs,
-                      gouttiere,
-                      AppSpacing.xs,
-                    ),
-                    child: ZoneSupport(
-                      vue: vue,
-                      zoom: local.zoom,
-                      contenu: contenuSupport,
-                    ),
-                  ),
-                  barre: Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      gouttiere,
-                      0,
-                      gouttiere,
-                      AppSpacing.sm,
-                    ),
-                    child: DockSeance(
-                      vue: vue,
-                      actions: actions,
-                      microOuvert: local.microOuvert,
-                      cameraAllumee: local.cameraAllumee,
-                      agrandi: agrandi,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-    // Plein cadre, sans coquille de page : ni titre d'ecran, ni colonne
-    // bornee (CONTENT > CHROME). Le fond reste celui du theme (clair et
-    // sombre), comme sur les images, et non le registre inverse.
-    return Material(
-      color: palette.surfaceCanvas.background,
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            if (agrandi) ...<Widget>[
-              // Mode agrandi : l'en-tete se retire, l'etat critique reste
-              // visible (CL-7 §2.7).
-              BandeauSecours(vue: vue, actions: actions, gouttiere: gouttiere),
-              Ecart.vLg,
-            ] else if (large) ...<Widget>[
-              ChromeSeance(vue: vue, actions: actions),
-              BandeauSecours(
-                vue: vue,
-                actions: actions,
-                gouttiere: gouttiere,
-                espaceApres: AppSpacing.lg,
-              ),
-              ?_appel(vue, gouttiere),
-            ] else ...<Widget>[
-              TeteSalleBornee(
-                children: <Widget>[
-                  ChromeSeance(vue: vue, actions: actions),
-                  BandeauSecours(
+      return _ContexteEleve(
+        vue: vue,
+        actions: actions,
+        construire: (FocusNode focusCapsule) => Material(
+          color: palette.surfaceCanvas.background,
+          child: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                if (!agrandi)
+                  ChromeSeance(
                     vue: vue,
                     actions: actions,
-                    gouttiere: gouttiere,
+                    compacte: true,
+                    focusCapsule: focusCapsule,
                   ),
-                  ?_appel(vue, gouttiere),
-                ],
-              ),
-              Ecart.vLg,
-            ],
-            // TB-2 (VIS-01) : la barre de l'appel est posee par-dessus, en bas,
-            // dans CommandesMasquables ; le support garde sa marge de lecture
-            // (hauteur mesuree de la barre), masquee ou non.
-            Expanded(
-              child: _visioRevelee(
-                vue: vue,
-                contenu: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: gouttiere),
+                BandeauSecours(
+                  vue: vue,
+                  actions: actions,
+                  gouttiere: gouttiere,
+                ),
+                if (!agrandi) ?_appel(vue, gouttiere),
+                Expanded(
+                  child: _visioRevelee(
+                    vue: vue,
+                    contenu: _surContexteEleve(
+                      vue: vue,
+                      actions: actions,
+                      contenu: Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          gouttiere,
+                          AppSpacing.xs,
+                          gouttiere,
+                          AppSpacing.xs,
+                        ),
                         child: ZoneSupport(
                           vue: vue,
                           zoom: local.zoom,
@@ -246,48 +185,254 @@ class SalleSeance extends StatelessWidget {
                         ),
                       ),
                     ),
-                    if (large && _BarreBasse.utile(vue))
-                      Padding(
-                        padding: EdgeInsetsDirectional.only(
-                          start: gouttiere,
-                          end: gouttiere,
-                          top: AppSpacing.xl,
-                        ),
-                        child: _BarreBasse(
-                          vue: vue,
-                          actions: actions,
-                          local: local,
-                        ),
+                    barre: Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        gouttiere,
+                        0,
+                        gouttiere,
+                        AppSpacing.sm,
                       ),
-                  ],
-                ),
-                barre: Padding(
-                  padding: EdgeInsetsDirectional.only(
-                    start: gouttiere,
-                    end: gouttiere,
-                    top: large ? AppSpacing.xl : AppSpacing.lg,
-                    bottom: large ? AppSpacing.xl : AppSpacing.md,
+                      child: DockSeance(
+                        vue: vue,
+                        actions: actions,
+                        microOuvert: local.microOuvert,
+                        cameraAllumee: local.cameraAllumee,
+                        agrandi: agrandi,
+                      ),
+                    ),
                   ),
-                  child: Center(
-                    heightFactor: 1,
-                    child: DockSeance(
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+    // Plein cadre, sans coquille de page : ni titre d'ecran, ni colonne
+    // bornee (CONTENT > CHROME). Le fond reste celui du theme (clair et
+    // sombre), comme sur les images, et non le registre inverse.
+    return _ContexteEleve(
+      vue: vue,
+      actions: actions,
+      construire: (FocusNode focusCapsule) => Material(
+        color: palette.surfaceCanvas.background,
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              if (agrandi) ...<Widget>[
+                // Mode agrandi : l'en-tete se retire, l'etat critique reste
+                // visible (CL-7 §2.7).
+                BandeauSecours(
+                  vue: vue,
+                  actions: actions,
+                  gouttiere: gouttiere,
+                ),
+                Ecart.vLg,
+              ] else if (large) ...<Widget>[
+                ChromeSeance(
+                  vue: vue,
+                  actions: actions,
+                  focusCapsule: focusCapsule,
+                ),
+                BandeauSecours(
+                  vue: vue,
+                  actions: actions,
+                  gouttiere: gouttiere,
+                  espaceApres: AppSpacing.lg,
+                ),
+                ?_appel(vue, gouttiere),
+              ] else ...<Widget>[
+                TeteSalleBornee(
+                  children: <Widget>[
+                    ChromeSeance(
                       vue: vue,
                       actions: actions,
-                      microOuvert: local.microOuvert,
-                      cameraAllumee: local.cameraAllumee,
-                      // Bureau : « Reduire » vit deja dans le zoom local.
-                      agrandi:
-                          agrandi && !(large && vue.voitZoomLocal(gabarit)),
+                      focusCapsule: focusCapsule,
+                    ),
+                    BandeauSecours(
+                      vue: vue,
+                      actions: actions,
+                      gouttiere: gouttiere,
+                    ),
+                    ?_appel(vue, gouttiere),
+                  ],
+                ),
+                Ecart.vLg,
+              ],
+              // TB-2 (VIS-01) : la barre de l'appel est posee par-dessus, en bas,
+              // dans CommandesMasquables ; le support garde sa marge de lecture
+              // (hauteur mesuree de la barre), masquee ou non.
+              Expanded(
+                child: _visioRevelee(
+                  vue: vue,
+                  contenu: _surContexteEleve(
+                    vue: vue,
+                    actions: actions,
+                    contenu: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: gouttiere,
+                            ),
+                            child: ZoneSupport(
+                              vue: vue,
+                              zoom: local.zoom,
+                              contenu: contenuSupport,
+                            ),
+                          ),
+                        ),
+                        if (large && _BarreBasse.utile(vue))
+                          Padding(
+                            padding: EdgeInsetsDirectional.only(
+                              start: gouttiere,
+                              end: gouttiere,
+                              top: AppSpacing.xl,
+                            ),
+                            child: _BarreBasse(
+                              vue: vue,
+                              actions: actions,
+                              local: local,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  barre: Padding(
+                    padding: EdgeInsetsDirectional.only(
+                      start: gouttiere,
+                      end: gouttiere,
+                      top: large ? AppSpacing.xl : AppSpacing.lg,
+                      bottom: large ? AppSpacing.xl : AppSpacing.md,
+                    ),
+                    child: Center(
+                      heightFactor: 1,
+                      child: DockSeance(
+                        vue: vue,
+                        actions: actions,
+                        microOuvert: local.microOuvert,
+                        cameraAllumee: local.cameraAllumee,
+                        // Bureau : « Reduire » vit deja dans le zoom local.
+                        agrandi:
+                            agrandi && !(large && vue.voitZoomLocal(gabarit)),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
+}
+
+/// TB-3 (CTX-01, CTX-02), eleve et guidee : Echap reduit le contexte deplie
+/// depuis la capsule, et le focus revient a l'avatar de la capsule.
+class _ContexteEleve extends StatefulWidget {
+  const _ContexteEleve({
+    required this.vue,
+    required this.actions,
+    required this.construire,
+  });
+
+  final VueSeance vue;
+  final ActionsSeance actions;
+  final Widget Function(FocusNode focusCapsule) construire;
+
+  @override
+  State<_ContexteEleve> createState() => _ContexteEleveState();
+}
+
+class _ContexteEleveState extends State<_ContexteEleve> {
+  final FocusNode _focusCapsule = FocusNode(debugLabel: 'capsule-avatar');
+
+  @override
+  void didUpdateWidget(_ContexteEleve ancien) {
+    super.didUpdateWidget(ancien);
+    if (ancien.vue.contexteOuvert && !widget.vue.contexteOuvert) {
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted && _focusCapsule.context != null) {
+          _focusCapsule.requestFocus();
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _focusCapsule.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => CallbackShortcuts(
+    bindings: <ShortcutActivator, VoidCallback>{
+      if (widget.vue.contexteOuvert)
+        const SingleActivator(LogicalKeyboardKey.escape): () =>
+            widget.actions.onContexte?.call(ContexteOuvert.aucun),
+    },
+    child: widget.construire(_focusCapsule),
+  );
+}
+
+/// TB-3, eleve et guidee : le contexte deplie, pose par-dessus la surface
+/// dans le cadre de panneau existant ([PanneauSeance]) : feuille du bas au
+/// telephone (le haut du support reste visible), volet ailleurs. Il reste
+/// au-dessus de la barre de l'appel (la surface garde sa marge de lecture).
+Widget _surContexteEleve({
+  required VueSeance vue,
+  required ActionsSeance actions,
+  required Widget contenu,
+}) {
+  if (!vue.contexteOuvert) return contenu;
+  return LayoutBuilder(
+    builder: (BuildContext contexte, BoxConstraints c) {
+      final Gabarit gabarit = AppGabarit.de(contexte);
+      final bool feuille = gabarit == Gabarit.mobile;
+      final ValueChanged<ContexteOuvert>? reduire = actions.onContexte;
+      final Widget panneau = Focus(
+        autofocus: true,
+        skipTraversal: true,
+        child: PanneauSeance(
+          titre: t.salle.seance.contexte.titre,
+          onFermer: reduire == null
+              ? null
+              : () => reduire(ContexteOuvert.aucun),
+          forme: feuille ? FormePanneau.feuille : FormePanneau.volet,
+          enfant: ListView(
+            key: const ValueKey<String>('panneau-contexte'),
+            padding: const EdgeInsets.only(bottom: AppSpacing.md),
+            children: <Widget>[SectionContexte(vue: vue, actions: actions)],
+          ),
+        ),
+      );
+      return Stack(
+        children: <Widget>[
+          Positioned.fill(child: contenu),
+          if (feuille)
+            Positioned.fill(
+              top: supportVisiblePour(contexte, c.maxHeight),
+              child: panneau,
+            )
+          else
+            PositionedDirectional(
+              start: AppSpacing.sm,
+              top: 0,
+              bottom: AppSpacing.sm,
+              width: math.min(
+                largeurPanneauSeance,
+                c.maxWidth - 2 * AppSpacing.sm,
+              ),
+              child: panneau,
+            ),
+        ],
+      );
+    },
+  );
 }
 
 /// Le clavier des panneaux Eleves et Supports : Echap ferme le panneau
@@ -319,6 +464,10 @@ class _FocusPanneaux extends StatefulWidget {
 class _FocusPanneauxState extends State<_FocusPanneaux> {
   final FocusNode _focusEleves = FocusNode(debugLabel: 'bouton-eleves');
   final FocusNode _focusSupports = FocusNode(debugLabel: 'bouton-supports');
+
+  /// TB-3 : l'avatar de la capsule, ou revient le focus quand le contexte
+  /// se reduit (« Reduire », croix ou Echap).
+  final FocusNode _focusCapsule = FocusNode(debugLabel: 'capsule-avatar');
   // Hors de l'ordre Tab : la zone n'est pas interactive (UX_REVIEW_04 n. 17 f) ;
   // `requestFocus` y pose toujours le focus.
   final FocusNode _focusSupport = FocusNode(
@@ -340,6 +489,14 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
           : t.salle.microCoupe;
       // Lu une seule fois : le bandeau visible est exclu des semantiques.
       _annoncer(_retourMicro!);
+    }
+    if (ancien.vue.contexteOuvert && !widget.vue.contexteOuvert) {
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted && _focusCapsule.context != null) {
+          _focusCapsule.requestFocus();
+        }
+      });
+      return;
     }
     final PanneauOuvert avant = ancien.vue.panneau;
     if (avant == PanneauOuvert.aucun ||
@@ -372,10 +529,17 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
     _focusEleves.dispose();
     _focusSupports.dispose();
     _focusSupport.dispose();
+    _focusCapsule.dispose();
     super.dispose();
   }
 
   void _fermer() {
+    // TB-3 : le contexte deplie est le panneau le plus recent ; Echap le
+    // reduit, la capsule revient.
+    if (widget.vue.contexteOuvert) {
+      widget.actions.onContexte?.call(ContexteOuvert.aucun);
+      return;
+    }
     switch (widget.vue.panneau) {
       case PanneauOuvert.eleves:
         widget.actions.onEleves?.call();
@@ -511,15 +675,22 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
   Widget build(BuildContext context) {
     // EN-9 : sur bureau, le panneau Eleves est ouvert d'office (a droite du
     // support), jamais derriere le bouton « Eleves ».
-    final VueSeance vue =
-        widget.gabarit == Gabarit.desktop &&
-            widget.vue.voitBoutonsPanneaux &&
-            widget.vue.panneau == PanneauOuvert.aucun
+    // TB-3 (CTX-01, CTX-02) : le contexte deplie depuis la capsule s'ouvre
+    // dans le panneau de personnes existant (Eleves), a tous les gabarits.
+    final VueSeance base =
+        widget.vue.contexteOuvert && widget.vue.voitBoutonsPanneaux
         ? widget.vue.copyWith(panneau: PanneauOuvert.eleves)
         : widget.vue;
+    final VueSeance vue =
+        widget.gabarit == Gabarit.desktop &&
+            base.voitBoutonsPanneaux &&
+            base.panneau == PanneauOuvert.aucun
+        ? base.copyWith(panneau: PanneauOuvert.eleves)
+        : base;
     final bool ouvert =
         widget.vue.voitBoutonsPanneaux &&
-        widget.vue.panneau != PanneauOuvert.aucun;
+        (widget.vue.panneau != PanneauOuvert.aucun ||
+            widget.vue.contexteOuvert);
     // EN-KB (E19) : les lettres sont posees sur le sous-arbre de la salle,
     // jamais globales ; l'action refuse (et laisse passer la touche) hors
     // bureau, preference coupee, ou pendant une saisie.
@@ -568,6 +739,7 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
                     focusEleves: _focusEleves,
                     focusSupports: _focusSupports,
                     focusSupport: _focusSupport,
+                    focusCapsule: _focusCapsule,
                   ),
                   barre: _barreEnseignant(vue),
                 ),
@@ -653,6 +825,7 @@ class _SalleEnseignant extends StatelessWidget {
     required this.focusEleves,
     required this.focusSupports,
     required this.focusSupport,
+    this.focusCapsule,
     this.contenuSupport,
   });
 
@@ -661,6 +834,9 @@ class _SalleEnseignant extends StatelessWidget {
   final EtatLocalSeance local;
   final Gabarit gabarit;
   final Widget? contenuSupport;
+
+  /// TB-3 : le noeud de l'avatar de la capsule (retour du focus).
+  final FocusNode? focusCapsule;
 
   /// Les noeuds des boutons Eleves et Supports (retour du focus).
   final FocusNode focusEleves;
@@ -710,7 +886,11 @@ class _SalleEnseignant extends StatelessWidget {
         final Widget contenu = Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            ChromeSeance(vue: vue, actions: actions),
+            ChromeSeance(
+              vue: vue,
+              actions: actions,
+              focusCapsule: focusCapsule,
+            ),
             // La rangee d'outils n'a pas d'ecart en tete : 12, comme sous
             // elle.
             BandeauSecours(
@@ -817,7 +997,11 @@ class _SalleEnseignant extends StatelessWidget {
           children: <Widget>[
             TeteSalleBornee(
               children: <Widget>[
-                ChromeSeance(vue: vue, actions: actions),
+                ChromeSeance(
+                  vue: vue,
+                  actions: actions,
+                  focusCapsule: focusCapsule,
+                ),
                 BandeauSecours(vue: vue, actions: actions),
               ],
             ),
@@ -869,8 +1053,13 @@ class _SalleEnseignant extends StatelessWidget {
             ? vue.compteurEleves ?? t.salle.seance.eleves
             : t.salle.seance.eleves,
         // EN-9 : sur bureau, le panneau Eleves reste ouvert a droite du
-        // support ; il ne se ferme pas.
-        onFermer: forme == FormePanneau.colonne ? null : actions.onEleves,
+        // support ; il ne se ferme pas. TB-3 : ouvert par la capsule, la
+        // croix reduit le contexte (la capsule revient).
+        onFermer: forme == FormePanneau.colonne
+            ? null
+            : vue.contexteOuvert
+            ? () => actions.onContexte?.call(ContexteOuvert.aucun)
+            : actions.onEleves,
         forme: forme,
         enMenu: forme != FormePanneau.colonne,
         ajusteAuContenu: true,
@@ -888,6 +1077,9 @@ class _SalleEnseignant extends StatelessWidget {
               : null,
           large: forme == FormePanneau.colonne,
           serre: forme == FormePanneau.feuille,
+          entete: vue.contexteOuvert
+              ? SectionContexte(vue: vue, actions: actions)
+              : null,
         ),
       ),
       PanneauOuvert.supports => PanneauSeance(
@@ -960,7 +1152,7 @@ class _SalleEnseignant extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          ChromeSeance(vue: vue, actions: actions),
+          ChromeSeance(vue: vue, actions: actions, focusCapsule: focusCapsule),
           BandeauSecours(vue: vue, actions: actions),
           Ecart.vSm,
           Expanded(
@@ -999,7 +1191,7 @@ class _SalleEnseignant extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        ChromeSeance(vue: vue, actions: actions),
+        ChromeSeance(vue: vue, actions: actions, focusCapsule: focusCapsule),
         BandeauSecours(vue: vue, actions: actions),
         Ecart.vSm,
         Expanded(
@@ -1089,7 +1281,11 @@ class _SalleEnseignant extends StatelessWidget {
       children: <Widget>[
         TeteSalleBornee(
           children: <Widget>[
-            ChromeSeance(vue: vue, actions: actions),
+            ChromeSeance(
+              vue: vue,
+              actions: actions,
+              focusCapsule: focusCapsule,
+            ),
             BandeauSecours(vue: vue, actions: actions),
           ],
         ),

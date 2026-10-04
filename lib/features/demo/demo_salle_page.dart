@@ -24,7 +24,9 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/status_pill.dart';
 import '../salle_seance/actions_seance.dart';
 import '../salle_seance/outils_dock_salle.dart';
 import '../salle_seance/panneau_eleves.dart';
@@ -51,6 +53,10 @@ List<RouteBase> routesDemoSalle(String environnement) {
         titre: etat.uri.queryParameters['titre'] == 'sayyida'
             ? TitreEnseignant.sayyida
             : TitreEnseignant.sayyid,
+        // TB-3 : l'enregistrement de demonstration (`&enr=inactif`).
+        enregistrement:
+            _lire(EtatEnregistrement.values, etat.uri.queryParameters['enr']) ??
+            EtatEnregistrement.actif,
       ),
     ),
   ];
@@ -83,11 +89,18 @@ class DemoSallePage extends StatelessWidget {
     this.etat,
     this.situation,
     this.titre = TitreEnseignant.sayyid,
+    this.enregistrement = EtatEnregistrement.actif,
     super.key,
   });
 
   final RoleSeance? role;
+
+  /// L'etat ; avec une [situation], il en remplace l'etat de base (TB-3 :
+  /// `&etat=visite` montre la notice de l'enfant pendant le partage).
   final EtatDemoSalle? etat;
+
+  /// TB-3 : l'enregistrement de la situation (actif par defaut).
+  final EtatEnregistrement enregistrement;
 
   /// TB-1b : la situation Supports et tableau ; elle prime sur [etat]. Une
   /// situation sans objet pour le role ramene a la liste.
@@ -108,9 +121,10 @@ class DemoSallePage extends StatelessWidget {
         SalleDemo(
           key: ValueKey<String>('${r.name}-tb-${s.name}'),
           role: r,
-          etat: DonneesSeanceDemo.etatBaseTb(s),
+          etat: etat ?? DonneesSeanceDemo.etatBaseTb(s),
           situation: s,
           titre: titre,
+          enregistrement: enregistrement,
           onSortir: () => context.go(Routes.demoSalle),
         ),
       );
@@ -335,12 +349,16 @@ class SalleDemo extends StatefulWidget {
     this.tutoiement,
     this.prenomEleve = DonneesSeanceDemo.eleveCourant,
     this.situation,
+    this.enregistrement = EtatEnregistrement.actif,
     super.key,
   });
 
   final RoleSeance role;
   final EtatDemoSalle etat;
   final VoidCallback onSortir;
+
+  /// TB-3 : l'enregistrement de la situation (actif par defaut).
+  final EtatEnregistrement enregistrement;
 
   /// TB-1b : la situation Supports et tableau, ou `null`. Ses donnees
   /// viennent de `DonneesSeanceDemo.vueTb` (une seule source).
@@ -398,6 +416,8 @@ class _SalleDemoState extends State<SalleDemo> {
             s,
             titre: titre,
             prenomEleve: prenomEleve,
+            etat: widget.etat,
+            enregistrement: widget.enregistrement,
           );
   }
 
@@ -406,6 +426,9 @@ class _SalleDemoState extends State<SalleDemo> {
   late FileRecitation _recitation = _donnees().recitation;
 
   late PanneauOuvert _panneau = _donnees().panneau;
+
+  /// TB-3 : le contexte deplie depuis la capsule (etat local d'interface).
+  late ContexteOuvert _contexte = _donnees().contexte;
 
   // Les commandes sans effet en demonstration (cloche, reglages, compte,
   // outils) : rendues pour montrer l'ecran des images, elles ne font rien.
@@ -440,6 +463,7 @@ class _SalleDemoState extends State<SalleDemo> {
       connexion: _connexion,
       recitation: _recitation,
       tutoiement: widget.tutoiement,
+      contexte: _contexte,
     );
     final bool enseignant = widget.role == RoleSeance.enseignant;
     // Fin de seance de l'enseignant : CLV-10 (le cahier n'existe pas en
@@ -485,7 +509,26 @@ class _SalleDemoState extends State<SalleDemo> {
       onNotifications: _inerte,
       onReglages: _inerte,
       onCompte: _inerte,
-      onReseau: enseignant ? _inerte : null,
+      // TB-3 : « Detail du reseau » du contexte enseignant ouvre la feuille
+      // du reseau, comme en Classe Live (sans mesure : l'etat de la
+      // connexion de demonstration).
+      onReseau: enseignant
+          ? () => unawaited(
+              AppBottomSheet.ouvrir<void>(
+                context,
+                titre: t.salle.seance.reseau,
+                constructeur: (BuildContext _) => Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: StatusPill(
+                    libelle: vue.texteConnexion,
+                    ton: vue.connexion.etablie
+                        ? TonEtat.succes
+                        : TonEtat.avertissement,
+                  ),
+                ),
+              ),
+            )
+          : null,
       onEleves: enseignant
           ? () => _basculerPanneau(PanneauOuvert.eleves)
           : null,
@@ -525,6 +568,9 @@ class _SalleDemoState extends State<SalleDemo> {
       onReessayerConnexion: () =>
           setState(() => _connexion = ConnexionSeance.retablie),
       onContinuerSansMicro: () => setState(() => _micro = false),
+      // TB-3 : l'avatar et l'oeil de la capsule deplient le contexte,
+      // « Reduire » le replie ; etat local, rien n'est diffuse.
+      onContexte: (ContexteOuvert c) => setState(() => _contexte = c),
     );
     final Widget salle = SalleSeance(
       vue: vue,

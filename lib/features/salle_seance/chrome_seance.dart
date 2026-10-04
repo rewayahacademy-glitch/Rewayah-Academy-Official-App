@@ -17,6 +17,7 @@ import '../../core/widgets/entete_page.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/status_pill.dart';
 import 'actions_seance.dart';
+import 'capsule_seance.dart';
 import 'dock_seance.dart';
 import 'mention_seance.dart';
 import 'vue_seance.dart';
@@ -33,11 +34,16 @@ class ChromeSeance extends StatelessWidget {
     required this.vue,
     required this.actions,
     this.compacte = false,
+    this.focusCapsule,
     super.key,
   });
 
   final VueSeance vue;
   final ActionsSeance actions;
+
+  /// TB-3 : le noeud de l'avatar de la capsule (retour du focus quand le
+  /// contexte se reduit).
+  final FocusNode? focusCapsule;
 
   /// MA-CMD-1 : en Mode Accessibilite (telephone et web etroit), l'en-tete
   /// tient sur une ligne ; la ligne d'etat et la mention restent lues par le
@@ -60,12 +66,13 @@ class ChromeSeance extends StatelessWidget {
         ),
       ),
       child: gabarit == Gabarit.desktop
-          ? _Large(vue: vue, actions: actions)
+          ? _Large(vue: vue, actions: actions, focusCapsule: focusCapsule)
           : _Etroit(
               vue: vue,
               actions: actions,
               gabarit: gabarit,
               compacte: compacte,
+              focusCapsule: focusCapsule,
             ),
     );
   }
@@ -160,10 +167,11 @@ class EnteteFinSeance extends StatelessWidget {
 const double _retraitEtroit = AppTouchTarget.standard + AppSpacing.xs;
 
 class _Large extends StatelessWidget {
-  const _Large({required this.vue, required this.actions});
+  const _Large({required this.vue, required this.actions, this.focusCapsule});
 
   final VueSeance vue;
   final ActionsSeance actions;
+  final FocusNode? focusCapsule;
 
   @override
   Widget build(BuildContext context) {
@@ -205,6 +213,16 @@ class _Large extends StatelessWidget {
               ],
             ),
           ),
+          // TB-3 (UI-01) : pendant le partage, la capsule a la place de la
+          // vignette, avant le coin de l'en-tete.
+          if (vue.voitCapsule) ...<Widget>[
+            Ecart.hLg,
+            CapsuleSeance(
+              vue: vue,
+              actions: actions,
+              focusAvatar: focusCapsule,
+            ),
+          ],
           Ecart.hLg,
           if (vue.voitReglagesEnTete)
             _CoinComplet(vue: vue, actions: actions)
@@ -222,12 +240,14 @@ class _Etroit extends StatelessWidget {
     required this.actions,
     required this.gabarit,
     this.compacte = false,
+    this.focusCapsule,
   });
 
   final VueSeance vue;
   final ActionsSeance actions;
   final Gabarit gabarit;
   final bool compacte;
+  final FocusNode? focusCapsule;
 
   @override
   Widget build(BuildContext context) {
@@ -236,6 +256,12 @@ class _Etroit extends StatelessWidget {
     final String? ligne = vue.ligneEtat;
     final bool retour = actions.onRetour != null;
     final bool mention = vue.texteMention != null;
+    // TB-3 (UI-01) : la capsule suit la mention sur la meme ligne quand la
+    // place le permet ; sinon elle passe dessous (Wrap), rien n'est coupe.
+    final bool capsule = vue.voitCapsule;
+    final Widget? laCapsule = capsule
+        ? CapsuleSeance(vue: vue, actions: actions, focusAvatar: focusCapsule)
+        : null;
     if (compacte) {
       // MA-CMD-1 : une seule ligne (chevron, titre, « En ligne ») ; la ligne
       // d'etat reste lue sans prendre de hauteur. La mention (observation
@@ -288,7 +314,16 @@ class _Etroit extends StatelessWidget {
                 ],
               ),
             ),
-            if (mention) MentionSeance(vue: vue),
+            if (mention || capsule)
+              Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.xs,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: <Widget>[
+                  if (mention) MentionSeance(vue: vue),
+                  ?laCapsule,
+                ],
+              ),
           ],
         ),
       );
@@ -324,24 +359,33 @@ class _Etroit extends StatelessWidget {
               _Connexion(vue: vue, compacte: true),
             ],
           ),
-          if (ligne != null || mention)
+          if (ligne != null || mention || capsule)
             Padding(
               padding: EdgeInsetsDirectional.only(
                 start: retour ? _retraitEtroit : 0,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
+              child: Wrap(
+                spacing: AppSpacing.md,
+                runSpacing: AppSpacing.xs,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: <Widget>[
-                  if (ligne != null)
-                    Text(
-                      ligne,
-                      style: palette.inkMuted.applyTo(
-                        theme.textTheme.bodyMedium ?? const TextStyle(),
-                      ),
+                  if (ligne != null || mention)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        if (ligne != null)
+                          Text(
+                            ligne,
+                            style: palette.inkMuted.applyTo(
+                              theme.textTheme.bodyMedium ?? const TextStyle(),
+                            ),
+                          ),
+                        if (ligne != null && mention) Ecart.vXs,
+                        if (mention) MentionSeance(vue: vue),
+                      ],
                     ),
-                  if (ligne != null && mention) Ecart.vXs,
-                  if (mention) MentionSeance(vue: vue),
+                  ?laCapsule,
                 ],
               ),
             ),
