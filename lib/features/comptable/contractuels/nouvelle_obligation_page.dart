@@ -34,7 +34,7 @@ import '../../../core/theme/app_typography.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/bloc_asynchrone.dart';
 import '../../../core/widgets/choice_card_group.dart';
-import '../../../core/widgets/comptable/ligne_activite.dart';
+import '../../../core/widgets/comptable/ligne_activite.dart' show dateComptable;
 import '../../../core/widgets/etat_systeme.dart';
 import '../../../core/widgets/filter_pill.dart';
 import '../../../core/widgets/page_shell.dart';

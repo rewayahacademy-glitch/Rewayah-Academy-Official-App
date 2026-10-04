@@ -7,7 +7,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/port_obligations_contractuels.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -46,36 +45,34 @@ void main() {
       expect(find.byType(EditableText), findsNothing);
     });
 
-    testWidgets('masque par defaut, 350 USD une fois revele', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('masque par defaut', (WidgetTester tester) async {
       await monterContractuels(
         tester,
         depart: _adresse(SocleComptableDemo.obligationFacture024),
       );
       expect(find.text(masque), findsWidgets);
       expect(find.textContaining('350'), findsNothing);
+    });
+
+    testWidgets('350 USD une fois revele', (WidgetTester tester) async {
       await monterContractuels(
         tester,
         depart: _adresse(SocleComptableDemo.obligationFacture024),
         montantsAffiches: true,
       );
       expect(find.textContaining('350'), findsWidgets);
+      expect(find.text(masque), findsNothing);
     });
 
     testWidgets('Payer ouvre le detail de paiement W03 de l obligation', (
       WidgetTester tester,
     ) async {
-      final GoRouter routeur = await monterContractuels(
+      await monterContractuels(
         tester,
         depart: _adresse(SocleComptableDemo.obligationFacture024),
       );
       await tester.tap(_action);
       await tester.pumpAndSettle();
-      expect(
-        routeur.routerDelegate.currentConfiguration.uri.path,
-        Routes.comptablePaiementObligationPour('obl-pay-ctr-024'),
-      );
       expect(find.text(texteW03('obl-pay-ctr-024')), findsOneWidget);
     });
 
@@ -89,7 +86,7 @@ void main() {
       expect(find.text('facture-024.pdf'), findsOneWidget);
       expect(find.text('Communication'), findsOneWidget);
       expect(find.text(c.sectionHistorique), findsOneWidget);
-      expect(find.text('Approbation'), findsNothing);
+      expect(find.text('Approbation'), findsOneWidget);
       expect(find.textContaining('la direction'), findsWidgets);
     });
   });
@@ -108,7 +105,7 @@ void main() {
       expect(find.text(c.montantDefini), findsOneWidget);
     });
 
-    testWidgets('permis : Approuver fige le montant et ouvre Payer', (
+    testWidgets('permis : Approuver fige le montant, le paiement reste borne', (
       WidgetTester tester,
     ) async {
       await monterContractuels(tester, depart: _adresse('obl-ctr-027'));
@@ -116,9 +113,15 @@ void main() {
       expect(find.text(c.payer), findsNothing);
       await tester.tap(_action);
       await tester.pumpAndSettle();
-      expect(find.text(c.payer), findsOneWidget);
       expect(find.text(c.approuver), findsNothing);
       expect(find.text(c.montantFige), findsOneWidget);
+      // L'externe n'a pas encore saisi sa methode : pas de Payer, et la
+      // raison rendue par la source est dite.
+      expect(find.text(c.payer), findsNothing);
+      expect(
+        find.text(t.comptable.statuts.raison.infosManquantes),
+        findsOneWidget,
+      );
     });
 
     testWidgets('approuvee mais verification requise : pas de Payer, raison', (
@@ -205,7 +208,8 @@ void main() {
     testWidgets('hors ligne', (WidgetTester tester) async {
       await monterContractuels(
         tester,
-        depart: _adresse('inconnue'),
+        depart: _adresse('x'),
+        port: _EnEchec(),
         horsLigne: true,
       );
       expect(find.text(t.commun.etats.horsLigne.titre), findsOneWidget);
@@ -259,6 +263,14 @@ class _Absent extends PortVide {
       Future<ObligationContractuel>.error(
         const CapaciteIndisponible('CPT-BR-08'),
       );
+}
+
+class _EnEchec extends PortVide {
+  _EnEchec();
+
+  @override
+  Future<ObligationContractuel> detail(String obligationId) =>
+      Future<ObligationContractuel>.error(StateError('x'));
 }
 
 class _Lent extends PortVide {

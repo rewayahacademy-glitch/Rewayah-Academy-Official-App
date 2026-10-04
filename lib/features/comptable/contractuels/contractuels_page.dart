@@ -21,12 +21,14 @@ import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
+import '../../../core/theme/app_gabarit.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
+import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/bascule_montants.dart';
 import '../../../core/widgets/bloc_asynchrone.dart';
-import '../../../core/widgets/comptable/ligne_activite.dart';
+import '../../../core/widgets/comptable/ligne_activite.dart' show dateComptable;
 import '../../../core/widgets/data_collection.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/etat_systeme.dart';
@@ -89,22 +91,21 @@ class _ContractuelsPageState extends ConsumerState<ContractuelsPage> {
     );
     final List<ObligationContractuel> toutes =
         liste.value ?? const <ObligationContractuel>[];
+    // Sur bureau, un tableau qui defile seul ; sinon la page entiere defile
+    // et chaque obligation est une carte (la tete des onglets est haute).
+    final bool bureau = AppGabarit.de(context) == Gabarit.desktop;
 
     return PageShell(
       titre: c.titre,
       sousTitre: c.sousTitre,
-      defilante: false,
+      defilante: !bureau,
       entete: _entete(context, contexte, raison, toutes, liste.hasValue),
       actionsEntete: <Widget>[
         const BasculeMontants(),
-        if (contexte != null && contexte.peutCreer)
-          ActionPrincipale(
-            libelle: c.nouvelle,
-            compacte: true,
-            pleineLargeur: false,
-            prefixe: Icon(AppIcons.ajouter.repos),
-            onPress: () => context.push(Routes.comptableContractuelsNouvelle),
-          ),
+        // Sur bureau, en haut a droite (H08 W06) ; sur telephone l'en-tete
+        // est deja plein, le bouton passe sous les onglets.
+        if (contexte != null && contexte.peutCreer && bureau)
+          _boutonNouvelle(context),
       ],
       child: echecHorsLigne
           ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: _relire)
@@ -115,11 +116,26 @@ class _ContractuelsPageState extends ConsumerState<ContractuelsPage> {
               estVide: (List<ObligationContractuel> l) =>
                   l.where(_onglet.contient).isEmpty,
               vide: _Vide(onglet: _onglet),
-              construire: (List<ObligationContractuel> l) =>
-                  _Tableau(obligations: l.where(_onglet.contient).toList()),
+              construire: (List<ObligationContractuel> l) {
+                final List<ObligationContractuel> vues = l
+                    .where(_onglet.contient)
+                    .toList();
+                return bureau
+                    ? _Tableau(obligations: vues)
+                    : _Cartes(obligations: vues);
+              },
             ),
     );
   }
+
+  Widget _boutonNouvelle(BuildContext context) => ActionPrincipale(
+    key: const ValueKey<String>('nouvelle-obligation'),
+    libelle: t.comptable.contractuels.nouvelle,
+    compacte: true,
+    pleineLargeur: false,
+    prefixe: Icon(AppIcons.ajouter.repos),
+    onPress: () => context.push(Routes.comptableContractuelsNouvelle),
+  );
 
   /// L'en-tete qui ne defile pas (sauf a texte agrandi, par le gabarit) : les
   /// onglets de Paiements, la phrase d'une creation indisponible, les quatre
@@ -140,6 +156,15 @@ class _ContractuelsPageState extends ConsumerState<ContractuelsPage> {
           indexActif: 1,
         ),
         Ecart.vLg,
+        if (contexte != null &&
+            contexte.peutCreer &&
+            AppGabarit.de(context) != Gabarit.desktop) ...<Widget>[
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: _boutonNouvelle(context),
+          ),
+          Ecart.vMd,
+        ],
         if (contexte != null &&
             !contexte.peutCreer &&
             raison != null) ...<Widget>[
@@ -226,7 +251,107 @@ class _Vide extends StatelessWidget {
   }
 }
 
-/// La table des obligations : un tableau a 1440, des cartes en dessous.
+/// Les obligations en cartes (telephone et tablette), dans la page qui
+/// defile : le beneficiaire, l'objet, l'echeance, le montant masque, le
+/// statut, et « Payer » quand la source le permet.
+class _Cartes extends StatelessWidget {
+  const _Cartes({required this.obligations});
+
+  final List<ObligationContractuel> obligations;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle attenue = palette.inkMuted.applyTo(
+      textes.bodySmall ?? const TextStyle(),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        for (int i = 0; i < obligations.length; i++) ...<Widget>[
+          if (i > 0) Ecart.vMd,
+          _carte(context, obligations[i], palette, textes, attenue),
+        ],
+      ],
+    );
+  }
+
+  Widget _carte(
+    BuildContext context,
+    ObligationContractuel o,
+    AppPalette palette,
+    TextTheme textes,
+    TextStyle attenue,
+  ) {
+    final String? payable = o.obligationPayableId;
+    final bool payer =
+        o.etat == EtatObligationContractuel.approuvee &&
+        o.permissions.permet(ActionFinance.payer) &&
+        payable != null;
+    return AppCard(
+      key: ValueKey<String>('obligation-${o.id}'),
+      onPress: () =>
+          context.push(Routes.comptableContractuelObligationPour(o.id)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(
+            o.beneficiaire.nom,
+            style: palette.inkStrong.applyTo(
+              textes.titleMedium ?? const TextStyle(),
+            ),
+          ),
+          Ecart.vXs,
+          Text(
+            '${o.objet} · ${libelleTypeObligation(o.type)}',
+            style: palette.inkMuted.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+          Text(
+            t.comptable.contractuels.echeanceLe(
+              date: dateComptable(o.echeance),
+            ),
+            style: attenue,
+          ),
+          Ecart.vMd,
+          Wrap(
+            spacing: AppSpacing.md,
+            runSpacing: AppSpacing.sm,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: <Widget>[
+              MontantSensible(o.montant),
+              StatusPill(
+                libelle: libelleObligationContractuel(o.etat),
+                ton: tonObligationContractuel(o.etat),
+              ),
+            ],
+          ),
+          if (payer) ...<Widget>[
+            Ecart.vMd,
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: ActionPrincipale(
+                key: ValueKey<String>('payer-${o.id}'),
+                libelle: t.comptable.contractuels.payer,
+                niveau: NiveauAction.secondaire,
+                compacte: true,
+                pleineLargeur: false,
+                onPress: () => context.push(
+                  Routes.comptablePaiementObligationPour(payable),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// La table des obligations, sur bureau.
 class _Tableau extends StatelessWidget {
   const _Tableau({required this.obligations});
 

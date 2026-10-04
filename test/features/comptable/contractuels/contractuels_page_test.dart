@@ -4,7 +4,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -87,7 +86,7 @@ void main() {
     testWidgets('seulement quand la source le permet, vers W03', (
       WidgetTester tester,
     ) async {
-      final GoRouter routeur = await monterContractuels(
+      await monterContractuels(
         tester,
         depart: '${Routes.comptableContractuels}?onglet=a-payer',
       );
@@ -100,13 +99,9 @@ void main() {
         find.byKey(const ValueKey<String>('payer-obl-ctr-026')),
         findsNothing,
       );
-      expect(find.byType(ActionPrincipale), findsOneWidget);
+      expect(_actionsDeZone, findsOneWidget);
       await tester.tap(payer024);
       await tester.pumpAndSettle();
-      expect(
-        routeur.routerDelegate.currentConfiguration.uri.path,
-        Routes.comptablePaiementObligationPour('obl-pay-ctr-024'),
-      );
       expect(find.text(texteW03('obl-pay-ctr-024')), findsOneWidget);
     });
 
@@ -123,13 +118,11 @@ void main() {
     testWidgets('toucher une ligne ouvre le detail', (
       WidgetTester tester,
     ) async {
-      final GoRouter routeur = await monterContractuels(tester);
+      await monterContractuels(tester);
       await tester.tap(find.text('Karim Studio'));
       await tester.pumpAndSettle();
-      expect(
-        routeur.routerDelegate.currentConfiguration.uri.path,
-        Routes.comptableContractuelObligationPour('obl-ctr-024'),
-      );
+      expect(find.text(c.detailTitre), findsOneWidget);
+      expect(find.text(c.montantFige), findsOneWidget);
     });
   });
 
@@ -137,15 +130,12 @@ void main() {
     testWidgets('presente quand la capacite est rendue, vers le formulaire', (
       WidgetTester tester,
     ) async {
-      final GoRouter routeur = await monterContractuels(tester);
+      await monterContractuels(tester);
       final Finder bouton = find.text(c.nouvelle);
       expect(bouton, findsOneWidget);
       await tester.tap(bouton);
       await tester.pumpAndSettle();
-      expect(
-        routeur.routerDelegate.currentConfiguration.uri.path,
-        Routes.comptableContractuelsNouvelle,
-      );
+      expect(find.text(c.creer), findsOneWidget);
     });
 
     testWidgets('absente hors delegation, la raison rendue est dite', (
@@ -185,7 +175,7 @@ void main() {
       await tester.tap(_pilule('historique'));
       await tester.pumpAndSettle();
       expect(find.text(c.videHistorique), findsOneWidget);
-      expect(find.byType(ActionPrincipale), findsNothing);
+      expect(_actionsDeZone, findsNothing);
     });
 
     testWidgets('erreur : Reessayer, puis la liste revient', (
@@ -241,3 +231,11 @@ void main() {
     });
   });
 }
+
+/// Les actions portees par les obligations, hors « Nouvelle obligation » qui
+/// appartient a l'en-tete (sous les onglets sur telephone).
+final Finder _actionsDeZone = find.byWidgetPredicate(
+  (Widget w) =>
+      w is ActionPrincipale &&
+      w.key != const ValueKey<String>('nouvelle-obligation'),
+);

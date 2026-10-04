@@ -20,6 +20,7 @@ import '../../../core/capacites/port_obligations_contractuels.dart';
 import '../../../core/comptable/modeles_comptable.dart';
 import '../../../core/comptable/navigation_comptable.dart';
 import '../../../core/comptable/statuts_comptable.dart';
+import '../../../core/finance/montant.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
@@ -31,7 +32,7 @@ import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/bascule_montants.dart';
 import '../../../core/widgets/bloc_asynchrone.dart';
 import '../../../core/widgets/carte_groupee.dart';
-import '../../../core/widgets/comptable/ligne_activite.dart';
+import '../../../core/widgets/comptable/ligne_activite.dart' show dateComptable;
 import '../../../core/widgets/etat_systeme.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
 import '../../../core/widgets/montant_argent.dart';
@@ -685,10 +686,65 @@ class _Journal extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              for (final EntreeJournal e in l) LigneActivite(e),
+              for (final EntreeJournal e in l) _LigneJournal(e),
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Une entree du journal : l'objet, qui et quand, le passage d'un etat a
+/// l'autre, et le montant. Ecrite ici plutot que `LigneActivite` : a texte
+/// agrandi la rangee de ce composant deborde, la nature ne se corrige pas
+/// dans un fichier gele.
+class _LigneJournal extends StatelessWidget {
+  const _LigneJournal(this.entree);
+
+  final EntreeJournal entree;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle attenue = palette.inkMuted.applyTo(
+      textes.bodySmall ?? const TextStyle(),
+    );
+    final String? avant = entree.ancienEtat;
+    final String? apres = entree.nouvelEtat;
+    final String? transition = avant != null && apres != null
+        ? t.comptable.commun.activiteTransition(avant: avant, apres: apres)
+        : apres ?? avant;
+    final Montant? montant = entree.montant;
+    return MergeSemantics(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              entree.source ?? entree.objet,
+              style: palette.inkStrong.applyTo(
+                textes.bodyLarge ?? const TextStyle(),
+              ),
+            ),
+            Ecart.vXs,
+            Text(
+              t.comptable.commun.activiteInitiateurDate(
+                initiateur: entree.initiateur,
+                date: dateComptable(entree.date),
+              ),
+              style: attenue,
+            ),
+            if (transition != null) Text(transition, style: attenue),
+            if (montant != null) ...<Widget>[
+              Ecart.vXs,
+              MontantSensible(montant, attenue: true),
+            ],
+          ],
+        ),
       ),
     );
   }
