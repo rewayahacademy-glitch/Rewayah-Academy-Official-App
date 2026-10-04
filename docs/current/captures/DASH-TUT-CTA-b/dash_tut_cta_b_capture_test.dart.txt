@@ -1,0 +1,189 @@
+// DASH-TUT-CTA-b : captures des corrections de la revue DASH-TUT-CTA-R.
+// Accueil famille avec blocage « aucun appareil pret » : sur bureau (1440) et
+// tablette (900), « Connecter un appareil » est le seul bouton plein ; la carte
+// classe est un lien dont l'indice ferme la carte. Telephone 390 et 320 x2
+// pour verifier que rien n'a bouge ; 1440 en RTL. Saute sans CAPTURE_DIR.
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/appairage/service_appairage.dart';
+import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/app_router.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/seance_famille/port_seances_famille.dart';
+import 'package:rewayah_academy/core/seance_famille/seance_famille.dart';
+import 'package:rewayah_academy/core/tc_parcours/port_travail_a_venir.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
+
+import '../fixtures/tuteur/faux_classes_foyer.dart';
+import '../fixtures/tuteur/faux_seances_famille.dart';
+import '../fixtures/tuteur/foyers.dart';
+import '../router/support_routeur.dart' hide stabiliser;
+import '../support/harnais.dart';
+import 'outil_capture.dart';
+
+/// L'accueil famille sur le vrai routeur (comme accueil_famille_test.dart),
+/// dans le cadre de capture.
+Future<void> _monterFamille(
+  WidgetTester tester,
+  ThemeMode mode,
+  double echelle, {
+  bool blocage = false,
+  TextDirection direction = TextDirection.ltr,
+}) async {
+  const String a1 = 'foyer-a-eleve-1';
+  final FauxServiceAppairage appairage = FauxServiceAppairage()
+    ..elevesRendus = FoyersFictifs.foyerA
+    ..appareilsRendus = blocage
+        ? <AppareilAppaire>[]
+        : <AppareilAppaire>[
+            AppareilAppaire(
+              id: 'app-1',
+              profilId: a1,
+              prenom: 'Eleve A1',
+              plateforme: 'Android',
+              appaireA: DateTime.utc(2026, 9, 1),
+            ),
+          ];
+  final FauxSeancesFamille seances = FauxSeancesFamille(
+    seances: <SeanceFamille>[
+      seanceFictive(
+        seanceId: 's1',
+        eleveId: a1,
+        debutUtc: instantServeurFige.add(const Duration(hours: 3)),
+        statut: StatutSeance.planifiee,
+        heureFoyer: heureRendue('Europe/Paris', 'Paris', '18:10'),
+      ),
+      seanceFictive(
+        seanceId: 's0',
+        eleveId: a1,
+        debutUtc: instantServeurFige.subtract(const Duration(days: 2)),
+        statut: StatutSeance.terminee,
+        heureFoyer: heureRendue(
+          'Europe/Paris',
+          'Paris',
+          '18:00',
+          date: 'Samedi 19 septembre',
+        ),
+      ),
+    ],
+  );
+  late GoRouter routeur;
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: <Override>[
+        ...surchargesRouteur(
+          FausseSourceSession(sessionActive(AppRole.guardian)),
+          appairage: appairage,
+        ),
+        portSeancesFamilleProvider.overrideWithValue(seances),
+        portClassesFoyerProvider.overrideWithValue(
+          FauxClassesFoyer(
+            classes: <ClasseFoyer>[
+              ClasseFoyer(eleveId: a1, classe: classeFictive()),
+            ],
+          ),
+        ),
+        portTravailAVenirProvider.overrideWithValue(null),
+      ],
+      child: TranslationProvider(
+        child: RepaintBoundary(
+          key: cadreCapture,
+          child: Consumer(
+            builder: (BuildContext _, WidgetRef ref, Widget? _) {
+              routeur = ref.read(routeurProvider);
+              return MaterialApp.router(
+                debugShowCheckedModeBanner: false,
+                theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+                darkTheme: AppTheme.pour(
+                  InterfaceMode.standard,
+                  Brightness.dark,
+                ),
+                themeMode: mode,
+                builder: (BuildContext c, Widget? app) => MediaQuery(
+                  data: MediaQuery.of(c)
+                      .copyWith(textScaler: TextScaler.linear(echelle)),
+                  child: Directionality(textDirection: direction, child: app!),
+                ),
+                routerConfig: routeur,
+              );
+            },
+          ),
+        ),
+      ),
+    ),
+  );
+  await stabiliser(tester);
+  routeur.go(Routes.tuteurAccueil);
+  await stabiliser(tester);
+}
+
+void main() {
+  group('Capture : DASH-TUT-CTA-b', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    for (final (double, double, ThemeMode, TextDirection, String) c
+        in const <(double, double, ThemeMode, TextDirection, String)>[
+          (
+            1440,
+            1,
+            ThemeMode.light,
+            TextDirection.ltr,
+            'famille_blocage_1440_clair',
+          ),
+          (
+            1440,
+            1,
+            ThemeMode.dark,
+            TextDirection.ltr,
+            'famille_blocage_1440_sombre',
+          ),
+          (
+            1440,
+            1,
+            ThemeMode.light,
+            TextDirection.rtl,
+            'famille_blocage_1440_rtl_clair',
+          ),
+          (
+            900,
+            1,
+            ThemeMode.light,
+            TextDirection.ltr,
+            'famille_blocage_900_clair',
+          ),
+          (
+            390,
+            1,
+            ThemeMode.light,
+            TextDirection.ltr,
+            'famille_blocage_390_clair',
+          ),
+          (
+            320,
+            2,
+            ThemeMode.dark,
+            TextDirection.ltr,
+            'famille_blocage_320x2_sombre',
+          ),
+        ]) {
+      testWidgets(c.$5, (WidgetTester tester) async {
+        fixerVueCapture(tester, Size(c.$1, c.$1 < 600 ? 3200 : 1800), 1);
+        await _monterFamille(
+          tester,
+          c.$3,
+          c.$2,
+          blocage: true,
+          direction: c.$4,
+        );
+        expect(tester.takeException(), isNull);
+        debugPrint('PNG ${await capturer(tester, c.$5)}');
+      });
+    }
+  });
+}
