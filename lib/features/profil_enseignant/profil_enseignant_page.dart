@@ -31,6 +31,7 @@ import '../../core/widgets/raccourci_tactile.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import 'declaration_choix.dart';
 import 'photo_publique.dart';
 
 /// Le nom public de l'enseignant, avec son titre Sayyid ou Sayyida (R18, E16).
@@ -269,9 +270,8 @@ class _Identite extends StatelessWidget {
                 profil.identifiant.isEmpty
                     ? t.enseignant.profil.nonRenseigne
                     : profil.identifiant,
-                style: AppPalette.of(
-                  context,
-                ).inkMuted.applyTo(textes.bodySmall ?? const TextStyle()),
+                style: AppPalette.of(context).inkMuted
+                    .applyTo(textes.bodySmall ?? const TextStyle()),
               ),
             ],
           ),
@@ -381,9 +381,11 @@ class _Statut extends StatelessWidget {
 
 /// Ce que l'enseignant declare, et qu'il peut corriger.
 ///
-/// Deux lignes editables, pas trois : `country` et `languages` sont du texte
-/// libre en base, donc un champ libre dit exactement ce que la colonne accepte.
-/// `timezone_iana`, lui, demande un libelle IANA valide -- la fonction SQL le
+/// Deux lignes editables, pas trois. `country` et `languages` sont du texte
+/// libre en base, mais l'ecran les fait **choisir** (K-57, FORM-L8) : le pays
+/// dans une liste preselectionnee d'apres le fuseau, les langues parmi celles
+/// que l'academie publie (`languesCoursProvider`), le clavier seulement en
+/// dernier recours (« Autre »). `timezone_iana`, lui, demande un libelle IANA valide -- la fonction SQL le
 /// verifie et refuse le reste -- et aucun inventaire de fuseaux n'est tranche
 /// dans le produit : il reste donc en lecture, et la demande est ecrite dans
 /// `CONTRACT_REQUEST_E.md`. Un champ qui refuserait une saisie que l'enseignant
@@ -401,23 +403,30 @@ class _Declaration extends ConsumerStatefulWidget {
 class _DeclarationState extends ConsumerState<_Declaration> {
   String? _message;
 
-  Future<void> _editer({
+  /// Ouvre une feuille de choix, puis ecrit la reponse et relit le profil.
+  ///
+  /// Pays et langues se **choisissent** (K-57, FORM-L8) : la feuille rend la
+  /// valeur retenue, ou `null` si l'enseignant la referme sans enregistrer.
+  Future<void> _editer<T extends Object>({
     required String titre,
-    required String valeur,
-    required String? indice,
-    required Future<void> Function(String saisie) ecrire,
+    required Widget Function() feuille,
+    required Future<void> Function(T choix) ecrire,
   }) async {
-    final String? saisie = await AppBottomSheet.ouvrir<String>(
+    // La feuille vit dans la route du navigateur, au-dessus d'un eventuel
+    // ProviderScope imbrique (la demonstration) : on lui passe le conteneur
+    // de l'ecran, comme pour la photo publique.
+    final ProviderContainer conteneur = ProviderScope.containerOf(context);
+    final T? choix = await AppBottomSheet.ouvrir<T>(
       context,
       titre: titre,
       constructeur: (BuildContext _) =>
-          _FeuilleTexte(valeur: valeur, indice: indice),
+          UncontrolledProviderScope(container: conteneur, child: feuille()),
     );
-    if (saisie == null || !mounted) {
+    if (choix == null || !mounted) {
       return;
     }
     try {
-      await ecrire(saisie);
+      await ecrire(choix);
       if (!mounted) {
         return;
       }
@@ -466,12 +475,15 @@ class _DeclarationState extends ConsumerState<_Declaration> {
               onPress: widget.horsLigne
                   ? null
                   : () => unawaited(
-                      _editer(
+                      _editer<String>(
                         titre: t.enseignant.profil.modifierPays,
-                        valeur: profil.pays ?? '',
-                        indice: null,
-                        ecrire: (String saisie) =>
-                            _service.declarer(pays: saisie),
+                        // Le fuseau deja lu preselectionne le pays ; tant
+                        // qu'il n'est pas la, la liste reste dans son ordre.
+                        feuille: () => FeuillePays(
+                          paysDeclare: profil.pays,
+                          fuseau: fuseau.value,
+                        ),
+                        ecrire: (String pays) => _service.declarer(pays: pays),
                       ),
                     ),
             ),
@@ -484,12 +496,12 @@ class _DeclarationState extends ConsumerState<_Declaration> {
               onPress: widget.horsLigne
                   ? null
                   : () => unawaited(
-                      _editer(
+                      _editer<List<String>>(
                         titre: t.enseignant.profil.modifierLangues,
-                        valeur: langues,
-                        indice: t.enseignant.profil.languesIndice,
-                        ecrire: (String saisie) =>
-                            _service.declarer(langues: _listeDeLangues(saisie)),
+                        feuille: () =>
+                            FeuilleLangues(declarees: profil.langues),
+                        ecrire: (List<String> choisies) =>
+                            _service.declarer(langues: choisies),
                       ),
                     ),
             ),
@@ -514,56 +526,6 @@ class _DeclarationState extends ConsumerState<_Declaration> {
           ],
         ),
         LocalFeedback(message: _message),
-      ],
-    );
-  }
-
-  /// Decoupe une saisie en langues, sans garder de vide.
-  static List<String> _listeDeLangues(String saisie) => saisie
-      .split(',')
-      .map((String langue) => langue.trim())
-      .where((String langue) => langue.isNotEmpty)
-      .toList(growable: false);
-}
-
-/// Un champ unique, dans une feuille courte.
-class _FeuilleTexte extends StatefulWidget {
-  const _FeuilleTexte({required this.valeur, required this.indice});
-
-  final String valeur;
-  final String? indice;
-
-  @override
-  State<_FeuilleTexte> createState() => _FeuilleTexteState();
-}
-
-class _FeuilleTexteState extends State<_FeuilleTexte> {
-  late final TextEditingController _saisie = TextEditingController(
-    text: widget.valeur,
-  );
-
-  @override
-  void dispose() {
-    _saisie.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        TextField(
-          controller: _saisie,
-          autofocus: true,
-          decoration: InputDecoration(helperText: widget.indice),
-        ),
-        Ecart.vXl,
-        ActionPrincipale(
-          libelle: t.enseignant.profil.enregistrer,
-          onPress: () => Navigator.of(context).pop(_saisie.text.trim()),
-        ),
       ],
     );
   }

@@ -20,10 +20,12 @@ import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/matching/service_matching.dart';
+import '../../core/offres/service_offres.dart' show languesCoursProvider;
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/priere/service_priere.dart';
 import '../../core/profil/service_acceptations.dart';
+import '../../core/profil/service_declaration.dart';
 import '../../core/profil/service_profil_enseignant.dart';
 import '../../core/regles/service_regles.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -207,8 +209,17 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
       vide ? const <OffreClasseDemo>[] : DonneesEnseignantDemo.offres,
     ),
     // Profil (ENS-05).
+    // Pays et langues se choisissent (FORM-L8) : l'ecriture reste sur
+    // l'appareil (K-28) et le profil relu la reflete. Les langues proposees
+    // sont celles que la base publie a sa creation (`0043`).
     profilEnseignantProvider.overrideWith(
-      (Ref _) async => DonneesEnseignantDemo.profil,
+      (Ref ref) async => ref.watch(declarationEnseignantDemoProvider).profil,
+    ),
+    serviceDeclarationProvider.overrideWith(
+      (Ref ref) => ref.watch(declarationEnseignantDemoProvider),
+    ),
+    languesCoursProvider.overrideWith(
+      (Ref _) async => DonneesEnseignantDemo.languesCours,
     ),
     // Le nom public avec son titre (R18), que le modele ne porte pas encore.
     nomPublicEnseignantProvider.overrideWithValue(
@@ -484,3 +495,34 @@ class SoumissionCahierDemo implements SoumissionCahier {
   @override
   Future<int> rejouer() async => 0;
 }
+
+/// La declaration de la demonstration : pays et langues gardes en memoire,
+/// jamais envoyes (K-28). Le profil relu part de celui de la demonstration.
+class DeclarationEnseignantDemo implements ServiceDeclarationEnseignant {
+  String? _pays = DonneesEnseignantDemo.profil.pays;
+  List<String> _langues = DonneesEnseignantDemo.profil.langues;
+
+  /// Le profil tel que la demonstration le relit apres une ecriture.
+  ProfilEnseignant get profil {
+    const ProfilEnseignant base = DonneesEnseignantDemo.profil;
+    return ProfilEnseignant(
+      prenom: base.prenom,
+      identifiant: base.identifiant,
+      pays: _pays,
+      langues: _langues,
+      plafondHeures: base.plafondHeures,
+      statutCompte: base.statutCompte,
+      verification: base.verification,
+    );
+  }
+
+  @override
+  Future<void> declarer({String? pays, List<String>? langues}) async {
+    _pays = pays ?? _pays;
+    _langues = langues ?? _langues;
+  }
+}
+
+/// Une declaration par conteneur de demonstration.
+final Provider<DeclarationEnseignantDemo> declarationEnseignantDemoProvider =
+    Provider<DeclarationEnseignantDemo>((Ref _) => DeclarationEnseignantDemo());

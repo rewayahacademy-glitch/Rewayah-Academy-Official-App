@@ -9290,8 +9290,29 @@ class Traductions$enseignant$profil$fr {
 	/// fr: 'Modifier les langues'
 	String get modifierLangues => 'Modifier les langues';
 
-	/// fr: 'Séparez les langues par une virgule'
-	String get languesIndice => 'Séparez les langues par une virgule';
+	/// fr: 'Choisissez le pays où vous vivez. S'il n'est pas dans la liste, touchez « Autre ».'
+	String get paysConsigne => 'Choisissez le pays où vous vivez. S\'il n\'est pas dans la liste, touchez « Autre ».';
+
+	/// fr: 'D'après votre fuseau horaire'
+	String get paysDuFuseau => 'D\'après votre fuseau horaire';
+
+	/// fr: 'Choisissez un pays, ou écrivez-le dans « Autre ».'
+	String get paysRequis => 'Choisissez un pays, ou écrivez-le dans « Autre ».';
+
+	/// fr: 'Cochez les langues dans lesquelles vous pouvez enseigner.'
+	String get languesConsigne => 'Cochez les langues dans lesquelles vous pouvez enseigner.';
+
+	/// fr: 'Déjà déclarée dans votre profil'
+	String get langueDejaDeclaree => 'Déjà déclarée dans votre profil';
+
+	/// fr: 'Cochez au moins une langue.'
+	String get languesRequises => 'Cochez au moins une langue.';
+
+	/// fr: 'La liste des langues n'a pas pu être lue'
+	String get languesErreur => 'La liste des langues n\'a pas pu être lue';
+
+	/// fr: 'Vos langues actuelles ne changent pas. Réessayez dans un instant.'
+	String get languesErreurDetail => 'Vos langues actuelles ne changent pas. Réessayez dans un instant.';
 
 	/// fr: 'Enregistrer'
 	String get enregistrer => 'Enregistrer';
@@ -18420,7 +18441,14 @@ extension on Traductions {
 			'enseignant.profil.horsLigne' => 'Pas de réseau : rien ne peut être modifié ici pour l\'instant.',
 			'enseignant.profil.modifierPays' => 'Modifier le pays',
 			'enseignant.profil.modifierLangues' => 'Modifier les langues',
-			'enseignant.profil.languesIndice' => 'Séparez les langues par une virgule',
+			'enseignant.profil.paysConsigne' => 'Choisissez le pays où vous vivez. S\'il n\'est pas dans la liste, touchez « Autre ».',
+			'enseignant.profil.paysDuFuseau' => 'D\'après votre fuseau horaire',
+			'enseignant.profil.paysRequis' => 'Choisissez un pays, ou écrivez-le dans « Autre ».',
+			'enseignant.profil.languesConsigne' => 'Cochez les langues dans lesquelles vous pouvez enseigner.',
+			'enseignant.profil.langueDejaDeclaree' => 'Déjà déclarée dans votre profil',
+			'enseignant.profil.languesRequises' => 'Cochez au moins une langue.',
+			'enseignant.profil.languesErreur' => 'La liste des langues n\'a pas pu être lue',
+			'enseignant.profil.languesErreurDetail' => 'Vos langues actuelles ne changent pas. Réessayez dans un instant.',
 			'enseignant.profil.enregistrer' => 'Enregistrer',
 			'enseignant.profil.enregistre' => 'Modification enregistrée',
 			'enseignant.profil.editionErreur' => 'La modification n\'a pas abouti. Réessayez dans un instant.',
@@ -18605,6 +18633,8 @@ extension on Traductions {
 			'controleur.observation.contexteDomaine' => 'Le domaine aide l\'administration à lire votre observation.',
 			'controleur.observation.pedagogie' => 'Pédagogie',
 			'controleur.observation.pedagogieAide' => 'Quand il s\'agit de l\'enseignement : explications, progression, supports',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.interaction' => 'Interaction avec les élèves',
 			'controleur.observation.interactionAide' => 'Quand il s\'agit des échanges entre l\'enseignant et les élèves',
 			'controleur.observation.gestionClasse' => 'Gestion de la classe',
@@ -18612,8 +18642,6 @@ extension on Traductions {
 			'controleur.observation.respectCadre' => 'Respect du cadre',
 			'controleur.observation.respectCadreAide' => 'Quand il s\'agit des règles de l\'académie et de la séance',
 			'controleur.observation.climat' => 'Comportement / climat',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.climatAide' => 'Quand il s\'agit du comportement ou de l\'ambiance de la classe',
 			'controleur.observation.autre' => 'Autre',
 			'controleur.observation.autreAide' => 'Quand aucun autre domaine ne convient · précisez-le dans votre texte',
@@ -19119,6 +19147,8 @@ extension on Traductions {
 			'tc.observation.reglages.enregistrer' => 'Enregistrer',
 			'tc.observation.reglages.invalideVisites' => 'Au moins une visite par séance.',
 			'tc.observation.reglages.invalideTemps' => 'Au moins trente secondes par séance.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.reglages.valeurHeritee' => ({required Object valeur}) => 'Académie : ${valeur}',
 			'tc.observation.reglages.uniteVisiteUne' => ({required Object n}) => '${n} visite',
 			'tc.observation.reglages.uniteVisites' => ({required Object n}) => '${n} visites',
@@ -19126,8 +19156,6 @@ extension on Traductions {
 			'tc.observation.reglages.versionPolitique' => ({required Object version}) => 'Version ${version}',
 			'tc.parcours.avant.titre' => 'Avant le prochain cours',
 			'tc.parcours.avant.rien' => 'Rien à préparer pour le prochain cours.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.avant.rienDetail' => 'Votre enseignant proposera le travail à la fin de la prochaine séance.',
 			'tc.parcours.avant.nonBranche' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'tc.parcours.avant.nonBrancheDetail' => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.',
