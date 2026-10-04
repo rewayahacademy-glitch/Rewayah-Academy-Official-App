@@ -31,14 +31,31 @@
 // sans liste a montrer (chargement, vide, erreur, indisponible), l'etat
 // prend la place et aucune colonne n'est reservee.
 //
+// Mode focus (COM-W03F, COM-M05 ; spec section 10, section 20, section 23 ;
+// COM-STU-3, dossier `focus/`) : un ETAT local du canal ouvert, jamais une
+// route ni le plein ecran du navigateur. La coquille porte l'etat
+// (`EtatFocusStudio`) ; en Focus, elle retire sa navigation (colonne, rail,
+// barre basse), son titre, son disque retour et les actions de coquille, et
+// ne pose au-dessus du canal que le bandeau de sortie (« Le Studio »,
+// « Focus active », « Quitter le focus »). L'espace des canaux retire la
+// liste, la recherche et le panneau de contexte, et centre le fil a la
+// largeur de lecture (« Contenu centre + composer + sortie », section 23).
+// Le bandeau hors ligne et les erreurs du fil restent. Le contenu de la
+// coquille garde son sous-arbre d'une disposition a l'autre (cle globale) :
+// canal, fil, brouillon, envois en attente, recherche et panneau ne sont
+// jamais reconstruits ; le restaurateur remet la position de lecture, que le
+// changement de largeur deplace. Sortie : « Quitter le focus », Echap sans
+// dialogue prioritaire, retour explicite du telephone.
+//
 // Etats (spec section 25) : chargement (squelette), contenu, vide (« Aucun
 // canal pour le moment »), erreur (« Reessayer »), hors ligne (bandeau des
 // communications, contenu deja lu garde), capacite indisponible (port
 // neutre, sans « Reessayer »), canal retire ou prive non autorise (rien du
 // canal n'est rendu, R-COM-08), envoi en cours, envoi non confirme
-// (R-COM-13), non lu (badge), panneau de contexte ferme.
+// (R-COM-13), non lu (badge), panneau de contexte ferme, Focus.
 
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -63,6 +80,9 @@ import 'aujourdhui_page.dart';
 import 'brouillons_studio.dart';
 import 'canal_page.dart';
 import 'elements_enregistres_studio.dart';
+import 'focus/bascule_focus.dart';
+import 'focus/restauration_focus.dart';
+import 'focus/sortie_focus.dart';
 import 'liste_canaux.dart';
 import 'panneau_partages.dart';
 import 'port_activite_studio.dart' show DestinationStudio;
@@ -163,7 +183,11 @@ class StudioPage extends StatelessWidget {
 /// La coquille du Studio : sa navigation (Aujourd'hui, Canaux, Elements
 /// enregistres, Brouillons), son titre et sa sortie. Posee par la page
 /// routee et par la demonstration, chacune avec sa facon de changer de vue.
-class CoquilleStudio extends StatelessWidget {
+///
+/// Elle porte aussi le Mode focus du canal ouvert ([EtatFocusStudio]) :
+/// en Focus, sa navigation, son titre et son retour s'effacent derriere le
+/// bandeau de sortie, et son contenu garde son etat.
+class CoquilleStudio extends StatefulWidget {
   /// Cree la coquille.
   const CoquilleStudio({
     required this.vue,
@@ -173,6 +197,7 @@ class CoquilleStudio extends StatelessWidget {
     super.key,
     this.onRetourListe,
     this.sousTitre,
+    this.focusInitial = false,
   });
 
   /// La vue montree.
@@ -199,6 +224,10 @@ class CoquilleStudio extends StatelessWidget {
   /// Un sous-titre ; par defaut, celui de la vue (« Espace de travail de
   /// l'equipe » pour les canaux, « Le Studio » ailleurs).
   final String? sousTitre;
+
+  /// Ouvre le canal deja en Focus (la demonstration « Mode focus ») ; sans
+  /// canal ouvert, sans effet.
+  final bool focusInitial;
 
   /// Les destinations de la navigation du Studio, dans l'ordre de
   /// [VueStudio].
@@ -232,12 +261,78 @@ class CoquilleStudio extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final List<Destination> d = destinations();
+  State<CoquilleStudio> createState() => _CoquilleStudioState();
+}
+
+class _CoquilleStudioState extends State<CoquilleStudio> {
+  final EtatFocusStudio _focus = EtatFocusStudio();
+
+  /// Le contenu change de parent quand la navigation s'efface : cette cle
+  /// le deplace avec tout son etat (canal, fil, champ, recherche, panneau).
+  final GlobalKey _cleContenu = GlobalKey(debugLabel: 'studio-contenu');
+
+  /// Le Focus n'a de sens que dans un canal ouvert.
+  bool get _canalOuvert =>
+      widget.vue == VueStudio.canaux && widget.onRetourListe != null;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.focusInitial && _canalOuvert) _focus.entrer();
+  }
+
+  @override
+  void didUpdateWidget(CoquilleStudio ancien) {
+    super.didUpdateWidget(ancien);
+    // Une autre vue, ou le canal referme : le Focus prend fin, sans
+    // restauration (la personne est allee ailleurs).
+    if (!_canalOuvert) _focus.quitterPlusTard();
+  }
+
+  @override
+  void dispose() {
+    _focus.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => PorteeFocusStudio(
+    etat: _focus,
+    child: ListenableBuilder(
+      listenable: _focus,
+      builder: (BuildContext context, Widget? _) {
+        final bool focus = _focus.actif && _canalOuvert;
+        final Widget contenu = KeyedSubtree(
+          key: _cleContenu,
+          child: widget.child,
+        );
+        return GardeSortieFocus(
+          actif: focus,
+          onQuitter: _focus.quitter,
+          child: focus ? _enFocus(contenu) : _coquille(context, contenu),
+        );
+      },
+    ),
+  );
+
+  /// En Focus : ni navigation, ni titre, ni retour, ni actions de coquille
+  /// (cloche) ; le bandeau de sortie, puis le contenu. Le bandeau hors
+  /// ligne de la page reste.
+  Widget _enFocus(Widget contenu) => PageShell(
+    entete: const BandeauSortieFocus(),
+    actionsCoquille: false,
+    defilante: false,
+    child: contenu,
+  );
+
+  Widget _coquille(BuildContext context, Widget contenu) {
+    final VueStudio vue = widget.vue;
+    final VoidCallback? onRetourListe = widget.onRetourListe;
+    final List<Destination> d = CoquilleStudio.destinations();
     return NavShell(
       destinations: d,
       indexActif: VueStudio.values.indexOf(vue),
-      onAller: (String chemin) => onAllerVue(vueStudioDepuis(chemin)),
+      onAller: (String chemin) => widget.onAllerVue(vueStudioDepuis(chemin)),
       // Sur telephone, un canal ouvert est une tache focalisee : la barre
       // basse s'efface, le disque retour ramene a la liste, et le fil garde
       // sa hauteur au-dessus du clavier (R-COM-15).
@@ -250,7 +345,7 @@ class CoquilleStudio extends StatelessWidget {
           VueStudio.brouillons => t.com.studio.brouillons.titre,
         },
         sousTitre:
-            sousTitre ??
+            widget.sousTitre ??
             switch (vue) {
               VueStudio.aujourdhui => t.com.studio.aujourdhui.sousTitre,
               VueStudio.canaux => t.com.studio.sousTitre,
@@ -261,10 +356,10 @@ class CoquilleStudio extends StatelessWidget {
           final VoidCallback retour
               when AppGabarit.de(context) == Gabarit.mobile =>
             retour,
-          _ => onQuitter,
+          _ => widget.onQuitter,
         },
         defilante: false,
-        child: child,
+        child: contenu,
       ),
     );
   }
@@ -343,6 +438,41 @@ class _EspaceStudioState extends ConsumerState<EspaceStudio> {
   int _numeroRecherche = 0;
   String _texteCherche = '';
 
+  /// Le panneau de contexte est-il ouvert ? Suivi a chaque bascule, et
+  /// rendu a l'espace adaptatif comme etat de depart s'il est reconstruit.
+  bool _panneauOuvert = true;
+
+  /// Le Focus du Studio qui entoure l'espace ; nul hors d'un Studio.
+  EtatFocusStudio? _focus;
+
+  /// La recherche locale (texte, filtre, surface ouverte), gardee pendant le
+  /// Focus, qui la masque.
+  late final SourceValeur<(TextEditingValue, FiltreRechercheStudio, bool)>
+  _sourceRecherche =
+      SourceValeur<(TextEditingValue, FiltreRechercheStudio, bool)>(
+        lire: () => (_recherche.value, _filtre, _surfaceRecherche),
+        ecrire: ((TextEditingValue, FiltreRechercheStudio, bool) v) {
+          if (_recherche.value != v.$1) _recherche.value = v.$1;
+          setState(() {
+            _filtre = v.$2;
+            _surfaceRecherche = v.$3;
+          });
+        },
+      );
+
+  /// Le panneau droit (ouvert ou ferme), garde pendant le Focus, qui le
+  /// retire.
+  late final SourceValeur<bool> _sourcePanneau = SourceValeur<bool>(
+    lire: () => _panneauOuvert,
+    ecrire: (bool ouvert) => setState(() => _panneauOuvert = ouvert),
+  );
+
+  /// La cle de la source « recherche » aupres du restaurateur du Focus.
+  static const String cleSourceRecherche = 'espace-recherche';
+
+  /// La cle de la source « panneau ».
+  static const String cleSourcePanneau = 'espace-panneau';
+
   PortStudio get _port => ref.read(portStudioProvider);
 
   @override
@@ -356,14 +486,38 @@ class _EspaceStudioState extends ConsumerState<EspaceStudio> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final EtatFocusStudio? focus = PorteeFocusStudio.de(context);
+    if (!identical(focus, _focus)) {
+      _retirerSources();
+      _focus = focus;
+      focus?.restaurateur
+        ?..inscrire(cleSourceRecherche, _sourceRecherche)
+        ..inscrire(cleSourcePanneau, _sourcePanneau);
+    }
+  }
+
+  @override
   void didUpdateWidget(EspaceStudio ancien) {
     super.didUpdateWidget(ancien);
     final String? id = widget.canalId;
-    if (id != ancien.canalId && id != null) _chargerCanal(id);
+    if (id != ancien.canalId) {
+      // Un autre canal : le Focus du precedent prend fin, sans restauration.
+      _focus?.quitterPlusTard();
+      if (id != null) _chargerCanal(id);
+    }
+  }
+
+  void _retirerSources() {
+    _focus?.restaurateur
+      ?..retirer(cleSourceRecherche, _sourceRecherche)
+      ..retirer(cleSourcePanneau, _sourcePanneau);
   }
 
   @override
   void dispose() {
+    _retirerSources();
     _recherche
       ..removeListener(_auChangementRecherche)
       ..dispose();
@@ -553,6 +707,9 @@ class _EspaceStudioState extends ConsumerState<EspaceStudio> {
 
   Widget _espace(int colonnes, bool horsLigne) {
     final String? canalId = widget.canalId;
+    // En Focus (canal ouvert seulement) : ni liste, ni recherche, ni
+    // panneau ; le fil centre a la largeur de lecture.
+    final bool focus = canalId != null && (_focus?.actif ?? false);
     final List<ResumeCanal>? canaux = _canaux.hasValue && !_canaux.isLoading
         ? _canaux.value
         : null;
@@ -598,17 +755,35 @@ class _EspaceStudioState extends ConsumerState<EspaceStudio> {
     final Widget etatListe = _etatListe(horsLigne);
 
     // Sur ordinateur et tablette, les resultats prennent la place du canal,
-    // qui reste monte dessous (brouillon et lecture gardes).
-    Widget principalAvecRecherche(Widget principal) {
-      if (colonnes == 1) return principal;
-      return Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          Offstage(offstage: recherche, child: principal),
-          if (recherche) vueResultats,
-        ],
-      );
-    }
+    // qui reste monte dessous (brouillon et lecture gardes). La forme ne
+    // change pas avec le nombre de colonnes, que l'entree dans le Focus peut
+    // faire varier (la navigation rend sa largeur) : le canal garde son
+    // etat. En Focus, les resultats s'effacent, la recherche reste gardee.
+    final bool resultatsVisibles = recherche && colonnes > 1 && !focus;
+    Widget principalAvecRecherche(Widget principal) => Stack(
+      fit: StackFit.expand,
+      children: <Widget>[
+        Offstage(offstage: resultatsVisibles, child: principal),
+        if (resultatsVisibles) vueResultats,
+      ],
+    );
+
+    // « Contenu centre » en Focus (section 23) : le fil a la largeur de
+    // lecture, centre. Meme forme hors Focus, a toute la largeur : le canal
+    // recoit toujours une taille fixe, et garde son etat d'une disposition
+    // a l'autre.
+    Widget centre(Widget principal) => LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints c) => Align(
+        alignment: Alignment.topCenter,
+        child: SizedBox(
+          width: focus
+              ? math.min(c.maxWidth, AppPage.largeurLecture)
+              : c.maxWidth,
+          height: c.maxHeight,
+          child: principal,
+        ),
+      ),
+    );
 
     if (canalId == null) {
       return EspaceTravailAdaptatif(
@@ -621,10 +796,12 @@ class _EspaceStudioState extends ConsumerState<EspaceStudio> {
         ? _canal.value
         : null;
     return EspaceTravailAdaptatif(
-      liste: liste ?? etatListe,
-      principal: principalAvecRecherche(_vueCanal(canalId, horsLigne)),
+      liste: focus ? null : liste ?? etatListe,
+      principal: principalAvecRecherche(centre(_vueCanal(canalId, horsLigne))),
       titreContexte: t.com.studio.panneau.titre,
-      contexte: canal == null || (recherche && colonnes > 1)
+      contexteOuvertInitial: _panneauOuvert,
+      onContexteBascule: (bool ouvert) => _panneauOuvert = ouvert,
+      contexte: focus || canal == null || resultatsVisibles
           ? null
           : PanneauPartages(
               key: ValueKey<String>('studio-panneau-${canal.id}'),

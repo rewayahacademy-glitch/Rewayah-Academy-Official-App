@@ -24,6 +24,14 @@
 // Un canal ou la personne ne peut pas ecrire (capacite `ecrire` absente du
 // canal rendu, COM-BR-16) se lit sans champ ni bouton : une phrase dit la
 // limite, aucun bouton grise.
+//
+// Mode focus (COM-STU-3, spec section 10) : « Mode focus » est dans
+// l'en-tete du canal (`BasculeFocus`). En Focus, l'en-tete ne garde que le
+// nom du canal et son statut (sa section et son nombre de membres, compteurs
+// non essentiels, s'effacent) ; le fil et son champ restent les MEMES (meme
+// controleur, meme brouillon, memes envois en attente), selon la regle du
+// champ minimal (`ComposerMinimal`). Le canal inscrit sa position de lecture
+// et son champ aupres du restaurateur du Focus (`FocusStateRestorer`).
 
 import 'dart:ui' show FlutterView;
 
@@ -41,6 +49,9 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../accueil_famille/bloc_seance.dart'
     show dateDeLAppareil, heureDeLAppareil;
 import 'brouillons_studio.dart';
+import 'focus/bascule_focus.dart';
+import 'focus/composer_minimal.dart';
+import 'focus/restauration_focus.dart';
 import 'liste_canaux.dart';
 import 'panneau_partages.dart' show libelleMembres;
 import 'port_studio.dart';
@@ -98,15 +109,26 @@ TextesFilDiscussion textesCanal(ResumeCanal canal) {
 /// garder sa place au-dessus du champ, meme a 390 avec un texte double. La
 /// description du canal est dans son panneau (« A propos ») ; ses non-lus
 /// sont dans la liste, et tombent quand il s'ouvre.
+///
+/// [minimal] (Mode focus) : le nom et le statut seulement, sans la ligne
+/// section et membres.
 class EnteteCanal extends StatelessWidget {
   /// Cree l'en-tete du canal [canal].
-  const EnteteCanal({required this.canal, super.key});
+  const EnteteCanal({required this.canal, super.key, this.minimal = false});
 
   /// Le canal ouvert.
   final Canal canal;
 
+  /// Vrai en Mode focus : la ligne section et membres s'efface.
+  final bool minimal;
+
   /// La cle de l'en-tete, pour les tests.
   static const ValueKey<String> cle = ValueKey<String>('studio-entete-canal');
+
+  /// La cle de la ligne section et membres, pour les tests.
+  static const ValueKey<String> cleLegende = ValueKey<String>(
+    'studio-entete-canal-legende',
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -139,13 +161,16 @@ class EnteteCanal extends StatelessWidget {
             MarqueVisibiliteCanal(visibilite: r.visibilite),
           ],
         ),
-        Ecart.vXs,
-        Text(
-          legende,
-          style: palette.inkMuted.applyTo(
-            textes.bodySmall ?? const TextStyle(),
+        if (!minimal) ...<Widget>[
+          Ecart.vXs,
+          Text(
+            legende,
+            key: cleLegende,
+            style: palette.inkMuted.applyTo(
+              textes.bodySmall ?? const TextStyle(),
+            ),
           ),
-        ),
+        ],
       ],
     );
   }
@@ -200,6 +225,23 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
   /// La hauteur du clavier logiciel au dernier releve, en points logiques.
   double _clavier = 0;
 
+  /// Le Focus du Studio qui entoure le canal ; nul hors d'un Studio.
+  EtatFocusStudio? _focus;
+
+  /// La position de lecture du fil, gardee pendant le Focus.
+  late final SourceDefilement _sourceDefilement = SourceDefilement(
+    () => _defilementDesMessages()?.position,
+  );
+
+  /// Le champ du fil (brouillon et selection), garde pendant le Focus.
+  late final SourceChamp _sourceChamp = SourceChamp(_champDuFil);
+
+  /// Les cles des sources du canal aupres du restaurateur du Focus.
+  static const String cleSourceDefilement = 'canal-defilement';
+
+  /// La cle de la source « champ » du canal.
+  static const String cleSourceChamp = 'canal-champ';
+
   @override
   void initState() {
     super.initState();
@@ -210,12 +252,46 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _clavier = _hauteurClavier();
+    final EtatFocusStudio? focus = PorteeFocusStudio.de(context);
+    if (!identical(focus, _focus)) {
+      _retirerSources();
+      _focus = focus;
+      focus?.restaurateur
+        ?..inscrire(cleSourceDefilement, _sourceDefilement)
+        ..inscrire(cleSourceChamp, _sourceChamp);
+    }
   }
 
   @override
   void dispose() {
+    _retirerSources();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  void _retirerSources() {
+    _focus?.restaurateur
+      ?..retirer(cleSourceDefilement, _sourceDefilement)
+      ..retirer(cleSourceChamp, _sourceChamp);
+  }
+
+  /// Le controleur du champ du fil, reconnu par sa cle publique ; nul sans
+  /// champ (canal en lecture seule).
+  TextEditingController? _champDuFil() {
+    if (!mounted) return null;
+    TextEditingController? trouve;
+    void visiter(Element e) {
+      if (trouve != null) return;
+      final Widget w = e.widget;
+      if (w is TextField && w.key == FilDiscussion.champKey) {
+        trouve = w.controller;
+        return;
+      }
+      e.visitChildren(visiter);
+    }
+
+    (context as Element).visitChildren(visiter);
+    return trouve;
   }
 
   double _hauteurClavier() {
@@ -282,34 +358,54 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
   }
 
   /// L'en-tete du canal ; avec [restaure], la phrase « Brouillon
-  /// restaure » dessous.
-  Widget _entete(Canal canal, {bool restaure = false}) => Padding(
-    padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        EnteteCanal(canal: canal),
-        if (restaure) ...<Widget>[
-          Ecart.vSm,
-          Text(
-            t.com.studio.brouillons.restaure,
-            key: CanalStudio.cleBrouillonRestaure,
-            style: AppPalette.of(context).inkMuted.applyTo(
-              Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+  /// restaure » dessous. Hors Focus, « Mode focus » au bout de la ligne ; en
+  /// Focus, l'en-tete minimal (la sortie est dans le bandeau du Focus).
+  Widget _entete(Canal canal, {required bool focus, bool restaure = false}) =>
+      Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            // « Mode focus » au bout de la ligne s'il y tient, sinon dessous (a
+            // 390 en texte double, le nom garde toute la largeur).
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.xs,
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: <Widget>[
+                EnteteCanal(canal: canal, minimal: focus),
+                if (!focus && _focus != null) const BasculeFocus(),
+              ],
             ),
-          ),
-        ],
-      ],
-    ),
-  );
+            if (restaure) ...<Widget>[
+              Ecart.vSm,
+              Text(
+                t.com.studio.brouillons.restaure,
+                key: CanalStudio.cleBrouillonRestaure,
+                style: AppPalette.of(context).inkMuted.applyTo(
+                  Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+                ),
+              ),
+            ],
+          ],
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
     final Canal canal = widget.canal;
+    final bool focus = _focus?.actif ?? false;
     if (!canal.peut(CapaciteCanal.ecrire)) {
-      return _CanalEnLecture(canal: canal, entete: _entete(canal));
+      return _CanalEnLecture(
+        canal: canal,
+        entete: _entete(canal, focus: focus),
+      );
     }
+    // Le champ minimal du Focus : le canal ne pose encore ni vocal ni piece
+    // jointe (COM-FUS), la regle est la meme pour eux.
+    const ComposerMinimal composer = ComposerMinimal();
     final String soi = t.com.socle.composants.composer.auteurSoi;
     // Le texte du champ est garde comme brouillon (memoire de session,
     // spec section 8.2) et remis a la reouverture du canal (COM-STU-2).
@@ -318,7 +414,7 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
       canalId: canal.id,
       constructeur: (BuildContext _, bool restaure) => FilDiscussion(
         key: ValueKey<String>('studio-fil-${canal.id}'),
-        entete: _entete(canal, restaure: restaure),
+        entete: _entete(canal, focus: focus, restaure: restaure),
         messages: <MessageFil>[
           for (final MessageCommunication m in canal.messages)
             MessageFil(
@@ -331,6 +427,8 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
         ],
         textes: textesCanal(canal.resume),
         onEnvoyer: _envoyer,
+        emplacementPieceJointe: composer.emplacementPieceJointe(focus: focus),
+        emplacementVocal: composer.emplacementVocal(focus: focus),
       ),
     );
   }

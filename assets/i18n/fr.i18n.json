@@ -4805,6 +4805,13 @@
       "vide": "Aucune publication dans cette catégorie."
     },
     "studio": {
+      "focus": {
+        "entrer": "@:com.socle.lexique.modeFocus",
+        "quitter": "@:com.socle.lexique.quitterFocus",
+        "actif": "Focus activé",
+        "actifAvecEchap": "Focus activé. Échap pour quitter.",
+        "aide": "Masquez les panneaux secondaires pour vous concentrer sur cette discussion."
+      },
       "aujourdhui": {
         "titre": "@:com.socle.lexique.aujourdhui",
         "sousTitre": "Ce qui mérite votre attention dans Le Studio",
@@ -4972,6 +4979,7 @@
         "messageDe": "{auteur}, dans {canal}"
       },
       "demo": {
+        "focus": "Un canal en mode focus",
         "aujourdhuiVide": "Aujourd'hui sans activité",
         "horsDemo": "Dans l'application, cette ligne ouvre {module}. La démonstration reste sur cette page.",
         "choisir": "Choisissez une situation à essayer.",

@@ -331,5 +331,11 @@
   "com.studio.aujourdhui.titre": "spec Communications V1 du directeur (04/10), section 22, lexique impose ; renvoi au lexique du socle (COM-STU-2)",
   "com.studio.aujourdhui.indicateurs.aTraiter": "spec Communications V1 du directeur (04/10), section 22, lexique impose ; renvoi au lexique du socle (COM-STU-2)",
   "com.studio.aujourdhui.modules.studio": "spec Communications V1 du directeur (04/10), section 22, lexique impose ; renvoi au lexique du socle (COM-STU-2)",
-  "com.studio.aujourdhui.acces.messages": "spec Communications V1 du directeur (04/10), section 22, lexique impose ; renvoi au lexique du socle (COM-STU-2)"
+  "com.studio.aujourdhui.acces.messages": "spec Communications V1 du directeur (04/10), section 22, lexique impose ; renvoi au lexique du socle (COM-STU-2)",
+  "com.studio.focus.entrer": "spec Communications V1 du directeur (04/10), section 22 « Focus », lexique impose ; renvoi au lexique du socle (COM-STU-3)",
+  "com.studio.focus.quitter": "spec Communications V1 du directeur (04/10), section 22 « Focus », lexique impose ; renvoi au lexique du socle (COM-STU-3)",
+  "com.studio.focus.actif": "spec Communications V1 du directeur (04/10), section 22 « Focus », texte impose (COM-STU-3)",
+  "com.studio.focus.aide": "spec Communications V1 du directeur (04/10), section 22 « Focus », texte impose (COM-STU-3)",
+  "com.studio.focus.actifAvecEchap": "spec Communications V1 du directeur (04/10), sections 10.4, 10.5 et 24 (Echap sort du Focus) ; libelle propose par un agent (COM-STU-3), a valider par le directeur",
+  "com.studio.demo.focus": "spec Communications V1 du directeur (04/10), sections 10, 26 et 33 (Studio avec Focus) ; libelle propose par un agent (COM-STU-3), a valider par le directeur"
 }

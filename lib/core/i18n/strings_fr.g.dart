@@ -11085,6 +11085,7 @@ class Traductions$com$studio$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$com$studio$focus$fr focus = Traductions$com$studio$focus$fr.internal(_root);
 	late final Traductions$com$studio$aujourdhui$fr aujourdhui = Traductions$com$studio$aujourdhui$fr.internal(_root);
 	late final Traductions$com$studio$brouillons$fr brouillons = Traductions$com$studio$brouillons$fr.internal(_root);
 
@@ -15275,6 +15276,30 @@ class Traductions$com$socle$navigation$fr {
 	late final Traductions$com$socle$navigation$demo$fr demo = Traductions$com$socle$navigation$demo$fr.internal(_root);
 }
 
+// Path: com.studio.focus
+class Traductions$com$studio$focus$fr {
+	Traductions$com$studio$focus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mode focus'
+	String get entrer => _root.com.socle.lexique.modeFocus;
+
+	/// fr: 'Quitter le focus'
+	String get quitter => _root.com.socle.lexique.quitterFocus;
+
+	/// fr: 'Focus activé'
+	String get actif => 'Focus activé';
+
+	/// fr: 'Focus activé. Échap pour quitter.'
+	String get actifAvecEchap => 'Focus activé. Échap pour quitter.';
+
+	/// fr: 'Masquez les panneaux secondaires pour vous concentrer sur cette discussion.'
+	String get aide => 'Masquez les panneaux secondaires pour vous concentrer sur cette discussion.';
+}
+
 // Path: com.studio.aujourdhui
 class Traductions$com$studio$aujourdhui$fr {
 	Traductions$com$studio$aujourdhui$fr.internal(this._root);
@@ -15651,6 +15676,9 @@ class Traductions$com$studio$demo$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+
+	/// fr: 'Un canal en mode focus'
+	String get focus => 'Un canal en mode focus';
 
 	/// fr: 'Aujourd'hui sans activité'
 	String get aujourdhuiVide => 'Aujourd\'hui sans activité';
@@ -20586,6 +20614,11 @@ extension on Traductions {
 			'com.vocal.titre' => 'Message vocal',
 			'com.communaute.titre' => _root.com.socle.lexique.communaute,
 			'com.communaute.vide' => 'Aucune publication dans cette catégorie.',
+			'com.studio.focus.entrer' => _root.com.socle.lexique.modeFocus,
+			'com.studio.focus.quitter' => _root.com.socle.lexique.quitterFocus,
+			'com.studio.focus.actif' => 'Focus activé',
+			'com.studio.focus.actifAvecEchap' => 'Focus activé. Échap pour quitter.',
+			'com.studio.focus.aide' => 'Masquez les panneaux secondaires pour vous concentrer sur cette discussion.',
 			'com.studio.aujourdhui.titre' => _root.com.socle.lexique.aujourdhui,
 			'com.studio.aujourdhui.sousTitre' => 'Ce qui mérite votre attention dans Le Studio',
 			'com.studio.aujourdhui.indicateurs.titre' => 'Indicateurs d\'attention',
@@ -20642,13 +20675,13 @@ extension on Traductions {
 			'com.studio.sousTitre' => 'Espace de travail de l\'équipe',
 			'com.studio.navigation.aujourdhui' => _root.com.socle.lexique.aujourdhui,
 			'com.studio.navigation.brouillons' => 'Brouillons',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.navigation.canaux' => 'Canaux',
 			'com.studio.navigation.enregistres' => 'Éléments enregistrés',
 			'com.studio.choisirTitre' => 'Choisissez un canal',
 			'com.studio.choisir' => 'Choisissez un canal dans la liste pour lire la discussion et y écrire.',
 			'com.studio.aucunCanalTitre' => 'Aucun canal pour le moment',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.aucunCanal' => 'Les canaux qui vous sont ouverts apparaîtront ici.',
 			'com.studio.sections.organisation' => 'Organisation',
 			'com.studio.sections.admissionsFamilles' => 'Admissions & familles',
@@ -20722,6 +20755,7 @@ extension on Traductions {
 			'com.studio.recherche.fichiers' => 'Fichiers',
 			'com.studio.recherche.dansCanal' => ({required Object canal}) => 'Dans ${canal}',
 			'com.studio.recherche.messageDe' => ({required Object auteur, required Object canal}) => '${auteur}, dans ${canal}',
+			'com.studio.demo.focus' => 'Un canal en mode focus',
 			'com.studio.demo.aujourdhuiVide' => 'Aujourd\'hui sans activité',
 			'com.studio.demo.horsDemo' => ({required Object module}) => 'Dans l\'application, cette ligne ouvre ${module}. La démonstration reste sur cette page.',
 			'com.studio.demo.choisir' => 'Choisissez une situation à essayer.',

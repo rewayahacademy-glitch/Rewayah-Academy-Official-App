@@ -59,7 +59,8 @@ final String adresseCanaux = adresseVueStudio(VueStudio.canaux);
 /// [enregistres] : nul, le port neutre de production (indisponible) ; sinon
 /// le double en memoire. [activite] : nul, le port neutre de production
 /// (indisponible). [brouillons] : nul, une memoire de session neuve (le
-/// comportement de production).
+/// comportement de production). [mouvementReduit] : le systeme demande de
+/// reduire les animations (COM-STU-3).
 Future<GoRouter> monterStudio(
   WidgetTester tester, {
   required PortStudio port,
@@ -73,6 +74,7 @@ Future<GoRouter> monterStudio(
   Brightness luminosite = Brightness.light,
   bool horsLigne = false,
   bool stabiliser = true,
+  bool mouvementReduit = false,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -133,8 +135,10 @@ Future<GoRouter> monterStudio(
           supportedLocales: AppLocaleUtils.supportedLocales,
           localizationsDelegates: GlobalMaterialLocalizations.delegates,
           builder: (BuildContext context, Widget? app) => MediaQuery(
-            data: MediaQuery.of(context)
-                .copyWith(textScaler: TextScaler.linear(echelleTexte)),
+            data: MediaQuery.of(context).copyWith(
+              textScaler: TextScaler.linear(echelleTexte),
+              disableAnimations: mouvementReduit,
+            ),
             child: app!,
           ),
           routerConfig: routeur,

@@ -13,7 +13,10 @@
 // les cinq blocs (dont une ligne Finance sans page, R-COM-11, une ligne
 // dossier qui ouvre SON dossier, et une ligne d'un canal prive absent que le
 // port ne rend jamais, R-COM-08), un brouillon dans le canal Admissions, et
-// la situation « Aujourd'hui sans activite ».
+// la situation « Aujourd'hui sans activite ». Pour le Mode focus (COM-STU-3,
+// spec section 10, section 33 « Studio avec Focus ») : la situation « Un
+// canal en mode focus » ouvre le canal Organisation deja en Focus ; partout
+// ailleurs, « Mode focus » est dans l'en-tete de chaque canal ouvert.
 //
 // Une ligne qui ouvre un module hors du Studio (Finance, dossier, Classe)
 // quitterait la demonstration pour une page qui demande une session : la
@@ -72,7 +75,13 @@ enum SituationDemoStudio {
 
   /// Aujourd'hui n'a aucune activite, et aucun brouillon n'est garde.
   aujourdhuiVide,
+
+  /// Le canal Organisation s'ouvre en Mode focus.
+  focus,
 }
+
+/// Le canal que la situation « Mode focus » ouvre.
+const String canalFocusDemo = 'organisation';
 
 /// L'identifiant du canal prive que la personne ne voit jamais (R-COM-08).
 const String canalPriveAbsentDemo = 'direction-strategie';
@@ -98,6 +107,7 @@ String libelleSituationDemoStudio(SituationDemoStudio situation) {
     SituationDemoStudio.canalPrive => d.canalPrive,
     SituationDemoStudio.sansCanaux => d.sansCanaux,
     SituationDemoStudio.aujourdhuiVide => d.aujourdhuiVide,
+    SituationDemoStudio.focus => d.focus,
   };
 }
 
@@ -193,13 +203,17 @@ class _DemoStudioState extends State<_DemoStudio> {
   final ElementsEnregistresMemoire _enregistres = ElementsEnregistresMemoire();
 
   /// Le Studio s'ouvre sur Aujourd'hui, son accueil ; l'adresse d'un canal
-  /// prive ouvre ce canal.
-  late VueStudio _vue = widget.situation == SituationDemoStudio.canalPrive
-      ? VueStudio.canaux
-      : VueStudio.aujourdhui;
-  late String? _canalId = widget.situation == SituationDemoStudio.canalPrive
-      ? canalPriveAbsentDemo
-      : null;
+  /// prive ouvre ce canal ; le Mode focus ouvre son canal.
+  late VueStudio _vue = switch (widget.situation) {
+    SituationDemoStudio.canalPrive ||
+    SituationDemoStudio.focus => VueStudio.canaux,
+    _ => VueStudio.aujourdhui,
+  };
+  late String? _canalId = switch (widget.situation) {
+    SituationDemoStudio.canalPrive => canalPriveAbsentDemo,
+    SituationDemoStudio.focus => canalFocusDemo,
+    _ => null,
+  };
 
   /// Le module qu'une ligne aurait ouvert hors de la demonstration.
   String? _horsDemo;
@@ -246,6 +260,7 @@ class _DemoStudioState extends State<_DemoStudio> {
       ],
       child: CoquilleStudio(
         vue: _vue,
+        focusInitial: widget.situation == SituationDemoStudio.focus,
         sousTitre: t.com.studio.demo.vue(
           situation: libelleSituationDemoStudio(widget.situation),
         ),
@@ -781,7 +796,8 @@ class StudioDemo implements PortStudio {
       case SituationDemoStudio.normale ||
           SituationDemoStudio.canalPrive ||
           SituationDemoStudio.sansCanaux ||
-          SituationDemoStudio.aujourdhuiVide:
+          SituationDemoStudio.aujourdhuiVide ||
+          SituationDemoStudio.focus:
         break;
     }
     final DateTime maintenant = DateTime.now().toUtc();

@@ -293,6 +293,13 @@
       "vide": "لا توجد منشورات في هذه الفئة."
     },
     "studio": {
+      "focus": {
+        "entrer": "@:com.socle.lexique.modeFocus",
+        "quitter": "@:com.socle.lexique.quitterFocus",
+        "actif": "التركيز مفعّل",
+        "actifAvecEchap": "التركيز مفعّل. اضغط Esc للخروج.",
+        "aide": "أخفِ اللوحات الثانوية للتركيز على هذه المحادثة."
+      },
       "aujourdhui": {
         "titre": "@:com.socle.lexique.aujourdhui",
         "sousTitre": "ما يستحق انتباهك في الاستوديو",
@@ -460,6 +467,7 @@
         "messageDe": "{auteur}، في {canal}"
       },
       "demo": {
+        "focus": "قناة في وضع التركيز",
         "aujourdhuiVide": "اليوم دون نشاط",
         "horsDemo": "في التطبيق، يفتح هذا السطر {module}. يبقى العرض التجريبي على هذه الصفحة.",
         "choisir": "اختر حالة لتجربتها.",

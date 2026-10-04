@@ -366,6 +366,7 @@ class _Traductions$com$studio$ar extends Traductions$com$studio$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$com$studio$focus$ar focus = _Traductions$com$studio$focus$ar._(_root);
 	@override late final _Traductions$com$studio$aujourdhui$ar aujourdhui = _Traductions$com$studio$aujourdhui$ar._(_root);
 	@override late final _Traductions$com$studio$brouillons$ar brouillons = _Traductions$com$studio$brouillons$ar._(_root);
 	@override String get sousTitre => 'مساحة عمل الفريق';
@@ -537,6 +538,20 @@ class _Traductions$com$socle$navigation$ar extends Traductions$com$socle$navigat
 	@override String get bientot => 'متاح قريبًا';
 	@override late final _Traductions$com$socle$navigation$provisoire$ar provisoire = _Traductions$com$socle$navigation$provisoire$ar._(_root);
 	@override late final _Traductions$com$socle$navigation$demo$ar demo = _Traductions$com$socle$navigation$demo$ar._(_root);
+}
+
+// Path: com.studio.focus
+class _Traductions$com$studio$focus$ar extends Traductions$com$studio$focus$fr {
+	_Traductions$com$studio$focus$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get entrer => _root.com.socle.lexique.modeFocus;
+	@override String get quitter => _root.com.socle.lexique.quitterFocus;
+	@override String get actif => 'التركيز مفعّل';
+	@override String get actifAvecEchap => 'التركيز مفعّل. اضغط Esc للخروج.';
+	@override String get aide => 'أخفِ اللوحات الثانوية للتركيز على هذه المحادثة.';
 }
 
 // Path: com.studio.aujourdhui
@@ -732,6 +747,7 @@ class _Traductions$com$studio$demo$ar extends Traductions$com$studio$demo$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get focus => 'قناة في وضع التركيز';
 	@override String get aujourdhuiVide => 'اليوم دون نشاط';
 	@override String horsDemo({required Object module}) => 'في التطبيق، يفتح هذا السطر ${module}. يبقى العرض التجريبي على هذه الصفحة.';
 	@override String get choisir => 'اختر حالة لتجربتها.';
@@ -1195,6 +1211,11 @@ extension on TraductionsAr {
 			'com.vocal.titre' => 'رسالة صوتية',
 			'com.communaute.titre' => _root.com.socle.lexique.communaute,
 			'com.communaute.vide' => 'لا توجد منشورات في هذه الفئة.',
+			'com.studio.focus.entrer' => _root.com.socle.lexique.modeFocus,
+			'com.studio.focus.quitter' => _root.com.socle.lexique.quitterFocus,
+			'com.studio.focus.actif' => 'التركيز مفعّل',
+			'com.studio.focus.actifAvecEchap' => 'التركيز مفعّل. اضغط Esc للخروج.',
+			'com.studio.focus.aide' => 'أخفِ اللوحات الثانوية للتركيز على هذه المحادثة.',
 			'com.studio.aujourdhui.titre' => _root.com.socle.lexique.aujourdhui,
 			'com.studio.aujourdhui.sousTitre' => 'ما يستحق انتباهك في الاستوديو',
 			'com.studio.aujourdhui.indicateurs.titre' => 'مؤشرات الانتباه',
@@ -1329,6 +1350,7 @@ extension on TraductionsAr {
 			'com.studio.recherche.fichiers' => 'الملفات',
 			'com.studio.recherche.dansCanal' => ({required Object canal}) => 'في ${canal}',
 			'com.studio.recherche.messageDe' => ({required Object auteur, required Object canal}) => '${auteur}، في ${canal}',
+			'com.studio.demo.focus' => 'قناة في وضع التركيز',
 			'com.studio.demo.aujourdhuiVide' => 'اليوم دون نشاط',
 			'com.studio.demo.horsDemo' => ({required Object module}) => 'في التطبيق، يفتح هذا السطر ${module}. يبقى العرض التجريبي على هذه الصفحة.',
 			'com.studio.demo.choisir' => 'اختر حالة لتجربتها.',
