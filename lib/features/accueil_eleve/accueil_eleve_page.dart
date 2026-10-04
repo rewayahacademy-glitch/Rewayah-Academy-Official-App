@@ -596,13 +596,17 @@ class _Interruptions extends StatelessWidget {
 /// d'ecran, c'est le bouton « Ecouter : Le Coran », distinct du lien.
 ///
 /// Sur grand ecran, le contenu garde la largeur de la colonne de l'etat vide
-/// ([AppPage.largeurEtatVide]), centree dans la carte : le haut-parleur reste
-/// pres du titre qu'il prononce au lieu de partir au bout d'une carte de
-/// 1 100 points.
+/// ([AppPage.largeurEtatVide]), calee sur le bord de debut de la carte comme
+/// le contenu des autres tuiles Bento (a gauche en LTR, a droite en RTL) : le
+/// haut-parleur reste pres du titre qu'il prononce au lieu de partir au bout
+/// d'une carte de 1 100 points.
 ///
 /// Les icones gardent leur taille quand le texte est agrandi (spec
-/// CORAN-CARTE-1, point 6) : elles vivent seules sur leur ligne et
-/// grandissent avec le mode enfant, pas avec l'echelle du texte.
+/// CORAN-CARTE-1, point 6, acte) : elles vivent seules sur leur ligne et
+/// grandissent avec l'Interface guidee (le mode enfant), jamais avec
+/// l'echelle du texte. A 320 points et texte x2, le livre et le haut-parleur
+/// gardent donc leur taille pendant que le titre et la phrase doublent ;
+/// c'est voulu, ce n'est pas un oubli.
 class _BlocCoran extends StatelessWidget {
   const _BlocCoran();
 
@@ -622,7 +626,7 @@ class _BlocCoran extends StatelessWidget {
 
     return BentoTile(
       child: Align(
-        alignment: Alignment.topCenter,
+        alignment: AlignmentDirectional.topStart,
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: AppPage.largeurEtatVide),
           child: Column(

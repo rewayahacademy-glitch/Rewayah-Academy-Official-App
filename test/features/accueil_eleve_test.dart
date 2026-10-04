@@ -713,7 +713,8 @@ void main() {
   // bas, et chaque arret du clavier porte un nom.
   // CORAN-CARTE-3 : le livre ouvre aussi le Coran (raccourci tactile du
   // lien), le haut-parleur se nomme « Ecouter : Le Coran », le contenu garde
-  // une colonne bornee sur grand ecran, l'air est egal dans les deux modes.
+  // une colonne bornee sur grand ecran, calee au bord de debut de la carte,
+  // l'air est egal dans les deux modes.
   //
   // Ce groupe charge les vraies polices : il reste le DERNIER du fichier, pour
   // ne pas changer les mesures des groupes qui le precedent.
@@ -955,29 +956,44 @@ void main() {
       });
     }
 
-    testWidgets('1440 : le haut-parleur reste pres du titre qu il prononce', (
-      WidgetTester tester,
-    ) async {
-      await monter(tester, largeur: 1440);
-      final Rect tuile = tester.getRect(carte());
-      final Rect l = tester.getRect(livre());
-      final Rect h = tester.getRect(hautParleur());
-      final Rect ti = tester.getRect(titre());
-      // Une colonne bornee : du livre au haut-parleur, du titre au chevron,
-      // jamais plus que la colonne de l'etat vide.
-      expect(h.right - l.left, lessThanOrEqualTo(AppPage.largeurEtatVide));
-      expect(h.right - ti.left, lessThanOrEqualTo(AppPage.largeurEtatVide));
-      expect(
-        tester.getRect(chevron()).right,
-        moreOrLessEquals(h.right, epsilon: 1),
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets(
+        '1440, ${sens.name} : colonne bornee, calee au bord de debut',
+        (WidgetTester tester) async {
+          await monter(tester, largeur: 1440, sens: sens);
+          final bool ltr = sens == TextDirection.ltr;
+          final Rect c = contenu(tester);
+          final Rect l = tester.getRect(livre());
+          final Rect h = tester.getRect(hautParleur());
+          final Rect ti = tester.getRect(titre());
+          // Une colonne bornee : du livre au haut-parleur, du titre au
+          // chevron, jamais plus que la colonne de l'etat vide.
+          final Rect colonne = l.expandToInclude(h).expandToInclude(ti);
+          expect(colonne.width, lessThanOrEqualTo(AppPage.largeurEtatVide));
+          expect(
+            ltr
+                ? tester.getRect(chevron()).right
+                : tester.getRect(chevron()).left,
+            moreOrLessEquals(ltr ? h.right : h.left, epsilon: 1),
+          );
+          // Calee au bord de debut de la carte, comme les autres tuiles :
+          // le livre et le titre touchent le bord de debut du contenu, tout
+          // l'air restant est rendu du cote de la fin.
+          for (final Rect r in <Rect>[l, ti]) {
+            expect(
+              ltr ? r.left : r.right,
+              moreOrLessEquals(ltr ? c.left : c.right, epsilon: 1),
+            );
+          }
+          final double airFin = ltr ? c.right - h.right : h.left - c.left;
+          expect(
+            airFin,
+            moreOrLessEquals(c.width - AppPage.largeurEtatVide, epsilon: 1),
+          );
+          verifierSepares(tester);
+        },
       );
-      // Centree dans la carte.
-      expect(
-        (l.left - tuile.left) - (tuile.right - h.right),
-        moreOrLessEquals(0, epsilon: 1),
-      );
-      verifierSepares(tester);
-    });
+    }
 
     testWidgets('toucher le haut-parleur ne quitte pas l accueil', (
       WidgetTester tester,
@@ -1126,18 +1142,30 @@ void main() {
       verifierSepares(tester);
     });
 
-    for (final (double, double, TextDirection) cas
-        in <(double, double, TextDirection)>[
-          (320, 2, TextDirection.ltr),
-          (320, 2, TextDirection.rtl),
-          (1440, 1, TextDirection.ltr),
-          (1440, 1, TextDirection.rtl),
+    // L'Interface guidee (mode enfant) grossit le livre, le haut-parleur et
+    // les cibles : elle passe le meme controle que le mode standard.
+    for (final (InterfaceMode, double, double, TextDirection) cas
+        in <(InterfaceMode, double, double, TextDirection)>[
+          (InterfaceMode.standard, 320, 2, TextDirection.ltr),
+          (InterfaceMode.standard, 320, 2, TextDirection.rtl),
+          (InterfaceMode.standard, 1440, 1, TextDirection.ltr),
+          (InterfaceMode.standard, 1440, 1, TextDirection.rtl),
+          (InterfaceMode.enfant, 320, 2, TextDirection.ltr),
+          (InterfaceMode.enfant, 320, 2, TextDirection.rtl),
+          (InterfaceMode.enfant, 1440, 1, TextDirection.ltr),
+          (InterfaceMode.enfant, 1440, 1, TextDirection.rtl),
         ]) {
       testWidgets(
-        '${cas.$1.toInt()} px, texte x${cas.$2.toInt()}, ${cas.$3.name} : '
-        'aucun debordement, aucun mot coupe',
+        '${cas.$1.name}, ${cas.$2.toInt()} px, texte x${cas.$3.toInt()}, '
+        '${cas.$4.name} : aucun debordement, aucun mot coupe',
         (WidgetTester tester) async {
-          await monter(tester, largeur: cas.$1, echelle: cas.$2, sens: cas.$3);
+          await monter(
+            tester,
+            mode: cas.$1,
+            largeur: cas.$2,
+            echelle: cas.$3,
+            sens: cas.$4,
+          );
           expect(tester.takeException(), isNull);
           verifierAucunMotCoupe(tester, carte());
           verifierSepares(tester);
