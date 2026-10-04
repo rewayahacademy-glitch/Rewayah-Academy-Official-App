@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_comptes.dart';
@@ -38,7 +39,11 @@ import '../../core/widgets/status_pill.dart';
 ///     precisement l'etat qui etait invisible.
 class ComptesPage extends ConsumerStatefulWidget {
   /// Cree l'ecran des comptes.
-  const ComptesPage({super.key});
+  const ComptesPage({super.key, this.echusSeulement = false});
+
+  /// Ouvre la page sur les seuls acces echus (DASH-ADM-ECHUS, adresse
+  /// `Routes.adminPersonnesComptesEchus`).
+  final bool echusSeulement;
 
   @override
   ConsumerState<ComptesPage> createState() => _ComptesPageEtat();
@@ -48,6 +53,62 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   /// Le filtre courant. `null` veut dire « tous ».
   AccountStatus? _etat;
   AppRole? _role;
+
+  /// Vrai : seuls les acces echus (DASH-ADM-ECHUS).
+  late bool _echus = widget.echusSeulement;
+
+  /// L'adresse porte le filtre, et go_router garde ce `State` d'une requete a
+  /// l'autre (la page est cle sur le chemin seul) : sans ce recalage, passer
+  /// de `?filtre=echus` a l'adresse nue (entree « Comptes » de la navigation)
+  /// laissait l'ecran filtre.
+  @override
+  void didUpdateWidget(ComptesPage ancien) {
+    super.didUpdateWidget(ancien);
+    if (ancien.echusSeulement != widget.echusSeulement) {
+      _echus = widget.echusSeulement;
+      if (_echus) {
+        _etat = null;
+      }
+    }
+  }
+
+  /// Une seule pastille retenue a la fois dans la rangee des etats : « Tous »,
+  /// un etat, ou « Acces echus ». Choisir l'une relache les autres.
+  void _choisir({AccountStatus? etat, bool echus = false}) {
+    setState(() {
+      _etat = echus ? null : etat;
+      _echus = echus;
+    });
+    _ecrireAdresse(echus);
+  }
+
+  /// Reporte le filtre des echus dans l'adresse, pour qu'elle dise toujours ce
+  /// que montre l'ecran (lien partage, retour arriere, rechargement). Hors
+  /// routeur (tests montes sans GoRouter), rien a faire.
+  void _ecrireAdresse(bool echus) {
+    final GoRouter? routeur = GoRouter.maybeOf(context);
+    if (routeur == null) {
+      return;
+    }
+    final Uri actuelle = routeur.routerDelegate.currentConfiguration.uri;
+    if ((actuelle.queryParameters['filtre'] == 'echus') == echus) {
+      return;
+    }
+    final Map<String, String> requete = Map<String, String>.of(
+      actuelle.queryParameters,
+    );
+    if (echus) {
+      requete['filtre'] = 'echus';
+    } else {
+      requete.remove('filtre');
+    }
+    routeur.go(
+      Uri(
+        path: actuelle.path,
+        queryParameters: requete.isEmpty ? null : requete,
+      ).toString(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +135,9 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
                 comptes: comptes.requireValue,
                 etat: _etat,
                 role: _role,
-                onEtat: (AccountStatus? etat) => setState(() => _etat = etat),
+                echus: _echus,
+                onEchus: (bool echus) => _choisir(echus: echus),
+                onEtat: (AccountStatus? etat) => _choisir(etat: etat),
                 onRole: (AppRole? role) => setState(() => _role = role),
               ),
             ),
@@ -104,6 +167,8 @@ class _Corps extends StatelessWidget {
     required this.comptes,
     required this.etat,
     required this.role,
+    required this.echus,
+    required this.onEchus,
     required this.onEtat,
     required this.onRole,
   });
@@ -111,6 +176,10 @@ class _Corps extends StatelessWidget {
   final List<CompteAdmin> comptes;
   final AccountStatus? etat;
   final AppRole? role;
+
+  /// Vrai : seuls les acces echus.
+  final bool echus;
+  final void Function(bool echus) onEchus;
   final void Function(AccountStatus? etat) onEtat;
   final void Function(AppRole? role) onRole;
 
@@ -125,7 +194,8 @@ class _Corps extends StatelessWidget {
         .where(
           (CompteAdmin c) =>
               (etat == null || c.etat == etat) &&
-              (role == null || c.role == role),
+              (role == null || c.role == role) &&
+              (!echus || c.accesEchu(maintenant)),
         )
         .toList(growable: false);
 
@@ -189,7 +259,10 @@ class _Corps extends StatelessWidget {
             FilterPill(
               libelle: t.admin.comptes.filtreTousEtats,
               compteur: comptes.length,
-              retenue: etat == null,
+              // « Tous » ne se dit retenu que s'il l'est vraiment : avec les
+              // echus retenus, deux pastilles allumees pour une seule liste
+              // mentaient sur ce qui est affiche.
+              retenue: etat == null && !echus,
               onPress: () => onEtat(null),
             ),
             for (final AccountStatus valeur in AccountStatus.values)
@@ -200,6 +273,17 @@ class _Corps extends StatelessWidget {
                   retenue: etat == valeur,
                   onPress: () => onEtat(valeur),
                 ),
+            // DASH-ADM-ECHUS : les acces echus, le meme chiffre que le Centre
+            // de commande. Rendu des qu'il y en a, ou quand la page a ete
+            // ouverte sur eux (le filtre retenu doit pouvoir se relacher).
+            if (echus || _nombreEchus(comptes, maintenant) > 0)
+              FilterPill(
+                key: const ValueKey<String>('comptes-filtre-echus'),
+                libelle: t.admin.tableau.comptes,
+                compteur: _nombreEchus(comptes, maintenant),
+                retenue: echus,
+                onPress: () => onEchus(!echus),
+              ),
             // Un seul role present : le menu n'offrirait aucun choix, et un
             // controle sans choix n'est pas un controle.
             if (rolesPresents.length > 1)
@@ -336,3 +420,7 @@ String _nomPiece(EtatPiece piece) => switch (piece) {
   EtatPiece.refusee => t.admin.comptes.pieceRefusee,
   EtatPiece.nonVisible => t.admin.comptes.pieceNonVisible,
 };
+
+/// Combien d'acces sont echus parmi [comptes].
+int _nombreEchus(List<CompteAdmin> comptes, DateTime maintenant) =>
+    comptes.where((CompteAdmin c) => c.accesEchu(maintenant)).length;

@@ -947,9 +947,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // defaut mesure le 18 septembre 2026.
       GoRoute(
         path: Routes.adminPersonnesComptes,
-        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
-          child: ComptesPage(),
+          // DASH-ADM-ECHUS : `?filtre=echus` ouvre la page sur les acces echus.
+          child: ComptesPage(
+            echusSeulement: etat.uri.queryParameters['filtre'] == 'echus',
+          ),
         ),
       ),
       // Domaine Pedagogie : cinq fonctions pairs, jamais une secondaire

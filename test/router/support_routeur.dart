@@ -133,6 +133,7 @@ Future<GoRouter> monterRouteur(
   String? depart, {
   SourceSession? source,
   Size taille = const Size(390, 844),
+  List<Override> surcharges = const <Override>[],
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -149,6 +150,7 @@ Future<GoRouter> monterRouteur(
         portClassesFoyerProvider.overrideWithValue(
           const ClassesFoyerIndisponible(),
         ),
+        ...surcharges,
       ],
       child: TranslationProvider(
         child: Consumer(

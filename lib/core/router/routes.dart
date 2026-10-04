@@ -417,6 +417,11 @@ abstract final class Routes {
   /// Les comptes du produit (`ADM-08`), sous Personnes.
   static const String adminPersonnesComptes = '/admin/personnes/comptes';
 
+  /// Les comptes dont l'acces provisoire est echu (DASH-ADM-ECHUS) : la meme
+  /// page, ouverte filtree, cible de « Acces echus » du Centre de commande.
+  static const String adminPersonnesComptesEchus =
+      '$adminPersonnesComptes?filtre=echus';
+
   /// Domaine Pedagogie.
   static const String adminPedagogie = '/admin/pedagogie';
 
