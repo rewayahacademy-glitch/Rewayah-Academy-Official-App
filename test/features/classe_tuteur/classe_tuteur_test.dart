@@ -397,7 +397,9 @@ void main() {
         find.text(
           t.classe.observation.resume(
             visites: t.classe.observation.visites(nombre: 2),
-            duree: t.classe.observation.minutes(minutes: 2),
+            duree: LibellesGroupe.insecable(
+              t.classe.observation.minutes(minutes: 2),
+            ),
           ),
         ),
         findsOneWidget,
@@ -799,15 +801,17 @@ void main() {
     test('duree d une visite : minutes, secondes, jamais arrondie', () {
       expect(
         dureeVisite(const Duration(seconds: 120)),
-        t.classe.observation.minutes(minutes: 2),
+        LibellesGroupe.insecable(t.classe.observation.minutes(minutes: 2)),
       );
       expect(
         dureeVisite(const Duration(seconds: 80)),
-        t.classe.observation.minutesSecondes(minutes: 1, secondes: 20),
+        LibellesGroupe.insecable(
+          t.classe.observation.minutesSecondes(minutes: 1, secondes: 20),
+        ),
       );
       expect(
         dureeVisite(const Duration(seconds: 40)),
-        t.classe.observation.secondes(secondes: 40),
+        LibellesGroupe.insecable(t.classe.observation.secondes(secondes: 40)),
       );
     });
 

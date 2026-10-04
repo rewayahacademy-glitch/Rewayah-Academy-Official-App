@@ -5,6 +5,7 @@
 // seances et classes fictives, horloge serveur figee). Aucun service reel.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -901,6 +902,59 @@ void main() {
         expect(zone.left, greaterThanOrEqualTo(0));
         expect(zone.right, lessThanOrEqualTo(320));
       });
+    }
+  });
+
+  group('DUREE-INSECABLE-1 : la place ne manque pas, l etat reste sur une '
+      'ligne', () {
+    setUpAll(chargerPolicesDuDepot);
+
+    /// Le nombre de lignes du paragraphe [texte] dans le selecteur.
+    int lignes(WidgetTester tester, String texte) {
+      final Finder f = find.descendant(
+        of: find.byType(SelecteurProfils),
+        matching: find.text(texte),
+      );
+      expect(f, findsOneWidget, reason: '« $texte » absent du selecteur');
+      final RenderParagraph p = tester.renderObject<RenderParagraph>(f);
+      return <double>{
+        for (final TextBox b in p.getBoxesForSelection(
+          TextSelection(baseOffset: 0, extentOffset: texte.length),
+        ))
+          b.bottom.roundToDouble(),
+      }.length;
+    }
+
+    for (final Size taille in const <Size>[Size(390, 844), Size(1440, 1000)]) {
+      for (final TextDirection sens in TextDirection.values) {
+        testWidgets('${taille.width.toInt()} px texte x1, ${sens.name} : '
+            '« Dans 3 h 28 » et « Aucune séance » sur une ligne', (
+          WidgetTester tester,
+        ) async {
+          await _monter(
+            tester,
+            depart: Routes.tuteurAccueil,
+            taille: taille,
+            direction: sens,
+            seances: <SeanceFamille>[
+              _prochaine(
+                avant: const Duration(hours: 3, minutes: 28, seconds: 30),
+              ),
+            ],
+          );
+          expect(tester.takeException(), isNull);
+          expect(
+            lignes(
+              tester,
+              LibellesGroupe.insecable(
+                t.tuteur.accueil.etatCourt.dansHeures(heures: 3, minutes: '28'),
+              ),
+            ),
+            1,
+          );
+          expect(lignes(tester, t.tuteur.accueil.etatCourt.aucune), 1);
+        });
+      }
     }
   });
 

@@ -123,26 +123,89 @@ class SelecteurProfils extends StatelessWidget {
         ? diametreMobile
         : diametreLarge;
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          for (final ProfilSelectionnable profil in profils) ...<Widget>[
-            _Item(
-              profil: profil,
-              selectionne: profil.id == selectionId,
-              diametre: diametre,
-              onPress: () => onSelection(profil.id),
-            ),
-            Ecart.hMd,
-          ],
-          if (onAjouter != null)
-            _Ajouter(diametre: diametre, onPress: onAjouter!),
-        ],
-      ),
+    // DUREE-INSECABLE-1 : chaque etat garde sa ligne unique tant que la
+    // rangee entiere tient dans la largeur offerte (telephone nominal,
+    // bureau). Seulement quand elle deborderait, et rognerait le dernier
+    // item au bord de l'ecran (« Aucune séan » a 320 px texte x2), chaque
+    // etat passe a la ligne entre ses mots.
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) {
+        final bool compacte =
+            contraintes.hasBoundedWidth &&
+            _largeurRangeeUneLigne(context, diametre) > contraintes.maxWidth;
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              for (final ProfilSelectionnable profil in profils) ...<Widget>[
+                _Item(
+                  profil: profil,
+                  selectionne: profil.id == selectionId,
+                  diametre: diametre,
+                  compacte: compacte,
+                  onPress: () => onSelection(profil.id),
+                ),
+                Ecart.hMd,
+              ],
+              if (onAjouter != null)
+                _Ajouter(diametre: diametre, onPress: onAjouter!),
+            ],
+          ),
+        );
+      },
     );
   }
+
+  /// La largeur de la rangee quand chaque etat tient sur une ligne : items,
+  /// ecarts et « Ajouter ».
+  double _largeurRangeeUneLigne(BuildContext context, double diametre) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final double couronne = diametre + 2 * AppSpacing.xs;
+    double total = 0;
+    for (final ProfilSelectionnable profil in profils) {
+      total +=
+          _max3(
+            couronne,
+            _largeurLigne(context, profil.prenom, textes.labelLarge),
+            _largeurLigne(context, profil.etat, textes.bodySmall),
+          ) +
+          AppSpacing.md;
+    }
+    if (onAjouter != null) {
+      final double ajouter = _largeurLigne(
+        context,
+        t.commun.selecteurProfils.ajouter,
+        textes.labelLarge,
+      );
+      total += ajouter > couronne ? ajouter : couronne;
+    }
+    return total;
+  }
+}
+
+/// La marge d'arrondi des glyphes (comme `TexteSansCoupure`).
+const double _margeGlyphes = 2;
+
+double _max3(double a, double b, double c) {
+  final double ab = a > b ? a : b;
+  return ab > c ? ab : c;
+}
+
+/// La largeur de [texte] sur une seule ligne, a l'echelle de texte courante.
+double _largeurLigne(BuildContext context, String texte, TextStyle? style) {
+  final TextPainter p = TextPainter(
+    text: TextSpan(
+      text: texte,
+      style: DefaultTextStyle.of(context).style.merge(style),
+    ),
+    textDirection: Directionality.of(context),
+    textScaler: MediaQuery.textScalerOf(context),
+    maxLines: 1,
+  )..layout();
+  final double largeur = p.width;
+  p.dispose();
+  return largeur + _margeGlyphes;
 }
 
 /// La couronne d'un avatar : l'avatar, sa marge de 4, et l'anneau eventuel.
@@ -176,12 +239,17 @@ class _Item extends StatelessWidget {
     required this.profil,
     required this.selectionne,
     required this.diametre,
+    required this.compacte,
     required this.onPress,
   });
 
   final ProfilSelectionnable profil;
   final bool selectionne;
   final double diametre;
+
+  /// Vrai quand la rangee deborderait : l'etat passe a la ligne entre ses
+  /// mots. Faux : l'item garde sa largeur naturelle (etat sur une ligne).
+  final bool compacte;
   final VoidCallback onPress;
 
   @override
@@ -211,14 +279,17 @@ class _Item extends StatelessWidget {
           // meme axe (composant partage). L'anneau de selection et le point de
           // statut habillent le cercle sans le deformer.
           //
-          // DUREE-INSECABLE-1 : l'item a la largeur de sa couronne, de son
-          // prenom entier ou du plus long mot de son etat. L'etat passe a la
-          // ligne entre ses mots (« Aucune / séance ») au lieu de deborder
-          // de la rangee et d'etre rogne au bord de l'ecran (« Aucune séan »).
+          // DUREE-INSECABLE-1 : quand la rangee deborderait ([compacte]),
+          // l'item a la largeur de sa couronne, de son prenom entier ou du
+          // plus long mot de son etat. L'etat passe alors a la ligne entre
+          // ses mots (« Aucune / séance ») au lieu d'etre rogne au bord de
+          // l'ecran (« Aucune séan »). Sinon, largeur naturelle, une ligne.
           child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: _largeurItem(context, styleNom, styleEtat),
-            ),
+            constraints: compacte
+                ? BoxConstraints(
+                    maxWidth: _largeurItem(context, styleNom, styleEtat),
+                  )
+                : const BoxConstraints(),
             child: AvatarNom.vertical(
               prenom: profil.prenom,
               urlSignee: profil.urlPhoto,
@@ -269,40 +340,23 @@ class _Item extends StatelessWidget {
     );
   }
 
-  /// La largeur maximale de l'item : couronne, prenom entier (une ligne,
-  /// comme avant), plus long mot de l'etat, a l'echelle de texte courante.
+  /// La largeur maximale de l'item compacte : couronne, prenom entier (une
+  /// ligne), plus long mot de l'etat, a l'echelle de texte courante.
   double _largeurItem(
     BuildContext context,
     TextStyle styleNom,
     TextStyle styleEtat,
-  ) {
-    final TextScaler echelle = MediaQuery.textScalerOf(context);
-    final TextPainter nom = TextPainter(
-      text: TextSpan(
-        text: profil.prenom,
-        style: DefaultTextStyle.of(context).style.merge(styleNom),
-      ),
-      textDirection: Directionality.of(context),
-      textScaler: echelle,
-      maxLines: 1,
-    )..layout();
-    final double largeurNom = nom.width;
-    nom.dispose();
-    final double motEtat = largeurMotLePlusLong(
-      context,
-      profil.etat,
-      styleEtat,
-      echelle,
-    );
-    final double couronne = diametre + 2 * AppSpacing.xs;
-    // La marge d'arrondi des glyphes (comme `TexteSansCoupure`).
-    const double marge = 2;
-    return <double>[
-      couronne,
-      largeurNom + marge,
-      motEtat + marge,
-    ].reduce((double a, double b) => a > b ? a : b);
-  }
+  ) => _max3(
+    diametre + 2 * AppSpacing.xs,
+    _largeurLigne(context, profil.prenom, styleNom),
+    largeurMotLePlusLong(
+          context,
+          profil.etat,
+          styleEtat,
+          MediaQuery.textScalerOf(context),
+        ) +
+        _margeGlyphes,
+  );
 
   static AppIndicatorColor _couleurPoint(
     AppPalette palette,

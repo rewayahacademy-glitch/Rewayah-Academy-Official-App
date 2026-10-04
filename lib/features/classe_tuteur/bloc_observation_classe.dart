@@ -7,6 +7,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/router/routes.dart';
 import '../../core/seance_famille/seance_famille.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_observation/activation_observation.dart';
 import '../../core/tc_observation/disponibilite_observation.dart';
 import '../../core/tc_observation/echec_observation.dart';
@@ -33,7 +34,10 @@ String visitesRestantes(int nombre) => switch (nombre) {
 
 /// La duree d'une visite, « 2 min », « 1 min 20 s », « 40 s ». Rendue telle
 /// que le serveur la donne : jamais arrondie a la hausse.
-String dureeVisite(Duration duree) {
+String dureeVisite(Duration duree) =>
+    LibellesGroupe.insecable(_dureeVisiteSecable(duree));
+
+String _dureeVisiteSecable(Duration duree) {
   final int total = duree.inSeconds < 0 ? 0 : duree.inSeconds;
   final int minutes = total ~/ Duration.secondsPerMinute;
   final int secondes = total % Duration.secondsPerMinute;

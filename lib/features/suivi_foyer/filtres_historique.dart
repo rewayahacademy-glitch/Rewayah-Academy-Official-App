@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_observation/guardian_session_visit.dart';
 import '../../core/tc_observation/port_historique_observations.dart';
 import '../../core/widgets/ligne_presence.dart';
@@ -341,7 +342,11 @@ String plageHoraire(DateTime debut, DateTime fin) =>
     t.historique.plage(debut: heureMinute(debut), fin: heureMinute(fin));
 
 /// Une duree lisible : « 48 s », « 2 min », « 1 min 42 s », « 1 h », « 1 h 05 ».
-String dureeLisible(Duration duree) {
+/// Insecable (DUREE-INSECABLE-1) : jamais scindee sur deux lignes.
+String dureeLisible(Duration duree) =>
+    LibellesGroupe.insecable(_dureeSecable(duree));
+
+String _dureeSecable(Duration duree) {
   final int secondes = duree.inSeconds < 0 ? 0 : duree.inSeconds;
   if (secondes < 60) {
     return t.historique.duree.secondes(s: secondes);

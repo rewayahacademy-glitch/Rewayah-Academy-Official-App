@@ -6,6 +6,11 @@
 // Apres : la duree reste sur une ligne (espaces insecables du formatage
 // partage), le sous-titre du selecteur passe a la ligne entre ses mots.
 //
+// Reprise apres revue : a 390 px et 1440 px texte x1, la rangee tient, et
+// chaque etat reste sur une ligne (« Dans 3 h 28 », « Aucune séance ») ; le
+// prefixe « refuse » montre l'etat refuse (91aec131), ou il passait a la
+// ligne meme quand la place ne manquait pas.
+//
 // Prefixe des PNG : variable `CAPTURE_PREFIXE` (avant / apres).
 import 'dart:io';
 
@@ -41,6 +46,8 @@ Widget _cadre({
   required GoRouter Function(WidgetRef ref) routeur,
   required TextDirection sens,
   List<Override> surcharges = const <Override>[],
+  double echelle = 2,
+  Brightness luminosite = Brightness.light,
 }) => ProviderScope(
   overrides: surcharges,
   child: TranslationProvider(
@@ -50,13 +57,13 @@ Widget _cadre({
         builder: (BuildContext _, WidgetRef ref, Widget? _) =>
             MaterialApp.router(
               debugShowCheckedModeBanner: false,
-              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              theme: AppTheme.pour(InterfaceMode.standard, luminosite),
               locale: AppLocale.fr.flutterLocale,
               supportedLocales: AppLocaleUtils.supportedLocales,
               localizationsDelegates: GlobalMaterialLocalizations.delegates,
               builder: (BuildContext c, Widget? app) => MediaQuery(
                 data: MediaQuery.of(c)
-                    .copyWith(textScaler: const TextScaler.linear(2)),
+                    .copyWith(textScaler: TextScaler.linear(echelle)),
                 child: Directionality(textDirection: sens, child: app!),
               ),
               routerConfig: routeur(ref),
@@ -93,60 +100,99 @@ void main() {
         debugPrint('PNG ${await capturer(tester, nom)}');
       });
 
-      testWidgets('famille ${sens.name}', (WidgetTester tester) async {
-        fixerVueCapture(tester, const Size(320, 2200), 1);
-        final FauxServiceAppairage appairage = FauxServiceAppairage()
-          ..elevesRendus = FoyersFictifs.foyerA
-          ..appareilsRendus = <AppareilAppaire>[
-            AppareilAppaire(
-              id: 'app-1',
-              profilId: 'foyer-a-eleve-1',
-              prenom: 'Eleve A1',
-              plateforme: 'Android',
-              appaireA: DateTime.utc(2026, 9, 1),
+      for (final ({
+            Size taille,
+            double echelle,
+            Brightness luminosite,
+            String suffixe,
+          })
+          cas
+          in const <
+            ({
+              Size taille,
+              double echelle,
+              Brightness luminosite,
+              String suffixe,
+            })
+          >[
+            (
+              taille: Size(320, 2200),
+              echelle: 2,
+              luminosite: Brightness.light,
+              suffixe: '320x2',
             ),
-          ];
-        // Eleve A1 : cours dans 3 h 28. Eleve A2 : aucune seance.
-        final FauxSeancesFamille seances = FauxSeancesFamille(
-          seances: <SeanceFamille>[
-            seanceFictive(
-              debutUtc: instantServeurFige.add(
-                const Duration(hours: 3, minutes: 28, seconds: 30),
-              ),
-              heureFoyer: heureRendue('Europe/Paris', 'Paris', '21:28'),
+            (
+              taille: Size(390, 844),
+              echelle: 1,
+              luminosite: Brightness.dark,
+              suffixe: '390x1_sombre',
             ),
-          ],
-        );
-        late GoRouter r;
-        await tester.pumpWidget(
-          _cadre(
-            sens: sens,
-            surcharges: <Override>[
-              ...surchargesRouteur(
-                FausseSourceSession(sessionActive(AppRole.guardian)),
-                appairage: appairage,
+            (
+              taille: Size(1440, 900),
+              echelle: 1,
+              luminosite: Brightness.light,
+              suffixe: '1440x1',
+            ),
+          ]) {
+        testWidgets('famille ${cas.suffixe} ${sens.name}', (
+          WidgetTester tester,
+        ) async {
+          fixerVueCapture(tester, cas.taille, 1);
+          final FauxServiceAppairage appairage = FauxServiceAppairage()
+            ..elevesRendus = FoyersFictifs.foyerA
+            ..appareilsRendus = <AppareilAppaire>[
+              AppareilAppaire(
+                id: 'app-1',
+                profilId: 'foyer-a-eleve-1',
+                prenom: 'Eleve A1',
+                plateforme: 'Android',
+                appaireA: DateTime.utc(2026, 9, 1),
               ),
-              portSeancesFamilleProvider.overrideWithValue(seances),
-              portClassesFoyerProvider.overrideWithValue(
-                FauxClassesFoyer(
-                  classes: <ClasseFoyer>[
-                    ClasseFoyer(
-                      eleveId: 'foyer-a-eleve-1',
-                      classe: classeFictive(),
-                    ),
-                  ],
+            ];
+          // Eleve A1 : cours dans 3 h 28. Eleve A2 : aucune seance.
+          final FauxSeancesFamille seances = FauxSeancesFamille(
+            seances: <SeanceFamille>[
+              seanceFictive(
+                debutUtc: instantServeurFige.add(
+                  const Duration(hours: 3, minutes: 28, seconds: 30),
                 ),
+                heureFoyer: heureRendue('Europe/Paris', 'Paris', '21:28'),
               ),
             ],
-            routeur: (WidgetRef ref) => r = ref.read(routeurProvider),
-          ),
-        );
-        await stabiliser(tester);
-        r.go(Routes.tuteurAccueil);
-        await stabiliser(tester);
-        final String nom = '${_prefixe}_famille_320x2_${sens.name}';
-        debugPrint('PNG ${await capturer(tester, nom)}');
-      });
+          );
+          late GoRouter r;
+          await tester.pumpWidget(
+            _cadre(
+              sens: sens,
+              echelle: cas.echelle,
+              luminosite: cas.luminosite,
+              surcharges: <Override>[
+                ...surchargesRouteur(
+                  FausseSourceSession(sessionActive(AppRole.guardian)),
+                  appairage: appairage,
+                ),
+                portSeancesFamilleProvider.overrideWithValue(seances),
+                portClassesFoyerProvider.overrideWithValue(
+                  FauxClassesFoyer(
+                    classes: <ClasseFoyer>[
+                      ClasseFoyer(
+                        eleveId: 'foyer-a-eleve-1',
+                        classe: classeFictive(),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              routeur: (WidgetRef ref) => r = ref.read(routeurProvider),
+            ),
+          );
+          await stabiliser(tester);
+          r.go(Routes.tuteurAccueil);
+          await stabiliser(tester);
+          final String nom = '${_prefixe}_famille_${cas.suffixe}_${sens.name}';
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
+      }
     }
   });
 }

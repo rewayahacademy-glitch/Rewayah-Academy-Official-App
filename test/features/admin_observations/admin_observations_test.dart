@@ -138,7 +138,7 @@ void main() {
       expect(find.text('23/09/2026'), findsNWidgets(2));
       expect(find.text('18:12:00'), findsOneWidget);
       expect(find.text('18:14:00'), findsOneWidget);
-      expect(find.text('1 min 42 s'), findsOneWidget);
+      expect(find.text('1\u00A0min\u00A042\u00A0s'), findsOneWidget);
       // Visite sans sortie : ni sortie ni duree inventees.
       expect(find.text(t.admin.observations.sortieAbsente), findsOneWidget);
       expect(find.text(t.admin.observations.dureeNonConfirmee), findsOneWidget);

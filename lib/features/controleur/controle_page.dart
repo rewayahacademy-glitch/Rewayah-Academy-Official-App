@@ -7,6 +7,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -263,7 +264,10 @@ class _CarteMission extends StatelessWidget {
         debut: heureDeLAppareil(mission.debut),
         fin: heureDeLAppareil(mission.finPrevue),
       ),
-      t.controleur.controle.duree(minutes: mission.dureePrevue.inMinutes),
+      // DUREE-INSECABLE-1 : la duree prevue n'est jamais scindee.
+      LibellesGroupe.insecable(
+        t.controleur.controle.duree(minutes: mission.dureePrevue.inMinutes),
+      ),
       t.controleur.controle.eleves(n: mission.nombreEleves),
     ].join(' · ');
 

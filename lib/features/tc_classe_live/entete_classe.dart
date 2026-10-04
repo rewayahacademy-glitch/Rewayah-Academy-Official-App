@@ -1,9 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/session_live_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/theme/app_spacing.dart';
@@ -37,12 +38,15 @@ String? libelleTempsRestant(SessionClockVM? horloge) {
   }
   final int heures = restant.inHours;
   final int minutes = restant.inMinutes % Duration.minutesPerHour;
-  return heures == 0
-      ? t.tc.classe.entete.resteMinutes(minutes: restant.inMinutes)
-      : t.tc.classe.entete.resteHeuresMinutes(
-          heures: heures,
-          minutes: minutes.toString().padLeft(2, '0'),
-        );
+  // DUREE-INSECABLE-1 : la duree restante n'est jamais scindee.
+  return LibellesGroupe.insecable(
+    heures == 0
+        ? t.tc.classe.entete.resteMinutes(minutes: restant.inMinutes)
+        : t.tc.classe.entete.resteHeuresMinutes(
+            heures: heures,
+            minutes: minutes.toString().padLeft(2, '0'),
+          ),
+  );
 }
 
 /// Le nom de l'enseignant, precede de son titre.
