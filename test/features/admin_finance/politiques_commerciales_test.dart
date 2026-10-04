@@ -9,8 +9,17 @@
 // - « Publier » appelle le port et rend l'etat honnete, sans ecriture ;
 // - les etats : chargement, production indisponible, erreur, hors ligne ;
 // - 320 px texte x2 et 1440 px, clair et sombre, LTR et RTL.
+//
+// FI-11c : l'historique des versions (lecture seule, version active
+// marquee) et l'apercu du brouillon (foyer de 1 a 5 enfants : 145 USD pour
+// 3, 231 USD pour 5 ; classe de 5 : 7 $/h pour 5 eligibles, 6,40 $/h pour
+// 4), arrete par le port et relu a chaque saisie valide ; ses etats
+// (attente d'une saisie valide, calcul, indisponible, erreur, hors ligne) ;
+// garde de source : aucune formule de prix, remise ou taux dans
+// lib/features/admin_finance.
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,7 +36,9 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/bandeau_attention.dart';
+import 'package:rewayah_academy/core/widgets/bouton_icone.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
+import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_finance/politiques_commerciales.dart';
 import 'package:rewayah_academy/features/demo/finance_demo.dart';
@@ -36,13 +47,58 @@ import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 
 /// Un port de test : [versions] (la plus recente d'abord), ou [erreur] ; il
-/// retient chaque brouillon qu'on lui demande de publier.
+/// retient chaque brouillon qu'on lui demande de publier, et chaque apercu
+/// demande. L'apercu est celui du double de demonstration, ou
+/// [erreurApercu], ou [apercuSuspendu] (jamais rendu).
 class _Port implements PortPolitiquesCommerciales {
-  _Port({this.versionsRendues, this.erreur});
+  _Port({
+    this.versionsRendues,
+    this.erreur,
+    this.erreurApercu,
+    this.apercuSuspendu = false,
+  });
 
   final List<PolitiqueCommerciale>? versionsRendues;
   final Object? erreur;
+  final Object? erreurApercu;
+  final bool apercuSuspendu;
   final List<PolitiqueCommerciale> publies = <PolitiqueCommerciale>[];
+  final List<(PolitiqueCommerciale, int)> apercusFamille =
+      <(PolitiqueCommerciale, int)>[];
+  final List<(int, int)> apercusEnseignant = <(int, int)>[];
+
+  static const PolitiquesCommercialesDemo _demo = PolitiquesCommercialesDemo();
+
+  Future<T> _apercu<T>(Future<T> Function() calcul) {
+    if (apercuSuspendu) return Completer<T>().future;
+    if (erreurApercu != null) return Future<T>.error(erreurApercu!);
+    return calcul();
+  }
+
+  @override
+  Future<ApercuFamille> apercuFamille(
+    PolitiqueCommerciale brouillon,
+    int enfants,
+  ) {
+    apercusFamille.add((brouillon, enfants));
+    return _apercu(() => _demo.apercuFamille(brouillon, enfants));
+  }
+
+  @override
+  Future<ApercuEnseignant> apercuEnseignant(
+    PolitiqueCommerciale brouillon, {
+    required int capacite,
+    required int eligibles,
+  }) {
+    apercusEnseignant.add((capacite, eligibles));
+    return _apercu(
+      () => _demo.apercuEnseignant(
+        brouillon,
+        capacite: capacite,
+        eligibles: eligibles,
+      ),
+    );
+  }
 
   @override
   Future<PolitiqueCommerciale> active() => erreur == null
@@ -146,6 +202,34 @@ String _saisie(WidgetTester tester, String id) =>
 Finder _comparaison(String id) =>
     find.byKey(PolitiquesCommercialesContenu.comparaisonKey(id));
 
+Finder _dansEntete(Finder f) => find.descendant(
+  of: find.byKey(PolitiquesCommercialesContenu.enteteKey),
+  matching: f,
+);
+
+Finder _dans(Key carte, Finder f) =>
+    find.descendant(of: find.byKey(carte), matching: f);
+
+/// Le texte de la valeur d'une ligne d'apercu ([cle]), quelle qu'en soit
+/// la mise en page.
+bool _ligneDit(Key cle, String texte) =>
+    find
+        .descendant(of: find.byKey(cle), matching: find.text(texte))
+        .evaluate()
+        .length ==
+    1;
+
+Finder _bouton(String libelle) => find.byWidgetPredicate(
+  (Widget w) => w is BoutonIcone && w.libelle == libelle,
+);
+
+Future<void> _toucher(WidgetTester tester, Finder f) async {
+  await tester.ensureVisible(f);
+  await tester.pumpAndSettle();
+  await tester.tap(f);
+  await tester.pumpAndSettle();
+}
+
 Future<void> _publier(WidgetTester tester) async {
   final Finder bouton = find.text(t.admin.finance.pol.publier);
   await tester.ensureVisible(bouton);
@@ -222,20 +306,26 @@ void main() {
       );
       // L'etat « sans brouillon » : la version active, publiee, datee.
       expect(find.text(pol.sansBrouillon), findsOneWidget);
-      expect(find.text(pol.statutPubliee), findsOneWidget);
+      expect(_dansEntete(find.text(pol.statutPubliee)), findsOneWidget);
       expect(find.text(pol.statutBrouillon), findsNothing);
       expect(find.text(pol.enVigueur(date: '1 octobre 2026')), findsOneWidget);
       expect(find.byType(TextField), findsNothing);
       verifierUnSeulBoutonPlein(tester, maximum: 0);
       expect(find.text(pol.publier), findsNothing);
-      // Huit cartes (sept sections et les regles fixes) plus l'en-tete.
+      // Huit cartes (sept sections et les regles fixes), l'en-tete et
+      // l'historique ; aucun apercu sans brouillon.
       expect(
         verifierAucuneCarteCollee(
           tester,
           estCarte: (Widget w) => w is AppCard || w is BandeauAttention,
         ),
-        9,
+        10,
       );
+      expect(
+        find.byKey(PolitiquesCommercialesContenu.apercuFamilleKey),
+        findsNothing,
+      );
+      expect(find.text(pol.apercu), findsNothing);
       expect(tester.takeException(), isNull);
     });
 
@@ -278,8 +368,8 @@ void main() {
       await tester.pumpWidget(_hote(surcharges: _avec(_avecBrouillon())));
       await tester.pumpAndSettle();
 
-      expect(find.text(pol.statutBrouillon), findsOneWidget);
-      expect(find.text(pol.statutPubliee), findsOneWidget);
+      expect(_dansEntete(find.text(pol.statutBrouillon)), findsOneWidget);
+      expect(_dansEntete(find.text(pol.statutPubliee)), findsOneWidget);
       expect(
         find.text(
           pol.versionBrouillon(
@@ -288,7 +378,10 @@ void main() {
         ),
         findsOneWidget,
       );
-      expect(find.text(pol.dateEffet(date: '1 janvier 2027')), findsOneWidget);
+      expect(
+        _dansEntete(find.text(pol.dateEffet(date: '1 janvier 2027'))),
+        findsOneWidget,
+      );
       expect(find.text(pol.aucuneDifference), findsOneWidget);
       expect(find.text(pol.nonEnregistre), findsOneWidget);
 
@@ -482,7 +575,7 @@ void main() {
         _hote(surcharges: _avec(const PolitiquesCommercialesDemo())),
       );
       await tester.pumpAndSettle();
-      expect(find.text(pol.statutBrouillon), findsOneWidget);
+      expect(_dansEntete(find.text(pol.statutBrouillon)), findsOneWidget);
       await _publier(tester);
       expect(find.text(pol.publicationIndisponible), findsOneWidget);
       await expectLater(
@@ -579,6 +672,416 @@ void main() {
       expect(_estEtat(NatureEtat.horsLigne), isTrue);
       expect(_estEtat(NatureEtat.echecServeur), isFalse);
     });
+  });
+
+  group('apercu : calcul du double de demonstration (lancement)', () {
+    const PolitiquesCommercialesDemo demo = PolitiquesCommercialesDemo();
+    final PolitiqueCommerciale lancement =
+        DonneesFinanceDemo.politiqueLancement;
+
+    test('foyer : 3 profils = 145 USD, 5 profils = 231 USD', () async {
+      final ApercuFamille trois = await demo.apercuFamille(lancement, 3);
+      expect(trois.enfants.map((MensualiteApercu m) => m.mensualite), <Montant>[
+        _usd(50),
+        _usd(50),
+        _usd(45),
+      ]);
+      expect(trois.total, const Montant(14500, 'USD'));
+      expect(trois.enfants[0].remise, isNull);
+      expect(trois.enfants[2].remise, _usd(-5));
+      final ApercuFamille cinq = await demo.apercuFamille(lancement, 5);
+      expect(cinq.enfants.map((MensualiteApercu m) => m.mensualite), <Montant>[
+        _usd(50),
+        _usd(50),
+        _usd(45),
+        _usd(43),
+        _usd(43),
+      ]);
+      expect(cinq.total, const Montant(23100, 'USD'));
+      final ApercuFamille un = await demo.apercuFamille(lancement, 1);
+      expect(un.total, _usd(50));
+    });
+
+    test('enseignant : base 4, plafond 7, capacite 5 : 5 eligibles = 7 \$/h, '
+        '4 eligibles = 6,40 \$/h', () async {
+      final ApercuEnseignant plein = await demo.apercuEnseignant(
+        lancement,
+        capacite: 5,
+        eligibles: 5,
+      );
+      expect(plein.tauxHoraire, const Montant(700, 'USD'));
+      expect(plein.occupation, const Montant(300, 'USD'));
+      final ApercuEnseignant quatre = await demo.apercuEnseignant(
+        lancement,
+        capacite: 5,
+        eligibles: 4,
+      );
+      expect(quatre.tauxHoraire, const Montant(640, 'USD'));
+      expect(quatre.baseHoraire, const Montant(400, 'USD'));
+      expect(quatre.occupation, const Montant(240, 'USD'));
+      expect(formaterMontant(quatre.tauxHoraire), '6,40 \$');
+      // Le meme taux que les revenus de l'enseignant (une seule formule).
+      expect(
+        quatre.tauxHoraire,
+        DonneesFinanceDemo.tauxEffectif(siegesEligibles: 4, capacite: 5),
+      );
+      await expectLater(
+        demo.apercuEnseignant(lancement, capacite: 0, eligibles: 0),
+        throwsArgumentError,
+      );
+    });
+
+    test('production : l apercu est indisponible', () async {
+      await expectLater(
+        const PolitiquesCommercialesIndisponibles().apercuFamille(lancement, 3),
+        throwsA(isA<CapaciteIndisponible>()),
+      );
+      await expectLater(
+        const PolitiquesCommercialesIndisponibles().apercuEnseignant(
+          lancement,
+          capacite: 5,
+          eligibles: 5,
+        ),
+        throwsA(isA<CapaciteIndisponible>()),
+      );
+    });
+  });
+
+  group('apercu a l ecran', () {
+    const Key famille = PolitiquesCommercialesContenu.apercuFamilleKey;
+    const Key enseignant = PolitiquesCommercialesContenu.apercuEnseignantKey;
+    const Key total = PolitiquesCommercialesContenu.apercuTotalKey;
+    const Key taux = PolitiquesCommercialesContenu.apercuTauxKey;
+    String parHeure(int mineur) =>
+        pol.parHeure(montant: formaterMontant(Montant(mineur, 'USD')));
+
+    testWidgets('brouillon = lancement : 3 enfants 145 USD, 5 enfants '
+        '231 USD ; classe de 5 : 7 \$/h puis 6,40 \$/h', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 3200));
+      final _Port port = _avecBrouillon();
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+
+      expect(find.text(pol.apercu), findsOneWidget);
+      // Le foyer de la maquette : trois enfants payants.
+      expect(_ligneDit(total, formaterMontant(_usd(145))), isTrue);
+      expect(
+        _ligneDit(
+          PolitiquesCommercialesContenu.apercuEnfantKey(3),
+          pol.apercuRemise(montant: formaterMontant(_usd(-5))),
+        ),
+        isTrue,
+      );
+      expect(
+        _ligneDit(
+          PolitiquesCommercialesContenu.apercuEnfantKey(1),
+          pol.apercuPrixNormal,
+        ),
+        isTrue,
+      );
+      expect(port.apercusFamille.last.$2, 3);
+
+      await _toucher(tester, find.text(pol.apercuEnfants(n: 5)));
+      expect(_ligneDit(total, formaterMontant(_usd(231))), isTrue);
+      expect(
+        _ligneDit(
+          PolitiquesCommercialesContenu.apercuEnfantKey(5),
+          formaterMontant(_usd(43)),
+        ),
+        isTrue,
+      );
+      expect(port.apercusFamille.last.$2, 5);
+
+      await _toucher(tester, find.text(pol.apercuEnfants(n: 1)));
+      expect(_ligneDit(total, formaterMontant(_usd(50))), isTrue);
+      expect(
+        find.byKey(PolitiquesCommercialesContenu.apercuEnfantKey(2)),
+        findsNothing,
+      );
+
+      // Enseignant : classe d'enfants de 5, pleine par defaut.
+      expect(
+        _dans(
+          enseignant,
+          find.text(pol.apercuEligibles(eligibles: '5', capacite: '5')),
+        ),
+        findsOneWidget,
+      );
+      expect(_ligneDit(taux, parHeure(700)), isTrue);
+      expect(port.apercusEnseignant.last, (5, 5));
+      // A la capacite, « plus » disparait (sa place reste), jamais grise.
+      expect(
+        tester
+            .widget<Visibility>(
+              find
+                  .ancestor(
+                    of: _bouton(pol.apercuEligiblesPlus),
+                    matching: find.byType(Visibility),
+                  )
+                  .first,
+            )
+            .visible,
+        isFalse,
+      );
+      await _toucher(tester, _bouton(pol.apercuEligiblesMoins));
+      expect(_ligneDit(taux, parHeure(640)), isTrue);
+      expect(
+        _dans(
+          enseignant,
+          find.text(pol.apercuOccupationDetail(eligibles: '4', capacite: '5')),
+        ),
+        findsOneWidget,
+      );
+      expect(port.apercusEnseignant.last, (5, 4));
+      // Classe d'adultes : 6 sieges, pleine.
+      await _toucher(tester, find.text(pol.apercuClasseAdultes));
+      expect(port.apercusEnseignant.last, (6, 6));
+      expect(_ligneDit(taux, parHeure(700)), isTrue);
+      verifierUnSeulBoutonPlein(tester);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('remise de rang 3 de 5 a 6 dans le brouillon : 3 enfants = '
+        '144 USD, relu sur le port', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 3200));
+      final _Port port = _avecBrouillon();
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      expect(_ligneDit(total, formaterMontant(_usd(145))), isTrue);
+      final int appels = port.apercusFamille.length;
+
+      await tester.enterText(_champ('remise-3'), '6');
+      await tester.pumpAndSettle();
+      expect(_ligneDit(total, formaterMontant(_usd(144))), isTrue);
+      expect(port.apercusFamille.length, greaterThan(appels));
+      expect(
+        port.apercusFamille.last.$1.remisePourRang(3),
+        const Montant(-600, 'USD'),
+      );
+      // Le plafond du brouillon change le taux de la classe pleine.
+      await tester.enterText(_champ('plafondHoraire'), '8');
+      await tester.pumpAndSettle();
+      expect(_ligneDit(taux, parHeure(800)), isTrue);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('saisie invalide : l apercu attend, puis se recalcule', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 3200));
+      final _Port port = _avecBrouillon();
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      final int appels = port.apercusFamille.length;
+
+      await tester.enterText(_champ('tarifEnfant'), '');
+      await tester.pumpAndSettle();
+      expect(find.text(pol.apercuAttente), findsNWidgets(2));
+      expect(find.text(pol.apercuAttenteDetail), findsNWidgets(2));
+      expect(find.byKey(total), findsNothing);
+      expect(find.byKey(taux), findsNothing);
+      expect(port.apercusFamille.length, appels);
+
+      await tester.enterText(_champ('tarifEnfant'), '55');
+      await tester.pumpAndSettle();
+      expect(find.text(pol.apercuAttente), findsNothing);
+      // 55 + 55 + 50 : la remise de rang 3 s'applique au nouveau tarif.
+      expect(_ligneDit(total, formaterMontant(_usd(160))), isTrue);
+
+      // Une classe sans siege n'a pas de taux : l'apercu le dit.
+      await tester.enterText(_champ('capaciteEnfant'), '0');
+      await tester.pumpAndSettle();
+      expect(
+        _dans(enseignant, find.text(pol.apercuCapaciteAttente)),
+        findsOneWidget,
+      );
+      expect(find.byKey(taux), findsNothing);
+      expect(_ligneDit(total, formaterMontant(_usd(160))), isTrue);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('calcul en cours : le squelette dans chaque carte', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 3200));
+      await tester.pumpWidget(
+        _hote(
+          surcharges: _avec(
+            _Port(
+              versionsRendues: _avecBrouillon().versionsRendues,
+              apercuSuspendu: true,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 250));
+      expect(_dans(famille, find.byType(Skeleton)), findsOneWidget);
+      expect(_dans(enseignant, find.byType(Skeleton)), findsOneWidget);
+      expect(find.byKey(total), findsNothing);
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+
+    testWidgets('apercu indisponible : dit honnetement, sans relance ni '
+        'montant', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 3200));
+      await tester.pumpWidget(
+        _hote(
+          surcharges: _avec(
+            _Port(
+              versionsRendues: _avecBrouillon().versionsRendues,
+              erreurApercu: const CapaciteIndisponible('FI-BR-01'),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(pol.apercuIndisponible), findsNWidgets(2));
+      expect(find.text(pol.apercuRecalculer), findsNothing);
+      expect(find.byKey(total), findsNothing);
+      // Le reste de l'ecran reste en place.
+      expect(find.text(pol.publier), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('apercu en echec : relancer rappelle le port ; hors ligne, '
+        'il le dit', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 3200));
+      final _Port port = _Port(
+        versionsRendues: _avecBrouillon().versionsRendues,
+        erreurApercu: StateError('panne'),
+      );
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      expect(find.text(pol.apercuErreur), findsNWidgets(2));
+      expect(find.text(pol.apercuErreurDetail), findsNWidgets(2));
+      final int appels = port.apercusFamille.length;
+      await _toucher(tester, _dans(famille, find.text(pol.apercuRecalculer)));
+      expect(port.apercusFamille.length, appels + 1);
+      expect(find.text(pol.apercuErreur), findsNWidgets(2));
+      verifierUnSeulBoutonPlein(tester);
+
+      // Une nouvelle lecture, appareil hors ligne.
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpWidget(_hote(surcharges: _avec(port), horsLigne: true));
+      await tester.pumpAndSettle();
+      expect(find.text(pol.apercuHorsLigne), findsNWidgets(2));
+      expect(find.text(pol.apercuErreur), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('historique des versions', () {
+    const Key carte = PolitiquesCommercialesContenu.historiqueKey;
+
+    testWidgets('brouillon puis version active, statut et date d effet, la '
+        'version active marquee, rien d editable', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 3200));
+      await tester.pumpWidget(_hote(surcharges: _avec(_avecBrouillon())));
+      await tester.pumpAndSettle();
+
+      final PolitiqueCommerciale b = DonneesFinanceDemo.politiqueBrouillon;
+      final PolitiqueCommerciale a = DonneesFinanceDemo.politiqueLancement;
+      final Finder ligneB = find.byKey(
+        PolitiquesCommercialesContenu.historiqueLigneKey(b.version),
+      );
+      final Finder ligneA = find.byKey(
+        PolitiquesCommercialesContenu.historiqueLigneKey(a.version),
+      );
+      expect(_dans(carte, find.text(pol.historique)), findsOneWidget);
+      // La plus recente d'abord.
+      expect(
+        tester.getTopLeft(ligneB).dy,
+        lessThan(tester.getTopLeft(ligneA).dy),
+      );
+      expect(
+        find.descendant(of: ligneB, matching: find.text(pol.statutBrouillon)),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: ligneB,
+          matching: find.text(pol.dateEffet(date: '1 janvier 2027')),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(of: ligneA, matching: find.text(pol.statutPubliee)),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: ligneA,
+          matching: find.text(pol.dateEffet(date: '1 octobre 2026')),
+        ),
+        findsOneWidget,
+      );
+      // Une seule version active, marquee sur sa ligne.
+      expect(find.text(pol.historiqueActive), findsOneWidget);
+      expect(
+        find.descendant(of: ligneA, matching: find.text(pol.historiqueActive)),
+        findsOneWidget,
+      );
+      expect(_dans(carte, find.byType(TextField)), findsNothing);
+      expect(_dans(carte, find.byType(FilterPill)), findsNothing);
+      expect(find.text(pol.historiqueVide), findsNothing);
+    });
+
+    testWidgets('version active seule : une ligne, marquee, et la phrase', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 2600));
+      await tester.pumpWidget(_hote(surcharges: _avec(_sansBrouillon())));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(
+          PolitiquesCommercialesContenu.historiqueLigneKey(
+            DonneesFinanceDemo.politiqueLancement.version,
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(pol.historiqueActive), findsOneWidget);
+      expect(find.text(pol.historiqueVide), findsOneWidget);
+    });
+  });
+
+  test('garde de source : aucune formule de prix, remise ou taux dans '
+      'lib/features/admin_finance (FI6)', () {
+    final List<File> fichiers = Directory('lib/features/admin_finance')
+        .listSync()
+        .whereType<File>()
+        .where((File f) => f.path.endsWith('.dart'))
+        .toList();
+    expect(fichiers, isNotEmpty);
+    final List<(String, RegExp)> interdits = <(String, RegExp)>[
+      ('division par 100', RegExp(r'~/\s*100')),
+      ('multiplication par 7', RegExp(r'\*\s*7\b')),
+      ('arithmetique sur unites mineures', RegExp(r'\.mineur\s*[-+*/~]')),
+      ('arithmetique sur unites mineures', RegExp(r'[-+*/]\s*\w+\.mineur')),
+      ('somme d une liste', RegExp(r'fold\s*<')),
+      ('formule de taux', RegExp(r'tauxEffectif|eligibles\s*/|/\s*capacite\b')),
+      ('mensualites par rang', RegExp(r'lignesPourRang|DonneesFinanceDemo')),
+      ('remise appliquee', RegExp(r'(tarif\w*|remise\w*)\s*[-+]\s*\w')),
+    ];
+    for (final File f in fichiers) {
+      // Le code seul : les commentaires peuvent citer une formule.
+      final String source = f
+          .readAsLinesSync()
+          .where((String l) => !l.trimLeft().startsWith('//'))
+          .join('\n');
+      for (final (String nom, RegExp motif) in interdits) {
+        expect(motif.hasMatch(source), isFalse, reason: '${f.path} : $nom');
+      }
+    }
+    // L'apercu passe bien par le port.
+    final String ecran = File(
+      'lib/features/admin_finance/politiques_commerciales.dart',
+    ).readAsStringSync();
+    expect(ecran, contains('.apercuFamille('));
+    expect(ecran, contains('.apercuEnseignant('));
   });
 
   group('gabarits', () {

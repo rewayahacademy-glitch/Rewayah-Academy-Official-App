@@ -148,3 +148,75 @@ class PolitiqueCommerciale {
     return retenue?.remise;
   }
 }
+
+/// La mensualite d'un enfant payant dans un apercu de foyer (FI-11c, guide
+/// §5.7) : arretee par la source, jamais calculee dans un widget (FI6).
+@immutable
+class MensualiteApercu {
+  /// Cree la ligne.
+  const MensualiteApercu({
+    required this.rang,
+    required this.tarif,
+    required this.mensualite,
+    this.remise,
+  });
+
+  /// Le rang du membre payant (1 = premier).
+  final int rang;
+
+  /// Le tarif applique a ce rang.
+  final Montant tarif;
+
+  /// La remise de rang (negative), ou `null` quand ce rang n'en a aucune.
+  final Montant? remise;
+
+  /// La mensualite arretee de ce membre.
+  final Montant mensualite;
+}
+
+/// L'apercu d'un foyer de demonstration pour une version de politique : une
+/// mensualite par enfant payant, puis le total du foyer par mois.
+@immutable
+class ApercuFamille {
+  /// Cree l'apercu.
+  const ApercuFamille({required this.enfants, required this.total});
+
+  /// Les mensualites, dans l'ordre des rangs.
+  final List<MensualiteApercu> enfants;
+
+  /// Le total du foyer par mois, arrete par la source.
+  final Montant total;
+}
+
+/// L'apercu du taux horaire d'un enseignant pour une classe (guide §1.4) :
+/// la base, la part d'occupation et le taux effectif, arretes par la source.
+@immutable
+class ApercuEnseignant {
+  /// Cree l'apercu.
+  const ApercuEnseignant({
+    required this.capacite,
+    required this.eligibles,
+    required this.baseHoraire,
+    required this.occupation,
+    required this.tauxHoraire,
+    required this.plafondHoraire,
+  });
+
+  /// La capacite de la classe.
+  final int capacite;
+
+  /// Les sieges eligibles retenus (periode financee).
+  final int eligibles;
+
+  /// La base horaire garantie.
+  final Montant baseHoraire;
+
+  /// La part d'occupation, par heure.
+  final Montant occupation;
+
+  /// Le taux horaire effectif.
+  final Montant tauxHoraire;
+
+  /// Le plafond horaire.
+  final Montant plafondHoraire;
+}

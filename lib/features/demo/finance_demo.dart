@@ -488,6 +488,68 @@ abstract final class DonneesFinanceDemo {
     return Montant(taux > plafond ? plafond : taux, devise);
   }
 
+  /// L'apercu d'un foyer de [enfants] membres payants sous [politique]
+  /// (FI-11c) : la mensualite de chaque rang (`lignesPourRang`), puis le
+  /// total. Calcul du double de demonstration, jamais dans un widget.
+  static ApercuFamille apercuFamille(
+    PolitiqueCommerciale politique,
+    int enfants,
+  ) {
+    final List<MensualiteApercu> lignes = <MensualiteApercu>[
+      for (int rang = 1; rang <= enfants; rang++)
+        _mensualiteApercu(rang, lignesPourRang(rang, politique: politique)),
+    ];
+    return ApercuFamille(
+      enfants: lignes,
+      total: _somme(lignes.map((MensualiteApercu l) => l.mensualite)),
+    );
+  }
+
+  static MensualiteApercu _mensualiteApercu(
+    int rang,
+    List<LigneMensualite> lignes,
+  ) {
+    Montant? remise;
+    for (final LigneMensualite l in lignes) {
+      if (l.nature == NatureLigneMensualite.remiseRang) remise = l.montant;
+    }
+    return MensualiteApercu(
+      rang: rang,
+      tarif: lignes.first.montant,
+      remise: remise,
+      mensualite: _somme(lignes.map((LigneMensualite l) => l.montant)),
+    );
+  }
+
+  /// L'apercu du taux horaire d'une classe sous [politique] (FI-11c) : le
+  /// taux de `tauxEffectif`, et la part d'occupation au-dessus de la base.
+  /// Une capacite nulle n'a pas de taux : erreur d'argument.
+  static ApercuEnseignant apercuEnseignant(
+    PolitiqueCommerciale politique, {
+    required int capacite,
+    required int eligibles,
+  }) {
+    if (capacite < 1 || eligibles < 0) {
+      throw ArgumentError('capacite $capacite, eligibles $eligibles');
+    }
+    final Montant taux = tauxEffectif(
+      siegesEligibles: eligibles,
+      capacite: capacite,
+      politique: politique,
+    );
+    return ApercuEnseignant(
+      capacite: capacite,
+      eligibles: eligibles > capacite ? capacite : eligibles,
+      baseHoraire: politique.baseHoraire,
+      occupation: Montant(
+        taux.mineur - politique.baseHoraire.mineur,
+        taux.devise,
+      ),
+      tauxHoraire: taux,
+      plafondHoraire: politique.plafondHoraire,
+    );
+  }
+
   static RevenusClasse _classe(
     String id,
     String nom, {
@@ -759,6 +821,24 @@ class PolitiquesCommercialesDemo implements PortPolitiquesCommerciales {
   @override
   Future<void> publier(PolitiqueCommerciale brouillon) =>
       Future<void>.error(const CapaciteIndisponible('FI-BR-02'));
+
+  /// L'apercu se calcule ICI, a partir des regles du brouillon recu (FI-11c).
+  @override
+  Future<ApercuFamille> apercuFamille(
+    PolitiqueCommerciale brouillon,
+    int enfants,
+  ) async => DonneesFinanceDemo.apercuFamille(brouillon, enfants);
+
+  @override
+  Future<ApercuEnseignant> apercuEnseignant(
+    PolitiqueCommerciale brouillon, {
+    required int capacite,
+    required int eligibles,
+  }) async => DonneesFinanceDemo.apercuEnseignant(
+    brouillon,
+    capacite: capacite,
+    eligibles: eligibles,
+  );
 }
 
 /// Les revenus de l'enseignant en demonstration (FI-BR-11).
