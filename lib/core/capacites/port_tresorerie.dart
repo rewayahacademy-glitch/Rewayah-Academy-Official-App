@@ -66,6 +66,29 @@ class MouvementPermis {
   final Montant? montantPropose;
 }
 
+/// Un couple de coffres que la politique **refuse** au Comptable, avec la
+/// raison rendue par la source (DR-19 : l'ecran affiche la raison, il ne la
+/// deduit jamais). Ex. : retrait de la Reserve strategique sans capacite
+/// (R-FIN-10) ; ajoute par CPT-TRES-2 (ligne pour `CPT-BR.md`, CPT-BR-05).
+@immutable
+class MouvementBloque {
+  /// Cree le couple refuse.
+  const MouvementBloque({
+    required this.origine,
+    required this.destination,
+    required this.raison,
+  });
+
+  /// Le coffre d'origine.
+  final Coffre origine;
+
+  /// Le coffre de destination.
+  final Coffre destination;
+
+  /// Pourquoi la source le refuse.
+  final RaisonBlocage raison;
+}
+
 /// Le filtre de l'historique des allocations.
 @immutable
 class FiltreHistoriqueTresorerie {
@@ -91,6 +114,7 @@ class ResultatMouvement {
     required this.execute,
     this.validation,
     this.journal,
+    this.refus,
   });
 
   /// L'identifiant du mouvement.
@@ -104,6 +128,10 @@ class ResultatMouvement {
 
   /// L'entree de journal rendue (§48).
   final EntreeJournal? journal;
+
+  /// La raison du refus, quand la source refuse le mouvement (ni execute, ni
+  /// en validation) ; ajoutee par CPT-TRES-2 (CPT-BR-05).
+  final RaisonBlocage? refus;
 }
 
 /// La tresorerie (CPT-BR-04, 05).
@@ -122,6 +150,10 @@ abstract interface class PortTresorerie {
 
   /// Les mouvements que la politique permet au Comptable.
   Future<List<MouvementPermis>> mouvementsPermis();
+
+  /// Les mouvements attendus que la politique refuse au Comptable, avec leur
+  /// raison (R-FIN-10).
+  Future<List<MouvementBloque>> mouvementsBloques();
 
   /// Un transfert entre deux coffres, une fois (cle d'idempotence).
   Future<ResultatMouvement> transferer({
@@ -164,6 +196,10 @@ class TresorerieIndisponible implements PortTresorerie {
   @override
   Future<List<MouvementPermis>> mouvementsPermis() =>
       Future<List<MouvementPermis>>.error(_manqueMouvement);
+
+  @override
+  Future<List<MouvementBloque>> mouvementsBloques() =>
+      Future<List<MouvementBloque>>.error(_manqueMouvement);
 
   @override
   Future<ResultatMouvement> transferer({
