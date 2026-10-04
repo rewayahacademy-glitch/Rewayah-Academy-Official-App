@@ -11482,6 +11482,7 @@ class Traductions$salle$seance$demo$fr {
 	late final Traductions$salle$seance$demo$groupes$fr groupes = Traductions$salle$seance$demo$groupes$fr.internal(_root);
 	late final Traductions$salle$seance$demo$roles$fr roles = Traductions$salle$seance$demo$roles$fr.internal(_root);
 	late final Traductions$salle$seance$demo$etats$fr etats = Traductions$salle$seance$demo$etats$fr.internal(_root);
+	late final Traductions$salle$seance$demo$tb$fr tb = Traductions$salle$seance$demo$tb$fr.internal(_root);
 }
 
 // Path: salle.seance.statut
@@ -15087,6 +15088,9 @@ class Traductions$salle$seance$demo$groupes$fr {
 
 	/// fr: 'Situations de secours'
 	String get secours => 'Situations de secours';
+
+	/// fr: 'Supports et tableau'
+	String get tableau => 'Supports et tableau';
 }
 
 // Path: salle.seance.demo.roles
@@ -15162,6 +15166,102 @@ class Traductions$salle$seance$demo$etats$fr {
 
 	/// fr: 'Accès retiré'
 	String get accesRetire => 'Accès retiré';
+}
+
+// Path: salle.seance.demo.tb
+class Traductions$salle$seance$demo$tb$fr {
+	Traductions$salle$seance$demo$tb$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'SAL-00 Salle et personnes'
+	String get sal00 => 'SAL-00 Salle et personnes';
+
+	/// fr: 'PED-01 Tableau libre, sans support'
+	String get ped01 => 'PED-01 Tableau libre, sans support';
+
+	/// fr: 'PED-02 Support seul'
+	String get ped02 => 'PED-02 Support seul';
+
+	/// fr: 'PED-03 Support avec notes'
+	String get ped03 => 'PED-03 Support avec notes';
+
+	/// fr: 'PED-04 Tableau, support masqué'
+	String get ped04 => 'PED-04 Tableau, support masqué';
+
+	/// fr: 'UI-01 Présentation compacte'
+	String get ui01 => 'UI-01 Présentation compacte';
+
+	/// fr: 'UI-02 Salle développée'
+	String get ui02 => 'UI-02 Salle développée';
+
+	/// fr: 'UI-03 Focus local'
+	String get ui03 => 'UI-03 Focus local';
+
+	/// fr: 'VIS-01 Barre de visio révélée'
+	String get vis01 => 'VIS-01 Barre de visio révélée';
+
+	/// fr: 'CTX-01 Contexte de la séance'
+	String get ctx01 => 'CTX-01 Contexte de la séance';
+
+	/// fr: 'CTX-02 Informations de contrôle'
+	String get ctx02 => 'CTX-02 Informations de contrôle';
+
+	/// fr: 'CMD-01 Commandes'
+	String get cmd01 => 'CMD-01 Commandes';
+
+	/// fr: 'CMD-02 Couleur et épaisseur'
+	String get cmd02 => 'CMD-02 Couleur et épaisseur';
+
+	/// fr: 'CMD-03 Écriture active'
+	String get cmd03 => 'CMD-03 Écriture active';
+
+	/// fr: 'LIB-01 Bibliothèque'
+	String get lib01 => 'LIB-01 Bibliothèque';
+
+	/// fr: 'LIB-02 Aperçu personnel'
+	String get lib02 => 'LIB-02 Aperçu personnel';
+
+	/// fr: 'LIB-03 Ouverture du support'
+	String get lib03 => 'LIB-03 Ouverture du support';
+
+	/// fr: 'LIB-04 Recherche sans résultat'
+	String get lib04 => 'LIB-04 Recherche sans résultat';
+
+	/// fr: 'PER-01 Participants et autorisations'
+	String get per01 => 'PER-01 Participants et autorisations';
+
+	/// fr: 'DLG-01 Effacer les notes de la page'
+	String get dlg01 => 'DLG-01 Effacer les notes de la page';
+
+	/// fr: 'ERR-01 Synchronisation interrompue'
+	String get err01 => 'ERR-01 Synchronisation interrompue';
+
+	/// fr: 'ERR-02 Reprise du tableau'
+	String get err02 => 'ERR-02 Reprise du tableau';
+
+	/// fr: 'ERR-03 Sauvegarde en échec'
+	String get err03 => 'ERR-03 Sauvegarde en échec';
+
+	/// fr: 'END-01 Quitter la séance'
+	String get end01 => 'END-01 Quitter la séance';
+
+	/// fr: 'Le support arrive'
+	String get supportArrive => 'Le support arrive';
+
+	/// fr: 'Ressource indisponible'
+	String get ressourceIndisponible => 'Ressource indisponible';
+
+	/// fr: 'Autorisation d'écrire'
+	String get autorisationEcrire => 'Autorisation d\'écrire';
+
+	/// fr: 'Droit retiré'
+	String get droitRetire => 'Droit retiré';
+
+	/// fr: 'Effacer les notes du tableau'
+	String get effacementTableau => 'Effacer les notes du tableau';
 }
 
 // Path: classe.entree.demo.roles
@@ -15693,6 +15793,7 @@ extension on Traductions {
 			'salle.seance.demo.intro' => 'Données fictives, aucun serveur. Choisissez un rôle et un état.',
 			'salle.seance.demo.groupes.seance' => 'Déroulé de la séance',
 			'salle.seance.demo.groupes.secours' => 'Situations de secours',
+			'salle.seance.demo.groupes.tableau' => 'Supports et tableau',
 			'salle.seance.demo.roles.eleve' => 'Élève standard',
 			'salle.seance.demo.roles.guidee' => 'Mode Accessibilité',
 			'salle.seance.demo.roles.enseignant' => 'Enseignant',
@@ -15712,6 +15813,35 @@ extension on Traductions {
 			'salle.seance.demo.etats.cameraInterdite' => 'Caméra interdite',
 			'salle.seance.demo.etats.prolongee' => 'Séance prolongée',
 			'salle.seance.demo.etats.accesRetire' => 'Accès retiré',
+			'salle.seance.demo.tb.sal00' => 'SAL-00 Salle et personnes',
+			'salle.seance.demo.tb.ped01' => 'PED-01 Tableau libre, sans support',
+			'salle.seance.demo.tb.ped02' => 'PED-02 Support seul',
+			'salle.seance.demo.tb.ped03' => 'PED-03 Support avec notes',
+			'salle.seance.demo.tb.ped04' => 'PED-04 Tableau, support masqué',
+			'salle.seance.demo.tb.ui01' => 'UI-01 Présentation compacte',
+			'salle.seance.demo.tb.ui02' => 'UI-02 Salle développée',
+			'salle.seance.demo.tb.ui03' => 'UI-03 Focus local',
+			'salle.seance.demo.tb.vis01' => 'VIS-01 Barre de visio révélée',
+			'salle.seance.demo.tb.ctx01' => 'CTX-01 Contexte de la séance',
+			'salle.seance.demo.tb.ctx02' => 'CTX-02 Informations de contrôle',
+			'salle.seance.demo.tb.cmd01' => 'CMD-01 Commandes',
+			'salle.seance.demo.tb.cmd02' => 'CMD-02 Couleur et épaisseur',
+			'salle.seance.demo.tb.cmd03' => 'CMD-03 Écriture active',
+			'salle.seance.demo.tb.lib01' => 'LIB-01 Bibliothèque',
+			'salle.seance.demo.tb.lib02' => 'LIB-02 Aperçu personnel',
+			'salle.seance.demo.tb.lib03' => 'LIB-03 Ouverture du support',
+			'salle.seance.demo.tb.lib04' => 'LIB-04 Recherche sans résultat',
+			'salle.seance.demo.tb.per01' => 'PER-01 Participants et autorisations',
+			'salle.seance.demo.tb.dlg01' => 'DLG-01 Effacer les notes de la page',
+			'salle.seance.demo.tb.err01' => 'ERR-01 Synchronisation interrompue',
+			'salle.seance.demo.tb.err02' => 'ERR-02 Reprise du tableau',
+			'salle.seance.demo.tb.err03' => 'ERR-03 Sauvegarde en échec',
+			'salle.seance.demo.tb.end01' => 'END-01 Quitter la séance',
+			'salle.seance.demo.tb.supportArrive' => 'Le support arrive',
+			'salle.seance.demo.tb.ressourceIndisponible' => 'Ressource indisponible',
+			'salle.seance.demo.tb.autorisationEcrire' => 'Autorisation d\'écrire',
+			'salle.seance.demo.tb.droitRetire' => 'Droit retiré',
+			'salle.seance.demo.tb.effacementTableau' => 'Effacer les notes du tableau',
 			'salle.seance.statut.connecte' => 'Connecté',
 			'salle.seance.statut.pasEncoreConnecte' => 'Pas encore connecté',
 			'salle.seance.statut.connexionInterrompue' => 'Connexion interrompue',
@@ -15921,6 +16051,8 @@ extension on Traductions {
 			'inscription.identiteRaison' => 'Ce nom doit être celui de votre pièce d\'identité.',
 			'inscription.prenom' => 'Prénom',
 			'inscription.nom' => 'Nom',
+			_ => null,
+		} ?? switch (path) {
 			'inscription.genreQuestion' => 'Vous êtes',
 			'inscription.genreHomme' => 'Un homme',
 			'inscription.genreFemme' => 'Une femme',
@@ -15951,8 +16083,6 @@ extension on Traductions {
 			'contrat.pointControle' => 'Un contrôleur qualité peut assister à un cours sans être vu. La salle le rappelle en permanence, que la visite ait lieu ou non.',
 			'contrat.pointCoordonnees' => 'Vous ne voyez jamais les coordonnées d\'une famille : ni nom complet, ni courriel, ni téléphone.',
 			'contrat.lireTexte' => 'Lire le texte complet',
-			_ => null,
-		} ?? switch (path) {
 			'contrat.accepter' => 'J\'ai lu et j\'accepte',
 			'contrat.accepteLe' => ({required Object date}) => 'Accepté le ${date}',
 			'contrat.erreur' => 'La signature n\'a pas abouti. Réessayez dans un instant.',
@@ -16435,6 +16565,8 @@ extension on Traductions {
 			'eleveConnexion.refus.nonEnregistre' => 'Cet appareil n\'a pas pu garder la connexion. Le code a sans doute déjà servi : affichez un nouveau code sur l\'appareil du tuteur, puis recommencez.',
 			'eleveConnexion.refus.generiqueTitre' => 'Connexion non aboutie',
 			'eleveConnexion.refus.generique' => 'La vérification du code n\'a pas abouti. Réessayez dans un instant.',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.titre' => 'Dossiers à valider',
 			'dossiers.sousTitre' => 'Examinez les dossiers prêts pour une décision.',
 			'dossiers.aucun' => 'Aucun dossier n\'attend de validation.',
@@ -16465,8 +16597,6 @@ extension on Traductions {
 			'dossiers.detail.titreElide' => ({required Object nom}) => 'Dossier d\'${nom}',
 			'dossiers.visionneuse.chargement' => 'Chargement de la pièce…',
 			'dossiers.visionneuse.erreur' => 'La pièce ne peut pas être affichée.',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.visionneuse.expire' => 'L\'accès à cette pièce a expiré.',
 			'dossiers.visionneuse.recharger' => 'Recharger la pièce',
 			'dossiers.visionneuse.formatNonPrisEnCharge' => 'Ce format de pièce ne peut pas être affiché.',
@@ -16949,6 +17079,8 @@ extension on Traductions {
 			'admin.programmes.champMotif' => 'Motif',
 			'admin.programmes.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
 			'admin.programmes.journalisation' => 'Chaque création, modification, suppression et publication est inscrite au journal d\'audit.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.titre' => 'Journal',
 			'admin.journal.chaineIntacte' => 'Journal intact',
 			'admin.journal.chaineIntacteDetail' => ({required Object nombre}) => '${nombre} entrées relues une à une : aucune n\'a été modifiée ni retirée depuis son écriture.',
@@ -16979,8 +17111,6 @@ extension on Traductions {
 			'admin.journal.roleEleve' => 'Élève',
 			'admin.journal.roleControleur' => 'Contrôleur',
 			'admin.journal.roleComptable' => 'Comptable',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.roleAucun' => 'Hors session',
 			'admin.journal.evtKycLu' => 'Dossier d\'identité consulté',
 			'admin.journal.evtKycTranche' => 'Dossier d\'identité tranché',
@@ -17463,6 +17593,8 @@ extension on Traductions {
 			'compte.tuteur.pageSecurite.deconnexion' => 'Pour fermer la session de cet appareil, utilisez « Se déconnecter » en bas de Mon compte.',
 			'compte.tuteur.pageAcces.titre' => 'Accès des profils élèves',
 			'compte.tuteur.pageAcces.sousTitre' => 'Le statut de l\'accès de chaque profil élève.',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageAcces.sansEcheance' => 'Sans date de fin',
 			'compte.tuteur.pageAcces.jusqua' => ({required Object date}) => 'Ouvert jusqu\'au ${date}',
 			'compte.tuteur.pageAcces.expire' => ({required Object date}) => 'Terminé le ${date}',
@@ -17493,8 +17625,6 @@ extension on Traductions {
 			'compte.tuteur.pageApparence.animations' => 'Animations',
 			'compte.tuteur.pageApparence.animationsDetail' => 'Réduites quand votre appareil le demande',
 			'compte.tuteur.pageApparence.texte' => 'Taille du texte',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageApparence.texteDetail' => 'Suit la taille du système',
 			'compte.tuteur.pageAide.titre' => 'Aide et support',
 			'compte.tuteur.pageAide.indisponibleTitre' => 'Aide pas encore disponible',
@@ -17977,6 +18107,8 @@ extension on Traductions {
 			'enseignant.eleve.signalerAide' => 'Un besoin à remonter à l\'académie, sans recopier le contexte.',
 			'enseignant.signalement.titre' => 'Signaler un besoin',
 			'enseignant.signalement.contexte' => ({required Object prenom, required Object classe}) => 'Pour ${prenom} · ${classe}',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.signalement.categorieTitre' => 'Catégorie',
 			'enseignant.signalement.categories.pedagogique' => 'Problème pédagogique',
 			'enseignant.signalement.categories.presence' => 'Présence',
@@ -18007,8 +18139,6 @@ extension on Traductions {
 			'enseignant.bienvenue.salutationSansNom' => 'Bienvenue.',
 			'enseignant.bienvenue.dossierValide' => 'Votre dossier est validé.',
 			'enseignant.bienvenue.sousTitre' => 'Préparez votre espace avant votre première Classe.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.bienvenue.aCompleter' => 'À compléter',
 			'enseignant.bienvenue.compteur' => ({required Object fait, required Object total}) => '${fait} sur ${total}',
 			'enseignant.bienvenue.prerequisPhoto' => 'Ajouter ma photo professionnelle',
@@ -18491,6 +18621,8 @@ extension on Traductions {
 			'controleur.observation.respectCadreAide' => 'Quand il s\'agit des règles de l\'académie et de la séance',
 			'controleur.observation.climat' => 'Comportement / climat',
 			'controleur.observation.climatAide' => 'Quand il s\'agit du comportement ou de l\'ambiance de la classe',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.autre' => 'Autre',
 			'controleur.observation.autreAide' => 'Quand aucun autre domaine ne convient · précisez-le dans votre texte',
 			'controleur.observation.questionPersonne' => 'Qui est concerné ?',
@@ -18521,8 +18653,6 @@ extension on Traductions {
 			'controleur.observation.sansTexte' => 'Aucun texte',
 			'controleur.observation.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.titre' => 'Échanges',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.echanges.titreFil' => ({required Object classe, required Object date}) => '${classe} · ${date}',
 			'controleur.echanges.derniereActivite' => ({required Object date}) => 'Dernière activité : ${date}',
 			'controleur.echanges.reponseRecue' => 'Réponse reçue',
@@ -19005,6 +19135,8 @@ extension on Traductions {
 			'tc.parcours.avant.rien' => 'Rien à préparer pour le prochain cours.',
 			'tc.parcours.avant.rienDetail' => 'Votre enseignant proposera le travail à la fin de la prochaine séance.',
 			'tc.parcours.avant.nonBranche' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.avant.nonBrancheDetail' => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.',
 			'tc.parcours.avant.reprendre' => 'Reprendre le cours',
 			'tc.parcours.avant.reprendreDepuis' => ({required Object position}) => 'Reprendre le cours à ${position}',
@@ -19035,8 +19167,6 @@ extension on Traductions {
 			'tc.parcours.feedback.technique.intitule' => 'Le son et l\'image étaient-ils confortables ?',
 			'tc.parcours.feedback.technique.difficile' => 'Gênants',
 			'tc.parcours.feedback.technique.bien' => 'Corrects',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.feedback.technique.tresBien' => 'Très bons',
 			'tc.parcours.feedback.confiance.intitule' => 'Vous sentez-vous prêt pour le prochain cours ?',
 			'tc.parcours.feedback.confiance.difficile' => 'Pas encore',

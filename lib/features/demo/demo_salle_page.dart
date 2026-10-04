@@ -1,16 +1,20 @@
 // La salle de seance en demonstration : /demo/salle (hors production).
 //
 // Sans parametre : la liste des liens par role, deroule (6 etats) puis
-// situations de secours CL-7 (9, 8 pour l enseignant). Avec `role` et
-// `etat` : la salle en plein ecran, donnees fictives (seance_demo.dart) et
+// situations de secours CL-7 (9, 8 pour l enseignant), puis situations
+// Supports et tableau (TB-1b, `SituationTb`). Avec `role` et `etat` (ou
+// `role` et `tb`) : la salle en plein ecran, donnees fictives (seance_demo.dart) et
 // etat local (micro, camera, zoom, agrandi, panneaux). Aucun appel serveur
 // (consigne K-28). La guidee lit le theme `InterfaceMode.enfant`.
 
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
+import '../../core/appairage/service_avatar.dart' show avatarUrlProvider;
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
@@ -41,6 +45,8 @@ List<RouteBase> routesDemoSalle(String environnement) {
       builder: (BuildContext _, GoRouterState etat) => DemoSallePage(
         role: _lire(RoleSeance.values, etat.uri.queryParameters['role']),
         etat: _lire(EtatDemoSalle.values, etat.uri.queryParameters['etat']),
+        // TB-1b : une situation Supports et tableau (`&tb=ped03`).
+        situation: _lire(SituationTb.values, etat.uri.queryParameters['tb']),
         // Le titre de demonstration, comme l'Espace Classe (`&titre=sayyida`).
         titre: etat.uri.queryParameters['titre'] == 'sayyida'
             ? TitreEnseignant.sayyida
@@ -63,11 +69,19 @@ String adresseDemoSalle(RoleSeance role, EtatDemoSalle etat) => Uri(
   queryParameters: <String, String>{'role': role.name, 'etat': etat.name},
 ).toString();
 
-/// La page : la liste, ou la salle si [role] et [etat] sont donnes.
+/// L'adresse d'une situation Supports et tableau (TB-1b).
+String adresseDemoSalleTb(RoleSeance role, SituationTb situation) => Uri(
+  path: Routes.demoSalle,
+  queryParameters: <String, String>{'role': role.name, 'tb': situation.name},
+).toString();
+
+/// La page : la liste, ou la salle si [role] et [etat] (ou [situation])
+/// sont donnes.
 class DemoSallePage extends StatelessWidget {
   const DemoSallePage({
     this.role,
     this.etat,
+    this.situation,
     this.titre = TitreEnseignant.sayyid,
     super.key,
   });
@@ -75,12 +89,32 @@ class DemoSallePage extends StatelessWidget {
   final RoleSeance? role;
   final EtatDemoSalle? etat;
 
+  /// TB-1b : la situation Supports et tableau ; elle prime sur [etat]. Une
+  /// situation sans objet pour le role ramene a la liste.
+  final SituationTb? situation;
+
   /// Le titre de l'enseignant de la demonstration (E16).
   final TitreEnseignant titre;
 
   @override
   Widget build(BuildContext context) {
     final RoleSeance? r = role;
+    final SituationTb? s = situation;
+    if (r != null && s != null) {
+      if (!s.concerne(r)) return const _ListeDemo();
+      return _themePour(
+        context,
+        r,
+        SalleDemo(
+          key: ValueKey<String>('${r.name}-tb-${s.name}'),
+          role: r,
+          etat: DonneesSeanceDemo.etatBaseTb(s),
+          situation: s,
+          titre: titre,
+          onSortir: () => context.go(Routes.demoSalle),
+        ),
+      );
+    }
     final EtatDemoSalle? e = etat;
     if (r == null || e == null) return const _ListeDemo();
     final Widget salle = SalleDemo(
@@ -90,6 +124,11 @@ class DemoSallePage extends StatelessWidget {
       titre: titre,
       onSortir: () => context.go(Routes.demoSalle),
     );
+    return _themePour(context, r, salle);
+  }
+
+  /// La guidee lit le theme `InterfaceMode.enfant`.
+  static Widget _themePour(BuildContext context, RoleSeance r, Widget salle) {
     if (r != RoleSeance.guidee) return salle;
     return Theme(
       data: AppTheme.pour(InterfaceMode.enfant, Theme.of(context).brightness),
@@ -123,6 +162,39 @@ String _libelleEtat(EtatDemoSalle etat) => switch (etat) {
   EtatDemoSalle.accesRetire => t.salle.seance.demo.etats.accesRetire,
 };
 
+String _libelleSituation(SituationTb s) => switch (s) {
+  SituationTb.sal00 => t.salle.seance.demo.tb.sal00,
+  SituationTb.ped01 => t.salle.seance.demo.tb.ped01,
+  SituationTb.ped02 => t.salle.seance.demo.tb.ped02,
+  SituationTb.ped03 => t.salle.seance.demo.tb.ped03,
+  SituationTb.ped04 => t.salle.seance.demo.tb.ped04,
+  SituationTb.ui01 => t.salle.seance.demo.tb.ui01,
+  SituationTb.ui02 => t.salle.seance.demo.tb.ui02,
+  SituationTb.ui03 => t.salle.seance.demo.tb.ui03,
+  SituationTb.vis01 => t.salle.seance.demo.tb.vis01,
+  SituationTb.ctx01 => t.salle.seance.demo.tb.ctx01,
+  SituationTb.ctx02 => t.salle.seance.demo.tb.ctx02,
+  SituationTb.cmd01 => t.salle.seance.demo.tb.cmd01,
+  SituationTb.cmd02 => t.salle.seance.demo.tb.cmd02,
+  SituationTb.cmd03 => t.salle.seance.demo.tb.cmd03,
+  SituationTb.lib01 => t.salle.seance.demo.tb.lib01,
+  SituationTb.lib02 => t.salle.seance.demo.tb.lib02,
+  SituationTb.lib03 => t.salle.seance.demo.tb.lib03,
+  SituationTb.lib04 => t.salle.seance.demo.tb.lib04,
+  SituationTb.per01 => t.salle.seance.demo.tb.per01,
+  SituationTb.dlg01 => t.salle.seance.demo.tb.dlg01,
+  SituationTb.err01 => t.salle.seance.demo.tb.err01,
+  SituationTb.err02 => t.salle.seance.demo.tb.err02,
+  SituationTb.err03 => t.salle.seance.demo.tb.err03,
+  SituationTb.end01 => t.salle.seance.demo.tb.end01,
+  SituationTb.supportArrive => t.salle.seance.demo.tb.supportArrive,
+  SituationTb.ressourceIndisponible =>
+    t.salle.seance.demo.tb.ressourceIndisponible,
+  SituationTb.autorisationEcrire => t.salle.seance.demo.tb.autorisationEcrire,
+  SituationTb.droitRetire => t.salle.seance.demo.tb.droitRetire,
+  SituationTb.effacementTableau => t.salle.seance.demo.tb.effacementTableau,
+};
+
 /// Les etats du deroule ordinaire de la seance (lots CL-1 a CL-6).
 const List<EtatDemoSalle> etatsDemoSeance = <EtatDemoSalle>[
   EtatDemoSalle.repos,
@@ -153,16 +225,36 @@ class _ListeDemo extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final ThemeData theme = Theme.of(context);
+    Widget titreGroupe(String titre) => Text(
+      titre,
+      style: palette.inkMuted.applyTo(
+        theme.textTheme.labelLarge ?? const TextStyle(),
+      ),
+    );
+    Widget groupeTb(RoleSeance role) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        titreGroupe(t.salle.seance.demo.groupes.tableau),
+        Ecart.vSm,
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: <Widget>[
+            for (final SituationTb s in situationsTb(role))
+              _Lien(
+                key: ValueKey<String>('lien-${role.name}-tb-${s.name}'),
+                libelle: _libelleSituation(s),
+                onPress: () => context.go(adresseDemoSalleTb(role, s)),
+              ),
+          ],
+        ),
+      ],
+    );
     Widget groupe(String titre, RoleSeance role, List<EtatDemoSalle> etats) =>
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
-              titre,
-              style: palette.inkMuted.applyTo(
-                theme.textTheme.labelLarge ?? const TextStyle(),
-              ),
-            ),
+            titreGroupe(titre),
             Ecart.vSm,
             Wrap(
               spacing: AppSpacing.sm,
@@ -208,6 +300,8 @@ class _ListeDemo extends StatelessWidget {
               role,
               etatsDemoSecours(role),
             ),
+            Ecart.vLg,
+            groupeTb(role),
           ],
         ],
       ),
@@ -240,12 +334,17 @@ class SalleDemo extends StatefulWidget {
     this.titre = TitreEnseignant.sayyid,
     this.tutoiement,
     this.prenomEleve = DonneesSeanceDemo.eleveCourant,
+    this.situation,
     super.key,
   });
 
   final RoleSeance role;
   final EtatDemoSalle etat;
   final VoidCallback onSortir;
+
+  /// TB-1b : la situation Supports et tableau, ou `null`. Ses donnees
+  /// viennent de `DonneesSeanceDemo.vueTb` (une seule source).
+  final SituationTb? situation;
 
   /// Le titre de l'enseignant de la demonstration (E16).
   final TitreEnseignant titre;
@@ -276,20 +375,37 @@ class _SalleDemoState extends State<SalleDemo> {
 
   /// L'eleve a quitte la salle avant la fin (apres confirmation).
   bool _quittee = false;
-  bool _agrandi = false;
+
+  /// UI-03 (TB-1b) : le focus local part de l'etat local `agrandi` existant.
+  late bool _agrandi = widget.situation == SituationTb.ui03;
   double _zoom = 1;
+
+  /// Les donnees de l'etat choisi, ou de la situation TB (une seule source).
+  VueSeance _donnees({
+    TitreEnseignant titre = TitreEnseignant.sayyid,
+    String prenomEleve = DonneesSeanceDemo.eleveCourant,
+  }) {
+    final SituationTb? s = widget.situation;
+    return s == null
+        ? DonneesSeanceDemo.vue(
+            widget.role,
+            widget.etat,
+            titre: titre,
+            prenomEleve: prenomEleve,
+          )
+        : DonneesSeanceDemo.vueTb(
+            widget.role,
+            s,
+            titre: titre,
+            prenomEleve: prenomEleve,
+          );
+  }
 
   /// La file de recitation locale (EN-9) : « Faire reciter » donne la parole
   /// sans serveur, par le modele de `ControleurRecitation`.
-  late FileRecitation _recitation = DonneesSeanceDemo.vue(
-    widget.role,
-    widget.etat,
-  ).recitation;
+  late FileRecitation _recitation = _donnees().recitation;
 
-  late PanneauOuvert _panneau = DonneesSeanceDemo.vue(
-    widget.role,
-    widget.etat,
-  ).panneau;
+  late PanneauOuvert _panneau = _donnees().panneau;
 
   // Les commandes sans effet en demonstration (cloche, reglages, compte,
   // outils) : rendues pour montrer l'ecran des images, elles ne font rien.
@@ -314,9 +430,7 @@ class _SalleDemoState extends State<SalleDemo> {
 
   @override
   Widget build(BuildContext context) {
-    final VueSeance etat = DonneesSeanceDemo.vue(
-      widget.role,
-      widget.etat,
+    final VueSeance etat = _donnees(
       titre: widget.titre,
       prenomEleve: widget.prenomEleve,
     );
@@ -412,7 +526,7 @@ class _SalleDemoState extends State<SalleDemo> {
           setState(() => _connexion = ConnexionSeance.retablie),
       onContinuerSansMicro: () => setState(() => _micro = false),
     );
-    return SalleSeance(
+    final Widget salle = SalleSeance(
       vue: vue,
       local: EtatLocalSeance(
         microOuvert: _micro,
@@ -421,6 +535,19 @@ class _SalleDemoState extends State<SalleDemo> {
         agrandi: _agrandi,
       ),
       actions: actions,
+    );
+    if (widget.situation == null) return salle;
+    // TB-1b : les inscrits ont une cle de photo (K-44) mais aucun fichier
+    // n'est livre ; la demonstration ne demande aucune URL au stockage
+    // (K-28) : les initiales en repli (E5).
+    return ProviderScope(
+      overrides: <Override>[
+        avatarUrlProvider.overrideWith(
+          (Ref _, String cle) =>
+              Future<String>.error(StateError('demonstration : $cle')),
+        ),
+      ],
+      child: salle,
     );
   }
 }

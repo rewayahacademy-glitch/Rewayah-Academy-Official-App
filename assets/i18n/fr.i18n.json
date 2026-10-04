@@ -334,7 +334,8 @@
         "intro": "Données fictives, aucun serveur. Choisissez un rôle et un état.",
         "groupes": {
           "seance": "Déroulé de la séance",
-          "secours": "Situations de secours"
+          "secours": "Situations de secours",
+          "tableau": "Supports et tableau"
         },
         "roles": {
           "eleve": "Élève standard",
@@ -358,6 +359,37 @@
           "cameraInterdite": "Caméra interdite",
           "prolongee": "Séance prolongée",
           "accesRetire": "Accès retiré"
+        },
+        "tb": {
+          "sal00": "SAL-00 Salle et personnes",
+          "ped01": "PED-01 Tableau libre, sans support",
+          "ped02": "PED-02 Support seul",
+          "ped03": "PED-03 Support avec notes",
+          "ped04": "PED-04 Tableau, support masqué",
+          "ui01": "UI-01 Présentation compacte",
+          "ui02": "UI-02 Salle développée",
+          "ui03": "UI-03 Focus local",
+          "vis01": "VIS-01 Barre de visio révélée",
+          "ctx01": "CTX-01 Contexte de la séance",
+          "ctx02": "CTX-02 Informations de contrôle",
+          "cmd01": "CMD-01 Commandes",
+          "cmd02": "CMD-02 Couleur et épaisseur",
+          "cmd03": "CMD-03 Écriture active",
+          "lib01": "LIB-01 Bibliothèque",
+          "lib02": "LIB-02 Aperçu personnel",
+          "lib03": "LIB-03 Ouverture du support",
+          "lib04": "LIB-04 Recherche sans résultat",
+          "per01": "PER-01 Participants et autorisations",
+          "dlg01": "DLG-01 Effacer les notes de la page",
+          "err01": "ERR-01 Synchronisation interrompue",
+          "err02": "ERR-02 Reprise du tableau",
+          "err03": "ERR-03 Sauvegarde en échec",
+          "end01": "END-01 Quitter la séance",
+          "supportArrive": "Le support arrive",
+          "ressourceIndisponible": "Ressource indisponible",
+          "autorisationEcrire": "Autorisation d'écrire",
+          "droitRetire": "Droit retiré",
+          "effacementTableau": "Effacer les notes du tableau"
         }
       },
       "statut": {

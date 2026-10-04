@@ -122,7 +122,14 @@ class EleveSeance {
     this.fiche,
     this.id,
     this.cleAvatar,
+    this.peutEcrire = false,
   });
+
+  /// L'enseignant l'a autorise a ecrire sur le support ou le tableau (plan
+  /// V2 §4.3, §12, TB15). Faux par defaut : ecrire demande une autorisation
+  /// explicite (TB14). En demonstration seulement : le droit effectif viendra
+  /// du serveur (TB-BR-10).
+  final bool peutEcrire;
 
   /// La cle de sa photo (E5, K-44), `null` sans photo : les initiales en
   /// repli. Nulle en demonstration, qui n'a aucune photo stockee.
@@ -176,6 +183,130 @@ class SupportSeance {
   final List<String> points;
   final int page;
   final int pages;
+}
+
+/// L'affichage partage de la surface pedagogique (plan V2 §2, §3, TB3).
+///
+/// Un AUTRE axe que `ModeAffichagePartage` (page, verset, focus), contrat de
+/// base inchange : ce qui est visible (fond du support, calque des notes),
+/// pas ce qui est cadre. Pas de colonne en base aujourd'hui (TB-BR-13) :
+/// donnee de demonstration jusqu'a BR-1.
+enum AffichagePartage {
+  /// « Support » : le support seul, les notes cachees, jamais effacees (PED-02).
+  support,
+
+  /// « Avec notes » : le support et son calque (PED-03).
+  avecNotes,
+
+  /// « Tableau » : la feuille claire et les notes, le support masque (PED-04).
+  tableau,
+}
+
+/// Ce que montre la surface pedagogique, derive de l'etat partage (plan V2
+/// §17, PED-01 a PED-04). Lu par les widgets, jamais calcule par eux.
+enum VueSurface {
+  /// PED-01 : aucun support presente, le tableau libre.
+  tableauLibre,
+
+  /// PED-02 : le support seul.
+  supportSeul,
+
+  /// PED-03 : le support avec notes.
+  supportAvecNotes,
+
+  /// PED-04 : le tableau, le support retenu et masque.
+  tableauSupportMasque,
+}
+
+/// L'etat d'enregistrement de la seance, a trois valeurs (UX_REVIEW_TB
+/// n. 7, TB12) : le point rouge ne se montre que sur `actif`. Inconnu par
+/// defaut : un etat qu'on ne connait pas ne se montre pas (TB-BR-23).
+enum EtatEnregistrement { actif, inactif, inconnu }
+
+/// Un support a page fixe presente a la classe (plan V2 §8, etat partage) :
+/// support, version, page et total. Distinct de `SupportSeance`, diapositive
+/// de texte que la salle existante garde, et de `SupportPresente`
+/// (`core/tc_outils`), declaration du support a l'hote des outils.
+///
+/// La page est une image immuable et versionnee (TB-BR-20) ; son ratio est
+/// celui des dimensions canoniques fournies par les donnees, jamais celui de
+/// l'ecran (TB4, TB19). Aucune page de Coran n'est fabriquee ici (TB27).
+@immutable
+class SupportPageFixe {
+  const SupportPageFixe({
+    required this.id,
+    required this.version,
+    required this.titre,
+    required this.page,
+    required this.total,
+    required this.largeurCanonique,
+    required this.hauteurCanonique,
+    this.mention,
+    this.cleImage,
+  }) : assert(page >= 1 && page <= total),
+       assert(largeurCanonique > 0 && hauteurCanonique > 0);
+
+  /// L'identifiant de la ressource (celui de `SupportDisponible.id`).
+  final String id;
+
+  /// La version de la ressource : un trait reste attache a cette version.
+  final String version;
+  final String titre;
+
+  /// La page presentee, de 1 a [total].
+  final int page;
+  final int total;
+
+  /// Les dimensions canoniques de la page, en pixels de la source.
+  final int largeurCanonique;
+  final int hauteurCanonique;
+
+  /// Une mention portee par la page, ou `null` (« Support illustratif » en
+  /// demonstration : un contenu, pas un libelle d'interface).
+  final String? mention;
+
+  /// La cle de l'image de la page dans le stockage, ou `null` : aucune image
+  /// livree (demonstration ; fournisseur des pages a BR-1, TB-BR-19).
+  final String? cleImage;
+
+  /// Le ratio largeur sur hauteur, fixe par les donnees.
+  double get ratio => largeurCanonique / hauteurCanonique;
+
+  /// La meme ressource a une autre page.
+  SupportPageFixe aLaPage(int autre) => SupportPageFixe(
+    id: id,
+    version: version,
+    titre: titre,
+    page: autre,
+    total: total,
+    largeurCanonique: largeurCanonique,
+    hauteurCanonique: hauteurCanonique,
+    mention: mention,
+    cleImage: cleImage,
+  );
+}
+
+/// Le tableau libre de la seance, independant de tout support (plan V2 §2,
+/// TB5) : les traits d'un support n'y sont jamais copies.
+@immutable
+class TableauLibre {
+  const TableauLibre({
+    required this.largeurCanonique,
+    required this.hauteurCanonique,
+    this.aDesNotes = false,
+  }) : assert(largeurCanonique > 0 && hauteurCanonique > 0);
+
+  /// Le repere de la feuille. Le plan ne donne pas de ratio au tableau sans
+  /// support : choix provisoire, fourni par les donnees (UX_REVIEW_TB n. 15,
+  /// TB-BR-14), jamais la taille de l'ecran.
+  final int largeurCanonique;
+  final int hauteurCanonique;
+
+  /// Des notes existent sur le tableau libre (« Effacer les notes » n'a de
+  /// sens qu'alors).
+  final bool aDesNotes;
+
+  double get ratio => largeurCanonique / hauteurCanonique;
 }
 
 /// La rubrique d'un support dans le panneau Supports (CLV-08). Ordre repris
@@ -301,6 +432,10 @@ class VueSeance {
     this.notificationsNonLues = 0,
     this.groupeId,
     this.tutoiement,
+    this.affichage = AffichagePartage.avecNotes,
+    this.supportPresente,
+    this.tableauLibre,
+    this.enregistrement = EtatEnregistrement.inconnu,
   });
 
   // --- Reponses retenues aux questions Q1 a Q8 (plan de code section 4) ---
@@ -406,6 +541,26 @@ class VueSeance {
   /// presentation (MA1, deux axes). `null` : le choix par le role (la
   /// guidee tutoie).
   final bool? tutoiement;
+
+  // --- Supports et tableau (TB-1b, plan V2 §2, §8) : donnees pures ---
+  //
+  // Aucun widget ne les lit encore : la salle s'affiche comme avant. Les
+  // etapes TB-2 et suivantes les rendront.
+
+  /// L'affichage partage choisi par l'enseignant. Sans objet sans
+  /// [supportPresente] : la surface est alors le tableau libre (PED-01).
+  final AffichagePartage affichage;
+
+  /// Le support a page fixe presente a la classe, ou `null` : aucun (un
+  /// seul a la fois, TB2).
+  final SupportPageFixe? supportPresente;
+
+  /// Le tableau libre de la seance, ou `null` : non connu de cette vue.
+  final TableauLibre? tableauLibre;
+
+  /// L'enregistrement, a trois valeurs (inconnu par defaut). La mention
+  /// existante (`enregistrementConfirme`) n'est pas touchee (HU-1).
+  final EtatEnregistrement enregistrement;
 
   bool get _tutoie => tutoiement ?? _guidee;
 
@@ -678,6 +833,32 @@ class VueSeance {
     ],
   };
 
+  // --- Surface pedagogique (TB-1b) ---
+
+  /// Ce que montre la surface (PED-01 a PED-04), derive de l'etat partage.
+  VueSurface get vueSurface {
+    if (supportPresente == null) return VueSurface.tableauLibre;
+    return switch (affichage) {
+      AffichagePartage.support => VueSurface.supportSeul,
+      AffichagePartage.avecNotes => VueSurface.supportAvecNotes,
+      AffichagePartage.tableau => VueSurface.tableauSupportMasque,
+    };
+  }
+
+  /// Les inscrits autorises a ecrire (Participants, TB15).
+  List<EleveSeance> get elevesAutorisesAEcrire =>
+      eleves.where((EleveSeance e) => e.peutEcrire).toList();
+
+  /// La personne devant l'ecran peut-elle ecrire ? L'enseignant toujours ;
+  /// un eleve seulement si sa ligne porte l'autorisation (TB14). En
+  /// demonstration, l'eleve est retrouve par son prenom.
+  bool get peutEcrire =>
+      _enseignant ||
+      (prenomEleve != null &&
+          eleves.any(
+            (EleveSeance e) => e.prenom == prenomEleve && e.peutEcrire,
+          ));
+
   /// Copie modifiee.
   VueSeance copyWith({
     RoleSeance? role,
@@ -697,6 +878,11 @@ class VueSeance {
     FinSeance? fin,
     PanneauOuvert? panneau,
     bool? tutoiement,
+    AffichagePartage? affichage,
+    SupportPageFixe? supportPresente,
+    bool sansSupportPresente = false,
+    TableauLibre? tableauLibre,
+    EtatEnregistrement? enregistrement,
   }) => VueSeance(
     role: role ?? this.role,
     nomClasse: nomClasse,
@@ -723,5 +909,11 @@ class VueSeance {
     notificationsNonLues: notificationsNonLues,
     groupeId: groupeId,
     tutoiement: tutoiement ?? this.tutoiement,
+    affichage: affichage ?? this.affichage,
+    supportPresente: sansSupportPresente
+        ? null
+        : supportPresente ?? this.supportPresente,
+    tableauLibre: tableauLibre ?? this.tableauLibre,
+    enregistrement: enregistrement ?? this.enregistrement,
   );
 }

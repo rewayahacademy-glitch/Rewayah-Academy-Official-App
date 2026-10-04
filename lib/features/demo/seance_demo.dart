@@ -65,6 +65,139 @@ enum EtatDemoSalle {
   accesRetire,
 }
 
+/// Les situations nommees du chantier Supports et tableau (TB-1b) : une par
+/// vue de l'arborescence du plan V2 §17 (SAL-00 a END-01), plus les etats du
+/// §12 qui n'y ont pas de vue propre. Le nom suit l'identifiant du plan.
+///
+/// `/demo/salle?role=…&tb=<situation>`. A TB-1b, chaque situation porte ses
+/// DONNEES (affichage, support a page fixe, tableau libre, droits d'ecrire)
+/// et s'ouvre dans la salle existante, sans disposition nouvelle : chaque
+/// etape TB rendra la sienne.
+enum SituationTb {
+  /// SAL-00 : salle, connexion et personnes.
+  sal00('SAL-00'),
+
+  /// PED-01 et §12 « Aucun support » : le tableau libre.
+  ped01('PED-01'),
+
+  /// PED-02 : support seul.
+  ped02('PED-02'),
+
+  /// PED-03 : support avec notes.
+  ped03('PED-03'),
+
+  /// PED-04 et §12 « Tableau seul avec support retenu ».
+  ped04('PED-04'),
+
+  /// UI-01 : chrome compact pendant le partage.
+  ui01('UI-01'),
+
+  /// UI-02 : salle de bureau developpee.
+  ui02('UI-02'),
+
+  /// UI-03 : focus local (l'etat local `agrandi` existant).
+  ui03('UI-03'),
+
+  /// VIS-01 : barre de visio revelee.
+  vis01('VIS-01'),
+
+  /// CTX-01 : contexte enseignant et personnes.
+  ctx01('CTX-01'),
+
+  /// CTX-02 : informations de controle.
+  ctx02('CTX-02'),
+
+  /// CMD-01 : commandes pedagogiques.
+  cmd01('CMD-01'),
+
+  /// CMD-02 : options couleur et epaisseur.
+  cmd02('CMD-02'),
+
+  /// CMD-03 : ecriture active, palette courte.
+  cmd03('CMD-03'),
+
+  /// LIB-01 : catalogue et recherche.
+  lib01('LIB-01'),
+
+  /// LIB-02 : previsualisation personnelle.
+  lib02('LIB-02'),
+
+  /// LIB-03 et §12 « Chargement avant presentation ».
+  lib03('LIB-03'),
+
+  /// LIB-04 et §12 « Recherche catalogue vide ».
+  lib04('LIB-04'),
+
+  /// PER-01 : participants et autorisations.
+  per01('PER-01'),
+
+  /// DLG-01 et §12 « Effacement de page ».
+  dlg01('DLG-01'),
+
+  /// ERR-01 et §12 « Synchronisation interrompue ».
+  err01('ERR-01'),
+
+  /// ERR-02 et §12 « Recuperation d'etat ».
+  err02('ERR-02'),
+
+  /// ERR-03 et §12 « Sauvegarde en echec ».
+  err03('ERR-03'),
+
+  /// END-01 : quitter ou terminer la seance.
+  end01('END-01'),
+
+  // --- Etats du §12 sans vue propre au §17 ---
+
+  /// §12 « Presentation en chargement cote eleve ».
+  supportArrive('§12'),
+
+  /// §12 « Ressource indisponible ».
+  ressourceIndisponible('§12'),
+
+  /// §12 « Autorisation de dessin ».
+  autorisationEcrire('§12'),
+
+  /// §12 « Droit retire ».
+  droitRetire('§12'),
+
+  /// §12 « Effacement du tableau libre ».
+  effacementTableau('§12');
+
+  const SituationTb(this.reference);
+
+  /// L'identifiant du plan V2 (§17), ou « §12 ».
+  final String reference;
+
+  /// L'enseignant seulement : bibliotheque, participants et autorisations,
+  /// effacements, ouverture du support, sauvegarde en echec (« pas d'alerte
+  /// inutile » cote eleve, §12).
+  static const Set<SituationTb> _enseignantSeul = <SituationTb>{
+    lib01,
+    lib02,
+    lib03,
+    lib04,
+    per01,
+    dlg01,
+    err03,
+    effacementTableau,
+  };
+
+  /// L'eleve seulement : le support qui arrive chez le destinataire.
+  static const Set<SituationTb> _eleveSeul = <SituationTb>{supportArrive};
+
+  /// La situation a-t-elle un sens pour [role] ? Une commande d'un autre
+  /// role n'est jamais proposee (00_REPRISE §8).
+  bool concerne(RoleSeance role) => role == RoleSeance.enseignant
+      ? !_eleveSeul.contains(this)
+      : !_enseignantSeul.contains(this);
+}
+
+/// Les situations Supports et tableau proposees pour [role], dans l'ordre.
+List<SituationTb> situationsTb(RoleSeance role) => <SituationTb>[
+  for (final SituationTb s in SituationTb.values)
+    if (s.concerne(role)) s,
+];
+
 /// Les donnees exactes de la demonstration.
 abstract final class DonneesSeanceDemo {
   static const String classe = 'Classe An-Nour';
@@ -199,6 +332,164 @@ abstract final class DonneesSeanceDemo {
       rubrique: RubriqueSupport.classe,
     ),
   ];
+
+  // --- Supports et tableau (TB-1b) : la seule source de toutes les etapes ---
+
+  /// La photo de demonstration d'un inscrit d'An-Nour, lue dans la Classe
+  /// de l'Espace enseignant (meme cle, une seule source) ; a defaut, la cle
+  /// au meme format. Aucun fichier n'est livre : le rendu retombe sur les
+  /// initiales (E5).
+  static String _photo(String prenom, String id) {
+    for (final ClasseEnseignantDemo c in DonneesEnseignantDemo.classes) {
+      if (c.id != 'demo-classe-an-nour') continue;
+      for (final EleveEnseignantDemo e in c.eleves) {
+        if (e.prenom == prenom && e.photo != null) return e.photo!;
+      }
+    }
+    return 'demo/eleves/$id.png';
+  }
+
+  /// La quatrieme inscrite, autorisee a ecrire (planche 8 : « Peut ecrire »
+  /// sur sa ligne).
+  static const String eleveAutorisee = 'Zaynab';
+
+  /// Les quatre inscrits du chantier, avec photo (K-44) : les trois de la
+  /// salle (memes prenoms, statuts et fiches) et Zaynab, connectee, seule
+  /// autorisee a ecrire (« Eleves 2/4 »).
+  static final List<EleveSeance> elevesTb = <EleveSeance>[
+    for (final EleveSeance e in eleves)
+      EleveSeance(
+        prenom: e.prenom,
+        statut: e.statut,
+        fiche: e.fiche,
+        cleAvatar: _photo(
+          e.prenom,
+          'demo-eleve-${e.prenom.toLowerCase().replaceAll('ï', 'i')}',
+        ),
+      ),
+    EleveSeance(
+      prenom: eleveAutorisee,
+      statut: StatutEleveSeance.connecte,
+      cleAvatar: _photo(eleveAutorisee, 'demo-eleve-zaynab'),
+      peutEcrire: true,
+      fiche: const FicheEleveSeance(
+        niveau: '1',
+        objectifActuel: 'Chapitre 1 (les bonnes manières)',
+        derniereSeance: '21 sept. 2026',
+        aReprendre: 'Pages 24 à 26',
+        presenceRecente: '3 séances cette semaine',
+        travailActuel: 'Lecture du chapitre',
+      ),
+    ),
+  ];
+
+  /// Les dimensions canoniques de la page de demonstration : A4 portrait a
+  /// 150 points par pouce (1240 x 1754). Fournies par les donnees, jamais
+  /// deduites de l'ecran (TB4).
+  static const int largeurPage = 1240;
+  static const int hauteurPage = 1754;
+
+  /// Le support a page fixe presente : le Chapitre 1 du panneau Supports
+  /// (meme identifiant, meme version, meme nombre de pages). Une page neutre
+  /// marquee « Support illustratif » : aucune page de Coran (TB27).
+  static const SupportPageFixe supportPageFixe = SupportPageFixe(
+    id: 'demo-chapitre-1',
+    version: 'v2.0',
+    titre: 'Les bonnes manières',
+    page: 1,
+    total: 12,
+    largeurCanonique: largeurPage,
+    hauteurCanonique: hauteurPage,
+    mention: 'Support illustratif',
+  );
+
+  /// Le tableau libre : choix provisoire, meme repere que la page de
+  /// demonstration (UX_REVIEW_TB n. 15, une seule valeur, TB-BR-14).
+  static const TableauLibre tableauLibre = TableauLibre(
+    largeurCanonique: largeurPage,
+    hauteurCanonique: hauteurPage,
+  );
+
+  /// La vue d'une situation Supports et tableau pour [role].
+  ///
+  /// Toutes les situations partent de l'etat `repos` (ou `rienPartage`,
+  /// `fin`) de la meme demonstration : meme Classe, meme enseignant, memes
+  /// inscrits. Seules les donnees du chantier changent.
+  static VueSeance vueTb(
+    RoleSeance role,
+    SituationTb situation, {
+    TitreEnseignant titre = TitreEnseignant.sayyid,
+    String prenomEleve = eleveCourant,
+  }) {
+    final bool enseignant = role == RoleSeance.enseignant;
+    final VueSeance base = vue(
+      role,
+      etatBaseTb(situation),
+      titre: titre,
+      prenomEleve: prenomEleve,
+    );
+    // L'autorisation donnee a l'eleve courant (§12, CMD-02, CMD-03) :
+    // une seule ligne « Peut ecrire », la sienne.
+    final bool autoriseCourant = switch (situation) {
+      SituationTb.autorisationEcrire ||
+      SituationTb.cmd02 ||
+      SituationTb.cmd03 => true,
+      _ => false,
+    };
+    final List<EleveSeance> inscrits = <EleveSeance>[
+      for (final EleveSeance e in elevesTb)
+        EleveSeance(
+          prenom: e.prenom,
+          statut: e.statut,
+          fiche: e.fiche,
+          cleAvatar: e.cleAvatar,
+          peutEcrire: autoriseCourant ? e.prenom == prenomEleve : e.peutEcrire,
+        ),
+    ];
+    final bool sansSupport = switch (situation) {
+      SituationTb.ped01 || SituationTb.effacementTableau => true,
+      _ => false,
+    };
+    return base.copyWith(
+      eleves: inscrits,
+      enregistrement: EtatEnregistrement.actif,
+      tableauLibre: situation == SituationTb.effacementTableau
+          ? const TableauLibre(
+              largeurCanonique: largeurPage,
+              hauteurCanonique: hauteurPage,
+              aDesNotes: true,
+            )
+          : tableauLibre,
+      supportPresente: sansSupport ? null : supportPageFixe,
+      sansSupportPresente: sansSupport,
+      affichage: switch (situation) {
+        SituationTb.ped02 => AffichagePartage.support,
+        SituationTb.ped04 => AffichagePartage.tableau,
+        _ => AffichagePartage.avecNotes,
+      },
+      panneau: !enseignant
+          ? PanneauOuvert.aucun
+          : switch (situation) {
+              SituationTb.lib01 ||
+              SituationTb.lib02 ||
+              SituationTb.lib03 ||
+              SituationTb.lib04 => PanneauOuvert.supports,
+              SituationTb.per01 ||
+              SituationTb.autorisationEcrire ||
+              SituationTb.droitRetire => PanneauOuvert.eleves,
+              _ => PanneauOuvert.aucun,
+            },
+    );
+  }
+
+  /// L'etat existant d'ou part une situation : sans support pour le
+  /// tableau libre, la fin existante pour END-01, le repos ailleurs.
+  static EtatDemoSalle etatBaseTb(SituationTb situation) => switch (situation) {
+    SituationTb.ped01 ||
+    SituationTb.effacementTableau => EtatDemoSalle.rienPartage,
+    SituationTb.end01 => EtatDemoSalle.fin,
+    _ => EtatDemoSalle.repos,
+  };
 
   /// La file de recitation de la demonstration (EN-9).
   static const FileRecitation recitation = FileRecitation(
