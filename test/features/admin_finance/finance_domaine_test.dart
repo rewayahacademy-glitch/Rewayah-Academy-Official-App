@@ -2,27 +2,38 @@
 // application, comme `main.dart` la monte en demonstration (`?demo=admin`) :
 // « Finance » est tape dans la vraie coquille admin (K-07), puis l'onglet
 // « Politiques commerciales ». Et /demo/finance n'existe pas en production.
+//
+// FI-11a : en demonstration, la Vue globale rend les chiffres de
+// `FinanceDirectionDemo` ; sans la demonstration (port de production,
+// `CapaciteIndisponible`), elle dit toujours « Pas encore disponible ».
+// Politiques reste la page neutre jusqu'a FI-11b.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/app.dart';
 import 'package:rewayah_academy/core/admin/admin_domaine.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/finance/format_montant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/redirection.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/features/admin_finance/finance_page.dart';
+import 'package:rewayah_academy/features/admin_finance/vue_globale_finance.dart';
 import 'package:rewayah_academy/features/demo/demo_finance_page.dart';
+import 'package:rewayah_academy/features/demo/finance_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/repere_demonstration.dart';
+import 'package:rewayah_academy/features/demo/services_admin_demo.dart';
 
 import '../../support/selecteur_section.dart';
 
@@ -32,14 +43,18 @@ Future<void> _stabiliser(WidgetTester tester) async {
   }
 }
 
-Future<GoRouter> _monter(WidgetTester tester, Size taille) async {
+Future<GoRouter> _monter(
+  WidgetTester tester,
+  Size taille, {
+  List<Override>? surcharges,
+}) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
   await tester.pumpWidget(
     ProviderScope(
-      overrides: surchargesDemoAdmin(environnement: 'staging'),
+      overrides: surcharges ?? surchargesDemoAdmin(environnement: 'staging'),
       child: TranslationProvider(
         child: RewayahApp(
           builder: (BuildContext context, Widget? child) =>
@@ -75,6 +90,20 @@ void _verifierPageNeutre(OngletFinance onglet) {
   );
 }
 
+/// La Vue globale de la demonstration : ses chiffres, aucun etat
+/// « indisponible ».
+void _verifierVueGlobaleDemo() {
+  expect(find.byType(FinancePage), findsOneWidget);
+  expect(find.byType(VueGlobaleFinanceContenu), findsOneWidget);
+  expect(find.byType(EtatSysteme), findsNothing);
+  // 690 USD encaisses et 690 USD de revenu, deux indicateurs separes.
+  expect(
+    find.text(formaterMontant(DonneesFinanceDemo.usd(690))),
+    findsNWidgets(2),
+  );
+  expect(find.text(t.admin.finance.vue.marge), findsOneWidget);
+}
+
 void main() {
   test('ongletsFinance : Vue globale puis Politiques commerciales', () {
     expect(ongletsFinance(), <({String libelle, String chemin})>[
@@ -107,7 +136,7 @@ void main() {
       domainesAdmin(voitDirection: false).indexOf(AdminDomaine.finance),
     );
     expect(sectionVisible(t.admin.finance.vueGlobale), findsOneWidget);
-    _verifierPageNeutre(OngletFinance.vueGlobale);
+    _verifierVueGlobaleDemo();
 
     await choisirSection(tester, t.admin.finance.politiques);
     await _stabiliser(tester);
@@ -127,7 +156,28 @@ void main() {
     );
     await _stabiliser(tester);
     expect(_chemin(routeur), Routes.adminFinance);
+    _verifierVueGlobaleDemo();
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('production (port neutre) : la Vue globale dit toujours « Pas '
+      'encore disponible », sans chiffre', (WidgetTester tester) async {
+    final GoRouter routeur = await _monter(
+      tester,
+      const Size(1440, 900),
+      surcharges: <Override>[
+        // Une session admin, et aucun port Finance surcharge : celui de la
+        // production (`FinanceDirectionIndisponible`).
+        sourceSessionProvider.overrideWithValue(const SourceSessionDemoAdmin()),
+        ...surchargesServicesAdminIndisponibles(),
+      ],
+    );
+    routeur.go(Routes.adminFinance);
+    await _stabiliser(tester);
+    expect(_chemin(routeur), Routes.adminFinance);
     _verifierPageNeutre(OngletFinance.vueGlobale);
+    expect(find.byType(VueGlobaleFinanceContenu), findsNothing);
+    expect(find.textContaining('\$'), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
@@ -188,7 +238,7 @@ void main() {
         ),
         findsOneWidget,
       );
-      _verifierPageNeutre(OngletFinance.vueGlobale);
+      _verifierVueGlobaleDemo();
 
       await choisirSection(tester, t.admin.finance.politiques);
       await tester.pumpAndSettle();

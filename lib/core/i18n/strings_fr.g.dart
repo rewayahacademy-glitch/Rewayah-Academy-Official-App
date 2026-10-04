@@ -5476,6 +5476,8 @@ class Traductions$admin$finance$fr {
 
 	/// fr: 'Politiques commerciales'
 	String get politiques => 'Politiques commerciales';
+
+	late final Traductions$admin$finance$vue$fr vue = Traductions$admin$finance$vue$fr.internal(_root);
 }
 
 // Path: admin.regles
@@ -11998,6 +12000,83 @@ class Traductions$dossiers$revue$etats$fr {
 	String get refusNonAutorise => 'Ce dossier ne peut pas être refusé dans son état actuel.';
 }
 
+// Path: admin.finance.vue
+class Traductions$admin$finance$vue$fr {
+	Traductions$admin$finance$vue$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{mois} {annee}'
+	String moisAnnee({required Object mois, required Object annee}) => '${mois} ${annee}';
+
+	/// fr: 'Les chiffres de {mois}, chacun à part : ce qui est encaissé, ce qui est reconnu comme revenu, ce qui est dû aux enseignants et ce qui reste sur les profils des familles.'
+	String contexte({required Object mois}) => 'Les chiffres de ${mois}, chacun à part : ce qui est encaissé, ce qui est reconnu comme revenu, ce qui est dû aux enseignants et ce qui reste sur les profils des familles.';
+
+	/// fr: 'Indicateurs du mois'
+	String get indicateurs => 'Indicateurs du mois';
+
+	/// fr: 'Chiffre encaissé'
+	String get encaisse => 'Chiffre encaissé';
+
+	/// fr: 'Paiements reçus ce mois. Un encaissement n'est pas encore un revenu.'
+	String get encaisseDetail => 'Paiements reçus ce mois. Un encaissement n\'est pas encore un revenu.';
+
+	/// fr: 'Revenu académique'
+	String get revenu => 'Revenu académique';
+
+	/// fr: 'Revenu reconnu ce mois, hors taxes collectées.'
+	String get revenuDetail => 'Revenu reconnu ce mois, hors taxes collectées.';
+
+	/// fr: 'Paie enseignants'
+	String get paie => 'Paie enseignants';
+
+	/// fr: 'Estimée pour le mois : une charge à venir, pas un paiement fait.'
+	String get paieDetail => 'Estimée pour le mois : une charge à venir, pas un paiement fait.';
+
+	/// fr: 'Marge projetée'
+	String get marge => 'Marge projetée';
+
+	/// fr: '{valeur} %'
+	String margeValeur({required Object valeur}) => '${valeur} %';
+
+	/// fr: 'Calculée sur la seule paie des enseignants, sans les autres charges : elle ne se compare pas à une marge nette.'
+	String get margeDetail => 'Calculée sur la seule paie des enseignants, sans les autres charges : elle ne se compare pas à une marge nette.';
+
+	/// fr: 'Aucune activité'
+	String get margeSansActivite => 'Aucune activité';
+
+	/// fr: 'Impayés'
+	String get impayes => 'Impayés';
+
+	/// fr: 'Reste à financer sur les périodes du mois.'
+	String get impayesDetail => 'Reste à financer sur les périodes du mois.';
+
+	/// fr: 'Essais en cours'
+	String get essais => 'Essais en cours';
+
+	/// fr: 'Élèves en essai, jamais comptés comme payants.'
+	String get essaisDetail => 'Élèves en essai, jamais comptés comme payants.';
+
+	/// fr: 'Soldes créditeurs'
+	String get soldes => 'Soldes créditeurs';
+
+	/// fr: 'Argent disponible sur les profils des familles : ni un revenu, ni une marge.'
+	String get soldesDetail => 'Argent disponible sur les profils des familles : ni un revenu, ni une marge.';
+
+	/// fr: 'Aucune activité financière en {mois} : les indicateurs sont à zéro.'
+	String sansActivite({required Object mois}) => 'Aucune activité financière en ${mois} : les indicateurs sont à zéro.';
+
+	/// fr: 'Alertes'
+	String get alertes => 'Alertes';
+
+	/// fr: 'Aucune alerte ce mois.'
+	String get aucuneAlerte => 'Aucune alerte ce mois.';
+
+	late final Traductions$admin$finance$vue$alerte$fr alerte = Traductions$admin$finance$vue$alerte$fr.internal(_root);
+}
+
 // Path: admin.journal.evenements
 class Traductions$admin$journal$evenements$fr {
 	Traductions$admin$journal$evenements$fr.internal(this._root);
@@ -15294,6 +15373,48 @@ class Traductions$salle$seance$demo$etats$fr {
 	String get accesRetire => 'Accès retiré';
 }
 
+// Path: admin.finance.vue.alerte
+class Traductions$admin$finance$vue$alerte$fr {
+	Traductions$admin$finance$vue$alerte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Période à régulariser'
+	String get aRegulariser => 'Période à régulariser';
+
+	/// fr: '{qui} : il manque {montant} pour financer la période en cours.'
+	String aRegulariserMontant({required Object qui, required Object montant}) => '${qui} : il manque ${montant} pour financer la période en cours.';
+
+	/// fr: '{qui} : la période en cours n'est pas financée.'
+	String aRegulariserSansMontant({required Object qui}) => '${qui} : la période en cours n\'est pas financée.';
+
+	/// fr: 'Paiement en attente de confirmation'
+	String get confirmation => 'Paiement en attente de confirmation';
+
+	/// fr: '{qui} : un paiement de {montant} attend sa confirmation.'
+	String confirmationMontant({required Object qui, required Object montant}) => '${qui} : un paiement de ${montant} attend sa confirmation.';
+
+	/// fr: '{qui} : un paiement attend sa confirmation.'
+	String confirmationSansMontant({required Object qui}) => '${qui} : un paiement attend sa confirmation.';
+
+	/// fr: 'Classe sous le minimum d'ouverture'
+	String get sousMinimum => 'Classe sous le minimum d\'ouverture';
+
+	/// fr: '{qui} : moins d'élèves inscrits que le minimum d'ouverture.'
+	String sousMinimumDetail({required Object qui}) => '${qui} : moins d\'élèves inscrits que le minimum d\'ouverture.';
+
+	/// fr: '{prenom}, classe {classe}'
+	String quiPrenomClasse({required Object prenom, required Object classe}) => '${prenom}, classe ${classe}';
+
+	/// fr: 'Classe {classe}'
+	String quiClasse({required Object classe}) => 'Classe ${classe}';
+
+	/// fr: 'Un profil'
+	String get quiInconnu => 'Un profil';
+}
+
 // Path: classe.entree.demo.roles
 class Traductions$classe$entree$demo$roles$fr {
 	Traductions$classe$entree$demo$roles$fr.internal(this._root);
@@ -16908,6 +17029,39 @@ extension on Traductions {
 			'admin.qualite.traiterErreur' => ({required Object message}) => 'Le traitement n\'a pas abouti : ${message}',
 			'admin.finance.vueGlobale' => 'Vue globale',
 			'admin.finance.politiques' => 'Politiques commerciales',
+			'admin.finance.vue.moisAnnee' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
+			'admin.finance.vue.contexte' => ({required Object mois}) => 'Les chiffres de ${mois}, chacun à part : ce qui est encaissé, ce qui est reconnu comme revenu, ce qui est dû aux enseignants et ce qui reste sur les profils des familles.',
+			'admin.finance.vue.indicateurs' => 'Indicateurs du mois',
+			'admin.finance.vue.encaisse' => 'Chiffre encaissé',
+			'admin.finance.vue.encaisseDetail' => 'Paiements reçus ce mois. Un encaissement n\'est pas encore un revenu.',
+			'admin.finance.vue.revenu' => 'Revenu académique',
+			'admin.finance.vue.revenuDetail' => 'Revenu reconnu ce mois, hors taxes collectées.',
+			'admin.finance.vue.paie' => 'Paie enseignants',
+			'admin.finance.vue.paieDetail' => 'Estimée pour le mois : une charge à venir, pas un paiement fait.',
+			'admin.finance.vue.marge' => 'Marge projetée',
+			'admin.finance.vue.margeValeur' => ({required Object valeur}) => '${valeur} %',
+			'admin.finance.vue.margeDetail' => 'Calculée sur la seule paie des enseignants, sans les autres charges : elle ne se compare pas à une marge nette.',
+			'admin.finance.vue.margeSansActivite' => 'Aucune activité',
+			'admin.finance.vue.impayes' => 'Impayés',
+			'admin.finance.vue.impayesDetail' => 'Reste à financer sur les périodes du mois.',
+			'admin.finance.vue.essais' => 'Essais en cours',
+			'admin.finance.vue.essaisDetail' => 'Élèves en essai, jamais comptés comme payants.',
+			'admin.finance.vue.soldes' => 'Soldes créditeurs',
+			'admin.finance.vue.soldesDetail' => 'Argent disponible sur les profils des familles : ni un revenu, ni une marge.',
+			'admin.finance.vue.sansActivite' => ({required Object mois}) => 'Aucune activité financière en ${mois} : les indicateurs sont à zéro.',
+			'admin.finance.vue.alertes' => 'Alertes',
+			'admin.finance.vue.aucuneAlerte' => 'Aucune alerte ce mois.',
+			'admin.finance.vue.alerte.aRegulariser' => 'Période à régulariser',
+			'admin.finance.vue.alerte.aRegulariserMontant' => ({required Object qui, required Object montant}) => '${qui} : il manque ${montant} pour financer la période en cours.',
+			'admin.finance.vue.alerte.aRegulariserSansMontant' => ({required Object qui}) => '${qui} : la période en cours n\'est pas financée.',
+			'admin.finance.vue.alerte.confirmation' => 'Paiement en attente de confirmation',
+			'admin.finance.vue.alerte.confirmationMontant' => ({required Object qui, required Object montant}) => '${qui} : un paiement de ${montant} attend sa confirmation.',
+			'admin.finance.vue.alerte.confirmationSansMontant' => ({required Object qui}) => '${qui} : un paiement attend sa confirmation.',
+			'admin.finance.vue.alerte.sousMinimum' => 'Classe sous le minimum d\'ouverture',
+			'admin.finance.vue.alerte.sousMinimumDetail' => ({required Object qui}) => '${qui} : moins d\'élèves inscrits que le minimum d\'ouverture.',
+			'admin.finance.vue.alerte.quiPrenomClasse' => ({required Object prenom, required Object classe}) => '${prenom}, classe ${classe}',
+			'admin.finance.vue.alerte.quiClasse' => ({required Object classe}) => 'Classe ${classe}',
+			'admin.finance.vue.alerte.quiInconnu' => 'Un profil',
 			'admin.regles.titre' => 'Règles',
 			'admin.regles.intro' => 'Les valeurs par défaut de toute la plateforme. Une exception pour un profil précis se pose depuis Opérations > Règles individuelles, jamais ici.',
 			'admin.regles.erreur' => 'Les règles n\'ont pas pu être lues. Réessayez dans un instant.',
@@ -17076,6 +17230,8 @@ extension on Traductions {
 			'admin.programmes.modifierNiveauTitre' => ({required Object nom}) => 'Modifier ${nom}',
 			'admin.programmes.modifierNiveauEnvoyer' => 'Enregistrer',
 			'admin.programmes.modifierNiveauErreur' => ({required Object message}) => 'La modification n\'a pas abouti : ${message}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.programmes.supprimerNiveau' => 'Supprimer',
 			'admin.programmes.supprimerNiveauTitre' => ({required Object nom}) => 'Supprimer ${nom}',
 			'admin.programmes.supprimerNiveauEnvoyer' => 'Supprimer',
@@ -17109,8 +17265,6 @@ extension on Traductions {
 			'admin.journal.tousTypes' => 'Tous les événements',
 			'admin.journal.tousActeurs' => 'Tout le monde',
 			'admin.journal.colonneQuand' => 'Quand',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.colonneQui' => 'Qui',
 			'admin.journal.colonneRole' => 'À quel titre',
 			'admin.journal.colonneQuoi' => 'Ce qui a été fait',
@@ -17590,6 +17744,8 @@ extension on Traductions {
 			'compte.tuteur.deconnexion.question' => 'Se déconnecter de Rewayah ?',
 			'compte.tuteur.deconnexion.consequence' => 'Vous devrez vous reconnecter pour revenir sur cet appareil. Vos autres appareils restent connectés.',
 			'compte.tuteur.deconnexion.confirmer' => 'Me déconnecter',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.deconnexion.echec' => 'La déconnexion n\'a pas abouti. Vérifiez votre connexion, puis réessayez.',
 			'compte.tuteur.pageInformations.titre' => 'Informations personnelles',
 			'compte.tuteur.pageInformations.prenom' => 'Prénom',
@@ -17623,8 +17779,6 @@ extension on Traductions {
 			'compte.tuteur.pagePaiements.paiementDu' => ({required Object date}) => 'Paiement du ${date}',
 			'compte.tuteur.pagePaiements.justificatif' => 'Justificatif disponible',
 			'compte.tuteur.pagePreferences.titre' => 'Préférences',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pagePreferences.sousTitre' => 'Personnalisez votre expérience sur cet appareil.',
 			'compte.tuteur.pagePreferences.apparence' => 'Apparence',
 			'compte.tuteur.pagePreferences.apparenceDetail' => 'Thème et confort visuel',
@@ -18104,6 +18258,8 @@ extension on Traductions {
 			'enseignant.classes.remplacement' => 'Remplacement',
 			'enseignant.classes.rappelCahier' => 'Un cahier de transmission reste à valider',
 			'enseignant.classes.cahierAValider' => 'Cahier de transmission à valider',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.eleve.titre' => ({required Object prenom}) => 'Fiche de ${prenom}',
 			'enseignant.eleve.retour' => 'Élèves',
 			'enseignant.eleve.identifiant' => ({required Object id}) => 'Identifiant Académie : ${id}',
@@ -18137,8 +18293,6 @@ extension on Traductions {
 			'enseignant.signalement.demoSuccesDetail' => 'Dans l\'application reliée, il partira vers l\'équipe de l\'académie.',
 			'enseignant.signalement.fermer' => 'Fermer',
 			'enseignant.demo.titre' => 'Démonstration enseignant',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.demo.mention' => 'Données fictives, aucun envoi.',
 			'enseignant.demo.intro' => 'Choisissez un écran de Sayyid Ibrahim.',
 			'enseignant.demo.ecrans' => 'Écrans',
@@ -18618,6 +18772,8 @@ extension on Traductions {
 			'controleur.observation.pedagogieAide' => 'Quand il s\'agit de l\'enseignement : explications, progression, supports',
 			'controleur.observation.interaction' => 'Interaction avec les élèves',
 			'controleur.observation.interactionAide' => 'Quand il s\'agit des échanges entre l\'enseignant et les élèves',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.gestionClasse' => 'Gestion de la classe',
 			'controleur.observation.gestionClasseAide' => 'Quand il s\'agit de l\'organisation de la séance : temps, consignes, déroulement',
 			'controleur.observation.respectCadre' => 'Respect du cadre',
@@ -18651,8 +18807,6 @@ extension on Traductions {
 			'controleur.observation.cleDomaine' => 'Domaine',
 			'controleur.observation.clePersonne' => 'Personne concernée',
 			'controleur.observation.cleTexte' => 'Remarque',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.sansTexte' => 'Aucun texte',
 			'controleur.observation.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.titre' => 'Échanges',
@@ -19132,6 +19286,8 @@ extension on Traductions {
 			'tc.observation.reglages.valeurHeritee' => ({required Object valeur}) => 'Académie : ${valeur}',
 			'tc.observation.reglages.uniteVisiteUne' => ({required Object n}) => '${n} visite',
 			'tc.observation.reglages.uniteVisites' => ({required Object n}) => '${n} visites',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.reglages.uniteSecondes' => ({required Object n}) => '${n} s',
 			'tc.observation.reglages.versionPolitique' => ({required Object version}) => 'Version ${version}',
 			'tc.parcours.avant.titre' => 'Avant le prochain cours',
@@ -19165,8 +19321,6 @@ extension on Traductions {
 			'tc.parcours.feedback.rythme.difficile' => 'Trop rapide',
 			'tc.parcours.feedback.rythme.bien' => 'Convenable',
 			'tc.parcours.feedback.rythme.tresBien' => 'Très confortable',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.feedback.technique.intitule' => 'Le son et l\'image étaient-ils confortables ?',
 			'tc.parcours.feedback.technique.difficile' => 'Gênants',
 			'tc.parcours.feedback.technique.bien' => 'Corrects',

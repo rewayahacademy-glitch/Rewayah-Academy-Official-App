@@ -20,6 +20,7 @@ import '../../core/capacites/port_accents_profils.dart';
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_catalogue_classes.dart';
 import '../../core/capacites/port_classes_foyer.dart';
+import '../../core/capacites/port_finance_direction.dart';
 import '../../core/capacites/port_politique_revue_kyc.dart';
 import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/config/env.dart';
@@ -48,6 +49,7 @@ import '../../core/tc_observation/port_visite_observation.dart';
 import '../../core/theme/accent_profil.dart';
 import 'catalogue_demo.dart';
 import 'dossiers_demo.dart';
+import 'finance_demo.dart';
 import 'observation_demo.dart';
 import 'presence_demo.dart';
 import 'services_admin_demo.dart';
@@ -208,6 +210,11 @@ List<Override> surchargesDemoAdmin({
       ),
     ),
     demandesProvider.overrideWith((Ref ref) async => const <Demande>[]),
+    // La Vue globale de la Finance (FI-11a) : les chiffres de la
+    // demonstration, jamais en production (K-09).
+    portFinanceDirectionProvider.overrideWithValue(
+      const FinanceDirectionDemo(),
+    ),
     // Tous les autres services admin adosses a Supabase : « indisponible ».
     ...surchargesServicesAdminIndisponibles(),
   ];
