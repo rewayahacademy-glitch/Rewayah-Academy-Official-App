@@ -4805,6 +4805,110 @@
       "vide": "Aucune publication dans cette catégorie."
     },
     "studio": {
+      "sousTitre": "Espace de travail de l'équipe",
+      "navigation": {
+        "canaux": "Canaux",
+        "enregistres": "Éléments enregistrés"
+      },
+      "choisirTitre": "Choisissez un canal",
+      "choisir": "Choisissez un canal dans la liste pour lire la discussion et y écrire.",
+      "aucunCanalTitre": "Aucun canal pour le moment",
+      "aucunCanal": "Les canaux qui vous sont ouverts apparaîtront ici.",
+      "sections": {
+        "organisation": "Organisation",
+        "admissionsFamilles": "Admissions & familles",
+        "pedagogieQualite": "Pédagogie & qualité",
+        "planningRemplacements": "Planning & remplacements",
+        "finance": "Finance",
+        "support": "Support",
+        "produitTechnique": "Produit & technique",
+        "direction": "Direction"
+      },
+      "visibilite": {
+        "restreint": "Restreint",
+        "prive": "Privé",
+        "visibleDetail": "Ouvert à toute l'équipe.",
+        "restreintDetail": "Ouvert à une partie de l'équipe, dont vous faites partie.",
+        "priveDetail": "Canal privé, ouvert à ses seuls membres. Vous en faites partie."
+      },
+      "canal": {
+        "membresUn": "1 membre",
+        "membres": "{nombre} membres",
+        "aide": "Écrire dans {nom}",
+        "lectureSeule": "Vous pouvez lire ce canal. L'écriture n'y est pas ouverte pour vous.",
+        "indisponibleTitre": "Canal indisponible",
+        "indisponible": "Ce canal n'est pas disponible pour vous. Choisissez un autre canal dans la liste.",
+        "pieceJointe": "Pièce jointe : {nom}",
+        "vocal": "Message vocal de {duree}",
+        "vocalSansDuree": "Message vocal",
+        "horodatage": "{date}, {heure}",
+        "auteurEtMoment": "{auteur} · {moment}"
+      },
+      "panneau": {
+        "titre": "À propos du canal",
+        "aPropos": "À propos",
+        "section": "Section",
+        "visibilite": "Visibilité",
+        "epingles": "@:com.socle.lexique.elementsEpingles",
+        "fichiers": "Fichiers récents",
+        "liens": "Liens utiles",
+        "vous": "Vous",
+        "parametres": "Paramètres du canal",
+        "parametresDetail": "La modification des paramètres arrivera avec le service du Studio.",
+        "ouvrir": "Ouvrir {titre}",
+        "lienExterne": "Site externe : {hote}",
+        "aucunPartageTitre": "Rien de partagé pour le moment",
+        "aucunPartage": "Les éléments épinglés, les fichiers et les liens de ce canal apparaîtront ici."
+      },
+      "enregistrer": {
+        "enregistrer": "@:com.socle.lexique.enregistrer",
+        "retirer": "Retirer",
+        "semantiqueEnregistrer": "Enregistrer {titre}",
+        "semantiqueRetirer": "Retirer {titre} des éléments enregistrés",
+        "ajoute": "Ajouté aux éléments enregistrés : {titre}.",
+        "retire": "Retiré des éléments enregistrés : {titre}.",
+        "nonConfirme": "L'enregistrement n'a pas encore été confirmé. Réessayez dans un instant."
+      },
+      "enregistres": {
+        "detail": "Les canaux et les éléments que vous gardez sous la main. Chacun s'ouvre à sa place d'origine.",
+        "videTitre": "Aucun élément enregistré",
+        "vide": "Touchez Enregistrer dans le panneau d'un canal pour retrouver un canal ou un élément ici.",
+        "ouvrir": "Ouvrir {titre}",
+        "sansDestination": "{type}, ne s'ouvre plus d'ici",
+        "types": {
+          "canal": "Canal",
+          "publication": "Publication",
+          "message": "Message",
+          "element": "Élément du Studio"
+        }
+      },
+      "recherche": {
+        "champ": "Rechercher dans Le Studio",
+        "aide": "Canal, message ou fichier",
+        "fermer": "Fermer la recherche",
+        "effacer": "Effacer la recherche",
+        "aucunTitre": "Aucun résultat",
+        "aucun": "Rien ne correspond à « {texte} » dans vos canaux. Essayez un autre mot.",
+        "aucunDansFiltre": "Rien de ce type ne correspond. Choisissez Tout pour voir les autres résultats.",
+        "resultatUn": "1 résultat",
+        "resultats": "{nombre} résultats",
+        "filtre": "Type de résultat",
+        "tout": "Tout",
+        "canaux": "Canaux",
+        "messages": "Messages",
+        "fichiers": "Fichiers",
+        "dansCanal": "Dans {canal}",
+        "messageDe": "{auteur}, dans {canal}"
+      },
+      "demo": {
+        "choisir": "Choisissez une situation à essayer.",
+        "normale": "Le Studio et ses canaux",
+        "echec": "Envoi non confirmé",
+        "horsLigne": "Hors ligne",
+        "canalPrive": "Adresse d'un canal privé qui ne vous est pas ouvert",
+        "sansCanaux": "Aucun canal ouvert",
+        "vue": "Situation : {situation}"
+      },
       "titre": "@:com.socle.lexique.studio",
       "vide": "Aucune activité à traiter ici."
     },

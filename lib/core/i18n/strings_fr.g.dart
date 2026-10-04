@@ -11086,6 +11086,32 @@ class Traductions$com$studio$fr {
 
 	// Translations
 
+	/// fr: 'Espace de travail de l'équipe'
+	String get sousTitre => 'Espace de travail de l\'équipe';
+
+	late final Traductions$com$studio$navigation$fr navigation = Traductions$com$studio$navigation$fr.internal(_root);
+
+	/// fr: 'Choisissez un canal'
+	String get choisirTitre => 'Choisissez un canal';
+
+	/// fr: 'Choisissez un canal dans la liste pour lire la discussion et y écrire.'
+	String get choisir => 'Choisissez un canal dans la liste pour lire la discussion et y écrire.';
+
+	/// fr: 'Aucun canal pour le moment'
+	String get aucunCanalTitre => 'Aucun canal pour le moment';
+
+	/// fr: 'Les canaux qui vous sont ouverts apparaîtront ici.'
+	String get aucunCanal => 'Les canaux qui vous sont ouverts apparaîtront ici.';
+
+	late final Traductions$com$studio$sections$fr sections = Traductions$com$studio$sections$fr.internal(_root);
+	late final Traductions$com$studio$visibilite$fr visibilite = Traductions$com$studio$visibilite$fr.internal(_root);
+	late final Traductions$com$studio$canal$fr canal = Traductions$com$studio$canal$fr.internal(_root);
+	late final Traductions$com$studio$panneau$fr panneau = Traductions$com$studio$panneau$fr.internal(_root);
+	late final Traductions$com$studio$enregistrer$fr enregistrer = Traductions$com$studio$enregistrer$fr.internal(_root);
+	late final Traductions$com$studio$enregistres$fr enregistres = Traductions$com$studio$enregistres$fr.internal(_root);
+	late final Traductions$com$studio$recherche$fr recherche = Traductions$com$studio$recherche$fr.internal(_root);
+	late final Traductions$com$studio$demo$fr demo = Traductions$com$studio$demo$fr.internal(_root);
+
 	/// fr: 'Le Studio'
 	String get titre => _root.com.socle.lexique.studio;
 
@@ -15247,6 +15273,314 @@ class Traductions$com$socle$navigation$fr {
 	late final Traductions$com$socle$navigation$demo$fr demo = Traductions$com$socle$navigation$demo$fr.internal(_root);
 }
 
+// Path: com.studio.navigation
+class Traductions$com$studio$navigation$fr {
+	Traductions$com$studio$navigation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Canaux'
+	String get canaux => 'Canaux';
+
+	/// fr: 'Éléments enregistrés'
+	String get enregistres => 'Éléments enregistrés';
+}
+
+// Path: com.studio.sections
+class Traductions$com$studio$sections$fr {
+	Traductions$com$studio$sections$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Organisation'
+	String get organisation => 'Organisation';
+
+	/// fr: 'Admissions & familles'
+	String get admissionsFamilles => 'Admissions & familles';
+
+	/// fr: 'Pédagogie & qualité'
+	String get pedagogieQualite => 'Pédagogie & qualité';
+
+	/// fr: 'Planning & remplacements'
+	String get planningRemplacements => 'Planning & remplacements';
+
+	/// fr: 'Finance'
+	String get finance => 'Finance';
+
+	/// fr: 'Support'
+	String get support => 'Support';
+
+	/// fr: 'Produit & technique'
+	String get produitTechnique => 'Produit & technique';
+
+	/// fr: 'Direction'
+	String get direction => 'Direction';
+}
+
+// Path: com.studio.visibilite
+class Traductions$com$studio$visibilite$fr {
+	Traductions$com$studio$visibilite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Restreint'
+	String get restreint => 'Restreint';
+
+	/// fr: 'Privé'
+	String get prive => 'Privé';
+
+	/// fr: 'Ouvert à toute l'équipe.'
+	String get visibleDetail => 'Ouvert à toute l\'équipe.';
+
+	/// fr: 'Ouvert à une partie de l'équipe, dont vous faites partie.'
+	String get restreintDetail => 'Ouvert à une partie de l\'équipe, dont vous faites partie.';
+
+	/// fr: 'Canal privé, ouvert à ses seuls membres. Vous en faites partie.'
+	String get priveDetail => 'Canal privé, ouvert à ses seuls membres. Vous en faites partie.';
+}
+
+// Path: com.studio.canal
+class Traductions$com$studio$canal$fr {
+	Traductions$com$studio$canal$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '1 membre'
+	String get membresUn => '1 membre';
+
+	/// fr: '{nombre} membres'
+	String membres({required Object nombre}) => '${nombre} membres';
+
+	/// fr: 'Écrire dans {nom}'
+	String aide({required Object nom}) => 'Écrire dans ${nom}';
+
+	/// fr: 'Vous pouvez lire ce canal. L'écriture n'y est pas ouverte pour vous.'
+	String get lectureSeule => 'Vous pouvez lire ce canal. L\'écriture n\'y est pas ouverte pour vous.';
+
+	/// fr: 'Canal indisponible'
+	String get indisponibleTitre => 'Canal indisponible';
+
+	/// fr: 'Ce canal n'est pas disponible pour vous. Choisissez un autre canal dans la liste.'
+	String get indisponible => 'Ce canal n\'est pas disponible pour vous. Choisissez un autre canal dans la liste.';
+
+	/// fr: 'Pièce jointe : {nom}'
+	String pieceJointe({required Object nom}) => 'Pièce jointe : ${nom}';
+
+	/// fr: 'Message vocal de {duree}'
+	String vocal({required Object duree}) => 'Message vocal de ${duree}';
+
+	/// fr: 'Message vocal'
+	String get vocalSansDuree => 'Message vocal';
+
+	/// fr: '{date}, {heure}'
+	String horodatage({required Object date, required Object heure}) => '${date}, ${heure}';
+
+	/// fr: '{auteur} · {moment}'
+	String auteurEtMoment({required Object auteur, required Object moment}) => '${auteur} · ${moment}';
+}
+
+// Path: com.studio.panneau
+class Traductions$com$studio$panneau$fr {
+	Traductions$com$studio$panneau$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À propos du canal'
+	String get titre => 'À propos du canal';
+
+	/// fr: 'À propos'
+	String get aPropos => 'À propos';
+
+	/// fr: 'Section'
+	String get section => 'Section';
+
+	/// fr: 'Visibilité'
+	String get visibilite => 'Visibilité';
+
+	/// fr: 'Éléments épinglés'
+	String get epingles => _root.com.socle.lexique.elementsEpingles;
+
+	/// fr: 'Fichiers récents'
+	String get fichiers => 'Fichiers récents';
+
+	/// fr: 'Liens utiles'
+	String get liens => 'Liens utiles';
+
+	/// fr: 'Vous'
+	String get vous => 'Vous';
+
+	/// fr: 'Paramètres du canal'
+	String get parametres => 'Paramètres du canal';
+
+	/// fr: 'La modification des paramètres arrivera avec le service du Studio.'
+	String get parametresDetail => 'La modification des paramètres arrivera avec le service du Studio.';
+
+	/// fr: 'Ouvrir {titre}'
+	String ouvrir({required Object titre}) => 'Ouvrir ${titre}';
+
+	/// fr: 'Site externe : {hote}'
+	String lienExterne({required Object hote}) => 'Site externe : ${hote}';
+
+	/// fr: 'Rien de partagé pour le moment'
+	String get aucunPartageTitre => 'Rien de partagé pour le moment';
+
+	/// fr: 'Les éléments épinglés, les fichiers et les liens de ce canal apparaîtront ici.'
+	String get aucunPartage => 'Les éléments épinglés, les fichiers et les liens de ce canal apparaîtront ici.';
+}
+
+// Path: com.studio.enregistrer
+class Traductions$com$studio$enregistrer$fr {
+	Traductions$com$studio$enregistrer$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Enregistrer'
+	String get enregistrer => _root.com.socle.lexique.enregistrer;
+
+	/// fr: 'Retirer'
+	String get retirer => 'Retirer';
+
+	/// fr: 'Enregistrer {titre}'
+	String semantiqueEnregistrer({required Object titre}) => 'Enregistrer ${titre}';
+
+	/// fr: 'Retirer {titre} des éléments enregistrés'
+	String semantiqueRetirer({required Object titre}) => 'Retirer ${titre} des éléments enregistrés';
+
+	/// fr: 'Ajouté aux éléments enregistrés : {titre}.'
+	String ajoute({required Object titre}) => 'Ajouté aux éléments enregistrés : ${titre}.';
+
+	/// fr: 'Retiré des éléments enregistrés : {titre}.'
+	String retire({required Object titre}) => 'Retiré des éléments enregistrés : ${titre}.';
+
+	/// fr: 'L'enregistrement n'a pas encore été confirmé. Réessayez dans un instant.'
+	String get nonConfirme => 'L\'enregistrement n\'a pas encore été confirmé. Réessayez dans un instant.';
+}
+
+// Path: com.studio.enregistres
+class Traductions$com$studio$enregistres$fr {
+	Traductions$com$studio$enregistres$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les canaux et les éléments que vous gardez sous la main. Chacun s'ouvre à sa place d'origine.'
+	String get detail => 'Les canaux et les éléments que vous gardez sous la main. Chacun s\'ouvre à sa place d\'origine.';
+
+	/// fr: 'Aucun élément enregistré'
+	String get videTitre => 'Aucun élément enregistré';
+
+	/// fr: 'Touchez Enregistrer dans le panneau d'un canal pour retrouver un canal ou un élément ici.'
+	String get vide => 'Touchez Enregistrer dans le panneau d\'un canal pour retrouver un canal ou un élément ici.';
+
+	/// fr: 'Ouvrir {titre}'
+	String ouvrir({required Object titre}) => 'Ouvrir ${titre}';
+
+	/// fr: '{type}, ne s'ouvre plus d'ici'
+	String sansDestination({required Object type}) => '${type}, ne s\'ouvre plus d\'ici';
+
+	late final Traductions$com$studio$enregistres$types$fr types = Traductions$com$studio$enregistres$types$fr.internal(_root);
+}
+
+// Path: com.studio.recherche
+class Traductions$com$studio$recherche$fr {
+	Traductions$com$studio$recherche$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Rechercher dans Le Studio'
+	String get champ => 'Rechercher dans Le Studio';
+
+	/// fr: 'Canal, message ou fichier'
+	String get aide => 'Canal, message ou fichier';
+
+	/// fr: 'Fermer la recherche'
+	String get fermer => 'Fermer la recherche';
+
+	/// fr: 'Effacer la recherche'
+	String get effacer => 'Effacer la recherche';
+
+	/// fr: 'Aucun résultat'
+	String get aucunTitre => 'Aucun résultat';
+
+	/// fr: 'Rien ne correspond à « {texte} » dans vos canaux. Essayez un autre mot.'
+	String aucun({required Object texte}) => 'Rien ne correspond à « ${texte} » dans vos canaux. Essayez un autre mot.';
+
+	/// fr: 'Rien de ce type ne correspond. Choisissez Tout pour voir les autres résultats.'
+	String get aucunDansFiltre => 'Rien de ce type ne correspond. Choisissez Tout pour voir les autres résultats.';
+
+	/// fr: '1 résultat'
+	String get resultatUn => '1 résultat';
+
+	/// fr: '{nombre} résultats'
+	String resultats({required Object nombre}) => '${nombre} résultats';
+
+	/// fr: 'Type de résultat'
+	String get filtre => 'Type de résultat';
+
+	/// fr: 'Tout'
+	String get tout => 'Tout';
+
+	/// fr: 'Canaux'
+	String get canaux => 'Canaux';
+
+	/// fr: 'Messages'
+	String get messages => 'Messages';
+
+	/// fr: 'Fichiers'
+	String get fichiers => 'Fichiers';
+
+	/// fr: 'Dans {canal}'
+	String dansCanal({required Object canal}) => 'Dans ${canal}';
+
+	/// fr: '{auteur}, dans {canal}'
+	String messageDe({required Object auteur, required Object canal}) => '${auteur}, dans ${canal}';
+}
+
+// Path: com.studio.demo
+class Traductions$com$studio$demo$fr {
+	Traductions$com$studio$demo$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Choisissez une situation à essayer.'
+	String get choisir => 'Choisissez une situation à essayer.';
+
+	/// fr: 'Le Studio et ses canaux'
+	String get normale => 'Le Studio et ses canaux';
+
+	/// fr: 'Envoi non confirmé'
+	String get echec => 'Envoi non confirmé';
+
+	/// fr: 'Hors ligne'
+	String get horsLigne => 'Hors ligne';
+
+	/// fr: 'Adresse d'un canal privé qui ne vous est pas ouvert'
+	String get canalPrive => 'Adresse d\'un canal privé qui ne vous est pas ouvert';
+
+	/// fr: 'Aucun canal ouvert'
+	String get sansCanaux => 'Aucun canal ouvert';
+
+	/// fr: 'Situation : {situation}'
+	String vue({required Object situation}) => 'Situation : ${situation}';
+}
+
 // Path: salle.preparation.eleve.guidee
 class Traductions$salle$preparation$eleve$guidee$fr {
 	Traductions$salle$preparation$eleve$guidee$fr.internal(this._root);
@@ -15923,6 +16257,27 @@ class Traductions$com$socle$navigation$demo$fr {
 
 	/// fr: 'Choisissez un espace à essayer.'
 	String get choisir => 'Choisissez un espace à essayer.';
+}
+
+// Path: com.studio.enregistres.types
+class Traductions$com$studio$enregistres$types$fr {
+	Traductions$com$studio$enregistres$types$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Canal'
+	String get canal => 'Canal';
+
+	/// fr: 'Publication'
+	String get publication => 'Publication';
+
+	/// fr: 'Message'
+	String get message => 'Message';
+
+	/// fr: 'Élément du Studio'
+	String get element => 'Élément du Studio';
 }
 
 /// The flat map containing all translations for locale <fr>.
@@ -19982,6 +20337,92 @@ extension on Traductions {
 			'com.vocal.titre' => 'Message vocal',
 			'com.communaute.titre' => _root.com.socle.lexique.communaute,
 			'com.communaute.vide' => 'Aucune publication dans cette catégorie.',
+			'com.studio.sousTitre' => 'Espace de travail de l\'équipe',
+			'com.studio.navigation.canaux' => 'Canaux',
+			'com.studio.navigation.enregistres' => 'Éléments enregistrés',
+			'com.studio.choisirTitre' => 'Choisissez un canal',
+			'com.studio.choisir' => 'Choisissez un canal dans la liste pour lire la discussion et y écrire.',
+			'com.studio.aucunCanalTitre' => 'Aucun canal pour le moment',
+			'com.studio.aucunCanal' => 'Les canaux qui vous sont ouverts apparaîtront ici.',
+			'com.studio.sections.organisation' => 'Organisation',
+			'com.studio.sections.admissionsFamilles' => 'Admissions & familles',
+			'com.studio.sections.pedagogieQualite' => 'Pédagogie & qualité',
+			'com.studio.sections.planningRemplacements' => 'Planning & remplacements',
+			'com.studio.sections.finance' => 'Finance',
+			'com.studio.sections.support' => 'Support',
+			'com.studio.sections.produitTechnique' => 'Produit & technique',
+			'com.studio.sections.direction' => 'Direction',
+			'com.studio.visibilite.restreint' => 'Restreint',
+			'com.studio.visibilite.prive' => 'Privé',
+			'com.studio.visibilite.visibleDetail' => 'Ouvert à toute l\'équipe.',
+			'com.studio.visibilite.restreintDetail' => 'Ouvert à une partie de l\'équipe, dont vous faites partie.',
+			'com.studio.visibilite.priveDetail' => 'Canal privé, ouvert à ses seuls membres. Vous en faites partie.',
+			'com.studio.canal.membresUn' => '1 membre',
+			'com.studio.canal.membres' => ({required Object nombre}) => '${nombre} membres',
+			'com.studio.canal.aide' => ({required Object nom}) => 'Écrire dans ${nom}',
+			'com.studio.canal.lectureSeule' => 'Vous pouvez lire ce canal. L\'écriture n\'y est pas ouverte pour vous.',
+			'com.studio.canal.indisponibleTitre' => 'Canal indisponible',
+			'com.studio.canal.indisponible' => 'Ce canal n\'est pas disponible pour vous. Choisissez un autre canal dans la liste.',
+			'com.studio.canal.pieceJointe' => ({required Object nom}) => 'Pièce jointe : ${nom}',
+			'com.studio.canal.vocal' => ({required Object duree}) => 'Message vocal de ${duree}',
+			'com.studio.canal.vocalSansDuree' => 'Message vocal',
+			'com.studio.canal.horodatage' => ({required Object date, required Object heure}) => '${date}, ${heure}',
+			'com.studio.canal.auteurEtMoment' => ({required Object auteur, required Object moment}) => '${auteur} · ${moment}',
+			'com.studio.panneau.titre' => 'À propos du canal',
+			'com.studio.panneau.aPropos' => 'À propos',
+			'com.studio.panneau.section' => 'Section',
+			'com.studio.panneau.visibilite' => 'Visibilité',
+			'com.studio.panneau.epingles' => _root.com.socle.lexique.elementsEpingles,
+			'com.studio.panneau.fichiers' => 'Fichiers récents',
+			'com.studio.panneau.liens' => 'Liens utiles',
+			'com.studio.panneau.vous' => 'Vous',
+			'com.studio.panneau.parametres' => 'Paramètres du canal',
+			'com.studio.panneau.parametresDetail' => 'La modification des paramètres arrivera avec le service du Studio.',
+			'com.studio.panneau.ouvrir' => ({required Object titre}) => 'Ouvrir ${titre}',
+			'com.studio.panneau.lienExterne' => ({required Object hote}) => 'Site externe : ${hote}',
+			'com.studio.panneau.aucunPartageTitre' => 'Rien de partagé pour le moment',
+			'com.studio.panneau.aucunPartage' => 'Les éléments épinglés, les fichiers et les liens de ce canal apparaîtront ici.',
+			'com.studio.enregistrer.enregistrer' => _root.com.socle.lexique.enregistrer,
+			'com.studio.enregistrer.retirer' => 'Retirer',
+			'com.studio.enregistrer.semantiqueEnregistrer' => ({required Object titre}) => 'Enregistrer ${titre}',
+			'com.studio.enregistrer.semantiqueRetirer' => ({required Object titre}) => 'Retirer ${titre} des éléments enregistrés',
+			'com.studio.enregistrer.ajoute' => ({required Object titre}) => 'Ajouté aux éléments enregistrés : ${titre}.',
+			'com.studio.enregistrer.retire' => ({required Object titre}) => 'Retiré des éléments enregistrés : ${titre}.',
+			'com.studio.enregistrer.nonConfirme' => 'L\'enregistrement n\'a pas encore été confirmé. Réessayez dans un instant.',
+			'com.studio.enregistres.detail' => 'Les canaux et les éléments que vous gardez sous la main. Chacun s\'ouvre à sa place d\'origine.',
+			'com.studio.enregistres.videTitre' => 'Aucun élément enregistré',
+			'com.studio.enregistres.vide' => 'Touchez Enregistrer dans le panneau d\'un canal pour retrouver un canal ou un élément ici.',
+			'com.studio.enregistres.ouvrir' => ({required Object titre}) => 'Ouvrir ${titre}',
+			'com.studio.enregistres.sansDestination' => ({required Object type}) => '${type}, ne s\'ouvre plus d\'ici',
+			'com.studio.enregistres.types.canal' => 'Canal',
+			'com.studio.enregistres.types.publication' => 'Publication',
+			'com.studio.enregistres.types.message' => 'Message',
+			'com.studio.enregistres.types.element' => 'Élément du Studio',
+			_ => null,
+		} ?? switch (path) {
+			'com.studio.recherche.champ' => 'Rechercher dans Le Studio',
+			'com.studio.recherche.aide' => 'Canal, message ou fichier',
+			'com.studio.recherche.fermer' => 'Fermer la recherche',
+			'com.studio.recherche.effacer' => 'Effacer la recherche',
+			'com.studio.recherche.aucunTitre' => 'Aucun résultat',
+			'com.studio.recherche.aucun' => ({required Object texte}) => 'Rien ne correspond à « ${texte} » dans vos canaux. Essayez un autre mot.',
+			'com.studio.recherche.aucunDansFiltre' => 'Rien de ce type ne correspond. Choisissez Tout pour voir les autres résultats.',
+			'com.studio.recherche.resultatUn' => '1 résultat',
+			'com.studio.recherche.resultats' => ({required Object nombre}) => '${nombre} résultats',
+			'com.studio.recherche.filtre' => 'Type de résultat',
+			'com.studio.recherche.tout' => 'Tout',
+			'com.studio.recherche.canaux' => 'Canaux',
+			'com.studio.recherche.messages' => 'Messages',
+			'com.studio.recherche.fichiers' => 'Fichiers',
+			'com.studio.recherche.dansCanal' => ({required Object canal}) => 'Dans ${canal}',
+			'com.studio.recherche.messageDe' => ({required Object auteur, required Object canal}) => '${auteur}, dans ${canal}',
+			'com.studio.demo.choisir' => 'Choisissez une situation à essayer.',
+			'com.studio.demo.normale' => 'Le Studio et ses canaux',
+			'com.studio.demo.echec' => 'Envoi non confirmé',
+			'com.studio.demo.horsLigne' => 'Hors ligne',
+			'com.studio.demo.canalPrive' => 'Adresse d\'un canal privé qui ne vous est pas ouvert',
+			'com.studio.demo.sansCanaux' => 'Aucun canal ouvert',
+			'com.studio.demo.vue' => ({required Object situation}) => 'Situation : ${situation}',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
 			'com.studio.vide' => 'Aucune activité à traiter ici.',
 			'com.annonces.titre' => 'Annonces',
