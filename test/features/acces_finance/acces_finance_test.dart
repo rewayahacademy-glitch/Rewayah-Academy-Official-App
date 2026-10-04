@@ -500,6 +500,22 @@ void main() {
         phraseConservation(ibrahim),
         t.argent.acces.placeConservee(date: '8 octobre 2026'),
       );
+      // R8-05 : le premier du mois s'ecrit « 1er ».
+      expect(
+        phraseConservation(
+          FinancesProfil(
+            profilId: ibrahim.profilId,
+            prenom: ibrahim.prenom,
+            cleAccent: ibrahim.cleAccent,
+            estAdulte: ibrahim.estAdulte,
+            etat: ibrahim.etat,
+            solde: ibrahim.solde,
+            mensualite: ibrahim.mensualite,
+            finConservation: DateTime(2026, 11, 1, 12),
+          ),
+        ),
+        t.argent.acces.placeConservee(date: '1er novembre 2026'),
+      );
     });
 
     test('copies du guide, mot pour mot', () {
@@ -1318,6 +1334,12 @@ void main() {
       expect(
         phrasePlace(avec(EtatPlace.reactivee)),
         t.argent.acces.reactiveAdulteSansDate,
+      );
+      // R8-05 : le premier du mois s'ecrit « 1er ».
+      expect(
+        phrasePlace(avec(EtatPlace.liberee, jour: DateTime(2026, 11, 1, 12))),
+        'Votre place a été libérée le 1er novembre 2026. Votre compte et vos '
+        'contenus restent accessibles.',
       );
       // Sans etat de place rendu, rien n'est dit.
       expect(phrasePlace(libere, prenom: 'Ibrahim'), isNull);

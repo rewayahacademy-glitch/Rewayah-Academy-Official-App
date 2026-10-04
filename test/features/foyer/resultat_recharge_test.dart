@@ -63,10 +63,11 @@ FauxServiceAppairage _foyer() =>
 
 /// Un port qui rend l'etat que le test choisit (et compte les lectures).
 class _PortEtat extends RechargeFoyerFinanceDemo {
-  _PortEtat(this.etat, {this.motif, this.erreur}) : super(_jeu);
+  _PortEtat(this.etat, {this.motif, this.erreur, this.date}) : super(_jeu);
 
   EtatPaiement etat;
   final String? motif;
+  final DateTime? date;
   final Error? erreur;
   int lectures = 0;
 
@@ -80,7 +81,7 @@ class _PortEtat extends RechargeFoyerFinanceDemo {
       etat: etat,
       total: DonneesFinanceDemo.usd(50),
       reference: 'REF-TEST',
-      date: DonneesFinanceDemo.aujourdhui,
+      date: date ?? DonneesFinanceDemo.aujourdhui,
       moyen: RailPaiement.webStripe,
       motif: motif,
       allocations: <AllocationProfil>[
@@ -536,6 +537,19 @@ void main() {
     );
     expect(find.byKey(RechargeFoyerPage.payerKey), findsNothing);
     _aucunSucces();
+  });
+
+  testWidgets('R8-05 : la ligne Date ecrit « 1er novembre 2026 »', (
+    WidgetTester tester,
+  ) async {
+    await _monter(
+      tester,
+      depart: c1,
+      port: _PortEtat(EtatPaiement.termine, date: DateTime(2026, 11, 1, 12)),
+    );
+    expect(tester.takeException(), isNull);
+    expect(find.text('1er novembre 2026'), findsOneWidget);
+    expect(find.text('1 novembre 2026'), findsNothing);
   });
 
   group('la selection est gardee (echec, annule, perime, preparation)', () {

@@ -25,6 +25,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/suivi_paiement.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/admin_finance/finance_page.dart'
@@ -34,9 +35,13 @@ import 'package:rewayah_academy/features/demo/adulte_demo.dart'
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/demo/demo_finance_page.dart';
 import 'package:rewayah_academy/features/demo/finance_demo.dart';
+import 'package:rewayah_academy/features/mon_espace_adulte/mes_finances_page.dart';
+import 'package:rewayah_academy/features/revenus_enseignant/revenus_enseignant_page.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart' show stabiliser;
+import '../../support/harnais.dart'
+    show FauxServiceReseau, sansPersonneConnectee;
 import '../../support/mots_coupes.dart';
 import 'support_recette_fi.dart';
 
@@ -106,6 +111,36 @@ Future<void> _monterDemoFinance(
           supportedLocales: AppLocaleUtils.supportedLocales,
           localizationsDelegates: GlobalMaterialLocalizations.delegates,
           routerConfig: routeur,
+        ),
+      ),
+    ),
+  );
+  await stabiliser(tester);
+}
+
+/// Monte l'ecran [page] seul, sur ses ports de PRODUCTION (aucune
+/// surcharge de port) : l'etat honnete « pas encore disponible » que la
+/// personne verra tant que la source manque. Les demonstrations surchargent
+/// ces ports a l'interieur de leur coquille ; leur etat de production ne se
+/// mesure donc que l'ecran monte seul.
+Future<void> _monterProduction(WidgetTester tester, Widget page) async {
+  tester.view.physicalSize = _vue;
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+  await tester.pumpWidget(const SizedBox.shrink());
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: <Override>[
+        sansPersonneConnectee(),
+        serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+      ],
+      child: TranslationProvider(
+        child: MaterialApp(
+          theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+          locale: AppLocale.fr.flutterLocale,
+          supportedLocales: AppLocaleUtils.supportedLocales,
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
+          home: page,
         ),
       ),
     ),
@@ -259,10 +294,31 @@ final List<_Cas> _cas = <_Cas>[
   ),
   _adulte('Adulte, mouvements', EcranDemoAdulte.mesMouvements),
   _adulte('Adulte, recharge', EcranDemoAdulte.maRecharge),
+  (
+    nom: 'Adulte, Mes finances, production',
+    monter: (WidgetTester tester) => _monterProduction(
+      tester,
+      MesFinancesPage(
+        onRetour: () {},
+        onRecharger: (String _) {},
+        onMouvements: () {},
+      ),
+    ),
+  ),
+  (
+    nom: 'Adulte, Mes mouvements, production',
+    monter: (WidgetTester tester) =>
+        _monterProduction(tester, MesMouvementsPage(onRetour: () {})),
+  ),
   // Revenus de l'enseignant (FI-10).
   (
     nom: 'Revenus enseignant',
     monter: (WidgetTester tester) => monterEnseignantFi(tester, taille: _vue),
+  ),
+  (
+    nom: 'Revenus enseignant, production',
+    monter: (WidgetTester tester) =>
+        _monterProduction(tester, const RevenusEnseignantPage()),
   ),
   // Vue globale et Politiques (FI-11) : coquille admin, puis la
   // demonstration `/demo/finance` (R8-02).

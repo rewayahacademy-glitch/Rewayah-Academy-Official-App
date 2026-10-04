@@ -6,6 +6,7 @@ import '../../core/capacites/port_paiements_foyer.dart';
 import '../../core/capacites/port_profil_eleve_titulaire.dart';
 import '../../core/capacites/port_support.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/jour_du_mois.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
@@ -39,7 +40,7 @@ final FutureProvider<List<PaiementFoyer>> paiementsFoyerProvider =
     );
 
 /// Les soldes des beneficiaires du foyer, pour le titulaire (EA-9 ;
-/// indisponibles tant qu'EA-BR-23 manque).
+/// indisponibles tant que FI-BR-03, qui remplace EA-BR-23, manque).
 final FutureProvider<SoldesFoyer> soldesFoyerProvider =
     FutureProvider<SoldesFoyer>(
       (Ref ref) => ref.watch(portPaiementsFoyerProvider).soldes(),
@@ -72,11 +73,12 @@ String villeDuFuseau(String iana) {
   return ville.isEmpty ? iana.trim() : ville;
 }
 
-/// Une date en toutes lettres : « 30 octobre 2026 », en heure locale.
+/// Une date en toutes lettres : « 30 octobre 2026 », « 1er novembre 2026 »
+/// (R8-05), en heure locale.
 String dateLongue(DateTime date) {
   final DateTime locale = date.toLocal();
   return t.compte.tuteur.dateLongue(
-    jour: locale.day,
+    jour: jourDuMois(locale.day),
     mois: t.commun.dates.mois[locale.month - 1],
     annee: locale.year,
   );

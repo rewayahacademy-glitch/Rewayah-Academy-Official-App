@@ -8,8 +8,9 @@
 // `PhotoEleve` du Foyer (K-44 ; initiales quand le serveur ne rend pas de
 // photo, le second adulte, Q4), la `StatusPill` partagee et `ActionPrincipale`.
 // Aucun calcul (F9, F12) : ni total, ni seuil, ni taux, ni devise ajoutes ici.
-// Aucune source serveur a ce jour (EA-BR-23) : le port rend
-// `CapaciteIndisponible`, la demonstration surcharge le fournisseur (K-28).
+// Aucune source serveur a ce jour (FI-BR-03, qui remplace EA-BR-23) : le
+// port rend `CapaciteIndisponible`, la demonstration surcharge le fournisseur
+// (K-28).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
