@@ -34,7 +34,13 @@ import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 
-import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../capture/outil_capture.dart'
+    show
+        capturer,
+        chargerPolicesDuDepot,
+        fixerVueCapture,
+        hoteCapture,
+        sautSansCapture;
 import '../support/aucun_mot_coupe.dart';
 import '../support/garde_interface.dart';
 import '../support/harnais.dart';
@@ -254,6 +260,83 @@ void main() {
       );
       expect(tester.widget<AppCard>(carte).surface, isNotNull);
     });
+
+    // SALLE-CORR-3 (releve VERIF-CORR-2) : la carte nomme sa Classe et y mene.
+    testWidgets('nomme la Classe, « Voir la Classe » y mene', (
+      WidgetTester tester,
+    ) async {
+      _fenetre(tester, const Size(390, 2400));
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: Routes.enseignantJournee,
+          routes: _routes(),
+          surcharges: _surcharges(
+            enseignant: FauxServiceEnseignant()
+              ..seancesRendues = <SeanceEnseignant>[
+                _anNour(statut: StatutSeance.annulee),
+              ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final Finder carte = find.byKey(
+        const ValueKey<String>('journee-cours-annule'),
+      );
+      expect(
+        find.descendant(of: carte, matching: find.text('An-Nour')),
+        findsOneWidget,
+      );
+      final Finder lien = find.descendant(
+        of: carte,
+        matching: find.text(t.enseignant.journee.voirClasse),
+      );
+      expect(lien, findsOneWidget);
+      await tester.ensureVisible(lien);
+      await tester.tap(lien);
+      await tester.pumpAndSettle();
+      expect(find.text('groupe:g-an-nour'), findsOneWidget);
+    });
+  });
+
+  group('SALLE-CORR-3 : captures du cours annule', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String l, Size taille, double texte, double densite)
+        in <(String, Size, double, double)>[
+          ('320_x2', const Size(320, 1400), 2, 2),
+          ('390', const Size(390, 1400), 1, 3),
+          ('1440', const Size(1440, 1100), 1, 1),
+        ]) {
+      for (final (String m, ThemeMode mode) in <(String, ThemeMode)>[
+        ('clair', ThemeMode.light),
+        ('sombre', ThemeMode.dark),
+      ]) {
+        testWidgets('journee_annule_${l}_$m', (WidgetTester tester) async {
+          fixerVueCapture(tester, taille, densite);
+          await tester.pumpWidget(
+            hoteCapture(
+              const JourneePage(),
+              surcharges: _surcharges(
+                enseignant: FauxServiceEnseignant()
+                  ..seancesRendues = <SeanceEnseignant>[
+                    _anNour(statut: StatutSeance.annulee),
+                  ],
+              ),
+              themeMode: mode,
+              echelleTexte: texte,
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          await tester.ensureVisible(
+            find.byKey(const ValueKey<String>('journee-cours-annule')),
+          );
+          await tester.pumpAndSettle();
+          debugPrint(
+            'PNG ${await capturer(tester, 'salle_corr3_journee_annule_${l}_$m')}',
+          );
+        });
+      }
+    }
   });
 
   group('ENS-02 : les etats de l ecran', () {
