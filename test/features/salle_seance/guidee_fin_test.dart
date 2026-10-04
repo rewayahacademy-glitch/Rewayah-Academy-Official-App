@@ -159,11 +159,12 @@ void main() {
           // ETATS-BTN-1 : le mot d'etat des deux bascules.
           'Micro ouvert',
           'Caméra allumée',
-          'Agrandir',
           'Quitter',
         ]) {
           expect(_bouton(bouton), findsOneWidget, reason: bouton);
         }
+        // TB-2 (VIS-01) : Agrandir a quitte la barre de l'appel.
+        expect(_bouton('Agrandir'), findsNothing);
         expect(find.text('Micro'), findsNothing);
         expect(find.text('Parler'), findsNothing);
       });
@@ -183,7 +184,8 @@ void main() {
                 .evaluate())
           (e.renderObject! as RenderBox).size,
       ];
-      expect(tailles, hasLength(4));
+      // TB-2 : Micro, Camera, Quitter.
+      expect(tailles, hasLength(3));
       for (final Size s in tailles) {
         expect(s, tailles.first);
         expect(s.width, s.height);
@@ -299,14 +301,16 @@ void main() {
       for (int i = 0; i < trouves.evaluate().length; i++)
         tester.getRect(trouves.at(i)),
     ]..sort((Rect a, Rect b) => a.left.compareTo(b.left));
-    expect(disques.length, 4);
+    // TB-2 : Micro, Camera, Quitter (Agrandir a quitte la barre).
+    expect(disques.length, 3);
     for (int i = 1; i < disques.length; i++) {
       expect(disques[i].center.dx - disques[i - 1].center.dx, closeTo(130, 8));
     }
     final Rect dock = tester.getRect(
       find.byKey(const ValueKey<String>('dock-seance')),
     );
-    expect(dock.width, closeTo(555, 15));
+    // Une case aeree de moins (≈ 130) que la pilule de l'image (≈ 555).
+    expect(dock.width, closeTo(555 - 130, 15));
   });
 
   testWidgets('guidee desktop : la sortie de l\'en-tete demande confirmation', (

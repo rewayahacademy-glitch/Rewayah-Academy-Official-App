@@ -10,6 +10,13 @@
 //
 // Commande :
 //   CAPTURE_DIR=/tmp/tb flutter test test/features/tb_recette/captures_tb_test.dart
+//
+// TB-2 (VIS-01) : la barre de l'appel au repos (masquee apres le delai) et
+// revelee (une touche sur le contenu), pour l'enseignant, l'eleve et le Mode
+// Accessibilite (guidee), situation VIS-01. Rangees dans
+// docs/current/captures/TB-2/ :
+//   CAPTURE_DIR=docs/current/captures/TB-2 flutter test \
+//     test/features/tb_recette/captures_tb_test.dart --name tb2_
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -69,6 +76,47 @@ void main() {
       }
     });
   });
+
+  group(
+    'TB-2 : barre de l\'appel au repos et revelee',
+    skip: sautSansCapture,
+    () {
+      setUpAll(chargerPolicesDuDepot);
+
+      for (final RoleSeance role in RoleSeance.values) {
+        for (final _Cadrage cas in _cadragesTb) {
+          for (final bool revelee in <bool>[false, true]) {
+            final String nom =
+                'tb2_${role.name}_${revelee ? 'revelee' : 'repos'}_${cas.$1}';
+            testWidgets(nom, (WidgetTester tester) async {
+              fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+              await tester.pumpWidget(
+                hoteCapture(
+                  DemoSallePage(role: role, situation: SituationTb.vis01),
+                  themeMode: cas.$6,
+                  echelleTexte: cas.$5,
+                ),
+              );
+              await stabiliser(tester);
+              // Le delai passe : la barre se masque (repos).
+              await tester.pump(CommandesMasquables.delaiParDefaut);
+              await tester.pump(const Duration(seconds: 1));
+              if (revelee) {
+                // Une touche sur le contenu, au tiers de la hauteur : la barre
+                // revient, rien d'autre ne change.
+                await tester.tapAt(Offset(cas.$2.width / 2, cas.$2.height / 3));
+                // Un cadre pour lancer le fondu, puis sa duree.
+                await tester.pump();
+                await tester.pump(const Duration(milliseconds: 400));
+              }
+              expect(tester.takeException(), isNull);
+              debugPrint('PNG ${await capturer(tester, nom)}');
+            });
+          }
+        }
+      }
+    },
+  );
 
   group('TB : captures de la salle', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);

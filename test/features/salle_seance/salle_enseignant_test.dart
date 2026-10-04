@@ -109,7 +109,9 @@ void main() {
         expect(find.textContaining('Prolonger'), findsNothing);
         expect(find.text('Élèves 1/3'), findsOneWidget);
         expect(find.text('Supports'), findsOneWidget);
-        expect(find.text('Réseau'), findsOneWidget);
+        // TB-2 (VIS-01, D5) : Reseau a quitte la barre de l'appel.
+        expect(find.text('Réseau'), findsNothing);
+        expect(_cle('bouton-reseau'), findsNothing);
         for (final String outil in <String>[
           'Pointeur',
           'Marquer',

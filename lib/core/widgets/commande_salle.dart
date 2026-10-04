@@ -297,7 +297,10 @@ class CommandeSalle extends StatelessWidget {
     );
     // Une bascule tient une case de largeur fixe : son mot d'etat change de
     // longueur (« Micro ouvert », « Micro coupe ») sans deplacer ses voisines.
-    final Widget case_ = estBascule
+    // TB-2 : texte tres agrandi hors rangee compacte (bureau), le mot reste
+    // visible : la case suit sa largeur, jamais un mot coupe dans une case
+    // pensee pour l'icone seule.
+    final Widget case_ = estBascule && (iconeSeule || motEtatVisible(context))
         ? SizedBox(
             width: largeurCaseCommande(context, bascule: true),
             child: pressable,

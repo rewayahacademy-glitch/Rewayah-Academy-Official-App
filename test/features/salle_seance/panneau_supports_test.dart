@@ -158,12 +158,31 @@ void main() {
               scrollable: dansPanneau(find.byType(Scrollable)).first,
             );
             expect(dansPanneau(find.text(texte)), findsOneWidget);
+            // « Voir tout » : Recents partout, Ressources hors desktop. Mesure
+            // dans la ligne de son titre : la liste est paresseuse, et la
+            // feuille s'arrete au-dessus de la barre de l'appel (TB-2).
+            final bool recents =
+                texte == t.salle.seance.panneauSupports.recents;
+            final bool classe =
+                texte == t.salle.seance.panneauSupports.ressourcesClasse;
+            if (recents || classe) {
+              expect(
+                find.descendant(
+                  of: find
+                      .ancestor(
+                        of: find.text(texte),
+                        matching: find.byType(Row),
+                      )
+                      .first,
+                  matching: find.text(t.salle.seance.panneauSupports.voirTout),
+                ),
+                recents || taille.key != 'desktop'
+                    ? findsOneWidget
+                    : findsNothing,
+                reason: texte,
+              );
+            }
           }
-          // « Voir tout » : Recents partout, Ressources hors desktop.
-          expect(
-            dansPanneau(find.text(t.salle.seance.panneauSupports.voirTout)),
-            findsNWidgets(taille.key == 'desktop' ? 1 : 2),
-          );
           await tester.scrollUntilVisible(
             find.byKey(const ValueKey<String>('voir-bibliotheque')),
             50,

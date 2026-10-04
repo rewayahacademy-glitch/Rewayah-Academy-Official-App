@@ -122,5 +122,6 @@
   "salle.seance.demo.tb.ressourceIndisponible": "etape TB-1b (Supports et tableau) : libelle de la liste de demonstration /demo/salle, identifiant et vue du plan V2 §17 ou etat du §12 (pilotage 18_supports_tableau), a valider par le directeur",
   "salle.seance.demo.tb.autorisationEcrire": "etape TB-1b (Supports et tableau) : libelle de la liste de demonstration /demo/salle, identifiant et vue du plan V2 §17 ou etat du §12 (pilotage 18_supports_tableau), a valider par le directeur",
   "salle.seance.demo.tb.droitRetire": "etape TB-1b (Supports et tableau) : libelle de la liste de demonstration /demo/salle, identifiant et vue du plan V2 §17 ou etat du §12 (pilotage 18_supports_tableau), a valider par le directeur",
-  "salle.seance.demo.tb.effacementTableau": "etape TB-1b (Supports et tableau) : libelle de la liste de demonstration /demo/salle, identifiant et vue du plan V2 §17 ou etat du §12 (pilotage 18_supports_tableau), a valider par le directeur"
+  "salle.seance.demo.tb.effacementTableau": "etape TB-1b (Supports et tableau) : libelle de la liste de demonstration /demo/salle, identifiant et vue du plan V2 §17 ou etat du §12 (pilotage 18_supports_tableau), a valider par le directeur",
+  "salle.seance.commandesAppel": "plan V2 §18.3 (pilotage 18_supports_tableau, etape TB-2) : texte exact de l'entree accessible au Tab qui revele la barre Micro, Camera, Quitter"
 }

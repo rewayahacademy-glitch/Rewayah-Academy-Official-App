@@ -154,13 +154,14 @@ void main() {
     });
 
     test('jamais Agrandir au dock ; dock compact EN-10', () {
+      // TB-2 (VIS-01, D5) : Reseau quitte la barre ; Supports, Partager et
+      // Outils y restent jusqu'a TB-4 (Commandes).
       expect(_vue(r).commandesDock, <CommandeDock>[
         CommandeDock.supports,
         CommandeDock.micro,
         CommandeDock.camera,
         CommandeDock.partager,
         CommandeDock.outils,
-        CommandeDock.reseau,
         CommandeDock.quitter,
       ]);
     });
@@ -299,9 +300,9 @@ void main() {
     test('camera non autorisee : aucun bouton Camera pour l eleve', () {
       for (final RoleSeance r in _eleves) {
         final VueSeance v = _vue(r).copyWith(cameraAutorisee: false);
+        // TB-2 (VIS-01) : Agrandir a quitte la barre de l'appel.
         expect(v.commandesDock, <CommandeDock>[
           CommandeDock.micro,
-          CommandeDock.agrandir,
           CommandeDock.quitter,
         ]);
       }

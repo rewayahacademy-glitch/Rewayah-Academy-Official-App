@@ -1,0 +1,385 @@
+// TB-2 (VIS-01) : la barre de l'appel revelee (plan V2 §4.1, §18, §23).
+//
+// Chaque test part de la VRAIE coquille (`routeurProvider`), ouvre
+// /demo/salle, tape le lien de la situation VIS-01 (K-07), puis agit comme
+// une personne : un doigt, une souris, le clavier. UX-01 a UX-06 et UX-08,
+// plus : panneau ouvert, Quitter au-dessus de la feuille (UX-07, en partie),
+// micro bloque jamais rendu actif par la revelation.
+
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/accessibilite/commandes_masquables.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
+import 'package:rewayah_academy/features/demo/seance_demo.dart';
+import 'package:rewayah_academy/features/salle_seance/dock_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/zone_support.dart';
+
+import '../../capture/outil_capture.dart' show fixerVueCapture, hoteCapture;
+import '../../router/support_routeur.dart';
+
+const Size _telephone = Size(390, 844);
+const Size _bureau = Size(1440, 900);
+
+/// Ouvre la salle de la situation depuis la liste de /demo/salle.
+Future<GoRouter> _ouvrir(
+  WidgetTester tester,
+  RoleSeance role, {
+  SituationTb situation = SituationTb.vis01,
+  Size taille = _telephone,
+}) async {
+  final GoRouter routeur = await monterRouteur(
+    tester,
+    Routes.demoSalle,
+    taille: taille,
+  );
+  final Finder lien = find.byKey(
+    ValueKey<String>('lien-${role.name}-tb-${situation.name}'),
+  );
+  await tester.ensureVisible(lien);
+  await tester.pump();
+  await tester.tap(lien);
+  await stabiliser(tester);
+  expect(lieu(routeur), adresseDemoSalleTb(role, situation));
+  expect(tester.takeException(), isNull);
+  return routeur;
+}
+
+AnimatedOpacity _fondu(WidgetTester tester) => tester.widget<AnimatedOpacity>(
+  find.ancestor(
+    of: find.byKey(CommandesMasquables.commandesKey),
+    matching: find.byType(AnimatedOpacity),
+  ),
+);
+
+bool _visible(WidgetTester tester) => _fondu(tester).opacity == 1;
+
+/// Vrai si les commandes ignorent le doigt (masquees, rien d'activable).
+bool _ignorees(WidgetTester tester) => tester
+    .widget<IgnorePointer>(
+      find
+          .ancestor(
+            of: find.byKey(CommandesMasquables.commandesKey),
+            matching: find.byType(IgnorePointer),
+          )
+          .first,
+    )
+    .ignoring;
+
+/// Laisse passer le delai de masquage, sans aucune interaction.
+Future<void> _attendreDelai(WidgetTester tester) async {
+  await tester.pump(CommandesMasquables.delaiParDefaut);
+  await tester.pump(const Duration(milliseconds: 500));
+}
+
+/// Le fondu : un cadre pour le lancer, puis sa duree.
+Future<void> _fondre(WidgetTester tester) async {
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 400));
+}
+
+/// Le bouton d'appel de ce libelle (icone seule en Mode Accessibilite).
+Finder _bouton(String libelle) => find.byWidgetPredicate(
+  (Widget w) => w is BoutonAppel && w.libelle == libelle,
+);
+
+Finder get _quitter => _bouton(t.salle.quitter);
+
+Finder get _question => find.text(t.salle.seance.quitterQuestion);
+
+Rect _support(WidgetTester tester) =>
+    tester.getRect(find.byType(ZoneSupport).first);
+
+void main() {
+  group('UX-01 : un doigt sur le contenu revele Micro, Camera, Quitter', () {
+    for (final RoleSeance role in RoleSeance.values) {
+      testWidgets(role.name, (WidgetTester tester) async {
+        await _ouvrir(tester, role);
+        // Entree dans la salle : la barre est visible, puis se masque.
+        expect(_visible(tester), isTrue);
+        await _attendreDelai(tester);
+        expect(_visible(tester), isFalse);
+        expect(_ignorees(tester), isTrue);
+        final String micro = find.text(t.salle.microOuvert).evaluate().isEmpty
+            ? t.salle.microCoupe
+            : t.salle.microOuvert;
+        // Un doigt au milieu du support.
+        await tester.tapAt(_support(tester).center);
+        await _fondre(tester);
+        expect(_visible(tester), isTrue);
+        expect(_ignorees(tester), isFalse);
+        // Dans cet ordre : Micro, Camera, Quitter (eleve, guidee) ; aucune
+        // action d'appel executee.
+        if (role != RoleSeance.enseignant) {
+          final List<String> ordre = <String>[
+            micro,
+            t.salle.cameraAllumee,
+            t.salle.quitter,
+          ];
+          final List<double> x = <double>[
+            for (final String l in ordre) tester.getCenter(_bouton(l)).dx,
+          ];
+          expect(x[0], lessThan(x[1]));
+          expect(x[1], lessThan(x[2]));
+        }
+        expect(find.text(micro), findsWidgets);
+        expect(_question, findsNothing);
+        expect(tester.takeException(), isNull);
+      });
+    }
+  });
+
+  group('UX-02 : la souris qui bouge revele la barre, sans clic', () {
+    for (final RoleSeance role in RoleSeance.values) {
+      testWidgets(role.name, (WidgetTester tester) async {
+        await _ouvrir(tester, role, taille: _bureau);
+        final TestGesture souris = await tester.createGesture(
+          kind: PointerDeviceKind.mouse,
+        );
+        await souris.addPointer(location: const Offset(700, 200));
+        await _attendreDelai(tester);
+        expect(_visible(tester), isFalse);
+        await souris.moveTo(const Offset(720, 260));
+        await _fondre(tester);
+        expect(_visible(tester), isTrue);
+        // Aucun panneau ouvert, aucune action : la salle est la meme.
+        expect(_question, findsNothing);
+        expect(
+          find.byKey(const ValueKey<String>('panneau-supports')),
+          findsNothing,
+        );
+        await souris.removePointer();
+      });
+    }
+  });
+
+  testWidgets('UX-03 : un geste commence sous la barre masquee n\'active '
+      'jamais Quitter ; le geste suivant l\'active', (
+    WidgetTester tester,
+  ) async {
+    await _ouvrir(tester, RoleSeance.eleve);
+    await _attendreDelai(tester);
+    expect(_visible(tester), isFalse);
+    final Offset ou = tester.getCenter(_quitter);
+    // Le doigt se pose ou Quitter va apparaitre, y reste, puis se leve.
+    final TestGesture doigt = await tester.startGesture(ou);
+    await _fondre(tester);
+    expect(_visible(tester), isTrue, reason: 'revelee pendant le geste');
+    await doigt.up();
+    await _fondre(tester);
+    expect(_question, findsNothing, reason: 'Quitter vole par le geste');
+    // Les commandes sont activables au geste suivant.
+    await tester.tapAt(ou);
+    await _fondre(tester);
+    expect(_question, findsOneWidget);
+  });
+
+  testWidgets('UX-04 : barre visible, Micro coupe une fois, rien d\'autre', (
+    WidgetTester tester,
+  ) async {
+    await _ouvrir(tester, RoleSeance.eleve);
+    final Rect avant = _support(tester);
+    expect(find.text(t.salle.microOuvert), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey<String>('bouton-micro')));
+    await _fondre(tester);
+    expect(find.text(t.salle.microCoupe), findsOneWidget);
+    expect(find.text(t.salle.microOuvert), findsNothing);
+    expect(find.text(t.salle.cameraAllumee), findsOneWidget);
+    expect(_question, findsNothing);
+    expect(_support(tester), avant);
+    // Aucun calque d'annotation n'est monte avant TB-7a : la part
+    // « aucune annotation creee » se prouve la (UX_REVIEW_TB, UX-04).
+  });
+
+  group('UX-05 : survolee ou focalisee, la barre reste au-dela du delai', () {
+    testWidgets('survol de la barre', (WidgetTester tester) async {
+      await _ouvrir(tester, RoleSeance.eleve, taille: _bureau);
+      final TestGesture souris = await tester.createGesture(
+        kind: PointerDeviceKind.mouse,
+      );
+      await souris.addPointer(location: const Offset(700, 200));
+      await souris.moveTo(
+        tester.getCenter(find.byKey(CommandesMasquables.commandesKey)),
+      );
+      await tester.pump();
+      await _attendreDelai(tester);
+      await _attendreDelai(tester);
+      expect(_visible(tester), isTrue);
+      expect(_ignorees(tester), isFalse);
+      // Le pointeur sort : la barre se masque apres le delai.
+      await souris.moveTo(const Offset(700, 200));
+      await tester.pump();
+      await _attendreDelai(tester);
+      expect(_visible(tester), isFalse);
+      await souris.removePointer();
+    });
+
+    testWidgets('focus sur une commande, meme apres un mouvement de souris', (
+      WidgetTester tester,
+    ) async {
+      await _ouvrir(tester, RoleSeance.eleve, taille: _bureau);
+      // Tab jusqu'a Micro.
+      for (int i = 0; i < 30; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        if (FocusManager.instance.primaryFocus?.debugLabel == 'bouton-micro') {
+          break;
+        }
+      }
+      expect(FocusManager.instance.primaryFocus?.debugLabel, 'bouton-micro');
+      // La souris bouge hors de la barre : le parcours clavier n'est plus la
+      // derniere interaction, mais une commande garde le focus.
+      final TestGesture souris = await tester.createGesture(
+        kind: PointerDeviceKind.mouse,
+      );
+      await souris.addPointer(location: const Offset(700, 200));
+      await souris.moveTo(const Offset(710, 210));
+      await tester.pump();
+      await _attendreDelai(tester);
+      await _attendreDelai(tester);
+      expect(_visible(tester), isTrue);
+      expect(_ignorees(tester), isFalse);
+      await souris.removePointer();
+    });
+  });
+
+  group('UX-06 : sans interaction, la barre se masque ; rien ne bouge', () {
+    for (final RoleSeance role in RoleSeance.values) {
+      for (final Size taille in <Size>[_telephone, _bureau]) {
+        testWidgets('${role.name} ${taille.width.toInt()}', (
+          WidgetTester tester,
+        ) async {
+          await _ouvrir(tester, role, taille: taille);
+          final Rect avant = _support(tester);
+          final Rect barre = tester.getRect(
+            find.byKey(CommandesMasquables.commandesKey),
+          );
+          // Marge de lecture : la barre ne couvre pas le support.
+          expect(avant.bottom, lessThanOrEqualTo(barre.top));
+          await _attendreDelai(tester);
+          expect(_visible(tester), isFalse);
+          expect(_support(tester), avant, reason: 'contenu et repere');
+          expect(
+            tester.getRect(find.byKey(CommandesMasquables.commandesKey)),
+            barre,
+          );
+        });
+      }
+    }
+  });
+
+  testWidgets('UX-08 : Tab revele la barre, entre par « Commandes de '
+      'l\'appel », puis Micro', (WidgetTester tester) async {
+    await _ouvrir(tester, RoleSeance.eleve, taille: _bureau);
+    // Un doigt a touche la salle (mode tactile), puis le delai passe.
+    await tester.tapAt(_support(tester).center);
+    await _attendreDelai(tester);
+    expect(_visible(tester), isFalse);
+    expect(_ignorees(tester), isTrue, reason: 'aucune cible cachee active');
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await _fondre(tester);
+    expect(_visible(tester), isTrue);
+    for (int i = 0; i < 30; i++) {
+      if (FocusManager.instance.primaryFocus?.debugLabel ==
+          'commandes-de-l-appel') {
+        break;
+      }
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+      // Pendant tout le parcours, la barre reste visible.
+      expect(_visible(tester), isTrue);
+    }
+    expect(
+      FocusManager.instance.primaryFocus?.debugLabel,
+      'commandes-de-l-appel',
+    );
+    expect(find.bySemanticsLabel(t.salle.seance.commandesAppel), findsWidgets);
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pump();
+    expect(FocusManager.instance.primaryFocus?.debugLabel, 'bouton-micro');
+    // Le temps passe, le focus reste dans la barre : elle reste.
+    await _attendreDelai(tester);
+    await _attendreDelai(tester);
+    expect(_visible(tester), isTrue);
+  });
+
+  testWidgets('panneau ouvert : la barre reste, Quitter au-dessus de la '
+      'feuille et activable (UX-07, telephone)', (WidgetTester tester) async {
+    await _ouvrir(tester, RoleSeance.enseignant, situation: SituationTb.lib01);
+    final Finder panneau = find.byKey(
+      const ValueKey<String>('panneau-supports'),
+    );
+    expect(panneau, findsOneWidget);
+    await _attendreDelai(tester);
+    await _attendreDelai(tester);
+    expect(_visible(tester), isTrue);
+    final Rect barre = tester.getRect(
+      find.byKey(CommandesMasquables.commandesKey),
+    );
+    expect(tester.getRect(panneau).bottom, lessThanOrEqualTo(barre.top));
+    await tester.tap(_quitter);
+    await _fondre(tester);
+    expect(_question, findsOneWidget);
+  });
+
+  testWidgets('micro bloque : la revelation ne le rend jamais actif', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter routeur = await monterRouteur(
+      tester,
+      adresseDemoSalle(RoleSeance.eleve, EtatDemoSalle.microBloque),
+    );
+    expect(lieu(routeur), contains('microBloque'));
+    expect(find.text(t.salle.microOuvert), findsNothing);
+    await _attendreDelai(tester);
+    await tester.tapAt(_support(tester).center);
+    await _fondre(tester);
+    expect(_visible(tester), isTrue);
+    expect(find.text(t.salle.microOuvert), findsNothing);
+    expect(find.text(t.salle.microCoupe), findsOneWidget);
+  });
+
+  // RTL force (K-41 n. 12), 320 px et texte x2 (SALLE-200) : la barre tient,
+  // sans debordement ; Quitter reste dans l'ecran, cible de 48 au moins.
+  for (final RoleSeance role in RoleSeance.values) {
+    for (final (Size, double) cas in <(Size, double)>[
+      (const Size(320, 700), 1),
+      (const Size(320, 700), 2),
+      (_telephone, 2),
+    ]) {
+      testWidgets(
+        '${role.name} RTL ${cas.$1.width.toInt()} x${cas.$2.toInt()}',
+        (WidgetTester tester) async {
+          fixerVueCapture(tester, cas.$1, 1);
+          await tester.pumpWidget(
+            hoteCapture(
+              Directionality(
+                textDirection: TextDirection.rtl,
+                child: DemoSallePage(role: role, situation: SituationTb.vis01),
+              ),
+              echelleTexte: cas.$2,
+            ),
+          );
+          await stabiliser(tester);
+          expect(tester.takeException(), isNull, reason: 'debordement');
+          final Rect q = tester.getRect(_quitter);
+          expect(q.left, greaterThanOrEqualTo(0));
+          expect(q.right, lessThanOrEqualTo(cas.$1.width));
+          expect(q.bottom, lessThanOrEqualTo(cas.$1.height));
+          expect(q.height, greaterThanOrEqualTo(48));
+          await _attendreDelai(tester);
+          expect(_visible(tester), isFalse);
+          await tester.tapAt(_support(tester).center);
+          await _fondre(tester);
+          expect(_visible(tester), isTrue);
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
+  }
+}

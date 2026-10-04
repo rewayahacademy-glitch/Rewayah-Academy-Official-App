@@ -112,16 +112,11 @@ class SalleSeance extends StatelessWidget {
     final Gabarit gabarit = AppGabarit.de(context);
     final bool large = gabarit == Gabarit.desktop;
     if (vue.role == RoleSeance.enseignant) {
-      // Telephone, panneau ouvert : la feuille descend jusqu'au bord de
-      // l'ecran (image) ; elle garde elle-meme la marge du systeme.
-      final bool feuilleOuverte =
-          gabarit == Gabarit.mobile &&
-          vue.voitBoutonsPanneaux &&
-          vue.panneau != PanneauOuvert.aucun;
+      // TB-2 : la barre de l'appel est en bas de l'ecran, au-dessus de la
+      // feuille ouverte (UX-07) ; c'est elle qui garde la marge du systeme.
       return Material(
         color: palette.surfaceCanvas.background,
         child: SafeArea(
-          bottom: !feuilleOuverte,
           child: _avecPreferenceRaccourcis(
             context,
             (bool raccourcis) => _FocusPanneaux(
@@ -158,7 +153,8 @@ class SalleSeance extends StatelessWidget {
               BandeauSecours(vue: vue, actions: actions, gouttiere: gouttiere),
               if (!agrandi) ?_appel(vue, gouttiere),
               Expanded(
-                child: CommandesMasquables(
+                child: _visioRevelee(
+                  vue: vue,
                   contenu: Padding(
                     padding: EdgeInsets.fromLTRB(
                       gouttiere,
@@ -172,7 +168,7 @@ class SalleSeance extends StatelessWidget {
                       contenu: contenuSupport,
                     ),
                   ),
-                  commandes: Padding(
+                  barre: Padding(
                     padding: EdgeInsets.fromLTRB(
                       gouttiere,
                       0,
@@ -231,32 +227,61 @@ class SalleSeance extends StatelessWidget {
               ),
               Ecart.vLg,
             ],
+            // TB-2 (VIS-01) : la barre de l'appel est posee par-dessus, en bas,
+            // dans CommandesMasquables ; le support garde sa marge de lecture
+            // (hauteur mesuree de la barre), masquee ou non.
             Expanded(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: gouttiere),
-                child: ZoneSupport(
-                  vue: vue,
-                  zoom: local.zoom,
-                  contenu: contenuSupport,
+              child: _visioRevelee(
+                vue: vue,
+                contenu: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: gouttiere),
+                        child: ZoneSupport(
+                          vue: vue,
+                          zoom: local.zoom,
+                          contenu: contenuSupport,
+                        ),
+                      ),
+                    ),
+                    if (large && _BarreBasse.utile(vue))
+                      Padding(
+                        padding: EdgeInsetsDirectional.only(
+                          start: gouttiere,
+                          end: gouttiere,
+                          top: AppSpacing.xl,
+                        ),
+                        child: _BarreBasse(
+                          vue: vue,
+                          actions: actions,
+                          local: local,
+                        ),
+                      ),
+                  ],
                 ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsetsDirectional.only(
-                start: gouttiere,
-                end: gouttiere,
-                top: large ? AppSpacing.xl : AppSpacing.lg,
-                bottom: large ? AppSpacing.xl : AppSpacing.md,
-              ),
-              child: large
-                  ? _BarreBasse(vue: vue, actions: actions, local: local)
-                  : DockSeance(
+                barre: Padding(
+                  padding: EdgeInsetsDirectional.only(
+                    start: gouttiere,
+                    end: gouttiere,
+                    top: large ? AppSpacing.xl : AppSpacing.lg,
+                    bottom: large ? AppSpacing.xl : AppSpacing.md,
+                  ),
+                  child: Center(
+                    heightFactor: 1,
+                    child: DockSeance(
                       vue: vue,
                       actions: actions,
                       microOuvert: local.microOuvert,
                       cameraAllumee: local.cameraAllumee,
-                      agrandi: agrandi,
+                      // Bureau : « Reduire » vit deja dans le zoom local.
+                      agrandi:
+                          agrandi && !(large && vue.voitZoomLocal(gabarit)),
                     ),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -436,6 +461,42 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
         : dessusDock + AppSpacing.respiration + AppSpacing.lg;
   }
 
+  /// La barre de l'appel de l'enseignant : pilule centree sur bureau,
+  /// panneau sur toute la largeur ailleurs.
+  Widget _barreEnseignant(VueSeance vue) {
+    const double gouttiere = AppPage.gouttiereMobile;
+    final Widget dock = DockSeance(
+      vue: vue,
+      actions: widget.actions,
+      microOuvert: widget.local.microOuvert,
+      cameraAllumee: widget.local.cameraAllumee,
+      focusSupports: _focusSupports,
+    );
+    if (widget.gabarit == Gabarit.desktop) {
+      return Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(
+          gouttiere,
+          AppSpacing.md,
+          gouttiere,
+          AppSpacing.lg,
+        ),
+        child: Center(heightFactor: 1, child: dock),
+      );
+    }
+    final double ecartDock = widget.gabarit == Gabarit.mobile
+        ? AppSpacing.sm
+        : AppSpacing.md;
+    return Padding(
+      padding: EdgeInsetsDirectional.fromSTEB(
+        gouttiere,
+        ecartDock,
+        gouttiere,
+        ecartDock,
+      ),
+      child: dock,
+    );
+  }
+
   void _annoncer(String message) {
     unawaited(
       SemanticsService.sendAnnouncement(
@@ -492,15 +553,23 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
           child: Stack(
             children: <Widget>[
               Positioned.fill(
-                child: _SalleEnseignant(
-                  vue: vue,
-                  actions: widget.actions,
-                  local: widget.local,
-                  gabarit: widget.gabarit,
-                  contenuSupport: widget.contenuSupport,
-                  focusEleves: _focusEleves,
-                  focusSupports: _focusSupports,
-                  focusSupport: _focusSupport,
+                // TB-2 (VIS-01) : la barre de l'appel par-dessus la salle, au-
+                // dessus des panneaux et de la feuille (UX-07). Maintenue
+                // quand un panneau est ouvert par l'enseignant (pas le
+                // panneau Eleves pose d'office sur bureau, EN-9).
+                child: _visioRevelee(
+                  vue: widget.vue,
+                  contenu: _SalleEnseignant(
+                    vue: vue,
+                    actions: widget.actions,
+                    local: widget.local,
+                    gabarit: widget.gabarit,
+                    contenuSupport: widget.contenuSupport,
+                    focusEleves: _focusEleves,
+                    focusSupports: _focusSupports,
+                    focusSupport: _focusSupport,
+                  ),
+                  barre: _barreEnseignant(vue),
                 ),
               ),
               // Le retour du micro : discret, au-dessus du dock, sans
@@ -676,12 +745,14 @@ class _SalleEnseignant extends StatelessWidget {
                 child: support,
               ),
             ),
+            // TB-2 : le dock est dans la barre de l'appel (par-dessus) ;
+            // pagination et zoom restent sous le support.
             Padding(
               padding: const EdgeInsetsDirectional.fromSTEB(
                 gouttiere,
                 AppSpacing.xxl,
                 gouttiere,
-                AppSpacing.lg,
+                0,
               ),
               child: Row(
                 children: <Widget>[
@@ -698,16 +769,9 @@ class _SalleEnseignant extends StatelessWidget {
                           : const SizedBox.shrink(),
                     ),
                   ),
-                  DockSeance(
-                    vue: vue,
-                    actions: actions,
-                    microOuvert: local.microOuvert,
-                    cameraAllumee: local.cameraAllumee,
-                    focusSupports: focusSupports,
-                  ),
                   Expanded(
                     child: Align(
-                      alignment: AlignmentDirectional.centerStart,
+                      alignment: AlignmentDirectional.centerEnd,
                       child: vue.voitZoomLocal(gabarit)
                           ? Padding(
                               padding: const EdgeInsetsDirectional.only(
@@ -735,7 +799,6 @@ class _SalleEnseignant extends StatelessWidget {
         // Telephone : les ecarts entre les rangees se resserrent d'un
         // palier, la place revient au support (image mobile, enseignant).
         final Widget ecart = mobile ? Ecart.vSm : Ecart.vMd;
-        final double ecartDock = mobile ? AppSpacing.sm : AppSpacing.md;
         final Widget milieu = mobile || !outils
             ? support
             : Row(
@@ -782,21 +845,7 @@ class _SalleEnseignant extends StatelessWidget {
                 ),
               ),
             ],
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(
-                gouttiere,
-                ecartDock,
-                gouttiere,
-                ecartDock,
-              ),
-              child: DockSeance(
-                vue: vue,
-                actions: actions,
-                microOuvert: local.microOuvert,
-                cameraAllumee: local.cameraAllumee,
-                focusSupports: focusSupports,
-              ),
-            ),
+            // TB-2 : la barre de l'appel est posee par-dessus, en bas.
           ],
         );
     }
@@ -899,13 +948,6 @@ class _SalleEnseignant extends StatelessWidget {
             onSuivante: actions.onPageSuivante,
           )
         : null;
-    final Widget dock = DockSeance(
-      vue: vue,
-      actions: actions,
-      microOuvert: local.microOuvert,
-      cameraAllumee: local.cameraAllumee,
-      focusSupports: focusSupports,
-    );
     final Widget? zoom = vue.voitZoomLocal(gabarit)
         ? ZoomLocal(
             zoom: local.zoom,
@@ -929,7 +971,7 @@ class _SalleEnseignant extends StatelessWidget {
                 children: <Widget>[
                   SizedBox(width: largeurColonneSupportsSeance, child: panneau),
                   Ecart.hMd,
-                  Expanded(child: support),
+                  Expanded(child: _sousSupport(support, pagination, zoom)),
                   Ecart.hMd,
                   SizedBox(
                     width: largeurColonneDroiteSeance,
@@ -945,27 +987,6 @@ class _SalleEnseignant extends StatelessWidget {
                         : Column(children: <Widget>[?boutons]),
                   ),
                 ],
-              ),
-            ),
-          ),
-          // Image CLV-08 : le dock part sous le debut du support, pagination
-          // et zoom a sa droite.
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(
-              gouttiere + largeurPanneauSeance,
-              AppSpacing.xl,
-              gouttiere,
-              AppSpacing.lg,
-            ),
-            // A 1200 de large (bas du gabarit desktop), la rangee se reduit
-            // d'un bloc plutot que de deborder.
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              alignment: AlignmentDirectional.centerStart,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                spacing: AppSpacing.xl,
-                children: <Widget>[dock, ?pagination, ?zoom],
               ),
             ),
           ),
@@ -1001,7 +1022,7 @@ class _SalleEnseignant extends StatelessWidget {
                         ),
                         Ecart.vMd,
                       ],
-                      Expanded(child: support),
+                      Expanded(child: _sousSupport(support, pagination, zoom)),
                     ],
                   ),
                 ),
@@ -1020,23 +1041,28 @@ class _SalleEnseignant extends StatelessWidget {
             ),
           ),
         ),
-        // La barre basse sous le support seulement.
+      ],
+    );
+  }
+
+  /// Bureau, panneau ouvert : pagination et zoom sous le support, dans sa
+  /// colonne (le panneau garde toute sa hauteur). TB-2 (UX_REVIEW_TB n. 27
+  /// g) : la rangee passe a la ligne au lieu de reduire le texte agrandi ;
+  /// le dock est dans la barre de l'appel, posee par-dessus en bas.
+  Widget _sousSupport(Widget support, Widget? pagination, Widget? zoom) {
+    if (pagination == null && zoom == null) return support;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Expanded(child: support),
         Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(
-            gouttiere,
-            AppSpacing.xl,
-            gouttiere + largeurColonneSeance + AppSpacing.md,
-            AppSpacing.lg,
-          ),
-          // Pres du bas du gabarit desktop (1200 a 1400), la rangee se
-          // reduit d'un bloc plutot que de deborder, comme sur CLV-08.
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              spacing: AppSpacing.md,
-              children: <Widget>[?pagination, dock, ?zoom],
-            ),
+          padding: const EdgeInsets.only(top: AppSpacing.md),
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            spacing: AppSpacing.md,
+            runSpacing: AppSpacing.sm,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: <Widget>[?pagination, ?zoom],
           ),
         ),
       ],
@@ -1053,35 +1079,10 @@ class _SalleEnseignant extends StatelessWidget {
   }) {
     const double gouttiere = AppPage.gouttiereMobile;
     final bool mobile = gabarit == Gabarit.mobile;
-    final double ecartDock = mobile ? AppSpacing.sm : AppSpacing.md;
-    Widget dessous(double largeurVolet) => Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: gouttiere),
-            child: support,
-          ),
-        ),
-        Padding(
-          // Web etroit : le dock se centre a droite du volet (image).
-          padding: EdgeInsetsDirectional.fromSTEB(
-            mobile ? gouttiere : largeurVolet + AppSpacing.sm + AppSpacing.xs,
-            ecartDock,
-            mobile ? gouttiere : AppSpacing.sm,
-            ecartDock,
-          ),
-          child: Align(
-            child: DockSeance(
-              vue: vue,
-              actions: actions,
-              microOuvert: local.microOuvert,
-              cameraAllumee: local.cameraAllumee,
-              focusSupports: focusSupports,
-            ),
-          ),
-        ),
-      ],
+    // TB-2 : le dock est dans la barre de l'appel, sous le panneau.
+    final Widget dessous = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: gouttiere),
+      child: support,
     );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1104,12 +1105,23 @@ class _SalleEnseignant extends StatelessWidget {
               );
               return Stack(
                 children: <Widget>[
-                  Positioned.fill(child: dessous(largeurVolet)),
+                  Positioned.fill(child: dessous),
                   if (mobile)
                     Positioned.fill(
                       // COUPE-MOTS-1 : sous un en-tete haut (titre a 200 %),
                       // le support visible cede sa place a la feuille.
-                      top: supportVisiblePour(contexte, c.maxHeight),
+                      // TB-2 : la feuille s'arrete au-dessus de la barre de
+                      // l'appel (UX-07) ; elle garde sa hauteur d'avant, le
+                      // support visible au-dessus cede la hauteur de la barre.
+                      top: math.max(
+                        0,
+                        supportVisiblePour(
+                              contexte,
+                              c.maxHeight +
+                                  CommandesMasquables.margeDe(contexte),
+                            ) -
+                            CommandesMasquables.margeDe(contexte),
+                      ),
                       child: panneau,
                     )
                   else
@@ -1321,7 +1333,8 @@ class BoutonPanneau extends StatelessWidget {
   }
 }
 
-/// Desktop : indicateur a gauche, dock au centre, zoom local a droite.
+/// Desktop : indicateur a gauche, zoom local a droite. TB-2 : le dock est
+/// dans la barre de l'appel, posee par-dessus en bas (VIS-01).
 class _BarreBasse extends StatelessWidget {
   const _BarreBasse({
     required this.vue,
@@ -1332,6 +1345,11 @@ class _BarreBasse extends StatelessWidget {
   final VueSeance vue;
   final ActionsSeance actions;
   final EtatLocalSeance local;
+
+  /// Vrai si la rangee a quelque chose a montrer.
+  static bool utile(VueSeance vue) =>
+      (vue.support != null && vue.voitIndicateurPage(Gabarit.desktop)) ||
+      vue.voitZoomLocal(Gabarit.desktop);
 
   @override
   Widget build(BuildContext context) {
@@ -1346,13 +1364,6 @@ class _BarreBasse extends StatelessWidget {
                 ? IndicateurPage(page: support.page, pages: support.pages)
                 : const SizedBox.shrink(),
           ),
-        ),
-        DockSeance(
-          vue: vue,
-          actions: actions,
-          microOuvert: local.microOuvert,
-          cameraAllumee: local.cameraAllumee,
-          agrandi: local.agrandi && support != null,
         ),
         Expanded(
           child: Align(
@@ -1586,3 +1597,22 @@ Widget? _appel(VueSeance vue, double gouttiere) {
     ),
   );
 }
+
+/// TB-2 (VIS-01, plan V2 §4.1, §18) : la barre de l'appel (Micro, Camera,
+/// Quitter) dans [CommandesMasquables], pour l'eleve, la guidee et
+/// l'enseignant, a tous les gabarits : revelee au toucher (non consomme),
+/// a la souris, au Tab (« Commandes de l'appel ») ; retenue au survol, au
+/// focus, panneau ouvert ou erreur critique ([VueSeance.visioMaintenue]),
+/// lecteur d'ecran ; posee par-dessus le contenu, qui garde une marge egale
+/// a sa hauteur mesuree : rien ne bouge quand elle se masque.
+Widget _visioRevelee({
+  required VueSeance vue,
+  required Widget contenu,
+  required Widget barre,
+}) => CommandesMasquables(
+  contenu: contenu,
+  commandes: barre,
+  maintenir: vue.visioMaintenue,
+  margeLecture: true,
+  libelleEntree: t.salle.seance.commandesAppel,
+);

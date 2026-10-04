@@ -811,27 +811,37 @@ class VueSeance {
       gabarit == Gabarit.desktop &&
       (_enseignant || (role == RoleSeance.eleve && optionQ6));
 
-  /// Le dock, dans l'ordre (I-4). Agrandir n'existe que si un support est
-  /// partage : sans support, il n'y a rien a agrandir.
+  /// Le dock, dans l'ordre (I-4).
+  ///
+  /// TB-2 (VIS-01, plan V2 §4.1, UX_REVIEW_TB n. 1) : la barre de l'appel
+  /// est Micro, Camera, Quitter, dans cet ordre. Agrandir la quitte (le
+  /// Focus passe dans Commandes en TB-4 ; la salle garde « Reduire » tant
+  /// que le focus local est actif, [DockSeance.agrandi]) ; Reseau la quitte
+  /// (un indicateur, D5). Supports, Partager et Outils de l'enseignant y
+  /// restent jusqu'a ce que TB-4 (CMD-01) les pose dans Commandes : les
+  /// retirer avant laisserait l'enseignant sans eux.
   List<CommandeDock> get commandesDock => switch (role) {
-    // EN-10 (maquettes planche 3, 04 §18.3) : barre compacte Supports,
-    // Micro, Camera, Partager, « Ouvrir les outils d'enseignement ».
     RoleSeance.enseignant => const <CommandeDock>[
       CommandeDock.supports,
       CommandeDock.micro,
       CommandeDock.camera,
       CommandeDock.partager,
       CommandeDock.outils,
-      CommandeDock.reseau,
       CommandeDock.quitter,
     ],
     RoleSeance.eleve || RoleSeance.guidee => <CommandeDock>[
       CommandeDock.micro,
       if (cameraAutorisee) CommandeDock.camera,
-      if (support != null) CommandeDock.agrandir,
       CommandeDock.quitter,
     ],
   };
+
+  /// TB-2 (plan V2 §18.1) : la barre de l'appel reste visible, sans
+  /// masquage temporise : un panneau ouvert, ou une erreur critique de
+  /// connexion (reconnexion, echec, hors ligne).
+  bool get visioMaintenue =>
+      (voitBoutonsPanneaux && panneau != PanneauOuvert.aucun) ||
+      !commandesPublicationActives;
 
   // --- Surface pedagogique (TB-1b) ---
 

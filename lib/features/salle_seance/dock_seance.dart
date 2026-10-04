@@ -153,7 +153,8 @@ class DockSeance extends StatelessWidget {
   final bool microOuvert;
   final bool cameraAllumee;
 
-  /// Le support occupe l'ecran : le bouton devient « Reduire ».
+  /// Le support occupe l'ecran (focus local) : « Reduire » est rendu avant
+  /// Quitter, pour en sortir (TB-2).
   final bool agrandi;
 
   /// EN-10 : le focus rendu a Supports a la fermeture de son panneau.
@@ -273,7 +274,19 @@ class DockSeance extends StatelessWidget {
     // Une bascule (Micro, Camera) porte son mot d'etat : sa case est plus
     // large que celle d'une commande ordinaire (ETATS-BTN-1).
     final List<bool> bascules = <bool>[];
-    for (final CommandeDock commande in vue.commandesDock) {
+    // TB-2 : Agrandir a quitte la barre de l'appel ; tant que le focus local
+    // est actif ([agrandi]), sa sortie « Reduire » y reste, avant Quitter
+    // (TB18 : la sortie du focus toujours atteignable, jusqu'a TB-4).
+    final List<CommandeDock> commandes = <CommandeDock>[
+      for (final CommandeDock c in vue.commandesDock) ...<CommandeDock>[
+        if (c == CommandeDock.quitter &&
+            agrandi &&
+            !vue.commandesDock.contains(CommandeDock.agrandir))
+          CommandeDock.agrandir,
+        c,
+      ],
+    ];
+    for (final CommandeDock commande in commandes) {
       // Enseignant desktop (image CLV-06) : un filet vertical avant Quitter.
       if (large &&
           commande == CommandeDock.quitter &&
