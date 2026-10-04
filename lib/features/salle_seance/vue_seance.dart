@@ -837,11 +837,13 @@ class VueSeance {
   };
 
   /// TB-2 (plan V2 §18.1) : la barre de l'appel reste visible, sans
-  /// masquage temporise : un panneau ouvert, ou une erreur critique de
-  /// connexion (reconnexion, echec, hors ligne).
+  /// masquage temporise : un panneau ouvert, une erreur critique de
+  /// connexion (reconnexion, echec, hors ligne) ou de media (micro refuse
+  /// par le systeme, P09).
   bool get visioMaintenue =>
       (voitBoutonsPanneaux && panneau != PanneauOuvert.aucun) ||
-      !commandesPublicationActives;
+      !commandesPublicationActives ||
+      microBloque;
 
   // --- Surface pedagogique (TB-1b) ---
 

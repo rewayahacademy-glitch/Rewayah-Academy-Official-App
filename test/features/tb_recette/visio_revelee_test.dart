@@ -327,7 +327,8 @@ void main() {
     expect(_question, findsOneWidget);
   });
 
-  testWidgets('micro bloque : la revelation ne le rend jamais actif', (
+  testWidgets('micro bloque : erreur critique media, la barre reste sans '
+      'toucher l\'ecran ; elle ne rend jamais le micro actif', (
     WidgetTester tester,
   ) async {
     final GoRouter routeur = await monterRouteur(
@@ -336,12 +337,150 @@ void main() {
     );
     expect(lieu(routeur), contains('microBloque'));
     expect(find.text(t.salle.microOuvert), findsNothing);
+    // Aucune interaction : deux delais passent, la barre reste (§18.1).
     await _attendreDelai(tester);
+    await _attendreDelai(tester);
+    expect(_visible(tester), isTrue);
+    expect(_ignorees(tester), isFalse);
+    // Un doigt sur le contenu : toujours pas de micro actif.
     await tester.tapAt(_support(tester).center);
     await _fondre(tester);
+    await _attendreDelai(tester);
     expect(_visible(tester), isTrue);
     expect(find.text(t.salle.microOuvert), findsNothing);
     expect(find.text(t.salle.microCoupe), findsOneWidget);
+  });
+
+  // Plan V2 §18.1 : « Erreur critique de connexion ou media : barre
+  // visible ». Reconnexion, echec, hors ligne : la barre ne se masque pas,
+  // meme apres un toucher et deux delais.
+  group('erreur critique de connexion : la barre reste', () {
+    for (final EtatDemoSalle etat in <EtatDemoSalle>[
+      EtatDemoSalle.reconnexion,
+      EtatDemoSalle.echec,
+      EtatDemoSalle.horsLigne,
+    ]) {
+      for (final RoleSeance role in RoleSeance.values) {
+        testWidgets('${etat.name} ${role.name}', (WidgetTester tester) async {
+          final GoRouter routeur = await monterRouteur(
+            tester,
+            adresseDemoSalle(role, etat),
+          );
+          expect(lieu(routeur), contains(etat.name));
+          expect(find.byKey(CommandesMasquables.commandesKey), findsOneWidget);
+          await _attendreDelai(tester);
+          await _attendreDelai(tester);
+          expect(_visible(tester), isTrue);
+          expect(_ignorees(tester), isFalse);
+          expect(_quitter, findsOneWidget);
+          expect(tester.takeException(), isNull);
+        });
+      }
+    }
+
+    testWidgets('temoin : seance en cours, la meme attente masque la barre', (
+      WidgetTester tester,
+    ) async {
+      await monterRouteur(
+        tester,
+        adresseDemoSalle(RoleSeance.eleve, EtatDemoSalle.repos),
+      );
+      await _attendreDelai(tester);
+      await _attendreDelai(tester);
+      expect(_visible(tester), isFalse);
+    });
+  });
+
+  // Plan V2 §18.1 : « Parcours clavier actif, focus hors de la barre : pas
+  // de masquage automatique » ; Quitter jamais masque au clavier.
+  for (final RoleSeance role in RoleSeance.values) {
+    testWidgets('clavier, focus hors de la barre : jamais masquee '
+        '(${role.name})', (WidgetTester tester) async {
+      await _ouvrir(tester, role, taille: _bureau);
+      // Un doigt d'abord (mode tactile) : la barre se masque.
+      await tester.tapAt(_support(tester).center);
+      await _attendreDelai(tester);
+      expect(_visible(tester), isFalse);
+      // Le clavier reprend ; le focus avance jusqu'a une cible HORS de la
+      // barre et de son entree.
+      final Element barre = tester.element(
+        find.byKey(CommandesMasquables.entreeKey),
+      );
+      bool dansBarre() {
+        final BuildContext? c = FocusManager.instance.primaryFocus?.context;
+        if (c == null) return false;
+        if (identical(c, barre)) return true;
+        bool dedans = false;
+        c.visitAncestorElements((Element e) {
+          if (identical(e, barre)) {
+            dedans = true;
+            return false;
+          }
+          return true;
+        });
+        return dedans;
+      }
+
+      bool horsBarre = false;
+      for (int i = 0; i < 40; i++) {
+        await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+        await tester.pump();
+        final FocusNode? f = FocusManager.instance.primaryFocus;
+        if (f != null &&
+            f.context != null &&
+            !dansBarre() &&
+            f.debugLabel != 'commandes-de-l-appel') {
+          horsBarre = true;
+          break;
+        }
+      }
+      expect(horsBarre, isTrue, reason: 'une cible focalisable hors barre');
+      expect(
+        FocusManager.instance.highlightMode,
+        FocusHighlightMode.traditional,
+      );
+      await _fondre(tester);
+      expect(_visible(tester), isTrue);
+      // Le temps passe, focus toujours hors de la barre : elle reste,
+      // Quitter activable.
+      await _attendreDelai(tester);
+      await _attendreDelai(tester);
+      await _attendreDelai(tester);
+      expect(dansBarre(), isFalse);
+      expect(_visible(tester), isTrue);
+      expect(_ignorees(tester), isFalse);
+      expect(tester.getRect(_quitter).height, greaterThanOrEqualTo(48));
+    });
+  }
+
+  // Plan V2 §18.1 : « Trait ou geste de zoom en cours : ne pas masquer ».
+  testWidgets('un doigt pose au-dela du delai : la barre reste ; leve, '
+      'elle se masque apres le delai', (WidgetTester tester) async {
+    await _ouvrir(tester, RoleSeance.eleve);
+    final TestGesture doigt = await tester.startGesture(
+      _support(tester).center,
+    );
+    await _fondre(tester);
+    expect(_visible(tester), isTrue);
+    await _attendreDelai(tester);
+    await _attendreDelai(tester);
+    await _attendreDelai(tester);
+    expect(_visible(tester), isTrue, reason: 'geste en cours');
+    // Deux doigts (zoom) : le premier se leve, le second reste.
+    final TestGesture second = await tester.startGesture(
+      _support(tester).center + const Offset(40, 0),
+      pointer: 7,
+    );
+    await doigt.up();
+    await _attendreDelai(tester);
+    await _attendreDelai(tester);
+    expect(_visible(tester), isTrue, reason: 'un contact reste pose');
+    await second.up();
+    await tester.pump();
+    expect(_visible(tester), isTrue);
+    await _attendreDelai(tester);
+    expect(_visible(tester), isFalse);
+    expect(_question, findsNothing);
   });
 
   // RTL force (K-41 n. 12), 320 px et texte x2 (SALLE-200) : la barre tient,
