@@ -195,6 +195,7 @@ void main() {
       double echelle = 1,
       ThemeMode theme = ThemeMode.light,
       TextDirection sens = TextDirection.ltr,
+      bool sessionALaRacine = true,
     }) async {
       fixerVueCapture(tester, taille, 1);
       final GoRouter routeur = GoRouter(
@@ -205,7 +206,7 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: <Override>[
-            sansPersonneConnectee(),
+            if (sessionALaRacine) sansPersonneConnectee(),
             serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
           ],
           child: TranslationProvider(
@@ -360,6 +361,29 @@ void main() {
       await monterDemo(tester, etat: EtatDemoEnseignant.vide);
       expect(find.text(t.enseignant.revenus.vide), findsOneWidget);
       expect(find.text(t.enseignant.revenus.totalEstime), findsNothing);
+    });
+
+    testWidgets('releve de la demonstration : « pas encore disponible » meme '
+        'sans session a la racine, jamais l\'etat d\'erreur (R5-03, '
+        'FI-VAGUE-CORR)', (WidgetTester tester) async {
+      // L'hote des captures ne fournit aucune session a la racine : le
+      // releve doit se lire dans la portee de la demonstration, a son port.
+      await monterDemo(
+        tester,
+        taille: const Size(1440, 1400),
+        sessionALaRacine: false,
+      );
+      expect(
+        find.text(t.enseignant.revenus.releveIndisponibleTitre),
+        findsOneWidget,
+      );
+      final Iterable<EtatSysteme> etats = tester.widgetList<EtatSysteme>(
+        find.byType(EtatSysteme),
+      );
+      expect(
+        etats.map((EtatSysteme e) => e.nature),
+        everyElement(isNot(NatureEtat.echecServeur)),
+      );
     });
 
     testWidgets('hors ligne : le bandeau, et le contenu reste lisible', (

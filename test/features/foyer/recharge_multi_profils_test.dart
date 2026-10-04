@@ -1,8 +1,9 @@
 // FI-7 (guide Finance V4 §1.6, §4, §5.3, §8 LOT F4 ; maquettes 04 et 07) :
 // la recharge multi-profils du tuteur, UN seul moteur (`RechargeFoyerPage`)
 // sur `/tuteur/foyer/recharge`, UNE seule page (revue FI-VAGUE-R, R3-01 :
-// ni etapes ni « Tout selectionner ») ; trois colonnes et le bandeau
-// « Acces a regulariser » a 1440 (R3-02). Un, plusieurs ou tous les profils ; un
+// ni etapes ni « Tout selectionner ») ; profils et paiement cote a cote,
+// solde et montant suggere lisibles, et le bandeau « Acces a regulariser »
+// a 1440 (R3-02, FI-VAGUE-CORR). Un, plusieurs ou tous les profils ; un
 // montant par profil, desactive tant que le profil n'est pas coche ; le
 // total RENDU par le port, jamais additionne a l'ecran ; le seul paiement
 // web (ni App Store ni Play) ; « Recharger Ibrahim » (Foyer) et « Recharger »
@@ -13,6 +14,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -752,8 +754,8 @@ void main() {
     expect(find.byType(LigneMoyenPaiement), findsNothing);
   });
 
-  testWidgets('1440 : trois colonnes (profils, explication, recapitulatif et '
-      'paiement), le bandeau « Acces a regulariser » dessous, sans croix, '
+  testWidgets('1440 : les profils et le paiement cote a cote, l\'explication '
+      'sous le total, le bandeau « Acces a regulariser » dessous, sans croix, '
       'qui ajoute Ibrahim a la recharge (R3-02)', (WidgetTester tester) async {
     await _monter(
       tester,
@@ -768,13 +770,52 @@ void main() {
     );
     final Rect total = tester.getRect(find.byKey(RechargeFoyerPage.totalKey));
     final Rect payer = tester.getRect(find.byKey(RechargeFoyerPage.payerKey));
-    // Trois colonnes cote a cote, en haut de la page : jamais une colonne
-    // de telephone centree (contrat D).
-    expect(profils.right, lessThan(explication.left));
-    expect(explication.right, lessThan(total.left));
-    expect(profils.top, lessThan(explication.bottom));
+    // Les profils et le paiement cote a cote, en haut de la page : jamais
+    // une colonne de telephone centree (contrat D).
+    expect(profils.right, lessThan(total.left));
     expect(total.top, lessThan(profils.bottom));
     expect(total.right - profils.left, greaterThan(AppPage.largeurDialogue));
+    // L'explication du paiement unique sous le total qu'elle explique,
+    // dans la meme colonne : jamais seule dans une colonne vide
+    // (FI-VAGUE-CORR).
+    expect(
+      _dans(
+        RechargeFoyerPage.totalKey,
+        find.byKey(RechargeFoyerPage.repartitionKey),
+      ),
+      findsOneWidget,
+    );
+    expect(explication.left, greaterThanOrEqualTo(total.left));
+    expect(explication.right, lessThanOrEqualTo(total.right));
+    // La colonne des profils a la moitie de la page, bornee a la colonne
+    // de dialogue, et le solde comme le montant suggere tiennent sur une ou
+    // deux lignes a cote du montant (l'ancienne composition les coupait en
+    // quatre lignes chacun dans la police de test, six a l'ecran).
+    expect(profils.width, greaterThanOrEqualTo(total.width - 0.5));
+    expect(profils.width, lessThanOrEqualTo(AppPage.largeurDialogue + 0.5));
+    int mesures = 0;
+    for (final String id in <String>[_mariam, _ibrahim, _aicha]) {
+      final Finder textes = find.descendant(
+        of: find.byKey(RechargeFoyerPage.profilDe(id)),
+        matching: find.byType(RichText),
+      );
+      for (final Element e in textes.evaluate()) {
+        final RenderParagraph p = e.renderObject! as RenderParagraph;
+        final String texte = p.text.toPlainText();
+        if (!texte.contains(':')) continue;
+        final double ligne = p.getFullHeightForCaret(
+          const TextPosition(offset: 0),
+        );
+        expect(
+          (p.size.height / ligne).round(),
+          lessThanOrEqualTo(2),
+          reason: '« $texte » doit tenir sur une ou deux lignes',
+        );
+        mesures++;
+      }
+    }
+    // Trois soldes et le montant suggere d'Ibrahim, au moins.
+    expect(mesures, greaterThanOrEqualTo(4));
     // Le bandeau, en bas, sur toute la largeur, sans croix (Q-FI-6).
     final Finder bandeau = find.byKey(RechargeFoyerPage.bandeauKey);
     expect(bandeau, findsOneWidget);

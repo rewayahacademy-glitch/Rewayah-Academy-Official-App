@@ -22,8 +22,14 @@
 //   Play), puis « Payer {total} » : le total que la source vient de rendre.
 //   Si elle le change apres un choix, le bouton dit le nouveau total ; tant
 //   qu'elle ne l'a pas rendu, il attend, avec une phrase qui dit pourquoi.
-// - Sur bureau (classe large, maquette 07) : trois colonnes, les profils,
-//   l'explication, le recapitulatif et le paiement ; dessous, le bandeau
+// - Sur bureau (classe large, maquette 07, sa composition seulement,
+//   K-63) : les profils a gauche, assez larges pour que solde et montant
+//   suggere restent sur une ligne chacun a cote du montant ; a droite le
+//   recapitulatif (l'explication du paiement unique sous son total, la
+//   ou elle se rapporte, comme sur telephone), le moyen et « Payer ».
+//   La colonne du milieu de la maquette porte quatre lignes d'aide que
+//   la recharge n'a pas : une seule phrase y flottait seule, a cote d'une
+//   colonne de profils trop etroite (FI-VAGUE-CORR). Dessous, le bandeau
 //   « Acces a regulariser » sans croix (Q-FI-6), dont le lien « Ajouter
 //   {prenom} a la recharge » coche le profil avec le montant suggere (revue
 //   ligne 7 d). Plus etroit : une seule colonne, le bandeau en tete.
@@ -464,9 +470,9 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     return _Colonne(auBordDeDebut: true, child: etat);
   }
 
-  /// La page, une fois les profils lus : une colonne, ou les trois colonnes
-  /// de la maquette 07 a partir de la classe large (contrat D : jamais une
-  /// colonne de telephone centree sur un bureau).
+  /// La page, une fois les profils lus : une colonne, ou les profils et le
+  /// paiement cote a cote a partir de la classe large (maquette 07 ; contrat
+  /// D : jamais une colonne de telephone centree sur un bureau).
   Widget _contenu(
     BuildContext context,
     List<BeneficiaireRecharge> liste,
@@ -475,10 +481,11 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     final bool large =
         AppGabarit.classe(MediaQuery.sizeOf(context).width) ==
         ClasseLargeur.large;
-    final Widget profils = _profils(context, liste);
+    final Widget profils = _profils(context, liste, large: large);
     // La repartition (guide §5.3) : un seul paiement, chaque montant au
     // solde de son profil, jamais un solde commun. Sans objet pour un seul
-    // profil (revue FI-VAGUE-R R4-06).
+    // profil (revue FI-VAGUE-R R4-06). Toujours sous le total qu'elle
+    // explique, dans la colonne du paiement.
     final Widget? repartition = _unSeul(liste)
         ? null
         : _Note(
@@ -491,7 +498,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
       context,
       liste,
       horsLigne,
-      repartition: large ? null : repartition,
+      repartition: repartition,
     );
     if (!large) {
       return _Colonne(
@@ -510,17 +517,24 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Expanded(flex: 5, child: profils),
-            Ecart.hXl,
-            if (repartition != null) ...<Widget>[
-              Expanded(flex: 3, child: _Carte(lignes: <Widget>[repartition])),
+        // La moitie de la page aux profils, bornee a la colonne de dialogue
+        // (la liste ne s'etire jamais a la page) ; le paiement prend le
+        // reste.
+        LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints contraintes) => Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              SizedBox(
+                width: math.min(
+                  AppPage.largeurDialogue,
+                  (contraintes.maxWidth - AppSpacing.xl) / 2,
+                ),
+                child: profils,
+              ),
               Ecart.hXl,
+              Expanded(child: paiement),
             ],
-            Expanded(flex: 4, child: paiement),
-          ],
+          ),
         ),
         if (bandeau != null) ...<Widget>[Ecart.vXxl, bandeau],
       ],
@@ -539,8 +553,12 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
   );
 
   /// « Profils a recharger » : une seule carte a lignes fines, les profils
-  /// etant lies par le meme paiement (K-55).
-  Widget _profils(BuildContext context, List<BeneficiaireRecharge> liste) {
+  /// etant lies par le meme paiement (K-55). [large] : la colonne du bureau.
+  Widget _profils(
+    BuildContext context,
+    List<BeneficiaireRecharge> liste, {
+    required bool large,
+  }) {
     // Le montant en bout de ligne quand la place le permet (tablette,
     // bureau, texte peu agrandi) ; sinon sous la ligne, au bord de fin.
     final bool enLigne =
@@ -565,7 +583,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
           child: CarteGroupee(
             sections: <Widget>[
               for (final BeneficiaireRecharge b in liste)
-                _ligneProfil(context, b, enLigne: enLigne),
+                _ligneProfil(context, b, enLigne: enLigne, large: large),
             ],
           ),
         ),
@@ -626,6 +644,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     BuildContext context,
     BeneficiaireRecharge b, {
     required bool enLigne,
+    required bool large,
   }) {
     final bool coche = _selection.contains(b.id);
     final String? solde = switch (b.solde) {
@@ -690,7 +709,10 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
       child: enLigne
           ? Row(
               children: <Widget>[
-                Expanded(child: identite),
+                // Sur bureau, l'identite prend les deux tiers : un partage
+                // egal laissait au solde et au montant suggere une colonne
+                // de quelques mots (six lignes a 1440, FI-VAGUE-CORR).
+                Expanded(flex: large ? 2 : 1, child: identite),
                 Ecart.hMd,
                 Flexible(child: montant),
               ],
@@ -799,7 +821,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
 
   /// Le recapitulatif et le total rendus, le moyen de paiement, puis
   /// « Payer {total} » (maquettes 04 et 07). [repartition] : l'explication,
-  /// posee sous le total quand la page n'a qu'une colonne.
+  /// posee sous le total, dans la meme colonne, a toutes les largeurs.
   Widget _paiement(
     BuildContext context,
     List<BeneficiaireRecharge> liste,

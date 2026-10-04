@@ -220,6 +220,12 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
     revenusEnseignantProvider.overrideWith(
       (Ref ref) => ref.watch(portRevenusEnseignantProvider).moisEnCours(),
     ),
+    // Le releve aussi : resolu a la racine, il lisait la session de
+    // l'application, et son echec s'affichait « Impossible de charger » au
+    // lieu de l'etat honnete du port, « pas encore disponible » (R5-03).
+    releveEnseignantProvider.overrideWith(
+      (Ref ref) => ref.watch(portRevenusEnseignantProvider).releve(),
+    ),
     // Profil (ENS-05).
     profilEnseignantProvider.overrideWith(
       (Ref _) async => DonneesEnseignantDemo.profil,
