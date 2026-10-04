@@ -1538,16 +1538,24 @@ class _CoquilleNavigation extends ConsumerWidget {
       mode: InterfaceMode.standard,
     );
     final List<Destination> visibles = destinationsPour(role: role, mode: mode);
+    // COM-F-Q5 : sur la page des notifications, la cloche est la seule
+    // entree active. La page vit sous une branche (la Journee, l'Accueil),
+    // mais la barre ne surligne pas cet onglet : deux selections a la fois
+    // diraient deux endroits.
+    final String? cheminCloche = Routes.notificationsPour(role);
+    final bool surNotifications = chemin == cheminCloche;
 
     final Widget coquille = NavShell(
       destinations: visibles,
-      indexActif: indexDansBarre(
-        visibles: visibles,
-        completes: destinations,
-        indexComplet: navigationShell.currentIndex < destinations.length
-            ? navigationShell.currentIndex
-            : null,
-      ),
+      indexActif: surNotifications
+          ? null
+          : indexDansBarre(
+              visibles: visibles,
+              completes: destinations,
+              indexComplet: navigationShell.currentIndex < destinations.length
+                  ? navigationShell.currentIndex
+                  : null,
+            ),
       masquerBarreBasse: Routes.estTacheFocalisee(chemin),
       // Le rail replie a icones seules est la maquette du tuteur ; l'eleve et
       // l'enseignant gardent leurs libelles visibles sur tablette, comme avant
@@ -1596,7 +1604,6 @@ class _CoquilleNavigation extends ConsumerWidget {
       // 04/10). Sans point tant que le port est indisponible, comme le
       // tuteur. Elle s'ajoute, en dernier, aux actions deja posees au-dessus
       // (le raccourci Espaces de CT-9), et se montre active sur sa page.
-      final String? cheminCloche = Routes.notificationsPour(role);
       final Widget avecCloche = cheminCloche == null
           ? coquille
           : Builder(
@@ -1604,7 +1611,7 @@ class _CoquilleNavigation extends ConsumerWidget {
                 actions: <Widget>[
                   ...ActionsEnteteCoquille.de(contexte),
                   ClocheNotifications(
-                    actif: chemin == cheminCloche,
+                    actif: surNotifications,
                     onPress: () => GoRouter.of(contexte).go(cheminCloche),
                   ),
                 ],
@@ -1629,7 +1636,7 @@ class _CoquilleNavigation extends ConsumerWidget {
       actions: <Widget>[
         if (large) const BasculeTheme(),
         ClocheNotifications(
-          actif: chemin == Routes.tuteurNotifications,
+          actif: surNotifications,
           onPress: () => GoRouter.of(context).go(Routes.tuteurNotifications),
         ),
       ],

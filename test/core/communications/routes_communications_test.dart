@@ -99,7 +99,9 @@ Finder _dans(Key cle, Finder cible) =>
 
 void main() {
   group('Chaque route Communications resout vers son ecran', () {
-    // (chemin, role, ecran, destination active de la barre ou null)
+    // (chemin, role, ecran, destination active de la barre ou null).
+    // null : pas de coquille. -1 : coquille sans onglet actif, la cloche
+    // y est la seule entree active (COM-F-Q5).
     final List<(String, AppRole, Type, int?)> table =
         <(String, AppRole, Type, int?)>[
           (Routes.tuteurMessages, AppRole.guardian, MessagesPage, 0),
@@ -117,7 +119,7 @@ void main() {
             Routes.enseignantNotifications,
             AppRole.teacher,
             NotificationsPage,
-            0,
+            -1,
           ),
           (
             Routes.publierAnnoncePour('g1'),
@@ -135,7 +137,7 @@ void main() {
         expect(find.byType(ecran), findsOneWidget);
         if (actif != null) {
           expect(
-            tester.widget<NavShell>(find.byType(NavShell)).indexActif,
+            tester.widget<NavShell>(find.byType(NavShell)).indexActif ?? -1,
             actif,
             reason: 'aucune destination ajoutee : la pose garde la sienne',
           );
@@ -237,7 +239,8 @@ void main() {
       await stabiliser(tester);
       expect(lieu(routeur), Routes.controleurNotifications);
       expect(find.byType(NotificationsPage), findsOneWidget);
-      expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 0);
+      // COM-F-Q5 : la cloche est la seule entree active, aucun onglet.
+      expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, isNull);
     });
 
     testWidgets('l eleve n a toujours aucune cloche', (
@@ -446,6 +449,8 @@ void main() {
     bool actif(WidgetTester tester) => tester
         .widget<ClocheNotifications>(find.byType(ClocheNotifications))
         .actif;
+    int? ongletActif(WidgetTester tester) =>
+        tester.widget<NavShell>(find.byType(NavShell)).indexActif;
 
     for (final (String accueil, String page, AppRole role)
         in <(String, String, AppRole)>[
@@ -466,6 +471,7 @@ void main() {
       ) async {
         final GoRouter routeur = await _monter(tester, accueil, role);
         expect(actif(tester), isFalse);
+        expect(ongletActif(tester), isNotNull);
         final SemanticsHandle repos = tester.ensureSemantics();
         expect(
           tester
@@ -480,6 +486,12 @@ void main() {
         await stabiliser(tester);
         expect(find.byType(NotificationsPage), findsOneWidget);
         expect(actif(tester), isTrue);
+        // Une seule selection a l'ecran : la cloche, pas l'onglet parent.
+        expect(
+          ongletActif(tester),
+          isNull,
+          reason: 'sur sa page, la cloche est la seule entree active',
+        );
         final SemanticsHandle semantique = tester.ensureSemantics();
         expect(
           tester
@@ -502,6 +514,11 @@ void main() {
       routeur.go(Routes.adminNotifications);
       await stabiliser(tester);
       expect(actif(tester), isTrue);
+      expect(
+        tester.widget<AdminShell>(find.byType(AdminShell)).domaineActif,
+        isNull,
+        reason: 'sur ses notifications, aucun domaine n est surligne',
+      );
     });
   });
 
