@@ -365,7 +365,7 @@ void main() {
   });
 
   // AD9-M1 : une lecture en erreur sans reseau dit « hors ligne », pas
-  // l'echec serveur ; Reessayer relit une fois, le reseau revenu.
+  // l'echec serveur ; Reessayer relit une fois (le faux port ne sert son erreur qu'une fois).
   testWidgets('G11 ter : lecture en erreur hors ligne, etat hors ligne', (
     WidgetTester tester,
   ) async {
