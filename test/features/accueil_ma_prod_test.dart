@@ -437,14 +437,24 @@ void main() {
   group('Aucun mot coupe (lecon 8), 320 x2 et 1440, LTR et RTL', () {
     setUpAll(chargerPolicesDuDepot);
 
-    final List<(String, PortAccueilAccessibilite?)> etats =
-        <(String, PortAccueilAccessibilite?)>[
-          ('indisponible', null),
+    final List<(String, PortAccueilAccessibilite?, bool)> etats =
+        <(String, PortAccueilAccessibilite?, bool)>[
+          ('indisponible', null, false),
           (
             'contenu',
             const PortAccueilAccessibiliteDemo(
               eleve: EleveDemoAccessibilite.mariam,
             ),
+            false,
+          ),
+          // DASH-MA-PROD-b : la ligne d'etat hors ligne de la carte de
+          // seance (« une conn / exion » a 320 px x2 sur l'ancien code).
+          (
+            'hors ligne',
+            const PortAccueilAccessibiliteDemo(
+              eleve: EleveDemoAccessibilite.mariam,
+            ),
+            true,
           ),
           (
             'vide',
@@ -452,6 +462,7 @@ void main() {
               eleve: EleveDemoAccessibilite.idriss,
               situation: SituationAccueilDemo.vide,
             ),
+            false,
           ),
           (
             'erreur',
@@ -459,9 +470,11 @@ void main() {
               eleve: EleveDemoAccessibilite.mariam,
               situation: SituationAccueilDemo.erreur,
             ),
+            false,
           ),
         ];
-    for (final (String nom, PortAccueilAccessibilite? port) in etats) {
+    for (final (String nom, PortAccueilAccessibilite? port, bool horsLigne)
+        in etats) {
       for (final TextDirection sens in TextDirection.values) {
         for (final (double largeur, double echelle) forme in <(double, double)>[
           (320, 2),
@@ -473,6 +486,7 @@ void main() {
             await _monter(
               tester,
               port: port,
+              horsLigne: horsLigne,
               taille: Size(forme.$1, 3200),
               echelle: forme.$2,
               sens: sens,

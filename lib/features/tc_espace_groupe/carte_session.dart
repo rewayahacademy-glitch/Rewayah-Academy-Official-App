@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
@@ -500,7 +501,9 @@ class _LigneEtat extends StatelessWidget {
           Icon(icone.repos, size: AppSpacing.xxl),
           Ecart.hSm,
           Flexible(
-            child: Text(
+            // Aucun mot coupe a 320 px texte x2 (lecon 8, DASH-MA-PROD-b :
+            // « une conn / exion » hors ligne sur l'Accueil MA).
+            child: TexteSansCoupure(
               texte,
               // Un decompte : chiffres tabulaires (revue phase 0, jetons D4).
               style: AppTypography.tabulaire(

@@ -1,0 +1,130 @@
+// Captures de DASH-MA-PROD-b : l'Accueil du Mode Accessibilite sur la VRAIE
+// route de l'eleve (`/eleve`), apres correction de la relecture : hors
+// ligne (« Reessayer » actif, il relit le reseau) et vide (plus de « ; »
+// seul en debut de ligne a 320 px texte x2).
+//
+// Saute sans CAPTURE_DIR : la CI ne l'execute jamais et n'ecrit rien.
+
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/accessibilite/port_accueil_accessibilite.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/router/app_router.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
+
+import '../router/support_routeur.dart' show sessionActive, surchargesRouteur;
+import '../support/harnais.dart' show FausseSourceSession;
+import 'outil_capture.dart';
+
+Future<void> _monter(
+  WidgetTester tester, {
+  required ThemeMode theme,
+  required double echelle,
+  PortAccueilAccessibilite? port,
+  bool horsLigne = false,
+  String? aller,
+}) async {
+  late GoRouter routeur;
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: <Override>[
+        ...surchargesRouteur(
+          FausseSourceSession(
+            sessionActive(AppRole.student, mode: InterfaceMode.enfant),
+          ),
+        ),
+        if (port != null)
+          portAccueilAccessibiliteProvider.overrideWithValue(port),
+        if (horsLigne)
+          horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
+      ],
+      child: TranslationProvider(
+        child: RepaintBoundary(
+          key: cadreCapture,
+          child: Consumer(
+            builder: (BuildContext _, WidgetRef ref, Widget? _) {
+              routeur = ref.read(routeurProvider);
+              return MaterialApp.router(
+                debugShowCheckedModeBanner: false,
+                theme: AppTheme.pour(InterfaceMode.enfant, Brightness.light),
+                darkTheme: AppTheme.pour(InterfaceMode.enfant, Brightness.dark),
+                themeMode: theme,
+                routerConfig: routeur,
+                locale: AppLocale.fr.flutterLocale,
+                supportedLocales: AppLocaleUtils.supportedLocales,
+                localizationsDelegates: GlobalMaterialLocalizations.delegates,
+                builder: (BuildContext contexte, Widget? app) => MediaQuery(
+                  data: MediaQuery.of(contexte)
+                      .copyWith(textScaler: TextScaler.linear(echelle)),
+                  child: app!,
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    ),
+  );
+  await stabiliser(tester);
+  if (aller != null) {
+    routeur.go(aller);
+    await stabiliser(tester);
+  }
+}
+
+void main() {
+  group('Capture : DASH-MA-PROD-b', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    const PortAccueilAccessibilite contenu = PortAccueilAccessibiliteDemo(
+      eleve: EleveDemoAccessibilite.mariam,
+    );
+    final Map<String, (PortAccueilAccessibilite?, bool, String?)> etats =
+        <String, (PortAccueilAccessibilite?, bool, String?)>{
+          'vide': (
+            const PortAccueilAccessibiliteDemo(
+              eleve: EleveDemoAccessibilite.idriss,
+              situation: SituationAccueilDemo.vide,
+            ),
+            false,
+            null,
+          ),
+          'horsligne': (contenu, true, null),
+        };
+    final List<(String, Size, ThemeMode, double)> formes =
+        <(String, Size, ThemeMode, double)>[
+          ('320x2_clair', const Size(320, 3400), ThemeMode.light, 2),
+          ('320x2_sombre', const Size(320, 3400), ThemeMode.dark, 2),
+          ('390_clair', const Size(390, 1300), ThemeMode.light, 1),
+          ('390_sombre', const Size(390, 1300), ThemeMode.dark, 1),
+          ('1440_clair', const Size(1440, 1100), ThemeMode.light, 1),
+        ];
+    for (final MapEntry<String, (PortAccueilAccessibilite?, bool, String?)> e
+        in etats.entries) {
+      for (final (String nom, Size taille, ThemeMode theme, double echelle)
+          in formes) {
+        testWidgets('${e.key}_$nom', (WidgetTester tester) async {
+          fixerVueCapture(tester, taille, 1);
+          await _monter(
+            tester,
+            theme: theme,
+            echelle: echelle,
+            port: e.value.$1,
+            horsLigne: e.value.$2,
+            aller: e.value.$3,
+          );
+          debugPrint(
+            'PNG ${await capturer(tester, 'ma_prod_b_${e.key}_$nom')}',
+          );
+        });
+      }
+    }
+  });
+}
