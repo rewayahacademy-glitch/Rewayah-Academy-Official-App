@@ -285,6 +285,120 @@ void main() {
     }
   });
 
+  group('CTX-02 : l\'oeil fait defiler la liste du panneau jusqu\'a la '
+      'section controle, et elle seule (320 px, texte x2)', () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final RoleSeance role in RoleSeance.values) {
+      testWidgets(role.name, (WidgetTester tester) async {
+        const Size petit = Size(320, 700);
+        await _monter(
+          tester,
+          DemoSallePage(role: role, situation: SituationTb.ctx02),
+          taille: petit,
+          texte: 2,
+        );
+        final Finder liste = find.byKey(
+          ValueKey<String>(
+            role == RoleSeance.enseignant
+                ? 'panneau-eleves'
+                : 'panneau-contexte',
+          ),
+        );
+        final Finder controle = find.byKey(SectionContexte.cleControle);
+        ScrollableState defilement(Finder f) => tester.state<ScrollableState>(
+          find.descendant(of: f, matching: find.byType(Scrollable)).first,
+        );
+        final Finder panneau = find.byType(PanneauSeance);
+
+        // Le panneau garde sa tete a l'ecran : aucun Scrollable ancetre de la
+        // liste n'a defile (le panneau entier defile a 320 px x2).
+        void teteVisible() {
+          final Finder entier = find.byKey(
+            const ValueKey<String>('panneau-seance-defile'),
+          );
+          if (entier.evaluate().isNotEmpty) {
+            expect(
+              tester
+                  .state<ScrollableState>(
+                    find
+                        .descendant(
+                          of: entier,
+                          matching: find.byType(Scrollable),
+                        )
+                        .first,
+                  )
+                  .position
+                  .pixels,
+              0,
+              reason: 'le panneau entier a defile : sa tete sort de l\'ecran',
+            );
+          }
+          expect(tester.getRect(panneau.first).top, greaterThanOrEqualTo(0));
+        }
+
+        // Ouverte par la situation (a la section controle).
+        expect(controle, findsOneWidget);
+        expect(defilement(liste).position.pixels, greaterThan(0));
+        teteVisible();
+
+        Future<void> reduire() async {
+          // Comme une personne : la liste defile jusqu'au bout, « Reduire »
+          // s'arrete au-dessus de la barre de l'appel (texte x2 : la barre
+          // se pose par-dessus le contenu).
+          // La liste de l'enseignant (panneau Eleves) est paresseuse : le
+          // contexte est sa premiere rangee, « Reduire » y est amene.
+          if (role == RoleSeance.enseignant) {
+            await tester.ensureVisible(_reduire);
+          } else {
+            final ScrollPosition p = defilement(liste).position;
+            p.jumpTo(p.maxScrollExtent);
+          }
+          await tester.pump();
+          await tester.tap(_reduire);
+          await stabiliser(tester);
+          expect(_contexte, findsNothing);
+          // Tout ce qui reste ouvert revient en haut : le cas suivant part
+          // d'une liste non defilee.
+          for (final Element e in find.byType(Scrollable).evaluate()) {
+            final ScrollableState etat =
+                (e as StatefulElement).state as ScrollableState;
+            if (etat.position.hasPixels && etat.position.pixels != 0) {
+              etat.position.jumpTo(0);
+            }
+          }
+          await tester.pump();
+        }
+
+        // L'avatar ouvre le contexte en haut : la section du controle est
+        // hors de la partie visible de la liste (sans defilement, elle n'y
+        // serait pas).
+        await reduire();
+        await tester.tap(_avatar);
+        await stabiliser(tester);
+        expect(_contexte, findsOneWidget);
+        expect(defilement(liste).position.pixels, 0);
+        expect(
+          tester.getRect(controle).top,
+          greaterThanOrEqualTo(tester.getRect(liste).bottom - 1),
+          reason: 'precondition : la section doit etre hors de vue',
+        );
+
+        // L'oeil : la meme liste defile jusqu'a la section, rien d'autre.
+        await reduire();
+        await tester.tap(_oeil);
+        await stabiliser(tester);
+        expect(_contexte, findsOneWidget);
+        expect(defilement(liste).position.pixels, greaterThan(0));
+        final Rect vue = tester.getRect(liste);
+        final Rect r = tester.getRect(controle);
+        expect(r.top, greaterThanOrEqualTo(vue.top - 1));
+        expect(r.top, lessThan(vue.bottom));
+        teteVisible();
+        expect(tester.takeException(), isNull);
+      });
+    }
+  });
+
   testWidgets('Echap reduit le contexte et rend le focus a l\'avatar', (
     WidgetTester tester,
   ) async {

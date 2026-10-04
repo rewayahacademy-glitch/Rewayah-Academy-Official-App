@@ -185,13 +185,19 @@ class _SectionContexteState extends State<SectionContexte> {
   }
 
   /// L'oeil ouvre le panneau A LA SECTION du controle (CTX-02) : elle est
-  /// amenee dans la partie visible du panneau.
+  /// amenee en haut de la liste du panneau. Seule la liste la plus proche
+  /// defile : `Scrollable.ensureVisible` ferait aussi defiler les ancetres
+  /// (le panneau entier quand il defile a 320 px a 200 %), et la tete du
+  /// panneau (poignee, titre) sortirait de l'ecran.
   void _amenerControle() {
     if (widget.vue.contexte != ContexteOuvert.controle) return;
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
       final BuildContext? section = _controle.currentContext;
       if (!mounted || section == null) return;
-      Scrollable.ensureVisible(section, duration: Duration.zero);
+      final ScrollableState? liste = Scrollable.maybeOf(section);
+      final RenderObject? cible = section.findRenderObject();
+      if (liste == null || cible == null) return;
+      liste.position.ensureVisible(cible);
     });
   }
 

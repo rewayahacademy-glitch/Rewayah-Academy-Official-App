@@ -72,6 +72,17 @@ class CommandesMasquables extends StatefulWidget {
   static double margeDe(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<_MargeCommandes>()?.marge ?? 0;
 
+  /// La hauteur du contenu que les commandes recouvrent quand elles se
+  /// posent par-dessus (marge de lecture au-dela de [partMaxMarge], texte
+  /// agrandi sur petit ecran) ; 0 quand la marge les loge, ou hors de
+  /// [CommandesMasquables]. Un panneau maintenu ouvert sous des commandes
+  /// retenues (TB-3) s'arrete au-dessus d'elles au lieu d'etre recouvert.
+  static double recouvrementDe(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<_MargeCommandes>()
+          ?.recouvrement ??
+      0;
+
   /// Vrai : la barre du bas de `NavShell` suit les commandes (effacee quand
   /// elles se masquent, revenue a la meme touche, toujours visible avec
   /// lecteur d'ecran ou clavier).
@@ -130,12 +141,20 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
   /// La derniere marge de lecture mesuree (transmise au contenu).
   double _marge = 0;
 
+  /// La hauteur du contenu recouverte par les commandes posees par-dessus.
+  double _recouvrement = 0;
+
   /// Une marge mesuree differente : transmise au cadre suivant (une fois
   /// a l'ouverture ou quand le texte change de taille, jamais au masquage).
-  void _surMarge(double marge) {
-    if (marge == _marge) return;
+  void _surMarge(double marge, double recouvrement) {
+    if (marge == _marge && recouvrement == _recouvrement) return;
     SchedulerBinding.instance.addPostFrameCallback((Duration _) {
-      if (mounted && marge != _marge) setState(() => _marge = marge);
+      if (mounted && (marge != _marge || recouvrement != _recouvrement)) {
+        setState(() {
+          _marge = marge;
+          _recouvrement = recouvrement;
+        });
+      }
     });
   }
 
@@ -390,7 +409,11 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
         children: <Widget>[
           LayoutId(
             id: _Partie.contenu,
-            child: _MargeCommandes(marge: _marge, child: widget.contenu),
+            child: _MargeCommandes(
+              marge: _marge,
+              recouvrement: _recouvrement,
+              child: widget.contenu,
+            ),
           ),
           LayoutId(id: _Partie.commandes, child: zoneCommandes),
         ],
@@ -409,7 +432,7 @@ class _DispositionCommandes extends MultiChildLayoutDelegate {
   _DispositionCommandes({required this.margeLecture, required this.onMarge});
 
   final bool margeLecture;
-  final ValueChanged<double> onMarge;
+  final void Function(double marge, double recouvrement) onMarge;
 
   @override
   void performLayout(Size size) {
@@ -425,7 +448,7 @@ class _DispositionCommandes extends MultiChildLayoutDelegate {
             barre.height <= size.height * CommandesMasquables.partMaxMarge
         ? barre.height
         : 0;
-    onMarge(marge);
+    onMarge(marge, margeLecture ? barre.height - marge : 0);
     layoutChild(
       _Partie.contenu,
       BoxConstraints.tight(Size(size.width, size.height - marge)),
@@ -440,10 +463,16 @@ class _DispositionCommandes extends MultiChildLayoutDelegate {
 
 /// La marge de lecture mesuree, pour le contenu ([CommandesMasquables.margeDe]).
 class _MargeCommandes extends InheritedWidget {
-  const _MargeCommandes({required this.marge, required super.child});
+  const _MargeCommandes({
+    required this.marge,
+    required this.recouvrement,
+    required super.child,
+  });
 
   final double marge;
+  final double recouvrement;
 
   @override
-  bool updateShouldNotify(_MargeCommandes ancien) => ancien.marge != marge;
+  bool updateShouldNotify(_MargeCommandes ancien) =>
+      ancien.marge != marge || ancien.recouvrement != recouvrement;
 }

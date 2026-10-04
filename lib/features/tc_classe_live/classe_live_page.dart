@@ -62,6 +62,7 @@ class ContexteClasseLive {
     this.seuilMax,
     this.supportActifId,
     this.descriptionSupport,
+    this.supportPresente,
     this.support,
     this.dock,
     this.bibliotheque,
@@ -101,6 +102,12 @@ class ContexteClasseLive {
   /// [support] n'est fourni. `null` tant que le catalogue n'est pas branche
   /// (BR-1) ; la demonstration et les captures le remplissent.
   final SupportSeance? descriptionSupport;
+
+  /// Le support a page fixe PRESENTE a la classe (TB-1b, plan V2 §8), port
+  /// neutre : `null` tant que l'etat partage n'est pas branche (TB-BR). Avec
+  /// lui, la capsule compacte remplace la vignette pendant le partage (TB-3,
+  /// UI-01) ; sans lui, la vignette reste.
+  final SupportPageFixe? supportPresente;
 
   /// Le rendu du support, par Agent B ou Agent C.
   final WidgetBuilder? support;
@@ -331,6 +338,10 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
   /// Le panneau ouvert a cote du support (enseignant).
   PanneauOuvert _panneau = PanneauOuvert.aucun;
 
+  /// TB-3 (CTX-01, CTX-02) : le contexte deplie depuis la capsule. Etat
+  /// local d'interface, jamais diffuse.
+  ContexteOuvert _contexte = ContexteOuvert.aucun;
+
   /// Le zoom local, qui n'agit que sur cet ecran.
   double _zoom = 1;
 
@@ -434,7 +445,12 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
             ? () => unawaited(_basculerCamera(cameraOuverte))
             : null,
         // L'etat du lien, en un mot (J7), lu du moteur : aucune mesure maison.
+        // Depuis TB-2, le Reseau n'est plus dans la barre : la feuille s'ouvre
+        // par « Detail du reseau » du contexte enseignant (TB-3, plan §19.6).
         onReseau: enseignant ? () => unawaited(_voirReseau(vue)) : null,
+        // TB-3 : l'avatar et l'oeil de la capsule deplient le contexte,
+        // « Reduire » le replie ; etat local, rien n'est diffuse.
+        onContexte: (ContexteOuvert c) => setState(() => _contexte = c),
         onZoomMoins: () => _zoomer(-0.1),
         onZoomPlus: () => _zoomer(0.1),
         onEleves: enseignant && salle.voitLesParticipants && vue.elevesConnus
@@ -680,7 +696,10 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
       );
       if (seance != null) {
         return _salleSeance(
-          vue: seance,
+          vue: seance.copyWith(
+            supportPresente: contexte.supportPresente,
+            contexte: _contexte,
+          ),
           salle: salle,
           support: slotSupport,
           bibliotheque: slotBibliotheque,

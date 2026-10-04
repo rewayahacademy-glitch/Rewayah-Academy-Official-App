@@ -394,6 +394,14 @@ Widget _surContexteEleve({
       final Gabarit gabarit = AppGabarit.de(contexte);
       final bool feuille = gabarit == Gabarit.mobile;
       final ValueChanged<ContexteOuvert>? reduire = actions.onContexte;
+      // Texte agrandi sur petit ecran : la barre de l'appel, retenue tant
+      // que le contexte est ouvert, se pose par-dessus le contenu. La
+      // feuille garde sa tete et une rangee au-dessus d'elle, et sa liste
+      // defile jusqu'au-dessus de la barre : rien ne reste recouvert.
+      final double recouvert = math.min(
+        CommandesMasquables.recouvrementDe(contexte),
+        c.maxHeight,
+      );
       final Widget panneau = Focus(
         autofocus: true,
         skipTraversal: true,
@@ -405,7 +413,7 @@ Widget _surContexteEleve({
           forme: feuille ? FormePanneau.feuille : FormePanneau.volet,
           enfant: ListView(
             key: const ValueKey<String>('panneau-contexte'),
-            padding: const EdgeInsets.only(bottom: AppSpacing.md),
+            padding: EdgeInsets.only(bottom: AppSpacing.md + recouvert),
             children: <Widget>[SectionContexte(vue: vue, actions: actions)],
           ),
         ),
@@ -415,7 +423,7 @@ Widget _surContexteEleve({
           Positioned.fill(child: contenu),
           if (feuille)
             Positioned.fill(
-              top: supportVisiblePour(contexte, c.maxHeight),
+              top: supportVisiblePour(contexte, c.maxHeight - recouvert),
               child: panneau,
             )
           else
