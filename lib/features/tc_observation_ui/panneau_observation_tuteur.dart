@@ -489,6 +489,7 @@ class _Vignette extends StatelessWidget {
         parle,
         v.parle(nom: nom),
         etiquette: etiquette,
+        sansImage: etiquette ? null : v.cameraFermee,
       ),
     );
   }
@@ -500,11 +501,19 @@ class _Vignette extends StatelessWidget {
     bool parle,
     String nomQuiParle, {
     required bool etiquette,
+    required String? sansImage,
   }) {
     return Semantics(
       key: cle,
       container: true,
-      label: parle ? nomQuiParle : nom,
+      // TUILE-TUTEUR-1b : sans image, le cadre dit tout en un seul noeud
+      // (« Mariam, Camera fermee ») ; la tuile partagee ne le redit pas
+      // dessous, sinon le nom est annonce deux fois.
+      label: <String>[
+        if (parle) nomQuiParle else nom,
+        ?sansImage,
+      ].join(', '),
+      excludeSemantics: sansImage != null,
       child: DecoratedBox(
         position: DecorationPosition.foreground,
         decoration: BoxDecoration(

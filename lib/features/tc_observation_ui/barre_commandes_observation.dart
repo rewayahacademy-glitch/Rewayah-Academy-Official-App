@@ -10,6 +10,7 @@ import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/pressable.dart';
 
@@ -17,6 +18,12 @@ import '../../core/widgets/pressable.dart';
 /// l'icone au-dessus du libelle (maquette V8 M3) : trois libelles cote a cote
 /// ne tiennent plus sur 390 points.
 const double seuilTexteEmpile = 1.3;
+
+/// Un point de garde pour l'arrondi des glyphes : au plancher lisible,
+/// [TexteSansCoupure] ne retire plus sa marge de deux points, le mot doit
+/// seulement tenir dans sa place ; ce point evite de jouer la decision a un
+/// arrondi pres.
+const double _gardeArrondi = 1;
 
 /// La barre de commandes de la salle d'observation : **trois elements, pas un
 /// de plus** (decision du directeur, `03` section 1 bis-5) : le son recu,
@@ -65,26 +72,43 @@ class BarreCommandesObservation extends StatelessWidget {
         _barre(context, c.maxWidth),
   );
 
-  /// Vrai quand le mot le plus long des libelles affiches ne tient pas a
-  /// cote de son medaillon dans un tiers de la barre, meme reduit au plancher
-  /// lisible de [TexteSansCoupure] (OBS-COUPE-1 : a 320 px, texte a 100 %, il
-  /// restait environ 28 px pour « Agrandir »). La barre passe alors en deux
-  /// rangees, comme a texte tres agrandi.
-  bool _troisTropEtroits(BuildContext context, double largeur) {
+  /// Vrai quand le mot le plus long d'un libelle affiche ne tient pas a cote
+  /// de son medaillon dans la case qu'il aura VRAIMENT en une rangee, meme
+  /// reduit au plancher lisible de [TexteSansCoupure]. La barre passe alors
+  /// en deux rangees, comme a texte tres agrandi.
+  ///
+  /// OBS-COUPE-1b (revue du 4 octobre 2026) : la regle precedente supposait
+  /// trois tiers egaux. Or, en une rangee, « Quitter » garde sa largeur
+  /// propre (pilule, M4) et ne laisse aux deux autres que le reste, et le mot
+  /// etait mesure a l'echelle de l'appareil au lieu de celle du theme, sur
+  /// laquelle [TexteSansCoupure] pose son plancher. « Agrandir »
+  /// etait coupe a 340 et 360 px, « Son interrompu » a 375 px, « Reduire » a
+  /// 320 px.
+  bool _uneRangeeCoupe(BuildContext context, double largeur) {
     if (!largeur.isFinite) return false;
     final v = t.tc.observation.visite;
     final TextStyle style = _style(context, Theme.of(context).textTheme);
-    final TextScaler echelle = MediaQuery.textScalerOf(context);
+    final double facteur = MediaQuery.textScalerOf(context).scale(1);
+    // L'echelle la plus basse que [TexteSansCoupure] s'autorise.
+    final double plancher = math.min(echelleMinimaleLisible, facteur);
     final double motLong =
         <String>[
               if (sonRecu) v.sonRecu else v.sonInterrompu,
               if (agrandi) v.reduire else v.agrandir,
             ]
-            .map((String l) => largeurMotLePlusLong(context, l, style, echelle))
+            .map(
+              (String l) =>
+                  largeurMotLePlusLong(context, l, style, TextScaler.noScaling),
+            )
             .reduce(math.max);
-    final double tiers = (largeur - 2 * AppSpacing.sm - 2 * AppSpacing.xs) / 3;
-    return tiers - _Medaillon.diametre - AppSpacing.sm <
-        motLong * echelleMinimaleLisible;
+    final double cases =
+        (largeur -
+            2 * AppSpacing.sm -
+            2 * AppSpacing.xs -
+            _Quitter.largeur(context)) /
+        2;
+    return cases - _Medaillon.diametre - AppSpacing.sm <
+        motLong * plancher + _gardeArrondi;
   }
 
   Widget _barre(BuildContext context, double largeur) {
@@ -93,7 +117,7 @@ class BarreCommandesObservation extends StatelessWidget {
         !large &&
         (MediaQuery.textScalerOf(context).scale(AppSpacing.lg) / AppSpacing.lg >
                 seuilTexteEmpile ||
-            _troisTropEtroits(context, largeur));
+            _uneRangeeCoupe(context, largeur));
     final Widget son = _TemoinSon(sonRecu: sonRecu, empile: empile);
     final Widget agrandir = _Agrandir(
       agrandi: agrandi,
@@ -310,6 +334,29 @@ class _Quitter extends StatelessWidget {
 
   final VoidCallback onPress;
   final bool empile;
+
+  /// La largeur propre de la pilule en une rangee : les marges
+  /// d'[ActionPrincipale] (`xl` de chaque cote), l'icone (`xl`), l'ecart
+  /// (`sm`) et le libelle a l'echelle de l'appareil, mesure dans la graisse
+  /// la plus large qu'il puisse prendre (600).
+  static double largeur(BuildContext context) {
+    final TextStyle style = AppTypography.graisse(
+      Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
+      FontWeight.w600,
+    );
+    final TextPainter p = TextPainter(
+      text: TextSpan(
+        text: t.tc.observation.visite.quitter,
+        style: DefaultTextStyle.of(context).style.merge(style),
+      ),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    final double texte = p.width;
+    p.dispose();
+    return 2 * AppSpacing.xl + AppSpacing.xl + AppSpacing.sm + texte;
+  }
 
   @override
   Widget build(BuildContext context) {
