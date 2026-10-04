@@ -3,6 +3,7 @@
 // masque apres une deconnexion ou une nouvelle session. Jamais conserve.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/comptable/visibilite_montants.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';

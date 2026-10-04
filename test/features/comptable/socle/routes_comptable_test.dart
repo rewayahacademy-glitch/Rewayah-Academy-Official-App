@@ -15,6 +15,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/bascule_montants.dart';
+import 'package:rewayah_academy/core/widgets/bouton_icone.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/sous_navigation_domaine.dart';
@@ -348,9 +349,13 @@ void main() {
       await stabiliser(tester);
       expect(find.byType(TresoreriePage), findsOneWidget);
       expect(_coquille(tester).indexActif, 2);
+      // Le repere « Demonstration » fusionne la semantique sous lui : on lit
+      // le libelle du bouton lui-meme.
       expect(
-        find.bySemanticsLabel(t.comptable.commun.afficherMontants),
-        findsOneWidget,
+        tester
+            .widget<BoutonIcone>(find.byKey(BasculeMontants.cleBouton))
+            .libelle,
+        t.comptable.commun.afficherMontants,
       );
 
       await tester.pumpWidget(
