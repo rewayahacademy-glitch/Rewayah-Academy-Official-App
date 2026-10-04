@@ -218,10 +218,7 @@ class SurfaceFiche extends StatelessWidget {
         ombre: palette.ombre,
         arrondi: AppRadius.arrondiMd,
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(marge),
-        child: child,
-      ),
+      child: Padding(padding: const EdgeInsets.all(marge), child: child),
     );
   }
 }
@@ -330,13 +327,10 @@ class _ContenuFiche extends ConsumerWidget {
           LigneRubrique(
             icone: AppIcons.palette,
             libelle: t.ficheEleve.lignes.couleur,
-            legende: switch (accentLu(
+            legende: legendeCouleur(
               ref.watch(accentsProfilsProvider),
               profil.eleveId,
-            )) {
-              final AccentProfil a => libelleAccent(a),
-              null => t.ficheEleve.lignes.couleurAucune,
-            },
+            ),
             onPress: () => aller(sousPage('couleur')),
           ),
           LigneRubrique(
@@ -389,10 +383,7 @@ class _ContenuFiche extends ConsumerWidget {
           child: _Entete(
             profil: profil,
             classe: texteClasse(classe),
-            accent: accentLu(
-              ref.watch(accentsProfilsProvider),
-              profil.eleveId,
-            ),
+            accent: accentLu(ref.watch(accentsProfilsProvider), profil.eleveId),
           ),
         ),
         Ecart.vXxl,
@@ -451,4 +442,21 @@ class _Entete extends StatelessWidget {
       ),
     );
   }
+}
+
+/// La legende de la ligne « Couleur du profil » : le nom de la couleur, « Sans
+/// couleur », ou, sans source (production, FI-BR-19), « Pas encore
+/// disponible » plutot qu'un choix vide qui n'a jamais ete fait (revue FI-2-R
+/// m1).
+String legendeCouleur(
+  AsyncValue<Map<String, AccentProfil>> accents,
+  String profilId,
+) {
+  if (accents.hasError && accents.error is CapaciteIndisponible) {
+    return t.ficheEleve.lignes.couleurIndisponible;
+  }
+  return switch (accentLu(accents, profilId)) {
+    final AccentProfil a => libelleAccent(a),
+    null => t.ficheEleve.lignes.couleurAucune,
+  };
 }

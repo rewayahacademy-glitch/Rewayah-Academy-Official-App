@@ -63,6 +63,7 @@ class AvatarNom extends StatelessWidget {
     this.ajuste = false,
     this.roleWidget,
     this.cercleEnHaut = false,
+    this.texteEtire = false,
   });
 
   /// Avatar centre, nom centre dessous.
@@ -110,6 +111,7 @@ class AvatarNom extends StatelessWidget {
     bool ajuste = false,
     Widget? roleWidget,
     bool cercleEnHaut = false,
+    bool texteEtire = false,
   }) : this(
          prenom: prenom,
          disposition: DispositionAvatar.enLigne,
@@ -127,6 +129,7 @@ class AvatarNom extends StatelessWidget {
          ajuste: ajuste,
          roleWidget: roleWidget,
          cercleEnHaut: cercleEnHaut,
+         texteEtire: texteEtire,
        );
 
   /// Le prenom, source des initiales de repli.
@@ -184,6 +187,12 @@ class AvatarNom extends StatelessWidget {
   /// hauteur du texte (texte agrandi, legende sur plusieurs lignes).
   final bool cercleEnHaut;
 
+  /// En ligne seulement : vrai pour que le texte prenne toute la place
+  /// restante, et que [fin] aille donc au bout de la rangee quelle que soit
+  /// la longueur du prenom (carte d'un membre du Foyer, revue FI-2-R M1).
+  /// Faux par defaut : [fin] suit le texte.
+  final bool texteEtire;
+
   /// En ligne seulement : l'espace entre le cercle et le texte
   /// (defaut [AppSpacing.md]).
   final double? ecart;
@@ -239,6 +248,7 @@ class AvatarNom extends StatelessWidget {
           cercleHabille,
           SizedBox(width: ecart ?? AppSpacing.md),
           Flexible(
+            fit: texteEtire ? FlexFit.tight : FlexFit.loose,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,

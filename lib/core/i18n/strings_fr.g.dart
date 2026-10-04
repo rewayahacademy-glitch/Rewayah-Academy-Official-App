@@ -3858,6 +3858,9 @@ class Traductions$ficheEleve$lignes$fr {
 
 	/// fr: 'Sans couleur'
 	String get couleurAucune => 'Sans couleur';
+
+	/// fr: 'Pas encore disponible'
+	String get couleurIndisponible => 'Pas encore disponible';
 }
 
 // Path: ficheEleve.couleur
@@ -3892,8 +3895,11 @@ class Traductions$ficheEleve$couleur$fr {
 	/// fr: 'Sable'
 	String get sable => 'Sable';
 
-	/// fr: 'Déjà choisie pour {prenom} : les deux profils auraient la même couleur.'
-	String dejaPrise({required Object prenom}) => 'Déjà choisie pour ${prenom} : les deux profils auraient la même couleur.';
+	/// fr: 'Déjà choisie pour {prenom} : la couleur ne distinguerait plus ces profils.'
+	String dejaPrise({required Object prenom}) => 'Déjà choisie pour ${prenom} : la couleur ne distinguerait plus ces profils.';
+
+	/// fr: '{premiers} et {dernier}'
+	String prenomsEt({required Object premiers, required Object dernier}) => '${premiers} et ${dernier}';
 
 	/// fr: 'Sans couleur'
 	String get aucune => 'Sans couleur';
@@ -16242,6 +16248,7 @@ extension on Traductions {
 			'ficheEleve.lignes.appareilsLegende' => 'Connecter un appareil, voir ceux qui sont reliés, en retirer un',
 			'ficheEleve.lignes.couleur' => 'Couleur du profil',
 			'ficheEleve.lignes.couleurAucune' => 'Sans couleur',
+			'ficheEleve.lignes.couleurIndisponible' => 'Pas encore disponible',
 			'ficheEleve.couleur.titre' => 'Couleur du profil',
 			'ficheEleve.couleur.contexte' => ({required Object prenom}) => 'Choisissez la couleur qui distingue ${prenom} des autres profils du foyer. Elle s\'affiche derrière sa photo sur les écrans du foyer. Ce n\'est ni un statut, ni une classe.',
 			'ficheEleve.couleur.menthe' => 'Menthe',
@@ -16250,7 +16257,8 @@ extension on Traductions {
 			'ficheEleve.couleur.rose' => 'Rose',
 			'ficheEleve.couleur.peche' => 'Pêche',
 			'ficheEleve.couleur.sable' => 'Sable',
-			'ficheEleve.couleur.dejaPrise' => ({required Object prenom}) => 'Déjà choisie pour ${prenom} : les deux profils auraient la même couleur.',
+			'ficheEleve.couleur.dejaPrise' => ({required Object prenom}) => 'Déjà choisie pour ${prenom} : la couleur ne distinguerait plus ces profils.',
+			'ficheEleve.couleur.prenomsEt' => ({required Object premiers, required Object dernier}) => '${premiers} et ${dernier}',
 			'ficheEleve.couleur.aucune' => 'Sans couleur',
 			'ficheEleve.couleur.choisie' => ({required Object couleur}) => 'Couleur choisie : ${couleur}.',
 			'ficheEleve.couleur.priseLigne' => ({required Object couleur, required Object prenom}) => '${couleur} : déjà choisie pour ${prenom}.',
@@ -16486,10 +16494,10 @@ extension on Traductions {
 			'dossiers.file.ouvrirDe' => ({required Object nom}) => 'Ouvrir le dossier de ${nom}',
 			'dossiers.file.ouvrirElide' => ({required Object nom}) => 'Ouvrir le dossier d\'${nom}',
 			'dossiers.file.enVerification' => 'En cours de vérification',
-			'dossiers.file.sansNom' => 'Dossier sans nom disponible',
-			'dossiers.file.legende' => ({required Object type, required Object date}) => '${type} · ${date}',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.file.sansNom' => 'Dossier sans nom disponible',
+			'dossiers.file.legende' => ({required Object type, required Object date}) => '${type} · ${date}',
 			'dossiers.file.dateHeure' => ({required Object date, required Object heure, required Object zone}) => '${date} à ${heure} (${zone})',
 			'dossiers.file.dateChiffres' => ({required Object jour, required Object mois, required Object annee}) => '${jour}/${mois}/${annee}',
 			'dossiers.file.heureChiffres' => ({required Object heures, required Object minutes}) => '${heures}:${minutes}',
@@ -17000,10 +17008,10 @@ extension on Traductions {
 			'admin.journal.tousTypes' => 'Tous les événements',
 			'admin.journal.tousActeurs' => 'Tout le monde',
 			'admin.journal.colonneQuand' => 'Quand',
-			'admin.journal.colonneQui' => 'Qui',
-			'admin.journal.colonneRole' => 'À quel titre',
 			_ => null,
 		} ?? switch (path) {
+			'admin.journal.colonneQui' => 'Qui',
+			'admin.journal.colonneRole' => 'À quel titre',
 			'admin.journal.colonneQuoi' => 'Ce qui a été fait',
 			'admin.journal.colonneCible' => 'Sur quoi',
 			'admin.journal.colonneDetail' => 'Détail',
@@ -17514,10 +17522,10 @@ extension on Traductions {
 			'compte.tuteur.pagePaiements.paiementDu' => ({required Object date}) => 'Paiement du ${date}',
 			'compte.tuteur.pagePaiements.justificatif' => 'Justificatif disponible',
 			'compte.tuteur.pagePreferences.titre' => 'Préférences',
-			'compte.tuteur.pagePreferences.sousTitre' => 'Personnalisez votre expérience sur cet appareil.',
-			'compte.tuteur.pagePreferences.apparence' => 'Apparence',
 			_ => null,
 		} ?? switch (path) {
+			'compte.tuteur.pagePreferences.sousTitre' => 'Personnalisez votre expérience sur cet appareil.',
+			'compte.tuteur.pagePreferences.apparence' => 'Apparence',
 			'compte.tuteur.pagePreferences.apparenceDetail' => 'Thème et confort visuel',
 			'compte.tuteur.pagePreferences.langue' => 'Langue et région',
 			'compte.tuteur.pagePreferences.notifications' => 'Notifications',
@@ -18028,10 +18036,10 @@ extension on Traductions {
 			'enseignant.signalement.demoSuccesDetail' => 'Dans l\'application reliée, il partira vers l\'équipe de l\'académie.',
 			'enseignant.signalement.fermer' => 'Fermer',
 			'enseignant.demo.titre' => 'Démonstration enseignant',
-			'enseignant.demo.mention' => 'Données fictives, aucun envoi.',
-			'enseignant.demo.intro' => 'Choisissez un écran de Sayyid Ibrahim.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.demo.mention' => 'Données fictives, aucun envoi.',
+			'enseignant.demo.intro' => 'Choisissez un écran de Sayyid Ibrahim.',
 			'enseignant.demo.ecrans' => 'Écrans',
 			'enseignant.demo.etats' => 'Situations',
 			'enseignant.demo.etatNominal' => 'Journée ordinaire',
@@ -18542,10 +18550,10 @@ extension on Traductions {
 			'controleur.observation.cleDomaine' => 'Domaine',
 			'controleur.observation.clePersonne' => 'Personne concernée',
 			'controleur.observation.cleTexte' => 'Remarque',
-			'controleur.observation.sansTexte' => 'Aucun texte',
-			'controleur.observation.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.observation.sansTexte' => 'Aucun texte',
+			'controleur.observation.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.titre' => 'Échanges',
 			'controleur.echanges.titreFil' => ({required Object classe, required Object date}) => '${classe} · ${date}',
 			'controleur.echanges.derniereActivite' => ({required Object date}) => 'Dernière activité : ${date}',
@@ -19056,10 +19064,10 @@ extension on Traductions {
 			'tc.parcours.feedback.rythme.difficile' => 'Trop rapide',
 			'tc.parcours.feedback.rythme.bien' => 'Convenable',
 			'tc.parcours.feedback.rythme.tresBien' => 'Très confortable',
-			'tc.parcours.feedback.technique.intitule' => 'Le son et l\'image étaient-ils confortables ?',
-			'tc.parcours.feedback.technique.difficile' => 'Gênants',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.feedback.technique.intitule' => 'Le son et l\'image étaient-ils confortables ?',
+			'tc.parcours.feedback.technique.difficile' => 'Gênants',
 			'tc.parcours.feedback.technique.bien' => 'Corrects',
 			'tc.parcours.feedback.technique.tresBien' => 'Très bons',
 			'tc.parcours.feedback.confiance.intitule' => 'Vous sentez-vous prêt pour le prochain cours ?',

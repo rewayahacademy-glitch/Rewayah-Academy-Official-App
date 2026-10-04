@@ -217,6 +217,8 @@ class CarteMembre extends StatelessWidget {
         prenom: profil.prenom,
         diametre: AppAvatar.grand,
         cercleEnHaut: true,
+        // La fleche au bout de la carte, a toute largeur (revue FI-2-R M1).
+        texteEtire: true,
         avatar: PhotoEleve(
           prenom: profil.prenom,
           cleAvatar: profil.cleAvatar,

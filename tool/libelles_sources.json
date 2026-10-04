@@ -64,6 +64,8 @@
   "admin.finance.politiques": "guide Finance V4 du directeur (02/10), §2 et §5.7 « Admin - Politiques commerciales » ; maquette 10 ; lexique de la revue FI-1a (pilotage 17_finance/UX_REVIEW_08_FINANCE.md:297), etape FI-1b",
   "ficheEleve.lignes.couleur": "decision du directeur du 04/10/2026 (K-62, maquette 11) : couleur de profil choisie par le tuteur dans les reglages du profil, etape FI-2",
   "ficheEleve.lignes.couleurAucune": "decision du directeur du 04/10/2026 (K-62, maquette 11) : couleur de profil choisie par le tuteur dans les reglages du profil, etape FI-2",
+  "ficheEleve.lignes.couleurIndisponible": "revue FI-2-R m1 (04/10/2026) : en production, sans source (FI-BR-19), la ligne dit que la couleur n'est pas encore disponible au lieu de « Sans couleur », etape FI-2-CORR",
+  "ficheEleve.couleur.prenomsEt": "revue FI-2-R m2 (04/10/2026) : une couleur deja choisie pour plusieurs profils les nomme tous, etape FI-2-CORR",
   "ficheEleve.couleur.titre": "decision du directeur du 04/10/2026 (K-62, maquette 11) : couleur de profil choisie par le tuteur dans les reglages du profil, etape FI-2",
   "ficheEleve.couleur.contexte": "decision du directeur du 04/10/2026 (K-62, maquette 11) : couleur de profil choisie par le tuteur dans les reglages du profil, etape FI-2",
   "ficheEleve.couleur.menthe": "decision du directeur du 04/10/2026 (K-62, maquette 11) : couleur de profil choisie par le tuteur dans les reglages du profil, etape FI-2",

@@ -987,7 +987,8 @@
       "appareils": "Appareils de {prenom}",
       "appareilsLegende": "Connecter un appareil, voir ceux qui sont reliés, en retirer un",
       "couleur": "Couleur du profil",
-      "couleurAucune": "Sans couleur"
+      "couleurAucune": "Sans couleur",
+      "couleurIndisponible": "Pas encore disponible"
     },
     "couleur": {
       "titre": "Couleur du profil",
@@ -998,7 +999,8 @@
       "rose": "Rose",
       "peche": "Pêche",
       "sable": "Sable",
-      "dejaPrise": "Déjà choisie pour {prenom} : les deux profils auraient la même couleur.",
+      "dejaPrise": "Déjà choisie pour {prenom} : la couleur ne distinguerait plus ces profils.",
+      "prenomsEt": "{premiers} et {dernier}",
       "aucune": "Sans couleur",
       "choisie": "Couleur choisie : {couleur}.",
       "priseLigne": "{couleur} : déjà choisie pour {prenom}.",

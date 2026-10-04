@@ -1048,10 +1048,16 @@ void main() {
     );
 
     testWidgets('sans source (production) : la page le dit, aucun choix, '
-        'la fiche dit « Sans couleur »', (WidgetTester tester) async {
+        'la fiche dit « Pas encore disponible » (revue FI-2-R m1)', (
+      WidgetTester tester,
+    ) async {
       await _monter(tester, appairage: _foyerA());
       await _ouvrirFicheA1(tester);
-      expect(find.text(t.ficheEleve.lignes.couleurAucune), findsOneWidget);
+      expect(
+        find.text(t.ficheEleve.lignes.couleurIndisponible),
+        findsOneWidget,
+      );
+      expect(find.text(t.ficheEleve.lignes.couleurAucune), findsNothing);
       expect(bandeau(), findsNothing);
 
       await _ouvrirLigne(tester, t.ficheEleve.lignes.couleur);
@@ -1162,6 +1168,34 @@ void main() {
       );
       expect(tester.takeException(), isNull);
     });
+
+    // Revue FI-2-R M1 : la fleche de chaque carte du Foyer va au bout de la
+    // carte a toute largeur, pas juste apres le texte.
+    for (final double largeur in const <double>[390, 1024, 1440]) {
+      testWidgets('Foyer ${largeur.toInt()} px : la fleche au bout de chaque '
+          'carte', (WidgetTester tester) async {
+        await _monter(
+          tester,
+          appairage: _foyerA(),
+          depart: Routes.tuteurFoyer,
+          taille: Size(largeur, 900),
+        );
+        final Finder cartes = find.byType(CarteMembre);
+        expect(cartes, findsAtLeastNWidgets(2));
+        for (int i = 0; i < 2; i++) {
+          final Finder carte = cartes.at(i);
+          final Rect rCarte = tester.getRect(carte);
+          final Rect rFleche = tester.getRect(
+            find.descendant(of: carte, matching: find.byType(Icon)).last,
+          );
+          expect(
+            rCarte.right - rFleche.right,
+            moreOrLessEquals(CarteMembre.marge, epsilon: 1.5),
+          );
+        }
+        expect(tester.takeException(), isNull);
+      });
+    }
 
     testWidgets('« Sans couleur » retire le bandeau', (
       WidgetTester tester,

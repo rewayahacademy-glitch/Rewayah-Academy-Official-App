@@ -127,14 +127,13 @@ class _ChoixCouleurState extends ConsumerState<_ChoixCouleur> {
           in ref.watch(elevesDuFoyerProvider).value ?? const <EleveDuFoyer>[])
         e.id: e.prenom,
     };
-    String? priseePar(AccentProfil a) {
-      for (final MapEntry<String, AccentProfil> e in accents.entries) {
-        if (e.key != profil.eleveId && e.value == a) {
-          return prenoms[e.key];
-        }
-      }
-      return null;
-    }
+    // Tous les autres profils qui l'ont, jamais le premier seul (revue
+    // FI-2-R m2).
+    String? priseePar(AccentProfil a) => prenomsJoints(<String>[
+      for (final MapEntry<String, AccentProfil> e in accents.entries)
+        if (e.key != profil.eleveId && e.value == a)
+          if (prenoms[e.key] case final String p) p,
+    ]);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -195,3 +194,14 @@ class _ChoixCouleurState extends ConsumerState<_ChoixCouleur> {
     );
   }
 }
+
+/// Les prenoms d'une liste dits en clair : « Yusuf », « Yusuf et Aicha »,
+/// « Yusuf, Aicha et Mariam » ; `null` pour une liste vide.
+String? prenomsJoints(List<String> prenoms) => switch (prenoms) {
+  <String>[] => null,
+  <String>[final String seul] => seul,
+  _ => t.ficheEleve.couleur.prenomsEt(
+    premiers: prenoms.sublist(0, prenoms.length - 1).join(', '),
+    dernier: prenoms.last,
+  ),
+};
