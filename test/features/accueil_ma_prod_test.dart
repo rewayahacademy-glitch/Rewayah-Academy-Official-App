@@ -16,6 +16,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -66,6 +67,7 @@ Future<GoRouter> _monter(
   InterfaceMode mode = InterfaceMode.enfant,
   PortAccueilAccessibilite? port,
   bool horsLigne = false,
+  List<Override> surcharges = const <Override>[],
   Size taille = const Size(390, 844),
   double echelle = 1,
   TextDirection sens = TextDirection.ltr,
@@ -84,6 +86,7 @@ Future<GoRouter> _monter(
           portAccueilAccessibiliteProvider.overrideWithValue(port),
         if (horsLigne)
           horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
+        ...surcharges,
       ],
       child: TranslationProvider(
         child: Consumer(
@@ -333,6 +336,75 @@ void main() {
     });
   });
 
+  group('DASH-MA-PROD-b : hors ligne, aucun bouton grise (D9)', () {
+    testWidgets('chaque ActionPrincipale agit ; « Reessayer » relit le '
+        'reseau, puis « Voir ma classe » revient', (WidgetTester tester) async {
+      // Hors ligne a la premiere lecture du reseau, en ligne a la suivante.
+      int lecturesReseau = 0;
+      await _monter(
+        tester,
+        port: const PortAccueilAccessibiliteDemo(
+          eleve: EleveDemoAccessibilite.mariam,
+        ),
+        surcharges: <Override>[
+          horsLigneProvider.overrideWith((Ref _) {
+            lecturesReseau++;
+            return Stream<bool>.value(lecturesReseau == 1);
+          }),
+        ],
+      );
+      expect(find.text(t.reseau.horsLigne), findsOneWidget);
+      final Iterable<ActionPrincipale> actions = tester
+          .widgetList<ActionPrincipale>(find.byType(ActionPrincipale));
+      expect(actions, isNotEmpty);
+      for (final ActionPrincipale action in actions) {
+        expect(
+          action.onPress,
+          isNotNull,
+          reason: '« ${action.libelle} » grise hors ligne',
+        );
+      }
+      final Finder reessayer = find.widgetWithText(
+        ActionPrincipale,
+        t.classe.entree.reessayer,
+      );
+      expect(reessayer, findsOneWidget);
+      final int avant = lecturesReseau;
+      await tester.ensureVisible(reessayer);
+      await tester.pumpAndSettle();
+      await tester.tap(reessayer);
+      await stabiliser(tester);
+      expect(lecturesReseau, greaterThan(avant));
+      expect(find.text(t.reseau.horsLigne), findsNothing);
+      expect(reessayer, findsNothing);
+      expect(find.byKey(AccueilAccessibilite.cleVoirClasse), findsOneWidget);
+      _coranEtAideRestent();
+    });
+  });
+
+  group('DASH-MA-PROD-b : « ; » jamais seul en debut de ligne', () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets('vide, 320 x2, ${sens.name}', (WidgetTester tester) async {
+        await _monter(
+          tester,
+          port: const PortAccueilAccessibiliteDemo(
+            eleve: EleveDemoAccessibilite.idriss,
+            situation: SituationAccueilDemo.vide,
+          ),
+          taille: const Size(320, 3200),
+          echelle: 2,
+          sens: sens,
+        );
+        expect(find.byKey(AccueilAccessibilite.cleVide), findsOneWidget);
+        expect(
+          _ponctuationsOrphelines(tester, find.byType(AccueilAccessibilite)),
+          isEmpty,
+        );
+      });
+    }
+  });
+
   group('D11 : chaque etat atteignable en demonstration (?accueil=)', () {
     for (final (SituationAccueilDemo, Key?) cas
         in <(SituationAccueilDemo, Key?)>[
@@ -431,6 +503,39 @@ void main() {
       });
     }
   });
+}
+
+/// Les ponctuations hautes (« ; », « : », « ! », « ? », « » ») rendues
+/// seules en debut de ligne, sous [ou] : chacune doit rester sur la ligne
+/// du dernier caractere qui la precede (espace insecable, typographie
+/// francaise).
+List<String> _ponctuationsOrphelines(WidgetTester tester, Finder ou) {
+  final List<String> fautes = <String>[];
+  final RegExp motif = RegExp(r'\S([ \u00a0\u202f])([;:!?»])');
+  final Set<RenderParagraph> paragraphes = <RenderParagraph>{};
+  void visiter(RenderObject o) {
+    if (o is RenderParagraph) paragraphes.add(o);
+    o.visitChildren(visiter);
+  }
+
+  tester.renderObjectList<RenderObject>(ou).forEach(visiter);
+  for (final RenderParagraph p in paragraphes) {
+    if (!p.hasSize || !p.attached) continue;
+    final String texte = p.text.toPlainText();
+    for (final RegExpMatch m in motif.allMatches(texte)) {
+      double haut(int debut) => p
+          .getBoxesForSelection(
+            TextSelection(baseOffset: debut, extentOffset: debut + 1),
+          )
+          .first
+          .top;
+      final int signe = m.end - 1;
+      if ((haut(m.start) - haut(signe)).abs() > 1) {
+        fautes.add('$texte : « ${m.group(2)} » seul en debut de ligne');
+      }
+    }
+  }
+  return fautes;
 }
 
 /// Un port dont la reponse arrive quand le test le decide.

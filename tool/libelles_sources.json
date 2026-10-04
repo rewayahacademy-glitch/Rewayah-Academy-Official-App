@@ -66,5 +66,5 @@
   "accessibilite.accueil.indisponibleTitre": "ecrit par l'agent, etape DASH-MA-PROD (DASH_STRATEGIE §3.3, D10, D11 ; K-59 pour l'erreur) ; a faire valider par le directeur",
   "accessibilite.accueil.indisponiblePhrase": "ecrit par l'agent, etape DASH-MA-PROD (DASH_STRATEGIE §3.3, D10, D11 ; K-59 pour l'erreur) ; a faire valider par le directeur",
   "accessibilite.accueil.videTitre": "ecrit par l'agent, etape DASH-MA-PROD (DASH_STRATEGIE §3.3, D10, D11 ; K-59 pour l'erreur) ; a faire valider par le directeur",
-  "accessibilite.accueil.videPhrase": "ecrit par l'agent, etape DASH-MA-PROD (DASH_STRATEGIE §3.3, D10, D11 ; K-59 pour l'erreur) ; a faire valider par le directeur"
+  "accessibilite.accueil.videPhrase": "redige par l'agent, etape DASH-MA-PROD puis DASH-MA-PROD-b (le « ; » devient un point : a 320 px texte x2, « l'academie ; » ne tient pas sur une ligne et le point-virgule y restait seul, meme avec une espace insecable) ; a faire valider par le directeur"
 }

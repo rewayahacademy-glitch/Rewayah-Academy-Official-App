@@ -150,6 +150,7 @@ class AccueilAccessibilite extends ConsumerWidget {
         horsLigne: false,
         onVoirClasse: onVoirClasse,
         onRejoindre: onRejoindre,
+        onReessayer: null,
         onTache: onTache,
       );
     } else {
@@ -198,6 +199,10 @@ class AccueilAccessibilite extends ConsumerWidget {
             horsLigne: horsLigne,
             onVoirClasse: onVoirClasse,
             onRejoindre: rejoindre == null ? null : () => rejoindre(lu),
+            // Hors ligne, « Reessayer » relit l'etat du reseau (precedent
+            // de `fiche_groupe_page.dart`) : jamais un bouton grise (D9).
+            // De retour en ligne, l'entree et « Voir ma classe » reviennent.
+            onReessayer: () => ref.invalidate(horsLigneProvider),
             onTache: onTache,
           );
         },
@@ -213,8 +218,9 @@ class AccueilAccessibilite extends ConsumerWidget {
   }
 }
 
-/// A texte agrandi (au-dela de 130 %), le trait d'union devient insecable
-/// (U+2011) a l'affichage : « As-salāmu », « An-Nour » restent entiers
+/// A texte agrandi (au-dela de 130 %), le trait d'union est suivi d'un
+/// gluon de mots (U+2060, WORD JOINER) a l'affichage : aucune coupure de
+/// ligne apres lui, « As-salāmu », « An-Nour » restent entiers
 /// (lecon 8, precedent MA-4 de `espace_groupe_page.dart`). Rendu a 100 %
 /// inchange.
 String _insecable(BuildContext context, String texte) =>
@@ -253,6 +259,7 @@ class _Haut extends StatelessWidget {
     required this.horsLigne,
     required this.onVoirClasse,
     required this.onRejoindre,
+    required this.onReessayer,
     required this.onTache,
   });
 
@@ -262,6 +269,10 @@ class _Haut extends StatelessWidget {
   final bool horsLigne;
   final VoidCallback onVoirClasse;
   final VoidCallback? onRejoindre;
+
+  /// « Reessayer » de l'emplacement d'entree hors ligne ; obligatoire des
+  /// que [horsLigne] peut etre vrai (aucun bouton grise, D9).
+  final VoidCallback? onReessayer;
   final VoidCallback? onTache;
 
   @override
@@ -291,6 +302,7 @@ class _Haut extends StatelessWidget {
           // Hors ligne, l'entree reste presente et inerte (D9) ; le bandeau
           // de `PageShell` dit pourquoi.
           horsLigne: horsLigne,
+          onReessayer: onReessayer,
           identite: _IdentiteClasse(identite: espace.identite),
           actionHorsEntree: mobile
               ? voirClasse

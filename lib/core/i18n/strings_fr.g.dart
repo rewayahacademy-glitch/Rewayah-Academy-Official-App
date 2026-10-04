@@ -3202,8 +3202,8 @@ class Traductions$accessibilite$accueil$fr {
 	/// fr: 'Pas encore de Classe'
 	String get videTitre => 'Pas encore de Classe';
 
-	/// fr: 'Aucune Classe n'est encore attribuée. Elle se choisit avec l'académie ; en attendant, le Coran et l'aide restent ouverts juste en dessous.'
-	String get videPhrase => 'Aucune Classe n\'est encore attribuée. Elle se choisit avec l\'académie ; en attendant, le Coran et l\'aide restent ouverts juste en dessous.';
+	/// fr: 'Aucune Classe n'est encore attribuée. Elle se choisit avec l'académie. En attendant, le Coran et l'aide restent ouverts juste en dessous.'
+	String get videPhrase => 'Aucune Classe n\'est encore attribuée. Elle se choisit avec l\'académie. En attendant, le Coran et l\'aide restent ouverts juste en dessous.';
 }
 
 // Path: accessibilite.coran
@@ -15916,7 +15916,7 @@ extension on Traductions {
 			'accessibilite.accueil.indisponibleTitre' => 'Prochaine séance pas encore affichée ici',
 			'accessibilite.accueil.indisponiblePhrase' => 'L\'Accueil ne reçoit pas encore la séance de la Classe. Elle se lit dans Ma classe.',
 			'accessibilite.accueil.videTitre' => 'Pas encore de Classe',
-			'accessibilite.accueil.videPhrase' => 'Aucune Classe n\'est encore attribuée. Elle se choisit avec l\'académie ; en attendant, le Coran et l\'aide restent ouverts juste en dessous.',
+			'accessibilite.accueil.videPhrase' => 'Aucune Classe n\'est encore attribuée. Elle se choisit avec l\'académie. En attendant, le Coran et l\'aide restent ouverts juste en dessous.',
 			'accessibilite.coran.ouvrir' => 'Ouvrir le Coran',
 			'accessibilite.coran.reprendre' => 'Reprendre à ta dernière page',
 			'accessibilite.coran.reprendreVous' => 'Reprendre à votre dernière page',
