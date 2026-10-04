@@ -723,8 +723,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   ),
                   GoRoute(
                     path: 'paiements',
+                    // « Recharger » ouvre LA recharge du Foyer (FI-7,
+                    // guide V4 §4) : jamais un second centre de paiement.
                     pageBuilder: glissee(
-                      (GoRouterState _) => const PaiementsComptePage(),
+                      (GoRouterState _) => Builder(
+                        builder: (BuildContext context) => PaiementsComptePage(
+                          onRecharger: () =>
+                              GoRouter.of(context)
+                                  .go(Routes.tuteurFoyerRecharge),
+                        ),
+                      ),
                     ),
                   ),
                   GoRoute(
