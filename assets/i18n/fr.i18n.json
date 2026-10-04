@@ -4338,8 +4338,9 @@
         "indisponiblePhrase": "Le détail de vos cours, de vos séances et de votre accès n'est pas encore disponible dans l'application."
       }
     },
-    "provisoire": {
-      "coran": "Le Coran de votre espace élève s'affichera ici."
+    "coranDemo": {
+      "titre": "Disponible après connexion",
+      "phrase": "Ce n'est pas une panne : la démonstration ne contient pas le texte du Coran. Après connexion à votre espace élève, il s'ouvre ici."
     },
     "recharge": {
       "titre": "Nouvelle recharge",

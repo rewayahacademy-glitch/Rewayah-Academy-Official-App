@@ -2376,7 +2376,7 @@ class Traductions$adulte$fr {
 	late final Traductions$adulte$historique$fr historique = Traductions$adulte$historique$fr.internal(_root);
 	late final Traductions$adulte$maClasse$fr maClasse = Traductions$adulte$maClasse$fr.internal(_root);
 	late final Traductions$adulte$monEspace$fr monEspace = Traductions$adulte$monEspace$fr.internal(_root);
-	late final Traductions$adulte$provisoire$fr provisoire = Traductions$adulte$provisoire$fr.internal(_root);
+	late final Traductions$adulte$coranDemo$fr coranDemo = Traductions$adulte$coranDemo$fr.internal(_root);
 	late final Traductions$adulte$recharge$fr recharge = Traductions$adulte$recharge$fr.internal(_root);
 	late final Traductions$adulte$paiements$fr paiements = Traductions$adulte$paiements$fr.internal(_root);
 	late final Traductions$adulte$famille$fr famille = Traductions$adulte$famille$fr.internal(_root);
@@ -10368,16 +10368,19 @@ class Traductions$adulte$monEspace$fr {
 	late final Traductions$adulte$monEspace$pageCoursAcces$fr pageCoursAcces = Traductions$adulte$monEspace$pageCoursAcces$fr.internal(_root);
 }
 
-// Path: adulte.provisoire
-class Traductions$adulte$provisoire$fr {
-	Traductions$adulte$provisoire$fr.internal(this._root);
+// Path: adulte.coranDemo
+class Traductions$adulte$coranDemo$fr {
+	Traductions$adulte$coranDemo$fr.internal(this._root);
 
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
 
-	/// fr: 'Le Coran de votre espace élève s'affichera ici.'
-	String get coran => 'Le Coran de votre espace élève s\'affichera ici.';
+	/// fr: 'Disponible après connexion'
+	String get titre => 'Disponible après connexion';
+
+	/// fr: 'Ce n'est pas une panne : la démonstration ne contient pas le texte du Coran. Après connexion à votre espace élève, il s'ouvre ici.'
+	String get phrase => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte du Coran. Après connexion à votre espace élève, il s\'ouvre ici.';
 }
 
 // Path: adulte.recharge
@@ -19038,7 +19041,8 @@ extension on Traductions {
 			'adulte.monEspace.pageAccords.indisponiblePhrase' => 'Accepter, refuser ou retirer chacun de vos accords n\'est pas encore possible dans l\'application. Aucun accord ne vous est demandé ici.',
 			'adulte.monEspace.pageCoursAcces.indisponibleTitre' => 'Cours et accès pas encore consultables',
 			'adulte.monEspace.pageCoursAcces.indisponiblePhrase' => 'Le détail de vos cours, de vos séances et de votre accès n\'est pas encore disponible dans l\'application.',
-			'adulte.provisoire.coran' => 'Le Coran de votre espace élève s\'affichera ici.',
+			'adulte.coranDemo.titre' => 'Disponible après connexion',
+			'adulte.coranDemo.phrase' => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte du Coran. Après connexion à votre espace élève, il s\'ouvre ici.',
 			'adulte.recharge.titre' => 'Nouvelle recharge',
 			'adulte.recharge.phrase' => 'Sélectionnez un ou plusieurs bénéficiaires, puis choisissez une offre pour chacun.',
 			'adulte.recharge.toutSelectionner' => 'Tout sélectionner',
