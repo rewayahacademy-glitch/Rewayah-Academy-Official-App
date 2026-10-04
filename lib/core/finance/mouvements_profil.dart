@@ -104,3 +104,26 @@ class MouvementProfil {
   /// Le recu du paiement, quand il en existe un (une recharge).
   final RecuPaiement? recu;
 }
+
+/// Un mouvement du foyer : le mouvement d'un profil, avec le profil qu'il
+/// concerne (FI-5b, « Dernieres transactions » du Foyer sur ordinateur).
+/// Rien n'est agrege ni trie dans Flutter : la source rend la liste deja
+/// arretee, le plus recent d'abord.
+@immutable
+class MouvementFoyer {
+  /// Cree le mouvement.
+  const MouvementFoyer({
+    required this.profilId,
+    required this.prenom,
+    required this.mouvement,
+  });
+
+  /// Le profil concerne.
+  final String profilId;
+
+  /// Son prenom.
+  final String prenom;
+
+  /// Le mouvement, tel que la source le rend.
+  final MouvementProfil mouvement;
+}

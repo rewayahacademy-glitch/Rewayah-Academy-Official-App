@@ -121,6 +121,12 @@ class FauxPaiementsFoyer implements PortPaiementsFoyer {
       );
 
   @override
+  Future<List<MouvementFoyer>> derniersMouvements({int limite = 3}) =>
+      Future<List<MouvementFoyer>>.error(
+        const CapaciteIndisponible('FI-BR-05'),
+      );
+
+  @override
   Future<PaiementFoyer?> detail(String id) async {
     for (final PaiementFoyer p in paiements) {
       if (p.id == id) {

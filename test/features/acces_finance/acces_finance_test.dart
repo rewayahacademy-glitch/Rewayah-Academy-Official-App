@@ -109,6 +109,10 @@ class _PaiementsEspion implements PortPaiementsFoyer {
   @override
   Future<List<MouvementProfil>> mouvements(String profilId) async =>
       const <MouvementProfil>[];
+
+  @override
+  Future<List<MouvementFoyer>> derniersMouvements({int limite = 3}) async =>
+      const <MouvementFoyer>[];
 }
 
 /// L'acces d'Aicha apres ses deux essais, sans periode financee (FIN4-13).

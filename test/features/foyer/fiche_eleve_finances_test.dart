@@ -86,6 +86,10 @@ class _PortFinances implements PortPaiementsFoyer {
   @override
   Future<List<MouvementProfil>> mouvements(String profilId) async =>
       <MouvementProfil>[];
+
+  @override
+  Future<List<MouvementFoyer>> derniersMouvements({int limite = 3}) async =>
+      <MouvementFoyer>[];
 }
 
 /// Mariam avec des lignes injectees (prorata, avoir, taxe) : le total est

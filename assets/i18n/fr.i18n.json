@@ -900,6 +900,15 @@
       "manque": "Il manque {montant} pour la prochaine période.",
       "indisponibleTitre": "Les soldes ne peuvent pas être lus"
     },
+    "transactions": {
+      "titre": "Dernières transactions",
+      "ligne": "{libelle} · {prenom}",
+      "voirTout": "Voir tout",
+      "voirToutSemantique": "Voir tous les mouvements de {prenom}",
+      "videTitre": "Aucune transaction pour l'instant",
+      "videPhrase": "Les recharges et les mensualités des profils apparaîtront ici.",
+      "erreurTitre": "Les dernières transactions ne peuvent pas être lues"
+    },
     "titre": "Foyer",
     "ajouterProfil": "Ajouter un profil élève",
     "sousTitre": "Les profils élèves de votre foyer",

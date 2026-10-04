@@ -1006,6 +1006,7 @@ class Traductions$foyer$fr {
 
 	// Translations
 	late final Traductions$foyer$finances$fr finances = Traductions$foyer$finances$fr.internal(_root);
+	late final Traductions$foyer$transactions$fr transactions = Traductions$foyer$transactions$fr.internal(_root);
 
 	/// fr: 'Foyer'
 	String get titre => 'Foyer';
@@ -3766,6 +3767,36 @@ class Traductions$foyer$finances$fr {
 
 	/// fr: 'Les soldes ne peuvent pas être lus'
 	String get indisponibleTitre => 'Les soldes ne peuvent pas être lus';
+}
+
+// Path: foyer.transactions
+class Traductions$foyer$transactions$fr {
+	Traductions$foyer$transactions$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Dernières transactions'
+	String get titre => 'Dernières transactions';
+
+	/// fr: '{libelle} · {prenom}'
+	String ligne({required Object libelle, required Object prenom}) => '${libelle} · ${prenom}';
+
+	/// fr: 'Voir tout'
+	String get voirTout => 'Voir tout';
+
+	/// fr: 'Voir tous les mouvements de {prenom}'
+	String voirToutSemantique({required Object prenom}) => 'Voir tous les mouvements de ${prenom}';
+
+	/// fr: 'Aucune transaction pour l'instant'
+	String get videTitre => 'Aucune transaction pour l\'instant';
+
+	/// fr: 'Les recharges et les mensualités des profils apparaîtront ici.'
+	String get videPhrase => 'Les recharges et les mensualités des profils apparaîtront ici.';
+
+	/// fr: 'Les dernières transactions ne peuvent pas être lues'
+	String get erreurTitre => 'Les dernières transactions ne peuvent pas être lues';
 }
 
 // Path: foyer.vide
@@ -17482,6 +17513,13 @@ extension on Traductions {
 			'foyer.finances.essaiSansMax' => ({required Object n}) => 'Essai : ${n} séance(s) utilisée(s)',
 			'foyer.finances.manque' => ({required Object montant}) => 'Il manque ${montant} pour la prochaine période.',
 			'foyer.finances.indisponibleTitre' => 'Les soldes ne peuvent pas être lus',
+			'foyer.transactions.titre' => 'Dernières transactions',
+			'foyer.transactions.ligne' => ({required Object libelle, required Object prenom}) => '${libelle} · ${prenom}',
+			'foyer.transactions.voirTout' => 'Voir tout',
+			'foyer.transactions.voirToutSemantique' => ({required Object prenom}) => 'Voir tous les mouvements de ${prenom}',
+			'foyer.transactions.videTitre' => 'Aucune transaction pour l\'instant',
+			'foyer.transactions.videPhrase' => 'Les recharges et les mensualités des profils apparaîtront ici.',
+			'foyer.transactions.erreurTitre' => 'Les dernières transactions ne peuvent pas être lues',
 			'foyer.titre' => 'Foyer',
 			'foyer.ajouterProfil' => 'Ajouter un profil élève',
 			'foyer.sousTitre' => 'Les profils élèves de votre foyer',
@@ -17786,6 +17824,8 @@ extension on Traductions {
 			'eleveConnexion.pin.confirmer' => 'Entre-le encore une fois',
 			'eleveConnexion.pin.different' => 'Les deux codes ne sont pas les mêmes. Choisis ton code à nouveau.',
 			'eleveConnexion.pin.ouverture' => 'Connexion en cours',
+			_ => null,
+		} ?? switch (path) {
 			'eleveConnexion.pin.horsLigne' => 'Pas de connexion internet. Ton code est bon : réessaie quand internet revient.',
 			'eleveConnexion.pin.tropDEssais' => 'Trop d\'essais. Patiente un instant avant de réessayer.',
 			'eleveConnexion.pin.echec' => 'La connexion n\'a pas abouti. Réessaie dans un instant.',
@@ -17793,8 +17833,6 @@ extension on Traductions {
 			'eleveConnexion.pin.oublie' => 'Code oublié ?',
 			'eleveConnexion.pin.oubliePhrase' => 'Demande au tuteur d\'afficher un nouveau code sur son appareil, puis saisis-le ici. Tu choisiras alors un nouveau code personnel.',
 			'eleveConnexion.pin.oublieAction' => 'Saisir un nouveau code',
-			_ => null,
-		} ?? switch (path) {
 			'eleveConnexion.saisie.titre' => 'Connecter cet appareil',
 			'eleveConnexion.saisie.phrase' => 'Saisissez le code de six caractères affiché sous le QR code, sur l\'appareil du tuteur.',
 			'eleveConnexion.saisie.champ' => 'Code',
@@ -18300,6 +18338,8 @@ extension on Traductions {
 			'admin.finance.pol.invariantSoldes' => 'Chaque profil a son propre solde ; le total du foyer n\'est qu\'une lecture.',
 			'admin.finance.pol.publier' => 'Publier cette version',
 			'admin.finance.pol.publierConsequence' => 'Publier rend ce brouillon applicable à partir de sa date d\'effet ; aucune facture déjà payée n\'est modifiée.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.publicationIndisponible' => 'La publication n\'est pas encore disponible',
 			'admin.finance.pol.publicationIndisponibleDetail' => 'Rien n\'a été publié : le service de publication n\'est pas encore branché. La version active continue de s\'appliquer. Gardez cet écran ouvert pour conserver vos modifications, ou revenez quand la publication sera ouverte.',
 			'admin.finance.pol.publicationNonConfirmee' => 'Publication non confirmée',
@@ -18307,8 +18347,6 @@ extension on Traductions {
 			'admin.finance.pol.champsACorriger' => 'Corrigez d\'abord les champs signalés',
 			'admin.finance.pol.champsACorrigerDetail' => 'Un champ vide ou mal saisi empêche de préparer la publication : saisissez un nombre entier dans chaque champ signalé, puis publiez.',
 			'admin.finance.pol.apercu' => 'Aperçu avant publication',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.apercuDetail' => 'Ce que donnerait le brouillon à l\'écran, recalculé à chaque modification valide. Ce sont des exemples : rien n\'est facturé ni payé.',
 			'admin.finance.pol.apercuFamille' => 'Exemple de foyer',
 			'admin.finance.pol.apercuFamilleDetail' => 'La mensualité de chaque enfant payant, dans l\'ordre des rangs, puis le total du foyer.',
@@ -18814,6 +18852,8 @@ extension on Traductions {
 			'parcours.momentsQuestion' => 'Quels moments de la journée vous conviennent le mieux ?',
 			'parcours.momentsRaison' => 'Cette réponse ne crée aucun horaire et ne réserve rien. Elle sert seulement à mettre en avant, parmi les horaires que l\'académie propose déjà, ceux qui tombent le mieux pour vous. Vous verrez tous les autres juste en dessous.',
 			'parcours.momentMatin' => 'Le matin',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.momentApresMidi' => 'L\'après-midi',
 			'parcours.momentSoir' => 'Le soir',
 			'parcours.offresQuestion' => ({required Object prenom}) => 'Voici les horaires ouverts pour ${prenom}',
@@ -18821,8 +18861,6 @@ extension on Traductions {
 			'parcours.offreRecommandee' => 'Le plus proche de vos réponses',
 			'parcours.offresAutres' => 'Autres horaires possibles',
 			'parcours.offreRecurrence' => ({required Object seances, required Object duree}) => '${seances} séances par semaine, ${duree} min',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.offreRecurrencePause' => ({required Object seances, required Object duree, required Object pause}) => '${seances} séances par semaine, ${duree} min dont ${pause} min de pause',
 			'parcours.offreLangue' => ({required Object langue}) => 'Cours en ${langue}',
 			'parcours.offreFuseau' => ({required Object fuseau}) => 'Heure affichée pour ${fuseau}',
@@ -19328,6 +19366,8 @@ extension on Traductions {
 			'tuteur.accueil.sansCreneauDetail' => ({required Object prenom}) => 'Sans créneau, aucun enseignant ne peut prendre ${prenom} en charge.',
 			'tuteur.accueil.poserDesHeures' => 'Proposer des heures',
 			'tuteur.accueil.annulee' => ({required Object heure}) => 'Le cours de ${heure} n\'aura pas lieu',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.motifAnnulee' => 'Séance annulée',
 			'tuteur.accueil.motifAnnuleeTard' => 'Séance annulée peu avant l\'heure',
 			'tuteur.accueil.proposeApres' => ({required Object jour, required Object heure}) => 'Prochain cours ${jour} à ${heure}',
@@ -19335,8 +19375,6 @@ extension on Traductions {
 			'tuteur.accueil.gererLeFoyer' => 'Gérer le foyer',
 			'tuteur.accueil.blocAppareils' => 'Appareils du foyer',
 			'tuteur.accueil.blocAppareilsDetail' => 'Ajouter un appareil, ou en retirer un.',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.blocReglages' => 'Réglages par enfant',
 			'tuteur.accueil.blocReglagesDetail' => 'Photo, caméra et affichage, enfant par enfant.',
 			'tuteur.accueil.blocGroupesDetail' => 'Le groupe, l\'enseignant et le prochain cours de chaque enfant.',
@@ -19842,6 +19880,8 @@ extension on Traductions {
 			'enseignant.profil.plafondDetail' => 'Fixé par l\'académie.',
 			'enseignant.profil.nonRenseigne' => 'Non renseigné',
 			'enseignant.profil.statutSection' => 'Statut du compte',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.statutValideDetail' => 'Vous pouvez enseigner et déclarer vos heures.',
 			'enseignant.profil.statutEnAttente' => 'Dossier en cours de vérification',
 			'enseignant.profil.statutEnAttenteDetail' => 'L\'académie vérifie vos pièces. Vous n\'avez rien de plus à faire.',
@@ -19849,8 +19889,6 @@ extension on Traductions {
 			'enseignant.profil.statutProvisoireDetail' => 'Vous enseignez déjà. Votre dossier reste à compléter, sans coupure automatique.',
 			'enseignant.profil.statutSuspendu' => 'Compte suspendu',
 			'enseignant.profil.statutSuspenduDetail' => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.statutInconnu' => 'Statut non disponible',
 			'enseignant.profil.statutInconnuDetail' => 'Nous n\'avons pas pu lire votre statut.',
 			'enseignant.profil.statutDivergent' => 'Ce statut vient de changer. Rouvrez l\'application pour que votre accès suive.',
@@ -20356,6 +20394,8 @@ extension on Traductions {
 			'tc.outils.trait.effacerDernier' => 'Effacer mon dernier trait',
 			'tc.outils.portee.temporaire' => 'Le temps d\'expliquer',
 			'tc.outils.portee.seance' => 'Jusqu\'à la fin du cours',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.portee.enregistree' => 'Enregistrer',
 			'tc.outils.portee.aide' => 'Combien de temps garder ces annotations ?',
 			'tc.outils.marquer.titre' => 'Marquer ce passage',
@@ -20363,8 +20403,6 @@ extension on Traductions {
 			'tc.outils.marquer.retirer' => 'Retirer le marqueur',
 			'tc.outils.revision.titre' => 'À préparer',
 			'tc.outils.revision.aide' => 'Le passage sélectionné devient un travail à préparer.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.revision.groupeEntier' => 'Tout le groupe',
 			'tc.outils.revision.consigne' => 'Consigne courte (facultatif)',
 			'tc.outils.revision.creer' => 'Poser le travail',
@@ -20870,6 +20908,8 @@ extension on Traductions {
 			'adulte.invitation.envoyeeTitre' => 'Invitation envoyée',
 			'adulte.invitation.envoyeePhrase' => ({required Object courriel}) => 'L\'invitation est partie vers ${courriel}.',
 			'adulte.invitation.revenirMaFamille' => 'Revenir à Ma famille',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.detailPhrase' => 'L\'invitation attend sa réponse. Vous pouvez l\'annuler tant qu\'elle n\'a pas été acceptée.',
 			'adulte.invitation.annuler' => 'Annuler l\'invitation',
 			'adulte.invitation.annulerQuestion' => ({required Object prenom}) => 'Annuler l\'invitation de ${prenom} ?',
@@ -20877,8 +20917,6 @@ extension on Traductions {
 			'adulte.invitation.annulerHorsLigne' => 'Vous êtes hors ligne. Rien n\'est annulé. Vous pourrez annuler l\'invitation vous-même quand la connexion sera revenue.',
 			'adulte.invitation.annulerConsequence' => 'L\'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.',
 			'adulte.invitation.garder' => 'Garder l\'invitation',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.annulationEchecTitre' => 'L\'annulation n\'a pas été confirmée.',
 			'adulte.invitation.annulationEchecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.acceptation.notification' => ({required Object prenom}) => '${prenom} vous invite à rejoindre son forfait famille.',

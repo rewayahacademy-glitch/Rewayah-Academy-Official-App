@@ -78,6 +78,10 @@ class _PortMouvements implements PortPaiementsFoyer {
       lecture(profilId);
 
   @override
+  Future<List<MouvementFoyer>> derniersMouvements({int limite = 3}) async =>
+      <MouvementFoyer>[];
+
+  @override
   Future<FinancesFoyer> finances() async =>
       DonneesFinanceDemo.finances(JeuFoyerFinance.unARegulariser);
 

@@ -126,6 +126,11 @@ abstract interface class PortPaiementsFoyer {
   /// ajout seul : aucune ecriture n'est exposee. Pour le titulaire seulement
   /// (lecon 15).
   Future<List<MouvementProfil>> mouvements(String profilId);
+
+  /// Les [limite] derniers mouvements du foyer, tous profils confondus
+  /// (FI-5b) : liste arretee par la source, le plus recent d'abord, aucun
+  /// tri ni agregat dans Flutter. Pour le titulaire seulement (lecon 15).
+  Future<List<MouvementFoyer>> derniersMouvements({int limite = 3});
 }
 
 /// Les paiements tant qu'aucune source n'existe : une page, une phrase, aucun
@@ -155,6 +160,12 @@ class PaiementsFoyerIndisponible implements PortPaiementsFoyer {
   @override
   Future<List<MouvementProfil>> mouvements(String profilId) =>
       Future<List<MouvementProfil>>.error(
+        const CapaciteIndisponible('FI-BR-05'),
+      );
+
+  @override
+  Future<List<MouvementFoyer>> derniersMouvements({int limite = 3}) =>
+      Future<List<MouvementFoyer>>.error(
         const CapaciteIndisponible('FI-BR-05'),
       );
 }

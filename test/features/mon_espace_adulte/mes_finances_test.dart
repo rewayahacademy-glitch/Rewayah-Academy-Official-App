@@ -88,6 +88,15 @@ class _PaiementsFoyerEspion implements PortPaiementsFoyer {
   }
 
   @override
+  Future<List<MouvementFoyer>> derniersMouvements({int limite = 3}) async {
+    appels.add('derniersMouvements');
+    return DonneesFinanceDemo.derniersMouvements(
+      JeuFoyerFinance.tousFinances,
+      limite: limite,
+    );
+  }
+
+  @override
   Future<List<PaiementFoyer>> historique() async {
     appels.add('historique');
     return <PaiementFoyer>[];

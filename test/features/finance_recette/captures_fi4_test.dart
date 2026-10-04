@@ -1,7 +1,7 @@
 // FI-4 : captures du Foyer du tuteur avec ses soldes et paiements (guide
 // Finance V4 §5.1, maquette 03), depuis le VRAI routeur et la demonstration
-// tuteur branchee sur chacun des six jeux du foyer : 390, 768 et 1440, clair
-// et sombre, et 390 a texte 200 %.
+// tuteur branchee sur chacun des six jeux du foyer : 390, 768, 1200 (FI-5b)
+// et 1440, clair et sombre, et 390 a texte 200 %.
 //
 // **Jamais execute sans `CAPTURE_DIR`** (`sautSansCapture`).
 
@@ -77,6 +77,7 @@ void main() {
       for (final (String l, Size taille) in <(String, Size)>[
         ('390', const Size(390, 2000)),
         ('768', const Size(768, 1600)),
+        ('1200', const Size(1200, 1200)),
         ('1440', const Size(1440, 1200)),
       ]) {
         for (final ThemeMode mode in <ThemeMode>[

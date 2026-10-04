@@ -37,6 +37,7 @@ import 'finances_foyer.dart';
 import 'ligne_membre.dart';
 import 'photo_eleve.dart';
 import 'place_adulte.dart';
+import 'transactions_foyer.dart';
 
 /// L'horloge du Foyer, pour dire qu'une echeance d'acces est passee.
 ///
@@ -206,9 +207,14 @@ class FoyerPage extends ConsumerWidget {
       onPress: () => aller(Routes.tuteurAjouterEnfant),
     );
 
+    // FI-5b : sur bureau, le Foyer du tuteur pose la synthese et les cartes
+    // des enfants sur toute la largeur utile, les cartes en grille (guide V4
+    // §5.1 « Desktop », maquette 05). Le titulaire adulte garde ses deux
+    // colonnes (planche 6).
+    final bool compositionBureau = bureau && adulte == null;
     final Widget profils = KeyedSubtree(
       key: membresKey,
-      child: _Membres(aller),
+      child: _Membres(aller, grille: compositionBureau),
     );
     final VoidCallback? nouvelleDemande = onNouvelleDemande;
     final Widget membres = adulte == null
@@ -341,7 +347,16 @@ class FoyerPage extends ConsumerWidget {
       entete: bureau || adulte != null
           ? null
           : Align(alignment: AlignmentDirectional.centerStart, child: ajouter),
-      child: bureau
+      child: compositionBureau
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                membres,
+                Ecart.vSection,
+                _RangeeBureau(aller: aller, annexes: annexes),
+              ],
+            )
+          : bureau
           ? Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -358,11 +373,97 @@ class FoyerPage extends ConsumerWidget {
   }
 }
 
-/// Les membres : chargement, contenu, vide, erreur, hors ligne.
-class _Membres extends ConsumerWidget {
-  const _Membres(this.aller);
+/// Sous la grille, sur bureau : « Dernieres transactions » et les annexes
+/// (appareils partages, « Creer mon profil eleve »), cote a cote. Sans
+/// source de transactions (production), les annexes seules, a leur largeur
+/// de colonne : jamais une colonne etiree sur toute la page.
+class _RangeeBureau extends ConsumerWidget {
+  const _RangeeBureau({required this.aller, required this.annexes});
 
   final void Function(String chemin) aller;
+
+  final Widget annexes;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool avecTransactions = transactionsDisponibles(
+      ref.watch(derniersMouvementsFoyerProvider),
+    );
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        if (avecTransactions) ...<Widget>[
+          Expanded(flex: 3, child: DernieresTransactionsFoyer(aller: aller)),
+          Ecart.hXxl,
+          Expanded(flex: 2, child: annexes),
+        ] else ...<Widget>[
+          Expanded(flex: 2, child: annexes),
+          const Spacer(flex: 3),
+        ],
+      ],
+    );
+  }
+}
+
+/// La largeur minimale d'une carte d'enfant en grille, a texte normal : le
+/// prenom, la legende, les pastilles et les lignes solde / prochain debit
+/// sans coupure. Multipliee par l'echelle du texte : a texte agrandi, moins
+/// de colonnes, jamais une carte plus etroite que son contenu.
+const double _largeurMinCarte = 320;
+
+/// Au plus trois cartes cote a cote (maquette 05).
+const int _colonnesMax = 3;
+
+/// Les cartes des enfants en grille (FI-5b) : autant de colonnes que la
+/// largeur en tient, de une a trois. Une seule colonne : la pile d'avant.
+class _GrilleCartes extends StatelessWidget {
+  const _GrilleCartes(this.cartes);
+
+  final List<Widget> cartes;
+
+  @override
+  Widget build(BuildContext context) {
+    final double echelle = MediaQuery.textScalerOf(context).scale(1);
+    return LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints contraintes) {
+        final int colonnes =
+            ((contraintes.maxWidth + AppSpacing.lg) /
+                    (_largeurMinCarte * echelle + AppSpacing.lg))
+                .floor()
+                .clamp(1, _colonnesMax);
+        if (colonnes == 1) return PileCartes(children: cartes);
+        // Des rangees de cartes separees de 16 dans les deux sens (K-55) ;
+        // la derniere rangee garde la largeur de colonne.
+        return PileCartes(
+          children: <Widget>[
+            for (int debut = 0; debut < cartes.length; debut += colonnes)
+              PileCartes(
+                axe: Axis.horizontal,
+                alignement: CrossAxisAlignment.start,
+                children: <Widget>[
+                  for (int i = debut; i < debut + colonnes; i++)
+                    Expanded(
+                      child: i < cartes.length
+                          ? cartes[i]
+                          : const SizedBox.shrink(),
+                    ),
+                ],
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// Les membres : chargement, contenu, vide, erreur, hors ligne.
+class _Membres extends ConsumerWidget {
+  const _Membres(this.aller, {this.grille = false});
+
+  final void Function(String chemin) aller;
+
+  /// Vrai sur bureau, pour le tuteur : les cartes en grille.
+  final bool grille;
 
   void _relire(WidgetRef ref) => ref.invalidate(elevesDuFoyerProvider);
 
@@ -405,17 +506,20 @@ class _Membres extends ConsumerWidget {
         titre: t.foyer.vide.titre,
         phrase: t.foyer.vide.phrase,
       ),
-      construire: (List<ProfilEleveFoyer> p) => _ListeMembres(p, aller),
+      construire: (List<ProfilEleveFoyer> p) =>
+          _ListeMembres(p, aller, grille: grille),
     );
   }
 }
 
 class _ListeMembres extends ConsumerWidget {
-  const _ListeMembres(this.profils, this.aller);
+  const _ListeMembres(this.profils, this.aller, {required this.grille});
 
   final List<ProfilEleveFoyer> profils;
 
   final void Function(String chemin) aller;
+
+  final bool grille;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -514,7 +618,7 @@ class _ListeMembres extends ConsumerWidget {
           ),
         ),
         Ecart.vSm,
-        PileCartes(children: cartes),
+        if (grille) _GrilleCartes(cartes) else PileCartes(children: cartes),
         if (classesIndisponibles) ...<Widget>[
           Ecart.vSm,
           Text(t.foyer.classesIndisponibles, style: note),

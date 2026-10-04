@@ -543,6 +543,30 @@ abstract final class DonneesFinanceDemo {
     return _mouvementsDe(p, recu(jeu));
   }
 
+  /// Les [limite] derniers mouvements du foyer du jeu [jeu] (FI-5b) : ceux
+  /// de [mouvements] pour chaque profil, du plus recent au plus ancien, a
+  /// date egale dans l'ordre des profils puis l'ordre rendu. Le tri est celui
+  /// de la source (ici la demonstration), jamais celui de l'ecran.
+  static List<MouvementFoyer> derniersMouvements(
+    JeuFoyerFinance jeu, {
+    int limite = 3,
+  }) {
+    final List<MouvementFoyer> tous = <MouvementFoyer>[
+      for (final FinancesProfil p in profils(jeu))
+        for (final MouvementProfil m in mouvements(jeu, p.profilId))
+          MouvementFoyer(profilId: p.profilId, prenom: p.prenom, mouvement: m),
+    ];
+    // `List.sort` n'est pas stable : l'indice departage deux dates egales.
+    final List<int> ordre = List<int>.generate(tous.length, (int i) => i)
+      ..sort((int a, int b) {
+        final int parDate = tous[b].mouvement.date.compareTo(
+          tous[a].mouvement.date,
+        );
+        return parDate != 0 ? parDate : a.compareTo(b);
+      });
+    return <MouvementFoyer>[for (final int i in ordre.take(limite)) tous[i]];
+  }
+
   /// Les mouvements de l'eleve adulte autonome [p] (FI-9b, FI-BR-17) : son
   /// recu ne repartit le paiement que sur lui.
   static List<MouvementProfil> mouvementsAdulte(FinancesProfil p) =>
@@ -1015,6 +1039,10 @@ class PaiementsFoyerFinanceDemo implements PortPaiementsFoyer {
   @override
   Future<List<MouvementProfil>> mouvements(String profilId) async =>
       DonneesFinanceDemo.mouvements(jeu, profilId);
+
+  @override
+  Future<List<MouvementFoyer>> derniersMouvements({int limite = 3}) async =>
+      DonneesFinanceDemo.derniersMouvements(jeu, limite: limite);
 
   // Les soldes rediges d'EA-9 sont remplaces par `finances()` (FI-BR-03).
   @override
