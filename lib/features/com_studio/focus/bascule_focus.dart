@@ -13,7 +13,8 @@
 //
 // Le focus CLAVIER suit, sans jamais etre piege : en entrant, il passe a
 // « Quitter le focus » (le lecteur d'ecran dit ou sortir) ; en sortant, il
-// revient sur « Mode focus », la ou il etait. Aucune portee de focus n'est
+// reste sur l'element qui l'avait (le champ, si l'on quitte par Echap en
+// ecrivant), sinon il revient sur « Mode focus ». Aucune portee de focus n'est
 // creee : la tabulation parcourt la page comme avant.
 
 import 'package:flutter/material.dart';
@@ -62,14 +63,40 @@ class EtatFocusStudio extends ChangeNotifier {
     final InstantaneFocus sortie = restaurer
         ? restaurateur.capturer()
         : InstantaneFocus.vide;
+    // Ou etait le focus clavier au moment de sortir (le champ, si l'on
+    // quitte par Echap en ecrivant).
+    final FocusNode? tenu = FocusManager.instance.primaryFocus;
     _actif = false;
     if (!restaurer) restaurateur.oublier();
     notifyListeners();
     if (!restaurer) return;
     _apresImage(() {
       restaurateur.restaurer(sortie);
-      noeudBascule.requestFocus();
+      _rendreFocusClavier(tenu);
     });
+  }
+
+  /// Rend le focus clavier apres la sortie : a l'element qui l'avait (le
+  /// champ du fil, un bouton du fil) s'il est encore a l'ecran, pour que la
+  /// personne continue la ou elle etait ; sinon (la sortie elle-meme, la
+  /// portee de la page apres un clic sur le fond, un element disparu) a
+  /// « Mode focus ».
+  void _rendreFocusClavier(FocusNode? tenu) {
+    final BuildContext? contexte = tenu?.context;
+    final bool garde =
+        tenu != null &&
+        tenu is! FocusScopeNode &&
+        !identical(tenu, noeudSortie) &&
+        contexte != null &&
+        contexte.mounted &&
+        tenu.canRequestFocus;
+    if (garde) {
+      // Deja tenu (le sous-arbre du canal est garde d'une disposition a
+      // l'autre) : rien a demander, la selection reste celle restauree.
+      if (!tenu.hasPrimaryFocus) tenu.requestFocus();
+      return;
+    }
+    noeudBascule.requestFocus();
   }
 
   /// Quitte le Focus sans restaurer, a l'image suivante : appele pendant une

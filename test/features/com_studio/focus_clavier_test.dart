@@ -7,7 +7,8 @@
 //   page n'a le focus clavier ; hors Focus, il ne fait rien.
 // - Le focus clavier n'est jamais piege : aucune portee de focus n'est
 //   creee, la tabulation va du bandeau au champ et revient ; a l'entree il
-//   passe a « Quitter le focus », a la sortie il revient a « Mode focus ».
+//   passe a « Quitter le focus », a la sortie il revient a « Mode focus »,
+//   sauf depuis le champ : le champ le garde, avec sa selection.
 // - Avec la reduction de mouvement, la transition est directe.
 
 import 'dart:async';
@@ -80,6 +81,37 @@ void main() {
 
       expect(_enFocus(), isFalse);
       expect(champFil(tester).text, 'En cours');
+      // Le curseur reste dans le champ : on continue d'ecrire sans
+      // revenir au champ (section 20, FocusStateRestorer).
+      expect(_noeudChamp(tester).hasPrimaryFocus, isTrue);
+      expect(
+        champFil(tester).selection,
+        const TextSelection.collapsed(offset: 8),
+      );
+      expect(noeudAction(tester, entrerFocus).hasFocus, isFalse);
+    });
+
+    testWidgets('depuis le champ, une selection au milieu du texte : le '
+        'champ garde le focus et la selection', (WidgetTester tester) async {
+      await _monter(tester);
+      await entrer(tester);
+      await tester.enterText(find.byKey(FilDiscussion.champKey), 'Un texte');
+      await tester.pump();
+      champFil(tester).selection = const TextSelection(
+        baseOffset: 3,
+        extentOffset: 8,
+      );
+      await tester.pump();
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+
+      expect(_enFocus(), isFalse);
+      expect(_noeudChamp(tester).hasPrimaryFocus, isTrue);
+      expect(
+        champFil(tester).selection,
+        const TextSelection(baseOffset: 3, extentOffset: 8),
+      );
     });
 
     testWidgets('sans element focalise dans la page (clic sur le fond) : '

@@ -247,6 +247,59 @@ void main() {
       }
     }
 
+    testWidgets('390, texte x2 : « Quitter le focus » reste a l ecran '
+        'apres defilement du fil, de la page et ouverture du champ', (
+      WidgetTester tester,
+    ) async {
+      await monterStudio(
+        tester,
+        port: portFocus(),
+        depart: _adresseC1,
+        taille: _mobile,
+        echelleTexte: 2,
+      );
+      await entrer(tester);
+      final Rect vue = Offset.zero & _mobile;
+
+      void sortieVisible(String apres) {
+        final Rect r = tester.getRect(quitterFocus);
+        expect(
+          r.top >= vue.top &&
+              r.left >= vue.left &&
+              r.bottom <= vue.bottom &&
+              r.right <= vue.right,
+          isTrue,
+          reason: 'apres $apres : $r hors de $vue',
+        );
+        expect(quitterFocus.hitTestable(), findsOneWidget, reason: apres);
+      }
+
+      sortieVisible('l entree');
+      // Le fil defile, dans les deux sens.
+      await tester.drag(find.byType(FilDiscussion), const Offset(0, 600));
+      await tester.pumpAndSettle();
+      sortieVisible('le defilement du fil');
+      // Un geste sur le bandeau lui-meme ne l emporte pas.
+      await tester.drag(
+        find.byKey(BandeauSortieFocus.cle),
+        const Offset(0, -400),
+      );
+      await tester.pumpAndSettle();
+      sortieVisible('un geste sur le bandeau');
+      // Un geste sur le haut de la page, au-dessus du bandeau.
+      await tester.dragFrom(const Offset(195, 4), const Offset(0, -400));
+      await tester.pumpAndSettle();
+      sortieVisible('un geste sur le haut de la page');
+      // Le champ prend le focus (et se rend visible).
+      await tester.showKeyboard(find.byKey(FilDiscussion.champKey));
+      await tester.pumpAndSettle();
+      sortieVisible('l ouverture du champ');
+      await tester.drag(find.byType(FilDiscussion), const Offset(0, -600));
+      await tester.pumpAndSettle();
+      sortieVisible('un second defilement');
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('hors ligne : le bandeau de la connexion reste en Focus '
         '(erreur reseau critique, section 10.4)', (WidgetTester tester) async {
       await monterStudio(

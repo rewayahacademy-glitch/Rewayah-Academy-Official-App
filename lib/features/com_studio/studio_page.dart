@@ -318,11 +318,26 @@ class _CoquilleStudioState extends State<CoquilleStudio> {
   /// En Focus : ni navigation, ni titre, ni retour, ni actions de coquille
   /// (cloche) ; le bandeau de sortie, puis le contenu. Le bandeau hors
   /// ligne de la page reste.
+  ///
+  /// Le bandeau est le premier element du CORPS non defilant, jamais
+  /// l'`entete` de la page : sur telephone a texte agrandi (200 %) ou sur
+  /// une vue tres basse, `PageShell` fait defiler sa tete avec le corps, et
+  /// « Quitter le focus » sortait de l'ecran pendant la lecture. Sans titre
+  /// ni entete, la tete n'est plus qu'une respiration ; le defilement de la
+  /// page ne peut pas depasser cette respiration, et le bandeau, pose juste
+  /// dessous, reste donc toujours entier a l'ecran (section 10.6, R-COM-09).
+  /// Seul le fil defile.
   Widget _enFocus(Widget contenu) => PageShell(
-    entete: const BandeauSortieFocus(),
     actionsCoquille: false,
     defilante: false,
-    child: contenu,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        const BandeauSortieFocus(),
+        Ecart.vXl,
+        Expanded(child: contenu),
+      ],
+    ),
   );
 
   Widget _coquille(BuildContext context, Widget contenu) {
