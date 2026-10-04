@@ -54,7 +54,7 @@ Références sur `ui/eleves-adultes-v1` @ 5629693 sauf mention « admin » (`ui/
 | Accès par profil | `lib/core/capacites/port_acces_foyer.dart:7` `EtatAccesAffiche`, `:39` `AccesBeneficiaire` | Base de FI-9a. |
 | Fiche élève et sous-pages | `lib/features/foyer/fiche_eleve_page.dart:241` `FicheElevePage`, `:35` `PageFiche` ; `Routes.ficheEleveSousPage` ; sous-pages `lib/features/foyer/fiche/` (`informations_page.dart:19`, `inscription_page.dart:33`, `interface_page.dart:31`, `camera_page.dart:29`, `acces_page.dart:27`) ; routes `app_router.dart:527-575` | Les lignes Classe, Interface, Caméra, Accès de la maquette 06 existent déjà. |
 | `ProfileIdentityAvatar` (photo ou initiale) | `lib/features/foyer/photo_eleve.dart:20` `PhotoEleve` | Le bandeau s'ajoute autour, sans recopier la photo. `AvatarNom` existe sur `corrections/revue-directeur-2026-10` (`lib/core/widgets/avatar_nom.dart`, AVATAR-1) mais pas dans notre base : ligne « Harmonisation » à HU-1. |
-| Accent d'identité stable | `lib/core/theme/app_palette.dart:306` `teintesIdentite` (32 paires vérifiées AA, décision D-18), `:309` `teinteGroupe(index)` | Aucune couleur nouvelle (K-37) : la clé `profileAccentKey` est un index stable rendu par les données, jamais la position dans la liste. Le guide §3.8 point 2 demande justement de réutiliser l'existant. **Contredit par la revue FI-1a : voir §4 bis, X-1.** |
+| Accent d'identité stable | `lib/core/theme/app_palette.dart:306` `teintesIdentite` (32 paires vérifiées AA, décision D-18), `:309` `teinteGroupe(index)` | ~~Aucune couleur nouvelle (K-37) : la clé `profileAccentKey` est un index stable rendu par les données, jamais la position dans la liste. Le guide §3.8 point 2 demande justement de réutiliser l'existant.~~ **Faux, barré le 04/10 (FI-ACCENT-1)** : ces teintes sont celles des classes et des couvertures ; le guide §3.8 parle des accents **de profils**, qui n'existent pas. FI-2 ne pose aucune teinte de profil avant la réponse du directeur (`FI-ACCENT-1.md`). |
 | `GroupedCard` | `lib/core/widgets/groupe_reglages.dart:81` `GroupeReglages`, `:13` `LigneRubrique` | Un rectangle, lignes à filets (K-55 b). |
 | `FinancialStatusChip`, `FinancedPeriodBadge` | `lib/core/widgets/status_pill.dart:60` `StatusPill` | Point + texte, jamais la couleur seule. |
 | `AttentionBanner` | `lib/core/widgets/permanent_notice.dart:28` `PermanentNotice` | Bandeau « Accès à régulariser » (maquette 07). **Contredit par la revue FI-1a : voir §4 bis, X-2.** |
@@ -182,8 +182,10 @@ CONFORME
 RISQUE
 - Tables serveur `wallets`, `wallet_entries` existantes (ADMIN_FINANCE_CONFIGURATION.md:72) : si elles
   portent un portefeuille de foyer, contraire à FIN4-07. À trancher en BR-1 (FI-BR-14).
-- Le guide §3 approuve des couleurs nouvelles, K-37 gèle le thème : on prend les 32 teintes
-  d'identité existantes ; si le directeur veut les teintes exactes des maquettes, ligne TH-2.
+- Le guide §3 approuve des couleurs nouvelles, K-37 gèle le thème : ~~on prend les 32 teintes
+  d'identité existantes ; si le directeur veut les teintes exactes des maquettes, ligne TH-2.~~
+  **Barré le 04/10 (FI-ACCENT-1)** : aucune teinte de profil avant la réponse du directeur,
+  question posée en TH-2 (`FI-ACCENT-1.md` §4).
 - Fusion admin + adultes dans la branche : à refaire proprement au plan 13_fusion.
 - Enseignant : `ui/enseignant-v1` @ 058c525 n'est pas dans la base ; la page Revenus doit rester
   autonome (un fichier, une entrée) pour ne pas entrer en conflit.
