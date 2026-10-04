@@ -60,5 +60,18 @@
   "enseignant.photo.aide": "commentaire du directeur, revue du 01-02/10, etape KYC-PHOTO-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
   "enseignant.photo.obligatoireLecteur": "commentaire du directeur, revue du 01-02/10, etape KYC-PHOTO-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
   "enseignant.photo.voile": "commentaire du directeur, revue du 01-02/10, etape KYC-PHOTO-1 ; decision deleguee du 02/10 (« le reste tu te débrouilles pour le bien de l'académie »)",
-  "enseignant.cahier.travailMaisonSaisi": "revue du directeur 10/2026, etape EN-7c-SUGG-T : aucune source de devoir suggere n'existe (brouillon_cahier ne rend que le devoir precedent) ; « Ajustez la suggestion » est reservee a une vraie suggestion, ce texte dit le devoir deja saisi par l'enseignant (K-57) ; a valider par le directeur"
+  "enseignant.cahier.travailMaisonSaisi": "revue du directeur 10/2026, etape EN-7c-SUGG-T : aucune source de devoir suggere n'existe (brouillon_cahier ne rend que le devoir precedent) ; « Ajustez la suggestion » est reservee a une vraie suggestion, ce texte dit le devoir deja saisi par l'enseignant (K-57) ; a valider par le directeur",
+  "admin.programmes.nouveauCycle": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.champNouveauCycle": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.ordreMoins": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.ordrePlus": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.ordreDeduit": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.codeGenere": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.codeModifier": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.manqueNom": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.manqueCycle": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.manqueOrdre": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.manqueCode": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.manque": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.ajouterNiveauErreur": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur"
 }

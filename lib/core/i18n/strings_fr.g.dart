@@ -5904,8 +5904,8 @@ class Traductions$admin$programmes$fr {
 	/// fr: 'Ajouter'
 	String get ajouterNiveauEnvoyer => 'Ajouter';
 
-	/// fr: 'L'ajout n'a pas abouti : {message}'
-	String ajouterNiveauErreur({required Object message}) => 'L\'ajout n\'a pas abouti : ${message}';
+	/// fr: 'L'ajout du niveau n'a pas été confirmé : {message}. Le code technique existe peut-être déjà dans cette version : modifiez-le, puis réessayez.'
+	String ajouterNiveauErreur({required Object message}) => 'L\'ajout du niveau n\'a pas été confirmé : ${message}. Le code technique existe peut-être déjà dans cette version : modifiez-le, puis réessayez.';
 
 	/// fr: 'Modifier'
 	String get modifierNiveau => 'Modifier';
@@ -5957,6 +5957,42 @@ class Traductions$admin$programmes$fr {
 
 	/// fr: 'Ordre'
 	String get champOrdre => 'Ordre';
+
+	/// fr: 'Nouveau cycle'
+	String get nouveauCycle => 'Nouveau cycle';
+
+	/// fr: 'Nom du nouveau cycle'
+	String get champNouveauCycle => 'Nom du nouveau cycle';
+
+	/// fr: 'Diminuer l'ordre de 1'
+	String get ordreMoins => 'Diminuer l\'ordre de 1';
+
+	/// fr: 'Augmenter l'ordre de 1'
+	String get ordrePlus => 'Augmenter l\'ordre de 1';
+
+	/// fr: 'L'ordre proposé suit le dernier niveau du cycle choisi. Changez-le si besoin.'
+	String get ordreDeduit => 'L\'ordre proposé suit le dernier niveau du cycle choisi. Changez-le si besoin.';
+
+	/// fr: 'Code technique proposé : {code}'
+	String codeGenere({required Object code}) => 'Code technique proposé : ${code}';
+
+	/// fr: 'Modifier le code technique'
+	String get codeModifier => 'Modifier le code technique';
+
+	/// fr: 'le nom affiché'
+	String get manqueNom => 'le nom affiché';
+
+	/// fr: 'le cycle'
+	String get manqueCycle => 'le cycle';
+
+	/// fr: 'l'ordre (un nombre entier)'
+	String get manqueOrdre => 'l\'ordre (un nombre entier)';
+
+	/// fr: 'le code technique'
+	String get manqueCode => 'le code technique';
+
+	/// fr: 'Rien n'a été enregistré : il manque {elements}. Complétez-le, puis réessayez.'
+	String manque({required Object elements}) => 'Rien n\'a été enregistré : il manque ${elements}. Complétez-le, puis réessayez.';
 
 	/// fr: 'Description (optionnelle)'
 	String get champDescription => 'Description (optionnelle)';
@@ -16841,7 +16877,7 @@ extension on Traductions {
 			'admin.programmes.ajouterNiveau' => 'Ajouter un niveau',
 			'admin.programmes.ajouterNiveauTitre' => ({required Object version}) => 'Ajouter un niveau à ${version}',
 			'admin.programmes.ajouterNiveauEnvoyer' => 'Ajouter',
-			'admin.programmes.ajouterNiveauErreur' => ({required Object message}) => 'L\'ajout n\'a pas abouti : ${message}',
+			'admin.programmes.ajouterNiveauErreur' => ({required Object message}) => 'L\'ajout du niveau n\'a pas été confirmé : ${message}. Le code technique existe peut-être déjà dans cette version : modifiez-le, puis réessayez.',
 			'admin.programmes.modifierNiveau' => 'Modifier',
 			'admin.programmes.modifierNiveauTitre' => ({required Object nom}) => 'Modifier ${nom}',
 			'admin.programmes.modifierNiveauEnvoyer' => 'Enregistrer',
@@ -16859,6 +16895,18 @@ extension on Traductions {
 			'admin.programmes.champNomHumain' => 'Nom affiché',
 			'admin.programmes.champCycle' => 'Cycle',
 			'admin.programmes.champOrdre' => 'Ordre',
+			'admin.programmes.nouveauCycle' => 'Nouveau cycle',
+			'admin.programmes.champNouveauCycle' => 'Nom du nouveau cycle',
+			'admin.programmes.ordreMoins' => 'Diminuer l\'ordre de 1',
+			'admin.programmes.ordrePlus' => 'Augmenter l\'ordre de 1',
+			'admin.programmes.ordreDeduit' => 'L\'ordre proposé suit le dernier niveau du cycle choisi. Changez-le si besoin.',
+			'admin.programmes.codeGenere' => ({required Object code}) => 'Code technique proposé : ${code}',
+			'admin.programmes.codeModifier' => 'Modifier le code technique',
+			'admin.programmes.manqueNom' => 'le nom affiché',
+			'admin.programmes.manqueCycle' => 'le cycle',
+			'admin.programmes.manqueOrdre' => 'l\'ordre (un nombre entier)',
+			'admin.programmes.manqueCode' => 'le code technique',
+			'admin.programmes.manque' => ({required Object elements}) => 'Rien n\'a été enregistré : il manque ${elements}. Complétez-le, puis réessayez.',
 			'admin.programmes.champDescription' => 'Description (optionnelle)',
 			'admin.programmes.champMotif' => 'Motif',
 			'admin.programmes.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
@@ -16888,6 +16936,8 @@ extension on Traductions {
 			'admin.journal.acteurSysteme' => 'Le système',
 			'admin.journal.acteurInconnu' => 'Compte supprimé',
 			'admin.journal.roleAdmin' => 'Administration',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.roleEnseignant' => 'Enseignant',
 			'admin.journal.roleTuteur' => 'Tuteur',
 			'admin.journal.roleEleve' => 'Élève',
@@ -16900,8 +16950,6 @@ extension on Traductions {
 			'admin.journal.evtProfilEnfantCree' => 'Profil enfant créé',
 			'admin.journal.evtCodeCree' => 'Code d\'appairage créé',
 			'admin.journal.evtAppareilAppaire' => 'Appareil appairé',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.evtAppareilRevoque' => 'Appareil révoqué',
 			'admin.journal.evtPedagogie' => 'Réglages pédagogiques modifiés',
 			'admin.journal.evtAffectationPrise' => 'Élève pris par un enseignant',
@@ -17402,6 +17450,8 @@ extension on Traductions {
 			'compte.tuteur.pageApparence.titre' => 'Apparence',
 			'compte.tuteur.pageApparence.sousTitre' => 'Appliqué sur cet appareil.',
 			'compte.tuteur.pageApparence.theme' => 'Thème de l\'application',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageApparence.themeDetail' => 'Personnalisez l\'apparence de Rewayah.',
 			'compte.tuteur.pageApparence.confort' => 'Confort visuel',
 			'compte.tuteur.pageApparence.animations' => 'Animations',
@@ -17414,8 +17464,6 @@ extension on Traductions {
 			'compte.tuteur.pageAide.canalCourriel' => 'Courriel de l\'académie',
 			'compte.tuteur.pageAide.canalLien' => 'Page d\'aide de l\'académie',
 			'compte.tuteur.pageAide.aucunCanal' => 'Aucun canal d\'aide n\'est publié pour le moment.',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageLegal.titre' => 'Informations légales',
 			'compte.tuteur.pageLegal.documents' => 'Documents acceptés',
 			'compte.tuteur.pageLegal.conditionsTuteur' => 'Conditions du tuteur',
@@ -17916,6 +17964,8 @@ extension on Traductions {
 			'enseignant.demo.etatHorsLigne' => 'Hors ligne',
 			'enseignant.bienvenue.titre' => 'Premiers pas',
 			'enseignant.bienvenue.salutation' => ({required Object prenom}) => 'Bienvenue, ${prenom}.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.bienvenue.salutationSansNom' => 'Bienvenue.',
 			'enseignant.bienvenue.dossierValide' => 'Votre dossier est validé.',
 			'enseignant.bienvenue.sousTitre' => 'Préparez votre espace avant votre première Classe.',
@@ -17928,8 +17978,6 @@ extension on Traductions {
 			'enseignant.bienvenue.ctaInformations' => 'Vérifier mes informations',
 			'enseignant.bienvenue.ctaJournee' => 'Voir ma journée',
 			'enseignant.bienvenue.rappels' => 'Deux choses à ne pas découvrir en cours de route',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.bienvenue.declarer' => 'Déclarer mes disponibilités',
 			'enseignant.bienvenue.versJournee' => 'Aller à ma journée',
 			'enseignant.bienvenue.horsLigne' => 'Sans réseau, vos créneaux ne pourront pas être enregistrés.',
@@ -18430,6 +18478,8 @@ extension on Traductions {
 			'controleur.echanges.reponseRecue' => 'Réponse reçue',
 			'controleur.echanges.enAttente' => 'En attente',
 			'controleur.echanges.vide' => 'Aucun échange avec l\'administration pour le moment.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.echanges.contexte' => 'Contexte de la visite, joint automatiquement',
 			'controleur.echanges.cleClasse' => 'Classe',
 			'controleur.echanges.cleDate' => 'Date',
@@ -18442,8 +18492,6 @@ extension on Traductions {
 			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
 			'controleur.echanges.enCours' => 'Envoi en cours.',
 			'controleur.echanges.envoye' => 'Envoyé.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.reessayer' => 'Réessayer',
 			'controleur.echanges.nouveauMessage' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
@@ -18944,6 +18992,8 @@ extension on Traductions {
 			'tc.parcours.feedback.confiance.difficile' => 'Pas encore',
 			'tc.parcours.feedback.confiance.bien' => 'Plutôt',
 			'tc.parcours.feedback.confiance.tresBien' => 'Tout à fait',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.feedback.merci' => 'Merci.',
 			'tc.parcours.feedback.tendance.titre' => 'Retour des élèves',
 			'tc.parcours.feedback.tendance.sousSeuil' => 'Pas encore assez de retours pour dégager une tendance.',
@@ -18956,8 +19006,6 @@ extension on Traductions {
 			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
 			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
 			'tc.parcours.signalement.interne' => 'Note interne',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',
