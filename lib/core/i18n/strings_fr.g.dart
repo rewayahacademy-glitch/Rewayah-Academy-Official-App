@@ -9134,6 +9134,48 @@ class Traductions$enseignant$cahier$fr {
 	/// fr: 'Indiquez où la Classe s'est arrêtée : un remplaçant reprendra ici.'
 	String get repriseRequise => 'Indiquez où la Classe s\'est arrêtée : un remplaçant reprendra ici.';
 
+	/// fr: 'Choisir la sourate et le verset'
+	String get repriseChoisir => 'Choisir la sourate et le verset';
+
+	/// fr: 'Choisissez la sourate, puis le verset où la Classe s'est arrêtée.'
+	String get repriseConsigne => 'Choisissez la sourate, puis le verset où la Classe s\'est arrêtée.';
+
+	/// fr: 'Chercher une sourate par son nom ou son numéro'
+	String get repriseRecherche => 'Chercher une sourate par son nom ou son numéro';
+
+	/// fr: '{numero}. {nom}'
+	String repriseSourate({required Object numero, required Object nom}) => '${numero}. ${nom}';
+
+	/// fr: '{n} versets'
+	String repriseVersets({required Object n}) => '${n} versets';
+
+	/// fr: 'Encore {n} sourates : précisez la recherche.'
+	String repriseRestantes({required Object n}) => 'Encore ${n} sourates : précisez la recherche.';
+
+	/// fr: 'Verset'
+	String get repriseVerset => 'Verset';
+
+	/// fr: 'Retenir cette position'
+	String get repriseRetenir => 'Retenir cette position';
+
+	/// fr: 'Choisissez la sourate puis le verset.'
+	String get repriseIncomplete => 'Choisissez la sourate puis le verset.';
+
+	/// fr: 'Aucune sourate ne correspond'
+	String get repriseAucune => 'Aucune sourate ne correspond';
+
+	/// fr: 'Essayez un autre nom, ou son numéro de 1 à 114.'
+	String get repriseAucuneDetail => 'Essayez un autre nom, ou son numéro de 1 à 114.';
+
+	/// fr: 'La liste des sourates n'a pas pu être lue'
+	String get repriseSansListe => 'La liste des sourates n\'a pas pu être lue';
+
+	/// fr: 'Fermez cette feuille : le cahier de transmission vous laisse écrire la position, ou réessayez.'
+	String get repriseSansListeFeuille => 'Fermez cette feuille : le cahier de transmission vous laisse écrire la position, ou réessayez.';
+
+	/// fr: 'Écrivez la position de reprise dans le champ ci-dessous, par exemple « Sourate 18, verset 10 ».'
+	String get repriseSansListeDetail => 'Écrivez la position de reprise dans le champ ci-dessous, par exemple « Sourate 18, verset 10 ».';
+
 	/// fr: 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.'
 	String get integrite => 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.';
 
@@ -18392,6 +18434,20 @@ extension on Traductions {
 			'enseignant.cahier.repriseDetail' => 'C\'est la position de reprise d\'un remplaçant.',
 			'enseignant.cahier.repriseProposee' => ({required Object sourate, required Object verset}) => 'Sourate ${sourate}, verset ${verset}',
 			'enseignant.cahier.repriseRequise' => 'Indiquez où la Classe s\'est arrêtée : un remplaçant reprendra ici.',
+			'enseignant.cahier.repriseChoisir' => 'Choisir la sourate et le verset',
+			'enseignant.cahier.repriseConsigne' => 'Choisissez la sourate, puis le verset où la Classe s\'est arrêtée.',
+			'enseignant.cahier.repriseRecherche' => 'Chercher une sourate par son nom ou son numéro',
+			'enseignant.cahier.repriseSourate' => ({required Object numero, required Object nom}) => '${numero}. ${nom}',
+			'enseignant.cahier.repriseVersets' => ({required Object n}) => '${n} versets',
+			'enseignant.cahier.repriseRestantes' => ({required Object n}) => 'Encore ${n} sourates : précisez la recherche.',
+			'enseignant.cahier.repriseVerset' => 'Verset',
+			'enseignant.cahier.repriseRetenir' => 'Retenir cette position',
+			'enseignant.cahier.repriseIncomplete' => 'Choisissez la sourate puis le verset.',
+			'enseignant.cahier.repriseAucune' => 'Aucune sourate ne correspond',
+			'enseignant.cahier.repriseAucuneDetail' => 'Essayez un autre nom, ou son numéro de 1 à 114.',
+			'enseignant.cahier.repriseSansListe' => 'La liste des sourates n\'a pas pu être lue',
+			'enseignant.cahier.repriseSansListeFeuille' => 'Fermez cette feuille : le cahier de transmission vous laisse écrire la position, ou réessayez.',
+			'enseignant.cahier.repriseSansListeDetail' => 'Écrivez la position de reprise dans le champ ci-dessous, par exemple « Sourate 18, verset 10 ».',
 			'enseignant.cahier.integrite' => 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.',
 			'enseignant.cahier.corriger' => 'Corriger le cahier de transmission',
 			'enseignant.cahier.corrigeLe' => ({required Object date}) => 'Corrigé le ${date}',
@@ -18619,6 +18675,8 @@ extension on Traductions {
 			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
 			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
 			'controleur.compteRendu.visiteInconnue' => 'Ce compte rendu ne peut plus être repris ici.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.compteRendu.visiteInconnueAide' => 'Cet appareil n\'a plus la visite en mémoire, sans doute après un rechargement de la page. La visite reste transmise à l\'administration avec son relevé automatique ; ce point n\'est pas confirmé depuis cet écran. Pour ajouter une remarque, écrivez à l\'administration.',
 			'controleur.observation.important' => 'Vous signalez un point important : votre texte sera demandé.',
 			'controleur.observation.questionNature' => 'Quelle est la nature de votre observation ?',
@@ -18633,8 +18691,6 @@ extension on Traductions {
 			'controleur.observation.contexteDomaine' => 'Le domaine aide l\'administration à lire votre observation.',
 			'controleur.observation.pedagogie' => 'Pédagogie',
 			'controleur.observation.pedagogieAide' => 'Quand il s\'agit de l\'enseignement : explications, progression, supports',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.interaction' => 'Interaction avec les élèves',
 			'controleur.observation.interactionAide' => 'Quand il s\'agit des échanges entre l\'enseignant et les élèves',
 			'controleur.observation.gestionClasse' => 'Gestion de la classe',
@@ -19133,6 +19189,8 @@ extension on Traductions {
 			'tc.observation.annonce.tuteurObserve' => ({required Object prenomEnfant}) => 'Tuteur de ${prenomEnfant} observe',
 			'tc.observation.annonce.restant' => ({required Object secondes}) => '${secondes} s',
 			'tc.observation.annonce.enfantIndicateur' => 'Ton tuteur regarde le cours',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.annonce.tuteursObservent' => ({required Object nombre}) => '${nombre} tuteurs observent',
 			'tc.observation.reglages.titre' => 'Observation par les tuteurs',
 			'tc.observation.reglages.intro' => 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s\'applique à ce groupe.',
@@ -19147,8 +19205,6 @@ extension on Traductions {
 			'tc.observation.reglages.enregistrer' => 'Enregistrer',
 			'tc.observation.reglages.invalideVisites' => 'Au moins une visite par séance.',
 			'tc.observation.reglages.invalideTemps' => 'Au moins trente secondes par séance.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.reglages.valeurHeritee' => ({required Object valeur}) => 'Académie : ${valeur}',
 			'tc.observation.reglages.uniteVisiteUne' => ({required Object n}) => '${n} visite',
 			'tc.observation.reglages.uniteVisites' => ({required Object n}) => '${n} visites',

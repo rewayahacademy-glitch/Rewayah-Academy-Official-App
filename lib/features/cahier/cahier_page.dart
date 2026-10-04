@@ -13,6 +13,8 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/presence/vue_presence.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_coran/moteur_mushaf.dart' show souratesCoranProvider;
+import '../../core/tc_coran/port_corpus_coran.dart' show SourateVM;
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -36,6 +38,7 @@ import '../presence_correction/presence_correction.dart';
 import '../presence_correction/presence_correction_page.dart';
 import 'emplacement_evaluation.dart';
 import 'makharij.dart';
+import 'selecteur_reprise.dart';
 import 'vue_cahier.dart';
 
 /// `ENS-04` : le cahier de seance (doc 04 §20, planche 4, K-45).
@@ -135,6 +138,12 @@ class _CahierState extends ConsumerState<_Cahier> {
   final Map<String, DecisionEleve> _decisions = <String, DecisionEleve>{};
   final TextEditingController _reprise = TextEditingController();
   final FocusNode _focusReprise = FocusNode();
+  final GlobalKey _cleReprise = GlobalKey();
+
+  /// La reprise choisie au selecteur (FORM-L9). [_reprise] garde la phrase
+  /// envoyee : elle est ecrite depuis ce choix, ou tapee quand la liste des
+  /// sourates est illisible.
+  PositionReprise? _position;
 
   bool _envoiEnCours = false;
   bool _echecEnvoi = false;
@@ -178,10 +187,11 @@ class _CahierState extends ConsumerState<_Cahier> {
     _repriseProposee = true;
     final PositionLecture? position = repriseProposee(brouillon.participants);
     if (position != null && _reprise.text.isEmpty) {
-      _reprise.text = t.enseignant.cahier.repriseProposee(
-        sourate: '${position.sourate}',
-        verset: '${position.verset}',
+      _position = PositionReprise(
+        sourate: position.sourate,
+        verset: position.verset,
       );
+      _reprise.text = _position!.texte;
     }
   }
 
@@ -296,27 +306,24 @@ class _CahierState extends ConsumerState<_Cahier> {
           child: Text(t.enseignant.cahier.reprise, style: textes.titleSmall),
         ),
         Ecart.vSm,
-        Semantics(
-          label: t.enseignant.cahier.reprise,
-          child: TextField(
-            key: const ValueKey<String>('cahier-reprise'),
-            controller: _reprise,
-            focusNode: _focusReprise,
-            textInputAction: TextInputAction.done,
-            onChanged: (String valeur) {
-              if (_repriseManquante && valeur.trim().isNotEmpty) {
-                setState(() => _repriseManquante = false);
-              }
-            },
-            decoration: InputDecoration(
-              helperText: t.enseignant.cahier.repriseDetail,
-              helperMaxLines: 2,
-              errorText: _repriseManquante
-                  ? t.enseignant.cahier.repriseRequise
-                  : null,
-              errorMaxLines: 3,
-            ),
-          ),
+        KeyedSubtree(
+          key: _cleReprise,
+          // K-57, FORM-L9 : la reprise se choisit (sourate puis verset). Le
+          // clavier ne revient que si la liste des sourates est illisible,
+          // et l'ecran le dit.
+          child: _sansListeDeSourates
+              ? _repriseTapee(textes)
+              : ChampReprise(
+                  valeur: _position,
+                  erreur: _repriseManquante
+                      ? t.enseignant.cahier.repriseRequise
+                      : null,
+                  onChoix: (PositionReprise choisie) => setState(() {
+                    _position = choisie;
+                    _reprise.text = choisie.texte;
+                    _repriseManquante = false;
+                  }),
+                ),
         ),
         Ecart.vXxl,
         Text(
@@ -345,6 +352,50 @@ class _CahierState extends ConsumerState<_Cahier> {
       ],
     );
   }
+
+  /// Vrai quand le corpus ne rend pas la liste des sourates : seul cas ou la
+  /// reprise se tape encore.
+  ///
+  /// Lu par `watch` pendant `build`, par `read` au moment du geste.
+  bool get _sansListeDeSourates => _illisible(ref.watch(souratesCoranProvider));
+
+  static bool _illisible(AsyncValue<List<SourateVM>> sourates) =>
+      sourates.hasError && !sourates.hasValue;
+
+  /// Le repli au clavier, tel qu'avant FORM-L9, avec sa raison.
+  Widget _repriseTapee(TextTheme textes) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: <Widget>[
+      Text(
+        t.enseignant.cahier.repriseSansListeDetail,
+        key: const ValueKey<String>('cahier-reprise-sans-liste'),
+        style: textes.bodySmall,
+      ),
+      Ecart.vSm,
+      Semantics(
+        label: t.enseignant.cahier.reprise,
+        child: TextField(
+          key: ChampReprise.champKey,
+          controller: _reprise,
+          focusNode: _focusReprise,
+          textInputAction: TextInputAction.done,
+          onChanged: (String valeur) {
+            if (_repriseManquante && valeur.trim().isNotEmpty) {
+              setState(() => _repriseManquante = false);
+            }
+          },
+          decoration: InputDecoration(
+            helperText: t.enseignant.cahier.repriseDetail,
+            helperMaxLines: 2,
+            errorText: _repriseManquante
+                ? t.enseignant.cahier.repriseRequise
+                : null,
+            errorMaxLines: 3,
+          ),
+        ),
+      ),
+    ],
+  );
 
   void _retourJournee() => GoRouter.of(context).go(Routes.enseignantJournee);
 
@@ -391,7 +442,14 @@ class _CahierState extends ConsumerState<_Cahier> {
     }
     if (_reprise.text.trim().isEmpty) {
       setState(() => _repriseManquante = true);
-      _focusReprise.requestFocus();
+      if (_illisible(ref.read(souratesCoranProvider))) {
+        _focusReprise.requestFocus();
+      } else {
+        final BuildContext? champ = _cleReprise.currentContext;
+        if (champ != null) {
+          unawaited(Scrollable.ensureVisible(champ));
+        }
+      }
       return;
     }
     setState(() {
