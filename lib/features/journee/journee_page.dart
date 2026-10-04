@@ -836,49 +836,63 @@ class _ATerminer extends ConsumerWidget {
     // Doc 04 §11.4 et §33 n. 9 : du plus ancien au plus recent, trois au
     // plus ; au-dela, « Voir tout » ouvre la liste complete.
     final List<CahierEnRetard> tries = trierCahiersATerminer(cahiers);
+    final Widget entete = Wrap(
+      spacing: AppSpacing.xs,
+      runSpacing: AppSpacing.xs,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: <Widget>[
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Flexible(
+              child: Semantics(
+                header: true,
+                child: Text(
+                  t.enseignant.journee.aTerminer,
+                  // Un titre de section : `titleLarge`, comme
+                  // `SectionHeader` ; la page porte son titre d'ecran au
+                  // rang `headline*` (HIER-1).
+                  style: palette.surfaceCanvas.applyTo(
+                    textes.titleLarge ?? const TextStyle(),
+                  ),
+                ),
+              ),
+            ),
+            Ecart.hXs,
+            PointRappel(
+              key: const ValueKey<String>('journee-point-rappel'),
+              libelle: t.enseignant.journee.rappelCahier,
+            ),
+          ],
+        ),
+        // LIB-CAHIER-1 : le caractere obligatoire se voit sur la carte.
+        StatusPill(
+          key: const ValueKey<String>('journee-cahier-obligatoire'),
+          libelle: t.enseignant.cahier.obligatoire,
+          ton: TonEtat.avertissement,
+        ),
+      ],
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         // Le titre au style de `SectionHeader`, le point colle a lui : dans
         // `SectionHeader`, qui occupe toute la ligne, il partirait au bout.
-        // BENTO-2b : un `Wrap` et non une `Row` : a 390 px et texte double, la
-        // pastille passe a la ligne au lieu de serrer le titre (« À termi/ner »).
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: Wrap(
-                spacing: AppSpacing.xs,
-                runSpacing: AppSpacing.xs,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: <Widget>[
-                  Semantics(
-                    header: true,
-                    child: Text(
-                      t.enseignant.journee.aTerminer,
-                      // Un titre de section : `titleLarge`, comme
-                      // `SectionHeader` ; la page porte son titre d'ecran au
-                      // rang `headline*` (HIER-1).
-                      style: palette.surfaceCanvas.applyTo(
-                        textes.titleLarge ?? const TextStyle(),
-                      ),
-                    ),
-                  ),
-                  PointRappel(
-                    key: const ValueKey<String>('journee-point-rappel'),
-                    libelle: t.enseignant.journee.rappelCahier,
-                  ),
-                  // LIB-CAHIER-1 : le caractere obligatoire se voit sur la
-                  // carte.
-                  StatusPill(
-                    key: const ValueKey<String>('journee-cahier-obligatoire'),
-                    libelle: t.enseignant.cahier.obligatoire,
-                    ton: TonEtat.avertissement,
-                  ),
-                ],
-              ),
-            ),
-            if (tries.length > maximumATerminer) ...<Widget>[
-              Ecart.hXs,
+        // Titre et point forment UN enfant du `Wrap` (le point ne reste
+        // jamais seul en tete de ligne) ; la pastille passe a la ligne au
+        // lieu de serrer le titre (« À termi/ner », BENTO-2b).
+        // BENTO-2c : « Voir tout » n'est plus dans une `Row` qui laissait au
+        // titre ce qu'il restait (320 px, texte double : « termi/ner »,
+        // « Obligatoi/re ») : un `OverflowBar` le met au bout de la ligne
+        // quand tout tient, sous l'en-tete sinon, comme `SectionHeader`.
+        if (tries.length > maximumATerminer)
+          OverflowBar(
+            key: const ValueKey<String>('journee-a-terminer-entete'),
+            alignment: MainAxisAlignment.spaceBetween,
+            spacing: AppSpacing.lg,
+            overflowSpacing: AppSpacing.sm,
+            children: <Widget>[
+              entete,
               LienFleche(
                 key: const ValueKey<String>('journee-a-terminer-voir-tout'),
                 libelle: t.tuteur.accueil.voirTout,
@@ -891,8 +905,12 @@ class _ATerminer extends ConsumerWidget {
                 ),
               ),
             ],
-          ],
-        ),
+          )
+        else
+          KeyedSubtree(
+            key: const ValueKey<String>('journee-a-terminer-entete'),
+            child: entete,
+          ),
         Ecart.vXs,
         Text(
           t.enseignant.journee.aTerminerAide,
