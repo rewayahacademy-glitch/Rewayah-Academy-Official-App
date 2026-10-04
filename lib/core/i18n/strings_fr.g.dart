@@ -9514,8 +9514,8 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: '{nombre} sur {capacite}'
 	String siegesValeur({required Object nombre, required Object capacite}) => '${nombre} sur ${capacite}';
 
-	/// fr: 'Élèves financés, présents ou absents, et élèves en essai présents.'
-	String get siegesDetail => 'Élèves financés, présents ou absents, et élèves en essai présents.';
+	/// fr: 'Élèves financés, présents ou absents, et élèves en essai présents. Nombre retenu pour le mois, tel que l'académie le transmet.'
+	String get siegesDetail => 'Élèves financés, présents ou absents, et élèves en essai présents. Nombre retenu pour le mois, tel que l\'académie le transmet.';
 
 	/// fr: 'Taux horaire effectif'
 	String get taux => 'Taux horaire effectif';
@@ -9556,8 +9556,8 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: 'Une seule aide par mois, versée à part de la rémunération pédagogique.'
 	String get internetDetail => 'Une seule aide par mois, versée à part de la rémunération pédagogique.';
 
-	/// fr: 'Vous n'êtes pas concerné par l'aide Internet ce mois-ci.'
-	String get internetNon => 'Vous n\'êtes pas concerné par l\'aide Internet ce mois-ci.';
+	/// fr: 'Aucune aide Internet n'est prévue ce mois-ci.'
+	String get internetAucune => 'Aucune aide Internet n\'est prévue ce mois-ci.';
 
 	/// fr: 'Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l'académie fait foi.'
 	String get mention => 'Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l\'académie fait foi.';
@@ -19849,7 +19849,7 @@ extension on Traductions {
 			'enseignant.revenus.capaciteValeur' => ({required Object nombre}) => '${nombre} places',
 			'enseignant.revenus.sieges' => 'Sièges éligibles',
 			'enseignant.revenus.siegesValeur' => ({required Object nombre, required Object capacite}) => '${nombre} sur ${capacite}',
-			'enseignant.revenus.siegesDetail' => 'Élèves financés, présents ou absents, et élèves en essai présents.',
+			'enseignant.revenus.siegesDetail' => 'Élèves financés, présents ou absents, et élèves en essai présents. Nombre retenu pour le mois, tel que l\'académie le transmet.',
 			'enseignant.revenus.taux' => 'Taux horaire effectif',
 			'enseignant.revenus.tauxValeur' => ({required Object montant}) => '${montant} par heure',
 			'enseignant.revenus.montantClasse' => 'Montant estimé',
@@ -19863,7 +19863,7 @@ extension on Traductions {
 			'enseignant.revenus.internetSection' => 'Aide Internet',
 			'enseignant.revenus.internet' => 'Aide Internet du mois',
 			'enseignant.revenus.internetDetail' => 'Une seule aide par mois, versée à part de la rémunération pédagogique.',
-			'enseignant.revenus.internetNon' => 'Vous n\'êtes pas concerné par l\'aide Internet ce mois-ci.',
+			'enseignant.revenus.internetAucune' => 'Aucune aide Internet n\'est prévue ce mois-ci.',
 			'enseignant.revenus.mention' => 'Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l\'académie fait foi.',
 			'enseignant.revenus.vide' => 'Aucune heure assurée ce mois-ci',
 			'enseignant.revenus.videDetail' => 'L\'estimation apparaîtra après votre première séance assurée du mois.',

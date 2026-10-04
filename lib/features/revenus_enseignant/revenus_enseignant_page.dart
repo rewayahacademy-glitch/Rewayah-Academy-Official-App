@@ -19,11 +19,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_revenus_enseignant.dart';
 import '../../core/finance/format_montant.dart';
 import '../../core/finance/montant.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -32,6 +34,7 @@ import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/carte_groupee.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/ligne_finance.dart';
 import '../../core/widgets/montant_argent.dart';
@@ -59,23 +62,36 @@ class RevenusEnseignantPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<RevenusEnseignant> revenus = ref.watch(
+      revenusEnseignantProvider,
+    );
+    void relire() => ref.invalidate(revenusEnseignantProvider);
+    // Sans reseau, un echec se dit « hors ligne » (comme la Vue globale de
+    // la direction) ; une capacite absente reste dite indisponible.
+    final Object? erreur = revenus.hasError ? revenus.error : null;
+    final bool echecHorsLigne =
+        erreur != null &&
+        erreur is! CapaciteIndisponible &&
+        (ref.watch(horsLigneProvider).value ?? false);
     return PageShell(
       titre: t.enseignant.revenus.titre,
       entete: Text(t.enseignant.revenus.intro),
       onRetour: onRetour ?? () => _retour(context),
-      child: BlocAsynchrone<RevenusEnseignant>(
-        valeur: ref.watch(revenusEnseignantProvider),
-        squelette: const Skeleton.liste(lignes: 6),
-        onReessayer: () => ref.invalidate(revenusEnseignantProvider),
-        estVide: (RevenusEnseignant r) => r.classes.isEmpty,
-        vide: EmptyState(
-          message: t.enseignant.revenus.vide,
-          invitation: t.enseignant.revenus.videDetail,
-          icone: AppIcons.finance,
-          registre: RegistreVide.subi,
-        ),
-        construire: (RevenusEnseignant r) => _Corps(revenus: r),
-      ),
+      child: echecHorsLigne
+          ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire)
+          : BlocAsynchrone<RevenusEnseignant>(
+              valeur: revenus,
+              squelette: const Skeleton.liste(lignes: 6),
+              onReessayer: relire,
+              estVide: (RevenusEnseignant r) => r.classes.isEmpty,
+              vide: EmptyState(
+                message: t.enseignant.revenus.vide,
+                invitation: t.enseignant.revenus.videDetail,
+                icone: AppIcons.finance,
+                registre: RegistreVide.subi,
+              ),
+              construire: (RevenusEnseignant r) => _Corps(revenus: r),
+            ),
     );
   }
 
@@ -273,6 +289,9 @@ class _SectionClasse extends StatelessWidget {
           valeur: t.enseignant.revenus.capaciteValeur(nombre: classe.capacite),
           chiffres: true,
         ),
+        // Un nombre par Classe pour le mois, tel que la source le rend ; le
+        // guide parle d'une moyenne ou d'un detail par seance, qu'aucun
+        // contrat ne porte encore (ecart FI-BR-11) : rien n'est recalcule ici.
         LigneCleValeur(
           cle: t.enseignant.revenus.sieges,
           detailCle: t.enseignant.revenus.siegesDetail,
@@ -365,7 +384,9 @@ class _Etape extends StatelessWidget {
 }
 
 /// L'aide Internet, a part de la remuneration pedagogique (guide §1.4) : une
-/// seule par enseignant eligible, jamais multipliee par Classe.
+/// seule par enseignant eligible, jamais multipliee par Classe. Sans montant,
+/// un libelle neutre : le contrat ne distingue pas « non eligible » de
+/// « montant non fixe par la politique », l'ecran ne tranche donc pas.
 class _Internet extends StatelessWidget {
   const _Internet({required this.allocation});
 
@@ -379,7 +400,7 @@ class _Internet extends StatelessWidget {
     return AppCard(
       child: montant == null
           ? Text(
-              t.enseignant.revenus.internetNon,
+              t.enseignant.revenus.internetAucune,
               style: palette.inkMuted.applyTo(
                 textes.bodyMedium ?? const TextStyle(),
               ),

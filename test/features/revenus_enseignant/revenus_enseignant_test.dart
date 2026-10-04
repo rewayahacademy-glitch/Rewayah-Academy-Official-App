@@ -285,7 +285,18 @@ void main() {
       );
       // La politique ne fixe pas d'aide Internet : aucune n'est inventee.
       expect(r.allocationInternet, isNull);
-      expect(find.text(t.enseignant.revenus.internetNon), findsOneWidget);
+      expect(find.text(t.enseignant.revenus.internetAucune), findsOneWidget);
+      // Un libelle neutre : rien ne dit que l'enseignant n'est pas concerne.
+      expect(
+        t.enseignant.revenus.internetAucune,
+        "Aucune aide Internet n'est prévue ce mois-ci.",
+      );
+      expect(find.textContaining('concerné'), findsNothing);
+      // Les sieges : le nombre du mois tel que la source le rend.
+      expect(
+        t.enseignant.revenus.siegesDetail,
+        contains('Nombre retenu pour le mois'),
+      );
       verifierUnSeulBoutonPlein(tester);
       expect(
         verifierAucuneCarteCollee(tester, estCarte: (Widget w) => w is AppCard),
@@ -354,14 +365,17 @@ void main() {
   group('Etats de la page', () {
     Future<void> monterPage(
       WidgetTester tester,
-      PortRevenusEnseignant port,
-    ) async {
+      PortRevenusEnseignant port, {
+      bool horsLigne = false,
+    }) async {
       fixerVueCapture(tester, const Size(390, 1600), 1);
       await tester.pumpWidget(
         hoteCapture(
           RevenusEnseignantPage(onRetour: () {}),
           surcharges: <Override>[
-            serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+            serviceReseauProvider.overrideWithValue(
+              FauxServiceReseau(horsLigneRendu: horsLigne),
+            ),
             portRevenusEnseignantProvider.overrideWithValue(port),
           ],
         ),
@@ -390,6 +404,31 @@ void main() {
           find.byType(EtatSysteme).evaluate().single.widget as EtatSysteme;
       expect(etat.nature, NatureEtat.echecServeur);
       expect(find.text(t.commun.reessayer), findsOneWidget);
+    });
+
+    testWidgets('hors ligne : un echec sans reseau se dit hors ligne', (
+      WidgetTester tester,
+    ) async {
+      await monterPage(tester, const _PortEnEchec(), horsLigne: true);
+      await _attendre(tester);
+      final EtatSysteme etat =
+          find.byType(EtatSysteme).evaluate().single.widget as EtatSysteme;
+      expect(etat.nature, NatureEtat.horsLigne);
+      expect(etat.onAction, isNotNull);
+    });
+
+    testWidgets('hors ligne : une capacite absente reste indisponible', (
+      WidgetTester tester,
+    ) async {
+      await monterPage(
+        tester,
+        const RevenusEnseignantIndisponibles(),
+        horsLigne: true,
+      );
+      await _attendre(tester);
+      final EtatSysteme etat =
+          find.byType(EtatSysteme).evaluate().single.widget as EtatSysteme;
+      expect(etat.nature, NatureEtat.indisponible);
     });
 
     testWidgets('indisponible : le port de production, sans « Reessayer »', (
@@ -427,7 +466,7 @@ void main() {
       await _attendre(tester);
       expect(find.text(t.enseignant.revenus.internet), findsOneWidget);
       expect(find.text(formaterMontant(aide)), findsOneWidget);
-      expect(find.text(t.enseignant.revenus.internetNon), findsNothing);
+      expect(find.text(t.enseignant.revenus.internetAucune), findsNothing);
       // Le total reste celui de la remuneration pedagogique.
       expect(find.text(formaterMontant(base.totalEstime)), findsOneWidget);
     });

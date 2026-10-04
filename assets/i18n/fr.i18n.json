@@ -3625,7 +3625,7 @@
       "capaciteValeur": "{nombre} places",
       "sieges": "Sièges éligibles",
       "siegesValeur": "{nombre} sur {capacite}",
-      "siegesDetail": "Élèves financés, présents ou absents, et élèves en essai présents.",
+      "siegesDetail": "Élèves financés, présents ou absents, et élèves en essai présents. Nombre retenu pour le mois, tel que l'académie le transmet.",
       "taux": "Taux horaire effectif",
       "tauxValeur": "{montant} par heure",
       "montantClasse": "Montant estimé",
@@ -3639,7 +3639,7 @@
       "internetSection": "Aide Internet",
       "internet": "Aide Internet du mois",
       "internetDetail": "Une seule aide par mois, versée à part de la rémunération pédagogique.",
-      "internetNon": "Vous n'êtes pas concerné par l'aide Internet ce mois-ci.",
+      "internetAucune": "Aucune aide Internet n'est prévue ce mois-ci.",
       "mention": "Ce montant est une estimation, pas une paie définitive. Le relevé arrêté par l'académie fait foi.",
       "vide": "Aucune heure assurée ce mois-ci",
       "videDetail": "L'estimation apparaîtra après votre première séance assurée du mois."
