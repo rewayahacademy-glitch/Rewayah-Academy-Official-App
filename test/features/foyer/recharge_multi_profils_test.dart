@@ -218,6 +218,27 @@ class _PolitiqueTousRails implements PortPolitiquesCommerciales {
   Future<PolitiqueCommerciale> active() async => _p;
 
   @override
+  Future<void> publier(PolitiqueCommerciale brouillon) =>
+      const PolitiquesCommercialesDemo().publier(brouillon);
+
+  @override
+  Future<ApercuFamille> apercuFamille(
+    PolitiqueCommerciale brouillon,
+    int enfants,
+  ) => const PolitiquesCommercialesDemo().apercuFamille(brouillon, enfants);
+
+  @override
+  Future<ApercuEnseignant> apercuEnseignant(
+    PolitiqueCommerciale brouillon, {
+    required int capacite,
+    required int eligibles,
+  }) => const PolitiquesCommercialesDemo().apercuEnseignant(
+    brouillon,
+    capacite: capacite,
+    eligibles: eligibles,
+  );
+
+  @override
   Future<List<PolitiqueCommerciale>> versions() async => <PolitiqueCommerciale>[
     _p,
   ];

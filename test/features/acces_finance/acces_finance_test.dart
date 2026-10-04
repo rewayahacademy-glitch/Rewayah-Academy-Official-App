@@ -24,6 +24,7 @@ import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
+import 'package:rewayah_academy/core/finance/mouvements_profil.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
@@ -86,6 +87,10 @@ class _PaiementsEspion implements PortPaiementsFoyer {
 
   @override
   Future<SoldesFoyer> soldes() => throw UnimplementedError();
+
+  @override
+  Future<List<MouvementProfil>> mouvements(String profilId) async =>
+      const <MouvementProfil>[];
 }
 
 /// L'acces d'Aicha apres ses deux essais, sans periode financee (FIN4-13).
