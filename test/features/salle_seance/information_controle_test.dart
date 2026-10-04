@@ -200,6 +200,11 @@ void main() {
   });
 
   group('Mise en page : la salle ne bouge pas, la lecture defile', () {
+    // Les mesures se font avec les vraies polices du depot : la police de
+    // test (Ahem) elargit chaque glyphe et fait passer la mention sur deux
+    // lignes.
+    setUpAll(chargerPolicesDuDepot);
+
     Future<void> salle(
       WidgetTester tester,
       Size taille,
@@ -309,6 +314,11 @@ void main() {
               fin,
               200,
               scrollable: find.byType(Scrollable).last,
+            );
+            // Jusqu'au bout du defilement : la derniere phrase entiere.
+            await tester.drag(
+              find.byType(Scrollable).last,
+              const Offset(0, -10000),
             );
             await stabiliser(tester);
             expect(tester.takeException(), isNull);
