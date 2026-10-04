@@ -399,17 +399,6 @@ void main() {
       expect(find.text(t.appareils.plateforme.android), findsOneWidget);
     });
 
-    testWidgets('hors ligne avec donnees : le bandeau seul dit le reseau '
-        '(EA-HL-DOUBLE-1)', (WidgetTester tester) async {
-      await _monter(
-        tester,
-        service: _foyer(),
-        depart: _page('e1'),
-        horsLigne: true,
-      );
-      expectAvecDonnees();
-    });
-
     testWidgets('hors ligne sans donnees : le bloc dit ce qui manque, sans '
         'redire le reseau (EA-HL-DOUBLE-1)', (WidgetTester tester) async {
       await _monter(

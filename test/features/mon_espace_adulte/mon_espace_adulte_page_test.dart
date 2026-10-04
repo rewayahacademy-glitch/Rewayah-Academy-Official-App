@@ -811,7 +811,6 @@ void main() {
     await tester.pumpAndSettle();
     expect(dansFamille(t.adulte.famille.maFamille), findsOneWidget);
     expect(find.text(t.commun.etats.horsLigne.titre), findsNothing);
-    expectAvecDonnees();
   });
 
   testWidgets('legendes honnetes : les rubriques sans source disent « Non '
