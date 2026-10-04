@@ -1,5 +1,25 @@
 # FI-ACCENT-1 : l'accent de profil n'a pas d'étape qui le porte
 
+> **DÉCISION DU DIRECTEUR, 04/10/2026 (définitive, prime sur tout le reste du fichier)** :
+> « C'est le tuteur qui choisira dans les réglages du profil ; il faut prévoir la partie frontend
+> et le branchement serveur viendra après. Tout ce qui contredit ceci est obsolète. »
+> Maquette de référence : `V/11_mobile_sombre_foyer_bandeau_profil_2026-10-04.jpg` (Foyer mobile
+> sombre : Salam, Mariam, Fatimah). Ce qu'elle montre :
+> - un **bandeau vertical** de couleur douce (menthe, rose, lavande), posé au **bord haut de la
+>   carte**, **derrière le cercle de l'avatar** et décalé à son départ ; il descend jusqu'à
+>   environ la moitié du cercle ; il reste **dans la carte** ;
+> - une couleur différente par profil, qui n'est ni un statut (« Actif » garde sa pastille), ni
+>   une classe ;
+> - avatar en cercle, initiale, prénom, âge, classe.
+>
+> Donc : choix 3 de la §4 (couleur choisie par le tuteur, parmi des jetons d'accent de profil
+> nouveaux, exception à K-37 limitée à ces jetons), bandeau **derrière l'avatar, contenu dans la
+> carte**. Ce qui contredit cela devient obsolète : K-37 pour ces seuls jetons, la phrase
+> d'AVATAR-1 « le bandeau se pose sur la carte, pas sur l'avatar », la recommandation 2 de la §4.
+> Frontend maintenant (jetons, composant, choix dans les réglages du profil, port neutre +
+> démonstration) ; stockage serveur de la couleur en BR-1 (ligne FI-BR-19). FOY-COUL-1 est porté
+> par la même étape (doublon).
+
 Écrit le 04/10/2026 par la session cloud b061fd81 (relevé VERIF-PREP, gravité moyen, session 90248232). Pilotage seulement : aucune ligne de code, aucune couleur, aucun jeton (K-37).
 
 ## 1. Ce qui était faux
