@@ -18,16 +18,22 @@ import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
+import 'package:rewayah_academy/core/theme/app_color_pair.dart';
+import 'package:rewayah_academy/core/theme/app_gabarit.dart';
+import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
+import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
 import 'package:rewayah_academy/core/widgets/page_immersive.dart';
+import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 
 import '../capture/outil_capture.dart';
 import '../support/harnais.dart';
 import '../teaching_core/e/faux/faux_classe.dart';
+import '../theme/support/contraste.dart';
 
 AccesSalle _acces(String role) => AccesSalle(
   urlServeur: 'wss://exemple.invalid',
@@ -97,14 +103,17 @@ Future<void> _monter(
   double largeur,
   double texte, {
   double densite = 1,
+  ThemeMode themeMode = ThemeMode.light,
+  double hauteur = 844,
 }) async {
-  fixerVueCapture(tester, Size(largeur, 844), densite);
+  fixerVueCapture(tester, Size(largeur, hauteur), densite);
   final FauxMoteurSalle moteur = FauxMoteurSalle();
   await tester.pumpWidget(
     hoteCapture(
       const SallePage(seanceId: 's1'),
       surcharges: _surcharges(role, moteur),
       echelleTexte: texte,
+      themeMode: themeMode,
     ),
   );
   await tester.pumpAndSettle();
@@ -132,16 +141,70 @@ const List<String> _roles = <String>[
   'guardian_observer',
 ];
 
+/// La couleur rendue d'un texte (style fusionne de son `RichText`).
+Color? _couleurRendue(WidgetTester tester, Finder texte) => tester
+    .widget<RichText>(
+      find.descendant(of: texte, matching: find.byType(RichText)).first,
+    )
+    .text
+    .style
+    ?.color;
+
+/// Le fond sous un element : la premiere boite coloree au-dessus de lui, ou
+/// le fond de l'echafaudage (celui de `PageImmersive`).
+Color _fondSous(WidgetTester tester, Finder cible) {
+  Color? trouve;
+  tester.element(cible).visitAncestorElements((Element e) {
+    final Widget w = e.widget;
+    if (w is DecoratedBox) {
+      final Decoration d = w.decoration;
+      if (d is BoxDecoration && d.color != null) {
+        trouve = d.color;
+        return false;
+      }
+      if (d is ShapeDecoration && d.color != null) {
+        trouve = d.color;
+        return false;
+      }
+    }
+    if (w is ColoredBox) {
+      trouve = w.color;
+      return false;
+    }
+    if (w is Scaffold && w.backgroundColor != null) {
+      trouve = w.backgroundColor;
+      return false;
+    }
+    return true;
+  });
+  return trouve!;
+}
+
+/// Verifie qu'un texte se lit sur ce qui est dessous : 4,5:1 au moins.
+void _lisible(WidgetTester tester, Finder texte, String quoi) {
+  expect(texte, findsWidgets, reason: quoi);
+  for (final Element e in texte.evaluate()) {
+    final Finder un = find.byWidget(e.widget).first;
+    final Color? encre = _couleurRendue(tester, un);
+    expect(encre, isNotNull, reason: quoi);
+    final Color fond = _fondSous(tester, un);
+    final double r = contraste(encre!, fond);
+    expect(
+      r,
+      greaterThanOrEqualTo(seuilTexte),
+      reason: '« $quoi » : ${r.toStringAsFixed(2)}:1 ($encre sur $fond)',
+    );
+  }
+}
+
 void main() {
   group('SALLE-200-1 : la salle tient, texte agrandi', () {
     for (final String role in _roles) {
       for (final double largeur in <double>[320, 390]) {
         for (final double texte in <double>[1, 2]) {
-          // Reste a traiter (SALLE-200-2) : a 320 px et texte x1, le panneau
-          // de l'enseignant deborde de 37 px a droite, defaut anterieur a
-          // cette etape (il n'est pas dans le chrome de la salle).
-          final bool reste = role == 'teacher' && largeur == 320 && texte == 1;
-          testWidgets('$role, $largeur px, texte x$texte', skip: reste, (
+          // SALLE-CORR-3 : le cas enseignant 320 x1 (sauté jusque-la, la
+          // rangee des commandes debordait de 8 px) est reactive.
+          testWidgets('$role, $largeur px, texte x$texte', (
             WidgetTester tester,
           ) async {
             await _monter(tester, role, largeur, texte);
@@ -206,6 +269,272 @@ void main() {
           );
         }
       });
+    }
+  });
+
+  // SALLE-CORR-3 (releves VERIF-CORR-2) : l'encre des commandes, le titre du
+  // rappel de qui observe a x2, la gouttiere du bandeau permanent.
+  group('SALLE-CORR-3 : commandes lisibles sur le fond de la salle', () {
+    for (final String role in <String>['teacher', 'student']) {
+      for (final ThemeMode mode in <ThemeMode>[
+        ThemeMode.light,
+        ThemeMode.dark,
+      ]) {
+        testWidgets('$role, ${mode.name} : mot et icone a l encre du fond', (
+          WidgetTester tester,
+        ) async {
+          await _monter(tester, role, 390, 1, themeMode: mode);
+          expect(tester.takeException(), isNull);
+          final AppPalette palette = AppPalette.of(
+            tester.element(find.byType(SallePage)),
+          );
+          final Color fond = palette.surfaceInverse.background;
+          final Color encre = palette.surfaceInverse.onBackground;
+          final Finder mots = find.byKey(
+            const ValueKey<String>('mot-commande'),
+          );
+          expect(mots, findsWidgets);
+          for (final Element mot in mots.evaluate()) {
+            final Text texte = mot.widget as Text;
+            expect(texte.style?.color, encre, reason: '« ${texte.data} »');
+          }
+          // Une bascule inactive n'a que son contour : son icone se pose sur
+          // le fond de la salle, et doit s'y lire.
+          int transparents = 0;
+          for (final Element disque
+              in find
+                  .byKey(const ValueKey<String>('disque-appel'))
+                  .evaluate()) {
+            final DecoratedBox boite = tester.widget<DecoratedBox>(
+              find
+                  .descendant(
+                    of: find.byWidget(disque.widget),
+                    matching: find.byType(DecoratedBox),
+                  )
+                  .first,
+            );
+            final Decoration deco = boite.decoration;
+            if (deco is BoxDecoration && deco.color == null) {
+              transparents++;
+              final Element icone = find
+                  .descendant(
+                    of: find.byWidget(disque.widget),
+                    matching: find.byType(Icon),
+                  )
+                  .evaluate()
+                  .first;
+              final Color? couleur = IconTheme.of(icone).color;
+              expect(couleur, encre);
+              expect(couleur, isNot(fond));
+            }
+          }
+          expect(transparents, greaterThan(0));
+        });
+      }
+    }
+
+    for (final (String role, String Function() titre, String Function() texte)
+        in <(String, String Function(), String Function())>[
+          (
+            'masked_controller',
+            () => t.salle.bandeauControleTitre,
+            () => t.salle.bandeauControle,
+          ),
+          (
+            'guardian_observer',
+            () => t.salle.observationMuetteTitre,
+            () => t.salle.observationMuette,
+          ),
+        ]) {
+      testWidgets('$role, 320 px, texte x2 : le rappel garde son titre', (
+        WidgetTester tester,
+      ) async {
+        await _monter(tester, role, 320, 2);
+        expect(tester.takeException(), isNull);
+        // Le titre, en toutes lettres et a l'ecran ; la phrase entiere, lue.
+        final Finder ecrit = find.text(titre());
+        expect(ecrit, findsOneWidget);
+        final Rect zone = tester.getRect(ecrit);
+        expect(zone.width, greaterThan(0));
+        expect(zone.left, greaterThanOrEqualTo(-0.5));
+        expect(zone.right, lessThanOrEqualTo(320 + 0.5));
+        expect(find.bySemanticsLabel(texte()), findsOneWidget);
+      });
+    }
+
+    testWidgets('teacher, 320 px : bandeau permanent dans la gouttiere', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, 'teacher', 320, 1);
+      expect(tester.takeException(), isNull);
+      final double gouttiere = AppGabarit.de(
+        tester.element(find.byType(SallePage)),
+      ).gouttiere;
+      final Rect bandeau = tester.getRect(find.byType(PermanentNotice));
+      expect(bandeau.left, greaterThanOrEqualTo(gouttiere - 0.5));
+      expect(bandeau.right, lessThanOrEqualTo(320 - gouttiere + 0.5));
+    });
+  });
+
+  // SALLE-ENCRE-1 / SALLE-CORR-4 (reserve R1 de C1-SALLE-R, releve de
+  // SALLE-CORR-3) : les textes poses sur le fond de la salle en prennent
+  // l'encre, pour tous les roles et dans les deux themes.
+  group('SALLE-ENCRE-1 : textes lisibles sur le fond de la salle', () {
+    for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
+      for (final double largeur in <double>[390, 1440]) {
+        testWidgets('teacher, $largeur px, ${mode.name} : panneau du support', (
+          WidgetTester tester,
+        ) async {
+          await _monter(
+            tester,
+            'teacher',
+            largeur,
+            1,
+            themeMode: mode,
+            hauteur: largeur > 1000 ? 900 : 844,
+          );
+          expect(tester.takeException(), isNull);
+          final AppColorPair salle = AppPalette.of(
+            tester.element(find.byType(SallePage)),
+          ).surfaceInverse;
+          final Map<String, Finder> textes = <String, Finder>{
+            'Presente : page 42 sur 604': find.textContaining('sur 604'),
+            'titre d erreur': find.text(t.enseignant.salle.pageIndisponible),
+            'detail d erreur': find.text(
+              t.enseignant.salle.pageIndisponibleDetail,
+            ),
+            '42 / 604': find.byKey(const ValueKey<String>('nav-position')),
+            'Ouvrir le Coran': find.text(t.salle.ouvrirCoran),
+          };
+          for (final MapEntry<String, Finder> e in textes.entries) {
+            _lisible(tester, e.value, e.key);
+            // L'encre est celle du registre `salle`, aucune couleur nouvelle.
+            expect(
+              _couleurRendue(tester, e.value.first),
+              salle.onBackground,
+              reason: e.key,
+            );
+            expect(_fondSous(tester, e.value.first), salle.background);
+          }
+        });
+
+        for (final String role in <String>['teacher', 'student']) {
+          testWidgets('$role, $largeur px, ${mode.name} : presence lisible', (
+            WidgetTester tester,
+          ) async {
+            await _monter(
+              tester,
+              role,
+              largeur,
+              1,
+              themeMode: mode,
+              hauteur: largeur > 1000 ? 900 : 844,
+            );
+            expect(tester.takeException(), isNull);
+            final Finder lignes = find.byType(LignePresence);
+            expect(lignes, findsWidgets);
+            _lisible(
+              tester,
+              find.descendant(of: lignes, matching: find.byType(Text)),
+              'ligne de presence ($role)',
+            );
+            if (role == 'teacher') {
+              _lisible(tester, find.text(t.presence.titre), 'Presence');
+            }
+          });
+        }
+      }
+    }
+  });
+
+  group('SALLE-ENCRE-1 : captures', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String role, String nom) in <(String, String)>[
+      ('teacher', 'enseignant'),
+      ('student', 'eleve'),
+    ]) {
+      for (final (
+            String l,
+            double largeur,
+            double hauteur,
+            double texte,
+            double densite,
+          )
+          in <(String, double, double, double, double)>[
+            ('320_x1', 320, 700, 1, 2),
+            ('320_x2', 320, 700, 2, 2),
+            ('390', 390, 844, 1, 3),
+            ('1440', 1440, 900, 1, 1),
+          ]) {
+        for (final (String m, ThemeMode mode) in <(String, ThemeMode)>[
+          ('clair', ThemeMode.light),
+          ('sombre', ThemeMode.dark),
+        ]) {
+          testWidgets('salle_encre1_${nom}_${l}_$m', (
+            WidgetTester tester,
+          ) async {
+            await _monter(
+              tester,
+              role,
+              largeur,
+              texte,
+              densite: densite,
+              themeMode: mode,
+              hauteur: hauteur,
+            );
+            expect(tester.takeException(), isNull);
+            debugPrint(
+              'PNG ${await capturer(tester, 'salle_encre1_${nom}_${l}_$m')}',
+            );
+          });
+        }
+      }
+    }
+  });
+
+  group('SALLE-CORR-3 : captures', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String role, String nom) in <(String, String)>[
+      ('teacher', 'enseignant'),
+      ('student', 'eleve'),
+      ('masked_controller', 'controleur'),
+    ]) {
+      for (final (
+            String l,
+            double largeur,
+            double hauteur,
+            double texte,
+            double densite,
+          )
+          in <(String, double, double, double, double)>[
+            ('320_x1', 320, 700, 1, 2),
+            ('320_x2', 320, 700, 2, 2),
+            ('390', 390, 844, 1, 3),
+            ('1440', 1440, 900, 1, 1),
+          ]) {
+        for (final (String m, ThemeMode mode) in <(String, ThemeMode)>[
+          ('clair', ThemeMode.light),
+          ('sombre', ThemeMode.dark),
+        ]) {
+          testWidgets('salle_corr3_${nom}_${l}_$m', (
+            WidgetTester tester,
+          ) async {
+            await _monter(
+              tester,
+              role,
+              largeur,
+              texte,
+              densite: densite,
+              themeMode: mode,
+              hauteur: hauteur,
+            );
+            expect(tester.takeException(), isNull);
+            debugPrint(
+              'PNG ${await capturer(tester, 'salle_corr3_${nom}_${l}_$m')}',
+            );
+          });
+        }
+      }
     }
   });
 

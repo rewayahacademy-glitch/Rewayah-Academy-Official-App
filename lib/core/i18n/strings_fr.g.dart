@@ -368,8 +368,14 @@ class Traductions$salle$fr {
 	/// fr: 'Vous assistez au cours. Vous n'êtes pas entendu.'
 	String get observationMuette => 'Vous assistez au cours. Vous n\'êtes pas entendu.';
 
+	/// fr: 'Vous assistez au cours.'
+	String get observationMuetteTitre => 'Vous assistez au cours.';
+
 	/// fr: 'Visite de contrôle. Vous n'êtes ni vu ni entendu, et votre passage est inscrit au journal.'
 	String get bandeauControle => 'Visite de contrôle. Vous n\'êtes ni vu ni entendu, et votre passage est inscrit au journal.';
+
+	/// fr: 'Visite de contrôle.'
+	String get bandeauControleTitre => 'Visite de contrôle.';
 
 	late final Traductions$salle$visiteControle$fr visiteControle = Traductions$salle$visiteControle$fr.internal(_root);
 }
@@ -15948,7 +15954,9 @@ extension on Traductions {
 			'salle.roleTuteur' => 'Tuteur, en observation',
 			'salle.roleAdministration' => 'Administration Rewayah',
 			'salle.observationMuette' => 'Vous assistez au cours. Vous n\'êtes pas entendu.',
+			'salle.observationMuetteTitre' => 'Vous assistez au cours.',
 			'salle.bandeauControle' => 'Visite de contrôle. Vous n\'êtes ni vu ni entendu, et votre passage est inscrit au journal.',
+			'salle.bandeauControleTitre' => 'Visite de contrôle.',
 			'salle.visiteControle.titre' => 'Contrôle Rewayah',
 			'salle.visiteControle.sonRecu' => 'Son reçu',
 			'salle.visiteControle.sonCoupe' => 'Son coupé',
@@ -16101,10 +16109,10 @@ extension on Traductions {
 			'inscription.usage.question' => 'Quel type de compte souhaitez-vous créer ?',
 			'inscription.usage.moiTitre' => 'Moi uniquement',
 			'inscription.usage.moiDescription' => 'Je souhaite suivre les cours avec mon propre profil élève.',
-			'inscription.usage.familleTitre' => 'Moi et ma famille',
-			'inscription.usage.familleDescription' => 'Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.',
 			_ => null,
 		} ?? switch (path) {
+			'inscription.usage.familleTitre' => 'Moi et ma famille',
+			'inscription.usage.familleDescription' => 'Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.',
 			'inscription.usage.enseignant' => 'Je suis enseignant',
 			'inscription.recap.usage' => 'Type de compte',
 			'inscription.recap.identite' => 'Nom',
@@ -16615,10 +16623,10 @@ extension on Traductions {
 			'eleveConnexion.refus.horsLigne' => 'Le code n\'a pas pu être vérifié. Vérifiez la connexion internet, puis réessayez.',
 			'eleveConnexion.refus.nonEnregistreTitre' => 'Connexion non enregistrée',
 			'eleveConnexion.refus.nonEnregistre' => 'Cet appareil n\'a pas pu garder la connexion. Le code a sans doute déjà servi : affichez un nouveau code sur l\'appareil du tuteur, puis recommencez.',
-			'eleveConnexion.refus.generiqueTitre' => 'Connexion non aboutie',
-			'eleveConnexion.refus.generique' => 'La vérification du code n\'a pas abouti. Réessayez dans un instant.',
 			_ => null,
 		} ?? switch (path) {
+			'eleveConnexion.refus.generiqueTitre' => 'Connexion non aboutie',
+			'eleveConnexion.refus.generique' => 'La vérification du code n\'a pas abouti. Réessayez dans un instant.',
 			'dossiers.titre' => 'Dossiers à valider',
 			'dossiers.sousTitre' => 'Examinez les dossiers prêts pour une décision.',
 			'dossiers.aucun' => 'Aucun dossier n\'attend de validation.',
@@ -17129,10 +17137,10 @@ extension on Traductions {
 			'admin.programmes.champOrdre' => 'Ordre',
 			'admin.programmes.champDescription' => 'Description (optionnelle)',
 			'admin.programmes.champMotif' => 'Motif',
-			'admin.programmes.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
-			'admin.programmes.journalisation' => 'Chaque création, modification, suppression et publication est inscrite au journal d\'audit.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.programmes.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
+			'admin.programmes.journalisation' => 'Chaque création, modification, suppression et publication est inscrite au journal d\'audit.',
 			'admin.journal.titre' => 'Journal',
 			'admin.journal.chaineIntacte' => 'Journal intact',
 			'admin.journal.chaineIntacteDetail' => ({required Object nombre}) => '${nombre} entrées relues une à une : aucune n\'a été modifiée ni retirée depuis son écriture.',
@@ -17643,10 +17651,10 @@ extension on Traductions {
 			'compte.tuteur.pageSecurite.adresse' => 'Adresse de connexion',
 			'compte.tuteur.pageSecurite.appareils' => 'Les appareils connectés à votre compte ne sont pas encore listés dans l\'application.',
 			'compte.tuteur.pageSecurite.deconnexion' => 'Pour fermer la session de cet appareil, utilisez « Se déconnecter » en bas de Mon compte.',
-			'compte.tuteur.pageAcces.titre' => 'Accès des profils élèves',
-			'compte.tuteur.pageAcces.sousTitre' => 'Le statut de l\'accès de chaque profil élève.',
 			_ => null,
 		} ?? switch (path) {
+			'compte.tuteur.pageAcces.titre' => 'Accès des profils élèves',
+			'compte.tuteur.pageAcces.sousTitre' => 'Le statut de l\'accès de chaque profil élève.',
 			'compte.tuteur.pageAcces.sansEcheance' => 'Sans date de fin',
 			'compte.tuteur.pageAcces.jusqua' => ({required Object date}) => 'Ouvert jusqu\'au ${date}',
 			'compte.tuteur.pageAcces.expire' => ({required Object date}) => 'Terminé le ${date}',
@@ -18157,10 +18165,10 @@ extension on Traductions {
 			'enseignant.eleve.nonRenseigne' => 'Non renseigné',
 			'enseignant.eleve.signaler' => 'Signaler un besoin',
 			'enseignant.eleve.signalerAide' => 'Un besoin à remonter à l\'académie, sans recopier le contexte.',
-			'enseignant.signalement.titre' => 'Signaler un besoin',
-			'enseignant.signalement.contexte' => ({required Object prenom, required Object classe}) => 'Pour ${prenom} · ${classe}',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.signalement.titre' => 'Signaler un besoin',
+			'enseignant.signalement.contexte' => ({required Object prenom, required Object classe}) => 'Pour ${prenom} · ${classe}',
 			'enseignant.signalement.categorieTitre' => 'Catégorie',
 			'enseignant.signalement.categories.pedagogique' => 'Problème pédagogique',
 			'enseignant.signalement.categories.presence' => 'Présence',
@@ -18671,10 +18679,10 @@ extension on Traductions {
 			'controleur.observation.gestionClasseAide' => 'Quand il s\'agit de l\'organisation de la séance : temps, consignes, déroulement',
 			'controleur.observation.respectCadre' => 'Respect du cadre',
 			'controleur.observation.respectCadreAide' => 'Quand il s\'agit des règles de l\'académie et de la séance',
-			'controleur.observation.climat' => 'Comportement / climat',
-			'controleur.observation.climatAide' => 'Quand il s\'agit du comportement ou de l\'ambiance de la classe',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.observation.climat' => 'Comportement / climat',
+			'controleur.observation.climatAide' => 'Quand il s\'agit du comportement ou de l\'ambiance de la classe',
 			'controleur.observation.autre' => 'Autre',
 			'controleur.observation.autreAide' => 'Quand aucun autre domaine ne convient · précisez-le dans votre texte',
 			'controleur.observation.questionPersonne' => 'Qui est concerné ?',
@@ -19185,10 +19193,10 @@ extension on Traductions {
 			'tc.observation.reglages.versionPolitique' => ({required Object version}) => 'Version ${version}',
 			'tc.parcours.avant.titre' => 'Avant le prochain cours',
 			'tc.parcours.avant.rien' => 'Rien à préparer pour le prochain cours.',
-			'tc.parcours.avant.rienDetail' => 'Votre enseignant proposera le travail à la fin de la prochaine séance.',
-			'tc.parcours.avant.nonBranche' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.avant.rienDetail' => 'Votre enseignant proposera le travail à la fin de la prochaine séance.',
+			'tc.parcours.avant.nonBranche' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'tc.parcours.avant.nonBrancheDetail' => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.',
 			'tc.parcours.avant.reprendre' => 'Reprendre le cours',
 			'tc.parcours.avant.reprendreDepuis' => ({required Object position}) => 'Reprendre le cours à ${position}',

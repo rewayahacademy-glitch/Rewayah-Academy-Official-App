@@ -155,7 +155,8 @@ class CommandeSalle extends StatelessWidget {
     // libelles du Teaching Dock (`BoutonOutil`).
     final bool iconeSeule =
         compacte != null && (!estBascule || !motEtatVisible(context));
-    final double diametre = compacte?.diametre ?? diametreCommandeSalle(context);
+    final double diametre =
+        compacte?.diametre ?? diametreCommandeSalle(context);
     final double tailleIcone =
         AppMetriques.of(context).mode == InterfaceMode.enfant
         ? AppSpacing.xxxl
@@ -172,6 +173,10 @@ class CommandeSalle extends StatelessWidget {
       FondCommande.surface || FondCommande.reseau => palette.surfaceInverse,
     };
 
+    // Un disque a contour seul laisse voir le fond sous l'icone : posee sur le
+    // fond du registre `salle`, elle prend l'encre de [encreLibelle]
+    // (SALLE-CORR-3), sinon celle du theme.
+    final AppColorPair? fondPose = encreLibelle;
     final BoxDecoration disque;
     final IconThemeData encre;
     if (!repondre && estBascule && !allumee) {
@@ -182,7 +187,9 @@ class CommandeSalle extends StatelessWidget {
           palette.borderResting.asBorderSide(width: AppContour.fort),
         ),
       );
-      encre = palette.inkMuted.asIconTheme(size: tailleIcone);
+      encre = fondPose != null
+          ? IconThemeData(color: fondPose.onBackground, size: tailleIcone)
+          : palette.inkMuted.asIconTheme(size: tailleIcone);
     } else if (!repondre) {
       // Commande inerte, ou bascule active et inerte : le disque plein reste
       // (surface neutre), seule l'encre s'attenue. L'etat se lit donc encore.
@@ -199,7 +206,9 @@ class CommandeSalle extends StatelessWidget {
           palette.borderStrong.asBorderSide(width: AppContour.fort),
         ),
       );
-      encre = palette.inkStrong.asIconTheme(size: tailleIcone);
+      encre = fondPose != null
+          ? IconThemeData(color: fondPose.onBackground, size: tailleIcone)
+          : palette.inkStrong.asIconTheme(size: tailleIcone);
     } else if (estBascule) {
       disque = pleinBascule.decoration(borderRadius: AppRadius.arrondiFull);
       encre = IconThemeData(
@@ -213,10 +222,11 @@ class CommandeSalle extends StatelessWidget {
             borderRadius: AppRadius.arrondiFull,
             side: palette.borderHairline.asBorderSide(),
           );
-          encre = (fond == FondCommande.reseau
-                  ? palette.inkSuccess
-                  : palette.inkStrong)
-              .asIconTheme(size: tailleIcone);
+          encre =
+              (fond == FondCommande.reseau
+                      ? palette.inkSuccess
+                      : palette.inkStrong)
+                  .asIconTheme(size: tailleIcone);
         case FondCommande.alerte:
           disque = palette.pointsStatut.alerte.pastille();
           // Encre claire fixe, dans les deux themes : le disque est un point
@@ -307,6 +317,8 @@ class CommandeSalle extends StatelessWidget {
         ? Semantics(toggled: allumee, child: bouton)
         : bouton;
     final bool? choisi = selectionne;
-    return choisi == null ? annonce : Semantics(selected: choisi, child: annonce);
+    return choisi == null
+        ? annonce
+        : Semantics(selected: choisi, child: annonce);
   }
 }
