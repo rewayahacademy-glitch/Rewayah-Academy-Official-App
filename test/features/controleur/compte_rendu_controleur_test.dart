@@ -59,11 +59,13 @@ class _PortTemoin implements EnvoiCompteRendu {
   Future<void> envoyer(String seanceId, ChoixCompteRendu choix) async =>
       envois.add((seanceId, choix));
 
+  final List<String> observations = <String>[];
+
   @override
   Future<void> envoyerObservation(
     String seanceId,
     ObservationControle observation,
-  ) async {}
+  ) async => observations.add(seanceId);
 }
 
 /// La visite A, copiee a l'entree en salle.
@@ -487,6 +489,98 @@ void main() {
       expect(find.text(r.envoyeTitre), findsOneWidget);
     });
   }
+
+  // CTRL-RETOUR-1 : l'observation (CTR-03A) part sur la visite de l'adresse
+  // (A), meme quand la mission courante est devenue B.
+  testWidgets('Observation de A, mission courante B : rattachee a A', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final _PortTemoin port = _PortTemoin();
+    final GoRouter routeur = GoRouter(
+      initialLocation: adresseObservation(
+        Routes.controleurObservation,
+        ChoixCompteRendu.ajouterObservation,
+        seanceId: _visiteA.seanceId,
+      ),
+      routes: <RouteBase>[
+        // Le meme constructeur que `app_router.dart`.
+        GoRoute(
+          path: Routes.controleurObservation,
+          builder: (BuildContext _, GoRouterState etat) =>
+              ObservationControlePage(
+                seanceId: etat.uri.queryParameters['seance'],
+                choix: choixObservationDepuis(
+                  etat.uri.queryParameters,
+                  etat.extra,
+                ),
+              ),
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: <Override>[
+          missionControleProvider.overrideWith((Ref _) async => _missionB()),
+          visitesObserveesProvider.overrideWith(
+            () => VisitesObservees(<String, CompteRenduEnSuspens>{
+              _visiteA.seanceId: _visiteA,
+            }),
+          ),
+          rosterControleProvider.overrideWith(
+            (Ref _, String _) async => const <EleveRoster>[],
+          ),
+          envoiCompteRenduProvider.overrideWithValue(port),
+        ],
+        child: TranslationProvider(
+          child: MaterialApp.router(
+            theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+            locale: AppLocale.fr.flutterLocale,
+            supportedLocales: AppLocaleUtils.supportedLocales,
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            routerConfig: routeur,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    Future<void> toucher(Finder f) async {
+      await tester.ensureVisible(f);
+      await tester.pumpAndSettle();
+      await tester.tap(f);
+      await tester.pumpAndSettle();
+    }
+
+    await toucher(
+      find.byKey(
+        ObservationControlePage.cleNature(NatureObservation.pointPositif),
+      ),
+    );
+    await toucher(find.text(t.commun.continuer).last);
+    await toucher(
+      find.byKey(ObservationControlePage.cleDomaine(DomaineObservation.climat)),
+    );
+    await toucher(find.text(t.commun.continuer).last);
+    await toucher(
+      find.byKey(
+        ObservationControlePage.clePersonne(PersonneConcernee.classeEntiere),
+      ),
+    );
+    await toucher(find.text(t.commun.continuer).last);
+    await tester.enterText(
+      find.byKey(ObservationControlePage.texteKey),
+      'Bonne ambiance.',
+    );
+    await tester.pump();
+    await toucher(find.text(t.commun.continuer).last);
+    await toucher(find.text(t.controleur.compteRendu.envoyer).last);
+
+    expect(port.observations, <String>[_visiteA.seanceId]);
+    expect(find.text(t.controleur.compteRendu.envoyeTitre), findsOneWidget);
+    expect(find.textContaining('Al-Qamar'), findsNothing);
+  });
 
   testWidgets('Seance inconnue : visite plus en memoire, aucune transmission', (
     WidgetTester tester,

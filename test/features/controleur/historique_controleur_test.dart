@@ -355,6 +355,100 @@ void main() {
     expect(ligne, findsOneWidget);
   });
 
+  // CTRL-RETOUR-1 : aux etapes 2 et 3, le retour systeme recule d'une etape,
+  // comme « Retour » a l'ecran, et le texte saisi reste.
+  testWidgets('retour systeme aux etapes 2 et 3 : une etape, texte garde', (
+    WidgetTester tester,
+  ) async {
+    final c = t.controleur.complement;
+    await _monter(
+      tester,
+      adresseDemoControleur(EcranDemoControleur.historique),
+      taille: const Size(390, 844),
+    );
+    await _attendre(tester);
+    await _toucher(
+      tester,
+      find.byKey(HistoriqueControleurPage.ligneKey('demo-rapport-0921')),
+    );
+    await _toucher(tester, find.byKey(HistoriqueControleurPage.complementKey));
+    await _toucher(
+      tester,
+      find.byKey(ComplementRapportPage.cleMotif(MotifComplement.precision)),
+    );
+    await _toucher(tester, find.text(t.commun.continuer).last);
+    expect(find.text(c.questionTexte), findsOneWidget);
+    await tester.enterText(
+      find.byKey(ComplementRapportPage.texteKey),
+      'Texte à ne pas perdre.',
+    );
+    await tester.pump();
+    await _toucher(tester, find.text(t.commun.continuer).last);
+    expect(find.text(c.questionRecap), findsOneWidget);
+
+    // Etape 3 -> etape 2 : le texte est toujours dans le champ.
+    await tester.binding.handlePopRoute();
+    await _attendre(tester);
+    expect(find.text(c.bandeau), findsOneWidget);
+    expect(find.text(c.questionTexte), findsOneWidget);
+    expect(find.text('Texte à ne pas perdre.'), findsOneWidget);
+
+    // Etape 2 -> etape 1 : le motif choisi reste, le complement aussi.
+    await tester.binding.handlePopRoute();
+    await _attendre(tester);
+    expect(find.text(c.questionMotif), findsOneWidget);
+    expect(find.text(c.bandeau), findsOneWidget);
+
+    // On revient en avant : la saisie n'a pas ete effacee.
+    await _toucher(tester, find.text(t.commun.continuer).last);
+    expect(find.text('Texte à ne pas perdre.'), findsOneWidget);
+
+    // Etape 2 -> 1, puis etape 1 -> detail : le complement se ferme.
+    await tester.binding.handlePopRoute();
+    await _attendre(tester);
+    await tester.binding.handlePopRoute();
+    await _attendre(tester);
+    expect(find.text(c.bandeau), findsNothing);
+    expect(find.byKey(HistoriqueControleurPage.complementKey), findsOneWidget);
+  });
+
+  testWidgets('retour systeme apres l envoi : le detail a jour', (
+    WidgetTester tester,
+  ) async {
+    final h = t.controleur.historique;
+    final c = t.controleur.complement;
+    await _monter(
+      tester,
+      adresseDemoControleur(EcranDemoControleur.historique),
+      taille: const Size(390, 844),
+    );
+    await _attendre(tester);
+    await _toucher(
+      tester,
+      find.byKey(HistoriqueControleurPage.ligneKey('demo-rapport-0921')),
+    );
+    await _toucher(tester, find.byKey(HistoriqueControleurPage.complementKey));
+    await _toucher(tester, find.text(t.commun.continuer).last);
+    await tester.enterText(
+      find.byKey(ComplementRapportPage.texteKey),
+      'Un ajout envoyé.',
+    );
+    await tester.pump();
+    await _toucher(tester, find.text(t.commun.continuer).last);
+    await _toucher(tester, find.text(c.envoyer).last);
+    expect(find.text(c.envoyeTitre), findsOneWidget);
+
+    await tester.binding.handlePopRoute();
+    await _attendre(tester);
+    // Le detail (et non l'ecran de resultat), avec le complement et le
+    // nouveau statut.
+    expect(find.text(c.envoyePhrase), findsNothing);
+    expect(find.text(h.sectionMission), findsOneWidget);
+    expect(find.textContaining('Un ajout envoyé.'), findsOneWidget);
+    expect(find.text(h.complementAjoute), findsOneWidget);
+    expect(find.text(h.sansComplement), findsNothing);
+  });
+
   testWidgets('CTR-03B : complement envoye, visible dans le detail', (
     WidgetTester tester,
   ) async {

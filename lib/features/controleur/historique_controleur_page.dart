@@ -170,20 +170,15 @@ class _HistoriqueControleurPageState
   });
 
   // Revue CT-R m3 : le Detail et le Complement sont des etats internes ; le
-  // retour systeme (Android, navigateur) ferme d'abord le complement, puis le
-  // detail, au lieu de quitter l'Historique.
+  // retour systeme (Android, navigateur) ne quitte pas l'Historique. Dans le
+  // Complement, c'est sa propre PopScope qui recule d'une etape en gardant
+  // la saisie (CTRL-RETOUR-1) ; ici, seul le detail se ferme.
   @override
   Widget build(BuildContext context) => PopScope(
     canPop: _ouvert == null,
     onPopInvokedWithResult: (bool fait, Object? _) {
-      if (fait) return;
-      setState(() {
-        if (_enComplement) {
-          _enComplement = false;
-        } else {
-          _ouvert = null;
-        }
-      });
+      if (fait || _enComplement) return;
+      setState(() => _ouvert = null);
     },
     child: _corps(context),
   );

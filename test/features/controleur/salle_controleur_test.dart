@@ -18,8 +18,9 @@ import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.d
 import 'package:rewayah_academy/features/controleur/controle_page.dart';
 import 'package:rewayah_academy/features/demo/controleur_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
+import 'package:rewayah_academy/features/salle/salle_page.dart';
 
-Future<void> _monter(WidgetTester tester) async {
+Future<GoRouter> _monter(WidgetTester tester) async {
   tester.view.physicalSize = const Size(1280, 900);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
@@ -41,6 +42,7 @@ Future<void> _monter(WidgetTester tester) async {
     ),
   );
   await tester.pumpAndSettle();
+  return routeur;
 }
 
 Finder _parSens(String libelle) => find.bySemanticsLabel(RegExp(libelle));
@@ -129,5 +131,28 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
     await tester.pumpAndSettle();
     expect(find.text(t.controleur.compteRendu.visiteTransmise), findsOneWidget);
+  });
+
+  // CTRL-RETOUR-1 : la sortie de salle porte `?seance=` (salle_page.dart,
+  // `_quitterControle`). La demonstration retombe sur sa visite par defaut
+  // sans ce parametre : seule l'adresse prouve que la visite voyage.
+  testWidgets('Quitter : l adresse du compte rendu porte la seance', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter routeur = await _monter(tester);
+    await tester.tap(find.byKey(ControleControleurPage.commencerKey));
+    await tester.pumpAndSettle();
+    final String seance = tester
+        .widget<SallePage>(find.byType(SallePage))
+        .seanceId;
+    expect(seance, isNotEmpty);
+
+    await tester.tap(find.text(t.salle.quitter));
+    await tester.pumpAndSettle();
+    expect(find.byType(CompteRenduControlePage), findsOneWidget);
+    expect(routeur.state.uri.path, cheminDemoCompteRenduControleur);
+    expect(routeur.state.uri.queryParameters['seance'], seance);
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pumpAndSettle();
   });
 }

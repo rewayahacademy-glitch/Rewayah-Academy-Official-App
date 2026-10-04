@@ -117,6 +117,20 @@ class _ComplementRapportPageState extends ConsumerState<ComplementRapportPage> {
     _Etape.envoye => null,
   };
 
+  // CTRL-RETOUR-1 : le retour systeme (Android, navigateur) fait comme
+  // « Retour » a l'ecran : il recule d'une etape et garde la saisie ; il ne
+  // ferme le complement qu'a la premiere etape. Apres l'envoi, il rend le
+  // detail a jour ; pendant l'envoi, il attend.
+  void _retourSysteme() {
+    if (_enCours) return;
+    final RapportControle? fait = _resultat;
+    if (_etape == _Etape.envoye && fait != null) {
+      widget.onTermine(fait);
+      return;
+    }
+    _precedent();
+  }
+
   void _validerTexte() {
     if (_texte.text.trim().isEmpty) {
       setState(() => _texteManquant = true);
@@ -166,7 +180,15 @@ class _ComplementRapportPageState extends ConsumerState<ComplementRapportPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => PopScope(
+    canPop: false,
+    onPopInvokedWithResult: (bool fait, Object? _) {
+      if (!fait) _retourSysteme();
+    },
+    child: _corps(context),
+  );
+
+  Widget _corps(BuildContext context) {
     final c = t.controleur.complement;
     final RapportControle? fait = _resultat;
     if (_etape == _Etape.envoye && fait != null) {
