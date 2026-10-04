@@ -86,6 +86,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$galerie$fr galerie = Traductions$galerie$fr.internal(_root);
 	late final Traductions$tc$fr tc = Traductions$tc$fr.internal(_root);
 	late final Traductions$adulte$fr adulte = Traductions$adulte$fr.internal(_root);
+	late final Traductions$argent$fr argent = Traductions$argent$fr.internal(_root);
 	late final Traductions$identiteProfil$fr identiteProfil = Traductions$identiteProfil$fr.internal(_root);
 }
 
@@ -2387,6 +2388,19 @@ class Traductions$adulte$fr {
 	late final Traductions$adulte$sortie$fr sortie = Traductions$adulte$sortie$fr.internal(_root);
 	late final Traductions$adulte$reprise$fr reprise = Traductions$adulte$reprise$fr.internal(_root);
 	late final Traductions$adulte$demo$fr demo = Traductions$adulte$demo$fr.internal(_root);
+}
+
+// Path: argent
+class Traductions$argent$fr {
+	Traductions$argent$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$argent$etat$fr etat = Traductions$argent$etat$fr.internal(_root);
+	late final Traductions$argent$periode$fr periode = Traductions$argent$periode$fr.internal(_root);
+	late final Traductions$argent$moyen$fr moyen = Traductions$argent$moyen$fr.internal(_root);
+	late final Traductions$argent$soldes$fr soldes = Traductions$argent$soldes$fr.internal(_root);
 }
 
 // Path: identiteProfil
@@ -11116,6 +11130,93 @@ class Traductions$adulte$demo$fr {
 	late final Traductions$adulte$demo$etats$fr etats = Traductions$adulte$demo$etats$fr.internal(_root);
 }
 
+// Path: argent.etat
+class Traductions$argent$etat$fr {
+	Traductions$argent$etat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Financé'
+	String get finance => 'Financé';
+
+	/// fr: 'Essai'
+	String get essai => 'Essai';
+
+	/// fr: 'À financer'
+	String get manque => 'À financer';
+
+	/// fr: 'En confirmation'
+	String get enConfirmation => 'En confirmation';
+
+	/// fr: 'Accès expiré'
+	String get expire => 'Accès expiré';
+
+	/// fr: 'En pause'
+	String get pause => 'En pause';
+
+	/// fr: 'À régulariser'
+	String get aRegulariser => 'À régulariser';
+}
+
+// Path: argent.periode
+class Traductions$argent$periode$fr {
+	Traductions$argent$periode$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Financé jusqu'au {date}'
+	String jusquau({required Object date}) => 'Financé jusqu\'au ${date}';
+
+	/// fr: 'Aucune période financée'
+	String get aucune => 'Aucune période financée';
+}
+
+// Path: argent.moyen
+class Traductions$argent$moyen$fr {
+	Traductions$argent$moyen$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Carte bancaire'
+	String get webStripe => 'Carte bancaire';
+
+	/// fr: 'Paiement web sécurisé. Aucun débit avant votre confirmation.'
+	String get webStripeDetail => 'Paiement web sécurisé. Aucun débit avant votre confirmation.';
+}
+
+// Path: argent.soldes
+class Traductions$argent$soldes$fr {
+	Traductions$argent$soldes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Total des soldes'
+	String get total => 'Total des soldes';
+
+	/// fr: 'Une lecture : chaque solde reste celui de son profil.'
+	String get totalDetail => 'Une lecture : chaque solde reste celui de son profil.';
+
+	/// fr: 'À financer ce mois'
+	String get aPayer => 'À financer ce mois';
+
+	/// fr: 'Profils financés'
+	String get profilsFinances => 'Profils financés';
+
+	/// fr: '{n} sur {total}'
+	String profilsFinancesValeur({required Object n, required Object total}) => '${n} sur ${total}';
+
+	/// fr: 'Paiements du mois'
+	String get paiements => 'Paiements du mois';
+}
+
 // Path: commun.etats.chargementProlonge
 class Traductions$commun$etats$chargementProlonge$fr {
 	Traductions$commun$etats$chargementProlonge$fr.internal(this._root);
@@ -19416,6 +19517,23 @@ extension on Traductions {
 			'adulte.demo.etats.doubleSoumission' => 'La même action a été envoyée deux fois.',
 			'adulte.demo.etats.notificationDansLApplication' => 'La notification n\'a pas pu partir sur le téléphone, elle reste visible dans l\'application.',
 			'adulte.demo.etats.emancipation' => 'Émancipation d\'un élève devenu adulte : non construite dans cette vague.',
+			'argent.etat.finance' => 'Financé',
+			'argent.etat.essai' => 'Essai',
+			'argent.etat.manque' => 'À financer',
+			'argent.etat.enConfirmation' => 'En confirmation',
+			'argent.etat.expire' => 'Accès expiré',
+			'argent.etat.pause' => 'En pause',
+			'argent.etat.aRegulariser' => 'À régulariser',
+			'argent.periode.jusquau' => ({required Object date}) => 'Financé jusqu\'au ${date}',
+			'argent.periode.aucune' => 'Aucune période financée',
+			'argent.moyen.webStripe' => 'Carte bancaire',
+			'argent.moyen.webStripeDetail' => 'Paiement web sécurisé. Aucun débit avant votre confirmation.',
+			'argent.soldes.total' => 'Total des soldes',
+			'argent.soldes.totalDetail' => 'Une lecture : chaque solde reste celui de son profil.',
+			'argent.soldes.aPayer' => 'À financer ce mois',
+			'argent.soldes.profilsFinances' => 'Profils financés',
+			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} sur ${total}',
+			'argent.soldes.paiements' => 'Paiements du mois',
 			'identiteProfil.age' => ({required Object n}) => '${n} ans',
 			'identiteProfil.classe' => ({required Object classe}) => 'Classe ${classe}',
 			'identiteProfil.ageEtClasse' => ({required Object age, required Object classe}) => '${age} · ${classe}',

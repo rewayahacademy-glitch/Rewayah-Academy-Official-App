@@ -86,5 +86,22 @@
   "identiteProfil.lecteurAdulte": "guide Finance V4 §3.2, §3.7 et maquette 11 (prenom, age, classe ; libelle lu « Mariam, profil enfant, Classe An-Nour »), etape FI-2",
   "identiteProfil.lecteurAvecClasse": "guide Finance V4 §3.2, §3.7 et maquette 11 (prenom, age, classe ; libelle lu « Mariam, profil enfant, Classe An-Nour »), etape FI-2",
   "ficheEleve.couleur.choisie": "revue du directeur du 04/10/2026 (K-62) : simple selecteur de couleur, pas des cartes empilees ; phrase de consequence K-58, etape FI-2",
-  "ficheEleve.couleur.priseLigne": "revue du directeur du 04/10/2026 (K-62) : simple selecteur de couleur, pas des cartes empilees ; phrase de consequence K-58, etape FI-2"
+  "ficheEleve.couleur.priseLigne": "revue du directeur du 04/10/2026 (K-62) : simple selecteur de couleur, pas des cartes empilees ; phrase de consequence K-58, etape FI-2",
+  "argent.etat.finance": "guide Finance V4 du directeur (02/10) §5.1 « États visuels » (financé), §11.4 : chip compact, texte explicite, etape FI-3b",
+  "argent.etat.essai": "guide Finance V4 du directeur (02/10) §5.1 (essai), §1.2, etape FI-3b",
+  "argent.etat.manque": "guide Finance V4 du directeur (02/10) §5.1 (manque à financer), §5.3, etape FI-3b",
+  "argent.etat.enConfirmation": "guide Finance V4 du directeur (02/10) §5.4 « Confirmation externe en attente », §1.6, etape FI-3b",
+  "argent.etat.expire": "guide Finance V4 du directeur (02/10) §5.1 (accès expiré), etape FI-3b",
+  "argent.etat.pause": "guide Finance V4 du directeur (02/10) §5.1 (pause), etape FI-3b",
+  "argent.etat.aRegulariser": "guide Finance V4 du directeur (02/10) §1.7 « la nouvelle période affiche À régulariser », etape FI-3b",
+  "argent.periode.jusquau": "guide Finance V4 du directeur (02/10) §5.2 « période financée », etape FI-3b",
+  "argent.periode.aucune": "guide Finance V4 du directeur (02/10) §5.2, essai ou aucun paiement, etape FI-3b",
+  "argent.moyen.webStripe": "guide Finance V4 du directeur (02/10) §1.6 : WEB_STRIPE seul actif au lancement, aucun bouton App Store ou Play, etape FI-3b",
+  "argent.moyen.webStripeDetail": "guide Finance V4 du directeur (02/10) §1.6 « Confirmation » : jamais confirmé au retour d'un écran externe ; phrase de conséquence K-58, etape FI-3b",
+  "argent.soldes.total": "guide Finance V4 du directeur (02/10) §5.1 « total des soldes en lecture », etape FI-3b",
+  "argent.soldes.totalDetail": "guide Finance V4 du directeur (02/10) §5.3 « pas de solde commun », phrase de conséquence K-58, etape FI-3b",
+  "argent.soldes.aPayer": "guide Finance V4 du directeur (02/10) §5.1 « montant à financer ce mois », etape FI-3b",
+  "argent.soldes.profilsFinances": "guide Finance V4 du directeur (02/10) §5.1 « nombre de profils financés », etape FI-3b",
+  "argent.soldes.profilsFinancesValeur": "guide Finance V4 du directeur (02/10) §5.1, etape FI-3b",
+  "argent.soldes.paiements": "guide Finance V4 du directeur (02/10) §5.1 « paiements du mois », etape FI-3b"
 }

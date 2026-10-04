@@ -4672,6 +4672,33 @@
       }
     }
   },
+  "argent": {
+    "etat": {
+      "finance": "Financé",
+      "essai": "Essai",
+      "manque": "À financer",
+      "enConfirmation": "En confirmation",
+      "expire": "Accès expiré",
+      "pause": "En pause",
+      "aRegulariser": "À régulariser"
+    },
+    "periode": {
+      "jusquau": "Financé jusqu'au {date}",
+      "aucune": "Aucune période financée"
+    },
+    "moyen": {
+      "webStripe": "Carte bancaire",
+      "webStripeDetail": "Paiement web sécurisé. Aucun débit avant votre confirmation."
+    },
+    "soldes": {
+      "total": "Total des soldes",
+      "totalDetail": "Une lecture : chaque solde reste celui de son profil.",
+      "aPayer": "À financer ce mois",
+      "profilsFinances": "Profils financés",
+      "profilsFinancesValeur": "{n} sur {total}",
+      "paiements": "Paiements du mois"
+    }
+  },
   "identiteProfil": {
     "age": "{n} ans",
     "classe": "Classe {classe}",

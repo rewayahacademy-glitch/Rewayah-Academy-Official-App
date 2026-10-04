@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../../core/admin/admin_domaine.dart';
 import '../../../core/admin/service_programme.dart';
 import '../../../core/domain/enums.dart';
+import '../../../core/finance/finances_profil.dart';
 import '../../../core/finance/montant.dart';
+import '../../../core/finance/politique_commerciale.dart';
 import '../../../core/i18n/cle_audio.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
@@ -25,6 +27,8 @@ import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/audio_label.dart';
 import '../../../core/widgets/avatar_nom.dart';
 import '../../../core/widgets/avatar_tile.dart';
+import '../../../core/widgets/badge_periode_financee.dart';
+import '../../../core/widgets/bandeau_attention.dart';
 import '../../../core/widgets/bandeau_observation.dart';
 import '../../../core/widgets/barre_precedent_suivant.dart';
 import '../../../core/widgets/bento_tile.dart';
@@ -49,6 +53,7 @@ import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/ligne_allocation.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
 import '../../../core/widgets/ligne_finance.dart';
+import '../../../core/widgets/ligne_moyen_paiement.dart';
 import '../../../core/widgets/ligne_presence.dart';
 import '../../../core/widgets/ligne_transaction.dart';
 import '../../../core/widgets/local_feedback.dart';
@@ -63,12 +68,14 @@ import '../../../core/widgets/page_immersive.dart';
 import '../../../core/widgets/page_parcours.dart';
 import '../../../core/widgets/page_shell.dart';
 import '../../../core/widgets/pastille_etat_seance.dart';
+import '../../../core/widgets/pastille_financiere.dart';
 import '../../../core/widgets/permanent_notice.dart';
 import '../../../core/widgets/pile_cartes.dart';
 import '../../../core/widgets/pin_pad.dart';
 import '../../../core/widgets/point_rappel.dart';
 import '../../../core/widgets/pressable.dart';
 import '../../../core/widgets/raccourci_tactile.dart';
+import '../../../core/widgets/resume_soldes.dart';
 import '../../../core/widgets/rosace_verset.dart';
 import '../../../core/widgets/schedule_option.dart';
 import '../../../core/widgets/section_header.dart';
@@ -1121,6 +1128,133 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             avatar: AvatarTile(prenom: 'Ibrahim', diametre: AppAvatar.moyen),
             diametre: AppAvatar.moyen,
             accent: null,
+          ),
+        ),
+      ),
+    ],
+  ),
+  // FI-3b (guide Finance V4 §1.6, §1.7, §5.1-5.4, §11.4) : statuts,
+  // bandeau, moyen de paiement, synthese.
+  EntreeGalerie(
+    nom: 'PastilleFinanciere',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'finance',
+        (BuildContext _) =>
+            const PastilleFinanciere(etat: EtatFinancier.finance),
+      ),
+      EtatGalerie(
+        'a regulariser',
+        (BuildContext _) =>
+            const PastilleFinanciere(etat: EtatFinancier.aRegulariser),
+      ),
+      EtatGalerie(
+        'en confirmation',
+        (BuildContext _) =>
+            const PastilleFinanciere(etat: EtatFinancier.enConfirmation),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'BadgePeriodeFinancee',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'periode financee',
+        (BuildContext _) => BadgePeriodeFinancee(
+          periode: PeriodeFinancee(
+            debut: DateTime(2026, 10),
+            fin: DateTime(2026, 10, 31),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'aucune periode (essai)',
+        (BuildContext _) => const BadgePeriodeFinancee(periode: null),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'BandeauAttention',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'acces a regulariser',
+        (BuildContext _) => const BandeauAttention(
+          titre: 'Acces a regulariser',
+          message: 'Il manque 8 USD pour financer janvier.',
+        ),
+      ),
+      EtatGalerie(
+        'paiement en confirmation',
+        (BuildContext _) => const BandeauAttention(
+          titre: 'Paiement en cours de confirmation',
+          message: 'Ne payez pas une seconde fois.',
+          ton: TonEtat.accent,
+        ),
+      ),
+      EtatGalerie(
+        'echec',
+        (BuildContext _) => const BandeauAttention(
+          titre: 'Le paiement n a pas abouti',
+          message: 'Votre selection est gardee. Reessayez ou changez de moyen.',
+          ton: TonEtat.alerte,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'LigneMoyenPaiement',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'retenu',
+        (BuildContext _) => const LigneMoyenPaiement(
+          rail: RailPaiement.webStripe,
+          retenu: true,
+          onPress: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'a choisir',
+        (BuildContext _) => const LigneMoyenPaiement(
+          rail: RailPaiement.webStripe,
+          onPress: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'hors ligne : la carte ne se presse plus',
+        (BuildContext _) =>
+            const LigneMoyenPaiement(rail: RailPaiement.webStripe),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'ResumeSoldes',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'foyer de trois profils',
+        (BuildContext _) => const ResumeSoldes(
+          synthese: SyntheseFoyer(
+            totalSoldes: Montant(14500, 'USD'),
+            aPayerCeMois: Montant(800, 'USD'),
+            profilsFinances: 2,
+            profils: 3,
+            paiementsDuMois: 2,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'tout est finance',
+        (BuildContext _) => const ResumeSoldes(
+          synthese: SyntheseFoyer(
+            totalSoldes: Montant(0, 'USD'),
+            aPayerCeMois: Montant(0, 'USD'),
+            profilsFinances: 3,
+            profils: 3,
+            paiementsDuMois: 1,
           ),
         ),
       ),
