@@ -11297,6 +11297,9 @@ class Traductions$com$annonces$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$com$annonces$publieur$fr publieur = Traductions$com$annonces$publieur$fr.internal(_root);
+	late final Traductions$com$annonces$administration$fr administration = Traductions$com$annonces$administration$fr.internal(_root);
+	late final Traductions$com$annonces$demoPublication$fr demoPublication = Traductions$com$annonces$demoPublication$fr.internal(_root);
 
 	/// fr: 'Annonces de la Classe'
 	String get section => 'Annonces de la Classe';
@@ -15909,6 +15912,178 @@ class Traductions$com$communaute$demo$fr {
 	String get lecteurSeul => 'Lecture seule, sans publication';
 }
 
+// Path: com.annonces.publieur
+class Traductions$com$annonces$publieur$fr {
+	Traductions$com$annonces$publieur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nouvelle annonce'
+	String get titre => 'Nouvelle annonce';
+
+	late final Traductions$com$annonces$publieur$etapes$fr etapes = Traductions$com$annonces$publieur$etapes$fr.internal(_root);
+	late final Traductions$com$annonces$publieur$contexte$fr contexte = Traductions$com$annonces$publieur$contexte$fr.internal(_root);
+
+	/// fr: 'Titre de l'annonce'
+	String get champTitre => 'Titre de l\'annonce';
+
+	/// fr: 'Texte de l'annonce'
+	String get champTexte => 'Texte de l\'annonce';
+
+	late final Traductions$com$annonces$publieur$nature$fr nature = Traductions$com$annonces$publieur$nature$fr.internal(_root);
+	late final Traductions$com$annonces$publieur$quand$fr quand = Traductions$com$annonces$publieur$quand$fr.internal(_root);
+	late final Traductions$com$annonces$publieur$apercu$fr apercu = Traductions$com$annonces$publieur$apercu$fr.internal(_root);
+
+	/// fr: 'Continuer'
+	String get continuer => 'Continuer';
+
+	/// fr: 'Publier l'annonce'
+	String get publier => 'Publier l\'annonce';
+
+	/// fr: 'Programmer l'annonce'
+	String get programmer => 'Programmer l\'annonce';
+
+	/// fr: 'Réessayer la publication'
+	String get reessayer => 'Réessayer la publication';
+
+	/// fr: 'Terminer'
+	String get terminer => 'Terminer';
+
+	/// fr: 'Écrivez un titre et un texte pour continuer.'
+	String get manqueContenu => 'Écrivez un titre et un texte pour continuer.';
+
+	/// fr: 'Choisissez une audience pour continuer.'
+	String get manqueAudience => 'Choisissez une audience pour continuer.';
+
+	/// fr: 'Publication en cours. Attendez la confirmation.'
+	String get enCours => 'Publication en cours. Attendez la confirmation.';
+
+	/// fr: 'Annonce publiée. Les destinataires la reçoivent.'
+	String get publiee => 'Annonce publiée. Les destinataires la reçoivent.';
+
+	/// fr: 'Annonce planifiée pour le {date} à {heure}.'
+	String planifiee({required Object date, required Object heure}) => 'Annonce planifiée pour le ${date} à ${heure}.';
+
+	/// fr: 'Cette annonce n'est pas encore confirmée. Vérifiez la connexion, puis réessayez : elle ne partira qu'une fois.'
+	String get nonConfirmee => 'Cette annonce n\'est pas encore confirmée. Vérifiez la connexion, puis réessayez : elle ne partira qu\'une fois.';
+
+	/// fr: 'Vous êtes hors ligne : cette annonce n'est pas encore confirmée. Reconnectez-vous, puis réessayez.'
+	String get horsLigne => 'Vous êtes hors ligne : cette annonce n\'est pas encore confirmée. Reconnectez-vous, puis réessayez.';
+
+	/// fr: 'La publication des annonces n'est pas encore disponible. Revenez plus tard.'
+	String get indisponible => 'La publication des annonces n\'est pas encore disponible. Revenez plus tard.';
+
+	/// fr: 'Aucune audience ouverte'
+	String get aucuneCibleTitre => 'Aucune audience ouverte';
+
+	/// fr: 'Vous ne pouvez publier vers aucune audience pour le moment. Demandez l'accès à la direction.'
+	String get aucuneCible => 'Vous ne pouvez publier vers aucune audience pour le moment. Demandez l\'accès à la direction.';
+}
+
+// Path: com.annonces.administration
+class Traductions$com$annonces$administration$fr {
+	Traductions$com$annonces$administration$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nouvelle annonce'
+	String get nouvelle => 'Nouvelle annonce';
+
+	/// fr: 'Démonstration'
+	String get demo => 'Démonstration';
+
+	/// fr: 'Données de démonstration : aucun chiffre réel.'
+	String get demoDetail => 'Données de démonstration : aucun chiffre réel.';
+
+	late final Traductions$com$annonces$administration$indicateurs$fr indicateurs = Traductions$com$annonces$administration$indicateurs$fr.internal(_root);
+	late final Traductions$com$annonces$administration$publiees$fr publiees = Traductions$com$annonces$administration$publiees$fr.internal(_root);
+	late final Traductions$com$annonces$administration$planifiees$fr planifiees = Traductions$com$annonces$administration$planifiees$fr.internal(_root);
+	late final Traductions$com$annonces$administration$matrice$fr matrice = Traductions$com$annonces$administration$matrice$fr.internal(_root);
+	late final Traductions$com$annonces$administration$moderation$fr moderation = Traductions$com$annonces$administration$moderation$fr.internal(_root);
+}
+
+// Path: com.annonces.demoPublication
+class Traductions$com$annonces$demoPublication$fr {
+	Traductions$com$annonces$demoPublication$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Administration des communications (direction)'
+	String get lienAdministration => 'Administration des communications (direction)';
+
+	/// fr: 'Publier une annonce pour une Classe (enseignant)'
+	String get lienPublier => 'Publier une annonce pour une Classe (enseignant)';
+
+	/// fr: 'Toute l'école'
+	String get toutes => 'Toute l\'école';
+
+	/// fr: 'Familles'
+	String get familles => 'Familles';
+
+	/// fr: 'Enseignants'
+	String get enseignants => 'Enseignants';
+
+	/// fr: 'Élèves'
+	String get eleves => 'Élèves';
+
+	/// fr: 'Contrôleurs'
+	String get controleurs => 'Contrôleurs';
+
+	/// fr: 'Direction'
+	String get direction => 'Direction';
+
+	/// fr: 'Toute l'école, un public ou une Classe'
+	String get audiencesDirection => 'Toute l\'école, un public ou une Classe';
+
+	/// fr: 'Sa Classe seulement'
+	String get audiencesEnseignant => 'Sa Classe seulement';
+
+	/// fr: 'Calendrier des vacances d'hiver'
+	String get vacancesTitre => 'Calendrier des vacances d\'hiver';
+
+	/// fr: 'Les cours s'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.'
+	String get vacancesTexte => 'Les cours s\'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.';
+
+	/// fr: 'Réunion des enseignants de jeudi'
+	String get reunionTitre => 'Réunion des enseignants de jeudi';
+
+	/// fr: 'La réunion pédagogique de jeudi commence à 18 h, en visio. L'ordre du jour est dans Le Studio.'
+	String get reunionTexte => 'La réunion pédagogique de jeudi commence à 18 h, en visio. L\'ordre du jour est dans Le Studio.';
+
+	/// fr: 'Récitation de fin de trimestre'
+	String get recitationTitre => 'Récitation de fin de trimestre';
+
+	/// fr: 'La Classe An-Nour présentera sa récitation de fin de trimestre samedi à 10 h, en visio.'
+	String get recitationTexte => 'La Classe An-Nour présentera sa récitation de fin de trimestre samedi à 10 h, en visio.';
+
+	/// fr: 'Reprise des cours après les vacances'
+	String get rentreeTitre => 'Reprise des cours après les vacances';
+
+	/// fr: 'Les séances reprennent le lundi 6 janvier aux horaires habituels.'
+	String get rentreeTexte => 'Les séances reprennent le lundi 6 janvier aux horaires habituels.';
+
+	/// fr: 'Publication « Fiches de tajwid à imprimer »'
+	String get signalementAffilie => 'Publication « Fiches de tajwid à imprimer »';
+
+	/// fr: 'Retrouvez mes fiches avec ce lien partenaire, remise de 20 % avec mon code.'
+	String get extraitAffilie => 'Retrouvez mes fiches avec ce lien partenaire, remise de 20 % avec mon code.';
+
+	/// fr: 'Publication « Cours particuliers disponibles »'
+	String get signalementVente => 'Publication « Cours particuliers disponibles »';
+
+	/// fr: 'Je propose des cours particuliers payants le week-end, écrivez-moi.'
+	String get extraitVente => 'Je propose des cours particuliers payants le week-end, écrivez-moi.';
+
+	/// fr: 'Réponse sous « Organiser une révision collective »'
+	String get signalementHorsSujet => 'Réponse sous « Organiser une révision collective »';
+}
+
 // Path: com.annonces.demo
 class Traductions$com$annonces$demo$fr {
 	Traductions$com$annonces$demo$fr.internal(this._root);
@@ -16634,6 +16809,318 @@ class Traductions$com$communaute$signalement$politique$fr {
 
 	/// fr: 'La sollicitation commerciale n'est pas autorisée dans cet espace.'
 	String get sollicitation => 'La sollicitation commerciale n\'est pas autorisée dans cet espace.';
+}
+
+// Path: com.annonces.publieur.etapes
+class Traductions$com$annonces$publieur$etapes$fr {
+	Traductions$com$annonces$publieur$etapes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Contenu de l'annonce'
+	String get contenu => 'Contenu de l\'annonce';
+
+	/// fr: 'Audience de l'annonce'
+	String get audience => 'Audience de l\'annonce';
+
+	/// fr: 'Date de diffusion'
+	String get programmation => 'Date de diffusion';
+
+	/// fr: 'Aperçu de l'annonce'
+	String get previsualisation => 'Aperçu de l\'annonce';
+
+	/// fr: 'Publication de l'annonce'
+	String get publication => 'Publication de l\'annonce';
+}
+
+// Path: com.annonces.publieur.contexte
+class Traductions$com$annonces$publieur$contexte$fr {
+	Traductions$com$annonces$publieur$contexte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Écrivez ce que les destinataires doivent savoir. Une annonce part dans un seul sens : personne n'y répond.'
+	String get contenu => 'Écrivez ce que les destinataires doivent savoir. Une annonce part dans un seul sens : personne n\'y répond.';
+
+	/// fr: 'Choisissez qui reçoit l'annonce. Seules les audiences que vous pouvez viser sont proposées.'
+	String get audience => 'Choisissez qui reçoit l\'annonce. Seules les audiences que vous pouvez viser sont proposées.';
+
+	/// fr: 'Cette annonce part vers {cible}. Vous publiez seulement pour votre Classe.'
+	String audienceFixee({required Object cible}) => 'Cette annonce part vers ${cible}. Vous publiez seulement pour votre Classe.';
+
+	/// fr: 'Choisissez quand l'annonce part. Une annonce programmée attend sa date.'
+	String get programmation => 'Choisissez quand l\'annonce part. Une annonce programmée attend sa date.';
+
+	/// fr: 'Voici l'annonce telle que les destinataires la liront.'
+	String get previsualisation => 'Voici l\'annonce telle que les destinataires la liront.';
+
+	/// fr: 'Relisez l'audience et la date, puis publiez. Rien n'est publié avant la confirmation.'
+	String get publication => 'Relisez l\'audience et la date, puis publiez. Rien n\'est publié avant la confirmation.';
+}
+
+// Path: com.annonces.publieur.nature
+class Traductions$com$annonces$publieur$nature$fr {
+	Traductions$com$annonces$publieur$nature$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Seules les familles et les élèves de cette Classe la reçoivent.'
+	String get classe => 'Seules les familles et les élèves de cette Classe la reçoivent.';
+
+	/// fr: 'Toutes les personnes de ce public la reçoivent.'
+	String get public => 'Toutes les personnes de ce public la reçoivent.';
+
+	/// fr: 'Toute l'école la reçoit. Réservez-la à ce qui concerne tout le monde.'
+	String get toutes => 'Toute l\'école la reçoit. Réservez-la à ce qui concerne tout le monde.';
+}
+
+// Path: com.annonces.publieur.quand
+class Traductions$com$annonces$publieur$quand$fr {
+	Traductions$com$annonces$publieur$quand$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Dès la confirmation'
+	String get maintenant => 'Dès la confirmation';
+
+	/// fr: 'L'annonce part dès que la publication est confirmée.'
+	String get maintenantDetail => 'L\'annonce part dès que la publication est confirmée.';
+
+	/// fr: 'Le {date} à {heure}'
+	String creneau({required Object date, required Object heure}) => 'Le ${date} à ${heure}';
+
+	/// fr: 'L'annonce attend cette date. Vous la retrouvez dans les annonces planifiées.'
+	String get creneauDetail => 'L\'annonce attend cette date. Vous la retrouvez dans les annonces planifiées.';
+}
+
+// Path: com.annonces.publieur.apercu
+class Traductions$com$annonces$publieur$apercu$fr {
+	Traductions$com$annonces$publieur$apercu$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À : {cible}'
+	String a({required Object cible}) => 'À : ${cible}';
+
+	/// fr: 'Diffusion : dès la confirmation'
+	String get diffusionMaintenant => 'Diffusion : dès la confirmation';
+
+	/// fr: 'Diffusion prévue le {date} à {heure}'
+	String diffusionLe({required Object date, required Object heure}) => 'Diffusion prévue le ${date} à ${heure}';
+}
+
+// Path: com.annonces.administration.indicateurs
+class Traductions$com$annonces$administration$indicateurs$fr {
+	Traductions$com$annonces$administration$indicateurs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Indicateurs des communications'
+	String get titre => 'Indicateurs des communications';
+
+	/// fr: 'Annonces publiées'
+	String get publiees => 'Annonces publiées';
+
+	/// fr: 'Annonces planifiées'
+	String get planifiees => 'Annonces planifiées';
+
+	/// fr: 'Contenus en modération'
+	String get moderation => 'Contenus en modération';
+
+	/// fr: 'Règles de portée'
+	String get regles => 'Règles de portée';
+
+	/// fr: '{libelle} : pas encore disponible'
+	String indisponible({required Object libelle}) => '${libelle} : pas encore disponible';
+
+	/// fr: '{libelle} : lecture impossible, actualisez la page'
+	String echec({required Object libelle}) => '${libelle} : lecture impossible, actualisez la page';
+}
+
+// Path: com.annonces.administration.publiees
+class Traductions$com$annonces$administration$publiees$fr {
+	Traductions$com$annonces$administration$publiees$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Annonces publiées'
+	String get titre => 'Annonces publiées';
+
+	/// fr: 'Aucune annonce publiée sur la période.'
+	String get vide => 'Aucune annonce publiée sur la période.';
+
+	/// fr: 'Publiée'
+	String get pastille => 'Publiée';
+
+	/// fr: '{cible} · le {date} à {heure}'
+	String legende({required Object cible, required Object date, required Object heure}) => '${cible} · le ${date} à ${heure}';
+}
+
+// Path: com.annonces.administration.planifiees
+class Traductions$com$annonces$administration$planifiees$fr {
+	Traductions$com$annonces$administration$planifiees$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Annonces planifiées'
+	String get titre => 'Annonces planifiées';
+
+	/// fr: 'Aucune annonce planifiée.'
+	String get vide => 'Aucune annonce planifiée.';
+
+	/// fr: 'Planifiée'
+	String get pastille => 'Planifiée';
+
+	/// fr: '{cible} · prévue le {date} à {heure}'
+	String legende({required Object cible, required Object date, required Object heure}) => '${cible} · prévue le ${date} à ${heure}';
+}
+
+// Path: com.annonces.administration.matrice
+class Traductions$com$annonces$administration$matrice$fr {
+	Traductions$com$annonces$administration$matrice$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Règles de portée et autorisations'
+	String get titre => 'Règles de portée et autorisations';
+
+	/// fr: 'La règle de l'école, appliquée à chaque publication.'
+	String get detail => 'La règle de l\'école, appliquée à chaque publication.';
+
+	/// fr: 'Qui publie'
+	String get auteurs => 'Qui publie';
+
+	/// fr: 'Peut publier'
+	String get peutPublier => 'Peut publier';
+
+	/// fr: 'Audiences'
+	String get audiences => 'Audiences';
+
+	/// fr: 'Validation requise'
+	String get validation => 'Validation requise';
+
+	/// fr: 'Oui'
+	String get oui => 'Oui';
+
+	/// fr: 'Non'
+	String get non => 'Non';
+
+	/// fr: 'Aucune'
+	String get aucune => 'Aucune';
+
+	/// fr: 'Aucune règle de portée n'est configurée.'
+	String get vide => 'Aucune règle de portée n\'est configurée.';
+}
+
+// Path: com.annonces.administration.moderation
+class Traductions$com$annonces$administration$moderation$fr {
+	Traductions$com$annonces$administration$moderation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'File de modération'
+	String get titre => 'File de modération';
+
+	/// fr: 'Signalé le {date} à {heure}'
+	String legende({required Object date, required Object heure}) => 'Signalé le ${date} à ${heure}';
+
+	/// fr: 'Motif : {motif}'
+	String motif({required Object motif}) => 'Motif : ${motif}';
+
+	/// fr: 'Contenu signalé'
+	String get extraitTitre => 'Contenu signalé';
+
+	/// fr: 'L'extrait de ce contenu n'est pas communiqué.'
+	String get extraitAbsent => 'L\'extrait de ce contenu n\'est pas communiqué.';
+
+	/// fr: 'Règle visée'
+	String get regle => 'Règle visée';
+
+	/// fr: 'Approuver après examen'
+	String get approuver => 'Approuver après examen';
+
+	/// fr: 'Masquer le contenu'
+	String get masquer => 'Masquer le contenu';
+
+	/// fr: 'Restaurer le contenu'
+	String get restaurer => 'Restaurer le contenu';
+
+	/// fr: 'Rejeter le signalement'
+	String get rejeter => 'Rejeter le signalement';
+
+	/// fr: 'Ouvrir le contexte'
+	String get contexte => 'Ouvrir le contexte';
+
+	/// fr: 'Masqué'
+	String get masque => 'Masqué';
+
+	/// fr: 'Approuvé'
+	String get approuve => 'Approuvé';
+
+	/// fr: 'Signalement rejeté'
+	String get rejete => 'Signalement rejeté';
+
+	/// fr: 'Restauré'
+	String get restaure => 'Restauré';
+
+	/// fr: 'Décision enregistrée.'
+	String get enregistree => 'Décision enregistrée.';
+
+	/// fr: 'Cette décision n'est pas encore confirmée. Vérifiez la connexion, puis réessayez.'
+	String get nonConfirmee => 'Cette décision n\'est pas encore confirmée. Vérifiez la connexion, puis réessayez.';
+
+	/// fr: 'La modération n'est pas encore disponible. Revenez plus tard.'
+	String get indisponible => 'La modération n\'est pas encore disponible. Revenez plus tard.';
+
+	/// fr: 'Aucun contenu à examiner'
+	String get videTitre => 'Aucun contenu à examiner';
+
+	/// fr: 'Les signalements de la Communauté enseignants arrivent ici.'
+	String get vide => 'Les signalements de la Communauté enseignants arrivent ici.';
+
+	/// fr: 'File réservée à la modération'
+	String get refuseTitre => 'File réservée à la modération';
+
+	/// fr: 'Seules les personnes chargées de la modération voient cette file.'
+	String get refuse => 'Seules les personnes chargées de la modération voient cette file.';
+
+	/// fr: 'Aucun signalement ouvert'
+	String get choisirTitre => 'Aucun signalement ouvert';
+
+	/// fr: 'Choisissez un signalement dans la file pour l'examiner.'
+	String get choisir => 'Choisissez un signalement dans la file pour l\'examiner.';
+
+	/// fr: 'Aucune action de modération ne vous est ouverte sur ce contenu.'
+	String get sansAction => 'Aucune action de modération ne vous est ouverte sur ce contenu.';
+
+	/// fr: 'Aucune sanction de compte n'est appliquée automatiquement.'
+	String get sansSanction => 'Aucune sanction de compte n\'est appliquée automatiquement.';
+
+	/// fr: 'Politique anti-promotion'
+	String get politique => 'Politique anti-promotion';
+
+	/// fr: 'Examiner {objet}, motif {motif}'
+	String ouvrirSemantique({required Object objet, required Object motif}) => 'Examiner ${objet}, motif ${motif}';
 }
 
 // Path: com.annonces.demo.roles
@@ -20988,6 +21475,124 @@ extension on Traductions {
 			'com.communaute.vide' => 'Aucune publication dans cette catégorie.',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
 			'com.studio.vide' => 'Aucune activité à traiter ici.',
+			'com.annonces.publieur.titre' => 'Nouvelle annonce',
+			'com.annonces.publieur.etapes.contenu' => 'Contenu de l\'annonce',
+			'com.annonces.publieur.etapes.audience' => 'Audience de l\'annonce',
+			'com.annonces.publieur.etapes.programmation' => 'Date de diffusion',
+			'com.annonces.publieur.etapes.previsualisation' => 'Aperçu de l\'annonce',
+			'com.annonces.publieur.etapes.publication' => 'Publication de l\'annonce',
+			'com.annonces.publieur.contexte.contenu' => 'Écrivez ce que les destinataires doivent savoir. Une annonce part dans un seul sens : personne n\'y répond.',
+			'com.annonces.publieur.contexte.audience' => 'Choisissez qui reçoit l\'annonce. Seules les audiences que vous pouvez viser sont proposées.',
+			'com.annonces.publieur.contexte.audienceFixee' => ({required Object cible}) => 'Cette annonce part vers ${cible}. Vous publiez seulement pour votre Classe.',
+			'com.annonces.publieur.contexte.programmation' => 'Choisissez quand l\'annonce part. Une annonce programmée attend sa date.',
+			'com.annonces.publieur.contexte.previsualisation' => 'Voici l\'annonce telle que les destinataires la liront.',
+			'com.annonces.publieur.contexte.publication' => 'Relisez l\'audience et la date, puis publiez. Rien n\'est publié avant la confirmation.',
+			'com.annonces.publieur.champTitre' => 'Titre de l\'annonce',
+			'com.annonces.publieur.champTexte' => 'Texte de l\'annonce',
+			'com.annonces.publieur.nature.classe' => 'Seules les familles et les élèves de cette Classe la reçoivent.',
+			'com.annonces.publieur.nature.public' => 'Toutes les personnes de ce public la reçoivent.',
+			'com.annonces.publieur.nature.toutes' => 'Toute l\'école la reçoit. Réservez-la à ce qui concerne tout le monde.',
+			'com.annonces.publieur.quand.maintenant' => 'Dès la confirmation',
+			'com.annonces.publieur.quand.maintenantDetail' => 'L\'annonce part dès que la publication est confirmée.',
+			'com.annonces.publieur.quand.creneau' => ({required Object date, required Object heure}) => 'Le ${date} à ${heure}',
+			'com.annonces.publieur.quand.creneauDetail' => 'L\'annonce attend cette date. Vous la retrouvez dans les annonces planifiées.',
+			'com.annonces.publieur.apercu.a' => ({required Object cible}) => 'À : ${cible}',
+			'com.annonces.publieur.apercu.diffusionMaintenant' => 'Diffusion : dès la confirmation',
+			'com.annonces.publieur.apercu.diffusionLe' => ({required Object date, required Object heure}) => 'Diffusion prévue le ${date} à ${heure}',
+			'com.annonces.publieur.continuer' => 'Continuer',
+			'com.annonces.publieur.publier' => 'Publier l\'annonce',
+			'com.annonces.publieur.programmer' => 'Programmer l\'annonce',
+			'com.annonces.publieur.reessayer' => 'Réessayer la publication',
+			'com.annonces.publieur.terminer' => 'Terminer',
+			'com.annonces.publieur.manqueContenu' => 'Écrivez un titre et un texte pour continuer.',
+			'com.annonces.publieur.manqueAudience' => 'Choisissez une audience pour continuer.',
+			'com.annonces.publieur.enCours' => 'Publication en cours. Attendez la confirmation.',
+			'com.annonces.publieur.publiee' => 'Annonce publiée. Les destinataires la reçoivent.',
+			'com.annonces.publieur.planifiee' => ({required Object date, required Object heure}) => 'Annonce planifiée pour le ${date} à ${heure}.',
+			'com.annonces.publieur.nonConfirmee' => 'Cette annonce n\'est pas encore confirmée. Vérifiez la connexion, puis réessayez : elle ne partira qu\'une fois.',
+			'com.annonces.publieur.horsLigne' => 'Vous êtes hors ligne : cette annonce n\'est pas encore confirmée. Reconnectez-vous, puis réessayez.',
+			'com.annonces.publieur.indisponible' => 'La publication des annonces n\'est pas encore disponible. Revenez plus tard.',
+			'com.annonces.publieur.aucuneCibleTitre' => 'Aucune audience ouverte',
+			'com.annonces.publieur.aucuneCible' => 'Vous ne pouvez publier vers aucune audience pour le moment. Demandez l\'accès à la direction.',
+			'com.annonces.administration.nouvelle' => 'Nouvelle annonce',
+			'com.annonces.administration.demo' => 'Démonstration',
+			'com.annonces.administration.demoDetail' => 'Données de démonstration : aucun chiffre réel.',
+			'com.annonces.administration.indicateurs.titre' => 'Indicateurs des communications',
+			'com.annonces.administration.indicateurs.publiees' => 'Annonces publiées',
+			'com.annonces.administration.indicateurs.planifiees' => 'Annonces planifiées',
+			'com.annonces.administration.indicateurs.moderation' => 'Contenus en modération',
+			'com.annonces.administration.indicateurs.regles' => 'Règles de portée',
+			'com.annonces.administration.indicateurs.indisponible' => ({required Object libelle}) => '${libelle} : pas encore disponible',
+			'com.annonces.administration.indicateurs.echec' => ({required Object libelle}) => '${libelle} : lecture impossible, actualisez la page',
+			'com.annonces.administration.publiees.titre' => 'Annonces publiées',
+			'com.annonces.administration.publiees.vide' => 'Aucune annonce publiée sur la période.',
+			'com.annonces.administration.publiees.pastille' => 'Publiée',
+			'com.annonces.administration.publiees.legende' => ({required Object cible, required Object date, required Object heure}) => '${cible} · le ${date} à ${heure}',
+			'com.annonces.administration.planifiees.titre' => 'Annonces planifiées',
+			'com.annonces.administration.planifiees.vide' => 'Aucune annonce planifiée.',
+			'com.annonces.administration.planifiees.pastille' => 'Planifiée',
+			'com.annonces.administration.planifiees.legende' => ({required Object cible, required Object date, required Object heure}) => '${cible} · prévue le ${date} à ${heure}',
+			'com.annonces.administration.matrice.titre' => 'Règles de portée et autorisations',
+			'com.annonces.administration.matrice.detail' => 'La règle de l\'école, appliquée à chaque publication.',
+			'com.annonces.administration.matrice.auteurs' => 'Qui publie',
+			'com.annonces.administration.matrice.peutPublier' => 'Peut publier',
+			'com.annonces.administration.matrice.audiences' => 'Audiences',
+			'com.annonces.administration.matrice.validation' => 'Validation requise',
+			'com.annonces.administration.matrice.oui' => 'Oui',
+			'com.annonces.administration.matrice.non' => 'Non',
+			'com.annonces.administration.matrice.aucune' => 'Aucune',
+			'com.annonces.administration.matrice.vide' => 'Aucune règle de portée n\'est configurée.',
+			'com.annonces.administration.moderation.titre' => 'File de modération',
+			'com.annonces.administration.moderation.legende' => ({required Object date, required Object heure}) => 'Signalé le ${date} à ${heure}',
+			'com.annonces.administration.moderation.motif' => ({required Object motif}) => 'Motif : ${motif}',
+			'com.annonces.administration.moderation.extraitTitre' => 'Contenu signalé',
+			'com.annonces.administration.moderation.extraitAbsent' => 'L\'extrait de ce contenu n\'est pas communiqué.',
+			'com.annonces.administration.moderation.regle' => 'Règle visée',
+			'com.annonces.administration.moderation.approuver' => 'Approuver après examen',
+			'com.annonces.administration.moderation.masquer' => 'Masquer le contenu',
+			'com.annonces.administration.moderation.restaurer' => 'Restaurer le contenu',
+			'com.annonces.administration.moderation.rejeter' => 'Rejeter le signalement',
+			'com.annonces.administration.moderation.contexte' => 'Ouvrir le contexte',
+			'com.annonces.administration.moderation.masque' => 'Masqué',
+			'com.annonces.administration.moderation.approuve' => 'Approuvé',
+			'com.annonces.administration.moderation.rejete' => 'Signalement rejeté',
+			'com.annonces.administration.moderation.restaure' => 'Restauré',
+			'com.annonces.administration.moderation.enregistree' => 'Décision enregistrée.',
+			'com.annonces.administration.moderation.nonConfirmee' => 'Cette décision n\'est pas encore confirmée. Vérifiez la connexion, puis réessayez.',
+			'com.annonces.administration.moderation.indisponible' => 'La modération n\'est pas encore disponible. Revenez plus tard.',
+			'com.annonces.administration.moderation.videTitre' => 'Aucun contenu à examiner',
+			'com.annonces.administration.moderation.vide' => 'Les signalements de la Communauté enseignants arrivent ici.',
+			'com.annonces.administration.moderation.refuseTitre' => 'File réservée à la modération',
+			'com.annonces.administration.moderation.refuse' => 'Seules les personnes chargées de la modération voient cette file.',
+			'com.annonces.administration.moderation.choisirTitre' => 'Aucun signalement ouvert',
+			'com.annonces.administration.moderation.choisir' => 'Choisissez un signalement dans la file pour l\'examiner.',
+			'com.annonces.administration.moderation.sansAction' => 'Aucune action de modération ne vous est ouverte sur ce contenu.',
+			'com.annonces.administration.moderation.sansSanction' => 'Aucune sanction de compte n\'est appliquée automatiquement.',
+			'com.annonces.administration.moderation.politique' => 'Politique anti-promotion',
+			'com.annonces.administration.moderation.ouvrirSemantique' => ({required Object objet, required Object motif}) => 'Examiner ${objet}, motif ${motif}',
+			'com.annonces.demoPublication.lienAdministration' => 'Administration des communications (direction)',
+			'com.annonces.demoPublication.lienPublier' => 'Publier une annonce pour une Classe (enseignant)',
+			'com.annonces.demoPublication.toutes' => 'Toute l\'école',
+			'com.annonces.demoPublication.familles' => 'Familles',
+			'com.annonces.demoPublication.enseignants' => 'Enseignants',
+			'com.annonces.demoPublication.eleves' => 'Élèves',
+			'com.annonces.demoPublication.controleurs' => 'Contrôleurs',
+			'com.annonces.demoPublication.direction' => 'Direction',
+			'com.annonces.demoPublication.audiencesDirection' => 'Toute l\'école, un public ou une Classe',
+			'com.annonces.demoPublication.audiencesEnseignant' => 'Sa Classe seulement',
+			'com.annonces.demoPublication.vacancesTitre' => 'Calendrier des vacances d\'hiver',
+			'com.annonces.demoPublication.vacancesTexte' => 'Les cours s\'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.',
+			'com.annonces.demoPublication.reunionTitre' => 'Réunion des enseignants de jeudi',
+			'com.annonces.demoPublication.reunionTexte' => 'La réunion pédagogique de jeudi commence à 18 h, en visio. L\'ordre du jour est dans Le Studio.',
+			'com.annonces.demoPublication.recitationTitre' => 'Récitation de fin de trimestre',
+			'com.annonces.demoPublication.recitationTexte' => 'La Classe An-Nour présentera sa récitation de fin de trimestre samedi à 10 h, en visio.',
+			'com.annonces.demoPublication.rentreeTitre' => 'Reprise des cours après les vacances',
+			'com.annonces.demoPublication.rentreeTexte' => 'Les séances reprennent le lundi 6 janvier aux horaires habituels.',
+			'com.annonces.demoPublication.signalementAffilie' => 'Publication « Fiches de tajwid à imprimer »',
+			'com.annonces.demoPublication.extraitAffilie' => 'Retrouvez mes fiches avec ce lien partenaire, remise de 20 % avec mon code.',
+			'com.annonces.demoPublication.signalementVente' => 'Publication « Cours particuliers disponibles »',
+			'com.annonces.demoPublication.extraitVente' => 'Je propose des cours particuliers payants le week-end, écrivez-moi.',
+			'com.annonces.demoPublication.signalementHorsSujet' => 'Réponse sous « Organiser une révision collective »',
 			'com.annonces.section' => 'Annonces de la Classe',
 			'com.annonces.annonce' => 'Annonce',
 			'com.annonces.publier' => 'Publier une annonce',

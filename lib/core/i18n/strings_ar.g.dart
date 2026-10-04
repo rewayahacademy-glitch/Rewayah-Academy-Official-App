@@ -486,6 +486,9 @@ class _Traductions$com$annonces$ar extends Traductions$com$annonces$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$com$annonces$publieur$ar publieur = _Traductions$com$annonces$publieur$ar._(_root);
+	@override late final _Traductions$com$annonces$administration$ar administration = _Traductions$com$annonces$administration$ar._(_root);
+	@override late final _Traductions$com$annonces$demoPublication$ar demoPublication = _Traductions$com$annonces$demoPublication$ar._(_root);
 	@override String get section => 'إعلانات الفصل';
 	@override String get annonce => 'إعلان';
 	@override String get publier => 'نشر إعلان';
@@ -860,6 +863,87 @@ class _Traductions$com$communaute$demo$ar extends Traductions$com$communaute$dem
 	@override String get lecteurSeul => 'قراءة فقط، دون نشر';
 }
 
+// Path: com.annonces.publieur
+class _Traductions$com$annonces$publieur$ar extends Traductions$com$annonces$publieur$fr {
+	_Traductions$com$annonces$publieur$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'إعلان جديد';
+	@override late final _Traductions$com$annonces$publieur$etapes$ar etapes = _Traductions$com$annonces$publieur$etapes$ar._(_root);
+	@override late final _Traductions$com$annonces$publieur$contexte$ar contexte = _Traductions$com$annonces$publieur$contexte$ar._(_root);
+	@override String get champTitre => 'عنوان الإعلان';
+	@override String get champTexte => 'نص الإعلان';
+	@override late final _Traductions$com$annonces$publieur$nature$ar nature = _Traductions$com$annonces$publieur$nature$ar._(_root);
+	@override late final _Traductions$com$annonces$publieur$quand$ar quand = _Traductions$com$annonces$publieur$quand$ar._(_root);
+	@override late final _Traductions$com$annonces$publieur$apercu$ar apercu = _Traductions$com$annonces$publieur$apercu$ar._(_root);
+	@override String get continuer => 'متابعة';
+	@override String get publier => 'نشر الإعلان';
+	@override String get programmer => 'برمجة الإعلان';
+	@override String get reessayer => 'إعادة محاولة النشر';
+	@override String get terminer => 'إنهاء';
+	@override String get manqueContenu => 'اكتب عنوانًا ونصًا للمتابعة.';
+	@override String get manqueAudience => 'اختر جمهورًا للمتابعة.';
+	@override String get enCours => 'النشر جارٍ. انتظر التأكيد.';
+	@override String get publiee => 'نُشر الإعلان. يستلمه المستلمون.';
+	@override String planifiee({required Object date, required Object heure}) => 'بُرمج الإعلان ليوم ${date} الساعة ${heure}.';
+	@override String get nonConfirmee => 'لم يُؤكَّد هذا الإعلان بعد. تحقق من الاتصال ثم أعد المحاولة : لن يُرسل إلا مرة واحدة.';
+	@override String get horsLigne => 'أنت غير متصل : لم يُؤكَّد هذا الإعلان بعد. أعد الاتصال ثم أعد المحاولة.';
+	@override String get indisponible => 'نشر الإعلانات غير متاح بعد. عد لاحقًا.';
+	@override String get aucuneCibleTitre => 'لا يوجد جمهور متاح';
+	@override String get aucuneCible => 'لا يمكنك النشر لأي جمهور حاليًا. اطلب الإذن من الإدارة.';
+}
+
+// Path: com.annonces.administration
+class _Traductions$com$annonces$administration$ar extends Traductions$com$annonces$administration$fr {
+	_Traductions$com$annonces$administration$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get nouvelle => 'إعلان جديد';
+	@override String get demo => 'عرض تجريبي';
+	@override String get demoDetail => 'بيانات تجريبية : لا رقم حقيقي.';
+	@override late final _Traductions$com$annonces$administration$indicateurs$ar indicateurs = _Traductions$com$annonces$administration$indicateurs$ar._(_root);
+	@override late final _Traductions$com$annonces$administration$publiees$ar publiees = _Traductions$com$annonces$administration$publiees$ar._(_root);
+	@override late final _Traductions$com$annonces$administration$planifiees$ar planifiees = _Traductions$com$annonces$administration$planifiees$ar._(_root);
+	@override late final _Traductions$com$annonces$administration$matrice$ar matrice = _Traductions$com$annonces$administration$matrice$ar._(_root);
+	@override late final _Traductions$com$annonces$administration$moderation$ar moderation = _Traductions$com$annonces$administration$moderation$ar._(_root);
+}
+
+// Path: com.annonces.demoPublication
+class _Traductions$com$annonces$demoPublication$ar extends Traductions$com$annonces$demoPublication$fr {
+	_Traductions$com$annonces$demoPublication$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get lienAdministration => 'إدارة التواصل (الإدارة)';
+	@override String get lienPublier => 'نشر إعلان لفصل (المعلم)';
+	@override String get toutes => 'المدرسة كلها';
+	@override String get familles => 'الأسر';
+	@override String get enseignants => 'المعلمون';
+	@override String get eleves => 'الطلاب';
+	@override String get controleurs => 'المراقبون';
+	@override String get direction => 'الإدارة';
+	@override String get audiencesDirection => 'المدرسة كلها، أو جمهور، أو فصل';
+	@override String get audiencesEnseignant => 'فصله فقط';
+	@override String get vacancesTitre => 'تقويم عطلة الشتاء';
+	@override String get vacancesTexte => 'تتوقف الدروس من 21 ديسمبر إلى 5 يناير. تُستأنف الحصص يوم الاثنين 6 يناير في المواعيد المعتادة.';
+	@override String get reunionTitre => 'اجتماع المعلمين يوم الخميس';
+	@override String get reunionTexte => 'يبدأ الاجتماع التربوي يوم الخميس الساعة 18، عبر الاتصال المرئي. جدول الأعمال في الاستوديو.';
+	@override String get recitationTitre => 'تلاوة نهاية الفصل الدراسي';
+	@override String get recitationTexte => 'سيقدم فصل النور تلاوة نهاية الفصل الدراسي يوم السبت الساعة 10، عبر الاتصال المرئي.';
+	@override String get rentreeTitre => 'استئناف الدروس بعد العطلة';
+	@override String get rentreeTexte => 'تُستأنف الحصص يوم الاثنين 6 يناير في المواعيد المعتادة.';
+	@override String get signalementAffilie => 'منشور « بطاقات تجويد للطباعة »';
+	@override String get extraitAffilie => 'تجدون بطاقاتي عبر هذا الرابط الشريك، خصم 20 % برمزي.';
+	@override String get signalementVente => 'منشور « دروس خصوصية متاحة »';
+	@override String get extraitVente => 'أقدم دروسًا خصوصية مدفوعة في عطلة نهاية الأسبوع، راسلوني.';
+	@override String get signalementHorsSujet => 'رد تحت « تنظيم مراجعة جماعية »';
+}
+
 // Path: com.annonces.demo
 class _Traductions$com$annonces$demo$ar extends Traductions$com$annonces$demo$fr {
 	_Traductions$com$annonces$demo$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -1018,6 +1102,170 @@ class _Traductions$com$communaute$signalement$politique$ar extends Traductions$c
 	// Translations
 	@override String get publicite => 'الإعلانات التجارية غير مسموح بها في مجتمع المعلّمين.';
 	@override String get sollicitation => 'الاستدراج التجاري غير مسموح به في هذه المساحة.';
+}
+
+// Path: com.annonces.publieur.etapes
+class _Traductions$com$annonces$publieur$etapes$ar extends Traductions$com$annonces$publieur$etapes$fr {
+	_Traductions$com$annonces$publieur$etapes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get contenu => 'محتوى الإعلان';
+	@override String get audience => 'جمهور الإعلان';
+	@override String get programmation => 'تاريخ النشر';
+	@override String get previsualisation => 'معاينة الإعلان';
+	@override String get publication => 'نشر الإعلان';
+}
+
+// Path: com.annonces.publieur.contexte
+class _Traductions$com$annonces$publieur$contexte$ar extends Traductions$com$annonces$publieur$contexte$fr {
+	_Traductions$com$annonces$publieur$contexte$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get contenu => 'اكتب ما يجب أن يعرفه المستلمون. الإعلان في اتجاه واحد : لا أحد يرد عليه.';
+	@override String get audience => 'اختر من يستلم الإعلان. لا تُعرض إلا الجماهير التي يمكنك استهدافها.';
+	@override String audienceFixee({required Object cible}) => 'يُرسل هذا الإعلان إلى ${cible}. أنت تنشر لفصلك فقط.';
+	@override String get programmation => 'اختر متى يُرسل الإعلان. الإعلان المبرمج ينتظر تاريخه.';
+	@override String get previsualisation => 'هذا هو الإعلان كما سيقرؤه المستلمون.';
+	@override String get publication => 'راجع الجمهور والتاريخ، ثم انشر. لا يُنشر شيء قبل التأكيد.';
+}
+
+// Path: com.annonces.publieur.nature
+class _Traductions$com$annonces$publieur$nature$ar extends Traductions$com$annonces$publieur$nature$fr {
+	_Traductions$com$annonces$publieur$nature$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get classe => 'تستلمه أسر هذا الفصل وطلابه فقط.';
+	@override String get public => 'يستلمه كل أفراد هذا الجمهور.';
+	@override String get toutes => 'تستلمه المدرسة كلها. خصصه لما يهم الجميع.';
+}
+
+// Path: com.annonces.publieur.quand
+class _Traductions$com$annonces$publieur$quand$ar extends Traductions$com$annonces$publieur$quand$fr {
+	_Traductions$com$annonces$publieur$quand$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get maintenant => 'فور التأكيد';
+	@override String get maintenantDetail => 'يُرسل الإعلان فور تأكيد النشر.';
+	@override String creneau({required Object date, required Object heure}) => 'يوم ${date} الساعة ${heure}';
+	@override String get creneauDetail => 'ينتظر الإعلان هذا التاريخ. ستجده في الإعلانات المبرمجة.';
+}
+
+// Path: com.annonces.publieur.apercu
+class _Traductions$com$annonces$publieur$apercu$ar extends Traductions$com$annonces$publieur$apercu$fr {
+	_Traductions$com$annonces$publieur$apercu$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String a({required Object cible}) => 'إلى : ${cible}';
+	@override String get diffusionMaintenant => 'النشر : فور التأكيد';
+	@override String diffusionLe({required Object date, required Object heure}) => 'النشر المقرر يوم ${date} الساعة ${heure}';
+}
+
+// Path: com.annonces.administration.indicateurs
+class _Traductions$com$annonces$administration$indicateurs$ar extends Traductions$com$annonces$administration$indicateurs$fr {
+	_Traductions$com$annonces$administration$indicateurs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'مؤشرات التواصل';
+	@override String get publiees => 'الإعلانات المنشورة';
+	@override String get planifiees => 'الإعلانات المبرمجة';
+	@override String get moderation => 'محتويات قيد الإشراف';
+	@override String get regles => 'قواعد النطاق';
+	@override String indisponible({required Object libelle}) => '${libelle} : غير متاح بعد';
+	@override String echec({required Object libelle}) => '${libelle} : تعذرت القراءة، حدّث الصفحة';
+}
+
+// Path: com.annonces.administration.publiees
+class _Traductions$com$annonces$administration$publiees$ar extends Traductions$com$annonces$administration$publiees$fr {
+	_Traductions$com$annonces$administration$publiees$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الإعلانات المنشورة';
+	@override String get vide => 'لا توجد إعلانات منشورة في هذه الفترة.';
+	@override String get pastille => 'منشور';
+	@override String legende({required Object cible, required Object date, required Object heure}) => '${cible} · يوم ${date} الساعة ${heure}';
+}
+
+// Path: com.annonces.administration.planifiees
+class _Traductions$com$annonces$administration$planifiees$ar extends Traductions$com$annonces$administration$planifiees$fr {
+	_Traductions$com$annonces$administration$planifiees$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الإعلانات المبرمجة';
+	@override String get vide => 'لا توجد إعلانات مبرمجة.';
+	@override String get pastille => 'مبرمج';
+	@override String legende({required Object cible, required Object date, required Object heure}) => '${cible} · مقرر يوم ${date} الساعة ${heure}';
+}
+
+// Path: com.annonces.administration.matrice
+class _Traductions$com$annonces$administration$matrice$ar extends Traductions$com$annonces$administration$matrice$fr {
+	_Traductions$com$annonces$administration$matrice$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'قواعد النطاق والصلاحيات';
+	@override String get detail => 'قاعدة المدرسة، تُطبق على كل نشر.';
+	@override String get auteurs => 'من ينشر';
+	@override String get peutPublier => 'يمكنه النشر';
+	@override String get audiences => 'الجماهير';
+	@override String get validation => 'يتطلب موافقة';
+	@override String get oui => 'نعم';
+	@override String get non => 'لا';
+	@override String get aucune => 'لا شيء';
+	@override String get vide => 'لا توجد قواعد نطاق مُعدّة.';
+}
+
+// Path: com.annonces.administration.moderation
+class _Traductions$com$annonces$administration$moderation$ar extends Traductions$com$annonces$administration$moderation$fr {
+	_Traductions$com$annonces$administration$moderation$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'قائمة الإشراف';
+	@override String legende({required Object date, required Object heure}) => 'أُبلغ عنه يوم ${date} الساعة ${heure}';
+	@override String motif({required Object motif}) => 'السبب : ${motif}';
+	@override String get extraitTitre => 'المحتوى المُبلغ عنه';
+	@override String get extraitAbsent => 'مقتطف هذا المحتوى غير متاح.';
+	@override String get regle => 'القاعدة المعنية';
+	@override String get approuver => 'الموافقة بعد الفحص';
+	@override String get masquer => 'إخفاء المحتوى';
+	@override String get restaurer => 'استعادة المحتوى';
+	@override String get rejeter => 'رفض البلاغ';
+	@override String get contexte => 'فتح السياق';
+	@override String get masque => 'مخفي';
+	@override String get approuve => 'تمت الموافقة';
+	@override String get rejete => 'رُفض البلاغ';
+	@override String get restaure => 'مستعاد';
+	@override String get enregistree => 'سُجل القرار.';
+	@override String get nonConfirmee => 'لم يُؤكَّد هذا القرار بعد. تحقق من الاتصال ثم أعد المحاولة.';
+	@override String get indisponible => 'الإشراف غير متاح بعد. عد لاحقًا.';
+	@override String get videTitre => 'لا يوجد محتوى للفحص';
+	@override String get vide => 'تصل هنا بلاغات مجتمع المعلمين.';
+	@override String get refuseTitre => 'قائمة خاصة بالإشراف';
+	@override String get refuse => 'لا يرى هذه القائمة إلا المكلفون بالإشراف.';
+	@override String get choisirTitre => 'لا يوجد بلاغ مفتوح';
+	@override String get choisir => 'اختر بلاغًا من القائمة لفحصه.';
+	@override String get sansAction => 'لا يتاح لك أي إجراء إشراف على هذا المحتوى.';
+	@override String get sansSanction => 'لا تُطبق أي عقوبة على الحساب تلقائيًا.';
+	@override String get politique => 'سياسة منع الترويج';
+	@override String ouvrirSemantique({required Object objet, required Object motif}) => 'فحص ${objet}، السبب ${motif}';
 }
 
 // Path: com.annonces.demo.roles
@@ -1471,6 +1719,124 @@ extension on TraductionsAr {
 			'com.communaute.vide' => 'لا توجد منشورات في هذه الفئة.',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
 			'com.studio.vide' => 'لا يوجد نشاط للمعالجة هنا.',
+			'com.annonces.publieur.titre' => 'إعلان جديد',
+			'com.annonces.publieur.etapes.contenu' => 'محتوى الإعلان',
+			'com.annonces.publieur.etapes.audience' => 'جمهور الإعلان',
+			'com.annonces.publieur.etapes.programmation' => 'تاريخ النشر',
+			'com.annonces.publieur.etapes.previsualisation' => 'معاينة الإعلان',
+			'com.annonces.publieur.etapes.publication' => 'نشر الإعلان',
+			'com.annonces.publieur.contexte.contenu' => 'اكتب ما يجب أن يعرفه المستلمون. الإعلان في اتجاه واحد : لا أحد يرد عليه.',
+			'com.annonces.publieur.contexte.audience' => 'اختر من يستلم الإعلان. لا تُعرض إلا الجماهير التي يمكنك استهدافها.',
+			'com.annonces.publieur.contexte.audienceFixee' => ({required Object cible}) => 'يُرسل هذا الإعلان إلى ${cible}. أنت تنشر لفصلك فقط.',
+			'com.annonces.publieur.contexte.programmation' => 'اختر متى يُرسل الإعلان. الإعلان المبرمج ينتظر تاريخه.',
+			'com.annonces.publieur.contexte.previsualisation' => 'هذا هو الإعلان كما سيقرؤه المستلمون.',
+			'com.annonces.publieur.contexte.publication' => 'راجع الجمهور والتاريخ، ثم انشر. لا يُنشر شيء قبل التأكيد.',
+			'com.annonces.publieur.champTitre' => 'عنوان الإعلان',
+			'com.annonces.publieur.champTexte' => 'نص الإعلان',
+			'com.annonces.publieur.nature.classe' => 'تستلمه أسر هذا الفصل وطلابه فقط.',
+			'com.annonces.publieur.nature.public' => 'يستلمه كل أفراد هذا الجمهور.',
+			'com.annonces.publieur.nature.toutes' => 'تستلمه المدرسة كلها. خصصه لما يهم الجميع.',
+			'com.annonces.publieur.quand.maintenant' => 'فور التأكيد',
+			'com.annonces.publieur.quand.maintenantDetail' => 'يُرسل الإعلان فور تأكيد النشر.',
+			'com.annonces.publieur.quand.creneau' => ({required Object date, required Object heure}) => 'يوم ${date} الساعة ${heure}',
+			'com.annonces.publieur.quand.creneauDetail' => 'ينتظر الإعلان هذا التاريخ. ستجده في الإعلانات المبرمجة.',
+			'com.annonces.publieur.apercu.a' => ({required Object cible}) => 'إلى : ${cible}',
+			'com.annonces.publieur.apercu.diffusionMaintenant' => 'النشر : فور التأكيد',
+			'com.annonces.publieur.apercu.diffusionLe' => ({required Object date, required Object heure}) => 'النشر المقرر يوم ${date} الساعة ${heure}',
+			'com.annonces.publieur.continuer' => 'متابعة',
+			'com.annonces.publieur.publier' => 'نشر الإعلان',
+			'com.annonces.publieur.programmer' => 'برمجة الإعلان',
+			'com.annonces.publieur.reessayer' => 'إعادة محاولة النشر',
+			'com.annonces.publieur.terminer' => 'إنهاء',
+			'com.annonces.publieur.manqueContenu' => 'اكتب عنوانًا ونصًا للمتابعة.',
+			'com.annonces.publieur.manqueAudience' => 'اختر جمهورًا للمتابعة.',
+			'com.annonces.publieur.enCours' => 'النشر جارٍ. انتظر التأكيد.',
+			'com.annonces.publieur.publiee' => 'نُشر الإعلان. يستلمه المستلمون.',
+			'com.annonces.publieur.planifiee' => ({required Object date, required Object heure}) => 'بُرمج الإعلان ليوم ${date} الساعة ${heure}.',
+			'com.annonces.publieur.nonConfirmee' => 'لم يُؤكَّد هذا الإعلان بعد. تحقق من الاتصال ثم أعد المحاولة : لن يُرسل إلا مرة واحدة.',
+			'com.annonces.publieur.horsLigne' => 'أنت غير متصل : لم يُؤكَّد هذا الإعلان بعد. أعد الاتصال ثم أعد المحاولة.',
+			'com.annonces.publieur.indisponible' => 'نشر الإعلانات غير متاح بعد. عد لاحقًا.',
+			'com.annonces.publieur.aucuneCibleTitre' => 'لا يوجد جمهور متاح',
+			'com.annonces.publieur.aucuneCible' => 'لا يمكنك النشر لأي جمهور حاليًا. اطلب الإذن من الإدارة.',
+			'com.annonces.administration.nouvelle' => 'إعلان جديد',
+			'com.annonces.administration.demo' => 'عرض تجريبي',
+			'com.annonces.administration.demoDetail' => 'بيانات تجريبية : لا رقم حقيقي.',
+			'com.annonces.administration.indicateurs.titre' => 'مؤشرات التواصل',
+			'com.annonces.administration.indicateurs.publiees' => 'الإعلانات المنشورة',
+			'com.annonces.administration.indicateurs.planifiees' => 'الإعلانات المبرمجة',
+			'com.annonces.administration.indicateurs.moderation' => 'محتويات قيد الإشراف',
+			'com.annonces.administration.indicateurs.regles' => 'قواعد النطاق',
+			'com.annonces.administration.indicateurs.indisponible' => ({required Object libelle}) => '${libelle} : غير متاح بعد',
+			'com.annonces.administration.indicateurs.echec' => ({required Object libelle}) => '${libelle} : تعذرت القراءة، حدّث الصفحة',
+			'com.annonces.administration.publiees.titre' => 'الإعلانات المنشورة',
+			'com.annonces.administration.publiees.vide' => 'لا توجد إعلانات منشورة في هذه الفترة.',
+			'com.annonces.administration.publiees.pastille' => 'منشور',
+			'com.annonces.administration.publiees.legende' => ({required Object cible, required Object date, required Object heure}) => '${cible} · يوم ${date} الساعة ${heure}',
+			'com.annonces.administration.planifiees.titre' => 'الإعلانات المبرمجة',
+			'com.annonces.administration.planifiees.vide' => 'لا توجد إعلانات مبرمجة.',
+			'com.annonces.administration.planifiees.pastille' => 'مبرمج',
+			'com.annonces.administration.planifiees.legende' => ({required Object cible, required Object date, required Object heure}) => '${cible} · مقرر يوم ${date} الساعة ${heure}',
+			'com.annonces.administration.matrice.titre' => 'قواعد النطاق والصلاحيات',
+			'com.annonces.administration.matrice.detail' => 'قاعدة المدرسة، تُطبق على كل نشر.',
+			'com.annonces.administration.matrice.auteurs' => 'من ينشر',
+			'com.annonces.administration.matrice.peutPublier' => 'يمكنه النشر',
+			'com.annonces.administration.matrice.audiences' => 'الجماهير',
+			'com.annonces.administration.matrice.validation' => 'يتطلب موافقة',
+			'com.annonces.administration.matrice.oui' => 'نعم',
+			'com.annonces.administration.matrice.non' => 'لا',
+			'com.annonces.administration.matrice.aucune' => 'لا شيء',
+			'com.annonces.administration.matrice.vide' => 'لا توجد قواعد نطاق مُعدّة.',
+			'com.annonces.administration.moderation.titre' => 'قائمة الإشراف',
+			'com.annonces.administration.moderation.legende' => ({required Object date, required Object heure}) => 'أُبلغ عنه يوم ${date} الساعة ${heure}',
+			'com.annonces.administration.moderation.motif' => ({required Object motif}) => 'السبب : ${motif}',
+			'com.annonces.administration.moderation.extraitTitre' => 'المحتوى المُبلغ عنه',
+			'com.annonces.administration.moderation.extraitAbsent' => 'مقتطف هذا المحتوى غير متاح.',
+			'com.annonces.administration.moderation.regle' => 'القاعدة المعنية',
+			'com.annonces.administration.moderation.approuver' => 'الموافقة بعد الفحص',
+			'com.annonces.administration.moderation.masquer' => 'إخفاء المحتوى',
+			'com.annonces.administration.moderation.restaurer' => 'استعادة المحتوى',
+			'com.annonces.administration.moderation.rejeter' => 'رفض البلاغ',
+			'com.annonces.administration.moderation.contexte' => 'فتح السياق',
+			'com.annonces.administration.moderation.masque' => 'مخفي',
+			'com.annonces.administration.moderation.approuve' => 'تمت الموافقة',
+			'com.annonces.administration.moderation.rejete' => 'رُفض البلاغ',
+			'com.annonces.administration.moderation.restaure' => 'مستعاد',
+			'com.annonces.administration.moderation.enregistree' => 'سُجل القرار.',
+			'com.annonces.administration.moderation.nonConfirmee' => 'لم يُؤكَّد هذا القرار بعد. تحقق من الاتصال ثم أعد المحاولة.',
+			'com.annonces.administration.moderation.indisponible' => 'الإشراف غير متاح بعد. عد لاحقًا.',
+			'com.annonces.administration.moderation.videTitre' => 'لا يوجد محتوى للفحص',
+			'com.annonces.administration.moderation.vide' => 'تصل هنا بلاغات مجتمع المعلمين.',
+			'com.annonces.administration.moderation.refuseTitre' => 'قائمة خاصة بالإشراف',
+			'com.annonces.administration.moderation.refuse' => 'لا يرى هذه القائمة إلا المكلفون بالإشراف.',
+			'com.annonces.administration.moderation.choisirTitre' => 'لا يوجد بلاغ مفتوح',
+			'com.annonces.administration.moderation.choisir' => 'اختر بلاغًا من القائمة لفحصه.',
+			'com.annonces.administration.moderation.sansAction' => 'لا يتاح لك أي إجراء إشراف على هذا المحتوى.',
+			'com.annonces.administration.moderation.sansSanction' => 'لا تُطبق أي عقوبة على الحساب تلقائيًا.',
+			'com.annonces.administration.moderation.politique' => 'سياسة منع الترويج',
+			'com.annonces.administration.moderation.ouvrirSemantique' => ({required Object objet, required Object motif}) => 'فحص ${objet}، السبب ${motif}',
+			'com.annonces.demoPublication.lienAdministration' => 'إدارة التواصل (الإدارة)',
+			'com.annonces.demoPublication.lienPublier' => 'نشر إعلان لفصل (المعلم)',
+			'com.annonces.demoPublication.toutes' => 'المدرسة كلها',
+			'com.annonces.demoPublication.familles' => 'الأسر',
+			'com.annonces.demoPublication.enseignants' => 'المعلمون',
+			'com.annonces.demoPublication.eleves' => 'الطلاب',
+			'com.annonces.demoPublication.controleurs' => 'المراقبون',
+			'com.annonces.demoPublication.direction' => 'الإدارة',
+			'com.annonces.demoPublication.audiencesDirection' => 'المدرسة كلها، أو جمهور، أو فصل',
+			'com.annonces.demoPublication.audiencesEnseignant' => 'فصله فقط',
+			'com.annonces.demoPublication.vacancesTitre' => 'تقويم عطلة الشتاء',
+			'com.annonces.demoPublication.vacancesTexte' => 'تتوقف الدروس من 21 ديسمبر إلى 5 يناير. تُستأنف الحصص يوم الاثنين 6 يناير في المواعيد المعتادة.',
+			'com.annonces.demoPublication.reunionTitre' => 'اجتماع المعلمين يوم الخميس',
+			'com.annonces.demoPublication.reunionTexte' => 'يبدأ الاجتماع التربوي يوم الخميس الساعة 18، عبر الاتصال المرئي. جدول الأعمال في الاستوديو.',
+			'com.annonces.demoPublication.recitationTitre' => 'تلاوة نهاية الفصل الدراسي',
+			'com.annonces.demoPublication.recitationTexte' => 'سيقدم فصل النور تلاوة نهاية الفصل الدراسي يوم السبت الساعة 10، عبر الاتصال المرئي.',
+			'com.annonces.demoPublication.rentreeTitre' => 'استئناف الدروس بعد العطلة',
+			'com.annonces.demoPublication.rentreeTexte' => 'تُستأنف الحصص يوم الاثنين 6 يناير في المواعيد المعتادة.',
+			'com.annonces.demoPublication.signalementAffilie' => 'منشور « بطاقات تجويد للطباعة »',
+			'com.annonces.demoPublication.extraitAffilie' => 'تجدون بطاقاتي عبر هذا الرابط الشريك، خصم 20 % برمزي.',
+			'com.annonces.demoPublication.signalementVente' => 'منشور « دروس خصوصية متاحة »',
+			'com.annonces.demoPublication.extraitVente' => 'أقدم دروسًا خصوصية مدفوعة في عطلة نهاية الأسبوع، راسلوني.',
+			'com.annonces.demoPublication.signalementHorsSujet' => 'رد تحت « تنظيم مراجعة جماعية »',
 			'com.annonces.section' => 'إعلانات الفصل',
 			'com.annonces.annonce' => 'إعلان',
 			'com.annonces.publier' => 'نشر إعلان',
@@ -1478,6 +1844,8 @@ extension on TraductionsAr {
 			'com.annonces.auteurDate' => ({required Object auteur, required Object date, required Object heure}) => '${auteur}، يوم ${date} الساعة ${heure}',
 			'com.annonces.date' => ({required Object date, required Object heure}) => 'يوم ${date} الساعة ${heure}',
 			'com.annonces.lire' => 'قراءة الإعلان كاملًا',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.ouvrirClasse' => 'فتح الفصل',
 			'com.annonces.ouvrirClasseSemantique' => ({required Object classe}) => 'فتح ${classe}',
 			'com.annonces.marquerLue' => 'تحديد كمقروء',

@@ -74,6 +74,56 @@ class FauxAnnonces implements PortAnnonces {
     if (echecLecture) throw Exception('lecture refusee');
     lues.add(annonceId);
   }
+
+  /// Les audiences ouvertes (COM-ANN-2).
+  List<CibleAnnonce> cibles = const <CibleAnnonce>[];
+
+  /// Les annonces de l'Administration ; nul : deux listes vides.
+  AnnoncesAdministration? administration;
+
+  /// Leve a la lecture de l'Administration quand il est pose.
+  Exception? erreurAdministration;
+
+  /// Leve a la publication quand il est pose.
+  Exception? erreurPublication;
+
+  /// Les publications recues : (brouillon, cle d'idempotence).
+  final List<(BrouillonAnnonce, String)> publications =
+      <(BrouillonAnnonce, String)>[];
+
+  @override
+  Future<List<CibleAnnonce>> ciblesPublication({String? classeId}) async =>
+      classeId == null
+      ? cibles
+      : <CibleAnnonce>[
+          for (final CibleAnnonce c in cibles)
+            if (c.id == classeId) c,
+        ];
+
+  @override
+  Future<AnnonceConfirmee> publier({
+    required BrouillonAnnonce brouillon,
+    required String cleIdempotence,
+  }) async {
+    publications.add((brouillon, cleIdempotence));
+    if (erreurPublication case final Exception e) throw e;
+    final DateTime? prevue = brouillon.programmeeLe;
+    return AnnonceConfirmee(
+      id: 'confirmee-${publications.length}',
+      etat: prevue == null ? EtatAnnonce.publiee : EtatAnnonce.planifiee,
+      le: prevue ?? DateTime.utc(2026, 10, 4, 9),
+    );
+  }
+
+  @override
+  Future<AnnoncesAdministration> annoncesAdministration() async {
+    if (erreurAdministration case final Exception e) throw e;
+    return administration ??
+        const AnnoncesAdministration(
+          publiees: <AnnonceAdministration>[],
+          planifiees: <AnnonceAdministration>[],
+        );
+  }
 }
 
 /// Un texte long, qui depasse la carte a toutes les largeurs.

@@ -12,23 +12,40 @@
 // section 26 : une notification urgente, une annonce). Avec `classe=...` en
 // plus : l'Espace Classe de demonstration, ou se pose le VRAI emplacement
 // `AnnoncesDeClasse` ; c'est la que mene « Ouvrir la Classe » (R-COM-12).
+//
+// COM-ANN-2 : avec `role=admin&ecran=administration&onglet=...`, la VRAIE
+// Administration des communications dans la VRAIE coquille Admin, sur des
+// fixtures marquees « Démonstration » (annonces, regles de portee de la spec
+// section 13.4 seulement, file de moderation) ; avec
+// `role=enseignant&ecran=publier`, le VRAI publieur limite a la Classe.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
+import '../../../core/admin/admin_domaine.dart';
+import '../../../core/capacites/capacite_indisponible.dart';
 import '../../../core/capacites/port_notifications.dart';
+import '../../../core/communications/capacites_communication.dart';
 import '../../../core/communications/modeles_communication.dart';
+import '../../../core/communications/moderation.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/widgets/admin_shell.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/page_shell.dart';
+import '../../com_annonces/administration_communications_page.dart';
 import '../../com_annonces/annonces_de_classe.dart';
+import '../../com_annonces/file_moderation.dart';
 import '../../com_annonces/port_annonces.dart';
+import '../../com_annonces/port_regles_audience.dart';
+import '../../com_annonces/publier_annonce_classe_page.dart';
 import '../../notifications/notifications_page.dart';
+import 'com_communaute_demo.dart'
+    show adresseDemoCommunaute, SituationDemoCommunaute;
 import 'demo_communications_page.dart';
 
 /// La demonstration de la voie COM-ANN.
@@ -438,12 +455,45 @@ class NotificationsDemonstration
 }
 
 /// Les annonces de demonstration, en memoire.
+///
+/// COM-ANN-2 : elles portent aussi les audiences ouvertes ([cibles]), les
+/// annonces de l'Administration ([publiees], [planifiees]) et la
+/// publication. La publication est idempotente par sa cle (un « Reessayer »
+/// ne publie pas deux fois) ; [echecPublication] simule un accuse qui ne
+/// revient pas. Toute la lecture de l'Administration porte
+/// `demonstration: true`, dite a l'ecran.
 class AnnoncesDemonstration implements PortAnnonces {
   /// Cree le double avec les annonces [parClasse].
-  AnnoncesDemonstration(this.parClasse);
+  AnnoncesDemonstration(
+    this.parClasse, {
+    this.cibles = const <CibleAnnonce>[],
+    List<AnnonceAdministration> publiees = const <AnnonceAdministration>[],
+    List<AnnonceAdministration> planifiees = const <AnnonceAdministration>[],
+    this.maintenant,
+    this.echecPublication = false,
+  }) : publiees = List<AnnonceAdministration>.of(publiees),
+       planifiees = List<AnnonceAdministration>.of(planifiees);
 
   /// Les annonces, par Classe.
   final Map<String, List<AnnonceClasse>> parClasse;
+
+  /// Les audiences ouvertes.
+  final List<CibleAnnonce> cibles;
+
+  /// Les annonces publiees, la plus recente d'abord.
+  final List<AnnonceAdministration> publiees;
+
+  /// Les annonces planifiees, la plus proche d'abord.
+  final List<AnnonceAdministration> planifiees;
+
+  /// L'instant de reference ; par defaut, maintenant.
+  final DateTime Function()? maintenant;
+
+  /// Vrai : l'accuse de publication ne revient pas.
+  bool echecPublication;
+
+  /// Les publications par cle d'idempotence (tests).
+  final Map<String, AnnonceConfirmee> parCle = <String, AnnonceConfirmee>{};
 
   final Set<String> _lues = <String>{};
 
@@ -482,33 +532,466 @@ class AnnoncesDemonstration implements PortAnnonces {
 
   @override
   Future<void> marquerLue(String annonceId) async => _lues.add(annonceId);
+
+  @override
+  Future<List<CibleAnnonce>> ciblesPublication({String? classeId}) async =>
+      classeId == null
+      ? List<CibleAnnonce>.unmodifiable(cibles)
+      : <CibleAnnonce>[
+          for (final CibleAnnonce c in cibles)
+            if (c.nature == NatureCible.classe && c.id == classeId) c,
+        ];
+
+  @override
+  Future<AnnonceConfirmee> publier({
+    required BrouillonAnnonce brouillon,
+    required String cleIdempotence,
+  }) async {
+    final AnnonceConfirmee? deja = parCle[cleIdempotence];
+    if (deja != null) return deja;
+    if (echecPublication) throw StateError('accuse de publication non recu');
+    if (!cibles.contains(brouillon.cible)) {
+      // Comme le serveur : une audience non ouverte est refusee.
+      throw StateError('audience refusee');
+    }
+    final DateTime maintenant = (this.maintenant ?? DateTime.now)().toUtc();
+    final DateTime? prevue = brouillon.programmeeLe;
+    final AnnonceConfirmee confirmee = AnnonceConfirmee(
+      id: 'demo-annonce-${parCle.length + 1}',
+      etat: prevue == null ? EtatAnnonce.publiee : EtatAnnonce.planifiee,
+      le: prevue ?? maintenant,
+    );
+    parCle[cleIdempotence] = confirmee;
+    final AnnonceAdministration vue = AnnonceAdministration(
+      id: confirmee.id,
+      titre: brouillon.titre,
+      texte: brouillon.texte,
+      cible: brouillon.cible,
+      etat: confirmee.etat,
+      le: confirmee.le,
+    );
+    if (prevue == null) {
+      publiees.insert(0, vue);
+    } else {
+      planifiees
+        ..add(vue)
+        ..sort(
+          (AnnonceAdministration a, AnnonceAdministration b) =>
+              a.le.compareTo(b.le),
+        );
+    }
+    return confirmee;
+  }
+
+  @override
+  Future<AnnoncesAdministration> annoncesAdministration() async =>
+      AnnoncesAdministration(
+        publiees: List<AnnonceAdministration>.unmodifiable(publiees),
+        planifiees: List<AnnonceAdministration>.unmodifiable(planifiees),
+        demonstration: true,
+      );
 }
+
+/// Les audiences de demonstration : toute l'ecole, deux publics, deux
+/// Classes (spec section 13.4).
+List<CibleAnnonce> ciblesDemo() {
+  final d = t.com.annonces.demoPublication;
+  return <CibleAnnonce>[
+    CibleAnnonce(
+      id: 'demo-toutes',
+      libelle: d.toutes,
+      nature: NatureCible.toutes,
+    ),
+    CibleAnnonce(
+      id: 'demo-familles',
+      libelle: d.familles,
+      nature: NatureCible.public,
+    ),
+    CibleAnnonce(
+      id: 'demo-enseignants',
+      libelle: d.enseignants,
+      nature: NatureCible.public,
+    ),
+    CibleAnnonce(
+      id: ClassesDemoAnnonces.nour,
+      libelle: t.com.annonces.demo.classeNour,
+      nature: NatureCible.classe,
+    ),
+    CibleAnnonce(
+      id: ClassesDemoAnnonces.fajr,
+      libelle: t.com.annonces.demo.classeFajr,
+      nature: NatureCible.classe,
+    ),
+  ];
+}
+
+/// Les annonces de l'Administration en demonstration : trois publiees, une
+/// planifiee.
+({List<AnnonceAdministration> publiees, List<AnnonceAdministration> planifiees})
+annoncesAdministrationDemo(DateTime maintenant) {
+  final d = t.com.annonces.demoPublication;
+  final List<CibleAnnonce> c = ciblesDemo();
+  AnnonceAdministration a(
+    String id,
+    String titre,
+    String texte,
+    CibleAnnonce cible,
+    EtatAnnonce etat,
+    Duration decalage,
+  ) => AnnonceAdministration(
+    id: id,
+    titre: titre,
+    texte: texte,
+    cible: cible,
+    etat: etat,
+    le: maintenant.add(decalage).toUtc(),
+  );
+  return (
+    publiees: <AnnonceAdministration>[
+      a(
+        'demo-adm-vacances',
+        d.vacancesTitre,
+        d.vacancesTexte,
+        c[0],
+        EtatAnnonce.publiee,
+        const Duration(hours: -2),
+      ),
+      a(
+        'demo-adm-reunion',
+        d.reunionTitre,
+        d.reunionTexte,
+        c[2],
+        EtatAnnonce.publiee,
+        const Duration(days: -1),
+      ),
+      a(
+        'demo-adm-recitation',
+        d.recitationTitre,
+        d.recitationTexte,
+        c[3],
+        EtatAnnonce.publiee,
+        const Duration(days: -3),
+      ),
+    ],
+    planifiees: <AnnonceAdministration>[
+      a(
+        'demo-adm-rentree',
+        d.rentreeTitre,
+        d.rentreeTexte,
+        c[1],
+        EtatAnnonce.planifiee,
+        const Duration(days: 4),
+      ),
+    ],
+  );
+}
+
+/// Les regles de portee de demonstration : la spec section 13.4, rien de
+/// plus (Direction : toute audience ; enseignant : sa Classe ; famille,
+/// eleve, controleur : aucune publication). Aucune validation n'est
+/// inventee : la spec n'en prevoit pas.
+class ReglesAudienceDemo implements PortReglesAudience {
+  /// Cree la matrice.
+  const ReglesAudienceDemo();
+
+  @override
+  Future<ReglesAudience> regles() async {
+    final d = t.com.annonces.demoPublication;
+    return ReglesAudience(
+      demonstration: true,
+      regles: <RegleAudience>[
+        RegleAudience(
+          id: 'direction',
+          auteurs: d.direction,
+          peutPublier: true,
+          audiences: d.audiencesDirection,
+          validationRequise: false,
+        ),
+        RegleAudience(
+          id: 'enseignants',
+          auteurs: d.enseignants,
+          peutPublier: true,
+          audiences: d.audiencesEnseignant,
+          validationRequise: false,
+        ),
+        RegleAudience(
+          id: 'familles',
+          auteurs: d.familles,
+          peutPublier: false,
+          audiences: '',
+          validationRequise: false,
+        ),
+        RegleAudience(
+          id: 'eleves',
+          auteurs: d.eleves,
+          peutPublier: false,
+          audiences: '',
+          validationRequise: false,
+        ),
+        RegleAudience(
+          id: 'controleurs',
+          auteurs: d.controleurs,
+          peutPublier: false,
+          audiences: '',
+          validationRequise: false,
+        ),
+      ],
+    );
+  }
+}
+
+/// La moderation de l'Administration en demonstration : trois signalements
+/// de la Communaute (un lien affilie, une vente, un hors sujet), toutes les
+/// actions permises. Une decision est accusee en memoire ; [indisponible]
+/// et [nonConfirme] simulent les deux echecs.
+class ModerationAdministrationDemo implements PortModeration {
+  /// Cree la moderation.
+  ModerationAdministrationDemo({
+    required this.maintenant,
+    this.actions = const <ActionModeration>{
+      ActionModeration.masquer,
+      ActionModeration.restaurer,
+      ActionModeration.rejeter,
+      ActionModeration.approuver,
+    },
+    this.vide = false,
+    this.indisponible = false,
+    this.nonConfirme = false,
+  });
+
+  /// L'instant de reference des dates.
+  final DateTime maintenant;
+
+  /// Les actions permises.
+  final Set<ActionModeration> actions;
+
+  /// Vrai : la file est vide.
+  final bool vide;
+
+  /// Vrai : chaque decision echoue comme un port sans contrat.
+  final bool indisponible;
+
+  /// Vrai : l'accuse d'une decision ne revient pas.
+  bool nonConfirme;
+
+  /// Les decisions accusees (tests).
+  final List<(String, ActionModeration)> decisions =
+      <(String, ActionModeration)>[];
+
+  @override
+  Future<CapacitesModeration> capacites() async =>
+      CapacitesModeration(peutSignaler: true, actions: actions);
+
+  @override
+  Future<void> signaler({
+    required ObjetLie objet,
+    required MotifSignalement motif,
+    String? precision,
+  }) async {}
+
+  @override
+  Future<List<ElementModeration>> file() async {
+    if (vide) return const <ElementModeration>[];
+    final d = t.com.annonces.demoPublication;
+    final String communaute = adresseDemoCommunaute(
+      SituationDemoCommunaute.nominal,
+    );
+    return <ElementModeration>[
+      ElementModeration(
+        id: 'demo-sig-affilie',
+        objet: ObjetLie(
+          type: TypeObjetLie.publication,
+          id: 'demo-pub-affilie',
+          libelle: d.signalementAffilie,
+          destination: communaute,
+        ),
+        motif: MotifSignalement.lienAffilie,
+        signaleLe: maintenant.subtract(const Duration(hours: 5)).toUtc(),
+        extrait: d.extraitAffilie,
+      ),
+      ElementModeration(
+        id: 'demo-sig-vente',
+        objet: ObjetLie(
+          type: TypeObjetLie.publication,
+          id: 'demo-pub-vente',
+          libelle: d.signalementVente,
+          destination: communaute,
+        ),
+        motif: MotifSignalement.venteNonAutorisee,
+        signaleLe: maintenant.subtract(const Duration(hours: 3)).toUtc(),
+        extrait: d.extraitVente,
+      ),
+      ElementModeration(
+        id: 'demo-sig-hors-sujet',
+        objet: ObjetLie(
+          type: TypeObjetLie.publication,
+          id: 'demo-rep-hors-sujet',
+          libelle: d.signalementHorsSujet,
+        ),
+        motif: MotifSignalement.horsSujet,
+        signaleLe: maintenant.subtract(const Duration(hours: 1)).toUtc(),
+      ),
+    ];
+  }
+
+  @override
+  Future<void> appliquer({
+    required String signalementId,
+    required ActionModeration action,
+  }) async {
+    if (indisponible) throw const CapaciteIndisponible('COM-BR-06');
+    if (nonConfirme) throw StateError('accuse de decision non recu');
+    decisions.add((signalementId, action));
+  }
+}
+
+/// Les capacites Communications ouvertes en demonstration : publier,
+/// programmer, moderer.
+const Set<CapaciteCommunication> capacitesDemoAdministration =
+    <CapaciteCommunication>{
+      CapaciteCommunication.publierAnnonce,
+      CapaciteCommunication.programmer,
+      CapaciteCommunication.moderer,
+    };
+
+/// Les surcharges de l'Administration des communications et du publieur en
+/// demonstration : seuls des doubles en memoire, marques « Démonstration ».
+/// Les lectures derivees sont surchargees elles-memes : sous un
+/// `ProviderScope` imbrique, elles liraient sinon la racine, ou les ports
+/// restent neutres.
+List<Override> surchargesAdministrationDemo({
+  required AnnoncesDemonstration annonces,
+  required PortModeration moderation,
+  PortReglesAudience regles = const ReglesAudienceDemo(),
+  Set<CapaciteCommunication> capacites = capacitesDemoAdministration,
+}) => <Override>[
+  portAnnoncesProvider.overrideWithValue(annonces),
+  annoncesAdministrationProvider.overrideWith(
+    (Ref _) => annonces.annoncesAdministration(),
+  ),
+  ciblesPublicationProvider.overrideWith(
+    (Ref _, String? classeId) => annonces.ciblesPublication(classeId: classeId),
+  ),
+  annoncesDeClasseProvider.overrideWith(
+    (Ref _, String id) => annonces.annoncesDeClasse(id),
+  ),
+  portReglesAudienceProvider.overrideWithValue(regles),
+  reglesAudienceProvider.overrideWith((Ref _) => regles.regles()),
+  portModerationProvider.overrideWithValue(moderation),
+  capacitesModerationFileProvider.overrideWith(
+    (Ref _) => moderation.capacites(),
+  ),
+  fileModerationProvider.overrideWith((Ref _) => moderation.file()),
+  moderationDemonstrationProvider.overrideWithValue(true),
+  portCapacitesCommunicationsProvider.overrideWithValue(
+    CapacitesCommunicationsFixes(capacites),
+  ),
+  capacitesCommunicationProvider.overrideWith(
+    (Ref _) async => CapacitesCommunication(capacites),
+  ),
+];
+
+/// L'ecran de l'Administration des communications en demonstration
+/// (`?ecran=administration`, role Administration).
+const String ecranAdministrationDemo = 'administration';
+
+/// L'ecran du publieur de l'enseignant en demonstration (`?ecran=publier`,
+/// role Enseignant).
+const String ecranPublierDemo = 'publier';
+
+/// L'adresse de l'Administration des communications de demonstration, sur
+/// l'onglet [onglet].
+String adresseAdministrationDemo(OngletCommunications onglet) => Uri(
+  path: Routes.demoCommunications,
+  queryParameters: <String, String>{
+    'voie': VoieDemoCommunications.annonces.name,
+    'role': RoleDemoCommunications.admin.name,
+    'ecran': ecranAdministrationDemo,
+    'onglet': onglet.name,
+  },
+).toString();
+
+/// L'adresse du publieur de l'enseignant en demonstration.
+String adressePublierDemo() => Uri(
+  path: Routes.demoCommunications,
+  queryParameters: <String, String>{
+    'voie': VoieDemoCommunications.annonces.name,
+    'role': RoleDemoCommunications.enseignant.name,
+    'ecran': ecranPublierDemo,
+  },
+).toString();
+
+/// Les onglets de l'Administration de demonstration : les libelles du
+/// socle, des adresses qui restent dans la demonstration.
+List<({String libelle, String chemin})> ongletsAdministrationDemo() =>
+    <({String libelle, String chemin})>[
+      for (final (int i, ({String libelle, String chemin}) o)
+          in ongletsCommunications().indexed)
+        (
+          libelle: o.libelle,
+          chemin: adresseAdministrationDemo(OngletCommunications.values[i]),
+        ),
+    ];
 
 class _ComAnnoncesDemoState extends State<ComAnnoncesDemo> {
   NotificationsDemonstration? _notifications;
   AnnoncesDemonstration? _annonces;
+  ModerationAdministrationDemo? _moderation;
   RoleDemoCommunications? _rolePorts;
 
   /// Les doubles du role, gardes d'une reconstruction a l'autre : une lecture
   /// enregistree le reste tant que la demonstration est ouverte.
-  ({NotificationsDemonstration notifications, AnnoncesDemonstration annonces})
+  ({
+    NotificationsDemonstration notifications,
+    AnnoncesDemonstration annonces,
+    ModerationAdministrationDemo moderation,
+  })
   _ports(RoleDemoCommunications role) {
     final NotificationsDemonstration? n = _notifications;
     final AnnoncesDemonstration? a = _annonces;
-    if (_rolePorts == role && n != null && a != null) {
-      return (notifications: n, annonces: a);
+    final ModerationAdministrationDemo? m = _moderation;
+    if (_rolePorts == role && n != null && a != null && m != null) {
+      return (notifications: n, annonces: a, moderation: m);
     }
     final DateTime maintenant = widget.maintenant ?? DateTime.now();
     final NotificationsDemonstration nouvelles = NotificationsDemonstration(
       notificationsDemo(role, maintenant),
     );
+    final List<CibleAnnonce> cibles = ciblesDemo();
+    final administration = annoncesAdministrationDemo(maintenant);
     final AnnoncesDemonstration annonces = AnnoncesDemonstration(
       annoncesDemo(role, maintenant),
+      // L'Administration vise toutes les audiences ; l'enseignant, sa
+      // Classe seulement (spec section 13.4) ; les autres, aucune.
+      cibles: switch (role) {
+        RoleDemoCommunications.admin => cibles,
+        RoleDemoCommunications.enseignant => <CibleAnnonce>[
+          for (final CibleAnnonce c in cibles)
+            if (c.id == ClassesDemoAnnonces.nour) c,
+        ],
+        RoleDemoCommunications.tuteur ||
+        RoleDemoCommunications.adulte ||
+        RoleDemoCommunications.controleur => const <CibleAnnonce>[],
+      },
+      publiees: role == RoleDemoCommunications.admin
+          ? administration.publiees
+          : const <AnnonceAdministration>[],
+      planifiees: role == RoleDemoCommunications.admin
+          ? administration.planifiees
+          : const <AnnonceAdministration>[],
+      maintenant: widget.maintenant == null ? null : () => maintenant,
     );
+    final ModerationAdministrationDemo moderation =
+        ModerationAdministrationDemo(maintenant: maintenant);
     _rolePorts = role;
     _notifications = nouvelles;
     _annonces = annonces;
-    return (notifications: nouvelles, annonces: annonces);
+    _moderation = moderation;
+    return (
+      notifications: nouvelles,
+      annonces: annonces,
+      moderation: moderation,
+    );
   }
 
   @override
@@ -516,10 +999,11 @@ class _ComAnnoncesDemoState extends State<ComAnnoncesDemo> {
     final RoleDemoCommunications? role = widget.role;
     if (role == null) return const _ChoixRole();
     final ports = _ports(role);
-    final String? classeId = GoRouter.maybeOf(context)
-        ?.state
-        .uri
-        .queryParameters['classe'];
+    final Map<String, String> parametres =
+        GoRouter.maybeOf(context)?.state.uri.queryParameters ??
+        const <String, String>{};
+    final String? classeId = parametres['classe'];
+    final String? ecran = parametres['ecran'];
     final String? libelleClasse = classeId == null
         ? null
         : ClassesDemoAnnonces.libelle(classeId);
@@ -531,15 +1015,52 @@ class _ComAnnoncesDemoState extends State<ComAnnoncesDemo> {
         notificationsTuteurProvider.overrideWith(
           (Ref _) => ports.notifications.liste(),
         ),
-        portAnnoncesProvider.overrideWithValue(ports.annonces),
-        annoncesDeClasseProvider.overrideWith(
-          (Ref _, String id) => ports.annonces.annoncesDeClasse(id),
-        ),
         annonceProvider.overrideWith(
           (Ref _, String id) => ports.annonces.annonce(id),
         ),
+        ...surchargesAdministrationDemo(
+          annonces: ports.annonces,
+          moderation: ports.moderation,
+          capacites: switch (role) {
+            RoleDemoCommunications.admin => capacitesDemoAdministration,
+            RoleDemoCommunications.enseignant => const <CapaciteCommunication>{
+              CapaciteCommunication.publierAnnonce,
+            },
+            RoleDemoCommunications.tuteur ||
+            RoleDemoCommunications.adulte ||
+            RoleDemoCommunications.controleur =>
+              const <CapaciteCommunication>{},
+          },
+        ),
       ],
-      child: classeId != null && libelleClasse != null
+      child:
+          role == RoleDemoCommunications.admin &&
+              ecran == ecranAdministrationDemo
+          ? _AdministrationDemo(
+              onglet:
+                  OngletCommunications.values
+                      .where(
+                        (OngletCommunications o) =>
+                            o.name == parametres['onglet'],
+                      )
+                      .firstOrNull ??
+                  OngletCommunications.annonces,
+              horloge: widget.maintenant == null
+                  ? null
+                  : () => widget.maintenant!,
+            )
+          : role == RoleDemoCommunications.enseignant &&
+                ecran == ecranPublierDemo
+          ? PublierAnnonceClassePage(
+              groupeId: ClassesDemoAnnonces.nour,
+              horloge: widget.maintenant == null
+                  ? null
+                  : () => widget.maintenant!,
+              onRetour: () => GoRouter.of(
+                context,
+              ).go(adresseDemoCommunications(VoieDemoCommunications.annonces)),
+            )
+          : classeId != null && libelleClasse != null
           ? PageShell(
               key: const ValueKey<String>('demo-espace-classe'),
               titre: libelleClasse,
@@ -557,6 +1078,36 @@ class _ComAnnoncesDemoState extends State<ComAnnoncesDemo> {
                 context,
               ).go(adresseDemoCommunications(VoieDemoCommunications.annonces)),
             ),
+    );
+  }
+}
+
+/// L'Administration des communications de demonstration, dans la VRAIE
+/// coquille Admin (domaine Operations allume) ; les domaines et le compte ne
+/// menent nulle part hors de la demonstration.
+class _AdministrationDemo extends StatelessWidget {
+  const _AdministrationDemo({required this.onglet, this.horloge});
+
+  final OngletCommunications onglet;
+  final DateTime Function()? horloge;
+
+  @override
+  Widget build(BuildContext context) {
+    void index() =>
+        GoRouter.of(context)
+            .go(adresseDemoCommunications(VoieDemoCommunications.annonces));
+    return AdminShell(
+      domaines: domainesAdmin(voitDirection: false),
+      domaineActif: AdminDomaine.operations,
+      onAller: (String _) => index(),
+      onCompte: index,
+      onRetour: index,
+      child: AdministrationCommunicationsPage(
+        key: ValueKey<String>('demo-administration-${onglet.name}'),
+        onglet: onglet,
+        onglets: ongletsAdministrationDemo(),
+        horloge: horloge,
+      ),
     );
   }
 }
@@ -595,6 +1146,19 @@ class _ChoixRole extends StatelessWidget {
                 ),
               ),
             ),
+          // COM-ANN-2 : l'Administration des communications et le publieur
+          // de l'enseignant.
+          LienFleche(
+            key: const ValueKey<String>('lien-administration'),
+            libelle: t.com.annonces.demoPublication.lienAdministration,
+            onPress: () => GoRouter.of(context)
+                .go(adresseAdministrationDemo(OngletCommunications.annonces)),
+          ),
+          LienFleche(
+            key: const ValueKey<String>('lien-publier'),
+            libelle: t.com.annonces.demoPublication.lienPublier,
+            onPress: () => GoRouter.of(context).go(adressePublierDemo()),
+          ),
         ],
       ),
     );

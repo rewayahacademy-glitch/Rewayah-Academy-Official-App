@@ -67,10 +67,168 @@ class AnnonceClasse {
   final bool lue;
 }
 
+/// La nature d'une audience d'annonce (spec section 13.4).
+enum NatureCible {
+  /// Une Classe : la seule audience d'un enseignant, la sienne.
+  classe,
+
+  /// Un public (familles, enseignants...), pour l'Administration.
+  public,
+
+  /// Toute l'ecole : l'annonce globale, pour l'Administration seulement.
+  toutes,
+}
+
+/// Une audience vers laquelle la personne PEUT publier : rendue par le
+/// serveur ([PortAnnonces.ciblesPublication]), jamais composee par l'ecran.
+/// Son [libelle] est deja redige (« Classe An-Nour », « Familles »).
+@immutable
+class CibleAnnonce {
+  /// Cree l'audience.
+  const CibleAnnonce({
+    required this.id,
+    required this.libelle,
+    required this.nature,
+  });
+
+  /// Identifiant de l'audience, porte par la publication.
+  final String id;
+
+  /// Le libelle, deja redige.
+  final String libelle;
+
+  /// Sa nature.
+  final NatureCible nature;
+
+  @override
+  bool operator ==(Object other) =>
+      other is CibleAnnonce &&
+      other.id == id &&
+      other.libelle == libelle &&
+      other.nature == nature;
+
+  @override
+  int get hashCode => Object.hash(id, libelle, nature);
+}
+
+/// Une annonce prete a partir : contenu, audience et, si la personne peut
+/// programmer, la date de diffusion (spec section 20, `AnnouncementPublisher`).
+@immutable
+class BrouillonAnnonce {
+  /// Cree le brouillon.
+  const BrouillonAnnonce({
+    required this.titre,
+    required this.texte,
+    required this.cible,
+    this.programmeeLe,
+  });
+
+  /// Le titre.
+  final String titre;
+
+  /// Le texte.
+  final String texte;
+
+  /// L'audience choisie parmi celles du serveur.
+  final CibleAnnonce cible;
+
+  /// L'instant de diffusion demande (UTC) ; `null` : des que possible.
+  final DateTime? programmeeLe;
+}
+
+/// L'etat d'une annonce cote administration.
+enum EtatAnnonce {
+  /// Publiee : le serveur l'a confirme.
+  publiee,
+
+  /// Planifiee : le serveur l'a enregistree pour une date future.
+  planifiee,
+}
+
+/// Une annonce confirmee par le serveur : la SEULE source d'un « Publiee »
+/// ou d'un « Planifiee » a l'ecran (spec section 20 : aucune publication
+/// affichee comme publiee sans confirmation du contrat reel).
+@immutable
+class AnnonceConfirmee {
+  /// Cree la confirmation.
+  const AnnonceConfirmee({
+    required this.id,
+    required this.etat,
+    required this.le,
+  });
+
+  /// Identifiant de l'annonce creee.
+  final String id;
+
+  /// Publiee ou planifiee.
+  final EtatAnnonce etat;
+
+  /// L'instant de publication, ou de diffusion prevue (UTC).
+  final DateTime le;
+}
+
+/// Une annonce vue par l'Administration (publiee ou planifiee).
+@immutable
+class AnnonceAdministration {
+  /// Cree l'annonce.
+  const AnnonceAdministration({
+    required this.id,
+    required this.titre,
+    required this.texte,
+    required this.cible,
+    required this.etat,
+    required this.le,
+  });
+
+  /// Identifiant.
+  final String id;
+
+  /// Le titre, deja redige.
+  final String titre;
+
+  /// Le texte, deja redige.
+  final String texte;
+
+  /// L'audience.
+  final CibleAnnonce cible;
+
+  /// Publiee ou planifiee.
+  final EtatAnnonce etat;
+
+  /// L'instant de publication, ou de diffusion prevue (UTC).
+  final DateTime le;
+}
+
+/// Les annonces lues par l'Administration (COM-BR-10) : les publiees de la
+/// periode du serveur, et les planifiees.
+///
+/// [demonstration] est vrai quand les donnees sont des fixtures : l'ecran
+/// le dit en clair (« Démonstration ») a cote de chaque chiffre et de chaque
+/// liste qui en vient (COM-BR-A08). Le port de production ne le pose jamais.
+@immutable
+class AnnoncesAdministration {
+  /// Cree la vue.
+  const AnnoncesAdministration({
+    required this.publiees,
+    required this.planifiees,
+    this.demonstration = false,
+  });
+
+  /// Les annonces publiees, la plus recente d'abord.
+  final List<AnnonceAdministration> publiees;
+
+  /// Les annonces planifiees, la plus proche d'abord.
+  final List<AnnonceAdministration> planifiees;
+
+  /// Vrai pour des donnees de demonstration.
+  final bool demonstration;
+}
+
 /// Ce que la personne peut faire dans l'espace d'annonces d'une Classe.
 enum CapaciteAnnonces {
   /// Publier une annonce pour cette Classe (enseignant de la Classe,
-  /// Administration). La publication elle-meme est l'etape COM-ANN-2.
+  /// Administration). La publication passe par le publieur unique
+  /// (`PublieurAnnonce`, COM-ANN-2).
   publier,
 }
 
@@ -105,6 +263,23 @@ abstract interface class PortAnnonces {
   /// Enregistre que la personne a lu l'annonce [annonceId] (COM-BR-A03).
   /// Leve en cas d'echec : l'annonce reste alors non lue a l'ecran.
   Future<void> marquerLue(String annonceId);
+
+  /// Les audiences vers lesquelles la personne peut publier (COM-BR-10).
+  /// Avec [classeId], seulement cette Classe si la personne peut y publier
+  /// (liste vide sinon) : l'enseignant ne vise jamais que sa Classe, et le
+  /// serveur refuse quand meme toute autre audience.
+  Future<List<CibleAnnonce>> ciblesPublication({String? classeId});
+
+  /// Publie (ou programme) [brouillon]. Le futur ne se termine qu'a l'accuse
+  /// du serveur ; [cleIdempotence] est tiree une fois par annonce et rejouee
+  /// telle quelle a chaque nouvelle tentative (COM-BR-02).
+  Future<AnnonceConfirmee> publier({
+    required BrouillonAnnonce brouillon,
+    required String cleIdempotence,
+  });
+
+  /// Les annonces publiees et planifiees, pour l'Administration.
+  Future<AnnoncesAdministration> annoncesAdministration();
 }
 
 /// Les annonces tant qu'aucune source n'existe : chaque lecture et chaque
@@ -126,6 +301,20 @@ class AnnoncesIndisponibles implements PortAnnonces {
 
   @override
   Future<void> marquerLue(String annonceId) => Future<void>.error(manque);
+
+  @override
+  Future<List<CibleAnnonce>> ciblesPublication({String? classeId}) =>
+      Future<List<CibleAnnonce>>.error(manque);
+
+  @override
+  Future<AnnonceConfirmee> publier({
+    required BrouillonAnnonce brouillon,
+    required String cleIdempotence,
+  }) => Future<AnnonceConfirmee>.error(manque);
+
+  @override
+  Future<AnnoncesAdministration> annoncesAdministration() =>
+      Future<AnnoncesAdministration>.error(manque);
 }
 
 /// Le port des annonces employe par l'application : neutre en production.
@@ -144,4 +333,18 @@ annoncesDeClasseProvider = FutureProvider.family<AnnoncesDeLaClasse, String>(
 final FutureProviderFamily<AnnonceClasse?, String> annonceProvider =
     FutureProvider.family<AnnonceClasse?, String>(
       (Ref ref, String id) => ref.watch(portAnnoncesProvider).annonce(id),
+    );
+
+/// Les audiences de publication : `null` pour l'Administration, l'identifiant
+/// d'une Classe pour la publication depuis une Classe.
+final FutureProviderFamily<List<CibleAnnonce>, String?>
+ciblesPublicationProvider = FutureProvider.family<List<CibleAnnonce>, String?>(
+  (Ref ref, String? classeId) =>
+      ref.watch(portAnnoncesProvider).ciblesPublication(classeId: classeId),
+);
+
+/// Les annonces publiees et planifiees, pour l'Administration.
+final FutureProvider<AnnoncesAdministration> annoncesAdministrationProvider =
+    FutureProvider<AnnoncesAdministration>(
+      (Ref ref) => ref.watch(portAnnoncesProvider).annoncesAdministration(),
     );
