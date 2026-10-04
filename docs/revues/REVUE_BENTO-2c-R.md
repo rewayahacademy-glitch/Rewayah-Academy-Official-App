@@ -81,4 +81,4 @@ test/suivi 16 · test/priere 15 · test/mouvement 13 · test/appairage 12 · tes
 test/config 11 · test/observabilite 10 · test/i18n 7 · test/icons 4 · test/capture 0 (~657)
 ```
 
-Somme des dossiers : 5383 verts, 0 échec. Les dossiers `test/fixtures` et `test/support` ne contiennent aucun test. Lancés seuls, ils ont fait tourner toute la suite, deux fois, l'une après l'autre : **5399 verts, 0 échec**. C'est le chiffre de l'auteur ; les 16 tests de plus sont posés à la racine de `test/`.
+Somme des dossiers : **5399 verts, 0 échec**, comme l'auteur. Les dossiers `test/fixtures` et `test/support`, qui ne contiennent aucun test, ont en plus fait tourner chacun toute la suite par erreur : 5399 / 0 les deux fois.

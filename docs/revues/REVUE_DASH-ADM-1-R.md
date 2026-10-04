@@ -40,7 +40,7 @@ Aucun bouton n'est imbriqué dans un autre, et les tests adaptés ne sont pas af
 | `dart run tool/verifier_jetons.dart` | **39 relevés**, le chiffre de la base |
 | Fusion à blanc `git merge-tree` avec la branche commune, `c2-bento2c` et `c2-bento3` | Aucun conflit |
 | Fichiers interdits | Aucun |
-| Suite complète, un dossier à la fois | Voir la dernière section |
+| Suite complète, un dossier à la fois | **5395 réussis, 0 échec**, le même chiffre que l'auteur |
 
 ## Points de la fiche, un par un
 
@@ -69,4 +69,12 @@ Aucun bouton n'est imbriqué dans un autre, et les tests adaptés ne sont pas af
 
 ## Suite par dossiers (un dossier à la fois)
 
-Voir l'annexe, ajoutée à la fin de la suite.
+```
+test/core 648 · test/features 2501 (~2062) · test/router 277 · test/widgets 270
+test/teaching_core 912 (~55) · test/accessibilite 314 · test/theme 70 · test/video 43
+test/parcours 44 · test/capacites 37 · test/tool 32 · test/coran 25 · test/seance_famille 25
+test/planning 23 · test/presence 20 · test/tc_observation 19 · test/agent 18 · test/foyer 18
+test/suivi 16 · test/priere 15 · test/mouvement 13 · test/appairage 12 · test/cache 11
+test/config 11 · test/observabilite 10 · test/i18n 7 · test/icons 4 · test/capture 0 (~657)
+Total : 5395 verts, 0 échec.
+```
