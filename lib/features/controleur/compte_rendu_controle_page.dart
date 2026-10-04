@@ -166,12 +166,14 @@ class _CompteRenduControlePageState
   Widget build(BuildContext context) {
     final CompteRenduEnSuspens? visite = _visite;
     if (visite == null) {
-      // Seance inconnue (rechargement, lien direct) : le message generique,
-      // jamais une autre mission (C7, revue CT-R B1).
+      // Seance inconnue (rechargement, lien direct) : la visite n'est plus en
+      // memoire, jamais une autre mission (C7, revue CT-R B1). Ni annulation
+      // ni changement de controleur : la vraie cause (CTRL-MSG-1, K-59).
       return PageShell(
         titre: t.controleur.compteRendu.titre,
         child: EmptyState(
-          message: t.controleur.controle.indisponible,
+          message: t.controleur.compteRendu.visiteInconnue,
+          invitation: t.controleur.compteRendu.visiteInconnueAide,
           registre: RegistreVide.subi,
           libelleAction: t.controleur.compteRendu.revenir,
           onAction: _revenir,

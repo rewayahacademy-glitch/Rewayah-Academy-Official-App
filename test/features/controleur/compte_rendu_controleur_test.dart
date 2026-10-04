@@ -488,7 +488,7 @@ void main() {
     });
   }
 
-  testWidgets('Seance inconnue : le message generique, aucune transmission', (
+  testWidgets('Seance inconnue : visite plus en memoire, aucune transmission', (
     WidgetTester tester,
   ) async {
     final _PortTemoin port = _PortTemoin();
@@ -498,7 +498,16 @@ void main() {
       mission: _missionB(),
       seance: 'seance-inconnue',
     );
-    expect(find.text(t.controleur.controle.indisponible), findsOneWidget);
+    // CTRL-MSG-1 (K-59) : la vraie cause, jamais « annulee ou confiee a un
+    // autre controleur ».
+    final String message = t.controleur.compteRendu.visiteInconnue;
+    expect(find.text(message), findsOneWidget);
+    expect(find.text(t.controleur.controle.indisponible), findsNothing);
+    expect(find.textContaining('annulée'), findsNothing);
+    expect(find.textContaining('autre contrôleur'), findsNothing);
+    final String aide = t.controleur.compteRendu.visiteInconnueAide;
+    expect(find.text(aide), findsOneWidget);
+    expect(aide, contains("n'est pas confirmé"));
     expect(port.transmises, isEmpty);
     expect(find.textContaining('Al-Qamar'), findsNothing);
   });
