@@ -58,7 +58,11 @@ import 'vue_presentation.dart';
 /// chose du parent qu'une largeur contrainte. Il se rend aux trois gabarits.
 class PanneauEnseignantSalle extends ConsumerWidget {
   /// Cree le panneau pour une seance.
-  const PanneauEnseignantSalle({required this.seanceId, super.key});
+  const PanneauEnseignantSalle({
+    required this.seanceId,
+    this.peutPresenter = true,
+    super.key,
+  });
 
   /// La seance en cours.
   ///
@@ -69,6 +73,14 @@ class PanneauEnseignantSalle extends ConsumerWidget {
   /// faudra pour journaliser un tour de page le jour ou le protocole le
   /// demandera.
   final String seanceId;
+
+  /// Le droit de presenter, celui du jeton (`can_publish_data`).
+  ///
+  /// Vrai par defaut : l'integration n'insere aujourd'hui ce panneau que pour
+  /// un enseignant dont le jeton porte ce droit (voir le commentaire de
+  /// `build`). C'est la ligne qui le branchera ; elle permet deja de verifier
+  /// l'etat « sans droit » a sa vraie place (SALLE-ERR-320-1).
+  final bool peutPresenter;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -95,7 +107,7 @@ class PanneauEnseignantSalle extends ConsumerWidget {
         // qu'il n'existe pas, l'integration n'insere ce panneau que pour un
         // enseignant dont le jeton porte ce droit, et le parametre reste porte
         // par la vue pure pour qu'une seule ligne suffise a le brancher.
-        peutPresenter: true,
+        peutPresenter: peutPresenter,
       ),
     );
   }
