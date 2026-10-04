@@ -270,7 +270,7 @@ class _Cartes extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         for (int i = 0; i < obligations.length; i++) ...<Widget>[
-          if (i > 0) Ecart.vMd,
+          if (i > 0) Ecart.vLg,
           _carte(context, obligations[i], palette, textes, attenue),
         ],
       ],
