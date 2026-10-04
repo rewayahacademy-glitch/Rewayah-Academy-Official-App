@@ -77,7 +77,7 @@ void main() {
     // pour cet eleve ». Aucune zone n'est sautee. Puis le devoir saisi,
     // enregistre, et la feuille rouverte : la phrase « deja note ».
     // Clair (noms historiques) puis sombre (suffixe `_sombre`), EN-7c-MINEURS.
-    for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark])
+    for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
       for (final double largeur in <double>[390, 320]) {
         final String l = '${largeur.toInt()}';
         final String sombre = mode == ThemeMode.dark ? '_sombre' : '';
@@ -149,5 +149,6 @@ void main() {
           expect(tester.takeException(), isNull);
         });
       }
+    }
   });
 }
