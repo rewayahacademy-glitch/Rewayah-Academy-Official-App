@@ -65,12 +65,14 @@ import '../../core/video/pre_vol.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
+import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/point_rappel.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
@@ -84,9 +86,14 @@ const int maximumATerminer = 3;
 
 /// Combien d'alertes individuelles de presence la page montre a la fois.
 ///
-/// Deux lignes se lisent d'un coup d'oeil avant un cours ; au dela, une
-/// phrase dit combien d'autres attendent.
-const int _maximumAlertes = 2;
+/// Deux lignes se lisent d'un coup d'oeil avant un cours ; au dela, un lien
+/// dit combien d'autres attendent et ouvre [Routes.enseignantAlertes]
+/// (DASH-ENS-LISTES : l'exception D6 b tombe, la page existe).
+const int maximumAlertes = 2;
+
+/// Combien de remplacements confirmes la Journee montre au plus (D6) ; au
+/// dela, « Voir tout » ouvre [Routes.enseignantRemplacements].
+const int maximumRemplacements = 3;
 
 /// L'horloge de la page. En production, l'heure de l'appareil ; la
 /// demonstration (`/demo/enseignant`) la fixe au lundi 28 septembre 2026.
@@ -194,14 +201,9 @@ class _Corps extends ConsumerWidget {
 
     final List<SeanceEnseignant> toutes =
         seances.value ?? const <SeanceEnseignant>[];
-    final Map<String, SeanceEnseignant> parId = <String, SeanceEnseignant>{
-      for (final SeanceEnseignant seance in toutes) seance.id: seance,
-    };
-    // Le pont vers la journee partagee, relu par identifiant pour retrouver
-    // la seance riche.
+    // Le pont vers la journee partagee.
     final List<Seance> pont = toutes.map(_versSeance).toList(growable: false);
-    final Seance? relais = prochainCours(pont, maintenant);
-    final SeanceEnseignant? dominant = relais == null ? null : parId[relais.id];
+    final SeanceEnseignant? dominant = _seanceDominante(toutes, maintenant);
     final Seance? annulee = seanceAnnuleeDuJour(pont, maintenant);
 
     // Les bornes du jour civil local, par le calendrier et non par 24 heures.
@@ -228,10 +230,14 @@ class _Corps extends ConsumerWidget {
         retards.value ?? const <CahierEnRetard>[];
 
     // Les alertes utiles : ce qui change ce que l'enseignant fait aujourd'hui.
-    final List<String> alertes = <String>[
-      if (dominant != null && dominant.enCoursA(maintenant))
-        ..._alertesPresence(ref, dominant),
-    ];
+    // Toutes sont calculees ; la tuile en montre deux, la page les autres.
+    final List<String> alertes =
+        dominant != null && dominant.enCoursA(maintenant)
+        ? alertesPresence(
+            ref.watch(presenceSeanceProvider(dominant.id)).value ??
+                const <PresenceParticipant>[],
+          )
+        : const <String>[];
     // LIB-ERR-1 : l'echec partiel dit ce qui manque, que les seances sont a
     // jour, et se relance d'un bouton.
     final bool partielle =
@@ -262,10 +268,9 @@ class _Corps extends ConsumerWidget {
         ),
         maintenant: maintenant,
       ),
-      remplacements: <Widget>[
-        for (final OffreRemplacement r in confirmes)
-          CarteRemplacement(offre: r, date: dateLisible(r.debut)),
-      ],
+      // D6 : trois au plus, les plus proches d'abord ; au dela, « Voir
+      // tout » sous la troisieme (DASH-ENS-LISTES).
+      remplacements: _cartesRemplacements(trierRemplacements(confirmes)),
       maJournee: _MaJournee(
         journee: journee,
         prochain: dominant,
@@ -282,7 +287,10 @@ class _Corps extends ConsumerWidget {
           alertes.isEmpty && offres.isEmpty && annulee == null && !partielle
           ? null
           : _AlertesUtiles(
-              alertes: alertes,
+              alertes: alertes.take(maximumAlertes).toList(growable: false),
+              autres: alertes.length > maximumAlertes
+                  ? alertes.length - maximumAlertes
+                  : 0,
               offres: offres,
               coursAnnule: annulee,
               onReessayerPartiel: partielle
@@ -303,32 +311,106 @@ class _Corps extends ConsumerWidget {
   }
 }
 
-/// Les absences et coupures du cours en direct, en phrases.
+/// Toutes les absences et coupures du cours en direct, en phrases.
 ///
-/// `null` n'est pas une liste vide : « je ne sais pas » ne s'annonce pas
-/// comme une absence (invariant J3). Seuls `absente` et `deconnectee`
-/// deviennent une alerte.
-List<String> _alertesPresence(WidgetRef ref, SeanceEnseignant seance) {
-  final List<PresenceParticipant>? lignes = ref
-      .watch(presenceSeanceProvider(seance.id))
-      .value;
-  if (lignes == null) return const <String>[];
-  final List<PresenceParticipant> manquants = lignes
-      .where(
-        (PresenceParticipant ligne) =>
-            !ligne.estEnseignant &&
-            (ligne.etat == EtatPresence.absente ||
-                ligne.etat == EtatPresence.deconnectee),
-      )
-      .toList(growable: false);
-  final int reste = manquants.length - _maximumAlertes;
-  return <String>[
-    for (final PresenceParticipant ligne in manquants.take(_maximumAlertes))
-      ligne.etat == EtatPresence.absente
-          ? t.enseignant.journee.absenceDetectee(eleve: _nommer(ligne))
-          : t.enseignant.journee.coupureDetectee(eleve: _nommer(ligne)),
-    if (reste > 0) t.enseignant.journee.autresAbsences(nombre: '$reste'),
+/// Une presence illisible (`null`) n'est pas une liste vide : « je ne sais
+/// pas » ne s'annonce pas comme une absence (invariant J3) ; l'appelant
+/// decide (la Journee se tait, la page des alertes dit l'echec). Seuls
+/// `absente` et `deconnectee` deviennent une alerte.
+List<String> alertesPresence(List<PresenceParticipant> lignes) => <String>[
+  for (final PresenceParticipant ligne in lignes)
+    if (!ligne.estEnseignant && ligne.etat == EtatPresence.absente)
+      t.enseignant.journee.absenceDetectee(eleve: _nommer(ligne))
+    else if (!ligne.estEnseignant && ligne.etat == EtatPresence.deconnectee)
+      t.enseignant.journee.coupureDetectee(eleve: _nommer(ligne)),
+];
+
+/// La seance qui domine la journee : la prochaine (ou celle en cours), hors
+/// annulees, retrouvee riche par son identifiant.
+SeanceEnseignant? _seanceDominante(
+  List<SeanceEnseignant> toutes,
+  DateTime maintenant,
+) {
+  final Seance? relais = prochainCours(
+    toutes.map(_versSeance).toList(growable: false),
+    maintenant,
+  );
+  if (relais == null) return null;
+  for (final SeanceEnseignant seance in toutes) {
+    if (seance.id == relais.id) return seance;
+  }
+  return null;
+}
+
+/// Les remplacements confirmes, les plus proches d'abord (D6).
+List<OffreRemplacement> trierRemplacements(List<OffreRemplacement> offres) =>
+    List<OffreRemplacement>.of(offres)..sort(
+      (OffreRemplacement a, OffreRemplacement b) => a.debut.compareTo(b.debut),
+    );
+
+/// Les tuiles de remplacement de la Journee : [maximumRemplacements] au plus ;
+/// au dela, la derniere porte « Voir tout » vers la liste entiere.
+List<Widget> _cartesRemplacements(List<OffreRemplacement> tries) {
+  final int montres = tries.length < maximumRemplacements
+      ? tries.length
+      : maximumRemplacements;
+  return <Widget>[
+    for (int i = 0; i < montres; i++)
+      if (i == montres - 1 && tries.length > maximumRemplacements)
+        _AvecVoirTousRemplacements(
+          nombre: tries.length,
+          child: CarteRemplacement(
+            offre: tries[i],
+            date: dateLisible(tries[i].debut),
+          ),
+        )
+      else
+        CarteRemplacement(offre: tries[i], date: dateLisible(tries[i].debut)),
   ];
+}
+
+/// La troisieme carte de remplacement, et sous elle le lien vers les autres.
+class _AvecVoirTousRemplacements extends StatelessWidget {
+  const _AvecVoirTousRemplacements({required this.nombre, required this.child});
+
+  final int nombre;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    mainAxisSize: MainAxisSize.min,
+    children: <Widget>[
+      child,
+      Ecart.vSm,
+      Align(
+        alignment: AlignmentDirectional.centerEnd,
+        child: LienFleche(
+          key: const ValueKey<String>('journee-remplacements-voir-tout'),
+          libelle: t.tuteur.accueil.voirTout,
+          // « Voir tout » seul ne dit pas quoi : le lecteur d'ecran entend
+          // la liste et son nombre.
+          libelleSemantique: t.enseignant.journee.voirTousRemplacements(
+            nombre: '$nombre',
+          ),
+          alignerEnFin: true,
+          onPress: () =>
+              GoRouter.of(context).go(Routes.enseignantRemplacements),
+        ),
+      ),
+    ],
+  );
+}
+
+/// Le retour d'une liste de la Journee : la page precedente, ou la Journee
+/// quand la liste a ete ouverte directement (rechargement, lien).
+void _retourVersJournee(BuildContext context) {
+  final GoRouter routeur = GoRouter.of(context);
+  if (routeur.canPop()) {
+    routeur.pop();
+  } else {
+    routeur.go(Routes.enseignantJournee);
+  }
 }
 
 /// BENTO-2 : la grille Bento partagee, disposition de DASH_STRATEGIE.md §3.5.
@@ -897,12 +979,10 @@ class _ATerminer extends ConsumerWidget {
                 key: const ValueKey<String>('journee-a-terminer-voir-tout'),
                 libelle: t.tuteur.accueil.voirTout,
                 legende: true,
-                onPress: () => Navigator.of(context).push<void>(
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext _) =>
-                        _ListeATerminer(cahiers: tries),
-                  ),
-                ),
+                // DASH-ENS-ROUTE : une adresse, pour qu'un rechargement Web ou
+                // un lien garde la liste (DASH_STRATEGIE §5).
+                onPress: () =>
+                    GoRouter.of(context).go(Routes.enseignantATerminer),
               ),
             ],
           )
@@ -934,30 +1014,233 @@ List<CahierEnRetard> trierCahiersATerminer(List<CahierEnRetard> cahiers) =>
       cahiers,
     )..sort((CahierEnRetard a, CahierEnRetard b) => a.debut.compareTo(b.debut));
 
-/// La liste complete « A terminer », ouverte par « Voir tout » (§11.4).
-class _ListeATerminer extends ConsumerWidget {
-  const _ListeATerminer({required this.cahiers});
-
-  final List<CahierEnRetard> cahiers;
+/// La liste complete « A terminer » (§11.4), a son adresse
+/// [Routes.enseignantATerminer] (DASH-ENS-ROUTE) : ouverte par « Voir tout »,
+/// ou directement (rechargement, lien). Elle lit elle-meme les cahiers en
+/// retard, avec ses etats : chargement, erreur, vide, contenu, et hors ligne
+/// (un echec sans reseau se dit « hors ligne », sous le bandeau de
+/// [PageShell]).
+class ListeATerminerPage extends ConsumerWidget {
+  /// Cree la page.
+  const ListeATerminerPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<List<CahierEnRetard>> lecture = ref.watch(
+      cahiersEnRetardProvider,
+    );
+    final Widget corps;
+    if (!lecture.hasValue && lecture.isLoading) {
+      corps = const Skeleton.liste(lignes: 3);
+    } else if (lecture.hasError && !lecture.hasValue) {
+      // Jamais « rien a terminer » sur une lecture ratee (D10). Sans reseau,
+      // l'echec se dit « hors ligne », pas « le serveur n'a pas repondu ».
+      corps = _EchecLecture(
+        cle: 'a-terminer-erreur',
+        phraseServeur: t.enseignant.journee.aTerminerErreur,
+        onReessayer: () => ref.invalidate(cahiersEnRetardProvider),
+      );
+    } else if (lecture.requireValue.isEmpty) {
+      corps = EmptyState(
+        key: const ValueKey<String>('a-terminer-vide'),
+        message: t.enseignant.journee.aTerminerVide,
+        icone: AppIcons.cahier,
+      );
+    } else {
+      corps = _LignesATerminer(
+        // Relue au retour d'un cahier : une ligne validee disparait.
+        cahiers: trierCahiersATerminer(lecture.requireValue),
+        enFile: ref.watch(cahiersEnFileProvider).value ?? const <String>{},
+      );
+    }
     return PageShell(
       titre: t.enseignant.journee.aTerminer,
-      onRetour: () => Navigator.of(context).pop(),
+      onRetour: () => _retourVersJournee(context),
       child: Align(
         alignment: AlignmentDirectional.topStart,
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: AppPage.largeurReglages),
-          child: _LignesATerminer(
-            // Relue au retour d'un cahier : une ligne validee disparait.
-            cahiers: trierCahiersATerminer(
-              ref.watch(cahiersEnRetardProvider).value ?? cahiers,
-            ),
-            enFile: ref.watch(cahiersEnFileProvider).value ?? const <String>{},
-          ),
+          child: corps,
         ),
       ),
+    );
+  }
+}
+
+/// Tous les remplacements confirmes (DASH-ENS-LISTES, ligne DASH-ENS-REMPL),
+/// a l'adresse [Routes.enseignantRemplacements] : ouverte par « Voir tout »
+/// de la Journee, ou directement. Les plus proches d'abord (D6).
+///
+/// La source est la memoire des remplacements que le serveur a confirmes
+/// (`remplacementsConfirmesProvider`, synchrone) : elle n'a ni chargement ni
+/// echec de lecture, et aucun n'est invente (D10). Etats : vide, contenu ;
+/// le bandeau hors ligne vient de [PageShell].
+class ListeRemplacementsPage extends ConsumerWidget {
+  /// Cree la page.
+  const ListeRemplacementsPage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final List<OffreRemplacement> tries = trierRemplacements(
+      ref.watch(remplacementsConfirmesProvider),
+    );
+    return PageShell(
+      titre: t.enseignant.journee.remplacementsTitre,
+      onRetour: () => _retourVersJournee(context),
+      child: Align(
+        alignment: AlignmentDirectional.topStart,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: AppPage.largeurReglages),
+          child: tries.isEmpty
+              ? EmptyState(
+                  key: const ValueKey<String>('remplacements-vide'),
+                  message: t.enseignant.journee.remplacementsVide,
+                  icone: AppIcons.cours,
+                )
+              : PileCartes(
+                  key: const ValueKey<String>('remplacements-liste'),
+                  children: <Widget>[
+                    for (final OffreRemplacement offre in tries)
+                      CarteRemplacement(
+                        offre: offre,
+                        date: dateLisible(offre.debut),
+                      ),
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Toutes les « Alertes utiles » (DASH-ENS-LISTES, ligne DASH-ENS-ALERTES), a
+/// l'adresse [Routes.enseignantAlertes] : ouverte par le lien « Voir les N
+/// autres alertes » de la Journee, ou directement.
+///
+/// Elle lit ce que lit le bloc de la Journee : les seances (pour le cours en
+/// direct et le cours annule), la presence du cours en direct, les offres de
+/// remplacement. Etats : chargement, erreur (une seance ou une presence
+/// illisible le dit, jamais « aucune alerte », D10), vide, contenu ; le
+/// bandeau hors ligne vient de [PageShell].
+class ListeAlertesPage extends ConsumerWidget {
+  /// Cree la page.
+  const ListeAlertesPage({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final DateTime maintenant = ref.watch(maintenantJourneeProvider)();
+    final AsyncValue<List<SeanceEnseignant>> seances = ref.watch(
+      seancesEnseignantProvider,
+    );
+    final Widget corps;
+    if (!seances.hasValue && seances.isLoading) {
+      corps = const Skeleton.liste(lignes: 3);
+    } else if (seances.hasError && !seances.hasValue) {
+      corps = _ErreurAlertes(
+        onReessayer: () => ref.invalidate(seancesEnseignantProvider),
+      );
+    } else {
+      final List<SeanceEnseignant> toutes = seances.requireValue;
+      final SeanceEnseignant? dominant = _seanceDominante(toutes, maintenant);
+      final SeanceEnseignant? enDirect =
+          dominant != null && dominant.enCoursA(maintenant) ? dominant : null;
+      final AsyncValue<List<PresenceParticipant>?>? presence = enDirect == null
+          ? null
+          : ref.watch(presenceSeanceProvider(enDirect.id));
+      final List<OffreRemplacement> confirmes = ref.watch(
+        remplacementsConfirmesProvider,
+      );
+      final List<OffreRemplacement> offres = ref
+          .watch(offresRemplacementProvider)
+          .where(
+            (OffreRemplacement o) => !confirmes.any(
+              (OffreRemplacement c) => c.seanceId == o.seanceId,
+            ),
+          )
+          .toList(growable: false);
+      final Seance? annulee = seanceAnnuleeDuJour(
+        toutes.map(_versSeance).toList(growable: false),
+        maintenant,
+      );
+      if (presence != null && !presence.hasValue && presence.isLoading) {
+        corps = const Skeleton.liste(lignes: 3);
+      } else if (presence != null && presence.value == null) {
+        // Presence illisible : on ne dit pas « aucune absence » (J3, D10).
+        corps = _ErreurAlertes(
+          onReessayer: () =>
+              ref.invalidate(presenceSeanceProvider(enDirect!.id)),
+        );
+      } else {
+        final List<String> alertes = alertesPresence(
+          presence?.value ?? const <PresenceParticipant>[],
+        );
+        corps = alertes.isEmpty && offres.isEmpty && annulee == null
+            ? EmptyState(
+                key: const ValueKey<String>('alertes-vide'),
+                message: t.enseignant.journee.alertesVide,
+                icone: AppIcons.avertissement,
+              )
+            : _AlertesUtiles(
+                key: const ValueKey<String>('alertes-liste'),
+                entete: false,
+                alertes: alertes,
+                offres: offres,
+                coursAnnule: annulee,
+              );
+      }
+    }
+    return PageShell(
+      titre: t.enseignant.journee.alertesUtiles,
+      onRetour: () => _retourVersJournee(context),
+      child: Align(
+        alignment: AlignmentDirectional.topStart,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: AppPage.largeurReglages),
+          child: corps,
+        ),
+      ),
+    );
+  }
+}
+
+/// L'echec de lecture des alertes (K-59) : ce qui manque, la cause probable,
+/// et « Reessayer ».
+class _ErreurAlertes extends StatelessWidget {
+  const _ErreurAlertes({required this.onReessayer});
+
+  final VoidCallback onReessayer;
+
+  @override
+  Widget build(BuildContext context) => _EchecLecture(
+    cle: 'alertes-erreur',
+    phraseServeur: t.enseignant.journee.alertesErreur,
+    onReessayer: onReessayer,
+  );
+}
+
+/// L'echec de lecture d'une liste de la Journee : « hors ligne » quand le
+/// reseau manque (la cause est connue), sinon l'echec serveur et sa phrase
+/// (K-59). Les deux proposent de relire ; aucun ne dit « rien a afficher »
+/// (D10).
+class _EchecLecture extends ConsumerWidget {
+  const _EchecLecture({
+    required this.cle,
+    required this.phraseServeur,
+    required this.onReessayer,
+  });
+
+  final String cle;
+  final String phraseServeur;
+  final VoidCallback onReessayer;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    return EtatSysteme(
+      key: ValueKey<String>(cle),
+      nature: horsLigne ? NatureEtat.horsLigne : NatureEtat.echecServeur,
+      phrase: horsLigne ? null : phraseServeur,
+      onAction: onReessayer,
     );
   }
 }
@@ -1013,10 +1296,20 @@ class _LignesATerminer extends ConsumerWidget {
 class _AlertesUtiles extends ConsumerWidget {
   const _AlertesUtiles({
     required this.alertes,
+    super.key,
+    this.autres = 0,
+    this.entete = true,
     this.offres = const <OffreRemplacement>[],
     this.coursAnnule,
     this.onReessayerPartiel,
   });
+
+  /// Combien d'alertes de presence ne sont pas montrees : au-dela de zero,
+  /// un lien ouvre la page qui les liste toutes (DASH-ENS-LISTES).
+  final int autres;
+
+  /// Faux sur la page des alertes, qui porte deja le titre.
+  final bool entete;
 
   /// Relance des lectures secondaires (prieres, pauses, cahiers en retard)
   /// quand elles ont echoue, ou `null` si tout a ete lu (LIB-ERR-1).
@@ -1035,8 +1328,10 @@ class _AlertesUtiles extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        SectionHeader(titre: t.enseignant.journee.alertesUtiles),
-        Ecart.vSm,
+        if (entete) ...<Widget>[
+          SectionHeader(titre: t.enseignant.journee.alertesUtiles),
+          Ecart.vSm,
+        ],
         if (coursAnnule != null) ...<Widget>[
           _CarteCoursAnnule(cours: coursAnnule!),
           if (alertes.isNotEmpty || offres.isNotEmpty) Ecart.vLg,
@@ -1073,6 +1368,22 @@ class _AlertesUtiles extends ConsumerWidget {
                 LigneRubrique(icone: AppIcons.avertissement, libelle: alerte),
             ],
           ),
+        // DASH-ENS-LISTES : « et N autres » devient un lien vers la page qui
+        // les liste toutes (l'exception D6 b tombe).
+        if (autres > 0) ...<Widget>[
+          Ecart.vSm,
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: LienFleche(
+              key: const ValueKey<String>('journee-alertes-voir-autres'),
+              libelle: autres == 1
+                  ? t.enseignant.journee.voirAutreAlerte
+                  : t.enseignant.journee.voirAutresAlertes(nombre: '$autres'),
+              alignerEnFin: true,
+              onPress: () => GoRouter.of(context).go(Routes.enseignantAlertes),
+            ),
+          ),
+        ],
         if (onReessayerPartiel != null) ...<Widget>[
           if (coursAnnule != null || alertes.isNotEmpty || offres.isNotEmpty)
             Ecart.vLg,

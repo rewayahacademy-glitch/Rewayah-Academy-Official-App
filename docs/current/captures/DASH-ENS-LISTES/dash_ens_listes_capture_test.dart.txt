@@ -1,0 +1,198 @@
+// DASH-ENS-LISTES : la Journee avec cinq remplacements (3 montres + « Voir
+// tout ») et cinq alertes (2 + lien) ; les pages des remplacements et des
+// alertes, leurs etats.
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/enseignant/absence_remplacement.dart';
+import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart'
+    show cahiersEnFileProvider;
+import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
+import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
+import 'package:rewayah_academy/core/presence/service_presence.dart';
+import 'package:rewayah_academy/core/priere/service_priere.dart';
+import 'package:rewayah_academy/core/regles/service_regles.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/features/journee/journee_page.dart';
+
+import '../support/harnais.dart';
+import 'outil_capture.dart';
+
+final DateTime _maintenant = DateTime(2026, 9, 28, 16, 10);
+
+final SeanceEnseignant _enDirect = SeanceEnseignant(
+  id: 'live',
+  debut: DateTime(2026, 9, 28, 16),
+  fin: DateTime(2026, 9, 28, 16, 45),
+  statut: StatutSeance.enCours,
+  nbParticipants: 6,
+  cahierDepose: false,
+  groupeId: 'g-live',
+  groupeLibelle: 'Al-Badr',
+);
+
+PresenceParticipant _eleve(String prenom, EtatPresence etat) =>
+    PresenceParticipant(
+      profilId: 'p-$prenom',
+      role: 'student',
+      prenom: prenom,
+      identifiantImmuable: 'id-$prenom',
+      etat: etat,
+      consolide: false,
+    );
+
+OffreRemplacement _remplacement(String classe, int mois, int jour) =>
+    OffreRemplacement(
+      seanceId: 'r-$classe',
+      classe: classe,
+      debut: DateTime(2026, mois, jour, 18),
+      fin: DateTime(2026, mois, jour, 18, 45),
+      nbEleves: 4,
+      groupeId: 'g-$classe',
+    );
+
+class _RemplacementsFixes extends RemplacementsControleur {
+  _RemplacementsFixes(this._depart);
+
+  final List<OffreRemplacement> _depart;
+
+  @override
+  List<OffreRemplacement> build() => _depart;
+}
+
+List<Override> _surcharges(String etat) => <Override>[
+  sourceSessionProvider.overrideWithValue(
+    FausseSourceSession(
+      const SessionState(
+        resolue: true,
+        role: AppRole.teacher,
+        profileId: 'ens-1',
+        householdId: 'h1',
+        accountStatus: AccountStatus.active,
+        lectureProfil: LectureProfil.presente,
+      ),
+    ),
+  ),
+  serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+  serviceEnseignantProvider.overrideWithValue(FauxServiceEnseignant()),
+  serviceReglesProvider.overrideWithValue(FauxServiceRegles()),
+  servicePriereProvider.overrideWithValue(FauxServicePriere()),
+  // La file locale (drift) n'existe pas dans l'hote de capture.
+  cahiersEnFileProvider.overrideWith((Ref _) async => const <String>{}),
+  cahiersEnRetardProvider.overrideWith(
+    (Ref _) async => const <CahierEnRetard>[],
+  ),
+  maintenantJourneeProvider.overrideWithValue(() => _maintenant),
+  seancesEnseignantProvider.overrideWith((Ref _) async {
+    if (etat == 'erreur') throw StateError('reseau');
+    return <SeanceEnseignant>[_enDirect];
+  }),
+  remplacementsConfirmesProvider.overrideWith(
+    () => _RemplacementsFixes(
+      etat == 'vide'
+          ? const <OffreRemplacement>[]
+          : <OffreRemplacement>[
+              _remplacement('An-Nour', 10, 2),
+              _remplacement('Al-Fatiha', 9, 29),
+              _remplacement('Al-Ikhlas', 10, 4),
+              _remplacement('As-Salam', 9, 30),
+              _remplacement('Al-Kawthar', 10, 1),
+            ],
+    ),
+  ),
+  presenceSeanceProvider('live').overrideWith(
+    (Ref _) => Stream<List<PresenceParticipant>?>.value(
+      etat == 'vide'
+          ? const <PresenceParticipant>[]
+          : <PresenceParticipant>[
+              _eleve('Yasmine', EtatPresence.absente),
+              _eleve('Ilyas', EtatPresence.deconnectee),
+              _eleve('Maryam', EtatPresence.absente),
+              _eleve('Souhayl', EtatPresence.absente),
+              _eleve('Khadija', EtatPresence.deconnectee),
+            ],
+    ),
+  ),
+];
+
+void main() {
+  group('Capture : DASH-ENS-LISTES', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    final Map<String, Widget> pages = <String, Widget>{
+      'journee': const JourneePage(),
+      'remplacements': const ListeRemplacementsPage(),
+      'alertes': const ListeAlertesPage(),
+    };
+    for (final (String, Size, ThemeMode, double, String) cas
+        in <(String, Size, ThemeMode, double, String)>[
+          ('journee', const Size(320, 5200), ThemeMode.light, 2, 'contenu'),
+          ('journee', const Size(390, 2600), ThemeMode.light, 1, 'contenu'),
+          ('journee', const Size(390, 2600), ThemeMode.dark, 1, 'contenu'),
+          ('journee', const Size(1440, 1600), ThemeMode.light, 1, 'contenu'),
+          (
+            'remplacements',
+            const Size(320, 4200),
+            ThemeMode.light,
+            2,
+            'contenu',
+          ),
+          (
+            'remplacements',
+            const Size(320, 4200),
+            ThemeMode.dark,
+            2,
+            'contenu',
+          ),
+          (
+            'remplacements',
+            const Size(390, 1900),
+            ThemeMode.light,
+            1,
+            'contenu',
+          ),
+          (
+            'remplacements',
+            const Size(390, 1900),
+            ThemeMode.dark,
+            1,
+            'contenu',
+          ),
+          (
+            'remplacements',
+            const Size(1440, 2000),
+            ThemeMode.light,
+            1,
+            'contenu',
+          ),
+          ('remplacements', const Size(390, 900), ThemeMode.light, 1, 'vide'),
+          ('alertes', const Size(320, 1800), ThemeMode.light, 2, 'contenu'),
+          ('alertes', const Size(320, 1800), ThemeMode.dark, 2, 'contenu'),
+          ('alertes', const Size(390, 900), ThemeMode.light, 1, 'contenu'),
+          ('alertes', const Size(390, 900), ThemeMode.dark, 1, 'contenu'),
+          ('alertes', const Size(1440, 900), ThemeMode.light, 1, 'contenu'),
+          ('alertes', const Size(390, 900), ThemeMode.light, 1, 'vide'),
+          ('alertes', const Size(390, 900), ThemeMode.dark, 1, 'erreur'),
+        ]) {
+      final String nom =
+          '${cas.$1}_${cas.$5}_${cas.$2.width.toInt()}'
+          '${cas.$4 == 2 ? 'x2' : ''}_${cas.$3 == ThemeMode.light ? 'clair' : 'sombre'}';
+      testWidgets(nom, (WidgetTester tester) async {
+        fixerVueCapture(tester, cas.$2, 1);
+        await tester.pumpWidget(
+          hoteCapture(
+            pages[cas.$1]!,
+            surcharges: _surcharges(cas.$5),
+            themeMode: cas.$3,
+            echelleTexte: cas.$4,
+          ),
+        );
+        await stabiliser(tester);
+        debugPrint('PNG ${await capturer(tester, nom)}');
+      });
+    }
+  });
+}
