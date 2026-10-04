@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/service_comptes.dart';
@@ -40,6 +41,7 @@ CompteAdmin _compte({
   String? prenom = 'Aicha',
   int joursDepuisInscription = 7,
   int contrats = 2,
+  DateTime? accesJusquAu,
 }) => CompteAdmin(
   profilId: identifiant,
   identifiant: identifiant,
@@ -48,7 +50,7 @@ CompteAdmin _compte({
   role: role,
   etat: etat,
   inscritLe: DateTime.now().subtract(Duration(days: joursDepuisInscription)),
-  accesJusquAu: null,
+  accesJusquAu: accesJusquAu,
   foyerId: null,
   piece: piece,
   contrats: contrats,
@@ -57,10 +59,14 @@ CompteAdmin _compte({
 );
 
 void main() {
-  Future<void> monter(WidgetTester tester, ServiceComptes service) async {
+  Future<void> monter(
+    WidgetTester tester,
+    ServiceComptes service, {
+    bool echusSeulement = false,
+  }) async {
     await tester.pumpWidget(
       hote(
-        const ComptesPage(),
+        ComptesPage(echusSeulement: echusSeulement),
         surcharges: <Override>[
           serviceComptesProvider.overrideWithValue(service),
           serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
@@ -288,5 +294,81 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.text('Aucun compte avec ce filtre'), findsOneWidget);
+  });
+
+  // DASH-ADM-ECHUS : la page s'ouvre filtree sur les acces echus, avec la
+  // definition du compteur du Centre de commande.
+  group('DASH-ADM-ECHUS : les acces echus', () {
+    final DateTime hier = DateTime.now().subtract(const Duration(days: 1));
+    final DateTime demain = DateTime.now().add(const Duration(days: 1));
+    List<CompteAdmin> jeu() => <CompteAdmin>[
+      _compte(
+        identifiant: 'TUTOR-EC-000001',
+        prenom: 'Echue',
+        role: AppRole.guardian,
+        etat: AccountStatus.provisionalActive,
+        accesJusquAu: hier,
+      ),
+      _compte(
+        identifiant: 'TUTOR-EC-000002',
+        prenom: 'Encore',
+        role: AppRole.guardian,
+        etat: AccountStatus.provisionalActive,
+        accesJusquAu: demain,
+      ),
+      _compte(
+        identifiant: 'TUTOR-EC-000003',
+        prenom: 'Active',
+        role: AppRole.guardian,
+        etat: AccountStatus.active,
+        accesJusquAu: hier,
+      ),
+    ];
+
+    test('meme definition que le compteur serveur', () {
+      final DateTime maintenant = DateTime.now();
+      expect(
+        jeu()
+            .where((CompteAdmin c) => c.accesEchu(maintenant))
+            .map((CompteAdmin c) => c.prenom),
+        <String>['Echue'],
+      );
+    });
+
+    testWidgets('ouverte sur les echus : le seul compte echu', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, _FauxServiceComptes(jeu()), echusSeulement: true);
+      expect(find.textContaining('Echue'), findsWidgets);
+      expect(find.textContaining('Encore'), findsNothing);
+      expect(find.textContaining('Active Sow'), findsNothing);
+    });
+
+    testWidgets('le filtre se relache et se reprend d un tap', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, _FauxServiceComptes(jeu()), echusSeulement: true);
+      final Finder filtre = find.byKey(
+        const ValueKey<String>('comptes-filtre-echus'),
+      );
+      expect(filtre, findsOneWidget);
+      await tester.tap(filtre);
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Encore'), findsWidgets);
+      await tester.tap(filtre);
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Encore'), findsNothing);
+    });
+
+    testWidgets('sans echu, pas de filtre a vide', (WidgetTester tester) async {
+      await monter(
+        tester,
+        _FauxServiceComptes(<CompteAdmin>[jeu()[1], jeu()[2]]),
+      );
+      expect(
+        find.byKey(const ValueKey<String>('comptes-filtre-echus')),
+        findsNothing,
+      );
+    });
   });
 }

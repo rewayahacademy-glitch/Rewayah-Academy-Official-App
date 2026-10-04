@@ -225,6 +225,9 @@ class TuileCompteur extends StatelessWidget {
 
 /// Deux compteurs de meme nature dans une seule tuile large, chacun avec son
 /// libelle, quelles que soient leurs valeurs (DASH_STRATEGIE D3).
+///
+/// Un compteur dont la page s'ouvre filtree sur ce qu'il compte devient un
+/// lien ([onPressGauche], [onPressDroite]) ; l'autre reste un rapport (D9).
 class TuileDouble extends StatelessWidget {
   /// Cree la tuile double.
   const TuileDouble({
@@ -232,6 +235,8 @@ class TuileDouble extends StatelessWidget {
     required this.gauche,
     required this.droite,
     this.titre,
+    this.onPressGauche,
+    this.onPressDroite,
   });
 
   /// Ce que les deux compteurs ont en commun, au-dessus des chiffres.
@@ -243,54 +248,75 @@ class TuileDouble extends StatelessWidget {
   /// Le second compteur : chiffre et libelle.
   final (int, String) droite;
 
+  /// La page filtree du premier compteur, s'il en a une.
+  final VoidCallback? onPressGauche;
+
+  /// La page filtree du second compteur (DASH-ADM-ECHUS : les acces echus).
+  final VoidCallback? onPressDroite;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final AppColorPair paire = palette.surfaceRaised;
-    Widget chiffre(int v) => Expanded(
-      child: Text(
-        '$v',
-        style: AppTypography.tabulaire(
-          paire.applyTo(textes.headlineMedium ?? const TextStyle()),
-        ),
-      ),
-    );
-    Widget libelle(String l) => Expanded(
-      child: TexteSansCoupure(
-        l,
-        style: paire.applyTo(textes.labelMedium ?? const TextStyle()),
-      ),
-    );
+    Widget compteur((int, String) c, VoidCallback? onPress) {
+      final Widget bloc = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(
+            '${c.$1}',
+            style: AppTypography.tabulaire(
+              paire.applyTo(textes.headlineMedium ?? const TextStyle()),
+            ),
+          ),
+          Ecart.vXs,
+          TexteSansCoupure(
+            c.$2,
+            // Le libelle d'un lien prend l'encre d'accent, comme les noms
+            // de l'apercu des dossiers.
+            style: onPress == null
+                ? paire.applyTo(textes.labelMedium ?? const TextStyle())
+                : palette.inkAccent.applyTo(
+                    textes.labelMedium ?? const TextStyle(),
+                  ),
+          ),
+        ],
+      );
+      return Expanded(
+        child: onPress == null
+            ? Semantics(
+                label: '${c.$1} ${c.$2}',
+                child: ExcludeSemantics(child: bloc),
+              )
+            : Pressable(
+                onPress: onPress,
+                lien: true,
+                libelleSemantique: '${c.$1} ${c.$2}',
+                child: SizedBox(width: double.infinity, child: bloc),
+              ),
+      );
+    }
+
     return AppCard(
       surface: paire,
       marge: AppSpacing.lg,
-      libelleSemantique: <String>[
-        ?titre,
-        '${gauche.$1} ${gauche.$2}, ${droite.$1} ${droite.$2}',
-      ].join(', '),
-      // Les chiffres en haut, leurs libelles en bas, chacun sous le sien.
       child: ContenuTuileBento(
         children: <Widget>[
           if (titre != null)
-            TexteSansCoupure(
-              titre!,
-              style: paire.applyTo(textes.labelLarge ?? const TextStyle()),
+            Semantics(
+              header: true,
+              child: TexteSansCoupure(
+                titre!,
+                style: paire.applyTo(textes.labelLarge ?? const TextStyle()),
+              ),
             ),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
-              chiffre(gauche.$1),
+              compteur(gauche, onPressGauche),
               Ecart.hLg,
-              chiffre(droite.$1),
-            ],
-          ),
-          Ecart.vXs,
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              libelle(gauche.$2),
-              Ecart.hLg,
-              libelle(droite.$2),
+              compteur(droite, onPressDroite),
             ],
           ),
         ],

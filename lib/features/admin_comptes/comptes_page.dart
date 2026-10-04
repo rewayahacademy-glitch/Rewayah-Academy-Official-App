@@ -38,7 +38,11 @@ import '../../core/widgets/status_pill.dart';
 ///     precisement l'etat qui etait invisible.
 class ComptesPage extends ConsumerStatefulWidget {
   /// Cree l'ecran des comptes.
-  const ComptesPage({super.key});
+  const ComptesPage({super.key, this.echusSeulement = false});
+
+  /// Ouvre la page sur les seuls acces echus (DASH-ADM-ECHUS, adresse
+  /// `Routes.adminPersonnesComptesEchus`).
+  final bool echusSeulement;
 
   @override
   ConsumerState<ComptesPage> createState() => _ComptesPageEtat();
@@ -48,6 +52,9 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   /// Le filtre courant. `null` veut dire « tous ».
   AccountStatus? _etat;
   AppRole? _role;
+
+  /// Vrai : seuls les acces echus (DASH-ADM-ECHUS).
+  late bool _echus = widget.echusSeulement;
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +81,8 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
                 comptes: comptes.requireValue,
                 etat: _etat,
                 role: _role,
+                echus: _echus,
+                onEchus: (bool echus) => setState(() => _echus = echus),
                 onEtat: (AccountStatus? etat) => setState(() => _etat = etat),
                 onRole: (AppRole? role) => setState(() => _role = role),
               ),
@@ -104,6 +113,8 @@ class _Corps extends StatelessWidget {
     required this.comptes,
     required this.etat,
     required this.role,
+    required this.echus,
+    required this.onEchus,
     required this.onEtat,
     required this.onRole,
   });
@@ -111,6 +122,10 @@ class _Corps extends StatelessWidget {
   final List<CompteAdmin> comptes;
   final AccountStatus? etat;
   final AppRole? role;
+
+  /// Vrai : seuls les acces echus.
+  final bool echus;
+  final void Function(bool echus) onEchus;
   final void Function(AccountStatus? etat) onEtat;
   final void Function(AppRole? role) onRole;
 
@@ -125,7 +140,8 @@ class _Corps extends StatelessWidget {
         .where(
           (CompteAdmin c) =>
               (etat == null || c.etat == etat) &&
-              (role == null || c.role == role),
+              (role == null || c.role == role) &&
+              (!echus || c.accesEchu(maintenant)),
         )
         .toList(growable: false);
 
@@ -200,6 +216,17 @@ class _Corps extends StatelessWidget {
                   retenue: etat == valeur,
                   onPress: () => onEtat(valeur),
                 ),
+            // DASH-ADM-ECHUS : les acces echus, le meme chiffre que le Centre
+            // de commande. Rendu des qu'il y en a, ou quand la page a ete
+            // ouverte sur eux (le filtre retenu doit pouvoir se relacher).
+            if (echus || _nombreEchus(comptes, maintenant) > 0)
+              FilterPill(
+                key: const ValueKey<String>('comptes-filtre-echus'),
+                libelle: t.admin.tableau.comptes,
+                compteur: _nombreEchus(comptes, maintenant),
+                retenue: echus,
+                onPress: () => onEchus(!echus),
+              ),
             // Un seul role present : le menu n'offrirait aucun choix, et un
             // controle sans choix n'est pas un controle.
             if (rolesPresents.length > 1)
@@ -336,3 +363,7 @@ String _nomPiece(EtatPiece piece) => switch (piece) {
   EtatPiece.refusee => t.admin.comptes.pieceRefusee,
   EtatPiece.nonVisible => t.admin.comptes.pieceNonVisible,
 };
+
+/// Combien d'acces sont echus parmi [comptes].
+int _nombreEchus(List<CompteAdmin> comptes, DateTime maintenant) =>
+    comptes.where((CompteAdmin c) => c.accesEchu(maintenant)).length;

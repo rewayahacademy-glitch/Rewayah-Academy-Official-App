@@ -285,7 +285,6 @@ void main() {
               (Routes.adminOperationsAttributions, 'ADM-05'),
               (Routes.adminPedagogieQualite, 'ADM-14'),
               (Routes.adminOperationsGroupes, 'GROUPES'),
-              (Routes.adminPersonnesComptes, 'ADM-08'),
               (Routes.adminSecuriteAuditAccesAgents, 'ADM-07'),
             ])
               GoRoute(
@@ -293,6 +292,16 @@ void main() {
                 builder: (BuildContext _, GoRouterState _) =>
                     Scaffold(body: Text(code)),
               ),
+            GoRoute(
+              path: Routes.adminPersonnesComptes,
+              builder: (BuildContext _, GoRouterState etat) => Scaffold(
+                body: Text(
+                  etat.uri.queryParameters['filtre'] == 'echus'
+                      ? 'ADM-08 echus'
+                      : 'ADM-08',
+                ),
+              ),
+            ),
           ],
           surcharges: <Override>[
             serviceAdminProvider.overrideWithValue(admin),
@@ -351,6 +360,8 @@ void main() {
           (() => t.admin.groupes.titre, 'GROUPES'),
           (() => t.admin.tableau.outilsComptes, 'ADM-08'),
           (() => t.admin.tableau.outilsAccesAgents, 'ADM-07'),
+          // DASH-ADM-ECHUS : la moitie « Acces echus » de la tuile double.
+          (() => t.admin.tableau.comptes, 'ADM-08 echus'),
         ]) {
       testWidgets('un tap ouvre ${cas.$2}', (WidgetTester tester) async {
         await monterRoutant(
@@ -394,9 +405,25 @@ void main() {
             findsOneWidget,
           );
         }
-        // Un rapport sans page : aucun appui (D9).
+        // DASH-ADM-ECHUS : un seul appui, celui des acces echus ; les
+        // incidents restent un rapport sans page (D9, DASH-ADM-INC).
+        final Finder appuis = find.descendant(
+          of: double,
+          matching: find.byType(Pressable),
+        );
+        expect(appuis, findsOneWidget);
         expect(
-          find.descendant(of: double, matching: find.byType(Pressable)),
+          find.descendant(
+            of: appuis,
+            matching: find.text(t.admin.tableau.comptes),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: appuis,
+            matching: find.text(t.admin.tableau.incidents),
+          ),
           findsNothing,
         );
       });

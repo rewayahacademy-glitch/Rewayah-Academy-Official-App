@@ -271,6 +271,11 @@ class _Compteurs extends StatelessWidget {
         titre: t.admin.tableau.incidentsEtAcces,
         gauche: (indicateurs.incidents24h, t.admin.tableau.incidents),
         droite: (indicateurs.comptesEchus, t.admin.tableau.comptes),
+        // DASH-ADM-ECHUS : Comptes s'ouvre filtre sur les acces echus.
+        // Incidents reste un rapport : aucune page ne liste ce qu'il compte
+        // (DASH-ADM-INC).
+        onPressDroite: () =>
+            GoRouter.of(context).go(Routes.adminPersonnesComptesEchus),
       ),
     ];
     return GrilleBento(

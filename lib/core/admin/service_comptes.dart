@@ -152,6 +152,17 @@ class CompteAdmin {
   bool get attendUneDecision =>
       etat == AccountStatus.pendingKyc && role == AppRole.teacher;
 
+  /// Vrai quand l'acces provisoire est echu : la meme definition que le
+  /// compteur « Acces echus » du Centre de commande (compte provisoire dont
+  /// la date de fin d'acces est passee), lue sur les memes colonnes
+  /// (DASH-ADM-ECHUS).
+  bool accesEchu(DateTime maintenant) {
+    final DateTime? fin = accesJusquAu;
+    return etat == AccountStatus.provisionalActive &&
+        fin != null &&
+        fin.isBefore(maintenant);
+  }
+
   /// Depuis combien de jours ce compte attend, en jours pleins.
   int joursDAttente(DateTime maintenant) =>
       maintenant.difference(inscritLe).inDays;
