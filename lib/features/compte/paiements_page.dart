@@ -149,8 +149,11 @@ class PaiementsComptePage extends ConsumerWidget {
   /// L'historique, precede de « Recharger » quand la recharge est ouverte.
   Widget _avecRaccourci(WidgetRef ref, Widget historique) {
     final VoidCallback? recharger = onRecharger;
+    // Sans recharge (second adulte rattache), les finances du foyer ne sont
+    // jamais lues, meme pour etre ignorees (lecon 15, FI-BR-18).
+    if (recharger == null) return historique;
     final AsyncValue<Object> finances = ref.watch(financesFoyerProvider);
-    if (recharger == null || !finances.hasValue || finances.hasError) {
+    if (!finances.hasValue || finances.hasError) {
       return historique;
     }
     return Column(
