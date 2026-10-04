@@ -1,6 +1,8 @@
 // AD-7 : la visionneuse depuis la VRAIE coque admin et le vrai routeur, avec
-// l'adaptateur de PRODUCTION (surchargeRevueDossiersProduction) et un
-// ServiceValidation factice : aucune demonstration pour la revue (K-07).
+// l'adaptateur de PRODUCTION et un ServiceValidation factice : aucune
+// demonstration pour la revue (K-07). AD-M3-PROD : le vrai branchement
+// (surchargeRevueDossiersProduction) ferme piece et refus jusqu'a BR-1 ; la
+// visionneuse se teste sur l'adaptateur rebranche comme a BR-1.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,6 +28,7 @@ import 'package:rewayah_academy/features/demo/dossiers_demo.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
 import 'package:rewayah_academy/features/demo/services_admin_demo.dart';
 
+import '../../support/dossiers_production.dart';
 import '../../support/harnais.dart';
 
 Future<void> _stabiliser(WidgetTester tester) async {
@@ -52,79 +55,38 @@ ActionPrincipale _action(WidgetTester tester, String libelle) =>
     );
 
 void main() {
-  testWidgets('production depuis la coque : Personnes, la ligne, « Voir la '
-      'piece », fermer, cocher, valider', (WidgetTester tester) async {
-    tester.view.physicalSize = const Size(1440, 900);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.resetPhysicalSize);
-    addTearDown(tester.view.resetDevicePixelRatio);
-    final FauxServiceValidation service = FauxServiceValidation()
-      ..file = <DossierAValider>[
-        DossierAValider(
-          documentId: 'doc1',
-          profilId: 'p1',
-          type: TypePiece.carteIdentite,
-          cleObjet: 'p1/piece.webp',
-          deposeLe: DateTime(2026, 9, 4),
-          prenom: 'Moussa',
-          nom: 'Barry',
-          identifiantImmuable: 'TEACHER-MB-000001',
-          role: AppRole.teacher,
-        ),
-      ];
-    final EtatRevueDemo e = EtatRevueDemo.initial();
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: <Override>[
-          // Seules la session admin et la politique du relecteur sont
-          // simulees ; la revue et la piece passent par la production.
-          sourceSessionProvider.overrideWithValue(
-            const SourceSessionDemoAdmin(),
-          ),
-          portPolitiqueRevueKycProvider.overrideWithValue(
-            PolitiqueRevueKycDemo(e),
-          ),
-          // Aucune base locale : runAsync ferait sinon ouvrir drift.
-          stockagePreferencesProvider.overrideWithValue(
-            StockagePreferencesMemoire(),
-          ),
-          serviceValidationProvider.overrideWithValue(service),
-          surchargeRevueDossiersProduction,
-          imagePieceProvider.overrideWithValue(
-            (Uri _) => MemoryImage(pngSynthetique),
-          ),
-          indicateursProvider.overrideWith(
-            (Ref ref) async => const IndicateursAdmin(
-              dossiersEnAttente: 1,
-              foyersSansEnseignant: 0,
-              rapportsManquants: 0,
-              incidents24h: 0,
-              comptesEchus: 0,
-              demandesEnAttente: 0,
-            ),
-          ),
-          demandesProvider.overrideWith((Ref ref) async => const <Demande>[]),
-          ...surchargesServicesAdminIndisponibles(),
-        ],
-        child: TranslationProvider(child: const RewayahApp()),
-      ),
+  // AD-M3-PROD : le VRAI branchement de main.dart, depuis la coque admin.
+  testWidgets('production depuis la coque : ni « Voir la piece » ni refus, '
+      'aucune URL signee, aucun appel (decision du 27/09)', (
+    WidgetTester tester,
+  ) async {
+    final FauxServiceValidation service = await _monterCoque(
+      tester,
+      surchargeRevueDossiersProduction,
+    );
+    expect(find.text(t.dossiers.revue.voirPiece), findsNothing);
+    expect(find.text(t.dossiers.refuser), findsNothing);
+    expect(find.text(t.dossiers.approuver), findsNothing);
+    await tester.ensureVisible(
+      find.text(t.dossiers.revue.etats.decisionIndisponible),
     );
     await _stabiliser(tester);
-    ProviderScope.containerOf(tester.element(find.byType(RewayahApp)))
-        .read(routeurProvider)
-        .go(Routes.admin);
-    await _stabiliser(tester);
+    expect(
+      find.text(t.dossiers.revue.etats.decisionIndisponible),
+      findsOneWidget,
+    );
+    expect(find.text(t.dossiers.revue.pieceIndisponible), findsOneWidget);
+    expect(service.apercus, isEmpty);
+    expect(service.verdicts, isEmpty);
+  });
 
-    await _toucher(
+  testWidgets('branchee comme apres BR-1, depuis la coque : Personnes, la '
+      'ligne, « Voir la piece », fermer, cocher, valider', (
+    WidgetTester tester,
+  ) async {
+    final FauxServiceValidation service = await _monterCoque(
       tester,
-      find.descendant(
-        of: find.byKey(AdminShell.barreLateraleKey),
-        matching: find.text(AdminDomaine.personnes.libelle),
-      ),
-    );
-    await _toucher(
-      tester,
-      find.bySemanticsLabel(RegExp('^Ouvrir le dossier de Moussa')),
+      surchargeRevueDossiersBrancheeBR1,
     );
 
     // Avant lecture : cases fermees, validation fermee, refus ouvert.
@@ -166,4 +128,83 @@ void main() {
     expect(find.text(t.dossiers.validation.indisponible), findsOneWidget);
     expect(service.verdicts, isEmpty);
   });
+}
+
+/// Monte la vraie coque admin avec [revue] comme adaptateur de revue, puis
+/// ouvre le dossier de Moussa depuis « Personnes ».
+Future<FauxServiceValidation> _monterCoque(
+  WidgetTester tester,
+  Override revue,
+) async {
+  tester.view.physicalSize = const Size(1440, 900);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+  final FauxServiceValidation service = FauxServiceValidation()
+    ..file = <DossierAValider>[
+      DossierAValider(
+        documentId: 'doc1',
+        profilId: 'p1',
+        type: TypePiece.carteIdentite,
+        cleObjet: 'p1/piece.webp',
+        deposeLe: DateTime(2026, 9, 4),
+        prenom: 'Moussa',
+        nom: 'Barry',
+        identifiantImmuable: 'TEACHER-MB-000001',
+        role: AppRole.teacher,
+      ),
+    ];
+  final EtatRevueDemo e = EtatRevueDemo.initial();
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: <Override>[
+        // Seules la session admin et la politique du relecteur sont
+        // simulees ; la revue et la piece passent par la production.
+        sourceSessionProvider.overrideWithValue(const SourceSessionDemoAdmin()),
+        portPolitiqueRevueKycProvider.overrideWithValue(
+          PolitiqueRevueKycDemo(e),
+        ),
+        // Aucune base locale : runAsync ferait sinon ouvrir drift.
+        stockagePreferencesProvider.overrideWithValue(
+          StockagePreferencesMemoire(),
+        ),
+        serviceValidationProvider.overrideWithValue(service),
+        revue,
+        imagePieceProvider.overrideWithValue(
+          (Uri _) => MemoryImage(pngSynthetique),
+        ),
+        indicateursProvider.overrideWith(
+          (Ref ref) async => const IndicateursAdmin(
+            dossiersEnAttente: 1,
+            foyersSansEnseignant: 0,
+            rapportsManquants: 0,
+            incidents24h: 0,
+            comptesEchus: 0,
+            demandesEnAttente: 0,
+          ),
+        ),
+        demandesProvider.overrideWith((Ref ref) async => const <Demande>[]),
+        ...surchargesServicesAdminIndisponibles(),
+      ],
+      child: TranslationProvider(child: const RewayahApp()),
+    ),
+  );
+  await _stabiliser(tester);
+  ProviderScope.containerOf(tester.element(find.byType(RewayahApp)))
+      .read(routeurProvider)
+      .go(Routes.admin);
+  await _stabiliser(tester);
+
+  await _toucher(
+    tester,
+    find.descendant(
+      of: find.byKey(AdminShell.barreLateraleKey),
+      matching: find.text(AdminDomaine.personnes.libelle),
+    ),
+  );
+  await _toucher(
+    tester,
+    find.bySemanticsLabel(RegExp('^Ouvrir le dossier de Moussa')),
+  );
+  return service;
 }

@@ -188,8 +188,15 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
       EtatPieceRevue.nonVisible => BlocageRevue.pieceNonVisible,
       _ => BlocageRevue.pieceAbsente,
     };
+    // AD-M3-PROD (decision S1 -> a du 27/09) : sans `decider_dossier`
+    // branche, le refus est ferme comme la validation, jusqu'a BR-1.
+    final bool decisionBranchee = deciderExistant != null;
     // `decider_dossier` exige `p_document_id` : sans piece, aucun geste.
-    final bool peutRefuser = d.documentId != null;
+    final bool peutRefuser = d.documentId != null && decisionBranchee;
+    final List<BlocageRevue> blocagesDecision = <BlocageRevue>[
+      if (d.documentId != null && !decisionBranchee)
+        BlocageRevue.decisionIndisponible,
+    ];
     return DossierPourRevue(
       dossierId: d.profilId,
       // Jamais affichee : la RPC ne la fournit pas (AD-BR-06).
@@ -216,18 +223,24 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
       ],
       // Aucun accord versionne n'est lu (AD-BR-02) : la carte est masquee.
       accords: const <AccordSoumis>[],
-      peutValider: consultable,
+      peutValider: consultable && decisionBranchee,
       // La cle finit par une extension d'image : c'est une promesse, pas une
       // lecture. La revue attend l'affichage reussi (AD-7, P-ADM-06 pt 5).
       lectureRequise: consultable,
       peutRefuser: peutRefuser,
-      peutVoirPiece: d.documentId != null && piece != EtatPieceRevue.nonVisible,
-      blocagesValidation: <BlocageRevue>[?manque],
+      // AD-M3-PROD : sans signature branchee, aucune URL n'est demandee.
+      peutVoirPiece:
+          apercu != null &&
+          d.documentId != null &&
+          piece != EtatPieceRevue.nonVisible,
+      blocagesValidation: <BlocageRevue>[...blocagesDecision, ?manque],
       blocagesRefus: peutRefuser
           ? const <BlocageRevue>[]
+          : blocagesDecision.isNotEmpty
+          ? blocagesDecision
           : <BlocageRevue>[?manque],
-      // La decision passe encore par `ServiceValidation` : pas de blocage
-      // `decisionIndisponible`, mais aucune consequence connue.
+      // Branchee, la decision passe par `ServiceValidation` sans consequence
+      // connue ; sinon `decisionIndisponible` ferme les deux gestes.
       consequence: ConsequenceValidation.indeterminee,
     );
   }
@@ -399,15 +412,16 @@ class EchecDecisionCertain implements Exception {
 }
 
 /// Le branchement de production, pose dans `lib/main.dart` seulement.
+///
+/// AD-M3-PROD (decision du directeur du 27/09, S1 -> a) : la file et le
+/// detail sont lus, mais le refus et l'apercu de la piece restent fermes
+/// comme la validation jusqu'a BR-1 : ni `decider_dossier`, ni
+/// `createSignedUrl`. A BR-1, rebrancher ici `apercu`
+/// (ServiceValidation.apercu), `deciderExistant` (ServiceValidation.decider)
+/// et `relire` (invalidation puis relecture de `dossiersEnAttenteProvider`).
 final Override surchargeRevueDossiersProduction = portRevueDossiersProvider
     .overrideWith(
       (Ref ref) => RevueDossiersDepuisValidation(
         () => ref.read(dossiersEnAttenteProvider.future),
-        apercu: (String cle) => ref.read(serviceValidationProvider).apercu(cle),
-        deciderExistant: ref.read(serviceValidationProvider).decider,
-        relire: () {
-          ref.invalidate(dossiersEnAttenteProvider);
-          return ref.read(dossiersEnAttenteProvider.future);
-        },
       ),
     );

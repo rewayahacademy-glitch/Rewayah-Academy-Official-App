@@ -30,16 +30,22 @@ DossierAValider _dossier({String id = 'doc1', String prenom = 'Moussa'}) =>
       role: AppRole.teacher,
     );
 
+/// Monte la revue sur l'adaptateur branche comme apres BR-1, ou, avec
+/// [production], sur le vrai branchement de `lib/main.dart` (AD-M3-PROD).
 Future<FauxServiceValidation> _monter(
   WidgetTester tester,
-  FauxServiceValidation service,
-) async {
+  FauxServiceValidation service, {
+  bool production = false,
+}) async {
   await tester.pumpWidget(
     hote(
       const DossiersPage(),
       surcharges: <Override>[
         serviceValidationProvider.overrideWithValue(service),
-        surchargeRevueDossiersProduction,
+        if (production)
+          surchargeRevueDossiersProduction
+        else
+          surchargeRevueDossiersBrancheeBR1,
         imagePieceProvider.overrideWithValue(
           (Uri _) => MemoryImage(pngSynthetique),
         ),
@@ -186,8 +192,36 @@ void main() {
       },
     );
 
+    // AD-M3-PROD (decision du directeur du 27/09, S1 -> a) : jusqu'a BR-1,
+    // la production ne refuse pas et ne montre pas la piece, comme elle ne
+    // valide pas. Zero appel a decider_dossier, zero URL signee.
+    testWidgets('AD-M3-PROD : en production, ni refus ni piece, aucun appel', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceValidation service = await _monter(
+        tester,
+        FauxServiceValidation()..file = <DossierAValider>[_dossier()],
+        production: true,
+      );
+
+      expect(find.text('Dossier de Moussa Barry'), findsOneWidget);
+      await _allerA(tester, t.dossiers.revue.etats.decisionIndisponible);
+      expect(find.text(t.dossiers.refuser), findsNothing);
+      expect(find.text(t.dossiers.approuver), findsNothing);
+      expect(find.text(t.dossiers.revue.voirPiece), findsNothing);
+      expect(find.text(t.dossiers.revue.pieceIndisponible), findsOneWidget);
+      // Dit une seule fois pour les deux gestes.
+      expect(
+        find.text(t.dossiers.revue.etats.decisionIndisponible),
+        findsOneWidget,
+      );
+      expect(find.text(t.dossiers.revue.etats.refusNonAutorise), findsNothing);
+      expect(service.apercus, isEmpty);
+      expect(service.verdicts, isEmpty);
+    });
+
     testWidgets(
-      'production : la consequence est inconnue, Valider reste ferme (Q21)',
+      'branchee : la consequence est inconnue, Valider reste ferme (Q21)',
       (WidgetTester tester) async {
         final FauxServiceValidation service = await _monter(
           tester,

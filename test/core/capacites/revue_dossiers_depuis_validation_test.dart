@@ -180,10 +180,14 @@ void main() {
     );
     expect(d.accords, isEmpty);
     expect(d.peutValider, isFalse);
-    expect(d.peutRefuser && d.peutVoirPiece, isTrue);
+    // AD-M3-PROD : ni signature ni decision branchees (production jusqu'a
+    // BR-1) : refus et consultation fermes comme la validation.
+    expect(d.peutRefuser || d.peutVoirPiece, isFalse);
     expect(d.blocagesValidation, <BlocageRevue>[
+      BlocageRevue.decisionIndisponible,
       BlocageRevue.pieceNonConsultable,
     ]);
+    expect(d.blocagesRefus, <BlocageRevue>[BlocageRevue.decisionIndisponible]);
     expect(d.consequence, ConsequenceValidation.indeterminee);
     // Aucune cle d'objet dans le modele rendu.
     expect(d.toString().contains('x/d1'), isFalse);
@@ -291,8 +295,12 @@ void main() {
   });
 
   test('sans RPC branchee, la decision reste indisponible', () async {
+    int lectures = 0;
     final RevueDossiersDepuisValidation port = RevueDossiersDepuisValidation(
-      () async => <DossierAValider>[],
+      () async {
+        lectures++;
+        return <DossierAValider>[_d('p1')];
+      },
     );
     await expectLater(
       port.decider(
@@ -311,7 +319,35 @@ void main() {
         ),
       ),
     );
+    // Refuse avant toute lecture : aucune file relue, aucun appel.
+    expect(lectures, 0);
   });
+
+  // AD-M3-PROD (decision du directeur du 27/09, S1 -> a) : le branchement
+  // de production ne signe aucune URL et n'appelle jamais decider_dossier.
+  test(
+    'sans signature branchee, la piece reste fermee, rien n est signe',
+    () async {
+      int lectures = 0;
+      final RevueDossiersDepuisValidation port = RevueDossiersDepuisValidation(
+        () async {
+          lectures++;
+          return <DossierAValider>[_d('p1', doc: 'd1')];
+        },
+      );
+      await expectLater(
+        port.demanderVuePiece(dossierId: 'p1', documentId: 'd1'),
+        throwsA(
+          isA<CapaciteIndisponible>().having(
+            (CapaciteIndisponible e) => e.dependance,
+            'dependance',
+            'AD-BR-03',
+          ),
+        ),
+      );
+      expect(lectures, 0);
+    },
+  );
 
   // AD-RC m2 : la validation reste fermee en production jusqu'a BR-1, par
   // l'adaptateur lui-meme et non par le seul bouton de l'ecran.
