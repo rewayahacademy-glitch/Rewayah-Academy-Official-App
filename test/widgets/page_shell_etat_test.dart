@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
+import 'package:rewayah_academy/features/foyer/place_adulte.dart'
+    show AProposForfaitFamillePage;
 
 import '../support/harnais.dart';
 
@@ -127,4 +129,42 @@ void main() {
       expect(tester.state<ScrollableState>(defileur).position.pixels, 400);
     },
   );
+
+  // AD-M4-DEFIL : une page DEFILANTE gardait saisie et focus, mais repartait
+  // du haut a la bascule (deux defileurs differents). Sur une vraie page
+  // d'un autre role (Eleve adulte, « A propos du forfait famille »).
+  testWidgets('une vraie page defilante garde sa position a la bascule', (
+    WidgetTester tester,
+  ) async {
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 420);
+    addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+
+    await tester.pumpWidget(
+      hotePage(AProposForfaitFamillePage(onRetour: () {})),
+    );
+    await tester.pumpAndSettle();
+    ScrollPosition position() =>
+        tester.state<ScrollableState>(find.byType(Scrollable).first).position;
+    expect(position().maxScrollExtent, greaterThan(0));
+    final double cible = position().maxScrollExtent < 60
+        ? position().maxScrollExtent
+        : 60;
+    position().jumpTo(cible);
+    await tester.pump();
+
+    // Vue basse : la tete defile avec le corps, la position reste.
+    tester.view.physicalSize = const Size(320, 300);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(position().pixels, cible);
+
+    // Retour a la tete fixe : toujours la meme position.
+    tester.view.physicalSize = const Size(320, 420);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(position().pixels, cible);
+  });
 }
