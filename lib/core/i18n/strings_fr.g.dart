@@ -7976,12 +7976,6 @@ class Traductions$tuteur$accueil$fr {
 	/// fr: 'Accès'
 	String get acces => 'Accès';
 
-	/// fr: 'Accès {dePrenom} jusqu'au {date}'
-	String accesJusqua({required Object dePrenom, required Object date}) => 'Accès ${dePrenom} jusqu\'au ${date}';
-
-	/// fr: 'Accès {dePrenom} sans date de fin'
-	String accesSansFin({required Object dePrenom}) => 'Accès ${dePrenom} sans date de fin';
-
 	/// fr: 'Aucun enfant dans le foyer'
 	String get aucunEnfant => 'Aucun enfant dans le foyer';
 
@@ -10846,8 +10840,8 @@ class Traductions$adulte$recharge$fr {
 	/// fr: 'Choisissez les profils et les montants.'
 	String get phrase => 'Choisissez les profils et les montants.';
 
-	/// fr: 'Choisissez le montant.'
-	String get phraseUnique => 'Choisissez le montant.';
+	/// fr: 'Cochez le profil, puis choisissez le montant.'
+	String get phraseUnique => 'Cochez le profil, puis choisissez le montant.';
 
 	/// fr: 'Profils à recharger'
 	String get profils => 'Profils à recharger';
@@ -19491,8 +19485,6 @@ extension on Traductions {
 			'tuteur.accueil.blocReglagesDetail' => 'Photo, caméra et affichage, enfant par enfant.',
 			'tuteur.accueil.blocGroupesDetail' => 'Le groupe, l\'enseignant et le prochain cours de chaque enfant.',
 			'tuteur.accueil.acces' => 'Accès',
-			'tuteur.accueil.accesJusqua' => ({required Object dePrenom, required Object date}) => 'Accès ${dePrenom} jusqu\'au ${date}',
-			'tuteur.accueil.accesSansFin' => ({required Object dePrenom}) => 'Accès ${dePrenom} sans date de fin',
 			'tuteur.accueil.aucunEnfant' => 'Aucun enfant dans le foyer',
 			'tuteur.accueil.aucunEnfantDetail' => 'Ajoutez votre premier enfant pour commencer.',
 			'tuteur.accueil.erreur' => 'Le foyer n\'a pas pu être lu en entier. Réessayez dans un instant.',
@@ -19976,10 +19968,10 @@ extension on Traductions {
 			'enseignant.cahier.integrite' => 'Ce que vous écrivez ici engage votre parole. Les hommes ne peuvent pas le vérifier, mais Allah voit tout.',
 			'enseignant.cahier.corriger' => 'Corriger le cahier de transmission',
 			'enseignant.cahier.corrigeLe' => ({required Object date}) => 'Corrigé le ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.titre' => 'Profil',
 			'enseignant.profil.remuneration' => 'Rémunération',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.revenus' => 'Mes revenus',
 			'enseignant.profil.revenusDetail' => 'Estimation du mois en cours, Classe par Classe',
 			'enseignant.profil.compteValide' => 'Compte enseignant vérifié',
@@ -20490,10 +20482,10 @@ extension on Traductions {
 			'tc.outils.dock.marquer' => 'Marquer',
 			'tc.outils.dock.masquer' => 'Masquer',
 			'tc.outils.dock.stylet' => 'Stylet',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.dock.pointeur' => 'Pointeur',
 			'tc.outils.dock.revision' => 'Révision',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.intention.aApprendre' => 'À apprendre',
 			'tc.outils.intention.aRevoir' => 'À revoir',
 			'tc.outils.intention.aRenforcer' => 'À renforcer',
@@ -20867,7 +20859,7 @@ extension on Traductions {
 			'adulte.provisoire.coran' => 'Le Coran de votre espace élève s\'affichera ici.',
 			'adulte.recharge.titre' => 'Recharge',
 			'adulte.recharge.phrase' => 'Choisissez les profils et les montants.',
-			'adulte.recharge.phraseUnique' => 'Choisissez le montant.',
+			'adulte.recharge.phraseUnique' => 'Cochez le profil, puis choisissez le montant.',
 			'adulte.recharge.profils' => 'Profils à recharger',
 			'adulte.recharge.profilUnique' => 'Profil à recharger',
 			'adulte.recharge.soldeActuel' => ({required Object montant}) => 'Solde actuel : ${montant}',
@@ -21004,10 +20996,10 @@ extension on Traductions {
 			'adulte.invitation.nom' => 'Nom',
 			'adulte.invitation.nomAide' => 'Facultatif.',
 			'adulte.invitation.courriel' => 'Adresse e-mail',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.courrielAideElle' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjointe l\'invitation à rejoindre Rewayah.',
 			'adulte.invitation.courrielAideLui' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjoint l\'invitation à rejoindre Rewayah.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.prenomRequis' => 'Indiquez son prénom.',
 			'adulte.invitation.courrielRequis' => 'Indiquez son adresse e-mail.',
 			'adulte.invitation.courrielInvalide' => 'Vérifiez l\'adresse e-mail : elle doit ressembler à nom@exemple.com.',

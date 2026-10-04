@@ -99,6 +99,24 @@ class _MonAccesEnAttente implements PortMonAcces {
   Future<AccesBeneficiaire?> monAcces() => reponse.future;
 }
 
+/// L'acces de la personne connectee, qui compte ses lectures et rend une
+/// ligne distincte a chacune : une ligne lue pour une autre personne ne doit
+/// jamais survivre a un changement de session.
+class _MonAccesCompte implements PortMonAcces {
+  int lectures = 0;
+
+  @override
+  Future<AccesBeneficiaire?> monAcces() async {
+    lectures++;
+    return AccesBeneficiaire(
+      eleveId: 'lecture-$lectures',
+      prenom: 'Aïcha',
+      etatAffiche: EtatAccesAffiche.sansEcheance,
+      seancesPayantesOuvertes: true,
+    );
+  }
+}
+
 /// Un port de l'acces du FOYER qui compte ses lectures : un ecran d'eleve ne
 /// doit jamais en faire une (revue FI-VAGUE-R R4-02). Il rend les seances
 /// d'Ibrahim fermees : si l'ecran le lisait, il le montrerait.
@@ -266,6 +284,10 @@ List<Override> _surchargesEnfant({
   serviceReseauProvider.overrideWithValue(
     FauxServiceReseau(horsLigneRendu: horsLigne),
   ),
+  // L'acces est relu par personne connectee : la session la nomme.
+  sourceSessionProvider.overrideWithValue(
+    FausseSourceSession(sessionActive(AppRole.student)),
+  ),
   if (acces != null) portMonAccesProvider.overrideWithValue(acces),
   if (foyer != null) portAccesFoyerProvider.overrideWithValue(foyer),
   if (paiements != null)
@@ -388,6 +410,10 @@ List<Override> _surchargesAdulte({
     // FI-9b : l'adulte seul lit ses finances par son propre port.
     portMesFinancesProvider.overrideWithValue(_MesFinancesDe(paiements)),
   ],
+  // L'acces est relu par personne connectee : la session la nomme.
+  sourceSessionProvider.overrideWithValue(
+    FausseSourceSession(sessionActive(AppRole.student)),
+  ),
   if (acces != null) portMonAccesProvider.overrideWithValue(acces),
   if (foyer != null) portAccesFoyerProvider.overrideWithValue(foyer),
 ];
@@ -1495,6 +1521,9 @@ void main() {
           ),
           surcharges: <Override>[
             ...surchargesDemonstration(),
+            sourceSessionProvider.overrideWithValue(
+              FausseSourceSession(sessionActive(AppRole.student)),
+            ),
             portMonAccesProvider.overrideWithValue(acces),
           ],
         ),
@@ -1589,6 +1618,34 @@ void main() {
       expect(find.byKey(AccueilAccessibilite.cleVoirClasse), findsOneWidget);
     });
 
+    testWidgets('Accueil du Mode Accessibilite, eleve adulte (vouvoye) : '
+        'acces ferme, la copie de l adulte, jamais celle de l enfant', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(390, 1600));
+      await tester.pumpWidget(
+        _hote(
+          AccueilAccessibilite(
+            prenom: 'Idriss',
+            espace: DonneesAccessibiliteDemo.espaceAccueil(
+              MomentDemoAccessibilite.pendant,
+            ),
+            onVoirClasse: () {},
+            onRejoindre: () {},
+            onCoran: () {},
+            onAide: () {},
+            tutoiement: false,
+            accesFerme: true,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(BandeauAccesAdulte.cle), findsOneWidget);
+      expect(find.byKey(BandeauAccesEnfant.cle), findsNothing);
+      expect(find.text(t.argent.acces.enfantMessage), findsNothing);
+      expect(find.byKey(AccueilAccessibilite.cleVoirClasse), findsOneWidget);
+    });
+
     testWidgets('demonstration du Mode Accessibilite : l hote lit l acces de '
         'l eleve et le passe a l Accueil', (WidgetTester tester) async {
       _taille(tester, const Size(390, 844));
@@ -1602,6 +1659,9 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: <Override>[
+            sourceSessionProvider.overrideWithValue(
+              FausseSourceSession(sessionActive(AppRole.student)),
+            ),
             portMonAccesProvider.overrideWithValue(
               _MonAccesFixe(accesDeMoi(ouvert: false)),
             ),
@@ -1628,6 +1688,37 @@ void main() {
       );
       expect(find.byKey(BandeauAccesEnfant.cle), findsOneWidget);
     });
+  });
+
+  test('contre-revue : l acces de la personne connectee est relu quand la '
+      'personne change, jamais garde de la precedente', () async {
+    final _MonAccesCompte port = _MonAccesCompte();
+    final ProviderContainer conteneur = ProviderContainer(
+      overrides: <Override>[
+        demoAuthActiveProvider.overrideWithValue(true),
+        sourceSessionProvider.overrideWithValue(FausseSourceSession()),
+        portMonAccesProvider.overrideWithValue(port),
+      ],
+    );
+    addTearDown(conteneur.dispose);
+    final ProviderSubscription<AsyncValue<AccesBeneficiaire?>> abonnement =
+        conteneur.listen(monAccesProvider, (_, _) {});
+    addTearDown(abonnement.close);
+    final SessionControleur session = conteneur.read(sessionProvider.notifier)
+      ..ouvrirDemo((role: AppRole.guardian, mode: InterfaceMode.standard));
+    final String? avant = (await conteneur.read(monAccesProvider.future))
+        ?.eleveId;
+    final int lecturesAvant = port.lectures;
+    // Meme personne : aucune relecture.
+    await conteneur.read(monAccesProvider.future);
+    expect(port.lectures, lecturesAvant);
+    session
+      ..fermerDemo()
+      ..ouvrirDemo((role: AppRole.student, mode: InterfaceMode.enfant));
+    final String? apres = (await conteneur.read(monAccesProvider.future))
+        ?.eleveId;
+    expect(port.lectures, greaterThan(lecturesAvant));
+    expect(apres, isNot(avant));
   });
 
   group('R4-05, R4-07, R4-08 : adulte autonome et elision', () {

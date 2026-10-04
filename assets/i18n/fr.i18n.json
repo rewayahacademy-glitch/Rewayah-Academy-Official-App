@@ -3030,8 +3030,6 @@
       "blocReglagesDetail": "Photo, caméra et affichage, enfant par enfant.",
       "blocGroupesDetail": "Le groupe, l'enseignant et le prochain cours de chaque enfant.",
       "acces": "Accès",
-      "accesJusqua": "Accès {dePrenom} jusqu'au {date}",
-      "accesSansFin": "Accès {dePrenom} sans date de fin",
       "aucunEnfant": "Aucun enfant dans le foyer",
       "aucunEnfantDetail": "Ajoutez votre premier enfant pour commencer.",
       "erreur": "Le foyer n'a pas pu être lu en entier. Réessayez dans un instant."
@@ -4705,7 +4703,7 @@
     "recharge": {
       "titre": "Recharge",
       "phrase": "Choisissez les profils et les montants.",
-      "phraseUnique": "Choisissez le montant.",
+      "phraseUnique": "Cochez le profil, puis choisissez le montant.",
       "profils": "Profils à recharger",
       "profilUnique": "Profil à recharger",
       "soldeActuel": "Solde actuel : {montant}",

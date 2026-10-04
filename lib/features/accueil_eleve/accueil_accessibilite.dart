@@ -119,7 +119,15 @@ class AccueilAccessibilite extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        if (accesFerme) ...<Widget>[const BandeauAccesEnfant(), Ecart.vLg],
+        // Le mineur lit la copie de l'enfant, l'adulte autonome la sienne :
+        // choisi par [tutoiement] (age legal, MA4), jamais par un role.
+        if (accesFerme) ...<Widget>[
+          if (tutoiement)
+            const BandeauAccesEnfant()
+          else
+            const BandeauAccesAdulte(),
+          Ecart.vLg,
+        ],
         SectionHeader(titre: t.accessibilite.accueil.prochaineSeance),
         Ecart.vMd,
         CarteSession(

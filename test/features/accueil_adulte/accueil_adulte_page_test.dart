@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
@@ -32,6 +33,8 @@ import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/emplacements_groupe.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../../router/support_routeur.dart' show sessionActive;
+import '../../support/harnais.dart' show FausseSourceSession;
 
 void main() {
   Widget app({required Widget child, List<Override> overrides = const []}) =>
@@ -224,7 +227,13 @@ void main() {
     addTearDown(routeur.dispose);
     await tester.pumpWidget(
       ProviderScope(
-        overrides: <Override>[portMonAccesProvider.overrideWithValue(acces)],
+        overrides: <Override>[
+          // L'acces est relu par personne connectee : la session la nomme.
+          sourceSessionProvider.overrideWithValue(
+            FausseSourceSession(sessionActive(AppRole.student)),
+          ),
+          portMonAccesProvider.overrideWithValue(acces),
+        ],
         child: TranslationProvider(
           child: MaterialApp.router(
             theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),

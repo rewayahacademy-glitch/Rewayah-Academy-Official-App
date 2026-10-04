@@ -34,6 +34,8 @@ import '../../core/finance/finances_profil.dart';
 import '../../core/finance/format_montant.dart';
 import '../../core/finance/montant.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/session/session_controleur.dart';
+import '../../core/session/session_state.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bandeau_attention.dart';
@@ -93,9 +95,18 @@ AsyncValue<AccesBeneficiaire?> _accesDe(
 /// ne changera avant le branchement, et une relance silencieuse ferait
 /// tourner des minuteries sur chaque ecran d'eleve. Un autre echec garde la
 /// relance par defaut de Riverpod.
+///
+/// Relue quand la personne connectee change (contre-revue FI-VAGUE-CORR) :
+/// sur un appareil partage, la ligne de la personne precedente ne survit
+/// jamais a sa deconnexion (meme precedent que `identiteTitulaireProvider`).
 final FutureProvider<AccesBeneficiaire?> monAccesProvider =
     FutureProvider<AccesBeneficiaire?>(
-      (Ref ref) => ref.watch(portMonAccesProvider).monAcces(),
+      (Ref ref) {
+        ref.watch(
+          sessionProvider.select((SessionState session) => session.profileId),
+        );
+        return ref.watch(portMonAccesProvider).monAcces();
+      },
       retry: (int essai, Object erreur) => erreur is CapaciteIndisponible
           ? null
           : ProviderContainer.defaultRetry(essai, erreur),
