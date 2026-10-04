@@ -54,12 +54,19 @@ enum JeuFoyerFinance {
 }
 
 /// Une classe de l'enseignant de demonstration (revue FI-1c-R M2).
+///
+/// `eligibles` : les sieges dont la periode est financee (guide §1.4) ;
+/// `manques` : un manque en dollars par siege attribue dont la nouvelle
+/// periode n'est PAS financee (guide §1.7). Un tel siege n'est pas eligible
+/// et ne fait pas de revenu ; son manque fait les impayes (revue
+/// FI-1c-CORR-R m5).
 typedef _ClasseDemo = ({
   String id,
   String nom,
   int minutes,
   int capacite,
   int eligibles,
+  List<int> manques,
   bool adulte,
 });
 
@@ -161,18 +168,21 @@ abstract final class DonneesFinanceDemo {
     'An-Nour',
     age: 7,
   );
+  // Youssef (12 ans) et Khadija (13 ans) sont des enfants : ils suivent
+  // Al-Huda, classe enfants, jamais As-Salam, classe adultes a 60 USD
+  // (revue FI-1c-CORR-R m6).
   static const _ProfilDemo _youssef = _ProfilDemo(
     youssefId,
     'Youssef',
     'accent-youssef',
-    'As-Salam',
+    'Al-Huda',
     age: 12,
   );
   static const _ProfilDemo _khadija = _ProfilDemo(
     khadijaId,
     'Khadija',
     'accent-khadija',
-    'As-Salam',
+    'Al-Huda',
     age: 13,
   );
 
@@ -342,6 +352,12 @@ abstract final class DonneesFinanceDemo {
   /// fin de sa derniere periode, ou celle de son essai (FIN4-13). Elle est
   /// passee, donc l'acces se lit « expire », jamais « sans echeance », qui
   /// est le cas ordinaire d'un compte valide (revue FI-1c-R M1).
+  ///
+  /// **Valeur de demonstration, pas une regle** (revue FI-1c-CORR-R m3) : le
+  /// 30/09 a 23 h 59 est seulement la veille du mois de reference choisi par
+  /// la demonstration. Aucune regle ne fixe la fin d'acces a la fin d'un mois
+  /// civil : en production, l'echeance est celle que rend le serveur
+  /// (`profiles.access_until`, FI-BR-08), quelle qu'elle soit.
   static final DateTime finDernierAcces = DateTime(2026, 9, 30, 23, 59);
 
   /// L'acces des profils du jeu [jeu], tel que l'enfant peut le lire :
@@ -354,6 +370,27 @@ abstract final class DonneesFinanceDemo {
         for (final FinancesProfil p in profils(jeu)) _acces(p),
       ];
 
+  // Revue FI-1c-CORR-R m2 : le guide §1.7 dit « Acces a regulariser » pour
+  // un profil payant dont la nouvelle periode n'est pas financee. Cet etat
+  // n'existe pas dans `EtatAccesAffiche`, et il ne peut pas y etre ajoute
+  // cote frontend seul : `etatAccesAffiche` est un calcul pur sur la seule
+  // echeance (`finAcces`), qui ne sait pas distinguer « a regulariser » d'une
+  // fin d'acces ordinaire ; il faudrait un etat rendu par le serveur
+  // (DB-FOY-05), et les ecrans qui enumerent `EtatAccesAffiche` (fiche eleve,
+  // ligne du Foyer, page Acces du Compte) devraient changer. Question au
+  // directeur, FI-BR-08 : le contrat d'acces rendra-t-il un etat « a
+  // regulariser » distinct de l'echeance ? D'ici la, la demonstration garde
+  // `expire`, et la cause utile reste dans la Finance du tuteur
+  // (`EtatFinancier.aRegulariser`, manque, fin de conservation).
+  //
+  // Revue FI-1c-CORR-R m4 : l'essai reste « sans echeance ». Un essai se
+  // compte en seances (2 au plus, FIN4-10, FIN4-13), jamais en jours : le
+  // guide ne lui donne aucune date de fin. Le modele n'en porte pas non plus
+  // (`FinancesProfil` n'a que `essaisUtilises`, et `AccesBeneficiaire.finAcces`
+  // est `profiles.access_until`, une echeance serveur) : une date inventee
+  // ici se lirait « actif jusqu'au ... » et ferait d'une regle de seances une
+  // regle de calendrier. Le compteur `essaisUtilises / essaisMax` dit seul
+  // ou en est l'essai.
   static AccesBeneficiaire _acces(FinancesProfil p) {
     final DateTime? fin = switch (p.etat) {
       EtatFinancier.essai => null,
@@ -449,9 +486,10 @@ abstract final class DonneesFinanceDemo {
   }
 
   /// Les classes de l'enseignant de demonstration : une classe pleine, une
-  /// classe a 80 %, une classe d'adultes au minimum d'ouverture. Les MEMES
-  /// sieges font ses revenus et le revenu de la vue globale (revue FI-1c-R
-  /// M2) : jamais deux populations qui ne se correspondent pas.
+  /// classe a 80 % (plus un siege a regulariser), une classe d'adultes au
+  /// minimum d'ouverture. Les MEMES sieges font ses revenus et le revenu,
+  /// l'encaisse et les impayes de la vue globale (revues FI-1c-R M2 et
+  /// FI-1c-CORR-R m5) : jamais deux populations qui ne se correspondent pas.
   static List<_ClasseDemo> _classesDemo() {
     final PolitiqueCommerciale p = politiqueLancement;
     return <_ClasseDemo>[
@@ -461,14 +499,18 @@ abstract final class DonneesFinanceDemo {
         minutes: 480,
         capacite: p.capaciteEnfant,
         eligibles: p.capaciteEnfant,
+        manques: const <int>[],
         adulte: false,
       ),
+      // Quatre sieges finances et Ibrahim, dont la periode n'est pas financee
+      // : 42 sur 50, il manque 8 (jeu `unARegulariser`, FIN4-09).
       (
         id: 'demo-fi-classe-huda',
         nom: 'Al-Huda',
         minutes: 480,
         capacite: p.capaciteEnfant,
         eligibles: 4,
+        manques: const <int>[8],
         adulte: false,
       ),
       (
@@ -477,6 +519,7 @@ abstract final class DonneesFinanceDemo {
         minutes: 360,
         capacite: p.capaciteAdulte,
         eligibles: p.minimumOuverture,
+        manques: const <int>[],
         adulte: true,
       ),
     ];
@@ -519,13 +562,34 @@ abstract final class DonneesFinanceDemo {
     ]);
   }
 
-  /// La vue globale de la direction pour le mois de reference. Revenu et
-  /// paie portent sur les memes sieges (revue FI-1c-R M2) ; la marge est
-  /// celle de la paie des enseignants seule, jamais une marge nette, qui
-  /// demande des charges que la demonstration ne connait pas (guide §1.5).
+  /// Les impayes du mois de reference : la somme des manques des sieges a
+  /// regulariser des classes de l'enseignant de demonstration, soit la meme
+  /// population que [revenuDemo] et [revenus] (revue FI-1c-CORR-R m5).
+  static Montant impayesDemo() => _somme(<Montant>[
+    for (final _ClasseDemo c in _classesDemo())
+      for (final int manque in c.manques) usd(manque),
+  ]);
+
+  /// Les noms des classes d'adultes de la demonstration : aucun profil
+  /// mineur n'y est inscrit (revue FI-1c-CORR-R m6).
+  static Set<String> classesAdultesDemo() => <String>{
+    for (final _ClasseDemo c in _classesDemo())
+      if (c.adulte) c.nom,
+  };
+
+  /// La vue globale de la direction pour le mois de reference. Revenu,
+  /// encaisse, impayes et paie portent sur les memes sieges (revues
+  /// FI-1c-R M2, FI-1c-CORR-R m5) ; la marge est celle de la paie des
+  /// enseignants seule, jamais une marge nette, qui demande des charges que
+  /// la demonstration ne connait pas (guide §1.5) : elle ne se compare
+  /// jamais aux 30 % nets de la politique (revue FI-1c-CORR-R m1).
+  ///
+  /// L'encaisse est ce que les sieges finances ont debite pour le mois : le
+  /// revenu de ces memes sieges. Le versement partiel d'un siege a
+  /// regulariser n'est pas debite (FIN4-09) : il reste dans le solde du
+  /// profil, la demonstration ne l'invente pas en encaissement.
   static VueGlobaleFinance vueGlobale() {
     final FinancesFoyer finance = finances(JeuFoyerFinance.tousFinances);
-    final FinancesFoyer aRegulariser = finances(JeuFoyerFinance.unARegulariser);
     final Montant revenu = revenuDemo();
     final Montant paie = revenus().totalEstime;
     return VueGlobaleFinance(
@@ -535,7 +599,7 @@ abstract final class DonneesFinanceDemo {
       paieEnseignants: paie,
       margeProjeteePourMille:
           (revenu.mineur - paie.mineur) * 1000 ~/ revenu.mineur,
-      impayes: aRegulariser.synthese.aPayerCeMois,
+      impayes: impayesDemo(),
       essaisEnCours: profils(JeuFoyerFinance.unEnEssai)
           .where((FinancesProfil p) => p.etat == EtatFinancier.essai)
           .length,
@@ -546,7 +610,9 @@ abstract final class DonneesFinanceDemo {
           nature: NatureAlerteFinance.aRegulariser,
           prenom: _ibrahim.prenom,
           classe: _ibrahim.classe,
-          montant: usd(8),
+          // Le seul siege a regulariser des classes : son manque est
+          // l'impaye du mois, jamais un second chiffre.
+          montant: impayesDemo(),
         ),
       ],
     );

@@ -82,6 +82,14 @@ class VueGlobaleFinance {
   final Montant paieEnseignants;
 
   /// La marge projetee, en pour mille, `null` sans activite.
+  ///
+  /// **Marge sur la seule paie des enseignants** : (revenu academique - paie
+  /// des enseignants) / revenu academique. Aucune autre charge n'y entre
+  /// (plateforme, paiement, Internet, direction). Elle ne se compare donc
+  /// JAMAIS aux references nettes de la politique (environ 30 % net, guide
+  /// §1.5, `margeReferencePourMille`), qui supposent toutes les charges : une
+  /// marge sur paie de 79 % n'est pas une marge nette au-dessus de l'objectif.
+  /// La demonstration (`DonneesFinanceDemo.vueGlobale`) suit ce contrat.
   final int? margeProjeteePourMille;
 
   /// Le montant des impayes.

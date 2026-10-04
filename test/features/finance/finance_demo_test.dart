@@ -406,6 +406,85 @@ void main() {
       expect(v.paieEnseignants.mineur, lessThan(v.revenuAcademique.mineur));
     });
 
+    // Revue FI-1c-CORR-R m5 : l'impaye venait du foyer de demonstration
+    // (jeu `unARegulariser`) quand revenu et paie venaient des classes de
+    // l'enseignant : deux populations. Encaisse et impayes se lisent
+    // maintenant sur les memes sieges que revenu et paie.
+    test('vue globale : encaisse et impayes sur les memes sieges que le '
+        'revenu et la paie', () {
+      final VueGlobaleFinance v = DonneesFinanceDemo.vueGlobale();
+      final RevenusEnseignant r = DonneesFinanceDemo.revenus();
+      // L'encaisse est le debit des sieges finances : le revenu de ces
+      // memes sieges, au centime pres.
+      expect(v.encaisse, DonneesFinanceDemo.revenuDemo());
+      expect(v.encaisse, v.revenuAcademique);
+      expect(v.encaisse, _usd(690));
+      // Les impayes sont les manques des sieges a regulariser des classes.
+      expect(v.impayes, DonneesFinanceDemo.impayesDemo());
+      expect(v.impayes, _usd(8));
+      // Le meme siege que le foyer : Ibrahim, 42 sur 50 (FIN4-09).
+      final FinancesProfil ibrahim = _profil(
+        JeuFoyerFinance.unARegulariser,
+        DonneesFinanceDemo.ibrahimId,
+      );
+      expect(v.impayes, ibrahim.manque);
+      // L'alerte vise une classe de ces sieges et dit le meme montant.
+      final Set<String> classes = <String>{
+        for (final RevenusClasse c in r.classes) c.classe,
+      };
+      final Iterable<AlerteFinance> alertes = v.alertes.where(
+        (AlerteFinance a) => a.nature == NatureAlerteFinance.aRegulariser,
+      );
+      expect(alertes, isNotEmpty);
+      for (final AlerteFinance a in alertes) {
+        expect(classes, contains(a.classe));
+      }
+      expect(
+        alertes.fold<int>(0, (int s, AlerteFinance a) => s + a.montant!.mineur),
+        v.impayes.mineur,
+      );
+      // Un siege a regulariser n'est pas eligible (guide §1.4) : Al-Huda
+      // garde 4 sieges eligibles sur 5, le cinquieme est celui d'Ibrahim.
+      final RevenusClasse huda = r.classes.firstWhere(
+        (RevenusClasse c) => c.classe == ibrahim.classe,
+      );
+      expect(huda.siegesEligibles, 4);
+      expect(huda.siegesEligibles, lessThan(huda.capacite));
+    });
+
+    // Revue FI-1c-CORR-R m6 : As-Salam est une classe d'adultes (60 USD) ;
+    // Youssef (12 ans) et Khadija (13 ans) y etaient inscrits. Aucun total
+    // ne change : les classes de l'enseignant ne lisent pas les profils du
+    // foyer, seule l'inscription des deux enfants est corrigee.
+    test('aucun profil mineur dans une classe d adultes', () {
+      final Set<String> adultes = DonneesFinanceDemo.classesAdultesDemo();
+      expect(adultes, <String>{'As-Salam'});
+      for (final JeuFoyerFinance jeu in JeuFoyerFinance.values) {
+        for (final FinancesProfil p in DonneesFinanceDemo.profils(jeu)) {
+          final String cas = '${jeu.name} ${p.prenom}';
+          expect(p.age, isNotNull, reason: cas);
+          if (p.age! < 18) {
+            expect(adultes, isNot(contains(p.classe)), reason: cas);
+            expect(p.estAdulte, isFalse, reason: cas);
+          }
+        }
+      }
+      expect(
+        _profil(
+          JeuFoyerFinance.cinqProfils,
+          DonneesFinanceDemo.youssefId,
+        ).classe,
+        'Al-Huda',
+      );
+      expect(
+        _profil(
+          JeuFoyerFinance.cinqProfils,
+          DonneesFinanceDemo.khadijaId,
+        ).classe,
+        'Al-Huda',
+      );
+    });
+
     test('total = somme des classes, aide Internet a part', () {
       final RevenusEnseignant r = DonneesFinanceDemo.revenus();
       expect(r.classes, hasLength(3));
