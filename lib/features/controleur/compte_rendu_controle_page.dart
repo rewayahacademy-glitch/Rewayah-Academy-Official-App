@@ -25,6 +25,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
 import '../../core/mouvement/mouvement.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -146,7 +147,13 @@ class _CompteRenduControlePageState
       _echec = false;
     });
     try {
-      await ref.read(envoiCompteRenduProvider).envoyer(visite.seanceId, choix);
+      // Un serveur muet ne bloque pas l'ecran (CTRL-DELAI-1, K-59) : passe
+      // le delai maximal, l'envoi est « non confirme », Reessayer et
+      // « Plus tard » redeviennent disponibles.
+      await ref
+          .read(envoiCompteRenduProvider)
+          .envoyer(visite.seanceId, choix)
+          .timeout(AppDelais.requeteMax);
       if (!mounted) return;
       ref.read(compteRenduATerminerProvider.notifier).terminer(visite.seanceId);
       setState(() {

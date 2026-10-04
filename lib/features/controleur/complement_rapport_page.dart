@@ -23,6 +23,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
+import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/choice_card_group.dart';
@@ -146,7 +147,9 @@ class _ComplementRapportPageState extends ConsumerState<ComplementRapportPage> {
             widget.rapport.id,
             texte: texte,
             motif: m == null ? null : ComplementRapportPage.libelleMotif(m),
-          );
+          )
+          // Serveur muet : « non confirme » et Reessayer (CTRL-DELAI-1).
+          .timeout(AppDelais.requeteMax);
       if (!mounted) return;
       setState(() {
         _enCours = false;

@@ -18,6 +18,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
+import '../../core/theme/app_delais.dart';
 import 'mission_controle.dart';
 import 'observation_controle.dart';
 
@@ -203,7 +204,9 @@ Future<void> transmettreVisiteATerminer(WidgetRef ref, String seanceId) async {
   final EnvoiCompteRendu port = ref.read(envoiCompteRenduProvider);
   suivi.marquer(seanceId, TransmissionVisite.enCours);
   try {
-    await port.transmettreVisite(seanceId);
+    // Sans reponse dans le delai maximal : « non confirmee », Reessayer
+    // (CTRL-DELAI-1), jamais « en cours » pour toujours.
+    await port.transmettreVisite(seanceId).timeout(AppDelais.requeteMax);
     suivi.marquer(seanceId, TransmissionVisite.transmise);
   } on Object {
     suivi.marquer(seanceId, TransmissionVisite.echec);

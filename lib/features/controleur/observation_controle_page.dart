@@ -20,6 +20,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -229,7 +230,9 @@ class _ObservationControlePageState
                   : null,
               texte: _texte.text.trim(),
             ),
-          );
+          )
+          // Serveur muet : « non confirme » et Reessayer (CTRL-DELAI-1).
+          .timeout(AppDelais.requeteMax);
       if (!mounted) return;
       ref.read(compteRenduATerminerProvider.notifier).terminer(visite.seanceId);
       setState(() {
