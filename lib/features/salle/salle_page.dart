@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -143,8 +142,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// L'eleve sorti de la salle (CLV-09).
   IssueSeance? _sortieEleve;
 
-  /// CTR-02 : le support occupe toute la scene (« Agrandir le support »).
-  bool _agrandi = false;
+  // CTRL-AGRANDIR-1 (releve VERIF-CT-1) : pas de commande « Agrandir le
+  // support » dans la salle du controleur tant qu'aucun support n'y est
+  // rendu. Elle agrandissait l'enseignant (la personne dominante), pas un
+  // support. Elle reviendra avec le rendu du support partage.
 
   // CTRL-SON-1 (decision du directeur C5 = a) : pas de commande « Son reçu »
   // dans la salle du controleur jusqu'a BR-1. Une bascule locale changeait le
@@ -546,36 +547,19 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         : const <AnnonceObservation>[];
 
     // CTR-02 : la salle du controleur, la MEME salle (R-salle unique), avec
-    // sa zone haute et ses deux commandes. Aucune commande interdite n'est
-    // rendue, pas meme grisee (UX_REVIEW_08 n° 4 f).
+    // sa zone haute (« Quitter » y vit). Aucune commande en bas : « Son reçu »
+    // attend BR-1 (CTRL-SON-1), « Agrandir le support » attend le rendu d'un
+    // support (CTRL-AGRANDIR-1). Aucune commande interdite n'est rendue, pas
+    // meme grisee (UX_REVIEW_08 n° 4 f).
     if (vue.role == RoleSalle.controleur && !enImpasse) {
-      return CallbackShortcuts(
-        bindings: <ShortcutActivator, VoidCallback>{
-          // Echap rend la vue quand le support est agrandi (n° 4 c).
-          const SingleActivator(LogicalKeyboardKey.escape): () {
-            if (_agrandi) setState(() => _agrandi = false);
-          },
-        },
-        // Le focus de la page, pour qu'Echap soit entendu meme quand la
-        // commande a ete touchee du doigt plutot qu'au clavier.
-        child: Focus(
-          autofocus: true,
-          child: PageImmersive(
-            registre: RegistreImmersif.salle,
-            entete: _EnteteControle(
-              vue: vue,
-              onQuitter: () => unawaited(_quitter(vue)),
-            ),
-            bandeau: _Bandeaux(vue: vue),
-            commandes: _CommandesControle(
-              agrandi: _agrandi,
-              onAgrandir: () => setState(() => _agrandi = !_agrandi),
-            ),
-            child: _agrandi
-                ? _SupportAgrandi(vue: vue)
-                : _Corps(vue: vue, lignes: lignes),
-          ),
+      return PageImmersive(
+        registre: RegistreImmersif.salle,
+        entete: _EnteteControle(
+          vue: vue,
+          onQuitter: () => unawaited(_quitter(vue)),
         ),
+        bandeau: _Bandeaux(vue: vue),
+        child: _Corps(vue: vue, lignes: lignes),
       );
     }
 
@@ -991,63 +975,6 @@ class _EnteteControle extends StatelessWidget {
           onPress: onQuitter,
         ),
       ],
-    );
-  }
-}
-
-/// CTR-02 : la commande du controleur, et rien d'autre.
-///
-/// « Agrandir le support ». « Son reçu » est retire jusqu'a BR-1 (CTRL-SON-1,
-/// decision C5 = a) : une bascule qui ne coupe rien ment. Micro, camera, main
-/// levee, discussion, annotation, changement de support : non rendus du tout
-/// (UX_REVIEW_08 n° 4 f). « Quitter » vit dans la zone haute.
-class _CommandesControle extends StatelessWidget {
-  const _CommandesControle({required this.agrandi, required this.onAgrandir});
-
-  final bool agrandi;
-  final VoidCallback onAgrandir;
-
-  @override
-  Widget build(BuildContext context) {
-    return _RangeeCompacte(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          _Commande(
-            icone: agrandi ? AppIcons.reduire : AppIcons.agrandir,
-            libelle: agrandi
-                ? t.tc.observation.visite.reduire
-                : t.tc.observation.visite.agrandir,
-            acte: agrandi
-                ? t.salle.visiteControle.reduire
-                : t.salle.visiteControle.agrandir,
-            bascule: agrandi,
-            onPress: onAgrandir,
-            encreDuRegistre: true,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// CTR-02 : le support seul, sur toute la scene. Tant qu'aucun support
-/// partage n'est projete, c'est la personne dominante (l'enseignant).
-class _SupportAgrandi extends StatelessWidget {
-  const _SupportAgrandi({required this.vue});
-
-  final VueSalle vue;
-
-  @override
-  Widget build(BuildContext context) {
-    final ParticipantSalle? dominant = vue.dominant;
-    if (dominant == null) {
-      return _Seul(role: vue.role);
-    }
-    return _Cadre(
-      key: ValueKey<String>(dominant.identite),
-      participant: dominant,
-      moi: false,
     );
   }
 }

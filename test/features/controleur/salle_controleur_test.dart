@@ -1,10 +1,10 @@
 // CT-3 : CTR-02 Observation, depuis la VRAIE route de demonstration.
 // « Commencer le controle » -> la salle en role controleur (zone haute,
-// Agrandir, Quitter ; « Son reçu » retire jusqu'a BR-1, CTRL-SON-1) ; aucune
+// Quitter ; « Son reçu » retire jusqu'a BR-1, CTRL-SON-1 ; « Agrandir »
+// retire tant qu'aucun support n'est rendu, CTRL-AGRANDIR-1) ; aucune
 // commande interdite rendue, pas meme grisee ; « Quitter » -> le compte rendu (CTR-03, provisoire).
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -62,9 +62,22 @@ void main() {
     // possible », pour les participants seulement (CTRL-SALLE-1).
     expect(find.text(t.salle.bandeauControle), findsOneWidget);
     expect(find.text(t.salle.bandeauPermanent), findsNothing);
-    // Une seule commande : Agrandir. « Son reçu » est retire jusqu'a BR-1
-    // (CTRL-SON-1, decision C5 = a) : la bascule locale ne coupait rien.
-    expect(_parSens(t.salle.visiteControle.agrandir), findsOneWidget);
+    // Aucune commande en bas. « Agrandir le support » est retire tant
+    // qu'aucun support n'est rendu : il agrandissait l'enseignant
+    // (CTRL-AGRANDIR-1, releve VERIF-CT-1).
+    for (final String agrandir in <String>[
+      t.salle.visiteControle.agrandir,
+      t.salle.visiteControle.reduire,
+    ]) {
+      expect(find.text(agrandir), findsNothing, reason: agrandir);
+      expect(_parSens(agrandir), findsNothing, reason: agrandir);
+    }
+    expect(find.byTooltip(t.tc.observation.visite.agrandir), findsNothing);
+    // Les eleves restent a la vue (la colonne de presence n'est pas
+    // remplacee par un cadre agrandi).
+    expect(find.text(t.presence.titre), findsWidgets);
+    // « Son reçu » est retire jusqu'a BR-1 (CTRL-SON-1, decision C5 = a) :
+    // la bascule locale ne coupait rien.
     for (final String son in <String>[
       t.salle.visiteControle.sonRecu,
       t.salle.visiteControle.sonCoupe,
@@ -112,15 +125,6 @@ void main() {
     )) {
       expect(a.urlSignee, isNull);
     }
-
-    // Agrandir, puis Echap rend la vue.
-    await tester.tap(_parSens(t.salle.visiteControle.agrandir));
-    await tester.pumpAndSettle();
-    expect(_parSens(t.salle.visiteControle.reduire), findsOneWidget);
-    expect(find.text(t.presence.titre), findsNothing);
-    await tester.sendKeyEvent(LogicalKeyboardKey.escape);
-    await tester.pumpAndSettle();
-    expect(_parSens(t.salle.visiteControle.agrandir), findsOneWidget);
 
     // Quitter, sans fenetre de confirmation, mene au compte rendu.
     await tester.tap(find.text(t.salle.quitter));
