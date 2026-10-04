@@ -1075,6 +1075,7 @@ class Traductions$ficheEleve$fr {
 	late final Traductions$ficheEleve$interface$fr interface = Traductions$ficheEleve$interface$fr.internal(_root);
 	late final Traductions$ficheEleve$camera$fr camera = Traductions$ficheEleve$camera$fr.internal(_root);
 	late final Traductions$ficheEleve$acces$fr acces = Traductions$ficheEleve$acces$fr.internal(_root);
+	late final Traductions$ficheEleve$finances$fr finances = Traductions$ficheEleve$finances$fr.internal(_root);
 }
 
 // Path: disponibilites
@@ -3920,6 +3921,9 @@ class Traductions$ficheEleve$lignes$fr {
 
 	/// fr: 'Pas encore disponible'
 	String get couleurIndisponible => 'Pas encore disponible';
+
+	/// fr: 'Finances'
+	String get finances => 'Finances';
 }
 
 // Path: ficheEleve.couleur
@@ -4241,6 +4245,87 @@ class Traductions$ficheEleve$acces$fr {
 
 	/// fr: 'Le début de l'accès et son motif ne s'affichent pas encore.'
 	String get detailIndisponible => 'Le début de l\'accès et son motif ne s\'affichent pas encore.';
+}
+
+// Path: ficheEleve.finances
+class Traductions$ficheEleve$finances$fr {
+	Traductions$ficheEleve$finances$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Finances'
+	String get titre => 'Finances';
+
+	/// fr: 'Vue financière'
+	String get vueTitre => 'Vue financière';
+
+	/// fr: 'Mensualité'
+	String get mensualite => 'Mensualité';
+
+	/// fr: '{montant} / mois'
+	String mensualiteValeur({required Object montant}) => '${montant} / mois';
+
+	/// fr: 'Détail de la mensualité'
+	String get detailTitre => 'Détail de la mensualité';
+
+	/// fr: 'Tarif enfant'
+	String get tarifEnfant => 'Tarif enfant';
+
+	/// fr: 'Tarif adulte'
+	String get tarifAdulte => 'Tarif adulte';
+
+	/// fr: 'Remise familiale'
+	String get remiseRang => 'Remise familiale';
+
+	/// fr: 'Réduction calendrier'
+	String get prorata => 'Réduction calendrier';
+
+	/// fr: 'Avoir'
+	String get avoir => 'Avoir';
+
+	/// fr: 'Taxe applicable'
+	String get taxe => 'Taxe applicable';
+
+	/// fr: 'Total à financer'
+	String get total => 'Total à financer';
+
+	/// fr: 'Accès à régulariser'
+	String get regulariserTitre => 'Accès à régulariser';
+
+	/// fr: 'Prochaine période à financer'
+	String get aFinancerTitre => 'Prochaine période à financer';
+
+	/// fr: 'Accès expiré'
+	String get expireTitre => 'Accès expiré';
+
+	/// fr: 'Il manque {montant} pour la prochaine période. La place est conservée jusqu'au {date}.'
+	String manqueEtConservation({required Object montant, required Object date}) => 'Il manque ${montant} pour la prochaine période. La place est conservée jusqu\'au ${date}.';
+
+	/// fr: 'La prochaine période n'est pas encore financée.'
+	String get sansManque => 'La prochaine période n\'est pas encore financée.';
+
+	/// fr: 'Paiement en cours de confirmation'
+	String get confirmationTitre => 'Paiement en cours de confirmation';
+
+	/// fr: 'Ne payez pas une seconde fois : la période se met à jour dès la confirmation.'
+	String get confirmationPhrase => 'Ne payez pas une seconde fois : la période se met à jour dès la confirmation.';
+
+	/// fr: 'Les finances ne sont pas encore disponibles'
+	String get indisponibleTitre => 'Les finances ne sont pas encore disponibles';
+
+	/// fr: 'Le solde et la mensualité de {prenom} s'afficheront ici dès leur mise en service.'
+	String indisponiblePhrase({required Object prenom}) => 'Le solde et la mensualité de ${prenom} s\'afficheront ici dès leur mise en service.';
+
+	/// fr: 'Les finances de {prenom} ne peuvent pas être lues'
+	String erreurTitre({required Object prenom}) => 'Les finances de ${prenom} ne peuvent pas être lues';
+
+	/// fr: 'Aucune finance enregistrée pour {prenom}'
+	String videTitre({required Object prenom}) => 'Aucune finance enregistrée pour ${prenom}';
+
+	/// fr: 'Aucun solde ni aucune mensualité n'est encore rendu pour ce profil. Ils apparaîtront ici après son inscription à une classe.'
+	String get videPhrase => 'Aucun solde ni aucune mensualité n\'est encore rendu pour ce profil. Ils apparaîtront ici après son inscription à une classe.';
 }
 
 // Path: eleveConnexion.profils
@@ -16680,6 +16765,7 @@ extension on Traductions {
 			'ficheEleve.lignes.couleur' => 'Couleur du profil',
 			'ficheEleve.lignes.couleurAucune' => 'Sans couleur',
 			'ficheEleve.lignes.couleurIndisponible' => 'Pas encore disponible',
+			'ficheEleve.lignes.finances' => 'Finances',
 			'ficheEleve.couleur.titre' => 'Couleur du profil',
 			'ficheEleve.couleur.contexte' => ({required Object prenom}) => 'Choisissez la couleur qui distingue ${prenom} des autres profils du foyer. Elle s\'affiche derrière sa photo sur les écrans du foyer. Ce n\'est ni un statut, ni une classe.',
 			'ficheEleve.couleur.menthe' => 'Menthe',
@@ -16769,6 +16855,30 @@ extension on Traductions {
 			'ficheEleve.acces.expireDepuis' => ({required Object date}) => 'Expiré depuis le ${date}',
 			'ficheEleve.acces.expirePhrase' => ({required Object prenom}) => 'Depuis cette date, ${prenom} ne peut plus entrer dans Rewayah.',
 			'ficheEleve.acces.detailIndisponible' => 'Le début de l\'accès et son motif ne s\'affichent pas encore.',
+			'ficheEleve.finances.titre' => 'Finances',
+			'ficheEleve.finances.vueTitre' => 'Vue financière',
+			'ficheEleve.finances.mensualite' => 'Mensualité',
+			'ficheEleve.finances.mensualiteValeur' => ({required Object montant}) => '${montant} / mois',
+			'ficheEleve.finances.detailTitre' => 'Détail de la mensualité',
+			'ficheEleve.finances.tarifEnfant' => 'Tarif enfant',
+			'ficheEleve.finances.tarifAdulte' => 'Tarif adulte',
+			'ficheEleve.finances.remiseRang' => 'Remise familiale',
+			'ficheEleve.finances.prorata' => 'Réduction calendrier',
+			'ficheEleve.finances.avoir' => 'Avoir',
+			'ficheEleve.finances.taxe' => 'Taxe applicable',
+			'ficheEleve.finances.total' => 'Total à financer',
+			'ficheEleve.finances.regulariserTitre' => 'Accès à régulariser',
+			'ficheEleve.finances.aFinancerTitre' => 'Prochaine période à financer',
+			'ficheEleve.finances.expireTitre' => 'Accès expiré',
+			'ficheEleve.finances.manqueEtConservation' => ({required Object montant, required Object date}) => 'Il manque ${montant} pour la prochaine période. La place est conservée jusqu\'au ${date}.',
+			'ficheEleve.finances.sansManque' => 'La prochaine période n\'est pas encore financée.',
+			'ficheEleve.finances.confirmationTitre' => 'Paiement en cours de confirmation',
+			'ficheEleve.finances.confirmationPhrase' => 'Ne payez pas une seconde fois : la période se met à jour dès la confirmation.',
+			'ficheEleve.finances.indisponibleTitre' => 'Les finances ne sont pas encore disponibles',
+			'ficheEleve.finances.indisponiblePhrase' => ({required Object prenom}) => 'Le solde et la mensualité de ${prenom} s\'afficheront ici dès leur mise en service.',
+			'ficheEleve.finances.erreurTitre' => ({required Object prenom}) => 'Les finances de ${prenom} ne peuvent pas être lues',
+			'ficheEleve.finances.videTitre' => ({required Object prenom}) => 'Aucune finance enregistrée pour ${prenom}',
+			'ficheEleve.finances.videPhrase' => 'Aucun solde ni aucune mensualité n\'est encore rendu pour ce profil. Ils apparaîtront ici après son inscription à une classe.',
 			'disponibilites.titre' => 'Quand vos enfants peuvent-ils suivre un cours ?',
 			'disponibilites.titreEnseignant' => 'Quand pouvez-vous donner cours ?',
 			'disponibilites.consigne' => ({required Object prenom}) => 'Touchez les heures possibles pour ${prenom}.',
@@ -16889,6 +16999,8 @@ extension on Traductions {
 			'eleveConnexion.lecteur.erreurPhrase' => 'Réessayez, ou saisissez le code affiché sous le QR.',
 			'eleveConnexion.refus.format' => 'Un code compte six caractères : chiffres de 2 à 9 et lettres, sans I ni O.',
 			'eleveConnexion.refus.inconnuTitre' => 'Code non reconnu',
+			_ => null,
+		} ?? switch (path) {
 			'eleveConnexion.refus.inconnu' => 'Ce code n\'existe pas, ou un code plus récent l\'a remplacé. Vérifiez-le, ou affichez un nouveau code sur l\'appareil du tuteur.',
 			'eleveConnexion.refus.expireTitre' => 'Code expiré',
 			'eleveConnexion.refus.expire' => 'Ce code n\'est plus valable. Affichez un nouveau code sur l\'appareil du tuteur.',
@@ -16914,8 +17026,6 @@ extension on Traductions {
 			'dossiers.file.erreur' => 'Impossible de charger les dossiers.',
 			'dossiers.file.horsLigne' => 'Vous êtes hors ligne. Les dossiers ne peuvent pas être actualisés.',
 			'dossiers.file.accesRefuse' => 'Vous n\'avez pas accès aux dossiers à valider.',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.file.actualisation' => 'Actualisation des dossiers…',
 			'dossiers.file.chargementProlonge' => 'Le chargement prend plus de temps que prévu.',
 			'dossiers.file.suivantsErreur' => 'Impossible de charger les dossiers suivants.',
@@ -17403,6 +17513,8 @@ extension on Traductions {
 			'admin.progression.poserExceptionEnvoyer' => 'Poser l\'exception',
 			'admin.progression.poserExceptionErreur' => ({required Object message}) => 'La pose n\'a pas abouti : ${message}',
 			'admin.progression.clorerExceptionTitre' => ({required Object eleve}) => 'Clore l\'exception de ${eleve}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.progression.clorerExceptionEnvoyer' => 'Clore',
 			'admin.progression.clorerExceptionErreur' => ({required Object message}) => 'La clôture n\'a pas abouti : ${message}',
 			'admin.progression.promouvoirTitre' => ({required Object eleve}) => 'Changer le niveau de ${eleve}',
@@ -17428,8 +17540,6 @@ extension on Traductions {
 			'admin.programmes.creerVersionDepuisPubliee' => 'Créer une nouvelle version à partir de celle-ci',
 			'admin.programmes.creerVersionErreur' => ({required Object message}) => 'La création n\'a pas abouti : ${message}',
 			'admin.programmes.niveauxTitre' => 'Niveaux',
-			_ => null,
-		} ?? switch (path) {
 			'admin.programmes.niveauAucun' => 'Aucun niveau dans cette version',
 			'admin.programmes.niveauAucunDetail' => 'Ajoutez un premier niveau pour commencer à composer cette version.',
 			'admin.programmes.codeTechnique' => ({required Object code}) => 'Code : ${code}',
@@ -17917,6 +18027,8 @@ extension on Traductions {
 			'compte.roleDetail.controller' => 'Observe les séances pour la qualité pédagogique',
 			'compte.roleDetail.teacher' => 'Donne les cours et suit ses créneaux',
 			'compte.roleDetail.guardian' => 'Suit le foyer et ses enfants',
+			_ => null,
+		} ?? switch (path) {
 			'compte.roleDetail.student' => 'Suit ses cours et son Coran',
 			'compte.tuteur.preferences' => 'Préférences',
 			'compte.tuteur.dateLongue' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
@@ -17942,8 +18054,6 @@ extension on Traductions {
 			'compte.tuteur.informations.langueFuseau' => ({required Object ville}) => 'Français · ${ville}',
 			'compte.tuteur.informations.consulter' => 'Consulter mes informations',
 			'compte.tuteur.foyer.titre' => 'Mon foyer',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.foyer.aucun' => 'Aucun profil élève pour le moment',
 			'compte.tuteur.foyer.un' => '1 profil élève',
 			'compte.tuteur.foyer.plusieurs' => ({required Object nombre}) => '${nombre} profils élèves',
@@ -18431,6 +18541,8 @@ extension on Traductions {
 			'classe.pageCatalogue.etat.listeAttente' => 'Liste d\'attente',
 			'classe.pageCatalogue.choisir' => 'Choisir cette classe',
 			'classe.pageCatalogue.rejoindreAttente' => 'Rejoindre la liste d\'attente',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageCatalogue.precisionsTitre' => 'Avant de choisir',
 			'classe.pageCatalogue.precisionEnseignant' => 'Une classe garde le même enseignant pour toutes ses séances.',
 			'classe.pageCatalogue.precisionPlaces' => 'Les places affichées sont celles de l\'académie au moment de la lecture.',
@@ -18456,8 +18568,6 @@ extension on Traductions {
 			'classe.pageCatalogue.resultat.retourAccueil' => 'Retour à l\'accueil',
 			'enseignant.classes.titre' => 'Classes',
 			'enseignant.classes.vide' => 'Aucune Classe attribuée',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.classes.videDetail' => 'Les Classes confirmées apparaîtront ici.',
 			'enseignant.classes.erreur' => 'Vos Classes n\'ont pas pu être lues. Réessayez dans un instant.',
 			'enseignant.classes.chargement' => 'Chargement de vos Classes.',
@@ -18945,6 +19055,8 @@ extension on Traductions {
 			'controleur.complement.precisionAide' => 'Quand un détail manque · il complète le rapport, sans rien y changer',
 			'controleur.complement.correction' => 'Correction',
 			'controleur.complement.correctionAide' => 'Quand une information du rapport est inexacte · l\'original reste lisible, la correction s\'affiche dessous',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.complement.faitNouveau' => 'Information nouvelle',
 			'controleur.complement.faitNouveauAide' => 'Quand vous l\'apprenez après la visite · il est daté du jour de l\'ajout',
 			'controleur.complement.questionTexte' => 'Qu\'ajoutez-vous au rapport ?',
@@ -18970,8 +19082,6 @@ extension on Traductions {
 			'controleur.compteRendu.faits' => 'Relevé automatique de la séance',
 			'controleur.compteRendu.faitsReplies' => 'Relevé automatique de la séance, replié',
 			'controleur.compteRendu.faitsDeplies' => 'Relevé automatique de la séance, déplié',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.compteRendu.faitsChargement' => 'Lecture du relevé automatique de la séance : heures, élèves présents, reconnexions.',
 			'controleur.compteRendu.faitsAbsents' => 'Le relevé automatique de la séance (heures, élèves présents, reconnexions) n\'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Vous pouvez répondre sans lui ; il sera joint au rapport dès sa réception.',
 			'controleur.compteRendu.cleHoraire' => 'Heure prévue',
@@ -19459,6 +19569,8 @@ extension on Traductions {
 			'tc.observation.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
 			'tc.observation.refus.politiqueDesactivee' => 'L\'observation est désactivée pour cette classe.',
 			'tc.observation.refus.quotaVisites' => 'Vous avez déjà utilisé vos visites pour cette séance.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.refus.tempsEpuise' => 'Votre temps d\'observation est épuisé pour cette séance.',
 			'tc.observation.refus.lienTuteur' => 'Vous n\'êtes rattaché à aucun élève de cette séance.',
 			'tc.observation.refus.seanceNonActive' => 'La séance n\'est pas en cours.',
@@ -19484,8 +19596,6 @@ extension on Traductions {
 			'tc.observation.visite.sonInterrompu' => 'Son interrompu',
 			'tc.observation.visite.agrandir' => 'Agrandir',
 			'tc.observation.visite.reduire' => 'Réduire',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.visite.cameraFermee' => 'Caméra fermée',
 			'tc.observation.visite.pasEncoreLa' => 'Pas encore dans la salle',
 			'tc.observation.visite.parle' => ({required Object nom}) => '${nom} parle',

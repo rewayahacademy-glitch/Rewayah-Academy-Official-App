@@ -6,6 +6,7 @@ import '../../core/appairage/service_appairage.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_accents_profils.dart';
 import '../../core/domain/enums.dart';
+import '../../core/finance/finances_profil.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -23,8 +24,10 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/identite_profil.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pastille_financiere.dart';
 import '../../core/widgets/selecteur_couleur_profil.dart';
 import '../../core/widgets/skeleton.dart';
+import 'finances_foyer.dart';
 import 'foyer_page.dart';
 import 'ligne_membre.dart';
 import 'photo_eleve.dart';
@@ -240,9 +243,9 @@ String libelleInterface(InterfaceMode mode) => switch (mode) {
 /// Onglet actif : Foyer. Aucun age affiche : il n'est pas enregistre
 /// (DB-ADM-05).
 ///
-/// Place reservee, rien de construit : le futur solde par eleve (decision du
-/// directeur, section 1 ter point 9) prendra une ligne de ce groupe ou un
-/// groupe sous les appareils, sans refonte.
+/// Le solde par eleve (decision du directeur, section 1 ter point 9) prend
+/// la ligne « Finances » de ce groupe (FI-6a), seulement quand une source
+/// rend les finances du foyer.
 class FicheElevePage extends ConsumerWidget {
   /// Cree la page.
   const FicheElevePage({
@@ -347,6 +350,16 @@ class _ContenuFiche extends ConsumerWidget {
             legende: statutAcces(profil, maintenant),
             onPress: () => aller(sousPage('acces')),
           ),
+          // FI-6a : la finance du profil, seulement quand une source la
+          // rend (jamais en production ni au second adulte, lecon 15).
+          if (legendeFinances(ref.watch(financesFoyerProvider), profil.eleveId)
+              case final ({String? legende}) finances)
+            LigneRubrique(
+              icone: AppIcons.finance,
+              libelle: t.ficheEleve.lignes.finances,
+              legende: finances.legende,
+              onPress: () => aller(sousPage('finances')),
+            ),
         ],
       ),
     );
@@ -459,4 +472,25 @@ String legendeCouleur(
     final AccentProfil a => libelleAccent(a),
     null => t.ficheEleve.lignes.couleurAucune,
   };
+}
+
+/// La ligne « Finances » de la fiche : `null` (aucune ligne) tant que rien
+/// n'est lu et quand la source n'existe pas (`CapaciteIndisponible` :
+/// production, second adulte) ; sinon sa legende, l'etat financier lu, ou
+/// `null` quand la lecture a echoue ou ne rend pas ce profil (la sous-page
+/// dit pourquoi).
+({String? legende})? legendeFinances(
+  AsyncValue<FinancesFoyer> lecture,
+  String profilId,
+) {
+  if (lecture.hasError) {
+    return lecture.error is CapaciteIndisponible ? null : (legende: null);
+  }
+  if (!lecture.hasValue) return null;
+  final FinancesProfil? finance = financesParProfil(lecture)[profilId];
+  return (
+    legende: finance == null
+        ? null
+        : PastilleFinanciere.libelleDe(finance.etat),
+  );
 }
