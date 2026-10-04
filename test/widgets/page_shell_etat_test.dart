@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart'
+    show FlutterMemoryAllocations, ObjectCreated, ObjectDisposed, ObjectEvent;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -166,5 +168,52 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
     expect(position().pixels, cible);
+  });
+
+  // DEFIL-1 : chaque bascule recree le defileur de `PageShell`. L'ancien est
+  // libere apres l'image, le dernier a la destruction de la page. Le suivi
+  // des allocations de Flutter (celui du suivi des fuites, sans dependance
+  // de plus) compte chaque ScrollController cree et libere.
+  testWidgets('chaque defileur cree a la bascule est libere', (
+    WidgetTester tester,
+  ) async {
+    final Set<Object> vivants = Set<Object>.identity();
+    int crees = 0;
+    void suivre(ObjectEvent e) {
+      if (e.object is! ScrollController) {
+        return;
+      }
+      if (e is ObjectCreated) {
+        crees++;
+        vivants.add(e.object);
+      } else if (e is ObjectDisposed) {
+        vivants.remove(e.object);
+      }
+    }
+
+    FlutterMemoryAllocations.instance.addListener(suivre);
+    addTearDown(() => FlutterMemoryAllocations.instance.removeListener(suivre));
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(320, 420);
+    addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+
+    await tester.pumpWidget(
+      hotePage(AProposForfaitFamillePage(onRetour: () {})),
+    );
+    await tester.pumpAndSettle();
+    final int avantBascules = crees;
+    tester.view.physicalSize = const Size(320, 300);
+    await tester.pumpAndSettle();
+    tester.view.physicalSize = const Size(320, 420);
+    await tester.pumpAndSettle();
+    // Deux bascules : deux nouveaux defileurs, les anciens deja liberes.
+    expect(crees - avantBascules, greaterThanOrEqualTo(2));
+
+    await tester.pumpWidget(const SizedBox());
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(vivants, isEmpty, reason: 'ScrollController non libere');
   });
 }

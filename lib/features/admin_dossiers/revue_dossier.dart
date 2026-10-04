@@ -27,8 +27,10 @@ import 'visionneuse_piece.dart';
 /// lecture : titre, statut, identite, piece, verifications, accords, puis
 /// decision et ses raisons.
 ///
-/// Les DECISIONS restent jusqu'a AD-8 sur `ServiceValidation.decider` :
-/// `decider_dossier` en production, le pont de demonstration sinon.
+/// Les DECISIONS passent par le port : `decider_dossier`
+/// (`ServiceValidation.decider`) A PARTIR DE BR-1, le pont de demonstration
+/// sinon. En production aujourd'hui, la decision est fermee (AD-M3-PROD,
+/// voir `surchargeRevueDossiersProduction`).
 class RevueDossier extends ConsumerStatefulWidget {
   /// Cree la revue. A cle par dossier et revision : les cases repartent
   /// vides a chaque dossier et a chaque nouvelle revision.

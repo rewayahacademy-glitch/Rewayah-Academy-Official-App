@@ -70,6 +70,9 @@ const String valeurDemoTuteur = 'tuteur';
 bool environnementAutoriseDemo(
   String environnement, {
   bool declare = Env.environnementDeclare,
+  // DEMO-ENV-1-M1 : ce branchement n'est garde que par la relecture. En
+  // debogage et sous `flutter test`, kReleaseMode vaut toujours faux : un
+  // test l'affirmant serait une tautologie. `declare` est, lui, teste.
   bool publication = kReleaseMode,
 }) {
   if (publication && !declare) {

@@ -9,6 +9,7 @@ import 'package:rewayah_academy/core/capacites/port_catalogue_classes.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_politique_revue_kyc.dart';
 import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
+import 'package:rewayah_academy/core/config/env.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/offres/service_offres.dart';
@@ -106,6 +107,18 @@ void main() {
           publication: true,
         ),
         isFalse,
+      );
+    });
+
+    // DEMO-ENV-1-M1 : le branchement reel de la garde. `flutter test` (poste
+    // et CI) compile sans `--dart-define` : la valeur par defaut injectee dans
+    // `environnementAutoriseDemo` doit dire « non declare ». Le second
+    // branchement, sur kReleaseMode, n'est garde que par la relecture.
+    test('sans --dart-define, ENVIRONNEMENT est non declare', () {
+      expect(
+        Env.environnementDeclare,
+        isFalse,
+        reason: 'a lancer sans --dart-define=ENVIRONNEMENT',
       );
     });
   });
