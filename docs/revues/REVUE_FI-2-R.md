@@ -98,3 +98,23 @@ La suite complète de `f58645d1` avait déjà été mesurée par cette session p
 1. Lever M1 : la flèche au bout de chaque carte du Foyer, à toute largeur, en LTR et en RTL. Un test qui la mesure, et les captures 1440 refaites.
 2. Dans la même correction, car dans les mêmes fichiers : m1 et m2.
 3. Revue FI-2-CORR-R par une autre session que l'auteur de la correction.
+
+## Suite : FI-2-CORR (même session, 04/10)
+
+La correction de M1, m1 et m2 est livrée en patch, `docs/revues/FI-2-CORR.patch`. Elle s'applique **après** `FI-1c-CORR.patch`, sur `ui/finance-v1` @ `f58645d1`. L'application des deux patchs dans cet ordre a été vérifiée : le résultat est identique au commit local `bdac0bb7`.
+
+```
+git fetch origin claude/collaborative-task-tracking-r47ieu
+git show origin/claude/collaborative-task-tracking-r47ieu:docs/revues/FI-1c-CORR.patch | git am
+git show origin/claude/collaborative-task-tracking-r47ieu:docs/revues/FI-2-CORR.patch | git am
+```
+
+- **M1.** `AvatarNom.texteEtire`, défaut `false`, met le texte en `FlexFit.tight` : `fin` va au bout de la rangée. Seule `CarteMembre` l'active, et les quatre autres appelants de `fin:` sont inchangés.
+- **m1.** `legendeCouleur` donne « Pas encore disponible » sur `CapaciteIndisponible`.
+- **m2.** `prenomsJoints` donne « Yusuf », « Yusuf et Mariam », « Yusuf, Mariam et Ibrahim ». La phrase `dejaPrise` devient « la couleur ne distinguerait plus ces profils », juste à partir de deux profils.
+- **Tests.**
+  - `test/features/foyer/carte_membre_test.dart` (9) : carte de 358, 896 et 1312 px en LTR et RTL, légende, prénoms.
+  - `fiche_eleve_test.dart` (+3) : le Foyer réel à 390, 1024 et 1440 px, avec la flèche à la marge de la carte près. Le test « production » attend maintenant « Pas encore disponible ».
+- **Contre-épreuve.** Sans `texteEtire`, les 6 cas larges échouent (896, 1312 dans les deux sens, plus Foyer 1024 et 1440), et les cas à 390 px restent verts.
+- **Mesures.** analyze 0. Suite par dossiers **5368 / 0**, soit 5356 + 12 tests nouveaux. Jetons inchangés (39).
+- **Captures refaites.** Le Foyer et la fiche, à 390 et 1440 px, clair et sombre, plus 200 % : `docs/revues/captures/FI-2-CORR/`. À 1440, la flèche est au bout de chaque carte.
