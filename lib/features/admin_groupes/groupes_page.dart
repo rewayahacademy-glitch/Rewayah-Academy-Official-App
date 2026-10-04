@@ -189,6 +189,9 @@ class _Corps extends StatelessWidget {
                 ))
                   ColonneDonnees<GroupeAdmin>(
                     titre: t.admin.groupes.colonnePays,
+                    // Sa propre ligne en carte (sous 1200), avec le drapeau :
+                    // la ligne secondaire jointe ne rendrait que du texte.
+                    role: RoleColonne.aPart,
                     texte: (GroupeAdmin g) =>
                         PaysEnseignant.nomAffichable(g.teacherPays) ?? '',
                     rendu: (BuildContext _, GroupeAdmin g) =>

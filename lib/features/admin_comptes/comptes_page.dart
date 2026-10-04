@@ -289,6 +289,9 @@ class _Corps extends StatelessWidget {
                 ))
                   ColonneDonnees<CompteAdmin>(
                     titre: t.admin.comptes.colonnePays,
+                    // Sa propre ligne en carte (sous 1200), avec le drapeau :
+                    // la ligne secondaire jointe ne rendrait que du texte.
+                    role: RoleColonne.aPart,
                     texte: (CompteAdmin c) =>
                         PaysEnseignant.nomAffichable(c.paysEnseignant) ?? '',
                     rendu: (BuildContext _, CompteAdmin c) =>
