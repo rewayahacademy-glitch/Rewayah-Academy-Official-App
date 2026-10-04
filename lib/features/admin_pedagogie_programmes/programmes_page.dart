@@ -5,6 +5,7 @@ import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_programme.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -55,10 +56,18 @@ class _ProgrammesPageEtat extends ConsumerState<ProgrammesPage> {
       versionsProgrammeProvider,
     );
 
+    // A texte agrandi (au-dela de 130 %, meme seuil que PageShell) hors desktop,
+    // le haut de l'ecran (versions, actions) prend plus que la vue : la page
+    // defile alors d'un bloc et les niveaux prennent leur hauteur, au lieu de
+    // deborder de 128 px a 320 x 700 en texte x2 (FORM-MINEURS).
+    final bool integree =
+        MediaQuery.textScalerOf(context).scale(1) > 1.3 &&
+        AppGabarit.de(context) != Gabarit.desktop;
+
     return PageShell(
       titre: t.admin.programmes.titre,
       entete: SousNavigationDomaine(onglets: ongletsPedagogie(), indexActif: 3),
-      defilante: false,
+      defilante: integree,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -80,8 +89,10 @@ class _ProgrammesPageEtat extends ConsumerState<ProgrammesPage> {
                       icone: AppIcons.rienAAfficher,
                       registre: RegistreVide.subi,
                     )
-                  : Expanded(
+                  : _SelonDefilement(
+                      integree: integree,
                       child: _Corps(
+                        integree: integree,
                         versions: versions.requireValue,
                         versionId: _versionId ?? versions.requireValue.first.id,
                         onSelectionner: (String id) =>
@@ -135,6 +146,7 @@ class _ProgrammesPageEtat extends ConsumerState<ProgrammesPage> {
 /// Le selecteur de version, puis les niveaux de la version choisie.
 class _Corps extends StatelessWidget {
   const _Corps({
+    required this.integree,
     required this.versions,
     required this.versionId,
     required this.onSelectionner,
@@ -145,6 +157,7 @@ class _Corps extends StatelessWidget {
     required this.onPublier,
   });
 
+  final bool integree;
   final List<VersionProgramme> versions;
   final String versionId;
   final void Function(String id) onSelectionner;
@@ -230,8 +243,10 @@ class _Corps extends StatelessWidget {
           ],
         ),
         Ecart.vLg,
-        Expanded(
+        _SelonDefilement(
+          integree: integree,
           child: _Niveaux(
+            integree: integree,
             version: selectionnee,
             onModifier: (NiveauProgramme n) =>
                 onModifierNiveau(selectionnee, n),
@@ -244,15 +259,30 @@ class _Corps extends StatelessWidget {
   }
 }
 
+/// Remplit la hauteur bornee de la page, ou prend la sienne quand la page
+/// defile d'un bloc.
+class _SelonDefilement extends StatelessWidget {
+  const _SelonDefilement({required this.integree, required this.child});
+
+  final bool integree;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) =>
+      integree ? child : Expanded(child: child);
+}
+
 /// Les niveaux de la version selectionnee, groupes par cycle a l'affichage
 /// (le tri vient deja de la base par `ordre`).
 class _Niveaux extends ConsumerWidget {
   const _Niveaux({
+    required this.integree,
     required this.version,
     required this.onModifier,
     required this.onSupprimer,
   });
 
+  final bool integree;
   final VersionProgramme version;
   final void Function(NiveauProgramme niveau) onModifier;
   final void Function(NiveauProgramme niveau) onSupprimer;
@@ -273,6 +303,7 @@ class _Niveaux extends ConsumerWidget {
                 registre: RegistreVide.subi,
               )
             : DataCollection<NiveauProgramme>(
+                integree: integree,
                 lignes: niveaux.requireValue,
                 cle: (NiveauProgramme n) => ValueKey<String>(n.id),
                 colonnes: <ColonneDonnees<NiveauProgramme>>[

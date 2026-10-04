@@ -21,6 +21,7 @@ import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
+import '../../core/widgets/selecteur_personne.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 
@@ -62,7 +63,6 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
   static const List<int> _durees = <int>[1, 4, 8, 24];
 
   final TextEditingController _libelle = TextEditingController();
-  final TextEditingController _recherche = TextEditingController();
 
   List<JetonAgent> _jetons = <JetonAgent>[];
   List<PersonneObservable> _personnes = <PersonneObservable>[];
@@ -92,7 +92,6 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
   @override
   void dispose() {
     _libelle.dispose();
-    _recherche.dispose();
     super.dispose();
   }
 
@@ -225,25 +224,6 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
     setState(() => _message = t.admin.agents.copie);
   }
 
-  /// Les personnes que la recherche laisse passer.
-  ///
-  /// Le filtre porte sur le prenom, le nom **et l'identifiant immuable** : une
-  /// administration qui a sous les yeux un identifiant dans un journal doit
-  /// pouvoir le coller ici sans le traduire en nom.
-  List<PersonneObservable> get _proposees {
-    final String q = _recherche.text.trim().toLowerCase();
-    if (q.isEmpty) {
-      return _personnes;
-    }
-    return _personnes
-        .where(
-          (PersonneObservable p) =>
-              p.libelle.toLowerCase().contains(q) ||
-              p.identifiant.toLowerCase().contains(q),
-        )
-        .toList(growable: false);
-  }
-
   @override
   Widget build(BuildContext context) {
     return PageShell(
@@ -309,27 +289,31 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
           ),
           Ecart.vXxl,
 
-          Text(t.admin.agents.qui, style: textes.titleSmall),
-          Ecart.vXs,
-          Text(t.admin.agents.quiAide, style: textes.bodySmall),
-          Ecart.vMd,
-          TextField(
-            controller: _recherche,
-            onChanged: (String _) => setState(() {}),
-            decoration: InputDecoration(
-              // Une indication sur plusieurs lignes, pas une etiquette qui se
-              // coupe a 320 en texte x2 (FORM-MINEURS).
-              hintText: t.admin.agents.chercher,
-              hintMaxLines: 6,
-              prefixIcon: Icon(AppIcons.dossiers.repos),
-            ),
-          ),
-          Ecart.vMd,
-          _ChoixPersonne(
-            personnes: _proposees,
-            choisie: _choisie,
-            onChoix: (PersonneObservable p) => setState(() {
-              _choisie = p;
+          // Le meme selecteur que les autres formulaires (K-10) : titre,
+          // recherche sur le nom et l'identifiant, cartes de choix.
+          SelecteurPersonne(
+            sorte: SortePersonne.observable,
+            personnes: _erreur != null
+                ? AsyncValue<List<PersonneProposee>>.error(
+                    _erreur!,
+                    StackTrace.empty,
+                  )
+                : _chargement
+                ? const AsyncValue<List<PersonneProposee>>.loading()
+                : AsyncValue<List<PersonneProposee>>.data(<PersonneProposee>[
+                    for (final PersonneObservable p in _personnes)
+                      PersonneProposee(
+                        id: p.id,
+                        nom: p.libelleNom,
+                        identifiant: p.identifiant,
+                      ),
+                  ]),
+            choisie: _choisie?.id,
+            onReessayer: () => unawaited(_charger()),
+            onChoix: (PersonneProposee choisie) => setState(() {
+              _choisie = _personnes.firstWhere(
+                (PersonneObservable p) => p.id == choisie.id,
+              );
               _erreurFormulaire = null;
               _preremplir();
             }),
@@ -554,42 +538,6 @@ class _PourraNePourraPas extends StatelessWidget {
             ],
           ),
         ),
-      ],
-    );
-  }
-}
-
-/// La liste des personnes observables.
-class _ChoixPersonne extends StatelessWidget {
-  const _ChoixPersonne({
-    required this.personnes,
-    required this.choisie,
-    required this.onChoix,
-  });
-
-  final List<PersonneObservable> personnes;
-  final PersonneObservable? choisie;
-  final void Function(PersonneObservable personne) onChoix;
-
-  @override
-  Widget build(BuildContext context) {
-    if (personnes.isEmpty) {
-      return EmptyState(
-        message: t.admin.agents.quiVide,
-        registre: RegistreVide.subi,
-        icone: AppIcons.rienAAfficher,
-      );
-    }
-    return Wrap(
-      spacing: AppSpacing.sm,
-      runSpacing: AppSpacing.sm,
-      children: <Widget>[
-        for (final PersonneObservable p in personnes.take(40))
-          FilterPill(
-            libelle: p.libelle,
-            retenue: choisie?.id == p.id,
-            onPress: () => onChoix(p),
-          ),
       ],
     );
   }

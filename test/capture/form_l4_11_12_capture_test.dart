@@ -106,7 +106,7 @@ Future<void> _ouvrir(
     case _Ecran.depot:
       await toucher(find.text(t.kyc.autrePiece));
     case _Ecran.jeton:
-      await toucher(find.text('Maryam Sow (ELV-MS-010)'));
+      await toucher(find.text('Maryam Sow'));
       await tester.ensureVisible(find.byType(TextField).first);
       await stabiliser(tester);
     case _Ecran.recuperation:

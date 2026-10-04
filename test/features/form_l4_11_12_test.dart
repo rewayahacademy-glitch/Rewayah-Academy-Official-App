@@ -217,7 +217,7 @@ void main() {
       await _ouvrirAgents(tester);
       expect(_libelleJeton(tester), isEmpty);
 
-      await _presser(tester, _personne('Maryam Sow (ELV-MS-010)'));
+      await _presser(tester, _personne('Maryam Sow'));
       expect(
         _libelleJeton(tester),
         'Observation de Maryam, le 04/10/2026, 8 h',
@@ -240,7 +240,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final _AgentsQuiRetient agents = await _ouvrirAgents(tester);
-      await _presser(tester, _personne('Maryam Sow (ELV-MS-010)'));
+      await _presser(tester, _personne('Maryam Sow'));
 
       await tester.enterText(
         find.byType(TextField).first,
@@ -261,7 +261,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final _AgentsQuiRetient agents = await _ouvrirAgents(tester);
-      await _presser(tester, _personne('Maryam Sow (ELV-MS-010)'));
+      await _presser(tester, _personne('Maryam Sow'));
       await _presser(tester, find.text(t.admin.agents.emettre));
 
       expect(

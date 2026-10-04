@@ -102,6 +102,7 @@ class DataCollection<T> extends StatelessWidget {
     this.piedDePage,
     this.cle,
     this.onSelectionner,
+    this.integree = false,
   });
 
   /// Les colonnes, dans l'ordre d'affichage.
@@ -122,6 +123,12 @@ class DataCollection<T> extends StatelessWidget {
   /// la collection en pure lecture, comme avant l'ajout de ce parametre.
   final void Function(T ligne)? onSelectionner;
 
+  /// Vrai quand la page qui porte la collection defile elle-meme (texte agrandi,
+  /// vue basse) : les cartes prennent leur hauteur et defilent avec la page, au
+  /// lieu de remplir une hauteur bornee. Sans effet en tableau (desktop), qui
+  /// borne toujours sa hauteur.
+  final bool integree;
+
   @override
   Widget build(BuildContext context) {
     final bool tableau = AppGabarit.de(context) == Gabarit.desktop;
@@ -132,6 +139,7 @@ class DataCollection<T> extends StatelessWidget {
         piedDePage: piedDePage,
         cle: cle,
         espacement: AppSpacing.md,
+        integree: integree,
         constructeur: (BuildContext contexte, T ligne) => _Carte<T>(
           colonnes: colonnes,
           ligne: ligne,
@@ -187,8 +195,10 @@ class _Defilement<T> extends StatelessWidget {
     required this.espacement,
     this.piedDePage,
     this.cle,
+    this.integree = false,
   });
 
+  final bool integree;
   final List<T> lignes;
   final Widget Function(BuildContext context, T ligne) constructeur;
   final double espacement;
@@ -200,6 +210,8 @@ class _Defilement<T> extends StatelessWidget {
     final int total = lignes.length + (piedDePage == null ? 0 : 1);
 
     return ListView.builder(
+      shrinkWrap: integree,
+      physics: integree ? const NeverScrollableScrollPhysics() : null,
       itemCount: total,
       itemBuilder: (BuildContext contexte, int index) {
         if (index >= lignes.length) {

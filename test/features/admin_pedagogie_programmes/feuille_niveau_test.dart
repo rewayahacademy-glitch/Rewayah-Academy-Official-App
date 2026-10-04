@@ -7,6 +7,7 @@ import 'package:rewayah_academy/core/widgets/champ_etiquete.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_programmes/programmes_page.dart';
 
+import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/harnais.dart';
 
 /// Un service de programme en memoire : une version brouillon, deux cycles.
@@ -161,6 +162,7 @@ Future<void> _envoyer(WidgetTester tester, String libelle) async {
 
 /// FORM-L5 : cycle en puces, ordre deduit, code genere depuis le nom.
 void main() {
+  setUpAll(chargerPolicesDuDepot);
   setUp(() => LocaleSettings.setLocaleSync(AppLocale.fr));
 
   test('codeDepuisNom : minuscules, sans accents, tirets', () {
@@ -352,6 +354,35 @@ void main() {
       expect(service.ajouts, isEmpty);
     });
   }
+
+  testWidgets('320 x 700 en texte x2 : la page defile d\'un bloc, sans '
+      'deborder, et les niveaux restent atteignables', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(320, 700);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      hote(
+        Builder(
+          builder: (BuildContext contexte) => MediaQuery(
+            data: MediaQuery.of(contexte)
+                .copyWith(textScaler: const TextScaler.linear(2)),
+            child: const ProgrammesPage(),
+          ),
+        ),
+        surcharges: <Override>[
+          serviceProgrammeProvider.overrideWithValue(_Faux()),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await tester.dragFrom(const Offset(160, 600), const Offset(0, -1500));
+    await tester.pumpAndSettle();
+    expect(find.text('Madd'), findsWidgets);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('modification : le cycle du niveau est retenu, changer de '
       'cycle rededuit l ordre sans compter le niveau lui-meme', (

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart'
     show AuthException, AuthRetryableFetchException;
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/auth/service_auth.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
@@ -317,7 +318,10 @@ class _Saisie extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(t.connexion.recuperation.titre, style: textes.headlineMedium),
+        TexteSansCoupure(
+          t.connexion.recuperation.titre,
+          style: textes.headlineMedium,
+        ),
         Ecart.vMd,
         if (motif != null) ...<Widget>[
           Semantics(
@@ -415,7 +419,7 @@ class _Envoye extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(
+        TexteSansCoupure(
           t.connexion.recuperation.envoyeTitre,
           style: textes.headlineMedium,
         ),

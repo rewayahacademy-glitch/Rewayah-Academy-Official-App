@@ -2474,11 +2474,20 @@ class Traductions$commun$selecteurPersonne$fr {
 	/// fr: 'Choisissez l'enseignant dans la liste. Seuls les comptes enseignants actifs y figurent : un enseignant dont le dossier attend sa validation ne peut pas encore recevoir de classe.'
 	String get contexteEnseignant => 'Choisissez l\'enseignant dans la liste. Seuls les comptes enseignants actifs y figurent : un enseignant dont le dossier attend sa validation ne peut pas encore recevoir de classe.';
 
+	/// fr: 'Qui l'agent observe'
+	String get titreObservable => 'Qui l\'agent observe';
+
+	/// fr: 'L'agent verra exactement l'écran de cette personne, et son parcours sera le sien.'
+	String get contexteObservable => 'L\'agent verra exactement l\'écran de cette personne, et son parcours sera le sien.';
+
 	/// fr: 'Chercher un élève par son nom ou son identifiant'
 	String get rechercheEleve => 'Chercher un élève par son nom ou son identifiant';
 
 	/// fr: 'Chercher un enseignant par son nom ou son identifiant'
 	String get rechercheEnseignant => 'Chercher un enseignant par son nom ou son identifiant';
+
+	/// fr: 'Chercher un nom ou un identifiant'
+	String get rechercheObservable => 'Chercher un nom ou un identifiant';
 
 	/// fr: 'Aucun compte élève actif'
 	String get videEleve => 'Aucun compte élève actif';
@@ -2492,11 +2501,20 @@ class Traductions$commun$selecteurPersonne$fr {
 	/// fr: 'Aucun enseignant ne peut être choisi pour l'instant. Validez d'abord les dossiers en attente dans Personnes > Comptes, puis revenez ici.'
 	String get videEnseignantDetail => 'Aucun enseignant ne peut être choisi pour l\'instant. Validez d\'abord les dossiers en attente dans Personnes > Comptes, puis revenez ici.';
 
+	/// fr: 'Aucune personne à observer'
+	String get videObservable => 'Aucune personne à observer';
+
+	/// fr: 'Aucun compte ne peut être observé pour l'instant. Validez d'abord les comptes en attente dans Personnes > Comptes, puis revenez ici.'
+	String get videObservableDetail => 'Aucun compte ne peut être observé pour l\'instant. Validez d\'abord les comptes en attente dans Personnes > Comptes, puis revenez ici.';
+
 	/// fr: 'La liste des élèves n'a pas pu être lue'
 	String get erreurEleveTitre => 'La liste des élèves n\'a pas pu être lue';
 
 	/// fr: 'La liste des enseignants n'a pas pu être lue'
 	String get erreurEnseignantTitre => 'La liste des enseignants n\'a pas pu être lue';
+
+	/// fr: 'La liste des personnes n'a pas pu être lue'
+	String get erreurObservableTitre => 'La liste des personnes n\'a pas pu être lue';
 
 	/// fr: 'Cause probable : la connexion au serveur s'est interrompue (non confirmé). Réessayez dans un instant.'
 	String get erreurDetail => 'Cause probable : la connexion au serveur s\'est interrompue (non confirmé). Réessayez dans un instant.';
@@ -15549,14 +15567,20 @@ extension on Traductions {
 			'commun.selecteurPersonne.titreEnseignant' => 'Enseignant',
 			'commun.selecteurPersonne.contexteEleve' => 'Choisissez l\'élève dans la liste. Seuls les comptes élèves actifs y figurent : un compte encore en attente de validation ne peut pas être choisi.',
 			'commun.selecteurPersonne.contexteEnseignant' => 'Choisissez l\'enseignant dans la liste. Seuls les comptes enseignants actifs y figurent : un enseignant dont le dossier attend sa validation ne peut pas encore recevoir de classe.',
+			'commun.selecteurPersonne.titreObservable' => 'Qui l\'agent observe',
+			'commun.selecteurPersonne.contexteObservable' => 'L\'agent verra exactement l\'écran de cette personne, et son parcours sera le sien.',
 			'commun.selecteurPersonne.rechercheEleve' => 'Chercher un élève par son nom ou son identifiant',
 			'commun.selecteurPersonne.rechercheEnseignant' => 'Chercher un enseignant par son nom ou son identifiant',
+			'commun.selecteurPersonne.rechercheObservable' => 'Chercher un nom ou un identifiant',
 			'commun.selecteurPersonne.videEleve' => 'Aucun compte élève actif',
 			'commun.selecteurPersonne.videEleveDetail' => 'Aucun élève ne peut être choisi pour l\'instant. Validez d\'abord les inscriptions en attente dans Personnes > Comptes, puis revenez ici.',
 			'commun.selecteurPersonne.videEnseignant' => 'Aucun compte enseignant actif',
 			'commun.selecteurPersonne.videEnseignantDetail' => 'Aucun enseignant ne peut être choisi pour l\'instant. Validez d\'abord les dossiers en attente dans Personnes > Comptes, puis revenez ici.',
+			'commun.selecteurPersonne.videObservable' => 'Aucune personne à observer',
+			'commun.selecteurPersonne.videObservableDetail' => 'Aucun compte ne peut être observé pour l\'instant. Validez d\'abord les comptes en attente dans Personnes > Comptes, puis revenez ici.',
 			'commun.selecteurPersonne.erreurEleveTitre' => 'La liste des élèves n\'a pas pu être lue',
 			'commun.selecteurPersonne.erreurEnseignantTitre' => 'La liste des enseignants n\'a pas pu être lue',
+			'commun.selecteurPersonne.erreurObservableTitre' => 'La liste des personnes n\'a pas pu être lue',
 			'commun.selecteurPersonne.erreurDetail' => 'Cause probable : la connexion au serveur s\'est interrompue (non confirmé). Réessayez dans un instant.',
 			'commun.selecteurPersonne.aucunResultat' => ({required Object recherche}) => 'Personne ne correspond à « ${recherche} »',
 			'commun.selecteurPersonne.aucunResultatDetail' => 'Vérifiez l\'orthographe, ou cherchez une partie du nom ou de l\'identifiant.',
@@ -16036,14 +16060,14 @@ extension on Traductions {
 			'inscription.genreHomme' => 'Un homme',
 			'inscription.genreFemme' => 'Une femme',
 			'inscription.genreRaison' => 'Cette réponse ne sert qu\'à confier votre pièce d\'identité à un membre du personnel du même genre.',
+			_ => null,
+		} ?? switch (path) {
 			'inscription.recapitulatif' => 'Avant de continuer',
 			'inscription.creer' => 'Créer mon compte',
 			'inscription.erreur' => 'La création du compte n\'a pas abouti. Réessayez dans un instant.',
 			'inscription.champRequis' => 'Cette réponse est nécessaire pour continuer.',
 			'inscription.etapeCourte' => ({required Object n, required Object total}) => '${n} sur ${total}',
 			'inscription.retourEtape' => 'Revenir à l\'étape précédente',
-			_ => null,
-		} ?? switch (path) {
 			'inscription.seDeconnecter' => 'Se déconnecter',
 			'inscription.modifier' => 'Modifier',
 			'inscription.reessayer' => 'Réessayer',
@@ -16550,14 +16574,14 @@ extension on Traductions {
 			'dossiers.aucun' => 'Aucun dossier n\'attend de validation.',
 			'dossiers.aucunDetail' => 'Les nouveaux dossiers apparaîtront ici lorsqu\'ils seront prêts.',
 			'dossiers.file.chargement' => 'Chargement des dossiers…',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.file.erreur' => 'Impossible de charger les dossiers.',
 			'dossiers.file.horsLigne' => 'Vous êtes hors ligne. Les dossiers ne peuvent pas être actualisés.',
 			'dossiers.file.accesRefuse' => 'Vous n\'avez pas accès aux dossiers à valider.',
 			'dossiers.file.actualisation' => 'Actualisation des dossiers…',
 			'dossiers.file.chargementProlonge' => 'Le chargement prend plus de temps que prévu.',
 			'dossiers.file.suivantsErreur' => 'Impossible de charger les dossiers suivants.',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.file.indisponible' => 'La consultation des dossiers est indisponible pour le moment.',
 			'dossiers.file.selectionRetiree' => 'Ce dossier n’est plus disponible dans la file.',
 			'dossiers.file.actualiser' => 'Actualiser les dossiers',
@@ -17064,14 +17088,14 @@ extension on Traductions {
 			'admin.programmes.codeModifier' => 'Modifier le code technique',
 			'admin.programmes.manqueNom' => 'le nom affiché',
 			'admin.programmes.manqueCycle' => 'le cycle',
+			_ => null,
+		} ?? switch (path) {
 			'admin.programmes.manqueOrdre' => 'l\'ordre (un nombre entier)',
 			'admin.programmes.manqueCode' => 'le code technique',
 			'admin.programmes.manque' => ({required Object elements}) => 'Rien n\'a été enregistré : il manque ${elements}. Complétez-le, puis réessayez.',
 			'admin.programmes.champDescription' => 'Description (optionnelle)',
 			'admin.programmes.champMotif' => 'Motif',
 			'admin.programmes.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.programmes.journalisation' => 'Chaque création, modification, suppression et publication est inscrite au journal d\'audit.',
 			'admin.journal.titre' => 'Journal',
 			'admin.journal.chaineIntacte' => 'Journal intact',
@@ -17578,14 +17602,14 @@ extension on Traductions {
 			'compte.tuteur.pageInformations.prenom' => 'Prénom',
 			'compte.tuteur.pageInformations.nom' => 'Nom',
 			'compte.tuteur.pageInformations.courriel' => 'Adresse de connexion',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageInformations.langue' => 'Langue de l\'interface',
 			'compte.tuteur.pageInformations.fuseau' => 'Fuseau des séances',
 			'compte.tuteur.pageInformations.fuseauIndisponible' => 'Non disponible pour le moment',
 			'compte.tuteur.pageInformations.note' => 'Ces informations sont tenues par l\'académie. Elles ne se modifient pas encore depuis l\'application.',
 			'compte.tuteur.pageSecurite.titre' => 'Connexion et sécurité',
 			'compte.tuteur.pageSecurite.sousTitre' => 'Comment vous accédez à votre compte.',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageSecurite.methode' => 'Méthode de connexion',
 			'compte.tuteur.pageSecurite.adresse' => 'Adresse de connexion',
 			'compte.tuteur.pageSecurite.appareils' => 'Les appareils connectés à votre compte ne sont pas encore listés dans l\'application.',
@@ -18092,14 +18116,14 @@ extension on Traductions {
 			'enseignant.eleve.retour' => 'Élèves',
 			'enseignant.eleve.identifiant' => ({required Object id}) => 'Identifiant Académie : ${id}',
 			'enseignant.eleve.photo' => ({required Object prenom}) => 'Photo de ${prenom}',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.eleve.niveau' => 'Niveau',
 			'enseignant.eleve.objectif' => 'Objectif',
 			'enseignant.eleve.presence' => 'Présence récente',
 			'enseignant.eleve.travail' => 'Travail',
 			'enseignant.eleve.travailReprise' => ({required Object page}) => 'Reprise à la ${page}',
 			'enseignant.eleve.derniereSeance' => 'Dernière séance',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.eleve.nonRenseigne' => 'Non renseigné',
 			'enseignant.eleve.signaler' => 'Signaler un besoin',
 			'enseignant.eleve.signalerAide' => 'Un besoin à remonter à l\'académie, sans recopier le contexte.',
@@ -18606,14 +18630,14 @@ extension on Traductions {
 			'controleur.observation.pedagogie' => 'Pédagogie',
 			'controleur.observation.pedagogieAide' => 'Quand il s\'agit de l\'enseignement : explications, progression, supports',
 			'controleur.observation.interaction' => 'Interaction avec les élèves',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.interactionAide' => 'Quand il s\'agit des échanges entre l\'enseignant et les élèves',
 			'controleur.observation.gestionClasse' => 'Gestion de la classe',
 			'controleur.observation.gestionClasseAide' => 'Quand il s\'agit de l\'organisation de la séance : temps, consignes, déroulement',
 			'controleur.observation.respectCadre' => 'Respect du cadre',
 			'controleur.observation.respectCadreAide' => 'Quand il s\'agit des règles de l\'académie et de la séance',
 			'controleur.observation.climat' => 'Comportement / climat',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.climatAide' => 'Quand il s\'agit du comportement ou de l\'ambiance de la classe',
 			'controleur.observation.autre' => 'Autre',
 			'controleur.observation.autreAide' => 'Quand aucun autre domaine ne convient · précisez-le dans votre texte',
@@ -19120,14 +19144,14 @@ extension on Traductions {
 			'tc.observation.reglages.invalideVisites' => 'Au moins une visite par séance.',
 			'tc.observation.reglages.invalideTemps' => 'Au moins trente secondes par séance.',
 			'tc.observation.reglages.valeurHeritee' => ({required Object valeur}) => 'Académie : ${valeur}',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.reglages.uniteVisiteUne' => ({required Object n}) => '${n} visite',
 			'tc.observation.reglages.uniteVisites' => ({required Object n}) => '${n} visites',
 			'tc.observation.reglages.uniteSecondes' => ({required Object n}) => '${n} s',
 			'tc.observation.reglages.versionPolitique' => ({required Object version}) => 'Version ${version}',
 			'tc.parcours.avant.titre' => 'Avant le prochain cours',
 			'tc.parcours.avant.rien' => 'Rien à préparer pour le prochain cours.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.avant.rienDetail' => 'Votre enseignant proposera le travail à la fin de la prochaine séance.',
 			'tc.parcours.avant.nonBranche' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'tc.parcours.avant.nonBrancheDetail' => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.',
