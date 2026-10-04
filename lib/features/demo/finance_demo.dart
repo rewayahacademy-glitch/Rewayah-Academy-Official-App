@@ -29,6 +29,7 @@ import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/capacites/port_revenus_enseignant.dart';
 import '../../core/finance/finances_profil.dart';
 import '../../core/finance/montant.dart';
+import '../../core/finance/mouvements_profil.dart';
 import '../../core/finance/politique_commerciale.dart';
 import '../../core/finance/suivi_paiement.dart';
 
@@ -441,6 +442,95 @@ abstract final class DonneesFinanceDemo {
     );
   }
 
+  /// La date de la recharge de demonstration : avant le debit du mois de
+  /// reference, qui la consomme.
+  static final DateTime dateRecharge = DateTime(2026, 9, 25, 10, 30);
+
+  /// La reference du paiement de demonstration qui a recharge le foyer.
+  static const String referenceRecharge = 'RWY-DEMO-0925';
+
+  /// Les mouvements de la periode du mois de reference d'un profil finance
+  /// (FI-BR-05) : une ligne par ligne de mensualite RENDUE, signe inverse
+  /// (le tarif debite, la remise ou l'avoir credites). Aucun sans periode :
+  /// aucun debit partiel (FIN4-09), aucun debit en essai.
+  static List<MouvementProfil> _mouvementsPeriode(FinancesProfil p) {
+    if (p.periode == null) return const <MouvementProfil>[];
+    return <MouvementProfil>[
+      for (final (int i, LigneMensualite l) in p.lignesMensualite.indexed)
+        MouvementProfil(
+          id: 'demo-fi-mvt-${p.profilId}-$i',
+          date: debutMois,
+          nature: switch (l.nature) {
+            NatureLigneMensualite.tarif ||
+            NatureLigneMensualite.taxe => NatureMouvement.debitPeriode,
+            NatureLigneMensualite.remiseRang ||
+            NatureLigneMensualite.prorata => NatureMouvement.remise,
+            NatureLigneMensualite.avoir => NatureMouvement.avoir,
+          },
+          montant: Montant(-l.montant.mineur, devise),
+          periode: debutMois,
+        ),
+    ];
+  }
+
+  /// La recharge d'un profil : ce qu'il a fallu verser pour arriver a son
+  /// solde apres les mouvements de la periode. Les memes chiffres que le
+  /// solde et la mensualite, jamais ceux d'une maquette.
+  static Montant _rechargeDe(FinancesProfil p) => Montant(
+    p.solde.mineur -
+        _mouvementsPeriode(p)
+            .fold<int>(0, (int s, MouvementProfil m) => s + m.montant.mineur),
+    devise,
+  );
+
+  /// Le recu du paiement de demonstration du jeu [jeu] : un seul paiement
+  /// externe, reparti par profil (guide §1.6), `null` quand aucun profil
+  /// n'a ete recharge (aucun paiement, essai seul).
+  static RecuPaiement? recu(JeuFoyerFinance jeu) {
+    final List<AllocationProfil> allocations = <AllocationProfil>[
+      for (final FinancesProfil p in profils(jeu))
+        if (_rechargeDe(p).mineur > 0)
+          AllocationProfil(
+            profilId: p.profilId,
+            prenom: p.prenom,
+            montant: _rechargeDe(p),
+          ),
+    ];
+    if (allocations.isEmpty) return null;
+    return RecuPaiement(
+      reference: referenceRecharge,
+      date: dateRecharge,
+      rail: RailPaiement.webStripe,
+      total: _somme(allocations.map((AllocationProfil a) => a.montant)),
+      allocations: allocations,
+    );
+  }
+
+  /// Les mouvements du profil [profilId] dans le jeu [jeu], le plus recent
+  /// d'abord (FI-BR-05) : leur somme est son solde. Vide pour un profil
+  /// inconnu, en essai ou sans aucun paiement.
+  static List<MouvementProfil> mouvements(
+    JeuFoyerFinance jeu,
+    String profilId,
+  ) {
+    final FinancesProfil? p = profils(jeu)
+        .where((FinancesProfil f) => f.profilId == profilId)
+        .firstOrNull;
+    if (p == null) return const <MouvementProfil>[];
+    final Montant recharge = _rechargeDe(p);
+    return <MouvementProfil>[
+      ..._mouvementsPeriode(p),
+      if (recharge.mineur > 0)
+        MouvementProfil(
+          id: 'demo-fi-mvt-${p.profilId}-recharge',
+          date: dateRecharge,
+          nature: NatureMouvement.recharge,
+          montant: recharge,
+          recu: recu(jeu),
+        ),
+    ];
+  }
+
   /// L'identifiant de la commande de demonstration dans l'etat [etat] : la
   /// demonstration parcourt les huit etats (revue FI-1a E-10).
   static String commandeDemo(EtatPaiement etat) => 'demo-fi-cmd-${etat.name}';
@@ -688,6 +778,10 @@ class PaiementsFoyerFinanceDemo implements PortPaiementsFoyer {
     }
     return null;
   }
+
+  @override
+  Future<List<MouvementProfil>> mouvements(String profilId) async =>
+      DonneesFinanceDemo.mouvements(jeu, profilId);
 
   // Les soldes rediges d'EA-9 sont remplaces par `finances()` (FI-BR-03).
   @override

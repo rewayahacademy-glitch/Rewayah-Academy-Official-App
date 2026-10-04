@@ -1129,7 +1129,48 @@
       "indisponiblePhrase": "Le solde et la mensualité de {prenom} s'afficheront ici dès leur mise en service.",
       "erreurTitre": "Les finances de {prenom} ne peuvent pas être lues",
       "videTitre": "Aucune finance enregistrée pour {prenom}",
-      "videPhrase": "Aucun solde ni aucune mensualité n'est encore rendu pour ce profil. Ils apparaîtront ici après son inscription à une classe."
+      "videPhrase": "Aucun solde ni aucune mensualité n'est encore rendu pour ce profil. Ils apparaîtront ici après son inscription à une classe.",
+      "voirMouvements": "Mouvements",
+      "voirMouvementsSemantique": "Voir les mouvements de {prenom}"
+    },
+    "mouvements": {
+      "titre": "Mouvements",
+      "contexte": "Les recharges, mensualités, remises et avoirs de {prenom}, du plus récent au plus ancien. Rien ne s'efface : une correction s'ajoute comme un nouveau mouvement.",
+      "personne": "Personne",
+      "colonne": {
+        "date": "Date",
+        "libelle": "Libellé",
+        "montant": "Montant",
+        "statut": "Statut",
+        "recu": "Reçu"
+      },
+      "nature": {
+        "recharge": "Recharge",
+        "mensualite": "Mensualité",
+        "mensualiteDe": "Mensualité {mois} {annee}",
+        "avoir": "Avoir",
+        "remise": "Remise"
+      },
+      "statut": {
+        "enregistre": "Enregistré",
+        "enConfirmation": "En confirmation"
+      },
+      "voirRecu": "Voir le reçu",
+      "voirRecuSemantique": "Voir le reçu {reference}",
+      "recu": {
+        "titre": "Reçu",
+        "fermer": "Fermer le reçu",
+        "date": "Date",
+        "reference": "Référence",
+        "moyen": "Moyen de paiement",
+        "montant": "Montant payé",
+        "repartition": "Répartition"
+      },
+      "videTitre": "Aucun mouvement",
+      "videPhrase": "Aucune recharge ni aucune mensualité n'est encore enregistrée pour {prenom}. Les mouvements apparaîtront ici après le premier paiement.",
+      "erreurTitre": "Les mouvements de {prenom} ne peuvent pas être lus",
+      "indisponibleTitre": "Les mouvements ne sont pas encore disponibles",
+      "indisponiblePhrase": "Les recharges et mensualités de {prenom} s'afficheront ici dès leur mise en service."
     }
   },
   "disponibilites": {
