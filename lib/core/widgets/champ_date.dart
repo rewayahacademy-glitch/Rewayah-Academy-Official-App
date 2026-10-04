@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../i18n/strings.g.dart';
@@ -65,6 +65,16 @@ class ChampDate extends StatelessWidget {
       firstDate: premierJour,
       lastDate: dernierJour,
       helpText: libelle,
+      // L'en-tete du calendrier de Material a une hauteur fixe : a 320 de large
+      // et texte a 200 %, la date y deborde de 36 points. On plafonne le texte
+      // du seul calendrier a 150 % ; le champ, lui, suit le reglage en entier.
+      builder: (BuildContext contexte, Widget? dialogue) => MediaQuery(
+        data: MediaQuery.of(contexte).copyWith(
+          textScaler: MediaQuery.textScalerOf(contexte)
+              .clamp(maxScaleFactor: 1.5),
+        ),
+        child: dialogue ?? const SizedBox.shrink(),
+      ),
     );
     if (choisie != null) {
       onChoix(DateTime(choisie.year, choisie.month, choisie.day));
