@@ -4,6 +4,9 @@
 // serveur (K-28). La Classe, l'enseignant, les seances et le travail sont
 // ceux de la demonstration de Classe (CL-4), reutilises et jamais recopies.
 
+import 'dart:async';
+
+import '../../core/accessibilite/port_accueil_accessibilite.dart';
 import '../../core/domain/enums.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
@@ -127,4 +130,68 @@ enum EtapeDemoAccessibilite {
 
   /// La salle pendant la seance.
   salle,
+}
+
+/// DASH-MA-PROD : la situation de l'Accueil en demonstration (D11, chaque
+/// etat atteignable) : `?accueil=vide|erreur|chargement`.
+enum SituationAccueilDemo {
+  /// La Classe et sa prochaine seance.
+  contenu,
+
+  /// Aucune Classe attribuee.
+  vide,
+
+  /// La lecture echoue (elle se reessaie).
+  erreur,
+
+  /// La lecture ne repond pas : squelette, puis chargement prolonge.
+  chargement,
+
+  /// La Classe lue, puis l'appareil hors ligne : bandeau de `PageShell`,
+  /// entree inerte.
+  horsLigne,
+}
+
+/// Le double de demonstration du port de l'Accueil : aucun serveur (K-28).
+class PortAccueilAccessibiliteDemo implements PortAccueilAccessibilite {
+  /// Cree le double.
+  const PortAccueilAccessibiliteDemo({
+    required this.eleve,
+    this.moment = MomentDemoAccessibilite.avant,
+    this.situation = SituationAccueilDemo.contenu,
+  });
+
+  /// L'eleve.
+  final EleveDemoAccessibilite eleve;
+
+  /// Le moment de la seance.
+  final MomentDemoAccessibilite moment;
+
+  /// La situation montree.
+  final SituationAccueilDemo situation;
+
+  @override
+  Future<DonneesAccueilAccessibilite> lire() => switch (situation) {
+    SituationAccueilDemo.contenu ||
+    SituationAccueilDemo.horsLigne => Future<DonneesAccueilAccessibilite>.value(
+      DonneesAccueilAccessibilite(
+        prenom: DonneesAccessibiliteDemo.prenom(eleve),
+        tutoiement: DonneesAccessibiliteDemo.mineur(eleve),
+        espace: DonneesAccessibiliteDemo.espaceAccueil(moment),
+      ),
+    ),
+    SituationAccueilDemo.vide => Future<DonneesAccueilAccessibilite>.value(
+      DonneesAccueilAccessibilite(
+        prenom: DonneesAccessibiliteDemo.prenom(eleve),
+        tutoiement: DonneesAccessibiliteDemo.mineur(eleve),
+        espace: null,
+      ),
+    ),
+    SituationAccueilDemo.erreur => Future<DonneesAccueilAccessibilite>.error(
+      StateError('lecture de l Accueil en echec (demonstration)'),
+    ),
+    // Jamais de reponse : le squelette reste, puis le chargement prolonge.
+    SituationAccueilDemo.chargement =>
+      Completer<DonneesAccueilAccessibilite>().future,
+  };
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
@@ -314,7 +315,17 @@ class _Bloc extends StatelessWidget {
       heightFactor: 1,
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: AppPage.largeurLecture),
-        child: _carte(palette, textes, medaillon, avecAction, avecSecondaire),
+        child: _carte(
+          palette,
+          textes,
+          medaillon,
+          avecAction,
+          avecSecondaire,
+          // DASH-MA-PROD (lecon 8) : a texte agrandi (au-dela de 130 %), le
+          // medaillon passe AU-DESSUS du texte, qui garde toute la largeur
+          // de la carte (« connexi / on » a 320 px x2 sinon).
+          empile: MediaQuery.textScalerOf(context).scale(1) > 1.3,
+        ),
       ),
     );
   }
@@ -324,8 +335,78 @@ class _Bloc extends StatelessWidget {
     TextTheme textes,
     AppColorPair medaillon,
     bool avecAction,
-    bool avecSecondaire,
-  ) {
+    bool avecSecondaire, {
+    required bool empile,
+  }) {
+    final Widget medaillonRendu = ExcludeSemantics(
+      child: SizedBox.square(
+        dimension: diametreMedaillon,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: medaillon.background,
+          ),
+          child: Center(
+            child: IconTheme(
+              data: IconThemeData(
+                color: medaillon.onBackground,
+                size: AppSpacing.xl,
+              ),
+              child: Icon(icone.actif),
+            ),
+          ),
+        ),
+      ),
+    );
+    final Widget texte = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        TexteSansCoupure(
+          titre,
+          style: palette.surfaceRaised.applyTo(
+            textes.titleSmall ?? const TextStyle(),
+          ),
+        ),
+        // Une phrase vide n'est pas rendue (titre seul, spec).
+        if (phrase.isNotEmpty) ...<Widget>[
+          Ecart.vXs,
+          TexteSansCoupure(
+            phrase,
+            style: palette.inkMuted.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+        ],
+        // HU-1 (EA-PL) : une seule rangee, celle du contrat B,
+        // pour tous les blocs ; « Reessayer » garde la largeur
+        // de son libelle, au bord de fin, jamais toute la carte.
+        if (avecAction || avecSecondaire) ...<Widget>[
+          Ecart.vLg,
+          RangeeActions(
+            children: <Widget>[
+              if (avecSecondaire)
+                ActionPrincipale(
+                  key: const ValueKey<String>('etat-systeme-secondaire'),
+                  libelle: libelleSecondaire!,
+                  onPress: onSecondaire,
+                  niveau: NiveauAction.tertiaire,
+                  pleineLargeur: false,
+                ),
+              if (avecAction)
+                ActionPrincipale(
+                  key: const ValueKey<String>('etat-systeme-action'),
+                  libelle: libelleAction!,
+                  onPress: onAction,
+                  enCours: actionEnCours,
+                  niveau: NiveauAction.secondaire,
+                  pleineLargeur: false,
+                ),
+            ],
+          ),
+        ],
+      ],
+    );
     return Semantics(
       liveRegion: true,
       container: true,
@@ -338,87 +419,20 @@ class _Bloc extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              ExcludeSemantics(
-                child: SizedBox.square(
-                  dimension: diametreMedaillon,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: medaillon.background,
-                    ),
-                    child: Center(
-                      child: IconTheme(
-                        data: IconThemeData(
-                          color: medaillon.onBackground,
-                          size: AppSpacing.xl,
-                        ),
-                        child: Icon(icone.actif),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Ecart.hMd,
-              Expanded(
-                child: Column(
+          child: empile
+              ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[medaillonRendu, Ecart.vMd, texte],
+                )
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      titre,
-                      style: palette.surfaceRaised.applyTo(
-                        textes.titleSmall ?? const TextStyle(),
-                      ),
-                    ),
-                    // Une phrase vide n'est pas rendue (titre seul, spec).
-                    if (phrase.isNotEmpty) ...<Widget>[
-                      Ecart.vXs,
-                      Text(
-                        phrase,
-                        style: palette.inkMuted.applyTo(
-                          textes.bodyMedium ?? const TextStyle(),
-                        ),
-                      ),
-                    ],
-                    // HU-1 (EA-PL) : une seule rangee, celle du contrat B,
-                    // pour tous les blocs ; « Reessayer » garde la largeur
-                    // de son libelle, au bord de fin, jamais toute la carte.
-                    if (avecAction || avecSecondaire) ...<Widget>[
-                      Ecart.vLg,
-                      RangeeActions(
-                        children: <Widget>[
-                          if (avecSecondaire)
-                            ActionPrincipale(
-                              key: const ValueKey<String>(
-                                'etat-systeme-secondaire',
-                              ),
-                              libelle: libelleSecondaire!,
-                              onPress: onSecondaire,
-                              niveau: NiveauAction.tertiaire,
-                              pleineLargeur: false,
-                            ),
-                          if (avecAction)
-                            ActionPrincipale(
-                              key: const ValueKey<String>(
-                                'etat-systeme-action',
-                              ),
-                              libelle: libelleAction!,
-                              onPress: onAction,
-                              enCours: actionEnCours,
-                              niveau: NiveauAction.secondaire,
-                              pleineLargeur: false,
-                            ),
-                        ],
-                      ),
-                    ],
+                    medaillonRendu,
+                    Ecart.hMd,
+                    Expanded(child: texte),
                   ],
                 ),
-              ),
-            ],
-          ),
         ),
       ),
     );

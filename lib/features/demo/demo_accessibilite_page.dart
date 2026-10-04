@@ -16,14 +16,17 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/mode_accessibilite.dart';
+import '../../core/accessibilite/port_accueil_accessibilite.dart';
 import '../../core/accessibilite/port_demande_presentation.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/preferences/preferences_locales.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
+import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
@@ -67,6 +70,10 @@ List<RouteBase> routesDemoAccessibilite(String environnement) {
               etat.uri.queryParameters['moment'],
             ) ??
             MomentDemoAccessibilite.avant,
+        accueil: _lire(
+          SituationAccueilDemo.values,
+          etat.uri.queryParameters['accueil'],
+        ),
       ),
     ),
   ];
@@ -131,8 +138,13 @@ class DemoAccessibilitePage extends StatelessWidget {
   const DemoAccessibilitePage({
     this.eleve,
     this.moment = MomentDemoAccessibilite.avant,
+    this.accueil,
     super.key,
   });
+
+  /// DASH-MA-PROD : la situation de l'Accueil (`?accueil=`) ; donnee, la
+  /// demonstration s'ouvre sur l'Accueil.
+  final SituationAccueilDemo? accueil;
 
   /// L'eleve choisi, ou nul pour la liste.
   final EleveDemoAccessibilite? eleve;
@@ -143,7 +155,17 @@ class DemoAccessibilitePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final EleveDemoAccessibilite? e = eleve;
-    if (e != null) return EcranAccessibiliteDemo(eleve: e, moment: moment);
+    final SituationAccueilDemo? situation = accueil;
+    if (e != null) {
+      return situation == null
+          ? EcranAccessibiliteDemo(eleve: e, moment: moment)
+          : EcranAccessibiliteDemo(
+              eleve: e,
+              moment: moment,
+              destinationInitiale: EcranAccessibiliteDemo.indexAccueil,
+              situationAccueil: situation,
+            );
+    }
 
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
@@ -201,8 +223,13 @@ class EcranAccessibiliteDemo extends StatefulWidget {
     this.etapeInitiale = EtapeDemoAccessibilite.classe,
     this.surchargesCoran,
     this.portDemande = const PortDemandePresentationDemo(),
+    this.situationAccueil = SituationAccueilDemo.contenu,
     super.key,
   });
+
+  /// DASH-MA-PROD : la situation de l'Accueil, lue par le double de
+  /// demonstration du port (D11 : chaque etat atteignable).
+  final SituationAccueilDemo situationAccueil;
 
   /// MA-8 : le port de la demande de presentation standard du mineur ; en
   /// demonstration, le port neutre (aucun serveur). Les tests y posent un
@@ -450,20 +477,17 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
                 : _index == EcranAccessibiliteDemo.indexMaClasse
                 ? maClasse
                 : _index == EcranAccessibiliteDemo.indexAccueil
-                ? AccueilAccessibilite(
+                // DASH-MA-PROD : le meme Accueil que la route de l'eleve,
+                // qui lit le double de demonstration du port.
+                ? AccueilAccessibilite.lu(
                     key: const ValueKey<String>('demo-accueil'),
-                    prenom: DonneesAccessibiliteDemo.prenom(widget.eleve),
-                    tutoiement: DonneesAccessibiliteDemo.mineur(widget.eleve),
-                    espace: DonneesAccessibiliteDemo.espaceAccueil(
-                      widget.moment,
-                    ),
-                    onRejoindre: entrer,
+                    onRejoindreEspace: (GroupHomeVM _) => entrer(),
                     onVoirClasse: () =>
                         _aller(EcranAccessibiliteDemo.indexMaClasse),
                     onTache: () => _aller(EcranAccessibiliteDemo.indexMaClasse),
                     onCoran: () => _aller(EcranAccessibiliteDemo.indexCoran),
                     // L'aide vit dans Mon espace en demonstration (MA14,
-                    // MA-8) : aucune route reelle hors de la demonstration.
+                    // MA-8) ; hors demonstration, `/eleve/aide`.
                     onAide: () => _aller(EcranAccessibiliteDemo.indexMonEspace),
                   )
                 : _index == EcranAccessibiliteDemo.indexCoran
@@ -525,7 +549,18 @@ class _EcranAccessibiliteDemoEtat extends State<EcranAccessibiliteDemo> {
     // `AppTheme.pour` existant, sans aucune couleur nouvelle (K-37).
     return ProviderScope(
       key: ValueKey<String>('${widget.eleve.name}-${widget.moment.name}'),
-      overrides: surchargesAccessibiliteDemo(presentation: _presentation),
+      overrides: <Override>[
+        ...surchargesAccessibiliteDemo(presentation: _presentation),
+        portAccueilAccessibiliteProvider.overrideWithValue(
+          PortAccueilAccessibiliteDemo(
+            eleve: widget.eleve,
+            moment: widget.moment,
+            situation: widget.situationAccueil,
+          ),
+        ),
+        if (widget.situationAccueil == SituationAccueilDemo.horsLigne)
+          horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
+      ],
       child: Theme(
         data: AppTheme.pour(_presentation, Theme.of(context).brightness),
         child: contenu,

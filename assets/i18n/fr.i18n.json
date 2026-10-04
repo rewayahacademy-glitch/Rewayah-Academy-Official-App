@@ -654,7 +654,13 @@
       "voirMaClasse": "Voir ma classe",
       "lireCoran": "Lire le Coran",
       "lireCoranDetail": "Accéder au Mushaf",
-      "aide": "Besoin d'aide ?"
+      "aide": "Besoin d'aide ?",
+      "erreurTitre": "Prochaine séance non chargée",
+      "erreurPhrase": "La séance et le travail à faire n'ont pas pu être lus, souvent à cause de la connexion. Il suffit de réessayer dans un instant.",
+      "indisponibleTitre": "Prochaine séance pas encore affichée ici",
+      "indisponiblePhrase": "L'Accueil ne reçoit pas encore la séance de la Classe. Elle se lit dans Ma classe.",
+      "videTitre": "Pas encore de Classe",
+      "videPhrase": "Aucune Classe n'est encore attribuée. Elle se choisit avec l'académie. En attendant, le Coran et l'aide restent ouverts juste en dessous."
     },
     "coran": {
       "ouvrir": "Ouvrir le Coran",

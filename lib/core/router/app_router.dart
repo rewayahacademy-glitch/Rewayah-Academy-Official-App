@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/_dev/galerie/compte_galerie.dart';
 import '../../features/_dev/galerie/galerie_page.dart';
-import '../../features/accueil_eleve/accueil_eleve_page.dart';
+import '../../features/accueil_eleve/accueil_eleve_selon_presentation.dart';
 import '../../features/accueil_famille/accueil_famille_page.dart';
 import '../../features/admin_acces_agents/acces_agents_page.dart';
 import '../../features/admin_attribution/attribution_page.dart';
@@ -322,8 +322,10 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             routes: <GoRoute>[
               GoRoute(
                 path: Routes.eleve,
+                // DASH-MA-PROD : l'Accueil du Mode Accessibilite quand la
+                // presentation de l'eleve l'est, `ELV-02` sinon.
                 builder: (BuildContext _, GoRouterState _) =>
-                    const AccueilElevePage(),
+                    const AccueilEleveSelonPresentation(),
               ),
             ],
           ),
@@ -350,6 +352,21 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             ],
           ),
         ],
+      ),
+
+      // --- DASH-MA-PROD : l'aide de l'eleve ---------------------------------
+      // Bloc separe (une autre etape ajoute aussi une route ici). La page
+      // d'aide existante (contrat K6, port neutre tant qu'aucun canal n'est
+      // publie), dans la coquille de l'eleve pour en ressortir ; le retour
+      // ramene a l'Accueil.
+      GoRoute(
+        path: Routes.eleveAide,
+        builder: (BuildContext contexte, GoRouterState _) =>
+            _CoquilleSecondaire(
+              child: AideComptePage(
+                onRetour: () => GoRouter.of(contexte).go(Routes.eleve),
+              ),
+            ),
       ),
 
       // Les alias du tuteur (arbre du mandat, mapping des routes sections 3

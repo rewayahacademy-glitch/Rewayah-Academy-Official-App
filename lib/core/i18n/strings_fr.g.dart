@@ -3186,6 +3186,24 @@ class Traductions$accessibilite$accueil$fr {
 
 	/// fr: 'Besoin d'aide ?'
 	String get aide => 'Besoin d\'aide ?';
+
+	/// fr: 'Prochaine séance non chargée'
+	String get erreurTitre => 'Prochaine séance non chargée';
+
+	/// fr: 'La séance et le travail à faire n'ont pas pu être lus, souvent à cause de la connexion. Il suffit de réessayer dans un instant.'
+	String get erreurPhrase => 'La séance et le travail à faire n\'ont pas pu être lus, souvent à cause de la connexion. Il suffit de réessayer dans un instant.';
+
+	/// fr: 'Prochaine séance pas encore affichée ici'
+	String get indisponibleTitre => 'Prochaine séance pas encore affichée ici';
+
+	/// fr: 'L'Accueil ne reçoit pas encore la séance de la Classe. Elle se lit dans Ma classe.'
+	String get indisponiblePhrase => 'L\'Accueil ne reçoit pas encore la séance de la Classe. Elle se lit dans Ma classe.';
+
+	/// fr: 'Pas encore de Classe'
+	String get videTitre => 'Pas encore de Classe';
+
+	/// fr: 'Aucune Classe n'est encore attribuée. Elle se choisit avec l'académie. En attendant, le Coran et l'aide restent ouverts juste en dessous.'
+	String get videPhrase => 'Aucune Classe n\'est encore attribuée. Elle se choisit avec l\'académie. En attendant, le Coran et l\'aide restent ouverts juste en dessous.';
 }
 
 // Path: accessibilite.coran
@@ -15917,6 +15935,12 @@ extension on Traductions {
 			'accessibilite.accueil.lireCoran' => 'Lire le Coran',
 			'accessibilite.accueil.lireCoranDetail' => 'Accéder au Mushaf',
 			'accessibilite.accueil.aide' => 'Besoin d\'aide ?',
+			'accessibilite.accueil.erreurTitre' => 'Prochaine séance non chargée',
+			'accessibilite.accueil.erreurPhrase' => 'La séance et le travail à faire n\'ont pas pu être lus, souvent à cause de la connexion. Il suffit de réessayer dans un instant.',
+			'accessibilite.accueil.indisponibleTitre' => 'Prochaine séance pas encore affichée ici',
+			'accessibilite.accueil.indisponiblePhrase' => 'L\'Accueil ne reçoit pas encore la séance de la Classe. Elle se lit dans Ma classe.',
+			'accessibilite.accueil.videTitre' => 'Pas encore de Classe',
+			'accessibilite.accueil.videPhrase' => 'Aucune Classe n\'est encore attribuée. Elle se choisit avec l\'académie. En attendant, le Coran et l\'aide restent ouverts juste en dessous.',
 			'accessibilite.coran.ouvrir' => 'Ouvrir le Coran',
 			'accessibilite.coran.reprendre' => 'Reprendre à ta dernière page',
 			'accessibilite.coran.reprendreVous' => 'Reprendre à votre dernière page',
@@ -16404,14 +16428,14 @@ extension on Traductions {
 			'dossiers.visionneuse.erreur' => 'La pièce ne peut pas être affichée.',
 			'dossiers.visionneuse.expire' => 'L\'accès à cette pièce a expiré.',
 			'dossiers.visionneuse.recharger' => 'Recharger la pièce',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.visionneuse.formatNonPrisEnCharge' => 'Ce format de pièce ne peut pas être affiché.',
 			'dossiers.visionneuse.accesRetire' => 'Vous n’avez plus accès à cette pièce.',
 			'dossiers.visionneuse.horsLigne' => 'Vous êtes hors ligne. La pièce ne peut pas être chargée.',
 			'dossiers.visionneuse.aucune' => 'Aucune pièce n’est disponible.',
 			'dossiers.visionneuse.fermerPiece' => 'Fermer la pièce',
 			'dossiers.visionneuse.agrandir' => 'Agrandir',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.visionneuse.reduire' => 'Réduire',
 			'dossiers.visionneuse.ajuster' => 'Ajuster à l’écran',
 			'dossiers.visionneuse.infoBulle' => ({required Object action, required Object touche}) => '${action} (touche ${touche})',
@@ -16918,14 +16942,14 @@ extension on Traductions {
 			'admin.journal.roleComptable' => 'Comptable',
 			'admin.journal.roleAucun' => 'Hors session',
 			'admin.journal.evtKycLu' => 'Dossier d\'identité consulté',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.evtKycTranche' => 'Dossier d\'identité tranché',
 			'admin.journal.evtProfilCree' => 'Profil créé',
 			'admin.journal.evtProfilEnfantCree' => 'Profil enfant créé',
 			'admin.journal.evtCodeCree' => 'Code d\'appairage créé',
 			'admin.journal.evtAppareilAppaire' => 'Appareil appairé',
 			'admin.journal.evtAppareilRevoque' => 'Appareil révoqué',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.evtPedagogie' => 'Réglages pédagogiques modifiés',
 			'admin.journal.evtAffectationPrise' => 'Élève pris par un enseignant',
 			'admin.journal.evtAffectationAttribuee' => 'Élève attribué par l\'administration',
@@ -17432,14 +17456,14 @@ extension on Traductions {
 			'compte.tuteur.pageApparence.texte' => 'Taille du texte',
 			'compte.tuteur.pageApparence.texteDetail' => 'Suit la taille du système',
 			'compte.tuteur.pageAide.titre' => 'Aide et support',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageAide.indisponibleTitre' => 'Aide pas encore disponible',
 			'compte.tuteur.pageAide.indisponiblePhrase' => 'Les questions fréquentes et le contact de l\'académie ne sont pas encore ouverts dans l\'application.',
 			'compte.tuteur.pageAide.canalCourriel' => 'Courriel de l\'académie',
 			'compte.tuteur.pageAide.canalLien' => 'Page d\'aide de l\'académie',
 			'compte.tuteur.pageAide.aucunCanal' => 'Aucun canal d\'aide n\'est publié pour le moment.',
 			'compte.tuteur.pageLegal.titre' => 'Informations légales',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageLegal.documents' => 'Documents acceptés',
 			'compte.tuteur.pageLegal.conditionsTuteur' => 'Conditions du tuteur',
 			'compte.tuteur.pageLegal.contratEnseignant' => 'Contrat enseignant',
@@ -17946,14 +17970,14 @@ extension on Traductions {
 			'enseignant.bienvenue.aCompleter' => 'À compléter',
 			'enseignant.bienvenue.compteur' => ({required Object fait, required Object total}) => '${fait} sur ${total}',
 			'enseignant.bienvenue.prerequisPhoto' => 'Ajouter ma photo professionnelle',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.bienvenue.prerequisLangues' => 'Vérifier mes langues d\'enseignement',
 			'enseignant.bienvenue.prerequisFuseau' => 'Vérifier mon fuseau horaire',
 			'enseignant.bienvenue.ctaPhoto' => 'Ajouter ma photo',
 			'enseignant.bienvenue.ctaInformations' => 'Vérifier mes informations',
 			'enseignant.bienvenue.ctaJournee' => 'Voir ma journée',
 			'enseignant.bienvenue.rappels' => 'Deux choses à ne pas découvrir en cours de route',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.bienvenue.declarer' => 'Déclarer mes disponibilités',
 			'enseignant.bienvenue.versJournee' => 'Aller à ma journée',
 			'enseignant.bienvenue.horsLigne' => 'Sans réseau, vos créneaux ne pourront pas être enregistrés.',
@@ -18460,14 +18484,14 @@ extension on Traductions {
 			'controleur.echanges.titreFil' => ({required Object classe, required Object date}) => '${classe} · ${date}',
 			'controleur.echanges.derniereActivite' => ({required Object date}) => 'Dernière activité : ${date}',
 			'controleur.echanges.reponseRecue' => 'Réponse reçue',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.echanges.enAttente' => 'En attente',
 			'controleur.echanges.vide' => 'Aucun échange avec l\'administration pour le moment.',
 			'controleur.echanges.contexte' => 'Contexte de la visite, joint automatiquement',
 			'controleur.echanges.cleClasse' => 'Classe',
 			'controleur.echanges.cleDate' => 'Date',
 			'controleur.echanges.cleHeure' => 'Heure',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.echanges.auteurVous' => 'Vous',
 			'controleur.echanges.auteurAdmin' => 'Administration',
 			'controleur.echanges.champ' => 'Répondre à l\'administration…',
@@ -18974,14 +18998,14 @@ extension on Traductions {
 			'tc.parcours.feedback.technique.tresBien' => 'Très bons',
 			'tc.parcours.feedback.confiance.intitule' => 'Vous sentez-vous prêt pour le prochain cours ?',
 			'tc.parcours.feedback.confiance.difficile' => 'Pas encore',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.feedback.confiance.bien' => 'Plutôt',
 			'tc.parcours.feedback.confiance.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.merci' => 'Merci.',
 			'tc.parcours.feedback.tendance.titre' => 'Retour des élèves',
 			'tc.parcours.feedback.tendance.sousSeuil' => 'Pas encore assez de retours pour dégager une tendance.',
 			'tc.parcours.feedback.tendance.anonyme' => 'Les retours sont anonymes et agrégés. Ils ne suffisent jamais, seuls, à une décision.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.signalement.titre' => 'Signaler un besoin',
 			'tc.parcours.signalement.categorie' => 'De quoi s\'agit-il ?',
 			'tc.parcours.signalement.categorieValeur.pedagogique' => 'Pédagogique',

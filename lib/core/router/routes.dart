@@ -80,6 +80,15 @@ abstract final class Routes {
   /// Suivi et historique de l'eleve.
   static const String eleveSuivi = '/eleve/suivi';
 
+  // --- DASH-MA-PROD : l'aide de l'eleve -------------------------------------
+  //
+  // Bloc separe : une autre etape ajoute aussi une route dans ce fichier.
+
+  /// L'aide de l'eleve (« Besoin d'aide ? », dernier bloc de chaque ecran
+  /// du Mode Accessibilite, MA14). Sous le prefixe de l'eleve : la garde de
+  /// role s'y applique sans rien ajouter.
+  static const String eleveAide = '/eleve/aide';
+
   // --- Tuteur -------------------------------------------------------------
 
   /// Accueil famille : l'etat en direct de chaque enfant.
