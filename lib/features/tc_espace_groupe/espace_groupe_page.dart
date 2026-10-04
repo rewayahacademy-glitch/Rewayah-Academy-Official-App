@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
@@ -105,8 +106,11 @@ class EspaceGroupePage extends ConsumerWidget {
     // retire et la copie neutre le dit, sans cause ni montant ; tant que
     // l'acces se lit, le bouton reste present et inerte. Lu borne a sa
     // session : un tuteur ou un enseignant n'a pas de ligne, rien ne change.
+    final AsyncValue<AccesBeneficiaire?> ligneAcces = ref.watch(
+      accesAppelantProvider,
+    );
     final ({bool ferme, bool enLecture}) acces = rejoindreSelonAcces(
-      ref.watch(accesAppelantProvider),
+      ligneAcces,
     );
     final Widget lecteur = LecteurGroupe(
       groupeId: groupeId,
@@ -125,7 +129,16 @@ class EspaceGroupePage extends ConsumerWidget {
     final Widget corps = acces.ferme
         ? Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[const BandeauAccesEnfant(), Ecart.vLg, lecteur],
+            children: <Widget>[
+              // L'adulte autonome y revient depuis la salle : sa copie, jamais
+              // celle du tuteur (contre-revue FI-VAGUE-CORR).
+              BandeauAccesFerme(
+                acces: ligneAcces.value,
+                tutoiement: tutoiement,
+              ),
+              Ecart.vLg,
+              lecteur,
+            ],
           )
         : lecteur;
     final Widget? basDePage = pied;

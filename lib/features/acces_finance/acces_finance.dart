@@ -294,6 +294,30 @@ class BandeauPlace extends StatelessWidget {
   }
 }
 
+/// La copie des seances fermees d'un ecran d'eleve que lisent l'enfant et
+/// l'adulte autonome (Accueil, Mes groupes, Espace groupe ; contre-revue
+/// FI-VAGUE-CORR) : celle de l'adulte quand la ligne d'acces dit qu'il gere
+/// lui-meme son acces ([AccesBeneficiaire.gereSonAcces]), celle de l'enfant
+/// sinon, et toujours quand l'hote tutoie (mineur, MA4). Aucun role lu :
+/// l'adulte autonome ne lit jamais une copie qui parle d'un tuteur qu'il n'a
+/// pas.
+class BandeauAccesFerme extends StatelessWidget {
+  /// Cree le bandeau.
+  const BandeauAccesFerme({this.acces, this.tutoiement = false, super.key});
+
+  /// La ligne d'acces de la personne connectee.
+  final AccesBeneficiaire? acces;
+
+  /// Vrai quand l'hote sait le lecteur mineur.
+  final bool tutoiement;
+
+  @override
+  Widget build(BuildContext context) =>
+      !tutoiement && (acces?.gereSonAcces ?? false)
+      ? const BandeauAccesAdulte()
+      : const BandeauAccesEnfant();
+}
+
 /// La copie de l'eleve adulte autonome quand ses seances sont fermees, sans
 /// etat de place ni manque rendus : neutre, au vouvoiement, sans cause
 /// inventee. La cause utile vit dans Mon espace > Paiements.

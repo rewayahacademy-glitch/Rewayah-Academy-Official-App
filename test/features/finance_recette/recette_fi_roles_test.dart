@@ -449,6 +449,9 @@ void main() {
         // jamais une cause ni un montant.
         'place': 'EtatPlace?',
         'datePlace': 'DateTime?',
+        // Contre-revue FI-VAGUE-CORR : qui gere l'acces choisit la copie des
+        // seances fermees (enfant ou adulte autonome), jamais une cause.
+        'gereSonAcces': 'bool?',
       });
       // Aucun type d'argent, aucun nom de montant ou de cause financiere.
       for (final MapEntry<String, String> c in champs.entries) {

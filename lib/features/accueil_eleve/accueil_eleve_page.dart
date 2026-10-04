@@ -237,7 +237,7 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 if (accesFerme) ...<Widget>[
-                  const BandeauAccesEnfant(),
+                  BandeauAccesFerme(acces: acces?.value),
                   Ecart.vLg,
                 ],
                 _BlocPrincipal(

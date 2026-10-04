@@ -1550,6 +1550,79 @@ void main() {
       });
     });
 
+    testWidgets('Espace groupe, adulte autonome, acces ferme : sa copie, '
+        'jamais celle du tuteur (contre-revue FI-VAGUE-CORR)', (
+      WidgetTester tester,
+    ) async {
+      await avecLargeur(tester, largeurMobile, () async {
+        await espaceGroupe(
+          tester,
+          _MonAccesFixe(
+            AccesBeneficiaire(
+              eleveId: moi,
+              prenom: 'Youssef',
+              etatAffiche: EtatAccesAffiche.sansEcheance,
+              seancesPayantesOuvertes: false,
+              gereSonAcces: true,
+            ),
+          ),
+        );
+        expect(rejoindre(), findsNothing);
+        expect(find.byKey(BandeauAccesAdulte.cle), findsOneWidget);
+        expect(find.byKey(BandeauAccesEnfant.cle), findsNothing);
+        expect(find.text(t.argent.acces.enfantMessage), findsNothing);
+        for (final String texte in _textes(tester)) {
+          expect(
+            texte.toLowerCase().contains('tuteur'),
+            isFalse,
+            reason: texte,
+          );
+        }
+      });
+    });
+
+    testWidgets('Mes groupes, adulte autonome, acces ferme : jamais la copie '
+        'du tuteur (contre-revue FI-VAGUE-CORR)', (WidgetTester tester) async {
+      await avecLargeur(tester, largeurMobile, () async {
+        await tester.pumpWidget(
+          hoteTcA(
+            const MesGroupesPage(),
+            surcharges: <Override>[
+              ...surchargesDemonstration(),
+              sourceSessionProvider.overrideWithValue(
+                FausseSourceSession(sessionActive(AppRole.student)),
+              ),
+              portMonAccesProvider.overrideWithValue(
+                _MonAccesFixe(
+                  AccesBeneficiaire(
+                    eleveId: moi,
+                    prenom: 'Youssef',
+                    etatAffiche: EtatAccesAffiche.sansEcheance,
+                    seancesPayantesOuvertes: false,
+                    gereSonAcces: true,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+        for (int i = 0; i < 4; i++) {
+          await tester.pump();
+        }
+        expect(find.byKey(BandeauAccesAdulte.cle), findsOneWidget);
+        expect(find.text(t.argent.acces.enfantMessage), findsNothing);
+      });
+    });
+
+    testWidgets('Espace groupe, ligne sans la capacite (enfant) : la copie '
+        'de l enfant reste', (WidgetTester tester) async {
+      await avecLargeur(tester, largeurMobile, () async {
+        await espaceGroupe(tester, _MonAccesFixe(accesDeMoi(ouvert: false)));
+        expect(find.byKey(BandeauAccesEnfant.cle), findsOneWidget);
+        expect(find.byKey(BandeauAccesAdulte.cle), findsNothing);
+      });
+    });
+
     testWidgets('Espace groupe, acces ouvert : Rejoindre rendu et actif', (
       WidgetTester tester,
     ) async {
@@ -1805,6 +1878,22 @@ void main() {
         t.ficheEleve.mouvements.erreurTitre(dePrenom: deDevant('Ousmane')),
         "Les mouvements d'Ousmane ne peuvent pas être lus",
       );
+    });
+
+    test('R4-08 : « y » suivi d une voyelle est une consonne, « de » '
+        '(contre-revue FI-VAGUE-CORR)', () {
+      expect(deDevant('Youssef'), 'de Youssef');
+      expect(deDevant('Yasmine'), 'de Yasmine');
+      expect(deDevant('Yahya'), 'de Yahya');
+      expect(deDevant('Yusuf'), 'de Yusuf');
+      expect(deDevant('Yanis'), 'de Yanis');
+      expect(deDevant('Yacine'), 'de Yacine');
+      expect(
+        t.ficheEleve.acces.ligne(dePrenom: deDevant('Youssef')),
+        'Accès de Youssef',
+      );
+      // Suivi d'une consonne, « y » se prononce « i » : il elide.
+      expect(deDevant('Yvette'), "d'Yvette");
     });
 
     testWidgets('R4-08 : la fiche > Acces d Aicha dit « Accès d\'Aïcha »', (

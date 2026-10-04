@@ -67,6 +67,7 @@ class AccesBeneficiaire {
     this.essaisMax,
     this.place,
     this.datePlace,
+    this.gereSonAcces,
   });
 
   /// L'eleve.
@@ -109,6 +110,14 @@ class AccesBeneficiaire {
   /// Le jour ou la place a ete liberee ou l'acces reactive, quand la source
   /// le rend.
   final DateTime? datePlace;
+
+  /// Vrai quand la personne qui lit cette ligne gere elle-meme son acces
+  /// (eleve adulte autonome, son propre tuteur, ADR-009) ; faux pour un
+  /// enfant, que son tuteur gere ; `null` quand la source ne le rend pas
+  /// encore (FI-BR-08). **Une capacite de la ligne, jamais un role** : elle
+  /// choisit seulement la copie des seances fermees (guide §1.7), et
+  /// `null` garde la copie de l'enfant (contre-revue FI-VAGUE-CORR).
+  final bool? gereSonAcces;
 }
 
 /// L'acces des eleves du foyer (contrat K6, consommateurs : Compte, fiche
