@@ -81,9 +81,15 @@ class CarteClasseSeance extends StatelessWidget {
     // La carte n'est un lien que sans bouton « Reessayer » dedans : jamais un
     // bouton dans un bouton.
     final bool lien = laClasse != null && !classe.hasError && !seance.hasError;
+    // Sans classe lisible, la carte n'est pas un bouton grise : elle n'est
+    // simplement pas un lien (lib/CLAUDE.md).
+    VoidCallback? ouvrir;
+    if (lien) {
+      ouvrir = () => onVoirClasse(laClasse.classe.groupeId);
+    }
 
     return AppCard(
-      onPress: lien ? () => onVoirClasse(laClasse.classe.groupeId) : null,
+      onPress: ouvrir,
       libelleSemantique: lien ? t.tuteur.accueil.voirLaClasse : null,
       // Bureau et tablette : la carte mise en avant (V2) ; telephone : la
       // surface elevee, avec la seance en zone imbriquee (V1).
