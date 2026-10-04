@@ -24,6 +24,7 @@ import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/avatar_nom.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/compteur_visite.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/ouverture_observation.dart';
@@ -527,5 +528,75 @@ void main() {
       await _presser(tester, find.text(v.quitter));
       expect(find.text(v.quitterQuestion), findsOneWidget);
     });
+  });
+  // TUILE-TUTEUR-1 : sans image, la vignette du tuteur prend la tuile sans
+  // image partagee (VIDEO-TUILE-1) : cercle, nom centre dessous, une seule
+  // fois ; « Camera fermee » reste lu.
+  group('TUILE-TUTEUR-1 : vignette sans image', () {
+    for (final (Size, double) cas in const <(Size, double)>[
+      (Size(390, 844), 1),
+      (Size(320, 844), 2),
+      (Size(1440, 900), 1),
+    ]) {
+      testWidgets('${cas.$1.width.toInt()} px, texte x${cas.$2.toInt()}', (
+        WidgetTester tester,
+      ) async {
+        final _Salle salle = await _entrerEnSalle(
+          tester,
+          taille: cas.$1,
+          echelleTexte: cas.$2,
+        );
+        _publierParticipants(salle.moteur);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+
+        for (final (String cle, String nom) vignette in <(String, String)>[
+          ('vignette-enfant', 'Mariam'),
+          ('vignette-enseignant', 'Amina'),
+        ]) {
+          final Finder cadre = find.byKey(ValueKey<String>(vignette.$1));
+          final Finder tuile = find.descendant(
+            of: cadre,
+            matching: find.byType(TuileSansImage),
+          );
+          expect(tuile, findsOneWidget);
+          // Le nom une seule fois : l'etiquette du bas ne le redit pas.
+          expect(
+            find.descendant(of: cadre, matching: find.text(vignette.$2)),
+            findsOneWidget,
+          );
+          final Rect cercle = tester.getRect(
+            find.descendant(
+              of: tuile,
+              matching: find.byKey(
+                const ValueKey<String>('tuile-sans-image-cercle'),
+              ),
+            ),
+          );
+          final Rect nomRect = tester.getRect(
+            find.descendant(
+              of: tuile,
+              matching: find.byKey(
+                const ValueKey<String>('tuile-sans-image-nom'),
+              ),
+            ),
+          );
+          expect(
+            nomRect.center.dx,
+            moreOrLessEquals(cercle.center.dx, epsilon: 1),
+          );
+          expect(nomRect.top, greaterThanOrEqualTo(cercle.bottom));
+          // Tout dans le cadre.
+          final Rect bord = tester.getRect(cadre);
+          expect(bord.contains(cercle.topLeft), isTrue);
+          expect(nomRect.bottom, lessThanOrEqualTo(bord.bottom + 0.5));
+        }
+        // « Camera fermee » est dit au lecteur d'ecran.
+        expect(
+          find.bySemanticsLabel(RegExp(RegExp.escape(v.cameraFermee))),
+          findsNWidgets(2),
+        );
+      });
+    }
   });
 }

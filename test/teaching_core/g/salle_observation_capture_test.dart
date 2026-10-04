@@ -83,12 +83,17 @@ Future<FauxMoteurClasse> _monterSalle(
   bool participants = true,
   bool jetonRefuse = false,
   double echelleTexte = 1,
+  bool sansImage = false,
 }) async {
   final FauxPortPolitique politique = FauxPortPolitique();
   addTearDown(politique.fermer);
-  final FauxMoteurClasse moteur = FauxMoteurClasse()
-    ..videos['prof-1'] = _videoDouble(const Color(0xFF6F6A86))
-    ..videos['enfant-1'] = _videoDouble(const Color(0xFF8C84A8));
+  final FauxMoteurClasse moteur = FauxMoteurClasse();
+  // TUILE-TUTEUR-1 : sans image, les vignettes prennent la tuile partagee.
+  if (!sansImage) {
+    moteur
+      ..videos['prof-1'] = _videoDouble(const Color(0xFF6F6A86))
+      ..videos['enfant-1'] = _videoDouble(const Color(0xFF8C84A8));
+  }
   await tester.pumpWidget(
     ProviderScope(
       overrides: surchargesTcG(
@@ -317,6 +322,34 @@ void main() {
       fixerVueCapture(tester, const Size(390, 844), 3, zoneSure: _zoneSure);
       await _monterSalle(tester, participants: false);
       await _capturer(tester, 'o2_salle_vide_390x844@3_light');
+    });
+
+    // TUILE-TUTEUR-1 : vignettes sans image (cercle, nom centre dessous).
+    for (final ThemeMode mode in <ThemeMode>[
+      ThemeMode.light,
+      ThemeMode.dark,
+    ]) {
+      testWidgets('sans image 390x844 @3, ${mode.name}', (
+        WidgetTester tester,
+      ) async {
+        fixerVueCapture(tester, const Size(390, 844), 3, zoneSure: _zoneSure);
+        await _monterSalle(tester, mode: mode, sansImage: true);
+        await _capturer(tester, 'o2_sans_image_390x844@3_${mode.name}');
+      });
+    }
+
+    testWidgets('sans image 1440x900 @1', (WidgetTester tester) async {
+      fixerVueCapture(tester, const Size(1440, 900), 1);
+      await _monterSalle(tester, sansImage: true);
+      await _capturer(tester, 'o2_sans_image_1440x900@1_light');
+    });
+
+    testWidgets('sans image, texte a 200 % 320x844 @2', (
+      WidgetTester tester,
+    ) async {
+      fixerVueCapture(tester, const Size(320, 844), 2, zoneSure: _zoneSure);
+      await _monterSalle(tester, sansImage: true, echelleTexte: 2);
+      await _capturer(tester, 'o2_sans_image_texte200_320x844@2_light');
     });
 
     testWidgets('video indisponible 390x844 @3', (WidgetTester tester) async {

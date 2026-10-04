@@ -460,21 +460,36 @@ class _Vignette extends StatelessWidget {
                       ),
                     ),
                   )
-                : AvatarSansImage(
+                // TUILE-TUTEUR-1 : la meme tuile sans image que la salle et
+                // la scene live (VIDEO-TUILE-1) : cercle, nom centre dessous ;
+                // « Camera fermee » est lu, la tuile parle dans son coin.
+                : TuileSansImage(
                     prenom: p.nom,
-                    legende: v.cameraFermee,
-                    styleLegende: palette.inkMuted.applyTo(
-                      textes.bodySmall ?? const TextStyle(),
+                    nom: nom,
+                    libelleSansImage: v.cameraFermee,
+                    styleNom: palette.surfaceSunken.applyTo(
+                      textes.labelMedium ?? const TextStyle(),
                     ),
+                    coin: parle ? const _OndesParole() : null,
                   ),
           );
+    // Sans image, le nom est deja sous le cercle : l'etiquette du bas ne le
+    // redit pas.
+    final bool etiquette = image != null || p == null;
 
     // Une vignette est un cadre video de taille fixe : son texte grossit
     // jusqu'au seuil des commandes, pas au-dela (les noms se relisent en
     // taille pleine dans l'en-tete).
     return MediaQuery.withClampedTextScaling(
       maxScaleFactor: seuilTexteEmpile,
-      child: _cadre(palette, fond, nom, parle, v.parle(nom: nom)),
+      child: _cadre(
+        palette,
+        fond,
+        nom,
+        parle,
+        v.parle(nom: nom),
+        etiquette: etiquette,
+      ),
     );
   }
 
@@ -483,8 +498,9 @@ class _Vignette extends StatelessWidget {
     Widget fond,
     String nom,
     bool parle,
-    String nomQuiParle,
-  ) {
+    String nomQuiParle, {
+    required bool etiquette,
+  }) {
     return Semantics(
       key: cle,
       container: true,
@@ -506,15 +522,16 @@ class _Vignette extends StatelessWidget {
             child: Stack(
               children: <Widget>[
                 Positioned.fill(child: fond),
-                PositionedDirectional(
-                  start: AppSpacing.sm,
-                  bottom: AppSpacing.sm,
-                  end: AppSpacing.sm,
-                  child: Align(
-                    alignment: AlignmentDirectional.bottomStart,
-                    child: _Etiquette(nom: nom, parle: parle),
+                if (etiquette)
+                  PositionedDirectional(
+                    start: AppSpacing.sm,
+                    bottom: AppSpacing.sm,
+                    end: AppSpacing.sm,
+                    child: Align(
+                      alignment: AlignmentDirectional.bottomStart,
+                      child: _Etiquette(nom: nom, parle: parle),
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -522,6 +539,19 @@ class _Vignette extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Les ondes de parole, seules, dans le coin d'une tuile sans image (signal
+/// reel seulement, comme l'etiquette).
+class _OndesParole extends StatelessWidget {
+  const _OndesParole();
+
+  @override
+  Widget build(BuildContext context) => IconTheme(
+    data: AppPalette.of(context).pointsStatut.succes
+        .asIconTheme(size: AppSpacing.lg),
+    child: Icon(AppIcons.libelleAudio.repos),
+  );
 }
 
 /// L'etiquette du nom sur la vignette : pilule sombre, nom, ondes quand la
