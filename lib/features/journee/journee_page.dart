@@ -1017,8 +1017,9 @@ List<CahierEnRetard> trierCahiersATerminer(List<CahierEnRetard> cahiers) =>
 /// La liste complete « A terminer » (§11.4), a son adresse
 /// [Routes.enseignantATerminer] (DASH-ENS-ROUTE) : ouverte par « Voir tout »,
 /// ou directement (rechargement, lien). Elle lit elle-meme les cahiers en
-/// retard, avec ses etats : chargement, erreur, vide, contenu ; le bandeau
-/// hors ligne vient de [PageShell].
+/// retard, avec ses etats : chargement, erreur, vide, contenu, et hors ligne
+/// (un echec sans reseau se dit « hors ligne », sous le bandeau de
+/// [PageShell]).
 class ListeATerminerPage extends ConsumerWidget {
   /// Cree la page.
   const ListeATerminerPage({super.key});
@@ -1032,12 +1033,12 @@ class ListeATerminerPage extends ConsumerWidget {
     if (!lecture.hasValue && lecture.isLoading) {
       corps = const Skeleton.liste(lignes: 3);
     } else if (lecture.hasError && !lecture.hasValue) {
-      // Jamais « rien a terminer » sur une lecture ratee (D10).
-      corps = EtatSysteme(
-        key: const ValueKey<String>('a-terminer-erreur'),
-        nature: NatureEtat.echecServeur,
-        phrase: t.enseignant.journee.aTerminerErreur,
-        onAction: () => ref.invalidate(cahiersEnRetardProvider),
+      // Jamais « rien a terminer » sur une lecture ratee (D10). Sans reseau,
+      // l'echec se dit « hors ligne », pas « le serveur n'a pas repondu ».
+      corps = _EchecLecture(
+        cle: 'a-terminer-erreur',
+        phraseServeur: t.enseignant.journee.aTerminerErreur,
+        onReessayer: () => ref.invalidate(cahiersEnRetardProvider),
       );
     } else if (lecture.requireValue.isEmpty) {
       corps = EmptyState(
@@ -1210,12 +1211,38 @@ class _ErreurAlertes extends StatelessWidget {
   final VoidCallback onReessayer;
 
   @override
-  Widget build(BuildContext context) => EtatSysteme(
-    key: const ValueKey<String>('alertes-erreur'),
-    nature: NatureEtat.echecServeur,
-    phrase: t.enseignant.journee.alertesErreur,
-    onAction: onReessayer,
+  Widget build(BuildContext context) => _EchecLecture(
+    cle: 'alertes-erreur',
+    phraseServeur: t.enseignant.journee.alertesErreur,
+    onReessayer: onReessayer,
   );
+}
+
+/// L'echec de lecture d'une liste de la Journee : « hors ligne » quand le
+/// reseau manque (la cause est connue), sinon l'echec serveur et sa phrase
+/// (K-59). Les deux proposent de relire ; aucun ne dit « rien a afficher »
+/// (D10).
+class _EchecLecture extends ConsumerWidget {
+  const _EchecLecture({
+    required this.cle,
+    required this.phraseServeur,
+    required this.onReessayer,
+  });
+
+  final String cle;
+  final String phraseServeur;
+  final VoidCallback onReessayer;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    return EtatSysteme(
+      key: ValueKey<String>(cle),
+      nature: horsLigne ? NatureEtat.horsLigne : NatureEtat.echecServeur,
+      phrase: horsLigne ? null : phraseServeur,
+      onAction: onReessayer,
+    );
+  }
 }
 
 /// Une ligne par cahier ; l'appui ouvre le cahier de la seance.

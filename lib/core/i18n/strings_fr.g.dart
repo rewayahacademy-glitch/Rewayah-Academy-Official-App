@@ -8496,9 +8496,6 @@ class Traductions$enseignant$journee$fr {
 	/// fr: '{eleve} a perdu la connexion.'
 	String coupureDetectee({required Object eleve}) => '${eleve} a perdu la connexion.';
 
-	/// fr: 'et {nombre} autres élèves.'
-	String autresAbsences({required Object nombre}) => 'et ${nombre} autres élèves.';
-
 	/// fr: 'Le cours de {heure} est annulé.'
 	String coursAnnule({required Object heure}) => 'Le cours de ${heure} est annulé.';
 
@@ -8532,8 +8529,8 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'À terminer'
 	String get aTerminer => 'À terminer';
 
-	/// fr: 'Aucun cahier de transmission à terminer.'
-	String get aTerminerVide => 'Aucun cahier de transmission à terminer.';
+	/// fr: 'Tous vos cahiers sont terminés.'
+	String get aTerminerVide => 'Tous vos cahiers sont terminés.';
 
 	/// fr: 'Les cahiers à terminer n'ont pas pu être lus. Réessayez dans un instant.'
 	String get aTerminerErreur => 'Les cahiers à terminer n\'ont pas pu être lus. Réessayez dans un instant.';
@@ -8568,11 +8565,11 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Remplacements confirmés'
 	String get remplacementsTitre => 'Remplacements confirmés';
 
-	/// fr: 'Aucun remplacement confirmé pour le moment.'
-	String get remplacementsVide => 'Aucun remplacement confirmé pour le moment.';
+	/// fr: 'Aucun cours d'un collègue à assurer pour le moment.'
+	String get remplacementsVide => 'Aucun cours d\'un collègue à assurer pour le moment.';
 
-	/// fr: 'Voir les {nombre} remplacements confirmés'
-	String voirTousRemplacements({required Object nombre}) => 'Voir les ${nombre} remplacements confirmés';
+	/// fr: 'Voir tout : les {nombre} remplacements confirmés'
+	String voirTousRemplacements({required Object nombre}) => 'Voir tout : les ${nombre} remplacements confirmés';
 
 	/// fr: 'Heure'
 	String get heure => 'Heure';
@@ -18014,7 +18011,6 @@ extension on Traductions {
 			'enseignant.journee.erreurPartielle' => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.',
 			'enseignant.journee.absenceDetectee' => ({required Object eleve}) => '${eleve} n\'est pas entré en salle.',
 			'enseignant.journee.coupureDetectee' => ({required Object eleve}) => '${eleve} a perdu la connexion.',
-			'enseignant.journee.autresAbsences' => ({required Object nombre}) => 'et ${nombre} autres élèves.',
 			'enseignant.journee.coursAnnule' => ({required Object heure}) => 'Le cours de ${heure} est annulé.',
 			'enseignant.journee.rapportsTitre' => 'Rapports en attente',
 			'enseignant.journee.rapportLigne' => ({required Object jour, required Object heure}) => 'Cours du ${jour} à ${heure}',
@@ -18026,7 +18022,7 @@ extension on Traductions {
 			'enseignant.journee.prochaineSeance' => 'Prochaine séance',
 			'enseignant.journee.maJournee' => 'Ma journée',
 			'enseignant.journee.aTerminer' => 'À terminer',
-			'enseignant.journee.aTerminerVide' => 'Aucun cahier de transmission à terminer.',
+			'enseignant.journee.aTerminerVide' => 'Tous vos cahiers sont terminés.',
 			'enseignant.journee.aTerminerErreur' => 'Les cahiers à terminer n\'ont pas pu être lus. Réessayez dans un instant.',
 			'enseignant.journee.aTerminerAide' => 'Le cahier de transmission aide vos élèves et vous permet d\'ajuster le prochain cours.',
 			'enseignant.journee.rappelCahier' => 'Des cahiers de transmission attendent d\'être terminés',
@@ -18038,8 +18034,8 @@ extension on Traductions {
 			'enseignant.journee.voirAutreAlerte' => 'Voir l\'autre alerte',
 			'enseignant.journee.voirAutresAlertes' => ({required Object nombre}) => 'Voir les ${nombre} autres alertes',
 			'enseignant.journee.remplacementsTitre' => 'Remplacements confirmés',
-			'enseignant.journee.remplacementsVide' => 'Aucun remplacement confirmé pour le moment.',
-			'enseignant.journee.voirTousRemplacements' => ({required Object nombre}) => 'Voir les ${nombre} remplacements confirmés',
+			'enseignant.journee.remplacementsVide' => 'Aucun cours d\'un collègue à assurer pour le moment.',
+			'enseignant.journee.voirTousRemplacements' => ({required Object nombre}) => 'Voir tout : les ${nombre} remplacements confirmés',
 			'enseignant.journee.heure' => 'Heure',
 			'enseignant.journee.eleves' => 'Élèves',
 			'enseignant.journee.classe' => 'Classe',
@@ -18469,9 +18465,9 @@ extension on Traductions {
 			'controleur.echanges.contexte' => 'Contexte de la visite, joint automatiquement',
 			'controleur.echanges.cleClasse' => 'Classe',
 			'controleur.echanges.cleDate' => 'Date',
+			'controleur.echanges.cleHeure' => 'Heure',
 			_ => null,
 		} ?? switch (path) {
-			'controleur.echanges.cleHeure' => 'Heure',
 			'controleur.echanges.auteurVous' => 'Vous',
 			'controleur.echanges.auteurAdmin' => 'Administration',
 			'controleur.echanges.champ' => 'Répondre à l\'administration…',
@@ -18983,9 +18979,9 @@ extension on Traductions {
 			'tc.parcours.feedback.merci' => 'Merci.',
 			'tc.parcours.feedback.tendance.titre' => 'Retour des élèves',
 			'tc.parcours.feedback.tendance.sousSeuil' => 'Pas encore assez de retours pour dégager une tendance.',
+			'tc.parcours.feedback.tendance.anonyme' => 'Les retours sont anonymes et agrégés. Ils ne suffisent jamais, seuls, à une décision.',
 			_ => null,
 		} ?? switch (path) {
-			'tc.parcours.feedback.tendance.anonyme' => 'Les retours sont anonymes et agrégés. Ils ne suffisent jamais, seuls, à une décision.',
 			'tc.parcours.signalement.titre' => 'Signaler un besoin',
 			'tc.parcours.signalement.categorie' => 'De quoi s\'agit-il ?',
 			'tc.parcours.signalement.categorieValeur.pedagogique' => 'Pédagogique',

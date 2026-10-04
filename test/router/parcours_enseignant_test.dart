@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -365,6 +367,44 @@ void main() {
       await tester.pump(const Duration(seconds: 5));
     });
 
+    // DASH-ENS-ROUTE-R, mineur 2 : le retour d'une adresse ouverte
+    // directement (rechargement, lien) ramene a la Journee ; ouverte par
+    // « Voir tout », il revient a la page precedente.
+    testWidgets('ouverte directement, le retour mene a la Journee', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await monter(
+        tester,
+        Routes.enseignantATerminer,
+        avec: avecCahiers(quatre),
+      );
+      // Sous-route de la Journee : go_router empile la Journee dessous.
+      await tester.tap(find.byType(DisqueRetour));
+      await tester.pumpAndSettle();
+      expect(routeur.state.matchedLocation, Routes.enseignantJournee);
+      expect(find.byType(ListeATerminerPage), findsNothing);
+      await tester.pump(const Duration(seconds: 5));
+    });
+
+    testWidgets('ouverte par un push, le retour revient en arriere', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await monter(
+        tester,
+        Routes.enseignantJournee,
+        avec: avecCahiers(quatre),
+      );
+      unawaited(routeur.push<void>(Routes.enseignantATerminer));
+      await tester.pumpAndSettle();
+      expect(find.byType(ListeATerminerPage), findsOneWidget);
+      expect(routeur.canPop(), isTrue);
+      await tester.tap(find.byType(DisqueRetour));
+      await tester.pumpAndSettle();
+      expect(routeur.state.matchedLocation, Routes.enseignantJournee);
+      expect(find.byType(ListeATerminerPage), findsNothing);
+      await tester.pump(const Duration(seconds: 5));
+    });
+
     testWidgets('rien a terminer : une phrase, pas une page vide', (
       WidgetTester tester,
     ) async {
@@ -620,6 +660,60 @@ void main() {
       ]) {
         expect(find.textContaining(prenom), findsOneWidget, reason: prenom);
       }
+    });
+
+    // DASH-ENS-LISTES-R (contre-revue) : une seule alerte cachee, le lien
+    // le dit au singulier.
+    testWidgets('trois alertes : « Voir l autre alerte », au singulier', (
+      WidgetTester tester,
+    ) async {
+      vueHaute(tester);
+      final GoRouter routeur = await monter(
+        tester,
+        Routes.enseignantJournee,
+        avec: avec(presence: cinqManquants.take(3).toList()),
+      );
+      final Finder lien = find.byKey(
+        const ValueKey<String>('journee-alertes-voir-autres'),
+      );
+      expect(
+        find.descendant(
+          of: lien,
+          matching: find.text(t.enseignant.journee.voirAutreAlerte),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.enseignant.journee.voirAutresAlertes(nombre: '1')),
+        findsNothing,
+      );
+      await toucher(tester, lien);
+      expect(routeur.state.matchedLocation, Routes.enseignantAlertes);
+      expect(find.textContaining('Maryam'), findsOneWidget);
+    });
+
+    // DASH-ENS-LISTES-R (contre-revue), WCAG 2.5.3 : le nom accessible du
+    // lien contient le texte visible « Voir tout », puis dit quoi.
+    testWidgets('« Voir tout » : le nom accessible commence par le visible', (
+      WidgetTester tester,
+    ) async {
+      vueHaute(tester);
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      await monter(
+        tester,
+        Routes.enseignantJournee,
+        avec: avec(remplacements: cinqRemplacements),
+      );
+      final String nom = tester
+          .getSemantics(
+            find.byKey(
+              const ValueKey<String>('journee-remplacements-voir-tout'),
+            ),
+          )
+          .label;
+      expect(nom, startsWith(t.tuteur.accueil.voirTout));
+      expect(nom, contains('5'));
+      semantique.dispose();
     });
 
     testWidgets('deux alertes ou moins : aucun lien', (
