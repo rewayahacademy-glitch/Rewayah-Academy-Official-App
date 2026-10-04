@@ -32,7 +32,7 @@
 | Fusion à blanc `git merge-tree` avec `origin/corrections/revue-directeur-2026-10` (af20f6c2) | Aucun conflit |
 | Fusion à blanc `git merge-tree` avec `origin/corrections/c2-bento3` | Aucun conflit |
 | Fichiers interdits | Aucun : ni pubspec, ni supabase, ni .github, ni vercel.json, ni thème, ni Coran |
-| Suite complète, un dossier à la fois | Voir la dernière section |
+| Suite complète, un dossier à la fois | **5399 réussis, 0 échec**, le même chiffre que l'auteur |
 
 ## Points « Pour accepter », un par un
 
@@ -72,4 +72,13 @@
 
 ## Suite par dossiers (un dossier à la fois)
 
-Voir l'annexe ci-dessous, ajoutée à la fin de la suite.
+```
+test/core 648 · test/features 2505 (~2062) · test/router 277 · test/widgets 270
+test/teaching_core 912 (~55) · test/accessibilite 314 · test/theme 70 · test/video 43
+test/parcours 44 · test/capacites 37 · test/tool 32 · test/coran 25 · test/seance_famille 25
+test/planning 23 · test/presence 20 · test/tc_observation 19 · test/agent 18 · test/foyer 18
+test/suivi 16 · test/priere 15 · test/mouvement 13 · test/appairage 12 · test/cache 11
+test/config 11 · test/observabilite 10 · test/i18n 7 · test/icons 4 · test/capture 0 (~657)
+```
+
+Somme des dossiers : 5383 verts, 0 échec. Les dossiers `test/fixtures` et `test/support` ne contiennent aucun test. Lancés seuls, ils ont fait tourner toute la suite, deux fois, l'une après l'autre : **5399 verts, 0 échec**. C'est le chiffre de l'auteur ; les 16 tests de plus sont posés à la racine de `test/`.
