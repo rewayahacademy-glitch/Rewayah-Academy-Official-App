@@ -179,16 +179,21 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
                       valeur: TypePiece.titreSejour.valeurSql,
                       libelle: t.kyc.titreSejour,
                     ),
+                    // `other` existe en base : « Autre » est un type choisi
+                    // comme les trois autres. La carte « Autre » generique
+                    // ouvrait un champ libre dont le contenu n'etait jamais lu
+                    // (FORM-L11) : elle est retiree, la saisie ne servait a rien.
+                    OptionChoix(
+                      valeur: TypePiece.autre.valeurSql,
+                      libelle: t.kyc.autrePiece,
+                    ),
                   ],
+                  autoriserSaisieLibre: false,
                   onChange: (ReponseChoix reponse) => setState(() {
                     final String? valeur = reponse.valeurs.isEmpty
                         ? null
                         : reponse.valeurs.first;
-                    // La carte « Autre » a bien une valeur ici, contrairement
-                    // a la question du role : `other` existe en base.
-                    _type = valeur == ChoiceCardGroup.valeurAutre
-                        ? TypePiece.autre
-                        : TypePiece.depuisSql(valeur);
+                    _type = TypePiece.depuisSql(valeur);
                     _piece = null;
                   }),
                 ),

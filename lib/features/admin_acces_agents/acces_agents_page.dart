@@ -12,6 +12,7 @@ import '../../core/router/routes.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/champ_date.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
@@ -68,6 +69,13 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
   int _duree = 8;
   bool _masquee = true;
 
+  /// Vrai des que la personne a ecrit elle-meme le libelle : la proposition
+  /// automatique ne le touche plus.
+  bool _libelleSaisi = false;
+
+  /// La raison affichee quand on presse « Emettre » avec un champ manquant.
+  String? _erreurFormulaire;
+
   bool _chargement = true;
   bool _emission = false;
   Object? _erreur;
@@ -115,17 +123,42 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
     }
   }
 
-  bool get _emissionPossible =>
-      _libelle.text.trim().isNotEmpty && _choisie != null && !_emission;
+  /// Ce qui manque encore, nul quand tout est la : le bouton ne grise jamais,
+  /// il dit ce qui manque (K-56).
+  String? get _manque => _choisie == null
+      ? t.admin.agents.manquePersonne
+      : _libelle.text.trim().isEmpty
+      ? t.admin.agents.manqueLibelle
+      : null;
+
+  /// Propose « Observation de Maryam, le 04/10/2026, 8 h » tant que la
+  /// personne qui emet n'a pas ecrit son propre libelle (FORM-L12). Une
+  /// proposition se modifie ; un libelle ecrit a la main n'est jamais ecrase.
+  void _preremplir() {
+    final PersonneObservable? qui = _choisie;
+    if (qui == null || _libelleSaisi) {
+      return;
+    }
+    _libelle.text = t.admin.agents.libelleAuto(
+      prenom: qui.prenom.isEmpty ? qui.identifiant : qui.prenom,
+      date: ChampDate.ecrire(ref.read(horlogeFormulairesProvider)()),
+      duree: _duree,
+    );
+  }
 
   Future<void> _emettre() async {
+    if (_emission) {
+      return;
+    }
     final PersonneObservable? qui = _choisie;
-    if (qui == null || !_emissionPossible) {
+    if (qui == null || _manque != null) {
+      setState(() => _erreurFormulaire = _manque);
       return;
     }
     setState(() {
       _emission = true;
       _message = null;
+      _erreurFormulaire = null;
     });
     try {
       final JetonEmis emis = await ref
@@ -143,6 +176,7 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
         _emis = emis;
         _emission = false;
         _libelle.clear();
+        _libelleSaisi = false;
         _choisie = null;
       });
       await _charger();
@@ -226,11 +260,14 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 Ecart.vXxl,
-                if (_emis != null) _CarteJetonEmis(
-                  emis: _emis!,
-                  onCopier: _copier,
-                  onTermine: () => setState(() => _emis = null),
-                ) else _formulaire(context),
+                if (_emis != null)
+                  _CarteJetonEmis(
+                    emis: _emis!,
+                    onCopier: _copier,
+                    onTermine: () => setState(() => _emis = null),
+                  )
+                else
+                  _formulaire(context),
                 Ecart.vSection,
                 SectionHeader(
                   titre: t.admin.agents.titre,
@@ -256,7 +293,11 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
         children: <Widget>[
           TextField(
             controller: _libelle,
-            onChanged: (String _) => setState(() {}),
+            onChanged: (String texte) => setState(() {
+              // Vider le champ rend la main a la proposition automatique.
+              _libelleSaisi = texte.trim().isNotEmpty;
+              _erreurFormulaire = null;
+            }),
             textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(
               labelText: t.admin.agents.libelle,
@@ -282,7 +323,11 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
           _ChoixPersonne(
             personnes: _proposees,
             choisie: _choisie,
-            onChoix: (PersonneObservable p) => setState(() => _choisie = p),
+            onChoix: (PersonneObservable p) => setState(() {
+              _choisie = p;
+              _erreurFormulaire = null;
+              _preremplir();
+            }),
           ),
           Ecart.vXxl,
 
@@ -296,7 +341,10 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
                 FilterPill(
                   libelle: t.admin.agents.dureeHeure(nombre: h),
                   retenue: _duree == h,
-                  onPress: () => setState(() => _duree = h),
+                  onPress: () => setState(() {
+                    _duree = h;
+                    _preremplir();
+                  }),
                 ),
             ],
           ),
@@ -336,10 +384,22 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
           const _PourraNePourraPas(),
           Ecart.vXxl,
 
+          if (_erreurFormulaire != null) ...<Widget>[
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                _erreurFormulaire!,
+                style: textes.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.error,
+                ),
+              ),
+            ),
+            Ecart.vMd,
+          ],
           ActionPrincipale(
             libelle: t.admin.agents.emettre,
             enCours: _emission,
-            onPress: _emissionPossible ? _emettre : null,
+            onPress: _emettre,
           ),
         ],
       ),
@@ -403,9 +463,8 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
         ColonneDonnees<JetonAgent>(
           titre: t.admin.agents.colonneUsage,
           tabulaire: true,
-          texte: (JetonAgent j) => j.jamaisServi
-              ? t.admin.agents.jamaisServi
-              : '${j.remises}',
+          texte: (JetonAgent j) =>
+              j.jamaisServi ? t.admin.agents.jamaisServi : '${j.remises}',
         ),
         ColonneDonnees<JetonAgent>(
           titre: t.admin.agents.colonneEtat,

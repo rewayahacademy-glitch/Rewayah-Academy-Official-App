@@ -207,7 +207,9 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: Routes.connexionRecuperation,
-        builder: (BuildContext _, GoRouterState _) => const RecuperationPage(),
+        builder: (BuildContext _, GoRouterState etat) => RecuperationPage(
+          courrielInitial: etat.extra is String ? etat.extra! as String : null,
+        ),
       ),
       // L'accueil public : la racine d'un visiteur deconnecte y mene
       // (`deciderRedirection`, demande A-1) ; une route protegee demandee
