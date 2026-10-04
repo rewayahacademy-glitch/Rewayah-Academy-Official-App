@@ -100,9 +100,13 @@ void _verifierVueGlobaleDemo() {
   expect(find.byType(FinancePage), findsOneWidget);
   expect(find.byType(VueGlobaleFinanceContenu), findsOneWidget);
   expect(find.byType(EtatSysteme), findsNothing);
-  // 690 USD encaisses et 690 USD de revenu, deux indicateurs separes.
+  // 690 USD encaisses et 690 USD de revenu, deux indicateurs separes (le
+  // graphique de l'encaisse repete le mois, hors de la grille).
   expect(
-    find.text(formaterMontant(DonneesFinanceDemo.usd(690))),
+    find.descendant(
+      of: find.byKey(VueGlobaleFinanceContenu.indicateursKey),
+      matching: find.text(formaterMontant(DonneesFinanceDemo.usd(690))),
+    ),
     findsNWidgets(2),
   );
   expect(find.text(t.admin.finance.vue.marge), findsOneWidget);

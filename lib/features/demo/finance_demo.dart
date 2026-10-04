@@ -152,12 +152,18 @@ abstract final class DonneesFinanceDemo {
 
   /// La politique commerciale de lancement (guide §1), publiee.
   static final PolitiqueCommerciale politiqueLancement = PolitiqueCommerciale(
-    version: 'lancement-2026-10',
+    // Un numero de version comme la maquette 10 (« v2.0.0 »), jamais un
+    // identifiant technique (revue FI-VAGUE-R R6-10).
+    version: 'v1.0.0',
     statut: StatutPolitique.publiee,
     dateEffet: DateTime(2026, 10),
     tarifEnfant: usd(50),
     tarifAdulte: usd(60),
     essaisMax: 2,
+    // L'essai existe au lancement (guide §1.2). Relances et budgets : le
+    // guide ne fixe aucune valeur, la demonstration n'en invente pas
+    // (`joursRelance` nul, `budgets` vide ; revue FI-VAGUE-R R6-06).
+    essaiActif: true,
     remisesParRang: <RemiseRang>[
       RemiseRang(aPartirDuRang: 3, remise: usd(-5)),
       RemiseRang(aPartirDuRang: 4, remise: usd(-7)),
@@ -168,8 +174,8 @@ abstract final class DonneesFinanceDemo {
     capaciteAdulte: 6,
     capaciteDebutant: 4,
     minimumOuverture: 4,
-    groupesObjectif: 3,
-    groupesMax: 4,
+    classesObjectif: 3,
+    classesMax: 4,
     joursConservationPlace: 7,
     margeReferencePourMille: (objectif: 300, forte: 350, stretch: 400),
     railsActifs: const <RailPaiement>{RailPaiement.webStripe},
@@ -179,12 +185,13 @@ abstract final class DonneesFinanceDemo {
   /// politique de lancement, une date d'effet plus tardive. Aucune valeur
   /// inventee ; la comparaison apparait des qu'un champ est modifie a l'ecran.
   static final PolitiqueCommerciale politiqueBrouillon = PolitiqueCommerciale(
-    version: 'brouillon-2027-01',
+    version: 'v1.1.0',
     statut: StatutPolitique.brouillon,
     dateEffet: DateTime(2027),
     tarifEnfant: politiqueLancement.tarifEnfant,
     tarifAdulte: politiqueLancement.tarifAdulte,
     essaisMax: politiqueLancement.essaisMax,
+    essaiActif: politiqueLancement.essaiActif,
     remisesParRang: politiqueLancement.remisesParRang,
     baseHoraire: politiqueLancement.baseHoraire,
     plafondHoraire: politiqueLancement.plafondHoraire,
@@ -192,12 +199,14 @@ abstract final class DonneesFinanceDemo {
     capaciteAdulte: politiqueLancement.capaciteAdulte,
     capaciteDebutant: politiqueLancement.capaciteDebutant,
     minimumOuverture: politiqueLancement.minimumOuverture,
-    groupesObjectif: politiqueLancement.groupesObjectif,
-    groupesMax: politiqueLancement.groupesMax,
+    classesObjectif: politiqueLancement.classesObjectif,
+    classesMax: politiqueLancement.classesMax,
     joursConservationPlace: politiqueLancement.joursConservationPlace,
     margeReferencePourMille: politiqueLancement.margeReferencePourMille,
     railsActifs: politiqueLancement.railsActifs,
     allocationInternet: politiqueLancement.allocationInternet,
+    joursRelance: politiqueLancement.joursRelance,
+    budgets: politiqueLancement.budgets,
   );
 
   /// Mariam, premier profil du foyer.
@@ -1129,16 +1138,19 @@ abstract final class DonneesFinanceDemo {
   /// Le revenu academique du mois de reference : un tarif par siege eligible
   /// des classes de l'enseignant de demonstration, enfant ou adulte, hors
   /// taxe (FI13). Les remises de rang dependent des foyers, que ces sieges ne
-  /// disent pas : la demonstration n'en invente pas.
-  static Montant revenuDemo() {
+  /// disent pas : la demonstration n'en invente pas. [adulte] restreint aux
+  /// classes d'adultes (`true`) ou d'enfants (`false`) : la repartition de
+  /// la vue globale (revue FI-VAGUE-R R6-01).
+  static Montant revenuDemo({bool? adulte}) {
     final PolitiqueCommerciale p = politiqueLancement;
     return _somme(<Montant>[
       for (final _ClasseDemo c in _classesDemo())
-        Montant(
-          (c.adulte ? p.tarifAdulte : p.tarifEnfant).mineur *
-              (c.eligibles > c.capacite ? c.capacite : c.eligibles),
-          devise,
-        ),
+        if (adulte == null || c.adulte == adulte)
+          Montant(
+            (c.adulte ? p.tarifAdulte : p.tarifEnfant).mineur *
+                (c.eligibles > c.capacite ? c.capacite : c.eligibles),
+            devise,
+          ),
     ]);
   }
 
@@ -1172,13 +1184,13 @@ abstract final class DonneesFinanceDemo {
     final FinancesFoyer finance = finances(JeuFoyerFinance.tousFinances);
     final Montant revenu = revenuDemo();
     final Montant paie = revenus().totalEstime;
+    final int marge = (revenu.mineur - paie.mineur) * 1000 ~/ revenu.mineur;
     return VueGlobaleFinance(
       mois: debutMois,
       encaisse: revenu,
       revenuAcademique: revenu,
       paieEnseignants: paie,
-      margeProjeteePourMille:
-          (revenu.mineur - paie.mineur) * 1000 ~/ revenu.mineur,
+      margeProjeteePourMille: marge,
       impayes: impayesDemo(),
       essaisEnCours: profils(JeuFoyerFinance.unEnEssai)
           .where((FinancesProfil p) => p.etat == EtatFinancier.essai)
@@ -1188,11 +1200,34 @@ abstract final class DonneesFinanceDemo {
         AlerteFinance(
           id: 'demo-fi-alerte-ibrahim',
           nature: NatureAlerteFinance.aRegulariser,
+          cible: CibleAlerteFinance.comptes,
           prenom: _ibrahim.prenom,
           classe: _ibrahim.classe,
           // Le seul siege a regulariser des classes : son manque est
           // l'impaye du mois, jamais un second chiffre.
           montant: impayesDemo(),
+        ),
+      ],
+      // La politique est entree en vigueur en octobre 2026 (date d'effet de
+      // [politiqueLancement]) : les series n'ont qu'un mois, celui de la
+      // vue, aucun historique invente avant le lancement.
+      encaisseParMois: <MontantMensuel>[
+        MontantMensuel(mois: debutMois, montant: revenu),
+      ],
+      paieParMois: <MontantMensuel>[
+        MontantMensuel(mois: debutMois, montant: paie),
+      ],
+      margeParMois: <MargeMensuelle>[
+        MargeMensuelle(mois: debutMois, pourMille: marge),
+      ],
+      revenuParType: <PartRevenu>[
+        PartRevenu(
+          type: TypeEleveRevenu.enfant,
+          montant: revenuDemo(adulte: false),
+        ),
+        PartRevenu(
+          type: TypeEleveRevenu.adulte,
+          montant: revenuDemo(adulte: true),
         ),
       ],
     );

@@ -190,6 +190,9 @@ PolitiqueCommerciale _brouillon({
   List<RemiseRang>? remisesParRang,
   ({int objectif, int forte, int stretch})? marge,
   Set<RailPaiement>? rails,
+  bool? essaiActif,
+  List<int>? joursRelance,
+  List<BudgetPilotage>? budgets,
 }) {
   final PolitiqueCommerciale b = DonneesFinanceDemo.politiqueBrouillon;
   return PolitiqueCommerciale(
@@ -199,6 +202,7 @@ PolitiqueCommerciale _brouillon({
     tarifEnfant: tarifEnfant ?? b.tarifEnfant,
     tarifAdulte: b.tarifAdulte,
     essaisMax: b.essaisMax,
+    essaiActif: essaiActif ?? b.essaiActif,
     remisesParRang: remisesParRang ?? b.remisesParRang,
     baseHoraire: b.baseHoraire,
     plafondHoraire: b.plafondHoraire,
@@ -206,12 +210,14 @@ PolitiqueCommerciale _brouillon({
     capaciteAdulte: b.capaciteAdulte,
     capaciteDebutant: b.capaciteDebutant,
     minimumOuverture: b.minimumOuverture,
-    groupesObjectif: b.groupesObjectif,
-    groupesMax: b.groupesMax,
+    classesObjectif: b.classesObjectif,
+    classesMax: b.classesMax,
     joursConservationPlace: b.joursConservationPlace,
     margeReferencePourMille: marge ?? b.margeReferencePourMille,
     railsActifs: rails ?? b.railsActifs,
     allocationInternet: b.allocationInternet,
+    joursRelance: joursRelance ?? b.joursRelance,
+    budgets: budgets ?? b.budgets,
   );
 }
 
@@ -298,8 +304,8 @@ const Set<String> _reglables = <String>{
   'remise-4',
   'baseHoraire',
   'plafondHoraire',
-  'groupesObjectif',
-  'groupesMax',
+  'classesObjectif',
+  'classesMax',
   'internet',
   'capaciteEnfant',
   'capaciteAdulte',
@@ -331,7 +337,7 @@ void main() {
       // Tarifs.
       expect(find.text(formaterMontant(_usd(50))), findsOneWidget);
       expect(find.text(formaterMontant(_usd(60))), findsOneWidget);
-      // Enseignants : base 4 / plafond 7, par heure ; 3 et 4 groupes.
+      // Enseignants : base 4 / plafond 7, par heure ; 3 et 4 classes.
       expect(
         find.text(pol.parHeure(montant: formaterMontant(_usd(4)))),
         findsOneWidget,
@@ -340,10 +346,10 @@ void main() {
         find.text(pol.parHeure(montant: formaterMontant(_usd(7)))),
         findsOneWidget,
       );
-      expect(find.text(pol.groupes(n: 3)), findsOneWidget);
-      expect(find.text(pol.groupes(n: 4)), findsOneWidget);
+      expect(find.text(pol.classes(n: 3)), findsOneWidget);
+      expect(find.text(pol.classes(n: 4)), findsOneWidget);
       expect(find.text(pol.internetNonFixee), findsOneWidget);
-      // Groupes : 5 enfants, 6 adultes, 4 debutants, minimum 4.
+      // Classes : 5 enfants, 6 adultes, 4 debutants, minimum 4.
       expect(find.text(pol.eleves(n: 5)), findsOneWidget);
       expect(find.text(pol.eleves(n: 6)), findsOneWidget);
       expect(find.text(pol.eleves(n: 4)), findsNWidgets(2));
@@ -397,8 +403,8 @@ void main() {
         pol.baseHoraireDetail,
         pol.plafondHoraireDetail,
         pol.occupationDetail,
-        pol.groupesObjectifDetail,
-        pol.groupesMaxDetail,
+        pol.classesObjectifDetail,
+        pol.classesMaxDetail,
         pol.internetDetail,
         pol.capaciteEnfantDetail,
         pol.capaciteAdulteDetail,
@@ -447,8 +453,8 @@ void main() {
         'remise-4': '7',
         'baseHoraire': '4',
         'plafondHoraire': '7',
-        'groupesObjectif': '3',
-        'groupesMax': '4',
+        'classesObjectif': '3',
+        'classesMax': '4',
         // L'aide Internet n'est pas encore fixee : un champ vide, qui le dit.
         'internet': '',
         'capaciteEnfant': '5',
@@ -645,13 +651,13 @@ void main() {
       expect(port.publies, isEmpty);
       await tester.enterText(_champ('plafondHoraire'), '7');
 
-      await tester.enterText(_champ('groupesMax'), '2');
+      await tester.enterText(_champ('classesMax'), '2');
       await tester.pump();
       expect(
-        erreur('groupesMax'),
-        pol.erreurGroupesMax(objectif: pol.groupes(n: 3)),
+        erreur('classesMax'),
+        pol.erreurClassesMax(objectif: pol.classes(n: 3)),
       );
-      await tester.enterText(_champ('groupesMax'), '4');
+      await tester.enterText(_champ('classesMax'), '4');
 
       await tester.enterText(_champ('minimum'), '5');
       await tester.pump();
@@ -1032,6 +1038,7 @@ void main() {
         tarifEnfant: l.tarifEnfant,
         tarifAdulte: l.tarifAdulte,
         essaisMax: l.essaisMax,
+        essaiActif: l.essaiActif,
         remisesParRang: <RemiseRang>[
           RemiseRang(aPartirDuRang: 3, remise: _usd(-60)),
         ],
@@ -1041,8 +1048,8 @@ void main() {
         capaciteAdulte: l.capaciteAdulte,
         capaciteDebutant: l.capaciteDebutant,
         minimumOuverture: l.minimumOuverture,
-        groupesObjectif: l.groupesObjectif,
-        groupesMax: l.groupesMax,
+        classesObjectif: l.classesObjectif,
+        classesMax: l.classesMax,
         joursConservationPlace: l.joursConservationPlace,
         margeReferencePourMille: l.margeReferencePourMille,
         railsActifs: l.railsActifs,
@@ -1459,6 +1466,146 @@ void main() {
     ).readAsStringSync();
     expect(ecran, contains('.apercuFamille('));
     expect(ecran, contains('.apercuEnseignant('));
+  });
+
+  group('contre-revue FI-VAGUE-R', () {
+    testWidgets('R6-05 : « Classes » partout, jamais « groupe »', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(1440, 2600));
+      await tester.pumpWidget(_hote(surcharges: _avec(_avecBrouillon())));
+      await tester.pumpAndSettle();
+      expect(find.text(pol.sectionClasses), findsOneWidget);
+      expect(pol.sectionClasses, 'Classes');
+      expect(pol.classes(n: 3), '3 classes');
+      expect(pol.classes(n: 1), '1 classe');
+      expect(pol.classesObjectif, 'Objectif de classes par enseignant');
+      expect(pol.classesMax, 'Maximum normal de classes');
+      // L'unite du champ, dans le brouillon.
+      expect(
+        find.descendant(
+          of: find.byKey(PolitiquesCommercialesContenu.champKey('classesMax')),
+          matching: find.text(pol.uniteClasses),
+        ),
+        findsOneWidget,
+      );
+      await tester.enterText(_champ('classesMax'), '2');
+      await tester.pump();
+      final RegExp groupe = RegExp('groupe', caseSensitive: false);
+      for (final Element e in find.byType(RichText).evaluate()) {
+        final String texte = (e.widget as RichText).text.toPlainText();
+        expect(groupe.hasMatch(texte), isFalse, reason: texte);
+      }
+      expect(find.text(pol.erreurClassesMax(objectif: '3 classes')), findsOne);
+    });
+
+    testWidgets('R6-06 : activation de l essai, relances et budgets lus, '
+        'budgets non contraignants', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 2600));
+      await tester.pumpWidget(_hote(surcharges: _avec(_sansBrouillon())));
+      await tester.pumpAndSettle();
+      Finder ligne(String id, String texte) => find.descendant(
+        of: find.byKey(PolitiquesCommercialesContenu.champKey(id)),
+        matching: find.text(texte),
+      );
+      expect(ligne('essaiActif', pol.essaiActivation), findsOneWidget);
+      expect(ligne('essaiActif', pol.essaiActive), findsOneWidget);
+      expect(ligne('essaiActif', pol.essaiActivationDetail), findsOneWidget);
+      // Le guide ne fixe ni relance ni budget : rien d'invente.
+      expect(ligne('relances', pol.relancesNonFixees), findsOneWidget);
+      expect(ligne('relances', pol.relancesDetail), findsOneWidget);
+      expect(ligne('budgets', pol.budgetsNonFixes), findsOneWidget);
+      expect(ligne('budgets', pol.budgetsDetail), findsOneWidget);
+      expect(pol.budgetsDetail, startsWith('Non contraignants'));
+      expect(find.byType(Switch), findsNothing);
+    });
+
+    testWidgets('R6-06 : relances et budgets fixes dans le brouillon, une '
+        'ligne chacun, comptes et compares', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 2600));
+      await tester.pumpWidget(
+        _hote(
+          surcharges: _avec(
+            _avecCeBrouillon(
+              _brouillon(
+                joursRelance: const <int>[1, 3, 6],
+                budgets: const <BudgetPilotage>[
+                  BudgetPilotage(nature: NatureBudget.marketing, pourMille: 80),
+                  BudgetPilotage(
+                    nature: NatureBudget.operationnel,
+                    pourMille: 150,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(pol.relanceRang(rang: '3')), findsOneWidget);
+      expect(
+        find.text(pol.relanceApres(jours: pol.jours(n: 6))),
+        findsOneWidget,
+      );
+      expect(find.text(pol.budgetMarketing), findsOneWidget);
+      expect(find.text(pol.budgetValeur(valeur: '8')), findsOneWidget);
+      expect(find.text(pol.budgetOperationnel), findsOneWidget);
+      expect(find.text(pol.budgetValeur(valeur: '15')), findsOneWidget);
+      expect(pol.budgetValeur(valeur: '8'), '8 %, non contraignant');
+      expect(find.text(pol.differences(n: 2)), findsOneWidget);
+      expect(
+        tester.widget<Text>(_comparaison('relances')).data,
+        pol.versionActiveValeur(valeur: pol.relancesNonFixees),
+      );
+      expect(
+        tester.widget<Text>(_comparaison('budgets')).data,
+        pol.versionActiveValeur(valeur: pol.budgetsNonFixes),
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('R6-06 : l interrupteur d activation de l essai, compte, '
+        'compare et transmis a la publication', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 2600));
+      final _Port port = _avecBrouillon();
+      await tester.pumpWidget(_hote(surcharges: _avec(port)));
+      await tester.pumpAndSettle();
+      final Finder interrupteur = find.descendant(
+        of: find.byKey(PolitiquesCommercialesContenu.champKey('essaiActif')),
+        matching: find.byType(Switch),
+      );
+      expect(interrupteur, findsOneWidget);
+      expect(find.text(pol.aucuneDifference), findsOneWidget);
+      await _toucher(tester, interrupteur);
+      expect(find.text(pol.essaiDesactive), findsOneWidget);
+      expect(find.text(pol.differences(n: 1)), findsOneWidget);
+      expect(
+        tester.widget<Text>(_comparaison('essaiActif')).data,
+        pol.versionActiveValeur(valeur: pol.essaiActive),
+      );
+      await _publier(tester);
+      expect(port.publies.single.essaiActif, isFalse);
+      verifierUnSeulBoutonPlein(tester);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('R6-10 : « Publier la version », versions de demonstration '
+        'numerotees', (WidgetTester tester) async {
+      _taille(tester, const Size(1440, 2600));
+      await tester.pumpWidget(_hote(surcharges: _avec(_avecBrouillon())));
+      await tester.pumpAndSettle();
+      expect(pol.publier, 'Publier la version');
+      expect(find.text('Publier la version'), findsOneWidget);
+      expect(
+        _dansEntete(find.text(pol.versionBrouillon(version: 'v1.1.0'))),
+        findsOneWidget,
+      );
+      expect(
+        _dansEntete(find.text(pol.versionActive(version: 'v1.0.0'))),
+        findsOneWidget,
+      );
+      expect(find.textContaining('brouillon-'), findsNothing);
+    });
   });
 
   group('gabarits', () {

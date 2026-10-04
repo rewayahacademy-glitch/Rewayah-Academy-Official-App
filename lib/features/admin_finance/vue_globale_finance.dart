@@ -3,10 +3,21 @@
 //
 // Sept indicateurs SEPARES (FI21) : encaissement, revenu, charge, marge,
 // impayes, essais, soldes des familles ; chacun dans sa carte, avec son nombre
-// exact et une phrase qui dit ce qu'il est et ce qu'il n'est pas. Puis les
-// alertes, redigees ici depuis leur nature (K-41). Aucun graphique : la source
-// ne rend pas d'historique, et un graphique ne remplace jamais un nombre
-// (§8 F7).
+// exact et une phrase qui dit ce qu'il est et ce qu'il n'est pas. Puis
+// l'evolution (revue FI-VAGUE-R R6-01 ; revue 12 d, e, f) : UN graphique par
+// notion (encaisse, paie, marge, repartition du revenu par type d'eleve),
+// jamais deux notions dans un meme graphique (ECARTS C5), chaque barre avec
+// son nombre exact a cote (§8 F7 : un graphique ne remplace jamais un
+// nombre). Les barres prennent les jetons existants (`surfacePrimary` sur
+// `washAccent`, ECARTS A5 : l'accent seul, aucune couleur decorative). La
+// marge par mois n'affiche AUCUNE reference de la politique : elle est
+// calculee sur la seule paie, les ~30 % sont nets (voir plus bas). Puis les
+// alertes, redigees ici depuis leur nature (K-41), chacune avec un seul lien
+// vers sa cible (R6-04, revue 12 i).
+//
+// La longueur d'une barre est une mise a l'echelle de dessin
+// (`longueursDeBarres` du port pour les montants, une marge sur 100 %),
+// jamais un chiffre affiche : les nombres lus sont ceux du port.
 //
 // Tout vient du port (`PortFinanceDirection`) : cet ecran n'additionne, ne
 // soustrait et ne compare aucun montant (FI6). La marge est celle du port,
@@ -16,6 +27,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_finance_direction.dart';
@@ -24,14 +36,17 @@ import '../../core/finance/montant.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/montant_argent.dart';
 import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/section_header.dart';
@@ -94,6 +109,34 @@ class VueGlobaleFinanceContenu extends StatelessWidget {
 
   /// La cle de la liste des alertes.
   static const Key alertesKey = ValueKey<String>('fi-vue-alertes');
+
+  /// La cle de la grille des graphiques.
+  static const Key graphiquesKey = ValueKey<String>('fi-vue-graphiques');
+
+  /// La cle du graphique de l'encaisse par mois.
+  static const Key graphiqueEncaisseKey = ValueKey<String>(
+    'fi-vue-graphique-encaisse',
+  );
+
+  /// La cle du graphique de la paie par mois.
+  static const Key graphiquePaieKey = ValueKey<String>('fi-vue-graphique-paie');
+
+  /// La cle du graphique de la marge par mois.
+  static const Key graphiqueMargeKey = ValueKey<String>(
+    'fi-vue-graphique-marge',
+  );
+
+  /// La cle du graphique de repartition du revenu.
+  static const Key graphiqueRepartitionKey = ValueKey<String>(
+    'fi-vue-graphique-repartition',
+  );
+
+  /// La route qu'ouvre une alerte de cible [cible] : une page existante du
+  /// routeur de la direction.
+  static String routeDe(CibleAlerteFinance cible) => switch (cible) {
+    CibleAlerteFinance.comptes => Routes.adminPersonnesComptes,
+    CibleAlerteFinance.classes => Routes.adminOperationsGroupes,
+  };
 
   /// La largeur minimale d'une carte au texte normal : celle qui loge quatre
   /// cartes a partir du seuil etendu (840), ecarts de 16 compris.
@@ -216,6 +259,27 @@ class VueGlobaleFinanceContenu extends StatelessWidget {
               ),
         ),
         Ecart.vXxl,
+        SectionHeader(titre: vueT.evolution),
+        Ecart.vXs,
+        Text(
+          vueT.evolutionDetail,
+          style: palette.inkMuted.applyTo(
+            textes.bodyMedium ?? const TextStyle(),
+          ),
+        ),
+        Ecart.vMd,
+        LayoutBuilder(
+          builder: (BuildContext contexte, BoxConstraints contraintes) =>
+              _Grille(
+                key: graphiquesKey,
+                colonnes: colonnesPour(
+                  contraintes.maxWidth,
+                  MediaQuery.textScalerOf(contexte),
+                ).clamp(1, 2),
+                children: _graphiques(vue, mois),
+              ),
+        ),
+        Ecart.vXxl,
         SectionHeader(titre: vueT.alertes),
         Ecart.vMd,
         if (vue.alertes.isEmpty)
@@ -230,7 +294,7 @@ class VueGlobaleFinanceContenu extends StatelessWidget {
           PileCartes(
             key: alertesKey,
             children: <Widget>[
-              for (final AlerteFinance a in vue.alertes) _bandeau(a),
+              for (final AlerteFinance a in vue.alertes) _bandeau(context, a),
             ],
           ),
       ],
@@ -239,8 +303,17 @@ class VueGlobaleFinanceContenu extends StatelessWidget {
 
   /// L'alerte redigee depuis sa nature et ses donnees, en une phrase entiere
   /// par cas (K-41).
-  static Widget _bandeau(AlerteFinance a) {
+  static Widget _bandeau(BuildContext context, AlerteFinance a) {
     final alerteT = t.admin.finance.vue.alerte;
+    // Une seule action secondaire par alerte : le lien vers sa cible.
+    final Widget action = LienFleche(
+      key: ValueKey<String>('${a.id}-cible'),
+      libelle: switch (a.cible) {
+        CibleAlerteFinance.comptes => alerteT.ouvrirComptes,
+        CibleAlerteFinance.classes => alerteT.ouvrirClasses,
+      },
+      onPress: () => GoRouter.of(context).go(routeDe(a.cible)),
+    );
     final String qui = switch ((a.prenom, a.classe)) {
       (final String p, final String c) => alerteT.quiPrenomClasse(
         prenom: p,
@@ -256,6 +329,7 @@ class VueGlobaleFinanceContenu extends StatelessWidget {
     return switch (a.nature) {
       NatureAlerteFinance.aRegulariser => BandeauAttention(
         key: ValueKey<String>(a.id),
+        action: action,
         titre: alerteT.aRegulariser,
         message: montant == null
             ? alerteT.aRegulariserSansMontant(qui: qui)
@@ -264,6 +338,7 @@ class VueGlobaleFinanceContenu extends StatelessWidget {
       NatureAlerteFinance.confirmationEnAttente => BandeauAttention(
         key: ValueKey<String>(a.id),
         ton: TonEtat.accent,
+        action: action,
         titre: alerteT.confirmation,
         message: montant == null
             ? alerteT.confirmationSansMontant(qui: qui)
@@ -271,10 +346,209 @@ class VueGlobaleFinanceContenu extends StatelessWidget {
       ),
       NatureAlerteFinance.classeSousMinimum => BandeauAttention(
         key: ValueKey<String>(a.id),
+        action: action,
         titre: alerteT.sousMinimum,
         message: alerteT.sousMinimumDetail(qui: qui),
       ),
     };
+  }
+}
+
+/// Les quatre graphiques, un par notion, dans l'ordre des indicateurs.
+List<Widget> _graphiques(VueGlobaleFinance vue, String mois) {
+  final vueT = t.admin.finance.vue;
+  String moisDe(DateTime d) => vueT.moisAnnee(
+    mois: t.commun.dates.mois[d.month - 1],
+    annee: '${d.year}',
+  );
+  List<_Barre> montants(List<MontantMensuel> serie) {
+    final List<double> longueurs = longueursDeBarres(<int>[
+      for (final MontantMensuel p in serie) p.montant.mineur,
+    ]);
+    return <_Barre>[
+      for (int i = 0; i < serie.length; i++)
+        _Barre(
+          libelle: moisDe(serie[i].mois),
+          montant: serie[i].montant,
+          echelle: longueurs[i],
+        ),
+    ];
+  }
+
+  final List<double> parts = longueursDeBarres(<int>[
+    for (final PartRevenu p in vue.revenuParType) p.montant.mineur,
+  ]);
+  return <Widget>[
+    _Graphique(
+      key: VueGlobaleFinanceContenu.graphiqueEncaisseKey,
+      titre: vueT.graphiqueEncaisse,
+      barres: montants(vue.encaisseParMois),
+    ),
+    _Graphique(
+      key: VueGlobaleFinanceContenu.graphiquePaieKey,
+      titre: vueT.graphiquePaie,
+      barres: montants(vue.paieParMois),
+    ),
+    _Graphique(
+      key: VueGlobaleFinanceContenu.graphiqueMargeKey,
+      titre: vueT.graphiqueMarge,
+      barres: <_Barre>[
+        for (final MargeMensuelle p in vue.margeParMois)
+          _Barre(
+            libelle: moisDe(p.mois),
+            texte: switch (p.pourMille) {
+              final int m => vueT.margeValeur(valeur: pourMilleEnTexte(m)),
+              null => vueT.margeNonCalculable,
+            },
+            echelle: switch (p.pourMille) {
+              final int m => m.clamp(0, 1000) / 1000,
+              null => 0,
+            },
+          ),
+      ],
+    ),
+    _Graphique(
+      key: VueGlobaleFinanceContenu.graphiqueRepartitionKey,
+      titre: vueT.graphiqueRepartition,
+      detail: vueT.graphiqueRepartitionDetail(deMois: deDevant(mois)),
+      barres: <_Barre>[
+        for (int i = 0; i < vue.revenuParType.length; i++)
+          _Barre(
+            libelle: switch (vue.revenuParType[i].type) {
+              TypeEleveRevenu.enfant => vueT.repartitionEnfants,
+              TypeEleveRevenu.adulte => vueT.repartitionAdultes,
+            },
+            montant: vue.revenuParType[i].montant,
+            echelle: parts[i],
+          ),
+      ],
+    ),
+  ];
+}
+
+/// Une barre d'un graphique : son libelle, son nombre exact (un montant ou
+/// un texte deja mis en mots) et sa longueur de dessin, entre 0 et 1.
+class _Barre {
+  const _Barre({
+    required this.libelle,
+    required this.echelle,
+    this.montant,
+    this.texte,
+  });
+
+  final String libelle;
+  final Montant? montant;
+  final String? texte;
+  final double echelle;
+}
+
+/// Un graphique d'une seule notion : un titre, puis une ligne par barre,
+/// chacune avec son nombre exact au-dessus de sa barre (§8 F7). Sans barre,
+/// une phrase le dit (etat vide).
+class _Graphique extends StatelessWidget {
+  const _Graphique({
+    required this.titre,
+    required this.barres,
+    super.key,
+    this.detail,
+  });
+
+  final String titre;
+  final String? detail;
+  final List<_Barre> barres;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle chiffre = palette.inkStrong.applyTo(
+      AppTypography.tabulaire(textes.bodyMedium ?? const TextStyle()),
+    );
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Semantics(header: true, child: Text(titre, style: textes.titleSmall)),
+          if (detail case final String d) ...<Widget>[
+            Ecart.vXs,
+            Text(
+              d,
+              style: palette.inkMuted.applyTo(
+                textes.bodySmall ?? const TextStyle(),
+              ),
+            ),
+          ],
+          Ecart.vMd,
+          if (barres.isEmpty)
+            Text(
+              t.admin.finance.vue.sansHistorique,
+              style: palette.inkMuted.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            )
+          else
+            for (int i = 0; i < barres.length; i++) ...<Widget>[
+              if (i > 0) Ecart.vMd,
+              MergeSemantics(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Wrap(
+                      spacing: AppSpacing.sm,
+                      alignment: WrapAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          barres[i].libelle,
+                          style: palette.inkMuted.applyTo(
+                            textes.bodyMedium ?? const TextStyle(),
+                          ),
+                        ),
+                        if (barres[i].montant case final Montant m)
+                          MontantArgent(m)
+                        else
+                          Text(barres[i].texte ?? '', style: chiffre),
+                      ],
+                    ),
+                    Ecart.vXs,
+                    ExcludeSemantics(child: _Trace(echelle: barres[i].echelle)),
+                  ],
+                ),
+              ),
+            ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Le trace d'une barre : un fond `washAccent`, la part `surfacePrimary`.
+class _Trace extends StatelessWidget {
+  const _Trace({required this.echelle});
+
+  final double echelle;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    return DecoratedBox(
+      decoration: palette.washAccent.decoration(
+        borderRadius: AppRadius.arrondiFull,
+      ),
+      child: SizedBox(
+        height: AppSpacing.sm,
+        child: FractionallySizedBox(
+          alignment: AlignmentDirectional.centerStart,
+          widthFactor: echelle.clamp(0, 1),
+          child: DecoratedBox(
+            decoration: palette.surfacePrimary.decoration(
+              borderRadius: AppRadius.arrondiFull,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
