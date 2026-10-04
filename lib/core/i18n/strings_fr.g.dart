@@ -3216,6 +3216,12 @@ class Traductions$accessibilite$coran$fr {
 
 	/// fr: 'Ce n'est pas une panne : la démonstration ne contient pas le texte. Vous n'avez rien à faire. Dans l'application, le Coran s'ouvre ici, à votre page, et vos réglages de lecture restent enregistrés.'
 	String get demoSansTexteDetailVous => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte. Vous n\'avez rien à faire. Dans l\'application, le Coran s\'ouvre ici, à votre page, et vos réglages de lecture restent enregistrés.';
+
+	/// fr: 'Dès que le réseau revient, votre page se rouvre ici.'
+	String get indisponibleDetailVous => 'Dès que le réseau revient, votre page se rouvre ici.';
+
+	/// fr: 'Le texte n'a pas été installé sur cette page. Signalez-le : ce n'est pas vous.'
+	String get absentDetailVous => 'Le texte n\'a pas été installé sur cette page. Signalez-le : ce n\'est pas vous.';
 }
 
 // Path: accessibilite.maClasse
@@ -15906,6 +15912,8 @@ extension on Traductions {
 			'accessibilite.coran.demoSansTexte' => 'Le texte du Coran n\'est pas chargé dans la démonstration',
 			'accessibilite.coran.demoSansTexteDetail' => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte. Tu n\'as rien à faire. Dans l\'application, le Coran s\'ouvre ici, à ta page, et tes réglages de lecture restent enregistrés.',
 			'accessibilite.coran.demoSansTexteDetailVous' => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte. Vous n\'avez rien à faire. Dans l\'application, le Coran s\'ouvre ici, à votre page, et vos réglages de lecture restent enregistrés.',
+			'accessibilite.coran.indisponibleDetailVous' => 'Dès que le réseau revient, votre page se rouvre ici.',
+			'accessibilite.coran.absentDetailVous' => 'Le texte n\'a pas été installé sur cette page. Signalez-le : ce n\'est pas vous.',
 			'accessibilite.maClasse.titre' => 'Ma classe',
 			'accessibilite.maClasse.suivi' => 'Mon suivi',
 			'accessibilite.maClasse.suiviDetail' => 'Les séances passées et la présence',
@@ -16390,10 +16398,10 @@ extension on Traductions {
 			'dossiers.visionneuse.recharger' => 'Recharger la pièce',
 			'dossiers.visionneuse.formatNonPrisEnCharge' => 'Ce format de pièce ne peut pas être affiché.',
 			'dossiers.visionneuse.accesRetire' => 'Vous n’avez plus accès à cette pièce.',
-			'dossiers.visionneuse.horsLigne' => 'Vous êtes hors ligne. La pièce ne peut pas être chargée.',
-			'dossiers.visionneuse.aucune' => 'Aucune pièce n’est disponible.',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.visionneuse.horsLigne' => 'Vous êtes hors ligne. La pièce ne peut pas être chargée.',
+			'dossiers.visionneuse.aucune' => 'Aucune pièce n’est disponible.',
 			'dossiers.visionneuse.fermerPiece' => 'Fermer la pièce',
 			'dossiers.visionneuse.agrandir' => 'Agrandir',
 			'dossiers.visionneuse.reduire' => 'Réduire',
@@ -16904,10 +16912,10 @@ extension on Traductions {
 			'admin.journal.roleAucun' => 'Hors session',
 			'admin.journal.evtKycLu' => 'Dossier d\'identité consulté',
 			'admin.journal.evtKycTranche' => 'Dossier d\'identité tranché',
-			'admin.journal.evtProfilCree' => 'Profil créé',
-			'admin.journal.evtProfilEnfantCree' => 'Profil enfant créé',
 			_ => null,
 		} ?? switch (path) {
+			'admin.journal.evtProfilCree' => 'Profil créé',
+			'admin.journal.evtProfilEnfantCree' => 'Profil enfant créé',
 			'admin.journal.evtCodeCree' => 'Code d\'appairage créé',
 			'admin.journal.evtAppareilAppaire' => 'Appareil appairé',
 			'admin.journal.evtAppareilRevoque' => 'Appareil révoqué',
@@ -17418,10 +17426,10 @@ extension on Traductions {
 			'compte.tuteur.pageApparence.texteDetail' => 'Suit la taille du système',
 			'compte.tuteur.pageAide.titre' => 'Aide et support',
 			'compte.tuteur.pageAide.indisponibleTitre' => 'Aide pas encore disponible',
-			'compte.tuteur.pageAide.indisponiblePhrase' => 'Les questions fréquentes et le contact de l\'académie ne sont pas encore ouverts dans l\'application.',
-			'compte.tuteur.pageAide.canalCourriel' => 'Courriel de l\'académie',
 			_ => null,
 		} ?? switch (path) {
+			'compte.tuteur.pageAide.indisponiblePhrase' => 'Les questions fréquentes et le contact de l\'académie ne sont pas encore ouverts dans l\'application.',
+			'compte.tuteur.pageAide.canalCourriel' => 'Courriel de l\'académie',
 			'compte.tuteur.pageAide.canalLien' => 'Page d\'aide de l\'académie',
 			'compte.tuteur.pageAide.aucunCanal' => 'Aucun canal d\'aide n\'est publié pour le moment.',
 			'compte.tuteur.pageLegal.titre' => 'Informations légales',
@@ -17932,10 +17940,10 @@ extension on Traductions {
 			'enseignant.bienvenue.prerequisPhoto' => 'Ajouter ma photo professionnelle',
 			'enseignant.bienvenue.prerequisLangues' => 'Vérifier mes langues d\'enseignement',
 			'enseignant.bienvenue.prerequisFuseau' => 'Vérifier mon fuseau horaire',
-			'enseignant.bienvenue.ctaPhoto' => 'Ajouter ma photo',
-			'enseignant.bienvenue.ctaInformations' => 'Vérifier mes informations',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.bienvenue.ctaPhoto' => 'Ajouter ma photo',
+			'enseignant.bienvenue.ctaInformations' => 'Vérifier mes informations',
 			'enseignant.bienvenue.ctaJournee' => 'Voir ma journée',
 			'enseignant.bienvenue.rappels' => 'Deux choses à ne pas découvrir en cours de route',
 			'enseignant.bienvenue.declarer' => 'Déclarer mes disponibilités',
@@ -18446,10 +18454,10 @@ extension on Traductions {
 			'controleur.echanges.auteurAdmin' => 'Administration',
 			'controleur.echanges.champ' => 'Répondre à l\'administration…',
 			'controleur.echanges.champLibelle' => 'Répondre à l\'administration',
-			'controleur.echanges.envoyer' => 'Envoyer',
-			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.echanges.envoyer' => 'Envoyer',
+			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
 			'controleur.echanges.enCours' => 'Envoi en cours.',
 			'controleur.echanges.envoye' => 'Envoyé.',
 			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
@@ -18960,10 +18968,10 @@ extension on Traductions {
 			'tc.parcours.signalement.categorie' => 'De quoi s\'agit-il ?',
 			'tc.parcours.signalement.categorieValeur.pedagogique' => 'Pédagogique',
 			'tc.parcours.signalement.categorieValeur.presence' => 'Présence',
-			'tc.parcours.signalement.categorieValeur.technique' => 'Technique',
-			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.signalement.categorieValeur.technique' => 'Technique',
+			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
 			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
 			'tc.parcours.signalement.interne' => 'Note interne',
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',

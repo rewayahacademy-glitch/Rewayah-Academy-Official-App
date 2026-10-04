@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/accessibilite/age_eleve.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
@@ -20,6 +21,16 @@ import 'package:rewayah_academy/features/tc_observation_ui/indicateur_observatio
 
 import 'faux/faux_classe.dart';
 import 'support/hote_classe.dart';
+
+/// Le port de l'age fixe (MA-TUTOIEMENT-1).
+class _AgeFixe implements PortAgeEleve {
+  const _AgeFixe(this.age);
+
+  final AgeEleve age;
+
+  @override
+  AgeEleve ageDeLEleve() => age;
+}
 
 /// La Classe Live montee pour de vrai, aux trois gabarits.
 ///
@@ -735,6 +746,47 @@ void main() {
       expect(find.byType(IndicateurObservation), findsNothing);
       expect(find.textContaining('Tuteur de'), findsNothing);
     });
+
+    // MA-TUTOIEMENT-1 (decision A4 = a) : en Mode Accessibilite (guidee), le
+    // registre suit l'age, jamais la presentation. Avant le correctif,
+    // `DepuisClasseLive` ne passait rien et `VueSeance` repliait sur la
+    // presentation : la guidee etait tutoyee quel que soit son age.
+    for (final (String nom, AgeEleve? age, bool tu)
+        in <(String, AgeEleve?, bool)>[
+          ('enfant (mineur connu)', AgeEleve.mineur, true),
+          ('adulte connu', AgeEleve.adulte, false),
+          ('age inconnu, port neutre', null, false),
+        ]) {
+      testWidgets('MA-TUTOIEMENT-1 : guidee, $nom : '
+          '${tu ? 'tutoyee' : 'vouvoyee'}', (WidgetTester tester) async {
+        final banc0 = banc(
+          role: 'student',
+          presence: troisEleves(),
+          monTuteurObserve: true,
+        );
+        await monterClasse(
+          tester,
+          contexte: contexte(support: 'r1'),
+          surcharges: <Override>[
+            ...banc0.surcharges,
+            if (age != null)
+              portAgeEleveProvider.overrideWithValue(_AgeFixe(age)),
+          ],
+          ecran: LargeurEcran.tablette,
+          mode: InterfaceMode.enfant,
+          mouvementReduit: true,
+        );
+        expect(find.byType(SalleSeance), findsOneWidget);
+        expect(
+          find.text(t.salle.seance.tonParentObserve),
+          tu ? findsOneWidget : findsNothing,
+        );
+        expect(
+          find.text(t.salle.seance.votreParentObserve),
+          tu ? findsNothing : findsOneWidget,
+        );
+      });
+    }
 
     testWidgets('l enfant NON observe ne lit rien, et le serveur le dit', (
       WidgetTester tester,

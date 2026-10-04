@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/age_eleve.dart';
 import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/domain/enums.dart';
@@ -490,9 +491,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         return ApresSeanceSalle(
           groupeId: groupe,
           quittee: sortie == IssueSeance.quittee,
-          // Le tutoiement suit la presentation, comme la salle (VueSeance,
-          // MA-5) : l'age reel arrive avec MA-TUTOIEMENT-1.
-          tutoiement: true,
+          // MA-TUTOIEMENT-1 : le tutoiement suit l'age, jamais la
+          // presentation ; port neutre (K-09) avant BR-1, age inconnu :
+          // vouvoiement.
+          tutoiement: ref.watch(portAgeEleveProvider).ageDeLEleve().tutoiement,
           // « Retour a la Classe » : la destination Ma classe du Mode
           // Accessibilite.
           onRetourClasse: () => GoRouter.of(context).go(Routes.eleveSuivi),

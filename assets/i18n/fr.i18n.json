@@ -663,7 +663,9 @@
       "repriseErreurVous": "Votre dernière page n'a pas pu être retrouvée, sans doute à cause de la connexion. Ouvrez le Coran et choisissez votre page dans le lecteur. Vos réglages de lecture restent enregistrés.",
       "demoSansTexte": "Le texte du Coran n'est pas chargé dans la démonstration",
       "demoSansTexteDetail": "Ce n'est pas une panne : la démonstration ne contient pas le texte. Tu n'as rien à faire. Dans l'application, le Coran s'ouvre ici, à ta page, et tes réglages de lecture restent enregistrés.",
-      "demoSansTexteDetailVous": "Ce n'est pas une panne : la démonstration ne contient pas le texte. Vous n'avez rien à faire. Dans l'application, le Coran s'ouvre ici, à votre page, et vos réglages de lecture restent enregistrés."
+      "demoSansTexteDetailVous": "Ce n'est pas une panne : la démonstration ne contient pas le texte. Vous n'avez rien à faire. Dans l'application, le Coran s'ouvre ici, à votre page, et vos réglages de lecture restent enregistrés.",
+      "indisponibleDetailVous": "Dès que le réseau revient, votre page se rouvre ici.",
+      "absentDetailVous": "Le texte n'a pas été installé sur cette page. Signalez-le : ce n'est pas vous."
     },
     "maClasse": {
       "titre": "Ma classe",

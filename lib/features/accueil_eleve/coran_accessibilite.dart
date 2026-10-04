@@ -41,6 +41,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
 import '../tc_mushaf/navigation_coran_feuille.dart';
+import '../tc_mushaf/textes_lecteur_coran.dart';
 import '../tc_mushaf/vue_page_mushaf.dart';
 import '../tc_mushaf/vue_verset_agrandi.dart';
 
@@ -178,7 +179,10 @@ class _CoranAccessibiliteEtat extends ConsumerState<CoranAccessibilite> {
                     Expanded(child: _demonstrationSansTexte()),
                   ],
                 )
-              : LecteurCoranAccessibilite(onRetour: _fermer),
+              : LecteurCoranAccessibilite(
+                  onRetour: _fermer,
+                  tutoiement: widget.tutoiement,
+                ),
         ),
       ),
     );
@@ -303,10 +307,19 @@ class _CoranAccessibiliteEtat extends ConsumerState<CoranAccessibilite> {
 /// avec les commandes : la licence demande qu'elle soit lisible).
 class LecteurCoranAccessibilite extends ConsumerStatefulWidget {
   /// Cree le lecteur.
-  const LecteurCoranAccessibilite({this.onRetour, super.key});
+  const LecteurCoranAccessibilite({
+    this.onRetour,
+    this.tutoiement = false,
+    super.key,
+  });
 
   /// Le retour a l'entree ; nul : pas de bouton de retour.
   final VoidCallback? onRetour;
+
+  /// Vrai pour l'eleve mineur (tutoiement) ; un adulte, ou un age inconnu,
+  /// est vouvoye (MA-TUTOIEMENT-1, decision A4 = a). Les phrases des etats
+  /// sans texte des vues de rendu suivent, par [TextesLecteurCoran].
+  final bool tutoiement;
 
   /// La cle de l'en-tete (tests, captures).
   static const Key enteteKey = ValueKey<String>('coran-ma-entete');
@@ -486,10 +499,20 @@ class _LecteurCoranAccessibiliteEtat
         ),
         Expanded(
           child: CommandesMasquables(
-            contenu: switch (etat.mode) {
-              ModeRenduCoran.versetAgrandi => const VueVersetAgrandi(),
-              _ => const VuePageMushaf(),
-            },
+            // MA-TUTOIEMENT-1 : les vues de rendu, inchangees, recoivent les
+            // phrases de leurs etats sans texte au registre de l'eleve.
+            contenu: TextesLecteurCoran(
+              indisponibleDetail: widget.tutoiement
+                  ? t.eleve.coran.indisponibleDetail
+                  : t.accessibilite.coran.indisponibleDetailVous,
+              absentDetail: widget.tutoiement
+                  ? t.eleve.coran.absentDetail
+                  : t.accessibilite.coran.absentDetailVous,
+              child: switch (etat.mode) {
+                ModeRenduCoran.versetAgrandi => const VueVersetAgrandi(),
+                _ => const VuePageMushaf(),
+              },
+            ),
             commandes: commandes,
             // Finition MA-CMD-1 : la barre du bas s'efface avec les
             // commandes et revient a la meme touche.

@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/accessibilite/age_eleve.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
@@ -113,8 +114,22 @@ Future<void> stabiliserMaApres(WidgetTester tester) async {
   }
 }
 
+/// Le port de l'age fixe (MA-TUTOIEMENT-1).
+class AgeFixe implements PortAgeEleve {
+  /// Cree le port sur cet age.
+  const AgeFixe(this.age);
+
+  /// L'age rendu.
+  final AgeEleve age;
+
+  @override
+  AgeEleve ageDeLEleve() => age;
+}
+
 /// Monte la vraie salle en Mode Accessibilite, puis « Quitter le cours » et
 /// confirme. [cadre] : la cle du cadre de capture (au-dessus de l'app).
+/// [age] : l'age rendu par le port (MA-TUTOIEMENT-1) ; `null` : le port
+/// neutre de l'application, sans surcharge (age inconnu).
 Future<void> quitterLaSalleMa(
   WidgetTester tester, {
   required PortGroupes groupes,
@@ -125,6 +140,7 @@ Future<void> quitterLaSalleMa(
   List<SlotAction> travail = DonneesClasseDemo.actions,
   ThemeMode themeMode = ThemeMode.light,
   Key? cadre,
+  AgeEleve? age = AgeEleve.mineur,
 }) async {
   tester.view.physicalSize = taille * densite;
   tester.view.devicePixelRatio = densite;
@@ -158,6 +174,7 @@ Future<void> quitterLaSalleMa(
     serviceReseauProvider.overrideWithValue(
       FauxServiceReseau(horsLigneRendu: horsLigne),
     ),
+    if (age != null) portAgeEleveProvider.overrideWithValue(AgeFixe(age)),
   ];
   final GoRouter routeur = GoRouter(
     initialLocation: Routes.salle,
