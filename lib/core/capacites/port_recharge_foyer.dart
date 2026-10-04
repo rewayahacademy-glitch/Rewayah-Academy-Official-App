@@ -193,9 +193,10 @@ abstract interface class PortRechargeFoyer {
   Future<RecapitulatifRecharge> verifier(List<ChoixRecharge> choix);
 
   /// Paie le recapitulatif [recapitulatifId], idempotent par [cle] : une
-  /// nouvelle tentative apres une coupure ne paie pas deux fois (EA-BR-25).
-  /// Rend l'etat du paiement DEJA REDIGE par le serveur, affiche tel quel :
-  /// l'ecran n'en deduit jamais une reussite (F13).
+  /// nouvelle tentative apres une coupure ne paie pas deux fois (EA-BR-25),
+  /// et la meme cle rend la meme commande (FI-8 : double confirmation, un
+  /// seul credit). Rend l'identifiant de la commande, dont l'etat se lit par
+  /// [suivre] : l'ecran n'en deduit jamais une reussite (F13, FI9).
   Future<String> payer({required String recapitulatifId, required String cle});
 
   /// Le recapitulatif d'une recharge par montants choisis (FI-1c, FI-BR-06) :

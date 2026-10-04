@@ -225,7 +225,7 @@ class _PolitiqueTousRails implements PortPolitiquesCommerciales {
 
 void main() {
   testWidgets('un profil : montant choisi, recapitulatif et total rendus, '
-      'paiement web seul, etat honnete', (WidgetTester tester) async {
+      'paiement web seul, resultat relu (FI-8)', (WidgetTester tester) async {
     await _monter(tester, jeu: JeuFoyerFinance.unProfil);
     expect(find.byType(RechargeFoyerPage), findsOneWidget);
     expect(find.text(t.adulte.recharge.titre), findsOneWidget);
@@ -266,9 +266,12 @@ void main() {
     expect(find.text(t.adulte.recharge.payer(montant: total)), findsOneWidget);
     verifierUnSeulBoutonPlein(tester);
 
+    // FI-8 : la demonstration rend une commande, dont le resultat relit
+    // l'etat : en attente de confirmation, jamais « reussi ».
     await _taper(tester, find.byKey(RechargeFoyerPage.payerKey));
+    expect(find.byType(ResultatRechargePage), findsOneWidget);
     expect(
-      find.text(t.adulte.recharge.paiementIndisponibleTitre),
+      find.text(t.adulte.recharge.resultat.attenteBandeauTitre),
       findsOneWidget,
     );
     expect(find.textContaining(RegExp(r'réussi|confirmé$')), findsNothing);

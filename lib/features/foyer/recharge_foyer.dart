@@ -19,10 +19,12 @@
 //    lien « Modifier » par profil qui revient a l'etape 1 sans rien perdre,
 //    le total RENDU (jamais additionne ici), le moyen de paiement (seul le
 //    paiement web, §1.6 : ni App Store ni Play), puis « Payer {total} ».
-// 3. Le paiement n'a aucun prestataire branche : « Paiement pas encore
-//    disponible », jamais « Paiement reussi » (F13). Une coupure dit
-//    seulement que le paiement n'a pas ete confirme (D5) ; la meme cle rend
-//    une nouvelle tentative sure. Le resultat et ses huit etats : FI-8.
+// 3. « Payer » : le port rend l'identifiant de la commande et l'ecran
+//    ouvre son resultat (`ResultatRechargePage`, FI-8), qui relit l'etat ;
+//    jamais un succes local (F13). Sans prestataire branche (production) :
+//    « Paiement pas encore disponible ». Une coupure dit seulement que le
+//    paiement n'a pas ete confirme (D5) ; la meme cle rend une nouvelle
+//    tentative sure, et la meme commande.
 //
 // **Aucun chiffre economique calcule ici** (FI6) : les montants proposes,
 // le recapitulatif et le total viennent du port. Rien sur le second adulte
@@ -47,8 +49,10 @@ class RechargeFoyerPage extends ConsumerStatefulWidget {
   const RechargeFoyerPage({
     required this.onAbandon,
     required this.onTerminee,
+    required this.onPaye,
     super.key,
     this.preselection = const <String>{},
+    this.montantsInitiaux = const <String, Montant>{},
   });
 
   /// Les profils deja coches a l'ouverture : « Recharger Mariam » ouvre le
@@ -56,6 +60,14 @@ class RechargeFoyerPage extends ConsumerStatefulWidget {
   /// Finance V4 §4, FI-4). Un identifiant qui n'est pas un beneficiaire
   /// rendu ne coche rien.
   final Set<String> preselection;
+
+  /// Les montants rappeles a l'ouverture (« Reessayer » apres un echec,
+  /// FI-8) : un montant n'est retenu que s'il fait partie de ceux que la
+  /// source propose a ce profil ; sinon le montant suggere s'applique.
+  final Map<String, Montant> montantsInitiaux;
+
+  /// Le paiement a rendu la commande [commandeId] : ouvrir son resultat.
+  final ValueChanged<String> onPaye;
 
   /// Quitter depuis la premiere etape : retour aux paiements du foyer.
   final VoidCallback onAbandon;
@@ -89,6 +101,9 @@ class RechargeFoyerPage extends ConsumerStatefulWidget {
 
   /// « Payer {total} » (etape 2).
   static const Key payerKey = Key('recharge.payer');
+
+  /// « Suivre le paiement », une fois la commande rendue (etape 2).
+  static const Key suivreKey = Key('recharge.suivre');
 
   /// Le titre de l'etape 2, qui prend le focus a son apparition.
   static const Key focusEtape2Key = Key('recharge.focusEtape2');
@@ -155,8 +170,9 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
   bool _paiementEnCours = false;
   _EchecRecharge? _echecPaiement;
 
-  /// L'etat du paiement tel que le serveur le redige (jamais deduit ici).
-  String? _etatPaiement;
+  /// La commande rendue par le paiement : plus de « Payer » sur cette page,
+  /// seulement son suivi (FI-8, « Ne payez pas une seconde fois »).
+  String? _commande;
 
   bool get _occupe => _verifEnCours || _paiementEnCours;
 
@@ -169,10 +185,14 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
   bool get _paiementIncertain => _echecPaiement == _EchecRecharge.reseau;
 
   /// Le montant retenu pour [b] : celui que le titulaire a choisi, sinon le
-  /// montant suggere par la source. Un montant nul n'est jamais retenu.
+  /// montant rappele s'il est propose (FI-8), sinon le montant suggere par
+  /// la source. Un montant nul n'est jamais retenu.
   Montant? _montantDe(BeneficiaireRecharge b) {
+    final Montant? rappele = widget.montantsInitiaux[b.id];
     final Montant? m = _montants.containsKey(b.id)
         ? _montants[b.id]
+        : rappele != null && b.montantsProposes.contains(rappele)
+        ? rappele
         : b.montantSuggere;
     return m == null || m.estNul ? null : m;
   }
@@ -265,13 +285,13 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
       _verification = true;
       _cle = const Uuid().v4();
       _echecPaiement = null;
-      _etatPaiement = null;
+      _commande = null;
     });
   }
 
   void _retour() {
     if (_occupe) return;
-    if (_verification && _paiementIncertain) {
+    if (_verification && (_paiementIncertain || _commande != null)) {
       // Paiement non confirme (D5) : pas de retour aux choix, qui tirerait
       // une autre cle ; le retour mene la ou l'on verifie.
       widget.onTerminee();
@@ -282,7 +302,6 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
       setState(() {
         _verification = false;
         _echecPaiement = null;
-        _etatPaiement = null;
       });
       return;
     }
@@ -290,16 +309,17 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
   }
 
   Future<void> _payer(RecapitulatifRecharge recapitulatif) async {
-    // Double envoi : un seul appel part, le bouton attend la reponse.
-    if (_occupe) return;
+    // Double envoi : un seul appel part, le bouton attend la reponse ; une
+    // commande deja rendue ne se repaie pas (FI-8).
+    if (_occupe || _commande != null) return;
     setState(() {
       _paiementEnCours = true;
       _echecPaiement = null;
     });
     _EchecRecharge? echec;
-    String? etat;
+    String? commande;
     try {
-      etat = await ref
+      commande = await ref
           .read(portRechargeFoyerProvider)
           .payer(recapitulatifId: recapitulatif.id, cle: _cle);
     } on CapaciteIndisponible {
@@ -311,8 +331,10 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
     setState(() {
       _paiementEnCours = false;
       _echecPaiement = echec;
-      _etatPaiement = etat;
+      _commande = commande;
     });
+    // Le resultat relit l'etat de la commande (FI-8) : rien n'est conclu ici.
+    if (commande != null) widget.onPaye(commande);
   }
 
   @override
@@ -669,9 +691,9 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
   ) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final String? etatPaiement = _etatPaiement;
+    final String? commande = _commande;
     final bool arrete =
-        etatPaiement != null || _echecPaiement == _EchecRecharge.indisponible;
+        commande != null || _echecPaiement == _EchecRecharge.indisponible;
     // Les moyens que la politique active ouvre, sinon le seul paiement web
     // du lancement (guide §1.6) ; jamais un rail StoreKit ou Play.
     final Set<RailPaiement> ouverts =
@@ -690,7 +712,7 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         ),
       ),
     );
-    final Widget? etat = switch ((_echecPaiement, etatPaiement)) {
+    final Widget? etat = switch ((_echecPaiement, commande)) {
       // D5 : l'ecran ne dit que ce qu'il sait, le paiement n'est pas
       // confirme ; la meme cle rend une nouvelle tentative sure.
       (_EchecRecharge.reseau, _) => EtatSysteme(
@@ -707,11 +729,8 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         libelleAction: t.adulte.recharge.revenirPaiements,
         onAction: widget.onTerminee,
       ),
-      // L'etat que le serveur redige, tel quel (EA-BR-25).
-      (null, final String rendu) => Semantics(
-        liveRegion: true,
-        child: _Note(texte: rendu),
-      ),
+      // La commande est rendue : son suivi, jamais un second paiement.
+      (null, String()) => _Note(texte: t.adulte.recharge.commandeRendue),
       (null, null) => null,
     };
     return Column(
@@ -840,14 +859,16 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
           Ecart.vLg,
           _Note(texte: t.adulte.recharge.horsLignePayer),
         ],
-        // Un seul bouton dominant, 16 sous le moyen de paiement. Apres
-        // l'etat honnete, le seul geste est le retour qu'il porte.
-        if (etatPaiement != null) ...<Widget>[
+        // Un seul bouton dominant, 16 sous le moyen de paiement. Une fois la
+        // commande rendue, le seul geste est son suivi (FI-8).
+        if (commande != null) ...<Widget>[
           Ecart.vLg,
           _Actions(
             principale: ActionPrincipale(
-              libelle: t.adulte.recharge.revenirPaiements,
-              onPress: widget.onTerminee,
+              key: RechargeFoyerPage.suivreKey,
+              libelle: t.adulte.recharge.suivrePaiement,
+              fleche: true,
+              onPress: () => widget.onPaye(commande),
               pleineLargeur: false,
             ),
           ),

@@ -534,6 +534,7 @@ void main() {
       PortRechargeFoyer? port,
       Stream<bool>? horsLigne,
       VoidCallback? onTerminee,
+      ValueChanged<String>? onPaye,
     }) async {
       taille(tester, const Size(390, 844));
       await tester.pumpWidget(
@@ -545,6 +546,7 @@ void main() {
           child: RechargeFoyerPage(
             onAbandon: () {},
             onTerminee: onTerminee ?? () {},
+            onPaye: onPaye ?? (String _) {},
           ),
         ),
       );
@@ -766,22 +768,27 @@ void main() {
       expect(port.cles.toSet(), hasLength(1));
     });
 
-    testWidgets('etat rendu par le serveur : affiche tel quel, sans succes '
-        'local, et le seul retour', (WidgetTester tester) async {
-      bool termine = false;
+    testWidgets('commande rendue par le serveur (FI-8) : son resultat '
+        's ouvre, sans succes local ni second paiement', (
+      WidgetTester tester,
+    ) async {
+      final List<String> commandes = <String>[];
       await monter(
         tester,
         port: _Port(liste: exemple),
-        onTerminee: () => termine = true,
+        onPaye: commandes.add,
       );
       await tester.pumpAndSettle();
       await jusquAuRecapitulatif(tester);
       await taper(tester, find.byKey(RechargeFoyerPage.payerKey));
-      expect(find.text('etat redige par le serveur'), findsOneWidget);
+      expect(commandes, <String>['commande rendue par le serveur']);
       expect(find.byKey(RechargeFoyerPage.payerKey), findsNothing);
+      expect(find.text(t.adulte.recharge.commandeRendue), findsOneWidget);
       expect(find.byType(ActionPrincipale), findsOneWidget);
-      await taper(tester, find.text(t.adulte.recharge.revenirPaiements));
-      expect(termine, isTrue);
+      // Revenu sur cette page, le seul geste est le suivi de la commande.
+      await taper(tester, find.byKey(RechargeFoyerPage.suivreKey));
+      expect(commandes, hasLength(2));
+      expect(commandes.toSet(), hasLength(1));
     });
   });
 }
@@ -852,7 +859,7 @@ class _Port implements PortRechargeFoyer {
   Future<String> payer({required String recapitulatifId, required String cle}) {
     cles.add(cle);
     if (paiementSuspendu) return reponse.future;
-    return Future<String>.value('etat redige par le serveur');
+    return Future<String>.value('commande rendue par le serveur');
   }
 
   @override

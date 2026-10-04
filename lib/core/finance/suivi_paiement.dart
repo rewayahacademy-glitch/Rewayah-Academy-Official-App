@@ -9,6 +9,7 @@
 import 'package:flutter/foundation.dart';
 
 import 'montant.dart';
+import 'politique_commerciale.dart';
 
 /// Les huit etats d'un paiement (guide §1.6, FI9).
 enum EtatPaiement {
@@ -72,6 +73,8 @@ class SuiviPaiement {
     required this.allocations,
     this.reference,
     this.date,
+    this.moyen,
+    this.motif,
   });
 
   /// L'identifiant de la commande (cle d'idempotence cote source).
@@ -91,4 +94,12 @@ class SuiviPaiement {
 
   /// La date du paiement, rendue quand elle existe.
   final DateTime? date;
+
+  /// Le moyen de paiement employe, rendu quand il existe (guide §5.4,
+  /// FI-8) : l'ecran ne le deduit jamais du moyen choisi avant le paiement.
+  final RailPaiement? moyen;
+
+  /// Le motif d'un echec, deja redige pour l'utilisateur par la source, ou
+  /// `null` (guide §5.4 : « motif utilisateur lorsque disponible »).
+  final String? motif;
 }

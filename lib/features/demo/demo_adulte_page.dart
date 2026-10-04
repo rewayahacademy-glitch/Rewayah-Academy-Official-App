@@ -1249,6 +1249,10 @@ class CoquilleAdulteDemo extends StatelessWidget {
       EcranDemoAdulte.recharge => RechargeFoyerPage(
         onAbandon: () => context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
         onTerminee: () => context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
+        // Le paiement EA ne rend jamais de commande (F13) : par surete, une
+        // commande rendue ramenerait aux paiements, ou l'on verifie.
+        onPaye: (String _) =>
+            context.go(_adresse(EcranDemoAdulte.paiementsFoyer)),
       ),
       EcranDemoAdulte.inviterConjoint => InviterConjointPage(
         placeFeminine: titulaire.placeFeminine,

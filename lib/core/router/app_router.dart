@@ -113,6 +113,7 @@ import '../../features/tc_observation_ui/routes_tc_g.dart';
 import '../admin/admin_domaine.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
+import '../finance/montant.dart';
 import '../mouvement/transitions.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
@@ -539,19 +540,54 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     pageBuilder: glissee(
                       (GoRouterState etat) => Builder(
                         builder: (BuildContext context) => RechargeFoyerPage(
+                          // Une autre selection (« Reessayer » apres un
+                          // echec, FI-8) ouvre une recharge neuve : l'etat
+                          // d'une page gardee sous le resultat ne la masque
+                          // pas.
+                          key: ValueKey<String>(etat.uri.query),
                           preselection: <String>{
                             for (final String id
                                 in (etat.uri.queryParameters['profils'] ?? '')
                                     .split(','))
                               if (id.isNotEmpty) id,
                           },
+                          montantsInitiaux: Routes.montantsDe(
+                            etat.uri.queryParameters['montants'],
+                          ),
                           onAbandon: () =>
                               GoRouter.of(context).go(Routes.tuteurFoyer),
                           onTerminee: () =>
                               GoRouter.of(context).go(Routes.tuteurFoyer),
+                          // Le paiement rend une commande : son resultat
+                          // (FI-8), qui relit l'etat, jamais un succes local.
+                          onPaye: (String commande) =>
+                              GoRouter.of(context)
+                                  .go(Routes.resultatRechargePour(commande)),
                         ),
                       ),
                     ),
+                    routes: <RouteBase>[
+                      // Le resultat et ses huit etats (FI-8, guide §5.4).
+                      GoRoute(
+                        path: 'result',
+                        pageBuilder: glissee(
+                          (GoRouterState etat) => Builder(
+                            builder: (BuildContext context) =>
+                                ResultatRechargePage(
+                                  commandeId:
+                                      etat.uri.queryParameters['commande'] ??
+                                      '',
+                                  onRevenir: () =>
+                                      GoRouter.of(context)
+                                          .go(Routes.tuteurFoyer),
+                                  onReprendre: (Map<String, Montant> m) =>
+                                      GoRouter.of(context)
+                                          .go(Routes.rechargeReprise(m)),
+                                ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   GoRoute(
                     path: 'appairer/:eleveId',
