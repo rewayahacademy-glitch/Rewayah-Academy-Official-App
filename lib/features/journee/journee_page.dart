@@ -292,7 +292,7 @@ class _Corps extends ConsumerWidget {
                   ? alertes.length - maximumAlertes
                   : 0,
               offres: offres,
-              coursAnnule: annulee == null ? null : parId[annulee.id],
+              coursAnnule: _retrouverParId(toutes, annulee),
               onReessayerPartiel: partielle
                   ? () {
                       ref
@@ -335,6 +335,16 @@ SeanceEnseignant? _seanceDominante(
     toutes.map(_versSeance).toList(growable: false),
     maintenant,
   );
+  return _retrouverParId(toutes, relais);
+}
+
+/// La seance riche (Classe, groupe) qui porte le meme identifiant que
+/// [relais], lue dans le pont vers la journee partagee. La carte du cours
+/// annule en a besoin pour nommer sa Classe et y mener (SALLE-CORR-3).
+SeanceEnseignant? _retrouverParId(
+  List<SeanceEnseignant> toutes,
+  Seance? relais,
+) {
   if (relais == null) return null;
   for (final SeanceEnseignant seance in toutes) {
     if (seance.id == relais.id) return seance;
@@ -1185,7 +1195,7 @@ class ListeAlertesPage extends ConsumerWidget {
                 entete: false,
                 alertes: alertes,
                 offres: offres,
-                coursAnnule: annulee,
+                coursAnnule: _retrouverParId(toutes, annulee),
               );
       }
     }
