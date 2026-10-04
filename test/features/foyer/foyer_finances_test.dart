@@ -39,7 +39,10 @@ import '../../support/harnais.dart';
 /// Le 4 octobre 2026 a midi, dans le mois de reference de la demonstration.
 final DateTime _maintenant = DateTime(2026, 10, 4, 12);
 
-/// Le foyer du jeu [jeu] : les memes identifiants que ses finances.
+/// Le foyer du jeu [jeu] : les memes identifiants que ses finances, et
+/// l'echeance d'acces a la fin de la periode financee, comme en
+/// demonstration (sans elle, la legende ne dirait jamais de date et le
+/// controle R1-11 ne prouverait rien).
 FauxServiceAppairage _foyer(JeuFoyerFinance jeu) =>
     FauxServiceAppairage()
       ..elevesRendus = <EleveDuFoyer>[
@@ -50,6 +53,7 @@ FauxServiceAppairage _foyer(JeuFoyerFinance jeu) =>
             identifiantImmuable: 'STUD-FI-${p.profilId}',
             mode: InterfaceMode.standard,
             camera: CameraPolicy.allowed,
+            finAcces: p.periode?.fin,
           ),
       ];
 

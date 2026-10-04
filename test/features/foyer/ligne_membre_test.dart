@@ -166,4 +166,78 @@ void main() {
       );
     });
   });
+
+  group('memeEcheance (R1-11)', () {
+    test('meme jour, heures differentes : une seule echeance', () {
+      expect(
+        memeEcheance(DateTime(2026, 10, 31), DateTime(2026, 10, 31, 23, 59)),
+        isTrue,
+      );
+    });
+
+    test('jours differents : deux echeances', () {
+      expect(
+        memeEcheance(DateTime(2026, 10, 31), DateTime(2026, 11, 1)),
+        isFalse,
+      );
+      expect(
+        memeEcheance(DateTime(2026, 10, 31), DateTime(2026, 11, 30)),
+        isFalse,
+      );
+    });
+
+    test('une date absente : jamais la meme echeance', () {
+      expect(memeEcheance(null, DateTime(2026, 10, 31)), isFalse);
+      expect(memeEcheance(DateTime(2026, 10, 31), null), isFalse);
+      expect(memeEcheance(null, null), isFalse);
+    });
+  });
+
+  group('legendeMembre sans acces (R1-11)', () {
+    final DateTime fin = DateTime(2026, 10, 31);
+
+    test('la classe seule, la date d acces n est pas repetee', () {
+      final String legende = legendeMembre(
+        profil: _profil(finAcces: fin),
+        classe: ClasseMembre.depuis(<ClasseFoyer>[
+          ClasseFoyer(
+            eleveId: 'foyer-a-eleve-1',
+            classe: classeFictive(libelle: 'Classe B'),
+          ),
+        ]),
+        maintenant: maintenant,
+        avecAcces: false,
+      );
+      expect(legende, 'Classe B');
+      expect(legende, isNot(contains(dateEcheance(fin))));
+    });
+
+    test('avec acces, la meme legende dit la date', () {
+      expect(
+        legendeMembre(
+          profil: _profil(finAcces: fin),
+          classe: ClasseMembre.depuis(<ClasseFoyer>[
+            ClasseFoyer(
+              eleveId: 'foyer-a-eleve-1',
+              classe: classeFictive(libelle: 'Classe B'),
+            ),
+          ]),
+          maintenant: maintenant,
+        ),
+        'Classe B · ${t.foyer.membre.accesJusquau(date: dateEcheance(fin))}',
+      );
+    });
+
+    test('classe inconnue, sans acces : une legende vide', () {
+      expect(
+        legendeMembre(
+          profil: _profil(finAcces: fin),
+          classe: ClasseMembre.inconnue,
+          maintenant: maintenant,
+          avecAcces: false,
+        ),
+        isEmpty,
+      );
+    });
+  });
 }

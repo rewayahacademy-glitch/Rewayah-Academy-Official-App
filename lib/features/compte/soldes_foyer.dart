@@ -11,6 +11,12 @@
 // Aucune source serveur a ce jour (FI-BR-03, qui remplace EA-BR-23) : le
 // port rend `CapaciteIndisponible`, la demonstration surcharge le fournisseur
 // (K-28).
+//
+// Plus aucun ecran ne pose cette section depuis la revue FI-VAGUE-R R1-06 :
+// le Foyer lit ses finances par `SyntheseSoldesFoyer`. Elle reste parce que
+// les recettes EA-12 et FI-roles et `paiements_foyer_adulte_test` l'eprouvent
+// encore ; son retrait, avec ces tests, revient a une vague ulterieure
+// (contre-revue FI-VAGUE-CORR Foyer).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
