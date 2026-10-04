@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show SemanticsNode;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -102,6 +103,20 @@ Future<void> _voirEtFermer(WidgetTester tester) async {
     ),
   );
   await tester.pumpAndSettle();
+}
+
+/// L'etat annonce de la verification [libelle] (`Semantics.checked` et
+/// geste) : ce qu'un lecteur d'ecran percoit, donc ce qui compte.
+({bool pressable, bool cochee}) _verification(
+  WidgetTester tester,
+  String libelle,
+) {
+  final SemanticsNode s = tester.getSemantics(find.text(libelle));
+  bool vaut(Matcher m) => m.matches(s, <dynamic, dynamic>{});
+  return (
+    pressable: vaut(isSemantics(hasTapAction: true)),
+    cochee: vaut(isSemantics(isChecked: true)),
+  );
 }
 
 ActionPrincipale _action(WidgetTester tester, String libelle) =>
@@ -320,7 +335,7 @@ void main() {
       expect(service.verdicts, isEmpty);
     });
     testWidgets('AD-7 : ni journalisation ni URL dans le detail ; « Voir la '
-        'piece » signe par le mecanisme existant et la validation se rouvre', (
+        'piece » signe par le mecanisme existant ; Valider reste ferme (Q21)', (
       WidgetTester tester,
     ) async {
       final FauxServiceValidation service = await _monter(
@@ -363,6 +378,60 @@ void main() {
       await _allerA(tester, t.dossiers.refuser);
       expect(find.text(t.dossiers.approuver), findsNothing);
       expect(service.verdicts, isEmpty);
+    });
+
+    // AD-T-LECTURE : la porte de lecture (P-ADM-06 point 5). Les cases sont
+    // fermees tant que la piece n'a pas ete affichee, ouvertes apres. Ce test
+    // echoue si la porte est neutralisee (_lectureFaite toujours vrai).
+    testWidgets('AD-T-LECTURE : cases fermees avant la lecture de la piece, '
+        'ouvertes apres', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        FauxServiceValidation()..file = <DossierAValider>[_dossier()],
+      );
+      final List<String> points = <String>[
+        t.dossiers.pointLisible,
+        t.dossiers.pointNom,
+        t.dossiers.pointValidite,
+      ];
+      for (final String point in points) {
+        await _allerA(tester, point);
+        expect(_verification(tester, point).pressable, isFalse, reason: point);
+        await tester.tap(find.text(point));
+        await tester.pumpAndSettle();
+        expect(_verification(tester, point).cochee, isFalse, reason: point);
+      }
+
+      await _voirEtFermer(tester);
+      for (final String point in points) {
+        await _allerA(tester, point);
+        expect(_verification(tester, point).pressable, isTrue, reason: point);
+        await tester.tap(find.text(point));
+        await tester.pumpAndSettle();
+        expect(_verification(tester, point).cochee, isTrue, reason: point);
+      }
+    });
+
+    testWidgets('AD-T-LECTURE : signature indisponible (500), la visionneuse '
+        'le dit et les cases restent fermees', (WidgetTester tester) async {
+      final FauxServiceValidation service = await _monter(
+        tester,
+        FauxServiceValidation()
+          ..file = <DossierAValider>[_dossier()]
+          ..erreurApercu = const StorageException('Erreur', statusCode: '500'),
+      );
+      await _taper(tester, t.dossiers.revue.voirPiece);
+      expect(service.apercus, <String>['p1/piece.webp']);
+      expect(find.text(t.dossiers.revue.pieceIndisponible), findsOneWidget);
+      await tester.tap(
+        find.descendant(
+          of: find.byType(VisionneusePiece),
+          matching: find.text(t.commun.fermer),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await _allerA(tester, t.dossiers.pointLisible);
+      expect(_verification(tester, t.dossiers.pointLisible).pressable, isFalse);
     });
 
     testWidgets('AD-7 : une signature en echec (404) garde la validation '

@@ -81,7 +81,7 @@ void main() {
   });
 
   testWidgets('branchee comme apres BR-1, depuis la coque : Personnes, la '
-      'ligne, « Voir la piece », fermer, cocher, valider', (
+      'ligne, « Voir la piece », fermer, cocher ; Valider reste ferme (Q21)', (
     WidgetTester tester,
   ) async {
     final FauxServiceValidation service = await _monterCoque(

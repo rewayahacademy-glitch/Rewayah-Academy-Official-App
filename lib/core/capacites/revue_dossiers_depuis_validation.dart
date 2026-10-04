@@ -176,10 +176,12 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
     }
     final EtatPieceRevue piece = _etatPiece(d) ?? EtatPieceRevue.absente;
     final bool disponible = piece == EtatPieceRevue.disponible;
-    // AD-7 : une piece image s'ouvre dans la visionneuse, les verifications
-    // deviennent modifiables et la validation se rouvre. Un format que la
-    // visionneuse n'affiche pas (pdf, heic, inconnu) garde la validation
-    // fermee et le refus ouvert (P-ADM-06).
+    // AD-7 : une piece image s'ouvre dans la visionneuse et les
+    // verifications deviennent modifiables apres sa lecture (lectureRequise).
+    // La validation reste fermee a l'ecran tant que la consequence est
+    // inconnue (Q21), et ici tant que la decision n'est pas branchee
+    // (AD-M3-PROD). Un format que la visionneuse n'affiche pas (pdf, heic,
+    // inconnu) garde les verifications fermees (P-ADM-06).
     final bool consultable =
         disponible && apercu != null && typeImage(d.cleObjet) != null;
     final BlocageRevue? manque = switch (piece) {
