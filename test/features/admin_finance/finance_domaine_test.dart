@@ -301,5 +301,57 @@ void main() {
       _verifierPolitiquesDemo();
       expect(tester.takeException(), isNull);
     });
+
+    testWidgets('R6-04 : le lien d une alerte reste dans la demonstration '
+        '(K-28), jamais vers une route reelle gardee', (
+      WidgetTester tester,
+    ) async {
+      tester.view.physicalSize = const Size(1440, 2400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final GoRouter routeur = GoRouter(
+        initialLocation: Routes.demoFinance,
+        routes: <RouteBase>[
+          ...routesDemoFinance('staging'),
+          GoRoute(
+            path: Routes.adminPersonnesComptes,
+            builder: (BuildContext _, GoRouterState _) =>
+                const Scaffold(body: Text('route reelle')),
+          ),
+        ],
+      );
+      addTearDown(routeur.dispose);
+      await tester.pumpWidget(
+        ProviderScope(
+          child: TranslationProvider(
+            child: MaterialApp.router(
+              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              locale: AppLocale.fr.flutterLocale,
+              supportedLocales: AppLocaleUtils.supportedLocales,
+              localizationsDelegates: GlobalMaterialLocalizations.delegates,
+              routerConfig: routeur,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final Finder lien = find.byKey(
+        const ValueKey<String>('demo-fi-alerte-ibrahim-cible'),
+      );
+      expect(lien, findsOneWidget);
+      expect(find.text(t.admin.finance.vue.alerte.ouvrirComptes), findsOne);
+      await tester.ensureVisible(lien);
+      await tester.pumpAndSettle();
+      await tester.tap(lien);
+      await tester.pumpAndSettle();
+      expect(
+        routeur.routerDelegate.currentConfiguration.uri.path,
+        Routes.demoFinance,
+      );
+      expect(find.text('route reelle'), findsNothing);
+      expect(find.byType(AdminShell), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
   });
 }

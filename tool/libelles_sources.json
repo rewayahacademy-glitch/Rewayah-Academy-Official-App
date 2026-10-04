@@ -527,7 +527,7 @@
   "admin.finance.vue.repartitionAdultes": "ECARTS C3 (type d'élève adulte) ; revue FI-VAGUE-R R6-01",
   "admin.finance.vue.sansHistorique": "guide Finance V4 du directeur (02/10), §8 LOT F7 (chiffres vides) ; état vide d'un graphique, revue FI-VAGUE-R R6-01",
   "admin.finance.vue.alerte.ouvrirComptes": "UX_REVIEW_08_FINANCE ligne 12 i (chaque ligne ouvre sa cible) ; ECARTS C7 ; page Personnes > Comptes existante ; revue FI-VAGUE-R R6-04",
-  "admin.finance.vue.alerte.ouvrirClasses": "UX_REVIEW_08_FINANCE ligne 12 i (chaque ligne ouvre sa cible) ; ECARTS C7 ; page Opérations > Classes existante ; revue FI-VAGUE-R R6-04",
+  "admin.finance.vue.alerte.ouvrirClasses": "UX_REVIEW_08_FINANCE ligne 12 i (chaque ligne ouvre sa cible) ; ECARTS C7 ; cible : page Opérations > Groupes existante (/admin/operations/groupes, titre « Groupes », aucune page « Classes ») ; écart de vocabulaire lien/titre noté pour le directeur, renommage hors périmètre ; revue FI-VAGUE-R R6-04",
   "admin.finance.pol.essaiActivation": "guide Finance V4 du directeur (02/10), §5.7 Essai « activation » ; ECARTS D8 ; revue FI-VAGUE-R R6-06",
   "admin.finance.pol.essaiActivationDetail": "guide Finance V4 du directeur (02/10), §1.2 (FIN4-13, FIN4-14) et §5.7 ; K-58 (conséquence) ; revue FI-VAGUE-R R6-06",
   "admin.finance.pol.essaiActive": "guide Finance V4 du directeur (02/10), §5.7 Essai « activation » ; ECARTS D8 (interrupteur) ; revue FI-VAGUE-R R6-06",

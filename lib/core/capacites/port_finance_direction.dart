@@ -31,7 +31,9 @@ enum CibleAlerteFinance {
   /// Les comptes du produit (Personnes > Comptes) : le foyer du profil.
   comptes,
 
-  /// Les classes (Operations > Classes).
+  /// Les classes : la page des groupes pedagogiques (Operations > Groupes,
+  /// `/admin/operations/groupes`, intitulee « Groupes ») ; aucune page
+  /// « Classes » n'existe, l'ecart de vocabulaire est note pour le directeur.
   classes,
 }
 

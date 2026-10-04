@@ -64,6 +64,19 @@ final FutureProvider<VueGlobaleFinance> vueGlobaleFinanceProvider =
       retry: (int retryCount, Object error) => null,
     );
 
+/// Ce que fait le lien d'une alerte (R6-04) : ouvrir sa cible dans le routeur
+/// de la direction ([VueGlobaleFinanceContenu.routeDe]). La page hote decide
+/// de la navigation : la demonstration (`/demo/finance`) le surcharge pour
+/// rester en place, comme ses autres domaines (K-28), au lieu de sortir vers
+/// une route reelle gardee.
+final Provider<void Function(BuildContext, CibleAlerteFinance)>
+ouvrirCibleAlerteFinanceProvider =
+    Provider<void Function(BuildContext, CibleAlerteFinance)>(
+      (Ref _) =>
+          (BuildContext context, CibleAlerteFinance cible) =>
+              GoRouter.of(context).go(VueGlobaleFinanceContenu.routeDe(cible)),
+    );
+
 /// Le contenu de l'onglet Vue globale : chargement, contenu, mois sans
 /// activite, erreur, hors ligne, et « Pas encore disponible » tant que le
 /// port rend `CapaciteIndisponible` (production, FI-BR-12).
@@ -132,7 +145,11 @@ class VueGlobaleFinanceContenu extends StatelessWidget {
   );
 
   /// La route qu'ouvre une alerte de cible [cible] : une page existante du
-  /// routeur de la direction.
+  /// routeur de la direction. `classes` ouvre la page des groupes
+  /// pedagogiques (`/admin/operations/groupes`, intitulee « Groupes ») : il
+  /// n'existe pas de page « Classes » ; l'ecart de vocabulaire entre le lien
+  /// « Ouvrir les classes » et le titre « Groupes » est note pour le
+  /// directeur, le renommage est hors perimetre.
   static String routeDe(CibleAlerteFinance cible) => switch (cible) {
     CibleAlerteFinance.comptes => Routes.adminPersonnesComptes,
     CibleAlerteFinance.classes => Routes.adminOperationsGroupes,
@@ -306,13 +323,17 @@ class VueGlobaleFinanceContenu extends StatelessWidget {
   static Widget _bandeau(BuildContext context, AlerteFinance a) {
     final alerteT = t.admin.finance.vue.alerte;
     // Une seule action secondaire par alerte : le lien vers sa cible.
-    final Widget action = LienFleche(
-      key: ValueKey<String>('${a.id}-cible'),
-      libelle: switch (a.cible) {
-        CibleAlerteFinance.comptes => alerteT.ouvrirComptes,
-        CibleAlerteFinance.classes => alerteT.ouvrirClasses,
-      },
-      onPress: () => GoRouter.of(context).go(routeDe(a.cible)),
+    // La navigation vient de la page hote (`ouvrirCibleAlerteFinanceProvider`).
+    final Widget action = Consumer(
+      builder: (BuildContext context, WidgetRef ref, Widget? _) => LienFleche(
+        key: ValueKey<String>('${a.id}-cible'),
+        libelle: switch (a.cible) {
+          CibleAlerteFinance.comptes => alerteT.ouvrirComptes,
+          CibleAlerteFinance.classes => alerteT.ouvrirClasses,
+        },
+        onPress: () =>
+            ref.read(ouvrirCibleAlerteFinanceProvider)(context, a.cible),
+      ),
     );
     final String qui = switch ((a.prenom, a.classe)) {
       (final String p, final String c) => alerteT.quiPrenomClasse(
