@@ -11,7 +11,8 @@
 // avant BR-1 : il rend `CapaciteIndisponible`, que la page dit comme tel
 // (D10 : rien d'invente). La demonstration le surcharge (K-28). La source
 // est le prolongement d'EA-BR-06 (les trois dernieres seances) a tout
-// l'historique de la Classe de l'eleve : ligne a ajouter a `EA-BR.md`.
+// l'historique de la Classe de l'eleve : DASH-BR-01 (registre
+// `DASH_STRATEGIE.md` §5 bis, a reporter dans `EA-BR.md`).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

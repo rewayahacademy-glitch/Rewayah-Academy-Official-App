@@ -154,7 +154,10 @@ void main() {
       expect(find.text(t.tuteur.accueil.voirTout), findsNothing);
     });
 
-    testWidgets('contre-epreuve : sans destination, aucun « Voir tout » des '
+    // Non-regression seulement (revue DASH-EA-PROD-R, defaut 3) : ce test
+    // protege l'absence de lien sans destination, il n'est pas une
+    // contre-epreuve d'une mutation du code.
+    testWidgets('non-regression : sans destination, aucun « Voir tout » des '
         'dernieres seances (D9)', (WidgetTester tester) async {
       tester.view.physicalSize = const Size(390, 2400);
       tester.view.devicePixelRatio = 1;

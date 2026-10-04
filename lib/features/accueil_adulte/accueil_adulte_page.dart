@@ -50,7 +50,9 @@ import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/empty_state.dart';
@@ -136,18 +138,24 @@ final FutureProvider<AccueilAdulteVM> accueilAdulteProvider =
 /// (EA-BR-04) a ce compte eleve. C'est elle, et non un role, qui fait ouvrir
 /// `/eleve` sur l'Accueil adulte (`routes_accueil_adulte.dart`).
 ///
-/// Une lecture en echec ou indisponible la laisse fausse : `/eleve` garde
+/// Une lecture en echec ou indisponible la laisse fausse, meme apres une
+/// premiere lecture reussie : `/eleve` garde
 /// l'accueil de l'eleve, rien n'est suppose. Elle n'est lue que pour un
 /// compte eleve : aucun autre compte n'atteint `/eleve` (garde de role).
 /// Quand EA-BR-04 sera servi, une capacite rendue avec la session evitera
-/// d'attendre cette lecture (ligne a ajouter a `EA-BR.md`, voir le rapport
-/// DASH-EA-PROD).
+/// d'attendre cette lecture (DASH-BR-02, registre `DASH_STRATEGIE.md`
+/// §5 bis, a reporter dans `EA-BR.md`).
 final Provider<bool> capaciteAccueilAdulteProvider = Provider<bool>((Ref ref) {
   final AppRole? role = ref.watch(
     sessionProvider.select((SessionState s) => s.role),
   );
   if (role != AppRole.student) return false;
-  return ref.watch(accueilAdulteProvider).hasValue;
+  // Une relecture en echec garde la valeur precedente (`hasValue` reste
+  // vrai) : sans `hasError`, la capacite resterait vraie apres l'echec
+  // (revue DASH-EA-PROD-R, defaut 1). Une relecture en cours, elle, la garde
+  // vraie : pas de va-et-vient du routeur pendant « Reessayer ».
+  final AsyncValue<AccueilAdulteVM> lecture = ref.watch(accueilAdulteProvider);
+  return lecture.hasValue && !lecture.hasError;
 });
 
 /// L'accueil de l'eleve adulte : salutation et cloche, prochaine seance,
@@ -380,13 +388,12 @@ class _Sections extends StatelessWidget {
         ? const <Widget>[]
         : <Widget>[
             // « Voir tout » (D6) ouvre l'historique ; sans destination, pas
-            // de lien (D9). Meme lien tertiaire que les ressources.
-            SectionHeader(
+            // de lien (D9). Meme lien tertiaire, place comme celui des
+            // ressources (`BlocBibliotheque`).
+            EnteteVoirTout(
               titre: t.adulte.accueil.dernieresSeances,
-              libelleAction: onVoirDernieresSeances == null
-                  ? null
-                  : t.tuteur.accueil.voirTout,
-              onAction: onVoirDernieresSeances,
+              libelle: t.tuteur.accueil.voirTout,
+              onVoirTout: onVoirDernieresSeances,
             ),
             Ecart.vMd,
             ListeSeancesPassees(
@@ -467,6 +474,71 @@ class _Sections extends StatelessWidget {
   }
 }
 
+/// Un titre de section et son « Voir tout », places comme ceux des
+/// ressources (`BlocBibliotheque`) : sur la ligne du titre, au bord de fin,
+/// sur mobile comme sur bureau ; a grande taille de texte
+/// ([AppGabarit.seuilTexteColonne]), sous le titre, au bord de debut.
+/// `SectionHeader` seul passerait le lien sous le titre des 600 px de large :
+/// deux « Voir tout » voisins ne seraient pas au meme endroit (contre-revue
+/// DASH-EA-PROD-R). Sans [onVoirTout], pas de lien (D9). Le titre ne coupe
+/// aucun mot : `SectionHeader` le rend en `TexteSansCoupure` des que le texte
+/// est agrandi, sans le reduire en bloc.
+class EnteteVoirTout extends StatelessWidget {
+  /// Cree l'en-tete.
+  const EnteteVoirTout({
+    required this.titre,
+    required this.libelle,
+    super.key,
+    this.onVoirTout,
+  });
+
+  /// Le titre de section.
+  final String titre;
+
+  /// Le libelle du lien.
+  final String libelle;
+
+  /// La destination du lien ; nulle : pas de lien.
+  final VoidCallback? onVoirTout;
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget entete = SectionHeader(titre: titre);
+    final VoidCallback? ouvrir = onVoirTout;
+    if (ouvrir == null) return entete;
+    final Widget lien = IntrinsicWidth(
+      child: ActionPrincipale(
+        libelle: libelle,
+        niveau: NiveauAction.tertiaire,
+        pleineLargeur: false,
+        onPress: ouvrir,
+      ),
+    );
+    final bool empile =
+        MediaQuery.textScalerOf(context).scale(1) >=
+        AppGabarit.seuilTexteColonne;
+    if (empile) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          entete,
+          Ecart.vSm,
+          Align(alignment: AlignmentDirectional.centerStart, child: lien),
+        ],
+      );
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        Flexible(flex: 2, child: entete),
+        Ecart.hLg,
+        Flexible(child: lien),
+      ],
+    );
+  }
+}
+
 /// Des seances passees en une carte groupee : la date, puis une seule
 /// ligne, la plage ; une pastille pour une absence seulement (K-42 point 4).
 /// La Classe et l'enseignant ne sont pas repetes. Partagee par l'Accueil
@@ -517,11 +589,20 @@ class SqueletteAccueilAdulte extends StatelessWidget {
   /// Cree le squelette.
   const SqueletteAccueilAdulte({super.key});
 
-  /// Hauteur d'une grande tuile qui charge : un titre et une carte.
-  static const double hauteurGrande = 280;
+  /// Hauteur d'une grande tuile qui charge, composee des jetons de ce
+  /// qu'elle attend (revue DASH-EA-PROD-R, defaut 2) : un titre de section,
+  /// son ecart, trois lignes de reglage (les trois dernieres seances ou
+  /// ressources, [AccueilAdultePage.limite]) et la marge de la carte.
+  static const double hauteurGrande =
+      AppSpacing.xxxl +
+      AppSpacing.md +
+      AccueilAdultePage.limite * AppPage.hauteurReglage +
+      AppSpacing.xxl;
 
-  /// Hauteur de la ligne « Mon parcours » qui charge.
-  static const double hauteurLarge = 96;
+  /// Hauteur de « Mon parcours » qui charge : un titre de section, son
+  /// ecart et une seule ligne de carte.
+  static const double hauteurLarge =
+      AppSpacing.xxxl + AppSpacing.md + AppPage.hauteurReglage;
 
   @override
   Widget build(BuildContext context) {
