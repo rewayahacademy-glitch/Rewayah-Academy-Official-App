@@ -239,9 +239,15 @@ abstract final class DonneesFinanceDemo {
       etat: etat,
       solde: usd(solde),
       periode: finance ? PeriodeFinancee(debut: debutMois, fin: finMois) : null,
+      // Sans periode financee, le debit attendu est celui du mois de
+      // reference, pas du suivant : c'est le mois que le manque doit
+      // financer (« Il manque 8 $ pour financer octobre », guide §1.7).
       prochainDebit: essais != null
           ? null
-          : ProchainDebit(date: moisSuivant, montant: mensualite),
+          : ProchainDebit(
+              date: finance ? moisSuivant : debutMois,
+              montant: mensualite,
+            ),
       mensualite: mensualite,
       lignesMensualite: lignes,
       essaisUtilises: essais,

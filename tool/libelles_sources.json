@@ -103,5 +103,13 @@
   "argent.soldes.aPayer": "guide Finance V4 du directeur (02/10) §5.1 « montant à financer ce mois », etape FI-3b",
   "argent.soldes.profilsFinances": "guide Finance V4 du directeur (02/10) §5.1 « nombre de profils financés », etape FI-3b",
   "argent.soldes.profilsFinancesValeur": "guide Finance V4 du directeur (02/10) §5.1, etape FI-3b",
-  "argent.soldes.paiements": "guide Finance V4 du directeur (02/10) §5.1 « paiements du mois », etape FI-3b"
+  "argent.soldes.paiements": "guide Finance V4 du directeur (02/10) §5.1 « paiements du mois », etape FI-3b",
+  "argent.acces.enfantTitre": "guide Finance V4 du directeur (02/10) §1.7 « Copie enfant », mot pour mot, etape FI-9a",
+  "argent.acces.enfantMessage": "guide Finance V4 du directeur (02/10) §1.7 « Copie enfant », mot pour mot, etape FI-9a",
+  "argent.acces.regulariserTitre": "guide Finance V4 du directeur (02/10) §1.7 « Copie tuteur / adulte autonome », mot pour mot, etape FI-9a",
+  "argent.acces.regulariserManque": "guide Finance V4 du directeur (02/10) §1.7 « Il manque 8 USD pour financer janvier. », montant par formaterMontant (§7), etape FI-9a",
+  "argent.acces.regulariserManqueNouvellePeriode": "guide Finance V4 du directeur (02/10) §1.7 « la nouvelle période affiche À régulariser », quand la source ne rend pas le mois, etape FI-9a",
+  "argent.acces.regulariserSansManque": "guide Finance V4 du directeur (02/10) §1.7 « Si la nouvelle période n'est pas financée », quand la source ne rend pas de manque, etape FI-9a",
+  "argent.acces.placeConservee": "guide Finance V4 du directeur (02/10) §1.7 « la place peut être conservée 7 jours » (finConservation rendue par la source), etape FI-9a",
+  "argent.acces.essai": "guide Finance V4 du directeur (02/10) §1.2 « Essai : n/2 », FIN4-10, etape FI-9a"
 }
