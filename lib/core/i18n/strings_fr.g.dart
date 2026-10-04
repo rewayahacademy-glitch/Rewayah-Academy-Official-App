@@ -6005,8 +6005,8 @@ class Traductions$admin$programmes$fr {
 	/// fr: 'Ajouter'
 	String get ajouterNiveauEnvoyer => 'Ajouter';
 
-	/// fr: 'L'ajout n'a pas abouti : {message}'
-	String ajouterNiveauErreur({required Object message}) => 'L\'ajout n\'a pas abouti : ${message}';
+	/// fr: 'L'ajout du niveau n'a pas été confirmé : {message}. Le code technique existe peut-être déjà dans cette version : modifiez-le, puis réessayez.'
+	String ajouterNiveauErreur({required Object message}) => 'L\'ajout du niveau n\'a pas été confirmé : ${message}. Le code technique existe peut-être déjà dans cette version : modifiez-le, puis réessayez.';
 
 	/// fr: 'Modifier'
 	String get modifierNiveau => 'Modifier';
@@ -6058,6 +6058,42 @@ class Traductions$admin$programmes$fr {
 
 	/// fr: 'Ordre'
 	String get champOrdre => 'Ordre';
+
+	/// fr: 'Nouveau cycle'
+	String get nouveauCycle => 'Nouveau cycle';
+
+	/// fr: 'Nom du nouveau cycle'
+	String get champNouveauCycle => 'Nom du nouveau cycle';
+
+	/// fr: 'Diminuer l'ordre de 1'
+	String get ordreMoins => 'Diminuer l\'ordre de 1';
+
+	/// fr: 'Augmenter l'ordre de 1'
+	String get ordrePlus => 'Augmenter l\'ordre de 1';
+
+	/// fr: 'L'ordre proposé suit le dernier niveau du cycle choisi. Changez-le si besoin.'
+	String get ordreDeduit => 'L\'ordre proposé suit le dernier niveau du cycle choisi. Changez-le si besoin.';
+
+	/// fr: 'Code technique proposé : {code}'
+	String codeGenere({required Object code}) => 'Code technique proposé : ${code}';
+
+	/// fr: 'Modifier le code technique'
+	String get codeModifier => 'Modifier le code technique';
+
+	/// fr: 'le nom affiché'
+	String get manqueNom => 'le nom affiché';
+
+	/// fr: 'le cycle'
+	String get manqueCycle => 'le cycle';
+
+	/// fr: 'l'ordre (un nombre entier)'
+	String get manqueOrdre => 'l\'ordre (un nombre entier)';
+
+	/// fr: 'le code technique'
+	String get manqueCode => 'le code technique';
+
+	/// fr: 'Rien n'a été enregistré : il manque {elements}. Complétez-le, puis réessayez.'
+	String manque({required Object elements}) => 'Rien n\'a été enregistré : il manque ${elements}. Complétez-le, puis réessayez.';
 
 	/// fr: 'Description (optionnelle)'
 	String get champDescription => 'Description (optionnelle)';
@@ -10721,6 +10757,9 @@ class Traductions$adulte$invitation$fr {
 	/// fr: 'Facultatif.'
 	String get nomAide => 'Facultatif.';
 
+	/// fr: 'Facultatif. Prérempli avec le nom de votre compte : modifiez-le si besoin.'
+	String get nomAidePrerempli => 'Facultatif. Prérempli avec le nom de votre compte : modifiez-le si besoin.';
+
 	/// fr: 'Adresse e-mail'
 	String get courriel => 'Adresse e-mail';
 
@@ -11814,11 +11853,11 @@ class Traductions$foyer$ajout$identite$fr {
 	/// fr: 'Le nom de famille n'est jamais montré à l'enseignant.'
 	String get nomAide => 'Le nom de famille n\'est jamais montré à l\'enseignant.';
 
-	/// fr: 'Âge'
-	String get age => 'Âge';
+	/// fr: 'Prérempli avec le nom de votre compte : modifiez-le si l'élève porte un autre nom. Jamais montré à l'enseignant.'
+	String get nomAidePrerempli => 'Prérempli avec le nom de votre compte : modifiez-le si l\'élève porte un autre nom. Jamais montré à l\'enseignant.';
 
-	/// fr: 'ans'
-	String get ageSuffixe => 'ans';
+	/// fr: 'Âge, en années'
+	String get age => 'Âge, en années';
 
 	/// fr: 'L'âge fixe l'affichage et la caméra au départ. Vous pourrez changer les deux ensuite.'
 	String get ageAide => 'L\'âge fixe l\'affichage et la caméra au départ. Vous pourrez changer les deux ensuite.';
@@ -11838,8 +11877,8 @@ class Traductions$foyer$ajout$erreurs$fr {
 	/// fr: 'Indiquez le nom de l'élève.'
 	String get nomRequis => 'Indiquez le nom de l\'élève.';
 
-	/// fr: 'Indiquez l'âge, en chiffres.'
-	String get ageRequis => 'Indiquez l\'âge, en chiffres.';
+	/// fr: 'Choisissez l'âge de l'élève pour continuer.'
+	String get ageRequis => 'Choisissez l\'âge de l\'élève pour continuer.';
 
 	/// fr: 'Indiquez un âge entre {min} et {max} ans.'
 	String ageHorsBornes({required Object min, required Object max}) => 'Indiquez un âge entre ${min} et ${max} ans.';
@@ -16264,12 +16303,12 @@ extension on Traductions {
 			'foyer.ajout.identite.prenom' => 'Prénom',
 			'foyer.ajout.identite.nom' => 'Nom',
 			'foyer.ajout.identite.nomAide' => 'Le nom de famille n\'est jamais montré à l\'enseignant.',
-			'foyer.ajout.identite.age' => 'Âge',
-			'foyer.ajout.identite.ageSuffixe' => 'ans',
+			'foyer.ajout.identite.nomAidePrerempli' => 'Prérempli avec le nom de votre compte : modifiez-le si l\'élève porte un autre nom. Jamais montré à l\'enseignant.',
+			'foyer.ajout.identite.age' => 'Âge, en années',
 			'foyer.ajout.identite.ageAide' => 'L\'âge fixe l\'affichage et la caméra au départ. Vous pourrez changer les deux ensuite.',
 			'foyer.ajout.erreurs.prenomRequis' => 'Indiquez le prénom de l\'élève.',
 			'foyer.ajout.erreurs.nomRequis' => 'Indiquez le nom de l\'élève.',
-			'foyer.ajout.erreurs.ageRequis' => 'Indiquez l\'âge, en chiffres.',
+			'foyer.ajout.erreurs.ageRequis' => 'Choisissez l\'âge de l\'élève pour continuer.',
 			'foyer.ajout.erreurs.ageHorsBornes' => ({required Object min, required Object max}) => 'Indiquez un âge entre ${min} et ${max} ans.',
 			'foyer.ajout.refus.compteNonValide' => 'Votre accès doit être ouvert avant d\'ajouter un profil élève.',
 			'foyer.ajout.refus.ageHorsBornes' => 'Cet âge n\'est pas accepté. Vérifiez-le puis réessayez.',
@@ -16998,7 +17037,7 @@ extension on Traductions {
 			'admin.programmes.ajouterNiveau' => 'Ajouter un niveau',
 			'admin.programmes.ajouterNiveauTitre' => ({required Object version}) => 'Ajouter un niveau à ${version}',
 			'admin.programmes.ajouterNiveauEnvoyer' => 'Ajouter',
-			'admin.programmes.ajouterNiveauErreur' => ({required Object message}) => 'L\'ajout n\'a pas abouti : ${message}',
+			'admin.programmes.ajouterNiveauErreur' => ({required Object message}) => 'L\'ajout du niveau n\'a pas été confirmé : ${message}. Le code technique existe peut-être déjà dans cette version : modifiez-le, puis réessayez.',
 			'admin.programmes.modifierNiveau' => 'Modifier',
 			'admin.programmes.modifierNiveauTitre' => ({required Object nom}) => 'Modifier ${nom}',
 			'admin.programmes.modifierNiveauEnvoyer' => 'Enregistrer',
@@ -17016,9 +17055,23 @@ extension on Traductions {
 			'admin.programmes.champNomHumain' => 'Nom affiché',
 			'admin.programmes.champCycle' => 'Cycle',
 			'admin.programmes.champOrdre' => 'Ordre',
+			'admin.programmes.nouveauCycle' => 'Nouveau cycle',
+			'admin.programmes.champNouveauCycle' => 'Nom du nouveau cycle',
+			'admin.programmes.ordreMoins' => 'Diminuer l\'ordre de 1',
+			'admin.programmes.ordrePlus' => 'Augmenter l\'ordre de 1',
+			'admin.programmes.ordreDeduit' => 'L\'ordre proposé suit le dernier niveau du cycle choisi. Changez-le si besoin.',
+			'admin.programmes.codeGenere' => ({required Object code}) => 'Code technique proposé : ${code}',
+			'admin.programmes.codeModifier' => 'Modifier le code technique',
+			'admin.programmes.manqueNom' => 'le nom affiché',
+			'admin.programmes.manqueCycle' => 'le cycle',
+			'admin.programmes.manqueOrdre' => 'l\'ordre (un nombre entier)',
+			'admin.programmes.manqueCode' => 'le code technique',
+			'admin.programmes.manque' => ({required Object elements}) => 'Rien n\'a été enregistré : il manque ${elements}. Complétez-le, puis réessayez.',
 			'admin.programmes.champDescription' => 'Description (optionnelle)',
 			'admin.programmes.champMotif' => 'Motif',
 			'admin.programmes.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.programmes.journalisation' => 'Chaque création, modification, suppression et publication est inscrite au journal d\'audit.',
 			'admin.journal.titre' => 'Journal',
 			'admin.journal.chaineIntacte' => 'Journal intact',
@@ -17031,8 +17084,6 @@ extension on Traductions {
 			'admin.journal.chaineEnCours' => 'Vérification',
 			'admin.journal.chaineEnCoursDetail' => 'Relecture de l\'empreinte de chaque entrée.',
 			'admin.journal.periodeSemaine' => '7 derniers jours',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.periodeMois' => '30 derniers jours',
 			'admin.journal.periodeTout' => 'Depuis le début',
 			'admin.journal.tousTypes' => 'Tous les événements',
@@ -17533,6 +17584,8 @@ extension on Traductions {
 			'compte.tuteur.pageInformations.note' => 'Ces informations sont tenues par l\'académie. Elles ne se modifient pas encore depuis l\'application.',
 			'compte.tuteur.pageSecurite.titre' => 'Connexion et sécurité',
 			'compte.tuteur.pageSecurite.sousTitre' => 'Comment vous accédez à votre compte.',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageSecurite.methode' => 'Méthode de connexion',
 			'compte.tuteur.pageSecurite.adresse' => 'Adresse de connexion',
 			'compte.tuteur.pageSecurite.appareils' => 'Les appareils connectés à votre compte ne sont pas encore listés dans l\'application.',
@@ -17545,8 +17598,6 @@ extension on Traductions {
 			'compte.tuteur.pageAcces.pastilleActif' => 'Actif',
 			'compte.tuteur.pageAcces.pastilleExpire' => 'Terminé',
 			'compte.tuteur.pageAcces.aucunTitre' => 'Aucun profil élève',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageAcces.aucunePhrase' => 'L\'accès de chaque profil élève s\'affichera ici.',
 			'compte.tuteur.pageAcces.titulaire' => 'Votre compte de titulaire n\'a pas d\'échéance propre : l\'accès se règle profil par profil.',
 			'compte.tuteur.pagePaiements.titre' => 'Paiements et reçus',
@@ -18047,6 +18098,8 @@ extension on Traductions {
 			'enseignant.eleve.travail' => 'Travail',
 			'enseignant.eleve.travailReprise' => ({required Object page}) => 'Reprise à la ${page}',
 			'enseignant.eleve.derniereSeance' => 'Dernière séance',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.eleve.nonRenseigne' => 'Non renseigné',
 			'enseignant.eleve.signaler' => 'Signaler un besoin',
 			'enseignant.eleve.signalerAide' => 'Un besoin à remonter à l\'académie, sans recopier le contexte.',
@@ -18059,8 +18112,6 @@ extension on Traductions {
 			'enseignant.signalement.categories.changement' => 'Changement',
 			'enseignant.signalement.categories.autre' => 'Autre',
 			'enseignant.signalement.details' => 'Détails internes',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.signalement.detailsAide' => 'Lu par l\'équipe de l\'académie seulement.',
 			'enseignant.signalement.resume' => 'Résumé partageable',
 			'enseignant.signalement.resumeAide' => 'Peut être partagé avec la famille par l\'académie.',
@@ -18561,6 +18612,8 @@ extension on Traductions {
 			'controleur.observation.respectCadre' => 'Respect du cadre',
 			'controleur.observation.respectCadreAide' => 'Quand il s\'agit des règles de l\'académie et de la séance',
 			'controleur.observation.climat' => 'Comportement / climat',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.climatAide' => 'Quand il s\'agit du comportement ou de l\'ambiance de la classe',
 			'controleur.observation.autre' => 'Autre',
 			'controleur.observation.autreAide' => 'Quand aucun autre domaine ne convient · précisez-le dans votre texte',
@@ -18573,8 +18626,6 @@ extension on Traductions {
 			'controleur.observation.elevePrecis' => 'Élève précis',
 			'controleur.observation.elevePrecisAide' => 'Quand un seul élève est concerné · vous le choisissez dans la liste, prénom seulement',
 			'controleur.observation.aucun' => 'Aucun participant précis',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.aucunAide' => 'Quand elle ne vise personne en particulier, par exemple le déroulement',
 			'controleur.observation.questionEleve' => 'Choisissez l\'élève dans la liste de la Classe.',
 			'controleur.observation.rosterChargement' => 'Lecture de la liste des élèves présents.',
@@ -19075,6 +19126,8 @@ extension on Traductions {
 			'tc.observation.reglages.versionPolitique' => ({required Object version}) => 'Version ${version}',
 			'tc.parcours.avant.titre' => 'Avant le prochain cours',
 			'tc.parcours.avant.rien' => 'Rien à préparer pour le prochain cours.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.avant.rienDetail' => 'Votre enseignant proposera le travail à la fin de la prochaine séance.',
 			'tc.parcours.avant.nonBranche' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'tc.parcours.avant.nonBrancheDetail' => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.',
@@ -19087,8 +19140,6 @@ extension on Traductions {
 			'tc.parcours.intention.evaluation' => 'Pour l\'évaluation',
 			'tc.parcours.plage.versets' => ({required Object sourate, required Object premier, required Object dernier}) => 'Sourate ${sourate}, versets ${premier} à ${dernier}',
 			'tc.parcours.plage.versetUnique' => ({required Object sourate, required Object premier}) => 'Sourate ${sourate}, verset ${premier}',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.plage.versetsCroisee' => ({required Object sourateDebut, required Object versetDebut, required Object sourateFin, required Object versetFin}) => 'Sourate ${sourateDebut}, verset ${versetDebut} jusqu\'à sourate ${sourateFin}, verset ${versetFin}',
 			'tc.parcours.plage.pages' => ({required Object premiere, required Object derniere}) => 'Pages ${premiere} à ${derniere}',
 			'tc.parcours.plage.pageUnique' => ({required Object premiere}) => 'Page ${premiere}',
@@ -19256,6 +19307,7 @@ extension on Traductions {
 			'adulte.invitation.prenom' => 'Prénom',
 			'adulte.invitation.nom' => 'Nom',
 			'adulte.invitation.nomAide' => 'Facultatif.',
+			'adulte.invitation.nomAidePrerempli' => 'Facultatif. Prérempli avec le nom de votre compte : modifiez-le si besoin.',
 			'adulte.invitation.courriel' => 'Adresse e-mail',
 			'adulte.invitation.courrielAideElle' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjointe l\'invitation à rejoindre Rewayah.',
 			'adulte.invitation.courrielAideLui' => 'L\'adresse e-mail sera utilisée pour envoyer à votre conjoint l\'invitation à rejoindre Rewayah.',

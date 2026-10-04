@@ -120,5 +120,22 @@
   "kyc.autrePiece": "etape FORM-L4-11-12 (L11) : la carte Autre en champ libre jamais lu est remplacee par un type explicite (TypePiece.autre existe, valeur SQL other) ; a valider par le directeur",
   "admin.agents.libelleAuto": "etape FORM-L4-11-12 (L12) : libelle du jeton prerempli depuis la personne, la date et la duree, modifiable ; a valider par le directeur",
   "admin.agents.manqueLibelle": "etape FORM-L4-11-12 (L12) : raison a la place du bouton grise (K-56, K-59)",
-  "admin.agents.manquePersonne": "etape FORM-L4-11-12 (L12) : raison a la place du bouton grise (K-56, K-59)"
+  "admin.agents.manquePersonne": "etape FORM-L4-11-12 (L12) : raison a la place du bouton grise (K-56, K-59)",
+  "admin.programmes.nouveauCycle": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.champNouveauCycle": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.ordreMoins": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.ordrePlus": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.ordreDeduit": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.codeGenere": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.codeModifier": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.manqueNom": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.manqueCycle": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.manqueOrdre": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.manqueCode": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.manque": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "admin.programmes.ajouterNiveauErreur": "etape FORM-L5 (recensement FORM-AUTO-1 section 7-8) : feuille ajouter/modifier un niveau ; a valider par le directeur",
+  "foyer.ajout.identite.nomAidePrerempli": "etape FORM-L6 (recensement FORM-AUTO-1 section 3 et 8) : nom prerempli et age choisi ; a valider par le directeur",
+  "foyer.ajout.identite.age": "etape FORM-L6 (recensement FORM-AUTO-1 section 3 et 8) : nom prerempli et age choisi ; a valider par le directeur",
+  "foyer.ajout.erreurs.ageRequis": "etape FORM-L6 (recensement FORM-AUTO-1 section 3 et 8) : nom prerempli et age choisi ; a valider par le directeur",
+  "adulte.invitation.nomAidePrerempli": "etape FORM-L6 (recensement FORM-AUTO-1 section 3 et 8) : nom prerempli et age choisi ; a valider par le directeur"
 }
