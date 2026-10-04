@@ -7,7 +7,7 @@
 // Meme montage que `test/features/dossiers_admin_test.dart` (ServiceValidation
 // factice sous `surchargeRevueDossiersProduction`), sans demonstration. Saute
 // sans CAPTURE_DIR (voir `test/capture/LISEZ-MOI.md`). Nommage :
-// ad_m2_production_<revue|piece>_<LxH>_<light|dark>.png.
+// ad_m2_production_<LxH>_<light|dark>.png.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -17,7 +17,6 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
-import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
 
 import '../support/dossiers_production.dart';
 import '../support/harnais.dart';
@@ -74,37 +73,19 @@ void main() {
           );
           await stabiliser(tester);
 
-          final String suffixe = mode == ThemeMode.light ? 'light' : 'dark';
-          // La piece : l'apercu est ferme, la visionneuse le dit.
-          await tester.ensureVisible(find.text(t.dossiers.revue.voirPiece));
-          await stabiliser(tester);
-          await tester.tap(find.text(t.dossiers.revue.voirPiece));
-          await tester.runAsync(
-            () => Future<void>.delayed(const Duration(milliseconds: 100)),
-          );
-          await stabiliser(tester);
+          // Depuis AD-M3-PROD, la piece et la decision sont fermees : chaque
+          // phrase est dite une fois, aucun Voir la piece, Refuser ni Valider.
           expect(find.text(t.dossiers.revue.pieceIndisponible), findsOneWidget);
-          debugPrint(
-            'PNG ${await capturer(tester, 'ad_m2_production_piece_${nom}_$suffixe')}',
-          );
-
-          // Piece vue (ou tentee) : la decision, dite une fois, sans Refuser
-          // ni Valider grises.
-          await tester.tap(
-            find.descendant(
-              of: find.byType(VisionneusePiece),
-              matching: find.text(t.commun.fermer),
-            ),
-          );
-          await stabiliser(tester);
           expect(
             find.text(t.dossiers.revue.etats.decisionIndisponible),
             findsOneWidget,
           );
+          expect(find.text(t.dossiers.revue.voirPiece), findsNothing);
           expect(find.text(t.dossiers.refuser), findsNothing);
           expect(find.text(t.dossiers.approuver), findsNothing);
+          final String suffixe = mode == ThemeMode.light ? 'light' : 'dark';
           debugPrint(
-            'PNG ${await capturer(tester, 'ad_m2_production_revue_${nom}_$suffixe')}',
+            'PNG ${await capturer(tester, 'ad_m2_production_${nom}_$suffixe')}',
           );
         });
       }
