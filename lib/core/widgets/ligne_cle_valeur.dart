@@ -26,6 +26,9 @@ class LigneCleValeur extends StatelessWidget {
     this.complement,
     this.chiffres = false,
     this.annulee = false,
+    this.detailCle,
+    this.meneur,
+    this.valeurForte = false,
   });
 
   /// Ce que la valeur designe : « Horaire », « Duree », « Presence ».
@@ -45,19 +48,48 @@ class LigneCleValeur extends StatelessWidget {
   /// attenuee, annoncee « Annulee : ... » (ANNUL-VIS-1).
   final bool annulee;
 
+  /// Une precision sous la cle, en plus petit : la date d'un mouvement, la
+  /// periode d'un profil (lignes d'argent, FI-3a).
+  final String? detailCle;
+
+  /// Ce qui se pose avant la cle : l'avatar d'un profil (lignes d'argent,
+  /// FI-3a). Reste en tete quand la ligne s'empile.
+  final Widget? meneur;
+
+  /// Vrai pour une valeur qui conclut un bloc (un total) : au rang des noms
+  /// et titres de carte (`titleMedium`) au lieu du corps.
+  final bool valeurForte;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle base =
+        (valeurForte ? textes.titleMedium : textes.bodyLarge) ??
+        const TextStyle();
     final TextStyle styleValeur = palette.inkStrong.applyTo(
-      chiffres
-          ? AppTypography.tabulaire(textes.bodyLarge ?? const TextStyle())
-          : textes.bodyLarge ?? const TextStyle(),
+      chiffres ? AppTypography.tabulaire(base) : base,
     );
-    final Text texteCle = Text(
+    final Text libelleCle = Text(
       cle,
       style: palette.inkMuted.applyTo(textes.bodyMedium ?? const TextStyle()),
     );
+    final String? detail = detailCle;
+    final Widget texteCle = detail == null
+        ? libelleCle
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              libelleCle,
+              Text(
+                detail,
+                style: palette.inkMuted.applyTo(
+                  textes.bodySmall ?? const TextStyle(),
+                ),
+              ),
+            ],
+          );
     final Widget blocValeur = Wrap(
       spacing: AppSpacing.sm,
       runSpacing: AppSpacing.xs,
@@ -74,21 +106,32 @@ class LigneCleValeur extends StatelessWidget {
         MediaQuery.textScalerOf(context).scale(AppSpacing.lg) / AppSpacing.lg >=
         AppGabarit.seuilTexteColonne;
 
+    final Widget corps = empiler
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[texteCle, Ecart.vXs, blocValeur],
+          )
+        : Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(flex: 2, child: texteCle),
+              Ecart.hLg,
+              Expanded(flex: 3, child: blocValeur),
+            ],
+          );
+    final Widget? tete = meneur;
     return MergeSemantics(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-        child: empiler
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[texteCle, Ecart.vXs, blocValeur],
-              )
+        child: tete == null
+            ? corps
             : Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Expanded(flex: 2, child: texteCle),
-                  Ecart.hLg,
-                  Expanded(flex: 3, child: blocValeur),
+                  tete,
+                  Ecart.hMd,
+                  Expanded(child: corps),
                 ],
               ),
       ),

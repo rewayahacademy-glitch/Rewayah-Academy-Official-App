@@ -44,6 +44,11 @@ const List<String> composantsDuCatalogue = <String>[
   // Revue du directeur du 04/10 : le choix de la couleur est un simple
   // selecteur de pastilles, jamais des cartes empilees.
   'SelecteurCouleurProfil',
+  // FI-3a (guide Finance V4 §7) : les composants d'argent.
+  'MontantArgent',
+  'LigneFinance',
+  'LigneTransaction',
+  'LigneAllocation',
   'AudioLabel',
   'PermanentNotice',
   'PinPad',

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/admin/admin_domaine.dart';
 import '../../../core/admin/service_programme.dart';
 import '../../../core/domain/enums.dart';
+import '../../../core/finance/montant.dart';
 import '../../../core/i18n/cle_audio.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
@@ -45,12 +46,16 @@ import '../../../core/widgets/grille_bento.dart';
 import '../../../core/widgets/groupe_reglages.dart';
 import '../../../core/widgets/identite_profil.dart';
 import '../../../core/widgets/lien_fleche.dart';
+import '../../../core/widgets/ligne_allocation.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
+import '../../../core/widgets/ligne_finance.dart';
 import '../../../core/widgets/ligne_presence.dart';
+import '../../../core/widgets/ligne_transaction.dart';
 import '../../../core/widgets/local_feedback.dart';
 import '../../../core/widgets/marque_page.dart';
 import '../../../core/widgets/menu_actions.dart';
 import '../../../core/widgets/menu_filtre.dart';
+import '../../../core/widgets/montant_argent.dart';
 import '../../../core/widgets/nav_shell.dart';
 import '../../../core/widgets/offline_banner.dart';
 import '../../../core/widgets/page_etape.dart';
@@ -987,6 +992,136 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           prenom: 'Youssef',
           nom: 'Sayyid Youssef',
           role: 'Coran, niveau 2',
+        ),
+      ),
+    ],
+  ),
+  // FI-3a (guide Finance V4 §7, §11.3) : les composants d'argent.
+  EntreeGalerie(
+    nom: 'MontantArgent',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'grand : le solde',
+        (BuildContext _) => const MontantArgent(
+          Montant(14500, 'USD'),
+          taille: TailleMontant.grand,
+        ),
+      ),
+      EtatGalerie(
+        'signe : une remise',
+        (BuildContext _) =>
+            const MontantArgent(Montant(-500, 'USD'), signe: true),
+      ),
+      EtatGalerie(
+        'attenue, avec centimes',
+        (BuildContext _) =>
+            const MontantArgent(Montant(14320, 'USD'), attenue: true),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'LigneFinance',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'decomposition dans une seule carte',
+        (BuildContext _) => const CarteLignes(
+          lignes: <Widget>[
+            LigneFinance(
+              libelle: 'Tarif enfant',
+              montant: Montant(5000, 'USD'),
+            ),
+            LigneFinance(
+              libelle: 'Remise familiale',
+              detail: '3e membre',
+              montant: Montant(-500, 'USD'),
+            ),
+            LigneFinance(
+              libelle: 'Total a financer',
+              montant: Montant(4500, 'USD'),
+              total: true,
+            ),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'une taxe ajoutee, signee',
+        (BuildContext _) => const LigneFinance(
+          libelle: 'Taxe applicable',
+          montant: Montant(250, 'USD'),
+          signe: true,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'LigneTransaction',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'credit et debit, toujours signes',
+        (BuildContext _) => const CarteLignes(
+          lignes: <Widget>[
+            LigneTransaction(
+              libelle: 'Recharge',
+              date: '1er octobre',
+              montant: Montant(14500, 'USD'),
+            ),
+            LigneTransaction(
+              libelle: 'Periode d octobre',
+              date: '1er octobre',
+              montant: Montant(-5000, 'USD'),
+            ),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'en confirmation : la pastille dit l etat',
+        (BuildContext _) => const LigneTransaction(
+          libelle: 'Recharge',
+          date: '4 octobre',
+          montant: Montant(9500, 'USD'),
+          statut: StatusPill(
+            libelle: 'En confirmation',
+            ton: TonEtat.avertissement,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'LigneAllocation',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'a qui va chaque montant',
+        (BuildContext _) => const CarteLignes(
+          lignes: <Widget>[
+            LigneAllocation(
+              prenom: 'Mariam',
+              detail: 'Octobre',
+              montant: Montant(5000, 'USD'),
+              avatar: BandeauProfil(
+                avatar: AvatarTile(prenom: 'Mariam', diametre: AppAvatar.moyen),
+                diametre: AppAvatar.moyen,
+                accent: AccentProfil.rose,
+              ),
+            ),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'sans couleur choisie : le cercle seul',
+        (BuildContext _) => const LigneAllocation(
+          prenom: 'Ibrahim',
+          detail: 'Nouveau solde : 50 USD',
+          montant: Montant(5000, 'USD'),
+          avatar: BandeauProfil(
+            avatar: AvatarTile(prenom: 'Ibrahim', diametre: AppAvatar.moyen),
+            diametre: AppAvatar.moyen,
+            accent: null,
+          ),
         ),
       ),
     ],
