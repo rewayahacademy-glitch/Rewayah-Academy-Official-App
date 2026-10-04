@@ -367,8 +367,14 @@ class Traductions$salle$fr {
 	/// fr: 'Vous assistez au cours. Vous n'êtes pas entendu.'
 	String get observationMuette => 'Vous assistez au cours. Vous n\'êtes pas entendu.';
 
+	/// fr: 'Vous assistez au cours.'
+	String get observationMuetteTitre => 'Vous assistez au cours.';
+
 	/// fr: 'Visite de contrôle. Vous n'êtes ni vu ni entendu, et votre passage est inscrit au journal.'
 	String get bandeauControle => 'Visite de contrôle. Vous n\'êtes ni vu ni entendu, et votre passage est inscrit au journal.';
+
+	/// fr: 'Visite de contrôle.'
+	String get bandeauControleTitre => 'Visite de contrôle.';
 
 	late final Traductions$salle$visiteControle$fr visiteControle = Traductions$salle$visiteControle$fr.internal(_root);
 }
@@ -15704,7 +15710,9 @@ extension on Traductions {
 			'salle.roleTuteur' => 'Tuteur, en observation',
 			'salle.roleAdministration' => 'Administration Rewayah',
 			'salle.observationMuette' => 'Vous assistez au cours. Vous n\'êtes pas entendu.',
+			'salle.observationMuetteTitre' => 'Vous assistez au cours.',
 			'salle.bandeauControle' => 'Visite de contrôle. Vous n\'êtes ni vu ni entendu, et votre passage est inscrit au journal.',
+			'salle.bandeauControleTitre' => 'Visite de contrôle.',
 			'salle.visiteControle.titre' => 'Contrôle Rewayah',
 			'salle.visiteControle.sonRecu' => 'Son reçu',
 			'salle.visiteControle.sonCoupe' => 'Son coupé',
@@ -15870,10 +15878,10 @@ extension on Traductions {
 			'contrat.pointControle' => 'Un contrôleur qualité peut assister à un cours sans être vu. La salle le rappelle en permanence, que la visite ait lieu ou non.',
 			'contrat.pointCoordonnees' => 'Vous ne voyez jamais les coordonnées d\'une famille : ni nom complet, ni courriel, ni téléphone.',
 			'contrat.lireTexte' => 'Lire le texte complet',
-			'contrat.accepter' => 'J\'ai lu et j\'accepte',
-			'contrat.accepteLe' => ({required Object date}) => 'Accepté le ${date}',
 			_ => null,
 		} ?? switch (path) {
+			'contrat.accepter' => 'J\'ai lu et j\'accepte',
+			'contrat.accepteLe' => ({required Object date}) => 'Accepté le ${date}',
 			'contrat.erreur' => 'La signature n\'a pas abouti. Réessayez dans un instant.',
 			'contrat.horsLigne' => 'Vous êtes hors ligne. Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.',
 			'contrat.caseRequise' => 'Cochez la case pour continuer.',
@@ -16384,10 +16392,10 @@ extension on Traductions {
 			'dossiers.visionneuse.accesRetire' => 'Vous n’avez plus accès à cette pièce.',
 			'dossiers.visionneuse.horsLigne' => 'Vous êtes hors ligne. La pièce ne peut pas être chargée.',
 			'dossiers.visionneuse.aucune' => 'Aucune pièce n’est disponible.',
-			'dossiers.visionneuse.fermerPiece' => 'Fermer la pièce',
-			'dossiers.visionneuse.agrandir' => 'Agrandir',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.visionneuse.fermerPiece' => 'Fermer la pièce',
+			'dossiers.visionneuse.agrandir' => 'Agrandir',
 			'dossiers.visionneuse.reduire' => 'Réduire',
 			'dossiers.visionneuse.ajuster' => 'Ajuster à l’écran',
 			'dossiers.visionneuse.infoBulle' => ({required Object action, required Object touche}) => '${action} (touche ${touche})',
@@ -16898,10 +16906,10 @@ extension on Traductions {
 			'admin.journal.evtProfilCree' => 'Profil créé',
 			'admin.journal.evtProfilEnfantCree' => 'Profil enfant créé',
 			'admin.journal.evtCodeCree' => 'Code d\'appairage créé',
-			'admin.journal.evtAppareilAppaire' => 'Appareil appairé',
-			'admin.journal.evtAppareilRevoque' => 'Appareil révoqué',
 			_ => null,
 		} ?? switch (path) {
+			'admin.journal.evtAppareilAppaire' => 'Appareil appairé',
+			'admin.journal.evtAppareilRevoque' => 'Appareil révoqué',
 			'admin.journal.evtPedagogie' => 'Réglages pédagogiques modifiés',
 			'admin.journal.evtAffectationPrise' => 'Élève pris par un enseignant',
 			'admin.journal.evtAffectationAttribuee' => 'Élève attribué par l\'administration',
@@ -17412,10 +17420,10 @@ extension on Traductions {
 			'compte.tuteur.pageAide.indisponiblePhrase' => 'Les questions fréquentes et le contact de l\'académie ne sont pas encore ouverts dans l\'application.',
 			'compte.tuteur.pageAide.canalCourriel' => 'Courriel de l\'académie',
 			'compte.tuteur.pageAide.canalLien' => 'Page d\'aide de l\'académie',
-			'compte.tuteur.pageAide.aucunCanal' => 'Aucun canal d\'aide n\'est publié pour le moment.',
-			'compte.tuteur.pageLegal.titre' => 'Informations légales',
 			_ => null,
 		} ?? switch (path) {
+			'compte.tuteur.pageAide.aucunCanal' => 'Aucun canal d\'aide n\'est publié pour le moment.',
+			'compte.tuteur.pageLegal.titre' => 'Informations légales',
 			'compte.tuteur.pageLegal.documents' => 'Documents acceptés',
 			'compte.tuteur.pageLegal.conditionsTuteur' => 'Conditions du tuteur',
 			'compte.tuteur.pageLegal.contratEnseignant' => 'Contrat enseignant',
@@ -17926,10 +17934,10 @@ extension on Traductions {
 			'enseignant.bienvenue.prerequisFuseau' => 'Vérifier mon fuseau horaire',
 			'enseignant.bienvenue.ctaPhoto' => 'Ajouter ma photo',
 			'enseignant.bienvenue.ctaInformations' => 'Vérifier mes informations',
-			'enseignant.bienvenue.ctaJournee' => 'Voir ma journée',
-			'enseignant.bienvenue.rappels' => 'Deux choses à ne pas découvrir en cours de route',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.bienvenue.ctaJournee' => 'Voir ma journée',
+			'enseignant.bienvenue.rappels' => 'Deux choses à ne pas découvrir en cours de route',
 			'enseignant.bienvenue.declarer' => 'Déclarer mes disponibilités',
 			'enseignant.bienvenue.versJournee' => 'Aller à ma journée',
 			'enseignant.bienvenue.horsLigne' => 'Sans réseau, vos créneaux ne pourront pas être enregistrés.',
@@ -18440,10 +18448,10 @@ extension on Traductions {
 			'controleur.echanges.champLibelle' => 'Répondre à l\'administration',
 			'controleur.echanges.envoyer' => 'Envoyer',
 			'controleur.echanges.champVide' => 'Écrivez un message pour pouvoir l\'envoyer.',
-			'controleur.echanges.enCours' => 'Envoi en cours.',
-			'controleur.echanges.envoye' => 'Envoyé.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.echanges.enCours' => 'Envoi en cours.',
+			'controleur.echanges.envoye' => 'Envoyé.',
 			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.reessayer' => 'Réessayer',
 			'controleur.echanges.nouveauMessage' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
@@ -18954,10 +18962,10 @@ extension on Traductions {
 			'tc.parcours.signalement.categorieValeur.presence' => 'Présence',
 			'tc.parcours.signalement.categorieValeur.technique' => 'Technique',
 			'tc.parcours.signalement.categorieValeur.changement' => 'Changement',
-			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
-			'tc.parcours.signalement.interne' => 'Note interne',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.signalement.categorieValeur.autre' => 'Autre',
+			'tc.parcours.signalement.interne' => 'Note interne',
 			'tc.parcours.signalement.interneAide' => 'Lue par l\'administration seulement. Elle ne part jamais automatiquement à la famille.',
 			'tc.parcours.signalement.famille' => 'Message pour la famille',
 			'tc.parcours.signalement.familleAide' => 'Facultatif. L\'administration décide seule de le transmettre, en un clic.',
