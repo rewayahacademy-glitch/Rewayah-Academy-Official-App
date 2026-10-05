@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/service_groupes.dart' show TypePublicGroupe;
 import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
@@ -563,7 +564,7 @@ class _Preparation extends ConsumerWidget {
         Ecart.vSm,
         AppCard(
           child: lignes.isEmpty
-              ? Text(
+              ? TexteSansCoupure(
                   t.enseignant.ficheGroupe.preparationVide,
                   style: palette.inkMuted.applyTo(
                     textes.bodyMedium ?? const TextStyle(),
@@ -581,14 +582,16 @@ class _Preparation extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Text(
+                            // Passe a la ligne entre les mots, jamais dans
+                            // un mot (« compréhension », COUPE-MOTS-3).
+                            TexteSansCoupure(
                               ligne.$1,
                               style: palette.inkMuted.applyTo(
                                 textes.bodySmall ?? const TextStyle(),
                               ),
                             ),
                             Ecart.vXs,
-                            Text(
+                            TexteSansCoupure(
                               ligne.$2,
                               style: textes.titleSmall ?? const TextStyle(),
                             ),
@@ -799,6 +802,11 @@ LigneRubrique _ligneMembre(
 /// « Progression de la Classe » en une ligne : l'etape commune et sa valeur
 /// ecrites, puis la barre, en un seul noeud (UX_REVIEW_04 n° 9 b). Une
 /// barre, jamais un anneau.
+///
+/// COUPE-MOTS-3 : le texte a la moitie de la ligne, la barre l'autre. Quand
+/// le mot le plus long du texte n'y tient pas (« Chapit / re 1 » a 320 px,
+/// texte x2, Interface guidee), la barre passe dessous et le texte prend
+/// toute la ligne : il passe a la ligne entre les mots, jamais dans un mot.
 class _ProgressionClasse extends StatelessWidget {
   const _ProgressionClasse({required this.valeur});
 
@@ -810,6 +818,7 @@ class _ProgressionClasse extends StatelessWidget {
       chapitre: valeur.chapitre,
       pourcentage: (valeur.fraction * 100).round(),
     );
+    final TextStyle? style = Theme.of(context).textTheme.titleSmall;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -818,19 +827,39 @@ class _ProgressionClasse extends StatelessWidget {
         Semantics(
           label: texte,
           child: ExcludeSemantics(
-            child: Row(
-              children: <Widget>[
-                Flexible(
-                  child: Text(
-                    texte,
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                ),
-                Ecart.hLg,
-                Expanded(
-                  child: LinearProgressIndicator(value: valeur.fraction),
-                ),
-              ],
+            child: LayoutBuilder(
+              builder: (BuildContext contexte, BoxConstraints c) {
+                final Widget barre = LinearProgressIndicator(
+                  value: valeur.fraction,
+                );
+                final double moitie = (c.maxWidth - AppSpacing.lg) / 2;
+                final bool empile =
+                    largeurMotLePlusLong(
+                      contexte,
+                      texte,
+                      style,
+                      MediaQuery.textScalerOf(contexte),
+                    ) >
+                    moitie;
+                if (empile) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      TexteSansCoupure(texte, style: style),
+                      Ecart.vSm,
+                      barre,
+                    ],
+                  );
+                }
+                return Row(
+                  children: <Widget>[
+                    Flexible(child: Text(texte, style: style)),
+                    Ecart.hLg,
+                    Expanded(child: barre),
+                  ],
+                );
+              },
             ),
           ),
         ),

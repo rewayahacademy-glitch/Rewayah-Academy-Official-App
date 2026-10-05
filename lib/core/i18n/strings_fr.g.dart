@@ -927,7 +927,7 @@ class Traductions$kyc$fr {
 	String get erreur => 'L\'envoi n\'a pas abouti. Réessayez dans un instant.';
 
 	/// fr: 'Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse.'
-	String tropVolumineux({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.';
+	String tropVolumineux({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.';
 }
 
 // Path: appareils
@@ -3930,7 +3930,7 @@ class Traductions$ficheEleve$informations$fr {
 	String get succes => 'La photo est enregistrée.';
 
 	/// fr: 'Cette photo dépasse {taille} Mo. Choisissez une image plus légère.'
-	String tropLourde({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Choisissez une image plus légère.';
+	String tropLourde({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Choisissez une image plus légère.';
 
 	/// fr: 'La photo n'a pas pu être envoyée. Rien n'a changé sur le profil.'
 	String get echecEnvoi => 'La photo n\'a pas pu être envoyée. Rien n\'a changé sur le profil.';
@@ -7708,7 +7708,7 @@ class Traductions$tuteur$reglages$fr {
 	String get photoChanger => 'Changer la photo';
 
 	/// fr: 'Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse.'
-	String photoTropLourde({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.';
+	String photoTropLourde({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.';
 
 	/// fr: 'Caméra'
 	String get camera => 'Caméra';
@@ -7858,7 +7858,7 @@ class Traductions$classe$entree$fr {
 	String get chargementSeance => 'Chargement de la prochaine séance.';
 
 	/// fr: '{chapitre} · {pourcentage} %'
-	String progressionValeur({required Object chapitre, required Object pourcentage}) => '${chapitre} · ${pourcentage} %';
+	String progressionValeur({required Object chapitre, required Object pourcentage}) => '${chapitre} · ${pourcentage} %';
 
 	/// fr: 'Changement d'heure : le cours passera de {avant} à {apres}.'
 	String dst({required Object avant, required Object apres}) => 'Changement d\'heure : le cours passera de ${avant} à ${apres}.';
@@ -16110,7 +16110,7 @@ extension on Traductions {
 			'kyc.envoiEnCours' => 'Envoi en cours',
 			'kyc.deposee' => 'Pièce reçue',
 			'kyc.erreur' => 'L\'envoi n\'a pas abouti. Réessayez dans un instant.',
-			'kyc.tropVolumineux' => ({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.',
+			'kyc.tropVolumineux' => ({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.',
 			'appareils.titre' => 'Appareils',
 			'appareils.foyer.titre' => 'Appareils du foyer',
 			'appareils.foyer.phrase' => 'Chaque profil élève a ses propres appareils. Touchez un profil pour voir ses appareils, en retirer un ou en connecter un nouveau.',
@@ -16299,7 +16299,7 @@ extension on Traductions {
 			'ficheEleve.informations.etapeEnvoi' => 'Envoi de la photo, étape 1 sur 2',
 			'ficheEleve.informations.etapeEnregistrement' => 'Enregistrement sur le profil, étape 2 sur 2',
 			'ficheEleve.informations.succes' => 'La photo est enregistrée.',
-			'ficheEleve.informations.tropLourde' => ({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Choisissez une image plus légère.',
+			'ficheEleve.informations.tropLourde' => ({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Choisissez une image plus légère.',
 			'ficheEleve.informations.echecEnvoi' => 'La photo n\'a pas pu être envoyée. Rien n\'a changé sur le profil.',
 			'ficheEleve.informations.echecEnregistrement' => 'La photo est envoyée, mais elle n\'a pas pu être enregistrée sur le profil.',
 			'ficheEleve.informations.reprendre' => 'Réessayer',
@@ -17825,7 +17825,7 @@ extension on Traductions {
 			'tuteur.reglages.photoPresente' => ({required Object prenom}) => 'La photo de ${prenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.',
 			'tuteur.reglages.photoAjouter' => 'Ajouter une photo',
 			'tuteur.reglages.photoChanger' => 'Changer la photo',
-			'tuteur.reglages.photoTropLourde' => ({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.',
+			'tuteur.reglages.photoTropLourde' => ({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.',
 			'tuteur.reglages.camera' => 'Caméra',
 			'tuteur.reglages.cameraAutorisee' => ({required Object prenom}) => '${prenom} peut allumer sa caméra pendant le cours.',
 			'tuteur.reglages.cameraInterdite' => ({required Object prenom}) => 'Le bouton caméra n\'apparaîtra pas pour ${prenom}.',
@@ -17872,7 +17872,7 @@ extension on Traductions {
 			'classe.entree.accesInverifiable' => 'L\'accès à la salle ne peut pas être vérifié pour le moment.',
 			'classe.entree.reessayer' => 'Réessayer',
 			'classe.entree.chargementSeance' => 'Chargement de la prochaine séance.',
-			'classe.entree.progressionValeur' => ({required Object chapitre, required Object pourcentage}) => '${chapitre} · ${pourcentage} %',
+			'classe.entree.progressionValeur' => ({required Object chapitre, required Object pourcentage}) => '${chapitre} · ${pourcentage} %',
 			'classe.entree.dst' => ({required Object avant, required Object apres}) => 'Changement d\'heure : le cours passera de ${avant} à ${apres}.',
 			'classe.entree.annonce.aVenir' => 'Séance à venir',
 			'classe.entree.annonce.fenetreOuverte' => 'La salle est ouverte',

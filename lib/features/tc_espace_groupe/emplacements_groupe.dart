@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderFamily;
 
 import '../../core/i18n/strings.g.dart';
+import '../../core/i18n/taille_fichier.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_bibliotheque/donnees_catalogue.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
@@ -227,7 +228,10 @@ class _Couvertures extends StatelessWidget {
               lignes: <LigneRubrique>[
                 for (final LibraryResource ressource in ressources)
                   LigneRubrique(
-                    libelle: ressource.shortTitle,
+                    // Une taille de fichier venue des donnees (« 8,1 Mo »)
+                    // ne se coupe jamais entre le nombre et l'unite
+                    // (COUPE-MOTS-3).
+                    libelle: lierTaillesFichier(ressource.shortTitle),
                     icone: AppIcons.bibliotheque,
                   ),
               ],
