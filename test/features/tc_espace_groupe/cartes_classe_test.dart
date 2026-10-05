@@ -446,7 +446,9 @@ void main() {
       expect(find.byKey(BlocCartesClasse.ajouterKey), findsNothing);
       final Finder copier = find.widgetWithText(
         LienFleche,
-        t.classe.cartes.copierLien(titre: isolerSens('Récitation modèle')),
+        isolerSens(
+          t.classe.cartes.copierLien(titre: isolerSens('Récitation modèle')),
+        ),
       );
       expect(copier, findsOneWidget);
       await tester.tap(copier);
@@ -924,6 +926,24 @@ void main() {
         expect(find.text(phrase()), findsNothing);
       });
     }
+
+    testWidgets('lecture (tuteur, adulte), rtl : « Copier le lien de » '
+        'isole en entier', (WidgetTester tester) async {
+      _taille(tester, const Size(390, 2400));
+      await tester.pumpWidget(
+        _hote(
+          const BlocCartesClasse(groupeId: _id),
+          surcharges: _demo(peutModifier: false),
+          sens: TextDirection.rtl,
+        ),
+      );
+      await tester.pumpAndSettle();
+      final String nu = t.classe.cartes.copierLien(
+        titre: isolerSens('Récitation modèle'),
+      );
+      expect(find.widgetWithText(LienFleche, isolerSens(nu)), findsOneWidget);
+      expect(find.widgetWithText(LienFleche, nu), findsNothing);
+    });
 
     testWidgets('feuille, rtl : la phrase de contexte isolee', (
       WidgetTester tester,

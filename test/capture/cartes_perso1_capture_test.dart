@@ -18,10 +18,13 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/router/app_router.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_groupe/cartes_classe.dart';
 import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
 import 'package:rewayah_academy/features/demo/cartes_classe_demo.dart';
 import 'package:rewayah_academy/features/demo/classe_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
@@ -29,6 +32,7 @@ import 'package:rewayah_academy/features/demo/demo_classe_page.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/bloc_cartes_classe.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/feuille_carte_classe.dart';
 
+import '../features/classe_tuteur/support_classe.dart';
 import '../support/harnais.dart' show FauxServiceReseau;
 import 'outil_capture.dart';
 
@@ -321,6 +325,22 @@ void main() {
         await stabiliser(tester);
         expect(find.byType(FeuilleCarteClasse), findsOneWidget);
         await capturer(tester, 'page_enseignant_feuille_$suffixe');
+        // Revue CARTES-PERSO-1 : sur la vraie page de demonstration,
+        // l'enregistrement aboutit (la feuille lit le conteneur de la page).
+        await tester.enterText(
+          find.byKey(FeuilleCarteClasse.titreKey),
+          'Récitation de la sourate Quraysh',
+        );
+        await tester.ensureVisible(
+          find.byKey(FeuilleCarteClasse.enregistrerKey),
+        );
+        await tester.tap(find.byKey(FeuilleCarteClasse.enregistrerKey));
+        await stabiliser(tester);
+        expect(find.byType(FeuilleCarteClasse), findsNothing);
+        expect(find.text(t.classe.cartes.enregistree), findsOneWidget);
+        await tester.ensureVisible(find.text(t.classe.cartes.enregistree));
+        await stabiliser(tester);
+        await capturer(tester, 'page_enseignant_enregistree_$suffixe');
       });
     }
 
@@ -368,6 +388,61 @@ void main() {
         await stabiliser(tester);
         expect(find.byType(BlocCartesClasse), findsOneWidget);
         await capturer(tester, 'page_adulte_$suffixe');
+      });
+    }
+    // Revue CARTES-PERSO-1 : la lecture du tuteur sur la VRAIE page
+    // `ClasseTuteurPage`, montee par le vrai routeur (capacite fausse).
+    for (final (Size vue, Brightness lum, double echelle, TextDirection sens)
+        in <(Size, Brightness, double, TextDirection)>[
+          (const Size(390, 2400), Brightness.light, 1, TextDirection.ltr),
+          (const Size(1440, 1400), Brightness.dark, 1, TextDirection.ltr),
+          (const Size(320, 5200), Brightness.light, 2, TextDirection.ltr),
+          (const Size(320, 5200), Brightness.dark, 2, TextDirection.rtl),
+        ]) {
+      final String nom =
+          'page_tuteur_${vue.width.toInt()}${echelle == 2 ? 'x2' : ''}_'
+          '${sens.name}_${lum == Brightness.light ? 'clair' : 'sombre'}';
+      testWidgets(nom, (WidgetTester tester) async {
+        fixerVueCapture(tester, vue, 1);
+        late GoRouter routeur;
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: <Override>[
+              ...surchargesClasse(),
+              ...surchargesCartesClasseDemo(classeA, peutModifier: false),
+            ],
+            child: TranslationProvider(
+              child: RepaintBoundary(
+                key: cadreCapture,
+                child: Consumer(
+                  builder: (BuildContext _, WidgetRef ref, Widget? _) {
+                    routeur = ref.read(routeurProvider);
+                    return MaterialApp.router(
+                      debugShowCheckedModeBanner: false,
+                      theme: AppTheme.pour(InterfaceMode.standard, lum),
+                      locale: AppLocale.fr.flutterLocale,
+                      supportedLocales: AppLocaleUtils.supportedLocales,
+                      localizationsDelegates:
+                          GlobalMaterialLocalizations.delegates,
+                      builder: (BuildContext c, Widget? app) => MediaQuery(
+                        data: MediaQuery.of(c)
+                            .copyWith(textScaler: TextScaler.linear(echelle)),
+                        child: Directionality(textDirection: sens, child: app!),
+                      ),
+                      routerConfig: routeur,
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        );
+        await stabiliser(tester);
+        routeur.go(Routes.classePour(classeA, eleveId: eleveA1));
+        await stabiliser(tester);
+        expect(find.byType(ClasseTuteurPage), findsOneWidget);
+        expect(find.byType(VueCarteClasse), findsNWidgets(3));
+        await capturer(tester, nom);
       });
     }
   });

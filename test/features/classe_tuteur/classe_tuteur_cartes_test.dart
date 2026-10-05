@@ -94,7 +94,9 @@ void main() {
       // Le lien est une action de lecture.
       final Finder copier = find.widgetWithText(
         LienFleche,
-        t.classe.cartes.copierLien(titre: isolerSens('Récitation modèle')),
+        isolerSens(
+          t.classe.cartes.copierLien(titre: isolerSens('Récitation modèle')),
+        ),
       );
       expect(copier, findsOneWidget);
       // Toucher une carte n'ouvre rien.

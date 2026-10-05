@@ -375,8 +375,11 @@ class VueCarteClasse extends StatelessWidget {
             Align(
               alignment: AlignmentDirectional.centerStart,
               child: LienFleche(
-                libelle: t.classe.cartes.copierLien(
-                  titre: isolerSens(carte.titre),
+                // La phrase entiere isolee, et le titre dedans : en RTL,
+                // « Copier le lien de « Récitation » « modèle » se lisait
+                // dans le desordre (revue CARTES-PERSO-1, capture tuteur).
+                libelle: isolerSens(
+                  t.classe.cartes.copierLien(titre: isolerSens(carte.titre)),
                 ),
                 onPress: onCopierLien,
               ),
