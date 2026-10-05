@@ -366,4 +366,37 @@ void main() {
       }
     });
   }
+
+  // SUPERPOS-1 : en-tete compact. A 320 en texte double, le contexte en
+  // trois lignes cle / valeur et le titre prenaient tout l'ecran ; le
+  // contexte tient alors en une phrase, sans rien retirer. Contre-epreuve :
+  // echoue sur l'ancien code (aucune forme compacte).
+  for (final (Size, double, bool) cas in <(Size, double, bool)>[
+    (const Size(320, 640), 2, true),
+    (const Size(390, 844), 1, false),
+    (const Size(1440, 900), 1, false),
+  ]) {
+    testWidgets('fil ${cas.$1.width.toInt()} x${cas.$2.toInt()} : contexte '
+        '${cas.$3 ? 'compact' : 'en lignes'}', (WidgetTester tester) async {
+      tester.platformDispatcher.textScaleFactorTestValue = cas.$2;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await _monter(
+        tester,
+        adresseDemoControleur(
+          EcranDemoControleur.echanges,
+          fil: 'demo-mission-al-badr-0924',
+        ),
+        taille: cas.$1,
+      );
+      await _attendre(tester);
+      expect(tester.takeException(), isNull);
+      expect(
+        find.byKey(EchangesControleurPage.contexteCompactKey),
+        cas.$3 ? findsOneWidget : findsNothing,
+      );
+      // Rien n'est retire : classe, date et heure restent ecrites.
+      expect(find.textContaining('Classe Al-Badr'), findsWidgets);
+      expect(find.textContaining('17:00'), findsOneWidget);
+    });
+  }
 }
