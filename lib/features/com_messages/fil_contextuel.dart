@@ -64,6 +64,7 @@ class FilContextuel extends StatefulWidget {
     required this.onEnvoyer,
     super.key,
     this.onEnvoyerVocal,
+    this.onRetour,
   });
 
   /// Le fil ouvert.
@@ -83,6 +84,12 @@ class FilContextuel extends StatefulWidget {
   /// fermee, production).
   final Future<void> Function(EnregistrementVocal vocal, String cleIdempotence)?
   onEnvoyerVocal;
+
+  /// Le retour de la page vers la liste des conversations, ou `null`. A
+  /// texte agrandi ou sur une vue basse, la tete de la page (et son disque
+  /// retour) defile avec les messages : ce retour se pose alors dans la
+  /// ligne compacte, fixe (COM-R-3, constat 8).
+  final VoidCallback? onRetour;
 
   /// La cle du composer vocal du fil, pour les tests.
   static const ValueKey<String> cleComposerVocal = ValueKey<String>(
@@ -223,6 +230,7 @@ class _FilContextuelState extends State<FilContextuel>
         entete: entete,
         enteteCompacte: compacte,
         enteteSuite: suite,
+        retourCompacte: widget.onRetour,
         messages: connus,
         textes: textes,
         lectureSeule: t.com.messages.fil.lectureSeule,
@@ -237,6 +245,7 @@ class _FilContextuelState extends State<FilContextuel>
       entete: entete,
       enteteCompacte: compacte,
       enteteSuite: suite,
+      retourCompacte: widget.onRetour,
       messages: <MessageFil>[
         ...connus,
         for (final VocalConfirme v in _vocauxConfirmes)

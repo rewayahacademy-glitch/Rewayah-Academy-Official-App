@@ -95,7 +95,7 @@ Future<void> _enregistrerPuisArreter(
   WidgetTester tester,
   HorlogeManuelle horloge,
 ) async {
-  await _toucher(tester, ComposerVocal.cleEnregistrer);
+  await _toucher(tester, FilDiscussion.cleMicro);
   await avancer(tester, horloge, const Duration(seconds: 6));
   await _toucher(tester, ComposerVocal.cleArreter);
 }
@@ -154,10 +154,17 @@ void main() {
         surcharges: _vocal(horloge, envoi),
       );
       expect(find.byKey(FilContextuel.cleComposerVocal), findsOneWidget);
+      // Decision R-28 : le micro est a cote d'« Envoyer », plus un lien
+      // sous le champ.
+      expect(find.byKey(ComposerVocal.cleEnregistrer), findsNothing);
       expect(
-        tester.getTopLeft(find.byKey(ComposerVocal.cleEnregistrer)).dy,
-        greaterThan(
-          tester.getBottomLeft(find.byKey(FilDiscussion.champKey)).dy,
+        tester.getTopLeft(find.byKey(FilDiscussion.cleMicro)).dy,
+        tester.getTopLeft(find.byKey(FilDiscussion.envoyerKey)).dy,
+      );
+      expect(
+        tester.getTopRight(find.byKey(FilDiscussion.cleMicro)).dx,
+        lessThanOrEqualTo(
+          tester.getTopLeft(find.byKey(FilDiscussion.envoyerKey)).dx,
         ),
       );
       await _enregistrerPuisArreter(tester, horloge);

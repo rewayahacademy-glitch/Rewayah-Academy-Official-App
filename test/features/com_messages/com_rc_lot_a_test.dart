@@ -122,11 +122,14 @@ Future<void> _filLisible(
     bouton.bottomRight - const Offset(2, 2),
   ]) {
     expect(
-      tester.hitTestOnBinding(coin).path.any(
-        (HitTestEntry e) =>
-            e.target is RenderObject &&
-            _sous(e.target as RenderObject, tester.renderObject(envoyer)),
-      ),
+      tester
+          .hitTestOnBinding(coin)
+          .path
+          .any(
+            (HitTestEntry e) =>
+                e.target is RenderObject &&
+                _sous(e.target as RenderObject, tester.renderObject(envoyer)),
+          ),
       isTrue,
       reason: 'le toucher en $coin atteint « Envoyer »',
     );
@@ -339,7 +342,7 @@ void main() {
       );
       await tester.enterText(find.byKey(FilDiscussion.champKey), 'Je reviens');
       await tester.pump();
-      await _toucher(tester, ComposerVocal.cleEnregistrer);
+      await _toucher(tester, FilDiscussion.cleMicro);
       // Enregistrement : le panneau seul.
       expect(find.byKey(FilDiscussion.champKey), findsNothing);
       expect(find.byKey(FilDiscussion.envoyerKey), findsNothing);

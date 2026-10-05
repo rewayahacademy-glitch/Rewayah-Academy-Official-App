@@ -53,6 +53,9 @@ class MessagesAdminPage extends StatelessWidget {
   }
 
   Widget _page(BuildContext context, double largeur) {
+    final VoidCallback? retour = filId == null
+        ? null
+        : () => GoRouter.of(context).go(Routes.adminCommunicationsMessages);
     return PageShell(
       // Le titre de la spec, replie sur « Messages » quand un mot ne
       // tiendrait pas (revue COM-R, R-09 et R-15).
@@ -67,12 +70,12 @@ class MessagesAdminPage extends StatelessWidget {
       ),
       // Un fil ouvert revient a la liste de l'onglet ; la liste elle-meme est
       // une page de domaine, sans retour (la coquille porte la navigation).
-      onRetour: filId == null
-          ? null
-          : () => GoRouter.of(context).go(Routes.adminCommunicationsMessages),
+      onRetour: retour,
       defilante: false,
       child: EspaceMessagesMetier(
         filId: filId,
+        // COM-R-3, constat 8 : le meme retour, dans la ligne compacte du fil.
+        onRetourFil: retour,
         onOuvrirFil: (String id) =>
             GoRouter.of(context)
                 .go(Routes.adminFilPour(Uri.encodeComponent(id))),

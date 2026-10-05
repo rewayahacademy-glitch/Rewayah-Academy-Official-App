@@ -109,9 +109,11 @@ AppIcon iconeTypeObjet(TypeObjetLie type) => switch (type) {
 ///
 /// [compacte] (COM-RC tour 4, N-1) : la ligne fixe qui garde le contexte a
 /// l'ecran quand le reste de l'en-tete defile (texte agrandi, vue basse) :
-/// les noms et les objets, une ligne chacun, sans cercle ni badge ; le badge
-/// defile sous elle ([badgeDuFil]). Le lecteur d'ecran entend la phrase
-/// entiere, badge compris ; le panneau (i) dit le contexte en entier.
+/// les noms et les objets, sans cercle ni badge ; le badge defile sous elle
+/// ([badgeDuFil]). COM-RC tour 5 (constat 8) : un interlocuteur seul s'y
+/// nomme sans sa fonction, sur deux lignes au plus, pour se lire a 320 en
+/// texte x2. Le lecteur d'ecran entend la phrase entiere, fonction et badge
+/// compris ; le panneau (i) dit le contexte en entier.
 class EnteteFilContexte extends StatelessWidget {
   /// Cree l'en-tete.
   const EnteteFilContexte({
@@ -209,7 +211,17 @@ class EnteteFilContexte extends StatelessWidget {
             ),
       child: ExcludeSemantics(
         child: compacte
-            ? _ligneCompacte(palette, textes, noms, ligneObjets)
+            ? _ligneCompacte(
+                palette,
+                textes,
+                // Constat 8 : les noms sans fonction, qui tiennent a 320 en
+                // texte x2 ; la phrase entiere est lue (semantique) et
+                // ecrite dans le panneau (i).
+                interlocuteurs.length == 1
+                    ? interlocuteurs.single.nomAffiche
+                    : noms,
+                ligneObjets,
+              )
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -234,8 +246,9 @@ class EnteteFilContexte extends StatelessWidget {
     );
   }
 
-  /// La ligne compacte : les noms, puis les objets s'ils ne sont pas deja
-  /// le titre (fil sans interlocuteur nomme).
+  /// La ligne compacte : les noms (sans fonction, deux lignes au plus),
+  /// puis les objets s'ils ne sont pas deja le titre (fil sans
+  /// interlocuteur nomme).
   Widget _ligneCompacte(
     AppPalette palette,
     TextTheme textes,
@@ -247,7 +260,7 @@ class EnteteFilContexte extends StatelessWidget {
     children: <Widget>[
       Text(
         noms,
-        maxLines: 1,
+        maxLines: 2,
         overflow: TextOverflow.ellipsis,
         style: palette.inkStrong.applyTo(
           textes.titleSmall ?? const TextStyle(),

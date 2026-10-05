@@ -49,11 +49,30 @@
 // - N-6 : les seuils de bascule viennent de `SeuilsTexteAgrandi` ;
 // - N-9 : une marge basse sous la saisie bornee quand le panneau vocal
 //   l'occupe : il ne touche plus la barre de navigation ni le bord.
+//
+// COM-RC tour 5, lot H (COM-R-3, section 7.3, et decisions du directeur) :
+// - constat 1 : le brouillon d'un message s'efface a SON accuse, meme
+//   arrive apres la fermeture du fil, s'il garde encore ce texte ; un echec
+//   ne bloque plus rien, et un texte envoye ne revient jamais dans le champ ;
+// - constat 2 : en lecture seule, l'en-tete complet reste fixe hors texte
+//   agrandi et hors vue basse ; la ligne compacte n'y sert que quand la
+//   hauteur l'exige ;
+// - constat 3 (N-9) : quand le panneau vocal occupe la saisie bornee, sa
+//   borne monte et la saisie va a son bas : le panneau se lit en entier ;
+//   dans la liste, le fil va a son bas ;
+// - constat 8 : la ligne compacte porte le retour de la page
+//   ([FilDiscussion.retourCompacte]) quand la tete de la page defile ;
+// - decision « Focus a 320 » : [FilDiscussion.saisieReduite] reduit la
+//   saisie a une ligne a texte agrandi sur un telephone etroit, tant que le
+//   champ est vide et sans focus : une bulle au moins reste a l'ecran ;
+// - decision R-28 : un micro a cote d'« Envoyer » ouvre l'enregistrement
+//   ([MicroVocalFil], [DemandeVocalFil]), a la place du lien sous le champ.
 
 import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' show FlutterView;
 
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -62,6 +81,7 @@ import '../accessibilite/texte_agrandi.dart';
 import '../communications/persistance_brouillon.dart';
 import '../communications/port_brouillons.dart';
 import '../i18n/strings.g.dart';
+import '../icons/app_icons.dart';
 import '../mouvement/apparition_douce.dart';
 import '../mouvement/mouvement.dart';
 import '../theme/app_color_pair.dart';
@@ -69,6 +89,7 @@ import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'action_principale.dart';
+import 'bouton_icone.dart';
 import 'empty_state.dart';
 import 'espace_travail_adaptatif.dart';
 import 'page_shell.dart';
@@ -100,6 +121,41 @@ class PanneauVocalFil extends Notification {
 
   /// Vrai quand le panneau vocal occupe la saisie.
   final bool ouvert;
+}
+
+/// Ce que le composer vocal pose dans [FilDiscussion.emplacementVocal] dit
+/// de son micro (decision R-28) : [disponible], le fil pose le bouton micro
+/// a cote d'« Envoyer » ; sinon, aucun bouton qui ne peut aboutir.
+class MicroVocalFil extends Notification {
+  /// Cree l'avis.
+  const MicroVocalFil({required this.disponible});
+
+  /// Vrai quand un enregistreur repond et qu'un enregistrement peut partir.
+  final bool disponible;
+}
+
+/// La portee par laquelle le micro de la rangee d'envoi demande un
+/// enregistrement au composer vocal (decision R-28) : chaque toucher
+/// incremente [demandes]. Hors d'un fil, le composer garde son entree
+/// « Enregistrer un message vocal ».
+class DemandeVocalFil extends InheritedWidget {
+  /// Cree la portee.
+  const DemandeVocalFil({
+    required this.demandes,
+    required super.child,
+    super.key,
+  });
+
+  /// Le compteur des touchers du micro.
+  final ValueListenable<int> demandes;
+
+  /// Les demandes du fil qui entoure [context], ou `null` hors d'un fil.
+  static ValueListenable<int>? de(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<DemandeVocalFil>()?.demandes;
+
+  @override
+  bool updateShouldNotify(DemandeVocalFil ancien) =>
+      !identical(ancien.demandes, demandes);
 }
 
 /// Un message deja connu du fil (lu depuis le serveur ou la demonstration).
@@ -215,10 +271,14 @@ enum EtatEnvoiMessage {
 }
 
 class _MessageLocal {
-  _MessageLocal(this.id, this.texte);
+  _MessageLocal(this.id, this.texte, this.brut);
 
   final String id;
   final String texte;
+
+  /// Le texte du champ tel qu'il etait a l'envoi, donc tel que le brouillon
+  /// le garde (constat 1).
+  final String brut;
   EtatEnvoiMessage etat = EtatEnvoiMessage.enCours;
 }
 
@@ -259,6 +319,8 @@ class FilDiscussion extends StatefulWidget {
     this.defilement,
     this.cleBrouillon,
     this.lectureSeule,
+    this.retourCompacte,
+    this.saisieReduite = false,
   }) : assert(
          lectureSeule != null || onEnvoyer != null || onEnvoyerMessage != null,
          'FilDiscussion demande onEnvoyer, onEnvoyerMessage ou lectureSeule.',
@@ -330,8 +392,36 @@ class FilDiscussion extends StatefulWidget {
   /// pose sous eux (R-07).
   final String? lectureSeule;
 
+  /// Le retour de la page (vers la liste des conversations), ou `null`.
+  /// Quand la tete de la page defile avec les messages (texte agrandi, vue
+  /// basse), son disque retour quitte l'ecran : le fil pose alors ce retour
+  /// au debut de la ligne compacte, qui reste fixe (constat 8). Inutile
+  /// quand l'espace de travail confie deja son retour a l'en-tete.
+  final VoidCallback? retourCompacte;
+
+  /// Vrai en Focus du Studio (decision du directeur, « Focus a 320 ») : a
+  /// texte agrandi sur un telephone etroit (ecran de moins de
+  /// [largeurReduite]), la saisie se reduit a une ligne (le champ, et le
+  /// micro) tant que le champ est vide et n'a pas le focus ; elle reprend sa
+  /// forme entiere des qu'on y ecrit ou qu'il prend le focus. Une bulle au
+  /// moins reste a l'ecran.
+  final bool saisieReduite;
+
+  /// La largeur sous laquelle [saisieReduite] s'applique (320 oui, 360 et
+  /// 390 non).
+  static const double largeurReduite = 360;
+
   /// La part de la hauteur de l'ecran que la saisie occupe au plus (R-02).
   static const double partSaisieMax = 0.4;
+
+  /// La part de la hauteur de l'ecran que la saisie occupe au plus quand le
+  /// panneau vocal l'occupe (N-9) : le panneau, borne a la moitie de
+  /// l'ecran, s'y lit en entier.
+  static const double partSaisieVocalMax = 0.6;
+
+  /// La part de la hauteur du fil que la saisie occupe au plus quand le
+  /// panneau vocal l'occupe (N-9).
+  static const double partSaisieFilVocalMax = 0.75;
 
   /// La part de la hauteur du fil que la saisie occupe au plus, quand le
   /// clavier logiciel la reduit : les messages gardent le reste.
@@ -373,6 +463,14 @@ class FilDiscussion extends StatefulWidget {
 
   /// Le bouton d'envoi, pour les tests.
   static const Key envoyerKey = ValueKey<String>('fil-discussion-envoyer');
+
+  /// Le micro a cote d'« Envoyer » (decision R-28), pour les tests.
+  static const Key cleMicro = ValueKey<String>('fil-discussion-micro');
+
+  /// Le retour de la ligne compacte (constat 8), pour les tests.
+  static const Key cleRetourCompacte = ValueKey<String>(
+    'fil-discussion-retour-compacte',
+  );
 
   @override
   State<FilDiscussion> createState() => _FilDiscussionState();
@@ -420,6 +518,28 @@ class _FilDiscussionState extends State<FilDiscussion> {
   /// Vrai tant que le brouillon remis n'a pas ete touche.
   bool _restaure = false;
 
+  /// Le texte que le brouillon garde, tel que le fil l'a ecrit ou remis
+  /// (constat 1) : un accuse n'efface que le brouillon de SON texte.
+  String _garde = '';
+
+  /// Le composer vocal dit-il son micro disponible (decision R-28) ?
+  bool _microDisponible = false;
+
+  /// Les touchers du micro, ecoutes par le composer vocal (R-28).
+  final ValueNotifier<int> _demandesVocal = ValueNotifier<int>(0);
+
+  /// Le focus clavier du champ : la saisie reduite reprend sa forme entiere
+  /// quand il le prend (decision « Focus a 320 »).
+  final FocusNode _noeudChamp = FocusNode(debugLabel: 'FilDiscussion.champ');
+
+  /// Le champ garde son etat (texte, focus) quand sa rangee change de forme
+  /// (reduite, empilee, en ligne).
+  final GlobalKey _cleChamp = GlobalKey(debugLabel: 'FilDiscussion.champ');
+
+  /// La saisie bornee sous la liste, qui va a son bas quand le panneau
+  /// vocal s'ouvre ou grandit (N-9).
+  final ScrollController _defilementSaisie = ScrollController();
+
   TextEditingController get _champ => widget.controleur ?? _proprio!;
 
   @override
@@ -427,7 +547,12 @@ class _FilDiscussionState extends State<FilDiscussion> {
     super.initState();
     if (widget.controleur == null) _proprio = TextEditingController();
     _champ.addListener(_auChangement);
+    _noeudChamp.addListener(_auFocusChamp);
     WidgetsBinding.instance.addPostFrameCallback((_) => _allerEnBas(false));
+  }
+
+  void _auFocusChamp() {
+    if (mounted) setState(() {});
   }
 
   @override
@@ -478,7 +603,10 @@ class _FilDiscussionState extends State<FilDiscussion> {
       _champ.addListener(_auChangement);
       _persistance?.caler(_champ.text);
     }
-    if (widget.emplacementVocal == null) _vocalOuvert = false;
+    if (widget.emplacementVocal == null) {
+      _vocalOuvert = false;
+      _microDisponible = false;
+    }
     if (ancien.demandeSaisieVisible != widget.demandeSaisieVisible) {
       // N-4 : la saisie dans la liste revient a l'ecran (le Focus montre
       // le champ a l'entree). Bornee sous la liste, elle y est deja.
@@ -495,6 +623,11 @@ class _FilDiscussionState extends State<FilDiscussion> {
     _proprio?.dispose();
     _relaisTete?.rendre(this);
     _defilementPropre?.dispose();
+    _defilementSaisie.dispose();
+    _noeudChamp
+      ..removeListener(_auFocusChamp)
+      ..dispose();
+    _demandesVocal.dispose();
     super.dispose();
   }
 
@@ -508,7 +641,9 @@ class _FilDiscussionState extends State<FilDiscussion> {
       _champ,
       encoreMonte: () => mounted,
     );
-    if (remis && mounted) setState(() => _restaure = true);
+    if (!remis) return;
+    _garde = _champ.text;
+    if (mounted) setState(() => _restaure = true);
   }
 
   void _auChangement() {
@@ -516,6 +651,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
     // Un texte vide (apres un envoi, ou tout efface) efface le brouillon.
     if (cle != null && (_persistance?.noter(cle, _champ.text) ?? false)) {
       _restaure = false;
+      _garde = _champ.text;
     }
     setState(() {});
   }
@@ -548,6 +684,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
     final _MessageLocal m = _MessageLocal(
       'local-${_compteurSession++}',
       _champ.text.trim(),
+      _champ.text,
     );
     setState(() => _locaux.add(m));
     // N-3 : le champ se vide tout de suite, mais le brouillon reste jusqu'a
@@ -561,6 +698,9 @@ class _FilDiscussionState extends State<FilDiscussion> {
 
   Future<void> _tenter(_MessageLocal m) async {
     setState(() => m.etat = EtatEnvoiMessage.enCours);
+    // Lus avant l'attente : l'accuse peut arriver fil ferme (constat 1).
+    final CleBrouillon? cle = widget.cleBrouillon;
+    final PersistanceBrouillon? persistance = _persistance;
     try {
       final Future<void> Function(String, String)? identifie =
           widget.onEnvoyerMessage;
@@ -569,33 +709,90 @@ class _FilDiscussionState extends State<FilDiscussion> {
       } else {
         await widget.onEnvoyer!(m.texte);
       }
+      _effacerBrouillonDe(m, cle, persistance);
       if (!mounted) return;
       setState(() => m.etat = EtatEnvoiMessage.envoye);
-      _effacerBrouillonSiConfirme();
     } on Object {
       if (!mounted) return;
       setState(() => m.etat = EtatEnvoiMessage.echec);
     }
   }
 
-  /// N-3 : a l'accuse, le brouillon s'efface si le champ est encore vide
-  /// (un texte saisi depuis est un nouveau brouillon) et qu'aucun autre
-  /// message n'attend sa confirmation.
-  void _effacerBrouillonSiConfirme() {
-    final CleBrouillon? cle = widget.cleBrouillon;
-    final PersistanceBrouillon? persistance = _persistance;
-    if (cle == null || persistance == null || !_vide) return;
-    if (_locaux.any((_MessageLocal l) => l.etat != EtatEnvoiMessage.envoye)) {
-      return;
-    }
+  /// N-3, constat 1 : a l'accuse de [m], le brouillon s'efface s'il garde
+  /// encore le texte de [m] (rien n'a ete ecrit depuis) et que le champ ne
+  /// le montre pas a nouveau. Un autre message en echec ou en attente ne
+  /// bloque rien : chaque accuse efface le brouillon de SON texte, meme
+  /// arrive apres la fermeture du fil. Un texte envoye ne revient donc
+  /// jamais dans le champ a la reouverture ; un texte en echec, lui, reste
+  /// garde tant que rien ne l'a remplace.
+  void _effacerBrouillonDe(
+    _MessageLocal m,
+    CleBrouillon? cle,
+    PersistanceBrouillon? persistance,
+  ) {
+    if (cle == null || persistance == null || _garde != m.brut) return;
+    if (mounted && !_vide) return;
+    _garde = '';
     unawaited(persistance.effacer(cle));
+  }
+
+  /// R-28 : le micro demande un enregistrement au composer vocal.
+  void _demanderVocal() => _demandesVocal.value++;
+
+  bool _surMicroVocal(MicroVocalFil avis) {
+    if (avis.disponible != _microDisponible) {
+      setState(() => _microDisponible = avis.disponible);
+    }
+    return true;
+  }
+
+  /// N-9 : le panneau vocal ouvert (ou qui grandit) se lit jusqu'en bas :
+  /// la saisie bornee va a son bas ; dans la liste, le fil va a son bas.
+  void _montrerBasDuPanneau() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_vocalOuvert) return;
+      if (_saisieDansListe) {
+        _allerEnBas(false);
+      } else if (_defilementSaisie.hasClients) {
+        _defilementSaisie.jumpTo(_defilementSaisie.position.maxScrollExtent);
+      }
+    });
   }
 
   bool _surPanneauVocal(PanneauVocalFil avis) {
     if (avis.ouvert != _vocalOuvert) {
       setState(() => _vocalOuvert = avis.ouvert);
+      if (avis.ouvert) _montrerBasDuPanneau();
     }
     return true;
+  }
+
+  bool _surTailleVocal(SizeChangedLayoutNotification _) {
+    if (_vocalOuvert) _montrerBasDuPanneau();
+    return true;
+  }
+
+  /// Constat 8 : quand la tete de la page defile avec les messages, son
+  /// disque retour quitte l'ecran ; le retour de la page se pose alors au
+  /// debut de la ligne compacte, fixe.
+  Widget _avecRetourCompacte(Widget ligne) {
+    final VoidCallback? retour = widget.retourCompacte;
+    if (retour == null || _teteDePage == null) return ligne;
+    final String libelle = t.com.socle.composants.espace.retourListe;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        BoutonIcone(
+          key: FilDiscussion.cleRetourCompacte,
+          icone: AppIcons.retour,
+          libelle: libelle,
+          infobulle: libelle,
+          onPress: retour,
+        ),
+        Ecart.hSm,
+        Expanded(child: ligne),
+      ],
+    );
   }
 
   @override
@@ -669,9 +866,11 @@ class _FilDiscussionState extends State<FilDiscussion> {
               // entier reste lu (semantique de la ligne) et ecrit dans le
               // panneau (i).
               child: RangeeEnteteEspace(
-                child: MediaQuery.withClampedTextScaling(
-                  maxScaleFactor: SeuilsTexteAgrandi.echelle,
-                  child: compacteDonnee,
+                child: _avecRetourCompacte(
+                  MediaQuery.withClampedTextScaling(
+                    maxScaleFactor: SeuilsTexteAgrandi.echelle,
+                    child: compacteDonnee,
+                  ),
                 ),
               ),
             ),
@@ -680,7 +879,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
     final Widget? pieceJointe = widget.emplacementPieceJointe;
     final Widget? vocal = widget.emplacementVocal;
     final TextTheme styles = Theme.of(context).textTheme;
-    final Widget zoneSaisie = Column(
+    Widget zoneSaisie({required bool reduite}) => Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -705,15 +904,31 @@ class _FilDiscussionState extends State<FilDiscussion> {
           ),
         _Saisie(
           champ: _champ,
+          cleChamp: _cleChamp,
+          noeudChamp: _noeudChamp,
           vide: _vide,
           textes: x,
           onEnvoyer: _envoyer,
+          reduite: reduite,
+          onMicro: vocal != null && _microDisponible && !_vocalOuvert
+              ? _demanderVocal
+              : null,
           vocalOuvert: vocal != null && _vocalOuvert,
           vocal: vocal == null
               ? null
-              : NotificationListener<PanneauVocalFil>(
-                  onNotification: _surPanneauVocal,
-                  child: vocal,
+              : DemandeVocalFil(
+                  demandes: _demandesVocal,
+                  child: NotificationListener<MicroVocalFil>(
+                    onNotification: _surMicroVocal,
+                    child: NotificationListener<PanneauVocalFil>(
+                      onNotification: _surPanneauVocal,
+                      child:
+                          NotificationListener<SizeChangedLayoutNotification>(
+                            onNotification: _surTailleVocal,
+                            child: SizeChangedLayoutNotifier(child: vocal),
+                          ),
+                    ),
+                  ),
                 ),
         ),
       ],
@@ -730,11 +945,13 @@ class _FilDiscussionState extends State<FilDiscussion> {
         final FlutterView vue = View.of(context);
         final double hauteurSansClavier =
             hauteur + vue.viewInsets.bottom / vue.devicePixelRatio;
-        // En lecture seule, rien ne reste fixe sous la liste : l'en-tete
-        // defile toujours avec les messages (R-02, R-07).
+        // Constat 2 (COM-R-3) : en lecture seule comme ailleurs, l'en-tete
+        // ne defile (et la ligne compacte ne le remplace) que quand la
+        // hauteur l'exige : texte agrandi ou vue basse. A 1440, le canal en
+        // lecture seule garde son en-tete complet, fixe.
+        final bool texteAgrandi = SeuilsTexteAgrandi.texteAgrandi(context);
         final bool enteteDefilante =
-            limite != null ||
-            SeuilsTexteAgrandi.texteAgrandi(context) ||
+            texteAgrandi ||
             hauteurSansClavier < SeuilsTexteAgrandi.hauteurBasse;
         // N-1 : quand l'en-tete defile, sa ligne compacte reste fixe ; le
         // reste de l'en-tete defile, apres la tete de la page.
@@ -758,10 +975,23 @@ class _FilDiscussionState extends State<FilDiscussion> {
         // reconstruit pas (le champ garde son focus).
         final bool saisieDansListe = limite == null && enteteDefilante;
         _saisieDansListe = saisieDansListe;
+        // Decision « Focus a 320 » : en Focus, a texte agrandi sur un
+        // telephone etroit, la saisie dans la liste se reduit a une ligne
+        // tant que le champ est vide et sans focus.
+        final bool reduite =
+            widget.saisieReduite &&
+            saisieDansListe &&
+            texteAgrandi &&
+            MediaQuery.sizeOf(context).width < FilDiscussion.largeurReduite &&
+            _vide &&
+            !_noeudChamp.hasFocus &&
+            !_vocalOuvert &&
+            !_restaure;
         final Widget saisie = KeyedSubtree(
           key: _cleZoneSaisie,
-          child: zoneSaisie,
+          child: zoneSaisie(reduite: reduite),
         );
+        final bool vocalBorne = limite == null && _vocalOuvert;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
@@ -800,16 +1030,24 @@ class _FilDiscussionState extends State<FilDiscussion> {
             if (!saisieDansListe)
               ConstrainedBox(
                 key: FilDiscussion.cleSaisie,
+                // N-9 : le panneau vocal releve la borne ; la saisie va a son
+                // bas a l'ouverture du panneau.
                 constraints: BoxConstraints(
                   maxHeight: math.min(
                     MediaQuery.sizeOf(context).height *
-                        FilDiscussion.partSaisieMax,
+                        (vocalBorne
+                            ? FilDiscussion.partSaisieVocalMax
+                            : FilDiscussion.partSaisieMax),
                     hauteur.isFinite
-                        ? hauteur * FilDiscussion.partSaisieFilMax
+                        ? hauteur *
+                              (vocalBorne
+                                  ? FilDiscussion.partSaisieFilVocalMax
+                                  : FilDiscussion.partSaisieFilMax)
                         : double.infinity,
                   ),
                 ),
                 child: SingleChildScrollView(
+                  controller: _defilementSaisie,
                   child: limite == null
                       ? saisie
                       : Padding(
@@ -826,7 +1064,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
               ),
             // N-9 : sous la saisie bornee qu'occupe le panneau vocal, une
             // marge : il ne touche ni la barre de navigation ni le bord.
-            if (!saisieDansListe && limite == null && _vocalOuvert)
+            if (!saisieDansListe && vocalBorne)
               const SizedBox(
                 key: FilDiscussion.cleMargeVocal,
                 height: AppSpacing.lg,
@@ -951,17 +1189,34 @@ class _Bulle extends StatelessWidget {
 class _Saisie extends StatelessWidget {
   const _Saisie({
     required this.champ,
+    required this.cleChamp,
+    required this.noeudChamp,
     required this.vide,
     required this.textes,
     required this.onEnvoyer,
+    this.reduite = false,
+    this.onMicro,
     this.vocal,
     this.vocalOuvert = false,
   });
 
   final TextEditingController champ;
+
+  /// La cle globale du champ : il garde son etat (texte, focus) quand sa
+  /// rangee change de forme.
+  final GlobalKey cleChamp;
+  final FocusNode noeudChamp;
   final bool vide;
   final TextesFilDiscussion textes;
   final VoidCallback onEnvoyer;
+
+  /// Vrai quand la saisie est reduite a une ligne (Focus a 320, texte x2) :
+  /// le champ seul (et le micro), sans aide ni « Envoyer » inerte.
+  final bool reduite;
+
+  /// Le toucher du micro (R-28), ou `null` : aucun micro (pas de composer
+  /// vocal, capacite `envoyerVocal` fermee, enregistreur absent).
+  final VoidCallback? onMicro;
   final Widget? vocal;
 
   /// Vrai pendant l'enregistrement et la pre-ecoute : le panneau vocal
@@ -1009,26 +1264,53 @@ class _Saisie extends StatelessWidget {
   }
 
   Widget _rangee({required bool empilee}) {
-    final Widget saisie = raccourciEnvoi(
-      onEnvoyer: onEnvoyer,
-      child: TextField(
-        key: FilDiscussion.champKey,
-        controller: champ,
-        minLines: 1,
-        maxLines: 5,
-        keyboardType: TextInputType.multiline,
-        textInputAction: TextInputAction.newline,
-        textCapitalization: TextCapitalization.sentences,
-        decoration: InputDecoration(
-          labelText: textes.libelleChamp,
-          hintText: textes.aideChamp,
-          floatingLabelBehavior: FloatingLabelBehavior.auto,
-          // La raison du bouton inactif, lisible sous le champ.
-          helperText: vide ? textes.champVide : null,
-          helperMaxLines: 3,
+    final Widget saisie = KeyedSubtree(
+      key: cleChamp,
+      child: raccourciEnvoi(
+        onEnvoyer: onEnvoyer,
+        child: TextField(
+          key: FilDiscussion.champKey,
+          controller: champ,
+          focusNode: noeudChamp,
+          minLines: 1,
+          maxLines: reduite ? 1 : 5,
+          keyboardType: TextInputType.multiline,
+          textInputAction: TextInputAction.newline,
+          textCapitalization: TextCapitalization.sentences,
+          decoration: InputDecoration(
+            labelText: textes.libelleChamp,
+            hintText: textes.aideChamp,
+            floatingLabelBehavior: FloatingLabelBehavior.auto,
+            // La raison du bouton inactif, lisible sous le champ ; la
+            // saisie reduite n'a pas de bouton inactif.
+            helperText: vide && !reduite ? textes.champVide : null,
+            helperMaxLines: 3,
+          ),
         ),
       ),
     );
+    // Decision R-28 : le micro, une icone nommee (cible de 48), a cote
+    // d'« Envoyer » ; il ouvre l'enregistrement du composer vocal.
+    final VoidCallback? onMicro = this.onMicro;
+    final Widget? micro = onMicro == null
+        ? null
+        : BoutonIcone(
+            key: FilDiscussion.cleMicro,
+            icone: AppIcons.micro,
+            libelle: t.com.socle.composants.composer.enregistrerVocal,
+            onPress: onMicro,
+          );
+    if (reduite) {
+      // Une ligne : le champ, et le micro s'il y en a un. « Envoyer »
+      // revient des que le champ prend le focus ou recoit du texte.
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Expanded(child: saisie),
+          if (micro != null) ...<Widget>[Ecart.hSm, micro],
+        ],
+      );
+    }
     // Une action se nomme, elle ne s'illustre pas : « Envoyer » en toutes
     // lettres, inerte (et dit comme tel) tant que le champ est vide ; la
     // raison est ecrite sous le champ.
@@ -1039,15 +1321,28 @@ class _Saisie extends StatelessWidget {
       pleineLargeur: false,
     );
     if (empilee) {
-      // Le meme controleur : le texte reste si la disposition change
-      // (rotation, taille du texte).
+      // Le meme champ (cle globale) : le texte et le focus restent si la
+      // disposition change (rotation, taille du texte).
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           saisie,
           Ecart.vSm,
-          Align(alignment: AlignmentDirectional.centerEnd, child: envoyer),
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: micro == null
+                ? envoyer
+                // A 320 en texte x2, « Envoyer » passe sous le micro s'ils
+                // ne tiennent pas sur une ligne.
+                : Wrap(
+                    alignment: WrapAlignment.end,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: AppSpacing.sm,
+                    runSpacing: AppSpacing.sm,
+                    children: <Widget>[micro, envoyer],
+                  ),
+          ),
         ],
       );
     }
@@ -1056,6 +1351,7 @@ class _Saisie extends StatelessWidget {
       children: <Widget>[
         Expanded(child: saisie),
         Ecart.hSm,
+        if (micro != null) ...<Widget>[micro, Ecart.hSm],
         envoyer,
       ],
     );

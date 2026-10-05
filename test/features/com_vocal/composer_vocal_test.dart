@@ -665,11 +665,14 @@ void main() {
     );
     await tester.pump();
     await tester.pump();
+    // Decision R-28 : dans un fil, l'entree est le micro a cote
+    // d'« Envoyer », plus le lien sous le champ.
+    expect(find.byKey(ComposerVocal.cleEnregistrer), findsNothing);
     expect(
-      tester.getTopLeft(find.byKey(ComposerVocal.cleEnregistrer)).dy,
-      greaterThan(tester.getBottomLeft(find.byKey(FilDiscussion.champKey)).dy),
+      tester.getTopLeft(find.byKey(FilDiscussion.cleMicro)).dy,
+      tester.getTopLeft(find.byKey(FilDiscussion.envoyerKey)).dy,
     );
-    await _toucher(tester, ComposerVocal.cleEnregistrer);
+    await _toucher(tester, FilDiscussion.cleMicro);
     await avancer(tester, banc.horloge, const Duration(seconds: 6));
     await _toucher(tester, ComposerVocal.cleArreter);
     expect(find.byKey(ComposerVocal.cleEnvoyer), findsOneWidget);

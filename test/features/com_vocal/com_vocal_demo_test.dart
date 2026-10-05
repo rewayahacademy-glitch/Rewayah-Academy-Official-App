@@ -128,7 +128,7 @@ void main() {
       findsOneWidget,
     );
 
-    await _toucher(tester, ComposerVocal.cleEnregistrer);
+    await _toucher(tester, FilDiscussion.cleMicro);
     horloge.avancer(const Duration(seconds: 11));
     await tester.pump(const Duration(seconds: 11));
     await _toucher(tester, ComposerVocal.cleArreter);
@@ -166,15 +166,17 @@ void main() {
     );
     // A 1440, les cinq situations tiennent en ligne.
     await _choisirSituation(tester, d.refuse);
-    await _toucher(tester, ComposerVocal.cleEnregistrer);
+    await _toucher(tester, FilDiscussion.cleMicro);
     expect(find.text(c.refuse), findsOneWidget);
 
     await _choisirSituation(tester, d.indisponible);
     expect(find.byKey(ComposerVocal.cleIndisponible), findsOneWidget);
+    // Indisponible : aucun micro, aucun lien (R-28).
+    expect(find.byKey(FilDiscussion.cleMicro), findsNothing);
     expect(find.byKey(ComposerVocal.cleEnregistrer), findsNothing);
 
     await _choisirSituation(tester, d.nonConfirme);
-    await _toucher(tester, ComposerVocal.cleEnregistrer);
+    await _toucher(tester, FilDiscussion.cleMicro);
     horloge.avancer(const Duration(seconds: 4));
     await tester.pump(const Duration(seconds: 4));
     await _toucher(tester, ComposerVocal.cleArreter);
@@ -188,7 +190,7 @@ void main() {
     expect(find.text(c.envoye), findsOneWidget);
 
     await _choisirSituation(tester, d.aDemander);
-    await _toucher(tester, ComposerVocal.cleEnregistrer);
+    await _toucher(tester, FilDiscussion.cleMicro);
     expect(find.text(c.permissionPhrase), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -230,7 +232,7 @@ void main() {
             taille: taille,
             luminosite: luminosite,
           );
-          await _toucher(tester, ComposerVocal.cleEnregistrer);
+          await _toucher(tester, FilDiscussion.cleMicro);
           horloge.avancer(const Duration(seconds: 5));
           await tester.pump(const Duration(seconds: 5));
           await _toucher(tester, ComposerVocal.cleArreter);
@@ -253,7 +255,7 @@ void main() {
         echelle: 2,
       );
       expect(tester.takeException(), isNull);
-      await _toucher(tester, ComposerVocal.cleEnregistrer);
+      await _toucher(tester, FilDiscussion.cleMicro);
       horloge.avancer(const Duration(seconds: 5));
       await tester.pump(const Duration(seconds: 5));
       await _toucher(tester, ComposerVocal.cleArreter);

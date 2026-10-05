@@ -28,10 +28,16 @@
 //   n'est pas disponible, sans jamais simuler un micro ;
 // - COM-RC (R-04) : pendant l'enregistrement, la pre-ecoute et l'envoi, le
 //   composer previent le fil (`PanneauVocalFil`) : son panneau remplace la
-//   rangee texte, un seul « Envoyer » reste a l'ecran.
+//   rangee texte, un seul « Envoyer » reste a l'ecran ;
+// - decision du directeur sur R-28 (COM-RC tour 5, lot H) : dans un fil
+//   (`DemandeVocalFil`), l'entree n'est plus un lien sous le champ mais le
+//   micro du fil, a cote d'« Envoyer » ; le composer dit au fil si son micro
+//   repond (`MicroVocalFil`) et ouvre l'enregistrement a chaque toucher.
+//   Hors d'un fil, il garde son lien « Enregistrer un message vocal ».
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -43,7 +49,8 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/fil_discussion.dart' show PanneauVocalFil;
+import '../../core/widgets/fil_discussion.dart'
+    show DemandeVocalFil, MicroVocalFil, PanneauVocalFil;
 import '../../core/widgets/lien_fleche.dart';
 import 'etats_vocal.dart';
 import 'lecteur_vocal.dart';
@@ -180,8 +187,18 @@ class _ComposerVocalState extends ConsumerState<ComposerVocal> {
   bool _occupe = false;
   String? _erreurMicro;
 
-  /// Le dernier etat du panneau dit au fil (R-04).
-  bool _ouvertSignale = false;
+  /// Le dernier etat du panneau dit au fil (R-04) ; `null` avant le
+  /// premier rendu : le premier etat est toujours dit, pour qu'un composer
+  /// qui en remplace un autre (panneau ouvert) remette le fil d'aplomb.
+  bool? _ouvertSignale;
+
+  /// Le dernier etat du micro dit au fil (R-28) ; `null` avant le premier
+  /// rendu, comme [_ouvertSignale].
+  bool? _microSignale;
+
+  /// Les touchers du micro du fil qui entoure le composer, ou `null` hors
+  /// d'un fil (R-28).
+  ValueListenable<int>? _demandes;
 
   /// Le numero de l'enregistrement en cours, incremente a chaque demarrage :
   /// un vocal rendu par un arret lent ne vaut que pour la session qui l'a
@@ -195,7 +212,26 @@ class _ComposerVocalState extends ConsumerState<ComposerVocal> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final ValueListenable<int>? demandes = DemandeVocalFil.de(context);
+    if (!identical(demandes, _demandes)) {
+      _demandes?.removeListener(_surDemande);
+      _demandes = demandes?..addListener(_surDemande);
+    }
+  }
+
+  /// R-28 : le micro du fil a ete touche ; l'enregistrement s'ouvre comme
+  /// par le lien, s'il peut aboutir.
+  void _surDemande() {
+    if (!mounted || _panneauOuvert) return;
+    if (_disponibilite != _Disponibilite.disponible) return;
+    unawaited(_enregistrer());
+  }
+
+  @override
   void dispose() {
+    _demandes?.removeListener(_surDemande);
     _desarmer();
     // Quitter l'ecran ne garde pas de vocal : il n'y a pas de brouillon vocal
     // en V1. Un enregistrement en cours est abandonne, un vocal arrete et pas
@@ -457,9 +493,22 @@ class _ComposerVocalState extends ConsumerState<ComposerVocal> {
     });
   }
 
+  /// Dit au fil, apres la construction, si son micro peut ouvrir un
+  /// enregistrement (R-28).
+  void _signalerMicro() {
+    if (_demandes == null) return;
+    final bool disponible = _disponibilite == _Disponibilite.disponible;
+    if (disponible == _microSignale) return;
+    _microSignale = disponible;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) MicroVocalFil(disponible: disponible).dispatch(context);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     _signalerPanneau();
+    _signalerMicro();
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final c = t.com.vocal.composer;
@@ -525,13 +574,15 @@ class _ComposerVocalState extends ConsumerState<ComposerVocal> {
                   style: AppPalette.of(context).inkAlert.applyTo(discret),
                 ),
               ),
-            LienFleche(
-              key: ComposerVocal.cleEnregistrer,
-              libelle: c.enregistrer,
-              icone: AppIcons.micro,
-              fleche: false,
-              onPress: _enregistrer,
-            ),
+            // R-28 : dans un fil, l'entree est le micro a cote d'« Envoyer ».
+            if (_demandes == null)
+              LienFleche(
+                key: ComposerVocal.cleEnregistrer,
+                libelle: c.enregistrer,
+                icone: AppIcons.micro,
+                fleche: false,
+                onPress: _enregistrer,
+              ),
           ],
         );
 

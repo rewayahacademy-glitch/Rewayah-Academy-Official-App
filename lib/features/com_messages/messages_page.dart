@@ -121,6 +121,14 @@ class MessagesPage extends StatelessWidget {
       child: EspaceMessagesMetier(
         filId: filId,
         onOuvrirFil: (String id) => _ouvrirFil(context, id),
+        // COM-R-3, constat 8 : le meme retour, dans la ligne compacte du
+        // fil quand la tete de la page defile avec les messages.
+        onRetourFil: switch ((filId, cheminRetour)) {
+          (String _, final String chemin) => () => unawaited(
+            _retour(context, chemin),
+          ),
+          _ => null,
+        },
       ),
     );
   }
@@ -137,6 +145,7 @@ class EspaceMessagesMetier extends ConsumerStatefulWidget {
     super.key,
     this.filId,
     this.onOuvrirObjet,
+    this.onRetourFil,
     this.horloge = DateTime.now,
   });
 
@@ -148,6 +157,11 @@ class EspaceMessagesMetier extends ConsumerStatefulWidget {
 
   /// Ouvre un objet lie du panneau ; par defaut, le routeur.
   final ValueChanged<String>? onOuvrirObjet;
+
+  /// Le retour de la page quand un fil est ouvert (vers la liste), ou
+  /// `null` : le fil le pose dans sa ligne compacte quand la tete de la page
+  /// defile avec les messages (COM-R-3, constat 8).
+  final VoidCallback? onRetourFil;
 
   /// L'heure courante, pour la liste.
   final DateTime Function() horloge;
@@ -416,6 +430,7 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
               ?.peut(CapaciteCommunication.ecrireDansFil) ??
           false,
       onEnvoyer: (String texte, String cle) => _envoyer(fil.id, texte, cle),
+      onRetour: widget.onRetourFil,
       // COM-FUS : le composer vocal seulement si la capacite `envoyerVocal`
       // est ouverte (COM-BR-16) ; fermee en production, rien n'est rendu.
       onEnvoyerVocal: vocalOuvert(ref)
