@@ -12302,6 +12302,116 @@ class Traductions$comptable$tresorerie$fr {
 
 	// Translations
 
+	/// fr: 'Coffres'
+	String get coffresTitre => 'Coffres';
+
+	/// fr: 'Où l'argent est affecté. Une somme protégée n'est jamais comptée comme libre.'
+	String get coffresPhrase => 'Où l\'argent est affecté. Une somme protégée n\'est jamais comptée comme libre.';
+
+	/// fr: 'Protégé'
+	String get coffreProtege => 'Protégé';
+
+	/// fr: 'Non protégé'
+	String get coffreNonProtege => 'Non protégé';
+
+	/// fr: '{part} % de la trésorerie détenue'
+	String partDetenue({required Object part}) => '${part} % de la trésorerie détenue';
+
+	/// fr: 'Règle d'usage : {regle}'
+	String regleUsage({required Object regle}) => 'Règle d\'usage : ${regle}';
+
+	/// fr: 'Aucun coffre n'est encore rendu.'
+	String get coffresVide => 'Aucun coffre n\'est encore rendu.';
+
+	/// fr: 'Les sept coffres apparaîtront ici dès que la source les rendra.'
+	String get coffresVidePhrase => 'Les sept coffres apparaîtront ici dès que la source les rendra.';
+
+	late final Traductions$comptable$tresorerie$descriptions$fr descriptions = Traductions$comptable$tresorerie$descriptions$fr.internal(_root);
+
+	/// fr: 'Politique de la Réserve stratégique'
+	String get politiqueTitre => 'Politique de la Réserve stratégique';
+
+	/// fr: 'Fixée par la direction. Vous l'appliquez, vous ne la modifiez pas.'
+	String get politiquePhrase => 'Fixée par la direction. Vous l\'appliquez, vous ne la modifiez pas.';
+
+	/// fr: 'Alimentation automatique'
+	String get alimentationAuto => 'Alimentation automatique';
+
+	late final Traductions$comptable$tresorerie$regle$fr regle = Traductions$comptable$tresorerie$regle$fr.internal(_root);
+
+	/// fr: 'Cadence'
+	String get cadence => 'Cadence';
+
+	late final Traductions$comptable$tresorerie$cadences$fr cadences = Traductions$comptable$tresorerie$cadences$fr.internal(_root);
+
+	/// fr: 'Alerte sous {pourcent} % du montant visé'
+	String seuilAlerte({required Object pourcent}) => 'Alerte sous ${pourcent} % du montant visé';
+
+	/// fr: 'Tout retrait exige une validation supplémentaire.'
+	String get retraitValidation => 'Tout retrait exige une validation supplémentaire.';
+
+	/// fr: 'La politique n'exige pas de validation pour un retrait ; il reste traité comme un mouvement sensible.'
+	String get retraitSansValidation => 'La politique n\'exige pas de validation pour un retrait ; il reste traité comme un mouvement sensible.';
+
+	/// fr: 'Version {version}'
+	String version({required Object version}) => 'Version ${version}';
+
+	/// fr: 'Version {version}, en vigueur depuis le {date}'
+	String versionDepuis({required Object version, required Object date}) => 'Version ${version}, en vigueur depuis le ${date}';
+
+	/// fr: 'Mouvements entre coffres'
+	String get mouvementsTitre => 'Mouvements entre coffres';
+
+	/// fr: 'Vers une protection : selon votre délégation. Sortie d'un coffre protégé : validation supplémentaire requise.'
+	String get mouvementsPhrase => 'Vers une protection : selon votre délégation. Sortie d\'un coffre protégé : validation supplémentaire requise.';
+
+	/// fr: 'Préparer un mouvement'
+	String get preparerMouvement => 'Préparer un mouvement';
+
+	/// fr: 'Retirer de la Réserve stratégique'
+	String get retirer => 'Retirer de la Réserve stratégique';
+
+	/// fr: 'Retrait de la Réserve stratégique : {raison}.'
+	String retraitBloque({required Object raison}) => 'Retrait de la Réserve stratégique : ${raison}.';
+
+	/// fr: 'Alimentation de la Réserve stratégique : {raison}.'
+	String alimenterBloque({required Object raison}) => 'Alimentation de la Réserve stratégique : ${raison}.';
+
+	/// fr: 'Aucun mouvement entre coffres n'est permis à votre compte par la politique.'
+	String get aucunMouvement => 'Aucun mouvement entre coffres n\'est permis à votre compte par la politique.';
+
+	/// fr: 'Hors ligne : les mouvements entre coffres reprendront avec le réseau.'
+	String get mouvementsHorsLigne => 'Hors ligne : les mouvements entre coffres reprendront avec le réseau.';
+
+	/// fr: 'Fonds clients engagés et Taxes & obligations ne financent jamais une dépense ordinaire ; une allocation passée ne se modifie pas.'
+	String get interdits => 'Fonds clients engagés et Taxes & obligations ne financent jamais une dépense ordinaire ; une allocation passée ne se modifie pas.';
+
+	/// fr: 'Prévision'
+	String get previsionTitre => 'Prévision';
+
+	/// fr: 'Entrées et sorties attendues, par date.'
+	String get previsionPhrase => 'Entrées et sorties attendues, par date.';
+
+	/// fr: 'Aucune entrée ni sortie attendue pour l'instant.'
+	String get previsionVide => 'Aucune entrée ni sortie attendue pour l\'instant.';
+
+	/// fr: 'Entrée'
+	String get entree => 'Entrée';
+
+	/// fr: 'Sortie'
+	String get sortie => 'Sortie';
+
+	/// fr: 'Historique des allocations'
+	String get historiqueTitre => 'Historique des allocations';
+
+	/// fr: 'Chaque mouvement est journalisé ; rien ne s'y modifie.'
+	String get historiquePhrase => 'Chaque mouvement est journalisé ; rien ne s\'y modifie.';
+
+	/// fr: 'Aucun mouvement entre coffres enregistré.'
+	String get historiqueVide => 'Aucun mouvement entre coffres enregistré.';
+
+	late final Traductions$comptable$tresorerie$transfert$fr transfert = Traductions$comptable$tresorerie$transfert$fr.internal(_root);
+
 	/// fr: 'Trésorerie et coffres'
 	String get titre => 'Trésorerie et coffres';
 
@@ -18015,6 +18125,180 @@ class Traductions$comptable$paiements$ecart$fr {
 	String get erreurEnvoi => 'Le signalement n\'a pas abouti. Réessayez : il ne sera enregistré qu\'une fois.';
 }
 
+// Path: comptable.tresorerie.descriptions
+class Traductions$comptable$tresorerie$descriptions$fr {
+	Traductions$comptable$tresorerie$descriptions$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Argent encaissé, lié à des prestations pas encore acquises.'
+	String get fondsClientsEngages => 'Argent encaissé, lié à des prestations pas encore acquises.';
+
+	/// fr: 'Rémunérations déjà calculées et dues.'
+	String get paieADecaisser => 'Rémunérations déjà calculées et dues.';
+
+	/// fr: 'Infrastructure, abonnements indispensables, fonctions fixes.'
+	String get chargesEssentielles => 'Infrastructure, abonnements indispensables, fonctions fixes.';
+
+	/// fr: 'Provision pour les obligations fiscales, sociales ou réglementaires.'
+	String get taxesObligations => 'Provision pour les obligations fiscales, sociales ou réglementaires.';
+
+	/// fr: 'Coffre de continuité et de sécurité.'
+	String get reserveStrategique => 'Coffre de continuité et de sécurité.';
+
+	/// fr: 'Argent engagé dans une opération pas encore confirmée.'
+	String get enTransit => 'Argent engagé dans une opération pas encore confirmée.';
+
+	/// fr: 'Ce qui reste réellement disponible après les allocations protégées.'
+	String get tresorerieLibre => 'Ce qui reste réellement disponible après les allocations protégées.';
+}
+
+// Path: comptable.tresorerie.regle
+class Traductions$comptable$tresorerie$regle$fr {
+	Traductions$comptable$tresorerie$regle$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Désactivée'
+	String get desactivee => 'Désactivée';
+
+	/// fr: 'Montant fixe à chaque échéance'
+	String get montantFixe => 'Montant fixe à chaque échéance';
+
+	/// fr: '{pourcent} % de chaque encaissement consolidé'
+	String pourcentage({required Object pourcent}) => '${pourcent} % de chaque encaissement consolidé';
+
+	/// fr: 'Compléter jusqu'au montant visé'
+	String get jusquAObjectif => 'Compléter jusqu\'au montant visé';
+
+	/// fr: 'Proposition à confirmer par vous'
+	String get proposee => 'Proposition à confirmer par vous';
+}
+
+// Path: comptable.tresorerie.cadences
+class Traductions$comptable$tresorerie$cadences$fr {
+	Traductions$comptable$tresorerie$cadences$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À chaque clôture de cycle'
+	String get clotureCycle => 'À chaque clôture de cycle';
+
+	/// fr: 'Chaque semaine'
+	String get hebdomadaire => 'Chaque semaine';
+
+	/// fr: 'Chaque mois'
+	String get mensuelle => 'Chaque mois';
+
+	/// fr: 'Après chaque encaissement consolidé'
+	String get apresEncaissementConsolide => 'Après chaque encaissement consolidé';
+
+	/// fr: 'Manuelle'
+	String get manuelle => 'Manuelle';
+}
+
+// Path: comptable.tresorerie.transfert
+class Traductions$comptable$tresorerie$transfert$fr {
+	Traductions$comptable$tresorerie$transfert$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mouvement entre coffres'
+	String get titre => 'Mouvement entre coffres';
+
+	/// fr: 'Mouvement permis par la politique'
+	String get choix => 'Mouvement permis par la politique';
+
+	/// fr: '{origine} → {destination}'
+	String couple({required Object origine, required Object destination}) => '${origine} → ${destination}';
+
+	/// fr: 'Vers une protection : exécuté selon votre délégation.'
+	String get delegable => 'Vers une protection : exécuté selon votre délégation.';
+
+	/// fr: 'Validation supplémentaire requise : une autre personne décide, rien ne sort du coffre avant.'
+	String get sensible => 'Validation supplémentaire requise : une autre personne décide, rien ne sort du coffre avant.';
+
+	/// fr: 'Montant'
+	String get montant => 'Montant';
+
+	/// fr: 'En unités entières, {devise}.'
+	String montantAide({required Object devise}) => 'En unités entières, ${devise}.';
+
+	/// fr: 'Montant proposé par la politique'
+	String get montantPropose => 'Montant proposé par la politique';
+
+	/// fr: 'Utiliser le montant proposé'
+	String get utiliserPropose => 'Utiliser le montant proposé';
+
+	/// fr: 'Saisissez un montant entier supérieur à zéro.'
+	String get erreurMontant => 'Saisissez un montant entier supérieur à zéro.';
+
+	/// fr: 'Vérifier le mouvement'
+	String get verifier => 'Vérifier le mouvement';
+
+	/// fr: 'Vérifiez le montant exact avant d'envoyer.'
+	String get recapPhrase => 'Vérifiez le montant exact avant d\'envoyer.';
+
+	/// fr: 'De'
+	String get de => 'De';
+
+	/// fr: 'Vers'
+	String get vers => 'Vers';
+
+	/// fr: 'Confirmer le mouvement'
+	String get confirmer => 'Confirmer le mouvement';
+
+	/// fr: 'Demander la validation'
+	String get demanderValidation => 'Demander la validation';
+
+	/// fr: 'Modifier le mouvement'
+	String get modifier => 'Modifier le mouvement';
+
+	/// fr: 'Fermer'
+	String get fermer => 'Fermer';
+
+	/// fr: 'Mouvement exécuté par la source'
+	String get executeTitre => 'Mouvement exécuté par la source';
+
+	/// fr: 'Le journal l'a enregistré. Les soldes affichés sont relus.'
+	String get executePhrase => 'Le journal l\'a enregistré. Les soldes affichés sont relus.';
+
+	/// fr: 'Référence : {reference}'
+	String reference({required Object reference}) => 'Référence : ${reference}';
+
+	/// fr: 'Validation demandée'
+	String get validationTitre => 'Validation demandée';
+
+	/// fr: 'Une autre personne doit décider. Le coffre d'origine reste inchangé jusque-là.'
+	String get validationPhrase => 'Une autre personne doit décider. Le coffre d\'origine reste inchangé jusque-là.';
+
+	/// fr: 'Mouvement refusé par la source'
+	String get refusTitre => 'Mouvement refusé par la source';
+
+	/// fr: 'Raison : {raison}. Rien n'a été déplacé.'
+	String refusPhrase({required Object raison}) => 'Raison : ${raison}. Rien n\'a été déplacé.';
+
+	/// fr: 'Réponse non reçue'
+	String get erreurEnvoiTitre => 'Réponse non reçue';
+
+	/// fr: 'La réponse n'est pas arrivée. Consultez l'historique avant de réessayer : le même mouvement ne sera jamais compté deux fois.'
+	String get erreurEnvoi => 'La réponse n\'est pas arrivée. Consultez l\'historique avant de réessayer : le même mouvement ne sera jamais compté deux fois.';
+
+	/// fr: 'Les mouvements entre coffres ne sont pas encore reliés au serveur. Rien n'a été déplacé.'
+	String get indisponible => 'Les mouvements entre coffres ne sont pas encore reliés au serveur. Rien n\'a été déplacé.';
+
+	/// fr: 'Aucun mouvement n'est permis par la politique pour votre compte.'
+	String get aucunCouple => 'Aucun mouvement n\'est permis par la politique pour votre compte.';
+}
+
 // Path: comptable.beneficiaires.recevoir
 class Traductions$comptable$beneficiaires$recevoir$fr {
 	Traductions$comptable$beneficiaires$recevoir$fr.internal(this._root);
@@ -23255,6 +23539,86 @@ extension on Traductions {
 			'comptable.paiements.sousTitre' => 'Montants calculés à la source : ici on vérifie et on paie, on ne modifie rien.',
 			'comptable.paiements.detailTitre' => 'Détail du paiement',
 			'comptable.paiements.detailSousTitre' => 'Chaque ligne a sa source. Un écart se signale, il ne se corrige pas ici.',
+			'comptable.tresorerie.coffresTitre' => 'Coffres',
+			'comptable.tresorerie.coffresPhrase' => 'Où l\'argent est affecté. Une somme protégée n\'est jamais comptée comme libre.',
+			'comptable.tresorerie.coffreProtege' => 'Protégé',
+			'comptable.tresorerie.coffreNonProtege' => 'Non protégé',
+			'comptable.tresorerie.partDetenue' => ({required Object part}) => '${part} % de la trésorerie détenue',
+			'comptable.tresorerie.regleUsage' => ({required Object regle}) => 'Règle d\'usage : ${regle}',
+			'comptable.tresorerie.coffresVide' => 'Aucun coffre n\'est encore rendu.',
+			'comptable.tresorerie.coffresVidePhrase' => 'Les sept coffres apparaîtront ici dès que la source les rendra.',
+			'comptable.tresorerie.descriptions.fondsClientsEngages' => 'Argent encaissé, lié à des prestations pas encore acquises.',
+			'comptable.tresorerie.descriptions.paieADecaisser' => 'Rémunérations déjà calculées et dues.',
+			'comptable.tresorerie.descriptions.chargesEssentielles' => 'Infrastructure, abonnements indispensables, fonctions fixes.',
+			'comptable.tresorerie.descriptions.taxesObligations' => 'Provision pour les obligations fiscales, sociales ou réglementaires.',
+			'comptable.tresorerie.descriptions.reserveStrategique' => 'Coffre de continuité et de sécurité.',
+			'comptable.tresorerie.descriptions.enTransit' => 'Argent engagé dans une opération pas encore confirmée.',
+			'comptable.tresorerie.descriptions.tresorerieLibre' => 'Ce qui reste réellement disponible après les allocations protégées.',
+			'comptable.tresorerie.politiqueTitre' => 'Politique de la Réserve stratégique',
+			'comptable.tresorerie.politiquePhrase' => 'Fixée par la direction. Vous l\'appliquez, vous ne la modifiez pas.',
+			'comptable.tresorerie.alimentationAuto' => 'Alimentation automatique',
+			'comptable.tresorerie.regle.desactivee' => 'Désactivée',
+			'comptable.tresorerie.regle.montantFixe' => 'Montant fixe à chaque échéance',
+			'comptable.tresorerie.regle.pourcentage' => ({required Object pourcent}) => '${pourcent} % de chaque encaissement consolidé',
+			'comptable.tresorerie.regle.jusquAObjectif' => 'Compléter jusqu\'au montant visé',
+			'comptable.tresorerie.regle.proposee' => 'Proposition à confirmer par vous',
+			'comptable.tresorerie.cadence' => 'Cadence',
+			'comptable.tresorerie.cadences.clotureCycle' => 'À chaque clôture de cycle',
+			'comptable.tresorerie.cadences.hebdomadaire' => 'Chaque semaine',
+			'comptable.tresorerie.cadences.mensuelle' => 'Chaque mois',
+			'comptable.tresorerie.cadences.apresEncaissementConsolide' => 'Après chaque encaissement consolidé',
+			'comptable.tresorerie.cadences.manuelle' => 'Manuelle',
+			'comptable.tresorerie.seuilAlerte' => ({required Object pourcent}) => 'Alerte sous ${pourcent} % du montant visé',
+			'comptable.tresorerie.retraitValidation' => 'Tout retrait exige une validation supplémentaire.',
+			'comptable.tresorerie.retraitSansValidation' => 'La politique n\'exige pas de validation pour un retrait ; il reste traité comme un mouvement sensible.',
+			'comptable.tresorerie.version' => ({required Object version}) => 'Version ${version}',
+			'comptable.tresorerie.versionDepuis' => ({required Object version, required Object date}) => 'Version ${version}, en vigueur depuis le ${date}',
+			'comptable.tresorerie.mouvementsTitre' => 'Mouvements entre coffres',
+			'comptable.tresorerie.mouvementsPhrase' => 'Vers une protection : selon votre délégation. Sortie d\'un coffre protégé : validation supplémentaire requise.',
+			'comptable.tresorerie.preparerMouvement' => 'Préparer un mouvement',
+			'comptable.tresorerie.retirer' => 'Retirer de la Réserve stratégique',
+			'comptable.tresorerie.retraitBloque' => ({required Object raison}) => 'Retrait de la Réserve stratégique : ${raison}.',
+			'comptable.tresorerie.alimenterBloque' => ({required Object raison}) => 'Alimentation de la Réserve stratégique : ${raison}.',
+			'comptable.tresorerie.aucunMouvement' => 'Aucun mouvement entre coffres n\'est permis à votre compte par la politique.',
+			'comptable.tresorerie.mouvementsHorsLigne' => 'Hors ligne : les mouvements entre coffres reprendront avec le réseau.',
+			'comptable.tresorerie.interdits' => 'Fonds clients engagés et Taxes & obligations ne financent jamais une dépense ordinaire ; une allocation passée ne se modifie pas.',
+			'comptable.tresorerie.previsionTitre' => 'Prévision',
+			'comptable.tresorerie.previsionPhrase' => 'Entrées et sorties attendues, par date.',
+			'comptable.tresorerie.previsionVide' => 'Aucune entrée ni sortie attendue pour l\'instant.',
+			'comptable.tresorerie.entree' => 'Entrée',
+			'comptable.tresorerie.sortie' => 'Sortie',
+			'comptable.tresorerie.historiqueTitre' => 'Historique des allocations',
+			'comptable.tresorerie.historiquePhrase' => 'Chaque mouvement est journalisé ; rien ne s\'y modifie.',
+			'comptable.tresorerie.historiqueVide' => 'Aucun mouvement entre coffres enregistré.',
+			'comptable.tresorerie.transfert.titre' => 'Mouvement entre coffres',
+			'comptable.tresorerie.transfert.choix' => 'Mouvement permis par la politique',
+			'comptable.tresorerie.transfert.couple' => ({required Object origine, required Object destination}) => '${origine} → ${destination}',
+			'comptable.tresorerie.transfert.delegable' => 'Vers une protection : exécuté selon votre délégation.',
+			'comptable.tresorerie.transfert.sensible' => 'Validation supplémentaire requise : une autre personne décide, rien ne sort du coffre avant.',
+			'comptable.tresorerie.transfert.montant' => 'Montant',
+			'comptable.tresorerie.transfert.montantAide' => ({required Object devise}) => 'En unités entières, ${devise}.',
+			'comptable.tresorerie.transfert.montantPropose' => 'Montant proposé par la politique',
+			'comptable.tresorerie.transfert.utiliserPropose' => 'Utiliser le montant proposé',
+			'comptable.tresorerie.transfert.erreurMontant' => 'Saisissez un montant entier supérieur à zéro.',
+			'comptable.tresorerie.transfert.verifier' => 'Vérifier le mouvement',
+			'comptable.tresorerie.transfert.recapPhrase' => 'Vérifiez le montant exact avant d\'envoyer.',
+			'comptable.tresorerie.transfert.de' => 'De',
+			'comptable.tresorerie.transfert.vers' => 'Vers',
+			'comptable.tresorerie.transfert.confirmer' => 'Confirmer le mouvement',
+			'comptable.tresorerie.transfert.demanderValidation' => 'Demander la validation',
+			'comptable.tresorerie.transfert.modifier' => 'Modifier le mouvement',
+			'comptable.tresorerie.transfert.fermer' => 'Fermer',
+			'comptable.tresorerie.transfert.executeTitre' => 'Mouvement exécuté par la source',
+			'comptable.tresorerie.transfert.executePhrase' => 'Le journal l\'a enregistré. Les soldes affichés sont relus.',
+			'comptable.tresorerie.transfert.reference' => ({required Object reference}) => 'Référence : ${reference}',
+			'comptable.tresorerie.transfert.validationTitre' => 'Validation demandée',
+			'comptable.tresorerie.transfert.validationPhrase' => 'Une autre personne doit décider. Le coffre d\'origine reste inchangé jusque-là.',
+			'comptable.tresorerie.transfert.refusTitre' => 'Mouvement refusé par la source',
+			'comptable.tresorerie.transfert.refusPhrase' => ({required Object raison}) => 'Raison : ${raison}. Rien n\'a été déplacé.',
+			'comptable.tresorerie.transfert.erreurEnvoiTitre' => 'Réponse non reçue',
+			'comptable.tresorerie.transfert.erreurEnvoi' => 'La réponse n\'est pas arrivée. Consultez l\'historique avant de réessayer : le même mouvement ne sera jamais compté deux fois.',
+			'comptable.tresorerie.transfert.indisponible' => 'Les mouvements entre coffres ne sont pas encore reliés au serveur. Rien n\'a été déplacé.',
+			'comptable.tresorerie.transfert.aucunCouple' => 'Aucun mouvement n\'est permis par la politique pour votre compte.',
 			'comptable.tresorerie.titre' => 'Trésorerie et coffres',
 			'comptable.tresorerie.sousTitre' => 'La Trésorerie libre est le seul chiffre dépensable.',
 			'comptable.tresorerie.alimenter' => 'Alimenter la Réserve stratégique',
