@@ -30,9 +30,9 @@ Mesures sur `ccr-1b1bfa0b-m1kvkk` : analyse 0 problème ; 6566 tests réussis, 1
 
 Comptable : CPT-JOUR, CPT-PAY-1/2, CPT-TRES-1/2, CPT-ENC-1/2, CPT-BEN-1/2, CPT-CTR-1, CPT-DIR-1 faits ; vérifiés ensemble par la revue CPT-R (sécurité §47 tenue, 27 recettes R-FIN sur 29 prouvées), qui a refusé pour 3 défauts corrigés dans CPT-RC.
 
-## 3. En cours au moment du bilan
+## 3. Comptable : fermeture de la vague
 
-- **CPT-RC** fait sur `ui/comptable-v1` @ c07aead7 (rapport `docs/current/CPT-RC.md`), vérification croisée en cours au moment du bilan :
+- **CPT-RC** fait et **vérifié** sur `ui/comptable-v1` @ c07aead7 (rapport `docs/current/CPT-RC.md`) :
   - la vraie démo `/demo/comptable` montre ses 16 écrans avec données (8 étaient vides) ;
   - les 4 composants du socle sont au catalogue et à la galerie ;
   - l'en-tête des pages de détail ne s'écrit plus un mot par ligne à 320 ×2 ;
