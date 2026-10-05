@@ -592,7 +592,8 @@ démonstration). Rien n'est branché, rien n'est testé sur staging, rien n'est 
    A1 » sans accent, mais annonce « Classe An-Nour ». Données de démonstration, pas de rendu
    (`com_annonce_classe_tuteur_390_clair.png`).
 6. Restent du tour 4, non revus à ce tour : ligne de contexte tronquée à 320 (n° 1), moment
-   relatif coupé à 390 (n° 3), N-9 (panneau de pré-écoute coupé en bas).
+   relatif coupé à 390 (n° 3). N-9 est corrigé : la pré-écoute à 390 montre le panneau entier
+   (constat de COM-R-5, 05/10).
 
 ### Bilan
 
@@ -601,5 +602,5 @@ démonstration). Rien n'est branché, rien n'est testé sur staging, rien n'est 
   focus », écarts du Studio (sections des canaux, Aujourd'hui).
 - Vérifiés par test seulement : accusé tardif (8.3-1), phrase hors ligne des annonces (8.3-2),
   squelette d'Aujourd'hui (8.3-3, point 14).
-- Restants : « Envoyer » hors du fil à 1440 (R-12), micro à texte ×2, N-9, et les défauts
-  mineurs ci-dessus.
+- Restants : « Envoyer » hors du fil à 1440 (R-12), micro à texte ×2, et les défauts
+  mineurs ci-dessus. N-9 corrigé (COM-R-5, 05/10).
