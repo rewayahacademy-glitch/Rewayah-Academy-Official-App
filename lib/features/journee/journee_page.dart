@@ -716,7 +716,7 @@ class _CarteProchaineSeance extends ConsumerWidget {
               Ecart.vSm,
               LigneCleValeur(
                 cle: LibellesGroupe.dureeLibelle,
-                valeur: LibellesGroupe.dureeLisible(
+                valeur: LibellesGroupe.dureeSeule(
                   cours.fin.difference(cours.debut),
                 ),
                 chiffres: true,

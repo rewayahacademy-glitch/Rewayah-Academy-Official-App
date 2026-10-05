@@ -112,7 +112,7 @@ double _motLePlusLong(
   TextScaler echelle,
 ) {
   double motLong = 0;
-  for (final String mot in texte.split(RegExp(r'\s+'))) {
+  for (final String mot in texte.split(_espacesSecables)) {
     if (mot.isEmpty) continue;
     final TextPainter p = TextPainter(
       text: TextSpan(text: mot, style: complet),
@@ -125,6 +125,12 @@ double _motLePlusLong(
   }
   return motLong;
 }
+
+/// Les espaces ou une ligne peut se couper : tout blanc SAUF les espaces
+/// insecables (U+00A0, U+2007, U+202F). Une duree « 3\u00A0h\u00A028 »
+/// (DUREE-INSECABLE-1) est un seul mot pour la mesure, comme pour le moteur
+/// de texte qui ne la coupe pas.
+final RegExp _espacesSecables = RegExp(r'[^\S\u00A0\u2007\u202F]+');
 
 /// L'echelle sous laquelle aucun libelle ne descend pour garder un mot
 /// entier (85 % de la taille du theme). Au-dela, le conteneur s'elargit

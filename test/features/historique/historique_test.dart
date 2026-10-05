@@ -323,7 +323,7 @@ void main() {
       expect(find.text(t.historique.observation.visite(n: 1)), findsOneWidget);
       expect(find.text(t.historique.observation.visite(n: 2)), findsOneWidget);
       expect(find.text('18:12 - 18:14'), findsOneWidget);
-      expect(find.text('2 min'), findsOneWidget);
+      expect(find.text('2\u00A0min'), findsOneWidget);
       expect(find.text(t.historique.observations.terminee), findsOneWidget);
       expect(
         find.text(t.historique.observation.plageOuverte(debut: '18:35')),
@@ -340,7 +340,7 @@ void main() {
       final Finder ligneA2 = _ligneObs('s-a2', eleve: FoyersFictifs.a2.id);
       expect(ligneA2, findsOneWidget);
       expect(
-        _dans(ligneA2, '${t.historique.observations.visiteUne} · 48 s'),
+        _dans(ligneA2, '${t.historique.observations.visiteUne} · 48\u00A0s'),
         findsOneWidget,
       );
       expect(_dans(ligneA2, t.historique.classeInconnue), findsOneWidget);

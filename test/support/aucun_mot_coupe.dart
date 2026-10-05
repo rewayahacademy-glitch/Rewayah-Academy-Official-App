@@ -81,6 +81,57 @@ void verifierEcranSansMotCoupe(
   verifierAucunMotCoupe(tester, ecrans, exceptions: exceptions);
 }
 
+/// Une duree rendue : « 3 h 28 », « 2 h », « 45 min » (espaces ordinaires
+/// ou insecables, U+00A0 et U+202F). Le mot qui suit l'unite ne compte pas
+/// (« heures », « minutes » ne sont pas des unites courtes).
+final RegExp motifDuree = RegExp(
+  r'\d+[ \u00A0\u202F]*(?:h|min)(?![\p{L}])(?:[ \u00A0\u202F]*\d+)?',
+  unicode: true,
+);
+
+/// DUREE-INSECABLE-1 : les durees des paragraphes trouves sous [ou].
+///
+/// [mesurees] : chaque duree rendue (« texte : duree »), pour prouver que la
+/// mesure porte sur quelque chose ; [coupees] : celles qui occupent plus
+/// d'une ligne (« Cours dans 3 h / 28 »). Le detecteur de mots
+/// ([motsCoupes]) ne les voit pas : la coupure tombe ENTRE deux mots.
+({List<String> mesurees, List<String> coupees}) mesurerDurees(
+  WidgetTester tester,
+  Finder ou,
+) {
+  final List<String> mesurees = <String>[];
+  final List<String> coupees = <String>[];
+  final Set<RenderParagraph> paragraphes = <RenderParagraph>{
+    ...tester.renderObjectList<RenderObject>(ou).expand(_paragraphesSous),
+  };
+  for (final RenderParagraph p in paragraphes) {
+    if (!p.hasSize || !p.attached) continue;
+    final String texte = p.text.toPlainText();
+    for (final RegExpMatch m in motifDuree.allMatches(texte)) {
+      final String fiche = '$texte : ${m.group(0)}';
+      mesurees.add(fiche);
+      final List<TextBox> boites = p.getBoxesForSelection(
+        TextSelection(baseOffset: m.start, extentOffset: m.end),
+      );
+      if (_lignesDistinctes(boites) > 1) {
+        coupees.add(fiche);
+      }
+    }
+  }
+  return (mesurees: mesurees, coupees: coupees);
+}
+
+/// Echoue si une duree sous [ou] passe sur deux lignes, ou si aucune duree
+/// n'y est rendue (la mesure doit porter sur quelque chose).
+void verifierDureesSurUneLigne(WidgetTester tester, Finder ou) {
+  final ({List<String> mesurees, List<String> coupees}) r = mesurerDurees(
+    tester,
+    ou,
+  );
+  expect(r.mesurees, isNotEmpty, reason: 'Aucune duree rendue a mesurer');
+  expect(r.coupees, isEmpty, reason: 'Une duree scindee sur deux lignes');
+}
+
 /// Le nombre de lignes occupees par [boites] : une boite appartient a une
 /// ligne deja vue quand son milieu vertical tombe dans la hauteur d'une
 /// boite de cette ligne ; sinon elle ouvre une nouvelle ligne.

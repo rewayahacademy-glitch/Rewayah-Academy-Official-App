@@ -226,23 +226,23 @@ void main() {
     test('la duree se lit en heures et minutes', () {
       expect(
         LibellesGroupe.dureeLisible(const Duration(hours: 1, minutes: 30)),
-        '1 h 30',
+        '1\u00A0h\u00A030',
       );
-      expect(LibellesGroupe.dureeLisible(const Duration(hours: 1)), '1 h');
+      expect(LibellesGroupe.dureeLisible(const Duration(hours: 1)), '1\u00A0h');
       expect(
         LibellesGroupe.dureeLisible(const Duration(minutes: 45)),
-        '45 min',
+        '45\u00A0min',
       );
     });
 
     test('le compte a rebours coupe a une heure, comme ELV-02', () {
       expect(
         LibellesGroupe.compteARebours(const Duration(hours: 3, minutes: 28)),
-        'Cours dans 3 h 28',
+        'Cours dans 3\u00A0h\u00A028',
       );
       expect(
         LibellesGroupe.compteARebours(const Duration(minutes: 28)),
-        'Cours dans 28 min',
+        'Cours dans 28\u00A0min',
       );
       expect(
         LibellesGroupe.compteARebours(Duration.zero),
@@ -253,7 +253,7 @@ void main() {
     test('le temps restant ne descend jamais sous zero', () {
       expect(
         LibellesGroupe.tempsRestant(const Duration(minutes: -5)),
-        'Reste 0 min',
+        'Reste 0\u00A0min',
       );
     });
   });

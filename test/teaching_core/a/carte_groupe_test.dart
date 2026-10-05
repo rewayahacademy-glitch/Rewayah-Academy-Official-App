@@ -122,7 +122,7 @@ void main() {
       ),
     );
     expect(find.text(LibellesGroupe.rejoindre), findsNothing);
-    expect(find.textContaining('Cours dans 3 h 28'), findsOneWidget);
+    expect(find.textContaining('Cours dans 3\u00A0h\u00A028'), findsOneWidget);
   });
 
   testWidgets('a T-20, le bouton Rejoindre apparait', (
