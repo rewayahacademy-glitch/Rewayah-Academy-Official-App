@@ -486,3 +486,76 @@ annoncés se rejouent à l'identique. Il ne reste que trois mineurs (8.3) et deu
   arabophone.
 - Restent au directeur : la colonne « Validation requise » (COM-BR-11) et la lecture « proche =
   5 min » de R-16.
+
+## 9. Contre-vérification du tour 6 de COM-RC (COM-R-5)
+
+Date : 5 octobre 2026. Session 01HS7t3c, qui n'a écrit aucun code COM. Lecture seule.
+
+Périmètre :
+- code : `ui/communications-v1` @ `145af740`, diff depuis `a1a33222` (4 commits, 22 fichiers) ;
+- captures : `pilotage/tuteur-v1` @ `0b43fd9f`, 187 PNG, section « Après COM-RC tour 6 » de
+  `COM-CAPT.md`.
+
+Méthode : relecture du diff et des tests ; contre-preuve du test 8.3-1 sur le code de
+`a1a33222` ; captures régénérées à `145af740` et comparées octet par octet ; huit PNG lus.
+
+### 9.1 Chiffres rejoués (worktree propre à `145af740`)
+
+| Contrôle | Annoncé | Rejoué |
+| :--- | :--- | :--- |
+| `dart analyze --fatal-infos` | 0 | 0 |
+| `flutter test -j 3` | +6410, ~3082, 0 échec | +6410, ~3082, 0 échec (« All tests passed! », 11 min 02 s) |
+| `verifier_jetons` | 39 | 39 |
+| `verifier_revue` | 1627 | 1627 |
+| Captures (`CAPTURE_DIR`, `communications_capture_test.dart`) | 187 à `145af740` | 187 régénérées, **187 identiques octet par octet** à celles de `0b43fd9f` |
+
+### 9.2 Constats attendus
+
+| # | État | Preuve à `145af740` |
+| :--- | :--- | :--- |
+| 8.3-1 (brouillon, accusé tardif) | **corrigé** | `PersistanceBrouillon.effacerSi` (`persistance_brouillon.dart:159-173`) relit le brouillon et n'efface que s'il vaut encore le texte envoyé ; appel `fil_discussion.dart:769`. Test `com_rc_tour5_lot_h_test.dart` « 8.3-1 » (A envoyé, fil fermé puis rouvert, B saisi, accusé de A : B reste). **Contre-preuve rejouée** : avec `fil_discussion.dart` et `persistance_brouillon.dart` de `a1a33222`, le test échoue (`Expected: 'B'`, `Actual: <null>`) |
+| 8.3-2 (hors ligne répété) | **corrigé** | `BandeauHorsLigneCommunication(message:)` et `VueEtatCommunication(sousBandeau:)` (`vue_etat_communication.dart`) ; phrases propres aux annonces et à la modération ; sous le bandeau, un bloc dit « Impossible de charger ce contenu. Réessayez quand la connexion revient. » avec « Réessayer ». Tests : `textContaining('hors ligne')` une seule fois sur l'Administration et la Modération ; aucune capture hors ligne des annonces (test seulement). Les autres pages COM gardent la phrase des messages, qui leur convient |
+| 8.3-3 (UX_REVIEW) | **corrigé** | `liste_canaux.dart:128-131` : 24 sur téléphone, 32 au-delà ; `aujourdhui_page.dart` : écart de section 24/32 et squelette à la forme d'Aujourd'hui (tuiles, puis 1, 2 ou 3 colonnes de groupes) ; test `com_rc_tour6_studio_test.dart` ; à l'image, 32 entre sections à 1440 (`com_studio_canal_1440_clair`) |
+
+Captures lues : `com_studio_focus_320x2_clair` (une ligne, micro, dernière bulle visible),
+`com_studio_canal_320x2_clair`, `com_studio_canal_1440_clair`, `com_communaute_hors_ligne_390_clair`
+(un seul bandeau), `com_vocal_pre_ecoute_tuteur_390_clair` (panneau entier, « Supprimer » et
+« Envoyer » visibles), `com_admin_annonces_390_rtl_clair`, `com_admin_moderation_390_sombre`,
+`com_annonce_classe_tuteur_390_clair`.
+
+Restes déclarés, aucun bloquant pour `verifie` :
+- « Envoyer » plus large que le fil à 1440 : mineur, le bouton reste dans sa colonne ;
+- micro de taille fixe à 320×2 : mineur, la cible reste de 48 ; à aligner sur « Envoyer » ;
+- retrait de « Mode focus » (marge interne du bouton texte) : cosmétique ;
+- démonstration incohérente de la Classe du tuteur (« Classe fictive A », « Eleve A1 » sans
+  accent, annonce « Classe An-Nour ») : à corriger **avant HU-1**, sinon la recette humaine lira
+  une incohérence ;
+- arabe des 23 libellés corrigés, plus les 3 nouveaux : relecture par un arabophone avant toute
+  ouverture en arabe.
+
+### 9.3 Constats nouveaux, tous mineurs
+
+| # | Fichier:ligne | Constat | Correction proposée |
+| :--- | :--- | :--- | :--- |
+| 1 | `19_communications/captures/COM-CAPT.md:594-595`, `:604` | COM-CAPT cite N-9 (panneau de pré-écoute coupé) parmi les restes « non revus ». À `145af740`, `com_vocal_pre_ecoute_tuteur_390_clair.png` montre le panneau entier : la mention est périmée. | Retirer N-9 des restes, ou le noter « levé à l'image à 390 ». |
+| 2 | `tool/libelles_sources.json` (3 dernières entrées) | `etats.horsLigneBloc`, `administration.horsLigne` et `moderation.horsLigne` sont marqués « à valider par le directeur ». Relus avec la grille de `LIBELLES_COM_RELECTURE.md`, ils sont conformes (ce qui manque, puis quoi faire ; pas de « non envoyé »). | Les marquer « validé par délégation » par une relecture croisée, comme les 658 autres. |
+
+Vérifié sans défaut dans ce diff :
+- aucun rôle lu ;
+- aucune couleur, police ni rayon en dur (jetons 39) ;
+- aucune démo hors garde, aucun appel réseau, aucun fichier `supabase/` ni `.github/` ;
+- aucun `skip` ajouté, aucun test supprimé ; les cinq `expect` retirés sont remplacés par des
+  assertions plus strictes ;
+- parité fr/ar des trois clés nouvelles ;
+- worktree propre après les contrôles ;
+- aucun tiret cadratin.
+
+### 9.4 Verdict de COM-R-5 : COM-RC (tour 6) ACCEPTÉE, COM-RC-6 passe à `verifie`
+
+Les trois mineurs de COM-R-4 §8.3 sont corrigés et testés. Le correctif 8.3-1 a sa contre-preuve.
+Les captures sont bien celles de `145af740`, et les chiffres se rejouent à l'identique. Il ne
+reste que des mineurs et des restes déclarés, dont aucun ne bloque `verifie`.
+
+- Statut de preuve : `présent dans le code` et `testé localement`. Rien n'est branché, testé sur
+  staging ni déployé ; `verifie` ne vaut ni fusion dans `main` ni mise en production.
+- Avant HU-1 : données de démonstration de la Classe du tuteur cohérentes ; relecture arabe.
