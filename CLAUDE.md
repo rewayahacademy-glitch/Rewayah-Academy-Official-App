@@ -76,6 +76,7 @@ Un contrôle qui n'a jamais tourné n'est pas un contrôle vert : c'est ce qui a
 - Un widget ne lit jamais un rôle. Il lit une capacité. `if (role == admin)` dans un écran est un défaut à corriger, pas un raccourci.
 - Un écran n'est fini qu'avec ses états `loading`, `content`, `empty`, `error` et `offline`. Un écran livré avec son seul état nominal est refusé en revue.
 - Tant que le natif n'est pas publié, tout doit fonctionner en PWA (Windows, Android, iPad) pour que l'opérateur suive l'évolution tôt. Le Web est ouvert à tous les rôles (ADR-008).
+- **Propriété du code** (règle du directeur, 05/10/2026, fichier `LICENSE`) : le code source appartient à Abdoulaye Mouhidine Sow ; Rewayah Academy Ltd en a une licence gratuite, perpétuelle et incessible, qu'aucune cession du code ne retire. Ne jamais ajouter de licence libre. Poser une étiquette `deploy-AAAA-MM-JJ` à chaque mise en production (copie de l'académie). Détail : pilotage `14_controleur/juridique/PROPRIETE_CODE_SOURCE.md`.
 
 ## Rappels des références mappées
 
