@@ -63,6 +63,11 @@ abstract interface class ServiceDossier {
   /// Enregistre une acceptation. Elle ne se modifie ni ne s'efface ensuite.
   Future<void> accepterContrat(SorteContrat sorte, String version);
 
+  /// Vrai pour le service de la demonstration : rien n'est signe pour de
+  /// vrai. Il choisit la version du contrat enseignant
+  /// (`VersionsContrat.politiqueControlePubliee`).
+  bool get demonstration;
+
   /// Depose une piece d'identite et cree sa ligne de suivi.
   ///
   /// **Le genre du dossier n'est pas un parametre.** Il decide quel membre du
@@ -112,6 +117,9 @@ class ServiceDossierSupabase implements ServiceDossier {
     }
     return const EtatDossier.sansProfil();
   }
+
+  @override
+  bool get demonstration => false;
 
   @override
   Future<void> accepterContrat(SorteContrat sorte, String version) async {

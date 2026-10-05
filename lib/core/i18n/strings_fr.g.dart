@@ -222,6 +222,7 @@ class Traductions$salle$fr {
 	/// fr: 'Cours enregistré, visite de contrôle possible.'
 	String get bandeauPermanent => 'Cours enregistré, visite de contrôle possible.';
 
+	late final Traductions$salle$informationControle$fr informationControle = Traductions$salle$informationControle$fr.internal(_root);
 	late final Traductions$salle$secours$fr secours = Traductions$salle$secours$fr.internal(_root);
 	late final Traductions$salle$seance$fr seance = Traductions$salle$seance$fr.internal(_root);
 	late final Traductions$salle$fin$fr fin = Traductions$salle$fin$fr.internal(_root);
@@ -830,6 +831,10 @@ class Traductions$contrat$fr {
 
 	/// fr: 'Cochez la case pour continuer.'
 	String get caseRequise => 'Cochez la case pour continuer.';
+
+	late final Traductions$contrat$a3$fr a3 = Traductions$contrat$a3$fr.internal(_root);
+	late final Traductions$contrat$e1$fr e1 = Traductions$contrat$e1$fr.internal(_root);
+	late final Traductions$contrat$clauseControle$fr clauseControle = Traductions$contrat$clauseControle$fr.internal(_root);
 }
 
 // Path: accessibilite
@@ -2706,6 +2711,21 @@ class Traductions$salle$preparation$fr {
 	late final Traductions$salle$preparation$eleve$fr eleve = Traductions$salle$preparation$eleve$fr.internal(_root);
 }
 
+// Path: salle.informationControle
+class Traductions$salle$informationControle$fr {
+	Traductions$salle$informationControle$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'En savoir plus'
+	String get lien => 'En savoir plus';
+
+	late final Traductions$salle$informationControle$e1$fr e1 = Traductions$salle$informationControle$e1$fr.internal(_root);
+	late final Traductions$salle$informationControle$e2$fr e2 = Traductions$salle$informationControle$e2$fr.internal(_root);
+}
+
 // Path: salle.secours
 class Traductions$salle$secours$fr {
 	Traductions$salle$secours$fr.internal(this._root);
@@ -3133,6 +3153,90 @@ class Traductions$inscription$recap$fr {
 
 	/// fr: 'Enseignant'
 	String get enseignant => 'Enseignant';
+}
+
+// Path: contrat.a3
+class Traductions$contrat$a3$fr {
+	Traductions$contrat$a3$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les cours sont enregistrés (le son seulement)'
+	String get titre => 'Les cours sont enregistrés (le son seulement)';
+
+	/// fr: 'Ce que nous faisons.'
+	String get quoiTitre => 'Ce que nous faisons.';
+
+	/// fr: 'Chaque cours est enregistré en audio. L'image n'est pas enregistrée. Une personne de l'académie chargée du contrôle peut aussi suivre un cours en direct : elle voit et entend le cours, sans être vue ni entendue. Elle n'enregistre rien. La salle le rappelle en permanence.'
+	String get quoi => 'Chaque cours est enregistré en audio. L\'image n\'est pas enregistrée. Une personne de l\'académie chargée du contrôle peut aussi suivre un cours en direct : elle voit et entend le cours, sans être vue ni entendue. Elle n\'enregistre rien. La salle le rappelle en permanence.';
+
+	/// fr: 'Pourquoi.'
+	String get pourquoiTitre => 'Pourquoi.';
+
+	/// fr: 'Pour protéger les enfants et les enseignants. Si quelqu'un signale un problème, nous pouvons vérifier ce qui s'est passé.'
+	String get pourquoi => 'Pour protéger les enfants et les enseignants. Si quelqu\'un signale un problème, nous pouvons vérifier ce qui s\'est passé.';
+
+	/// fr: 'Qui peut écouter l'enregistrement.'
+	String get quiTitre => 'Qui peut écouter l\'enregistrement.';
+
+	/// fr: 'Seulement les personnes de l'académie chargées de la qualité et de la protection, et seulement pour une raison précise, par exemple un signalement. Chaque écoute est inscrite dans un journal. Vous pouvez demander si un enregistrement a été écouté, et pourquoi.'
+	String get qui => 'Seulement les personnes de l\'académie chargées de la qualité et de la protection, et seulement pour une raison précise, par exemple un signalement. Chaque écoute est inscrite dans un journal. Vous pouvez demander si un enregistrement a été écouté, et pourquoi.';
+
+	/// fr: 'Combien de temps.'
+	String get dureeTitre => 'Combien de temps.';
+
+	/// fr: '{duree} jours, puis effacé. S'il y a un signalement, l'enregistrement est gardé jusqu'à la fin de l'examen.'
+	String duree({required Object duree}) => '${duree} jours, puis effacé. S\'il y a un signalement, l\'enregistrement est gardé jusqu\'à la fin de l\'examen.';
+
+	/// fr: 'Si vous n'êtes pas d'accord.'
+	String get desaccordTitre => 'Si vous n\'êtes pas d\'accord.';
+
+	/// fr: 'Vous pouvez vous opposer : Compte, Mes accords, Je m'oppose à l'enregistrement. Nous vous répondons sous un mois. Nous chercherons une solution avec vous. Si aucune n'est possible, vous pouvez arrêter sans frais pour les cours pas encore suivis.'
+	String get desaccord => 'Vous pouvez vous opposer : Compte, Mes accords, Je m\'oppose à l\'enregistrement. Nous vous répondons sous un mois. Nous chercherons une solution avec vous. Si aucune n\'est possible, vous pouvez arrêter sans frais pour les cours pas encore suivis.';
+
+	/// fr: 'J'ai lu'
+	String get jaiLu => 'J\'ai lu';
+}
+
+// Path: contrat.e1
+class Traductions$contrat$e1$fr {
+	Traductions$contrat$e1$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Chaque cours est enregistré en audio. L'image n'est pas enregistrée. Une personne de l'académie chargée du contrôle peut aussi suivre un cours en direct : elle voit et entend le cours, sans être vue ni entendue. Elle n'enregistre rien. Elle envoie ensuite un compte rendu à l'académie. La salle le rappelle en permanence.'
+	String get quoi => 'Chaque cours est enregistré en audio. L\'image n\'est pas enregistrée. Une personne de l\'académie chargée du contrôle peut aussi suivre un cours en direct : elle voit et entend le cours, sans être vue ni entendue. Elle n\'enregistre rien. Elle envoie ensuite un compte rendu à l\'académie. La salle le rappelle en permanence.';
+
+	/// fr: 'Pour protéger les enfants et les enseignants. Si quelqu'un signale un problème, nous pouvons vérifier ce qui s'est passé. C'est aussi une preuve pour vous si une famille se plaint à tort.'
+	String get pourquoi => 'Pour protéger les enfants et les enseignants. Si quelqu\'un signale un problème, nous pouvons vérifier ce qui s\'est passé. C\'est aussi une preuve pour vous si une famille se plaint à tort.';
+
+	/// fr: 'Si vous refusez.'
+	String get refusTitre => 'Si vous refusez.';
+
+	/// fr: 'Nous ne pouvons pas vous confier d'élèves, car cette mesure protège les enfants. Nous vous le disons avant votre signature.'
+	String get refus => 'Nous ne pouvons pas vous confier d\'élèves, car cette mesure protège les enfants. Nous vous le disons avant votre signature.';
+}
+
+// Path: contrat.clauseControle
+class Traductions$contrat$clauseControle$fr {
+	Traductions$contrat$clauseControle$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Visites de contrôle.'
+	String get titre => 'Visites de contrôle.';
+
+	/// fr: 'Pour protéger les élèves et garantir la qualité des cours, une personne de l'académie peut observer vos cours en direct, sans vous prévenir du moment. Elle voit et entend le cours. Elle ne parle pas, n'enregistre rien et ne publie rien. Elle écrit un compte rendu pour l'administration. Vous recevez chaque mois une synthèse. Vous pouvez la contester. Les comptes rendus sont gardés 12 mois. La politique de contrôle, jointe à ce contrat et disponible dans votre espace, explique tout. En signant, vous confirmez l'avoir reçue.'
+	String get texte => 'Pour protéger les élèves et garantir la qualité des cours, une personne de l\'académie peut observer vos cours en direct, sans vous prévenir du moment. Elle voit et entend le cours. Elle ne parle pas, n\'enregistre rien et ne publie rien. Elle écrit un compte rendu pour l\'administration. Vous recevez chaque mois une synthèse. Vous pouvez la contester. Les comptes rendus sont gardés 12 mois. La politique de contrôle, jointe à ce contrat et disponible dans votre espace, explique tout. En signant, vous confirmez l\'avoir reçue.';
+
+	/// fr: 'J'accepte que l'académie traite le fait que j'enseigne le Coran, qui peut révéler ma religion, pour gérer mon contrat et mes cours.'
+	String get caseReligion => 'J\'accepte que l\'académie traite le fait que j\'enseigne le Coran, qui peut révéler ma religion, pour gérer mon contrat et mes cours.';
 }
 
 // Path: accessibilite.demo
@@ -11405,6 +11509,60 @@ class Traductions$salle$preparation$eleve$fr {
 	late final Traductions$salle$preparation$eleve$demo$fr demo = Traductions$salle$preparation$eleve$demo$fr.internal(_root);
 }
 
+// Path: salle.informationControle.e1
+class Traductions$salle$informationControle$e1$fr {
+	Traductions$salle$informationControle$e1$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Quelqu'un veille sur ton cours'
+	String get titre => 'Quelqu\'un veille sur ton cours';
+
+	/// fr: 'Parfois, une personne de l'académie regarde et écoute ton cours en direct.'
+	String get p1 => 'Parfois, une personne de l\'académie regarde et écoute ton cours en direct.';
+
+	/// fr: 'Elle vient pour vérifier que tout se passe bien et que ton enseignant est gentil et fait bien son travail.'
+	String get p2 => 'Elle vient pour vérifier que tout se passe bien et que ton enseignant est gentil et fait bien son travail.';
+
+	/// fr: 'Elle ne parle pas. Elle ne filme pas. Elle ne montre ton cours à personne.'
+	String get p3 => 'Elle ne parle pas. Elle ne filme pas. Elle ne montre ton cours à personne.';
+
+	/// fr: 'Tu ne sais pas quand elle vient. C'est normal : comme ça, elle voit le vrai cours. Le petit message en haut de l'écran te le rappelle.'
+	String get p4 => 'Tu ne sais pas quand elle vient. C\'est normal : comme ça, elle voit le vrai cours. Le petit message en haut de l\'écran te le rappelle.';
+
+	/// fr: 'Si quelque chose te gêne ou te fait peur pendant un cours, dis-le à tes parents.'
+	String get p5 => 'Si quelque chose te gêne ou te fait peur pendant un cours, dis-le à tes parents.';
+
+	/// fr: 'Tu peux aussi appuyer sur Signaler.'
+	String get signaler => 'Tu peux aussi appuyer sur Signaler.';
+}
+
+// Path: salle.informationControle.e2
+class Traductions$salle$informationControle$e2$fr {
+	Traductions$salle$informationControle$e2$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les visites de contrôle'
+	String get titre => 'Les visites de contrôle';
+
+	/// fr: 'Pour protéger les élèves, une personne de l'académie peut observer un cours en direct, sans prévenir du moment. Elle voit l'écran du cours et peut entendre le son.'
+	String get p1 => 'Pour protéger les élèves, une personne de l\'académie peut observer un cours en direct, sans prévenir du moment. Elle voit l\'écran du cours et peut entendre le son.';
+
+	/// fr: 'Elle ne parle pas, n'a pas de caméra et n'enregistre rien. Elle écrit un court compte rendu pour l'administration de l'académie, surtout sur l'enseignant et le déroulement du cours. Ton prénom n'y figure que si c'est nécessaire.'
+	String get p2 => 'Elle ne parle pas, n\'a pas de caméra et n\'enregistre rien. Elle écrit un court compte rendu pour l\'administration de l\'académie, surtout sur l\'enseignant et le déroulement du cours. Ton prénom n\'y figure que si c\'est nécessaire.';
+
+	/// fr: 'Ce compte rendu n'est jamais publié et il est effacé après 12 mois. Il sert seulement à l'académie pour prendre les bonnes décisions.'
+	String get p3 => 'Ce compte rendu n\'est jamais publié et il est effacé après 12 mois. Il sert seulement à l\'académie pour prendre les bonnes décisions.';
+
+	/// fr: 'Le bandeau en haut de la salle te rappelle qu'une visite est possible. Si tu as une question, ou si quelque chose te dérange, parle à tes parents ou écris à {contact}.'
+	String p4({required Object contact}) => 'Le bandeau en haut de la salle te rappelle qu\'une visite est possible. Si tu as une question, ou si quelque chose te dérange, parle à tes parents ou écris à ${contact}.';
+}
+
 // Path: salle.seance.outils
 class Traductions$salle$seance$outils$fr {
 	Traductions$salle$seance$outils$fr.internal(this._root);
@@ -15644,6 +15802,19 @@ extension on Traductions {
 			'salle.preparation.eleve.demo.microBloque' => 'Micro bloqué',
 			'salle.preparation.eleve.demo.horsLigne' => 'Hors ligne',
 			'salle.bandeauPermanent' => 'Cours enregistré, visite de contrôle possible.',
+			'salle.informationControle.lien' => 'En savoir plus',
+			'salle.informationControle.e1.titre' => 'Quelqu\'un veille sur ton cours',
+			'salle.informationControle.e1.p1' => 'Parfois, une personne de l\'académie regarde et écoute ton cours en direct.',
+			'salle.informationControle.e1.p2' => 'Elle vient pour vérifier que tout se passe bien et que ton enseignant est gentil et fait bien son travail.',
+			'salle.informationControle.e1.p3' => 'Elle ne parle pas. Elle ne filme pas. Elle ne montre ton cours à personne.',
+			'salle.informationControle.e1.p4' => 'Tu ne sais pas quand elle vient. C\'est normal : comme ça, elle voit le vrai cours. Le petit message en haut de l\'écran te le rappelle.',
+			'salle.informationControle.e1.p5' => 'Si quelque chose te gêne ou te fait peur pendant un cours, dis-le à tes parents.',
+			'salle.informationControle.e1.signaler' => 'Tu peux aussi appuyer sur Signaler.',
+			'salle.informationControle.e2.titre' => 'Les visites de contrôle',
+			'salle.informationControle.e2.p1' => 'Pour protéger les élèves, une personne de l\'académie peut observer un cours en direct, sans prévenir du moment. Elle voit l\'écran du cours et peut entendre le son.',
+			'salle.informationControle.e2.p2' => 'Elle ne parle pas, n\'a pas de caméra et n\'enregistre rien. Elle écrit un court compte rendu pour l\'administration de l\'académie, surtout sur l\'enseignant et le déroulement du cours. Ton prénom n\'y figure que si c\'est nécessaire.',
+			'salle.informationControle.e2.p3' => 'Ce compte rendu n\'est jamais publié et il est effacé après 12 mois. Il sert seulement à l\'académie pour prendre les bonnes décisions.',
+			'salle.informationControle.e2.p4' => ({required Object contact}) => 'Le bandeau en haut de la salle te rappelle qu\'une visite est possible. Si tu as une question, ou si quelque chose te dérange, parle à tes parents ou écris à ${contact}.',
 			'salle.secours.reseauFaible' => 'Réseau faible. L\'audio est prioritaire.',
 			'salle.secours.reseauFaibleGuidee' => 'Le réseau est faible.',
 			'salle.secours.reseauFaibleGuideeSuite' => 'Le son reste prioritaire.',
@@ -15983,6 +16154,8 @@ extension on Traductions {
 			'inscription.usage.moiTitre' => 'Moi uniquement',
 			'inscription.usage.moiDescription' => 'Je souhaite suivre les cours avec mon propre profil élève.',
 			'inscription.usage.familleTitre' => 'Moi et ma famille',
+			_ => null,
+		} ?? switch (path) {
 			'inscription.usage.familleDescription' => 'Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.',
 			'inscription.usage.enseignant' => 'Je suis enseignant',
 			'inscription.recap.usage' => 'Type de compte',
@@ -15996,12 +16169,29 @@ extension on Traductions {
 			'contrat.pointCoordonnees' => 'Vous ne voyez jamais les coordonnées d\'une famille : ni nom complet, ni courriel, ni téléphone.',
 			'contrat.lireTexte' => 'Lire le texte complet',
 			'contrat.accepter' => 'J\'ai lu et j\'accepte',
-			_ => null,
-		} ?? switch (path) {
 			'contrat.accepteLe' => ({required Object date}) => 'Accepté le ${date}',
 			'contrat.erreur' => 'La signature n\'a pas abouti. Réessayez dans un instant.',
 			'contrat.horsLigne' => 'Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.',
 			'contrat.caseRequise' => 'Cochez la case pour continuer.',
+			'contrat.a3.titre' => 'Les cours sont enregistrés (le son seulement)',
+			'contrat.a3.quoiTitre' => 'Ce que nous faisons.',
+			'contrat.a3.quoi' => 'Chaque cours est enregistré en audio. L\'image n\'est pas enregistrée. Une personne de l\'académie chargée du contrôle peut aussi suivre un cours en direct : elle voit et entend le cours, sans être vue ni entendue. Elle n\'enregistre rien. La salle le rappelle en permanence.',
+			'contrat.a3.pourquoiTitre' => 'Pourquoi.',
+			'contrat.a3.pourquoi' => 'Pour protéger les enfants et les enseignants. Si quelqu\'un signale un problème, nous pouvons vérifier ce qui s\'est passé.',
+			'contrat.a3.quiTitre' => 'Qui peut écouter l\'enregistrement.',
+			'contrat.a3.qui' => 'Seulement les personnes de l\'académie chargées de la qualité et de la protection, et seulement pour une raison précise, par exemple un signalement. Chaque écoute est inscrite dans un journal. Vous pouvez demander si un enregistrement a été écouté, et pourquoi.',
+			'contrat.a3.dureeTitre' => 'Combien de temps.',
+			'contrat.a3.duree' => ({required Object duree}) => '${duree} jours, puis effacé. S\'il y a un signalement, l\'enregistrement est gardé jusqu\'à la fin de l\'examen.',
+			'contrat.a3.desaccordTitre' => 'Si vous n\'êtes pas d\'accord.',
+			'contrat.a3.desaccord' => 'Vous pouvez vous opposer : Compte, Mes accords, Je m\'oppose à l\'enregistrement. Nous vous répondons sous un mois. Nous chercherons une solution avec vous. Si aucune n\'est possible, vous pouvez arrêter sans frais pour les cours pas encore suivis.',
+			'contrat.a3.jaiLu' => 'J\'ai lu',
+			'contrat.e1.quoi' => 'Chaque cours est enregistré en audio. L\'image n\'est pas enregistrée. Une personne de l\'académie chargée du contrôle peut aussi suivre un cours en direct : elle voit et entend le cours, sans être vue ni entendue. Elle n\'enregistre rien. Elle envoie ensuite un compte rendu à l\'académie. La salle le rappelle en permanence.',
+			'contrat.e1.pourquoi' => 'Pour protéger les enfants et les enseignants. Si quelqu\'un signale un problème, nous pouvons vérifier ce qui s\'est passé. C\'est aussi une preuve pour vous si une famille se plaint à tort.',
+			'contrat.e1.refusTitre' => 'Si vous refusez.',
+			'contrat.e1.refus' => 'Nous ne pouvons pas vous confier d\'élèves, car cette mesure protège les enfants. Nous vous le disons avant votre signature.',
+			'contrat.clauseControle.titre' => 'Visites de contrôle.',
+			'contrat.clauseControle.texte' => 'Pour protéger les élèves et garantir la qualité des cours, une personne de l\'académie peut observer vos cours en direct, sans vous prévenir du moment. Elle voit et entend le cours. Elle ne parle pas, n\'enregistre rien et ne publie rien. Elle écrit un compte rendu pour l\'administration. Vous recevez chaque mois une synthèse. Vous pouvez la contester. Les comptes rendus sont gardés 12 mois. La politique de contrôle, jointe à ce contrat et disponible dans votre espace, explique tout. En signant, vous confirmez l\'avoir reçue.',
+			'contrat.clauseControle.caseReligion' => 'J\'accepte que l\'académie traite le fait que j\'enseigne le Coran, qui peut révéler ma religion, pour gérer mon contrat et mes cours.',
 			'accessibilite.demo.titre' => 'Démonstration du Mode Accessibilité',
 			'accessibilite.demo.mention' => 'Données fictives, aucun envoi.',
 			'accessibilite.demo.intro' => 'Choisissez un élève et un moment de la séance.',
@@ -16478,6 +16668,8 @@ extension on Traductions {
 			'eleveConnexion.refus.plafondTitre' => 'Limite d\'appareils atteinte',
 			'eleveConnexion.refus.plafond' => 'Ce profil élève a atteint le nombre d\'appareils autorisés. Le tuteur peut en retirer un dans Foyer, puis afficher un nouveau code.',
 			'eleveConnexion.refus.tropDEssaisTitre' => 'Trop d\'essais',
+			_ => null,
+		} ?? switch (path) {
 			'eleveConnexion.refus.tropDEssais' => 'Patientez un instant avant de réessayer.',
 			'eleveConnexion.refus.horsLigneTitre' => 'Code pas encore vérifié',
 			'eleveConnexion.refus.horsLigne' => 'Vérifiez la connexion internet, puis réessayez.',
@@ -16510,8 +16702,6 @@ extension on Traductions {
 			'dossiers.file.dateChiffres' => ({required Object jour, required Object mois, required Object annee}) => '${jour}/${mois}/${annee}',
 			'dossiers.file.heureChiffres' => ({required Object heures, required Object minutes}) => '${heures}:${minutes}',
 			'dossiers.file.zoneUtc' => 'UTC',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.file.suivantAnnonce' => ({required Object nom}) => 'Dossier suivant : ${nom}',
 			'dossiers.detail.titreDe' => ({required Object nom}) => 'Dossier de ${nom}',
 			'dossiers.detail.titreElide' => ({required Object nom}) => 'Dossier d\'${nom}',
@@ -16992,6 +17182,8 @@ extension on Traductions {
 			'admin.programmes.publierVersionEnvoyer' => 'Publier',
 			'admin.programmes.publierVersionErreur' => ({required Object message}) => 'La publication n\'a pas abouti : ${message}',
 			'admin.programmes.champCodeTechnique' => 'Code technique (usage interne, jamais affiché à l\'élève)',
+			_ => null,
+		} ?? switch (path) {
 			'admin.programmes.champNomHumain' => 'Nom affiché',
 			'admin.programmes.champCycle' => 'Cycle',
 			'admin.programmes.champOrdre' => 'Ordre',
@@ -17024,8 +17216,6 @@ extension on Traductions {
 			'admin.journal.acteurSysteme' => 'Le système',
 			'admin.journal.acteurInconnu' => 'Compte supprimé',
 			'admin.journal.roleAdmin' => 'Administration',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.roleEnseignant' => 'Enseignant',
 			'admin.journal.roleTuteur' => 'Tuteur',
 			'admin.journal.roleEleve' => 'Élève',
@@ -17506,6 +17696,8 @@ extension on Traductions {
 			'compte.tuteur.pageInformations.fuseauIndisponible' => 'Non disponible pour le moment',
 			'compte.tuteur.pageInformations.note' => 'Ces informations sont tenues par l\'académie. Elles ne se modifient pas encore depuis l\'application.',
 			'compte.tuteur.pageSecurite.titre' => 'Connexion et sécurité',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageSecurite.sousTitre' => 'Comment vous accédez à votre compte.',
 			'compte.tuteur.pageSecurite.methode' => 'Méthode de connexion',
 			'compte.tuteur.pageSecurite.adresse' => 'Adresse de connexion',
@@ -17538,8 +17730,6 @@ extension on Traductions {
 			'compte.tuteur.pageApparence.titre' => 'Apparence',
 			'compte.tuteur.pageApparence.sousTitre' => 'Appliqué sur cet appareil.',
 			'compte.tuteur.pageApparence.theme' => 'Thème de l\'application',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageApparence.themeDetail' => 'Personnalisez l\'apparence de Rewayah.',
 			'compte.tuteur.pageApparence.confort' => 'Confort visuel',
 			'compte.tuteur.pageApparence.animations' => 'Animations',
@@ -18020,6 +18210,8 @@ extension on Traductions {
 			'enseignant.eleve.niveau' => 'Niveau',
 			'enseignant.eleve.objectif' => 'Objectif',
 			'enseignant.eleve.presence' => 'Présence récente',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.eleve.travail' => 'Travail',
 			'enseignant.eleve.travailReprise' => ({required Object page}) => 'Reprise à la ${page}',
 			'enseignant.eleve.derniereSeance' => 'Dernière séance',
@@ -18052,8 +18244,6 @@ extension on Traductions {
 			'enseignant.demo.etats' => 'Situations',
 			'enseignant.demo.etatNominal' => 'Journée ordinaire',
 			'enseignant.demo.etatVide' => 'Aucune séance',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.demo.etatHorsLigne' => 'Hors ligne',
 			'enseignant.bienvenue.titre' => 'Premiers pas',
 			'enseignant.bienvenue.salutation' => ({required Object prenom}) => 'Bienvenue, ${prenom}.',
@@ -18534,6 +18724,8 @@ extension on Traductions {
 			'controleur.observation.interventionAdminAide' => 'Quand l\'administration doit agir · votre texte sera demandé, elle le reçoit avec le rapport',
 			'controleur.observation.questionDomaine' => 'Quel domaine concerne-t-elle ?',
 			'controleur.observation.contexteDomaine' => 'Le domaine aide l\'administration à lire votre observation.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.pedagogie' => 'Pédagogie',
 			'controleur.observation.pedagogieAide' => 'Quand il s\'agit de l\'enseignement : explications, progression, supports',
 			'controleur.observation.interaction' => 'Interaction avec les élèves',
@@ -18566,8 +18758,6 @@ extension on Traductions {
 			'controleur.observation.libelleTexte' => 'Votre remarque',
 			'controleur.observation.aideTexte' => 'Décrivez seulement ce que vous avez observé.',
 			'controleur.observation.texteRequis' => 'Écrivez ce que vous avez observé pour continuer.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.questionRecap' => 'Vérifiez votre observation avant l\'envoi.',
 			'controleur.observation.cleNature' => 'Nature',
 			'controleur.observation.cleDomaine' => 'Domaine',
@@ -19048,6 +19238,8 @@ extension on Traductions {
 			'tc.observation.reglages.augmenter' => 'Augmenter',
 			'tc.observation.reglages.enregistrer' => 'Enregistrer',
 			'tc.observation.reglages.invalideVisites' => 'Au moins une visite par séance.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.reglages.invalideTemps' => 'Au moins trente secondes par séance.',
 			'tc.observation.reglages.valeurHeritee' => ({required Object valeur}) => 'Académie : ${valeur}',
 			'tc.observation.reglages.uniteVisiteUne' => ({required Object n}) => '${n} visite',
@@ -19080,8 +19272,6 @@ extension on Traductions {
 			'tc.parcours.feedback.comprehension.intitule' => 'Avez-vous compris ce qui a été travaillé ?',
 			'tc.parcours.feedback.comprehension.difficile' => 'Pas vraiment',
 			'tc.parcours.feedback.comprehension.bien' => 'Plutôt oui',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.feedback.comprehension.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.rythme.intitule' => 'Le rythme du cours vous a-t-il convenu ?',
 			'tc.parcours.feedback.rythme.difficile' => 'Trop rapide',

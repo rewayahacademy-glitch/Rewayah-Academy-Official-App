@@ -83,10 +83,39 @@ class CaseAccordObservation extends StatelessWidget {
   final ValueChanged<bool>? onChanged;
 
   @override
-  Widget build(BuildContext context) {
-    final String libelle = variante == VarianteObservation.eleveAdulte
+  Widget build(BuildContext context) => CaseAccordTexte(
+    libelle: variante == VarianteObservation.eleveAdulte
         ? t.consentement.texte.caseAdulte
-        : t.consentement.texte.caseResponsable;
+        : t.consentement.texte.caseResponsable,
+    cochee: cochee,
+    onChanged: onChanged,
+  );
+}
+
+/// Une case d'accord a libelle libre, **jamais precochee** : son etat vient
+/// toujours de l'appelant, qui part de `false`. La case des visites
+/// d'observation et celle de l'article 9 du contrat enseignant en sont deux
+/// usages.
+class CaseAccordTexte extends StatelessWidget {
+  /// Cree la case.
+  const CaseAccordTexte({
+    required this.libelle,
+    required this.cochee,
+    required this.onChanged,
+    super.key,
+  });
+
+  /// Le texte de l'accord, mot pour mot.
+  final String libelle;
+
+  /// L'etat de la case.
+  final bool cochee;
+
+  /// Appele au geste. `null` desactive la case (envoi en cours).
+  final ValueChanged<bool>? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
     final ValueChanged<bool>? geste = onChanged;
     return AppCard(
       // Toute la ligne est la cible (case et libelle), par le composant

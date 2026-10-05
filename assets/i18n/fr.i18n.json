@@ -228,6 +228,25 @@
       }
     },
     "bandeauPermanent": "Cours enregistré, visite de contrôle possible.",
+    "informationControle": {
+      "lien": "En savoir plus",
+      "e1": {
+        "titre": "Quelqu'un veille sur ton cours",
+        "p1": "Parfois, une personne de l'académie regarde et écoute ton cours en direct.",
+        "p2": "Elle vient pour vérifier que tout se passe bien et que ton enseignant est gentil et fait bien son travail.",
+        "p3": "Elle ne parle pas. Elle ne filme pas. Elle ne montre ton cours à personne.",
+        "p4": "Tu ne sais pas quand elle vient. C'est normal : comme ça, elle voit le vrai cours. Le petit message en haut de l'écran te le rappelle.",
+        "p5": "Si quelque chose te gêne ou te fait peur pendant un cours, dis-le à tes parents.",
+        "signaler": "Tu peux aussi appuyer sur Signaler."
+      },
+      "e2": {
+        "titre": "Les visites de contrôle",
+        "p1": "Pour protéger les élèves, une personne de l'académie peut observer un cours en direct, sans prévenir du moment. Elle voit l'écran du cours et peut entendre le son.",
+        "p2": "Elle ne parle pas, n'a pas de caméra et n'enregistre rien. Elle écrit un court compte rendu pour l'administration de l'académie, surtout sur l'enseignant et le déroulement du cours. Ton prénom n'y figure que si c'est nécessaire.",
+        "p3": "Ce compte rendu n'est jamais publié et il est effacé après 12 mois. Il sert seulement à l'académie pour prendre les bonnes décisions.",
+        "p4": "Le bandeau en haut de la salle te rappelle qu'une visite est possible. Si tu as une question, ou si quelque chose te dérange, parle à tes parents ou écris à {contact}."
+      }
+    },
     "secours": {
       "reseauFaible": "Réseau faible. L'audio est prioritaire.",
       "reseauFaibleGuidee": "Le réseau est faible.",
@@ -634,7 +653,32 @@
     "accepteLe": "Accepté le {date}",
     "erreur": "La signature n'a pas abouti. Réessayez dans un instant.",
     "horsLigne": "Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.",
-    "caseRequise": "Cochez la case pour continuer."
+    "caseRequise": "Cochez la case pour continuer.",
+    "a3": {
+      "titre": "Les cours sont enregistrés (le son seulement)",
+      "quoiTitre": "Ce que nous faisons.",
+      "quoi": "Chaque cours est enregistré en audio. L'image n'est pas enregistrée. Une personne de l'académie chargée du contrôle peut aussi suivre un cours en direct : elle voit et entend le cours, sans être vue ni entendue. Elle n'enregistre rien. La salle le rappelle en permanence.",
+      "pourquoiTitre": "Pourquoi.",
+      "pourquoi": "Pour protéger les enfants et les enseignants. Si quelqu'un signale un problème, nous pouvons vérifier ce qui s'est passé.",
+      "quiTitre": "Qui peut écouter l'enregistrement.",
+      "qui": "Seulement les personnes de l'académie chargées de la qualité et de la protection, et seulement pour une raison précise, par exemple un signalement. Chaque écoute est inscrite dans un journal. Vous pouvez demander si un enregistrement a été écouté, et pourquoi.",
+      "dureeTitre": "Combien de temps.",
+      "duree": "{duree} jours, puis effacé. S'il y a un signalement, l'enregistrement est gardé jusqu'à la fin de l'examen.",
+      "desaccordTitre": "Si vous n'êtes pas d'accord.",
+      "desaccord": "Vous pouvez vous opposer : Compte, Mes accords, Je m'oppose à l'enregistrement. Nous vous répondons sous un mois. Nous chercherons une solution avec vous. Si aucune n'est possible, vous pouvez arrêter sans frais pour les cours pas encore suivis.",
+      "jaiLu": "J'ai lu"
+    },
+    "e1": {
+      "quoi": "Chaque cours est enregistré en audio. L'image n'est pas enregistrée. Une personne de l'académie chargée du contrôle peut aussi suivre un cours en direct : elle voit et entend le cours, sans être vue ni entendue. Elle n'enregistre rien. Elle envoie ensuite un compte rendu à l'académie. La salle le rappelle en permanence.",
+      "pourquoi": "Pour protéger les enfants et les enseignants. Si quelqu'un signale un problème, nous pouvons vérifier ce qui s'est passé. C'est aussi une preuve pour vous si une famille se plaint à tort.",
+      "refusTitre": "Si vous refusez.",
+      "refus": "Nous ne pouvons pas vous confier d'élèves, car cette mesure protège les enfants. Nous vous le disons avant votre signature."
+    },
+    "clauseControle": {
+      "titre": "Visites de contrôle.",
+      "texte": "Pour protéger les élèves et garantir la qualité des cours, une personne de l'académie peut observer vos cours en direct, sans vous prévenir du moment. Elle voit et entend le cours. Elle ne parle pas, n'enregistre rien et ne publie rien. Elle écrit un compte rendu pour l'administration. Vous recevez chaque mois une synthèse. Vous pouvez la contester. Les comptes rendus sont gardés 12 mois. La politique de contrôle, jointe à ce contrat et disponible dans votre espace, explique tout. En signant, vous confirmez l'avoir reçue.",
+      "caseReligion": "J'accepte que l'académie traite le fait que j'enseigne le Coran, qui peut révéler ma religion, pour gérer mon contrat et mes cours."
+    }
   },
   "accessibilite": {
     "demo": {
