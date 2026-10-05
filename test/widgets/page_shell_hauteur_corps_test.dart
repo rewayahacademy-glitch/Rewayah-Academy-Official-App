@@ -330,9 +330,10 @@ void main() {
       Widget corps,
       Size taille, {
       TextDirection sens = TextDirection.ltr,
+      double echelle = 2,
     }) async {
       vue(tester, taille, zoneSure);
-      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      tester.platformDispatcher.textScaleFactorTestValue = echelle;
       addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
       await tester.pumpWidget(
         hotePage(
@@ -407,17 +408,105 @@ void main() {
       });
     }
 
-    testWidgets('salle qui tient : la page ne defile pas pour la zone, la '
-        'barre reste au premier affichage', (WidgetTester tester) async {
-      // La zone (environ 200) ne montre pas en-tete et support (350) : elle
-      // defile seule, la page ne s'allonge pas pour elle.
-      await monter(tester, salle(bandeau: 300), const Size(390, 844));
+    // Revue adverse de PAGESHELL-200-1c (majeur 1) : la salle « tenait »
+    // dans la vue parce que sa zone n'etait qu'une fenetre (environ 200 pour
+    // 350 d'en-tete et de support) ; le minimum du defileur ne comptait que
+    // si la page defilait deja. Il compte toujours : la page defile.
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets('salle qui tiendrait en ecrasant la zone, ${sens.name} : '
+          'la zone montre l\'en-tete et le support, la page defile', (
+        WidgetTester tester,
+      ) async {
+        await monter(
+          tester,
+          salle(bandeau: 300),
+          const Size(390, 844),
+          sens: sens,
+        );
+        expect(tester.takeException(), isNull);
+        expect(tester.getSize(zone()).height, closeTo(350, 0.5));
+        expect(defileurPage(tester).maxScrollExtent, greaterThan(0));
+        final ScrollPosition page = defileurPage(tester);
+        page.jumpTo(page.maxScrollExtent);
+        await tester.pump();
+        expect(tester.takeException(), isNull);
+        expect(
+          tester.getRect(find.byKey(cleBarre)).bottom,
+          lessThanOrEqualTo(844 - zoneSure.bottom + 0.5),
+        );
+      });
+    }
+
+    // Revue adverse de PAGESHELL-200-1c (majeur 2) : sous une tete fixe, un
+    // defileur qui cache son minimum ne faisait basculer la page qu'au-dela
+    // de 130 % de texte. A 100 %, la zone restait une fenetre.
+    testWidgets('tete fixe a 100 % : un defileur qui cache son minimum fait '
+        'passer la page en defilement global', (WidgetTester tester) async {
+      await monter(
+        tester,
+        salle(bandeau: 300),
+        const Size(800, 600),
+        echelle: 1,
+      );
       expect(tester.takeException(), isNull);
-      expect(defileurPage(tester).maxScrollExtent, 0);
-      expect(tester.getSize(zone()).height, lessThan(350));
+      final ScrollPosition page = defileurPage(tester);
+      expect(page.maxScrollExtent, greaterThan(0));
+      expect(tester.getSize(zone()).height, closeTo(350, 0.5));
+      page.jumpTo(page.maxScrollExtent);
+      await tester.pump();
       expect(
         tester.getRect(find.byKey(cleBarre)).bottom,
-        lessThanOrEqualTo(844 - zoneSure.bottom + 0.5),
+        lessThanOrEqualTo(600 - zoneSure.bottom + 0.5),
+      );
+    });
+
+    // Revue adverse de PAGESHELL-200-1c (mineur 4) : a vue egale, une page
+    // passee en defilement global gardait son corps agrandi quand son
+    // contenu rapetissait (tete qui laisse moins de la moitie de la vue :
+    // le corps recevait toute la vue, et la page defilait de la hauteur de
+    // la tete). Elle reprend la geometrie de la tete fixe.
+    testWidgets('a vue egale, un corps qui rapetisse reprend la geometrie de '
+        'la tete fixe', (WidgetTester tester) async {
+      final ValueNotifier<double> hauteur = ValueNotifier<double>(500);
+      addTearDown(hauteur.dispose);
+      vue(tester, const Size(800, 600), zoneSure);
+      await tester.pumpWidget(
+        hotePage(
+          PageShell(
+            titre: 'Salle',
+            defilante: false,
+            entete: const SizedBox(height: 300, child: Text('en-tete')),
+            child: ColonneCorps(
+              key: cleCorps,
+              children: <Widget>[
+                ValueListenableBuilder<double>(
+                  valueListenable: hauteur,
+                  builder: (BuildContext _, double h, Widget? _) =>
+                      SizedBox(key: cleBarre, height: h),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      // 500 ne tient pas sous la tete fixe : defilement global.
+      expect(defileurPage(tester).maxScrollExtent, greaterThan(0));
+      final double vueUtile = 600 - zoneSure.vertical;
+      final double tete =
+          tester.getRect(find.byKey(cleCorps)).top - zoneSure.top;
+      expect(tete, greaterThan(vueUtile / 2));
+
+      hauteur.value = 50;
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      // Le corps tient sous la tete : la page ne defile plus, et le corps
+      // descend jusqu'au bas de la vue, comme sous une tete fixe.
+      expect(defileurPage(tester).maxScrollExtent, 0);
+      expect(
+        tester.getRect(find.byKey(cleCorps)).bottom,
+        closeTo(600 - zoneSure.bottom, 0.5),
       );
     });
 

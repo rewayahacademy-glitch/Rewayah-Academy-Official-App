@@ -562,8 +562,12 @@ void main() {
     // direct comprise) et le support entiers : en haut, au support, au bout
     // (la barre). 667x375 sans zone sure a 200 % : la page passe en
     // defilement global au lieu de deborder (standard et Interface guidee).
-    // RTL pour l'en-tete en `Wrap`. 667x375 a 100 % en non-regression : tete
-    // fixe, barre au premier affichage.
+    // RTL pour l'en-tete en `Wrap`.
+    // Reprise apres revue adverse : les vues ou la salle « tenait » en
+    // ecrasant le support (390x844 et 414x896 en Interface guidee a 200 %,
+    // 360x800 a 200 %, 390x844 en Interface guidee a 100 %) et le paysage a
+    // 100 % (667x375, standard et Interface guidee) defilent maintenant avec
+    // le support entier ; 320x568 a 100 % montre le bandeau sans debordement.
     for (final (
           String,
           Size,
@@ -694,14 +698,92 @@ void main() {
             false,
             1,
           ),
+          (
+            '667x375',
+            Size(667, 375),
+            EdgeInsets.zero,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            false,
+            1,
+          ),
+          (
+            '667x375',
+            Size(667, 375),
+            EdgeInsets.zero,
+            ThemeMode.dark,
+            InterfaceMode.enfant,
+            true,
+            1,
+          ),
+          (
+            '390x844',
+            Size(390, 844),
+            EdgeInsets.zero,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            false,
+            2,
+          ),
+          (
+            '390x844',
+            Size(390, 844),
+            EdgeInsets.zero,
+            ThemeMode.dark,
+            InterfaceMode.enfant,
+            true,
+            2,
+          ),
+          (
+            '414x896',
+            Size(414, 896),
+            EdgeInsets.zero,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            false,
+            2,
+          ),
+          (
+            '360x800',
+            Size(360, 800),
+            EdgeInsets.zero,
+            ThemeMode.light,
+            InterfaceMode.standard,
+            false,
+            2,
+          ),
+          (
+            '390x844',
+            Size(390, 844),
+            EdgeInsets.zero,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            false,
+            1,
+          ),
+          (
+            '320x568',
+            Size(320, 568),
+            _zoneSure,
+            ThemeMode.light,
+            InterfaceMode.standard,
+            false,
+            1,
+          ),
+          (
+            '320x568',
+            Size(320, 568),
+            _zoneSure,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            true,
+            1,
+          ),
         ]) {
       final String guidee = cas.$5 == InterfaceMode.enfant ? '_guidee' : '';
       final String rtl = cas.$6 ? '_rtl' : '';
       final String texte = 'texte${(cas.$7 * 100).toInt()}';
       for (final String ou in <String>['haut', 'support', 'bout']) {
-        if (cas.$7 == 1 && ou != 'haut') {
-          continue;
-        }
         final String nom =
             'pageshell200_1c_${cas.$1}@2_${texte}_'
             '${cas.$4.name}$guidee${rtl}_$ou';
