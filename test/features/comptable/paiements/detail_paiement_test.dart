@@ -14,8 +14,8 @@ import 'package:rewayah_academy/core/widgets/montant_sensible.dart';
 import 'package:rewayah_academy/features/comptable/paiements/detail_paiement_page.dart';
 import 'package:rewayah_academy/features/comptable/paiements/signaler_ecart.dart';
 import 'package:rewayah_academy/features/demo/comptable/paiements_demo.dart';
-import 'package:rewayah_academy/features/demo/comptable/validations_demo.dart';
 import 'package:rewayah_academy/features/demo/comptable/socle_comptable_demo.dart';
+import 'package:rewayah_academy/features/demo/comptable/validations_demo.dart';
 
 import 'support_paiements.dart';
 

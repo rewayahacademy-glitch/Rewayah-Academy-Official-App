@@ -361,44 +361,48 @@ class _FeuilleDecisionValidationState
           onPress: () => Navigator.of(context).pop(_change),
         ),
       );
-    } else if (saisieMotif) {
-      boutons
-        ..add(
-          ActionPrincipale(
-            libelle: v.annuler,
-            niveau: NiveauAction.tertiaire,
-            onPress: envoi
-                ? null
-                : () => setState(() {
-                    _phase = _Phase.lecture;
-                    _erreurMotif = null;
-                  }),
-          ),
-        )
-        ..add(
-          ActionPrincipale(
-            key: FeuilleDecisionValidation.cleConfirmerRefus,
-            libelle: v.confirmerRefus,
-            enCours: envoi,
-            onPress: () => _decider(DecisionValidation.refuser),
-          ),
-        );
     } else {
+      // Une seule action pleine : « Confirmer le refus » pendant la saisie
+      // du motif, « Valider » sinon ; l'autre geste est secondaire.
       boutons
         ..add(
-          ActionPrincipale(
-            key: FeuilleDecisionValidation.cleRefuser,
-            libelle: v.refuser,
-            niveau: NiveauAction.secondaire,
-            onPress: envoi ? null : () => setState(() => _phase = _Phase.motif),
-          ),
+          saisieMotif
+              ? ActionPrincipale(
+                  libelle: v.annuler,
+                  niveau: NiveauAction.tertiaire,
+                  onPress: envoi
+                      ? null
+                      : () => setState(() {
+                          _phase = _Phase.lecture;
+                          _erreurMotif = null;
+                        }),
+                )
+              : ActionPrincipale(
+                  key: FeuilleDecisionValidation.cleRefuser,
+                  libelle: v.refuser,
+                  niveau: NiveauAction.secondaire,
+                  onPress: envoi
+                      ? null
+                      : () => setState(() => _phase = _Phase.motif),
+                ),
         )
         ..add(
           ActionPrincipale(
-            key: FeuilleDecisionValidation.cleValider,
-            libelle: v.valider,
-            enCours: envoi && _enCours == DecisionValidation.valider,
-            onPress: () => _decider(DecisionValidation.valider),
+            key: saisieMotif
+                ? FeuilleDecisionValidation.cleConfirmerRefus
+                : FeuilleDecisionValidation.cleValider,
+            libelle: saisieMotif ? v.confirmerRefus : v.valider,
+            enCours:
+                envoi &&
+                _enCours ==
+                    (saisieMotif
+                        ? DecisionValidation.refuser
+                        : DecisionValidation.valider),
+            onPress: () => _decider(
+              saisieMotif
+                  ? DecisionValidation.refuser
+                  : DecisionValidation.valider,
+            ),
           ),
         );
     }

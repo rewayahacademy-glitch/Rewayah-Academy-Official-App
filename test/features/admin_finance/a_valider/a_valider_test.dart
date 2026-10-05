@@ -15,6 +15,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -22,10 +23,9 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/port_validations_finance.dart';
 import 'package:rewayah_academy/core/comptable/modeles_comptable.dart';
 import 'package:rewayah_academy/core/comptable/statuts_comptable.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
@@ -70,7 +70,7 @@ class ValidationsPilotees implements PortValidationsFinance {
     final Completer<List<DemandeValidation>>? a = attente;
     if (a != null) return a.future;
     final Object? e = erreur;
-    if (e != null) throw e;
+    if (e != null) return Future<List<DemandeValidation>>.error(e);
     return rendues;
   }
 
@@ -83,7 +83,7 @@ class ValidationsPilotees implements PortValidationsFinance {
   }) async {
     decisions.add((decision, motif, cleIdempotence));
     final Object? e = erreurDecision;
-    if (e != null) throw e;
+    if (e != null) return Future<DemandeValidation>.error(e);
     final Completer<DemandeValidation>? c = this.decision;
     if (c != null) return c.future;
     throw StateError('aucune decision prevue');
@@ -198,12 +198,14 @@ void main() {
       expect(find.text(v.decidees), findsOneWidget);
     });
 
-    testWidgets('erreur : un echec n\'est jamais une liste vide, « Reessayer »',
-        (WidgetTester tester) async {
-      await monter(tester, ValidationsPilotees(erreur: StateError('x')));
-      expect(find.byKey(AValiderBloc.cleVide), findsNothing);
-      expect(find.text(t.commun.reessayer), findsWidgets);
-    });
+    testWidgets(
+      'erreur : un echec n\'est jamais une liste vide, « Reessayer »',
+      (WidgetTester tester) async {
+        await monter(tester, ValidationsPilotees(erreur: StateError('x')));
+        expect(find.byKey(AValiderBloc.cleVide), findsNothing);
+        expect(find.text(t.commun.reessayer), findsWidgets);
+      },
+    );
 
     testWidgets('hors ligne : l\'echec sans reseau le dit', (
       WidgetTester tester,
@@ -256,7 +258,10 @@ void main() {
         findsOneWidget,
       );
       // Masques par defaut dans la liste.
-      expect(find.text(formaterMontant(SocleComptableDemo.usd(500))), findsNothing);
+      expect(
+        find.text(formaterMontant(SocleComptableDemo.usd(500))),
+        findsNothing,
+      );
     });
   });
 
@@ -302,7 +307,9 @@ void main() {
       expect(port.decisions, isEmpty);
       await appuyer(
         tester,
-        find.byKey(FeuilleDecisionValidation.cleMotif(MotifRefusValidation.autre)),
+        find.byKey(
+          FeuilleDecisionValidation.cleMotif(MotifRefusValidation.autre),
+        ),
       );
       await tester.enterText(
         find.byKey(FeuilleDecisionValidation.cleMotifAutre),
@@ -347,7 +354,9 @@ void main() {
       await appuyer(tester, find.byKey(FeuilleDecisionValidation.cleRefuser));
       await appuyer(
         tester,
-        find.byKey(FeuilleDecisionValidation.cleMotif(MotifRefusValidation.autre)),
+        find.byKey(
+          FeuilleDecisionValidation.cleMotif(MotifRefusValidation.autre),
+        ),
       );
       await tester.enterText(
         find.byKey(FeuilleDecisionValidation.cleMotifAutre),
@@ -397,9 +406,7 @@ void main() {
         lecteurNom: SocleComptableDemo.leComptable.nom,
       );
       final List<DemandeValidation> siennes = await comptable.demandes(
-        const FiltreDemandesValidation(
-          etat: EtatDemandeValidation.enAttente,
-        ),
+        const FiltreDemandesValidation(etat: EtatDemandeValidation.enAttente),
       );
       final DemandeValidation paie = siennes.firstWhere(
         (DemandeValidation d) => d.id == ValidationsDemo.demandePaieComptable,
@@ -560,13 +567,13 @@ void main() {
         find.text(t.comptable.paiements.confirmation.validationDemandeeTitre),
         findsWidgets,
       );
-      await appuyer(tester, find.text(t.comptable.paiements.confirmation.fermer));
+      await appuyer(
+        tester,
+        find.text(t.comptable.paiements.confirmation.fermer),
+      );
       // Le detail relu : le suivi « Validation demandee », plus de bouton.
       expect(find.byKey(SuiviValidation.cle), findsOneWidget);
-      expect(
-        find.text(t.comptable.statuts.validation.enAttente),
-        findsWidgets,
-      );
+      expect(find.text(t.comptable.statuts.validation.enAttente), findsWidgets);
       expect(find.byKey(DetailPaiementPage.clePayer), findsNothing);
       // La demande est dans l'onglet de la direction, decidable par elle.
       final List<DemandeValidation> recues =
@@ -581,42 +588,44 @@ void main() {
       expect(recues.single.precision, contains('2 octobre 2026'));
     });
 
-    testWidgets('refusee par la direction : « Refusee », par qui, et le motif',
-        (WidgetTester tester) async {
-      final EtatDemoPaiements etat = EtatDemoPaiements();
-      final DemandeValidation d = RegistreValidationsDemo.instance.deposer(
-        nature: NatureDemandeValidation.payoutSensible,
-        demandeurId: SocleComptableDemo.comptableId,
-        demandeurNom: SocleComptableDemo.leComptable.nom,
-        objet: 'x',
-        montant: SocleComptableDemo.usd(100),
-        raison: RaisonBlocage.validationRequise,
-        cleIdempotence: 'dep',
-        objetId: PaiementsDemo.obligationMethodeRecente,
-      );
-      await const ValidationsFinanceDemo().decider(
-        demandeId: d.id,
-        decision: DecisionValidation.refuser,
-        cleIdempotence: 'dec',
-        motif: v.motifs.coordonnees,
-      );
-      await monterPaiements(
-        tester,
-        const DetailPaiementPage(
-          obligationId: PaiementsDemo.obligationMethodeRecente,
-        ),
-        surcharges: surchargesComptable(etat),
-        taille: telephone,
-      );
-      expect(find.text(t.comptable.statuts.validation.refusee), findsWidgets);
-      expect(
-        find.textContaining(v.motifs.coordonnees),
-        findsOneWidget,
-      );
-      expect(find.textContaining(ValidationsDemo.directionNom), findsOneWidget);
-      // Refusee : la demande peut etre refaite apres correction.
-      expect(find.byKey(DetailPaiementPage.clePayer), findsOneWidget);
-    });
+    testWidgets(
+      'refusee par la direction : « Refusee », par qui, et le motif',
+      (WidgetTester tester) async {
+        final EtatDemoPaiements etat = EtatDemoPaiements();
+        final DemandeValidation d = RegistreValidationsDemo.instance.deposer(
+          nature: NatureDemandeValidation.payoutSensible,
+          demandeurId: SocleComptableDemo.comptableId,
+          demandeurNom: SocleComptableDemo.leComptable.nom,
+          objet: 'x',
+          montant: SocleComptableDemo.usd(100),
+          raison: RaisonBlocage.validationRequise,
+          cleIdempotence: 'dep',
+          objetId: PaiementsDemo.obligationMethodeRecente,
+        );
+        await const ValidationsFinanceDemo().decider(
+          demandeId: d.id,
+          decision: DecisionValidation.refuser,
+          cleIdempotence: 'dec',
+          motif: v.motifs.coordonnees,
+        );
+        await monterPaiements(
+          tester,
+          const DetailPaiementPage(
+            obligationId: PaiementsDemo.obligationMethodeRecente,
+          ),
+          surcharges: surchargesComptable(etat),
+          taille: telephone,
+        );
+        expect(find.text(t.comptable.statuts.validation.refusee), findsWidgets);
+        expect(find.textContaining(v.motifs.coordonnees), findsOneWidget);
+        expect(
+          find.textContaining(ValidationsDemo.directionNom),
+          findsOneWidget,
+        );
+        // Refusee : la demande peut etre refaite apres correction.
+        expect(find.byKey(DetailPaiementPage.clePayer), findsOneWidget);
+      },
+    );
 
     testWidgets('validee par la direction : « Validee », le paiement devient '
         'payable par le Comptable', (WidgetTester tester) async {

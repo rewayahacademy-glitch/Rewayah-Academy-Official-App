@@ -139,7 +139,7 @@ class _Liste extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         for (int i = 0; i < liste.length; i++) ...<Widget>[
-          if (i > 0) Ecart.vMd,
+          if (i > 0) Ecart.vLg,
           CarteDemandeValidation(
             key: AValiderBloc.cleDemande(liste[i].id),
             demande: liste[i],

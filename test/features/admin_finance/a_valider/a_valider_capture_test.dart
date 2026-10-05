@@ -43,11 +43,18 @@ MaterialApp _app({
   Widget? accueil,
 }) {
   Widget cadre(BuildContext context, Widget? app) => MediaQuery(
-    data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(echelle)),
+    data: MediaQuery.of(context)
+        .copyWith(textScaler: TextScaler.linear(echelle)),
     child: app!,
   );
-  final ThemeData clair = AppTheme.pour(InterfaceMode.standard, Brightness.light);
-  final ThemeData sombre = AppTheme.pour(InterfaceMode.standard, Brightness.dark);
+  final ThemeData clair = AppTheme.pour(
+    InterfaceMode.standard,
+    Brightness.light,
+  );
+  final ThemeData sombre = AppTheme.pour(
+    InterfaceMode.standard,
+    Brightness.dark,
+  );
   if (routeur != null) {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
@@ -222,8 +229,14 @@ void main() {
               ),
             ),
           );
+          // Le motif retenu en vue (a 320 texte x2, le bouton suit en
+          // defilant).
           await tester.ensureVisible(
-            find.byKey(FeuilleDecisionValidation.cleConfirmerRefus),
+            find.byKey(
+              FeuilleDecisionValidation.cleMotif(
+                MotifRefusValidation.coordonnees,
+              ),
+            ),
           );
           await tester.pumpAndSettle();
           debugPrint('PNG ${await capturer(tester, 'refus_motif_${nom}_$m')}');
