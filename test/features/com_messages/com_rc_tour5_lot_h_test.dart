@@ -4,7 +4,8 @@
 // Chaque test dit sa contre-preuve : ce qui echouait a 27689f94.
 //
 // - constat 1 : un accuse efface le brouillon de SON texte, meme apres un
-//   echec ou la fermeture du fil ; un texte envoye ne revient jamais ;
+//   echec ou la fermeture du fil ; un texte envoye ne revient jamais, meme
+//   dans un fil rouvert avant l'accuse (contre-verification) ;
 // - constat 2 : en lecture seule, l'en-tete complet reste a 1440 ;
 // - constat 3 (N-9) : le panneau de pre-ecoute se lit en entier ;
 // - constat 6 : l'entree dans le Focus ne se compte plus pendant `build` ;
@@ -453,6 +454,89 @@ void main() {
       await _attendre(tester);
       expect((await brouillons.lire(_cle))?.texte, 'C en cours');
       expect(_champ(tester).text, 'C en cours');
+    });
+
+    testWidgets('un fil rouvert AVANT l accuse ne remet pas le texte parti : '
+        'rien ne peut repartir en double', (WidgetTester tester) async {
+      // Contre-preuve : a 71e3e555, le fil remonte restaurait « Parti »
+      // (« Brouillon restaure ») ; a l'accuse, l'ancien etat effacait le
+      // brouillon, mais le champ du nouveau gardait « Parti ».
+      final BrouillonsMemoire brouillons = BrouillonsMemoire();
+      final Completer<void> accuse = Completer<void>();
+      int envois = 0;
+      Widget fil() => FilDiscussion(
+        messages: const <MessageFil>[],
+        textes: _textes,
+        cleBrouillon: _cle,
+        onEnvoyer: (String _) {
+          envois++;
+          return accuse.future;
+        },
+      );
+      final List<Override> surcharges = <Override>[
+        portBrouillonsProvider.overrideWithValue(brouillons),
+      ];
+      await _monterNu(tester, fil(), surcharges: surcharges);
+      await tester.enterText(find.byKey(FilDiscussion.champKey), 'Parti');
+      await tester.pump();
+      await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+      await tester.pump();
+      // Le fil est quitte, puis rouvert avant l'accuse.
+      await _monterNu(tester, const SizedBox(), surcharges: surcharges);
+      await _monterNu(tester, fil(), surcharges: surcharges);
+      expect(_champ(tester).text, isEmpty);
+      expect(find.byKey(FilDiscussion.cleBrouillonRestaure), findsNothing);
+      accuse.complete();
+      await _attendre(tester);
+      expect(await brouillons.lire(_cle), isNull);
+      expect(_champ(tester).text, isEmpty);
+      expect(envois, 1);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('a l accuse, un autre fil qui montre encore ce texte remis, '
+        'sans modification, vide son champ', (WidgetTester tester) async {
+      // Contre-preuve : a 71e3e555, le second fil gardait « Parti » apres
+      // l'accuse, pret a partir en double.
+      final BrouillonsMemoire brouillons = BrouillonsMemoire();
+      await brouillons.enregistrer(_cle, 'Parti');
+      final Completer<void> accuse = Completer<void>();
+      Widget fil(Key cle) => Expanded(
+        child: FilDiscussion(
+          key: cle,
+          messages: const <MessageFil>[],
+          textes: _textes,
+          cleBrouillon: _cle,
+          onEnvoyer: (String _) => accuse.future,
+        ),
+      );
+      await _monterNu(
+        tester,
+        Column(
+          children: <Widget>[
+            fil(const ValueKey<String>('a')),
+            fil(const ValueKey<String>('b')),
+          ],
+        ),
+        taille: const Size(390, 1600),
+        surcharges: <Override>[
+          portBrouillonsProvider.overrideWithValue(brouillons),
+        ],
+      );
+      final Finder champs = find.byKey(FilDiscussion.champKey);
+      TextEditingController champ(int i) =>
+          tester.widget<TextField>(champs.at(i)).controller!;
+      expect(champ(0).text, 'Parti');
+      expect(champ(1).text, 'Parti');
+      await tester.tap(find.byKey(FilDiscussion.envoyerKey).first);
+      await tester.pump();
+      expect(champ(0).text, isEmpty);
+      expect(champ(1).text, 'Parti');
+      accuse.complete();
+      await _attendre(tester);
+      expect(champ(1).text, isEmpty);
+      expect(await brouillons.lire(_cle), isNull);
+      expect(tester.takeException(), isNull);
     });
   });
 

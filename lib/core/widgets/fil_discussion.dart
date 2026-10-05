@@ -67,6 +67,10 @@
 //   champ est vide et sans focus : une bulle au moins reste a l'ecran ;
 // - decision R-28 : un micro a cote d'« Envoyer » ouvre l'enregistrement
 //   ([MicroVocalFil], [DemandeVocalFil]), a la place du lien sous le champ.
+// - contre-verification du lot H : un texte en attente d'accuse est tenu
+//   par la persistance (`PersistanceBrouillon.marquerEnAttente`) ; un fil
+//   rouvert avant l'accuse ne le remet pas dans son champ, et a l'accuse un
+//   fil qui montre encore ce texte remis, sans modification, vide son champ.
 
 import 'dart:async';
 import 'dart:math' as math;
@@ -522,6 +526,9 @@ class _FilDiscussionState extends State<FilDiscussion> {
   /// (constat 1) : un accuse n'efface que le brouillon de SON texte.
   String _garde = '';
 
+  /// Arrete l'ecoute des issues d'envoi (accuse, echec) de la persistance.
+  VoidCallback? _arreterIssues;
+
   /// Le composer vocal dit-il son micro disponible (decision R-28) ?
   bool _microDisponible = false;
 
@@ -590,6 +597,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
         context,
       )..caler(_champ.text);
       _persistance = persistance;
+      _arreterIssues = persistance.ecouterIssues(_aLIssueDUnEnvoi);
       if (persistance.port != null) unawaited(_restaurer(persistance, cle));
     }
   }
@@ -620,6 +628,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
   void dispose() {
     // Retirer une ecoute d'un controleur exterieur deja libere est permis.
     _champ.removeListener(_auChangement);
+    _arreterIssues?.call();
     _proprio?.dispose();
     _relaisTete?.rendre(this);
     _defilementPropre?.dispose();
@@ -644,6 +653,23 @@ class _FilDiscussionState extends State<FilDiscussion> {
     if (!remis) return;
     _garde = _champ.text;
     if (mounted) setState(() => _restaure = true);
+  }
+
+  /// Un envoi de [cle] s'est termine, peut-etre depuis un fil deja ferme.
+  /// Accuse : si le champ montre encore ce texte remis, sans modification,
+  /// il se vide (le texte est parti, il ne doit pas repartir en double).
+  void _aLIssueDUnEnvoi(CleBrouillon cle, String texte, bool accuse) {
+    final PersistanceBrouillon? persistance = _persistance;
+    if (!accuse || !mounted || persistance == null) return;
+    if (cle != widget.cleBrouillon || !_restaure || _champ.text != texte) {
+      return;
+    }
+    persistance.caler('');
+    _champ.clear();
+    setState(() {
+      _restaure = false;
+      _garde = '';
+    });
   }
 
   void _auChangement() {
@@ -701,6 +727,9 @@ class _FilDiscussionState extends State<FilDiscussion> {
     // Lus avant l'attente : l'accuse peut arriver fil ferme (constat 1).
     final CleBrouillon? cle = widget.cleBrouillon;
     final PersistanceBrouillon? persistance = _persistance;
+    // Le texte attend son accuse (premier envoi comme nouvel essai) : un fil
+    // rouvert d'ici la ne le remet pas dans son champ.
+    if (cle != null) persistance?.marquerEnAttente(cle, m.brut);
     try {
       final Future<void> Function(String, String)? identifie =
           widget.onEnvoyerMessage;
@@ -710,9 +739,11 @@ class _FilDiscussionState extends State<FilDiscussion> {
         await widget.onEnvoyer!(m.texte);
       }
       _effacerBrouillonDe(m, cle, persistance);
+      if (cle != null) persistance?.terminerEnvoi(cle, m.brut, accuse: true);
       if (!mounted) return;
       setState(() => m.etat = EtatEnvoiMessage.envoye);
     } on Object {
+      if (cle != null) persistance?.terminerEnvoi(cle, m.brut, accuse: false);
       if (!mounted) return;
       setState(() => m.etat = EtatEnvoiMessage.echec);
     }
