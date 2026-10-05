@@ -94,7 +94,7 @@ void main() {
     expect(find.text(c.auteur(auteur: 'La direction')), findsOneWidget);
     expect(
       tester.widget<TextField>(_champ(r.montantCible)).controller!.text,
-      '5000',
+      '9000',
     );
     expect(
       tester.widget<TextField>(_champ(r.montantAuto)).controller!.text,

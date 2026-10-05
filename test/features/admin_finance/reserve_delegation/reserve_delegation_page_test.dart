@@ -111,7 +111,7 @@ void main() {
     // Masques par defaut : le masque de la devise, jamais le chiffre.
     final String masque = MontantSensible.masquePour('USD');
     expect(find.text(masque), findsWidgets);
-    final String actuel = formaterMontant(SocleComptableDemo.usd(3200));
+    final String actuel = formaterMontant(SocleComptableDemo.usd(7400));
     expect(find.text(actuel), findsNothing);
     await tester.tap(find.byKey(BasculeMontants.cleBouton));
     await tester.pumpAndSettle();

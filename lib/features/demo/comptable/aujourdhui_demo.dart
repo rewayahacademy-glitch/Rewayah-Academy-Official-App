@@ -6,8 +6,8 @@
 // Donnees tenues pour la spec §44 : 12 paiements prets, 2 infos
 // manquantes, 1 modification recente de methode, 1 validation
 // supplementaire, 1 payout echoue, 1 remboursement, 3 encaissements,
-// 2 rapprochements, 1 Reserve strategique sous l'objectif (couverture en
-// mois), 1 fournisseur indisponible. Les sommes sont **rendues par la
+// 2 rapprochements, 1 Reserve strategique sous son objectif fixe (la
+// politique de `direction_demo.dart`), 1 fournisseur indisponible. Les sommes sont **rendues par la
 // source** : ici, ecrites a la main et coherentes entre elles (detenue =
 // protegee + transit + libre), jamais additionnees par l'ecran.
 
@@ -18,32 +18,25 @@ import '../../../core/comptable/modeles_comptable.dart';
 import '../../../core/comptable/statuts_comptable.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/router/routes.dart';
+import 'direction_demo.dart';
 import 'socle_comptable_demo.dart';
 
 /// Les donnees d'Aujourd'hui en demonstration.
 abstract final class DonneesAujourdhuiDemo {
   /// La synthese de tresorerie : la Tresorerie libre est ce qui reste apres
-  /// les fonds proteges et le transit (§11).
+  /// les fonds proteges et le transit (§11). Memes chiffres que la
+  /// Tresorerie (`tresorerie_demo.dart`, CPT-FUS).
   static final SyntheseTresorerie tresorerie = SyntheseTresorerie(
-    detenue: SocleComptableDemo.usd(48250),
-    protegee: SocleComptableDemo.usd(31900),
-    enTransit: SocleComptableDemo.usd(1450),
-    libre: SocleComptableDemo.usd(14900),
+    detenue: SocleComptableDemo.usd(48650),
+    protegee: SocleComptableDemo.usd(37900),
+    enTransit: SocleComptableDemo.usd(1250),
+    libre: SocleComptableDemo.usd(9500),
   );
 
-  /// La Reserve strategique, sous son objectif de trois mois de charges
-  /// essentielles (§44 « politique couverture en mois »).
-  static final IndicateursReserve reserve = IndicateursReserve(
-    mode: ModeObjectifReserve.couvertureMois,
-    nombreMois: 3,
-    objectif: SocleComptableDemo.usd(9000),
-    actuel: SocleComptableDemo.usd(6300),
-    manque: SocleComptableDemo.usd(2700),
-    atteintPourMille: 700,
-    etat: EtatReserve.sousObjectif,
-    derniereAllocation: DateTime(2026, 9, 30),
-    prochaineAllocation: DateTime(2026, 10, 31),
-  );
+  /// La Reserve strategique, sous son objectif fixe : la meme que la
+  /// politique de la direction (`direction_demo.dart`) et le coffre de la
+  /// Tresorerie (CPT-FUS).
+  static final IndicateursReserve reserve = PolitiqueReserveDemo.sousObjectif;
 
   /// La file : « A traiter » et « Alertes » melangees, chaque element avec
   /// la route de son ecran canonique deja filtre (§5.1).

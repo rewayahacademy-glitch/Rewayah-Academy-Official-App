@@ -24,7 +24,7 @@ const String _laDirection = 'La direction';
 /// construisent par [PolitiqueReserveDemo.avec]. L'enregistrement ne garde la
 /// nouvelle version qu'en memoire de la page : aucune ecriture reelle.
 class PolitiqueReserveDemo implements PortPolitiqueReserve {
-  /// La demonstration par defaut : cible fixe de 5 000 USD.
+  /// La demonstration par defaut : cible fixe de 9 000 USD.
   PolitiqueReserveDemo() : this.avec(cibleFixe);
 
   /// La demonstration qui part de [depart].
@@ -32,11 +32,11 @@ class PolitiqueReserveDemo implements PortPolitiqueReserve {
     : _courante = depart,
       _journal = <EntreeJournal>[_entree('res-1', depart.version)];
 
-  /// Cible fixe : 5 000 USD, 1 000 USD affectes chaque mois, seuil a 80 %.
+  /// Cible fixe : 9 000 USD, 1 000 USD affectes chaque mois, seuil a 80 %.
   static final PolitiqueReserve cibleFixe = PolitiqueReserve(
     version: '2',
     modeObjectif: ModeObjectifReserve.montantFixe,
-    montantCible: SocleComptableDemo.usd(5000),
+    montantCible: SocleComptableDemo.usd(9000),
     regleAlimentation: RegleAlimentation.montantFixe,
     montantAuto: SocleComptableDemo.usd(1000),
     cadence: CadenceAlimentation.mensuelle,
@@ -59,13 +59,16 @@ class PolitiqueReserveDemo implements PortPolitiqueReserve {
     auteur: _laDirection,
   );
 
-  /// La Reserve sous l'objectif (§44) : 3 200 USD sur 5 000 USD.
+  /// La Reserve sous l'objectif (§44) : 7 400 USD sur 9 000 USD, le solde
+  /// du coffre Reserve strategique de la Tresorerie (`tresorerie_demo.dart`)
+  /// et la Reserve d'Aujourd'hui (`aujourdhui_demo.dart`) : une seule Reserve
+  /// dans toute la demonstration (CPT-FUS).
   static final IndicateursReserve sousObjectif = IndicateursReserve(
     mode: ModeObjectifReserve.montantFixe,
-    objectif: SocleComptableDemo.usd(5000),
-    actuel: SocleComptableDemo.usd(3200),
-    manque: SocleComptableDemo.usd(1800),
-    atteintPourMille: 640,
+    objectif: SocleComptableDemo.usd(9000),
+    actuel: SocleComptableDemo.usd(7400),
+    manque: SocleComptableDemo.usd(1600),
+    atteintPourMille: 822,
     etat: EtatReserve.sousObjectif,
     derniereAllocation: DateTime(2026, 9, 30),
     prochaineAllocation: DateTime(2026, 10, 31),
