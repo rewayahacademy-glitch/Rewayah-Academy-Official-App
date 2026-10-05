@@ -408,17 +408,19 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
     setState(() => _vocauxConfirmes.add((cle: cle, duree: vocal.duree)));
   }
 
-  /// L'en-tete du canal. Hors Focus, « Mode focus » au bout de la ligne ;
+  /// L'en-tete du canal. Hors Focus, « Mode focus » apres le nom, aligne au
+  /// debut (R-12, decision du directeur ; RTL respecte) ;
   /// en Focus, l'en-tete minimal (la sortie est dans le bandeau du Focus).
   /// La phrase « Brouillon restaure » est posee par le fil, sur son champ.
   Widget _entete(Canal canal, {required bool focus}) => Padding(
     padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-    // « Mode focus » au bout de la ligne s'il y tient, sinon dessous (a 390
-    // en texte double, le nom garde toute la largeur).
+    // R-12 : « Mode focus » suit le nom, aligne au debut (a droite en
+    // arabe), s'il y tient ; sinon dessous (a 390 en texte double, le nom
+    // garde toute la largeur). Jamais repousse au bout de la ligne.
     child: Wrap(
       spacing: AppSpacing.sm,
       runSpacing: AppSpacing.xs,
-      alignment: WrapAlignment.spaceBetween,
+      alignment: WrapAlignment.start,
       crossAxisAlignment: WrapCrossAlignment.center,
       children: <Widget>[
         EnteteCanal(canal: canal, minimal: focus),
@@ -432,7 +434,8 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
   Widget _suiteEntete(Canal canal, {required bool focus}) => Wrap(
     spacing: AppSpacing.sm,
     runSpacing: AppSpacing.xs,
-    alignment: WrapAlignment.spaceBetween,
+    // R-12 : aligne au debut, RTL respecte.
+    alignment: WrapAlignment.start,
     crossAxisAlignment: WrapCrossAlignment.center,
     children: <Widget>[
       MarqueVisibiliteCanal(visibilite: canal.resume.visibilite),

@@ -357,8 +357,8 @@ void main() {
       expect(find.byKey(CanalStudio.cleLectureSeule), findsOneWidget);
     });
 
-    testWidgets('arabe, 1440 : le bandeau se lit en miroir, la sortie au '
-        'bout de la ligne', (WidgetTester tester) async {
+    testWidgets('arabe, 1440 : le bandeau se lit en miroir, la sortie apres '
+        'l etat (R-12)', (WidgetTester tester) async {
       await monterStudio(
         tester,
         port: portFocus(),

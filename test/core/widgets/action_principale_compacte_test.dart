@@ -7,6 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 
 import '../../support/hote_theme.dart';
@@ -51,10 +52,9 @@ void main() {
       });
     }
 
-    testWidgets('dans un Wrap : la pastille reste sur la ligne du titre, au '
-        'bout (spaceBetween), sans prendre une ligne entiere', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('dans un Wrap aligne au debut (R-12, decision du directeur) : '
+        'la pastille suit le titre sur sa ligne, sans prendre une ligne '
+        'entiere', (WidgetTester tester) async {
       fixerVue(tester, vueBureau);
       await tester.pumpWidget(
         hoteTheme(
@@ -62,7 +62,7 @@ void main() {
             width: double.infinity,
             child: Wrap(
               key: const ValueKey<String>('ligne'),
-              alignment: WrapAlignment.spaceBetween,
+              spacing: AppSpacing.sm,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: <Widget>[const Text('Organisation'), _bouton()],
             ),
@@ -76,7 +76,8 @@ void main() {
         find.byKey(const ValueKey<String>('ligne')),
       );
       expect(boite.center.dy, moreOrLessEquals(titre.center.dy, epsilon: 1));
-      expect(boite.right, moreOrLessEquals(ligne.right));
+      expect(boite.left, moreOrLessEquals(titre.right + AppSpacing.sm));
+      expect(boite.right, lessThan(ligne.right));
       expect(boite.width, lessThan(ligne.width / 2));
     });
 

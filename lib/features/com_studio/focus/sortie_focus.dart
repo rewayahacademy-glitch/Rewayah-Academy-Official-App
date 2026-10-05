@@ -65,7 +65,9 @@ class BandeauSortieFocus extends StatelessWidget {
           spacing: AppSpacing.lg,
           runSpacing: AppSpacing.sm,
           crossAxisAlignment: WrapCrossAlignment.center,
-          alignment: WrapAlignment.spaceBetween,
+          // R-12 (decision du directeur) : « Quitter le focus » suit l'etat,
+          // aligne au debut (a droite en arabe), jamais au bout de la ligne.
+          alignment: WrapAlignment.start,
           children: <Widget>[
             Column(
               mainAxisSize: MainAxisSize.min,
