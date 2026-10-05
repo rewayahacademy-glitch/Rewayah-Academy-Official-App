@@ -434,7 +434,7 @@ void main() {
       expect(message, findsOneWidget);
       expect(
         tester.widget<Text>(message).data,
-        t.enseignant.journee.erreurPartielleCahiers,
+        t.enseignant.journee.erreurPartielleRetards,
       );
       expect(tester.widget<Text>(message).data, contains('cahiers'));
       expect(tester.widget<Text>(message).data, isNot(contains('prière')));
