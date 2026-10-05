@@ -218,5 +218,6 @@
   "foyer.ajout.identite.nomAidePrerempli": "etape FORM-L6 (recensement FORM-AUTO-1 section 3 et 8) : nom prerempli et age choisi ; a valider par le directeur",
   "foyer.ajout.identite.age": "etape FORM-L6 (recensement FORM-AUTO-1 section 3 et 8) : nom prerempli et age choisi ; a valider par le directeur",
   "foyer.ajout.erreurs.ageRequis": "etape FORM-L6 (recensement FORM-AUTO-1 section 3 et 8) : nom prerempli et age choisi ; a valider par le directeur",
-  "adulte.invitation.nomAidePrerempli": "etape FORM-L6 (recensement FORM-AUTO-1 section 3 et 8) : nom prerempli et age choisi ; a valider par le directeur"
+  "adulte.invitation.nomAidePrerempli": "etape FORM-L6 (recensement FORM-AUTO-1 section 3 et 8) : nom prerempli et age choisi ; a valider par le directeur",
+  "enseignant.cahier.repriseVersetBornes": "etape FORM-L9-VERSET : message factuel sous le champ Verset quand la saisie est vide ou hors des bornes de la sourate (Entre 1 et N) ; a valider par le directeur"
 }

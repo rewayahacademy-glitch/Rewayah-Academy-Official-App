@@ -3380,6 +3380,7 @@
       "repriseVersets": "{n} versets",
       "repriseRestantes": "Encore {n} sourates : précisez la recherche.",
       "repriseVerset": "Verset",
+      "repriseVersetBornes": "Entre 1 et {n}",
       "repriseRetenir": "Retenir cette position",
       "repriseIncomplete": "Choisissez la sourate puis le verset.",
       "repriseAucune": "Aucune sourate ne correspond",
