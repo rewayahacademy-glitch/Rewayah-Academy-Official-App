@@ -47,7 +47,9 @@ String libelleTypeEnregistre(TypeObjetLie type) {
 AppIcon _icone(TypeObjetLie type) => switch (type) {
   TypeObjetLie.canal => AppIcons.discussion,
   TypeObjetLie.message => AppIcons.envoyerMessage,
-  _ => AppIcons.texteStructure,
+  // D-FUS-9 : un element sans icone propre porte le signet des
+  // « Enregistres ».
+  _ => AppIcons.signet,
 };
 
 /// Les elements enregistres de la personne, depuis Le Studio.

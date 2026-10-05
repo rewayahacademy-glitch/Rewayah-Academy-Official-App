@@ -265,7 +265,8 @@ class CoquilleStudio extends StatefulWidget {
           ),
           VueStudio.enregistres => Destination(
             libelle: n.enregistres,
-            icone: AppIcons.cahier,
+            // D-FUS-9 : le signet, plus le repli « cahier ».
+            icone: AppIcons.signet,
             chemin: v.name,
           ),
           VueStudio.brouillons => Destination(

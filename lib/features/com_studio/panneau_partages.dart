@@ -41,6 +41,17 @@ import 'liste_canaux.dart';
 import 'port_studio.dart';
 import 'visibilite_canal.dart';
 
+/// L'icone d'un element partage dans un canal (D-FUS-9, decision du
+/// directeur du 05/10) : la nature de sa piece quand il en a une, sinon
+/// l'epingle ou le lien (plus les replis « texte » et « fleche »).
+AppIcon iconeElementPartage(ElementPartage e) => switch (e.piece) {
+  final PieceJointe piece => CartePieceJointe.iconeNature(piece.nature),
+  null => switch (e.nature) {
+    NaturePartage.lien => AppIcons.lien,
+    NaturePartage.epingle || NaturePartage.fichier => AppIcons.epingle,
+  },
+};
+
 /// Ce que l'ecran sait des elements enregistres de la personne.
 @immutable
 class EtatEnregistrements {
@@ -306,9 +317,7 @@ class PanneauPartages extends StatelessWidget {
       ?e.detail,
     ];
     return LigneRubrique(
-      icone: piece == null
-          ? AppIcons.texteStructure
-          : CartePieceJointe.iconeNature(piece.nature),
+      icone: iconeElementPartage(e),
       libelle: e.titre,
       legende: morceaux.isEmpty ? null : morceaux.join(' · '),
       controle: _enregistrer(e.objet(destinationCanal)),
@@ -324,13 +333,13 @@ class PanneauPartages extends StatelessWidget {
     final String? hote = e.hote;
     if (chemin == null) {
       return LigneRubrique(
-        icone: AppIcons.flecheAction,
+        icone: iconeElementPartage(e),
         libelle: e.titre,
         legende: hote == null ? e.detail : p.lienExterne(hote: hote),
       );
     }
     return LigneRubrique(
-      icone: AppIcons.flecheAction,
+      icone: iconeElementPartage(e),
       libelle: e.titre,
       legende: e.detail,
       libelleSemantique: p.ouvrir(titre: e.titre),

@@ -850,6 +850,16 @@ abstract final class AppIcons {
     IconData(0xe2e6, fontFamily: _actif),
   );
 
+  /// Signet : les elements enregistres d'une personne (Studio, « Enregistres »,
+  /// spec section 18). Ajoute par decision du directeur du 05/10 (D-FUS-9,
+  /// choix a), a la place du repli [cahier].
+  /// Phosphor `bookmark-simple` (0xe0ea), ligature verifiee dans les deux
+  /// polices de `assets/fonts`.
+  static const AppIcon signet = AppIcon._(
+    IconData(0xe0ea, fontFamily: _repos),
+    IconData(0xe0ea, fontFamily: _actif),
+  );
+
   /// Telecharger un fichier partage, par jeton ephemere seulement (COM-BR-04).
   /// Distinct de [enAttenteEnvoi] (`cloud-arrow-up`), qui dit un envoi.
   /// Phosphor `download-simple` (0xe20c).
