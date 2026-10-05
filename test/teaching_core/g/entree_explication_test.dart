@@ -121,6 +121,7 @@ Future<void> _monter(
   String depart = '/tuteur/classes/c1?eleve=enfant-1',
   Size taille = const Size(390, 844),
   ThemeMode mode = ThemeMode.light,
+  InterfaceMode interface = InterfaceMode.standard,
   bool attendre = true,
 }) async {
   tester.view.physicalSize = taille;
@@ -139,8 +140,8 @@ Future<void> _monter(
       ),
       child: TranslationProvider(
         child: MaterialApp.router(
-          theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
-          darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+          theme: AppTheme.pour(interface, Brightness.light),
+          darkTheme: AppTheme.pour(interface, Brightness.dark),
           themeMode: mode,
           routerConfig: GoRouter(initialLocation: depart, routes: _routes()),
         ),
@@ -822,6 +823,37 @@ void main() {
       expect(find.textContaining('visites de'), findsNothing);
       expect(_observerMaintenant, findsNothing);
     });
+  });
+
+  // EA-HL-DOUBLE-1c : Interface guidee et texte x2 de la verification de
+  // l'observation hors ligne (revue EA-HL-DOUBLE-1-R, m4). Sautees sans
+  // CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1c', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, ThemeMode) cas in <(String, ThemeMode)>[
+      ('390_guidee', ThemeMode.light),
+      ('390_guidee_sombre', ThemeMode.dark),
+    ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        final FauxPortPolitique politique = FauxPortPolitique()
+          ..echecBudget = const EchecObservation(MotifEchecObservation.reseau);
+        addTearDown(politique.fermer);
+        await _monter(
+          tester,
+          politique: politique,
+          horsLigne: true,
+          mode: cas.$2,
+          interface: InterfaceMode.enfant,
+        );
+        await _presser(tester, find.text(t.classe.observer));
+        expect(tester.takeException(), isNull);
+        expectHorsLigneUneFois();
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_observation_${cas.$1}')}',
+        );
+      });
+    }
   });
 
   // EA-HL-DOUBLE-1 (reprise) : captures de preuve de la verification de

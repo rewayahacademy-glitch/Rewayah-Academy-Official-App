@@ -117,6 +117,8 @@ Future<GoRouter> _monter(
   String depart = Routes.tuteurAccueil,
   List<Override> autres = const <Override>[],
   Size taille = const Size(390, 844),
+  ThemeMode mode = ThemeMode.light,
+  InterfaceMode interface = InterfaceMode.standard,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -137,7 +139,9 @@ Future<GoRouter> _monter(
           builder: (BuildContext _, WidgetRef ref, Widget? _) {
             routeur = ref.read(routeurProvider);
             return MaterialApp.router(
-              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              theme: AppTheme.pour(interface, Brightness.light),
+              darkTheme: AppTheme.pour(interface, Brightness.dark),
+              themeMode: mode,
               routerConfig: routeur,
             );
           },
@@ -1028,6 +1032,76 @@ void main() {
       expect(photo.left, greaterThan(identite.right));
       expect(tester.takeException(), isNull);
     });
+  });
+
+  // EA-HL-DOUBLE-1c : sombre, Interface guidee et texte x2 de la fiche
+  // eleve hors ligne (revue EA-HL-DOUBLE-1-R, m4). Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1c', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, ThemeMode, InterfaceMode, bool) cas
+        in <(String, Size, ThemeMode, InterfaceMode, bool)>[
+          (
+            'sans_donnees_390_sombre',
+            const Size(390, 844),
+            ThemeMode.dark,
+            InterfaceMode.standard,
+            true,
+          ),
+          (
+            'sans_donnees_390_guidee',
+            const Size(390, 844),
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            true,
+          ),
+          (
+            'sans_donnees_1440_clair',
+            const Size(1440, 900),
+            ThemeMode.light,
+            InterfaceMode.standard,
+            true,
+          ),
+          (
+            'avec_donnees_390_sombre',
+            const Size(390, 844),
+            ThemeMode.dark,
+            InterfaceMode.standard,
+            false,
+          ),
+          (
+            'avec_donnees_390_guidee',
+            const Size(390, 844),
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            false,
+          ),
+        ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        await _monter(
+          tester,
+          appairage: _foyerA()..echoue = cas.$5,
+          depart: Routes.ficheEleveSousPage(a1, 'informations'),
+          taille: cas.$2,
+          mode: cas.$3,
+          interface: cas.$4,
+          autres: <Override>[
+            horsLigneProvider.overrideWith(
+              (Ref ref) => Stream<bool>.value(true),
+            ),
+          ],
+        );
+        expect(tester.takeException(), isNull);
+        if (cas.$5) {
+          expectSansDonnees(t.ficheEleve.sansDonnees);
+        } else {
+          expectAvecDonnees();
+        }
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_fiche_eleve_${cas.$1}')}',
+        );
+      });
+    }
   });
 
   // EA-HL-DOUBLE-1 (reprise) : captures de preuve de la fiche eleve hors

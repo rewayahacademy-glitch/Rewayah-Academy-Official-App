@@ -731,6 +731,8 @@ void main() {
       required Future<List<EleveDuFoyer>> Function() eleves,
       bool horsLigne = false,
       Future<IdentiteTitulaire> Function()? identite,
+      ThemeMode mode = ThemeMode.light,
+      InterfaceMode interface = InterfaceMode.standard,
     }) async {
       taille(tester, const Size(390, 844));
       await tester.pumpWidget(
@@ -754,7 +756,9 @@ void main() {
           ],
           child: TranslationProvider(
             child: MaterialApp(
-              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              theme: AppTheme.pour(interface, Brightness.light),
+              darkTheme: AppTheme.pour(interface, Brightness.dark),
+              themeMode: mode,
               locale: AppLocale.fr.flutterLocale,
               supportedLocales: AppLocaleUtils.supportedLocales,
               localizationsDelegates: GlobalMaterialLocalizations.delegates,
@@ -839,6 +843,67 @@ void main() {
     // EA-HL-DOUBLE-1 (reprise) : captures de preuve du Foyer hors ligne,
     // sans donnees (le bloc dit ce qui manque) et avec donnees (le bandeau
     // seul). Sautees sans CAPTURE_DIR.
+    // EA-HL-DOUBLE-1c : sombre et Interface guidee du Foyer hors ligne, sans
+    // et avec donnees (revue EA-HL-DOUBLE-1-R, m4). Sautees sans
+    // CAPTURE_DIR.
+    group('Capture EA-HL-DOUBLE-1c', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final (String, ThemeMode, InterfaceMode, bool) cas
+          in <(String, ThemeMode, InterfaceMode, bool)>[
+            (
+              'sans_donnees_390_sombre',
+              ThemeMode.dark,
+              InterfaceMode.standard,
+              true,
+            ),
+            (
+              'sans_donnees_390_guidee',
+              ThemeMode.light,
+              InterfaceMode.enfant,
+              true,
+            ),
+            (
+              'avec_donnees_390_sombre',
+              ThemeMode.dark,
+              InterfaceMode.standard,
+              false,
+            ),
+            (
+              'avec_donnees_390_guidee',
+              ThemeMode.light,
+              InterfaceMode.enfant,
+              false,
+            ),
+          ]) {
+        testWidgets(cas.$1, (WidgetTester tester) async {
+          await monterPage(
+            tester,
+            eleves: cas.$4
+                ? () => Future<List<EleveDuFoyer>>.error(Exception('x'))
+                : () async => const <EleveDuFoyer>[],
+            horsLigne: true,
+            identite: cas.$4
+                ? () => Future<IdentiteTitulaire>.error(Exception('x'))
+                : null,
+            mode: cas.$2,
+            interface: cas.$3,
+          );
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          if (cas.$4) {
+            expectHorsLigneUneFois();
+            expect(find.byType(EtatSansDonnees), findsNWidgets(2));
+          } else {
+            expectAvecDonnees();
+          }
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'ea_hl_double1_foyer_${cas.$1}')}',
+          );
+        });
+      }
+    });
+
     group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
       setUpAll(chargerPolicesDuDepot);
       setUp(masquerRubanDebug);

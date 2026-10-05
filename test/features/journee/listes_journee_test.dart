@@ -169,6 +169,8 @@ Future<void> _monter(
   required TextDirection direction,
   double largeur = 320,
   double echelle = 2,
+  ThemeMode mode = ThemeMode.light,
+  InterfaceMode interface = InterfaceMode.standard,
 }) async {
   tester.view.physicalSize = Size(largeur, 3000);
   tester.view.devicePixelRatio = 1;
@@ -178,7 +180,9 @@ Future<void> _monter(
       overrides: _surcharges(etat),
       child: TranslationProvider(
         child: MaterialApp(
-          theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+          theme: AppTheme.pour(interface, Brightness.light),
+          darkTheme: AppTheme.pour(interface, Brightness.dark),
+          themeMode: mode,
           localizationsDelegates: GlobalMaterialLocalizations.delegates,
           builder: (BuildContext contexte, Widget? app) => Directionality(
             textDirection: direction,
@@ -321,6 +325,44 @@ void main() {
         expect(rtl.right, moreOrLessEquals(1440 - ltr.left));
         expect(rtl.width, moreOrLessEquals(ltr.width));
       });
+    }
+  });
+
+  // EA-HL-DOUBLE-1c : sombre, Interface guidee et 1440 des listes de la
+  // Journee hors ligne (revue EA-HL-DOUBLE-1-R, m4). Sautees sans
+  // CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1c', skip: sautSansCapture, () {
+    setUp(masquerRubanDebug);
+    for (final (String, Widget) page in <(String, Widget)>[
+      ('a_terminer', const ListeATerminerPage()),
+      ('alertes', const ListeAlertesPage()),
+    ]) {
+      for (final (String, double, ThemeMode, InterfaceMode) cas
+          in <(String, double, ThemeMode, InterfaceMode)>[
+            ('390_sombre', 390, ThemeMode.dark, InterfaceMode.standard),
+            ('390_guidee', 390, ThemeMode.light, InterfaceMode.enfant),
+            ('1440_clair', 1440, ThemeMode.light, InterfaceMode.standard),
+          ]) {
+        testWidgets('${page.$1} ${cas.$1}', (WidgetTester tester) async {
+          await _monter(
+            tester,
+            page.$2,
+            _Etat.horsLigne,
+            direction: TextDirection.ltr,
+            largeur: cas.$2,
+            echelle: 1,
+            mode: cas.$3,
+            interface: cas.$4,
+          );
+          tester.view.physicalSize = Size(cas.$2, 900);
+          await tester.pump();
+          expect(tester.takeException(), isNull);
+          expectHorsLigneUneFois();
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'ea_hl_double1_journee_${page.$1}_sans_donnees_${cas.$1}')}',
+          );
+        });
+      }
     }
   });
 
