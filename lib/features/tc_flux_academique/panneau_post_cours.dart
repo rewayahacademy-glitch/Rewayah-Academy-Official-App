@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_bibliotheque/content_position.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_outils/learning_assignment.dart';
 import '../../core/tc_parcours/libelles_parcours.dart';
 import '../../core/tc_parcours/plage_lisible.dart';
@@ -83,8 +84,7 @@ class _PanneauPostCoursState extends ConsumerState<PanneauPostCours> {
         return EmptyState(
           message: t.tc.parcours.postCours.repriseInconnue,
           libelleAction: t.tc.parcours.postCours.valider,
-          onAction: () =>
-              ref.invalidate(postCoursProvider(widget.sessionId)),
+          onAction: () => ref.invalidate(postCoursProvider(widget.sessionId)),
         );
       }
       return const Skeleton.liste(lignes: 3);
@@ -99,8 +99,10 @@ class _PanneauPostCoursState extends ConsumerState<PanneauPostCours> {
       children: <Widget>[
         // 1. CE QUE LE SYSTEME SAIT DEJA, en premier et sans champ.
         Text(
-          t.tc.parcours.postCours.duree(
-            minutes: postCours.dureeReelle.inMinutes,
+          LibellesGroupe.insecable(
+            t.tc.parcours.postCours.duree(
+              minutes: postCours.dureeReelle.inMinutes,
+            ),
           ),
           style: textes.bodyMedium,
         ),

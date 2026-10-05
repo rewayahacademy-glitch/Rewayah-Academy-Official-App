@@ -162,7 +162,9 @@ String libelleStatut(LigneSuivi ligne) {
   if (statut == StatutHistorique.retard) {
     final Duration? retard = ligne.presence.ecoule;
     if (retard != null && retard.inMinutes > 0) {
-      return t.historique.etat.retard(minutes: retard.inMinutes);
+      return LibellesGroupe.insecable(
+        t.historique.etat.retard(minutes: retard.inMinutes),
+      );
     }
   }
   return statut.libelle;
@@ -345,6 +347,13 @@ String plageHoraire(DateTime debut, DateTime fin) =>
 /// Insecable (DUREE-INSECABLE-1) : jamais scindee sur deux lignes.
 String dureeLisible(Duration duree) =>
     LibellesGroupe.insecable(_dureeSecable(duree));
+
+/// La meme duree affichee seule, comme valeur (« Duree prevue / 45 min ») :
+/// ancree pour garder son ordre en interface de droite a gauche
+/// (DUREE-INSECABLE-2, [LibellesGroupe.ancreSens]). Dans une phrase,
+/// [dureeLisible] suffit.
+String dureeSeule(Duration duree) =>
+    LibellesGroupe.ancreSens(dureeLisible(duree));
 
 String _dureeSecable(Duration duree) {
   final int secondes = duree.inSeconds < 0 ? 0 : duree.inSeconds;

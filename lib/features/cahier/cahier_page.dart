@@ -13,6 +13,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/presence/vue_presence.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -677,12 +678,16 @@ class _Resume extends StatelessWidget {
         // l'en-tete (K-42 §5), sous le nom de la Classe.
         // La duree du cahier est celle que la base a calculee, et une seule.
         Text(
-          brouillon.minutesInterruption > 0
-              ? t.enseignant.cahier.dureeEtInterruption(
-                  minutes: '${brouillon.dureeMinutes}',
-                  interruption: '${brouillon.minutesInterruption}',
-                )
-              : t.enseignant.cahier.duree(minutes: '${brouillon.dureeMinutes}'),
+          LibellesGroupe.valeurSeule(
+            brouillon.minutesInterruption > 0
+                ? t.enseignant.cahier.dureeEtInterruption(
+                    minutes: '${brouillon.dureeMinutes}',
+                    interruption: '${brouillon.minutesInterruption}',
+                  )
+                : t.enseignant.cahier.duree(
+                    minutes: '${brouillon.dureeMinutes}',
+                  ),
+          ),
           style: textes.titleMedium,
         ),
         Ecart.vXs,
