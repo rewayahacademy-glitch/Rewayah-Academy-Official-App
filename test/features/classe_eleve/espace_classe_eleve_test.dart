@@ -216,7 +216,8 @@ void main() {
   ) async {
     await avecLargeur(tester, largeurMobile, () async {
       await _poser(tester, EtatDemoClasse.aVenir);
-      expect(find.text('Chapitre 1 · 60 %'), findsOneWidget);
+      // Pourcentage insecable (COUPE-MOTS-3).
+      expect(find.text('Chapitre 1 · 60\u00A0%'), findsOneWidget);
       expect(find.byType(LinearProgressIndicator), findsOneWidget);
     });
   });
