@@ -451,17 +451,19 @@ class _CarteLignes extends StatelessWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.only(top: AppSpacing.md),
-              child: Row(
+              // A texte agrandi, le total passe sous son libelle (§45).
+              child: Wrap(
+                spacing: AppSpacing.md,
+                runSpacing: AppSpacing.xs,
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: <Widget>[
-                  Expanded(
-                    child: Text(
-                      d.ligneTotal,
-                      style: palette.inkStrong.applyTo(
-                        textes.titleMedium ?? const TextStyle(),
-                      ),
+                  Text(
+                    d.ligneTotal,
+                    style: palette.inkStrong.applyTo(
+                      textes.titleMedium ?? const TextStyle(),
                     ),
                   ),
-                  Ecart.hMd,
                   MontantSensible(
                     obligation.montant,
                     taille: TailleMontant.titre,

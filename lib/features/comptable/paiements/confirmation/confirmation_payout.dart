@@ -23,6 +23,8 @@
 // erreur sans reponse dit que l'issue est inconnue et que reessayer renvoie
 // la meme demande. Hors ligne, aucun bouton d'envoi.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -63,14 +65,27 @@ Future<bool> ouvrirConfirmationPayout(
     context,
     listen: false,
   );
+  final ControleurConfirmationPayout controleur = ControleurConfirmationPayout(
+    portee,
+    selection,
+  );
+  unawaited(controleur.controler());
+  // Le corps defile ; les actions restent collees en bas de la feuille : le
+  // bouton de confirmation et son montant exact sont toujours visibles.
   final bool? change = await AppBottomSheet.ouvrir<bool>(
     context,
     titre: titreConfirmation(selection),
     constructeur: (BuildContext _) => UncontrolledProviderScope(
       container: portee,
-      child: PayoutConfirmationSheet(selection: selection),
+      child: PayoutConfirmationSheet(controleur: controleur),
+    ),
+    actions: (BuildContext _) => UncontrolledProviderScope(
+      container: portee,
+      child: ActionsConfirmationPayout(controleur: controleur),
     ),
   );
+  controleur.dispose();
+  // Fermee d'un geste (voile, glissement) : la page relit par prudence.
   return change ?? true;
 }
 
@@ -103,13 +118,13 @@ enum _Phase {
   validationEchouee,
 }
 
-/// Le contenu de la feuille de confirmation d'un payout.
-class PayoutConfirmationSheet extends ConsumerStatefulWidget {
-  /// Cree la feuille pour [selection].
-  const PayoutConfirmationSheet({required this.selection, super.key});
+/// Le corps de la feuille de confirmation d'un payout.
+class PayoutConfirmationSheet extends ConsumerWidget {
+  /// Cree le corps, lu sur [controleur].
+  const PayoutConfirmationSheet({required this.controleur, super.key});
 
-  /// Les obligations choisies, telles que vues par le Comptable.
-  final List<ObligationPayable> selection;
+  /// L'etat de la confirmation, partage avec les actions.
+  final ControleurConfirmationPayout controleur;
 
   /// La cle du bouton de confirmation (« Confirmer le paiement de ... »).
   static const Key cleConfirmer = ValueKey<String>('payout-confirmer');
@@ -127,19 +142,68 @@ class PayoutConfirmationSheet extends ConsumerStatefulWidget {
   static const Key cleActualiser = ValueKey<String>('payout-actualiser');
 
   @override
-  ConsumerState<PayoutConfirmationSheet> createState() =>
-      _PayoutConfirmationSheetState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    return ListenableBuilder(
+      listenable: controleur,
+      builder: (BuildContext _, Widget? _) => controleur._corps(horsLigne),
+    );
+  }
 }
 
-class _PayoutConfirmationSheetState
-    extends ConsumerState<PayoutConfirmationSheet> {
+/// Les actions de la feuille, collees en bas : Annuler ou Fermer, et le seul
+/// bouton plein de l'etape (confirmer, demander, relancer, reessayer).
+class ActionsConfirmationPayout extends ConsumerWidget {
+  /// Cree les actions, lues sur [controleur].
+  const ActionsConfirmationPayout({required this.controleur, super.key});
+
+  /// L'etat de la confirmation, partage avec le corps.
+  final ControleurConfirmationPayout controleur;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    return ListenableBuilder(
+      listenable: controleur,
+      builder: (BuildContext contexte, Widget? _) =>
+          controleur._actions(contexte, horsLigne),
+    );
+  }
+}
+
+/// L'etat d'une confirmation de payout : preflight, envoi, suivi. Il ne lit
+/// que les ports de la portee de la page qui l'a ouverte.
+class ControleurConfirmationPayout extends ChangeNotifier {
+  /// Cree l'etat pour [selection].
+  ControleurConfirmationPayout(this._portee, List<ObligationPayable> selection)
+    : _selection = selection;
+
+  final ProviderContainer _portee;
+  final List<ObligationPayable> _selection;
+  bool _ferme = false;
+
+  /// Vrai quand quelque chose a pu changer a la source.
+  bool get change => _change;
+
+  void _changer(VoidCallback f) {
+    if (_ferme) return;
+    f();
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _ferme = true;
+    super.dispose();
+  }
+
   _Phase _phase = _Phase.controle;
   PreflightLot? _lot;
 
   /// Les obligations telles que relues apres un recalcul (R-FIN-18).
   late final Map<String, ObligationPayable> _obligations =
       <String, ObligationPayable>{
-        for (final ObligationPayable o in widget.selection) o.id: o,
+        for (final ObligationPayable o in _selection) o.id: o,
       };
 
   /// Tiree une fois par preflight, rejouee telle quelle a chaque essai.
@@ -152,56 +216,51 @@ class _PayoutConfirmationSheetState
   bool _suiviEchoue = false;
   bool _change = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _controler();
-  }
-
-  Future<void> _controler() async {
-    setState(() {
+  /// Lance (ou relance) le preflight de la selection.
+  Future<void> controler() async {
+    _changer(() {
       _phase = _Phase.controle;
       _refus = null;
     });
     try {
-      final PreflightLot lot = await ref.read(portPayoutProvider).preflight(
+      final PreflightLot lot = await _portee.read(portPayoutProvider).preflight(
         <ObligationChoisie>[
           for (final ObligationPayable o in _obligations.values)
             ObligationChoisie(obligationId: o.id, version: o.version),
         ],
       );
-      if (!mounted) return;
-      setState(() {
+      if (_ferme) return;
+      _changer(() {
         _lot = lot;
         _cle = const Uuid().v4();
         _phase = _Phase.pret;
       });
     } on Object {
-      if (mounted) setState(() => _phase = _Phase.controleEchoue);
+      if (!_ferme) _changer(() => _phase = _Phase.controleEchoue);
     }
   }
 
   Future<void> _soumettre() async {
     final PreflightLot? lot = _lot;
     if (lot == null || _phase == _Phase.envoi) return;
-    setState(() => _phase = _Phase.envoi);
+    _changer(() => _phase = _Phase.envoi);
     try {
-      final List<SuiviPayout> suivis = await ref
+      final List<SuiviPayout> suivis = await _portee
           .read(portPayoutProvider)
           .soumettre(preflightId: lot.id, cleIdempotence: _cle);
-      if (!mounted) return;
-      setState(() {
+      if (_ferme) return;
+      _changer(() {
         _change = true;
         _suivis = suivis;
         _phase = _Phase.soumis;
       });
     } on RefusPayout catch (refus) {
-      if (!mounted) return;
+      if (_ferme) return;
       if (refus.motif == MotifRefusPayout.versionChangee) {
         await _relireRecalculees(refus.obligationIds);
       }
-      if (!mounted) return;
-      setState(() {
+      if (_ferme) return;
+      _changer(() {
         _change = true;
         _refus = refus;
         _recalcul = refus.motif == MotifRefusPayout.versionChangee;
@@ -210,8 +269,8 @@ class _PayoutConfirmationSheetState
     } on Object {
       // Aucune reponse : le paiement a pu partir. La meme cle sera
       // rejouee : la source rendra le suivi existant, sans second envoi.
-      if (mounted) {
-        setState(() {
+      if (!_ferme) {
+        _changer(() {
           _change = true;
           _phase = _Phase.issueInconnue;
         });
@@ -222,7 +281,7 @@ class _PayoutConfirmationSheetState
   /// Relit le detail des obligations recalculees : le prochain preflight
   /// porte leur nouvelle version et la feuille montre le nouveau montant.
   Future<void> _relireRecalculees(List<String> ids) async {
-    final PortObligationsPayables port = ref.read(
+    final PortObligationsPayables port = _portee.read(
       portObligationsPayablesProvider,
     );
     for (final String id in ids) {
@@ -238,32 +297,32 @@ class _PayoutConfirmationSheetState
   Future<void> _demanderValidation() async {
     if (_phase == _Phase.envoi) return;
     final ObligationPayable o = _obligations.values.first;
-    setState(() => _phase = _Phase.envoi);
+    _changer(() => _phase = _Phase.envoi);
     try {
-      await ref
+      await _portee
           .read(portPayoutProvider)
           .demanderValidation(
             obligationId: o.id,
             motif: libelleRaisonBlocage(RaisonBlocage.validationRequise),
             cleIdempotence: _cle,
           );
-      if (!mounted) return;
-      setState(() {
+      if (_ferme) return;
+      _changer(() {
         _change = true;
         _phase = _Phase.validationDemandee;
       });
     } on Object {
-      if (mounted) setState(() => _phase = _Phase.validationEchouee);
+      if (!_ferme) _changer(() => _phase = _Phase.validationEchouee);
     }
   }
 
   Future<void> _actualiser() async {
     if (_actualisation) return;
-    setState(() {
+    _changer(() {
       _actualisation = true;
       _suiviEchoue = false;
     });
-    final PortPayout port = ref.read(portPayoutProvider);
+    final PortPayout port = _portee.read(portPayoutProvider);
     final List<SuiviPayout> lus = <SuiviPayout>[];
     bool echec = false;
     for (final SuiviPayout s in _suivis) {
@@ -278,19 +337,15 @@ class _PayoutConfirmationSheetState
         lus.add(s);
       }
     }
-    if (!mounted) return;
-    setState(() {
+    if (_ferme) return;
+    _changer(() {
       _suivis = lus;
       _actualisation = false;
       _suiviEchoue = echec;
     });
   }
 
-  void _fermer() => Navigator.of(context).pop(_change);
-
-  @override
-  Widget build(BuildContext context) {
-    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+  Widget _corps(bool horsLigne) {
     final PreflightLot? lot = _lot;
     final List<Widget> corps = switch (_phase) {
       _Phase.controle => <Widget>[const Skeleton.texte(lignes: 6)],
@@ -342,8 +397,6 @@ class _PayoutConfirmationSheetState
             ton: TonEtat.avertissement,
           ),
         ],
-        Ecart.vXl,
-        _actions(horsLigne),
       ],
     );
   }
@@ -355,7 +408,7 @@ class _PayoutConfirmationSheetState
       _phase == _Phase.validationEchouee ||
       _phase == _Phase.issueInconnue;
 
-  Widget _actions(bool horsLigne) {
+  Widget _actions(BuildContext context, bool horsLigne) {
     final c = t.comptable.paiements.confirmation;
     final bool termine =
         _phase == _Phase.soumis || _phase == _Phase.validationDemandee;
@@ -363,7 +416,9 @@ class _PayoutConfirmationSheetState
       ActionPrincipale(
         libelle: termine ? c.fermer : c.annuler,
         niveau: NiveauAction.tertiaire,
-        onPress: _phase == _Phase.envoi ? null : _fermer,
+        onPress: _phase == _Phase.envoi
+            ? null
+            : () => Navigator.of(context).pop(_change),
       ),
     ];
     final _Bouton? plein = _boutonPlein(horsLigne);
@@ -410,7 +465,7 @@ class _PayoutConfirmationSheetState
         return _Bouton(
           PayoutConfirmationSheet.cleRelancer,
           c.relancerControle,
-          _controler,
+          controler,
         );
       case _Phase.pret:
       case _Phase.envoi:
@@ -446,7 +501,7 @@ class _PayoutConfirmationSheetState
 
   List<Widget> _resume(PreflightLot lot) {
     final c = t.comptable.paiements.confirmation;
-    final bool seul = widget.selection.length == 1;
+    final bool seul = _selection.length == 1;
     final ObligationPayable? unique = lot.prets.length == 1
         ? _obligations[lot.prets.single.obligationId]
         : null;
