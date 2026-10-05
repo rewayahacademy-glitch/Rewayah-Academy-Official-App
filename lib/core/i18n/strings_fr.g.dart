@@ -18055,9 +18055,9 @@ extension on Traductions {
 			'enseignant.demo.ecrans' => 'Écrans',
 			'enseignant.demo.etats' => 'Situations',
 			'enseignant.demo.etatNominal' => 'Journée ordinaire',
-			'enseignant.demo.etatVide' => 'Aucune séance',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.demo.etatVide' => 'Aucune séance',
 			'enseignant.demo.etatHorsLigne' => 'Hors ligne',
 			'enseignant.bienvenue.titre' => 'Premiers pas',
 			'enseignant.bienvenue.salutation' => ({required Object prenom}) => 'Bienvenue, ${prenom}.',
@@ -18569,9 +18569,9 @@ extension on Traductions {
 			'controleur.observation.texteFacultatif' => 'Ce texte est facultatif.',
 			'controleur.observation.libelleTexte' => 'Votre remarque',
 			'controleur.observation.aideTexte' => 'Décrivez seulement ce que vous avez observé.',
-			'controleur.observation.texteRequis' => 'Écrivez ce que vous avez observé pour continuer.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.observation.texteRequis' => 'Écrivez ce que vous avez observé pour continuer.',
 			'controleur.observation.questionRecap' => 'Vérifiez votre observation avant l\'envoi.',
 			'controleur.observation.cleNature' => 'Nature',
 			'controleur.observation.cleDomaine' => 'Domaine',
@@ -19083,9 +19083,9 @@ extension on Traductions {
 			'tc.parcours.feedback.cours.tresBien' => 'Très bien',
 			'tc.parcours.feedback.comprehension.intitule' => 'Avez-vous compris ce qui a été travaillé ?',
 			'tc.parcours.feedback.comprehension.difficile' => 'Pas vraiment',
-			'tc.parcours.feedback.comprehension.bien' => 'Plutôt oui',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.feedback.comprehension.bien' => 'Plutôt oui',
 			'tc.parcours.feedback.comprehension.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.rythme.intitule' => 'Le rythme du cours vous a-t-il convenu ?',
 			'tc.parcours.feedback.rythme.difficile' => 'Trop rapide',

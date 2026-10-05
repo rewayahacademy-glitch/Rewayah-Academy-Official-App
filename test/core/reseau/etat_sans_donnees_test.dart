@@ -175,6 +175,9 @@ void main() {
     expect(etat.nature, NatureEtat.horsLigne);
     expect(find.text(t.adulte.maClasse.sansDonnees), findsOneWidget);
     expect(signauxHorsLigne(), findsNothing);
+    // La phrase par defaut du hors ligne redit le bandeau : jamais rendue.
+    expect(phraseHorsLigneParDefaut(), findsNothing);
+    expect(etat.phrase, isEmpty);
     await tester.tap(find.text(t.commun.etats.actions.reessayer));
     expect(relectures, 1);
   });

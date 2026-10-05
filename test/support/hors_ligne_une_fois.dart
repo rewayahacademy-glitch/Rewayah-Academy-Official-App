@@ -49,7 +49,15 @@ void expectHorsLigneUneFois({bool bandeau = true}) {
   );
   expect(signauxHorsLigne(), bandeau ? findsOneWidget : findsNothing);
   expect(iconesHorsLigne(), bandeau ? findsOneWidget : findsNothing);
+  // La phrase par defaut d'un etat hors ligne (« Verifiez votre
+  // connexion... ») redit le bandeau sans contenir les mots du motif : elle
+  // ne s'affiche jamais (revue EA-HL-DOUBLE-1, m2).
+  expect(phraseHorsLigneParDefaut(), findsNothing);
 }
+
+/// La phrase par defaut de [NatureEtat.horsLigne], qui redit le bandeau.
+Finder phraseHorsLigneParDefaut() =>
+    find.text(EtatSysteme.textesPar(NatureEtat.horsLigne).phrase);
 
 /// Le bloc « rien a afficher » dit [quoi], et rien d'autre ne le double.
 void expectSansDonnees(String quoi, {bool bandeau = true}) {
