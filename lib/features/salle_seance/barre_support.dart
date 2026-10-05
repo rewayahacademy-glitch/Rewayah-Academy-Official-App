@@ -62,6 +62,7 @@ class PaginationSupport extends StatelessWidget {
     required this.pages,
     this.onPrecedente,
     this.onSuivante,
+    this.longue = false,
     super.key,
   });
 
@@ -69,6 +70,12 @@ class PaginationSupport extends StatelessWidget {
   final int pages;
   final VoidCallback? onPrecedente;
   final VoidCallback? onSuivante;
+
+  /// TB-4 (Commandes, plan V2 §20) : « Page {numero} sur {total} » ecrit en
+  /// entier (le texte lu, W-253) entre les fleches, sur toute la largeur
+  /// offerte ; a 200 % il passe a la ligne, jamais tronque. Faux : la
+  /// pastille courte « 1 / 12 ».
+  final bool longue;
 
   @override
   Widget build(BuildContext context) {
@@ -85,8 +92,10 @@ class PaginationSupport extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
         child: BarrePrecedentSuivant(
-          etendue: false,
-          position: t.salle.seance.page(page: page, pages: pages),
+          etendue: longue,
+          position: longue
+              ? t.salle.seance.pageSemantique(page: page, pages: pages)
+              : t.salle.seance.page(page: page, pages: pages),
           positionSemantique: t.salle.seance.pageSemantique(
             page: page,
             pages: pages,
@@ -180,9 +189,7 @@ class ZoomLocal extends StatelessWidget {
           CommandeSalle(
             key: const ValueKey<String>('bouton-agrandir-barre'),
             icone: (agrandi ? AppIcons.reduire : AppIcons.agrandir).repos,
-            libelle: agrandi
-                ? t.salle.seance.reduire
-                : t.salle.seance.agrandir,
+            libelle: agrandi ? t.salle.seance.reduire : t.salle.seance.agrandir,
             bascule: agrandi,
             onPress: agrandir,
           ),
@@ -212,9 +219,8 @@ class _IconeBarre extends StatelessWidget {
       child: Center(
         child: IconTheme(
           // Un bouton sans rappel (fin de pagination, etc.) : estompe, inactif.
-          data:
-              (action == null ? palette.inkFaint : palette.inkStrong)
-                  .asIconTheme(size: AppSpacing.xxl),
+          data: (action == null ? palette.inkFaint : palette.inkStrong)
+              .asIconTheme(size: AppSpacing.xxl),
           child: Icon(icone.repos),
         ),
       ),

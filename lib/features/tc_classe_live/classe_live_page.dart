@@ -350,6 +350,9 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
 
   void _basculerPanneau(PanneauOuvert panneau) => setState(() {
     _panneau = _panneau == panneau ? PanneauOuvert.aucun : panneau;
+    // TB-4 (plan V2 §18.3) : un seul panneau secondaire ; les Commandes
+    // remplacent le contexte deplie.
+    if (_panneau == PanneauOuvert.commandes) _contexte = ContexteOuvert.aucun;
   });
 
   void _zoomer(double pas) => setState(() {
@@ -450,9 +453,25 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
         onReseau: enseignant ? () => unawaited(_voirReseau(vue)) : null,
         // TB-3 : l'avatar et l'oeil de la capsule deplient le contexte,
         // « Reduire » le replie ; etat local, rien n'est diffuse.
-        onContexte: (ContexteOuvert c) => setState(() => _contexte = c),
+        // TB-4 (plan V2 §18.3) : le contexte deplie remplace les Commandes
+        // (un seul panneau secondaire), qui ne reviennent pas a sa fermeture.
+        onContexte: (ContexteOuvert c) => setState(() {
+          _contexte = c;
+          if (c != ContexteOuvert.aucun &&
+              _panneau == PanneauOuvert.commandes) {
+            _panneau = PanneauOuvert.aucun;
+          }
+        }),
         onZoomMoins: () => _zoomer(-0.1),
         onZoomPlus: () => _zoomer(0.1),
+        // TB-4 (CMD-01) : le panneau « Commandes » de l'enseignant (etat
+        // local) ; « Ajuster a l'ecran » remet le zoom local a 100 %. Les
+        // affichages partages attendent leur champ serveur (TB-BR-13) : pas
+        // de rappel, pas de choix rendu.
+        onCommandes: enseignant
+            ? () => _basculerPanneau(PanneauOuvert.commandes)
+            : null,
+        onAjusterEcran: enseignant ? () => setState(() => _zoom = 1) : null,
         onEleves: enseignant && salle.voitLesParticipants && vue.elevesConnus
             ? () => _basculerPanneau(PanneauOuvert.eleves)
             : null,

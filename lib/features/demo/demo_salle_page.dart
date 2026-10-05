@@ -28,7 +28,6 @@ import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/status_pill.dart';
 import '../salle_seance/actions_seance.dart';
-import '../salle_seance/outils_dock_salle.dart';
 import '../salle_seance/panneau_eleves.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/salle_seance.dart';
@@ -440,7 +439,38 @@ class _SalleDemoState extends State<SalleDemo> {
 
   void _basculerPanneau(PanneauOuvert panneau) => setState(() {
     _panneau = _panneau == panneau ? PanneauOuvert.aucun : panneau;
+    // TB-4 (plan V2 §18.3) : un seul panneau secondaire a la fois ; les
+    // Commandes remplacent le contexte deplie.
+    if (_panneau == PanneauOuvert.commandes) _contexte = ContexteOuvert.aucun;
   });
+
+  /// TB-4 : l'affichage choisi dans les Commandes ; `null` : celui de la
+  /// situation. Demonstration : rien n'est diffuse (TB-BR-13).
+  AffichagePartage? _affichage;
+
+  /// TB-4 : la page choisie dans les Commandes ; `null` : celle de la
+  /// situation. Demonstration : rien n'est diffuse (BR-1).
+  int? _page;
+
+  void _changerPage(VueSeance vue, int pas) {
+    final ({int page, int total})? actuelle = vue.pageCommandes;
+    if (actuelle == null) return;
+    setState(() {
+      _page = (actuelle.page + pas).clamp(1, actuelle.total);
+    });
+  }
+
+  /// La diapositive a une autre page (demonstration).
+  static SupportSeance _diapositiveALaPage(SupportSeance s, int page) =>
+      SupportSeance(
+        chapitre: s.chapitre,
+        titre: s.titre,
+        encadre: s.encadre,
+        points: s.points,
+        page: page.clamp(1, s.pages),
+        pages: s.pages,
+        ressourceId: s.ressourceId,
+      );
 
   /// Le support ouvert depuis le panneau Supports ; `null` : celui de l'etat.
   SupportSeance? _support;
@@ -448,6 +478,7 @@ class _SalleDemoState extends State<SalleDemo> {
   /// « Ouvrir » (CLV-08) : le support affiche change, le panneau se ferme.
   void _ouvrirSupport(SupportDisponible choisi) => setState(() {
     _support = choisi.contenu ?? _support;
+    _page = null;
     _panneau = PanneauOuvert.aucun;
   });
 
@@ -457,13 +488,28 @@ class _SalleDemoState extends State<SalleDemo> {
       titre: widget.titre,
       prenomEleve: widget.prenomEleve,
     );
+    final int? page = _page;
+    // Comme avant : sans support dans l'etat, rien n'est montre.
+    final SupportSeance? diapositive = etat.support == null
+        ? null
+        : _support ?? etat.support;
     final VueSeance vue = etat.copyWith(
       panneau: _panneau,
-      support: etat.support == null ? null : _support,
+      support: diapositive == null
+          ? null
+          : page == null
+          ? _support
+          : _diapositiveALaPage(diapositive, page),
       connexion: _connexion,
       recitation: _recitation,
       tutoiement: widget.tutoiement,
       contexte: _contexte,
+      affichage: _affichage,
+      supportPresente: page == null
+          ? null
+          : etat.supportPresente?.aLaPage(
+              page.clamp(1, etat.supportPresente!.total),
+            ),
     );
     final bool enseignant = widget.role == RoleSeance.enseignant;
     // Fin de seance de l'enseignant : CLV-10 (le cahier n'existe pas en
@@ -491,12 +537,16 @@ class _SalleDemoState extends State<SalleDemo> {
     }
     late final ActionsSeance actions;
     actions = ActionsSeance(
-      // EN-10 : « Partager » (etat partage publie a BR-1, K-28 : rien ici)
-      // et « Ouvrir les outils d'enseignement » (Teaching Dock en feuille).
-      onPartager: enseignant ? _inerte : null,
-      onOutilsEnseignement: enseignant
-          ? () => unawaited(ouvrirOutilsEnseignement(context, actions: actions))
+      // TB-4 (CMD-01) : « Commandes » ouvre et reduit le panneau ; les trois
+      // affichages, un clic chacun ; « Ajuster a l'ecran » remet le zoom
+      // local a 100 %. Etat local, rien n'est diffuse.
+      onCommandes: enseignant
+          ? () => _basculerPanneau(PanneauOuvert.commandes)
           : null,
+      onAffichage: enseignant
+          ? (AffichagePartage a) => setState(() => _affichage = a)
+          : null,
+      onAjusterEcran: enseignant ? () => setState(() => _zoom = 1) : null,
       onRetour: widget.onSortir,
       onQuitter: enseignant
           ? widget.onSortir
@@ -536,8 +586,9 @@ class _SalleDemoState extends State<SalleDemo> {
           ? () => _basculerPanneau(PanneauOuvert.supports)
           : null,
       onOutil: enseignant ? (OutilEnseignement _) => _inerte() : null,
-      onPagePrecedente: enseignant ? _inerte : null,
-      onPageSuivante: enseignant ? _inerte : null,
+      // TB-4 : la page change dans la demonstration (diffusion a BR-1).
+      onPagePrecedente: enseignant ? () => _changerPage(vue, -1) : null,
+      onPageSuivante: enseignant ? () => _changerPage(vue, 1) : null,
       // Le rail sort de la salle (apres confirmation) : en demonstration,
       // retour a la liste des etats.
       onNaviguer: enseignant ? (String _) => widget.onSortir() : null,
@@ -570,7 +621,14 @@ class _SalleDemoState extends State<SalleDemo> {
       onContinuerSansMicro: () => setState(() => _micro = false),
       // TB-3 : l'avatar et l'oeil de la capsule deplient le contexte,
       // « Reduire » le replie ; etat local, rien n'est diffuse.
-      onContexte: (ContexteOuvert c) => setState(() => _contexte = c),
+      // TB-4 (plan V2 §18.3) : le contexte deplie remplace les Commandes
+      // (un seul panneau secondaire), qui ne reviennent pas a sa fermeture.
+      onContexte: (ContexteOuvert c) => setState(() {
+        _contexte = c;
+        if (c != ContexteOuvert.aucun && _panneau == PanneauOuvert.commandes) {
+          _panneau = PanneauOuvert.aucun;
+        }
+      }),
     );
     final Widget salle = SalleSeance(
       vue: vue,

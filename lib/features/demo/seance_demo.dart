@@ -502,6 +502,8 @@ abstract final class DonneesSeanceDemo {
               SituationTb.per01 ||
               SituationTb.autorisationEcrire ||
               SituationTb.droitRetire => PanneauOuvert.eleves,
+              // TB-4 : CMD-01 s'ouvre sur les Commandes.
+              SituationTb.cmd01 => PanneauOuvert.commandes,
               _ => PanneauOuvert.aucun,
             },
     );

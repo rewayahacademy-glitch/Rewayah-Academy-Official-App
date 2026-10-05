@@ -330,6 +330,25 @@
         "seancesSemaine": "{nombre} séances cette semaine"
       },
       "optionsPanneau": "Options du panneau {titre}",
+      "commandes": {
+        "declencheur": "Commandes",
+        "declencheurSemantique": "Ouvrir les commandes du support et du tableau",
+        "titre": "Commandes",
+        "reduire": "Réduire",
+        "reduireSemantique": "Réduire les commandes",
+        "ongletSupport": "Support",
+        "ongletOutils": "Outils",
+        "bibliotheque": "Bibliothèque",
+        "affichageSupport": "Support",
+        "affichageAvecNotes": "Avec notes",
+        "affichageTableau": "Tableau",
+        "lecture": "Lecture",
+        "ajuster": "Ajuster à l'écran",
+        "affichage": "Affichage",
+        "focus": "Focus",
+        "focusSemantique": "Focus, agrandir le contenu et réduire les panneaux",
+        "quitterFocus": "Quitter le focus"
+      },
       "capsule": {
         "avatar": "Afficher les informations de {nom}",
         "controlePossible": "Contrôle possible. Afficher les informations",

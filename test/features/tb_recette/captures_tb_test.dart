@@ -25,6 +25,14 @@
 // docs/current/captures/TB-3/ :
 //   CAPTURE_DIR=docs/current/captures/TB-3 flutter test \
 //     test/features/tb_recette/captures_tb_test.dart --name tb3_
+//
+// TB-4 (CMD-01) : le declencheur « Commandes » ferme (PED-03), le panneau
+// ouvert sur l'onglet « Support » et sur l'onglet « Outils » (CMD-01) pour
+// l'enseignant ; l'eleve en CMD-01, sans rien de l'enseignant. 390, 768,
+// 1440 et 320, texte x1 et x2, clair et sombre, plus RTL. Rangees dans
+// docs/current/captures/TB-4/ :
+//   CAPTURE_DIR=docs/current/captures/TB-4 flutter test \
+//     test/features/tb_recette/captures_tb_test.dart --name tb4_
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -32,6 +40,7 @@ import 'package:rewayah_academy/core/accessibilite/commandes_masquables.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/capsule_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/zone_support.dart';
 
@@ -218,6 +227,112 @@ void main() {
             debugPrint('PNG ${await capturer(tester, nom)}');
           });
         }
+      }
+    }
+  });
+
+  group('TB-4 : declencheur et panneau Commandes', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+
+    // 390, 768, 1440 et 320 ; x1 et x2 ; clair et sombre ; plus RTL.
+    final List<(_Cadrage, TextDirection)> cadrages =
+        <(_Cadrage, TextDirection)>[
+          for (final (String, Size, double, EdgeInsets) taille
+              in <(String, Size, double, EdgeInsets)>[
+                ('390', const Size(390, 844), 3, _zoneTelephone),
+                ('768', const Size(768, 1024), 2, EdgeInsets.zero),
+                ('1440', const Size(1440, 900), 1, EdgeInsets.zero),
+                ('320', const Size(320, 700), 2, EdgeInsets.zero),
+              ])
+            for (final double texte in <double>[1, 2])
+              for (final ThemeMode mode in <ThemeMode>[
+                ThemeMode.light,
+                ThemeMode.dark,
+              ])
+                (
+                  (
+                    '${taille.$1}_x${texte.toInt()}_'
+                        '${mode == ThemeMode.light ? 'clair' : 'sombre'}',
+                    taille.$2,
+                    taille.$3,
+                    taille.$4,
+                    texte,
+                    mode,
+                  ),
+                  TextDirection.ltr,
+                ),
+          for (final (String, Size, double, EdgeInsets, double) taille
+              in <(String, Size, double, EdgeInsets, double)>[
+                ('390_x1', const Size(390, 844), 3, _zoneTelephone, 1),
+                ('1440_x1', const Size(1440, 900), 1, EdgeInsets.zero, 1),
+                ('320_x2', const Size(320, 700), 2, EdgeInsets.zero, 2),
+              ])
+            (
+              (
+                '${taille.$1}_clair_rtl',
+                taille.$2,
+                taille.$3,
+                taille.$4,
+                taille.$5,
+                ThemeMode.light,
+              ),
+              TextDirection.rtl,
+            ),
+        ];
+    // Enseignant : ferme, onglet Support, onglet Outils ; eleve : CMD-01.
+    for (final (RoleSeance role, SituationTb situation, String etat)
+        in <(RoleSeance, SituationTb, String)>[
+          (RoleSeance.enseignant, SituationTb.ped03, 'ferme'),
+          (RoleSeance.enseignant, SituationTb.cmd01, 'support'),
+          (RoleSeance.enseignant, SituationTb.cmd01, 'outils'),
+          (RoleSeance.eleve, SituationTb.cmd01, 'sans'),
+        ]) {
+      for (final (_Cadrage cas, TextDirection sens) in cadrages) {
+        final String nom = 'tb4_${role.name}_${etat}_${cas.$1}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, cas.$2, cas.$3, zoneSure: cas.$4);
+          await tester.pumpWidget(
+            hoteCapture(
+              Directionality(
+                textDirection: sens,
+                child: DemoSallePage(role: role, situation: situation),
+              ),
+              themeMode: cas.$6,
+              echelleTexte: cas.$5,
+            ),
+          );
+          await stabiliser(tester);
+          if (etat == 'outils') {
+            await tester.tap(
+              find.descendant(
+                of: find.byKey(CommandesPedagogiques.cleOnglets),
+                matching: find.text('Outils'),
+              ),
+            );
+            await stabiliser(tester);
+          }
+          await tester.pump(const Duration(milliseconds: 1400));
+          // La capture prouve ce qu'elle nomme.
+          final bool ouvert = etat == 'support' || etat == 'outils';
+          expect(
+            find.byKey(CommandesPedagogiques.cle),
+            ouvert ? findsOneWidget : findsNothing,
+          );
+          expect(
+            find.byKey(DeclencheurCommandes.cle),
+            role == RoleSeance.enseignant && !(ouvert && cas.$2.width < 1200)
+                ? findsOneWidget
+                : findsNothing,
+          );
+          if (etat == 'outils') {
+            expect(
+              find.byKey(const ValueKey<String>('outil-pointeur')),
+              findsOneWidget,
+            );
+          }
+          expect(tester.takeException(), isNull);
+          debugPrint('PNG ${await capturer(tester, nom)}');
+        });
       }
     }
   });

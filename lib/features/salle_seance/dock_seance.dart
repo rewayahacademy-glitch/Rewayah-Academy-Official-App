@@ -21,7 +21,6 @@ import '../../core/widgets/commande_salle.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import 'actions_seance.dart';
 import 'feuille_micro_bloque.dart';
-import 'libelles_salle_b.dart';
 import 'vue_seance.dart';
 
 /// Le fond d'un [BoutonAppel].
@@ -102,7 +101,7 @@ class BoutonAppel extends StatelessWidget {
   /// d'une feuille ouverte par ce bouton (micro bloque, W2 2.4.3).
   final FocusNode? focusNode;
 
-  /// EN-10 : Supports dit « selectionne » quand son panneau est ouvert.
+  /// Le bouton se dit « selectionne » (son panneau est ouvert).
   final bool? selectionne;
 
   final IconData icone;
@@ -150,7 +149,6 @@ class DockSeance extends StatelessWidget {
     this.microOuvert = true,
     this.cameraAllumee = true,
     this.agrandi = false,
-    this.focusSupports,
     super.key,
   });
 
@@ -162,9 +160,6 @@ class DockSeance extends StatelessWidget {
   /// Le support occupe l'ecran (focus local) : « Reduire » est rendu avant
   /// Quitter, pour en sortir (TB-2).
   final bool agrandi;
-
-  /// EN-10 : le focus rendu a Supports a la fermeture de son panneau.
-  final FocusNode? focusSupports;
 
   Widget? _bouton(BuildContext context, CommandeDock commande) {
     // Guidee (Q1) : « Parler » et « Camera » en disques pleins.
@@ -217,38 +212,6 @@ class DockSeance extends StatelessWidget {
           libelle: t.salle.seance.reseau,
           fond: FondBoutonAppel.reseau,
           onPress: reseau,
-        );
-      case CommandeDock.supports:
-        final VoidCallback? supports = actions.onSupports;
-        if (supports == null) return null;
-        return BoutonAppel(
-          key: const ValueKey<String>('bouton-supports'),
-          focusNode: focusSupports,
-          selectionne:
-              vue.panneau == PanneauOuvert.supports ||
-              vue.panneau == PanneauOuvert.ressources,
-          icone: AppIcons.supports.repos,
-          libelle: t.salle.seance.supports,
-          onPress: supports,
-        );
-      case CommandeDock.partager:
-        final VoidCallback? partager = actions.onPartager;
-        if (partager == null) return null;
-        return BoutonAppel(
-          key: const ValueKey<String>('dock-partager'),
-          icone: AppIcons.flecheAction.repos,
-          libelle: LibellesSalleB.partager,
-          onPress: partager,
-        );
-      case CommandeDock.outils:
-        final VoidCallback? outils = actions.onOutilsEnseignement;
-        if (outils == null) return null;
-        return BoutonAppel(
-          key: const ValueKey<String>('dock-outils'),
-          icone: AppIcons.stylet.repos,
-          libelle: t.salle.seance.outils.titre,
-          libelleSemantique: LibellesSalleB.ouvrirOutils,
-          onPress: outils,
         );
       case CommandeDock.quitter:
         final VoidCallback? quitter = actions.onQuitter;
@@ -470,10 +433,7 @@ class DockSeance extends StatelessWidget {
 /// [CommandeSalle] (labelMedium), arrondie au pixel superieur.
 double _largeurMot(BuildContext context, String mot) {
   final TextPainter peintre = TextPainter(
-    text: TextSpan(
-      text: mot,
-      style: Theme.of(context).textTheme.labelMedium,
-    ),
+    text: TextSpan(text: mot, style: Theme.of(context).textTheme.labelMedium),
     textDirection: Directionality.of(context),
     textScaler: MediaQuery.textScalerOf(context),
     maxLines: 1,

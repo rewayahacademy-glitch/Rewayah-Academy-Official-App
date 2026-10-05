@@ -1,5 +1,6 @@
-// La salle de l'enseignant, CLV-06 (T4) : rail, outils, Eleves et Supports,
-// pagination active, zoom, Reseau ; rien de cela chez l'eleve ni en guidee ;
+// La salle de l'enseignant, CLV-06 (T4) : Eleves et declencheur Commandes
+// (TB-4 : outils, Bibliotheque, pagination et zoom y passent) ; rien de cela
+// chez l'eleve ni en guidee ;
 // aucun debordement aux trois tailles, clair et sombre.
 
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ const ActionsSeance _complet = ActionsSeance(
   onReseau: _rien,
   onEleves: _rien,
   onSupports: _rien,
+  onCommandes: _rien,
   onOutil: _outil,
   onPagePrecedente: _rien,
   onPageSuivante: _rien,
@@ -108,7 +110,10 @@ void main() {
         expect(find.textContaining('Terminer pour tous'), findsNothing);
         expect(find.textContaining('Prolonger'), findsNothing);
         expect(find.text('Élèves 1/3'), findsOneWidget);
-        expect(find.text('Supports'), findsOneWidget);
+        // TB-4 (CMD-01) : Supports et les outils passent dans les Commandes,
+        // pagination et zoom aussi (plan V2 §4.2) ; un seul declencheur.
+        expect(find.text('Supports'), findsNothing);
+        expect(find.text('Commandes'), findsOneWidget);
         // TB-2 (VIS-01, D5) : Reseau a quitte la barre de l'appel.
         expect(find.text('Réseau'), findsNothing);
         expect(_cle('bouton-reseau'), findsNothing);
@@ -118,14 +123,11 @@ void main() {
           'Masquer',
           'Annoter',
         ]) {
-          expect(find.text(outil), findsOneWidget);
+          expect(find.text(outil), findsNothing);
         }
         final bool desktop = taille.key == 'desktop';
-        expect(
-          _cle('pagination-support'),
-          desktop ? findsOneWidget : findsNothing,
-        );
-        expect(_cle('zoom-local'), desktop ? findsOneWidget : findsNothing);
+        expect(_cle('pagination-support'), findsNothing);
+        expect(_cle('zoom-local'), findsNothing);
         expect(
           find.text('Zoom local, sans effet sur les autres'),
           findsNothing,
@@ -179,6 +181,9 @@ void main() {
         for (final String texte in <String>[
           'Élèves 1/3',
           'Supports',
+          'Commandes',
+          'Bibliothèque',
+          'Avec notes',
           'Réseau',
           'Pointeur',
           'Marquer',

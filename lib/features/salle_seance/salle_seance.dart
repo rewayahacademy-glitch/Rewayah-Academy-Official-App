@@ -29,8 +29,8 @@ import 'actions_seance.dart';
 import 'barre_support.dart';
 import 'capsule_seance.dart';
 import 'chrome_seance.dart';
+import 'commandes_pedagogiques.dart';
 import 'dock_seance.dart';
-import 'outils_enseignement.dart';
 import 'panneau_eleves.dart';
 import 'panneau_seance.dart';
 import 'panneau_supports.dart';
@@ -443,9 +443,9 @@ Widget _surContexteEleve({
   );
 }
 
-/// Le clavier des panneaux Eleves et Supports : Echap ferme le panneau
-/// ouvert ; a la fermeture (croix, menu ou Echap), le focus revient au
-/// bouton qui l'avait ouvert.
+/// Le clavier des panneaux Eleves, Supports et Commandes : Echap ferme le
+/// panneau ouvert ; a la fermeture (croix, « Reduire », menu ou Echap), le
+/// focus revient au bouton qui l'avait ouvert.
 class _FocusPanneaux extends StatefulWidget {
   const _FocusPanneaux({
     required this.vue,
@@ -471,7 +471,12 @@ class _FocusPanneaux extends StatefulWidget {
 
 class _FocusPanneauxState extends State<_FocusPanneaux> {
   final FocusNode _focusEleves = FocusNode(debugLabel: 'bouton-eleves');
-  final FocusNode _focusSupports = FocusNode(debugLabel: 'bouton-supports');
+
+  /// TB-4 : le declencheur « Commandes ». La Bibliotheque s'ouvre depuis les
+  /// Commandes : sa fermeture y rend aussi le focus.
+  final FocusNode _focusCommandes = FocusNode(
+    debugLabel: 'declencheur-commandes',
+  );
 
   /// TB-3 : l'avatar de la capsule, ou revient le focus quand le contexte
   /// se reduit (« Reduire », croix ou Echap).
@@ -525,7 +530,7 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
         ? _focusSupport
         : avant == PanneauOuvert.eleves
         ? _focusEleves
-        : _focusSupports;
+        : _focusCommandes;
     // Le bouton est remonte au cadre suivant (telephone, web etroit).
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
       if (mounted && bouton.context != null) bouton.requestFocus();
@@ -535,7 +540,7 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
   @override
   void dispose() {
     _focusEleves.dispose();
-    _focusSupports.dispose();
+    _focusCommandes.dispose();
     _focusSupport.dispose();
     _focusCapsule.dispose();
     super.dispose();
@@ -555,6 +560,8 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
         widget.actions.onSupports?.call();
       case PanneauOuvert.ressources:
         widget.actions.onBibliotheque?.call();
+      case PanneauOuvert.commandes:
+        widget.actions.onCommandes?.call();
       case PanneauOuvert.aucun:
         break;
     }
@@ -598,7 +605,8 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
         vue.voitBoutonsPanneaux &&
             actions.onEleves != null &&
             (panneau == PanneauOuvert.supports ||
-                panneau == PanneauOuvert.ressources),
+                panneau == PanneauOuvert.ressources ||
+                panneau == PanneauOuvert.commandes),
       RaccourciSalle.bibliotheque =>
         vue.voitBoutonsPanneaux &&
             actions.onBibliotheque != null &&
@@ -624,7 +632,8 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
   }
 
   /// La hauteur du retour du micro : au-dessus du dock et de ses libelles,
-  /// et, hors bureau, au-dessus de la rangee d'outils posee sur le dock.
+  /// et, hors bureau, au-dessus du declencheur « Commandes » pose sur le
+  /// dock.
   double _hauteurRetourMicro(BuildContext context) {
     final double dessusDock =
         diametreBoutonAppel(context) + AppSpacing.respiration;
@@ -642,7 +651,9 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
       actions: widget.actions,
       microOuvert: widget.local.microOuvert,
       cameraAllumee: widget.local.cameraAllumee,
-      focusSupports: _focusSupports,
+      // TB-4 : en focus, « Reduire » reste dans la barre (TB18), en plus de
+      // « Quitter le focus » des Commandes.
+      agrandi: _agrandi,
     );
     if (widget.gabarit == Gabarit.desktop) {
       return Padding(
@@ -679,10 +690,15 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
     );
   }
 
+  /// TB-4 : le focus local de l'enseignant (Commandes > Focus), etat local
+  /// existant ; sans support, rien a agrandir.
+  bool get _agrandi => widget.local.agrandi && widget.vue.support != null;
+
   @override
   Widget build(BuildContext context) {
     // EN-9 : sur bureau, le panneau Eleves est ouvert d'office (a droite du
-    // support), jamais derriere le bouton « Eleves ».
+    // support), jamais derriere le bouton « Eleves ». TB-4 : le focus local
+    // replie ce panneau pose d'office (plan V2 §18.3).
     // TB-3 (CTX-01, CTX-02) : le contexte deplie depuis la capsule s'ouvre
     // dans le panneau de personnes existant (Eleves), a tous les gabarits.
     final VueSeance base =
@@ -691,6 +707,7 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
         : widget.vue;
     final VueSeance vue =
         widget.gabarit == Gabarit.desktop &&
+            !_agrandi &&
             base.voitBoutonsPanneaux &&
             base.panneau == PanneauOuvert.aucun
         ? base.copyWith(panneau: PanneauOuvert.eleves)
@@ -745,9 +762,10 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
                     gabarit: widget.gabarit,
                     contenuSupport: widget.contenuSupport,
                     focusEleves: _focusEleves,
-                    focusSupports: _focusSupports,
+                    focusCommandes: _focusCommandes,
                     focusSupport: _focusSupport,
                     focusCapsule: _focusCapsule,
+                    agrandi: _agrandi,
                   ),
                   barre: _barreEnseignant(vue),
                 ),
@@ -821,9 +839,11 @@ class _ActionRaccourciSalle extends Action<IntentRaccourciSalle> {
   }
 }
 
-/// La salle de l'enseignant (CLV-06) : rail (desktop), outils, boutons
-/// Eleves et Supports, support dominant, pagination active et zoom (desktop),
-/// dock Micro, Camera, Reseau, Quitter. Jamais Agrandir.
+/// La salle de l'enseignant (CLV-06) : support dominant, bouton Eleves,
+/// declencheur « Commandes » (TB-4) ; la barre de l'appel Micro, Camera,
+/// Quitter est posee par-dessus (TB-2). Plus d'outils permanents ni de
+/// pagination sous le support : ils vivent dans les Commandes (plan V2 §4.2,
+/// UX_REVIEW_TB n. 10, n. 11).
 class _SalleEnseignant extends StatelessWidget {
   const _SalleEnseignant({
     required this.vue,
@@ -831,10 +851,11 @@ class _SalleEnseignant extends StatelessWidget {
     required this.local,
     required this.gabarit,
     required this.focusEleves,
-    required this.focusSupports,
+    required this.focusCommandes,
     required this.focusSupport,
     this.focusCapsule,
     this.contenuSupport,
+    this.agrandi = false,
   });
 
   final VueSeance vue;
@@ -843,12 +864,17 @@ class _SalleEnseignant extends StatelessWidget {
   final Gabarit gabarit;
   final Widget? contenuSupport;
 
+  /// TB-4 : le focus local (Commandes > Focus) replie le bouton Eleves et
+  /// le panneau pose d'office ; capsule, Commandes et barre restent.
+  final bool agrandi;
+
   /// TB-3 : le noeud de l'avatar de la capsule (retour du focus).
   final FocusNode? focusCapsule;
 
-  /// Les noeuds des boutons Eleves et Supports (retour du focus).
+  /// Les noeuds du bouton Eleves et du declencheur Commandes (retour du
+  /// focus).
   final FocusNode focusEleves;
-  final FocusNode focusSupports;
+  final FocusNode focusCommandes;
 
   /// Le noeud du support : il recoit le focus apres le choix d'une ressource.
   final FocusNode focusSupport;
@@ -856,9 +882,8 @@ class _SalleEnseignant extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const double gouttiere = AppPage.gouttiereMobile;
-    final bool outils = vue.voitOutils && actions.onOutil != null;
-    // Telephone et desktop : le support partage la hauteur avec les boutons
-    // et les outils, il se resserre pour montrer la diapositive entiere.
+    // Telephone et desktop : le support partage la hauteur avec les boutons,
+    // il se resserre pour montrer la diapositive entiere.
     final Widget support = Focus(
       focusNode: focusSupport,
       child: ZoneSupport(
@@ -868,30 +893,23 @@ class _SalleEnseignant extends StatelessWidget {
         contenu: contenuSupport,
       ),
     );
-    final Widget? boutons = _BoutonsPanneaux.ou(
-      vue,
-      actions,
-      gabarit,
-      focusEleves: focusEleves,
-      focusSupports: focusSupports,
-    );
+    final Widget? boutons = agrandi
+        ? null
+        : _BoutonsPanneaux.ou(vue, actions, gabarit, focusEleves: focusEleves);
+    final Widget? declencheur = _declencheur();
     final Widget? panneau = _panneau();
     if (panneau != null) {
       return gabarit == Gabarit.desktop
-          ? _avecRail(
-              _desktopAvecPanneau(
-                context,
-                panneau: panneau,
-                support: support,
-                outils: outils,
-              ),
+          ? _desktopAvecPanneau(
+              panneau: panneau,
+              support: support,
+              declencheur: declencheur,
             )
           : _etroitAvecPanneau(panneau: panneau, support: support);
     }
     switch (gabarit) {
       case Gabarit.desktop:
-        final SupportSeance? page = vue.support;
-        final Widget contenu = Column(
+        return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             ChromeSeance(
@@ -899,14 +917,12 @@ class _SalleEnseignant extends StatelessWidget {
               actions: actions,
               focusCapsule: focusCapsule,
             ),
-            // La rangee d'outils n'a pas d'ecart en tete : 12, comme sous
-            // elle.
             BandeauSecours(
               vue: vue,
               actions: actions,
               espaceApres: AppSpacing.md,
             ),
-            if (outils || boutons != null)
+            if (boutons != null)
               Padding(
                 padding: const EdgeInsetsDirectional.fromSTEB(
                   gouttiere,
@@ -914,92 +930,25 @@ class _SalleEnseignant extends StatelessWidget {
                   gouttiere,
                   AppSpacing.md,
                 ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    if (outils)
-                      OutilsEnseignement(
-                        onOutil: actions.onOutil,
-                        forme: FormeOutils.rangee,
-                      ),
-                    const Spacer(),
-                    ?boutons,
-                  ],
+                child: Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: boutons,
                 ),
               ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: gouttiere),
-                child: support,
-              ),
-            ),
-            // TB-2 : le dock est dans la barre de l'appel (par-dessus) ;
-            // pagination et zoom restent sous le support.
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(
-                gouttiere,
-                AppSpacing.xxl,
-                gouttiere,
-                0,
-              ),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Align(
-                      alignment: AlignmentDirectional.centerStart,
-                      child: page != null && vue.voitPaginationActive(gabarit)
-                          ? PaginationSupport(
-                              page: page.page,
-                              pages: page.pages,
-                              onPrecedente: actions.onPagePrecedente,
-                              onSuivante: actions.onPageSuivante,
-                            )
-                          : const SizedBox.shrink(),
-                    ),
-                  ),
-                  Expanded(
-                    child: Align(
-                      alignment: AlignmentDirectional.centerEnd,
-                      child: vue.voitZoomLocal(gabarit)
-                          ? Padding(
-                              padding: const EdgeInsetsDirectional.only(
-                                start: AppSpacing.respiration,
-                              ),
-                              child: ZoomLocal(
-                                zoom: local.zoom,
-                                onMoins: actions.onZoomMoins,
-                                onPlus: actions.onZoomPlus,
-                                avecLibelle: false,
-                              ),
-                            )
-                          : const SizedBox.shrink(),
-                    ),
-                  ),
-                ],
+                child: _sousSupport(support, declencheur),
               ),
             ),
           ],
         );
-        return _avecRail(contenu);
       case Gabarit.tablette:
       case Gabarit.mobile:
         final bool mobile = gabarit == Gabarit.mobile;
         // Telephone : les ecarts entre les rangees se resserrent d'un
         // palier, la place revient au support (image mobile, enseignant).
         final Widget ecart = mobile ? Ecart.vSm : Ecart.vMd;
-        final Widget milieu = mobile || !outils
-            ? support
-            : Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(child: support),
-                  Ecart.hMd,
-                  OutilsEnseignement(
-                    onOutil: actions.onOutil,
-                    forme: FormeOutils.colonne,
-                  ),
-                ],
-              );
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
@@ -1024,28 +973,42 @@ class _SalleEnseignant extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: gouttiere),
-                child: milieu,
+                child: support,
               ),
             ),
-            if (mobile && outils) ...<Widget>[
+            // TB-4 : le declencheur, pres du bas, au-dessus de la zone de la
+            // barre de l'appel (posee par-dessus, TB-2) ; centre au
+            // telephone (planche 1), au bord de fin sur tablette (§4.2).
+            if (declencheur != null) ...<Widget>[
               ecart,
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: gouttiere),
-                child: OutilsEnseignement(
-                  onOutil: actions.onOutil,
-                  forme: FormeOutils.rangee,
+                child: Align(
+                  alignment: mobile
+                      ? Alignment.center
+                      : AlignmentDirectional.centerEnd,
+                  child: declencheur,
                 ),
               ),
             ],
-            // TB-2 : la barre de l'appel est posee par-dessus, en bas.
           ],
         );
     }
   }
 
-  /// EN-9 : la salle de l'enseignant n'a pas de barre de navigation, meme
-  /// sur bureau (le rail reste a la fin de seance, `FinSeanceEnseignant`).
-  Widget _avecRail(Widget contenu) => contenu;
+  /// TB-4 : le declencheur « Commandes », rendu seulement si une entree du
+  /// panneau a un rappel (UX_REVIEW_TB §3 bis).
+  Widget? _declencheur() {
+    final VoidCallback? basculer = actions.onCommandes;
+    if (basculer == null || !CommandesPedagogiques.aDesEntrees(vue, actions)) {
+      return null;
+    }
+    return DeclencheurCommandes(
+      onPress: basculer,
+      ouvert: vue.panneau == PanneauOuvert.commandes,
+      focusNode: focusCommandes,
+    );
+  }
 
   /// Le panneau ouvert, ou `null`. Enseignant seulement : ce widget n'est
   /// construit que pour `RoleSeance.enseignant`, et la vue le confirme.
@@ -1101,13 +1064,27 @@ class _SalleEnseignant extends StatelessWidget {
         ),
       ),
       // EN-10 : le selecteur de ressources (04 §19), ouvert par « Voir toute
-      // la bibliotheque » et par la Bibliotheque du Teaching Dock ; feuille
-      // sur mobile, panneau sur bureau. La salle reste ouverte.
+      // la bibliotheque » ; feuille sur mobile, panneau sur bureau. La salle
+      // reste ouverte.
       PanneauOuvert.ressources => PanneauSeance(
         titre: t.salle.seance.supports,
         onFermer: actions.onBibliotheque,
         forme: forme,
         enfant: SelecteurRessources(supports: vue.supports, actions: actions),
+      ),
+      // TB-4 (CMD-01) : « Commandes », ferme par « Reduire » (plan V2 §20).
+      PanneauOuvert.commandes => PanneauSeance(
+        titre: t.salle.seance.commandes.titre,
+        onFermer: actions.onCommandes,
+        libelleFermer: t.salle.seance.commandes.reduire,
+        semantiqueFermer: t.salle.seance.commandes.reduireSemantique,
+        forme: forme,
+        enfant: CommandesPedagogiques(
+          vue: vue,
+          actions: actions,
+          zoom: local.zoom,
+          agrandi: agrandi,
+        ),
       ),
     };
     if (panneau == null) return null;
@@ -1116,46 +1093,28 @@ class _SalleEnseignant extends StatelessWidget {
     return Focus(autofocus: true, skipTraversal: true, child: panneau);
   }
 
-  /// Desktop, panneau ouvert (CLV-07, CLV-08) : panneau a gauche, support au
-  /// centre, colonne droite (Eleves et Supports, puis carte des outils, Q2) ;
-  /// pagination, dock et zoom sous le support seulement.
-  Widget _desktopAvecPanneau(
-    BuildContext context, {
+  /// Desktop, panneau ouvert. Supports (CLV-08) : panneau a gauche, support
+  /// au centre, bouton Eleves a droite. Eleves (EN-9) et Commandes (TB-4) :
+  /// support a gauche, panneau a droite (« bord droit », plan V2 §4.2).
+  Widget _desktopAvecPanneau({
     required Widget panneau,
     required Widget support,
-    required bool outils,
+    required Widget? declencheur,
   }) {
     const double gouttiere = AppPage.gouttiereMobile;
-    final SupportSeance? page = vue.support;
-    // CLV-08 : carte des outils en tete de la colonne droite, puis Eleves et
-    // Supports en liste ; sous le support, dock puis pagination et zoom.
     final bool supports = vue.panneau == PanneauOuvert.supports;
-    final Widget? boutons = _BoutonsPanneaux.ou(
-      vue,
-      actions,
-      gabarit,
-      etire: true,
-      serre: true,
-      enColonne: supports,
-      focusEleves: focusEleves,
-      focusSupports: focusSupports,
-    );
-    final Widget? pagination = page != null && vue.voitPaginationActive(gabarit)
-        ? PaginationSupport(
-            page: page.page,
-            pages: page.pages,
-            onPrecedente: actions.onPagePrecedente,
-            onSuivante: actions.onPageSuivante,
-          )
-        : null;
-    final Widget? zoom = vue.voitZoomLocal(gabarit)
-        ? ZoomLocal(
-            zoom: local.zoom,
-            onMoins: actions.onZoomMoins,
-            onPlus: actions.onZoomPlus,
-            avecLibelle: false,
-          )
-        : null;
+    final Widget? boutons = agrandi
+        ? null
+        : _BoutonsPanneaux.ou(
+            vue,
+            actions,
+            gabarit,
+            etire: true,
+            serre: true,
+            enColonne: supports,
+            focusEleves: focusEleves,
+          );
+    final Widget centre = _sousSupport(support, declencheur);
     if (supports) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1171,21 +1130,14 @@ class _SalleEnseignant extends StatelessWidget {
                 children: <Widget>[
                   SizedBox(width: largeurColonneSupportsSeance, child: panneau),
                   Ecart.hMd,
-                  Expanded(child: _sousSupport(support, pagination, zoom)),
-                  Ecart.hMd,
-                  SizedBox(
-                    width: largeurColonneDroiteSeance,
-                    // Une seule carte haute comme le support : les outils,
-                    // puis Eleves et Supports (image CLV-08).
-                    child: outils
-                        ? OutilsEnseignement(
-                            onOutil: actions.onOutil,
-                            forme: FormeOutils.carte,
-                            initial: null,
-                            pied: boutons,
-                          )
-                        : Column(children: <Widget>[?boutons]),
-                  ),
+                  Expanded(child: centre),
+                  if (boutons != null) ...<Widget>[
+                    Ecart.hMd,
+                    SizedBox(
+                      width: largeurColonneDroiteSeance,
+                      child: Column(children: <Widget>[boutons]),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -1193,9 +1145,6 @@ class _SalleEnseignant extends StatelessWidget {
         ],
       );
     }
-    // EN-9 (salle A, bureau) : deux volets seulement. A gauche, la rangee
-    // d'outils puis le support ; a droite, les boutons Eleves et Supports
-    // puis le panneau Eleves et la file de recitation, ouverts d'office.
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -1208,24 +1157,7 @@ class _SalleEnseignant extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      if (outils) ...<Widget>[
-                        Align(
-                          alignment: AlignmentDirectional.centerStart,
-                          child: OutilsEnseignement(
-                            onOutil: actions.onOutil,
-                            forme: FormeOutils.rangee,
-                          ),
-                        ),
-                        Ecart.vMd,
-                      ],
-                      Expanded(child: _sousSupport(support, pagination, zoom)),
-                    ],
-                  ),
-                ),
+                Expanded(child: centre),
                 Ecart.hMd,
                 SizedBox(
                   width: largeurColonneSeance,
@@ -1245,24 +1177,20 @@ class _SalleEnseignant extends StatelessWidget {
     );
   }
 
-  /// Bureau, panneau ouvert : pagination et zoom sous le support, dans sa
-  /// colonne (le panneau garde toute sa hauteur). TB-2 (UX_REVIEW_TB n. 27
-  /// g) : la rangee passe a la ligne au lieu de reduire le texte agrandi ;
-  /// le dock est dans la barre de l'appel, posee par-dessus en bas.
-  Widget _sousSupport(Widget support, Widget? pagination, Widget? zoom) {
-    if (pagination == null && zoom == null) return support;
+  /// Bureau : le declencheur « Commandes » sous le support, au bord de fin
+  /// (plan V2 §4.2 : « bord droit de la surface ») ; la barre de l'appel est
+  /// posee par-dessus, plus bas (TB-2).
+  Widget _sousSupport(Widget support, Widget? declencheur) {
+    if (declencheur == null) return support;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Expanded(child: support),
         Padding(
           padding: const EdgeInsets.only(top: AppSpacing.md),
-          child: Wrap(
-            alignment: WrapAlignment.center,
-            spacing: AppSpacing.md,
-            runSpacing: AppSpacing.sm,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: <Widget>[?pagination, ?zoom],
+          child: Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: declencheur,
           ),
         ),
       ],
@@ -1270,15 +1198,17 @@ class _SalleEnseignant extends StatelessWidget {
   }
 
   /// Web etroit et telephone, panneau ouvert : le panneau recouvre le
-  /// support (volet a gauche, ou feuille du bas qui laisse voir le haut du
-  /// support et la vignette). Les boutons Eleves et Supports et les outils
-  /// se retirent : le panneau les remplace (images CLV-07-08-10).
+  /// support (volet, ou feuille du bas qui laisse voir le haut du support et
+  /// la vignette). Les boutons et le declencheur se retirent : le panneau
+  /// les remplace (images CLV-07-08-10). TB-4 : le volet des Commandes est
+  /// au bord de fin (« panneau droit », plan V2 §6), les autres au debut.
   Widget _etroitAvecPanneau({
     required Widget panneau,
     required Widget support,
   }) {
     const double gouttiere = AppPage.gouttiereMobile;
     final bool mobile = gabarit == Gabarit.mobile;
+    final bool aLaFin = vue.panneau == PanneauOuvert.commandes;
     // TB-2 : le dock est dans la barre de l'appel, sous le panneau.
     final Widget dessous = Padding(
       padding: const EdgeInsets.symmetric(horizontal: gouttiere),
@@ -1331,7 +1261,8 @@ class _SalleEnseignant extends StatelessWidget {
                   else
                     // Le volet descend jusqu'au bas de l'ecran (image).
                     PositionedDirectional(
-                      start: AppSpacing.sm,
+                      start: aLaFin ? null : AppSpacing.sm,
+                      end: aLaFin ? AppSpacing.sm : null,
                       top: 0,
                       bottom: 0,
                       width: largeurVolet,
@@ -1347,18 +1278,16 @@ class _SalleEnseignant extends StatelessWidget {
   }
 }
 
-/// « Eleves 1/3 › » et « Supports › » : enseignant seulement. Desktop :
-/// deux boutons a droite de la rangee d'outils ; ailleurs, deux boutons de
-/// meme largeur au-dessus du support.
+/// « Eleves 1/3 › » : enseignant seulement. Desktop : a droite au-dessus du
+/// support ; ailleurs, sur toute la largeur au-dessus du support. La
+/// Bibliotheque est dans les Commandes (TB-4).
 class _BoutonsPanneaux extends StatelessWidget {
   const _BoutonsPanneaux({
     required this.compteur,
     required this.onEleves,
-    required this.onSupports,
     required this.etire,
     this.panneau = PanneauOuvert.aucun,
     this.focusEleves,
-    this.focusSupports,
     this.serre = false,
     this.enColonne = false,
   });
@@ -1371,11 +1300,11 @@ class _BoutonsPanneaux extends StatelessWidget {
     bool serre = false,
     bool enColonne = false,
     FocusNode? focusEleves,
-    FocusNode? focusSupports,
   }) {
     final String? compteur = vue.compteurEleves;
     if (!vue.voitBoutonsPanneaux || compteur == null) return null;
-    if (actions.onEleves == null) return null;
+    final VoidCallback? eleves = actions.onEleves;
+    if (eleves == null) return null;
     // Bureau, panneau Eleves ouvert : il dit deja l'etat et le compteur (son
     // en-tete), le bouton ne le repete pas (K-42, style 3). R et Echap
     // restent.
@@ -1384,14 +1313,10 @@ class _BoutonsPanneaux extends StatelessWidget {
     }
     return _BoutonsPanneaux(
       compteur: compteur,
-      onEleves: actions.onEleves,
-      // EN-10 : Supports passe dans le Teaching Dock compact (maquettes,
-      // planche 3) ; un seul bouton Supports dans la salle.
-      onSupports: null,
+      onEleves: eleves,
       etire: etire ?? gabarit != Gabarit.desktop,
       panneau: vue.panneau,
       focusEleves: focusEleves,
-      focusSupports: focusSupports,
       serre: serre,
       enColonne: enColonne,
     );
@@ -1400,60 +1325,38 @@ class _BoutonsPanneaux extends StatelessWidget {
   /// Le panneau ouvert : son bouton se dit selectionne.
   final PanneauOuvert panneau;
   final FocusNode? focusEleves;
-  final FocusNode? focusSupports;
 
   final String compteur;
-  final VoidCallback? onEleves;
-  final VoidCallback? onSupports;
+  final VoidCallback onEleves;
   final bool etire;
 
   /// Desktop, panneau ouvert : colonne droite etroite (CLV-07).
   final bool serre;
 
-  /// Desktop, panneau Supports : l'un sous l'autre, pleine largeur (CLV-08).
+  /// Desktop, panneau Supports : pleine largeur de la colonne (CLV-08).
   final bool enColonne;
 
   @override
   Widget build(BuildContext context) {
-    final VoidCallback? eleves = onEleves;
-    final VoidCallback? supports = onSupports;
-    final List<Widget> boutons = <Widget>[
-      if (eleves != null)
-        BoutonPanneau(
-          key: const ValueKey<String>('bouton-eleves'),
-          icone: AppIcons.eleves,
-          libelle: compteur,
-          onPress: eleves,
-          ouvert: panneau == PanneauOuvert.eleves,
-          focusNode: focusEleves,
-          etire: etire,
-          serre: serre,
-        ),
-      if (supports != null)
-        BoutonPanneau(
-          key: const ValueKey<String>('bouton-supports'),
-          icone: AppIcons.supports,
-          libelle: t.salle.seance.supports,
-          onPress: supports,
-          ouvert: panneau == PanneauOuvert.supports,
-          focusNode: focusSupports,
-          etire: etire,
-          serre: serre,
-        ),
-    ];
+    final Widget bouton = BoutonPanneau(
+      key: const ValueKey<String>('bouton-eleves'),
+      icone: AppIcons.eleves,
+      libelle: compteur,
+      onPress: onEleves,
+      ouvert: panneau == PanneauOuvert.eleves,
+      focusNode: focusEleves,
+      etire: etire,
+      serre: serre,
+    );
     if (enColonne) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        spacing: AppSpacing.lg,
-        children: boutons,
+        children: <Widget>[bouton],
       );
     }
     return Row(
       mainAxisSize: etire ? MainAxisSize.max : MainAxisSize.min,
-      spacing: AppSpacing.lg,
-      children: <Widget>[
-        for (final Widget b in boutons) etire ? Expanded(child: b) : b,
-      ],
+      children: <Widget>[if (etire) Expanded(child: bouton) else bouton],
     );
   }
 }
@@ -1468,12 +1371,17 @@ class BoutonPanneau extends StatelessWidget {
     this.focusNode,
     this.etire = false,
     this.serre = false,
+    this.libelleSemantique,
     super.key,
   });
 
   final AppIcon icone;
   final String libelle;
   final VoidCallback onPress;
+
+  /// Le nom lu, s'il dit plus que [libelle] (il le contient, W-253) ;
+  /// `null` : le libelle.
+  final String? libelleSemantique;
 
   /// Son panneau est ouvert : dit « selectionne » aux lecteurs d'ecran.
   final bool ouvert;
@@ -1504,7 +1412,7 @@ class BoutonPanneau extends StatelessWidget {
       selected: ouvert,
       child: AppCard(
         onPress: onPress,
-        libelleSemantique: libelle,
+        libelleSemantique: libelleSemantique ?? libelle,
         focusNode: focusNode,
         marge: etire ? AppSpacing.md : AppSpacing.lg,
         // Le libelle est deja porte par la semantique de la carte : exclure

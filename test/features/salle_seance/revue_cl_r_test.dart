@@ -13,8 +13,8 @@ import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle/vue_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart';
 import 'package:rewayah_academy/features/salle_seance/depuis_salle.dart';
-import 'package:rewayah_academy/features/salle_seance/dock_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
@@ -62,6 +62,7 @@ class _HoteState extends State<_Hote> {
       onCamera: _rien,
       onEleves: () => _basculer(PanneauOuvert.eleves),
       onSupports: () => _basculer(PanneauOuvert.supports),
+      onCommandes: () => _basculer(PanneauOuvert.commandes),
       onRappeler: _eleve,
       onChoisirPourReciter: _eleve,
       onNoter: _eleve,
@@ -150,11 +151,19 @@ void main() {
       });
     }
 
-    testWidgets('la croix ferme Supports et rend le focus a son bouton', (
+    testWidgets('la croix ferme Supports et rend le focus aux Commandes', (
       WidgetTester tester,
     ) async {
+      // TB-4 : la Bibliotheque s'ouvre depuis les Commandes ; sa fermeture
+      // rend le focus au declencheur.
       await _monterSalle(tester, const Size(640, 1000));
-      await tester.tap(find.byKey(const ValueKey<String>('bouton-supports')));
+      await tester.tap(
+        find.byKey(const ValueKey<String>('declencheur-commandes')),
+      );
+      await tester.pump();
+      await tester.tap(
+        find.byKey(const ValueKey<String>('commandes-bibliotheque')),
+      );
       await tester.pump();
       expect(find.byType(PanneauSeance), findsOneWidget);
 
@@ -168,7 +177,7 @@ void main() {
       await tester.pump();
       await tester.pump();
       expect(find.byType(PanneauSeance), findsNothing);
-      expect(_focus(), 'bouton-supports');
+      expect(_focus(), 'declencheur-commandes');
     });
 
     testWidgets('le bouton du panneau ouvert se dit selectionne', (
@@ -176,17 +185,20 @@ void main() {
     ) async {
       final SemanticsHandle semantique = tester.ensureSemantics();
       await _monterSalle(tester, const Size(1440, 900));
-      // EN-9 : sur bureau, Eleves est ouvert d'office ; on ouvre Supports.
-      final Finder eleves = find.byKey(
-        const ValueKey<String>('bouton-supports'),
+      // EN-9 : sur bureau, Eleves est ouvert d'office ; TB-4 : on ouvre
+      // les Commandes.
+      final Finder commandes = find.byKey(
+        const ValueKey<String>('declencheur-commandes'),
       );
-      expect(tester.getSemantics(eleves), isNot(isSemantics(isSelected: true)));
-      await tester.tap(eleves);
-      await tester.pump();
-      // EN-10 : Supports est dans le Teaching Dock compact.
-      expect(tester.widget<BoutonAppel>(eleves).selectionne, isTrue);
       expect(
-        tester.getSemantics(eleves),
+        tester.getSemantics(commandes),
+        isNot(isSemantics(isSelected: true)),
+      );
+      await tester.tap(commandes);
+      await tester.pump();
+      expect(tester.widget<DeclencheurCommandes>(commandes).ouvert, isTrue);
+      expect(
+        tester.getSemantics(commandes),
         isSemantics(isSelected: true, isButton: true),
       );
       semantique.dispose();

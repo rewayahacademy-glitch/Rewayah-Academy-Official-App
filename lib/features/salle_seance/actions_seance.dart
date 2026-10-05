@@ -24,8 +24,9 @@ class ActionsSeance {
     this.onReseau,
     this.onEleves,
     this.onSupports,
-    this.onPartager,
-    this.onOutilsEnseignement,
+    this.onCommandes,
+    this.onAffichage,
+    this.onAjusterEcran,
     this.onOutil,
     this.onPagePrecedente,
     this.onPageSuivante,
@@ -96,12 +97,19 @@ class ActionsSeance {
   final VoidCallback? onEleves;
   final VoidCallback? onSupports;
 
-  /// EN-10 : « Partager » du Teaching Dock compact. Nul : pas de bouton.
-  final VoidCallback? onPartager;
+  /// TB-4 (CMD-01) : le declencheur « Commandes » ouvre ou reduit le
+  /// panneau pedagogique (etat local, jamais diffuse). Nul : pas de
+  /// declencheur.
+  final VoidCallback? onCommandes;
 
-  /// EN-10 : « Ouvrir les outils d'enseignement » (le Teaching Dock de
-  /// `tc_dock`). Nul : pas de bouton.
-  final VoidCallback? onOutilsEnseignement;
+  /// TB-4 : « Support », « Avec notes », « Tableau », un clic chacun (TB3).
+  /// Nul : le choix n'est pas rendu (aucun champ partage avant TB-BR-13 en
+  /// Classe Live).
+  final ValueChanged<AffichagePartage>? onAffichage;
+
+  /// TB-4 : « Ajuster a l'ecran » (section Lecture) retablit le cadrage
+  /// personnel, sans rien diffuser. Nul : pas de bouton.
+  final VoidCallback? onAjusterEcran;
   final ValueChanged<OutilEnseignement>? onOutil;
   final VoidCallback? onPagePrecedente;
   final VoidCallback? onPageSuivante;

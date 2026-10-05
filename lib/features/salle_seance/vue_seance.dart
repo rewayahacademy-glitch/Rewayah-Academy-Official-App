@@ -406,21 +406,15 @@ enum PanneauOuvert {
 
   /// EN-10 : le selecteur de ressources (04 §19).
   ressources,
+
+  /// TB-4 (CMD-01, plan V2 §4.2) : les commandes du support et du tableau,
+  /// ouvertes par le seul declencheur « Commandes ». Feuille au telephone,
+  /// panneau a droite ailleurs ; un seul panneau secondaire a la fois.
+  commandes,
 }
 
 /// Une commande du dock, par role (I-4).
-enum CommandeDock {
-  micro,
-  camera,
-  agrandir,
-  reseau,
-  quitter,
-
-  /// EN-10 : le Teaching Dock compact de l'enseignant.
-  supports,
-  partager,
-  outils,
-}
+enum CommandeDock { micro, camera, agrandir, reseau, quitter }
 
 /// Un compte affiche en haut a droite : celui de la personne devant l'ecran.
 @immutable
@@ -788,7 +782,21 @@ class VueSeance {
 
   bool get voitCompteurEleves => _enseignant;
   bool get voitBoutonsPanneaux => _enseignant;
+
+  /// Les outils d'enseignement (onglet « Outils » des Commandes, TB-4) :
+  /// enseignant, un support montre.
   bool get voitOutils => _enseignant && support != null;
+
+  /// TB-4 (CMD-01) : le declencheur « Commandes » et son panneau. Enseignant
+  /// seulement : l'eleve ne voit ni Bibliotheque, ni affichages, ni page
+  /// partagee (TB14, plan V2 §5) ; son contenu propre (lecture, focus,
+  /// ecriture autorisee) vient avec TB-10. Le declencheur n'est rendu que si
+  /// une de ses entrees a un rappel (UX_REVIEW_TB §3 bis).
+  bool get voitCommandes => _enseignant && !estFinie;
+
+  /// « Support », « Avec notes », « Tableau » : invisibles sans support
+  /// presente (plan V2 §4.2) ; jamais chez l'eleve.
+  bool get voitAffichagesPartages => _enseignant && supportPresente != null;
   bool get voitSignalVideo => _enseignant;
 
   /// Le rail de navigation enseignant : desktop seulement (image CLV-06).
@@ -832,9 +840,27 @@ class VueSeance {
 
   // --- Barre du support (I-5, I-7) ---
 
-  /// Fleches ‹ 1/12 › qui changent la page de tous : enseignant, desktop.
-  bool voitPaginationActive(Gabarit gabarit) =>
-      _enseignant && support != null && gabarit == Gabarit.desktop;
+  /// « Page {numero} sur {total} » et ses fleches, qui changent la page de
+  /// tous : enseignant, dans les Commandes, a toutes les tailles (TB-4,
+  /// UX_REVIEW_TB n. 10).
+  bool get voitPaginationCommandes =>
+      _enseignant && (support != null || supportPresente != null);
+
+  /// La page montree dans les Commandes : celle du support presente, sinon
+  /// celle de la diapositive, ou `null` sans support.
+  ({int page, int total})? get pageCommandes {
+    final SupportPageFixe? fixe = supportPresente;
+    if (fixe != null) return (page: fixe.page, total: fixe.total);
+    final SupportSeance? diapositive = support;
+    if (diapositive != null) {
+      return (page: diapositive.page, total: diapositive.pages);
+    }
+    return null;
+  }
+
+  /// Lecture (zoom local, « Ajuster a l'ecran ») et Affichage (Focus) dans
+  /// les Commandes : enseignant, un support montre ; rien n'est diffuse.
+  bool get voitLectureCommandes => _enseignant && support != null;
 
   /// « 1 / 12 » en lecture seule : eleve standard, desktop.
   bool voitIndicateurPage(Gabarit gabarit) =>
@@ -850,18 +876,15 @@ class VueSeance {
   ///
   /// TB-2 (VIS-01, plan V2 §4.1, UX_REVIEW_TB n. 1) : la barre de l'appel
   /// est Micro, Camera, Quitter, dans cet ordre. Agrandir la quitte (le
-  /// Focus passe dans Commandes en TB-4 ; la salle garde « Reduire » tant
-  /// que le focus local est actif, [DockSeance.agrandi]) ; Reseau la quitte
-  /// (un indicateur, D5). Supports, Partager et Outils de l'enseignant y
-  /// restent jusqu'a ce que TB-4 (CMD-01) les pose dans Commandes : les
-  /// retirer avant laisserait l'enseignant sans eux.
+  /// Focus est dans Commandes ; la salle garde « Reduire » tant que le focus
+  /// local est actif, [DockSeance.agrandi]) ; Reseau la quitte (un
+  /// indicateur, D5). TB-4 (CMD-01) : Supports devient la Bibliotheque des
+  /// Commandes, les outils leur onglet « Outils » ; Partager, sans effet
+  /// avant BR-1, n'est pas repris (« Presenter » de la Bibliotheque, TB-8).
   List<CommandeDock> get commandesDock => switch (role) {
     RoleSeance.enseignant => const <CommandeDock>[
-      CommandeDock.supports,
       CommandeDock.micro,
       CommandeDock.camera,
-      CommandeDock.partager,
-      CommandeDock.outils,
       CommandeDock.quitter,
     ],
     RoleSeance.eleve || RoleSeance.guidee => <CommandeDock>[

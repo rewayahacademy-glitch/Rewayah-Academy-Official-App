@@ -737,10 +737,15 @@ void main() {
     }
 
     Future<void> ouvrirSelecteur(WidgetTester tester) async {
-      final Finder bouton = find.byKey(
-        const ValueKey<String>('bouton-supports'),
+      // TB-4 : Commandes, puis la Bibliotheque (premiere entree).
+      await _toucherEtAttendre(
+        tester,
+        find.byKey(const ValueKey<String>('declencheur-commandes')),
       );
-      await _toucherEtAttendre(tester, bouton);
+      await _toucherEtAttendre(
+        tester,
+        find.byKey(const ValueKey<String>('commandes-bibliotheque')),
+      );
       final Finder bureau = find.text(
         t.salle.seance.panneauSupports.voirBibliotheque,
       );
