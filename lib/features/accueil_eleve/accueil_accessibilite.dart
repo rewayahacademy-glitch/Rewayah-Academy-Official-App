@@ -10,8 +10,13 @@
 //
 // DASH-MA-PROD : monte sur la vraie route de l'eleve (`/eleve`) quand le
 // Mode Accessibilite est actif (`AccueilEleveSelonPresentation`), ses
-// donnees lues dans un port neutre par defaut (K-09) ; une seule colonne
-// (DASH-1, Q3) et ses cinq etats (D11).
+// donnees lues dans un port neutre par defaut (K-09) et ses cinq etats
+// (D11).
+//
+// MA-2COL-1 : les deux colonnes de MA-3 reviennent, comme la fiche ELV-02-MA
+// le prevoit (DASH_STRATEGIE, « une colonne ; deux a partir de 840 /
+// facteur de texte ; pas de Bento ») : Q3 ecarte le Bento, pas cette
+// seconde colonne.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,6 +47,10 @@ import '../tc_espace_groupe/carte_session.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_mes_groupes/photo_enseignant.dart';
 
+/// Largeur utile, divisee par le facteur de texte, a partir de laquelle
+/// l'Accueil passe en deux colonnes (K-42 point 6, MA15, fiche ELV-02-MA).
+const double seuilDeuxColonnesAccueil = 840;
+
 /// L'Accueil de l'eleve en Mode Accessibilite.
 ///
 /// Le seul bouton dominant est celui de la carte de seance : « Rejoindre »
@@ -49,9 +58,11 @@ import '../tc_mes_groupes/photo_enseignant.dart';
 /// ligne d'etat (jamais les deux, R4). Tout le reste est une ligne d'une
 /// seule cible.
 ///
-/// DASH-MA-PROD : **une seule colonne**, a toute largeur (DASH-1, Q3 :
-/// l'ordre de lecture unique aide l'eleve), bornee par `PageShell`. Deux
-/// formes :
+/// Une colonne ; deux a partir de [seuilDeuxColonnesAccueil] de largeur
+/// utile divisee par le facteur de texte (fiche ELV-02-MA) : la salutation
+/// et la seance gardent toute la largeur, puis « Avant le prochain cours » a
+/// cote de « Lire le Coran » et de l'aide, lus dans cet ordre. Hors contenu
+/// (chargement mis a part), une seule colonne. Deux formes :
 ///
 /// - [AccueilAccessibilite.new] recoit ses donnees (tests de composant) ;
 /// - [AccueilAccessibilite.lu] les lit dans [donneesAccueilAccessibiliteProvider]
@@ -123,6 +134,9 @@ class AccueilAccessibilite extends ConsumerWidget {
   /// Cle du bouton « Voir ma classe ».
   static const Key cleVoirClasse = ValueKey<String>('ma3-voir-classe');
 
+  /// Cle de la mise en deux colonnes.
+  static const Key cleDeuxColonnes = ValueKey<String>('ma3-deux-colonnes');
+
   /// Cle du squelette de chargement.
   static const Key cleSquelette = ValueKey<String>('ma3-squelette');
 
@@ -136,10 +150,31 @@ class AccueilAccessibilite extends ConsumerWidget {
   static const Key cleIndisponible = ValueKey<String>('ma3-indisponible');
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context, WidgetRef ref) => PageShell(
+    child: LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) {
+        final double facteur = MediaQuery.textScalerOf(context).scale(1);
+        final bool deuxColonnes =
+            contraintes.maxWidth / facteur >= seuilDeuxColonnesAccueil;
+        return _composer(ref, deuxColonnes: deuxColonnes);
+      },
+    ),
+  );
+
+  Widget _composer(WidgetRef ref, {required bool deuxColonnes}) {
     final String? prenomDonne = prenom;
     final GroupHomeVM? espaceDonne = espace;
     final Widget coranEtAide = _CoranEtAide(onCoran: onCoran, onAide: onAide);
+    // En deux colonnes, « Lire le Coran » et l'aide vont a cote des taches :
+    // chaque temps du bloc les place lui-meme. En une colonne, ils restent
+    // sous le bloc, a la meme place dans tous les etats.
+    final Widget? aCote = deuxColonnes ? coranEtAide : null;
+    final Widget? dessous = deuxColonnes
+        ? Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.section),
+            child: coranEtAide,
+          )
+        : null;
 
     final Widget haut;
     if (prenomDonne != null && espaceDonne != null) {
@@ -152,6 +187,7 @@ class AccueilAccessibilite extends ConsumerWidget {
         onRejoindre: onRejoindre,
         onReessayer: null,
         onTache: onTache,
+        aCote: aCote,
       );
     } else {
       final AsyncValue<DonneesAccueilAccessibilite> lecture = ref.watch(
@@ -161,8 +197,11 @@ class AccueilAccessibilite extends ConsumerWidget {
       final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
       haut = BlocAsynchrone<DonneesAccueilAccessibilite>(
         valeur: lecture,
-        squelette: const _Squelette(key: cleSquelette),
+        squelette: _Squelette(key: cleSquelette, aCote: aCote),
         onReessayer: () => ref.invalidate(donneesAccueilAccessibiliteProvider),
+        // Echec ou indisponibilite : en deux colonnes, le Coran et l'aide
+        // restent dessous (D11), tentative perdue comprise.
+        piedEchec: dessous,
         erreurVersEtat: (Object erreur, VoidCallback? reessayer) =>
             erreur is CapaciteIndisponible
             // La source n'existe pas encore (BR-1) : on le dit, sans
@@ -189,7 +228,15 @@ class AccueilAccessibilite extends ConsumerWidget {
         construire: (DonneesAccueilAccessibilite donnees) {
           final GroupHomeVM? lu = donnees.espace;
           if (lu == null) {
-            return _Vide(key: cleVide, prenom: donnees.prenom);
+            // Sans Classe, aucune tache : une seule colonne.
+            final Widget vide = _Vide(key: cleVide, prenom: donnees.prenom);
+            return dessous == null
+                ? vide
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[vide, dessous],
+                  );
           }
           final ValueChanged<GroupHomeVM>? rejoindre = onRejoindreEspace;
           return _Haut(
@@ -204,18 +251,40 @@ class AccueilAccessibilite extends ConsumerWidget {
             // De retour en ligne, l'entree et « Voir ma classe » reviennent.
             onReessayer: () => ref.invalidate(horsLigneProvider),
             onTache: onTache,
+            aCote: aCote,
           );
         },
       );
     }
 
-    return PageShell(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[haut, Ecart.vSection, coranEtAide],
-      ),
+    if (deuxColonnes) {
+      return haut;
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[haut, Ecart.vSection, coranEtAide],
     );
   }
+}
+
+/// La rangee des deux colonnes : [gauche] puis [droite], lues et parcourues
+/// au clavier dans cet ordre (MA-3).
+class _DeuxColonnes extends StatelessWidget {
+  const _DeuxColonnes({required this.gauche, required this.droite});
+
+  final Widget gauche;
+  final Widget droite;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    key: AccueilAccessibilite.cleDeuxColonnes,
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: <Widget>[
+      Expanded(child: gauche),
+      const SizedBox(width: AppSpacing.xxl),
+      Expanded(child: droite),
+    ],
+  );
 }
 
 /// A texte agrandi (au-dela de 130 %), le trait d'union est suivi d'un
@@ -261,6 +330,7 @@ class _Haut extends StatelessWidget {
     required this.onRejoindre,
     required this.onReessayer,
     required this.onTache,
+    required this.aCote,
   });
 
   final String prenom;
@@ -274,6 +344,10 @@ class _Haut extends StatelessWidget {
   /// que [horsLigne] peut etre vrai (aucun bouton grise, D9).
   final VoidCallback? onReessayer;
   final VoidCallback? onTache;
+
+  /// En deux colonnes, ce qui va a cote des taches (« Lire le Coran », puis
+  /// l'aide) ; nul : une seule colonne.
+  final Widget? aCote;
 
   @override
   Widget build(BuildContext context) {
@@ -312,7 +386,13 @@ class _Haut extends StatelessWidget {
                 ),
         ),
         Ecart.vSection,
-        _Taches(espace: espace, onTache: onTache),
+        if (aCote case final Widget droite)
+          _DeuxColonnes(
+            gauche: _Taches(espace: espace, onTache: onTache),
+            droite: droite,
+          )
+        else
+          _Taches(espace: espace, onTache: onTache),
       ],
     );
   }
@@ -351,22 +431,32 @@ class _Vide extends StatelessWidget {
 /// fausse donnee (DESIGN-GOV §4 bis.6) ; le delai d'apparition est celui
 /// de `Skeleton`.
 class _Squelette extends StatelessWidget {
-  const _Squelette({super.key});
+  const _Squelette({required this.aCote, super.key});
+
+  /// En deux colonnes, le Coran et l'aide, deja la, a cote des lignes ; nul :
+  /// une seule colonne.
+  final Widget? aCote;
 
   @override
-  Widget build(BuildContext context) => const Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    mainAxisSize: MainAxisSize.min,
-    children: <Widget>[
-      Skeleton(hauteur: AppSpacing.xxxl),
-      SizedBox(height: AppSpacing.xxxl),
-      Skeleton(hauteur: AppSpacing.xxl),
-      Ecart.vMd,
-      Skeleton.tuileBento(hauteur: AppPage.hauteurChoix * 2),
-      Ecart.vSection,
-      Skeleton.liste(),
-    ],
-  );
+  Widget build(BuildContext context) {
+    final Widget? droite = aCote;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        const Skeleton(hauteur: AppSpacing.xxxl),
+        const SizedBox(height: AppSpacing.xxxl),
+        const Skeleton(hauteur: AppSpacing.xxl),
+        Ecart.vMd,
+        const Skeleton.tuileBento(hauteur: AppPage.hauteurChoix * 2),
+        Ecart.vSection,
+        if (droite == null)
+          const Skeleton.liste()
+        else
+          _DeuxColonnes(gauche: const Skeleton.liste(), droite: droite),
+      ],
+    );
+  }
 }
 
 /// « Lire le Coran », puis l'aide, dernier bloc du contenu (MA14). Ne

@@ -51,7 +51,14 @@ class BlocAsynchrone<T> extends StatefulWidget {
     this.titreProlonge,
     this.titreEchec,
     this.erreurVersEtat,
+    this.piedEchec,
   });
+
+  /// Ce que la page garde sous tout echec ou indisponibilite de ce bloc
+  /// (erreur typee, erreur par defaut, tentative perdue) : une source en
+  /// echec n'emporte que ce qu'elle remplit (D11). Le squelette et le
+  /// contenu placent eux-memes ce bloc. Nul : rien dessous.
+  final Widget? piedEchec;
 
   /// Le titre du chargement prolonge propre a l'ecran. Nul : celui de la
   /// nature.
@@ -213,7 +220,18 @@ class _BlocAsynchroneState<T> extends State<BlocAsynchrone<T>> {
   @override
   Widget build(BuildContext context) {
     final (_Temps temps, Widget enfant) = _rendu();
-    return BasculeEtat(etat: temps, child: enfant);
+    final Widget? pied = widget.piedEchec;
+    final bool echoue = temps == _Temps.echec || temps == _Temps.indisponible;
+    return BasculeEtat(
+      etat: temps,
+      child: pied == null || !echoue
+          ? enfant
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[enfant, pied],
+            ),
+    );
   }
 
   (_Temps, Widget) _rendu() {

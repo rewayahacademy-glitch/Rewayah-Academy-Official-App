@@ -265,6 +265,72 @@ void main() {
   });
 
   group('BlocAsynchrone : squelette, prolonge, perdu, contenu', () {
+    // MA-2COL-1 : `piedEchec` reste sous tout echec et indisponibilite
+    // (erreur typee, erreur par defaut, tentative perdue), jamais sous le
+    // squelette ni le contenu.
+    testWidgets('piedEchec : sous l echec, l indisponible et la tentative '
+        'perdue ; ni sous le squelette ni sous le contenu', (
+      WidgetTester tester,
+    ) async {
+      fixerVue(tester, vueMobile);
+      const Key pied = Key('pied');
+      Widget bloc(AsyncValue<List<String>> valeur) =>
+          BlocAsynchrone<List<String>>(
+            valeur: valeur,
+            squelette: const SizedBox(key: _squelette, height: 48),
+            construire: (List<String> v) => Text('contenu ${v.join(',')}'),
+            onReessayer: () {},
+            piedEchec: const SizedBox(key: pied, height: 48),
+          );
+
+      await tester.pumpWidget(
+        hoteTheme(
+          bloc(
+            AsyncValue<List<String>>.error(StateError('x'), StackTrace.empty),
+          ),
+        ),
+      );
+      expect(find.text(t.commun.etats.echecServeur.titre), findsOneWidget);
+      expect(find.byKey(pied), findsOneWidget);
+      expect(
+        tester.getRect(find.byKey(pied)).top,
+        greaterThanOrEqualTo(
+          tester.getRect(find.text(t.commun.etats.echecServeur.titre)).bottom,
+        ),
+      );
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpWidget(
+        hoteTheme(
+          bloc(
+            const AsyncValue<List<String>>.error(
+              CapaciteIndisponible('DB-X'),
+              StackTrace.empty,
+            ),
+          ),
+        ),
+      );
+      expect(find.byKey(pied), findsOneWidget);
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpWidget(
+        hoteTheme(bloc(const AsyncData<List<String>>(<String>['a']))),
+      );
+      expect(find.text('contenu a'), findsOneWidget);
+      expect(find.byKey(pied), findsNothing);
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpWidget(
+        hoteTheme(bloc(const AsyncValue<List<String>>.loading())),
+      );
+      expect(find.byKey(_squelette), findsOneWidget);
+      expect(find.byKey(pied), findsNothing);
+      await tester.pump(AppDelais.requeteMax);
+      await tester.pump(Mouvement.maximum);
+      expect(find.text(t.commun.etats.echecServeur.titre), findsOneWidget);
+      expect(find.byKey(pied), findsOneWidget);
+    });
+
     testWidgets('le squelette, puis la phrase de chargement prolonge', (
       WidgetTester tester,
     ) async {
