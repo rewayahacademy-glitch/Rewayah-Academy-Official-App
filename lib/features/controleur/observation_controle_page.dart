@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
@@ -498,7 +499,10 @@ class _ObservationControlePageState
                         OptionChoix(
                           cle: ObservationControlePage.cleEleve(e.id),
                           valeur: e.id,
-                          libelle: e.nomAffiche,
+                          // Isole : le point de « Mariam S. » reste a la fin
+                          // du nom, quel que soit le sens de l'interface
+                          // (CTRL-ROSTER-C7-1b).
+                          libelle: isolerSens(e.nomAffiche),
                         ),
                     ],
                     onChange: (ReponseChoix r) => setState(
@@ -548,7 +552,9 @@ class _ObservationControlePageState
         : ObservationControlePage.libellePersonne(p);
     if (p == PersonneConcernee.elevePrecis) {
       for (final EleveRoster e in roster) {
-        if (e.id == _eleveId) personne = '$personne · ${e.nomAffiche}';
+        if (e.id == _eleveId) {
+          personne = '$personne · ${isolerSens(e.nomAffiche)}';
+        }
       }
     }
     final String texte = _texte.text.trim();
