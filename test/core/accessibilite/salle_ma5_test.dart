@@ -265,5 +265,46 @@ void main() {
       expect(find.byTooltip(t.salle.seance.sortir), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
+
+    // Q-3 = b (directeur, 05/10/2026) : sous 388 de large, le lien « En
+    // savoir plus » n'est pas affiche. Mesures avec le lien (avant) : 31,3 %
+    // a 320 x 690 texte x1,5 ; 30,8 % a 360 x 779 texte x2. Sans lien : 27,8 %
+    // et 26,7 %. La limite reste 30 %.
+    for (final (Size taille, double echelle) in <(Size, double)>[
+      (const Size(320, 690), 1.5),
+      (const Size(360, 779), 2),
+    ]) {
+      testWidgets('MA-CMD-1 : ${taille.width.toInt()} x '
+          '${taille.height.toInt()}, texte x$echelle, en-tete et commandes '
+          'dans 30 %, sans le lien', (WidgetTester tester) async {
+        await _monter(tester, echelle: echelle, taille: taille);
+        final Finder rejoindre = find.text(LibellesGroupe.rejoindre);
+        await tester.ensureVisible(rejoindre);
+        await tester.tap(rejoindre);
+        await stabiliser(tester);
+        final Finder entrer = find.byKey(
+          const ValueKey<String>('preparation-entrer'),
+        );
+        await tester.ensureVisible(entrer);
+        await tester.tap(entrer);
+        await tester.pump(const Duration(milliseconds: 500));
+
+        expect(find.text(t.salle.informationControle.lien), findsNothing);
+        final double hauteurEntete = tester
+            .getSize(
+              find.byKey(const ValueKey<String>('entete-seance-compacte')),
+            )
+            .height;
+        final double hauteurCommandes = tester
+            .getSize(find.byKey(CommandesMasquables.commandesKey))
+            .height;
+        expect(
+          hauteurEntete + hauteurCommandes,
+          lessThanOrEqualTo(taille.height * 0.30),
+          reason: 'en-tete $hauteurEntete + commandes $hauteurCommandes',
+        );
+        expect(tester.takeException(), isNull);
+      });
+    }
   });
 }

@@ -21,6 +21,29 @@ abstract final class InformationControle {
   /// c'est le seul ajout a l'ecran, discret).
   static const bool lienAccepte = true;
 
+  /// La largeur de fenetre sous laquelle le lien n'est pas affiche (Q-3 = b,
+  /// decision du directeur du 05/10/2026 : « cacher le lien sous 385
+  /// environ »). Seuil exact : **388**.
+  ///
+  /// Mesures du 05/10/2026, polices du depot :
+  ///
+  /// - texte x1, salle guidee : le lien tient sur la ligne de la mention a
+  ///   partir de 388 de large (387 : il passe dessous et le cours descend de
+  ///   16 ; dans la salle du Mode Accessibilite il tient des 385). Sous 388,
+  ///   le lien ne peut donc que pousser le cours ;
+  /// - texte x2 (salle du Mode Accessibilite, telephone de hauteur
+  ///   proportionnelle a 390 x 844) : le lien passe sous la mention (+32) et
+  ///   en-tete + commandes depassent 30 % de l'ecran sous 375 (30,8 % a 360,
+  ///   30,0 % a 370, 29,6 % a 375 ; sans lien 26,7 %, 26,0 %, 25,6 %) ; a
+  ///   375 x 667, 36 % avec le lien ;
+  /// - texte x1,5 : 31,3 % a 320 x 690 avec le lien, 27,8 % sans.
+  ///
+  /// A 390 x 844 le lien reste (texte x2 : 28,8 %, MA-CMD-1).
+  ///
+  /// Sous ce seuil, l'information reste accessible : la mention elle-meme
+  /// ouvre la meme lecture ([MentionSeance]), sans hauteur ni ecran nouveaux.
+  static const double largeurMinimaleLien = 388;
+
   /// Le contact confidentialite que cite le texte E-2
   /// (`{contact_confidentialite}`). **Pas encore fourni** (referent donnees
   /// non nomme au 02/10) : tant qu'il manque, le texte E-2 n'est pas affiche,

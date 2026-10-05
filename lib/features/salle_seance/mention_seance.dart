@@ -31,10 +31,12 @@ import 'vue_seance.dart';
 /// repos et pendant une visite annoncee : rien ne change a l'arrivee d'un
 /// controleur.
 ///
-/// Le lien ne change pas la mise en page de la salle : il suit la mention sur
-/// sa ligne quand elle a la place (390 et plus), centre sur le point et le
-/// texte ; sinon il passe dessous, aligne sur le debut du texte, avec la
-/// seule hauteur de son texte. Sa cible tactile (48, 72 en guidee) deborde
+/// Sous [InformationControle.largeurMinimaleLien] (388) de fenetre, le lien
+/// n'est pas affiche (Q-3 = b, 05/10/2026) : la mention elle-meme ouvre la
+/// lecture. Au-dela, le lien ne change pas la mise en page de la salle : il
+/// suit la mention sur sa ligne quand elle a la place, centre sur le point
+/// et le texte ; sinon (texte agrandi) il passe dessous, aligne sur le debut
+/// du texte, avec la seule hauteur de son texte. Sa cible tactile (48, 72 en guidee) deborde
 /// sans prendre de hauteur ([CibleDebordante]). Il est souligne, dans l'encre
 /// de la mention : reconnaissable comme lien sans couleur ajoutee.
 class MentionSeance extends StatelessWidget {
@@ -62,13 +64,18 @@ class MentionSeance extends StatelessWidget {
         !InformationControle.texteDisponible(vue.role, contact: contact)) {
       return ligne;
     }
+    void ouvrir() => unawaited(
+      ouvrirInformationControle(context, vue.role, contact: contact),
+    );
+    // Q-3 = b (05/10/2026) : sous le seuil, pas de lien (il passerait sous la
+    // mention et pousserait le cours) ; la mention ouvre la meme lecture.
+    if (MediaQuery.sizeOf(context).width <
+        InformationControle.largeurMinimaleLien) {
+      return _MentionQuiOuvre(ligne: ligne, onPress: ouvrir);
+    }
     return _LigneEtLien(
       ligne: ligne,
-      lien: _LienDiscret(
-        onPress: () => unawaited(
-          ouvrirInformationControle(context, vue.role, contact: contact),
-        ),
-      ),
+      lien: _LienDiscret(onPress: ouvrir),
     );
   }
 
@@ -129,6 +136,31 @@ class _LienDiscret extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Sous [InformationControle.largeurMinimaleLien] : la mention, inchangee
+/// a l'oeil (meme texte, meme encre, aucune icone), ouvre la lecture. Le
+/// lecteur d'ecran l'annonce comme un lien « En savoir plus ». Sa cible
+/// tactile deborde sans prendre de hauteur ([CibleDebordante]) et ne prend
+/// jamais une touche a une autre commande (le chevron Retour garde les
+/// siennes).
+class _MentionQuiOuvre extends StatelessWidget {
+  const _MentionQuiOuvre({required this.ligne, required this.onPress});
+
+  final Widget ligne;
+  final VoidCallback onPress;
+
+  @override
+  Widget build(BuildContext context) => CibleDebordante(
+    child: Pressable(
+      onPress: onPress,
+      libelleSemantique: t.salle.informationControle.lien,
+      lien: true,
+      respecterCibleTactile: false,
+      arrondiFocus: AppRadius.arrondiSm,
+      child: ligne,
+    ),
+  );
 }
 
 /// La mention et son lien : sur la meme ligne quand la mention, a sa largeur

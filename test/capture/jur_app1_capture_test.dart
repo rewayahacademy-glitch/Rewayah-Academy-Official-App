@@ -23,6 +23,7 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/dossier/signature_page.dart';
+import 'package:rewayah_academy/features/salle_seance/information_controle.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
 import '../support/harnais.dart';
@@ -137,7 +138,13 @@ void main() {
             mode: mode,
             echelle: echelle,
           );
-          expect(find.text(t.salle.informationControle.lien), findsOneWidget);
+          // Q-3 = b (05/10/2026) : pas de lien sous 388 de large.
+          expect(
+            find.text(t.salle.informationControle.lien),
+            taille.width >= InformationControle.largeurMinimaleLien
+                ? findsOneWidget
+                : findsNothing,
+          );
           debugPrint('MESURE $nom $m haut du cours ${_hautCours(tester)}');
           debugPrint(
             'PNG ${await capturer(tester, 'jur_app1_salle_guidee_${nom}_$m')}',
@@ -154,7 +161,14 @@ void main() {
             mode: mode,
             echelle: echelle,
           );
-          await tester.tap(find.text(t.salle.informationControle.lien));
+          // Sous 388, la mention ouvre la lecture (Q-3 = b).
+          await tester.tap(
+            find.text(
+              taille.width >= InformationControle.largeurMinimaleLien
+                  ? t.salle.informationControle.lien
+                  : t.salle.bandeauPermanent,
+            ),
+          );
           await stabiliser(tester);
           expect(tester.takeException(), isNull);
           expect(
