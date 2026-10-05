@@ -44,8 +44,6 @@ import '../../com_annonces/port_annonces.dart';
 import '../../com_annonces/port_regles_audience.dart';
 import '../../com_annonces/publier_annonce_classe_page.dart';
 import '../../notifications/notifications_page.dart';
-import 'com_communaute_demo.dart'
-    show adresseDemoCommunaute, SituationDemoCommunaute;
 import 'demo_communications_page.dart';
 
 /// La demonstration de la voie COM-ANN.
@@ -539,7 +537,7 @@ class AnnoncesDemonstration implements PortAnnonces {
       ? List<CibleAnnonce>.unmodifiable(cibles)
       : <CibleAnnonce>[
           for (final CibleAnnonce c in cibles)
-            if (c.nature == NatureCible.classe && c.id == classeId) c,
+            if (c.nature == NatureCible.classe && c.classeId == classeId) c,
         ];
 
   @override
@@ -613,14 +611,16 @@ List<CibleAnnonce> ciblesDemo() {
       nature: NatureCible.public,
     ),
     CibleAnnonce(
-      id: ClassesDemoAnnonces.nour,
+      id: 'demo-audience-${ClassesDemoAnnonces.nour}',
       libelle: t.com.annonces.demo.classeNour,
       nature: NatureCible.classe,
+      classeId: ClassesDemoAnnonces.nour,
     ),
     CibleAnnonce(
-      id: ClassesDemoAnnonces.fajr,
+      id: 'demo-audience-${ClassesDemoAnnonces.fajr}',
       libelle: t.com.annonces.demo.classeFajr,
       nature: NatureCible.classe,
+      classeId: ClassesDemoAnnonces.fajr,
     ),
   ];
 }
@@ -689,7 +689,7 @@ annoncesAdministrationDemo(DateTime maintenant) {
 /// Les regles de portee de demonstration : la spec section 13.4, rien de
 /// plus (Direction : toute audience ; enseignant : sa Classe ; famille,
 /// eleve, controleur : aucune publication). Aucune validation n'est
-/// inventee : la spec n'en prevoit pas.
+/// inventee : la spec n'en prevoit pas, la colonne n'est donc pas montree.
 class ReglesAudienceDemo implements PortReglesAudience {
   /// Cree la matrice.
   const ReglesAudienceDemo();
@@ -705,40 +705,49 @@ class ReglesAudienceDemo implements PortReglesAudience {
           auteurs: d.direction,
           peutPublier: true,
           audiences: d.audiencesDirection,
-          validationRequise: false,
         ),
         RegleAudience(
           id: 'enseignants',
           auteurs: d.enseignants,
           peutPublier: true,
           audiences: d.audiencesEnseignant,
-          validationRequise: false,
         ),
         RegleAudience(
           id: 'familles',
           auteurs: d.familles,
           peutPublier: false,
           audiences: '',
-          validationRequise: false,
         ),
         RegleAudience(
           id: 'eleves',
           auteurs: d.eleves,
           peutPublier: false,
           audiences: '',
-          validationRequise: false,
         ),
         RegleAudience(
           id: 'controleurs',
           auteurs: d.controleurs,
           peutPublier: false,
           audiences: '',
-          validationRequise: false,
         ),
       ],
     );
   }
 }
+
+/// L'adresse de la Communaute enseignants en demonstration, ouverte par
+/// « Ouvrir le contexte » : l'aiguillage du socle (`?voie=`, `?role=`), sans
+/// importer la voie COM-COMU (fiche COM-ANN-2). `etat=nominal` est la
+/// situation nominale de la demonstration Communaute ; une voie qui ne lit
+/// pas ce parametre l'ignore.
+final String adresseDemoCommunauteModeration = Uri(
+  path: Routes.demoCommunications,
+  queryParameters: <String, String>{
+    'voie': VoieDemoCommunications.communaute.name,
+    'role': RoleDemoCommunications.enseignant.name,
+    'etat': 'nominal',
+  },
+).toString();
 
 /// La moderation de l'Administration en demonstration : trois signalements
 /// de la Communaute (un lien affilie, une vente, un hors sujet), toutes les
@@ -793,9 +802,7 @@ class ModerationAdministrationDemo implements PortModeration {
   Future<List<ElementModeration>> file() async {
     if (vide) return const <ElementModeration>[];
     final d = t.com.annonces.demoPublication;
-    final String communaute = adresseDemoCommunaute(
-      SituationDemoCommunaute.nominal,
-    );
+    final String communaute = adresseDemoCommunauteModeration;
     return <ElementModeration>[
       ElementModeration(
         id: 'demo-sig-affilie',
@@ -967,7 +974,7 @@ class _ComAnnoncesDemoState extends State<ComAnnoncesDemo> {
         RoleDemoCommunications.admin => cibles,
         RoleDemoCommunications.enseignant => <CibleAnnonce>[
           for (final CibleAnnonce c in cibles)
-            if (c.id == ClassesDemoAnnonces.nour) c,
+            if (c.classeId == ClassesDemoAnnonces.nour) c,
         ],
         RoleDemoCommunications.tuteur ||
         RoleDemoCommunications.adulte ||

@@ -27,7 +27,7 @@ class RegleAudience {
     required this.auteurs,
     required this.peutPublier,
     required this.audiences,
-    required this.validationRequise,
+    this.validationRequise,
   });
 
   /// Identifiant stable de la ligne.
@@ -43,8 +43,12 @@ class RegleAudience {
   /// quand le public ne publie pas.
   final String audiences;
 
-  /// Vrai si une publication de ce public attend une validation.
-  final bool validationRequise;
+  /// Vrai si une publication de ce public attend une validation ; `null`
+  /// tant que le serveur ne le dit pas. HYPOTHESE : COM-BR-11 cite une
+  /// « validation » sans la definir, et ni la spec section 13.4 ni section 17
+  /// COM-W04 n'en prevoient. L'ecran ne montre la colonne que si au moins
+  /// une ligne la renseigne ; la demonstration ne l'invente pas.
+  final bool? validationRequise;
 }
 
 /// La matrice rendue par le serveur.

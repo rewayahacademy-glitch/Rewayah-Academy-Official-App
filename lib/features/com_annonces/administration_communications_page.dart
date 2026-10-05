@@ -17,7 +17,10 @@
 // COM-BR-10), contenus en moderation (`PortModeration.file`, COM-BR-06),
 // regles de portee (`PortReglesAudience`, COM-BR-11). Une source absente
 // (port neutre) dit « pas encore disponible », jamais un chiffre invente ;
-// pas de fleche de tendance (UX_REVIEW L0, ecart 16).
+// une lecture en echec offre « Réessayer » ; pas de fleche de tendance
+// (UX_REVIEW L0, ecart 16). Le compteur de moderation suit la capacite de
+// moderer (`CapacitesModeration.voitLaFile`) : sans elle, la file n'est pas
+// lue et la tuile ne mene nulle part.
 //
 // « Nouvelle annonce » ouvre le publieur unique (`PublieurAnnonce`) a la
 // place de l'onglet, comme une tache focalisee : la coquille Admin reste.
@@ -38,6 +41,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pile_cartes.dart';
@@ -94,6 +98,11 @@ class AdministrationCommunicationsPage extends ConsumerStatefulWidget {
   static const ValueKey<String> cleNouvelle = ValueKey<String>(
     'administration-nouvelle-annonce',
   );
+
+  /// La cle de l'action « Réessayer » d'une tuile en echec, par libelle,
+  /// pour les tests.
+  static ValueKey<String> cleReessayerIndicateur(String libelle) =>
+      ValueKey<String>('administration-indicateur-reessayer-$libelle');
 
   /// La cle de la rangee des indicateurs, pour les tests.
   static const ValueKey<String> cleIndicateurs = ValueKey<String>(
@@ -249,8 +258,20 @@ AsyncValue<int> _compte<T>(AsyncValue<T> lue, int Function(T valeur) compter) {
   return const AsyncLoading<int>();
 }
 
-/// Un indicateur : son libelle et sa valeur lue, ou ce qui manque.
-typedef _Mesure = ({String libelle, AsyncValue<int> valeur, VoidCallback? va});
+/// Un indicateur : son libelle et sa valeur lue, ou ce qui manque ; ou il
+/// mene, et comment relire sa source.
+typedef _Mesure = ({
+  String libelle,
+  AsyncValue<int> valeur,
+  VoidCallback? va,
+  VoidCallback relire,
+});
+
+/// La moderation refusee a la personne : la file n'est pas lue (capacite du
+/// serveur, jamais un role).
+class _ModerationReservee implements Exception {
+  const _ModerationReservee();
+}
 
 /// Les quatre indicateurs du haut de l'onglet Annonces.
 class _Indicateurs extends ConsumerWidget {
@@ -264,14 +285,39 @@ class _Indicateurs extends ConsumerWidget {
     final AsyncValue<AnnoncesAdministration> annonces = ref.watch(
       annoncesAdministrationProvider,
     );
-    final AsyncValue<List<ElementModeration>> file = ref.watch(
-      fileModerationProvider,
+    // La file ne se lit qu'avec la capacite de moderer : sans elle, ni
+    // compte ni lien vers une file refusee.
+    final AsyncValue<CapacitesModeration> capacites = ref.watch(
+      capacitesModerationFileProvider,
     );
+    final bool voitLaFile =
+        capacites.hasValue &&
+        !capacites.hasError &&
+        capacites.requireValue.voitLaFile;
+    final AsyncValue<List<ElementModeration>> file;
+    if (capacites.hasError) {
+      file = AsyncError<List<ElementModeration>>(
+        capacites.error!,
+        capacites.stackTrace ?? StackTrace.empty,
+      );
+    } else if (!capacites.hasValue) {
+      file = const AsyncLoading<List<ElementModeration>>();
+    } else if (!voitLaFile) {
+      file = const AsyncError<List<ElementModeration>>(
+        _ModerationReservee(),
+        StackTrace.empty,
+      );
+    } else {
+      file = ref.watch(fileModerationProvider);
+    }
     final AsyncValue<ReglesAudience> regles = ref.watch(reglesAudienceProvider);
     final bool demonstration =
         (annonces.value?.demonstration ?? false) ||
         (regles.value?.demonstration ?? false) ||
-        (file.hasValue && ref.watch(moderationDemonstrationProvider));
+        (voitLaFile &&
+            file.hasValue &&
+            ref.watch(moderationDemonstrationProvider));
+    void relireAnnonces() => ref.invalidate(annoncesAdministrationProvider);
 
     final List<_Mesure> mesures = <_Mesure>[
       (
@@ -281,6 +327,7 @@ class _Indicateurs extends ConsumerWidget {
           (AnnoncesAdministration v) => v.publiees.length,
         ),
         va: null,
+        relire: relireAnnonces,
       ),
       (
         libelle: i.planifiees,
@@ -289,16 +336,21 @@ class _Indicateurs extends ConsumerWidget {
           (AnnoncesAdministration v) => v.planifiees.length,
         ),
         va: null,
+        relire: relireAnnonces,
       ),
       (
         libelle: i.moderation,
         valeur: _compte(file, (List<ElementModeration> v) => v.length),
-        va: () => GoRouter.of(context).go(cheminModeration),
+        va: voitLaFile ? () => GoRouter.of(context).go(cheminModeration) : null,
+        relire: () => ref
+          ..invalidate(capacitesModerationFileProvider)
+          ..invalidate(fileModerationProvider),
       ),
       (
         libelle: i.regles,
         valeur: _compte(regles, (ReglesAudience v) => v.regles.length),
         va: null,
+        relire: () => ref.invalidate(reglesAudienceProvider),
       ),
     ];
     final List<Widget> tuiles = <Widget>[
@@ -377,12 +429,35 @@ class _Indicateur extends StatelessWidget {
     }
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle style = palette.inkMuted.applyTo(
+      textes.bodyMedium ?? const TextStyle(),
+    );
+    // Une source absente ou refusee : une phrase, rien a relancer. Une
+    // lecture en echec : la phrase et « Réessayer ».
+    if (erreur is CapaciteIndisponible || erreur is _ModerationReservee) {
+      return AppCard(
+        child: Text(
+          erreur is _ModerationReservee
+              ? i.reserve(libelle: mesure.libelle)
+              : i.indisponible(libelle: mesure.libelle),
+          style: style,
+        ),
+      );
+    }
     return AppCard(
-      child: Text(
-        erreur is CapaciteIndisponible
-            ? i.indisponible(libelle: mesure.libelle)
-            : i.echec(libelle: mesure.libelle),
-        style: palette.inkMuted.applyTo(textes.bodyMedium ?? const TextStyle()),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(i.echec(libelle: mesure.libelle), style: style),
+          Ecart.vXs,
+          LienFleche(
+            key: AdministrationCommunicationsPage.cleReessayerIndicateur(
+              mesure.libelle,
+            ),
+            libelle: t.commun.etats.actions.reessayer,
+            onPress: mesure.relire,
+          ),
+        ],
       ),
     );
   }

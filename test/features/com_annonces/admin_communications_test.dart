@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/communications/capacites_communication.dart';
+import 'package:rewayah_academy/core/communications/moderation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
@@ -19,6 +20,8 @@ import 'package:rewayah_academy/features/com_annonces/administration_communicati
 import 'package:rewayah_academy/features/com_annonces/annonces_planifiees.dart';
 import 'package:rewayah_academy/features/com_annonces/matrice_audience.dart';
 import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
+import 'package:rewayah_academy/features/com_annonces/port_regles_audience.dart';
+import 'package:rewayah_academy/features/demo/communications/com_annonces_demo.dart';
 
 import '../../support/garde_interface.dart';
 import 'admin_banc.dart';
@@ -187,6 +190,52 @@ void main() {
     });
   });
 
+  group('Matrice des regles de portee', () {
+    testWidgets('demonstration : pas de colonne Validation sans source', (
+      WidgetTester tester,
+    ) async {
+      await monterAdministration(tester);
+      await tester.ensureVisible(find.byKey(MatriceAudience.cle));
+      await tester.pumpAndSettle();
+      expect(find.text(a.matrice.validation), findsNothing);
+    });
+
+    testWidgets('le serveur la renseigne : la colonne apparait', (
+      WidgetTester tester,
+    ) async {
+      await monterAdministration(tester, regles: const _ReglesAvecValidation());
+      await tester.ensureVisible(find.byKey(MatriceAudience.cle));
+      await tester.pumpAndSettle();
+      expect(find.text(a.matrice.validation), findsOneWidget);
+    });
+
+    for (final Size taille in const <Size>[Size(390, 844), Size(1440, 900)]) {
+      for (final double echelle in const <double>[1, 2]) {
+        testWidgets(
+          '${taille.width.toInt()} texte x${echelle.toInt()} : hauteur '
+          'naturelle, aucun defilement imbrique',
+          (WidgetTester tester) async {
+            await monterAdministration(
+              tester,
+              taille: taille,
+              echelleTexte: echelle,
+            );
+            final Finder liste = find.descendant(
+              of: find.byKey(MatriceAudience.cleCollection),
+              matching: find.byType(Scrollable),
+            );
+            await tester.ensureVisible(find.byKey(MatriceAudience.cle));
+            await tester.pumpAndSettle();
+            final ScrollPosition position = tester
+                .state<ScrollableState>(liste.first)
+                .position;
+            expect(position.maxScrollExtent, 0);
+          },
+        );
+      }
+    }
+  });
+
   group('Annonces : production et etats', () {
     testWidgets('ports neutres : aucun chiffre, aucune action, aucune marque', (
       WidgetTester tester,
@@ -272,6 +321,45 @@ void main() {
       expect(find.text(t.com.socle.composants.etats.horsLigne), findsNothing);
     });
 
+    testWidgets('echec de lecture : la tuile offre Reessayer, qui relit', (
+      WidgetTester tester,
+    ) async {
+      final FauxAnnonces faux = FauxAnnonces()
+        ..erreurAdministration = Exception('panne');
+      await monterAdministration(tester, surcharges: surFaux(faux));
+      final Finder reessayer = find.byKey(
+        AdministrationCommunicationsPage.cleReessayerIndicateur(i.publiees),
+      );
+      expect(reessayer, findsOneWidget);
+      expect(find.textContaining('actualisez'), findsNothing);
+      faux.erreurAdministration = null;
+      await taper(tester, reessayer);
+      expect(_valeurTuile(tester, i.publiees), 0);
+      expect(reessayer, findsNothing);
+    });
+
+    testWidgets('sans la capacite de moderer : ni compte ni lien', (
+      WidgetTester tester,
+    ) async {
+      final _ModerationComptee moderation = _ModerationComptee();
+      final GoRouter routeur = await monterAdministration(
+        tester,
+        moderation: moderation,
+      );
+      expect(moderation.lectures, 0);
+      expect(
+        find.byWidgetPredicate(
+          (Widget w) => w is StatTile && w.libelle == i.moderation,
+        ),
+        findsNothing,
+      );
+      expect(find.text(i.reserve(libelle: i.moderation)), findsOneWidget);
+      await taper(tester, find.text(i.reserve(libelle: i.moderation)));
+      expect(routeur.state.uri.path, Routes.adminCommunicationsAnnonces);
+      // Les autres indicateurs restent lus.
+      expect(_valeurTuile(tester, i.publiees), 3);
+    });
+
     testWidgets('onglet Messages : la voie COM-MSG-2, pas encore disponible', (
       WidgetTester tester,
     ) async {
@@ -283,4 +371,37 @@ void main() {
       expect(find.byType(StatTile), findsNothing);
     });
   });
+}
+
+/// Une moderation sans capacite de moderer, qui compte les lectures de sa
+/// file.
+class _ModerationComptee extends ModerationAdministrationDemo {
+  _ModerationComptee()
+    : super(maintenant: maintenantBanc, actions: const <ActionModeration>{});
+
+  int lectures = 0;
+
+  @override
+  Future<List<ElementModeration>> file() {
+    lectures++;
+    return super.file();
+  }
+}
+
+/// Une matrice dont le serveur renseigne la validation.
+class _ReglesAvecValidation implements PortReglesAudience {
+  const _ReglesAvecValidation();
+
+  @override
+  Future<ReglesAudience> regles() async => const ReglesAudience(
+    regles: <RegleAudience>[
+      RegleAudience(
+        id: 'enseignants',
+        auteurs: 'Enseignants',
+        peutPublier: true,
+        audiences: 'Sa Classe seulement',
+        validationRequise: true,
+      ),
+    ],
+  );
 }

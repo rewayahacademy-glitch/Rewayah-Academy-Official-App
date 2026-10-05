@@ -27,6 +27,13 @@
 // « pas encore disponible ». La cle d'idempotence est tiree une fois par
 // annonce et rejouee a chaque nouvelle tentative : un « Reessayer » ne publie
 // jamais deux fois (COM-BR-02).
+//
+// **Une fois un envoi parti, l'annonce n'est plus modifiable** : pendant
+// l'envoi, le retour ne fait rien ; apres un envoi non confirme, le retour
+// quitte le publieur au lieu de rouvrir le contenu. Sinon, corriger une
+// coquille tirerait une nouvelle cle, et une annonce deja arrivee au serveur
+// partirait une deuxieme fois, contrairement a « elle ne partira qu'une
+// fois ».
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -188,8 +195,12 @@ class _PublieurAnnonceState extends ConsumerState<PublieurAnnonce> {
   bool _indisponible = false;
 
   /// Tiree a l'arrivee a la publication, gardee a chaque nouvelle tentative,
-  /// oubliee des que le brouillon change.
+  /// oubliee des que le brouillon change (tant qu'aucun envoi n'est parti).
   String? _cle;
+
+  /// Vrai des qu'un envoi est parti sans accuse : le brouillon est fige, la
+  /// cle aussi, et seul « Reessayer » (meme cle) ou la sortie restent.
+  bool _envoye = false;
 
   late final List<DateTime> _creneaux = creneauxProgrammation(
     (widget.horloge ?? DateTime.now)(),
@@ -213,11 +224,15 @@ class _PublieurAnnonceState extends ConsumerState<PublieurAnnonce> {
   }
 
   void _brouillonChange() {
+    // Un envoi parti sans accuse fige la cle (COM-BR-02).
+    if (_envoye) return;
     _cle = null;
   }
 
   void _retour() {
-    if (_confirmee != null || _rang == 0) {
+    // Pendant l'envoi, rien : l'accuse est attendu.
+    if (_envoi) return;
+    if (_confirmee != null || _rang == 0 || _envoye) {
       widget.onQuitter();
       return;
     }
@@ -263,6 +278,7 @@ class _PublieurAnnonceState extends ConsumerState<PublieurAnnonce> {
     final String cle = _cle ??= const Uuid().v4();
     setState(() {
       _envoi = true;
+      _envoye = true;
       _message = p.enCours;
       _ton = _Ton.attente;
     });

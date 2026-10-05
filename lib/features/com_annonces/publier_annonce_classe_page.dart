@@ -56,10 +56,11 @@ class PublierAnnonceClassePage extends ConsumerWidget {
       classeId: groupeId,
       titre: t.com.socle.navigation.provisoire.publierAnnonceTitre,
       onQuitter: retour,
-      // Seule la Classe de l'adresse : une audience d'une autre nature rendue
-      // par erreur n'est jamais proposee ici.
+      // Seule la Classe de l'adresse, lue par `classeId` (l'identifiant de
+      // l'audience n'est pas celui de la Classe, COM-BR-10) : une audience
+      // d'une autre nature rendue par erreur n'est jamais proposee ici.
       retenir: (CibleAnnonce c) =>
-          c.nature == NatureCible.classe && c.id == groupeId,
+          c.nature == NatureCible.classe && c.classeId == groupeId,
       construire: (List<CibleAnnonce> cibles, bool peutProgrammer) =>
           PublieurAnnonce(
             cibles: cibles.take(1).toList(),

@@ -244,7 +244,7 @@ Future<GoRouter> monterPublierClasse(
                   annoncesBanc(
                     cibles: <CibleAnnonce>[
                       for (final CibleAnnonce c in ciblesDemo())
-                        if (c.id == ClassesDemoAnnonces.nour) c,
+                        if (c.classeId == ClassesDemoAnnonces.nour) c,
                     ],
                   ),
               moderation: ModerationAdministrationDemo(

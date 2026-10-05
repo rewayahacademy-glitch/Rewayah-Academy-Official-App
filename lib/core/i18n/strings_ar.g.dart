@@ -1183,7 +1183,8 @@ class _Traductions$com$annonces$administration$indicateurs$ar extends Traduction
 	@override String get moderation => 'محتويات قيد الإشراف';
 	@override String get regles => 'قواعد النطاق';
 	@override String indisponible({required Object libelle}) => '${libelle} : غير متاح بعد';
-	@override String echec({required Object libelle}) => '${libelle} : تعذرت القراءة، حدّث الصفحة';
+	@override String echec({required Object libelle}) => '${libelle} : تعذرت القراءة';
+	@override String reserve({required Object libelle}) => '${libelle} : خاص بالمكلفين بالإشراف';
 }
 
 // Path: com.annonces.administration.publiees
@@ -1266,6 +1267,8 @@ class _Traductions$com$annonces$administration$moderation$ar extends Traductions
 	@override String get sansSanction => 'لا تُطبق أي عقوبة على الحساب تلقائيًا.';
 	@override String get politique => 'سياسة منع الترويج';
 	@override String ouvrirSemantique({required Object objet, required Object motif}) => 'فحص ${objet}، السبب ${motif}';
+	@override late final _Traductions$com$annonces$administration$moderation$regleMotif$ar regleMotif = _Traductions$com$annonces$administration$moderation$regleMotif$ar._(_root);
+	@override late final _Traductions$com$annonces$administration$moderation$regles$ar regles = _Traductions$com$annonces$administration$moderation$regles$ar._(_root);
 }
 
 // Path: com.annonces.demo.roles
@@ -1322,6 +1325,36 @@ class _Traductions$com$annonces$demo$f$ar extends Traductions$com$annonces$demo$
 	@override String get controleurMission => 'مهمة جديدة : زيارة فصل النور';
 	@override String get controleurChangement => 'نُقلت مهمتك يوم الخميس إلى الساعة 18';
 	@override String get controleurReponse => 'رد الإدارة على تقريرك';
+}
+
+// Path: com.annonces.administration.moderation.regleMotif
+class _Traductions$com$annonces$administration$moderation$regleMotif$ar extends Traductions$com$annonces$administration$moderation$regleMotif$fr {
+	_Traductions$com$annonces$administration$moderation$regleMotif$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get publicite => 'الإعلانات التجارية غير مسموح بها في مجتمع المعلّمين.';
+	@override String get lienAffilie => 'روابط التسويق بالعمولة غير مسموح بها في مجتمع المعلّمين.';
+	@override String get vente => 'بيع المنتجات أو الخدمات غير مسموح به في هذه المساحة.';
+	@override String get sollicitation => 'الاستدراج التجاري غير مسموح به في هذه المساحة.';
+}
+
+// Path: com.annonces.administration.moderation.regles
+class _Traductions$com$annonces$administration$moderation$regles$ar extends Traductions$com$annonces$administration$moderation$regles$fr {
+	_Traductions$com$annonces$administration$moderation$regles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'مشاركة تعليمية فقط';
+	@override String get corps => 'مجتمع المعلّمين مخصّص للتبادل المهني بين المعلّمين.';
+	@override String get reglesTitre => 'قواعد النشر';
+	@override String get pasPublicite => 'لا إعلانات';
+	@override String get pasAffilie => 'لا روابط تسويق بالعمولة';
+	@override String get pasVente => 'لا بيع لمنتج أو خدمة';
+	@override String get pasSollicitation => 'لا التماس تجاري';
+	@override String get pasDonnees => 'لا بيانات شخصية لطالب أو عائلة';
 }
 
 /// The flat map containing all translations for locale <ar>.
@@ -1767,7 +1800,8 @@ extension on TraductionsAr {
 			'com.annonces.administration.indicateurs.moderation' => 'محتويات قيد الإشراف',
 			'com.annonces.administration.indicateurs.regles' => 'قواعد النطاق',
 			'com.annonces.administration.indicateurs.indisponible' => ({required Object libelle}) => '${libelle} : غير متاح بعد',
-			'com.annonces.administration.indicateurs.echec' => ({required Object libelle}) => '${libelle} : تعذرت القراءة، حدّث الصفحة',
+			'com.annonces.administration.indicateurs.echec' => ({required Object libelle}) => '${libelle} : تعذرت القراءة',
+			'com.annonces.administration.indicateurs.reserve' => ({required Object libelle}) => '${libelle} : خاص بالمكلفين بالإشراف',
 			'com.annonces.administration.publiees.titre' => 'الإعلانات المنشورة',
 			'com.annonces.administration.publiees.vide' => 'لا توجد إعلانات منشورة في هذه الفترة.',
 			'com.annonces.administration.publiees.pastille' => 'منشور',
@@ -1814,6 +1848,18 @@ extension on TraductionsAr {
 			'com.annonces.administration.moderation.sansSanction' => 'لا تُطبق أي عقوبة على الحساب تلقائيًا.',
 			'com.annonces.administration.moderation.politique' => 'سياسة منع الترويج',
 			'com.annonces.administration.moderation.ouvrirSemantique' => ({required Object objet, required Object motif}) => 'فحص ${objet}، السبب ${motif}',
+			'com.annonces.administration.moderation.regleMotif.publicite' => 'الإعلانات التجارية غير مسموح بها في مجتمع المعلّمين.',
+			'com.annonces.administration.moderation.regleMotif.lienAffilie' => 'روابط التسويق بالعمولة غير مسموح بها في مجتمع المعلّمين.',
+			'com.annonces.administration.moderation.regleMotif.vente' => 'بيع المنتجات أو الخدمات غير مسموح به في هذه المساحة.',
+			'com.annonces.administration.moderation.regleMotif.sollicitation' => 'الاستدراج التجاري غير مسموح به في هذه المساحة.',
+			'com.annonces.administration.moderation.regles.titre' => 'مشاركة تعليمية فقط',
+			'com.annonces.administration.moderation.regles.corps' => 'مجتمع المعلّمين مخصّص للتبادل المهني بين المعلّمين.',
+			'com.annonces.administration.moderation.regles.reglesTitre' => 'قواعد النشر',
+			'com.annonces.administration.moderation.regles.pasPublicite' => 'لا إعلانات',
+			'com.annonces.administration.moderation.regles.pasAffilie' => 'لا روابط تسويق بالعمولة',
+			'com.annonces.administration.moderation.regles.pasVente' => 'لا بيع لمنتج أو خدمة',
+			'com.annonces.administration.moderation.regles.pasSollicitation' => 'لا التماس تجاري',
+			'com.annonces.administration.moderation.regles.pasDonnees' => 'لا بيانات شخصية لطالب أو عائلة',
 			'com.annonces.demoPublication.lienAdministration' => 'إدارة التواصل (الإدارة)',
 			'com.annonces.demoPublication.lienPublier' => 'نشر إعلان لفصل (المعلم)',
 			'com.annonces.demoPublication.toutes' => 'المدرسة كلها',
@@ -1831,6 +1877,8 @@ extension on TraductionsAr {
 			'com.annonces.demoPublication.recitationTitre' => 'تلاوة نهاية الفصل الدراسي',
 			'com.annonces.demoPublication.recitationTexte' => 'سيقدم فصل النور تلاوة نهاية الفصل الدراسي يوم السبت الساعة 10، عبر الاتصال المرئي.',
 			'com.annonces.demoPublication.rentreeTitre' => 'استئناف الدروس بعد العطلة',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demoPublication.rentreeTexte' => 'تُستأنف الحصص يوم الاثنين 6 يناير في المواعيد المعتادة.',
 			'com.annonces.demoPublication.signalementAffilie' => 'منشور « بطاقات تجويد للطباعة »',
 			'com.annonces.demoPublication.extraitAffilie' => 'تجدون بطاقاتي عبر هذا الرابط الشريك، خصم 20 % برمزي.',
@@ -1844,8 +1892,6 @@ extension on TraductionsAr {
 			'com.annonces.auteurDate' => ({required Object auteur, required Object date, required Object heure}) => '${auteur}، يوم ${date} الساعة ${heure}',
 			'com.annonces.date' => ({required Object date, required Object heure}) => 'يوم ${date} الساعة ${heure}',
 			'com.annonces.lire' => 'قراءة الإعلان كاملًا',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.ouvrirClasse' => 'فتح الفصل',
 			'com.annonces.ouvrirClasseSemantique' => ({required Object classe}) => 'فتح ${classe}',
 			'com.annonces.marquerLue' => 'تحديد كمقروء',

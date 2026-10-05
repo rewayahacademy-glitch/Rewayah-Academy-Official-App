@@ -11,6 +11,10 @@
 //
 // Les reponses « Oui » / « Non » sont des mots, avec une pastille : jamais la
 // couleur seule.
+//
+// La colonne « Validation requise » de la maquette n'est ni dans la spec
+// section 13.4 ni dans section 17 COM-W04 : elle n'est montree que si le
+// serveur la renseigne (hypothese COM-BR-11), jamais un « Non » sans source.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,17 +40,31 @@ class MatriceAudience extends ConsumerWidget {
     'administration-matrice',
   );
 
+  /// La cle de la boite qui porte la collection, pour les tests.
+  static const ValueKey<String> cleCollection = ValueKey<String>(
+    'administration-matrice-collection',
+  );
+
   /// La cle d'une ligne, pour les tests.
   static ValueKey<String> cleLigne(String id) =>
       ValueKey<String>('administration-regle-$id');
 
-  /// La hauteur reservee a la collection : elle defile elle-meme
-  /// (`DataCollection`), dans une boite bornee. Tableau : l'en-tete puis une
-  /// ligne de reglage par regle ; cartes : une carte de choix par regle.
-  static double hauteurPour(BuildContext context, int lignes) =>
-      AppGabarit.de(context) == Gabarit.desktop
-      ? AppSpacing.titreEcran + lignes * AppPage.hauteurReglage
-      : lignes * (AppPage.hauteurChoix + AppSpacing.lg);
+  /// La hauteur estimee de la collection, avant sa premiere mise en page :
+  /// `DataCollection` defile elle-meme et demande une boite bornee. Tableau :
+  /// l'en-tete puis une ligne de reglage par regle ; cartes : une carte de
+  /// choix par regle ; le tout suit l'agrandissement du texte (`textScaler`).
+  /// L'estimation n'est qu'un depart : [_HauteurNaturelle] agrandit la boite
+  /// de ce qui deborde encore, pour que la matrice garde sa hauteur naturelle
+  /// et ne devienne jamais une zone a defilement imbrique dans la page qui
+  /// defile deja (texte x2, libelles longs, telephone).
+  static double hauteurPour(BuildContext context, int lignes) {
+    final double base = AppGabarit.de(context) == Gabarit.desktop
+        ? AppSpacing.titreEcran + lignes * AppPage.hauteurReglage
+        : lignes * (AppPage.hauteurChoix + AppSpacing.lg);
+    final double facteur =
+        MediaQuery.textScalerOf(context).scale(AppSpacing.lg) / AppSpacing.lg;
+    return base * (facteur < 1 ? 1 : facteur);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -77,8 +95,9 @@ class MatriceAudience extends ConsumerWidget {
             titre: m.vide,
             phrase: '',
           ),
-          construire: (ReglesAudience v) => SizedBox(
-            height: hauteurPour(context, v.regles.length),
+          construire: (ReglesAudience v) => _HauteurNaturelle(
+            key: cleCollection,
+            estimee: hauteurPour(context, v.regles.length),
             child: DataCollection<RegleAudience>(
               lignes: v.regles,
               cle: (RegleAudience r) => cleLigne(r.id),
@@ -107,10 +126,16 @@ class MatriceAudience extends ConsumerWidget {
                   texte: (RegleAudience r) =>
                       r.audiences.isEmpty ? m.aucune : r.audiences,
                 ),
-                ColonneDonnees<RegleAudience>(
-                  titre: m.validation,
-                  texte: (RegleAudience r) => ouiNon(r.validationRequise),
-                ),
+                if (v.regles.any(
+                  (RegleAudience r) => r.validationRequise != null,
+                ))
+                  ColonneDonnees<RegleAudience>(
+                    titre: m.validation,
+                    texte: (RegleAudience r) => switch (r.validationRequise) {
+                      final bool oui => ouiNon(oui),
+                      null => '',
+                    },
+                  ),
               ],
             ),
           ),
@@ -118,4 +143,52 @@ class MatriceAudience extends ConsumerWidget {
       ],
     );
   }
+}
+
+/// Une boite bornee qui prend la hauteur naturelle de la collection qu'elle
+/// porte : elle part de [estimee], puis s'agrandit de ce que la liste
+/// interieure peut encore defiler (`ScrollMetricsNotification`, emise apres
+/// chaque mise en page qui change les mesures), jusqu'a ce que plus rien ne
+/// defile.
+class _HauteurNaturelle extends StatefulWidget {
+  const _HauteurNaturelle({
+    required this.estimee,
+    required this.child,
+    super.key,
+  });
+
+  final double estimee;
+  final Widget child;
+
+  @override
+  State<_HauteurNaturelle> createState() => _HauteurNaturelleState();
+}
+
+class _HauteurNaturelleState extends State<_HauteurNaturelle> {
+  late double _hauteur = widget.estimee;
+
+  @override
+  void didUpdateWidget(_HauteurNaturelle ancien) {
+    super.didUpdateWidget(ancien);
+    // Une autre estimation (lignes, gabarit, taille du texte) : on repart
+    // d'elle, puis la boite s'ajuste de nouveau.
+    if (ancien.estimee != widget.estimee) _hauteur = widget.estimee;
+  }
+
+  bool _mesurer(ScrollMetricsNotification notification) {
+    final ScrollMetrics mesures = notification.metrics;
+    if (notification.depth == 0 &&
+        mesures.axis == Axis.vertical &&
+        mesures.maxScrollExtent > 0) {
+      setState(() => _hauteur += mesures.maxScrollExtent);
+    }
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      NotificationListener<ScrollMetricsNotification>(
+        onNotification: _mesurer,
+        child: SizedBox(height: _hauteur, child: widget.child),
+      );
 }

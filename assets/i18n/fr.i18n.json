@@ -5062,7 +5062,8 @@
             "moderation": "Contenus en modération",
             "regles": "Règles de portée",
             "indisponible": "{libelle} : pas encore disponible",
-            "echec": "{libelle} : lecture impossible, actualisez la page"
+            "echec": "{libelle} : lecture impossible",
+            "reserve": "{libelle} : réservé aux personnes chargées de la modération"
           },
           "publiees": {
             "titre": "Annonces publiées",
@@ -5116,7 +5117,23 @@
             "sansAction": "Aucune action de modération ne vous est ouverte sur ce contenu.",
             "sansSanction": "Aucune sanction de compte n'est appliquée automatiquement.",
             "politique": "Politique anti-promotion",
-            "ouvrirSemantique": "Examiner {objet}, motif {motif}"
+            "ouvrirSemantique": "Examiner {objet}, motif {motif}",
+            "regleMotif": {
+              "publicite": "La publicité n'est pas autorisée dans la Communauté enseignants.",
+              "lienAffilie": "Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.",
+              "vente": "La vente de produits ou de services n'est pas autorisée dans cet espace.",
+              "sollicitation": "La sollicitation commerciale n'est pas autorisée dans cet espace."
+            },
+            "regles": {
+              "titre": "Partage pédagogique uniquement",
+              "corps": "La Communauté enseignants est réservée aux échanges professionnels entre enseignants.",
+              "reglesTitre": "Règles de publication",
+              "pasPublicite": "Aucune publicité",
+              "pasAffilie": "Aucun lien affilié",
+              "pasVente": "Aucune vente de produit ou de service",
+              "pasSollicitation": "Aucune sollicitation commerciale",
+              "pasDonnees": "Aucune donnée personnelle d'un élève ou d'une famille"
+            }
           }
         },
         "demoPublication": {

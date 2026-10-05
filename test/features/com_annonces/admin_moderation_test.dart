@@ -1,18 +1,23 @@
 // COM-ANN-2 : la file de moderation de l'Administration des communications
 // (`ModerationQueue`, spec section 5.5). Les actions ne se montrent qu'avec
 // la capacite du serveur, une decision n'est dite qu'apres l'accuse, les
-// motifs et la regle visee viennent du socle et de COM-COMU-2. Rendu verifie
-// a 390, 768 et 1440, et en arabe.
+// motifs viennent du socle, la regle visee reprend les textes de COM-COMU-2
+// sans importer sa voie. Rendu verifie a 390, 768 et 1440, et en arabe.
+
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/communications/moderation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/espace_travail_adaptatif.dart';
+import 'package:rewayah_academy/core/widgets/stat_tile.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/com_annonces/administration_communications_page.dart';
 import 'package:rewayah_academy/features/com_annonces/annonces_planifiees.dart';
 import 'package:rewayah_academy/features/com_annonces/file_moderation.dart';
-import 'package:rewayah_academy/features/com_communaute/regles_communaute.dart';
 import 'package:rewayah_academy/features/demo/communications/com_annonces_demo.dart';
 
 import '../../support/garde_interface.dart';
@@ -50,8 +55,12 @@ void main() {
           findsOneWidget,
         );
         expect(find.text(d.extraitAffilie), findsOneWidget);
-        // La regle visee est celle de COM-COMU-2.
-        expect(find.text(t.com.communaute.garde.bloqueAffilie), findsOneWidget);
+        // La regle visee : le texte de COM-COMU-2, repris dans la voie.
+        expect(find.text(m.regleMotif.lienAffilie), findsOneWidget);
+        expect(
+          regleVisee(MotifSignalement.lienAffilie),
+          m.regleMotif.lienAffilie,
+        );
         expect(
           find.text(m.motif(motif: MotifSignalement.lienAffilie.libelle)),
           findsOneWidget,
@@ -103,7 +112,9 @@ void main() {
         onglet: OngletCommunications.moderation,
       );
       expect(find.byKey(EspaceTravailAdaptatif.cleContexte), findsOneWidget);
-      expect(find.byType(ReglesCommunaute), findsOneWidget);
+      expect(find.byKey(FileModeration.clePolitique), findsOneWidget);
+      expect(find.text(m.regles.titre), findsOneWidget);
+      expect(find.text(m.regles.pasAffilie), findsOneWidget);
       expect(find.text(m.sansSanction), findsOneWidget);
     });
 
@@ -160,6 +171,150 @@ void main() {
         TextDirection.rtl,
       );
       expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('Moderation : revue COM-ANN-2', () {
+    test('la voie COM-ANN n importe rien de la voie COM-COMU', () {
+      final List<File> fichiers = <File>[
+        ...Directory('lib/features/com_annonces')
+            .listSync(recursive: true)
+            .whereType<File>()
+            .where((File f) => f.path.endsWith('.dart')),
+        File('lib/features/demo/communications/com_annonces_demo.dart'),
+        ...Directory('test/features/com_annonces')
+            .listSync(recursive: true)
+            .whereType<File>()
+            .where((File f) => f.path.endsWith('.dart')),
+      ];
+      final RegExp importCommunaute = RegExp(
+        r"^import\s+'[^']*(com_communaute/|com_communaute_demo\.dart)",
+        multiLine: true,
+      );
+      for (final File f in fichiers) {
+        expect(
+          importCommunaute.hasMatch(f.readAsStringSync()),
+          isFalse,
+          reason: f.path,
+        );
+      }
+    });
+
+    test('regle visee : seulement les quatre motifs de la politique', () {
+      for (final MotifSignalement motif in MotifSignalement.values) {
+        final bool politique = <MotifSignalement>{
+          MotifSignalement.publicite,
+          MotifSignalement.lienAffilie,
+          MotifSignalement.venteNonAutorisee,
+          MotifSignalement.sollicitationCommerciale,
+        }.contains(motif);
+        expect(regleVisee(motif) != null, politique, reason: motif.name);
+      }
+    });
+
+    testWidgets('apres l accuse, la file est relue : le traite en sort', (
+      WidgetTester tester,
+    ) async {
+      final _FileQuiSuit moderation = _FileQuiSuit();
+      await monterAdministration(
+        tester,
+        onglet: OngletCommunications.moderation,
+        moderation: moderation,
+      );
+      expect(moderation.lectures, 1);
+      await taper(tester, _ligne(d.signalementVente));
+      await taper(
+        tester,
+        find.byKey(FileModeration.cleAction(ActionModeration.approuver)),
+      );
+      expect(find.text(m.enregistree), findsOneWidget);
+      expect(moderation.lectures, 2);
+      // Le serveur l'a sorti de la file : la ligne et le detail disparaissent.
+      expect(find.text(d.signalementVente), findsNothing);
+      expect(
+        find.byKey(FileModeration.cleDetail('demo-sig-vente')),
+        findsNothing,
+      );
+      expect(find.text(d.signalementAffilie), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('le compteur des Annonces suit la decision', (
+      WidgetTester tester,
+    ) async {
+      final _FileQuiSuit moderation = _FileQuiSuit();
+      final GoRouter router = await monterAdministration(
+        tester,
+        moderation: moderation,
+      );
+      int valeur() => tester
+          .widget<StatTile>(
+            find.byWidgetPredicate(
+              (Widget w) =>
+                  w is StatTile &&
+                  w.libelle ==
+                      t.com.annonces.administration.indicateurs.moderation,
+            ),
+          )
+          .valeur;
+      expect(valeur(), 3);
+      await taper(
+        tester,
+        find.byWidgetPredicate(
+          (Widget w) =>
+              w is StatTile &&
+              w.libelle == t.com.annonces.administration.indicateurs.moderation,
+        ),
+      );
+      await taper(tester, _ligne(d.signalementVente));
+      await taper(
+        tester,
+        find.byKey(FileModeration.cleAction(ActionModeration.rejeter)),
+      );
+      router.go(Routes.adminCommunicationsAnnonces);
+      await tester.pumpAndSettle();
+      expect(valeur(), 2);
+    });
+
+    for (final ActionModeration action in <ActionModeration>[
+      ActionModeration.rejeter,
+      ActionModeration.approuver,
+      ActionModeration.masquer,
+    ]) {
+      testWidgets('${action.name} : meme ton de pastille, ligne et detail', (
+        WidgetTester tester,
+      ) async {
+        await monterAdministration(
+          tester,
+          onglet: OngletCommunications.moderation,
+        );
+        await taper(tester, _ligne(d.signalementAffilie));
+        await taper(tester, find.byKey(FileModeration.cleAction(action)));
+        final StatusPill ligne = tester.widget<StatusPill>(
+          find.byKey(
+            FileModeration.clePastilleDecision(
+              'demo-sig-affilie',
+              detail: false,
+            ),
+          ),
+        );
+        final StatusPill detail = tester.widget<StatusPill>(
+          find.byKey(
+            FileModeration.clePastilleDecision(
+              'demo-sig-affilie',
+              detail: true,
+            ),
+          ),
+        );
+        expect(ligne.ton, detail.ton);
+        expect(ligne.ton, tonDecision(action));
+      });
+    }
+    test('signalement rejete : ton neutre, le contenu reste tel quel', () {
+      expect(tonDecision(ActionModeration.rejeter), TonEtat.neutre);
+      expect(tonDecision(ActionModeration.masquer), TonEtat.avertissement);
+      expect(tonDecision(ActionModeration.approuver), TonEtat.succes);
+      expect(tonDecision(ActionModeration.restaurer), TonEtat.succes);
     });
   });
 
@@ -296,4 +451,26 @@ class _FileEnPanne extends ModerationAdministrationDemo {
   @override
   Future<List<ElementModeration>> file() =>
       Future<List<ElementModeration>>.error(Exception('reseau'));
+}
+
+/// Une moderation dont la file suit les decisions comme le serveur : un
+/// signalement approuve, rejete ou restaure en sort ; elle compte ses
+/// lectures.
+class _FileQuiSuit extends ModerationAdministrationDemo {
+  _FileQuiSuit() : super(maintenant: maintenantBanc);
+
+  int lectures = 0;
+
+  @override
+  Future<List<ElementModeration>> file() async {
+    lectures++;
+    final Set<String> traites = <String>{
+      for (final (String id, ActionModeration a) in decisions)
+        if (a != ActionModeration.masquer) id,
+    };
+    return <ElementModeration>[
+      for (final ElementModeration e in await super.file())
+        if (!traites.contains(e.id)) e,
+    ];
+  }
 }

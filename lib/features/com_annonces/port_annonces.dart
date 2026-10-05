@@ -82,6 +82,11 @@ enum NatureCible {
 /// Une audience vers laquelle la personne PEUT publier : rendue par le
 /// serveur ([PortAnnonces.ciblesPublication]), jamais composee par l'ecran.
 /// Son [libelle] est deja redige (« Classe An-Nour », « Familles »).
+///
+/// L'identifiant de l'audience ([id]) n'est PAS celui de la Classe : une
+/// audience de nature [NatureCible.classe] dit sa Classe par [classeId]
+/// (contrat COM-BR-10), et c'est ce champ que l'ecran de l'enseignant compare
+/// a la Classe de son adresse.
 @immutable
 class CibleAnnonce {
   /// Cree l'audience.
@@ -89,10 +94,15 @@ class CibleAnnonce {
     required this.id,
     required this.libelle,
     required this.nature,
+    this.classeId,
   });
 
   /// Identifiant de l'audience, porte par la publication.
   final String id;
+
+  /// La Classe visee, pour une audience de nature [NatureCible.classe] ;
+  /// `null` pour un public ou toute l'ecole.
+  final String? classeId;
 
   /// Le libelle, deja redige.
   final String libelle;
@@ -105,10 +115,11 @@ class CibleAnnonce {
       other is CibleAnnonce &&
       other.id == id &&
       other.libelle == libelle &&
-      other.nature == nature;
+      other.nature == nature &&
+      other.classeId == classeId;
 
   @override
-  int get hashCode => Object.hash(id, libelle, nature);
+  int get hashCode => Object.hash(id, libelle, nature, classeId);
 }
 
 /// Une annonce prete a partir : contenu, audience et, si la personne peut

@@ -16945,8 +16945,11 @@ class Traductions$com$annonces$administration$indicateurs$fr {
 	/// fr: '{libelle} : pas encore disponible'
 	String indisponible({required Object libelle}) => '${libelle} : pas encore disponible';
 
-	/// fr: '{libelle} : lecture impossible, actualisez la page'
-	String echec({required Object libelle}) => '${libelle} : lecture impossible, actualisez la page';
+	/// fr: '{libelle} : lecture impossible'
+	String echec({required Object libelle}) => '${libelle} : lecture impossible';
+
+	/// fr: '{libelle} : réservé aux personnes chargées de la modération'
+	String reserve({required Object libelle}) => '${libelle} : réservé aux personnes chargées de la modération';
 }
 
 // Path: com.annonces.administration.publiees
@@ -17121,6 +17124,9 @@ class Traductions$com$annonces$administration$moderation$fr {
 
 	/// fr: 'Examiner {objet}, motif {motif}'
 	String ouvrirSemantique({required Object objet, required Object motif}) => 'Examiner ${objet}, motif ${motif}';
+
+	late final Traductions$com$annonces$administration$moderation$regleMotif$fr regleMotif = Traductions$com$annonces$administration$moderation$regleMotif$fr.internal(_root);
+	late final Traductions$com$annonces$administration$moderation$regles$fr regles = Traductions$com$annonces$administration$moderation$regles$fr.internal(_root);
 }
 
 // Path: com.annonces.demo.roles
@@ -17253,6 +17259,60 @@ class Traductions$com$annonces$demo$f$fr {
 
 	/// fr: 'Réponse de l'Administration à votre rapport'
 	String get controleurReponse => 'Réponse de l\'Administration à votre rapport';
+}
+
+// Path: com.annonces.administration.moderation.regleMotif
+class Traductions$com$annonces$administration$moderation$regleMotif$fr {
+	Traductions$com$annonces$administration$moderation$regleMotif$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La publicité n'est pas autorisée dans la Communauté enseignants.'
+	String get publicite => 'La publicité n\'est pas autorisée dans la Communauté enseignants.';
+
+	/// fr: 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.'
+	String get lienAffilie => 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.';
+
+	/// fr: 'La vente de produits ou de services n'est pas autorisée dans cet espace.'
+	String get vente => 'La vente de produits ou de services n\'est pas autorisée dans cet espace.';
+
+	/// fr: 'La sollicitation commerciale n'est pas autorisée dans cet espace.'
+	String get sollicitation => 'La sollicitation commerciale n\'est pas autorisée dans cet espace.';
+}
+
+// Path: com.annonces.administration.moderation.regles
+class Traductions$com$annonces$administration$moderation$regles$fr {
+	Traductions$com$annonces$administration$moderation$regles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Partage pédagogique uniquement'
+	String get titre => 'Partage pédagogique uniquement';
+
+	/// fr: 'La Communauté enseignants est réservée aux échanges professionnels entre enseignants.'
+	String get corps => 'La Communauté enseignants est réservée aux échanges professionnels entre enseignants.';
+
+	/// fr: 'Règles de publication'
+	String get reglesTitre => 'Règles de publication';
+
+	/// fr: 'Aucune publicité'
+	String get pasPublicite => 'Aucune publicité';
+
+	/// fr: 'Aucun lien affilié'
+	String get pasAffilie => 'Aucun lien affilié';
+
+	/// fr: 'Aucune vente de produit ou de service'
+	String get pasVente => 'Aucune vente de produit ou de service';
+
+	/// fr: 'Aucune sollicitation commerciale'
+	String get pasSollicitation => 'Aucune sollicitation commerciale';
+
+	/// fr: 'Aucune donnée personnelle d'un élève ou d'une famille'
+	String get pasDonnees => 'Aucune donnée personnelle d\'un élève ou d\'une famille';
 }
 
 /// The flat map containing all translations for locale <fr>.
@@ -21523,7 +21583,8 @@ extension on Traductions {
 			'com.annonces.administration.indicateurs.moderation' => 'Contenus en modération',
 			'com.annonces.administration.indicateurs.regles' => 'Règles de portée',
 			'com.annonces.administration.indicateurs.indisponible' => ({required Object libelle}) => '${libelle} : pas encore disponible',
-			'com.annonces.administration.indicateurs.echec' => ({required Object libelle}) => '${libelle} : lecture impossible, actualisez la page',
+			'com.annonces.administration.indicateurs.echec' => ({required Object libelle}) => '${libelle} : lecture impossible',
+			'com.annonces.administration.indicateurs.reserve' => ({required Object libelle}) => '${libelle} : réservé aux personnes chargées de la modération',
 			'com.annonces.administration.publiees.titre' => 'Annonces publiées',
 			'com.annonces.administration.publiees.vide' => 'Aucune annonce publiée sur la période.',
 			'com.annonces.administration.publiees.pastille' => 'Publiée',
@@ -21570,6 +21631,18 @@ extension on Traductions {
 			'com.annonces.administration.moderation.sansSanction' => 'Aucune sanction de compte n\'est appliquée automatiquement.',
 			'com.annonces.administration.moderation.politique' => 'Politique anti-promotion',
 			'com.annonces.administration.moderation.ouvrirSemantique' => ({required Object objet, required Object motif}) => 'Examiner ${objet}, motif ${motif}',
+			'com.annonces.administration.moderation.regleMotif.publicite' => 'La publicité n\'est pas autorisée dans la Communauté enseignants.',
+			'com.annonces.administration.moderation.regleMotif.lienAffilie' => 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.',
+			'com.annonces.administration.moderation.regleMotif.vente' => 'La vente de produits ou de services n\'est pas autorisée dans cet espace.',
+			'com.annonces.administration.moderation.regleMotif.sollicitation' => 'La sollicitation commerciale n\'est pas autorisée dans cet espace.',
+			'com.annonces.administration.moderation.regles.titre' => 'Partage pédagogique uniquement',
+			'com.annonces.administration.moderation.regles.corps' => 'La Communauté enseignants est réservée aux échanges professionnels entre enseignants.',
+			'com.annonces.administration.moderation.regles.reglesTitre' => 'Règles de publication',
+			'com.annonces.administration.moderation.regles.pasPublicite' => 'Aucune publicité',
+			'com.annonces.administration.moderation.regles.pasAffilie' => 'Aucun lien affilié',
+			'com.annonces.administration.moderation.regles.pasVente' => 'Aucune vente de produit ou de service',
+			'com.annonces.administration.moderation.regles.pasSollicitation' => 'Aucune sollicitation commerciale',
+			'com.annonces.administration.moderation.regles.pasDonnees' => 'Aucune donnée personnelle d\'un élève ou d\'une famille',
 			'com.annonces.demoPublication.lienAdministration' => 'Administration des communications (direction)',
 			'com.annonces.demoPublication.lienPublier' => 'Publier une annonce pour une Classe (enseignant)',
 			'com.annonces.demoPublication.toutes' => 'Toute l\'école',

@@ -87,6 +87,9 @@ class FauxAnnonces implements PortAnnonces {
   /// Leve a la publication quand il est pose.
   Exception? erreurPublication;
 
+  /// Attendu avant de rendre l'accuse d'une publication, quand il est pose.
+  Future<void>? attente;
+
   /// Les publications recues : (brouillon, cle d'idempotence).
   final List<(BrouillonAnnonce, String)> publications =
       <(BrouillonAnnonce, String)>[];
@@ -97,7 +100,7 @@ class FauxAnnonces implements PortAnnonces {
       ? cibles
       : <CibleAnnonce>[
           for (final CibleAnnonce c in cibles)
-            if (c.id == classeId) c,
+            if (c.classeId == classeId || c.id == classeId) c,
         ];
 
   @override
@@ -106,6 +109,7 @@ class FauxAnnonces implements PortAnnonces {
     required String cleIdempotence,
   }) async {
     publications.add((brouillon, cleIdempotence));
+    if (attente case final Future<void> a) await a;
     if (erreurPublication case final Exception e) throw e;
     final DateTime? prevue = brouillon.programmeeLe;
     return AnnonceConfirmee(

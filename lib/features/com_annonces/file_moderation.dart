@@ -1,21 +1,37 @@
 // La file de moderation de l'Administration des communications
 // (`ModerationQueue`, spec section 5.5, section 17 COM-W04 ; COM-BR-06).
 //
-// Gabarit de la file des dossiers (`FileDossiers` + detail) : une file de
-// lignes a gauche, le detail du signalement ouvert au centre, et la
-// politique anti-promotion en contexte (la meme que la Communaute
-// enseignants, `ReglesCommunaute`, COM-COMU-2), sur l'espace adaptatif du
-// socle. Sur telephone : une surface a la fois, retour explicite.
+// Composition de la file des dossiers (une file de lignes a gauche, le
+// detail du signalement ouvert au centre) et la politique anti-promotion en
+// contexte, sur l'espace adaptatif du socle (`EspaceTravailAdaptatif`). Sur
+// telephone : une surface a la fois, retour explicite.
+//
+// ECART a la fiche COM-ANN-2 (« gabarit `FileDossiers` + detail »), a
+// reporter au tableau pour COM-FUS : `FileDossiers`
+// (`lib/features/admin_dossiers/file_dossiers.dart`) n'est pas un gabarit
+// generique, il lit lui-meme `fileDossiersProvider` et le service des
+// dossiers d'inscription (`EtatFile`, pagination, `ErreurRevueDossier`). Le
+// reprendre demanderait de le rendre generique, hors de la voie COM-ANN. La
+// file reprend donc sa composition (lignes `GroupeReglages` a filets,
+// selection marquee en deux panneaux, detail a droite) sans le composant.
+//
+// La politique se RAPPELLE ici avec les textes de la voie
+// (`com.annonces.administration.moderation.regles`, `regleMotif`), repris de
+// COM-COMU-2 (spec section 4.1, section 5.2, section 22) : aucun import de
+// `lib/features/com_communaute/` (fiche COM-ANN-2 : les motifs viennent du
+// socle, la dependance a COM-COMU-2 porte sur les textes et le comportement).
 //
 // Tout passe par `PortModeration` du SOCLE, sans le modifier : capacites,
 // file, decision. **Les actions ne se montrent qu'avec la capacite** donnee
 // par le serveur (`CapacitesModeration.peut`), jamais deduite d'un role ; une
 // action absente n'est pas rendue (jamais grisee). Les huit motifs et leur
 // texte sont ceux du socle (`MotifSignalement.libelle`) ; la regle visee par
-// un motif de la politique est celle de COM-COMU-2 (`reglePolitique`).
+// un motif de la politique reprend le texte de COM-COMU-2
+// ([regleVisee]).
 //
 // Une decision n'est dite qu'apres l'accuse du serveur (« Décision
-// enregistrée. ») ; un echec dit « pas encore confirmee » (K-59, D5), une
+// enregistrée. »), puis la file est relue : un signalement que le serveur a
+// sorti de la file disparait, et le compteur des Annonces suit ; un echec dit « pas encore confirmee » (K-59, D5), une
 // capacite absente « pas encore disponible ». Aucune sanction de compte
 // n'est appliquee automatiquement (spec section 5.5).
 //
@@ -43,9 +59,6 @@ import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/vue_etat_communication.dart';
-import '../com_communaute/feuille_signalement_communaute.dart'
-    show reglePolitique;
-import '../com_communaute/regles_communaute.dart';
 import '../suivi_foyer/filtres_historique.dart';
 import 'annonces_planifiees.dart';
 
@@ -70,6 +83,32 @@ final FutureProvider<List<ElementModeration>> fileModerationProvider =
 final Provider<bool> moderationDemonstrationProvider = Provider<bool>(
   (Ref ref) => false,
 );
+
+/// La regle de la politique anti-promotion que vise [motif] ; nulle pour un
+/// motif hors de la politique (spec section 4.1, section 5.2, section 22 ;
+/// memes textes que COM-COMU-2).
+String? regleVisee(MotifSignalement motif) {
+  final r = t.com.annonces.administration.moderation.regleMotif;
+  return switch (motif) {
+    MotifSignalement.publicite => r.publicite,
+    MotifSignalement.lienAffilie => r.lienAffilie,
+    MotifSignalement.venteNonAutorisee => r.vente,
+    MotifSignalement.sollicitationCommerciale => r.sollicitation,
+    MotifSignalement.horsSujet ||
+    MotifSignalement.harcelement ||
+    MotifSignalement.donneesPersonnelles ||
+    MotifSignalement.autre => null,
+  };
+}
+
+/// Le ton de la pastille d'une decision confirmee, le meme dans la file et
+/// dans le detail : masque, avertissement ; signalement rejete (le contenu
+/// reste tel quel), neutre ; approuve ou restaure, succes.
+TonEtat tonDecision(ActionModeration decision) => switch (decision) {
+  ActionModeration.masquer => TonEtat.avertissement,
+  ActionModeration.rejeter => TonEtat.neutre,
+  ActionModeration.approuver || ActionModeration.restaurer => TonEtat.succes,
+};
 
 /// Le libelle d'une decision deja confirmee.
 String libelleDecision(ActionModeration action) {
@@ -128,6 +167,20 @@ class FileModeration extends ConsumerStatefulWidget {
   static ValueKey<String> cleAction(ActionModeration action) =>
       ValueKey<String>('moderation-action-${action.name}');
 
+  /// La cle de la pastille de decision d'un signalement, dans la file ou dans
+  /// le detail, pour les tests.
+  static ValueKey<String> clePastilleDecision(
+    String id, {
+    required bool detail,
+  }) => ValueKey<String>(
+    'moderation-decision-${detail ? 'detail' : 'ligne'}-$id',
+  );
+
+  /// La cle de la politique en contexte, pour les tests.
+  static const ValueKey<String> clePolitique = ValueKey<String>(
+    'moderation-politique',
+  );
+
   /// La cle du message d'echec d'une decision, pour les tests.
   static const ValueKey<String> cleErreur = ValueKey<String>(
     'moderation-erreur',
@@ -175,6 +228,9 @@ class _FileModerationState extends ConsumerState<FileModeration> {
         _decisions[id] = action;
         _retourLocal = m.enregistree;
       });
+      // La file est relue apres l'accuse : le serveur dit ce qui y reste, et
+      // le compteur « Contenus en modération » des Annonces suit.
+      ref.invalidate(fileModerationProvider);
     } on CapaciteIndisponible {
       if (!mounted) return;
       setState(() {
@@ -342,17 +398,13 @@ class _FileModerationState extends ConsumerState<FileModeration> {
       ),
       pastille: decision != null
           ? StatusPill(
+              key: FileModeration.clePastilleDecision(e.id, detail: false),
               libelle: libelleDecision(decision),
-              ton: switch (decision) {
-                ActionModeration.masquer => TonEtat.avertissement,
-                ActionModeration.rejeter => TonEtat.neutre,
-                ActionModeration.approuver ||
-                ActionModeration.restaurer => TonEtat.succes,
-              },
+              ton: tonDecision(decision),
             )
           : StatusPill(
               libelle: e.motif.libelle,
-              ton: reglePolitique(e.motif) == null
+              ton: regleVisee(e.motif) == null
                   ? TonEtat.neutre
                   : TonEtat.avertissement,
             ),
@@ -421,7 +473,7 @@ class _Detail extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final m = t.com.annonces.administration.moderation;
     final DateTime le = element.signaleLe.toLocal();
-    final String? regle = reglePolitique(element.motif);
+    final String? regle = regleVisee(element.motif);
     final String? destination = element.objet.destination;
     final TextStyle titre = palette.inkStrong.applyTo(
       textes.titleSmall ?? const TextStyle(),
@@ -456,10 +508,12 @@ class _Detail extends StatelessWidget {
                 if (d != null) ...<Widget>[
                   Ecart.vSm,
                   StatusPill(
+                    key: FileModeration.clePastilleDecision(
+                      element.id,
+                      detail: true,
+                    ),
                     libelle: libelleDecision(d),
-                    ton: d == ActionModeration.masquer
-                        ? TonEtat.avertissement
-                        : TonEtat.succes,
+                    ton: tonDecision(d),
                   ),
                 ],
               ],
@@ -542,8 +596,9 @@ class _Detail extends StatelessWidget {
   }
 }
 
-/// La politique anti-promotion, en contexte de la file : les regles de la
-/// Communaute (COM-COMU-2), puis l'absence de sanction automatique.
+/// La politique anti-promotion, en contexte de la file : le rappel des
+/// regles de la Communaute (memes textes que COM-COMU-2), puis l'absence de
+/// sanction automatique. Elle se rappelle, elle ne detecte rien.
 class _Politique extends StatelessWidget {
   const _Politique();
 
@@ -551,11 +606,61 @@ class _Politique extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final r = t.com.annonces.administration.moderation.regles;
+    final TextStyle corps = palette.inkMuted.applyTo(
+      textes.bodyMedium ?? const TextStyle(),
+    );
     return Column(
+      key: FileModeration.clePolitique,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        const ReglesCommunaute(),
+        CarteGroupee(
+          sections: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Semantics(
+                  header: true,
+                  child: Text(
+                    r.titre,
+                    style: palette.inkStrong.applyTo(
+                      textes.titleSmall ?? const TextStyle(),
+                    ),
+                  ),
+                ),
+                Ecart.vXs,
+                Text(r.corps, style: corps),
+                Ecart.vMd,
+                Semantics(
+                  header: true,
+                  child: Text(
+                    r.reglesTitre,
+                    style: palette.inkStrong.applyTo(
+                      textes.labelLarge ?? const TextStyle(),
+                    ),
+                  ),
+                ),
+                Ecart.vSm,
+                for (final String regle in <String>[
+                  r.pasPublicite,
+                  r.pasAffilie,
+                  r.pasVente,
+                  r.pasSollicitation,
+                  r.pasDonnees,
+                ]) ...<Widget>[
+                  Text(
+                    regle,
+                    style: palette.inkStrong.applyTo(
+                      textes.bodyMedium ?? const TextStyle(),
+                    ),
+                  ),
+                  Ecart.vSm,
+                ],
+              ],
+            ),
+          ],
+        ),
         Ecart.vMd,
         Text(
           t.com.annonces.administration.moderation.sansSanction,

@@ -4,6 +4,8 @@
 // la meme cle d'idempotence a chaque nouvelle tentative, l'enseignant limite
 // a sa Classe. Rendu verifie a 390, 768 et 1440, et en arabe.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -40,10 +42,13 @@ Future<void> _ecrire(WidgetTester tester, String titre, String texte) async {
 
 Future<void> _continuer(WidgetTester tester) => taper(tester, _action);
 
+// L'identifiant de l'audience n'est pas celui de la Classe (COM-BR-10) :
+// l'ecran de l'enseignant la retrouve par `classeId`.
 const CibleAnnonce _nour = CibleAnnonce(
-  id: ClassesDemoAnnonces.nour,
+  id: 'audience-classe-an-nour',
   libelle: 'Classe An-Nour',
   nature: NatureCible.classe,
+  classeId: ClassesDemoAnnonces.nour,
 );
 
 List<Override> _surFaux(
@@ -85,7 +90,7 @@ void main() {
       final AnnoncesDemonstration annonces = annoncesBanc(
         cibles: <CibleAnnonce>[
           for (final CibleAnnonce c in ciblesDemo())
-            if (c.id == ClassesDemoAnnonces.nour) c,
+            if (c.classeId == ClassesDemoAnnonces.nour) c,
         ],
       );
       final GoRouter routeur = await monterPublierClasse(
@@ -131,7 +136,7 @@ void main() {
       expect(_libelleAction(tester), p.terminer);
       expect(annonces.parCle, hasLength(1));
       expect(annonces.publiees.first.cible.nature, NatureCible.classe);
-      expect(annonces.publiees.first.cible.id, ClassesDemoAnnonces.nour);
+      expect(annonces.publiees.first.cible.classeId, ClassesDemoAnnonces.nour);
 
       await _continuer(tester);
       expect(find.text(texteEspaceClasse), findsOneWidget);
@@ -205,6 +210,88 @@ void main() {
       expect(find.text(p.publiee), findsOneWidget);
       expect(faux.publications, hasLength(2));
       expect(faux.publications[0].$2, faux.publications[1].$2);
+    });
+
+    testWidgets('audience a identifiant propre : retenue par sa Classe', (
+      WidgetTester tester,
+    ) async {
+      final FauxAnnonces faux = FauxAnnonces()
+        ..cibles = const <CibleAnnonce>[_nour];
+      await monterPublierClasse(tester, surcharges: _surFaux(faux));
+      final p = t.com.annonces.publieur;
+      expect(find.text(p.aucuneCibleTitre), findsNothing);
+      await _ecrire(tester, 'Titre', 'Texte');
+      for (int i = 0; i < 4; i++) {
+        await _continuer(tester);
+      }
+      expect(find.text(p.publiee), findsOneWidget);
+      expect(faux.publications.single.$1.cible.id, _nour.id);
+    });
+
+    testWidgets('une audience d une autre Classe n est jamais retenue', (
+      WidgetTester tester,
+    ) async {
+      // Le serveur rendrait par erreur la Classe d'un autre sous l'identifiant
+      // de cette Classe : `classeId` ne correspond pas, rien n'est propose.
+      final FauxAnnonces faux = FauxAnnonces()
+        ..cibles = const <CibleAnnonce>[
+          CibleAnnonce(
+            id: ClassesDemoAnnonces.nour,
+            libelle: 'Classe Al-Fajr',
+            nature: NatureCible.classe,
+            classeId: ClassesDemoAnnonces.fajr,
+          ),
+        ];
+      await monterPublierClasse(tester, surcharges: _surFaux(faux));
+      expect(
+        find.text(t.com.annonces.publieur.aucuneCibleTitre),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('pendant l envoi, le retour ne rouvre pas le contenu', (
+      WidgetTester tester,
+    ) async {
+      final Completer<void> accuse = Completer<void>();
+      final FauxAnnonces faux = FauxAnnonces()
+        ..cibles = const <CibleAnnonce>[_nour]
+        ..attente = accuse.future;
+      await monterPublierClasse(tester, surcharges: _surFaux(faux));
+      await _ecrire(tester, 'Titre', 'Texte');
+      for (int i = 0; i < 3; i++) {
+        await _continuer(tester);
+      }
+      await tester.tap(_action);
+      await tester.pump();
+      expect(find.text(t.com.annonces.publieur.enCours), findsOneWidget);
+      await tester.tap(find.byType(DisqueRetour));
+      await tester.pump();
+      // Toujours a la publication : rien n'est modifiable pendant l'envoi.
+      expect(find.text(t.commun.etape.sur(n: 4, total: 4)), findsOneWidget);
+      expect(find.text(texteEspaceClasse), findsNothing);
+      accuse.complete();
+      await tester.pumpAndSettle();
+      expect(find.text(t.com.annonces.publieur.publiee), findsOneWidget);
+    });
+
+    testWidgets('apres un envoi non confirme, le retour sort sans republier', (
+      WidgetTester tester,
+    ) async {
+      final FauxAnnonces faux = FauxAnnonces()
+        ..cibles = const <CibleAnnonce>[_nour]
+        ..erreurPublication = Exception('accuse perdu');
+      await monterPublierClasse(tester, surcharges: _surFaux(faux));
+      await _ecrire(tester, 'Titre', 'Texte');
+      for (int i = 0; i < 4; i++) {
+        await _continuer(tester);
+      }
+      expect(find.text(t.com.annonces.publieur.nonConfirmee), findsOneWidget);
+      // Le retour ne rouvre pas le contenu (une coquille corrigee tirerait
+      // une nouvelle cle) : il quitte le publieur.
+      await taper(tester, find.byType(DisqueRetour));
+      expect(find.byKey(PublieurAnnonce.cleTitre), findsNothing);
+      expect(find.text(texteEspaceClasse), findsOneWidget);
+      expect(faux.publications, hasLength(1));
     });
 
     testWidgets('publication sans contrat : rien a reessayer, Terminer', (
