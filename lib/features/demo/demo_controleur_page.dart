@@ -194,11 +194,15 @@ List<Override> _visitesDemo() {
   ];
 }
 
-/// Le roster autorise de demonstration : prenom seul (C8), identifiant
-/// pedagogique fictif.
+/// Le roster autorise de demonstration : prenom et initiale du nom
+/// (decision C7 = a), identifiant pedagogique fictif.
 List<EleveRoster> rosterDemoControleur() => <EleveRoster>[
   for (final (int i, String prenom) in DonneesControleurDemo.roster.indexed)
-    EleveRoster(id: 'demo-eleve-$i', prenom: prenom),
+    EleveRoster(
+      id: 'demo-eleve-$i',
+      prenom: prenom,
+      initialeNom: DonneesControleurDemo.initialesNom[prenom],
+    ),
 ];
 
 /// L'observation structuree (CTR-03A) en demonstration.

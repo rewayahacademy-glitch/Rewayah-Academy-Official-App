@@ -9823,8 +9823,8 @@ class Traductions$controleur$observation$fr {
 	/// fr: 'Qui est concerné ?'
 	String get questionPersonne => 'Qui est concerné ?';
 
-	/// fr: 'Indiquez qui l'observation concerne. Un élève se choisit dans la liste de la Classe, prénom seulement.'
-	String get contextePersonne => 'Indiquez qui l\'observation concerne. Un élève se choisit dans la liste de la Classe, prénom seulement.';
+	/// fr: 'Indiquez qui l'observation concerne. Un élève se choisit dans la liste de la Classe, par son prénom et l'initiale de son nom.'
+	String get contextePersonne => 'Indiquez qui l\'observation concerne. Un élève se choisit dans la liste de la Classe, par son prénom et l\'initiale de son nom.';
 
 	/// fr: 'Enseignant'
 	String get enseignant => 'Enseignant';
@@ -9841,8 +9841,8 @@ class Traductions$controleur$observation$fr {
 	/// fr: 'Élève précis'
 	String get elevePrecis => 'Élève précis';
 
-	/// fr: 'Quand un seul élève est concerné · vous le choisissez dans la liste, prénom seulement'
-	String get elevePrecisAide => 'Quand un seul élève est concerné · vous le choisissez dans la liste, prénom seulement';
+	/// fr: 'Quand un seul élève est concerné · vous le choisissez dans la liste, par son prénom et l'initiale de son nom'
+	String get elevePrecisAide => 'Quand un seul élève est concerné · vous le choisissez dans la liste, par son prénom et l\'initiale de son nom';
 
 	/// fr: 'Aucun participant précis'
 	String get aucun => 'Aucun participant précis';
@@ -18490,13 +18490,13 @@ extension on Traductions {
 			'controleur.observation.autre' => 'Autre',
 			'controleur.observation.autreAide' => 'Quand aucun autre domaine ne convient · précisez-le dans votre texte',
 			'controleur.observation.questionPersonne' => 'Qui est concerné ?',
-			'controleur.observation.contextePersonne' => 'Indiquez qui l\'observation concerne. Un élève se choisit dans la liste de la Classe, prénom seulement.',
+			'controleur.observation.contextePersonne' => 'Indiquez qui l\'observation concerne. Un élève se choisit dans la liste de la Classe, par son prénom et l\'initiale de son nom.',
 			'controleur.observation.enseignant' => 'Enseignant',
 			'controleur.observation.enseignantAide' => 'Quand l\'observation porte sur l\'enseignant de la séance',
 			'controleur.observation.classeEntiere' => 'Classe entière',
 			'controleur.observation.classeEntiereAide' => 'Quand elle porte sur l\'ensemble des élèves présents',
 			'controleur.observation.elevePrecis' => 'Élève précis',
-			'controleur.observation.elevePrecisAide' => 'Quand un seul élève est concerné · vous le choisissez dans la liste, prénom seulement',
+			'controleur.observation.elevePrecisAide' => 'Quand un seul élève est concerné · vous le choisissez dans la liste, par son prénom et l\'initiale de son nom',
 			'controleur.observation.aucun' => 'Aucun participant précis',
 			'controleur.observation.aucunAide' => 'Quand elle ne vise personne en particulier, par exemple le déroulement',
 			'controleur.observation.questionEleve' => 'Choisissez l\'élève dans la liste de la Classe.',
