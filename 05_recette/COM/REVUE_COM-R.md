@@ -199,3 +199,118 @@ sont libérés. La seule réserve vient du contournement R-22.
 - COM-RC traite d'abord les majeurs R-01 à R-07.
 - R-03 attend la décision D-FUS-3 et R-08 la décision D-FUS-1. R-16 et R-19 sont des
   arbitrages du directeur.
+
+## 6. Contre-vérification de COM-RC (COM-R-2)
+
+Date : 5 octobre 2026. Même session (01HS7t3c), à la demande de la session 01FM3Arm (ordre du
+directeur : tout livrer). Lecture seule, rien n'a été corrigé.
+
+Périmètre :
+- code : `ui/communications-v1` @ `022cc31e`, diff depuis `de2bdb64` (11 commits, 95
+  fichiers) ;
+- captures : `pilotage/tuteur-v1` @ `1fab6898`, 186 PNG, comparées à celles de `de2bdb64`.
+
+Méthode : deux relecteurs indépendants à contexte vierge, l'un pour le code et les tests,
+l'autre pour les captures avant et après. Les affirmations de COM-CAPT.md et des commits ont
+été tenues pour non prouvées. J'ai moi-même rejoué R-01, N-1 et N-3 dans le code et sur
+l'image.
+
+### 6.1 Chiffres rejoués (worktree propre à `022cc31e`)
+
+| Contrôle | Annoncé par COM-RC | Rejoué |
+| :--- | :--- | :--- |
+| `dart analyze --fatal-infos` | 0 | 0 |
+| `flutter test -j 3` (suite complète) | 6320 réussis, 3081 sautés, 0 échec | +6320, ~3081 sautés, 0 échec (« All tests passed! », 9 min 23 s) |
+| `verifier_jetons` | 39 | 39 |
+| `verifier_revue` | 1627 | 1627 |
+
+### 6.2 État de chaque constat
+
+| # | Gravité | État | Preuve à `022cc31e` |
+| :--- | :--- | :--- | :--- |
+| R-01 | majeur | **corrigé** (deux réserves, ci-dessous) | `reponses.dart:418-470` : `verifierReponse` avant `onEnvoyer` ; un verdict qui retient garde le texte, et une panne retient aussi. Test `com_communaute/revue_com_rc_test.dart:107-188` ; capture `com_communaute_reponse_bloquee_390_clair.png` |
+| R-02 | majeur | **corrigé**, mais régression N-1 | `fil_discussion.dart:641-720` : en-tête et saisie dans la liste à texte ≥ 1,5 ou sous 480 de hauteur ; sinon, saisie bornée. Les quatre fils à 320×2 montrent champ et « Envoyer » |
+| R-03 | majeur | **décision du directeur** (D-FUS-3) | les deux bandeaux restent (`com_messages_hors_ligne_tuteur_390_clair.png`) |
+| R-04 | majeur | **corrigé** | un seul « Envoyer » en pré-écoute (`com_vocal_pre_ecoute_tuteur_390_clair.png`) ; `peutOuvrir: true` (`com_messages_demo.dart:628`, `com_studio_demo.dart:417`) ; « Écouter » visible |
+| R-05 | majeur | **corrigé** (identité seulement en icône à 768, et seulement le compte à 390) | `app_router.dart:1059,1069` (`_ActionsStudio`), `studio_page.dart:243` |
+| R-06 | majeur | **corrigé** | aucune ligne inerte ; toute `actionRequise` a une destination (`demo_annonces_test.dart`) ; chevrons visibles (`com_notifications_enseignant_390_clair.png`) |
+| R-07 | majeur | **corrigé** | aucune copie restante ; un seul `messageFilDe` ; `ChampRecherche` et `SurfaceRecherche` partagés par Messages, le Studio et la Communauté |
+| R-08 | mineur | **décision du directeur** (D-FUS-1) | dates toujours en français en arabe |
+| R-09 | mineur | **corrigé** | plus aucun mot coupé à 320×2 |
+| R-10 | mineur | **corrigé** | liste d'environ 336 px, gouttière, recherches entières |
+| R-11 | mineur | **corrigé** | carte PDF dans la bulle, nom réduit par le milieu |
+| R-12 | mineur | **partiel** ; le `Center` d'`ActionPrincipale` relève d'une décision du directeur | bandeau du Focus aligné sur le fil (`studio_page.dart:846-866`). « Quitter le focus » et « Mode focus » restent centrés. Le décalage d'« Envoyer » vient de bulles à 86 % face à une saisie pleine largeur : ce n'est pas un débordement |
+| R-13 | mineur | **corrigé** (voir N-5) | menu au bord, un seul état vide |
+| R-14 | mineur | **corrigé** | « · Il y a 2 h », « le mardi 6 octobre » |
+| R-15 | mineur | **corrigé** | « Administration des communications », une seule pastille |
+| R-16 | mineur | **décision du directeur** | annonce toujours avant la séance |
+| R-17 | mineur | **corrigé** | seule `CapaciteIndisponible` laisse passer (`relireParLeGarde`) ; le test attend désormais 0 publication en cas de panne |
+| R-18 | mineur | **corrigé côté client** ; le contrat COM-BR-06 reste à tenir côté serveur | `moderation.dart:158-168`, une clé rejouée (`revue_com_rc_test.dart:312-389`) |
+| R-19 | mineur | **décision du directeur** | `regles_communaute.dart`, inchangé |
+| R-20 | mineur | **corrigé** | `publier_annonce_classe_page.dart:79-116` : refus avant tout publieur |
+| R-21 | mineur | **corrigé dans le code**, **partiel** dans CARTE_FONCTIONS | la carte n'a été mise à jour qu'au lot B. Elle cite encore `recherche_fils.dart` (l.37) et `lecteursVocauxDuMessage` (l.46), et omet `ChampRecherche`, `SurfaceRecherche` et `PersistanceBrouillon` |
+| R-22 | mineur | **corrigé** | plus aucun parcours de l'arbre ; `FilDiscussion` porte `PersistanceBrouillon`, partagé avec `ComposerReponse` ; le fil Messages a un brouillon |
+| R-23 | mineur | **partiel** | `depuisErreur`, `VueChoisirCommunication` et un seul provider de modération. La logique reste recopiée à la main dans `publication_detail.dart:289-299`, `annonces_de_classe.dart:176-181` et `publier_annonce_classe_page.dart:89-95` |
+| R-24 | mineur | **corrigé** | squelette, `ref.watch`, hors ligne, « Aucun message » |
+| R-25 | mineur | **corrigé** pour les trois composers cités | `raccourciEnvoi` ; voir N-2 |
+| R-26 | mineur | **corrigé** | trois chemins ajoutés ; voir N-7 |
+| R-27 | mineur | **décision du directeur** | inchangé |
+| R-28 | mineur | **corrigé** | COM-CAPT.md compte 14 défauts et reporte les écarts |
+
+Bilan :
+- **21 corrigés** ;
+- **3 partiels** : R-12 (en partie une décision), R-21 (carte) et R-23 ;
+- **5 décisions du directeur** : R-03, R-08, R-16, R-19 et R-27, plus le `Center` de R-12.
+
+Les six majeurs que COM-RC pouvait traiter (R-01, R-02, R-04, R-05, R-06 et R-07) sont
+corrigés. R-03 attend D-FUS-3.
+
+Réserves sur R-01 :
+- L'avertissement d'une réponse (« Cette réponse semble… avant d'envoyer », `fr.i18n.json:5035`)
+  et les titres « Réponse bloquée » et « Réponse à revoir » ne sont pas les textes exacts du
+  §5.2. Il faut l'aval du directeur, ou revenir au texte du §5.2.
+- Un refus du serveur pour cause de politique s'affiche comme un échec générique
+  « Renvoyer » (`publication_detail.dart:184-186`).
+
+### 6.3 Constats nouveaux introduits par COM-RC
+
+| # | Gravité | Fichier:ligne ou capture | Constat | Correction proposée |
+| :--- | :--- | :--- | :--- | :--- |
+| N-1 | **majeur** | `lib/core/widgets/fil_discussion.dart:641-645` (seuil `hauteurBasse = 480`, l.296) ; `com_admin_messages_390_clair.png`, `com_admin_messages_320_clair.png`, `com_messages_fil_tuteur_320_clair.png` | **Régression de R-02 à texte ×1.** Quand le fil reçoit moins de 480 pt, l'en-tête de contexte passe dans la liste. Le défilement initial vers le bas le cache alors : chez l'admin à 390 (titre sur trois lignes plus onglets), et chez le tuteur à 320. Le fil s'ouvre sans interlocuteur, sans objet et sans bouton (i), alors qu'à `de2bdb64` « M. Rachid, Contrôleur pédagogique · Visite de contrôle, Classe An-Nour » était visible. Le critère « Messages métier contextuel » (§33) n'est plus tenu à une largeur courante. COM-CAPT.md ne le relève qu'à 320×2. | À texte ×1, garder fixe au moins une ligne compacte de contexte (nom et objet, avec (i)), ou ouvrir le fil sur l'en-tête plutôt que tout en bas. Ne pas lier la bascule à la seule hauteur, puis ajouter un test « en-tête visible à 390, texte ×1, coquille admin ». |
+| N-2 | mineur | `features/com_communaute/reponses.dart:483` | Le composer de réponse, quatrième composer, n'a pas Ctrl/Cmd+Entrée. | Envelopper son champ dans `raccourciEnvoi`. |
+| N-3 | mineur | `core/widgets/fil_discussion.dart:499` avec `persistance_brouillon.dart:56-65` | `_champ.clear()` déclenche `noter(cle, '')`, qui efface le brouillon avant l'accusé. Un message non confirmé est perdu si l'on quitte le fil. `ComposerReponse` attend l'accusé, lui. | Faire comme la réponse : `caler('')` avant `clear()`, puis effacer à l'accusé. |
+| N-4 | mineur | `test/features/com_studio/focus_studio_test.dart` (assertions en `skipOffstage: false`) | Test affaibli : en Focus à texte ×2, il accepte une saisie hors écran (§23 : « contenu centré + composer + sortie »). | Ramener la saisie dans la vue à l'entrée du Focus, et rétablir l'assertion « visible ». |
+| N-5 | mineur | `test/features/com_annonces/admin_publieur_test.dart` ; `com_communaute_vide_1440_clair.png` | Le cas « capacité présente, aucune audience » (`aucuneCibleTitre`) n'est plus testé. À 1440, sans publication, la colonne centrale est vide, sans titre ni état. | Rajouter le cas de test, et poser une invite légère au centre. |
+| N-6 | mineur | `flux_publications.dart:185`, `notifications_page.dart:482`, `aujourdhui_page.dart:512`, `administration_communications_page.dart:375`, `fil_discussion.dart:296-298` | Les seuils « texte agrandi = 1,5 » et « 480 » sont recopiés, parfois en littéral. | Une seule constante (`AppGabarit` ou `core/accessibilite`). |
+| N-7 | mineur | `test/core/communications/complements_com0b_test.dart:164-171` | Le test « aucun rôle » ne couvre pas `champ_recherche.dart`, `surface_recherche.dart` ni `page_shell.dart` (`TetePageConfiee`). | Les ajouter. |
+| N-8 | mineur | `features/com_vocal/lecteur_vocal.dart:341` | `lecteursVocauxDuMessage` n'est plus appelée nulle part : code mort qui double `piecesDuMessage`. | La supprimer, et corriger CARTE_FONCTIONS (l.46). |
+| N-9 | mineur | `com_vocal_pre_ecoute_tuteur_390_clair.png`, `..._1440_sombre.png` | Le bas du panneau de pré-écoute touche la barre de navigation (390) ou le bord de page (1440). | Une marge basse sous le panneau borné. |
+| N-10 | mineur | `com_notifications_enseignant_390_clair.png`, `com_admin_moderation_1440_clair.png`, `com_messages_fil_tuteur_390_rtl_clair.png` | Trois défauts de finition : date sur deux lignes à texte ×1 (« 4 oct. / 2026 ») ; pastille de motif longue étirée sur toute la largeur ; virgule arabe « ، » insérée dans du français (famille R-08). | Date compacte, sans l'année quand c'est l'année en cours ; largeur intrinsèque de la pastille ; séparateur neutre. |
+
+Les quatre défauts nouveaux que COM-CAPT.md relève au tour 3 (ligne auteur mixte en RTL,
+alignements RTL, premier écran sans titre à 320×2) sont confirmés et restent mineurs ou à
+arbitrer.
+
+Vérifié sans défaut dans le diff :
+- aucun rôle lu ;
+- aucune couleur, police ni rayon en dur ;
+- aucune démo hors garde, aucun appel réseau ;
+- ressources libérées, y compris le contrôleur injecté dans `FilDiscussion` et
+  `RelaisTetePage` ;
+- parité slang fr et ar ;
+- aucun `skip` ajouté, aucun test supprimé ;
+- aucun tiret cadratin.
+
+### 6.4 Verdict de COM-R-2 : COM-RC ACCEPTÉE AVEC RÉSERVES, non vérifiée
+
+COM-RC corrige les sept majeurs de la revue, hors la décision D-FUS-3. Elle introduit
+toutefois une régression majeure, N-1 : sur téléphone, le fil Messages s'ouvre sans son
+contexte. COM-RC reste donc en `dev_ok`.
+
+Pour passer à `verifie`, il faut :
+1. corriger N-1, avec un test ;
+2. de préférence, N-3 et N-4, qui touchent à la perte de données et à un test affaibli ;
+3. les autres mineurs peuvent suivre.
+
+Aucune étape COM ne passe à `verifie` tant que N-1 reste ouvert. N-1 touche le socle
+(`FilDiscussion`) et donc Messages, le Studio et la coquille admin.
