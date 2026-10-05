@@ -248,8 +248,10 @@ Responsabilites :
 | Potentiellement commercial | warning composer | `Cette publication semble contenir une promotion commerciale. Retirez le lien, le code ou l'offre avant de publier.` |
 | Lien affilie | blocage | `Les liens affilies ne sont pas autorises dans la Communaute enseignants.` |
 | Vente | blocage | `La vente de produits ou de services n'est pas autorisee dans cet espace.` |
-| Publication signalee | confirmation apres retour reel | `Le contenu a ete signale a l'equipe de moderation.` |
-| Moderation indisponible | erreur | `Le signalement n'a pas pu etre envoye. Reessayez.` |
+| Publication signalee | confirmation apres retour reel | ~~`Le contenu a ete signale a l'equipe de moderation.`~~ `Le contenu a été signalé. Il sera examiné.` (amendé le 05/10) |
+| Moderation indisponible | erreur | ~~`Le signalement n'a pas pu etre envoye. Reessayez.`~~ `Le signalement n'a pas encore été confirmé. Réessayez dans un instant.` (amendé le 05/10) |
+
+> **Amendement du 05/10/2026 (D-FUS-2 = option 1), décidé par délégation du directeur** (artefact « Décisions du directeur, 4 octobre », https://claude.ai/artifact/V6mniNAePTUXfpxKbnkEhW). Les deux textes barrés contredisaient la règle K-59 et D5 (un échec réseau se dit « non confirmé », jamais « non envoyé » : l'application ne peut pas prouver que rien n'est parti) et le contrôle `affirmation-reseau` de `verifier_revue`. La spec suit désormais les textes du code (`com.socle.signalement.confirme`, `com.socle.signalement.erreur`) ; quand le service de modération est absent, le texte est « Le signalement n'est pas encore disponible ici. » (`com.socle.signalement.indisponible`). Voir `19_communications/DECISIONS_COM_FUS.md`, D-FUS-2.
 
 ## 5.3 Composer communautaire
 

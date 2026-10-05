@@ -22,3 +22,26 @@ Seulement ce qui bloque, une phrase, avec recommandation (K-53). COM-0 a confirm
   - **Classe live (COM-ANN-1)** : pour l'enseignant, elle ouvre le centre partagé (`/enseignant/notifications`, choisi par `RoleSeance.enseignant`, déjà lu par `_routeDuGroupe`, `classe_live_page.dart:306-310`) ; pour l'élève, elle disparaît : la Classe live (`/tc/classe`) ne s'ouvre qu'à `AppRole.teacher` et `AppRole.student` (`redirection.dart:326-327`, verrou voulu et testé, `redirection_test.dart:883` : l'ouvrir à `guardian` y ferait entrer tous les tuteurs). L'élève, mineur comme adulte, entre en séance par `/salle` (« Rejoindre », `routes_tc_a.dart:44-75`), pas par `/tc/classe`. Correction du 04/10 (revue COM-F-Q5-R) : l'absence d'entrée adulte ne vient pas de cette ligne, mais du manque de capacité « élève autonome » servie par le serveur (EA-BR-01) et de l'accueil adulte qui teste `AppRole.student` (étapes EA-ROLE-BR et EA-ROLE-1 au tableau). Si une entrée adulte en Classe live existe un jour, elle passera `/tuteur/notifications` par un champ optionnel de `ContexteClasseLive` (`classe_live_page.dart:54`), construit aujourd'hui seulement par `routes_tc_a.dart:92` ; ce manque est signalé au tableau, hors COM. Jamais `AppRole` ni `InterfaceMode` (le mode standard couvre aussi les enfants de 9 ans et plus, `enums.dart:89`).
 - **Q2 (QUESTI-03)** : le raccourci « Communauté enseignants » n'est pas un 5e bloc de JourneePage (« Quatre blocs, pas un de plus », K-42, `journee_page.dart:3-5`). Il se pose dans un bloc toujours rendu ; « Alertes utiles » ne convient pas, ce bloc n'est rendu que s'il n'est pas vide (`journee_page.dart:4-5`). **Pour COM-F** : poser l'emplacement vide dans `journee_page.dart` (widget appartenant à `com_communaute/`) ; COM-COMU-1 le remplit. Le test vérifie qu'il reste quatre blocs au plus.
 - **Q4 (QUESTI-07)** : Configuration > Notifications (CFG-03, modèles globaux) reste hors COM (`admin_domaine.dart:38-40`, `:174-181` ; contrat archivé `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md:47`, `:65`, `:122`). **Pour COM-F** : ne pas l'ajouter à `ongletsConfiguration` (`admin_domaine.dart:185`). La frontière entre les modèles globaux de CFG-03 et le catalogue COM §13.2 est à tracer, sans dupliquer `/admin/operations/communications`.
+
+## Réponses du 05/10 (par délégation du directeur)
+
+Source : artefact « Décisions du directeur, 4 octobre », https://claude.ai/artifact/V6mniNAePTUXfpxKbnkEhW. Décisions prises le 05/10/2026 par délégation du directeur, sur les questions ouvertes après COM-FUS et la revue COM-R ; le détail et l'effet de chacune sont dans `DECISIONS_COM_FUS.md`.
+
+| Question | Réponse du 05/10 |
+|---|---|
+| D-FUS-1 / R-08 : arabe dans les Communications | **RÉPONDUE 05/10 : a**, garder l'arabe et traduire aussi les dates |
+| D-FUS-2 : texte du signalement contre K-59 | **RÉPONDUE 05/10 : a**, garder les textes actuels et corriger la spec §5.2 |
+| D-FUS-3 / R-03 : double bandeau hors ligne | **RÉPONDUE 05/10 : a**, masquer le bandeau générique sur les pages Communications |
+| D-FUS-4 à 7 : réglages techniques | **RÉPONDUE 05/10 : a**, les quatre restent ainsi (`domaine: null`, fusion anticipée admise, `envoyerVocal`, forme b des capacités) |
+| D-FUS-8 : publication « peut-être commerciale » | **RÉPONDUE 05/10 : a**, bloquer comme aujourd'hui |
+| D-FUS-8 : programmation d'une annonce | **RÉPONDUE 05/10 : a**, garder les trois créneaux |
+| D-FUS-8 : libellés `com.*` proposés par un agent | **RÉPONDUE 05/10 : b**, pas de page de validation ; relecture croisée des sessions (vocabulaire de `docs/current`, K-59, pas de jargon), marquée « validé par délégation le 05/10 » (`LIBELLES_COM_RELECTURE.md`) ; `com.communaute.garde.reponse.avertissement` devient « … avant de l'envoyer. » ; `consigneBlocage` et `reponses.refusee` sont bons |
+| D-FUS-9 : icônes signet, épingle, lien | **RÉPONDUE 05/10 : a**, ajout autorisé |
+| D-FUS-9 : UX_REVIEW du Studio | **RÉPONDUE 05/10 : a**, les écrire avant la recette humaine |
+| R-12 : actions compactes centrées | **RÉPONDUE 05/10 : a**, corriger le composant commun |
+| R-16 : annonce ou séance en tête | **RÉPONDUE 05/10 : a**, la séance en tête quand elle est ouverte ou proche |
+| R-19 : cinquième règle de la Communauté | **RÉPONDUE 05/10 : a**, la garder |
+| R-27 : raccourci Communauté sans service | **RÉPONDUE 05/10 : a**, le cacher tant que la Communauté n'est pas ouverte |
+| COM-R-3 constat 5 : Focus à 320, texte ×2 | **RÉPONDUE 05/10 : a**, zone d'écriture réduite à une ligne en Focus |
+| R-28 : ouverture du message vocal | **RÉPONDUE 05/10 : a**, un bouton micro à côté d'« Envoyer » |
+| COM-RC tour 5 : huit défauts mineurs | **RÉPONDUE 05/10 : a**, un tour court |
