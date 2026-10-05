@@ -1592,8 +1592,8 @@ class _CoquilleAdmin extends ConsumerWidget {
       // Le bandeau d'alerte urgente, en tete de toute page ouverte, sauf
       // sous l'Accueil : le Centre de commande et la page des alertes
       // montrent deja l'alerte en tete (D7, une information une fois).
-      // Pose seulement quand une alerte urgente est ouverte : sans elle, la
-      // page garde sa tete fixe.
+      // Pose seulement quand une alerte urgente est ouverte ; fige en haut
+      // par la coquille, hors de la zone qui defile (ALERTE-1b).
       bandeau: domaine == AdminDomaine.accueil || (urgentes ?? 0) == 0
           ? null
           : BandeauAlerteUrgente(onOuvrir: () => aller(Routes.adminAlertes)),

@@ -2574,6 +2574,8 @@
     "ligne": "{gravite}, {titre}, le {date} à {heure}",
     "bandeauUne": "Alerte urgente : {titre}",
     "bandeauPlusieurs": "{nombre} alertes urgentes. La plus récente : {titre}",
+    "bandeauCourtUne": "Alerte urgente à traiter",
+    "bandeauCourtPlusieurs": "{nombre} alertes urgentes à traiter",
     "voirTout": "Voir toutes les alertes",
     "vide": "Aucune alerte en cours.",
     "videTitre": "Aucune alerte en cours",

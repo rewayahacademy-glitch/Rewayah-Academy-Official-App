@@ -2215,6 +2215,12 @@ class Traductions$alertes$fr {
 	/// fr: '{nombre} alertes urgentes. La plus récente : {titre}'
 	String bandeauPlusieurs({required Object nombre, required Object titre}) => '${nombre} alertes urgentes. La plus récente : ${titre}';
 
+	/// fr: 'Alerte urgente à traiter'
+	String get bandeauCourtUne => 'Alerte urgente à traiter';
+
+	/// fr: '{nombre} alertes urgentes à traiter'
+	String bandeauCourtPlusieurs({required Object nombre}) => '${nombre} alertes urgentes à traiter';
+
 	/// fr: 'Voir toutes les alertes'
 	String get voirTout => 'Voir toutes les alertes';
 
@@ -17757,6 +17763,8 @@ extension on Traductions {
 			'alertes.ligne' => ({required Object gravite, required Object titre, required Object date, required Object heure}) => '${gravite}, ${titre}, le ${date} à ${heure}',
 			'alertes.bandeauUne' => ({required Object titre}) => 'Alerte urgente : ${titre}',
 			'alertes.bandeauPlusieurs' => ({required Object nombre, required Object titre}) => '${nombre} alertes urgentes. La plus récente : ${titre}',
+			'alertes.bandeauCourtUne' => 'Alerte urgente à traiter',
+			'alertes.bandeauCourtPlusieurs' => ({required Object nombre}) => '${nombre} alertes urgentes à traiter',
 			'alertes.voirTout' => 'Voir toutes les alertes',
 			'alertes.vide' => 'Aucune alerte en cours.',
 			'alertes.videTitre' => 'Aucune alerte en cours',
@@ -18131,10 +18139,10 @@ extension on Traductions {
 			'enseignant.signalement.contexte' => ({required Object prenom, required Object classe}) => 'Pour ${prenom} · ${classe}',
 			'enseignant.signalement.categorieTitre' => 'Catégorie',
 			'enseignant.signalement.categories.pedagogique' => 'Problème pédagogique',
-			'enseignant.signalement.categories.presence' => 'Présence',
-			'enseignant.signalement.categories.technique' => 'Technique',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.signalement.categories.presence' => 'Présence',
+			'enseignant.signalement.categories.technique' => 'Technique',
 			'enseignant.signalement.categories.changement' => 'Changement',
 			'enseignant.signalement.categories.autre' => 'Autre',
 			'enseignant.signalement.details' => 'Détails internes',
@@ -18645,10 +18653,10 @@ extension on Traductions {
 			'controleur.observation.respectCadreAide' => 'Quand il s\'agit des règles de l\'académie et de la séance',
 			'controleur.observation.climat' => 'Comportement / climat',
 			'controleur.observation.climatAide' => 'Quand il s\'agit du comportement ou de l\'ambiance de la classe',
-			'controleur.observation.autre' => 'Autre',
-			'controleur.observation.autreAide' => 'Quand aucun autre domaine ne convient · précisez-le dans votre texte',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.observation.autre' => 'Autre',
+			'controleur.observation.autreAide' => 'Quand aucun autre domaine ne convient · précisez-le dans votre texte',
 			'controleur.observation.questionPersonne' => 'Qui est concerné ?',
 			'controleur.observation.contextePersonne' => 'Indiquez qui l\'observation concerne. Un élève se choisit dans la liste de la Classe, par son prénom et l\'initiale de son nom.',
 			'controleur.observation.enseignant' => 'Enseignant',
@@ -19159,10 +19167,10 @@ extension on Traductions {
 			'tc.parcours.avant.rien' => 'Rien à préparer pour le prochain cours.',
 			'tc.parcours.avant.rienDetail' => 'Votre enseignant proposera le travail à la fin de la prochaine séance.',
 			'tc.parcours.avant.nonBranche' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
-			'tc.parcours.avant.nonBrancheDetail' => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.',
-			'tc.parcours.avant.reprendre' => 'Reprendre le cours',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.avant.nonBrancheDetail' => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.',
+			'tc.parcours.avant.reprendre' => 'Reprendre le cours',
 			'tc.parcours.avant.reprendreDepuis' => ({required Object position}) => 'Reprendre le cours à ${position}',
 			'tc.parcours.intention.apprendre' => 'À apprendre',
 			'tc.parcours.intention.revoir' => 'À revoir',

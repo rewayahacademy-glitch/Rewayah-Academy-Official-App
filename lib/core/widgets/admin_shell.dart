@@ -94,8 +94,17 @@ class AdminShell extends StatelessWidget {
   /// La cloche des alertes, ou `null` sans capacite « alertes » (Q5).
   final Widget? cloche;
 
-  /// Le bandeau pose en tete de chaque page (`PageShell`, au-dessus du
-  /// titre) : l'alerte urgente (ALERTE-1). Nul : aucun.
+  /// Le bandeau pose tout en haut de chaque page : l'alerte urgente
+  /// (ALERTE-1). Nul : aucun.
+  ///
+  /// **Fige au-dessus de la page, jamais dans sa tete** (ALERTE-1b) : la
+  /// coquille le pose au-dessus de la page ouverte, hors de la zone qui
+  /// defile. Il reste en vue tant que l'alerte est ouverte, et pousse la page
+  /// vers le bas sans jamais la recouvrir (« tout en haut de l'ecran,
+  /// jusqu'a ce qu'elle soit traitee », decision du 05/10). Sa hauteur est
+  /// bornee a la moitie de la vue : au-dela (vue tres basse, texte a 400 %),
+  /// il defile dans sa propre zone et la page garde l'autre moitie
+  /// (WCAG 1.4.10).
   final Widget? bandeau;
 
   /// L'ecran affiche.
@@ -143,19 +152,34 @@ class AdminShell extends StatelessWidget {
 
     // Les actions de l'en-tete de page, a partir de 600 : Recherche, theme,
     // compte, dans cet ordre (maquette 02A).
-    Widget contenu({required bool avecActions}) => ActionsEnteteCoquille(
-      actions: <Widget>[
-        if (avecActions) ...<Widget>[
-          _BoutonRecherche(onRecherche: onAller),
-          const BasculeTheme(),
-          ?cloche,
-          _BoutonCompte(onCompte: onCompte),
+    //
+    // ALERTE-1b : le bandeau n'est plus confie a `PageShell` (sa tete defile
+    // avec le corps des que le bandeau y est, et le bandeau sortait de la
+    // vue) ; il est pose ici, au-dessus de la page, par [_ZoneBandeau].
+    Widget contenu({required bool avecActions}) {
+      final Widget page = ActionsEnteteCoquille(
+        actions: <Widget>[
+          if (avecActions) ...<Widget>[
+            _BoutonRecherche(onRecherche: onAller),
+            const BasculeTheme(),
+            ?cloche,
+            _BoutonCompte(onCompte: onCompte),
+          ],
         ],
-      ],
-      onRetour: onRetour,
-      bandeau: bandeau,
-      child: child,
-    );
+        onRetour: onRetour,
+        child: child,
+      );
+      return switch (bandeau) {
+        null => page,
+        final Widget b => _ZoneBandeau(
+          bandeau: b,
+          // Sous 600, la barre mobile tient deja le haut de l'ecran (et sa
+          // marge de securite) : le bandeau se pose sous elle.
+          sousBarre: chrome == ChromeNavigation.barreBasse,
+          child: page,
+        ),
+      };
+    }
 
     // **Un seul `Scaffold`, quel que soit le gabarit.** La barre mobile porte
     // un `TextField`, qui exige un ancetre `Material` ; le mobile a de toute
@@ -201,6 +225,77 @@ class AdminShell extends StatelessWidget {
           ],
         ),
       },
+    );
+  }
+}
+
+/// La zone du bandeau d'alerte urgente (ALERTE-1b) : le bandeau fige en
+/// haut, la page dessous, dans la hauteur qui reste.
+///
+/// Le bandeau prend la gouttiere et la largeur bornee de la colonne de page
+/// (`PageShell`), pour s'aligner sur le titre. Sa hauteur ne depasse jamais
+/// la moitie de la vue : au-dela, il defile dans sa zone.
+class _ZoneBandeau extends StatelessWidget {
+  const _ZoneBandeau({
+    required this.bandeau,
+    required this.sousBarre,
+    required this.child,
+  });
+
+  final Widget bandeau;
+  final bool sousBarre;
+  final Widget child;
+
+  /// La part maximale de la hauteur que le bandeau occupe.
+  static const double partMaximale = 0.5;
+
+  @override
+  Widget build(BuildContext context) {
+    final double gouttiere = AppGabarit.de(context).gouttiere;
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          SafeArea(
+            top: !sousBarre,
+            bottom: false,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: contraintes.maxHeight * partMaximale,
+              ),
+              child: SingleChildScrollView(
+                child: Align(
+                  alignment: AlignmentDirectional.topCenter,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxWidth: AppPage.largeurMaxContenu,
+                    ),
+                    child: Padding(
+                      // Directionnel : en arabe, la gouttiere de debut est a
+                      // droite. 8 sous le bandeau, avant la tete de la page.
+                      padding: EdgeInsetsDirectional.only(
+                        start: gouttiere,
+                        end: gouttiere,
+                        bottom: AppSpacing.sm,
+                      ),
+                      child: bandeau,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            // La marge de securite du haut est deja prise au-dessus du
+            // bandeau : la page ne la reprend pas.
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: !sousBarre,
+              child: child,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
