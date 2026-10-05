@@ -1041,9 +1041,6 @@ void main() {
 
   // EA-HL-DOUBLE-1c : sombre, Interface guidee et texte x2 de la fiche
   // eleve hors ligne (revue EA-HL-DOUBLE-1-R, m4). Sautees sans CAPTURE_DIR.
-  // EA-HL-DOUBLE-1d : 320 texte x2 en LTR et RTL de la fiche eleve hors
-  // ligne, sans et avec donnees (revue EA-HL-DOUBLE-1c-R, mineur 2).
-  // Sautees sans CAPTURE_DIR.
   // EA-HL-DOUBLE-1e : l'echec d'ecriture de la presentation dit la cause
   // probable sans l'affirmer (K-59). 390, 320 texte x2 en LTR et RTL.
   // Sautees sans CAPTURE_DIR.
@@ -1086,6 +1083,9 @@ void main() {
     }
   });
 
+  // EA-HL-DOUBLE-1d : 320 texte x2 en LTR et RTL de la fiche eleve hors
+  // ligne, sans et avec donnees (revue EA-HL-DOUBLE-1c-R, mineur 2).
+  // Sautees sans CAPTURE_DIR.
   group('Capture EA-HL-DOUBLE-1d', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
     setUp(masquerRubanDebug);
