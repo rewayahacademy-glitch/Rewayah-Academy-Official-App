@@ -835,6 +835,7 @@ class Traductions$contrat$fr {
 	late final Traductions$contrat$a3$fr a3 = Traductions$contrat$a3$fr.internal(_root);
 	late final Traductions$contrat$e1$fr e1 = Traductions$contrat$e1$fr.internal(_root);
 	late final Traductions$contrat$clauseControle$fr clauseControle = Traductions$contrat$clauseControle$fr.internal(_root);
+	late final Traductions$contrat$politique$fr politique = Traductions$contrat$politique$fr.internal(_root);
 }
 
 // Path: accessibilite
@@ -3225,6 +3226,35 @@ class Traductions$contrat$clauseControle$fr {
 
 	/// fr: 'J'accepte que l'académie traite le fait que j'enseigne le Coran, qui peut révéler ma religion, pour gérer mon contrat et mes cours.'
 	String get caseReligion => 'J\'accepte que l\'académie traite le fait que j\'enseigne le Coran, qui peut révéler ma religion, pour gérer mon contrat et mes cours.';
+}
+
+// Path: contrat.politique
+class Traductions$contrat$politique$fr {
+	Traductions$contrat$politique$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Politique de contrôle des enseignants'
+	String get titre => 'Politique de contrôle des enseignants';
+
+	/// fr: 'Lire la politique de contrôle'
+	String get lien => 'Lire la politique de contrôle';
+
+	/// fr: '•'
+	String get puce => '•';
+
+	late final Traductions$contrat$politique$s1$fr s1 = Traductions$contrat$politique$s1$fr.internal(_root);
+	late final Traductions$contrat$politique$s2$fr s2 = Traductions$contrat$politique$s2$fr.internal(_root);
+	late final Traductions$contrat$politique$s3$fr s3 = Traductions$contrat$politique$s3$fr.internal(_root);
+	late final Traductions$contrat$politique$s4$fr s4 = Traductions$contrat$politique$s4$fr.internal(_root);
+	late final Traductions$contrat$politique$s5$fr s5 = Traductions$contrat$politique$s5$fr.internal(_root);
+	late final Traductions$contrat$politique$s6$fr s6 = Traductions$contrat$politique$s6$fr.internal(_root);
+	late final Traductions$contrat$politique$s7$fr s7 = Traductions$contrat$politique$s7$fr.internal(_root);
+	late final Traductions$contrat$politique$s8$fr s8 = Traductions$contrat$politique$s8$fr.internal(_root);
+	late final Traductions$contrat$politique$s9$fr s9 = Traductions$contrat$politique$s9$fr.internal(_root);
+	late final Traductions$contrat$politique$s10$fr s10 = Traductions$contrat$politique$s10$fr.internal(_root);
 }
 
 // Path: accessibilite.demo
@@ -11702,6 +11732,191 @@ class Traductions$salle$fin$enseignant$fr {
 	String get erreurCahier => 'Le cahier de transmission ne peut pas être ouvert pour le moment. Réessayez dans un instant.';
 }
 
+// Path: contrat.politique.s1
+class Traductions$contrat$politique$s1$fr {
+	Traductions$contrat$politique$s1$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '1. Pourquoi nous contrôlons'
+	String get titre => '1. Pourquoi nous contrôlons';
+
+	List<String> get blocs => [
+		'Nos enseignants et nos élèves vivent dans de nombreux pays. Nous vérifions l\'identité et le parcours de chaque enseignant, mais aucune vérification ne dit tout. Nous confions des enfants à des adultes, en ligne, souvent seuls. Les parents doivent pouvoir nous faire confiance.',
+		'Les visites de contrôle servent à quatre choses :',
+		'1. protéger les élèves ;',
+		'2. vérifier que le cours respecte nos objectifs pédagogiques et nos règles de sécurité ;',
+		'3. permettre à l\'administration d\'agir s\'il y a un problème ;',
+		'4. vous aider à progresser.',
+		'Elles ne servent à rien d\'autre. Elles ne servent pas à calculer votre paie. Aucune décision n\'est prise par une machine : une personne de l\'administration décide toujours.',
+	];
+}
+
+// Path: contrat.politique.s2
+class Traductions$contrat$politique$s2$fr {
+	Traductions$contrat$politique$s2$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '2. Comment se passe une visite'
+	String get titre => '2. Comment se passe une visite';
+
+	List<String> get blocs => [
+		'- Une personne de l\'académie, appelée contrôleur, est **approuvée par l\'administration** et se connecte avec une **double vérification** (B1, B2).',
+		'- Le système choisit une Classe **au hasard**. Une Classe peut être visitée plusieurs fois dans le mois, ou pas du tout. Un contrôleur n\'observe jamais sa propre Classe ni une séance où il intervient.',
+		'- Vous n\'êtes **pas prévenu du moment** de la visite. Vous êtes prévenu **à l\'avance qu\'elle peut avoir lieu** : par ce texte, par votre contrat et par le bandeau permanent de la salle « visite de contrôle possible ».',
+		'- Le contrôleur voit le support, votre vidéo et les vignettes des élèves. Il peut entendre le son. Il n\'a **ni micro, ni caméra, ni chat**. Il ne peut pas vous parler ni parler aux élèves.',
+		'- Il **n\'enregistre rien**. La capture d\'écran est bloquée sur son appareil (B10).',
+		'- L\'administration peut lui retirer l\'accès **en un clic** (B3).',
+	];
+}
+
+// Path: contrat.politique.s3
+class Traductions$contrat$politique$s3$fr {
+	Traductions$contrat$politique$s3$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '3. Ce qui est écrit'
+	String get titre => '3. Ce qui est écrit';
+
+	List<String> get blocs => [
+		'- **Un relevé automatique de la séance** : heure prévue, heure réelle, durée, élèves présents, reconnexions. Personne ne le saisit à la main.',
+		'- **Le compte rendu du contrôleur** : « Rien à signaler », ou une observation sur le cours (nature, domaine, personne concernée, texte). Il écrit seulement ce qu\'il a observé sur le cours.',
+		'- Le compte rendu n\'est **jamais réécrit**. Un complément peut être ajouté, daté.',
+		'- Le brouillon du contrôleur **ne sort jamais de l\'application** et il est effacé après l\'envoi (B11).',
+	];
+}
+
+// Path: contrat.politique.s4
+class Traductions$contrat$politique$s4$fr {
+	Traductions$contrat$politique$s4$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '4. Qui lit'
+	String get titre => '4. Qui lit';
+
+	List<String> get blocs => [
+		'- **Le compte rendu brut** : l\'administration, et le contrôleur qui l\'a écrit, pour son propre rapport seulement (B13).',
+		'- **L\'export** : l\'administration seulement, et chaque export est noté au journal (B14).',
+		'- **Vous** : une **synthèse mensuelle** avec les points positifs et les points à suivre.',
+		'- **Le nom du contrôleur ne vous est jamais donné**, même après la synthèse (B15). Cela le protège des pressions. Vous recevez tout le contenu qui vous concerne : c\'est ce qui vous permet de répondre.',
+		'- **Personne d\'autre.** Rien n\'est publié, ni montré aux familles, ni aux autres enseignants.',
+	];
+}
+
+// Path: contrat.politique.s5
+class Traductions$contrat$politique$s5$fr {
+	Traductions$contrat$politique$s5$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '5. Combien de temps'
+	String get titre => '5. Combien de temps';
+
+	List<String> get blocs => [
+		'- Le compte rendu brut est gardé **12 mois** après son envoi, puis effacé. S\'il y a un dossier ou une mesure en cours, il est gardé jusqu\'à la fin de ce dossier (B4).',
+		'- La synthèse mensuelle, sans nom d\'élève, est gardée plus longtemps pour suivre votre progression. Durée : celle de votre contrat, plus 12 mois.',
+	];
+}
+
+// Path: contrat.politique.s6
+class Traductions$contrat$politique$s6$fr {
+	Traductions$contrat$politique$s6$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '6. Contester un rapport (B7)'
+	String get titre => '6. Contester un rapport (B7)';
+
+	List<String> get blocs => [
+		'- Vous pouvez contester **une fois par rapport**.',
+		'- Vous avez **7 jours** à partir du jour où vous recevez la synthèse mensuelle.',
+		'- Vous écrivez **le motif**. Sans motif écrit, la demande n\'est pas traitée.',
+		'- L\'administration examine et vous répond par écrit. Le rapport n\'est pas réécrit ; votre contestation et la décision de l\'administration y sont ajoutées.',
+		'Cette contestation est une procédure interne. **Elle ne retire aucun de vos droits légaux** (partie 8), que vous pouvez exercer à tout moment, même après 7 jours.',
+	];
+}
+
+// Path: contrat.politique.s7
+class Traductions$contrat$politique$s7$fr {
+	Traductions$contrat$politique$s7$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '7. Ce que l'académie peut décider'
+	String get titre => '7. Ce que l\'académie peut décider';
+
+	List<String> get blocs => [
+		'À partir d\'un rapport, l\'administration peut : vous féliciter, vous proposer une formation, vous demander de changer une pratique, vous retirer une Classe, ou mettre fin au contrat dans les cas graves. Toute mesure est décidée par une personne, après lecture, et vous est expliquée. En cas de danger pour un enfant, l\'académie peut agir tout de suite et prévenir les autorités du pays.',
+	];
+}
+
+// Path: contrat.politique.s8
+class Traductions$contrat$politique$s8$fr {
+	Traductions$contrat$politique$s8$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '8. Vos droits'
+	String get titre => '8. Vos droits';
+
+	List<String> get blocs => [
+		'- **Accès** : vous pouvez demander une copie de vos données, y compris les rapports qui vous concernent. Nous répondons sous un mois. Le nom du contrôleur et les données des élèves sont masqués (DPA 2018, annexe 2, partie 3, paragraphe 16 : données d\'un tiers).',
+		'- **Rectification** : si un fait est faux (heure, présence), nous le corrigeons.',
+		'- **Opposition** : vous pouvez vous opposer au contrôle. Nous examinons votre demande. Comme le contrôle protège des enfants, nous pouvons le maintenir. Dans ce cas, nous ne pouvons pas vous confier de Classe d\'enfants, et nous vous le disons par écrit.',
+		'- **Plainte** : vous pouvez saisir l\'autorité de protection des données (au Royaume-Uni, l\'ICO ; dans l\'UE, l\'autorité de votre pays).',
+	];
+}
+
+// Path: contrat.politique.s9
+class Traductions$contrat$politique$s9$fr {
+	Traductions$contrat$politique$s9$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '9. Base légale'
+	String get titre => '9. Base légale';
+
+	List<String> get blocs => [
+		'Intérêt légitime de l\'académie et des élèves : protéger des enfants et garantir la qualité des cours (UK GDPR art. 6(1)(f)). Le test de mise en balance est écrit et signé. Nous ne vous demandons pas votre « consentement » au contrôle, car vous ne pourriez pas le refuser librement.',
+	];
+}
+
+// Path: contrat.politique.s10
+class Traductions$contrat$politique$s10$fr {
+	Traductions$contrat$politique$s10$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '10. Contact'
+	String get titre => '10. Contact';
+
+	/// fr: 'Responsable : Rewayah Academy Ltd, société n° 16624644 immatriculée en Angleterre et au pays de Galles, 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni. Contact confidentialité : {contact}. Représentant dans l'UE : pas encore désigné ; l'application ne s'ouvre pas aux familles de l'Union européenne avant sa désignation.'
+	String texte({required Object contact}) => 'Responsable : Rewayah Academy Ltd, société n° 16624644 immatriculée en Angleterre et au pays de Galles, 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni. Contact confidentialité : ${contact}. Représentant dans l\'UE : pas encore désigné ; l\'application ne s\'ouvre pas aux familles de l\'Union européenne avant sa désignation.';
+}
+
 // Path: appareils.emetteur.verification
 class Traductions$appareils$emetteur$verification$fr {
 	Traductions$appareils$emetteur$verification$fr.internal(this._root);
@@ -16140,6 +16355,55 @@ extension on Traductions {
 			'contrat.clauseControle.titre' => 'Visites de contrôle.',
 			'contrat.clauseControle.texte' => 'Pour protéger les élèves et garantir la qualité des cours, une personne de l\'académie peut observer vos cours en direct, sans vous prévenir du moment. Elle voit et entend le cours. Elle ne parle pas, n\'enregistre rien et ne publie rien. Elle écrit un compte rendu pour l\'administration. Vous recevez chaque mois une synthèse. Vous pouvez la contester. Les comptes rendus sont gardés 12 mois. La politique de contrôle, jointe à ce contrat et disponible dans votre espace, explique tout. En signant, vous confirmez l\'avoir reçue.',
 			'contrat.clauseControle.caseReligion' => 'J\'accepte que l\'académie traite le fait que j\'enseigne le Coran, qui peut révéler ma religion, pour gérer mon contrat et mes cours.',
+			'contrat.politique.titre' => 'Politique de contrôle des enseignants',
+			'contrat.politique.lien' => 'Lire la politique de contrôle',
+			'contrat.politique.puce' => '•',
+			'contrat.politique.s1.titre' => '1. Pourquoi nous contrôlons',
+			'contrat.politique.s1.blocs.0' => 'Nos enseignants et nos élèves vivent dans de nombreux pays. Nous vérifions l\'identité et le parcours de chaque enseignant, mais aucune vérification ne dit tout. Nous confions des enfants à des adultes, en ligne, souvent seuls. Les parents doivent pouvoir nous faire confiance.',
+			'contrat.politique.s1.blocs.1' => 'Les visites de contrôle servent à quatre choses :',
+			'contrat.politique.s1.blocs.2' => '1. protéger les élèves ;',
+			'contrat.politique.s1.blocs.3' => '2. vérifier que le cours respecte nos objectifs pédagogiques et nos règles de sécurité ;',
+			'contrat.politique.s1.blocs.4' => '3. permettre à l\'administration d\'agir s\'il y a un problème ;',
+			'contrat.politique.s1.blocs.5' => '4. vous aider à progresser.',
+			'contrat.politique.s1.blocs.6' => 'Elles ne servent à rien d\'autre. Elles ne servent pas à calculer votre paie. Aucune décision n\'est prise par une machine : une personne de l\'administration décide toujours.',
+			'contrat.politique.s2.titre' => '2. Comment se passe une visite',
+			'contrat.politique.s2.blocs.0' => '- Une personne de l\'académie, appelée contrôleur, est **approuvée par l\'administration** et se connecte avec une **double vérification** (B1, B2).',
+			'contrat.politique.s2.blocs.1' => '- Le système choisit une Classe **au hasard**. Une Classe peut être visitée plusieurs fois dans le mois, ou pas du tout. Un contrôleur n\'observe jamais sa propre Classe ni une séance où il intervient.',
+			'contrat.politique.s2.blocs.2' => '- Vous n\'êtes **pas prévenu du moment** de la visite. Vous êtes prévenu **à l\'avance qu\'elle peut avoir lieu** : par ce texte, par votre contrat et par le bandeau permanent de la salle « visite de contrôle possible ».',
+			'contrat.politique.s2.blocs.3' => '- Le contrôleur voit le support, votre vidéo et les vignettes des élèves. Il peut entendre le son. Il n\'a **ni micro, ni caméra, ni chat**. Il ne peut pas vous parler ni parler aux élèves.',
+			'contrat.politique.s2.blocs.4' => '- Il **n\'enregistre rien**. La capture d\'écran est bloquée sur son appareil (B10).',
+			'contrat.politique.s2.blocs.5' => '- L\'administration peut lui retirer l\'accès **en un clic** (B3).',
+			'contrat.politique.s3.titre' => '3. Ce qui est écrit',
+			'contrat.politique.s3.blocs.0' => '- **Un relevé automatique de la séance** : heure prévue, heure réelle, durée, élèves présents, reconnexions. Personne ne le saisit à la main.',
+			'contrat.politique.s3.blocs.1' => '- **Le compte rendu du contrôleur** : « Rien à signaler », ou une observation sur le cours (nature, domaine, personne concernée, texte). Il écrit seulement ce qu\'il a observé sur le cours.',
+			'contrat.politique.s3.blocs.2' => '- Le compte rendu n\'est **jamais réécrit**. Un complément peut être ajouté, daté.',
+			'contrat.politique.s3.blocs.3' => '- Le brouillon du contrôleur **ne sort jamais de l\'application** et il est effacé après l\'envoi (B11).',
+			'contrat.politique.s4.titre' => '4. Qui lit',
+			'contrat.politique.s4.blocs.0' => '- **Le compte rendu brut** : l\'administration, et le contrôleur qui l\'a écrit, pour son propre rapport seulement (B13).',
+			'contrat.politique.s4.blocs.1' => '- **L\'export** : l\'administration seulement, et chaque export est noté au journal (B14).',
+			'contrat.politique.s4.blocs.2' => '- **Vous** : une **synthèse mensuelle** avec les points positifs et les points à suivre.',
+			'contrat.politique.s4.blocs.3' => '- **Le nom du contrôleur ne vous est jamais donné**, même après la synthèse (B15). Cela le protège des pressions. Vous recevez tout le contenu qui vous concerne : c\'est ce qui vous permet de répondre.',
+			'contrat.politique.s4.blocs.4' => '- **Personne d\'autre.** Rien n\'est publié, ni montré aux familles, ni aux autres enseignants.',
+			'contrat.politique.s5.titre' => '5. Combien de temps',
+			'contrat.politique.s5.blocs.0' => '- Le compte rendu brut est gardé **12 mois** après son envoi, puis effacé. S\'il y a un dossier ou une mesure en cours, il est gardé jusqu\'à la fin de ce dossier (B4).',
+			'contrat.politique.s5.blocs.1' => '- La synthèse mensuelle, sans nom d\'élève, est gardée plus longtemps pour suivre votre progression. Durée : celle de votre contrat, plus 12 mois.',
+			'contrat.politique.s6.titre' => '6. Contester un rapport (B7)',
+			'contrat.politique.s6.blocs.0' => '- Vous pouvez contester **une fois par rapport**.',
+			'contrat.politique.s6.blocs.1' => '- Vous avez **7 jours** à partir du jour où vous recevez la synthèse mensuelle.',
+			'contrat.politique.s6.blocs.2' => '- Vous écrivez **le motif**. Sans motif écrit, la demande n\'est pas traitée.',
+			'contrat.politique.s6.blocs.3' => '- L\'administration examine et vous répond par écrit. Le rapport n\'est pas réécrit ; votre contestation et la décision de l\'administration y sont ajoutées.',
+			'contrat.politique.s6.blocs.4' => 'Cette contestation est une procédure interne. **Elle ne retire aucun de vos droits légaux** (partie 8), que vous pouvez exercer à tout moment, même après 7 jours.',
+			'contrat.politique.s7.titre' => '7. Ce que l\'académie peut décider',
+			'contrat.politique.s7.blocs.0' => 'À partir d\'un rapport, l\'administration peut : vous féliciter, vous proposer une formation, vous demander de changer une pratique, vous retirer une Classe, ou mettre fin au contrat dans les cas graves. Toute mesure est décidée par une personne, après lecture, et vous est expliquée. En cas de danger pour un enfant, l\'académie peut agir tout de suite et prévenir les autorités du pays.',
+			'contrat.politique.s8.titre' => '8. Vos droits',
+			'contrat.politique.s8.blocs.0' => '- **Accès** : vous pouvez demander une copie de vos données, y compris les rapports qui vous concernent. Nous répondons sous un mois. Le nom du contrôleur et les données des élèves sont masqués (DPA 2018, annexe 2, partie 3, paragraphe 16 : données d\'un tiers).',
+			'contrat.politique.s8.blocs.1' => '- **Rectification** : si un fait est faux (heure, présence), nous le corrigeons.',
+			'contrat.politique.s8.blocs.2' => '- **Opposition** : vous pouvez vous opposer au contrôle. Nous examinons votre demande. Comme le contrôle protège des enfants, nous pouvons le maintenir. Dans ce cas, nous ne pouvons pas vous confier de Classe d\'enfants, et nous vous le disons par écrit.',
+			'contrat.politique.s8.blocs.3' => '- **Plainte** : vous pouvez saisir l\'autorité de protection des données (au Royaume-Uni, l\'ICO ; dans l\'UE, l\'autorité de votre pays).',
+			'contrat.politique.s9.titre' => '9. Base légale',
+			'contrat.politique.s9.blocs.0' => 'Intérêt légitime de l\'académie et des élèves : protéger des enfants et garantir la qualité des cours (UK GDPR art. 6(1)(f)). Le test de mise en balance est écrit et signé. Nous ne vous demandons pas votre « consentement » au contrôle, car vous ne pourriez pas le refuser librement.',
+			'contrat.politique.s10.titre' => '10. Contact',
+			'contrat.politique.s10.texte' => ({required Object contact}) => 'Responsable : Rewayah Academy Ltd, société n° 16624644 immatriculée en Angleterre et au pays de Galles, 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni. Contact confidentialité : ${contact}. Représentant dans l\'UE : pas encore désigné ; l\'application ne s\'ouvre pas aux familles de l\'Union européenne avant sa désignation.',
 			'accessibilite.demo.titre' => 'Démonstration du Mode Accessibilité',
 			'accessibilite.demo.mention' => 'Données fictives, aucun envoi.',
 			'accessibilite.demo.intro' => 'Choisissez un élève et un moment de la séance.',
@@ -16568,6 +16832,8 @@ extension on Traductions {
 			'eleveConnexion.pin.changerProfil' => 'Changer de profil',
 			'eleveConnexion.pin.oublie' => 'Code oublié ?',
 			'eleveConnexion.pin.oubliePhrase' => 'Demande au tuteur d\'afficher un nouveau code sur son appareil, puis saisis-le ici. Tu choisiras alors un nouveau code personnel.',
+			_ => null,
+		} ?? switch (path) {
 			'eleveConnexion.pin.oublieAction' => 'Saisir un nouveau code',
 			'eleveConnexion.saisie.titre' => 'Connecter cet appareil',
 			'eleveConnexion.saisie.phrase' => 'Saisissez le code de six caractères affiché sous le QR code, sur l\'appareil du tuteur.',
@@ -16617,8 +16883,6 @@ extension on Traductions {
 			'eleveConnexion.refus.nonEnregistre' => 'Cet appareil n\'a pas pu garder la connexion. Le code a sans doute déjà servi : affichez un nouveau code sur l\'appareil du tuteur, puis recommencez.',
 			'eleveConnexion.refus.generiqueTitre' => 'Connexion non aboutie',
 			'eleveConnexion.refus.generique' => 'La vérification du code n\'a pas abouti. Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.titre' => 'Dossiers à valider',
 			'dossiers.sousTitre' => 'Examinez les dossiers prêts pour une décision.',
 			'dossiers.aucun' => 'Aucun dossier n\'attend de validation.',
@@ -17082,6 +17346,8 @@ extension on Traductions {
 			'admin.progression.clorerExceptionErreur' => ({required Object message}) => 'La clôture n\'a pas abouti : ${message}',
 			'admin.progression.promouvoirTitre' => ({required Object eleve}) => 'Changer le niveau de ${eleve}',
 			'admin.progression.promouvoirChampNiveau' => 'Nouveau niveau',
+			_ => null,
+		} ?? switch (path) {
 			'admin.progression.promouvoirEnvoyer' => 'Enregistrer',
 			'admin.progression.promouvoirErreur' => ({required Object message}) => 'Le changement n\'a pas abouti : ${message}',
 			'admin.progression.champMotif' => 'Motif',
@@ -17131,8 +17397,6 @@ extension on Traductions {
 			'admin.programmes.champMotif' => 'Motif',
 			'admin.programmes.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
 			'admin.programmes.journalisation' => 'Chaque création, modification, suppression et publication est inscrite au journal d\'audit.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.titre' => 'Journal',
 			'admin.journal.chaineIntacte' => 'Journal intact',
 			'admin.journal.chaineIntacteDetail' => ({required Object nombre}) => '${nombre} entrées relues une à une : aucune n\'a été modifiée ni retirée depuis son écriture.',
@@ -17596,6 +17860,8 @@ extension on Traductions {
 			'compte.tuteur.preferences' => 'Préférences',
 			'compte.tuteur.dateLongue' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
 			'compte.tuteur.identite.statutValide' => 'Compte validé',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.identite.statutProvisoire' => 'Profil à compléter',
 			'compte.tuteur.identite.nomInconnu' => 'Titulaire du compte',
 			'compte.tuteur.identite.courrielAbsent' => 'Adresse de connexion non communiquée',
@@ -17645,8 +17911,6 @@ extension on Traductions {
 			'compte.tuteur.pageSecurite.deconnexion' => 'Pour fermer la session de cet appareil, utilisez « Se déconnecter » en bas de Mon compte.',
 			'compte.tuteur.pageAcces.titre' => 'Accès des profils élèves',
 			'compte.tuteur.pageAcces.sousTitre' => 'Le statut de l\'accès de chaque profil élève.',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageAcces.sansEcheance' => 'Sans date de fin',
 			'compte.tuteur.pageAcces.jusqua' => ({required Object date}) => 'Ouvert jusqu\'au ${date}',
 			'compte.tuteur.pageAcces.expire' => ({required Object date}) => 'Terminé le ${date}',
@@ -18110,6 +18374,8 @@ extension on Traductions {
 			'classe.pageCatalogue.rejoindreAttente' => 'Rejoindre la liste d\'attente',
 			'classe.pageCatalogue.precisionsTitre' => 'Avant de choisir',
 			'classe.pageCatalogue.precisionEnseignant' => 'Une classe garde le même enseignant pour toutes ses séances.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageCatalogue.precisionPlaces' => 'Les places affichées sont celles de l\'académie au moment de la lecture.',
 			'classe.pageCatalogue.precisionReserve' => 'Rien n\'est réservé avant votre confirmation.',
 			'classe.pageCatalogue.confirmerTitre' => 'Confirmer la classe',
@@ -18159,8 +18425,6 @@ extension on Traductions {
 			'enseignant.eleve.signalerAide' => 'Un besoin à remonter à l\'académie, sans recopier le contexte.',
 			'enseignant.signalement.titre' => 'Signaler un besoin',
 			'enseignant.signalement.contexte' => ({required Object prenom, required Object classe}) => 'Pour ${prenom} · ${classe}',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.signalement.categorieTitre' => 'Catégorie',
 			'enseignant.signalement.categories.pedagogique' => 'Problème pédagogique',
 			'enseignant.signalement.categories.presence' => 'Présence',
@@ -18624,6 +18888,8 @@ extension on Traductions {
 			'controleur.compteRendu.cleHoraire' => 'Heure prévue',
 			'controleur.compteRendu.horaire' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
 			'controleur.compteRendu.cleDebutReel' => 'Début réel',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.compteRendu.debutRetard' => ({required Object heure, required Object minutes}) => '${heure}, ${minutes} min de retard',
 			'controleur.compteRendu.debutALHeure' => ({required Object heure}) => '${heure}, à l\'heure',
 			'controleur.compteRendu.cleFin' => 'Fin',
@@ -18673,8 +18939,6 @@ extension on Traductions {
 			'controleur.observation.respectCadreAide' => 'Quand il s\'agit des règles de l\'académie et de la séance',
 			'controleur.observation.climat' => 'Comportement / climat',
 			'controleur.observation.climatAide' => 'Quand il s\'agit du comportement ou de l\'ambiance de la classe',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.autre' => 'Autre',
 			'controleur.observation.autreAide' => 'Quand aucun autre domaine ne convient · précisez-le dans votre texte',
 			'controleur.observation.questionPersonne' => 'Qui est concerné ?',
@@ -19138,6 +19402,8 @@ extension on Traductions {
 			'tc.observation.visite.parle' => ({required Object nom}) => '${nom} parle',
 			'tc.observation.visite.quitterQuestion' => 'Quitter la visite ?',
 			'tc.observation.visite.quitterConsequence' => ({required Object duree}) => 'Il vous reste ${duree}. Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.visite.quitterConsequenceSansTemps' => 'Une visite quittée avant la fin compte comme une visite entière : le temps non utilisé n\'est pas reporté.',
 			'tc.observation.visite.quitterConfirmer' => 'Quitter la visite',
 			'tc.observation.fin.sortieVolontaire' => 'Vous avez quitté l\'observation.',
@@ -19187,8 +19453,6 @@ extension on Traductions {
 			'tc.parcours.avant.rien' => 'Rien à préparer pour le prochain cours.',
 			'tc.parcours.avant.rienDetail' => 'Votre enseignant proposera le travail à la fin de la prochaine séance.',
 			'tc.parcours.avant.nonBranche' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.avant.nonBrancheDetail' => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.',
 			'tc.parcours.avant.reprendre' => 'Reprendre le cours',
 			'tc.parcours.avant.reprendreDepuis' => ({required Object position}) => 'Reprendre le cours à ${position}',

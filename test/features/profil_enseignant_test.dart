@@ -179,18 +179,19 @@ void main() {
         ];
 
     for (final ({AccountStatus? statut, String attendu}) c in cas) {
-      testWidgets('${c.statut?.valeurSql ?? 'illisible'} se dit en une phrase', (
-        WidgetTester tester,
-      ) async {
-        await _monter(
-          tester,
-          profil: _profilDeTest(statutCompte: c.statut),
-          statutSession: c.statut,
-        );
-        await tester.pumpAndSettle();
+      testWidgets(
+        '${c.statut?.valeurSql ?? 'illisible'} se dit en une phrase',
+        (WidgetTester tester) async {
+          await _monter(
+            tester,
+            profil: _profilDeTest(statutCompte: c.statut),
+            statutSession: c.statut,
+          );
+          await tester.pumpAndSettle();
 
-        expect(find.text(c.attendu), findsOneWidget);
-      });
+          expect(find.text(c.attendu), findsOneWidget);
+        },
+      );
     }
 
     testWidgets('un statut illisible ne se replie JAMAIS sur « verifie »', (
@@ -209,22 +210,23 @@ void main() {
       expect(find.text(t.enseignant.profil.statutInconnu), findsOneWidget);
     });
 
-    testWidgets('une divergence entre le statut affiche et celui du routeur se dit', (
-      WidgetTester tester,
-    ) async {
-      // `account_status` est lu par deux chemins : la session gouverne la porte
-      // du routeur, le profil alimente l'ecran. Rien ne garantit qu'ils soient
-      // du meme instant, et l'enseignant ne doit pas decouvrir l'ecart en
-      // butant sur un acces.
-      await _monter(
-        tester,
-        profil: _profilDeTest(statutCompte: AccountStatus.active),
-        statutSession: AccountStatus.pendingKyc,
-      );
-      await tester.pumpAndSettle();
+    testWidgets(
+      'une divergence entre le statut affiche et celui du routeur se dit',
+      (WidgetTester tester) async {
+        // `account_status` est lu par deux chemins : la session gouverne la porte
+        // du routeur, le profil alimente l'ecran. Rien ne garantit qu'ils soient
+        // du meme instant, et l'enseignant ne doit pas decouvrir l'ecart en
+        // butant sur un acces.
+        await _monter(
+          tester,
+          profil: _profilDeTest(statutCompte: AccountStatus.active),
+          statutSession: AccountStatus.pendingKyc,
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.text(t.enseignant.profil.statutDivergent), findsOneWidget);
-    });
+        expect(find.text(t.enseignant.profil.statutDivergent), findsOneWidget);
+      },
+    );
 
     testWidgets('sans divergence, rien n est annonce', (
       WidgetTester tester,
@@ -263,7 +265,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // La feuille est ouverte, et rien n'est encore parti.
-      expect(find.text(t.enseignant.profil.deconnexionConsequence), findsOneWidget);
+      expect(
+        find.text(t.enseignant.profil.deconnexionConsequence),
+        findsOneWidget,
+      );
       expect(monte.auth.deconnexions, 0);
 
       await tester.tap(find.text(t.enseignant.profil.deconnexionConfirmer));
@@ -519,5 +524,25 @@ void main() {
 
       expect(find.text(t.enseignant.profil.enregistrer), findsNothing);
     });
+  });
+
+  group('ASSETS-DIR-1 : la politique de controle, rangee dans l espace '
+      'enseignant', () {
+    for (final bool echec in <bool>[false, true]) {
+      testWidgets('le lien ouvre la politique (lecture des acceptations '
+          '${echec ? 'en echec' : 'vide'})', (WidgetTester tester) async {
+        await _monter(
+          tester,
+          profil: _profilDeTest(),
+          echecAcceptations: echec,
+        );
+        await tester.pumpAndSettle();
+
+        // Un texte fixe : lisible quel que soit l'etat des acceptations.
+        await _taperLigne(tester, t.contrat.politique.lien);
+        expect(find.text(t.contrat.politique.titre), findsOneWidget);
+        expect(find.text(t.contrat.politique.s10.titre), findsOneWidget);
+      });
+    }
   });
 }

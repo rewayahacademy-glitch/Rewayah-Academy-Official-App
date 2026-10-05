@@ -29,7 +29,11 @@ List<String> motsCoupes(
   bool traitDUnionPermis = false,
   Set<String> exceptions = const <String>{},
 }) {
-  final RegExp mot = traitDUnionPermis ? RegExp(r'[^\s-]+-?') : RegExp(r'\S+');
+  // L'espace sans chasse (U+200B) est un point de coupure voulu (une adresse
+  // e-mail, `coupuresAdresse`) : elle separe deux mots comme une espace.
+  final RegExp mot = traitDUnionPermis
+      ? RegExp('[^\\s\u200B-]+-?')
+      : RegExp('[^\\s\u200B]+');
   final List<String> fautes = <String>[];
   final Set<RenderParagraph> paragraphes = <RenderParagraph>{
     ...tester.renderObjectList<RenderObject>(ou).expand(_paragraphesSous),

@@ -18,9 +18,9 @@ abstract final class VersionsContrat {
   /// d'accuse de l'ADR-011. Elle est en production depuis le 21/09 : des
   /// comptes reels ont pu la signer. Ses textes (`t.contrat.pointEnregistrement`,
   /// `t.contrat.pointControle`, `t.accuse`) sont donc gardes tels quels, comme
-  /// trace de ce qui a ete signe. Le contrat enseignant les affiche encore
-  /// hors demonstration tant que [politiqueControlePubliee] est faux ; ils ne
-  /// sont plus affiches ailleurs.
+  /// trace de ce qui a ete signe. Le contrat enseignant ne les affiche que si
+  /// [politiqueControlePubliee] repasse a faux ; ils ne sont plus affiches
+  /// ailleurs.
   static const String courante = '2026-09';
 
   /// Les textes juridiques valides par le directeur le 02/10/2026
@@ -44,21 +44,22 @@ abstract final class VersionsContrat {
   /// version, jamais une lecture de la configuration au moment d'afficher.
   static const int dureeEnregistrementJours = 30;
 
-  /// Garde-fou du contrat enseignant [textesJuridiques] : faux tant que la
+  /// Garde-fou du contrat enseignant [textesJuridiques] : vrai depuis que la
   /// politique de controle des enseignants (`POLITIQUE_CONTROLE_ENSEIGNANTS.md`,
-  /// partie B) n'est pas publiee dans l'application.
+  /// partie B) est publiee dans l'application.
   ///
   /// La clause des visites de controle de cette version fait « confirmer
-  /// avoir recue » la politique ; sa section 10 attend encore quatre valeurs
-  /// du directeur (`docs/current/JUR-APP-1_RESTES.md`, section 1). Tant que
-  /// l'interrupteur est faux, un vrai enseignant signe la version [courante]
-  /// (ses textes d'origine, sans la clause) ; seule la demonstration montre
-  /// et fait signer [textesJuridiques].
+  /// avoir recue » la politique. Elle est portee mot pour mot, avec les quatre
+  /// valeurs de sa section 10 (pilotage `COORDONNEES_LEGALES.md`, decide par
+  /// delegation le 05/10/2026), liee depuis la clause du contrat et rangee
+  /// dans le profil de l'enseignant (`politique_controle.dart`). Un vrai
+  /// enseignant signe donc [textesJuridiques].
   ///
-  /// **Le passer a vrai** seulement dans le meme commit que la politique
-  /// portee mot pour mot, liee depuis la clause et rangee dans l'espace
-  /// enseignant (procedure dans `docs/current/JUR-APP-1_RESTES.md`).
-  static const bool politiqueControlePubliee = false;
+  /// A remettre a faux si la politique cesse d'etre publiee : un vrai
+  /// enseignant signerait alors de nouveau la version [courante] (ses textes
+  /// d'origine, sans la clause). Conditions restantes avant fusion :
+  /// `docs/current/JUR-APP-1_RESTES.md`, section 1.
+  static const bool politiqueControlePubliee = true;
 
   /// La version a signer pour une sorte de texte.
   ///

@@ -31,6 +31,7 @@ import '../../core/widgets/raccourci_tactile.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../dossier/politique_controle.dart';
 import 'photo_publique.dart';
 
 /// Le nom public de l'enseignant, avec son titre Sayyid ou Sayyida (R18, E16).
@@ -269,9 +270,8 @@ class _Identite extends StatelessWidget {
                 profil.identifiant.isEmpty
                     ? t.enseignant.profil.nonRenseigne
                     : profil.identifiant,
-                style: AppPalette.of(
-                  context,
-                ).inkMuted.applyTo(textes.bodySmall ?? const TextStyle()),
+                style: AppPalette.of(context).inkMuted
+                    .applyTo(textes.bodySmall ?? const TextStyle()),
               ),
             ],
           ),
@@ -569,7 +569,8 @@ class _FeuilleTexteState extends State<_FeuilleTexte> {
   }
 }
 
-/// Le contrat et les accuses, en lecture seule et pour toujours.
+/// Le contrat et les accuses, en lecture seule et pour toujours, puis le
+/// lien vers la politique de controle des enseignants.
 ///
 /// Sans cette section, un enseignant valide ne peut plus les relire du tout :
 /// `deciderRedirection` ferme `/attente/*` des que le compte devient actif.
@@ -634,6 +635,15 @@ class _Contrat extends ConsumerWidget {
           ),
           _ => const Skeleton.liste(lignes: 2),
         },
+        // La politique de controle que le contrat fait « confirmer avoir
+        // recue », « disponible dans votre espace » (clause du contrat) : un
+        // texte fixe, lisible quel que soit l'etat de la lecture des
+        // acceptations.
+        Ecart.vSm,
+        LienFleche(
+          libelle: t.contrat.politique.lien,
+          onPress: () => unawaited(ouvrirPolitiqueControle(context)),
+        ),
       ],
     );
   }
