@@ -47,7 +47,9 @@ import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_pag
 
 import '../../capture/outil_capture.dart'
     show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
+import '../../support/aucun_mot_coupe.dart';
 import '../../support/hors_ligne_une_fois.dart';
+import '../../support/sens_et_echelle.dart';
 
 void main() {
   void taille(WidgetTester tester, Size s) {
@@ -733,6 +735,8 @@ void main() {
       Future<IdentiteTitulaire> Function()? identite,
       ThemeMode mode = ThemeMode.light,
       InterfaceMode interface = InterfaceMode.standard,
+      TextDirection? direction,
+      double echelle = 1,
     }) async {
       taille(tester, const Size(390, 844));
       await tester.pumpWidget(
@@ -762,6 +766,7 @@ void main() {
               locale: AppLocale.fr.flutterLocale,
               supportedLocales: AppLocaleUtils.supportedLocales,
               localizationsDelegates: GlobalMaterialLocalizations.delegates,
+              builder: sensEtEchelle(direction: direction, echelle: echelle),
               home: const FoyerPage(),
             ),
           ),
@@ -846,6 +851,49 @@ void main() {
     // EA-HL-DOUBLE-1c : sombre et Interface guidee du Foyer hors ligne, sans
     // et avec donnees (revue EA-HL-DOUBLE-1-R, m4). Sautees sans
     // CAPTURE_DIR.
+    // EA-HL-DOUBLE-1d : 320 texte x2 en LTR et RTL du Foyer hors ligne,
+    // sans et avec donnees (revue EA-HL-DOUBLE-1c-R, mineur 2). Sautees
+    // sans CAPTURE_DIR.
+    group('Capture EA-HL-DOUBLE-1d', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final (String, TextDirection) cas in <(String, TextDirection)>[
+        ('320x2_clair', TextDirection.ltr),
+        ('320x2_rtl_clair', TextDirection.rtl),
+      ]) {
+        for (final bool sans in <bool>[true, false]) {
+          final String etat = sans ? 'sans_donnees' : 'avec_donnees';
+          testWidgets('$etat ${cas.$1}', (WidgetTester tester) async {
+            await monterPage(
+              tester,
+              eleves: sans
+                  ? () => Future<List<EleveDuFoyer>>.error(Exception('x'))
+                  : () async => const <EleveDuFoyer>[],
+              horsLigne: true,
+              identite: sans
+                  ? () => Future<IdentiteTitulaire>.error(Exception('x'))
+                  : null,
+              direction: cas.$2,
+              echelle: 2,
+            );
+            taille(tester, const Size(320, 1800));
+            await tester.pumpAndSettle();
+            expect(tester.takeException(), isNull);
+            if (sans) {
+              expectHorsLigneUneFois();
+              expect(find.byType(EtatSansDonnees), findsNWidgets(2));
+            } else {
+              expectAvecDonnees();
+            }
+            verifierAucunMotCoupe(tester, find.byType(FoyerPage));
+            debugPrint(
+              'PNG ${await capturerVue(tester, 'ea_hl_double1d_foyer_${etat}_${cas.$1}')}',
+            );
+          });
+        }
+      }
+    });
+
     group('Capture EA-HL-DOUBLE-1c', skip: sautSansCapture, () {
       setUpAll(chargerPolicesDuDepot);
       setUp(masquerRubanDebug);
