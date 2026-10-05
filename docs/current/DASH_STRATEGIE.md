@@ -267,7 +267,7 @@ Liste de cartes, pas un tableau de bord (`BENTO_RECENSEMENT.md:43`). Hors DASH.
 
 **Droit de modifier** : une **capacité rendue par la lecture** (`CartesClasseVM.peutModifier`), jamais déduite d'un rôle ; la barrière reste la RLS (écriture réservée à l'enseignant de la Classe).
 
-**Fait (CARTES-PERSO-1, 05/10/2026, partie client avant BR-1)** : port neutre `PortCartesClasse` (`lib/core/tc_groupe/cartes_classe.dart`), indisponible en production (`CapaciteIndisponible('CARTES-BR-01')`, aucune fausse carte) ; démonstration en mémoire (`lib/features/demo/cartes_classe_demo.dart`), capacité vraie pour l'enseignant (`/demo/classe`, vue enseignant), fausse pour l'élève, l'Interface guidée et l'adulte ; feuille de composition (`feuille_carte_classe.dart`) ; tests `test/features/tc_espace_groupe/cartes_classe_test.dart` ; captures `docs/current/captures/CARTES-PERSO-1/`.
+**Fait (CARTES-PERSO-1, 05/10/2026, partie client avant BR-1)** : port neutre `PortCartesClasse` (`lib/core/tc_groupe/cartes_classe.dart`), indisponible en production (`CapaciteIndisponible('CARTES-BR-01')`, aucune fausse carte) ; démonstration en mémoire (`lib/features/demo/cartes_classe_demo.dart`), capacité vraie pour l'enseignant (`/demo/classe`, vue enseignant), fausse pour l'élève, l'Interface guidée et l'adulte ; feuille de composition (`feuille_carte_classe.dart`) ; texte de l'enseignant isolé dans son sens de lecture (point final gardé en RTL) et traits d'union insécables ; tests `test/features/tc_espace_groupe/cartes_classe_test.dart` (39, contre-épreuves par mutation) ; captures `docs/current/captures/CARTES-PERSO-1/`.
 
 **Reste** : la source serveur (CARTES-BR-01 à 03, §5 bis) ; le lien se **copie** (presse-papiers, « Lien copié. Collez-le dans votre navigateur ») au lieu de s'ouvrir, faute de paquet d'ouverture de lien dans `pubspec.yaml` (interdit à cette étape) : à arbitrer par le directeur (ajout de `url_launcher`).
 
@@ -509,7 +509,8 @@ Actions secondaires   toucher une carte (enseignant) ouvre sa modification ;
                       « Ajouter une carte » (lien à flèche) ; « Retirer cette
                       carte » (tertiaire, confirmation) ; « Copier le lien de
                       « titre » » (lien à flèche, bouton secondaire pleine
-                      largeur en Interface guidée)
+                      largeur « Copier le lien » en Interface guidée, le
+                      lecteur d'écran lisant le libellé entier)
 Champs (K-57)     modèle       choisi  (ChoiceCardGroup, 4 options expliquées)
                   titre        déduit du modèle, puis saisi (mots de
                                l'enseignant)
