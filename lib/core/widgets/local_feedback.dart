@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../accessibilite/sens_du_contenu.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_mouvement.dart';
 import '../theme/app_palette.dart';
@@ -180,10 +181,16 @@ class _Bandeau extends StatelessWidget {
         child: Row(
           children: <Widget>[
             Expanded(
-              child: Text(
-                message,
-                style: palette.washAccent.applyTo(
-                  Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+              // DUREE-INSECABLE-4 : le message du rappel discret (« Deja
+              // appele. A nouveau dans 30 s ») garde son point a sa place
+              // dans une interface de droite a gauche.
+              child: SensDuContenu(
+                texte: message,
+                child: Text(
+                  message,
+                  style: palette.washAccent.applyTo(
+                    Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+                  ),
                 ),
               ),
             ),

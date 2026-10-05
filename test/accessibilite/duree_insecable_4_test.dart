@@ -22,10 +22,12 @@ import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/presence/vue_presence.dart';
 import 'package:rewayah_academy/core/tc_classe/port_rappel_discret.dart';
 import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
+import 'package:rewayah_academy/core/widgets/local_feedback.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_support.dart';
@@ -277,6 +279,21 @@ Widget seule(int n) => Text(LibellesGroupe.dureeSeule(Duration(minutes: n)));
         }
       }
       expect(ponctues, greaterThan(0));
+    });
+
+    testWidgets('RTL : le message du rappel garde son point a sa place', (
+      WidgetTester tester,
+    ) async {
+      final String message = LibellesGroupe.insecable(
+        t.tc.classe.rappel.cooldown(secondes: 30),
+      );
+      await tester.pumpWidget(
+        _hote(LocalFeedback(message: message), sens: TextDirection.rtl),
+      );
+      await tester.pump();
+      final Element texte = find.text(message).evaluate().single;
+      expect(Directionality.of(texte), TextDirection.ltr);
+      await tester.pump(const Duration(seconds: 5));
     });
 
     testWidgets('1440 px : la carte ne depasse pas la largeur de lecture', (
