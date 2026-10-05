@@ -754,103 +754,110 @@ void main() {
     expect(find.byType(LigneMoyenPaiement), findsNothing);
   });
 
-  testWidgets('1440 : les profils et le paiement cote a cote, l\'explication '
-      'sous le total, le bandeau « Acces a regulariser » dessous, sans croix, '
-      'qui ajoute Ibrahim a la recharge (R3-02)', (WidgetTester tester) async {
-    await _monter(
-      tester,
-      jeu: JeuFoyerFinance.unARegulariser,
-      taille: const Size(1440, 1200),
-    );
-    final Rect profils = tester.getRect(
-      find.byKey(RechargeFoyerPage.profilsKey),
-    );
-    final Rect explication = tester.getRect(
-      find.byKey(RechargeFoyerPage.repartitionKey),
-    );
-    final Rect total = tester.getRect(find.byKey(RechargeFoyerPage.totalKey));
-    final Rect payer = tester.getRect(find.byKey(RechargeFoyerPage.payerKey));
-    // Les profils et le paiement cote a cote, en haut de la page : jamais
-    // une colonne de telephone centree (contrat D).
-    expect(profils.right, lessThan(total.left));
-    expect(total.top, lessThan(profils.bottom));
-    expect(total.right - profils.left, greaterThan(AppPage.largeurDialogue));
-    // L'explication du paiement unique sous le total qu'elle explique,
-    // dans la meme colonne : jamais seule dans une colonne vide
-    // (FI-VAGUE-CORR).
-    expect(
-      _dans(
-        RechargeFoyerPage.totalKey,
-        find.byKey(RechargeFoyerPage.repartitionKey),
-      ),
-      findsOneWidget,
-    );
-    expect(explication.left, greaterThanOrEqualTo(total.left));
-    expect(explication.right, lessThanOrEqualTo(total.right));
-    // La colonne des profils a la moitie de la page, bornee a la colonne
-    // de dialogue, et le solde comme le montant suggere tiennent sur une ou
-    // deux lignes a cote du montant (l'ancienne composition les coupait en
-    // quatre lignes chacun dans la police de test, six a l'ecran).
-    expect(profils.width, greaterThanOrEqualTo(total.width - 0.5));
-    expect(profils.width, lessThanOrEqualTo(AppPage.largeurDialogue + 0.5));
-    int mesures = 0;
-    for (final String id in <String>[_mariam, _ibrahim, _aicha]) {
-      final Finder textes = find.descendant(
-        of: find.byKey(RechargeFoyerPage.profilDe(id)),
-        matching: find.byType(RichText),
+  // Des le seuil de la composition large (1200, AppGabarit.seuilLarge),
+  // pas seulement a 1440 : a 1200 et 1280 le solde tenait sur trois lignes
+  // (contre-revue FI-VAGUE-CORR).
+  for (final double largeur in <double>[1200, 1280, 1440]) {
+    testWidgets('${largeur.toInt()} : les profils et le paiement cote a '
+        'cote, l\'explication sous le total, le bandeau « Acces a '
+        'regulariser » dessous, sans croix, qui ajoute Ibrahim a la recharge '
+        '(R3-02)', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        jeu: JeuFoyerFinance.unARegulariser,
+        taille: Size(largeur, 1200),
       );
-      for (final Element e in textes.evaluate()) {
-        final RenderParagraph p = e.renderObject! as RenderParagraph;
-        final String texte = p.text.toPlainText();
-        if (!texte.contains(':')) continue;
-        final double ligne = p.getFullHeightForCaret(
-          const TextPosition(offset: 0),
-        );
-        expect(
-          (p.size.height / ligne).round(),
-          lessThanOrEqualTo(2),
-          reason: '« $texte » doit tenir sur une ou deux lignes',
-        );
-        mesures++;
-      }
-    }
-    // Trois soldes et le montant suggere d'Ibrahim, au moins.
-    expect(mesures, greaterThanOrEqualTo(4));
-    // Le bandeau, en bas, sur toute la largeur, sans croix (Q-FI-6).
-    final Finder bandeau = find.byKey(RechargeFoyerPage.bandeauKey);
-    expect(bandeau, findsOneWidget);
-    expect(tester.getRect(bandeau).top, greaterThan(payer.bottom));
-    expect(tester.getRect(bandeau).left, moreOrLessEquals(profils.left));
-    expect(
-      _dans(
-        RechargeFoyerPage.bandeauKey,
-        find.text(t.argent.acces.regulariserTitre),
-      ),
-      findsOneWidget,
-    );
-    expect(
-      find.descendant(
-        of: bandeau,
-        matching: find.byWidgetPredicate(
-          (Widget w) => w is Icon && w.icon == AppIcons.fermer.repos,
+      final Rect profils = tester.getRect(
+        find.byKey(RechargeFoyerPage.profilsKey),
+      );
+      final Rect explication = tester.getRect(
+        find.byKey(RechargeFoyerPage.repartitionKey),
+      );
+      final Rect total = tester.getRect(find.byKey(RechargeFoyerPage.totalKey));
+      final Rect payer = tester.getRect(find.byKey(RechargeFoyerPage.payerKey));
+      // Les profils et le paiement cote a cote, en haut de la page : jamais
+      // une colonne de telephone centree (contrat D).
+      expect(profils.right, lessThan(total.left));
+      expect(total.top, lessThan(profils.bottom));
+      expect(total.right - profils.left, greaterThan(AppPage.largeurDialogue));
+      // L'explication du paiement unique sous le total qu'elle explique,
+      // dans la meme colonne : jamais seule dans une colonne vide
+      // (FI-VAGUE-CORR).
+      expect(
+        _dans(
+          RechargeFoyerPage.totalKey,
+          find.byKey(RechargeFoyerPage.repartitionKey),
         ),
-      ),
-      findsNothing,
-    );
-    expect(_coche(tester, _ibrahim), isFalse);
-    await _taper(tester, find.byKey(RechargeFoyerPage.ajouterDe(_ibrahim)));
-    // Coche, le manque suggere retenu, le recapitulatif rendu ; le lien,
-    // qui ne peut plus rien, disparait (K-56).
-    expect(_coche(tester, _ibrahim), isTrue);
-    final String manque = formaterMontant(DonneesFinanceDemo.usd(8));
-    expect(_montantAffiche(tester, _ibrahim), manque);
-    expect(find.byKey(RechargeFoyerPage.ligneDe(_ibrahim)), findsOneWidget);
-    expect(find.byKey(RechargeFoyerPage.ajouterDe(_ibrahim)), findsNothing);
-    expect(bandeau, findsOneWidget);
-    expect(_payer(tester), isNotNull);
-    verifierUnSeulBoutonPlein(tester);
-    expect(tester.takeException(), isNull);
-  });
+        findsOneWidget,
+      );
+      expect(explication.left, greaterThanOrEqualTo(total.left));
+      expect(explication.right, lessThanOrEqualTo(total.right));
+      // La colonne des profils a la moitie de la page, bornee a la colonne
+      // de dialogue, et le solde comme le montant suggere tiennent sur une ou
+      // deux lignes (l'ancienne composition les coupait en quatre lignes
+      // chacun dans la police de test, six a l'ecran ; trois a 1200 et 1280
+      // tant que le montant restait a cote dans une colonne de 430 ou 470).
+      expect(profils.width, greaterThanOrEqualTo(total.width - 0.5));
+      expect(profils.width, lessThanOrEqualTo(AppPage.largeurDialogue + 0.5));
+      int mesures = 0;
+      for (final String id in <String>[_mariam, _ibrahim, _aicha]) {
+        final Finder textes = find.descendant(
+          of: find.byKey(RechargeFoyerPage.profilDe(id)),
+          matching: find.byType(RichText),
+        );
+        for (final Element e in textes.evaluate()) {
+          final RenderParagraph p = e.renderObject! as RenderParagraph;
+          final String texte = p.text.toPlainText();
+          if (!texte.contains(':')) continue;
+          final double ligne = p.getFullHeightForCaret(
+            const TextPosition(offset: 0),
+          );
+          expect(
+            (p.size.height / ligne).round(),
+            lessThanOrEqualTo(2),
+            reason: '« $texte » doit tenir sur une ou deux lignes',
+          );
+          mesures++;
+        }
+      }
+      // Trois soldes et le montant suggere d'Ibrahim, au moins.
+      expect(mesures, greaterThanOrEqualTo(4));
+      // Le bandeau, en bas, sur toute la largeur, sans croix (Q-FI-6).
+      final Finder bandeau = find.byKey(RechargeFoyerPage.bandeauKey);
+      expect(bandeau, findsOneWidget);
+      expect(tester.getRect(bandeau).top, greaterThan(payer.bottom));
+      expect(tester.getRect(bandeau).left, moreOrLessEquals(profils.left));
+      expect(
+        _dans(
+          RechargeFoyerPage.bandeauKey,
+          find.text(t.argent.acces.regulariserTitre),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: bandeau,
+          matching: find.byWidgetPredicate(
+            (Widget w) => w is Icon && w.icon == AppIcons.fermer.repos,
+          ),
+        ),
+        findsNothing,
+      );
+      expect(_coche(tester, _ibrahim), isFalse);
+      await _taper(tester, find.byKey(RechargeFoyerPage.ajouterDe(_ibrahim)));
+      // Coche, le manque suggere retenu, le recapitulatif rendu ; le lien,
+      // qui ne peut plus rien, disparait (K-56).
+      expect(_coche(tester, _ibrahim), isTrue);
+      final String manque = formaterMontant(DonneesFinanceDemo.usd(8));
+      expect(_montantAffiche(tester, _ibrahim), manque);
+      expect(find.byKey(RechargeFoyerPage.ligneDe(_ibrahim)), findsOneWidget);
+      expect(find.byKey(RechargeFoyerPage.ajouterDe(_ibrahim)), findsNothing);
+      expect(bandeau, findsOneWidget);
+      expect(_payer(tester), isNotNull);
+      verifierUnSeulBoutonPlein(tester);
+      expect(tester.takeException(), isNull);
+    });
+  }
 
   testWidgets('390 : une seule colonne, le bandeau en tete', (
     WidgetTester tester,

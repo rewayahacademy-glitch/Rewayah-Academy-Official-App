@@ -561,11 +561,38 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
   }) {
     // Le montant en bout de ligne quand la place le permet (tablette,
     // bureau, texte peu agrandi) ; sinon sous la ligne, au bord de fin.
-    final bool enLigne =
+    final bool place =
         AppGabarit.classe(MediaQuery.sizeOf(context).width) !=
             ClasseLargeur.compacte &&
         MediaQuery.textScalerOf(context).scale(1) <=
             AppGabarit.seuilTexteColonne;
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) {
+        // La colonne elle-meme doit aussi avoir la place : sur bureau, la
+        // moitie de la page ne fait que 430 a 1200 et 470 a 1280, et le
+        // solde, serre a cote du montant, y passait sur trois lignes
+        // (contre-revue FI-VAGUE-CORR).
+        final bool enLigne =
+            place && contraintes.maxWidth >= _colonneMontantEnLigne;
+        return _listeProfils(context, liste, enLigne: enLigne, large: large);
+      },
+    );
+  }
+
+  /// La largeur de colonne en deca de laquelle le montant passe sous
+  /// l'identite : la colonne de dialogue, moins la gouttiere qui separe les
+  /// deux colonnes du bureau (540). A 1440 la colonne fait 550 et garde le
+  /// montant en ligne ; a 1200 et 1280 il passe dessous.
+  static const double _colonneMontantEnLigne =
+      AppPage.largeurDialogue - AppSpacing.xl;
+
+  /// Le titre et la carte des profils, le montant [enLigne] ou dessous.
+  Widget _listeProfils(
+    BuildContext context,
+    List<BeneficiaireRecharge> liste, {
+    required bool enLigne,
+    required bool large,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
