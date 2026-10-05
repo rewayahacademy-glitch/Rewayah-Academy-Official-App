@@ -32,6 +32,42 @@ enseignant (version `2026-10-jur`) à un vrai enseignant avant la publication de
 la politique.** La doc 08 §14.1 impose de toute façon la publication avant la
 première visite réelle.
 
+**Garde-fou technique (posé le 05/10/2026) :** l'interrupteur
+`VersionsContrat.politiqueControlePubliee` (`lib/core/dossier/versions_contrat.dart`)
+vaut `false`. Tant qu'il est faux :
+
+- hors démonstration, `VersionsContrat.pour(SorteContrat.contratEnseignant)`
+  rend la version précédente `2026-09` : l'enseignant lit et signe les textes
+  d'origine de cette version, gardés tels quels comme trace (`t.contrat.intro`,
+  `pointEnregistrement`, `pointControle`, `pointCoordonnees`), sans la clause
+  des visites ni la case art. 9 ;
+- seule la démonstration (`ServiceDossier.demonstration == true`, service
+  `ServiceDossierDemo`) montre et enregistre la version `2026-10-jur` ;
+- l'accusé (E1 pour l'enseignant, A3 pour le tuteur) reste en `2026-10-jur` :
+  il ne parle pas de la politique ; les conditions du tuteur restent en
+  `2026-09-obs`.
+
+Tests : `test/features/dossier_test.dart` (« hors démonstration… version
+2026-09 », « garde-fou : 2026-10-jur… ») ; capture
+`jur_app1_contrat_enseignant_hors_demo.png`.
+
+**Basculer l'interrupteur quand la politique est publiée**, dans un même
+commit :
+
+1. porter la partie B mot pour mot, avec les quatre valeurs de la section 10,
+   en pièce lisible liée depuis la clause du contrat et rangée dans l'espace
+   enseignant (écran inscrit au catalogue d'abord) ;
+2. passer `politiqueControlePubliee` à `true` ;
+3. dans `dossier_test.dart`, inverser l'attente du test « hors
+   démonstration » (version `2026-10-jur`, clause et case art. 9) et retirer
+   `expect(VersionsContrat.politiqueControlePubliee, isFalse)` ;
+4. régénérer les captures `jur_app1_contrat_enseignant*`.
+
+Les enseignants ayant signé `2026-09` entre-temps ne sont pas reconvoqués
+d'eux-mêmes (`etat_dossier()` ne filtre pas la version, voir l'en-tête de
+`versions_contrat.dart`) : décider avec le directeur s'il faut leur faire
+signer `2026-10-jur` (écran à prévoir).
+
 **Question au directeur :** pouvez-vous fournir le numéro de société, l'adresse
 du siège, le contact confidentialité et le représentant dans l'UE (ou
 décider d'une formule provisoire écrite par vous pour la section 10) ? Dès

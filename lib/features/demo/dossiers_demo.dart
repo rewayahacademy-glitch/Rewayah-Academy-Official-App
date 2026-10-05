@@ -800,6 +800,9 @@ class ServiceDossierDemo implements ServiceDossier {
   DossierDemo get _d => etatRevue.dossiers[titulaire]!;
 
   @override
+  bool get demonstration => true;
+
+  @override
   Future<void> creerProfil({
     required AppRole role,
     required String prenom,

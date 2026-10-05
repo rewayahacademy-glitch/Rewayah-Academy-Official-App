@@ -133,8 +133,13 @@ void main() {
   });
 
   group('Le contrat depend du role, et lui seul', () {
-    Future<FauxServiceDossier> monter(WidgetTester tester, AppRole role) async {
+    Future<FauxServiceDossier> monter(
+      WidgetTester tester,
+      AppRole role, {
+      bool demonstration = false,
+    }) async {
       final FauxServiceDossier dossier = FauxServiceDossier()
+        ..demonstration = demonstration
         ..etatRendu = EtatDossier(
           profilExiste: true,
           role: role,
@@ -160,10 +165,15 @@ void main() {
       return dossier;
     }
 
-    testWidgets('un enseignant signe son contrat, avec la clause coordonnees', (
+    testWidgets('demonstration : un enseignant signe la version 2026-10-jur, '
+        'avec la clause des visites et la case art. 9', (
       WidgetTester tester,
     ) async {
-      final FauxServiceDossier dossier = await monter(tester, AppRole.teacher);
+      final FauxServiceDossier dossier = await monter(
+        tester,
+        AppRole.teacher,
+        demonstration: true,
+      );
 
       // C'est le controle anti-pillage central de l'ADR-008 : il doit etre lu,
       // pas seulement signe.
@@ -193,6 +203,33 @@ void main() {
       expect(dossier.versionsAcceptees, <String>[
         VersionsContrat.textesJuridiques,
       ]);
+    });
+
+    testWidgets('hors demonstration, politique de controle non publiee : un '
+        'enseignant signe la version 2026-09, sans la clause qui fait '
+        'confirmer la reception de la politique', (
+      WidgetTester tester,
+    ) async {
+      expect(VersionsContrat.politiqueControlePubliee, isFalse);
+      final FauxServiceDossier dossier = await monter(tester, AppRole.teacher);
+
+      // Les textes d'origine de la version 2026-09, gardes tels quels.
+      expect(find.text(t.contrat.intro), findsOneWidget);
+      expect(find.text(t.contrat.pointEnregistrement), findsOneWidget);
+      expect(find.text(t.contrat.pointControle), findsOneWidget);
+      expect(find.text(t.contrat.pointCoordonnees), findsOneWidget);
+      // Rien de la version 2026-10-jur.
+      expect(find.text(t.contrat.clauseControle.titre), findsNothing);
+      expect(find.text(t.contrat.clauseControle.texte), findsNothing);
+      expect(find.text(t.contrat.clauseControle.caseReligion), findsNothing);
+      expect(find.text(t.contrat.e1.quoi), findsNothing);
+
+      await tester.tap(find.text(t.contrat.accepter));
+      await tester.pumpAndSettle();
+      expect(dossier.contratsAcceptes, <SorteContrat>[
+        SorteContrat.contratEnseignant,
+      ]);
+      expect(dossier.versionsAcceptees, <String>[VersionsContrat.courante]);
     });
 
     testWidgets('un tuteur signe les conditions, sans la clause enseignant', (
@@ -411,6 +448,45 @@ void main() {
       // L unicite en base porte sur profil, sorte et version : faire bouger
       // cette valeur redemande la signature a tout le monde, ce qui est voulu.
       expect(VersionsContrat.courante, isNotEmpty);
+    });
+
+    test('garde-fou : 2026-10-jur pour l enseignant seulement en '
+        'demonstration ou une fois la politique publiee', () {
+      expect(
+        VersionsContrat.pour(SorteContrat.contratEnseignant),
+        VersionsContrat.courante,
+      );
+      expect(
+        VersionsContrat.pour(
+          SorteContrat.contratEnseignant,
+          demonstration: true,
+        ),
+        VersionsContrat.textesJuridiques,
+      );
+      expect(
+        VersionsContrat.pour(
+          SorteContrat.contratEnseignant,
+          politiquePubliee: true,
+        ),
+        VersionsContrat.textesJuridiques,
+      );
+      // Les autres sortes ne dependent pas de l interrupteur.
+      for (final bool demo in <bool>[false, true]) {
+        expect(
+          VersionsContrat.pour(
+            SorteContrat.accuseEnregistrementControle,
+            demonstration: demo,
+          ),
+          VersionsContrat.textesJuridiques,
+        );
+        expect(
+          VersionsContrat.pour(
+            SorteContrat.conditionsTuteur,
+            demonstration: demo,
+          ),
+          VersionsContrat.avecObservation,
+        );
+      }
     });
   });
 }

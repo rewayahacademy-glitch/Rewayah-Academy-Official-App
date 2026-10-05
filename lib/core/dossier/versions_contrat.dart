@@ -18,7 +18,9 @@ abstract final class VersionsContrat {
   /// d'accuse de l'ADR-011. Elle est en production depuis le 21/09 : des
   /// comptes reels ont pu la signer. Ses textes (`t.contrat.pointEnregistrement`,
   /// `t.contrat.pointControle`, `t.accuse`) sont donc gardes tels quels, comme
-  /// trace de ce qui a ete signe, et ne sont plus affiches.
+  /// trace de ce qui a ete signe. Le contrat enseignant les affiche encore
+  /// hors demonstration tant que [politiqueControlePubliee] est faux ; ils ne
+  /// sont plus affiches ailleurs.
   static const String courante = '2026-09';
 
   /// Les textes juridiques valides par le directeur le 02/10/2026
@@ -42,10 +44,35 @@ abstract final class VersionsContrat {
   /// version, jamais une lecture de la configuration au moment d'afficher.
   static const int dureeEnregistrementJours = 30;
 
+  /// Garde-fou du contrat enseignant [textesJuridiques] : faux tant que la
+  /// politique de controle des enseignants (`POLITIQUE_CONTROLE_ENSEIGNANTS.md`,
+  /// partie B) n'est pas publiee dans l'application.
+  ///
+  /// La clause des visites de controle de cette version fait « confirmer
+  /// avoir recue » la politique ; sa section 10 attend encore quatre valeurs
+  /// du directeur (`docs/current/JUR-APP-1_RESTES.md`, section 1). Tant que
+  /// l'interrupteur est faux, un vrai enseignant signe la version [courante]
+  /// (ses textes d'origine, sans la clause) ; seule la demonstration montre
+  /// et fait signer [textesJuridiques].
+  ///
+  /// **Le passer a vrai** seulement dans le meme commit que la politique
+  /// portee mot pour mot, liee depuis la clause et rangee dans l'espace
+  /// enseignant (procedure dans `docs/current/JUR-APP-1_RESTES.md`).
+  static const bool politiqueControlePubliee = false;
+
   /// La version a signer pour une sorte de texte.
-  static String pour(SorteContrat sorte) => switch (sorte) {
+  ///
+  /// [demonstration] : le service du dossier est celui de la demonstration
+  /// (`ServiceDossier.demonstration`), aucune signature reelle.
+  /// [politiquePubliee] n'est injectable que pour les tests.
+  static String pour(
+    SorteContrat sorte, {
+    bool demonstration = false,
+    bool politiquePubliee = politiqueControlePubliee,
+  }) => switch (sorte) {
     SorteContrat.conditionsTuteur => avecObservation,
-    SorteContrat.contratEnseignant => textesJuridiques,
+    SorteContrat.contratEnseignant =>
+      politiquePubliee || demonstration ? textesJuridiques : courante,
     SorteContrat.accuseEnregistrementControle => textesJuridiques,
   };
 }

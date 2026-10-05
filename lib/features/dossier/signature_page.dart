@@ -81,6 +81,7 @@ class AccusePage extends ConsumerWidget {
       titre: t.contrat.a3.titre,
       libelleAction: t.contrat.a3.jaiLu,
       sorte: SorteContrat.accuseEnregistrementControle,
+      version: VersionsContrat.pour(SorteContrat.accuseEnregistrementControle),
       paragraphes: enseignant ? paragraphesE1() : paragraphesA3(),
     );
   }
@@ -99,6 +100,14 @@ class AccusePage extends ConsumerWidget {
 /// signature, et la case separee de l'article 9, jamais precochee, sans
 /// laquelle la signature reste fermee (`POLITIQUE_CONTROLE_ENSEIGNANTS.md`,
 /// partie A).
+///
+/// **Garde-fou** ([VersionsContrat.politiqueControlePubliee]) : tant que la
+/// politique de controle que la clause fait « confirmer avoir recue » n'est
+/// pas publiee, un vrai enseignant lit et signe la version
+/// [VersionsContrat.courante], ses textes d'origine gardes tels quels
+/// (`t.contrat.intro`, `pointEnregistrement`, `pointControle`,
+/// `pointCoordonnees`), sans la clause ni la case. La demonstration seule
+/// montre la version [VersionsContrat.textesJuridiques].
 class ContratPage extends ConsumerWidget {
   /// Cree la page de contrat.
   const ContratPage({super.key});
@@ -107,6 +116,24 @@ class ContratPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final SorteContrat sorte = SorteContrat.pour(_role(ref));
     final bool enseignant = sorte == SorteContrat.contratEnseignant;
+    final String version = VersionsContrat.pour(
+      sorte,
+      demonstration: ref.watch(serviceDossierProvider).demonstration,
+    );
+    if (enseignant && version == VersionsContrat.courante) {
+      return _PageASigner(
+        titre: t.contrat.titre,
+        introduction: t.contrat.intro,
+        libelleAction: t.contrat.accepter,
+        sorte: sorte,
+        version: version,
+        paragraphes: <ParagrapheTexte>[
+          (titre: t.contrat.pointEnregistrement, corps: null),
+          (titre: t.contrat.pointControle, corps: null),
+          (titre: t.contrat.pointCoordonnees, corps: null),
+        ],
+      );
+    }
     String? pour;
     try {
       pour = GoRouterState.of(context).uri.queryParameters['pour'];
@@ -118,6 +145,7 @@ class ContratPage extends ConsumerWidget {
       titre: t.contrat.titre,
       libelleAction: t.contrat.accepter,
       sorte: sorte,
+      version: version,
       paragraphes: <ParagrapheTexte>[
         ...enseignant ? paragraphesE1() : paragraphesA3(),
         // L'occultation des coordonnees ne concerne que l'enseignant : c'est ce
@@ -146,7 +174,9 @@ class _PageASigner extends ConsumerStatefulWidget {
     required this.titre,
     required this.libelleAction,
     required this.sorte,
+    required this.version,
     required this.paragraphes,
+    this.introduction,
     this.clause,
     this.caseReligion = false,
     this.observation,
@@ -155,7 +185,14 @@ class _PageASigner extends ConsumerStatefulWidget {
   final String titre;
   final String libelleAction;
   final SorteContrat sorte;
+
+  /// La version enregistree a la signature : celle du texte affiche.
+  final String version;
+
   final List<ParagrapheTexte> paragraphes;
+
+  /// Le chapeau au-dessus des paragraphes (version 2026-09 du contrat).
+  final String? introduction;
 
   /// Un paragraphe separe, au-dessus de la signature (clause enseignant).
   final ParagrapheTexte? clause;
@@ -188,7 +225,7 @@ class _PageASignerState extends ConsumerState<_PageASigner> {
     try {
       await ref
           .read(serviceDossierProvider)
-          .accepterContrat(widget.sorte, VersionsContrat.pour(widget.sorte));
+          .accepterContrat(widget.sorte, widget.version);
       ref.invalidate(etatDossierProvider);
       if (mounted) {
         GoRouter.of(context).go(Routes.attente);
@@ -245,6 +282,10 @@ class _PageASignerState extends ConsumerState<_PageASigner> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          if (widget.introduction case final String intro) ...<Widget>[
+            Text(intro, style: textes.bodyMedium),
+            Ecart.vXl,
+          ],
           GroupeReglages(
             lignes: <LigneRubrique>[
               for (final ParagrapheTexte p in widget.paragraphes)

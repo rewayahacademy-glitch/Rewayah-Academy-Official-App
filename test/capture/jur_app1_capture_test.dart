@@ -1,7 +1,9 @@
 // Captures de JUR-APP-1 : textes juridiques valides le 02/10/2026 portes dans
 // l'application. Le bandeau de la salle (guidee) avec son lien « En savoir
 // plus », la lecture E-1 ouverte, la carte d'accuse (A3 tuteur, E1
-// enseignant) et le contrat (tuteur, enseignant avec clause et case art. 9).
+// enseignant) et le contrat (tuteur, enseignant avec clause et case art. 9 en
+// demonstration, version 2026-09 hors demonstration tant que la politique de
+// controle n'est pas publiee).
 //
 // Saute sans CAPTURE_DIR (voir test/capture/LISEZ-MOI.md). Les pages de texte
 // sont capturees dans une vue haute (390 x 2400) pour montrer le texte entier.
@@ -31,9 +33,11 @@ Future<void> _monterDossier(
   required String depart,
   required AppRole role,
   Size taille = const Size(390, 2400),
+  bool demonstration = false,
 }) async {
   fixerVueCapture(tester, taille, 1);
   final FauxServiceDossier dossier = FauxServiceDossier()
+    ..demonstration = demonstration
     ..etatRendu = EtatDossier(
       profilExiste: true,
       role: role,
@@ -207,7 +211,21 @@ void main() {
       debugPrint('PNG ${await capturer(tester, 'jur_app1_contrat_tuteur')}');
     });
 
-    testWidgets('contrat enseignant (E1, clause, case art. 9)', (
+    testWidgets('contrat enseignant en demonstration (2026-10-jur : E1, '
+        'clause, case art. 9)', (WidgetTester tester) async {
+      await _monterDossier(
+        tester,
+        depart: Routes.attenteContrat,
+        role: AppRole.teacher,
+        demonstration: true,
+      );
+      debugPrint(
+        'PNG ${await capturer(tester, 'jur_app1_contrat_enseignant')}',
+      );
+    });
+
+    testWidgets('contrat enseignant hors demonstration (garde-fou : 2026-09 '
+        'tant que la politique de controle n est pas publiee)', (
       WidgetTester tester,
     ) async {
       await _monterDossier(
@@ -216,7 +234,7 @@ void main() {
         role: AppRole.teacher,
       );
       debugPrint(
-        'PNG ${await capturer(tester, 'jur_app1_contrat_enseignant')}',
+        'PNG ${await capturer(tester, 'jur_app1_contrat_enseignant_hors_demo')}',
       );
     });
   });
