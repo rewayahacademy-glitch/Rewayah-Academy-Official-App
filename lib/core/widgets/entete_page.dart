@@ -56,6 +56,11 @@ class EntetePage extends StatelessWidget {
   /// Les actions a droite du titre.
   final List<Widget> actions;
 
+  /// La part minimale de la largeur de l'en-tete laissee au titre quand
+  /// retour et actions sont sur sa ligne ; en dessous, ils passent
+  /// au-dessus et le titre prend toute la largeur.
+  static const double partMinTitre = 0.5;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -116,10 +121,21 @@ class EntetePage extends StatelessWidget {
         final double reserve =
             (onRetour != null ? AppTouchTarget.standard + AppSpacing.md : 0) +
             actions.length * (AppTouchTarget.standard + AppSpacing.xs);
+        // Trois raisons d'empiler (CPT-RC, revue CPT-R M3) : le mot le plus
+        // long ne tient pas a cote ; la largeur laissee au titre tombe sous
+        // [partMinTitre] de la colonne ; ou, sur telephone, le texte est
+        // agrandi au-dela de `AppGabarit.seuilTexteColonne`. Sans les deux
+        // dernieres, chaque mot tenant a cote, titre et sous-titre etaient
+        // composes dans la moitie de la largeur a 320 px texte x2, un mot
+        // par ligne, et le premier ecran ne montrait aucun contenu.
+        final double echelle = MediaQuery.textScalerOf(context).scale(1);
         final bool empiler =
             (onRetour != null || actions.isNotEmpty) &&
             contraintes.maxWidth.isFinite &&
-            largeurMot > contraintes.maxWidth - reserve;
+            (largeurMot > contraintes.maxWidth - reserve ||
+                contraintes.maxWidth - reserve <
+                    contraintes.maxWidth * partMinTitre ||
+                (mobile && echelle >= AppGabarit.seuilTexteColonne));
         if (empiler) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
