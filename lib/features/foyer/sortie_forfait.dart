@@ -233,7 +233,9 @@ class ForfaitFamillePage extends ConsumerWidget {
       // Libelle provisoire, lexique D4 (d'apres « Vous avez rejoint le
       // forfait famille de {prenom} », EA-7).
       corps: _Note(
-        texte: t.adulte.sortie.forfaitPhrase(prenom: vue.prenomTitulaire),
+        texte: t.adulte.sortie.forfaitPhrase(
+          dePrenom: deDevant(vue.prenomTitulaire),
+        ),
         attenuee: true,
       ),
       boutonKey: quitterKey,

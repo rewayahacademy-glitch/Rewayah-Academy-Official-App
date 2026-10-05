@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/coran/service_coran.dart';
 import '../../core/coran/vue_lecteur.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_color_pair.dart';
@@ -579,7 +580,7 @@ class _LigneSourate extends StatelessWidget {
       // Le libelle parle dit l'ACTE, parce qu'un element se lit par ce qu'il
       // declenche : ici, presenter le debut de cette sourate a tout le groupe.
       libelleSemantique: t.enseignant.salle.presenterSourate(
-        sourate: sourate.nomTranslittere,
+        deSourate: deDevant(sourate.nomTranslittere),
       ),
       onPress: () =>
           Navigator.of(context).pop((sourate: sourate.numero, verset: 1)),

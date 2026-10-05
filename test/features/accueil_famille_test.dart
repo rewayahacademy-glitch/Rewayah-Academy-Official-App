@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/classes_foyer_supabase.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -1013,7 +1014,10 @@ void main() {
       expect(salle.etatCourt, t.tuteur.accueil.etatCourt.salleOuverte);
       expect(salle.point, PointStatut.succes);
       expect(salle.ligneEtat, LibellesGroupe.dansMinutes(10));
-      expect(salle.fuseau, t.tuteur.accueil.heureDe(ville: 'Paris'));
+      expect(
+        salle.fuseau,
+        t.tuteur.accueil.heureDe(deVille: deDevant('Paris')),
+      );
 
       final AffichageSeance loin = AffichageSeance.depuis(
         _prochaine(avant: const Duration(hours: 3, minutes: 28, seconds: 30)),

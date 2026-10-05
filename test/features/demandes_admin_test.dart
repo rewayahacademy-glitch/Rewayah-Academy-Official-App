@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/service_admin.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
@@ -145,7 +146,9 @@ void main() {
           .getTopLeft(find.text(t.admin.demandes.reclame))
           .dy;
       final double yRegles = tester
-          .getTopLeft(find.text(t.admin.demandes.feuille(prenom: 'Aissatou')))
+          .getTopLeft(
+            find.text(t.admin.demandes.feuille(dePrenom: deDevant('Aissatou'))),
+          )
           .dy;
       final double yVerdict = tester
           .getTopLeft(find.text(t.admin.demandes.verdict))

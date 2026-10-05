@@ -5,6 +5,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -98,7 +99,7 @@ class VignetteVideo extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     return Semantics(
       image: true,
-      label: t.salle.seance.videoDe(nom: vue.nomEnseignant),
+      label: t.salle.seance.videoDe(deNom: deDevant(vue.nomEnseignant)),
       excludeSemantics: true,
       child: SizedBox(
         key: const ValueKey<String>('vignette-video'),

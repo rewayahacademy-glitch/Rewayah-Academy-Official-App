@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/seance_famille/seance_famille.dart';
@@ -58,7 +59,7 @@ class AffichageSeance {
       ville: foyer?.libelleVille,
       fuseau: foyer == null
           ? t.tuteur.accueil.heureAppareil
-          : t.tuteur.accueil.heureDe(ville: foyer.libelleVille),
+          : t.tuteur.accueil.heureDe(deVille: deDevant(foyer.libelleVille)),
       date: foyer?.dateLocaleRendue ?? dateDeLAppareil(local),
       duree: LibellesGroupe.dureeSeule(seance.dureePrevue),
       heureClasse: classe == null

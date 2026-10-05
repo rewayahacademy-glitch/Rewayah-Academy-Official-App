@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
 import '../../core/seance_famille/port_seances_famille.dart';
@@ -161,7 +162,7 @@ class _Planning extends ConsumerWidget {
         nature: NatureEtat.aucunResultat,
         titre: t.classe.pagePlanning.aucune,
         phrase: t.classe.pagePlanning.aucuneDetail(
-          prenom: contexte.eleve.prenom,
+          dePrenom: deDevant(contexte.eleve.prenom),
         ),
       ),
       construire: (List<SeanceFamille> seances) => _Liste(

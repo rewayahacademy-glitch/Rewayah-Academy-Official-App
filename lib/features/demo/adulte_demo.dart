@@ -13,6 +13,7 @@ import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/capacites/port_paiements_foyer.dart';
 import '../../core/capacites/port_recharge_foyer.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart' show Seance;
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
@@ -437,8 +438,12 @@ abstract final class DonneesAdulteDemo {
       t.adulte.sortie.notificationQuitte(prenom: prenomSecondAdulte(genre)),
     (EtatDemoAdulte.conjointRetire, VueDemoAdulte.secondAdulte) =>
       genre == GenreTitulaireDemo.homme
-          ? t.adulte.sortie.notificationRetiree(prenom: prenomTitulaire(genre))
-          : t.adulte.sortie.notificationRetire(prenom: prenomTitulaire(genre)),
+          ? t.adulte.sortie.notificationRetiree(
+              dePrenom: deDevant(prenomTitulaire(genre)),
+            )
+          : t.adulte.sortie.notificationRetire(
+              dePrenom: deDevant(prenomTitulaire(genre)),
+            ),
     _ => null,
   };
 

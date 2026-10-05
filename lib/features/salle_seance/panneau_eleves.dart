@@ -9,6 +9,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
@@ -258,7 +259,7 @@ class _EnTeteEleve extends StatelessWidget {
       child: Pressable(
         onPress: basculer,
         libelleSemantique:
-            '${deplie ? t.salle.seance.replierFiche(prenom: eleve.prenom) : t.salle.seance.deplierFiche(prenom: eleve.prenom)}, $statut',
+            '${deplie ? t.salle.seance.replierFiche(dePrenom: deDevant(eleve.prenom)) : t.salle.seance.deplierFiche(dePrenom: deDevant(eleve.prenom))}, $statut',
         arrondiFocus: AppRadius.arrondiSm,
         child: ligne,
       ),

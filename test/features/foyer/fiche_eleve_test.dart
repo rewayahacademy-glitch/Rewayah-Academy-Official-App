@@ -21,6 +21,7 @@ import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/appairage/service_avatar.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/offres/service_offres.dart';
@@ -275,7 +276,7 @@ void main() {
 
       await _ouvrirLigne(
         tester,
-        t.ficheEleve.lignes.appareils(prenom: 'Eleve A1'),
+        t.ficheEleve.lignes.appareils(dePrenom: deDevant('Eleve A1')),
       );
       final Uri adresse = Uri.parse(lieu(routeur));
       expect(adresse.path, Routes.ficheEleveSousPage(a1, 'appareils'));
@@ -728,7 +729,9 @@ void main() {
       await _toucher(tester, find.text(t.ficheEleve.interface.standard));
       expect(
         find.text(
-          t.ficheEleve.interface.echec(prenom: FoyersFictifs.a1.prenom),
+          t.ficheEleve.interface.echec(
+            dePrenom: deDevant(FoyersFictifs.a1.prenom),
+          ),
         ),
         findsOneWidget,
       );
@@ -898,7 +901,9 @@ void main() {
       expect(appairage.reglagesEcrits, isEmpty);
       expect(
         find.text(
-          t.ficheEleve.interface.echec(prenom: FoyersFictifs.a1.prenom),
+          t.ficheEleve.interface.echec(
+            dePrenom: deDevant(FoyersFictifs.a1.prenom),
+          ),
         ),
         findsNothing,
       );

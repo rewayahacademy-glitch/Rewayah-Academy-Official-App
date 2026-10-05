@@ -20,6 +20,7 @@ import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/appairage/service_enfant.dart';
 import 'package:rewayah_academy/core/cache/secure/stockage_securise.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -200,7 +201,7 @@ void main() {
         expect(lieu(routeur), Routes.ficheElevePour('e1'));
         await _taper(
           tester,
-          find.text(t.ficheEleve.lignes.appareils(prenom: 'Amina')),
+          find.text(t.ficheEleve.lignes.appareils(dePrenom: deDevant('Amina'))),
         );
         expect(
           Uri.parse(lieu(routeur)).path,
@@ -395,7 +396,9 @@ void main() {
         await _taper(tester, find.byKey(EleveConnexionPage.carteKey('e1')));
         await _composer(tester, _codeAmina);
         expect(
-          _message(t.eleveConnexion.profils.jetonAbsent(prenom: 'Amina')),
+          _message(
+            t.eleveConnexion.profils.jetonAbsent(dePrenom: deDevant('Amina')),
+          ),
           findsOneWidget,
         );
         // Rien ne dit que le tuteur a retire l'appareil : l'ecran ne

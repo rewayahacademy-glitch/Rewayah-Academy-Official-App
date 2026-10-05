@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -1346,7 +1347,7 @@ void main() {
             annonces: <AnnonceObservation>[
               AnnonceObservation(
                 libelle: t.tc.observation.annonce.tuteurObserve(
-                  prenomEnfant: 'Amina',
+                  dePrenomEnfant: deDevant('Amina'),
                 ),
                 prenomEnfant: 'Amina',
                 enfantConcerneId: 'enfant-1',
@@ -1372,7 +1373,7 @@ void main() {
             annonces: <AnnonceObservation>[
               AnnonceObservation(
                 libelle: t.tc.observation.annonce.tuteurObserve(
-                  prenomEnfant: 'Amina',
+                  dePrenomEnfant: deDevant('Amina'),
                 ),
                 prenomEnfant: 'Amina',
                 enfantConcerneId: 'enfant-1',

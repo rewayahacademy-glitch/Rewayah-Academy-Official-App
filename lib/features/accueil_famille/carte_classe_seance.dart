@@ -5,6 +5,7 @@ import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/foyer/selection_eleve.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/seance_famille/seance_famille.dart';
@@ -338,7 +339,9 @@ class _Seance extends StatelessWidget {
           ),
           Ecart.vXs,
           Text(
-            t.tuteur.accueil.aucuneSeanceDetail(prenom: profil.prenom),
+            t.tuteur.accueil.aucuneSeanceDetail(
+              dePrenom: deDevant(profil.prenom),
+            ),
             style: discret,
           ),
         ],

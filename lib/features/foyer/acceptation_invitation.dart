@@ -331,14 +331,14 @@ class _InvitationRecuePageState extends ConsumerState<InvitationRecuePage> {
         a.pourquoiTitre,
         f ? a.pourquoiElle(prenom: p) : a.pourquoiLui(prenom: p),
       ),
-      (a.verraTitre(prenom: p), f ? a.verraElle : a.verraLui),
-      (a.verraPasTitre(prenom: p), a.verraPas),
-      (a.vousTitre, a.vous(prenom: p)),
+      (a.verraTitre(quePrenom: queDevant(p)), f ? a.verraElle : a.verraLui),
+      (a.verraPasTitre(quePrenom: queDevant(p)), a.verraPas),
+      (a.vousTitre, a.vous(dePrenom: deDevant(p))),
       (a.autresTitre, a.autres),
       (
         a.dureeTitre,
         <String>[
-          a.duree(prenom: p),
+          a.duree(quePrenom: queDevant(p)),
           if (invitation.dureeConservation case final String d)
             a.conservation(duree: d),
         ].join(' '),
@@ -370,7 +370,10 @@ class _InvitationRecuePageState extends ConsumerState<InvitationRecuePage> {
           key: InvitationRecuePage.texteKey,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            _TitreSection(titre: a.titre(prenom: p), principal: true),
+            _TitreSection(
+              titre: a.titre(dePrenom: deDevant(p)),
+              principal: true,
+            ),
             // Remplacement : le texte T2 s'ajoute au T1 (UX_REVIEW_07). C'est
             // l'information la plus importante du remplacement : au moins la
             // taille du corps de T1, en encre forte, lue dans l'ordre de la
@@ -523,7 +526,7 @@ class _PageEtatInvitation extends StatelessWidget {
       // donne que la phrase, UX_REVIEW_07 ligne 10 d).
       InvitationAcceptee(:final String prenomTitulaire) => (
         a.accepteeTitre,
-        a.rejoint(prenom: prenomTitulaire),
+        a.rejoint(dePrenom: deDevant(prenomTitulaire)),
         AppIcons.invitationAcceptee,
       ),
       InvitationEnValidation() => (

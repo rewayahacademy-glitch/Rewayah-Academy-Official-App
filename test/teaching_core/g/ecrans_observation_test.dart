@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_observation/guardian_observation_policy.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
@@ -239,7 +240,7 @@ void main() {
             annonces: <AnnonceObservation>[
               AnnonceObservation(
                 libelle: t.tc.observation.annonce.tuteurObserve(
-                  prenomEnfant: 'Amina',
+                  dePrenomEnfant: deDevant('Amina'),
                 ),
                 tempsRestant: const Duration(seconds: 80),
                 enfantConcerneId: 'enfant-1',
@@ -264,14 +265,14 @@ void main() {
       List<AnnonceObservation> deuxTuteurs() => <AnnonceObservation>[
         AnnonceObservation(
           libelle: t.tc.observation.annonce.tuteurObserve(
-            prenomEnfant: 'Amina',
+            dePrenomEnfant: deDevant('Amina'),
           ),
           prenomEnfant: 'Amina',
           enfantConcerneId: 'enfant-1',
         ),
         AnnonceObservation(
           libelle: t.tc.observation.annonce.tuteurObserve(
-            prenomEnfant: 'Youssef',
+            dePrenomEnfant: deDevant('Youssef'),
           ),
           prenomEnfant: 'Youssef',
           enfantConcerneId: 'enfant-2',
@@ -353,7 +354,7 @@ void main() {
                 ...deuxTuteurs(),
                 AnnonceObservation(
                   libelle: t.tc.observation.annonce.tuteurObserve(
-                    prenomEnfant: 'Bilal',
+                    dePrenomEnfant: deDevant('Bilal'),
                   ),
                   prenomEnfant: 'Bilal',
                   enfantConcerneId: 'enfant-3',

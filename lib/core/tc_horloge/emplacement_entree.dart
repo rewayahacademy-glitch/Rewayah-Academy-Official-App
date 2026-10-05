@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../i18n/elision.dart';
 import '../i18n/strings.g.dart';
 import '../tc_groupe/libelles_tc_groupe.dart';
 import 'session_clock_vm.dart';
@@ -287,7 +288,7 @@ class EmplacementEntree {
           : t.classe.entree.rejoindre,
       libelleLecteur: enseignant
           ? t.enseignant.journee.rejoindreSalleLecteur(classe: nomClasse)
-          : t.classe.entree.rejoindreLecteur(classe: nomClasse),
+          : t.classe.entree.rejoindreLecteur(deClasse: deDevant(nomClasse)),
       detail: detail,
       annonce: annonce,
       avisDst: dst,

@@ -5,6 +5,7 @@ import '../../../core/admin/admin_domaine.dart';
 import '../../../core/admin/service_programme.dart';
 import '../../../core/domain/enums.dart';
 import '../../../core/i18n/cle_audio.dart';
+import '../../../core/i18n/elision.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/planning/journee.dart';
@@ -665,7 +666,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'neutre',
         (BuildContext _) => SignalRow(
-          phrase: t.admin.tableau.ligneDossier(prenom: 'Aicha'),
+          phrase: t.admin.tableau.ligneDossier(dePrenom: deDevant('Aicha')),
           icone: AppIcons.dossiers,
           anciennete: t.admin.tableau.attenteJours(jours: 3),
           onPress: _rien,
@@ -674,7 +675,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'avertissement',
         (BuildContext _) => SignalRow(
-          phrase: t.admin.tableau.lignePlafond(prenom: 'Youssef'),
+          phrase: t.admin.tableau.lignePlafond(dePrenom: deDevant('Youssef')),
           icone: AppIcons.avertissement,
           anciennete: t.admin.tableau.attenteUnJour,
           ton: TonEtat.avertissement,
@@ -3026,8 +3027,8 @@ final TextesFilDiscussion _textesFil = TextesFilDiscussion(
   echec: t.controleur.echanges.echec,
   reessayer: t.controleur.echanges.reessayer,
   auteurSoi: t.controleur.echanges.auteurVous,
-  annonce: (String auteur, String texte) =>
-      t.controleur.echanges.nouveauMessage(auteur: auteur, texte: texte),
+  annonce: (String auteur, String texte) => t.controleur.echanges
+      .nouveauMessage(deAuteur: deDevant(auteur), texte: texte),
 );
 
 /// Une surface Material de demonstration : `TextField` et `InkWell` en exigent une, que la page hote fournit dans le produit.

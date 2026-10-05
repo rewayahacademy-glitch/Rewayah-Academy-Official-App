@@ -13,6 +13,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_progression_famille.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
@@ -494,7 +495,9 @@ void main() {
       );
       expect(
         find.text(
-          t.classe.observation.motif.presenceEnVerification(prenom: 'Eleve A1'),
+          t.classe.observation.motif.presenceEnVerification(
+            dePrenom: deDevant('Eleve A1'),
+          ),
         ),
         findsOneWidget,
       );
@@ -713,7 +716,9 @@ void main() {
         depart: '${Routes.classeSousPage(_classe, 'progression')}?eleve=$_a1',
       );
       expect(
-        find.text(t.classe.pageProgression.indisponible(prenom: 'Eleve A1')),
+        find.text(
+          t.classe.pageProgression.indisponible(dePrenom: deDevant('Eleve A1')),
+        ),
         findsOneWidget,
       );
     });

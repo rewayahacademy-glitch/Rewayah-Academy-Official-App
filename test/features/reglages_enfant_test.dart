@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
@@ -139,8 +140,8 @@ void main() {
         for (final String ancien in <String>[
           t.tuteur.reglages.photoAjouter,
           t.tuteur.reglages.photoChanger,
-          t.tuteur.reglages.cameraAutoriser(prenom: 'Ibrahim'),
-          t.tuteur.reglages.cameraRetirer(prenom: 'Ibrahim'),
+          t.tuteur.reglages.cameraAutoriser(dePrenom: deDevant('Ibrahim')),
+          t.tuteur.reglages.cameraRetirer(dePrenom: deDevant('Ibrahim')),
           t.tuteur.reglages.modePasserStandard(prenom: 'Ibrahim'),
           t.tuteur.reglages.modePasserEnfant(prenom: 'Ibrahim'),
           t.tuteur.reglages.cameraInterdite(prenom: 'Ibrahim'),
@@ -150,7 +151,9 @@ void main() {
         // Un seul renvoi par eleve, vers sa fiche.
         expect(find.text(t.reglagesEnfant.renvoi), findsOneWidget);
         expect(
-          find.text(t.reglagesEnfant.renvoiLegende(prenom: 'Ibrahim')),
+          find.text(
+            t.reglagesEnfant.renvoiLegende(dePrenom: deDevant('Ibrahim')),
+          ),
           findsOneWidget,
         );
         // Aucun identifiant interne a l'ecran.
@@ -226,7 +229,11 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.text(t.tuteur.reglages.demandeTitreReaffectation(prenom: 'Amina')),
+        find.text(
+          t.tuteur.reglages.demandeTitreReaffectation(
+            dePrenom: deDevant('Amina'),
+          ),
+        ),
         findsOneWidget,
       );
       // Sans motif, le bouton n'aboutit pas : la base refuse une demande sans

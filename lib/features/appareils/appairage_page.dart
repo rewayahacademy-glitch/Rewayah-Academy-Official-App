@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 import '../../core/appairage/service_appairage.dart';
 import '../../core/appairage/statut_code_appairage.dart';
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -506,7 +507,9 @@ class _AppairagePageState extends ConsumerState<AppairagePage>
           titre: t.appareils.emetteur.confirme.titre,
           phrase: prenom == null || prenom.isEmpty
               ? t.appareils.emetteur.confirme.phraseSansPrenom
-              : t.appareils.emetteur.confirme.phrase(prenom: prenom),
+              : t.appareils.emetteur.confirme.phrase(
+                  dePrenom: deDevant(prenom),
+                ),
           libelleAction: t.appareils.emetteur.confirme.action,
           onAction: _retour,
         );

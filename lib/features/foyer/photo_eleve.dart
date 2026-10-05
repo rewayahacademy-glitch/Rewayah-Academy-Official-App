@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/appairage/service_avatar.dart';
 import '../../core/foyer/selection_eleve.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_palette.dart';
@@ -255,7 +256,7 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
                     avecApercu
                         ? t.ficheEleve.informations.apercuPhrase
                         : t.ficheEleve.informations.photoLegende(
-                            prenom: _profil.prenom,
+                            dePrenom: deDevant(_profil.prenom),
                           ),
                     style: attenue,
                   ),

@@ -12,6 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -330,7 +331,7 @@ void main() {
           find.text(
             t.appareils.retrait.consequence(
               appareil: t.appareils.plateforme.android,
-              prenom: 'Amina',
+              dePrenom: deDevant('Amina'),
             ),
           ),
           findsOneWidget,

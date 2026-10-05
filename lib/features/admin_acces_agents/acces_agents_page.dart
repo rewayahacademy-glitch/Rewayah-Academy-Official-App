@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/agent/service_agent.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
@@ -140,7 +141,7 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
       return;
     }
     _libelle.text = t.admin.agents.libelleAuto(
-      prenom: qui.prenom.isEmpty ? qui.identifiant : qui.prenom,
+      dePrenom: deDevant(qui.prenom.isEmpty ? qui.identifiant : qui.prenom),
       date: ChampDate.ecrire(ref.read(horlogeFormulairesProvider)()),
       duree: _duree,
     );

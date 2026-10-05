@@ -18,7 +18,7 @@
       "coursDans": "الدرس بعد {duree}",
       "coursImminent": "الدرس بعد أقل من دقيقة",
       "rejoindre": "انضمام",
-      "rejoindreLecteur": "الانضمام إلى حصة {classe}",
+      "rejoindreLecteur": "الانضمام إلى حصة {deClasse}",
       "salleOuverte": "القاعة مفتوحة. تبدأ الحصة بعد {duree}.",
       "salleOuverteImminent": "القاعة مفتوحة. تبدأ الحصة بعد أقل من دقيقة.",
       "preparation": "التحضير جارٍ",

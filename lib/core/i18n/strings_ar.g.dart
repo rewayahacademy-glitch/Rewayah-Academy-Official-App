@@ -167,7 +167,7 @@ class _Traductions$classe$entree$ar extends Traductions$classe$entree$fr {
 	@override String coursDans({required Object duree}) => 'الدرس بعد ${duree}';
 	@override String get coursImminent => 'الدرس بعد أقل من دقيقة';
 	@override String get rejoindre => 'انضمام';
-	@override String rejoindreLecteur({required Object classe}) => 'الانضمام إلى حصة ${classe}';
+	@override String rejoindreLecteur({required Object deClasse}) => 'الانضمام إلى حصة ${deClasse}';
 	@override String salleOuverte({required Object duree}) => 'القاعة مفتوحة. تبدأ الحصة بعد ${duree}.';
 	@override String get salleOuverteImminent => 'القاعة مفتوحة. تبدأ الحصة بعد أقل من دقيقة.';
 	@override String get preparation => 'التحضير جارٍ';
@@ -348,7 +348,7 @@ extension on TraductionsAr {
 			'classe.entree.coursDans' => ({required Object duree}) => 'الدرس بعد ${duree}',
 			'classe.entree.coursImminent' => 'الدرس بعد أقل من دقيقة',
 			'classe.entree.rejoindre' => 'انضمام',
-			'classe.entree.rejoindreLecteur' => ({required Object classe}) => 'الانضمام إلى حصة ${classe}',
+			'classe.entree.rejoindreLecteur' => ({required Object deClasse}) => 'الانضمام إلى حصة ${deClasse}',
 			'classe.entree.salleOuverte' => ({required Object duree}) => 'القاعة مفتوحة. تبدأ الحصة بعد ${duree}.',
 			'classe.entree.salleOuverteImminent' => 'القاعة مفتوحة. تبدأ الحصة بعد أقل من دقيقة.',
 			'classe.entree.preparation' => 'التحضير جارٍ',

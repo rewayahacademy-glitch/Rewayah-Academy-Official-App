@@ -8,6 +8,7 @@ import '../../core/appairage/code_local.dart';
 import '../../core/appairage/profils_locaux.dart';
 import '../../core/appairage/service_enfant.dart';
 import '../../core/cache/secure/stockage_securise.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
@@ -341,7 +342,9 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
       // l'affirme donc pas.
       await _oublier(
         profil,
-        message: t.eleveConnexion.profils.jetonAbsent(prenom: profil.prenom),
+        message: t.eleveConnexion.profils.jetonAbsent(
+          dePrenom: deDevant(profil.prenom),
+        ),
       );
       return;
     }
@@ -455,8 +458,9 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
     // commun aux trois taches de l'appareil eleve (saisie, scanner, ici), dont
     // le disque retour et le titre sont alignes sur le panneau (REVUE R-07).
     final bool mobile = AppGabarit.de(context) == Gabarit.mobile;
-    final VoidCallback? retour =
-        _moment == MomentConnexionEleve.ouverture ? null : _retour;
+    final VoidCallback? retour = _moment == MomentConnexionEleve.ouverture
+        ? null
+        : _retour;
     if (mobile) {
       return PageShell(titre: titre, onRetour: retour, child: contenu);
     }
@@ -590,7 +594,7 @@ class _CarteProfil extends StatelessWidget {
       key: EleveConnexionPage.carteKey(profil.id),
       onPress: onPress,
       libelleSemantique: t.eleveConnexion.profils.profilLibelle(
-        prenom: profil.prenom,
+        quePrenom: queDevant(profil.prenom),
       ),
       // AVATAR-1 : avatar centre, prenom centre dessous sur le meme axe.
       child: Center(

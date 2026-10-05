@@ -11,6 +11,7 @@ import '../../core/appairage/service_appairage.dart';
 import '../../core/appairage/service_avatar.dart';
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/foyer/selection_eleve.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/presence/vue_presence.dart';
@@ -219,7 +220,9 @@ class _Contenu extends ConsumerWidget {
           EtatSysteme(
             nature: NatureEtat.aucunResultat,
             titre: t.tuteur.accueil.sansClasseTitre(prenom: profil.prenom),
-            phrase: t.tuteur.accueil.sansClassePhrase(prenom: profil.prenom),
+            phrase: t.tuteur.accueil.sansClassePhrase(
+              quePrenom: queDevant(profil.prenom),
+            ),
             libelleAction: t.classe.catalogue,
             onAction: () => routeur.go(
               Uri(

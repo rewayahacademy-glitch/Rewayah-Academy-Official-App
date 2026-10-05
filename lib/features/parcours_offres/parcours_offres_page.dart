@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/offres/offre_horaire.dart';
@@ -90,9 +91,9 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
   String get _fuseauVu =>
       _fuseau ??
       fuseauSuggere(
-            fuseauConnu: _apprenant?.fuseauFoyer,
-            decalageAppareil: DateTime.now().timeZoneOffset,
-          )?.iana ??
+        fuseauConnu: _apprenant?.fuseauFoyer,
+        decalageAppareil: DateTime.now().timeZoneOffset,
+      )?.iana ??
       'Europe/Paris';
 
   ParcoursApprenant? get _apprenant => ref
@@ -358,10 +359,10 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
     final StatutDiagnostic? diagnostic = _apprenant?.diagnostic;
     final String? reste = switch (diagnostic) {
       StatutDiagnostic.aPlanifier => t.parcours.etatDiagnosticRequisDetail(
-        prenom: _prenom,
+        dePrenom: deDevant(_prenom),
       ),
       StatutDiagnostic.planifie => t.parcours.etatDiagnosticEnAttenteDetail(
-        prenom: _prenom,
+        dePrenom: deDevant(_prenom),
       ),
       StatutDiagnostic.nonRequis || StatutDiagnostic.fait || null => null,
     };

@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/enseignant/modeles_enseignant.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_palette.dart';
@@ -134,7 +135,7 @@ class FicheEleveEnseignant extends StatelessWidget {
           ),
           avatar: Semantics(
             image: true,
-            label: t.enseignant.eleve.photo(prenom: eleve.prenom),
+            label: t.enseignant.eleve.photo(dePrenom: deDevant(eleve.prenom)),
             child: ExcludeSemantics(
               child: PhotoEleve(
                 prenom: eleve.prenom,

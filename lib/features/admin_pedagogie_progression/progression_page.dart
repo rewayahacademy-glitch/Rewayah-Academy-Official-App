@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_programme.dart';
 import '../../core/admin/service_progression.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
@@ -71,9 +72,10 @@ class _ProgressionPageEtat extends ConsumerState<ProgressionPage> {
                         eleves: eleves.requireValue,
                         cycle: _cycle,
                         onCycle: (String? c) => setState(() => _cycle = c),
-                        onPoserException:
-                            (EleveProgression e, TypeExceptionProgression type) =>
-                                _ouvrirPoseException(context, ref, e, type),
+                        onPoserException: (
+                          EleveProgression e,
+                          TypeExceptionProgression type,
+                        ) => _ouvrirPoseException(context, ref, e, type),
                         onClorerException: (EleveProgression e) =>
                             _ouvrirClotureException(context, ref, e),
                         onPromouvoir: (EleveProgression e) =>
@@ -188,7 +190,8 @@ class _Corps extends StatelessWidget {
                     ? const SizedBox.shrink()
                     : StatusPill(
                         libelle: _libelleType(e.exceptionActiveType!),
-                        ton: e.exceptionActiveType ==
+                        ton:
+                            e.exceptionActiveType ==
                                 TypeExceptionProgression.blocage
                             ? TonEtat.avertissement
                             : TonEtat.neutre,
@@ -280,11 +283,7 @@ void _ouvrirPoseException(
       libelleEnvoyer: t.admin.progression.poserExceptionEnvoyer,
       onEnvoyer: (String motif) => ref
           .read(serviceProgressionProvider)
-          .poserException(
-            studentId: eleve.studentId,
-            type: type,
-            motif: motif,
-          ),
+          .poserException(studentId: eleve.studentId, type: type, motif: motif),
       messageErreur: t.admin.progression.poserExceptionErreur,
       onSucces: () => ref.invalidate(progressionProvider),
     ),
@@ -300,7 +299,9 @@ void _ouvrirClotureException(
   if (id == null) return;
   AppBottomSheet.ouvrir<void>(
     context,
-    titre: t.admin.progression.clorerExceptionTitre(eleve: eleve.libelle),
+    titre: t.admin.progression.clorerExceptionTitre(
+      deEleve: deDevant(eleve.libelle),
+    ),
     constructeur: (BuildContext contexte) => _FeuilleMotif(
       libelleEnvoyer: t.admin.progression.clorerExceptionEnvoyer,
       onEnvoyer: (String motif) => ref
@@ -319,9 +320,10 @@ void _ouvrirPromotion(
 ) {
   AppBottomSheet.ouvrir<void>(
     context,
-    titre: t.admin.progression.promouvoirTitre(eleve: eleve.libelle),
-    constructeur: (BuildContext contexte) =>
-        _FeuillePromotion(eleve: eleve),
+    titre: t.admin.progression.promouvoirTitre(
+      deEleve: deDevant(eleve.libelle),
+    ),
+    constructeur: (BuildContext contexte) => _FeuillePromotion(eleve: eleve),
   );
 }
 
@@ -384,7 +386,10 @@ class _FeuillePromotionEtat extends ConsumerState<_FeuillePromotion> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(t.admin.progression.promouvoirChampNiveau, style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          t.admin.progression.promouvoirChampNiveau,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         Ecart.vMd,
         switch (versionActive) {
           AsyncValue<VersionProgramme?>(hasValue: true) =>
@@ -402,19 +407,30 @@ class _FeuillePromotionEtat extends ConsumerState<_FeuillePromotion> {
           _ => const Skeleton.liste(lignes: 2),
         },
         Ecart.vLg,
-        Text(t.admin.progression.champMotif, style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          t.admin.progression.champMotif,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         Ecart.vSm,
-        Text(t.admin.progression.motifRequis, style: Theme.of(context).textTheme.bodySmall),
+        Text(
+          t.admin.progression.motifRequis,
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
         Ecart.vSm,
         TextField(
           controller: _motif,
           maxLines: 2,
           onChanged: (String _) => setState(() {}),
-          decoration: InputDecoration(labelText: t.admin.progression.champMotif),
+          decoration: InputDecoration(
+            labelText: t.admin.progression.champMotif,
+          ),
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
-          Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          Text(
+            _erreur!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
         ],
         Ecart.vLg,
         ActionPrincipale(
@@ -501,9 +517,7 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
       widget.onSucces();
       if (mounted) Navigator.of(context).pop();
     } catch (erreur) {
-      setState(
-        () => _erreur = widget.messageErreur(message: _message(erreur)),
-      );
+      setState(() => _erreur = widget.messageErreur(message: _message(erreur)));
     } finally {
       if (mounted) setState(() => _envoi = false);
     }
@@ -514,17 +528,25 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Text(t.admin.progression.motifRequis, style: Theme.of(context).textTheme.bodySmall),
+        Text(
+          t.admin.progression.motifRequis,
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
         Ecart.vSm,
         TextField(
           controller: _motif,
           maxLines: 2,
-          decoration: InputDecoration(labelText: t.admin.progression.champMotif),
+          decoration: InputDecoration(
+            labelText: t.admin.progression.champMotif,
+          ),
           onChanged: (String _) => setState(() {}),
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
-          Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          Text(
+            _erreur!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
         ],
         Ecart.vLg,
         ActionPrincipale(

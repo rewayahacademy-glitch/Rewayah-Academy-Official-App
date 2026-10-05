@@ -15,6 +15,7 @@ import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/appairage/statut_code_appairage.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
@@ -176,7 +177,7 @@ void main() {
         await stabiliser(tester);
         expect(lieu(routeur), Routes.ficheElevePour('e1'));
         final Finder appareils = find.text(
-          t.ficheEleve.lignes.appareils(prenom: 'Amina'),
+          t.ficheEleve.lignes.appareils(dePrenom: deDevant('Amina')),
         );
         await tester.ensureVisible(appareils);
         await tester.tap(appareils);
@@ -328,7 +329,9 @@ void main() {
         expect(find.bySemanticsLabel(RegExp('QR')), findsNothing);
         expect(find.text(t.appareils.emetteur.confirme.titre), findsOneWidget);
         expect(
-          find.text(t.appareils.emetteur.confirme.phrase(prenom: 'Amina')),
+          find.text(
+            t.appareils.emetteur.confirme.phrase(dePrenom: deDevant('Amina')),
+          ),
           findsOneWidget,
         );
 

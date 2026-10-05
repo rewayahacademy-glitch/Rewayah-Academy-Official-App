@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/presence/service_presence.dart';
@@ -65,9 +66,11 @@ String texteMotif(MotifIndisponibilite motif, {required String prenom}) {
     MotifIndisponibilite.horsFenetre => m.horsFenetre,
     MotifIndisponibilite.observationDesactivee => m.observationDesactivee,
     MotifIndisponibilite.lienAbsent => m.lienAbsent,
-    MotifIndisponibilite.enfantAbsent => m.enfantAbsent(prenom: prenom),
+    MotifIndisponibilite.enfantAbsent => m.enfantAbsent(
+      dePrenom: deDevant(prenom),
+    ),
     MotifIndisponibilite.presenceEnVerification => m.presenceEnVerification(
-      prenom: prenom,
+      dePrenom: deDevant(prenom),
     ),
     MotifIndisponibilite.visiteDejaOuverte => m.visiteDejaOuverte,
     MotifIndisponibilite.garantieServeurAbsente => m.garantieServeurAbsente,

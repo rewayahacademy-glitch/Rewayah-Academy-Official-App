@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/domain/enums.dart';
 import '../../core/foyer/selection_eleve.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
@@ -345,7 +346,9 @@ class _ContenuFiche extends ConsumerWidget {
         lignes: <LigneRubrique>[
           LigneRubrique(
             icone: AppIcons.appareil,
-            libelle: t.ficheEleve.lignes.appareils(prenom: profil.prenom),
+            libelle: t.ficheEleve.lignes.appareils(
+              dePrenom: deDevant(profil.prenom),
+            ),
             legende: t.ficheEleve.lignes.appareilsLegende,
             // Le retour des appareils ramene a cette fiche (`?retour=`), pas
             // aux appareils du foyer d'ou l'on ne vient pas (B-5).

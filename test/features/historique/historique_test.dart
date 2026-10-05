@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
@@ -462,7 +463,9 @@ void main() {
       expect(find.text(t.historique.seances.videTitre), findsOneWidget);
       expect(
         find.text(
-          t.historique.seances.videPhrase(prenom: FoyersFictifs.a1.prenom),
+          t.historique.seances.videPhrase(
+            dePrenom: deDevant(FoyersFictifs.a1.prenom),
+          ),
         ),
         findsOneWidget,
       );
