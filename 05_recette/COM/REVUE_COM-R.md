@@ -401,3 +401,88 @@ Les décisions du directeur restent ouvertes :
 - le Focus à 320×2 (constat 5) ;
 - les neuf décisions de `DECISIONS_COM_FUS.md`, dont l'historique de com-commu dans com-ann
   (COM-ANN-2).
+
+## 8. Contre-vérification du tour 5 de COM-RC (COM-R-4)
+
+Date : 5 octobre 2026. Session 01HS7t3c, qui n'a écrit aucun code COM. Lecture seule.
+
+Périmètre :
+- code : `ui/communications-v1` @ `a1a33222`, diff depuis `27689f94` (17 commits, 56 fichiers) ;
+- pilotage : `pilotage/tuteur-v1` @ `2eccde92` (`DECISIONS_COM_FUS.md`, `QUESTIONS.md`,
+  `LIBELLES_COM_RELECTURE.md`, `UX_REVIEW_COM-STU-1..3`) ; décisions du 05/10 lues dans ces
+  fichiers, pas dans l'artefact.
+
+Méthode : relecture du diff et des tests ; comparaison scriptée de `fr` et `ar.i18n.json` et de
+`libelles_sources.json` entre `27689f94` et `a1a33222` ; aucune capture relue (aucune refaite).
+
+### 8.1 Chiffres rejoués (worktree propre à `a1a33222`)
+
+| Contrôle | Annoncé | Rejoué |
+| :--- | :--- | :--- |
+| `dart analyze --fatal-infos` | 0 | 0 |
+| `flutter test -j 3` (suite complète) | +6400, ~3082, 0 échec | +6400, ~3082, 0 échec (« All tests passed! », 11 min 28 s) |
+| `verifier_jetons` | 39 | 39 |
+| `verifier_revue` | 1627 | 1627 |
+
+Aucun fichier `supabase/`, `.github/` ni `pubspec.yaml` touché ; worktree propre après `slang` et
+`build_runner`.
+
+### 8.2 Constats attendus
+
+| # | État | Preuve à `a1a33222` |
+| :--- | :--- | :--- |
+| 7.3-1 (brouillon) | **corrigé**, défaut résiduel (8.3-1) | `persistance_brouillon.dart:62-101` (textes en attente par port et clé) ; `fil_discussion.dart:726-767` ; tests `com_rc_tour5_lot_h_test.dart:356-531` (A échoue puis B confirmé ; accusé fil fermé ; fil rouvert avant l'accusé) |
+| 7.3-2 (lecture seule) | **corrigé** | `fil_discussion.dart:979-989` : ligne compacte seulement à texte agrandi ou vue basse ; tests l.555-600 (1440 en-tête complet, 320×2 compacte) |
+| 7.3-3 (N-9) | **corrigé** | borne 60 % / 75 % quand le vocal est ouvert (`fil_discussion.dart:422-432`), saisie menée à son bas (l.779-803) ; tests l.602-690 : carte entière, « Envoyer » et « Supprimer » à l'écran à 390 et 1440 |
+| 7.3-4 (horloge) | **corrigé** | `horlogeNotificationsProvider` (`notifications_page.dart:335`, `:462`) passé à la ligne (`:588`) ; test d'horloge injectée dans `notifications_test.dart` |
+| 7.3-5 (Focus 320×2) | **corrigé** selon la décision (zone réduite à une ligne) | `FilDiscussion.saisieReduite` (`fil_discussion.dart:1010-1020`, seuil `largeurReduite = 360`) ; test l.871 : une bulle entière visible, champ et sortie atteignables |
+| 7.3-6 (`build`) | **corrigé** | `canal_page.dart:334`, dans l'écoute d'`EtatFocusStudio` ; test source l.692 |
+| 7.3-7 (tests N-1) | **corrigé** | enseignant 320×2 et vue basse (l.734), Focus du Studio en vue basse (l.762) |
+| 7.3-8 (nom, retour) | **corrigé** | nom sans fonction sur deux lignes, sémantique entière ; `retourCompacte` (`fil_discussion.dart:807-828`) ; test l.798 |
+| R-03 (D-FUS-3 = a) | **corrigé** | `PageShell.bandeauHorsLigne` (`page_shell.dart`) ; les 13 `PageShell` des Communications le renseignent ; test `com_rc5_lot_i_bandeau_test.dart`. Voir 8.3-2 |
+| R-08 (D-FUS-1 = a) | **corrigé** | mois, jours et gabarits de date ajoutés en arabe (`historique.*`, `commun.dates.*`) ; test `com_rc5_lot_i_dates_test.dart`. Clés globales : l'effet dépasse COM, dans le bon sens |
+| R-12 (= a) | **corrigé** | `action_principale.dart` : `Center(widthFactor: 1)` ; « Mode focus » et « Quitter le focus » au début (`9cd8c394`) ; tests `action_principale_compacte_test.dart`, `com_rc5_r12_alignement_test.dart` (320×2, 390, 1440, arabe) |
+| R-16 (= a) | **corrigé** | `seanceAvantAnnonces` (`classe_tuteur_page.dart:89-110`) à l'heure serveur : salle ouverte, en direct, prolongée, ou à moins de 5 min (`seuilImminence`). « Proche » = 5 min est une lecture de l'auteur ; tests `classe_tuteur_test.dart` |
+| R-27 (= a) | **corrigé** | `entree_communaute.dart` lit `capacitesCommunauteProvider` (capacité, pas rôle) : `CapaciteIndisponible` ou lecture en cours, rien n'est rendu ; tests `journee_test.dart` (production et démo) |
+| R-28 (= a) | **corrigé** | micro (`BoutonIcone`, cible 48) à côté d'« Envoyer », seulement si `envoyerVocal` est ouverte (`fil_discussion.dart:944`, `composer_vocal.dart:504`) ; tests l.980-1080 (libellé arabe compris) |
+| D-FUS-9 (icônes) | **corrigé** | `AppIcons.signet` ajouté (`app_icons.dart`), `epingle` et `lien` employés ; un fichier sans pièce prend `supports` (`61a4c96a`) ; test `com_rc5_lot_i_icones_test.dart` |
+| Libellés (D-FUS-8) | **corrigé** | les 26 lignes de `LIBELLES_COM_RELECTURE.md` (25 + `reponse.avertissement`) sont au mot près dans `fr.i18n.json` ; 24 changent en arabe, les 2 autres y étaient déjà justes (`messagesDetail`, `demo.roles.admin`). Les 658 libellés validés portent « validé par délégation le 05/10 » et **aucun** n'a changé de texte. Seul autre changement du français : la clé nouvelle `composer.enregistrerVocal` (R-28), sourcée. Les 15 orphelines sont retirées ; parité `com.*` et `notifications.*` fr/ar complète (759 clés) |
+
+Restes déclarés :
+- **Captures COM-CAPT non refaites** : acceptable pour `verifie` de COM-RC, car chaque changement
+  visuel est mesuré par un test de géométrie aux vraies largeurs. Non acceptable pour la recette
+  humaine : COM-CAPT doit être rejouée à `a1a33222` (R-12, micro, Focus réduit, retour compact,
+  icônes, bandeau, dates arabes) avant HU-1.
+- **Arabe de 23 libellés corrigés non relu par un arabophone** : acceptable tant que rien n'est
+  branché ni déployé. À relire avant toute ouverture en arabe, avec la typographie (« : » précédé
+  d'une espace, à la française, dans `garde.panne`, `indicateurs.echec`, `publieur.horsLigne`).
+
+### 8.3 Constats nouveaux, tous mineurs
+
+| # | Fichier:ligne | Constat | Correction proposée |
+| :--- | :--- | :--- | :--- |
+| 1 | `core/widgets/fil_discussion.dart:759-767`, `persistance_brouillon.dart:160` | Lu dans le code, non rejoué : un accusé reçu par un fil **fermé** efface le brouillon de la clé sans condition. Si le fil a été rouvert et qu'on y a tapé Y entre-temps, Y est effacé du port ; le champ le montre encore, mais il est perdu si l'on ressort sans retoucher le texte. | N'effacer que si le brouillon gardé vaut encore `m.brut` (un `effacerSi(cle, texte)` dans la persistance) ; un test « rouvert, Y saisi, puis accusé ». |
+| 2 | `test/features/com_annonces/admin_communications_test.dart:309-313`, `admin_moderation_test.dart:444-448` | Hors ligne, la même phrase « Vous êtes hors ligne. Les nouveaux messages ne peuvent pas être actualisés. » paraît trois fois (bandeau et deux blocs) sur l'Administration des communications, deux fois sur la Modération. Le texte parle de « messages » sur des pages d'annonces. D-FUS-3 retire le doublon de bandeau, pas la répétition. | Sous un bandeau, les blocs disent seulement ce qui n'est pas chargé, avec « Réessayer » ; un texte de bandeau propre aux annonces. |
+| 3 | `features/com_studio/liste_canaux.dart:122` ; `aujourdhui_page.dart:328` | Les ajustements demandés par `UX_REVIEW_COM-STU-1` (point 6 : 20 au lieu de 24 entre sections) et `UX_REVIEW_COM-STU-2` (points 4 et 14 : 32 au-delà de 600, squelette d'Aujourd'hui) ne sont pas dans ce tour. Les revues les rattachaient « au tour 5 ou à la passe d'harmonisation ». | Les ranger explicitement dans la passe d'harmonisation (DESIGN-GOV §4 bis.8), ou les corriger. |
+
+Vérifié sans défaut dans ce diff :
+- aucun rôle lu, aucune permission inventée (micro et raccourci derrière une capacité) ;
+- aucune couleur, police ni rayon en dur (jetons 39, inchangé) ;
+- aucune démo hors `environnementAutoriseDemo`, aucun appel réseau, aucun backend ;
+- aucun `skip` ajouté ; quatre tests renommés, aucun supprimé ; trois `expect` retirés, chacun
+  remplacé par une assertion plus stricte (189 ajoutés) ;
+- contrôleurs, écouteurs et `ValueNotifier` du micro libérés (`fil_discussion.dart:628-640`) ;
+- aucun tiret cadratin.
+
+### 8.4 Verdict de COM-R-4 : COM-RC (tour 5) ACCEPTÉE, COM-RC-5 passe à `verifie`
+
+Les huit mineurs de COM-R-3 §7.3 sont corrigés et testés. Les décisions R-03, R-08, R-12, R-16,
+R-27, R-28, le Focus à 320×2, D-FUS-9 et les 25 libellés sont appliqués, et les chiffres
+annoncés se rejouent à l'identique. Il ne reste que trois mineurs (8.3) et deux restes déclarés.
+
+- Statut de preuve : `présent dans le code` et `testé localement`. Rien n'est branché, testé
+  sur staging ni déployé ; `verifie` ne vaut ni fusion dans `main` ni mise en production.
+- Avant HU-1 : COM-CAPT rejouée à `a1a33222` et relue ; arabe des libellés corrigés relu par un
+  arabophone.
+- Restent au directeur : la colonne « Validation requise » (COM-BR-11) et la lecture « proche =
+  5 min » de R-16.
