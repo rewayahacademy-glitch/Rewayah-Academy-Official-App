@@ -13,9 +13,14 @@ import '../../core/theme/app_spacing.dart';
 ///
 /// Sans elle, Flutter ne teste un enfant que dans la boite de ses parents :
 /// une cible de 48 (72 en guidee) posee sur une ligne de texte de 16 ne
-/// recevrait que les touches de la ligne. La zone teste d'abord ses cibles
-/// inscrites, puis le reste de l'arbre, comme d'habitude. Elle ne dessine
-/// rien et ne change aucune mesure.
+/// recevrait que les touches de la ligne. La zone teste d'abord le reste de
+/// l'arbre, comme d'habitude : si la touche tombe sur une autre commande
+/// (le chevron Retour, un bouton de l'en-tete), cette commande la garde. Ce
+/// n'est que si rien de pressable ne l'a prise que la zone la donne a une
+/// cible debordante qui la couvre. Une cible debordante ne l'emporte donc
+/// jamais sur une autre commande, meme quand elle passe sous le chevron
+/// (salle guidee a 320, le lien sous la mention). Elle ne dessine rien et ne
+/// change aucune mesure.
 ///
 /// Une cible ne s'etend jamais hors de la zone : la zone la plus proche (ici
 /// l'en-tete de la salle) borne ce qu'elle peut couvrir.
@@ -32,17 +37,30 @@ class _RenderZoneCibles extends RenderProxyBox {
 
   @override
   bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
+    // L'arbre normal d'abord : une commande touchee garde la touche.
+    final int avant = result.path.length;
+    final bool arbre = super.hitTestChildren(result, position: position);
+    if (result.path.skip(avant).any(_estCommande)) return true;
+    // Rien de pressable n'a pris la touche : une cible debordante peut la
+    // recevoir. Les entrees deja posees (fonds, textes) ne reagissent a rien.
     for (final _RenderCibleDebordante cible in _cibles) {
       if (!cible.attached || !cible.hasSize) continue;
       final bool touche = result.addWithPaintTransform(
         transform: cible.getTransformTo(this),
         position: position,
         hitTest: (BoxHitTestResult r, Offset p) =>
-            cible.hitTest(r, position: p),
+            cible.hitTestCible(r, position: p),
       );
       if (touche) return true;
     }
-    return super.hitTestChildren(result, position: position);
+    return arbre;
+  }
+
+  /// Une entree qui reagit au doigt : l'ecouteur d'un `GestureDetector`
+  /// (donc de tout `Pressable`, `InkWell` ou bouton Material).
+  static bool _estCommande(HitTestEntry entree) {
+    final Object cible = entree.target;
+    return cible is RenderPointerListener && cible.onPointerDown != null;
   }
 }
 
@@ -59,6 +77,13 @@ class _RenderZoneCibles extends RenderProxyBox {
 /// (`Pressable(respecterCibleTactile: false)`) : c'est cet objet qui porte la
 /// cible, sans la dessiner, pour que l'anneau de focus reste serre sur le
 /// texte.
+///
+/// Le noeud semantique du lien garde la boite du texte, volontairement : a
+/// 320 la cible agrandie passe sous le chevron Retour, et un noeud agrandi
+/// le recouvrirait pour l'exploration au toucher des lecteurs d'ecran (le
+/// defaut que la zone evite pour le doigt). Un lecteur d'ecran active le
+/// lien par double-tape une fois le noeud atteint, ou il l'atteint en
+/// balayant ; la taille du noeud n'y change rien.
 class CibleDebordante extends SingleChildRenderObjectWidget {
   /// Cree la cible.
   const CibleDebordante({
@@ -131,8 +156,17 @@ class _RenderCibleDebordante extends RenderProxyBox {
     );
   }
 
+  /// Dans l'arbre normal, la cible ne prend que les touches de sa boite
+  /// visible : elle ne peut pas y passer devant une voisine. Sa cible agrandie
+  /// n'est testee que par la zone ([hitTestCible]), apres les autres
+  /// commandes.
   @override
-  bool hitTest(BoxHitTestResult result, {required Offset position}) {
+  bool hitTest(BoxHitTestResult result, {required Offset position}) =>
+      super.hitTest(result, position: position);
+
+  /// La touche [position] tombe dans la cible agrandie : elle est rendue a
+  /// l'enfant en son centre.
+  bool hitTestCible(BoxHitTestResult result, {required Offset position}) {
     final RenderBox? enfant = child;
     if (enfant == null || !cible.contains(position)) return false;
     final Offset centre = enfant.size.center(Offset.zero);

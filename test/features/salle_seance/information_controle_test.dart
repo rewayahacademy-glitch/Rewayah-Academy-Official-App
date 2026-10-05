@@ -211,6 +211,7 @@ void main() {
       double densite, {
       ThemeMode mode = ThemeMode.light,
       double echelle = 1,
+      VoidCallback? onSortir,
     }) async {
       tester.view.physicalSize = taille * densite;
       tester.view.devicePixelRatio = densite;
@@ -220,7 +221,7 @@ void main() {
           SalleDemo(
             role: RoleSeance.guidee,
             etat: EtatDemoSalle.repos,
-            onSortir: () {},
+            onSortir: onSortir ?? () {},
           ),
           themeMode: mode,
           echelleTexte: echelle,
@@ -284,6 +285,68 @@ void main() {
       await tester.tapAt(centre + const Offset(0, 24));
       await stabiliser(tester);
       expect(find.text(t.salle.informationControle.e1.titre), findsNothing);
+    });
+
+    // Revue croisee du 05/10 : a 320 le lien passe sous la mention, sans
+    // retrait, et sa cible agrandie monte jusque sous le chevron Retour. Le
+    // chevron garde toujours ses touches ; la cible ne prend que les touches
+    // qui ne tombent sur aucune autre commande.
+    Finder chevron() => find.bySemanticsLabel(t.salle.seance.retour);
+    Finder e1Titre() => find.text(t.salle.informationControle.e1.titre);
+
+    for (final double largeur in <double>[320, 390]) {
+      final Size taille = Size(largeur, largeur == 320 ? 690 : 844);
+      testWidgets('${largeur.toInt()} : le chevron Retour garde ses touches, '
+          'au centre et aux bords (sortie, pas de feuille)', (
+        WidgetTester tester,
+      ) async {
+        int sorties = 0;
+        await salle(tester, taille, 2, onSortir: () => sorties++);
+        expect(chevron(), findsOneWidget);
+        final Rect r = tester.getRect(chevron());
+        final List<Offset> points = <Offset>[
+          r.center,
+          r.topLeft + const Offset(1, 1),
+          r.topRight + const Offset(-1, 1),
+          r.bottomLeft + const Offset(1, -1),
+          r.bottomRight + const Offset(-1, -1),
+          r.centerLeft + const Offset(1, 0),
+          r.centerRight + const Offset(-1, 0),
+          r.topCenter + const Offset(0, 1),
+          r.bottomCenter + const Offset(0, -1),
+        ];
+        for (final Offset p in points) {
+          await tester.tapAt(p);
+          await stabiliser(tester);
+          expect(e1Titre(), findsNothing, reason: 'touche en $p');
+        }
+        expect(sorties, points.length);
+      });
+
+      testWidgets('${largeur.toInt()} : une touche sur la carte du cours '
+          "n'ouvre rien", (WidgetTester tester) async {
+        int sorties = 0;
+        await salle(tester, taille, 2, onSortir: () => sorties++);
+        await tester.tapAt(tester.getCenter(find.text('Chapitre 1').first));
+        await stabiliser(tester);
+        expect(e1Titre(), findsNothing);
+        expect(sorties, 0);
+      });
+    }
+
+    testWidgets('320 : la touche a -30 du lien, hors de toute autre commande, '
+        'ouvre toujours E-1', (WidgetTester tester) async {
+      int sorties = 0;
+      await salle(tester, const Size(320, 690), 2, onSortir: () => sorties++);
+      final Offset p = tester.getCenter(_lien) + const Offset(0, -30);
+      // Le point est bien au-dessus du lien, hors du chevron et de toute
+      // autre commande de l'en-tete.
+      expect(tester.getRect(chevron()).contains(p), isFalse);
+      expect(tester.getRect(_lien).contains(p), isFalse);
+      await tester.tapAt(p);
+      await stabiliser(tester);
+      expect(e1Titre(), findsOneWidget);
+      expect(sorties, 0);
     });
 
     for (final double densite in <double>[1, 2]) {
