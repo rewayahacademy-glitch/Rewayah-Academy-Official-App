@@ -470,3 +470,79 @@ l'image » ne vaut pas `PASS`.
 | R-26 Test « aucun rôle lu » incomplet | présent dans le code (lot C : trois chemins ajoutés) | commit `87e7c6da` |
 | R-27 Raccourci Communauté en impasse | non traité (hors champ), à arbitrer | aucune capture |
 | R-28 Chiffre de COM-CAPT | corrigé : « 14 défauts numérotés » et écarts reportés | section « Défauts transmis » ci-dessus |
+
+## Après COM-RC tour 4
+
+Date : 5 octobre 2026. Captures refaites sur `ui/communications-v1` @ `38534685` (COM-RC
+tour 4 : lot F, fil de discussion, N-1, N-3, N-4, N-6, N-8, N-9 ; lot G, Communauté et
+annonces, R-01 réserves, R-23, N-2, N-5, N-7, N-10), plus le test de capture modifié au commit
+`27689f94` : le Focus du Studio est aussi capturé en texte ×2 à 320, et l'entrée en Focus
+remonte le fil quand « Mode focus » a défilé avec l'en-tête (comme
+`test/features/com_studio/support_focus.dart`). Les cas « Messages admin à 390 » et « tuteur à
+320 en texte ×1 » existaient déjà (écrans principaux). **187 captures** dans `com-v1/`, qui
+remplacent les 186 de `022cc31e` (56 fichiers modifiés, 1 ajouté :
+`com_studio_focus_320x2_clair.png`). **Aucun débordement de rendu** : `com_debordements.txt`
+n'est pas produit. Chaque PNG cité ci-dessous a été lu.
+
+Statut de preuve : `présent dans le code` et `testé localement` (rendu d'un état de
+démonstration). Rien n'est branché, rien n'est testé sur staging, rien n'est déployé.
+
+### Constats N-1 à N-10 de COM-R-2, R-01, R-21 et R-23
+
+| Constat | Verdict | Capture ou preuve |
+| :--- | :--- | :--- |
+| N-1 Fil ouvert sans contexte à texte ×1 (majeur) | **corrigé** : la ligne compacte de contexte reste fixe au-dessus de la liste. Admin à 390 : « M. Rachid, Contrôleur pédagogique », « Visite de contrôle, Classe An-Nour » et (i), sous l'onglet « Messages », avec les deux derniers messages, le champ et « Envoyer » entiers. Admin à 320 : « M. Rachid, Contrôleur pédag… » et (i). Tuteur à 320 : « Mme Mariam, Enseignante d… », « Classe An-Nour · Adam » et (i) sous « Messages métier » | `com_admin_messages_390_clair.png`, `com_admin_messages_320_clair.png`, `com_messages_fil_tuteur_320_clair.png` |
+| N-1 à texte ×2 | **corrigé** : la ligne de contexte (« Mme Mariam, Ense… », « Fatima, Parent de … », « Organisation géné… ») est en tête fixe, au-dessus de la fin de la dernière bulle, du champ, d'« Envoyer » et du lien vocal. Le titre de la page (« Messages métier », « Le Studio ») défile hors de vue, mais le nom du fil reste : le nouveau n° 4 du tour 3 est tenu | `com_messages_fil_tuteur_320x2_clair.png`, `com_messages_fil_contexte_enseignant_320x2_clair.png`, `com_studio_canal_320x2_clair.png` |
+| N-1 enseignant à 390 | corrigé, inchangé : en-tête complet (avatar, « Fatima, Parent de Yasmine », (i)) | `com_messages_fil_contexte_enseignant_390_clair.png` |
+| N-2 Ctrl/Cmd+Entrée dans le composer de réponse | présent dans le code (lot G) ; non vérifiable à l'image | commit `eb0447cc` |
+| N-3 Brouillon effacé avant l'accusé | présent dans le code (lot F, test `com_rc_tour4_lot_f_test.dart`) ; non vérifiable à l'image | commit `12bf1cc7` |
+| N-4 Focus à texte ×2, saisie hors écran | **corrigé** : à l'entrée du Focus, à 320 ×2, « Le Studio », « Focus activé », « Quitter le focus », « Organisation générale », puis le champ « Message », « Envoyer » entier et le lien vocal, tous au premier écran. Aucun message du canal n'y reste visible : la saisie occupe l'écran | `com_studio_focus_320x2_clair.png` (nouvelle) |
+| N-5 Cas « aucune audience » non testé ; colonne vide à 1440 | **corrigé** : à 1440 sans publication, « Aucune publication », « Aucune publication pour le moment. », une seule fois, au centre. La colonne de gauche reste blanche au-dessus de « Nouvelle publication » ; le test `aucuneCibleTitre` est présent dans le code, non vérifiable à l'image | `com_communaute_vide_1440_clair.png`, commit `eb0447cc` |
+| N-6 Seuils recopiés | présent dans le code (lot F : `SeuilsTexteAgrandi`) ; non vérifiable à l'image | commit `12bf1cc7` |
+| N-7 Test « aucun rôle » incomplet | présent dans le code (lot G : `champ_recherche`, `surface_recherche`, `page_shell`) ; non vérifiable à l'image | commit `eb0447cc` |
+| N-8 `lecteursVocauxDuMessage`, code mort | présent dans le code : aucune occurrence dans `lib/`, test de contre-preuve ; CARTE_FONCTIONS à jour (l.46) | commit `12bf1cc7`, `729cb967` |
+| N-9 Panneau de pré-écoute collé au bas | **restant en partie** : à 390, un espace sépare désormais le panneau de la barre de navigation, mais le panneau est coupé en bas (bord et coins inférieurs absents sous « Supprimer » et « Envoyer ») ; à 1440, le panneau va jusqu'au bord de la page et son bord bas est coupé de même | `com_vocal_pre_ecoute_tuteur_390_clair.png`, `com_vocal_pre_ecoute_tuteur_1440_sombre.png` |
+| N-10 Date sur deux lignes | **corrigé** : « 4 oct. » puis l'heure « 11:00 », sans l'année en cours | `com_notifications_enseignant_390_clair.png` |
+| N-10 Pastille de motif étirée | **corrigé** : « Lien affilié » et « Vente non autorisée » à la largeur de leur texte ; « Contenu sans rapport avec la communauté » tient dans une pastille sur deux lignes, sans s'étirer | `com_admin_moderation_1440_clair.png` |
+| N-10 Virgule arabe dans du français | **corrigé** : « Dimanche 4 octobre · 09:54 », séparateur neutre. La date reste en français en arabe (R-08, attend D-FUS-1) | `com_messages_fil_tuteur_390_rtl_clair.png` |
+| R-01 Réponse hors garde, réserves | **corrigé** : sous la réponse, le verdict a pour en-tête le texte du §5.2 (« Les liens affiliés ne sont pas autorisés dans la Communauté enseignants. »), sans titre inventé, puis « Motif : Lien affilié », le lien marqué « Lien commercial interdit » et « Modifiez la réponse, puis envoyez-la de nouveau. » ; à 390 et à 1440. Le refus du serveur (`ContenuRefuse`) est présent dans le code, non vérifiable à l'image | `com_communaute_reponse_bloquee_390_clair.png`, `com_communaute_reponse_bloquee_1440_clair.png`, commit `eb0447cc` |
+| R-01 Publication | corrigé, inchangé à 390 (texte entier, « Pédagogie », « Enregistrer la publication », « Réponses (2) ») ; à 320×2, titre et début du texte au premier écran, composer en défilant (« Votre réponse », « Envoyer la réponse », rappel des règles). La publication bloquée garde son titre « Publication bloquée » au-dessus du texte du §5.2 | `com_communaute_publication_390_clair.png`, `com_communaute_publication_320x2_clair.png`, `com_communaute_publication_composer_320x2_clair.png`, `com_communaute_garde_bloque_390_clair.png` |
+| R-21 Capacités mortes, carte | **corrigé** : capacités retirées du code (lot B) ; CARTE_FONCTIONS cite `recherche_fils.dart` (fichier présent), retire `lecteursVocauxDuMessage`, ajoute `ChampRecherche`, `SurfaceRecherche`, `PersistanceBrouillon` et `SeuilsTexteAgrandi` | `CARTE_FONCTIONS.md` l.37, l.46, l.81-82, commit `729cb967` |
+| R-23 Orchestration recopiée | présent dans le code : `publication_detail.dart`, `annonces_de_classe.dart` et `publier_annonce_classe_page.dart` passent par `VueEtatCommunication.depuisErreur` ; non vérifiable à l'image (aucun état d'erreur capturé). L'annonce de Classe s'affiche comme au tour 3 | commit `eb0447cc`, `com_annonce_classe_tuteur_390_clair.png` |
+
+### Restes des tours précédents, revus
+
+| Reste | Verdict | Capture |
+| :--- | :--- | :--- |
+| R-12 Focus à 1440 | **restant** : « Quitter le focus » centré ; « Envoyer » dépasse toujours le fil (bulles de 320 à 1007, bouton jusqu'à ~1120) | `com_studio_focus_1440_clair.png` |
+| R-03 Double bandeau hors ligne | restant, attend D-FUS-3 | `com_messages_hors_ligne_tuteur_390_clair.png` |
+| R-08 Dates en français en arabe | restant, attend D-FUS-1 (« Dimanche 4 octobre · 09:54 ») | `com_messages_fil_tuteur_390_rtl_clair.png` |
+| R-16 Annonce avant la séance | restant, arbitrage du directeur | `com_annonce_classe_tuteur_390_clair.png` |
+| Vocal ouvert par un lien | restant : « Enregistrer un message vocal » sous le champ | `com_admin_messages_390_clair.png` |
+
+### Défauts nouveaux
+
+1. **Ligne de contexte tronquée à 320** : « Mme Mariam, Enseignante d… » (×1), « Mme Mariam,
+   Ense… », « Fatima, Parent de … » et « Organisation géné… » (×2). L'objet sur la seconde ligne
+   reste entier ; le nom complet est derrière (i). Mineur
+   (`com_messages_fil_tuteur_320_clair.png`, `com_studio_canal_320x2_clair.png`).
+2. **Icône du micro à taille fixe à texte ×2** : devant « Enregistrer un message vocal », sur
+   deux lignes, le micro reste petit et décalé vers le bas. Mineur
+   (`com_studio_canal_320x2_clair.png`, `com_messages_fil_tuteur_320x2_clair.png`).
+3. **Moment relatif coupé à 390** : « Enseignante, Classe An-Nour · Il y a » puis « 2 h » seul à
+   la ligne, dans la publication. Mineur (`com_communaute_publication_390_clair.png`).
+4. **Focus à 320×2 sans message visible** : l'entrée du Focus amène la saisie à l'écran, mais
+   aucune bulle du canal n'y reste ; il faut remonter pour lire. Contrepartie de N-4, à arbitrer
+   (`com_studio_focus_320x2_clair.png`).
+
+### Bilan
+
+- Corrigés à l'image au tour 4 : N-1 (majeur : admin à 390, tuteur à 320, ×1 et ×2, Studio à
+  320×2), N-4, N-5, N-10 (trois points), R-01 (réserves sur le texte du verdict), R-21.
+- Présents dans le code, non vérifiables à l'image : N-2, N-3, N-6, N-7, N-8, R-23, refus du
+  serveur de R-01.
+- Restants : N-9 en partie (panneau de pré-écoute coupé en bas), R-12, R-03 (D-FUS-3), R-08
+  (D-FUS-1), R-16 (arbitrage), vocal ouvert par un lien.
+- Nouveaux : 4, mineurs ou à arbitrer.
+- N-1, qui bloquait le passage à `verifie` (COM-R-2, §6.4), est corrigé à l'image ; la
+  contre-vérification reste à faire par la revue.
