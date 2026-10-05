@@ -832,6 +832,9 @@ class _EspaceStudioState extends ConsumerState<EspaceStudio> {
     return EspaceTravailAdaptatif(
       liste: focus ? null : liste ?? etatListe,
       principal: principalAvecRecherche(centre(_vueCanal(canalId, horsLigne))),
+      // R-02 : un canal rendu pose (i) dans la rangee de son en-tete, au
+      // lieu d'une rangee a part qui lui prend de la hauteur.
+      barreDansEntete: canal != null,
       titreContexte: t.com.studio.panneau.titre,
       contexteOuvertInitial: _panneauOuvert,
       onContexteBascule: (bool ouvert) => _panneauOuvert = ouvert,

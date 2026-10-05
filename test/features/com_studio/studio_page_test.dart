@@ -15,6 +15,7 @@ import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
+import 'package:rewayah_academy/core/widgets/carte_piece_jointe.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/espace_travail_adaptatif.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
@@ -455,19 +456,25 @@ void main() {
   });
 
   group('Le canal (COM-M03, COM-W03)', () {
-    testWidgets('la piece jointe se dit dans le fil, le vocal s y lit '
-        '(COM-FUS) ; le fichier est dans le panneau, sans adresse', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('la piece jointe se montre dans le fil par sa carte '
+        '(COM-RC, R-11), le vocal s y lit (COM-FUS) ; le fichier est aussi '
+        'dans le panneau, sans adresse', (WidgetTester tester) async {
       await monterStudio(
         tester,
         port: portDemo(),
         depart: Routes.canalStudioPour('organisation'),
       );
       expect(find.byKey(EnteteCanal.cle), findsOneWidget);
+      // R-11 : la carte de la piece dans la bulle, plus la ligne de texte.
+      final Finder carte = _dansFil(find.byType(CartePieceJointe));
+      expect(carte, findsOneWidget);
+      expect(
+        find.descendant(of: carte, matching: find.text('Planning_T3.pdf')),
+        findsOneWidget,
+      );
       expect(
         _dansFil(find.textContaining('Pièce jointe : Planning_T3.pdf')),
-        findsOneWidget,
+        findsNothing,
       );
       // COM-FUS : le lecteur de COM-VOC remplace la ligne « Message vocal ».
       expect(_dansFil(find.byType(LecteurVocalRecu)), findsOneWidget);

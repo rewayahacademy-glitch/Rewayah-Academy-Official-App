@@ -17648,6 +17648,12 @@ class Traductions$com$socle$composants$composer$fr {
 
 	/// fr: 'Brouillon restauré'
 	String get brouillonRestaure => 'Brouillon restauré';
+
+	/// fr: 'Aucun message pour le moment'
+	String get aucunMessageTitre => 'Aucun message pour le moment';
+
+	/// fr: 'Écrivez le premier message de cette conversation : il s'affichera ici.'
+	String get aucunMessage => 'Écrivez le premier message de cette conversation : il s\'affichera ici.';
 }
 
 // Path: com.socle.composants.etats
@@ -22501,6 +22507,8 @@ extension on Traductions {
 			'com.socle.composants.composer.annonce' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
 			'com.socle.composants.composer.brouillon' => _root.com.socle.lexique.brouillon,
 			'com.socle.composants.composer.brouillonRestaure' => 'Brouillon restauré',
+			'com.socle.composants.composer.aucunMessageTitre' => 'Aucun message pour le moment',
+			'com.socle.composants.composer.aucunMessage' => 'Écrivez le premier message de cette conversation : il s\'affichera ici.',
 			'com.socle.composants.etats.chargement' => 'Chargement en cours',
 			'com.socle.composants.etats.videTitre' => 'Rien ici pour le moment',
 			'com.socle.composants.etats.erreurTitre' => 'Impossible de charger ce contenu.',
@@ -22594,10 +22602,10 @@ extension on Traductions {
 			'com.messages.entree.erreurOuvertureTitre' => 'Impossible d\'ouvrir cette conversation.',
 			'com.messages.entree.ouvertureEchouee' => 'Vérifiez votre connexion, puis réessayez.',
 			'com.messages.videDetail' => 'Une conversation s\'ouvre depuis une Classe, un élève ou un dossier.',
-			'com.messages.choisirTitre' => 'Choisissez une conversation',
-			'com.messages.choisir' => 'Choisissez une conversation dans la liste pour la lire et y répondre.',
 			_ => null,
 		} ?? switch (path) {
+			'com.messages.choisirTitre' => 'Choisissez une conversation',
+			'com.messages.choisir' => 'Choisissez une conversation dans la liste pour la lire et y répondre.',
 			'com.messages.recherche.champ' => 'Rechercher une conversation',
 			'com.messages.recherche.aide' => 'Nom, Classe ou dossier',
 			'com.messages.recherche.fermer' => 'Fermer la recherche',
@@ -23108,10 +23116,10 @@ extension on Traductions {
 			'com.annonces.demoPublication.rentreeTexte' => 'Les séances reprennent le lundi 6 janvier aux horaires habituels.',
 			'com.annonces.demoPublication.signalementAffilie' => 'Publication « Fiches de tajwid à imprimer »',
 			'com.annonces.demoPublication.extraitAffilie' => 'Retrouvez mes fiches avec ce lien partenaire, remise de 20 % avec mon code.',
-			'com.annonces.demoPublication.signalementVente' => 'Publication « Cours particuliers disponibles »',
-			'com.annonces.demoPublication.extraitVente' => 'Je propose des cours particuliers payants le week-end, écrivez-moi.',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.demoPublication.signalementVente' => 'Publication « Cours particuliers disponibles »',
+			'com.annonces.demoPublication.extraitVente' => 'Je propose des cours particuliers payants le week-end, écrivez-moi.',
 			'com.annonces.demoPublication.signalementHorsSujet' => 'Réponse sous « Organiser une révision collective »',
 			'com.annonces.section' => 'Annonces de la Classe',
 			'com.annonces.annonce' => 'Annonce',

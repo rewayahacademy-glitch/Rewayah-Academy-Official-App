@@ -9,9 +9,14 @@
 // reste au-dessus du clavier logiciel et la liste garde le dernier message
 // visible (R-COM-15).
 //
-// Une piece jointe se dit dans la bulle par son nom ; la carte de la piece
-// est dans le panneau de contexte (« Fichiers partages »). Un vocal recu se
-// lit dans la bulle, par le lecteur de COM-VOC (`LecteurVocalRecu`, COM-FUS).
+// Une piece jointe se montre dans la bulle par sa carte (`CartePieceJointe`,
+// COM-RC, R-11), et aussi dans le panneau de contexte (« Fichiers
+// partages »). Un vocal recu se lit dans la bulle, par le lecteur de COM-VOC
+// (`LecteurVocalRecu`, COM-FUS).
+//
+// Le texte du champ est garde comme brouillon le temps de la session et
+// remis a la reouverture du fil (« Brouillon restaure ») : `FilDiscussion`
+// le porte seul, sous la cle du fil (COM-RC, R-22).
 //
 // Le composer vocal (COM-VOC) se pose sous le champ seulement si la page
 // donne [FilContextuel.onEnvoyerVocal] : elle ne le fait que si la capacite
@@ -29,12 +34,14 @@ import 'dart:ui' show FlutterView;
 
 import 'package:flutter/material.dart';
 
+import '../../core/communications/port_brouillons.dart';
 import '../../core/communications/textes_fil_communication.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/carte_piece_jointe.dart';
+import '../../core/widgets/espace_travail_adaptatif.dart';
 import '../../core/widgets/fil_discussion.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../accueil_famille/bloc_seance.dart'
@@ -50,22 +57,31 @@ import 'port_messages_metier.dart';
 /// ligne par piece jointe (« Piece jointe : Devoir.pdf ») ou vocal
 /// (« Message vocal de 0:28 »). Jamais une reference ni une adresse.
 ///
-/// Sans [avecVocaux], les vocaux ne sont pas dits : la bulle les montre par
-/// leur lecteur ([lecteursVocauxDuMessage]).
-String texteDuMessage(MessageCommunication m, {bool avecVocaux = true}) {
+/// Sans [avecVocaux], les vocaux ne sont pas dits ; sans [avecDocuments],
+/// les autres pieces non plus : la bulle les montre par leur lecteur et
+/// leur carte ([piecesDuMessage]).
+String texteDuMessage(
+  MessageCommunication m, {
+  bool avecVocaux = true,
+  bool avecDocuments = true,
+}) {
   final f = t.com.messages.fil;
   return <String>[
     if (m.texte.trim().isNotEmpty) m.texte.trim(),
     for (final PieceJointe p in m.piecesJointes)
-      if (p.nature != NaturePieceJointe.vocal)
-        f.pieceJointe(nom: p.nom)
-      else if (avecVocaux)
+      if (p.nature != NaturePieceJointe.vocal) ...<String>[
+        if (avecDocuments) f.pieceJointe(nom: p.nom),
+      ] else if (avecVocaux)
         switch (p.duree) {
           final Duration d => f.vocal(duree: CartePieceJointe.libelleDuree(d)),
           null => f.vocalSansDuree,
         },
   ].join('\n');
 }
+
+/// La cle du brouillon du champ d'un fil metier.
+CleBrouillon cleBrouillonFil(String filId) =>
+    CleBrouillon(type: TypeObjetLie.message, objetId: filId);
 
 /// La date et l'heure d'un message, a l'heure de l'appareil.
 String horodatageMessage(DateTime instant) {
@@ -254,9 +270,9 @@ class _FilContextuelState extends State<FilContextuel>
           MessageFil(
             id: m.id,
             auteur: m.deSoi ? soi : m.auteur.nomAffiche,
-            texte: texteDuMessage(m, avecVocaux: false),
+            texte: texteDuMessage(m, avecVocaux: false, avecDocuments: false),
             annonceTexte: texteDuMessage(m),
-            complement: lecteursVocauxDuMessage(m.piecesJointes),
+            complement: piecesDuMessage(m.piecesJointes),
             horodatage: horodatageMessage(m.envoyeLe),
             deSoi: m.deSoi,
           ),
@@ -272,6 +288,7 @@ class _FilContextuelState extends State<FilContextuel>
       ],
       textes: textes,
       onEnvoyerMessage: _envoyer,
+      cleBrouillon: cleBrouillonFil(fil.id),
       emplacementVocal: vocal == null
           ? null
           : ComposerVocal(
@@ -298,11 +315,13 @@ class _FilEnLecture extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        entete,
         Expanded(
           child: ListView(
             padding: const EdgeInsets.only(bottom: AppSpacing.lg),
             children: <Widget>[
+              // R-02 : sans champ, l'en-tete defile avec les messages, ses
+              // actions (retour, contexte) dans sa rangee.
+              RangeeEnteteEspace(child: entete),
               GroupeReglages(
                 lignes: <LigneRubrique>[
                   for (final MessageCommunication m in fil.messages)

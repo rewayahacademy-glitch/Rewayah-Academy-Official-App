@@ -355,6 +355,29 @@ Widget? lecteursVocauxDuMessage(List<PieceJointe> pieces) {
   );
 }
 
+/// Les pieces d'un message, a poser dans sa bulle (`MessageFil.complement`,
+/// COM-RC, R-11) : la carte de chaque piece non vocale (`CartePieceJointe` :
+/// nom, type, taille, etat, jamais une adresse) et le lecteur de chaque
+/// vocal, dans l'ordre du message ; `null` sans piece. Les cartes sont
+/// detachees, a 16 l'une de l'autre (K-55).
+Widget? piecesDuMessage(List<PieceJointe> pieces) {
+  if (pieces.isEmpty) return null;
+  final List<Widget> elements = <Widget>[
+    for (final PieceJointe p in pieces)
+      if (p.nature == NaturePieceJointe.vocal)
+        LecteurVocalRecu(vocal: p)
+      else
+        CartePieceJointe(piece: p),
+  ];
+  if (elements.length == 1) return elements.single;
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    mainAxisSize: MainAxisSize.min,
+    spacing: AppSpacing.lg,
+    children: elements,
+  );
+}
+
 /// La lecture d'une source audio par `just_audio`, au contrat [LectureVocale].
 ///
 /// La source (lien signe de courte duree demande au serveur au toucher) est

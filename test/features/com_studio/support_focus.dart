@@ -78,6 +78,12 @@ FocusNode noeudAction(WidgetTester tester, Finder action) =>
 
 /// Entre dans le Focus par « Mode focus ».
 Future<void> entrer(WidgetTester tester) async {
+  // COM-RC (R-02) : a texte agrandi ou sur une vue basse, l'en-tete du canal
+  // defile avec les messages ; « Mode focus » se retrouve en remontant le fil.
+  if (entrerFocus.evaluate().isEmpty) {
+    positionFil(tester).jumpTo(0);
+    await tester.pumpAndSettle();
+  }
   await tester.ensureVisible(entrerFocus);
   await tester.tap(entrerFocus);
   await tester.pumpAndSettle();

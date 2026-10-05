@@ -332,6 +332,9 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
     return EspaceTravailAdaptatif(
       liste: listeFils ?? etatListe,
       principal: _vueFil(filId, horsLigne),
+      // R-02 : un fil rendu pose (i) dans la rangee de son en-tete, au lieu
+      // d'une rangee a part qui lui prend de la hauteur.
+      barreDansEntete: fil != null,
       contexte: fil == null
           ? null
           : PanneauContexteFil(

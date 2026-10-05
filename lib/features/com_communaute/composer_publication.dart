@@ -46,6 +46,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/carte_piece_jointe.dart';
 import '../../core/widgets/choice_card_group.dart';
+import '../../core/widgets/fil_discussion.dart' show raccourciEnvoi;
 import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/section_header.dart';
 import 'garde_promotion.dart';
@@ -512,7 +513,14 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-            child: formulaire,
+            // R-25 : Ctrl+Entree (Cmd+Entree) publie depuis un champ ;
+            // Entree garde le saut de ligne.
+            child: raccourciEnvoi(
+              onEnvoyer: () {
+                if (!_enCours) unawaited(_publier());
+              },
+              child: formulaire,
+            ),
           ),
         ),
         Ecart.vMd,

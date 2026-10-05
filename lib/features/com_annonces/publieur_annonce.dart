@@ -48,6 +48,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/carte_groupee.dart';
 import '../../core/widgets/choice_card_group.dart';
+import '../../core/widgets/fil_discussion.dart' show raccourciEnvoi;
 import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/status_pill.dart';
 import '../suivi_foyer/filtres_historique.dart';
@@ -358,13 +359,21 @@ class _PublieurAnnonceState extends ConsumerState<PublieurAnnonce> {
             onPress: action,
           ),
         ),
-        child: Align(
-          alignment: AlignmentDirectional.topStart,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: AppPage.largeurFormulaire,
+        // R-25 : Ctrl+Entree (Cmd+Entree) fait l'action de l'etape depuis un
+        // champ (« Continuer », puis « Publier ») ; Entree garde le saut de
+        // ligne.
+        child: raccourciEnvoi(
+          onEnvoyer: () {
+            if (!_envoi) action();
+          },
+          child: Align(
+            alignment: AlignmentDirectional.topStart,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: AppPage.largeurFormulaire,
+              ),
+              child: _corps(context),
             ),
-            child: _corps(context),
           ),
         ),
       ),

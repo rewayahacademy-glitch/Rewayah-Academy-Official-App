@@ -1514,6 +1514,8 @@ class _Traductions$com$socle$composants$composer$ar extends Traductions$com$socl
 	@override String annonce({required Object auteur, required Object texte}) => 'رسالة جديدة من ${auteur}: ${texte}';
 	@override String get brouillon => _root.com.socle.lexique.brouillon;
 	@override String get brouillonRestaure => 'تمت استعادة المسودة';
+	@override String get aucunMessageTitre => 'لا توجد رسائل حاليًا';
+	@override String get aucunMessage => 'اكتب أول رسالة في هذه المحادثة، وستظهر هنا.';
 }
 
 // Path: com.socle.composants.etats
@@ -2149,6 +2151,8 @@ extension on TraductionsAr {
 			'com.socle.composants.composer.annonce' => ({required Object auteur, required Object texte}) => 'رسالة جديدة من ${auteur}: ${texte}',
 			'com.socle.composants.composer.brouillon' => _root.com.socle.lexique.brouillon,
 			'com.socle.composants.composer.brouillonRestaure' => 'تمت استعادة المسودة',
+			'com.socle.composants.composer.aucunMessageTitre' => 'لا توجد رسائل حاليًا',
+			'com.socle.composants.composer.aucunMessage' => 'اكتب أول رسالة في هذه المحادثة، وستظهر هنا.',
 			'com.socle.composants.etats.chargement' => 'جارٍ التحميل',
 			'com.socle.composants.etats.videTitre' => 'لا شيء هنا حاليًا',
 			'com.socle.composants.etats.erreurTitre' => 'تعذّر تحميل هذا المحتوى.',
@@ -2467,10 +2471,10 @@ extension on TraductionsAr {
 			'com.communaute.demo.nominal' => 'ستة منشورات',
 			'com.communaute.demo.publication' => 'منشور مفتوح',
 			'com.communaute.demo.vide' => 'لا توجد منشورات',
-			'com.communaute.demo.lectureEchouee' => 'فشل القراءة',
-			'com.communaute.demo.indisponible' => 'الخدمة غير متاحة بعد',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.demo.lectureEchouee' => 'فشل القراءة',
+			'com.communaute.demo.indisponible' => 'الخدمة غير متاحة بعد',
 			'com.communaute.demo.horsLigne' => 'غير متصل',
 			'com.communaute.demo.envoiNonConfirme' => 'إرسال غير مؤكَّد',
 			'com.communaute.demo.moderationIndisponible' => 'الإشراف غير متاح',
