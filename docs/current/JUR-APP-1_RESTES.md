@@ -58,20 +58,17 @@ chasse invisible, `coupuresAdresse`), décidé par délégation le 05/10/2026.
 
 **Conditions restantes AVANT fusion dans `main` :**
 
-- **l'alias support@rewayahacademy.com doit être créé par le directeur**
-  (marche à suivre dans `COORDONNEES_LEGALES.md` §« Conditions ») : à ce jour,
-  rien n'a été envoyé ni reçu à cette adresse ; l'application l'affiche
-  désormais à l'élève (E-2) et à l'enseignant (section 10) ;
+- alias support@rewayahacademy.com : **créé par le directeur le 05/10/2026** (fait) ;
 - **représentant dans l'UE avant toute ouverture aux familles de l'UE** :
   remplacer alors la phrase de la section 10 (`t.contrat.politique.s10.texte`)
   par son nom et son adresse, nouvelle version du contrat enseignant à prévoir ;
-- inscription à l'ICO avant de traiter des données réelles
-  (`COORDONNEES_LEGALES.md`).
+- inscription à l'ICO : **non bloquante** (décision du directeur, 05/10/2026) ;
+  il s'inscrit après la mise en production et les tests (`COORDONNEES_LEGALES.md`).
 
 Les enseignants ayant signé `2026-09` entre-temps ne sont pas reconvoqués
 d'eux-mêmes (`etat_dossier()` ne filtre pas la version, voir l'en-tête de
-`versions_contrat.dart`) : décider avec le directeur s'il faut leur faire
-signer `2026-10-jur` (écran à prévoir).
+`versions_contrat.dart`) : re-signature de `2026-10-jur` **décidée le 05/10/2026**
+(décisions par délégation, tableau DIR-REP-1) ; écran de re-signature à prévoir.
 
 ## 2. A0 (information sur la religion, paragraphe « Qui voit » corrigé)
 
@@ -97,8 +94,8 @@ Porté mot pour mot et **visible depuis le 05/10/2026** (ASSETS-DIR-1, décidé
 par délégation) : `InformationControle.contactConfidentialite` vaut
 support@rewayahacademy.com (source : pilotage `COORDONNEES_LEGALES.md`), la
 même constante que la section 10 ci-dessus. Le lien « En savoir plus » de
-l'élève ouvre donc E-2. Condition avant fusion : l'alias
-support@rewayahacademy.com doit exister (section 1).
+l'élève ouvre donc E-2. L'alias
+support@rewayahacademy.com existe depuis le 05/10/2026.
 
 ## 5. Phrase « Tu peux aussi appuyer sur Signaler. » de E-1
 
