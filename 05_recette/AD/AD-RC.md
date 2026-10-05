@@ -33,6 +33,6 @@ Chaque correctif a été relu par un agent qui ne l'avait pas écrit. Les trois 
   - Revue de dossier : depuis la garde, les branches `approuve ? …` de `decider()` ne peuvent plus s'exécuter. Il faut ajouter un commentaire.
   - PageShell : une page défilante repart encore du haut quand la structure change. La saisie et le focus sont conservés. Le test doit aussi être fait sur une vraie page d'un autre rôle.
   - m15 (`AppBottomSheet`, même problème que M4) : non traité.
-  - Planche : `attente_refuse` et `retour_apres_validation` montrent encore les captures AD-10. Des captures HL-A-5 plus récentes existent.
+  - ~~Planche : `attente_refuse` et `retour_apres_validation` montrent encore les captures AD-10.~~ Levé : planche remplacée par les captures HL-A-5 (AD-M2-PLANCHE le 04/10), puis AD-M2-CAPT vérifiée le 05/10 (16 écrans × 6 = 96 PNG, corrections/ad-nettoyage-2 @ d52314cb).
 - Repris le 04/10 par AD-NETTOYAGE (corrections/c1-lib c1595c0e) : tri stable de Comptes, Sans objet pour les rôles sans pièce, rôle illisible signalé, m1, m3, m15, m16, m17, persona famille-accords (n2). Restent (étape AD-NETTOYAGE-2) : pastille En attente de Comptes (décision), PageShell défilant et commentaire de decider() (fichiers réservés), m6 à m8, m11 à m14 hors m12 réservé, m9, m10, m13, n1, n3 à n8, n10 à n12.
 - Worktrees de travail conservés, en attente d'accord pour les retirer : `D:\RA_TUTEUR\adrc-m1`, `adrc-m3`, `adrc-m4` (branches `adrc/m1`, `adrc/m3`, `adrc/m4`).

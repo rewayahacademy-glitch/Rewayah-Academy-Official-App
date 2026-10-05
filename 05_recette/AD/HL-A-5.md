@@ -7,7 +7,7 @@ Thème, couleurs (K-37), textes (spec 03, K-41), règles d'accès, appels serveu
 
 - `c61d66d` revue : emplacement de décision unique, carte Identité une ligne par élément, politique KYC bornée 760.
 - `80eae2e` surfaces 02D/02E, /attente : Actualiser sous la carte d'état.
-- `b2ecef2` planche de captures (84 PNG).
+- `b2ecef2` planche de captures (84 PNG à l'époque ; 96 PNG, 16 écrans × 3 tailles × 2 thèmes, depuis HL-A-6 et AD-M2-CAPT, vérifiée le 05/10 sur `corrections/ad-nettoyage-2` @ d52314cb).
 - `906d1a3` corrections d'audit (ce passage), voir ci-dessous.
 
 ## Ce qui a changé, écran par écran (906d1a3)
@@ -36,7 +36,7 @@ Thème, couleurs (K-37), textes (spec 03, K-41), règles d'accès, appels serveu
 - Tests ciblés (revue, attente, décisions, AD-10, AD-11, dossiers) : verts après mise à jour de deux tests.
   - `revue_dossier_test` 1440 : la ligne d'état est au bord de fin, après Refuser.
   - `attente_test` : `ensureVisible` avant le tap, car l'action est maintenant dans le corps.
-- Captures HL-A-5 : 84 PNG refaits (36 cas verts), ouverts : vérifications incomplètes, portail après refus, fiche,
+- Captures HL-A-5 : 84 PNG refaits à ce passage (14 écrans, 36 cas verts) ; la planche compte aujourd'hui 16 écrans et 96 PNG, avec l'écran 16 `retour_apres_validation_hors_portee`, ouverts : vérifications incomplètes, portail après refus, fiche,
   refus.
 - Suite complète sous verrou (`suite_complete_hl_a5.log`) : **+2967 ~880, All tests passed**, 930 s, en un seul passage.
 
@@ -53,3 +53,8 @@ Thème, couleurs (K-37), textes (spec 03, K-41), règles d'accès, appels serveu
 - Les décisions de spec signalées par l'audit restent ouvertes : titre « Dossier de … » (§10.11), ligne d'état au
   lieu d'un bouton grisé (§10.14, CA-19), pièce absente (P-ADM-08.2), SousNavigationDomaine sur le détail mobile.
 - Captures des dossiers AD-6 à AD-11 non refaites dans ce passage : seule la planche HL-A-5 couvre les écrans touchés.
+
+## Mise à jour du 05/10 (AD-M2-CAPT, vérifiée)
+
+- Planche `captures/HL-A-5` : **16 écrans × 6 = 96 PNG**, plus 6 captures de la revue d'un dossier en production et 2 captures `ad9_14` (corrections/ad-nettoyage-2 @ d52314cb). Écran 16 : `retour_apres_validation_hors_portee`.
+- Écran 3 (`verifications_incompletes`) : sur tablette la fiche tient entière à l'écran, donc le lien « Terminez les vérifications requises. » n'a pas d'effet visible (le défilement est impossible à cette taille). Ce n'est pas un défaut de la capture.

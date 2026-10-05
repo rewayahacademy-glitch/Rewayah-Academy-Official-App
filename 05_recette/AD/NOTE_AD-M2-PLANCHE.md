@@ -22,3 +22,10 @@ Sources : REVUE_AD-R.md (M2, l.69-71), verifications/2026-10-03/VERIF-AD-2/LOT-3
 3. **Comptes des fiches à aligner** : HL-A-5.md dit 84 captures (14 écrans), AD-11 dit 15 écrans pour l'artefact, HL-A-6.md dit 16 écrans (96 PNG). Après les points 1 et 2, corriger HL-A-5.md et AD-11.md pour qu'ils donnent le même compte que le test (16 écrans, 96 PNG).
 4. **Fraîcheur des captures HL-A-5 de 05_recette** : `portail_apres_refus_*` diffère entre 05_recette et la capture refaite à a8dfcb3 (comparaison_hash.txt, téléphone et ordinateur clair). Les captures de la planche ne sont donc pas celles d'a8dfcb3 pour cet écran. À refaire avec le point 1.
 5. `AD-RC.md` l.36 signale encore les captures AD-10 dans la planche : ce constat est levé par ce passage, la fiche n'a pas été réécrite ici.
+
+## Suite du 05/10 : AD-M2-CAPT vérifiée
+
+- Planche `captures/HL-A-5` : 16 écrans × 6 = 96 PNG, plus 6 captures de production et 2 `ad9_14`, sur `corrections/ad-nettoyage-2` @ d52314cb. Comptes alignés : HL-A-5.md (qui disait 84), HL-A-6.md (16 écrans, 96 PNG). La mention « 15 écrans » d'AD-11 portait sur l'artefact publié, pas sur AD-11.md : aucune ligne à y corriger.
+- Écran 3 : sur tablette la fiche tient entière, donc le lien « Terminez les vérifications requises. » n'a pas d'effet visible (défilement impossible à cette taille).
+- Le constat de `AD-RC.md` l.36 sur les captures AD-10 est levé.
+
