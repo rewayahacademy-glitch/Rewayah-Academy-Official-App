@@ -23,6 +23,7 @@ import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_observation/port_visite_observation.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
@@ -123,6 +124,7 @@ Future<_Salle> _entrerEnSalle(
   bool horsLigne = false,
   TextDirection? sens,
   EdgeInsets zoneSure = EdgeInsets.zero,
+  InterfaceMode interface = InterfaceMode.standard,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -159,8 +161,8 @@ Future<_Salle> _entrerEnSalle(
       ),
       child: TranslationProvider(
         child: MaterialApp.router(
-          theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
-          darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+          theme: AppTheme.pour(interface, Brightness.light),
+          darkTheme: AppTheme.pour(interface, Brightness.dark),
           themeMode: mode,
           builder: (BuildContext context, Widget? enfant) => MediaQuery(
             data: MediaQuery.of(context)
@@ -837,6 +839,205 @@ void main() {
               .label,
           '${v.parle(nom: 'Mariam')}, ${v.cameraFermee}',
         );
+      });
+    }
+  });
+  // PAGESHELL-200-1b : en Interface guidee a 320 px et 200 %, le titre de
+  // la salle, serre contre la pastille du direct, se coupait dans un mot
+  // (« Class / e »). La pastille passe sous le titre.
+  group('PAGESHELL-200-1b : en-tete sans mot coupe', () {
+    for (final InterfaceMode interface in InterfaceMode.values) {
+      for (final TextDirection sens in TextDirection.values) {
+        testWidgets('320x844, texte x2, ${interface.name}, ${sens.name}', (
+          WidgetTester tester,
+        ) async {
+          final _Salle salle = await _entrerEnSalle(
+            tester,
+            taille: const Size(320, 844),
+            echelleTexte: 2,
+            sens: sens,
+            interface: interface,
+            zoneSure: const EdgeInsets.only(top: 47, bottom: 34),
+            classes: FauxClassesFoyer(
+              classes: <ClasseFoyer>[
+                ClasseFoyer(
+                  eleveId: 'enfant-1',
+                  classe: classeFictive(groupeId: 'c1'),
+                ),
+              ],
+            ),
+          );
+          _publierParticipants(salle.moteur);
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          final Finder titre = find.text(classeFictive(groupeId: 'c1').libelle);
+          expect(titre, findsOneWidget);
+          verifierAucunMotCoupe(tester, titre);
+          verifierAucunMotCoupe(tester, find.text(v.enDirect));
+        });
+      }
+    }
+  });
+  // PAGESHELL-200-1b (reserves 1 et 2 de la revue PAGESHELL-200-1) : a 200 %
+  // sous une tete qui defile, le corps recevait `vue - tete` sans connaitre
+  // la hauteur dont la salle a besoin (bandeau et barre agrandis). En
+  // paysage sous les barres du systeme et en portrait a hauteur atypique, la
+  // colonne de la salle debordait et le bas de la barre sortait de la zone
+  // sure, sans que la page puisse defiler pour l'atteindre (defileur a 0).
+  // Le corps recoit maintenant max(minimum utile, vue - tete) : aucun
+  // debordement, et la barre entiere est toujours atteignable.
+  group('PAGESHELL-200-1b : geometrie de la salle a 200 %', () {
+    // (taille, zone sure, sens, la salle tient-elle sans defiler ?)
+    for (final (Size, EdgeInsets, TextDirection, bool) cas
+        in const <(Size, EdgeInsets, TextDirection, bool)>[
+          // Portrait a hauteur atypique : debordait (17, 5 et 4 px).
+          (
+            Size(320, 568),
+            EdgeInsets.only(top: 47, bottom: 34),
+            TextDirection.ltr,
+            false,
+          ),
+          (
+            Size(320, 568),
+            EdgeInsets.only(top: 47, bottom: 34),
+            TextDirection.rtl,
+            false,
+          ),
+          (
+            Size(320, 580),
+            EdgeInsets.only(top: 47, bottom: 34),
+            TextDirection.ltr,
+            false,
+          ),
+          (Size(320, 520), EdgeInsets.only(top: 20), TextDirection.ltr, false),
+          // Paysage sous les barres d'Android : debordait (56, 32, 26 et
+          // 2 px), sans pouvoir defiler.
+          (
+            Size(800, 360),
+            EdgeInsets.only(top: 24, bottom: 48),
+            TextDirection.ltr,
+            false,
+          ),
+          (
+            Size(800, 360),
+            EdgeInsets.only(top: 24, bottom: 48),
+            TextDirection.rtl,
+            false,
+          ),
+          (
+            Size(800, 360),
+            EdgeInsets.only(top: 24, bottom: 24),
+            TextDirection.ltr,
+            false,
+          ),
+          (
+            Size(844, 390),
+            EdgeInsets.only(top: 24, bottom: 48),
+            TextDirection.ltr,
+            false,
+          ),
+          (
+            Size(896, 414),
+            EdgeInsets.only(top: 24, bottom: 48),
+            TextDirection.ltr,
+            false,
+          ),
+          // Non-regression : ce qui tenait tient toujours, sans defiler.
+          (
+            Size(360, 640),
+            EdgeInsets.only(top: 24, bottom: 48),
+            TextDirection.ltr,
+            true,
+          ),
+          (Size(375, 667), EdgeInsets.only(top: 20), TextDirection.ltr, true),
+          (
+            Size(414, 896),
+            EdgeInsets.only(top: 44, bottom: 34),
+            TextDirection.rtl,
+            true,
+          ),
+          (
+            Size(844, 390),
+            EdgeInsets.only(left: 47, right: 47, bottom: 21),
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            Size(932, 430),
+            EdgeInsets.only(left: 59, right: 59, bottom: 21),
+            TextDirection.rtl,
+            true,
+          ),
+        ]) {
+      final Size taille = cas.$1;
+      final EdgeInsets zone = cas.$2;
+      testWidgets('${taille.width.toInt()}x${taille.height.toInt()} '
+          '(zone sure ${zone.top.toInt()}/${zone.bottom.toInt()}), '
+          '${cas.$3.name}', (WidgetTester tester) async {
+        final _Salle salle = await _entrerEnSalle(
+          tester,
+          taille: taille,
+          echelleTexte: 2,
+          sens: cas.$3,
+          zoneSure: zone,
+        );
+        _publierParticipants(salle.moteur);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+
+        final double hautZone = zone.top;
+        final double basZone = taille.height - zone.bottom;
+        // Le defileur de la page, s'il y en a un (tete qui defile).
+        final List<ScrollableState> page = tester
+            .stateList<ScrollableState>(
+              find.ancestor(
+                of: find.byType(PanneauObservationTuteur),
+                matching: find.byType(Scrollable),
+              ),
+            )
+            .toList();
+        final ScrollPosition? position = page.isEmpty
+            ? null
+            : page.last.position;
+        if (cas.$4) {
+          expect(position?.maxScrollExtent ?? 0, 0);
+        }
+        // En haut de la page : le bandeau du decompte commence dans la zone
+        // sure.
+        position?.jumpTo(0);
+        await tester.pump();
+        expect(
+          tester.getRect(find.byType(BandeauDecompteVisite)).top,
+          greaterThanOrEqualTo(hautZone - 0.5),
+        );
+        // Au bout de la page : la barre entiere est dans la zone sure.
+        position?.jumpTo(position.maxScrollExtent);
+        await tester.pump();
+        expect(tester.takeException(), isNull);
+        final Rect barre = tester.getRect(
+          find.byType(BarreCommandesObservation),
+        );
+        expect(barre.top, greaterThanOrEqualTo(hautZone - 0.5));
+        expect(barre.bottom, lessThanOrEqualTo(basZone + 0.5));
+        for (final String libelle in <String>[
+          v.sonRecu,
+          v.agrandir,
+          v.quitter,
+        ]) {
+          final Rect r = tester.getRect(find.text(libelle));
+          expect(r.top, greaterThanOrEqualTo(hautZone - 0.5));
+          expect(r.bottom, lessThanOrEqualTo(basZone + 0.5));
+        }
+        // Sous une tete qui defile, la zone du support garde au moins une
+        // cible tactile de hauteur (bandeau, ecart, support, ecart, barre :
+        // borne basse en paysage, ou la carte ajoute sa marge).
+        if (position != null) {
+          final double support =
+              barre.top -
+              tester.getRect(find.byType(BandeauDecompteVisite)).bottom -
+              2 * AppSpacing.md;
+          expect(support, greaterThanOrEqualTo(AppTouchTarget.standard));
+        }
       });
     }
   });

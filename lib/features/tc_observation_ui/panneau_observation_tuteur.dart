@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show SliverConstraints;
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -11,6 +12,7 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/avatar_nom.dart';
+import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/status_pill.dart';
 import 'barre_commandes_observation.dart';
@@ -129,9 +131,16 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
         budgetIncertain: widget.budgetIncertain,
       );
 
+      // PAGESHELL-200-1b : les colonnes de la salle disent a `PageShell` ce
+      // qui leur manque. A 200 % sous une tete qui defile (320x568, telephone
+      // en paysage sous les barres du systeme), le bandeau et la barre
+      // agrandis ne tiennent plus dans la hauteur laissee : la page defile
+      // d'autant, et la barre se rejoint au lieu d'etre coupee. La zone du
+      // support ne descend pas sous une cible tactile, ou elle ne se saisit
+      // plus pour defiler.
       if (!large) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+        return ColonneCorps(
+          minimumEtire: AppTouchTarget.standard,
           children: <Widget>[
             bandeau,
             Ecart.vMd,
@@ -144,8 +153,7 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
       }
       // Des la tablette (D1) : la salle est UNE carte (en-tete, support,
       // vignettes, barre), sous le bandeau du decompte.
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      return ColonneCorps(
         children: <Widget>[
           bandeau,
           Ecart.vMd,
@@ -157,8 +165,8 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(AppSpacing.lg),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                child: ColonneCorps(
+                  minimumEtire: AppTouchTarget.standard,
                   children: <Widget>[
                     Expanded(child: _corpsLarge()),
                     Ecart.vMd,
@@ -233,10 +241,8 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
   /// En deca, la salle du telephone defile plutot que d'ecraser le support.
   static const double _hauteurMinCorps = 300;
 
-  /// Tablette et bureau (D1) : en-tete, puis le support a environ trois
-  /// quarts de la largeur et la colonne des vignettes a droite.
-  /// Des la tablette (D1) : en-tete, puis le support et la colonne des
-  /// vignettes. Quand la hauteur manque (texte a 300 % sur une tablette, la
+  /// Des la tablette (D1) : en-tete, puis le support a environ trois
+  /// quarts de la largeur et la colonne des vignettes a droite. Quand la hauteur manque (texte a 300 % sur une tablette, la
   /// barre en deux rangees), la salle defile avec un support de hauteur
   /// minimale, comme sur telephone : jamais un debordement (PAGESHELL-200-1).
   Widget _corpsLarge() => Builder(
@@ -314,32 +320,38 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Row(
+        // PAGESHELL-200-1b : en Interface guidee a 320 px et 200 %, le titre
+        // serre contre la pastille se coupait dans un mot (« Class / e »).
+        // La pastille passe sous le titre quand les deux ne tiennent pas sur
+        // une ligne ; le titre garde toute la largeur, et un mot trop long
+        // pour elle se reduit (borne de lisibilite) au lieu d'etre coupe.
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
           children: <Widget>[
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Semantics(
-                    header: true,
-                    child: Text(
-                      widget.titre ?? v.titre,
-                      style: palette.inkStrong.applyTo(
-                        textes.titleMedium ?? const TextStyle(),
-                      ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Semantics(
+                  header: true,
+                  child: TexteSansCoupure(
+                    widget.titre ?? v.titre,
+                    style: palette.inkStrong.applyTo(
+                      textes.titleMedium ?? const TextStyle(),
                     ),
                   ),
-                  if (sousTitre != null)
-                    Text(
-                      sousTitre,
-                      style: palette.inkMuted.applyTo(
-                        textes.bodySmall ?? const TextStyle(),
-                      ),
+                ),
+                if (sousTitre != null)
+                  TexteSansCoupure(
+                    sousTitre,
+                    style: palette.inkMuted.applyTo(
+                      textes.bodySmall ?? const TextStyle(),
                     ),
-                ],
-              ),
+                  ),
+              ],
             ),
-            Ecart.hSm,
             _pastilleDirect(),
           ],
         ),
