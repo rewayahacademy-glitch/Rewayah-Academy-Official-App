@@ -1,7 +1,8 @@
 // Captures de recette du socle Comptable V1 (CPT-F), sur le VRAI routeur :
 // la coquille du Comptable (quatre destinations) sur Aujourd'hui, Paiements
 // et Tresorerie « en preparation », barre basse a 390x844 @3, barre laterale
-// depliee a 1440x900 @1, clair et sombre.
+// depliee a 1440x900 @1, clair et sombre ; et 320x640 @2 texte x2 (CPT-F-CORR),
+// clair et sombre en francais, clair en arabe (RTL).
 //
 // Saute sans CAPTURE_DIR : la CI ne l'execute jamais et n'ecrit rien. Mode
 // d'emploi : `test/capture/LISEZ-MOI.md`.
@@ -25,6 +26,7 @@ Future<void> _monter(
   WidgetTester tester,
   String depart, {
   ThemeMode mode = ThemeMode.light,
+  Locale? locale,
 }) async {
   late GoRouter routeur;
   await tester.pumpWidget(
@@ -46,7 +48,7 @@ Future<void> _monter(
                   Brightness.dark,
                 ),
                 themeMode: mode,
-                locale: TranslationProvider.of(context).flutterLocale,
+                locale: locale ?? TranslationProvider.of(context).flutterLocale,
                 supportedLocales: AppLocaleUtils.supportedLocales,
                 localizationsDelegates: GlobalMaterialLocalizations.delegates,
                 routerConfig: routeur,
@@ -107,6 +109,39 @@ void main() {
             'PNG ${await capturer(tester, 'comptable_${ecran.$1}_1440x900@1_${mode.name}')}',
           );
         });
+
+        testWidgets('320x640 @2 texte x2, ${ecran.$1}, ${mode.name}', (
+          WidgetTester tester,
+        ) async {
+          fixerVueCapture(tester, const Size(320, 640), 2);
+          tester.platformDispatcher.textScaleFactorTestValue = 2;
+          addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+          await _monter(tester, ecran.$2, mode: mode);
+          debugPrint(
+            'PNG ${await capturer(tester, 'comptable_${ecran.$1}_320x640@2_x2_${mode.name}')}',
+          );
+        });
+
+        if (mode == ThemeMode.light) {
+          testWidgets('320x640 @2 texte x2, ${ecran.$1}, RTL', (
+            WidgetTester tester,
+          ) async {
+            fixerVueCapture(tester, const Size(320, 640), 2);
+            tester.platformDispatcher.textScaleFactorTestValue = 2;
+            addTearDown(
+              tester.platformDispatcher.clearTextScaleFactorTestValue,
+            );
+            await _monter(
+              tester,
+              ecran.$2,
+              mode: mode,
+              locale: AppLocale.ar.flutterLocale,
+            );
+            debugPrint(
+              'PNG ${await capturer(tester, 'comptable_${ecran.$1}_320x640@2_x2_rtl')}',
+            );
+          });
+        }
       }
     }
   });

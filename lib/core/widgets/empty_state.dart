@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_metriques.dart';
@@ -115,14 +116,19 @@ class EmptyState extends StatelessWidget {
               child: Icon((icone ?? _iconeParDefaut).repos),
             ),
             Ecart.vXl,
-            Text(
+            // Aucun mot coupe, meme a 320 px et texte x2 (« aujourd'hu / i »,
+            // ELV-VIDE-COUPE-1 ; « l'acadé / mie », DASH-MA-PROD) : le
+            // constat et l'invitation passent a la ligne entre les mots ; le
+            // mot le plus long se reduit juste assez pour tenir. A l'echelle
+            // 1, rien ne change.
+            TexteSansCoupure(
               message,
               textAlign: TextAlign.center,
               style: fond.applyTo(textes.titleLarge ?? const TextStyle()),
             ),
             if (invitation != null) ...<Widget>[
               Ecart.vSm,
-              Text(
+              TexteSansCoupure(
                 invitation!,
                 textAlign: TextAlign.center,
                 style: palette.inkMuted.applyTo(

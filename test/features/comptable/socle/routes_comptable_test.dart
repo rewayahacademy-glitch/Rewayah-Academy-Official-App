@@ -368,7 +368,14 @@ void main() {
       );
       await stabiliser(tester);
       expect(find.byType(AujourdhuiComptablePage), findsOneWidget);
-      expect(find.text(t.comptable.commun.montantsAffiches), findsOneWidget);
+      // A 390 px, la bascule est le bouton seul (CPT-F-CORR) : l'etat
+      // « Montants affiches » est porte par son infobulle, l'action par son
+      // libelle.
+      final BoutonIcone bouton = tester.widget<BoutonIcone>(
+        find.byKey(BasculeMontants.cleBouton),
+      );
+      expect(bouton.libelle, t.comptable.commun.masquerMontants);
+      expect(bouton.infobulle, contains(t.comptable.commun.montantsAffiches));
     });
 
     testWidgets('la liste de la demonstration nomme chaque ecran', (
