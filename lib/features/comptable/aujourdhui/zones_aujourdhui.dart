@@ -122,12 +122,12 @@ class LigneZone extends StatelessWidget {
           ? textes0
           : Row(
               children: <Widget>[
-                Expanded(flex: 3, child: textes0),
+                Expanded(child: textes0),
                 Ecart.hMd,
-                // Borne la fin : une pastille et un montant passent a la
-                // ligne au lieu de deborder dans une colonne etroite.
+                // Borne la fin a la moitie de la ligne : une pastille et un
+                // montant passent a la ligne au lieu de deborder dans une
+                // colonne etroite, sans couper « Temporairement ».
                 Flexible(
-                  flex: 2,
                   child: Align(
                     alignment: AlignmentDirectional.centerEnd,
                     child: f,
