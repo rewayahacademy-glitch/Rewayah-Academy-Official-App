@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/service_admin.dart';
 import 'package:rewayah_academy/core/admin/service_comptes.dart';
@@ -14,15 +15,23 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_attribution.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
+import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/suivi/service_suivi.dart';
+import 'package:rewayah_academy/core/tc_classe/session_live_vm.dart';
+import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
+import 'package:rewayah_academy/core/tc_horloge/demonstration_horloge.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/core/widgets/pays_enseignant.dart';
 import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
 import 'package:rewayah_academy/features/accueil_famille/accueil_famille_page.dart';
 import 'package:rewayah_academy/features/admin_attribution/attribution_page.dart';
 import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
 import 'package:rewayah_academy/features/admin_groupes/groupes_page.dart'
     as admin;
+import 'package:rewayah_academy/features/classe_tuteur/catalogue_classes_page.dart';
 import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/controleur_demo.dart';
@@ -30,9 +39,19 @@ import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 import 'package:rewayah_academy/features/demo/demo_adulte_page.dart';
 import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
 import 'package:rewayah_academy/features/demo/mode_demonstration.dart';
+import 'package:rewayah_academy/features/suivi_eleve/suivi_eleve_page.dart';
+import 'package:rewayah_academy/features/suivi_foyer/detail_seance_page.dart';
+import 'package:rewayah_academy/features/suivi_foyer/suivi_foyer_page.dart';
+import 'package:rewayah_academy/features/tc_classe_live/classe_live_page.dart';
+import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dart';
+import 'package:rewayah_academy/features/tc_mes_groupes/mes_groupes_page.dart';
 
-import '../../capture/outil_capture.dart' show cadreCapture;
+import '../../capture/outil_capture.dart' show cadreCapture, stabiliser;
 import '../../support/harnais.dart';
+import '../../teaching_core/a/support/hote_tc_a.dart'
+    show surchargesDemonstration;
+import '../../teaching_core/e/faux/faux_classe.dart';
+import '../../teaching_core/e/support/hote_classe.dart' show surchargesClasse;
 
 /// Un ecran recense, et ce qu'il doit montrer.
 class EcranPays {
@@ -310,7 +329,176 @@ List<EcranPays> ecransPays() => <EcranPays>[
     debordementDeBase: true,
     hauteur320: 2400,
   ),
+  // Seconde passe (verification croisee du 04/10) : les cartes oubliees.
+  EcranPays(
+    role: 'tuteur',
+    nom: 'tuteur_catalogue',
+    construire: () => const CatalogueClassesPage(eleveId: DonneesDemo.yusufId),
+    surcharges: surchargesDemoTuteur(environnement: 'staging'),
+    pays: const <String>['Maroc', 'France'],
+  ),
+  classeLiveTuteur(),
+  EcranPays(
+    role: 'controleur',
+    nom: 'controleur_classe_live',
+    construire: () => ClasseLivePage(contexte: _contexteLive()),
+    surcharges: _surchargesLive('controller'),
+    pays: const <String>['Guinée'],
+  ),
+  EcranPays(
+    role: 'eleve',
+    nom: 'eleve_espace_groupe',
+    construire: () =>
+        const EspaceGroupePage(groupeId: GroupesDemonstration.alFatiha),
+    surcharges: surchargesDemonstration(),
+    pays: const <String>['Guinée'],
+  ),
+  EcranPays(
+    role: 'eleve',
+    nom: 'eleve_mes_groupes',
+    construire: () => const MesGroupesPage(),
+    surcharges: surchargesDemonstration(),
+    pays: const <String>['Guinée'],
+  ),
+  EcranPays(
+    role: 'eleve',
+    nom: 'eleve_suivi',
+    construire: () => SuiviElevePage(horloge: () => maintenantPays),
+    surcharges: <Override>[
+      serviceSuiviProvider.overrideWithValue(
+        FauxServiceSuivi(
+          seancesRendues: <Seance>[
+            _seancePassee(DonneesDemo.yusufId, 'Yusuf', jours: 2),
+          ],
+          presencesRendues: null,
+        ),
+      ),
+    ],
+    pays: const <String>['Mali'],
+    hauteur320: 2400,
+  ),
+  EcranPays(
+    role: 'tuteur',
+    nom: 'tuteur_suivi_foyer',
+    construire: () => SuiviFoyerPage(horloge: () => maintenantPays),
+    surcharges: _surchargesSuiviFoyer(),
+    pays: const <String>['Mali'],
+  ),
+  EcranPays(
+    role: 'tuteur',
+    nom: 'tuteur_detail_seance',
+    construire: () => const DetailSeancePage(seanceId: 's-passee-2'),
+    surcharges: _surchargesSuiviFoyer(),
+    pays: const <String>['Mali'],
+  ),
 ];
+
+/// Le contexte de la Classe Live : l'enseignant du groupe Al-Fatiha de la
+/// demonstration, tel que `routes_tc_a.dart` le transmet depuis sa carte.
+ContexteClasseLive _contexteLive({
+  bool photo = true,
+  String prenom = 'Youssouf',
+}) => ContexteClasseLive(
+  sessionId: 's-live',
+  groupeId: GroupesDemonstration.alFatiha,
+  libelleGroupe: 'Groupe Al-Fatiha',
+  enseignant: EnseignantDeClasse(
+    nomAffichage: prenom,
+    titre: TitreEnseignant.sayyid,
+    photoCleOuUrl: photo ? 'https://exemple.invalid/youssouf.jpg' : null,
+    pays: 'Guinée',
+  ),
+);
+
+/// La Classe Live vue par le tuteur observateur, avec ou sans photo de
+/// l'enseignant (les deux branches de `EnteteClasse`), et un prenom vide
+/// pour l'identite masquee.
+EcranPays classeLiveTuteur({bool photo = true, String prenom = 'Youssouf'}) =>
+    EcranPays(
+      role: 'tuteur',
+      nom: 'tuteur_classe_live',
+      construire: () => ClasseLivePage(
+        contexte: _contexteLive(photo: photo, prenom: prenom),
+      ),
+      surcharges: _surchargesLive('guardian'),
+      pays: <String>[if (prenom.isNotEmpty) 'Guinée'],
+    );
+
+/// Les faux de la Classe Live pour un role du jeton qui n'a pas de salle de
+/// seance (tuteur observateur, controleur) : l'en-tete `EnteteClasse` est
+/// alors celui qui presente l'enseignant.
+List<Override> _surchargesLive(String role) => <Override>[
+  ...surchargesClasse(
+    moteur: FauxMoteurClasse(),
+    video: FauxServiceVideoClasse(acces0: accesDe(role)),
+    preVol: FauxPreVolClasse(),
+  ),
+];
+
+/// Une seance passee de l'eleve [eleveId], enseignant au pays declare.
+Seance _seancePassee(String eleveId, String prenom, {required int jours}) {
+  final DateTime debut = maintenantPays.subtract(Duration(days: jours));
+  return Seance(
+    id: 's-passee-$jours',
+    debut: debut,
+    fin: debut.add(const Duration(minutes: 45)),
+    statut: StatutSeance.terminee,
+    eleveId: eleveId,
+    elevePrenom: prenom,
+    eleveIdentifiant: 'DEMO-Y1',
+    enseignantId: 'ens-mali',
+    enseignantPrenom: 'Oumar',
+    enseignantIdentifiant: 'TEACH-OM-000004',
+    enseignantPays: 'Mali',
+  );
+}
+
+/// Le foyer de demonstration, dont le suivi rend une seance passee de
+/// Yusuf avec un enseignant au pays declare (la demonstration n'en rend
+/// aucune).
+List<Override> _surchargesSuiviFoyer() => <Override>[
+  for (final Override o in surchargesDemoTuteur(environnement: 'staging'))
+    // ignore: invalid_use_of_visible_for_testing_member
+    if (o.origin != seancesDuSuiviProvider &&
+        // ignore: invalid_use_of_visible_for_testing_member
+        o.origin != presenceDuSuiviProvider)
+      o,
+  seancesDuSuiviProvider.overrideWith(
+    (Ref _) async => <Seance>[
+      _seancePassee(DonneesDemo.yusufId, 'Yusuf', jours: 2),
+      _seancePassee(DonneesDemo.aichaId, 'Aïcha', jours: 3),
+    ],
+  ),
+  presenceDuSuiviProvider.overrideWith(
+    (Ref _) async => const <PresenceParticipant>[],
+  ),
+];
+
+/// Fait defiler l'ecran jusqu'a la premiere ligne du pays, posee au tiers de
+/// la vue : ni sous un en-tete colle, ni sous la barre de navigation (K-61,
+/// verification croisee du 04/10). Sans ligne de pays, ne fait rien.
+Future<void> montrerPays(WidgetTester tester) async {
+  final Finder lignes = find.byKey(PaysEnseignant.ligneKey);
+  if (lignes.evaluate().isEmpty) return;
+  final BuildContext contexte = lignes.evaluate().first;
+  if (Scrollable.maybeOf(contexte) != null) {
+    await Scrollable.ensureVisible(contexte, alignment: 0.3);
+    await stabiliser(tester);
+  }
+}
+
+/// Vrai quand la premiere ligne du pays est entierement dans la vue et au
+/// dessus de la barre de navigation basse, s'il y en a une.
+Rect? rectangleVisibleDuPays(WidgetTester tester, Size vue) {
+  final Finder lignes = find.byKey(PaysEnseignant.ligneKey);
+  if (lignes.evaluate().isEmpty) return null;
+  final Rect r = tester.getRect(lignes.first);
+  final Finder barre = find.byKey(NavShell.barreBasseKey);
+  final double bas = barre.evaluate().isEmpty
+      ? vue.height
+      : tester.getRect(barre).top;
+  return r.top >= 0 && r.bottom <= bas + 0.5 ? r : null;
+}
 
 /// L'hote d'un ecran recense : vrai theme clair ou sombre, echelle de texte,
 /// sens de lecture, et un routeur (les ecrans du tuteur en lisent un).

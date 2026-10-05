@@ -6506,9 +6506,6 @@ class Traductions$admin$comptes$fr {
 	/// fr: 'Rôle'
 	String get colonneRole => 'Rôle';
 
-	/// fr: 'Pays de l'enseignant'
-	String get colonnePays => 'Pays de l\'enseignant';
-
 	/// fr: 'État'
 	String get colonneEtat => 'État';
 
@@ -17281,7 +17278,6 @@ extension on Traductions {
 			'admin.comptes.colonnePersonne' => 'Personne',
 			'admin.comptes.colonneIdentifiant' => 'Identifiant',
 			'admin.comptes.colonneRole' => 'Rôle',
-			'admin.comptes.colonnePays' => 'Pays de l\'enseignant',
 			'admin.comptes.colonneEtat' => 'État',
 			'admin.comptes.colonnePiece' => 'Pièce d\'identité',
 			'admin.comptes.colonneAttente' => 'Inscrit depuis',
@@ -17666,9 +17662,9 @@ extension on Traductions {
 			'compte.tuteur.pageInformations.fuseau' => 'Fuseau des séances',
 			'compte.tuteur.pageInformations.fuseauIndisponible' => 'Non disponible pour le moment',
 			'compte.tuteur.pageInformations.note' => 'Ces informations sont tenues par l\'académie. Elles ne se modifient pas encore depuis l\'application.',
+			'compte.tuteur.pageSecurite.titre' => 'Connexion et sécurité',
 			_ => null,
 		} ?? switch (path) {
-			'compte.tuteur.pageSecurite.titre' => 'Connexion et sécurité',
 			'compte.tuteur.pageSecurite.sousTitre' => 'Comment vous accédez à votre compte.',
 			'compte.tuteur.pageSecurite.methode' => 'Méthode de connexion',
 			'compte.tuteur.pageSecurite.adresse' => 'Adresse de connexion',
@@ -18180,9 +18176,9 @@ extension on Traductions {
 			'enseignant.eleve.niveau' => 'Niveau',
 			'enseignant.eleve.objectif' => 'Objectif',
 			'enseignant.eleve.presence' => 'Présence récente',
+			'enseignant.eleve.travail' => 'Travail',
 			_ => null,
 		} ?? switch (path) {
-			'enseignant.eleve.travail' => 'Travail',
 			'enseignant.eleve.travailReprise' => ({required Object page}) => 'Reprise à la ${page}',
 			'enseignant.eleve.derniereSeance' => 'Dernière séance',
 			'enseignant.eleve.nonRenseigne' => 'Non renseigné',
@@ -18694,9 +18690,9 @@ extension on Traductions {
 			'controleur.compteRendu.visiteEnCours' => 'Transmission de la visite à l\'administration en cours.',
 			'controleur.compteRendu.visiteTransmise' => 'La visite et son relevé automatique sont transmis à l\'administration.',
 			'controleur.compteRendu.visiteEchec' => 'La transmission de la visite n\'est pas confirmée : la connexion ou le serveur n\'a pas répondu. Réessayez ; le relevé de la visite reste enregistré sur le serveur.',
+			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
 			_ => null,
 		} ?? switch (path) {
-			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
 			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
 			'controleur.compteRendu.visiteInconnue' => 'Ce compte rendu ne peut plus être repris ici.',
 			'controleur.compteRendu.visiteInconnueAide' => 'Cet appareil n\'a plus la visite en mémoire, sans doute après un rechargement de la page. La visite reste transmise à l\'administration avec son relevé automatique ; ce point n\'est pas confirmé depuis cet écran. Pour ajouter une remarque, écrivez à l\'administration.',
@@ -19208,9 +19204,9 @@ extension on Traductions {
 			'tc.observation.resultat.verification' => 'Vérification de vos visites restantes',
 			'tc.observation.resultat.inconnues' => 'Vos visites restantes n\'ont pas pu être vérifiées. Elles le seront de nouveau dans la classe.',
 			'tc.observation.resultat.voirObservations' => 'Voir mes observations',
+			'tc.observation.annonce.tuteurObserve' => ({required Object prenomEnfant}) => 'Tuteur de ${prenomEnfant} observe',
 			_ => null,
 		} ?? switch (path) {
-			'tc.observation.annonce.tuteurObserve' => ({required Object prenomEnfant}) => 'Tuteur de ${prenomEnfant} observe',
 			'tc.observation.annonce.restant' => ({required Object secondes}) => '${secondes} s',
 			'tc.observation.annonce.enfantIndicateur' => 'Ton tuteur regarde le cours',
 			'tc.observation.annonce.tuteursObservent' => ({required Object nombre}) => '${nombre} tuteurs observent',

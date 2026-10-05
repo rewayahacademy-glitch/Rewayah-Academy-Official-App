@@ -474,6 +474,7 @@ class SeancesFamilleDemo implements PortSeancesFamille {
             enseignant: EnseignantSeance(
               prenom: DonneesDemo.classes[e.id]!.enseignant.nomAffichage,
               titre: DonneesDemo.classes[e.id]!.enseignant.titre,
+              pays: DonneesDemo.classes[e.id]!.enseignant.pays,
             ),
           ),
     ];

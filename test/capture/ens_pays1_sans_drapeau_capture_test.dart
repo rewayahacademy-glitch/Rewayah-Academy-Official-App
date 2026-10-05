@@ -31,6 +31,7 @@ void main() {
           await tester.tap(find.text(e.toucher!).first);
           await stabiliser(tester);
         }
+        await montrerPays(tester);
         tester.takeException();
         debugPrint('PNG ${await capturer(tester, fichier)}');
       });

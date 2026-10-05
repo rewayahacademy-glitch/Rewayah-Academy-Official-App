@@ -97,6 +97,7 @@ void _rejoindre(BuildContext contexte, GroupSummaryVM groupe) {
         nomAffichage: groupe.enseignant.nomAffichage,
         titre: groupe.enseignant.titre,
         photoCleOuUrl: groupe.enseignant.photoUrlOuCle,
+        pays: groupe.enseignant.pays,
       ),
       horloge: groupe.horloge,
       seuilMax: groupe.seuilMax,

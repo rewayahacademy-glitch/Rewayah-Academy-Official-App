@@ -103,6 +103,25 @@ void main() {
       expect(find.byKey(PaysEnseignant.ligneKey), findsNothing);
     });
 
+    testWidgets('identite masquee (prenom vide) : pas de pays seul', (
+      WidgetTester tester,
+    ) async {
+      for (final String prenom in <String>['', '  ']) {
+        await tester.pumpWidget(
+          _seul(AvatarNom.enLigne(prenom: prenom, nom: 'Sayyid', pays: 'Mali')),
+        );
+        expect(find.byKey(PaysEnseignant.ligneKey), findsNothing);
+        await tester.pumpWidget(
+          _seul(AvatarNom.vertical(prenom: prenom, pays: 'Mali')),
+        );
+        expect(find.byKey(PaysEnseignant.ligneKey), findsNothing);
+      }
+      await tester.pumpWidget(
+        _seul(const AvatarNom.enLigne(prenom: 'Oumar', pays: 'Mali')),
+      );
+      expect(find.byKey(PaysEnseignant.ligneKey), findsOneWidget);
+    });
+
     testWidgets('sans police qui fusionne les lettres (Windows) : le nom seul, '
         'jamais deux lettres', (WidgetTester tester) async {
       await tester.pumpWidget(_seul(const PaysEnseignant(pays: 'Guinée')));
@@ -186,6 +205,12 @@ void main() {
       ) async {
         await _monter(tester, e);
         expect(tester.takeException(), isNull);
+        await montrerPays(tester);
+        expect(
+          rectangleVisibleDuPays(tester, const Size(390, 844)),
+          isNotNull,
+          reason: '${e.nom} : la ligne du pays est visible apres defilement',
+        );
         final List<String> rendus = _paysRendus(tester);
         for (final String p in e.pays) {
           expect(rendus, contains(p), reason: '${e.nom} : $p');
@@ -210,6 +235,13 @@ void main() {
         final Object? exception = tester.takeException();
         if (!e.debordementDeBase) expect(exception, isNull);
         expect(find.byKey(PaysEnseignant.ligneKey), findsWidgets);
+        await montrerPays(tester);
+        tester.takeException();
+        expect(
+          rectangleVisibleDuPays(tester, Size(320, e.hauteur320)),
+          isNotNull,
+          reason: '${e.nom} : la ligne du pays est visible a 320 x2',
+        );
         // La ligne du pays elle-meme reste dans l'ecran.
         for (final Element l
             in find.byKey(PaysEnseignant.ligneKey).evaluate()) {
@@ -220,6 +252,30 @@ void main() {
         verifierAucunMotCoupe(tester, find.byKey(PaysEnseignant.ligneKey));
       });
     }
+
+    testWidgets('classe en direct sans photo : le pays sous le nom', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, classeLiveTuteur(photo: false));
+      expect(_paysRendus(tester), <String>['Guinée']);
+      await _monter(
+        tester,
+        classeLiveTuteur(photo: false),
+        taille: const Size(320, 700),
+        echelle: 2,
+      );
+      expect(tester.takeException(), isNull);
+      verifierAucunMotCoupe(tester, find.byKey(PaysEnseignant.ligneKey));
+    });
+
+    testWidgets('classe en direct, identite masquee : aucun pays', (
+      WidgetTester tester,
+    ) async {
+      for (final bool photo in <bool>[true, false]) {
+        await _monter(tester, classeLiveTuteur(photo: photo, prenom: ''));
+        expect(find.byKey(PaysEnseignant.ligneKey), findsNothing);
+      }
+    });
 
     testWidgets('eleve : pays non declare, aucune ligne de pays', (
       WidgetTester tester,

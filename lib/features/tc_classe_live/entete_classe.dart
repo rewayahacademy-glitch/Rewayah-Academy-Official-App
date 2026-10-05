@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
@@ -8,6 +8,7 @@ import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_nom.dart';
+import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/status_pill.dart';
 import '../tc_observation_ui/indicateur_observation.dart';
 import 'roster_classe.dart';
@@ -138,6 +139,7 @@ class EnteteClasse extends StatelessWidget {
                         prenom: session.enseignant.nomAffichage,
                         urlSignee: photoEnseignant,
                         nom: nomAvecTitre(session.enseignant),
+                        pays: session.enseignant.pays,
                         role: session.libelleGroupe,
                         diametre: AppAvatar.petit,
                         ecart: AppSpacing.sm,
@@ -158,6 +160,11 @@ class EnteteClasse extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: textes.labelMedium ?? const TextStyle(),
                           ),
+                          // ENS-PAYS-1 : la meme ligne que sous l'avatar,
+                          // sous un prenom connu seulement (identite
+                          // masquee : rien).
+                          if (session.enseignant.nomAffichage.trim().isNotEmpty)
+                            ?PaysEnseignant.siDeclare(session.enseignant.pays),
                         ],
                       ),
               ),

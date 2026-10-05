@@ -153,8 +153,15 @@ class AvatarNom extends StatelessWidget {
   /// ([PaysEnseignant]) ; nul ou vide : rien n'est rendu. Il ne compte pas
   /// comme la ligne de role : c'est une donnee de l'identite publique de
   /// l'enseignant, demandee par le directeur le 04/10/2026, au meme titre que
-  /// son nom. Il n'est pas ecrit quand le nom ne l'est pas ([afficherNom]).
+  /// son nom. Il n'est pas ecrit quand le nom ne l'est pas ([afficherNom]),
+  /// ni quand le [prenom] est vide (identite masquee) : un pays seul, sous un
+  /// enseignant sans nom, suffirait parfois a le reconnaitre.
   final String? pays;
+
+  /// Vrai quand la ligne du pays s'ecrit : un pays declare, sous un prenom
+  /// connu.
+  bool get _paysVisible =>
+      prenom.trim().isNotEmpty && PaysEnseignant.nomAffichable(pays) != null;
 
   /// URL signee de la photo, quand l'ecran en a une.
   final String? urlSignee;
@@ -235,7 +242,7 @@ class AvatarNom extends StatelessWidget {
               textAlign: TextAlign.center,
               style: styleDuNom,
             ),
-          if (afficherNom && PaysEnseignant.nomAffichable(pays) != null)
+          if (afficherNom && _paysVisible)
             PaysEnseignant(pays: pays, centre: true),
           if (ligneRole != null)
             TexteSansCoupure(
@@ -257,8 +264,7 @@ class AvatarNom extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 TexteSansCoupure(affiche, style: styleDuNom),
-                if (PaysEnseignant.nomAffichable(pays) != null)
-                  PaysEnseignant(pays: pays),
+                if (_paysVisible) PaysEnseignant(pays: pays),
                 if (roleWidget != null)
                   roleWidget!
                 else if (ligneRole != null)

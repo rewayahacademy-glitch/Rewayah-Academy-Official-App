@@ -288,7 +288,9 @@ class _Corps extends StatelessWidget {
                       PaysEnseignant.nomAffichable(c.paysEnseignant) != null,
                 ))
                   ColonneDonnees<CompteAdmin>(
-                    titre: t.admin.comptes.colonnePays,
+                    // « Pays » : la colonne ne porte que des comptes enseignants, et
+                    // « Pays de l'enseignant » se tronquait a 1440.
+                    titre: t.enseignant.profil.pays,
                     // Sa propre ligne en carte (sous 1200), avec le drapeau :
                     // la ligne secondaire jointe ne rendrait que du texte.
                     role: RoleColonne.aPart,

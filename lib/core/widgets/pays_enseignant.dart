@@ -223,6 +223,20 @@ bool drapeauDessinable(String code, TextStyle style) {
 @visibleForTesting
 void oublierDrapeauxMesures() => _dessinables.clear();
 
+/// Vrai une fois l'ecoute des polices du systeme posee : **une seule** pour
+/// toute l'application, quel que soit le nombre de drapeaux a l'ecran.
+bool _ecouteDesPolices = false;
+
+/// Pose, une fois, l'ecoute qui oublie les mesures quand les polices du
+/// systeme changent (Flutter Web finit de charger sa police d'emoji). Chaque
+/// drapeau ecoute ensuite le meme signal pour se redessiner, sans vider le
+/// cache lui-meme : un seul vidage par changement.
+void _ecouterLesPolices() {
+  if (_ecouteDesPolices) return;
+  _ecouteDesPolices = true;
+  PaintingBinding.instance.systemFonts.addListener(_dessinables.clear);
+}
+
 class _Drapeau extends StatefulWidget {
   const _Drapeau({required this.code, required this.style});
 
@@ -237,6 +251,10 @@ class _DrapeauEtat extends State<_Drapeau> {
   @override
   void initState() {
     super.initState();
+    // L'ecoute qui vide le cache est posee avant celle-ci : les auditeurs
+    // sont appeles dans l'ordre d'inscription, le cache est donc vide quand
+    // ce drapeau se reconstruit.
+    _ecouterLesPolices();
     PaintingBinding.instance.systemFonts.addListener(_policesChangees);
   }
 
@@ -247,7 +265,6 @@ class _DrapeauEtat extends State<_Drapeau> {
   }
 
   void _policesChangees() {
-    _dessinables.clear();
     if (mounted) setState(() {});
   }
 

@@ -19,6 +19,10 @@ Une seule colonne par projection, `teacher_country text`, avec **le même masqua
 | `public.groupes_admin()` (`0033_tc_vues_rpc.sql`, l. 694) | `GroupeAdmin.teacherPays` (`lib/core/admin/service_groupes.dart`) | administration (Groupes) | colonne de retour `teacher_country text`, même `case` ; changer la signature impose `drop function` puis `create` et de rejouer les `grant` |
 | `public.comptes_admin()` (`0015_administration_voit_les_personnes.sql`, l. 126) | `CompteAdmin.paysEnseignant` (`lib/core/admin/service_comptes.dart`) | administration (Comptes) | colonne de retour `teacher_country text` : `tp.country` pour `role = 'teacher'`, `null` pour les autres rôles, même `case` de masquage |
 | mission et rapports du contrôleur (contrat `14_controleur/CT-BR.md`, pas encore en base) | `MissionControle.paysEnseignant`, `RapportControle.paysEnseignant` | contrôleur | ajouter `teacher_country` au contrat de la mission et du rapport, même masquage |
+| catalogue des classes ouvertes (« Choisir une classe » du tuteur) : **aucune source en base** (DB-CRS-07, `port_catalogue_classes.dart`) | `ClasseOuverte.enseignant` → `EnseignantSeance.pays` (`lib/core/seance_famille/seance_famille.dart`) | tuteur | la vue ou RPC du catalogue, quand elle sera creee, rend `teacher_country` avec le meme `case` que le prenom ; le client l'affiche deja (donnees de demonstration `catalogue_demo.dart`) |
+| seances de la famille (`seanceFamilleDepuis`, `port_seances_famille.dart`) | `EnseignantSeance.pays`, repris de `Seance.enseignantPays` | tuteur, eleve | **rien de plus** : la meme colonne `teacher_country` de `mes_seances_v` (ligne ci-dessus) |
+| seance en direct : `ContexteClasseLive.enseignant` (en-tete `EnteteClasse`, salle d'attente, tuteur observateur, controleur) | `EnseignantDeClasse.pays` (`lib/core/tc_classe/session_live_vm.dart`), transmis par `routes_tc_a.dart` depuis `EnseignantVM.pays` | eleve, tuteur, controleur | **rien de plus** : la meme colonne `teacher_country` de `mes_groupes_famille_v` ; aucune lecture nouvelle dans la salle (le jeton LiveKit et `etat_presence()` ne portent pas le pays, et n'ont pas a le porter) |
+| suivi de l'eleve (`/eleve/suivi`, colonne « Pays ») | `Seance.enseignantPays` | eleve | **rien de plus** : `mes_seances_v.teacher_country` |
 | `public.enseignants_pour(uuid)` (`0016_masquage_coherent_en_observation.sql`, l. 305) | `EnseignantCandidat.pays` (déjà lu, `json['country']`) | administration (Attribution) | **déjà exposé**, mais **non masqué** : `tp.country` sort même quand `agent_identite_masquee()` cache le prénom. À aligner : `case when v_masque then null else tp.country end`. En attendant, le client ne l'affiche que si l'identité est connue |
 
 ## RLS et masquage
@@ -31,4 +35,5 @@ Une seule colonne par projection, `teacher_country text`, avec **le même masqua
 
 - Pays nul ou vide : aucune ligne, pas de « inconnu ».
 - Nom du pays toujours écrit ; drapeau seulement si l'appareil le dessine (mesure), jamais deux lettres.
-- Tableaux de l'administration : la colonne « Pays de l'enseignant » n'apparaît que si une ligne au moins porte un pays (pas de colonne vide avant BR-1).
+- Tableaux de l'administration et suivi de l'eleve : la colonne du pays n'apparaît que si une ligne au moins porte un pays (pas de colonne vide avant BR-1). Comptes et suivi : en-tête « Pays » (seuls des enseignants y ont un pays) ; Groupes : « Pays de l'enseignant ».
+- Identite masquee (prenom vide) : aucun pays n'est ecrit, meme si la projection en rendait un.
