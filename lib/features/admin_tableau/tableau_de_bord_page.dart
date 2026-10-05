@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/admin/service_admin.dart';
+import '../../core/alertes/alerte.dart';
+import '../../core/alertes/port_alertes.dart';
 import '../../core/capacites/revue_dossiers_depuis_validation.dart';
 import '../../core/dossier/service_validation.dart';
 import '../../core/i18n/strings.g.dart';
@@ -16,6 +18,7 @@ import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
+import '../alertes/section_alertes.dart';
 import 'tuiles_compteur.dart';
 
 /// `ADM-01` : le centre de commande.
@@ -74,21 +77,37 @@ class TableauDeBordPage extends ConsumerWidget {
         ),
     ];
 
+    // ALERTE-1 : une alerte urgente va en tete de la page, au-dessus de tout
+    // autre contenu, jusqu'a son traitement. Sans alerte urgente, la section
+    // suit les compteurs (D2 : agir, savoir, aller). Lit la capacite (le flux
+    // des alertes), jamais un role.
+    final List<Alerte>? alertes = ref.watch(alertesProvider).value;
+    final bool urgence = (ref.watch(alertesUrgentesProvider) ?? 0) > 0;
+    final Widget sectionAlertes = SectionAlertes(
+      onOuvrir: (String chemin) => GoRouter.of(context).go(chemin),
+      onVoirTout: () => GoRouter.of(context).go(Routes.adminAlertes),
+    );
+
     final IndicateursAdmin? valeurs = indicateurs.value;
     // La phrase calme n'est vraie que si les quatre files d'action sont
-    // vides. Incidents et acces echus, rapports sans action, n'y comptent pas.
+    // vides, et qu'aucune alerte urgente ou importante n'est ouverte.
+    // Incidents et acces echus, rapports sans action, n'y comptent pas.
     final bool calme =
         indicateurs.hasValue &&
         valeurs!.dossiersEnAttente == 0 &&
         valeurs.demandesEnAttente == 0 &&
         valeurs.foyersSansEnseignant == 0 &&
-        valeurs.rapportsManquants == 0;
+        valeurs.rapportsManquants == 0 &&
+        !(alertes ?? const <Alerte>[]).any(
+          (Alerte a) => a.gravite != GraviteAlerte.info,
+        );
 
     return PageShell(
       titre: t.admin.tableau.titre,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          if (urgence) ...<Widget>[sectionAlertes, Ecart.vXxl],
           // 1. AGIR ET SAVOIR : les compteurs, rendus des que la lecture
           // aboutit, zeros compris (D8). Les getters, jamais le type
           // d'execution : Riverpod 3 relance un provider en echec tout seul,
@@ -123,6 +142,7 @@ class TableauDeBordPage extends ConsumerWidget {
             Text(t.admin.tableau.calme, style: textes.bodyMedium),
           ],
           Ecart.vXxl,
+          if (!urgence) ...<Widget>[sectionAlertes, Ecart.vXxl],
 
           // 2. ALLER : les raccourcis vers Operations, Personnes et Securite.
           //

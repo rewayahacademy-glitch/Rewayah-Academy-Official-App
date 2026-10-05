@@ -28,6 +28,8 @@ import '../../features/admin_pedagogie_progression/progression_page.dart';
 import '../../features/admin_pedagogie_qualite/qualite_page.dart';
 import '../../features/admin_tableau/tableau_de_bord_page.dart';
 import '../../features/agent_entree/agent_entree_page.dart';
+import '../../features/alertes/alertes_page.dart';
+import '../../features/alertes/bandeau_alerte_urgente.dart';
 import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
 import '../../features/appareils/appareils_eleve_page.dart';
@@ -109,8 +111,10 @@ import '../../features/tc_mushaf/mushaf_page.dart';
 import '../../features/tc_mushaf/routes_tc_c.dart';
 import '../../features/tc_observation_ui/routes_tc_g.dart';
 import '../admin/admin_domaine.dart';
+import '../alertes/port_alertes.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
+import '../i18n/strings.g.dart';
 import '../mouvement/transitions.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
@@ -925,6 +929,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           child: TableauDeBordPage(),
         ),
       ),
+      GoRoute(
+        path: Routes.adminAlertes,
+        builder: (BuildContext _, GoRouterState _) => const _CoquilleAdmin(
+          domaine: AdminDomaine.accueil,
+          sousPage: true,
+          child: AlertesPage(),
+        ),
+      ),
       // La racine du domaine Operations n'est pas une page : elle renvoie a
       // sa fonction primaire, jamais une seconde implementation. Groupes en
       // est la fonction primaire depuis le pivot du 19 septembre 2026
@@ -1528,10 +1540,18 @@ class _CoquilleNavigation extends ConsumerWidget {
 /// faisaient deja `ADM-06`, `ADM-07` et `ADM-08` avant ce lot. C'est le prix
 /// assume de la restructuration, pas un oubli.
 class _CoquilleAdmin extends ConsumerWidget {
-  const _CoquilleAdmin({required this.domaine, required this.child});
+  const _CoquilleAdmin({
+    required this.domaine,
+    required this.child,
+    this.sousPage = false,
+  });
 
   /// Le domaine que revendique cette route.
   final AdminDomaine domaine;
+
+  /// Vrai pour une page rangee sous l'Accueil (les alertes) : elle garde le
+  /// retour vers l'Accueil.
+  final bool sousPage;
 
   final Widget child;
 
@@ -1543,6 +1563,11 @@ class _CoquilleAdmin extends ConsumerWidget {
       sessionProvider.select((SessionState s) => s.peutVoirDirection),
     );
 
+    // ALERTE-1 : la cloche n'existe que si la capacite « alertes » rend
+    // quelque chose (jamais en production avant DASH-BR-03, Q5) ; son point
+    // dit qu'une alerte urgente est ouverte. Jamais deduite du role.
+    final int? urgentes = ref.watch(alertesUrgentesProvider);
+
     return AdminShell(
       domaines: domainesAdmin(voitDirection: voitDirection),
       domaineActif: domaine,
@@ -1550,9 +1575,28 @@ class _CoquilleAdmin extends ConsumerWidget {
       onCompte: () => aller(Routes.compte),
       // Retour vers l'Accueil sur toute page admin sauf l'Accueil lui-meme
       // (spec section 26 ter, Q14).
-      onRetour: domaine == AdminDomaine.accueil
+      onRetour: domaine == AdminDomaine.accueil && !sousPage
           ? null
           : () => aller(Routes.admin),
+      cloche: urgentes == null
+          ? null
+          : ClocheNotifications(
+              onPress: () => aller(Routes.adminAlertes),
+              nonLues: urgentes,
+              libelleSemantique: switch (urgentes) {
+                0 => t.alertes.cloche,
+                1 => t.alertes.clocheUneUrgente,
+                _ => t.alertes.clocheUrgentes(nombre: urgentes),
+              },
+            ),
+      // Le bandeau d'alerte urgente, en tete de toute page ouverte, sauf
+      // sous l'Accueil : le Centre de commande et la page des alertes
+      // montrent deja l'alerte en tete (D7, une information une fois).
+      // Pose seulement quand une alerte urgente est ouverte : sans elle, la
+      // page garde sa tete fixe.
+      bandeau: domaine == AdminDomaine.accueil || (urgentes ?? 0) == 0
+          ? null
+          : BandeauAlerteUrgente(onOuvrir: () => aller(Routes.adminAlertes)),
       child: child,
     );
   }

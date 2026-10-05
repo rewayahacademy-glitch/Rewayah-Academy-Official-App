@@ -46,7 +46,10 @@ import 'pressable.dart';
 /// [ActionsEnteteCoquille], a cote du titre et du sous-titre de la page.
 /// Sous 600, une barre mobile garde Menu, le champ de recherche et le
 /// compte. Pas de cloche tant qu'aucun service de notifications n'existe
-/// (Q5). Chaque page recoit aussi le retour vers l'Accueil ([onRetour]).
+/// (Q5) : [cloche] n'est fournie que lorsque la capacite « alertes » rend
+/// quelque chose (ALERTE-1), et se pose alors avant le compte, sur toutes
+/// les formes. Chaque page recoit aussi le retour vers l'Accueil
+/// ([onRetour]).
 class AdminShell extends StatelessWidget {
   /// Cree la coquille admin.
   ///
@@ -62,6 +65,8 @@ class AdminShell extends StatelessWidget {
     required this.child,
     super.key,
     this.onRetour,
+    this.cloche,
+    this.bandeau,
   }) : assert(
          domaines.length <= maxDomaines,
          'La sidebar admin ne contient jamais plus de $maxDomaines domaines '
@@ -85,6 +90,13 @@ class AdminShell extends StatelessWidget {
   /// Le retour pose sur chaque page de la coquille (spec section 26 ter,
   /// Q14) : vers l'Accueil, nul sur l'Accueil lui-meme.
   final VoidCallback? onRetour;
+
+  /// La cloche des alertes, ou `null` sans capacite « alertes » (Q5).
+  final Widget? cloche;
+
+  /// Le bandeau pose en tete de chaque page (`PageShell`, au-dessus du
+  /// titre) : l'alerte urgente (ALERTE-1). Nul : aucun.
+  final Widget? bandeau;
 
   /// L'ecran affiche.
   final Widget child;
@@ -136,10 +148,12 @@ class AdminShell extends StatelessWidget {
         if (avecActions) ...<Widget>[
           _BoutonRecherche(onRecherche: onAller),
           const BasculeTheme(),
+          ?cloche,
           _BoutonCompte(onCompte: onCompte),
         ],
       ],
       onRetour: onRetour,
+      bandeau: bandeau,
       child: child,
     );
 
@@ -158,7 +172,11 @@ class AdminShell extends StatelessWidget {
       body: switch (chrome) {
         ChromeNavigation.barreBasse => Column(
           children: <Widget>[
-            _BarreMobile(onRecherche: onAller, onCompte: onCompte),
+            _BarreMobile(
+              onRecherche: onAller,
+              onCompte: onCompte,
+              cloche: cloche,
+            ),
             Expanded(child: contenu(avecActions: false)),
           ],
         ),
@@ -705,10 +723,15 @@ class _BoutonRecherche extends StatelessWidget {
 /// **Rien d'autre n'y vit** : ni reglage, ni eleve, ni groupe, ni bouton
 /// metier isole.
 class _BarreMobile extends StatefulWidget {
-  const _BarreMobile({required this.onRecherche, required this.onCompte});
+  const _BarreMobile({
+    required this.onRecherche,
+    required this.onCompte,
+    this.cloche,
+  });
 
   final void Function(String chemin) onRecherche;
   final VoidCallback onCompte;
+  final Widget? cloche;
 
   @override
   State<_BarreMobile> createState() => _BarreMobileState();
@@ -786,6 +809,10 @@ class _BarreMobileState extends State<_BarreMobile> {
                   ),
                 ),
               Ecart.hSm,
+              if (widget.cloche case final Widget cloche) ...<Widget>[
+                cloche,
+                Ecart.hSm,
+              ],
               _BoutonCompte(onCompte: widget.onCompte),
             ],
           ),

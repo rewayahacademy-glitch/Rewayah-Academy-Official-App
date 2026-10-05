@@ -163,13 +163,23 @@ class DisqueRetour extends StatelessWidget {
 /// « Notifications, n non lues ».
 class ClocheNotifications extends StatelessWidget {
   /// Cree la cloche.
-  const ClocheNotifications({required this.onPress, super.key, this.nonLues});
+  const ClocheNotifications({
+    required this.onPress,
+    super.key,
+    this.nonLues,
+    this.libelleSemantique,
+  });
 
   /// L'ouverture des notifications (`/tuteur/notifications`).
   final VoidCallback? onPress;
 
   /// Le nombre de notifications non lues, tel que le service le rend.
   final int? nonLues;
+
+  /// Ce que lit le lecteur d'ecran, quand la cloche dit autre chose que des
+  /// notifications non lues : la cloche des alertes de la direction annonce
+  /// ses alertes urgentes (ALERTE-1). Nul : le libelle des notifications.
+  final String? libelleSemantique;
 
   /// Diametre du point de non-lus.
   static const double diametrePoint = AppSpacing.sm;
@@ -179,11 +189,13 @@ class ClocheNotifications extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final bool mobile = AppGabarit.de(context) == Gabarit.mobile;
     final int nombre = nonLues ?? 0;
-    final String libelle = switch (nombre) {
-      <= 0 => t.commun.entete.notifications,
-      1 => t.commun.entete.notificationsUneNonLue,
-      _ => t.commun.entete.notificationsNonLues(nombre: nombre),
-    };
+    final String libelle =
+        libelleSemantique ??
+        switch (nombre) {
+          <= 0 => t.commun.entete.notifications,
+          1 => t.commun.entete.notificationsUneNonLue,
+          _ => t.commun.entete.notificationsNonLues(nombre: nombre),
+        };
 
     return Pressable(
       onPress: onPress,

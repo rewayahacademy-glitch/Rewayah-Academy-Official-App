@@ -102,7 +102,11 @@ Future<void> main() async {
   if (demoAdminActiveIci) {
     runApp(
       ProviderScope(
-        overrides: surchargesDemoAdmin(etat: etatRevueDemoPour(Uri.base)),
+        overrides: surchargesDemoAdmin(
+          etat: etatRevueDemoPour(Uri.base),
+          avecAlertes: true,
+          arriveeAlerte: dureeArriveeAlerteDemo,
+        ),
         child: TranslationProvider(
           child: RewayahApp(
             builder: (BuildContext context, Widget? child) =>

@@ -17,6 +17,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../../core/admin/service_admin.dart';
+import '../../core/alertes/port_alertes.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_catalogue_classes.dart';
@@ -46,6 +47,7 @@ import '../../core/tc_observation/activation_observation.dart';
 import '../../core/tc_observation/port_historique_observations.dart';
 import '../../core/tc_observation/port_politique_observation.dart';
 import '../../core/tc_observation/port_visite_observation.dart';
+import 'alertes_demo.dart';
 import 'catalogue_demo.dart';
 import 'dossiers_demo.dart';
 import 'observation_demo.dart';
@@ -183,13 +185,24 @@ bool demoAdminActive({required Uri adresse, required String environnement}) =>
 bool get demoAdminActiveIci =>
     demoAdminActive(adresse: Uri.base, environnement: Env.environnement);
 
+/// Le delai avant l'arrivee d'une alerte urgente dans la demonstration admin
+/// (ALERTE-1) : assez long pour regarder la page d'abord.
+const Duration dureeArriveeAlerteDemo = Duration(seconds: 20);
+
 /// Les surcharges de la demonstration admin.
 ///
 /// Une seule [EtatRevueDemo] partagee par les doubles : une bascule de
 /// politique se voit dans la file. Leve une [StateError] en production.
+/// [avecAlertes] (ALERTE-1) : la visite montre des alertes fictives, une
+/// urgente en tete ; [arriveeAlerte] : le delai avant qu'une seconde alerte
+/// urgente arrive en cours de visite, sans recharger. Sans [avecAlertes]
+/// (defaut, tests des autres ecrans), la source des alertes reste celle de
+/// la production : indisponible, ni cloche ni bandeau.
 List<Override> surchargesDemoAdmin({
   String? environnement,
   EtatRevueDemo? etat,
+  bool avecAlertes = false,
+  Duration? arriveeAlerte,
 }) {
   if (!environnementAutoriseDemo(environnement ?? Env.environnement)) {
     throw StateError('Demonstration interdite en production.');
@@ -212,6 +225,12 @@ List<Override> surchargesDemoAdmin({
       ),
     ),
     demandesProvider.overrideWith((Ref ref) async => const <Demande>[]),
+    // ALERTE-1 : alertes fictives, une urgente en tete ; une seconde urgente
+    // arrive en cours de visite, sans recharger (temps reel simule).
+    if (avecAlertes)
+      portAlertesProvider.overrideWithValue(
+        AlertesDemo(arrivee: arriveeAlerte),
+      ),
     // Tous les autres services admin adosses a Supabase : « indisponible ».
     ...surchargesServicesAdminIndisponibles(),
   ];

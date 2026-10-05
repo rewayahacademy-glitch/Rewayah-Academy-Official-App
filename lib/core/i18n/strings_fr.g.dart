@@ -77,6 +77,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$compte$fr compte = Traductions$compte$fr.internal(_root);
 	late final Traductions$historique$fr historique = Traductions$historique$fr.internal(_root);
 	late final Traductions$notifications$fr notifications = Traductions$notifications$fr.internal(_root);
+	late final Traductions$alertes$fr alertes = Traductions$alertes$fr.internal(_root);
 	late final Traductions$eleve$fr eleve = Traductions$eleve$fr.internal(_root);
 	late final Traductions$tuteur$fr tuteur = Traductions$tuteur$fr.internal(_root);
 	late final Traductions$classe$fr classe = Traductions$classe$fr.internal(_root);
@@ -2187,6 +2188,65 @@ class Traductions$notifications$fr {
 
 	/// fr: '{titre}, le {date} à {heure}'
 	String ligne({required Object titre, required Object date, required Object heure}) => '${titre}, le ${date} à ${heure}';
+}
+
+// Path: alertes
+class Traductions$alertes$fr {
+	Traductions$alertes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Alertes'
+	String get titre => 'Alertes';
+
+	late final Traductions$alertes$gravite$fr gravite = Traductions$alertes$gravite$fr.internal(_root);
+
+	/// fr: 'Le {date} à {heure}'
+	String creeeLe({required Object date, required Object heure}) => 'Le ${date} à ${heure}';
+
+	/// fr: '{gravite}, {titre}, le {date} à {heure}'
+	String ligne({required Object gravite, required Object titre, required Object date, required Object heure}) => '${gravite}, ${titre}, le ${date} à ${heure}';
+
+	/// fr: 'Alerte urgente : {titre}'
+	String bandeauUne({required Object titre}) => 'Alerte urgente : ${titre}';
+
+	/// fr: '{nombre} alertes urgentes. La plus récente : {titre}'
+	String bandeauPlusieurs({required Object nombre, required Object titre}) => '${nombre} alertes urgentes. La plus récente : ${titre}';
+
+	/// fr: 'Voir toutes les alertes'
+	String get voirTout => 'Voir toutes les alertes';
+
+	/// fr: 'Aucune alerte en cours.'
+	String get vide => 'Aucune alerte en cours.';
+
+	/// fr: 'Aucune alerte en cours'
+	String get videTitre => 'Aucune alerte en cours';
+
+	/// fr: 'Une alerte urgente s'affichera ici, en tête, dès son arrivée.'
+	String get videPhrase => 'Une alerte urgente s\'affichera ici, en tête, dès son arrivée.';
+
+	/// fr: 'Les alertes ne sont pas encore disponibles'
+	String get indisponibleTitre => 'Les alertes ne sont pas encore disponibles';
+
+	/// fr: 'Les alertes urgentes s'afficheront ici, en tête, dès que leur source sera ouverte.'
+	String get indisponiblePhrase => 'Les alertes urgentes s\'afficheront ici, en tête, dès que leur source sera ouverte.';
+
+	/// fr: 'Les alertes n'ont pas pu être lues'
+	String get erreurTitre => 'Les alertes n\'ont pas pu être lues';
+
+	/// fr: 'Les alertes n'ont pas pu être lues'
+	String get sansDonnees => 'Les alertes n\'ont pas pu être lues';
+
+	/// fr: 'Alertes'
+	String get cloche => 'Alertes';
+
+	/// fr: 'Alertes, une urgente'
+	String get clocheUneUrgente => 'Alertes, une urgente';
+
+	/// fr: 'Alertes, {nombre} urgentes'
+	String clocheUrgentes({required Object nombre}) => 'Alertes, ${nombre} urgentes';
 }
 
 // Path: eleve
@@ -7230,6 +7290,24 @@ class Traductions$historique$observation$fr {
 
 	/// fr: 'Aucune visite enregistrée ne correspond à cette séance.'
 	String get introuvablePhrase => 'Aucune visite enregistrée ne correspond à cette séance.';
+}
+
+// Path: alertes.gravite
+class Traductions$alertes$gravite$fr {
+	Traductions$alertes$gravite$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Urgente'
+	String get urgent => 'Urgente';
+
+	/// fr: 'Importante'
+	String get important => 'Importante';
+
+	/// fr: 'Pour information'
+	String get info => 'Pour information';
 }
 
 // Path: eleve.accueil
@@ -17671,6 +17749,25 @@ extension on Traductions {
 			'notifications.videTitre' => 'Aucune notification',
 			'notifications.videPhrase' => 'Les rappels de séance et les messages de l\'académie s\'afficheront ici.',
 			'notifications.ligne' => ({required Object titre, required Object date, required Object heure}) => '${titre}, le ${date} à ${heure}',
+			'alertes.titre' => 'Alertes',
+			'alertes.gravite.urgent' => 'Urgente',
+			'alertes.gravite.important' => 'Importante',
+			'alertes.gravite.info' => 'Pour information',
+			'alertes.creeeLe' => ({required Object date, required Object heure}) => 'Le ${date} à ${heure}',
+			'alertes.ligne' => ({required Object gravite, required Object titre, required Object date, required Object heure}) => '${gravite}, ${titre}, le ${date} à ${heure}',
+			'alertes.bandeauUne' => ({required Object titre}) => 'Alerte urgente : ${titre}',
+			'alertes.bandeauPlusieurs' => ({required Object nombre, required Object titre}) => '${nombre} alertes urgentes. La plus récente : ${titre}',
+			'alertes.voirTout' => 'Voir toutes les alertes',
+			'alertes.vide' => 'Aucune alerte en cours.',
+			'alertes.videTitre' => 'Aucune alerte en cours',
+			'alertes.videPhrase' => 'Une alerte urgente s\'affichera ici, en tête, dès son arrivée.',
+			'alertes.indisponibleTitre' => 'Les alertes ne sont pas encore disponibles',
+			'alertes.indisponiblePhrase' => 'Les alertes urgentes s\'afficheront ici, en tête, dès que leur source sera ouverte.',
+			'alertes.erreurTitre' => 'Les alertes n\'ont pas pu être lues',
+			'alertes.sansDonnees' => 'Les alertes n\'ont pas pu être lues',
+			'alertes.cloche' => 'Alertes',
+			'alertes.clocheUneUrgente' => 'Alertes, une urgente',
+			'alertes.clocheUrgentes' => ({required Object nombre}) => 'Alertes, ${nombre} urgentes',
 			'eleve.accueil.rejoindre' => 'Rejoindre',
 			'eleve.accueil.coran' => 'Le Coran',
 			'eleve.accueil.coranDetail' => 'À lire quand tu veux',
@@ -18036,6 +18133,8 @@ extension on Traductions {
 			'enseignant.signalement.categories.pedagogique' => 'Problème pédagogique',
 			'enseignant.signalement.categories.presence' => 'Présence',
 			'enseignant.signalement.categories.technique' => 'Technique',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.signalement.categories.changement' => 'Changement',
 			'enseignant.signalement.categories.autre' => 'Autre',
 			'enseignant.signalement.details' => 'Détails internes',
@@ -18055,8 +18154,6 @@ extension on Traductions {
 			'enseignant.demo.ecrans' => 'Écrans',
 			'enseignant.demo.etats' => 'Situations',
 			'enseignant.demo.etatNominal' => 'Journée ordinaire',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.demo.etatVide' => 'Aucune séance',
 			'enseignant.demo.etatHorsLigne' => 'Hors ligne',
 			'enseignant.bienvenue.titre' => 'Premiers pas',
@@ -18550,6 +18647,8 @@ extension on Traductions {
 			'controleur.observation.climatAide' => 'Quand il s\'agit du comportement ou de l\'ambiance de la classe',
 			'controleur.observation.autre' => 'Autre',
 			'controleur.observation.autreAide' => 'Quand aucun autre domaine ne convient · précisez-le dans votre texte',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.questionPersonne' => 'Qui est concerné ?',
 			'controleur.observation.contextePersonne' => 'Indiquez qui l\'observation concerne. Un élève se choisit dans la liste de la Classe, par son prénom et l\'initiale de son nom.',
 			'controleur.observation.enseignant' => 'Enseignant',
@@ -18569,8 +18668,6 @@ extension on Traductions {
 			'controleur.observation.texteFacultatif' => 'Ce texte est facultatif.',
 			'controleur.observation.libelleTexte' => 'Votre remarque',
 			'controleur.observation.aideTexte' => 'Décrivez seulement ce que vous avez observé.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.texteRequis' => 'Écrivez ce que vous avez observé pour continuer.',
 			'controleur.observation.questionRecap' => 'Vérifiez votre observation avant l\'envoi.',
 			'controleur.observation.cleNature' => 'Nature',
@@ -19064,6 +19161,8 @@ extension on Traductions {
 			'tc.parcours.avant.nonBranche' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'tc.parcours.avant.nonBrancheDetail' => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.',
 			'tc.parcours.avant.reprendre' => 'Reprendre le cours',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.avant.reprendreDepuis' => ({required Object position}) => 'Reprendre le cours à ${position}',
 			'tc.parcours.intention.apprendre' => 'À apprendre',
 			'tc.parcours.intention.revoir' => 'À revoir',
@@ -19083,8 +19182,6 @@ extension on Traductions {
 			'tc.parcours.feedback.cours.tresBien' => 'Très bien',
 			'tc.parcours.feedback.comprehension.intitule' => 'Avez-vous compris ce qui a été travaillé ?',
 			'tc.parcours.feedback.comprehension.difficile' => 'Pas vraiment',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.feedback.comprehension.bien' => 'Plutôt oui',
 			'tc.parcours.feedback.comprehension.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.rythme.intitule' => 'Le rythme du cours vous a-t-il convenu ?',

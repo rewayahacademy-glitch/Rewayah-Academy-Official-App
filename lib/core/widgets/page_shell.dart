@@ -123,7 +123,14 @@ class PageShell extends StatelessWidget {
     // selecteur d'enfant de `TUT-01`, une ligne de contexte). C'est une zone
     // distincte de la zone defilante, au meme titre que la zone d'action
     // collee en bas (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 2).
+    // Le bandeau de la coquille (l'alerte urgente de la direction,
+    // ALERTE-1) : en tete de la page, au-dessus du titre. Dans la tete et non
+    // au-dessus du `Scaffold`, et la tete defile alors avec le corps : un
+    // bandeau fige sur une vue basse (320x640, texte a 400 %) ne laisserait
+    // plus de place au corps (WCAG 1.4.10).
+    final Widget? bandeau = ActionsEnteteCoquille.bandeauDe(context);
     final List<Widget> tete = <Widget>[
+      ?bandeau,
       if (titre != null) ...<Widget>[
         // 48 au dessus d'un titre d'ecran, c'est le rythme de page
         // (`01-systeme-visuel.md` section 6). En mode enfant, la marge de
@@ -243,6 +250,7 @@ class PageShell extends StatelessWidget {
                 child: _Bascule(
                   teteDefilante: (double hauteur) =>
                       teteDefile ||
+                      bandeau != null ||
                       hauteur +
                               View.of(context).viewInsets.bottom /
                                   View.of(context).devicePixelRatio <
@@ -278,10 +286,17 @@ class ActionsEnteteCoquille extends InheritedWidget {
     required super.child,
     super.key,
     this.onRetour,
+    this.bandeau,
   });
 
   /// Les actions, dans l'ordre de lecture (la cloche en dernier).
   final List<Widget> actions;
+
+  /// Ce que la coquille pose en tete de chacune de ses pages, au-dessus du
+  /// titre : le bandeau d'alerte urgente de la direction (ALERTE-1). Nul par
+  /// defaut. Le widget porte ses propres marges et ne rend rien quand il n'a
+  /// rien a dire.
+  final Widget? bandeau;
 
   /// Le retour que la coquille pose sur chacune de ses pages quand la page
   /// n'en donne pas (l'admin : retour vers l'Accueil, spec section 26 ter).
@@ -300,9 +315,16 @@ class ActionsEnteteCoquille extends InheritedWidget {
       .dependOnInheritedWidgetOfExactType<ActionsEnteteCoquille>()
       ?.onRetour;
 
+  /// Le bandeau pose au-dessus de [context], ou nul.
+  static Widget? bandeauDe(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<ActionsEnteteCoquille>()
+      ?.bandeau;
+
   @override
   bool updateShouldNotify(ActionsEnteteCoquille ancien) =>
-      !listEquals(actions, ancien.actions) || onRetour != ancien.onRetour;
+      !listEquals(actions, ancien.actions) ||
+      onRetour != ancien.onRetour ||
+      bandeau != ancien.bandeau;
 }
 
 /// La bascule entre la tete fixe (`Column(tete, Expanded(corps))`) et le

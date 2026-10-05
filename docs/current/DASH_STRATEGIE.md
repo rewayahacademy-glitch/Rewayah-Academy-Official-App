@@ -145,6 +145,13 @@ des deux pages s'ouvrira filtrée.
 cas** (D3), puisque la tuile 5 garde ses deux chiffres même non nuls. Élément dominant : la
 tuile Dossiers (D5).
 
+**Alertes (ALERTE-1, 05/10/2026, §3.9)** : une section « Alertes » s'ajoute au Centre de
+commande. **Avec une alerte urgente ouverte, elle passe en tête de la page, au-dessus des
+tuiles** (rang 0), jusqu'au traitement de l'alerte ; sans alerte urgente, elle suit les tuiles
+et la phrase calme (rang 5 bis, avant les raccourcis). La phrase calme n'est plus vraie quand
+une alerte urgente ou importante est ouverte. Ce n'est pas une tuile : D3 (3 à 5 indicateurs)
+reste tenu.
+
 **Écart connu** : le compteur serveur des dossiers compte encore les tuteurs alors que l'aperçu ne montre que les enseignants (K-47, commentaire `tableau_de_bord_page.dart:139-141`, ligne serveur BR-1.c déjà ouverte). Aucun code serveur ici.
 
 ### 3.2 Élève, présentation standard : Accueil (`ELV-02`, `/eleve`)
@@ -254,6 +261,46 @@ Accord avec `BENTO_RECENSEMENT.md:28` (« Prochaine séance grande, […] Ma jou
 
 Liste de cartes, pas un tableau de bord (`BENTO_RECENSEMENT.md:43`). Hors DASH.
 
+### 3.9 Alertes de la direction (ALERTE-1)
+
+**Demande du directeur** (commentaire sur la page « Essai de fusion », 01/10/2026 à 23:02,
+reformulée d'après l'énoncé de l'étape ALERTE-1, le texte d'origine n'est pas dans le dépôt) :
+les alertes urgentes doivent être **en haut de l'écran dès leur arrivée**, et **signalées
+immédiatement par les notifications**. **Constat** : en démonstration admin, une alerte
+urgente apparaissait en bas de l'écran, sous le reste.
+
+**Décision du 05/10/2026, déléguée par le directeur** (« c'est à toi de choisir le meilleur
+choix… respecter à la lettre toutes les specs ») ; le directeur peut corriger la liste à tout
+moment :
+
+| Gravité | Définition | Exemples |
+|---|---|---|
+| **Urgente** (`urgent`) | Exige une action humaine **immédiate** pour une séance en cours ou imminente, ou touche la **sécurité d'un élève** | classe sans enseignant, incident de séance, signalement |
+| **Importante** (`important`) | À traiter **dans la journée** | paiement échu, remplacement à confirmer |
+| **Pour information** (`info`) | Tout le reste | programme d'une classe mis à jour |
+
+Règles (A1 à A6) :
+
+| N° | Règle | Critère vérifiable | Où |
+|---|---|---|---|
+| A1 | **Tri par gravité, puis par date**, la plus récente d'abord ; à égalité, l'identifiant (ordre stable). Le serveur trie (DASH-BR-03) ; l'écran retrie, car une alerte reçue en temps réel arrive en queue du flux. | urgente > importante > information ; dans une gravité, la plus récente d'abord | `lib/core/alertes/alerte.dart` (`trierAlertes`) |
+| A2 | **Une alerte urgente est toujours en tête** du tableau de bord et des listes, au-dessus de tout autre contenu, **jusqu'à son traitement**. Elle n'est jamais cachée derrière « Voir tout » : la liste du tableau de bord montre **toutes** les urgentes, puis les suivantes jusqu'à 3 lignes (D6). | section Alertes au-dessus des tuiles ; 0 urgente masquée | `tableau_de_bord_page.dart`, `section_alertes.dart` (`alertesDuTableau`) |
+| A3 | **À son arrivée** : mise à jour en temps réel, **sans recharger** ; **point sur la cloche** ; **bandeau en haut de l'écran ouvert** ; notification push si l'application est fermée. | le flux émet, le bandeau et le point apparaissent sur la page déjà ouverte | `port_alertes.dart` (flux), `bandeau_alerte_urgente.dart`, `AdminShell.cloche` ; push : DASH-BR-05 |
+| A4 | Une alerte traitée **sort du flux** : le bandeau et le point disparaissent. Le traitement se fait sur la page de l'alerte (chaque ligne l'ouvre). | | serveur (DASH-BR-03) |
+| A5 | **Délai mesuré** entre la création de l'alerte (horodatage **serveur**, `Alerte.creeeLe`) et son affichage. **Objectif proposé : moins de 5 s application ouverte** (à confirmer par le directeur). | p95 < 5 s, mesuré sur staging | DASH-BR-06 |
+| A6 | La capacité « alertes » est lue, **jamais un rôle** : sans source (production avant BR-1), ni cloche ni bandeau, et la section dit « indisponible ». Aucune liste vide qui ferait croire que rien n'attend. | `AlertesIndisponibles` rend `CapaciteIndisponible('DASH-BR-03')` | `port_alertes.dart` |
+
+**Couleur** : registre doux (`washAlert` pour une urgente, `washWarning` pour une importante,
+neutre pour une information), jamais un aplat ; la gravité est toujours **écrite** (« Urgente »,
+« Importante », « Pour information »), jamais dite par la seule couleur. Aucun jeton nouveau.
+
+**Où elles se voient** : section « Alertes » du Centre de commande (`ADM-01`) ; page des alertes
+(`ADM-ALERTES`, `/admin/alertes`, sous l'Accueil) ; bandeau en haut de toute autre page de la
+direction ; cloche de la coquille admin (avant le compte, sur les trois formes de la coquille).
+Le bandeau ne se pose pas sous l'Accueil (Centre de commande, page des alertes), qui montrent
+déjà l'alerte en tête (D7). Les autres rôles ne reçoivent pas encore d'alertes : le port est
+par profil, il servira à leur tour sans nouveau composant.
+
 ---
 
 ## 4. Questions au directeur
@@ -286,6 +333,7 @@ Aucune ne bloque. Chaque recommandation est appliquée dans ce document.
 | DASH-EA-PROD | Accueil adulte : route réelle et historique faits (04/10/2026, §3.7) ; **reste** la source serveur (EA-BR-04, DASH-BR-01, DASH-BR-02, §5 bis) | `routes_accueil_adulte.dart`, `historique_seances_adulte_page.dart` |
 | DASH-BIB-TITRE | Titre de `BlocBibliotheque` réduit en bloc à 320 px et texte ×2 (« Ressources de la classe ») : passer à la ligne entre les mots (`TexteSansCoupure`) sur les quatre écrans qui l'emploient | `tc_espace_groupe/emplacements_groupe.dart:155-160` |
 | DASH-LIB | Déclarer les libellés de l'annexe B dans `tool/libelles_sources.json` après accord | annexe B |
+| ALERTE-1 | **Partie client faite (05/10/2026)** : tri gravité puis date, section en tête du Centre de commande, page des alertes, bandeau, point sur la cloche, port neutre et démonstration. **Reste** : DASH-BR-03 à DASH-BR-06 (§5 bis), puis brancher l'adaptateur Supabase du port et confirmer l'objectif de délai (A5) | `lib/core/alertes/`, `lib/features/alertes/` |
 
 Aucun branchement serveur (avant BR-1). Le seul besoin serveur cité (compteur des dossiers qui inclut les tuteurs) est déjà la ligne BR-1.c.
 
@@ -296,6 +344,10 @@ Le registre des besoins de l'élève adulte, `16_eleves_adultes/EA-BR.md`, n'exi
 | Réf. | Étape | Besoin | Aujourd'hui |
 |---|---|---|---|
 | DASH-BR-01 | DASH-EA-PROD | Historique complet des séances passées de la Classe de l'élève adulte, prolongement d'EA-BR-06 : pour le compte connecté seulement, chaque séance passée (les plus récentes d'abord), sa date déjà rendue, sa plage horaire, l'absence de l'élève seule (aucune donnée de présence d'un autre élève) ; tests d'accès horizontal (un élève ne lit que sa propre Classe). | `historiqueSeancesAdulteProvider` rend `CapaciteIndisponible` (« indisponible ») ; la démonstration le surcharge (`DonneesAdulteDemo.historiqueSeances()`). |
+| DASH-BR-03 | ALERTE-1 | **Gravité portée par chaque alerte et lecture triée** : colonne `gravite` (enum `urgent` / `important` / `info`, A1) sur la table des alertes de la direction (ou des notifications), horodatage **serveur** `cree_le` ; lecture des alertes **ouvertes** du profil connecté seulement, triées gravité puis date ; état traité (qui, quand) et sortie de la liste au traitement ; destination interne (chemin de l'application) ; RLS, `search_path = ''`, tests d'accès horizontal (un profil ne lit que ses alertes). | `portAlertesProvider` rend `AlertesIndisponibles` (`CapaciteIndisponible('DASH-BR-03')`) ; la démonstration admin le surcharge (`AlertesDemo`). |
+| DASH-BR-04 | ALERTE-1 | **Temps réel** : Supabase Realtime sur cette table, **canal par profil**, filtré par la RLS (aucune alerte d'un autre profil sur le canal) ; l'adaptateur du port émet la liste complète à chaque changement (`PortAlertes.suivre`). | le port est déjà un flux ; aucun adaptateur. |
+| DASH-BR-05 | ALERTE-1 | **Notification push** à la création d'une alerte urgente quand l'application est fermée : d'abord **Web Push (PWA)** (clés VAPID en secret serveur, jamais côté Flutter ; table des abonnements **par appareil**, sous RLS ; fonction d'envoi déclenchée à la création), puis **natif**. | rien côté client (aucune demande d'autorisation de notification n'est posée). |
+| DASH-BR-06 | ALERTE-1 | **Délai mesuré** création → affichage : horodatage serveur dans l'alerte (DASH-BR-03), heure d'affichage notée par le client, mesure sur staging ; objectif proposé A5 (moins de 5 s application ouverte), à confirmer par le directeur. | `Alerte.creeeLe` porte déjà l'horodatage ; aucune mesure. |
 | DASH-BR-02 | DASH-EA-PROD | Capacité « accueil de l'élève adulte » rendue avec la session (ou le profil), pour que `/eleve` s'ouvre directement sur `/eleve/adulte` sans afficher un instant l'accueil de l'élève, et pour qu'elle ne dépende plus du succès de la lecture d'EA-BR-04 ; jamais déduite du rôle côté client. | `capaciteAccueilAdulteProvider` déduite de la lecture d'`accueil_eleve_adulte` (vraie seulement quand elle réussit, fausse après une relecture en échec) ; le routeur se réveille quand elle change. |
 
 ---
@@ -317,7 +369,10 @@ Nom               Centre de commande
 Rôle              Direction
 Route             /admin
 Question          Qu'est-ce qui attend une décision, et depuis quand ?
-Priorités         P0  Dossiers à valider (3 plus anciens)       grande
+Priorités         P0  Alertes, en tête QUAND une alerte urgente est ouverte
+                      (toutes les urgentes, puis 3 lignes au plus) ; sinon
+                      après les tuiles (ALERTE-1, §3.9)
+                  P0  Dossiers à valider (3 plus anciens)       grande
                   P0  Demandes à trancher                         haute
                   P1  Élèves sans enseignant                      carrée
                   P1  Cahiers manquants                           carrée
@@ -336,8 +391,64 @@ Actions secondaires   les autres tuiles, les noms de l'aperçu (vers leur dossie
                               « La liste n'a pas pu être lue. » à la place des noms
                   hors ligne  bandeau de PageShell
                   contenu     5 tuiles + raccourcis
+                  alertes     leurs cinq états propres, voir ADM-ALERTES
 Invariants        le zéro s'affiche ; une tuile sans page est un rapport ;
-                  5 indicateurs quelles que soient les valeurs
+                  5 indicateurs quelles que soient les valeurs ;
+                  une alerte urgente au-dessus de tout autre contenu
+```
+
+```
+CODE              ADM-ALERTES
+Nom               Alertes
+Rôle              Direction (capacité « alertes », jamais le rôle)
+Route             /admin/alertes (sous l'Accueil, retour vers l'Accueil)
+Question          Qu'est-ce qui exige une action, et quoi d'abord ?
+Entrées           cloche de la coquille admin ; bandeau d'alerte urgente ;
+                  « Voir toutes les alertes » du Centre de commande
+Priorités         P0  Alertes urgentes (toujours en tête)
+                  P1  Alertes importantes
+                  P2  Alertes pour information
+Composition       UNE carte à lignes fines (CarteLignes) ; chaque ligne :
+                  gravité écrite (StatusPill), titre, date et heure ;
+                  chevron quand elle mène à sa page ; sans page, la ligne
+                  n'est pas une cible (jamais grisée)
+Tri               gravité, puis la plus récente (trierAlertes, A1)
+Action principale     aucune (chaque ligne ouvre sa page)
+États             chargement  Skeleton.liste (BlocAsynchrone)
+                  vide        « Aucune alerte en cours » (EtatSysteme
+                              aucunResultat)
+                  erreur      « Les alertes n'ont pas pu être lues » +
+                              Réessayer (BlocAsynchrone)
+                  hors ligne  bandeau de PageShell ; liste déjà lue gardée ;
+                              sans liste : « Les alertes n'ont pas pu être
+                              lues » + Réessayer, sans redire « hors ligne »
+                              (K-42)
+                  indisponible  production avant DASH-BR-03 : « Les alertes
+                              ne sont pas encore disponibles », sans
+                              Réessayer ; ni cloche ni bandeau
+                  contenu     la liste triée
+Temps réel        une alerte reçue s'ajoute sans recharger (DASH-BR-04)
+Invariants        une urgente en tête jusqu'à son traitement ; gravité
+                  jamais par la seule couleur
+```
+
+```
+CODE              ADM-BANDEAU-URGENT
+Nom               Bandeau d'alerte urgente (composant de la coquille admin)
+Où                en haut de toute page de la direction, sauf sous l'Accueil
+                  (Centre de commande et page des alertes, qui montrent déjà
+                  l'alerte en tête, D7)
+Contenu           SignalRow au ton d'alerte : « Alerte urgente : <titre> » ou
+                  « N alertes urgentes. La plus récente : <titre> », date et
+                  heure, chevron ; la carte entière ouvre /admin/alertes
+Apparition        dès qu'une alerte urgente entre dans le flux, sans
+                  recharger ; région vivante (annoncée par le lecteur
+                  d'écran) ; disparaît au traitement
+États             rien sans alerte urgente, ni quand la source ne rend rien
+                  (indisponible, échec) : un signal, pas un état de page
+Cloche            point quand au moins une alerte urgente est ouverte ; lue
+                  « Alertes, une urgente » / « Alertes, N urgentes » ;
+                  absente sans capacité (Q5)
 ```
 
 ```
@@ -480,6 +591,15 @@ Statut : **proposé par un agent** (leçon 12, K-53.4). Aucune clé i18n n'est c
 | « La liste n'a pas pu être lue. » | tuile Dossiers, à la place des noms quand l'aperçu est refusé (ADM-01) | reprend le sens de `admin.tableau.listeErreur` ; le chiffre reste |
 | « Incidents et accès » | titre de la tuile 5 unique (ADM-01) | les deux libellés de chiffre restent `admin.tableau.incidents` et `admin.tableau.comptes` |
 | « Vos cours n'ont pas pu être lus. Réessayez dans un instant. » | erreur de l'Accueil élève (DASH-ELV-ERR) | format K-59 : ce qui manque, l'action |
+
+**ALERTE-1 (05/10/2026)**, clés `alertes.*`, rédigées par l'agent, à faire valider par le
+directeur (déclarées dans `tool/libelles_sources.json`) : « Alertes » ; gravités « Urgente »,
+« Importante », « Pour information » ; « Le {date} à {heure} » ; « Alerte urgente : {titre} » ;
+« {nombre} alertes urgentes. La plus récente : {titre} » ; « Voir toutes les alertes » ;
+« Aucune alerte en cours. » ; « Une alerte urgente s'affichera ici, en tête, dès son
+arrivée. » ; « Les alertes ne sont pas encore disponibles » ; « Les alertes urgentes
+s'afficheront ici, en tête, dès que leur source sera ouverte. » ; « Les alertes n'ont pas pu
+être lues » ; cloche « Alertes », « Alertes, une urgente », « Alertes, {nombre} urgentes ».
 
 Réutilisés sans changement : `tuteur.accueil.voirTout` (« Voir tout »), `admin.tableau.*` des compteurs.
 
