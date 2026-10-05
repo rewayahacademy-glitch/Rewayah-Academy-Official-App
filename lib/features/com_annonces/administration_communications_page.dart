@@ -31,6 +31,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_agrandi.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/capacites_communication.dart';
@@ -371,8 +372,7 @@ class _Indicateurs extends ConsumerWidget {
             // Quatre de front des la classe moyenne, deux par deux sur
             // telephone, une par rangee a texte agrandi (1,5 et plus, revue
             // COM-R, R-09) : jamais une tuile ecrasee ni un mot coupe.
-            final bool texteAgrandi =
-                MediaQuery.textScalerOf(context).scale(1) >= 1.5;
+            final bool texteAgrandi = SeuilsTexteAgrandi.texteAgrandi(context);
             if (AppGabarit.classe(c.maxWidth) == ClasseLargeur.compacte &&
                 texteAgrandi) {
               return PileCartes(children: tuiles);

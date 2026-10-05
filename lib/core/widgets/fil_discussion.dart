@@ -33,6 +33,22 @@
 //   bulles, l'en-tete qui defile avec elles, puis la phrase qui dit la
 //   limite ; ni champ ni bouton. Messages metier et canaux du Studio le
 //   lisent tous deux, au lieu de leurs deux copies.
+//
+// COM-RC tour 4 (contre-verification COM-R-2) :
+// - N-1 : quand l'en-tete defile (texte agrandi, vue basse, lecture seule),
+//   une ligne compacte de contexte ([FilDiscussion.enteteCompacte] :
+//   interlocuteur, objet, et les actions de l'espace dont (i)) reste fixe
+//   au-dessus de la liste ; le reste de l'en-tete
+//   ([FilDiscussion.enteteSuite]) defile. Le fil ne s'ouvre plus jamais
+//   sans son contexte, a 390 en texte x1 comme a 320 en texte x2 ;
+// - N-3 : vider le champ a l'envoi n'efface pas le brouillon ; il n'est
+//   efface qu'a l'accuse, si le champ est encore vide et que plus rien
+//   n'attend ;
+// - N-4 : [FilDiscussion.demandeSaisieVisible] ramene la saisie a l'ecran
+//   quand elle defile avec les messages (entree dans le Focus du Studio) ;
+// - N-6 : les seuils de bascule viennent de `SeuilsTexteAgrandi` ;
+// - N-9 : une marge basse sous la saisie bornee quand le panneau vocal
+//   l'occupe : il ne touche plus la barre de navigation ni le bord.
 
 import 'dart:async';
 import 'dart:math' as math;
@@ -42,6 +58,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../accessibilite/sens_du_contenu.dart';
+import '../accessibilite/texte_agrandi.dart';
 import '../communications/persistance_brouillon.dart';
 import '../communications/port_brouillons.dart';
 import '../i18n/strings.g.dart';
@@ -215,10 +232,12 @@ class _MessageLocal {
 /// ecrit apres l'ouverture est annonce une fois (region live polie) ; ceux
 /// presents a l'ouverture ne le sont pas.
 ///
-/// A texte agrandi (au moins 150 %) ou sous [hauteurBasse], l'en-tete
-/// defile avec les messages, et la saisie aussi, apres le dernier message :
-/// le fil s'ouvre sur le bas de la saisie, « Envoyer » entier (R-02, COM-RC
-/// tour 3). Sinon, la saisie reste sous la liste et ne prend jamais plus de
+/// A texte agrandi (au moins 150 %) ou sous 480 points de hauteur
+/// (`SeuilsTexteAgrandi`), l'en-tete defile avec les messages, et la saisie
+/// aussi, apres le dernier message : le fil s'ouvre sur le bas de la
+/// saisie, « Envoyer » entier (R-02, COM-RC tour 3). La ligne compacte de
+/// contexte ([enteteCompacte]), elle, reste fixe au-dessus (N-1). Sinon,
+/// la saisie reste sous la liste et ne prend jamais plus de
 /// [partSaisieMax] de la hauteur de l'ecran, ni plus de [partSaisieFilMax]
 /// de celle du fil (clavier ouvert) : au-dela, elle defile (R-02).
 class FilDiscussion extends StatefulWidget {
@@ -231,6 +250,9 @@ class FilDiscussion extends StatefulWidget {
     this.onEnvoyer,
     this.onEnvoyerMessage,
     this.entete,
+    this.enteteCompacte,
+    this.enteteSuite,
+    this.demandeSaisieVisible = 0,
     this.emplacementPieceJointe,
     this.emplacementVocal,
     this.controleur,
@@ -260,6 +282,22 @@ class FilDiscussion extends StatefulWidget {
   /// Un en-tete pose au-dessus des messages (contexte du fil, COM-MSG), ou
   /// `null` : rien n'est rendu, le fil reste celui du controleur.
   final Widget? entete;
+
+  /// La ligne compacte du contexte (interlocuteur, objet), ou `null`. Quand
+  /// l'en-tete defile avec les messages (texte agrandi, vue basse, lecture
+  /// seule), elle remplace [entete] et reste FIXE au-dessus de la liste, avec
+  /// les actions de l'espace (retour, (i)) : le fil s'ouvre toujours sur son
+  /// contexte (N-1). Sans elle, [entete] defile, comme avant.
+  final Widget? enteteCompacte;
+
+  /// Ce qui, de l'en-tete, defile avec les messages sous [enteteCompacte]
+  /// (badge d'attention, « Mode focus »), ou `null` : rien.
+  final Widget? enteteSuite;
+
+  /// Un jeton : quand il change et que la saisie defile avec les messages,
+  /// le fil va a son bas, la saisie entiere a l'ecran (N-4, entree dans le
+  /// Focus du Studio). Hors de ce cas, rien ne bouge.
+  final int demandeSaisieVisible;
 
   /// Ce qui se joint au message en preparation (cartes des pieces, entree
   /// « Joindre un fichier »), pose juste au-dessus du champ ; `null` : rien.
@@ -292,12 +330,6 @@ class FilDiscussion extends StatefulWidget {
   /// pose sous eux (R-07).
   final String? lectureSeule;
 
-  /// Sous cette hauteur recue, l'en-tete defile avec les messages (R-02).
-  static const double hauteurBasse = 480;
-
-  /// A partir de cette echelle de texte, l'en-tete defile avec les messages.
-  static const double echelleTexteAgrandi = 1.5;
-
   /// La part de la hauteur de l'ecran que la saisie occupe au plus (R-02).
   static const double partSaisieMax = 0.4;
 
@@ -315,6 +347,18 @@ class FilDiscussion extends StatefulWidget {
 
   /// La zone de saisie (bornee, defilante), pour les tests.
   static const Key cleSaisie = ValueKey<String>('fil-discussion-saisie');
+
+  /// La ligne compacte du contexte, fixe au-dessus de la liste, pour les
+  /// tests (N-1).
+  static const Key cleEnteteCompacte = ValueKey<String>(
+    'fil-discussion-entete-compacte',
+  );
+
+  /// La marge sous la saisie bornee quand le panneau vocal l'occupe, pour
+  /// les tests (N-9).
+  static const Key cleMargeVocal = ValueKey<String>(
+    'fil-discussion-marge-vocal',
+  );
 
   /// La liste des messages, pour les tests.
   static const Key cleMessages = ValueKey<String>('fil-discussion-messages');
@@ -365,6 +409,9 @@ class _FilDiscussionState extends State<FilDiscussion> {
 
   /// Le panneau vocal occupe-t-il la saisie (R-04) ?
   bool _vocalOuvert = false;
+
+  /// La saisie defile-t-elle avec les messages, au dernier rendu (N-4) ?
+  bool _saisieDansListe = false;
 
   /// La persistance du brouillon (R-22, commune avec le composer de
   /// reponse de la Communaute), lue une fois si le fil en garde un.
@@ -432,6 +479,13 @@ class _FilDiscussionState extends State<FilDiscussion> {
       _persistance?.caler(_champ.text);
     }
     if (widget.emplacementVocal == null) _vocalOuvert = false;
+    if (ancien.demandeSaisieVisible != widget.demandeSaisieVisible) {
+      // N-4 : la saisie dans la liste revient a l'ecran (le Focus montre
+      // le champ a l'entree). Bornee sous la liste, elle y est deja.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_saisieDansListe) _allerEnBas(false);
+      });
+    }
   }
 
   @override
@@ -496,6 +550,10 @@ class _FilDiscussionState extends State<FilDiscussion> {
       _champ.text.trim(),
     );
     setState(() => _locaux.add(m));
+    // N-3 : le champ se vide tout de suite, mais le brouillon reste jusqu'a
+    // l'accuse (comme la reponse de la Communaute) : quitter le fil avant
+    // lui ne perd pas le message. Le champ vide n'est pas note.
+    _persistance?.caler('');
     _champ.clear();
     _tenter(m);
     WidgetsBinding.instance.addPostFrameCallback((_) => _allerEnBas(true));
@@ -513,10 +571,24 @@ class _FilDiscussionState extends State<FilDiscussion> {
       }
       if (!mounted) return;
       setState(() => m.etat = EtatEnvoiMessage.envoye);
+      _effacerBrouillonSiConfirme();
     } on Object {
       if (!mounted) return;
       setState(() => m.etat = EtatEnvoiMessage.echec);
     }
+  }
+
+  /// N-3 : a l'accuse, le brouillon s'efface si le champ est encore vide
+  /// (un texte saisi depuis est un nouveau brouillon) et qu'aucun autre
+  /// message n'attend sa confirmation.
+  void _effacerBrouillonSiConfirme() {
+    final CleBrouillon? cle = widget.cleBrouillon;
+    final PersistanceBrouillon? persistance = _persistance;
+    if (cle == null || persistance == null || !_vide) return;
+    if (_locaux.any((_MessageLocal l) => l.etat != EtatEnvoiMessage.envoye)) {
+      return;
+    }
+    unawaited(persistance.effacer(cle));
   }
 
   bool _surPanneauVocal(PanneauVocalFil avis) {
@@ -583,6 +655,28 @@ class _FilDiscussionState extends State<FilDiscussion> {
             key: _cleEntete,
             child: RangeeEnteteEspace(child: enteteDonne),
           );
+    final Widget? compacteDonnee = widget.enteteCompacte;
+    // N-1 : la ligne compacte porte les actions de l'espace (retour, (i)),
+    // dans la meme rangee : elles restent a l'ecran avec le contexte.
+    final Widget? compacte = compacteDonnee == null
+        ? null
+        : KeyedSubtree(
+            key: FilDiscussion.cleEnteteCompacte,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+              // Une ligne, qui ne grandit pas au-dela de 150 % : a texte
+              // double, elle prenait le quart de l'ecran a 320. Le contexte
+              // entier reste lu (semantique de la ligne) et ecrit dans le
+              // panneau (i).
+              child: RangeeEnteteEspace(
+                child: MediaQuery.withClampedTextScaling(
+                  maxScaleFactor: SeuilsTexteAgrandi.echelle,
+                  child: compacteDonnee,
+                ),
+              ),
+            ),
+          );
+    final Widget? suite = widget.enteteSuite;
     final Widget? pieceJointe = widget.emplacementPieceJointe;
     final Widget? vocal = widget.emplacementVocal;
     final TextTheme styles = Theme.of(context).textTheme;
@@ -640,13 +734,18 @@ class _FilDiscussionState extends State<FilDiscussion> {
         // defile toujours avec les messages (R-02, R-07).
         final bool enteteDefilante =
             limite != null ||
-            MediaQuery.textScalerOf(context).scale(1) >=
-                FilDiscussion.echelleTexteAgrandi ||
-            hauteurSansClavier < FilDiscussion.hauteurBasse;
+            SeuilsTexteAgrandi.texteAgrandi(context) ||
+            hauteurSansClavier < SeuilsTexteAgrandi.hauteurBasse;
+        // N-1 : quand l'en-tete defile, sa ligne compacte reste fixe ; le
+        // reste de l'en-tete defile, apres la tete de la page.
+        final bool compacteFixe = compacte != null && enteteDefilante;
         final Widget? teteDePage = _teteDePage;
         final List<Widget> elements = <Widget>[
           ?teteDePage,
-          if (entete != null && enteteDefilante) entete,
+          if (compacteFixe)
+            ?suite
+          else if (entete != null && enteteDefilante)
+            entete,
           ...bulles,
         ];
         // COM-RC tour 3 (R-02) : quand l'en-tete defile (texte agrandi, vue
@@ -658,6 +757,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
         // une tranche a part de la liste : un message ajoute ne la
         // reconstruit pas (le champ garde son focus).
         final bool saisieDansListe = limite == null && enteteDefilante;
+        _saisieDansListe = saisieDansListe;
         final Widget saisie = KeyedSubtree(
           key: _cleZoneSaisie,
           child: zoneSaisie,
@@ -665,7 +765,10 @@ class _FilDiscussionState extends State<FilDiscussion> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            if (entete != null && !enteteDefilante) entete,
+            if (compacteFixe)
+              compacte
+            else if (entete != null && !enteteDefilante)
+              entete,
             Expanded(
               key: FilDiscussion.cleMessages,
               child: CustomScrollView(
@@ -720,6 +823,13 @@ class _FilDiscussionState extends State<FilDiscussion> {
                           ),
                         ),
                 ),
+              ),
+            // N-9 : sous la saisie bornee qu'occupe le panneau vocal, une
+            // marge : il ne touche ni la barre de navigation ni le bord.
+            if (!saisieDansListe && limite == null && _vocalOuvert)
+              const SizedBox(
+                key: FilDiscussion.cleMargeVocal,
+                height: AppSpacing.lg,
               ),
           ],
         );
@@ -860,12 +970,10 @@ class _Saisie extends StatelessWidget {
 
   static const Key _cleVocal = ValueKey<String>('fil-discussion-vocal');
 
-  /// En dessous de cette largeur, avec un texte agrandi d'au moins
-  /// [_echelleEmpilee], « Envoyer » passe sous le champ : a 390 en texte
-  /// double, il prenait la ligne et laissait au champ 86 points de large
-  /// (COM-FUS, point COM-MSG-1).
+  /// En dessous de cette largeur, a texte agrandi (`SeuilsTexteAgrandi`),
+  /// « Envoyer » passe sous le champ : a 390 en texte double, il prenait la
+  /// ligne et laissait au champ 86 points de large (COM-FUS, COM-MSG-1).
   static const double _largeurEmpilee = 480;
-  static const double _echelleEmpilee = 1.5;
 
   @override
   Widget build(BuildContext context) {
@@ -874,7 +982,7 @@ class _Saisie extends StatelessWidget {
       builder: (BuildContext contexte, BoxConstraints contraintes) => _rangee(
         empilee:
             contraintes.maxWidth < _largeurEmpilee &&
-            MediaQuery.textScalerOf(contexte).scale(1) >= _echelleEmpilee,
+            SeuilsTexteAgrandi.texteAgrandi(contexte),
       ),
     );
     return Padding(

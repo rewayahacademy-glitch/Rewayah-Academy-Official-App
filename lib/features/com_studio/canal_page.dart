@@ -100,15 +100,27 @@ TextesFilDiscussion textesCanal(ResumeCanal canal) {
 ///
 /// [minimal] (Mode focus) : le nom et le statut seulement, sans la ligne
 /// section et membres.
+///
+/// [compacte] (COM-RC tour 4, N-1) : le nom seul, sur une ligne, fixe
+/// au-dessus du fil quand le reste de l'en-tete defile (texte agrandi, vue
+/// basse) ; le statut et la ligne section et membres defilent dessous.
 class EnteteCanal extends StatelessWidget {
   /// Cree l'en-tete du canal [canal].
-  const EnteteCanal({required this.canal, super.key, this.minimal = false});
+  const EnteteCanal({
+    required this.canal,
+    super.key,
+    this.minimal = false,
+    this.compacte = false,
+  });
 
   /// Le canal ouvert.
   final Canal canal;
 
   /// Vrai en Mode focus : la ligne section et membres s'efface.
   final bool minimal;
+
+  /// Vrai pour la ligne compacte : le nom seul, sur une ligne.
+  final bool compacte;
 
   /// La cle de l'en-tete, pour les tests.
   static const ValueKey<String> cle = ValueKey<String>('studio-entete-canal');
@@ -123,10 +135,20 @@ class EnteteCanal extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final ResumeCanal r = canal.resume;
-    final String legende = <String>[
-      libelleSection(r.section),
-      libelleMembres(canal.membres.length),
-    ].join(' · ');
+    if (compacte) {
+      return Semantics(
+        key: cle,
+        header: true,
+        child: Text(
+          r.nom,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: palette.inkStrong.applyTo(
+            textes.titleSmall ?? const TextStyle(),
+          ),
+        ),
+      );
+    }
     return Column(
       key: cle,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,17 +171,33 @@ class EnteteCanal extends StatelessWidget {
             MarqueVisibiliteCanal(visibilite: r.visibilite),
           ],
         ),
-        if (!minimal) ...<Widget>[
-          Ecart.vXs,
-          Text(
-            legende,
-            key: cleLegende,
-            style: palette.inkMuted.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
-          ),
-        ],
+        if (!minimal) ...<Widget>[Ecart.vXs, LegendeCanal(canal: canal)],
       ],
+    );
+  }
+}
+
+/// La ligne section et membres d'un canal : sous son nom dans l'en-tete,
+/// ou, quand l'en-tete defile (texte agrandi, vue basse), sous la ligne
+/// compacte fixe, avec les messages (COM-RC tour 4, N-1).
+class LegendeCanal extends StatelessWidget {
+  /// Cree la ligne du canal [canal].
+  const LegendeCanal({required this.canal, super.key});
+
+  /// Le canal ouvert.
+  final Canal canal;
+
+  @override
+  Widget build(BuildContext context) {
+    final String legende = <String>[
+      libelleSection(canal.resume.section),
+      libelleMembres(canal.membres.length),
+    ].join(' · ');
+    return Text(
+      legende,
+      key: EnteteCanal.cleLegende,
+      style: AppPalette.of(context).inkMuted
+          .applyTo(Theme.of(context).textTheme.bodySmall ?? const TextStyle()),
     );
   }
 }
@@ -237,6 +275,14 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
 
   /// Le Focus du Studio qui entoure le canal ; nul hors d'un Studio.
   EtatFocusStudio? _focus;
+
+  /// Le Focus etait-il actif au dernier rendu ?
+  bool _focusAuDernierRendu = false;
+
+  /// Les entrees dans le Focus : a chacune, le fil ramene sa saisie a
+  /// l'ecran quand elle defile avec les messages (N-4, section 23 :
+  /// contenu, champ et sortie).
+  int _entreesFocus = 0;
 
   /// La position de lecture du fil, gardee pendant le Focus.
   late final SourceDefilement _sourceDefilement = SourceDefilement(
@@ -368,10 +414,31 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
     ),
   );
 
+  /// Ce qui, de l'en-tete, defile sous la ligne compacte (N-1) : le statut
+  /// du canal ; hors Focus, la ligne section et membres et « Mode focus ».
+  Widget _suiteEntete(Canal canal, {required bool focus}) => Wrap(
+    spacing: AppSpacing.sm,
+    runSpacing: AppSpacing.xs,
+    alignment: WrapAlignment.spaceBetween,
+    crossAxisAlignment: WrapCrossAlignment.center,
+    children: <Widget>[
+      MarqueVisibiliteCanal(visibilite: canal.resume.visibilite),
+      if (!focus) LegendeCanal(canal: canal),
+      if (!focus && _focus != null) const BasculeFocus(),
+    ],
+  );
+
   @override
   Widget build(BuildContext context) {
     final Canal canal = widget.canal;
     final bool focus = _focus?.actif ?? false;
+    if (focus && !_focusAuDernierRendu) _entreesFocus++;
+    _focusAuDernierRendu = focus;
+    // N-1 (COM-RC tour 4) : quand l'en-tete defile (texte agrandi, vue
+    // basse), le nom du canal reste fixe au-dessus du fil ; son statut, sa
+    // ligne section et membres et « Mode focus » defilent dessous.
+    final Widget compacte = EnteteCanal(canal: canal, compacte: true);
+    final Widget suite = _suiteEntete(canal, focus: focus);
     final List<MessageFil> connus = <MessageFil>[
       for (final MessageCommunication m in canal.messages)
         messageFilDe(m, complement: piecesDuMessage(m.piecesJointes)),
@@ -383,6 +450,8 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
         defilement: _defilement,
         key: ValueKey<String>('studio-fil-lecture-${canal.id}'),
         entete: _entete(canal, focus: focus),
+        enteteCompacte: compacte,
+        enteteSuite: suite,
         messages: connus,
         textes: textes,
         lectureSeule: t.com.studio.canal.lectureSeule,
@@ -409,6 +478,9 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
       defilement: _defilement,
       key: ValueKey<String>('studio-fil-${canal.id}'),
       entete: _entete(canal, focus: focus),
+      enteteCompacte: compacte,
+      enteteSuite: suite,
+      demandeSaisieVisible: _entreesFocus,
       controleur: _champ,
       cleBrouillon: cleBrouillonCanal(canal.id),
       messages: <MessageFil>[

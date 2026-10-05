@@ -241,13 +241,27 @@ void main() {
           await entrer(tester);
           expect(find.byKey(BandeauSortieFocus.cle), findsOneWidget);
           expect(quitterFocus, findsOneWidget);
-          // COM-RC tour 3 (R-02) : a texte x2, la saisie defile avec le fil
-          // (apres le dernier message) ; le Focus garde la position de
-          // lecture, prise en haut du fil pour toucher « Mode focus ».
-          expect(
-            find.byKey(FilDiscussion.champKey, skipOffstage: false),
-            findsOneWidget,
-          );
+          // COM-RC tour 4 (N-4, section 23 : contenu centre, composer et
+          // sortie) : a texte x2, la saisie defile avec le fil ; a l'entree
+          // du Focus, le fil la ramene a l'ecran, meme lu depuis le haut
+          // (pris pour toucher « Mode focus »). Contre-preuve : a 022cc31e,
+          // le champ restait hors ecran, et le test l'acceptait
+          // (`skipOffstage: false`).
+          final Rect ecran = Offset.zero & taille;
+          for (final Key cle in <Key>[
+            FilDiscussion.champKey,
+            FilDiscussion.envoyerKey,
+          ]) {
+            final Finder f = find.byKey(cle);
+            expect(f, findsOneWidget, reason: '$cle est rendu');
+            final Rect r = tester.getRect(f);
+            expect(
+              r.top >= ecran.top && r.bottom <= ecran.bottom,
+              isTrue,
+              reason: '$cle ($r) est entier a l ecran a l entree du Focus',
+            );
+            expect(f.hitTestable(), findsOneWidget, reason: '$cle se touche');
+          }
           expect(tester.takeException(), isNull);
         });
       }
@@ -297,10 +311,9 @@ void main() {
       await tester.pumpAndSettle();
       sortieVisible('un geste sur le haut de la page');
       // Le champ prend le focus (et se rend visible). COM-RC tour 3 (R-02) :
-      // a texte x2, la saisie defile avec le fil ; on la ramene a l'ecran.
-      await tester.ensureVisible(
-        find.byKey(FilDiscussion.champKey, skipOffstage: false),
-      );
+      // a texte x2, la saisie defile avec le fil ; on revient au bas du fil.
+      final ScrollPosition fil = positionFil(tester);
+      fil.jumpTo(fil.maxScrollExtent);
       await tester.pumpAndSettle();
       sortieVisible('le retour au champ');
       await tester.showKeyboard(find.byKey(FilDiscussion.champKey));

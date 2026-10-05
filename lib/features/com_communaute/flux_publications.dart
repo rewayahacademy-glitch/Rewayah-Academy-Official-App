@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/sens_du_contenu.dart';
+import '../../core/accessibilite/texte_agrandi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -203,14 +204,6 @@ class FluxPublications extends ConsumerWidget {
     'communaute-flux-defilement',
   );
 
-  /// A partir de cette echelle de texte, l'entree « Nouvelle publication »
-  /// defile avec le flux.
-  static const double echelleSerree = 1.5;
-
-  /// Sous cette hauteur recue, l'entree « Nouvelle publication » defile avec
-  /// le flux.
-  static const double hauteurSerree = 480;
-
   /// La cle de la carte d'une publication, pour les tests.
   static ValueKey<String> cleCarte(String id) =>
       ValueKey<String>('communaute-carte-$id');
@@ -268,8 +261,8 @@ class FluxPublications extends ConsumerWidget {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {
         final bool serre =
-            MediaQuery.textScalerOf(context).scale(1) >= echelleSerree ||
-            contraintes.maxHeight < hauteurSerree;
+            SeuilsTexteAgrandi.texteAgrandi(context) ||
+            contraintes.maxHeight < SeuilsTexteAgrandi.hauteurBasse;
         final bool entreeFixe = entree != null && !serre;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

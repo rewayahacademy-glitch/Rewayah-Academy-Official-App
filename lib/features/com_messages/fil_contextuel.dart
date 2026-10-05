@@ -205,6 +205,11 @@ class _FilContextuelState extends State<FilContextuel>
       padding: const EdgeInsets.only(bottom: AppSpacing.lg),
       child: EnteteFilContexte.duFil(fil),
     );
+    // N-1 (COM-RC tour 4) : quand l'en-tete defile (texte agrandi, vue
+    // basse), la ligne compacte (noms, objets, et (i)) reste fixe ; le
+    // badge d'attention defile avec les messages.
+    final Widget compacte = EnteteFilContexte.duFil(fil, compacte: true);
+    final Widget? suite = EnteteFilContexte.badgeDuFil(fil);
     final List<MessageFil> connus = <MessageFil>[
       for (final MessageCommunication m in fil.messages)
         messageFilDe(m, complement: piecesDuMessage(m.piecesJointes)),
@@ -216,6 +221,8 @@ class _FilContextuelState extends State<FilContextuel>
         defilement: _defilement,
         key: ValueKey<String>('fil-metier-lecture-${fil.id}'),
         entete: entete,
+        enteteCompacte: compacte,
+        enteteSuite: suite,
         messages: connus,
         textes: textes,
         lectureSeule: t.com.messages.fil.lectureSeule,
@@ -228,6 +235,8 @@ class _FilContextuelState extends State<FilContextuel>
       defilement: _defilement,
       key: ValueKey<String>('fil-metier-${fil.id}'),
       entete: entete,
+      enteteCompacte: compacte,
+      enteteSuite: suite,
       messages: <MessageFil>[
         ...connus,
         for (final VocalConfirme v in _vocauxConfirmes)

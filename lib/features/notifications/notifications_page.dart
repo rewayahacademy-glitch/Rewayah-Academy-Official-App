@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_agrandi.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_notifications.dart';
@@ -484,7 +485,7 @@ class LigneNotification extends StatelessWidget {
 
   /// Vrai a texte agrandi (1,5 et plus) : la date passe au-dessus du titre.
   static bool dateAuDessus(BuildContext context) =>
-      MediaQuery.textScalerOf(context).scale(1) >= 1.5;
+      SeuilsTexteAgrandi.texteAgrandi(context);
 
   /// La part de la largeur que prend la colonne de la date : 30 % des la
   /// largeur d'un dialogue, un quart en dessous (telephone, R-09).
