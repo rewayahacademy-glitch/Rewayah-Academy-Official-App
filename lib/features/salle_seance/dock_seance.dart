@@ -301,8 +301,14 @@ class DockSeance extends StatelessWidget {
       // Chaque bouton tient une case de largeur egale, centree : l'ecart
       // entre les centres ne depend pas de la longueur des libelles.
       final bool aere = vue.dockColore;
-      final double caseAeree =
-          diametreBoutonAppel(context) + AppSpacing.titreEcran + AppSpacing.sm;
+      // ETATS-MA-1 : au-dela de 130 %, en Mode Accessibilite, la case tient
+      // aussi le mot d'etat d'une bascule sur deux lignes, sans le couper.
+      final double caseAeree = math.max(
+        diametreBoutonAppel(context) + AppSpacing.titreEcran + AppSpacing.sm,
+        commandesSurDeuxRangees(context)
+            ? largeurCaseBasculeAvecMot(context) + AppSpacing.sm
+            : 0,
+      );
       dock = DecoratedBox(
         key: const ValueKey<String>('dock-seance'),
         decoration: cadre,

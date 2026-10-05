@@ -76,6 +76,15 @@ double largeurCaseCommande(BuildContext context, {required bool bascule}) {
   return bascule && motEtatVisible(context) ? cible * 2 : cible + AppSpacing.sm;
 }
 
+/// La largeur de case d'une bascule qui MONTRE son mot d'etat. ETATS-MA-1 :
+/// en Mode Accessibilite au-dela de 130 %, le mot reste aussi dans la
+/// rangee unique du bureau ; la case garde alors deux cibles (le mot passe
+/// sur deux lignes sans se couper). Ailleurs, [largeurCaseCommande].
+double largeurCaseBasculeAvecMot(BuildContext context) =>
+    commandesSurDeuxRangees(context)
+    ? AppMetriques.of(context).cibleTactile * 2
+    : largeurCaseCommande(context, bascule: true);
+
 /// EN-12 (UX_REVIEW_04 n° 17 d, K-42) : la rangee est trop serree ou le texte
 /// agrandi. Les commandes ordinaires y passent en icone seule (le libelle reste
 /// lu par le lecteur d'ecran et montre en infobulle) et le disque tient sa case
@@ -368,7 +377,9 @@ class CommandeSalle extends StatelessWidget {
     // case lui donne : son mot y passe a la ligne sans se couper.
     final Widget case_ = estBascule && !garderMot
         ? SizedBox(
-            width: largeurCaseCommande(context, bascule: true),
+            width: iconeSeule
+                ? largeurCaseCommande(context, bascule: true)
+                : largeurCaseBasculeAvecMot(context),
             child: pressable,
           )
         : pressable;

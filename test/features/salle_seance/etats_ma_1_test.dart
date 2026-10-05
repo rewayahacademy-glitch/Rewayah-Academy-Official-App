@@ -18,8 +18,8 @@ import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_accessibilite_page.dart';
 import 'package:rewayah_academy/features/demo/demo_salle_page.dart';
 import 'package:rewayah_academy/features/demo/seance_demo.dart';
-import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/dock_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
 import '../../capture/outil_capture.dart';
 import '../../support/aucun_mot_coupe.dart';
@@ -164,6 +164,21 @@ void main() {
       }
     }
 
+    // Bureau : la rangee unique reste ; le mot d'etat y passe sur deux
+    // lignes dans une case de deux cibles, sans se couper.
+    for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
+      testWidgets('1440 px, texte x2, ${mode.name} : mot entier', (
+        WidgetTester tester,
+      ) async {
+        await _monter(tester, taille: const Size(1440, 900), mode: mode);
+        expect(tester.takeException(), isNull);
+        final List<String> mots = _motsAffiches(tester);
+        expect(mots.where(_motsMicro.contains), hasLength(1));
+        expect(mots.where(_motsCamera.contains), hasLength(1));
+        verifierAucunMotCoupe(tester, _dock);
+      });
+    }
+
     testWidgets('Mariam (mineure), 320 px, texte x2 : meme regle', (
       WidgetTester tester,
     ) async {
@@ -227,6 +242,58 @@ void main() {
           );
         },
       );
+    }
+  });
+
+  // Captures K-61 (seulement avec CAPTURE_DIR) : la salle MA d'Idriss, a
+  // 390 et 320 px texte x2, a 1440, clair et sombre, et en RTL.
+  group('ETATS-MA-1 : captures', skip: sautSansCapture, () {
+    const List<(String, Size, double, double)> cas =
+        <(String, Size, double, double)>[
+          ('390_x2', Size(390, 844), 2, 2),
+          ('320_x2', Size(320, 568), 2, 2),
+          ('1440_x2', Size(1440, 900), 2, 1),
+        ];
+    for (final (String nom, Size taille, double echelle, double densite)
+        in cas) {
+      for (final ThemeMode mode in <ThemeMode>[
+        ThemeMode.light,
+        ThemeMode.dark,
+      ]) {
+        for (final bool rtl in <bool>[false, true]) {
+          if (rtl && (mode == ThemeMode.dark || nom.startsWith('1440'))) {
+            continue;
+          }
+          final String fichier =
+              'etats_ma_1/salle_ma_idriss_${nom}_${mode.name}'
+              '${rtl ? '_rtl' : ''}';
+          testWidgets(fichier, (WidgetTester tester) async {
+            fixerVueCapture(tester, taille, densite);
+            Widget ecran = const EcranAccessibiliteDemo(
+              eleve: EleveDemoAccessibilite.idriss,
+              moment: MomentDemoAccessibilite.fenetre,
+              etapeInitiale: EtapeDemoAccessibilite.salle,
+            );
+            if (rtl) {
+              ecran = Directionality(
+                textDirection: TextDirection.rtl,
+                child: ecran,
+              );
+            }
+            await tester.pumpWidget(
+              hoteCapture(
+                ecran,
+                themeMode: mode,
+                echelleTexte: echelle,
+                interfaceMode: InterfaceMode.enfant,
+              ),
+            );
+            await stabiliser(tester);
+            expect(tester.takeException(), isNull);
+            debugPrint('PNG ${await capturer(tester, fichier)}');
+          });
+        }
+      }
     }
   });
 }
