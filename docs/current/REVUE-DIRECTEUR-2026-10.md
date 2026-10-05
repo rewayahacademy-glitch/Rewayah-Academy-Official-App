@@ -24,7 +24,7 @@ Principe : corriger la cause (composant partagé de `lib/core`), recenser tous l
 | Hiérarchie de titres stricte : titre d'écran > titre de section > nom / titre de carte > corps, marque sous le titre | déduite (HIER-1) | `AppTypography`, `EntetePage`, `PageShell`, `SectionHeader`, `MarquePage` | `test/theme/hierarchie_titres_test.dart` | `verifierHierarchie` |
 | État jamais par la couleur seule | déduite | `StatusPill` | revue d'écran | |
 | « En direct » et « Annulée » reconnaissables d'un coup d'œil, partout | ON-AIR-1, ANNUL-VIS-1 | `PastilleEtatSeance`, `TexteHeureSeance`, `LigneRaisonSeance`, `surfaceCarteSeance` | `etat-seance-pastille` | `test/core/widgets/pastille_etat_seance_test.dart` |
-| Alerte urgente en tête | déduite | | revue d'écran | |
+| Alerte urgente en tête (tri gravité puis date, section en tête du Centre de commande, bandeau en tête de page, point sur la cloche) | déduite ; ALERTE-1 (01/10, décision du 05/10) | `trierAlertes`, `SectionAlertes`, `BandeauAlerteUrgente`, `ActionsEnteteCoquille.bandeau`, `ClocheNotifications` | revue d'écran | `test/core/alertes/alertes_test.dart`, `test/features/alertes/alertes_ecrans_test.dart` |
 | Navigation du Mode Accessibilité : moins de destinations, libellé visible, cibles de 72, actif à trois signaux, mêmes routes | MA-NAV-1 | `NavShell` | `nav-recomposee` | `nav_shell_accessibilite_test.dart` |
 | Libellé sans ambiguïté (qui, quoi) | déduite | | `libelle-ambigu` | |
 | Aucun mot interne chez le client | déduite | | `mot-interne` | |
