@@ -11,6 +11,7 @@ import '../montant_argent.dart';
 import '../montant_sensible.dart';
 import '../pastilles_comptable.dart';
 import 'ligne_activite.dart' show dateComptable;
+import 'pourcentage_sensible.dart';
 
 /// La Reserve strategique en lecture (`StrategicReserveCard`, spec §9 ;
 /// CPT-F) : **le titre est toujours « Reserve strategique »** (§9.1,
@@ -18,7 +19,8 @@ import 'ligne_activite.dart' show dateComptable;
 /// montant fixe » et le montant ; couverture : « Objectif actuel : N mois de
 /// charges essentielles », R-FIN-06, 07), puis la seule jauge de la vague
 /// (progression du theme, DR-09) avec son pourcentage ecrit, le montant
-/// actuel, le manque, les dates d'allocation et le statut en pastille.
+/// actuel, le manque, les dates d'allocation et le statut en pastille. Le
+/// pourcentage et la jauge se masquent avec les montants (Q-9, CPT-DIR-2).
 ///
 /// Aucune plage commerciale codee : 10 USD et 1 000 000 USD rendent pareil
 /// (R-FIN-08, 09). Tous les montants sont masquables.
@@ -102,13 +104,18 @@ class CarteReserveStrategique extends StatelessWidget {
               ],
             ),
           Ecart.vMd,
-          Semantics(
-            label: c.atteint(pourcent: i.atteintPourMille ~/ 10),
-            excludeSemantics: true,
-            child: LinearProgressIndicator(value: fraction),
+          // Q-9 = a : le pourcentage atteint et sa jauge se masquent avec
+          // les montants (CPT-DIR-2).
+          JaugeSensible(
+            fraction: fraction,
+            libelle: c.atteint(pourcent: i.atteintPourMille ~/ 10),
           ),
           Ecart.vXs,
-          Text(c.atteint(pourcent: i.atteintPourMille ~/ 10), style: cle),
+          PourcentageSensible(
+            valeur: '${i.atteintPourMille ~/ 10}',
+            gabarit: (String v) => c.atteint(pourcent: v),
+            style: cle,
+          ),
           Ecart.vMd,
           Wrap(
             spacing: AppSpacing.xxl,

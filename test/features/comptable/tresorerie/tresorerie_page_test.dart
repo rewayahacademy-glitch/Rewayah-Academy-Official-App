@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/comptable/statuts_comptable.dart';
 import 'package:rewayah_academy/core/finance/format_montant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/comptable/carte_reserve_strategique.dart';
+import 'package:rewayah_academy/core/widgets/comptable/pourcentage_sensible.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/montant_sensible.dart';
 import 'package:rewayah_academy/core/widgets/pastilles_comptable.dart';
@@ -52,6 +53,18 @@ void main() {
       // Nature ecrite en toutes lettres, part rendue par la source.
       expect(find.text(tr.coffreProtege), findsNWidgets(5));
       expect(find.text(tr.coffreNonProtege), findsNWidgets(2));
+      // Q-9 = a (CPT-DIR-2) : la part detenue derive des montants, elle est
+      // masquee avec eux a l'entree.
+      expect(find.text(tr.partDetenue(part: '12,5')), findsNothing);
+      expect(
+        find.text(tr.partDetenue(part: PourcentageSensible.masque)),
+        findsNWidgets(7),
+      );
+      await monterTresorerie(
+        tester,
+        tresorerie: FausseTresorerie(),
+        montantsAffiches: true,
+      );
       expect(find.text(tr.partDetenue(part: '12,5')), findsNWidgets(7));
     });
 

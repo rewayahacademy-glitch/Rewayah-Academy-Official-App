@@ -7,6 +7,7 @@ import '../../../core/icons/app_icons.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/comptable/pourcentage_sensible.dart';
 import '../../../core/widgets/montant_argent.dart';
 import '../../../core/widgets/montant_sensible.dart';
 import '../../../core/widgets/pastilles_comptable.dart';
@@ -91,8 +92,11 @@ class CarteCoffre extends StatelessWidget {
                 ton: coffre.protege ? TonEtat.accent : TonEtat.neutre,
               ),
               if (part != null)
-                Text(
-                  tr.partDetenue(part: pourcentDepuisPourMille(part)),
+                // Q-9 = a : la part detenue derive des montants, elle se
+                // masque avec eux (CPT-DIR-2).
+                PourcentageSensible(
+                  valeur: pourcentDepuisPourMille(part),
+                  gabarit: (String v) => tr.partDetenue(part: v),
                   style: attenue,
                 ),
             ],
