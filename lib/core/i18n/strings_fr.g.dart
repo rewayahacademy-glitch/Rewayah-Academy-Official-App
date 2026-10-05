@@ -621,17 +621,17 @@ class Traductions$attente$fr {
 	/// fr: 'Prochaine étape : {etape}'
 	String prochaineEtape({required Object etape}) => 'Prochaine étape : ${etape}';
 
-	/// fr: 'Pour relancer la vérification, commencez par cet élément : {element}.'
-	String refuseDetail({required Object element}) => 'Pour relancer la vérification, commencez par cet élément : ${element}.';
+	/// fr: 'Élément à reprendre : {element}.'
+	String refuseDetail({required Object element}) => 'Élément à reprendre : ${element}.';
 
 	/// fr: 'Vous pouvez joindre l'académie pour connaître la marche à suivre.'
 	String get refuseSansElement => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.';
 
-	/// fr: 'L'état de votre dossier ne s'affiche pas pour le moment.'
-	String get illisible => 'L\'état de votre dossier ne s\'affiche pas pour le moment.';
+	/// fr: 'L'état de votre compte ne s'affiche pas pour le moment.'
+	String get illisible => 'L\'état de votre compte ne s\'affiche pas pour le moment.';
 
-	/// fr: 'L'état de votre dossier s'affichera dès le retour du réseau.'
-	String get horsLigne => 'L\'état de votre dossier s\'affichera dès le retour du réseau.';
+	/// fr: 'L'état de votre compte s'affichera dès le retour du réseau.'
+	String get horsLigne => 'L\'état de votre compte s\'affichera dès le retour du réseau.';
 }
 
 // Path: connexion
@@ -4866,8 +4866,14 @@ class Traductions$dossiers$validation$fr {
 	/// fr: 'Le dossier de {nom} sera validé. Son compte pourra accéder à son espace.'
 	String corpsActivation({required Object nom}) => 'Le dossier de ${nom} sera validé. Son compte pourra accéder à son espace.';
 
+	/// fr: 'Le dossier d'{nom} sera validé. Son compte pourra accéder à son espace.'
+	String corpsActivationElide({required Object nom}) => 'Le dossier d\'${nom} sera validé. Son compte pourra accéder à son espace.';
+
 	/// fr: 'Le dossier de {nom} sera validé. Les autres conditions d’accès resteront applicables.'
 	String corpsDocumentaire({required Object nom}) => 'Le dossier de ${nom} sera validé. Les autres conditions d’accès resteront applicables.';
+
+	/// fr: 'Le dossier d'{nom} sera validé. Les autres conditions d’accès resteront applicables.'
+	String corpsDocumentaireElide({required Object nom}) => 'Le dossier d\'${nom} sera validé. Les autres conditions d’accès resteront applicables.';
 
 	/// fr: 'La validation est indisponible pour le moment.'
 	String get indisponible => 'La validation est indisponible pour le moment.';
@@ -16358,10 +16364,10 @@ extension on Traductions {
 			'attente.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il reste un élément à fournir.', other: 'Il reste ${n} éléments à fournir.', ), 
 			'attente.etatAFournir' => 'À fournir',
 			'attente.prochaineEtape' => ({required Object etape}) => 'Prochaine étape : ${etape}',
-			'attente.refuseDetail' => ({required Object element}) => 'Pour relancer la vérification, commencez par cet élément : ${element}.',
+			'attente.refuseDetail' => ({required Object element}) => 'Élément à reprendre : ${element}.',
 			'attente.refuseSansElement' => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.',
-			'attente.illisible' => 'L\'état de votre dossier ne s\'affiche pas pour le moment.',
-			'attente.horsLigne' => 'L\'état de votre dossier s\'affichera dès le retour du réseau.',
+			'attente.illisible' => 'L\'état de votre compte ne s\'affiche pas pour le moment.',
+			'attente.horsLigne' => 'L\'état de votre compte s\'affichera dès le retour du réseau.',
 			'connexion.titre' => 'Se connecter',
 			'connexion.intro' => 'Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.',
 			'connexion.courriel' => 'Votre adresse électronique',
@@ -17067,7 +17073,9 @@ extension on Traductions {
 			'dossiers.refus.abandonner' => 'Abandonner',
 			'dossiers.validation.titre' => 'Valider ce dossier ?',
 			'dossiers.validation.corpsActivation' => ({required Object nom}) => 'Le dossier de ${nom} sera validé. Son compte pourra accéder à son espace.',
+			'dossiers.validation.corpsActivationElide' => ({required Object nom}) => 'Le dossier d\'${nom} sera validé. Son compte pourra accéder à son espace.',
 			'dossiers.validation.corpsDocumentaire' => ({required Object nom}) => 'Le dossier de ${nom} sera validé. Les autres conditions d’accès resteront applicables.',
+			'dossiers.validation.corpsDocumentaireElide' => ({required Object nom}) => 'Le dossier d\'${nom} sera validé. Les autres conditions d’accès resteront applicables.',
 			'dossiers.validation.indisponible' => 'La validation est indisponible pour le moment.',
 			'dossiers.validation.envoi' => 'Validation en cours…',
 			'dossiers.validation.erreur' => 'Le dossier n\'a pas pu être validé.',
@@ -17438,10 +17446,10 @@ extension on Traductions {
 			'admin.programmes.aucuneVersion' => 'Aucune version de programme',
 			'admin.programmes.aucuneVersionDetail' => 'Créez la première version, encore en brouillon, pour commencer à y ajouter des niveaux.',
 			'admin.programmes.erreur' => 'Le programme n\'a pas pu être lu. Réessayez dans un instant.',
-			'admin.programmes.statutBrouillon' => 'Brouillon',
-			'admin.programmes.statutPubliee' => 'Publiée',
 			_ => null,
 		} ?? switch (path) {
+			'admin.programmes.statutBrouillon' => 'Brouillon',
+			'admin.programmes.statutPubliee' => 'Publiée',
 			'admin.programmes.statutArchivee' => 'Archivée',
 			'admin.programmes.versionNumero' => ({required Object numero}) => 'Version ${numero}',
 			'admin.programmes.niveauxSur' => ({required Object nombre}) => '${nombre} niveaux',
@@ -17952,10 +17960,10 @@ extension on Traductions {
 			'compte.roles.student' => 'Élève',
 			'compte.roleDetail.admin' => 'Gère les dossiers, l\'attribution et le journal de l\'académie',
 			'compte.roleDetail.accountant' => 'Gère les paiements et les factures',
-			'compte.roleDetail.controller' => 'Observe les séances pour la qualité pédagogique',
-			'compte.roleDetail.teacher' => 'Donne les cours et suit ses créneaux',
 			_ => null,
 		} ?? switch (path) {
+			'compte.roleDetail.controller' => 'Observe les séances pour la qualité pédagogique',
+			'compte.roleDetail.teacher' => 'Donne les cours et suit ses créneaux',
 			'compte.roleDetail.guardian' => 'Suit le foyer et ses enfants',
 			'compte.roleDetail.student' => 'Suit ses cours et son Coran',
 			'compte.tuteur.preferences' => 'Préférences',
@@ -18466,10 +18474,10 @@ extension on Traductions {
 			'classe.pageCatalogue.seanceHebdo' => ({required Object jour, required Object heure, required Object duree}) => '${jour} à ${heure} · ${duree} min',
 			'classe.pageCatalogue.fuseauClasse' => ({required Object fuseau}) => 'Heures de la classe (${fuseau})',
 			'classe.pageCatalogue.placeUne' => '1 place restante',
-			'classe.pageCatalogue.places' => ({required Object nombre}) => '${nombre} places restantes',
-			'classe.pageCatalogue.etat.ouverte' => 'Ouverte',
 			_ => null,
 		} ?? switch (path) {
+			'classe.pageCatalogue.places' => ({required Object nombre}) => '${nombre} places restantes',
+			'classe.pageCatalogue.etat.ouverte' => 'Ouverte',
 			'classe.pageCatalogue.etat.complete' => 'Complète',
 			'classe.pageCatalogue.etat.listeAttente' => 'Liste d\'attente',
 			'classe.pageCatalogue.choisir' => 'Choisir cette classe',
@@ -18980,10 +18988,10 @@ extension on Traductions {
 			'controleur.historique.ajouterComplement' => 'Ajouter un complément',
 			'controleur.complement.bandeau' => 'Ce complément sera ajouté au rapport existant.',
 			'controleur.complement.questionMotif' => 'Pourquoi ajoutez-vous ce complément ?',
-			'controleur.complement.contexteMotif' => 'Facultatif : le motif aide l\'administration à lire le complément. Le rapport d\'origine ne change pas.',
-			'controleur.complement.precision' => 'Précision',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.complement.contexteMotif' => 'Facultatif : le motif aide l\'administration à lire le complément. Le rapport d\'origine ne change pas.',
+			'controleur.complement.precision' => 'Précision',
 			'controleur.complement.precisionAide' => 'Quand un détail manque · il complète le rapport, sans rien y changer',
 			'controleur.complement.correction' => 'Correction',
 			'controleur.complement.correctionAide' => 'Quand une information du rapport est inexacte · l\'original reste lisible, la correction s\'affiche dessous',
@@ -19494,10 +19502,10 @@ extension on Traductions {
 			'tc.observation.connexion.enCours' => 'Connexion et vérification en cours',
 			'tc.observation.connexion.prolongee' => 'Restez sur cette page : la vérification continue.',
 			'tc.observation.connexion.impossibleTitre' => 'Connexion impossible',
-			'tc.observation.connexion.impossible' => 'L\'entrée dans la séance n\'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau.',
-			'tc.observation.duree.secondeUne' => ({required Object n}) => '${n} seconde',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.connexion.impossible' => 'L\'entrée dans la séance n\'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau.',
+			'tc.observation.duree.secondeUne' => ({required Object n}) => '${n} seconde',
 			'tc.observation.duree.secondes' => ({required Object n}) => '${n} secondes',
 			'tc.observation.duree.minuteUne' => ({required Object n}) => '${n} minute',
 			'tc.observation.duree.minutes' => ({required Object n}) => '${n} minutes',

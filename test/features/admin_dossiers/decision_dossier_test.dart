@@ -114,6 +114,13 @@ void main() {
     expect(await premier, isA<DecisionReussie>());
     expect(port.appels, 1);
     expect(etat.nombreDecisions, 1);
+
+    // AD-NETTOYAGE-2 (n8) : une decision reussie n'est pas renvoyee non plus
+    // (Entree repetee apres la reponse) : l'etat est rendu, aucun appel.
+    final EtatDecision encore = await n.envoyer(_refus(etat, id));
+    expect(encore, isA<DecisionReussie>());
+    expect(port.appels, 1);
+    expect(etat.nombreDecisions, 1);
   });
 
   test('refus : verification ou accord manquant ne dit jamais « valide »', () {

@@ -217,9 +217,12 @@ class _CorpsState extends ConsumerState<_Corps> {
           ),
           Ecart.vSm,
           Text(
-            dossier.consequence == ConsequenceValidation.activationPossible
-                ? t.dossiers.validation.corpsActivation(nom: nom)
-                : t.dossiers.validation.corpsDocumentaire(nom: nom),
+            corpsValidation(
+              nom,
+              activation:
+                  dossier.consequence ==
+                  ConsequenceValidation.activationPossible,
+            ),
             style: textes.bodyMedium,
           ),
           statut,
@@ -529,6 +532,10 @@ class _ActionsState extends ConsumerState<_Actions> {
         () => _relire(purgerMotif: true),
       ),
       DecisionIndisponible() => unique(t.commun.annuler, _annulerCommande),
+      // AD-NETTOYAGE-2 (n8) : la surface se ferme d'elle-meme apres une
+      // decision reussie ; si elle reste affichee un instant, Confirmer ne
+      // doit pas rester actif.
+      DecisionReussie() => unique(t.commun.fermer, _fermer),
       DecisionInconnue() || DecisionVerification() => _RangeeActions(
         enfants: <Widget>[
           ActionPrincipale(

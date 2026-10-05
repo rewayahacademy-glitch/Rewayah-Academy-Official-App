@@ -159,10 +159,12 @@ class DecisionsDossiersNotifier extends Notifier<Map<String, EtatDecision>> {
 
   /// Envoie (ou rejoue) une commande. Aucune relance automatique. Une
   /// commande deja non resolue pour ce dossier n'est jamais doublee (double
-  /// tap, Entree repetee) : l'etat courant est rendu tel quel.
+  /// tap, Entree repetee) : l'etat courant est rendu tel quel. Une decision
+  /// deja reussie n'est pas renvoyee non plus (AD-NETTOYAGE-2, n8) : le
+  /// dossier est decide, seule une relecture (`oublier`) rouvre la voie.
   Future<EtatDecision> envoyer(CommandeDecision c) async {
     final EtatDecision? courant = state[c.dossierId];
-    if (courant != null && courant.nonResolue) {
+    if (courant != null && (courant.nonResolue || courant is DecisionReussie)) {
       return courant;
     }
     _poser(c.dossierId, DecisionEnvoi(c));

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -53,5 +55,79 @@ void main() {
     tester.view.physicalSize = const Size(800, 800);
     await tester.pumpAndSettle();
     attendSaisieEtFocus(tester);
+  });
+
+  // AD-NETTOYAGE-2 (n7) : la garde de glissement ne retient que les feuilles
+  // qu'une PopScope interdit de fermer, et ne lance `maybePop` qu'aux seuils de
+  // `BottomSheet` (la moitie de la hauteur, ou 700 px/s).
+  group('garde de glissement', () {
+    Widget hoteOuverture({
+      required bool avecPopScope,
+      required List<int> pops,
+    }) => hote(
+      Builder(
+        builder: (BuildContext context) => Material(
+          child: TextButton(
+            onPressed: () => unawaited(
+              AppBottomSheet.ouvrir<void>(
+                context,
+                titre: 'Motif',
+                constructeur: (BuildContext _) => avecPopScope
+                    ? PopScope(
+                        canPop: false,
+                        onPopInvokedWithResult: (bool _, Object? _) =>
+                            pops.add(1),
+                        child: const Text('corps de la feuille'),
+                      )
+                    : const Text('corps de la feuille'),
+              ),
+            ),
+            child: const Text('Ouvrir'),
+          ),
+        ),
+      ),
+      surcharges: <Override>[
+        serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+      ],
+    );
+
+    Future<void> ouvrir(WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = const Size(390, 844);
+      addTearDown(tester.view.reset);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Ouvrir'));
+      await tester.pumpAndSettle();
+      expect(find.text('corps de la feuille'), findsOneWidget);
+    }
+
+    testWidgets('sans PopScope : le glisser ferme comme avant', (
+      WidgetTester tester,
+    ) async {
+      final List<int> pops = <int>[];
+      await tester.pumpWidget(hoteOuverture(avecPopScope: false, pops: pops));
+      await ouvrir(tester);
+      await tester.drag(find.text('Motif'), const Offset(0, 500));
+      await tester.pumpAndSettle();
+      expect(find.text('corps de la feuille'), findsNothing);
+      expect(pops, isEmpty);
+    });
+
+    testWidgets('avec PopScope : un effleurement ne pose pas la question, '
+        'une vraie descente oui', (WidgetTester tester) async {
+      final List<int> pops = <int>[];
+      await tester.pumpWidget(hoteOuverture(avecPopScope: true, pops: pops));
+      await ouvrir(tester);
+
+      await tester.drag(find.text('Motif'), const Offset(0, 40));
+      await tester.pumpAndSettle();
+      expect(pops, isEmpty);
+      expect(find.text('corps de la feuille'), findsOneWidget);
+
+      await tester.drag(find.text('Motif'), const Offset(0, 500));
+      await tester.pumpAndSettle();
+      expect(pops, hasLength(1));
+      expect(find.text('corps de la feuille'), findsOneWidget);
+    });
   });
 }

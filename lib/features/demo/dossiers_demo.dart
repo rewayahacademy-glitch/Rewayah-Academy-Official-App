@@ -683,18 +683,12 @@ class PolitiqueRevueKycDemo implements PortPolitiqueRevueKyc {
 
 /// Pont vers les decisions de la revue (`revue_dossier.dart`), en
 /// demonstration seulement : depuis AD-6, le detail est lu par le port et ce
-/// pont ne sert plus qu'aux decisions, jusqu'a AD-8. Il transmet les trois verifications comme faites : l'ecran
-/// exige deja les trois coches avant Valider. Jamais hors demonstration.
+/// pont ne sert plus qu'a lister la file (`enAttente`). Les decisions passent
+/// par `RevueDossiersDemo` ; ici, [decider] refuse. Jamais hors demonstration.
 class ServiceValidationDemo implements ServiceValidation {
-  ServiceValidationDemo(this.etat) : _revue = RevueDossiersDemo(etat);
+  ServiceValidationDemo(this.etat);
 
   final EtatRevueDemo etat;
-  final RevueDossiersDemo _revue;
-
-  /// Commande en cours par (dossier, decision, motif) : un nouveau tap apres
-  /// une reponse perdue renvoie la MEME commande (P-ADM-10.5).
-  final Map<String, ({String commandeId, int revision})> _enCours =
-      <String, ({String commandeId, int revision})>{};
 
   /// Toute la file, dans l'ordre du port (AD-5) : chaque ligne de la file
   /// doit trouver son detail ici, sinon elle ouvrirait « Ce dossier n'est
@@ -739,53 +733,17 @@ class ServiceValidationDemo implements ServiceValidation {
   Future<String> apercu(String cleObjet) =>
       Future<String>.error(const CapaciteIndisponible('AD-BR-03'));
 
+  /// AD-NETTOYAGE-2 (n10) : ce pont n'a aucun appelant dans l'application (la
+  /// demonstration branche `RevueDossiersDemo` sur le port, qui lit les
+  /// verifications reellement cochees). Il transmettait jusqu'ici les trois
+  /// verifications comme faites, quoi qu'ait coche l'administrateur : un
+  /// chemin de decision qui contournait les cases. Il refuse donc.
   @override
   Future<void> decider({
     required String documentId,
     required bool approuve,
     String? motif,
-  }) async {
-    final DossierDemo d = etat.dossiers.values.firstWhere(
-      (DossierDemo d) => d.documentId == documentId,
-      orElse: () => throw const ErreurRevueDossier(CodeErreurRevue.introuvable),
-    );
-    final DecisionDossier decision = approuve
-        ? DecisionDossier.valider
-        : DecisionDossier.refuser;
-    final String cle = '${d.id}|${decision.name}|${motif?.trim() ?? ''}';
-    final ({String commandeId, int revision}) commande =
-        _enCours[cle] ??
-        (
-          commandeId: 'demo-${d.id}-r${d.revision}-${decision.name}',
-          revision: d.revision,
-        );
-    _enCours[cle] = commande;
-    try {
-      await _revue.decider(
-        dossierId: d.id,
-        revisionAttendue: commande.revision,
-        decision: decision,
-        commandeId: commande.commandeId,
-        verificationsFaites: verificationsDemo.toSet(),
-        motif: motif,
-      );
-    } on ErreurRevueDossier catch (e) {
-      if (e.code != CodeErreurRevue.reponsePerdue) {
-        _enCours.remove(cle);
-        rethrow;
-      }
-      // Reponse perdue : relire le resultat avant de conclure a l'echec.
-      final EtatCommande relu = await _revue.resultatDecision(
-        dossierId: d.id,
-        commandeId: commande.commandeId,
-      );
-      if (relu is! EtatCommandeReussie) {
-        // Commande gardee : le prochain tap la rejoue a l'identique.
-        rethrow;
-      }
-    }
-    _enCours.remove(cle);
-  }
+  }) => Future<void>.error(const CapaciteIndisponible('AD-8'));
 }
 
 /// Le dossier vu par la personne elle-meme (AD-10), lu dans le meme etat que

@@ -73,6 +73,36 @@ void main() {
       }
     });
 
+    test('demo=enseignant : ouverte seulement avec un dossier (alias, n1)', () {
+      expect(
+        demoTuteurActive(
+          adresse: Uri.parse('https://x/?demo=enseignant&dossier=refuse'),
+          environnement: 'staging',
+        ),
+        isTrue,
+      );
+      for (final String adresse in <String>[
+        'https://x/?demo=enseignant',
+        'https://x/?demo=enseignant&dossier=',
+      ]) {
+        expect(
+          demoTuteurActive(
+            adresse: Uri.parse(adresse),
+            environnement: 'staging',
+          ),
+          isFalse,
+          reason: adresse,
+        );
+      }
+      expect(
+        demoTuteurActive(
+          adresse: Uri.parse('https://x/?demo=enseignant&dossier=refuse'),
+          environnement: 'production',
+        ),
+        isFalse,
+      );
+    });
+
     test('la compilation de test (developpement) sans adresse : fermee', () {
       expect(demoTuteurActiveIci, isFalse);
     });

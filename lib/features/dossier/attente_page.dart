@@ -17,7 +17,6 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/groupe_reglages.dart';
-import '../../core/widgets/marque_page.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../connexion/recuperation_page.dart'
@@ -108,57 +107,68 @@ class _AttentePageState extends ConsumerState<AttentePage> {
         onPress: () => unawaited(ref.read(serviceAuthProvider).deconnexion()),
         niveau: NiveauAction.tertiaire,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          const MarquePage(),
-          Ecart.vXxl,
-          AppCard(
-            child: lu != null
-                ? _Statut(etat: lu)
-                : illisible
-                ? _Illisible(erreur: etat.error ?? const FormatException())
-                : const _Patience(),
-          ),
-          // HL-A-5 (DESIGN-GOV B) : les actions rattachees a la carte d'etat
-          // se placent 16 sous elle, au bord de fin, et non dans le pied ;
-          // pleine largeur sur mobile, largeur naturelle au-dela.
-          if (prochaine != null) ...<Widget>[
-            Ecart.vLg,
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
-              // IntrinsicWidth au-dela du mobile : le Container centre
-              // d'ActionPrincipale s'etirerait sinon (meme remede que 02B).
-              child: _AuContenu(
-                actif: AppGabarit.de(context) != Gabarit.mobile,
-                child: ActionPrincipale(
-                  libelle: prochaine.libelle,
-                  onPress: prochaine.chemin != null
-                      ? () => routeur?.go(prochaine.chemin!)
-                      : prochaine.geste,
-                  fleche: prochaine.chemin != null,
-                  pleineLargeur: AppGabarit.de(context) == Gabarit.mobile,
+      // AD-NETTOYAGE-2 (m6, m8) : une seule tete (le titre de la page ; la
+      // carte d'etat porte le sien) et une colonne bornee comme la politique
+      // KYC, sans etirer la carte a 1140 sur bureau.
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: AppPage.largeurReglages),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              AppCard(
+                child: lu != null
+                    ? _Statut(etat: lu)
+                    : illisible
+                    ? _Illisible(erreur: etat.error ?? const FormatException())
+                    : const _Patience(),
+              ),
+              // HL-A-5 (DESIGN-GOV B) : les actions rattachees a la carte d'etat
+              // se placent 16 sous elle, au bord de fin, et non dans le pied ;
+              // pleine largeur sur mobile, largeur naturelle au-dela.
+              if (prochaine != null) ...<Widget>[
+                Ecart.vLg,
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  // IntrinsicWidth au-dela du mobile : le Container centre
+                  // d'ActionPrincipale s'etirerait sinon (meme remede que 02B).
+                  child: _AuContenu(
+                    actif: AppGabarit.de(context) != Gabarit.mobile,
+                    child: ActionPrincipale(
+                      libelle: prochaine.libelle,
+                      onPress: prochaine.chemin != null
+                          ? () => routeur?.go(prochaine.chemin!)
+                          : prochaine.geste,
+                      fleche: prochaine.chemin != null,
+                      pleineLargeur: AppGabarit.de(context) == Gabarit.mobile,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ],
-          if (lu?.etape
-              case EtapeDossier.enVerification ||
-                  EtapeDossier.accesEnPreparation) ...<Widget>[
-            Ecart.vLg,
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: ActionPrincipale(
-                libelle: lu!.estTuteur
-                    ? t.attente.actualiserCompte
-                    : t.attente.actualiser,
-                onPress: () => unawaited(_relire()),
-                niveau: NiveauAction.tertiaire,
-                pleineLargeur: false,
-              ),
-            ),
-          ],
-        ],
+              ],
+              if (lu?.etape
+                  case EtapeDossier.enVerification ||
+                      EtapeDossier.accesEnPreparation) ...<Widget>[
+                Ecart.vLg,
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  // AD-NETTOYAGE-2 (m7) : sans IntrinsicWidth, le Container centre
+                  // d'ActionPrincipale s'etire et le bouton se centre.
+                  child: _AuContenu(
+                    actif: true,
+                    child: ActionPrincipale(
+                      libelle: lu!.estTuteur
+                          ? t.attente.actualiserCompte
+                          : t.attente.actualiser,
+                      onPress: () => unawaited(_relire()),
+                      niveau: NiveauAction.tertiaire,
+                      pleineLargeur: false,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -238,7 +248,6 @@ class _Statut extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
     return switch (etat.etape) {
@@ -307,12 +316,7 @@ class _Statut extends StatelessWidget {
           Ecart.vMd,
           // La base refuse un verdict negatif sans motif : cette phrase existe
           // toujours quand on arrive ici.
-          Text(
-            etat.motifRefus ?? '',
-            style: palette.inkAlert.applyTo(
-              textes.titleMedium ?? const TextStyle(),
-            ),
-          ),
+          Text(etat.motifRefus ?? '', style: textes.bodyLarge),
           Ecart.vMd,
           // La phrase suit le premier element a corriger, celui que « Corriger »
           // ouvre (P-ADM-09.2) ; sans element, la sortie est de joindre

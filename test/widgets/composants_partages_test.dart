@@ -463,6 +463,11 @@ void main() {
         }
         // Toujours au bord de fin (16 de retrait), jamais au-dela.
         expect(controle.right, closeTo(groupe.right - AppSpacing.lg, 0.5));
+        // AD-NETTOYAGE-2 (m14) : sous le libelle, le controle garde sa largeur
+        // naturelle ; il ne s'etire pas sur toute la ligne.
+        if (dessous) {
+          expect(controle.width, lessThan(groupe.width - 3 * AppSpacing.lg));
+        }
       });
     }
 

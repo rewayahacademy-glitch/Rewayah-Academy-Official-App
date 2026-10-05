@@ -573,10 +573,10 @@
     },
     "etatAFournir": "À fournir",
     "prochaineEtape": "Prochaine étape : {etape}",
-    "refuseDetail": "Pour relancer la vérification, commencez par cet élément : {element}.",
+    "refuseDetail": "Élément à reprendre : {element}.",
     "refuseSansElement": "Vous pouvez joindre l'académie pour connaître la marche à suivre.",
-    "illisible": "L'état de votre dossier ne s'affiche pas pour le moment.",
-    "horsLigne": "L'état de votre dossier s'affichera dès le retour du réseau."
+    "illisible": "L'état de votre compte ne s'affiche pas pour le moment.",
+    "horsLigne": "L'état de votre compte s'affichera dès le retour du réseau."
   },
   "connexion": {
     "titre": "Se connecter",
@@ -1439,7 +1439,9 @@
     "validation": {
       "titre": "Valider ce dossier ?",
       "corpsActivation": "Le dossier de {nom} sera validé. Son compte pourra accéder à son espace.",
+      "corpsActivationElide": "Le dossier d'{nom} sera validé. Son compte pourra accéder à son espace.",
       "corpsDocumentaire": "Le dossier de {nom} sera validé. Les autres conditions d’accès resteront applicables.",
+      "corpsDocumentaireElide": "Le dossier d'{nom} sera validé. Les autres conditions d’accès resteront applicables.",
       "indisponible": "La validation est indisponible pour le moment.",
       "envoi": "Validation en cours…",
       "erreur": "Le dossier n'a pas pu être validé.",

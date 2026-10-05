@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
@@ -94,7 +96,24 @@ abstract final class Supervision {
     final List<Breadcrumb>? miettes = evenement.breadcrumbs;
     final List<SentryException>? exceptions = evenement.exceptions;
     final SentryMessage? message = evenement.message;
+    final SentryRequest? requete = evenement.request;
+    // ignore: deprecated_member_use
+    final Map<String, dynamic>? extra = evenement.extra;
     return evenement.copyWith(
+      // AD-NETTOYAGE-2 (n6) : les autres endroits ou une URL de stockage peut
+      // voyager : modele et parametres du message, requete, `extra` et
+      // `contexts` (parcours recursif des chaines).
+      request: requete?.copyWith(
+        url: requete.url == null ? null : masquerStockage(requete.url!),
+        queryString: requete.queryString == null
+            ? null
+            : masquerStockage(requete.queryString!),
+      ),
+      // ignore: deprecated_member_use
+      extra: extra == null
+          ? null
+          : (_masquerRecursif(extra)! as Map<String, dynamic>),
+      contexts: _nettoyerContextes(evenement.contexts),
       exceptions: exceptions
           ?.map(
             (SentryException e) => e.value == null
@@ -102,7 +121,15 @@ abstract final class Supervision {
                 : e.copyWith(value: masquerStockage(e.value!)),
           )
           .toList(),
-      message: message?.copyWith(formatted: masquerStockage(message.formatted)),
+      message: message?.copyWith(
+        formatted: masquerStockage(message.formatted),
+        template: message.template == null
+            ? null
+            : masquerStockage(message.template!),
+        params: message.params == null
+            ? null
+            : (_masquerRecursif(message.params)! as List<dynamic>),
+      ),
       breadcrumbs: miettes?.map(_nettoyerMiette).toList(),
     );
   }
@@ -117,6 +144,29 @@ abstract final class Supervision {
   @visibleForTesting
   static String masquerStockage(String texte) =>
       texte.replaceAll(_stockage, '/storage/v1/object/[masque]');
+
+  /// Masque le chemin de stockage dans toute chaine d'une structure JSON
+  /// (listes et tables imbriquees) ; les autres valeurs passent telles quelles.
+  static Object? _masquerRecursif(Object? valeur) => switch (valeur) {
+    String() => masquerStockage(valeur),
+    Map() => <String, dynamic>{
+      for (final MapEntry<dynamic, dynamic> e in valeur.entries)
+        '${e.key}': _masquerRecursif(e.value),
+    },
+    List() => valeur.map(_masquerRecursif).toList(),
+    _ => valeur,
+  };
+
+  /// Les contextes, masques par un aller-retour JSON ; rendus tels quels si
+  /// rien ne change, pour ne jamais abimer les contextes d'appareil.
+  static Contexts _nettoyerContextes(Contexts contextes) {
+    final Map<String, dynamic> avant = contextes.toJson();
+    final Map<String, dynamic> apres =
+        _masquerRecursif(avant)! as Map<String, dynamic>;
+    return jsonEncode(avant) == jsonEncode(apres)
+        ? contextes
+        : Contexts.fromJson(apres);
+  }
 
   static Breadcrumb _nettoyerMiette(Breadcrumb miette) {
     final String? message = miette.message;

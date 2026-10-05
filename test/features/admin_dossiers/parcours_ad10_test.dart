@@ -365,17 +365,23 @@ void main() {
     final String? pieceB = etat.dossiers[b]!.documentId;
     expect(pieceA, isNot(pieceB));
 
-    final ServiceValidationDemo service = ServiceValidationDemo(etat);
-    await service.decider(
-      documentId: pieceB!,
-      approuve: false,
+    final RevueDossiersDemo revue = RevueDossiersDemo(etat);
+    await revue.decider(
+      dossierId: b,
+      revisionAttendue: etat.dossiers[b]!.revision,
+      decision: DecisionDossier.refuser,
+      commandeId: 'ad10-u2-b-2',
+      verificationsFaites: const <String>{},
       motif: 'Motif fictif B.',
     );
     expect(etat.dossiers[b]!.statut, StatutRevue.refuse);
     expect(etat.dossiers[a]!.statut, StatutRevue.aVerifier);
-    await service.decider(
-      documentId: pieceA!,
-      approuve: false,
+    await revue.decider(
+      dossierId: a,
+      revisionAttendue: etat.dossiers[a]!.revision,
+      decision: DecisionDossier.refuser,
+      commandeId: 'ad10-u2-a-2',
+      verificationsFaites: const <String>{},
       motif: 'Motif fictif A.',
     );
     expect(etat.dossiers[a]!.motifRefus, 'Motif fictif A.');

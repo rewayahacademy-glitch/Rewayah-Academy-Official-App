@@ -323,10 +323,10 @@ class _Ligne extends StatelessWidget {
             child: marque,
           ),
         ],
-        if (ligne.controle != null) ...<Widget>[Ecart.hSm, ligne.controle!],
-        if (ligne.onPress != null &&
-            ligne.controle == null &&
-            ligne.cochee == null) ...<Widget>[
+        // AD-NETTOYAGE-2 (n12) : `_rangee` ne sert qu'aux lignes sans controle
+        // (les autres passent par `_RangeeMesuree`) : ni bloc controle, ni
+        // test sur le controle ici.
+        if (ligne.onPress != null && ligne.cochee == null) ...<Widget>[
           Ecart.hSm,
           ExcludeSemantics(
             child: IconTheme(
@@ -351,7 +351,7 @@ class _Ligne extends StatelessWidget {
   /// (interrupteur) n'est pas mesure : une ligne a marque n'en porte pas.
   double get _fixesEnFin =>
       AppSpacing.sm +
-      (ligne.onPress != null && ligne.controle == null && ligne.cochee == null
+      (ligne.onPress != null && ligne.cochee == null
           ? AppSpacing.sm + AppSpacing.xl
           : 0);
 
@@ -549,7 +549,18 @@ class _RenduRangeeMesuree extends RenderBox
       return contraintes.constrain(Size(w, h));
     }
     final Size t = disposer(_textes, BoxConstraints.tightFor(width: largeur));
-    final Size c = disposer(_controle, BoxConstraints(maxWidth: largeur));
+    // AD-NETTOYAGE-2 (m14) : sous le libelle, le controle garde sa largeur
+    // naturelle ; une contrainte lache seule etirait un bouton dont le
+    // contenu est centre (ActionPrincipale) sur toute la ligne.
+    final Size c = disposer(
+      _controle,
+      BoxConstraints(
+        maxWidth: math.min(
+          largeur,
+          _controle.getMaxIntrinsicWidth(double.infinity),
+        ),
+      ),
+    );
     final double h = t.height + _ecartDessous + c.height;
     if (placer) {
       (_textes.parentData! as _DonneesRangee).offset = Offset.zero;
