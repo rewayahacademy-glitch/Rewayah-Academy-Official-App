@@ -6,9 +6,11 @@
 // montants est sur chaque page.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/admin_domaine.dart';
+import 'package:rewayah_academy/core/capacites/port_aujourdhui_comptable.dart';
 import 'package:rewayah_academy/core/comptable/navigation_comptable.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -32,6 +34,7 @@ import 'package:rewayah_academy/features/comptable/encaissements/rapprochement_p
 import 'package:rewayah_academy/features/comptable/paiements/detail_paiement_page.dart';
 import 'package:rewayah_academy/features/comptable/paiements/paiements_page.dart';
 import 'package:rewayah_academy/features/comptable/tresorerie/tresorerie_page.dart';
+import 'package:rewayah_academy/features/demo/comptable/aujourdhui_demo.dart';
 import 'package:rewayah_academy/features/demo/demo_comptable_page.dart';
 import 'package:rewayah_academy/features/paiements_recus/recevoir_paiements_page.dart';
 
@@ -44,11 +47,13 @@ Future<GoRouter> _comptable(
   WidgetTester tester,
   String depart, {
   Size taille = const Size(390, 844),
+  List<Override> surcharges = const <Override>[],
 }) => monterRouteur(
   tester,
   depart,
   source: FausseSourceSession(sessionActive(AppRole.accountant)),
   taille: taille,
+  surcharges: surcharges,
 );
 
 NavShell _coquille(WidgetTester tester) =>
@@ -240,6 +245,49 @@ void main() {
       expect(_chemin(routeur), Routes.compte);
       // Compte garde la coquille du Comptable, Compte allume.
       expect(_coquille(tester).indexActif, 3);
+    });
+
+    // CPT-FUS : les acces rapides d'Aujourd'hui menent aux ecrans livres
+    // par les voies, sur leurs routes reelles.
+    for (final (String cle, String chemin, Type page)
+        in <(String, String, Type)>[
+          ('paiements', Routes.comptablePaiements, PaiementsAEffectuerPage),
+          ('contractuels', Routes.comptableContractuels, ContractuelsPage),
+          ('encaissements', Routes.comptableEncaissements, EncaissementsPage),
+          ('tresorerie', Routes.comptableTresorerie, TresoreriePage),
+          ('alimenter', Routes.comptableTresorerie, TresoreriePage),
+        ]) {
+      testWidgets('Aujourd hui, acces « $cle » : $page sur $chemin', (
+        WidgetTester tester,
+      ) async {
+        final GoRouter routeur = await _comptable(
+          tester,
+          Routes.comptable,
+          // Les acces rapides vivent dans la colonne du bureau (le telephone
+          // a la barre basse).
+          taille: const Size(1440, 3000),
+          surcharges: surchargesDemoAujourdhui(),
+        );
+        final Finder lien = find.byKey(ValueKey<String>('acces-$cle'));
+        await tester.ensureVisible(lien);
+        await tester.tap(lien);
+        await stabiliser(tester);
+        expect(_chemin(routeur), chemin);
+        expect(find.byType(page), findsOneWidget);
+      });
+    }
+
+    testWidgets('Aujourd hui : chaque element de la file mene a sa route '
+        'reelle, sans renvoi', (WidgetTester tester) async {
+      for (final ElementAttention e in DonneesAujourdhuiDemo.file) {
+        final GoRouter routeur = await _comptable(
+          tester,
+          e.route,
+          surcharges: surchargesDemoAujourdhui(),
+        );
+        expect(_chemin(routeur), Uri.parse(e.route).path, reason: e.id);
+        expect(_coquille(tester).destinations, hasLength(4));
+      }
     });
 
     testWidgets('le retour d un detail ramene a sa liste', (
