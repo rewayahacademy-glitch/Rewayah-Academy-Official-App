@@ -156,6 +156,22 @@ class PersistanceBrouillon {
     return true;
   }
 
+  /// Efface le brouillon de [cle] seulement s'il garde encore exactement
+  /// [texte] (accuse d'un envoi). COM-RC tour 6 (COM-R-4, 8.3-1) : un
+  /// accuse recu par un fil ferme n'efface pas un autre texte saisi depuis
+  /// dans le fil rouvert.
+  Future<void> effacerSi(CleBrouillon cle, String texte) async {
+    final PortBrouillons? p = port;
+    if (p == null) return;
+    try {
+      final Brouillon? garde = await p.lire(cle);
+      if (garde == null || garde.texte != texte) return;
+      await p.effacer(cle);
+    } on Object {
+      // Rien a effacer, ou memoire indisponible : sans consequence.
+    }
+  }
+
   /// Efface le brouillon de [cle] (envoi confirme).
   Future<void> effacer(CleBrouillon cle) async {
     try {

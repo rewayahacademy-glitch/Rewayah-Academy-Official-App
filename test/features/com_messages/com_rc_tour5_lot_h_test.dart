@@ -494,6 +494,41 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('COM-RC tour 6 (8.3-1) : A envoye, fil ferme puis rouvert, '
+        'B saisi ; l accuse de A garde B (champ et brouillon)', (
+      WidgetTester tester,
+    ) async {
+      // Contre-preuve : a a1a33222, l'ancien etat (ferme) effacait le
+      // brouillon sans condition a l'accuse de A : B disparaissait du port.
+      final BrouillonsMemoire brouillons = BrouillonsMemoire();
+      final Completer<void> accuse = Completer<void>();
+      Widget fil() => FilDiscussion(
+        messages: const <MessageFil>[],
+        textes: _textes,
+        cleBrouillon: _cle,
+        onEnvoyer: (String _) => accuse.future,
+      );
+      final List<Override> surcharges = <Override>[
+        portBrouillonsProvider.overrideWithValue(brouillons),
+      ];
+      await _monterNu(tester, fil(), surcharges: surcharges);
+      await tester.enterText(find.byKey(FilDiscussion.champKey), 'A');
+      await tester.pump();
+      await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+      await tester.pump();
+      await _monterNu(tester, const SizedBox(), surcharges: surcharges);
+      await _monterNu(tester, fil(), surcharges: surcharges);
+      expect(_champ(tester).text, isEmpty);
+      await tester.enterText(find.byKey(FilDiscussion.champKey), 'B');
+      await tester.pump();
+      expect((await brouillons.lire(_cle))?.texte, 'B');
+      accuse.complete();
+      await _attendre(tester);
+      expect(_champ(tester).text, 'B');
+      expect((await brouillons.lire(_cle))?.texte, 'B');
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('a l accuse, un autre fil qui montre encore ce texte remis, '
         'sans modification, vide son champ', (WidgetTester tester) async {
       // Contre-preuve : a 71e3e555, le second fil gardait « Parti » apres

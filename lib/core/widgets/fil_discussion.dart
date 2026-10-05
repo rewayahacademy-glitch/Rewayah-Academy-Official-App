@@ -764,7 +764,9 @@ class _FilDiscussionState extends State<FilDiscussion> {
     if (cle == null || persistance == null || _garde != m.brut) return;
     if (mounted && !_vide) return;
     _garde = '';
-    unawaited(persistance.effacer(cle));
+    // COM-RC tour 6 (8.3-1) : seulement si le brouillon garde encore ce
+    // texte ; un fil rouvert ou l'on a tape autre chose le conserve.
+    unawaited(persistance.effacerSi(cle, m.brut));
   }
 
   /// R-28 : le micro demande un enregistrement au composer vocal.
