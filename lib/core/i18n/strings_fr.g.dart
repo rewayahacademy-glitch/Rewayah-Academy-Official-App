@@ -12219,6 +12219,9 @@ class Traductions$comptable$aujourdhui$fr {
 	/// fr: 'À traiter aujourd'hui'
 	String get aTraiter => 'À traiter aujourd\'hui';
 
+	/// fr: 'À traiter, hors paiements'
+	String get aTraiterHorsPaiements => 'À traiter, hors paiements';
+
 	/// fr: 'Alertes'
 	String get alertes => 'Alertes';
 
@@ -24506,6 +24509,7 @@ extension on Traductions {
 			'comptable.aujourdhui.sousTitre' => 'Que dois-je faire maintenant ?',
 			'comptable.aujourdhui.attention' => 'À traiter et alertes',
 			'comptable.aujourdhui.aTraiter' => 'À traiter aujourd\'hui',
+			'comptable.aujourdhui.aTraiterHorsPaiements' => 'À traiter, hors paiements',
 			'comptable.aujourdhui.alertes' => 'Alertes',
 			'comptable.aujourdhui.echeances' => 'Échéances proches',
 			'comptable.aujourdhui.prestataires' => 'Prestataires',
@@ -24552,9 +24556,9 @@ extension on Traductions {
 			'comptable.paiements.confirmation.confirmerLot' => ({required num n, required Object montants}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Confirmer le paiement prêt de ${montants}', other: 'Confirmer les ${n} paiements prêts : ${montants}', ), 
 			'comptable.paiements.confirmation.demanderValidation' => 'Demander validation',
 			'comptable.paiements.confirmation.annuler' => 'Annuler',
-			'comptable.paiements.confirmation.fermer' => 'Fermer',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.paiements.confirmation.fermer' => 'Fermer',
 			'comptable.paiements.confirmation.soumisTitre' => 'Envoyé au prestataire',
 			'comptable.paiements.confirmation.soumisPhrase' => 'Un paiement envoyé n\'est pas encore reçu : son état vient du suivi du prestataire. Actualisez le suivi pour le voir avancer.',
 			'comptable.paiements.confirmation.actualiser' => 'Actualiser le suivi',
@@ -25066,9 +25070,9 @@ extension on Traductions {
 			'comptable.direction.reservePanneau.cadenceTitre' => 'Cadence',
 			'comptable.direction.reservePanneau.cadenceDetail' => 'Quand l\'alimentation a lieu.',
 			'comptable.direction.reservePanneau.cadence.clotureCycle' => 'À chaque clôture de cycle',
-			'comptable.direction.reservePanneau.cadence.hebdomadaire' => 'Chaque semaine',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.reservePanneau.cadence.hebdomadaire' => 'Chaque semaine',
 			'comptable.direction.reservePanneau.cadence.mensuelle' => 'Chaque mois',
 			'comptable.direction.reservePanneau.cadence.apresEncaissementConsolide' => 'Après chaque encaissement consolidé',
 			'comptable.direction.reservePanneau.cadence.manuelle' => 'Manuelle',

@@ -33,6 +33,7 @@ import 'package:rewayah_academy/core/widgets/comptable/carte_reserve_strategique
 import 'package:rewayah_academy/core/widgets/comptable/resume_tresorerie.dart';
 import 'package:rewayah_academy/core/widgets/montant_argent.dart';
 import 'package:rewayah_academy/core/widgets/montant_sensible.dart';
+import 'package:rewayah_academy/core/widgets/section_header.dart';
 import 'package:rewayah_academy/core/widgets/signal_row.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/comptable/aujourdhui/aujourdhui_page.dart';
@@ -194,7 +195,7 @@ void main() {
       expect(find.byType(ResumeTresorerie), findsOneWidget);
       expect(find.byType(CarteReserveStrategique), findsOneWidget);
       for (final String titre in <String>[
-        a.aTraiter,
+        a.aTraiterHorsPaiements,
         a.echeances,
         a.encaissementsRecents,
         a.paiementsAEffectuer,
@@ -500,6 +501,44 @@ void main() {
       );
       expect(find.text(t.commun.etats.horsLigne.titre), findsOneWidget);
       expect(find.byType(ResumeTresorerie), findsNothing);
+    });
+  });
+
+  group('compteurs (CPT-RC, revue CPT-R m3)', () {
+    testWidgets('un meme titre porte un meme nombre : bureau, telephone et '
+        'file complete', (WidgetTester tester) async {
+      final AujourdhuiComptable jour = await const AujourdhuiComptableDemo()
+          .aujourdhui();
+      // La donnee de demonstration distingue bien les deux nombres : sinon
+      // ce test ne prouverait rien.
+      expect(
+        jour.aTraiterHorsPaiements.length,
+        isNot(jour.aTraiter.length),
+      );
+      final Map<String, Set<int?>> vus = <String, Set<int?>>{};
+      Future<void> relever(Size taille, String depart) async {
+        _taille(tester, taille);
+        await _monter(tester, depart: depart);
+        for (final SectionHeader s in tester.widgetList<SectionHeader>(
+          find.byType(SectionHeader),
+        )) {
+          (vus[s.titre] ??= <int?>{}).add(s.compteur);
+        }
+        await tester.pumpWidget(const SizedBox.shrink());
+      }
+
+      await relever(_bureau, Routes.comptable);
+      await relever(_telephone, Routes.comptable);
+      await relever(_bureau, Routes.comptableAttention);
+      await relever(_telephone, Routes.comptableAttention);
+
+      for (final MapEntry<String, Set<int?>> e in vus.entries) {
+        expect(e.value, hasLength(1), reason: '« ${e.key} » : ${e.value}');
+      }
+      expect(vus[a.aTraiter], <int?>{jour.aTraiter.length});
+      expect(vus[a.aTraiterHorsPaiements], <int?>{
+        jour.aTraiterHorsPaiements.length,
+      });
     });
   });
 

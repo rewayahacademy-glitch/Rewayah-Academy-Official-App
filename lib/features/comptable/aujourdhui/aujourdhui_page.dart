@@ -315,7 +315,10 @@ class _Reserve extends StatelessWidget {
 Widget _zoneATraiter(BuildContext context, List<ElementAttention> elements) {
   final a = t.comptable.aujourdhui;
   return _zone(
-    titre: a.aTraiter,
+    // Un autre titre que la file complete (CPT-RC, revue CPT-R m3) : cette
+    // zone ne compte pas les paiements, et un meme titre doit porter un
+    // meme nombre d'un ecran a l'autre.
+    titre: a.aTraiterHorsPaiements,
     compteur: elements.length,
     libelleAction: a.voirTout,
     onAction: () => context.go(Routes.comptableAttention),
