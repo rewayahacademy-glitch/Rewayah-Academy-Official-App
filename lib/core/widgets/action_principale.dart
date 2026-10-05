@@ -161,7 +161,14 @@ class ActionPrincipale extends StatelessWidget {
           actif: actif,
           reduit: reduit,
         );
-        return reduit ? Center(child: corps) : corps;
+        // R-12 (decision du directeur du 05/10, choix a) : `widthFactor: 1`.
+        // Un `Center` sans facteur prenait toute la largeur offerte par un
+        // parent souple (`Wrap`, `Align`, `Column` en debut) et y centrait la
+        // pastille : « Mode focus », « Quitter le focus », « Enregistrer » se
+        // posaient au milieu de leur ligne. Il ne garde que la cible tactile
+        // autour de la pastille ; c'est le parent qui place le bouton (en
+        // debut de ligne, miroir en arabe).
+        return reduit ? Center(widthFactor: 1, child: corps) : corps;
       },
     );
   }
