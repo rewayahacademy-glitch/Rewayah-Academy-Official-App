@@ -39,6 +39,7 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/features/com_annonces/annonces_de_classe.dart';
 import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
 import 'package:rewayah_academy/features/com_communaute/composer_publication.dart';
@@ -420,8 +421,27 @@ Future<void> _allerAuComposerReponse(WidgetTester tester) async {
   await _stabiliser(tester);
 }
 
-Future<void> _focus(WidgetTester tester) =>
-    _toucher(tester, find.byKey(BasculeFocus.cleEntrer));
+/// Entre en Focus. A texte agrandi, l'en-tete du canal defile avec le fil
+/// (COM-RC, R-02) : « Mode focus » se retrouve en remontant le fil, comme
+/// dans `test/features/com_studio/support_focus.dart`.
+Future<void> _focus(WidgetTester tester) async {
+  final Finder entrer = find.byKey(BasculeFocus.cleEntrer);
+  if (entrer.evaluate().isEmpty) {
+    tester
+        .state<ScrollableState>(
+          find
+              .descendant(
+                of: find.byType(FilDiscussion),
+                matching: find.byType(Scrollable),
+              )
+              .first,
+        )
+        .position
+        .jumpTo(0);
+    await _stabiliser(tester);
+  }
+  await _toucher(tester, entrer);
+}
 
 Future<void> Function(WidgetTester) _vocal(
   HorlogeManuelle horloge, {
@@ -608,6 +628,8 @@ List<_Ecran> _ecrans() {
       cheminCanalStudio(canalFocusDemo),
       () => <Override>[..._admin(), ..._studio()],
       geste: _focus,
+      // Le Focus aussi en texte double a 320 (recette apres COM-RC tour 4).
+      variantes: <_Variante>[_accessibilite.first, ..._etats],
     ),
     _Ecran(
       'studio_hors_ligne',
