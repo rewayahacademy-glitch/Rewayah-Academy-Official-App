@@ -12248,6 +12248,38 @@ class Traductions$comptable$paiements$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$comptable$paiements$confirmation$fr confirmation = Traductions$comptable$paiements$confirmation$fr.internal(_root);
+	late final Traductions$comptable$paiements$filtres$fr filtres = Traductions$comptable$paiements$filtres$fr.internal(_root);
+	late final Traductions$comptable$paiements$colonnes$fr colonnes = Traductions$comptable$paiements$colonnes$fr.internal(_root);
+	late final Traductions$comptable$paiements$types$fr types = Traductions$comptable$paiements$types$fr.internal(_root);
+
+	/// fr: '(one) {Un paiement} (other) {{n} paiements}'
+	String compteur({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Un paiement',
+		other: '${n} paiements',
+	);
+
+	late final Traductions$comptable$paiements$actions$fr actions = Traductions$comptable$paiements$actions$fr.internal(_root);
+
+	/// fr: '(one) {Un paiement sélectionné} (other) {{n} paiements sélectionnés}'
+	String selection({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Un paiement sélectionné',
+		other: '${n} paiements sélectionnés',
+	);
+
+	/// fr: 'Le total et les exclusions sont rendus par le contrôle, avant tout envoi.'
+	String get selectionPhrase => 'Le total et les exclusions sont rendus par le contrôle, avant tout envoi.';
+
+	/// fr: 'Hors ligne : paiement impossible'
+	String get horsLigneCourt => 'Hors ligne : paiement impossible';
+
+	late final Traductions$comptable$paiements$vide$fr vide = Traductions$comptable$paiements$vide$fr.internal(_root);
+
+	/// fr: 'Hors ligne : aucun paiement ne part sans réseau. Reconnectez-vous pour payer.'
+	String get horsLigne => 'Hors ligne : aucun paiement ne part sans réseau. Reconnectez-vous pour payer.';
+
+	late final Traductions$comptable$paiements$detail$fr detail = Traductions$comptable$paiements$detail$fr.internal(_root);
+	late final Traductions$comptable$paiements$ecart$fr ecart = Traductions$comptable$paiements$ecart$fr.internal(_root);
 
 	/// fr: 'Paiements à effectuer'
 	String get titre => 'Paiements à effectuer';
@@ -17501,6 +17533,488 @@ class Traductions$comptable$statuts$raison$fr {
 	String get capaciteAbsente => 'Capacité absente';
 }
 
+// Path: comptable.paiements.confirmation
+class Traductions$comptable$paiements$confirmation$fr {
+	Traductions$comptable$paiements$confirmation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Confirmer le paiement'
+	String get titreUn => 'Confirmer le paiement';
+
+	/// fr: 'Confirmer le lot'
+	String get titreLot => 'Confirmer le lot';
+
+	/// fr: 'Demander une validation'
+	String get titreValidation => 'Demander une validation';
+
+	/// fr: 'Payer maintenant'
+	String get payerMaintenant => 'Payer maintenant';
+
+	/// fr: 'Contrôle interrompu'
+	String get controleEchoueTitre => 'Contrôle interrompu';
+
+	/// fr: 'Le contrôle de la sélection n'a pas abouti. Rien n'est parti. Relancez le contrôle.'
+	String get controleEchoue => 'Le contrôle de la sélection n\'a pas abouti. Rien n\'est parti. Relancez le contrôle.';
+
+	/// fr: 'Relancer le contrôle'
+	String get relancerControle => 'Relancer le contrôle';
+
+	/// fr: 'Montant exact'
+	String get montant => 'Montant exact';
+
+	/// fr: 'Bénéficiaire'
+	String get beneficiaire => 'Bénéficiaire';
+
+	/// fr: 'Devise'
+	String get devise => 'Devise';
+
+	/// fr: 'Type'
+	String get type => 'Type';
+
+	/// fr: 'Période / objet'
+	String get periode => 'Période / objet';
+
+	/// fr: 'Prestataire prévu'
+	String get prestataire => 'Prestataire prévu';
+
+	/// fr: 'Non rendu par la source'
+	String get prestataireAucun => 'Non rendu par la source';
+
+	/// fr: 'Taux de change'
+	String get taux => 'Taux de change';
+
+	/// fr: '{taux}, au {date}'
+	String tauxDate({required Object taux, required Object date}) => '${taux}, au ${date}';
+
+	/// fr: 'Frais du prestataire'
+	String get frais => 'Frais du prestataire';
+
+	/// fr: 'Coût du change'
+	String get change => 'Coût du change';
+
+	/// fr: 'Total envoyé'
+	String get montantEnvoye => 'Total envoyé';
+
+	/// fr: 'Montant reçu attendu'
+	String get montantRecu => 'Montant reçu attendu';
+
+	/// fr: 'Contrôles passés'
+	String get controlesTitre => 'Contrôles passés';
+
+	/// fr: 'Montant calculé, méthode vérifiée, délégation et doublons contrôlés par la source. Seuls les paiements prêts partiront.'
+	String get controlesPhrase => 'Montant calculé, méthode vérifiée, délégation et doublons contrôlés par la source. Seuls les paiements prêts partiront.';
+
+	/// fr: 'Ce paiement est sensible : une autre personne habilitée doit le valider. Demandez la validation, il ne part pas avant.'
+	String get sensiblePhrase => 'Ce paiement est sensible : une autre personne habilitée doit le valider. Demandez la validation, il ne part pas avant.';
+
+	/// fr: '(one) {1 prêt} (other) {{n} prêts}'
+	String prets({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '1 prêt',
+		other: '${n} prêts',
+	);
+
+	/// fr: '(one) {1 exclu} (other) {{n} exclus}'
+	String exclus({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '1 exclu',
+		other: '${n} exclus',
+	);
+
+	/// fr: 'Total des paiements prêts'
+	String get total => 'Total des paiements prêts';
+
+	/// fr: 'Bénéficiaires'
+	String get beneficiairesCle => 'Bénéficiaires';
+
+	/// fr: '(one) {Un bénéficiaire} (other) {{n} bénéficiaires}'
+	String beneficiaires({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Un bénéficiaire',
+		other: '${n} bénéficiaires',
+	);
+
+	/// fr: 'Devises'
+	String get devises => 'Devises';
+
+	/// fr: 'Prestataires'
+	String get prestataires => 'Prestataires';
+
+	/// fr: 'Délégation restante'
+	String get plafond => 'Délégation restante';
+
+	/// fr: 'Exclus de ce lot : ils ne partiront pas'
+	String get exclusTitre => 'Exclus de ce lot : ils ne partiront pas';
+
+	/// fr: 'Aucun paiement prêt'
+	String get aucunPretTitre => 'Aucun paiement prêt';
+
+	/// fr: 'Rien ne partira. Ouvrez chaque paiement exclu pour lever sa raison, puis relancez le contrôle.'
+	String get aucunPret => 'Rien ne partira. Ouvrez chaque paiement exclu pour lever sa raison, puis relancez le contrôle.';
+
+	/// fr: 'Erreurs rendues par le contrôle'
+	String get erreursTitre => 'Erreurs rendues par le contrôle';
+
+	/// fr: 'Confirmer le paiement de {montant}'
+	String confirmerUn({required Object montant}) => 'Confirmer le paiement de ${montant}';
+
+	/// fr: '(one) {Confirmer le paiement prêt de {montants}} (other) {Confirmer les {n} paiements prêts : {montants}}'
+	String confirmerLot({required num n, required Object montants}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Confirmer le paiement prêt de ${montants}',
+		other: 'Confirmer les ${n} paiements prêts : ${montants}',
+	);
+
+	/// fr: 'Demander validation'
+	String get demanderValidation => 'Demander validation';
+
+	/// fr: 'Annuler'
+	String get annuler => 'Annuler';
+
+	/// fr: 'Fermer'
+	String get fermer => 'Fermer';
+
+	/// fr: 'Envoyé au prestataire'
+	String get soumisTitre => 'Envoyé au prestataire';
+
+	/// fr: 'Un paiement envoyé n'est pas encore reçu : son état vient du suivi du prestataire. Actualisez le suivi pour le voir avancer.'
+	String get soumisPhrase => 'Un paiement envoyé n\'est pas encore reçu : son état vient du suivi du prestataire. Actualisez le suivi pour le voir avancer.';
+
+	/// fr: 'Actualiser le suivi'
+	String get actualiser => 'Actualiser le suivi';
+
+	/// fr: 'Le suivi n'a pas pu être lu. Le paiement reste envoyé : actualisez de nouveau dans un moment.'
+	String get suiviEchoue => 'Le suivi n\'a pas pu être lu. Le paiement reste envoyé : actualisez de nouveau dans un moment.';
+
+	/// fr: 'Référence du prestataire'
+	String get referenceCle => 'Référence du prestataire';
+
+	/// fr: 'Le montant a été recalculé'
+	String get recalculeTitre => 'Le montant a été recalculé';
+
+	/// fr: 'Un calcul a changé à la source depuis le contrôle. Rien n'est parti. Relancez le contrôle pour confirmer le nouveau montant.'
+	String get recalculePhrase => 'Un calcul a changé à la source depuis le contrôle. Rien n\'est parti. Relancez le contrôle pour confirmer le nouveau montant.';
+
+	/// fr: 'Nouveau montant pour {nom}'
+	String nouveauMontant({required Object nom}) => 'Nouveau montant pour ${nom}';
+
+	/// fr: 'Paiement refusé par la source'
+	String get refusTitre => 'Paiement refusé par la source';
+
+	/// fr: 'Ce paiement a déjà été soumis : rien n'est renvoyé. Suivez-le depuis l'onglet des paiements en cours.'
+	String get refusDejaSoumis => 'Ce paiement a déjà été soumis : rien n\'est renvoyé. Suivez-le depuis l\'onglet des paiements en cours.';
+
+	/// fr: 'Le cumul dépasse votre délégation, par bénéficiaire ou par période. Rien n'est parti. Relancez le contrôle : les paiements concernés seront exclus.'
+	String get refusHorsDelegation => 'Le cumul dépasse votre délégation, par bénéficiaire ou par période. Rien n\'est parti. Relancez le contrôle : les paiements concernés seront exclus.';
+
+	/// fr: 'Le contrôle a expiré. Rien n'est parti. Relancez le contrôle avant de confirmer.'
+	String get refusPerime => 'Le contrôle a expiré. Rien n\'est parti. Relancez le contrôle avant de confirmer.';
+
+	/// fr: 'Le prestataire est devenu indisponible. Rien n'est parti. Relancez le contrôle dans un moment.'
+	String get refusFournisseur => 'Le prestataire est devenu indisponible. Rien n\'est parti. Relancez le contrôle dans un moment.';
+
+	/// fr: 'Issue inconnue'
+	String get inconnuTitre => 'Issue inconnue';
+
+	/// fr: 'La réponse ne nous est pas parvenue : le paiement a pu partir. Réessayez : la même demande est renvoyée et ne partira qu'une fois.'
+	String get inconnuPhrase => 'La réponse ne nous est pas parvenue : le paiement a pu partir. Réessayez : la même demande est renvoyée et ne partira qu\'une fois.';
+
+	/// fr: 'Réessayer'
+	String get reessayer => 'Réessayer';
+
+	/// fr: 'Validation demandée'
+	String get validationDemandeeTitre => 'Validation demandée';
+
+	/// fr: 'Une autre personne habilitée validera ce paiement. Il ne part pas avant sa décision.'
+	String get validationDemandeePhrase => 'Une autre personne habilitée validera ce paiement. Il ne part pas avant sa décision.';
+
+	/// fr: 'La demande de validation n'a pas abouti. Réessayez : elle ne sera enregistrée qu'une fois.'
+	String get validationEchouee => 'La demande de validation n\'a pas abouti. Réessayez : elle ne sera enregistrée qu\'une fois.';
+}
+
+// Path: comptable.paiements.filtres
+class Traductions$comptable$paiements$filtres$fr {
+	Traductions$comptable$paiements$filtres$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Tous'
+	String get tous => 'Tous';
+
+	/// fr: 'Enseignants'
+	String get enseignants => 'Enseignants';
+
+	/// fr: 'Contractuels'
+	String get contractuels => 'Contractuels';
+
+	/// fr: 'Statut'
+	String get statut => 'Statut';
+
+	/// fr: 'Tous les statuts'
+	String get tousStatuts => 'Tous les statuts';
+
+	/// fr: 'Prêts'
+	String get prets => 'Prêts';
+
+	/// fr: 'Infos manquantes'
+	String get infos => 'Infos manquantes';
+
+	/// fr: 'Vérification'
+	String get verification => 'Vérification';
+
+	/// fr: 'Validation'
+	String get validation => 'Validation';
+
+	/// fr: 'En retard'
+	String get retard => 'En retard';
+
+	/// fr: 'Classe'
+	String get classe => 'Classe';
+
+	/// fr: 'Toutes les Classes'
+	String get toutesClasses => 'Toutes les Classes';
+
+	/// fr: 'Période'
+	String get periode => 'Période';
+
+	/// fr: 'Toutes les périodes'
+	String get toutesPeriodes => 'Toutes les périodes';
+
+	/// fr: 'Effacer les filtres'
+	String get effacer => 'Effacer les filtres';
+}
+
+// Path: comptable.paiements.colonnes
+class Traductions$comptable$paiements$colonnes$fr {
+	Traductions$comptable$paiements$colonnes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Bénéficiaire'
+	String get beneficiaire => 'Bénéficiaire';
+
+	/// fr: 'Type'
+	String get type => 'Type';
+
+	/// fr: 'Période / objet'
+	String get periode => 'Période / objet';
+
+	/// fr: 'Montant'
+	String get montant => 'Montant';
+
+	/// fr: 'Destination'
+	String get destination => 'Destination';
+
+	/// fr: 'Échéance'
+	String get echeance => 'Échéance';
+
+	/// fr: 'Statut'
+	String get statut => 'Statut';
+
+	/// fr: 'Action'
+	String get action => 'Action';
+}
+
+// Path: comptable.paiements.types
+class Traductions$comptable$paiements$types$fr {
+	Traductions$comptable$paiements$types$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Enseignant'
+	String get enseignant => 'Enseignant';
+
+	/// fr: 'Contractuel'
+	String get contractuel => 'Contractuel';
+}
+
+// Path: comptable.paiements.actions
+class Traductions$comptable$paiements$actions$fr {
+	Traductions$comptable$paiements$actions$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Voir'
+	String get voir => 'Voir';
+
+	/// fr: 'Payer'
+	String get payer => 'Payer';
+
+	/// fr: 'Demander validation'
+	String get demanderValidation => 'Demander validation';
+
+	/// fr: 'Relancer'
+	String get relancer => 'Relancer';
+
+	/// fr: 'Signaler un écart'
+	String get signalerEcart => 'Signaler un écart';
+
+	/// fr: 'Sélectionner le paiement de {nom}'
+	String selectionner({required Object nom}) => 'Sélectionner le paiement de ${nom}';
+
+	/// fr: 'Sélectionner tous les paiements prêts'
+	String get selectionnerPrets => 'Sélectionner tous les paiements prêts';
+
+	/// fr: 'Payer la sélection'
+	String get payerSelection => 'Payer la sélection';
+
+	/// fr: 'Vider la sélection'
+	String get viderSelection => 'Vider la sélection';
+
+	/// fr: 'Voir le profil de paiement'
+	String get voirProfil => 'Voir le profil de paiement';
+}
+
+// Path: comptable.paiements.vide
+class Traductions$comptable$paiements$vide$fr {
+	Traductions$comptable$paiements$vide$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucun paiement à effectuer.'
+	String get message => 'Aucun paiement à effectuer.';
+
+	/// fr: 'Les obligations apparaissent ici dès qu'elles sont calculées à la source.'
+	String get invitation => 'Les obligations apparaissent ici dès qu\'elles sont calculées à la source.';
+
+	/// fr: 'Aucun paiement ne correspond à ces filtres.'
+	String get filtreMessage => 'Aucun paiement ne correspond à ces filtres.';
+
+	/// fr: 'Effacez les filtres pour revoir tous les paiements.'
+	String get filtreInvitation => 'Effacez les filtres pour revoir tous les paiements.';
+}
+
+// Path: comptable.paiements.detail
+class Traductions$comptable$paiements$detail$fr {
+	Traductions$comptable$paiements$detail$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Total à payer'
+	String get total => 'Total à payer';
+
+	/// fr: 'Détail du calcul'
+	String get lignes => 'Détail du calcul';
+
+	/// fr: 'Total'
+	String get ligneTotal => 'Total';
+
+	/// fr: 'Source : {source}'
+	String source({required Object source}) => 'Source : ${source}';
+
+	/// fr: 'Ajouté par {auteur}'
+	String auteur({required Object auteur}) => 'Ajouté par ${auteur}';
+
+	/// fr: 'Voir la source'
+	String get voirSource => 'Voir la source';
+
+	/// fr: 'Méthode de paiement'
+	String get methode => 'Méthode de paiement';
+
+	/// fr: 'Informations'
+	String get informations => 'Informations';
+
+	/// fr: 'Type'
+	String get type => 'Type';
+
+	/// fr: 'Période / objet'
+	String get periode => 'Période / objet';
+
+	/// fr: 'Échéance'
+	String get echeance => 'Échéance';
+
+	/// fr: 'Prestataire prévu'
+	String get prestataire => 'Prestataire prévu';
+
+	/// fr: 'Preuve'
+	String get preuve => 'Preuve';
+
+	/// fr: 'Classes'
+	String get classes => 'Classes';
+
+	/// fr: 'Version du calcul'
+	String get version => 'Version du calcul';
+
+	/// fr: 'Historique'
+	String get historique => 'Historique';
+
+	/// fr: 'Aucune opération enregistrée pour ce paiement.'
+	String get historiqueVide => 'Aucune opération enregistrée pour ce paiement.';
+
+	/// fr: 'Le Comptable ne peut modifier ni le montant ni les coordonnées de paiement du bénéficiaire.'
+	String get encart => 'Le Comptable ne peut modifier ni le montant ni les coordonnées de paiement du bénéficiaire.';
+
+	/// fr: 'Méthode de paiement modifiée le {date} : une validation supplémentaire est requise avant tout paiement.'
+	String alerteMethodeRecente({required Object date}) => 'Méthode de paiement modifiée le ${date} : une validation supplémentaire est requise avant tout paiement.';
+
+	/// fr: 'Bénéficiaire lié à l'opérateur : une validation supplémentaire est requise avant tout paiement.'
+	String get alerteLieeOperateur => 'Bénéficiaire lié à l\'opérateur : une validation supplémentaire est requise avant tout paiement.';
+
+	/// fr: 'Le dernier envoi a échoué chez le prestataire. Vérifiez la méthode de paiement avant une nouvelle tentative.'
+	String get alerteEchec => 'Le dernier envoi a échoué chez le prestataire. Vérifiez la méthode de paiement avant une nouvelle tentative.';
+
+	/// fr: 'Le bénéficiaire n'a pas encore de méthode de paiement complète. Relancez-le depuis son profil de paiement.'
+	String get alerteInfos => 'Le bénéficiaire n\'a pas encore de méthode de paiement complète. Relancez-le depuis son profil de paiement.';
+
+	/// fr: 'À savoir avant de payer'
+	String get alerteTitre => 'À savoir avant de payer';
+
+	/// fr: 'Ce paiement vous concerne : une autre personne habilitée le traitera. Personne ne peut exécuter son propre paiement.'
+	String get autoPaiementPhrase => 'Ce paiement vous concerne : une autre personne habilitée le traitera. Personne ne peut exécuter son propre paiement.';
+
+	/// fr: 'Ce paiement est introuvable.'
+	String get introuvableTitre => 'Ce paiement est introuvable.';
+
+	/// fr: 'Revenez à la liste des paiements à effectuer pour choisir un autre paiement.'
+	String get introuvablePhrase => 'Revenez à la liste des paiements à effectuer pour choisir un autre paiement.';
+}
+
+// Path: comptable.paiements.ecart
+class Traductions$comptable$paiements$ecart$fr {
+	Traductions$comptable$paiements$ecart$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Signaler un écart'
+	String get titre => 'Signaler un écart';
+
+	/// fr: 'Choisissez la ligne et ce qui ne va pas. La correction se fait à la source, puis le montant est recalculé.'
+	String get phrase => 'Choisissez la ligne et ce qui ne va pas. La correction se fait à la source, puis le montant est recalculé.';
+
+	/// fr: 'Ligne concernée'
+	String get ligne => 'Ligne concernée';
+
+	/// fr: 'Ce qui ne va pas'
+	String get motif => 'Ce qui ne va pas';
+
+	late final Traductions$comptable$paiements$ecart$motifs$fr motifs = Traductions$comptable$paiements$ecart$motifs$fr.internal(_root);
+
+	/// fr: 'Envoyer le signalement'
+	String get envoyer => 'Envoyer le signalement';
+
+	/// fr: 'Annuler'
+	String get annuler => 'Annuler';
+
+	/// fr: 'Écart signalé le {date}. Le montant reste celui de la source jusqu'au recalcul.'
+	String envoye({required Object date}) => 'Écart signalé le ${date}. Le montant reste celui de la source jusqu\'au recalcul.';
+
+	/// fr: 'Le signalement n'a pas abouti. Réessayez : il ne sera enregistré qu'une fois.'
+	String get erreurEnvoi => 'Le signalement n\'a pas abouti. Réessayez : il ne sera enregistré qu\'une fois.';
+}
+
 // Path: comptable.beneficiaires.recevoir
 class Traductions$comptable$beneficiaires$recevoir$fr {
 	Traductions$comptable$beneficiaires$recevoir$fr.internal(this._root);
@@ -17979,6 +18493,27 @@ class Traductions$tc$parcours$signalement$categorieValeur$fr {
 
 	/// fr: 'Autre'
 	String get autre => 'Autre';
+}
+
+// Path: comptable.paiements.ecart.motifs
+class Traductions$comptable$paiements$ecart$motifs$fr {
+	Traductions$comptable$paiements$ecart$motifs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le montant de cette ligne ne correspond pas'
+	String get montantLigne => 'Le montant de cette ligne ne correspond pas';
+
+	/// fr: 'Une ligne manque (séance, remplacement, bonus)'
+	String get ligneManquante => 'Une ligne manque (séance, remplacement, bonus)';
+
+	/// fr: 'Cette ligne ne devrait pas être là'
+	String get ligneEnTrop => 'Cette ligne ne devrait pas être là';
+
+	/// fr: 'La source citée n'est pas la bonne'
+	String get sourceErronee => 'La source citée n\'est pas la bonne';
 }
 
 /// The flat map containing all translations for locale <fr>.
@@ -22573,6 +23108,149 @@ extension on Traductions {
 			'comptable.aujourdhui.accesRapides' => 'Accès rapides',
 			'comptable.aujourdhui.encaissementsRecents' => 'Encaissements récents',
 			'comptable.aujourdhui.voirTout' => 'Voir tout',
+			'comptable.paiements.confirmation.titreUn' => 'Confirmer le paiement',
+			'comptable.paiements.confirmation.titreLot' => 'Confirmer le lot',
+			'comptable.paiements.confirmation.titreValidation' => 'Demander une validation',
+			'comptable.paiements.confirmation.payerMaintenant' => 'Payer maintenant',
+			'comptable.paiements.confirmation.controleEchoueTitre' => 'Contrôle interrompu',
+			'comptable.paiements.confirmation.controleEchoue' => 'Le contrôle de la sélection n\'a pas abouti. Rien n\'est parti. Relancez le contrôle.',
+			'comptable.paiements.confirmation.relancerControle' => 'Relancer le contrôle',
+			'comptable.paiements.confirmation.montant' => 'Montant exact',
+			'comptable.paiements.confirmation.beneficiaire' => 'Bénéficiaire',
+			'comptable.paiements.confirmation.devise' => 'Devise',
+			'comptable.paiements.confirmation.type' => 'Type',
+			'comptable.paiements.confirmation.periode' => 'Période / objet',
+			'comptable.paiements.confirmation.prestataire' => 'Prestataire prévu',
+			'comptable.paiements.confirmation.prestataireAucun' => 'Non rendu par la source',
+			'comptable.paiements.confirmation.taux' => 'Taux de change',
+			'comptable.paiements.confirmation.tauxDate' => ({required Object taux, required Object date}) => '${taux}, au ${date}',
+			'comptable.paiements.confirmation.frais' => 'Frais du prestataire',
+			'comptable.paiements.confirmation.change' => 'Coût du change',
+			'comptable.paiements.confirmation.montantEnvoye' => 'Total envoyé',
+			'comptable.paiements.confirmation.montantRecu' => 'Montant reçu attendu',
+			'comptable.paiements.confirmation.controlesTitre' => 'Contrôles passés',
+			'comptable.paiements.confirmation.controlesPhrase' => 'Montant calculé, méthode vérifiée, délégation et doublons contrôlés par la source. Seuls les paiements prêts partiront.',
+			'comptable.paiements.confirmation.sensiblePhrase' => 'Ce paiement est sensible : une autre personne habilitée doit le valider. Demandez la validation, il ne part pas avant.',
+			'comptable.paiements.confirmation.prets' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '1 prêt', other: '${n} prêts', ), 
+			'comptable.paiements.confirmation.exclus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '1 exclu', other: '${n} exclus', ), 
+			'comptable.paiements.confirmation.total' => 'Total des paiements prêts',
+			'comptable.paiements.confirmation.beneficiairesCle' => 'Bénéficiaires',
+			'comptable.paiements.confirmation.beneficiaires' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Un bénéficiaire', other: '${n} bénéficiaires', ), 
+			'comptable.paiements.confirmation.devises' => 'Devises',
+			'comptable.paiements.confirmation.prestataires' => 'Prestataires',
+			'comptable.paiements.confirmation.plafond' => 'Délégation restante',
+			'comptable.paiements.confirmation.exclusTitre' => 'Exclus de ce lot : ils ne partiront pas',
+			'comptable.paiements.confirmation.aucunPretTitre' => 'Aucun paiement prêt',
+			'comptable.paiements.confirmation.aucunPret' => 'Rien ne partira. Ouvrez chaque paiement exclu pour lever sa raison, puis relancez le contrôle.',
+			'comptable.paiements.confirmation.erreursTitre' => 'Erreurs rendues par le contrôle',
+			'comptable.paiements.confirmation.confirmerUn' => ({required Object montant}) => 'Confirmer le paiement de ${montant}',
+			'comptable.paiements.confirmation.confirmerLot' => ({required num n, required Object montants}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Confirmer le paiement prêt de ${montants}', other: 'Confirmer les ${n} paiements prêts : ${montants}', ), 
+			'comptable.paiements.confirmation.demanderValidation' => 'Demander validation',
+			'comptable.paiements.confirmation.annuler' => 'Annuler',
+			'comptable.paiements.confirmation.fermer' => 'Fermer',
+			_ => null,
+		} ?? switch (path) {
+			'comptable.paiements.confirmation.soumisTitre' => 'Envoyé au prestataire',
+			'comptable.paiements.confirmation.soumisPhrase' => 'Un paiement envoyé n\'est pas encore reçu : son état vient du suivi du prestataire. Actualisez le suivi pour le voir avancer.',
+			'comptable.paiements.confirmation.actualiser' => 'Actualiser le suivi',
+			'comptable.paiements.confirmation.suiviEchoue' => 'Le suivi n\'a pas pu être lu. Le paiement reste envoyé : actualisez de nouveau dans un moment.',
+			'comptable.paiements.confirmation.referenceCle' => 'Référence du prestataire',
+			'comptable.paiements.confirmation.recalculeTitre' => 'Le montant a été recalculé',
+			'comptable.paiements.confirmation.recalculePhrase' => 'Un calcul a changé à la source depuis le contrôle. Rien n\'est parti. Relancez le contrôle pour confirmer le nouveau montant.',
+			'comptable.paiements.confirmation.nouveauMontant' => ({required Object nom}) => 'Nouveau montant pour ${nom}',
+			'comptable.paiements.confirmation.refusTitre' => 'Paiement refusé par la source',
+			'comptable.paiements.confirmation.refusDejaSoumis' => 'Ce paiement a déjà été soumis : rien n\'est renvoyé. Suivez-le depuis l\'onglet des paiements en cours.',
+			'comptable.paiements.confirmation.refusHorsDelegation' => 'Le cumul dépasse votre délégation, par bénéficiaire ou par période. Rien n\'est parti. Relancez le contrôle : les paiements concernés seront exclus.',
+			'comptable.paiements.confirmation.refusPerime' => 'Le contrôle a expiré. Rien n\'est parti. Relancez le contrôle avant de confirmer.',
+			'comptable.paiements.confirmation.refusFournisseur' => 'Le prestataire est devenu indisponible. Rien n\'est parti. Relancez le contrôle dans un moment.',
+			'comptable.paiements.confirmation.inconnuTitre' => 'Issue inconnue',
+			'comptable.paiements.confirmation.inconnuPhrase' => 'La réponse ne nous est pas parvenue : le paiement a pu partir. Réessayez : la même demande est renvoyée et ne partira qu\'une fois.',
+			'comptable.paiements.confirmation.reessayer' => 'Réessayer',
+			'comptable.paiements.confirmation.validationDemandeeTitre' => 'Validation demandée',
+			'comptable.paiements.confirmation.validationDemandeePhrase' => 'Une autre personne habilitée validera ce paiement. Il ne part pas avant sa décision.',
+			'comptable.paiements.confirmation.validationEchouee' => 'La demande de validation n\'a pas abouti. Réessayez : elle ne sera enregistrée qu\'une fois.',
+			'comptable.paiements.filtres.tous' => 'Tous',
+			'comptable.paiements.filtres.enseignants' => 'Enseignants',
+			'comptable.paiements.filtres.contractuels' => 'Contractuels',
+			'comptable.paiements.filtres.statut' => 'Statut',
+			'comptable.paiements.filtres.tousStatuts' => 'Tous les statuts',
+			'comptable.paiements.filtres.prets' => 'Prêts',
+			'comptable.paiements.filtres.infos' => 'Infos manquantes',
+			'comptable.paiements.filtres.verification' => 'Vérification',
+			'comptable.paiements.filtres.validation' => 'Validation',
+			'comptable.paiements.filtres.retard' => 'En retard',
+			'comptable.paiements.filtres.classe' => 'Classe',
+			'comptable.paiements.filtres.toutesClasses' => 'Toutes les Classes',
+			'comptable.paiements.filtres.periode' => 'Période',
+			'comptable.paiements.filtres.toutesPeriodes' => 'Toutes les périodes',
+			'comptable.paiements.filtres.effacer' => 'Effacer les filtres',
+			'comptable.paiements.colonnes.beneficiaire' => 'Bénéficiaire',
+			'comptable.paiements.colonnes.type' => 'Type',
+			'comptable.paiements.colonnes.periode' => 'Période / objet',
+			'comptable.paiements.colonnes.montant' => 'Montant',
+			'comptable.paiements.colonnes.destination' => 'Destination',
+			'comptable.paiements.colonnes.echeance' => 'Échéance',
+			'comptable.paiements.colonnes.statut' => 'Statut',
+			'comptable.paiements.colonnes.action' => 'Action',
+			'comptable.paiements.types.enseignant' => 'Enseignant',
+			'comptable.paiements.types.contractuel' => 'Contractuel',
+			'comptable.paiements.compteur' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Un paiement', other: '${n} paiements', ), 
+			'comptable.paiements.actions.voir' => 'Voir',
+			'comptable.paiements.actions.payer' => 'Payer',
+			'comptable.paiements.actions.demanderValidation' => 'Demander validation',
+			'comptable.paiements.actions.relancer' => 'Relancer',
+			'comptable.paiements.actions.signalerEcart' => 'Signaler un écart',
+			'comptable.paiements.actions.selectionner' => ({required Object nom}) => 'Sélectionner le paiement de ${nom}',
+			'comptable.paiements.actions.selectionnerPrets' => 'Sélectionner tous les paiements prêts',
+			'comptable.paiements.actions.payerSelection' => 'Payer la sélection',
+			'comptable.paiements.actions.viderSelection' => 'Vider la sélection',
+			'comptable.paiements.actions.voirProfil' => 'Voir le profil de paiement',
+			'comptable.paiements.selection' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Un paiement sélectionné', other: '${n} paiements sélectionnés', ), 
+			'comptable.paiements.selectionPhrase' => 'Le total et les exclusions sont rendus par le contrôle, avant tout envoi.',
+			'comptable.paiements.horsLigneCourt' => 'Hors ligne : paiement impossible',
+			'comptable.paiements.vide.message' => 'Aucun paiement à effectuer.',
+			'comptable.paiements.vide.invitation' => 'Les obligations apparaissent ici dès qu\'elles sont calculées à la source.',
+			'comptable.paiements.vide.filtreMessage' => 'Aucun paiement ne correspond à ces filtres.',
+			'comptable.paiements.vide.filtreInvitation' => 'Effacez les filtres pour revoir tous les paiements.',
+			'comptable.paiements.horsLigne' => 'Hors ligne : aucun paiement ne part sans réseau. Reconnectez-vous pour payer.',
+			'comptable.paiements.detail.total' => 'Total à payer',
+			'comptable.paiements.detail.lignes' => 'Détail du calcul',
+			'comptable.paiements.detail.ligneTotal' => 'Total',
+			'comptable.paiements.detail.source' => ({required Object source}) => 'Source : ${source}',
+			'comptable.paiements.detail.auteur' => ({required Object auteur}) => 'Ajouté par ${auteur}',
+			'comptable.paiements.detail.voirSource' => 'Voir la source',
+			'comptable.paiements.detail.methode' => 'Méthode de paiement',
+			'comptable.paiements.detail.informations' => 'Informations',
+			'comptable.paiements.detail.type' => 'Type',
+			'comptable.paiements.detail.periode' => 'Période / objet',
+			'comptable.paiements.detail.echeance' => 'Échéance',
+			'comptable.paiements.detail.prestataire' => 'Prestataire prévu',
+			'comptable.paiements.detail.preuve' => 'Preuve',
+			'comptable.paiements.detail.classes' => 'Classes',
+			'comptable.paiements.detail.version' => 'Version du calcul',
+			'comptable.paiements.detail.historique' => 'Historique',
+			'comptable.paiements.detail.historiqueVide' => 'Aucune opération enregistrée pour ce paiement.',
+			'comptable.paiements.detail.encart' => 'Le Comptable ne peut modifier ni le montant ni les coordonnées de paiement du bénéficiaire.',
+			'comptable.paiements.detail.alerteMethodeRecente' => ({required Object date}) => 'Méthode de paiement modifiée le ${date} : une validation supplémentaire est requise avant tout paiement.',
+			'comptable.paiements.detail.alerteLieeOperateur' => 'Bénéficiaire lié à l\'opérateur : une validation supplémentaire est requise avant tout paiement.',
+			'comptable.paiements.detail.alerteEchec' => 'Le dernier envoi a échoué chez le prestataire. Vérifiez la méthode de paiement avant une nouvelle tentative.',
+			'comptable.paiements.detail.alerteInfos' => 'Le bénéficiaire n\'a pas encore de méthode de paiement complète. Relancez-le depuis son profil de paiement.',
+			'comptable.paiements.detail.alerteTitre' => 'À savoir avant de payer',
+			'comptable.paiements.detail.autoPaiementPhrase' => 'Ce paiement vous concerne : une autre personne habilitée le traitera. Personne ne peut exécuter son propre paiement.',
+			'comptable.paiements.detail.introuvableTitre' => 'Ce paiement est introuvable.',
+			'comptable.paiements.detail.introuvablePhrase' => 'Revenez à la liste des paiements à effectuer pour choisir un autre paiement.',
+			'comptable.paiements.ecart.titre' => 'Signaler un écart',
+			'comptable.paiements.ecart.phrase' => 'Choisissez la ligne et ce qui ne va pas. La correction se fait à la source, puis le montant est recalculé.',
+			'comptable.paiements.ecart.ligne' => 'Ligne concernée',
+			'comptable.paiements.ecart.motif' => 'Ce qui ne va pas',
+			'comptable.paiements.ecart.motifs.montantLigne' => 'Le montant de cette ligne ne correspond pas',
+			'comptable.paiements.ecart.motifs.ligneManquante' => 'Une ligne manque (séance, remplacement, bonus)',
+			'comptable.paiements.ecart.motifs.ligneEnTrop' => 'Cette ligne ne devrait pas être là',
+			'comptable.paiements.ecart.motifs.sourceErronee' => 'La source citée n\'est pas la bonne',
+			'comptable.paiements.ecart.envoyer' => 'Envoyer le signalement',
+			'comptable.paiements.ecart.annuler' => 'Annuler',
+			'comptable.paiements.ecart.envoye' => ({required Object date}) => 'Écart signalé le ${date}. Le montant reste celui de la source jusqu\'au recalcul.',
+			'comptable.paiements.ecart.erreurEnvoi' => 'Le signalement n\'a pas abouti. Réessayez : il ne sera enregistré qu\'une fois.',
 			'comptable.paiements.titre' => 'Paiements à effectuer',
 			'comptable.paiements.sousTitre' => 'Montants calculés à la source : ici on vérifie et on paie, on ne modifie rien.',
 			'comptable.paiements.detailTitre' => 'Détail du paiement',
@@ -22613,8 +23291,6 @@ extension on Traductions {
 			'identiteProfil.ageEtClasse' => ({required Object age, required Object classe}) => '${age} · ${classe}',
 			'identiteProfil.lecteurEnfant' => ({required Object prenom}) => '${prenom}, profil enfant',
 			'identiteProfil.lecteurAdulte' => ({required Object prenom}) => '${prenom}, profil adulte',
-			_ => null,
-		} ?? switch (path) {
 			'identiteProfil.lecteurAvecClasse' => ({required Object profil, required Object classe}) => '${profil}, ${classe}',
 			_ => null,
 		};
