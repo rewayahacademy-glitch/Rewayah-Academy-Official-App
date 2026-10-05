@@ -1774,8 +1774,12 @@ void main() {
       }
       final List<String> fautes = <String>[
         for (final File f in _sources('lib'))
-          for (final (int n, String l) in _lignesDeCode(f))
-            if (_ancienMontant.hasMatch(l)) '${f.path}:$n',
+          // Exception ecrite (CPT-FUS) : la demonstration du Comptable
+          // recopie l'exemple de la spec Comptable V1 §13.3 (« Bonus
+          // approuve 20 USD », total 212 USD), pas l'ancien bonus du guide.
+          if (!f.path.contains('lib/features/demo/comptable/'))
+            for (final (int n, String l) in _lignesDeCode(f))
+              if (_ancienMontant.hasMatch(l)) '${f.path}:$n',
         for (final File f in Directory(
           'assets/i18n',
         ).listSync().whereType<File>())

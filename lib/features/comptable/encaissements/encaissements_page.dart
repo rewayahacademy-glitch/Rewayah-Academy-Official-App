@@ -167,7 +167,7 @@ class _EncaissementsPageState extends ConsumerState<EncaissementsPage> {
           hintText: e.recherche,
           // 320 px, texte x2 : l'aide passe a la ligne au lieu d'une
           // ellipse (CPT-FUS).
-          hintMaxLines: 3,
+          hintMaxLines: texteAgrandi(context) ? 3 : 1,
           prefixIcon: Icon(AppIcons.recherche.repos),
         ),
       ),

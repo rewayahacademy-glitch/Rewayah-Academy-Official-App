@@ -28,6 +28,7 @@ import '../../../core/finance/montant.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
+import '../../../core/theme/app_gabarit.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
@@ -444,7 +445,12 @@ class _Formulaire extends StatelessWidget {
             hintText: c.aideObjet,
             // 320 px, texte x2 : l'aide passe a la ligne au lieu d'une
             // ellipse (CPT-FUS).
-            hintMaxLines: 3,
+            hintMaxLines:
+                MediaQuery.textScalerOf(context).scale(AppSpacing.lg) /
+                        AppSpacing.lg >=
+                    AppGabarit.seuilTexteColonne
+                ? 3
+                : 1,
             floatingLabelBehavior: FloatingLabelBehavior.always,
             errorText: erreurObjet ? c.erreurObjet : null,
             errorMaxLines: 3,

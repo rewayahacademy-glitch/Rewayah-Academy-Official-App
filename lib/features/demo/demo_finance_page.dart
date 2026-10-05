@@ -17,6 +17,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/capacites/port_finance_direction.dart';
 import '../../core/capacites/port_politiques_commerciales.dart';
+import '../../core/comptable/visibilite_montants.dart';
 import '../../core/router/routes.dart';
 import '../../core/widgets/admin_shell.dart';
 import '../admin_finance/finance_page.dart';
@@ -81,6 +82,10 @@ class DemoFinancePage extends StatelessWidget {
         // Reserve et delegation (Comptable V1, CPT-F) : la politique de la
         // Reserve et la delegation de la demonstration Direction.
         ...surchargesDemoDirection(),
+        // Les montants de Reserve et delegation partent masques (R-FIN-01)
+        // sans lire la session : la demonstration ne depend d'aucun
+        // service (CPT-FUS ; sinon `MontantSensible` echoue hors Supabase).
+        visibiliteMontantsProvider.overrideWith(_MontantsMasquesDemo.new),
         // Le lien d'une alerte ouvre une page de Personnes ou d'Operations,
         // domaines sans demonstration ici : il reste en place (K-28), comme
         // `onAller` plus bas, au lieu de sortir vers une route reelle gardee.
@@ -116,4 +121,11 @@ class DemoFinancePage extends StatelessWidget {
       ),
     );
   }
+}
+
+/// La visibilite des montants de la demonstration Finance : masques au
+/// depart, basculables, sans lien avec la session.
+class _MontantsMasquesDemo extends VisibiliteMontants {
+  @override
+  bool build() => false;
 }

@@ -13,6 +13,7 @@ import '../../../core/capacites/capacite_indisponible.dart';
 import '../../../core/comptable/modeles_comptable.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/reseau/service_reseau.dart';
+import '../../../core/theme/app_gabarit.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
@@ -203,7 +204,12 @@ class ChampPolitique extends StatelessWidget {
               hintText: indice,
               // 320 px, texte x2 : l'indice passe a la ligne au lieu d'une
               // ellipse (CPT-FUS).
-              hintMaxLines: 3,
+              hintMaxLines:
+                  MediaQuery.textScalerOf(context).scale(AppSpacing.lg) /
+                          AppSpacing.lg >=
+                      AppGabarit.seuilTexteColonne
+                  ? 3
+                  : 1,
               errorText: erreur,
               errorMaxLines: 4,
             ),
