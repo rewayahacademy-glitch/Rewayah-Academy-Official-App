@@ -57,9 +57,20 @@ testé localement**. Rien n'est testé sur staging ni déployé (aucune PR, aucu
 - Le paiement web peut être désactivé dans un brouillon (FI-Q21.1) ; iOS et Android restent non réglables (guide §1.6 : aucun bouton App Store ou Play Billing au lancement).
 - Bornes du calendrier de la date d'effet : du lendemain à la fin de l'année N+5 (borne technique du sélecteur, pas une règle commerciale).
 
-## Mesures
+## Mesures (chiffres mesurés sur la branche)
 
-(voir la section « Mesures » plus bas, remplie après les tests)
+- `dart analyze --fatal-infos` (projet entier, sous verrou) : No issues found.
+- Suites demandées, une seule passe sous verrou (`admin_finance`, `revenus_enseignant`, `foyer`, `finance`, `finance_recette`, `mon_espace_adulte`, `demo`, `acces_finance`) : **+1081 ~650 (captures sautées sans `CAPTURE_DIR`), 0 échec**, « All tests passed! ».
+- Contre-épreuve (mutations, une passe) : 5 mutations posées ensemble, 5 tests rouges, puis code restauré :
+  - `_TopClasses` inverse l'ordre rendu → « R6-02 : État des paiements… » échoue ;
+  - `lireRevenus` ignore le mois choisi → « FI-Q18 : le choix du mois… » (revenus) échoue ;
+  - rangée de Politiques privée de sa section de gauche → « R6-08 : 1440 » échoue ;
+  - `BoutonRecu` traite `CapaciteIndisponible` comme un succès → « FI-Q7 : … visible » échoue ;
+  - marge saisie sans conversion en pour mille → « Q21.1 : la marge… » échoue.
+- `dart run tool/verifier_jetons.dart` : 39 → 39 (aucune ligne dans un fichier touché).
+- `dart run tool/verifier_revue.dart` : 1613 avant (base) → 1613 après ; chaque libellé neuf est déclaré dans `tool/libelles_sources.json`.
+- Captures : 36 PNG, `docs/current/captures/FI-DIR-1/` (`fidir1_<écran>_<390|1440|320_200pc>_<light|dark>.png`), écrans : Foyer (démo à régulariser, production sans source), fiche Finances de Mariam, Revenus estimés, Vue globale, Politiques. Ouvertes et vérifiées : Vue globale 1440 clair et 320 ×2 sombre, Politiques 1440 clair et 320 ×2 clair, Finances 390 sombre, Revenus 390 clair, Foyer production 390 clair et Foyer 1440 sombre.
+- Hors périmètre vérifié : aucun fichier de `lib/core/theme`, `pubspec.yaml`, `supabase/`, `.github/` n'est modifié.
 
 ## Restes
 
