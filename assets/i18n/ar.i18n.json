@@ -285,6 +285,94 @@
       }
     },
     "messages": {
+      "entree": {
+        "titreClasse": "التواصل بشأن هذا الفصل",
+        "titreDossier": "التواصل بشأن هذا الملف",
+        "titreObjet": "التواصل بشأن هذا الموضوع",
+        "ecrireFamille": "مراسلة الأسرة",
+        "ecrireAdministration": "مراسلة الإدارة",
+        "ecrireA": "مراسلة {nom}",
+        "conversationAvec": "محادثة مع {nom}",
+        "voirTout": "عرض كل المحادثات",
+        "toutes": "كل محادثاتك",
+        "aLireUne": "محادثة واحدة للقراءة",
+        "aLire": "{nombre} محادثات للقراءة",
+        "ouverture": "جارٍ فتح المحادثة",
+        "inaccessibleTitre": "محادثة غير متاحة",
+        "inaccessible": "لم تعد هذه المحادثة متاحة لك. اختر شخصًا آخر من القائمة.",
+        "erreurOuvertureTitre": "تعذّر فتح هذه المحادثة.",
+        "ouvertureEchouee": "تحقّق من اتصالك ثم أعد المحاولة."
+      },
+      "videDetail": "تُفتح المحادثة من فصل أو طالب أو ملف.",
+      "choisirTitre": "اختر محادثة",
+      "choisir": "اختر محادثة من القائمة لقراءتها والرد عليها.",
+      "recherche": {
+        "champ": "البحث عن محادثة",
+        "aide": "الاسم أو الفصل أو الملف",
+        "fermer": "إغلاق البحث",
+        "effacer": "مسح البحث",
+        "aucunTitre": "لم يتم العثور على أي محادثة",
+        "aucun": "لا توجد محادثة تطابق « {texte} ». جرّب اسمًا آخر أو فصلًا آخر.",
+        "resultatUn": "تم العثور على محادثة واحدة",
+        "resultats": "تم العثور على {nombre} محادثات"
+      },
+      "ligne": {
+        "legende": "{objet} · {apercu}",
+        "sansApercu": "لا توجد رسائل حاليًا",
+        "dateCourte": "{numero} {mois}"
+      },
+      "noms": {
+        "avecFonction": "{nom}، {fonction}",
+        "deux": "{premier} و{second}",
+        "plusieurs": "{premier} و{nombre} أشخاص آخرين",
+        "surObjet": "محادثة بخصوص {objet}",
+        "sansObjet": "محادثة"
+      },
+      "entete": {
+        "avecAttention": "{entete}. {attention}",
+        "deuxObjets": "{premier} · {second}",
+        "semantique": "محادثة مع {noms}، بخصوص {objets}",
+        "semantiqueSansNoms": "محادثة بخصوص {objets}"
+      },
+      "types": {
+        "classe": "الفصل",
+        "eleve": "الطالب",
+        "dossier": "الملف",
+        "mission": "مهمة المراقبة",
+        "remplacement": "الاستبدال",
+        "autre": "عنصر مرتبط"
+      },
+      "panneau": {
+        "objets": "العناصر المرتبطة",
+        "participants": "المشاركون",
+        "fichiers": "@:com.socle.lexique.fichiersPartages",
+        "ouvrir": "فتح {objet}",
+        "inaccessible": "لم يعد بإمكانك الوصول إلى هذا العنصر. تبقى المحادثة قابلة للقراءة.",
+        "vous": "أنت"
+      },
+      "fil": {
+        "auteurEtMoment": "{auteur} · {moment}",
+        "lectureSeule": "يمكنك قراءة هذه المحادثة. الرد فيها غير متاح لك.",
+        "pieceJointe": "مرفق: {nom}",
+        "vocal": "رسالة صوتية مدتها {duree}",
+        "vocalSansDuree": "رسالة صوتية",
+        "horodatage": "{date}، {heure}"
+      },
+      "demo": {
+        "choisirRole": "اختر وجهة النظر في هذا العرض التوضيحي.",
+        "roles": {
+          "tuteur": "الأسرة",
+          "enseignant": "المعلم",
+          "adulte": "طالب بالغ",
+          "admin": "الإدارة",
+          "controleur": "المراقب"
+        },
+        "situations": "حالات للتجربة",
+        "echec": "إرسال غير مؤكد، من جهة المعلم",
+        "horsLigne": "دون اتصال، من جهة الأسرة",
+        "refuse": "محادثة أسرة أخرى، مرفوضة",
+        "vue": "وجهة النظر: {role}"
+      },
       "titre": "@:com.socle.lexique.messagesMetier",
       "vide": "لا توجد محادثات حاليًا."
     },

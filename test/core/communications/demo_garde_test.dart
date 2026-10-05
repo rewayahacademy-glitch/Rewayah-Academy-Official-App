@@ -112,7 +112,9 @@ void main() {
         adresseDemoCommunications(VoieDemoCommunications.messages),
       );
       expect(find.byType(ComMessagesDemo), findsOneWidget);
-      expect(find.text(t.com.socle.navigation.bientot), findsOneWidget);
+      // COM-MSG-1 a rempli sa demonstration : elle ouvre sur le choix du
+      // point de vue, plus sur « Bientot disponible ».
+      expect(find.text(t.com.messages.demo.choisirRole), findsOneWidget);
 
       await tester.tap(find.byType(DisqueRetour));
       await tester.pumpAndSettle();

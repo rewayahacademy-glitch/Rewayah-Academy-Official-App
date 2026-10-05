@@ -4797,6 +4797,94 @@
       }
     },
     "messages": {
+      "entree": {
+        "titreClasse": "Échanger sur cette Classe",
+        "titreDossier": "Échanger sur ce dossier",
+        "titreObjet": "Échanger à ce sujet",
+        "ecrireFamille": "Écrire à la famille",
+        "ecrireAdministration": "Écrire à l'Administration",
+        "ecrireA": "Écrire à {nom}",
+        "conversationAvec": "Conversation avec {nom}",
+        "voirTout": "Voir toutes les conversations",
+        "toutes": "Toutes vos conversations",
+        "aLireUne": "1 conversation à lire",
+        "aLire": "{nombre} conversations à lire",
+        "ouverture": "Ouverture de la conversation",
+        "inaccessibleTitre": "Conversation inaccessible",
+        "inaccessible": "Cette conversation n'est plus ouverte pour vous. Choisissez une autre personne dans la liste.",
+        "erreurOuvertureTitre": "Impossible d'ouvrir cette conversation.",
+        "ouvertureEchouee": "Vérifiez votre connexion, puis réessayez."
+      },
+      "videDetail": "Une conversation s'ouvre depuis une Classe, un élève ou un dossier.",
+      "choisirTitre": "Choisissez une conversation",
+      "choisir": "Choisissez une conversation dans la liste pour la lire et y répondre.",
+      "recherche": {
+        "champ": "Rechercher une conversation",
+        "aide": "Nom, Classe ou dossier",
+        "fermer": "Fermer la recherche",
+        "effacer": "Effacer la recherche",
+        "aucunTitre": "Aucune conversation trouvée",
+        "aucun": "Aucune conversation ne correspond à « {texte} ». Essayez un autre nom ou une autre Classe.",
+        "resultatUn": "1 conversation trouvée",
+        "resultats": "{nombre} conversations trouvées"
+      },
+      "ligne": {
+        "legende": "{objet} · {apercu}",
+        "sansApercu": "Aucun message pour le moment",
+        "dateCourte": "{numero} {mois}"
+      },
+      "noms": {
+        "avecFonction": "{nom}, {fonction}",
+        "deux": "{premier} et {second}",
+        "plusieurs": "{premier} et {nombre} autres personnes",
+        "surObjet": "Conversation sur {objet}",
+        "sansObjet": "Conversation"
+      },
+      "entete": {
+        "avecAttention": "{entete}. {attention}",
+        "deuxObjets": "{premier} · {second}",
+        "semantique": "Conversation avec {noms}, à propos de {objets}",
+        "semantiqueSansNoms": "Conversation à propos de {objets}"
+      },
+      "types": {
+        "classe": "Classe",
+        "eleve": "Élève",
+        "dossier": "Dossier",
+        "mission": "Mission de contrôle",
+        "remplacement": "Remplacement",
+        "autre": "Objet lié"
+      },
+      "panneau": {
+        "objets": "Objets liés",
+        "participants": "Participants",
+        "fichiers": "@:com.socle.lexique.fichiersPartages",
+        "ouvrir": "Ouvrir {objet}",
+        "inaccessible": "Vous n'avez plus accès à cet objet. La conversation reste lisible.",
+        "vous": "Vous"
+      },
+      "fil": {
+        "auteurEtMoment": "{auteur} · {moment}",
+        "lectureSeule": "Vous pouvez lire cette conversation. La réponse n'y est pas ouverte pour vous.",
+        "pieceJointe": "Pièce jointe : {nom}",
+        "vocal": "Message vocal de {duree}",
+        "vocalSansDuree": "Message vocal",
+        "horodatage": "{date}, {heure}"
+      },
+      "demo": {
+        "choisirRole": "Choisissez le point de vue de cette démonstration.",
+        "roles": {
+          "tuteur": "Famille",
+          "enseignant": "Enseignant",
+          "adulte": "Élève adulte",
+          "admin": "Direction",
+          "controleur": "Contrôleur"
+        },
+        "situations": "Situations à essayer",
+        "echec": "Envoi non confirmé, vu par l'enseignant",
+        "horsLigne": "Hors ligne, vu par la famille",
+        "refuse": "Conversation d'une autre famille, refusée",
+        "vue": "Point de vue : {role}"
+      },
       "titre": "@:com.socle.lexique.messagesMetier",
       "vide": "Aucune conversation pour le moment."
     },

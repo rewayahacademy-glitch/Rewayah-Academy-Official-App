@@ -9,6 +9,8 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/skeleton.dart';
+import '../com_messages/entree_messages_contexte.dart';
+import '../com_messages/port_messages_metier.dart' show TypeObjetLie;
 import 'etat_file_dossiers.dart';
 import 'file_dossiers.dart';
 import 'revue_dossier.dart';
@@ -104,11 +106,27 @@ class DetailDossier extends ConsumerWidget {
           }
           return KeyedSubtree(
             key: ValueKey<String>('$id#${d.revision}'),
-            child: RevueDossier(
-              dossier: d,
-              avecTitre: avecTitre,
-              onDecision: (String message) => onDecision(id, message),
-              onActualiser: () => actualiserDossiers(ref),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                RevueDossier(
+                  dossier: d,
+                  avecTitre: avecTitre,
+                  onDecision: (String message) => onDecision(id, message),
+                  onActualiser: () => actualiserDossiers(ref),
+                ),
+                // COM-MSG-2 : ecrire a la personne du dossier (« Ecrire a la
+                // famille » quand le serveur la designe ainsi ; spec section
+                // 3.2, Administration / Tuteur ou Enseignant). Rien n'est
+                // rendu tant que les Messages n'ont pas de contrat
+                // (COM-BR-01).
+                EntreeMessagesContexte(
+                  type: TypeObjetLie.dossier,
+                  objetId: id,
+                  ecartAvant: Ecart.vSection,
+                ),
+              ],
             ),
           );
         },
