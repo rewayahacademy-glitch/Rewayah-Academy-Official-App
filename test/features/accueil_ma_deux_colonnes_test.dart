@@ -14,9 +14,16 @@
 //
 // Contre-epreuve : sur le code de DASH-MA-PROD-b (une seule colonne a toute
 // largeur), chaque cas ci-dessous echoue.
+//
+// MA-2COL-1b : franchir le seuil (fenetre redimensionnee, facteur de texte
+// change) ne recree pas le bloc asynchrone : meme State, compteur de
+// reessais et minuteries de chargement gardes. Contre-epreuve : avec
+// `if (deuxColonnes) return haut;` (le bloc change de place dans l'arbre),
+// le groupe « Franchir le seuil » echoue.
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,6 +38,7 @@ import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_delais.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/bloc_asynchrone.dart';
 import 'package:rewayah_academy/features/accueil_eleve/accueil_accessibilite.dart';
 import 'package:rewayah_academy/features/demo/accessibilite_demo.dart';
 
@@ -61,9 +69,13 @@ Future<void> _monter(
   PortAccueilAccessibilite? port = _contenu,
   bool horsLigne = false,
   double echelle = 1,
+  ValueListenable<double>? echelleVariable,
   TextDirection sens = TextDirection.ltr,
   bool attendre = true,
 }) async {
+  // Le facteur de texte peut changer sans remonter l'application.
+  final ValueListenable<double> facteur =
+      echelleVariable ?? ValueNotifier<double>(echelle);
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
@@ -91,11 +103,19 @@ Future<void> _monter(
                 locale: AppLocale.fr.flutterLocale,
                 supportedLocales: AppLocaleUtils.supportedLocales,
                 localizationsDelegates: GlobalMaterialLocalizations.delegates,
-                builder: (BuildContext contexte, Widget? app) => MediaQuery(
-                  data: MediaQuery.of(contexte)
-                      .copyWith(textScaler: TextScaler.linear(echelle)),
-                  child: Directionality(textDirection: sens, child: app!),
-                ),
+                builder: (BuildContext contexte, Widget? app) =>
+                    ValueListenableBuilder<double>(
+                      valueListenable: facteur,
+                      builder: (BuildContext contexte, double f, Widget? _) =>
+                          MediaQuery(
+                            data: MediaQuery.of(contexte)
+                                .copyWith(textScaler: TextScaler.linear(f)),
+                            child: Directionality(
+                              textDirection: sens,
+                              child: app!,
+                            ),
+                          ),
+                    ),
               ),
         ),
       ),
@@ -311,6 +331,118 @@ void main() {
         expect(a.onPress, isNotNull, reason: a.libelle);
       }
       expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('Franchir le seuil ne recree pas le bloc (MA-2COL-1b)', () {
+    const PortAccueilAccessibilite enEchec = PortAccueilAccessibiliteDemo(
+      eleve: EleveDemoAccessibilite.mariam,
+      situation: SituationAccueilDemo.erreur,
+    );
+    final Finder bloc = find.byType(
+      BlocAsynchrone<DonneesAccueilAccessibilite>,
+    );
+    final Finder reessayer = find.text(t.commun.etats.actions.reessayer);
+
+    /// Epuise les reessais : la phrase remplace le bouton.
+    Future<void> epuiser(WidgetTester tester) async {
+      for (int i = 0; i < BlocAsynchrone.reessaisMax; i++) {
+        await tester.tap(reessayer);
+        await stabiliser(tester);
+      }
+      expect(reessayer, findsNothing);
+      expect(find.text(t.commun.etats.reessaisEpuises), findsOneWidget);
+    }
+
+    /// Le bloc est le meme et n'a pas oublie ses reessais.
+    void memeBloc(WidgetTester tester, State<StatefulWidget> avant) {
+      expect(reessayer, findsNothing);
+      expect(find.text(t.commun.etats.reessaisEpuises), findsOneWidget);
+      expect(identical(tester.state(bloc), avant), isTrue);
+    }
+
+    testWidgets('fenetre redimensionnee : 390 -> 1440 -> 390, reessais '
+        'epuises gardes', (WidgetTester tester) async {
+      await _monter(tester, taille: const Size(390, 2400), port: enEchec);
+      expect(_largeurUtile(tester), lessThan(seuilDeuxColonnesAccueil));
+      await epuiser(tester);
+      final State<StatefulWidget> avant = tester.state(bloc);
+
+      tester.view.physicalSize = const Size(1440, 2400);
+      await stabiliser(tester);
+      expect(
+        _largeurUtile(tester),
+        greaterThanOrEqualTo(seuilDeuxColonnesAccueil),
+      );
+      memeBloc(tester, avant);
+
+      tester.view.physicalSize = const Size(390, 2400);
+      await stabiliser(tester);
+      expect(_largeurUtile(tester), lessThan(seuilDeuxColonnesAccueil));
+      memeBloc(tester, avant);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('facteur de texte change a 1440 : 100 % -> 200 % -> 100 %, '
+        'reessais epuises gardes', (WidgetTester tester) async {
+      final ValueNotifier<double> facteur = ValueNotifier<double>(1);
+      addTearDown(facteur.dispose);
+      await _monter(
+        tester,
+        taille: const Size(1440, 3200),
+        port: enEchec,
+        echelleVariable: facteur,
+      );
+      await epuiser(tester);
+      final State<StatefulWidget> avant = tester.state(bloc);
+
+      facteur.value = 2;
+      await stabiliser(tester);
+      expect(
+        _largeurUtile(tester) / 2,
+        lessThan(seuilDeuxColonnesAccueil),
+        reason: 'une colonne a 200 %',
+      );
+      memeBloc(tester, avant);
+
+      facteur.value = 1;
+      await stabiliser(tester);
+      memeBloc(tester, avant);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('chargement : la minuterie de perte court a travers le '
+        'seuil, elle ne repart pas de zero', (WidgetTester tester) async {
+      final Completer<DonneesAccueilAccessibilite> attente =
+          Completer<DonneesAccueilAccessibilite>();
+      await _monter(
+        tester,
+        taille: const Size(1440, 2400),
+        port: _PortEnAttente(attente.future),
+        attendre: false,
+      );
+      // Le routeur monte l'Accueil : le bloc nait, ses minuteries partent.
+      await tester.pump(const Duration(milliseconds: 500));
+      expect(find.byKey(AccueilAccessibilite.cleSquelette), findsOneWidget);
+      final Duration moitie = AppDelais.requeteMax ~/ 2;
+      await tester.pump(moitie);
+      expect(find.byKey(AccueilAccessibilite.cleSquelette), findsOneWidget);
+      final State<StatefulWidget> avant = tester.state(bloc);
+
+      // Le seuil est franchi a mi-attente.
+      tester.view.physicalSize = const Size(390, 2400);
+      await tester.pump();
+      expect(find.byKey(AccueilAccessibilite.cleSquelette), findsOneWidget);
+
+      // L'autre moitie ecoulee : la tentative est perdue, comme si la
+      // fenetre n'avait pas bouge.
+      await tester.pump(moitie + const Duration(milliseconds: 100));
+      await tester.pump(const Duration(seconds: 1));
+      expect(find.byKey(AccueilAccessibilite.cleSquelette), findsNothing);
+      expect(reessayer, findsOneWidget);
+      expect(identical(tester.state(bloc), avant), isTrue);
+      attente.complete(_contenu.lire());
+      await tester.pump(const Duration(seconds: 1));
     });
   });
 
