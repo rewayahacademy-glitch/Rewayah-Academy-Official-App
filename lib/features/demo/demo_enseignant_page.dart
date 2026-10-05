@@ -217,7 +217,7 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
     portRevenusEnseignantProvider.overrideWithValue(
       RevenusEnseignantDemo(vide: vide),
     ),
-    moisRevenusProvider.overrideWith(MoisRevenus.new),
+    moisRevenusProvider.overrideWith(MoisRevenusDemo.new),
     moisRevenusDisponiblesProvider.overrideWith(
       (Ref ref) => ref.watch(portRevenusEnseignantProvider).moisDisponibles(),
     ),

@@ -68,6 +68,13 @@ class MoisRevenus extends Notifier<DateTime?> {
   void choisir(DateTime mois) => state = mois;
 }
 
+/// Le mois choisi d'une demonstration, sous son conteneur imbrique : sans
+/// session a surveiller (la session de l'application n'y est pas lue).
+class MoisRevenusDemo extends MoisRevenus {
+  @override
+  DateTime? build() => null;
+}
+
 /// Le mois choisi sur les revenus.
 final NotifierProvider<MoisRevenus, DateTime?> moisRevenusProvider =
     NotifierProvider<MoisRevenus, DateTime?>(MoisRevenus.new);

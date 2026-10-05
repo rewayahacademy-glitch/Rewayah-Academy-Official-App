@@ -13242,9 +13242,6 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: 'Marge de référence'
 	String get marge => 'Marge de référence';
 
-	/// fr: 'Objectif {objectif} %, forte {forte} %, stretch {stretch} %'
-	String margeValeur({required Object objectif, required Object forte, required Object stretch}) => 'Objectif ${objectif} %, forte ${forte} %, stretch ${stretch} %';
-
 	/// fr: 'Un repère pour lire la vue globale, jamais une sanction, un refus ni un blocage.'
 	String get margeDetail => 'Un repère pour lire la vue globale, jamais une sanction, un refus ni un blocage.';
 
@@ -13272,8 +13269,8 @@ class Traductions$admin$finance$pol$fr {
 	/// fr: '%'
 	String get unitePourcent => '%';
 
-	/// fr: 'Une marge ne dépasse pas 100 %.'
-	String get erreurMargeMax => 'Une marge ne dépasse pas 100 %.';
+	/// fr: 'Saisissez une marge de 100 % au plus.'
+	String get erreurMargeMax => 'Saisissez une marge de 100 % au plus.';
 
 	/// fr: 'La performance forte ne descend pas sous l'objectif ({objectif}).'
 	String erreurMargeForte({required Object objectif}) => 'La performance forte ne descend pas sous l\'objectif (${objectif}).';
@@ -18844,7 +18841,6 @@ extension on Traductions {
 			'admin.finance.pol.pilotage' => 'Pilotage',
 			'admin.finance.pol.pilotageDetail' => 'Des repères pour lire les chiffres, jamais des règles qui bloquent.',
 			'admin.finance.pol.marge' => 'Marge de référence',
-			'admin.finance.pol.margeValeur' => ({required Object objectif, required Object forte, required Object stretch}) => 'Objectif ${objectif} %, forte ${forte} %, stretch ${stretch} %',
 			'admin.finance.pol.margeDetail' => 'Un repère pour lire la vue globale, jamais une sanction, un refus ni un blocage.',
 			'admin.finance.pol.margeObjectif' => 'Marge objectif',
 			'admin.finance.pol.margeObjectifDetail' => 'Marge nette visée, toutes charges comprises : un repère de pilotage, jamais une sanction ni un blocage.',
@@ -18854,7 +18850,7 @@ extension on Traductions {
 			'admin.finance.pol.margeStretchDetail' => 'Le repère ambitieux ; il ne descend pas sous la performance forte.',
 			'admin.finance.pol.pourcentValeur' => ({required Object valeur}) => '${valeur} %',
 			'admin.finance.pol.unitePourcent' => '%',
-			'admin.finance.pol.erreurMargeMax' => 'Une marge ne dépasse pas 100 %.',
+			'admin.finance.pol.erreurMargeMax' => 'Saisissez une marge de 100 % au plus.',
 			'admin.finance.pol.erreurMargeForte' => ({required Object objectif}) => 'La performance forte ne descend pas sous l\'objectif (${objectif}).',
 			'admin.finance.pol.erreurMargeStretch' => ({required Object forte}) => 'Le scénario stretch ne descend pas sous la performance forte (${forte}).',
 			'admin.finance.pol.budgets' => 'Budgets',
@@ -19282,9 +19278,9 @@ extension on Traductions {
 			'admin.agents.emissionEnCours' => 'Émission',
 			'admin.agents.emis' => 'Jeton émis',
 			'admin.agents.emisDetail' => 'Remettez ce lien à l\'agent. Il n\'apparaîtra plus : ni cet écran ni la base ne peuvent le retrouver.',
+			'admin.agents.copier' => 'Copier le lien',
 			_ => null,
 		} ?? switch (path) {
-			'admin.agents.copier' => 'Copier le lien',
 			'admin.agents.copie' => 'Lien copié',
 			'admin.agents.termine' => 'J\'ai copié le lien',
 			'admin.agents.erreurEmission' => 'Le jeton n\'a pas pu être émis. Réessayez dans un instant.',
@@ -19796,9 +19792,9 @@ extension on Traductions {
 			'eleve.accueil.pausePriereDetail' => ({required Object priere, required Object heure}) => '${priere}, vers ${heure}',
 			'eleve.coran.titre' => 'Le Coran',
 			'eleve.coran.page' => ({required Object page, required Object total}) => 'Page ${page} sur ${total}',
+			'eleve.coran.juz' => ({required Object juz}) => 'Juz ${juz}',
 			_ => null,
 		} ?? switch (path) {
-			'eleve.coran.juz' => ({required Object juz}) => 'Juz ${juz}',
 			'eleve.coran.mecquoise' => 'Révélée à La Mecque',
 			'eleve.coran.medinoise' => 'Révélée à Médine',
 			'eleve.coran.reprendre' => 'Reprendre ta lecture',
@@ -20310,9 +20306,9 @@ extension on Traductions {
 			'enseignant.cahier.dureeEtInterruption' => ({required Object minutes, required Object interruption}) => '${minutes} min de cours, dont ${interruption} min d\'interruption',
 			'enseignant.cahier.unEleve' => '1 élève',
 			'enseignant.cahier.eleves' => ({required Object nombre}) => '${nombre} élèves',
+			'enseignant.cahier.toutEstNominal' => 'Tout s\'est passé comme prévu.',
 			_ => null,
 		} ?? switch (path) {
-			'enseignant.cahier.toutEstNominal' => 'Tout s\'est passé comme prévu.',
 			'enseignant.cahier.toutEstNominalDetail' => 'Validez, et votre journée continue.',
 			'enseignant.cahier.exceptions' => 'À regarder',
 			'enseignant.cahier.uneException' => '1 élève demande un regard.',
@@ -20824,9 +20820,9 @@ extension on Traductions {
 			'tc.groupe.duree.minutes' => ({required Object minutes}) => '${minutes} min',
 			'tc.groupe.duree.heures' => ({required Object heures}) => '${heures} h',
 			'tc.groupe.duree.heuresMinutes' => ({required Object heures, required Object minutes}) => '${heures} h ${minutes}',
+			'tc.groupe.horloges.votreHeure' => 'Votre heure',
 			_ => null,
 		} ?? switch (path) {
-			'tc.groupe.horloges.votreHeure' => 'Votre heure',
 			'tc.groupe.horloges.chezEnseignant' => ({required Object nomme}) => 'Chez ${nomme}',
 			'tc.groupe.horloges.heureGroupe' => 'Heure de la classe',
 			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '${heure} ${ville}',
@@ -21338,9 +21334,9 @@ extension on Traductions {
 			'adulte.recharge.revenirPaiements' => 'Revenir aux paiements du foyer',
 			'adulte.recharge.commandeRendue' => 'Le paiement est envoyé. Ne payez pas une seconde fois : suivez son état.',
 			'adulte.recharge.suivrePaiement' => 'Suivre le paiement',
+			'adulte.recharge.resultat.preparationTitre' => 'Paiement en préparation',
 			_ => null,
 		} ?? switch (path) {
-			'adulte.recharge.resultat.preparationTitre' => 'Paiement en préparation',
 			'adulte.recharge.resultat.preparationPhrase' => 'Vérifiez la répartition avant de payer.',
 			'adulte.recharge.resultat.attenteTitre' => 'Paiement en cours de confirmation',
 			'adulte.recharge.resultat.attentePhrase' => 'Le prestataire de paiement n\'a pas encore confirmé. Les soldes ne changent qu\'après sa confirmation.',

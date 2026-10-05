@@ -244,10 +244,15 @@ void main() {
       expect(demo.margeProjeteePourMille, 792);
       expect(carte(find.text(vue.margeValeur(valeur: '79,2'))), findsOneWidget);
       expect(find.text(vue.margeDetail), findsOneWidget);
-      expect(find.text(formaterMontant(demo.impayes)), findsOneWidget);
+      expect(carte(find.text(formaterMontant(demo.impayes))), findsOneWidget);
       expect(formaterMontant(demo.impayes), '8\u00a0\$');
-      expect(find.text('${demo.essaisEnCours}'), findsOneWidget);
-      expect(find.text(formaterMontant(demo.soldesCrediteurs)), findsOneWidget);
+      // L'etat des paiements repete des nombres (« 1 » en essai) : la
+      // carte des essais seule.
+      expect(carte(find.text('${demo.essaisEnCours}')), findsOneWidget);
+      expect(
+        carte(find.text(formaterMontant(demo.soldesCrediteurs))),
+        findsOneWidget,
+      );
       // Les graphiques de la demonstration : le seul mois depuis le
       // lancement (octobre 2026), avec ses nombres exacts.
       Finder graphique(Key cle, Finder f) =>
@@ -323,7 +328,9 @@ void main() {
           tester,
           estCarte: (Widget w) => w is AppCard || w is BandeauAttention,
         ),
-        12,
+        // Sept indicateurs, quatre graphiques, une alerte, puis l'etat des
+        // paiements, le top classes et les dernieres operations (FI-DIR-1).
+        15,
       );
       expect(tester.takeException(), isNull);
     });
@@ -345,8 +352,9 @@ void main() {
       for (final String texte in textes) {
         expect(sanction.hasMatch(texte), isFalse, reason: texte);
       }
-      // Les references de la politique ne sont jamais rendues.
-      expect(find.textContaining('30'), findsNothing);
+      // Les references de la politique ne sont jamais rendues (l'heure
+      // « 10:30 » d'une operation n'en est pas une).
+      expect(find.textContaining(RegExp(r'(?<!:)\b30\b')), findsNothing);
     });
   });
 

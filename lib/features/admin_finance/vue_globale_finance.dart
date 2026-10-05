@@ -83,6 +83,13 @@ class MoisVueGlobale extends Notifier<DateTime?> {
   void choisir(DateTime mois) => state = mois;
 }
 
+/// Le mois choisi d'une demonstration, sous son conteneur imbrique : sans
+/// session a surveiller (la session de l'application n'y est pas lue).
+class MoisVueGlobaleDemo extends MoisVueGlobale {
+  @override
+  DateTime? build() => null;
+}
+
 /// Le mois choisi sur la Vue globale.
 final NotifierProvider<MoisVueGlobale, DateTime?> moisVueGlobaleProvider =
     NotifierProvider<MoisVueGlobale, DateTime?>(MoisVueGlobale.new);

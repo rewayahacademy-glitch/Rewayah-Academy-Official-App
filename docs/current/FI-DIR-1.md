@@ -1,0 +1,68 @@
+# FI-DIR-1 : décisions du 05/10 appliquées à la Finance
+
+Session de la vague du 05/10 (orchestrateur 01B8we8b). Branche `ui/fi-dir-1`, base
+`origin/ui/finance-v1` @ 728c34c5 (FI-VAGUE-CORR). Rapport source :
+`origin/pilotage/tuteur-v1:17_finance/FI-VAGUE-CORR.md`, revue
+`docs/revues/REVUE_FI-VAGUE-R.md` (branche `revues/2026-10-04-01MrLWqB`).
+
+Statuts au sens de `00_LIRE_D_ABORD.md` : tout ce qui suit est **présent dans le code et
+testé localement**. Rien n'est testé sur staging ni déployé (aucune PR, aucune fusion).
+
+## Décisions appliquées
+
+| Décision | Ce qui change | Où | Preuve (test) |
+|---|---|---|---|
+| FI-Q1 (a) | Sans source de paiement (production, chargement, erreur), « Ajouter un profil élève » est le bouton plein ; avec finances rendues, « Recharger plusieurs profils » l'est. Comportement déjà en place, commentaires mis à jour (la question est close). | `foyer_page.dart`, `finances_foyer.dart` | `foyer_finances_test` « un seul bouton plein », « sans source (production) » ; capture `fidir1_foyer_production_*` |
+| FI-Q2 (a) | « Vue financière du foyer » gardée, sur le mois en cours, sans sélecteur. | `finances_foyer.dart` (commentaire) | `foyer_bureau_test` « Vue financière du foyer sur le mois courant » |
+| FI-Q3 (b) | Titre « Profils élèves » pour tous les titulaires ; la clé `foyer.membresEnfants` (« Enfants du foyer ») est retirée, le paramètre `titulaireAdulte` devenu inutile aussi. | `foyer_page.dart`, `fr.i18n.json` | `foyer_finances_test` (« Profils élèves », jamais « Enfants du foyer »), `foyer_page_test` |
+| FI-Q4 (a) | « Voir tout » ouvre l'historique du foyer. Déjà en place, commentaire mis à jour. | `transactions_foyer.dart` | `foyer_bureau_test` « Voir tout vers l'historique du foyer » |
+| FI-Q5 (a) | Le ruban « Démonstration » suffit, aucune marque par montant. Commentaire de `finance_demo.dart` corrigé. | `finance_demo.dart` | (aucun code ne change) |
+| FI-Q7 (a) | « Télécharger le reçu » (secondaire) sous les actions de la fiche Finances, seulement quand une période a été financée ; l'appui appelle un port neuf `PortRecus` (FI-BR-05) qui rend `CapaciteIndisponible` en production **et** en démonstration ; l'écran dit « Le reçu n'est pas encore disponible ». Même composant pour l'adulte autonome (Mes finances). | `core/capacites/port_recus.dart`, `fiche/finances_page.dart` (`BoutonRecu`) | `fiche_eleve_finances_test` groupe « FI-DIR-1 » (390, 1440, essai sans reçu) |
+| FI-Q12 (b) | L'enfant ne voit que l'état « fermé ». Comportement gardé, commentaire écrit. | `accueil_eleve_page.dart` | tests d'accès existants (`acces_finance_test`) |
+| FI-Q16 (a) | Titre « Revenus estimés » (écran et ligne du Profil). | `fr.i18n.json` | `revenus_enseignant_test` « FI-Q16 » |
+| FI-Q18 (a) | Choix du mois sur les Revenus et la Vue globale. Il ne propose **que** les mois rendus par la source (`moisDisponibles()`, FI-BR-11 et FI-BR-12) ; sans source, aucun choix. La démonstration ne rend que le mois de référence (octobre 2026) : aucun mois inventé avant l'entrée en vigueur de la politique. Composant commun `SelecteurMois` (habit de `MenuFiltre`, axe ouvert). | `core/widgets/selecteur_mois.dart`, ports, `revenus_enseignant_page.dart`, `vue_globale_finance.dart`, `finance_demo.dart`, pages de démo | `revenus_enseignant_test` « FI-Q18 » (deux mois, mois vide, production), `vue_globale_finance_test` « R6-03 et FI-Q18 » |
+| FI-Q21.1 | Marge de référence (objectif, forte, stretch) en trois champs, pourcentage entier, rendue en pour mille ; cohérence : 100 % au plus, forte ≥ objectif, stretch ≥ forte. Paiement web : interrupteur dans le brouillon. | `politiques_commerciales.dart` | `politiques_commerciales_test` groupe « FI-DIR-1 » |
+| FI-Q21.2 | « Achat intégré iOS » et « Facturation Google Play » : « Préparé (inactif) », lus, jamais un réglage. | idem | idem (brouillon et lecture) |
+| FI-Q21.3 | Édition directe, aucun bouton « Modifier » par carte (déjà le cas). | idem | idem |
+| FI-Q21.4 | Date d'effet réglable dans le brouillon (calendrier à partir du lendemain, jamais rétroactive), envoyée avec le brouillon ; la phrase dit qu'elle s'applique à la publication, au branchement. | idem | idem |
+| FI-R6 (a) 1 | Vue globale : « État des paiements » (profils par état et leur part rendue), « Top classes » (encaisse par classe, ordre rendu), « Dernières opérations » (mouvements des profils, heure, état). Données de démo calculées dans `finance_demo.dart` sur les mêmes sièges que le revenu ; production : `CapaciteIndisponible('FI-BR-12')`. | `port_finance_direction.dart`, `vue_globale_finance.dart`, `finance_demo.dart` | `vue_globale_finance_test` « R6-02 » (contenu, ordre non trié par l'écran, vide) |
+| FI-R6 (a) 2 | Choix du mois sur la Vue globale (voir FI-Q18). | | |
+| FI-R6 (a) 3 | Politiques : sections lues rangée par rangée (plus de `i += 2` en deux colonnes) ; en-tête de version sur une rangée sur ordinateur ; historique en fin de page. | `politiques_commerciales.dart` | `politiques_commerciales_test` « R6-08 : 1440 » |
+| Libellé | `ficheEleve.finances.noteAbsences` → « Les absences ordinaires n'entraînent pas de réduction sur le mois une fois celui-ci financé. » | `fr.i18n.json` | `fiche_eleve_finances_test` (texte exact) |
+| fi-elision | Déjà fait dans la Finance ; rien n'est touché hors Finance (étape LIB-DIR-1). | | |
+
+## Points suspendus du rapport FI-VAGUE-CORR
+
+| # | Constat | État après FI-DIR-1 |
+|---|---|---|
+| 1 | R1-01, cas sans source | Fait : FI-Q1 (a). |
+| 7 | R1-02, Q-FI-8 | Fait : FI-Q2 (a). |
+| 9 | R1-09, « Enfants du foyer » | Fait : FI-Q3 (b), « Profils élèves ». |
+| 11 | R1-13, marque par montant | Fait : FI-Q5 (a), le ruban suffit. |
+| 15 | R2-03, texte de la note | Fait : libellé tranché le 05/10 (sans renvoi à un onglet inexistant). |
+| 16 | R2-04, reçu | Fait : FI-Q7 (a). |
+| 29 | R4-03 | Fait : FI-Q12 (b), comportement gardé. |
+| 32 | R4-08 hors Finance | Hors de cette étape : LIB-DIR-1 (élision dans toute l'application). |
+| 36 | R5-04, R5-05 | Fait : FI-Q16 (a), FI-Q18 (a). R5-06 était déjà fait. |
+| 41 | R6-06, édition en brouillon | Fait pour la marge et le paiement web (FI-Q21.1). **Relances et budgets restent lus** : FI-Q21 ne les nomme pas ; décidé par délégation le 05/10 (choix prudent : pas de règle de relance ni de budget saisissable sans contrat serveur). |
+| 42 | R6-02, R6-03, R6-08 | Fait : FI-R6 (a). |
+
+## Choix faits par délégation le 05/10 (non couverts mot à mot)
+
+- Le reçu est proposé aussi à l'adulte autonome (même composant `VueFinancesProfil`), seulement quand une période a été financée ; il n'est jamais proposé en essai ni sans paiement.
+- Le reçu se place sous « Voir les mouvements » (mobile) ou sous « Recharger » (bureau à trois colonnes) : l'ordre R2-04 (bouton plein, puis lien à 8 px) reste intact.
+- La démonstration ne rend qu'un mois : le choix du mois y montre un seul mois. Un second mois aurait été un historique inventé (règle R6-01) ; le changement de mois est prouvé par des doubles de test à deux mois.
+- Pas de « Voir tout » sur « Top classes » ni « Dernières opérations » : aucune page de la direction ne porte encore ces listes complètes (un lien sans cible distincte est refusé, leçon 11).
+- Pas de variation « vs mois précédent » (maquette 09) : aucun contrat ne la rend.
+- Le paiement web peut être désactivé dans un brouillon (FI-Q21.1) ; iOS et Android restent non réglables (guide §1.6 : aucun bouton App Store ou Play Billing au lancement).
+- Bornes du calendrier de la date d'effet : du lendemain à la fin de l'année N+5 (borne technique du sélecteur, pas une règle commerciale).
+
+## Mesures
+
+(voir la section « Mesures » plus bas, remplie après les tests)
+
+## Restes
+
+- Hors de cette étape : la page « Groupes » renommée « Classes » et l'élision hors Finance (LIB-DIR-1).
+- `SoldesFoyerSection` reste dans le code, non posée (vague ultérieure, inchangé).
+- Le contrat FI-BR-05 (reçu), FI-BR-11 et FI-BR-12 (mois disponibles, lecture par mois, état des paiements, classement, derniers mouvements) est à inscrire dans `17_finance/FI-BR.md` côté pilotage (non écrit ici : le prompt range le rapport sur la branche).

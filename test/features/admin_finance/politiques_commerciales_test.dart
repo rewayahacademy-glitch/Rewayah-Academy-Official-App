@@ -290,6 +290,11 @@ Future<void> _toucher(WidgetTester tester, Finder f) async {
 
 Future<void> _publier(WidgetTester tester) async {
   final Finder bouton = find.text(t.admin.finance.pol.publier);
+  // Le champ encore saisi ramene sa ligne a l'ecran quand l'apercu se
+  // recalcule : le bouton est ramene une seconde fois une fois l'ecran
+  // stable.
+  await tester.ensureVisible(bouton);
+  await tester.pumpAndSettle();
   await tester.ensureVisible(bouton);
   await tester.pumpAndSettle();
   await tester.tap(bouton);
@@ -362,11 +367,21 @@ void main() {
       expect(find.text(pol.seances(n: 2)), findsOneWidget);
       expect(find.text(pol.jours(n: 7)), findsOneWidget);
       expect(pol.jours(n: 7), '7 jours');
-      // Pilotage : des references, jamais un champ.
-      expect(
-        find.text(pol.margeValeur(objectif: '30', forte: '35', stretch: '40')),
-        findsOneWidget,
-      );
+      // Pilotage : trois reperes lus, jamais un champ hors brouillon.
+      for (final (String id, String valeur) in <(String, String)>[
+        ('margeObjectif', '30'),
+        ('margeForte', '35'),
+        ('margeStretch', '40'),
+      ]) {
+        expect(
+          find.descendant(
+            of: find.byKey(PolitiquesCommercialesContenu.champKey(id)),
+            matching: find.text(pol.pourcentValeur(valeur: valeur)),
+          ),
+          findsOneWidget,
+          reason: id,
+        );
+      }
       // L'etat « sans brouillon » : la version active, publiee, datee.
       expect(find.text(pol.sansBrouillon), findsOneWidget);
       expect(_dansEntete(find.text(pol.statutPubliee)), findsOneWidget);
