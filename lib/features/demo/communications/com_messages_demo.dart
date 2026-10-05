@@ -623,6 +623,8 @@ List<FilMetier> fixturesMessagesDemo(
     nature: NaturePieceJointe.vocal,
     typeLisible: 'Audio',
     duree: const Duration(seconds: 28),
+    // R-04 : le vocal recu de la demonstration se lit (lecture simulee).
+    peutOuvrir: true,
   );
   final PieceJointe attestation = PieceJointe(
     reference: ReferencePieceJointe('pj-attestation'),

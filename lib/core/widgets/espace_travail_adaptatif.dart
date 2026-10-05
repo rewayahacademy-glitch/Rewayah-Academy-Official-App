@@ -26,6 +26,11 @@
 //
 // Le panneau de contexte se ferme et se rouvre. Un panneau absent ou ferme ne
 // laisse AUCUNE colonne vide : le contenu prend la place.
+//
+// COM-RC (R-02) : avec `barreDansEntete`, le retour a la liste et
+// l'ouverture du contexte ne forment plus une rangee a part au-dessus du
+// contenu ; l'en-tete du contenu les pose dans sa propre rangee
+// ([RangeeEnteteEspace]), et ils defilent avec lui quand il defile.
 
 import 'package:flutter/material.dart';
 
@@ -75,6 +80,7 @@ class EspaceTravailAdaptatif extends StatefulWidget {
     this.onRetourListe,
     this.contexteOuvertInitial = true,
     this.onContexteBascule,
+    this.barreDansEntete = false,
   });
 
   /// Le contenu : toujours present.
@@ -102,6 +108,12 @@ class EspaceTravailAdaptatif extends StatefulWidget {
   /// Previent l'appelant quand le panneau de contexte s'ouvre ou se ferme,
   /// pour qu'il le memorise s'il le souhaite.
   final ValueChanged<bool>? onContexteBascule;
+
+  /// Vrai quand [principal] pose une [RangeeEnteteEspace] (un fil, un canal
+  /// ouvert) : le retour et l'ouverture du contexte y vont, dans la rangee
+  /// de son en-tete, au lieu d'une rangee a part qui prend de la hauteur au
+  /// fil (R-02). Faux : la rangee a part, pour un contenu sans en-tete.
+  final bool barreDansEntete;
 
   /// La largeur de la colonne de liste : celle de la barre laterale
   /// permanente (256), la colonne de navigation du produit.
@@ -266,8 +278,12 @@ class _EspaceTravailAdaptatifState extends State<EspaceTravailAdaptatif> {
     required bool contexteEnFeuille,
     bool rouvrirEnColonne = false,
   }) {
-    final x = t.com.socle.composants.espace;
-    final bool avecBarre = retour != null || contexteEnFeuille;
+    final VoidCallback? ouvrirContexte = contexteEnFeuille
+        ? (rouvrirEnColonne ? () => _basculer(true) : _ouvrirFeuille)
+        : null;
+    final bool dansEntete = widget.barreDansEntete;
+    final bool avecBarre =
+        !dansEntete && (retour != null || ouvrirContexte != null);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -276,25 +292,9 @@ class _EspaceTravailAdaptatifState extends State<EspaceTravailAdaptatif> {
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
             child: Row(
               children: <Widget>[
-                if (retour != null)
-                  BoutonIcone(
-                    key: EspaceTravailAdaptatif.cleRetourListe,
-                    icone: AppIcons.retour,
-                    libelle: x.retourListe,
-                    infobulle: x.retourListe,
-                    onPress: retour,
-                  ),
+                if (retour != null) _boutonRetour(retour),
                 const Spacer(),
-                if (contexteEnFeuille)
-                  BoutonIcone(
-                    key: EspaceTravailAdaptatif.cleOuvrirContexte,
-                    icone: AppIcons.info,
-                    libelle: x.ouvrirPanneau,
-                    infobulle: x.ouvrirPanneau,
-                    onPress: rouvrirEnColonne
-                        ? () => _basculer(true)
-                        : _ouvrirFeuille,
-                  ),
+                if (ouvrirContexte != null) _boutonContexte(ouvrirContexte),
               ],
             ),
           )
@@ -303,7 +303,13 @@ class _EspaceTravailAdaptatifState extends State<EspaceTravailAdaptatif> {
         Expanded(
           child: KeyedSubtree(
             key: EspaceTravailAdaptatif.clePrincipal,
-            child: widget.principal,
+            // Toujours la : seul son contenu change, le principal garde sa
+            // place dans l'arbre.
+            child: _ActionsEspace(
+              retour: dansEntete ? retour : null,
+              ouvrirContexte: dansEntete ? ouvrirContexte : null,
+              child: widget.principal,
+            ),
           ),
         ),
       ],
@@ -351,6 +357,74 @@ class _EspaceTravailAdaptatifState extends State<EspaceTravailAdaptatif> {
             child: widget.contexte,
           ),
         ),
+      ],
+    );
+  }
+}
+
+/// Le bouton de retour a la liste, en rangee a part ou dans l'en-tete.
+Widget _boutonRetour(VoidCallback retour) {
+  final x = t.com.socle.composants.espace;
+  return BoutonIcone(
+    key: EspaceTravailAdaptatif.cleRetourListe,
+    icone: AppIcons.retour,
+    libelle: x.retourListe,
+    infobulle: x.retourListe,
+    onPress: retour,
+  );
+}
+
+/// Le bouton (i) qui ouvre le panneau de contexte.
+Widget _boutonContexte(VoidCallback ouvrir) {
+  final x = t.com.socle.composants.espace;
+  return BoutonIcone(
+    key: EspaceTravailAdaptatif.cleOuvrirContexte,
+    icone: AppIcons.info,
+    libelle: x.ouvrirPanneau,
+    infobulle: x.ouvrirPanneau,
+    onPress: ouvrir,
+  );
+}
+
+/// Les actions que l'espace confie a l'en-tete du contenu.
+class _ActionsEspace extends InheritedWidget {
+  const _ActionsEspace({
+    required this.retour,
+    required this.ouvrirContexte,
+    required super.child,
+  });
+
+  final VoidCallback? retour;
+  final VoidCallback? ouvrirContexte;
+
+  @override
+  bool updateShouldNotify(_ActionsEspace ancien) =>
+      retour != ancien.retour || ouvrirContexte != ancien.ouvrirContexte;
+}
+
+/// La rangee de l'en-tete d'un contenu de l'espace (R-02) : le retour a la
+/// liste au debut, l'en-tete, puis (i) au bout, quand l'espace les confie a
+/// l'en-tete (`barreDansEntete`). Hors d'un espace, ou sans action a poser,
+/// l'en-tete seul.
+class RangeeEnteteEspace extends StatelessWidget {
+  /// Cree la rangee autour de [child].
+  const RangeeEnteteEspace({required this.child, super.key});
+
+  /// L'en-tete du contenu.
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final _ActionsEspace? actions = context
+        .dependOnInheritedWidgetOfExactType<_ActionsEspace>();
+    final VoidCallback? retour = actions?.retour;
+    final VoidCallback? ouvrir = actions?.ouvrirContexte;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        if (retour != null) ...<Widget>[_boutonRetour(retour), Ecart.hSm],
+        Expanded(child: child),
+        if (ouvrir != null) ...<Widget>[Ecart.hSm, _boutonContexte(ouvrir)],
       ],
     );
   }

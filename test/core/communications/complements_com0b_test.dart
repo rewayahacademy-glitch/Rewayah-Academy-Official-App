@@ -148,6 +148,9 @@ void main() {
           'lib/features/com_communaute',
           'lib/features/com_messages',
           'lib/features/com_studio',
+          // COM-RC (R-26) : le vocal et le centre de notifications aussi.
+          'lib/features/com_vocal',
+          'lib/features/notifications',
         ])
           if (Directory(racine).existsSync())
             for (final File f
@@ -162,6 +165,7 @@ void main() {
           'lib/core/widgets/badge_non_lu.dart',
           'lib/core/widgets/carte_piece_jointe.dart',
           'lib/core/widgets/espace_travail_adaptatif.dart',
+          'lib/core/widgets/fil_discussion.dart',
           'lib/core/widgets/vue_etat_communication.dart',
         ])
           if (RegExp(r'\bAppRole\b|\.role\b')

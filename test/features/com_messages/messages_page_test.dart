@@ -52,6 +52,20 @@ Finder _dansPrincipal(Finder cible) => find.descendant(
   matching: cible,
 );
 
+/// Un etat d'envoi ecrit dans une bulle, hors des cartes de pieces jointes
+/// (COM-RC, R-11 : la carte d'une piece envoyee dit aussi « Envoye »).
+Finder _etatDeBulle(String texte) => find.byElementPredicate(
+  (Element e) =>
+      _dansFil(find.text(texte)).evaluate().contains(e) &&
+      find
+          .ancestor(
+            of: find.byElementPredicate((Element x) => identical(x, e)),
+            matching: find.byType(CartePieceJointe),
+          )
+          .evaluate()
+          .isEmpty,
+);
+
 Finder _dansFil(Finder cible) =>
     find.descendant(of: find.byType(FilDiscussion), matching: cible);
 
@@ -238,39 +252,51 @@ void main() {
       }
     });
 
-    testWidgets('le vocal se lit dans le fil (COM-FUS), la piece jointe '
-        's y dit ; les deux se montrent dans le panneau, sans adresse', (
-      WidgetTester tester,
-    ) async {
-      await monterMessages(
-        tester,
-        port: portDemo(RoleDemoCommunications.tuteur),
-        depart: cheminFilTest('fil-adam'),
-      );
-      // COM-FUS : le lecteur de COM-VOC remplace la ligne « Message vocal ».
-      expect(_dansPrincipal(find.byType(LecteurVocalRecu)), findsOneWidget);
-      expect(
-        _dansPrincipal(find.textContaining('Message vocal de 0:28')),
-        findsNothing,
-      );
-      expect(
-        _dansPrincipal(
-          find.textContaining('Pièce jointe : Devoir_semaine_3.pdf'),
-        ),
-        findsOneWidget,
-      );
-      final Finder fichiers = find.byKey(PanneauContexteFil.cleFichiers);
-      expect(
-        find.descendant(of: fichiers, matching: find.byType(CartePieceJointe)),
-        findsNWidgets(2),
-      );
-      // Ouvrir passe par un jeton ephemere absent : aucune action rendue.
-      expect(find.byKey(CartePieceJointe.cleOuvrir), findsNothing);
-      for (final String texte in textesRendus(tester)) {
-        expect(texte.contains('pj-'), isFalse, reason: texte);
-        expect(texte.contains('http'), isFalse, reason: texte);
-      }
-    });
+    testWidgets(
+      'le vocal se lit dans le fil (COM-FUS), la piece jointe '
+      's y montre par sa carte (R-11) ; les deux se montrent dans le panneau, sans adresse',
+      (WidgetTester tester) async {
+        await monterMessages(
+          tester,
+          port: portDemo(RoleDemoCommunications.tuteur),
+          depart: cheminFilTest('fil-adam'),
+        );
+        // COM-FUS : le lecteur de COM-VOC remplace la ligne « Message vocal ».
+        expect(_dansPrincipal(find.byType(LecteurVocalRecu)), findsOneWidget);
+        expect(
+          _dansPrincipal(find.textContaining('Message vocal de 0:28')),
+          findsNothing,
+        );
+        // COM-RC (R-11) : la piece se montre dans la bulle par sa carte.
+        expect(
+          _dansPrincipal(
+            find.textContaining('Pièce jointe : Devoir_semaine_3.pdf'),
+          ),
+          findsNothing,
+        );
+        expect(
+          find.descendant(
+            of: find.byType(FilDiscussion),
+            matching: find.byType(CartePieceJointe),
+          ),
+          findsOneWidget,
+        );
+        final Finder fichiers = find.byKey(PanneauContexteFil.cleFichiers);
+        expect(
+          find.descendant(
+            of: fichiers,
+            matching: find.byType(CartePieceJointe),
+          ),
+          findsNWidgets(2),
+        );
+        // Ouvrir passe par un jeton ephemere absent : aucune action rendue.
+        expect(find.byKey(CartePieceJointe.cleOuvrir), findsNothing);
+        for (final String texte in textesRendus(tester)) {
+          expect(texte.contains('pj-'), isFalse, reason: texte);
+          expect(texte.contains('http'), isFalse, reason: texte);
+        }
+      },
+    );
 
     testWidgets('ouvrir un fil le marque lu : le badge de sa ligne tombe', (
       WidgetTester tester,
@@ -414,12 +440,12 @@ void main() {
       await tester.tap(find.byKey(FilDiscussion.envoyerKey));
       await tester.pumpAndSettle();
       expect(_dansFil(find.text(x.nonConfirme)), findsOneWidget);
-      expect(_dansFil(find.text(x.envoye)), findsNothing);
+      expect(_etatDeBulle(x.envoye), findsNothing);
       expect(find.text(x.reessayer), findsOneWidget);
 
       await tester.tap(find.text(x.reessayer));
       await tester.pumpAndSettle();
-      expect(_dansFil(find.text(x.envoye)), findsOneWidget);
+      expect(_etatDeBulle(x.envoye), findsOneWidget);
       expect(_dansFil(find.text(x.nonConfirme)), findsNothing);
       expect(port.clesRecues, hasLength(2));
       expect(port.clesRecues.first, port.clesRecues.last);
@@ -447,7 +473,7 @@ void main() {
         findsOneWidget,
       );
       expect(
-        _dansFil(find.text(t.com.socle.composants.composer.envoye)),
+        _etatDeBulle(t.com.socle.composants.composer.envoye),
         findsNothing,
       );
     });
@@ -603,7 +629,7 @@ void main() {
       await tester.tap(find.byKey(FilDiscussion.envoyerKey));
       await tester.pumpAndSettle();
       expect(
-        _dansFil(find.text(t.com.socle.composants.composer.envoye)),
+        _etatDeBulle(t.com.socle.composants.composer.envoye),
         findsOneWidget,
       );
       expect(port.envois.single.$1, 'fil-1');

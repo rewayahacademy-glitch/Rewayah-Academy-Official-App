@@ -25,7 +25,10 @@
 //   « Envoyer » laisse la place a une phrase, le vocal est garde) ;
 // - le port d'enregistrement est neutre en production
 //   (`EnregistreurVocalIndisponible`) : le composer dit alors que le vocal
-//   n'est pas disponible, sans jamais simuler un micro.
+//   n'est pas disponible, sans jamais simuler un micro ;
+// - COM-RC (R-04) : pendant l'enregistrement, la pre-ecoute et l'envoi, le
+//   composer previent le fil (`PanneauVocalFil`) : son panneau remplace la
+//   rangee texte, un seul « Envoyer » reste a l'ecran.
 
 import 'dart:async';
 
@@ -40,6 +43,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/fil_discussion.dart' show PanneauVocalFil;
 import '../../core/widgets/lien_fleche.dart';
 import 'etats_vocal.dart';
 import 'lecteur_vocal.dart';
@@ -175,6 +179,9 @@ class _ComposerVocalState extends ConsumerState<ComposerVocal> {
   Timer? _limite;
   bool _occupe = false;
   String? _erreurMicro;
+
+  /// Le dernier etat du panneau dit au fil (R-04).
+  bool _ouvertSignale = false;
 
   /// Le numero de l'enregistrement en cours, incremente a chaque demarrage :
   /// un vocal rendu par un arret lent ne vaut que pour la session qui l'a
@@ -426,8 +433,33 @@ class _ComposerVocalState extends ConsumerState<ComposerVocal> {
 
   // --- Rendu ---------------------------------------------------------------
 
+  /// Vrai quand un panneau d'enregistrement occupe la saisie : tout etat
+  /// actif du micro, de la demande d'autorisation a l'envoi.
+  bool get _panneauOuvert =>
+      _disponibilite == _Disponibilite.disponible &&
+      switch (_machine.etat) {
+        EtatVocal.repos ||
+        EtatVocal.envoye ||
+        EtatVocal.vocalRecu ||
+        EtatVocal.lecture ||
+        EtatVocal.pauseLecture ||
+        EtatVocal.finLecture => false,
+        _ => true,
+      };
+
+  /// Dit au fil, apres la construction, que le panneau s'ouvre ou se ferme.
+  void _signalerPanneau() {
+    final bool ouvert = _panneauOuvert;
+    if (ouvert == _ouvertSignale) return;
+    _ouvertSignale = ouvert;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) PanneauVocalFil(ouvert: ouvert).dispatch(context);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    _signalerPanneau();
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final c = t.com.vocal.composer;

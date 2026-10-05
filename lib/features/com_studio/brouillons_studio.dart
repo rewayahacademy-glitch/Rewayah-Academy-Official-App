@@ -8,11 +8,13 @@
 // message (`StockagePreferencesDrift` ne garde que des preferences), et
 // aucune synchronisation entre appareils n'est promise : l'ecran le dit.
 //
-// Trois pieces :
+// Le texte du champ d'un canal est ecrit dans le port a chaque frappe et
+// remis a la reouverture (« Brouillon restaure ») par `FilDiscussion` lui-
+// meme, sous [cleBrouillonCanal] (COM-RC, R-22) : aucun parcours de l'arbre
+// ici. Un envoi vide le champ, donc efface le brouillon.
 //
-// - [PersistanceBrouillonCanal] ecrit le texte du champ d'un canal dans le
-//   port a chaque frappe, et le remet a la reouverture (« Brouillon
-//   restaure ») ; un envoi vide le champ, donc efface le brouillon.
+// Deux pieces :
+//
 // - [BlocBrouillons] : le bloc « Brouillons » d'Aujourd'hui (les plus
 //   recents, puis « Voir tous les brouillons »).
 // - [VueBrouillonsStudio] : la vue « Brouillons » de la navigation du Studio.
@@ -34,7 +36,6 @@ import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/fil_discussion.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/vue_etat_communication.dart';
@@ -353,138 +354,5 @@ class _VueBrouillonsStudioState extends ConsumerState<VueBrouillonsStudio> {
         ),
       ],
     );
-  }
-}
-
-/// Garde le texte du champ d'un canal comme brouillon, et le remet a la
-/// reouverture.
-///
-/// Le champ est celui de `FilDiscussion` (socle), qui ne l'expose pas : la
-/// persistance le trouve dans ses descendants par sa cle publique
-/// ([FilDiscussion.champKey]), jamais comme « le premier champ venu » : un
-/// autre champ pose avant lui (recherche, vocal, texte selectionnable) n'est
-/// pas garde. Apres chaque construction, la persistance verifie qu'elle tient
-/// toujours ce champ : si le socle en recree le controleur, elle s'y
-/// rebranche. Une ligne COM-FUS demande au socle un parametre « texte
-/// initial et changement » pour s'en passer.
-///
-/// [constructeur] recoit vrai tant que le brouillon restaure n'a pas ete
-/// modifie : le canal le dit (« Brouillon restaure »).
-class PersistanceBrouillonCanal extends ConsumerStatefulWidget {
-  /// Cree la persistance du canal [canalId].
-  const PersistanceBrouillonCanal({
-    required this.canalId,
-    required this.constructeur,
-    super.key,
-  });
-
-  /// Le canal dont le champ est garde.
-  final String canalId;
-
-  /// Construit le canal ; `restaure` est vrai tant que le brouillon remis
-  /// n'a pas ete touche.
-  final Widget Function(BuildContext context, bool restaure) constructeur;
-
-  @override
-  ConsumerState<PersistanceBrouillonCanal> createState() =>
-      _PersistanceBrouillonCanalState();
-}
-
-class _PersistanceBrouillonCanalState
-    extends ConsumerState<PersistanceBrouillonCanal> {
-  TextEditingController? _champ;
-  late PortBrouillons _port;
-  String _dernier = '';
-  bool _restaure = false;
-
-  CleBrouillon get _cle => cleBrouillonCanal(widget.canalId);
-
-  @override
-  void initState() {
-    super.initState();
-    _port = ref.read(portBrouillonsProvider);
-  }
-
-  @override
-  void dispose() {
-    // Le champ appartient a `FilDiscussion`, souvent libere avant nous :
-    // retirer une ecoute d'un `ChangeNotifier` libere est permis.
-    _champ?.removeListener(_auChangement);
-    super.dispose();
-  }
-
-  /// Le controleur du champ de `FilDiscussion`, reconnu par sa cle ; nul
-  /// sans champ (canal en lecture seule).
-  TextEditingController? _trouverChamp() {
-    if (!mounted) return null;
-    TextEditingController? trouve;
-    void visiter(Element e) {
-      if (trouve != null) return;
-      final Widget w = e.widget;
-      if (w is TextField && w.key == FilDiscussion.champKey) {
-        trouve = w.controller;
-        return;
-      }
-      e.visitChildren(visiter);
-    }
-
-    (context as Element).visitChildren(visiter);
-    return trouve;
-  }
-
-  /// Apres une construction : le champ tenu est-il toujours celui du fil ?
-  /// Sinon (controleur recree, champ apparu ou retire), on s'y rebranche.
-  void _verifierBranchement() {
-    if (!mounted) return;
-    final TextEditingController? champ = _trouverChamp();
-    if (identical(champ, _champ)) return;
-    _champ?.removeListener(_auChangement);
-    _champ = null;
-    unawaited(_brancher(champ));
-  }
-
-  Future<void> _brancher([TextEditingController? trouve]) async {
-    final TextEditingController? champ = trouve ?? _trouverChamp();
-    // Un canal en lecture seule n'a pas de champ : rien a garder.
-    if (champ == null) return;
-    _champ = champ;
-    Brouillon? garde;
-    try {
-      garde = await _port.lire(_cle);
-    } on Object {
-      garde = null;
-    }
-    if (!mounted || _champ != champ) return;
-    final Brouillon? b = garde;
-    if (b != null && champ.text.isEmpty) {
-      champ.value = TextEditingValue(
-        text: b.texte,
-        selection: TextSelection.collapsed(offset: b.texte.length),
-      );
-      setState(() => _restaure = true);
-    }
-    _dernier = champ.text;
-    champ.addListener(_auChangement);
-  }
-
-  void _auChangement() {
-    final TextEditingController? champ = _champ;
-    if (champ == null) return;
-    final String texte = champ.text;
-    if (texte == _dernier) return;
-    _dernier = texte;
-    if (_restaure && mounted) setState(() => _restaure = false);
-    // Un texte vide (apres un envoi, ou tout efface) efface le brouillon.
-    unawaited(
-      _port.enregistrer(_cle, texte).catchError((Object _) {
-        // Le brouillon n'est pas garde ; le texte reste dans le champ.
-      }),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) => _verifierBranchement());
-    return widget.constructeur(context, _restaure);
   }
 }

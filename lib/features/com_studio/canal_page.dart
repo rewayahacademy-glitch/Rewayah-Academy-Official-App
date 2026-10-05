@@ -11,8 +11,9 @@
 // reste au-dessus du clavier logiciel et la lecture garde le dernier message
 // visible (R-COM-15).
 //
-// Une piece jointe se dit dans la bulle par son nom ; le fichier lui-meme
-// est dans le panneau du canal (« Fichiers recents »). Un vocal recu se lit
+// Une piece jointe se montre dans la bulle par sa carte (`CartePieceJointe`,
+// COM-RC, R-11) ; le fichier est aussi dans le panneau du canal (« Fichiers
+// recents »). Un vocal recu se lit
 // dans la bulle, par le lecteur de COM-VOC (`LecteurVocalRecu`, COM-FUS).
 // Les reactions secondaires (COM-BR-08) ne sont pas encore rendues.
 //
@@ -24,7 +25,10 @@
 //
 // Le texte du champ est garde comme brouillon le temps de la session et
 // remis a la reouverture du canal, avec la phrase « Brouillon restaure »
-// (COM-STU-2, spec section 8.2, `brouillons_studio.dart`).
+// (COM-STU-2, spec section 8.2) : `FilDiscussion` porte seul cette
+// persistance, sous la cle du canal (`cleBrouillonCanal`, COM-RC, R-22). Le
+// canal tient le controleur du champ, qu'il donne au fil et au restaurateur
+// du Focus : aucun parcours de l'arbre pour le retrouver.
 //
 // Un canal ou la personne ne peut pas ecrire (capacite `ecrire` absente du
 // canal rendu, COM-BR-16) se lit sans champ ni bouton : une phrase dit la
@@ -48,6 +52,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/carte_piece_jointe.dart';
+import '../../core/widgets/espace_travail_adaptatif.dart';
 import '../../core/widgets/fil_discussion.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/vue_etat_communication.dart';
@@ -70,16 +75,21 @@ import 'visibilite_canal.dart';
 /// une ligne par piece jointe (« Piece jointe : Planning.pdf ») ou vocal
 /// (« Message vocal de 0:42 »). Jamais une reference ni une adresse.
 ///
-/// Sans [avecVocaux], les vocaux ne sont pas dits : la bulle les montre par
-/// leur lecteur ([lecteursVocauxDuMessage]).
-String texteMessageCanal(MessageCommunication m, {bool avecVocaux = true}) {
+/// Sans [avecVocaux], les vocaux ne sont pas dits ; sans [avecDocuments],
+/// les autres pieces non plus : la bulle les montre par leur lecteur et
+/// leur carte ([piecesDuMessage]).
+String texteMessageCanal(
+  MessageCommunication m, {
+  bool avecVocaux = true,
+  bool avecDocuments = true,
+}) {
   final c = t.com.studio.canal;
   return <String>[
     if (m.texte.trim().isNotEmpty) m.texte.trim(),
     for (final PieceJointe p in m.piecesJointes)
-      if (p.nature != NaturePieceJointe.vocal)
-        c.pieceJointe(nom: p.nom)
-      else if (avecVocaux)
+      if (p.nature != NaturePieceJointe.vocal) ...<String>[
+        if (avecDocuments) c.pieceJointe(nom: p.nom),
+      ] else if (avecVocaux)
         switch (p.duree) {
           final Duration d => c.vocal(duree: CartePieceJointe.libelleDuree(d)),
           null => c.vocalSansDuree,
@@ -111,6 +121,9 @@ TextesFilDiscussion textesCanal(ResumeCanal canal) {
     reessayer: base.reessayer,
     auteurSoi: base.auteurSoi,
     annonce: base.annonce,
+    aucunMessageTitre: t.com.studio.canal.aucunMessageTitre,
+    aucunMessage: t.com.studio.canal.aucunMessage,
+    brouillonRestaure: t.com.studio.brouillons.restaure,
   );
 }
 
@@ -221,10 +234,9 @@ class CanalStudio extends StatefulWidget {
     'studio-canal-lecture-seule',
   );
 
-  /// La cle de la phrase « Brouillon restaure », pour les tests.
-  static const ValueKey<String> cleBrouillonRestaure = ValueKey<String>(
-    'studio-canal-brouillon-restaure',
-  );
+  /// La cle de la phrase « Brouillon restaure », pour les tests : celle du
+  /// fil, qui porte le brouillon (R-22).
+  static const Key cleBrouillonRestaure = FilDiscussion.cleBrouillonRestaure;
 
   /// La cle de l'etat vide d'un canal en lecture seule, pour les tests.
   static const ValueKey<String> cleAucunMessage = ValueKey<String>(
@@ -265,6 +277,10 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
     () => _defilementDesMessages()?.position,
   );
 
+  /// Le controleur du champ du fil, tenu par le canal (R-22) : le fil
+  /// l'emploie, le restaurateur du Focus le garde.
+  final TextEditingController _champ = TextEditingController();
+
   /// Le champ du fil (brouillon et selection), garde pendant le Focus.
   late final SourceChamp _sourceChamp = SourceChamp(_champDuFil);
 
@@ -298,6 +314,7 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
   void dispose() {
     _retirerSources();
     WidgetsBinding.instance.removeObserver(this);
+    _champ.dispose();
     super.dispose();
   }
 
@@ -307,24 +324,10 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
       ..retirer(cleSourceChamp, _sourceChamp);
   }
 
-  /// Le controleur du champ du fil, reconnu par sa cle publique ; nul sans
-  /// champ (canal en lecture seule).
-  TextEditingController? _champDuFil() {
-    if (!mounted) return null;
-    TextEditingController? trouve;
-    void visiter(Element e) {
-      if (trouve != null) return;
-      final Widget w = e.widget;
-      if (w is TextField && w.key == FilDiscussion.champKey) {
-        trouve = w.controller;
-        return;
-      }
-      e.visitChildren(visiter);
-    }
-
-    (context as Element).visitChildren(visiter);
-    return trouve;
-  }
+  /// Le controleur du champ du fil ; nul sans champ (canal en lecture
+  /// seule) ou hors de l'arbre.
+  TextEditingController? _champDuFil() =>
+      mounted && widget.canal.peut(CapaciteCanal.ecrire) ? _champ : null;
 
   double _hauteurClavier() {
     final FlutterView vue = View.of(context);
@@ -398,41 +401,24 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
     setState(() => _vocauxConfirmes.add((cle: cle, duree: vocal.duree)));
   }
 
-  /// L'en-tete du canal ; avec [restaure], la phrase « Brouillon
-  /// restaure » dessous. Hors Focus, « Mode focus » au bout de la ligne ; en
-  /// Focus, l'en-tete minimal (la sortie est dans le bandeau du Focus).
-  Widget _entete(Canal canal, {required bool focus, bool restaure = false}) =>
-      Padding(
-        padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            // « Mode focus » au bout de la ligne s'il y tient, sinon dessous (a
-            // 390 en texte double, le nom garde toute la largeur).
-            Wrap(
-              spacing: AppSpacing.sm,
-              runSpacing: AppSpacing.xs,
-              alignment: WrapAlignment.spaceBetween,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: <Widget>[
-                EnteteCanal(canal: canal, minimal: focus),
-                if (!focus && _focus != null) const BasculeFocus(),
-              ],
-            ),
-            if (restaure) ...<Widget>[
-              Ecart.vSm,
-              Text(
-                t.com.studio.brouillons.restaure,
-                key: CanalStudio.cleBrouillonRestaure,
-                style: AppPalette.of(context).inkMuted.applyTo(
-                  Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
-                ),
-              ),
-            ],
-          ],
-        ),
-      );
+  /// L'en-tete du canal. Hors Focus, « Mode focus » au bout de la ligne ;
+  /// en Focus, l'en-tete minimal (la sortie est dans le bandeau du Focus).
+  /// La phrase « Brouillon restaure » est posee par le fil, sur son champ.
+  Widget _entete(Canal canal, {required bool focus}) => Padding(
+    padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+    // « Mode focus » au bout de la ligne s'il y tient, sinon dessous (a 390
+    // en texte double, le nom garde toute la largeur).
+    child: Wrap(
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.xs,
+      alignment: WrapAlignment.spaceBetween,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: <Widget>[
+        EnteteCanal(canal: canal, minimal: focus),
+        if (!focus && _focus != null) const BasculeFocus(),
+      ],
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -459,40 +445,43 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
     );
     final String soi = t.com.socle.composants.composer.auteurSoi;
     final TextesFilDiscussion textes = textesCanal(canal.resume);
-    // Le texte du champ est garde comme brouillon (memoire de session,
-    // spec section 8.2) et remis a la reouverture du canal (COM-STU-2).
-    return PersistanceBrouillonCanal(
-      key: ValueKey<String>('studio-brouillon-${canal.id}'),
-      canalId: canal.id,
-      constructeur: (BuildContext _, bool restaure) => FilDiscussion(
-        key: ValueKey<String>('studio-fil-${canal.id}'),
-        entete: _entete(canal, focus: focus, restaure: restaure),
-        messages: <MessageFil>[
-          for (final MessageCommunication m in canal.messages)
-            MessageFil(
-              id: m.id,
-              auteur: m.deSoi ? soi : m.auteur.nomAffiche,
-              texte: texteMessageCanal(m, avecVocaux: false),
-              annonceTexte: texteMessageCanal(m),
-              complement: lecteursVocauxDuMessage(m.piecesJointes),
-              horodatage: horodatageCanal(m.envoyeLe),
-              deSoi: m.deSoi,
+    // Le texte du champ est garde comme brouillon par le fil (memoire de
+    // session, spec section 8.2) et remis a la reouverture du canal
+    // (COM-STU-2, R-22).
+    return FilDiscussion(
+      key: ValueKey<String>('studio-fil-${canal.id}'),
+      entete: _entete(canal, focus: focus),
+      controleur: _champ,
+      cleBrouillon: cleBrouillonCanal(canal.id),
+      messages: <MessageFil>[
+        for (final MessageCommunication m in canal.messages)
+          MessageFil(
+            id: m.id,
+            auteur: m.deSoi ? soi : m.auteur.nomAffiche,
+            texte: texteMessageCanal(
+              m,
+              avecVocaux: false,
+              avecDocuments: false,
             ),
-          for (final VocalConfirme v in _vocauxConfirmes)
-            bulleVocalConfirme(
-              v,
-              auteurSoi: soi,
-              ligneVocal: (Duration d) => t.com.studio.canal.vocal(
-                duree: CartePieceJointe.libelleDuree(d),
-              ),
-              envoye: textes.envoye,
+            annonceTexte: texteMessageCanal(m),
+            complement: piecesDuMessage(m.piecesJointes),
+            horodatage: horodatageCanal(m.envoyeLe),
+            deSoi: m.deSoi,
+          ),
+        for (final VocalConfirme v in _vocauxConfirmes)
+          bulleVocalConfirme(
+            v,
+            auteurSoi: soi,
+            ligneVocal: (Duration d) => t.com.studio.canal.vocal(
+              duree: CartePieceJointe.libelleDuree(d),
             ),
-        ],
-        textes: textes,
-        onEnvoyerMessage: _envoyer,
-        emplacementPieceJointe: composer.emplacementPieceJointe(focus: focus),
-        emplacementVocal: composer.emplacementVocal(focus: focus),
-      ),
+            envoye: textes.envoye,
+          ),
+      ],
+      textes: textes,
+      onEnvoyerMessage: _envoyer,
+      emplacementPieceJointe: composer.emplacementPieceJointe(focus: focus),
+      emplacementVocal: composer.emplacementVocal(focus: focus),
     );
   }
 }
@@ -513,11 +502,13 @@ class _CanalEnLecture extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        entete,
         Expanded(
           child: ListView(
             padding: const EdgeInsets.only(bottom: AppSpacing.lg),
             children: <Widget>[
+              // R-02 : sans champ, l'en-tete defile avec les messages, ses
+              // actions (retour, contexte) dans sa rangee.
+              RangeeEnteteEspace(child: entete),
               // Aucun message : l'etat vide le dit, jamais une zone blanche.
               if (canal.messages.isEmpty)
                 VueEtatCommunication(

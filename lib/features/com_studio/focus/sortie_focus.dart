@@ -53,43 +53,50 @@ class BandeauSortieFocus extends StatelessWidget {
     // Le clavier physique est l'usage de l'ordinateur et de la tablette : le
     // telephone sort par le bouton ou le retour.
     final bool rappelEchap = AppGabarit.de(context) != Gabarit.mobile;
+    // Un groupe a part pour le lecteur d'ecran : l'etat et « Quitter le
+    // focus » restent deux noeuds distincts, jamais fondus dans la page
+    // (COM-RC : la saisie du fil defile desormais dans sa propre zone).
     return ApparitionDouce(
-      child: Wrap(
-        key: cle,
-        spacing: AppSpacing.lg,
-        runSpacing: AppSpacing.sm,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        alignment: WrapAlignment.spaceBetween,
-        children: <Widget>[
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Semantics(
-                header: true,
-                child: Text(
-                  t.com.studio.titre,
-                  style: palette.inkStrong.applyTo(
-                    textes.titleSmall ?? const TextStyle(),
+      child: Semantics(
+        container: true,
+        explicitChildNodes: true,
+        child: Wrap(
+          key: cle,
+          spacing: AppSpacing.lg,
+          runSpacing: AppSpacing.sm,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          alignment: WrapAlignment.spaceBetween,
+          children: <Widget>[
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Semantics(
+                  header: true,
+                  child: Text(
+                    t.com.studio.titre,
+                    style: palette.inkStrong.applyTo(
+                      textes.titleSmall ?? const TextStyle(),
+                    ),
                   ),
                 ),
-              ),
-              Ecart.vXs,
-              // L'etat est dit en mots, et annonce une fois a l'entree.
-              Semantics(
-                liveRegion: true,
-                child: Text(
-                  rappelEchap ? f.actifAvecEchap : f.actif,
-                  key: cleIndicateur,
-                  style: palette.inkMuted.applyTo(
-                    textes.bodySmall ?? const TextStyle(),
+                Ecart.vXs,
+                // L'etat est dit en mots, et annonce une fois a l'entree.
+                Semantics(
+                  liveRegion: true,
+                  child: Text(
+                    rappelEchap ? f.actifAvecEchap : f.actif,
+                    key: cleIndicateur,
+                    style: palette.inkMuted.applyTo(
+                      textes.bodySmall ?? const TextStyle(),
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          const BasculeFocus(),
-        ],
+              ],
+            ),
+            const BasculeFocus(),
+          ],
+        ),
       ),
     );
   }

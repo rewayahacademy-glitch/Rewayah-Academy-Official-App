@@ -13,9 +13,30 @@
 // d'idempotence (COM-BR-02), rejouee au nouvel essai de CETTE bulle, meme si
 // deux bulles ont le meme texte. Un message peut porter un complement sous
 // son texte ([MessageFil.complement], par exemple le lecteur d'un vocal).
+//
+// COM-RC (revue COM-R) :
+// - R-02 : a texte agrandi ou sur une vue basse, l'en-tete defile avec les
+//   messages (premier element de la liste) ; les actions de l'espace de
+//   travail (retour, panneau de contexte) se posent dans la rangee de
+//   l'en-tete ; la saisie, vocal compris, est bornee a 40 % de la hauteur
+//   et defile elle-meme ;
+// - R-04 : pendant l'enregistrement et la pre-ecoute d'un vocal, son
+//   panneau remplace la rangee texte (un seul « Envoyer » a l'ecran) ;
+// - R-22 : le fil porte seul la persistance du brouillon de son champ
+//   ([FilDiscussion.cleBrouillon]) et accepte un controleur exterieur ;
+// - R-24 : un fil sans message le dit (« Aucun message pour le moment ») ;
+// - R-25 : Ctrl+Entree (Cmd+Entree) envoie, Entree garde le saut de ligne.
+
+import 'dart:async';
+import 'dart:math' as math;
+import 'dart:ui' show FlutterView;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../communications/port_brouillons.dart';
+import '../i18n/strings.g.dart';
 import '../mouvement/apparition_douce.dart';
 import '../mouvement/mouvement.dart';
 import '../theme/app_color_pair.dart';
@@ -23,6 +44,37 @@ import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'action_principale.dart';
+import 'empty_state.dart';
+import 'espace_travail_adaptatif.dart';
+
+/// Le raccourci d'envoi au clavier (R-25) : Ctrl+Entree, ou Cmd+Entree sur
+/// Mac, declenche [onEnvoyer] quand le focus est dans [child]. Entree seule
+/// n'est pas prise : elle garde le saut de ligne du champ.
+Widget raccourciEnvoi({
+  required VoidCallback onEnvoyer,
+  required Widget child,
+}) => CallbackShortcuts(
+  bindings: <ShortcutActivator, VoidCallback>{
+    const SingleActivator(LogicalKeyboardKey.enter, control: true): onEnvoyer,
+    const SingleActivator(LogicalKeyboardKey.enter, meta: true): onEnvoyer,
+    const SingleActivator(LogicalKeyboardKey.numpadEnter, control: true):
+        onEnvoyer,
+    const SingleActivator(LogicalKeyboardKey.numpadEnter, meta: true):
+        onEnvoyer,
+  },
+  child: child,
+);
+
+/// Ce qu'un panneau vocal pose dans [FilDiscussion.emplacementVocal] dit au
+/// fil (R-04) : [ouvert] pendant l'enregistrement, la pre-ecoute et l'envoi,
+/// la rangee texte s'efface ; ferme, elle revient, son texte garde.
+class PanneauVocalFil extends Notification {
+  /// Cree l'avis.
+  const PanneauVocalFil({required this.ouvert});
+
+  /// Vrai quand le panneau vocal occupe la saisie.
+  final bool ouvert;
+}
 
 /// Un message deja connu du fil (lu depuis le serveur ou la demonstration).
 @immutable
@@ -77,6 +129,9 @@ class TextesFilDiscussion {
     required this.reessayer,
     required this.auteurSoi,
     required this.annonce,
+    this.aucunMessageTitre,
+    this.aucunMessage,
+    this.brouillonRestaure,
   });
 
   /// L'aide dans le champ vide : « Repondre a l'administration… ».
@@ -108,6 +163,17 @@ class TextesFilDiscussion {
 
   /// L'annonce d'un message arrive pendant la lecture du fil.
   final String Function(String auteur, String texte) annonce;
+
+  /// Le titre de l'etat vide (R-24) ; `null` : « Aucun message pour le
+  /// moment ».
+  final String? aucunMessageTitre;
+
+  /// La phrase de l'etat vide ; `null` : celle du socle.
+  final String? aucunMessage;
+
+  /// La phrase dite tant qu'un brouillon remis n'a pas ete touche ; `null` :
+  /// « Brouillon restaure ».
+  final String? brouillonRestaure;
 }
 
 /// L'etat d'envoi d'un message ecrit dans le fil.
@@ -134,9 +200,15 @@ class _MessageLocal {
 ///
 /// A poser dans une zone de hauteur bornee (`PageShell(defilante: false)`) :
 /// la liste defile, le champ reste visible au-dessus du clavier (W-2411).
-/// Entree fait un retour a la ligne, seul le bouton envoie (UX_REVIEW_08
-/// ligne 12 e). Un message arrive ou ecrit apres l'ouverture est annonce une
-/// fois (region live polie) ; ceux presents a l'ouverture ne le sont pas.
+/// Entree fait un retour a la ligne ; le bouton envoie, et Ctrl+Entree
+/// (Cmd+Entree) aussi (UX_REVIEW_08 ligne 12 e, R-25). Un message arrive ou
+/// ecrit apres l'ouverture est annonce une fois (region live polie) ; ceux
+/// presents a l'ouverture ne le sont pas.
+///
+/// A texte agrandi (au moins 150 %) ou sous [hauteurBasse], l'en-tete
+/// defile avec les messages ; la saisie ne prend jamais plus de
+/// [partSaisieMax] de la hauteur de l'ecran, ni plus de [partSaisieFilMax]
+/// de celle du fil (clavier ouvert) : au-dela, elle defile (R-02).
 class FilDiscussion extends StatefulWidget {
   /// Cree le fil, avec [onEnvoyer] ou [onEnvoyerMessage].
   const FilDiscussion({
@@ -148,6 +220,8 @@ class FilDiscussion extends StatefulWidget {
     this.entete,
     this.emplacementPieceJointe,
     this.emplacementVocal,
+    this.controleur,
+    this.cleBrouillon,
   }) : assert(
          onEnvoyer != null || onEnvoyerMessage != null,
          'FilDiscussion demande onEnvoyer ou onEnvoyerMessage.',
@@ -180,6 +254,44 @@ class FilDiscussion extends StatefulWidget {
   /// par defaut : rien n'est rendu, aucune place n'est reservee.
   final Widget? emplacementVocal;
 
+  /// Le controleur du champ, quand l'ecran doit le tenir (restauration du
+  /// Focus) ; `null` : le fil a le sien. Un controleur donne n'est jamais
+  /// libere par le fil.
+  final TextEditingController? controleur;
+
+  /// L'endroit du brouillon du champ (`PortBrouillons`, COM-BR-12), ou
+  /// `null` : aucun brouillon. Le texte est garde a chaque frappe et remis a
+  /// la reouverture, avec la phrase « Brouillon restaure » ; un envoi vide
+  /// le champ, donc efface le brouillon (R-22).
+  final CleBrouillon? cleBrouillon;
+
+  /// Sous cette hauteur recue, l'en-tete defile avec les messages (R-02).
+  static const double hauteurBasse = 480;
+
+  /// A partir de cette echelle de texte, l'en-tete defile avec les messages.
+  static const double echelleTexteAgrandi = 1.5;
+
+  /// La part de la hauteur de l'ecran que la saisie occupe au plus (R-02).
+  static const double partSaisieMax = 0.4;
+
+  /// La part de la hauteur du fil que la saisie occupe au plus, quand le
+  /// clavier logiciel la reduit : les messages gardent le reste.
+  static const double partSaisieFilMax = 0.6;
+
+  /// L'etat vide, pour les tests.
+  static const Key cleAucunMessage = ValueKey<String>('fil-discussion-vide');
+
+  /// La phrase « Brouillon restaure », pour les tests.
+  static const Key cleBrouillonRestaure = ValueKey<String>(
+    'fil-discussion-brouillon-restaure',
+  );
+
+  /// La zone de saisie (bornee, defilante), pour les tests.
+  static const Key cleSaisie = ValueKey<String>('fil-discussion-saisie');
+
+  /// La liste des messages, pour les tests.
+  static const Key cleMessages = ValueKey<String>('fil-discussion-messages');
+
   /// Le champ de saisie, pour les tests.
   static const Key champKey = ValueKey<String>('fil-discussion-champ');
 
@@ -197,33 +309,119 @@ class _FilDiscussionState extends State<FilDiscussion> {
   /// l'autre).
   static int _compteurSession = 0;
 
-  final TextEditingController _champ = TextEditingController();
+  static const Key _cleEntete = ValueKey<String>('fil-discussion-entete');
+
+  TextEditingController? _proprio;
   final ScrollController _defilement = ScrollController();
   final List<_MessageLocal> _locaux = <_MessageLocal>[];
   late final Set<String> _presentsALOuverture = <String>{
     for (final MessageFil m in widget.messages) m.id,
   };
+
+  /// Le panneau vocal occupe-t-il la saisie (R-04) ?
+  bool _vocalOuvert = false;
+
+  /// Le port des brouillons, lu une fois si le fil en garde un.
+  PortBrouillons? _brouillons;
+  bool _brouillonsLus = false;
+
+  /// Le dernier texte garde, pour n'ecrire qu'un vrai changement.
+  String _dernier = '';
+
+  /// Vrai tant que le brouillon remis n'a pas ete touche.
+  bool _restaure = false;
+
+  TextEditingController get _champ => widget.controleur ?? _proprio!;
+
   @override
   void initState() {
     super.initState();
+    if (widget.controleur == null) _proprio = TextEditingController();
     _champ.addListener(_auChangement);
+    _dernier = _champ.text;
     WidgetsBinding.instance.addPostFrameCallback((_) => _allerEnBas(false));
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final CleBrouillon? cle = widget.cleBrouillon;
+    if (cle != null && !_brouillonsLus) {
+      _brouillonsLus = true;
+      try {
+        _brouillons = ProviderScope.containerOf(
+          context,
+          listen: false,
+        ).read(portBrouillonsProvider);
+      } on Object {
+        // Aucune memoire de brouillons lisible (pas de session) : le champ
+        // fonctionne, rien n'est garde ni remis.
+        _brouillons = null;
+      }
+      if (_brouillons != null) unawaited(_restaurer(cle));
+    }
+  }
+
+  @override
+  void didUpdateWidget(FilDiscussion ancien) {
+    super.didUpdateWidget(ancien);
+    if (!identical(ancien.controleur, widget.controleur)) {
+      (ancien.controleur ?? _proprio)?.removeListener(_auChangement);
+      if (widget.controleur == null) _proprio ??= TextEditingController();
+      _champ.addListener(_auChangement);
+      _dernier = _champ.text;
+    }
+    if (widget.emplacementVocal == null) _vocalOuvert = false;
+  }
+
+  @override
   void dispose() {
-    _champ
-      ..removeListener(_auChangement)
-      ..dispose();
+    // Retirer une ecoute d'un controleur exterieur deja libere est permis.
+    _champ.removeListener(_auChangement);
+    _proprio?.dispose();
     _defilement.dispose();
     super.dispose();
   }
 
-  void _auChangement() => setState(() {});
+  /// Remet le brouillon de [cle] dans un champ encore vide.
+  Future<void> _restaurer(CleBrouillon cle) async {
+    Brouillon? garde;
+    try {
+      garde = await _brouillons?.lire(cle);
+    } on Object {
+      garde = null;
+    }
+    if (!mounted || garde == null || _champ.text.isNotEmpty) return;
+    final String texte = garde.texte;
+    // Le texte remis est deja garde : l'ecoute ne le reecrit pas.
+    _dernier = texte;
+    _champ.value = TextEditingValue(
+      text: texte,
+      selection: TextSelection.collapsed(offset: texte.length),
+    );
+    setState(() => _restaure = true);
+  }
+
+  void _auChangement() {
+    final String texte = _champ.text;
+    final CleBrouillon? cle = widget.cleBrouillon;
+    final PortBrouillons? port = _brouillons;
+    if (cle != null && port != null && texte != _dernier) {
+      _dernier = texte;
+      _restaure = false;
+      // Un texte vide (apres un envoi, ou tout efface) efface le brouillon.
+      unawaited(
+        port.enregistrer(cle, texte).catchError((Object _) {
+          // Le brouillon n'est pas garde ; le texte reste dans le champ.
+        }),
+      );
+    }
+    setState(() {});
+  }
 
   bool get _vide => _champ.text.trim().isEmpty;
 
-  void _allerEnBas(bool anime) {
+  void _allerEnBas(bool anime, [int reprises = 3]) {
     if (!mounted || !_defilement.hasClients) return;
     final double fin = _defilement.position.maxScrollExtent;
     final Duration duree = Mouvement.duree(context, Mouvement.moyen);
@@ -231,11 +429,21 @@ class _FilDiscussionState extends State<FilDiscussion> {
       _defilement.animateTo(fin, duration: duree, curve: Mouvement.entree);
     } else {
       _defilement.jumpTo(fin);
+      // La liste est paresseuse : sa fin est estimee tant que les derniers
+      // messages (cartes de pieces, lecteurs) ne sont pas mesures. On
+      // rejoint la vraie fin une fois ceux-ci poses.
+      if (reprises > 0) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted || !_defilement.hasClients) return;
+          final ScrollPosition p = _defilement.position;
+          if (p.pixels < p.maxScrollExtent) _allerEnBas(false, reprises - 1);
+        });
+      }
     }
   }
 
   void _envoyer() {
-    if (_vide) return;
+    if (_vide || _vocalOuvert) return;
     final _MessageLocal m = _MessageLocal(
       'local-${_compteurSession++}',
       _champ.text.trim(),
@@ -262,6 +470,13 @@ class _FilDiscussionState extends State<FilDiscussion> {
       if (!mounted) return;
       setState(() => m.etat = EtatEnvoiMessage.echec);
     }
+  }
+
+  bool _surPanneauVocal(PanneauVocalFil avis) {
+    if (avis.ouvert != _vocalOuvert) {
+      setState(() => _vocalOuvert = avis.ouvert);
+    }
+    return true;
   }
 
   @override
@@ -300,22 +515,49 @@ class _FilDiscussionState extends State<FilDiscussion> {
           onReessayer: () => _tenter(m),
         ),
     ];
-    final Widget? entete = widget.entete;
-    final Widget? pieceJointe = widget.emplacementPieceJointe;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        ?entete,
-        Expanded(
-          child: ListView.separated(
-            controller: _defilement,
-            padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-            itemCount: bulles.length,
-            separatorBuilder: (BuildContext _, int _) => Ecart.vMd,
-            itemBuilder: (BuildContext _, int i) => bulles[i],
-          ),
+    if (bulles.isEmpty) {
+      // R-24 : un fil sans message le dit, jamais une zone blanche.
+      bulles.add(
+        EmptyState(
+          key: FilDiscussion.cleAucunMessage,
+          message:
+              x.aucunMessageTitre ??
+              t.com.socle.composants.composer.aucunMessageTitre,
+          invitation:
+              x.aucunMessage ?? t.com.socle.composants.composer.aucunMessage,
+          registre: RegistreVide.subi,
         ),
-        if (pieceJointe != null)
+      );
+    }
+    final Widget? enteteDonne = widget.entete;
+    final Widget? entete = enteteDonne == null
+        ? null
+        : KeyedSubtree(
+            key: _cleEntete,
+            child: RangeeEnteteEspace(child: enteteDonne),
+          );
+    final Widget? pieceJointe = widget.emplacementPieceJointe;
+    final Widget? vocal = widget.emplacementVocal;
+    final TextTheme styles = Theme.of(context).textTheme;
+    final Widget zoneSaisie = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        if (_restaure)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: Semantics(
+              liveRegion: true,
+              child: Text(
+                x.brouillonRestaure ??
+                    t.com.socle.composants.composer.brouillonRestaure,
+                key: FilDiscussion.cleBrouillonRestaure,
+                style: AppPalette.of(context).inkMuted
+                    .applyTo(styles.bodySmall ?? const TextStyle()),
+              ),
+            ),
+          ),
+        if (pieceJointe != null && !_vocalOuvert)
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
             child: pieceJointe,
@@ -325,9 +567,68 @@ class _FilDiscussionState extends State<FilDiscussion> {
           vide: _vide,
           textes: x,
           onEnvoyer: _envoyer,
-          vocal: widget.emplacementVocal,
+          vocalOuvert: vocal != null && _vocalOuvert,
+          vocal: vocal == null
+              ? null
+              : NotificationListener<PanneauVocalFil>(
+                  onNotification: _surPanneauVocal,
+                  child: vocal,
+                ),
         ),
       ],
+    );
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) {
+        final double hauteur = contraintes.maxHeight;
+        // R-02 : a texte agrandi ou sur une vue basse, l'en-tete defile avec
+        // les messages au lieu de leur prendre la hauteur. La vue se mesure
+        // sans le clavier logiciel : l'ouvrir ne deplace pas l'en-tete. Le
+        // `Scaffold` retire le clavier de la `MediaQuery` de son corps : on
+        // le lit sur la vue.
+        final FlutterView vue = View.of(context);
+        final double hauteurSansClavier =
+            hauteur + vue.viewInsets.bottom / vue.devicePixelRatio;
+        final bool enteteDefilante =
+            MediaQuery.textScalerOf(context).scale(1) >=
+                FilDiscussion.echelleTexteAgrandi ||
+            hauteurSansClavier < FilDiscussion.hauteurBasse;
+        final List<Widget> elements = <Widget>[
+          if (entete != null && enteteDefilante) entete,
+          ...bulles,
+        ];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            if (entete != null && !enteteDefilante) entete,
+            Expanded(
+              key: FilDiscussion.cleMessages,
+              child: ListView.separated(
+                controller: _defilement,
+                padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+                itemCount: elements.length,
+                separatorBuilder: (BuildContext _, int _) => Ecart.vMd,
+                itemBuilder: (BuildContext _, int i) => elements[i],
+              ),
+            ),
+            // La saisie, vocal compris, ne prend jamais plus de 40 % de la
+            // hauteur de l'ecran (60 % du fil, clavier ouvert) : au-dela,
+            // elle defile elle-meme.
+            ConstrainedBox(
+              key: FilDiscussion.cleSaisie,
+              constraints: BoxConstraints(
+                maxHeight: math.min(
+                  MediaQuery.sizeOf(context).height *
+                      FilDiscussion.partSaisieMax,
+                  hauteur.isFinite
+                      ? hauteur * FilDiscussion.partSaisieFilMax
+                      : double.infinity,
+                ),
+              ),
+              child: SingleChildScrollView(child: zoneSaisie),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -447,6 +748,7 @@ class _Saisie extends StatelessWidget {
     required this.textes,
     required this.onEnvoyer,
     this.vocal,
+    this.vocalOuvert = false,
   });
 
   final TextEditingController champ;
@@ -454,6 +756,12 @@ class _Saisie extends StatelessWidget {
   final TextesFilDiscussion textes;
   final VoidCallback onEnvoyer;
   final Widget? vocal;
+
+  /// Vrai pendant l'enregistrement et la pre-ecoute : le panneau vocal
+  /// remplace la rangee texte (R-04), qui revient ensuite avec son texte.
+  final bool vocalOuvert;
+
+  static const Key _cleVocal = ValueKey<String>('fil-discussion-vocal');
 
   /// En dessous de cette largeur, avec un texte agrandi d'au moins
   /// [_echelleEmpilee], « Envoyer » passe sous le champ : a 390 en texte
@@ -480,11 +788,15 @@ class _Saisie extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                rangee,
-                Ecart.vSm,
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: vocal,
+                if (!vocalOuvert) ...<Widget>[rangee, Ecart.vSm],
+                // Toujours le dernier enfant, sous sa cle : le composer vocal
+                // garde son etat quand la rangee texte s'efface ou revient.
+                KeyedSubtree(
+                  key: _cleVocal,
+                  child: Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: vocal,
+                  ),
                 ),
               ],
             ),
@@ -492,21 +804,24 @@ class _Saisie extends StatelessWidget {
   }
 
   Widget _rangee({required bool empilee}) {
-    final Widget saisie = TextField(
-      key: FilDiscussion.champKey,
-      controller: champ,
-      minLines: 1,
-      maxLines: 5,
-      keyboardType: TextInputType.multiline,
-      textInputAction: TextInputAction.newline,
-      textCapitalization: TextCapitalization.sentences,
-      decoration: InputDecoration(
-        labelText: textes.libelleChamp,
-        hintText: textes.aideChamp,
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-        // La raison du bouton inactif, lisible sous le champ.
-        helperText: vide ? textes.champVide : null,
-        helperMaxLines: 3,
+    final Widget saisie = raccourciEnvoi(
+      onEnvoyer: onEnvoyer,
+      child: TextField(
+        key: FilDiscussion.champKey,
+        controller: champ,
+        minLines: 1,
+        maxLines: 5,
+        keyboardType: TextInputType.multiline,
+        textInputAction: TextInputAction.newline,
+        textCapitalization: TextCapitalization.sentences,
+        decoration: InputDecoration(
+          labelText: textes.libelleChamp,
+          hintText: textes.aideChamp,
+          floatingLabelBehavior: FloatingLabelBehavior.auto,
+          // La raison du bouton inactif, lisible sous le champ.
+          helperText: vide ? textes.champVide : null,
+          helperMaxLines: 3,
+        ),
       ),
     );
     // Une action se nomme, elle ne s'illustre pas : « Envoyer » en toutes

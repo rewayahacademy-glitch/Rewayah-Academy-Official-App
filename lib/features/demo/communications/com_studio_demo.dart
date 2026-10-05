@@ -413,6 +413,8 @@ List<(Canal, PartagesCanal)> fixturesStudioDemo(DateTime maintenant) {
     nature: NaturePieceJointe.vocal,
     typeLisible: 'Audio',
     duree: const Duration(seconds: 42),
+    // R-04 : le vocal recu de la demonstration se lit (lecture simulee).
+    peutOuvrir: true,
   );
   final PieceJointe compteRendu = _pdf(
     'pj-compte-rendu',

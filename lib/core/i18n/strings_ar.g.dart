@@ -1518,6 +1518,8 @@ class _Traductions$com$socle$composants$composer$ar extends Traductions$com$socl
 	@override String annonce({required Object auteur, required Object texte}) => 'رسالة جديدة من ${auteur}: ${texte}';
 	@override String get brouillon => _root.com.socle.lexique.brouillon;
 	@override String get brouillonRestaure => 'تمت استعادة المسودة';
+	@override String get aucunMessageTitre => 'لا توجد رسائل حاليًا';
+	@override String get aucunMessage => 'اكتب أول رسالة في هذه المحادثة، وستظهر هنا.';
 }
 
 // Path: com.socle.composants.etats
@@ -2167,6 +2169,8 @@ extension on TraductionsAr {
 			'com.socle.composants.composer.annonce' => ({required Object auteur, required Object texte}) => 'رسالة جديدة من ${auteur}: ${texte}',
 			'com.socle.composants.composer.brouillon' => _root.com.socle.lexique.brouillon,
 			'com.socle.composants.composer.brouillonRestaure' => 'تمت استعادة المسودة',
+			'com.socle.composants.composer.aucunMessageTitre' => 'لا توجد رسائل حاليًا',
+			'com.socle.composants.composer.aucunMessage' => 'اكتب أول رسالة في هذه المحادثة، وستظهر هنا.',
 			'com.socle.composants.etats.chargement' => 'جارٍ التحميل',
 			'com.socle.composants.etats.videTitre' => 'لا شيء هنا حاليًا',
 			'com.socle.composants.etats.erreurTitre' => 'تعذّر تحميل هذا المحتوى.',
@@ -2485,10 +2489,10 @@ extension on TraductionsAr {
 			'com.communaute.demo.avertissement' => 'منشور يحتاج إلى مراجعة: إعلان تجاري',
 			'com.communaute.demo.lienAffilie' => 'رابط تسويق بالعمولة محظور',
 			'com.communaute.demo.vente' => 'بيع محظور',
-			'com.communaute.demo.signalementNonConfirme' => 'إبلاغ غير مؤكَّد',
-			'com.communaute.demo.choisir' => 'اختر حالة لتجربتها داخل واجهة المعلّم.',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.demo.signalementNonConfirme' => 'إبلاغ غير مؤكَّد',
+			'com.communaute.demo.choisir' => 'اختر حالة لتجربتها داخل واجهة المعلّم.',
 			'com.communaute.demo.aujourdhui' => 'اليوم، مع الاختصار',
 			'com.communaute.demo.nominal' => 'ستة منشورات',
 			'com.communaute.demo.publication' => 'منشور مفتوح',
