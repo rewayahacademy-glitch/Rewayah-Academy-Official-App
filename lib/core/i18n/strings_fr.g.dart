@@ -3590,8 +3590,8 @@ class Traductions$appareils$eleve$fr {
 	/// fr: 'Retirer {appareil}'
 	String retirerLibelle({required Object appareil}) => 'Retirer ${appareil}';
 
-	/// fr: 'Retirer ou connecter un appareil demande une connexion internet.'
-	String get horsLigne => 'Retirer ou connecter un appareil demande une connexion internet.';
+	/// fr: 'Vous pourrez retirer ou connecter un appareil quand la connexion reviendra.'
+	String get horsLigne => 'Vous pourrez retirer ou connecter un appareil quand la connexion reviendra.';
 
 	/// fr: 'Choix du profil et code personnel'
 	String get partageTitre => 'Choix du profil et code personnel';
@@ -16137,7 +16137,7 @@ extension on Traductions {
 			'appareils.eleve.utiliseLe' => ({required Object date}) => 'Dernière utilisation : ${date}',
 			'appareils.eleve.jamaisUtilise' => 'Pas encore utilisé',
 			'appareils.eleve.retirerLibelle' => ({required Object appareil}) => 'Retirer ${appareil}',
-			'appareils.eleve.horsLigne' => 'Retirer ou connecter un appareil demande une connexion internet.',
+			'appareils.eleve.horsLigne' => 'Vous pourrez retirer ou connecter un appareil quand la connexion reviendra.',
 			'appareils.eleve.partageTitre' => 'Choix du profil et code personnel',
 			'appareils.eleve.partage' => 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son propre code personnel, gardé sur cet appareil.',
 			'appareils.eleve.retraitTitre' => 'Retirer un appareil',

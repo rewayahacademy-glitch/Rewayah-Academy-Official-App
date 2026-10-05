@@ -806,7 +806,7 @@
       "utiliseLe": "Dernière utilisation : {date}",
       "jamaisUtilise": "Pas encore utilisé",
       "retirerLibelle": "Retirer {appareil}",
-      "horsLigne": "Retirer ou connecter un appareil demande une connexion internet.",
+      "horsLigne": "Vous pourrez retirer ou connecter un appareil quand la connexion reviendra.",
       "partageTitre": "Choix du profil et code personnel",
       "partage": "Sur un appareil partagé, chaque élève choisit son profil puis saisit son propre code personnel, gardé sur cet appareil.",
       "retraitTitre": "Retirer un appareil",

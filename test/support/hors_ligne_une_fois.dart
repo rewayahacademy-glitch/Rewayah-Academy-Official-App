@@ -12,12 +12,14 @@ import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 
 /// Ce qui dit l'absence de reseau, sous toutes les formes rencontrees dans le
 /// catalogue (revue EA-HL-DOUBLE-1 : « Sans reseau », « Connexion
-/// interrompue » passaient au travers). Partage avec la garde du catalogue
+/// interrompue » passaient au travers ; EA-HL-DOUBLE-1c : « demande une
+/// connexion internet » aussi). Partage avec la garde du catalogue
 /// (`test/core/reseau/etat_sans_donnees_test.dart`).
 final RegExp motifHorsLigne = RegExp(
   r'hors ligne|hors-ligne|pas de réseau|sans réseau|pas de connexion|'
   r'sans connexion|connexion (est |a été )?(interrompue|perdue|coupée)|'
-  r'réseau (est |a été )?(coupé|perdu)|vous êtes déconnecté',
+  r'réseau (est |a été )?(coupé|perdu)|vous êtes déconnecté|'
+  r'(demande|nécessite|exige) une connexion',
   caseSensitive: false,
 );
 
