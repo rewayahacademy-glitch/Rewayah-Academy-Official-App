@@ -174,6 +174,19 @@ class FluxPublications extends ConsumerWidget {
   /// L'entree « Nouvelle publication », ou `null` sans capacite.
   final Widget? entreeComposer;
 
+  /// La cle de la zone qui defile, pour les tests.
+  static const ValueKey<String> cleDefilement = ValueKey<String>(
+    'communaute-flux-defilement',
+  );
+
+  /// A partir de cette echelle de texte, l'entree « Nouvelle publication »
+  /// defile avec le flux.
+  static const double echelleSerree = 1.5;
+
+  /// Sous cette hauteur recue, l'entree « Nouvelle publication » defile avec
+  /// le flux.
+  static const double hauteurSerree = 480;
+
   /// La cle de la carte d'une publication, pour les tests.
   static ValueKey<String> cleCarte(String id) =>
       ValueKey<String>('communaute-carte-$id');
@@ -235,19 +248,45 @@ class FluxPublications extends ConsumerWidget {
 
     final Widget? tete = enTete;
     final Widget? entree = lues.hasValue ? entreeComposer : null;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        if (avecBandeau) ...<Widget>[const BandeauRegles(), Ecart.vMd],
-        if (tete != null) ...<Widget>[tete, Ecart.vLg],
-        Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-            child: corps,
-          ),
-        ),
-        if (entree != null) ...<Widget>[Ecart.vMd, entree, Ecart.vLg],
-      ],
+    // COM-RC tour 2 : le bandeau des regles, les categories et l'entree de
+    // la recherche defilent avec les cartes (a 320 x 640, texte x2, fixes,
+    // ils debordaient de 37). L'entree « Nouvelle publication » reste au
+    // bas du flux, sauf quand la place manque (texte agrandi, vue basse) :
+    // elle defile alors elle aussi, apres la derniere carte.
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) {
+        final bool serre =
+            MediaQuery.textScalerOf(context).scale(1) >= echelleSerree ||
+            contraintes.maxHeight < hauteurSerree;
+        final bool entreeFixe = entree != null && !serre;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Expanded(
+              child: SingleChildScrollView(
+                key: cleDefilement,
+                padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    if (avecBandeau) ...<Widget>[
+                      const BandeauRegles(),
+                      Ecart.vMd,
+                    ],
+                    if (tete != null) ...<Widget>[tete, Ecart.vLg],
+                    corps,
+                    if (entree != null && !entreeFixe) ...<Widget>[
+                      Ecart.vLg,
+                      entree,
+                    ],
+                  ],
+                ),
+              ),
+            ),
+            if (entreeFixe) ...<Widget>[Ecart.vMd, entree, Ecart.vLg],
+          ],
+        );
+      },
     );
   }
 }

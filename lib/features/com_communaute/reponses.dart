@@ -18,7 +18,16 @@
 //
 // Le texte en cours est un brouillon de session (`PortBrouillons`, spec
 // section 8.2), range sous l'identifiant de la publication : changer de
-// publication ne melange jamais deux reponses.
+// publication ne melange jamais deux reponses. COM-RC tour 2 (R-22) : le
+// composer n'a plus sa propre persistance ; il lit `PersistanceBrouillon`,
+// celle de `FilDiscussion` (garde a chaque changement, remise avec
+// « Brouillon restaure »). Seule difference voulue : le brouillon d'une
+// reponse n'est efface qu'a l'accuse du serveur.
+//
+// COM-RC tour 2 (R-01) : le composer ne se pose plus sous la publication en
+// zone fixe ; il defile avec la page, apres les reponses. Quand le garde
+// retient la reponse, le champ et le verdict sont ramenes ensemble dans la
+// vue, le champ entier en premier.
 
 import 'dart:async';
 
@@ -26,8 +35,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/communications/modeles_communication.dart';
+import '../../core/communications/persistance_brouillon.dart';
 import '../../core/communications/port_brouillons.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/mouvement/mouvement.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -287,6 +298,11 @@ class ComposerReponse extends ConsumerStatefulWidget {
     'communaute-reponse-envoyer',
   );
 
+  /// La phrase « Brouillon restaure », pour les tests.
+  static const ValueKey<String> cleBrouillonRestaure = ValueKey<String>(
+    'communaute-reponse-brouillon-restaure',
+  );
+
   /// La cle du garde rendu sous le composer, pour les tests.
   static const ValueKey<String> cleGarde = ValueKey<String>(
     'communaute-reponse-garde',
@@ -311,12 +327,22 @@ class _ComposerReponseState extends ConsumerState<ComposerReponse> {
   bool _videSignale = false;
   bool _enCours = false;
 
+  /// Vrai tant que le brouillon remis n'a pas ete touche.
+  bool _restaure = false;
+
   /// Le verdict du garde qui retient la reponse ; nul sinon.
   VerificationPromotion? _verdict;
 
   /// Vrai quand le garde est en panne : la reponse est retenue (R-17).
   bool _gardeEnPanne = false;
-  late final PortBrouillons _brouillons = ref.read(portBrouillonsProvider);
+
+  /// La persistance commune des brouillons (R-22).
+  late final PersistanceBrouillon _persistance = PersistanceBrouillon(
+    ref.read(portBrouillonsProvider),
+  );
+
+  final GlobalKey _cleComposer = GlobalKey(debugLabel: 'ComposerReponse');
+  final GlobalKey _cleChamp = GlobalKey(debugLabel: 'ComposerReponse.champ');
 
   CleBrouillon get _cle => CleBrouillon(
     type: TypeObjetLie.publication,
@@ -326,19 +352,63 @@ class _ComposerReponseState extends ConsumerState<ComposerReponse> {
   @override
   void initState() {
     super.initState();
+    _texte.addListener(_auChangement);
     unawaited(_restaurer());
   }
 
   Future<void> _restaurer() async {
-    final Brouillon? brouillon = await _brouillons.lire(_cle);
-    if (!mounted || brouillon == null || _texte.text.isNotEmpty) return;
-    _texte.text = brouillon.texte;
+    final bool remis = await _persistance.restaurer(
+      _cle,
+      _texte,
+      encoreMonte: () => mounted,
+    );
+    if (remis && mounted) setState(() => _restaure = true);
+  }
+
+  void _auChangement() {
+    final String texte = _texte.text;
+    final bool ecrit = _persistance.noter(_cle, texte);
+    if (!ecrit) return;
+    setState(() {
+      _restaure = false;
+      if (_videSignale && texte.trim().isNotEmpty) _videSignale = false;
+      // Un texte modifie est une autre reponse : le verdict et la panne
+      // portaient sur l'ancien, ils disparaissent.
+      _verdict = null;
+      _gardeEnPanne = false;
+    });
   }
 
   @override
   void dispose() {
-    _texte.dispose();
+    _texte
+      ..removeListener(_auChangement)
+      ..dispose();
     super.dispose();
+  }
+
+  /// Ramene le composer dans la vue : d'abord tout le composer (le verdict
+  /// sous le champ), puis le champ entier s'il en etait sorti par le haut.
+  void _ramenerDansLaVue() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final BuildContext? composer = _cleComposer.currentContext;
+      if (!mounted || composer == null) return;
+      final Duration duree = Mouvement.duree(context, Mouvement.moyen);
+      await Scrollable.ensureVisible(
+        composer,
+        duration: duree,
+        curve: Mouvement.entree,
+        alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+      );
+      final BuildContext? champ = _cleChamp.currentContext;
+      if (!mounted || champ == null || !champ.mounted) return;
+      await Scrollable.ensureVisible(
+        champ,
+        duration: duree,
+        curve: Mouvement.entree,
+        alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart,
+      );
+    });
   }
 
   Future<void> _envoyer() async {
@@ -372,6 +442,7 @@ class _ComposerReponseState extends ConsumerState<ComposerReponse> {
           _enCours = false;
           _gardeEnPanne = true;
         });
+        _ramenerDansLaVue();
       }
       return;
     }
@@ -382,17 +453,24 @@ class _ComposerReponseState extends ConsumerState<ComposerReponse> {
         _enCours = false;
         _verdict = verification;
       });
+      _ramenerDansLaVue();
       return;
     }
     // Le champ se vide tout de suite : la reponse apparait dans le fil, en
-    // attente de l'accuse. Le brouillon n'est efface qu'apres l'accuse.
+    // attente de l'accuse. Le brouillon n'est efface qu'apres l'accuse : le
+    // champ vide n'est pas note.
+    _persistance.caler('');
     _texte.clear();
     setState(() {
       _enCours = false;
       _verdict = null;
+      _restaure = false;
     });
     final bool confirme = await widget.onEnvoyer(texte);
-    if (confirme) await _brouillons.effacer(_cle);
+    // Un texte saisi depuis est un nouveau brouillon : il reste.
+    if (confirme && _texte.text.trim().isEmpty) {
+      await _persistance.effacer(_cle);
+    }
   }
 
   @override
@@ -405,20 +483,6 @@ class _ComposerReponseState extends ConsumerState<ComposerReponse> {
       maxLines: 5,
       keyboardType: TextInputType.multiline,
       textCapitalization: TextCapitalization.sentences,
-      onChanged: (String texte) {
-        unawaited(_brouillons.enregistrer(_cle, texte));
-        if (_videSignale && texte.trim().isNotEmpty) {
-          setState(() => _videSignale = false);
-        }
-        // Un texte modifie est une autre reponse : le verdict et la panne
-        // portaient sur l'ancien, ils disparaissent.
-        if (_verdict != null || _gardeEnPanne) {
-          setState(() {
-            _verdict = null;
-            _gardeEnPanne = false;
-          });
-        }
-      },
       decoration: InputDecoration(
         labelText: r.champ,
         hintText: r.aide,
@@ -501,9 +565,27 @@ class _ComposerReponseState extends ConsumerState<ComposerReponse> {
             ),
     );
     return Column(
+      key: _cleComposer,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
-      children: <Widget>[composer, garde],
+      children: <Widget>[
+        if (_restaure)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: Semantics(
+              liveRegion: true,
+              child: Text(
+                t.com.socle.composants.composer.brouillonRestaure,
+                key: ComposerReponse.cleBrouillonRestaure,
+                style: palette.inkMuted.applyTo(
+                  textes.bodySmall ?? const TextStyle(),
+                ),
+              ),
+            ),
+          ),
+        KeyedSubtree(key: _cleChamp, child: composer),
+        garde,
+      ],
     );
   }
 }

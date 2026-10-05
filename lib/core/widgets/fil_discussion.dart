@@ -22,8 +22,10 @@
 //   et defile elle-meme ;
 // - R-04 : pendant l'enregistrement et la pre-ecoute d'un vocal, son
 //   panneau remplace la rangee texte (un seul « Envoyer » a l'ecran) ;
-// - R-22 : le fil porte seul la persistance du brouillon de son champ
-//   ([FilDiscussion.cleBrouillon]) et accepte un controleur exterieur ;
+// - R-22 : le fil porte la persistance du brouillon de son champ
+//   ([FilDiscussion.cleBrouillon]) et accepte un controleur exterieur ; la
+//   persistance (`PersistanceBrouillon`) est celle qu'emploie aussi le
+//   composer de reponse de la Communaute (COM-RC tour 2) ;
 // - R-24 : un fil sans message le dit (« Aucun message pour le moment ») ;
 // - R-25 : Ctrl+Entree (Cmd+Entree) envoie, Entree garde le saut de ligne ;
 // - R-07 : un mode lecture seule ([FilDiscussion.lectureSeule]) : les memes
@@ -37,8 +39,8 @@ import 'dart:ui' show FlutterView;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../communications/persistance_brouillon.dart';
 import '../communications/port_brouillons.dart';
 import '../i18n/strings.g.dart';
 import '../mouvement/apparition_douce.dart';
@@ -354,12 +356,9 @@ class _FilDiscussionState extends State<FilDiscussion> {
   /// Le panneau vocal occupe-t-il la saisie (R-04) ?
   bool _vocalOuvert = false;
 
-  /// Le port des brouillons, lu une fois si le fil en garde un.
-  PortBrouillons? _brouillons;
-  bool _brouillonsLus = false;
-
-  /// Le dernier texte garde, pour n'ecrire qu'un vrai changement.
-  String _dernier = '';
+  /// La persistance du brouillon (R-22, commune avec le composer de
+  /// reponse de la Communaute), lue une fois si le fil en garde un.
+  PersistanceBrouillon? _persistance;
 
   /// Vrai tant que le brouillon remis n'a pas ete touche.
   bool _restaure = false;
@@ -371,7 +370,6 @@ class _FilDiscussionState extends State<FilDiscussion> {
     super.initState();
     if (widget.controleur == null) _proprio = TextEditingController();
     _champ.addListener(_auChangement);
-    _dernier = _champ.text;
     WidgetsBinding.instance.addPostFrameCallback((_) => _allerEnBas(false));
   }
 
@@ -398,19 +396,14 @@ class _FilDiscussionState extends State<FilDiscussion> {
     final CleBrouillon? cle = widget.lectureSeule == null
         ? widget.cleBrouillon
         : null;
-    if (cle != null && !_brouillonsLus) {
-      _brouillonsLus = true;
-      try {
-        _brouillons = ProviderScope.containerOf(
-          context,
-          listen: false,
-        ).read(portBrouillonsProvider);
-      } on Object {
-        // Aucune memoire de brouillons lisible (pas de session) : le champ
-        // fonctionne, rien n'est garde ni remis.
-        _brouillons = null;
-      }
-      if (_brouillons != null) unawaited(_restaurer(cle));
+    if (cle != null && _persistance == null) {
+      // Aucune memoire de brouillons lisible (pas de session) : le champ
+      // fonctionne, rien n'est garde ni remis.
+      final PersistanceBrouillon persistance = PersistanceBrouillon.depuis(
+        context,
+      )..caler(_champ.text);
+      _persistance = persistance;
+      if (persistance.port != null) unawaited(_restaurer(persistance, cle));
     }
   }
 
@@ -421,7 +414,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
       (ancien.controleur ?? _proprio)?.removeListener(_auChangement);
       if (widget.controleur == null) _proprio ??= TextEditingController();
       _champ.addListener(_auChangement);
-      _dernier = _champ.text;
+      _persistance?.caler(_champ.text);
     }
     if (widget.emplacementVocal == null) _vocalOuvert = false;
   }
@@ -437,37 +430,23 @@ class _FilDiscussionState extends State<FilDiscussion> {
   }
 
   /// Remet le brouillon de [cle] dans un champ encore vide.
-  Future<void> _restaurer(CleBrouillon cle) async {
-    Brouillon? garde;
-    try {
-      garde = await _brouillons?.lire(cle);
-    } on Object {
-      garde = null;
-    }
-    if (!mounted || garde == null || _champ.text.isNotEmpty) return;
-    final String texte = garde.texte;
-    // Le texte remis est deja garde : l'ecoute ne le reecrit pas.
-    _dernier = texte;
-    _champ.value = TextEditingValue(
-      text: texte,
-      selection: TextSelection.collapsed(offset: texte.length),
+  Future<void> _restaurer(
+    PersistanceBrouillon persistance,
+    CleBrouillon cle,
+  ) async {
+    final bool remis = await persistance.restaurer(
+      cle,
+      _champ,
+      encoreMonte: () => mounted,
     );
-    setState(() => _restaure = true);
+    if (remis && mounted) setState(() => _restaure = true);
   }
 
   void _auChangement() {
-    final String texte = _champ.text;
     final CleBrouillon? cle = widget.cleBrouillon;
-    final PortBrouillons? port = _brouillons;
-    if (cle != null && port != null && texte != _dernier) {
-      _dernier = texte;
+    // Un texte vide (apres un envoi, ou tout efface) efface le brouillon.
+    if (cle != null && (_persistance?.noter(cle, _champ.text) ?? false)) {
       _restaure = false;
-      // Un texte vide (apres un envoi, ou tout efface) efface le brouillon.
-      unawaited(
-        port.enregistrer(cle, texte).catchError((Object _) {
-          // Le brouillon n'est pas garde ; le texte reste dans le champ.
-        }),
-      );
     }
     setState(() {});
   }

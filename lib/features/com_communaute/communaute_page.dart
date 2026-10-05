@@ -37,6 +37,7 @@ import '../../core/communications/port_brouillons.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/champ_recherche.dart';
 import '../../core/widgets/espace_travail_adaptatif.dart';
@@ -207,9 +208,17 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
     // que la Communaute est ouverte : la page les ecoute, pour qu'un composer
     // ferme puis rouvert retrouve son texte (spec section 8.2).
     ref.watch(portBrouillonsProvider);
+    // Telephone, une publication ou le composer ouvert : la phrase qui
+    // presente la Communaute reste sur le flux. Elle ne prend pas la hauteur
+    // de la publication (COM-RC tour 2, R-01 : a 320, texte x2, elle
+    // occupait quatre lignes au-dessus de la publication).
+    final bool telephone =
+        MediaQuery.sizeOf(context).width < AppGabarit.seuilTablette;
+    final bool surfacePrincipale =
+        telephone && _surface == SurfaceMobile.principal;
     return PageShell(
       titre: c.titre,
-      sousTitre: c.sousTitre,
+      sousTitre: surfacePrincipale ? null : c.sousTitre,
       onRetour: _retour,
       defilante: false,
       child: LayoutBuilder(
@@ -319,6 +328,12 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
       contexte: const ReglesCommunaute(),
       titreContexte: t.com.communaute.regles.panneau,
       surfaceMobile: _surface,
+      // Le composer et la publication posent (i) dans leur en-tete
+      // (`RangeeEnteteEspace`) : aucune rangee a part ne prend de hauteur
+      // a la publication, et (i) ne s'empile pas sur la fermeture du
+      // composer (COM-RC tour 2).
+      barreDansEntete:
+          (_composer && capacites.peutPublier) || _selection != null,
       contexteOuvertInitial: _contexteOuvert,
       onContexteBascule: (bool ouvert) =>
           setState(() => _contexteOuvert = ouvert),
@@ -342,8 +357,11 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
                 ),
               ),
               Ecart.hLg,
+              // La largeur de la file (336, R-10) : a 256, l'etiquette
+              // « Rechercher une publication » etait tronquee a 1440
+              // (COM-RC tour 2).
               SizedBox(
-                width: EspaceTravailAdaptatif.largeurContexte,
+                width: EspaceTravailAdaptatif.largeurListeLarge,
                 child: ChampRecherche(
                   controleur: _recherche,
                   libelle: t.com.communaute.recherche.champ,
