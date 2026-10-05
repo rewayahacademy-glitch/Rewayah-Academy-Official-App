@@ -14,6 +14,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/bascule_montants.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
@@ -82,16 +83,17 @@ void main() {
           .byType(RichText)
           .evaluate()
           .where(
-            (Element e) =>
-                find
-                    .descendant(of: entete, matching: find.byWidget(e.widget))
-                    .evaluate()
-                    .isEmpty,
+            (Element e) => find
+                .descendant(of: entete, matching: find.byWidget(e.widget))
+                .evaluate()
+                .isEmpty,
           )
           .map((Element e) => tester.getRect(find.byWidget(e.widget).first))
           .where(
             (Rect r) =>
-                r.top >= boiteEntete.bottom && r.top < basVisible && r.height > 0,
+                r.top >= boiteEntete.bottom &&
+                r.top < basVisible &&
+                r.height > 0,
           );
       expect(
         textesContenu,
@@ -102,6 +104,38 @@ void main() {
             '${basVisible.toStringAsFixed(0)}',
       );
     });
+  }
+  for (final double texte in const <double>[1, 2]) {
+    testWidgets(
+      'W06 (obligation de contractuel) a 320 px, texte x$texte : '
+      'la barre collante ${texte >= 1.5 ? 'compacte, la phrase d aide dans le corps qui defile' : 'garde sa phrase d aide'}',
+      (WidgetTester tester) async {
+        fixerVueCapture(tester, const Size(320, _hauteurEcran), 2);
+        tester.platformDispatcher.textScaleFactorTestValue = texte;
+        addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+        await tester.pumpWidget(
+          hoteRoutant(
+            depart: adresseDemoComptable(
+              EcranDemoComptable.obligationContractuel,
+            ),
+            routes: routesDemoComptable('staging'),
+          ),
+        );
+        await stabiliser(tester);
+        expect(tester.takeException(), isNull);
+        final Finder aide = find.text(t.comptable.contractuels.payerAide);
+        expect(aide, findsOneWidget);
+        expect(
+          find.byKey(const ValueKey<String>('action-obligation')),
+          findsOneWidget,
+        );
+        final Finder dansLeCorps = find.ancestor(
+          of: aide,
+          matching: find.byType(Scrollable),
+        );
+        expect(dansLeCorps, texte >= 1.5 ? findsWidgets : findsNothing);
+      },
+    );
   }
 }
 

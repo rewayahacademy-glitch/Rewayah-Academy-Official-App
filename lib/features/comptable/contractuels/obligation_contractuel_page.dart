@@ -134,6 +134,13 @@ class _ObligationContractuelPageState
         (ref.watch(horsLigneProvider).value ?? false);
     final ObligationContractuel? o = lecture.value;
     final _ActionDetail? action = o == null ? null : _actionDe(context, o);
+    // Texte agrandi (CPT-RC, revue CPT-R m7) : la barre collante ne garde que
+    // l'erreur eventuelle et le bouton ; la phrase d'aide passe en tete du
+    // corps, qui defile. Sinon, a 320 px texte x2, barre et barre basse
+    // prenaient plus de la moitie de l'ecran.
+    final bool barreCompacte =
+        MediaQuery.textScalerOf(context).scale(1) >=
+        AppGabarit.seuilTexteColonne;
 
     return PageShell(
       titre: c.detailTitre,
@@ -145,6 +152,7 @@ class _ObligationContractuelPageState
               action: action,
               erreur: _erreur,
               enCours: _approbationEnCours,
+              avecAide: !barreCompacte,
             ),
       child: echecHorsLigne
           ? EtatSysteme(nature: NatureEtat.horsLigne, onAction: _relire)
@@ -158,6 +166,7 @@ class _ObligationContractuelPageState
                 invitationEnCours: _invitationEnCours,
                 invitationRenvoyee: _invitationRenvoyee,
                 onRenvoyer: _renvoyerInvitation,
+                aideAction: barreCompacte ? action?.aide : null,
               ),
             ),
     );
@@ -216,11 +225,15 @@ class _ZoneAction extends StatelessWidget {
     required this.action,
     required this.erreur,
     required this.enCours,
+    this.avecAide = true,
   });
 
   final _ActionDetail action;
   final String? erreur;
   final bool enCours;
+
+  /// Faux a texte agrandi : la phrase d'aide est dans le corps.
+  final bool avecAide;
 
   @override
   Widget build(BuildContext context) {
@@ -242,13 +255,15 @@ class _ZoneAction extends StatelessWidget {
           ),
           Ecart.vSm,
         ],
-        Text(
-          action.aide,
-          style: palette.inkMuted.applyTo(
-            textes.bodySmall ?? const TextStyle(),
+        if (avecAide) ...<Widget>[
+          Text(
+            action.aide,
+            style: palette.inkMuted.applyTo(
+              textes.bodySmall ?? const TextStyle(),
+            ),
           ),
-        ),
-        Ecart.vSm,
+          Ecart.vSm,
+        ],
         ActionPrincipale(
           key: const ValueKey<String>('action-obligation'),
           libelle: action.libelle,
@@ -268,6 +283,7 @@ class _Corps extends ConsumerWidget {
     required this.invitationEnCours,
     required this.invitationRenvoyee,
     required this.onRenvoyer,
+    this.aideAction,
   });
 
   final ObligationContractuel obligation;
@@ -275,6 +291,10 @@ class _Corps extends ConsumerWidget {
   final bool invitationEnCours;
   final bool invitationRenvoyee;
   final VoidCallback onRenvoyer;
+
+  /// La phrase d'aide de l'action collee en bas, quand la barre est
+  /// compacte (texte agrandi) ; nulle sinon.
+  final String? aideAction;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -327,6 +347,15 @@ class _Corps extends ConsumerWidget {
           Semantics(
             liveRegion: true,
             child: _Phrase(texte: erreur!, alerte: true),
+          ),
+          Ecart.vLg,
+        ],
+        if (aideAction case final String aide) ...<Widget>[
+          Text(
+            aide,
+            style: AppPalette.of(context).inkMuted.applyTo(
+              Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+            ),
           ),
           Ecart.vLg,
         ],
