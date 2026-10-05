@@ -71,13 +71,24 @@ Future<void> _monter(
   await tester.pumpAndSettle();
 }
 
+/// Le defilement vertical de la page : depuis CPT-F-CORR, la barre basse
+/// peut defiler a l'horizontale (libelles entiers a texte agrandi ou en
+/// arabe), et `scrollUntilVisible` doit viser la page (CPT-FUS).
+final Finder _defilementPage = find
+    .byWidgetPredicate(
+      (Widget w) =>
+          w is Scrollable &&
+          axisDirectionToAxis(w.axisDirection) == Axis.vertical,
+    )
+    .first;
+
 Future<void> _versDetailHistorique(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 500));
   await tester.pumpAndSettle();
   final Finder ligne = find.byKey(
     HistoriqueControleurPage.ligneKey('demo-rapport-0924'),
   );
-  await tester.scrollUntilVisible(ligne, 200);
+  await tester.scrollUntilVisible(ligne, 200, scrollable: _defilementPage);
   await tester.tap(ligne);
   await tester.pumpAndSettle();
   expect(find.text(t.controleur.historique.sectionMission), findsOneWidget);
@@ -127,6 +138,7 @@ void main() {
       await tester.scrollUntilVisible(
         find.byKey(ControleControleurPage.commencerKey),
         200,
+        scrollable: _defilementPage,
       );
       expect(find.byKey(ControleControleurPage.commencerKey), findsOneWidget);
       final Rect bouton = tester.getRect(
