@@ -165,8 +165,8 @@ Future<GoRouter> _monterCoque(WidgetTester tester, _Cas cas) async {
 }
 
 /// Le defilement vertical le plus haut de la page ouverte (sous
-/// `PageShell`) : celui de la page entiere quand la tete defile, sinon celui
-/// du corps sous la tete fixe.
+/// `PageShell`) qui a quelque chose a defiler : celui de la page entiere
+/// quand la tete defile avec elle, sinon celui du corps.
 ScrollableState _defilementPage(WidgetTester tester) {
   final List<ScrollableState> candidats = tester
       .stateList<ScrollableState>(
@@ -177,10 +177,16 @@ ScrollableState _defilementPage(WidgetTester tester) {
       )
       .where(
         (ScrollableState s) =>
-            s.position.axis == Axis.vertical && s.position.hasContentDimensions,
+            s.position.axis == Axis.vertical &&
+            s.position.hasContentDimensions &&
+            s.position.maxScrollExtent > 0,
       )
       .toList();
-  expect(candidats, isNotEmpty, reason: 'aucune zone qui defile');
+  expect(
+    candidats,
+    isNotEmpty,
+    reason: 'la page doit defiler pour que la mesure ait un sens',
+  );
   double haut(ScrollableState s) => tester.getRect(find.byWidget(s.widget)).top;
   candidats.sort(
     (ScrollableState a, ScrollableState b) => haut(a).compareTo(haut(b)),
@@ -260,13 +266,31 @@ void main() {
         Size(390, 700),
         route: Routes.adminConfigurationRegles,
       ),
-      _Cas('1440x700 LTR', Size(1440, 700)),
+      // La tete d'Interface guidee du Journal est haute : sans la regle de
+      // `PageShell` (la tete defile tant qu'un bandeau est pose), elle
+      // deborde de 164 sous le bandeau fige.
+      _Cas(
+        '390x844 Interface guidee, Journal',
+        Size(390, 844),
+        guidee: true,
+        route: Routes.adminSecuriteAuditJournal,
+      ),
+      _Cas(
+        '1440x600 Journal LTR',
+        Size(1440, 600),
+        route: Routes.adminSecuriteAuditJournal,
+      ),
       _Cas(
         '1440x500 page defilante (regles)',
         Size(1440, 500),
         route: Routes.adminConfigurationRegles,
       ),
-      _Cas('1440x700 RTL', Size(1440, 700), sens: TextDirection.rtl),
+      _Cas(
+        '1440x500 page defilante (regles) RTL',
+        Size(1440, 500),
+        sens: TextDirection.rtl,
+        route: Routes.adminConfigurationRegles,
+      ),
       _Cas('320x640 texte x2 LTR', Size(320, 640), echelle: 2),
       _Cas(
         '320x640 texte x2 RTL',
@@ -351,5 +375,58 @@ void main() {
         expect(find.byKey(BandeauAlerteUrgente.cle), findsNothing);
       });
     }
+  });
+
+  group('barre mobile avec la cloche : aucun mot coupe dans la recherche', () {
+    setUpAll(chargerPolicesDuDepot);
+
+    Future<void> verifier(
+      WidgetTester tester,
+      _Cas cas, {
+      required bool champEnLigne,
+    }) async {
+      // Un nouvel arbre : les surcharges changent d'un montage a l'autre.
+      await tester.pumpWidget(const SizedBox.shrink());
+      await _monterCoque(tester, cas);
+      expect(tester.takeException(), isNull);
+      expect(
+        find.byType(TextField),
+        champEnLigne ? findsOneWidget : findsNothing,
+      );
+      expect(
+        find.bySemanticsLabel(
+          champEnLigne
+              ? t.nav.admin.rechercheIndication
+              : t.nav.admin.recherche,
+        ),
+        findsWidgets,
+        reason: 'la recherche reste atteignable',
+      );
+      verifierAucunMotCoupe(tester, find.byType(Scaffold).first);
+    }
+
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets('390x844 Interface guidee, ${sens.name} : le bouton ; '
+          'en standard, le champ reste', (WidgetTester tester) async {
+        await verifier(
+          tester,
+          _Cas('', const Size(390, 844), guidee: true, sens: sens),
+          champEnLigne: false,
+        );
+        await verifier(
+          tester,
+          _Cas('', const Size(390, 844), sens: sens),
+          champEnLigne: true,
+        );
+      });
+    }
+
+    testWidgets('320x640 standard : le bouton', (WidgetTester tester) async {
+      await verifier(
+        tester,
+        const _Cas('', Size(320, 640)),
+        champEnLigne: false,
+      );
+    });
   });
 }

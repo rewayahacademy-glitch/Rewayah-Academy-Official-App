@@ -446,9 +446,26 @@ Apparition        dès qu'une alerte urgente entre dans le flux, sans
                   d'écran) ; disparaît au traitement
 États             rien sans alerte urgente, ni quand la source ne rend rien
                   (indisponible, échec) : un signal, pas un état de page
+Position          ALERTE-1b, décidé par délégation le 05/10 : figé tout en
+                  haut de l'écran (sous la barre mobile, au-dessus de la
+                  page sur rail et barre latérale), hors de la zone qui
+                  défile ; il pousse la page, ne la recouvre jamais, et
+                  reste en vue jusqu'au traitement. Tant qu'il est posé,
+                  la tête de la page (titre, onglets) défile avec elle
+                  (règle de PageShell gardée : elle évite le débordement
+                  d'une tête haute, Interface guidée, sous le bandeau).
+                  Hauteur bornée à la moitié de la vue.
+Forme courte      vue de moins de 480 de haut à texte normal (hauteur /
+                  échelle du texte : 320x640 à texte x2, téléphone couché,
+                  400 %) : « Alerte urgente à traiter » / « N alertes
+                  urgentes à traiter », sans titre ni heure (lus sur
+                  /admin/alertes, à un tap) ; décidé par délégation le 05/10
 Cloche            point quand au moins une alerte urgente est ouverte ; lue
                   « Alertes, une urgente » / « Alertes, N urgentes » ;
-                  absente sans capacité (Q5)
+                  absente sans capacité (Q5). Sous 600, quand la cloche ne
+                  laisse plus au champ de recherche la place du mot le plus
+                  long de son indication, le champ cède la place au bouton
+                  Recherche (ALERTE-1b, leçon 8)
 ```
 
 ```

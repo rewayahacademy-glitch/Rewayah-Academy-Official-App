@@ -153,9 +153,15 @@ class AdminShell extends StatelessWidget {
     // Les actions de l'en-tete de page, a partir de 600 : Recherche, theme,
     // compte, dans cet ordre (maquette 02A).
     //
-    // ALERTE-1b : le bandeau n'est plus confie a `PageShell` (sa tete defile
-    // avec le corps des que le bandeau y est, et le bandeau sortait de la
-    // vue) ; il est pose ici, au-dessus de la page, par [_ZoneBandeau].
+    // ALERTE-1b : le bandeau n'est plus rendu par `PageShell` (il etait dans
+    // la tete, qui defile avec le corps, et sortait de la vue) ; il est pose
+    // ici, au-dessus de la page, par [_ZoneBandeau], et reste en vue.
+    // `PageShell` recoit a sa place un bandeau vide : sa regle « un bandeau
+    // pose, la tete defile » reste vraie, et c'est elle qui protege la page
+    // du debordement quand le bandeau fige lui prend de la hauteur (tete
+    // d'Interface guidee a 390x844 : 164 de debordement en tete fixe).
+    // Decide par delegation le 05/10 : le titre defile avec la page tant
+    // qu'une alerte urgente est ouverte ; l'alerte, elle, ne bouge pas.
     Widget contenu({required bool avecActions}) {
       final Widget page = ActionsEnteteCoquille(
         actions: <Widget>[
@@ -167,6 +173,7 @@ class AdminShell extends StatelessWidget {
           ],
         ],
         onRetour: onRetour,
+        bandeau: bandeau == null ? null : const SizedBox.shrink(),
         child: child,
       );
       return switch (bandeau) {
@@ -849,6 +856,27 @@ class _BarreMobileState extends State<_BarreMobile> {
     }
   }
 
+  /// La largeur sous laquelle le champ de recherche couperait un mot de son
+  /// indication : le mot le plus long, a l'echelle du texte, plus l'icone de
+  /// tete (une cible de 48) et la marge de fin du champ.
+  double _largeurChampUtile(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final TextStyle style = (theme.textTheme.bodyLarge ?? const TextStyle())
+        .merge(theme.inputDecorationTheme.hintStyle);
+    double mot = 0;
+    for (final String m in t.nav.admin.rechercheIndication.split(' ')) {
+      final TextPainter peintre = TextPainter(
+        text: TextSpan(text: m, style: style),
+        textDirection: Directionality.of(context),
+        textScaler: MediaQuery.textScalerOf(context),
+        maxLines: 1,
+      )..layout();
+      mot = math.max(mot, peintre.width);
+      peintre.dispose();
+    }
+    return mot + kMinInteractiveDimension + AppSpacing.lg + AppSpacing.xs;
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -885,22 +913,37 @@ class _BarreMobileState extends State<_BarreMobile> {
                 _BoutonRecherche(onRecherche: widget.onRecherche),
               ] else
                 Expanded(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      maxWidth: AppPage.largeurFormulaire,
-                    ),
-                    child: TextField(
-                      controller: _recherche,
-                      onSubmitted: _lancer,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        hintText: t.nav.admin.rechercheIndication,
-                        // AD-11 (1.4.4) : a 200 %, l'indication passe a la
-                        // ligne au lieu d'etre coupee.
-                        hintMaxLines: 2,
-                        prefixIcon: Icon(AppIcons.recherche.repos),
-                      ),
-                    ),
+                  // ALERTE-1b (lecon 8) : avec la cloche, le champ peut ne
+                  // plus avoir la place du mot le plus long de son
+                  // indication (« Rec / her… » en Interface guidee a 390,
+                  // a 320 en taille normale). Il cede alors la place au
+                  // bouton qui ouvre le meme champ en feuille.
+                  child: LayoutBuilder(
+                    builder: (BuildContext contexte, BoxConstraints c) =>
+                        c.maxWidth < _largeurChampUtile(contexte)
+                        ? Align(
+                            alignment: AlignmentDirectional.centerEnd,
+                            child: _BoutonRecherche(
+                              onRecherche: widget.onRecherche,
+                            ),
+                          )
+                        : ConstrainedBox(
+                            constraints: const BoxConstraints(
+                              maxWidth: AppPage.largeurFormulaire,
+                            ),
+                            child: TextField(
+                              controller: _recherche,
+                              onSubmitted: _lancer,
+                              decoration: InputDecoration(
+                                isDense: true,
+                                hintText: t.nav.admin.rechercheIndication,
+                                // AD-11 (1.4.4) : a 200 %, l'indication passe
+                                // a la ligne au lieu d'etre coupee.
+                                hintMaxLines: 2,
+                                prefixIcon: Icon(AppIcons.recherche.repos),
+                              ),
+                            ),
+                          ),
                   ),
                 ),
               Ecart.hSm,
