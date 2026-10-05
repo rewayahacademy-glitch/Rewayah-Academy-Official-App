@@ -14,6 +14,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/choice_card_group.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/marque_page.dart';
 import '../../core/widgets/page_shell.dart';
 
@@ -129,10 +130,14 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
             ),
             Ecart.vMd,
           ],
-          ActionPrincipale(
-            libelle: _piece == null ? t.kyc.choisirFichier : t.kyc.fichierChoisi,
+          // Choisir un fichier est une action secondaire : une ligne de lien,
+          // jamais un bouton plein (K-56, PHOTO-LIEN-1). "Envoyer" reste l'unique
+          // bouton plein.
+          LienFleche(
+            libelle: _piece == null
+                ? t.kyc.choisirFichier
+                : t.kyc.fichierChoisi,
             onPress: _type == null ? null : () => unawaited(_choisir()),
-            niveau: NiveauAction.secondaire,
           ),
           Ecart.vMd,
           ActionPrincipale(
@@ -154,6 +159,9 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
                 Text(t.kyc.titre, style: textes.headlineSmall),
                 Ecart.vMd,
                 Text(t.kyc.intro, style: textes.bodyMedium),
+                // KYC-PHOTO-1 : jamais publique, la direction seule.
+                Ecart.vSm,
+                Text(t.kyc.confidentialite, style: textes.bodyMedium),
                 Ecart.vXxl,
                 Text(t.kyc.typeQuestion, style: textes.titleMedium),
                 Ecart.vMd,

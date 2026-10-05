@@ -20,9 +20,9 @@ import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/bouton_outil.dart';
 import '../../core/widgets/local_feedback.dart';
 import 'barre_stylet.dart';
-import 'bouton_outil.dart';
 import 'feuille_choix.dart';
 
 /// Le Teaching Dock : sept outils, flottants, jamais devant le texte.

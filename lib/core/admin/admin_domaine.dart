@@ -3,7 +3,7 @@ import '../icons/app_icons.dart';
 import '../router/routes.dart';
 
 /// Un domaine de premier niveau du panneau admin (gel d'architecture,
-/// `docs/architecture/ADMIN_IA_AUDIT.md`).
+/// `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md`).
 ///
 /// Huit domaines fixes : la sidebar admin ne contient jamais rien de plus
 /// granulaire que cette liste, quel que soit le nombre d'ecrans qu'elle
@@ -29,12 +29,12 @@ enum AdminDomaine {
   pedagogie,
 
   /// Reserve. Hors MVP-0, module finance (ADR-003), voir
-  /// `docs/architecture/ADMIN_FINANCE_CONFIGURATION.md`.
+  /// `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md`.
   finance,
 
   /// Regles globales du systeme -- distinctes de Finance par nature, jamais
   /// par ecran d'origine (contrat metier du 19 septembre 2026,
-  /// `docs/architecture/ADMIN_FINANCE_CONFIGURATION.md`). Trois fonctions
+  /// `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md`). Trois fonctions
   /// livrees le 19 septembre 2026 : Regles, Fonctionnalites, Conservation
   /// des donnees. Academie, Classe en ligne, Notifications et Localisation
   /// restent a construire (schema absent ou RPC d'ecriture manquante).
@@ -133,12 +133,13 @@ List<AdminDomaine> domainesAdmin({required bool voitDirection}) =>
 /// **Une recherche de navigation, pas une recherche metier** : aucune donnee
 /// n'est interrogee, seulement des libelles fixes et leurs routes -- ce
 /// qu'une coquille a le droit de faire, rien de plus. Un domaine sans
-/// fonction (Finance, Configuration) n'y figure pas : il n'a pas de route a
-/// trouver.
+/// fonction (Finance) n'y figure pas : il n'a pas de route a trouver.
 List<({String libelle, String chemin})> ciblesRechercheAdmin({
   required bool voitDirection,
 }) => <({String libelle, String chemin})>[
-  for (final AdminDomaine domaine in domainesAdmin(voitDirection: voitDirection))
+  for (final AdminDomaine domaine in domainesAdmin(
+    voitDirection: voitDirection,
+  ))
     if (domaine.chemin case final String chemin)
       (libelle: domaine.libelle, chemin: chemin),
 ];
@@ -151,30 +152,80 @@ List<({String libelle, String chemin})> ciblesRechercheAdmin({
 /// ecrans.
 List<({String libelle, String chemin})> ongletsPedagogie() =>
     <({String libelle, String chemin})>[
-      (libelle: t.admin.diagnostics.titre, chemin: Routes.adminPedagogieDiagnostics),
-      (libelle: t.admin.progression.titre, chemin: Routes.adminPedagogieProgression),
-      (libelle: t.admin.evaluations.titre, chemin: Routes.adminPedagogieEvaluations),
-      (libelle: t.admin.programmes.titre, chemin: Routes.adminPedagogieProgrammes),
+      (
+        libelle: t.admin.diagnostics.titre,
+        chemin: Routes.adminPedagogieDiagnostics,
+      ),
+      (
+        libelle: t.admin.progression.titre,
+        chemin: Routes.adminPedagogieProgression,
+      ),
+      (
+        libelle: t.admin.evaluations.titre,
+        chemin: Routes.adminPedagogieEvaluations,
+      ),
+      (
+        libelle: t.admin.programmes.titre,
+        chemin: Routes.adminPedagogieProgrammes,
+      ),
       (libelle: t.admin.qualite.titre, chemin: Routes.adminPedagogieQualite),
     ];
 
 /// Les fonctions livrees du domaine Configuration, dans l'ordre du contrat
-/// metier (`docs/architecture/ADMIN_FINANCE_CONFIGURATION.md`) parmi les
+/// metier (`docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md`) parmi les
 /// sept qu'il liste. **Seules celles construites y figurent** : Academie,
 /// Classe en ligne, Notifications et Localisation n'ont ni route ni ecran --
 /// les y lister ferait echouer la navigation au clic, exactement ce que
 /// l'audit interdit pour un domaine sans fonction reelle. Cette liste
 /// grandit lot par lot (`CFG-02`, `CFG-03`), jamais d'un coup comme
 /// Pedagogie.
-List<({String libelle, String chemin})> ongletsConfiguration() =>
+///
+/// [politiqueRevueKyc] ajoute l'onglet de la politique de genre (AD-9) ; il
+/// ne vaut vrai que pour la capacite Super Admin lue par le port.
+List<({String libelle, String chemin})> ongletsConfiguration({
+  bool politiqueRevueKyc = false,
+}) => <({String libelle, String chemin})>[
+  (libelle: t.admin.regles.titre, chemin: Routes.adminConfigurationRegles),
+  (
+    libelle: t.admin.fonctionnalites.titre,
+    chemin: Routes.adminConfigurationFonctionnalites,
+  ),
+  (
+    libelle: t.admin.conservationDonnees.titre,
+    chemin: Routes.adminConfigurationConservationDonnees,
+  ),
+  if (politiqueRevueKyc)
+    (
+      libelle: t.admin.politiqueRevueKyc.titre,
+      chemin: Routes.adminConfigurationPolitiqueRevueKyc,
+    ),
+];
+
+/// Les deux fonctions pairs du domaine Personnes : Dossiers a valider
+/// (`ADM-02`) et Comptes (`ADM-08`), modification UX n°1. Consommee par
+/// `SousNavigationDomaine` dans l'en-tete des deux ecrans.
+List<({String libelle, String chemin})> ongletsPersonnes() =>
     <({String libelle, String chemin})>[
-      (libelle: t.admin.regles.titre, chemin: Routes.adminConfigurationRegles),
+      (libelle: t.dossiers.titre, chemin: Routes.adminPersonnesDossiers),
+      (libelle: t.admin.comptes.titre, chemin: Routes.adminPersonnesComptes),
+    ];
+
+/// Les deux fonctions pairs du domaine Securite et audit : le Journal et
+/// l'historique des observations (complement observation du mandat Tuteur
+/// V1, section 8 ; mapping des routes, ligne C4). Les acces des agents IA
+/// restent une fonction secondaire atteinte depuis l'Accueil.
+///
+/// Consommee par `SousNavigationDomaine` dans l'en-tete des deux ecrans : le
+/// Journal (lot E, `journal_page.dart`) et l'historique des observations (lot
+/// E, `observations_admin_page.dart`).
+List<({String libelle, String chemin})> ongletsSecurite() =>
+    <({String libelle, String chemin})>[
       (
-        libelle: t.admin.fonctionnalites.titre,
-        chemin: Routes.adminConfigurationFonctionnalites,
+        libelle: t.admin.journal.titre,
+        chemin: Routes.adminSecuriteAuditJournal,
       ),
       (
-        libelle: t.admin.conservationDonnees.titre,
-        chemin: Routes.adminConfigurationConservationDonnees,
+        libelle: t.admin.observations.titre,
+        chemin: Routes.adminSecuriteAuditObservations,
       ),
     ];

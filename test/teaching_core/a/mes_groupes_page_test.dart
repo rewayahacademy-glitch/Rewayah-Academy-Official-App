@@ -173,7 +173,10 @@ void main() {
         surcharges: surchargesDemonstration(maintenant: ancreDemonstration),
       );
 
-      expect(find.textContaining('Cours dans 3 h 28'), findsOneWidget);
+      expect(
+        find.textContaining('Cours dans 3\u00A0h\u00A028'),
+        findsOneWidget,
+      );
       expect(
         find.textContaining(LibellesGroupe.salleOuverteCourt),
         findsWidgets,
@@ -182,7 +185,7 @@ void main() {
         find.textContaining(LibellesGroupe.attenteAvantDebut),
         findsOneWidget,
       );
-      expect(find.textContaining('Reste 28 min'), findsOneWidget);
+      expect(find.textContaining('Reste 28\u00A0min'), findsOneWidget);
       expect(find.textContaining(LibellesGroupe.prolongee), findsOneWidget);
       expect(find.textContaining(LibellesGroupe.terminee), findsOneWidget);
       expect(find.text(LibellesGroupe.aucuneSeance), findsOneWidget);

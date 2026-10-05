@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,32 +12,72 @@ import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
+import '../../core/theme/app_gabarit.dart';
+import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
-import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
-import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../profil_enseignant/photo_publique.dart';
 
-/// `ENS-01` : la bienvenue, traversee une seule fois apres validation.
+/// Les quatre prerequis de `ENS-01` (doc 04 section 10.1), tels que le serveur
+/// les rendrait : `true` quand l'element est deja confirme.
+///
+/// **Rien n'est calcule ici (E6).** Avant BR-1, aucun contrat ne les rend :
+/// [prerequisEnseignantProvider] vaut `null` et la carte « A completer »
+/// n'est pas affichee. La demonstration les fournit.
+@immutable
+class PrerequisEnseignant {
+  /// Cree l'etat des prerequis.
+  const PrerequisEnseignant({
+    required this.photo,
+    required this.langues,
+    required this.fuseau,
+    required this.disponibilites,
+  });
+
+  /// La photo professionnelle est confirmee.
+  final bool photo;
+
+  /// Les langues d'enseignement sont verifiees.
+  final bool langues;
+
+  /// Le fuseau horaire est verifie.
+  final bool fuseau;
+
+  /// Les disponibilites sont declarees.
+  final bool disponibilites;
+
+  /// Le nombre d'elements confirmes.
+  int get faits => <bool>[
+    photo,
+    langues,
+    fuseau,
+    disponibilites,
+  ].where((bool f) => f).length;
+
+  /// Le nombre total d'elements.
+  static const int total = 4;
+}
+
+/// Les prerequis de l'enseignant, `null` tant qu'aucun contrat ne les rend.
+final Provider<PrerequisEnseignant?> prerequisEnseignantProvider =
+    Provider<PrerequisEnseignant?>((Ref ref) => null);
+
+/// `ENS-01` : les premiers pas, traverses apres validation du dossier.
 ///
 /// **Elle ne porte aucune grille de semaine.** La declaration des
 /// disponibilites vit dans `ENS-06` (`Routes.enseignantCreneaux`) et nulle part
-/// ailleurs : deux grilles jumelles finiraient par diverger. Cet ecran y
-/// conduit, il ne la reimplemente pas.
+/// ailleurs. Elle n'est pas une destination : aucune barre, et ses sorties sont
+/// dans la zone d'action collee en bas.
 ///
-/// Elle n'est pas une destination : elle n'apparait dans aucune barre, et rien
-/// n'y ramene. Ses deux sorties sont donc **sur l'ecran**, dans la zone d'action
-/// collee en bas, et non dans un chrome de navigation qui n'existe pas ici.
-///
-/// Ce qu'elle ne sait pas faire, et qu'il faut lire avant de s'y fier : **elle
-/// ne memorise pas qu'elle a ete vue.** Rien dans le perimetre de cet ecran ne
-/// peut le retenir -- `AppDatabase` est gelee a quatre tables et
-/// `PreferencesLocales` ne vaut que pour l'appareil courant. C'est le routeur
-/// qui decide quand y mener, et la demande est ecrite dans
-/// `docs/parallel-reports/CONTRACT_REQUEST_E.md`.
+/// La carte « A completer » (00_MAQUETTES planche 1, UX_REVIEW_04 ligne
+/// ENS-01) montre les quatre prerequis du doc 04 section 10.1 ; une ligne
+/// faite garde sa place avec une coche et « Fait ». Le bouton principal porte
+/// le premier manque (doc 04 section 10.2).
 class BienvenueEnseignantPage extends ConsumerWidget {
   /// Cree l'ecran de bienvenue de l'enseignant.
   const BienvenueEnseignantPage({super.key});
@@ -49,6 +91,9 @@ class BienvenueEnseignantPage extends ConsumerWidget {
       profilEnseignantProvider,
     );
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    final PrerequisEnseignant? prerequis = ref.watch(
+      prerequisEnseignantProvider,
+    );
 
     // Un compte qui n'est pas valide ne se fait pas feliciter. On ne devine pas
     // non plus : un statut absent ou illisible n'ouvre pas la bienvenue.
@@ -69,18 +114,24 @@ class BienvenueEnseignantPage extends ConsumerWidget {
       );
     }
 
+    final String prenom = profil.value?.prenom.trim() ?? '';
+
     return PageShell(
       titre: t.enseignant.bienvenue.titre,
-      // Les deux sorties survivent a l'echec de la lecture du profil : la
-      // bienvenue n'est pas un cul-de-sac, meme quand elle ne sait pas le
-      // prenom de la personne qu'elle accueille.
-      actions: _Sorties(horsLigne: horsLigne),
+      // Les sorties survivent a l'echec de la lecture du profil : la
+      // bienvenue n'est pas un cul-de-sac.
+      actions: _Sorties(
+        horsLigne: horsLigne,
+        prerequis: prerequis,
+        prenom: prenom,
+      ),
       child: switch (profil) {
         // Les getters, jamais le type d'execution : Riverpod 3 relance un
         // provider en echec tout seul et l'etat repasse par `AsyncLoading` en
         // conservant `hasError`.
         AsyncValue<ProfilEnseignant?>(hasValue: true) => _Corps(
-          prenom: profil.requireValue?.prenom,
+          prenom: prenom,
+          prerequis: prerequis,
         ),
         AsyncValue<ProfilEnseignant?>(hasError: true) => EmptyState(
           message: t.enseignant.bienvenue.erreur,
@@ -94,114 +145,215 @@ class BienvenueEnseignantPage extends ConsumerWidget {
   }
 }
 
-/// Le corps de la bienvenue : ou l'on en est, ce qui vient, ce qui engage.
-class _Corps extends StatelessWidget {
-  const _Corps({required this.prenom});
+/// Le premier prerequis manquant, dans l'ordre du doc 04 section 10.1.
+enum _Manque { photo, informations, disponibilites, aucun }
 
-  /// Le prenom, quand la lecture du profil l'a rendu. Nul, la bienvenue reste
-  /// une bienvenue : elle ne fabrique pas un nom.
-  final String? prenom;
+_Manque _premierManque(PrerequisEnseignant p) {
+  if (!p.photo) return _Manque.photo;
+  if (!p.langues || !p.fuseau) return _Manque.informations;
+  if (!p.disponibilites) return _Manque.disponibilites;
+  return _Manque.aucun;
+}
+
+void _allerVers(BuildContext context, _Manque manque, String prenom) {
+  switch (manque) {
+    case _Manque.photo:
+      unawaited(ouvrirPhotoPublique(context, prenom: prenom));
+    case _Manque.informations:
+      GoRouter.of(context).go(Routes.enseignantProfil);
+    case _Manque.disponibilites:
+      GoRouter.of(context).go(Routes.enseignantCreneaux);
+    case _Manque.aucun:
+      GoRouter.of(context).go(Routes.enseignantJournee);
+  }
+}
+
+/// Le corps : un en-tete d'identite, « A completer », les deux mentions.
+class _Corps extends StatelessWidget {
+  const _Corps({required this.prenom, required this.prerequis});
+
+  /// Le prenom, vide quand la lecture ne l'a pas rendu : la bienvenue ne
+  /// fabrique pas un nom.
+  final String prenom;
+
+  final PrerequisEnseignant? prerequis;
 
   @override
   Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final String nomme = prenom?.trim() ?? '';
+    final TextStyle doux = palette.inkMuted.applyTo(
+      textes.bodyMedium ?? const TextStyle(),
+    );
+    final PrerequisEnseignant? p = prerequis;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        AppCard(
-          dominante: true,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Text(
-                nomme.isEmpty
-                    ? t.enseignant.bienvenue.salutationSansNom
-                    : t.enseignant.bienvenue.salutation(prenom: nomme),
-                style: textes.headlineSmall,
-              ),
-              Ecart.vMd,
-              // La pastille garde sa largeur intrinseque : etiree, elle ne
-              // serait plus une pastille mais un aplat.
-              Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: StatusPill(
-                  libelle: t.enseignant.bienvenue.dossierValide,
-                  ton: TonEtat.succes,
-                ),
-              ),
-            ],
+        // En-tete d'identite sobre (K-42 point 5) : le nom, une ligne de
+        // contexte, une pastille discrete.
+        Text(
+          prenom.isEmpty
+              ? t.enseignant.bienvenue.salutationSansNom
+              : t.enseignant.bienvenue.salutation(prenom: prenom),
+          style: textes.headlineSmall,
+        ),
+        Ecart.vXs,
+        Text(t.enseignant.bienvenue.sousTitre, style: doux),
+        Ecart.vMd,
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: StatusPill(
+            libelle: t.enseignant.bienvenue.dossierValide,
+            ton: TonEtat.succes,
           ),
         ),
+        if (p != null && p.faits < PrerequisEnseignant.total) ...<Widget>[
+          Ecart.vSection,
+          _ACompleter(prerequis: p, prenom: prenom),
+        ],
         Ecart.vSection,
-        SectionHeader(titre: t.enseignant.bienvenue.suite),
-        _Pas(numero: 1, texte: t.enseignant.bienvenue.pas1),
-        _Pas(numero: 2, texte: t.enseignant.bienvenue.pas2),
-        _Pas(numero: 3, texte: t.enseignant.bienvenue.pas3),
-        Ecart.vSection,
-        SectionHeader(titre: t.enseignant.bienvenue.rappels),
-        // **Les deux dispositifs de l'ADR-011, nommes en clair.** Ils ont deja
-        // ete accuses a l'inscription, en une seule acceptation
-        // `recording_and_control_notice` : la base n'en connait qu'une, et deux
-        // accuses separement opposables demanderaient une valeur de
-        // `contract_kind` de plus, donc une migration (demande ecrite dans
-        // `CONTRACT_REQUEST_E.md`). En attendant, les deux points sont dits
-        // explicitement, et ici une troisieme fois -- ce qui est voulu par
-        // l'ADR-011, non un doublon a corriger.
-        AppCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Text(t.contrat.pointEnregistrement, style: textes.bodyMedium),
-              Ecart.vMd,
-              Text(t.contrat.pointControle, style: textes.bodyMedium),
-              Ecart.vMd,
-              Text(
-                t.enseignant.bienvenue.rappelDejaAccepte,
-                style: textes.bodySmall,
-              ),
-            ],
-          ),
+        // **Les deux dispositifs de l'ADR-011, nommes en clair**, une ligne
+        // chacun. Ils ont deja ete accuses a l'inscription.
+        GroupeReglages(
+          titre: t.enseignant.bienvenue.rappels,
+          lignes: <LigneRubrique>[
+            LigneRubrique(
+              icone: AppIcons.micro,
+              libelle: t.contrat.pointEnregistrement,
+            ),
+            LigneRubrique(
+              icone: AppIcons.controleQualite,
+              libelle: t.contrat.pointControle,
+            ),
+          ],
         ),
       ],
     );
   }
 }
 
-/// Un pas du parcours, numerote pour qu'on sache combien il en reste.
-class _Pas extends StatelessWidget {
-  const _Pas({required this.numero, required this.texte});
+/// La carte groupee « A completer » : compteur en texte, une ligne par
+/// prerequis manquant ; une tache deja confirmee n'est pas affichee
+/// (spec 04 §10.1).
+class _ACompleter extends StatelessWidget {
+  const _ACompleter({required this.prerequis, required this.prenom});
 
-  final int numero;
-  final String texte;
+  final PrerequisEnseignant prerequis;
+  final String prenom;
 
   @override
   Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final PrerequisEnseignant p = prerequis;
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.md),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text('$numero.', style: textes.titleMedium),
-          Ecart.hMd,
-          Expanded(child: Text(texte, style: textes.bodyLarge)),
-        ],
-      ),
+    LigneRubrique ligne(String libelle, AppIcon icone, _Manque manque) =>
+        LigneRubrique(
+          libelle: libelle,
+          icone: icone,
+          onPress: () => _allerVers(context, manque, prenom),
+        );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        // Le compteur est lu avec le titre (UX_REVIEW_04 ENS-01 a).
+        MergeSemantics(
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: Semantics(
+                  header: true,
+                  child: Text(
+                    t.enseignant.bienvenue.aCompleter,
+                    style: palette.inkStrong.applyTo(
+                      textes.titleMedium ?? const TextStyle(),
+                    ),
+                  ),
+                ),
+              ),
+              Text(
+                t.enseignant.bienvenue.compteur(
+                  fait: p.faits,
+                  total: PrerequisEnseignant.total,
+                ),
+                style: palette.inkMuted.applyTo(
+                  textes.bodyMedium ?? const TextStyle(),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Ecart.vSm,
+        GroupeReglages(
+          lignes: <LigneRubrique>[
+            if (!p.photo)
+              ligne(
+                t.enseignant.bienvenue.prerequisPhoto,
+                AppIcons.image,
+                _Manque.photo,
+              ),
+            if (!p.langues)
+              ligne(
+                t.enseignant.bienvenue.prerequisLangues,
+                AppIcons.cours,
+                _Manque.informations,
+              ),
+            if (!p.fuseau)
+              ligne(
+                t.enseignant.bienvenue.prerequisFuseau,
+                AppIcons.horloge,
+                _Manque.informations,
+              ),
+            if (!p.disponibilites)
+              ligne(
+                t.enseignant.bienvenue.declarer,
+                AppIcons.disponibilites,
+                _Manque.disponibilites,
+              ),
+          ],
+        ),
+      ],
     );
   }
 }
 
-/// Les deux sorties de la bienvenue, collees en bas.
+/// Les sorties, collees en bas : le premier manque, puis la journee.
 class _Sorties extends StatelessWidget {
-  const _Sorties({required this.horsLigne});
+  const _Sorties({
+    required this.horsLigne,
+    required this.prerequis,
+    required this.prenom,
+  });
 
   final bool horsLigne;
+  final PrerequisEnseignant? prerequis;
+  final String prenom;
 
   @override
   Widget build(BuildContext context) {
+    final PrerequisEnseignant? p = prerequis;
+    // Sans prerequis connus, l'action reste la declaration des disponibilites.
+    final _Manque manque = p == null
+        ? _Manque.disponibilites
+        : _premierManque(p);
+    final String libelle = switch (manque) {
+      _Manque.photo => t.enseignant.bienvenue.ctaPhoto,
+      _Manque.informations => t.enseignant.bienvenue.ctaInformations,
+      _Manque.disponibilites => t.enseignant.bienvenue.declarer,
+      _Manque.aucun => t.enseignant.bienvenue.ctaJournee,
+    };
+    // K-42 (style, regles 2 et 6) : sur bureau, le bouton a sa largeur
+    // naturelle, au bord de fin ; pleine largeur sur telephone.
+    final bool bureau = AppGabarit.de(context) == Gabarit.desktop;
+    Widget borne(Widget bouton) => bureau
+        ? Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: IntrinsicWidth(child: bouton),
+          )
+        : bouton;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -219,16 +371,22 @@ class _Sorties extends StatelessWidget {
           ),
           Ecart.vMd,
         ],
-        ActionPrincipale(
-          libelle: t.enseignant.bienvenue.declarer,
-          onPress: () => GoRouter.of(context).go(Routes.enseignantCreneaux),
+        borne(
+          ActionPrincipale(
+            libelle: libelle,
+            onPress: () => _allerVers(context, manque, prenom),
+          ),
         ),
-        Ecart.vMd,
-        ActionPrincipale(
-          libelle: t.enseignant.bienvenue.versJournee,
-          niveau: NiveauAction.secondaire,
-          onPress: () => GoRouter.of(context).go(Routes.enseignantJournee),
-        ),
+        if (manque != _Manque.aucun) ...<Widget>[
+          Ecart.vMd,
+          borne(
+            ActionPrincipale(
+              libelle: t.enseignant.bienvenue.versJournee,
+              niveau: NiveauAction.tertiaire,
+              onPress: () => GoRouter.of(context).go(Routes.enseignantJournee),
+            ),
+          ),
+        ],
       ],
     );
   }

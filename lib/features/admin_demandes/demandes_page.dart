@@ -129,7 +129,7 @@ class _DemandesPageEtat extends ConsumerState<DemandesPage> {
                   ),
                 ),
         AsyncValue<List<Demande>>(hasError: true) => EmptyState(
-          message: t.admin.demandes.erreur(message: t.reseau.horsLigne),
+          message: t.admin.demandes.erreurFile,
           icone: AppIcons.avertissement,
           libelleAction: t.commun.reessayer,
           onAction: () => ref.invalidate(demandesProvider),
@@ -331,7 +331,7 @@ class FeuilleRegles extends ConsumerWidget {
         Ecart.vMd,
         for (final RegleProfil regle in lignes)
           Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            padding: const EdgeInsets.only(bottom: AppSpacing.lg),
             child: _LigneRegle(
               regle: regle,
               profilId: profilId,

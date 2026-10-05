@@ -56,7 +56,7 @@ import 'package:rewayah_academy/features/suivi_foyer/suivi_foyer_page.dart';
 import '../support/harnais.dart';
 
 /// Lot A1 : preuve, pour **chaque ecran reel construit du catalogue**
-/// (`docs/design/08-catalogue-ecrans.md`), que le rendu arabe (RTL, Bible V2
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/08-catalogue-ecrans.md`), que le rendu arabe (RTL, Bible V2
 /// §14) et l'agrandissement a 200 % (§13.2) ne levent aucune exception.
 ///
 /// `test/widgets/catalogue_galerie_test.dart` fait deja cette preuve, mais
@@ -605,7 +605,7 @@ List<_EcranAVerifier> _ecrans() => <_EcranAVerifier>[
 /// levee -- ni du rendu lui-meme, ni d'un `RenderFlex` en debordement.
 ///
 /// Pas de `pumpAndSettle` : `ELV-02` porte une pulsation en boucle
-/// (`docs/architecture/etape-4-journal.md`), et `disableAnimations` ne
+/// (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-4-journal.md`), et `disableAnimations` ne
 /// supprime pas forcement le minuteur qui l'entretient. Deux `pump` bornes
 /// suffisent a faire apparaitre un debordement de mise en page.
 Future<void> _verifier(

@@ -1,8 +1,26 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_color_pair.dart';
-import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
+import '../theme/app_spacing.dart';
+import '../theme/app_typography.dart';
+
+/// Les diametres d'avatar, pris dans l'echelle des jetons (AVATAR-1).
+///
+/// **Un avatar est un petit cercle.** Trois tailles suffisent : [petit] pour
+/// une pile ou une ligne dense, [moyen] pour une ligne de liste ou une tuile,
+/// [grand] pour l'en-tete d'une fiche. Au-dela, ce n'est plus un avatar mais un
+/// portrait, et il se pose dans un cadre qui le dit (editeur de photo).
+abstract final class AppAvatar {
+  /// 32 : pile d'avatars, ligne dense.
+  static const double petit = AppSpacing.xxxl;
+
+  /// 48 : ligne de liste, tuile, selecteur sur telephone. Taille par defaut.
+  static const double moyen = AppTouchTarget.standard;
+
+  /// 64 : en-tete de fiche, selecteur sur grand ecran.
+  static const double grand = AppSpacing.respiration;
+}
 
 /// Photo de profil d'un eleve, avec repli sur les initiales.
 ///
@@ -24,7 +42,7 @@ import '../theme/app_palette.dart';
 /// faisaient quatre aplats pleins, la ou la regle n'en autorise qu'un par
 /// ecran. Il prend desormais la teinte du domaine foyer, `washFamily`, et un
 /// contour `borderStrong` qui le detache de la carte
-/// (`docs/design/07-catalogue-composants.md` section 1).
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 1).
 class AvatarTile extends StatelessWidget {
   /// Cree une tuile d'avatar.
   const AvatarTile({
@@ -40,14 +58,15 @@ class AvatarTile extends StatelessWidget {
   /// URL signee de courte duree. `null` tant qu'aucune photo n'est ajoutee.
   final String? urlSignee;
 
-  /// Diametre de la tuile. Par defaut, deux fois la cible tactile du mode.
+  /// Diametre de la tuile, pris dans [AppAvatar]. Par defaut [AppAvatar.moyen] :
+  /// un avatar est un petit cercle, jamais deux fois la cible tactile du mode
+  /// (une tuile de 144 debordait de son cadre dans la salle).
   final double? diametre;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final AppMetriques metriques = AppMetriques.of(context);
-    final double taille = diametre ?? metriques.cibleTactile * 2;
+    final double taille = diametre ?? AppAvatar.moyen;
     final AppColorPair paire = palette.washFamily;
 
     final Widget repli = _Initiales(
@@ -120,12 +139,24 @@ class _Initiales extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle base =
-        Theme.of(context).textTheme.headlineMedium ?? const TextStyle();
+    // Le style chiffre, a la taille de la tuile : une initiale n'est pas un
+    // titre, et retailler un style DM Sans par `copyWith(fontSize:)` laisserait
+    // son axe `opsz` cale sur l'ancienne taille.
+    //
+    // Le disque a un diametre fixe : a 200 % de texte, deux initiales
+    // debordaient et le cercle les coupait (« MA » lu « M », capture 0b du
+    // 24/09/2026). Elles tiennent desormais dans le carre inscrit du disque,
+    // reduites seulement si elles n'y tiennent pas.
     return Center(
-      child: Text(
-        _lettres,
-        style: paire.applyTo(base).copyWith(fontSize: taille * 0.36),
+      child: SizedBox.square(
+        dimension: taille * 0.7,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            _lettres,
+            style: paire.applyTo(AppTypography.chiffre(taille: taille * 0.36)),
+          ),
+        ),
       ),
     );
   }

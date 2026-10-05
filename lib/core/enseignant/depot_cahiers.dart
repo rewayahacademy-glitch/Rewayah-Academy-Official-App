@@ -24,12 +24,12 @@ class DepotRapportsDrift implements DepotRapports {
   @override
   Future<List<RapportEnAttente>> enAttente() async {
     final List<RapportsEnAttenteData> lignes =
-        await (_base.select(_base.rapportsEnAttente)..orderBy(<
-          OrderClauseGenerator<$RapportsEnAttenteTable>
-        >[
-          ($RapportsEnAttenteTable r) =>
-              OrderingTerm(expression: r.redigeA),
-        ])).get();
+        await (_base.select(_base.rapportsEnAttente)
+              ..orderBy(<OrderClauseGenerator<$RapportsEnAttenteTable>>[
+                ($RapportsEnAttenteTable r) =>
+                    OrderingTerm(expression: r.redigeA),
+              ]))
+            .get();
 
     return lignes
         .map(
@@ -66,19 +66,23 @@ class DepotRapportsDrift implements DepotRapports {
   @override
   Future<void> retirer(String cleIdempotence) async {
     await (_base.delete(_base.rapportsEnAttente)..where(
-      ($RapportsEnAttenteTable r) =>
-          r.cleIdempotence.equals(cleIdempotence),
-    )).go();
+          ($RapportsEnAttenteTable r) =>
+              r.cleIdempotence.equals(cleIdempotence),
+        ))
+        .go();
   }
 
   @override
   Future<void> majApresEchec(RapportEnAttente rapport) async {
     await (_base.update(_base.rapportsEnAttente)..where(
-      ($RapportsEnAttenteTable r) =>
-          r.cleIdempotence.equals(rapport.cleIdempotence),
-    )).write(
-      RapportsEnAttenteCompanion(tentatives: Value<int>(rapport.tentatives)),
-    );
+          ($RapportsEnAttenteTable r) =>
+              r.cleIdempotence.equals(rapport.cleIdempotence),
+        ))
+        .write(
+          RapportsEnAttenteCompanion(
+            tentatives: Value<int>(rapport.tentatives),
+          ),
+        );
   }
 }
 
@@ -151,6 +155,22 @@ class SoumissionCahier {
 final Provider<DepotRapports> depotRapportsProvider = Provider<DepotRapports>(
   (Ref ref) => DepotRapportsDrift(ref.watch(baseLocaleProvider)),
 );
+
+/// Les seances dont le cahier valide attend encore le serveur (doc 04 §20.8 :
+/// « En attente d'envoi », visible dans ENS-02 tant que le serveur n'a pas
+/// confirme). Une lecture locale en echec vaut « aucune » : jamais bloquant
+/// (K-45).
+final FutureProvider<Set<String>> cahiersEnFileProvider =
+    FutureProvider<Set<String>>((Ref ref) async {
+      try {
+        final List<RapportEnAttente> file = await ref
+            .watch(depotRapportsProvider)
+            .enAttente();
+        return <String>{for (final RapportEnAttente r in file) r.sessionId};
+      } on Object {
+        return const <String>{};
+      }
+    });
 
 /// La file de synchronisation des cahiers.
 final Provider<FileRapports> fileRapportsProvider = Provider<FileRapports>(

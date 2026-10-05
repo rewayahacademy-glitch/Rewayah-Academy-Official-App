@@ -263,15 +263,14 @@ void main() {
         Routes.eleve,
         Routes.tuteurAccueil,
       ]) {
-        expect(
-          deciderRedirection(
-            session: const SessionState.deconnecte(),
-            cheminDemande: route,
-            maintenant: maintenant,
-          ),
-          Routes.connexion,
-          reason: route,
+        // Vers la connexion humaine, la destination gardee en `retour`
+        // (chemin interne valide, jamais un jeton).
+        final String? decision = deciderRedirection(
+          session: const SessionState.deconnecte(),
+          cheminDemande: route,
+          maintenant: maintenant,
         );
+        expect(Uri.parse(decision!).path, Routes.connexion, reason: route);
       }
     });
 

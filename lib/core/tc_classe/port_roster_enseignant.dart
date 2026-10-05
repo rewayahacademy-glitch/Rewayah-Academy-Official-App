@@ -1,4 +1,4 @@
-﻿import 'teacher_student_projection.dart';
+import 'teacher_student_projection.dart';
 
 /// Pourquoi un roster n'a pas pu etre lu.
 ///
@@ -15,7 +15,7 @@ enum MotifEchecRoster {
   /// C'est le cas du roster **par groupe** : `groupe_membres` ne porte que
   /// `student_id`, et la jointure vers `profiles` est fermee a l'enseignant par
   /// la RLS. La variante enseignant est demandee en section 1 de
-  /// `docs/teaching-core/TC_CONTRACT_REQUEST_E.md`.
+  /// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_E.md`.
   projectionAbsente,
 }
 
@@ -45,7 +45,7 @@ class EchecRoster implements Exception {
 /// `student_nom` et reste reserve a l'administration ; l'ouvrir a l'enseignant
 /// serait un contournement de l'ADR-008. La variante enseignant se construit sur
 /// le modele de `teacher_roster_v`, en base, et elle est demandee dans
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_E.md`.
+/// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_E.md`.
 abstract class PortRosterEnseignant {
   /// Le roster d'une seance : qui est inscrit, et dans quel etat.
   ///

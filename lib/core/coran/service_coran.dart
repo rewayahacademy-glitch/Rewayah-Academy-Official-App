@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../observabilite/journal_dev.dart';
+
 /// Le code de l'edition de reference, pose par la migration `0007`.
 ///
 /// **Un code, jamais un uuid en dur.** L'identifiant de la ligne `mushaf` est
@@ -158,9 +160,8 @@ class PositionLecture {
         sourate: json['sourate'] as int? ?? 1,
         verset: json['verset'] as int? ?? 1,
         zoom: (json['zoom_level'] as num?)?.toDouble() ?? 1,
-        misAJourLe: DateTime.tryParse(
-          json['updated_at'] as String? ?? '',
-        )?.toLocal(),
+        misAJourLe: DateTime.tryParse(json['updated_at'] as String? ?? '')
+            ?.toLocal(),
       );
 
   /// La page ou l'eleve en etait.
@@ -295,7 +296,7 @@ class ServiceCoranSupabase implements ServiceCoran {
       _editionEnCache = ligne?['id'] as String?;
       return _editionEnCache;
     } catch (erreur) {
-      debugPrint('edition du mushaf indisponible : $erreur');
+      journalDev('edition du mushaf indisponible : $erreur');
       return null;
     }
   }
@@ -309,7 +310,7 @@ class ServiceCoranSupabase implements ServiceCoran {
           .order('numero');
       return lignes.map(Sourate.depuisJson).toList();
     } catch (erreur) {
-      debugPrint('sourates indisponibles : $erreur');
+      journalDev('sourates indisponibles : $erreur');
       return null;
     }
   }
@@ -340,7 +341,7 @@ class ServiceCoranSupabase implements ServiceCoran {
         juzNumero: pages.isEmpty ? null : pages.first['juz_numero'] as int?,
       );
     } catch (erreur) {
-      debugPrint('page $numero indisponible : $erreur');
+      journalDev('page $numero indisponible : $erreur');
       return null;
     }
   }
@@ -364,7 +365,7 @@ class ServiceCoranSupabase implements ServiceCoran {
           .maybeSingle();
       return ligne?['page_numero'] as int?;
     } catch (erreur) {
-      debugPrint('page de $sourate:$verset indisponible : $erreur');
+      journalDev('page de $sourate:$verset indisponible : $erreur');
       return null;
     }
   }
@@ -384,7 +385,7 @@ class ServiceCoranSupabase implements ServiceCoran {
           .maybeSingle();
       return ligne == null ? null : PositionLecture.depuisJson(ligne);
     } catch (erreur) {
-      debugPrint('position de lecture indisponible : $erreur');
+      journalDev('position de lecture indisponible : $erreur');
       return null;
     }
   }
@@ -415,7 +416,7 @@ class ServiceCoranSupabase implements ServiceCoran {
     } catch (erreur) {
       // Perdre un marque-page n'interrompt pas une lecture : l'echec se tait a
       // l'ecran et se dit seulement au journal de developpement.
-      debugPrint('position de lecture non enregistree : $erreur');
+      journalDev('position de lecture non enregistree : $erreur');
       return false;
     }
   }
@@ -436,7 +437,7 @@ class ServiceCoranSupabase implements ServiceCoran {
         verset: ligne['verset_depart'] as int,
       );
     } catch (erreur) {
-      debugPrint('debut du juz $juz indisponible : $erreur');
+      journalDev('debut du juz $juz indisponible : $erreur');
       return null;
     }
   }
@@ -461,7 +462,7 @@ class ServiceCoranSupabase implements ServiceCoran {
           .limit(limite);
       return lignes.map(VersetCoran.depuisJson).toList();
     } catch (erreur) {
-      debugPrint('recherche "$requete" indisponible : $erreur');
+      journalDev('recherche "$requete" indisponible : $erreur');
       return null;
     }
   }

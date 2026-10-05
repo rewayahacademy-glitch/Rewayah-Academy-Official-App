@@ -1,6 +1,7 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/tc_classe/port_rappel_discret.dart';
@@ -10,6 +11,8 @@ import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
+import 'package:rewayah_academy/features/demo/seance_demo.dart';
+import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/tc_classe_live/classe_live_page.dart';
 import 'package:rewayah_academy/features/tc_classe_live/roster_classe.dart';
 import 'package:rewayah_academy/features/tc_classe_live/scene_classe.dart';
@@ -80,6 +83,7 @@ void main() {
     FauxPreVolClasse preVol,
     FauxRappelDiscret rappel,
     FauxAnnonceObservation annonces,
+    FauxAnnonceObservationEnfant annonceEnfant,
     List<Override> surcharges,
     List<String> journal,
   })
@@ -89,11 +93,14 @@ void main() {
     List<TeacherStudentProjection>? fiches,
     EchecRappel? echecRappel,
     List<AnnonceObservation> annonces = const <AnnonceObservation>[],
+    bool monTuteurObserve = false,
   }) {
     final List<String> journal = <String>[];
     final FauxAnnonceObservation annonceur = FauxAnnonceObservation(
       lignes: annonces,
     );
+    final FauxAnnonceObservationEnfant annonceurEnfant =
+        FauxAnnonceObservationEnfant(observe: monTuteurObserve);
     final FauxMoteurClasse moteur = FauxMoteurClasse(journal: journal);
     final FauxServiceVideoClasse video = FauxServiceVideoClasse(
       acces0: accesDe(role),
@@ -107,6 +114,7 @@ void main() {
       preVol: preVol,
       rappel: rappel,
       annonces: annonceur,
+      annonceEnfant: annonceurEnfant,
       journal: journal,
       surcharges: surchargesClasse(
         moteur: moteur,
@@ -118,8 +126,20 @@ void main() {
         ),
         rappel: rappel,
         annonces: annonceur,
+        annonceEnfant: annonceurEnfant,
       ),
     );
+  }
+
+  /// Le compteur du bouton Eleves (salle de seance unique, I-6).
+  Finder compteur(int connectes, int inscrits) => find.textContaining(
+    t.salle.seance.compteurEleves(connectes: connectes, inscrits: inscrits),
+  );
+
+  /// Ouvre le panneau Eleves de la salle de seance.
+  Future<void> ouvrirEleves(WidgetTester tester) async {
+    await tester.tap(find.textContaining(t.salle.seance.eleves).first);
+    await tester.pumpAndSettle();
   }
 
   group('layout', () {
@@ -134,13 +154,16 @@ void main() {
         ecran: LargeurEcran.desktop,
       );
 
+      // La salle de seance unique, celle de `/salle` : aucune seconde salle.
+      expect(find.byType(SalleSeance), findsOneWidget);
+      expect(find.byType(PanneauRoster), findsNothing);
       expect(find.text('support presente'), findsOneWidget);
-      expect(find.byType(PanneauRoster), findsOneWidget);
-      // Le compteur compact ferait doublon avec la colonne.
-      expect(find.byType(BoutonRoster), findsNothing);
+      // Le compteur derive du roster (I-6) : deux connectes sur trois.
+      expect(compteur(2, 3), findsOneWidget);
+      // EN-9 : sur bureau, le panneau Eleves est ouvert d'office a droite
+      // du support, sans passer par le bouton.
       expect(find.text('Amina'), findsOneWidget);
-      // Le plafond vient de la donnee, jamais d'une constante.
-      expect(find.text('3 / 5 places'), findsOneWidget);
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('telephone, support actif : roster en feuille', (
@@ -155,13 +178,11 @@ void main() {
       );
 
       expect(find.text('support presente'), findsOneWidget);
-      // Replie derriere un compteur compact : « 2/3 ».
-      expect(find.byType(BoutonRoster), findsOneWidget);
-      expect(find.text('2/3'), findsOneWidget);
+      // Replie derriere le bouton Eleves : « Eleves 2/3 ».
+      expect(compteur(2, 3), findsOneWidget);
       expect(find.text('Amina'), findsNothing);
 
-      await tester.tap(find.byType(BoutonRoster));
-      await tester.pumpAndSettle();
+      await ouvrirEleves(tester);
       expect(find.text('Amina'), findsOneWidget);
     });
 
@@ -176,7 +197,9 @@ void main() {
         ecran: LargeurEcran.tablette,
       );
 
-      expect(find.byType(SceneClasse), findsOneWidget);
+      // Rien de partage : la salle le dit, sans support invente.
+      expect(find.byType(SceneClasse), findsNothing);
+      expect(find.textContaining('Youssouf'), findsWidgets);
       expect(find.text('support presente'), findsNothing);
     });
 
@@ -202,7 +225,7 @@ void main() {
       expect(find.byType(EmptyState), findsWidgets);
     });
 
-    testWidgets('la photo enseignant manquante est dite, jamais masquee', (
+    testWidgets('le titre de l enseignant est Sayyid ou Sayyida', (
       WidgetTester tester,
     ) async {
       // Decision D-01 : pas d'avatar generique silencieux.
@@ -222,12 +245,10 @@ void main() {
         ecran: LargeurEcran.tablette,
       );
 
-      expect(
-        find.text(t.tc.classe.entete.photoManquante),
-        findsOneWidget,
-      );
-      // Sayyid / Sayyida, jamais Ustaz (decision D-02).
-      expect(find.text('Sayyida Youssouf'), findsOneWidget);
+      // Sayyid / Sayyida, jamais Ustaz (decision D-02) : le compte en haut
+      // a droite est celui de la personne devant l'ecran (I-9).
+      expect(find.textContaining('Sayyida Youssouf'), findsWidgets);
+      expect(find.textContaining('Ustaz'), findsNothing);
     });
   });
 
@@ -244,13 +265,13 @@ void main() {
         ecran: LargeurEcran.desktop,
       );
 
-      expect(find.text(t.tc.classe.roster.indisponible), findsOneWidget);
+      // J3 : un roster illisible ne devient ni un zero ni un « vide ».
+      expect(compteur(0, 0), findsNothing);
       expect(find.text(t.tc.classe.roster.vide), findsNothing);
+      expect(find.textContaining('bsent'), findsNothing);
     });
 
-    testWidgets('un roster vide le dit autrement', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('un roster vide le dit autrement', (WidgetTester tester) async {
       final banc0 = banc(presence: <PresenceParticipant>[]);
       await monterClasse(
         tester,
@@ -259,7 +280,8 @@ void main() {
         ecran: LargeurEcran.desktop,
       );
 
-      expect(find.text(t.tc.classe.roster.vide), findsOneWidget);
+      // Lu, et vide : c'est un vrai zero.
+      expect(compteur(0, 0), findsOneWidget);
     });
 
     testWidgets('l eleve ne voit pas la liste de ses camarades', (
@@ -277,6 +299,95 @@ void main() {
 
       expect(find.byType(PanneauRoster), findsNothing);
       expect(find.byType(BoutonRoster), findsNothing);
+      expect(find.textContaining(t.salle.seance.eleves), findsNothing);
+      expect(find.text('Amina'), findsNothing);
+    });
+
+    // Matrice des roles : rien de reserve a l'enseignant (Eleves, Supports,
+    // outils, Reseau, pagination active) chez l'eleve standard ni la guidee,
+    // meme quand le contexte fournit le dock, la Bibliotheque et un support
+    // pagine.
+    for (final (String nom, InterfaceMode mode) in <(String, InterfaceMode)>[
+      ('eleve standard', InterfaceMode.standard),
+      ('interface guidee', InterfaceMode.enfant),
+    ]) {
+      testWidgets('$nom : rien de reserve a l enseignant sur /tc/classe', (
+        WidgetTester tester,
+      ) async {
+        final SemanticsHandle semantique = tester.ensureSemantics();
+        final banc0 = banc(role: 'student', presence: troisEleves());
+        await monterClasse(
+          tester,
+          contexte: ContexteClasseLive(
+            sessionId: seance,
+            groupeId: 'g1',
+            libelleGroupe: 'Groupe Al-Fatiha',
+            enseignant: const EnseignantDeClasse(
+              nomAffichage: 'Youssouf',
+              titre: TitreEnseignant.sayyid,
+            ),
+            supportActifId: 'r1',
+            descriptionSupport: DonneesSeanceDemo.support,
+            support: (BuildContext _) => const Text('support presente'),
+            bibliotheque: (BuildContext _) => const Text('bibliotheque'),
+            dock: (BuildContext _) => const Text('dock'),
+            onNoter: () {},
+            onSignaler: () {},
+          ),
+          surcharges: banc0.surcharges,
+          ecran: LargeurEcran.desktop,
+          mode: mode,
+        );
+
+        expect(find.byType(SalleSeance), findsOneWidget);
+        for (final String reserve in <String>[
+          t.salle.seance.eleves,
+          t.salle.seance.supports,
+          t.salle.seance.reseau,
+          t.salle.seance.outils.titre,
+          t.salle.seance.outils.pointeur,
+          t.salle.seance.outils.marquer,
+          t.salle.seance.outils.masquer,
+          t.salle.seance.outils.annoter,
+        ]) {
+          expect(find.text(reserve), findsNothing, reason: reserve);
+          expect(find.bySemanticsLabel(reserve), findsNothing, reason: reserve);
+        }
+        expect(
+          find.bySemanticsLabel(t.salle.seance.pagePrecedente),
+          findsNothing,
+        );
+        expect(
+          find.bySemanticsLabel(t.salle.seance.pageSuivante),
+          findsNothing,
+        );
+        expect(find.text('dock'), findsNothing);
+        expect(find.text('bibliotheque'), findsNothing);
+        semantique.dispose();
+      });
+    }
+
+    testWidgets('enseignant, route ouverte directement : chevron et coin', (
+      WidgetTester tester,
+    ) async {
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      final banc0 = banc(role: 'teacher', presence: troisEleves());
+      await monterClasse(
+        tester,
+        contexte: contexte(support: 'r1'),
+        surcharges: banc0.surcharges,
+        ecran: LargeurEcran.desktop,
+      );
+
+      // Images CLV-06 et CLV-07 : chevron retour, cloche, reglages et menu
+      // du compte, meme sans page a depiler (route ouverte par `go`).
+      expect(find.bySemanticsLabel(t.salle.seance.retour), findsOneWidget);
+      expect(find.bySemanticsLabel(t.salle.seance.reglages), findsOneWidget);
+      expect(
+        find.bySemanticsLabel(RegExp(t.salle.seance.notifications)),
+        findsWidgets,
+      );
+      semantique.dispose();
     });
 
     testWidgets('quinze eleves tiennent dans la colonne', (
@@ -301,6 +412,7 @@ void main() {
         ecran: LargeurEcran.desktop,
       );
 
+      await ouvrirEleves(tester);
       expect(tester.takeException(), isNull);
       expect(find.text('Eleve00'), findsOneWidget);
     });
@@ -344,7 +456,7 @@ void main() {
         ecran: LargeurEcran.desktop,
       );
 
-      await tester.tap(find.text(t.tc.classe.support.bibliotheque));
+      await tester.tap(find.textContaining(t.salle.seance.supports).first);
       await tester.pumpAndSettle();
 
       expect(find.text('catalogue'), findsOneWidget);
@@ -398,10 +510,10 @@ void main() {
       );
       banc0.journal.clear();
 
-      await tester.tap(find.text(t.tc.classe.commandes.quitter).last);
+      await tester.tap(find.text(t.salle.quitter).last);
       await tester.pumpAndSettle();
       // La confirmation, une seule fois.
-      await tester.tap(find.text(t.tc.classe.commandes.quitter).last);
+      await tester.tap(find.text(t.salle.seance.quitterCahier).last);
       await tester.pumpAndSettle();
 
       expect(banc0.journal, <String>['annonce', 'deconnexion']);
@@ -427,7 +539,7 @@ void main() {
       await tester.pump();
       await tester.pump();
 
-      expect(find.text(t.tc.classe.lien.reconnexion), findsOneWidget);
+      expect(find.text(t.salle.seance.reconnexion), findsOneWidget);
       // La seance continue : le support reste a l'ecran.
       expect(find.text('support presente'), findsOneWidget);
       expect(banc0.moteur.departs, 0);
@@ -442,6 +554,7 @@ void main() {
         ecran: LargeurEcran.tablette,
       );
 
+      expect(find.text(t.salle.seance.reconnexion), findsNothing);
       expect(find.text(t.tc.classe.lien.reconnexion), findsNothing);
       expect(find.text(t.tc.classe.lien.instable), findsNothing);
     });
@@ -465,11 +578,15 @@ void main() {
         ecran: LargeurEcran.desktop,
       );
 
-      await tester.tap(find.text('Amina'));
-      await tester.pumpAndSettle();
-      expect(find.text(t.tc.classe.action.rappel), findsOneWidget);
+      await ouvrirEleves(tester);
+      // La fiche de la premiere connectee est deja depliee (CLV-07).
+      if (find.text(t.salle.seance.rappeler).evaluate().isEmpty) {
+        await tester.tap(find.text('Amina'));
+        await tester.pumpAndSettle();
+      }
+      expect(find.text(t.salle.seance.rappeler), findsOneWidget);
 
-      await tester.tap(find.text(t.tc.classe.action.rappel));
+      await tester.tap(find.text(t.salle.seance.rappeler));
       await tester.pump();
       await tester.pump();
 
@@ -492,9 +609,13 @@ void main() {
         ecran: LargeurEcran.desktop,
       );
 
-      await tester.tap(find.text('Amina'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text(t.tc.classe.action.rappel));
+      await ouvrirEleves(tester);
+      // La fiche de la premiere connectee est deja depliee (CLV-07).
+      if (find.text(t.salle.seance.rappeler).evaluate().isEmpty) {
+        await tester.tap(find.text('Amina'));
+        await tester.pumpAndSettle();
+      }
+      await tester.tap(find.text(t.salle.seance.rappeler));
       await tester.pump();
       await tester.pump();
 
@@ -520,9 +641,14 @@ void main() {
         ecran: LargeurEcran.desktop,
       );
 
-      await tester.tap(find.text('Amina'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text(t.tc.classe.action.reciter));
+      await ouvrirEleves(tester);
+      // La fiche de la premiere connectee est deja depliee (CLV-07).
+      if (find.text(t.salle.seance.rappeler).evaluate().isEmpty) {
+        await tester.tap(find.text('Amina'));
+        await tester.pumpAndSettle();
+      }
+      // EN-9 : l'action s'intitule « Faire réciter » dans la salle.
+      await tester.tap(find.text(t.salle.seance.faireReciter));
       await tester.pumpAndSettle();
 
       expect(find.text('support presente'), findsOneWidget);
@@ -536,6 +662,7 @@ void main() {
         libelle: 'Tuteur d Amina observe',
         tempsRestant: Duration(seconds: 90),
         enfantConcerneId: 'RA-Amina',
+        prenomEnfant: 'Amina',
       ),
     ];
 
@@ -548,17 +675,15 @@ void main() {
         contexte: contexte(support: 'r1'),
         surcharges: banc0.surcharges,
         ecran: LargeurEcran.tablette,
+        mouvementReduit: true,
       );
 
       // Le flux est demande pour CETTE seance, et l'en-tete porte ce qu'il
       // rend : c'est le cablage qui manquait, pas le composant.
       expect(banc0.annonces.demandes, <String>[seance]);
-      expect(find.byType(IndicateurObservation), findsOneWidget);
-      expect(find.text('Tuteur d Amina observe'), findsOneWidget);
-      expect(
-        find.text(t.tc.observation.annonce.restant(secondes: 90)),
-        findsOneWidget,
-      );
+      // La notice de visite de la salle unique (I-2, EN-9) : « Un parent
+      // observe cette séance », a la place du texte de la mention.
+      expect(find.text(t.salle.seance.unParentObserve), findsOneWidget);
     });
 
     testWidgets('l eleve ne lit pas les annonces, et ne les demande meme pas', (
@@ -575,6 +700,7 @@ void main() {
         contexte: contexte(support: 'r1'),
         surcharges: banc0.surcharges,
         ecran: LargeurEcran.tablette,
+        mouvementReduit: true,
       );
 
       // Un eleve qui apprendrait qu'un tuteur observe saurait aussi DE QUI :
@@ -582,6 +708,70 @@ void main() {
       expect(banc0.annonces.demandes, isEmpty);
       expect(find.byType(IndicateurObservation), findsNothing);
       expect(find.text('Tuteur d Amina observe'), findsNothing);
+      expect(find.textContaining('Tuteur de'), findsNothing);
     });
+
+    testWidgets('l enfant observe lit la mention discrete, et rien de plus', (
+      WidgetTester tester,
+    ) async {
+      final banc0 = banc(
+        role: 'student',
+        presence: troisEleves(),
+        monTuteurObserve: true,
+      );
+      await monterClasse(
+        tester,
+        contexte: contexte(support: 'r1'),
+        surcharges: banc0.surcharges,
+        ecran: LargeurEcran.tablette,
+        mouvementReduit: true,
+      );
+
+      // La lecture est demandee pour CETTE seance, et elle s'allume.
+      expect(banc0.annonceEnfant.demandes, <String>[seance]);
+      expect(find.text(t.salle.seance.votreParentObserve), findsOneWidget);
+      // Et rien de ce que lit l'enseignant : ni prenom d'un autre enfant, ni
+      // compteur d'observateurs. C'est la specification 11.3.
+      expect(find.byType(IndicateurObservation), findsNothing);
+      expect(find.textContaining('Tuteur de'), findsNothing);
+    });
+
+    testWidgets('l enfant NON observe ne lit rien, et le serveur le dit', (
+      WidgetTester tester,
+    ) async {
+      final banc0 = banc(role: 'student', presence: troisEleves());
+      await monterClasse(
+        tester,
+        contexte: contexte(support: 'r1'),
+        surcharges: banc0.surcharges,
+        ecran: LargeurEcran.tablette,
+        mouvementReduit: true,
+      );
+
+      // Le flux est bien ouvert -- l'eleve a le droit de demander -- mais il
+      // rend faux : `annonce_observation_pour_moi` borne sa reponse a la ligne
+      // de l'appelant, donc l'enfant d'un autre foyer recoit `observe: false`.
+      expect(banc0.annonceEnfant.demandes, <String>[seance]);
+      expect(find.text(t.salle.seance.votreParentObserve), findsNothing);
+    });
+
+    testWidgets(
+      'l enseignant ne demande jamais l annonce reservee a l enfant',
+      (WidgetTester tester) async {
+        final banc0 = banc(presence: troisEleves(), annonces: uneVisite);
+        await monterClasse(
+          tester,
+          contexte: contexte(support: 'r1'),
+          surcharges: banc0.surcharges,
+          ecran: LargeurEcran.tablette,
+          mouvementReduit: true,
+        );
+
+        // Le serveur la lui refuserait de toute facon (il n'est pas membre du
+        // groupe) : ne pas la demander evite de battre une RPC qui refuse.
+        expect(banc0.annonceEnfant.demandes, isEmpty);
+        expect(find.text(t.salle.seance.votreParentObserve), findsNothing);
+      },
+    );
   });
 }

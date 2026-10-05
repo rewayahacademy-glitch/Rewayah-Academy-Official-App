@@ -7,7 +7,6 @@ import '../../core/coran/service_coran.dart';
 import '../../core/coran/vue_lecteur.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -15,6 +14,7 @@ import '../../core/theme/app_typography.dart';
 import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
+import '../../core/widgets/barre_precedent_suivant.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/pressable.dart';
@@ -431,10 +431,10 @@ class _Vide extends StatelessWidget {
 /// l'enseignant pendant un cours de Coran ; le cacher derriere trois points
 /// couterait un geste a chaque verset.
 ///
-/// `[RESPONSIVE]` Les deux verbes ne se mettent cote a cote que sur grand
-/// gabarit. Sur 390 points, et plus encore a 200 % d'echelle de texte, deux
-/// libelles complets dans une meme rangee se tronquent -- et un verbe tronque ne
-/// vaut rien, la ou le catalogue exige justement un verbe et pas une fleche.
+/// `[RESPONSIVE]` NAV-FLECHES-1 : deux fleches rondes de part et d'autre de la
+/// page presentee ([BarrePrecedentSuivant]), a toutes les largeurs. Les verbes
+/// complets (« Presenter la page precedente ») sont lus par le lecteur
+/// d'ecran ; a l'ecran, une fleche ne se tronque pas, a 320 points ni a 200 %.
 class _Commandes extends StatelessWidget {
   const _Commandes({
     required this.vue,
@@ -453,34 +453,31 @@ class _Commandes extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Gabarit gabarit = AppGabarit.de(context);
     final int? avant = vue.pagePrecedente;
     final int? apres = vue.pageSuivante;
 
-    final Widget precedente = ActionPrincipale(
-      libelle: t.enseignant.salle.precedente,
-      niveau: NiveauAction.secondaire,
-      onPress: actives && avant != null ? () => onPresenter(avant) : null,
-    );
-    final Widget suivante = ActionPrincipale(
-      libelle: t.enseignant.salle.suivante,
-      niveau: NiveauAction.secondaire,
-      onPress: actives && apres != null ? () => onPresenter(apres) : null,
-    );
-
+    // NAV-FLECHES-1 : fleche, page presentee, fleche, a toutes les largeurs.
+    // Premiere ou derniere page : la fleche n'est pas rendue.
+    final int page = vue.contenu?.page ?? 1;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        if (gabarit.estLarge)
-          Row(
-            children: <Widget>[
-              Expanded(child: precedente),
-              Ecart.hSm,
-              Expanded(child: suivante),
-            ],
-          )
-        else ...<Widget>[precedente, Ecart.vSm, suivante],
+        BarrePrecedentSuivant(
+          position: t.salle.seance.page(page: page, pages: pagesMushafMedine),
+          positionSemantique: t.salle.seance.pageSemantique(
+            page: page,
+            pages: pagesMushafMedine,
+          ),
+          libellePrecedent: t.enseignant.salle.precedente,
+          libelleSuivant: t.enseignant.salle.suivante,
+          // Borne atteinte : rappel nul, la fleche disparait. Commande
+          // momentanement inactive (reconnexion, envoi en cours) : la fleche
+          // reste, inerte et attenuee, au lieu de disparaitre sans explication.
+          actives: actives,
+          onPrecedent: avant != null ? () => onPresenter(avant) : null,
+          onSuivant: apres != null ? () => onPresenter(apres) : null,
+        ),
         Ecart.vSm,
         ActionPrincipale(
           libelle: t.salle.ouvrirCoran,

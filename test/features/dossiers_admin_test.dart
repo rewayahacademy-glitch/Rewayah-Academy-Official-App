@@ -1,14 +1,21 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show SemanticsNode;
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/capacites/revue_dossiers_depuis_validation.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
+import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show StorageException;
 
+import '../support/dossiers_production.dart';
 import '../support/harnais.dart';
 
 DossierAValider _dossier({String id = 'doc1', String prenom = 'Moussa'}) =>
@@ -24,19 +31,30 @@ DossierAValider _dossier({String id = 'doc1', String prenom = 'Moussa'}) =>
       role: AppRole.teacher,
     );
 
+/// Monte la revue sur l'adaptateur branche comme apres BR-1, ou, avec
+/// [production], sur le vrai branchement de `lib/main.dart` (AD-M3-PROD).
 Future<FauxServiceValidation> _monter(
   WidgetTester tester,
-  FauxServiceValidation service,
-) async {
+  FauxServiceValidation service, {
+  bool production = false,
+}) async {
   await tester.pumpWidget(
     hote(
       const DossiersPage(),
       surcharges: <Override>[
         serviceValidationProvider.overrideWithValue(service),
+        if (production)
+          surchargeRevueDossiersProduction
+        else
+          surchargeRevueDossiersBrancheeBR1,
+        imagePieceProvider.overrideWithValue(
+          (Uri _) => MemoryImage(pngSynthetique),
+        ),
       ],
     ),
   );
   await tester.pumpAndSettle();
+  await ouvrirPremierDossier(tester);
   return service;
 }
 
@@ -70,6 +88,47 @@ Future<void> _taper(WidgetTester tester, String libelle) async {
   await tester.pumpAndSettle();
 }
 
+/// Ouvre la visionneuse, laisse l'image se decoder (hors horloge factice),
+/// puis la ferme par « Fermer » : la piece a ete vue (P-ADM-06 point 5).
+Future<void> _voirEtFermer(WidgetTester tester) async {
+  await _taper(tester, t.dossiers.revue.voirPiece);
+  await tester.runAsync(
+    () => Future<void>.delayed(const Duration(milliseconds: 100)),
+  );
+  await tester.pumpAndSettle();
+  await tester.tap(
+    find.descendant(
+      of: find.byType(VisionneusePiece),
+      matching: find.text(t.commun.fermer),
+    ),
+  );
+  await tester.pumpAndSettle();
+}
+
+/// L'etat annonce de la verification [libelle] (`Semantics.checked` et
+/// geste) : ce qu'un lecteur d'ecran percoit, donc ce qui compte.
+({bool pressable, bool cochee}) _verification(
+  WidgetTester tester,
+  String libelle,
+) {
+  final SemanticsNode s = tester.getSemantics(find.text(libelle));
+  bool vaut(Matcher m) => m.matches(s, <dynamic, dynamic>{});
+  return (
+    pressable: vaut(isSemantics(hasTapAction: true)),
+    cochee: vaut(isSemantics(isChecked: true)),
+  );
+}
+
+ActionPrincipale _action(WidgetTester tester, String libelle) =>
+    tester.widget<ActionPrincipale>(
+      find
+          .ancestor(
+            of: find.text(libelle).first,
+            matching: find.byType(ActionPrincipale),
+          )
+          .first,
+    );
+
 void main() {
   testWidgets('la premiere lecture montre un squelette', (
     WidgetTester tester,
@@ -83,12 +142,15 @@ void main() {
         surcharges: <Override>[
           serviceValidationProvider.overrideWithValue(FauxServiceValidation()),
           dossiersEnAttenteProvider.overrideWith((_) => reponse.future),
+          surchargeRevueDossiersProduction,
         ],
       ),
     );
     await tester.pump();
 
-    expect(find.byType(Skeleton), findsOneWidget);
+    // AD-5 : la file a son squelette (quatre lignes) et son texte visible.
+    expect(find.byType(Skeleton), findsWidgets);
+    expect(find.text(t.dossiers.file.chargement), findsOneWidget);
     expect(find.text(t.commun.chargement), findsNothing);
 
     reponse.complete(const <DossierAValider>[]);
@@ -108,9 +170,13 @@ void main() {
           ],
       );
 
-      expect(find.textContaining('Moussa'), findsOneWidget);
+      // Le detail ouvert (titre « Dossier de Moussa Barry » et constat) : une
+      // personne, une revue. Les deux pieces d'une meme personne ne font
+      // qu'une ligne (AD-BR-01), la plus ancienne gardee.
+      expect(find.text('Dossier de Moussa Barry'), findsOneWidget);
       expect(find.textContaining('Aissatou'), findsNothing);
-      expect(find.text(t.dossiers.restants(n: 2)), findsOneWidget);
+      // En production, le total n'est pas garanti : aucun compteur (Q16).
+      expect(find.text(t.dossiers.restants(n: 2)), findsNothing);
     });
 
     testWidgets(
@@ -121,22 +187,79 @@ void main() {
           FauxServiceValidation()..file = <DossierAValider>[_dossier()],
         );
 
-        final double yApercu = tester
-            .getTopLeft(find.text(t.dossiers.apercu))
+        // AD-6 : identite, piece, verifications, puis la decision.
+        final double yIdentite = tester
+            .getTopLeft(find.text(t.dossiers.revue.identite))
+            .dy;
+        final double yPiece = tester
+            .getTopLeft(find.text(t.dossiers.revue.piece))
             .dy;
         final double yChecklist = tester
             .getTopLeft(find.text(t.dossiers.verifications))
             .dy;
         final double yVerdict = tester
-            .getTopLeft(find.text(t.dossiers.verdict))
+            .getTopLeft(find.text(t.dossiers.refuser))
             .dy;
 
-        expect(yApercu, lessThan(yChecklist));
+        expect(yIdentite, lessThan(yPiece));
+        expect(yPiece, lessThan(yChecklist));
         expect(yChecklist, lessThan(yVerdict));
       },
     );
 
-    testWidgets('la validation attend que les trois constats soient poses', (
+    // AD-M3-PROD (decision du directeur du 27/09, S1 -> a) : jusqu'a BR-1,
+    // la production ne refuse pas et ne montre pas la piece, comme elle ne
+    // valide pas. Zero appel a decider_dossier, zero URL signee.
+    testWidgets('AD-M3-PROD : en production, ni refus ni piece, aucun appel', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceValidation service = await _monter(
+        tester,
+        FauxServiceValidation()..file = <DossierAValider>[_dossier()],
+        production: true,
+      );
+
+      expect(find.text('Dossier de Moussa Barry'), findsOneWidget);
+      await _allerA(tester, t.dossiers.revue.etats.decisionIndisponible);
+      expect(find.text(t.dossiers.refuser), findsNothing);
+      expect(find.text(t.dossiers.approuver), findsNothing);
+      expect(find.text(t.dossiers.revue.voirPiece), findsNothing);
+      expect(find.text(t.dossiers.revue.pieceIndisponible), findsOneWidget);
+      // Dit une seule fois pour les deux gestes.
+      expect(
+        find.text(t.dossiers.revue.etats.decisionIndisponible),
+        findsOneWidget,
+      );
+      expect(find.text(t.dossiers.revue.etats.refusNonAutorise), findsNothing);
+      expect(service.apercus, isEmpty);
+      expect(service.verdicts, isEmpty);
+    });
+
+    testWidgets(
+      'branchee : la consequence est inconnue, Valider reste ferme (Q21)',
+      (WidgetTester tester) async {
+        final FauxServiceValidation service = await _monter(
+          tester,
+          FauxServiceValidation()..file = <DossierAValider>[_dossier()],
+        );
+
+        await _voirEtFermer(tester);
+        for (final String point in <String>[
+          t.dossiers.pointLisible,
+          t.dossiers.pointNom,
+          t.dossiers.pointValidite,
+        ]) {
+          await _taper(tester, point);
+        }
+        await _allerA(tester, t.dossiers.validation.indisponible);
+        expect(find.text(t.dossiers.approuver), findsNothing);
+        expect(find.text(t.dossiers.validation.indisponible), findsOneWidget);
+        expect(find.text(t.dossiers.validation.titre), findsNothing);
+        expect(service.verdicts, isEmpty);
+      },
+    );
+
+    testWidgets('AD-8 : un refus passe par 02D, jamais sans motif', (
       WidgetTester tester,
     ) async {
       final FauxServiceValidation service = await _monter(
@@ -144,9 +267,194 @@ void main() {
         FauxServiceValidation()..file = <DossierAValider>[_dossier()],
       );
 
-      await _taper(tester, t.dossiers.approuver);
+      await _taper(tester, t.dossiers.refuser);
+      // 02D ouvert : titre, corps, champ etiquete, aide ; rien n'est parti.
+      expect(find.text(t.dossiers.refus.corps), findsOneWidget);
+      expect(find.text(t.dossiers.refus.champ), findsOneWidget);
+      expect(find.text(t.dossiers.refus.aide), findsOneWidget);
       expect(service.verdicts, isEmpty);
 
+      // Confirmer a vide, puis avec des espaces seuls : erreur, aucun appel.
+      await tester.tap(find.text(t.dossiers.refuser).last);
+      await tester.pumpAndSettle();
+      expect(find.text(t.dossiers.refus.erreurVide), findsOneWidget);
+      await tester.enterText(find.byType(TextField), '   ');
+      await tester.tap(find.text(t.dossiers.refuser).last);
+      await tester.pumpAndSettle();
+      expect(find.text(t.dossiers.refus.erreurVide), findsOneWidget);
+      expect(service.verdicts, isEmpty);
+
+      await tester.enterText(find.byType(TextField), '  Photo illisible.  ');
+      await tester.pumpAndSettle();
+      expect(find.text(t.dossiers.refus.erreurVide), findsNothing);
+      await tester.tap(find.text(t.dossiers.refuser).last);
+      await tester.pumpAndSettle();
+
+      // decider_dossier appele UNE fois, motif trime ; retour local.
+      expect(service.verdicts, hasLength(1));
+      expect(service.verdicts.single.approuve, isFalse);
+      expect(service.verdicts.single.motif, 'Photo illisible.');
+      expect(find.text(t.dossiers.refus.succes), findsOneWidget);
+      expect(find.text(t.dossiers.refus.corps), findsNothing);
+    });
+
+    testWidgets('AD-8 : un motif saisi n\'est pas perdu sur Annuler', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceValidation service = await _monter(
+        tester,
+        FauxServiceValidation()..file = <DossierAValider>[_dossier()],
+      );
+
+      await _taper(tester, t.dossiers.refuser);
+      await tester.enterText(find.byType(TextField), 'Photo floue.');
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.commun.annuler));
+      await tester.pumpAndSettle();
+      expect(
+        find.text(t.dossiers.refus.abandonQuestion),
+        findsOneWidget,
+        reason: find
+            .byType(Text)
+            .evaluate()
+            .map((Element e) => (e.widget as Text).data)
+            .join(' | '),
+      );
+
+      await tester.tap(find.text(t.dossiers.refus.continuerSaisie));
+      await tester.pumpAndSettle();
+      expect(find.text('Photo floue.'), findsOneWidget);
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(find.text(t.dossiers.refus.abandonQuestion), findsOneWidget);
+      await tester.tap(find.text(t.dossiers.refus.abandonner));
+      await tester.pumpAndSettle();
+
+      expect(find.text(t.dossiers.refus.corps), findsNothing);
+      expect(service.verdicts, isEmpty);
+    });
+    testWidgets('AD-7 : ni journalisation ni URL dans le detail ; « Voir la '
+        'piece » signe par le mecanisme existant ; Valider reste ferme (Q21)', (
+      WidgetTester tester,
+    ) async {
+      final FauxServiceValidation service = await _monter(
+        tester,
+        FauxServiceValidation()..file = <DossierAValider>[_dossier()],
+      );
+
+      expect(find.textContaining("journal d'audit"), findsNothing);
+      expect(find.text(t.dossiers.apercu), findsNothing);
+      expect(find.textContaining('piece.webp'), findsNothing);
+      expect(service.apercus, isEmpty);
+
+      await _taper(tester, t.dossiers.revue.voirPiece);
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(VisionneusePiece), findsOneWidget);
+      expect(service.apercus, <String>['p1/piece.webp']);
+      expect(find.textContaining('http'), findsNothing);
+      expect(find.textContaining('piece.webp'), findsNothing);
+
+      await tester.tap(
+        find.descendant(
+          of: find.byType(VisionneusePiece),
+          matching: find.text(t.commun.fermer),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(VisionneusePiece), findsNothing);
+      expect(
+        FocusManager.instance.primaryFocus?.debugLabel,
+        'adm02b-voir-piece',
+      );
+
+      await _taper(tester, t.dossiers.pointLisible);
+      await _taper(tester, t.dossiers.pointNom);
+      await _taper(tester, t.dossiers.pointValidite);
+      // AD-8, Q21 : en production 02E reste ferme (consequence inconnue).
+      await _allerA(tester, t.dossiers.refuser);
+      expect(find.text(t.dossiers.approuver), findsNothing);
+      expect(service.verdicts, isEmpty);
+    });
+
+    // AD-T-LECTURE : la porte de lecture (P-ADM-06 point 5). Les cases sont
+    // fermees tant que la piece n'a pas ete affichee, ouvertes apres. Ce test
+    // echoue si la porte est neutralisee (_lectureFaite toujours vrai).
+    testWidgets('AD-T-LECTURE : cases fermees avant la lecture de la piece, '
+        'ouvertes apres', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        FauxServiceValidation()..file = <DossierAValider>[_dossier()],
+      );
+      final List<String> points = <String>[
+        t.dossiers.pointLisible,
+        t.dossiers.pointNom,
+        t.dossiers.pointValidite,
+      ];
+      for (final String point in points) {
+        await _allerA(tester, point);
+        expect(_verification(tester, point).pressable, isFalse, reason: point);
+        await tester.tap(find.text(point));
+        await tester.pumpAndSettle();
+        expect(_verification(tester, point).cochee, isFalse, reason: point);
+      }
+
+      await _voirEtFermer(tester);
+      for (final String point in points) {
+        await _allerA(tester, point);
+        expect(_verification(tester, point).pressable, isTrue, reason: point);
+        await tester.tap(find.text(point));
+        await tester.pumpAndSettle();
+        expect(_verification(tester, point).cochee, isTrue, reason: point);
+      }
+    });
+
+    testWidgets('AD-T-LECTURE : signature indisponible (500), la visionneuse '
+        'le dit et les cases restent fermees', (WidgetTester tester) async {
+      final FauxServiceValidation service = await _monter(
+        tester,
+        FauxServiceValidation()
+          ..file = <DossierAValider>[_dossier()]
+          ..erreurApercu = const StorageException('Erreur', statusCode: '500'),
+      );
+      await _taper(tester, t.dossiers.revue.voirPiece);
+      expect(service.apercus, <String>['p1/piece.webp']);
+      expect(find.text(t.dossiers.revue.pieceIndisponible), findsOneWidget);
+      await tester.tap(
+        find.descendant(
+          of: find.byType(VisionneusePiece),
+          matching: find.text(t.commun.fermer),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await _allerA(tester, t.dossiers.pointLisible);
+      expect(_verification(tester, t.dossiers.pointLisible).pressable, isFalse);
+    });
+
+    testWidgets('AD-7 : une signature en echec (404) garde la validation '
+        'fermee et le refus ouvert', (WidgetTester tester) async {
+      final FauxServiceValidation service = await _monter(
+        tester,
+        FauxServiceValidation()
+          ..file = <DossierAValider>[_dossier()]
+          ..erreurApercu = const StorageException(
+            'Object not found',
+            statusCode: '404',
+          ),
+      );
+      await _taper(tester, t.dossiers.revue.voirPiece);
+      expect(service.apercus, <String>['p1/piece.webp']);
+      expect(find.text(t.dossiers.visionneuse.erreur), findsOneWidget);
+      await tester.tap(
+        find.descendant(
+          of: find.byType(VisionneusePiece),
+          matching: find.text(t.commun.fermer),
+        ),
+      );
+      await tester.pumpAndSettle();
       for (final String point in <String>[
         t.dossiers.pointLisible,
         t.dossiers.pointNom,
@@ -154,62 +462,52 @@ void main() {
       ]) {
         await _taper(tester, point);
       }
-
-      await _taper(tester, t.dossiers.approuver);
-
-      expect(service.verdicts, hasLength(1));
-      expect(service.verdicts.single.approuve, isTrue);
-      expect(service.verdicts.single.motif, isNull);
+      // Valider ferme n'est pas rendu : sa raison occupe sa place.
+      await _allerA(tester, t.dossiers.refuser);
+      expect(find.text(t.dossiers.approuver), findsNothing);
+      expect(_action(tester, t.dossiers.refuser).onPress, isNotNull);
+      expect(service.verdicts, isEmpty);
     });
 
-    testWidgets('un refus sans motif ne part pas', (WidgetTester tester) async {
+    testWidgets('AD-7 : une piece pdf ne s affiche pas, validation fermee, '
+        'refus ouvert, rien n est signe', (WidgetTester tester) async {
       final FauxServiceValidation service = await _monter(
         tester,
-        FauxServiceValidation()..file = <DossierAValider>[_dossier()],
+        FauxServiceValidation()
+          ..file = <DossierAValider>[
+            DossierAValider(
+              documentId: 'doc1',
+              profilId: 'p1',
+              type: TypePiece.carteIdentite,
+              cleObjet: 'p1/piece.pdf',
+              deposeLe: DateTime(2026, 9, 4),
+              prenom: 'Moussa',
+              nom: 'Barry',
+              identifiantImmuable: 'TEACHER-MB-000001',
+              role: AppRole.teacher,
+            ),
+          ],
       );
-
-      await _allerA(tester, t.dossiers.refuser);
-      await tester.tap(find.text(t.dossiers.refuser));
-      await tester.pumpAndSettle();
-
-      // La base refuse aussi un verdict negatif sans motif : l ecran ne fait
-      // que l annoncer plus tot.
-      await _allerA(tester, t.dossiers.motifRequis);
-      expect(find.text(t.dossiers.motifRequis), findsOneWidget);
-      await tester.tap(find.text(t.dossiers.refuser));
-      await tester.pumpAndSettle();
-      expect(service.verdicts, isEmpty);
-
-      await tester.enterText(find.byType(TextField), 'Photo illisible.');
-      await tester.pumpAndSettle();
-      await tester.tap(find.text(t.dossiers.refuser));
-      await tester.pumpAndSettle();
-
-      expect(service.verdicts.single.approuve, isFalse);
-      expect(service.verdicts.single.motif, 'Photo illisible.');
-    });
-
-    testWidgets('la journalisation est rappelee sous les verdicts', (
-      WidgetTester tester,
-    ) async {
-      await _monter(
-        tester,
-        FauxServiceValidation()..file = <DossierAValider>[_dossier()],
-      );
-
-      // La liste defile : le rappel est en bas, il faut aller le chercher comme
-      // l'administrateur le ferait.
-      await tester.scrollUntilVisible(
-        find.text(t.dossiers.journalisation),
-        200,
-        scrollable: find.byType(Scrollable).first,
-      );
-      await tester.pumpAndSettle();
-      expect(find.text(t.dossiers.journalisation), findsOneWidget);
+      await _taper(tester, t.dossiers.revue.voirPiece);
       expect(
-        tester.getTopLeft(find.text(t.dossiers.journalisation)).dy,
-        greaterThan(tester.getTopLeft(find.text(t.dossiers.verdict)).dy),
+        find.text(t.dossiers.visionneuse.formatNonPrisEnCharge),
+        findsOneWidget,
       );
+      expect(service.apercus, isEmpty);
+      await tester.tap(
+        find.descendant(
+          of: find.byType(VisionneusePiece),
+          matching: find.text(t.commun.fermer),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await _allerA(tester, t.dossiers.refuser);
+      expect(find.text(t.dossiers.approuver), findsNothing);
+      final Finder refuser = find.ancestor(
+        of: find.text(t.dossiers.refuser).first,
+        matching: find.byType(ActionPrincipale),
+      );
+      expect(tester.widget<ActionPrincipale>(refuser.first).onPress, isNotNull);
     });
 
     testWidgets('une file vide est une invitation, pas un ecran mort', (
@@ -231,7 +529,7 @@ void main() {
         FauxServiceValidation()..erreurFile = const GenreLecteurInconnu(),
       );
 
-      expect(find.text(t.dossiers.genreManquant), findsOneWidget);
+      expect(find.text(t.dossiers.profilACompleter.titre), findsOneWidget);
       expect(find.text(t.commun.reessayer), findsNothing);
     });
 
@@ -244,7 +542,7 @@ void main() {
       );
 
       expect(find.text(t.commun.reessayer), findsOneWidget);
-      expect(find.text(t.dossiers.genreManquant), findsNothing);
+      expect(find.text(t.dossiers.profilACompleter.titre), findsNothing);
     });
   });
 }

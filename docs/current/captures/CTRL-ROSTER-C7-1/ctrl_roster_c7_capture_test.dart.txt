@@ -1,0 +1,91 @@
+// CTRL-ROSTER-C7-1 : la liste des eleves de l'observation du Controleur en
+// prenom et initiale du nom (decision C7 = a), avec le roster de la
+// demonstration (« Mariam S. », « Yusuf B. », « Aïcha N. »), puis le
+// recapitulatif. 390 px, clair.
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
+import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
+import 'package:rewayah_academy/features/controleur/observation_controle.dart';
+import 'package:rewayah_academy/features/controleur/observation_controle_page.dart';
+import 'package:rewayah_academy/features/demo/demo_controleur_page.dart';
+
+import 'outil_capture.dart';
+
+Future<void> _toucher(WidgetTester tester, Finder f) async {
+  await tester.ensureVisible(f);
+  await tester.pumpAndSettle();
+  await tester.tap(f);
+  await tester.pumpAndSettle();
+}
+
+void main() {
+  setUpAll(chargerPolicesDuDepot);
+
+  group('CTRL-ROSTER-C7-1', skip: sautSansCapture, () {
+    testWidgets('roster et recapitulatif, 390 clair', (
+      WidgetTester tester,
+    ) async {
+      fixerVueCapture(tester, const Size(390, 844), 3);
+      final CompteRenduEnSuspens visite = CompteRenduEnSuspens(
+        seanceId: 'seance-A',
+        classe: 'Classe An-Nour',
+        debut: DateTime(2026, 9, 28, 16),
+      );
+      await tester.pumpWidget(
+        hoteCapture(
+          ObservationControlePage(seanceId: visite.seanceId),
+          surcharges: <Override>[
+            visitesObserveesProvider.overrideWith(
+              () => VisitesObservees(<String, CompteRenduEnSuspens>{
+                visite.seanceId: visite,
+              }),
+            ),
+            rosterControleProvider.overrideWith(
+              (Ref _) async => rosterDemoControleur(),
+            ),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      await _toucher(
+        tester,
+        find.byKey(
+          ObservationControlePage.cleNature(NatureObservation.aSuivre),
+        ),
+      );
+      await _toucher(tester, find.text(t.commun.continuer).last);
+      await _toucher(
+        tester,
+        find.byKey(
+          ObservationControlePage.cleDomaine(DomaineObservation.pedagogie),
+        ),
+      );
+      await _toucher(tester, find.text(t.commun.continuer).last);
+      await _toucher(
+        tester,
+        find.byKey(
+          ObservationControlePage.clePersonne(PersonneConcernee.elevePrecis),
+        ),
+      );
+      await _toucher(
+        tester,
+        find.byKey(ObservationControlePage.cleEleve('demo-eleve-0')),
+      );
+      expect(find.text('Mariam S.'), findsOneWidget);
+      await capturer(tester, 'roster_390_clair');
+      await _toucher(tester, find.text(t.commun.continuer).last);
+      await _toucher(tester, find.text(t.commun.continuer).last);
+      expect(find.textContaining('Mariam S.'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.textContaining('Mariam S.'),
+        -200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tester.pumpAndSettle();
+      await capturer(tester, 'recapitulatif_390_clair');
+    });
+  });
+}

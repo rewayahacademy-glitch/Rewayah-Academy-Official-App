@@ -1,4 +1,4 @@
-﻿import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/widgets/empty_state.dart';
@@ -23,7 +23,7 @@ import '../../core/widgets/empty_state.dart';
 /// n'aboutirait pas.
 ///
 /// Les demandes de signature sont en section 4 de
-/// `docs/teaching-core/TC_CONTRACT_REQUEST_E.md`.
+/// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_E.md`.
 @immutable
 class SlotClasse {
   /// Cree un slot.

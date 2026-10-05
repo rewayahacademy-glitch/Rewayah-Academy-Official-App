@@ -1,4 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Camera : lecture du QR d'appairage (mobile_scanner, lot D) et visio
+         des cours quand la camera est autorisee pour le profil eleve. La
+         camera n'est pas exigee : une tablette sans camera s'installe et
+         garde la saisie du code a la main. Le manifeste de mobile_scanner
+         declare deja ces deux lignes ; elles sont ecrites ici pour que
+         l'application les porte elle-meme (phase 0c1, chantier Tuteur V1). -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
     <application
         android:label="rewayah_academy"
         android:name="${applicationName}"

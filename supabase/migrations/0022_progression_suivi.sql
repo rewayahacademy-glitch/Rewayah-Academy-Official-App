@@ -5,7 +5,7 @@
 --
 -- `progression_exceptions` est un catalogue **neuf, distinct** de
 -- `rule_overrides`/`matching_requests` (`ADM-06`, migration `0005`) :
--- l'audit d'architecture (`docs/architecture/ADMIN_IA_AUDIT.md`, fiche
+-- l'audit d'architecture (`docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md`, fiche
 -- `ADM-06`) interdit explicitement d'etendre ce dernier avec des cles
 -- pedagogiques. `rule_overrides` reste strictement operationnel (duree de
 -- seance, pause, plafond eleves/enseignant) ; ceci est pedagogique

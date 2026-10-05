@@ -12,7 +12,7 @@ import 'action_principale.dart';
 /// Le retour local d'une action : court, pose pres de ce qui a change.
 ///
 /// **Jamais une boite de dialogue de succes** : une boite demande un geste pour
-/// dire qu'un geste a reussi (`docs/design/02-regles-ux.md` section 7). Et
+/// dire qu'un geste a reussi (`docs/archive/2026-09-pre-remise-a-plat/design/02-regles-ux.md` section 7). Et
 /// jamais au centre de l'ecran : il se pose sous la zone qui vient de changer,
 /// et il n'empeche jamais de continuer.
 ///

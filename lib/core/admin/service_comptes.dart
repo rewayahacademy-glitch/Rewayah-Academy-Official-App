@@ -145,7 +145,23 @@ class CompteAdmin {
   }
 
   /// Vrai quand ce compte attend une decision de l'administration.
-  bool get attendUneDecision => etat == AccountStatus.pendingKyc;
+  ///
+  /// Seul un enseignant en attente attend une decision (K-47) : la
+  /// verification d'identite et la validation ne concernent que lui. Un tuteur
+  /// `pending_kyc` ne depose rien et n'attend aucune validation.
+  bool get attendUneDecision =>
+      etat == AccountStatus.pendingKyc && role == AppRole.teacher;
+
+  /// Vrai quand l'acces provisoire est echu : la meme definition que le
+  /// compteur « Acces echus » du Centre de commande (compte provisoire dont
+  /// la date de fin d'acces est passee), lue sur les memes colonnes
+  /// (DASH-ADM-ECHUS).
+  bool accesEchu(DateTime maintenant) {
+    final DateTime? fin = accesJusquAu;
+    return etat == AccountStatus.provisionalActive &&
+        fin != null &&
+        fin.isBefore(maintenant);
+  }
 
   /// Depuis combien de jours ce compte attend, en jours pleins.
   int joursDAttente(DateTime maintenant) =>

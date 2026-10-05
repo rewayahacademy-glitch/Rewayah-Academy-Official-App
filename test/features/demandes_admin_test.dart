@@ -259,6 +259,22 @@ void main() {
 
       expect(find.text(t.commun.reessayer), findsOneWidget);
     });
+
+    // EA-HORS-LIGNE-1b : une panne quelconque, en ligne, n'est pas « Pas de
+    // reseau », et une file qui n'a pas charge n'a rien de consultable.
+    testWidgets(
+      'une panne dit que la file n a pas charge, pas « Pas de reseau »',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          admin: FauxServiceAdmin()..erreurFile = StateError('reseau'),
+        );
+
+        expect(find.text(t.admin.demandes.erreurFile), findsOneWidget);
+        expect(find.textContaining(t.reseau.horsLigne), findsNothing);
+        expect(find.textContaining('consultable'), findsNothing);
+      },
+    );
   });
 
   group('La feuille de regles : la plateforme et l applique, cote a cote', () {

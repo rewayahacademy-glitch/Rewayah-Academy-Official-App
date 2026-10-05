@@ -24,7 +24,7 @@ import 'feuille_observation_groupe.dart';
 /// [GroupeAdmin.seuilMax] eleves partagent un creneau commun, et c'est dans ce
 /// groupe que la visio se tiendra (migration `0017`). Cet ecran devient la
 /// fonction primaire du domaine Operations -- l'audit gele
-/// (`docs/architecture/ADMIN_IA_AUDIT.md`) y redirigeait jusqu'ici
+/// (`docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md`) y redirigeait jusqu'ici
 /// l'Attribution, qui reste atteignable comme fonction secondaire.
 ///
 /// Meme squelette liste+filtre que `ADM-08` (Comptes) : `FilterPill` pour

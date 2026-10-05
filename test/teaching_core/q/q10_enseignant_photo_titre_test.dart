@@ -47,7 +47,7 @@ Widget _carteGroupe(GroupSummaryVM g) => MaterialApp(
 );
 
 /// Les deux libelles, francais puis arabe, tels que
-/// `docs/teaching-core/i18n/tc_i18n_A.json` les porte -- le canonique
+/// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/i18n/tc_i18n_A.json` les porte -- le canonique
 /// `TitreEnseignant` ne garde que `valeurSql`, la traduction vit dans la
 /// facade i18n (`LibellesGroupe.sayyid`/`sayyida` pour le francais ; l arabe
 /// n a pas encore de facade tant que la fusion i18n n a pas eu lieu).

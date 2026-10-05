@@ -1,0 +1,243 @@
+// Les outils d'enseignement (CLV-06), enseignant seulement.
+//
+// Pointeur, Marquer, Masquer, Annoter : des tuiles avec libelle. Rendus
+// SEULEMENT si `ActionsSeance.onOutil` existe (lib/CLAUDE.md : un outil qui ne
+// peut pas aboutir n'est pas affiche ; S CLV-06 : « aucun outil fictif »).
+// L'outil choisi est un etat local de cet ecran : il ne publie rien.
+
+import 'package:flutter/material.dart';
+
+import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
+import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_radius.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/bouton_outil.dart';
+import 'actions_seance.dart';
+
+/// La disposition des tuiles.
+enum FormeOutils {
+  /// Desktop CLV-06 (au-dessus du support) et telephone (entre support et
+  /// dock, tuiles reparties sur la largeur).
+  rangee,
+
+  /// Web etroit : colonne a droite du support.
+  colonne,
+
+  /// Desktop CLV-07/08 : carte « Outils d'enseignement » (T5, T6).
+  carte,
+}
+
+/// Les mesures des tuiles, prises sur les images.
+abstract final class MesuresOutils {
+  /// Tuile desktop, rangee au-dessus du support (≈ 74 x 88).
+  static const Size tuileDesktop = Size(
+    AppSpacing.titreEcran + AppSpacing.xxxl,
+    AppSpacing.titreEcran + AppSpacing.titreEcran - AppSpacing.sm,
+  );
+
+  /// Largeur de la colonne du web etroit (≈ 80).
+  static const double colonne = AppSpacing.titreEcran + AppSpacing.xxxl;
+
+  /// Hauteur d'une tuile au telephone (≈ 64).
+  static const double hauteurCompacte = AppSpacing.respiration;
+}
+
+String _libelle(OutilEnseignement outil) => switch (outil) {
+  OutilEnseignement.pointeur => t.salle.seance.outils.pointeur,
+  OutilEnseignement.marquer => t.salle.seance.outils.marquer,
+  OutilEnseignement.masquer => t.salle.seance.outils.masquer,
+  OutilEnseignement.annoter => t.salle.seance.outils.annoter,
+};
+
+AppIcon _icone(OutilEnseignement outil) => switch (outil) {
+  OutilEnseignement.pointeur => AppIcons.curseur,
+  OutilEnseignement.marquer => AppIcons.crayon,
+  OutilEnseignement.masquer => AppIcons.oeil,
+  OutilEnseignement.annoter => AppIcons.annoter,
+};
+
+/// Les quatre outils, dans la [forme] voulue. Rien si [onOutil] est nul.
+class OutilsEnseignement extends StatefulWidget {
+  const OutilsEnseignement({
+    required this.onOutil,
+    required this.forme,
+    this.initial = OutilEnseignement.pointeur,
+    this.pied,
+    super.key,
+  });
+
+  final ValueChanged<OutilEnseignement>? onOutil;
+  final FormeOutils forme;
+
+  /// Carte seulement : ce qui suit les outils dans la meme carte (CLV-08 :
+  /// Eleves et Supports en liste).
+  final Widget? pied;
+
+  /// L'outil actif a l'ouverture (image CLV-06 : Pointeur ; image CLV-07,
+  /// carte a cote du panneau : aucun, `null`).
+  final OutilEnseignement? initial;
+
+  @override
+  State<OutilsEnseignement> createState() => _OutilsEnseignementState();
+}
+
+class _OutilsEnseignementState extends State<OutilsEnseignement> {
+  late OutilEnseignement? _actif = widget.initial;
+
+  void _choisir(ValueChanged<OutilEnseignement> rappel, OutilEnseignement o) {
+    setState(() => _actif = o);
+    rappel(o);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ValueChanged<OutilEnseignement>? rappel = widget.onOutil;
+    if (rappel == null) return const SizedBox.shrink();
+    Widget tuile(OutilEnseignement o) => _Tuile(
+      outil: o,
+      actif: o == _actif,
+      onPress: () => _choisir(rappel, o),
+    );
+    final Widget corps = switch (widget.forme) {
+      FormeOutils.rangee => LayoutBuilder(
+        builder: (BuildContext _, BoxConstraints c) {
+          // Desktop : tuiles de taille fixe ; ailleurs, reparties.
+          final bool fixe = c.maxWidth.isInfinite;
+          return Row(
+            mainAxisSize: fixe ? MainAxisSize.min : MainAxisSize.max,
+            spacing: fixe ? AppSpacing.md : AppSpacing.sm,
+            children: <Widget>[
+              for (final OutilEnseignement o in OutilEnseignement.values)
+                // Des minimums et non des tailles fixes : a 200 %, la tuile
+                // grandit avec son icone et son libelle (W-144).
+                if (fixe)
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minWidth: MesuresOutils.tuileDesktop.width,
+                      minHeight: MesuresOutils.tuileDesktop.height,
+                    ),
+                    child: tuile(o),
+                  )
+                else
+                  Expanded(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minHeight: MesuresOutils.hauteurCompacte,
+                      ),
+                      child: tuile(o),
+                    ),
+                  ),
+            ],
+          );
+        },
+      ),
+      // Desktop avec panneau ouvert (CLV-07/08, Q2) : carte titree, quatre
+      // tuiles de meme largeur sur une rangee.
+      FormeOutils.carte => DecoratedBox(
+        decoration: AppPalette.of(context).surfaceRaised.decoration(
+          borderRadius: AppRadius.arrondiLg,
+          side: AppPalette.of(context).borderHairline.asBorderSide(),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              ExcludeSemantics(
+                child: Text(
+                  t.salle.seance.outils.titre,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppPalette.of(context).inkStrong.applyTo(
+                    Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
+                  ),
+                ),
+              ),
+              Ecart.vMd,
+              Row(
+                spacing: AppSpacing.sm,
+                children: <Widget>[
+                  for (final OutilEnseignement o in OutilEnseignement.values)
+                    Expanded(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: MesuresOutils.tuileDesktop.height,
+                        ),
+                        child: tuile(o),
+                      ),
+                    ),
+                ],
+              ),
+              if (widget.pied case final Widget pied) ...<Widget>[
+                Ecart.vLg,
+                pied,
+              ],
+            ],
+          ),
+        ),
+      ),
+      // La colonne s'elargit avec le facteur de texte, borne a 200 % (W-144).
+      FormeOutils.colonne => SizedBox(
+        width:
+            MesuresOutils.colonne *
+            MediaQuery.textScalerOf(context).scale(1).clamp(1.0, 2.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: AppSpacing.sm,
+          children: <Widget>[
+            for (final OutilEnseignement o in OutilEnseignement.values)
+              ConstrainedBox(
+                constraints: const BoxConstraints(
+                  minHeight: MesuresOutils.colonne,
+                ),
+                child: tuile(o),
+              ),
+          ],
+        ),
+      ),
+    };
+    return Semantics(
+      container: true,
+      label: t.salle.seance.outils.titre,
+      child: KeyedSubtree(
+        key: ValueKey<String>('outils-${widget.forme.name}'),
+        child: corps,
+      ),
+    );
+  }
+}
+
+class _Tuile extends StatelessWidget {
+  const _Tuile({
+    required this.outil,
+    required this.actif,
+    required this.onPress,
+  });
+
+  final OutilEnseignement outil;
+  final bool actif;
+  final VoidCallback onPress;
+
+  @override
+  Widget build(BuildContext context) {
+    // L'icone, le mot et la surface sont peints par le composant du core
+    // (K-54) ; texte agrandi (DESIGN-GOV, 200 %) : l'icone seule, le libelle en
+    // infobulle et pour le lecteur d'ecran, plutot qu'un mot tronque.
+    final bool agrandi = MediaQuery.textScalerOf(context).scale(1) > 1.3;
+    return Semantics(
+      selected: actif,
+      child: BoutonOutil(
+        key: ValueKey<String>('outil-${outil.name}'),
+        icone: _icone(outil),
+        libelle: _libelle(outil),
+        retenu: actif,
+        avecLibelle: !agrandi,
+        forme: FormeBoutonOutil.tuile,
+        onPress: onPress,
+      ),
+    );
+  }
+}

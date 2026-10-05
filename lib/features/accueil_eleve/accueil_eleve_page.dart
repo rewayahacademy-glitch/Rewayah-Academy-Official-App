@@ -16,6 +16,7 @@ import '../../core/priere/service_priere.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_mouvement.dart';
@@ -25,16 +26,19 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/audio_label.dart';
 import '../../core/widgets/bento_tile.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
+import '../../core/widgets/raccourci_tactile.dart';
+import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
-import '../../core/widgets/status_pill.dart';
 
 /// Ce que le bloc principal de `ELV-02` annonce.
 ///
 /// Les six etats sont ceux que la fiche produit tabule, dans son ordre : cours
 /// dans plus d'une heure, cours dans moins de cinq minutes, cours en direct,
 /// aucun cours aujourd'hui, seance annulee, hors ligne
-/// (`docs/produit/parcours-utilisateurs.md`, fiche `ELV-02`).
+/// (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`, fiche `ELV-02`).
 enum EtatAccueilEleve {
   /// Un cours plus tard dans la journee.
   ///
@@ -116,7 +120,7 @@ EtatAccueilEleve etatAccueilEleve({
 /// `ELV-02` : l'accueil de l'eleve.
 ///
 /// **Deux blocs, rien d'autre.** En mode enfant, aucune navigation : l'ecran est
-/// le produit (`docs/architecture/etape-4-dashboards.md` section 5). Le premier
+/// le produit (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-4-dashboards.md` section 5). Le premier
 /// bloc dit ce qui vient, dans ses six etats ; le second, permanent, mene au
 /// Coran.
 ///
@@ -169,7 +173,14 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
     // reponse manque, l'appareil est repute en ligne.
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
 
-    if (!seances.hasValue && seances.isLoading) {
+    // DASH-ELV-ERR-b (revue DASH-ELV-ERR-R, m1 et i1) : l'echec passe avant
+    // le squelette. Pendant la relecture lancee par « Reessayer », Riverpod
+    // garde l'erreur precedente (`hasError` reste vrai, `isLoading` monte) :
+    // le message et le Coran restent a l'ecran, seul le bouton dit qu'il
+    // travaille.
+    final bool echec = seances.hasError && !seances.hasValue;
+
+    if (!echec && !seances.hasValue && seances.isLoading) {
       return const PageShell(child: Skeleton.liste(lignes: 2));
     }
 
@@ -200,9 +211,10 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
 
     // `PageShell` porte le fond creme, la gouttiere du gabarit courant, la
     // colonne centree et bornee a 1200 (« centre et borne, on n'ajoute rien »,
-    // `docs/design/05-regles-responsive.md` section 3) et le bandeau hors ligne.
+    // `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 3) et le bandeau hors ligne.
     // L'ecran ne rend plus que ses deux blocs.
-    final bool enChargement = seances.isLoading && seances.value == null;
+    final bool enChargement =
+        !echec && seances.isLoading && seances.value == null;
 
     return PageShell(
       child: enChargement
@@ -211,18 +223,41 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
               children: <Widget>[
                 Skeleton.tuileBento(hauteur: 160),
                 Ecart.vXl,
-                Skeleton.tuileBento(hauteur: 80),
+                Skeleton.tuileBento(hauteur: 156),
               ],
             )
           : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                _BlocPrincipal(
-                  etat: etat,
-                  prochain: prochain,
-                  interruptions: interruptions,
-                  maintenant: _maintenant,
-                ),
+                // DASH-ELV-ERR (DASH_STRATEGIE D10, D11) : une lecture en
+                // echec n'est jamais « pas de cours aujourd'hui ». Le bloc dit
+                // que les cours manquent et propose de relire ; le Coran, lu
+                // ailleurs, reste en place. Une erreur apres une valeur deja
+                // lue garde cette valeur (DASH-ELV-ERR-b, m3) : l'eleve voit
+                // encore son prochain cours plutot qu'un message. Hors ligne,
+                // le bloc dit la cause par sa nature (K-59, m2).
+                if (echec)
+                  EtatSysteme(
+                    key: const ValueKey<String>('accueil-eleve-erreur'),
+                    nature: horsLigne
+                        ? NatureEtat.horsLigne
+                        : NatureEtat.echecServeur,
+                    // Le titre commun hors ligne vouvoie ; l'accueil eleve
+                    // tutoie.
+                    titre: horsLigne
+                        ? t.eleve.accueil.erreurCoursHorsLigneTitre
+                        : null,
+                    phrase: t.eleve.accueil.erreurCours,
+                    onAction: () => ref.invalidate(seancesProvider),
+                    actionEnCours: seances.isLoading,
+                  )
+                else
+                  _BlocPrincipal(
+                    etat: etat,
+                    prochain: prochain,
+                    interruptions: interruptions,
+                    maintenant: _maintenant,
+                  ),
                 Ecart.vXl,
                 const _BlocCoran(),
               ],
@@ -251,7 +286,7 @@ class _BlocPrincipal extends StatelessWidget {
     final bool imminent = etat == EtatAccueilEleve.coursImminent;
     final bool mouvementReduit = AppMouvement.mouvementReduit(context);
 
-    // **Une seule zone pleine par ecran** (`docs/design/01-systeme-visuel.md`
+    // **Une seule zone pleine par ecran** (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md`
     // section 3) : le bloc imminent, et lui seul. Le cours en direct redevient
     // une carte normale avec sa pastille verte et son bouton d'entree en
     // `surfacePrimary`. Une paire dit sur quoi elle s'ecrit : les styles des
@@ -264,7 +299,7 @@ class _BlocPrincipal extends StatelessWidget {
       surface: imminent ? palette.surfacePrimary : null,
       // Sous mouvement reduit, la pulsation disparait et une bordure
       // `borderStrong` fixe porte a sa place l'information d'imminence
-      // (`docs/design/04-systeme-mouvement.md` section 5).
+      // (`docs/archive/2026-09-pre-remise-a-plat/design/04-systeme-mouvement.md` section 5).
       contourFort: imminent && mouvementReduit,
       child: switch (etat) {
         EtatAccueilEleve.coursPlusTard ||
@@ -283,6 +318,7 @@ class _BlocPrincipal extends StatelessWidget {
         ),
         EtatAccueilEleve.seanceAnnulee => _SansCoursAujourdhui(
           message: t.eleve.accueil.annulee,
+          annulee: true,
           prochain: prochain,
           interruptions: interruptions,
           paire: paire,
@@ -371,10 +407,10 @@ class _CoursEnDirect extends StatelessWidget {
       children: <Widget>[
         // La pastille verte de la fiche produit, portee par le composant
         // d'etat : une pastille pleine `surfaceSuccess` et son mot, jamais la
-        // couleur seule (`docs/design/01-systeme-visuel.md` section 8).
-        Align(
+        // couleur seule (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md` section 8).
+        const Align(
           alignment: AlignmentDirectional.centerStart,
-          child: StatusPill(libelle: t.etat.enDirect, ton: TonEtat.succes),
+          child: PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
         ),
         Ecart.vSm,
         AudioLabel(cle: ClesAudio.eleveAccueilCoursEnDirect, surface: paire),
@@ -449,9 +485,14 @@ class _SansCoursAujourdhui extends StatelessWidget {
     required this.interruptions,
     required this.paire,
     required this.maintenant,
+    this.annulee = false,
   });
 
   final String message;
+
+  /// Vrai quand le message dit une seance annulee : la pastille « Annulee »
+  /// ouvre le bloc (ANNUL-VIS-1), le mot ne reste pas seul dans le texte.
+  final bool annulee;
   final Seance? prochain;
   final List<InterruptionPriere> interruptions;
   final AppColorPair paire;
@@ -467,6 +508,12 @@ class _SansCoursAujourdhui extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        if (annulee) ...<Widget>[
+          const Align(
+            child: PastilleEtatSeance(etat: EtatPastilleSeance.annulee),
+          ),
+          Ecart.vSm,
+        ],
         _etatVide(cours, jours),
         _Interruptions(interruptions: interruptions, paire: paire),
       ],
@@ -478,7 +525,7 @@ class _SansCoursAujourdhui extends StatelessWidget {
       message: message,
       // Registre **subi** : l'enfant ne peut rien y faire, son enseignant
       // prepare le prochain cours. Proposer un bouton ici mentirait sur ce que
-      // l'enfant peut obtenir (`docs/design/02-regles-ux.md` section 6).
+      // l'enfant peut obtenir (`docs/archive/2026-09-pre-remise-a-plat/design/02-regles-ux.md` section 6).
       registre: RegistreVide.subi,
       // Un etat vide est une invitation, pas un constat. Le prochain cours peut
       // tomber le jour meme : une seance annulee le matin n'empeche pas celle
@@ -552,6 +599,34 @@ class _Interruptions extends StatelessWidget {
 }
 
 /// Le second bloc, permanent : le Coran.
+///
+/// Deux etages, une action par zone (demande du directeur du 04/10/2026 :
+/// « chaque element a part et lisible ») :
+/// - en-tete sans texte : le livre au bord de debut, le haut-parleur au bord
+///   de fin ;
+/// - une [SettingRow] nue : titre, phrase et chevron, le lien qui ouvre le
+///   Coran (`ELV-04`).
+///
+/// Le livre ouvre aussi le Coran : c'est un [RaccourciTactile] du lien,
+/// touchable au doigt et a la souris, hors du clavier et du lecteur d'ecran
+/// (un seul lien « Le Coran »). La tuile ne se presse pas : les cibles sont
+/// soeurs, jamais l'une dans l'autre.
+///
+/// Le haut-parleur dit « Le Coran » a qui ne lit pas encore ; pour le lecteur
+/// d'ecran, c'est le bouton « Ecouter : Le Coran », distinct du lien.
+///
+/// Sur grand ecran, le contenu garde la largeur de la colonne de l'etat vide
+/// ([AppPage.largeurEtatVide]), calee sur le bord de debut de la carte comme
+/// le contenu des autres tuiles Bento (a gauche en LTR, a droite en RTL) : le
+/// haut-parleur reste pres du titre qu'il prononce au lieu de partir au bout
+/// d'une carte de 1 100 points.
+///
+/// Les icones gardent leur taille quand le texte est agrandi (spec
+/// CORAN-CARTE-1, point 6, acte) : elles vivent seules sur leur ligne et
+/// grandissent avec l'Interface guidee (le mode enfant), jamais avec
+/// l'echelle du texte. A 320 points et texte x2, le livre et le haut-parleur
+/// gardent donc leur taille pendant que le titre et la phrase doublent ;
+/// c'est voulu, ce n'est pas un oubli.
 class _BlocCoran extends StatelessWidget {
   const _BlocCoran();
 
@@ -559,30 +634,59 @@ class _BlocCoran extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppMetriques metriques = AppMetriques.of(context);
     final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
+    final double tailleLivre = metriques.estEnfant
+        ? AppSpacing.xxxl
+        : AppSpacing.xxl;
+    // L'en-tete a la hauteur de la cible tactile, le livre y est centre, avec
+    // cet air au-dessus de lui. Le meme air est rendu sous la phrase (la
+    // ligne nue pose son texte en bas de sa cible), pour que la carte
+    // respire autant en haut qu'en bas.
+    final double airEntete = (metriques.cibleTactile - tailleLivre) / 2;
+    void ouvrir() => GoRouter.of(context).go(Routes.eleveCoran);
 
     return BentoTile(
-      libelleSemantique: t.eleve.accueil.coran,
-      onPress: () => GoRouter.of(context).go(Routes.eleveCoran),
-      child: Row(
-        children: <Widget>[
-          IconTheme(
-            data: palette.inkAccent.asIconTheme(
-              size: metriques.estEnfant ? AppSpacing.xxxl : AppSpacing.xxl,
-            ),
-            child: Icon(AppIcons.coran.repos),
+      child: Align(
+        alignment: AlignmentDirectional.topStart,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: AppPage.largeurEtatVide),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  RaccourciTactile(
+                    onPress: ouvrir,
+                    child: Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      widthFactor: 1,
+                      child: IconTheme(
+                        data: palette.inkAccent.asIconTheme(size: tailleLivre),
+                        child: Icon(AppIcons.coran.repos),
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  AudioLabel(
+                    cle: ClesAudio.eleveAccueilCoran,
+                    afficherTexte: false,
+                    alignerEnFin: true,
+                    libelleSemantique: t.eleve.accueil.coranEcouter,
+                  ),
+                ],
+              ),
+              Ecart.vSm,
+              SettingRow(
+                title: t.eleve.accueil.coran,
+                description: t.eleve.accueil.coranDetail,
+                nue: true,
+                lien: true,
+                onPress: ouvrir,
+              ),
+              SizedBox(height: airEntete),
+            ],
           ),
-          Ecart.hMd,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const AudioLabel(cle: ClesAudio.eleveAccueilCoran),
-                Text(t.eleve.accueil.coranDetail, style: textes.bodyMedium),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -615,7 +719,7 @@ class _PulsationEtat extends State<_Pulsation>
   // Le battement se compose des deux seules courbes du produit : l'entree a
   // l'aller, la sortie au retour. Aucune troisieme courbe n'est necessaire, et
   // le systeme de mouvement n'en autorise pas
-  // (`docs/design/04-systeme-mouvement.md` section 2).
+  // (`docs/archive/2026-09-pre-remise-a-plat/design/04-systeme-mouvement.md` section 2).
   late final Animation<double> _echelle = Tween<double>(begin: 1, end: 1.02)
       .animate(
         CurvedAnimation(
@@ -658,12 +762,17 @@ String _compteARebours(Duration reste) {
   if (minutes <= 0) {
     return t.eleve.accueil.imminent;
   }
+  // DUREE-INSECABLE-1 : la duree ne se scinde jamais sur deux lignes.
   if (minutes < Duration.minutesPerHour) {
-    return t.eleve.accueil.dansMinutes(minutes: '$minutes');
+    return LibellesGroupe.insecable(
+      t.eleve.accueil.dansMinutes(minutes: '$minutes'),
+    );
   }
-  return t.eleve.accueil.dansHeures(
-    heures: '${minutes ~/ Duration.minutesPerHour}',
-    minutes: (minutes % Duration.minutesPerHour).toString().padLeft(2, '0'),
+  return LibellesGroupe.insecable(
+    t.eleve.accueil.dansHeures(
+      heures: '${minutes ~/ Duration.minutesPerHour}',
+      minutes: (minutes % Duration.minutesPerHour).toString().padLeft(2, '0'),
+    ),
   );
 }
 

@@ -49,43 +49,51 @@ class ParcoursOffresPage extends ConsumerStatefulWidget {
   ConsumerState<ParcoursOffresPage> createState() => _ParcoursOffresPageState();
 }
 
-class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
-  /// Six questions, puis les horaires. Le total annonce inclut la derniere
-  /// page : une barre qui s'arrete a six alors qu'il reste un ecran ment sur ce
-  /// qu'il reste a faire.
-  static const int _pages = 7;
+/// Les questions du parcours, dans l'ordre.
+enum _Question { age, langue, lieu, niveau, objectif, moments, offres }
 
-  /// La page courante. Nulle tant que l'on ne sait pas d'ou partir.
-  ///
-  /// **Un foyer qui a deja repondu n'est pas renvoye a la premiere question.**
-  /// On revient ici pour changer d'horaire bien apres son inscription, et
-  /// reposer six questions deja repondues serait exactement ce que la mission
-  /// interdit : redemander une information connue. Les questions restent
-  /// accessibles par « Retour », pour qui veut corriger.
-  int? _page;
+class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
   bool _envoi = false;
   String? _erreur;
   bool _demandeEnregistree = false;
 
-  String? _cohorteTouchee;
-  String? _langueTouchee;
-  String? _fuseauTouche;
-  NiveauDeclare? _niveauTouche;
-  ObjectifApprentissage? _objectifTouche;
-  final Set<MomentJournee> _moments = <MomentJournee>{};
+  /// Vrai une fois un horaire choisi : la page dit alors ce qui a ete
+  /// enregistre et propose la suite, au lieu de renvoyer sans un mot.
+  bool _fini = false;
+
+  /// Les reponses en cours, gardees hors de la page (retour sans perte).
+  BrouillonParcours get _b => ref
+      .read(brouillonsParcoursProvider)
+      .putIfAbsent(widget.eleveId, BrouillonParcours.new);
 
   // Chaque reponse se lit « ce que la personne vient de toucher, sinon ce que
   // la fiche sait deja ». C'est ce qui permet de revenir corriger une seule
   // question sans devoir toutes les retaper.
-  String? get _cohorte => _cohorteTouchee ?? _apprenant?.cohorteCode;
-  String? get _langue => _langueTouchee ?? _apprenant?.langueCode;
-  String? get _fuseau => _fuseauTouche ?? _apprenant?.fuseauFoyer;
-  NiveauDeclare? get _niveau => _niveauTouche ?? _apprenant?.niveauDeclare;
-  ObjectifApprentissage? get _objectif =>
-      _objectifTouche ?? _apprenant?.objectif;
+  String? get _cohorte => _b.cohorte ?? _apprenant?.cohorteCode;
+  String? get _langue => _b.langue ?? _apprenant?.langueCode;
+  String? get _fuseau => _b.fuseau ?? _apprenant?.fuseauFoyer;
+  NiveauDeclare? get _niveau => _b.niveau ?? _apprenant?.niveauDeclare;
 
-  /// Le fuseau retenu, ou celui du foyer tant que la question n'est pas passee.
-  String get _fuseauVu => _fuseau ?? 'Europe/Paris';
+  // Aucune branche codee cote client (mandat LA-4 : branches serveur
+  // seulement). L'ancienne deduction « debut_lettres => apprendre_a_lire »
+  // a ete retiree (REVUE LA-F) : 0043 ne rend aucune regle de branchement,
+  // la question de l'objectif est donc posee a tous.
+  ObjectifApprentissage? get _objectif => _b.objectif ?? _apprenant?.objectif;
+
+  Set<MomentJournee> get _moments => MomentJournee.values
+      .where((MomentJournee m) => _b.moments.contains(m.name))
+      .toSet();
+
+  /// Le fuseau retenu, ou une suggestion d'apres l'horloge de l'appareil tant
+  /// que la question n'est pas passee (jamais une valeur fixe : LA-F, constat
+  /// honnetete, `parcours.offresRaison` promet l'heure locale).
+  String get _fuseauVu =>
+      _fuseau ??
+      fuseauSuggere(
+            fuseauConnu: _apprenant?.fuseauFoyer,
+            decalageAppareil: DateTime.now().timeZoneOffset,
+          )?.iana ??
+      'Europe/Paris';
 
   ParcoursApprenant? get _apprenant => ref
       .watch(parcoursFoyerProvider)
@@ -93,17 +101,37 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
       ?.where((ParcoursApprenant p) => p.eleveId == widget.eleveId)
       .firstOrNull;
 
+  /// Les questions de cet apprenant ; le total « n sur N » se calcule sur
+  /// cette liste.
+  List<_Question> get _questions => _Question.values;
+
+  int get _total => _questions.length;
+
+  int _numero(_Question q) => _questions.indexOf(q) + 1;
+
   void _avancer() => setState(() {
-    _page = (_page ?? 0) + 1;
+    _b.page = _pageCourante + 1;
     _erreur = null;
   });
 
   void _reculer() => setState(() {
-    _page = (_page ?? 0) - 1;
+    _b.page = _pageCourante - 1;
     _erreur = null;
   });
 
-  /// Enregistre les six reponses, puis passe aux horaires.
+  /// Quitte le questionnaire sans rien perdre : le brouillon reste, et la
+  /// prochaine visite reprend a la meme question.
+  void _quitter() => GoRouter.of(context).go(Routes.tuteurAccueil);
+
+  int get _pageCourante {
+    final int? page = _b.page;
+    if (page != null) {
+      return page.clamp(0, _total - 1);
+    }
+    return (_apprenant?.profilRempli ?? false) ? _total - 1 : 0;
+  }
+
+  /// Enregistre les reponses, puis passe aux horaires.
   ///
   /// L'ecriture a lieu ICI et non page par page : une fiche a moitie ecrite
   /// serait consideree « personnalisee » par `profilRempli` et ferait sauter
@@ -138,9 +166,9 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
       if (mounted) {
         _avancer();
       }
-    } on Object {
+    } on Object catch (e) {
       if (mounted) {
-        setState(() => _erreur = t.parcours.erreur);
+        setState(() => _erreur = _messagePanne(e));
       }
     } finally {
       if (mounted) {
@@ -149,29 +177,47 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
     }
   }
 
+  /// Une preference encore vivante sur un AUTRE horaire est retiree avant le
+  /// nouveau choix (`renoncer_intention_horaire`, DB-ADM-08).
+  bool _doitRenoncer(String offreId) {
+    final ParcoursApprenant? p = _apprenant;
+    if (p == null) {
+      return false;
+    }
+    final EtatIntention? etat = p.intentionEtat;
+    return etat != null &&
+        etat != EtatIntention.retiree &&
+        p.offreId != null &&
+        p.offreId != offreId;
+  }
+
   Future<void> _choisir(String offreId) async {
     setState(() {
       _envoi = true;
       _erreur = null;
     });
     try {
-      await ref
-          .read(serviceOffresProvider)
-          .choisirOffre(
-            CleOffres(membreId: widget.eleveId, fuseau: _fuseauVu),
-            offreId,
-          );
+      final ServiceOffres service = ref.read(serviceOffresProvider);
+      if (_doitRenoncer(offreId)) {
+        await service.renoncer(
+          membreId: widget.eleveId,
+          motif: 'changement_horaire',
+        );
+      }
+      await service.choisirOffre(
+        CleOffres(membreId: widget.eleveId, fuseau: _fuseauVu),
+        offreId,
+      );
       ref
         ..invalidate(parcoursFoyerProvider)
-        ..invalidate(offresCompatiblesProvider);
+        ..invalidate(offresCompatiblesProvider)
+        ..read(brouillonsParcoursProvider).remove(widget.eleveId);
       if (mounted) {
-        // Retour a l'accueil : c'est lui qui dit l'etat reel, et il le dira
-        // mieux que cette page, qui vient de faire son travail.
-        GoRouter.of(context).go(Routes.tuteurAccueil);
+        setState(() => _fini = true);
       }
-    } on Object {
+    } on Object catch (e) {
       if (mounted) {
-        setState(() => _erreur = t.parcours.erreur);
+        setState(() => _erreur = _messagePanne(e));
       }
     } finally {
       if (mounted) {
@@ -197,9 +243,9 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
       if (mounted) {
         setState(() => _demandeEnregistree = true);
       }
-    } on Object {
+    } on Object catch (e) {
       if (mounted) {
-        setState(() => _erreur = t.parcours.erreur);
+        setState(() => _erreur = _messagePanne(e));
       }
     } finally {
       if (mounted) {
@@ -207,6 +253,12 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
       }
     }
   }
+
+  String _messagePanne(Object e) => switch (classerPanneParcours(e)) {
+    PanneParcours.indisponible => t.parcours.indisponibleTitre,
+    PanneParcours.horsLigne => t.parcours.horsLigneDetail,
+    PanneParcours.erreur => t.parcours.erreur,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -217,32 +269,128 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
     // Rien ne s'affiche avant de savoir de qui l'on parle : une question qui
     // dirait « Quel age a  ? » vaut moins qu'un squelette.
     if (!foyer.hasValue) {
+      if (foyer.hasError) {
+        return _pagePanne(classerPanneParcours(foyer.error!));
+      }
       return PageShell(
         titre: t.parcours.chargement,
-        child: foyer.hasError
-            ? _Refus(message: t.parcours.erreur)
-            : const Skeleton.liste(lignes: 4),
+        onRetour: _quitter,
+        child: const Skeleton.liste(lignes: 4),
       );
     }
 
-    // Le profil deja rempli ouvre directement sur les horaires : les cinq
-    // getters ci-dessus reprennent les reponses connues, donc « Retour »
-    // retrouve des pages deja remplies plutot que vides.
-    final int page =
-        _page ?? ((_apprenant?.profilRempli ?? false) ? _pages - 1 : 0);
+    if (_apprenant == null) {
+      return _EtatParcours(
+        titre: t.parcours.introuvableTitre,
+        detail: t.parcours.introuvableDetail,
+        onRetour: _quitter,
+        actions: <Widget>[
+          ActionPrincipale(
+            libelle: t.parcours.retourFoyer,
+            onPress: () => GoRouter.of(context).go(Routes.tuteurFoyer),
+          ),
+        ],
+      );
+    }
 
-    return switch (page) {
-      0 => _pageAge(),
-      1 => _pageLangue(),
-      2 => _pageLieu(),
-      3 => _pageNiveau(),
-      4 => _pageObjectif(),
-      5 => _pageMoments(),
-      _ => _pageOffres(),
+    if (_fini) {
+      return _pageFin();
+    }
+
+    return switch (_questions[_pageCourante]) {
+      _Question.age => _pageAge(),
+      _Question.langue => _pageLangue(),
+      _Question.lieu => _pageLieu(),
+      _Question.niveau => _pageNiveau(),
+      _Question.objectif => _pageObjectif(),
+      _Question.moments => _pageMoments(),
+      _Question.offres => _pageOffres(),
     };
   }
 
   String get _prenom => _apprenant?.prenom ?? '';
+
+  /// Le prenom de l'eleve en contexte, sur les questions qui ne le nomment
+  /// pas : on sait toujours pour qui l'on repond.
+  String _pour(String raison) =>
+      '${t.parcours.pourPrenom(prenom: _prenom)}\n$raison';
+
+  // --- Etats sans questionnaire ---------------------------------------------
+
+  Widget _pagePanne(PanneParcours panne) {
+    void reessayer() => ref.invalidate(parcoursFoyerProvider);
+    return switch (panne) {
+      // Le backend du parcours n'existe pas encore sur ce serveur : rien a
+      // reessayer, et rien de faux a montrer.
+      PanneParcours.indisponible => _EtatParcours(
+        titre: t.parcours.indisponibleTitre,
+        detail: t.parcours.indisponibleDetail,
+        onRetour: _quitter,
+        actions: <Widget>[
+          ActionPrincipale(
+            libelle: t.parcours.retourAccueil,
+            onPress: _quitter,
+          ),
+        ],
+      ),
+      PanneParcours.horsLigne => _EtatParcours(
+        titre: t.parcours.horsLigneTitre,
+        detail: t.parcours.horsLigneDetail,
+        onRetour: _quitter,
+        actions: <Widget>[
+          ActionPrincipale(libelle: t.parcours.reessayer, onPress: reessayer),
+        ],
+      ),
+      PanneParcours.erreur => _EtatParcours(
+        titre: t.parcours.erreurChargement,
+        detail: t.parcours.erreurChargementDetail,
+        onRetour: _quitter,
+        actions: <Widget>[
+          ActionPrincipale(libelle: t.parcours.reessayer, onPress: reessayer),
+        ],
+      ),
+    };
+  }
+
+  /// Fin d'admission pour cet eleve : ce qui est enregistre, ce qui reste
+  /// selon le statut rendu par le serveur, puis la suite.
+  Widget _pageFin() {
+    final StatutDiagnostic? diagnostic = _apprenant?.diagnostic;
+    final String? reste = switch (diagnostic) {
+      StatutDiagnostic.aPlanifier => t.parcours.etatDiagnosticRequisDetail(
+        prenom: _prenom,
+      ),
+      StatutDiagnostic.planifie => t.parcours.etatDiagnosticEnAttenteDetail(
+        prenom: _prenom,
+      ),
+      StatutDiagnostic.nonRequis || StatutDiagnostic.fait || null => null,
+    };
+    return _EtatParcours(
+      titre: t.parcours.finTitre(prenom: _prenom),
+      detail: reste == null
+          ? t.parcours.finDetail
+          : '${t.parcours.finDetail}\n\n$reste',
+      onRetour: _quitter,
+      actions: <Widget>[
+        Text(
+          t.parcours.finAjouterDetail,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        Ecart.vMd,
+        ActionPrincipale(
+          libelle: t.parcours.finAjouterProfil,
+          // Par la route seule : le formulaire appartient au Foyer.
+          onPress: () => GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
+        ),
+        Ecart.vMd,
+        ActionPrincipale(
+          libelle: t.parcours.retourAccueil,
+          niveau: NiveauAction.secondaire,
+          onPress: _quitter,
+        ),
+      ],
+    );
+  }
 
   // --- 1. L'age, jamais une date de naissance ------------------------------
 
@@ -252,13 +400,15 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
     );
 
     return PageParcours(
-      numero: 1,
-      total: _pages,
+      numero: _numero(_Question.age),
+      total: _total,
       minutesRestantes: 3,
       question: t.parcours.ageQuestion(prenom: _prenom),
       explication: t.parcours.ageRaison,
       libelleAction: t.commun.continuer,
       onAction: _cohorte == null ? null : _avancer,
+      // Premiere question : Retour quitte le questionnaire, le brouillon reste.
+      onRetour: _quitter,
       enfant: cohortes.hasValue
           ? ChoiceCardGroup(
               // La liste des tranches est fermee et vient du serveur : aucune
@@ -273,11 +423,11 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
                   OptionChoix(valeur: c.code, libelle: c.nom),
               ],
               onChange: (ReponseChoix r) => setState(
-                () => _cohorteTouchee = r.valeurs.isEmpty
-                    ? null
-                    : r.valeurs.first,
+                () => _b.cohorte = r.valeurs.isEmpty ? null : r.valeurs.first,
               ),
             )
+          : cohortes.hasError
+          ? _Refus(message: _messagePanne(cohortes.error!))
           : const Skeleton.liste(lignes: 4),
     );
   }
@@ -290,11 +440,11 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
     );
 
     return PageParcours(
-      numero: 2,
-      total: _pages,
+      numero: _numero(_Question.langue),
+      total: _total,
       minutesRestantes: 3,
       question: t.parcours.langueQuestion,
-      explication: t.parcours.langueRaison,
+      explication: _pour(t.parcours.langueRaison),
       libelleAction: t.commun.continuer,
       onAction: _langue == null ? null : _avancer,
       onRetour: _reculer,
@@ -312,10 +462,11 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
                   OptionChoix(valeur: l.code, libelle: l.nom),
               ],
               onChange: (ReponseChoix r) => setState(
-                () =>
-                    _langueTouchee = r.valeurs.isEmpty ? null : r.valeurs.first,
+                () => _b.langue = r.valeurs.isEmpty ? null : r.valeurs.first,
               ),
             )
+          : langues.hasError
+          ? _Refus(message: _messagePanne(langues.error!))
           : const Skeleton.liste(lignes: 3),
     );
   }
@@ -330,20 +481,20 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
     final String? retenu = _fuseau ?? suggere?.iana;
 
     return PageParcours(
-      numero: 3,
-      total: _pages,
+      numero: _numero(_Question.lieu),
+      total: _total,
       minutesRestantes: 2,
       question: t.parcours.lieuQuestion,
-      explication: t.parcours.lieuRaison,
+      explication: _pour(t.parcours.lieuRaison),
       libelleAction: t.commun.continuer,
       onAction: retenu == null
           ? null
           : () {
-              setState(() => _fuseauTouche = retenu);
+              setState(() => _b.fuseau = retenu);
               _avancer();
             },
       onRetour: _reculer,
-      souscription: suggere != null && _fuseauTouche == null
+      souscription: suggere != null && _b.fuseau == null
           ? Text(
               t.parcours.lieuSuggere,
               textAlign: TextAlign.center,
@@ -361,7 +512,7 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
             OptionChoix(valeur: f.iana, libelle: f.libelle),
         ],
         onChange: (ReponseChoix r) => setState(
-          () => _fuseauTouche = r.valeurs.isEmpty ? null : r.valeurs.first,
+          () => _b.fuseau = r.valeurs.isEmpty ? null : r.valeurs.first,
         ),
       ),
     );
@@ -371,8 +522,8 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
 
   Widget _pageNiveau() {
     return PageParcours(
-      numero: 4,
-      total: _pages,
+      numero: _numero(_Question.niveau),
+      total: _total,
       minutesRestantes: 2,
       question: t.parcours.niveauQuestion(prenom: _prenom),
       explication: t.parcours.niveauRaison,
@@ -389,7 +540,7 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
             OptionChoix(valeur: n.valeurSql, libelle: libelleNiveau(n)),
         ],
         onChange: (ReponseChoix r) => setState(
-          () => _niveauTouche = NiveauDeclare.depuisSql(
+          () => _b.niveau = NiveauDeclare.depuisSql(
             r.valeurs.isEmpty ? null : r.valeurs.first,
           ),
         ),
@@ -397,15 +548,15 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
     );
   }
 
-  // --- 5. L'objectif -------------------------------------------------------
+  // --- 5. L'objectif (branche non debutant seulement) ----------------------
 
   Widget _pageObjectif() {
     return PageParcours(
-      numero: 5,
-      total: _pages,
+      numero: _numero(_Question.objectif),
+      total: _total,
       minutesRestantes: 1,
       question: t.parcours.objectifQuestion,
-      explication: t.parcours.objectifRaison,
+      explication: _pour(t.parcours.objectifRaison),
       libelleAction: t.commun.continuer,
       onAction: _objectif == null ? null : _avancer,
       onRetour: _reculer,
@@ -421,7 +572,7 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
             OptionChoix(valeur: o.valeurSql, libelle: libelleObjectif(o)),
         ],
         onChange: (ReponseChoix r) => setState(
-          () => _objectifTouche = ObjectifApprentissage.depuisSql(
+          () => _b.objectif = ObjectifApprentissage.depuisSql(
             r.valeurs.isEmpty ? null : r.valeurs.first,
           ),
         ),
@@ -433,11 +584,11 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
 
   Widget _pageMoments() {
     return PageParcours(
-      numero: 6,
-      total: _pages,
+      numero: _numero(_Question.moments),
+      total: _total,
       minutesRestantes: 1,
       question: t.parcours.momentsQuestion,
-      explication: t.parcours.momentsRaison,
+      explication: _pour(t.parcours.momentsRaison),
       libelleAction: t.commun.continuer,
       // Repondre est facultatif : sans reponse, les horaires s'affichent dans
       // l'ordre publie par l'academie. Exiger une reponse a une question qui ne
@@ -449,21 +600,15 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
       enfant: ChoiceCardGroup(
         selectionMultiple: true,
         autoriserSaisieLibre: false,
-        valeurInitiale: ReponseChoix(
-          valeurs: _moments.map((MomentJournee m) => m.name).toSet(),
-        ),
+        valeurInitiale: ReponseChoix(valeurs: Set<String>.of(_b.moments)),
         options: <OptionChoix>[
           for (final MomentJournee m in MomentJournee.values)
             OptionChoix(valeur: m.name, libelle: m.libelle),
         ],
         onChange: (ReponseChoix r) => setState(() {
-          _moments
+          _b.moments
             ..clear()
-            ..addAll(
-              MomentJournee.values.where(
-                (MomentJournee m) => r.valeurs.contains(m.name),
-              ),
-            );
+            ..addAll(r.valeurs);
         }),
       ),
     );
@@ -477,17 +622,20 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
         CleOffres(membreId: widget.eleveId, fuseau: _fuseauVu),
       ),
     );
+    final int numero = _numero(_Question.offres);
 
     if (!offres.hasValue) {
       return PageParcours(
-        numero: 7,
-        total: _pages,
+        numero: numero,
+        total: _total,
         question: t.parcours.offresQuestion(prenom: _prenom),
-        libelleAction: t.commun.continuer,
-        onAction: null,
+        libelleAction: t.parcours.reessayer,
+        onAction: offres.hasError
+            ? () => ref.invalidate(offresCompatiblesProvider)
+            : null,
         onRetour: _reculer,
         souscription: offres.hasError
-            ? _Refus(message: t.parcours.erreur)
+            ? _Refus(message: _messagePanne(offres.error!))
             : null,
         enfant: const Skeleton.liste(lignes: 3),
       );
@@ -499,19 +647,19 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
     );
 
     if (classees.isEmpty) {
-      return _pageAucuneOffre();
+      return _pageAucuneOffre(numero);
     }
 
     final OffreHoraire recommandee = classees.first;
     final List<OffreHoraire> autres = classees.skip(1).toList(growable: false);
 
     return PageParcours(
-      numero: 7,
-      total: _pages,
+      numero: numero,
+      total: _total,
       question: t.parcours.offresQuestion(prenom: _prenom),
       explication: t.parcours.offresRaison,
-      libelleAction: t.commun.retour,
-      onAction: () => GoRouter.of(context).go(Routes.tuteurAccueil),
+      libelleAction: t.parcours.retourAccueil,
+      onAction: _quitter,
       onRetour: _reculer,
       enCours: _envoi,
       souscription: _erreur == null ? null : _Refus(message: _erreur!),
@@ -538,7 +686,7 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
             Ecart.vMd,
             for (final OffreHoraire o in autres)
               Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                padding: const EdgeInsets.only(bottom: AppSpacing.lg),
                 child: _CarteOffre(
                   offre: o,
                   fuseauVu: _fuseauVu,
@@ -557,14 +705,14 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
     );
   }
 
-  Widget _pageAucuneOffre() {
+  Widget _pageAucuneOffre(int numero) {
     return PageParcours(
-      numero: 7,
-      total: _pages,
+      numero: numero,
+      total: _total,
       question: t.parcours.aucuneOffre,
       explication: t.parcours.aucuneOffreDetail,
-      libelleAction: t.commun.retour,
-      onAction: () => GoRouter.of(context).go(Routes.tuteurAccueil),
+      libelleAction: t.parcours.retourAccueil,
+      onAction: _quitter,
       onRetour: _reculer,
       enCours: _envoi,
       souscription: _erreur == null ? null : _Refus(message: _erreur!),
@@ -572,6 +720,43 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
         enregistree: _demandeEnregistree,
         enCours: _envoi,
         onSignaler: () => unawaited(_signalerRefus()),
+      ),
+    );
+  }
+}
+
+/// Un etat hors questionnaire (indisponible, hors ligne, erreur, profil
+/// introuvable, fin) : un titre, une phrase, les actions, et toujours un
+/// retour visible.
+class _EtatParcours extends StatelessWidget {
+  const _EtatParcours({
+    required this.titre,
+    required this.detail,
+    required this.onRetour,
+    required this.actions,
+  });
+
+  final String titre;
+  final String detail;
+  final VoidCallback onRetour;
+  final List<Widget> actions;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    return PageShell(
+      titre: titre,
+      onRetour: onRetour,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Semantics(
+            liveRegion: true,
+            child: Text(detail, style: textes.bodyLarge),
+          ),
+          Ecart.vXl,
+          ...actions,
+        ],
       ),
     );
   }

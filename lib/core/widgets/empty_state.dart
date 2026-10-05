@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_metriques.dart';
@@ -11,7 +12,7 @@ import 'action_principale.dart';
 ///
 /// **Le troisieme est celui qu'on oublie** : un tableau de bord
 /// d'administration vide veut dire que tout va bien, et ne doit pas ressembler
-/// a une panne (`docs/design/02-regles-ux.md` section 6).
+/// a une panne (`docs/archive/2026-09-pre-remise-a-plat/design/02-regles-ux.md` section 6).
 enum RegistreVide {
   /// L'utilisateur peut agir : le constat, l'invitation, et le bouton.
   actionnable,
@@ -34,7 +35,7 @@ enum RegistreVide {
 /// Obligatoire des qu'une liste peut etre vide. Un etat vide est une
 /// **invitation**, pas une excuse : « Aucun cours aujourd'hui, ton prochain
 /// cours est jeudi », jamais « Aucune donnee »
-/// (`docs/produit/parcours-utilisateurs.md`, regles communes).
+/// (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`, regles communes).
 ///
 /// D'ou l'API : [message] est obligatoire et [invitation] fortement attendue.
 /// Un appel qui ne donne qu'un constat produit un ecran mort.
@@ -86,8 +87,21 @@ class EmptyState extends StatelessWidget {
         libelleAction != null &&
         onAction != null;
 
-    return Center(
-      child: Padding(
+    // Un etat vide ne deborde jamais : centre quand la place suffit, defilant
+    // sinon (barre du Mode Accessibilite plus haute, texte agrandi, 320 px).
+    Widget centre(Widget contenu) => LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints c) => c.hasBoundedHeight
+          ? SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: c.maxHeight),
+                child: Center(child: contenu),
+              ),
+            )
+          : Center(child: contenu),
+    );
+
+    return centre(
+      Padding(
         padding: EdgeInsets.all(metriques.marge),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -102,14 +116,19 @@ class EmptyState extends StatelessWidget {
               child: Icon((icone ?? _iconeParDefaut).repos),
             ),
             Ecart.vXl,
-            Text(
+            // Aucun mot coupe, meme a 320 px et texte x2 (« aujourd'hu / i »,
+            // ELV-VIDE-COUPE-1 ; « l'acadé / mie », DASH-MA-PROD) : le
+            // constat et l'invitation passent a la ligne entre les mots ; le
+            // mot le plus long se reduit juste assez pour tenir. A l'echelle
+            // 1, rien ne change.
+            TexteSansCoupure(
               message,
               textAlign: TextAlign.center,
               style: fond.applyTo(textes.titleLarge ?? const TextStyle()),
             ),
             if (invitation != null) ...<Widget>[
               Ecart.vSm,
-              Text(
+              TexteSansCoupure(
                 invitation!,
                 textAlign: TextAlign.center,
                 style: palette.inkMuted.applyTo(

@@ -11,6 +11,7 @@ import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
+import '../theme/app_typography.dart';
 import 'audio_label.dart';
 import 'pressable.dart';
 
@@ -52,7 +53,7 @@ class _PinPadState extends State<PinPad> {
       return;
     }
     // Le passage d'un cran, l'un des trois seuls usages haptiques du produit
-    // (`docs/design/04-systeme-mouvement.md` section 6). Il double la pastille
+    // (`docs/archive/2026-09-pre-remise-a-plat/design/04-systeme-mouvement.md` section 6). Il double la pastille
     // qui se remplit : un enfant qui ne regarde pas l'ecran sait qu'un chiffre
     // est entre.
     unawaited(HapticFeedback.selectionClick());
@@ -168,7 +169,7 @@ class _Touche extends StatelessWidget {
     final AppMetriques metriques = AppMetriques.of(context);
     // Registre doux, et non l'aplat violet d'origine : dix touches pleines
     // faisaient dix zones saturees sur un meme ecran, la ou la regle n'en
-    // autorise qu'une (`docs/design/01-systeme-visuel.md` section 3). Le
+    // autorise qu'une (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md` section 3). Le
     // contour fort porte la lisibilite du bouton, la teinte porte son
     // appartenance a l'accent.
     final AppColorPair paire = palette.washAccent;
@@ -189,10 +190,21 @@ class _Touche extends StatelessWidget {
               ? palette.borderStrong.asBorderSide(width: 2)
               : palette.borderResting.asBorderSide(width: 2),
         ),
-        child: Text(
-          '$chiffre',
-          style: paire.applyTo(
-            Theme.of(contexte).textTheme.headlineMedium ?? const TextStyle(),
+        // Le style chiffre, et non `headlineMedium` : ce role est un titre en
+        // DM Sans, police sans chiffres tabulaires. Un chiffre de touche se
+        // lit en Plus Jakarta Sans, comme tous les codes du produit.
+        //
+        // La touche a une taille fixe : a 200 % de texte, le chiffre
+        // debordait sur l'anneau (capture 0b du 24/09/2026). Il remplit
+        // desormais la touche au plus, sans jamais etre coupe.
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.sm),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              '$chiffre',
+              style: paire.applyTo(AppTypography.chiffre()),
+            ),
           ),
         ),
       ),

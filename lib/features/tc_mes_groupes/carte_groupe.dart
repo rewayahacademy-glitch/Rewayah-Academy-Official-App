@@ -10,6 +10,8 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/avatar_nom.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/status_pill.dart';
 import 'photo_enseignant.dart';
 
@@ -195,48 +197,39 @@ class _Enseignant extends StatelessWidget {
       niveau: groupe.niveauHumain,
     );
 
-    return Row(
+    // AVATAR-1 : couple avatar + nom du composant partage, nom et une ligne
+    // de role (cours et niveau) ; les etats se lisent dessous.
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        PhotoEnseignant(enseignant: enseignant, urlSignee: urlPhotoEnseignant),
-        Ecart.hLg,
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Text(
-                LibellesGroupe.enseignantNomme(enseignant),
-                style: textes.titleSmall ?? const TextStyle(),
-              ),
-              if (coursEtNiveau.isNotEmpty) ...<Widget>[
-                Ecart.vXs,
-                Text(
-                  coursEtNiveau,
-                  style: palette.inkMuted.applyTo(
-                    textes.bodySmall ?? const TextStyle(),
-                  ),
-                ),
-              ],
-              if (enseignant.photoManquante) ...<Widget>[
-                Ecart.vSm,
-                // Un etat, pas une couleur : `StatusPill` refuse par
-                // construction une pastille sans libelle.
-                StatusPill(
-                  libelle: LibellesGroupe.photoManquante,
-                  ton: TonEtat.avertissement,
-                ),
-              ],
-              if (groupe.complet) ...<Widget>[
-                Ecart.vSm,
-                StatusPill(
-                  libelle: LibellesGroupe.complet,
-                  ton: TonEtat.neutre,
-                ),
-              ],
-            ],
+        AvatarNom.enLigne(
+          prenom: enseignant.nomAffichage,
+          nom: LibellesGroupe.enseignantNomme(enseignant),
+          role: coursEtNiveau.isEmpty ? null : coursEtNiveau,
+          ecart: AppSpacing.lg,
+          styleNom: textes.titleSmall,
+          styleRole: palette.inkMuted.applyTo(
+            textes.bodySmall ?? const TextStyle(),
+          ),
+          avatar: PhotoEnseignant(
+            enseignant: enseignant,
+            urlSignee: urlPhotoEnseignant,
           ),
         ),
+        if (enseignant.photoManquante) ...<Widget>[
+          Ecart.vSm,
+          // Un etat, pas une couleur : `StatusPill` refuse par construction
+          // une pastille sans libelle.
+          StatusPill(
+            libelle: LibellesGroupe.photoManquante,
+            ton: TonEtat.avertissement,
+          ),
+        ],
+        if (groupe.complet) ...<Widget>[
+          Ecart.vSm,
+          StatusPill(libelle: LibellesGroupe.complet, ton: TonEtat.neutre),
+        ],
       ],
     );
   }
@@ -261,6 +254,12 @@ class _ProchaineSeance extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          // Une seance en cours se reconnait au premier coup d'oeil
+          // (ON-AIR-1) ; la ligne d'etat garde le temps restant.
+          if (horloge.enDirect) ...<Widget>[
+            const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
+            Ecart.vSm,
+          ],
           Text(
             LibellesGroupe.prochainCours,
             style: palette.inkMuted.applyTo(

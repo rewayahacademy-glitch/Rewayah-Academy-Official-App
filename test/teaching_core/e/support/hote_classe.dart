@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `Override` n'est pas exporte par l'entree principale de Riverpod 3 : il vit
 // dans `misc.dart`, alors que `ProviderScope.overrides` en attend une liste.
@@ -64,6 +64,7 @@ List<Override> surchargesClasse({
   FauxRosterEnseignant? roster,
   PortRappelDiscret? rappel,
   FauxAnnonceObservation? annonces,
+  FauxAnnonceObservationEnfant? annonceEnfant,
 }) => <Override>[
   servicePreVolProvider.overrideWithValue(preVol),
   serviceVideoProvider.overrideWithValue(video),
@@ -80,6 +81,11 @@ List<Override> surchargesClasse({
   // exercer l'en-tete sans annonce, pas une salle observee par commodite.
   portAnnonceObservationProvider.overrideWithValue(
     annonces ?? FauxAnnonceObservation(),
+  ),
+  // **Le tuteur de l'eleve n'observe pas par defaut**, meme raison : le vrai
+  // port appellerait `annonce_observation_pour_moi` sur Supabase.
+  portAnnonceObservationEnfantProvider.overrideWithValue(
+    annonceEnfant ?? FauxAnnonceObservationEnfant(),
   ),
   if (rappel != null) portRappelDiscretProvider.overrideWithValue(rappel),
 ];
@@ -113,6 +119,8 @@ Future<void> monterClasse(
   required List<Override> surcharges,
   LargeurEcran ecran = LargeurEcran.tablette,
   InterfaceMode mode = InterfaceMode.standard,
+  Brightness luminosite = Brightness.light,
+  bool mouvementReduit = false,
 }) async {
   poserEcran(tester, ecran);
   await tester.pumpWidget(
@@ -120,7 +128,17 @@ Future<void> monterClasse(
       overrides: surcharges,
       child: TranslationProvider(
         child: MaterialApp.router(
-          theme: AppTheme.pour(mode, Brightness.light),
+          theme: AppTheme.pour(mode, luminosite),
+          // Pendant une visite, le point d'enregistrement clignote sans fin :
+          // `pumpAndSettle` ne s'arreterait jamais. Le mouvement reduit le
+          // fige (`AppMouvement.mouvementReduit`), sans rien changer d'autre.
+          builder: mouvementReduit
+              ? (BuildContext context, Widget? enfant) => MediaQuery(
+                  data: MediaQuery.of(context)
+                      .copyWith(disableAnimations: true),
+                  child: enfant ?? const SizedBox.shrink(),
+                )
+              : null,
           routerConfig: GoRouter(
             initialLocation: RoutesTcE.classe,
             routes: <RouteBase>[

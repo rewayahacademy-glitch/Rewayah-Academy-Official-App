@@ -1,44 +1,49 @@
-# Rewayah Academy — App (Flutter · Supabase · LiveKit)
+# Rewayah Academy — App (Flutter · Supabase · LiveKit · R2 · Vercel)
 
-Application MVP de gestion des cours de Coran en visio pour Rewayah Academy.
-Cible multi-plateforme : **Windows (desktop/Web)**, **Android**, **iOS/iPadOS** — l'accès le plus tôt possible passe par le mode **PWA** tant que le natif n'est pas publié.
+Application de cours de Coran en visio par **classes stables** (groupe, horaire récurrent,
+enseignant attitré). Remise à plat documentaire du 23 septembre 2026 : les seules
+spécifications actives sont dans `docs/current/`. Tout le reste est archivé.
 
-## Ce que tu es
+## Lire, dans cet ordre, et rien d'autre
 
-Tu es l'agent de code de ce projet. Ta mission : **transformer les spécifications livrées en implémentation pure**, sans jamais retomber dans de la configuration dispersée. Toute config, une fois faite, est codée dans le dépôt (`supabase/`, `.github/`, `web/`, etc.). Tu ne reconfigures rien au fil de l'eau.
+| Tâche | Lire |
+| :--- | :--- |
+| Toujours, en premier | `docs/current/00_LIRE_D_ABORD.md` (autorité, invariants, contradictions résolues) |
+| Toujours, en second | `docs/current/08_DECISIONS_ET_FEUILLE_DE_ROUTE_2026-09-23.md` version 2 (gate C0 de configuration, décisions datées, **§5 bis = dernières décisions**, qui prévalent sur le §0 quand elles l'amendent) |
+| Configuration de départ (C0) | `docs/current/09_PROMPT_REPRISE_VERTICALE.md` ; depuis le 23/09 (soir), **le travail UI isolé sur branche dédiée est autorisé sur ordre explicite du directeur, un écran à la fois** (`08` §5 bis) ; V0, V1, CORE24 restent suspendus ; fusion dans `main` et déploiement restent soumis aux contrôles CI, migrations et sécurité encore bloqués |
+| Bilan C0 | `docs/current/CONFIGURATION_BASELINE_2026-09-23.md` (PASS / BLOCKED / INCONNU par point, avec preuves) |
+| Produit, rôles, parcours, recette | `docs/current/01_PRODUIT_ET_PARCOURS.md` |
+| Schéma, RLS, RPC, LiveKit, R2, CI | `docs/current/02_ARCHITECTURE_ET_SECURITE.md` |
+| **Tout nouveau lot visuel ou nouvelle spec (règle gelée du directeur, 26/09/2026)** | `docs/current/DESIGN-GOV-2026-09-26.md`, immuable jusqu'à nouvelle décision datée du directeur |
+| Écran, composant, thème, accessibilité | `docs/current/03_DESIGN_SYSTEM_ET_UX.md` puis `lib/CLAUDE.md` |
+| Branches, worktrees, déploiement, ménage | `docs/current/04_EXECUTION_GIT_CI_ET_MIGRATION.md` |
+| Périmètre MVP et statuts de preuve | `docs/current/06_SPEC_FONCTIONNELLE_MVP.md` |
+| Pédagogie avancée, finance (après MVP) | `docs/current/07_MEMOIRE_PEDAGOGIE_FINANCE.md` |
+| Backend Supabase | `supabase/CLAUDE.md` |
 
-## Classement des documents — à lire dans cet ordre (jamais tous d'un coup)
+`docs/archive/` contient l'historique (HANDOFF, ADR, Bible V2, rapports d'agents).
+**Ne pas le charger comme instruction.** On l'ouvre seulement pour retrouver une décision
+passée nommément, et une règle archivée qui contredit `docs/current/` est caduque.
 
-| Si tu touches | Lis d'abord | Rôle |
-| :--- | :--- | :--- |
-| **N'importe quoi, au démarrage** | `docs/HANDOFF.md` | **À lire en premier, avant toute action.** Où la session précédente s'est arrêtée, quel lot reprendre, avec quelles commandes, et les mesures à ne pas faire régresser |
-| Juste après le handoff | `docs/PROGRESS.md` | Où en est le projet dans son ensemble. Une seule section à lire : DÉMARRER ICI |
-| Tout le projet, au démarrage | `docs/architecture/decisions.md` | Le registre ADR (questions déjà tranchées) |
-| Le code Flutter existant | `docs/architecture/etape-2-journal.md` | Le socle : thème, composants, routeur, cache |
-| L'auth, le KYC, l'appairage, les portails | `docs/architecture/etape-3-journal.md` | Ce qui existe, ce qui est mesuré, les pièges déjà payés |
-| Les portes d'accès et leurs invariants | `docs/architecture/etape-3-auth-kyc.md` | Spécification de l'étape 3 et ses douze scénarios |
-| Le schéma, RLS, fonctions, migrations | `docs/architecture/etape-0-1-fondations.md` | Dictionnaire de données, contraintes, tests d'acceptation |
-| Le backend Supabase | `supabase/CLAUDE.md` | Rappels non négociables du dossier |
-| **Tout écran, tout composant, toute couleur** | **`docs/design/00-bible-frontend-v2.md`** puis **`docs/design/README.md`** | **Le contrat frontend (ADR-019) puis sa constitution.** La Bible V2, 61 chapitres, adoptée le 11 septembre 2026 après que le rendu déployé du lot R3 ait été jugé « plus nul que du générique » ; `README.md` porte la table de correspondance (§4 BIS) — ce qui est déjà tenu, ce qui est tranché autrement pour une raison écrite, ce qui reste un écart et son lot. **À lire avant d'ouvrir un fichier d'écran** |
-| Un écran précis | `docs/design/08-catalogue-ecrans.md` | Le registre. Un écran absent du registre ne s'implémente pas |
-| Ce que l'écran contient et pourquoi | `docs/produit/parcours-utilisateurs.md` | États métier, raisons des choix. Ne dit plus à quoi ça ressemble |
-| Le thème, les composants partagés, le routeur | `docs/architecture/etape-2-core-flutter.md` | Le routeur unique. ⚠ Son tableau de jetons est périmé, voir `design-tokens.md` |
-| Tokens visuels, polices, icônes, éthique | `docs/produit/design-tokens.md` | **Source unique des valeurs** : palette mesurée, typographie, rayons, ombres, espacement, icônes, règles islamiques, anti-IA |
-| Le Coran, les invocations, le tajwid, l'alphabet | `docs/produit/bibliotheque-contenu.md` | Formats de contenu, micro-paquets de synchronisation, budget de poids |
-| Le front-end Flutter | `lib/CLAUDE.md` | Rappels non négociables du dossier |
+## Invariants (détail dans `00`)
 
-### Historique (ne les ouvre que sur demande explicite)
-
-`docs/historique/couverture-specs.md` et `docs/historique/etat-des-lieux.md` ont servi à cadrer le projet avant le code. Leur contenu utile est repris dans `decisions.md`. Ne les lis pas par défaut.
-
-## Première exécution sur ce dépôt — PRIMO OBLIGATOIRE
-
-**La première fois que tu es lancé dans ce dépôt, et avant toute autre tâche**, tu dois détecter si le fichier `docs/PROGRESS.md` existe.
-
-- **S'il n'existe PAS** : le projet n'a jamais été initialisé. Tu passes en **mode onboarding** et tu exécutes intégralement le protocole `docs/agent-onboarding.md` (github, CI/CD, Supabase staging+prod, secrets, cache, mémoire graphify, ressources frontend/backend, PWA). Tu ne fais AUCUNE autre tâche avant de l'avoir terminé. À la fin, tu crées `docs/PROGRESS.md` qui coche chaque étape et tu fais un commit.
-- **S'il EXISTE** : le projet est initialisé. Tu lis `docs/HANDOFF.md`, puis la section **DÉMARRER ICI** de `docs/PROGRESS.md`, tu reprends là où la session précédente s'est arrêtée, et tu appliques les consignes de `docs/agent-onboarding.md` si une étape y est encore non cochée.
-
-Il existe. **Va lire `docs/HANDOFF.md`, puis `docs/PROGRESS.md`.** Tu reprends un travail en cours : ne redémarre pas une étape déjà faite, et ne pars pas sur un autre dépôt parce qu'une mémoire ou un historique en parle.
+- La demande explicite la plus récente du directeur prévaut ; ensuite `docs/current/`.
+- Autorisation côté serveur : RLS sur toutes les tables, capacités et jetons LiveKit
+  délivrés par le serveur. Aucun secret ni calcul financier de référence côté Flutter.
+- Un widget lit une capacité, jamais un rôle. Un écran n'est fini qu'avec ses états
+  loading, content, empty, error, offline.
+- Chaque bilan distingue `spécifié` / `présent dans le code` / `testé localement` /
+  `testé sur staging` / `déployé`. Aucun `PASS` inventé.
+- Aucun déploiement, migration distante, suppression de branche ou de mémoire sans
+  inventaire, sauvegarde et feu vert explicite sur la liste précise.
+- **Pousser sur `main` déploie réellement en production** (`.github/workflows/flutter-deploy.yml`,
+  secrets Actions présents depuis le 24/09/2026, bilan C0 §1). Toute fusion dans `main` est une
+  mise en production. Travailler sur une branche, ne fusionner qu'un lot prouvé.
+- **Pour voir une branche « en live », ouvrir une pull request vers `main`** : le même workflow
+  déploie un aperçu Vercel (URL unique, `staging`) et l'écrit en commentaire de la PR. Jamais de
+  `vercel deploy --prod` à la main depuis un poste.
+- Aucun fichier de `.claude/agents/` ou `.claude/commands/` n'est actif dans ce dépôt ; seuls
+  `.claude/settings.local.json` (hooks de protection) et `.claude/hooks/` le sont.
 
 ## Vérifier avant de dire que c'est fait
 
@@ -50,55 +55,35 @@ flutter test
 dart run tool/verifier_jetons.dart
 ```
 
-Et côté base, sur un Postgres nu, exactement ce que rejoue la CI :
+Côté base, sur un Postgres nu, ce que rejoue `.github/workflows/ci.yml` :
+`supabase/tests/stub_auth.sql`, puis toutes les migrations, puis les scénarios
+`supabase/tests/scenarios_*.sql`. Les migrations sont appliquées en production hors CI
+(voir `deploy.yml`) ; la base distante enregistre des versions horodatées, pas la
+numérotation `00xx` du dépôt.
 
-```
-psql -f supabase/tests/stub_auth.sql
-psql -f supabase/migrations/0001_fondations.sql   # puis 0002 à 0005
-psql -f supabase/tests/scenarios_etape3.sql       # 34 contrôles
-psql -f supabase/tests/scenarios_etape4.sql       # 37 contrôles
-```
+## État du code à connaître
 
-Sur une base **neuve** à chaque fois : un fichier de scénarios insère ses fixtures, le rejouer deux fois sur la même base échoue sans que rien ne soit cassé. Les commandes complètes, avec le conteneur, sont dans `docs/HANDOFF.md`.
+- Lots Teaching Core D, F, H (`lib/core/tc_realtime`, `tc_etat_partage`, `tc_outils`,
+  `tc_parcours`, `lib/features/tc_dock`, `tc_flux_academique`) : **présents et testés,
+  non branchés depuis `main`**. La branche `core24/fable-frontend` les raccorde dans
+  `tc_classe_live`. Ne pas les supprimer, ne pas les dupliquer.
+- Deux salles coexistent : `/salle` (`features/salle`, atteinte par les quatre rôles) et
+  `/tc/classe` (`features/tc_classe_live`, sans entrée effective sur `main`). Cible : une
+  seule salle (`01`, « Classe et supports »).
+- `/tc/groupes` sert au tuteur des groupes de **démonstration** (`core/tc_groupe/port_groupes.dart`).
+  À rebrancher sur les vraies données avant toute cohorte réelle.
+- Le matching individuel par disponibilités (`core/matching`, `features/creneaux`,
+  `features/disponibilites`, `admin_attribution`) est remplacé par le choix d'une classe
+  précréée (`00`, contradictions résolues). Les disponibilités restent utiles pour
+  options, exceptions et liste d'attente.
+- « Mode enfant » devient « Interface guidée », activable aussi par un adulte. Le
+  Teaching Core emploie déjà `interfaceGuidee`.
+- Le bandeau « Cours enregistré » et le point de contrat sur l'enregistrement audio ne
+  correspondent à aucun enregistrement réel côté client : arbitrage ouvert (`06`).
+- Galerie (`/_galerie`) et playground sont des outils de développement derrière
+  `GALERIE` et `PLAYGROUND`, forcés à `false` en production.
 
-Un contrôle qui n'a jamais tourné n'est pas un contrôle vert : c'est ce qui a masqué un défaut de la CI pendant toute l'étape 1. Ne coche jamais un critère que tu n'as pas mesuré, et écris le chiffre plutôt que l'appréciation.
+## Mémoire de l'agent
 
-## Règles transverses (à respecter sans exception)
-
-- Aucun secret versionné. `git-secrets` / `.gitignore` toujours vérifiés. Les clés (Supabase service_role, LiveKit, R2) ne vivent que dans les secrets Supabase / GitHub, jamais en dur.
-- L'argent est un entier en unités mineures. Jamais de float sur de l'argent.
-- RLS activée sur toutes les tables, sans exception.
-- Toute fonction `SECURITY DEFINER` fixe `search_path = ''` et qualifie chaque objet.
-- Toute config est codée dans le dépôt : `supabase/migrations/`, `supabase/functions/`, `.github/workflows/`, `lib/core/`.
-- Un seul routeur pour toutes les plateformes, aucune branche par plateforme. Le mode enfant/standard change l'affichage, jamais l'arborescence.
-- **Aucun écran ne s'implémente s'il n'est pas inscrit dans `docs/design/08-catalogue-ecrans.md`.** S'il manque, on l'ajoute au catalogue avec sa fiche, et on discute de la fiche avant d'ouvrir un fichier `.dart`. Sans cette règle, tu improvises une UX, et c'est ce qui produit les applications incohérentes (ADR-018).
-- Aucune couleur, police, rayon, ombre, durée, courbe ou valeur d'espacement inventée. Tout vient de `docs/produit/design-tokens.md`, et `tool/verifier_jetons.dart` le vérifie.
-- Un widget ne lit jamais un rôle. Il lit une capacité. `if (role == admin)` dans un écran est un défaut à corriger, pas un raccourci.
-- Un écran n'est fini qu'avec ses états `loading`, `content`, `empty`, `error` et `offline`. Un écran livré avec son seul état nominal est refusé en revue.
-- Tant que le natif n'est pas publié, tout doit fonctionner en PWA (Windows, Android, iPad) pour que l'opérateur suive l'évolution tôt. Le Web est ouvert à tous les rôles (ADR-008).
-
-## Rappels des références mappées
-
-| Fichier source (docs de lancement) | Emplacement dans ce dépôt |
-| :--- | :--- |
-| `AUDIT_ARCHITECTURE_REWAYAH_APP.md` | `docs/architecture/audit-initial.md` |
-| `DECISIONS_ARCHITECTURE_MVP0.md` | `docs/architecture/decisions.md` |
-| `PLAN_ETAPE_0_ET_1.md` | `docs/architecture/etape-0-1-fondations.md` |
-| `PLAN_ETAPE_2.md` | `docs/architecture/etape-2-core-flutter.md` |
-| `PARCOURS_UTILISATEURS_MVP0.md` | `docs/produit/parcours-utilisateurs.md` |
-| `COUVERTURE_SPECS_ORIGINALES.md` | `docs/historique/couverture-specs.md` |
-| `ETAT_DES_LIEUX_AVANT_CODAGE.md` | `docs/historique/etat-des-lieux.md` |
-| `supabase_CLAUDE.md` | `supabase/CLAUDE.md` |
-| `lib_CLAUDE.md` | `lib/CLAUDE.md` |
-
-## Ordre d'exécution du code (déjà cadré par les specs)
-
-1. **Étape 0** — Socle d'exploitation (git, Supabase staging+prod, migrations versionnées, PITR, Sentry, CI/CD, variantes Flutter, R2, LiveKit, `app_config`).
-2. **Étape 1** — Fondations DB, RLS, fonctions, triggers, audit (aucune interface).
-3. **Étape 2** — Core Flutter, thème, cache local, routeur unique.
-4. **Étape 3** — Auth, KYC, appairage, portails d'attente.
-5. **Étape 4** — Dashboards Bento Grid.
-6. **Étape 5** — Visio LiveKit, preuve de présence, Coran.
-7. **Étape 6** — Cahier de transmission.
-
-Voir `docs/architecture/etape-0-1-fondations.md` pour les critères d'acceptation et les scénarios de test de chaque étape.
+`C:\Users\dell\.claude\projects\C--\memory\MEMORY.md` (index court). Les mémoires
+antérieures au 23 septembre 2026 sont sous `memory/archive/`.

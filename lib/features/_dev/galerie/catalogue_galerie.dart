@@ -11,25 +11,39 @@ import '../../../core/planning/service_planning.dart';
 import '../../../core/presence/service_presence.dart';
 import '../../../core/presence/vue_presence.dart';
 import '../../../core/priere/horaires_priere.dart';
-import '../../../core/router/routes.dart';
 import '../../../core/session/session_state.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/admin_shell.dart';
 import '../../../core/widgets/app_bottom_sheet.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/audio_label.dart';
+import '../../../core/widgets/avatar_nom.dart';
 import '../../../core/widgets/avatar_tile.dart';
 import '../../../core/widgets/bandeau_observation.dart';
+import '../../../core/widgets/barre_precedent_suivant.dart';
 import '../../../core/widgets/bento_tile.dart';
+import '../../../core/widgets/bouton_icone.dart';
+import '../../../core/widgets/bouton_outil.dart';
+import '../../../core/widgets/carte_groupee.dart';
+import '../../../core/widgets/carte_lignes.dart';
 import '../../../core/widgets/child_card.dart';
 import '../../../core/widgets/choice_card_group.dart';
+import '../../../core/widgets/commande_salle.dart';
 import '../../../core/widgets/confirm_destructive.dart';
+import '../../../core/widgets/controle_segmente.dart';
 import '../../../core/widgets/data_collection.dart';
+import '../../../core/widgets/ecran_resultat.dart';
 import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/fil_discussion.dart';
 import '../../../core/widgets/filter_pill.dart';
+import '../../../core/widgets/grille_bento.dart';
+import '../../../core/widgets/groupe_reglages.dart';
+import '../../../core/widgets/lien_fleche.dart';
+import '../../../core/widgets/ligne_cle_valeur.dart';
 import '../../../core/widgets/ligne_presence.dart';
 import '../../../core/widgets/local_feedback.dart';
 import '../../../core/widgets/marque_page.dart';
@@ -37,16 +51,23 @@ import '../../../core/widgets/menu_actions.dart';
 import '../../../core/widgets/menu_filtre.dart';
 import '../../../core/widgets/nav_shell.dart';
 import '../../../core/widgets/offline_banner.dart';
+import '../../../core/widgets/page_etape.dart';
 import '../../../core/widgets/page_immersive.dart';
 import '../../../core/widgets/page_parcours.dart';
 import '../../../core/widgets/page_shell.dart';
+import '../../../core/widgets/pastille_etat_seance.dart';
 import '../../../core/widgets/permanent_notice.dart';
+import '../../../core/widgets/pile_cartes.dart';
 import '../../../core/widgets/pin_pad.dart';
+import '../../../core/widgets/point_rappel.dart';
 import '../../../core/widgets/pressable.dart';
+import '../../../core/widgets/raccourci_tactile.dart';
 import '../../../core/widgets/rosace_verset.dart';
 import '../../../core/widgets/schedule_option.dart';
 import '../../../core/widgets/section_header.dart';
 import '../../../core/widgets/selecteur_niveau_programme.dart';
+import '../../../core/widgets/selecteur_section.dart';
+import '../../../core/widgets/selecteur_theme.dart';
 import '../../../core/widgets/setting_row.dart';
 import '../../../core/widgets/signal_row.dart';
 import '../../../core/widgets/skeleton.dart';
@@ -54,11 +75,13 @@ import '../../../core/widgets/sous_navigation_domaine.dart';
 import '../../../core/widgets/stat_tile.dart';
 import '../../../core/widgets/status_pill.dart';
 import '../../../core/widgets/timeline_row.dart';
+import '../../admin_tableau/tuiles_compteur.dart';
 import '../../disponibilites/grille_semaine.dart';
+import 'entrees_etats_tuteur.dart';
 
 /// Les familles d'etats obligatoires.
 ///
-/// Reprises telles quelles de `docs/design/07-catalogue-composants.md`
+/// Reprises telles quelles de `docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md`
 /// section 4. Les deux dernieres n'ont pas de liste fixe, et c'est voulu :
 ///
 /// - un **composant d'etat** porte les etats de son metier, qui ne se
@@ -188,26 +211,68 @@ final List<EntreeJournee> _entreesJournee = <EntreeJournee>[
   ),
 ];
 
-/// Trois destinations, pour les trois formes du chrome de navigation.
+/// Les quatre destinations du tuteur, pour les trois formes du chrome de
+/// navigation (Compte epingle en bas de la colonne laterale).
 ///
-/// Celles du tuteur, prises telles quelles dans les libelles du produit : une
-/// galerie qui inventerait ses propres libelles ne montrerait pas la vraie
-/// longueur des mots, et c'est justement ce qui casse un rail.
-List<Destination> _destinationsExemple() => <Destination>[
-  Destination(
-    libelle: t.nav.tuteur.foyer,
-    icone: AppIcons.foyer,
-    chemin: Routes.tuteurAccueil,
+/// Prises telles quelles dans le produit : une galerie qui inventerait ses
+/// propres libelles ne montrerait pas la vraie longueur des mots, et c'est
+/// justement ce qui casse un rail.
+List<Destination> _destinationsExemple() =>
+    destinationsPour(role: AppRole.guardian, mode: InterfaceMode.standard);
+
+/// Les quatre tuiles de tete du Centre de commande, avec les vraies tuiles
+/// (GALERIE-BENTO-2, K-10) : chiffre tabulaire, phrase de detail et apercu
+/// des trois plus anciens dossiers, comme dans tableau_de_bord_page.dart.
+List<TuileBento> _tuilesBentoPrincipales() => <TuileBento>[
+  TuileBento(
+    etendue: EtendueBento.grande,
+    child: TuileCompteur(
+      valeur: 5,
+      libelle: t.admin.tableau.dossiers,
+      detail: t.admin.tableau.dossiersDetail,
+      // Chaque nom ouvre son dossier (DASH-ADM-1, D4 (a)).
+      apercu: <LigneApercu>[
+        LigneApercu(
+          'Aicha · ${t.admin.tableau.attenteJours(jours: '4')}',
+          onPress: _rien,
+        ),
+        LigneApercu(
+          'Ibrahim · ${t.admin.tableau.attenteUnJour}',
+          onPress: _rien,
+        ),
+        LigneApercu(
+          'Youssef · ${t.admin.tableau.attenteAujourdhui}',
+          onPress: _rien,
+        ),
+      ],
+      enLigne: true,
+      onPress: _rien,
+    ),
   ),
-  Destination(
-    libelle: t.nav.tuteur.disponibilites,
-    icone: AppIcons.disponibilites,
-    chemin: Routes.tuteurDisponibilites,
+  TuileBento(
+    etendue: EtendueBento.haute,
+    child: TuileCompteur(
+      valeur: 3,
+      libelle: t.admin.tableau.demandes,
+      detail: t.admin.tableau.demandesDetail,
+      onPress: _rien,
+    ),
   ),
-  Destination(
-    libelle: t.nav.tuteur.reglages,
-    icone: AppIcons.reglages,
-    chemin: Routes.tuteurReglages,
+  TuileBento(
+    etendue: EtendueBento.carree,
+    child: TuileCompteur(
+      valeur: 17,
+      libelle: t.admin.tableau.foyers,
+      onPress: _rien,
+    ),
+  ),
+  TuileBento(
+    etendue: EtendueBento.carree,
+    child: TuileCompteur(
+      valeur: 0,
+      libelle: t.admin.tableau.rapports,
+      onPress: _rien,
+    ),
   ),
 ];
 
@@ -257,7 +322,7 @@ VuePresence _presence(
 
 /// **Le catalogue, et la preuve du catalogue.**
 ///
-/// `docs/design/07-catalogue-composants.md` section 5 : « Un composant absent
+/// `docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md` section 5 : « Un composant absent
 /// de la galerie est un composant dont personne ne peut verifier les etats sans
 /// lancer un ecran metier. » Cette liste est donc comparee, par
 /// `test/widgets/catalogue_galerie_test.dart`, a la liste des composants du
@@ -300,7 +365,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
     famille: FamilleComposant.structure,
     etats: <EtatGalerie>[
       EtatGalerie(
-        'trois destinations',
+        'quatre destinations',
         (BuildContext _) => SizedBox(
           height: _hauteurPage,
           child: NavShell(
@@ -639,6 +704,17 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           child: const Text('Le corps de la feuille.'),
         ),
       ),
+      // La forme de bureau : memes titre, corps et actions, quatre coins
+      // arrondis, sans poignee (contrat K5, phase 0c1 du chantier Tuteur V1).
+      EtatGalerie(
+        'dialogue (bureau)',
+        (BuildContext _) => AppBottomSheet(
+          titre: 'Changer d enseignant',
+          forme: FormeModale.dialogue,
+          actions: ActionPrincipale(libelle: t.commun.valider, onPress: _rien),
+          child: const Text('Le corps de la feuille.'),
+        ),
+      ),
     ],
   ),
   EntreeGalerie(
@@ -898,6 +974,30 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
     ],
   ),
   EntreeGalerie(
+    nom: 'AvatarNom',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'vertical : avatar centre, nom centre dessous',
+        (BuildContext _) => const Center(
+          child: AvatarNom.vertical(prenom: 'Amina', nom: 'Amina Bah'),
+        ),
+      ),
+      EtatGalerie(
+        'en ligne : nom centre sur le cercle',
+        (BuildContext _) => const AvatarNom.enLigne(prenom: 'Ibrahim'),
+      ),
+      EtatGalerie(
+        'en ligne : nom et une ligne de role',
+        (BuildContext _) => const AvatarNom.enLigne(
+          prenom: 'Youssef',
+          nom: 'Sayyid Youssef',
+          role: 'Coran, niveau 2',
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
     nom: 'AudioLabel',
     famille: FamilleComposant.composantEtat,
     etats: <EtatGalerie>[
@@ -921,6 +1021,17 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         (BuildContext _) => const AudioLabel(
           cle: ClesAudio.eleveAccueilRejoindre,
           afficherTexte: false,
+        ),
+      ),
+      EtatGalerie(
+        'sans texte, aligne en fin',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topEnd,
+          child: AudioLabel(
+            cle: ClesAudio.eleveAccueilRejoindre,
+            afficherTexte: false,
+            alignerEnFin: true,
+          ),
         ),
       ),
     ],
@@ -1066,8 +1177,9 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       // d'inventer une heure.
       EtatGalerie(
         'sans terme connu',
-        (BuildContext _) =>
-            const BandeauObservation(observation: Observation(identiteMasquee: true)),
+        (BuildContext _) => const BandeauObservation(
+          observation: Observation(identiteMasquee: true),
+        ),
       ),
     ],
   ),
@@ -1115,6 +1227,30 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             OptionChoix(valeur: 'mardi', libelle: 'Mardi'),
           ],
           selectionMultiple: true,
+          onChange: _choixIgnore,
+        ),
+      ),
+      EtatGalerie(
+        'description et option indisponible',
+        (BuildContext _) => const ChoiceCardGroup(
+          options: <OptionChoix>[
+            OptionChoix(
+              valeur: 'enfant',
+              libelle: 'Mon enfant',
+              icone: AppIcons.profil,
+              description: 'Un profil suivi par vous',
+            ),
+            OptionChoix(
+              valeur: 'moi',
+              libelle: 'Moi-meme',
+              icone: AppIcons.profil,
+              description: 'Votre propre profil eleve',
+              disponible: false,
+              raisonIndisponible: 'Bientot disponible',
+            ),
+          ],
+          valeurInitiale: ReponseChoix(valeurs: <String>{'enfant'}),
+          autoriserSaisieLibre: false,
           onChange: _choixIgnore,
         ),
       ),
@@ -1181,6 +1317,145 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       ),
     ],
   ),
+  EntreeGalerie(
+    nom: 'PageEtape',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'premiere etape',
+        (BuildContext _) => SizedBox(
+          height: _hauteurPage,
+          child: PageEtape(
+            numero: 1,
+            total: 3,
+            onRetour: _rien,
+            action: ActionPrincipale(
+              libelle: t.commun.continuer,
+              onPress: _rien,
+            ),
+            child: const Text('Le corps de l etape.'),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'derniere etape, action en pilule',
+        (BuildContext _) => SizedBox(
+          height: _hauteurPage,
+          child: PageEtape(
+            numero: 3,
+            total: 3,
+            onRetour: _rien,
+            action: ActionPrincipale(
+              libelle: t.commun.valider,
+              onPress: _rien,
+              pilule: true,
+            ),
+            child: const Text('Le corps de l etape.'),
+          ),
+        ),
+      ),
+    ],
+  ),
+  // CT-6 : le fil de discussion generique (CTR-04 Echanges). Envoi honnete :
+  // en cours, envoye sur reponse, echec avec « Reessayer ».
+  EntreeGalerie(
+    nom: 'FilDiscussion',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'vide',
+        (BuildContext _) => SizedBox(
+          height: 480,
+          child: Material(
+            type: MaterialType.transparency,
+            child: FilDiscussion(
+              messages: const <MessageFil>[],
+              textes: _textesFil,
+              onEnvoyer: (String _) async {},
+            ),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'messages',
+        (BuildContext _) => SizedBox(
+          height: 640,
+          child: Material(
+            type: MaterialType.transparency,
+            child: FilDiscussion(
+              messages: const <MessageFil>[
+                MessageFil(
+                  id: 'g1',
+                  auteur: 'Vous',
+                  texte: 'La séance a commencé avec huit minutes de retard.',
+                  horodatage: 'Jeudi 24 septembre, 18:02',
+                  deSoi: true,
+                ),
+                MessageFil(
+                  id: 'g2',
+                  auteur: 'Administration',
+                  texte: "Merci, c'est noté.",
+                  horodatage: 'Vendredi 25 septembre, 09:30',
+                  deSoi: false,
+                ),
+              ],
+              textes: _textesFil,
+              onEnvoyer: (String _) async {},
+            ),
+          ),
+        ),
+      ),
+    ],
+  ),
+  // EN-3 : le rappel des cahiers non valides (K-45). Il pulse trois fois
+  // puis reste fixe ; fixe d'emblee quand les animations sont reduites.
+  EntreeGalerie(
+    nom: 'PointRappel',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'pulse trois fois puis reste fixe',
+        (BuildContext _) =>
+            const PointRappel(libelle: 'Un cahier reste a valider'),
+      ),
+      EtatGalerie(
+        'fixe d emblee',
+        (BuildContext _) => const PointRappel(
+          libelle: 'Un cahier reste a valider',
+          battements: 0,
+        ),
+      ),
+    ],
+  ),
+  // ON-AIR-1, ANNUL-VIS-1 : « En direct » et « Annulee », partout.
+  EntreeGalerie(
+    nom: 'PastilleEtatSeance',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'en direct : le point bat trois fois puis reste fixe',
+        (BuildContext _) =>
+            const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
+      ),
+      EtatGalerie(
+        'annulee : icone d annulation, heure barree, raison',
+        (BuildContext _) => const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            PastilleEtatSeance(etat: EtatPastilleSeance.annulee),
+            Ecart.vSm,
+            TexteHeureSeance(heure: '10:00 - 11:00', annulee: true),
+            Ecart.vXs,
+            LigneRaisonSeance(
+              raison: 'Aucun remplacant trouve',
+              suite: 'seance non facturee',
+            ),
+          ],
+        ),
+      ),
+    ],
+  ),
 
   // --- Ce que la refonte a produit en chemin ------------------------------
   EntreeGalerie(
@@ -1201,6 +1476,142 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           textDirection: TextDirection.rtl,
           child: MarquePage(),
         ),
+      ),
+    ],
+  ),
+
+  // --- K-55 : jamais de cartes collees (revue du directeur du 01/10) -------
+  EntreeGalerie(
+    nom: 'PileCartes',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'trois cartes, 16 entre chacune',
+        (BuildContext _) => const PileCartes(
+          children: <Widget>[
+            AppCard(child: Text('Premier contenu')),
+            AppCard(child: Text('Deuxieme contenu')),
+            AppCard(child: Text('Troisieme contenu')),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'cote a cote, meme ecart',
+        (BuildContext _) => const PileCartes(
+          axe: Axis.horizontal,
+          alignement: CrossAxisAlignment.start,
+          children: <Widget>[
+            Flexible(child: AppCard(child: Text('Gauche'))),
+            Flexible(child: AppCard(child: Text('Droite'))),
+          ],
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'CarteGroupee',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'deux sections, un filet',
+        (BuildContext _) => const CarteGroupee(
+          sections: <Widget>[
+            Text('Preparation de la seance'),
+            Text('Derniere seance'),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'trois sections, marge reduite',
+        (BuildContext _) => const CarteGroupee(
+          marge: AppSpacing.lg,
+          sections: <Widget>[Text('Un'), Text('Deux'), Text('Trois')],
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'CarteLignes',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'trois lignes a plat',
+        (BuildContext _) => const CarteLignes(
+          lignes: <Widget>[
+            SettingRow(title: 'Profil', icon: AppIcons.profil, onPress: _rien),
+            SettingRow(
+              title: 'Reglages',
+              icon: AppIcons.reglages,
+              onPress: _rien,
+            ),
+            SettingRow(title: 'Appareils', icon: AppIcons.appareil),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'une ligne a valeur',
+        (BuildContext _) => const CarteLignes(
+          lignes: <Widget>[
+            SettingRow(
+              title: 'Langue',
+              description: 'La langue affichee',
+              value: 'Francais',
+              icon: AppIcons.reglages,
+            ),
+          ],
+        ),
+      ),
+    ],
+  ),
+
+  // --- BENTO-1 : la grille des tableaux de bord ----------------------------
+  // La composition du Centre de commande (tableau_de_bord_page.dart) : une
+  // tuile large qui devient grande sur quatre colonnes, une haute, deux carres,
+  // puis les deux compteurs calmes regroupes ou separes.
+  EntreeGalerie(
+    nom: 'GrilleBento',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'centre de commande, compteurs calmes regroupes',
+        (BuildContext _) => GrilleBento(
+          tuiles: <TuileBento>[
+            ..._tuilesBentoPrincipales(),
+            TuileBento(
+              etendue: EtendueBento.large,
+              etendueLarge: const EtendueBento(4, 1),
+              child: TuileDouble(
+                gauche: (0, t.admin.tableau.incidents),
+                droite: (0, t.admin.tableau.comptes),
+              ),
+            ),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'centre de commande, compteurs separes',
+        (BuildContext _) => GrilleBento(
+          tuiles: <TuileBento>[
+            ..._tuilesBentoPrincipales(),
+            TuileBento(
+              etendue: EtendueBento.carree,
+              etendueLarge: EtendueBento.large,
+              child: TuileCompteur(
+                valeur: 2,
+                libelle: t.admin.tableau.incidents,
+              ),
+            ),
+            TuileBento(
+              etendue: EtendueBento.carree,
+              etendueLarge: EtendueBento.large,
+              child: TuileCompteur(valeur: 1, libelle: t.admin.tableau.comptes),
+            ),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'aucune tuile',
+        (BuildContext _) => const GrilleBento(tuiles: <TuileBento>[]),
       ),
     ],
   ),
@@ -1300,6 +1711,20 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
     nom: 'SettingRow',
     famille: FamilleComposant.carteCliquable,
     etats: <EtatGalerie>[
+      // CORAN-CARTE-3 : la ligne nue, sans icone, posee dans une carte qui
+      // porte deja fond et marge ; annoncee comme lien.
+      EtatGalerie(
+        'nue, lien, dans une BentoTile',
+        (BuildContext _) => const BentoTile(
+          child: SettingRow(
+            title: 'Le Coran',
+            description: 'À lire quand tu veux',
+            nue: true,
+            lien: true,
+            onPress: _rien,
+          ),
+        ),
+      ),
       EtatGalerie(
         'default',
         (BuildContext _) => const SettingRow(
@@ -1511,54 +1936,76 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
   EntreeGalerie(
     nom: 'SousNavigationDomaine',
     // Structure : c'est un chrome de page, ni un controle qu'on presse ni une
-    // zone de donnees. Le `TabBar` porte lui-meme ses etats d'interaction.
+    // zone de donnees. Il n'est plus une rangee d'onglets qui defile : il pose
+    // `SelecteurSection` (segmente, en ligne ou menu selon la place).
     famille: FamilleComposant.structure,
     etats: <EtatGalerie>[
-      // Mesure, pas supposition : le `TabBar` se rend sans ancetre `Material`,
-      // contrairement au `PopupMenuButton` des deux menus plus bas. Aucune
-      // enveloppe ici. `GoRouter` n'est appele que dans `onTap`, jamais dans
-      // `build` : une demo isolee ne le declenche pas, donc pas de routeur non
-      // plus.
+      // `_SousMaterial` : sur telephone, cinq onglets deviennent un menu, et
+      // le `PopupMenuButton` leve « No Material widget found. » sans ancetre
+      // `Material`. `GoRouter` n'est appele que dans `onChange`, jamais dans
+      // `build` : une demo isolee ne le declenche pas, donc pas de routeur.
       //
       // Les onglets sont les vrais, pris dans `admin_domaine.dart` : une
       // galerie qui inventerait ses libelles ne montrerait pas la vraie
-      // longueur des mots, et c'est justement ce qui fait deborder un
-      // `TabBar`.
-      //
-      // **Une cle par etat, et elle est necessaire** : le composant construit
-      // son `TabController` dans un `late final`, sans `didUpdateWidget`.
-      // Comme la galerie rejoue ses etats l'un apres l'autre au meme endroit
-      // de l'arbre, Flutter reutilise le `State` et le controleur garde la
-      // longueur du precedent -- « Controller's length property (5) does not
-      // match the number of tabs (3) ». La cle force une instance neuve par
-      // etat, ce qui est de toute facon ce que la galerie veut dire. Le trou
-      // est reel mais reste theorique en production, ou chaque ecran monte le
-      // sien et ne change jamais sa liste d'onglets en place ; le combler
-      // demanderait un `didUpdateWidget`, hors du perimetre de ce lot.
+      // longueur des mots, et c'est justement ce qui decide de la bascule.
       EtatGalerie(
         'cinq onglets, le premier actif',
-        (BuildContext _) => SousNavigationDomaine(
-          key: const ValueKey<String>('sous-nav-premier'),
-          onglets: ongletsPedagogie(),
-          indexActif: 0,
+        (BuildContext _) => _SousMaterial(
+          child: SousNavigationDomaine(
+            onglets: ongletsPedagogie(),
+            indexActif: 0,
+          ),
         ),
       ),
-      // Le dernier actif : l'indicateur se pose hors du premier ecran, et le
-      // `TabBar` scrollable doit s'y porter tout seul.
+      // Le dernier actif : le menu (telephone) ou la piste (grand ecran) dit
+      // la section courante sans qu'il faille rien faire defiler.
       EtatGalerie(
         'cinq onglets, le dernier actif',
-        (BuildContext _) => SousNavigationDomaine(
-          key: const ValueKey<String>('sous-nav-dernier'),
-          onglets: ongletsPedagogie(),
-          indexActif: 4,
+        (BuildContext _) => _SousMaterial(
+          child: SousNavigationDomaine(
+            onglets: ongletsPedagogie(),
+            indexActif: 4,
+          ),
         ),
       ),
       EtatGalerie(
         'trois onglets',
-        (BuildContext _) => SousNavigationDomaine(
-          key: const ValueKey<String>('sous-nav-trois'),
-          onglets: ongletsConfiguration(),
-          indexActif: 1,
+        (BuildContext _) => _SousMaterial(
+          child: SousNavigationDomaine(
+            onglets: ongletsConfiguration(),
+            indexActif: 1,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'SelecteurSection',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      // Quatre sections courtes : controle segmente, tout visible.
+      EtatGalerie(
+        'quatre sections courtes',
+        (BuildContext _) => const _SousMaterial(
+          child: SelecteurSection<String>(
+            libelle: 'Sections de la page',
+            valeur: 'suivi',
+            sections: _sectionsCourtes,
+            onChange: _segmentIgnore,
+          ),
+        ),
+      ),
+      // Sept sections longues : la page est chargee, le menu prend le relais
+      // (jamais une rangee qui defile).
+      EtatGalerie(
+        'sept sections, la quatrieme choisie',
+        (BuildContext _) => const _SousMaterial(
+          child: SelecteurSection<String>(
+            libelle: 'Sections de la page',
+            valeur: 'bulletins',
+            sections: _sectionsLongues,
+            onChange: _segmentIgnore,
+          ),
         ),
       ),
     ],
@@ -1678,7 +2125,416 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       ),
     ],
   ),
+
+  // --- Composants partages du chantier Tuteur V1 (phase 0c1) ---------------
+  EntreeGalerie(
+    nom: 'EcranResultat',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'succes, action et lien',
+        (BuildContext _) => const EcranResultat(
+          icone: AppIcons.succes,
+          titre: 'Appareil connecté',
+          phrase: 'Le profil peut maintenant se connecter sur cet appareil.',
+          ton: TonEtat.succes,
+          libelleAction: 'Revenir au foyer',
+          onAction: _rien,
+          libelleSecondaire: 'Connecter un autre appareil',
+          onSecondaire: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'encart, action en cours',
+        (BuildContext _) => const EcranResultat(
+          icone: AppIcons.attente,
+          titre: 'Visite terminée',
+          phrase: 'La visite a atteint sa durée.',
+          encart: 'Une visite reste possible pour cette séance.',
+          libelleAction: 'Retour à la classe',
+          onAction: _rien,
+          actionEnCours: true,
+        ),
+      ),
+      EtatGalerie(
+        'alerte, sans action',
+        (BuildContext _) => const EcranResultat(
+          icone: AppIcons.avertissement,
+          titre: 'Impossible de charger ces informations',
+          ton: TonEtat.alerte,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'LienFleche',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'avec fleche',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: LienFleche(libelle: 'Voir tout', onPress: _rien),
+        ),
+      ),
+      EtatGalerie(
+        'survol',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: PressionForcee(
+            etat: EtatPression(survole: true),
+            child: LienFleche(libelle: 'Voir l historique', onPress: _rien),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'sans fleche',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: LienFleche(
+            libelle: 'Détails de la séance',
+            onPress: _rien,
+            fleche: false,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'BoutonOutil',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'nu, avec libelle',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: BoutonOutil(
+            icone: AppIcons.crayon,
+            libelle: 'Crayon',
+            avecLibelle: true,
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'retenu',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: BoutonOutil(
+            icone: AppIcons.crayon,
+            libelle: 'Crayon',
+            avecLibelle: true,
+            retenu: true,
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'tuile',
+        (BuildContext _) => const SizedBox(
+          width: AppSpacing.respiration + AppSpacing.xxxl,
+          height: AppSpacing.respiration + AppSpacing.lg,
+          child: BoutonOutil(
+            icone: AppIcons.crayon,
+            libelle: 'Crayon',
+            avecLibelle: true,
+            forme: FormeBoutonOutil.tuile,
+            onPress: _rien,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'BoutonIcone',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'cercle',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: BoutonIcone(
+            icone: AppIcons.zoomPlus,
+            libelle: 'Agrandir',
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'carre',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: BoutonIcone(
+            icone: AppIcons.crayon,
+            libelle: 'Modifier',
+            forme: FormeBoutonIcone.carre,
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'inerte',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: BoutonIcone(
+            icone: AppIcons.zoomPlus,
+            libelle: 'Agrandir',
+            onPress: null,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'RaccourciTactile',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'photo',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: RaccourciTactile(
+            onPress: _rien,
+            child: AvatarTile(prenom: 'Yasmine', diametre: 72),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'sans action',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: RaccourciTactile(
+            onPress: null,
+            child: AvatarTile(prenom: 'Yasmine', diametre: 72),
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'CommandeSalle',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'bascule active',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.topStart,
+          child: CommandeSalle(
+            icone: AppIcons.micro.repos,
+            libelle: 'Micro ouvert',
+            libelleSemantique: 'Fermer le micro',
+            bascule: true,
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'bascule inactive',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.topStart,
+          child: CommandeSalle(
+            icone: AppIcons.microCoupe.repos,
+            libelle: 'Micro coupé',
+            libelleSemantique: 'Ouvrir le micro',
+            bascule: false,
+            onPress: _rien,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'commande ordinaire',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.topStart,
+          child: CommandeSalle(
+            icone: AppIcons.supports.repos,
+            libelle: 'Supports',
+            onPress: _rien,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'BarrePrecedentSuivant',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'au milieu',
+        (BuildContext _) => const BarrePrecedentSuivant(
+          position: '12 / 604',
+          libellePrecedent: 'Page précédente',
+          libelleSuivant: 'Page suivante',
+          onPrecedent: _rien,
+          onSuivant: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'au debut',
+        (BuildContext _) => const BarrePrecedentSuivant(
+          position: '1 / 604',
+          libellePrecedent: 'Page précédente',
+          libelleSuivant: 'Page suivante',
+          onSuivant: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'a la fin',
+        (BuildContext _) => const BarrePrecedentSuivant(
+          position: '604 / 604',
+          libellePrecedent: 'Page précédente',
+          libelleSuivant: 'Page suivante',
+          onPrecedent: _rien,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'LigneCleValeur',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'texte',
+        (BuildContext _) =>
+            const LigneCleValeur(cle: 'Classe', valeur: 'Classe An-Nour'),
+      ),
+      EtatGalerie(
+        'chiffres',
+        (BuildContext _) => const LigneCleValeur(
+          cle: 'Horaire',
+          valeur: '18:00, heure de Paris',
+          chiffres: true,
+        ),
+      ),
+      EtatGalerie(
+        'avec complement',
+        (BuildContext _) => const LigneCleValeur(
+          cle: 'Présence',
+          valeur: 'Confirmée',
+          complement: StatusPill(libelle: 'Présente', ton: TonEtat.succes),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'GroupeReglages',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'avec titre',
+        (BuildContext _) => const GroupeReglages(
+          titre: 'Compte',
+          lignes: <LigneRubrique>[
+            LigneRubrique(
+              icone: AppIcons.profil,
+              libelle: 'Informations personnelles',
+              legende: 'Nom, courriel, fuseau',
+              onPress: _rien,
+            ),
+            LigneRubrique(
+              icone: AppIcons.reglages,
+              libelle: 'Préférences',
+              valeur: 'Système',
+              onPress: _rien,
+            ),
+            LigneRubrique(
+              icone: AppIcons.foyer,
+              libelle: 'Membres du foyer',
+              valeur: '3',
+            ),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'ligne survolee',
+        (BuildContext _) => const PressionForcee(
+          etat: EtatPression(survole: true),
+          child: GroupeReglages(
+            lignes: <LigneRubrique>[
+              LigneRubrique(
+                icone: AppIcons.verrou,
+                libelle: 'Connexion et sécurité',
+                onPress: _rien,
+              ),
+            ],
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'ControleSegmente',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'premier choisi',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: ControleSegmente<String>(
+            segments: _segmentsExemple,
+            valeur: 'seances',
+            onChange: _segmentIgnore,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'second choisi',
+        (BuildContext _) => const Align(
+          alignment: AlignmentDirectional.topStart,
+          child: ControleSegmente<String>(
+            segments: _segmentsExemple,
+            valeur: 'observations',
+            onChange: _segmentIgnore,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'SelecteurTheme',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'systeme choisi, theme clair',
+        (BuildContext _) => const SelecteurTheme(),
+      ),
+      EtatGalerie(
+        'systeme choisi, theme sombre',
+        (BuildContext _) => Theme(
+          data: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+          child: const SelecteurTheme(),
+        ),
+      ),
+    ],
+  ),
+  ...entreesEtatsTuteur(),
 ];
+
+/// Quatre sections courtes, pour le selecteur de section de la galerie.
+const List<Segment<String>> _sectionsCourtes = <Segment<String>>[
+  Segment<String>(valeur: 'suivi', libelle: 'Suivi'),
+  Segment<String>(valeur: 'notes', libelle: 'Notes'),
+  Segment<String>(valeur: 'bilan', libelle: 'Bilan'),
+  Segment<String>(valeur: 'plan', libelle: 'Plan'),
+];
+
+/// Sept sections, la limite haute d'une page : le menu prend le relais.
+const List<Segment<String>> _sectionsLongues = <Segment<String>>[
+  Segment<String>(valeur: 'accueil', libelle: 'Accueil'),
+  Segment<String>(valeur: 'presences', libelle: 'Présences'),
+  Segment<String>(valeur: 'cahiers', libelle: 'Cahiers de séance'),
+  Segment<String>(valeur: 'bulletins', libelle: 'Bulletins'),
+  Segment<String>(valeur: 'paiements', libelle: 'Paiements'),
+  Segment<String>(valeur: 'messages', libelle: 'Messages'),
+  Segment<String>(valeur: 'reglages', libelle: 'Réglages'),
+];
+
+/// Les deux segments de l'Historique, pour la galerie.
+const List<Segment<String>> _segmentsExemple = <Segment<String>>[
+  Segment<String>(valeur: 'seances', libelle: 'Séances'),
+  Segment<String>(valeur: 'observations', libelle: 'Observations'),
+];
+
+void _segmentIgnore(String segment) {}
 
 /// Trois acteurs, pour le menu de filtre de la galerie.
 ///
@@ -1941,3 +2797,18 @@ void _codeIgnore(String code) {}
 void _choixIgnore(ReponseChoix reponse) {}
 
 void _basculeIgnoree(Creneau creneau, bool posee) {}
+
+/// Les textes du fil de la galerie (CT-6).
+final TextesFilDiscussion _textesFil = TextesFilDiscussion(
+  aideChamp: t.controleur.echanges.champ,
+  libelleChamp: t.controleur.echanges.champLibelle,
+  envoyer: t.controleur.echanges.envoyer,
+  champVide: t.controleur.echanges.champVide,
+  enCours: t.controleur.echanges.enCours,
+  envoye: t.controleur.echanges.envoye,
+  echec: t.controleur.echanges.echec,
+  reessayer: t.controleur.echanges.reessayer,
+  auteurSoi: t.controleur.echanges.auteurVous,
+  annonce: (String auteur, String texte) =>
+      t.controleur.echanges.nouveauMessage(auteur: auteur, texte: texte),
+);

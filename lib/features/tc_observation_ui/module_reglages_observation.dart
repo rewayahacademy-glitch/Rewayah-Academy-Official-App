@@ -6,7 +6,9 @@ import '../../core/tc_observation/guardian_observation_policy.dart';
 import '../../core/tc_observation/libelles_observation.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_typography.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/setting_row.dart';
@@ -117,61 +119,71 @@ class _ModuleReglagesObservationEtat extends State<ModuleReglagesObservation> {
         ),
         if (_etat.editable) ...<Widget>[
           Ecart.vXl,
-          SettingRow(
-            title: t.tc.observation.reglages.maxVisites,
-            description: t.tc.observation.reglages.valeurHeritee(
-              valeur: uniteVisitesObservation(
-                widget.politiqueAcademie.maxVisitsPerSession,
+          CarteLignes(
+            lignes: <Widget>[
+              SettingRow(
+                title: t.tc.observation.reglages.maxVisites,
+                description: t.tc.observation.reglages.valeurHeritee(
+                  valeur: uniteVisitesObservation(
+                    widget.politiqueAcademie.maxVisitsPerSession,
+                  ),
+                ),
+                icon: AppIcons.foyer,
+                value: uniteVisitesObservation(_etat.maxVisites),
+                largeurControle: _Pas.largeur(context),
+                controle: _Pas(
+                  onMoins: () => _changer(_etat.deplacerVisites(-1)),
+                  onPlus: () => _changer(_etat.deplacerVisites(1)),
+                ),
               ),
-            ),
-            icon: AppIcons.foyer,
-            value: uniteVisitesObservation(_etat.maxVisites),
-            controle: _Pas(
-              onMoins: () => _changer(_etat.deplacerVisites(-1)),
-              onPlus: () => _changer(_etat.deplacerVisites(1)),
-            ),
-          ),
-          SettingRow(
-            title: t.tc.observation.reglages.tempsTotal,
-            description: t.tc.observation.reglages.valeurHeritee(
-              valeur: t.tc.observation.reglages.uniteSecondes(
-                n: widget.politiqueAcademie.maxTotalObservationTime.inSeconds,
+              SettingRow(
+                title: t.tc.observation.reglages.tempsTotal,
+                description: t.tc.observation.reglages.valeurHeritee(
+                  valeur: t.tc.observation.reglages.uniteSecondes(
+                    n: widget
+                        .politiqueAcademie
+                        .maxTotalObservationTime
+                        .inSeconds,
+                  ),
+                ),
+                icon: AppIcons.pause,
+                value: t.tc.observation.reglages.uniteSecondes(
+                  n: _etat.tempsTotal.inSeconds,
+                ),
+                largeurControle: _Pas.largeur(context),
+                controle: _Pas(
+                  onMoins: () => _changer(_etat.deplacerTemps(-1)),
+                  onPlus: () => _changer(_etat.deplacerTemps(1)),
+                ),
               ),
-            ),
-            icon: AppIcons.pause,
-            value: t.tc.observation.reglages.uniteSecondes(
-              n: _etat.tempsTotal.inSeconds,
-            ),
-            controle: _Pas(
-              onMoins: () => _changer(_etat.deplacerTemps(-1)),
-              onPlus: () => _changer(_etat.deplacerTemps(1)),
-            ),
-          ),
-          // Le cinquieme parametre de `definir_politique_observation_groupe`,
-          // ajoute par la migration `0036` -- non appliquee en production au
-          // 21 septembre 2026. Sans lui, un groupe personnalise perdait son
-          // plafond par visite et consommait tout son temps d'un seul coup :
-          // la seconde visite, qui est la raison d'etre du reglage, naissait
-          // vide.
-          SettingRow(
-            title: t.tc.observation.reglages.plafondVisite,
-            description: t.tc.observation.reglages.valeurHeritee(
-              valeur: t.tc.observation.reglages.uniteSecondes(
-                n: widget.politiqueAcademie
-                    .plafondDeVisite(
-                      widget.politiqueAcademie.maxTotalObservationTime,
-                    )
-                    .inSeconds,
+              // Le cinquieme parametre de `definir_politique_observation_groupe`,
+              // ajoute par la migration `0036` -- non appliquee en production au
+              // 21 septembre 2026. Sans lui, un groupe personnalise perdait son
+              // plafond par visite et consommait tout son temps d'un seul coup :
+              // la seconde visite, qui est la raison d'etre du reglage, naissait
+              // vide.
+              SettingRow(
+                title: t.tc.observation.reglages.plafondVisite,
+                description: t.tc.observation.reglages.valeurHeritee(
+                  valeur: t.tc.observation.reglages.uniteSecondes(
+                    n: widget.politiqueAcademie
+                        .plafondDeVisite(
+                          widget.politiqueAcademie.maxTotalObservationTime,
+                        )
+                        .inSeconds,
+                  ),
+                ),
+                icon: AppIcons.creneaux,
+                value: t.tc.observation.reglages.uniteSecondes(
+                  n: _etat.plafondEffectif.inSeconds,
+                ),
+                largeurControle: _Pas.largeur(context),
+                controle: _Pas(
+                  onMoins: () => _changer(_etat.deplacerPlafond(-1)),
+                  onPlus: () => _changer(_etat.deplacerPlafond(1)),
+                ),
               ),
-            ),
-            icon: AppIcons.creneaux,
-            value: t.tc.observation.reglages.uniteSecondes(
-              n: _etat.plafondEffectif.inSeconds,
-            ),
-            controle: _Pas(
-              onMoins: () => _changer(_etat.deplacerPlafond(-1)),
-              onPlus: () => _changer(_etat.deplacerPlafond(1)),
-            ),
+            ],
           ),
         ],
         if (problemes.contains(InvaliditeReglages.visitesTropBas)) ...<Widget>[
@@ -216,6 +228,33 @@ class _Pas extends StatelessWidget {
 
   final VoidCallback onMoins;
   final VoidCallback onPlus;
+
+  /// La largeur du pas a pas (deux actions tertiaires et leur ecart) : la
+  /// ligne garde alors sa valeur en fin de ligne quand tout y tient.
+  static double largeur(BuildContext context) {
+    final TextStyle style = AppTypography.graisse(
+      Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
+      FontWeight.w700,
+    );
+    double mesure(String libelle) {
+      final TextPainter p = TextPainter(
+        text: TextSpan(text: libelle, style: style),
+        textDirection: Directionality.of(context),
+        textScaler: MediaQuery.textScalerOf(context),
+        maxLines: 1,
+      )..layout();
+      final double l = p.width;
+      p.dispose();
+      return l;
+    }
+
+    // Marge de 2 par action : l'arrondi des glyphes.
+    return mesure(t.tc.observation.reglages.diminuer) +
+        mesure(t.tc.observation.reglages.augmenter) +
+        AppSpacing.xl * 4 +
+        AppSpacing.sm +
+        4;
+  }
 
   @override
   Widget build(BuildContext context) => Row(

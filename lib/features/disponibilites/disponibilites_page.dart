@@ -15,7 +15,7 @@ import 'grille_semaine.dart';
 ///
 /// Ecran absent des specs d'origine, et pourtant necessaire : le matching
 /// inverse suppose que les creneaux eleves existent, mais rien ne les produisait
-/// (`docs/produit/parcours-utilisateurs.md`, tableau des ecrans manquants).
+/// (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`, tableau des ecrans manquants).
 ///
 /// Sous la grille, une phrase dit **ce que cela produit**. Un ecran qui demande
 /// un effort sans en montrer l'effet ne l'obtient pas.

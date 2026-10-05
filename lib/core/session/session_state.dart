@@ -7,7 +7,7 @@ import '../domain/enums.dart';
 /// Cette porte est une **commodite d'experience**, pas une barriere de
 /// securite : la protection reelle reste la RLS de l'etape 1. Un compte qui
 /// contournerait cette redirection ne lirait rien de plus en base
-/// (`docs/architecture/etape-2-core-flutter.md` section 3).
+/// (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-2-core-flutter.md` section 3).
 enum PorteAcces {
   /// La session n'est pas encore resolue. Aucune redirection tant qu'on ne
   /// sait pas : rediriger sur un etat inconnu ferait clignoter l'ecran.
@@ -21,7 +21,7 @@ enum PorteAcces {
   /// Sans cette porte, un compte tout juste cree n'avait ni role ni foyer dans
   /// son jeton, tombait en [deconnecte] et repartait sur l'ecran de connexion :
   /// le produit n'avait aucune porte d'entree
-  /// (`docs/architecture/etape-3-auth-kyc.md` section 2.1).
+  /// (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-3-auth-kyc.md` section 2.1).
   inscription,
 
   /// Dossier non valide. Portail d'attente uniquement, quelle que soit l'URL
@@ -30,6 +30,12 @@ enum PorteAcces {
 
   /// Compte suspendu. Portail d'attente, avec un motif different.
   suspendu,
+
+  /// La session existe, mais le serveur n'a pas repondu a la lecture du
+  /// profil (reseau coupe, delai depasse) : **rien n'est ouvert**, et
+  /// l'ecran dit « hors ligne » au lieu d'afficher le portail d'un dossier
+  /// qui n'est pas en attente (mandat Tuteur V1 section 8, contradiction X21).
+  horsLigne,
 
   /// Acces complet aux routes du role.
   actif,
@@ -51,8 +57,12 @@ enum LectureProfil {
   /// Lue, une ligne.
   presente,
 
-  /// La lecture a echoue, reseau ou refus. On ne devine pas.
+  /// Le serveur a repondu par un refus ou une erreur. On ne devine pas.
   echouee,
+
+  /// Le serveur n'a pas repondu : reseau coupe ou delai depasse. Ni une
+  /// absence, ni un refus : on ferme, et on le dit.
+  injoignable,
 }
 
 /// L'etat de session dont depend toute la navigation.
@@ -124,7 +134,7 @@ class SessionState {
   /// **Fixee a `false`** : ni `AppRole` (plat -- `admin`, `accountant`,
   /// `controller`, `teacher`, `guardian`, `student`), ni le jeton (`role`,
   /// `householdId`, `sujet`) ne portent de permission infra-role
-  /// (`docs/architecture/ADMIN_IA_AUDIT.md`). Direction reste dans la sidebar comme
+  /// (`docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md`). Direction reste dans la sidebar comme
   /// domaine reserve tant qu'aucune decision de modele de permission n'a ete
   /// prise ; le jour ou elle le sera, cette seule ligne changera.
   bool get peutVoirDirection => false;
@@ -148,10 +158,15 @@ class SessionState {
       case LectureProfil.absente:
         return PorteAcces.inscription;
 
-      // Refus ou reseau : on ferme. Ouvrir l'inscription ici laisserait un
-      // compte suspendu s'en refabriquer un.
+      // Refus : on ferme. Ouvrir l'inscription ici laisserait un compte
+      // suspendu s'en refabriquer un.
       case LectureProfil.echouee:
         return PorteAcces.attente;
+
+      // Aucune reponse : on ferme aussi, mais sur l'etat hors ligne, pas sur
+      // le portail d'un dossier qui n'attend rien.
+      case LectureProfil.injoignable:
+        return PorteAcces.horsLigne;
 
       case LectureProfil.presente:
         // Le profil existe mais le jeton ne porte pas encore son role : c'est

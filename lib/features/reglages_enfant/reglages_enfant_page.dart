@@ -15,30 +15,36 @@ import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/bento_tile.dart';
+import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/setting_row.dart';
 
-/// `TUT-05` : les reglages du tuteur, enfant par enfant.
+/// `TUT-05` : les demandes du tuteur, profil eleve par profil eleve.
 ///
-/// **Un enfant par carte, trois reglages : photo, camera, mode d'interface.**
-/// Le texte dit la consequence en clair, avec le prenom de l'enfant, jamais un
-/// libelle abstrait : « Le bouton camera n'apparaitra pas pour Ibrahim » et non
-/// « camera : desactivee » (`docs/produit/parcours-utilisateurs.md`, ADR-009).
+/// **Une fonction = un seul endroit** (03, section 1 ter point 1) : depuis le
+/// lot B (fiche eleve), la photo, la camera et l'interface de chaque eleve se
+/// reglent dans sa fiche (`/tuteur/foyer/:eleveId/{informations,camera,
+/// interface}`). Cette page n'en garde qu'un **renvoi** par eleve vers la
+/// fiche, jamais une copie des reglages. La route `/tuteur/reglages` sera
+/// redirigee vers le Foyer par le coordinateur (mapping C6, demande B-4).
 ///
-/// Ces reglages s'appliquent a la seance suivante, jamais pendant un cours :
-/// l'ecran le dit une fois, en tete, plutot que de le repeter sur chaque carte.
-///
-/// C'est aussi d'ici que le tuteur **demande** : reaffectation, duree de seance
-/// et minimum payable. Une demande n'a pas d'ecran a elle, elle part de l'ecran
-/// ou la regle se constate (ADR-017, section 5 de `etape-4-dashboards.md`).
+/// C'est encore d'ici que le tuteur **demande** : reaffectation, duree de
+/// seance et minimum payable. Une demande n'a pas d'ecran a elle, elle part de
+/// l'ecran ou la regle se constate (ADR-017, section 5 de
+/// `etape-4-dashboards.md`).
 class ReglagesEnfantPage extends ConsumerWidget {
   /// Cree l'ecran des reglages.
   const ReglagesEnfantPage({super.key});
+
+  /// Le renvoi d'un eleve vers sa fiche.
+  static Key renvoiKey(String eleveId) => Key('reglagesEnfant.renvoi.$eleveId');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -49,36 +55,40 @@ class ReglagesEnfantPage extends ConsumerWidget {
     final List<EleveDuFoyer> foyer = enfants.value ?? const <EleveDuFoyer>[];
 
     return PageShell(
-      titre: t.tuteur.reglages.titre,
+      titre: t.reglagesEnfant.titre,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Text(t.tuteur.reglages.intro, style: textes.bodySmall),
+          Text(t.reglagesEnfant.intro, style: textes.bodySmall),
           Ecart.vXl,
           SectionHeader(titre: t.compte.titre),
-          SettingRow(
-            title: t.compte.profil,
-            description: t.compte.profilDetail,
-            icon: AppIcons.profil,
-            onPress: () => context.push(Routes.compteProfil),
-          ),
-          SettingRow(
-            title: t.compte.profils,
-            description: t.compte.profilsDetail,
-            icon: AppIcons.foyer,
-            onPress: () => context.push(Routes.compteProfils),
-          ),
-          SettingRow(
-            title: t.compte.reglages,
-            description: t.compte.reglagesDetail,
-            icon: AppIcons.reglages,
-            onPress: () => context.push(Routes.compteReglages),
+          CarteLignes(
+            lignes: <Widget>[
+              SettingRow(
+                title: t.compte.profil,
+                description: t.compte.profilDetail,
+                icon: AppIcons.profil,
+                onPress: () => context.push(Routes.compteProfil),
+              ),
+              SettingRow(
+                title: t.compte.profils,
+                description: t.compte.profilsDetail,
+                icon: AppIcons.foyer,
+                onPress: () => context.push(Routes.compteProfils),
+              ),
+              SettingRow(
+                title: t.compte.reglages,
+                description: t.compte.reglagesDetail,
+                icon: AppIcons.reglages,
+                onPress: () => context.push(Routes.compteReglages),
+              ),
+            ],
           ),
           Ecart.vXl,
           if (enfants.hasValue && foyer.isEmpty)
             EmptyState(
-              message: t.tuteur.reglages.aucunEnfant,
-              invitation: t.tuteur.reglages.aucunEnfantDetail,
+              message: t.enfant.aucun,
+              invitation: t.enfant.aucunDetail,
               libelleAction: t.enfant.titre,
               onAction: () =>
                   GoRouter.of(context).go(Routes.tuteurAjouterEnfant),
@@ -95,208 +105,49 @@ class ReglagesEnfantPage extends ConsumerWidget {
   }
 }
 
-/// Une carte par enfant : sa photo, sa camera, son affichage, ses demandes.
-class _CarteEnfant extends ConsumerStatefulWidget {
+/// Une carte par eleve : sa photo et son prenom, le renvoi vers sa fiche,
+/// ses demandes. Aucun identifiant interne a l'ecran.
+class _CarteEnfant extends StatelessWidget {
   const _CarteEnfant({required this.enfant});
 
   final EleveDuFoyer enfant;
 
   @override
-  ConsumerState<_CarteEnfant> createState() => _CarteEnfantEtat();
-}
-
-class _CarteEnfantEtat extends ConsumerState<_CarteEnfant> {
-  bool _photoEnCours = false;
-  bool _reglageEnCours = false;
-  String? _erreur;
-
-  EleveDuFoyer get _enfant => widget.enfant;
-
-  /// Ecrit un reglage, puis relit le foyer.
-  ///
-  /// L'ecran ne garde aucune copie locale de la valeur : ce que la base a
-  /// accepte est ce qui s'affiche. Un etat local optimiste montrerait une
-  /// camera autorisee la ou la policy vient de refuser l'ecriture.
-  Future<void> _ecrire({
-    InterfaceMode? mode,
-    CameraPolicy? camera,
-    String? cleAvatar,
-  }) async {
-    setState(() {
-      _reglageEnCours = true;
-      _erreur = null;
-    });
-    try {
-      await ref
-          .read(serviceAppairageProvider)
-          .majReglages(
-            eleveId: _enfant.id,
-            mode: mode,
-            camera: camera,
-            cleAvatar: cleAvatar,
-          );
-      ref.invalidate(elevesDuFoyerProvider);
-    } on Object catch (erreur) {
-      if (mounted) {
-        setState(() => _erreur = _message(erreur));
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _reglageEnCours = false);
-      }
-    }
-  }
-
-  Future<void> _changerPhoto() async {
-    setState(() {
-      _photoEnCours = true;
-      _erreur = null;
-    });
-    try {
-      final PhotoEnfant? photo = await ref
-          .read(selecteurPhotoProvider)
-          .choisirPhoto();
-      if (photo == null) {
-        return;
-      }
-      if (photo.octets.lengthInBytes > ServiceAvatar.tailleMaximaleOctets) {
-        // Le refus se dit AVANT l'envoi : le seau refuserait aussi, mais apres
-        // avoir fait monter quatre mega-octets sur une connexion de telephone.
-        if (mounted) {
-          setState(
-            () => _erreur = t.tuteur.reglages.photoTropLourde(
-              taille: '${ServiceAvatar.tailleMaximaleOctets ~/ (1024 * 1024)}',
-            ),
-          );
-        }
-        return;
-      }
-
-      final String cle = await ref
-          .read(serviceAvatarProvider)
-          .televerser(eleveId: _enfant.id, photo: photo);
-      await _ecrire(cleAvatar: cle);
-      // La photo remplacee ne doit pas rester servie par l'URL precedente.
-      ref.invalidate(avatarUrlProvider);
-    } on Object catch (erreur) {
-      if (mounted) {
-        setState(() => _erreur = _message(erreur));
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _photoEnCours = false);
-      }
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
-    final AppPalette palette = AppPalette.of(context);
-    final bool cameraAutorisee = _enfant.camera == CameraPolicy.allowed;
-    final bool modeEnfant = _enfant.mode == InterfaceMode.enfant;
 
     return BentoTile(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              _Photo(enfant: _enfant),
-              Ecart.hMd,
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(_enfant.prenom, style: textes.titleLarge),
-                    Text(_enfant.identifiantImmuable, style: textes.bodySmall),
-                  ],
-                ),
-              ),
-            ],
+          // AVATAR-1 : couple avatar + prenom du composant partage.
+          AvatarNom.enLigne(
+            prenom: enfant.prenom,
+            diametre: AppAvatar.grand,
+            avatar: _Photo(enfant: enfant),
+            styleNom: textes.titleLarge,
           ),
           Ecart.vMd,
-
-          // 1. La photo.
-          Text(t.tuteur.reglages.photo, style: textes.titleMedium),
-          Text(
-            _enfant.cleAvatar == null
-                ? t.tuteur.reglages.photoAucune(prenom: _enfant.prenom)
-                : t.tuteur.reglages.photoPresente(prenom: _enfant.prenom),
-            style: textes.bodySmall,
-          ),
-          Ecart.vSm,
-          ActionPrincipale(
-            libelle: _enfant.cleAvatar == null
-                ? t.tuteur.reglages.photoAjouter
-                : t.tuteur.reglages.photoChanger,
-            // Tertiaire, pas secondaire : la photo se change rarement, et la
-            // carte porte deja deux secondaires (camera, mode). Au dela de
-            // deux, `02-regles-ux.md` section 4 est violee -- constat du
-            // 11 septembre 2026, six secondaires empiles sur cette carte.
-            niveau: NiveauAction.tertiaire,
-            enCours: _photoEnCours,
-            onPress: _changerPhoto,
-          ),
-          Ecart.vLg,
-
-          // 2. La camera. Le texte dit la CONSEQUENCE, avec le prenom.
-          Text(t.tuteur.reglages.camera, style: textes.titleMedium),
-          Text(
-            cameraAutorisee
-                ? t.tuteur.reglages.cameraAutorisee(prenom: _enfant.prenom)
-                : t.tuteur.reglages.cameraInterdite(prenom: _enfant.prenom),
-            style: textes.bodySmall,
-          ),
-          Ecart.vSm,
-          ActionPrincipale(
-            libelle: cameraAutorisee
-                ? t.tuteur.reglages.cameraRetirer(prenom: _enfant.prenom)
-                : t.tuteur.reglages.cameraAutoriser(prenom: _enfant.prenom),
-            niveau: NiveauAction.secondaire,
-            enCours: _reglageEnCours,
-            onPress: () => _ecrire(
-              camera: cameraAutorisee
-                  ? CameraPolicy.forbidden
-                  : CameraPolicy.allowed,
+          // Photo, camera et interface : un renvoi vers la fiche, leur seule
+          // place (lot B, LB-3).
+          KeyedSubtree(
+            key: ReglagesEnfantPage.renvoiKey(enfant.id),
+            child: GroupeReglages(
+              lignes: <LigneRubrique>[
+                LigneRubrique(
+                  icone: AppIcons.reglages,
+                  libelle: t.reglagesEnfant.renvoi,
+                  legende: t.reglagesEnfant.renvoiLegende(
+                    prenom: enfant.prenom,
+                  ),
+                  onPress: () =>
+                      GoRouter.of(context).go(Routes.ficheElevePour(enfant.id)),
+                ),
+              ],
             ),
           ),
           Ecart.vLg,
-
-          // 3. Le mode d'interface.
-          Text(t.tuteur.reglages.mode, style: textes.titleMedium),
-          Text(
-            modeEnfant
-                ? t.tuteur.reglages.modeEnfant(prenom: _enfant.prenom)
-                : t.tuteur.reglages.modeStandard(prenom: _enfant.prenom),
-            style: textes.bodySmall,
-          ),
-          Ecart.vSm,
-          ActionPrincipale(
-            libelle: modeEnfant
-                ? t.tuteur.reglages.modePasserStandard(prenom: _enfant.prenom)
-                : t.tuteur.reglages.modePasserEnfant(prenom: _enfant.prenom),
-            niveau: NiveauAction.secondaire,
-            enCours: _reglageEnCours,
-            onPress: () => _ecrire(
-              mode: modeEnfant ? InterfaceMode.standard : InterfaceMode.enfant,
-            ),
-          ),
-
-          if (_erreur != null) ...<Widget>[
-            Ecart.vSm,
-            Text(
-              t.tuteur.reglages.erreur(message: _erreur!),
-              // L'encre d'alerte, jamais la paire : `surfaceAlert` ecrit en
-              // blanc, illisible sur la page.
-              style: palette.inkAlert.applyTo(
-                textes.bodySmall ?? const TextStyle(),
-              ),
-            ),
-          ],
-
-          Ecart.vLg,
-          _Demandes(enfant: _enfant),
+          _Demandes(enfant: enfant),
         ],
       ),
     );
@@ -322,7 +173,7 @@ class _Photo extends ConsumerWidget {
     return AvatarTile(
       prenom: enfant.prenom,
       urlSignee: url,
-      diametre: AppSpacing.xxxl * 2,
+      diametre: AppAvatar.grand,
     );
   }
 }

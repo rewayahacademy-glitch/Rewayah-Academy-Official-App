@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/app_bottom_sheet.dart';
 import 'package:rewayah_academy/core/widgets/confirm_destructive.dart';
+import 'package:rewayah_academy/features/inscription/etapes/identite_etape.dart';
+import 'package:rewayah_academy/features/inscription/etapes/usage_etape.dart';
 import 'package:rewayah_academy/features/inscription/inscription_page.dart';
 
 import '../support/harnais.dart';
@@ -38,27 +42,58 @@ void main() {
       'Tab avance du champ prenom vers le champ nom, dans l ordre visuel '
       '(TUT-00c, page identite)',
       (WidgetTester tester) async {
+        // L'inscription est un parcours route (les etapes lisent
+        // `GoRouterState`) : il se monte sous `hoteRoutant`, comme dans
+        // `test/features/inscription_test.dart`.
         await tester.pumpWidget(
-          hote(
-            const InscriptionPage(),
+          hoteRoutant(
+            depart: Routes.inscription,
+            routes: <RouteBase>[
+              GoRoute(
+                path: Routes.inscription,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const InscriptionPage(),
+              ),
+              GoRoute(
+                path: Routes.inscriptionUsage,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const UsageEtape(),
+              ),
+              GoRoute(
+                path: Routes.inscriptionIdentite,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const IdentiteEtape(),
+              ),
+            ],
             surcharges: <Override>[
               serviceDossierProvider.overrideWithValue(FauxServiceDossier()),
               sourceSessionProvider.overrideWithValue(FausseSourceSession()),
             ],
           ),
         );
-
-        await tester.tap(find.text(t.inscription.roleTuteur));
-        await tester.pumpAndSettle();
-        await tester.tap(find.text(t.commun.continuer));
         await tester.pumpAndSettle();
 
-        final Finder champs = find.byType(TextField);
-        expect(champs, findsNWidgets(2), reason: 'prenom, puis nom');
+        Future<void> taper(Finder cible) async {
+          await tester.ensureVisible(cible);
+          await tester.pumpAndSettle();
+          await tester.tap(cible);
+          await tester.pumpAndSettle();
+        }
+
+        await taper(find.text(t.inscription.usage.moiTitre));
+        await taper(find.text(t.commun.continuer));
+
+        final List<Finder> champs = <Finder>[
+          find.byKey(const Key('inscription-prenom')),
+          find.byKey(const Key('inscription-nom')),
+        ];
+        for (final Finder champ in champs) {
+          expect(champ, findsOneWidget, reason: 'prenom, puis nom');
+        }
 
         EditableText editable(int rang) => tester.widget<EditableText>(
           find.descendant(
-            of: champs.at(rang),
+            of: champs[rang],
             matching: find.byType(EditableText),
           ),
         );

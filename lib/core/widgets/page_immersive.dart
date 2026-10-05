@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_color_pair.dart';
+import '../theme/app_contour.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
@@ -17,7 +18,7 @@ enum RegistreImmersif {
 
   /// La lecture du Coran. Fond plus chaud que le reste de l'application, pour
   /// signaler qu'on entre dans un espace different du produit
-  /// (`docs/produit/parcours-utilisateurs.md`, direction artistique `ELV-04`).
+  /// (`docs/archive/2026-09-pre-remise-a-plat/produit/parcours-utilisateurs.md`, direction artistique `ELV-04`).
   lecture,
 }
 
@@ -73,6 +74,9 @@ class PageImmersive extends StatelessWidget {
   /// La rangee de commandes, collee en bas.
   final Widget? commandes;
 
+  /// La cle de la zone du contenu primaire (tests de geometrie, SALLE-200-1).
+  static const Key contenuKey = ValueKey<String>('page-immersive-contenu');
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -82,6 +86,9 @@ class PageImmersive extends StatelessWidget {
     };
     final Gabarit gabarit = AppGabarit.de(context);
     final TextTheme textes = Theme.of(context).textTheme;
+    final bool texteAgrandi =
+        MediaQuery.textScalerOf(context).scale(1) >
+        AppContour.seuilTexteAgrandi;
 
     return Scaffold(
       backgroundColor: paire.background,
@@ -92,7 +99,10 @@ class PageImmersive extends StatelessWidget {
         child: DefaultTextStyle(
           style: paire.applyTo(textes.bodyMedium ?? const TextStyle()),
           child: IconTheme(
-            data: IconThemeData(color: paire.onBackground, size: AppSpacing.xxl),
+            data: IconThemeData(
+              color: paire.onBackground,
+              size: AppSpacing.xxl,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
@@ -104,13 +114,17 @@ class PageImmersive extends StatelessWidget {
                     ),
                     child: entete,
                   ),
-                Expanded(child: child),
+                Expanded(
+                  child: KeyedSubtree(key: contenuKey, child: child),
+                ),
                 ?bandeau,
                 if (commandes != null)
                   Padding(
                     padding: EdgeInsetsDirectional.symmetric(
                       horizontal: gabarit.gouttiere,
-                      vertical: AppSpacing.lg,
+                      // SALLE-200-1 : texte tres agrandi, les commandes
+                      // compactes se serrent pour laisser le support respirer.
+                      vertical: texteAgrandi ? AppSpacing.sm : AppSpacing.lg,
                     ),
                     child: commandes,
                   ),

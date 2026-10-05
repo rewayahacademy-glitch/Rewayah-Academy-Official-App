@@ -5,6 +5,7 @@ import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/teacher_student_projection.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/status_pill.dart';
@@ -273,18 +274,17 @@ class BoutonRoster extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextTheme textes = Theme.of(context).textTheme;
-
     // **Un chiffre visible, une phrase parlee.** « 4/4 » tient dans un en-tete
     // de telephone ; « Eleves : 4 presents sur 4 attendus » est ce qu'un lecteur
     // d'ecran doit annoncer. Le premier sans le second serait illisible.
-    return Pressable(
-      onPress: onOuvrir,
+    return LienFleche(
+      libelle: compteur,
       libelleSemantique: t.tc.classe.roster.compteur(
         presents: presents,
         attendus: attendus,
       ),
-      child: Text(compteur, style: textes.labelLarge ?? const TextStyle()),
+      onPress: onOuvrir,
+      fleche: false,
     );
   }
 }

@@ -15,6 +15,7 @@ import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/skeleton.dart';
 import '../suivi_foyer/vue_suivi_foyer.dart';
 
@@ -106,11 +107,13 @@ class _Corps extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (erreur && vue.total == 0) {
-      return EmptyState(
-        message: t.eleve.suivi.erreur,
-        icone: AppIcons.avertissement,
-        libelleAction: t.commun.reessayer,
-        onAction: onReessayer,
+      return _VideDefilant(
+        child: EmptyState(
+          message: t.eleve.suivi.erreur,
+          icone: AppIcons.avertissement,
+          libelleAction: t.commun.reessayer,
+          onAction: onReessayer,
+        ),
       );
     }
 
@@ -119,10 +122,12 @@ class _Corps extends StatelessWidget {
     }
 
     if (vue.lignes.isEmpty) {
-      return EmptyState(
-        message: t.eleve.suivi.vide,
-        invitation: t.eleve.suivi.videDetail,
-        registre: RegistreVide.subi,
+      return _VideDefilant(
+        child: EmptyState(
+          message: t.eleve.suivi.vide,
+          invitation: t.eleve.suivi.videDetail,
+          registre: RegistreVide.subi,
+        ),
       );
     }
 
@@ -217,6 +222,15 @@ List<ColonneDonnees<LigneSuivi>> _colonnesSuiviEleve({
               vue: ligne.presence,
               afficherConsolide: false,
             )
+          : ligne.sort == SortDuCours.annule
+          // Une seance annulee se reconnait d'un coup d'oeil (ANNUL-VIS-1).
+          ? Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: PastilleEtatSeance(
+                etat: EtatPastilleSeance.annulee,
+                libelle: _libelleEtat(ligne),
+              ),
+            )
           : Text(
               _libelleEtat(ligne),
               style: Theme.of(context).textTheme.bodyMedium,
@@ -262,3 +276,30 @@ String _hhmm(DateTime quand) =>
 
 String _jjmmaaaa(DateTime quand) =>
     '${quand.day.toString().padLeft(2, '0')}/${quand.month.toString().padLeft(2, '0')}/${quand.year}';
+
+/// Un etat vide centre qui defile quand il ne tient pas : la page ne defile
+/// pas (`defilante: false`), et la barre du bas du Mode Accessibilite
+/// (MA-CMD-1, onglets de 72) lui laisse moins de hauteur a 390.
+class _VideDefilant extends StatelessWidget {
+  const _VideDefilant({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: contraintes.hasBoundedHeight
+                  ? contraintes.maxHeight
+                  : 0,
+            ),
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+}

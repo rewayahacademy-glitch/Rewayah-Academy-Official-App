@@ -13,8 +13,7 @@ library;
 
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
-
+import '../observabilite/journal_dev.dart';
 import 'port_realtime_pedagogique.dart';
 
 /// Encode un message pour le fil.
@@ -43,7 +42,7 @@ MessagePedagogique? messageDepuisOctets(List<int> octets) {
     final Object? decode = jsonDecode(utf8.decode(octets));
     return messageDepuisJson(decode);
   } catch (e) {
-    debugPrint('message pedagogique illisible : $e');
+    journalDev('message pedagogique illisible : $e');
     return null;
   }
 }

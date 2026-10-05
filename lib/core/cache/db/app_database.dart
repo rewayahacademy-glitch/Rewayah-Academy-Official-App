@@ -140,7 +140,7 @@ class RapportsEnAttente extends Table {
 
 /// La base locale.
 ///
-/// Cinq tables (`docs/architecture/etape-2-core-flutter.md` section 4, mis a
+/// Cinq tables (`docs/archive/2026-09-pre-remise-a-plat/architecture/etape-2-core-flutter.md` section 4, mis a
 /// jour au schema 2). Toute table supplementaire doit d'abord etre justifiee
 /// dans la specification : un cache qui grossit sans regle finit par recopier
 /// la base et par en heriter les obligations de protection.

@@ -61,6 +61,8 @@ class DossierAValider {
       prenom: json['first_name'] as String? ?? '',
       nom: json['last_name'] as String? ?? '',
       identifiantImmuable: json['immutable_id'] as String? ?? '',
+      // K-47 (HL-A-6) : un role illisible retombe sur guardian, que la file
+      // ADM-02 ecarte (enseignants seulement) : jamais pris pour un enseignant.
       role: AppRole.depuisSql(json['role'] as String?) ?? AppRole.guardian,
       etatPiece: EtatPiece.depuisSql(json['etat_piece'] as String?),
       inscritLeConnue: inscription,
@@ -139,8 +141,7 @@ class DossierAValider {
   /// sa place que sur la fiche `ADM-02`, ou l'un des trois constats porte
   /// justement sur lui (« le nom correspond a celui du compte ») : ailleurs,
   /// il allonge la ligne sans rien ajouter au jugement (ADR-008).
-  String get libelleCourt =>
-      prenom.isEmpty ? identifiantImmuable : prenom;
+  String get libelleCourt => prenom.isEmpty ? identifiantImmuable : prenom;
 
   /// Vrai quand un verdict est possible : il faut une piece, et qu'elle soit
   /// visible par ce lecteur.
@@ -148,8 +149,7 @@ class DossierAValider {
   /// **Un dossier sans piece n'est pas jugeable, et ce n'est pas une panne** :
   /// il n'y a rien a constater, donc rien a trancher. L'ecran le dit au lieu
   /// de proposer deux boutons qui echoueraient.
-  bool get jugeable =>
-      documentId != null && etatPiece == EtatPiece.aVerifier;
+  bool get jugeable => documentId != null && etatPiece == EtatPiece.aVerifier;
 
   /// Depuis combien de jours cette personne attend, en jours pleins.
   int joursDAttente(DateTime maintenant) =>
@@ -244,7 +244,19 @@ final Provider<ServiceValidation> serviceValidationProvider =
     );
 
 /// La file des dossiers a valider.
+///
+/// `retry: null` (aucune retentative automatique) : Riverpod 3 relance tout
+/// seul, avec un delai croissant (200 ms a 6,4 s, jusqu'a dix fois, ~32 s au
+/// total), toute erreur qui n'etend pas `Error` (dont `GenreLecteurInconnu`,
+/// une `Exception`) avant de la rendre par `.future` -- `ref.watch` la voit
+/// tout de suite (`hasError` monte independamment de `isLoading`), mais
+/// `ref.read(...future)` reste en attente jusqu'a la derniere retentative.
+/// Sans ce reglage, l'ecran resterait sur son squelette pendant ~32 s avant
+/// de dire enfin « Renseignez votre genre... » (AD-5) : le bouton
+/// « Reessayer » de l'ecran est la retentative explicite, la base n'en doit
+/// pas rejouer une en silence derriere lui.
 final FutureProvider<List<DossierAValider>> dossiersEnAttenteProvider =
     FutureProvider<List<DossierAValider>>(
       (Ref ref) => ref.watch(serviceValidationProvider).enAttente(),
+      retry: (int retryCount, Object error) => null,
     );

@@ -83,26 +83,37 @@ class FilterPill extends StatelessWidget {
                 horizontal: AppSpacing.lg,
                 vertical: AppSpacing.sm,
               ),
-              child: Wrap(
-                spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.xs,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: <Widget>[
-                  Text(
-                    libelle,
-                    style: fond.applyTo(textes.labelLarge ?? const TextStyle()),
-                  ),
-                  if (compteur != null) ...<Widget>[
+              // K-54 : le contenu est centre dans la pilule, en largeur comme
+              // en hauteur (la cible tactile de 48 est plus haute que le
+              // texte), y compris quand le parent etire la pilule.
+              child: Center(
+                widthFactor: 1,
+                heightFactor: 1,
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  runAlignment: WrapAlignment.center,
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.xs,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: <Widget>[
                     Text(
-                      '$compteur',
-                      style: AppTypography.tabulaire(
-                        palette.inkMuted.applyTo(
-                          textes.labelMedium ?? const TextStyle(),
-                        ),
+                      libelle,
+                      textAlign: TextAlign.center,
+                      style: fond.applyTo(
+                        textes.labelLarge ?? const TextStyle(),
                       ),
                     ),
+                    if (compteur != null)
+                      Text(
+                        '$compteur',
+                        style: AppTypography.tabulaire(
+                          palette.inkMuted.applyTo(
+                            textes.labelMedium ?? const TextStyle(),
+                          ),
+                        ),
+                      ),
                   ],
-                ],
+                ),
               ),
             ),
           );

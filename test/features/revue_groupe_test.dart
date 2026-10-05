@@ -7,6 +7,8 @@ import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
+import 'package:rewayah_academy/core/widgets/empty_state.dart';
+import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
 import 'package:rewayah_academy/features/revue_groupe/anomalies_revue.dart';
 import 'package:rewayah_academy/features/revue_groupe/revue_groupe_page.dart';
 
@@ -70,15 +72,19 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(t.enseignant.revue.aucuneAnomalie), findsOneWidget);
-      // La verite du depot, dite a l'ecran : le calcul des anomalies n'est pas
-      // ouvert aux enseignants, et la page reste vide jusque-la.
+      // Une seule phrase calme (UX_REVIEW_04 ligne 10) : aucun detail.
       expect(
-        find.text(t.enseignant.revue.aucuneAnomalieDetail),
-        findsOneWidget,
+        tester.widget<EmptyState>(find.byType(EmptyState)).invitation,
+        isNull,
       );
       // Rien a faire, donc aucun bouton : proposer une action serait inviter a
       // inventer un probleme.
-      expect(find.byType(ActionPrincipale), findsNothing);
+      // Seul le retour de l'Espace Classe (decision EN-RC).
+      expect(find.byType(ActionPrincipale), findsOneWidget);
+      expect(
+        find.widgetWithText(ActionPrincipale, t.commun.retour),
+        findsOneWidget,
+      );
       expect(find.text(t.commun.reessayer), findsNothing);
       // Et surtout : aucune carte, aucune colonne, aucun tiret en attendant.
       expect(find.byType(AppCard), findsNothing);
@@ -86,54 +92,61 @@ void main() {
       expect(find.text('-'), findsNothing);
     });
 
-    testWidgets('elle ne resume pas le groupe : ce travail est celui d ENS-07', (
-      WidgetTester tester,
-    ) async {
-      await _monter(tester, service: _service());
-      await tester.pumpAndSettle();
+    testWidgets(
+      'elle ne resume pas le groupe : ce travail est celui d ENS-07',
+      (WidgetTester tester) async {
+        await _monter(tester, service: _service());
+        await tester.pumpAndSettle();
 
-      // Aucun prenom de membre n'apparait : la revue parle d'anomalies, pas
-      // d'effectif.
-      expect(find.text('Khadija'), findsNothing);
-      expect(find.text('Bilal'), findsNothing);
-    });
+        // Aucun prenom de membre n'apparait : la revue parle d'anomalies, pas
+        // d'effectif.
+        expect(find.text('Khadija'), findsNothing);
+        expect(find.text('Bilal'), findsNothing);
+      },
+    );
   });
 
   group('ENS-08 : les anomalies, quand la source en rendra', () {
-    testWidgets('une carte par anomalie, son type dit par un mot', (
-      WidgetTester tester,
-    ) async {
-      await _monter(
-        tester,
-        service: _service(),
-        anomalies: const <AnomalieRevue>[
-          AnomalieRevue(
-            type: TypeAnomalieRevue.transfertPropose,
-            studentId: 'e2',
-            eleve: 'Bilal',
-          ),
-          AnomalieRevue(
-            type: TypeAnomalieRevue.gateAVenir,
-            studentId: 'e1',
-            eleve: 'Khadija',
-            detail: 'Palier de fin de cycle dans deux semaines.',
-          ),
-        ],
-      );
-      await tester.pumpAndSettle();
+    testWidgets(
+      'une ligne par anomalie dans un seul groupe, son type dit par un mot',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          service: _service(),
+          anomalies: const <AnomalieRevue>[
+            AnomalieRevue(
+              type: TypeAnomalieRevue.transfertPropose,
+              studentId: 'e2',
+              eleve: 'Bilal',
+            ),
+            AnomalieRevue(
+              type: TypeAnomalieRevue.gateAVenir,
+              studentId: 'e1',
+              eleve: 'Khadija',
+              detail: 'Palier de fin de cycle dans deux semaines.',
+            ),
+          ],
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.byType(AppCard), findsNWidgets(2));
-      expect(find.text(t.enseignant.revue.typeGate), findsOneWidget);
-      expect(find.text(t.enseignant.revue.typeTransfert), findsOneWidget);
-      expect(
-        find.text('Palier de fin de cycle dans deux semaines.'),
-        findsOneWidget,
-      );
-      // L'enseignant signale, l'academie tranche : aucune action de decision
-      // n'est rendue, meme pas grisee.
-      expect(find.byType(ActionPrincipale), findsNothing);
-      expect(find.text(t.enseignant.revue.pasDeDecision), findsOneWidget);
-    });
+        expect(find.byType(GroupeReglages), findsOneWidget);
+        expect(find.text(t.enseignant.revue.typeGate), findsOneWidget);
+        expect(find.text(t.enseignant.revue.typeTransfert), findsOneWidget);
+        expect(
+          find.textContaining('Palier de fin de cycle dans deux semaines.'),
+          findsOneWidget,
+        );
+        // L'enseignant signale, l'academie tranche : aucune action de decision
+        // n'est rendue, meme pas grisee.
+        // Seul le retour de l'Espace Classe (decision EN-RC).
+        expect(find.byType(ActionPrincipale), findsOneWidget);
+        expect(
+          find.widgetWithText(ActionPrincipale, t.commun.retour),
+          findsOneWidget,
+        );
+        expect(find.text(t.enseignant.revue.pasDeDecision), findsOneWidget);
+      },
+    );
 
     test('une anomalie qui vise un ancien membre ne s affiche pas', () {
       final List<AnomalieRevue> retenues = anomaliesDuGroupe(
@@ -187,10 +200,11 @@ void main() {
       // Ce qui a une echeance passe devant ce qui attend une decision, et a
       // egalite l'ordre est alphabetique : il ne depend jamais de l'ordre dans
       // lequel la source a rendu ses lignes.
-      expect(
-        retenues.map((AnomalieRevue a) => a.eleve),
-        <String>['Aisha', 'Zayd', 'Bilal'],
-      );
+      expect(retenues.map((AnomalieRevue a) => a.eleve), <String>[
+        'Aisha',
+        'Zayd',
+        'Bilal',
+      ]);
     });
   });
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 // `Override` n'est pas exporte par l'entree principale de Riverpod 3.
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_home_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
@@ -109,9 +110,9 @@ void main() {
       await avecLargeur(tester, largeurMobile, () async {
         await _poser(tester);
         expect(find.text(LibellesGroupe.votreHeure), findsOneWidget);
-        expect(find.text('18:00 Riyad'), findsOneWidget);
+        expect(find.text('\u200E18:00 Riyad'), findsOneWidget);
         expect(find.text('Chez Sayyid Youssouf'), findsOneWidget);
-        expect(find.text('15:00 Conakry'), findsOneWidget);
+        expect(find.text('\u200E15:00 Conakry'), findsOneWidget);
         // Jamais un offset numerique a l'ecran.
         expect(find.textContaining('UTC+'), findsNothing);
       });
@@ -123,7 +124,7 @@ void main() {
       await avecLargeur(tester, largeurMobile, () async {
         await _poser(tester, groupeId: GroupesDemonstration.anNour);
         expect(find.text(LibellesGroupe.votreHeure), findsOneWidget);
-        expect(find.text('13:45 Paris'), findsOneWidget);
+        expect(find.text('\u200E13:45 Paris'), findsOneWidget);
         expect(find.textContaining('Chez '), findsNothing);
         expect(find.text(LibellesGroupe.heureGroupe), findsNothing);
       });
@@ -156,7 +157,7 @@ void main() {
       await avecLargeur(tester, largeurMobile, () async {
         await _poser(tester);
         expect(find.text(LibellesGroupe.dureeLibelle), findsOneWidget);
-        expect(find.text('1 h 30'), findsOneWidget);
+        expect(find.text('\u200E1\u00A0h\u00A030'), findsOneWidget);
       });
     });
 
@@ -178,12 +179,31 @@ void main() {
       });
     });
 
+    testWidgets('a T-20, le tuteur n a pas de bouton Rejoindre', (
+      WidgetTester tester,
+    ) async {
+      // Revue phase 0 (routes D8) : le tuteur ne rejoint pas la classe de son
+      // enfant, il l'observe par la porte d'observation.
+      await avecLargeur(tester, largeurMobile, () async {
+        await _poser(
+          tester,
+          groupeId: GroupesDemonstration.anNour,
+          role: RoleEspaceGroupe.tuteur,
+        );
+        expect(find.text(LibellesGroupe.rejoindre), findsNothing);
+      });
+    });
+
     testWidgets('connecte avant T0, l attente est dite et expliquee', (
       WidgetTester tester,
     ) async {
       await avecLargeur(tester, largeurMobile, () async {
         await _poser(tester, groupeId: GroupesDemonstration.alIhsan);
-        expect(find.text(LibellesGroupe.attenteAvantDebut), findsOneWidget);
+        // CL-4.3 : la phrase vient de l'emplacement d'entree unique (R4).
+        expect(
+          find.textContaining(t.classe.entree.annonce.attente),
+          findsOneWidget,
+        );
         expect(
           find.text(LibellesGroupe.attenteAvantDebutDetail),
           findsOneWidget,
@@ -196,7 +216,11 @@ void main() {
     ) async {
       await avecLargeur(tester, largeurMobile, () async {
         await _poser(tester, groupeId: GroupesDemonstration.alHikma);
-        expect(find.text(LibellesGroupe.prolongee), findsOneWidget);
+        // R6 : « Temps prevu ecoule », jamais un nombre negatif.
+        expect(
+          find.textContaining(t.classe.entree.tempsEcoule),
+          findsOneWidget,
+        );
         expect(find.textContaining('Reste -'), findsNothing);
       });
     });
@@ -219,9 +243,9 @@ void main() {
       await avecLargeur(tester, largeurMobile, () async {
         await _poser(tester, groupeId: GroupesDemonstration.alBaqara);
         expect(find.byType(NoticeChangementHeure), findsOneWidget);
-        expect(find.text(LibellesGroupe.dstJ7), findsOneWidget);
+        // CL-4.3 : l'avis, sous les heures, vient d'EmplacementEntree.
         expect(
-          find.text(LibellesGroupe.dstDetail(avant: '13:00', apres: '12:00')),
+          find.text(t.classe.entree.dst(avant: '13:00', apres: '12:00')),
           findsOneWidget,
         );
       });

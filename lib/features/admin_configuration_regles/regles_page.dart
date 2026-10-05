@@ -4,9 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/config_edition.dart';
 import '../../core/admin/service_configuration.dart';
+import '../../core/capacites/port_politique_revue_kyc.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
@@ -14,7 +16,7 @@ import '../../core/widgets/sous_navigation_domaine.dart';
 
 /// `ADM-15` : Configuration > Regles, premiere fonction du domaine (contrat
 /// metier reçu le 19 septembre 2026,
-/// `docs/architecture/ADMIN_FINANCE_CONFIGURATION.md`).
+/// `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md`).
 ///
 /// **Le defaut de plateforme, jamais l'exception d'un profil.** Quatre de ces
 /// dix cles (`session_duration_minutes`, `session_paid_minimum_minutes`,
@@ -38,7 +40,9 @@ class ReglesPage extends ConsumerWidget {
     return PageShell(
       titre: t.admin.regles.titre,
       entete: SousNavigationDomaine(
-        onglets: ongletsConfiguration(),
+        onglets: ongletsConfiguration(
+          politiqueRevueKyc: ref.watch(peutReglerPolitiqueKycProvider),
+        ),
         indexActif: 0,
       ),
       child: Column(
@@ -149,9 +153,8 @@ class _Corps extends StatelessWidget {
     String erreurEcriture(String message) =>
         t.admin.regles.erreurEcriture(message: message);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
+    return CarteLignes(
+      lignes: <Widget>[
         for (final _ChampRegle champ in _champs())
           ConfigLigneEntiere(
             titre: champ.titre,

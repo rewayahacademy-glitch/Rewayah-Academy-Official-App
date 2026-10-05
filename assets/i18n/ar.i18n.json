@@ -1,4 +1,72 @@
 {
+  "commun": {
+    "sections": {
+      "page": "أقسام الصفحة"
+    }
+  },
+  "etat": {
+    "enDirect": "مباشر",
+    "seanceAnnulee": "ملغاة",
+    "annuleeValeur": "ملغاة : {valeur}",
+    "motifNonCommunique": "السبب غير متوفر",
+    "aucunRemplacantTrouve": "لم يُعثر على بديل",
+    "seanceNonFacturee": "الحصة غير مفوترة",
+    "raisonEtSuite": "{raison} · {suite}"
+  },
+  "classe": {
+    "entree": {
+      "coursDans": "الدرس بعد {duree}",
+      "coursImminent": "الدرس بعد أقل من دقيقة",
+      "rejoindre": "انضمام",
+      "rejoindreLecteur": "الانضمام إلى حصة {classe}",
+      "salleOuverte": "القاعة مفتوحة. تبدأ الحصة بعد {duree}.",
+      "salleOuverteImminent": "القاعة مفتوحة. تبدأ الحصة بعد أقل من دقيقة.",
+      "preparation": "التحضير جارٍ",
+      "attente": "أنت في القاعة. تبدأ الحصة بعد {duree}.",
+      "attenteImminent": "أنت في القاعة. تبدأ الحصة بعد أقل من دقيقة.",
+      "enDirect": "الحصة مباشرة",
+      "tempsEcoule": "انتهى الوقت المقرر",
+      "terminee": "انتهت الحصة",
+      "annulee": "أُلغيت الحصة",
+      "aucune": "لا توجد حصة مقررة",
+      "horsLigne": "أنت غير متصل. تحتاج الحصة إلى اتصال.",
+      "indisponible": "معلومات الحصة غير متاحة حاليًا.",
+      "reessayer": "إعادة المحاولة",
+      "chargementSeance": "جارٍ تحميل الحصة القادمة.",
+      "progressionValeur": "{chapitre} · {pourcentage} %",
+      "dst": "تغيير التوقيت: سينتقل الدرس من {avant} إلى {apres}.",
+      "annonce": {
+        "aVenir": "حصة قادمة",
+        "fenetreOuverte": "القاعة مفتوحة",
+        "attente": "أنت في القاعة"
+      }
+    }
+  },
+  "salle": {
+    "microOuvert": "الميكروفون مفتوح",
+    "microCoupe": "الميكروفون مغلق",
+    "cameraAllumee": "الكاميرا مشغّلة",
+    "cameraCoupee": "الكاميرا مطفأة",
+    "secours": {
+      "reseauFaible": "الشبكة ضعيفة. الأولوية للصوت.",
+      "reseauFaibleGuidee": "الشبكة ضعيفة.",
+      "reseauFaibleGuideeSuite": "الصوت يبقى أولوية.",
+      "reconnexion": "انقطع الاتصال. جارٍ إعادة الاتصال…",
+      "reconnexionGuidee": "جارٍ إعادة الاتصال بالحصة…",
+      "retablie": "عاد الاتصال.",
+      "echec": "تعذّرت إعادة الاتصال.",
+      "echecGuidee": "الاتصال لا يعود.",
+      "horsLigne": "أنت غير متصل. تحتاج الحصة إلى اتصال.",
+      "reessayer": "إعادة المحاولة",
+      "quitter": "خروج",
+      "indisponible": "{commande}. غير متاح أثناء إعادة الاتصال.",
+      "cameraInterdite": "الكاميرا معطّلة لهذا الملف.",
+      "microBloque": "الميكروفون محظور في إعدادات هذا الجهاز.",
+      "microBloqueGuidee": "الميكروفون محظور على هذا الجهاز.",
+      "continuerSansMicro": "المتابعة دون ميكروفون",
+      "ouvrirReglages": "فتح الإعدادات"
+    }
+  },
   "eleve": {
     "suivi": {
       "titre": "متابعة دروسي",
@@ -21,7 +89,45 @@
       "finUn": "درس واحد في المتابعة."
     }
   },
+  "enseignant": {
+    "journee": {
+      "derniereSeance": "آخر حصة",
+      "rejoindreSalle": "الدخول إلى القاعة",
+      "rejoindreSalleLecteur": "الدخول إلى قاعة الفصل {classe}",
+      "remplirCahier": "تعبئة دفتر المتابعة",
+      "remplirCahierLecteur": "تعبئة دفتر المتابعة للفصل {classe}",
+      "cahierObligatoire": "إلزامي: يُعبَّأ دفتر {classe} في نهاية كل حصة.",
+      "voirCahier": "عرض دفتر {classe}",
+      "voirCahierLecteur": "عرض دفتر المتابعة للفصل {classe}"
+    },
+    "ficheGroupe": {
+      "elevesTitre": "الطلاب",
+      "preparationTitre": "للتحضير",
+      "supportPrevu": "المادة المقررة",
+      "positionReprise": "موضع الاستئناف",
+      "objectif": "الهدف",
+      "preparationVide": "لم يُسجَّل أي تحضير لهذه الحصة.",
+      "supportsTitre": "أحدث المواد",
+      "repriseEleve": "الاستئناف: {page}",
+      "dernierPoint": "آخر ملاحظة: {texte}",
+      "chargementClasse": "جارٍ تحميل الفصل."
+    }
+  },
+  "compte": {
+    "themeContexte": "اختر مظهر التطبيق. يتم التغيير فورًا ويبقى على هذا الجهاز، ويمكنك تعديله في أي وقت.",
+    "themeSysteme": "النظام",
+    "themeSystemeDetail": "يتبع إعداد جهازك",
+    "themeClair": "فاتح",
+    "themeClairDetail": "خلفية فاتحة مهما كان إعداد جهازك",
+    "themeSombre": "داكن",
+    "themeSombreDetail": "خلفية داكنة مهما كان إعداد جهازك"
+  },
   "tc": {
+    "bibliotheque": {
+      "sections": {
+        "groupe": "المواد المعروضة"
+      }
+    },
     "groupe": {
       "enseignant": {
         "sayyid": "سيد",

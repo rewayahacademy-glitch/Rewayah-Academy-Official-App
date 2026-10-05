@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
+import '../theme/app_spacing.dart';
 
 /// Une action rare proposee par un [MenuActions].
 @immutable
@@ -35,7 +36,16 @@ class EntreeAction {
 /// bouton permanent d'une ligne. Aucun menu de ce type n'existait avant lui.
 class MenuActions extends StatelessWidget {
   /// Cree un menu d'actions.
-  const MenuActions({required this.actions, this.tooltip, super.key});
+  const MenuActions({
+    required this.actions,
+    this.tooltip,
+    this.points = false,
+    super.key,
+  });
+
+  /// Vrai pour le declencheur « ... » (trois points horizontaux, image CLV-07)
+  /// au lieu de l'icone de menu : le menu d'un panneau.
+  final bool points;
 
   /// Les actions proposees.
   final List<EntreeAction> actions;
@@ -72,9 +82,39 @@ class MenuActions extends StatelessWidget {
         child: SizedBox(
           width: AppMetriques.of(context).cibleTactile,
           height: AppMetriques.of(context).cibleTactile,
-          child: Icon(AppIcons.menu.repos),
+          // K-54 : le declencheur est centre dans sa cible.
+          child: Center(
+            child: points
+                ? _TroisPoints(
+                    couleur: palette.inkStrong.asIconTheme(size: AppSpacing.xs).color,
+                  )
+                : Icon(AppIcons.menu.repos),
+          ),
         ),
       ),
     );
   }
+}
+
+/// Trois points horizontaux, a l'encre forte : le declencheur d'un menu de
+/// panneau.
+class _TroisPoints extends StatelessWidget {
+  const _TroisPoints({required this.couleur});
+
+  final Color? couleur;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    mainAxisSize: MainAxisSize.min,
+    spacing: AppSpacing.xs,
+    children: <Widget>[
+      for (int i = 0; i < 3; i++)
+        SizedBox.square(
+          dimension: AppSpacing.xs,
+          child: DecoratedBox(
+            decoration: BoxDecoration(color: couleur, shape: BoxShape.circle),
+          ),
+        ),
+    ],
+  );
 }

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/admin/admin_domaine.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/journal/service_journal.dart';
@@ -15,6 +16,7 @@ import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 
 /// Les trois profondeurs proposees par le filtre de periode.
@@ -239,6 +241,10 @@ class _Entete extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        // Journal et historique des observations : les deux fonctions pairs de
+        // Securite et audit (`ongletsSecurite()`), une route chacune.
+        SousNavigationDomaine(onglets: ongletsSecurite(), indexActif: 0),
+        Ecart.vLg,
         const _BandeauChaine(),
         Ecart.vLg,
         // La periode ne depend d'aucune lecture : elle s'affiche meme quand les
@@ -398,6 +404,11 @@ class _BandeauChaine extends ConsumerWidget {
         );
 }
 
+/// Un etat qui defile si la hauteur manque : la tete du Journal est haute et,
+/// sur telephone, l'etat n'y dispose parfois que de quelques pixels (meme
+/// choix que `_Defilant` de l'historique des observations).
+Widget _defilant(Widget etat) => SingleChildScrollView(child: etat);
+
 /// La liste, et ses cinq etats.
 class _Corps extends StatelessWidget {
   const _Corps({
@@ -426,11 +437,13 @@ class _Corps extends StatelessWidget {
     // suivante qui echoue ne doit pas effacer ce que l'administration a deja
     // sous les yeux.
     if (erreur != null && entrees.isEmpty) {
-      return EmptyState(
-        message: t.admin.journal.erreur,
-        icone: AppIcons.avertissement,
-        libelleAction: t.commun.reessayer,
-        onAction: () => unawaited(onReessayer()),
+      return _defilant(
+        EmptyState(
+          message: t.admin.journal.erreur,
+          icone: AppIcons.avertissement,
+          libelleAction: t.commun.reessayer,
+          onAction: () => unawaited(onReessayer()),
+        ),
       );
     }
 
@@ -443,18 +456,20 @@ class _Corps extends StatelessWidget {
       // Un journal vide sous filtre est une impasse dont on peut sortir ; un
       // journal vide tout court est une bonne nouvelle, pas une panne
       // (`02-regles-ux.md` section 6).
-      return filtre
-          ? EmptyState(
-              message: t.admin.journal.videFiltre,
-              invitation: t.admin.journal.videFiltreDetail,
-              libelleAction: t.admin.journal.effacerFiltres,
-              onAction: onEffacerFiltres,
-            )
-          : EmptyState(
-              message: t.admin.journal.vide,
-              invitation: t.admin.journal.videDetail,
-              registre: RegistreVide.bonneNouvelle,
-            );
+      return _defilant(
+        filtre
+            ? EmptyState(
+                message: t.admin.journal.videFiltre,
+                invitation: t.admin.journal.videFiltreDetail,
+                libelleAction: t.admin.journal.effacerFiltres,
+                onAction: onEffacerFiltres,
+              )
+            : EmptyState(
+                message: t.admin.journal.vide,
+                invitation: t.admin.journal.videDetail,
+                registre: RegistreVide.bonneNouvelle,
+              ),
+      );
     }
 
     return DataCollection<EntreeJournal>(
@@ -614,6 +629,11 @@ String libelleEvenement(String type) => switch (type) {
   'agent_session_opened' => t.admin.journal.evtAgentSessionOuverte,
   'controller_observation_started' => t.admin.journal.evtObservationControleur,
   'video_token_issued' => t.admin.journal.evtJetonVideo,
+  // Les trois evenements de l'observation tuteur (`0033`, `0036`, `0037`).
+  'observation_entree' => t.admin.journal.evenements.observationEntree,
+  'observation_sortie' => t.admin.journal.evenements.observationSortie,
+  'observation_politique_groupe_modifiee' =>
+    t.admin.journal.evenements.observationPolitiqueGroupeModifiee,
   _ => type,
 };
 

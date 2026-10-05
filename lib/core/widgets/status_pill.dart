@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
@@ -49,7 +50,7 @@ extension PaireDeTonEtat on AppPalette {
 
 /// Un etat nomme : une pastille de couleur **et** un mot.
 ///
-/// **Jamais la couleur seule** (`docs/design/01-systeme-visuel.md` section 8).
+/// **Jamais la couleur seule** (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md` section 8).
 /// Une pastille sans mot ne dit rien a qui ne distingue pas le vert du rouge,
 /// et rien du tout a un lecteur d'ecran.
 ///
@@ -59,7 +60,19 @@ extension PaireDeTonEtat on AppPalette {
 /// (`01-systeme-visuel.md` section 3).
 class StatusPill extends StatelessWidget {
   /// Cree une pilule d'etat.
-  const StatusPill({required this.libelle, required this.ton, super.key});
+  const StatusPill({
+    required this.libelle,
+    required this.ton,
+    super.key,
+    this.marqueur,
+  });
+
+  /// Ce qui remplace le disque de statut, ou `null` pour le disque du ton.
+  ///
+  /// Reserve a `PastilleEtatSeance` (point qui pulse, icone d'annulation) :
+  /// le marqueur prend la place du disque, sur [diametrePastille] de large
+  /// au plus, sans changer la mise en page de la pilule.
+  final Widget? marqueur;
 
   /// Le mot qui nomme l'etat. Court : deux mots au plus.
   final String libelle;
@@ -74,7 +87,7 @@ class StatusPill extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final AppColorPair fond = _fond(palette);
-    final Color pastille = _pastille(palette);
+    final BoxDecoration pastille = _pastille(palette);
 
     return Semantics(
       label: libelle,
@@ -87,20 +100,23 @@ class StatusPill extends StatelessWidget {
         decoration: fond.decoration(borderRadius: AppRadius.arrondiFull),
         child: Row(
           mainAxisSize: MainAxisSize.min,
+          // Etiree par son parent, la pastille garde son contenu au centre
+          // (K-54).
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            SizedBox.square(
-              dimension: diametrePastille,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: pastille,
+            marqueur ??
+                SizedBox.square(
+                  dimension: diametrePastille,
+                  child: DecoratedBox(decoration: pastille),
                 ),
-              ),
-            ),
             Ecart.hSm,
+            // PASTILLE-COUPE-1 : le libelle passe a la ligne entre les mots,
+            // jamais dans un mot (« Remplacem / ent » a 200 %) ; un mot trop
+            // long pour la place reduit son echelle, jamais sous 1.
             Flexible(
-              child: Text(
+              child: TexteSansCoupure(
                 libelle,
+                textAlign: TextAlign.center,
                 style: fond.applyTo(
                   Theme.of(context).textTheme.labelMedium ?? const TextStyle(),
                 ),
@@ -115,16 +131,21 @@ class StatusPill extends StatelessWidget {
   /// La paire douce de la famille. Voir [PaireDeTonEtat.paireDe].
   AppColorPair _fond(AppPalette palette) => palette.paireDe(ton);
 
-  /// L'aplat sature de la pastille.
+  /// Le disque de la pastille.
   ///
-  /// Le neutre prend `borderStrong`, la seule encre neutre qui passe le seuil
-  /// de 3:1 des elements porteurs de sens : une pastille grise decorative
-  /// serait invisible sur la surface enfoncee.
-  Color _pastille(AppPalette palette) => switch (ton) {
-    TonEtat.neutre => palette.borderStrong.asBorderSide().color,
-    TonEtat.accent => palette.surfacePrimary.background,
-    TonEtat.succes => palette.surfaceSuccess.background,
-    TonEtat.avertissement => palette.surfaceWarning.background,
-    TonEtat.alerte => palette.surfaceAlert.background,
+  /// Succes, attention, alerte et neutre prennent les **points de statut**
+  /// (`palette.pointsStatut`), valides a 3:1 contre leur fond doux et les
+  /// surfaces par `test/theme` : l'aplat `surfaceSuccess` clair (`#70EE9C`)
+  /// ne mesurait que 1,28:1 sur `washSuccess` (revue phase 0, jetons D8).
+  /// L'accent, sans point dedie, garde `surfacePrimary`.
+  BoxDecoration _pastille(AppPalette palette) => switch (ton) {
+    TonEtat.neutre => palette.pointsStatut.neutre.pastille(),
+    TonEtat.accent => BoxDecoration(
+      shape: BoxShape.circle,
+      color: palette.surfacePrimary.background,
+    ),
+    TonEtat.succes => palette.pointsStatut.succes.pastille(),
+    TonEtat.avertissement => palette.pointsStatut.attention.pastille(),
+    TonEtat.alerte => palette.pointsStatut.alerte.pastille(),
   };
 }

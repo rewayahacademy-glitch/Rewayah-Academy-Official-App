@@ -12,6 +12,8 @@ import 'package:rewayah_academy/features/tc_catalogue/detail_ressource_page.dart
 import 'package:rewayah_academy/features/tc_catalogue/surface_bibliotheque.dart';
 import 'package:rewayah_academy/features/tc_catalogue/vignette_ressource.dart';
 
+import '../../support/garde_interface.dart';
+
 import 'faux/faux_ports_b.dart';
 import 'support/hote_b.dart';
 
@@ -121,6 +123,38 @@ void main() {
     });
   });
 
+  group('Bibliotheque : cartes separees de 16 (K-55)', () {
+    for (final double largeur in <double>[320, 1440]) {
+      testWidgets('les cartes de ressource ne se collent pas a $largeur px', (
+        WidgetTester tester,
+      ) async {
+        tester.view.physicalSize = Size(largeur, 4000);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+
+        await tester.pumpWidget(
+          hoteB(
+            surface(),
+            surcharges: surchargesCatalogue(
+              ressources: <LibraryResource>[
+                ressource(id: 'r1', titre: 'Alphabet arabe'),
+                ressource(id: 'r2', titre: 'Regles du meem'),
+                ressource(id: 'r3', titre: 'Le Coran'),
+              ],
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        final int n = verifierAucuneCarteCollee(
+          tester,
+          estCarte: (Widget w) => w is CarteRessource,
+        );
+        expect(n, 3);
+      });
+    }
+  });
+
   group('Bibliotheque : recherche et filtres', () {
     List<LibraryResource> trois() => <LibraryResource>[
       ressource(id: 'r1', titre: 'Alphabet arabe', type: TypeRessource.lecon),
@@ -134,17 +168,17 @@ void main() {
       fenetreHaute(tester);
 
       await tester.pumpWidget(
-        hoteB(
-          surface(),
-          surcharges: surchargesCatalogue(ressources: trois()),
-        ),
+        hoteB(surface(), surcharges: surchargesCatalogue(ressources: trois())),
       );
       await tester.pumpAndSettle();
 
       await tester.enterText(find.byType(TextField), 'biologie');
       await tester.pumpAndSettle();
 
-      expect(find.text(t.tc.bibliotheque.aucunResultat.message), findsOneWidget);
+      expect(
+        find.text(t.tc.bibliotheque.aucunResultat.message),
+        findsOneWidget,
+      );
       expect(find.byType(CarteRessource), findsNothing);
 
       await tester.tap(find.text(t.tc.bibliotheque.effacerRecherche).last);
@@ -159,10 +193,7 @@ void main() {
       fenetreHaute(tester);
 
       await tester.pumpWidget(
-        hoteB(
-          surface(),
-          surcharges: surchargesCatalogue(ressources: trois()),
-        ),
+        hoteB(surface(), surcharges: surchargesCatalogue(ressources: trois())),
       );
       await tester.pumpAndSettle();
 
@@ -179,10 +210,7 @@ void main() {
       fenetreHaute(tester);
 
       await tester.pumpWidget(
-        hoteB(
-          surface(),
-          surcharges: surchargesCatalogue(ressources: trois()),
-        ),
+        hoteB(surface(), surcharges: surchargesCatalogue(ressources: trois())),
       );
       await tester.pumpAndSettle();
 
@@ -320,8 +348,14 @@ void main() {
 
       // Le bouton n'est pas grise : il n'existe pas, et une phrase prend sa
       // place.
-      expect(find.text(t.tc.bibliotheque.action.enregistrerCopie), findsNothing);
-      expect(find.text(t.tc.bibliotheque.message.aucunTelechargement), findsOneWidget);
+      expect(
+        find.text(t.tc.bibliotheque.action.enregistrerCopie),
+        findsNothing,
+      );
+      expect(
+        find.text(t.tc.bibliotheque.message.aucunTelechargement),
+        findsOneWidget,
+      );
     });
 
     testWidgets('un PDF annonce que son apercu n est pas encore disponible', (
@@ -344,7 +378,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text(t.tc.bibliotheque.detail.apercuIndisponible), findsOneWidget);
+      expect(
+        find.text(t.tc.bibliotheque.detail.apercuIndisponible),
+        findsOneWidget,
+      );
     });
 
     testWidgets('un telechargement impossible est dit, pas tu', (
@@ -410,7 +447,10 @@ void main() {
       expect(selecteur.appels.single.nom, 'Règles du meem.pdf');
       expect(selecteur.appels.single.mime, 'application/pdf');
       expect(selecteur.appels.single.taille, 4);
-      expect(find.text(t.tc.bibliotheque.message.copieEnregistree), findsOneWidget);
+      expect(
+        find.text(t.tc.bibliotheque.message.copieEnregistree),
+        findsOneWidget,
+      );
 
       await tester.pump(const Duration(seconds: 4));
       await tester.pumpAndSettle();
@@ -448,16 +488,16 @@ void main() {
         hoteB(
           surface(groupeId: 'g1'),
           surcharges: surchargesCatalogue(
-            ressources: <LibraryResource>[r, ressource(id: 'r2')],
+            ressources: <LibraryResource>[
+              r,
+              ressource(id: 'r2'),
+            ],
             assignations: <String, List<String>>{
               'g1': <String>['r2'],
             },
             reprise: ReprisLecture(
               ressource: r,
-              position: const ContentPosition.page(
-                resourceId: 'r1',
-                page: 12,
-              ),
+              position: const ContentPosition.page(resourceId: 'r1', page: 12),
               vueLeUtc: DateTime.utc(2026, 9, 19),
             ),
           ),

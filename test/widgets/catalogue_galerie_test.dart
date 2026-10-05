@@ -18,7 +18,7 @@ import '../support/harnais.dart';
 /// lieu de le contredire, et un composant ajoute sans entree de galerie ne
 /// serait jamais signale.
 ///
-/// Source : `docs/design/07-catalogue-composants.md`, sections 1 et 2.
+/// Source : `docs/archive/2026-09-pre-remise-a-plat/design/07-catalogue-composants.md`, sections 1 et 2.
 const List<String> composantsDuCatalogue = <String>[
   // Section 2 : les douze P0.
   'PageShell',
@@ -37,6 +37,7 @@ const List<String> composantsDuCatalogue = <String>[
   'Pressable',
   'BentoTile',
   'AvatarTile',
+  'AvatarNom',
   'AudioLabel',
   'PermanentNotice',
   'PinPad',
@@ -48,6 +49,12 @@ const List<String> composantsDuCatalogue = <String>[
   'PageParcours',
   // Section 2 : ce que la refonte a produit en chemin, hors liste d'origine.
   'MarquePage',
+  // K-55 (revue du directeur du 01/10) : jamais de cartes collees.
+  'PileCartes',
+  'CarteGroupee',
+  'CarteLignes',
+  // BENTO-1 (02/10) : la grille partagee des tableaux de bord.
+  'GrilleBento',
   // Section 2 : le P1 que le lot R3 produit.
   'TimelineRow',
   // Section 2 : les deux que le lot ADM-04 produit. `DataCollection` etait au
@@ -64,6 +71,10 @@ const List<String> composantsDuCatalogue = <String>[
   // montre qu'il en manquait un second, pour les ecrans sans page -- ni titre,
   // ni gouttiere, ni colonne bornee.
   'PageImmersive',
+  // Les deux que ETATS-BTN-1 et NAV-FLECHES-1 (revue du directeur 01-02/10)
+  // produisent : la commande ronde de la salle et la barre precedent / suivant.
+  'CommandeSalle',
+  'BarrePrecedentSuivant',
   // Section 2 : le composant d'etat que le lot N4 produit. Il porte a lui seul
   // deux invariants de l'etape 5 -- J3, un etat indisponible se dit « inconnu »
   // et jamais « absent », et J7, une couleur seule ne represente jamais un etat
@@ -96,9 +107,41 @@ const List<String> composantsDuCatalogue = <String>[
   'MenuFiltre',
   'SelecteurNiveauProgramme',
   'SousNavigationDomaine',
+  // ONGLETS-1 (revue du directeur, 01/10/2026) : le selecteur de section
+  // unique, qui remplace les rangees d'onglets et de pilules qui defilent.
+  'SelecteurSection',
+  // Les composants partages du chantier Tuteur V1 (phase 0c1 du 24/09/2026,
+  // manifeste visuel section 3.4 et contrat K5), sans cle i18n nouvelle.
+  'EcranResultat',
+  'LienFleche',
+  // Revue du directeur 01-02/10 (K-54) : les boutons que les ecrans peignaient
+  // eux-memes, rendus au core. Voir lib/CLAUDE.md, « Interdits d'interface ».
+  'BoutonOutil',
+  'BoutonIcone',
+  'RaccourciTactile',
+  'LigneCleValeur',
+  'GroupeReglages',
+  'ControleSegmente',
+  // Les cinq qui lisent des cles `commun.*` (meme phase).
+  'EtatSysteme',
+  'BlocAsynchrone',
+  'SelecteurProfils',
+  'EntetePage',
+  'BasculeTheme',
+  // THEME-SW-1 : le choix du theme (un rectangle, trois bascules).
+  'SelecteurTheme',
+  // Le gabarit d'etape partage (demandes B-3 et A-2, 25/09/2026).
+  'PageEtape',
+  // EN-3 : le point de rappel des cahiers (K-45), sorti de la Journee parce
+  // qu'il sert desormais a plusieurs ecrans (Aujourd'hui, Mes Classes).
+  'PointRappel',
+  // CT-6 : le fil de discussion generique (CTR-04 Echanges).
+  'FilDiscussion',
+  // ON-AIR-1, ANNUL-VIS-1 : la pastille d'etat de seance.
+  'PastilleEtatSeance',
 ];
 
-/// Les trois largeurs de `docs/design/05-regles-responsive.md` section 8.
+/// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.
 ///
 /// Une valeur au milieu de chaque plage, jamais sa borne : un composant qui ne
 /// tiendrait qu'a 599 passerait sinon pour bon.

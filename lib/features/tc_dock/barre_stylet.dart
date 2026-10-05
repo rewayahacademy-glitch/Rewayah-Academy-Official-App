@@ -12,7 +12,7 @@ import '../../core/theme/app_elevation.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
-import 'bouton_outil.dart';
+import '../../core/widgets/bouton_outil.dart';
 import 'feuille_choix.dart';
 
 /// La barre du stylet : cinq boutons, pas un de plus.

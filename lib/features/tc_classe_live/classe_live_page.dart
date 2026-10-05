@@ -1,11 +1,15 @@
-﻿import 'dart:async';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/i18n/strings.g.dart';
+import '../../core/router/routes.dart';
 import '../../core/tc_classe/controleur_recitation.dart';
+import '../../core/tc_classe/port_rappel_discret.dart';
 import '../../core/tc_classe/port_session_persistante.dart';
+import '../../core/tc_classe/rappel_discret.dart';
 import '../../core/tc_classe/roster_classe_vm.dart';
 import '../../core/tc_classe/roster_enseignant.dart';
 import '../../core/tc_classe/session_live_vm.dart';
@@ -14,6 +18,7 @@ import '../../core/tc_classe/teacher_student_projection.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/theme/app_gabarit.dart';
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/livekit_session_provider.dart';
 import '../../core/video/pre_vol.dart';
@@ -22,10 +27,15 @@ import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/confirm_destructive.dart';
+import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_immersive.dart';
 import '../../core/widgets/permanent_notice.dart';
 import '../../core/widgets/status_pill.dart';
 import '../salle/vue_salle.dart';
+import '../salle_seance/actions_seance.dart';
+import '../salle_seance/depuis_classe_live.dart';
+import '../salle_seance/salle_seance.dart';
+import '../salle_seance/vue_seance.dart';
 import 'entete_classe.dart';
 import 'fiche_seance.dart';
 import 'pre_vol_classe.dart';
@@ -51,6 +61,7 @@ class ContexteClasseLive {
     this.horloge,
     this.seuilMax,
     this.supportActifId,
+    this.descriptionSupport,
     this.support,
     this.dock,
     this.bibliotheque,
@@ -84,6 +95,12 @@ class ContexteClasseLive {
 
   /// La ressource presentee. `null` = aucun support, la video reprend la place.
   final String? supportActifId;
+
+  /// Ce que la salle sait du support partage (chapitre, titre, page sur
+  /// nombre de pages), rendu par la salle de seance elle-meme quand aucun
+  /// [support] n'est fourni. `null` tant que le catalogue n'est pas branche
+  /// (BR-1) ; la demonstration et les captures le remplissent.
+  final SupportSeance? descriptionSupport;
 
   /// Le rendu du support, par Agent B ou Agent C.
   final WidgetBuilder? support;
@@ -223,7 +240,9 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
       return;
     }
     final ResultatPreVol? mesure = ref.read(preVolProvider).value;
-    setState(() => _materielMesureBloque = mesure != null && !mesure.peutEntrer);
+    setState(
+      () => _materielMesureBloque = mesure != null && !mesure.peutEntrer,
+    );
   }
 
   /// La sortie volontaire, confirmee une fois.
@@ -241,6 +260,12 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
     if (!confirme || !mounted) {
       return;
     }
+    await _sortir();
+  }
+
+  /// La sortie elle-meme, une fois confirmee (la salle de seance confirme
+  /// Quitter de son cote : `confirmerQuitterSeance`).
+  Future<void> _sortir() async {
     await _controleur.quitter();
     ref.read(recitationProvider.notifier).reinitialiser();
     if (!mounted) {
@@ -249,7 +274,229 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
     widget.contexte.onSortie?.call();
   }
 
-  Future<void> _voirRoster(RosterClasseVM roster) => AppBottomSheet.ouvrir<void>(
+  /// Le mot du lien, dans une feuille (bouton Reseau du dock enseignant).
+  Future<void> _voirReseau(VueSeance vue) => AppBottomSheet.ouvrir<void>(
+    context,
+    titre: t.salle.seance.reseau,
+    constructeur: (BuildContext _) => Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: switch (_Commandes._reseau(_qualite)) {
+        final (String, TonEtat) dit => StatusPill(libelle: dit.$1, ton: dit.$2),
+        null => Text(vue.texteConnexion),
+      },
+    ),
+  );
+
+  /// Quitte la salle puis ouvre [route] (rail enseignant).
+  Future<void> _sortirVers(String route) async {
+    await _controleur.quitter();
+    ref.read(recitationProvider.notifier).reinitialiser();
+    if (!mounted) {
+      return;
+    }
+    GoRouter.maybeOf(context)?.go(route);
+  }
+
+  /// Ouvre [route] sans quitter la salle : le controleur de session
+  /// persistante garde la room, la barre « Cours en cours » y ramene (D-24).
+  void _allerSansQuitter(String route) => GoRouter.maybeOf(context)?.go(route);
+
+  /// Le Groupe de la seance, selon le role : la fiche du groupe pour
+  /// l'enseignant, l'Espace Groupe pour l'eleve, l'accueil pour la guidee.
+  String _routeDuGroupe(RoleSeance role) => switch (role) {
+    RoleSeance.enseignant => Routes.groupePour(widget.contexte.groupeId),
+    RoleSeance.eleve => Routes.tcEspaceGroupe(widget.contexte.groupeId),
+    RoleSeance.guidee => Routes.eleve,
+  };
+
+  /// La cloche : aucune source de notifications avant BR-1 (K-28), la
+  /// feuille le dit plutot que d'inventer une liste.
+  Future<void> _voirNotifications() => AppBottomSheet.ouvrir<void>(
+    context,
+    titre: t.notifications.titre,
+    constructeur: (BuildContext _) => Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          t.notifications.indisponibleTitre,
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        Ecart.vXs,
+        Text(t.notifications.indisponiblePhrase),
+      ],
+    ),
+  );
+
+  /// Le panneau ouvert a cote du support (enseignant).
+  PanneauOuvert _panneau = PanneauOuvert.aucun;
+
+  /// Le zoom local, qui n'agit que sur cet ecran.
+  double _zoom = 1;
+
+  /// Le seul retour d'un rappel discret : son echec (spec 10.2).
+  String? _echecRappel;
+
+  void _basculerPanneau(PanneauOuvert panneau) => setState(() {
+    _panneau = _panneau == panneau ? PanneauOuvert.aucun : panneau;
+  });
+
+  void _zoomer(double pas) => setState(() {
+    _zoom = ((_zoom + pas).clamp(0.5, 2) * 10).round() / 10;
+  });
+
+  /// Le rappel discret, depuis la fiche du panneau Eleves. La reussite ne
+  /// produit rien ; l'echec se dit, sur son motif.
+  Future<void> _rappeler(EleveSeance eleve) async {
+    final String? academyId = eleve.id;
+    if (academyId == null) return;
+    final PortRappelDiscret rappel = ref.read(portRappelDiscretProvider);
+    final String sessionId = widget.contexte.sessionId;
+    try {
+      await rappel.rappeler(sessionId: sessionId, academyId: academyId);
+      if (mounted) setState(() => _echecRappel = null);
+    } on EchecRappel catch (echec) {
+      if (!mounted) return;
+      setState(
+        () => _echecRappel = switch (echec.motif) {
+          MotifEchecRappel.cooldown => t.tc.classe.rappel.cooldown(
+            secondes:
+                (rappel.cooldownRestant(
+                          sessionId: sessionId,
+                          academyId: academyId,
+                        ) ??
+                        rappel.cooldown)
+                    .inSeconds,
+          ),
+          MotifEchecRappel.droitRefuse => t.tc.classe.rappel.echecDroit,
+          MotifEchecRappel.transport => t.tc.classe.rappel.echec,
+        },
+      );
+    }
+  }
+
+  /// La salle de seance unique (`SalleSeance`), celle de `/salle`, pour les
+  /// roles eleve, guidee et enseignant. Les rappels ne sont poses que si ce
+  /// qu'ils ouvrent est fourni par le contexte : un bouton qui ne peut pas
+  /// aboutir n'est pas rendu.
+  Widget _salleSeance({
+    required VueSeance vue,
+    required VueSalle salle,
+    required SlotClasse support,
+    required SlotClasse bibliotheque,
+    required SlotClasse dock,
+    required bool suspensionNonConfirmee,
+  }) {
+    final ContexteClasseLive contexte = widget.contexte;
+    final bool enseignant = vue.role == RoleSeance.enseignant;
+    final bool enSalle = salle.dansLaSalle;
+    final bool microOuvert = salle.moi?.micro ?? false;
+    final bool cameraOuverte = salle.moi?.camera ?? false;
+    final VoidCallback? noter = contexte.onNoter;
+    final VoidCallback? signaler = contexte.onSignaler;
+    final bool rendSupport =
+        contexte.support != null ||
+        (contexte.supportActifId != null &&
+            contexte.descriptionSupport == null);
+    final Widget salleSeance = SalleSeance(
+      vue: vue,
+      local: EtatLocalSeance(
+        microOuvert: microOuvert,
+        cameraAllumee: cameraOuverte,
+        zoom: _zoom,
+      ),
+      contenuSupport: rendSupport ? SurfaceSupport(slot: support) : null,
+      actions: ActionsSeance(
+        // Revenir au Groupe ne quitte rien : la barre « Cours en cours »
+        // ramene ici (session persistante, D-24).
+        // Ouverte par `go` (bouton « Rejoindre »), la route n'a rien a
+        // depiler : le chevron ramene alors au Groupe, sans quitter non plus.
+        onRetour: Navigator.of(context).canPop()
+            ? () => Navigator.of(context).pop()
+            : () => _allerSansQuitter(_routeDuGroupe(vue.role)),
+        // Coin de l'en-tete (images CLV-06 et CLV-07) : aucune source de
+        // notifications n'est branchee avant BR-1, la cloche le dit sur place
+        // ; reglages et compte ouvrent les pages communes `/compte`, la salle
+        // restant ouverte (barre « Cours en cours », D-24).
+        onNotifications: () => unawaited(_voirNotifications()),
+        onReglages: () => _allerSansQuitter(Routes.compteReglages),
+        onCompte: () => _allerSansQuitter(Routes.compte),
+        onQuitter: () => unawaited(_sortir()),
+        // Le rail enseignant (desktop) : la salle confirme la sortie, puis on
+        // quitte vraiment avant d'aller ailleurs, comme le dit la confirmation.
+        onNaviguer: enseignant
+            ? (String route) => unawaited(_sortirVers(route))
+            : null,
+        onMicro: salle.peutParler && enSalle
+            ? () => unawaited(_basculerMicro(microOuvert))
+            : null,
+        onCamera: salle.peutMontrer && enSalle
+            ? () => unawaited(_basculerCamera(cameraOuverte))
+            : null,
+        // L'etat du lien, en un mot (J7), lu du moteur : aucune mesure maison.
+        onReseau: enseignant ? () => unawaited(_voirReseau(vue)) : null,
+        onZoomMoins: () => _zoomer(-0.1),
+        onZoomPlus: () => _zoomer(0.1),
+        onEleves: enseignant && salle.voitLesParticipants && vue.elevesConnus
+            ? () => _basculerPanneau(PanneauOuvert.eleves)
+            : null,
+        // La Bibliotheque s'ouvre sans quitter la room (D-20), et seulement
+        // si elle est fournie.
+        onSupports: enseignant && contexte.bibliotheque != null && enSalle
+            ? () => unawaited(_ouvrirBibliotheque(bibliotheque, feuille: true))
+            : null,
+        onBibliotheque: enseignant && contexte.bibliotheque != null
+            ? () => unawaited(_ouvrirBibliotheque(bibliotheque, feuille: true))
+            : null,
+        // Le Teaching Dock d'Agent D porte les outils : sans lui, aucun outil.
+        onOutil: enseignant && contexte.dock != null
+            ? (OutilEnseignement _) => unawaited(
+                AppBottomSheet.ouvrir<void>(
+                  context,
+                  titre: t.salle.seance.outils.titre,
+                  constructeur: (BuildContext _) => HoteDock(slot: dock),
+                ),
+              )
+            : null,
+        onRappeler: enseignant
+            ? (EleveSeance e) => unawaited(_rappeler(e))
+            : null,
+        onChoisirPourReciter: enseignant
+            ? (EleveSeance e) {
+                final String? id = e.id;
+                if (id != null) {
+                  ref.read(recitationProvider.notifier).donnerLaParoleA(id);
+                }
+              }
+            : null,
+        onNoter: enseignant && noter != null
+            ? (EleveSeance _) => noter()
+            : null,
+        onSignaler: enseignant && signaler != null
+            ? (EleveSeance _) => signaler()
+            : null,
+      ),
+    );
+    final String? avis = suspensionNonConfirmee
+        ? t.tc.classe.lien.retourDeSuspension
+        : null;
+    if (avis == null && _echecRappel == null) return salleSeance;
+    // Les deux seuls messages de la Classe Live qui ne sont pas dans la salle
+    // de seance : une ligne au-dessus, jamais par-dessus.
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        if (avis != null) LocalFeedback(message: avis, persistant: true),
+        if (_echecRappel case final String echec)
+          LocalFeedback(message: echec, persistant: true),
+        Expanded(child: salleSeance),
+      ],
+    );
+  }
+
+  Future<void> _voirRoster(
+    RosterClasseVM roster,
+  ) => AppBottomSheet.ouvrir<void>(
     context,
     titre: t.tc.classe.roster.titre,
     constructeur: (BuildContext _) => PanneauRoster(
@@ -288,15 +535,19 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
   /// page, donc aucune navigation. Sur telephone, c'est une feuille modale, qui
   /// s'empile sur la page sans la demonter. Dans les deux cas, personne
   /// n'appelle `quitter` et personne ne change de route (decision D-20).
-  Future<void> _ouvrirBibliotheque(SlotClasse slot) async {
-    if (AppGabarit.de(context).estLarge) {
+  Future<void> _ouvrirBibliotheque(
+    SlotClasse slot, {
+    bool feuille = false,
+  }) async {
+    if (!feuille && AppGabarit.de(context).estLarge) {
       setState(() => _bibliothequeOuverte = true);
       return;
     }
     await AppBottomSheet.ouvrir<void>(
       context,
       titre: t.tc.classe.support.bibliotheque,
-      constructeur: (BuildContext _) => EmplacementBibliothequeEnClasse(slot: slot),
+      constructeur: (BuildContext _) =>
+          EmplacementBibliothequeEnClasse(slot: slot),
     );
   }
 
@@ -332,11 +583,25 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
     // (`supabase/migrations/0033_tc_vues_rpc.sql:1275`). La condition ici
     // n'ajoute donc aucune securite -- elle evite seulement de battre toutes
     // les dix secondes une RPC qui refusera, sur l'appareil de chaque eleve.
-    final List<AnnonceObservation> annonces =
-        salle.role == RoleSalle.enseignant
+    final List<AnnonceObservation> annonces = salle.role == RoleSalle.enseignant
         ? ref.watch(annoncesObservationProvider(contexte.sessionId)).value ??
               const <AnnonceObservation>[]
         : const <AnnonceObservation>[];
+
+    // **La symetrie cote eleve, par une AUTRE lecture.** L'eleve ne peut pas
+    // se servir de celle de l'enseignant : elle lui est refusee par le serveur,
+    // et elle porte les prenoms de tous les enfants observes.
+    // `annonce_observation_pour_moi` (`0040`) ne rend que SA ligne, et rien
+    // d'un autre foyer -- pas meme son nombre.
+    //
+    // Meme raison qu'au-dessus pour la condition de role : elle n'ajoute
+    // aucune securite (le serveur refuse deja qui n'est pas membre du groupe),
+    // elle evite de battre la RPC sur l'appareil de l'enseignant et du
+    // controleur, qui montent le meme en-tete.
+    final bool monTuteurObserve =
+        salle.role == RoleSalle.eleve &&
+        (ref.watch(monTuteurObserveProvider(contexte.sessionId)).value ??
+            false);
 
     final RosterClasseVM roster = ref
         .watch(rosterClasseProvider(contexte.sessionId))
@@ -383,6 +648,53 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
       contenu: contexte.bibliotheque,
     );
 
+    // **En seance, la salle unique** : le meme gabarit que `/salle`, pour
+    // l'eleve, la guidee et l'enseignant (plan de code, CL-2). Les autres
+    // roles du jeton (tuteur observateur, controleur) gardent le rendu
+    // ci-dessous, comme dans `/salle`.
+    if (!enImpasse && !enAttente) {
+      final VueSeance? seance = DepuisClasseLive.vue(
+        salle: salle,
+        mode: AppMetriques.of(context).mode,
+        roster: roster,
+        libelleGroupe: contexte.libelleGroupe,
+        nomEnseignant: nomAvecTitre(contexte.enseignant),
+        groupeId: contexte.groupeId,
+        horloge: session.horloge,
+        monTuteurObserve: monTuteurObserve,
+        annonces: annonces,
+        support:
+            contexte.descriptionSupport ??
+            (contexte.supportActifId == null
+                ? null
+                : SupportSeance(
+                    ressourceId: contexte.supportActifId,
+                    chapitre: '',
+                    titre: '',
+                    encadre: '',
+                    points: const <String>[],
+                    page: 1,
+                    pages: 1,
+                  )),
+        panneau: _panneau,
+      );
+      if (seance != null) {
+        return _salleSeance(
+          vue: seance,
+          salle: salle,
+          support: slotSupport,
+          bibliotheque: slotBibliotheque,
+          dock: SlotClasse(
+            sessionId: contexte.sessionId,
+            groupeId: contexte.groupeId,
+            resourceId: contexte.supportActifId,
+            contenu: contexte.dock,
+          ),
+          suspensionNonConfirmee: etat.retourDeSuspension,
+        );
+      }
+    }
+
     return PageImmersive(
       registre: RegistreImmersif.salle,
       entete: EnteteClasse(
@@ -390,6 +702,7 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
         vue: vue,
         roster: roster,
         annonces: annonces,
+        monTuteurObserve: monTuteurObserve,
         // Le bouton compact n'existe que la ou le roster est replie : a cote
         // d'une colonne, il ferait doublon.
         onVoirRoster: vue.placeRoster == PlaceRoster.feuille
@@ -403,9 +716,8 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
               salle: salle,
               qualite: _qualite,
               peutOuvrirBibliotheque: salle.peutPresenter,
-              onBibliotheque: () => unawaited(
-                _ouvrirBibliotheque(slotBibliotheque),
-              ),
+              onBibliotheque: () =>
+                  unawaited(_ouvrirBibliotheque(slotBibliotheque)),
               onMicro: _basculerMicro,
               onCamera: _basculerCamera,
               onQuitter: () => unawaited(_quitter()),
@@ -501,8 +813,8 @@ class _Attente extends StatelessWidget {
             Text(
               mot,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium ??
-                  const TextStyle(),
+              style:
+                  Theme.of(context).textTheme.titleMedium ?? const TextStyle(),
             ),
             if (phase == PhaseSalle.refus) ...<Widget>[
               Ecart.vLg,
@@ -604,7 +916,9 @@ class _Corps extends StatelessWidget {
               niveau: NiveauAction.tertiaire,
             ),
             Ecart.vMd,
-            Expanded(child: EmplacementBibliothequeEnClasse(slot: bibliotheque)),
+            Expanded(
+              child: EmplacementBibliothequeEnClasse(slot: bibliotheque),
+            ),
           ],
         ),
       ),

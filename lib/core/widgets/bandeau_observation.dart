@@ -28,7 +28,7 @@ import '../theme/app_spacing.dart';
 ///
 /// Il reprend le registre doux du bandeau hors ligne, pour la meme raison :
 /// une zone pleine par ecran est reservee a l'action principale
-/// (`docs/design/01-systeme-visuel.md` section 3), et ce bandeau est permanent.
+/// (`docs/archive/2026-09-pre-remise-a-plat/design/01-systeme-visuel.md` section 3), et ce bandeau est permanent.
 /// Il ne lit pas la session lui-meme : `app.dart`, qui le pose, l'observe deja.
 /// Deux lectures du meme fait finiraient par se contredire a l'ecran, et un
 /// composant qui depend d'un conteneur d'etat ne se montre pas en galerie.

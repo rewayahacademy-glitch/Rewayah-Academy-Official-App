@@ -3,7 +3,7 @@
 /// Contrat partage du lot « role Enseignant » (protocole multi-agents du
 /// 19 septembre 2026). **Ecrit par l'Agent Z, consomme par les agents A a E,
 /// modifie par personne d'autre** : voir
-/// `docs/architecture/TEACHER_FILE_OWNERSHIP.md`.
+/// `docs/archive/2026-09-pre-remise-a-plat/architecture/TEACHER_FILE_OWNERSHIP.md`.
 ///
 /// Rien ici ne duplique un modele existant. [Creneau], [TypePublicGroupe],
 /// [PositionLecture] et [EtatPresence] sont importes plutot que recrees.
@@ -263,8 +263,7 @@ class GroupeEnseignant {
   final DateTime creeLe;
 
   /// Les places encore libres. Jamais negatif.
-  int get placesLibres =>
-      seuilMax - nbMembres < 0 ? 0 : seuilMax - nbMembres;
+  int get placesLibres => seuilMax - nbMembres < 0 ? 0 : seuilMax - nbMembres;
 
   /// Vrai quand le groupe est au plafond.
   bool get complet => nbMembres >= seuilMax;
@@ -395,6 +394,10 @@ class ParticipantBrouillon {
     this.derniereTraceLe,
     this.position,
     this.unite,
+    this.devoirPrecedent,
+    this.suspensionPermise = true,
+    this.performancePrecedente,
+    this.faiblessesPrecedentes = const <FaiblesseRecitation>{},
   });
 
   /// Lit une ligne du tableau `participants`.
@@ -408,9 +411,8 @@ class ParticipantBrouillon {
           riwaya: json['riwaya'] as String?,
         ),
         presence: EtatPresence.depuisSql(json['presence'] as String?),
-        entreLe: DateTime.tryParse(
-          json['entre_le'] as String? ?? '',
-        )?.toLocal(),
+        entreLe: DateTime.tryParse(json['entre_le'] as String? ?? '')
+            ?.toLocal(),
         derniereTraceLe: DateTime.tryParse(
           json['derniere_trace_le'] as String? ?? '',
         )?.toLocal(),
@@ -421,7 +423,31 @@ class ParticipantBrouillon {
         unite: UniteCurriculum.depuisJson(
           json['unite_curriculum'] as Map<String, dynamic>?,
         ),
+        devoirPrecedent: json['devoir_precedent'] as String?,
+        suspensionPermise: json['suspension_permise'] as bool? ?? true,
+        performancePrecedente: NiveauPerformance.depuisNom(
+          json['performance_precedente'] as String?,
+        ),
+        faiblessesPrecedentes: FaiblesseRecitation.depuisNoms(
+          json['faiblesses_precedentes'] as List<Object?>?,
+        ),
       );
+
+  /// Le niveau retenu a la seance precedente (N1, directeur 27/09), pour
+  /// preremplir le cahier. Nul s'il n'y en avait pas.
+  final NiveauPerformance? performancePrecedente;
+
+  /// Les faiblesses cochees a la seance precedente, pour preremplir le cahier.
+  final Set<FaiblesseRecitation> faiblessesPrecedentes;
+
+  /// Le devoir donne a la seance precedente, tel que le systeme l'a garde
+  /// (doc 04 §20.1, « travail precedent »). Nul s'il n'y en avait pas.
+  final String? devoirPrecedent;
+
+  /// Vrai quand la logique academique permet de proposer « Suspendre le
+  /// nouveau » pour cet eleve (doc 04 §20.4). Vrai par defaut tant que le
+  /// serveur ne le dit pas (BR-1).
+  final bool suspensionPermise;
 
   /// L'eleve.
   final MembreSeance membre;
@@ -603,8 +629,33 @@ class DecisionEleve {
     this.pointPhonetique,
     this.objectifPersonnel,
     this.travailMaison,
-    this.nouveauSuspendu = false,
+    this.devoirSuggere = false,
+    this.suite = SuiteEleve.continuer,
+    this.performance,
+    this.faiblesses = const <FaiblesseRecitation>{},
   });
+
+  /// La decision de depart d'un eleve : la performance et les faiblesses de
+  /// la seance precedente, reprises telles quelles (N1, cahier en moins de
+  /// 45 s). L'enseignant les confirme en validant, ou les change.
+  ///
+  /// EN-7c-SUGG-T : le devoir n'est **pas** prerempli. Aucune source de
+  /// devoir propose n'existe : `brouillon_cahier()` ne rend que le devoir de
+  /// la seance precedente ([ParticipantBrouillon.devoirPrecedent]), deja
+  /// rappele en lecture, et le recopier comme devoir a venir serait inventer
+  /// une decision pedagogique. [devoirSuggere] reste donc faux ici.
+  factory DecisionEleve.preremplie(ParticipantBrouillon participant) =>
+      DecisionEleve(
+        studentId: participant.membre.studentId,
+        performance: participant.performancePrecedente,
+        faiblesses: participant.faiblessesPrecedentes,
+      );
+
+  /// L'echelle de performance, choix unique (N1, directeur 27/09).
+  final NiveauPerformance? performance;
+
+  /// Les faiblesses constatees, choix multiple (N1, directeur 27/09).
+  final Set<FaiblesseRecitation> faiblesses;
 
   /// L'eleve concerne.
   final String studentId;
@@ -621,11 +672,22 @@ class DecisionEleve {
   /// L'objectif personnel, dans la marge autorisee par les regles.
   final String? objectifPersonnel;
 
-  /// Le travail maison, ajuste a partir de la suggestion du systeme.
+  /// Le travail maison : saisi par l'enseignant, ou ajuste a partir d'une
+  /// suggestion du systeme quand [devoirSuggere] est vrai.
   final String? travailMaison;
 
+  /// Vrai seulement quand [travailMaison] vient d'une suggestion du systeme,
+  /// pas encore modifiee par l'enseignant (K-57 : proposer, puis saisir).
+  /// La feuille ne dit « Ajustez la suggestion » que dans ce cas. Provenance
+  /// d'ecran : elle ne part pas dans le cahier.
+  final bool devoirSuggere;
+
+  /// La suite pedagogique choisie pour cet eleve (doc 04 §20.4). « Continuer »
+  /// par defaut.
+  final SuiteEleve suite;
+
   /// Vrai quand l'enseignant suspend le nouveau contenu pour cet eleve.
-  final bool nouveauSuspendu;
+  bool get nouveauSuspendu => suite == SuiteEleve.suspendreNouveau;
 
   /// Ce qui part dans `lesson_reports.content`.
   Map<String, dynamic> versJson() => <String, dynamic>{
@@ -635,8 +697,79 @@ class DecisionEleve {
     if (pointPhonetique != null) 'point_phonetique': pointPhonetique,
     if (objectifPersonnel != null) 'objectif_personnel': objectifPersonnel,
     if (travailMaison != null) 'travail_maison': travailMaison,
+    if (suite != SuiteEleve.continuer) 'suite': suite.name,
     if (nouveauSuspendu) 'nouveau_suspendu': true,
+    if (performance case final NiveauPerformance p) 'performance': p.name,
+    if (faiblesses.isNotEmpty)
+      'faiblesses': <String>[
+        for (final FaiblesseRecitation f in FaiblesseRecitation.values)
+          if (faiblesses.contains(f)) f.name,
+      ],
   };
+}
+
+/// L'echelle de performance du cahier, choix unique (N1, directeur 27/09).
+enum NiveauPerformance {
+  /// A revoir.
+  aRevoir,
+
+  /// En progres.
+  enProgres,
+
+  /// Acquis.
+  acquis,
+
+  /// Maitrise.
+  maitrise;
+
+  /// Lit un nom serialise ; nul s'il est absent ou inconnu.
+  static NiveauPerformance? depuisNom(String? nom) {
+    for (final NiveauPerformance n in values) {
+      if (n.name == nom) return n;
+    }
+    return null;
+  }
+}
+
+/// Les faiblesses du cahier, choix multiple (N1, directeur 27/09).
+enum FaiblesseRecitation {
+  /// Makharij.
+  makharij,
+
+  /// Madd.
+  madd,
+
+  /// Ghunna.
+  ghunna,
+
+  /// Waqf.
+  waqf,
+
+  /// Fluidite.
+  fluidite,
+
+  /// Memorisation.
+  memorisation;
+
+  /// Lit une liste de noms serialises ; les noms inconnus sont ignores.
+  static Set<FaiblesseRecitation> depuisNoms(List<Object?>? noms) =>
+      <FaiblesseRecitation>{
+        for (final FaiblesseRecitation f in values)
+          if (noms?.contains(f.name) ?? false) f,
+      };
+}
+
+/// Les actions pedagogiques du cahier pour un eleve (doc 04 §20.4) :
+/// « Continuer », « Renforcer », « Suspendre le nouveau ».
+enum SuiteEleve {
+  /// L'etat par defaut, fourni par le curriculum.
+  continuer,
+
+  /// L'eleve revoit ce qui est en cours avant d'avancer.
+  renforcer,
+
+  /// La revision continue, rien de nouveau n'est ajoute.
+  suspendreNouveau,
 }
 
 /// Le cahier tel qu'il part au serveur.
@@ -652,6 +785,7 @@ class CahierARendre {
     required this.seanceId,
     required this.decisions,
     this.noteGroupe,
+    this.positionReprise,
   });
 
   /// La seance concernee.
@@ -664,12 +798,19 @@ class CahierARendre {
   /// interdit tout rapport narratif obligatoire.
   final String? noteGroupe;
 
+  /// Ou la Classe s'est arretee : la position de reprise d'un remplacant,
+  /// obligatoire a la validation (K-45, point 2). Le contrat serveur la
+  /// recevra a BR-1.
+  final String? positionReprise;
+
   /// Le contenu serialise, tel qu'il sera ecrit dans `lesson_reports.content`.
   Map<String, dynamic> versJson() => <String, dynamic>{
     'version': 1,
     'session_id': seanceId,
     if (noteGroupe != null && noteGroupe!.trim().isNotEmpty)
       'note_groupe': noteGroupe!.trim(),
+    if (positionReprise != null && positionReprise!.trim().isNotEmpty)
+      'position_reprise': positionReprise!.trim(),
     'eleves': <Map<String, dynamic>>[
       for (final DecisionEleve d in decisions) d.versJson(),
     ],

@@ -59,7 +59,15 @@ class MenuFiltre<T> extends StatelessWidget {
     required this.entrees,
     required this.onChoix,
     super.key,
+    this.selecteurDeSection = false,
   });
+
+  /// Vrai : le menu ne filtre pas, il **dit ou l'on est** parmi des sections
+  /// (`SelecteurSection`, au-dela de quatre sections sur telephone). Le bouton
+  /// prend toute la largeur, reste neutre (une section n'est pas un filtre
+  /// retenu) et la section courante porte une coche dans la liste : la
+  /// selection ne repose pas sur la seule position.
+  final bool selecteurDeSection;
 
   /// Le nom de l'axe : « Événement », « Acteur », « Rôle ».
   final String libelle;
@@ -77,7 +85,7 @@ class MenuFiltre<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final bool actif = valeur != null;
+    final bool actif = valeur != null && !selecteurDeSection;
 
     final EntreeFiltre<T>? retenue = entrees
         .where((EntreeFiltre<T> e) => e.valeur == valeur)
@@ -85,7 +93,9 @@ class MenuFiltre<T> extends StatelessWidget {
 
     // Le bouton dit l'axe quand rien n'est filtre, et la valeur retenue
     // sinon : sans cela il faudrait ouvrir le menu pour savoir ou l'on en est.
-    final String texte = actif && retenue != null ? retenue.libelle : libelle;
+    final String texte = (actif || selecteurDeSection) && retenue != null
+        ? retenue.libelle
+        : libelle;
 
     return PopupMenuButton<_Choix<T>>(
       tooltip: libelle,
@@ -100,6 +110,14 @@ class MenuFiltre<T> extends StatelessWidget {
             child: Row(
               children: <Widget>[
                 Expanded(child: Text(entree.libelle)),
+                if (selecteurDeSection && entree.valeur == valeur) ...<Widget>[
+                  Ecart.hMd,
+                  Icon(
+                    AppIcons.succes.actif,
+                    size: AppSpacing.lg,
+                    color: palette.inkAccent.asIconTheme().color,
+                  ),
+                ],
                 if (entree.compteur != null) ...<Widget>[
                   Ecart.hMd,
                   Text(
@@ -121,7 +139,7 @@ class MenuFiltre<T> extends StatelessWidget {
       ],
       child: Semantics(
         button: true,
-        label: actif ? '$libelle : $texte' : libelle,
+        label: actif || selecteurDeSection ? '$libelle : $texte' : libelle,
         child: Container(
           constraints: BoxConstraints(
             minHeight: AppMetriques.of(context).cibleTactile,
@@ -138,33 +156,52 @@ class MenuFiltre<T> extends StatelessWidget {
             // filtre se lisent comme une seule famille.
             borderRadius: AppRadius.arrondiFull,
             border: Border.fromBorderSide(
-              actif
+              actif || selecteurDeSection
                   ? palette.borderStrong.asBorderSide()
                   : palette.borderHairline.asBorderSide(),
             ),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Flexible(
-                child: Text(
-                  texte,
-                  overflow: TextOverflow.ellipsis,
-                  style: (actif ? palette.inkAccent : palette.inkStrong)
-                      .applyTo(textes.labelLarge ?? const TextStyle()),
+          // K-54 : libelle et chevron centres dans le bouton, y compris quand
+          // le parent l'etire. Selecteur de section (ONGLETS-1) : le nom au
+          // debut, le chevron au bout, sur toute la largeur.
+          child: Center(
+            widthFactor: selecteurDeSection ? null : 1,
+            heightFactor: 1,
+            child: Row(
+              mainAxisSize: selecteurDeSection
+                  ? MainAxisSize.max
+                  : MainAxisSize.min,
+              mainAxisAlignment: selecteurDeSection
+                  ? MainAxisAlignment.spaceBetween
+                  : MainAxisAlignment.center,
+              children: <Widget>[
+                Flexible(
+                  child: Text(
+                    texte,
+                    textAlign: selecteurDeSection
+                        ? TextAlign.start
+                        : TextAlign.center,
+                    // Un nom de section n'est jamais tronque : il passe a la
+                    // ligne (texte agrandi, 320 px).
+                    overflow: selecteurDeSection
+                        ? TextOverflow.visible
+                        : TextOverflow.ellipsis,
+                    style: (actif ? palette.inkAccent : palette.inkStrong)
+                        .applyTo(textes.labelLarge ?? const TextStyle()),
+                  ),
                 ),
-              ),
-              Ecart.hXs,
-              Icon(
-                // Vers le bas, la ou le menu s'ouvre. Un chevron vers la
-                // droite promettrait de mener ailleurs.
-                AppIcons.menuDeroulant.repos,
-                size: AppSpacing.lg,
-                color: (actif ? palette.inkAccent : palette.inkMuted)
-                    .asIconTheme()
-                    .color,
-              ),
-            ],
+                Ecart.hXs,
+                Icon(
+                  // Vers le bas, la ou le menu s'ouvre. Un chevron vers la
+                  // droite promettrait de mener ailleurs.
+                  AppIcons.menuDeroulant.repos,
+                  size: AppSpacing.lg,
+                  color: (actif ? palette.inkAccent : palette.inkMuted)
+                      .asIconTheme()
+                      .color,
+                ),
+              ],
+            ),
           ),
         ),
       ),
