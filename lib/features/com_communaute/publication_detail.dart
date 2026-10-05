@@ -19,6 +19,7 @@ import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/modeles_communication.dart';
 import '../../core/communications/moderation.dart';
+import '../../core/communications/port_brouillons.dart';
 import '../../core/communications/port_elements_enregistres.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -28,6 +29,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/carte_piece_jointe.dart';
+import '../../core/widgets/espace_travail_adaptatif.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/pile_cartes.dart';
@@ -104,6 +106,11 @@ class PublicationDetail extends ConsumerStatefulWidget {
     'communaute-detail-titre',
   );
 
+  /// La cle de la zone qui defile (publication, reponses, composer).
+  static const ValueKey<String> cleDefilement = ValueKey<String>(
+    'communaute-detail-defilement',
+  );
+
   /// La cle de l'action « Enregistrer ».
   static const ValueKey<String> cleEnregistrer = ValueKey<String>(
     'communaute-enregistrer',
@@ -170,6 +177,11 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
       return false;
     }
     if (!mounted) return true;
+    // Un renvoi accuse (« Réessayer » dans la liste) efface aussi le
+    // brouillon que le composer gardait pour ce texte : il ne reviendra pas
+    // dans le champ a la reouverture.
+    await _effacerBrouillonEnvoye(reponse.texte);
+    if (!mounted) return true;
     // La reponse quitte l'attente quand la liste relue la contient : jamais
     // de trou entre l'accuse et la relecture.
     ref
@@ -189,6 +201,22 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
       );
     }
     return true;
+  }
+
+  Future<void> _effacerBrouillonEnvoye(String texte) async {
+    final PortBrouillons brouillons = ref.read(portBrouillonsProvider);
+    final CleBrouillon cle = CleBrouillon(
+      type: TypeObjetLie.publication,
+      objetId: _id,
+    );
+    try {
+      final Brouillon? garde = await brouillons.lire(cle);
+      if (garde != null && garde.texte.trim() == texte) {
+        await brouillons.effacer(cle);
+      }
+    } on Object {
+      // Memoire indisponible : rien a effacer.
+    }
   }
 
   Future<void> _signaler(ObjetLie objet) async {
@@ -226,9 +254,13 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final p = t.com.communaute.publication;
 
+    // Tant que la publication n'est pas lue, l'en-tete n'existe pas : (i)
+    // garde sa rangee a part, au-dessus de l'etat (R-02 de l'espace).
+    final bool lueAvecValeur = lue.hasValue && !lue.hasError;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        if (!lueAvecValeur) const RangeeEnteteEspace(child: SizedBox.shrink()),
         Expanded(
           child: BlocAsynchrone<PublicationCommunaute>(
             valeur: lue,
@@ -256,28 +288,30 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
                     onReessayer: reessayer,
                   ),
                 },
+            // COM-RC tour 2 (R-01) : la publication garde la priorite de
+            // lecture. Le composer de reponse et son garde ne sont plus une
+            // zone fixe qui la reduit : ils defilent avec la page, apres
+            // les reponses.
             construire: (PublicationCommunaute publication) =>
                 SingleChildScrollView(
+                  key: PublicationDetail.cleDefilement,
                   padding: const EdgeInsets.only(bottom: AppSpacing.xxl),
-                  child: _contenu(publication),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      _contenu(publication),
+                      if (widget.peutRepondre) ...<Widget>[
+                        Ecart.vXl,
+                        ComposerReponse(
+                          publicationId: _id,
+                          onEnvoyer: _repondre,
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
           ),
         ),
-        if (widget.peutRepondre && lue.hasValue && !lue.hasError) ...<Widget>[
-          Ecart.vMd,
-          // Le composer et son garde (R-01) restent bornes : au-dela d'un
-          // peu moins de la moitie de la hauteur, ils defilent eux-memes et
-          // la publication reste lisible (texte agrandi, petit ecran).
-          ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.sizeOf(context).height * 0.45,
-            ),
-            child: SingleChildScrollView(
-              child: ComposerReponse(publicationId: _id, onEnvoyer: _repondre),
-            ),
-          ),
-          Ecart.vLg,
-        ],
       ],
     );
   }
@@ -289,8 +323,7 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
     final DateTime maintenant = ref.watch(horlogeCommunauteProvider)();
     final ObjetLie objet = publication.objet;
     final bool peutSignaler =
-        ref.watch(capacitesModerationProvider).value?.peutSignaler ??
-        false;
+        ref.watch(capacitesModerationProvider).value?.peutSignaler ?? false;
     final Set<ObjetLie> signales = _signales;
     final bool signalee = signales.contains(objet);
     final AsyncValue<bool> enregistrement = ref.watch(
@@ -310,17 +343,22 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         // Le menu « ... » au bord de fin de la carte, jamais colle au nom
-        // (revue COM-R, R-13).
+        // (revue COM-R, R-13). La rangee de l'auteur est l'en-tete du
+        // contenu : (i) s'y pose apres le nom, au lieu d'une rangee a part
+        // qui prenait de la hauteur a la publication ; le menu reste au
+        // bord de fin (R-13).
         Row(
           children: <Widget>[
             Expanded(
-              child: AvatarNom.enLigne(
-                prenom: publication.auteur.nomAffiche,
-                role: ligneAuteurCommunaute(
-                  publication.auteur.fonction,
-                  momentCommunaute(publication.publieeLe, maintenant),
+              child: RangeeEnteteEspace(
+                child: AvatarNom.enLigne(
+                  prenom: publication.auteur.nomAffiche,
+                  role: ligneAuteurCommunaute(
+                    publication.auteur.fonction,
+                    momentCommunaute(publication.publieeLe, maintenant),
+                  ),
+                  diametre: AppAvatar.petit,
                 ),
-                diametre: AppAvatar.petit,
               ),
             ),
             if (peutSignaler && !signalee) ...<Widget>[

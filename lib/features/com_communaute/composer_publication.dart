@@ -48,6 +48,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/carte_piece_jointe.dart';
 import '../../core/widgets/choice_card_group.dart';
+import '../../core/widgets/espace_travail_adaptatif.dart';
 import '../../core/widgets/fil_discussion.dart' show raccourciEnvoi;
 import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/section_header.dart';
@@ -525,9 +526,16 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        // L'en-tete du composer porte (i) de l'espace, puis la fermeture :
+        // une seule rangee, jamais (i) empile au-dessus de (x).
         Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Expanded(child: SectionHeader(titre: c.nouvelle)),
+            Expanded(
+              child: RangeeEnteteEspace(
+                child: SectionHeader(titre: c.nouvelle),
+              ),
+            ),
             BoutonIcone(
               key: ComposerPublication.cleFermer,
               icone: AppIcons.fermer,
