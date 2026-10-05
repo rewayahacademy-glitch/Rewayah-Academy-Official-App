@@ -1,5 +1,8 @@
+import 'dart:math' as math;
+
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import '../accessibilite/texte_sans_coupure.dart';
 import '../theme/app_elevation.dart';
@@ -216,8 +219,10 @@ class PageShell extends StatelessWidget {
                 // 400 %, soit 256 de haut), la tete fixe ne laisse plus de
                 // place au corps et deborde ; la page defilante fait alors
                 // defiler la tete avec le corps. Un corps non defilant (liste
-                // paresseuse) y recoit la hauteur de la vue : la tete defile,
-                // puis la liste occupe tout l'ecran.
+                // paresseuse) y recoit la hauteur laissee sous la tete
+                // (PAGESHELL-200-1), ou, si la tete en laisse moins de la
+                // moitie, la hauteur de la vue : la tete defile, puis la
+                // liste occupe tout l'ecran.
                 // Meme regle sur mobile a 200 % de texte : la tete (titre,
                 // sous-titre, onglets) y prend presque toute la hauteur et
                 // ne laissait au corps qu'une bande (390x844, 44 de
@@ -390,16 +395,21 @@ class _BasculeState extends State<_Bascule> {
                 // position.
                 controller: defileur,
                 primary: widget.defilante ? null : false,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    tete,
-                    if (widget.defilante)
-                      corps
-                    else
-                      SizedBox(height: contraintes.maxHeight, child: corps),
-                  ],
-                ),
+                child: widget.defilante
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[tete, corps],
+                      )
+                    // PAGESHELL-200-1 : le corps non defilant recoit la
+                    // hauteur reellement disponible sous la tete, pas toute
+                    // celle de la vue. Sinon il depassait de la hauteur de
+                    // la tete et son bas (la barre de la salle d'observation
+                    // a 200 % sur telephone) passait sous la zone sure au
+                    // premier affichage.
+                    : _TeteEtCorps(
+                        hauteurVue: contraintes.maxHeight,
+                        children: <Widget>[tete, corps],
+                      ),
               )
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -418,6 +428,130 @@ class _BasculeState extends State<_Bascule> {
       },
     );
   }
+}
+
+/// La tete puis le corps non defilant, en defilement global
+/// (PAGESHELL-200-1).
+///
+/// Le corps recoit la hauteur que la tete laisse dans la vue : au premier
+/// affichage, la page tient dans la vue et le bas du corps (une barre de
+/// commandes, une zone de saisie) reste dans la zone sure. Quand la tete
+/// laisse moins de la moitie de la vue (zoom a 400 % sur une vue tres basse,
+/// AD-11), un corps aussi ecrase serait inutilisable : il recoit alors toute
+/// la hauteur de la vue, la tete defile, puis le corps occupe l'ecran.
+///
+/// La hauteur de la tete n'est connue qu'a sa mise en page : un `Column`
+/// ne sait pas donner au second enfant ce que le premier laisse dans une
+/// hauteur non bornee, d'ou ce rendu a deux enfants.
+class _TeteEtCorps extends MultiChildRenderObjectWidget {
+  const _TeteEtCorps({required this.hauteurVue, required super.children})
+    : assert(children.length == 2, 'une tete et un corps');
+
+  /// La hauteur de la vue qui defile.
+  final double hauteurVue;
+
+  @override
+  _RenduTeteEtCorps createRenderObject(BuildContext context) =>
+      _RenduTeteEtCorps(hauteurVue);
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    _RenduTeteEtCorps renderObject,
+  ) {
+    renderObject.hauteurVue = hauteurVue;
+  }
+}
+
+class _ParentDataTeteEtCorps extends ContainerBoxParentData<RenderBox> {}
+
+class _RenduTeteEtCorps extends RenderBox
+    with
+        ContainerRenderObjectMixin<RenderBox, _ParentDataTeteEtCorps>,
+        RenderBoxContainerDefaultsMixin<RenderBox, _ParentDataTeteEtCorps> {
+  _RenduTeteEtCorps(this._hauteurVue);
+
+  double _hauteurVue;
+  set hauteurVue(double valeur) {
+    if (valeur == _hauteurVue) {
+      return;
+    }
+    _hauteurVue = valeur;
+    markNeedsLayout();
+  }
+
+  /// La hauteur donnee au corps sous une tete de hauteur [tete].
+  double _hauteurCorps(double tete) {
+    if (!_hauteurVue.isFinite) {
+      return 0;
+    }
+    final double reste = _hauteurVue - tete;
+    return reste >= _hauteurVue / 2 ? reste : _hauteurVue;
+  }
+
+  RenderBox get _tete => firstChild!;
+  RenderBox get _corps => lastChild!;
+
+  @override
+  void setupParentData(RenderBox child) {
+    if (child.parentData is! _ParentDataTeteEtCorps) {
+      child.parentData = _ParentDataTeteEtCorps();
+    }
+  }
+
+  @override
+  double computeMinIntrinsicWidth(double height) => math.max(
+    _tete.getMinIntrinsicWidth(double.infinity),
+    _corps.getMinIntrinsicWidth(double.infinity),
+  );
+
+  @override
+  double computeMaxIntrinsicWidth(double height) => math.max(
+    _tete.getMaxIntrinsicWidth(double.infinity),
+    _corps.getMaxIntrinsicWidth(double.infinity),
+  );
+
+  @override
+  double computeMinIntrinsicHeight(double width) {
+    final double tete = _tete.getMinIntrinsicHeight(width);
+    return tete + _hauteurCorps(tete);
+  }
+
+  @override
+  double computeMaxIntrinsicHeight(double width) {
+    final double tete = _tete.getMaxIntrinsicHeight(width);
+    return tete + _hauteurCorps(tete);
+  }
+
+  @override
+  Size computeDryLayout(covariant BoxConstraints constraints) {
+    final double tete = _tete
+        .getDryLayout(BoxConstraints.tightFor(width: constraints.maxWidth))
+        .height;
+    return constraints.constrain(
+      Size(constraints.maxWidth, tete + _hauteurCorps(tete)),
+    );
+  }
+
+  @override
+  void performLayout() {
+    final double largeur = constraints.maxWidth;
+    _tete.layout(BoxConstraints.tightFor(width: largeur), parentUsesSize: true);
+    final double tete = _tete.size.height;
+    final double corps = _hauteurCorps(tete);
+    _corps.layout(BoxConstraints.tight(Size(largeur, corps)));
+    (_tete.parentData! as _ParentDataTeteEtCorps).offset = Offset.zero;
+    (_corps.parentData! as _ParentDataTeteEtCorps).offset = Offset(0, tete);
+    size = constraints.constrain(Size(largeur, tete + corps));
+  }
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) =>
+      defaultHitTestChildren(result, position: position);
+
+  @override
+  void paint(PaintingContext context, Offset offset) =>
+      defaultPaint(context, offset);
 }
 
 /// La colonne de contenu : gouttiere du gabarit, largeur bornee, centree.

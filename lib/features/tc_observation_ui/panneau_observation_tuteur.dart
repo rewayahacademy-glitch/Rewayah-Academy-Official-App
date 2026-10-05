@@ -1,4 +1,7 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show SliverConstraints;
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -232,35 +235,64 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
 
   /// Tablette et bureau (D1) : en-tete, puis le support a environ trois
   /// quarts de la largeur et la colonne des vignettes a droite.
-  Widget _corpsLarge() => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: <Widget>[
-      if (!_agrandi) ...<Widget>[_entete(), Ecart.vMd],
-      Expanded(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Expanded(flex: 7, child: _support()),
-            if (!_agrandi) ...<Widget>[
-              Ecart.hMd,
-              Expanded(
-                flex: 2,
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      _vignetteEnseignant(),
-                      Ecart.vMd,
-                      _vignetteEnfant(),
-                    ],
-                  ),
+  /// Des la tablette (D1) : en-tete, puis le support et la colonne des
+  /// vignettes. Quand la hauteur manque (texte a 300 % sur une tablette, la
+  /// barre en deux rangees), la salle defile avec un support de hauteur
+  /// minimale, comme sur telephone : jamais un debordement (PAGESHELL-200-1).
+  Widget _corpsLarge() => Builder(
+    builder: (BuildContext context) {
+      final Widget salle = Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Expanded(flex: 7, child: _support()),
+          if (!_agrandi) ...<Widget>[
+            Ecart.hMd,
+            Expanded(
+              flex: 2,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    _vignetteEnseignant(),
+                    Ecart.vMd,
+                    _vignetteEnfant(),
+                  ],
                 ),
               ),
-            ],
+            ),
           ],
-        ),
-      ),
-    ],
+        ],
+      );
+      if (_agrandi) {
+        return salle;
+      }
+      // Le support prend la hauteur que l'en-tete laisse, jamais moins que
+      // [_hauteurMinSupport] : quand l'en-tete agrandi n'en laisse pas
+      // assez, la salle defile au lieu de deborder.
+      return CustomScrollView(
+        slivers: <Widget>[
+          SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[_entete(), Ecart.vMd],
+            ),
+          ),
+          SliverLayoutBuilder(
+            builder: (BuildContext context, SliverConstraints place) =>
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: math.max(
+                      _hauteurMinSupport,
+                      place.viewportMainAxisExtent -
+                          place.precedingScrollExtent,
+                    ),
+                    child: salle,
+                  ),
+                ),
+          ),
+        ],
+      );
+    },
   );
 
   /// Le plus petit support qui reste lisible quand la page defile.

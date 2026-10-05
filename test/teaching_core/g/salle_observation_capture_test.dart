@@ -28,6 +28,7 @@ import 'package:rewayah_academy/core/tc_observation/port_visite_observation.dart
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
+import 'package:rewayah_academy/features/tc_observation_ui/barre_commandes_observation.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/ouverture_observation.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/routes_tc_g.dart';
 import 'package:rewayah_academy/features/tc_observation_ui/verification_prealable.dart';
@@ -401,6 +402,80 @@ void main() {
       await _monterSalle(tester, echelleTexte: 2);
       await _capturer(tester, 'o2_texte200_390x844@2_light');
     });
+
+    // PAGESHELL-200-1 : barre entiere dans la zone sure au premier affichage.
+    testWidgets('texte a 200 % 320x844 @2', (WidgetTester tester) async {
+      fixerVueCapture(tester, const Size(320, 844), 2, zoneSure: _zoneSure);
+      await _monterSalle(tester, echelleTexte: 2);
+      await _capturer(tester, 'o2_texte200_320x844@2_light');
+    });
+
+    testWidgets('texte a 200 % 390x844 @2, rtl', (WidgetTester tester) async {
+      fixerVueCapture(tester, const Size(390, 844), 2, zoneSure: _zoneSure);
+      await _monterSalle(tester, echelleTexte: 2, sens: TextDirection.rtl);
+      await _capturer(tester, 'o2_texte200_390x844@2_light_rtl');
+    });
+
+    // PAGESHELL-200-1 (reserve 2) : barre large en deux rangees quand une
+    // seule coupe « Quitter » ; D1 tenue la ou elle tient.
+    testWidgets('large 700x900 @1, texte a 300 %', (WidgetTester tester) async {
+      fixerVueCapture(tester, const Size(700, 900), 1);
+      await _monterSalle(tester, echelleTexte: 3);
+      await _capturer(tester, 'o2_large_texte300_700x900@1_light');
+    });
+
+    testWidgets('large 700x900 @1, texte a 200 %, rtl', (
+      WidgetTester tester,
+    ) async {
+      fixerVueCapture(tester, const Size(700, 900), 1);
+      await _monterSalle(tester, echelleTexte: 2, sens: TextDirection.rtl);
+      await _capturer(tester, 'o2_large_texte200_700x900@1_light_rtl');
+    });
+
+    testWidgets('large 768x900 @1, texte a 200 %', (WidgetTester tester) async {
+      fixerVueCapture(tester, const Size(768, 900), 1);
+      await _monterSalle(tester, echelleTexte: 2);
+      await _capturer(tester, 'o2_large_texte200_768x900@1_light');
+    });
+
+    // PAGESHELL-200-1 (reserve 2) : la barre large seule, la ou l'ancienne
+    // coupait « Quitter » (440 px de barre, texte a 300 %).
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets('barre large 440 px, texte a 300 %, ${sens.name}', (
+        WidgetTester tester,
+      ) async {
+        fixerVueCapture(tester, const Size(472, 360), 2);
+        await tester.pumpWidget(
+          hoteCapture(
+            echelleTexte: 3,
+            Directionality(
+              textDirection: sens,
+              child: Scaffold(
+                body: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: BarreCommandesObservation(
+                      sonRecu: false,
+                      agrandi: false,
+                      onAgrandir: () {},
+                      onQuitter: () {},
+                      large: true,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+        await stabiliser(tester);
+        await _capturer(
+          tester,
+          'o2_barre_large_texte300_472x360@2_light'
+          '${sens == TextDirection.rtl ? '_rtl' : ''}',
+        );
+      });
+    }
 
     testWidgets(
       'planche : salle mobile claire contre la maquette V8 M4',
