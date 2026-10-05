@@ -3,8 +3,11 @@
 // R-COM-03 et R-COM-04).
 //
 // Il se pose dans l'emplacement vocal du composer des communications
-// (`FilDiscussion.emplacementVocal`, pose par COM-F), sous le champ texte. Le
-// branchement dans Messages et Le Studio est fait a COM-FUS.
+// (`FilDiscussion.emplacementVocal`, pose par COM-F), sous le champ texte.
+// Branche a COM-FUS dans le fil contextuel des Messages et dans les canaux
+// du Studio (Focus compris), seulement si la capacite `envoyerVocal` est
+// ouverte (`envoi_vocal.dart`) : jamais en production tant que le port des
+// capacites est neutre.
 //
 // Regles tenues ici :
 //

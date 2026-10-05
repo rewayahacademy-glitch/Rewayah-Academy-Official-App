@@ -39,6 +39,7 @@ import '../../../core/widgets/section_header.dart';
 import '../../../core/widgets/selecteur_section.dart';
 import '../../../core/widgets/vue_etat_communication.dart';
 import '../../com_vocal/composer_vocal.dart';
+import '../../com_vocal/envoi_vocal.dart';
 import '../../com_vocal/lecteur_vocal.dart';
 import '../../com_vocal/port_enregistreur_vocal.dart';
 import 'demo_communications_page.dart';
@@ -233,6 +234,46 @@ class LecturesVocalesDemonstration implements PortLectureVocale {
     horloge: horloge,
   );
 }
+
+/// L'envoi des vocaux en demonstration : un accuse apres un court delai,
+/// aucun serveur. Les vocaux acceptes sont gardes pour les tests.
+class EnvoiVocalDemonstration implements PortEnvoiVocal {
+  /// Cree l'envoi de demonstration.
+  EnvoiVocalDemonstration({this.delai = _delaiEnvoi});
+
+  /// Le delai avant l'accuse, pour voir « Envoi en cours ».
+  final Duration delai;
+
+  /// Les cles acceptees, dans l'ordre (pour les tests).
+  final List<String> cles = <String>[];
+
+  @override
+  Future<void> envoyer({
+    required DestinationVocal destination,
+    required EnregistrementVocal vocal,
+    required String cleIdempotence,
+  }) async {
+    await Future<void>.delayed(delai);
+    cles.add(cleIdempotence);
+  }
+}
+
+/// Les doubles du vocal pour une autre demonstration (Messages, Studio,
+/// COM-FUS) : faux enregistreur autorise, lecture simulee, envoi accuse.
+/// Hors production seulement : ces surcharges ne sont posees que par les
+/// pages de `/demo/communications`, sous `environnementAutoriseDemo`. La
+/// capacite `envoyerVocal` s'ouvre a part, avec les autres capacites de la
+/// demonstration.
+List<Override> surchargesVocalDemo({HorlogeVocale horloge = DateTime.now}) =>
+    <Override>[
+      portEnregistreurVocalProvider.overrideWithValue(
+        EnregistreurVocalDemonstration(horloge: horloge),
+      ),
+      portLectureVocaleProvider.overrideWithValue(
+        LecturesVocalesDemonstration(horloge: horloge),
+      ),
+      portEnvoiVocalProvider.overrideWithValue(EnvoiVocalDemonstration()),
+    ];
 
 /// Les situations de la demonstration.
 enum ScenarioVocalDemo {

@@ -34,6 +34,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
+import '../../../core/communications/capacites_communication.dart';
 import '../../../core/communications/port_brouillons.dart';
 import '../../../core/communications/port_elements_enregistres.dart';
 import '../../../core/i18n/strings.g.dart';
@@ -51,6 +52,7 @@ import '../../com_studio/port_activite_studio.dart';
 import '../../com_studio/port_studio.dart';
 import '../../com_studio/recherche_studio.dart';
 import '../../com_studio/studio_page.dart';
+import 'com_vocal_demo.dart';
 import 'demo_communications_page.dart';
 
 /// Les situations que la demonstration sait mettre en scene.
@@ -255,6 +257,15 @@ class _DemoStudioState extends State<_DemoStudio> {
         portActiviteStudioProvider.overrideWithValue(_activite),
         portBrouillonsProvider.overrideWithValue(_brouillons),
         portElementsEnregistresProvider.overrideWithValue(_enregistres),
+        // COM-FUS : le composer vocal du canal (faux micro, envoi accuse).
+        // Le provider lu par la page est surcharge lui-meme : sans
+        // `dependencies`, il se resoudrait dans la portee racine.
+        capacitesCommunicationProvider.overrideWith(
+          (Ref _) => const CapacitesCommunicationsFixes(<CapaciteCommunication>{
+            CapaciteCommunication.envoyerVocal,
+          }).capacites(),
+        ),
+        ...surchargesVocalDemo(),
         if (widget.situation == SituationDemoStudio.horsLigne)
           horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
       ],

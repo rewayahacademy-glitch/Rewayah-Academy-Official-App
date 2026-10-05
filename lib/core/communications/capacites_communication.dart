@@ -43,6 +43,11 @@ enum CapaciteCommunication {
 
   /// Ecrire dans un fil.
   ecrireDansFil,
+
+  /// Enregistrer et envoyer un message vocal dans un fil ou un canal
+  /// (COM-FUS ; transport COM-BR-03). Fermee en production tant que le port
+  /// est neutre : le composer vocal n'est alors pas rendu du tout.
+  envoyerVocal,
 }
 
 /// Les capacites Communications de la personne connectee.

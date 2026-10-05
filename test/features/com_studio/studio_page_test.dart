@@ -30,6 +30,7 @@ import 'package:rewayah_academy/features/com_studio/port_studio.dart';
 import 'package:rewayah_academy/features/com_studio/recherche_studio.dart';
 import 'package:rewayah_academy/features/com_studio/studio_page.dart';
 import 'package:rewayah_academy/features/com_studio/visibilite_canal.dart';
+import 'package:rewayah_academy/features/com_vocal/lecteur_vocal.dart';
 import 'package:rewayah_academy/features/demo/communications/com_studio_demo.dart';
 
 import '../../support/garde_interface.dart';
@@ -454,8 +455,8 @@ void main() {
   });
 
   group('Le canal (COM-M03, COM-W03)', () {
-    testWidgets('le vocal et la piece jointe se disent dans le fil ; le '
-        'fichier est dans le panneau, sans adresse', (
+    testWidgets('la piece jointe se dit dans le fil, le vocal s y lit '
+        '(COM-FUS) ; le fichier est dans le panneau, sans adresse', (
       WidgetTester tester,
     ) async {
       await monterStudio(
@@ -468,9 +469,11 @@ void main() {
         _dansFil(find.textContaining('Pièce jointe : Planning_T3.pdf')),
         findsOneWidget,
       );
+      // COM-FUS : le lecteur de COM-VOC remplace la ligne « Message vocal ».
+      expect(_dansFil(find.byType(LecteurVocalRecu)), findsOneWidget);
       expect(
         _dansFil(find.textContaining('Message vocal de 0:42')),
-        findsOneWidget,
+        findsNothing,
       );
       expect(_dansPanneau(find.text('Planning_T3.pdf')), findsOneWidget);
       final String tout = textesRendus(tester).join(' ');

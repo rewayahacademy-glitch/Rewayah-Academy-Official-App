@@ -97,6 +97,19 @@ class _DeuxEspaces extends EspacesCompteControleur {
   );
 }
 
+/// Le meme compte a deux espaces, vu depuis l'espace de controle (m4 de
+/// COM-F-b-R : le controleur passe aussi par l'en-tete des espaces).
+class _DeuxEspacesControle extends EspacesCompteControleur {
+  @override
+  EspacesCompte build() => const EspacesCompte(
+    disponibles: <EspaceTravail>[
+      EspaceTravail.enseignement,
+      EspaceTravail.controle,
+    ],
+    actif: EspaceTravail.controle,
+  );
+}
+
 Finder _dans(Key cle, Finder cible) =>
     find.descendant(of: find.byKey(cle), matching: cible);
 
@@ -588,55 +601,63 @@ void main() {
   });
 
   group('COM-F-Q5 : une seule rangee d actions, Espaces puis cloche', () {
-    testWidgets('compte a deux espaces : raccourci puis cloche, une fois', (
-      WidgetTester tester,
-    ) async {
-      tester.view.physicalSize = const Size(390, 844);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
-      late GoRouter routeur;
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: <Override>[
-            ...surchargesRouteur(
-              FausseSourceSession(sessionActive(AppRole.teacher)),
-            ),
-            espacesCompteProvider.overrideWith(_DeuxEspaces.new),
-          ],
-          child: TranslationProvider(
-            child: Consumer(
-              builder: (BuildContext _, WidgetRef ref, Widget? _) {
-                routeur = ref.read(routeurProvider);
-                return MaterialApp.router(
-                  theme: AppTheme.pour(
-                    InterfaceMode.standard,
-                    Brightness.light,
-                  ),
-                  routerConfig: routeur,
-                );
-              },
+    for (final (
+          AppRole role,
+          String depart,
+          EspacesCompteControleur Function() espaces,
+        )
+        in <(AppRole, String, EspacesCompteControleur Function())>[
+          (AppRole.teacher, Routes.enseignantJournee, _DeuxEspaces.new),
+          // COM-FUS (m4 de COM-F-b-R) : le meme cas pour le controleur.
+          (AppRole.controller, Routes.controleur, _DeuxEspacesControle.new),
+        ]) {
+      testWidgets('${role.name}, compte a deux espaces : raccourci puis '
+          'cloche, une fois', (WidgetTester tester) async {
+        tester.view.physicalSize = const Size(390, 844);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        late GoRouter routeur;
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: <Override>[
+              ...surchargesRouteur(FausseSourceSession(sessionActive(role))),
+              espacesCompteProvider.overrideWith(espaces),
+            ],
+            child: TranslationProvider(
+              child: Consumer(
+                builder: (BuildContext _, WidgetRef ref, Widget? _) {
+                  routeur = ref.read(routeurProvider);
+                  return MaterialApp.router(
+                    theme: AppTheme.pour(
+                      InterfaceMode.standard,
+                      Brightness.light,
+                    ),
+                    routerConfig: routeur,
+                  );
+                },
+              ),
             ),
           ),
-        ),
-      );
-      await stabiliser(tester);
-      routeur.go(Routes.enseignantJournee);
-      await stabiliser(tester);
+        );
+        await stabiliser(tester);
+        routeur.go(depart);
+        await stabiliser(tester);
 
-      final Finder espaces = find.byType(RaccourciEspaces);
-      final Finder cloche = find.byType(ClocheNotifications);
-      expect(espaces, findsOneWidget);
-      expect(cloche, findsOneWidget);
-      // Meme ligne, Espaces avant la cloche (sens de lecture).
-      expect(
-        tester.getCenter(espaces).dy,
-        moreOrLessEquals(tester.getCenter(cloche).dy),
-      );
-      expect(
-        tester.getCenter(espaces).dx,
-        lessThan(tester.getCenter(cloche).dx),
-      );
-    });
+        final Finder raccourci = find.byType(RaccourciEspaces);
+        final Finder cloche = find.byType(ClocheNotifications);
+        expect(raccourci, findsOneWidget);
+        expect(cloche, findsOneWidget);
+        // Meme ligne, Espaces avant la cloche (sens de lecture).
+        expect(
+          tester.getCenter(raccourci).dy,
+          moreOrLessEquals(tester.getCenter(cloche).dy),
+        );
+        expect(
+          tester.getCenter(raccourci).dx,
+          lessThan(tester.getCenter(cloche).dx),
+        );
+      });
+    }
   });
 
   group('COM-F-Q5 : barre mobile admin', () {

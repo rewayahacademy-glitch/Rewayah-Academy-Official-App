@@ -60,7 +60,8 @@ final String adresseCanaux = adresseVueStudio(VueStudio.canaux);
 /// le double en memoire. [activite] : nul, le port neutre de production
 /// (indisponible). [brouillons] : nul, une memoire de session neuve (le
 /// comportement de production). [mouvementReduit] : le systeme demande de
-/// reduire les animations (COM-STU-3).
+/// reduire les animations (COM-STU-3). [surcharges] : en plus (COM-FUS,
+/// capacite et doubles du vocal).
 Future<GoRouter> monterStudio(
   WidgetTester tester, {
   required PortStudio port,
@@ -75,6 +76,7 @@ Future<GoRouter> monterStudio(
   bool horsLigne = false,
   bool stabiliser = true,
   bool mouvementReduit = false,
+  List<Override> surcharges = const <Override>[],
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -123,6 +125,7 @@ Future<GoRouter> monterStudio(
         portBrouillonsProvider.overrideWithValue(
           brouillons ?? BrouillonsMemoire(),
         ),
+        ...surcharges,
       ],
       child: TranslationProvider(
         child: MaterialApp.router(

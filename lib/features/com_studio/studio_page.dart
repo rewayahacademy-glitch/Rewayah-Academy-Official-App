@@ -76,6 +76,8 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/vue_etat_communication.dart';
+import '../com_vocal/envoi_vocal.dart';
+import '../com_vocal/port_enregistreur_vocal.dart';
 import 'aujourdhui_page.dart';
 import 'brouillons_studio.dart';
 import 'canal_page.dart';
@@ -606,6 +608,23 @@ class _EspaceStudioState extends ConsumerState<EspaceStudio> {
     unawaited(_chargerCanaux(silencieux: true));
   }
 
+  /// L'envoi d'un vocal (COM-FUS) : par le port des vocaux (COM-BR-03),
+  /// neutre en production ; la liste suit le vocal confirme.
+  Future<void> _envoyerVocal(
+    String canalId,
+    EnregistrementVocal vocal,
+    String cle,
+  ) async {
+    await ref
+        .read(portEnvoiVocalProvider)
+        .envoyer(
+          destination: DestinationVocal.canal(canalId),
+          vocal: vocal,
+          cleIdempotence: cle,
+        );
+    unawaited(_chargerCanaux(silencieux: true));
+  }
+
   Future<void> _chargerEnregistrements() async {
     EtatEnregistrements etat;
     try {
@@ -931,6 +950,12 @@ class _EspaceStudioState extends ConsumerState<EspaceStudio> {
       key: ValueKey<String>('studio-canal-${canal.id}'),
       canal: canal,
       onEnvoyer: (String texte, String cle) => _envoyer(canal.id, texte, cle),
+      // COM-FUS : le composer vocal seulement si la capacite `envoyerVocal`
+      // est ouverte (COM-BR-16) ; fermee en production, rien n'est rendu.
+      onEnvoyerVocal: vocalOuvert(ref)
+          ? (EnregistrementVocal v, String cle) =>
+                _envoyerVocal(canal.id, v, cle)
+          : null,
     );
   }
 

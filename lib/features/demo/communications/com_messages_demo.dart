@@ -28,6 +28,7 @@ import '../../../core/widgets/page_shell.dart';
 import '../../com_messages/fil_contextuel.dart' show texteDuMessage;
 import '../../com_messages/messages_page.dart';
 import '../../com_messages/port_messages_metier.dart';
+import 'com_vocal_demo.dart';
 import 'demo_communications_page.dart';
 
 /// Les situations que la demonstration sait mettre en scene.
@@ -233,8 +234,11 @@ class _DemoMessagesState extends State<_DemoMessages> {
         capacitesCommunicationProvider.overrideWith(
           (Ref _) => const CapacitesCommunicationsFixes(<CapaciteCommunication>{
             CapaciteCommunication.ecrireDansFil,
+            // COM-FUS : le composer vocal (faux micro, envoi accuse).
+            CapaciteCommunication.envoyerVocal,
           }).capacites(),
         ),
+        ...surchargesVocalDemo(),
         if (widget.situation == SituationDemoMessages.horsLigne)
           horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
       ],

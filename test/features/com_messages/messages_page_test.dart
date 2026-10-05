@@ -23,6 +23,7 @@ import 'package:rewayah_academy/features/com_messages/messages_page.dart';
 import 'package:rewayah_academy/features/com_messages/panneau_contexte_fil.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 import 'package:rewayah_academy/features/com_messages/recherche_fils.dart';
+import 'package:rewayah_academy/features/com_vocal/lecteur_vocal.dart';
 import 'package:rewayah_academy/features/demo/communications/com_messages_demo.dart';
 import 'package:rewayah_academy/features/demo/communications/demo_communications_page.dart';
 
@@ -237,8 +238,8 @@ void main() {
       }
     });
 
-    testWidgets('le vocal et la piece jointe se disent dans le fil et '
-        'se montrent dans le panneau, sans adresse', (
+    testWidgets('le vocal se lit dans le fil (COM-FUS), la piece jointe '
+        's y dit ; les deux se montrent dans le panneau, sans adresse', (
       WidgetTester tester,
     ) async {
       await monterMessages(
@@ -246,9 +247,11 @@ void main() {
         port: portDemo(RoleDemoCommunications.tuteur),
         depart: cheminFilTest('fil-adam'),
       );
+      // COM-FUS : le lecteur de COM-VOC remplace la ligne « Message vocal ».
+      expect(_dansPrincipal(find.byType(LecteurVocalRecu)), findsOneWidget);
       expect(
         _dansPrincipal(find.textContaining('Message vocal de 0:28')),
-        findsOneWidget,
+        findsNothing,
       );
       expect(
         _dansPrincipal(

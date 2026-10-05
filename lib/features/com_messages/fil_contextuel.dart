@@ -9,11 +9,15 @@
 // reste au-dessus du clavier logiciel et la liste garde le dernier message
 // visible (R-COM-15).
 //
-// Une piece jointe ou un vocal recu se dit dans la bulle par son nom ou sa
-// duree ; la carte de la piece est dans le panneau de contexte (« Fichiers
-// partages »). La lecture du vocal (COM-VOC) et la bulle a piece jointe se
-// branchent a COM-FUS : `FilDiscussion` (socle) ne porte encore que du
-// texte.
+// Une piece jointe se dit dans la bulle par son nom ; la carte de la piece
+// est dans le panneau de contexte (« Fichiers partages »). Un vocal recu se
+// lit dans la bulle, par le lecteur de COM-VOC (`LecteurVocalRecu`, COM-FUS).
+//
+// Le composer vocal (COM-VOC) se pose sous le champ seulement si la page
+// donne [FilContextuel.onEnvoyerVocal] : elle ne le fait que si la capacite
+// `envoyerVocal` est ouverte (COM-BR-16), donc jamais en production tant que
+// le port des capacites est neutre. Aucun envoi automatique : seul
+// « Envoyer » du composer envoie, sous une cle par vocal (COM-BR-02).
 //
 // Un fil ou la personne ne peut pas ecrire se lit sans champ ni bouton : une
 // phrase dit la limite, aucun bouton grise. Ecrire demande les deux
@@ -35,24 +39,31 @@ import '../../core/widgets/fil_discussion.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../accueil_famille/bloc_seance.dart'
     show dateDeLAppareil, heureDeLAppareil;
+import '../com_vocal/composer_vocal.dart';
+import '../com_vocal/envoi_vocal.dart';
+import '../com_vocal/lecteur_vocal.dart';
+import '../com_vocal/port_enregistreur_vocal.dart';
 import 'entete_fil_contexte.dart';
 import 'port_messages_metier.dart';
 
 /// Le texte d'un message tel qu'il se lit dans le fil : son texte, puis une
 /// ligne par piece jointe (« Piece jointe : Devoir.pdf ») ou vocal
 /// (« Message vocal de 0:28 »). Jamais une reference ni une adresse.
-String texteDuMessage(MessageCommunication m) {
+///
+/// Sans [avecVocaux], les vocaux ne sont pas dits : la bulle les montre par
+/// leur lecteur ([lecteursVocauxDuMessage]).
+String texteDuMessage(MessageCommunication m, {bool avecVocaux = true}) {
   final f = t.com.messages.fil;
   return <String>[
     if (m.texte.trim().isNotEmpty) m.texte.trim(),
     for (final PieceJointe p in m.piecesJointes)
-      if (p.nature == NaturePieceJointe.vocal)
+      if (p.nature != NaturePieceJointe.vocal)
+        f.pieceJointe(nom: p.nom)
+      else if (avecVocaux)
         switch (p.duree) {
           final Duration d => f.vocal(duree: CartePieceJointe.libelleDuree(d)),
           null => f.vocalSansDuree,
-        }
-      else
-        f.pieceJointe(nom: p.nom),
+        },
   ].join('\n');
 }
 
@@ -73,6 +84,7 @@ class FilContextuel extends StatefulWidget {
     required this.ecritureOuverte,
     required this.onEnvoyer,
     super.key,
+    this.onEnvoyerVocal,
   });
 
   /// Le fil ouvert.
@@ -87,6 +99,17 @@ class FilContextuel extends StatefulWidget {
   /// termine sur l'accuse du serveur, et echoue sinon.
   final Future<void> Function(String texte, String cleIdempotence) onEnvoyer;
 
+  /// L'envoi d'un vocal avec sa cle d'idempotence (COM-BR-03, COM-BR-02), ou
+  /// `null` : aucun composer vocal n'est rendu (capacite `envoyerVocal`
+  /// fermee, production).
+  final Future<void> Function(EnregistrementVocal vocal, String cleIdempotence)?
+  onEnvoyerVocal;
+
+  /// La cle du composer vocal du fil, pour les tests.
+  static const ValueKey<String> cleComposerVocal = ValueKey<String>(
+    'fil-composer-vocal',
+  );
+
   /// La cle de la phrase « lecture seule », pour les tests.
   static const ValueKey<String> cleLectureSeule = ValueKey<String>(
     'fil-lecture-seule',
@@ -98,20 +121,18 @@ class FilContextuel extends StatefulWidget {
 
 class _FilContextuelState extends State<FilContextuel>
     with WidgetsBindingObserver {
-  /// Les cles des envois en echec, par texte, la plus ancienne d'abord : un
-  /// nouvel essai (« Reessayer ») rejoue une cle en echec, et le serveur ne
-  /// compte pas deux fois le meme message.
-  ///
-  /// Un envoi EN COURS ne prete jamais sa cle : deux messages identiques
-  /// envoyes coup sur coup partent sous deux cles, et le serveur les garde
-  /// tous les deux (R-COM-13 : jamais deux bulles « Envoye » pour un seul
-  /// message enregistre). `FilDiscussion` (socle) ne transmet que le texte,
-  /// pas l'identifiant de la bulle : un nouveau message identique a un
-  /// message en echec reprend sa cle ; le serveur n'en garde qu'un, la bulle
-  /// en echec le dit encore et son « Reessayer » repart sous une cle neuve.
-  /// Indexer par l'identifiant de la bulle : ligne COM-FUS (socle).
-  final Map<String, List<String>> _clesEnEchec = <String, List<String>>{};
+  /// Les cles d'idempotence, par identifiant local de bulle
+  /// (`FilDiscussion.onEnvoyerMessage`, COM-FUS) : chaque bulle a SA cle,
+  /// rejouee a son « Reessayer » ; le serveur ne compte pas deux fois le
+  /// meme message. Deux bulles au meme texte ont deux cles (R-COM-13). La
+  /// cle est oubliee a l'accuse.
+  final Map<String, String> _cles = <String, String>{};
   int _compteur = 0;
+
+  /// Les cles des vocaux de ce fil, une par vocal (COM-BR-02).
+  late final ClesVocales _clesVocales = ClesVocales(
+    DestinationVocal.fil(widget.fil.id),
+  );
 
   /// La hauteur du clavier logiciel au dernier releve, en points logiques.
   double _clavier = 0;
@@ -181,18 +202,15 @@ class _FilContextuelState extends State<FilContextuel>
     return trouve;
   }
 
-  Future<void> _envoyer(String texte) async {
-    final List<String>? enEchec = _clesEnEchec[texte];
-    final String cle = enEchec != null && enEchec.isNotEmpty
-        ? enEchec.removeAt(0)
-        : '${widget.fil.id}-${DateTime.now().microsecondsSinceEpoch}-'
-              '${_compteur++}';
-    try {
-      await widget.onEnvoyer(texte, cle);
-    } on Object {
-      (_clesEnEchec[texte] ??= <String>[]).add(cle);
-      rethrow;
-    }
+  Future<void> _envoyer(String idLocal, String texte) async {
+    final String cle = _cles.putIfAbsent(
+      idLocal,
+      () =>
+          '${widget.fil.id}-${DateTime.now().microsecondsSinceEpoch}-'
+          '${_compteur++}',
+    );
+    await widget.onEnvoyer(texte, cle);
+    _cles.remove(idLocal);
   }
 
   @override
@@ -206,6 +224,8 @@ class _FilContextuelState extends State<FilContextuel>
       return _FilEnLecture(fil: fil, entete: entete);
     }
     final String soi = t.com.socle.composants.composer.auteurSoi;
+    final Future<void> Function(EnregistrementVocal, String)? vocal =
+        widget.onEnvoyerVocal;
     return FilDiscussion(
       key: ValueKey<String>('fil-metier-${fil.id}'),
       entete: entete,
@@ -214,13 +234,22 @@ class _FilContextuelState extends State<FilContextuel>
           MessageFil(
             id: m.id,
             auteur: m.deSoi ? soi : m.auteur.nomAffiche,
-            texte: texteDuMessage(m),
+            texte: texteDuMessage(m, avecVocaux: false),
+            annonceTexte: texteDuMessage(m),
+            complement: lecteursVocauxDuMessage(m.piecesJointes),
             horodatage: horodatageMessage(m.envoyeLe),
             deSoi: m.deSoi,
           ),
       ],
       textes: textesFilCommunication(),
-      onEnvoyer: _envoyer,
+      onEnvoyerMessage: _envoyer,
+      emplacementVocal: vocal == null
+          ? null
+          : ComposerVocal(
+              key: FilContextuel.cleComposerVocal,
+              onEnvoyer: (EnregistrementVocal v) =>
+                  _clesVocales.envoyer(v, (String cle) => vocal(v, cle)),
+            ),
     );
   }
 }

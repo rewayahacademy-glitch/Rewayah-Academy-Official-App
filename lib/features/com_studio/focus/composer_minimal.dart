@@ -16,10 +16,10 @@
 // - mais pas l'entree « Joindre un fichier » ni les autres outils de
 //   redaction, qui reviennent a la sortie du Focus.
 //
-// Aujourd'hui, le canal du Studio ne pose encore ni vocal ni piece jointe :
-// la lecture du vocal et la jonction de fichiers se branchent a COM-FUS sur
-// les emplacements du socle. La regle est en place pour eux, et ne change
-// pas la forme de l'arbre du fil (le champ garde son texte d'une
+// Depuis COM-FUS, le canal pose le composer vocal (`ComposerVocal`) quand la
+// capacite `envoyerVocal` est ouverte : il reste en Focus. Il ne pose pas
+// encore de piece jointe (aucun contrat d'envoi, COM-BR-04). La regle ne
+// change pas la forme de l'arbre du fil (le champ garde son texte d'une
 // disposition a l'autre).
 
 import 'package:flutter/widgets.dart';

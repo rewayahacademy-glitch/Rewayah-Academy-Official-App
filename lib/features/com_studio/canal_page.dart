@@ -11,11 +11,16 @@
 // reste au-dessus du clavier logiciel et la lecture garde le dernier message
 // visible (R-COM-15).
 //
-// Une piece jointe ou un vocal recu se dit dans la bulle par son nom ou sa
-// duree ; le fichier lui-meme est dans le panneau du canal (« Fichiers
-// recents »). La lecture du vocal (COM-VOC), la bulle a piece jointe et les
-// reactions secondaires se branchent a COM-FUS : `FilDiscussion` (socle) ne
-// porte encore que du texte.
+// Une piece jointe se dit dans la bulle par son nom ; le fichier lui-meme
+// est dans le panneau du canal (« Fichiers recents »). Un vocal recu se lit
+// dans la bulle, par le lecteur de COM-VOC (`LecteurVocalRecu`, COM-FUS).
+// Les reactions secondaires (COM-BR-08) ne sont pas encore rendues.
+//
+// Le composer vocal (COM-VOC) se pose sous le champ, hors Focus comme en
+// Focus (`ComposerMinimal`), seulement si la page donne
+// [CanalStudio.onEnvoyerVocal] : elle ne le fait que si la capacite
+// `envoyerVocal` est ouverte (COM-BR-16), donc jamais en production tant que
+// le port des capacites est neutre. Aucun envoi automatique.
 //
 // Le texte du champ est garde comme brouillon le temps de la session et
 // remis a la reouverture du canal, avec la phrase « Brouillon restaure »
@@ -48,6 +53,10 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/vue_etat_communication.dart';
 import '../accueil_famille/bloc_seance.dart'
     show dateDeLAppareil, heureDeLAppareil;
+import '../com_vocal/composer_vocal.dart';
+import '../com_vocal/envoi_vocal.dart';
+import '../com_vocal/lecteur_vocal.dart';
+import '../com_vocal/port_enregistreur_vocal.dart';
 import 'brouillons_studio.dart';
 import 'focus/bascule_focus.dart';
 import 'focus/composer_minimal.dart';
@@ -60,18 +69,21 @@ import 'visibilite_canal.dart';
 /// Le texte d'un message tel qu'il se lit dans le canal : son texte, puis
 /// une ligne par piece jointe (« Piece jointe : Planning.pdf ») ou vocal
 /// (« Message vocal de 0:42 »). Jamais une reference ni une adresse.
-String texteMessageCanal(MessageCommunication m) {
+///
+/// Sans [avecVocaux], les vocaux ne sont pas dits : la bulle les montre par
+/// leur lecteur ([lecteursVocauxDuMessage]).
+String texteMessageCanal(MessageCommunication m, {bool avecVocaux = true}) {
   final c = t.com.studio.canal;
   return <String>[
     if (m.texte.trim().isNotEmpty) m.texte.trim(),
     for (final PieceJointe p in m.piecesJointes)
-      if (p.nature == NaturePieceJointe.vocal)
+      if (p.nature != NaturePieceJointe.vocal)
+        c.pieceJointe(nom: p.nom)
+      else if (avecVocaux)
         switch (p.duree) {
           final Duration d => c.vocal(duree: CartePieceJointe.libelleDuree(d)),
           null => c.vocalSansDuree,
-        }
-      else
-        c.pieceJointe(nom: p.nom),
+        },
   ].join('\n');
 }
 
@@ -179,7 +191,12 @@ class EnteteCanal extends StatelessWidget {
 /// Un canal ouvert : en-tete, messages, champ et envoi honnete.
 class CanalStudio extends StatefulWidget {
   /// Cree le canal.
-  const CanalStudio({required this.canal, required this.onEnvoyer, super.key});
+  const CanalStudio({
+    required this.canal,
+    required this.onEnvoyer,
+    super.key,
+    this.onEnvoyerVocal,
+  });
 
   /// Le canal ouvert.
   final Canal canal;
@@ -187,6 +204,17 @@ class CanalStudio extends StatefulWidget {
   /// L'envoi d'un texte avec sa cle d'idempotence (COM-BR-02) : le futur se
   /// termine sur l'accuse du serveur, et echoue sinon.
   final Future<void> Function(String texte, String cleIdempotence) onEnvoyer;
+
+  /// L'envoi d'un vocal avec sa cle d'idempotence (COM-BR-03, COM-BR-02), ou
+  /// `null` : aucun composer vocal n'est rendu (capacite `envoyerVocal`
+  /// fermee, production).
+  final Future<void> Function(EnregistrementVocal vocal, String cleIdempotence)?
+  onEnvoyerVocal;
+
+  /// La cle du composer vocal du canal, pour les tests.
+  static const ValueKey<String> cleComposerVocal = ValueKey<String>(
+    'studio-canal-composer-vocal',
+  );
 
   /// La cle de la phrase « lecture seule », pour les tests.
   static const ValueKey<String> cleLectureSeule = ValueKey<String>(
@@ -208,19 +236,18 @@ class CanalStudio extends StatefulWidget {
 }
 
 class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
-  /// Les cles LIBRES des envois non confirmes, par texte : une cle part
-  /// avec un essai, revient ici si l'essai echoue, et disparait avec la
-  /// confirmation. Un nouvel essai (« Reessayer ») reprend une cle libre :
-  /// le serveur ne compte pas deux fois le meme message (COM-BR-02).
-  ///
-  /// `FilDiscussion` (socle) ne transmet que le texte, pas l'identite de la
-  /// bulle (ligne COM-FUS). Une cle n'est donc jamais attachee a un texte
-  /// seul : deux envois simultanes du meme texte prennent deux cles
-  /// distinctes, et une cle n'est reprise qu'apres l'echec de son essai.
-  /// Ainsi, a tout instant, chaque bulle en attente a SA cle, et deux bulles
-  /// au meme texte ne peuvent jamais etre comptees comme un seul message.
-  final Map<String, List<String>> _clesLibres = <String, List<String>>{};
+  /// Les cles d'idempotence, par identifiant local de bulle
+  /// (`FilDiscussion.onEnvoyerMessage`, COM-FUS) : chaque bulle a SA cle,
+  /// rejouee a son « Reessayer » ; le serveur ne compte pas deux fois le
+  /// meme message (COM-BR-02). Deux bulles au meme texte ont deux cles. La
+  /// cle est oubliee a l'accuse.
+  final Map<String, String> _cles = <String, String>{};
   int _compteur = 0;
+
+  /// Les cles des vocaux de ce canal, une par vocal (COM-BR-02).
+  late final ClesVocales _clesVocales = ClesVocales(
+    DestinationVocal.canal(widget.canal.id),
+  );
 
   /// La hauteur du clavier logiciel au dernier releve, en points logiques.
   double _clavier = 0;
@@ -341,20 +368,15 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
     return trouve;
   }
 
-  Future<void> _envoyer(String texte) async {
-    final List<String>? libres = _clesLibres[texte];
-    final String cle = libres != null && libres.isNotEmpty
-        ? libres.removeLast()
-        : '${widget.canal.id}-${DateTime.now().microsecondsSinceEpoch}-'
-              '${_compteur++}';
-    if (libres != null && libres.isEmpty) _clesLibres.remove(texte);
-    try {
-      await widget.onEnvoyer(texte, cle);
-    } on Object {
-      // Non confirme : la cle redevient libre pour le nouvel essai.
-      (_clesLibres[texte] ??= <String>[]).add(cle);
-      rethrow;
-    }
+  Future<void> _envoyer(String idLocal, String texte) async {
+    final String cle = _cles.putIfAbsent(
+      idLocal,
+      () =>
+          '${widget.canal.id}-${DateTime.now().microsecondsSinceEpoch}-'
+          '${_compteur++}',
+    );
+    await widget.onEnvoyer(texte, cle);
+    _cles.remove(idLocal);
   }
 
   /// L'en-tete du canal ; avec [restaure], la phrase « Brouillon
@@ -403,9 +425,20 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
         entete: _entete(canal, focus: focus),
       );
     }
-    // Le champ minimal du Focus : le canal ne pose encore ni vocal ni piece
-    // jointe (COM-FUS), la regle est la meme pour eux.
-    const ComposerMinimal composer = ComposerMinimal();
+    // Le champ minimal du Focus : le vocal reste en Focus (section 10.4) ;
+    // le canal ne pose pas encore de piece jointe (aucun contrat d'envoi,
+    // COM-BR-04).
+    final Future<void> Function(EnregistrementVocal, String)? vocal =
+        widget.onEnvoyerVocal;
+    final ComposerMinimal composer = ComposerMinimal(
+      vocal: vocal == null
+          ? null
+          : ComposerVocal(
+              key: CanalStudio.cleComposerVocal,
+              onEnvoyer: (EnregistrementVocal v) =>
+                  _clesVocales.envoyer(v, (String cle) => vocal(v, cle)),
+            ),
+    );
     final String soi = t.com.socle.composants.composer.auteurSoi;
     // Le texte du champ est garde comme brouillon (memoire de session,
     // spec section 8.2) et remis a la reouverture du canal (COM-STU-2).
@@ -420,13 +453,15 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
             MessageFil(
               id: m.id,
               auteur: m.deSoi ? soi : m.auteur.nomAffiche,
-              texte: texteMessageCanal(m),
+              texte: texteMessageCanal(m, avecVocaux: false),
+              annonceTexte: texteMessageCanal(m),
+              complement: lecteursVocauxDuMessage(m.piecesJointes),
               horodatage: horodatageCanal(m.envoyeLe),
               deSoi: m.deSoi,
             ),
         ],
         textes: textesCanal(canal.resume),
-        onEnvoyer: _envoyer,
+        onEnvoyerMessage: _envoyer,
         emplacementPieceJointe: composer.emplacementPieceJointe(focus: focus),
         emplacementVocal: composer.emplacementVocal(focus: focus),
       ),

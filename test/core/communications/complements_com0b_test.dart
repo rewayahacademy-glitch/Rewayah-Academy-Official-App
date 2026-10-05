@@ -126,13 +126,15 @@ void main() {
       },
     );
 
-    test('les cinq capacites de COM-BR-16, dans cet ordre', () {
+    test('les six capacites de COM-BR-16, dans cet ordre (envoyerVocal '
+        'ajoutee a COM-FUS)', () {
       expect(CapaciteCommunication.values, <CapaciteCommunication>[
         CapaciteCommunication.publierAnnonce,
         CapaciteCommunication.programmer,
         CapaciteCommunication.moderer,
         CapaciteCommunication.parametresCanal,
         CapaciteCommunication.ecrireDansFil,
+        CapaciteCommunication.envoyerVocal,
       ]);
     });
 

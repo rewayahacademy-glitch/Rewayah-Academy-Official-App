@@ -40,6 +40,8 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/espace_travail_adaptatif.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/vue_etat_communication.dart';
+import '../com_vocal/envoi_vocal.dart';
+import '../com_vocal/port_enregistreur_vocal.dart';
 import 'fil_contextuel.dart';
 import 'liste_fils.dart';
 import 'panneau_contexte_fil.dart';
@@ -247,6 +249,23 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
     unawaited(_chargerListe(silencieux: true));
   }
 
+  /// L'envoi d'un vocal (COM-FUS) : par le port des vocaux (COM-BR-03),
+  /// neutre en production ; la liste suit le vocal confirme.
+  Future<void> _envoyerVocal(
+    String filId,
+    EnregistrementVocal vocal,
+    String cle,
+  ) async {
+    await ref
+        .read(portEnvoiVocalProvider)
+        .envoyer(
+          destination: DestinationVocal.fil(filId),
+          vocal: vocal,
+          cleIdempotence: cle,
+        );
+    unawaited(_chargerListe(silencieux: true));
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
@@ -417,6 +436,11 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
               ?.peut(CapaciteCommunication.ecrireDansFil) ??
           false,
       onEnvoyer: (String texte, String cle) => _envoyer(fil.id, texte, cle),
+      // COM-FUS : le composer vocal seulement si la capacite `envoyerVocal`
+      // est ouverte (COM-BR-16) ; fermee en production, rien n'est rendu.
+      onEnvoyerVocal: vocalOuvert(ref)
+          ? (EnregistrementVocal v, String cle) => _envoyerVocal(fil.id, v, cle)
+          : null,
     );
   }
 
