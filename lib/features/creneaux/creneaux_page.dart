@@ -119,9 +119,11 @@ class _OngletHeuresEtat extends ConsumerState<_OngletHeures> {
   /// Sans le jour et l'heure, la confirmation dit qu'« un » creneau est passe,
   /// pas lequel : au troisieme tap d'affilee, l'enseignant ne sait plus si
   /// c'est le sien qui a abouti.
-  String _nommer(Creneau creneau) => t.enseignant.creneaux.heureLibelle(
-    jour: t.disponibilites.joursLongs[creneau.jour - 1],
-    heure: '${creneau.heure}',
+  String _nommer(Creneau creneau) => LibellesGroupe.insecable(
+    t.enseignant.creneaux.heureLibelle(
+      jour: t.disponibilites.joursLongs[creneau.jour - 1],
+      heure: '${creneau.heure}',
+    ),
   );
 
   /// Les heures qui portent deja un eleve : le **conflit** de la grille.
@@ -269,7 +271,11 @@ class _OngletHeuresEtat extends ConsumerState<_OngletHeures> {
                           .map((Creneau c) => c.heure)
                           .toList()
                         ..sort())
-                      .map((int h) => t.enseignant.creneaux.heure(heure: '$h'))
+                      .map(
+                        (int h) => LibellesGroupe.insecable(
+                          t.enseignant.creneaux.heure(heure: '$h'),
+                        ),
+                      )
                       .join(', '),
             ),
           Ecart.vLg,
@@ -300,7 +306,9 @@ class _OngletHeuresEtat extends ConsumerState<_OngletHeures> {
         Text(switch (poses.length) {
           0 => t.enseignant.creneaux.aucuneHeure,
           1 => t.disponibilites.poseeUne,
-          _ => t.disponibilites.posees(nombre: '${poses.length}'),
+          _ => LibellesGroupe.valeurSeule(
+            t.disponibilites.posees(nombre: '${poses.length}'),
+          ),
         }, style: textes.bodySmall),
         if (horsLigne) ...<Widget>[
           Ecart.vSm,
@@ -426,8 +434,8 @@ class _ClassesDisponiblesEtat extends ConsumerState<_ClassesDisponibles> {
   /// s'ouvre sur son detail, avec un chevron (ENS-06B).
   LigneRubrique _ligneOffre(OffreClasseDemo offre, EtatOffreDemo etat) {
     final bool ouvrable = etat == EtatOffreDemo.disponible;
-    final String heure = t.enseignant.creneaux.heure(
-      heure: '${offre.creneau.heure}',
+    final String heure = LibellesGroupe.insecable(
+      t.enseignant.creneaux.heure(heure: '${offre.creneau.heure}'),
     );
     final (String mot, TonEtat ton) = _etat(etat);
     return LigneRubrique(
@@ -477,7 +485,9 @@ class _DetailOffrePageEtat extends State<DetailOffrePage> {
     ),
     LigneCleValeur(
       cle: t.enseignant.creneaux.cleHeureLocale,
-      valeur: t.enseignant.creneaux.heure(heure: '${offre.creneau.heure}'),
+      valeur: LibellesGroupe.valeurSeule(
+        t.enseignant.creneaux.heure(heure: '${offre.creneau.heure}'),
+      ),
     ),
     if (offre.dureeMinutes != null)
       LigneCleValeur(

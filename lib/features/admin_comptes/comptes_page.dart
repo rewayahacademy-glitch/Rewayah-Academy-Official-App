@@ -7,6 +7,7 @@ import '../../core/admin/service_comptes.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
@@ -234,8 +235,8 @@ class _Corps extends StatelessWidget {
                 ? switch (attendent.first.joursDAttente(maintenant)) {
                     <= 0 => t.admin.comptes.attenteUneAujourdhui,
                     1 => t.admin.comptes.attenteUneUnJour,
-                    final int jours => t.admin.comptes.attenteUne(
-                      jours: '$jours',
+                    final int jours => LibellesGroupe.insecable(
+                      t.admin.comptes.attenteUne(jours: '$jours'),
                     ),
                   }
                 : t.admin.comptes.attentePlusieurs(
@@ -385,7 +386,9 @@ class _Corps extends StatelessWidget {
   static String _attente(int jours) => switch (jours) {
     0 => t.admin.comptes.attendAujourdhui,
     1 => t.admin.comptes.attendUnJour,
-    _ => t.admin.comptes.attendJours(jours: '$jours'),
+    _ => LibellesGroupe.valeurSeule(
+      t.admin.comptes.attendJours(jours: '$jours'),
+    ),
   };
 }
 

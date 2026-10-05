@@ -8,6 +8,7 @@ import '../../core/admin/service_diagnostics.dart';
 import '../../core/admin/service_programme.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
@@ -233,16 +234,13 @@ class _Decision extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(eleve.libelle, style: textes.titleLarge),
-              Text(
-                switch (jours) {
-                  <= 0 => t.admin.diagnostics.inscritAujourdhui,
-                  1 => t.admin.diagnostics.inscritDepuisUnJour,
-                  final int j => t.admin.diagnostics.inscritDepuis(
-                    jours: '$j',
-                  ),
-                },
-                style: textes.bodySmall,
-              ),
+              Text(switch (jours) {
+                <= 0 => t.admin.diagnostics.inscritAujourdhui,
+                1 => t.admin.diagnostics.inscritDepuisUnJour,
+                final int j => LibellesGroupe.insecable(
+                  t.admin.diagnostics.inscritDepuis(jours: '$j'),
+                ),
+              }, style: textes.bodySmall),
             ],
           ),
         ),
@@ -270,11 +268,16 @@ class _Decision extends StatelessWidget {
           controller: motif,
           maxLines: 2,
           onChanged: onMotifChange,
-          decoration: InputDecoration(labelText: t.admin.diagnostics.champMotif),
+          decoration: InputDecoration(
+            labelText: t.admin.diagnostics.champMotif,
+          ),
         ),
         if (erreur != null) ...<Widget>[
           Ecart.vMd,
-          Text(erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          Text(
+            erreur!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
         ],
         Ecart.vLg,
         ActionPrincipale(

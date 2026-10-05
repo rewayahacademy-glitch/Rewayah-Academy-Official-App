@@ -5,8 +5,9 @@
 //    seance, indicateur d'observation, panneau post-cours, `LignePresence`,
 //    `PageParcours`, pastille de retard de l'historique.
 // 2. Une duree affichee seule, comme valeur, porte l'ancre de sens (U+200E) :
-//    detail de seance, detail des observations, carte de groupe, et les
-//    valeurs de la liste 1 qui commencent par un nombre.
+//    detail de seance, detail des observations, et les valeurs de la liste 1
+//    qui commencent par un nombre. La carte de groupe (« Duree 45 min ») n'en
+//    porte plus depuis DUREE-INSECABLE-3 : la valeur y suit un mot.
 //
 // Les gardes de source lisent `lib/` : un nouvel appel nu a l'un de ces
 // libelles fait echouer le test.
@@ -28,48 +29,36 @@ import 'package:rewayah_academy/features/suivi_foyer/filtres_historique.dart'
 
 import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../support/aucun_mot_coupe.dart';
+import '../support/garde_durees.dart';
 
 /// Les espaces ou une ligne peut se couper.
 final RegExp _espaceSecable = RegExp('[ \t\n]');
 
 /// Les libelles a duree dont chaque appel, dans `lib/`, doit passer par
-/// `insecable` (ou `valeurSeule`, qui l'inclut).
+/// `insecable` (ou `valeurSeule`, qui l'inclut). DUREE-INSECABLE-3 : chemins
+/// complets, juges appel par appel (`test/support/garde_durees.dart`).
 const List<String> _libellesADuree = <String>[
-  'cahier.duree(',
-  'cahier.dureeEtInterruption(',
-  'creneaux.duree(',
-  'h.duree(minutes',
-  'compteRendu.debutRetard(',
-  'seance.minutesRestantes(',
-  'annonce.restant(',
-  'postCours.duree(',
-  'presence.entreeMinutes(',
-  'presence.retardMinutes(',
-  'presence.silenceMinutes(',
-  'presence.attenteMinutes(',
-  'inscription.tempsRestant(',
-  'historique.etat.retard(',
+  'enseignant.cahier.duree',
+  'enseignant.cahier.dureeEtInterruption',
+  'enseignant.creneaux.duree',
+  'controleur.historique.duree',
+  'controleur.compteRendu.debutRetard',
+  'salle.seance.minutesRestantes',
+  'tc.observation.annonce.restant',
+  'tc.parcours.postCours.duree',
+  'presence.entreeMinutes',
+  'presence.retardMinutes',
+  'presence.silenceMinutes',
+  'presence.attenteMinutes',
+  'inscription.tempsRestant',
+  'historique.etat.retard',
 ];
 
 /// Les fichiers qui affichent une duree seule et doivent l'ancrer.
 const List<String> _valeursSeules = <String>[
   'lib/features/suivi_foyer/detail_seance_page.dart',
   'lib/features/suivi_foyer/detail_observations_page.dart',
-  'lib/features/tc_mes_groupes/carte_groupe.dart',
 ];
-
-Iterable<File> _sourcesDart() =>
-    Directory('lib')
-        .listSync(recursive: true)
-        .whereType<File>()
-        .where(
-          (File f) =>
-              f.path.endsWith('.dart') &&
-              !f.path.endsWith('.g.dart') &&
-              !f.path.contains(
-                '${Platform.pathSeparator}_dev${Platform.pathSeparator}',
-              ),
-        );
 
 PresenceParticipant _ligne(
   EtatPresence etat, {
@@ -92,25 +81,15 @@ PresenceParticipant _ligne(
 void main() {
   group('Garde de source : chaque libelle a duree passe par insecable', () {
     test('aucun appel nu dans lib/', () {
-      final List<String> nus = <String>[];
-      int appels = 0;
-      for (final File f in _sourcesDart()) {
-        final String source = f.readAsStringSync();
-        for (final String cle in _libellesADuree) {
-          int i = source.indexOf(cle);
-          while (i >= 0) {
-            appels++;
-            final String avant = source.substring(i < 400 ? 0 : i - 400, i);
-            if (!avant.contains('insecable(') &&
-                !avant.contains('valeurSeule(')) {
-              final int ligne = '\n'.allMatches(source.substring(0, i)).length;
-              nus.add('${f.path}:${ligne + 1} $cle');
-            }
-            i = source.indexOf(cle, i + cle.length);
-          }
-        }
-      }
-      expect(appels, greaterThanOrEqualTo(_libellesADuree.length));
+      final List<AppelLibelle> appels = appelsDe(
+        _libellesADuree,
+        sourcesDart(),
+      );
+      expect(appels.length, greaterThanOrEqualTo(_libellesADuree.length));
+      final List<String> nus = <String>[
+        for (final AppelLibelle a in appels)
+          if (!estInsecable(a.enveloppe)) '${a.fichier}:${a.ligne} ${a.cle}',
+      ];
       expect(nus, isEmpty, reason: 'Durees secables : $nus');
     });
 
@@ -200,9 +179,7 @@ void main() {
           ),
           (
             nom: 'carte de groupe, 45 min',
-            texte: LibellesGroupe.duree(
-              LibellesGroupe.dureeSeule(const Duration(minutes: 45)),
-            ),
+            texte: LibellesGroupe.dureeCarte(const Duration(minutes: 45)),
           ),
           (
             nom: 'cahier, 45 min de cours',

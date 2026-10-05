@@ -358,20 +358,24 @@ String dureeSeule(Duration duree) =>
 String _dureeSecable(Duration duree) {
   final int secondes = duree.inSeconds < 0 ? 0 : duree.inSeconds;
   if (secondes < 60) {
-    return t.historique.duree.secondes(s: secondes);
+    return LibellesGroupe.insecable(t.historique.duree.secondes(s: secondes));
   }
   if (secondes < 3600) {
     final int m = secondes ~/ 60;
     final int s = secondes % 60;
     return s == 0
-        ? t.historique.duree.minutes(m: m)
-        : t.historique.duree.minutesSecondes(m: m, s: s);
+        ? LibellesGroupe.insecable(t.historique.duree.minutes(m: m))
+        : LibellesGroupe.insecable(
+            t.historique.duree.minutesSecondes(m: m, s: s),
+          );
   }
   final int h = secondes ~/ 3600;
   final int m = (secondes % 3600) ~/ 60;
   return m == 0
-      ? t.historique.duree.heures(h: h)
-      : t.historique.duree.heuresMinutes(h: h, m: _deux(m));
+      ? LibellesGroupe.insecable(t.historique.duree.heures(h: h))
+      : LibellesGroupe.insecable(
+          t.historique.duree.heuresMinutes(h: h, m: _deux(m)),
+        );
 }
 
 /// Le decalage de l'heure affichee sur UTC : « +02:00 », « -05:30 ».

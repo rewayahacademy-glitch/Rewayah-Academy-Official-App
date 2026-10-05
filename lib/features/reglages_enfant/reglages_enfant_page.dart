@@ -11,6 +11,7 @@ import '../../core/matching/service_matching.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/regles/service_regles.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -367,8 +368,10 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
           else ...<Widget>[
             if (actuelle?.value != null) ...<Widget>[
               Text(
-                t.tuteur.reglages.demandeActuelle(
-                  minutes: '${actuelle!.requireValue}',
+                LibellesGroupe.insecable(
+                  t.tuteur.reglages.demandeActuelle(
+                    minutes: '${actuelle!.requireValue}',
+                  ),
                 ),
                 style: textes.bodySmall,
               ),
@@ -380,8 +383,8 @@ class _FeuilleDemandeTuteurEtat extends ConsumerState<FeuilleDemandeTuteur> {
                   for (final int minutes in dureesProposees)
                     OptionChoix(
                       valeur: '$minutes',
-                      libelle: t.tuteur.reglages.demandeMinutes(
-                        minutes: '$minutes',
+                      libelle: LibellesGroupe.valeurSeule(
+                        t.tuteur.reglages.demandeMinutes(minutes: '$minutes'),
                       ),
                     ),
                 ],

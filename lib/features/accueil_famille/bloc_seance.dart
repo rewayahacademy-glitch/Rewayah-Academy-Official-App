@@ -33,6 +33,7 @@ class AffichageSeance {
     required this.fuseau,
     required this.date,
     required this.duree,
+    required this.dureeEnPhrase,
     this.heureClasse,
   });
 
@@ -61,6 +62,7 @@ class AffichageSeance {
           : t.tuteur.accueil.heureDe(ville: foyer.libelleVille),
       date: foyer?.dateLocaleRendue ?? dateDeLAppareil(local),
       duree: LibellesGroupe.dureeSeule(seance.dureePrevue),
+      dureeEnPhrase: LibellesGroupe.dureeLisible(seance.dureePrevue),
       heureClasse: classe == null
           ? null
           : t.tuteur.accueil.heureClasse(
@@ -90,8 +92,17 @@ class AffichageSeance {
   /// La date lisible : « Lundi 21 septembre ».
   final String date;
 
-  /// La duree prevue, « 1 h 30 ».
+  /// La duree prevue, « 1 h 30 », affichee seule : ancree en interface de
+  /// droite a gauche ([LibellesGroupe.dureeSeule]).
   final String duree;
+
+  /// La meme duree, sans ancre : elle suit la date dans [dateEtDuree].
+  final String dureeEnPhrase;
+
+  /// « Lundi 21 septembre · 45 min » : la duree suit la date, l'ancre de sens
+  /// n'a rien a faire au milieu du libelle (DUREE-INSECABLE-3).
+  String get dateEtDuree =>
+      t.tuteur.accueil.dateEtDuree(date: date, duree: dureeEnPhrase);
 
   /// L'heure dans le fuseau de la classe quand il differe, sinon `null`.
   final String? heureClasse;

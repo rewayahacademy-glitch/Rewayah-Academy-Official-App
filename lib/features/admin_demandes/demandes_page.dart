@@ -9,6 +9,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/matching/service_matching.dart';
 import '../../core/regles/service_regles.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -699,7 +700,7 @@ String _libelleRegle(CleRegle? cle) => switch (cle) {
 /// lire « 5 » pour cinq minutes de cours.
 String _valeur(CleRegle? cle, int valeur) => cle == CleRegle.plafondEleves
     ? t.admin.demandes.eleves(valeur: '$valeur')
-    : t.admin.demandes.minutes(valeur: '$valeur');
+    : LibellesGroupe.valeurSeule(t.admin.demandes.minutes(valeur: '$valeur'));
 
 /// Ce que la demande reclame, dit en clair.
 String _reclame(Demande demande) => switch (demande.sorte) {
@@ -717,9 +718,11 @@ String _reclame(Demande demande) => switch (demande.sorte) {
         ? t.admin.demandes.reclameRegleSansValeur(
             regle: _libelleRegle(demande.cleRegle),
           )
-        : t.admin.demandes.reclameRegle(
-            regle: _libelleRegle(demande.cleRegle),
-            valeur: '${demande.valeurDemandee}',
+        : LibellesGroupe.insecable(
+            t.admin.demandes.reclameRegle(
+              regle: _libelleRegle(demande.cleRegle),
+              valeur: '${demande.valeurDemandee}',
+            ),
           ),
 };
 

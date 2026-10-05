@@ -7,6 +7,7 @@ import '../../core/admin/service_configuration.dart';
 import '../../core/capacites/port_politique_revue_kyc.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/empty_state.dart';
@@ -88,7 +89,9 @@ class _Corps extends StatelessWidget {
           description: t.admin.conservationDonnees.enregistrementsDetail,
           cle: 'recording_retention_days',
           valeur: v['recording_retention_days'] ?? 0,
-          affichage: (int n) => t.admin.conservationDonnees.uniteJours(n: '$n'),
+          affichage: (int n) => LibellesGroupe.valeurSeule(
+            t.admin.conservationDonnees.uniteJours(n: '$n'),
+          ),
           champValeur: t.admin.conservationDonnees.champValeur,
           envoyer: t.admin.conservationDonnees.envoyer,
           valeurInvalide: t.admin.conservationDonnees.valeurInvalide,
@@ -100,7 +103,9 @@ class _Corps extends StatelessWidget {
           description: t.admin.conservationDonnees.documentsIdentiteDetail,
           cle: 'kyc_retention_days',
           valeur: v['kyc_retention_days'] ?? 0,
-          affichage: (int n) => t.admin.conservationDonnees.uniteJours(n: '$n'),
+          affichage: (int n) => LibellesGroupe.valeurSeule(
+            t.admin.conservationDonnees.uniteJours(n: '$n'),
+          ),
           champValeur: t.admin.conservationDonnees.champValeur,
           envoyer: t.admin.conservationDonnees.envoyer,
           valeurInvalide: t.admin.conservationDonnees.valeurInvalide,
