@@ -6,6 +6,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_attribution.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
@@ -301,7 +302,11 @@ void main() {
       expect(tester.widget<ActionPrincipale>(bouton).onPress, isNull);
 
       await tester.tap(
-        find.text(t.admin.attribution.creneau(jour: 'jeudi', heure: '18')),
+        find.text(
+          LibellesGroupe.insecable(
+            t.admin.attribution.creneau(jour: 'jeudi', heure: '18'),
+          ),
+        ),
       );
       await tester.pumpAndSettle();
 

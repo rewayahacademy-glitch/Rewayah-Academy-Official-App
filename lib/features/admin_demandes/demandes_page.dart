@@ -697,10 +697,11 @@ String _libelleRegle(CleRegle? cle) => switch (cle) {
 
 /// Une valeur de regle avec son unite. **Le plafond compte des eleves, les
 /// trois autres regles comptent des minutes** : une valeur nue laisserait
-/// lire « 5 » pour cinq minutes de cours.
+/// lire « 5 » pour cinq minutes de cours. Insecable sans ancre de sens : la
+/// valeur est aussi glissee dans « Plateforme : 60 min » (DUREE-INSECABLE-3).
 String _valeur(CleRegle? cle, int valeur) => cle == CleRegle.plafondEleves
     ? t.admin.demandes.eleves(valeur: '$valeur')
-    : LibellesGroupe.valeurSeule(t.admin.demandes.minutes(valeur: '$valeur'));
+    : LibellesGroupe.insecable(t.admin.demandes.minutes(valeur: '$valeur'));
 
 /// Ce que la demande reclame, dit en clair.
 String _reclame(Demande demande) => switch (demande.sorte) {

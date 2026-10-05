@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/creneaux/creneaux_page.dart';
 import 'package:rewayah_academy/features/demo/enseignant_demo.dart';
@@ -185,7 +186,7 @@ void main() {
       await _monter(tester, planning: planning);
 
       expect(find.text('Lundi'), findsOneWidget);
-      expect(find.text('17 h, 18 h'), findsOneWidget);
+      expect(find.text('17\u00A0h, 18\u00A0h'), findsOneWidget);
       // La grille attend « Ajouter un creneau ».
       expect(find.text(t.disponibilites.titreEnseignant), findsNothing);
       await tester.tap(find.text(t.enseignant.creneaux.ajouterCreneau));
@@ -338,7 +339,9 @@ void main() {
       await _monter(tester, planning: planning);
       await _taperCase(
         tester,
-        libelle: t.disponibilites.celluleLibre(jour: 'mardi', heure: '17'),
+        libelle: LibellesGroupe.insecable(
+          t.disponibilites.celluleLibre(jour: 'mardi', heure: '17'),
+        ),
       );
 
       expect(planning.poses.length, 1);
@@ -346,7 +349,9 @@ void main() {
       expect(planning.poses.single.creneau.heure, 17);
       // `enCours` figeait la grille sans jamais dire qu'une case etait passee.
       expect(
-        find.text(t.enseignant.creneaux.heureEnregistree(heure: 'mardi 17 h')),
+        find.text(
+          t.enseignant.creneaux.heureEnregistree(heure: 'mardi 17\u00A0h'),
+        ),
         findsOneWidget,
       );
     });
@@ -368,20 +373,22 @@ void main() {
 
       // 1. Le conflit est visible AVANT le geste.
       expect(
-        find.text(t.enseignant.creneaux.heureEngagee(heures: 'jeudi 9 h')),
+        find.text(t.enseignant.creneaux.heureEngagee(heures: 'jeudi 9\u00A0h')),
         findsOneWidget,
       );
 
       await _taperCase(
         tester,
-        libelle: t.disponibilites.cellulePosee(jour: 'jeudi', heure: '9'),
+        libelle: LibellesGroupe.insecable(
+          t.disponibilites.cellulePosee(jour: 'jeudi', heure: '9'),
+        ),
       );
 
       // 2. Le geste passe, et la confirmation dit ce qu'il ne fait PAS.
       expect(planning.retires.length, 1);
       expect(planning.retires.single.creneau.heure, 9);
       expect(
-        find.text(t.enseignant.creneaux.retraitEngage(heure: 'jeudi 9 h')),
+        find.text(t.enseignant.creneaux.retraitEngage(heure: 'jeudi 9\u00A0h')),
         findsOneWidget,
       );
     });
@@ -399,12 +406,14 @@ void main() {
       await _monter(tester, planning: planning);
       await _taperCase(
         tester,
-        libelle: t.disponibilites.cellulePosee(jour: 'mardi', heure: '17'),
+        libelle: LibellesGroupe.insecable(
+          t.disponibilites.cellulePosee(jour: 'mardi', heure: '17'),
+        ),
       );
 
       expect(planning.retires.length, 1);
       expect(
-        find.text(t.enseignant.creneaux.heureRetiree(heure: 'mardi 17 h')),
+        find.text(t.enseignant.creneaux.heureRetiree(heure: 'mardi 17\u00A0h')),
         findsOneWidget,
       );
     });
@@ -428,7 +437,9 @@ void main() {
       // Et inerte : la case n'expose plus de libelle pressable.
       expect(
         find.bySemanticsLabel(
-          t.disponibilites.cellulePosee(jour: 'mardi', heure: '17'),
+          LibellesGroupe.insecable(
+            t.disponibilites.cellulePosee(jour: 'mardi', heure: '17'),
+          ),
         ),
         findsNothing,
       );
