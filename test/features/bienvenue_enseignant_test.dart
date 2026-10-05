@@ -17,6 +17,7 @@ import 'package:rewayah_academy/features/disponibilites/grille_semaine.dart';
 
 import '../capture/outil_capture.dart'
     show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
+import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
 import '../support/hors_ligne_une_fois.dart';
 
@@ -49,6 +50,10 @@ Future<void> _monter(
   AccountStatus? statut = AccountStatus.active,
   bool horsLigne = false,
   PrerequisEnseignant? prerequis,
+  ThemeMode themeMode = ThemeMode.light,
+  InterfaceMode interface = InterfaceMode.standard,
+  TextDirection? direction,
+  double echelle = 1,
 }) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
@@ -59,6 +64,10 @@ Future<void> _monter(
   await tester.pumpWidget(
     hoteRoutant(
       depart: Routes.enseignantBienvenue,
+      mode: interface,
+      themeMode: themeMode,
+      direction: direction,
+      echelle: echelle,
       routes: <RouteBase>[
         GoRoute(
           path: Routes.enseignantBienvenue,
@@ -391,6 +400,83 @@ void main() {
         expectHorsLigneUneFois();
         debugPrint(
           'PNG ${await capturerVue(tester, 'ea_hl_double1_bienvenue_${cas.$1}')}',
+        );
+      });
+    }
+  });
+  // EA-HL-DOUBLE-1d (vu sur la capture) : a 320 texte x2, « Bienvenue, »
+  // ne tenait pas en titre et se coupait. Le titre borne son echelle.
+  for (final TextDirection sens in TextDirection.values) {
+    testWidgets('320 texte x2 ${sens.name} : aucun mot coupe', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, direction: sens, echelle: 2);
+      tester.view.physicalSize = const Size(320, 1800);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+    });
+  }
+
+  // EA-HL-DOUBLE-1d : sombre, Interface guidee et 320 texte x2 en LTR et
+  // RTL de la bienvenue hors ligne (revue EA-HL-DOUBLE-1c-R, mineur 2).
+  // Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1d', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, ThemeMode, InterfaceMode, TextDirection, double)
+        cas
+        in <(String, Size, ThemeMode, InterfaceMode, TextDirection, double)>[
+          (
+            '390_sombre',
+            const Size(390, 844),
+            ThemeMode.dark,
+            InterfaceMode.standard,
+            TextDirection.ltr,
+            1,
+          ),
+          (
+            '390_guidee',
+            const Size(390, 844),
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            TextDirection.ltr,
+            1,
+          ),
+          (
+            '320x2_clair',
+            const Size(320, 1800),
+            ThemeMode.light,
+            InterfaceMode.standard,
+            TextDirection.ltr,
+            2,
+          ),
+          (
+            '320x2_rtl_clair',
+            const Size(320, 1800),
+            ThemeMode.light,
+            InterfaceMode.standard,
+            TextDirection.rtl,
+            2,
+          ),
+        ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        await _monter(
+          tester,
+          horsLigne: true,
+          themeMode: cas.$3,
+          interface: cas.$4,
+          direction: cas.$5,
+          echelle: cas.$6,
+        );
+        tester.view.physicalSize = cas.$2;
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text(t.enseignant.bienvenue.horsLigne), findsOneWidget);
+        expectHorsLigneUneFois();
+        verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1d_bienvenue_${cas.$1}')}',
         );
       });
     }
