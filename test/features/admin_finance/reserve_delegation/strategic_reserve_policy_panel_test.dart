@@ -36,6 +36,7 @@ class _Hote {
     onEnregistrer: (BrouillonPolitiqueReserve b, String cle) async {
       appels.add((brouillon: b, cle: cle));
       final Object? e = echec;
+      // ignore: only_throw_errors
       if (e != null) throw e;
     },
   );
@@ -264,7 +265,7 @@ void main() {
   testWidgets('echec : la phrase reste, la meme cle d idempotence est '
       'reprise, puis une modification en change', (WidgetTester tester) async {
     taille(tester, const Size(900, 4000));
-    final _Hote h = _Hote(fixe, echec: StateError('coupure'));
+    final _Hote h = _Hote(fixe, echec: Exception('coupure'));
     await tester.pumpWidget(hoteDirection(h.panneau()));
     await tester.pumpAndSettle();
 

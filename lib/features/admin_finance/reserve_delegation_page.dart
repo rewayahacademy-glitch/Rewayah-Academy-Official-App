@@ -38,19 +38,16 @@ class ReserveDelegationPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                c.sousTitre,
-                style: palette.inkMuted.applyTo(
-                  textes.bodyLarge ?? const TextStyle(),
-                ),
-              ),
-            ),
-            const BasculeMontants(avecEtat: true),
-          ],
+        Text(
+          c.sousTitre,
+          style: palette.inkMuted.applyTo(
+            textes.bodyLarge ?? const TextStyle(),
+          ),
+        ),
+        Ecart.vMd,
+        const Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: BasculeMontants(avecEtat: true),
         ),
         Ecart.vXxl,
         SectionHeader(titre: c.reserve),

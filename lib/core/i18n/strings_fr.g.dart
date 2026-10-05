@@ -17444,9 +17444,6 @@ class Traductions$comptable$direction$delegationPanneau$fr {
 	/// fr: 'Ces trois règles ne se règlent pas.'
 	String get toujoursDetail => 'Ces trois règles ne se règlent pas.';
 
-	/// fr: 'Toujours interdit'
-	String get toujoursPastille => 'Toujours interdit';
-
 	/// fr: 'Se payer lui-même'
 	String get autoPayout => 'Se payer lui-même';
 
@@ -17933,8 +17930,8 @@ class Traductions$comptable$direction$reservePanneau$regle$fr {
 	/// fr: 'Aucune alimentation automatique.'
 	String get desactiveeDetail => 'Aucune alimentation automatique.';
 
-	/// fr: 'Montant fixe'
-	String get montantFixe => 'Montant fixe';
+	/// fr: 'Somme fixe'
+	String get montantFixe => 'Somme fixe';
 
 	/// fr: 'La même somme à chaque échéance.'
 	String get montantFixeDetail => 'La même somme à chaque échéance.';
@@ -22532,7 +22529,7 @@ extension on Traductions {
 			'comptable.direction.reservePanneau.alimentationDetail' => 'Comment la Réserve se remplit sans geste du Comptable.',
 			'comptable.direction.reservePanneau.regle.desactivee' => 'Désactivée',
 			'comptable.direction.reservePanneau.regle.desactiveeDetail' => 'Aucune alimentation automatique.',
-			'comptable.direction.reservePanneau.regle.montantFixe' => 'Montant fixe',
+			'comptable.direction.reservePanneau.regle.montantFixe' => 'Somme fixe',
 			'comptable.direction.reservePanneau.regle.montantFixeDetail' => 'La même somme à chaque échéance.',
 			'comptable.direction.reservePanneau.regle.pourcentage' => 'Pourcentage',
 			'comptable.direction.reservePanneau.regle.pourcentageDetail' => 'Une part de l\'encaissement consolidé.',
@@ -22586,7 +22583,6 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.joursRecentsDetail' => 'Pendant ce nombre de jours après une modification, les coordonnées sont jugées récentes.',
 			'comptable.direction.delegationPanneau.toujoursTitre' => 'Toujours interdit au Comptable',
 			'comptable.direction.delegationPanneau.toujoursDetail' => 'Ces trois règles ne se règlent pas.',
-			'comptable.direction.delegationPanneau.toujoursPastille' => 'Toujours interdit',
 			'comptable.direction.delegationPanneau.autoPayout' => 'Se payer lui-même',
 			'comptable.direction.delegationPanneau.autoPayoutDetail' => 'Son propre paiement passe toujours par une autre personne.',
 			'comptable.direction.delegationPanneau.montantManuel' => 'Saisir un montant à la main au moment de payer',

@@ -418,7 +418,8 @@ class _FinanceDelegationPolicyPanelState
   }
 }
 
-/// Une regle que rien ne leve : une ligne en lecture seule, avec sa pastille.
+/// Une regle que rien ne leve : une ligne en lecture seule, sans interrupteur
+/// (le titre du groupe dit « Toujours interdit »).
 class _Interdit extends StatelessWidget {
   const _Interdit({required this.titre, required this.detail});
 
@@ -426,13 +427,6 @@ class _Interdit extends StatelessWidget {
   final String detail;
 
   @override
-  Widget build(BuildContext context) => SettingRow(
-    title: titre,
-    description: detail,
-    icon: AppIcons.interdit,
-    controle: StatusPill(
-      libelle: t.comptable.direction.delegationPanneau.toujoursPastille,
-      ton: TonEtat.neutre,
-    ),
-  );
+  Widget build(BuildContext context) =>
+      SettingRow(title: titre, description: detail, icon: AppIcons.interdit);
 }

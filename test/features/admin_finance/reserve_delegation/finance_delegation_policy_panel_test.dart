@@ -10,7 +10,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/port_delegation_finance.dart';
 import 'package:rewayah_academy/core/finance/montant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/admin_finance/reserve_delegation/finance_delegation_policy_panel.dart';
 import 'package:rewayah_academy/features/demo/comptable/direction_demo.dart';
 
@@ -33,6 +32,7 @@ class _Hote {
     onEnregistrer: (BrouillonDelegationFinance b, String cle) async {
       appels.add((brouillon: b, cle: cle));
       final Object? e = echec;
+      // ignore: only_throw_errors
       if (e != null) throw e;
     },
   );
@@ -132,12 +132,6 @@ void main() {
     }
     // Six interrupteurs seulement : les interdits n'en ont pas.
     expect(find.byType(Switch), findsNWidgets(6));
-    expect(
-      find.byWidgetPredicate(
-        (Widget w) => w is StatusPill && w.libelle == d.toujoursPastille,
-      ),
-      findsNWidgets(3),
-    );
     // Rien dans le brouillon ne porte les interdits : le port les rend vrais.
     await _basculer(tester, d.paiementsStandards);
     await _appuyer(tester);
@@ -205,7 +199,7 @@ void main() {
     await tester.pumpWidget(hoteDirection(h.panneau()));
     await tester.pumpAndSettle();
     await _taper(tester, d.joursRecents, '0');
-    await _taper(tester, d.plafondLot, 'x');
+    await _taper(tester, d.plafondLot, '0');
     await _appuyer(tester);
     expect(h.appels, isEmpty);
     expect(find.text(c.erreurNombre), findsOneWidget);
@@ -224,7 +218,7 @@ void main() {
     WidgetTester tester,
   ) async {
     taille(tester, const Size(900, 4000));
-    final _Hote h = _Hote(standard, echec: StateError('coupure'));
+    final _Hote h = _Hote(standard, echec: Exception('coupure'));
     await tester.pumpWidget(hoteDirection(h.panneau()));
     await tester.pumpAndSettle();
     await _taper(tester, d.plafondTransaction, '750');

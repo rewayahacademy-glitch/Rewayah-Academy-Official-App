@@ -5372,7 +5372,7 @@
         "regle": {
           "desactivee": "Désactivée",
           "desactiveeDetail": "Aucune alimentation automatique.",
-          "montantFixe": "Montant fixe",
+          "montantFixe": "Somme fixe",
           "montantFixeDetail": "La même somme à chaque échéance.",
           "pourcentage": "Pourcentage",
           "pourcentageDetail": "Une part de l'encaissement consolidé.",
@@ -5431,7 +5431,6 @@
         "joursRecentsDetail": "Pendant ce nombre de jours après une modification, les coordonnées sont jugées récentes.",
         "toujoursTitre": "Toujours interdit au Comptable",
         "toujoursDetail": "Ces trois règles ne se règlent pas.",
-        "toujoursPastille": "Toujours interdit",
         "autoPayout": "Se payer lui-même",
         "autoPayoutDetail": "Son propre paiement passe toujours par une autre personne.",
         "montantManuel": "Saisir un montant à la main au moment de payer",

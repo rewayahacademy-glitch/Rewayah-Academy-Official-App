@@ -9,6 +9,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 
+import '../../../router/support_routeur.dart';
 import '../../../support/harnais.dart';
 
 /// Monte [enfant] dans une page defilante, au texte [echelle], dans le sens
@@ -22,7 +23,9 @@ Widget hoteDirection(
   bool horsLigne = false,
 }) => ProviderScope(
   overrides: <Override>[
-    serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+    // La bascule des montants lit la session (remise a « masque » a chaque
+    // nouvelle session) ; ces surcharges portent aussi le faux reseau.
+    ...sessionDirection(),
     horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(horsLigne)),
     ...surcharges,
   ],
@@ -65,3 +68,8 @@ List<String> textes(WidgetTester tester) => <String>[
   for (final Element e in find.byType(RichText).evaluate())
     (e.widget as RichText).text.toPlainText(),
 ];
+
+/// Les surcharges de session d'un administrateur, pour monter la page dans la
+/// demonstration (la bascule des montants lit la session).
+List<Override> sessionDirection() =>
+    surchargesRouteur(FausseSourceSession(sessionActive(AppRole.admin)));
