@@ -151,9 +151,11 @@ class BlocBibliotheque extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        // « Voir tout » au bord de fin de l'en-tete, sur mobile comme sur
-        // bureau : `IntrinsicWidth` donne au lien sa largeur naturelle,
-        // bornee par la place restante.
+        // Deux dispositions. Texte agrandi (`empile`) : titre sur toute la
+        // largeur, « Voir tout » dessous, au bord de debut, comme dans
+        // `EnteteVoirTout`. Sinon : une rangee, titre au debut et « Voir
+        // tout » au bord de fin. Dans les deux cas, `IntrinsicWidth` donne au
+        // lien sa largeur naturelle, bornee par la place restante.
         if (empile) ...<Widget>[
           // Le titre garde la taille des autres titres de section et passe a
           // la ligne entre les mots : `SectionHeader` le rend en
