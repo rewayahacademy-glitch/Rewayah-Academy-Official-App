@@ -361,6 +361,18 @@ class DockSeance extends StatelessWidget {
               // Annule le dock a libelles visibles de M1.
               final bool accessibilite =
                   AppMetriques.of(contexte).mode == InterfaceMode.enfant;
+              // ETATS-MA-1 (decision du 05/10/2026, WCAG 1.4.1) : au-dela
+              // de 130 %, une rangee unique n'a plus la place du mot d'etat ;
+              // les commandes passent sur deux rangees et les bascules
+              // gardent leur mot (« Micro ouvert », « Camera allumee »).
+              if (accessibilite &&
+                  commandesSurDeuxRangees(contexte) &&
+                  bascules.contains(true)) {
+                return CommandesSurDeuxRangees(
+                  commandes: boutons,
+                  diametre: AppTouchTarget.standard + AppSpacing.sm,
+                );
+              }
               if (!serre && !texteAgrandi && !accessibilite) return rangee;
               // EN-12 (17 d) : icone seule, libelle lu ; disque a la case
               // moins un ecart, jamais sous la cible tactile.

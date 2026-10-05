@@ -1906,6 +1906,15 @@ class _Commandes extends StatelessWidget {
     // suffit pas encore, elle passe en rangee compacte (EN-12 : « Quitter »
     // en icone, nom en infobulle et lu ; les bascules gardent leur mot).
     final int bascules = (vue.peutParler ? 1 : 0) + (vue.peutMontrer ? 1 : 0);
+    // ETATS-MA-1 (decision du 05/10/2026, WCAG 1.4.1) : en Mode
+    // Accessibilite, texte au-dela de 130 %, les commandes passent sur deux
+    // rangees ; les bascules y gardent leur mot d'etat.
+    if (bascules > 0 && commandesSurDeuxRangees(context)) {
+      return CommandesSurDeuxRangees(
+        diametre: AppMetriques.of(context).cibleTactile,
+        commandes: _commandes(microOuvert, cameraOuverte, enSalle, 0),
+      );
+    }
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {
         // La largeur de la rangee, avec [cotes] d'ecart autour de chaque disque.
@@ -1934,37 +1943,44 @@ class _Commandes extends StatelessWidget {
     double ecart,
   ) => Row(
     mainAxisAlignment: MainAxisAlignment.center,
-    children: <Widget>[
-      // Un controle que le jeton refuse n'est PAS rendu, et n'est jamais
-      // grise : un bouton visible mais inactif invite a appuyer dessus, son
-      // absence ne pose pas la question.
-      if (vue.peutParler)
-        _Commande(
-          ecart: ecart,
-          icone: microOuvert ? AppIcons.micro : AppIcons.microCoupe,
-          libelle: microOuvert ? t.salle.microOuvert : t.salle.microCoupe,
-          acte: microOuvert ? t.salle.fermerMicro : t.salle.ouvrirMicro,
-          bascule: microOuvert,
-          onPress: enSalle ? () => unawaited(onMicro(microOuvert)) : null,
-        ),
-      if (vue.peutMontrer)
-        _Commande(
-          ecart: ecart,
-          icone: cameraOuverte ? AppIcons.camera : AppIcons.cameraCoupee,
-          libelle: cameraOuverte ? t.salle.cameraAllumee : t.salle.cameraCoupee,
-          acte: cameraOuverte ? t.salle.fermerCamera : t.salle.ouvrirCamera,
-          bascule: cameraOuverte,
-          onPress: enSalle ? () => unawaited(onCamera(cameraOuverte)) : null,
-        ),
+    children: _commandes(microOuvert, cameraOuverte, enSalle, ecart),
+  );
+
+  List<Widget> _commandes(
+    bool microOuvert,
+    bool cameraOuverte,
+    bool enSalle,
+    double ecart,
+  ) => <Widget>[
+    // Un controle que le jeton refuse n'est PAS rendu, et n'est jamais
+    // grise : un bouton visible mais inactif invite a appuyer dessus, son
+    // absence ne pose pas la question.
+    if (vue.peutParler)
       _Commande(
         ecart: ecart,
-        icone: AppIcons.sortie,
-        libelle: t.salle.quitter,
-        acte: t.salle.quitterLeCours,
-        onPress: () => unawaited(onQuitter()),
+        icone: microOuvert ? AppIcons.micro : AppIcons.microCoupe,
+        libelle: microOuvert ? t.salle.microOuvert : t.salle.microCoupe,
+        acte: microOuvert ? t.salle.fermerMicro : t.salle.ouvrirMicro,
+        bascule: microOuvert,
+        onPress: enSalle ? () => unawaited(onMicro(microOuvert)) : null,
       ),
-    ],
-  );
+    if (vue.peutMontrer)
+      _Commande(
+        ecart: ecart,
+        icone: cameraOuverte ? AppIcons.camera : AppIcons.cameraCoupee,
+        libelle: cameraOuverte ? t.salle.cameraAllumee : t.salle.cameraCoupee,
+        acte: cameraOuverte ? t.salle.fermerCamera : t.salle.ouvrirCamera,
+        bascule: cameraOuverte,
+        onPress: enSalle ? () => unawaited(onCamera(cameraOuverte)) : null,
+      ),
+    _Commande(
+      ecart: ecart,
+      icone: AppIcons.sortie,
+      libelle: t.salle.quitter,
+      acte: t.salle.quitterLeCours,
+      onPress: () => unawaited(onQuitter()),
+    ),
+  ];
 }
 
 /// La largeur d'un mot de commande, au style et a l'echelle de texte courants.
