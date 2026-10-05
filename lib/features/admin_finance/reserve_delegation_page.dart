@@ -8,17 +8,21 @@
 // `politiques_commerciales.dart` et `vue_globale_finance.dart` restent geles.
 //
 // Rendu DANS le `PageShell` de `FinancePage` (comme `VueGlobaleFinanceBloc`),
-// jamais une seconde page : pas de second systeme Finance Direction. Modes
-// de reserve : montant fixe, couverture en mois ; alimentation : desactivee,
-// fixe, pourcentage, jusqu'a l'objectif, proposee ; cadences §9.4 ;
-// delegation §21.2. Aucun plafond commercial code (R-FIN-08, 09). Lit et
-// ecrit `portPolitiqueReserveProvider` (CPT-BR-12) et
-// `portDelegationFinanceProvider` (CPT-BR-13).
+// jamais une seconde page : pas de second systeme Finance Direction. Les deux
+// panneaux se suivent : la politique de la Reserve strategique (CPT-BR-12),
+// puis la delegation financiere (CPT-BR-13). Chacun lit son port et porte ses
+// cinq etats. L'ecran de validation des operations sensibles attend la
+// reponse du directeur a CPT-Q1 : il n'est pas construit ici.
 
 import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
-import '../../core/widgets/empty_state.dart';
+import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/bascule_montants.dart';
+import '../../core/widgets/section_header.dart';
+import 'reserve_delegation/finance_delegation_policy_panel.dart';
+import 'reserve_delegation/strategic_reserve_policy_panel.dart';
 
 /// Le corps de l'onglet « Reserve et delegation ».
 class ReserveDelegationPage extends StatelessWidget {
@@ -27,9 +31,31 @@ class ReserveDelegationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return EmptyState(
-      message: t.comptable.commun.enPreparationTitre,
-      invitation: t.comptable.commun.enPreparationPhrase,
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final c = t.comptable.direction;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Text(
+          c.sousTitre,
+          style: palette.inkMuted.applyTo(
+            textes.bodyLarge ?? const TextStyle(),
+          ),
+        ),
+        Ecart.vMd,
+        const Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: BasculeMontants(avecEtat: true),
+        ),
+        Ecart.vXxl,
+        SectionHeader(titre: c.reserve),
+        const StrategicReservePolicyPanelBloc(),
+        Ecart.vSection,
+        SectionHeader(titre: c.delegation),
+        const FinanceDelegationPolicyPanelBloc(),
+      ],
     );
   }
 }

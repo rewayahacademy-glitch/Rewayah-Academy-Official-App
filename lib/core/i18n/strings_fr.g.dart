@@ -12910,6 +12910,63 @@ class Traductions$comptable$direction$fr {
 
 	// Translations
 
+	/// fr: 'Version {version}, en vigueur depuis le {date}'
+	String versionDepuis({required Object version, required Object date}) => 'Version ${version}, en vigueur depuis le ${date}';
+
+	/// fr: 'Version {version}'
+	String versionSansDate({required Object version}) => 'Version ${version}';
+
+	/// fr: 'Enregistrée par {auteur}'
+	String auteur({required Object auteur}) => 'Enregistrée par ${auteur}';
+
+	/// fr: 'Enregistrer une nouvelle version'
+	String get enregistrer => 'Enregistrer une nouvelle version';
+
+	/// fr: 'Aucune modification à enregistrer.'
+	String get aucuneModification => 'Aucune modification à enregistrer.';
+
+	/// fr: 'Corrigez les champs signalés pour enregistrer.'
+	String get corrigezChamps => 'Corrigez les champs signalés pour enregistrer.';
+
+	/// fr: 'Nouvelle version enregistrée.'
+	String get enregistree => 'Nouvelle version enregistrée.';
+
+	/// fr: 'Nous ne savons pas si cette version a été enregistrée. Relisez la version en vigueur, puis réessayez.'
+	String get erreurEnregistrement => 'Nous ne savons pas si cette version a été enregistrée. Relisez la version en vigueur, puis réessayez.';
+
+	/// fr: 'L'enregistrement n'est pas encore disponible. Réessayez plus tard.'
+	String get enregistrementIndisponible => 'L\'enregistrement n\'est pas encore disponible. Réessayez plus tard.';
+
+	/// fr: 'Historique des versions'
+	String get historique => 'Historique des versions';
+
+	/// fr: 'Aucune version avant celle-ci.'
+	String get historiqueVide => 'Aucune version avant celle-ci.';
+
+	/// fr: 'État actuel de la Réserve'
+	String get etatActuel => 'État actuel de la Réserve';
+
+	/// fr: 'mois'
+	String get suffixeMois => 'mois';
+
+	/// fr: 'jours'
+	String get suffixeJours => 'jours';
+
+	/// fr: '%'
+	String get suffixePourcent => '%';
+
+	/// fr: 'Saisissez un nombre entier supérieur à zéro.'
+	String get erreurNombre => 'Saisissez un nombre entier supérieur à zéro.';
+
+	/// fr: 'Saisissez un pourcentage supérieur à zéro et au plus égal à 100, avec une décimale au plus.'
+	String get erreurPourcentage => 'Saisissez un pourcentage supérieur à zéro et au plus égal à 100, avec une décimale au plus.';
+
+	/// fr: 'Saisissez un montant supérieur à zéro.'
+	String get erreurMontant => 'Saisissez un montant supérieur à zéro.';
+
+	late final Traductions$comptable$direction$reservePanneau$fr reservePanneau = Traductions$comptable$direction$reservePanneau$fr.internal(_root);
+	late final Traductions$comptable$direction$delegationPanneau$fr delegationPanneau = Traductions$comptable$direction$delegationPanneau$fr.internal(_root);
+
 	/// fr: 'Réserve et délégation'
 	String get titre => 'Réserve et délégation';
 
@@ -19119,6 +19176,208 @@ class Traductions$comptable$beneficiaires$recevoir$fr {
 	String get configurer => 'Configurer mes paiements';
 }
 
+// Path: comptable.direction.reservePanneau
+class Traductions$comptable$direction$reservePanneau$fr {
+	Traductions$comptable$direction$reservePanneau$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous fixez la politique ; le Comptable la lit et l'exécute. Chaque enregistrement crée une nouvelle version, conservée dans l'historique.'
+	String get intro => 'Vous fixez la politique ; le Comptable la lit et l\'exécute. Chaque enregistrement crée une nouvelle version, conservée dans l\'historique.';
+
+	/// fr: 'Objectif de la Réserve'
+	String get objectifTitre => 'Objectif de la Réserve';
+
+	/// fr: 'Ce que la Réserve stratégique doit atteindre.'
+	String get objectifDetail => 'Ce que la Réserve stratégique doit atteindre.';
+
+	/// fr: 'Montant fixe'
+	String get modeFixe => 'Montant fixe';
+
+	/// fr: 'Une somme précise que vous choisissez.'
+	String get modeFixeDetail => 'Une somme précise que vous choisissez.';
+
+	/// fr: 'Couverture en mois'
+	String get modeMois => 'Couverture en mois';
+
+	/// fr: 'Un nombre de mois de charges essentielles.'
+	String get modeMoisDetail => 'Un nombre de mois de charges essentielles.';
+
+	/// fr: 'Montant cible'
+	String get montantCible => 'Montant cible';
+
+	/// fr: 'La somme que la Réserve stratégique doit atteindre.'
+	String get montantCibleDetail => 'La somme que la Réserve stratégique doit atteindre.';
+
+	/// fr: 'Nombre de mois de couverture'
+	String get nombreMois => 'Nombre de mois de couverture';
+
+	/// fr: 'Combien de mois de charges essentielles la Réserve doit couvrir.'
+	String get nombreMoisDetail => 'Combien de mois de charges essentielles la Réserve doit couvrir.';
+
+	/// fr: 'Alimentation automatique'
+	String get alimentationTitre => 'Alimentation automatique';
+
+	/// fr: 'Comment la Réserve se remplit sans geste du Comptable.'
+	String get alimentationDetail => 'Comment la Réserve se remplit sans geste du Comptable.';
+
+	late final Traductions$comptable$direction$reservePanneau$regle$fr regle = Traductions$comptable$direction$reservePanneau$regle$fr.internal(_root);
+
+	/// fr: 'Montant à affecter'
+	String get montantAuto => 'Montant à affecter';
+
+	/// fr: 'La somme affectée à la Réserve à chaque échéance.'
+	String get montantAutoDetail => 'La somme affectée à la Réserve à chaque échéance.';
+
+	/// fr: 'Part de l'encaissement consolidé'
+	String get pourcentageAuto => 'Part de l\'encaissement consolidé';
+
+	/// fr: 'La part affectée à la Réserve à chaque échéance.'
+	String get pourcentageAutoDetail => 'La part affectée à la Réserve à chaque échéance.';
+
+	/// fr: 'Cadence'
+	String get cadenceTitre => 'Cadence';
+
+	/// fr: 'Quand l'alimentation a lieu.'
+	String get cadenceDetail => 'Quand l\'alimentation a lieu.';
+
+	late final Traductions$comptable$direction$reservePanneau$cadence$fr cadence = Traductions$comptable$direction$reservePanneau$cadence$fr.internal(_root);
+
+	/// fr: 'Alerte'
+	String get seuilTitre => 'Alerte';
+
+	/// fr: 'Seuil d'alerte'
+	String get seuil => 'Seuil d\'alerte';
+
+	/// fr: 'Sous cette part de l'objectif, la Réserve est signalée « sous l'objectif ». Laissez vide pour ne fixer aucun seuil.'
+	String get seuilDetail => 'Sous cette part de l\'objectif, la Réserve est signalée « sous l\'objectif ». Laissez vide pour ne fixer aucun seuil.';
+
+	/// fr: 'Aucun seuil'
+	String get seuilIndice => 'Aucun seuil';
+
+	/// fr: 'Retrait'
+	String get retraitTitre => 'Retrait';
+
+	/// fr: 'Un retrait demande une validation supplémentaire'
+	String get retraitSwitch => 'Un retrait demande une validation supplémentaire';
+
+	/// fr: 'Sortir de l'argent de la Réserve est une opération sensible : une autre personne que le demandeur la valide.'
+	String get retraitSwitchDetail => 'Sortir de l\'argent de la Réserve est une opération sensible : une autre personne que le demandeur la valide.';
+}
+
+// Path: comptable.direction.delegationPanneau
+class Traductions$comptable$direction$delegationPanneau$fr {
+	Traductions$comptable$direction$delegationPanneau$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous réglez une fois ce que le Comptable peut exécuter seul. Tout le reste vous revient.'
+	String get intro => 'Vous réglez une fois ce que le Comptable peut exécuter seul. Tout le reste vous revient.';
+
+	/// fr: 'Ce que le Comptable peut faire seul'
+	String get pouvoirsTitre => 'Ce que le Comptable peut faire seul';
+
+	/// fr: 'Payer les paiements standards'
+	String get paiementsStandards => 'Payer les paiements standards';
+
+	/// fr: 'Un paiement au montant calculé, vers une méthode vérifiée, part sans validation quotidienne.'
+	String get paiementsStandardsDetail => 'Un paiement au montant calculé, vers une méthode vérifiée, part sans validation quotidienne.';
+
+	/// fr: 'Exécuter un remboursement standard'
+	String get remboursement => 'Exécuter un remboursement standard';
+
+	/// fr: 'Un remboursement conforme à la règle part sans validation.'
+	String get remboursementDetail => 'Un remboursement conforme à la règle part sans validation.';
+
+	/// fr: 'Alimenter la Réserve stratégique'
+	String get alimentationReserve => 'Alimenter la Réserve stratégique';
+
+	/// fr: 'Un mouvement vers la Réserve, conforme à sa politique.'
+	String get alimentationReserveDetail => 'Un mouvement vers la Réserve, conforme à sa politique.';
+
+	/// fr: 'Plafonds'
+	String get plafondsTitre => 'Plafonds';
+
+	/// fr: 'Au-delà d'un plafond, le paiement demande votre validation. Laissez vide pour ne fixer aucun plafond.'
+	String get plafondsDetail => 'Au-delà d\'un plafond, le paiement demande votre validation. Laissez vide pour ne fixer aucun plafond.';
+
+	/// fr: 'Plafond par transaction'
+	String get plafondTransaction => 'Plafond par transaction';
+
+	/// fr: 'Le montant maximal d'un seul paiement.'
+	String get plafondTransactionDetail => 'Le montant maximal d\'un seul paiement.';
+
+	/// fr: 'Plafond par lot'
+	String get plafondLot => 'Plafond par lot';
+
+	/// fr: 'Le montant maximal d'un lot de paiements.'
+	String get plafondLotDetail => 'Le montant maximal d\'un lot de paiements.';
+
+	/// fr: 'Plafond cumulé par période'
+	String get plafondPeriode => 'Plafond cumulé par période';
+
+	/// fr: 'Le total maximal sur la période ; il empêche de contourner un plafond en fractionnant.'
+	String get plafondPeriodeDetail => 'Le total maximal sur la période ; il empêche de contourner un plafond en fractionnant.';
+
+	/// fr: 'Aucun plafond'
+	String get plafondIndice => 'Aucun plafond';
+
+	/// fr: 'Quand une seconde validation est exigée'
+	String get validationsTitre => 'Quand une seconde validation est exigée';
+
+	/// fr: 'Retrait de la Réserve stratégique'
+	String get retraitReserve => 'Retrait de la Réserve stratégique';
+
+	/// fr: 'Interdit au Comptable sans validation.'
+	String get retraitReserveDetail => 'Interdit au Comptable sans validation.';
+
+	/// fr: 'Premier paiement d'un bénéficiaire'
+	String get premierPaiement => 'Premier paiement d\'un bénéficiaire';
+
+	/// fr: 'Le premier paiement vers un bénéficiaire demande une seconde validation.'
+	String get premierPaiementDetail => 'Le premier paiement vers un bénéficiaire demande une seconde validation.';
+
+	/// fr: 'Coordonnées modifiées récemment'
+	String get coordonnees => 'Coordonnées modifiées récemment';
+
+	/// fr: 'Un paiement vers des coordonnées modifiées récemment demande une seconde validation.'
+	String get coordonneesDetail => 'Un paiement vers des coordonnées modifiées récemment demande une seconde validation.';
+
+	/// fr: 'Durée d'une modification récente'
+	String get joursRecents => 'Durée d\'une modification récente';
+
+	/// fr: 'Pendant ce nombre de jours après une modification, les coordonnées sont jugées récentes.'
+	String get joursRecentsDetail => 'Pendant ce nombre de jours après une modification, les coordonnées sont jugées récentes.';
+
+	/// fr: 'Toujours interdit au Comptable'
+	String get toujoursTitre => 'Toujours interdit au Comptable';
+
+	/// fr: 'Ces trois règles ne se règlent pas.'
+	String get toujoursDetail => 'Ces trois règles ne se règlent pas.';
+
+	/// fr: 'Se payer lui-même'
+	String get autoPayout => 'Se payer lui-même';
+
+	/// fr: 'Son propre paiement passe toujours par une autre personne.'
+	String get autoPayoutDetail => 'Son propre paiement passe toujours par une autre personne.';
+
+	/// fr: 'Saisir un montant à la main au moment de payer'
+	String get montantManuel => 'Saisir un montant à la main au moment de payer';
+
+	/// fr: 'Le montant d'un paiement est toujours celui de l'obligation.'
+	String get montantManuelDetail => 'Le montant d\'un paiement est toujours celui de l\'obligation.';
+
+	/// fr: 'Modifier les tarifs'
+	String get politiqueTarifaire => 'Modifier les tarifs';
+
+	/// fr: 'La politique tarifaire reste à la direction.'
+	String get politiqueTarifaireDetail => 'La politique tarifaire reste à la direction.';
+}
+
 // Path: salle.preparation.eleve.guidee
 class Traductions$salle$preparation$eleve$guidee$fr {
 	Traductions$salle$preparation$eleve$guidee$fr.internal(this._root);
@@ -19597,6 +19856,69 @@ class Traductions$comptable$paiements$ecart$motifs$fr {
 
 	/// fr: 'La source citée n'est pas la bonne'
 	String get sourceErronee => 'La source citée n\'est pas la bonne';
+}
+
+// Path: comptable.direction.reservePanneau.regle
+class Traductions$comptable$direction$reservePanneau$regle$fr {
+	Traductions$comptable$direction$reservePanneau$regle$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Désactivée'
+	String get desactivee => 'Désactivée';
+
+	/// fr: 'Aucune alimentation automatique.'
+	String get desactiveeDetail => 'Aucune alimentation automatique.';
+
+	/// fr: 'Somme fixe'
+	String get montantFixe => 'Somme fixe';
+
+	/// fr: 'La même somme à chaque échéance.'
+	String get montantFixeDetail => 'La même somme à chaque échéance.';
+
+	/// fr: 'Pourcentage'
+	String get pourcentage => 'Pourcentage';
+
+	/// fr: 'Une part de l'encaissement consolidé.'
+	String get pourcentageDetail => 'Une part de l\'encaissement consolidé.';
+
+	/// fr: 'Jusqu'à l'objectif'
+	String get jusquAObjectif => 'Jusqu\'à l\'objectif';
+
+	/// fr: 'Compléter ce qui manque pour atteindre l'objectif.'
+	String get jusquAObjectifDetail => 'Compléter ce qui manque pour atteindre l\'objectif.';
+
+	/// fr: 'Proposée'
+	String get proposee => 'Proposée';
+
+	/// fr: 'Une proposition que le Comptable confirme.'
+	String get proposeeDetail => 'Une proposition que le Comptable confirme.';
+}
+
+// Path: comptable.direction.reservePanneau.cadence
+class Traductions$comptable$direction$reservePanneau$cadence$fr {
+	Traductions$comptable$direction$reservePanneau$cadence$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'À chaque clôture de cycle'
+	String get clotureCycle => 'À chaque clôture de cycle';
+
+	/// fr: 'Chaque semaine'
+	String get hebdomadaire => 'Chaque semaine';
+
+	/// fr: 'Chaque mois'
+	String get mensuelle => 'Chaque mois';
+
+	/// fr: 'Après chaque encaissement consolidé'
+	String get apresEncaissementConsolide => 'Après chaque encaissement consolidé';
+
+	/// fr: 'Manuelle'
+	String get manuelle => 'Manuelle';
 }
 
 /// The flat map containing all translations for locale <fr>.
@@ -24696,6 +25018,101 @@ extension on Traductions {
 			'comptable.contractuels.sousTitre' => 'Les montants sont définis à la création de l\'obligation, figés après approbation.',
 			'comptable.contractuels.nouvelle' => 'Nouvelle obligation',
 			'comptable.contractuels.detailTitre' => 'Obligation',
+			'comptable.direction.versionDepuis' => ({required Object version, required Object date}) => 'Version ${version}, en vigueur depuis le ${date}',
+			'comptable.direction.versionSansDate' => ({required Object version}) => 'Version ${version}',
+			'comptable.direction.auteur' => ({required Object auteur}) => 'Enregistrée par ${auteur}',
+			'comptable.direction.enregistrer' => 'Enregistrer une nouvelle version',
+			'comptable.direction.aucuneModification' => 'Aucune modification à enregistrer.',
+			'comptable.direction.corrigezChamps' => 'Corrigez les champs signalés pour enregistrer.',
+			'comptable.direction.enregistree' => 'Nouvelle version enregistrée.',
+			'comptable.direction.erreurEnregistrement' => 'Nous ne savons pas si cette version a été enregistrée. Relisez la version en vigueur, puis réessayez.',
+			'comptable.direction.enregistrementIndisponible' => 'L\'enregistrement n\'est pas encore disponible. Réessayez plus tard.',
+			'comptable.direction.historique' => 'Historique des versions',
+			'comptable.direction.historiqueVide' => 'Aucune version avant celle-ci.',
+			'comptable.direction.etatActuel' => 'État actuel de la Réserve',
+			'comptable.direction.suffixeMois' => 'mois',
+			'comptable.direction.suffixeJours' => 'jours',
+			'comptable.direction.suffixePourcent' => '%',
+			'comptable.direction.erreurNombre' => 'Saisissez un nombre entier supérieur à zéro.',
+			'comptable.direction.erreurPourcentage' => 'Saisissez un pourcentage supérieur à zéro et au plus égal à 100, avec une décimale au plus.',
+			'comptable.direction.erreurMontant' => 'Saisissez un montant supérieur à zéro.',
+			'comptable.direction.reservePanneau.intro' => 'Vous fixez la politique ; le Comptable la lit et l\'exécute. Chaque enregistrement crée une nouvelle version, conservée dans l\'historique.',
+			'comptable.direction.reservePanneau.objectifTitre' => 'Objectif de la Réserve',
+			'comptable.direction.reservePanneau.objectifDetail' => 'Ce que la Réserve stratégique doit atteindre.',
+			'comptable.direction.reservePanneau.modeFixe' => 'Montant fixe',
+			'comptable.direction.reservePanneau.modeFixeDetail' => 'Une somme précise que vous choisissez.',
+			'comptable.direction.reservePanneau.modeMois' => 'Couverture en mois',
+			'comptable.direction.reservePanneau.modeMoisDetail' => 'Un nombre de mois de charges essentielles.',
+			'comptable.direction.reservePanneau.montantCible' => 'Montant cible',
+			'comptable.direction.reservePanneau.montantCibleDetail' => 'La somme que la Réserve stratégique doit atteindre.',
+			'comptable.direction.reservePanneau.nombreMois' => 'Nombre de mois de couverture',
+			'comptable.direction.reservePanneau.nombreMoisDetail' => 'Combien de mois de charges essentielles la Réserve doit couvrir.',
+			'comptable.direction.reservePanneau.alimentationTitre' => 'Alimentation automatique',
+			'comptable.direction.reservePanneau.alimentationDetail' => 'Comment la Réserve se remplit sans geste du Comptable.',
+			'comptable.direction.reservePanneau.regle.desactivee' => 'Désactivée',
+			'comptable.direction.reservePanneau.regle.desactiveeDetail' => 'Aucune alimentation automatique.',
+			'comptable.direction.reservePanneau.regle.montantFixe' => 'Somme fixe',
+			'comptable.direction.reservePanneau.regle.montantFixeDetail' => 'La même somme à chaque échéance.',
+			'comptable.direction.reservePanneau.regle.pourcentage' => 'Pourcentage',
+			'comptable.direction.reservePanneau.regle.pourcentageDetail' => 'Une part de l\'encaissement consolidé.',
+			'comptable.direction.reservePanneau.regle.jusquAObjectif' => 'Jusqu\'à l\'objectif',
+			'comptable.direction.reservePanneau.regle.jusquAObjectifDetail' => 'Compléter ce qui manque pour atteindre l\'objectif.',
+			'comptable.direction.reservePanneau.regle.proposee' => 'Proposée',
+			'comptable.direction.reservePanneau.regle.proposeeDetail' => 'Une proposition que le Comptable confirme.',
+			'comptable.direction.reservePanneau.montantAuto' => 'Montant à affecter',
+			'comptable.direction.reservePanneau.montantAutoDetail' => 'La somme affectée à la Réserve à chaque échéance.',
+			'comptable.direction.reservePanneau.pourcentageAuto' => 'Part de l\'encaissement consolidé',
+			'comptable.direction.reservePanneau.pourcentageAutoDetail' => 'La part affectée à la Réserve à chaque échéance.',
+			'comptable.direction.reservePanneau.cadenceTitre' => 'Cadence',
+			'comptable.direction.reservePanneau.cadenceDetail' => 'Quand l\'alimentation a lieu.',
+			'comptable.direction.reservePanneau.cadence.clotureCycle' => 'À chaque clôture de cycle',
+			'comptable.direction.reservePanneau.cadence.hebdomadaire' => 'Chaque semaine',
+			_ => null,
+		} ?? switch (path) {
+			'comptable.direction.reservePanneau.cadence.mensuelle' => 'Chaque mois',
+			'comptable.direction.reservePanneau.cadence.apresEncaissementConsolide' => 'Après chaque encaissement consolidé',
+			'comptable.direction.reservePanneau.cadence.manuelle' => 'Manuelle',
+			'comptable.direction.reservePanneau.seuilTitre' => 'Alerte',
+			'comptable.direction.reservePanneau.seuil' => 'Seuil d\'alerte',
+			'comptable.direction.reservePanneau.seuilDetail' => 'Sous cette part de l\'objectif, la Réserve est signalée « sous l\'objectif ». Laissez vide pour ne fixer aucun seuil.',
+			'comptable.direction.reservePanneau.seuilIndice' => 'Aucun seuil',
+			'comptable.direction.reservePanneau.retraitTitre' => 'Retrait',
+			'comptable.direction.reservePanneau.retraitSwitch' => 'Un retrait demande une validation supplémentaire',
+			'comptable.direction.reservePanneau.retraitSwitchDetail' => 'Sortir de l\'argent de la Réserve est une opération sensible : une autre personne que le demandeur la valide.',
+			'comptable.direction.delegationPanneau.intro' => 'Vous réglez une fois ce que le Comptable peut exécuter seul. Tout le reste vous revient.',
+			'comptable.direction.delegationPanneau.pouvoirsTitre' => 'Ce que le Comptable peut faire seul',
+			'comptable.direction.delegationPanneau.paiementsStandards' => 'Payer les paiements standards',
+			'comptable.direction.delegationPanneau.paiementsStandardsDetail' => 'Un paiement au montant calculé, vers une méthode vérifiée, part sans validation quotidienne.',
+			'comptable.direction.delegationPanneau.remboursement' => 'Exécuter un remboursement standard',
+			'comptable.direction.delegationPanneau.remboursementDetail' => 'Un remboursement conforme à la règle part sans validation.',
+			'comptable.direction.delegationPanneau.alimentationReserve' => 'Alimenter la Réserve stratégique',
+			'comptable.direction.delegationPanneau.alimentationReserveDetail' => 'Un mouvement vers la Réserve, conforme à sa politique.',
+			'comptable.direction.delegationPanneau.plafondsTitre' => 'Plafonds',
+			'comptable.direction.delegationPanneau.plafondsDetail' => 'Au-delà d\'un plafond, le paiement demande votre validation. Laissez vide pour ne fixer aucun plafond.',
+			'comptable.direction.delegationPanneau.plafondTransaction' => 'Plafond par transaction',
+			'comptable.direction.delegationPanneau.plafondTransactionDetail' => 'Le montant maximal d\'un seul paiement.',
+			'comptable.direction.delegationPanneau.plafondLot' => 'Plafond par lot',
+			'comptable.direction.delegationPanneau.plafondLotDetail' => 'Le montant maximal d\'un lot de paiements.',
+			'comptable.direction.delegationPanneau.plafondPeriode' => 'Plafond cumulé par période',
+			'comptable.direction.delegationPanneau.plafondPeriodeDetail' => 'Le total maximal sur la période ; il empêche de contourner un plafond en fractionnant.',
+			'comptable.direction.delegationPanneau.plafondIndice' => 'Aucun plafond',
+			'comptable.direction.delegationPanneau.validationsTitre' => 'Quand une seconde validation est exigée',
+			'comptable.direction.delegationPanneau.retraitReserve' => 'Retrait de la Réserve stratégique',
+			'comptable.direction.delegationPanneau.retraitReserveDetail' => 'Interdit au Comptable sans validation.',
+			'comptable.direction.delegationPanneau.premierPaiement' => 'Premier paiement d\'un bénéficiaire',
+			'comptable.direction.delegationPanneau.premierPaiementDetail' => 'Le premier paiement vers un bénéficiaire demande une seconde validation.',
+			'comptable.direction.delegationPanneau.coordonnees' => 'Coordonnées modifiées récemment',
+			'comptable.direction.delegationPanneau.coordonneesDetail' => 'Un paiement vers des coordonnées modifiées récemment demande une seconde validation.',
+			'comptable.direction.delegationPanneau.joursRecents' => 'Durée d\'une modification récente',
+			'comptable.direction.delegationPanneau.joursRecentsDetail' => 'Pendant ce nombre de jours après une modification, les coordonnées sont jugées récentes.',
+			'comptable.direction.delegationPanneau.toujoursTitre' => 'Toujours interdit au Comptable',
+			'comptable.direction.delegationPanneau.toujoursDetail' => 'Ces trois règles ne se règlent pas.',
+			'comptable.direction.delegationPanneau.autoPayout' => 'Se payer lui-même',
+			'comptable.direction.delegationPanneau.autoPayoutDetail' => 'Son propre paiement passe toujours par une autre personne.',
+			'comptable.direction.delegationPanneau.montantManuel' => 'Saisir un montant à la main au moment de payer',
+			'comptable.direction.delegationPanneau.montantManuelDetail' => 'Le montant d\'un paiement est toujours celui de l\'obligation.',
+			'comptable.direction.delegationPanneau.politiqueTarifaire' => 'Modifier les tarifs',
+			'comptable.direction.delegationPanneau.politiqueTarifaireDetail' => 'La politique tarifaire reste à la direction.',
 			'comptable.direction.titre' => 'Réserve et délégation',
 			'comptable.direction.sousTitre' => 'La politique de la Réserve stratégique et ce que le Comptable peut exécuter seul.',
 			'comptable.direction.reserve' => 'Politique de la Réserve stratégique',
