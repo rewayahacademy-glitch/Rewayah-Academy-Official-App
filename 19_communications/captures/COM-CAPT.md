@@ -371,3 +371,102 @@ capture : ils relèvent des tests de contre-preuve du tour 2, et non de cette re
 - Restants : R-12 (bouton centré et dépassement d'« Envoyer » en Focus), R-03 (D-FUS-3), R-08
   (D-FUS-1), R-16 (arbitrage), vocal ouvert par un lien, navigation RTL hors périmètre.
 - Nouveaux : 4 (ci-dessus).
+
+## Après COM-RC tour 3
+
+Date : 5 octobre 2026. Captures refaites sur `ui/communications-v1` @ `022cc31e` (COM-RC
+tour 3 : saisie du fil qui défile avec les messages, `_NomFichier` à début minimal, en-tête
+de la Communauté replié, ligne auteur compacte, `sensDuContenu`). Le test de capture n'a pas
+changé. **186 captures** dans `com-v1/`, qui remplacent celles de `e0b9f890` (29 fichiers
+diffèrent). **Aucun débordement de rendu** : `com_debordements.txt` n'est pas produit. Chaque
+PNG cité ci-dessous a été lu.
+
+Statut de preuve : `présent dans le code` et `testé localement` (rendu d'un état de
+démonstration). Rien n'est branché, rien n'est testé sur staging, rien n'est déployé.
+
+### Restes du tour 2, à l'image
+
+| Reste | Verdict | Capture qui le prouve |
+| :--- | :--- | :--- |
+| R-02 « Envoyer » coupé à 320×2, canal du Studio | corrigé : dernier message, champ « Message », « Envoyer » entier et lien vocal au premier écran | `com_studio_canal_320x2_clair.png` |
+| R-02 « Envoyer » coupé à 320×2, Messages admin | corrigé : barre de la coquille, fin du dernier message, champ, « Envoyer » entier et lien vocal | `com_admin_messages_320x2_clair.png` |
+| R-02 « Envoyer » sous la navigation, Messages tuteur à 320×2 | corrigé : « Envoyer » et le lien vocal finissent au-dessus de la barre de navigation | `com_messages_fil_tuteur_320x2_clair.png` |
+| R-02 même cas, fil enseignant à 320×2 | corrigé : « Envoyer » et le lien vocal au-dessus de la navigation | `com_messages_fil_contexte_enseignant_320x2_clair.png` |
+| R-01 Publication à 320×2 | **corrigé en partie** : la ligne auteur est compacte (nom sur deux lignes, « Enseignante, C… · Il y a 2 h » sur une ligne, environ 15 % de l'écran au lieu de 30 %) ; titre et quatre lignes du texte au premier écran. Le composer de réponse, placé après les réponses, s'atteint toujours en défilant | `com_communaute_publication_320x2_clair.png`, `com_communaute_publication_composer_320x2_clair.png` |
+| R-11 Nom de fichier à 320 et 320×2 | corrigé à 320 : « Devoir_…e_3.pdf », le début est gardé ; à 768, « Devoir_sema…e_3.pdf ». **Non vérifiable à 320×2** : la carte défile hors du premier écran, seul « Envoyé » reste visible ; le repli sur deux lignes n'est sur aucune capture | `com_messages_fil_tuteur_320_clair.png`, `com_messages_fil_tuteur_768_clair.png`, `com_messages_fil_tuteur_320x2_clair.png` |
+| Flux Communauté à 320×2 | **corrigé en partie** : le sous-titre de quatre lignes a disparu, mais la règle « Partage pédagogique uniquement » tient trois lignes et « Rechercher une publication » deux ; de la première publication, seul le nom de l'autrice (« Samira Belkacem ») est au premier écran, ni titre ni texte | `com_communaute_flux_320x2_clair.png` |
+| Texte français en RTL (« .élèves ») | corrigé : la réponse garde sa direction (« …vraiment les élèves. ») | `com_communaute_publication_composer_390_rtl_clair.png`, `com_studio_canal_390_rtl_clair.png` |
+| R-12 Focus à 1440 | **restant** : « Quitter le focus » centré ; « Envoyer » dépasse toujours le fil (bulles de 320 à 1007, bouton jusqu'à ~1120) | `com_studio_focus_1440_clair.png` |
+| R-12 « Mode focus » centré | **restant** (Center d'ActionPrincipale, décision du directeur) | `com_studio_canal_320_clair.png` |
+| R-03 Double bandeau hors ligne | **restant** (attend D-FUS-3) | `com_messages_hors_ligne_tuteur_390_clair.png`, `com_studio_hors_ligne_390_clair.png` |
+| R-08 Dates en français en arabe | **restant** (attend D-FUS-1) : « Dimanche 4 octobre، 11:40 » dans le canal, « dimanche 4 octobre 2026 » dans l'annonce | `com_studio_canal_390_rtl_clair.png`, `com_annonce_classe_tuteur_390_rtl_clair.png` |
+| R-16 Annonce avant la séance | **restant** (arbitrage du directeur) | `com_annonce_classe_tuteur_390_rtl_clair.png` |
+| Vocal ouvert par un lien | **restant** : « Enregistrer un message vocal » sous le champ | `com_studio_canal_320_clair.png` |
+| Navigation des coquilles en français en RTL | **restant**, hors périmètre COM (« Profil, Disponibilités, Classes, Aujourd'hui ») | `com_communaute_publication_390_rtl_clair.png` |
+
+### Défauts nouveaux
+
+1. **Ligne auteur mixte en RTL** : « منذ 2 ساعة » est coupé et réordonné (« 2 منذ · Enseignante,
+   Classe An-Nour », puis « ساعة » seul à la ligne). Le moment relatif n'est pas isolé en bidi
+   dans une ligne dont la fonction est en français
+   (`com_communaute_publication_390_rtl_clair.png`,
+   `com_communaute_publication_composer_390_rtl_clair.png`). Mineur, à voir avec R-08.
+2. **Titre et texte d'une publication, alignements différents en RTL** : « Idées pour la
+   mémorisation ? » est aligné à droite, le texte en dessous à gauche ; `sensDuContenu`
+   s'applique au texte, pas au titre (`com_communaute_publication_390_rtl_clair.png`). Mineur.
+3. **Bulle française alignée à droite en RTL** : « Merci à tous pour la semaine. » a la bonne
+   direction, mais elle est collée au bord droit de la bulle, alors que le texte d'Amina
+   commence à gauche (`com_studio_canal_390_rtl_clair.png`). Mineur.
+4. **Premier écran sans titre à 320×2** : dans le canal du Studio et les fils Messages, la tête
+   de page (« Le Studio », « Messages métier ») et l'en-tête du fil défilent hors de vue ;
+   l'écran s'ouvre sur la fin d'une bulle, sans nom de canal ni d'interlocuteur
+   (`com_studio_canal_320x2_clair.png`, `com_messages_fil_tuteur_320x2_clair.png`,
+   `com_messages_fil_contexte_enseignant_320x2_clair.png`). C'est la contrepartie voulue de
+   R-02, à arbitrer (garder au moins le nom du fil en tête fixe).
+
+### Bilan
+
+- Corrigés à l'image au tour 3 : R-02 (« Envoyer » entier au premier écran : Studio, admin,
+  tuteur, enseignant), R-11 à 320, texte français en RTL.
+- Corrigés en partie : R-01 à 320×2 (publication visible, composer en défilant), flux de la
+  Communauté à 320×2 (une publication commence au bas du premier écran).
+- Restants : R-12, R-03 (D-FUS-3), R-08 (D-FUS-1), R-16 (arbitrage), vocal ouvert par un lien,
+  navigation RTL hors périmètre ; R-11 à 320×2 non vérifiable à l'image.
+- Nouveaux : 4 (ci-dessus), tous mineurs ou à arbitrer.
+
+### État de chaque constat R-01 à R-28
+
+« Corrigé » renvoie à l'image de `022cc31e`. « Présent dans le code » renvoie au commit COM-RC
+qui le déclare, avec ses tests locaux de contre-preuve, sans autre preuve. « Non vérifiable à
+l'image » ne vaut pas `PASS`.
+
+| Constat | État | Preuve |
+| :--- | :--- | :--- |
+| R-01 Réponse hors garde | corrigé ; à 320×2, composer de réponse atteint en défilant | `com_communaute_reponse_bloquee_390_clair.png`, `com_communaute_publication_320x2_clair.png` |
+| R-02 Fil à 320×2 | corrigé (messages, champ et « Envoyer » au premier écran, quatre fils) ; titre hors de vue, nouveau n° 4 | `com_studio_canal_320x2_clair.png`, `com_admin_messages_320x2_clair.png`, `com_messages_fil_tuteur_320x2_clair.png` |
+| R-03 Double bandeau hors ligne | restant, attend D-FUS-3 | `com_messages_hors_ligne_tuteur_390_clair.png` |
+| R-04 Vocal, deux « Envoyer », vocal reçu | corrigé (tour 1) | `com_vocal_pre_ecoute_tuteur_390_clair.png`, `com_messages_fil_tuteur_768_clair.png` |
+| R-05 Studio sans identité | corrigé (tour 1) | `com_studio_canal_320_clair.png` (compte, cloche) |
+| R-06 Notification inerte | corrigé (tour 1) | `com_notifications_enseignant_390_clair.png` |
+| R-07 Lecture de fil et recherche en double | présent dans le code (lot C : adaptateur unique ; `ChampRecherche` dans `core/widgets`) ; non vérifiable à l'image | commit `87e7c6da` |
+| R-08 Dates en français en arabe | restant, attend D-FUS-1 | `com_studio_canal_390_rtl_clair.png` |
+| R-09 Mots coupés à 320×2 | corrigé (tours 1 et 2) | `com_admin_annonces_320x2_clair.png`, `com_notifications_tuteur_320x2_clair.png` |
+| R-10 Colonnes à 256 px, gouttière | corrigé (tours 1 et 2) | `com_messages_fil_tuteur_768_clair.png` |
+| R-11 Pièce jointe en texte, nom coupé | corrigé à 320, 768 et 1440 ; 320×2 non vérifiable à l'image | `com_messages_fil_tuteur_320_clair.png` |
+| R-12 Focus et actions centrées | restant (Center d'ActionPrincipale ; « Envoyer » dépasse le fil en Focus) | `com_studio_focus_1440_clair.png` |
+| R-13 Menu « … », double état vide | corrigé (tour 1) | `com_communaute_publication_390_clair.png` |
+| R-14 Majuscules en milieu de phrase | corrigé (tour 1) | `com_communaute_publication_390_clair.png` |
+| R-15 Titre et pastilles de l'administration | corrigé (tour 1) | `com_admin_annonces_1440_clair.png` |
+| R-16 Annonce avant la séance | restant, arbitrage du directeur | `com_annonce_classe_tuteur_390_clair.png` |
+| R-17 Garde en panne qui laisse passer | présent dans le code (lot B) ; non vérifiable à l'image | commit `402510ba` |
+| R-18 Signalement sans idempotence | présent dans le code (lot B ; contrat COM-BR encore à tenir côté serveur) ; non vérifiable à l'image | commit `402510ba` |
+| R-19 Cinquième règle | non traité (hors champ), à valider par le directeur | `regles_communaute.dart`, aucune capture |
+| R-20 Publieur ouvert par URL | présent dans le code (lot B) ; non vérifiable à l'image | commit `402510ba` |
+| R-21 Capacités mortes | présent dans le code (lot B : `moderer` et `parametresCanal` retirées, aucune occurrence dans `lib/`) | commit `402510ba` |
+| R-22 Brouillons par parcours d'arbre | présent dans le code (lot C : contrôleur et `CleBrouillon` ; tour 2 : `ComposerReponse` sans persistance propre) ; non vérifiable à l'image | commits `87e7c6da`, `0f8bf098` |
+| R-23 Orchestration recopiée | présent dans le code (lot C : `VueEtatCommunication.depuisErreur`) ; non vérifiable à l'image | commit `87e7c6da` |
+| R-24 États manquants | présent dans le code (lots B et C) ; non vérifiable à l'image | commits `402510ba`, `87e7c6da` |
+| R-25 Raccourci clavier d'envoi | présent dans le code (lot C : Ctrl/Cmd+Entrée) ; non vérifiable à l'image | commit `87e7c6da` |
+| R-26 Test « aucun rôle lu » incomplet | présent dans le code (lot C : trois chemins ajoutés) | commit `87e7c6da` |
+| R-27 Raccourci Communauté en impasse | non traité (hors champ), à arbitrer | aucune capture |
+| R-28 Chiffre de COM-CAPT | corrigé : « 14 défauts numérotés » et écarts reportés | section « Défauts transmis » ci-dessus |
