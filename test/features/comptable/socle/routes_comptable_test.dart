@@ -16,7 +16,6 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/bascule_montants.dart';
 import 'package:rewayah_academy/core/widgets/bouton_icone.dart';
-import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/sous_navigation_domaine.dart';
 import 'package:rewayah_academy/features/admin_finance/finance_page.dart';
@@ -181,6 +180,9 @@ void main() {
       ) async {
         final GoRouter routeur = await _comptable(tester, chemin);
         expect(_chemin(routeur), Uri.parse(chemin).path);
+        // La page livree par sa voie (CPT-FUS), plus la page « en
+        // preparation » de CPT-F. Sans source serveur, la page livree peut
+        // dire elle-meme « en preparation » (K-09) : on teste son type.
         expect(find.byType(page), findsOneWidget);
         final NavShell coquille = _coquille(tester);
         expect(coquille.destinations, hasLength(4));
@@ -189,12 +191,6 @@ void main() {
           coquille.masquerBarreBasse,
           chemin == Routes.comptableContractuelsNouvelle,
           reason: 'seule Nouvelle obligation efface la barre basse',
-        );
-        // « En preparation » : honnete, aucun chiffre.
-        expect(find.byType(EmptyState), findsOneWidget);
-        expect(
-          find.text(t.comptable.commun.enPreparationTitre),
-          findsOneWidget,
         );
         if (onglet != null) {
           final SousNavigationDomaine nav = tester

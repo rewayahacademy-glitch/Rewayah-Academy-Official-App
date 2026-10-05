@@ -83,12 +83,6 @@ class _ReserveEnPanne implements PortPolitiqueReserve {
 Finder _titre(String texte) =>
     find.descendant(of: find.byType(SectionHeader), matching: find.text(texte));
 
-/// A 320 px et texte x2, `CarteReserveStrategique` (voie CPT-TRES-1, pas ce
-/// lot) deborde de 152 px tant que sa correction (ui/cpt-tres @ 51bec879 :
-/// la pastille passe sous le titre) n'est pas fusionnee. Le cas a ete mesure
-/// vert avec cette carte ; il se reactive en retirant ce saut a la fusion.
-bool _attendCarteTres(double echelle) => echelle > 1;
-
 int _etats(NatureEtat nature) => find
     .byWidgetPredicate((Widget w) => w is EtatSysteme && w.nature == nature)
     .evaluate()
@@ -303,9 +297,7 @@ void main() {
         ('390 px, RTL', 1, const Size(390, 900), TextDirection.rtl),
         ('1440 px', 1, const Size(1440, 900), TextDirection.ltr),
       ]) {
-    testWidgets('mise en page : ${cas.$1}', skip: _attendCarteTres(cas.$2), (
-      WidgetTester tester,
-    ) async {
+    testWidgets('mise en page : ${cas.$1}', (WidgetTester tester) async {
       taille(tester, cas.$3);
       await tester.pumpWidget(
         hoteDirection(
