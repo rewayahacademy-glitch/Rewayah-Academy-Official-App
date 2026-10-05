@@ -8,6 +8,7 @@
 
 import 'package:flutter/foundation.dart';
 
+import '../../core/i18n/taille_fichier.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_groupe/group_home_vm.dart' show SlotAction;
 import '../../core/tc_groupe/group_summary_vm.dart';
@@ -56,7 +57,8 @@ class RessourceDemo {
   const RessourceDemo({
     required this.titre,
     required this.type,
-    required this.taille,
+    required this.nombre,
+    required this.unite,
   });
 
   /// Titre.
@@ -65,8 +67,15 @@ class RessourceDemo {
   /// Type lisible (PDF, audio...).
   final String type;
 
-  /// Taille lisible.
-  final String taille;
+  /// Le nombre de la taille, ecrit dans la langue (« 8,1 »).
+  final String nombre;
+
+  /// L'unite de la taille (« Mo »).
+  final String unite;
+
+  /// Taille lisible : nombre et unite lies par une espace insecable, au
+  /// point de formatage partage (COUPE-MOTS-3, jamais « 8,1 / Mo »).
+  String get taille => tailleFichier(nombre, unite);
 }
 
 /// Les situations de la demonstration de l'entree.
@@ -182,17 +191,20 @@ abstract final class DonneesClasseDemo {
     RessourceDemo(
       titre: 'Les bonnes manières, chapitre 1',
       type: 'PDF',
-      taille: '2,4 Mo',
+      nombre: '2,4',
+      unite: 'Mo',
     ),
     RessourceDemo(
       titre: 'Récitation, chapitre 1',
       type: 'Audio',
-      taille: '8,1 Mo',
+      nombre: '8,1',
+      unite: 'Mo',
     ),
     RessourceDemo(
       titre: 'Fiche des lettres liées',
       type: 'PDF',
-      taille: '640 Ko',
+      nombre: '640',
+      unite: 'Ko',
     ),
   ];
 

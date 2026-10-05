@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -602,8 +603,10 @@ class _Souscription extends StatelessWidget {
               child: Icon(AppIcons.info.resoudre()),
             ),
             Ecart.hSm,
+            // « automatiquement », « l'administration. » : jamais coupes a
+            // 320 px, texte x2, Interface guidee (COUPE-MOTS-3).
             Expanded(
-              child: Text(
+              child: TexteSansCoupure(
                 t.controleur.compteRendu.notice,
                 style: palette.inkMuted.applyTo(
                   textes.bodyMedium ?? const TextStyle(),
@@ -617,7 +620,7 @@ class _Souscription extends StatelessWidget {
           child: echec
               ? Padding(
                   padding: const EdgeInsets.only(top: AppSpacing.md),
-                  child: Text(
+                  child: TexteSansCoupure(
                     t.controleur.observation.echec,
                     style: palette.inkStrong.applyTo(
                       textes.bodyMedium ?? const TextStyle(),

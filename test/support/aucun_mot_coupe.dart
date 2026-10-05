@@ -132,6 +132,45 @@ void verifierDureesSurUneLigne(WidgetTester tester, Finder ou) {
   expect(r.coupees, isEmpty, reason: 'Une duree scindee sur deux lignes');
 }
 
+/// COUPE-MOTS-3 : une taille de fichier rendue (« 8,1 Mo », « 640 Ko »),
+/// espaces ordinaires ou insecables entre le nombre et l'unite.
+final RegExp motifTaille = RegExp(
+  r'\d+(?:[,.]\d+)?[ \u00A0\u202F]*(?:o|Ko|Mo|Go|To|KB|MB|GB|TB)(?![\p{L}\p{N}])',
+  unicode: true,
+);
+
+/// COUPE-MOTS-3 : les tailles de fichier des paragraphes trouves sous [ou].
+///
+/// [mesurees] : chaque taille rendue (« texte : taille »), pour prouver que
+/// la mesure porte sur quelque chose ; [coupees] : celles qui occupent plus
+/// d'une ligne (« 8,1 / Mo »). Le detecteur de mots ([motsCoupes]) ne les
+/// voit pas : la coupure tombe ENTRE deux mots.
+({List<String> mesurees, List<String> coupees}) mesurerTailles(
+  WidgetTester tester,
+  Finder ou,
+) {
+  final List<String> mesurees = <String>[];
+  final List<String> coupees = <String>[];
+  final Set<RenderParagraph> paragraphes = <RenderParagraph>{
+    ...tester.renderObjectList<RenderObject>(ou).expand(_paragraphesSous),
+  };
+  for (final RenderParagraph p in paragraphes) {
+    if (!p.hasSize || !p.attached) continue;
+    final String texte = p.text.toPlainText();
+    for (final RegExpMatch m in motifTaille.allMatches(texte)) {
+      final String fiche = '$texte : ${m.group(0)}';
+      mesurees.add(fiche);
+      final List<TextBox> boites = p.getBoxesForSelection(
+        TextSelection(baseOffset: m.start, extentOffset: m.end),
+      );
+      if (_lignesDistinctes(boites) > 1) {
+        coupees.add(fiche);
+      }
+    }
+  }
+  return (mesurees: mesurees, coupees: coupees);
+}
+
 /// Le nombre de lignes occupees par [boites] : une boite appartient a une
 /// ligne deja vue quand son milieu vertical tombe dans la hauteur d'une
 /// boite de cette ligne ; sinon elle ouvre une nouvelle ligne.
