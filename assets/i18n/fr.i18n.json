@@ -2774,6 +2774,7 @@
       "modifierLecteur": "Modifier la carte « {titre} »",
       "echeance": "Échéance : {date}",
       "copierLien": "Copier le lien de « {titre} »",
+      "copierLienCourt": "Copier le lien",
       "lienCopie": "Lien copié. Collez-le dans votre navigateur pour l'ouvrir.",
       "indisponibleTitre": "Les cartes de la classe ne sont pas encore ouvertes",
       "indisponiblePhrase": "Elles apparaîtront ici dès leur ouverture. Rien à faire de votre côté.",

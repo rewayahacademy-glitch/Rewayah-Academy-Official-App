@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -248,6 +249,9 @@ class _Contenu extends StatelessWidget {
   }
 }
 
+/// Le texte a l'affichage, ses traits d'union rendus insecables.
+String _insecable(String texte) => texte.replaceAll('-', '\u2011');
+
 /// Une carte de la Classe.
 ///
 /// [onModifier] non nul (l'enseignant, en ligne) : TOUTE la carte se presse
@@ -313,10 +317,13 @@ class VueCarteClasse extends StatelessWidget {
           ),
           Ecart.vSm,
         ],
-        Text(carte.titre, style: textes.titleSmall),
+        // Des mots de l'enseignant : un mot plus large que la carte se
+        // resserre au lieu d'etre coupe (lecon 8, K-61), et un mot compose
+        // (« Al-Fil ») garde son trait d'union insecable (U+2011, MA-4).
+        TexteSansCoupure(_insecable(carte.titre), style: textes.titleSmall),
         if (texte != null && texte.isNotEmpty) ...<Widget>[
           Ecart.vXs,
-          Text(texte, style: textes.bodyMedium),
+          TexteSansCoupure(_insecable(texte), style: textes.bodyMedium),
         ],
         if (echeance != null) ...<Widget>[
           Ecart.vSm,
@@ -330,10 +337,17 @@ class VueCarteClasse extends StatelessWidget {
           if (modifier != null)
             Text(lien, style: discret)
           else if (guidee)
-            ActionPrincipale(
-              libelle: t.classe.cartes.copierLien(titre: carte.titre),
-              niveau: NiveauAction.secondaire,
-              onPress: onCopierLien,
+            // Le titre est juste au-dessus : le bouton dit seulement son
+            // geste, le lecteur d'ecran lit le libelle entier.
+            Semantics(
+              label: t.classe.cartes.copierLien(titre: carte.titre),
+              excludeSemantics: true,
+              button: true,
+              child: ActionPrincipale(
+                libelle: t.classe.cartes.copierLienCourt,
+                niveau: NiveauAction.secondaire,
+                onPress: onCopierLien,
+              ),
             )
           else
             Align(

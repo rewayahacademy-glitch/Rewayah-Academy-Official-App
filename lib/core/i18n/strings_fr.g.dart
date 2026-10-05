@@ -7834,6 +7834,9 @@ class Traductions$classe$cartes$fr {
 	/// fr: 'Copier le lien de « {titre} »'
 	String copierLien({required Object titre}) => 'Copier le lien de « ${titre} »';
 
+	/// fr: 'Copier le lien'
+	String get copierLienCourt => 'Copier le lien';
+
 	/// fr: 'Lien copié. Collez-le dans votre navigateur pour l'ouvrir.'
 	String get lienCopie => 'Lien copié. Collez-le dans votre navigateur pour l\'ouvrir.';
 
@@ -18088,6 +18091,7 @@ extension on Traductions {
 			'classe.cartes.modifierLecteur' => ({required Object titre}) => 'Modifier la carte « ${titre} »',
 			'classe.cartes.echeance' => ({required Object date}) => 'Échéance : ${date}',
 			'classe.cartes.copierLien' => ({required Object titre}) => 'Copier le lien de « ${titre} »',
+			'classe.cartes.copierLienCourt' => 'Copier le lien',
 			'classe.cartes.lienCopie' => 'Lien copié. Collez-le dans votre navigateur pour l\'ouvrir.',
 			'classe.cartes.indisponibleTitre' => 'Les cartes de la classe ne sont pas encore ouvertes',
 			'classe.cartes.indisponiblePhrase' => 'Elles apparaîtront ici dès leur ouverture. Rien à faire de votre côté.',
@@ -18278,9 +18282,9 @@ extension on Traductions {
 			'classe.pageCatalogue.resultat.validationPhrase' => ({required Object prenom, required Object classe}) => 'L\'académie doit encore valider l\'inscription de ${prenom} dans ${classe}.',
 			'classe.pageCatalogue.resultat.listeAttenteTitre' => 'Inscription sur liste d\'attente',
 			'classe.pageCatalogue.resultat.listeAttentePhrase' => ({required Object prenom, required Object classe}) => '${prenom} est sur la liste d\'attente de ${classe}. Aucune place n\'est réservée pour l\'instant.',
-			'classe.pageCatalogue.resultat.refuseTitre' => 'Inscription non acceptée',
 			_ => null,
 		} ?? switch (path) {
+			'classe.pageCatalogue.resultat.refuseTitre' => 'Inscription non acceptée',
 			'classe.pageCatalogue.resultat.refusePhrase' => ({required Object prenom}) => 'Aucune place n\'a été réservée pour ${prenom}. Vous pouvez choisir une autre classe.',
 			'classe.pageCatalogue.resultat.autresClasses' => 'Voir les autres classes',
 			'classe.pageCatalogue.resultat.retourAccueil' => 'Retour à l\'accueil',
@@ -18792,9 +18796,9 @@ extension on Traductions {
 			'controleur.compteRendu.ajouterObservationAide' => 'Quand vous voulez noter ce que vous avez vu · quelques questions courtes, une à la fois',
 			'controleur.compteRendu.pointImportant' => 'Signaler un point important',
 			'controleur.compteRendu.pointImportantAide' => 'Quand ce que vous avez vu demande l\'attention de l\'administration · votre texte sera demandé',
-			'controleur.compteRendu.envoyer' => 'Envoyer le compte rendu',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.compteRendu.envoyer' => 'Envoyer le compte rendu',
 			'controleur.compteRendu.plusTard' => 'Plus tard',
 			'controleur.compteRendu.notice' => 'Ce compte rendu est transmis automatiquement à l\'administration.',
 			'controleur.compteRendu.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
@@ -19306,9 +19310,9 @@ extension on Traductions {
 			'tc.observation.resultat.continuePour' => ({required Object prenom}) => 'La séance continue pour ${prenom}.',
 			'tc.observation.resultat.continueSansPrenom' => 'La séance continue.',
 			'tc.observation.resultat.resteUne' => ({required Object duree}) => 'Il vous reste une visite de ${duree}. Revenez plus tard pour l\'écouter.',
-			'tc.observation.resultat.restent' => ({required Object n, required Object duree}) => 'Il vous reste ${n} visites de ${duree}. Revenez plus tard pour l\'écouter.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.resultat.restent' => ({required Object n, required Object duree}) => 'Il vous reste ${n} visites de ${duree}. Revenez plus tard pour l\'écouter.',
 			'tc.observation.resultat.resteUneSansDuree' => 'Il vous reste une visite. Revenez plus tard pour l\'écouter.',
 			'tc.observation.resultat.restentSansDuree' => ({required Object n}) => 'Il vous reste ${n} visites. Revenez plus tard pour l\'écouter.',
 			'tc.observation.resultat.aucune' => 'Vous avez utilisé vos visites pour cette séance. Vous pourrez observer la prochaine séance.',
