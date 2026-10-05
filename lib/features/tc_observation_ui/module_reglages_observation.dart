@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_observation/guardian_observation_policy.dart';
 import '../../core/tc_observation/libelles_observation.dart';
 import '../../core/theme/app_palette.dart';
@@ -139,16 +140,20 @@ class _ModuleReglagesObservationEtat extends State<ModuleReglagesObservation> {
               SettingRow(
                 title: t.tc.observation.reglages.tempsTotal,
                 description: t.tc.observation.reglages.valeurHeritee(
-                  valeur: t.tc.observation.reglages.uniteSecondes(
-                    n: widget
-                        .politiqueAcademie
-                        .maxTotalObservationTime
-                        .inSeconds,
+                  valeur: LibellesGroupe.insecable(
+                    t.tc.observation.reglages.uniteSecondes(
+                      n: widget
+                          .politiqueAcademie
+                          .maxTotalObservationTime
+                          .inSeconds,
+                    ),
                   ),
                 ),
                 icon: AppIcons.pause,
-                value: t.tc.observation.reglages.uniteSecondes(
-                  n: _etat.tempsTotal.inSeconds,
+                value: LibellesGroupe.valeurSeule(
+                  t.tc.observation.reglages.uniteSecondes(
+                    n: _etat.tempsTotal.inSeconds,
+                  ),
                 ),
                 largeurControle: _Pas.largeur(context),
                 controle: _Pas(
@@ -165,17 +170,21 @@ class _ModuleReglagesObservationEtat extends State<ModuleReglagesObservation> {
               SettingRow(
                 title: t.tc.observation.reglages.plafondVisite,
                 description: t.tc.observation.reglages.valeurHeritee(
-                  valeur: t.tc.observation.reglages.uniteSecondes(
-                    n: widget.politiqueAcademie
-                        .plafondDeVisite(
-                          widget.politiqueAcademie.maxTotalObservationTime,
-                        )
-                        .inSeconds,
+                  valeur: LibellesGroupe.insecable(
+                    t.tc.observation.reglages.uniteSecondes(
+                      n: widget.politiqueAcademie
+                          .plafondDeVisite(
+                            widget.politiqueAcademie.maxTotalObservationTime,
+                          )
+                          .inSeconds,
+                    ),
                   ),
                 ),
                 icon: AppIcons.creneaux,
-                value: t.tc.observation.reglages.uniteSecondes(
-                  n: _etat.plafondEffectif.inSeconds,
+                value: LibellesGroupe.valeurSeule(
+                  t.tc.observation.reglages.uniteSecondes(
+                    n: _etat.plafondEffectif.inSeconds,
+                  ),
                 ),
                 largeurControle: _Pas.largeur(context),
                 controle: _Pas(

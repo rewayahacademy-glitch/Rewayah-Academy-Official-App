@@ -8,6 +8,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/bento_tile.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
@@ -175,9 +176,11 @@ void main() {
       );
       expect(
         find.text(
-          t.admin.demandes.reclameRegle(
-            regle: t.admin.demandes.regleDuree,
-            valeur: '30',
+          LibellesGroupe.insecable(
+            t.admin.demandes.reclameRegle(
+              regle: t.admin.demandes.regleDuree,
+              valeur: '30',
+            ),
           ),
         ),
         findsOneWidget,
@@ -304,7 +307,9 @@ void main() {
         of: tuileDuree,
         matching: find.text(
           t.admin.demandes.plateforme(
-            valeur: t.admin.demandes.minutes(valeur: '60'),
+            valeur: LibellesGroupe.insecable(
+              t.admin.demandes.minutes(valeur: '60'),
+            ),
           ),
         ),
       );
@@ -312,7 +317,9 @@ void main() {
         of: tuileDuree,
         matching: find.text(
           t.admin.demandes.effective(
-            valeur: t.admin.demandes.minutes(valeur: '45'),
+            valeur: LibellesGroupe.insecable(
+              t.admin.demandes.minutes(valeur: '45'),
+            ),
           ),
         ),
       );
@@ -405,7 +412,9 @@ void main() {
       expect(
         find.text(
           t.admin.demandes.historiqueLigne(
-            valeur: t.admin.demandes.minutes(valeur: '30'),
+            valeur: LibellesGroupe.insecable(
+              t.admin.demandes.minutes(valeur: '30'),
+            ),
             debut: '01/07/2026',
             fin: '20/08/2026',
           ),
@@ -458,7 +467,11 @@ void main() {
       // refuse, et l'ecran ne fait pas semblant.
       expect(tester.widget<ActionPrincipale>(poser).onPress, isNull);
 
-      await tester.tap(find.text(t.admin.demandes.minutes(valeur: '45')));
+      await tester.tap(
+        find.text(
+          LibellesGroupe.insecable(t.admin.demandes.minutes(valeur: '45')),
+        ),
+      );
       await tester.enterText(
         find.byType(TextField),
         'Trajet entre deux cours.',

@@ -9,6 +9,7 @@ import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
@@ -226,11 +227,14 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 Ecart.vXxl,
-                if (_emis != null) _CarteJetonEmis(
-                  emis: _emis!,
-                  onCopier: _copier,
-                  onTermine: () => setState(() => _emis = null),
-                ) else _formulaire(context),
+                if (_emis != null)
+                  _CarteJetonEmis(
+                    emis: _emis!,
+                    onCopier: _copier,
+                    onTermine: () => setState(() => _emis = null),
+                  )
+                else
+                  _formulaire(context),
                 Ecart.vSection,
                 SectionHeader(
                   titre: t.admin.agents.titre,
@@ -294,7 +298,9 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
             children: <Widget>[
               for (final int h in _durees)
                 FilterPill(
-                  libelle: t.admin.agents.dureeHeure(nombre: h),
+                  libelle: LibellesGroupe.valeurSeule(
+                    t.admin.agents.dureeHeure(nombre: h),
+                  ),
                   retenue: _duree == h,
                   onPress: () => setState(() => _duree = h),
                 ),
@@ -403,9 +409,8 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
         ColonneDonnees<JetonAgent>(
           titre: t.admin.agents.colonneUsage,
           tabulaire: true,
-          texte: (JetonAgent j) => j.jamaisServi
-              ? t.admin.agents.jamaisServi
-              : '${j.remises}',
+          texte: (JetonAgent j) =>
+              j.jamaisServi ? t.admin.agents.jamaisServi : '${j.remises}',
         ),
         ColonneDonnees<JetonAgent>(
           titre: t.admin.agents.colonneEtat,

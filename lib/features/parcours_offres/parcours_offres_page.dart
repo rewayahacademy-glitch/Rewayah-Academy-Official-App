@@ -9,6 +9,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/offres/offre_horaire.dart';
 import '../../core/offres/service_offres.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -90,9 +91,9 @@ class _ParcoursOffresPageState extends ConsumerState<ParcoursOffresPage> {
   String get _fuseauVu =>
       _fuseau ??
       fuseauSuggere(
-            fuseauConnu: _apprenant?.fuseauFoyer,
-            decalageAppareil: DateTime.now().timeZoneOffset,
-          )?.iana ??
+        fuseauConnu: _apprenant?.fuseauFoyer,
+        decalageAppareil: DateTime.now().timeZoneOffset,
+      )?.iana ??
       'Europe/Paris';
 
   ParcoursApprenant? get _apprenant => ref
@@ -787,14 +788,18 @@ class _CarteOffre extends ConsumerWidget {
     final int seances = regles.value?.seancesParSemaine ?? 0;
 
     final String recurrence = offre.pauseMinutes > 0
-        ? t.parcours.offreRecurrencePause(
-            seances: seances,
-            duree: offre.dureeMinutes,
-            pause: offre.pauseMinutes,
+        ? LibellesGroupe.insecable(
+            t.parcours.offreRecurrencePause(
+              seances: seances,
+              duree: offre.dureeMinutes,
+              pause: offre.pauseMinutes,
+            ),
           )
-        : t.parcours.offreRecurrence(
-            seances: seances,
-            duree: offre.dureeMinutes,
+        : LibellesGroupe.insecable(
+            t.parcours.offreRecurrence(
+              seances: seances,
+              duree: offre.dureeMinutes,
+            ),
           );
 
     return ScheduleOption(

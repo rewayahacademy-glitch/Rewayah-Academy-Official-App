@@ -8,6 +8,7 @@ import '../../core/dossier/service_validation.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/carte_lignes.dart';
@@ -297,5 +298,7 @@ String _anciennete(DateTime maintenant, DateTime depuis) =>
     switch (maintenant.difference(depuis).inDays) {
       <= 0 => t.admin.tableau.attenteAujourdhui,
       1 => t.admin.tableau.attenteUnJour,
-      final int jours => t.admin.tableau.attenteJours(jours: '$jours'),
+      final int jours => LibellesGroupe.insecable(
+        t.admin.tableau.attenteJours(jours: '$jours'),
+      ),
     };

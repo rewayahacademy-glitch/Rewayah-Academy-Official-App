@@ -1,4 +1,5 @@
 import '../i18n/strings.g.dart';
+import '../tc_groupe/libelles_tc_groupe.dart';
 import 'disponibilite_observation.dart';
 import 'guardian_session_visit.dart';
 import 'port_politique_observation.dart';
@@ -36,12 +37,16 @@ String dureeVisiteLisible(Duration duree) {
   final int secondes = total % 60;
   final d = t.tc.observation.duree;
   if (minutes == 0) {
-    return secondes <= 1 ? d.secondeUne(n: secondes) : d.secondes(n: secondes);
+    return secondes <= 1
+        ? LibellesGroupe.insecable(d.secondeUne(n: secondes))
+        : LibellesGroupe.insecable(d.secondes(n: secondes));
   }
   if (secondes == 0) {
-    return minutes == 1 ? d.minuteUne(n: minutes) : d.minutes(n: minutes);
+    return minutes == 1
+        ? LibellesGroupe.insecable(d.minuteUne(n: minutes))
+        : LibellesGroupe.insecable(d.minutes(n: minutes));
   }
-  return d.minutesSecondes(m: minutes, s: secondes);
+  return LibellesGroupe.insecable(d.minutesSecondes(m: minutes, s: secondes));
 }
 
 /// La regle d'observation, telle que la politique effective la donne :

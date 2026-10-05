@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/grille_bento.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
@@ -232,8 +233,8 @@ void main() {
       ];
       // Du plus ancien au plus recent ; le quatrieme reste dans la file.
       expect(lus, <String>[
-        'Ancien · ${t.admin.tableau.attenteJours(jours: '7')}',
-        'Milieu · ${t.admin.tableau.attenteJours(jours: '3')}',
+        'Ancien · ${LibellesGroupe.insecable(t.admin.tableau.attenteJours(jours: '7'))}',
+        'Milieu · ${LibellesGroupe.insecable(t.admin.tableau.attenteJours(jours: '3'))}',
         'Hier · ${t.admin.tableau.attenteUnJour}',
       ]);
       expect(find.textContaining('Recent'), findsNothing);

@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/reglages_enfant/reglages_enfant_page.dart';
@@ -278,12 +279,20 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-        find.text(t.tuteur.reglages.demandeActuelle(minutes: '45')),
+        find.text(
+          LibellesGroupe.insecable(
+            t.tuteur.reglages.demandeActuelle(minutes: '45'),
+          ),
+        ),
         findsOneWidget,
       );
 
       await tester.tap(
-        find.text(t.tuteur.reglages.demandeMinutes(minutes: '30')),
+        find.text(
+          LibellesGroupe.valeurSeule(
+            t.tuteur.reglages.demandeMinutes(minutes: '30'),
+          ),
+        ),
       );
       await tester.enterText(find.byType(TextField).first, 'Elle decroche');
       await tester.pumpAndSettle();

@@ -212,7 +212,7 @@ void main() {
           find.text(regleVisitesObservation(2, const Duration(seconds: 120))),
           findsOneWidget,
         );
-        expect(find.text('2 visites de 2 minutes'), findsOneWidget);
+        expect(find.text('2 visites de 2\u00A0minutes'), findsOneWidget);
         final e = t.tc.observation.explication;
         for (final String texte in <String>[
           e.regleDetail,
@@ -839,8 +839,11 @@ void main() {
 
       await _presser(tester, find.text(_commentCaMarche));
 
-      expect(find.text('3 visites de 1 min 30 s'), findsOneWidget);
-      expect(find.text('2 visites de 2 minutes'), findsNothing);
+      expect(
+        find.text('3 visites de 1\u00A0min\u00A030\u00A0s'),
+        findsOneWidget,
+      );
+      expect(find.text('2 visites de 2\u00A0minutes'), findsNothing);
     });
 
     testWidgets('sans regle lisible, aucune explication chiffree', (
