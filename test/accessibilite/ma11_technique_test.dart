@@ -226,24 +226,27 @@ void main() {
   });
 
   group('MA-11 Coran : reprise (revue MA-7)', () {
-    testWidgets('pendant la recherche, message et action non cliquable ; '
-        'puis la reprise arrive', (WidgetTester tester) async {
+    testWidgets('pendant la recherche, « Chargement » et aucune action '
+        '(jamais grisee, K-54) ; puis la reprise arrive', (
+      WidgetTester tester,
+    ) async {
       final _NavigationPilotee port = _NavigationPilotee();
       await tester.pumpWidget(_hote(_coran(port)));
       await tester.pump();
-      expect(find.text(t.accessibilite.coran.repriseRecherche), findsOneWidget);
-      expect(_principale(tester).onPress, isNull);
+      // MA-DEC-1 (A8 = a) : le libelle commun existant, rien d'ajoute.
+      expect(find.text(t.commun.chargement), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('coran-ma-principale')),
+        findsNothing,
+      );
 
       port.reprise.complete(
         const PositionLecture(page: 12, sourate: 2, verset: 77),
       );
       await stabiliser(tester);
-      expect(
-        find.text(t.accessibilite.coran.reprendreDetail(page: '12')),
-        findsOneWidget,
-      );
+      expect(find.text('Tu en étais page 12'), findsOneWidget);
       expect(_principale(tester).onPress, isNotNull);
-      expect(find.text(t.accessibilite.coran.reprendre), findsOneWidget);
+      expect(find.text('Reprendre ta lecture'), findsOneWidget);
     });
 
     for (final bool tu in <bool>[true, false]) {
@@ -263,7 +266,7 @@ void main() {
           findsOneWidget,
         );
         expect(_principale(tester).onPress, isNotNull);
-        expect(find.text(t.accessibilite.coran.ouvrir), findsOneWidget);
+        expect(find.text(t.accessibilite.accueil.lireCoran), findsOneWidget);
       });
     }
 

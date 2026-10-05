@@ -224,6 +224,9 @@ class LectureGroupe {
       // pastille : « Photo a fournir » est une information interne.
       repliInitiales: espace.estCoteFamille,
       enPile: enPile,
+      // MA-DEC-1 (decision A5 = a du 27/09) : en Mode Accessibilite, l'eleve
+      // voit sa progression, pas le nombre de places (il sert la vente).
+      afficherCapacite: !(enPile && espace.role == RoleEspaceGroupe.eleve),
     ),
     Ecart.vXl,
     carte(onRejoindre: onRejoindre, tutoiement: tutoiement),
@@ -527,7 +530,12 @@ class IdentiteGroupe extends StatelessWidget {
     this.ligneDiscrete,
     this.typePublic,
     this.enPile = false,
+    this.afficherCapacite = true,
   });
+
+  /// Faux : la pastille « N eleves sur M places » n'est pas montree
+  /// (eleve en Mode Accessibilite, decision A5 = a).
+  final bool afficherCapacite;
 
   /// Vrai en Mode Accessibilite (MA-4) : la photo au-dessus, le nom en
   /// dessous sur toute la largeur, qui ne passe a la ligne qu'entre les mots.
@@ -603,17 +611,21 @@ class IdentiteGroupe extends StatelessWidget {
       coursEtNiveau,
       style: palette.inkMuted.applyTo(textes.bodySmall ?? const TextStyle()),
     );
+    final bool aPastilles =
+        afficherCapacite ||
+        (!repliInitiales && groupe.enseignant.photoManquante);
     final Widget pastilles = Wrap(
       spacing: AppSpacing.sm,
       runSpacing: AppSpacing.sm,
       children: <Widget>[
-        StatusPill(
-          libelle: LibellesGroupe.capacitePhrase(
-            membres: groupe.nombreMembres,
-            seuil: groupe.seuilMax,
+        if (afficherCapacite)
+          StatusPill(
+            libelle: LibellesGroupe.capacitePhrase(
+              membres: groupe.nombreMembres,
+              seuil: groupe.seuilMax,
+            ),
+            ton: groupe.complet ? TonEtat.avertissement : TonEtat.neutre,
           ),
-          ton: groupe.complet ? TonEtat.avertissement : TonEtat.neutre,
-        ),
         if (!repliInitiales && groupe.enseignant.photoManquante)
           StatusPill(
             libelle: LibellesGroupe.photoManquante,
@@ -654,8 +666,7 @@ class IdentiteGroupe extends StatelessWidget {
               Ecart.vMd,
               titre,
               if (coursEtNiveau.isNotEmpty) ...<Widget>[Ecart.vXs, cours],
-              Ecart.vSm,
-              pastilles,
+              if (aPastilles) ...<Widget>[Ecart.vSm, pastilles],
             ],
           )
         : Column(
@@ -675,8 +686,7 @@ class IdentiteGroupe extends StatelessWidget {
                 styleNom: textes.titleSmall,
                 styleRole: styleRole,
               ),
-              Ecart.vSm,
-              pastilles,
+              if (aPastilles) ...<Widget>[Ecart.vSm, pastilles],
             ],
           );
     return MergeSemantics(child: texte);

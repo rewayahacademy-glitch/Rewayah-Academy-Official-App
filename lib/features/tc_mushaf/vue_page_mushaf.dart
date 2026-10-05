@@ -22,6 +22,7 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/rosace_verset.dart';
+import 'textes_lecteur_coran.dart';
 
 /// Le rendu « page du mushaf ».
 ///
@@ -103,15 +104,13 @@ class _FeuilleteurEtat extends ConsumerState<_Feuilleteur> {
     super.dispose();
   }
 
-  int _feuilletDe(int page) =>
-      widget.doublePage ? (page - 1) ~/ 2 : page - 1;
+  int _feuilletDe(int page) => widget.doublePage ? (page - 1) ~/ 2 : page - 1;
 
   int _pageDe(int feuillet) =>
       widget.doublePage ? feuillet * 2 + 1 : feuillet + 1;
 
-  int get _nombreFeuillets => widget.doublePage
-      ? (pagesMushafMedine / 2).ceil()
-      : pagesMushafMedine;
+  int get _nombreFeuillets =>
+      widget.doublePage ? (pagesMushafMedine / 2).ceil() : pagesMushafMedine;
 
   @override
   Widget build(BuildContext context) {
@@ -140,10 +139,7 @@ class _FeuilleteurEtat extends ConsumerState<_Feuilleteur> {
         itemCount: _nombreFeuillets,
         onPageChanged: (int feuillet) => ref
             .read(lectureCoranProvider.notifier)
-            .allerA(
-              _pageDe(feuillet),
-              origine: OrigineNavigation.personnelle,
-            ),
+            .allerA(_pageDe(feuillet), origine: OrigineNavigation.personnelle),
         itemBuilder: (BuildContext context, int feuillet) => OuvertureMushaf(
           pageDeDroite: _pageDe(feuillet),
           doublePage: widget.doublePage,
@@ -200,10 +196,7 @@ class OuvertureMushaf extends ConsumerWidget {
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {
-        final double utile = math.max(
-          0,
-          contraintes.maxWidth - gouttiere * 2,
-        );
+        final double utile = math.max(0, contraintes.maxWidth - gouttiere * 2);
         final bool deuxCadres = planche?.estDouble ?? numeroGauche != null;
         final double largeurCadre = deuxCadres
             ? math.max(0, (utile - AppSpacing.lg) / 2)
@@ -236,10 +229,7 @@ class OuvertureMushaf extends ConsumerWidget {
                       const SizedBox(width: AppSpacing.lg),
                     SizedBox(
                       width: largeurCadre,
-                      child: CadrePageMushaf(
-                        vue: page,
-                        largeur: largeurCadre,
-                      ),
+                      child: CadrePageMushaf(vue: page, largeur: largeurCadre),
                     ),
                   ],
               ],
@@ -349,6 +339,8 @@ class _ContenuDePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // MA-TUTOIEMENT-1 : l'enrobage peut fournir ses phrases (vouvoiement).
+    final TextesLecteurCoran? enrobage = TextesLecteurCoran.de(context);
     return switch (vue.etat) {
       EtatLecteur.chargement => const Center(
         child: CircularProgressIndicator.adaptive(),
@@ -356,7 +348,8 @@ class _ContenuDePage extends ConsumerWidget {
       EtatLecteur.indisponible => Center(
         child: EmptyState(
           message: t.eleve.coran.indisponible,
-          invitation: t.eleve.coran.indisponibleDetail,
+          invitation:
+              enrobage?.indisponibleDetail ?? t.eleve.coran.indisponibleDetail,
           icone: AppIcons.horsLigne,
           libelleAction: t.eleve.coran.reessayer,
           onAction: () => ref.invalidate(pageCorpusProvider(vue.numero)),
@@ -365,7 +358,7 @@ class _ContenuDePage extends ConsumerWidget {
       EtatLecteur.corpusAbsent => Center(
         child: EmptyState(
           message: t.eleve.coran.absent,
-          invitation: t.eleve.coran.absentDetail,
+          invitation: enrobage?.absentDetail ?? t.eleve.coran.absentDetail,
           icone: AppIcons.rienAAfficher,
         ),
       ),
@@ -461,7 +454,8 @@ class LigneComposee extends StatelessWidget {
     return Text.rich(
       TextSpan(
         children: <InlineSpan>[
-          for (final SegmentVersetLigne segment in ligne.segments) ...<InlineSpan>[
+          for (final SegmentVersetLigne segment
+              in ligne.segments) ...<InlineSpan>[
             TextSpan(text: segment.texte),
             if (segment.termineLAyah) ...<InlineSpan>[
               const TextSpan(text: ' '),
@@ -601,7 +595,8 @@ class _PiedDePage extends StatelessWidget {
               page: '${vue.numero}',
               total: '${vue.nombrePages}',
             ),
-            if (vue.juzNumero != null) t.eleve.coran.juz(juz: '${vue.juzNumero}'),
+            if (vue.juzNumero != null)
+              t.eleve.coran.juz(juz: '${vue.juzNumero}'),
             vue.cote == CoteDePage.droite
                 ? t.tc.coran.mushaf.coteDroite
                 : t.tc.coran.mushaf.coteGauche,
@@ -637,9 +632,7 @@ class NoticeComposition extends StatelessWidget {
       return Text(
         t.tc.coran.fidelite.fidele,
         textAlign: TextAlign.center,
-        style: palette.inkFaint.applyTo(
-          textes.labelSmall ?? const TextStyle(),
-        ),
+        style: palette.inkFaint.applyTo(textes.labelSmall ?? const TextStyle()),
       );
     }
 

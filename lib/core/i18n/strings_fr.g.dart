@@ -3289,8 +3289,8 @@ class Traductions$accessibilite$accueil$fr {
 
 	// Translations
 
-	/// fr: 'As-salāmu ’alaykum, {prenom}.'
-	String salutation({required Object prenom}) => 'As-salāmu ’alaykum, ${prenom}.';
+	/// fr: 'Assalamou alaykoum, {prenom}.'
+	String salutation({required Object prenom}) => 'Assalamou alaykoum, ${prenom}.';
 
 	/// fr: 'Prochaine séance'
 	String get prochaineSeance => 'Prochaine séance';
@@ -3337,38 +3337,17 @@ class Traductions$accessibilite$coran$fr {
 
 	// Translations
 
-	/// fr: 'Ouvrir le Coran'
-	String get ouvrir => 'Ouvrir le Coran';
+	/// fr: 'Reprendre votre lecture'
+	String get reprendreVous => 'Reprendre votre lecture';
 
-	/// fr: 'Reprendre à ta dernière page'
-	String get reprendre => 'Reprendre à ta dernière page';
-
-	/// fr: 'Reprendre à votre dernière page'
-	String get reprendreVous => 'Reprendre à votre dernière page';
-
-	/// fr: 'Tu en étais page {page}.'
-	String reprendreDetail({required Object page}) => 'Tu en étais page ${page}.';
-
-	/// fr: 'Vous en étiez page {page}.'
-	String reprendreDetailVous({required Object page}) => 'Vous en étiez page ${page}.';
-
-	/// fr: 'Recherche de ta dernière page…'
-	String get repriseRecherche => 'Recherche de ta dernière page…';
-
-	/// fr: 'Recherche de votre dernière page…'
-	String get repriseRechercheVous => 'Recherche de votre dernière page…';
+	/// fr: 'Vous en étiez page {page}'
+	String reprendreDetailVous({required Object page}) => 'Vous en étiez page ${page}';
 
 	/// fr: 'Ta dernière page n'a pas pu être retrouvée, sans doute à cause de la connexion. Ouvre le Coran et choisis ta page dans le lecteur. Tes réglages de lecture restent enregistrés.'
 	String get repriseErreur => 'Ta dernière page n\'a pas pu être retrouvée, sans doute à cause de la connexion. Ouvre le Coran et choisis ta page dans le lecteur. Tes réglages de lecture restent enregistrés.';
 
 	/// fr: 'Votre dernière page n'a pas pu être retrouvée, sans doute à cause de la connexion. Ouvrez le Coran et choisissez votre page dans le lecteur. Vos réglages de lecture restent enregistrés.'
 	String get repriseErreurVous => 'Votre dernière page n\'a pas pu être retrouvée, sans doute à cause de la connexion. Ouvrez le Coran et choisissez votre page dans le lecteur. Vos réglages de lecture restent enregistrés.';
-
-	/// fr: 'Le Coran s'ouvre en lecture agrandie, verset par verset.'
-	String get lectureGrande => 'Le Coran s\'ouvre en lecture agrandie, verset par verset.';
-
-	/// fr: 'Retour à l'entrée du Coran'
-	String get retour => 'Retour à l\'entrée du Coran';
 
 	/// fr: 'Le texte du Coran n'est pas chargé dans la démonstration'
 	String get demoSansTexte => 'Le texte du Coran n\'est pas chargé dans la démonstration';
@@ -3378,6 +3357,12 @@ class Traductions$accessibilite$coran$fr {
 
 	/// fr: 'Ce n'est pas une panne : la démonstration ne contient pas le texte. Vous n'avez rien à faire. Dans l'application, le Coran s'ouvre ici, à votre page, et vos réglages de lecture restent enregistrés.'
 	String get demoSansTexteDetailVous => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte. Vous n\'avez rien à faire. Dans l\'application, le Coran s\'ouvre ici, à votre page, et vos réglages de lecture restent enregistrés.';
+
+	/// fr: 'Dès que le réseau revient, votre page se rouvre ici.'
+	String get indisponibleDetailVous => 'Dès que le réseau revient, votre page se rouvre ici.';
+
+	/// fr: 'Le texte n'a pas été installé sur cette page. Signalez-le : ce n'est pas vous.'
+	String get absentDetailVous => 'Le texte n\'a pas été installé sur cette page. Signalez-le : ce n\'est pas vous.';
 }
 
 // Path: accessibilite.maClasse
@@ -3444,6 +3429,39 @@ class Traductions$accessibilite$apres$fr {
 
 	/// fr: 'Le support reste dans votre Classe.'
 	String get revoirSupportDetailVous => 'Le support reste dans votre Classe.';
+
+	/// fr: 'Tu as quitté la séance.'
+	String get quitteTitre => 'Tu as quitté la séance.';
+
+	/// fr: 'Tu pourras revenir tant qu'elle reste ouverte.'
+	String get quittePhrase => 'Tu pourras revenir tant qu\'elle reste ouverte.';
+
+	/// fr: '{date} à {heure}'
+	String prochaineDateHeure({required Object date, required Object heure}) => '${date} à ${heure}';
+
+	/// fr: 'Ta prochaine séance n'est pas encore programmée. Elle s'affichera ici et dans ta Classe.'
+	String get vide => 'Ta prochaine séance n\'est pas encore programmée. Elle s\'affichera ici et dans ta Classe.';
+
+	/// fr: 'Votre prochaine séance n'est pas encore programmée. Elle s'affichera ici et dans votre Classe.'
+	String get videVous => 'Votre prochaine séance n\'est pas encore programmée. Elle s\'affichera ici et dans votre Classe.';
+
+	/// fr: 'Ta prochaine séance et ton travail n'ont pas pu être chargés, sans doute à cause de la connexion. Réessaie, ou retrouve-les dans ta Classe.'
+	String get erreur => 'Ta prochaine séance et ton travail n\'ont pas pu être chargés, sans doute à cause de la connexion. Réessaie, ou retrouve-les dans ta Classe.';
+
+	/// fr: 'Votre prochaine séance et votre travail n'ont pas pu être chargés, sans doute à cause de la connexion. Réessayez, ou retrouvez-les dans votre Classe.'
+	String get erreurVous => 'Votre prochaine séance et votre travail n\'ont pas pu être chargés, sans doute à cause de la connexion. Réessayez, ou retrouvez-les dans votre Classe.';
+
+	/// fr: 'Tu es hors ligne : ta prochaine séance et ton travail s'afficheront quand la connexion reviendra.'
+	String get horsLigne => 'Tu es hors ligne : ta prochaine séance et ton travail s\'afficheront quand la connexion reviendra.';
+
+	/// fr: 'Vous êtes hors ligne : votre prochaine séance et votre travail s'afficheront quand la connexion reviendra.'
+	String get horsLigneVous => 'Vous êtes hors ligne : votre prochaine séance et votre travail s\'afficheront quand la connexion reviendra.';
+
+	/// fr: 'Ta prochaine séance s'affichera dans ta Classe.'
+	String get prochaineInconnue => 'Ta prochaine séance s\'affichera dans ta Classe.';
+
+	/// fr: 'Votre prochaine séance s'affichera dans votre Classe.'
+	String get prochaineInconnueVous => 'Votre prochaine séance s\'affichera dans votre Classe.';
 }
 
 // Path: accessibilite.monEspace
@@ -16224,7 +16242,7 @@ extension on Traductions {
 			'accessibilite.demo.etatFenetre' => 'Juste avant la séance, l\'entrée est ouverte',
 			'accessibilite.demo.etatPendant' => 'Pendant la séance',
 			'accessibilite.demo.etatApres' => 'Après la séance',
-			'accessibilite.accueil.salutation' => ({required Object prenom}) => 'As-salāmu ’alaykum, ${prenom}.',
+			'accessibilite.accueil.salutation' => ({required Object prenom}) => 'Assalamou alaykoum, ${prenom}.',
 			'accessibilite.accueil.prochaineSeance' => 'Prochaine séance',
 			'accessibilite.accueil.avec' => ({required Object nomme}) => 'avec ${nomme}',
 			'accessibilite.accueil.voirMaClasse' => 'Voir ma classe',
@@ -16237,20 +16255,15 @@ extension on Traductions {
 			'accessibilite.accueil.indisponiblePhrase' => 'L\'Accueil ne reçoit pas encore la séance de la Classe. Elle se lit dans Ma classe.',
 			'accessibilite.accueil.videTitre' => 'Pas encore de Classe',
 			'accessibilite.accueil.videPhrase' => 'Aucune Classe n\'est encore attribuée. Elle se choisit avec l\'académie. En attendant, le Coran et l\'aide restent ouverts juste en dessous.',
-			'accessibilite.coran.ouvrir' => 'Ouvrir le Coran',
-			'accessibilite.coran.reprendre' => 'Reprendre à ta dernière page',
-			'accessibilite.coran.reprendreVous' => 'Reprendre à votre dernière page',
-			'accessibilite.coran.reprendreDetail' => ({required Object page}) => 'Tu en étais page ${page}.',
-			'accessibilite.coran.reprendreDetailVous' => ({required Object page}) => 'Vous en étiez page ${page}.',
-			'accessibilite.coran.repriseRecherche' => 'Recherche de ta dernière page…',
-			'accessibilite.coran.repriseRechercheVous' => 'Recherche de votre dernière page…',
+			'accessibilite.coran.reprendreVous' => 'Reprendre votre lecture',
+			'accessibilite.coran.reprendreDetailVous' => ({required Object page}) => 'Vous en étiez page ${page}',
 			'accessibilite.coran.repriseErreur' => 'Ta dernière page n\'a pas pu être retrouvée, sans doute à cause de la connexion. Ouvre le Coran et choisis ta page dans le lecteur. Tes réglages de lecture restent enregistrés.',
 			'accessibilite.coran.repriseErreurVous' => 'Votre dernière page n\'a pas pu être retrouvée, sans doute à cause de la connexion. Ouvrez le Coran et choisissez votre page dans le lecteur. Vos réglages de lecture restent enregistrés.',
-			'accessibilite.coran.lectureGrande' => 'Le Coran s\'ouvre en lecture agrandie, verset par verset.',
-			'accessibilite.coran.retour' => 'Retour à l\'entrée du Coran',
 			'accessibilite.coran.demoSansTexte' => 'Le texte du Coran n\'est pas chargé dans la démonstration',
 			'accessibilite.coran.demoSansTexteDetail' => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte. Tu n\'as rien à faire. Dans l\'application, le Coran s\'ouvre ici, à ta page, et tes réglages de lecture restent enregistrés.',
 			'accessibilite.coran.demoSansTexteDetailVous' => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte. Vous n\'avez rien à faire. Dans l\'application, le Coran s\'ouvre ici, à votre page, et vos réglages de lecture restent enregistrés.',
+			'accessibilite.coran.indisponibleDetailVous' => 'Dès que le réseau revient, votre page se rouvre ici.',
+			'accessibilite.coran.absentDetailVous' => 'Le texte n\'a pas été installé sur cette page. Signalez-le : ce n\'est pas vous.',
 			'accessibilite.maClasse.titre' => 'Ma classe',
 			'accessibilite.maClasse.suivi' => 'Mon suivi',
 			'accessibilite.maClasse.suiviDetail' => 'Les séances passées et la présence',
@@ -16264,6 +16277,17 @@ extension on Traductions {
 			'accessibilite.apres.revoirSupport' => 'Revoir le support du cours',
 			'accessibilite.apres.revoirSupportDetail' => 'Le support reste dans ta Classe.',
 			'accessibilite.apres.revoirSupportDetailVous' => 'Le support reste dans votre Classe.',
+			'accessibilite.apres.quitteTitre' => 'Tu as quitté la séance.',
+			'accessibilite.apres.quittePhrase' => 'Tu pourras revenir tant qu\'elle reste ouverte.',
+			'accessibilite.apres.prochaineDateHeure' => ({required Object date, required Object heure}) => '${date} à ${heure}',
+			'accessibilite.apres.vide' => 'Ta prochaine séance n\'est pas encore programmée. Elle s\'affichera ici et dans ta Classe.',
+			'accessibilite.apres.videVous' => 'Votre prochaine séance n\'est pas encore programmée. Elle s\'affichera ici et dans votre Classe.',
+			'accessibilite.apres.erreur' => 'Ta prochaine séance et ton travail n\'ont pas pu être chargés, sans doute à cause de la connexion. Réessaie, ou retrouve-les dans ta Classe.',
+			'accessibilite.apres.erreurVous' => 'Votre prochaine séance et votre travail n\'ont pas pu être chargés, sans doute à cause de la connexion. Réessayez, ou retrouvez-les dans votre Classe.',
+			'accessibilite.apres.horsLigne' => 'Tu es hors ligne : ta prochaine séance et ton travail s\'afficheront quand la connexion reviendra.',
+			'accessibilite.apres.horsLigneVous' => 'Vous êtes hors ligne : votre prochaine séance et votre travail s\'afficheront quand la connexion reviendra.',
+			'accessibilite.apres.prochaineInconnue' => 'Ta prochaine séance s\'affichera dans ta Classe.',
+			'accessibilite.apres.prochaineInconnueVous' => 'Votre prochaine séance s\'affichera dans votre Classe.',
 			'accessibilite.monEspace.titre' => 'Mon espace',
 			'accessibilite.monEspace.mode' => 'Mode Accessibilité',
 			'accessibilite.monEspace.modeDetail' => 'Une interface simplifiée et adaptée pour un apprentissage plus serein.',
@@ -16683,14 +16707,14 @@ extension on Traductions {
 			'eleveConnexion.refus.inconnuTitre' => 'Code non reconnu',
 			'eleveConnexion.refus.inconnu' => 'Ce code n\'existe pas, ou un code plus récent l\'a remplacé. Vérifiez-le, ou affichez un nouveau code sur l\'appareil du tuteur.',
 			'eleveConnexion.refus.expireTitre' => 'Code expiré',
+			_ => null,
+		} ?? switch (path) {
 			'eleveConnexion.refus.expire' => 'Ce code n\'est plus valable. Affichez un nouveau code sur l\'appareil du tuteur.',
 			'eleveConnexion.refus.dejaUtiliseTitre' => 'Code déjà utilisé',
 			'eleveConnexion.refus.dejaUtilise' => 'Ce code a déjà servi à connecter un appareil. Affichez un nouveau code sur l\'appareil du tuteur.',
 			'eleveConnexion.refus.revoqueTitre' => 'Appareil retiré',
 			'eleveConnexion.refus.revoque' => 'Le tuteur a retiré cet appareil. Demandez-lui d\'afficher un nouveau code.',
 			'eleveConnexion.refus.plafondTitre' => 'Limite d\'appareils atteinte',
-			_ => null,
-		} ?? switch (path) {
 			'eleveConnexion.refus.plafond' => 'Ce profil élève a atteint le nombre d\'appareils autorisés. Le tuteur peut en retirer un dans Foyer, puis afficher un nouveau code.',
 			'eleveConnexion.refus.tropDEssaisTitre' => 'Trop d\'essais',
 			'eleveConnexion.refus.tropDEssais' => 'Patientez un instant avant de réessayer.',
@@ -17197,14 +17221,14 @@ extension on Traductions {
 			'admin.programmes.modifierNiveauErreur' => ({required Object message}) => 'La modification n\'a pas abouti : ${message}',
 			'admin.programmes.supprimerNiveau' => 'Supprimer',
 			'admin.programmes.supprimerNiveauTitre' => ({required Object nom}) => 'Supprimer ${nom}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.programmes.supprimerNiveauEnvoyer' => 'Supprimer',
 			'admin.programmes.supprimerNiveauErreur' => ({required Object message}) => 'La suppression n\'a pas abouti : ${message}',
 			'admin.programmes.publierVersion' => 'Publier la version',
 			'admin.programmes.publierVersionTitre' => ({required Object version}) => 'Publier ${version}',
 			'admin.programmes.publierVersionDetail' => 'Une fois publiée, cette version ne pourra plus être modifiée. Toute évolution académique en créera une nouvelle.',
 			'admin.programmes.publierVersionEnvoyer' => 'Publier',
-			_ => null,
-		} ?? switch (path) {
 			'admin.programmes.publierVersionErreur' => ({required Object message}) => 'La publication n\'a pas abouti : ${message}',
 			'admin.programmes.champCodeTechnique' => 'Code technique (usage interne, jamais affiché à l\'élève)',
 			'admin.programmes.champNomHumain' => 'Nom affiché',
@@ -17711,14 +17735,14 @@ extension on Traductions {
 			'compte.tuteur.deconnexion.confirmer' => 'Me déconnecter',
 			'compte.tuteur.deconnexion.echec' => 'La déconnexion n\'a pas abouti. Vérifiez votre connexion, puis réessayez.',
 			'compte.tuteur.pageInformations.titre' => 'Informations personnelles',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageInformations.prenom' => 'Prénom',
 			'compte.tuteur.pageInformations.nom' => 'Nom',
 			'compte.tuteur.pageInformations.courriel' => 'Adresse de connexion',
 			'compte.tuteur.pageInformations.langue' => 'Langue de l\'interface',
 			'compte.tuteur.pageInformations.fuseau' => 'Fuseau des séances',
 			'compte.tuteur.pageInformations.fuseauIndisponible' => 'Non disponible pour le moment',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageInformations.note' => 'Ces informations sont tenues par l\'académie. Elles ne se modifient pas encore depuis l\'application.',
 			'compte.tuteur.pageSecurite.titre' => 'Connexion et sécurité',
 			'compte.tuteur.pageSecurite.sousTitre' => 'Comment vous accédez à votre compte.',
@@ -18225,14 +18249,14 @@ extension on Traductions {
 			'enseignant.classes.sansProchaine' => 'Aucune séance prévue',
 			'enseignant.classes.remplacement' => 'Remplacement',
 			'enseignant.classes.rappelCahier' => 'Un cahier de transmission reste à valider',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.classes.cahierAValider' => 'Cahier de transmission à valider',
 			'enseignant.eleve.titre' => ({required Object prenom}) => 'Fiche de ${prenom}',
 			'enseignant.eleve.retour' => 'Élèves',
 			'enseignant.eleve.identifiant' => ({required Object id}) => 'Identifiant Académie : ${id}',
 			'enseignant.eleve.photo' => ({required Object prenom}) => 'Photo de ${prenom}',
 			'enseignant.eleve.niveau' => 'Niveau',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.eleve.objectif' => 'Objectif',
 			'enseignant.eleve.presence' => 'Présence récente',
 			'enseignant.eleve.travail' => 'Travail',
@@ -18739,14 +18763,14 @@ extension on Traductions {
 			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
 			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
 			'controleur.compteRendu.visiteInconnue' => 'Ce compte rendu ne peut plus être repris ici.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.compteRendu.visiteInconnueAide' => 'Cet appareil n\'a plus la visite en mémoire, sans doute après un rechargement de la page. Le serveur transmet la visite et son relevé automatique dès la sortie de la salle ; cet écran ne peut pas le confirmer. Pour ajouter une remarque, écrivez à l\'administration.',
 			'controleur.observation.important' => 'Vous signalez un point important : votre texte sera demandé.',
 			'controleur.observation.questionNature' => 'Quelle est la nature de votre observation ?',
 			'controleur.observation.contexteNature' => 'Votre observation rejoint le compte rendu de cette visite, transmis à l\'administration.',
 			'controleur.observation.pointPositif' => 'Point positif',
 			'controleur.observation.pointPositifAide' => 'Quand une pratique mérite d\'être relevée · elle figure au rapport comme point positif',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.aSuivre' => 'À suivre',
 			'controleur.observation.aSuivreAide' => 'Quand un point devra être revu lors d\'une prochaine visite · il figure au rapport comme point à suivre',
 			'controleur.observation.interventionAdmin' => 'Intervention de l\'administration souhaitée',
@@ -19253,14 +19277,14 @@ extension on Traductions {
 			'tc.observation.annonce.tuteurObserve' => ({required Object prenomEnfant}) => 'Tuteur de ${prenomEnfant} observe',
 			'tc.observation.annonce.restant' => ({required Object secondes}) => '${secondes} s',
 			'tc.observation.annonce.enfantIndicateur' => 'Ton tuteur regarde le cours',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.annonce.tuteursObservent' => ({required Object nombre}) => '${nombre} tuteurs observent',
 			'tc.observation.reglages.titre' => 'Observation par les tuteurs',
 			'tc.observation.reglages.intro' => 'Un tuteur peut regarder un court moment le cours de son enfant, sans micro ni caméra. Ce réglage décide de ce qui s\'applique à ce groupe.',
 			'tc.observation.reglages.heriter' => 'Hériter de l\'Académie',
 			'tc.observation.reglages.personnaliser' => 'Personnaliser pour ce groupe',
 			'tc.observation.reglages.desactiver' => 'Désactiver pour ce groupe',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.reglages.maxVisites' => 'Visites par séance',
 			'tc.observation.reglages.tempsTotal' => 'Temps total par séance',
 			'tc.observation.reglages.plafondVisite' => 'Durée maximale d\'une visite',

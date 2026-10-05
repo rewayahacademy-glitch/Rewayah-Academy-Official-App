@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/age_eleve.dart';
 import '../../core/accessibilite/mode_accessibilite.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/domain/enums.dart';
@@ -40,6 +41,7 @@ import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/permanent_notice.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/status_pill.dart';
+import '../accueil_eleve/apres_seance_accessibilite.dart';
 import '../controleur/compte_rendu_controle.dart' show adresseCompteRendu;
 import '../fiche_groupe/preparation_seance.dart';
 import '../salle_enseignant/panneau_enseignant.dart';
@@ -544,6 +546,31 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     }
     final IssueSeance? sortie = _sortieEleve;
     if (sortie != null) {
+      // MA-APRES-1 (decision A7 = a) : en Mode Accessibilite, UN SEUL ecran
+      // de fin, celui de MA-6, monte ici par la vraie salle.
+      if (ref.watch(modeAccessibiliteActifProvider)) {
+        final String? groupe = widget.groupeId;
+        return ApresSeanceSalle(
+          groupeId: groupe,
+          // MA-APRES-1b : la seance quittee n'est jamais « la prochaine ».
+          seanceQuitteeId: widget.seanceId,
+          quittee: sortie == IssueSeance.quittee,
+          // MA-TUTOIEMENT-1 : le tutoiement suit l'age, jamais la
+          // presentation ; port neutre (K-09) avant BR-1, age inconnu :
+          // vouvoiement.
+          tutoiement: ref.watch(portAgeEleveProvider).ageDeLEleve().tutoiement,
+          // « Retour a la Classe » : la destination Ma classe du Mode
+          // Accessibilite.
+          onRetourClasse: () => GoRouter.of(context).go(Routes.eleveSuivi),
+          onClasse: () => GoRouter.of(context).go(
+            groupe == null
+                ? Routes.eleveSuivi
+                : CheminsTcA.espaceGroupe(groupe),
+          ),
+          // L'aide vit dans Mon espace (MA14, MA-8).
+          onAide: () => GoRouter.of(context).go(Routes.compte),
+        );
+      }
       return ResultatSeance(issue: sortie, onRetour: _retourClasse);
     }
 

@@ -309,6 +309,8 @@ class _Salutation extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     return Semantics(
       header: true,
+      // MA-DEC-1 (A3 = c) : « Assalamou alaykoum » passe a la ligne entre
+      // ses mots, jamais dans un mot (320 px a 200 %, COUPE-MOTS-1).
       child: TexteSansCoupure(
         _insecable(context, t.accessibilite.accueil.salutation(prenom: prenom)),
         style: palette.inkStrong.applyTo(
