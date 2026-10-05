@@ -1580,7 +1580,7 @@
       "erreur": "L'attribution n'a pas abouti : {message}"
     },
     "groupes": {
-      "titre": "Groupes",
+      "titre": "Classes",
       "intro": "Chaque groupe réunit un enseignant et ses élèves autour d'un créneau commun : c'est là que se donne le cours.",
       "colonneGroupe": "Groupe",
       "colonneEnseignant": "Enseignant",
@@ -1748,8 +1748,8 @@
       "uniteJours": "{n} j"
     },
     "politiqueRevueKyc": {
-      "titre": "Politique de genre pour la revue KYC",
-      "libelle": "Limiter la revue KYC selon le genre",
+      "titre": "Vérification des enseignants selon le genre",
+      "libelle": "Limiter la vérification des enseignants selon le genre",
       "aide": "Lorsque cette règle est désactivée, tout membre autorisé à revoir les dossiers peut traiter les dossiers de son périmètre, quel que soit son genre.",
       "echecEnregistrement": "@:admin.groupes.observationErreur"
     },
@@ -3204,9 +3204,9 @@
       "prochaineSeance": "Prochaine séance",
       "maJournee": "Ma journée",
       "aTerminer": "À terminer",
-      "aTerminerVide": "Tous vos cahiers sont terminés.",
-      "aTerminerSansDonnees": "Les cahiers à terminer n'ont pas pu être lus",
-      "aTerminerErreur": "Les cahiers à terminer n'ont pas pu être lus. Réessayez dans un instant.",
+      "aTerminerVide": "Tous vos cahiers de transmission sont terminés.",
+      "aTerminerSansDonnees": "Les cahiers de transmission à terminer n'ont pas pu être lus",
+      "aTerminerErreur": "Les cahiers de transmission à terminer n'ont pas pu être lus. Réessayez dans un instant.",
       "aTerminerAide": "Le cahier de transmission aide vos élèves et vous permet d'ajuster le prochain cours.",
       "rappelCahier": "Des cahiers de transmission attendent d'être terminés",
       "cahierLigne": "Cahier de transmission {classe}",

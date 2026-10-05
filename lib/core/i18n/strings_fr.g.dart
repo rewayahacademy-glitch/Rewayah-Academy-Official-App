@@ -5298,8 +5298,8 @@ class Traductions$admin$groupes$fr {
 
 	// Translations
 
-	/// fr: 'Groupes'
-	String get titre => 'Groupes';
+	/// fr: 'Classes'
+	String get titre => 'Classes';
 
 	/// fr: 'Chaque groupe réunit un enseignant et ses élèves autour d'un créneau commun : c'est là que se donne le cours.'
 	String get intro => 'Chaque groupe réunit un enseignant et ses élèves autour d\'un créneau commun : c\'est là que se donne le cours.';
@@ -5820,11 +5820,11 @@ class Traductions$admin$politiqueRevueKyc$fr {
 
 	// Translations
 
-	/// fr: 'Politique de genre pour la revue KYC'
-	String get titre => 'Politique de genre pour la revue KYC';
+	/// fr: 'Vérification des enseignants selon le genre'
+	String get titre => 'Vérification des enseignants selon le genre';
 
-	/// fr: 'Limiter la revue KYC selon le genre'
-	String get libelle => 'Limiter la revue KYC selon le genre';
+	/// fr: 'Limiter la vérification des enseignants selon le genre'
+	String get libelle => 'Limiter la vérification des enseignants selon le genre';
 
 	/// fr: 'Lorsque cette règle est désactivée, tout membre autorisé à revoir les dossiers peut traiter les dossiers de son périmètre, quel que soit son genre.'
 	String get aide => 'Lorsque cette règle est désactivée, tout membre autorisé à revoir les dossiers peut traiter les dossiers de son périmètre, quel que soit son genre.';
@@ -8883,14 +8883,14 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'À terminer'
 	String get aTerminer => 'À terminer';
 
-	/// fr: 'Tous vos cahiers sont terminés.'
-	String get aTerminerVide => 'Tous vos cahiers sont terminés.';
+	/// fr: 'Tous vos cahiers de transmission sont terminés.'
+	String get aTerminerVide => 'Tous vos cahiers de transmission sont terminés.';
 
-	/// fr: 'Les cahiers à terminer n'ont pas pu être lus'
-	String get aTerminerSansDonnees => 'Les cahiers à terminer n\'ont pas pu être lus';
+	/// fr: 'Les cahiers de transmission à terminer n'ont pas pu être lus'
+	String get aTerminerSansDonnees => 'Les cahiers de transmission à terminer n\'ont pas pu être lus';
 
-	/// fr: 'Les cahiers à terminer n'ont pas pu être lus. Réessayez dans un instant.'
-	String get aTerminerErreur => 'Les cahiers à terminer n\'ont pas pu être lus. Réessayez dans un instant.';
+	/// fr: 'Les cahiers de transmission à terminer n'ont pas pu être lus. Réessayez dans un instant.'
+	String get aTerminerErreur => 'Les cahiers de transmission à terminer n\'ont pas pu être lus. Réessayez dans un instant.';
 
 	/// fr: 'Le cahier de transmission aide vos élèves et vous permet d'ajuster le prochain cours.'
 	String get aTerminerAide => 'Le cahier de transmission aide vos élèves et vous permet d\'ajuster le prochain cours.';
@@ -17220,7 +17220,7 @@ extension on Traductions {
 			'admin.attribution.journalisation' => 'Chaque attribution est journalisée : qui a décidé, quand, sur quelle heure, et le motif s\'il a fallu passer outre.',
 			'admin.attribution.effet' => 'L\'élève quitte cette file et ses cours sont posés au calendrier tout de suite.',
 			'admin.attribution.erreur' => ({required Object message}) => 'L\'attribution n\'a pas abouti : ${message}',
-			'admin.groupes.titre' => 'Groupes',
+			'admin.groupes.titre' => 'Classes',
 			'admin.groupes.intro' => 'Chaque groupe réunit un enseignant et ses élèves autour d\'un créneau commun : c\'est là que se donne le cours.',
 			'admin.groupes.colonneGroupe' => 'Groupe',
 			'admin.groupes.colonneEnseignant' => 'Enseignant',
@@ -17376,8 +17376,8 @@ extension on Traductions {
 			'admin.conservationDonnees.documentsIdentite' => 'Documents d\'identité',
 			'admin.conservationDonnees.documentsIdentiteDetail' => 'Le nombre de jours pendant lesquels un document d\'identité déposé reste accessible avant sa purge.',
 			'admin.conservationDonnees.uniteJours' => ({required Object n}) => '${n} j',
-			'admin.politiqueRevueKyc.titre' => 'Politique de genre pour la revue KYC',
-			'admin.politiqueRevueKyc.libelle' => 'Limiter la revue KYC selon le genre',
+			'admin.politiqueRevueKyc.titre' => 'Vérification des enseignants selon le genre',
+			'admin.politiqueRevueKyc.libelle' => 'Limiter la vérification des enseignants selon le genre',
 			'admin.politiqueRevueKyc.aide' => 'Lorsque cette règle est désactivée, tout membre autorisé à revoir les dossiers peut traiter les dossiers de son périmètre, quel que soit son genre.',
 			'admin.politiqueRevueKyc.echecEnregistrement' => _root.admin.groupes.observationErreur,
 			'admin.evaluations.titre' => 'Évaluations',
@@ -18667,9 +18667,9 @@ extension on Traductions {
 			'enseignant.journee.prochaineSeance' => 'Prochaine séance',
 			'enseignant.journee.maJournee' => 'Ma journée',
 			'enseignant.journee.aTerminer' => 'À terminer',
-			'enseignant.journee.aTerminerVide' => 'Tous vos cahiers sont terminés.',
-			'enseignant.journee.aTerminerSansDonnees' => 'Les cahiers à terminer n\'ont pas pu être lus',
-			'enseignant.journee.aTerminerErreur' => 'Les cahiers à terminer n\'ont pas pu être lus. Réessayez dans un instant.',
+			'enseignant.journee.aTerminerVide' => 'Tous vos cahiers de transmission sont terminés.',
+			'enseignant.journee.aTerminerSansDonnees' => 'Les cahiers de transmission à terminer n\'ont pas pu être lus',
+			'enseignant.journee.aTerminerErreur' => 'Les cahiers de transmission à terminer n\'ont pas pu être lus. Réessayez dans un instant.',
 			'enseignant.journee.aTerminerAide' => 'Le cahier de transmission aide vos élèves et vous permet d\'ajuster le prochain cours.',
 			'enseignant.journee.rappelCahier' => 'Des cahiers de transmission attendent d\'être terminés',
 			'enseignant.journee.cahierLigne' => ({required Object classe}) => 'Cahier de transmission ${classe}',

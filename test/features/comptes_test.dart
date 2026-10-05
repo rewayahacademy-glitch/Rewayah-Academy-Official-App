@@ -324,6 +324,82 @@ void main() {
   // et les six roles produisait onze pastilles qui repoussaient la liste sous
   // le pli. Seuls les etats **presents dans les donnees** sont proposes, et
   // l'axe des roles passe dans un menu deroulant.
+  // Decision « pastille-attente » du 05/10 (AD-NETTOYAGE-2, par delegation
+  // du directeur) : la pastille « En attente » ne compte que les enseignants,
+  // le meme chiffre que la tuile « Dossiers a valider ». Un tuteur et un
+  // compte au role illisible en `pending_kyc` n'y entrent pas.
+  testWidgets('la pastille « En attente » ne compte que les enseignants', (
+    WidgetTester tester,
+  ) async {
+    await monter(
+      tester,
+      _FauxServiceComptes(<CompteAdmin>[
+        _compte(
+          identifiant: 'TEACHER-AS-000001',
+          etat: AccountStatus.pendingKyc,
+        ),
+        _compte(
+          identifiant: 'TEACHER-AS-000002',
+          etat: AccountStatus.pendingKyc,
+        ),
+        _compte(
+          identifiant: 'GUARDIAN-MS-000003',
+          etat: AccountStatus.pendingKyc,
+          role: AppRole.guardian,
+        ),
+        _compte(
+          identifiant: 'UNKNOWN-XX-000001',
+          etat: AccountStatus.pendingKyc,
+          role: null,
+          prenom: null,
+        ),
+      ]),
+    );
+
+    expect(tester.takeException(), isNull);
+    final Finder pastille = find.byKey(
+      const ValueKey<String>('comptes-filtre-etat-pendingKyc'),
+    );
+    expect(pastille, findsOneWidget);
+    expect(tester.widget<FilterPill>(pastille).compteur, 2);
+    // Le bandeau dit le meme chiffre.
+    expect(find.text('2 personnes attendent une décision.'), findsOneWidget);
+
+    // Retenue, la pastille montre exactement ces deux enseignants.
+    await tester.tap(pastille);
+    await tester.pumpAndSettle();
+    expect(find.textContaining('TEACHER-AS-000001'), findsWidgets);
+    expect(find.textContaining('TEACHER-AS-000002'), findsWidgets);
+    expect(find.textContaining('GUARDIAN-MS-000003'), findsNothing);
+    expect(find.textContaining('UNKNOWN-XX-000001'), findsNothing);
+  });
+
+  testWidgets('un tuteur seul en attente : aucune pastille « En attente »', (
+    WidgetTester tester,
+  ) async {
+    await monter(
+      tester,
+      _FauxServiceComptes(<CompteAdmin>[
+        _compte(
+          identifiant: 'GUARDIAN-MS-000003',
+          etat: AccountStatus.pendingKyc,
+          role: AppRole.guardian,
+        ),
+        _compte(
+          identifiant: 'STUDENT-LS-000001',
+          etat: AccountStatus.active,
+          role: AppRole.student,
+        ),
+      ]),
+    );
+
+    expect(tester.takeException(), isNull);
+    expect(
+      find.byKey(const ValueKey<String>('comptes-filtre-etat-pendingKyc')),
+      findsNothing,
+    );
+  });
+
   testWidgets('un etat absent des donnees n est pas propose comme filtre', (
     WidgetTester tester,
   ) async {

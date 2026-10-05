@@ -203,7 +203,7 @@ class _Corps extends StatelessWidget {
     final List<CompteAdmin> filtres = comptes
         .where(
           (CompteAdmin c) =>
-              (etat == null || c.etat == etat) &&
+              (etat == null || _dansEtat(c, etat!)) &&
               (role == null || c.role == role) &&
               (!echus || c.accesEchu(maintenant)),
         )
@@ -224,7 +224,7 @@ class _Corps extends StatelessWidget {
     final Set<AppRole> rolesPresents = <AppRole>{};
     for (final CompteAdmin compte in comptes) {
       final AccountStatus? e = compte.etat;
-      if (e != null) {
+      if (e != null && _dansEtat(compte, e)) {
         parEtat[e] = (parEtat[e] ?? 0) + 1;
       }
       final AppRole? r = compte.role;
@@ -294,10 +294,11 @@ class _Corps extends StatelessWidget {
               onPress: () => onEtat(null),
             ),
             for (final AccountStatus valeur in AccountStatus.values)
-              if (parEtat.containsKey(valeur))
+              if (parEtat.containsKey(valeur) || etat == valeur)
                 FilterPill(
+                  key: ValueKey<String>('comptes-filtre-etat-${valeur.name}'),
                   libelle: _nomEtat(valeur),
-                  compteur: parEtat[valeur],
+                  compteur: parEtat[valeur] ?? 0,
                   retenue: etat == valeur,
                   onPress: () => onEtat(valeur),
                 ),
@@ -436,6 +437,19 @@ class _Corps extends StatelessWidget {
     _ => t.admin.comptes.attendJours(jours: '$jours'),
   };
 }
+
+/// Vrai quand [compte] entre dans la pastille d'etat [etat].
+///
+/// Decision « pastille-attente » du 05/10 (AD-NETTOYAGE-2, decidee par
+/// delegation du directeur) : « En attente » ne compte que les enseignants
+/// qui attendent une decision, le meme chiffre que la tuile « Dossiers a
+/// valider » du Centre de commande (enseignants seulement, m1
+/// d'AD-NETTOYAGE). Un tuteur `pending_kyc` n'a aucune piece a faire valider
+/// (voir [_pieceSansObjet]) : il reste dans « Tous » et sous son role.
+bool _dansEtat(CompteAdmin compte, AccountStatus etat) =>
+    etat == AccountStatus.pendingKyc
+    ? compte.attendUneDecision
+    : compte.etat == etat;
 
 /// Vrai quand la piece d'identite n'a pas de sens pour ce compte : le tuteur
 /// (toujours) et les autres roles lisibles tant qu'ils n'en ont depose aucune.
