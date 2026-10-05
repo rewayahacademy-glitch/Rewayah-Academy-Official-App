@@ -34,7 +34,7 @@ Abréviations des rôles : **T** tuteur (et élève adulte, rôle `guardian`), *
 | Liste des fils et fil contextuel (COM-M01, COM-W01) | `lib/features/com_messages/messages_page.dart` (`EspaceMessagesMetier`), `fil_contextuel.dart`, `liste_fils.dart` | T `/tuteur/messages`, `/tuteur/messages/:filId` ; E `/enseignant/messages`, `/enseignant/messages/:filId` ; A `/admin/operations/communications/messages`, `/:filId` | T : Espace Classe (`classe_tuteur_page.dart`) et cloche ; E : Mes Classes et fiche de Classe ; A : tableau de bord, ligne Communications, onglet Messages | `CapaciteCommunication.ecrireDansFil` (COM-BR-16) **et** `CapaciteFil.ecrire` portée par le fil | `PortMessagesMetier` | COM-BR-01, COM-BR-02 |
 | Onglet Messages de l'administration | `lib/features/com_messages/messages_admin.dart` (`MessagesAdminPage`), monté par `app_router.dart` à COM-FUS | A `/admin/operations/communications/messages`, `/:filId` (coquille admin, domaine Opérations) | onglet Messages de `SousNavigationDomaine` | idem | `PortMessagesMetier` (vue admin) | COM-BR-14 |
 | Entrée contextuelle « Écrire à … » | `lib/features/com_messages/entree_messages_contexte.dart` | aucune route propre : ouvre le fil sur la route du rôle | T : Espace Classe ; E : Mes Classes, fiche de Classe ; A : détail d'un dossier (`detail_dossier.dart`) ; élève adulte de démonstration : `ma_classe_adulte_page.dart` | idem | `PortMessagesMetier.conversationsPourObjet`, `ouvrirConversation`, `filPourObjet` | COM-BR-01 (extension proposée par COM-MSG-2) |
-| Recherche des fils | `lib/features/com_messages/recherche_fils.dart` | sur la route Messages du rôle | champ de la liste | aucune | filtre local sur `fils()` | COM-BR-01 (réserve A05) |
+| Recherche des fils | filtre : `lib/features/com_messages/recherche_fils.dart` (`filtrerFils`) ; rendu : `liste_fils.dart`, avec le champ et la surface du socle (`ChampRecherche`, `SurfaceRecherche`, COM-RC R-07) | sur la route Messages du rôle | champ en tête de la liste (tablette, ordinateur) ; surface plein écran temporaire (téléphone) | aucune | filtre local sur `fils()` | COM-BR-01 (réserve A05) |
 | Fils du contrôleur sur sa mission | `lib/features/controleur/echanges_controleur_page.dart` (inchangé, C13) | C `/controleur/echanges` | navigation du contrôleur | `peutEcrire` (CT-6) | `PortEchanges` | BR-CT-13, COM-BR-14 (une seule source à BR-1) |
 
 ## 2. Message vocal (COM-VOC-1, branché à COM-FUS)
@@ -43,7 +43,7 @@ Abréviations des rôles : **T** tuteur (et élève adulte, rôle `guardian`), *
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | Composer vocal (`VoiceMessageComposer`, 17 états, 3:00, pré-écoute, aucun envoi automatique) | `lib/features/com_vocal/composer_vocal.dart` | aucune route : posé dans `FilDiscussion.emplacementVocal` | fil contextuel des Messages (T, E, A) ; canal du Studio (A), Focus compris (`ComposerMinimal`) | `CapaciteCommunication.envoyerVocal` (ajoutée à COM-FUS, COM-BR-16) : fermée en production, **aucun composer rendu** | `PortEnregistreurVocal` (neutre : `EnregistreurVocalIndisponible`) | COM-BR-03 (paquet `record` absent de `pubspec.yaml`, décision BR-1) |
 | Envoi d'un vocal | `lib/features/com_vocal/envoi_vocal.dart` (`PortEnvoiVocal`, `ClesVocales`) | idem | « Envoyer » du composer seulement | idem | `PortEnvoiVocal` (neutre : `EnvoiVocalIndisponible`), une clé d'idempotence par vocal ; à l'accusé, une bulle « Message vocal de 0:06 », « Envoyé », entre dans le fil ou le canal ouvert (`bulleVocalConfirme`, revue COM-FUS), aucune bulle sans accusé | COM-BR-03, COM-BR-02 |
-| Lecture d'un vocal reçu | `lib/features/com_vocal/lecteur_vocal.dart` (`LecteurVocalRecu`, `lecteursVocauxDuMessage`) | aucune route | dans la bulle du fil (Messages, Studio), à la place de la ligne « Message vocal de 0:28 » ; la lecture seule garde la ligne texte | `PieceJointe.peutOuvrir` | `PortLectureVocale` (neutre : `LectureVocaleIndisponible`) ; `LectureVocaleJustAudio` présent, non branché | COM-BR-03 (lien signé de courte durée au toucher) |
+| Lecture d'un vocal reçu | `lib/features/com_vocal/lecteur_vocal.dart` (`LecteurVocalRecu`, posé par `piecesDuMessage` avec les cartes des autres pièces ; `lecteursVocauxDuMessage`, code mort, retiré au tour 4 de COM-RC, N-8) | aucune route | dans la bulle du fil (Messages, Studio), à la place de la ligne « Message vocal de 0:28 » ; la lecture seule garde la ligne texte | `PieceJointe.peutOuvrir` | `PortLectureVocale` (neutre : `LectureVocaleIndisponible`) ; `LectureVocaleJustAudio` présent, non branché | COM-BR-03 (lien signé de courte durée au toucher) |
 
 ## 3. Communauté enseignants (COM-COMU-1, COM-COMU-2)
 
@@ -77,7 +77,10 @@ Abréviations des rôles : **T** tuteur (et élève adulte, rôle `guardian`), *
 
 | Fonction | Seul endroit | Capacité | Port | Serveur |
 | :--- | :--- | :--- | :--- | :--- |
-| Fil et composer texte (envoi honnête, identifiant local de bulle à l'envoi, complément de bulle, saisie empilée à texte agrandi) | `lib/core/widgets/fil_discussion.dart` | portée par l'écran | appelant | COM-BR-02 |
+| Fil et composer texte (envoi honnête, identifiant local de bulle à l'envoi, complément de bulle, saisie empilée à texte agrandi ; ligne compacte de contexte fixe quand l'en-tête défile, COM-RC tour 4, N-1) | `lib/core/widgets/fil_discussion.dart` | portée par l'écran | appelant | COM-BR-02 |
+| Persistance du brouillon d'un champ (fil, canal, réponse de la Communauté ; effacé à l'accusé seulement) | `lib/core/communications/persistance_brouillon.dart` (`PersistanceBrouillon`) | aucune | `PortBrouillons` | COM-BR-12 |
+| Recherche (champ, surface plein écran du téléphone) | `lib/core/widgets/champ_recherche.dart` (`ChampRecherche`), `surface_recherche.dart` (`SurfaceRecherche`) : Messages, Studio, Communauté | aucune | filtre de l'écran | COM-BR-01, COM-BR-05, COM-BR-08 |
+| Seuils de texte agrandi (1,5) et de vue basse (480) | `lib/core/accessibilite/texte_agrandi.dart` (`SeuilsTexteAgrandi`, COM-RC tour 4, N-6) | aucune | aucun | aucun |
 | Capacités Communications | `lib/core/communications/capacites_communication.dart` (quatre capacités : `publierAnnonce`, `programmer`, `ecrireDansFil`, `envoyerVocal` ; `moderer` et `parametresCanal`, lues nulle part, retirées à COM-RC R-21 : la modération lit `CapacitesModeration`, le canal `CapaciteCanal.parametres`) | source unique | `PortCapacitesCommunications` (neutre) | COM-BR-16 |
 | Pièces jointes (carte, politique) | `lib/core/widgets/carte_piece_jointe.dart`, `lib/core/communications/port_pieces_jointes.dart` | aucune | `PortPolitiquePiecesJointes` | COM-BR-04 (aucun envoi ni ouverture rendus) |
 | Modération et signalement | `lib/core/communications/moderation.dart` | `CapacitesModeration` | `PortModeration` | COM-BR-06 |
@@ -87,6 +90,12 @@ Abréviations des rôles : **T** tuteur (et élève adulte, rôle `guardian`), *
 
 Correction COM-RC (revue COM-R, R-21, 5 octobre 2026) : capacités mortes retirées, route de la
 publication ouverte ajoutée, garde des réponses et signalement idempotent reportés.
+
+Correction COM-RC tour 4 (contre-vérification COM-R-2, R-21 et N-8, 5 octobre 2026), à
+`ui/communications-v1` @ 12bf1cc7 : recherche des fils décrite comme dans le code (filtre
+`recherche_fils.dart`, champ et surface du socle) ; `lecteursVocauxDuMessage` retiré ;
+`ChampRecherche`, `SurfaceRecherche`, `PersistanceBrouillon` et `SeuilsTexteAgrandi` ajoutés
+au socle.
 
 ## 7. Ce que la carte ne couvre pas encore
 
