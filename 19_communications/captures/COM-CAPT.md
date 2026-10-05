@@ -305,3 +305,69 @@ couverts par les tests de contre-preuve de COM-RC, et non par cette recette.
 - Restants : R-02 (canal du Studio et Messages admin à 320×2), R-03 (D-FUS-3), R-08 (D-FUS-1),
   R-09 (titre de l'administration), R-12 (en partie), R-16 (arbitrage), recherches tronquées.
 - Nouveaux : 4 (ci-dessus).
+
+## Après COM-RC tour 2
+
+Date : 5 octobre 2026. Captures refaites sur `ui/communications-v1` @ `e0b9f890` : COM-RC
+tour 2, lots D (Studio, Messages admin, socle) et E (Communauté), à `70540698`, plus un cas
+ajouté au test de capture, `communaute_publication_composer` (la publication défilée jusqu'au
+composer de réponse, à 320×2, 390 clair, sombre et arabe, 1440 clair et sombre).
+**186 captures** dans `com-v1/`, qui remplacent les 180 de `1aa1ffd6`. **Aucun débordement de
+rendu** : `com_debordements.txt` n'est pas produit. Chaque PNG cité ci-dessous a été lu.
+
+Statut de preuve : `présent dans le code` et `testé localement` (rendu d'un état de
+démonstration). Rien n'est branché, rien n'est testé sur staging, rien n'est déployé.
+
+### Restes du tour 1, à l'image
+
+| Reste | Verdict | Capture qui le prouve |
+| :--- | :--- | :--- |
+| R-02 Canal du Studio à 320×2 | corrigé : la tête « Le Studio » défile ; les deux derniers messages et le champ « Message » sont au premier écran | `com_studio_canal_320x2_clair.png` |
+| R-02 Messages admin à 320×2 | corrigé : titre et onglets défilent ; fin du dernier message et champ « Message » au premier écran | `com_admin_messages_320x2_clair.png` |
+| R-09 Titre de l'administration à 320×2 | corrigé : l'en-tête s'empile (retour et cloche au-dessus), « Administration des communications » sans mot coupé | `com_admin_annonces_320x2_clair.png`, `com_admin_moderation_320x2_clair.png` |
+| Studio, « Aujourd'hu/i » à 320×2 | corrigé : « Aujourd'hui » entier, l'en-tête s'empile sous retour, compte et cloche | `com_studio_aujourdhui_320x2_clair.png` |
+| R-01 Publication à 390 | corrigé : texte entier, catégorie « Pédagogie » et « Enregistrer la publication » au premier écran, puis « Réponses (2) » | `com_communaute_publication_390_clair.png`, `..._390_sombre.png` |
+| R-01 Publication à 320×2 | corrigé en partie : titre et début du texte de la publication au premier écran ; le composer de réponse, placé après les réponses, s'atteint en défilant | `com_communaute_publication_320x2_clair.png`, `com_communaute_publication_composer_320x2_clair.png` |
+| R-01 Réponse bloquée à 1440 | corrigé : champ « Votre réponse » entier avec son libellé, « Envoyer la réponse » puis le verdict ; plus de lien flottant au-dessus du champ | `com_communaute_reponse_bloquee_1440_clair.png` |
+| R-11 Nom de fichier coupé | corrigé : ellipse au milieu, extension gardée (« Devoir_sema…e_3.pdf » à 768, « Devoir_semaine_3.pdf » entier à 390) | `com_messages_fil_tuteur_768_clair.png`, `com_messages_hors_ligne_tuteur_390_clair.png` |
+| (i) et (×) empilés à 390 | corrigé : côte à côte dans l'en-tête « Nouvelle publication » | `com_communaute_garde_bloque_390_clair.png` |
+| Recherches tronquées | corrigé : « Rechercher une publication » entier à 1440 ; à 768, libellé au-dessus du champ (« Rechercher une conversation », « Rechercher dans Le Studio ») et indication sur deux lignes | `com_communaute_flux_1440_clair.png`, `com_messages_fil_tuteur_768_clair.png`, `com_studio_canal_768_clair.png` |
+| R-12 Focus à 1440 | **restant** : « Quitter le focus » reste centré, et « Envoyer » dépasse toujours le fil d'environ 110 px (bulles de 320 à 1007, bouton jusqu'à ~1120). La lecture du tour 1, « erreur de lecture », n'est pas confirmée par l'image | `com_studio_focus_1440_clair.png` |
+| R-12 « Mode focus » centré | **restant** (Center d'ActionPrincipale, décision du directeur) | `com_studio_canal_768_clair.png`, `com_studio_canal_320_clair.png` |
+| R-03 Double bandeau hors ligne | **restant** (attend D-FUS-3) | `com_messages_hors_ligne_tuteur_390_clair.png`, `com_studio_hors_ligne_390_clair.png` |
+| R-08 Dates en français en arabe | **restant** (attend D-FUS-1) : « oct. 4 2026 » dans les notifications, « Dimanche 4 octobre » dans le Studio | `com_notifications_tuteur_390_rtl_clair.png`, `com_studio_aujourdhui_390_rtl_clair.png` |
+| R-16 Annonce avant la séance | **restant** (arbitrage du directeur) | `com_annonce_classe_tuteur_390_clair.png` |
+| Vocal ouvert par un lien | **restant** : « Enregistrer un message vocal » sous le champ | `com_studio_canal_320_clair.png` |
+| Navigation des coquilles en français en RTL | **restant**, hors périmètre COM (« Compte, Historique, Foyer, Accueil ») ; la navigation du Studio, elle, est en arabe | `com_notifications_tuteur_390_rtl_clair.png`, `com_studio_aujourdhui_390_rtl_clair.png` |
+
+Les constats R-17 à R-26 (dont R-22, brouillon de ComposerReponse) ne se voient pas sur une
+capture : ils relèvent des tests de contre-preuve du tour 2, et non de cette recette.
+
+### Défauts nouveaux
+
+1. **« Envoyer » coupé au bas du premier écran à 320×2** : dans le canal du Studio et les
+   Messages admin, le bouton n'est visible qu'à moitié au bord bas, et le lien vocal est hors
+   vue ; dans le fil Messages du tuteur, « Envoyer » passe en partie sous la barre de
+   navigation. Le défilement initial s'arrête au dernier message, pas à la fin du composer
+   (`com_studio_canal_320x2_clair.png`, `com_admin_messages_320x2_clair.png`,
+   `com_messages_fil_tuteur_320x2_clair.png`).
+2. **Nom de fichier réduit à « …_3.pdf » à 320×2** : l'ellipse au milieu ne garde que la fin
+   du nom ; le début (« Devoir ») disparaît (`com_messages_fil_tuteur_320x2_clair.png`).
+   Mineur.
+3. **Flux de la Communauté à 320×2** : le sous-titre « Échanges et entraide entre
+   enseignants » s'étale sur quatre lignes à côté du bouton retour, et aucune publication
+   n'est visible au premier écran (`com_communaute_flux_320x2_clair.png`). Plus de
+   débordement, mais le premier écran ne montre que l'en-tête, la règle et le filtre.
+4. **Texte français en RTL** : dans les réponses de démonstration affichées en arabe, le
+   point final passe en tête de ligne (« .élèves ») ; le texte d'un auteur n'a pas sa propre
+   direction (`com_communaute_publication_composer_390_rtl_clair.png`). Mineur, à voir avec
+   R-08.
+
+### Bilan
+
+- Corrigés à l'image au tour 2 : R-02 (canal du Studio, Messages admin), R-09 (titre de
+  l'administration), « Aujourd'hui » coupé, R-01 (publication à 390, réponse bloquée à 1440 ;
+  à 320×2 en partie), nom de fichier à 768, (i) et (×) à 390, recherches tronquées.
+- Restants : R-12 (bouton centré et dépassement d'« Envoyer » en Focus), R-03 (D-FUS-3), R-08
+  (D-FUS-1), R-16 (arbitrage), vocal ouvert par un lien, navigation RTL hors périmètre.
+- Nouveaux : 4 (ci-dessus).
