@@ -165,16 +165,12 @@ void main() {
       );
       await tester.pumpAndSettle();
 
+      // DUREE-INSECABLE-2 : insecable, et ancree en tete (U+200E).
       expect(
-        find.text(
-          t.enseignant.cahier.dureeEtInterruption(
-            minutes: '38',
-            interruption: '7',
-          ),
-        ),
+        find.text("\u200E38\u00A0min de cours, dont 7\u00A0min d'interruption"),
         findsOneWidget,
       );
-      expect(find.text(t.enseignant.cahier.duree(minutes: '45')), findsNothing);
+      expect(find.textContaining('45\u00A0min de cours'), findsNothing);
     });
   });
 
