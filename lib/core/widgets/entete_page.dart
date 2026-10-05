@@ -56,41 +56,22 @@ class EntetePage extends StatelessWidget {
   /// place qui reste au titre.
   static const double _largeurAction = AppTouchTarget.standard;
 
-  /// Echelle de texte au-dela de laquelle le texte est dit agrandi.
-  static const double _echelleAgrandie = 1.3;
-
-  /// Vrai quand le titre (ou le sous-titre) ne tient pas a cote du retour et
-  /// des actions (COM-RC tour 2, R-05 et R-09) : un de ses mots serait coupe
-  /// meme reduit a l'echelle minimale lisible, ou, a texte agrandi, il
-  /// devrait etre reduit pour tenir. Le titre passe alors sous la rangee du
-  /// retour et des actions, sur toute la largeur : il garde la taille du
-  /// texte agrandi autant que la largeur le permet, et ne se coupe jamais
-  /// dans un mot (« Aujourd'hu / i », « communication / s » a 320 et texte
-  /// x2).
-  bool _empile(
-    BuildContext context,
-    double largeur,
-    TextStyle styleTitre,
-    TextStyle styleSousTitre,
-  ) {
+  /// Vrai quand un mot du titre ne tient pas a cote du retour et des
+  /// actions, meme reduit a l'echelle minimale lisible (COM-RC tour 2, R-05
+  /// et R-09) : il serait coupe au milieu (« Aujourd'hu / i »,
+  /// « communication / s » a 320 et texte x2). Le titre passe alors sous la
+  /// rangee du retour et des actions, sur toute la largeur, ou il garde la
+  /// taille du texte agrandi autant que la largeur le permet. Un titre qui
+  /// tient en se reduisant garde sa rangee : la hauteur reste a la lecture.
+  bool _empile(BuildContext context, double largeur, TextStyle styleTitre) {
     if (!largeur.isFinite) return false;
     final double reserve =
         (onRetour == null ? 0 : AppTouchTarget.standard + AppSpacing.md) +
         actions.length * (_largeurAction + AppSpacing.xs);
     if (reserve == 0) return false;
-    final double colonne = largeur - reserve;
-    final TextScaler echelle = MediaQuery.textScalerOf(context);
     const TextScaler minimale = TextScaler.linear(echelleMinimaleLisible);
-    if (largeurMotLePlusLong(context, titre, styleTitre, minimale) > colonne) {
-      return true;
-    }
-    if (echelle.scale(1) <= _echelleAgrandie) return false;
-    if (largeurMotLePlusLong(context, titre, styleTitre, echelle) > colonne) {
-      return true;
-    }
-    final String? sous = sousTitre;
-    return sous != null &&
-        largeurMotLePlusLong(context, sous, styleSousTitre, echelle) > colonne;
+    return largeurMotLePlusLong(context, titre, styleTitre, minimale) >
+        largeur - reserve;
   }
 
   @override
@@ -128,12 +109,7 @@ class EntetePage extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {
-        if (_empile(
-          context,
-          contraintes.maxWidth,
-          styleTitre,
-          styleSousTitre,
-        )) {
+        if (_empile(context, contraintes.maxWidth, styleTitre)) {
           // Le retour et les actions d'abord, aux deux bouts de leur
           // rangee ; le titre dessous, sur toute la largeur.
           return Column(
