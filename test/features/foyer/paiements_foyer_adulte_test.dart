@@ -41,6 +41,8 @@ import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 import 'package:rewayah_academy/features/foyer/place_adulte.dart';
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
+import '../../support/hors_ligne_une_fois.dart';
+
 void main() {
   void taille(WidgetTester tester, Size s) {
     tester.view.physicalSize = s;
@@ -406,6 +408,8 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(etat(tester)?.nature, NatureEtat.horsLigne);
+      // EA-HL-DOUBLE-1 : le bloc dit ce qui manque, sans redire le reseau.
+      expectSansDonnees(t.adulte.paiements.soldesSansDonnees, bandeau: false);
     });
 
     testWidgets('indisponible : la dependance EA-BR-23, sans « Reessayer »', (

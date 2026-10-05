@@ -621,8 +621,8 @@ class Traductions$attente$fr {
 	/// fr: 'L'état de votre dossier ne s'affiche pas pour le moment.'
 	String get illisible => 'L\'état de votre dossier ne s\'affiche pas pour le moment.';
 
-	/// fr: 'Vous êtes hors ligne. L'état de votre dossier s'affichera dès le retour du réseau.'
-	String get horsLigne => 'Vous êtes hors ligne. L\'état de votre dossier s\'affichera dès le retour du réseau.';
+	/// fr: 'L'état de votre dossier s'affichera dès le retour du réseau.'
+	String get horsLigne => 'L\'état de votre dossier s\'affichera dès le retour du réseau.';
 }
 
 // Path: connexion
@@ -687,8 +687,8 @@ class Traductions$connexion$fr {
 	/// fr: 'Un lien vient déjà de partir. Attendez un moment avant d'en demander un autre.'
 	String get erreurTropTot => 'Un lien vient déjà de partir. Attendez un moment avant d\'en demander un autre.';
 
-	/// fr: 'Vous êtes hors ligne : le lien ne peut pas partir pour l'instant.'
-	String get horsLigne => 'Vous êtes hors ligne : le lien ne peut pas partir pour l\'instant.';
+	/// fr: 'Le lien ne peut pas partir pour l'instant. Réessayez quand la connexion sera revenue.'
+	String get horsLigne => 'Le lien ne peut pas partir pour l\'instant. Réessayez quand la connexion sera revenue.';
 
 	/// fr: 'Lien expiré ou jamais reçu ?'
 	String get probleme => 'Lien expiré ou jamais reçu ?';
@@ -825,8 +825,8 @@ class Traductions$contrat$fr {
 	/// fr: 'La signature n'a pas abouti. Réessayez dans un instant.'
 	String get erreur => 'La signature n\'a pas abouti. Réessayez dans un instant.';
 
-	/// fr: 'Vous êtes hors ligne. Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.'
-	String get horsLigne => 'Vous êtes hors ligne. Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.';
+	/// fr: 'Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.'
+	String get horsLigne => 'Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.';
 
 	/// fr: 'Cochez la case pour continuer.'
 	String get caseRequise => 'Cochez la case pour continuer.';
@@ -1028,6 +1028,12 @@ class Traductions$foyer$fr {
 	/// fr: 'Relire les classes'
 	String get relireClasses => 'Relire les classes';
 
+	/// fr: 'Les profils élèves de votre foyer n'ont pas pu être chargés'
+	String get profilsSansDonnees => 'Les profils élèves de votre foyer n\'ont pas pu être chargés';
+
+	/// fr: 'Vos informations de titulaire n'ont pas pu être chargées'
+	String get titulaireSansDonnees => 'Vos informations de titulaire n\'ont pas pu être chargées';
+
 	/// fr: 'L'inscription en cours de chaque élève ne s'affiche pas encore sur cette page.'
 	String get inscriptionIllisible => 'L\'inscription en cours de chaque élève ne s\'affiche pas encore sur cette page.';
 
@@ -1054,6 +1060,9 @@ class Traductions$ficheEleve$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+
+	/// fr: 'Le profil de cet élève n'a pas pu être chargé'
+	String get sansDonnees => 'Le profil de cet élève n\'a pas pu être chargé';
 
 	/// fr: 'Profil élève'
 	String get titreRepli => 'Profil élève';
@@ -1569,8 +1578,8 @@ class Traductions$parcours$fr {
 	/// fr: 'Cette étape n'est pas encore ouverte par l'académie. Vous n'avez rien à faire pour l'instant : rien n'est perdu, et vous pourrez la remplir dès qu'elle sera ouverte.'
 	String get indisponibleDetail => 'Cette étape n\'est pas encore ouverte par l\'académie. Vous n\'avez rien à faire pour l\'instant : rien n\'est perdu, et vous pourrez la remplir dès qu\'elle sera ouverte.';
 
-	/// fr: 'Pas de connexion'
-	String get horsLigneTitre => 'Pas de connexion';
+	/// fr: 'Le parcours n'a pas pu être chargé'
+	String get horsLigneTitre => 'Le parcours n\'a pas pu être chargé';
 
 	/// fr: 'Vérifiez votre connexion, puis réessayez. Vos réponses sont gardées.'
 	String get horsLigneDetail => 'Vérifiez votre connexion, puis réessayez. Vos réponses sont gardées.';
@@ -2452,6 +2461,9 @@ class Traductions$commun$etats$fr {
 	/// fr: 'Toujours sans réponse. Réessayez un peu plus tard.'
 	String get reessaisEpuises => 'Toujours sans réponse. Réessayez un peu plus tard.';
 
+	/// fr: 'Votre compte n'a pas pu être vérifié'
+	String get horsLigneDemarrageTitre => 'Votre compte n\'a pas pu être vérifié';
+
 	/// fr: 'Rewayah a besoin d'Internet pour vérifier votre compte. Reconnectez cet appareil, puis réessayez.'
 	String get horsLigneDemarrage => 'Rewayah a besoin d\'Internet pour vérifier votre compte. Reconnectez cet appareil, puis réessayez.';
 
@@ -3299,8 +3311,8 @@ class Traductions$accessibilite$tutoiement$fr {
 	/// fr: 'Tu es dans la salle'
 	String get annonceAttente => 'Tu es dans la salle';
 
-	/// fr: 'Tu es hors ligne. La séance nécessite une connexion.'
-	String get horsLigne => 'Tu es hors ligne. La séance nécessite une connexion.';
+	/// fr: 'Tu pourras entrer dans la séance dès le retour de la connexion.'
+	String get horsLigne => 'Tu pourras entrer dans la séance dès le retour de la connexion.';
 
 	/// fr: 'Tu peux retrouver ton travail dans ta Classe.'
 	String get finPhrase => 'Tu peux retrouver ton travail dans ta Classe.';
@@ -3473,8 +3485,8 @@ class Traductions$consentement$compte$fr {
 	/// fr: 'Vos accords ne s'affichent pas pour le moment.'
 	String get erreur => 'Vos accords ne s\'affichent pas pour le moment.';
 
-	/// fr: 'Vous êtes hors ligne. Vos accords s'afficheront dès le retour du réseau.'
-	String get horsLigne => 'Vous êtes hors ligne. Vos accords s\'afficheront dès le retour du réseau.';
+	/// fr: 'Vos accords s'afficheront dès le retour du réseau.'
+	String get horsLigne => 'Vos accords s\'afficheront dès le retour du réseau.';
 
 	/// fr: 'Aucun compte connecté : reconnectez-vous pour lire vos accords.'
 	String get sansProfil => 'Aucun compte connecté : reconnectez-vous pour lire vos accords.';
@@ -3518,6 +3530,9 @@ class Traductions$appareils$foyer$fr {
 	/// fr: 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel. Cet appareil apparaît alors sous chaque profil qui l'utilise.'
 	String get partage => 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel. Cet appareil apparaît alors sous chaque profil qui l\'utilise.';
 
+	/// fr: 'Les appareils de votre foyer n'ont pas pu être chargés'
+	String get sansDonnees => 'Les appareils de votre foyer n\'ont pas pu être chargés';
+
 	/// fr: 'Aucun profil élève'
 	String get videTitre => 'Aucun profil élève';
 
@@ -3544,6 +3559,9 @@ class Traductions$appareils$eleve$fr {
 
 	/// fr: 'Connecter un appareil'
 	String get connecter => 'Connecter un appareil';
+
+	/// fr: 'Les appareils de ce profil n'ont pas pu être chargés'
+	String get sansDonnees => 'Les appareils de ce profil n\'ont pas pu être chargés';
 
 	/// fr: 'Aucun appareil connecté'
 	String get videTitre => 'Aucun appareil connecté';
@@ -3638,8 +3656,8 @@ class Traductions$appareils$retrait$fr {
 	/// fr: 'Le retrait n'a pas abouti. L'appareil est toujours autorisé. Réessayez dans un instant.'
 	String get echec => 'Le retrait n\'a pas abouti. L\'appareil est toujours autorisé. Réessayez dans un instant.';
 
-	/// fr: 'Pas de connexion internet : l'appareil n'a pas été retiré.'
-	String get horsLigne => 'Pas de connexion internet : l\'appareil n\'a pas été retiré.';
+	/// fr: 'L'appareil n'a pas été retiré. Réessayez quand la connexion sera revenue.'
+	String get horsLigne => 'L\'appareil n\'a pas été retiré. Réessayez quand la connexion sera revenue.';
 }
 
 // Path: appareils.emetteur
@@ -3779,8 +3797,8 @@ class Traductions$foyer$ajout$fr {
 	late final Traductions$foyer$ajout$refus$fr refus = Traductions$foyer$ajout$refus$fr.internal(_root);
 	late final Traductions$foyer$ajout$incertaine$fr incertaine = Traductions$foyer$ajout$incertaine$fr.internal(_root);
 
-	/// fr: 'Vous êtes hors ligne. Le profil pourra être créé quand la connexion reviendra.'
-	String get horsLigne => 'Vous êtes hors ligne. Le profil pourra être créé quand la connexion reviendra.';
+	/// fr: 'Le profil pourra être créé quand la connexion reviendra.'
+	String get horsLigne => 'Le profil pourra être créé quand la connexion reviendra.';
 }
 
 // Path: ficheEleve.introuvable
@@ -3926,8 +3944,8 @@ class Traductions$ficheEleve$informations$fr {
 	/// fr: 'La photo n'a pas pu être ouverte. Vérifiez l'accès aux photos de l'appareil, puis réessayez.'
 	String get selectionEchec => 'La photo n\'a pas pu être ouverte. Vérifiez l\'accès aux photos de l\'appareil, puis réessayez.';
 
-	/// fr: 'Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.'
-	String get horsLigne => 'Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.';
+	/// fr: 'La photo pourra être envoyée quand la connexion reviendra.'
+	String get horsLigne => 'La photo pourra être envoyée quand la connexion reviendra.';
 }
 
 // Path: ficheEleve.inscription
@@ -4031,8 +4049,8 @@ class Traductions$ficheEleve$interface$fr {
 	/// fr: 'Le changement n'a pas été enregistré, probablement à cause d'une coupure de connexion avec Rewayah. Vérifiez votre connexion, puis touchez de nouveau votre choix. La présentation actuelle de {prenom} reste inchangée sur son appareil.'
 	String echec({required Object prenom}) => 'Le changement n\'a pas été enregistré, probablement à cause d\'une coupure de connexion avec Rewayah. Vérifiez votre connexion, puis touchez de nouveau votre choix. La présentation actuelle de ${prenom} reste inchangée sur son appareil.';
 
-	/// fr: 'Vous êtes hors ligne. La présentation pourra être changée quand la connexion reviendra.'
-	String get horsLigne => 'Vous êtes hors ligne. La présentation pourra être changée quand la connexion reviendra.';
+	/// fr: 'La présentation pourra être changée quand la connexion reviendra.'
+	String get horsLigne => 'La présentation pourra être changée quand la connexion reviendra.';
 }
 
 // Path: ficheEleve.camera
@@ -4064,8 +4082,8 @@ class Traductions$ficheEleve$camera$fr {
 	/// fr: 'Le changement n'a pas été enregistré. Réessayez.'
 	String get echec => 'Le changement n\'a pas été enregistré. Réessayez.';
 
-	/// fr: 'Vous êtes hors ligne. La caméra pourra être réglée quand la connexion reviendra.'
-	String get horsLigne => 'Vous êtes hors ligne. La caméra pourra être réglée quand la connexion reviendra.';
+	/// fr: 'La caméra pourra être réglée quand la connexion reviendra.'
+	String get horsLigne => 'La caméra pourra être réglée quand la connexion reviendra.';
 }
 
 // Path: ficheEleve.acces
@@ -4169,8 +4187,8 @@ class Traductions$eleveConnexion$pin$fr {
 	/// fr: 'Connexion en cours'
 	String get ouverture => 'Connexion en cours';
 
-	/// fr: 'Pas de connexion internet. Ton code est bon : réessaie quand internet revient.'
-	String get horsLigne => 'Pas de connexion internet. Ton code est bon : réessaie quand internet revient.';
+	/// fr: 'Ton code est bon : réessaie quand internet revient.'
+	String get horsLigne => 'Ton code est bon : réessaie quand internet revient.';
 
 	/// fr: 'Trop d'essais. Patiente un instant avant de réessayer.'
 	String get tropDEssais => 'Trop d\'essais. Patiente un instant avant de réessayer.';
@@ -4217,8 +4235,8 @@ class Traductions$eleveConnexion$saisie$fr {
 	/// fr: 'Scanner le QR code'
 	String get scanner => 'Scanner le QR code';
 
-	/// fr: 'Pas de connexion internet. Le code pourra être vérifié au retour du réseau.'
-	String get horsLigne => 'Pas de connexion internet. Le code pourra être vérifié au retour du réseau.';
+	/// fr: 'Le code pourra être vérifié au retour du réseau.'
+	String get horsLigne => 'Le code pourra être vérifié au retour du réseau.';
 }
 
 // Path: eleveConnexion.lecteur
@@ -4343,11 +4361,11 @@ class Traductions$eleveConnexion$refus$fr {
 	/// fr: 'Patientez un instant avant de réessayer.'
 	String get tropDEssais => 'Patientez un instant avant de réessayer.';
 
-	/// fr: 'Pas de connexion'
-	String get horsLigneTitre => 'Pas de connexion';
+	/// fr: 'Code pas encore vérifié'
+	String get horsLigneTitre => 'Code pas encore vérifié';
 
-	/// fr: 'Le code n'a pas pu être vérifié. Vérifiez la connexion internet, puis réessayez.'
-	String get horsLigne => 'Le code n\'a pas pu être vérifié. Vérifiez la connexion internet, puis réessayez.';
+	/// fr: 'Vérifiez la connexion internet, puis réessayez.'
+	String get horsLigne => 'Vérifiez la connexion internet, puis réessayez.';
 
 	/// fr: 'Connexion non enregistrée'
 	String get nonEnregistreTitre => 'Connexion non enregistrée';
@@ -4376,8 +4394,8 @@ class Traductions$dossiers$file$fr {
 	/// fr: 'Impossible de charger les dossiers.'
 	String get erreur => 'Impossible de charger les dossiers.';
 
-	/// fr: 'Vous êtes hors ligne. Les dossiers ne peuvent pas être actualisés.'
-	String get horsLigne => 'Vous êtes hors ligne. Les dossiers ne peuvent pas être actualisés.';
+	/// fr: 'Les dossiers n'ont pas pu être actualisés.'
+	String get horsLigne => 'Les dossiers n\'ont pas pu être actualisés.';
 
 	/// fr: 'Vous n'avez pas accès aux dossiers à valider.'
 	String get accesRefuse => 'Vous n\'avez pas accès aux dossiers à valider.';
@@ -4478,8 +4496,8 @@ class Traductions$dossiers$visionneuse$fr {
 	/// fr: 'Vous n’avez plus accès à cette pièce.'
 	String get accesRetire => 'Vous n’avez plus accès à cette pièce.';
 
-	/// fr: 'Vous êtes hors ligne. La pièce ne peut pas être chargée.'
-	String get horsLigne => 'Vous êtes hors ligne. La pièce ne peut pas être chargée.';
+	/// fr: 'La pièce n'a pas pu être chargée.'
+	String get horsLigne => 'La pièce n\'a pas pu être chargée.';
 
 	/// fr: 'Aucune pièce n’est disponible.'
 	String get aucune => 'Aucune pièce n’est disponible.';
@@ -4606,8 +4624,8 @@ class Traductions$dossiers$refus$fr {
 	/// fr: 'Le dossier n'a pas pu être refusé.'
 	String get erreur => 'Le dossier n\'a pas pu être refusé.';
 
-	/// fr: 'Vous êtes hors ligne. Le refus n’a pas été envoyé.'
-	String get horsLigne => 'Vous êtes hors ligne. Le refus n’a pas été envoyé.';
+	/// fr: 'Le refus n’a pas été envoyé. Réessayez quand la connexion sera revenue.'
+	String get horsLigne => 'Le refus n’a pas été envoyé. Réessayez quand la connexion sera revenue.';
 
 	/// fr: 'Le résultat du refus n’est pas encore confirmé.'
 	String get inconnu => 'Le résultat du refus n’est pas encore confirmé.';
@@ -4657,8 +4675,8 @@ class Traductions$dossiers$validation$fr {
 	/// fr: 'Le dossier n'a pas pu être validé.'
 	String get erreur => 'Le dossier n\'a pas pu être validé.';
 
-	/// fr: 'Vous êtes hors ligne. La validation n’a pas été envoyée.'
-	String get horsLigne => 'Vous êtes hors ligne. La validation n’a pas été envoyée.';
+	/// fr: 'La validation n’a pas été envoyée. Réessayez quand la connexion sera revenue.'
+	String get horsLigne => 'La validation n’a pas été envoyée. Réessayez quand la connexion sera revenue.';
 
 	/// fr: 'Le résultat de la validation n’est pas encore confirmé.'
 	String get inconnu => 'Le résultat de la validation n’est pas encore confirmé.';
@@ -7276,8 +7294,8 @@ class Traductions$eleve$accueil$fr {
 	/// fr: 'Ce cours n'aura pas lieu'
 	String get annulee => 'Ce cours n\'aura pas lieu';
 
-	/// fr: 'Pas de réseau'
-	String get horsLigne => 'Pas de réseau';
+	/// fr: 'Entrée en attente'
+	String get horsLigne => 'Entrée en attente';
 
 	/// fr: 'Tu pourras entrer dès que le réseau revient.'
 	String get horsLigneDetail => 'Tu pourras entrer dès que le réseau revient.';
@@ -7824,8 +7842,8 @@ class Traductions$classe$entree$fr {
 	/// fr: 'Aucune séance prévue'
 	String get aucune => 'Aucune séance prévue';
 
-	/// fr: 'Vous êtes hors ligne. La séance nécessite une connexion.'
-	String get horsLigne => 'Vous êtes hors ligne. La séance nécessite une connexion.';
+	/// fr: 'Vous pourrez entrer dans la séance dès le retour de la connexion.'
+	String get horsLigne => 'Vous pourrez entrer dans la séance dès le retour de la connexion.';
 
 	/// fr: 'L'information sur la séance est indisponible pour l'instant.'
 	String get indisponible => 'L\'information sur la séance est indisponible pour l\'instant.';
@@ -8404,8 +8422,8 @@ class Traductions$enseignant$photo$fr {
 	/// fr: 'La photo n'a pas pu être ouverte. Vérifiez l'accès aux photos de l'appareil, puis réessayez.'
 	String get selectionEchec => 'La photo n\'a pas pu être ouverte. Vérifiez l\'accès aux photos de l\'appareil, puis réessayez.';
 
-	/// fr: 'Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.'
-	String get horsLigne => 'Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.';
+	/// fr: 'La photo pourra être envoyée quand la connexion reviendra.'
+	String get horsLigne => 'La photo pourra être envoyée quand la connexion reviendra.';
 }
 
 // Path: enseignant.journee
@@ -8557,6 +8575,9 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Tous vos cahiers sont terminés.'
 	String get aTerminerVide => 'Tous vos cahiers sont terminés.';
 
+	/// fr: 'Les cahiers à terminer n'ont pas pu être lus'
+	String get aTerminerSansDonnees => 'Les cahiers à terminer n\'ont pas pu être lus';
+
 	/// fr: 'Les cahiers à terminer n'ont pas pu être lus. Réessayez dans un instant.'
 	String get aTerminerErreur => 'Les cahiers à terminer n\'ont pas pu être lus. Réessayez dans un instant.';
 
@@ -8577,6 +8598,9 @@ class Traductions$enseignant$journee$fr {
 
 	/// fr: 'Aucune alerte utile en ce moment.'
 	String get alertesVide => 'Aucune alerte utile en ce moment.';
+
+	/// fr: 'Les alertes de présence n'ont pas pu être lues'
+	String get alertesSansDonnees => 'Les alertes de présence n\'ont pas pu être lues';
 
 	/// fr: 'Les alertes de présence n'ont pas pu être lues : la connexion ou le serveur n'a pas répondu. Réessayez dans un instant.'
 	String get alertesErreur => 'Les alertes de présence n\'ont pas pu être lues : la connexion ou le serveur n\'a pas répondu. Réessayez dans un instant.';
@@ -9169,8 +9193,8 @@ class Traductions$enseignant$profil$fr {
 	/// fr: 'Ce compte n'a pas de profil enseignant. Seule l'académie peut en créer un.'
 	String get videDetail => 'Ce compte n\'a pas de profil enseignant. Seule l\'académie peut en créer un.';
 
-	/// fr: 'Pas de réseau : rien ne peut être modifié ici pour l'instant.'
-	String get horsLigne => 'Pas de réseau : rien ne peut être modifié ici pour l\'instant.';
+	/// fr: 'Rien ne peut être modifié ici pour l'instant.'
+	String get horsLigne => 'Rien ne peut être modifié ici pour l\'instant.';
 
 	/// fr: 'Modifier le pays'
 	String get modifierPays => 'Modifier le pays';
@@ -10325,6 +10349,9 @@ class Traductions$adulte$accueil$fr {
 	/// fr: 'Votre prochaine séance s'affichera ici dès que votre classe sera ouverte.'
 	String get aucuneClasseDetail => 'Votre prochaine séance s\'affichera ici dès que votre classe sera ouverte.';
 
+	/// fr: 'Votre prochaine séance et vos dernières séances n'ont pas pu être chargées'
+	String get sansDonnees => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées';
+
 	/// fr: 'Votre prochaine séance et vos dernières séances n'ont pas pu être chargées : le serveur n'a pas répondu. Réessayez dans un instant.'
 	String get echec => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées : le serveur n\'a pas répondu. Réessayez dans un instant.';
 }
@@ -10339,6 +10366,9 @@ class Traductions$adulte$historique$fr {
 
 	/// fr: 'Mes séances passées'
 	String get titre => 'Mes séances passées';
+
+	/// fr: 'Vos séances passées n'ont pas pu être chargées'
+	String get sansDonnees => 'Vos séances passées n\'ont pas pu être chargées';
 
 	/// fr: 'Vos séances passées n'ont pas pu être chargées : le serveur n'a pas répondu. Réessayez dans un instant.'
 	String get echec => 'Vos séances passées n\'ont pas pu être chargées : le serveur n\'a pas répondu. Réessayez dans un instant.';
@@ -10369,6 +10399,9 @@ class Traductions$adulte$maClasse$fr {
 
 	/// fr: 'Ma progression dans cette classe'
 	String get progression => 'Ma progression dans cette classe';
+
+	/// fr: 'Votre classe n'a pas pu être chargée'
+	String get sansDonnees => 'Votre classe n\'a pas pu être chargée';
 
 	/// fr: 'Votre classe, ses participants et ses ressources s'afficheront ici dès qu'elle sera ouverte.'
 	String get aucuneClasseDetail => 'Votre classe, ses participants et ses ressources s\'afficheront ici dès qu\'elle sera ouverte.';
@@ -10408,6 +10441,12 @@ class Traductions$adulte$monEspace$fr {
 
 	/// fr: 'Accords donnés à l'académie'
 	String get accordsLegende => 'Accords donnés à l\'académie';
+
+	/// fr: 'Vos informations de compte n'ont pas pu être chargées'
+	String get sansDonneesCompte => 'Vos informations de compte n\'ont pas pu être chargées';
+
+	/// fr: 'Les informations de votre famille n'ont pas pu être chargées'
+	String get sansDonneesFamille => 'Les informations de votre famille n\'ont pas pu être chargées';
 
 	/// fr: 'Méthode et adresse de connexion'
 	String get securiteLegende => 'Méthode et adresse de connexion';
@@ -10463,8 +10502,11 @@ class Traductions$adulte$recharge$fr {
 	/// fr: 'Choisissez une offre pour chaque bénéficiaire sélectionné.'
 	String get raisonOffre => 'Choisissez une offre pour chaque bénéficiaire sélectionné.';
 
-	/// fr: 'Vous êtes hors ligne. Vous pourrez vérifier la recharge quand la connexion sera revenue.'
-	String get horsLigneVerifier => 'Vous êtes hors ligne. Vous pourrez vérifier la recharge quand la connexion sera revenue.';
+	/// fr: 'Vous pourrez vérifier la recharge quand la connexion sera revenue.'
+	String get horsLigneVerifier => 'Vous pourrez vérifier la recharge quand la connexion sera revenue.';
+
+	/// fr: 'Les bénéficiaires à recharger n'ont pas pu être chargés'
+	String get sansDonnees => 'Les bénéficiaires à recharger n\'ont pas pu être chargés';
 
 	/// fr: 'Recharge pas encore disponible'
 	String get indisponibleTitre => 'Recharge pas encore disponible';
@@ -10505,8 +10547,8 @@ class Traductions$adulte$recharge$fr {
 	/// fr: 'Payer {montant}'
 	String payer({required Object montant}) => 'Payer ${montant}';
 
-	/// fr: 'Vous êtes hors ligne. Vous pourrez payer quand la connexion sera revenue.'
-	String get horsLignePayer => 'Vous êtes hors ligne. Vous pourrez payer quand la connexion sera revenue.';
+	/// fr: 'Vous pourrez payer quand la connexion sera revenue.'
+	String get horsLignePayer => 'Vous pourrez payer quand la connexion sera revenue.';
 
 	/// fr: 'Le paiement n'a pas été confirmé.'
 	String get paiementEchecTitre => 'Le paiement n\'a pas été confirmé.';
@@ -10549,6 +10591,9 @@ class Traductions$adulte$paiements$fr {
 
 	/// fr: 'Historique des paiements'
 	String get historique => 'Historique des paiements';
+
+	/// fr: 'Les soldes de votre foyer n'ont pas pu être chargés'
+	String get soldesSansDonnees => 'Les soldes de votre foyer n\'ont pas pu être chargés';
 
 	/// fr: 'Soldes pas encore consultables'
 	String get soldesIndisponiblesTitre => 'Soldes pas encore consultables';
@@ -10699,8 +10744,8 @@ class Traductions$adulte$invitation$fr {
 	/// fr: 'Envoyer l'invitation'
 	String get envoyer => 'Envoyer l\'invitation';
 
-	/// fr: 'Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez envoyer l'invitation vous-même quand la connexion sera revenue.'
-	String get horsLigne => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez envoyer l\'invitation vous-même quand la connexion sera revenue.';
+	/// fr: 'Rien n'est envoyé. Vous pourrez envoyer l'invitation vous-même quand la connexion sera revenue.'
+	String get horsLigne => 'Rien n\'est envoyé. Vous pourrez envoyer l\'invitation vous-même quand la connexion sera revenue.';
 
 	/// fr: 'L'envoi n'a pas été confirmé.'
 	String get echecTitre => 'L\'envoi n\'a pas été confirmé.';
@@ -10735,8 +10780,8 @@ class Traductions$adulte$invitation$fr {
 	/// fr: 'Annuler cette invitation ?'
 	String get annulerQuestionSansPrenom => 'Annuler cette invitation ?';
 
-	/// fr: 'Vous êtes hors ligne. Rien n'est annulé. Vous pourrez annuler l'invitation vous-même quand la connexion sera revenue.'
-	String get annulerHorsLigne => 'Vous êtes hors ligne. Rien n\'est annulé. Vous pourrez annuler l\'invitation vous-même quand la connexion sera revenue.';
+	/// fr: 'Rien n'est annulé. Vous pourrez annuler l'invitation vous-même quand la connexion sera revenue.'
+	String get annulerHorsLigne => 'Rien n\'est annulé. Vous pourrez annuler l\'invitation vous-même quand la connexion sera revenue.';
 
 	/// fr: 'L'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.'
 	String get annulerConsequence => 'L\'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.';
@@ -10837,8 +10882,8 @@ class Traductions$adulte$acceptation$fr {
 	/// fr: 'Accepter l'invitation'
 	String get accepter => 'Accepter l\'invitation';
 
-	/// fr: 'Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez répondre vous-même quand la connexion sera revenue.'
-	String get horsLigne => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez répondre vous-même quand la connexion sera revenue.';
+	/// fr: 'Rien n'est envoyé. Vous pourrez répondre vous-même quand la connexion sera revenue.'
+	String get horsLigne => 'Rien n\'est envoyé. Vous pourrez répondre vous-même quand la connexion sera revenue.';
 
 	/// fr: 'L'acceptation n'a pas été confirmée.'
 	String get acceptationEchecTitre => 'L\'acceptation n\'a pas été confirmée.';
@@ -10945,8 +10990,8 @@ class Traductions$adulte$sortie$fr {
 	/// fr: 'Vérifiez avant de réessayer.'
 	String get echecPhrase => 'Vérifiez avant de réessayer.';
 
-	/// fr: 'Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez réessayer vous-même quand la connexion sera revenue.'
-	String get horsLigne => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez réessayer vous-même quand la connexion sera revenue.';
+	/// fr: 'Rien n'est envoyé. Vous pourrez réessayer vous-même quand la connexion sera revenue.'
+	String get horsLigne => 'Rien n\'est envoyé. Vous pourrez réessayer vous-même quand la connexion sera revenue.';
 
 	/// fr: '{prenom} a quitté votre forfait famille.'
 	String notificationQuitte({required Object prenom}) => '${prenom} a quitté votre forfait famille.';
@@ -11006,8 +11051,8 @@ class Traductions$adulte$reprise$fr {
 	/// fr: 'Le titulaire du foyer en sera informé et pourra la refuser. L'administration examinera ensuite la demande et décidera.'
 	String get deposerConsequence => 'Le titulaire du foyer en sera informé et pourra la refuser. L\'administration examinera ensuite la demande et décidera.';
 
-	/// fr: 'Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.'
-	String get horsLigne => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.';
+	/// fr: 'Rien n'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.'
+	String get horsLigne => 'Rien n\'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.';
 
 	/// fr: 'La demande n'a pas été confirmée.'
 	String get depotEchecTitre => 'La demande n\'a pas été confirmée.';
@@ -11690,6 +11735,9 @@ class Traductions$foyer$ajout$porte$fr {
 
 	// Translations
 
+	/// fr: 'Les profils que vous pouvez ajouter n'ont pas pu être vérifiés'
+	String get sansDonneesTitre => 'Les profils que vous pouvez ajouter n\'ont pas pu être vérifiés';
+
 	/// fr: 'Votre compte n'a pas pu être lu'
 	String get illisibleTitre => 'Votre compte n\'a pas pu être lu';
 
@@ -11837,8 +11885,8 @@ class Traductions$dossiers$revue$etats$fr {
 	/// fr: 'Chargement du dossier…'
 	String get chargement => 'Chargement du dossier…';
 
-	/// fr: 'Vous êtes hors ligne. Aucune décision ne peut être envoyée.'
-	String get horsLigne => 'Vous êtes hors ligne. Aucune décision ne peut être envoyée.';
+	/// fr: 'Aucune décision ne peut être envoyée pour l'instant.'
+	String get horsLigne => 'Aucune décision ne peut être envoyée pour l\'instant.';
 
 	/// fr: 'Vous n’avez plus accès à ce dossier.'
 	String get accesPerdu => 'Vous n’avez plus accès à ce dossier.';
@@ -14842,8 +14890,8 @@ class Traductions$adulte$reprise$titulaire$fr {
 	/// fr: 'Le refus n'a pas été confirmé.'
 	String get refusEchecTitre => 'Le refus n\'a pas été confirmé.';
 
-	/// fr: 'Vous êtes hors ligne. Rien n'est envoyé. Vous pourrez refuser la demande vous-même quand la connexion sera revenue.'
-	String get horsLigne => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez refuser la demande vous-même quand la connexion sera revenue.';
+	/// fr: 'Rien n'est envoyé. Vous pourrez refuser la demande vous-même quand la connexion sera revenue.'
+	String get horsLigne => 'Rien n\'est envoyé. Vous pourrez refuser la demande vous-même quand la connexion sera revenue.';
 
 	/// fr: 'Vous avez refusé cette demande. L'administration en est informée. Aucune permission de votre foyer n'est transférée.'
 	String get refusee => 'Vous avez refusé cette demande. L\'administration en est informée. Aucune permission de votre foyer n\'est transférée.';
@@ -15474,6 +15522,7 @@ extension on Traductions {
 			'commun.etats.indisponible.titre' => 'Pas encore disponible',
 			'commun.etats.indisponible.phrase' => 'Cette fonction n\'est pas encore ouverte.',
 			'commun.etats.reessaisEpuises' => 'Toujours sans réponse. Réessayez un peu plus tard.',
+			'commun.etats.horsLigneDemarrageTitre' => 'Votre compte n\'a pas pu être vérifié',
 			'commun.etats.horsLigneDemarrage' => 'Rewayah a besoin d\'Internet pour vérifier votre compte. Reconnectez cet appareil, puis réessayez.',
 			'commun.etats.actions.reessayer' => 'Réessayer',
 			'commun.etats.actions.retourAccueil' => 'Retour à l\'accueil',
@@ -15861,7 +15910,7 @@ extension on Traductions {
 			'attente.refuseDetail' => ({required Object element}) => 'Pour relancer la vérification, commencez par cet élément : ${element}.',
 			'attente.refuseSansElement' => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.',
 			'attente.illisible' => 'L\'état de votre dossier ne s\'affiche pas pour le moment.',
-			'attente.horsLigne' => 'Vous êtes hors ligne. L\'état de votre dossier s\'affichera dès le retour du réseau.',
+			'attente.horsLigne' => 'L\'état de votre dossier s\'affichera dès le retour du réseau.',
 			'connexion.titre' => 'Se connecter',
 			'connexion.intro' => 'Nous vous envoyons un lien par courriel. Aucun mot de passe à retenir, donc aucun à perdre.',
 			'connexion.courriel' => 'Votre adresse électronique',
@@ -15880,7 +15929,7 @@ extension on Traductions {
 			'connexion.renvoyer' => 'Renvoyer le lien',
 			'connexion.renvoye' => ({required Object courriel}) => 'Un nouveau lien est parti à ${courriel}. Utilisez celui du message le plus récent.',
 			'connexion.erreurTropTot' => 'Un lien vient déjà de partir. Attendez un moment avant d\'en demander un autre.',
-			'connexion.horsLigne' => 'Vous êtes hors ligne : le lien ne peut pas partir pour l\'instant.',
+			'connexion.horsLigne' => 'Le lien ne peut pas partir pour l\'instant. Réessayez quand la connexion sera revenue.',
 			'connexion.probleme' => 'Lien expiré ou jamais reçu ?',
 			'connexion.decouvrir' => 'Découvrir Rewayah Academy',
 			'connexion.recuperation.titre' => 'Retrouver mon accès',
@@ -15947,11 +15996,11 @@ extension on Traductions {
 			'contrat.pointCoordonnees' => 'Vous ne voyez jamais les coordonnées d\'une famille : ni nom complet, ni courriel, ni téléphone.',
 			'contrat.lireTexte' => 'Lire le texte complet',
 			'contrat.accepter' => 'J\'ai lu et j\'accepte',
-			'contrat.accepteLe' => ({required Object date}) => 'Accepté le ${date}',
 			_ => null,
 		} ?? switch (path) {
+			'contrat.accepteLe' => ({required Object date}) => 'Accepté le ${date}',
 			'contrat.erreur' => 'La signature n\'a pas abouti. Réessayez dans un instant.',
-			'contrat.horsLigne' => 'Vous êtes hors ligne. Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.',
+			'contrat.horsLigne' => 'Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.',
 			'contrat.caseRequise' => 'Cochez la case pour continuer.',
 			'accessibilite.demo.titre' => 'Démonstration du Mode Accessibilité',
 			'accessibilite.demo.mention' => 'Données fictives, aucun envoi.',
@@ -15997,7 +16046,7 @@ extension on Traductions {
 			'accessibilite.tutoiement.attente' => ({required Object duree}) => 'Tu es dans la salle. La séance commence dans ${duree}.',
 			'accessibilite.tutoiement.attenteImminent' => 'Tu es dans la salle. La séance commence dans moins d\'une minute.',
 			'accessibilite.tutoiement.annonceAttente' => 'Tu es dans la salle',
-			'accessibilite.tutoiement.horsLigne' => 'Tu es hors ligne. La séance nécessite une connexion.',
+			'accessibilite.tutoiement.horsLigne' => 'Tu pourras entrer dans la séance dès le retour de la connexion.',
 			'accessibilite.tutoiement.finPhrase' => 'Tu peux retrouver ton travail dans ta Classe.',
 			'accessibilite.apres.revoirSupport' => 'Revoir le support du cours',
 			'accessibilite.apres.revoirSupportDetail' => 'Le support reste dans ta Classe.',
@@ -16041,7 +16090,7 @@ extension on Traductions {
 			'consentement.compte.merci' => 'Merci, votre accord est enregistré.',
 			'consentement.compte.chargement' => 'Lecture de vos accords',
 			'consentement.compte.erreur' => 'Vos accords ne s\'affichent pas pour le moment.',
-			'consentement.compte.horsLigne' => 'Vous êtes hors ligne. Vos accords s\'afficheront dès le retour du réseau.',
+			'consentement.compte.horsLigne' => 'Vos accords s\'afficheront dès le retour du réseau.',
 			'consentement.compte.sansProfil' => 'Aucun compte connecté : reconnectez-vous pour lire vos accords.',
 			'consentement.compte.invite' => 'Une nouvelle version à lire : les visites des parents',
 			'consentement.compte.inviteAction' => 'Lire',
@@ -16068,12 +16117,14 @@ extension on Traductions {
 			'appareils.foyer.plusieursAppareils' => ({required Object nombre, required Object noms}) => '${nombre} appareils connectés : ${noms}',
 			'appareils.foyer.partageTitre' => 'Appareil partagé',
 			'appareils.foyer.partage' => 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son code personnel. Cet appareil apparaît alors sous chaque profil qui l\'utilise.',
+			'appareils.foyer.sansDonnees' => 'Les appareils de votre foyer n\'ont pas pu être chargés',
 			'appareils.foyer.videTitre' => 'Aucun profil élève',
 			'appareils.foyer.vide' => 'Ajoutez un profil élève pour lui connecter une tablette, un téléphone ou un ordinateur.',
 			'appareils.foyer.videAction' => 'Ajouter un profil élève',
 			'appareils.eleve.sousTitre' => ({required Object prenom}) => 'Gérez les appareils autorisés pour ${prenom}.',
 			'appareils.eleve.groupe' => 'Appareils connectés',
 			'appareils.eleve.connecter' => 'Connecter un appareil',
+			'appareils.eleve.sansDonnees' => 'Les appareils de ce profil n\'ont pas pu être chargés',
 			'appareils.eleve.videTitre' => 'Aucun appareil connecté',
 			'appareils.eleve.vide' => ({required Object prenom}) => 'Connectez la tablette, le téléphone ou l\'ordinateur de ${prenom} avec le code affiché par le bouton ci-dessous.',
 			'appareils.eleve.introuvableTitre' => 'Profil élève introuvable',
@@ -16099,7 +16150,7 @@ extension on Traductions {
 			'appareils.retrait.enCours' => 'Retrait en cours',
 			'appareils.retrait.reussi' => 'Appareil retiré. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.',
 			'appareils.retrait.echec' => 'Le retrait n\'a pas abouti. L\'appareil est toujours autorisé. Réessayez dans un instant.',
-			'appareils.retrait.horsLigne' => 'Pas de connexion internet : l\'appareil n\'a pas été retiré.',
+			'appareils.retrait.horsLigne' => 'L\'appareil n\'a pas été retiré. Réessayez quand la connexion sera revenue.',
 			'appareils.emetteur.titre' => 'Connecter un appareil',
 			'appareils.emetteur.pourEleve' => ({required Object prenom}) => 'Pour ${prenom}',
 			'appareils.emetteur.consigneTitre' => 'Sur l\'autre appareil',
@@ -16161,6 +16212,8 @@ extension on Traductions {
 			'foyer.classesIndisponibles' => 'La classe de chaque élève ne s\'affiche pas encore sur cette page.',
 			'foyer.classesEchec' => 'La classe de certains élèves n\'a pas pu être lue.',
 			'foyer.relireClasses' => 'Relire les classes',
+			'foyer.profilsSansDonnees' => 'Les profils élèves de votre foyer n\'ont pas pu être chargés',
+			'foyer.titulaireSansDonnees' => 'Vos informations de titulaire n\'ont pas pu être chargées',
 			'foyer.inscriptionIllisible' => 'L\'inscription en cours de chaque élève ne s\'affiche pas encore sur cette page.',
 			'foyer.appareilsPartages' => 'Appareils partagés',
 			'foyer.appareilsFoyer' => 'Appareils du foyer',
@@ -16172,6 +16225,7 @@ extension on Traductions {
 			'foyer.monProfil.retour' => 'Retour au foyer',
 			'foyer.ajout.suivant' => 'Suivant',
 			'foyer.ajout.creer' => 'Créer le profil',
+			'foyer.ajout.porte.sansDonneesTitre' => 'Les profils que vous pouvez ajouter n\'ont pas pu être vérifiés',
 			'foyer.ajout.porte.illisibleTitre' => 'Votre compte n\'a pas pu être lu',
 			'foyer.ajout.porte.illisiblePhrase' => 'Nous ne savons pas encore quels profils vous pouvez ajouter. Réessayez dans un instant.',
 			'foyer.ajout.pourQui.question' => 'Pour qui est ce profil élève ?',
@@ -16202,7 +16256,8 @@ extension on Traductions {
 			'foyer.ajout.incertaine.phrase' => 'La réponse ne nous est pas parvenue. Vérifiez le foyer avant de réessayer, pour ne pas créer le profil deux fois.',
 			'foyer.ajout.incertaine.voirFoyer' => 'Voir le foyer',
 			'foyer.ajout.incertaine.reessayer' => 'Réessayer quand même',
-			'foyer.ajout.horsLigne' => 'Vous êtes hors ligne. Le profil pourra être créé quand la connexion reviendra.',
+			'foyer.ajout.horsLigne' => 'Le profil pourra être créé quand la connexion reviendra.',
+			'ficheEleve.sansDonnees' => 'Le profil de cet élève n\'a pas pu être chargé',
 			'ficheEleve.titreRepli' => 'Profil élève',
 			'ficheEleve.parametres' => 'Paramètres de l\'élève',
 			'ficheEleve.appareilsGroupe' => 'Appareils',
@@ -16245,7 +16300,7 @@ extension on Traductions {
 			'ficheEleve.informations.echecEnregistrement' => 'La photo est envoyée, mais elle n\'a pas pu être enregistrée sur le profil.',
 			'ficheEleve.informations.reprendre' => 'Réessayer',
 			'ficheEleve.informations.selectionEchec' => 'La photo n\'a pas pu être ouverte. Vérifiez l\'accès aux photos de l\'appareil, puis réessayez.',
-			'ficheEleve.informations.horsLigne' => 'Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.',
+			'ficheEleve.informations.horsLigne' => 'La photo pourra être envoyée quand la connexion reviendra.',
 			'ficheEleve.inscription.titre' => 'Parcours et inscription',
 			'ficheEleve.inscription.intro' => ({required Object prenom}) => 'Où en est ${prenom} : questionnaire et classe.',
 			'ficheEleve.inscription.questionnaire' => 'Questionnaire',
@@ -16274,7 +16329,7 @@ extension on Traductions {
 			'ficheEleve.interface.demandeEleve' => 'La demande de changement par l\'élève lui-même n\'est pas encore proposée.',
 			'ficheEleve.interface.enCours' => 'Enregistrement en cours',
 			'ficheEleve.interface.echec' => ({required Object prenom}) => 'Le changement n\'a pas été enregistré, probablement à cause d\'une coupure de connexion avec Rewayah. Vérifiez votre connexion, puis touchez de nouveau votre choix. La présentation actuelle de ${prenom} reste inchangée sur son appareil.',
-			'ficheEleve.interface.horsLigne' => 'Vous êtes hors ligne. La présentation pourra être changée quand la connexion reviendra.',
+			'ficheEleve.interface.horsLigne' => 'La présentation pourra être changée quand la connexion reviendra.',
 			'ficheEleve.camera.titre' => 'Caméra en cours',
 			'ficheEleve.camera.ligne' => 'Caméra pendant les séances',
 			'ficheEleve.camera.autorisee' => ({required Object prenom}) => '${prenom} peut allumer sa caméra pendant les séances.',
@@ -16282,7 +16337,7 @@ extension on Traductions {
 			'ficheEleve.camera.application' => ({required Object prenom}) => 'Le changement compte à la prochaine entrée de ${prenom} en séance.',
 			'ficheEleve.camera.distincte' => 'Ce réglage ne change pas l\'autorisation caméra de l\'appareil, celle que le téléphone demande pour lire un QR code.',
 			'ficheEleve.camera.echec' => 'Le changement n\'a pas été enregistré. Réessayez.',
-			'ficheEleve.camera.horsLigne' => 'Vous êtes hors ligne. La caméra pourra être réglée quand la connexion reviendra.',
+			'ficheEleve.camera.horsLigne' => 'La caméra pourra être réglée quand la connexion reviendra.',
 			'ficheEleve.acces.titre' => 'Accès Rewayah',
 			'ficheEleve.acces.ligne' => ({required Object prenom}) => 'Accès de ${prenom}',
 			'ficheEleve.acces.pastilleSansEcheance' => 'Sans échéance',
@@ -16375,7 +16430,7 @@ extension on Traductions {
 			'eleveConnexion.pin.confirmer' => 'Entre-le encore une fois',
 			'eleveConnexion.pin.different' => 'Les deux codes ne sont pas les mêmes. Choisis ton code à nouveau.',
 			'eleveConnexion.pin.ouverture' => 'Connexion en cours',
-			'eleveConnexion.pin.horsLigne' => 'Pas de connexion internet. Ton code est bon : réessaie quand internet revient.',
+			'eleveConnexion.pin.horsLigne' => 'Ton code est bon : réessaie quand internet revient.',
 			'eleveConnexion.pin.tropDEssais' => 'Trop d\'essais. Patiente un instant avant de réessayer.',
 			'eleveConnexion.pin.echec' => 'La connexion n\'a pas abouti. Réessaie dans un instant.',
 			'eleveConnexion.pin.changerProfil' => 'Changer de profil',
@@ -16388,7 +16443,7 @@ extension on Traductions {
 			'eleveConnexion.saisie.aide' => 'Chiffres de 2 à 9 et lettres, sans I ni O.',
 			'eleveConnexion.saisie.valider' => 'Connecter l\'appareil',
 			'eleveConnexion.saisie.scanner' => 'Scanner le QR code',
-			'eleveConnexion.saisie.horsLigne' => 'Pas de connexion internet. Le code pourra être vérifié au retour du réseau.',
+			'eleveConnexion.saisie.horsLigne' => 'Le code pourra être vérifié au retour du réseau.',
 			'eleveConnexion.lecteur.titre' => 'Scanner le QR code',
 			'eleveConnexion.lecteur.consigne' => 'Visez le QR code affiché sur l\'appareil du tuteur.',
 			'eleveConnexion.lecteur.demarrage' => 'Autorisez la caméra si l\'appareil le demande.',
@@ -16424,8 +16479,8 @@ extension on Traductions {
 			'eleveConnexion.refus.plafond' => 'Ce profil élève a atteint le nombre d\'appareils autorisés. Le tuteur peut en retirer un dans Foyer, puis afficher un nouveau code.',
 			'eleveConnexion.refus.tropDEssaisTitre' => 'Trop d\'essais',
 			'eleveConnexion.refus.tropDEssais' => 'Patientez un instant avant de réessayer.',
-			'eleveConnexion.refus.horsLigneTitre' => 'Pas de connexion',
-			'eleveConnexion.refus.horsLigne' => 'Le code n\'a pas pu être vérifié. Vérifiez la connexion internet, puis réessayez.',
+			'eleveConnexion.refus.horsLigneTitre' => 'Code pas encore vérifié',
+			'eleveConnexion.refus.horsLigne' => 'Vérifiez la connexion internet, puis réessayez.',
 			'eleveConnexion.refus.nonEnregistreTitre' => 'Connexion non enregistrée',
 			'eleveConnexion.refus.nonEnregistre' => 'Cet appareil n\'a pas pu garder la connexion. Le code a sans doute déjà servi : affichez un nouveau code sur l\'appareil du tuteur, puis recommencez.',
 			'eleveConnexion.refus.generiqueTitre' => 'Connexion non aboutie',
@@ -16436,7 +16491,7 @@ extension on Traductions {
 			'dossiers.aucunDetail' => 'Les nouveaux dossiers apparaîtront ici lorsqu\'ils seront prêts.',
 			'dossiers.file.chargement' => 'Chargement des dossiers…',
 			'dossiers.file.erreur' => 'Impossible de charger les dossiers.',
-			'dossiers.file.horsLigne' => 'Vous êtes hors ligne. Les dossiers ne peuvent pas être actualisés.',
+			'dossiers.file.horsLigne' => 'Les dossiers n\'ont pas pu être actualisés.',
 			'dossiers.file.accesRefuse' => 'Vous n\'avez pas accès aux dossiers à valider.',
 			'dossiers.file.actualisation' => 'Actualisation des dossiers…',
 			'dossiers.file.chargementProlonge' => 'Le chargement prend plus de temps que prévu.',
@@ -16455,6 +16510,8 @@ extension on Traductions {
 			'dossiers.file.dateChiffres' => ({required Object jour, required Object mois, required Object annee}) => '${jour}/${mois}/${annee}',
 			'dossiers.file.heureChiffres' => ({required Object heures, required Object minutes}) => '${heures}:${minutes}',
 			'dossiers.file.zoneUtc' => 'UTC',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.file.suivantAnnonce' => ({required Object nom}) => 'Dossier suivant : ${nom}',
 			'dossiers.detail.titreDe' => ({required Object nom}) => 'Dossier de ${nom}',
 			'dossiers.detail.titreElide' => ({required Object nom}) => 'Dossier d\'${nom}',
@@ -16462,11 +16519,9 @@ extension on Traductions {
 			'dossiers.visionneuse.erreur' => 'La pièce ne peut pas être affichée.',
 			'dossiers.visionneuse.expire' => 'L\'accès à cette pièce a expiré.',
 			'dossiers.visionneuse.recharger' => 'Recharger la pièce',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.visionneuse.formatNonPrisEnCharge' => 'Ce format de pièce ne peut pas être affiché.',
 			'dossiers.visionneuse.accesRetire' => 'Vous n’avez plus accès à cette pièce.',
-			'dossiers.visionneuse.horsLigne' => 'Vous êtes hors ligne. La pièce ne peut pas être chargée.',
+			'dossiers.visionneuse.horsLigne' => 'La pièce n\'a pas pu être chargée.',
 			'dossiers.visionneuse.aucune' => 'Aucune pièce n’est disponible.',
 			'dossiers.visionneuse.fermerPiece' => 'Fermer la pièce',
 			'dossiers.visionneuse.agrandir' => 'Agrandir',
@@ -16489,7 +16544,7 @@ extension on Traductions {
 			'dossiers.revue.erreurChargement' => 'Impossible de charger ce dossier.',
 			'dossiers.revue.pieceIndisponible' => 'La consultation de la pièce est indisponible pour le moment.',
 			'dossiers.revue.etats.chargement' => 'Chargement du dossier…',
-			'dossiers.revue.etats.horsLigne' => 'Vous êtes hors ligne. Aucune décision ne peut être envoyée.',
+			'dossiers.revue.etats.horsLigne' => 'Aucune décision ne peut être envoyée pour l\'instant.',
 			'dossiers.revue.etats.accesPerdu' => 'Vous n’avez plus accès à ce dossier.',
 			'dossiers.revue.etats.retourDossiers' => 'Retour aux dossiers',
 			'dossiers.revue.etats.verificationsIncompletes' => 'Terminez les vérifications requises.',
@@ -16529,7 +16584,7 @@ extension on Traductions {
 			'dossiers.refus.tropLong' => 'Le motif dépasse la longueur autorisée.',
 			'dossiers.refus.envoi' => 'Refus en cours…',
 			'dossiers.refus.erreur' => 'Le dossier n\'a pas pu être refusé.',
-			'dossiers.refus.horsLigne' => 'Vous êtes hors ligne. Le refus n’a pas été envoyé.',
+			'dossiers.refus.horsLigne' => 'Le refus n’a pas été envoyé. Réessayez quand la connexion sera revenue.',
 			'dossiers.refus.inconnu' => 'Le résultat du refus n’est pas encore confirmé.',
 			'dossiers.refus.interdit' => 'Vous ne pouvez plus refuser ce dossier.',
 			'dossiers.refus.indisponible' => 'Le refus est indisponible pour le moment.',
@@ -16543,7 +16598,7 @@ extension on Traductions {
 			'dossiers.validation.indisponible' => 'La validation est indisponible pour le moment.',
 			'dossiers.validation.envoi' => 'Validation en cours…',
 			'dossiers.validation.erreur' => 'Le dossier n\'a pas pu être validé.',
-			'dossiers.validation.horsLigne' => 'Vous êtes hors ligne. La validation n’a pas été envoyée.',
+			'dossiers.validation.horsLigne' => 'La validation n’a pas été envoyée. Réessayez quand la connexion sera revenue.',
 			'dossiers.validation.inconnu' => 'Le résultat de la validation n’est pas encore confirmé.',
 			'dossiers.validation.plusPret' => 'Ce dossier n’est plus prêt à être validé.',
 			'dossiers.validation.interdit' => 'Vous ne pouvez plus valider ce dossier.',
@@ -16969,6 +17024,8 @@ extension on Traductions {
 			'admin.journal.acteurSysteme' => 'Le système',
 			'admin.journal.acteurInconnu' => 'Compte supprimé',
 			'admin.journal.roleAdmin' => 'Administration',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.roleEnseignant' => 'Enseignant',
 			'admin.journal.roleTuteur' => 'Tuteur',
 			'admin.journal.roleEleve' => 'Élève',
@@ -16976,8 +17033,6 @@ extension on Traductions {
 			'admin.journal.roleComptable' => 'Comptable',
 			'admin.journal.roleAucun' => 'Hors session',
 			'admin.journal.evtKycLu' => 'Dossier d\'identité consulté',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.evtKycTranche' => 'Dossier d\'identité tranché',
 			'admin.journal.evtProfilCree' => 'Profil créé',
 			'admin.journal.evtProfilEnfantCree' => 'Profil enfant créé',
@@ -17193,7 +17248,7 @@ extension on Traductions {
 			'parcours.reessayer' => 'Réessayer',
 			'parcours.indisponibleTitre' => 'Le questionnaire n\'est pas encore disponible',
 			'parcours.indisponibleDetail' => 'Cette étape n\'est pas encore ouverte par l\'académie. Vous n\'avez rien à faire pour l\'instant : rien n\'est perdu, et vous pourrez la remplir dès qu\'elle sera ouverte.',
-			'parcours.horsLigneTitre' => 'Pas de connexion',
+			'parcours.horsLigneTitre' => 'Le parcours n\'a pas pu être chargé',
 			'parcours.horsLigneDetail' => 'Vérifiez votre connexion, puis réessayez. Vos réponses sont gardées.',
 			'parcours.erreurChargement' => 'Le questionnaire n\'a pas pu s\'afficher',
 			'parcours.erreurChargementDetail' => 'Une erreur est survenue de notre côté. Réessayez dans un instant ; vos réponses sont gardées.',
@@ -17483,6 +17538,8 @@ extension on Traductions {
 			'compte.tuteur.pageApparence.titre' => 'Apparence',
 			'compte.tuteur.pageApparence.sousTitre' => 'Appliqué sur cet appareil.',
 			'compte.tuteur.pageApparence.theme' => 'Thème de l\'application',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageApparence.themeDetail' => 'Personnalisez l\'apparence de Rewayah.',
 			'compte.tuteur.pageApparence.confort' => 'Confort visuel',
 			'compte.tuteur.pageApparence.animations' => 'Animations',
@@ -17490,8 +17547,6 @@ extension on Traductions {
 			'compte.tuteur.pageApparence.texte' => 'Taille du texte',
 			'compte.tuteur.pageApparence.texteDetail' => 'Suit la taille du système',
 			'compte.tuteur.pageAide.titre' => 'Aide et support',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageAide.indisponibleTitre' => 'Aide pas encore disponible',
 			'compte.tuteur.pageAide.indisponiblePhrase' => 'Les questions fréquentes et le contact de l\'académie ne sont pas encore ouverts dans l\'application.',
 			'compte.tuteur.pageAide.canalCourriel' => 'Courriel de l\'académie',
@@ -17630,7 +17685,7 @@ extension on Traductions {
 			'eleve.accueil.prochainDemain' => 'Ton prochain cours est demain.',
 			'eleve.accueil.prochainDansJours' => ({required Object jours}) => 'Ton prochain cours est dans ${jours} jours.',
 			'eleve.accueil.annulee' => 'Ce cours n\'aura pas lieu',
-			'eleve.accueil.horsLigne' => 'Pas de réseau',
+			'eleve.accueil.horsLigne' => 'Entrée en attente',
 			'eleve.accueil.horsLigneDetail' => 'Tu pourras entrer dès que le réseau revient.',
 			'eleve.accueil.pausePriere' => 'Pause pour la prière',
 			'eleve.accueil.pausePriereDetail' => ({required Object priere, required Object heure}) => '${priere}, vers ${heure}',
@@ -17808,7 +17863,7 @@ extension on Traductions {
 			'classe.entree.terminee' => 'Séance terminée',
 			'classe.entree.annulee' => 'Séance annulée',
 			'classe.entree.aucune' => 'Aucune séance prévue',
-			'classe.entree.horsLigne' => 'Vous êtes hors ligne. La séance nécessite une connexion.',
+			'classe.entree.horsLigne' => 'Vous pourrez entrer dans la séance dès le retour de la connexion.',
 			'classe.entree.indisponible' => 'L\'information sur la séance est indisponible pour l\'instant.',
 			'classe.entree.accesInverifiable' => 'L\'accès à la salle ne peut pas être vérifié pour le moment.',
 			'classe.entree.reessayer' => 'Réessayer',
@@ -17997,6 +18052,8 @@ extension on Traductions {
 			'enseignant.demo.etats' => 'Situations',
 			'enseignant.demo.etatNominal' => 'Journée ordinaire',
 			'enseignant.demo.etatVide' => 'Aucune séance',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.demo.etatHorsLigne' => 'Hors ligne',
 			'enseignant.bienvenue.titre' => 'Premiers pas',
 			'enseignant.bienvenue.salutation' => ({required Object prenom}) => 'Bienvenue, ${prenom}.',
@@ -18004,8 +18061,6 @@ extension on Traductions {
 			'enseignant.bienvenue.dossierValide' => 'Votre dossier est validé.',
 			'enseignant.bienvenue.sousTitre' => 'Préparez votre espace avant votre première Classe.',
 			'enseignant.bienvenue.aCompleter' => 'À compléter',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.bienvenue.compteur' => ({required Object fait, required Object total}) => '${fait} sur ${total}',
 			'enseignant.bienvenue.prerequisPhoto' => 'Ajouter ma photo professionnelle',
 			'enseignant.bienvenue.prerequisLangues' => 'Vérifier mes langues d\'enseignement',
@@ -18035,7 +18090,7 @@ extension on Traductions {
 			'enseignant.photo.succes' => 'La photo est enregistrée.',
 			'enseignant.photo.echec' => 'La photo n\'a pas pu être envoyée. Rien n\'a changé sur le profil.',
 			'enseignant.photo.selectionEchec' => 'La photo n\'a pas pu être ouverte. Vérifiez l\'accès aux photos de l\'appareil, puis réessayez.',
-			'enseignant.photo.horsLigne' => 'Vous êtes hors ligne. La photo pourra être envoyée quand la connexion reviendra.',
+			'enseignant.photo.horsLigne' => 'La photo pourra être envoyée quand la connexion reviendra.',
 			'enseignant.journee.lancer' => 'Lancer le cours',
 			'enseignant.journee.preflight' => 'Vérifier avant le cours',
 			'enseignant.journee.titre' => 'Aujourd\'hui',
@@ -18083,6 +18138,7 @@ extension on Traductions {
 			'enseignant.journee.maJournee' => 'Ma journée',
 			'enseignant.journee.aTerminer' => 'À terminer',
 			'enseignant.journee.aTerminerVide' => 'Tous vos cahiers sont terminés.',
+			'enseignant.journee.aTerminerSansDonnees' => 'Les cahiers à terminer n\'ont pas pu être lus',
 			'enseignant.journee.aTerminerErreur' => 'Les cahiers à terminer n\'ont pas pu être lus. Réessayez dans un instant.',
 			'enseignant.journee.aTerminerAide' => 'Le cahier de transmission aide vos élèves et vous permet d\'ajuster le prochain cours.',
 			'enseignant.journee.rappelCahier' => 'Des cahiers de transmission attendent d\'être terminés',
@@ -18090,6 +18146,7 @@ extension on Traductions {
 			'enseignant.journee.cahierDetail' => ({required Object jour, required Object numero, required Object mois, required Object heure}) => 'Séance du ${jour} ${numero} ${mois} à ${heure}',
 			'enseignant.journee.alertesUtiles' => 'Alertes utiles',
 			'enseignant.journee.alertesVide' => 'Aucune alerte utile en ce moment.',
+			'enseignant.journee.alertesSansDonnees' => 'Les alertes de présence n\'ont pas pu être lues',
 			'enseignant.journee.alertesErreur' => 'Les alertes de présence n\'ont pas pu être lues : la connexion ou le serveur n\'a pas répondu. Réessayez dans un instant.',
 			'enseignant.journee.voirAutreAlerte' => 'Voir l\'autre alerte',
 			'enseignant.journee.voirAutresAlertes' => ({required Object nombre}) => 'Voir les ${nombre} autres alertes',
@@ -18293,7 +18350,7 @@ extension on Traductions {
 			'enseignant.profil.erreur' => 'Votre profil n\'a pas pu être lu. Réessayez dans un instant.',
 			'enseignant.profil.vide' => 'Aucun profil enseignant',
 			'enseignant.profil.videDetail' => 'Ce compte n\'a pas de profil enseignant. Seule l\'académie peut en créer un.',
-			'enseignant.profil.horsLigne' => 'Pas de réseau : rien ne peut être modifié ici pour l\'instant.',
+			'enseignant.profil.horsLigne' => 'Rien ne peut être modifié ici pour l\'instant.',
 			'enseignant.profil.modifierPays' => 'Modifier le pays',
 			'enseignant.profil.modifierLangues' => 'Modifier les langues',
 			'enseignant.profil.languesIndice' => 'Séparez les langues par une virgule',
@@ -18509,6 +18566,8 @@ extension on Traductions {
 			'controleur.observation.libelleTexte' => 'Votre remarque',
 			'controleur.observation.aideTexte' => 'Décrivez seulement ce que vous avez observé.',
 			'controleur.observation.texteRequis' => 'Écrivez ce que vous avez observé pour continuer.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.questionRecap' => 'Vérifiez votre observation avant l\'envoi.',
 			'controleur.observation.cleNature' => 'Nature',
 			'controleur.observation.cleDomaine' => 'Domaine',
@@ -18518,8 +18577,6 @@ extension on Traductions {
 			'controleur.observation.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.titre' => 'Échanges',
 			'controleur.echanges.titreFil' => ({required Object classe, required Object date}) => '${classe} · ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.echanges.derniereActivite' => ({required Object date}) => 'Dernière activité : ${date}',
 			'controleur.echanges.reponseRecue' => 'Réponse reçue',
 			'controleur.echanges.enAttente' => 'En attente',
@@ -19023,6 +19080,8 @@ extension on Traductions {
 			'tc.parcours.feedback.comprehension.intitule' => 'Avez-vous compris ce qui a été travaillé ?',
 			'tc.parcours.feedback.comprehension.difficile' => 'Pas vraiment',
 			'tc.parcours.feedback.comprehension.bien' => 'Plutôt oui',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.feedback.comprehension.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.rythme.intitule' => 'Le rythme du cours vous a-t-il convenu ?',
 			'tc.parcours.feedback.rythme.difficile' => 'Trop rapide',
@@ -19032,8 +19091,6 @@ extension on Traductions {
 			'tc.parcours.feedback.technique.difficile' => 'Gênants',
 			'tc.parcours.feedback.technique.bien' => 'Corrects',
 			'tc.parcours.feedback.technique.tresBien' => 'Très bons',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.feedback.confiance.intitule' => 'Vous sentez-vous prêt pour le prochain cours ?',
 			'tc.parcours.feedback.confiance.difficile' => 'Pas encore',
 			'tc.parcours.feedback.confiance.bien' => 'Plutôt',
@@ -19081,8 +19138,10 @@ extension on Traductions {
 			'adulte.accueil.absence' => 'Absence',
 			'adulte.accueil.aucuneClasse' => 'Aucune classe pour le moment.',
 			'adulte.accueil.aucuneClasseDetail' => 'Votre prochaine séance s\'affichera ici dès que votre classe sera ouverte.',
+			'adulte.accueil.sansDonnees' => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées',
 			'adulte.accueil.echec' => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées : le serveur n\'a pas répondu. Réessayez dans un instant.',
 			'adulte.historique.titre' => 'Mes séances passées',
+			'adulte.historique.sansDonnees' => 'Vos séances passées n\'ont pas pu être chargées',
 			'adulte.historique.echec' => 'Vos séances passées n\'ont pas pu être chargées : le serveur n\'a pas répondu. Réessayez dans un instant.',
 			'adulte.historique.vide' => 'Aucune séance passée pour le moment.',
 			'adulte.historique.videDetail' => 'Vos séances s\'afficheront ici après votre premier cours.',
@@ -19090,6 +19149,7 @@ extension on Traductions {
 			'adulte.maClasse.participants' => 'Participants',
 			'adulte.maClasse.vous' => ({required Object prenom}) => '${prenom} (vous)',
 			'adulte.maClasse.progression' => 'Ma progression dans cette classe',
+			'adulte.maClasse.sansDonnees' => 'Votre classe n\'a pas pu être chargée',
 			'adulte.maClasse.aucuneClasseDetail' => 'Votre classe, ses participants et ses ressources s\'afficheront ici dès qu\'elle sera ouverte.',
 			'adulte.monEspace.role' => 'Élève adulte',
 			'adulte.monEspace.monCompte' => 'Mon compte',
@@ -19100,6 +19160,8 @@ extension on Traductions {
 			'adulte.monEspace.paiementsLegende' => 'Historique et reçus',
 			'adulte.monEspace.accords' => 'Mes accords',
 			'adulte.monEspace.accordsLegende' => 'Accords donnés à l\'académie',
+			'adulte.monEspace.sansDonneesCompte' => 'Vos informations de compte n\'ont pas pu être chargées',
+			'adulte.monEspace.sansDonneesFamille' => 'Les informations de votre famille n\'ont pas pu être chargées',
 			'adulte.monEspace.securiteLegende' => 'Méthode et adresse de connexion',
 			'adulte.monEspace.pageAccords.indisponibleTitre' => 'Vos accords ne sont pas encore consultables',
 			'adulte.monEspace.pageAccords.indisponiblePhrase' => 'Accepter, refuser ou retirer chacun de vos accords n\'est pas encore possible dans l\'application. Aucun accord ne vous est demandé ici.',
@@ -19115,7 +19177,8 @@ extension on Traductions {
 			'adulte.recharge.verifier' => 'Vérifier la recharge',
 			'adulte.recharge.raisonAucun' => 'Sélectionnez au moins un bénéficiaire pour continuer.',
 			'adulte.recharge.raisonOffre' => 'Choisissez une offre pour chaque bénéficiaire sélectionné.',
-			'adulte.recharge.horsLigneVerifier' => 'Vous êtes hors ligne. Vous pourrez vérifier la recharge quand la connexion sera revenue.',
+			'adulte.recharge.horsLigneVerifier' => 'Vous pourrez vérifier la recharge quand la connexion sera revenue.',
+			'adulte.recharge.sansDonnees' => 'Les bénéficiaires à recharger n\'ont pas pu être chargés',
 			'adulte.recharge.indisponibleTitre' => 'Recharge pas encore disponible',
 			'adulte.recharge.indisponiblePhrase' => 'Les offres de recharge ne sont pas encore disponibles dans l\'application. Aucun paiement n\'est possible ici pour l\'instant.',
 			'adulte.recharge.verificationEchecTitre' => 'La vérification n\'a pas abouti.',
@@ -19129,7 +19192,7 @@ extension on Traductions {
 			'adulte.recharge.modifier' => 'Modifier',
 			'adulte.recharge.total' => 'Total à payer',
 			'adulte.recharge.payer' => ({required Object montant}) => 'Payer ${montant}',
-			'adulte.recharge.horsLignePayer' => 'Vous êtes hors ligne. Vous pourrez payer quand la connexion sera revenue.',
+			'adulte.recharge.horsLignePayer' => 'Vous pourrez payer quand la connexion sera revenue.',
 			'adulte.recharge.paiementEchecTitre' => 'Le paiement n\'a pas été confirmé.',
 			'adulte.recharge.paiementEchecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.recharge.paiementIndisponibleTitre' => 'Paiement pas encore disponible',
@@ -19141,6 +19204,7 @@ extension on Traductions {
 			'adulte.paiements.bientotEpuise' => 'Bientôt épuisé',
 			'adulte.paiements.inactif' => 'Inactif',
 			'adulte.paiements.historique' => 'Historique des paiements',
+			'adulte.paiements.soldesSansDonnees' => 'Les soldes de votre foyer n\'ont pas pu être chargés',
 			'adulte.paiements.soldesIndisponiblesTitre' => 'Soldes pas encore consultables',
 			'adulte.paiements.soldesIndisponiblesPhrase' => 'Le solde de chaque bénéficiaire n\'est pas encore disponible dans l\'application. Aucune recharge n\'est possible ici pour l\'instant.',
 			'adulte.paiements.aucunBeneficiaireTitre' => 'Aucun bénéficiaire',
@@ -19198,7 +19262,7 @@ extension on Traductions {
 			'adulte.invitation.nonRenseigne' => 'Non renseigné',
 			'adulte.invitation.modifier' => 'Modifier',
 			'adulte.invitation.envoyer' => 'Envoyer l\'invitation',
-			'adulte.invitation.horsLigne' => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez envoyer l\'invitation vous-même quand la connexion sera revenue.',
+			'adulte.invitation.horsLigne' => 'Rien n\'est envoyé. Vous pourrez envoyer l\'invitation vous-même quand la connexion sera revenue.',
 			'adulte.invitation.echecTitre' => 'L\'envoi n\'a pas été confirmé.',
 			'adulte.invitation.echecPhrase' => 'Vérifiez avant de réessayer. Vos informations sont conservées.',
 			'adulte.invitation.refusTitre' => 'Cette invitation ne peut pas être envoyée',
@@ -19210,7 +19274,7 @@ extension on Traductions {
 			'adulte.invitation.annuler' => 'Annuler l\'invitation',
 			'adulte.invitation.annulerQuestion' => ({required Object prenom}) => 'Annuler l\'invitation de ${prenom} ?',
 			'adulte.invitation.annulerQuestionSansPrenom' => 'Annuler cette invitation ?',
-			'adulte.invitation.annulerHorsLigne' => 'Vous êtes hors ligne. Rien n\'est annulé. Vous pourrez annuler l\'invitation vous-même quand la connexion sera revenue.',
+			'adulte.invitation.annulerHorsLigne' => 'Rien n\'est annulé. Vous pourrez annuler l\'invitation vous-même quand la connexion sera revenue.',
 			'adulte.invitation.annulerConsequence' => 'L\'invitation ne pourra plus être acceptée. Vous pourrez en envoyer une nouvelle quand vous le souhaitez.',
 			'adulte.invitation.garder' => 'Garder l\'invitation',
 			'adulte.invitation.annulationEchecTitre' => 'L\'annulation n\'a pas été confirmée.',
@@ -19241,7 +19305,7 @@ extension on Traductions {
 			'adulte.acceptation.validation' => 'Ce rattachement doit être validé par l\'administration de l\'académie. En attendant, votre compte et vos cours fonctionnent normalement.',
 			'adulte.acceptation.refuser' => 'Refuser l\'invitation',
 			'adulte.acceptation.accepter' => 'Accepter l\'invitation',
-			'adulte.acceptation.horsLigne' => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez répondre vous-même quand la connexion sera revenue.',
+			'adulte.acceptation.horsLigne' => 'Rien n\'est envoyé. Vous pourrez répondre vous-même quand la connexion sera revenue.',
 			'adulte.acceptation.acceptationEchecTitre' => 'L\'acceptation n\'a pas été confirmée.',
 			'adulte.acceptation.refusEchecTitre' => 'Le refus n\'a pas été confirmé.',
 			'adulte.acceptation.echecPhrase' => 'Vérifiez avant de réessayer.',
@@ -19274,7 +19338,7 @@ extension on Traductions {
 			'adulte.sortie.retraitEchecTitre' => 'Le retrait n\'a pas été confirmé.',
 			'adulte.sortie.departEchecTitre' => 'Le départ n\'a pas été confirmé.',
 			'adulte.sortie.echecPhrase' => 'Vérifiez avant de réessayer.',
-			'adulte.sortie.horsLigne' => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez réessayer vous-même quand la connexion sera revenue.',
+			'adulte.sortie.horsLigne' => 'Rien n\'est envoyé. Vous pourrez réessayer vous-même quand la connexion sera revenue.',
 			'adulte.sortie.notificationQuitte' => ({required Object prenom}) => '${prenom} a quitté votre forfait famille.',
 			'adulte.sortie.notificationRetiree' => ({required Object prenom}) => 'Vous avez été retirée du forfait famille de ${prenom}.',
 			'adulte.sortie.notificationRetire' => ({required Object prenom}) => 'Vous avez été retiré du forfait famille de ${prenom}.',
@@ -19301,7 +19365,7 @@ extension on Traductions {
 			'adulte.reprise.deposer' => 'Déposer la demande',
 			'adulte.reprise.deposerQuestion' => 'Déposer cette demande ?',
 			'adulte.reprise.deposerConsequence' => 'Le titulaire du foyer en sera informé et pourra la refuser. L\'administration examinera ensuite la demande et décidera.',
-			'adulte.reprise.horsLigne' => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.',
+			'adulte.reprise.horsLigne' => 'Rien n\'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.',
 			'adulte.reprise.depotEchecTitre' => 'La demande n\'a pas été confirmée.',
 			'adulte.reprise.echecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.reprise.motif' => 'Motif',
@@ -19324,7 +19388,7 @@ extension on Traductions {
 			'adulte.reprise.titulaire.refuser' => 'Refuser la demande',
 			'adulte.reprise.titulaire.ligne' => 'Une demande de reprise de votre foyer a été déposée.',
 			'adulte.reprise.titulaire.refusEchecTitre' => 'Le refus n\'a pas été confirmé.',
-			'adulte.reprise.titulaire.horsLigne' => 'Vous êtes hors ligne. Rien n\'est envoyé. Vous pourrez refuser la demande vous-même quand la connexion sera revenue.',
+			'adulte.reprise.titulaire.horsLigne' => 'Rien n\'est envoyé. Vous pourrez refuser la demande vous-même quand la connexion sera revenue.',
 			'adulte.reprise.titulaire.refusee' => 'Vous avez refusé cette demande. L\'administration en est informée. Aucune permission de votre foyer n\'est transférée.',
 			'adulte.reprise.notifications.refuseeParTitulaire' => 'Le titulaire du foyer a refusé votre demande de reprise du foyer.',
 			'adulte.reprise.notifications.attenteAdministration' => 'Votre demande de reprise du foyer est en attente de l\'administration.',

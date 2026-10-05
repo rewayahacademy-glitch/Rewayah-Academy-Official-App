@@ -29,6 +29,8 @@ import 'package:rewayah_academy/features/tc_espace_groupe/emplacements_groupe.da
 import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dart'
     show IdentiteGroupe;
 
+import '../../support/hors_ligne_une_fois.dart';
+
 void main() {
   Widget app({required Widget child, List<Override> overrides = const []}) =>
       ProviderScope(
@@ -291,6 +293,8 @@ void main() {
     );
     expect(find.text(t.classe.entree.horsLigne), findsOneWidget);
     expect(find.text(t.classe.entree.rejoindre), findsNothing);
+    // EA-HL-DOUBLE-1 : avec donnees, le bandeau seul dit « hors ligne ».
+    expectAvecDonnees();
   });
 
   bool estHorsLigne(Widget w) =>
@@ -308,7 +312,8 @@ void main() {
 
     expect(find.byType(MaClasseAdultePage), findsOneWidget);
     expect(find.byWidgetPredicate(estHorsLigne), findsOneWidget);
-    expect(find.text(t.commun.etats.horsLigne.titre), findsOneWidget);
+    // EA-HL-DOUBLE-1 : le bandeau dit le reseau, le bloc dit ce qui manque.
+    expectSansDonnees(t.adulte.maClasse.sansDonnees);
     expect(find.text(t.commun.etats.echecServeur.titre), findsNothing);
     expect(find.byType(CarteSession), findsNothing);
     expect(participants, findsNothing);

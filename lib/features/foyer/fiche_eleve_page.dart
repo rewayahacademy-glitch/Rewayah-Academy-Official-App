@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/appairage/service_appairage.dart';
-import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/domain/enums.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_elevation.dart';
@@ -85,11 +85,11 @@ class PageFiche extends ConsumerWidget {
     }
 
     final Widget corps;
-    if (horsLigne &&
-        profils.hasError &&
-        profils.error is! CapaciteIndisponible) {
-      corps = EtatSysteme(
-        nature: NatureEtat.horsLigne,
+    if (sansDonneesHorsLigne(profils, horsLigne: horsLigne)) {
+      // Le bandeau de `PageShell` dit le reseau, le bloc dit ce qui manque
+      // (EA-HL-DOUBLE-1).
+      corps = EtatSansDonnees(
+        quoi: t.ficheEleve.sansDonnees,
         onAction: () => _relire(ref),
       );
     } else {

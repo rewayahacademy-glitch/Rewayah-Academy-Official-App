@@ -9,6 +9,7 @@ import '../../core/foyer/port_creation_profil_eleve.dart';
 import '../../core/foyer/profil_eleve_brouillon.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
@@ -358,9 +359,11 @@ class _FormulaireProfilEleveState extends ConsumerState<FormulaireProfilEleve> {
       PorteAcces.chargement => const Skeleton.liste(
         key: FormulaireProfilEleve.porteChargementKey,
       ),
-      PorteAcces.horsLigne => EtatSysteme(
+      // Le bandeau de `PageShell` dit le reseau, le bloc dit ce qui manque
+      // (EA-HL-DOUBLE-1).
+      PorteAcces.horsLigne => EtatSansDonnees(
         key: FormulaireProfilEleve.porteHorsLigneKey,
-        nature: NatureEtat.horsLigne,
+        quoi: t.foyer.ajout.porte.sansDonneesTitre,
         onAction: relire,
       ),
       _ => null,

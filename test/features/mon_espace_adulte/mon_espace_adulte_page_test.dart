@@ -43,6 +43,8 @@ import 'package:rewayah_academy/features/foyer/place_adulte.dart';
 import 'package:rewayah_academy/features/ma_classe_adulte/ma_classe_adulte_page.dart';
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
+import '../../support/hors_ligne_une_fois.dart';
+
 void main() {
   Widget app({
     required Widget child,
@@ -750,7 +752,8 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.byKey(MonEspaceAdultePage.horsLigneKey), findsOneWidget);
-    expect(find.text(t.commun.etats.horsLigne.titre), findsOneWidget);
+    // EA-HL-DOUBLE-1 : le bandeau dit le reseau, le bloc dit ce qui manque.
+    expectSansDonnees(t.adulte.monEspace.sansDonneesCompte);
     expect(find.text(t.commun.etats.echecServeur.titre), findsNothing);
     final Finder reessayer = find.text(t.commun.reessayer);
     expect(reessayer, findsOneWidget);
@@ -785,6 +788,7 @@ void main() {
       findsOneWidget,
     );
     expect(find.text(t.commun.reessayer), findsOneWidget);
+    expectSansDonnees(t.adulte.monEspace.sansDonneesFamille);
   });
 
   testWidgets('hors ligne, ligne deja lue : elle reste', (

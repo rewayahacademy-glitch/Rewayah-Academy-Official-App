@@ -275,8 +275,11 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
   }
 
   Widget _pageBeneficiaires(BuildContext context, bool horsLigne) {
-    final AsyncValue<List<BeneficiaireRecharge>> lecture = ref.watch(
-      beneficiairesRechargeProvider,
+    // Hors ligne, des beneficiaires deja lus restent affiches
+    // (EA-HL-DOUBLE-1).
+    final AsyncValue<List<BeneficiaireRecharge>> lecture = lectureHorsLigne(
+      ref.watch(beneficiairesRechargeProvider),
+      horsLigne: horsLigne,
     );
     void relire() => ref.invalidate(beneficiairesRechargeProvider);
     final Object? erreur = lecture.hasError ? lecture.error : null;
@@ -289,9 +292,13 @@ class _RechargeFoyerPageState extends ConsumerState<RechargeFoyerPage> {
         phrase: t.adulte.recharge.indisponiblePhrase,
         dependance: erreur.dependance,
       );
-    } else if (erreur != null && horsLigne) {
-      // Sans reseau, un echec se dit « hors ligne », comme les soldes.
-      corps = EtatSysteme(nature: NatureEtat.horsLigne, onAction: relire);
+    } else if (sansDonneesHorsLigne(lecture, horsLigne: horsLigne)) {
+      // Sans reseau ni beneficiaires deja lus : le bandeau de `PageShell` dit
+      // le reseau, le bloc dit ce qui manque (EA-HL-DOUBLE-1).
+      corps = EtatSansDonnees(
+        quoi: t.adulte.recharge.sansDonnees,
+        onAction: relire,
+      );
     } else {
       corps = BlocAsynchrone<List<BeneficiaireRecharge>>(
         valeur: lecture,

@@ -38,6 +38,7 @@ import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart';
 import '../../support/aucun_mot_coupe.dart';
 import '../../support/harnais.dart';
+import '../../support/hors_ligne_une_fois.dart';
 
 /// Aucune action avant le prochain cours.
 class _AucunTravail implements PortTravailAVenir {
@@ -271,6 +272,8 @@ void main() {
       );
       expect(find.text(t.classe.entree.horsLigne), findsOneWidget);
       expect(find.text(t.classe.entree.rejoindre), findsNothing);
+      // EA-HL-DOUBLE-1 : avec donnees, le bandeau seul dit « hors ligne ».
+      expectAvecDonnees();
     },
   );
 
@@ -291,7 +294,8 @@ void main() {
 
     expect(find.byType(AccueilAdultePage), findsOneWidget);
     expect(find.byWidgetPredicate(estHorsLigne), findsOneWidget);
-    expect(find.text(t.commun.etats.horsLigne.titre), findsOneWidget);
+    // EA-HL-DOUBLE-1 : le bandeau dit le reseau, le bloc dit ce qui manque.
+    expectSansDonnees(t.adulte.accueil.sansDonnees);
     expect(find.text(t.commun.etats.echecServeur.titre), findsNothing);
     expect(find.byType(CarteSession), findsNothing);
     expect(find.byType(ClocheNotifications), findsOneWidget);
@@ -311,6 +315,43 @@ void main() {
       findsOneWidget,
     );
     expect(find.byType(CarteSession), findsOneWidget);
+  });
+
+  testWidgets('hors ligne, Accueil deja lu puis relu en echec : il reste '
+      'affiche, le bandeau seul le dit (EA-HL-DOUBLE-1)', (
+    WidgetTester tester,
+  ) async {
+    int lectures = 0;
+    final AccueilAdulteVM vue = DonneesAdulteDemo.accueil(
+      GenreTitulaireDemo.homme,
+      VueDemoAdulte.titulaire,
+    )!;
+    await tester.pumpWidget(
+      app(
+        overrides: <Override>[
+          horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
+          accueilAdulteProvider.overrideWith((Ref _) {
+            lectures++;
+            return lectures == 1
+                ? Future<AccueilAdulteVM>.value(vue)
+                : Future<AccueilAdulteVM>.error(StateError('reseau'));
+          }),
+        ],
+        child: const AccueilAdultePage(),
+      ),
+    );
+    await tester.pumpAndSettle();
+    ProviderScope.containerOf(tester.element(find.byType(AccueilAdultePage)))
+        .invalidate(accueilAdulteProvider);
+    await tester.pumpAndSettle();
+    expect(lectures, greaterThanOrEqualTo(2));
+    expect(
+      find.text(t.adulte.accueil.salutation(prenom: vue.prenom)),
+      findsOneWidget,
+    );
+    expect(find.byWidgetPredicate(estHorsLigne), findsNothing);
+    expect(find.text(t.commun.etats.echecServeur.titre), findsNothing);
+    expectAvecDonnees();
   });
 
   testWidgets('hors ligne et capacite absente : reste indisponible', (

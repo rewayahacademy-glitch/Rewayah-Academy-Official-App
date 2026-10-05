@@ -46,8 +46,9 @@
 //   « vos » ;
 // - (revue d'EA-4c) une seule entree vers les paiements : le second adulte
 //   rattache n'a que « Paiements du foyer », la page d'arrivee porte ce
-//   titre ; hors ligne se dit une seule fois (bandeau et un seul etat, un
-//   seul « Reessayer » qui relit les deux lectures, K-42) ;
+//   titre ; hors ligne se dit une seule fois (le bandeau, et un seul bloc
+//   qui dit ce qui manque, un seul « Reessayer » qui relit les deux
+//   lectures, K-42, EA-HL-DOUBLE-1) ;
 // - (revue EA-R, M2) la rubrique « Paiements » personnelle n'est rendue
 //   qu'une fois la ligne famille lue, et hors forfait famille : jamais par
 //   defaut puis masquee (F7) ;
@@ -63,6 +64,7 @@ import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
@@ -167,18 +169,21 @@ class MonEspaceAdultePage extends ConsumerWidget {
   /// ou la ligne elle-meme.
   static const Key blocFamilleKey = Key('adulte.monEspace.famille.bloc');
 
-  /// La cle de l'unique etat « hors ligne » de la page.
+  /// La cle de l'unique bloc « rien a afficher » hors ligne de la page : il
+  /// dit ce qui manque, le bandeau dit l'absence de reseau (EA-HL-DOUBLE-1).
   static const Key horsLigneKey = Key('adulte.monEspace.horsLigne');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<MonEspaceAdulteVM> lecture = ref.watch(
-      monEspaceAdulteProvider,
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    // Hors ligne, une lecture deja faite reste affichee (EA-HL-DOUBLE-1).
+    final AsyncValue<MonEspaceAdulteVM> lecture = lectureHorsLigne(
+      ref.watch(monEspaceAdulteProvider),
+      horsLigne: horsLigne,
     );
     final MonEspaceAdulteVM? vue = lecture.hasValue && !lecture.hasError
         ? lecture.requireValue
         : null;
-    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final bool large = AppGabarit.de(context).estLarge;
     final double ecart = large ? AppSpacing.lg : AppSpacing.md;
 
@@ -209,19 +214,21 @@ class MonEspaceAdultePage extends ConsumerWidget {
       onPress: onOuvrir == null ? null : () => onOuvrir!(r),
     );
 
-    // Sans reseau, un echec se dit « hors ligne », pas « le serveur n'a pas
-    // repondu » (meme regle que le Foyer) ; une capacite absente reste dite
-    // indisponible, hors ligne ou non.
+    // Sans reseau, un echec n'est pas « le serveur n'a pas repondu » (meme
+    // regle que le Foyer) ; une capacite absente reste dite indisponible,
+    // hors ligne ou non.
     bool echecHorsLigne(AsyncValue<Object?> v) =>
-        horsLigne && v.hasError && v.error is! CapaciteIndisponible;
+        sansDonneesHorsLigne(v, horsLigne: horsLigne);
 
-    final AsyncValue<IdentiteTitulaire> identiteLue = ref.watch(
-      identiteTitulaireProvider,
+    final AsyncValue<IdentiteTitulaire> identiteLue = lectureHorsLigne(
+      ref.watch(identiteTitulaireProvider),
+      horsLigne: horsLigne,
     );
-    // Hors ligne se dit UNE fois (K-42, comme le Foyer) : le bandeau de
-    // `PageShell` et un seul etat, a la place du premier bloc en echec, dont
-    // l'unique « Reessayer » relit les deux lectures. L'autre bloc en echec
-    // garde son squelette, sans bouton.
+    // Hors ligne se dit UNE fois (K-42 ; EA-HL-DOUBLE-1, 04/10) : le bandeau
+    // de `PageShell` le dit, et un seul bloc, a la place du premier bloc en
+    // echec, dit ce qui manque, sans redire « hors ligne » ; son unique
+    // « Reessayer » relit les deux lectures. L'autre bloc en echec garde son
+    // squelette, sans bouton.
     final bool identiteHorsLigne = echecHorsLigne(identiteLue);
     final bool familleHorsLigne = echecHorsLigne(lecture);
     void relireTout() {
@@ -230,9 +237,11 @@ class MonEspaceAdultePage extends ConsumerWidget {
         ..invalidate(monEspaceAdulteProvider);
     }
 
-    Widget horsLigneUnique() => EtatSysteme(
+    Widget horsLigneUnique() => EtatSansDonnees(
       key: horsLigneKey,
-      nature: NatureEtat.horsLigne,
+      quoi: identiteHorsLigne
+          ? t.adulte.monEspace.sansDonneesCompte
+          : t.adulte.monEspace.sansDonneesFamille,
       onAction: relireTout,
     );
     final Widget identite = identiteHorsLigne

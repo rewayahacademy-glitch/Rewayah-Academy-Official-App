@@ -13,6 +13,7 @@ import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 
 import '../support/harnais.dart';
+import '../support/hors_ligne_une_fois.dart';
 import 'support_routeur.dart';
 
 /// Les etats transverses du routeur, sur le **vrai** routeur (mandat Tuteur
@@ -209,6 +210,13 @@ void main() {
         expect(find.byType(PageHorsLigne), findsOneWidget);
         // Ni le portail d'un dossier, ni une page du tuteur.
         expect(find.text(t.commun.etats.horsLigneDemarrage), findsOneWidget);
+        // EA-HL-DOUBLE-1 : le titre dit ce qui manque ; seul le bandeau, quand
+        // il est la, dit « hors ligne ».
+        expect(
+          find.text(t.commun.etats.horsLigneDemarrageTitre),
+          findsOneWidget,
+        );
+        expect(signauxHorsLigne().evaluate().length, lessThanOrEqualTo(1));
       }
     });
 

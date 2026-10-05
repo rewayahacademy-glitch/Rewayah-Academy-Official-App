@@ -31,6 +31,7 @@ import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart' show lieu;
 import '../../support/aucun_mot_coupe.dart';
 import '../../support/garde_interface.dart';
+import '../../support/hors_ligne_une_fois.dart';
 import 'support_accueil_adulte_route.dart';
 
 /// Le lien « Voir tout » des dernieres seances, dans leur tuile.
@@ -285,6 +286,8 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(t.adulte.accueil.echec), findsNothing);
+      // EA-HL-DOUBLE-1 : le bandeau dit le reseau, le bloc dit ce qui manque.
+      expectSansDonnees(t.adulte.accueil.sansDonnees);
     });
   });
 
@@ -344,6 +347,8 @@ void main() {
         find.byWidgetPredicate((Widget w) => _nature(w, NatureEtat.horsLigne)),
         findsOneWidget,
       );
+      // EA-HL-DOUBLE-1 : le bandeau dit le reseau, le bloc dit ce qui manque.
+      expectSansDonnees(t.adulte.historique.sansDonnees);
     });
 
     testWidgets('production : indisponible, rien d\'invente', (

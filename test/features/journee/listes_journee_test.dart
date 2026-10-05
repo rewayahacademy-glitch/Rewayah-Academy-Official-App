@@ -33,6 +33,7 @@ import 'package:rewayah_academy/features/journee/journee_page.dart';
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
 import '../../support/harnais.dart';
+import '../../support/hors_ligne_une_fois.dart';
 
 final DateTime _maintenant = DateTime(2026, 9, 28, 16, 10);
 
@@ -234,14 +235,21 @@ void main() {
   // DASH-ENS-ROUTE-R, mineur 1 : sans reseau et sans valeur, la page dit
   // « hors ligne », pas « le serveur n'a pas repondu ».
   group('Sans reseau, une lecture ratee se dit hors ligne', () {
-    for (final (String, Widget, String) cas in <(String, Widget, String)>[
-      (
-        'A terminer',
-        const ListeATerminerPage(),
-        t.enseignant.journee.aTerminerErreur,
-      ),
-      ('Alertes', const ListeAlertesPage(), t.enseignant.journee.alertesErreur),
-    ]) {
+    for (final (String, Widget, String, String) cas
+        in <(String, Widget, String, String)>[
+          (
+            'A terminer',
+            const ListeATerminerPage(),
+            t.enseignant.journee.aTerminerErreur,
+            t.enseignant.journee.aTerminerSansDonnees,
+          ),
+          (
+            'Alertes',
+            const ListeAlertesPage(),
+            t.enseignant.journee.alertesErreur,
+            t.enseignant.journee.alertesSansDonnees,
+          ),
+        ]) {
       testWidgets('${cas.$1} : hors ligne', (WidgetTester tester) async {
         await _monter(
           tester,
@@ -257,6 +265,9 @@ void main() {
         expect(etat.nature, NatureEtat.horsLigne);
         expect(find.text(cas.$3), findsNothing);
         expect(etat.onAction, isNotNull);
+        // EA-HL-DOUBLE-1 : le bloc dit ce qui manque, sans redire le reseau.
+        expect(find.text(cas.$4), findsOneWidget);
+        expectHorsLigneUneFois();
       });
 
       testWidgets('${cas.$1} : en ligne, l echec reste un echec serveur', (

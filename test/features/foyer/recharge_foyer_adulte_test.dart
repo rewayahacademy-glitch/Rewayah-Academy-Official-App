@@ -39,6 +39,8 @@ import 'package:rewayah_academy/features/foyer/place_adulte.dart'
     show paiementsFoyerKey;
 import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
+import '../../support/hors_ligne_une_fois.dart';
+
 const String _mamadou = DonneesAdulteDemo.mamadouId;
 const String _mariama = DonneesAdulteDemo.mariamaId;
 const String _aicha = DonneesAdulteDemo.aichaId;
@@ -568,6 +570,8 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(etat(tester)?.nature, NatureEtat.horsLigne);
+      // EA-HL-DOUBLE-1 : le bloc dit ce qui manque, sans redire le reseau.
+      expectSansDonnees(t.adulte.recharge.sansDonnees);
     });
 
     testWidgets('indisponible : le port reel, la dependance EA-BR-24', (
