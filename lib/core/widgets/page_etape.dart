@@ -5,6 +5,7 @@ import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'entete_page.dart';
+import 'offline_banner.dart';
 import 'page_shell.dart';
 
 /// Le gabarit d'une etape de tache focalisee : l'ajout d'un profil eleve
@@ -30,6 +31,7 @@ class PageEtape extends StatelessWidget {
     this.onRetour,
     this.action,
     this.defilante = true,
+    this.bandeauHorsLigne = const OfflineBanner(),
   }) : assert(total > 0 && numero >= 1 && numero <= total, 'etape hors borne');
 
   /// Le rang de cette etape, a partir de 1.
@@ -53,6 +55,10 @@ class PageEtape extends StatelessWidget {
   /// Faux quand le contenu gere son propre defilement.
   final bool defilante;
 
+  /// Le bandeau hors ligne de la page (voir [PageShell.bandeauHorsLigne]) :
+  /// une etape des Communications y pose le sien (D-FUS-3).
+  final Widget bandeauHorsLigne;
+
   @override
   Widget build(BuildContext context) {
     return PageShell(
@@ -60,6 +66,7 @@ class PageEtape extends StatelessWidget {
       entete: RangeeEtape(numero: numero, total: total, onRetour: onRetour),
       actions: action,
       defilante: defilante,
+      bandeauHorsLigne: bandeauHorsLigne,
       child: child,
     );
   }

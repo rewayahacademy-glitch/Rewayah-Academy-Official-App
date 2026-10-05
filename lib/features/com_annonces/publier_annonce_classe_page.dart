@@ -74,8 +74,13 @@ class PublierAnnonceClassePage extends ConsumerWidget {
     );
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final p = t.com.annonces.publieur;
-    Widget page(Widget corps) =>
-        PageShell(titre: titre, onRetour: retour, child: corps);
+    Widget page(Widget corps) => PageShell(
+      titre: titre,
+      onRetour: retour,
+      // D-FUS-3 : seul le bandeau hors ligne des Communications.
+      bandeauHorsLigne: const BandeauHorsLigneCommunication(),
+      child: corps,
+    );
     if (classe.hasError) {
       final Object erreur = classe.error!;
       return page(

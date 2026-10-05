@@ -253,6 +253,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         if (!sorti && _detailSeul) setState(() => _selection = null);
       },
       child: PageShell(
+        // D-FUS-3 : seul le bandeau hors ligne des Communications.
+        bandeauHorsLigne: const BandeauHorsLigneCommunication(),
         titre: t.notifications.titre,
         onRetour: _retourPage,
         child: valeur.error is CapaciteIndisponible
@@ -330,6 +332,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     final List<NotificationTuteur> retenues = liste
         .where(_filtre.retient)
         .toList();
+    final DateTime maintenant = ref.watch(horlogeNotificationsProvider)();
     final Widget filtres = SelecteurSection<FiltreNotifications>(
       key: NotificationsPage.cleFiltres,
       libelle: t.notifications.filtres.libelle,
@@ -357,6 +360,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   LigneNotification(
                     key: ValueKey<String>('notification-${n.id}'),
                     notification: n,
+                    maintenant: maintenant,
                     selectionnee: deux && n.id == _selection,
                     onPress: _actionLigne(n, deux: deux),
                   ),
@@ -451,6 +455,13 @@ final FutureProvider<List<NotificationTuteur>> notificationsTuteurProvider =
       (Ref ref) => ref.watch(portNotificationsProvider).liste(),
     );
 
+/// L'horloge du centre de notifications : l'instant de reference de la date
+/// compacte des lignes (sans l'annee en cours, N-10). Surchargee par les
+/// tests et les captures, qui ne dependent plus de l'annee courante (revue
+/// COM-R-3, constat 4).
+final Provider<DateTime Function()> horlogeNotificationsProvider =
+    Provider<DateTime Function()>((Ref _) => DateTime.now);
+
 /// Une ligne de notification : date et heure a gauche, filet vertical, titre,
 /// puis le type, « Non lue » et le niveau en toutes lettres ; chevron quand
 /// elle mene quelque part. Sans action, la ligne n'est pas une cible (aucun
@@ -460,17 +471,18 @@ class LigneNotification extends StatelessWidget {
   const LigneNotification({
     required this.notification,
     required this.onPress,
+    required this.maintenant,
     super.key,
     this.selectionnee = false,
-    this.maintenant,
   });
 
   /// La notification.
   final NotificationTuteur notification;
 
-  /// L'instant de reference de la date compacte (sans l'annee en cours) ;
-  /// l'heure de l'appareil par defaut.
-  final DateTime? maintenant;
+  /// L'instant de reference de la date compacte (sans l'annee en cours),
+  /// lu par la page dans [horlogeNotificationsProvider] : jamais l'heure de
+  /// l'appareil en dur.
+  final DateTime maintenant;
 
   /// L'ouverture de la notification (detail ou destination), ou `null`.
   final VoidCallback? onPress;
@@ -573,10 +585,7 @@ class LigneNotification extends StatelessWidget {
                   children: <Widget>[
                     // N-10 : sans l'annee en cours, la date tient sur une
                     // ligne (« 4 oct. », plus « 4 oct. / 2026 »).
-                    Text(
-                      dateCompacte(quand, maintenant ?? DateTime.now()),
-                      style: fort,
-                    ),
+                    Text(dateCompacte(quand, maintenant), style: fort),
                     Ecart.vXs,
                     Text(
                       heureMinute(quand),

@@ -265,7 +265,8 @@ class CoquilleStudio extends StatefulWidget {
           ),
           VueStudio.enregistres => Destination(
             libelle: n.enregistres,
-            icone: AppIcons.cahier,
+            // D-FUS-9 : le signet, plus le repli « cahier ».
+            icone: AppIcons.signet,
             chemin: v.name,
           ),
           VueStudio.brouillons => Destination(
@@ -344,8 +345,13 @@ class _CoquilleStudioState extends State<CoquilleStudio> {
   /// tete n'est plus qu'une respiration ; le bandeau, pose juste dessous,
   /// reste donc toujours entier a l'ecran (section 10.6, R-COM-09). Seul le
   /// fil defile.
-  Widget _enFocus(Widget contenu) =>
-      PageShell(actionsCoquille: false, defilante: false, child: contenu);
+  Widget _enFocus(Widget contenu) => PageShell(
+    actionsCoquille: false,
+    defilante: false,
+    // D-FUS-3 : le corps du Focus pose le bandeau des Communications.
+    bandeauHorsLigne: const SizedBox.shrink(),
+    child: contenu,
+  );
 
   Widget _coquille(BuildContext context, Widget contenu) {
     final VueStudio vue = widget.vue;
@@ -368,6 +374,8 @@ class _CoquilleStudioState extends State<CoquilleStudio> {
       // sa hauteur au-dessus du clavier (R-COM-15).
       masquerBarreBasse: onRetourListe != null,
       child: PageShell(
+        // D-FUS-3 : chaque vue du Studio pose le bandeau des Communications.
+        bandeauHorsLigne: const SizedBox.shrink(),
         titre: switch (vue) {
           VueStudio.aujourdhui => t.com.studio.aujourdhui.titre,
           VueStudio.canaux => t.com.studio.titre,

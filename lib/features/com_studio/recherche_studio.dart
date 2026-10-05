@@ -23,12 +23,12 @@ import '../../core/icons/app_icons.dart';
 import '../../core/tc_bibliotheque/recherche_catalogue.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/carte_piece_jointe.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/vue_etat_communication.dart';
+import 'panneau_partages.dart' show iconeElementPartage;
 import 'port_studio.dart';
 
 /// Les mots de [texte], normalises (sans majuscules ni accents) ; vide si
@@ -233,10 +233,7 @@ class ResultatsRechercheStudio extends StatelessWidget {
           lignes: <LigneRubrique>[
             for (final FichierTrouve f in tous.fichiers)
               LigneRubrique(
-                icone: switch (f.element.piece) {
-                  final PieceJointe p => CartePieceJointe.iconeNature(p.nature),
-                  null => AppIcons.supports,
-                },
+                icone: iconeElementPartage(f.element),
                 libelle: f.element.titre,
                 legende: r.dansCanal(canal: f.canal.nom),
                 onPress: () => onOuvrirCanal(f.canal.id),

@@ -118,12 +118,14 @@ void main() {
   final g = c.garde;
 
   group('R-01 : textes exacts de la spec sous une reponse', () {
-    test('l avertissement d une reponse est celui du section 5.2, le seul '
-        'nom adapte', () {
-      // Contre-preuve : a 022cc31e, « ... avant d'envoyer. ».
+    test('l avertissement d une reponse est le texte valide du directeur '
+        '(05/10) : « avant de l envoyer », sous « Envoyer »', () {
+      // Contre-preuve : a 27689f94, « ... avant de publier. » sous un
+      // bouton « Envoyer » (revue COM-R-3, reserve de R-01).
       expect(
         g.reponse.avertissement,
-        g.avertissement.replaceFirst('Cette publication', 'Cette réponse'),
+        'Cette réponse semble contenir une promotion commerciale. '
+        "Retirez le lien, le code ou l'offre avant de l'envoyer.",
       );
     });
 

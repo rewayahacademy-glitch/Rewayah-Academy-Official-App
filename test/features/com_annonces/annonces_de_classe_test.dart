@@ -14,6 +14,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/seance_famille/seance_famille.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/badge_non_lu.dart';
@@ -274,6 +275,10 @@ void main() {
           tester,
           depart: Routes.classePour(classeA, eleveId: eleveA1),
           taille: taille,
+          // R-16 : seance lointaine, l'annonce garde la tete.
+          seances: <SeanceFamille>[
+            seanceSalleOuverte(avant: const Duration(days: 2)),
+          ],
           autres: <Override>[
             portAnnoncesProvider.overrideWithValue(
               FauxAnnonces(
@@ -293,6 +298,33 @@ void main() {
         expect(
           tester.getTopLeft(carte).dy,
           lessThan(tester.getTopLeft(find.byType(CarteSeanceClasse)).dy),
+        );
+        verifierUnSeulBoutonPlein(tester);
+        expect(tester.takeException(), isNull);
+      });
+
+      testWidgets('${taille.width.toInt()} : R-16, salle ouverte, la seance '
+          'passe avant l annonce', (WidgetTester tester) async {
+        await monterTuteurAnnonces(
+          tester,
+          depart: Routes.classePour(classeA, eleveId: eleveA1),
+          taille: taille,
+          seances: <SeanceFamille>[seanceSalleOuverte()],
+          autres: <Override>[
+            portAnnoncesProvider.overrideWithValue(
+              FauxAnnonces(
+                parClasse: <String, List<AnnonceClasse>>{
+                  classeA: <AnnonceClasse>[annonceDeTest(classeId: classeA)],
+                },
+              ),
+            ),
+          ],
+        );
+        final Finder carte = find.byKey(const ValueKey<String>('annonce-an1'));
+        expect(carte, findsOneWidget);
+        expect(
+          tester.getTopLeft(carte).dy,
+          greaterThan(tester.getTopLeft(find.byType(CarteSeanceClasse)).dy),
         );
         verifierUnSeulBoutonPlein(tester);
         expect(tester.takeException(), isNull);

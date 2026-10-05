@@ -5032,7 +5032,7 @@
         "consigneBlocage": "Modifiez la publication, puis publiez-la de nouveau.",
         "panne": "La politique de la Communauté n'a pas pu relire ce contenu : rien n'est parti. Vérifiez la connexion, puis réessayez.",
         "reponse": {
-          "avertissement": "Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l'offre avant de publier.",
+          "avertissement": "Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l'offre avant de l'envoyer.",
           "liensTitre": "Liens de la réponse",
           "consigneBlocage": "Modifiez la réponse, puis envoyez-la de nouveau."
         }

@@ -100,7 +100,11 @@ Widget _ligne(NotificationTuteur n, double echelle) => MediaQuery(
   ),
   child: Scaffold(
     body: SingleChildScrollView(
-      child: LigneNotification(notification: n, onPress: () {}),
+      child: LigneNotification(
+        notification: n,
+        maintenant: DateTime(2026, 10, 5),
+        onPress: () {},
+      ),
     ),
   ),
 );

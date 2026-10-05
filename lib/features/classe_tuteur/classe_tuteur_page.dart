@@ -12,6 +12,7 @@ import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../accueil_eleve/accueil_eleve_page.dart' show seuilImminence;
 import '../accueil_famille/ancre_horloge_serveur.dart';
 import '../com_annonces/annonces_de_classe.dart';
 import '../com_messages/entree_messages_contexte.dart';
@@ -75,6 +76,37 @@ class _ClasseTuteurPageEtat extends ConsumerState<ClasseTuteurPage>
           _Contenu(contexte: c, maintenantServeurUtc: maintenant),
     );
   }
+}
+
+/// R-16 (decision du directeur du 05/10, choix a) : vrai quand la carte de
+/// seance passe avant les annonces de la Classe. Une seance ouverte (salle
+/// ouverte, en direct, prolongee) ou qui commence bientot (dans moins de
+/// [seuilImminence], le seuil « C'est bientot » de l'Accueil eleve) ne
+/// doit pas finir sous le pli ; sinon l'annonce reste en haut.
+///
+/// Pure, a l'instant serveur : sans horloge serveur, aucun etat d'ouverture
+/// n'est affirme et l'annonce garde la tete.
+bool seanceAvantAnnonces(
+  SeanceFamille? seance, {
+  required DateTime? maintenantServeurUtc,
+}) {
+  if (seance == null) return false;
+  return switch (etatSeanceFamille(
+    seance,
+    maintenantServeurUtc: maintenantServeurUtc,
+  )) {
+    EtatSeanceFamille.salleOuverte ||
+    EtatSeanceFamille.enDirect ||
+    EtatSeanceFamille.prolongee => true,
+    EtatSeanceFamille.aVenir => switch (restantAvant(
+      seance,
+      maintenantServeurUtc: maintenantServeurUtc,
+    )) {
+      final Duration reste => reste <= seuilImminence,
+      null => false,
+    },
+    _ => false,
+  };
 }
 
 /// Le corps de la Classe, une fois la classe et l'eleve connus.
@@ -150,9 +182,15 @@ class _Contenu extends ConsumerWidget {
     // voies ne les remplissent pas (annonces de la Classe en tete, entree
     // des Messages apres les rubriques) ; la page dit de quel cote poser
     // l'ecart, rendu seulement quand l'emplacement rend quelque chose.
+    // R-16 : une seance ouverte ou proche passe avant les annonces.
+    final bool seanceEnTete = seanceAvantAnnonces(
+      seance.value,
+      maintenantServeurUtc: maintenantServeurUtc,
+    );
     final Widget annonces = AnnoncesDeClasse(
       classeId: classeId,
-      ecartApres: Ecart.vLg,
+      ecartAvant: seanceEnTete ? Ecart.vLg : null,
+      ecartApres: seanceEnTete ? null : Ecart.vLg,
     );
     final Widget messages = EntreeMessagesContexte(
       type: TypeObjetLie.classe,
@@ -164,7 +202,9 @@ class _Contenu extends ConsumerWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
-        children: <Widget>[annonces, carte, Ecart.vLg, rubriques, messages],
+        children: seanceEnTete
+            ? <Widget>[carte, annonces, Ecart.vLg, rubriques, messages]
+            : <Widget>[annonces, carte, Ecart.vLg, rubriques, messages],
       );
     }
     // Tablette large et bureau : deux colonnes, environ 62 / 38, comme
@@ -173,11 +213,22 @@ class _Contenu extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        annonces,
+        if (!seanceEnTete) annonces,
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Expanded(flex: 62, child: carte),
+            // R-16 : seance en tete, les annonces suivent la carte, dans sa
+            // colonne.
+            Expanded(
+              flex: 62,
+              child: seanceEnTete
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[carte, annonces],
+                    )
+                  : carte,
+            ),
             Ecart.hLg,
             Expanded(
               flex: 38,

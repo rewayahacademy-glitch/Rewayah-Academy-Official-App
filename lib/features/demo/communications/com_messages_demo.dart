@@ -244,6 +244,8 @@ class _DemoMessagesState extends State<_DemoMessages> {
           horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(true)),
       ],
       child: PageShell(
+        // D-FUS-3 : le corps pose le bandeau des Communications.
+        bandeauHorsLigne: const SizedBox.shrink(),
         titre: t.com.messages.titre,
         sousTitre: t.com.messages.demo.vue(
           role: libelleRoleDemoMessages(widget.role),

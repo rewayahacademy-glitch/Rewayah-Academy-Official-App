@@ -57,6 +57,9 @@ class MessagesAdminPage extends StatelessWidget {
         ? null
         : () => GoRouter.of(context).go(Routes.adminCommunicationsMessages);
     return PageShell(
+      // D-FUS-3 : le corps pose le bandeau hors ligne des Communications ;
+      // pas de bandeau generique en plus.
+      bandeauHorsLigne: const SizedBox.shrink(),
       // Le titre de la spec, replie sur « Messages » quand un mot ne
       // tiendrait pas (revue COM-R, R-09 et R-15).
       titre: titreAdministrationCommunications(

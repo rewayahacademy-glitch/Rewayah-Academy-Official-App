@@ -40,6 +40,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 
 	// Translations
 	@override late final _Traductions$notifications$ar notifications = _Traductions$notifications$ar._(_root);
+	@override late final _Traductions$historique$ar historique = _Traductions$historique$ar._(_root);
 	@override late final _Traductions$commun$ar commun = _Traductions$commun$ar._(_root);
 	@override late final _Traductions$etat$ar etat = _Traductions$etat$ar._(_root);
 	@override late final _Traductions$classe$ar classe = _Traductions$classe$ar._(_root);
@@ -75,6 +76,32 @@ class _Traductions$notifications$ar extends Traductions$notifications$fr {
 	@override late final _Traductions$notifications$types$ar types = _Traductions$notifications$types$ar._(_root);
 }
 
+// Path: historique
+class _Traductions$historique$ar extends Traductions$historique$fr {
+	_Traductions$historique$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override List<String> get moisCourts => [
+		'يناير',
+		'فبراير',
+		'مارس',
+		'أبريل',
+		'مايو',
+		'يونيو',
+		'يوليو',
+		'أغسطس',
+		'سبتمبر',
+		'أكتوبر',
+		'نوفمبر',
+		'ديسمبر',
+	];
+	@override String dateCourte({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}';
+	@override String dateCourteSansAnnee({required Object jour, required Object mois}) => '${jour} ${mois}';
+	@override String dateLongue({required Object jourSemaine, required Object jour, required Object mois, required Object annee}) => '${jourSemaine} ${jour} ${mois} ${annee}';
+}
+
 // Path: commun
 class _Traductions$commun$ar extends Traductions$commun$fr {
 	_Traductions$commun$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -82,6 +109,7 @@ class _Traductions$commun$ar extends Traductions$commun$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$commun$dates$ar dates = _Traductions$commun$dates$ar._(_root);
 	@override late final _Traductions$commun$recherche$ar recherche = _Traductions$commun$recherche$ar._(_root);
 	@override late final _Traductions$commun$sections$ar sections = _Traductions$commun$sections$ar._(_root);
 }
@@ -252,6 +280,39 @@ class _Traductions$notifications$types$ar extends Traductions$notifications$type
 	@override String get annonceInterne => 'إعلان داخلي';
 	@override String get evenementContextuel => 'حدث';
 	@override String get autre => 'إشعار';
+}
+
+// Path: commun.dates
+class _Traductions$commun$dates$ar extends Traductions$commun$dates$fr {
+	_Traductions$commun$dates$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override List<String> get jours => [
+		'الاثنين',
+		'الثلاثاء',
+		'الأربعاء',
+		'الخميس',
+		'الجمعة',
+		'السبت',
+		'الأحد',
+	];
+	@override List<String> get mois => [
+		'يناير',
+		'فبراير',
+		'مارس',
+		'أبريل',
+		'مايو',
+		'يونيو',
+		'يوليو',
+		'أغسطس',
+		'سبتمبر',
+		'أكتوبر',
+		'نوفمبر',
+		'ديسمبر',
+	];
+	@override String jourDate({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}';
 }
 
 // Path: commun.recherche
@@ -1618,7 +1679,7 @@ class _Traductions$com$communaute$garde$reponse$ar extends Traductions$com$commu
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get avertissement => 'يبدو أن هذا الرد يتضمن ترويجًا تجاريًا. احذف الرابط أو الرمز أو العرض قبل النشر.';
+	@override String get avertissement => 'يبدو أن هذا الرد يتضمن ترويجًا تجاريًا. احذف الرابط أو الرمز أو العرض قبل إرساله.';
 	@override String get liensTitre => 'روابط الرد';
 	@override String get consigneBlocage => 'عدِّل الرد ثم أرسله من جديد.';
 }
@@ -2038,6 +2099,41 @@ extension on TraductionsAr {
 			'notifications.types.annonceInterne' => 'إعلان داخلي',
 			'notifications.types.evenementContextuel' => 'حدث',
 			'notifications.types.autre' => 'إشعار',
+			'historique.moisCourts.0' => 'يناير',
+			'historique.moisCourts.1' => 'فبراير',
+			'historique.moisCourts.2' => 'مارس',
+			'historique.moisCourts.3' => 'أبريل',
+			'historique.moisCourts.4' => 'مايو',
+			'historique.moisCourts.5' => 'يونيو',
+			'historique.moisCourts.6' => 'يوليو',
+			'historique.moisCourts.7' => 'أغسطس',
+			'historique.moisCourts.8' => 'سبتمبر',
+			'historique.moisCourts.9' => 'أكتوبر',
+			'historique.moisCourts.10' => 'نوفمبر',
+			'historique.moisCourts.11' => 'ديسمبر',
+			'historique.dateCourte' => ({required Object jour, required Object mois, required Object annee}) => '${jour} ${mois} ${annee}',
+			'historique.dateCourteSansAnnee' => ({required Object jour, required Object mois}) => '${jour} ${mois}',
+			'historique.dateLongue' => ({required Object jourSemaine, required Object jour, required Object mois, required Object annee}) => '${jourSemaine} ${jour} ${mois} ${annee}',
+			'commun.dates.jours.0' => 'الاثنين',
+			'commun.dates.jours.1' => 'الثلاثاء',
+			'commun.dates.jours.2' => 'الأربعاء',
+			'commun.dates.jours.3' => 'الخميس',
+			'commun.dates.jours.4' => 'الجمعة',
+			'commun.dates.jours.5' => 'السبت',
+			'commun.dates.jours.6' => 'الأحد',
+			'commun.dates.mois.0' => 'يناير',
+			'commun.dates.mois.1' => 'فبراير',
+			'commun.dates.mois.2' => 'مارس',
+			'commun.dates.mois.3' => 'أبريل',
+			'commun.dates.mois.4' => 'مايو',
+			'commun.dates.mois.5' => 'يونيو',
+			'commun.dates.mois.6' => 'يوليو',
+			'commun.dates.mois.7' => 'أغسطس',
+			'commun.dates.mois.8' => 'سبتمبر',
+			'commun.dates.mois.9' => 'أكتوبر',
+			'commun.dates.mois.10' => 'نوفمبر',
+			'commun.dates.mois.11' => 'ديسمبر',
+			'commun.dates.jourDate' => ({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}',
 			'commun.recherche.effacer' => 'مسح البحث',
 			'commun.recherche.fermer' => 'إغلاق البحث',
 			'commun.sections.page' => 'أقسام الصفحة',
@@ -2404,7 +2500,7 @@ extension on TraductionsAr {
 			'com.communaute.garde.liensTitre' => 'روابط المنشور',
 			'com.communaute.garde.consigneBlocage' => 'عدِّل المنشور ثم انشره من جديد.',
 			'com.communaute.garde.panne' => 'تعذّر على سياسة المجتمع مراجعة هذا المحتوى، فلم يُرسَل شيء. تحقّق من الاتصال ثم أعد المحاولة.',
-			'com.communaute.garde.reponse.avertissement' => 'يبدو أن هذا الرد يتضمن ترويجًا تجاريًا. احذف الرابط أو الرمز أو العرض قبل النشر.',
+			'com.communaute.garde.reponse.avertissement' => 'يبدو أن هذا الرد يتضمن ترويجًا تجاريًا. احذف الرابط أو الرمز أو العرض قبل إرساله.',
 			'com.communaute.garde.reponse.liensTitre' => 'روابط الرد',
 			'com.communaute.garde.reponse.consigneBlocage' => 'عدِّل الرد ثم أرسله من جديد.',
 			'com.communaute.lien.interne' => 'رابط داخلي في رواية',
@@ -2465,6 +2561,8 @@ extension on TraductionsAr {
 			'com.communaute.composer.nouvelle' => 'منشور جديد',
 			'com.communaute.composer.contexte' => 'شارك سؤالًا أو طريقة أو موردًا مفيدًا للتعليم.',
 			'com.communaute.composer.categorie' => 'الفئة',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.composer.categorieManquante' => 'اختر فئة للنشر.',
 			'com.communaute.composer.champTitre' => 'العنوان',
 			'com.communaute.composer.aideTitre' => 'الموضوع في كلمات قليلة',
@@ -2500,8 +2598,6 @@ extension on TraductionsAr {
 			'com.communaute.demo.vente' => 'بيع محظور',
 			'com.communaute.demo.signalementNonConfirme' => 'إبلاغ غير مؤكَّد',
 			'com.communaute.demo.choisir' => 'اختر حالة لتجربتها داخل واجهة المعلّم.',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.demo.aujourdhui' => 'اليوم، مع الاختصار',
 			'com.communaute.demo.nominal' => 'ستة منشورات',
 			'com.communaute.demo.publication' => 'منشور مفتوح',

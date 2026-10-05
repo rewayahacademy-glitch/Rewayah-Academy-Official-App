@@ -138,6 +138,8 @@ class _AdministrationCommunicationsPageState
     // tiendrait pas (320, texte x2 : revue COM-R, R-09 et R-15).
     return LayoutBuilder(
       builder: (BuildContext contexte, BoxConstraints contraintes) => PageShell(
+        // D-FUS-3 : seul le bandeau hors ligne des Communications.
+        bandeauHorsLigne: const BandeauHorsLigneCommunication(),
         titre: titreAdministrationCommunications(
           contexte,
           largeurPage: contraintes.maxWidth,
@@ -592,7 +594,13 @@ class ChargementPublieur extends ConsumerWidget {
         child: const ExcludeSemantics(child: Skeleton.liste()),
       );
     }
-    return PageShell(titre: titre, onRetour: onQuitter, child: corps);
+    return PageShell(
+      titre: titre,
+      onRetour: onQuitter,
+      // D-FUS-3 : seul le bandeau hors ligne des Communications.
+      bandeauHorsLigne: const BandeauHorsLigneCommunication(),
+      child: corps,
+    );
   }
 
   void _relire(WidgetRef ref) => ref

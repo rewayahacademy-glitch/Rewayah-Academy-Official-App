@@ -51,6 +51,7 @@ import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/fil_discussion.dart' show raccourciEnvoi;
 import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/status_pill.dart';
+import '../../core/widgets/vue_etat_communication.dart';
 import '../suivi_foyer/filtres_historique.dart';
 import 'port_annonces.dart';
 
@@ -346,6 +347,8 @@ class _PublieurAnnonceState extends ConsumerState<PublieurAnnonce> {
         if (!fait) _retour();
       },
       child: PageEtape(
+        // D-FUS-3 : seul le bandeau hors ligne des Communications.
+        bandeauHorsLigne: const BandeauHorsLigneCommunication(),
         numero: _rang + 1,
         total: _etapes.length,
         onRetour: _retour,

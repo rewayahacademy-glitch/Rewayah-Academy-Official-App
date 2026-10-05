@@ -922,6 +922,10 @@ void main() {
           tester,
           depart: Routes.classePour(_classe, eleveId: _a1),
           taille: taille,
+          // R-16 : une seance lointaine laisse l'annonce en tete.
+          seances: <SeanceFamille>[
+            seanceSalleOuverte(avant: const Duration(days: 2)),
+          ],
         );
         expect(find.byType(ClasseTuteurPage), findsOneWidget);
         final AnnoncesDeClasse annonces = tester.widget<AnnoncesDeClasse>(
@@ -941,6 +945,104 @@ void main() {
         expect(messages.ecartAvant, isNotNull);
         expect(messages.ecartApres, isNull);
         expect(tester.takeException(), isNull);
+      });
+    }
+  });
+  group('R-16 : la seance ouverte ou proche passe avant les annonces', () {
+    final DateTime maintenant = instantServeurFige;
+
+    test(
+      'fonction pure : ouverte, en direct, bientot, lointaine, inconnue',
+      () {
+        bool enTete(SeanceFamille? s, {DateTime? a}) =>
+            seanceAvantAnnonces(s, maintenantServeurUtc: a);
+        // Salle ouverte (10 min avant, fenetre de 20 min).
+        expect(enTete(seanceSalleOuverte(), a: maintenant), isTrue);
+        expect(enTete(seanceEnDirect(), a: maintenant), isTrue);
+        // Salle encore fermee, mais debut dans 4 min : sous le seuil
+        // « C'est bientot » (5 min).
+        SeanceFamille aVenirDans(Duration avant) => seanceFictive(
+          debutUtc: maintenant.add(avant),
+          ouvertureAvantDebut: const Duration(minutes: 2),
+        );
+        expect(
+          etatSeanceFamille(
+            aVenirDans(const Duration(minutes: 4)),
+            maintenantServeurUtc: maintenant,
+          ),
+          EtatSeanceFamille.aVenir,
+        );
+        expect(
+          enTete(aVenirDans(const Duration(minutes: 4)), a: maintenant),
+          isTrue,
+        );
+        expect(
+          enTete(aVenirDans(const Duration(minutes: 5)), a: maintenant),
+          isTrue,
+        );
+        expect(
+          enTete(aVenirDans(const Duration(minutes: 6)), a: maintenant),
+          isFalse,
+        );
+        expect(
+          enTete(aVenirDans(const Duration(days: 2)), a: maintenant),
+          isFalse,
+        );
+        // Annulee, sans seance, sans horloge serveur : l'annonce garde la tete.
+        expect(
+          enTete(
+            seanceSalleOuverte(statut: StatutSeance.annulee),
+            a: maintenant,
+          ),
+          isFalse,
+        );
+        expect(enTete(null, a: maintenant), isFalse);
+        expect(enTete(seanceSalleOuverte()), isFalse);
+      },
+    );
+
+    for (final Size taille in <Size>[
+      const Size(390, 844),
+      const Size(1440, 1000),
+    ]) {
+      testWidgets('${taille.width.round()} : salle ouverte, la carte de '
+          'seance en tete, l annonce apres', (WidgetTester tester) async {
+        await _monter(
+          tester,
+          depart: Routes.classePour(_classe, eleveId: _a1),
+          taille: taille,
+          seances: <SeanceFamille>[seanceSalleOuverte()],
+        );
+        final Finder annonces = find.byType(AnnoncesDeClasse);
+        final Finder carte = find.byType(CarteSeanceClasse);
+        expect(carte, findsOneWidget);
+        final AnnoncesDeClasse a = tester.widget<AnnoncesDeClasse>(annonces);
+        expect(a.ecartAvant, isNotNull);
+        expect(a.ecartApres, isNull);
+        expect(
+          tester.getTopLeft(annonces).dy,
+          greaterThan(tester.getTopLeft(carte).dy),
+        );
+        expect(tester.takeException(), isNull);
+      });
+
+      testWidgets('${taille.width.round()} : seance lointaine, l annonce '
+          'reste en haut', (WidgetTester tester) async {
+        await _monter(
+          tester,
+          depart: Routes.classePour(_classe, eleveId: _a1),
+          taille: taille,
+          seances: <SeanceFamille>[
+            seanceSalleOuverte(avant: const Duration(days: 2)),
+          ],
+        );
+        final Finder annonces = find.byType(AnnoncesDeClasse);
+        final Finder carte = find.byType(CarteSeanceClasse);
+        expect(
+          tester.getTopLeft(annonces).dy,
+          lessThanOrEqualTo(tester.getTopLeft(carte).dy),
+        );
+        expect(tester.widget<AnnoncesDeClasse>(annonces).ecartAvant, isNull);
       });
     }
   });
