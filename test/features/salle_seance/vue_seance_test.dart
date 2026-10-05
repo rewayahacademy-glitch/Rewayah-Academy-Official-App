@@ -168,9 +168,11 @@ void main() {
     test('la ligne d etat ne porte pas son propre nom', () {
       expect(_vue(r).ligneEtat, isNot(contains('Sayyida')));
       expect(_vue(r).ligneEtat, 'Classe An-Nour · La séance se poursuit.');
+      // DUREE-INSECABLE-4 : la duree suit le nom de la Classe, donc sans
+      // ancre de sens au milieu de la ligne ; elle reste insecable.
       expect(
         _vue(r, EtatDemoSalle.repos).ligneEtat,
-        'Classe An-Nour · \u200E32\u00A0min restantes',
+        'Classe An-Nour · 32\u00A0min restantes',
       );
     });
 

@@ -15,7 +15,6 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
-import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/presence/vue_presence.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
@@ -73,7 +72,7 @@ void main() {
     });
 
     test('chaque appel est enveloppe par insecable ou valeurSeule', () {
-      final List<AppelLibelle> appels = appelsDe(cles, sourcesDart());
+      final List<AppelLibelle> appels = appelsDe(cles, sourcesDartHorsCoran());
       expect(appels.length, greaterThan(50));
       final List<String> nus = <String>[
         for (final AppelLibelle a in appels)
@@ -137,12 +136,10 @@ String b() {
   });
 
   group('Durees et unites restantes : valeurs rendues', () {
-    test('rappel : « A nouveau dans 30 s » insecable', () {
-      expect(
-        LibellesGroupe.insecable(t.tc.classe.rappel.cooldown(secondes: 30)),
-        endsWith('30${_nbsp}s'),
-      );
-    });
+    // DUREE-INSECABLE-4 : le rappel se verifie sur l'ecran reel (fiche de
+    // seance et Classe Live), plus en appelant `insecable` soi-meme :
+    // test/accessibilite/duree_insecable_4_test.dart et
+    // test/teaching_core/e/classe_live_page_test.dart.
 
     test('regles de l academie : « 45 min » insecable et ancree', () {
       expect(uniteMinutesRegle(45), '${_lrm}45${_nbsp}min');

@@ -814,9 +814,13 @@ class _ProgressionClasse extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String texte = t.classe.entree.progressionValeur(
-      chapitre: valeur.chapitre,
-      pourcentage: (valeur.fraction * 100).round(),
+    // DUREE-INSECABLE-4 : « 40 % » ne se coupe jamais entre le nombre et
+    // l'unite (espace insecable du formatage partage).
+    final String texte = LibellesGroupe.insecable(
+      t.classe.entree.progressionValeur(
+        chapitre: valeur.chapitre,
+        pourcentage: (valeur.fraction * 100).round(),
+      ),
     );
     final TextStyle? style = Theme.of(context).textTheme.titleSmall;
     return Column(

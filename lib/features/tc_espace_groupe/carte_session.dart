@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/accessibilite/sens_du_contenu.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -111,13 +112,15 @@ class _CarteSessionState extends State<CarteSession> {
     final OccurrenceSeance? occurrence = espace.identite.prochaineSeance;
 
     if (horloge == null || occurrence == null) {
-      return AppCard(
-        dominante: true,
-        child: EmptyState(
-          message: LibellesGroupe.aucuneSeance,
-          invitation: LibellesGroupe.aucuneSeanceDetail,
-          icone: AppIcons.cours,
-          registre: RegistreVide.subi,
+      return LargeurLectureCarte(
+        child: AppCard(
+          dominante: true,
+          child: EmptyState(
+            message: LibellesGroupe.aucuneSeance,
+            invitation: LibellesGroupe.aucuneSeanceDetail,
+            icone: AppIcons.cours,
+            registre: RegistreVide.subi,
+          ),
         ),
       );
     }
@@ -139,6 +142,19 @@ class _CarteSessionState extends State<CarteSession> {
     );
     final TextTheme textes = Theme.of(context).textTheme;
 
+    return LargeurLectureCarte(
+      child: _contenu(context, emplacement, horloge, occurrence, textes),
+    );
+  }
+
+  Widget _contenu(
+    BuildContext context,
+    EmplacementEntree emplacement,
+    SessionClockVM horloge,
+    OccurrenceSeance occurrence,
+    TextTheme textes,
+  ) {
+    final GroupHomeVM espace = widget.espace;
     return AppCard(
       dominante: true,
       // Une seance annulee attenue la carte par sa surface, jamais par une
@@ -150,10 +166,13 @@ class _CarteSessionState extends State<CarteSession> {
         focusNode: _focusTitre,
         child: Semantics(
           header: true,
-          child: Text(
-            horloge.horlogeUtilisateur.dateLocaleRendue,
-            key: const ValueKey<String>('carte-seance-titre'),
-            style: textes.titleMedium ?? const TextStyle(),
+          child: SensDuContenu(
+            texte: horloge.horlogeUtilisateur.dateLocaleRendue,
+            child: Text(
+              horloge.horlogeUtilisateur.dateLocaleRendue,
+              key: const ValueKey<String>('carte-seance-titre'),
+              style: textes.titleMedium ?? const TextStyle(),
+            ),
           ),
         ),
       ),
@@ -188,7 +207,7 @@ class _CarteSessionState extends State<CarteSession> {
           // deviner.
           if (horloge.phase == PhaseSeance.attenteAvantT0) ...<Widget>[
             Ecart.vMd,
-            Text(
+            _TexteIsole(
               widget.tutoiement
                   ? t.accessibilite.tutoiement.attenteDetail
                   : LibellesGroupe.attenteAvantDebutDetail,
@@ -299,7 +318,10 @@ class NoticeChangementHeure extends StatelessWidget {
           Icon(AppIcons.horloge.repos, size: AppSpacing.xl),
           Ecart.hSm,
           Expanded(
-            child: Text(texte, style: Theme.of(context).textTheme.bodySmall),
+            child: _TexteIsole(
+              texte,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
           ),
         ],
       ),
@@ -505,11 +527,14 @@ class _LigneEtat extends StatelessWidget {
           Flexible(
             // Aucun mot coupe a 320 px texte x2 (lecon 8, DASH-MA-PROD-b :
             // « une conn / exion » hors ligne sur l'Accueil MA).
-            child: TexteSansCoupure(
-              texte,
-              // Un decompte : chiffres tabulaires (revue phase 0, jetons D4).
-              style: AppTypography.tabulaire(
-                textes.titleMedium ?? const TextStyle(),
+            child: SensDuContenu(
+              texte: texte,
+              child: TexteSansCoupure(
+                texte,
+                // Un decompte : chiffres tabulaires (revue phase 0, jetons D4).
+                style: AppTypography.tabulaire(
+                  textes.titleMedium ?? const TextStyle(),
+                ),
               ),
             ),
           ),
@@ -530,18 +555,20 @@ class SqueletteCarteSession extends StatelessWidget {
     return Semantics(
       label: t.classe.entree.chargementSeance,
       child: const ExcludeSemantics(
-        child: AppCard(
-          dominante: true,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Skeleton(hauteur: AppSpacing.xl),
-              Ecart.vLg,
-              Skeleton.texte(),
-              Ecart.vLg,
-              Skeleton(hauteur: AppPage.hauteurBouton),
-            ],
+        child: LargeurLectureCarte(
+          child: AppCard(
+            dominante: true,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Skeleton(hauteur: AppSpacing.xl),
+                Ecart.vLg,
+                Skeleton.texte(),
+                Ecart.vLg,
+                Skeleton(hauteur: AppPage.hauteurBouton),
+              ],
+            ),
           ),
         ),
       ),
@@ -617,7 +644,7 @@ class _LigneValeur extends StatelessWidget {
         alignment: WrapAlignment.spaceBetween,
         spacing: AppSpacing.md,
         children: <Widget>[
-          Text(
+          _TexteIsole(
             libelle,
             style: palette.inkMuted.applyTo(
               textes.bodySmall ?? const TextStyle(),
@@ -660,7 +687,7 @@ class _ConseilAppareil extends StatelessWidget {
           ),
           Ecart.hSm,
           Expanded(
-            child: Text(
+            child: _TexteIsole(
               LibellesGroupe.conseilAppareil,
               style: palette.inkMuted.applyTo(
                 textes.bodySmall ?? const TextStyle(),
@@ -691,6 +718,47 @@ class _EnFin extends StatelessWidget {
     return Align(
       alignment: AlignmentDirectional.centerEnd,
       child: IntrinsicWidth(child: child),
+    );
+  }
+}
+
+/// DUREE-INSECABLE-4 : la carte de seance garde une largeur de lecture
+/// ([AppPage.largeurLecture]). A 1440 px, etiree sur toute la largeur, la
+/// date et la duree s'ecartaient de plus d'un metre d'ecran de leurs
+/// libelles ; bornee, elle reste au bord de debut de la page.
+class LargeurLectureCarte extends StatelessWidget {
+  /// Borne [child] a la largeur de lecture.
+  const LargeurLectureCarte({required this.child, super.key});
+
+  /// La carte.
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: AlignmentDirectional.topStart,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: AppPage.largeurLecture),
+        child: child,
+      ),
+    );
+  }
+}
+
+/// Un texte de la carte isole dans le sens de son contenu ([SensDuContenu]) :
+/// en interface de droite a gauche, la ponctuation d'un libelle francais
+/// reste a sa place.
+class _TexteIsole extends StatelessWidget {
+  const _TexteIsole(this.texte, {this.style});
+
+  final String texte;
+  final TextStyle? style;
+
+  @override
+  Widget build(BuildContext context) {
+    return SensDuContenu(
+      texte: texte,
+      child: Text(texte, style: style),
     );
   }
 }

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -159,7 +160,11 @@ class ZoomLocal extends StatelessWidget {
                 onPress: onMoins,
               ),
               Text(
-                t.salle.seance.zoomValeur(valeur: (zoom * 100).round()),
+                // DUREE-INSECABLE-4 : « 150 % » affiche seul, insecable et
+                // ancre en interface de droite a gauche.
+                LibellesGroupe.valeurSeule(
+                  t.salle.seance.zoomValeur(valeur: (zoom * 100).round()),
+                ),
                 style: palette.inkStrong.applyTo(
                   theme.textTheme.titleSmall ?? const TextStyle(),
                 ),
@@ -180,9 +185,7 @@ class ZoomLocal extends StatelessWidget {
           CommandeSalle(
             key: const ValueKey<String>('bouton-agrandir-barre'),
             icone: (agrandi ? AppIcons.reduire : AppIcons.agrandir).repos,
-            libelle: agrandi
-                ? t.salle.seance.reduire
-                : t.salle.seance.agrandir,
+            libelle: agrandi ? t.salle.seance.reduire : t.salle.seance.agrandir,
             bascule: agrandi,
             onPress: agrandir,
           ),
@@ -212,9 +215,8 @@ class _IconeBarre extends StatelessWidget {
       child: Center(
         child: IconTheme(
           // Un bouton sans rappel (fin de pagination, etc.) : estompe, inactif.
-          data:
-              (action == null ? palette.inkFaint : palette.inkStrong)
-                  .asIconTheme(size: AppSpacing.xxl),
+          data: (action == null ? palette.inkFaint : palette.inkStrong)
+              .asIconTheme(size: AppSpacing.xxl),
           child: Icon(icone.repos),
         ),
       ),

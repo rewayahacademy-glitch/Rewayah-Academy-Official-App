@@ -6,6 +6,7 @@ import '../../core/appairage/service_avatar.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -131,8 +132,11 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
       // Refus AVANT l'envoi : rien ne monte sur une connexion de telephone
       // pour etre refuse ensuite.
       setState(() {
-        _refus = t.ficheEleve.informations.tropLourde(
-          taille: '${ServiceAvatar.tailleMaximaleOctets ~/ (1024 * 1024)}',
+        // DUREE-INSECABLE-4 : « 2 Mo » insecable.
+        _refus = LibellesGroupe.insecable(
+          t.ficheEleve.informations.tropLourde(
+            taille: '${ServiceAvatar.tailleMaximaleOctets ~/ (1024 * 1024)}',
+          ),
         );
         _phase = _Phase.repos;
         _photo = null;

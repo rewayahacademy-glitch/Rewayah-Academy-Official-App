@@ -331,7 +331,10 @@ class _HistoriqueControleurPageState
   Widget _ligne(RapportControle r) {
     final h = t.controleur.historique;
     final String date = dateDeLAppareil(r.debut);
-    final String duree = LibellesGroupe.valeurSeule(
+    // DUREE-INSECABLE-4 : la duree ne s'affiche jamais seule ici, elle suit
+    // l'heure (« 18:00 · 12 min observees ») et la date de la phrase lue :
+    // insecable, sans ancre de sens au milieu du libelle.
+    final String duree = LibellesGroupe.insecable(
       h.duree(minutes: r.dureeObservee.inMinutes),
     );
     final String statut = libelleStatutRapport(r.statut);
