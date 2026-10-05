@@ -44,7 +44,7 @@ import '../../../../core/widgets/app_bottom_sheet.dart';
 import '../../../../core/widgets/bandeau_attention.dart';
 import '../../../../core/widgets/comptable/ligne_activite.dart';
 import '../../../../core/widgets/ligne_cle_valeur.dart';
-import '../../../../core/widgets/ligne_destination.dart';
+import '../../../../core/widgets/ligne_destination_masquee.dart';
 import '../../../../core/widgets/montant_argent.dart';
 import '../../../../core/widgets/pastilles_comptable.dart';
 import '../../../../core/widgets/skeleton.dart';

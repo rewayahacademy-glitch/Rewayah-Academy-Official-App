@@ -44,7 +44,7 @@ import '../../core/widgets/comptable/ligne_activite.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/lien_fleche.dart';
-import '../../core/widgets/ligne_destination.dart';
+import '../../core/widgets/ligne_destination_masquee.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastilles_comptable.dart';
 import '../../core/widgets/pile_cartes.dart';

@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/comptable/modeles_comptable.dart';
 import 'package:rewayah_academy/core/comptable/statuts_comptable.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/widgets/ligne_destination.dart';
+import 'package:rewayah_academy/core/widgets/ligne_destination_masquee.dart';
 import 'package:rewayah_academy/core/widgets/pastilles_comptable.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 

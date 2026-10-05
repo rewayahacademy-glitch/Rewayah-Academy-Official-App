@@ -17,7 +17,7 @@ import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/avatar_nom.dart';
 import '../../../core/widgets/comptable/ligne_activite.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
-import '../../../core/widgets/ligne_destination.dart';
+import '../../../core/widgets/ligne_destination_masquee.dart';
 import '../../../core/widgets/pastilles_comptable.dart';
 import 'etat_beneficiaires.dart';
 

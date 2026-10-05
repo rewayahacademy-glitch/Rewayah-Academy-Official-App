@@ -156,6 +156,22 @@ const List<String> composantsDuCatalogue = <String>[
   'FilDiscussion',
   // ON-AIR-1, ANNUL-VIS-1 : la pastille d'etat de seance.
   'PastilleEtatSeance',
+  // CPT-F (spec §7, DR-06) : le masque des montants du Comptable.
+  'BasculeMontants',
+  'MontantSensible',
+  // CPT-F (spec §16.3) : la destination de paiement masquee du personnel.
+  'LigneDestinationMasquee',
+  // CPT-F (spec §40) : une FAMILLE de neuf pastilles de statut dans un seul
+  // fichier, inscrite sous le nom du fichier. C'est l'exception inverse de
+  // `GrilleSemaine` : ici, un nom de catalogue qui n'est pas une classe ;
+  // l'entree de galerie montre chacune des neuf pastilles.
+  'PastillesComptable',
+  // CPT-F, CPT-TRES, CPT-JOUR : le sous-dossier lib/core/widgets/comptable/,
+  // inscrit par CPT-RC (revue CPT-R, m1) ; le controle des fichiers lit
+  // desormais les sous-dossiers.
+  'CarteReserveStrategique',
+  'LigneActivite',
+  'ResumeTresorerie',
 ];
 
 /// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.
@@ -260,7 +276,9 @@ void main() {
       // sans passer par le catalogue, ce que la constitution interdit.
       final List<String> fichiers =
           Directory('lib/core/widgets')
-              .listSync()
+              // Recursif : un sous-dossier (lib/core/widgets/comptable/)
+              // n'echappe plus au catalogue (CPT-RC, revue CPT-R m1).
+              .listSync(recursive: true)
               .whereType<File>()
               .map((File f) => f.uri.pathSegments.last)
               .where((String n) => n.endsWith('.dart'))

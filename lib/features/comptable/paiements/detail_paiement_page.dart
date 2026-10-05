@@ -41,7 +41,7 @@ import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/etat_systeme.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
-import '../../../core/widgets/ligne_destination.dart';
+import '../../../core/widgets/ligne_destination_masquee.dart';
 import '../../../core/widgets/montant_argent.dart';
 import '../../../core/widgets/montant_sensible.dart';
 import '../../../core/widgets/page_shell.dart';
