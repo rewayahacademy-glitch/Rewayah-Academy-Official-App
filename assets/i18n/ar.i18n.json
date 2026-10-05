@@ -451,6 +451,144 @@
       "titre": "رسالة صوتية"
     },
     "communaute": {
+      "garde": {
+        "aide": "لا إعلانات. لا روابط تسويق بالعمولة. لا بيع.",
+        "avertissement": "يبدو أن هذا المنشور يتضمّن ترويجًا تجاريًا. أزِل الرابط أو الرمز أو العرض قبل النشر.",
+        "bloqueAffilie": "روابط التسويق بالعمولة غير مسموح بها في مجتمع المعلّمين.",
+        "bloqueVente": "بيع المنتجات أو الخدمات غير مسموح به في هذه المساحة.",
+        "titreAvertissement": "منشور يحتاج إلى مراجعة",
+        "titreBlocage": "منشور محظور",
+        "motif": "السبب: {motif}",
+        "liensTitre": "روابط المنشور",
+        "consigneBlocage": "عدِّل المنشور ثم انشره من جديد."
+      },
+      "lien": {
+        "interne": "رابط داخلي في رواية",
+        "ressourceExterne": "مورد تعليمي خارجي",
+        "commercialInterdit": "رابط تجاري ممنوع",
+        "nonVerifie": "رابط غير مُتحقَّق منه",
+        "semantique": "{adresse}، {etat}"
+      },
+      "sousTitre": "تبادل وتعاون بين المعلّمين",
+      "sections": "فئات مجتمع المعلّمين",
+      "toutes": "الكل",
+      "videTitre": "لا توجد منشورات",
+      "rechercheVideTitre": "لا توجد نتائج",
+      "rechercheVide": "لا يوجد منشور يطابق بحثك. جرّب كلمة أخرى.",
+      "videToutes": "لا توجد منشورات حاليًا.",
+      "flux": {
+        "ouvrir": "فتح المنشور {titre}",
+        "reponseUne": "ردّ واحد",
+        "reponses": "{nombre} ردود",
+        "aucuneReponse": "لا توجد ردود",
+        "categorie": "الفئة {categorie}"
+      },
+      "recherche": {
+        "ouvrir": "البحث عن منشور",
+        "champ": "البحث عن منشور",
+        "aide": "كلمة من العنوان أو النص",
+        "fermer": "إغلاق البحث"
+      },
+      "moment": {
+        "instant": "الآن",
+        "minutes": "منذ {nombre} دقيقة",
+        "heures": "منذ {nombre} ساعة",
+        "jours": "منذ {nombre} يوم",
+        "date": "في {jour}/{mois}"
+      },
+      "publication": {
+        "auteur": "{fonction}، {moment}",
+        "enregistrer": "حفظ المنشور",
+        "enregistree": "منشور محفوظ",
+        "retirer": "إزالة من العناصر المحفوظة",
+        "menu": "إجراءات على المنشور {titre}",
+        "signaler": "الإبلاغ عن المنشور",
+        "signalee": "تم الإبلاغ عن المحتوى إلى فريق الإشراف.",
+        "choisirTitre": "لا يوجد منشور مفتوح",
+        "choisir": "اختر منشورًا من القائمة لقراءته والردّ عليه.",
+        "introuvableTitre": "المنشور غير متاح",
+        "introuvable": "تمت إزالة هذا المنشور أو لم يعد متاحًا لك. عد إلى المنشورات لاختيار منشور آخر.",
+        "revenir": "العودة إلى المنشورات"
+      },
+      "reponses": {
+        "titre": "الردود ({nombre})",
+        "vide": "لا توجد ردود حاليًا.",
+        "erreurTitre": "تعذّر تحميل الردود.",
+        "champ": "ردّك",
+        "aide": "اكتب ردًّا",
+        "envoyer": "إرسال الردّ",
+        "champVide": "اكتب ردًّا لإرساله.",
+        "enCours": "جارٍ الإرسال",
+        "nonConfirmee": "لم يُؤكَّد هذا الردّ بعد.",
+        "reessayer": "إعادة إرسال الردّ",
+        "indisponible": "الردود غير متاحة هنا بعد.",
+        "menu": "إجراءات على ردّ {nom}",
+        "signaler": "الإبلاغ عن الردّ",
+        "signalee": "لقد أبلغت عن هذا الردّ."
+      },
+      "signalement": {
+        "politique": {
+          "publicite": "الإعلانات التجارية غير مسموح بها في مجتمع المعلّمين.",
+          "sollicitation": "الاستدراج التجاري غير مسموح به في هذه المساحة."
+        },
+        "motifManquant": "اختر سببًا لإرسال البلاغ."
+      },
+      "composer": {
+        "nouvelle": "منشور جديد",
+        "contexte": "شارك سؤالًا أو طريقة أو موردًا مفيدًا للتعليم.",
+        "categorie": "الفئة",
+        "categorieManquante": "اختر فئة للنشر.",
+        "champTitre": "العنوان",
+        "aideTitre": "الموضوع في كلمات قليلة",
+        "titreManquant": "اكتب عنوانًا للنشر.",
+        "champTexte": "النص",
+        "aideTexte": "سؤالك أو خبرتك",
+        "texteManquant": "اكتب نص المنشور للنشر.",
+        "pieces": "المرفقات",
+        "pieceRefusee": "أزل الملفات المرفوضة قبل النشر.",
+        "choixIndisponible": "اختيار ملف غير متاح هنا بعد.",
+        "publier": "نشر",
+        "fermer": "إغلاق المنشور الجديد",
+        "confirmee": "منشورك متاح الآن.",
+        "erreurEnvoi": "لم يُؤكَّد منشورك بعد. تحقّق من اتصالك ثم أعد المحاولة.",
+        "indisponible": "النشر غير متاح هنا بعد."
+      },
+      "regles": {
+        "panneau": "المساعدة والقواعد",
+        "aProposTitre": "حول هذه المساحة",
+        "aPropos": "مساحة تعاون بين المعلّمين لطرح الأسئلة وتبادل الطرق والموارد التعليمية.",
+        "titre": "مشاركة تعليمية فقط",
+        "corps": "هذا المجتمع مخصّص للتبادل المهني بين المعلّمين.",
+        "reglesTitre": "قواعد النشر",
+        "pasPublicite": "لا إعلانات",
+        "pasAffilie": "لا روابط تسويق بالعمولة",
+        "pasVente": "لا بيع لمنتج أو خدمة",
+        "pasSollicitation": "لا التماس تجاري",
+        "pasDonnees": "لا بيانات شخصية لطالب أو عائلة",
+        "signaler": "يُبلَّغ عن المحتوى غير المناسب من قائمة المنشور.",
+        "voir": "عرض القواعد"
+      },
+      "entree": {
+        "lecteur": "فتح مجتمع المعلّمين",
+        "detail": "أسئلة وطرق وموارد بين المعلّمين"
+      },
+      "demo": {
+        "avertissement": "منشور يحتاج إلى مراجعة: إعلان تجاري",
+        "lienAffilie": "رابط تسويق بالعمولة محظور",
+        "vente": "بيع محظور",
+        "signalementNonConfirme": "إبلاغ غير مؤكَّد",
+        "choisir": "اختر حالة لتجربتها داخل واجهة المعلّم.",
+        "aujourdhui": "اليوم، مع الاختصار",
+        "nominal": "ستة منشورات",
+        "publication": "منشور مفتوح",
+        "vide": "لا توجد منشورات",
+        "lectureEchouee": "فشل القراءة",
+        "indisponible": "الخدمة غير متاحة بعد",
+        "horsLigne": "غير متصل",
+        "envoiNonConfirme": "إرسال غير مؤكَّد",
+        "moderationIndisponible": "الإشراف غير متاح",
+        "lecteurSeul": "قراءة فقط، دون نشر"
+      },
       "titre": "@:com.socle.lexique.communaute",
       "vide": "لا توجد منشورات في هذه الفئة."
     },
