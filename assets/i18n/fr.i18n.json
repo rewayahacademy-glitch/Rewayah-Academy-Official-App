@@ -2583,7 +2583,7 @@
       "messageAdministration": "Message de l'Administration",
       "dossierATraiter": "Dossier à traiter",
       "signalementCommunaute": "Signalement dans la Communauté",
-      "reponseFil": "Réponse à un fil",
+      "reponseFil": "Réponse dans une conversation",
       "annoncePlanifiee": "Annonce planifiée à publier",
       "evenementOperationnel": "Événement de l'académie",
       "mission": "Mission",
@@ -4914,14 +4914,14 @@
         "dossier": "Dossier",
         "mission": "Mission de contrôle",
         "remplacement": "Remplacement",
-        "autre": "Objet lié"
+        "autre": "Autre sujet"
       },
       "panneau": {
-        "objets": "Objets liés",
+        "objets": "À propos de",
         "participants": "Participants",
         "fichiers": "@:com.socle.lexique.fichiersPartages",
         "ouvrir": "Ouvrir {objet}",
-        "inaccessible": "Vous n'avez plus accès à cet objet. La conversation reste lisible.",
+        "inaccessible": "Ce sujet ne vous est plus ouvert. La conversation reste lisible.",
         "vous": "Vous"
       },
       "fil": {
@@ -5030,7 +5030,7 @@
         "motif": "Motif : {motif}",
         "liensTitre": "Liens de la publication",
         "consigneBlocage": "Modifiez la publication, puis publiez-la de nouveau.",
-        "panne": "La politique de la Communauté n'a pas pu relire ce contenu : rien n'est parti. Vérifiez la connexion, puis réessayez.",
+        "panne": "La vérification de ce contenu n'est pas confirmée, sans doute à cause de la connexion : rien n'a été publié. Vérifiez la connexion, puis réessayez.",
         "reponse": {
           "avertissement": "Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l'offre avant de l'envoyer.",
           "liensTitre": "Liens de la réponse",
@@ -5093,7 +5093,7 @@
         "envoyer": "Envoyer la réponse",
         "champVide": "Écrivez une réponse pour l'envoyer.",
         "enCours": "Envoi en cours",
-        "nonConfirmee": "Cette réponse n'a pas encore été confirmée.",
+        "nonConfirmee": "Cette réponse n'a pas encore été confirmée. Vérifiez votre connexion, puis renvoyez-la.",
         "refusee": "Refusée par la politique de la Communauté",
         "reessayer": "Renvoyer la réponse",
         "indisponible": "Les réponses ne sont pas encore disponibles ici.",
@@ -5152,7 +5152,7 @@
         "lienAffilie": "Lien affilié bloqué",
         "vente": "Vente bloquée",
         "signalementNonConfirme": "Signalement non confirmé",
-        "choisir": "Choisissez une situation à essayer, dans la coquille Enseignant.",
+        "choisir": "Choisissez une situation à essayer, vue par un enseignant.",
         "aujourdhui": "Aujourd'hui, avec le raccourci",
         "nominal": "Six publications",
         "publication": "Une publication ouverte",
@@ -5218,7 +5218,7 @@
         },
         "acces": {
           "messages": "@:com.socle.lexique.messagesMetier",
-          "messagesDetail": "Les fils avec les familles, les enseignants et les contrôleurs",
+          "messagesDetail": "Les conversations avec les familles, les enseignants et les contrôleurs",
           "annonces": "Annonces",
           "annoncesDetail": "Publier et suivre les annonces",
           "dossiers": "Dossiers à valider",
@@ -5354,25 +5354,25 @@
           "titre": "Nouvelle annonce",
           "etapes": {
             "contenu": "Contenu de l'annonce",
-            "audience": "Audience de l'annonce",
+            "audience": "Destinataires de l'annonce",
             "programmation": "Date de diffusion",
             "previsualisation": "Aperçu de l'annonce",
             "publication": "Publication de l'annonce"
           },
           "contexte": {
             "contenu": "Écrivez ce que les destinataires doivent savoir. Une annonce part dans un seul sens : personne n'y répond.",
-            "audience": "Choisissez qui reçoit l'annonce. Seules les audiences que vous pouvez viser sont proposées.",
+            "audience": "Choisissez qui reçoit l'annonce. Seuls les destinataires que vous pouvez viser sont proposés.",
             "audienceFixee": "Cette annonce part vers {cible}. Vous publiez seulement pour votre Classe.",
             "programmation": "Choisissez quand l'annonce part. Une annonce programmée attend sa date.",
             "previsualisation": "Voici l'annonce telle que les destinataires la liront.",
-            "publication": "Relisez l'audience et la date, puis publiez. Rien n'est publié avant la confirmation."
+            "publication": "Relisez les destinataires et la date, puis publiez. Rien n'est publié avant la confirmation."
           },
           "champTitre": "Titre de l'annonce",
           "champTexte": "Texte de l'annonce",
           "nature": {
             "classe": "Seules les familles et les élèves de cette Classe la reçoivent.",
             "public": "Toutes les personnes de ce public la reçoivent.",
-            "toutes": "Toute l'école la reçoit. Réservez-la à ce qui concerne tout le monde."
+            "toutes": "Toute l'académie la reçoit. Réservez-la à ce qui concerne tout le monde."
           },
           "quand": {
             "maintenant": "Dès la confirmation",
@@ -5391,15 +5391,15 @@
           "reessayer": "Réessayer la publication",
           "terminer": "Terminer",
           "manqueContenu": "Écrivez un titre et un texte pour continuer.",
-          "manqueAudience": "Choisissez une audience pour continuer.",
+          "manqueAudience": "Choisissez les destinataires pour continuer.",
           "enCours": "Publication en cours. Attendez la confirmation.",
           "publiee": "Annonce publiée. Les destinataires la reçoivent.",
           "planifiee": "Annonce planifiée pour le {date} à {heure}.",
           "nonConfirmee": "Cette annonce n'est pas encore confirmée. Vérifiez la connexion, puis réessayez : elle ne partira qu'une fois.",
-          "horsLigne": "Vous êtes hors ligne : cette annonce n'est pas encore confirmée. Reconnectez-vous, puis réessayez.",
+          "horsLigne": "Vous êtes hors ligne : cette annonce n'est pas encore confirmée. Réessayez quand la connexion revient.",
           "indisponible": "La publication des annonces n'est pas encore disponible. Revenez plus tard.",
-          "aucuneCibleTitre": "Aucune audience ouverte",
-          "aucuneCible": "Vous ne pouvez publier vers aucune audience pour le moment. Demandez l'accès à la direction.",
+          "aucuneCibleTitre": "Aucun destinataire ouvert",
+          "aucuneCible": "Vous ne pouvez publier pour aucun destinataire pour le moment. Demandez l'accès à la direction.",
           "classeRefuseeTitre": "Publication réservée",
           "classeRefusee": "Vous ne pouvez pas publier d'annonce pour cette Classe. Demandez l'accès à la direction."
         },
@@ -5412,9 +5412,9 @@
             "publiees": "Annonces publiées",
             "planifiees": "Annonces planifiées",
             "moderation": "Contenus en modération",
-            "regles": "Règles de portée",
+            "regles": "Droits de publication",
             "indisponible": "{libelle} : pas encore disponible",
-            "echec": "{libelle} : lecture impossible",
+            "echec": "{libelle} : non chargé. Vérifiez la connexion, puis rechargez la page.",
             "reserve": "{libelle} : réservé aux personnes chargées de la modération"
           },
           "publiees": {
@@ -5430,16 +5430,16 @@
             "legende": "{cible} · prévue le {date} à {heure}"
           },
           "matrice": {
-            "titre": "Règles de portée et autorisations",
-            "detail": "La règle de l'école, appliquée à chaque publication.",
+            "titre": "Droits de publication des annonces",
+            "detail": "La règle de l'académie, appliquée à chaque publication.",
             "auteurs": "Qui publie",
             "peutPublier": "Peut publier",
-            "audiences": "Audiences",
+            "audiences": "Destinataires",
             "validation": "Validation requise",
             "oui": "Oui",
             "non": "Non",
             "aucune": "Aucune",
-            "vide": "Aucune règle de portée n'est configurée."
+            "vide": "Aucun droit de publication n'est configuré."
           },
           "moderation": {
             "titre": "File de modération",
@@ -5491,13 +5491,13 @@
         "demoPublication": {
           "lienAdministration": "Administration des communications (direction)",
           "lienPublier": "Publier une annonce pour une Classe (enseignant)",
-          "toutes": "Toute l'école",
+          "toutes": "Toute l'académie",
           "familles": "Familles",
           "enseignants": "Enseignants",
           "eleves": "Élèves",
           "controleurs": "Contrôleurs",
           "direction": "Direction",
-          "audiencesDirection": "Toute l'école, un public ou une Classe",
+          "audiencesDirection": "Toute l'académie, un public ou une Classe",
           "audiencesEnseignant": "Sa Classe seulement",
           "vacancesTitre": "Calendrier des vacances d'hiver",
           "vacancesTexte": "Les cours s'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.",
@@ -5534,7 +5534,7 @@
           "tuteur": "Famille",
           "enseignant": "Enseignant",
           "adulte": "Élève adulte",
-          "admin": "Administration",
+          "admin": "Direction",
           "controleur": "Contrôleur"
         },
         "classeNour": "Classe An-Nour",

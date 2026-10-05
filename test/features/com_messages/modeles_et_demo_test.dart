@@ -100,7 +100,7 @@ void main() {
         'Classe An-Nour · Adam',
       );
       expect(libelleTypeObjet(TypeObjetLie.mission), 'Mission de contrôle');
-      expect(libelleTypeObjet(TypeObjetLie.annonce), 'Objet lié');
+      expect(libelleTypeObjet(TypeObjetLie.annonce), 'Autre sujet');
     });
 
     test('le moment : l heure du jour, sinon le jour et le mois', () {

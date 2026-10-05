@@ -264,7 +264,15 @@ void main() {
       expect(gauches.toSet(), hasLength(1));
       expect(titre(tester), 'Annonces');
       verifierAucunMotCoupe(tester, paragrapheTitre(tester));
-      verifierAucunMotCoupe(tester, find.byType(StatTile));
+      // « Droits de publication » (relecture croisee du 05/10) : la police
+      // de test (Ahem, un carre par lettre) coupe tout mot de onze lettres
+      // a cette largeur ; il est mesure avec les vraies polices du depot
+      // dans libelles_relecture_polices_test.dart.
+      verifierAucunMotCoupe(
+        tester,
+        find.byType(StatTile),
+        exceptions: <String>{t.com.annonces.administration.indicateurs.regles},
+      );
     });
   });
 

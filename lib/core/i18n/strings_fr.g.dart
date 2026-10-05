@@ -7353,8 +7353,8 @@ class Traductions$notifications$types$fr {
 	/// fr: 'Signalement dans la Communauté'
 	String get signalementCommunaute => 'Signalement dans la Communauté';
 
-	/// fr: 'Réponse à un fil'
-	String get reponseFil => 'Réponse à un fil';
+	/// fr: 'Réponse dans une conversation'
+	String get reponseFil => 'Réponse dans une conversation';
 
 	/// fr: 'Annonce planifiée à publier'
 	String get annoncePlanifiee => 'Annonce planifiée à publier';
@@ -15735,8 +15735,8 @@ class Traductions$com$messages$types$fr {
 	/// fr: 'Remplacement'
 	String get remplacement => 'Remplacement';
 
-	/// fr: 'Objet lié'
-	String get autre => 'Objet lié';
+	/// fr: 'Autre sujet'
+	String get autre => 'Autre sujet';
 }
 
 // Path: com.messages.panneau
@@ -15747,8 +15747,8 @@ class Traductions$com$messages$panneau$fr {
 
 	// Translations
 
-	/// fr: 'Objets liés'
-	String get objets => 'Objets liés';
+	/// fr: 'À propos de'
+	String get objets => 'À propos de';
 
 	/// fr: 'Participants'
 	String get participants => 'Participants';
@@ -15759,8 +15759,8 @@ class Traductions$com$messages$panneau$fr {
 	/// fr: 'Ouvrir {objet}'
 	String ouvrir({required Object objet}) => 'Ouvrir ${objet}';
 
-	/// fr: 'Vous n'avez plus accès à cet objet. La conversation reste lisible.'
-	String get inaccessible => 'Vous n\'avez plus accès à cet objet. La conversation reste lisible.';
+	/// fr: 'Ce sujet ne vous est plus ouvert. La conversation reste lisible.'
+	String get inaccessible => 'Ce sujet ne vous est plus ouvert. La conversation reste lisible.';
 
 	/// fr: 'Vous'
 	String get vous => 'Vous';
@@ -16064,8 +16064,8 @@ class Traductions$com$communaute$garde$fr {
 	/// fr: 'Modifiez la publication, puis publiez-la de nouveau.'
 	String get consigneBlocage => 'Modifiez la publication, puis publiez-la de nouveau.';
 
-	/// fr: 'La politique de la Communauté n'a pas pu relire ce contenu : rien n'est parti. Vérifiez la connexion, puis réessayez.'
-	String get panne => 'La politique de la Communauté n\'a pas pu relire ce contenu : rien n\'est parti. Vérifiez la connexion, puis réessayez.';
+	/// fr: 'La vérification de ce contenu n'est pas confirmée, sans doute à cause de la connexion : rien n'a été publié. Vérifiez la connexion, puis réessayez.'
+	String get panne => 'La vérification de ce contenu n\'est pas confirmée, sans doute à cause de la connexion : rien n\'a été publié. Vérifiez la connexion, puis réessayez.';
 
 	late final Traductions$com$communaute$garde$reponse$fr reponse = Traductions$com$communaute$garde$reponse$fr.internal(_root);
 }
@@ -16237,8 +16237,8 @@ class Traductions$com$communaute$reponses$fr {
 	/// fr: 'Envoi en cours'
 	String get enCours => 'Envoi en cours';
 
-	/// fr: 'Cette réponse n'a pas encore été confirmée.'
-	String get nonConfirmee => 'Cette réponse n\'a pas encore été confirmée.';
+	/// fr: 'Cette réponse n'a pas encore été confirmée. Vérifiez votre connexion, puis renvoyez-la.'
+	String get nonConfirmee => 'Cette réponse n\'a pas encore été confirmée. Vérifiez votre connexion, puis renvoyez-la.';
 
 	/// fr: 'Refusée par la politique de la Communauté'
 	String get refusee => 'Refusée par la politique de la Communauté';
@@ -16418,8 +16418,8 @@ class Traductions$com$communaute$demo$fr {
 	/// fr: 'Signalement non confirmé'
 	String get signalementNonConfirme => 'Signalement non confirmé';
 
-	/// fr: 'Choisissez une situation à essayer, dans la coquille Enseignant.'
-	String get choisir => 'Choisissez une situation à essayer, dans la coquille Enseignant.';
+	/// fr: 'Choisissez une situation à essayer, vue par un enseignant.'
+	String get choisir => 'Choisissez une situation à essayer, vue par un enseignant.';
 
 	/// fr: 'Aujourd'hui, avec le raccourci'
 	String get aujourdhui => 'Aujourd\'hui, avec le raccourci';
@@ -16905,8 +16905,8 @@ class Traductions$com$annonces$publieur$fr {
 	/// fr: 'Écrivez un titre et un texte pour continuer.'
 	String get manqueContenu => 'Écrivez un titre et un texte pour continuer.';
 
-	/// fr: 'Choisissez une audience pour continuer.'
-	String get manqueAudience => 'Choisissez une audience pour continuer.';
+	/// fr: 'Choisissez les destinataires pour continuer.'
+	String get manqueAudience => 'Choisissez les destinataires pour continuer.';
 
 	/// fr: 'Publication en cours. Attendez la confirmation.'
 	String get enCours => 'Publication en cours. Attendez la confirmation.';
@@ -16920,17 +16920,17 @@ class Traductions$com$annonces$publieur$fr {
 	/// fr: 'Cette annonce n'est pas encore confirmée. Vérifiez la connexion, puis réessayez : elle ne partira qu'une fois.'
 	String get nonConfirmee => 'Cette annonce n\'est pas encore confirmée. Vérifiez la connexion, puis réessayez : elle ne partira qu\'une fois.';
 
-	/// fr: 'Vous êtes hors ligne : cette annonce n'est pas encore confirmée. Reconnectez-vous, puis réessayez.'
-	String get horsLigne => 'Vous êtes hors ligne : cette annonce n\'est pas encore confirmée. Reconnectez-vous, puis réessayez.';
+	/// fr: 'Vous êtes hors ligne : cette annonce n'est pas encore confirmée. Réessayez quand la connexion revient.'
+	String get horsLigne => 'Vous êtes hors ligne : cette annonce n\'est pas encore confirmée. Réessayez quand la connexion revient.';
 
 	/// fr: 'La publication des annonces n'est pas encore disponible. Revenez plus tard.'
 	String get indisponible => 'La publication des annonces n\'est pas encore disponible. Revenez plus tard.';
 
-	/// fr: 'Aucune audience ouverte'
-	String get aucuneCibleTitre => 'Aucune audience ouverte';
+	/// fr: 'Aucun destinataire ouvert'
+	String get aucuneCibleTitre => 'Aucun destinataire ouvert';
 
-	/// fr: 'Vous ne pouvez publier vers aucune audience pour le moment. Demandez l'accès à la direction.'
-	String get aucuneCible => 'Vous ne pouvez publier vers aucune audience pour le moment. Demandez l\'accès à la direction.';
+	/// fr: 'Vous ne pouvez publier pour aucun destinataire pour le moment. Demandez l'accès à la direction.'
+	String get aucuneCible => 'Vous ne pouvez publier pour aucun destinataire pour le moment. Demandez l\'accès à la direction.';
 
 	/// fr: 'Publication réservée'
 	String get classeRefuseeTitre => 'Publication réservée';
@@ -16977,8 +16977,8 @@ class Traductions$com$annonces$demoPublication$fr {
 	/// fr: 'Publier une annonce pour une Classe (enseignant)'
 	String get lienPublier => 'Publier une annonce pour une Classe (enseignant)';
 
-	/// fr: 'Toute l'école'
-	String get toutes => 'Toute l\'école';
+	/// fr: 'Toute l'académie'
+	String get toutes => 'Toute l\'académie';
 
 	/// fr: 'Familles'
 	String get familles => 'Familles';
@@ -16995,8 +16995,8 @@ class Traductions$com$annonces$demoPublication$fr {
 	/// fr: 'Direction'
 	String get direction => 'Direction';
 
-	/// fr: 'Toute l'école, un public ou une Classe'
-	String get audiencesDirection => 'Toute l\'école, un public ou une Classe';
+	/// fr: 'Toute l'académie, un public ou une Classe'
+	String get audiencesDirection => 'Toute l\'académie, un public ou une Classe';
 
 	/// fr: 'Sa Classe seulement'
 	String get audiencesEnseignant => 'Sa Classe seulement';
@@ -17962,8 +17962,8 @@ class Traductions$com$studio$aujourdhui$acces$fr {
 	/// fr: 'Messages métier'
 	String get messages => _root.com.socle.lexique.messagesMetier;
 
-	/// fr: 'Les fils avec les familles, les enseignants et les contrôleurs'
-	String get messagesDetail => 'Les fils avec les familles, les enseignants et les contrôleurs';
+	/// fr: 'Les conversations avec les familles, les enseignants et les contrôleurs'
+	String get messagesDetail => 'Les conversations avec les familles, les enseignants et les contrôleurs';
 
 	/// fr: 'Annonces'
 	String get annonces => 'Annonces';
@@ -18022,8 +18022,8 @@ class Traductions$com$annonces$publieur$etapes$fr {
 	/// fr: 'Contenu de l'annonce'
 	String get contenu => 'Contenu de l\'annonce';
 
-	/// fr: 'Audience de l'annonce'
-	String get audience => 'Audience de l\'annonce';
+	/// fr: 'Destinataires de l'annonce'
+	String get audience => 'Destinataires de l\'annonce';
 
 	/// fr: 'Date de diffusion'
 	String get programmation => 'Date de diffusion';
@@ -18046,8 +18046,8 @@ class Traductions$com$annonces$publieur$contexte$fr {
 	/// fr: 'Écrivez ce que les destinataires doivent savoir. Une annonce part dans un seul sens : personne n'y répond.'
 	String get contenu => 'Écrivez ce que les destinataires doivent savoir. Une annonce part dans un seul sens : personne n\'y répond.';
 
-	/// fr: 'Choisissez qui reçoit l'annonce. Seules les audiences que vous pouvez viser sont proposées.'
-	String get audience => 'Choisissez qui reçoit l\'annonce. Seules les audiences que vous pouvez viser sont proposées.';
+	/// fr: 'Choisissez qui reçoit l'annonce. Seuls les destinataires que vous pouvez viser sont proposés.'
+	String get audience => 'Choisissez qui reçoit l\'annonce. Seuls les destinataires que vous pouvez viser sont proposés.';
 
 	/// fr: 'Cette annonce part vers {cible}. Vous publiez seulement pour votre Classe.'
 	String audienceFixee({required Object cible}) => 'Cette annonce part vers ${cible}. Vous publiez seulement pour votre Classe.';
@@ -18058,8 +18058,8 @@ class Traductions$com$annonces$publieur$contexte$fr {
 	/// fr: 'Voici l'annonce telle que les destinataires la liront.'
 	String get previsualisation => 'Voici l\'annonce telle que les destinataires la liront.';
 
-	/// fr: 'Relisez l'audience et la date, puis publiez. Rien n'est publié avant la confirmation.'
-	String get publication => 'Relisez l\'audience et la date, puis publiez. Rien n\'est publié avant la confirmation.';
+	/// fr: 'Relisez les destinataires et la date, puis publiez. Rien n'est publié avant la confirmation.'
+	String get publication => 'Relisez les destinataires et la date, puis publiez. Rien n\'est publié avant la confirmation.';
 }
 
 // Path: com.annonces.publieur.nature
@@ -18076,8 +18076,8 @@ class Traductions$com$annonces$publieur$nature$fr {
 	/// fr: 'Toutes les personnes de ce public la reçoivent.'
 	String get public => 'Toutes les personnes de ce public la reçoivent.';
 
-	/// fr: 'Toute l'école la reçoit. Réservez-la à ce qui concerne tout le monde.'
-	String get toutes => 'Toute l\'école la reçoit. Réservez-la à ce qui concerne tout le monde.';
+	/// fr: 'Toute l'académie la reçoit. Réservez-la à ce qui concerne tout le monde.'
+	String get toutes => 'Toute l\'académie la reçoit. Réservez-la à ce qui concerne tout le monde.';
 }
 
 // Path: com.annonces.publieur.quand
@@ -18139,14 +18139,14 @@ class Traductions$com$annonces$administration$indicateurs$fr {
 	/// fr: 'Contenus en modération'
 	String get moderation => 'Contenus en modération';
 
-	/// fr: 'Règles de portée'
-	String get regles => 'Règles de portée';
+	/// fr: 'Droits de publication'
+	String get regles => 'Droits de publication';
 
 	/// fr: '{libelle} : pas encore disponible'
 	String indisponible({required Object libelle}) => '${libelle} : pas encore disponible';
 
-	/// fr: '{libelle} : lecture impossible'
-	String echec({required Object libelle}) => '${libelle} : lecture impossible';
+	/// fr: '{libelle} : non chargé. Vérifiez la connexion, puis rechargez la page.'
+	String echec({required Object libelle}) => '${libelle} : non chargé. Vérifiez la connexion, puis rechargez la page.';
 
 	/// fr: '{libelle} : réservé aux personnes chargées de la modération'
 	String reserve({required Object libelle}) => '${libelle} : réservé aux personnes chargées de la modération';
@@ -18202,11 +18202,11 @@ class Traductions$com$annonces$administration$matrice$fr {
 
 	// Translations
 
-	/// fr: 'Règles de portée et autorisations'
-	String get titre => 'Règles de portée et autorisations';
+	/// fr: 'Droits de publication des annonces'
+	String get titre => 'Droits de publication des annonces';
 
-	/// fr: 'La règle de l'école, appliquée à chaque publication.'
-	String get detail => 'La règle de l\'école, appliquée à chaque publication.';
+	/// fr: 'La règle de l'académie, appliquée à chaque publication.'
+	String get detail => 'La règle de l\'académie, appliquée à chaque publication.';
 
 	/// fr: 'Qui publie'
 	String get auteurs => 'Qui publie';
@@ -18214,8 +18214,8 @@ class Traductions$com$annonces$administration$matrice$fr {
 	/// fr: 'Peut publier'
 	String get peutPublier => 'Peut publier';
 
-	/// fr: 'Audiences'
-	String get audiences => 'Audiences';
+	/// fr: 'Destinataires'
+	String get audiences => 'Destinataires';
 
 	/// fr: 'Validation requise'
 	String get validation => 'Validation requise';
@@ -18229,8 +18229,8 @@ class Traductions$com$annonces$administration$matrice$fr {
 	/// fr: 'Aucune'
 	String get aucune => 'Aucune';
 
-	/// fr: 'Aucune règle de portée n'est configurée.'
-	String get vide => 'Aucune règle de portée n\'est configurée.';
+	/// fr: 'Aucun droit de publication n'est configuré.'
+	String get vide => 'Aucun droit de publication n\'est configuré.';
 }
 
 // Path: com.annonces.administration.moderation
@@ -18346,8 +18346,8 @@ class Traductions$com$annonces$demo$roles$fr {
 	/// fr: 'Élève adulte'
 	String get adulte => 'Élève adulte';
 
-	/// fr: 'Administration'
-	String get admin => 'Administration';
+	/// fr: 'Direction'
+	String get admin => 'Direction';
 
 	/// fr: 'Contrôleur'
 	String get controleur => 'Contrôleur';
@@ -20721,7 +20721,7 @@ extension on Traductions {
 			'notifications.types.messageAdministration' => 'Message de l\'Administration',
 			'notifications.types.dossierATraiter' => 'Dossier à traiter',
 			'notifications.types.signalementCommunaute' => 'Signalement dans la Communauté',
-			'notifications.types.reponseFil' => 'Réponse à un fil',
+			'notifications.types.reponseFil' => 'Réponse dans une conversation',
 			'notifications.types.annoncePlanifiee' => 'Annonce planifiée à publier',
 			'notifications.types.evenementOperationnel' => 'Événement de l\'académie',
 			'notifications.types.mission' => 'Mission',
@@ -22668,12 +22668,12 @@ extension on Traductions {
 			'com.messages.types.dossier' => 'Dossier',
 			'com.messages.types.mission' => 'Mission de contrôle',
 			'com.messages.types.remplacement' => 'Remplacement',
-			'com.messages.types.autre' => 'Objet lié',
-			'com.messages.panneau.objets' => 'Objets liés',
+			'com.messages.types.autre' => 'Autre sujet',
+			'com.messages.panneau.objets' => 'À propos de',
 			'com.messages.panneau.participants' => 'Participants',
 			'com.messages.panneau.fichiers' => _root.com.socle.lexique.fichiersPartages,
 			'com.messages.panneau.ouvrir' => ({required Object objet}) => 'Ouvrir ${objet}',
-			'com.messages.panneau.inaccessible' => 'Vous n\'avez plus accès à cet objet. La conversation reste lisible.',
+			'com.messages.panneau.inaccessible' => 'Ce sujet ne vous est plus ouvert. La conversation reste lisible.',
 			'com.messages.panneau.vous' => 'Vous',
 			'com.messages.fil.lectureSeule' => 'Vous pouvez lire cette conversation. La réponse n\'y est pas ouverte pour vous.',
 			'com.messages.demo.choisirRole' => 'Choisissez le point de vue de cette démonstration.',
@@ -22764,7 +22764,7 @@ extension on Traductions {
 			'com.communaute.garde.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'com.communaute.garde.liensTitre' => 'Liens de la publication',
 			'com.communaute.garde.consigneBlocage' => 'Modifiez la publication, puis publiez-la de nouveau.',
-			'com.communaute.garde.panne' => 'La politique de la Communauté n\'a pas pu relire ce contenu : rien n\'est parti. Vérifiez la connexion, puis réessayez.',
+			'com.communaute.garde.panne' => 'La vérification de ce contenu n\'est pas confirmée, sans doute à cause de la connexion : rien n\'a été publié. Vérifiez la connexion, puis réessayez.',
 			'com.communaute.garde.reponse.avertissement' => 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant de l\'envoyer.',
 			'com.communaute.garde.reponse.liensTitre' => 'Liens de la réponse',
 			'com.communaute.garde.reponse.consigneBlocage' => 'Modifiez la réponse, puis envoyez-la de nouveau.',
@@ -22813,7 +22813,7 @@ extension on Traductions {
 			'com.communaute.reponses.envoyer' => 'Envoyer la réponse',
 			'com.communaute.reponses.champVide' => 'Écrivez une réponse pour l\'envoyer.',
 			'com.communaute.reponses.enCours' => 'Envoi en cours',
-			'com.communaute.reponses.nonConfirmee' => 'Cette réponse n\'a pas encore été confirmée.',
+			'com.communaute.reponses.nonConfirmee' => 'Cette réponse n\'a pas encore été confirmée. Vérifiez votre connexion, puis renvoyez-la.',
 			'com.communaute.reponses.refusee' => 'Refusée par la politique de la Communauté',
 			'com.communaute.reponses.reessayer' => 'Renvoyer la réponse',
 			'com.communaute.reponses.indisponible' => 'Les réponses ne sont pas encore disponibles ici.',
@@ -22860,7 +22860,7 @@ extension on Traductions {
 			'com.communaute.demo.lienAffilie' => 'Lien affilié bloqué',
 			'com.communaute.demo.vente' => 'Vente bloquée',
 			'com.communaute.demo.signalementNonConfirme' => 'Signalement non confirmé',
-			'com.communaute.demo.choisir' => 'Choisissez une situation à essayer, dans la coquille Enseignant.',
+			'com.communaute.demo.choisir' => 'Choisissez une situation à essayer, vue par un enseignant.',
 			'com.communaute.demo.aujourdhui' => 'Aujourd\'hui, avec le raccourci',
 			'com.communaute.demo.nominal' => 'Six publications',
 			'com.communaute.demo.publication' => 'Une publication ouverte',
@@ -22911,7 +22911,7 @@ extension on Traductions {
 			'com.studio.aujourdhui.modules.demandes' => 'Demandes',
 			'com.studio.aujourdhui.modules.communications' => 'Administration des communications',
 			'com.studio.aujourdhui.acces.messages' => _root.com.socle.lexique.messagesMetier,
-			'com.studio.aujourdhui.acces.messagesDetail' => 'Les fils avec les familles, les enseignants et les contrôleurs',
+			'com.studio.aujourdhui.acces.messagesDetail' => 'Les conversations avec les familles, les enseignants et les contrôleurs',
 			'com.studio.aujourdhui.acces.annonces' => 'Annonces',
 			'com.studio.aujourdhui.acces.annoncesDetail' => 'Publier et suivre les annonces',
 			'com.studio.aujourdhui.acces.dossiers' => 'Dossiers à valider',
@@ -23019,21 +23019,21 @@ extension on Traductions {
 			'com.studio.vide' => 'Aucune activité à traiter ici.',
 			'com.annonces.publieur.titre' => 'Nouvelle annonce',
 			'com.annonces.publieur.etapes.contenu' => 'Contenu de l\'annonce',
-			'com.annonces.publieur.etapes.audience' => 'Audience de l\'annonce',
+			'com.annonces.publieur.etapes.audience' => 'Destinataires de l\'annonce',
 			'com.annonces.publieur.etapes.programmation' => 'Date de diffusion',
 			'com.annonces.publieur.etapes.previsualisation' => 'Aperçu de l\'annonce',
 			'com.annonces.publieur.etapes.publication' => 'Publication de l\'annonce',
 			'com.annonces.publieur.contexte.contenu' => 'Écrivez ce que les destinataires doivent savoir. Une annonce part dans un seul sens : personne n\'y répond.',
-			'com.annonces.publieur.contexte.audience' => 'Choisissez qui reçoit l\'annonce. Seules les audiences que vous pouvez viser sont proposées.',
+			'com.annonces.publieur.contexte.audience' => 'Choisissez qui reçoit l\'annonce. Seuls les destinataires que vous pouvez viser sont proposés.',
 			'com.annonces.publieur.contexte.audienceFixee' => ({required Object cible}) => 'Cette annonce part vers ${cible}. Vous publiez seulement pour votre Classe.',
 			'com.annonces.publieur.contexte.programmation' => 'Choisissez quand l\'annonce part. Une annonce programmée attend sa date.',
 			'com.annonces.publieur.contexte.previsualisation' => 'Voici l\'annonce telle que les destinataires la liront.',
-			'com.annonces.publieur.contexte.publication' => 'Relisez l\'audience et la date, puis publiez. Rien n\'est publié avant la confirmation.',
+			'com.annonces.publieur.contexte.publication' => 'Relisez les destinataires et la date, puis publiez. Rien n\'est publié avant la confirmation.',
 			'com.annonces.publieur.champTitre' => 'Titre de l\'annonce',
 			'com.annonces.publieur.champTexte' => 'Texte de l\'annonce',
 			'com.annonces.publieur.nature.classe' => 'Seules les familles et les élèves de cette Classe la reçoivent.',
 			'com.annonces.publieur.nature.public' => 'Toutes les personnes de ce public la reçoivent.',
-			'com.annonces.publieur.nature.toutes' => 'Toute l\'école la reçoit. Réservez-la à ce qui concerne tout le monde.',
+			'com.annonces.publieur.nature.toutes' => 'Toute l\'académie la reçoit. Réservez-la à ce qui concerne tout le monde.',
 			'com.annonces.publieur.quand.maintenant' => 'Dès la confirmation',
 			'com.annonces.publieur.quand.maintenantDetail' => 'L\'annonce part dès que la publication est confirmée.',
 			'com.annonces.publieur.quand.creneau' => ({required Object date, required Object heure}) => 'Le ${date} à ${heure}',
@@ -23047,15 +23047,15 @@ extension on Traductions {
 			'com.annonces.publieur.reessayer' => 'Réessayer la publication',
 			'com.annonces.publieur.terminer' => 'Terminer',
 			'com.annonces.publieur.manqueContenu' => 'Écrivez un titre et un texte pour continuer.',
-			'com.annonces.publieur.manqueAudience' => 'Choisissez une audience pour continuer.',
+			'com.annonces.publieur.manqueAudience' => 'Choisissez les destinataires pour continuer.',
 			'com.annonces.publieur.enCours' => 'Publication en cours. Attendez la confirmation.',
 			'com.annonces.publieur.publiee' => 'Annonce publiée. Les destinataires la reçoivent.',
 			'com.annonces.publieur.planifiee' => ({required Object date, required Object heure}) => 'Annonce planifiée pour le ${date} à ${heure}.',
 			'com.annonces.publieur.nonConfirmee' => 'Cette annonce n\'est pas encore confirmée. Vérifiez la connexion, puis réessayez : elle ne partira qu\'une fois.',
-			'com.annonces.publieur.horsLigne' => 'Vous êtes hors ligne : cette annonce n\'est pas encore confirmée. Reconnectez-vous, puis réessayez.',
+			'com.annonces.publieur.horsLigne' => 'Vous êtes hors ligne : cette annonce n\'est pas encore confirmée. Réessayez quand la connexion revient.',
 			'com.annonces.publieur.indisponible' => 'La publication des annonces n\'est pas encore disponible. Revenez plus tard.',
-			'com.annonces.publieur.aucuneCibleTitre' => 'Aucune audience ouverte',
-			'com.annonces.publieur.aucuneCible' => 'Vous ne pouvez publier vers aucune audience pour le moment. Demandez l\'accès à la direction.',
+			'com.annonces.publieur.aucuneCibleTitre' => 'Aucun destinataire ouvert',
+			'com.annonces.publieur.aucuneCible' => 'Vous ne pouvez publier pour aucun destinataire pour le moment. Demandez l\'accès à la direction.',
 			'com.annonces.publieur.classeRefuseeTitre' => 'Publication réservée',
 			'com.annonces.publieur.classeRefusee' => 'Vous ne pouvez pas publier d\'annonce pour cette Classe. Demandez l\'accès à la direction.',
 			'com.annonces.administration.nouvelle' => 'Nouvelle annonce',
@@ -23065,9 +23065,9 @@ extension on Traductions {
 			'com.annonces.administration.indicateurs.publiees' => 'Annonces publiées',
 			'com.annonces.administration.indicateurs.planifiees' => 'Annonces planifiées',
 			'com.annonces.administration.indicateurs.moderation' => 'Contenus en modération',
-			'com.annonces.administration.indicateurs.regles' => 'Règles de portée',
+			'com.annonces.administration.indicateurs.regles' => 'Droits de publication',
 			'com.annonces.administration.indicateurs.indisponible' => ({required Object libelle}) => '${libelle} : pas encore disponible',
-			'com.annonces.administration.indicateurs.echec' => ({required Object libelle}) => '${libelle} : lecture impossible',
+			'com.annonces.administration.indicateurs.echec' => ({required Object libelle}) => '${libelle} : non chargé. Vérifiez la connexion, puis rechargez la page.',
 			'com.annonces.administration.indicateurs.reserve' => ({required Object libelle}) => '${libelle} : réservé aux personnes chargées de la modération',
 			'com.annonces.administration.publiees.titre' => 'Annonces publiées',
 			'com.annonces.administration.publiees.vide' => 'Aucune annonce publiée sur la période.',
@@ -23077,16 +23077,16 @@ extension on Traductions {
 			'com.annonces.administration.planifiees.vide' => 'Aucune annonce planifiée.',
 			'com.annonces.administration.planifiees.pastille' => 'Planifiée',
 			'com.annonces.administration.planifiees.legende' => ({required Object cible, required Object date, required Object heure}) => '${cible} · prévue le ${date} à ${heure}',
-			'com.annonces.administration.matrice.titre' => 'Règles de portée et autorisations',
-			'com.annonces.administration.matrice.detail' => 'La règle de l\'école, appliquée à chaque publication.',
+			'com.annonces.administration.matrice.titre' => 'Droits de publication des annonces',
+			'com.annonces.administration.matrice.detail' => 'La règle de l\'académie, appliquée à chaque publication.',
 			'com.annonces.administration.matrice.auteurs' => 'Qui publie',
 			'com.annonces.administration.matrice.peutPublier' => 'Peut publier',
-			'com.annonces.administration.matrice.audiences' => 'Audiences',
+			'com.annonces.administration.matrice.audiences' => 'Destinataires',
 			'com.annonces.administration.matrice.validation' => 'Validation requise',
 			'com.annonces.administration.matrice.oui' => 'Oui',
 			'com.annonces.administration.matrice.non' => 'Non',
 			'com.annonces.administration.matrice.aucune' => 'Aucune',
-			'com.annonces.administration.matrice.vide' => 'Aucune règle de portée n\'est configurée.',
+			'com.annonces.administration.matrice.vide' => 'Aucun droit de publication n\'est configuré.',
 			'com.annonces.administration.moderation.titre' => 'File de modération',
 			'com.annonces.administration.moderation.legende' => ({required Object date, required Object heure}) => 'Signalé le ${date} à ${heure}',
 			'com.annonces.administration.moderation.motif' => ({required Object motif}) => 'Motif : ${motif}',
@@ -23129,13 +23129,13 @@ extension on Traductions {
 			'com.annonces.administration.moderation.regles.pasDonnees' => 'Aucune donnée personnelle d\'un élève ou d\'une famille',
 			'com.annonces.demoPublication.lienAdministration' => 'Administration des communications (direction)',
 			'com.annonces.demoPublication.lienPublier' => 'Publier une annonce pour une Classe (enseignant)',
-			'com.annonces.demoPublication.toutes' => 'Toute l\'école',
+			'com.annonces.demoPublication.toutes' => 'Toute l\'académie',
 			'com.annonces.demoPublication.familles' => 'Familles',
 			'com.annonces.demoPublication.enseignants' => 'Enseignants',
 			'com.annonces.demoPublication.eleves' => 'Élèves',
 			'com.annonces.demoPublication.controleurs' => 'Contrôleurs',
 			'com.annonces.demoPublication.direction' => 'Direction',
-			'com.annonces.demoPublication.audiencesDirection' => 'Toute l\'école, un public ou une Classe',
+			'com.annonces.demoPublication.audiencesDirection' => 'Toute l\'académie, un public ou une Classe',
 			'com.annonces.demoPublication.audiencesEnseignant' => 'Sa Classe seulement',
 			'com.annonces.demoPublication.vacancesTitre' => 'Calendrier des vacances d\'hiver',
 			'com.annonces.demoPublication.vacancesTexte' => 'Les cours s\'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.',
@@ -23171,7 +23171,7 @@ extension on Traductions {
 			'com.annonces.demo.roles.tuteur' => 'Famille',
 			'com.annonces.demo.roles.enseignant' => 'Enseignant',
 			'com.annonces.demo.roles.adulte' => 'Élève adulte',
-			'com.annonces.demo.roles.admin' => 'Administration',
+			'com.annonces.demo.roles.admin' => 'Direction',
 			'com.annonces.demo.roles.controleur' => 'Contrôleur',
 			'com.annonces.demo.classeNour' => 'Classe An-Nour',
 			'com.annonces.demo.classeFajr' => 'Classe Al-Fajr',

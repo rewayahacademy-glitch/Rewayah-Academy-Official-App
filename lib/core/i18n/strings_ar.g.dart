@@ -267,7 +267,7 @@ class _Traductions$notifications$types$ar extends Traductions$notifications$type
 	@override String get messageAdministration => 'رسالة من الإدارة';
 	@override String get dossierATraiter => 'ملف للمعالجة';
 	@override String get signalementCommunaute => 'بلاغ في مجتمع المعلمين';
-	@override String get reponseFil => 'رد على محادثة';
+	@override String get reponseFil => 'رد في محادثة';
 	@override String get annoncePlanifiee => 'إعلان مجدول للنشر';
 	@override String get evenementOperationnel => 'حدث في الأكاديمية';
 	@override String get mission => 'مهمة';
@@ -848,7 +848,7 @@ class _Traductions$com$messages$types$ar extends Traductions$com$messages$types$
 	@override String get dossier => 'الملف';
 	@override String get mission => 'مهمة المراقبة';
 	@override String get remplacement => 'الاستبدال';
-	@override String get autre => 'عنصر مرتبط';
+	@override String get autre => 'موضوع آخر';
 }
 
 // Path: com.messages.panneau
@@ -858,11 +858,11 @@ class _Traductions$com$messages$panneau$ar extends Traductions$com$messages$pann
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get objets => 'العناصر المرتبطة';
+	@override String get objets => 'بخصوص';
 	@override String get participants => 'المشاركون';
 	@override String get fichiers => _root.com.socle.lexique.fichiersPartages;
 	@override String ouvrir({required Object objet}) => 'فتح ${objet}';
-	@override String get inaccessible => 'لم يعد بإمكانك الوصول إلى هذا العنصر. تبقى المحادثة قابلة للقراءة.';
+	@override String get inaccessible => 'لم يعد هذا الموضوع متاحًا لك. تبقى المحادثة قابلة للقراءة.';
 	@override String get vous => 'أنت';
 }
 
@@ -1000,7 +1000,7 @@ class _Traductions$com$communaute$garde$ar extends Traductions$com$communaute$ga
 	@override String motif({required Object motif}) => 'السبب: ${motif}';
 	@override String get liensTitre => 'روابط المنشور';
 	@override String get consigneBlocage => 'عدِّل المنشور ثم انشره من جديد.';
-	@override String get panne => 'تعذّر على سياسة المجتمع مراجعة هذا المحتوى، فلم يُرسَل شيء. تحقّق من الاتصال ثم أعد المحاولة.';
+	@override String get panne => 'لم يُؤكَّد التحقق من هذا المحتوى، على الأرجح بسبب الاتصال : لم يُنشر شيء. تحقّق من الاتصال ثم أعد المحاولة.';
 	@override late final _Traductions$com$communaute$garde$reponse$ar reponse = _Traductions$com$communaute$garde$reponse$ar._(_root);
 }
 
@@ -1094,7 +1094,7 @@ class _Traductions$com$communaute$reponses$ar extends Traductions$com$communaute
 	@override String get envoyer => 'إرسال الردّ';
 	@override String get champVide => 'اكتب ردًّا لإرساله.';
 	@override String get enCours => 'جارٍ الإرسال';
-	@override String get nonConfirmee => 'لم يُؤكَّد هذا الردّ بعد.';
+	@override String get nonConfirmee => 'لم يُؤكَّد هذا الردّ بعد. تحقّق من اتصالك ثم أعد إرساله.';
 	@override String get refusee => 'رفضته سياسة المجتمع';
 	@override String get reessayer => 'إعادة إرسال الردّ';
 	@override String get indisponible => 'الردود غير متاحة هنا بعد.';
@@ -1185,7 +1185,7 @@ class _Traductions$com$communaute$demo$ar extends Traductions$com$communaute$dem
 	@override String get lienAffilie => 'رابط تسويق بالعمولة محظور';
 	@override String get vente => 'بيع محظور';
 	@override String get signalementNonConfirme => 'إبلاغ غير مؤكَّد';
-	@override String get choisir => 'اختر حالة لتجربتها داخل واجهة المعلّم.';
+	@override String get choisir => 'اختر حالة لتجربتها كما يراها المعلّم.';
 	@override String get aujourdhui => 'اليوم، مع الاختصار';
 	@override String get nominal => 'ستة منشورات';
 	@override String get publication => 'منشور مفتوح';
@@ -1431,15 +1431,15 @@ class _Traductions$com$annonces$publieur$ar extends Traductions$com$annonces$pub
 	@override String get reessayer => 'إعادة محاولة النشر';
 	@override String get terminer => 'إنهاء';
 	@override String get manqueContenu => 'اكتب عنوانًا ونصًا للمتابعة.';
-	@override String get manqueAudience => 'اختر جمهورًا للمتابعة.';
+	@override String get manqueAudience => 'اختر المستلمين للمتابعة.';
 	@override String get enCours => 'النشر جارٍ. انتظر التأكيد.';
 	@override String get publiee => 'نُشر الإعلان. يستلمه المستلمون.';
 	@override String planifiee({required Object date, required Object heure}) => 'بُرمج الإعلان ليوم ${date} الساعة ${heure}.';
 	@override String get nonConfirmee => 'لم يُؤكَّد هذا الإعلان بعد. تحقق من الاتصال ثم أعد المحاولة : لن يُرسل إلا مرة واحدة.';
-	@override String get horsLigne => 'أنت غير متصل : لم يُؤكَّد هذا الإعلان بعد. أعد الاتصال ثم أعد المحاولة.';
+	@override String get horsLigne => 'أنت غير متصل : لم يُؤكَّد هذا الإعلان بعد. أعد المحاولة عند عودة الاتصال.';
 	@override String get indisponible => 'نشر الإعلانات غير متاح بعد. عد لاحقًا.';
-	@override String get aucuneCibleTitre => 'لا يوجد جمهور متاح';
-	@override String get aucuneCible => 'لا يمكنك النشر لأي جمهور حاليًا. اطلب الإذن من الإدارة.';
+	@override String get aucuneCibleTitre => 'لا يوجد مستلم متاح';
+	@override String get aucuneCible => 'لا يمكنك النشر لأي مستلم حاليًا. اطلب الإذن من الإدارة.';
 	@override String get classeRefuseeTitre => 'النشر مقصور';
 	@override String get classeRefusee => 'لا يمكنك نشر إعلان لهذا الفصل. اطلب الإذن من الإدارة.';
 }
@@ -1470,13 +1470,13 @@ class _Traductions$com$annonces$demoPublication$ar extends Traductions$com$annon
 	// Translations
 	@override String get lienAdministration => 'إدارة التواصل (الإدارة)';
 	@override String get lienPublier => 'نشر إعلان لفصل (المعلم)';
-	@override String get toutes => 'المدرسة كلها';
+	@override String get toutes => 'الأكاديمية كلها';
 	@override String get familles => 'الأسر';
 	@override String get enseignants => 'المعلمون';
 	@override String get eleves => 'الطلاب';
 	@override String get controleurs => 'المراقبون';
 	@override String get direction => 'الإدارة';
-	@override String get audiencesDirection => 'المدرسة كلها، أو جمهور، أو فصل';
+	@override String get audiencesDirection => 'الأكاديمية كلها، أو جمهور، أو فصل';
 	@override String get audiencesEnseignant => 'فصله فقط';
 	@override String get vacancesTitre => 'تقويم عطلة الشتاء';
 	@override String get vacancesTexte => 'تتوقف الدروس من 21 ديسمبر إلى 5 يناير. تُستأنف الحصص يوم الاثنين 6 يناير في المواعيد المعتادة.';
@@ -1796,7 +1796,7 @@ class _Traductions$com$annonces$publieur$etapes$ar extends Traductions$com$annon
 
 	// Translations
 	@override String get contenu => 'محتوى الإعلان';
-	@override String get audience => 'جمهور الإعلان';
+	@override String get audience => 'مستلمو الإعلان';
 	@override String get programmation => 'تاريخ النشر';
 	@override String get previsualisation => 'معاينة الإعلان';
 	@override String get publication => 'نشر الإعلان';
@@ -1810,11 +1810,11 @@ class _Traductions$com$annonces$publieur$contexte$ar extends Traductions$com$ann
 
 	// Translations
 	@override String get contenu => 'اكتب ما يجب أن يعرفه المستلمون. الإعلان في اتجاه واحد : لا أحد يرد عليه.';
-	@override String get audience => 'اختر من يستلم الإعلان. لا تُعرض إلا الجماهير التي يمكنك استهدافها.';
+	@override String get audience => 'اختر من يستلم الإعلان. لا يُعرض إلا المستلمون الذين يمكنك استهدافهم.';
 	@override String audienceFixee({required Object cible}) => 'يُرسل هذا الإعلان إلى ${cible}. أنت تنشر لفصلك فقط.';
 	@override String get programmation => 'اختر متى يُرسل الإعلان. الإعلان المبرمج ينتظر تاريخه.';
 	@override String get previsualisation => 'هذا هو الإعلان كما سيقرؤه المستلمون.';
-	@override String get publication => 'راجع الجمهور والتاريخ، ثم انشر. لا يُنشر شيء قبل التأكيد.';
+	@override String get publication => 'راجع المستلمين والتاريخ، ثم انشر. لا يُنشر شيء قبل التأكيد.';
 }
 
 // Path: com.annonces.publieur.nature
@@ -1826,7 +1826,7 @@ class _Traductions$com$annonces$publieur$nature$ar extends Traductions$com$annon
 	// Translations
 	@override String get classe => 'تستلمه أسر هذا الفصل وطلابه فقط.';
 	@override String get public => 'يستلمه كل أفراد هذا الجمهور.';
-	@override String get toutes => 'تستلمه المدرسة كلها. خصصه لما يهم الجميع.';
+	@override String get toutes => 'تستلمه الأكاديمية كلها. خصصه لما يهم الجميع.';
 }
 
 // Path: com.annonces.publieur.quand
@@ -1865,9 +1865,9 @@ class _Traductions$com$annonces$administration$indicateurs$ar extends Traduction
 	@override String get publiees => 'الإعلانات المنشورة';
 	@override String get planifiees => 'الإعلانات المبرمجة';
 	@override String get moderation => 'محتويات قيد الإشراف';
-	@override String get regles => 'قواعد النطاق';
+	@override String get regles => 'صلاحيات النشر';
 	@override String indisponible({required Object libelle}) => '${libelle} : غير متاح بعد';
-	@override String echec({required Object libelle}) => '${libelle} : تعذرت القراءة';
+	@override String echec({required Object libelle}) => '${libelle} : لم يُحمَّل. تحقّق من الاتصال ثم أعد تحميل الصفحة.';
 	@override String reserve({required Object libelle}) => '${libelle} : خاص بالمكلفين بالإشراف';
 }
 
@@ -1904,16 +1904,16 @@ class _Traductions$com$annonces$administration$matrice$ar extends Traductions$co
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get titre => 'قواعد النطاق والصلاحيات';
-	@override String get detail => 'قاعدة المدرسة، تُطبق على كل نشر.';
+	@override String get titre => 'صلاحيات نشر الإعلانات';
+	@override String get detail => 'قاعدة الأكاديمية، تُطبق على كل نشر.';
 	@override String get auteurs => 'من ينشر';
 	@override String get peutPublier => 'يمكنه النشر';
-	@override String get audiences => 'الجماهير';
+	@override String get audiences => 'المستلمون';
 	@override String get validation => 'يتطلب موافقة';
 	@override String get oui => 'نعم';
 	@override String get non => 'لا';
 	@override String get aucune => 'لا شيء';
-	@override String get vide => 'لا توجد قواعد نطاق مُعدّة.';
+	@override String get vide => 'لا توجد صلاحيات نشر مُعدّة.';
 }
 
 // Path: com.annonces.administration.moderation
@@ -2086,7 +2086,7 @@ extension on TraductionsAr {
 			'notifications.types.messageAdministration' => 'رسالة من الإدارة',
 			'notifications.types.dossierATraiter' => 'ملف للمعالجة',
 			'notifications.types.signalementCommunaute' => 'بلاغ في مجتمع المعلمين',
-			'notifications.types.reponseFil' => 'رد على محادثة',
+			'notifications.types.reponseFil' => 'رد في محادثة',
 			'notifications.types.annoncePlanifiee' => 'إعلان مجدول للنشر',
 			'notifications.types.evenementOperationnel' => 'حدث في الأكاديمية',
 			'notifications.types.mission' => 'مهمة',
@@ -2403,12 +2403,12 @@ extension on TraductionsAr {
 			'com.messages.types.dossier' => 'الملف',
 			'com.messages.types.mission' => 'مهمة المراقبة',
 			'com.messages.types.remplacement' => 'الاستبدال',
-			'com.messages.types.autre' => 'عنصر مرتبط',
-			'com.messages.panneau.objets' => 'العناصر المرتبطة',
+			'com.messages.types.autre' => 'موضوع آخر',
+			'com.messages.panneau.objets' => 'بخصوص',
 			'com.messages.panneau.participants' => 'المشاركون',
 			'com.messages.panneau.fichiers' => _root.com.socle.lexique.fichiersPartages,
 			'com.messages.panneau.ouvrir' => ({required Object objet}) => 'فتح ${objet}',
-			'com.messages.panneau.inaccessible' => 'لم يعد بإمكانك الوصول إلى هذا العنصر. تبقى المحادثة قابلة للقراءة.',
+			'com.messages.panneau.inaccessible' => 'لم يعد هذا الموضوع متاحًا لك. تبقى المحادثة قابلة للقراءة.',
 			'com.messages.panneau.vous' => 'أنت',
 			'com.messages.fil.lectureSeule' => 'يمكنك قراءة هذه المحادثة. الرد فيها غير متاح لك.',
 			'com.messages.demo.choisirRole' => 'اختر وجهة النظر في هذا العرض التوضيحي.',
@@ -2499,7 +2499,7 @@ extension on TraductionsAr {
 			'com.communaute.garde.motif' => ({required Object motif}) => 'السبب: ${motif}',
 			'com.communaute.garde.liensTitre' => 'روابط المنشور',
 			'com.communaute.garde.consigneBlocage' => 'عدِّل المنشور ثم انشره من جديد.',
-			'com.communaute.garde.panne' => 'تعذّر على سياسة المجتمع مراجعة هذا المحتوى، فلم يُرسَل شيء. تحقّق من الاتصال ثم أعد المحاولة.',
+			'com.communaute.garde.panne' => 'لم يُؤكَّد التحقق من هذا المحتوى، على الأرجح بسبب الاتصال : لم يُنشر شيء. تحقّق من الاتصال ثم أعد المحاولة.',
 			'com.communaute.garde.reponse.avertissement' => 'يبدو أن هذا الرد يتضمن ترويجًا تجاريًا. احذف الرابط أو الرمز أو العرض قبل إرساله.',
 			'com.communaute.garde.reponse.liensTitre' => 'روابط الرد',
 			'com.communaute.garde.reponse.consigneBlocage' => 'عدِّل الرد ثم أرسله من جديد.',
@@ -2548,7 +2548,7 @@ extension on TraductionsAr {
 			'com.communaute.reponses.envoyer' => 'إرسال الردّ',
 			'com.communaute.reponses.champVide' => 'اكتب ردًّا لإرساله.',
 			'com.communaute.reponses.enCours' => 'جارٍ الإرسال',
-			'com.communaute.reponses.nonConfirmee' => 'لم يُؤكَّد هذا الردّ بعد.',
+			'com.communaute.reponses.nonConfirmee' => 'لم يُؤكَّد هذا الردّ بعد. تحقّق من اتصالك ثم أعد إرساله.',
 			'com.communaute.reponses.refusee' => 'رفضته سياسة المجتمع',
 			'com.communaute.reponses.reessayer' => 'إعادة إرسال الردّ',
 			'com.communaute.reponses.indisponible' => 'الردود غير متاحة هنا بعد.',
@@ -2597,7 +2597,7 @@ extension on TraductionsAr {
 			'com.communaute.demo.lienAffilie' => 'رابط تسويق بالعمولة محظور',
 			'com.communaute.demo.vente' => 'بيع محظور',
 			'com.communaute.demo.signalementNonConfirme' => 'إبلاغ غير مؤكَّد',
-			'com.communaute.demo.choisir' => 'اختر حالة لتجربتها داخل واجهة المعلّم.',
+			'com.communaute.demo.choisir' => 'اختر حالة لتجربتها كما يراها المعلّم.',
 			'com.communaute.demo.aujourdhui' => 'اليوم، مع الاختصار',
 			'com.communaute.demo.nominal' => 'ستة منشورات',
 			'com.communaute.demo.publication' => 'منشور مفتوح',
@@ -2756,21 +2756,21 @@ extension on TraductionsAr {
 			'com.studio.vide' => 'لا يوجد نشاط للمعالجة هنا.',
 			'com.annonces.publieur.titre' => 'إعلان جديد',
 			'com.annonces.publieur.etapes.contenu' => 'محتوى الإعلان',
-			'com.annonces.publieur.etapes.audience' => 'جمهور الإعلان',
+			'com.annonces.publieur.etapes.audience' => 'مستلمو الإعلان',
 			'com.annonces.publieur.etapes.programmation' => 'تاريخ النشر',
 			'com.annonces.publieur.etapes.previsualisation' => 'معاينة الإعلان',
 			'com.annonces.publieur.etapes.publication' => 'نشر الإعلان',
 			'com.annonces.publieur.contexte.contenu' => 'اكتب ما يجب أن يعرفه المستلمون. الإعلان في اتجاه واحد : لا أحد يرد عليه.',
-			'com.annonces.publieur.contexte.audience' => 'اختر من يستلم الإعلان. لا تُعرض إلا الجماهير التي يمكنك استهدافها.',
+			'com.annonces.publieur.contexte.audience' => 'اختر من يستلم الإعلان. لا يُعرض إلا المستلمون الذين يمكنك استهدافهم.',
 			'com.annonces.publieur.contexte.audienceFixee' => ({required Object cible}) => 'يُرسل هذا الإعلان إلى ${cible}. أنت تنشر لفصلك فقط.',
 			'com.annonces.publieur.contexte.programmation' => 'اختر متى يُرسل الإعلان. الإعلان المبرمج ينتظر تاريخه.',
 			'com.annonces.publieur.contexte.previsualisation' => 'هذا هو الإعلان كما سيقرؤه المستلمون.',
-			'com.annonces.publieur.contexte.publication' => 'راجع الجمهور والتاريخ، ثم انشر. لا يُنشر شيء قبل التأكيد.',
+			'com.annonces.publieur.contexte.publication' => 'راجع المستلمين والتاريخ، ثم انشر. لا يُنشر شيء قبل التأكيد.',
 			'com.annonces.publieur.champTitre' => 'عنوان الإعلان',
 			'com.annonces.publieur.champTexte' => 'نص الإعلان',
 			'com.annonces.publieur.nature.classe' => 'تستلمه أسر هذا الفصل وطلابه فقط.',
 			'com.annonces.publieur.nature.public' => 'يستلمه كل أفراد هذا الجمهور.',
-			'com.annonces.publieur.nature.toutes' => 'تستلمه المدرسة كلها. خصصه لما يهم الجميع.',
+			'com.annonces.publieur.nature.toutes' => 'تستلمه الأكاديمية كلها. خصصه لما يهم الجميع.',
 			'com.annonces.publieur.quand.maintenant' => 'فور التأكيد',
 			'com.annonces.publieur.quand.maintenantDetail' => 'يُرسل الإعلان فور تأكيد النشر.',
 			'com.annonces.publieur.quand.creneau' => ({required Object date, required Object heure}) => 'يوم ${date} الساعة ${heure}',
@@ -2784,15 +2784,15 @@ extension on TraductionsAr {
 			'com.annonces.publieur.reessayer' => 'إعادة محاولة النشر',
 			'com.annonces.publieur.terminer' => 'إنهاء',
 			'com.annonces.publieur.manqueContenu' => 'اكتب عنوانًا ونصًا للمتابعة.',
-			'com.annonces.publieur.manqueAudience' => 'اختر جمهورًا للمتابعة.',
+			'com.annonces.publieur.manqueAudience' => 'اختر المستلمين للمتابعة.',
 			'com.annonces.publieur.enCours' => 'النشر جارٍ. انتظر التأكيد.',
 			'com.annonces.publieur.publiee' => 'نُشر الإعلان. يستلمه المستلمون.',
 			'com.annonces.publieur.planifiee' => ({required Object date, required Object heure}) => 'بُرمج الإعلان ليوم ${date} الساعة ${heure}.',
 			'com.annonces.publieur.nonConfirmee' => 'لم يُؤكَّد هذا الإعلان بعد. تحقق من الاتصال ثم أعد المحاولة : لن يُرسل إلا مرة واحدة.',
-			'com.annonces.publieur.horsLigne' => 'أنت غير متصل : لم يُؤكَّد هذا الإعلان بعد. أعد الاتصال ثم أعد المحاولة.',
+			'com.annonces.publieur.horsLigne' => 'أنت غير متصل : لم يُؤكَّد هذا الإعلان بعد. أعد المحاولة عند عودة الاتصال.',
 			'com.annonces.publieur.indisponible' => 'نشر الإعلانات غير متاح بعد. عد لاحقًا.',
-			'com.annonces.publieur.aucuneCibleTitre' => 'لا يوجد جمهور متاح',
-			'com.annonces.publieur.aucuneCible' => 'لا يمكنك النشر لأي جمهور حاليًا. اطلب الإذن من الإدارة.',
+			'com.annonces.publieur.aucuneCibleTitre' => 'لا يوجد مستلم متاح',
+			'com.annonces.publieur.aucuneCible' => 'لا يمكنك النشر لأي مستلم حاليًا. اطلب الإذن من الإدارة.',
 			'com.annonces.publieur.classeRefuseeTitre' => 'النشر مقصور',
 			'com.annonces.publieur.classeRefusee' => 'لا يمكنك نشر إعلان لهذا الفصل. اطلب الإذن من الإدارة.',
 			'com.annonces.administration.nouvelle' => 'إعلان جديد',
@@ -2802,9 +2802,9 @@ extension on TraductionsAr {
 			'com.annonces.administration.indicateurs.publiees' => 'الإعلانات المنشورة',
 			'com.annonces.administration.indicateurs.planifiees' => 'الإعلانات المبرمجة',
 			'com.annonces.administration.indicateurs.moderation' => 'محتويات قيد الإشراف',
-			'com.annonces.administration.indicateurs.regles' => 'قواعد النطاق',
+			'com.annonces.administration.indicateurs.regles' => 'صلاحيات النشر',
 			'com.annonces.administration.indicateurs.indisponible' => ({required Object libelle}) => '${libelle} : غير متاح بعد',
-			'com.annonces.administration.indicateurs.echec' => ({required Object libelle}) => '${libelle} : تعذرت القراءة',
+			'com.annonces.administration.indicateurs.echec' => ({required Object libelle}) => '${libelle} : لم يُحمَّل. تحقّق من الاتصال ثم أعد تحميل الصفحة.',
 			'com.annonces.administration.indicateurs.reserve' => ({required Object libelle}) => '${libelle} : خاص بالمكلفين بالإشراف',
 			'com.annonces.administration.publiees.titre' => 'الإعلانات المنشورة',
 			'com.annonces.administration.publiees.vide' => 'لا توجد إعلانات منشورة في هذه الفترة.',
@@ -2814,16 +2814,16 @@ extension on TraductionsAr {
 			'com.annonces.administration.planifiees.vide' => 'لا توجد إعلانات مبرمجة.',
 			'com.annonces.administration.planifiees.pastille' => 'مبرمج',
 			'com.annonces.administration.planifiees.legende' => ({required Object cible, required Object date, required Object heure}) => '${cible} · مقرر يوم ${date} الساعة ${heure}',
-			'com.annonces.administration.matrice.titre' => 'قواعد النطاق والصلاحيات',
-			'com.annonces.administration.matrice.detail' => 'قاعدة المدرسة، تُطبق على كل نشر.',
+			'com.annonces.administration.matrice.titre' => 'صلاحيات نشر الإعلانات',
+			'com.annonces.administration.matrice.detail' => 'قاعدة الأكاديمية، تُطبق على كل نشر.',
 			'com.annonces.administration.matrice.auteurs' => 'من ينشر',
 			'com.annonces.administration.matrice.peutPublier' => 'يمكنه النشر',
-			'com.annonces.administration.matrice.audiences' => 'الجماهير',
+			'com.annonces.administration.matrice.audiences' => 'المستلمون',
 			'com.annonces.administration.matrice.validation' => 'يتطلب موافقة',
 			'com.annonces.administration.matrice.oui' => 'نعم',
 			'com.annonces.administration.matrice.non' => 'لا',
 			'com.annonces.administration.matrice.aucune' => 'لا شيء',
-			'com.annonces.administration.matrice.vide' => 'لا توجد قواعد نطاق مُعدّة.',
+			'com.annonces.administration.matrice.vide' => 'لا توجد صلاحيات نشر مُعدّة.',
 			'com.annonces.administration.moderation.titre' => 'قائمة الإشراف',
 			'com.annonces.administration.moderation.legende' => ({required Object date, required Object heure}) => 'أُبلغ عنه يوم ${date} الساعة ${heure}',
 			'com.annonces.administration.moderation.motif' => ({required Object motif}) => 'السبب : ${motif}',
@@ -2866,13 +2866,13 @@ extension on TraductionsAr {
 			'com.annonces.administration.moderation.regles.pasDonnees' => 'لا بيانات شخصية لطالب أو عائلة',
 			'com.annonces.demoPublication.lienAdministration' => 'إدارة التواصل (الإدارة)',
 			'com.annonces.demoPublication.lienPublier' => 'نشر إعلان لفصل (المعلم)',
-			'com.annonces.demoPublication.toutes' => 'المدرسة كلها',
+			'com.annonces.demoPublication.toutes' => 'الأكاديمية كلها',
 			'com.annonces.demoPublication.familles' => 'الأسر',
 			'com.annonces.demoPublication.enseignants' => 'المعلمون',
 			'com.annonces.demoPublication.eleves' => 'الطلاب',
 			'com.annonces.demoPublication.controleurs' => 'المراقبون',
 			'com.annonces.demoPublication.direction' => 'الإدارة',
-			'com.annonces.demoPublication.audiencesDirection' => 'المدرسة كلها، أو جمهور، أو فصل',
+			'com.annonces.demoPublication.audiencesDirection' => 'الأكاديمية كلها، أو جمهور، أو فصل',
 			'com.annonces.demoPublication.audiencesEnseignant' => 'فصله فقط',
 			'com.annonces.demoPublication.vacancesTitre' => 'تقويم عطلة الشتاء',
 			'com.annonces.demoPublication.vacancesTexte' => 'تتوقف الدروس من 21 ديسمبر إلى 5 يناير. تُستأنف الحصص يوم الاثنين 6 يناير في المواعيد المعتادة.',
