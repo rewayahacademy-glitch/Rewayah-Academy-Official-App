@@ -1059,7 +1059,7 @@
       "application": "Le changement s'applique à la prochaine ouverture de Rewayah sur l'appareil de {prenom}.",
       "demandeEleve": "La demande de changement par l'élève lui-même n'est pas encore proposée.",
       "enCours": "Enregistrement en cours",
-      "echec": "Le changement n'a pas été enregistré : Rewayah n'a pas répondu. Touchez de nouveau votre choix. La présentation actuelle de {prenom} reste inchangée sur son appareil.",
+      "echec": "Le changement n'est pas confirmé : il n'est peut-être pas parvenu jusqu'à Rewayah. Touchez de nouveau votre choix. S'il n'est pas arrivé, la présentation de {prenom} reste celle d'avant sur son appareil.",
       "horsLigne": "La présentation pourra être changée quand la connexion reviendra."
     },
     "camera": {
@@ -3106,7 +3106,7 @@
       "preflightSansMicro": "Aucun micro n'est détecté. Branchez-en un pour lancer le cours.",
       "preflightIndisponible": "La vérification du matériel n'a pas abouti. Réessayez avant de lancer le cours.",
       "lancerHorsLigne": "Le cours pourra être lancé quand la connexion reviendra.",
-      "erreurPartielle": "Les horaires de prière et vos pauses n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.",
+      "erreurPartielle": "Les horaires de prière et vos pauses n'ont pas pu être chargés : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour : vous pouvez les lancer normalement.",
       "absenceDetectee": "{eleve} n'est pas entré en salle.",
       "coupureDetectee": "{eleve} a perdu la connexion.",
       "coursAnnule": "Le cours de {heure} est annulé.",
@@ -3486,7 +3486,7 @@
       "sansMotif": "Aucun motif",
       "cleTexte": "Complément",
       "envoyer": "Envoyer le complément",
-      "echec": "L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre texte est gardé ici, réessayez dans un instant. Le rapport d'origine reste intact.",
+      "echec": "L'envoi n'est pas confirmé : il n'est peut-être pas parvenu jusqu'à Rewayah. Votre texte est gardé ici, réessayez dans un instant. Le rapport d'origine reste intact.",
       "envoyeTitre": "Complément ajouté",
       "envoyePhrase": "Il s'affiche sous le rapport d'origine, qui reste inchangé.",
       "revenir": "Revenir au rapport"
@@ -3522,14 +3522,14 @@
       "envoyer": "Envoyer le compte rendu",
       "plusTard": "Plus tard",
       "notice": "Ce compte rendu est transmis automatiquement à l'administration.",
-      "echec": "L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.",
-      "echecRien": "L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.",
+      "echec": "L'envoi n'est pas confirmé : il n'est peut-être pas parvenu jusqu'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.",
+      "echecRien": "L'envoi n'est pas confirmé : il n'est peut-être pas parvenu jusqu'à Rewayah. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.",
       "envoyeTitre": "Compte rendu envoyé",
       "envoyePhrase": "Il est transmis à l'administration. Pour y revenir, ouvrez-le dans l'Historique et choisissez « Ajouter un complément ».",
       "ecrireAdmin": "Écrire à l'administration",
       "visiteEnCours": "Transmission de la visite à l'administration en cours.",
       "visiteTransmise": "La visite et son relevé automatique sont transmis à l'administration.",
-      "visiteEchec": "La transmission de la visite n'est pas confirmée : Rewayah n'a pas répondu. Réessayez ; le relevé de la visite reste enregistré sur le serveur.",
+      "visiteEchec": "La transmission de la visite n'est pas confirmée : elle n'est peut-être pas parvenue jusqu'à Rewayah. Réessayez ; le relevé de la visite reste enregistré sur le serveur.",
       "aTerminer": "Compte rendu à terminer",
       "reprendre": "Reprendre le compte rendu"
     },
@@ -3583,7 +3583,7 @@
       "clePersonne": "Personne concernée",
       "cleTexte": "Remarque",
       "sansTexte": "Aucun texte",
-      "echec": "L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration."
+      "echec": "L'envoi n'est pas confirmé : il n'est peut-être pas parvenu jusqu'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration."
     },
     "echanges": {
       "titre": "Échanges",
@@ -3604,7 +3604,7 @@
       "champVide": "Écrivez un message pour pouvoir l'envoyer.",
       "enCours": "Envoi en cours.",
       "envoye": "Envoyé.",
-      "echec": "L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.",
+      "echec": "L'envoi n'est pas confirmé : il n'est peut-être pas parvenu jusqu'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.",
       "reessayer": "Réessayer",
       "nouveauMessage": "Nouveau message de {auteur} : {texte}"
     },

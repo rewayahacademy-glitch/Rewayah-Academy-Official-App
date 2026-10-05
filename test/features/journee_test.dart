@@ -38,6 +38,7 @@ import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../support/aucun_mot_coupe.dart';
 import '../support/garde_interface.dart';
 import '../support/harnais.dart';
+import '../support/hors_ligne_une_fois.dart';
 
 const String _monId = 't1';
 
@@ -1159,4 +1160,52 @@ void main() {
       }
     }
   });
+
+  // EA-HL-DOUBLE-1e : l'echec partiel (horaires de priere, pauses) ne redit
+  // pas le reseau sous le bandeau, ni « connexion instable », ni « service
+  // indisponible » ; il dit ce qui manque, une cause probable sans
+  // l'affirmer, et que les seances affichees sont a jour.
+  group('Echec partiel : sans redire le reseau (EA-HL-DOUBLE-1e)', () {
+    for (final bool horsLigne in <bool>[true, false]) {
+      testWidgets(horsLigne ? 'hors ligne' : 'en ligne', (
+        WidgetTester tester,
+      ) async {
+        await _ouvrir(
+          tester,
+          priere: _PriereEnPanne(),
+          reseau: FauxServiceReseau(horsLigneRendu: horsLigne),
+          enseignant: FauxServiceEnseignant()
+            ..seancesRendues = <SeanceEnseignant>[_anNour()],
+        );
+        final Finder phrase = find.byKey(
+          const ValueKey<String>('journee-erreur-partielle'),
+        );
+        expect(phrase, findsOneWidget);
+        final String texte = tester.widget<Text>(phrase).data!;
+        expect(texte, t.enseignant.journee.erreurPartielle);
+        expect(
+          RegExp(
+            'connexion|réseau|internet',
+            caseSensitive: false,
+          ).hasMatch(texte),
+          isFalse,
+          reason: texte,
+        );
+        expect(motifHorsLigne.hasMatch(texte), isFalse, reason: texte);
+        expect(texte, contains('peut-être'));
+        if (horsLigne) {
+          expectHorsLigneUneFois();
+        } else {
+          expect(signauxHorsLigne(), findsNothing);
+        }
+      });
+    }
+  });
+}
+
+/// Les horaires de priere ne se lisent pas : l'echec partiel de la Journee.
+class _PriereEnPanne extends FauxServicePriere {
+  @override
+  Future<ReglagesPriere?> reglages(String enseignantId) async =>
+      throw StateError('lecture des reglages impossible');
 }

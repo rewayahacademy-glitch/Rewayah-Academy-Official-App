@@ -48,6 +48,21 @@ const Set<String> _permises = <String>{
   'salle.preparation.eleve.guidee.horsLigne',
   'salle.secours.echecGuidee',
   'salle.seance.demo.etats.echec',
+  // La qualite du lien de la salle et de la classe en direct (« Connexion
+  // instable », « Reseau faible »), dite par la salle elle-meme, sans
+  // bandeau (EA-HL-DOUBLE-1e : la garde cherche desormais ces formes
+  // partout ailleurs, sans exception).
+  'salle.preparation.connexionInstable',
+  'salle.preparation.reseauFaible',
+  'salle.secours.reseauFaible',
+  'salle.secours.reseauFaibleGuidee',
+  'salle.reconnexion',
+  'salle.lienMediocre',
+  'tc.classe.reseau.mediocre',
+  'tc.classe.lien.instable',
+  // Etiquettes du selecteur d'etats des demonstrations de la salle.
+  'salle.preparation.demo.reseauFaible',
+  'salle.seance.demo.etats.reseauFaible',
   // Une cause passee, pas l'etat de l'appareil qui lit : la visite a pris
   // fin, ou le releve d'une seance terminee manque.
   'tc.observation.fin.deconnexion',
@@ -201,5 +216,43 @@ void main() {
           '${e.key} = ${e.value}',
     ];
     expect(fautifs, isEmpty);
+  });
+
+  // EA-HL-DOUBLE-1e (K-59, decide par delegation le 05/10, DIR-REP-1) :
+  // « Rewayah n'a pas repondu » est inexact quand c'est l'appareil qui est
+  // hors ligne. Un envoi ou une lecture restes sans reponse disent la cause
+  // probable sans l'affirmer, en une seule formulation.
+  test('catalogue : jamais « Rewayah n a pas repondu », une seule '
+      'formulation de la cause probable', () {
+    final Map<String, String> textes = <String, String>{};
+    _aplatir(
+      jsonDecode(File('assets/i18n/fr.i18n.json').readAsStringSync()),
+      '',
+      textes,
+    );
+    expect(<String>[
+      for (final MapEntry<String, String> e in textes.entries)
+        if (RegExp(
+          r'Rewayah n.a pas répondu|Rewayah ne répond pas',
+          caseSensitive: false,
+        ).hasMatch(e.value))
+          '${e.key} = ${e.value}',
+    ], isEmpty);
+    final RegExp formulation = RegExp(
+      r'n.est peut-être pas parvenue? jusqu.à Rewayah',
+    );
+    for (final String cle in <String>[
+      'ficheEleve.interface.echec',
+      'controleur.complement.echec',
+      'controleur.compteRendu.echec',
+      'controleur.compteRendu.echecRien',
+      'controleur.compteRendu.visiteEchec',
+      'controleur.observation.echec',
+      'controleur.echanges.echec',
+      'enseignant.journee.erreurPartielle',
+    ]) {
+      expect(textes[cle], matches(formulation), reason: cle);
+      expect(motifHorsLigne.hasMatch(textes[cle]!), isFalse, reason: cle);
+    }
   });
 }
