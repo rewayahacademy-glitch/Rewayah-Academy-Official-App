@@ -1201,6 +1201,132 @@ void main() {
       }
     }
   });
+  // PAGESHELL-200-1d (reserve 1 de la revue PAGESHELL-200-1c-R2 ; decide
+  // par delegation le 05/10) : sur telephone, les vignettes (cameras de
+  // l'enseignant et de l'enfant) font partie du « reste » qui defile avec
+  // la page. Avant, elles restaient cachees dans le defileur imbrique (142
+  // px a 390x844 a 200 % en Interface guidee, 116 a 320x568) : la page
+  // defilee jusqu'au bout montrait le support puis la barre, sans camera.
+  group('PAGESHELL-200-1d : les vignettes defilent avec la page', () {
+    const EdgeInsets zoneSure = EdgeInsets.only(top: 47, bottom: 34);
+    for (final (Size, double, InterfaceMode) cas
+        in const <(Size, double, InterfaceMode)>[
+          (Size(390, 844), 2, InterfaceMode.enfant),
+          (Size(390, 844), 2, InterfaceMode.standard),
+          (Size(414, 896), 2, InterfaceMode.enfant),
+          (Size(360, 800), 2, InterfaceMode.standard),
+          (Size(320, 568), 2, InterfaceMode.standard),
+          (Size(320, 568), 1, InterfaceMode.standard),
+          (Size(320, 568), 1, InterfaceMode.enfant),
+        ]) {
+      for (final TextDirection sens in TextDirection.values) {
+        testWidgets('${cas.$1.width.toInt()}x${cas.$1.height.toInt()}, '
+            'texte x${cas.$2.toInt()}, ${cas.$3.name}, ${sens.name}', (
+          WidgetTester tester,
+        ) async {
+          final _Salle salle = await _entrerEnSalle(
+            tester,
+            taille: cas.$1,
+            echelleTexte: cas.$2,
+            interface: cas.$3,
+            sens: sens,
+            zoneSure: zoneSure,
+          );
+          _publierParticipants(salle.moteur);
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          final Finder support = find.byKey(
+            const ValueKey<String>('support-observation'),
+          );
+          final Finder zone = find
+              .ancestor(of: support, matching: find.byType(Scrollable))
+              .first;
+          // Rien de cache dans la zone du support : c'est la page qui defile.
+          expect(
+            tester.state<ScrollableState>(zone).position.maxScrollExtent,
+            closeTo(0, 0.5),
+          );
+          final double basZone = cas.$1.height - zoneSure.bottom;
+          // Au bout de la page : support, vignettes et barre, dans cet
+          // ordre, les vignettes entieres dans la zone du support et dans
+          // la zone sure.
+          await _verifierBarreAtteignable(tester, cas.$1, zoneSure);
+          final Rect cadre = tester.getRect(zone);
+          final Rect barre = tester.getRect(
+            find.byType(BarreCommandesObservation),
+          );
+          for (final String cle in <String>[
+            'vignette-enseignant',
+            'vignette-enfant',
+          ]) {
+            final Rect r = tester.getRect(find.byKey(ValueKey<String>(cle)));
+            expect(r.top, greaterThanOrEqualTo(cadre.top - 0.5), reason: cle);
+            expect(r.bottom, lessThanOrEqualTo(cadre.bottom + 0.5));
+            expect(r.top, greaterThanOrEqualTo(zoneSure.top - 0.5));
+            expect(r.bottom, lessThanOrEqualTo(barre.top + 0.5));
+            expect(r.bottom, lessThanOrEqualTo(basZone + 0.5));
+            expect(
+              r.top,
+              greaterThanOrEqualTo(tester.getRect(support).bottom - 0.5),
+            );
+          }
+        });
+      }
+    }
+  });
+  // PAGESHELL-200-1d (reserve 3 de la revue PAGESHELL-200-1c-R2 : la
+  // mutation `minimumEtire: AppTouchTarget.standard` survivait). Le minimum
+  // de la zone etiree n'est pas redondant : avec « Agrandir », le support
+  // est seul dans la zone, sans le defileur qui en garantit la hauteur ;
+  // c'est `minimumEtire` qui le garde lisible quand le bandeau et la barre
+  // agrandis ne lui laissent presque rien (320x568 a 200 %, paysage).
+  group('PAGESHELL-200-1d : support agrandi a sa hauteur lisible', () {
+    for (final (Size, double, InterfaceMode) cas
+        in const <(Size, double, InterfaceMode)>[
+          (Size(320, 568), 2, InterfaceMode.standard),
+          (Size(320, 568), 2, InterfaceMode.enfant),
+          (Size(667, 375), 2, InterfaceMode.standard),
+          (Size(667, 375), 1, InterfaceMode.enfant),
+        ]) {
+      testWidgets('${cas.$1.width.toInt()}x${cas.$1.height.toInt()}, texte '
+          'x${cas.$2.toInt()}, ${cas.$3.name}', (WidgetTester tester) async {
+        final _Salle salle = await _entrerEnSalle(
+          tester,
+          taille: cas.$1,
+          echelleTexte: cas.$2,
+          interface: cas.$3,
+        );
+        _publierParticipants(salle.moteur);
+        await tester.pumpAndSettle();
+        await _presser(tester, find.text(v.agrandir));
+        expect(tester.takeException(), isNull);
+        expect(find.text(v.reduire), findsOneWidget);
+        final Finder support = find.byKey(
+          const ValueKey<String>('support-observation'),
+        );
+        expect(tester.getSize(support).height, greaterThanOrEqualTo(199.5));
+        // Et la barre reste atteignable en defilant la page.
+        final List<ScrollableState> page = tester
+            .stateList<ScrollableState>(
+              find.ancestor(
+                of: find.byType(PanneauObservationTuteur),
+                matching: find.byType(Scrollable),
+              ),
+            )
+            .toList();
+        if (page.isNotEmpty) {
+          page.last.position.jumpTo(page.last.position.maxScrollExtent);
+          await tester.pump();
+        }
+        expect(tester.takeException(), isNull);
+        for (final String libelle in <String>[v.reduire, v.quitter]) {
+          final Rect r = tester.getRect(find.text(libelle));
+          expect(r.top, greaterThanOrEqualTo(-0.5));
+          expect(r.bottom, lessThanOrEqualTo(cas.$1.height + 0.5));
+        }
+      });
+    }
+  });
 }
 
 /// PAGESHELL-200-1c : la barre entiere se rejoint dans la zone sure, en

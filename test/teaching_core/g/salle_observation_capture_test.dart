@@ -810,6 +810,114 @@ void main() {
       }
     }
 
+    // PAGESHELL-200-1d : sur telephone, les vignettes defilent avec la page
+    // (au bout : support, vignettes, barre) ; captures standard a 100 %
+    // demandees par la revue (1440 et 390x844), et 320x568 a 100 %.
+    for (final (String, Size, double, ThemeMode, InterfaceMode, bool, double)
+        cas
+        in const <
+          (String, Size, double, ThemeMode, InterfaceMode, bool, double)
+        >[
+          (
+            '1440x900',
+            Size(1440, 900),
+            1,
+            ThemeMode.light,
+            InterfaceMode.standard,
+            false,
+            1,
+          ),
+          (
+            '1440x900',
+            Size(1440, 900),
+            1,
+            ThemeMode.dark,
+            InterfaceMode.standard,
+            false,
+            1,
+          ),
+          (
+            '390x844',
+            Size(390, 844),
+            2,
+            ThemeMode.light,
+            InterfaceMode.standard,
+            false,
+            1,
+          ),
+          (
+            '390x844',
+            Size(390, 844),
+            2,
+            ThemeMode.dark,
+            InterfaceMode.standard,
+            true,
+            1,
+          ),
+          (
+            '320x568',
+            Size(320, 568),
+            2,
+            ThemeMode.light,
+            InterfaceMode.standard,
+            false,
+            1,
+          ),
+          (
+            '320x568',
+            Size(320, 568),
+            2,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            true,
+            1,
+          ),
+          (
+            '390x844',
+            Size(390, 844),
+            2,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            false,
+            2,
+          ),
+          (
+            '320x568',
+            Size(320, 568),
+            2,
+            ThemeMode.dark,
+            InterfaceMode.standard,
+            true,
+            2,
+          ),
+        ]) {
+      final String guidee = cas.$5 == InterfaceMode.enfant ? '_guidee' : '';
+      final String rtl = cas.$6 ? '_rtl' : '';
+      final String texte = 'texte${(cas.$7 * 100).toInt()}';
+      for (final String ou in <String>['haut', 'bout']) {
+        final String nom =
+            'pageshell200_1d_${cas.$1}@${cas.$3.toInt()}_${texte}_'
+            '${cas.$4.name}$guidee${rtl}_$ou';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(
+            tester,
+            cas.$2,
+            cas.$3,
+            zoneSure: cas.$2.width < 600 ? _zoneSure : EdgeInsets.zero,
+          );
+          await _monterSalle(
+            tester,
+            echelleTexte: cas.$7,
+            mode: cas.$4,
+            interface: cas.$5,
+            sens: cas.$6 ? TextDirection.rtl : null,
+          );
+          await _defilerPage(tester, bout: ou == 'bout');
+          await _capturer(tester, nom);
+        });
+      }
+    }
+
     // PAGESHELL-200-1 (reserve 2) : la barre large seule, la ou l'ancienne
     // coupait « Quitter » (440 px de barre, texte a 300 %).
     for (final TextDirection sens in TextDirection.values) {
