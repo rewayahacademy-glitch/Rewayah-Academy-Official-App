@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/service_programme.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/widgets/champ_etiquete.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_programmes/programmes_page.dart';
 
 import 'outil_capture.dart';
@@ -140,7 +141,13 @@ void main() {
             await tester.tap(find.text(t.admin.programmes.ajouterNiveau));
             await stabiliser(tester);
             await tester.enterText(
-              find.widgetWithText(TextField, t.admin.programmes.champNomHumain),
+              find.descendant(
+                of: find.widgetWithText(
+                  ChampEtiquete,
+                  t.admin.programmes.champNomHumain,
+                ),
+                matching: find.byType(TextField),
+              ),
               'Éléments de Tajwîd',
             );
             await stabiliser(tester);
@@ -177,14 +184,23 @@ void main() {
             await tester.tap(find.text(t.admin.programmes.nouveauCycle));
             await stabiliser(tester);
             await tester.enterText(
-              find.widgetWithText(
-                TextField,
-                t.admin.programmes.champNouveauCycle,
+              find.descendant(
+                of: find.widgetWithText(
+                  ChampEtiquete,
+                  t.admin.programmes.champNouveauCycle,
+                ),
+                matching: find.byType(TextField),
               ),
               'Avancé',
             );
             await tester.enterText(
-              find.widgetWithText(TextField, t.admin.programmes.champNomHumain),
+              find.descendant(
+                of: find.widgetWithText(
+                  ChampEtiquete,
+                  t.admin.programmes.champNomHumain,
+                ),
+                matching: find.byType(TextField),
+              ),
               'Lettres',
             );
             await stabiliser(tester);
@@ -202,6 +218,40 @@ void main() {
           });
         }
       }
+    }
+
+    // Page Programmes seule, 320 x 700 a texte x2, defilee au bas de la liste
+    // des niveaux : preuve visuelle de l'absence de debordement.
+    for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
+      testWidgets('liste bas 320x700 x2 ${mode.name}', (
+        WidgetTester tester,
+      ) async {
+        fixerVueCapture(tester, const Size(320, 700), 2);
+        await tester.pumpWidget(
+          hoteCapture(
+            const ProgrammesPage(),
+            themeMode: mode,
+            echelleTexte: 2,
+            surcharges: <Override>[
+              serviceProgrammeProvider.overrideWithValue(_Service()),
+            ],
+          ),
+        );
+        await stabiliser(tester);
+        final Finder defilants = find.byType(Scrollable);
+        for (int i = 0; i < defilants.evaluate().length; i++) {
+          final ScrollableState etat = tester.state<ScrollableState>(
+            defilants.at(i),
+          );
+          if (etat.position.axis == Axis.vertical) {
+            etat.position.jumpTo(etat.position.maxScrollExtent);
+          }
+        }
+        await stabiliser(tester);
+        expect(tester.takeException(), isNull);
+        // ignore: avoid_print
+        print('PNG ${await capturer(tester, 'forml5_liste_bas_320x700_x2_${mode.name}')}');
+      });
     }
   });
 }

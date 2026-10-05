@@ -145,6 +145,8 @@ const List<String> composantsDuCatalogue = <String>[
   'ChampDate',
   // ENS-PAYS-1 : le pays de l'enseignant sur sa carte, pour tous les roles.
   'PaysEnseignant',
+  // FORM-CORR-1 : l'etiquette d'un champ de texte passe a la ligne.
+  'ChampEtiquete',
 ];
 
 /// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.

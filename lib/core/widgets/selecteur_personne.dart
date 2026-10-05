@@ -40,6 +40,10 @@ enum SortePersonne {
 
   /// Un enseignant.
   enseignant,
+
+  /// N'importe quelle personne qu'un agent peut observer (eleve, parent,
+  /// enseignant...) : la liste vient de `personnes_observables()`.
+  observable,
 }
 
 /// Le choix d'une personne dans une liste cherchable (FORM-L2, K-57 :
@@ -99,7 +103,36 @@ class _SelecteurPersonneEtat extends State<SelecteurPersonne> {
     super.dispose();
   }
 
-  bool get _eleve => widget.sorte == SortePersonne.eleve;
+  /// Les phrases de la sorte choisie.
+  _Textes get _textes {
+    final s = t.commun.selecteurPersonne;
+    return switch (widget.sorte) {
+      SortePersonne.eleve => _Textes(
+        titre: s.titreEleve,
+        contexte: s.contexteEleve,
+        recherche: s.rechercheEleve,
+        videTitre: s.videEleve,
+        videDetail: s.videEleveDetail,
+        erreurTitre: s.erreurEleveTitre,
+      ),
+      SortePersonne.enseignant => _Textes(
+        titre: s.titreEnseignant,
+        contexte: s.contexteEnseignant,
+        recherche: s.rechercheEnseignant,
+        videTitre: s.videEnseignant,
+        videDetail: s.videEnseignantDetail,
+        erreurTitre: s.erreurEnseignantTitre,
+      ),
+      SortePersonne.observable => _Textes(
+        titre: s.titreObservable,
+        contexte: s.contexteObservable,
+        recherche: s.rechercheObservable,
+        videTitre: s.videObservable,
+        videDetail: s.videObservableDetail,
+        erreurTitre: s.erreurObservableTitre,
+      ),
+    };
+  }
 
   List<PersonneProposee> _correspondantes(List<PersonneProposee> toutes) {
     final String cle = RechercheCatalogue.normaliser(_recherche.text.trim());
@@ -117,20 +150,15 @@ class _SelecteurPersonneEtat extends State<SelecteurPersonne> {
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
     final s = t.commun.selecteurPersonne;
+    final _Textes mots = _textes;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Text(
-          _eleve ? s.titreEleve : s.titreEnseignant,
-          style: textes.titleMedium,
-        ),
+        Text(mots.titre, style: textes.titleMedium),
         Ecart.vXs,
-        Text(
-          _eleve ? s.contexteEleve : s.contexteEnseignant,
-          style: textes.bodySmall,
-        ),
+        Text(mots.contexte, style: textes.bodySmall),
         Ecart.vMd,
         BlocAsynchrone<List<PersonneProposee>>(
           valeur: widget.personnes,
@@ -138,14 +166,14 @@ class _SelecteurPersonneEtat extends State<SelecteurPersonne> {
           onReessayer: widget.onReessayer,
           erreurVersEtat: (Object _, VoidCallback? reessayer) => EtatSysteme(
             nature: NatureEtat.echecServeur,
-            titre: _eleve ? s.erreurEleveTitre : s.erreurEnseignantTitre,
+            titre: mots.erreurTitre,
             phrase: s.erreurDetail,
             onAction: reessayer,
           ),
           vide: EtatSysteme(
             nature: NatureEtat.aucunResultat,
-            titre: _eleve ? s.videEleve : s.videEnseignant,
-            phrase: _eleve ? s.videEleveDetail : s.videEnseignantDetail,
+            titre: mots.videTitre,
+            phrase: mots.videDetail,
           ),
           construire: _liste,
         ),
@@ -166,8 +194,7 @@ class _SelecteurPersonneEtat extends State<SelecteurPersonne> {
           .take(widget.maximumAffiche - (choisie == null ? 0 : 1)),
     ];
     final int restantes =
-        trouvees.length -
-        affichees.where(trouvees.contains).length;
+        trouvees.length - affichees.where(trouvees.contains).length;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -180,7 +207,7 @@ class _SelecteurPersonneEtat extends State<SelecteurPersonne> {
           // etiquette flottante tient sur une ligne et se coupait a 320 px en
           // texte x2 (« Chercher un ... », capture FORM-L2).
           decoration: InputDecoration(
-            hintText: _eleve ? s.rechercheEleve : s.rechercheEnseignant,
+            hintText: _textes.recherche,
             hintMaxLines: 6,
             prefixIcon: Icon(AppIcons.recherche.repos),
           ),
@@ -211,7 +238,12 @@ class _SelecteurPersonneEtat extends State<SelecteurPersonne> {
                   cle: ValueKey<String>('personne-${p.id}'),
                   valeur: p.id,
                   libelle: p.nom,
-                  description: p.identifiant == p.nom ? null : p.identifiant,
+                  // Tirets insecables a l'affichage seulement : « ELV- / MS-010 »
+                  // a 320 en texte x2 (FORM-MINEURS). La valeur et la recherche
+                  // gardent l'identifiant tel quel.
+                  description: p.identifiant == p.nom
+                      ? null
+                      : p.identifiant.replaceAll('-', '\u2011'),
                 ),
             ],
             onChange: (ReponseChoix reponse) {
@@ -230,4 +262,24 @@ class _SelecteurPersonneEtat extends State<SelecteurPersonne> {
       ],
     );
   }
+}
+
+/// Les phrases d'une sorte de personne.
+@immutable
+class _Textes {
+  const _Textes({
+    required this.titre,
+    required this.contexte,
+    required this.recherche,
+    required this.videTitre,
+    required this.videDetail,
+    required this.erreurTitre,
+  });
+
+  final String titre;
+  final String contexte;
+  final String recherche;
+  final String videTitre;
+  final String videDetail;
+  final String erreurTitre;
 }

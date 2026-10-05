@@ -20,7 +20,7 @@ import '../features/support_form_l2.dart';
 import '../support/harnais.dart' show FauxSelecteurFichier, FauxServiceDossier;
 import 'outil_capture.dart';
 
-enum _Ecran { calendrier, dateChoisie, depot, jeton, recuperation }
+enum _Ecran { calendrier, dateChoisie, depot, jeton, jetonCartes, recuperation }
 
 class _Agents implements ServiceAgent {
   @override
@@ -34,6 +34,20 @@ class _Agents implements ServiceAgent {
           identifiant: 'ELV-MS-010',
           prenom: 'Maryam',
           nom: 'Sow',
+          role: null,
+        ),
+        PersonneObservable(
+          id: 'p-abdourahmane',
+          identifiant: 'ELV-AD-011',
+          prenom: 'Abdourahmane',
+          nom: 'Diallo-Barry',
+          role: null,
+        ),
+        PersonneObservable(
+          id: 'p-fatoumata',
+          identifiant: 'ELV-FB-012',
+          prenom: 'Fatoumata',
+          nom: 'Bah',
           role: null,
         ),
       ];
@@ -65,7 +79,7 @@ Future<void> _ouvrir(
   final Widget page = switch (ecran) {
     _Ecran.calendrier || _Ecran.dateChoisie => const EvaluationsPage(),
     _Ecran.depot => const DepotPiecePage(),
-    _Ecran.jeton => const AccesAgentsPage(),
+    _Ecran.jeton || _Ecran.jetonCartes => const AccesAgentsPage(),
     _Ecran.recuperation => const RecuperationPage(
       courrielInitial: 'awa@exemple.fr',
     ),
@@ -106,8 +120,16 @@ Future<void> _ouvrir(
     case _Ecran.depot:
       await toucher(find.text(t.kyc.autrePiece));
     case _Ecran.jeton:
-      await toucher(find.text('Maryam Sow (ELV-MS-010)'));
+      await toucher(find.text('Maryam Sow'));
       await tester.ensureVisible(find.byType(TextField).first);
+      await stabiliser(tester);
+    case _Ecran.jetonCartes:
+      // Sans rien choisir : defile jusqu'aux cartes de personnes (K-61).
+      final Finder premiere = find.byKey(
+        const ValueKey<String>('personne-p-maryam'),
+      );
+      expect(premiere, findsOneWidget);
+      await tester.ensureVisible(premiere);
       await stabiliser(tester);
     case _Ecran.recuperation:
       break;

@@ -217,7 +217,7 @@ void main() {
       await _ouvrirAgents(tester);
       expect(_libelleJeton(tester), isEmpty);
 
-      await _presser(tester, _personne('Maryam Sow (ELV-MS-010)'));
+      await _presser(tester, _personne('Maryam Sow'));
       expect(
         _libelleJeton(tester),
         'Observation de Maryam, le 04/10/2026, 8 h',
@@ -229,7 +229,7 @@ void main() {
         'Observation de Maryam, le 04/10/2026, 4 h',
       );
 
-      await _presser(tester, _personne('Yacine Benali (ENS-YB-002)'));
+      await _presser(tester, _personne('Yacine Benali'));
       expect(
         _libelleJeton(tester),
         'Observation de Yacine, le 04/10/2026, 4 h',
@@ -240,7 +240,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final _AgentsQuiRetient agents = await _ouvrirAgents(tester);
-      await _presser(tester, _personne('Maryam Sow (ELV-MS-010)'));
+      await _presser(tester, _personne('Maryam Sow'));
 
       await tester.enterText(
         find.byType(TextField).first,
@@ -248,7 +248,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       await _presser(tester, find.text(t.admin.agents.dureeHeure(nombre: 1)));
-      await _presser(tester, _personne('Yacine Benali (ENS-YB-002)'));
+      await _presser(tester, _personne('Yacine Benali'));
       expect(_libelleJeton(tester), 'Relecture du suivi');
 
       await _presser(tester, find.text(t.admin.agents.emettre));
@@ -261,7 +261,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final _AgentsQuiRetient agents = await _ouvrirAgents(tester);
-      await _presser(tester, _personne('Maryam Sow (ELV-MS-010)'));
+      await _presser(tester, _personne('Maryam Sow'));
       await _presser(tester, find.text(t.admin.agents.emettre));
 
       expect(
