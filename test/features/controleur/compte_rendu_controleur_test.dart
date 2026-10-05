@@ -200,7 +200,7 @@ void main() {
     expect(find.textContaining('min de retard'), findsNothing);
     await tester.tap(find.text(r.faits));
     await tester.pumpAndSettle();
-    expect(find.textContaining('3 min de retard'), findsOneWidget);
+    expect(find.textContaining('3\u00A0min de retard'), findsOneWidget);
     expect(find.text(r.enCours), findsOneWidget);
     expect(find.textContaining('Enregistrement'), findsNothing);
 

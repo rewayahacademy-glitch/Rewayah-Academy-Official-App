@@ -250,10 +250,7 @@ void main() {
       );
 
       expect(find.text('Tuteur de Amina observe'), findsOneWidget);
-      expect(
-        find.text(t.tc.observation.annonce.restant(secondes: 80)),
-        findsOneWidget,
-      );
+      expect(find.text('\u200E80\u00A0s'), findsOneWidget);
       // Un seul observateur ne se replie pas : une ligne ne merite pas une
       // animation, et il n'y a rien a compter.
       expect(find.byKey(IndicateurObservation.cleBandePrenoms), findsNothing);

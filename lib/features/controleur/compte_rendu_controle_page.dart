@@ -25,6 +25,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
 import '../../core/mouvement/mouvement.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -602,12 +603,14 @@ class LignesFaitsVisite extends StatelessWidget {
         LigneCleValeur(
           cle: t.controleur.compteRendu.cleDebutReel,
           // L'ecart est ecrit, jamais porte par la couleur seule (C4).
-          valeur: retard > 0
-              ? t.controleur.compteRendu.debutRetard(
-                  heure: debutReel,
-                  minutes: retard,
-                )
-              : t.controleur.compteRendu.debutALHeure(heure: debutReel),
+          valeur: LibellesGroupe.valeurSeule(
+            retard > 0
+                ? t.controleur.compteRendu.debutRetard(
+                    heure: debutReel,
+                    minutes: retard,
+                  )
+                : t.controleur.compteRendu.debutALHeure(heure: debutReel),
+          ),
           chiffres: true,
         ),
         LigneCleValeur(

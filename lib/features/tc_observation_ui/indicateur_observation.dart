@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
@@ -198,8 +199,8 @@ class _LigneUnique extends StatelessWidget {
           if (annonce.tempsRestant case final Duration restant) ...<Widget>[
             Ecart.hSm,
             StatusPill(
-              libelle: t.tc.observation.annonce.restant(
-                secondes: restant.inSeconds,
+              libelle: LibellesGroupe.valeurSeule(
+                t.tc.observation.annonce.restant(secondes: restant.inSeconds),
               ),
               ton: TonEtat.neutre,
             ),

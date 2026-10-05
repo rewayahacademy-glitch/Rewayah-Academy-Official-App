@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../i18n/strings.g.dart';
 import '../presence/service_presence.dart';
 import '../presence/vue_presence.dart';
+import '../tc_groupe/libelles_tc_groupe.dart';
 import '../theme/app_spacing.dart';
 import 'status_pill.dart';
 
@@ -89,18 +90,26 @@ class LignePresence extends StatelessWidget {
       RepereTemps.entree =>
         minutes <= 0
             ? t.presence.entreeInstant
-            : t.presence.entreeMinutes(minutes: '$minutes'),
+            : LibellesGroupe.insecable(
+                t.presence.entreeMinutes(minutes: '$minutes'),
+              ),
       // Un retard sous la minute n'existe pas : le seuil est de cinq minutes
       // par defaut, et il se regle en base, jamais ici.
-      RepereTemps.retard => t.presence.retardMinutes(minutes: '$minutes'),
+      RepereTemps.retard => LibellesGroupe.valeurSeule(
+        t.presence.retardMinutes(minutes: '$minutes'),
+      ),
       RepereTemps.silence =>
         minutes <= 0
             ? t.presence.silenceInstant
-            : t.presence.silenceMinutes(minutes: '$minutes'),
+            : LibellesGroupe.insecable(
+                t.presence.silenceMinutes(minutes: '$minutes'),
+              ),
       RepereTemps.attente =>
         minutes <= 0
             ? t.presence.attenteInstant
-            : t.presence.attenteMinutes(minutes: '$minutes'),
+            : LibellesGroupe.insecable(
+                t.presence.attenteMinutes(minutes: '$minutes'),
+              ),
       RepereTemps.aucun => null,
     };
   }

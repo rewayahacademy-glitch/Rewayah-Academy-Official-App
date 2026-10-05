@@ -68,7 +68,7 @@ void main() {
       );
       expect(
         libelleStatut(_ligne(EtatPresence.enRetard)),
-        t.historique.etat.retard(minutes: 12),
+        'Retard 12\u00A0min',
       );
       expect(statutDe(_ligne(EtatPresence.absente)), StatutHistorique.absence);
       expect(StatutHistorique.absence.libelle, t.presence.absente);

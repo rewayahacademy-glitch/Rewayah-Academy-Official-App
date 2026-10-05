@@ -23,6 +23,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -329,7 +330,9 @@ class _HistoriqueControleurPageState
   Widget _ligne(RapportControle r) {
     final h = t.controleur.historique;
     final String date = dateDeLAppareil(r.debut);
-    final String duree = h.duree(minutes: r.dureeObservee.inMinutes);
+    final String duree = LibellesGroupe.valeurSeule(
+      h.duree(minutes: r.dureeObservee.inMinutes),
+    );
     final String statut = libelleStatutRapport(r.statut);
     return LigneHistorique(
       key: HistoriqueControleurPage.ligneKey(r.id),
@@ -410,7 +413,9 @@ class _DetailRapport extends StatelessWidget {
                 ),
                 LigneCleValeur(
                   cle: h.cleDuree,
-                  valeur: h.duree(minutes: r.dureeObservee.inMinutes),
+                  valeur: LibellesGroupe.valeurSeule(
+                    h.duree(minutes: r.dureeObservee.inMinutes),
+                  ),
                   chiffres: true,
                 ),
               ],

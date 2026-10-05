@@ -357,6 +357,13 @@ abstract final class LibellesGroupe {
   /// gauche ([ancreSens]). Dans une phrase, [dureeLisible] suffit.
   static String dureeSeule(Duration duree) => ancreSens(dureeLisible(duree));
 
+  /// DUREE-INSECABLE-2 : un libelle deja rendu qui porte une duree et peut
+  /// s'afficher seul (« 45 min de cours », « 12 min observées », « 5 min
+  /// après l'heure ») : insecable ([insecable]) et ancre en interface de
+  /// droite a gauche ([ancreSens]). Un libelle qui commence par un mot
+  /// (« Environ 3 min ») n'est qu'insecable : [ancreSens] le laisse intact.
+  static String valeurSeule(String texte) => ancreSens(insecable(texte));
+
   /// La ligne d'etat de la Session Card, deduite de l'horloge.
   ///
   /// **Un seul endroit decide de cette phrase.** La carte de « Mes groupes » et

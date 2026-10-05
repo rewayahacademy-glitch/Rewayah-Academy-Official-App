@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../i18n/strings.g.dart';
+import '../tc_groupe/libelles_tc_groupe.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -123,7 +124,9 @@ class PageParcours extends StatelessWidget {
           if (minutesRestantes != null) ...<Widget>[
             Ecart.vSm,
             Text(
-              t.inscription.tempsRestant(minutes: minutesRestantes!),
+              LibellesGroupe.insecable(
+                t.inscription.tempsRestant(minutes: minutesRestantes!),
+              ),
               textAlign: TextAlign.center,
               style: textes.bodySmall,
             ),

@@ -6,6 +6,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -481,7 +482,9 @@ class _DetailOffrePageEtat extends State<DetailOffrePage> {
     if (offre.dureeMinutes != null)
       LigneCleValeur(
         cle: t.enseignant.creneaux.cleDuree,
-        valeur: t.enseignant.creneaux.duree(minutes: '${offre.dureeMinutes}'),
+        valeur: LibellesGroupe.valeurSeule(
+          t.enseignant.creneaux.duree(minutes: '${offre.dureeMinutes}'),
+        ),
       ),
   ];
 
