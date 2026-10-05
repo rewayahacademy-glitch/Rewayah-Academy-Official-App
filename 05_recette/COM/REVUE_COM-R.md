@@ -314,3 +314,90 @@ Pour passer à `verifie`, il faut :
 
 Aucune étape COM ne passe à `verifie` tant que N-1 reste ouvert. N-1 touche le socle
 (`FilDiscussion`) et donc Messages, le Studio et la coquille admin.
+
+## 7. Contre-vérification du tour 4 de COM-RC (COM-R-3)
+
+Date : 5 octobre 2026. Même session (01HS7t3c), à la demande de la session 01FM3Arm. Lecture
+seule.
+
+Périmètre :
+- code : `ui/communications-v1` @ `27689f94`, diff depuis `022cc31e` (4 commits, 36
+  fichiers) ;
+- captures : `pilotage/tuteur-v1` @ `fbc9153d`, 187 PNG ;
+- carte des fonctions : `729cb967`.
+
+Méthode : un relecteur indépendant à contexte vierge pour le code et les tests. J'ai lu moi-même
+les captures clés (`com_admin_messages_390_clair`, `com_messages_fil_tuteur_320_clair`,
+`..._320x2_clair`, `com_studio_focus_320x2_clair`, `com_vocal_pre_ecoute_tuteur_390_clair`,
+`com_communaute_reponse_bloquee_390_clair`) et rejoué dans le code les constats nouveaux 1 et 2.
+
+### 7.1 Chiffres rejoués (worktree propre à `27689f94`)
+
+| Contrôle | Annoncé | Rejoué |
+| :--- | :--- | :--- |
+| `dart analyze --fatal-infos` | 0 | 0 |
+| `flutter test -j 3` (suite complète) | 6344 réussis, 3082 sautés, 0 échec | +6344, ~3082 sautés, 0 échec (« All tests passed! », 10 min 57 s) |
+| `verifier_jetons` | 39 | 39 |
+| `verifier_revue` | 1627 | 1627 |
+
+### 7.2 Constats de COM-R-2
+
+| # | État | Preuve à `27689f94` |
+| :--- | :--- | :--- |
+| N-1 (majeur) | **corrigé** | `fil_discussion.dart:735-772` : quand l'en-tête défile, sa ligne compacte (nom, objet, (i)) reste fixe au-dessus de la liste. Elle sert à Messages (tuteur, enseignant, admin) et au canal, Focus compris. Test `com_rc_tour4_lot_f_test.dart:360-375` : admin, 390, texte ×1, vraie coquille ; il échouerait à `022cc31e`. À l'image, « M. Rachid, Contrôleur pédagogique · Visite de contrôle, Classe An-Nour » et (i) sont visibles à 390, et « Mme Mariam, Enseignante d… · Classe An-Nour · Adam » à 320 et à 320×2. R-02 ne régresse pas : à 320×2, champ et « Envoyer » sont entiers. |
+| N-2 | **corrigé** | `reponses.dart:560-578`, `raccourciEnvoi` ; test `com_communaute/com_rc_tour4_test.dart:273-305` |
+| N-3 | **corrigé**, avec un défaut résiduel (constat 1 ci-dessous) | `fil_discussion.dart:556`, `:582-592` ; tests `lot_f_test.dart:457-531` (le brouillon reste jusqu'à l'accusé, et aussi en cas d'échec) |
+| N-4 | **corrigé** | `focus_studio_test.dart:244-264` : plus de `skipOffstage`. Le test vérifie le rectangle à l'écran et `hitTestable` |
+| N-5 | **corrigé** | `aucuneCibleTitre` testé ; un état vide au centre à 1440 |
+| N-6 | **corrigé** | `core/accessibilite/texte_agrandi.dart` (`SeuilsTexteAgrandi`). Les littéraux restants sont hors COM (`admin_shell.dart:837`, `nav_shell.dart:406`) ou désignent une largeur (`_largeurEmpilee`) |
+| N-7 | **corrigé** | `complements_com0b_test.dart:167-173` |
+| N-8 | **corrigé** | plus aucune occurrence dans `lib` ; CARTE_FONCTIONS l.46 à jour |
+| N-9 | **partiel** | marge ajoutée (`fil_discussion.dart:827-833`). Le panneau de pré-écoute reste rogné en bas à 390 et à 1440 : la saisie, bornée à 40 % de la hauteur, défile depuis le haut |
+| N-10 | **corrigé** | date compacte sans l'année en cours, pastille à sa largeur, séparateur neutre « · » |
+| R-01, réserve sur les textes | **partiel**, aval du directeur | le blocage reprend le texte exact du §5.2 et les titres inventés sont retirés. Trois textes restent hors du §5.2 : l'avertissement de réponse (`fr.i18n.json:5034`, qui dit « avant de publier » sous un bouton « Envoyer »), `reponse.consigneBlocage` et `reponses.refusee`. Ils sont marqués « à valider par le directeur » |
+| R-01, réserve sur le refus du serveur | **corrigé côté client** | `ContenuRefuse` est affiché sans « Renvoyer » (`publication_detail.dart:199-203`, `reponses.dart:315-323`). Aucun adaptateur réel ne le lève encore |
+| R-21 | **corrigé** | CARTE_FONCTIONS (`729cb967`), l.37, l.46 et l.81-83 |
+| R-23 | **corrigé** | les trois écrans passent par `depuisErreur` |
+
+### 7.3 Constats nouveaux, tous mineurs
+
+| # | Fichier:ligne | Constat | Correction proposée |
+| :--- | :--- | :--- | :--- |
+| 1 | `core/widgets/fil_discussion.dart:584-592` | Un message en échec reste dans `_locaux`, et `any(etat != envoye)` bloque ensuite tout effacement. Si A échoue puis B est confirmé, le brouillon garde le texte de B : à la réouverture, ce texte déjà envoyé revient dans le champ. | N'attendre que les messages `enCours`, ou effacer à l'accusé du message dont le texte correspond. |
+| 2 | `core/widgets/fil_discussion.dart:735-747` | En lecture seule, `limite != null` rend `compacteFixe` toujours vrai, même à 1440. Le canal en lecture seule perd l'en-tête complet (avatar, nom entier). | Réserver la ligne compacte au texte agrandi et à la vue basse. |
+| 3 | `fil_discussion.dart:800-833` | N-9 : le panneau vocal dépasse la saisie bornée ; son bas est découpé. | Faire défiler la saisie jusqu'au bas du panneau à son ouverture, ou relever la borne quand le vocal est ouvert. Le test doit vérifier que le bas du panneau est visible. |
+| 4 | `features/notifications/notifications_page.dart:577` | `DateTime.now()` n'est pas injecté : rendu et captures dépendent de l'année courante, et le test associé est tautologique. | Passer l'horloge de la page à `LigneNotification`. |
+| 5 | `com_studio_focus_320x2_clair.png` | En Focus à 320×2, aucune bulle n'est visible (§23 : « contenu centré + composer + sortie »). | Arbitrage du directeur, ou champ réduit à une ligne en Focus. |
+| 6 | `features/com_studio/canal_page.dart:434` | `_entreesFocus++` est fait dans `build`. | Le déplacer dans le rappel de changement d'`EtatFocusStudio`. |
+| 7 | `test/.../com_rc_tour4_lot_f_test.dart:355` | N-1 n'est testé ni pour l'enseignant ni pour le Focus en vue basse (même widget). | Ajouter ces deux cas. |
+| 8 | captures 320 et 320×2 | La ligne compacte tronque le nom (« Mme Mariam, Ense… »). À 320×2, aucun bouton retour n'est visible au premier écran (la barre basse reste). Déjà déclaré par COM-RC. | Le nom entier passe derrière (i) ; un retour compact dans la ligne de contexte. |
+
+Vérifié sans défaut dans ce diff :
+- aucun rôle lu ;
+- aucune couleur, police ni rayon en dur ;
+- aucune démo hors garde, aucun appel réseau ;
+- aucun contrôleur, `FocusNode` ni écouteur ajouté sans libération ;
+- aucun `skip` ajouté ; le seul `expect` retiré est remplacé par une assertion cohérente ;
+- parité slang inchangée ;
+- aucun tiret cadratin.
+
+### 7.4 Verdict de COM-R-3 : COM-RC ACCEPTÉE, passée à `verifie`
+
+Le seul majeur ouvert, N-1, est corrigé, testé et visible à l'image. Les sept majeurs de la
+revue initiale sont corrigés, hors R-03, qui attend D-FUS-3. Il ne reste que des mineurs (N-9
+partiel, constats 1 à 8 ci-dessus) et des décisions du directeur.
+
+- **COM-RC passe à `verifie`**, ainsi que les étapes COM couvertes par cette revue :
+  COM-MSG-1, COM-MSG-2, COM-VOC-1, COM-COMU-1, COM-COMU-2, COM-STU-1, COM-STU-2, COM-STU-3,
+  COM-ANN-1, COM-ANN-2, COM-FUS, COM-CAPT.
+- Statut de preuve : `présent dans le code` et `testé localement`. Rien n'est branché, rien
+  n'est testé sur staging, rien n'est déployé. `verifie` ne vaut ni fusion dans `main` ni mise
+  en production.
+
+Les décisions du directeur restent ouvertes :
+- R-03 (D-FUS-3), R-08 (D-FUS-1), R-16, R-19, R-27 ;
+- le `Center` d'`ActionPrincipale` (R-12) ;
+- les trois textes de réponse de R-01 ;
+- le Focus à 320×2 (constat 5) ;
+- les neuf décisions de `DECISIONS_COM_FUS.md`, dont l'historique de com-commu dans com-ann
+  (COM-ANN-2).
