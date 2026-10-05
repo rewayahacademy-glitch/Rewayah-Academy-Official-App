@@ -17812,8 +17812,8 @@ class Traductions$com$communaute$garde$reponse$fr {
 
 	// Translations
 
-	/// fr: 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l'offre avant de publier.'
-	String get avertissement => 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant de publier.';
+	/// fr: 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l'offre avant de l'envoyer.'
+	String get avertissement => 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant de l\'envoyer.';
 
 	/// fr: 'Liens de la réponse'
 	String get liensTitre => 'Liens de la réponse';
@@ -22761,7 +22761,7 @@ extension on Traductions {
 			'com.communaute.garde.liensTitre' => 'Liens de la publication',
 			'com.communaute.garde.consigneBlocage' => 'Modifiez la publication, puis publiez-la de nouveau.',
 			'com.communaute.garde.panne' => 'La politique de la Communauté n\'a pas pu relire ce contenu : rien n\'est parti. Vérifiez la connexion, puis réessayez.',
-			'com.communaute.garde.reponse.avertissement' => 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant de publier.',
+			'com.communaute.garde.reponse.avertissement' => 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant de l\'envoyer.',
 			'com.communaute.garde.reponse.liensTitre' => 'Liens de la réponse',
 			'com.communaute.garde.reponse.consigneBlocage' => 'Modifiez la réponse, puis envoyez-la de nouveau.',
 			'com.communaute.lien.interne' => 'Lien interne Rewayah',
