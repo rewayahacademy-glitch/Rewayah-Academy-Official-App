@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_groupe/cartes_classe.dart';
 import '../../core/theme/app_palette.dart';
@@ -271,7 +272,10 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Text(t.classe.cartes.feuille.contexte, style: textes.bodyMedium),
+        Text(
+          isolerSens(t.classe.cartes.feuille.contexte),
+          style: textes.bodyMedium,
+        ),
         Ecart.vLg,
         Text(t.classe.cartes.feuille.modele, style: textes.titleSmall),
         Ecart.vSm,
@@ -354,7 +358,7 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
         ),
         if (erreurEcheance != null) ...<Widget>[
           Ecart.vXs,
-          Text(erreurEcheance, style: alerte),
+          Text(isolerSens(erreurEcheance), style: alerte),
         ],
         Align(
           alignment: AlignmentDirectional.centerStart,
@@ -371,7 +375,10 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
               onPress: _retirerEcheance,
             ),
           ),
-        if (echec != null) ...<Widget>[Ecart.vLg, Text(echec, style: alerte)],
+        if (echec != null) ...<Widget>[
+          Ecart.vLg,
+          Text(isolerSens(echec), style: alerte),
+        ],
         Ecart.vXl,
         ActionPrincipale(
           key: FeuilleCarteClasse.enregistrerKey,

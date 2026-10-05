@@ -100,15 +100,26 @@ class _BlocCartesClasseEtat extends ConsumerState<BlocCartesClasse> {
   void _relire() => ref.invalidate(cartesClasseProvider(widget.groupeId));
 
   Future<void> _editer(CarteClasse? carte) async {
+    // La feuille vit sur le Navigator du routeur, au-dessus d'un eventuel
+    // `ProviderScope` imbrique (la demonstration, EcranEnseignantDemo) : sans
+    // le conteneur de l'emplacement, elle lirait le port du conteneur racine
+    // (indisponible) et aucun envoi n'aboutirait (revue CARTES-PERSO-1).
+    final ProviderContainer conteneur = ProviderScope.containerOf(
+      context,
+      listen: false,
+    );
     final String? retour = await AppBottomSheet.ouvrir<String>(
       context,
       titre: carte == null
           ? t.classe.cartes.feuille.titreNouvelle
           : t.classe.cartes.feuille.titreModifier(titre: carte.titre),
-      constructeur: (BuildContext _) => FeuilleCarteClasse(
-        groupeId: widget.groupeId,
-        carte: carte,
-        prochaineSeance: widget.prochaineSeance,
+      constructeur: (BuildContext _) => UncontrolledProviderScope(
+        container: conteneur,
+        child: FeuilleCarteClasse(
+          groupeId: widget.groupeId,
+          carte: carte,
+          prochaineSeance: widget.prochaineSeance,
+        ),
       ),
     );
     if (!mounted || retour == null) return;
@@ -206,12 +217,17 @@ class _Contenu extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         if (vue.peutModifier) ...<Widget>[
+          // Une phrase de l'interface encore en francais dans l'interface
+          // arabe : isolee, elle garde son point a la fin (revue
+          // CARTES-PERSO-1, comme les mots de l'enseignant).
           Text(
-            modifiable
-                ? (cartes.isEmpty
-                      ? t.classe.cartes.aucuneEnseignant
-                      : t.classe.cartes.contexteEnseignant)
-                : t.classe.cartes.modificationPlusTard,
+            isolerSens(
+              modifiable
+                  ? (cartes.isEmpty
+                        ? t.classe.cartes.aucuneEnseignant
+                        : t.classe.cartes.contexteEnseignant)
+                  : t.classe.cartes.modificationPlusTard,
+            ),
             style: textes.bodyMedium,
           ),
           if (cartes.isNotEmpty) Ecart.vLg,
@@ -241,7 +257,9 @@ class _Contenu extends StatelessWidget {
             )
           else
             Text(
-              t.classe.cartes.limite(max: BornesCarteClasse.cartesMax),
+              isolerSens(
+                t.classe.cartes.limite(max: BornesCarteClasse.cartesMax),
+              ),
               style: textes.bodySmall,
             ),
         ],

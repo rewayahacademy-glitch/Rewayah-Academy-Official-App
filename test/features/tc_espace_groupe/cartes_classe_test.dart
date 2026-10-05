@@ -369,7 +369,10 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.text(t.classe.cartes.aucuneEnseignant), findsOneWidget);
+      expect(
+        find.text(isolerSens(t.classe.cartes.aucuneEnseignant)),
+        findsOneWidget,
+      );
       expect(find.byKey(BlocCartesClasse.ajouterKey), findsOneWidget);
     });
 
@@ -436,7 +439,10 @@ void main() {
       )) {
         expect(carte.onPress, isNull);
       }
-      expect(find.text(t.classe.cartes.contexteEnseignant), findsNothing);
+      expect(
+        find.text(isolerSens(t.classe.cartes.contexteEnseignant)),
+        findsNothing,
+      );
       expect(find.byKey(BlocCartesClasse.ajouterKey), findsNothing);
       final Finder copier = find.widgetWithText(
         LienFleche,
@@ -462,7 +468,10 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.text(t.classe.cartes.contexteEnseignant), findsOneWidget);
+      expect(
+        find.text(isolerSens(t.classe.cartes.contexteEnseignant)),
+        findsOneWidget,
+      );
       for (final AppCard carte in tester.widgetList<AppCard>(
         find.byType(AppCard),
       )) {
@@ -516,7 +525,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(BlocCartesClasse.ajouterKey), findsNothing);
       expect(
-        find.text(t.classe.cartes.limite(max: BornesCarteClasse.cartesMax)),
+        find.text(
+          isolerSens(t.classe.cartes.limite(max: BornesCarteClasse.cartesMax)),
+        ),
         findsOneWidget,
       );
     });
@@ -558,7 +569,10 @@ void main() {
         expect(carte.onPress, isNull);
       }
       expect(find.byKey(BlocCartesClasse.ajouterKey), findsNothing);
-      expect(find.text(t.classe.cartes.modificationPlusTard), findsOneWidget);
+      expect(
+        find.text(isolerSens(t.classe.cartes.modificationPlusTard)),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Interface guidee : titre et texte, sans le modele ; le lien '
@@ -633,7 +647,10 @@ void main() {
         'et la classe le voit', (WidgetTester tester) async {
       await ouvrir(tester, titre: 'Récitation modèle');
       expect(find.byType(FeuilleCarteClasse), findsOneWidget);
-      expect(find.text(t.classe.cartes.feuille.contexte), findsOneWidget);
+      expect(
+        find.text(isolerSens(t.classe.cartes.feuille.contexte)),
+        findsOneWidget,
+      );
       verifierUnSeulBoutonPlein(tester);
       await tester.enterText(
         find.byKey(FeuilleCarteClasse.titreKey),
@@ -711,7 +728,9 @@ void main() {
       await tester.tap(find.byKey(FeuilleCarteClasse.enregistrerKey));
       await tester.pumpAndSettle();
       expect(
-        find.text(t.classe.cartes.feuille.defauts.echeanceManquante),
+        find.text(
+          isolerSens(t.classe.cartes.feuille.defauts.echeanceManquante),
+        ),
         findsOneWidget,
       );
     });
@@ -785,7 +804,7 @@ void main() {
       await tester.tap(find.byKey(FeuilleCarteClasse.enregistrerKey));
       await tester.pumpAndSettle();
       expect(
-        find.text(t.classe.cartes.feuille.envoiNonConfirme),
+        find.text(isolerSens(t.classe.cartes.feuille.envoiNonConfirme)),
         findsOneWidget,
       );
     });
@@ -858,11 +877,83 @@ void main() {
     }
   });
 
+  group('sens de lecture des phrases de l interface', () {
+    setUpAll(chargerPolicesDuDepot);
+
+    // Revue CARTES-PERSO-1 : en RTL, « familles la voient .aussitôt ». Les
+    // phrases de l'interface encore en francais sont isolees comme les mots
+    // de l'enseignant ; isolees, elles gardent leur point a la fin.
+    for (final (
+          String nom,
+          List<CarteClasse> cartes,
+          bool horsLigne,
+          String Function() phrase,
+        )
+        in <(String, List<CarteClasse>, bool, String Function())>[
+          (
+            'contexte',
+            _troisCartes(),
+            false,
+            () => t.classe.cartes.contexteEnseignant,
+          ),
+          (
+            'aucune carte',
+            <CarteClasse>[],
+            false,
+            () => t.classe.cartes.aucuneEnseignant,
+          ),
+          (
+            'hors ligne',
+            _troisCartes(),
+            true,
+            () => t.classe.cartes.modificationPlusTard,
+          ),
+        ]) {
+      testWidgets('enseignant, rtl : $nom isole', (WidgetTester tester) async {
+        _taille(tester, const Size(390, 2400));
+        await tester.pumpWidget(
+          _hote(
+            const BlocCartesClasse(groupeId: _id),
+            surcharges: _demo(peutModifier: true, cartes: cartes),
+            sens: TextDirection.rtl,
+            horsLigne: horsLigne,
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(find.text(isolerSens(phrase())), findsOneWidget);
+        expect(find.text(phrase()), findsNothing);
+      });
+    }
+
+    testWidgets('feuille, rtl : la phrase de contexte isolee', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(390, 2400));
+      await tester.pumpWidget(
+        _hote(
+          const FeuilleCarteClasse(groupeId: _id),
+          surcharges: _demo(peutModifier: true),
+          sens: TextDirection.rtl,
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.text(isolerSens(t.classe.cartes.feuille.contexte)),
+        findsOneWidget,
+      );
+      expect(find.text(t.classe.cartes.feuille.contexte), findsNothing);
+    });
+  });
+
   group('demonstration', () {
     setUpAll(chargerPolicesDuDepot);
 
-    Future<void> monter(WidgetTester tester, String adresse) async {
-      _taille(tester, const Size(390, 5200));
+    Future<void> monter(
+      WidgetTester tester,
+      String adresse, {
+      Size taille = const Size(390, 5200),
+    }) async {
+      _taille(tester, taille);
       final GoRouter routeur = GoRouter(
         initialLocation: adresse,
         routes: routesDemoClasse('dev'),
@@ -904,7 +995,81 @@ void main() {
       );
       expect(find.byType(BlocCartesClasse), findsOneWidget);
       expect(find.byKey(BlocCartesClasse.ajouterKey), findsOneWidget);
-      expect(find.text(t.classe.cartes.contexteEnseignant), findsOneWidget);
+      expect(
+        find.text(isolerSens(t.classe.cartes.contexteEnseignant)),
+        findsOneWidget,
+      );
     });
+
+    // Revue CARTES-PERSO-1 : la feuille vit sur le Navigator du routeur,
+    // au-dessus du `ProviderScope` imbrique de la demonstration. Sur la
+    // VRAIE page, l'enregistrement et le retrait doivent aboutir.
+    for (final Size taille in const <Size>[Size(390, 5200), Size(1440, 5200)]) {
+      final String l = '${taille.width.toInt()}';
+      testWidgets('Espace Classe enseignant, $l : une carte touchee '
+          's enregistre', (WidgetTester tester) async {
+        await monter(
+          tester,
+          adresseDemoClasse(RoleEntree.enseignant, EtatDemoClasse.aVenir),
+          taille: taille,
+        );
+        await tester.ensureVisible(_cartes.first);
+        await tester.pumpAndSettle();
+        await tester.tap(_cartes.first);
+        await tester.pumpAndSettle();
+        expect(find.byType(FeuilleCarteClasse), findsOneWidget);
+        await tester.enterText(
+          find.byKey(FeuilleCarteClasse.titreKey),
+          'Réviser la sourate Quraysh',
+        );
+        await tester.ensureVisible(
+          find.byKey(FeuilleCarteClasse.enregistrerKey),
+        );
+        await tester.tap(find.byKey(FeuilleCarteClasse.enregistrerKey));
+        await tester.pumpAndSettle();
+        expect(
+          find.text(isolerSens(t.classe.cartes.feuille.envoiNonConfirme)),
+          findsNothing,
+        );
+        expect(find.byType(FeuilleCarteClasse), findsNothing);
+        expect(
+          find.text(texteAffiche('Réviser la sourate Quraysh')),
+          findsOneWidget,
+        );
+        expect(find.text(t.classe.cartes.enregistree), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+
+      testWidgets('Espace Classe enseignant, $l : une carte se retire', (
+        WidgetTester tester,
+      ) async {
+        await monter(
+          tester,
+          adresseDemoClasse(RoleEntree.enseignant, EtatDemoClasse.aVenir),
+          taille: taille,
+        );
+        final String titre = texteAffiche('Pas de séance pendant les vacances');
+        await tester.ensureVisible(find.text(titre));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(titre));
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(find.byKey(FeuilleCarteClasse.retirerKey));
+        await tester.tap(find.byKey(FeuilleCarteClasse.retirerKey));
+        await tester.pumpAndSettle();
+        await tester.tap(
+          find.text(t.classe.cartes.feuille.retirerConfirmer).last,
+        );
+        await tester.pumpAndSettle();
+        expect(
+          find.text(isolerSens(t.classe.cartes.feuille.retraitNonConfirme)),
+          findsNothing,
+        );
+        expect(find.byType(FeuilleCarteClasse), findsNothing);
+        expect(find.text(titre), findsNothing);
+        expect(_cartes, findsNWidgets(2));
+        expect(find.text(t.classe.cartes.retiree), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+    }
   });
 }
