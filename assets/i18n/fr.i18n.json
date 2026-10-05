@@ -5398,7 +5398,7 @@
       "sousTitre": "Que dois-je faire maintenant ?",
       "attention": "À traiter et alertes",
       "aTraiter": "À traiter aujourd'hui",
-      "aTraiterHorsPaiements": "À traiter, hors paiements",
+      "aTraiterHorsPaiements": "Autres tâches",
       "alertes": "Alertes",
       "echeances": "Échéances proches",
       "prestataires": "Prestataires",
@@ -5731,7 +5731,7 @@
       "journalVide": "Aucune opération enregistrée pour cet encaissement.",
       "rap": {
         "vueTransactions": "À rapprocher",
-        "vueRemboursements": "Remboursements et avoirs",
+        "vueRemboursements": "Remboursements",
         "natPaiementAttendu": "Paiement attendu",
         "natTransaction": "Transaction prestataire",
         "natMensualite": "Solde ou mensualité",

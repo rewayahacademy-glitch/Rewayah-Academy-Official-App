@@ -12223,8 +12223,8 @@ class Traductions$comptable$aujourdhui$fr {
 	/// fr: 'À traiter aujourd'hui'
 	String get aTraiter => 'À traiter aujourd\'hui';
 
-	/// fr: 'À traiter, hors paiements'
-	String get aTraiterHorsPaiements => 'À traiter, hors paiements';
+	/// fr: 'Autres tâches'
+	String get aTraiterHorsPaiements => 'Autres tâches';
 
 	/// fr: 'Alertes'
 	String get alertes => 'Alertes';
@@ -18915,8 +18915,8 @@ class Traductions$comptable$encaissements$rap$fr {
 	/// fr: 'À rapprocher'
 	String get vueTransactions => 'À rapprocher';
 
-	/// fr: 'Remboursements et avoirs'
-	String get vueRemboursements => 'Remboursements et avoirs';
+	/// fr: 'Remboursements'
+	String get vueRemboursements => 'Remboursements';
 
 	/// fr: 'Paiement attendu'
 	String get natPaiementAttendu => 'Paiement attendu';
@@ -24730,7 +24730,7 @@ extension on Traductions {
 			'comptable.aujourdhui.sousTitre' => 'Que dois-je faire maintenant ?',
 			'comptable.aujourdhui.attention' => 'À traiter et alertes',
 			'comptable.aujourdhui.aTraiter' => 'À traiter aujourd\'hui',
-			'comptable.aujourdhui.aTraiterHorsPaiements' => 'À traiter, hors paiements',
+			'comptable.aujourdhui.aTraiterHorsPaiements' => 'Autres tâches',
 			'comptable.aujourdhui.alertes' => 'Alertes',
 			'comptable.aujourdhui.echeances' => 'Échéances proches',
 			'comptable.aujourdhui.prestataires' => 'Prestataires',
@@ -25014,7 +25014,7 @@ extension on Traductions {
 			'comptable.encaissements.journal' => 'Journal de l\'encaissement',
 			'comptable.encaissements.journalVide' => 'Aucune opération enregistrée pour cet encaissement.',
 			'comptable.encaissements.rap.vueTransactions' => 'À rapprocher',
-			'comptable.encaissements.rap.vueRemboursements' => 'Remboursements et avoirs',
+			'comptable.encaissements.rap.vueRemboursements' => 'Remboursements',
 			'comptable.encaissements.rap.natPaiementAttendu' => 'Paiement attendu',
 			'comptable.encaissements.rap.natTransaction' => 'Transaction prestataire',
 			'comptable.encaissements.rap.natMensualite' => 'Solde ou mensualité',
