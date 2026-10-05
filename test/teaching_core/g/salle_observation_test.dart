@@ -1137,23 +1137,36 @@ void main() {
           (Size(320, 568), 1.3, InterfaceMode.standard),
           (Size(390, 844), 1.3, InterfaceMode.enfant),
           (Size(360, 800), 1.3, InterfaceMode.standard),
+          // PAGESHELL-200-1d : 320 px a 200 %.
+          (Size(320, 568), 2, InterfaceMode.standard),
+          (Size(320, 568), 2, InterfaceMode.enfant),
         ]) {
-      testWidgets('${cas.$1.width.toInt()}x${cas.$1.height.toInt()}, texte '
-          'x${cas.$2}, ${cas.$3.name}', (WidgetTester tester) async {
-        final _Salle salle = await _entrerEnSalle(
-          tester,
-          taille: cas.$1,
-          echelleTexte: cas.$2,
-          interface: cas.$3,
-        );
-        _publierParticipants(salle.moteur);
-        await tester.pumpAndSettle();
-        expect(tester.takeException(), isNull);
-        final Finder bandeau = find.byType(BandeauDecompteVisite);
-        // Ni lettre par ligne : le bandeau garde une hauteur de bandeau.
-        expect(tester.getSize(bandeau).height, lessThan(cas.$1.height / 2));
-        verifierAucunMotCoupe(tester, bandeau);
-      });
+      // PAGESHELL-200-1d : en LTR et en RTL.
+      for (final TextDirection sens in TextDirection.values) {
+        testWidgets('${cas.$1.width.toInt()}x${cas.$1.height.toInt()}, texte '
+            'x${cas.$2}, ${cas.$3.name}, ${sens.name}', (
+          WidgetTester tester,
+        ) async {
+          final _Salle salle = await _entrerEnSalle(
+            tester,
+            taille: cas.$1,
+            echelleTexte: cas.$2,
+            interface: cas.$3,
+            sens: sens,
+          );
+          _publierParticipants(salle.moteur);
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          final Finder bandeau = find.byType(BandeauDecompteVisite);
+          // Ni lettre par ligne : le bandeau garde une hauteur de bandeau
+          // (a 200 %, il empile decompte et visites sur plusieurs lignes ;
+          // seul le controle des mots coupes vaut).
+          if (cas.$2 < 2) {
+            expect(tester.getSize(bandeau).height, lessThan(cas.$1.height / 2));
+          }
+          verifierAucunMotCoupe(tester, bandeau);
+        });
+      }
     }
   });
   group('PAGESHELL-200-1c : 667x375 sans zone sure, a 200 %', () {
