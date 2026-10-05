@@ -713,7 +713,9 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
             ? () => unawaited(_voirRoster(roster))
             : null,
       ),
-      bandeau: enImpasse ? null : const PermanentNotice(),
+      bandeau: enImpasse
+          ? null
+          : const EncreDeLaSalle(child: PermanentNotice()),
       commandes: enImpasse || enAttente
           ? null
           : _Commandes(

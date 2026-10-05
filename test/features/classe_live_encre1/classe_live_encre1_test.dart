@@ -8,11 +8,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 
+import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
+
 import '../../capture/outil_capture.dart' show fixerVueCapture, stabiliser;
 import '../../theme/support/contraste.dart';
 import '../ens_pays1/support_ens_pays1.dart';
 
 void main() {
+  mainBandeau();
   for (final (Size taille, double echelle, String nom)
       in <(Size, double, String)>[
         (const Size(390, 844), 1, '390'),
@@ -44,5 +47,38 @@ void main() {
         );
       });
     }
+  }
+}
+
+/// Le bandeau permanent (PermanentNotice) sur le fond de la salle.
+void mainBandeau() {
+  for (final ThemeMode mode in <ThemeMode>[ThemeMode.light, ThemeMode.dark]) {
+    testWidgets('bandeau permanent : encre lisible sur le fond, ${mode.name}', (
+      WidgetTester tester,
+    ) async {
+      fixerVueCapture(tester, const Size(390, 844), 1);
+      await tester.pumpWidget(hotePays(classeLiveTuteur(), theme: mode));
+      await stabiliser(tester);
+
+      final Finder texte = find.descendant(
+        of: find.byType(PermanentNotice),
+        matching: find.byType(RichText),
+      );
+      final Color fond = tester
+          .widget<Scaffold>(find.byType(Scaffold).first)
+          .backgroundColor!;
+      int mesures = 0;
+      for (final Element e in texte.evaluate()) {
+        final Color? encre = (e.widget as RichText).text.style?.color;
+        if (encre == null) continue;
+        mesures++;
+        expect(
+          contraste(encre, fond),
+          greaterThanOrEqualTo(seuilTexte),
+          reason: 'bandeau : encre $encre sur fond $fond',
+        );
+      }
+      expect(mesures, greaterThan(0));
+    });
   }
 }
