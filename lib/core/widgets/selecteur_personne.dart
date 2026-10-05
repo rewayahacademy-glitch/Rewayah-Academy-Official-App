@@ -238,7 +238,12 @@ class _SelecteurPersonneEtat extends State<SelecteurPersonne> {
                   cle: ValueKey<String>('personne-${p.id}'),
                   valeur: p.id,
                   libelle: p.nom,
-                  description: p.identifiant == p.nom ? null : p.identifiant,
+                  // Tirets insecables a l'affichage seulement : « ELV- / MS-010 »
+                  // a 320 en texte x2 (FORM-MINEURS). La valeur et la recherche
+                  // gardent l'identifiant tel quel.
+                  description: p.identifiant == p.nom
+                      ? null
+                      : p.identifiant.replaceAll('-', '\u2011'),
                 ),
             ],
             onChange: (ReponseChoix reponse) {

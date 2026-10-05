@@ -157,6 +157,14 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
 
   Widget _carteOption(OptionChoix option, {required bool verticale}) => _Carte(
     key: option.cle,
+    // Cartes empilees de meme largeur : titres et descriptions gardent la meme
+    // taille d'une carte a l'autre (COUPE-MOTS-1 point 6).
+    voisinsLibelle: verticale
+        ? const <String>[]
+        : <String>[for (final OptionChoix o in widget.options) o.libelle],
+    voisinsDescription: verticale
+        ? const <String>[]
+        : <String>[for (final OptionChoix o in widget.options) ?o.description],
     libelle: option.libelle,
     icone: option.icone,
     description: option.description,
@@ -241,7 +249,13 @@ class _Carte extends StatelessWidget {
     this.description,
     this.raisonIndisponible,
     this.verticale = false,
+    this.voisinsLibelle = const <String>[],
+    this.voisinsDescription = const <String>[],
   });
+
+  /// Les titres et descriptions des cartes voisines (meme largeur).
+  final List<String> voisinsLibelle;
+  final List<String> voisinsDescription;
 
   /// Vrai pour la disposition cote a cote : contenu centre, icone dans un
   /// disque au-dessus du titre, radio (ou coche) en haut a droite.
@@ -354,6 +368,7 @@ class _Carte extends StatelessWidget {
                                 // (FORM-MINEURS) ; l'echelle se reduit juste assez.
                                 TexteSansCoupure(
                                   libelle,
+                                  voisins: voisinsLibelle,
                                   style: _disponible
                                       ? paire.applyTo(
                                           textes.titleMedium ??
@@ -366,7 +381,12 @@ class _Carte extends StatelessWidget {
                                 ),
                                 if (description != null) ...<Widget>[
                                   Ecart.vXs,
-                                  Text(description!, style: styleSecondaire),
+                                  // Sans coupure : « ELV- / MS-010 » a 320 en texte x2 (FORM-MINEURS).
+                                  TexteSansCoupure(
+                                    description!,
+                                    voisins: voisinsDescription,
+                                    style: styleSecondaire,
+                                  ),
                                 ],
                                 if (raisonIndisponible != null) ...<Widget>[
                                   Ecart.vSm,

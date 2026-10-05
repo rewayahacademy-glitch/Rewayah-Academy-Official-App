@@ -98,7 +98,7 @@ void main() {
       expect(_carte('e-mariam'), findsNothing);
       // Le nom et l'identifiant immuable, jamais l'identifiant technique.
       expect(find.text('Amina Diallo'), findsWidgets);
-      expect(find.text('ENS-AD-001'), findsOneWidget);
+      expect(find.text('ENS\u2011AD\u2011001'), findsOneWidget);
       expect(find.text('t-amina'), findsNothing);
     });
 
