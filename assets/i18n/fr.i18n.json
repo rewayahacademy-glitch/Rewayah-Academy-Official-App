@@ -4771,6 +4771,7 @@
           "erreur": "Vérifiez votre connexion, puis réessayez.",
           "reessayer": "Réessayer",
           "horsLigne": "Vous êtes hors ligne. Les nouveaux messages ne peuvent pas être actualisés.",
+          "horsLigneBloc": "Réessayez quand la connexion revient.",
           "indisponibleTitre": "Pas encore disponible",
           "indisponible": "Cette fonction n'est pas encore disponible ici. Elle s'ouvrira dès que le service sera prêt.",
           "permissionRefusee": "Vous n'avez pas accès à ce contenu."
@@ -5407,6 +5408,7 @@
           "nouvelle": "Nouvelle annonce",
           "demo": "Démonstration",
           "demoDetail": "Données de démonstration : aucun chiffre réel.",
+          "horsLigne": "Vous êtes hors ligne. Les annonces ne peuvent pas être actualisées.",
           "indicateurs": {
             "titre": "Indicateurs des communications",
             "publiees": "Annonces publiées",
@@ -5459,6 +5461,7 @@
             "restaure": "Restauré",
             "enregistree": "Décision enregistrée.",
             "nonConfirmee": "Cette décision n'est pas encore confirmée. Vérifiez la connexion, puis réessayez.",
+            "horsLigne": "Vous êtes hors ligne. La file de modération ne peut pas être actualisée.",
             "indisponible": "La modération n'est pas encore disponible. Revenez plus tard.",
             "videTitre": "Aucun contenu à examiner",
             "vide": "Les signalements de la Communauté enseignants arrivent ici.",

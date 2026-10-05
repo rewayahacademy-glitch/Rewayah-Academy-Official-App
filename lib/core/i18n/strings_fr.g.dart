@@ -16956,6 +16956,9 @@ class Traductions$com$annonces$administration$fr {
 	/// fr: 'Données de démonstration : aucun chiffre réel.'
 	String get demoDetail => 'Données de démonstration : aucun chiffre réel.';
 
+	/// fr: 'Vous êtes hors ligne. Les annonces ne peuvent pas être actualisées.'
+	String get horsLigne => 'Vous êtes hors ligne. Les annonces ne peuvent pas être actualisées.';
+
 	late final Traductions$com$annonces$administration$indicateurs$fr indicateurs = Traductions$com$annonces$administration$indicateurs$fr.internal(_root);
 	late final Traductions$com$annonces$administration$publiees$fr publiees = Traductions$com$annonces$administration$publiees$fr.internal(_root);
 	late final Traductions$com$annonces$administration$planifiees$fr planifiees = Traductions$com$annonces$administration$planifiees$fr.internal(_root);
@@ -17695,6 +17698,9 @@ class Traductions$com$socle$composants$etats$fr {
 	/// fr: 'Vous êtes hors ligne. Les nouveaux messages ne peuvent pas être actualisés.'
 	String get horsLigne => 'Vous êtes hors ligne. Les nouveaux messages ne peuvent pas être actualisés.';
 
+	/// fr: 'Réessayez quand la connexion revient.'
+	String get horsLigneBloc => 'Réessayez quand la connexion revient.';
+
 	/// fr: 'Pas encore disponible'
 	String get indisponibleTitre => 'Pas encore disponible';
 
@@ -18291,6 +18297,9 @@ class Traductions$com$annonces$administration$moderation$fr {
 
 	/// fr: 'Cette décision n'est pas encore confirmée. Vérifiez la connexion, puis réessayez.'
 	String get nonConfirmee => 'Cette décision n\'est pas encore confirmée. Vérifiez la connexion, puis réessayez.';
+
+	/// fr: 'Vous êtes hors ligne. La file de modération ne peut pas être actualisée.'
+	String get horsLigne => 'Vous êtes hors ligne. La file de modération ne peut pas être actualisée.';
 
 	/// fr: 'La modération n'est pas encore disponible. Revenez plus tard.'
 	String get indisponible => 'La modération n\'est pas encore disponible. Revenez plus tard.';
@@ -22554,6 +22563,7 @@ extension on Traductions {
 			'com.socle.composants.etats.erreur' => 'Vérifiez votre connexion, puis réessayez.',
 			'com.socle.composants.etats.reessayer' => 'Réessayer',
 			'com.socle.composants.etats.horsLigne' => 'Vous êtes hors ligne. Les nouveaux messages ne peuvent pas être actualisés.',
+			'com.socle.composants.etats.horsLigneBloc' => 'Réessayez quand la connexion revient.',
 			'com.socle.composants.etats.indisponibleTitre' => 'Pas encore disponible',
 			'com.socle.composants.etats.indisponible' => 'Cette fonction n\'est pas encore disponible ici. Elle s\'ouvrira dès que le service sera prêt.',
 			'com.socle.composants.etats.permissionRefusee' => 'Vous n\'avez pas accès à ce contenu.',
@@ -22632,9 +22642,9 @@ extension on Traductions {
 			'com.messages.entree.ecrireA' => ({required Object nom}) => 'Écrire à ${nom}',
 			'com.messages.entree.conversationAvec' => ({required Object nom}) => 'Conversation avec ${nom}',
 			'com.messages.entree.voirTout' => 'Voir toutes les conversations',
-			'com.messages.entree.toutes' => 'Toutes vos conversations',
 			_ => null,
 		} ?? switch (path) {
+			'com.messages.entree.toutes' => 'Toutes vos conversations',
 			'com.messages.entree.aLireUne' => '1 conversation à lire',
 			'com.messages.entree.aLire' => ({required Object nombre}) => '${nombre} conversations à lire',
 			'com.messages.entree.ouverture' => 'Ouverture de la conversation',
@@ -23061,6 +23071,7 @@ extension on Traductions {
 			'com.annonces.administration.nouvelle' => 'Nouvelle annonce',
 			'com.annonces.administration.demo' => 'Démonstration',
 			'com.annonces.administration.demoDetail' => 'Données de démonstration : aucun chiffre réel.',
+			'com.annonces.administration.horsLigne' => 'Vous êtes hors ligne. Les annonces ne peuvent pas être actualisées.',
 			'com.annonces.administration.indicateurs.titre' => 'Indicateurs des communications',
 			'com.annonces.administration.indicateurs.publiees' => 'Annonces publiées',
 			'com.annonces.administration.indicateurs.planifiees' => 'Annonces planifiées',
@@ -23104,6 +23115,7 @@ extension on Traductions {
 			'com.annonces.administration.moderation.restaure' => 'Restauré',
 			'com.annonces.administration.moderation.enregistree' => 'Décision enregistrée.',
 			'com.annonces.administration.moderation.nonConfirmee' => 'Cette décision n\'est pas encore confirmée. Vérifiez la connexion, puis réessayez.',
+			'com.annonces.administration.moderation.horsLigne' => 'Vous êtes hors ligne. La file de modération ne peut pas être actualisée.',
 			'com.annonces.administration.moderation.indisponible' => 'La modération n\'est pas encore disponible. Revenez plus tard.',
 			'com.annonces.administration.moderation.videTitre' => 'Aucun contenu à examiner',
 			'com.annonces.administration.moderation.vide' => 'Les signalements de la Communauté enseignants arrivent ici.',
@@ -23144,11 +23156,11 @@ extension on Traductions {
 			'com.annonces.demoPublication.recitationTitre' => 'Récitation de fin de trimestre',
 			'com.annonces.demoPublication.recitationTexte' => 'La Classe An-Nour présentera sa récitation de fin de trimestre samedi à 10 h, en visio.',
 			'com.annonces.demoPublication.rentreeTitre' => 'Reprise des cours après les vacances',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demoPublication.rentreeTexte' => 'Les séances reprennent le lundi 6 janvier aux horaires habituels.',
 			'com.annonces.demoPublication.signalementAffilie' => 'Publication « Fiches de tajwid à imprimer »',
 			'com.annonces.demoPublication.extraitAffilie' => 'Retrouvez mes fiches avec ce lien partenaire, remise de 20 % avec mon code.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demoPublication.signalementVente' => 'Publication « Cours particuliers disponibles »',
 			'com.annonces.demoPublication.extraitVente' => 'Je propose des cours particuliers payants le week-end, écrivez-moi.',
 			'com.annonces.demoPublication.signalementHorsSujet' => 'Réponse sous « Organiser une révision collective »',

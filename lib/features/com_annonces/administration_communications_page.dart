@@ -139,7 +139,13 @@ class _AdministrationCommunicationsPageState
     return LayoutBuilder(
       builder: (BuildContext contexte, BoxConstraints contraintes) => PageShell(
         // D-FUS-3 : seul le bandeau hors ligne des Communications.
-        bandeauHorsLigne: const BandeauHorsLigneCommunication(),
+        // COM-R-4 8.3-2 : la phrase propre a l'onglet, pas « nouveaux
+        // messages ».
+        bandeauHorsLigne: BandeauHorsLigneCommunication(
+          message: widget.onglet == OngletCommunications.moderation
+              ? t.com.annonces.administration.moderation.horsLigne
+              : t.com.annonces.administration.horsLigne,
+        ),
         titre: titreAdministrationCommunications(
           contexte,
           largeurPage: contraintes.maxWidth,
@@ -598,7 +604,9 @@ class ChargementPublieur extends ConsumerWidget {
       titre: titre,
       onRetour: onQuitter,
       // D-FUS-3 : seul le bandeau hors ligne des Communications.
-      bandeauHorsLigne: const BandeauHorsLigneCommunication(),
+      bandeauHorsLigne: BandeauHorsLigneCommunication(
+        message: t.com.annonces.administration.horsLigne,
+      ),
       child: corps,
     );
   }

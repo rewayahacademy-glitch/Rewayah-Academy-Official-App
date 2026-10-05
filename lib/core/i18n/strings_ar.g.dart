@@ -1454,6 +1454,7 @@ class _Traductions$com$annonces$administration$ar extends Traductions$com$annonc
 	@override String get nouvelle => 'إعلان جديد';
 	@override String get demo => 'عرض تجريبي';
 	@override String get demoDetail => 'بيانات تجريبية : لا رقم حقيقي.';
+	@override String get horsLigne => 'أنت غير متصل. لا يمكن تحديث الإعلانات.';
 	@override late final _Traductions$com$annonces$administration$indicateurs$ar indicateurs = _Traductions$com$annonces$administration$indicateurs$ar._(_root);
 	@override late final _Traductions$com$annonces$administration$publiees$ar publiees = _Traductions$com$annonces$administration$publiees$ar._(_root);
 	@override late final _Traductions$com$annonces$administration$planifiees$ar planifiees = _Traductions$com$annonces$administration$planifiees$ar._(_root);
@@ -1609,6 +1610,7 @@ class _Traductions$com$socle$composants$etats$ar extends Traductions$com$socle$c
 	@override String get erreur => 'تحقّق من اتصالك ثم أعد المحاولة.';
 	@override String get reessayer => 'إعادة المحاولة';
 	@override String get horsLigne => 'أنت غير متصل. لا يمكن تحديث الرسائل الجديدة.';
+	@override String get horsLigneBloc => 'أعد المحاولة عند عودة الاتصال.';
 	@override String get indisponibleTitre => 'غير متاح بعد';
 	@override String get indisponible => 'هذه الميزة غير متاحة هنا بعد. ستُفتح حين تصبح الخدمة جاهزة.';
 	@override String get permissionRefusee => 'ليس لديك صلاحية الوصول إلى هذا المحتوى.';
@@ -1940,6 +1942,7 @@ class _Traductions$com$annonces$administration$moderation$ar extends Traductions
 	@override String get restaure => 'مستعاد';
 	@override String get enregistree => 'سُجل القرار.';
 	@override String get nonConfirmee => 'لم يُؤكَّد هذا القرار بعد. تحقق من الاتصال ثم أعد المحاولة.';
+	@override String get horsLigne => 'أنت غير متصل. لا يمكن تحديث قائمة الإشراف.';
 	@override String get indisponible => 'الإشراف غير متاح بعد. عد لاحقًا.';
 	@override String get videTitre => 'لا يوجد محتوى للفحص';
 	@override String get vide => 'تصل هنا بلاغات مجتمع المعلمين.';
@@ -2291,6 +2294,7 @@ extension on TraductionsAr {
 			'com.socle.composants.etats.erreur' => 'تحقّق من اتصالك ثم أعد المحاولة.',
 			'com.socle.composants.etats.reessayer' => 'إعادة المحاولة',
 			'com.socle.composants.etats.horsLigne' => 'أنت غير متصل. لا يمكن تحديث الرسائل الجديدة.',
+			'com.socle.composants.etats.horsLigneBloc' => 'أعد المحاولة عند عودة الاتصال.',
 			'com.socle.composants.etats.indisponibleTitre' => 'غير متاح بعد',
 			'com.socle.composants.etats.indisponible' => 'هذه الميزة غير متاحة هنا بعد. ستُفتح حين تصبح الخدمة جاهزة.',
 			'com.socle.composants.etats.permissionRefusee' => 'ليس لديك صلاحية الوصول إلى هذا المحتوى.',
@@ -2560,9 +2564,9 @@ extension on TraductionsAr {
 			'com.communaute.signalement.motifManquant' => 'اختر سببًا لإرسال البلاغ.',
 			'com.communaute.composer.nouvelle' => 'منشور جديد',
 			'com.communaute.composer.contexte' => 'شارك سؤالًا أو طريقة أو موردًا مفيدًا للتعليم.',
-			'com.communaute.composer.categorie' => 'الفئة',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.composer.categorie' => 'الفئة',
 			'com.communaute.composer.categorieManquante' => 'اختر فئة للنشر.',
 			'com.communaute.composer.champTitre' => 'العنوان',
 			'com.communaute.composer.aideTitre' => 'الموضوع في كلمات قليلة',
@@ -2798,6 +2802,7 @@ extension on TraductionsAr {
 			'com.annonces.administration.nouvelle' => 'إعلان جديد',
 			'com.annonces.administration.demo' => 'عرض تجريبي',
 			'com.annonces.administration.demoDetail' => 'بيانات تجريبية : لا رقم حقيقي.',
+			'com.annonces.administration.horsLigne' => 'أنت غير متصل. لا يمكن تحديث الإعلانات.',
 			'com.annonces.administration.indicateurs.titre' => 'مؤشرات التواصل',
 			'com.annonces.administration.indicateurs.publiees' => 'الإعلانات المنشورة',
 			'com.annonces.administration.indicateurs.planifiees' => 'الإعلانات المبرمجة',
@@ -2841,6 +2846,7 @@ extension on TraductionsAr {
 			'com.annonces.administration.moderation.restaure' => 'مستعاد',
 			'com.annonces.administration.moderation.enregistree' => 'سُجل القرار.',
 			'com.annonces.administration.moderation.nonConfirmee' => 'لم يُؤكَّد هذا القرار بعد. تحقق من الاتصال ثم أعد المحاولة.',
+			'com.annonces.administration.moderation.horsLigne' => 'أنت غير متصل. لا يمكن تحديث قائمة الإشراف.',
 			'com.annonces.administration.moderation.indisponible' => 'الإشراف غير متاح بعد. عد لاحقًا.',
 			'com.annonces.administration.moderation.videTitre' => 'لا يوجد محتوى للفحص',
 			'com.annonces.administration.moderation.vide' => 'تصل هنا بلاغات مجتمع المعلمين.',

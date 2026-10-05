@@ -347,8 +347,11 @@ class _PublieurAnnonceState extends ConsumerState<PublieurAnnonce> {
         if (!fait) _retour();
       },
       child: PageEtape(
-        // D-FUS-3 : seul le bandeau hors ligne des Communications.
-        bandeauHorsLigne: const BandeauHorsLigneCommunication(),
+        // D-FUS-3 : seul le bandeau hors ligne des Communications, avec la
+        // phrase des annonces (COM-R-4 8.3-2).
+        bandeauHorsLigne: BandeauHorsLigneCommunication(
+          message: t.com.annonces.administration.horsLigne,
+        ),
         numero: _rang + 1,
         total: _etapes.length,
         onRetour: _retour,

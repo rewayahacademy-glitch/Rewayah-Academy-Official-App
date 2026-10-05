@@ -817,5 +817,8 @@
   "com.socle.composants.lecture.vocal": "revue croisee COM-R du 05/10 (R-07) ; texte inchange, repris de com.messages.fil.vocal et com.studio.canal.vocal (COM-VOC), regroupe dans le socle par COM-RC",
   "com.socle.composants.lecture.vocalSansDuree": "revue croisee COM-R du 05/10 (R-07) ; texte inchange, repris de com.messages.fil.vocalSansDuree et com.studio.canal.vocalSansDuree (COM-VOC), regroupe dans le socle par COM-RC",
   "commun.recherche.effacer": "revue croisee COM-R du 05/10 (R-07) ; texte inchange, repris de com.messages.recherche.effacer et com.studio.recherche.effacer (spec V1 section 18), commun a ChampRecherche par COM-RC",
-  "commun.recherche.fermer": "revue croisee COM-R du 05/10 (R-07) ; texte inchange, repris de com.messages.recherche.fermer, com.studio.recherche.fermer et com.communaute.recherche.fermer (spec V1 section 18), commun a SurfaceRecherche par COM-RC"
+  "commun.recherche.fermer": "revue croisee COM-R du 05/10 (R-07) ; texte inchange, repris de com.messages.recherche.fermer, com.studio.recherche.fermer et com.communaute.recherche.fermer (spec V1 section 18), commun a SurfaceRecherche par COM-RC",
+  "com.socle.composants.etats.horsLigneBloc": "COM-RC tour 6, contre-verification COM-R-4 8.3-2 (un seul message hors ligne par page ; une page d'annonces ne parle pas de nouveaux messages) ; libelle propose par un agent, a valider par le directeur",
+  "com.annonces.administration.horsLigne": "COM-RC tour 6, contre-verification COM-R-4 8.3-2 (un seul message hors ligne par page ; une page d'annonces ne parle pas de nouveaux messages) ; libelle propose par un agent, a valider par le directeur",
+  "com.annonces.administration.moderation.horsLigne": "COM-RC tour 6, contre-verification COM-R-4 8.3-2 (un seul message hors ligne par page ; une page d'annonces ne parle pas de nouveaux messages) ; libelle propose par un agent, a valider par le directeur"
 }

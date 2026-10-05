@@ -439,13 +439,18 @@ void main() {
         surcharges: surchargesDemoSansAnnonces(moderation: _FileEnPanne()),
         horsLigne: true,
       );
-      // D-FUS-3 : le bandeau des Communications (plus le generique), puis
-      // l'etat hors ligne de la file.
+      // D-FUS-3 : le bandeau des Communications (plus le generique).
+      // COM-RC tour 6 (COM-R-4 8.3-2) : un seul message hors ligne, propre
+      // a la moderation ; la file dit seulement ce qui n'est pas charge.
+      // Contre-preuve : a a1a33222, la phrase des « nouveaux messages »
+      // paraissait deux fois.
+      final e = t.com.socle.composants.etats;
       expect(find.text(t.reseau.horsLigne), findsNothing);
-      expect(
-        find.text(t.com.socle.composants.etats.horsLigne),
-        findsNWidgets(2),
-      );
+      expect(find.text(e.horsLigne), findsNothing);
+      expect(find.text(m.horsLigne), findsOneWidget);
+      expect(find.textContaining('hors ligne'), findsOneWidget);
+      expect(find.text(e.horsLigneBloc), findsOneWidget);
+      expect(find.text(e.reessayer), findsOneWidget);
     });
   });
 }

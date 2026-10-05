@@ -279,6 +279,8 @@ class _FileModerationState extends ConsumerState<FileModeration> {
                 erreur,
                 horsLigne: ref.watch(horsLigneProvider).value ?? false,
                 onReessayer: _relire,
+                // La page porte le bandeau (COM-R-4 8.3-2).
+                sousBandeau: true,
               ),
       );
     }

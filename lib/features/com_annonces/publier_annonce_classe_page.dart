@@ -77,8 +77,11 @@ class PublierAnnonceClassePage extends ConsumerWidget {
     Widget page(Widget corps) => PageShell(
       titre: titre,
       onRetour: retour,
-      // D-FUS-3 : seul le bandeau hors ligne des Communications.
-      bandeauHorsLigne: const BandeauHorsLigneCommunication(),
+      // D-FUS-3 : seul le bandeau hors ligne des Communications, avec la
+      // phrase des annonces (COM-R-4 8.3-2).
+      bandeauHorsLigne: BandeauHorsLigneCommunication(
+        message: t.com.annonces.administration.horsLigne,
+      ),
       child: corps,
     );
     if (classe.hasError) {
@@ -97,6 +100,7 @@ class PublierAnnonceClassePage extends ConsumerWidget {
                 horsLigne: horsLigne,
                 onReessayer: () =>
                     ref.invalidate(annoncesDeClasseProvider(groupeId)),
+                sousBandeau: true,
               ),
       );
     }

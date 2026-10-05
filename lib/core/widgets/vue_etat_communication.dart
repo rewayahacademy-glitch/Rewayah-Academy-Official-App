@@ -63,6 +63,7 @@ class VueEtatCommunication extends StatelessWidget {
     this.onReessayer,
     this.portee = PorteeEtat.bloc,
     this.dependance,
+    this.sousBandeau = false,
   });
 
   /// L'etat a rendre.
@@ -83,6 +84,12 @@ class VueEtatCommunication extends StatelessWidget {
   /// Ce qui manque (`COM-BR-nn`), jamais affiche.
   final String? dependance;
 
+  /// Vrai quand la page porte deja [BandeauHorsLigneCommunication] : hors
+  /// ligne, le bloc dit seulement ce qui n'est pas charge, avec
+  /// « Reessayer », sans repeter la phrase du bandeau (COM-RC tour 6,
+  /// COM-R-4 8.3-2 : un seul message hors ligne par page).
+  final bool sousBandeau;
+
   /// La vue d'une lecture en echec (R-23) : une capacite absente
   /// (`CapaciteIndisponible`, port neutre) dit « pas encore disponible »,
   /// sans « Reessayer » ; sinon l'etat hors ligne si [horsLigne], ou l'echec,
@@ -93,6 +100,7 @@ class VueEtatCommunication extends StatelessWidget {
     bool horsLigne = false,
     VoidCallback? onReessayer,
     PorteeEtat portee = PorteeEtat.bloc,
+    bool sousBandeau = false,
   }) => erreur is CapaciteIndisponible
       ? VueEtatCommunication(
           key: key,
@@ -107,6 +115,7 @@ class VueEtatCommunication extends StatelessWidget {
               : EtatCommunication.erreur,
           onReessayer: onReessayer,
           portee: portee,
+          sousBandeau: sousBandeau,
         );
 
   /// L'etat qui correspond a une erreur de lecture : une capacite absente
@@ -149,7 +158,10 @@ class VueEtatCommunication extends StatelessWidget {
       EtatCommunication.horsLigne => EtatSysteme(
         nature: NatureEtat.horsLigne,
         portee: portee,
-        phrase: e.horsLigne,
+        // Sous le bandeau : ce qui n'est pas charge, sans redire « hors
+        // ligne » (le titre de la nature le dirait une deuxieme fois).
+        titre: sousBandeau ? e.erreurTitre : null,
+        phrase: sousBandeau ? e.horsLigneBloc : e.horsLigne,
         libelleAction: e.reessayer,
         onAction: onReessayer,
       ),
@@ -174,12 +186,22 @@ class VueEtatCommunication extends StatelessWidget {
 /// phrase de la spec (« Les nouveaux messages ne peuvent pas etre
 /// actualises »), rendu seulement quand l'appareil est hors ligne. Le contenu
 /// deja lu reste affiche dessous.
+///
+/// COM-RC tour 6 (COM-R-4 8.3-2) : une page qui ne montre pas de messages
+/// (annonces, moderation) donne son propre [message].
 class BandeauHorsLigneCommunication extends ConsumerWidget {
   /// Cree le bandeau.
-  const BandeauHorsLigneCommunication({super.key, this.encadre = false});
+  const BandeauHorsLigneCommunication({
+    super.key,
+    this.encadre = false,
+    this.message,
+  });
 
   /// Vrai : le bandeau suit les marges de la page.
   final bool encadre;
+
+  /// La phrase propre a la page ; nulle : celle des messages (spec 22).
+  final String? message;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -188,7 +210,7 @@ class BandeauHorsLigneCommunication extends ConsumerWidget {
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     if (!horsLigne) return const SizedBox.shrink();
     return OfflineBanner.message(
-      message: t.com.socle.composants.etats.horsLigne,
+      message: message ?? t.com.socle.composants.etats.horsLigne,
       encadre: encadre,
     );
   }

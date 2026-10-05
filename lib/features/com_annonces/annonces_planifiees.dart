@@ -47,9 +47,12 @@ Widget? etatErreurAdministration(
 ) {
   if (erreur is CapaciteIndisponible) return null;
   if (horsLigne) {
+    // La page porte le bandeau hors ligne : le bloc dit seulement ce qui
+    // n'est pas charge (COM-RC tour 6, COM-R-4 8.3-2).
     return VueEtatCommunication(
       etat: EtatCommunication.horsLigne,
       onReessayer: reessayer,
+      sousBandeau: true,
     );
   }
   return null;

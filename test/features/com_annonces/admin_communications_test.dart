@@ -305,12 +305,18 @@ void main() {
         horsLigne: true,
       );
       // D-FUS-3 : le bandeau des Communications en tete de page (plus le
-      // bandeau generique), puis l'etat hors ligne des deux blocs en echec.
+      // bandeau generique). COM-RC tour 6 (COM-R-4 8.3-2) : un seul message
+      // hors ligne, propre aux annonces ; les deux blocs en echec disent
+      // seulement ce qui n'est pas charge, avec « Reessayer ».
+      // Contre-preuve : a a1a33222, la phrase des « nouveaux messages »
+      // paraissait trois fois.
+      final e = t.com.socle.composants.etats;
       expect(find.text(t.reseau.horsLigne), findsNothing);
-      expect(
-        find.text(t.com.socle.composants.etats.horsLigne),
-        findsNWidgets(3),
-      );
+      expect(find.text(e.horsLigne), findsNothing);
+      expect(find.text(a.horsLigne), findsOneWidget);
+      expect(find.textContaining('hors ligne'), findsOneWidget);
+      expect(find.text(e.horsLigneBloc), findsNWidgets(2));
+      expect(find.text(e.reessayer), findsWidgets);
       expect(find.text(i.echec(libelle: i.publiees)), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
