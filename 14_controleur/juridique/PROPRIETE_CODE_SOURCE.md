@@ -23,7 +23,7 @@
 | Copie de l'académie : à chaque mise en production, l'académie garde une archive du code source exact de la version déployée, pour pouvoir l'exécuter et la maintenir si le dépôt change de mains | Étiquette git `deploy-AAAA-MM-JJ` et archive sur le Drive de l'académie | Session de déploiement |
 | Licences des dépendances tierces (paquets Dart, Flutter, Supabase, LiveKit) conservées : elles ne sont pas la propriété du propriétaire | `pubspec.lock` | Sessions |
 | Tout prestataire humain qui écrit du code signe avant de commencer une cession de ses droits au propriétaire, et l'académie reçoit la même licence sur ce code | Contrat du prestataire | Directeur |
-| Conflit d'intérêts : le propriétaire est aussi directeur de l'académie. Il déclare son intérêt et la licence est approuvée par une décision écrite du directeur (Companies Act 2006, s. 177 et 182, modèle ci-dessous), gardée avec les registres de la société | Registre de la société | Directeur, une signature |
+| Preuve datée : le propriétaire est aussi directeur unique de l'académie. Un directeur unique d'une private company n'est pas tenu de se déclarer son intérêt à lui-même (s. 177 et 182 ; s. 186 ne vise que les sociétés tenues d'avoir plusieurs directeurs). La décision écrite ci-dessous reste recommandée : elle prouve que la société a accepté la licence et ses limites, notamment face à un futur acheteur de l'académie. Elle est gardée avec les registres de la société, sans dépôt à Companies House | Registre de la société | Directeur, une signature |
 
 ## 3. Texte du fichier `LICENSE` (anglais, fait foi)
 
@@ -58,6 +58,14 @@ It is not open source. No licence is granted except as stated below.
 > **REWAYAH ACADEMY LTD (16624644). Décision écrite du directeur unique, le ____ 2026.**
 > Le directeur, Abdoulaye Mouhidine Sow, déclare être personnellement propriétaire du code source de l'application utilisée par la société, et donc intéressé à la présente décision (Companies Act 2006, s. 177). Il est décidé que la société accepte la licence gratuite, perpétuelle et irrévocable décrite dans le fichier `LICENSE` du dépôt, ainsi que ses limites. La société reconnaît ne pas être propriétaire du code source. Elle reconnaît aussi que le code ne fait pas partie de ses actifs cessibles.
 > Signature : ______________________
+
+Version anglaise, à signer (les registres d'une société anglaise se tiennent en anglais) :
+
+> **REWAYAH ACADEMY LTD (company number 16624644). Written decision of the sole director, dated ____ 2026.**
+> The director, Abdoulaye Mouhidine Sow, declares that he personally owns the source code of the application used by the company and is therefore interested in this decision (Companies Act 2006, s. 177). It is decided that the company accepts the free, perpetual and irrevocable licence set out in the `LICENSE` file of the repository, together with its restrictions. The company acknowledges that it does not own the source code and that the source code is not among its transferable assets.
+> Signed: ______________________ Abdoulaye Mouhidine Sow, Director
+
+**Comment signer.** Imprimer la version anglaise, dater, signer à la main, scanner en PDF. Ou signer le PDF électroniquement (une signature électronique est valable en droit anglais). Ranger le PDF dans un dossier « Registres société » du Drive, à côté du certificat d'incorporation. Ne pas le déposer à Companies House et ne pas le verser dans un dépôt.
 
 ## 5. Choix faits par délégation
 
