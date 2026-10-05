@@ -40,12 +40,14 @@ import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/session/source_session.dart';
 import '../../core/suivi/service_suivi.dart';
+import '../../core/tc_groupe/cartes_classe.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/port_groupes.dart';
 import '../../core/tc_observation/activation_observation.dart';
 import '../../core/tc_observation/port_historique_observations.dart';
 import '../../core/tc_observation/port_politique_observation.dart';
 import '../../core/tc_observation/port_visite_observation.dart';
+import 'cartes_classe_demo.dart';
 import 'catalogue_demo.dart';
 import 'dossiers_demo.dart';
 import 'observation_demo.dart';
@@ -148,6 +150,16 @@ List<Override> surchargesDemoTuteur({
       (Ref ref) async => avecDossier
           ? const <GroupSummaryVM>[]
           : DonneesDemo.classes.values.toList(),
+    ),
+    // CARTES-PERSO-1b : la page Classe du tuteur lit les memes cartes de
+    // demonstration que la demonstration enseignant, en lecture seule (la
+    // capacite que le serveur rendrait au tuteur). Sans elle, elle disait
+    // « pas encore ouvertes » (revue CARTES-PERSO-1, deuxieme passe).
+    portCartesClasseProvider.overrideWith(
+      (Ref _) => PortCartesClasseDemo(
+        peutModifier: false,
+        cartes: cartesClasseDemo(DateTime.now()),
+      ),
     ),
     // Observation simulee : politique, budget, historique. La salle video
     // demande un jeton au serveur, donc l'observation reelle reste fermee.
