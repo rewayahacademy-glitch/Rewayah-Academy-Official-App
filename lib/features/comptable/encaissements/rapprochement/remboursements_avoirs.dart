@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/capacites/port_encaissements.dart';
+import '../../../../core/comptable/modeles_comptable.dart';
 import '../../../../core/comptable/statuts_comptable.dart';
 import '../../../../core/i18n/strings.g.dart';
 import '../../../../core/theme/app_palette.dart';
@@ -26,7 +27,6 @@ import '../../../../core/widgets/ligne_cle_valeur.dart';
 import '../../../../core/widgets/pastilles_comptable.dart';
 import '../../../../core/widgets/status_pill.dart';
 import '../commun_encaissements.dart';
-import '../contenu_encaissement.dart';
 import '../donnees_encaissements.dart';
 import 'donnees_rapprochement.dart';
 import 'feuille_remboursement.dart';
@@ -255,7 +255,7 @@ class JournalOperationSansCarte extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          for (final EntreeJournal j in entrees) LigneActivite(j),
+          for (final EntreeJournal j in entrees) LigneJournal(j),
         ],
       ),
     );

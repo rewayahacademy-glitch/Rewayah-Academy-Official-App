@@ -205,7 +205,7 @@ class JournalOperation extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            for (final EntreeJournal entree in entrees) LigneActivite(entree),
+            for (final EntreeJournal entree in entrees) LigneJournal(entree),
           ],
         ),
       ),

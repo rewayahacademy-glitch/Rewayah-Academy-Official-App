@@ -13,7 +13,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -88,6 +87,9 @@ void main() {
         tester,
         Routes.comptableEncaissements,
         surcharges: _demo(),
+        // Le tableau ne construit que les lignes visibles : assez haut
+        // pour les six.
+        taille: const Size(1440, 1600),
       );
       expect(find.byType(DataCollection<Encaissement>), findsOneWidget);
       final e = t.comptable.encaissements;
@@ -215,6 +217,9 @@ void main() {
         tester,
         Routes.comptableEncaissements,
         surcharges: _demo(),
+        // Le tableau ne construit que les lignes visibles : assez haut
+        // pour les six.
+        taille: const Size(1440, 1600),
       );
       await tester.enterText(
         find.byKey(EncaissementsPage.rechercheKey),

@@ -273,7 +273,7 @@ class _PanneauRapprochementState extends ConsumerState<PanneauRapprochement> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                for (final EntreeJournal j in entrees) LigneActivite(j),
+                for (final EntreeJournal j in entrees) LigneJournal(j),
               ],
             ),
           ),

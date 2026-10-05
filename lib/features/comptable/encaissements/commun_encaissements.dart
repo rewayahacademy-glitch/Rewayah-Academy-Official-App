@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/capacites/capacite_indisponible.dart';
+import '../../../core/comptable/modeles_comptable.dart';
 import '../../../core/finance/montant.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/reseau/service_reseau.dart';
@@ -14,6 +15,7 @@ import '../../../core/theme/app_gabarit.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/bloc_asynchrone.dart';
+import '../../../core/widgets/comptable/ligne_activite.dart';
 import '../../../core/widgets/empty_state.dart';
 import '../../../core/widgets/etat_systeme.dart';
 import '../../../core/widgets/montant_argent.dart';
@@ -178,6 +180,57 @@ class LigneMontant extends StatelessWidget {
                   valeur,
                 ],
               ),
+      ),
+    );
+  }
+}
+
+/// Une entree du journal (§48) : `LigneActivite` du socle, telle quelle.
+/// Quand le texte est agrandi, la ligne du socle garde son montant cote a
+/// cote et deborde a 320 px : le montant passe alors sous la ligne, au bord
+/// de fin, masquable comme partout (meme parade que [LigneMontant]).
+class LigneJournal extends StatelessWidget {
+  /// Cree la ligne.
+  const LigneJournal(this.entree, {super.key});
+
+  /// L'entree, rendue par la source.
+  final EntreeJournal entree;
+
+  @override
+  Widget build(BuildContext context) {
+    final Montant? montant = entree.montant;
+    if (montant == null || !texteAgrandi(context)) {
+      return LigneActivite(entree);
+    }
+    final EntreeJournal e = entree;
+    return MergeSemantics(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          LigneActivite(
+            EntreeJournal(
+              id: e.id,
+              date: e.date,
+              initiateur: e.initiateur,
+              objet: e.objet,
+              source: e.source,
+              ancienEtat: e.ancienEtat,
+              nouvelEtat: e.nouvelEtat,
+              preuve: e.preuve,
+              prestataire: e.prestataire,
+              reference: e.reference,
+            ),
+          ),
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: MontantSensible(
+              montant,
+              signe: true,
+              taille: TailleMontant.corps,
+            ),
+          ),
+        ],
       ),
     );
   }

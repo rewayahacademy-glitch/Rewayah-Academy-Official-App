@@ -239,7 +239,13 @@ void main() {
         taille: _bureau,
       );
       await _choisir(tester, DonneesEncaissementsDemo.trxDoublon);
-      expect(find.text(r.doublonTitre), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(BandeauAttention),
+          matching: find.text(r.doublonTitre),
+        ),
+        findsOneWidget,
+      );
       expect(find.text(r.doublonPhrase), findsOneWidget);
       expect(find.byType(BandeauAttention), findsOneWidget);
       // Le journal de la source (§48).
@@ -433,9 +439,7 @@ void main() {
       expect(find.text(r.videTitre), findsOneWidget);
     });
 
-    testWidgets('erreur : Reessayer relit ; hors ligne : dit hors ligne', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('erreur : Reessayer relit', (WidgetTester tester) async {
       final _Espion port = _Espion(erreurListe: StateError('panne'));
       await monterEncaissements(
         tester,
@@ -447,6 +451,11 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(port.lectures, 2);
+    });
+
+    testWidgets('hors ligne : l echec se dit hors ligne', (
+      WidgetTester tester,
+    ) async {
       await monterEncaissements(
         tester,
         Routes.comptableRapprochement,
