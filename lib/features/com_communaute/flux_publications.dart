@@ -14,7 +14,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -24,7 +23,6 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
-import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/pile_cartes.dart';
@@ -110,60 +108,30 @@ class SelecteurCategories extends ConsumerWidget {
   }
 }
 
-/// Le champ de recherche des publications (`CommunitySearch`).
-class ChampRechercheCommunaute extends StatefulWidget {
-  /// Cree le champ.
-  const ChampRechercheCommunaute({
-    required this.valeur,
-    required this.onChange,
-    super.key,
-    this.autofocus = false,
-  });
-
-  /// Le texte courant.
-  final String valeur;
-
-  /// Chaque changement du texte.
-  final ValueChanged<String> onChange;
-
-  /// Vrai pour prendre le focus a l'ouverture (surface de recherche mobile).
-  final bool autofocus;
-
-  /// La cle du champ, pour les tests.
-  static const ValueKey<String> cle = ValueKey<String>('communaute-recherche');
-
-  @override
-  State<ChampRechercheCommunaute> createState() =>
-      _ChampRechercheCommunauteState();
-}
-
-class _ChampRechercheCommunauteState extends State<ChampRechercheCommunaute> {
-  late final TextEditingController _texte = TextEditingController(
-    text: widget.valeur,
+/// Les cles de la recherche des publications (`CommunitySearch`), pour les
+/// tests. Le champ et la surface sont ceux du core (`ChampRecherche`,
+/// `SurfaceRecherche`, revue COM-R, R-07), avec « Effacer la recherche »
+/// comme partout.
+abstract final class ClesRechercheCommunaute {
+  /// Le champ de saisie.
+  static const ValueKey<String> champ = ValueKey<String>(
+    'communaute-recherche',
   );
 
-  @override
-  void dispose() {
-    _texte.dispose();
-    super.dispose();
-  }
+  /// Le bouton qui efface.
+  static const ValueKey<String> effacer = ValueKey<String>(
+    'communaute-recherche-effacer',
+  );
 
-  @override
-  Widget build(BuildContext context) {
-    final r = t.com.communaute.recherche;
-    return TextField(
-      key: ChampRechercheCommunaute.cle,
-      controller: _texte,
-      autofocus: widget.autofocus,
-      textInputAction: TextInputAction.search,
-      onChanged: widget.onChange,
-      decoration: InputDecoration(
-        labelText: r.champ,
-        hintText: r.aide,
-        prefixIcon: Icon(AppIcons.recherche.repos),
-      ),
-    );
-  }
+  /// La surface plein ecran du telephone.
+  static const ValueKey<String> surface = ValueKey<String>(
+    'communaute-recherche-surface',
+  );
+
+  /// Le bouton qui ferme la surface.
+  static const ValueKey<String> fermer = ValueKey<String>(
+    'communaute-fermer-recherche',
+  );
 }
 
 /// Le flux : les publications du filtre, ou leur etat.
@@ -246,17 +214,11 @@ class FluxPublications extends ConsumerWidget {
             : c.vide,
       ),
       erreurVersEtat: (Object erreur, VoidCallback? reessayer) =>
-          erreur is CapaciteIndisponible
-          ? VueEtatCommunication(
-              etat: EtatCommunication.indisponible,
-              dependance: erreur.dependance,
-            )
-          : VueEtatCommunication(
-              etat: horsLigne
-                  ? EtatCommunication.horsLigne
-                  : EtatCommunication.erreur,
-              onReessayer: reessayer,
-            ),
+          VueEtatCommunication.depuisErreur(
+            erreur,
+            horsLigne: horsLigne,
+            onReessayer: reessayer,
+          ),
       construire: (List<PublicationCommunaute> publications) => PileCartes(
         children: <Widget>[
           for (final PublicationCommunaute p in publications)
@@ -426,52 +388,5 @@ class EntreeRechercheCommunaute extends StatelessWidget {
     icone: AppIcons.recherche,
     fleche: false,
     onPress: onOuvrir,
-  );
-}
-
-/// La tete de la surface de recherche sur telephone : le champ et
-/// « Fermer la recherche », qui rend le flux tel qu'il etait.
-class TeteRechercheCommunaute extends StatelessWidget {
-  /// Cree la tete.
-  const TeteRechercheCommunaute({
-    required this.valeur,
-    required this.onChange,
-    required this.onFermer,
-    super.key,
-  });
-
-  /// Le texte courant.
-  final String valeur;
-
-  /// Chaque changement du texte.
-  final ValueChanged<String> onChange;
-
-  /// Ferme la recherche.
-  final VoidCallback onFermer;
-
-  /// La cle du bouton qui ferme la recherche, pour les tests.
-  static const ValueKey<String> cleFermer = ValueKey<String>(
-    'communaute-fermer-recherche',
-  );
-
-  @override
-  Widget build(BuildContext context) => Row(
-    children: <Widget>[
-      Expanded(
-        child: ChampRechercheCommunaute(
-          valeur: valeur,
-          onChange: onChange,
-          autofocus: true,
-        ),
-      ),
-      Ecart.hSm,
-      BoutonIcone(
-        key: cleFermer,
-        icone: AppIcons.fermer,
-        libelle: t.com.communaute.recherche.fermer,
-        infobulle: t.com.communaute.recherche.fermer,
-        onPress: onFermer,
-      ),
-    ],
   );
 }

@@ -19,9 +19,11 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/badge_non_lu.dart';
+import '../../core/widgets/champ_recherche.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/surface_recherche.dart';
 import '../accueil_famille/bloc_seance.dart' show heureDeLAppareil;
 import 'entete_fil_contexte.dart';
 import 'port_messages_metier.dart';
@@ -148,8 +150,14 @@ class _ListeFilsState extends State<ListeFils> {
           onPopInvokedWithResult: (bool sortie, Object? _) {
             if (!sortie) _etat.fermerSurface();
           },
-          child: SurfaceRechercheFils(
+          child: SurfaceRecherche(
+            key: ClesRechercheFils.surface,
             controleur: _recherche,
+            libelle: r.champ,
+            aide: r.aide,
+            cleChamp: ClesRechercheFils.champ,
+            cleEffacer: ClesRechercheFils.effacer,
+            cleFermer: ClesRechercheFils.fermer,
             onFermer: _etat.fermerSurface,
             resultats: _resultats(),
           ),
@@ -173,7 +181,13 @@ class _ListeFilsState extends State<ListeFils> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        ChampRechercheFils(controleur: _recherche),
+        ChampRecherche(
+          controleur: _recherche,
+          libelle: r.champ,
+          aide: r.aide,
+          cleChamp: ClesRechercheFils.champ,
+          cleEffacer: ClesRechercheFils.effacer,
+        ),
         Ecart.vLg,
         Expanded(child: _resultats()),
       ],

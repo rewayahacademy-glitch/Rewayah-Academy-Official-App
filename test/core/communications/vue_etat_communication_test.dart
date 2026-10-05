@@ -80,13 +80,13 @@ void main() {
     // La dependance n'est jamais affichee.
     expect(find.textContaining('COM-BR'), findsNothing);
     expect(
-      VueEtatCommunication.depuisErreur(
+      VueEtatCommunication.etatDepuisErreur(
         const CapaciteIndisponible('COM-BR-04'),
       ),
       EtatCommunication.indisponible,
     );
     expect(
-      VueEtatCommunication.depuisErreur(Exception('reseau')),
+      VueEtatCommunication.etatDepuisErreur(Exception('reseau')),
       EtatCommunication.erreur,
     );
   });

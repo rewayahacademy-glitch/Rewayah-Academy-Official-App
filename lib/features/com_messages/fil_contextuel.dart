@@ -25,7 +25,11 @@
 // « Envoyer » du composer envoie, sous une cle par vocal (COM-BR-02).
 //
 // Un fil ou la personne ne peut pas ecrire se lit sans champ ni bouton : une
-// phrase dit la limite, aucun bouton grise. Ecrire demande les deux
+// phrase dit la limite, aucun bouton grise. C'est le mode lecture seule de
+// `FilDiscussion` (memes bulles, meme etat vide), et le texte et la date
+// d'un message viennent de l'adaptateur unique du socle
+// (`lecture_fil_communication.dart`) : aucune copie avec le canal du Studio
+// (revue COM-R, R-07). Ecrire demande les deux
 // capacites de COM-BR-16 : `ecrireDansFil` du port neutre du socle
 // (`capacitesCommunicationProvider`, lu par la page et passe ici en
 // [FilContextuel.ecritureOuverte]) ET `ecrire` portee par CE fil rendu.
@@ -34,18 +38,12 @@ import 'dart:ui' show FlutterView;
 
 import 'package:flutter/material.dart';
 
+import '../../core/communications/lecture_fil_communication.dart';
 import '../../core/communications/port_brouillons.dart';
 import '../../core/communications/textes_fil_communication.dart';
 import '../../core/i18n/strings.g.dart';
-import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/avatar_tile.dart';
-import '../../core/widgets/carte_piece_jointe.dart';
-import '../../core/widgets/espace_travail_adaptatif.dart';
 import '../../core/widgets/fil_discussion.dart';
-import '../../core/widgets/groupe_reglages.dart';
-import '../accueil_famille/bloc_seance.dart'
-    show dateDeLAppareil, heureDeLAppareil;
 import '../com_vocal/composer_vocal.dart';
 import '../com_vocal/envoi_vocal.dart';
 import '../com_vocal/lecteur_vocal.dart';
@@ -53,44 +51,9 @@ import '../com_vocal/port_enregistreur_vocal.dart';
 import 'entete_fil_contexte.dart';
 import 'port_messages_metier.dart';
 
-/// Le texte d'un message tel qu'il se lit dans le fil : son texte, puis une
-/// ligne par piece jointe (« Piece jointe : Devoir.pdf ») ou vocal
-/// (« Message vocal de 0:28 »). Jamais une reference ni une adresse.
-///
-/// Sans [avecVocaux], les vocaux ne sont pas dits ; sans [avecDocuments],
-/// les autres pieces non plus : la bulle les montre par leur lecteur et
-/// leur carte ([piecesDuMessage]).
-String texteDuMessage(
-  MessageCommunication m, {
-  bool avecVocaux = true,
-  bool avecDocuments = true,
-}) {
-  final f = t.com.messages.fil;
-  return <String>[
-    if (m.texte.trim().isNotEmpty) m.texte.trim(),
-    for (final PieceJointe p in m.piecesJointes)
-      if (p.nature != NaturePieceJointe.vocal) ...<String>[
-        if (avecDocuments) f.pieceJointe(nom: p.nom),
-      ] else if (avecVocaux)
-        switch (p.duree) {
-          final Duration d => f.vocal(duree: CartePieceJointe.libelleDuree(d)),
-          null => f.vocalSansDuree,
-        },
-  ].join('\n');
-}
-
 /// La cle du brouillon du champ d'un fil metier.
 CleBrouillon cleBrouillonFil(String filId) =>
     CleBrouillon(type: TypeObjetLie.message, objetId: filId);
-
-/// La date et l'heure d'un message, a l'heure de l'appareil.
-String horodatageMessage(DateTime instant) {
-  final DateTime local = instant.toLocal();
-  return t.com.messages.fil.horodatage(
-    date: dateDeLAppareil(local),
-    heure: heureDeLAppareil(local),
-  );
-}
 
 /// Le fil contextuel : en-tete, messages, champ et envoi honnete.
 class FilContextuel extends StatefulWidget {
@@ -126,10 +89,9 @@ class FilContextuel extends StatefulWidget {
     'fil-composer-vocal',
   );
 
-  /// La cle de la phrase « lecture seule », pour les tests.
-  static const ValueKey<String> cleLectureSeule = ValueKey<String>(
-    'fil-lecture-seule',
-  );
+  /// La cle de la phrase « lecture seule », pour les tests : celle du fil
+  /// (R-07).
+  static const Key cleLectureSeule = FilDiscussion.cleLectureSeule;
 
   @override
   State<FilContextuel> createState() => _FilContextuelState();
@@ -255,34 +217,34 @@ class _FilContextuelState extends State<FilContextuel>
       padding: const EdgeInsets.only(bottom: AppSpacing.lg),
       child: EnteteFilContexte.duFil(fil),
     );
+    final List<MessageFil> connus = <MessageFil>[
+      for (final MessageCommunication m in fil.messages)
+        messageFilDe(m, complement: piecesDuMessage(m.piecesJointes)),
+    ];
+    final TextesFilDiscussion textes = textesFilCommunication();
     if (!widget.ecritureOuverte || !fil.peut(CapaciteFil.ecrire)) {
-      return _FilEnLecture(fil: fil, entete: entete);
+      // Lecture seule : le meme fil, sans champ ; la phrase dit la limite.
+      return FilDiscussion(
+        key: ValueKey<String>('fil-metier-lecture-${fil.id}'),
+        entete: entete,
+        messages: connus,
+        textes: textes,
+        lectureSeule: t.com.messages.fil.lectureSeule,
+      );
     }
     final String soi = t.com.socle.composants.composer.auteurSoi;
     final Future<void> Function(EnregistrementVocal, String)? vocal =
         widget.onEnvoyerVocal;
-    final TextesFilDiscussion textes = textesFilCommunication();
     return FilDiscussion(
       key: ValueKey<String>('fil-metier-${fil.id}'),
       entete: entete,
       messages: <MessageFil>[
-        for (final MessageCommunication m in fil.messages)
-          MessageFil(
-            id: m.id,
-            auteur: m.deSoi ? soi : m.auteur.nomAffiche,
-            texte: texteDuMessage(m, avecVocaux: false, avecDocuments: false),
-            annonceTexte: texteDuMessage(m),
-            complement: piecesDuMessage(m.piecesJointes),
-            horodatage: horodatageMessage(m.envoyeLe),
-            deSoi: m.deSoi,
-          ),
+        ...connus,
         for (final VocalConfirme v in _vocauxConfirmes)
           bulleVocalConfirme(
             v,
             auteurSoi: soi,
-            ligneVocal: (Duration d) => t.com.messages.fil.vocal(
-              duree: CartePieceJointe.libelleDuree(d),
-            ),
+            ligneVocal: ligneVocal,
             envoye: textes.envoye,
           ),
       ],
@@ -295,63 +257,6 @@ class _FilContextuelState extends State<FilContextuel>
               key: FilContextuel.cleComposerVocal,
               onEnvoyer: (EnregistrementVocal v) => _envoyerVocal(v, vocal),
             ),
-    );
-  }
-}
-
-/// Un fil en lecture seule : les messages en une surface a filets, puis la
-/// phrase qui dit la limite. Aucun champ, aucun bouton.
-class _FilEnLecture extends StatelessWidget {
-  const _FilEnLecture({required this.fil, required this.entete});
-
-  final FilMetier fil;
-  final Widget entete;
-
-  @override
-  Widget build(BuildContext context) {
-    final f = t.com.messages.fil;
-    final String soi = t.com.socle.composants.composer.auteurSoi;
-    final AppPalette palette = AppPalette.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-            children: <Widget>[
-              // R-02 : sans champ, l'en-tete defile avec les messages, ses
-              // actions (retour, contexte) dans sa rangee.
-              RangeeEnteteEspace(child: entete),
-              GroupeReglages(
-                lignes: <LigneRubrique>[
-                  for (final MessageCommunication m in fil.messages)
-                    LigneRubrique(
-                      meneur: AvatarTile(
-                        prenom: m.auteur.nomAffiche,
-                        diametre: AppAvatar.petit,
-                      ),
-                      libelle: texteDuMessage(m),
-                      legende: f.auteurEtMoment(
-                        auteur: m.deSoi ? soi : m.auteur.nomAffiche,
-                        moment: horodatageMessage(m.envoyeLe),
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
-          child: Text(
-            f.lectureSeule,
-            key: FilContextuel.cleLectureSeule,
-            style: palette.inkMuted.applyTo(
-              Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

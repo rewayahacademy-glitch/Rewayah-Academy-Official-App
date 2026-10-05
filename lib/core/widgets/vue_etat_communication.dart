@@ -5,6 +5,12 @@
 // `Skeleton`, `BlocAsynchrone` et `OfflineBanner`, avec les textes de la spec
 // (`com.socle.composants.etats.*`). Un ecran de communication ne recompose
 // donc ni son vide, ni son erreur, ni son hors ligne.
+//
+// Revue COM-R, R-23 : une lecture en echec se rend par
+// [VueEtatCommunication.depuisErreur] (capacite absente sans « Reessayer »,
+// hors ligne ou echec avec), et la colonne d'un maitre-detail sans element
+// ouvert par [VueChoisirCommunication] (« Choisissez une conversation »), qui
+// defile a texte agrandi : aucun ecran ne les recopie.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +18,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../capacites/capacite_indisponible.dart';
 import '../i18n/strings.g.dart';
 import '../reseau/service_reseau.dart';
+import '../theme/app_palette.dart';
+import '../theme/app_spacing.dart';
 import 'bloc_asynchrone.dart';
 import 'etat_systeme.dart';
 import 'offline_banner.dart';
@@ -75,9 +83,35 @@ class VueEtatCommunication extends StatelessWidget {
   /// Ce qui manque (`COM-BR-nn`), jamais affiche.
   final String? dependance;
 
+  /// La vue d'une lecture en echec (R-23) : une capacite absente
+  /// (`CapaciteIndisponible`, port neutre) dit « pas encore disponible »,
+  /// sans « Reessayer » ; sinon l'etat hors ligne si [horsLigne], ou l'echec,
+  /// avec « Reessayer » si [onReessayer] est donne.
+  factory VueEtatCommunication.depuisErreur(
+    Object erreur, {
+    Key? key,
+    bool horsLigne = false,
+    VoidCallback? onReessayer,
+    PorteeEtat portee = PorteeEtat.bloc,
+  }) => erreur is CapaciteIndisponible
+      ? VueEtatCommunication(
+          key: key,
+          etat: EtatCommunication.indisponible,
+          dependance: erreur.dependance,
+          portee: portee,
+        )
+      : VueEtatCommunication(
+          key: key,
+          etat: horsLigne
+              ? EtatCommunication.horsLigne
+              : EtatCommunication.erreur,
+          onReessayer: onReessayer,
+          portee: portee,
+        );
+
   /// L'etat qui correspond a une erreur de lecture : une capacite absente
   /// n'est pas un echec.
-  static EtatCommunication depuisErreur(Object erreur) =>
+  static EtatCommunication etatDepuisErreur(Object erreur) =>
       erreur is CapaciteIndisponible
       ? EtatCommunication.indisponible
       : EtatCommunication.erreur;
@@ -214,14 +248,60 @@ class BlocCommunication<T> extends StatelessWidget {
     // Une capacite absente garde le traitement de BlocAsynchrone (indisponible,
     // sans « Reessayer ») ; un echec prend la phrase des communications.
     erreurVersEtat: (Object erreur, VoidCallback? reessayer) =>
-        erreur is CapaciteIndisponible
-        ? VueEtatCommunication(
-            etat: EtatCommunication.indisponible,
-            dependance: erreur.dependance,
-          )
-        : VueEtatCommunication(
-            etat: EtatCommunication.erreur,
-            onReessayer: reessayer,
-          ),
+        VueEtatCommunication.depuisErreur(erreur, onReessayer: reessayer),
   );
+}
+
+/// La colonne d'un maitre-detail quand rien n'est ouvert : dire quoi faire
+/// (« Choisissez une conversation »), jamais une colonne vide (R-23).
+///
+/// Centree, et defilante : a texte agrandi sur une colonne basse, le titre
+/// et la phrase restent lisibles en entier.
+class VueChoisirCommunication extends StatelessWidget {
+  /// Cree la vue.
+  const VueChoisirCommunication({
+    required this.titre,
+    required this.phrase,
+    super.key,
+  });
+
+  /// Le titre (« Choisissez une conversation »).
+  final String titre;
+
+  /// La phrase qui dit quoi faire.
+  final String phrase;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(AppSpacing.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Semantics(
+              header: true,
+              child: Text(
+                titre,
+                textAlign: TextAlign.center,
+                style: palette.inkStrong.applyTo(
+                  textes.titleMedium ?? const TextStyle(),
+                ),
+              ),
+            ),
+            Ecart.vSm,
+            Text(
+              phrase,
+              textAlign: TextAlign.center,
+              style: palette.inkMuted.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

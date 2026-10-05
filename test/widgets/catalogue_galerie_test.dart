@@ -146,6 +146,10 @@ const List<String> composantsDuCatalogue = <String>[
   'CartePieceJointe',
   'EspaceTravailAdaptatif',
   'VueEtatCommunication',
+  // COM-RC (revue COM-R, R-07) : une seule recherche de liste, pour les
+  // Messages, Le Studio et la Communaute.
+  'ChampRecherche',
+  'SurfaceRecherche',
 ];
 
 /// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.

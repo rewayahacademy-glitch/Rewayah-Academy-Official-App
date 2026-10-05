@@ -115,6 +115,8 @@ import '../../features/tc_observation_ui/routes_tc_g.dart';
 import '../admin/admin_domaine.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
+import '../i18n/strings.g.dart';
+import '../icons/app_icons.dart';
 import '../mouvement/transitions.dart';
 import '../session/session_controleur.dart';
 import '../session/session_state.dart';
@@ -122,6 +124,7 @@ import '../tc_groupe/group_home_vm.dart' show RoleEspaceGroupe;
 import '../theme/app_gabarit.dart';
 import '../widgets/admin_shell.dart';
 import '../widgets/bascule_theme.dart';
+import '../widgets/bouton_icone.dart';
 import '../widgets/entete_page.dart';
 import '../widgets/nav_shell.dart';
 import '../widgets/page_shell.dart';
@@ -1047,9 +1050,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // navigation viendra de la voie COM-STU, la sortie ramene a `/admin`.
       // `/admin/studio/canaux` n'a pas de page : elle renvoie a la vue des
       // canaux du Studio (`/admin/studio` est Aujourd'hui, COM-STU-2).
+      // COM-RC (revue COM-R, R-05) : comme toute coquille admin, Le Studio
+      // porte la cloche, la bascule clair / sombre et l'acces au compte
+      // (`_ActionsStudio`), et son identite « Administrateur » dans sa
+      // colonne (`CoquilleStudio.onCompte`).
       GoRoute(
         path: Routes.adminStudio,
-        builder: (BuildContext _, GoRouterState _) => const StudioPage(),
+        builder: (BuildContext _, GoRouterState _) =>
+            const _ActionsStudio(child: StudioPage()),
       ),
       GoRoute(
         path: Routes.adminStudioCanaux,
@@ -1058,8 +1066,9 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRoute(
         path: '${Routes.adminStudioCanaux}/:canalId',
-        builder: (BuildContext _, GoRouterState etat) =>
-            StudioPage(canalId: _parametre(etat, 'canalId')),
+        builder: (BuildContext _, GoRouterState etat) => _ActionsStudio(
+          child: StudioPage(canalId: _parametre(etat, 'canalId')),
+        ),
       ),
       GoRoute(
         path: Routes.adminPersonnes,
@@ -1644,6 +1653,40 @@ class _CoquilleNavigation extends ConsumerWidget {
     );
   }
 }
+
+/// Les actions d'en-tete du Studio (revue COM-R, R-05), posees par la route
+/// comme celles de l'`AdminShell` : a partir de 600, la bascule clair /
+/// sombre ; partout, « Mon compte » (la deconnexion y est) puis la cloche des
+/// notifications de l'admin, en dernier. Sous le prefixe `/admin`, que la
+/// garde reserve a l'admin : rien ici ne lit un role.
+class _ActionsStudio extends StatelessWidget {
+  const _ActionsStudio({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    void aller(String chemin) => GoRouter.of(context).go(chemin);
+    final bool large = AppGabarit.de(context).estLarge;
+    return ActionsEnteteCoquille(
+      actions: <Widget>[
+        if (large) const BasculeTheme(),
+        BoutonIcone(
+          key: cleCompteStudio,
+          icone: AppIcons.profil,
+          libelle: t.nav.compte,
+          infobulle: t.nav.compte,
+          onPress: () => aller(Routes.compte),
+        ),
+        ClocheNotifications(onPress: () => aller(Routes.adminNotifications)),
+      ],
+      child: child,
+    );
+  }
+}
+
+/// La cle de « Mon compte » dans l'en-tete du Studio, pour les tests.
+const Key cleCompteStudio = ValueKey<String>('studio-compte');
 
 /// Le chrome du panneau admin, huit domaines (lot IA-01, 19 septembre 2026).
 ///

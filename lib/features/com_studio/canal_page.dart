@@ -32,7 +32,10 @@
 //
 // Un canal ou la personne ne peut pas ecrire (capacite `ecrire` absente du
 // canal rendu, COM-BR-16) se lit sans champ ni bouton : une phrase dit la
-// limite, aucun bouton grise.
+// limite, aucun bouton grise. C'est le mode lecture seule de
+// `FilDiscussion` (memes bulles, meme etat vide que les Messages metier), et
+// le texte et la date d'un message viennent de l'adaptateur unique du socle
+// (`lecture_fil_communication.dart`, revue COM-R, R-07).
 //
 // Mode focus (COM-STU-3, spec section 10) : « Mode focus » est dans
 // l'en-tete du canal (`BasculeFocus`). En Focus, l'en-tete ne garde que le
@@ -46,18 +49,12 @@ import 'dart:ui' show FlutterView;
 
 import 'package:flutter/material.dart';
 
+import '../../core/communications/lecture_fil_communication.dart';
 import '../../core/communications/textes_fil_communication.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/avatar_tile.dart';
-import '../../core/widgets/carte_piece_jointe.dart';
-import '../../core/widgets/espace_travail_adaptatif.dart';
 import '../../core/widgets/fil_discussion.dart';
-import '../../core/widgets/groupe_reglages.dart';
-import '../../core/widgets/vue_etat_communication.dart';
-import '../accueil_famille/bloc_seance.dart'
-    show dateDeLAppareil, heureDeLAppareil;
 import '../com_vocal/composer_vocal.dart';
 import '../com_vocal/envoi_vocal.dart';
 import '../com_vocal/lecteur_vocal.dart';
@@ -70,41 +67,6 @@ import 'liste_canaux.dart';
 import 'panneau_partages.dart' show libelleMembres;
 import 'port_studio.dart';
 import 'visibilite_canal.dart';
-
-/// Le texte d'un message tel qu'il se lit dans le canal : son texte, puis
-/// une ligne par piece jointe (« Piece jointe : Planning.pdf ») ou vocal
-/// (« Message vocal de 0:42 »). Jamais une reference ni une adresse.
-///
-/// Sans [avecVocaux], les vocaux ne sont pas dits ; sans [avecDocuments],
-/// les autres pieces non plus : la bulle les montre par leur lecteur et
-/// leur carte ([piecesDuMessage]).
-String texteMessageCanal(
-  MessageCommunication m, {
-  bool avecVocaux = true,
-  bool avecDocuments = true,
-}) {
-  final c = t.com.studio.canal;
-  return <String>[
-    if (m.texte.trim().isNotEmpty) m.texte.trim(),
-    for (final PieceJointe p in m.piecesJointes)
-      if (p.nature != NaturePieceJointe.vocal) ...<String>[
-        if (avecDocuments) c.pieceJointe(nom: p.nom),
-      ] else if (avecVocaux)
-        switch (p.duree) {
-          final Duration d => c.vocal(duree: CartePieceJointe.libelleDuree(d)),
-          null => c.vocalSansDuree,
-        },
-  ].join('\n');
-}
-
-/// La date et l'heure d'un message, a l'heure de l'appareil.
-String horodatageCanal(DateTime instant) {
-  final DateTime local = instant.toLocal();
-  return t.com.studio.canal.horodatage(
-    date: dateDeLAppareil(local),
-    heure: heureDeLAppareil(local),
-  );
-}
 
 /// Les textes du fil d'un canal : ceux des communications, avec l'aide du
 /// champ qui nomme le canal (« Ecrire dans Organisation »).
@@ -229,19 +191,16 @@ class CanalStudio extends StatefulWidget {
     'studio-canal-composer-vocal',
   );
 
-  /// La cle de la phrase « lecture seule », pour les tests.
-  static const ValueKey<String> cleLectureSeule = ValueKey<String>(
-    'studio-canal-lecture-seule',
-  );
+  /// La cle de la phrase « lecture seule », pour les tests : celle du fil
+  /// (R-07).
+  static const Key cleLectureSeule = FilDiscussion.cleLectureSeule;
 
   /// La cle de la phrase « Brouillon restaure », pour les tests : celle du
   /// fil, qui porte le brouillon (R-22).
   static const Key cleBrouillonRestaure = FilDiscussion.cleBrouillonRestaure;
 
-  /// La cle de l'etat vide d'un canal en lecture seule, pour les tests.
-  static const ValueKey<String> cleAucunMessage = ValueKey<String>(
-    'studio-canal-aucun-message',
-  );
+  /// La cle de l'etat vide du canal, pour les tests : celle du fil (R-07).
+  static const Key cleAucunMessage = FilDiscussion.cleAucunMessage;
 
   @override
   State<CanalStudio> createState() => _CanalStudioState();
@@ -424,10 +383,19 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final Canal canal = widget.canal;
     final bool focus = _focus?.actif ?? false;
+    final List<MessageFil> connus = <MessageFil>[
+      for (final MessageCommunication m in canal.messages)
+        messageFilDe(m, complement: piecesDuMessage(m.piecesJointes)),
+    ];
+    final TextesFilDiscussion textes = textesCanal(canal.resume);
     if (!canal.peut(CapaciteCanal.ecrire)) {
-      return _CanalEnLecture(
-        canal: canal,
+      // Lecture seule : le meme fil, sans champ ; la phrase dit la limite.
+      return FilDiscussion(
+        key: ValueKey<String>('studio-fil-lecture-${canal.id}'),
         entete: _entete(canal, focus: focus),
+        messages: connus,
+        textes: textes,
+        lectureSeule: t.com.studio.canal.lectureSeule,
       );
     }
     // Le champ minimal du Focus : le vocal reste en Focus (section 10.4) ;
@@ -444,7 +412,6 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
             ),
     );
     final String soi = t.com.socle.composants.composer.auteurSoi;
-    final TextesFilDiscussion textes = textesCanal(canal.resume);
     // Le texte du champ est garde comme brouillon par le fil (memoire de
     // session, spec section 8.2) et remis a la reouverture du canal
     // (COM-STU-2, R-22).
@@ -454,27 +421,12 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
       controleur: _champ,
       cleBrouillon: cleBrouillonCanal(canal.id),
       messages: <MessageFil>[
-        for (final MessageCommunication m in canal.messages)
-          MessageFil(
-            id: m.id,
-            auteur: m.deSoi ? soi : m.auteur.nomAffiche,
-            texte: texteMessageCanal(
-              m,
-              avecVocaux: false,
-              avecDocuments: false,
-            ),
-            annonceTexte: texteMessageCanal(m),
-            complement: piecesDuMessage(m.piecesJointes),
-            horodatage: horodatageCanal(m.envoyeLe),
-            deSoi: m.deSoi,
-          ),
+        ...connus,
         for (final VocalConfirme v in _vocauxConfirmes)
           bulleVocalConfirme(
             v,
             auteurSoi: soi,
-            ligneVocal: (Duration d) => t.com.studio.canal.vocal(
-              duree: CartePieceJointe.libelleDuree(d),
-            ),
+            ligneVocal: ligneVocal,
             envoye: textes.envoye,
           ),
       ],
@@ -482,72 +434,6 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
       onEnvoyerMessage: _envoyer,
       emplacementPieceJointe: composer.emplacementPieceJointe(focus: focus),
       emplacementVocal: composer.emplacementVocal(focus: focus),
-    );
-  }
-}
-
-/// Un canal en lecture seule : les messages en une surface a filets, puis la
-/// phrase qui dit la limite. Aucun champ, aucun bouton.
-class _CanalEnLecture extends StatelessWidget {
-  const _CanalEnLecture({required this.canal, required this.entete});
-
-  final Canal canal;
-  final Widget entete;
-
-  @override
-  Widget build(BuildContext context) {
-    final c = t.com.studio.canal;
-    final String soi = t.com.socle.composants.composer.auteurSoi;
-    final AppPalette palette = AppPalette.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-            children: <Widget>[
-              // R-02 : sans champ, l'en-tete defile avec les messages, ses
-              // actions (retour, contexte) dans sa rangee.
-              RangeeEnteteEspace(child: entete),
-              // Aucun message : l'etat vide le dit, jamais une zone blanche.
-              if (canal.messages.isEmpty)
-                VueEtatCommunication(
-                  key: CanalStudio.cleAucunMessage,
-                  etat: EtatCommunication.vide,
-                  titreVide: c.aucunMessageTitre,
-                  phraseVide: c.aucunMessage,
-                )
-              else
-                GroupeReglages(
-                  lignes: <LigneRubrique>[
-                    for (final MessageCommunication m in canal.messages)
-                      LigneRubrique(
-                        meneur: AvatarTile(
-                          prenom: m.auteur.nomAffiche,
-                          diametre: AppAvatar.petit,
-                        ),
-                        libelle: texteMessageCanal(m),
-                        legende: c.auteurEtMoment(
-                          auteur: m.deSoi ? soi : m.auteur.nomAffiche,
-                          moment: horodatageCanal(m.envoyeLe),
-                        ),
-                      ),
-                  ],
-                ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
-          child: Text(
-            c.lectureSeule,
-            key: CanalStudio.cleLectureSeule,
-            style: palette.inkMuted.applyTo(
-              Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

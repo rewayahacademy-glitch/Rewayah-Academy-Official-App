@@ -1,5 +1,9 @@
 {
   "commun": {
+    "recherche": {
+      "effacer": "Effacer la recherche",
+      "fermer": "Fermer la recherche"
+    },
     "marque": "Rewayah Academy",
     "continuer": "Continuer",
     "retour": "Retour",
@@ -4700,6 +4704,12 @@
   "com": {
     "socle": {
       "composants": {
+        "lecture": {
+          "pieceJointe": "Pièce jointe : {nom}",
+          "vocal": "Message vocal de {duree}",
+          "vocalSansDuree": "Message vocal",
+          "horodatage": "{date}, {heure}"
+        },
         "badge": {
           "nonLuUn": "1 non lu",
           "nonLus": "{nombre} non lus",
@@ -4873,8 +4883,6 @@
       "recherche": {
         "champ": "Rechercher une conversation",
         "aide": "Nom, Classe ou dossier",
-        "fermer": "Fermer la recherche",
-        "effacer": "Effacer la recherche",
         "aucunTitre": "Aucune conversation trouvée",
         "aucun": "Aucune conversation ne correspond à « {texte} ». Essayez un autre nom ou une autre Classe.",
         "resultatUn": "1 conversation trouvée",
@@ -4915,12 +4923,7 @@
         "vous": "Vous"
       },
       "fil": {
-        "auteurEtMoment": "{auteur} · {moment}",
-        "lectureSeule": "Vous pouvez lire cette conversation. La réponse n'y est pas ouverte pour vous.",
-        "pieceJointe": "Pièce jointe : {nom}",
-        "vocal": "Message vocal de {duree}",
-        "vocalSansDuree": "Message vocal",
-        "horodatage": "{date}, {heure}"
+        "lectureSeule": "Vous pouvez lire cette conversation. La réponse n'y est pas ouverte pour vous."
       },
       "demo": {
         "choisirRole": "Choisissez le point de vue de cette démonstration.",
@@ -5058,8 +5061,7 @@
       "recherche": {
         "ouvrir": "Rechercher une publication",
         "champ": "Rechercher une publication",
-        "aide": "Un mot du titre ou du texte",
-        "fermer": "Fermer la recherche"
+        "aide": "Un mot du titre ou du texte"
       },
       "moment": {
         "instant": "À l'instant",
@@ -5275,12 +5277,7 @@
         "aucunMessageTitre": "Aucun message pour le moment",
         "aucunMessage": "Les messages de ce canal s'afficheront ici dès leur publication.",
         "indisponibleTitre": "Canal indisponible",
-        "indisponible": "Ce canal n'est pas disponible pour vous. Choisissez un autre canal dans la liste.",
-        "pieceJointe": "Pièce jointe : {nom}",
-        "vocal": "Message vocal de {duree}",
-        "vocalSansDuree": "Message vocal",
-        "horodatage": "{date}, {heure}",
-        "auteurEtMoment": "{auteur} · {moment}"
+        "indisponible": "Ce canal n'est pas disponible pour vous. Choisissez un autre canal dans la liste."
       },
       "panneau": {
         "titre": "À propos du canal",
@@ -5323,8 +5320,6 @@
       "recherche": {
         "champ": "Rechercher dans Le Studio",
         "aide": "Canal, message ou fichier",
-        "fermer": "Fermer la recherche",
-        "effacer": "Effacer la recherche",
         "aucunTitre": "Aucun résultat",
         "aucun": "Rien ne correspond à « {texte} » dans vos canaux. Essayez un autre mot.",
         "aucunDansFiltre": "Rien de ce type ne correspond. Choisissez Tout pour voir les autres résultats.",

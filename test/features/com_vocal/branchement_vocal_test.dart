@@ -185,7 +185,7 @@ void main() {
         ecritureOuverte: false,
         surcharges: _vocal(horloge, envoi),
       );
-      final String ligne = t.com.messages.fil.vocal(
+      final String ligne = t.com.socle.composants.lecture.vocal(
         duree: CartePieceJointe.libelleDuree(const Duration(seconds: 6)),
       );
       final Finder bulle = find.descendant(
@@ -228,7 +228,7 @@ void main() {
         find.descendant(
           of: find.byType(FilDiscussion),
           matching: find.text(
-            t.com.messages.fil.vocal(
+            t.com.socle.composants.lecture.vocal(
               duree: CartePieceJointe.libelleDuree(const Duration(seconds: 6)),
             ),
           ),
@@ -284,7 +284,7 @@ void main() {
         matching: find.byType(LecteurVocalRecu),
       );
       expect(dansFil, findsOneWidget);
-      final String ligne = t.com.messages.fil.vocal(
+      final String ligne = t.com.socle.composants.lecture.vocal(
         duree: CartePieceJointe.libelleDuree(const Duration(seconds: 28)),
       );
       expect(
@@ -387,7 +387,7 @@ void main() {
       final Finder bulle = find.descendant(
         of: find.byType(FilDiscussion),
         matching: find.text(
-          t.com.studio.canal.vocal(
+          t.com.socle.composants.lecture.vocal(
             duree: CartePieceJointe.libelleDuree(const Duration(seconds: 6)),
           ),
         ),
@@ -492,7 +492,7 @@ void main() {
         find.descendant(
           of: find.byType(FilDiscussion),
           matching: find.textContaining(
-            t.com.studio.canal.vocal(
+            t.com.socle.composants.lecture.vocal(
               duree: CartePieceJointe.libelleDuree(const Duration(seconds: 28)),
             ),
           ),

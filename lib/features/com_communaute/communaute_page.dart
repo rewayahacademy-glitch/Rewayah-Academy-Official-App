@@ -38,11 +38,13 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/champ_recherche.dart';
 import '../../core/widgets/espace_travail_adaptatif.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/surface_recherche.dart';
 import '../../core/widgets/vue_etat_communication.dart';
 import 'composer_publication.dart';
 import 'flux_publications.dart';
@@ -89,7 +91,7 @@ class CommunautePage extends ConsumerStatefulWidget {
 
 class _CommunautePageState extends ConsumerState<CommunautePage> {
   String? _categorie;
-  String _recherche = '';
+  final TextEditingController _recherche = TextEditingController();
   bool _rechercheOuverte = false;
   late String? _selection = widget.publicationId;
   late bool _composer = widget.composerOuvert;
@@ -112,7 +114,25 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
   /// et que la confirmation reste dite.
   final Set<ObjetLie> _signales = <ObjetLie>{};
 
-  FiltreFlux get _filtre => (categorieId: _categorie, recherche: _recherche);
+  FiltreFlux get _filtre =>
+      (categorieId: _categorie, recherche: _recherche.text);
+
+  @override
+  void initState() {
+    super.initState();
+    _recherche.addListener(_auChangementRecherche);
+  }
+
+  @override
+  void dispose() {
+    _recherche
+      ..removeListener(_auChangementRecherche)
+      ..dispose();
+    super.dispose();
+  }
+
+  /// La recherche filtre le flux deja lu a chaque frappe (et a « Effacer »).
+  void _auChangementRecherche() => setState(() {});
 
   void _quitter() {
     final VoidCallback? retour = widget.onRetour;
@@ -163,10 +183,10 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
     _retourLocal = null;
   });
 
-  void _fermerRecherche() => setState(() {
-    _rechercheOuverte = false;
-    _recherche = '';
-  });
+  void _fermerRecherche() {
+    _recherche.clear();
+    setState(() => _rechercheOuverte = false);
+  }
 
   void _publiee(PublicationCommunaute publication) {
     ref
@@ -230,10 +250,9 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
                 phrase: t.com.socle.navigation.provisoire.communauteDetail,
                 dependance: erreur.dependance,
               )
-            : VueEtatCommunication(
-                etat: ref.watch(horsLigneProvider).value ?? false
-                    ? EtatCommunication.horsLigne
-                    : EtatCommunication.erreur,
+            : VueEtatCommunication.depuisErreur(
+                erreur,
+                horsLigne: ref.watch(horsLigneProvider).value ?? false,
                 onReessayer: () => ref
                   ..invalidate(capacitesCommunauteProvider)
                   ..invalidate(categoriesCommunauteProvider),
@@ -263,27 +282,36 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
           )
         : null;
 
-    final Widget flux = Padding(
-      padding: uneColonne
-          ? EdgeInsets.zero
-          : const EdgeInsetsDirectional.only(end: AppSpacing.lg),
-      child: FluxPublications(
-        filtre: _filtre,
-        selection: uneColonne ? null : _selection,
-        onOuvrir: _ouvrir,
-        compacte: uneColonne,
-        avecBandeau: !avecContexte && !(uneColonne && _rechercheOuverte),
-        enTete: uneColonne ? _teteMobile() : null,
-        entreeComposer: uneColonne && _rechercheOuverte ? null : entree,
-      ),
+    final bool surfaceRecherche = uneColonne && _rechercheOuverte;
+    final Widget publications = FluxPublications(
+      filtre: _filtre,
+      selection: uneColonne ? null : _selection,
+      onOuvrir: _ouvrir,
+      compacte: uneColonne,
+      avecBandeau: !avecContexte && !surfaceRecherche,
+      enTete: uneColonne && !surfaceRecherche ? _teteMobile() : null,
+      entreeComposer: surfaceRecherche ? null : entree,
     );
+    final r = t.com.communaute.recherche;
+    // Telephone : la recherche ouverte est la surface partagee (R-07), le
+    // flux filtre en dessous ; la fermer rend le flux tel qu'il etait.
+    final Widget flux = surfaceRecherche
+        ? SurfaceRecherche(
+            key: ClesRechercheCommunaute.surface,
+            controleur: _recherche,
+            libelle: r.champ,
+            aide: r.aide,
+            cleChamp: ClesRechercheCommunaute.champ,
+            cleEffacer: ClesRechercheCommunaute.effacer,
+            cleFermer: ClesRechercheCommunaute.fermer,
+            onFermer: _fermerRecherche,
+            resultats: publications,
+          )
+        : publications;
 
-    final Widget principal = Padding(
-      padding: uneColonne
-          ? EdgeInsets.zero
-          : const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-      child: _principal(capacites, categories),
-    );
+    // Les ecarts entre colonnes et le retrait apres le filet sont ceux de
+    // l'espace adaptatif (R-10) : la page n'en ajoute pas.
+    final Widget principal = _principal(capacites, categories);
 
     final Widget espace = EspaceTravailAdaptatif(
       liste: flux,
@@ -316,10 +344,12 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
               Ecart.hLg,
               SizedBox(
                 width: EspaceTravailAdaptatif.largeurContexte,
-                child: ChampRechercheCommunaute(
-                  valeur: _recherche,
-                  onChange: (String texte) =>
-                      setState(() => _recherche = texte),
+                child: ChampRecherche(
+                  controleur: _recherche,
+                  libelle: t.com.communaute.recherche.champ,
+                  aide: t.com.communaute.recherche.aide,
+                  cleChamp: ClesRechercheCommunaute.champ,
+                  cleEffacer: ClesRechercheCommunaute.effacer,
                 ),
               ),
             ],
@@ -334,16 +364,8 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
     );
   }
 
-  /// La tete du flux sur telephone : categories et entree de la recherche,
-  /// ou la surface de recherche ouverte.
+  /// La tete du flux sur telephone : categories et entree de la recherche.
   Widget _teteMobile() {
-    if (_rechercheOuverte) {
-      return TeteRechercheCommunaute(
-        valeur: _recherche,
-        onChange: (String texte) => setState(() => _recherche = texte),
-        onFermer: _fermerRecherche,
-      );
-    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -394,14 +416,10 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
         return const SizedBox.shrink(key: CommunautePage.cleAucuneSelection);
       }
       final c = t.com.communaute.publication;
-      return SingleChildScrollView(
+      return VueChoisirCommunication(
         key: CommunautePage.cleAucuneSelection,
-        child: VueEtatCommunication(
-          etat: EtatCommunication.vide,
-          titreVide: c.choisirTitre,
-          phraseVide: c.choisir,
-          portee: PorteeEtat.bloc,
-        ),
+        titre: c.choisirTitre,
+        phrase: c.choisir,
       );
     }
     return PublicationDetail(

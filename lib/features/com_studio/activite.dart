@@ -15,12 +15,13 @@
 
 import 'package:flutter/material.dart';
 
+import '../../core/communications/lecture_fil_communication.dart'
+    show horodatageMessage;
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/widgets/badge_non_lu.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../accueil_famille/bloc_seance.dart' show dateDeLAppareil;
-import 'canal_page.dart' show horodatageCanal;
 import 'port_activite_studio.dart';
 
 /// Le nom d'un module canonique.
@@ -79,7 +80,7 @@ String legendeActivite(ActiviteStudio activite) {
       a.echeance(date: dansPhrase(dateDeLAppareil(echeance.toLocal()))),
     source,
     ?activite.auteur?.nomAffiche,
-    horodatageCanal(activite.survenueLe),
+    horodatageMessage(activite.survenueLe),
   ];
   final String legende = morceaux.join(' · ');
   if (activite.destination != null) return legende;

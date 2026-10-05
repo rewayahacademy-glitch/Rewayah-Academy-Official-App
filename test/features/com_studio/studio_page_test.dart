@@ -412,7 +412,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await monterStudio(tester, port: portDemo());
-      await tester.enterText(find.byKey(ChampRechercheStudio.cle), 'budget');
+      await tester.enterText(find.byKey(ClesRechercheStudio.champ), 'budget');
       await tester.pumpAndSettle();
       expect(find.text(t.com.studio.recherche.aucunTitre), findsOneWidget);
       expect(
@@ -439,7 +439,7 @@ void main() {
       expect(find.text('Canal secret'), findsNothing);
 
       // La recherche non plus.
-      await tester.enterText(find.byKey(ChampRechercheStudio.cle), 'secret');
+      await tester.enterText(find.byKey(ClesRechercheStudio.champ), 'secret');
       await tester.pumpAndSettle();
       expect(find.text('Canal secret'), findsNothing);
       expect(find.text('Contenu secret'), findsNothing);
@@ -466,7 +466,19 @@ void main() {
       );
       expect(find.byKey(EnteteCanal.cle), findsOneWidget);
       // R-11 : la carte de la piece dans la bulle, plus la ligne de texte.
+      // R-10 : la liste s'est elargie, le fil a moins de largeur ; on
+      // remonte le fil jusqu'a la bulle de la piece.
       final Finder carte = _dansFil(find.byType(CartePieceJointe));
+      await tester.scrollUntilVisible(
+        carte,
+        -200,
+        scrollable: find
+            .descendant(
+              of: find.byKey(FilDiscussion.cleMessages),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
       expect(carte, findsOneWidget);
       expect(
         find.descendant(of: carte, matching: find.text('Planning_T3.pdf')),
@@ -1086,8 +1098,8 @@ void main() {
       );
       await tester.enterText(find.byKey(FilDiscussion.champKey), 'Brouillon');
       await tester.pump();
-      expect(_dansListe(find.byKey(ChampRechercheStudio.cle)), findsOneWidget);
-      await tester.enterText(find.byKey(ChampRechercheStudio.cle), 'planning');
+      expect(_dansListe(find.byKey(ClesRechercheStudio.champ)), findsOneWidget);
+      await tester.enterText(find.byKey(ClesRechercheStudio.champ), 'planning');
       await tester.pumpAndSettle();
       expect(
         _dansPrincipal(find.byKey(ResultatsRechercheStudio.cle)),
@@ -1121,7 +1133,7 @@ void main() {
         findsOneWidget,
       );
 
-      await tester.tap(find.byKey(ChampRechercheStudio.cleEffacer));
+      await tester.tap(find.byKey(ClesRechercheStudio.effacer));
       await tester.pumpAndSettle();
       expect(find.byKey(ResultatsRechercheStudio.cle), findsNothing);
       expect(find.byType(CanalStudio), findsOneWidget);
@@ -1137,7 +1149,7 @@ void main() {
 
     testWidgets('un resultat ouvre son canal', (WidgetTester tester) async {
       final GoRouter routeur = await monterStudio(tester, port: portDemo());
-      await tester.enterText(find.byKey(ChampRechercheStudio.cle), 'visites');
+      await tester.enterText(find.byKey(ClesRechercheStudio.champ), 'visites');
       await tester.pumpAndSettle();
       await tester.tap(
         _dansPrincipal(find.text('Compte_rendu_visites.pdf')).first,
@@ -1150,7 +1162,7 @@ void main() {
     testWidgets('un canal choisi dans la liste pendant une recherche '
         's ouvre a la place des resultats', (WidgetTester tester) async {
       final GoRouter routeur = await monterStudio(tester, port: portDemo());
-      await tester.enterText(find.byKey(ChampRechercheStudio.cle), 'planning');
+      await tester.enterText(find.byKey(ClesRechercheStudio.champ), 'planning');
       await tester.pumpAndSettle();
       expect(find.byKey(ResultatsRechercheStudio.cle), findsOneWidget);
       await tester.tap(_dansListe(find.text('Admissions')));
@@ -1164,7 +1176,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await monterStudio(tester, port: portDemo());
-      await tester.enterText(find.byKey(ChampRechercheStudio.cle), 'zzz');
+      await tester.enterText(find.byKey(ClesRechercheStudio.champ), 'zzz');
       await tester.pumpAndSettle();
       expect(find.text(t.com.studio.recherche.aucunTitre), findsOneWidget);
       expect(
@@ -1178,7 +1190,7 @@ void main() {
     ) async {
       final _StudioSansRecherche port = _StudioSansRecherche();
       await monterStudio(tester, port: port);
-      await tester.enterText(find.byKey(ChampRechercheStudio.cle), 'plan');
+      await tester.enterText(find.byKey(ClesRechercheStudio.champ), 'plan');
       await tester.pumpAndSettle();
       expect(
         find.text(t.com.socle.composants.etats.indisponibleTitre),
@@ -1193,20 +1205,20 @@ void main() {
         port: portDemo(),
         taille: _mobile,
       );
-      expect(find.byKey(ChampRechercheStudio.cle), findsNothing);
+      expect(find.byKey(ClesRechercheStudio.champ), findsNothing);
       await tester.tap(find.byKey(EspaceStudio.cleOuvrirRecherche));
       await tester.pumpAndSettle();
-      expect(find.byKey(SurfaceRechercheStudio.cle), findsOneWidget);
+      expect(find.byKey(ClesRechercheStudio.surface), findsOneWidget);
       expect(find.byType(ListeCanaux), findsNothing);
-      await tester.tap(find.byKey(SurfaceRechercheStudio.cleFermer));
+      await tester.tap(find.byKey(ClesRechercheStudio.fermer));
       await tester.pumpAndSettle();
-      expect(find.byKey(SurfaceRechercheStudio.cle), findsNothing);
+      expect(find.byKey(ClesRechercheStudio.surface), findsNothing);
       expect(find.byType(ListeCanaux), findsOneWidget);
 
       await tester.tap(find.byKey(EspaceStudio.cleOuvrirRecherche));
       await tester.pumpAndSettle();
       await tester.enterText(
-        find.byKey(ChampRechercheStudio.cle),
+        find.byKey(ClesRechercheStudio.champ),
         'admissions',
       );
       await tester.pumpAndSettle();
@@ -1220,7 +1232,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(cheminCourant(routeur), Routes.canalStudioPour('admissions'));
-      expect(find.byKey(SurfaceRechercheStudio.cle), findsNothing);
+      expect(find.byKey(ClesRechercheStudio.surface), findsNothing);
       expect(find.byType(CanalStudio), findsOneWidget);
       expect(tester.takeException(), isNull);
     });

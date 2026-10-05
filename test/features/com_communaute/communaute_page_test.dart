@@ -193,11 +193,19 @@ void main() {
       }
       // L'aide est en colonne : pas de bandeau en double dans le flux.
       expect(_present(BandeauRegles.cle), isFalse);
-      // Contrat A : pas de bouton pleine largeur sur ordinateur.
+      // Contrat A : pas de bouton pleine largeur sur ordinateur. Le bouton ne
+      // depasse pas la colonne du flux ; le centrage sans `widthFactor`
+      // d'`ActionPrincipale` (composant partage, revue COM-R, R-12) reste a
+      // valider par le directeur.
       final double largeurBouton = tester
           .getSize(find.byKey(EntreeNouvellePublication.cle))
           .width;
-      expect(largeurBouton, lessThan(EspaceTravailAdaptatif.largeurListe));
+      expect(
+        largeurBouton,
+        lessThanOrEqualTo(
+          tester.getSize(find.byKey(EspaceTravailAdaptatif.cleListe)).width,
+        ),
+      );
 
       await taper(
         tester,
@@ -271,13 +279,13 @@ void main() {
         'quoi faire', (WidgetTester tester) async {
       await monterCommunaute(tester, taille: const Size(1440, 900));
       await tester.enterText(
-        find.byKey(ChampRechercheCommunaute.cle),
+        find.byKey(ClesRechercheCommunaute.champ),
         'cartes',
       );
       await tester.pumpAndSettle();
       expect(_cartes(), 1);
       await tester.enterText(
-        find.byKey(ChampRechercheCommunaute.cle),
+        find.byKey(ClesRechercheCommunaute.champ),
         'introuvable',
       );
       await tester.pumpAndSettle();
@@ -292,15 +300,15 @@ void main() {
       expect(_cartes(), 2);
 
       await taper(tester, find.byKey(EntreeRechercheCommunaute.cle));
-      expect(find.byKey(ChampRechercheCommunaute.cle), findsOneWidget);
+      expect(find.byKey(ClesRechercheCommunaute.champ), findsOneWidget);
       expect(_present(SelecteurCategories.cle), isFalse);
       expect(_present(EntreeNouvellePublication.cle), isFalse);
-      await tester.enterText(find.byKey(ChampRechercheCommunaute.cle), 'fiche');
+      await tester.enterText(find.byKey(ClesRechercheCommunaute.champ), 'fiche');
       await tester.pumpAndSettle();
       expect(_cartes(), 1);
 
-      await taper(tester, find.byKey(TeteRechercheCommunaute.cleFermer));
-      expect(find.byKey(ChampRechercheCommunaute.cle), findsNothing);
+      await taper(tester, find.byKey(ClesRechercheCommunaute.fermer));
+      expect(find.byKey(ClesRechercheCommunaute.champ), findsNothing);
       // La categorie d'avant est restee : deux publications de Ressources.
       expect(_cartes(), 2);
     });

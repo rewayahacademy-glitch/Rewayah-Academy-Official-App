@@ -62,13 +62,6 @@ import '../../core/widgets/vue_etat_communication.dart';
 import '../suivi_foyer/filtres_historique.dart';
 import 'annonces_planifiees.dart';
 
-/// Les capacites de moderation de la personne connectee, relues a chaque
-/// ouverture de la file.
-final FutureProvider<CapacitesModeration> capacitesModerationFileProvider =
-    FutureProvider.autoDispose<CapacitesModeration>(
-      (Ref ref) => ref.watch(portModerationProvider).capacites(),
-    );
-
 /// La file des contenus signales, relue a chaque ouverture (le compteur
 /// « Contenus en modération » des Annonces la lit aussi).
 final FutureProvider<List<ElementModeration>> fileModerationProvider =
@@ -247,14 +240,14 @@ class _FileModerationState extends ConsumerState<FileModeration> {
   }
 
   void _relire() => ref
-    ..invalidate(capacitesModerationFileProvider)
+    ..invalidate(capacitesModerationProvider)
     ..invalidate(fileModerationProvider);
 
   @override
   Widget build(BuildContext context) {
     final m = t.com.annonces.administration.moderation;
     final AsyncValue<CapacitesModeration> capacitesLues = ref.watch(
-      capacitesModerationFileProvider,
+      capacitesModerationProvider,
     );
     final AsyncValue<List<ElementModeration>> fileLue = ref.watch(
       fileModerationProvider,
@@ -282,10 +275,9 @@ class _FileModerationState extends ConsumerState<FileModeration> {
                 phrase: m.indisponible,
                 dependance: erreur.dependance,
               )
-            : VueEtatCommunication(
-                etat: ref.watch(horsLigneProvider).value ?? false
-                    ? EtatCommunication.horsLigne
-                    : EtatCommunication.erreur,
+            : VueEtatCommunication.depuisErreur(
+                erreur,
+                horsLigne: ref.watch(horsLigneProvider).value ?? false,
                 onReessayer: _relire,
               ),
       );
@@ -333,18 +325,10 @@ class _FileModerationState extends ConsumerState<FileModeration> {
               LocalFeedback(message: _retourLocal),
               Expanded(
                 child: EspaceTravailAdaptatif(
-                  liste: Padding(
-                    padding: uneColonne
-                        ? EdgeInsets.zero
-                        : const EdgeInsetsDirectional.only(end: AppSpacing.lg),
-                    child: _liste(elements, demonstration, uneColonne),
-                  ),
-                  principal: Padding(
-                    padding: uneColonne
-                        ? EdgeInsets.zero
-                        : const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-                    child: _principal(elements, capacites),
-                  ),
+                  // Les ecarts entre colonnes et le retrait apres le filet
+                  // sont ceux de l'espace adaptatif (R-10).
+                  liste: _liste(elements, demonstration, uneColonne),
+                  principal: _principal(elements, capacites),
                   contexte: const _Politique(),
                   titreContexte: m.politique,
                   surfaceMobile: _surface,

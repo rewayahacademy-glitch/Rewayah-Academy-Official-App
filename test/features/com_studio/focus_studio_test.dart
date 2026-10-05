@@ -88,7 +88,7 @@ void main() {
       // Avant : la vraie disposition du canal (COM-W03).
       expect(find.byKey(NavShell.barreLateraleKey), findsOneWidget);
       expect(find.byType(ListeCanaux), findsOneWidget);
-      expect(find.byType(ChampRechercheStudio), findsOneWidget);
+      expect(find.byKey(ClesRechercheStudio.champ), findsOneWidget);
       expect(find.byType(PanneauPartages), findsOneWidget);
       expect(find.byKey(EnteteCanal.cleLegende), findsOneWidget);
       expect(entrerFocus, findsOneWidget);
@@ -109,7 +109,7 @@ void main() {
       expect(find.byKey(NavShell.railKey), findsNothing);
       expect(find.byKey(NavShell.barreBasseKey), findsNothing);
       expect(find.byType(ListeCanaux), findsNothing);
-      expect(find.byType(ChampRechercheStudio), findsNothing);
+      expect(find.byKey(ClesRechercheStudio.champ), findsNothing);
       expect(find.byType(PanneauPartages), findsNothing);
       expect(find.byKey(EspaceTravailAdaptatif.cleContexte), findsNothing);
       expect(
@@ -501,7 +501,7 @@ void main() {
         depart: _adresseC1,
         taille: _bureau,
       );
-      await tester.enterText(find.byKey(ChampRechercheStudio.cle), 'planning');
+      await tester.enterText(find.byKey(ClesRechercheStudio.champ), 'planning');
       await tester.pumpAndSettle();
       expect(find.byKey(ResultatsRechercheStudio.cle), findsOneWidget);
       // Les resultats couvrent le canal : « Mode focus » n'est pas a portee
@@ -512,15 +512,15 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byKey(ResultatsRechercheStudio.cle), findsNothing);
-      expect(find.byType(ChampRechercheStudio), findsNothing);
+      expect(find.byKey(ClesRechercheStudio.champ), findsNothing);
       expect(find.byKey(FilDiscussion.champKey).hitTestable(), findsOneWidget);
 
       await quitter(tester);
 
-      expect(find.byType(ChampRechercheStudio), findsOneWidget);
+      expect(find.byKey(ClesRechercheStudio.champ), findsOneWidget);
       expect(
         tester
-            .widget<TextField>(find.byKey(ChampRechercheStudio.cle))
+            .widget<TextField>(find.byKey(ClesRechercheStudio.champ))
             .controller!
             .text,
         'planning',

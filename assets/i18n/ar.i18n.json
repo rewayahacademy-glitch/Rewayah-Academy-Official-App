@@ -58,6 +58,10 @@
     }
   },
   "commun": {
+    "recherche": {
+      "effacer": "مسح البحث",
+      "fermer": "إغلاق البحث"
+    },
     "sections": {
       "page": "أقسام الصفحة"
     }
@@ -196,6 +200,12 @@
   "com": {
     "socle": {
       "composants": {
+        "lecture": {
+          "pieceJointe": "مرفق: {nom}",
+          "vocal": "رسالة صوتية مدتها {duree}",
+          "vocalSansDuree": "رسالة صوتية",
+          "horodatage": "{date}، {heure}"
+        },
         "badge": {
           "nonLuUn": "1 غير مقروء",
           "nonLus": "{nombre} غير مقروءة",
@@ -369,8 +379,6 @@
       "recherche": {
         "champ": "البحث عن محادثة",
         "aide": "الاسم أو الفصل أو الملف",
-        "fermer": "إغلاق البحث",
-        "effacer": "مسح البحث",
         "aucunTitre": "لم يتم العثور على أي محادثة",
         "aucun": "لا توجد محادثة تطابق « {texte} ». جرّب اسمًا آخر أو فصلًا آخر.",
         "resultatUn": "تم العثور على محادثة واحدة",
@@ -411,12 +419,7 @@
         "vous": "أنت"
       },
       "fil": {
-        "auteurEtMoment": "{auteur} · {moment}",
-        "lectureSeule": "يمكنك قراءة هذه المحادثة. الرد فيها غير متاح لك.",
-        "pieceJointe": "مرفق: {nom}",
-        "vocal": "رسالة صوتية مدتها {duree}",
-        "vocalSansDuree": "رسالة صوتية",
-        "horodatage": "{date}، {heure}"
+        "lectureSeule": "يمكنك قراءة هذه المحادثة. الرد فيها غير متاح لك."
       },
       "demo": {
         "choisirRole": "اختر وجهة النظر في هذا العرض التوضيحي.",
@@ -554,8 +557,7 @@
       "recherche": {
         "ouvrir": "البحث عن منشور",
         "champ": "البحث عن منشور",
-        "aide": "كلمة من العنوان أو النص",
-        "fermer": "إغلاق البحث"
+        "aide": "كلمة من العنوان أو النص"
       },
       "moment": {
         "instant": "الآن",
@@ -771,12 +773,7 @@
         "aucunMessageTitre": "لا توجد رسائل حاليًا",
         "aucunMessage": "ستظهر رسائل هذه القناة هنا فور نشرها.",
         "indisponibleTitre": "القناة غير متاحة",
-        "indisponible": "هذه القناة غير متاحة لك. اختر قناة أخرى من القائمة.",
-        "pieceJointe": "مرفق: {nom}",
-        "vocal": "رسالة صوتية مدتها {duree}",
-        "vocalSansDuree": "رسالة صوتية",
-        "horodatage": "{date}، {heure}",
-        "auteurEtMoment": "{auteur} · {moment}"
+        "indisponible": "هذه القناة غير متاحة لك. اختر قناة أخرى من القائمة."
       },
       "panneau": {
         "titre": "حول القناة",
@@ -819,8 +816,6 @@
       "recherche": {
         "champ": "البحث في الاستوديو",
         "aide": "قناة أو رسالة أو ملف",
-        "fermer": "إغلاق البحث",
-        "effacer": "مسح البحث",
         "aucunTitre": "لا توجد نتائج",
         "aucun": "لا شيء يطابق «{texte}» في قنواتك. جرّب كلمة أخرى.",
         "aucunDansFiltre": "لا شيء من هذا النوع يطابق البحث. اختر الكل لرؤية النتائج الأخرى.",

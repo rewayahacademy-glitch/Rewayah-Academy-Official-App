@@ -18,6 +18,8 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
 
 import '../../../core/communications/capacites_communication.dart';
+import '../../../core/communications/lecture_fil_communication.dart'
+    show texteDuMessage;
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
@@ -25,7 +27,6 @@ import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/page_shell.dart';
-import '../../com_messages/fil_contextuel.dart' show texteDuMessage;
 import '../../com_messages/messages_page.dart';
 import '../../com_messages/port_messages_metier.dart';
 import 'com_vocal_demo.dart';

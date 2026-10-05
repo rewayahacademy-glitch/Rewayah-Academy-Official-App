@@ -25,7 +25,11 @@
 // - R-22 : le fil porte seul la persistance du brouillon de son champ
 //   ([FilDiscussion.cleBrouillon]) et accepte un controleur exterieur ;
 // - R-24 : un fil sans message le dit (« Aucun message pour le moment ») ;
-// - R-25 : Ctrl+Entree (Cmd+Entree) envoie, Entree garde le saut de ligne.
+// - R-25 : Ctrl+Entree (Cmd+Entree) envoie, Entree garde le saut de ligne ;
+// - R-07 : un mode lecture seule ([FilDiscussion.lectureSeule]) : les memes
+//   bulles, l'en-tete qui defile avec elles, puis la phrase qui dit la
+//   limite ; ni champ ni bouton. Messages metier et canaux du Studio le
+//   lisent tous deux, au lieu de leurs deux copies.
 
 import 'dart:async';
 import 'dart:math' as math;
@@ -196,7 +200,8 @@ class _MessageLocal {
   EtatEnvoiMessage etat = EtatEnvoiMessage.enCours;
 }
 
-/// Le fil : la liste des messages, puis le champ et le bouton d'envoi.
+/// Le fil : la liste des messages, puis le champ et le bouton d'envoi ; ou,
+/// en lecture seule ([lectureSeule]), la phrase qui dit la limite.
 ///
 /// A poser dans une zone de hauteur bornee (`PageShell(defilante: false)`) :
 /// la liste defile, le champ reste visible au-dessus du clavier (W-2411).
@@ -210,7 +215,8 @@ class _MessageLocal {
 /// [partSaisieMax] de la hauteur de l'ecran, ni plus de [partSaisieFilMax]
 /// de celle du fil (clavier ouvert) : au-dela, elle defile (R-02).
 class FilDiscussion extends StatefulWidget {
-  /// Cree le fil, avec [onEnvoyer] ou [onEnvoyerMessage].
+  /// Cree le fil, avec [onEnvoyer] ou [onEnvoyerMessage], ou en lecture
+  /// seule avec [lectureSeule].
   const FilDiscussion({
     required this.messages,
     required this.textes,
@@ -222,9 +228,10 @@ class FilDiscussion extends StatefulWidget {
     this.emplacementVocal,
     this.controleur,
     this.cleBrouillon,
+    this.lectureSeule,
   }) : assert(
-         onEnvoyer != null || onEnvoyerMessage != null,
-         'FilDiscussion demande onEnvoyer ou onEnvoyerMessage.',
+         lectureSeule != null || onEnvoyer != null || onEnvoyerMessage != null,
+         'FilDiscussion demande onEnvoyer, onEnvoyerMessage ou lectureSeule.',
        );
 
   /// Les messages connus, du plus ancien au plus recent.
@@ -265,6 +272,13 @@ class FilDiscussion extends StatefulWidget {
   /// le champ, donc efface le brouillon (R-22).
   final CleBrouillon? cleBrouillon;
 
+  /// La phrase qui dit pourquoi on ne peut pas ecrire ici (« Vous pouvez lire
+  /// ce canal. L'ecriture n'y est pas ouverte pour vous. »), ou `null` : le
+  /// fil s'ecrit. Donnee, le fil se lit seulement : ni champ, ni bouton
+  /// grise, ni brouillon ; l'en-tete defile avec les messages, la phrase se
+  /// pose sous eux (R-07).
+  final String? lectureSeule;
+
   /// Sous cette hauteur recue, l'en-tete defile avec les messages (R-02).
   static const double hauteurBasse = 480;
 
@@ -291,6 +305,11 @@ class FilDiscussion extends StatefulWidget {
 
   /// La liste des messages, pour les tests.
   static const Key cleMessages = ValueKey<String>('fil-discussion-messages');
+
+  /// La phrase de la lecture seule, pour les tests.
+  static const Key cleLectureSeule = ValueKey<String>(
+    'fil-discussion-lecture-seule',
+  );
 
   /// Le champ de saisie, pour les tests.
   static const Key champKey = ValueKey<String>('fil-discussion-champ');
@@ -345,7 +364,9 @@ class _FilDiscussionState extends State<FilDiscussion> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final CleBrouillon? cle = widget.cleBrouillon;
+    final CleBrouillon? cle = widget.lectureSeule == null
+        ? widget.cleBrouillon
+        : null;
     if (cle != null && !_brouillonsLus) {
       _brouillonsLus = true;
       try {
@@ -577,6 +598,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
         ),
       ],
     );
+    final String? limite = widget.lectureSeule;
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {
         final double hauteur = contraintes.maxHeight;
@@ -588,7 +610,10 @@ class _FilDiscussionState extends State<FilDiscussion> {
         final FlutterView vue = View.of(context);
         final double hauteurSansClavier =
             hauteur + vue.viewInsets.bottom / vue.devicePixelRatio;
+        // En lecture seule, rien ne reste fixe sous la liste : l'en-tete
+        // defile toujours avec les messages (R-02, R-07).
         final bool enteteDefilante =
+            limite != null ||
             MediaQuery.textScalerOf(context).scale(1) >=
                 FilDiscussion.echelleTexteAgrandi ||
             hauteurSansClavier < FilDiscussion.hauteurBasse;
@@ -624,7 +649,20 @@ class _FilDiscussionState extends State<FilDiscussion> {
                       : double.infinity,
                 ),
               ),
-              child: SingleChildScrollView(child: zoneSaisie),
+              child: SingleChildScrollView(
+                child: limite == null
+                    ? zoneSaisie
+                    : Padding(
+                        padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+                        child: Text(
+                          limite,
+                          key: FilDiscussion.cleLectureSeule,
+                          style: AppPalette.of(context).inkMuted.applyTo(
+                            styles.bodyMedium ?? const TextStyle(),
+                          ),
+                        ),
+                      ),
+              ),
             ),
           ],
         );

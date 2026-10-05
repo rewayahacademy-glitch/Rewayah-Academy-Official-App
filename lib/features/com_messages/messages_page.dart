@@ -31,11 +31,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/capacites_communication.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
-import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/espace_travail_adaptatif.dart';
 import '../../core/widgets/page_shell.dart';
@@ -346,41 +344,12 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
   }
 
   /// La colonne du fil quand aucun fil n'est ouvert : dire quoi faire,
-  /// jamais une colonne vide.
-  Widget _choisir() {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    final m = t.com.messages;
-    return Center(
-      key: EspaceMessagesMetier.cleChoisir,
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Semantics(
-              header: true,
-              child: Text(
-                m.choisirTitre,
-                textAlign: TextAlign.center,
-                style: palette.inkStrong.applyTo(
-                  textes.titleMedium ?? const TextStyle(),
-                ),
-              ),
-            ),
-            Ecart.vSm,
-            Text(
-              m.choisir,
-              textAlign: TextAlign.center,
-              style: palette.inkMuted.applyTo(
-                textes.bodyMedium ?? const TextStyle(),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  /// jamais une colonne vide (vue partagee, R-23).
+  Widget _choisir() => VueChoisirCommunication(
+    key: EspaceMessagesMetier.cleChoisir,
+    titre: t.com.messages.choisirTitre,
+    phrase: t.com.messages.choisir,
+  );
 
   /// L'etat de la liste quand elle n'a pas de contenu a montrer.
   Widget _etatListe(bool horsLigne) {
@@ -392,7 +361,11 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
     }
     if (_liste.hasError) {
       return SingleChildScrollView(
-        child: _vueErreur(_liste.error!, horsLigne, _chargerListe),
+        child: VueEtatCommunication.depuisErreur(
+          _liste.error!,
+          horsLigne: horsLigne,
+          onReessayer: _chargerListe,
+        ),
       );
     }
     return SingleChildScrollView(
@@ -413,7 +386,11 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
     }
     if (_fil.hasError) {
       return SingleChildScrollView(
-        child: _vueErreur(_fil.error!, horsLigne, () => _chargerFil(filId)),
+        child: VueEtatCommunication.depuisErreur(
+          _fil.error!,
+          horsLigne: horsLigne,
+          onReessayer: () => _chargerFil(filId),
+        ),
       );
     }
     final FilMetier? fil = _fil.value;
@@ -444,21 +421,6 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
       onEnvoyerVocal: vocalOuvert(ref)
           ? (EnregistrementVocal v, String cle) => _envoyerVocal(fil.id, v, cle)
           : null,
-    );
-  }
-
-  /// Une lecture en echec : capacite absente (sans « Reessayer »), hors
-  /// ligne ou echec (avec « Reessayer »).
-  Widget _vueErreur(Object erreur, bool horsLigne, VoidCallback reessayer) {
-    if (erreur is CapaciteIndisponible) {
-      return VueEtatCommunication(
-        etat: EtatCommunication.indisponible,
-        dependance: erreur.dependance,
-      );
-    }
-    return VueEtatCommunication(
-      etat: horsLigne ? EtatCommunication.horsLigne : EtatCommunication.erreur,
-      onReessayer: reessayer,
     );
   }
 }

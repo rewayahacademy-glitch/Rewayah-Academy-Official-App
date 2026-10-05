@@ -82,9 +82,10 @@ void main() {
         depart: cheminFilTest('fil-adam'),
       );
       expect(_panneaux(), 3);
+      // R-10 : la liste des fils a au moins 320 a 1440.
       expect(
         tester.getSize(find.byKey(EspaceTravailAdaptatif.cleListe)).width,
-        EspaceTravailAdaptatif.largeurListe,
+        greaterThanOrEqualTo(320),
       );
       expect(_dansListe(find.byType(ListeFils)), findsOneWidget);
       expect(_dansPrincipal(find.byType(FilDiscussion)), findsOneWidget);
@@ -590,7 +591,9 @@ void main() {
           depart: cheminFilTest('fil-1'),
           ecritureOuverte: false,
         );
-        expect(find.byType(FilDiscussion), findsNothing);
+        expect(find.byType(FilDiscussion), findsOneWidget);
+        // R-07 : le mode lecture seule du fil partage, sans champ.
+        expect(find.byKey(FilDiscussion.champKey), findsNothing);
         expect(find.byKey(FilContextuel.cleLectureSeule), findsOneWidget);
         expect(find.byKey(FilDiscussion.envoyerKey), findsNothing);
         expect(
@@ -608,7 +611,9 @@ void main() {
         port: FauxMessagesMetier(fils: <FilMetier>[filSimple(ecrire: false)]),
         depart: cheminFilTest('fil-1'),
       );
-      expect(find.byType(FilDiscussion), findsNothing);
+      expect(find.byType(FilDiscussion), findsOneWidget);
+      // R-07 : le mode lecture seule du fil partage, sans champ.
+      expect(find.byKey(FilDiscussion.champKey), findsNothing);
       expect(find.byKey(FilContextuel.cleLectureSeule), findsOneWidget);
       expect(
         _dansPrincipal(find.textContaining('Bonjour, voici une question')),
@@ -646,18 +651,18 @@ void main() {
         tester,
         port: portDemo(RoleDemoCommunications.enseignant),
       );
-      expect(find.byKey(ChampRechercheFils.cle), findsOneWidget);
-      await tester.enterText(find.byKey(ChampRechercheFils.cle), 'yasmine');
+      expect(find.byKey(ClesRechercheFils.champ), findsOneWidget);
+      await tester.enterText(find.byKey(ClesRechercheFils.champ), 'yasmine');
       await tester.pumpAndSettle();
       expect(find.byKey(ListeFils.cleLigne('fil-yasmine')), findsOneWidget);
       expect(find.byKey(ListeFils.cleLigne('fil-adam')), findsNothing);
       expect(find.text(t.com.messages.recherche.resultatUn), findsOneWidget);
 
-      await tester.enterText(find.byKey(ChampRechercheFils.cle), 'zzz');
+      await tester.enterText(find.byKey(ClesRechercheFils.champ), 'zzz');
       await tester.pumpAndSettle();
       expect(find.text(t.com.messages.recherche.aucunTitre), findsOneWidget);
 
-      await tester.tap(find.byKey(ChampRechercheFils.cleEffacer));
+      await tester.tap(find.byKey(ClesRechercheFils.effacer));
       await tester.pumpAndSettle();
       expect(find.byKey(ListeFils.cleLigne('fil-adam')), findsOneWidget);
       expect(find.byKey(ListeFils.cleLigne('fil-yasmine')), findsOneWidget);
@@ -670,18 +675,18 @@ void main() {
         port: portDemo(RoleDemoCommunications.enseignant),
         taille: _mobile,
       );
-      expect(find.byKey(ChampRechercheFils.cle), findsNothing);
+      expect(find.byKey(ClesRechercheFils.champ), findsNothing);
       await tester.tap(find.byKey(ListeFils.cleOuvrirRecherche));
       await tester.pumpAndSettle();
-      expect(find.byKey(SurfaceRechercheFils.cle), findsOneWidget);
-      await tester.enterText(find.byKey(ChampRechercheFils.cle), 'direction');
+      expect(find.byKey(ClesRechercheFils.surface), findsOneWidget);
+      await tester.enterText(find.byKey(ClesRechercheFils.champ), 'direction');
       await tester.pumpAndSettle();
       expect(find.byKey(ListeFils.cleLigne('fil-affectation')), findsOneWidget);
       expect(find.byKey(ListeFils.cleLigne('fil-adam')), findsNothing);
 
-      await tester.tap(find.byKey(SurfaceRechercheFils.cleFermer));
+      await tester.tap(find.byKey(ClesRechercheFils.fermer));
       await tester.pumpAndSettle();
-      expect(find.byKey(SurfaceRechercheFils.cle), findsNothing);
+      expect(find.byKey(ClesRechercheFils.surface), findsNothing);
       expect(find.byKey(ListeFils.cleLigne('fil-adam')), findsOneWidget);
       expect(find.byKey(ListeFils.cleLigne('fil-affectation')), findsOneWidget);
     });

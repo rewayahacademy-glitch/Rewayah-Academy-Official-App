@@ -192,7 +192,7 @@ void main() {
         port,
       );
       expect(find.byKey(ListeFils.cleLigne('fil-adam')), findsOneWidget);
-      await tester.enterText(find.byKey(ChampRechercheFils.cle), 'dossier');
+      await tester.enterText(find.byKey(ClesRechercheFils.champ), 'dossier');
       await stabiliser(tester);
       expect(find.byKey(ListeFils.cleLigne('fil-adam')), findsNothing);
 
@@ -212,7 +212,7 @@ void main() {
 
       expect(lieu(routeur), Routes.tuteurFilPour('fil-dossier-adam'));
       final TextField champ = tester.widget<TextField>(
-        find.byKey(ChampRechercheFils.cle),
+        find.byKey(ClesRechercheFils.champ),
       );
       expect(champ.controller!.text, 'dossier');
       expect(
@@ -240,14 +240,14 @@ void main() {
       );
       await tester.tap(find.byKey(ListeFils.cleOuvrirRecherche));
       await tester.pumpAndSettle();
-      await tester.enterText(find.byKey(ChampRechercheFils.cle), 'direction');
+      await tester.enterText(find.byKey(ClesRechercheFils.champ), 'direction');
       await tester.pumpAndSettle();
-      expect(find.byKey(SurfaceRechercheFils.cle), findsOneWidget);
+      expect(find.byKey(ClesRechercheFils.surface), findsOneWidget);
 
       await tester.binding.handlePopRoute();
       await tester.pumpAndSettle();
       expect(cheminCourant(routeur), cheminListeTest);
-      expect(find.byKey(SurfaceRechercheFils.cle), findsNothing);
+      expect(find.byKey(ClesRechercheFils.surface), findsNothing);
       expect(find.byKey(ListeFils.cleLigne('fil-adam')), findsOneWidget);
       expect(find.byKey(ListeFils.cleLigne('fil-affectation')), findsOneWidget);
     });
@@ -262,12 +262,12 @@ void main() {
       );
       await tester.tap(find.byKey(ListeFils.cleOuvrirRecherche));
       await tester.pumpAndSettle();
-      expect(find.byKey(SurfaceRechercheFils.cle), findsOneWidget);
+      expect(find.byKey(ClesRechercheFils.surface), findsOneWidget);
 
       await tester.tap(find.byType(DisqueRetour));
       await tester.pumpAndSettle();
       expect(cheminCourant(routeur), cheminListeTest);
-      expect(find.byKey(SurfaceRechercheFils.cle), findsNothing);
+      expect(find.byKey(ClesRechercheFils.surface), findsNothing);
       expect(find.byKey(ListeFils.cleOuvrirRecherche), findsOneWidget);
 
       await tester.tap(find.byType(DisqueRetour));

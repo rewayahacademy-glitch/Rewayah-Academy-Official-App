@@ -827,5 +827,10 @@
   "com.communaute.garde.reponse.liensTitre": "revue croisee COM-R du 05/10 (R-01) ; libelle propose par un agent (COM-RC), a valider par le directeur",
   "com.communaute.garde.reponse.consigneBlocage": "revue croisee COM-R du 05/10 (R-01, K-59) ; libelle propose par un agent (COM-RC), a valider par le directeur",
   "com.annonces.publieur.classeRefuseeTitre": "revue croisee COM-R du 05/10 (R-20) ; libelle propose par un agent (COM-RC), a valider par le directeur",
-  "com.annonces.publieur.classeRefusee": "revue croisee COM-R du 05/10 (R-20, K-59) ; libelle propose par un agent (COM-RC), a valider par le directeur"
+  "com.annonces.publieur.classeRefusee": "revue croisee COM-R du 05/10 (R-20, K-59) ; libelle propose par un agent (COM-RC), a valider par le directeur",
+  "com.socle.composants.lecture.pieceJointe": "revue croisee COM-R du 05/10 (R-07) ; texte inchange, repris de com.messages.fil.pieceJointe et com.studio.canal.pieceJointe (spec V1 section 3), regroupe dans le socle par COM-RC",
+  "com.socle.composants.lecture.vocal": "revue croisee COM-R du 05/10 (R-07) ; texte inchange, repris de com.messages.fil.vocal et com.studio.canal.vocal (COM-VOC), regroupe dans le socle par COM-RC",
+  "com.socle.composants.lecture.vocalSansDuree": "revue croisee COM-R du 05/10 (R-07) ; texte inchange, repris de com.messages.fil.vocalSansDuree et com.studio.canal.vocalSansDuree (COM-VOC), regroupe dans le socle par COM-RC",
+  "commun.recherche.effacer": "revue croisee COM-R du 05/10 (R-07) ; texte inchange, repris de com.messages.recherche.effacer et com.studio.recherche.effacer (spec V1 section 18), commun a ChampRecherche par COM-RC",
+  "commun.recherche.fermer": "revue croisee COM-R du 05/10 (R-07) ; texte inchange, repris de com.messages.recherche.fermer, com.studio.recherche.fermer et com.communaute.recherche.fermer (spec V1 section 18), commun a SurfaceRecherche par COM-RC"
 }

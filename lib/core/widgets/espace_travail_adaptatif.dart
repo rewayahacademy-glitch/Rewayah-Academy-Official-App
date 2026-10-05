@@ -27,6 +27,15 @@
 // Le panneau de contexte se ferme et se rouvre. Un panneau absent ou ferme ne
 // laisse AUCUNE colonne vide : le contenu prend la place.
 //
+// COM-RC (R-10) : la liste s'elargit avec la place recue, de 256 a 336
+// (DESIGN-GOV-2026-09-26, section 4 bis.4 : file 336, gap 24), donc au moins
+// 320 a 1440 ; deux colonnes voisines sont separees par un ecart de 24
+// (`ecartColonnes`) puis le filet, et le contenu pose apres un filet est en
+// retrait de 16 (`retraitFilet`) : rien ne touche le filet. L'espace porte
+// ces ecarts ; les ecrans n'en ajoutent pas. Le contexte ne prend une
+// colonne que si le contenu garde au moins `largeurContenuMin` ; sinon il
+// s'ouvre en feuille.
+//
 // COM-RC (R-02) : avec `barreDansEntete`, le retour a la liste et
 // l'ouverture du contexte ne forment plus une rangee a part au-dessus du
 // contenu ; l'en-tete du contenu les pose dans sa propre rangee
@@ -115,9 +124,36 @@ class EspaceTravailAdaptatif extends StatefulWidget {
   /// fil (R-02). Faux : la rangee a part, pour un contenu sans en-tete.
   final bool barreDansEntete;
 
-  /// La largeur de la colonne de liste : celle de la barre laterale
-  /// permanente (256), la colonne de navigation du produit.
+  /// La largeur minimale de la colonne de liste : celle de la barre
+  /// laterale permanente (256), la colonne de navigation du produit.
   static const double largeurListe = AppGabarit.largeurBarreLaterale;
+
+  /// La largeur maximale de la colonne de liste : la file de 336 du
+  /// maitre-detail de DESIGN-GOV-2026-09-26, section 4 bis.4 (R-10).
+  static const double largeurListeLarge =
+      AppGabarit.largeurBarreLaterale + AppSpacing.section * 2;
+
+  /// La part de la largeur recue que prend la liste, entre [largeurListe] et
+  /// [largeurListeLarge] : 336 a 1440 (1120 recus), 326 dans la coquille
+  /// admin (1088 recus).
+  static const double partListe = 0.3;
+
+  /// L'ecart entre deux colonnes, avant le filet (DESIGN-GOV-2026-09-26,
+  /// section 4 bis.4 : gap 24).
+  static const double ecartColonnes = AppSpacing.xxl;
+
+  /// Le retrait du contenu pose apres un filet : il ne touche jamais le
+  /// filet (R-10).
+  static const double retraitFilet = AppSpacing.lg;
+
+  /// La largeur que le contenu garde au moins quand le contexte prend une
+  /// colonne ; en dessous, le contexte s'ouvre en feuille.
+  static const double largeurContenuMin =
+      AppGabarit.largeurBarreLaterale + AppSpacing.respiration;
+
+  /// La largeur de la liste pour une largeur recue [largeur].
+  static double largeurListePour(double largeur) =>
+      (largeur * partListe).clamp(largeurListe, largeurListeLarge);
 
   /// La largeur de la colonne de contexte (256).
   static const double largeurContexte = AppGabarit.largeurBarreLaterale;
@@ -168,6 +204,11 @@ class EspaceTravailAdaptatif extends StatefulWidget {
   State<EspaceTravailAdaptatif> createState() => _EspaceTravailAdaptatifState();
 }
 
+/// Les ecarts entre colonnes, cles pour que la colonne principale garde sa
+/// place quand ils apparaissent.
+const Key _cleEcartListe = ValueKey<String>('espace-ecart-liste');
+const Key _cleEcartContexte = ValueKey<String>('espace-ecart-contexte');
+
 class _EspaceTravailAdaptatifState extends State<EspaceTravailAdaptatif> {
   late bool _contexteOuvert = widget.contexteOuvertInitial;
 
@@ -193,11 +234,11 @@ class _EspaceTravailAdaptatifState extends State<EspaceTravailAdaptatif> {
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (BuildContext context, BoxConstraints contraintes) {
       final int colonnes = colonnesPour(contraintes.maxWidth);
-      return _disposer(context, colonnes);
+      return _disposer(context, colonnes, contraintes.maxWidth);
     },
   );
 
-  Widget _disposer(BuildContext context, int colonnes) {
+  Widget _disposer(BuildContext context, int colonnes, double largeur) {
     final Widget? liste = widget.liste;
     final Widget? contexte = widget.contexte;
     final AppPalette palette = AppPalette.of(context);
@@ -215,42 +256,70 @@ class _EspaceTravailAdaptatifState extends State<EspaceTravailAdaptatif> {
     // ouvert ; sinon il passe en feuille.
     final bool uneColonne = colonnes == 1;
     final bool avecListe = !uneColonne && liste != null;
-    final int restantes = colonnes - 1 - (avecListe ? 1 : 0);
+    final double largeurListe = EspaceTravailAdaptatif.largeurListePour(
+      largeur,
+    );
+    const double ecart = EspaceTravailAdaptatif.ecartColonnes;
+    // Le contexte n'a une colonne que s'il en reste une ET que le contenu
+    // garde sa largeur minimale a cote (R-10) ; sinon il passe en feuille.
+    final double contenuAvecContexte =
+        largeur -
+        (avecListe ? largeurListe + ecart : 0) -
+        EspaceTravailAdaptatif.largeurContexte -
+        ecart;
+    final int restantes =
+        contenuAvecContexte >= EspaceTravailAdaptatif.largeurContenuMin
+        ? colonnes - 1 - (avecListe ? 1 : 0)
+        : 0;
     final bool contexteEnColonne =
         !uneColonne && contexte != null && _contexteOuvert && restantes >= 1;
     final bool boutonContexte = contexte != null && !contexteEnColonne;
 
-    // Toujours la meme forme : Row > Expanded(cle stable) > filet > Column
-    // [barre, Expanded(contenu)]. Seuls les freres cles (liste, contexte)
-    // apparaissent ou disparaissent.
+    // Toujours la meme forme : Row > Expanded(cle stable) > filet > retrait
+    // > Column [barre, Expanded(contenu)]. Seuls les freres cles (liste,
+    // ecarts, contexte) apparaissent ou disparaissent.
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        if (avecListe)
+        if (avecListe) ...<Widget>[
           SizedBox(
             key: EspaceTravailAdaptatif.cleListe,
-            width: EspaceTravailAdaptatif.largeurListe,
+            width: largeurListe,
             child: liste,
           ),
+          const SizedBox(key: _cleEcartListe, width: ecart),
+        ],
         Expanded(
           key: EspaceTravailAdaptatif.cleColonnePrincipale,
           child: _filetDebut(
             palette,
             avecListe,
-            _principalAvecBarre(
-              retour: uneColonne && liste != null ? widget.onRetourListe : null,
-              contexteEnFeuille: boutonContexte,
-              // Le contexte ferme se rouvre en colonne s'il en a la place.
-              rouvrirEnColonne: !uneColonne && boutonContexte && restantes >= 1,
+            Padding(
+              // Apres le filet, le contenu ne le touche pas (R-10).
+              padding: EdgeInsetsDirectional.only(
+                start: avecListe ? EspaceTravailAdaptatif.retraitFilet : 0,
+              ),
+              child: _principalAvecBarre(
+                retour: uneColonne && liste != null
+                    ? widget.onRetourListe
+                    : null,
+                contexteEnFeuille: boutonContexte,
+                // Le contexte ferme se rouvre en colonne s'il en a la place.
+                rouvrirEnColonne:
+                    !uneColonne && boutonContexte && restantes >= 1,
+              ),
             ),
           ),
         ),
-        if (contexteEnColonne)
+        if (contexteEnColonne) ...<Widget>[
+          const SizedBox(key: _cleEcartContexte, width: ecart),
           SizedBox(
             key: EspaceTravailAdaptatif.cleContexte,
             width: EspaceTravailAdaptatif.largeurContexte,
+            // Le contexte a son propre retrait (16) apres le filet.
             child: _filetDebut(palette, true, _colonneContexte(context)),
           ),
+        ],
       ],
     );
   }

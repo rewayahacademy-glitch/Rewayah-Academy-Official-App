@@ -34,6 +34,7 @@ import '../../../core/widgets/bouton_outil.dart';
 import '../../../core/widgets/carte_groupee.dart';
 import '../../../core/widgets/carte_lignes.dart';
 import '../../../core/widgets/carte_piece_jointe.dart';
+import '../../../core/widgets/champ_recherche.dart';
 import '../../../core/widgets/child_card.dart';
 import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/commande_salle.dart';
@@ -79,6 +80,7 @@ import '../../../core/widgets/skeleton.dart';
 import '../../../core/widgets/sous_navigation_domaine.dart';
 import '../../../core/widgets/stat_tile.dart';
 import '../../../core/widgets/status_pill.dart';
+import '../../../core/widgets/surface_recherche.dart';
 import '../../../core/widgets/timeline_row.dart';
 import '../../../core/widgets/vue_etat_communication.dart';
 import '../../admin_tableau/tuiles_compteur.dart';
@@ -1371,6 +1373,29 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           ),
         ),
       ),
+      // R-07 : la lecture seule, celle des Messages et des canaux du Studio.
+      EtatGalerie(
+        'lecture seule : la phrase dit la limite, ni champ ni bouton',
+        (BuildContext _) => SizedBox(
+          height: _hauteurCollection * 2,
+          child: Material(
+            type: MaterialType.transparency,
+            child: FilDiscussion(
+              messages: const <MessageFil>[
+                MessageFil(
+                  id: 'g0',
+                  auteur: 'Administration',
+                  texte: 'Le planning de la semaine est en ligne.',
+                  horodatage: 'Lundi 21 septembre, 08:15',
+                  deSoi: false,
+                ),
+              ],
+              textes: _textesFil,
+              lectureSeule: t.com.studio.canal.lectureSeule,
+            ),
+          ),
+        ),
+      ),
       EtatGalerie(
         'messages',
         (BuildContext _) => SizedBox(
@@ -1539,6 +1564,74 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       ),
     ],
   ),
+  // R-07 (revue COM-R) : la recherche d'une liste, une seule pour les
+  // Messages, Le Studio et la Communaute.
+  EntreeGalerie(
+    nom: 'ChampRecherche',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'vide : l aide, sans Effacer',
+        (BuildContext _) => Material(
+          type: MaterialType.transparency,
+          child: ChampRecherche(
+            controleur: TextEditingController(),
+            libelle: t.com.messages.recherche.champ,
+            aide: t.com.messages.recherche.aide,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'rempli : Effacer la recherche',
+        (BuildContext _) => Material(
+          type: MaterialType.transparency,
+          child: ChampRecherche(
+            controleur: TextEditingController(text: 'Classe An-Nour'),
+            libelle: t.com.messages.recherche.champ,
+            aide: t.com.messages.recherche.aide,
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'SurfaceRecherche',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'telephone : retour, champ, resultats',
+        (BuildContext _) => SizedBox(
+          height: _hauteurCollection,
+          child: Material(
+            type: MaterialType.transparency,
+            child: SurfaceRecherche(
+              controleur: TextEditingController(text: 'planning'),
+              libelle: t.com.studio.recherche.champ,
+              aide: t.com.studio.recherche.aide,
+              onFermer: _rien,
+              resultats: const _PanneauGalerie('Resultats'),
+            ),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'champ vide : aucun resultat pose',
+        (BuildContext _) => SizedBox(
+          height: _hauteurCollection,
+          child: Material(
+            type: MaterialType.transparency,
+            child: SurfaceRecherche(
+              controleur: TextEditingController(),
+              libelle: t.com.communaute.recherche.champ,
+              aide: t.com.communaute.recherche.aide,
+              onFermer: _rien,
+              resultats: const SizedBox.shrink(),
+            ),
+          ),
+        ),
+      ),
+    ],
+  ),
   EntreeGalerie(
     nom: 'VueEtatCommunication',
     famille: FamilleComposant.composantEtat,
@@ -1552,6 +1645,17 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             dependance: 'COM-BR-00',
           ),
         ),
+      // R-23 : la colonne d'un maitre-detail sans element ouvert, partagee.
+      EtatGalerie(
+        'choisir : la colonne sans element ouvert, qui defile',
+        (BuildContext _) => SizedBox(
+          height: _hauteurCollection,
+          child: VueChoisirCommunication(
+            titre: t.com.messages.choisirTitre,
+            phrase: t.com.messages.choisir,
+          ),
+        ),
+      ),
     ],
   ),
 

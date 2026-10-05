@@ -96,6 +96,7 @@ class Traductions$commun$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$commun$recherche$fr recherche = Traductions$commun$recherche$fr.internal(_root);
 
 	/// fr: 'Rewayah Academy'
 	String get marque => 'Rewayah Academy';
@@ -2422,6 +2423,21 @@ class Traductions$com$fr {
 	late final Traductions$com$communaute$fr communaute = Traductions$com$communaute$fr.internal(_root);
 	late final Traductions$com$studio$fr studio = Traductions$com$studio$fr.internal(_root);
 	late final Traductions$com$annonces$fr annonces = Traductions$com$annonces$fr.internal(_root);
+}
+
+// Path: commun.recherche
+class Traductions$commun$recherche$fr {
+	Traductions$commun$recherche$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Effacer la recherche'
+	String get effacer => 'Effacer la recherche';
+
+	/// fr: 'Fermer la recherche'
+	String get fermer => 'Fermer la recherche';
 }
 
 // Path: commun.demonstration
@@ -15340,6 +15356,7 @@ class Traductions$com$socle$composants$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$com$socle$composants$lecture$fr lecture = Traductions$com$socle$composants$lecture$fr.internal(_root);
 	late final Traductions$com$socle$composants$badge$fr badge = Traductions$com$socle$composants$badge$fr.internal(_root);
 	late final Traductions$com$socle$composants$pieceJointe$fr pieceJointe = Traductions$com$socle$composants$pieceJointe$fr.internal(_root);
 	late final Traductions$com$socle$composants$composer$fr composer = Traductions$com$socle$composants$composer$fr.internal(_root);
@@ -15616,12 +15633,6 @@ class Traductions$com$messages$recherche$fr {
 	/// fr: 'Nom, Classe ou dossier'
 	String get aide => 'Nom, Classe ou dossier';
 
-	/// fr: 'Fermer la recherche'
-	String get fermer => 'Fermer la recherche';
-
-	/// fr: 'Effacer la recherche'
-	String get effacer => 'Effacer la recherche';
-
 	/// fr: 'Aucune conversation trouvée'
 	String get aucunTitre => 'Aucune conversation trouvée';
 
@@ -15760,23 +15771,8 @@ class Traductions$com$messages$fil$fr {
 
 	// Translations
 
-	/// fr: '{auteur} · {moment}'
-	String auteurEtMoment({required Object auteur, required Object moment}) => '${auteur} · ${moment}';
-
 	/// fr: 'Vous pouvez lire cette conversation. La réponse n'y est pas ouverte pour vous.'
 	String get lectureSeule => 'Vous pouvez lire cette conversation. La réponse n\'y est pas ouverte pour vous.';
-
-	/// fr: 'Pièce jointe : {nom}'
-	String pieceJointe({required Object nom}) => 'Pièce jointe : ${nom}';
-
-	/// fr: 'Message vocal de {duree}'
-	String vocal({required Object duree}) => 'Message vocal de ${duree}';
-
-	/// fr: 'Message vocal'
-	String get vocalSansDuree => 'Message vocal';
-
-	/// fr: '{date}, {heure}'
-	String horodatage({required Object date, required Object heure}) => '${date}, ${heure}';
 }
 
 // Path: com.messages.demo
@@ -16135,9 +16131,6 @@ class Traductions$com$communaute$recherche$fr {
 
 	/// fr: 'Un mot du titre ou du texte'
 	String get aide => 'Un mot du titre ou du texte';
-
-	/// fr: 'Fermer la recherche'
-	String get fermer => 'Fermer la recherche';
 }
 
 // Path: com.communaute.moment
@@ -16665,21 +16658,6 @@ class Traductions$com$studio$canal$fr {
 
 	/// fr: 'Ce canal n'est pas disponible pour vous. Choisissez un autre canal dans la liste.'
 	String get indisponible => 'Ce canal n\'est pas disponible pour vous. Choisissez un autre canal dans la liste.';
-
-	/// fr: 'Pièce jointe : {nom}'
-	String pieceJointe({required Object nom}) => 'Pièce jointe : ${nom}';
-
-	/// fr: 'Message vocal de {duree}'
-	String vocal({required Object duree}) => 'Message vocal de ${duree}';
-
-	/// fr: 'Message vocal'
-	String get vocalSansDuree => 'Message vocal';
-
-	/// fr: '{date}, {heure}'
-	String horodatage({required Object date, required Object heure}) => '${date}, ${heure}';
-
-	/// fr: '{auteur} · {moment}'
-	String auteurEtMoment({required Object auteur, required Object moment}) => '${auteur} · ${moment}';
 }
 
 // Path: com.studio.panneau
@@ -16802,12 +16780,6 @@ class Traductions$com$studio$recherche$fr {
 
 	/// fr: 'Canal, message ou fichier'
 	String get aide => 'Canal, message ou fichier';
-
-	/// fr: 'Fermer la recherche'
-	String get fermer => 'Fermer la recherche';
-
-	/// fr: 'Effacer la recherche'
-	String get effacer => 'Effacer la recherche';
 
 	/// fr: 'Aucun résultat'
 	String get aucunTitre => 'Aucun résultat';
@@ -17500,6 +17472,27 @@ class Traductions$tc$parcours$signalement$categorieValeur$fr {
 
 	/// fr: 'Autre'
 	String get autre => 'Autre';
+}
+
+// Path: com.socle.composants.lecture
+class Traductions$com$socle$composants$lecture$fr {
+	Traductions$com$socle$composants$lecture$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pièce jointe : {nom}'
+	String pieceJointe({required Object nom}) => 'Pièce jointe : ${nom}';
+
+	/// fr: 'Message vocal de {duree}'
+	String vocal({required Object duree}) => 'Message vocal de ${duree}';
+
+	/// fr: 'Message vocal'
+	String get vocalSansDuree => 'Message vocal';
+
+	/// fr: '{date}, {heure}'
+	String horodatage({required Object date, required Object heure}) => '${date}, ${heure}';
 }
 
 // Path: com.socle.composants.badge
@@ -18527,6 +18520,8 @@ class Traductions$com$annonces$administration$moderation$regles$fr {
 extension on Traductions {
 	dynamic _flatMapFunction(String path) {
 		return switch (path) {
+			'commun.recherche.effacer' => 'Effacer la recherche',
+			'commun.recherche.fermer' => 'Fermer la recherche',
 			'commun.marque' => 'Rewayah Academy',
 			'commun.continuer' => 'Continuer',
 			'commun.retour' => 'Retour',
@@ -19037,10 +19032,10 @@ extension on Traductions {
 			'contrat.pointControle' => 'Un contrôleur qualité peut assister à un cours sans être vu. La salle le rappelle en permanence, que la visite ait lieu ou non.',
 			'contrat.pointCoordonnees' => 'Vous ne voyez jamais les coordonnées d\'une famille : ni nom complet, ni courriel, ni téléphone.',
 			'contrat.lireTexte' => 'Lire le texte complet',
-			'contrat.accepter' => 'J\'ai lu et j\'accepte',
-			'contrat.accepteLe' => ({required Object date}) => 'Accepté le ${date}',
 			_ => null,
 		} ?? switch (path) {
+			'contrat.accepter' => 'J\'ai lu et j\'accepte',
+			'contrat.accepteLe' => ({required Object date}) => 'Accepté le ${date}',
 			'contrat.erreur' => 'La signature n\'a pas abouti. Réessayez dans un instant.',
 			'contrat.horsLigne' => 'Vous êtes hors ligne. Votre accord sera enregistré dès le retour du réseau, en appuyant de nouveau.',
 			'contrat.caseRequise' => 'Cochez la case pour continuer.',
@@ -19551,10 +19546,10 @@ extension on Traductions {
 			'dossiers.visionneuse.accesRetire' => 'Vous n’avez plus accès à cette pièce.',
 			'dossiers.visionneuse.horsLigne' => 'Vous êtes hors ligne. La pièce ne peut pas être chargée.',
 			'dossiers.visionneuse.aucune' => 'Aucune pièce n’est disponible.',
-			'dossiers.visionneuse.fermerPiece' => 'Fermer la pièce',
-			'dossiers.visionneuse.agrandir' => 'Agrandir',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.visionneuse.fermerPiece' => 'Fermer la pièce',
+			'dossiers.visionneuse.agrandir' => 'Agrandir',
 			'dossiers.visionneuse.reduire' => 'Réduire',
 			'dossiers.visionneuse.ajuster' => 'Ajuster à l’écran',
 			'dossiers.visionneuse.infoBulle' => ({required Object action, required Object touche}) => '${action} (touche ${touche})',
@@ -20065,10 +20060,10 @@ extension on Traductions {
 			'admin.journal.evtProfilCree' => 'Profil créé',
 			'admin.journal.evtProfilEnfantCree' => 'Profil enfant créé',
 			'admin.journal.evtCodeCree' => 'Code d\'appairage créé',
-			'admin.journal.evtAppareilAppaire' => 'Appareil appairé',
-			'admin.journal.evtAppareilRevoque' => 'Appareil révoqué',
 			_ => null,
 		} ?? switch (path) {
+			'admin.journal.evtAppareilAppaire' => 'Appareil appairé',
+			'admin.journal.evtAppareilRevoque' => 'Appareil révoqué',
 			'admin.journal.evtPedagogie' => 'Réglages pédagogiques modifiés',
 			'admin.journal.evtAffectationPrise' => 'Élève pris par un enseignant',
 			'admin.journal.evtAffectationAttribuee' => 'Élève attribué par l\'administration',
@@ -20579,10 +20574,10 @@ extension on Traductions {
 			'compte.tuteur.pageAide.indisponiblePhrase' => 'Les questions fréquentes et le contact de l\'académie ne sont pas encore ouverts dans l\'application.',
 			'compte.tuteur.pageAide.canalCourriel' => 'Courriel de l\'académie',
 			'compte.tuteur.pageAide.canalLien' => 'Page d\'aide de l\'académie',
-			'compte.tuteur.pageAide.aucunCanal' => 'Aucun canal d\'aide n\'est publié pour le moment.',
-			'compte.tuteur.pageLegal.titre' => 'Informations légales',
 			_ => null,
 		} ?? switch (path) {
+			'compte.tuteur.pageAide.aucunCanal' => 'Aucun canal d\'aide n\'est publié pour le moment.',
+			'compte.tuteur.pageLegal.titre' => 'Informations légales',
 			'compte.tuteur.pageLegal.documents' => 'Documents acceptés',
 			'compte.tuteur.pageLegal.conditionsTuteur' => 'Conditions du tuteur',
 			'compte.tuteur.pageLegal.contratEnseignant' => 'Contrat enseignant',
@@ -21093,10 +21088,10 @@ extension on Traductions {
 			'enseignant.eleve.presence' => 'Présence récente',
 			'enseignant.eleve.travail' => 'Travail',
 			'enseignant.eleve.travailReprise' => ({required Object page}) => 'Reprise à la ${page}',
-			'enseignant.eleve.derniereSeance' => 'Dernière séance',
-			'enseignant.eleve.nonRenseigne' => 'Non renseigné',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.eleve.derniereSeance' => 'Dernière séance',
+			'enseignant.eleve.nonRenseigne' => 'Non renseigné',
 			'enseignant.eleve.signaler' => 'Signaler un besoin',
 			'enseignant.eleve.signalerAide' => 'Un besoin à remonter à l\'académie, sans recopier le contexte.',
 			'enseignant.signalement.titre' => 'Signaler un besoin',
@@ -21607,10 +21602,10 @@ extension on Traductions {
 			'controleur.observation.climatAide' => 'Quand il s\'agit du comportement ou de l\'ambiance de la classe',
 			'controleur.observation.autre' => 'Autre',
 			'controleur.observation.autreAide' => 'Quand aucun autre domaine ne convient · précisez-le dans votre texte',
-			'controleur.observation.questionPersonne' => 'Qui est concerné ?',
-			'controleur.observation.contextePersonne' => 'Indiquez qui l\'observation concerne. Un élève se choisit dans la liste de la Classe, prénom seulement.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.observation.questionPersonne' => 'Qui est concerné ?',
+			'controleur.observation.contextePersonne' => 'Indiquez qui l\'observation concerne. Un élève se choisit dans la liste de la Classe, prénom seulement.',
 			'controleur.observation.enseignant' => 'Enseignant',
 			'controleur.observation.enseignantAide' => 'Quand l\'observation porte sur l\'enseignant de la séance',
 			'controleur.observation.classeEntiere' => 'Classe entière',
@@ -22121,10 +22116,10 @@ extension on Traductions {
 			'tc.parcours.avant.nonBranche' => 'Le travail à préparer n\'est pas encore relié à cet espace.',
 			'tc.parcours.avant.nonBrancheDetail' => 'Cela ne veut pas dire qu\'il n\'y a rien à préparer : cet écran ne sait pas encore le lire.',
 			'tc.parcours.avant.reprendre' => 'Reprendre le cours',
-			'tc.parcours.avant.reprendreDepuis' => ({required Object position}) => 'Reprendre le cours à ${position}',
-			'tc.parcours.intention.apprendre' => 'À apprendre',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.avant.reprendreDepuis' => ({required Object position}) => 'Reprendre le cours à ${position}',
+			'tc.parcours.intention.apprendre' => 'À apprendre',
 			'tc.parcours.intention.revoir' => 'À revoir',
 			'tc.parcours.intention.renforcer' => 'À renforcer',
 			'tc.parcours.intention.entretenir' => 'À entretenir',
@@ -22498,6 +22493,10 @@ extension on Traductions {
 			'adulte.demo.etats.doubleSoumission' => 'La même action a été envoyée deux fois.',
 			'adulte.demo.etats.notificationDansLApplication' => 'La notification n\'a pas pu partir sur le téléphone, elle reste visible dans l\'application.',
 			'adulte.demo.etats.emancipation' => 'Émancipation d\'un élève devenu adulte : non construite dans cette vague.',
+			'com.socle.composants.lecture.pieceJointe' => ({required Object nom}) => 'Pièce jointe : ${nom}',
+			'com.socle.composants.lecture.vocal' => ({required Object duree}) => 'Message vocal de ${duree}',
+			'com.socle.composants.lecture.vocalSansDuree' => 'Message vocal',
+			'com.socle.composants.lecture.horodatage' => ({required Object date, required Object heure}) => '${date}, ${heure}',
 			'com.socle.composants.badge.nonLuUn' => '1 non lu',
 			'com.socle.composants.badge.nonLus' => ({required Object nombre}) => '${nombre} non lus',
 			'com.socle.composants.badge.nonLusSemantique' => ({required Object nombre}) => '${nombre} éléments non lus',
@@ -22631,20 +22630,18 @@ extension on Traductions {
 			'com.messages.entree.toutes' => 'Toutes vos conversations',
 			'com.messages.entree.aLireUne' => '1 conversation à lire',
 			'com.messages.entree.aLire' => ({required Object nombre}) => '${nombre} conversations à lire',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.entree.ouverture' => 'Ouverture de la conversation',
 			'com.messages.entree.inaccessibleTitre' => 'Conversation inaccessible',
 			'com.messages.entree.inaccessible' => 'Cette conversation n\'est plus ouverte pour vous. Choisissez une autre personne dans la liste.',
 			'com.messages.entree.erreurOuvertureTitre' => 'Impossible d\'ouvrir cette conversation.',
 			'com.messages.entree.ouvertureEchouee' => 'Vérifiez votre connexion, puis réessayez.',
 			'com.messages.videDetail' => 'Une conversation s\'ouvre depuis une Classe, un élève ou un dossier.',
-			_ => null,
-		} ?? switch (path) {
 			'com.messages.choisirTitre' => 'Choisissez une conversation',
 			'com.messages.choisir' => 'Choisissez une conversation dans la liste pour la lire et y répondre.',
 			'com.messages.recherche.champ' => 'Rechercher une conversation',
 			'com.messages.recherche.aide' => 'Nom, Classe ou dossier',
-			'com.messages.recherche.fermer' => 'Fermer la recherche',
-			'com.messages.recherche.effacer' => 'Effacer la recherche',
 			'com.messages.recherche.aucunTitre' => 'Aucune conversation trouvée',
 			'com.messages.recherche.aucun' => ({required Object texte}) => 'Aucune conversation ne correspond à « ${texte} ». Essayez un autre nom ou une autre Classe.',
 			'com.messages.recherche.resultatUn' => '1 conversation trouvée',
@@ -22673,12 +22670,7 @@ extension on Traductions {
 			'com.messages.panneau.ouvrir' => ({required Object objet}) => 'Ouvrir ${objet}',
 			'com.messages.panneau.inaccessible' => 'Vous n\'avez plus accès à cet objet. La conversation reste lisible.',
 			'com.messages.panneau.vous' => 'Vous',
-			'com.messages.fil.auteurEtMoment' => ({required Object auteur, required Object moment}) => '${auteur} · ${moment}',
 			'com.messages.fil.lectureSeule' => 'Vous pouvez lire cette conversation. La réponse n\'y est pas ouverte pour vous.',
-			'com.messages.fil.pieceJointe' => ({required Object nom}) => 'Pièce jointe : ${nom}',
-			'com.messages.fil.vocal' => ({required Object duree}) => 'Message vocal de ${duree}',
-			'com.messages.fil.vocalSansDuree' => 'Message vocal',
-			'com.messages.fil.horodatage' => ({required Object date, required Object heure}) => '${date}, ${heure}',
 			'com.messages.demo.choisirRole' => 'Choisissez le point de vue de cette démonstration.',
 			'com.messages.demo.roles.tuteur' => 'Famille',
 			'com.messages.demo.roles.enseignant' => 'Enseignant',
@@ -22793,7 +22785,6 @@ extension on Traductions {
 			'com.communaute.recherche.ouvrir' => 'Rechercher une publication',
 			'com.communaute.recherche.champ' => 'Rechercher une publication',
 			'com.communaute.recherche.aide' => 'Un mot du titre ou du texte',
-			'com.communaute.recherche.fermer' => 'Fermer la recherche',
 			'com.communaute.moment.instant' => 'À l\'instant',
 			'com.communaute.moment.minutes' => ({required Object nombre}) => 'Il y a ${nombre} min',
 			'com.communaute.moment.heures' => ({required Object nombre}) => 'Il y a ${nombre} h',
@@ -22966,11 +22957,6 @@ extension on Traductions {
 			'com.studio.canal.aucunMessage' => 'Les messages de ce canal s\'afficheront ici dès leur publication.',
 			'com.studio.canal.indisponibleTitre' => 'Canal indisponible',
 			'com.studio.canal.indisponible' => 'Ce canal n\'est pas disponible pour vous. Choisissez un autre canal dans la liste.',
-			'com.studio.canal.pieceJointe' => ({required Object nom}) => 'Pièce jointe : ${nom}',
-			'com.studio.canal.vocal' => ({required Object duree}) => 'Message vocal de ${duree}',
-			'com.studio.canal.vocalSansDuree' => 'Message vocal',
-			'com.studio.canal.horodatage' => ({required Object date, required Object heure}) => '${date}, ${heure}',
-			'com.studio.canal.auteurEtMoment' => ({required Object auteur, required Object moment}) => '${auteur} · ${moment}',
 			'com.studio.panneau.titre' => 'À propos du canal',
 			'com.studio.panneau.aPropos' => 'À propos',
 			'com.studio.panneau.section' => 'Section',
@@ -23003,8 +22989,6 @@ extension on Traductions {
 			'com.studio.enregistres.types.element' => 'Élément du Studio',
 			'com.studio.recherche.champ' => 'Rechercher dans Le Studio',
 			'com.studio.recherche.aide' => 'Canal, message ou fichier',
-			'com.studio.recherche.fermer' => 'Fermer la recherche',
-			'com.studio.recherche.effacer' => 'Effacer la recherche',
 			'com.studio.recherche.aucunTitre' => 'Aucun résultat',
 			'com.studio.recherche.aucun' => ({required Object texte}) => 'Rien ne correspond à « ${texte} » dans vos canaux. Essayez un autre mot.',
 			'com.studio.recherche.aucunDansFiltre' => 'Rien de ce type ne correspond. Choisissez Tout pour voir les autres résultats.',
@@ -23151,8 +23135,6 @@ extension on Traductions {
 			'com.annonces.demoPublication.audiencesEnseignant' => 'Sa Classe seulement',
 			'com.annonces.demoPublication.vacancesTitre' => 'Calendrier des vacances d\'hiver',
 			'com.annonces.demoPublication.vacancesTexte' => 'Les cours s\'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demoPublication.reunionTitre' => 'Réunion des enseignants de jeudi',
 			'com.annonces.demoPublication.reunionTexte' => 'La réunion pédagogique de jeudi commence à 18 h, en visio. L\'ordre du jour est dans Le Studio.',
 			'com.annonces.demoPublication.recitationTitre' => 'Récitation de fin de trimestre',
@@ -23162,6 +23144,8 @@ extension on Traductions {
 			'com.annonces.demoPublication.signalementAffilie' => 'Publication « Fiches de tajwid à imprimer »',
 			'com.annonces.demoPublication.extraitAffilie' => 'Retrouvez mes fiches avec ce lien partenaire, remise de 20 % avec mon code.',
 			'com.annonces.demoPublication.signalementVente' => 'Publication « Cours particuliers disponibles »',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demoPublication.extraitVente' => 'Je propose des cours particuliers payants le week-end, écrivez-moi.',
 			'com.annonces.demoPublication.signalementHorsSujet' => 'Réponse sous « Organiser une révision collective »',
 			'com.annonces.section' => 'Annonces de la Classe',

@@ -350,7 +350,7 @@ void main() {
     );
     expect(
       _dansFil(
-        find.text(t.com.messages.fil.pieceJointe(nom: 'Devoir_semaine_3.pdf')),
+        find.text(t.com.socle.composants.lecture.pieceJointe(nom: 'Devoir_semaine_3.pdf')),
       ),
       findsNothing,
     );

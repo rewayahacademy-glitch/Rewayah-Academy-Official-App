@@ -61,20 +61,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/port_elements_enregistres.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
-import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/champ_recherche.dart';
 import '../../core/widgets/espace_travail_adaptatif.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/surface_recherche.dart';
 import '../../core/widgets/vue_etat_communication.dart';
 import '../com_vocal/envoi_vocal.dart';
 import '../com_vocal/port_enregistreur_vocal.dart';
@@ -155,6 +155,7 @@ class StudioPage extends StatelessWidget {
       vue: vue,
       onAllerVue: (VueStudio v) => routeur.go(adresseVueStudio(v)),
       onQuitter: () => routeur.go(Routes.admin),
+      onCompte: () => routeur.go(Routes.compte),
       onRetourListe: canal == null
           ? null
           : () => routeur.go(adresseVueStudio(VueStudio.canaux)),
@@ -200,6 +201,7 @@ class CoquilleStudio extends StatefulWidget {
     this.onRetourListe,
     this.sousTitre,
     this.focusInitial = false,
+    this.onCompte,
   });
 
   /// La vue montree.
@@ -230,6 +232,19 @@ class CoquilleStudio extends StatefulWidget {
   /// Ouvre le canal deja en Focus (la demonstration « Mode focus ») ; sans
   /// canal ouvert, sans effet.
   final bool focusInitial;
+
+  /// Ouvre « Mon compte » ; donne, la colonne de navigation porte, sous les
+  /// vues, l'identite de la personne connectee (« Administrateur », comme le
+  /// pied de l'`AdminShell`), qui y mene (revue COM-R, R-05). Nul (la
+  /// demonstration) : aucune identite.
+  final VoidCallback? onCompte;
+
+  /// L'entree d'identite de la colonne (« Administrateur »), vers le compte.
+  static Destination identite() => Destination(
+    libelle: t.compte.roles.admin,
+    icone: AppIcons.profil,
+    chemin: Routes.compte,
+  );
 
   /// Les destinations de la navigation du Studio, dans l'ordre de
   /// [VueStudio].
@@ -318,38 +333,36 @@ class _CoquilleStudioState extends State<CoquilleStudio> {
   );
 
   /// En Focus : ni navigation, ni titre, ni retour, ni actions de coquille
-  /// (cloche) ; le bandeau de sortie, puis le contenu. Le bandeau hors
-  /// ligne de la page reste.
+  /// (cloche) ; le contenu seul. Le bandeau de sortie est pose par l'espace
+  /// des canaux, dans la MEME colonne centree que le fil (revue COM-R,
+  /// R-12) : il s'aligne sur le fil a toutes les largeurs.
   ///
-  /// Le bandeau est le premier element du CORPS non defilant, jamais
-  /// l'`entete` de la page : sur telephone a texte agrandi (200 %) ou sur
-  /// une vue tres basse, `PageShell` fait defiler sa tete avec le corps, et
-  /// « Quitter le focus » sortait de l'ecran pendant la lecture. Sans titre
-  /// ni entete, la tete n'est plus qu'une respiration ; le defilement de la
-  /// page ne peut pas depasser cette respiration, et le bandeau, pose juste
-  /// dessous, reste donc toujours entier a l'ecran (section 10.6, R-COM-09).
-  /// Seul le fil defile.
-  Widget _enFocus(Widget contenu) => PageShell(
-    actionsCoquille: false,
-    defilante: false,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        const BandeauSortieFocus(),
-        Ecart.vXl,
-        Expanded(child: contenu),
-      ],
-    ),
-  );
+  /// Il reste le premier element d'un CORPS non defilant, jamais l'`entete`
+  /// de la page : sur telephone a texte agrandi (200 %) ou sur une vue tres
+  /// basse, `PageShell` fait defiler sa tete avec le corps, et « Quitter le
+  /// focus » sortait de l'ecran pendant la lecture. Sans titre ni entete, la
+  /// tete n'est plus qu'une respiration ; le bandeau, pose juste dessous,
+  /// reste donc toujours entier a l'ecran (section 10.6, R-COM-09). Seul le
+  /// fil defile.
+  Widget _enFocus(Widget contenu) =>
+      PageShell(actionsCoquille: false, defilante: false, child: contenu);
 
   Widget _coquille(BuildContext context, Widget contenu) {
     final VueStudio vue = widget.vue;
     final VoidCallback? onRetourListe = widget.onRetourListe;
     final List<Destination> d = CoquilleStudio.destinations();
+    final VoidCallback? onCompte = widget.onCompte;
     return NavShell(
       destinations: d,
       indexActif: VueStudio.values.indexOf(vue),
       onAller: (String chemin) => widget.onAllerVue(vueStudioDepuis(chemin)),
+      // L'identite et l'acces au compte, sous les vues (R-05) ; la barre
+      // basse du telephone ne la porte pas : « Mon compte » est alors dans
+      // les actions de l'en-tete.
+      secondaires: onCompte == null
+          ? const <Destination>[]
+          : <Destination>[CoquilleStudio.identite()],
+      onAllerSecondaire: onCompte == null ? null : (String _) => onCompte(),
       // Sur telephone, un canal ouvert est une tache focalisee : la barre
       // basse s'efface, le disque retour ramene a la liste, et le fil garde
       // sa hauteur au-dessus du clavier (R-COM-15).
@@ -429,6 +442,10 @@ class EspaceStudio extends ConsumerStatefulWidget {
     'studio-ouvrir-recherche',
   );
 
+  /// La colonne centree du canal (le fil, et en Focus son bandeau de
+  /// sortie), pour les tests.
+  static const ValueKey<String> cleCentre = ValueKey<String>('studio-centre');
+
   /// La cle de l'etat « canal indisponible », pour les tests.
   static const ValueKey<String> cleCanalIndisponible = ValueKey<String>(
     'studio-canal-indisponible',
@@ -491,6 +508,10 @@ class _EspaceStudioState extends ConsumerState<EspaceStudio> {
   static const String cleSourcePanneau = 'espace-panneau';
 
   PortStudio get _port => ref.read(portStudioProvider);
+
+  /// Le fil dans sa colonne centree : il garde sa place (et son etat)
+  /// quand le bandeau de sortie apparait au-dessus de lui.
+  static const Key _cleFilCentre = ValueKey<String>('studio-centre-fil');
 
   @override
   void initState() {
@@ -719,12 +740,15 @@ class _EspaceStudioState extends ConsumerState<EspaceStudio> {
   @override
   Widget build(BuildContext context) {
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    // En Focus, le bandeau hors ligne passe sous le bandeau de sortie, dans
+    // la colonne centree du fil (R-12).
+    final bool focus = widget.canalId != null && (_focus?.actif ?? false);
     return PageStorage(
       bucket: ref.watch(positionsStudioProvider),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          if (horsLigne) ...<Widget>[
+          if (horsLigne && !focus) ...<Widget>[
             const BandeauHorsLigneCommunication(encadre: true),
             Ecart.vLg,
           ],
@@ -762,8 +786,14 @@ class _EspaceStudioState extends ConsumerState<EspaceStudio> {
     Widget? liste;
     if (contenu) {
       if (colonnes == 1 && _surfaceRecherche) {
-        liste = SurfaceRechercheStudio(
+        liste = SurfaceRecherche(
+          key: ClesRechercheStudio.surface,
           controleur: _recherche,
+          libelle: t.com.studio.recherche.champ,
+          aide: t.com.studio.recherche.aide,
+          cleChamp: ClesRechercheStudio.champ,
+          cleEffacer: ClesRechercheStudio.effacer,
+          cleFermer: ClesRechercheStudio.fermer,
           onFermer: _fermerSurfaceRecherche,
           resultats: recherche ? vueResultats : const SizedBox.shrink(),
         );
@@ -775,7 +805,13 @@ class _EspaceStudioState extends ConsumerState<EspaceStudio> {
           onOuvrir: _ouvrirCanal,
           canalSelectionne: colonnes > 1 ? canalId : null,
           entete: colonnes > 1
-              ? ChampRechercheStudio(controleur: _recherche)
+              ? ChampRecherche(
+                  controleur: _recherche,
+                  libelle: t.com.studio.recherche.champ,
+                  aide: t.com.studio.recherche.aide,
+                  cleChamp: ClesRechercheStudio.champ,
+                  cleEffacer: ClesRechercheStudio.effacer,
+                )
               : LienFleche(
                   key: EspaceStudio.cleOuvrirRecherche,
                   libelle: t.com.studio.recherche.champ,
@@ -802,19 +838,34 @@ class _EspaceStudioState extends ConsumerState<EspaceStudio> {
       ],
     );
 
-    // « Contenu centre » en Focus (section 23) : le fil a la largeur de
-    // lecture, centre. Meme forme hors Focus, a toute la largeur : le canal
-    // recoit toujours une taille fixe, et garde son etat d'une disposition
-    // a l'autre.
+    // « Contenu centre + composer + sortie » en Focus (section 23) : le fil a
+    // la largeur de lecture, centre, et le bandeau de sortie au-dessus de lui
+    // dans la MEME colonne (R-12) : ses bords sont ceux du fil. Meme forme
+    // hors Focus, a toute la largeur : le canal recoit toujours une taille
+    // fixe, et garde son etat d'une disposition a l'autre (colonne cle).
     Widget centre(Widget principal) => LayoutBuilder(
       builder: (BuildContext _, BoxConstraints c) => Align(
         alignment: Alignment.topCenter,
         child: SizedBox(
+          key: EspaceStudio.cleCentre,
           width: focus
               ? math.min(c.maxWidth, AppPage.largeurLecture)
               : c.maxWidth,
           height: c.maxHeight,
-          child: principal,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              if (focus) ...<Widget>[
+                const BandeauSortieFocus(),
+                Ecart.vXl,
+                if (horsLigne) ...<Widget>[
+                  const BandeauHorsLigneCommunication(encadre: true),
+                  Ecart.vLg,
+                ],
+              ],
+              Expanded(key: _cleFilCentre, child: principal),
+            ],
+          ),
         ),
       ),
     );
@@ -856,41 +907,12 @@ class _EspaceStudioState extends ConsumerState<EspaceStudio> {
   }
 
   /// La colonne du canal quand aucun canal n'est ouvert : dire quoi faire,
-  /// jamais une colonne vide.
-  Widget _choisir() {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-    final s = t.com.studio;
-    return Center(
-      key: EspaceStudio.cleChoisir,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Semantics(
-              header: true,
-              child: Text(
-                s.choisirTitre,
-                textAlign: TextAlign.center,
-                style: palette.inkStrong.applyTo(
-                  textes.titleMedium ?? const TextStyle(),
-                ),
-              ),
-            ),
-            Ecart.vSm,
-            Text(
-              s.choisir,
-              textAlign: TextAlign.center,
-              style: palette.inkMuted.applyTo(
-                textes.bodyMedium ?? const TextStyle(),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  /// jamais une colonne vide (vue partagee, R-23).
+  Widget _choisir() => VueChoisirCommunication(
+    key: EspaceStudio.cleChoisir,
+    titre: t.com.studio.choisirTitre,
+    phrase: t.com.studio.choisir,
+  );
 
   /// L'etat de la liste quand elle n'a pas de contenu a montrer.
   Widget _etatListe(bool horsLigne) {
@@ -902,7 +924,11 @@ class _EspaceStudioState extends ConsumerState<EspaceStudio> {
     }
     if (_canaux.hasError) {
       return SingleChildScrollView(
-        child: _vueErreur(_canaux.error!, horsLigne, _chargerCanaux),
+        child: VueEtatCommunication.depuisErreur(
+          _canaux.error!,
+          horsLigne: horsLigne,
+          onReessayer: _chargerCanaux,
+        ),
       );
     }
     return SingleChildScrollView(
@@ -924,10 +950,10 @@ class _EspaceStudioState extends ConsumerState<EspaceStudio> {
     }
     if (_canal.hasError) {
       return SingleChildScrollView(
-        child: _vueErreur(
+        child: VueEtatCommunication.depuisErreur(
           _canal.error!,
-          horsLigne,
-          () => _chargerCanal(canalId),
+          horsLigne: horsLigne,
+          onReessayer: () => _chargerCanal(canalId),
         ),
       );
     }
@@ -959,21 +985,6 @@ class _EspaceStudioState extends ConsumerState<EspaceStudio> {
           ? (EnregistrementVocal v, String cle) =>
                 _envoyerVocal(canal.id, v, cle)
           : null,
-    );
-  }
-
-  /// Une lecture en echec : capacite absente (sans « Reessayer »), hors
-  /// ligne ou echec (avec « Reessayer »).
-  Widget _vueErreur(Object erreur, bool horsLigne, VoidCallback reessayer) {
-    if (erreur is CapaciteIndisponible) {
-      return VueEtatCommunication(
-        etat: EtatCommunication.indisponible,
-        dependance: erreur.dependance,
-      );
-    }
-    return VueEtatCommunication(
-      etat: horsLigne ? EtatCommunication.horsLigne : EtatCommunication.erreur,
-      onReessayer: reessayer,
     );
   }
 }

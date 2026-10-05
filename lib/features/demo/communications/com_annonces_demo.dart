@@ -941,7 +941,7 @@ List<Override> surchargesAdministrationDemo({
   portReglesAudienceProvider.overrideWithValue(regles),
   reglesAudienceProvider.overrideWith((Ref _) => regles.regles()),
   portModerationProvider.overrideWithValue(moderation),
-  capacitesModerationFileProvider.overrideWith(
+  capacitesModerationProvider.overrideWith(
     (Ref _) => moderation.capacites(),
   ),
   fileModerationProvider.overrideWith((Ref _) => moderation.file()),

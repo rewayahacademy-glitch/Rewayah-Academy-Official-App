@@ -18,13 +18,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_bibliotheque/recherche_catalogue.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/carte_piece_jointe.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/etat_systeme.dart';
@@ -72,127 +70,27 @@ enum FiltreRechercheStudio {
   fichiers,
 }
 
-/// Le champ de recherche du Studio.
-///
-/// Etiquete (« Rechercher dans Le Studio »), avec l'aide « Canal, message ou
-/// fichier » ; « Effacer la recherche » n'est rendu que s'il y a quelque
-/// chose a effacer.
-class ChampRechercheStudio extends StatelessWidget {
-  /// Cree le champ.
-  const ChampRechercheStudio({
-    required this.controleur,
-    super.key,
-    this.autofocus = false,
-  });
+/// Les cles de la recherche du Studio, pour les tests. Le champ et la
+/// surface sont ceux du core (`ChampRecherche`, `SurfaceRecherche`, revue
+/// COM-R, R-07), parametres par les textes du Studio et ces cles.
+abstract final class ClesRechercheStudio {
+  /// Le champ de saisie.
+  static const ValueKey<String> champ = ValueKey<String>('studio-recherche');
 
-  /// Le texte cherche ; l'appelant l'ecoute.
-  final TextEditingController controleur;
-
-  /// Vrai : le champ prend le focus a l'apparition (surface mobile).
-  final bool autofocus;
-
-  /// La cle du champ, pour les tests.
-  static const ValueKey<String> cle = ValueKey<String>('studio-recherche');
-
-  /// La cle du bouton qui efface, pour les tests.
-  static const ValueKey<String> cleEffacer = ValueKey<String>(
+  /// Le bouton qui efface.
+  static const ValueKey<String> effacer = ValueKey<String>(
     'studio-recherche-effacer',
   );
 
-  @override
-  Widget build(BuildContext context) {
-    final r = t.com.studio.recherche;
-    return ValueListenableBuilder<TextEditingValue>(
-      valueListenable: controleur,
-      builder: (BuildContext context, TextEditingValue valeur, Widget? _) =>
-          TextField(
-            key: cle,
-            controller: controleur,
-            autofocus: autofocus,
-            textInputAction: TextInputAction.search,
-            decoration: InputDecoration(
-              labelText: r.champ,
-              hintText: r.aide,
-              prefixIcon: ExcludeSemantics(
-                child: Icon(AppIcons.recherche.repos),
-              ),
-              suffixIcon: valeur.text.isEmpty
-                  ? null
-                  : BoutonIcone(
-                      key: cleEffacer,
-                      icone: AppIcons.effacer,
-                      libelle: r.effacer,
-                      infobulle: r.effacer,
-                      onPress: controleur.clear,
-                    ),
-            ),
-          ),
-    );
-  }
-}
-
-/// La recherche plein ecran du telephone : retour, champ, resultats.
-///
-/// Temporaire : elle ne pousse aucune route. [onFermer] la referme et rend
-/// la liste des canaux, qui garde sa position.
-class SurfaceRechercheStudio extends StatelessWidget {
-  /// Cree la surface.
-  const SurfaceRechercheStudio({
-    required this.controleur,
-    required this.onFermer,
-    required this.resultats,
-    super.key,
-  });
-
-  /// Le texte cherche.
-  final TextEditingController controleur;
-
-  /// Ferme la recherche.
-  final VoidCallback onFermer;
-
-  /// Les resultats, sous le champ ; ils gerent leur propre defilement.
-  final Widget resultats;
-
-  /// La cle de la surface, pour les tests.
-  static const ValueKey<String> cle = ValueKey<String>(
+  /// La surface plein ecran du telephone.
+  static const ValueKey<String> surface = ValueKey<String>(
     'studio-recherche-surface',
   );
 
-  /// La cle du bouton qui ferme la recherche, pour les tests.
-  static const ValueKey<String> cleFermer = ValueKey<String>(
+  /// Le bouton qui ferme la surface.
+  static const ValueKey<String> fermer = ValueKey<String>(
     'studio-recherche-fermer',
   );
-
-  @override
-  Widget build(BuildContext context) {
-    final r = t.com.studio.recherche;
-    return Column(
-      key: cle,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            BoutonIcone(
-              key: cleFermer,
-              icone: AppIcons.retour,
-              libelle: r.fermer,
-              infobulle: r.fermer,
-              onPress: onFermer,
-            ),
-            Ecart.hSm,
-            Expanded(
-              child: ChampRechercheStudio(
-                controleur: controleur,
-                autofocus: true,
-              ),
-            ),
-          ],
-        ),
-        Ecart.vLg,
-        Expanded(child: resultats),
-      ],
-    );
-  }
 }
 
 /// Les resultats d'une recherche du Studio, avec leurs filtres.
@@ -255,19 +153,12 @@ class ResultatsRechercheStudio extends StatelessWidget {
       );
     }
     if (resultats.hasError) {
-      final Object erreur = resultats.error!;
       return SingleChildScrollView(
-        child: erreur is CapaciteIndisponible
-            ? VueEtatCommunication(
-                etat: EtatCommunication.indisponible,
-                dependance: erreur.dependance,
-              )
-            : VueEtatCommunication(
-                etat: horsLigne
-                    ? EtatCommunication.horsLigne
-                    : EtatCommunication.erreur,
-                onReessayer: onReessayer,
-              ),
+        child: VueEtatCommunication.depuisErreur(
+          resultats.error!,
+          horsLigne: horsLigne,
+          onReessayer: onReessayer,
+        ),
       );
     }
     final ResultatsStudio tous = (resultats.value ?? ResultatsStudio())

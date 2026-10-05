@@ -10,6 +10,8 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+// `ProviderOrFamily` n'est pas exporte par l'entree principale de Riverpod 3.
+import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 
 import '../capacites/capacite_indisponible.dart';
 import '../i18n/strings.g.dart';
@@ -214,3 +216,20 @@ class ModerationIndisponible implements PortModeration {
 /// La moderation employee par l'application.
 final Provider<PortModeration> portModerationProvider =
     Provider<PortModeration>((Ref ref) => const ModerationIndisponible());
+
+Duration? _sansRetentative(int essai, Object erreur) => null;
+
+/// Les capacites de moderation de la personne connectee (signaler, voir la
+/// file, agir), relues a chaque ouverture d'un ecran qui les lit.
+///
+/// Le SEUL provider de ces capacites (revue COM-R, R-23) : la publication de
+/// la Communaute (« Signaler ») et la file de l'Administration des
+/// communications le lisent tous deux. Un port neutre echoue tout de suite
+/// (`CapaciteIndisponible`), sans nouvel essai ; il suit le port de sa portee
+/// (demonstration, tests).
+final FutureProvider<CapacitesModeration> capacitesModerationProvider =
+    FutureProvider.autoDispose<CapacitesModeration>(
+      (Ref ref) => ref.watch(portModerationProvider).capacites(),
+      retry: _sansRetentative,
+      dependencies: <ProviderOrFamily>[portModerationProvider],
+    );

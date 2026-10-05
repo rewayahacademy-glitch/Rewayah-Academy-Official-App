@@ -289,7 +289,7 @@ class _Indicateurs extends ConsumerWidget {
     // La file ne se lit qu'avec la capacite de moderer : sans elle, ni
     // compte ni lien vers une file refusee.
     final AsyncValue<CapacitesModeration> capacites = ref.watch(
-      capacitesModerationFileProvider,
+      capacitesModerationProvider,
     );
     final bool voitLaFile =
         capacites.hasValue &&
@@ -344,7 +344,7 @@ class _Indicateurs extends ConsumerWidget {
         valeur: _compte(file, (List<ElementModeration> v) => v.length),
         va: voitLaFile ? () => GoRouter.of(context).go(cheminModeration) : null,
         relire: () => ref
-          ..invalidate(capacitesModerationFileProvider)
+          ..invalidate(capacitesModerationProvider)
           ..invalidate(fileModerationProvider),
       ),
       (

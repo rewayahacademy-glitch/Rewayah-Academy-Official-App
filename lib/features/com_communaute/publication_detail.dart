@@ -42,15 +42,6 @@ import 'reponses.dart';
 
 Duration? _sansRetentative(int essai, Object erreur) => null;
 
-/// Les capacites de moderation de la personne connectee (signaler).
-final FutureProvider<CapacitesModeration>
-capacitesModerationCommunauteProvider =
-    FutureProvider.autoDispose<CapacitesModeration>(
-      (Ref ref) => ref.watch(portModerationProvider).capacites(),
-      retry: _sansRetentative,
-      dependencies: <ProviderOrFamily>[portModerationProvider],
-    );
-
 /// Les contenus que la personne a deja signales, rendus par le serveur
 /// (revue COM-R, R-18) : un signalement fait avant la visite (autre page,
 /// autre appareil) se dit aussi, et « Signaler » n'est pas repropose. Une
@@ -298,7 +289,7 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
     final DateTime maintenant = ref.watch(horlogeCommunauteProvider)();
     final ObjetLie objet = publication.objet;
     final bool peutSignaler =
-        ref.watch(capacitesModerationCommunauteProvider).value?.peutSignaler ??
+        ref.watch(capacitesModerationProvider).value?.peutSignaler ??
         false;
     final Set<ObjetLie> signales = _signales;
     final bool signalee = signales.contains(objet);

@@ -169,8 +169,10 @@ void main() {
       await _monter(tester, const Size(768, 1024), avecListe: false);
       expect(_panneaux(), 2);
       expect(find.byKey(EspaceTravailAdaptatif.cleListe), findsNothing);
+      // R-10 : l'ecart de 24 entre les colonnes est porte par l'espace.
       expect(
         _largeur(tester, EspaceTravailAdaptatif.clePrincipal) +
+            EspaceTravailAdaptatif.ecartColonnes +
             _largeur(tester, EspaceTravailAdaptatif.cleContexte),
         768,
       );
@@ -194,7 +196,12 @@ void main() {
       // Aucune colonne vide : le contenu prend la place du contexte.
       expect(
         _largeur(tester, EspaceTravailAdaptatif.clePrincipal),
-        1440 - EspaceTravailAdaptatif.largeurListe,
+        // R-10 : la liste a sa largeur pour 1440, puis l'ecart de 24 ; le
+        // retrait de 16 apres le filet est dans la colonne du contenu.
+        1440 -
+            EspaceTravailAdaptatif.largeurListePour(1440) -
+            EspaceTravailAdaptatif.ecartColonnes -
+            EspaceTravailAdaptatif.retraitFilet,
       );
 
       await tester.tap(find.byKey(EspaceTravailAdaptatif.cleOuvrirContexte));

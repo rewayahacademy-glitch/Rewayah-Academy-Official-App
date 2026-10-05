@@ -82,6 +82,7 @@ class _Traductions$commun$ar extends Traductions$commun$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$commun$recherche$ar recherche = _Traductions$commun$recherche$ar._(_root);
 	@override late final _Traductions$commun$sections$ar sections = _Traductions$commun$sections$ar._(_root);
 }
 
@@ -251,6 +252,17 @@ class _Traductions$notifications$types$ar extends Traductions$notifications$type
 	@override String get annonceInterne => 'إعلان داخلي';
 	@override String get evenementContextuel => 'حدث';
 	@override String get autre => 'إشعار';
+}
+
+// Path: commun.recherche
+class _Traductions$commun$recherche$ar extends Traductions$commun$recherche$fr {
+	_Traductions$commun$recherche$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get effacer => 'مسح البحث';
+	@override String get fermer => 'إغلاق البحث';
 }
 
 // Path: commun.sections
@@ -579,6 +591,7 @@ class _Traductions$com$socle$composants$ar extends Traductions$com$socle$composa
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$com$socle$composants$lecture$ar lecture = _Traductions$com$socle$composants$lecture$ar._(_root);
 	@override late final _Traductions$com$socle$composants$badge$ar badge = _Traductions$com$socle$composants$badge$ar._(_root);
 	@override late final _Traductions$com$socle$composants$pieceJointe$ar pieceJointe = _Traductions$com$socle$composants$pieceJointe$ar._(_root);
 	@override late final _Traductions$com$socle$composants$composer$ar composer = _Traductions$com$socle$composants$composer$ar._(_root);
@@ -717,8 +730,6 @@ class _Traductions$com$messages$recherche$ar extends Traductions$com$messages$re
 	// Translations
 	@override String get champ => 'البحث عن محادثة';
 	@override String get aide => 'الاسم أو الفصل أو الملف';
-	@override String get fermer => 'إغلاق البحث';
-	@override String get effacer => 'مسح البحث';
 	@override String get aucunTitre => 'لم يتم العثور على أي محادثة';
 	@override String aucun({required Object texte}) => 'لا توجد محادثة تطابق « ${texte} ». جرّب اسمًا آخر أو فصلًا آخر.';
 	@override String get resultatUn => 'تم العثور على محادثة واحدة';
@@ -801,12 +812,7 @@ class _Traductions$com$messages$fil$ar extends Traductions$com$messages$fil$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String auteurEtMoment({required Object auteur, required Object moment}) => '${auteur} · ${moment}';
 	@override String get lectureSeule => 'يمكنك قراءة هذه المحادثة. الرد فيها غير متاح لك.';
-	@override String pieceJointe({required Object nom}) => 'مرفق: ${nom}';
-	@override String vocal({required Object duree}) => 'رسالة صوتية مدتها ${duree}';
-	@override String get vocalSansDuree => 'رسالة صوتية';
-	@override String horodatage({required Object date, required Object heure}) => '${date}، ${heure}';
 }
 
 // Path: com.messages.demo
@@ -975,7 +981,6 @@ class _Traductions$com$communaute$recherche$ar extends Traductions$com$communaut
 	@override String get ouvrir => 'البحث عن منشور';
 	@override String get champ => 'البحث عن منشور';
 	@override String get aide => 'كلمة من العنوان أو النص';
-	@override String get fermer => 'إغلاق البحث';
 }
 
 // Path: com.communaute.moment
@@ -1245,11 +1250,6 @@ class _Traductions$com$studio$canal$ar extends Traductions$com$studio$canal$fr {
 	@override String get aucunMessage => 'ستظهر رسائل هذه القناة هنا فور نشرها.';
 	@override String get indisponibleTitre => 'القناة غير متاحة';
 	@override String get indisponible => 'هذه القناة غير متاحة لك. اختر قناة أخرى من القائمة.';
-	@override String pieceJointe({required Object nom}) => 'مرفق: ${nom}';
-	@override String vocal({required Object duree}) => 'رسالة صوتية مدتها ${duree}';
-	@override String get vocalSansDuree => 'رسالة صوتية';
-	@override String horodatage({required Object date, required Object heure}) => '${date}، ${heure}';
-	@override String auteurEtMoment({required Object auteur, required Object moment}) => '${auteur} · ${moment}';
 }
 
 // Path: com.studio.panneau
@@ -1315,8 +1315,6 @@ class _Traductions$com$studio$recherche$ar extends Traductions$com$studio$recher
 	// Translations
 	@override String get champ => 'البحث في الاستوديو';
 	@override String get aide => 'قناة أو رسالة أو ملف';
-	@override String get fermer => 'إغلاق البحث';
-	@override String get effacer => 'مسح البحث';
 	@override String get aucunTitre => 'لا توجد نتائج';
 	@override String aucun({required Object texte}) => 'لا شيء يطابق «${texte}» في قنواتك. جرّب كلمة أخرى.';
 	@override String get aucunDansFiltre => 'لا شيء من هذا النوع يطابق البحث. اختر الكل لرؤية النتائج الأخرى.';
@@ -1447,6 +1445,19 @@ class _Traductions$com$annonces$demo$ar extends Traductions$com$annonces$demo$fr
 	@override String get classeFajr => 'فصل الفجر';
 	@override String get enseignante => 'معلمة الفصل';
 	@override late final _Traductions$com$annonces$demo$f$ar f = _Traductions$com$annonces$demo$f$ar._(_root);
+}
+
+// Path: com.socle.composants.lecture
+class _Traductions$com$socle$composants$lecture$ar extends Traductions$com$socle$composants$lecture$fr {
+	_Traductions$com$socle$composants$lecture$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String pieceJointe({required Object nom}) => 'مرفق: ${nom}';
+	@override String vocal({required Object duree}) => 'رسالة صوتية مدتها ${duree}';
+	@override String get vocalSansDuree => 'رسالة صوتية';
+	@override String horodatage({required Object date, required Object heure}) => '${date}، ${heure}';
 }
 
 // Path: com.socle.composants.badge
@@ -2027,6 +2038,8 @@ extension on TraductionsAr {
 			'notifications.types.annonceInterne' => 'إعلان داخلي',
 			'notifications.types.evenementContextuel' => 'حدث',
 			'notifications.types.autre' => 'إشعار',
+			'commun.recherche.effacer' => 'مسح البحث',
+			'commun.recherche.fermer' => 'إغلاق البحث',
 			'commun.sections.page' => 'أقسام الصفحة',
 			'etat.enDirect' => 'مباشر',
 			'etat.seanceAnnulee' => 'ملغاة',
@@ -2125,6 +2138,10 @@ extension on TraductionsAr {
 			'tc.bibliotheque.sections.groupe' => 'المواد المعروضة',
 			'tc.groupe.enseignant.sayyid' => 'سيد',
 			'tc.groupe.enseignant.sayyida' => 'سيدة',
+			'com.socle.composants.lecture.pieceJointe' => ({required Object nom}) => 'مرفق: ${nom}',
+			'com.socle.composants.lecture.vocal' => ({required Object duree}) => 'رسالة صوتية مدتها ${duree}',
+			'com.socle.composants.lecture.vocalSansDuree' => 'رسالة صوتية',
+			'com.socle.composants.lecture.horodatage' => ({required Object date, required Object heure}) => '${date}، ${heure}',
 			'com.socle.composants.badge.nonLuUn' => '1 غير مقروء',
 			'com.socle.composants.badge.nonLus' => ({required Object nombre}) => '${nombre} غير مقروءة',
 			'com.socle.composants.badge.nonLusSemantique' => ({required Object nombre}) => '${nombre} عناصر غير مقروءة',
@@ -2268,8 +2285,6 @@ extension on TraductionsAr {
 			'com.messages.choisir' => 'اختر محادثة من القائمة لقراءتها والرد عليها.',
 			'com.messages.recherche.champ' => 'البحث عن محادثة',
 			'com.messages.recherche.aide' => 'الاسم أو الفصل أو الملف',
-			'com.messages.recherche.fermer' => 'إغلاق البحث',
-			'com.messages.recherche.effacer' => 'مسح البحث',
 			'com.messages.recherche.aucunTitre' => 'لم يتم العثور على أي محادثة',
 			'com.messages.recherche.aucun' => ({required Object texte}) => 'لا توجد محادثة تطابق « ${texte} ». جرّب اسمًا آخر أو فصلًا آخر.',
 			'com.messages.recherche.resultatUn' => 'تم العثور على محادثة واحدة',
@@ -2298,12 +2313,7 @@ extension on TraductionsAr {
 			'com.messages.panneau.ouvrir' => ({required Object objet}) => 'فتح ${objet}',
 			'com.messages.panneau.inaccessible' => 'لم يعد بإمكانك الوصول إلى هذا العنصر. تبقى المحادثة قابلة للقراءة.',
 			'com.messages.panneau.vous' => 'أنت',
-			'com.messages.fil.auteurEtMoment' => ({required Object auteur, required Object moment}) => '${auteur} · ${moment}',
 			'com.messages.fil.lectureSeule' => 'يمكنك قراءة هذه المحادثة. الرد فيها غير متاح لك.',
-			'com.messages.fil.pieceJointe' => ({required Object nom}) => 'مرفق: ${nom}',
-			'com.messages.fil.vocal' => ({required Object duree}) => 'رسالة صوتية مدتها ${duree}',
-			'com.messages.fil.vocalSansDuree' => 'رسالة صوتية',
-			'com.messages.fil.horodatage' => ({required Object date, required Object heure}) => '${date}، ${heure}',
 			'com.messages.demo.choisirRole' => 'اختر وجهة النظر في هذا العرض التوضيحي.',
 			'com.messages.demo.roles.tuteur' => 'الأسرة',
 			'com.messages.demo.roles.enseignant' => 'المعلم',
@@ -2418,7 +2428,6 @@ extension on TraductionsAr {
 			'com.communaute.recherche.ouvrir' => 'البحث عن منشور',
 			'com.communaute.recherche.champ' => 'البحث عن منشور',
 			'com.communaute.recherche.aide' => 'كلمة من العنوان أو النص',
-			'com.communaute.recherche.fermer' => 'إغلاق البحث',
 			'com.communaute.moment.instant' => 'الآن',
 			'com.communaute.moment.minutes' => ({required Object nombre}) => 'منذ ${nombre} دقيقة',
 			'com.communaute.moment.heures' => ({required Object nombre}) => 'منذ ${nombre} ساعة',
@@ -2489,10 +2498,10 @@ extension on TraductionsAr {
 			'com.communaute.demo.avertissement' => 'منشور يحتاج إلى مراجعة: إعلان تجاري',
 			'com.communaute.demo.lienAffilie' => 'رابط تسويق بالعمولة محظور',
 			'com.communaute.demo.vente' => 'بيع محظور',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.demo.signalementNonConfirme' => 'إبلاغ غير مؤكَّد',
 			'com.communaute.demo.choisir' => 'اختر حالة لتجربتها داخل واجهة المعلّم.',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.demo.aujourdhui' => 'اليوم، مع الاختصار',
 			'com.communaute.demo.nominal' => 'ستة منشورات',
 			'com.communaute.demo.publication' => 'منشور مفتوح',
@@ -2593,11 +2602,6 @@ extension on TraductionsAr {
 			'com.studio.canal.aucunMessage' => 'ستظهر رسائل هذه القناة هنا فور نشرها.',
 			'com.studio.canal.indisponibleTitre' => 'القناة غير متاحة',
 			'com.studio.canal.indisponible' => 'هذه القناة غير متاحة لك. اختر قناة أخرى من القائمة.',
-			'com.studio.canal.pieceJointe' => ({required Object nom}) => 'مرفق: ${nom}',
-			'com.studio.canal.vocal' => ({required Object duree}) => 'رسالة صوتية مدتها ${duree}',
-			'com.studio.canal.vocalSansDuree' => 'رسالة صوتية',
-			'com.studio.canal.horodatage' => ({required Object date, required Object heure}) => '${date}، ${heure}',
-			'com.studio.canal.auteurEtMoment' => ({required Object auteur, required Object moment}) => '${auteur} · ${moment}',
 			'com.studio.panneau.titre' => 'حول القناة',
 			'com.studio.panneau.aPropos' => 'حول',
 			'com.studio.panneau.section' => 'القسم',
@@ -2630,8 +2634,6 @@ extension on TraductionsAr {
 			'com.studio.enregistres.types.element' => 'عنصر من الاستوديو',
 			'com.studio.recherche.champ' => 'البحث في الاستوديو',
 			'com.studio.recherche.aide' => 'قناة أو رسالة أو ملف',
-			'com.studio.recherche.fermer' => 'إغلاق البحث',
-			'com.studio.recherche.effacer' => 'مسح البحث',
 			'com.studio.recherche.aucunTitre' => 'لا توجد نتائج',
 			'com.studio.recherche.aucun' => ({required Object texte}) => 'لا شيء يطابق «${texte}» في قنواتك. جرّب كلمة أخرى.',
 			'com.studio.recherche.aucunDansFiltre' => 'لا شيء من هذا النوع يطابق البحث. اختر الكل لرؤية النتائج الأخرى.',
