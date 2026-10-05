@@ -18,12 +18,15 @@ import '../theme/app_spacing.dart';
 /// - Pays non declare (nul, vide) : **rien n'est rendu**, pas de « inconnu ».
 /// - Le nom du pays est **toujours** ecrit, en entier, sans coupure de mot
 ///   ([TexteSansCoupure]).
-/// - Le drapeau le precede **seulement quand l'appareil sait le dessiner**
-///   ([drapeauDessinable]) : un drapeau se compose de deux « lettres
-///   regionales » que la police d'emoji fusionne. Chrome et Edge sous
-///   Windows, sans police qui les fusionne, montrent deux lettres (« GN ») :
-///   le composant le mesure et, dans ce cas, n'affiche que le nom. Jamais
-///   deux lettres orphelines a l'ecran.
+/// - Le drapeau le precede, **image embarquee** (ENS-DRAPEAU-1, decision Q-5
+///   du directeur du 05/10/2026) : un seul rendu sur toutes les plateformes,
+///   Windows et web compris, sans dependre d'une police d'emoji. Images :
+///   `assets/flags/<code>.png`, flag-icons 7.5.0 (MIT, voir
+///   `assets/flags/LICENCE.txt`), pour les 19 pays de FORM-L8 seulement. Un
+///   pays sans image (ecrit dans « Autre ») garde son nom seul : jamais de
+///   lettres orphelines.
+/// - Le drapeau a la hauteur du corps du texte (taille de police agrandie
+///   par l'echelle de l'appareil), au format 4:3.
 /// - Le drapeau est decoratif pour le lecteur d'ecran : la phrase lue est
 ///   « Pays : Guinee ».
 class PaysEnseignant extends StatelessWidget {
@@ -49,7 +52,7 @@ class PaysEnseignant extends StatelessWidget {
   /// Cle de la ligne, pour les tests.
   static const Key ligneKey = ValueKey<String>('pays-enseignant');
 
-  /// Cle du drapeau, present seulement quand il est dessinable.
+  /// Cle du drapeau, present seulement quand le pays a son image.
   static const Key drapeauKey = ValueKey<String>('pays-enseignant-drapeau');
 
   /// Le nom a afficher, ou nul si rien n'est declare.
@@ -168,117 +171,35 @@ String? codeIsoDuPays(String? nom) {
   return _codesParForme[_forme(nom)];
 }
 
-/// Le drapeau du code [code] : ses deux lettres regionales Unicode
-/// (U+1F1E6 a U+1F1FF), construites ici plutot qu'ecrites dans le source.
-String drapeauDuCode(String code) => String.fromCharCodes(<int>[
-  for (final int c in code.toUpperCase().codeUnits) 0x1F1E6 + c - 0x41,
-]);
+/// Le chemin de l'image du drapeau du code [code] (ISO 3166-1 alpha-2).
+String cheminDrapeau(String code) => 'assets/flags/${code.toLowerCase()}.png';
 
-/// La police d'emoji que Flutter Web charge pour les glyphes absents des
-/// polices de l'application, et celle d'Android : nommee en repli du seul
-/// drapeau, sans rien embarquer ni changer aux polices du produit.
-const String _repliDrapeau = 'Noto Color Emoji';
+/// Le rapport largeur / hauteur des images (flag-icons, dossier `4x3`).
+const double rapportDrapeau = 4 / 3;
 
-/// Le style du drapeau : celui du nom, avec la police d'emoji en repli.
-TextStyle _styleDrapeau(TextStyle style) => style.copyWith(
-  fontFamilyFallback: <String>[...?style.fontFamilyFallback, _repliDrapeau],
-);
-
-final Map<String, bool> _dessinables = <String, bool>{};
-
-/// Vrai quand l'appareil dessine le drapeau [code] en un seul glyphe.
-///
-/// **Mesure, pas supposition.** Les deux lettres regionales se fusionnent en
-/// un drapeau quand la police sait le faire : la paire prend alors la largeur
-/// d'un seul glyphe. Sinon (Chrome ou Edge sous Windows, police d'emoji pas
-/// encore chargee, police de test) la paire est deux fois plus large qu'une
-/// lettre seule : le drapeau n'est pas dessinable, seul le nom s'affiche.
-/// Le resultat est garde par code et par style ; il est oublie quand les
-/// polices du systeme changent (Flutter Web finit de charger sa police
-/// d'emoji), et les drapeaux se redessinent alors.
-bool drapeauDessinable(String code, TextStyle style) {
-  final TextStyle s = _styleDrapeau(style);
-  final String cle =
-      '$code|${s.fontFamily}|${s.fontSize}|${s.fontFamilyFallback?.join(',')}';
-  return _dessinables.putIfAbsent(cle, () {
-    double largeur(String texte) {
-      final TextPainter peintre = TextPainter(
-        text: TextSpan(text: texte, style: s),
-        textDirection: TextDirection.ltr,
-        maxLines: 1,
-      )..layout();
-      final double w = peintre.width;
-      peintre.dispose();
-      return w;
-    }
-
-    final String paire = drapeauDuCode(code);
-    final double seule = largeur(String.fromCharCode(paire.runes.first));
-    final double ensemble = largeur(paire);
-    return seule > 0 && ensemble < seule * 1.5;
-  });
-}
-
-/// Oublie les mesures (tests, et changement des polices du systeme).
-@visibleForTesting
-void oublierDrapeauxMesures() => _dessinables.clear();
-
-/// Vrai une fois l'ecoute des polices du systeme posee : **une seule** pour
-/// toute l'application, quel que soit le nombre de drapeaux a l'ecran.
-bool _ecouteDesPolices = false;
-
-/// Pose, une fois, l'ecoute qui oublie les mesures quand les polices du
-/// systeme changent (Flutter Web finit de charger sa police d'emoji). Chaque
-/// drapeau ecoute ensuite le meme signal pour se redessiner, sans vider le
-/// cache lui-meme : un seul vidage par changement.
-void _ecouterLesPolices() {
-  if (_ecouteDesPolices) return;
-  _ecouteDesPolices = true;
-  PaintingBinding.instance.systemFonts.addListener(_dessinables.clear);
-}
-
-class _Drapeau extends StatefulWidget {
+class _Drapeau extends StatelessWidget {
   const _Drapeau({required this.code, required this.style});
 
   final String code;
   final TextStyle style;
 
   @override
-  State<_Drapeau> createState() => _DrapeauEtat();
-}
-
-class _DrapeauEtat extends State<_Drapeau> {
-  @override
-  void initState() {
-    super.initState();
-    // L'ecoute qui vide le cache est posee avant celle-ci : les auditeurs
-    // sont appeles dans l'ordre d'inscription, le cache est donc vide quand
-    // ce drapeau se reconstruit.
-    _ecouterLesPolices();
-    PaintingBinding.instance.systemFonts.addListener(_policesChangees);
-  }
-
-  @override
-  void dispose() {
-    PaintingBinding.instance.systemFonts.removeListener(_policesChangees);
-    super.dispose();
-  }
-
-  void _policesChangees() {
-    if (mounted) setState(() {});
-  }
-
-  @override
   Widget build(BuildContext context) {
-    if (!drapeauDessinable(widget.code, widget.style)) {
-      return const SizedBox.shrink();
-    }
+    final double corps = MediaQuery.textScalerOf(context)
+        .scale(style.fontSize ?? DefaultTextStyle.of(context).style.fontSize!);
     return Padding(
       key: PaysEnseignant.drapeauKey,
       padding: const EdgeInsetsDirectional.only(end: AppSpacing.xs),
-      child: Text(
-        drapeauDuCode(widget.code),
-        style: _styleDrapeau(widget.style),
+      child: Image.asset(
+        cheminDrapeau(code),
+        width: corps * rapportDrapeau,
+        height: corps,
+        fit: BoxFit.fill,
+        filterQuality: FilterQuality.medium,
+        excludeFromSemantics: true,
+        // Image absente du paquet (ne doit pas arriver : un test verifie les
+        // 19) : rien a la place, le nom reste seul.
+        errorBuilder: (_, _, _) => const SizedBox.shrink(),
       ),
     );
   }

@@ -4,24 +4,19 @@
 // sombre. Vrais ecrans, donnees de demonstration ou faux services ; chaque
 // vue est defilee jusqu'a la ligne du pays (`montrerPays`).
 //
-// La police d'emoji de la machine (Noto Color Emoji, celle de Flutter Web et
-// d'Android) est chargee : c'est le rendu d'un appareil qui sait dessiner le
-// drapeau. Le rendu sans drapeau (Chrome ou Edge sous Windows) est capture a
-// part par `ens_pays1_sans_drapeau_capture_test.dart`.
+// Depuis ENS-DRAPEAU-1 (05/10/2026), le drapeau est une image embarquee,
+// la meme sur toutes les plateformes : plus de police d'emoji a charger, plus
+// de rendu « sans drapeau » a part. Les images sont decodees avant la prise
+// de vue (`chargerDrapeaux`).
 //
 // Saute sans CAPTURE_DIR (voir `test/capture/LISEZ-MOI.md`). Nommage :
 // enspays1_<role>_<ecran>_<largeur>_<mode>.png.
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../features/ens_pays1/support_ens_pays1.dart';
 import 'outil_capture.dart';
-
-const String _policeEmoji = '/usr/share/fonts/truetype/noto/NotoColorEmoji.ttf';
 
 const List<(Size, double, String)> _cadres = <(Size, double, String)>[
   (Size(390, 844), 1, '390'),
@@ -31,18 +26,7 @@ const List<(Size, double, String)> _cadres = <(Size, double, String)>[
 
 void main() {
   group('Capture : ENS-PAYS-1', skip: sautSansCapture, () {
-    setUpAll(() async {
-      await chargerPolicesDuDepot();
-      if (File(_policeEmoji).existsSync()) {
-        final FontLoader emoji = FontLoader('Noto Color Emoji')
-          ..addFont(
-            Future<ByteData>.value(
-              ByteData.sublistView(File(_policeEmoji).readAsBytesSync()),
-            ),
-          );
-        await emoji.load();
-      }
-    });
+    setUpAll(chargerPolicesDuDepot);
 
     for (final EcranPays e in ecransPays()) {
       for (final (Size cadre, double echelle, String nom) in _cadres) {
@@ -66,6 +50,7 @@ void main() {
             // amenee dans la vue, au-dessus de la barre de navigation, avant
             // la prise de vue.
             await montrerPays(tester);
+            await chargerDrapeaux(tester);
             tester.takeException();
             expect(
               rectangleVisibleDuPays(tester, taille),

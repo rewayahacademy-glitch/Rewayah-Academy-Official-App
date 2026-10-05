@@ -1,10 +1,12 @@
 // ENS-PAYS-1 (demande du directeur du 04/10/2026) : le pays de chaque
 // enseignant apparait sur sa carte, pour tous les roles ; rien s'il n'est pas
 // declare ; jamais deux lettres orphelines a la place d'un drapeau.
+// ENS-DRAPEAU-1 (decision Q-5 du 05/10/2026) : le drapeau est une image
+// embarquee, la meme sur toutes les plateformes, Windows compris.
 
-import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show SemanticsNode;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/widgets/avatar_nom.dart';
@@ -14,10 +16,6 @@ import 'package:rewayah_academy/features/profil_enseignant/declaration_choix.dar
 import '../../capture/outil_capture.dart';
 import '../../support/aucun_mot_coupe.dart';
 import 'support_ens_pays1.dart';
-
-/// La police d'emoji de la machine, quand elle existe (Noto Color Emoji,
-/// celle que Flutter Web et Android utilisent).
-const String _policeEmoji = '/usr/share/fonts/truetype/noto/NotoColorEmoji.ttf';
 
 Future<void> _monter(
   WidgetTester tester,
@@ -44,6 +42,25 @@ List<String> _paysRendus(WidgetTester tester) => tester
     .map((PaysEnseignant p) => PaysEnseignant.nomAffichable(p.pays))
     .whereType<String>()
     .toList();
+
+/// Le chemin de l'image du drapeau a l'ecran (un seul attendu).
+String? _imageDuDrapeau(WidgetTester tester) {
+  final Iterable<Image> images = tester.widgetList<Image>(find.byType(Image));
+  if (images.isEmpty) return null;
+  final ImageProvider<Object> source = images.single.image;
+  return source is AssetImage ? source.assetName : null;
+}
+
+/// Laisse le decodage des images se terminer (il tourne hors du temps
+/// simule des tests), puis redessine.
+Future<void> _chargerImages(WidgetTester tester) async {
+  await tester.runAsync(() async {
+    for (final Element e in find.byType(Image).evaluate()) {
+      await precacheImage((e.widget as Image).image, e);
+    }
+  });
+  await tester.pump();
+}
 
 Widget _seul(Widget enfant, {TextDirection sens = TextDirection.ltr}) =>
     hoteCapture(
@@ -78,14 +95,20 @@ void main() {
       expect(codeIsoDuPays(null), isNull);
     });
 
-    test('le drapeau est la paire de lettres regionales du code', () {
-      expect(drapeauDuCode('GN').runes.toList(), <int>[0x1F1EC, 0x1F1F3]);
-      expect(drapeauDuCode('fr').runes.toList(), <int>[0x1F1EB, 0x1F1F7]);
+    test('chacun des 19 pays a son image de drapeau dans le paquet', () async {
+      TestWidgetsFlutterBinding.ensureInitialized();
+      for (final String code in codesIsoDesPays.values) {
+        final ByteData png = await rootBundle.load(cheminDrapeau(code));
+        // Signature PNG, puis largeur et hauteur de l'en-tete IHDR : 64 x 48.
+        expect(png.getUint32(0), 0x89504E47, reason: code);
+        expect(png.getUint32(16), 64, reason: code);
+        expect(png.getUint32(20), 48, reason: code);
+      }
     });
   });
 
   group('PaysEnseignant', () {
-    setUp(oublierDrapeauxMesures);
+    tearDown(() => debugDefaultTargetPlatformOverride = null);
 
     testWidgets('non declare : rien, pas de « inconnu »', (
       WidgetTester tester,
@@ -94,6 +117,7 @@ void main() {
         await tester.pumpWidget(_seul(PaysEnseignant(pays: vide)));
         expect(find.byKey(PaysEnseignant.ligneKey), findsNothing);
         expect(find.byType(Text), findsNothing);
+        expect(find.byType(Image), findsNothing);
       }
       await tester.pumpWidget(
         _seul(
@@ -111,90 +135,139 @@ void main() {
           _seul(AvatarNom.enLigne(prenom: prenom, nom: 'Sayyid', pays: 'Mali')),
         );
         expect(find.byKey(PaysEnseignant.ligneKey), findsNothing);
+        expect(find.byType(Image), findsNothing);
         await tester.pumpWidget(
           _seul(AvatarNom.vertical(prenom: prenom, pays: 'Mali')),
         );
         expect(find.byKey(PaysEnseignant.ligneKey), findsNothing);
+        expect(find.byType(Image), findsNothing);
       }
       await tester.pumpWidget(
         _seul(const AvatarNom.enLigne(prenom: 'Oumar', pays: 'Mali')),
       );
       expect(find.byKey(PaysEnseignant.ligneKey), findsOneWidget);
+      expect(_imageDuDrapeau(tester), 'assets/flags/ml.png');
     });
 
-    testWidgets('sans police qui fusionne les lettres (Windows) : le nom seul, '
-        'jamais deux lettres', (WidgetTester tester) async {
-      await tester.pumpWidget(_seul(const PaysEnseignant(pays: 'Guinée')));
-      expect(find.text('Guinée', findRichText: true), findsOneWidget);
-      expect(find.byKey(PaysEnseignant.drapeauKey), findsNothing);
-      expect(
-        find.textContaining(drapeauDuCode('GN'), findRichText: true),
-        findsNothing,
-      );
-      expect(
-        find.textContaining(String.fromCharCode(0x1F1EC), findRichText: true),
-        findsNothing,
-      );
-      expect(drapeauDessinable('GN', const TextStyle(fontSize: 14)), isFalse);
+    // ENS-DRAPEAU-1 : un seul rendu, l'image embarquee, sur TOUTES les
+    // plateformes ; Windows (ou les drapeaux emoji ne s'affichent pas) en tete.
+    for (final TargetPlatform plateforme in <TargetPlatform>[
+      TargetPlatform.windows,
+      TargetPlatform.linux,
+      TargetPlatform.macOS,
+      TargetPlatform.android,
+      TargetPlatform.iOS,
+      TargetPlatform.fuchsia,
+    ]) {
+      testWidgets('${plateforme.name} : l image du drapeau precede le nom, '
+          'jamais de lettres regionales', (WidgetTester tester) async {
+        debugDefaultTargetPlatformOverride = plateforme;
+        await tester.pumpWidget(_seul(const PaysEnseignant(pays: 'Guinée')));
+        await _chargerImages(tester);
+        expect(find.text('Guinée', findRichText: true), findsOneWidget);
+        expect(find.byKey(PaysEnseignant.drapeauKey), findsOneWidget);
+        expect(_imageDuDrapeau(tester), 'assets/flags/gn.png');
+        // L'image est decodee et peinte (pas le repli vide de errorBuilder).
+        final RawImage peinte = tester.widget<RawImage>(find.byType(RawImage));
+        expect(peinte.image, isNotNull);
+        expect(peinte.image!.width, 64);
+        expect(
+          tester.getCenter(find.byKey(PaysEnseignant.drapeauKey)).dx,
+          lessThan(tester.getCenter(find.text('Guinée')).dx),
+        );
+        expect(
+          find.textContaining(
+            RegExp('[\u{1F1E6}-\u{1F1FF}]', unicode: true),
+            findRichText: true,
+          ),
+          findsNothing,
+        );
+        debugDefaultTargetPlatformOverride = null;
+      });
+    }
+
+    testWidgets('taille alignee sur la ligne : hauteur du corps, 4:3, '
+        'agrandie avec le texte', (WidgetTester tester) async {
+      for (final double echelle in <double>[1, 2]) {
+        await tester.pumpWidget(
+          hoteCapture(
+            const Scaffold(
+              body: Center(child: PaysEnseignant(pays: 'Mali')),
+            ),
+            echelleTexte: echelle,
+          ),
+        );
+        final BuildContext ctx = tester.element(find.byType(PaysEnseignant));
+        final double corps =
+            Theme.of(ctx).textTheme.bodySmall!.fontSize! * echelle;
+        final Size image = tester.getSize(find.byType(Image));
+        expect(image.height, moreOrLessEquals(corps), reason: 'x$echelle');
+        expect(image.width, moreOrLessEquals(corps * 4 / 3));
+        // Le drapeau ne depasse pas la hauteur de la ligne de texte.
+        final Size texte = tester.getSize(find.text('Mali'));
+        expect(image.height, lessThanOrEqualTo(texte.height));
+        // Et il est centre sur elle.
+        expect(
+          tester.getCenter(find.byType(Image)).dy,
+          moreOrLessEquals(tester.getCenter(find.text('Mali')).dy, epsilon: 1),
+        );
+      }
     });
 
-    testWidgets('le lecteur d ecran lit « Pays : Guinée »', (
+    testWidgets('en arabe, le drapeau passe de l autre cote', (
       WidgetTester tester,
     ) async {
-      final SemanticsHandle h = tester.ensureSemantics();
-      await tester.pumpWidget(_seul(const PaysEnseignant(pays: 'Guinée')));
-      expect(find.bySemanticsLabel('Pays : Guinée'), findsOneWidget);
-      h.dispose();
+      await tester.pumpWidget(
+        _seul(const PaysEnseignant(pays: 'Guinée'), sens: TextDirection.rtl),
+      );
+      expect(
+        tester.getCenter(find.byKey(PaysEnseignant.drapeauKey)).dx,
+        greaterThan(tester.getCenter(find.text('Guinée')).dx),
+      );
     });
 
-    group('avec une police d emoji (Android, Flutter Web)', () {
-      final bool police = File(_policeEmoji).existsSync();
-      setUpAll(() async {
-        if (!police) return;
-        final FontLoader l = FontLoader('Noto Color Emoji')
-          ..addFont(
-            Future<ByteData>.value(
-              ByteData.sublistView(File(_policeEmoji).readAsBytesSync()),
-            ),
-          );
-        await l.load();
+    testWidgets('pays ecrit a la main mais reconnu : son drapeau', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        _seul(const PaysEnseignant(pays: 'cote d’ivoire')),
+      );
+      expect(_imageDuDrapeau(tester), 'assets/flags/ci.png');
+    });
+
+    testWidgets('pays sans image (hors liste) : le nom seul, rien d autre', (
+      WidgetTester tester,
+    ) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+      await tester.pumpWidget(_seul(const PaysEnseignant(pays: 'Comores')));
+      expect(find.text('Comores', findRichText: true), findsOneWidget);
+      expect(find.byKey(PaysEnseignant.drapeauKey), findsNothing);
+      expect(find.byType(Image), findsNothing);
+      // Aucun autre texte que le nom (ni code, ni lettres).
+      expect(find.byType(Text), findsOneWidget);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('le lecteur d ecran lit « Pays : Guinée », l image est '
+        'decorative', (WidgetTester tester) async {
+      final SemanticsHandle h = tester.ensureSemantics();
+      await tester.pumpWidget(_seul(const PaysEnseignant(pays: 'Guinée')));
+      await _chargerImages(tester);
+      expect(find.bySemanticsLabel('Pays : Guinée'), findsOneWidget);
+      final Image image = tester.widget<Image>(find.byType(Image));
+      expect(image.excludeFromSemantics, isTrue);
+      final SemanticsNode noeud = tester.getSemantics(
+        find.byKey(PaysEnseignant.ligneKey),
+      );
+      expect(noeud.label, 'Pays : Guinée');
+      // Le noeud du pays n'a aucun enfant : l'image n'en ajoute pas.
+      int enfants = 0;
+      noeud.visitChildren((SemanticsNode _) {
+        enfants++;
+        return true;
       });
-
-      testWidgets(
-        'le drapeau precede le nom, et se met de l autre cote en arabe',
-        skip: !police,
-        (WidgetTester tester) async {
-          oublierDrapeauxMesures();
-          await tester.pumpWidget(_seul(const PaysEnseignant(pays: 'Guinée')));
-          expect(find.byKey(PaysEnseignant.drapeauKey), findsOneWidget);
-          final Finder nom = find.text('Guinée', findRichText: true);
-          expect(
-            tester.getCenter(find.byKey(PaysEnseignant.drapeauKey)).dx,
-            lessThan(tester.getCenter(nom).dx),
-          );
-          await tester.pumpWidget(
-            _seul(
-              const PaysEnseignant(pays: 'Guinée'),
-              sens: TextDirection.rtl,
-            ),
-          );
-          await tester.pump();
-          expect(
-            tester.getCenter(find.byKey(PaysEnseignant.drapeauKey)).dx,
-            greaterThan(tester.getCenter(nom).dx),
-          );
-        },
-      );
-
-      testWidgets(
-        'un pays hors liste garde son nom, sans drapeau',
-        skip: !police,
-        (WidgetTester tester) async {
-          await tester.pumpWidget(_seul(const PaysEnseignant(pays: 'Comores')));
-          expect(find.text('Comores', findRichText: true), findsOneWidget);
-          expect(find.byKey(PaysEnseignant.drapeauKey), findsNothing);
-        },
-      );
+      expect(enfants, 0);
+      h.dispose();
     });
   });
 

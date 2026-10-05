@@ -542,3 +542,28 @@ Widget hotePays(
     ),
   );
 }
+
+/// Laisse les images de drapeau (ENS-DRAPEAU-1) finir leur decodage, qui
+/// tourne hors du temps simule des tests, puis redessine : sans cela, une
+/// capture prise tout de suite montrerait la place du drapeau vide.
+Future<void> chargerDrapeaux(WidgetTester tester) async {
+  final List<Element> images = find
+      .byKey(PaysEnseignant.drapeauKey)
+      .evaluate()
+      .expand(
+        (Element e) => find
+            .descendant(
+              of: find.byWidget(e.widget),
+              matching: find.byType(Image),
+            )
+            .evaluate(),
+      )
+      .toList();
+  if (images.isEmpty) return;
+  await tester.runAsync(() async {
+    for (final Element e in images) {
+      await precacheImage((e.widget as Image).image, e);
+    }
+  });
+  await tester.pump();
+}
