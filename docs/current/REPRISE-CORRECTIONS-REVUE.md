@@ -30,7 +30,7 @@ Fiche de passage pour tout agent qui prend la suite. Elle se suffit à elle-mêm
 - Galerie vidéo de la salle : écart de 8 entre cartes, à garder ?
 - Configuration : menu ou 4 segments ?
 - Le Coran est retiré de la barre élève en Mode Accessibilité : confirmer ?
-- Plus tard, selon les lots : écran exact de FILTRES-1 / SUPERPOS-1 / bouton K-56 ; choix K-58 ; CARTES-PERSO-1 = espace de classe ? ; nom « Cahier de transmission » ; textes KYC-PHOTO-1 ; REMPL-1 offre visible aux seuls enseignants du bon genre (recommandé).
+- Plus tard, selon les lots : écran exact de FILTRES-1 / SUPERPOS-1 / bouton K-56 ; choix K-58 ; CARTES-PERSO-1 = espace de classe (tranché le 05/10 par décision déléguée : emplacements de l'espace de classe, visibles aussitôt, masquage a posteriori par la direction ; `DASH_STRATEGIE.md` §3.9) ; nom « Cahier de transmission » ; textes KYC-PHOTO-1 ; REMPL-1 offre visible aux seuls enseignants du bon genre (recommandé).
 
 ## Suite : lot 2 (balayage de tous les écrans)
 

@@ -254,6 +254,23 @@ Accord avec `BENTO_RECENSEMENT.md:28` (« Prochaine séance grande, […] Ma jou
 
 Liste de cartes, pas un tableau de bord (`BENTO_RECENSEMENT.md:43`). Hors DASH.
 
+### 3.9 Espace de classe : cartes de la classe (CARTES-PERSO-1, fiche CLS-CARTES)
+
+**Demande** (directeur, commentaire sur la page Essai de fusion, 01/10 23:32) : l'enseignant touche une carte pour en changer le contenu et y saisir ce qu'il veut (titre, texte, lien, échéance) ; les cartes sont visibles par le tuteur, l'élève enfant et l'élève adulte de la classe.
+
+**Décision datée du 05/10/2026, déléguée par le directeur** (ordre du 04/10 soir) :
+- les cartes sont un **emplacement de l'espace de classe** (`tc_espace_groupe/bloc_cartes_classe.dart`, à côté des emplacements de `emplacements_groupe.dart`), posé sur les quatre écrans qui montrent une Classe : Espace Classe (`EspaceGroupePage`, quatre rôles et Interface guidée), Espace Classe enseignant (`FicheGroupePage`), Ma classe de l'élève adulte (`MaClasseAdultePage`), Classe vue par le tuteur (`ClasseTuteurPage`) ;
+- **contenu visible immédiatement** par les membres de la classe et les tuteurs de leurs foyers, sans relecture préalable ; l'enseignant en est responsable ; **masquage a posteriori par la direction**, consigné pour BR-1 (CARTES-BR-02) ;
+- **Interface guidée** (élève enfant, ou adulte qui l'a choisie) : titre et texte seuls (le modèle ne se dit pas), lien en bouton pleine largeur de sa carte ;
+- modèles préremplis (K-57) : Annonce, Devoir, Lien utile, Rappel. Le modèle est **choisi** (`ChoiceCardGroup`, chaque option dit quand la choisir, K-58) ; il **déduit** le titre proposé et, pour un devoir ou un rappel, l'échéance (date de la prochaine séance, modifiable) ; le titre, le texte et le lien sont **saisis** parce que ce sont les mots de l'enseignant (aucune déduction possible) ;
+- bornes appliquées avant l'envoi et à revérifier par le serveur : titre 60 caractères (non vide), texte 280, lien `https` complet de 500 au plus, 6 cartes au plus par Classe, échéance obligatoire pour un devoir (`BornesCarteClasse`, `defautsCarte`).
+
+**Droit de modifier** : une **capacité rendue par la lecture** (`CartesClasseVM.peutModifier`), jamais déduite d'un rôle ; la barrière reste la RLS (écriture réservée à l'enseignant de la Classe).
+
+**Fait (CARTES-PERSO-1, 05/10/2026, partie client avant BR-1)** : port neutre `PortCartesClasse` (`lib/core/tc_groupe/cartes_classe.dart`), indisponible en production (`CapaciteIndisponible('CARTES-BR-01')`, aucune fausse carte) ; démonstration en mémoire (`lib/features/demo/cartes_classe_demo.dart`), capacité vraie pour l'enseignant (`/demo/classe`, vue enseignant), fausse pour l'élève, l'Interface guidée et l'adulte ; feuille de composition (`feuille_carte_classe.dart`) ; tests `test/features/tc_espace_groupe/cartes_classe_test.dart` ; captures `docs/current/captures/CARTES-PERSO-1/`.
+
+**Reste** : la source serveur (CARTES-BR-01 à 03, §5 bis) ; le lien se **copie** (presse-papiers, « Lien copié. Collez-le dans votre navigateur ») au lieu de s'ouvrir, faute de paquet d'ouverture de lien dans `pubspec.yaml` (interdit à cette étape) : à arbitrer par le directeur (ajout de `url_launcher`).
+
 ---
 
 ## 4. Questions au directeur
@@ -286,6 +303,7 @@ Aucune ne bloque. Chaque recommandation est appliquée dans ce document.
 | DASH-EA-PROD | Accueil adulte : route réelle et historique faits (04/10/2026, §3.7) ; **reste** la source serveur (EA-BR-04, DASH-BR-01, DASH-BR-02, §5 bis) | `routes_accueil_adulte.dart`, `historique_seances_adulte_page.dart` |
 | DASH-BIB-TITRE | Titre de `BlocBibliotheque` réduit en bloc à 320 px et texte ×2 (« Ressources de la classe ») : passer à la ligne entre les mots (`TexteSansCoupure`) sur les quatre écrans qui l'emploient | `tc_espace_groupe/emplacements_groupe.dart:155-160` |
 | DASH-LIB | Déclarer les libellés de l'annexe B dans `tool/libelles_sources.json` après accord | annexe B |
+| CARTES-PERSO-1 | Cartes de la classe : partie client faite (05/10/2026, §3.9) ; **reste** la source serveur (CARTES-BR-01 à 03, §5 bis) et l'ouverture du lien (paquet à ajouter, décision du directeur) | `core/tc_groupe/cartes_classe.dart`, `tc_espace_groupe/bloc_cartes_classe.dart`, `feuille_carte_classe.dart` |
 
 Aucun branchement serveur (avant BR-1). Le seul besoin serveur cité (compteur des dossiers qui inclut les tuteurs) est déjà la ligne BR-1.c.
 
@@ -297,6 +315,9 @@ Le registre des besoins de l'élève adulte, `16_eleves_adultes/EA-BR.md`, n'exi
 |---|---|---|---|
 | DASH-BR-01 | DASH-EA-PROD | Historique complet des séances passées de la Classe de l'élève adulte, prolongement d'EA-BR-06 : pour le compte connecté seulement, chaque séance passée (les plus récentes d'abord), sa date déjà rendue, sa plage horaire, l'absence de l'élève seule (aucune donnée de présence d'un autre élève) ; tests d'accès horizontal (un élève ne lit que sa propre Classe). | `historiqueSeancesAdulteProvider` rend `CapaciteIndisponible` (« indisponible ») ; la démonstration le surcharge (`DonneesAdulteDemo.historiqueSeances()`). |
 | DASH-BR-02 | DASH-EA-PROD | Capacité « accueil de l'élève adulte » rendue avec la session (ou le profil), pour que `/eleve` s'ouvre directement sur `/eleve/adulte` sans afficher un instant l'accueil de l'élève, et pour qu'elle ne dépende plus du succès de la lecture d'EA-BR-04 ; jamais déduite du rôle côté client. | `capaciteAccueilAdulteProvider` déduite de la lecture d'`accueil_eleve_adulte` (vraie seulement quand elle réussit, fausse après une relecture en échec) ; le routeur se réveille quand elle change. |
+| CARTES-BR-01 | CARTES-PERSO-1 | Table `class_cards` (`id`, `group_id`, `position`, `type` parmi annonce, devoir, lien, rappel, `titre`, `texte`, `lien`, `echeance` en date, `modifie_par`, `modifie_le`, `supprime_le`) ; RLS activée : **écriture** réservée à l'enseignant assigné de la Classe, **lecture** aux membres actifs de la Classe et aux tuteurs de leurs foyers (et à la direction) ; RPC de lecture ordonnée (position, puis identifiant ; cartes non retirées seulement) qui rend aussi la capacité `peut_modifier` de l'appelant ; RPC d'écriture (création, modification, retrait doux par `supprime_le`) avec contrôle des longueurs (titre 1 à 60, texte 280, lien `https` 500), de l'échéance d'un devoir et du plafond de 6 cartes ; idempotence ; `search_path = ''` ; tests d'accès horizontal (un tuteur ou un élève d'une autre Classe ne lit rien, un enseignant d'une autre Classe n'écrit rien). | `portCartesClasseProvider` rend `PortCartesClasseIndisponible` (`CapaciteIndisponible('CARTES-BR-01')`, « Les cartes de la classe ne sont pas encore ouvertes ») ; la démonstration le surcharge (`surchargesCartesClasseDemo`). |
+| CARTES-BR-02 | CARTES-PERSO-1 | Masquage a posteriori par la direction (décision du 05/10) : une RPC de la direction masque une carte avec un motif, journalisé ; la carte masquée disparaît de la lecture des membres et des tuteurs ; l'enseignant voit qu'elle a été masquée. | Rien côté client : aucune interface de masquage avant BR-1. |
+| CARTES-BR-03 | CARTES-PERSO-1 | Journal d'audit de chaque écriture (création, modification, retrait, masquage) : auteur, Classe, carte, date, ancien et nouveau contenu. | Rien côté client. |
 
 ---
 
@@ -467,6 +488,55 @@ Composition       GrilleBento en hauteur de contenu (BENTO-3, l.364-424) ;
                   hors ligne  bandeau de PageShell (l.168)
                   contenu     les tuiles ci-dessus ; source serveur absente
                               (l.110, DASH-EA-PROD)
+```
+
+```
+CODE              CLS-CARTES
+Nom               Cartes de la classe (emplacement de l'espace de classe)
+Rôles             Enseignant de la Classe (modifie) ; tuteur, élève enfant
+                  (Interface guidée), élève adulte (lisent)
+Écrans            EspaceGroupePage (rangée 1, sous « Avant le prochain
+                  cours ») ; FicheGroupePage (après la préparation) ;
+                  MaClasseAdultePage (après « À propos ») ; ClasseTuteurPage
+                  (après les rubriques ; colonne de la carte sur bureau)
+Question          Qu'est-ce que l'enseignant veut que la classe sache ?
+Priorités         P1  les cartes, dans l'ordre de la Classe (position)
+                  P2  « Ajouter une carte » (enseignant, 6 au plus)
+Action principale     aucune dans l'emplacement (le bouton plein de l'écran
+                      reste celui de la séance) ; dans la feuille :
+                      « Enregistrer la carte », seul bouton plein
+Actions secondaires   toucher une carte (enseignant) ouvre sa modification ;
+                      « Ajouter une carte » (lien à flèche) ; « Retirer cette
+                      carte » (tertiaire, confirmation) ; « Copier le lien de
+                      « titre » » (lien à flèche, bouton secondaire pleine
+                      largeur en Interface guidée)
+Champs (K-57)     modèle       choisi  (ChoiceCardGroup, 4 options expliquées)
+                  titre        déduit du modèle, puis saisi (mots de
+                               l'enseignant)
+                  texte        saisi (facultatif, 280)
+                  lien         saisi (facultatif, https)
+                  échéance     déduite (prochaine séance) pour devoir et
+                               rappel, sinon choisie (sélecteur de date)
+États             chargement  Skeleton.liste(lignes: 2) dans BlocAsynchrone
+                  vide        famille : « Aucune carte pour l'instant », état
+                              subi ; enseignant : phrase « Ajoutez-en une »
+                              et le lien d'ajout
+                  erreur      « Les cartes de la classe n'ont pas pu être
+                              lues. Réessayez dans un instant. » + Réessayer
+                  indisponible  production avant BR-1 : « Les cartes de la
+                              classe ne sont pas encore ouvertes », sans
+                              Réessayer
+                  hors ligne  bandeau de PageShell ; cartes déjà lues
+                              gardées ; sans elles, EtatSansDonnees (« Les
+                              cartes de la classe n'ont pas pu être
+                              chargées ») ; enseignant : cartes non
+                              pressables, ajout non rendu, phrase « Les
+                              cartes pourront être modifiées quand la
+                              connexion reviendra »
+                  contenu     PileCartes (écart 16), une AppCard par carte
+Invariants        capacité lue, jamais un rôle ; aucun bouton grisé ; aucun
+                  bouton dans une carte pressable ; aucune fausse carte en
+                  production ; aucun mot coupé à 320 px, texte ×2, LTR et RTL
 ```
 
 ## Annexe B : libellés nouveaux

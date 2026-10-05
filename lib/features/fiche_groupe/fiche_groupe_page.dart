@@ -30,6 +30,7 @@ import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../foyer/photo_eleve.dart' show PhotoEleve;
+import '../tc_espace_groupe/bloc_cartes_classe.dart';
 import '../tc_espace_groupe/carte_session.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart' show IdentiteGroupe;
@@ -303,12 +304,27 @@ class _CorpsState extends ConsumerState<_Corps> {
       progressionGroupeProvider(groupe.id),
     );
 
-    // La Classe, dans l'ordre de lecture : seance, preparation, progression,
-    // ressources.
+    // CARTES-PERSO-1 : les cartes de la Classe, que l'enseignant touche pour
+    // les modifier (la capacite vient de leur lecture, jamais du role). La
+    // prochaine seance, quand elle est lue, devient l'echeance proposee.
+    final Widget cartes = BlocCartesClasse(
+      groupeId: groupe.id,
+      prochaineSeance: ref
+          .watch(groupeProvider(groupe.id))
+          .value
+          ?.prochaineSeance
+          ?.debutUtc
+          .toLocal(),
+    );
+
+    // La Classe, dans l'ordre de lecture : seance, preparation, cartes,
+    // progression, ressources.
     final List<Widget> classe = <Widget>[
       seance,
       Ecart.vSection,
       preparation,
+      Ecart.vSection,
+      cartes,
       if (avancement != null) ...<Widget>[
         Ecart.vSection,
         _ProgressionClasse(valeur: avancement),

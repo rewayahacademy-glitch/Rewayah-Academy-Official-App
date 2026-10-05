@@ -2219,6 +2219,7 @@ class Traductions$classe$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$classe$cartes$fr cartes = Traductions$classe$cartes$fr.internal(_root);
 	late final Traductions$classe$entree$fr entree = Traductions$classe$entree$fr.internal(_root);
 
 	/// fr: 'Choisir une classe'
@@ -7792,6 +7793,74 @@ class Traductions$tuteur$reglages$fr {
 	String erreur({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}';
 }
 
+// Path: classe.cartes
+class Traductions$classe$cartes$fr {
+	Traductions$classe$cartes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Cartes de la classe'
+	String get titre => 'Cartes de la classe';
+
+	/// fr: 'Touchez une carte pour la modifier. Les élèves et leurs familles la voient aussitôt.'
+	String get contexteEnseignant => 'Touchez une carte pour la modifier. Les élèves et leurs familles la voient aussitôt.';
+
+	/// fr: 'Les cartes pourront être modifiées quand la connexion reviendra.'
+	String get modificationPlusTard => 'Les cartes pourront être modifiées quand la connexion reviendra.';
+
+	/// fr: 'Aucune carte pour l'instant'
+	String get aucune => 'Aucune carte pour l\'instant';
+
+	/// fr: 'L'enseignant de la classe y posera les informations utiles.'
+	String get aucuneDetail => 'L\'enseignant de la classe y posera les informations utiles.';
+
+	/// fr: 'Aucune carte pour l'instant. Ajoutez-en une : la classe la verra aussitôt.'
+	String get aucuneEnseignant => 'Aucune carte pour l\'instant. Ajoutez-en une : la classe la verra aussitôt.';
+
+	/// fr: 'Ajouter une carte'
+	String get ajouter => 'Ajouter une carte';
+
+	/// fr: '{max} cartes au plus : retirez-en une pour en ajouter une autre.'
+	String limite({required Object max}) => '${max} cartes au plus : retirez-en une pour en ajouter une autre.';
+
+	/// fr: 'Modifier la carte « {titre} »'
+	String modifierLecteur({required Object titre}) => 'Modifier la carte « ${titre} »';
+
+	/// fr: 'Échéance : {date}'
+	String echeance({required Object date}) => 'Échéance : ${date}';
+
+	/// fr: 'Copier le lien de « {titre} »'
+	String copierLien({required Object titre}) => 'Copier le lien de « ${titre} »';
+
+	/// fr: 'Lien copié. Collez-le dans votre navigateur pour l'ouvrir.'
+	String get lienCopie => 'Lien copié. Collez-le dans votre navigateur pour l\'ouvrir.';
+
+	/// fr: 'Les cartes de la classe ne sont pas encore ouvertes'
+	String get indisponibleTitre => 'Les cartes de la classe ne sont pas encore ouvertes';
+
+	/// fr: 'Elles apparaîtront ici dès leur ouverture. Rien à faire de votre côté.'
+	String get indisponiblePhrase => 'Elles apparaîtront ici dès leur ouverture. Rien à faire de votre côté.';
+
+	/// fr: 'Les cartes de la classe n'ont pas pu être lues. Réessayez dans un instant.'
+	String get erreurLecture => 'Les cartes de la classe n\'ont pas pu être lues. Réessayez dans un instant.';
+
+	/// fr: 'Les cartes de la classe n'ont pas pu être chargées'
+	String get sansDonnees => 'Les cartes de la classe n\'ont pas pu être chargées';
+
+	/// fr: 'Carte enregistrée. La classe la voit maintenant.'
+	String get enregistree => 'Carte enregistrée. La classe la voit maintenant.';
+
+	/// fr: 'Carte retirée. La classe ne la voit plus.'
+	String get retiree => 'Carte retirée. La classe ne la voit plus.';
+
+	late final Traductions$classe$cartes$types$fr types = Traductions$classe$cartes$types$fr.internal(_root);
+	late final Traductions$classe$cartes$typesDetail$fr typesDetail = Traductions$classe$cartes$typesDetail$fr.internal(_root);
+	late final Traductions$classe$cartes$modeles$fr modeles = Traductions$classe$cartes$modeles$fr.internal(_root);
+	late final Traductions$classe$cartes$feuille$fr feuille = Traductions$classe$cartes$feuille$fr.internal(_root);
+}
+
 // Path: classe.entree
 class Traductions$classe$entree$fr {
 	Traductions$classe$entree$fr.internal(this._root);
@@ -12405,6 +12474,137 @@ class Traductions$tuteur$accueil$etatCourt$fr {
 	String get illisible => 'Non disponible';
 }
 
+// Path: classe.cartes.types
+class Traductions$classe$cartes$types$fr {
+	Traductions$classe$cartes$types$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Annonce'
+	String get annonce => 'Annonce';
+
+	/// fr: 'Devoir'
+	String get devoir => 'Devoir';
+
+	/// fr: 'Lien utile'
+	String get lien => 'Lien utile';
+
+	/// fr: 'Rappel'
+	String get rappel => 'Rappel';
+}
+
+// Path: classe.cartes.typesDetail
+class Traductions$classe$cartes$typesDetail$fr {
+	Traductions$classe$cartes$typesDetail$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pour une information à toute la classe.'
+	String get annonce => 'Pour une information à toute la classe.';
+
+	/// fr: 'Pour un travail à préparer : l'échéance proposée est la prochaine séance.'
+	String get devoir => 'Pour un travail à préparer : l\'échéance proposée est la prochaine séance.';
+
+	/// fr: 'Pour partager une page ou un support : collez son adresse.'
+	String get lien => 'Pour partager une page ou un support : collez son adresse.';
+
+	/// fr: 'Pour une date à ne pas oublier : sortie, examen, changement d'horaire.'
+	String get rappel => 'Pour une date à ne pas oublier : sortie, examen, changement d\'horaire.';
+}
+
+// Path: classe.cartes.modeles
+class Traductions$classe$cartes$modeles$fr {
+	Traductions$classe$cartes$modeles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Information pour la classe'
+	String get annonce => 'Information pour la classe';
+
+	/// fr: 'À préparer pour la prochaine séance'
+	String get devoir => 'À préparer pour la prochaine séance';
+
+	/// fr: 'Support à consulter'
+	String get lien => 'Support à consulter';
+
+	/// fr: 'À ne pas oublier'
+	String get rappel => 'À ne pas oublier';
+}
+
+// Path: classe.cartes.feuille
+class Traductions$classe$cartes$feuille$fr {
+	Traductions$classe$cartes$feuille$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Nouvelle carte de la classe'
+	String get titreNouvelle => 'Nouvelle carte de la classe';
+
+	/// fr: 'Modifier la carte « {titre} »'
+	String titreModifier({required Object titre}) => 'Modifier la carte « ${titre} »';
+
+	/// fr: 'Choisissez un modèle : il préremplit la carte. Elle est visible aussitôt par les élèves de la classe et leurs familles.'
+	String get contexte => 'Choisissez un modèle : il préremplit la carte. Elle est visible aussitôt par les élèves de la classe et leurs familles.';
+
+	/// fr: 'Modèle de la carte'
+	String get modele => 'Modèle de la carte';
+
+	/// fr: 'Titre de la carte'
+	String get champTitre => 'Titre de la carte';
+
+	/// fr: 'Texte de la carte (facultatif)'
+	String get champTexte => 'Texte de la carte (facultatif)';
+
+	/// fr: 'Lien de la carte (facultatif)'
+	String get champLien => 'Lien de la carte (facultatif)';
+
+	/// fr: '{max} caractères au plus'
+	String aideLongueur({required Object max}) => '${max} caractères au plus';
+
+	/// fr: 'Une adresse complète, qui commence par https://'
+	String get aideLien => 'Une adresse complète, qui commence par https://';
+
+	/// fr: 'Aucune échéance'
+	String get echeanceAucune => 'Aucune échéance';
+
+	/// fr: 'Choisir la date d'échéance'
+	String get choisirEcheance => 'Choisir la date d\'échéance';
+
+	/// fr: 'Retirer l'échéance'
+	String get retirerEcheance => 'Retirer l\'échéance';
+
+	/// fr: 'Enregistrer la carte'
+	String get enregistrer => 'Enregistrer la carte';
+
+	/// fr: 'Retirer cette carte'
+	String get retirer => 'Retirer cette carte';
+
+	/// fr: 'Retirer la carte « {titre} » ?'
+	String retirerQuestion({required Object titre}) => 'Retirer la carte « ${titre} » ?';
+
+	/// fr: 'Elle disparaît aussitôt pour les élèves de la classe et leurs familles.'
+	String get retirerConsequence => 'Elle disparaît aussitôt pour les élèves de la classe et leurs familles.';
+
+	/// fr: 'Retirer la carte'
+	String get retirerConfirmer => 'Retirer la carte';
+
+	/// fr: 'La carte n'est pas confirmée : la réponse n'est pas arrivée. Vérifiez la connexion, puis enregistrez de nouveau.'
+	String get envoiNonConfirme => 'La carte n\'est pas confirmée : la réponse n\'est pas arrivée. Vérifiez la connexion, puis enregistrez de nouveau.';
+
+	/// fr: 'Le retrait n'est pas confirmé : la réponse n'est pas arrivée. Vérifiez la connexion, puis réessayez.'
+	String get retraitNonConfirme => 'Le retrait n\'est pas confirmé : la réponse n\'est pas arrivée. Vérifiez la connexion, puis réessayez.';
+
+	late final Traductions$classe$cartes$feuille$defauts$fr defauts = Traductions$classe$cartes$feuille$defauts$fr.internal(_root);
+}
+
 // Path: classe.entree.annonce
 class Traductions$classe$entree$annonce$fr {
 	Traductions$classe$entree$annonce$fr.internal(this._root);
@@ -15212,6 +15412,30 @@ class Traductions$salle$seance$demo$etats$fr {
 	String get accesRetire => 'Accès retiré';
 }
 
+// Path: classe.cartes.feuille.defauts
+class Traductions$classe$cartes$feuille$defauts$fr {
+	Traductions$classe$cartes$feuille$defauts$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le titre manque. Écrivez quelques mots, par exemple « Sourate à réviser ».'
+	String get titreVide => 'Le titre manque. Écrivez quelques mots, par exemple « Sourate à réviser ».';
+
+	/// fr: 'Le titre dépasse {max} caractères. Raccourcissez-le.'
+	String titreLong({required Object max}) => 'Le titre dépasse ${max} caractères. Raccourcissez-le.';
+
+	/// fr: 'Le texte dépasse {max} caractères. Raccourcissez-le ou partagez un lien.'
+	String texteLong({required Object max}) => 'Le texte dépasse ${max} caractères. Raccourcissez-le ou partagez un lien.';
+
+	/// fr: 'Ce lien n'est pas une adresse complète. Collez une adresse qui commence par https://.'
+	String get lienInvalide => 'Ce lien n\'est pas une adresse complète. Collez une adresse qui commence par https://.';
+
+	/// fr: 'Un devoir a besoin d'une échéance. Choisissez la date d'échéance.'
+	String get echeanceManquante => 'Un devoir a besoin d\'une échéance. Choisissez la date d\'échéance.';
+}
+
 // Path: classe.entree.demo.roles
 class Traductions$classe$entree$demo$roles$fr {
 	Traductions$classe$entree$demo$roles$fr.internal(this._root);
@@ -17853,6 +18077,60 @@ extension on Traductions {
 			'tuteur.reglages.aucunEnfant' => 'Aucun enfant dans le foyer',
 			'tuteur.reglages.aucunEnfantDetail' => 'Ajoutez un enfant pour pouvoir régler son affichage et sa caméra.',
 			'tuteur.reglages.erreur' => ({required Object message}) => 'L\'enregistrement n\'a pas abouti : ${message}',
+			'classe.cartes.titre' => 'Cartes de la classe',
+			'classe.cartes.contexteEnseignant' => 'Touchez une carte pour la modifier. Les élèves et leurs familles la voient aussitôt.',
+			'classe.cartes.modificationPlusTard' => 'Les cartes pourront être modifiées quand la connexion reviendra.',
+			'classe.cartes.aucune' => 'Aucune carte pour l\'instant',
+			'classe.cartes.aucuneDetail' => 'L\'enseignant de la classe y posera les informations utiles.',
+			'classe.cartes.aucuneEnseignant' => 'Aucune carte pour l\'instant. Ajoutez-en une : la classe la verra aussitôt.',
+			'classe.cartes.ajouter' => 'Ajouter une carte',
+			'classe.cartes.limite' => ({required Object max}) => '${max} cartes au plus : retirez-en une pour en ajouter une autre.',
+			'classe.cartes.modifierLecteur' => ({required Object titre}) => 'Modifier la carte « ${titre} »',
+			'classe.cartes.echeance' => ({required Object date}) => 'Échéance : ${date}',
+			'classe.cartes.copierLien' => ({required Object titre}) => 'Copier le lien de « ${titre} »',
+			'classe.cartes.lienCopie' => 'Lien copié. Collez-le dans votre navigateur pour l\'ouvrir.',
+			'classe.cartes.indisponibleTitre' => 'Les cartes de la classe ne sont pas encore ouvertes',
+			'classe.cartes.indisponiblePhrase' => 'Elles apparaîtront ici dès leur ouverture. Rien à faire de votre côté.',
+			'classe.cartes.erreurLecture' => 'Les cartes de la classe n\'ont pas pu être lues. Réessayez dans un instant.',
+			'classe.cartes.sansDonnees' => 'Les cartes de la classe n\'ont pas pu être chargées',
+			'classe.cartes.enregistree' => 'Carte enregistrée. La classe la voit maintenant.',
+			'classe.cartes.retiree' => 'Carte retirée. La classe ne la voit plus.',
+			'classe.cartes.types.annonce' => 'Annonce',
+			'classe.cartes.types.devoir' => 'Devoir',
+			'classe.cartes.types.lien' => 'Lien utile',
+			'classe.cartes.types.rappel' => 'Rappel',
+			'classe.cartes.typesDetail.annonce' => 'Pour une information à toute la classe.',
+			'classe.cartes.typesDetail.devoir' => 'Pour un travail à préparer : l\'échéance proposée est la prochaine séance.',
+			'classe.cartes.typesDetail.lien' => 'Pour partager une page ou un support : collez son adresse.',
+			'classe.cartes.typesDetail.rappel' => 'Pour une date à ne pas oublier : sortie, examen, changement d\'horaire.',
+			'classe.cartes.modeles.annonce' => 'Information pour la classe',
+			'classe.cartes.modeles.devoir' => 'À préparer pour la prochaine séance',
+			'classe.cartes.modeles.lien' => 'Support à consulter',
+			'classe.cartes.modeles.rappel' => 'À ne pas oublier',
+			'classe.cartes.feuille.titreNouvelle' => 'Nouvelle carte de la classe',
+			'classe.cartes.feuille.titreModifier' => ({required Object titre}) => 'Modifier la carte « ${titre} »',
+			'classe.cartes.feuille.contexte' => 'Choisissez un modèle : il préremplit la carte. Elle est visible aussitôt par les élèves de la classe et leurs familles.',
+			'classe.cartes.feuille.modele' => 'Modèle de la carte',
+			'classe.cartes.feuille.champTitre' => 'Titre de la carte',
+			'classe.cartes.feuille.champTexte' => 'Texte de la carte (facultatif)',
+			'classe.cartes.feuille.champLien' => 'Lien de la carte (facultatif)',
+			'classe.cartes.feuille.aideLongueur' => ({required Object max}) => '${max} caractères au plus',
+			'classe.cartes.feuille.aideLien' => 'Une adresse complète, qui commence par https://',
+			'classe.cartes.feuille.echeanceAucune' => 'Aucune échéance',
+			'classe.cartes.feuille.choisirEcheance' => 'Choisir la date d\'échéance',
+			'classe.cartes.feuille.retirerEcheance' => 'Retirer l\'échéance',
+			'classe.cartes.feuille.enregistrer' => 'Enregistrer la carte',
+			'classe.cartes.feuille.retirer' => 'Retirer cette carte',
+			'classe.cartes.feuille.retirerQuestion' => ({required Object titre}) => 'Retirer la carte « ${titre} » ?',
+			'classe.cartes.feuille.retirerConsequence' => 'Elle disparaît aussitôt pour les élèves de la classe et leurs familles.',
+			'classe.cartes.feuille.retirerConfirmer' => 'Retirer la carte',
+			'classe.cartes.feuille.envoiNonConfirme' => 'La carte n\'est pas confirmée : la réponse n\'est pas arrivée. Vérifiez la connexion, puis enregistrez de nouveau.',
+			'classe.cartes.feuille.retraitNonConfirme' => 'Le retrait n\'est pas confirmé : la réponse n\'est pas arrivée. Vérifiez la connexion, puis réessayez.',
+			'classe.cartes.feuille.defauts.titreVide' => 'Le titre manque. Écrivez quelques mots, par exemple « Sourate à réviser ».',
+			'classe.cartes.feuille.defauts.titreLong' => ({required Object max}) => 'Le titre dépasse ${max} caractères. Raccourcissez-le.',
+			'classe.cartes.feuille.defauts.texteLong' => ({required Object max}) => 'Le texte dépasse ${max} caractères. Raccourcissez-le ou partagez un lien.',
+			'classe.cartes.feuille.defauts.lienInvalide' => 'Ce lien n\'est pas une adresse complète. Collez une adresse qui commence par https://.',
+			'classe.cartes.feuille.defauts.echeanceManquante' => 'Un devoir a besoin d\'une échéance. Choisissez la date d\'échéance.',
 			'classe.entree.coursDans' => ({required Object duree}) => 'Cours dans ${duree}',
 			'classe.entree.coursImminent' => 'Cours dans moins d\'une minute',
 			'classe.entree.rejoindre' => 'Rejoindre',
@@ -18001,6 +18279,8 @@ extension on Traductions {
 			'classe.pageCatalogue.resultat.listeAttenteTitre' => 'Inscription sur liste d\'attente',
 			'classe.pageCatalogue.resultat.listeAttentePhrase' => ({required Object prenom, required Object classe}) => '${prenom} est sur la liste d\'attente de ${classe}. Aucune place n\'est réservée pour l\'instant.',
 			'classe.pageCatalogue.resultat.refuseTitre' => 'Inscription non acceptée',
+			_ => null,
+		} ?? switch (path) {
 			'classe.pageCatalogue.resultat.refusePhrase' => ({required Object prenom}) => 'Aucune place n\'a été réservée pour ${prenom}. Vous pouvez choisir une autre classe.',
 			'classe.pageCatalogue.resultat.autresClasses' => 'Voir les autres classes',
 			'classe.pageCatalogue.resultat.retourAccueil' => 'Retour à l\'accueil',
@@ -18055,8 +18335,6 @@ extension on Traductions {
 			'enseignant.demo.ecrans' => 'Écrans',
 			'enseignant.demo.etats' => 'Situations',
 			'enseignant.demo.etatNominal' => 'Journée ordinaire',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.demo.etatVide' => 'Aucune séance',
 			'enseignant.demo.etatHorsLigne' => 'Hors ligne',
 			'enseignant.bienvenue.titre' => 'Premiers pas',
@@ -18515,6 +18793,8 @@ extension on Traductions {
 			'controleur.compteRendu.pointImportant' => 'Signaler un point important',
 			'controleur.compteRendu.pointImportantAide' => 'Quand ce que vous avez vu demande l\'attention de l\'administration · votre texte sera demandé',
 			'controleur.compteRendu.envoyer' => 'Envoyer le compte rendu',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.compteRendu.plusTard' => 'Plus tard',
 			'controleur.compteRendu.notice' => 'Ce compte rendu est transmis automatiquement à l\'administration.',
 			'controleur.compteRendu.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
@@ -18569,8 +18849,6 @@ extension on Traductions {
 			'controleur.observation.texteFacultatif' => 'Ce texte est facultatif.',
 			'controleur.observation.libelleTexte' => 'Votre remarque',
 			'controleur.observation.aideTexte' => 'Décrivez seulement ce que vous avez observé.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.texteRequis' => 'Écrivez ce que vous avez observé pour continuer.',
 			'controleur.observation.questionRecap' => 'Vérifiez votre observation avant l\'envoi.',
 			'controleur.observation.cleNature' => 'Nature',
@@ -19029,6 +19307,8 @@ extension on Traductions {
 			'tc.observation.resultat.continueSansPrenom' => 'La séance continue.',
 			'tc.observation.resultat.resteUne' => ({required Object duree}) => 'Il vous reste une visite de ${duree}. Revenez plus tard pour l\'écouter.',
 			'tc.observation.resultat.restent' => ({required Object n, required Object duree}) => 'Il vous reste ${n} visites de ${duree}. Revenez plus tard pour l\'écouter.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.resultat.resteUneSansDuree' => 'Il vous reste une visite. Revenez plus tard pour l\'écouter.',
 			'tc.observation.resultat.restentSansDuree' => ({required Object n}) => 'Il vous reste ${n} visites. Revenez plus tard pour l\'écouter.',
 			'tc.observation.resultat.aucune' => 'Vous avez utilisé vos visites pour cette séance. Vous pourrez observer la prochaine séance.',
@@ -19083,8 +19363,6 @@ extension on Traductions {
 			'tc.parcours.feedback.cours.tresBien' => 'Très bien',
 			'tc.parcours.feedback.comprehension.intitule' => 'Avez-vous compris ce qui a été travaillé ?',
 			'tc.parcours.feedback.comprehension.difficile' => 'Pas vraiment',
-			_ => null,
-		} ?? switch (path) {
 			'tc.parcours.feedback.comprehension.bien' => 'Plutôt oui',
 			'tc.parcours.feedback.comprehension.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.rythme.intitule' => 'Le rythme du cours vous a-t-il convenu ?',
