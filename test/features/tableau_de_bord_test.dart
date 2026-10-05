@@ -125,8 +125,15 @@ void main() {
     );
     await tester.pump();
 
-    // Un bloc par tuile (DASH-ADM-1).
-    expect(find.byType(Skeleton), findsNWidgets(5));
+    // Un bloc par tuile (DASH-ADM-1), dans la grille. La section Alertes
+    // (ALERTE-1) a son propre squelette de lignes, hors de la grille.
+    expect(
+      find.descendant(
+        of: find.byType(GrilleBento),
+        matching: find.byType(Skeleton),
+      ),
+      findsNWidgets(5),
+    );
     expect(find.text(t.commun.chargement), findsNothing);
 
     reponse.complete(_indicateurs());

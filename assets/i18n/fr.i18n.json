@@ -2563,6 +2563,29 @@
     "videPhrase": "Les rappels de séance et les messages de l'académie s'afficheront ici.",
     "ligne": "{titre}, le {date} à {heure}"
   },
+  "alertes": {
+    "titre": "Alertes",
+    "gravite": {
+      "urgent": "Urgente",
+      "important": "Importante",
+      "info": "Pour information"
+    },
+    "creeeLe": "Le {date} à {heure}",
+    "ligne": "{gravite}, {titre}, le {date} à {heure}",
+    "bandeauUne": "Alerte urgente : {titre}",
+    "bandeauPlusieurs": "{nombre} alertes urgentes. La plus récente : {titre}",
+    "voirTout": "Voir toutes les alertes",
+    "vide": "Aucune alerte en cours.",
+    "videTitre": "Aucune alerte en cours",
+    "videPhrase": "Une alerte urgente s'affichera ici, en tête, dès son arrivée.",
+    "indisponibleTitre": "Les alertes ne sont pas encore disponibles",
+    "indisponiblePhrase": "Les alertes urgentes s'afficheront ici, en tête, dès que leur source sera ouverte.",
+    "erreurTitre": "Les alertes n'ont pas pu être lues",
+    "sansDonnees": "Les alertes n'ont pas pu être lues",
+    "cloche": "Alertes",
+    "clocheUneUrgente": "Alertes, une urgente",
+    "clocheUrgentes": "Alertes, {nombre} urgentes"
+  },
   "eleve": {
     "accueil": {
       "rejoindre": "Rejoindre",
