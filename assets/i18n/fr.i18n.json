@@ -2577,7 +2577,7 @@
       "aucunCours": "Pas de cours aujourd'hui",
       "aucunCoursDetail": "Ton enseignant prépare le prochain.",
       "erreurCours": "Tes cours n'ont pas pu être lus : la connexion ou le serveur n'a pas répondu. Réessaie dans un instant.",
-      "erreurCoursHorsLigneTitre": "Tu es hors ligne",
+      "erreurCoursHorsLigneTitre": "Tes cours ne sont pas disponibles",
       "prochainAujourdhui": "Ton prochain cours est plus tard aujourd'hui.",
       "prochainDemain": "Ton prochain cours est demain.",
       "prochainDansJours": "Ton prochain cours est dans {jours} jours.",

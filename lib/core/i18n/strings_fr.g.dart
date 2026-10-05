@@ -7279,8 +7279,8 @@ class Traductions$eleve$accueil$fr {
 	/// fr: 'Tes cours n'ont pas pu être lus : la connexion ou le serveur n'a pas répondu. Réessaie dans un instant.'
 	String get erreurCours => 'Tes cours n\'ont pas pu être lus : la connexion ou le serveur n\'a pas répondu. Réessaie dans un instant.';
 
-	/// fr: 'Tu es hors ligne'
-	String get erreurCoursHorsLigneTitre => 'Tu es hors ligne';
+	/// fr: 'Tes cours ne sont pas disponibles'
+	String get erreurCoursHorsLigneTitre => 'Tes cours ne sont pas disponibles';
 
 	/// fr: 'Ton prochain cours est plus tard aujourd'hui.'
 	String get prochainAujourdhui => 'Ton prochain cours est plus tard aujourd\'hui.';
@@ -17680,7 +17680,7 @@ extension on Traductions {
 			'eleve.accueil.aucunCours' => 'Pas de cours aujourd\'hui',
 			'eleve.accueil.aucunCoursDetail' => 'Ton enseignant prépare le prochain.',
 			'eleve.accueil.erreurCours' => 'Tes cours n\'ont pas pu être lus : la connexion ou le serveur n\'a pas répondu. Réessaie dans un instant.',
-			'eleve.accueil.erreurCoursHorsLigneTitre' => 'Tu es hors ligne',
+			'eleve.accueil.erreurCoursHorsLigneTitre' => 'Tes cours ne sont pas disponibles',
 			'eleve.accueil.prochainAujourdhui' => 'Ton prochain cours est plus tard aujourd\'hui.',
 			'eleve.accueil.prochainDemain' => 'Ton prochain cours est demain.',
 			'eleve.accueil.prochainDansJours' => ({required Object jours}) => 'Ton prochain cours est dans ${jours} jours.',
