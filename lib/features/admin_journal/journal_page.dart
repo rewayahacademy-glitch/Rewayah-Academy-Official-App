@@ -15,6 +15,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
@@ -247,10 +248,19 @@ class _Entete extends ConsumerWidget {
         Ecart.vLg,
         const _BandeauChaine(),
         Ecart.vLg,
-        // La periode ne depend d'aucune lecture : elle s'affiche meme quand les
-        // filtres de la base n'ont pas pu etre lus.
-        _Rangee(
-          pilules: <Widget>[
+        // FILTRES-1 : la periode et les deux menus sur UNE rangee qui defile
+        // (`RangeeFiltres`). La periode ne depend d'aucune lecture : elle
+        // s'affiche meme quand les filtres de la base n'ont pas pu etre lus.
+        //
+        // **Deux menus, et non deux rangees de pastilles.** Le vocabulaire
+        // d'evenements et la liste des acteurs vivent en base et grandissent
+        // a chaque migration : les rendre en pastilles produisait une
+        // vingtaine de boutons qui repoussaient le journal sous le pli, et
+        // l'accent y decorait un inventaire au lieu de porter la selection.
+        // La periode, elle, a trois valeurs fixes : c'est un vrai selecteur,
+        // elle reste en pastilles.
+        RangeeFiltres(
+          filtres: <Widget>[
             for (final PeriodeJournal p in PeriodeJournal.values)
               FilterPill(
                 libelle: switch (p) {
@@ -261,26 +271,12 @@ class _Entete extends ConsumerWidget {
                 retenue: periode == p,
                 onPress: () => onPeriode(p),
               ),
-          ],
-        ),
-        // Les getters, jamais le type d'execution : Riverpod 3 relance un
-        // provider en echec tout seul, et l'etat repasse par `AsyncLoading` en
-        // conservant `hasError`.
-        if (filtres case AsyncValue<FiltresJournal>(
-          hasValue: true,
-        )) ...<Widget>[
-          Ecart.vMd,
-          // **Deux menus, et non deux rangees de pastilles.** Le vocabulaire
-          // d'evenements et la liste des acteurs vivent en base et grandissent
-          // a chaque migration : les rendre en pastilles produisait une
-          // vingtaine de boutons qui repoussaient le journal sous le pli, et
-          // l'accent y decorait un inventaire au lieu de porter la selection.
-          // La periode, elle, a trois valeurs fixes : c'est un vrai selecteur,
-          // elle reste en pastilles.
-          Wrap(
-            spacing: AppSpacing.md,
-            runSpacing: AppSpacing.sm,
-            children: <Widget>[
+            // Les getters, jamais le type d'execution : Riverpod 3 relance un
+            // provider en echec tout seul, et l'etat repasse par
+            // `AsyncLoading` en conservant `hasError`.
+            if (filtres case AsyncValue<FiltresJournal>(
+              hasValue: true,
+            )) ...<Widget>[
               MenuFiltre<String>(
                 libelle: t.admin.journal.filtreEvenement,
                 valeur: type,
@@ -320,28 +316,11 @@ class _Entete extends ConsumerWidget {
                 ],
               ),
             ],
-          ),
-        ],
+          ],
+        ),
       ],
     );
   }
-}
-
-/// Une rangee de pilules qui passe a la ligne plutot que de defiler.
-///
-/// Un defilement horizontal cacherait des filtres sans le dire, et se
-/// disputerait le geste avec la liste qui defile juste en dessous.
-class _Rangee extends StatelessWidget {
-  const _Rangee({required this.pilules});
-
-  final List<Widget> pilules;
-
-  @override
-  Widget build(BuildContext context) => Wrap(
-    spacing: AppSpacing.sm,
-    runSpacing: AppSpacing.sm,
-    children: pilules,
-  );
 }
 
 /// Ce que la chaine de hachage dit de l'integrite du journal.

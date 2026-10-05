@@ -15,6 +15,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_filtre.dart';
+import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import 'carte_ressource.dart';
@@ -158,13 +159,11 @@ class _SurfaceEtat extends ConsumerState<SurfaceBibliotheque> {
           ),
         ),
         Ecart.vMd,
-        // Une rangee qui defile cache des filtres hors de la vue (ONGLETS-1) :
-        // les pastilles passent a la ligne, tout est visible.
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: <Widget>[
+        // FILTRES-1 (05/10/2026) : une seule rangee de filtres, qui defile
+        // quand elle ne tient pas ; sa barre de defilement dit qu'il y en a
+        // d'autres (`RangeeFiltres`). Remplace le passage a la ligne d'ONGLETS-1.
+        RangeeFiltres(
+          filtres: <Widget>[
             for (final TypeRessource type in TypeRessource.values)
               FilterPill(
                 libelle: libelleTypeRessource(type),
