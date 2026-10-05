@@ -9,7 +9,6 @@ import '../../core/dossier/selecteur_fichier.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
-import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -56,13 +55,10 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
     // reseau guineen serait une facon de perdre la famille.
     if (choisie.octets.lengthInBytes > ServiceDossier.tailleMaximaleOctets) {
       setState(
-        // DUREE-INSECABLE-4 : « 8 Mo » insecable.
-        () => _erreur = LibellesGroupe.insecable(
-          t.kyc.tropVolumineux(
-            taille: (ServiceDossier.tailleMaximaleOctets / (1024 * 1024))
-                .round()
-                .toString(),
-          ),
+        () => _erreur = t.kyc.tropVolumineux(
+          taille: (ServiceDossier.tailleMaximaleOctets / (1024 * 1024))
+              .round()
+              .toString(),
         ),
       );
       return;

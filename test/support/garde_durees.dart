@@ -25,7 +25,10 @@ typedef AppelLibelle = ({
 
 /// Les unites qui suivent un parametre dans un libelle a duree ou a unite.
 final RegExp _parametreEtUnite = RegExp(
-  r'\{\w+\}[  ]?'
+  // DUREE-INSECABLE-4 : seule une espace ordinaire (secable) est cherchee ;
+  // un libelle qui lie deja son nombre a son unite par U+00A0
+  // (« {taille}\u00A0Mo ») est insecable par son texte.
+  r'\{\w+\} ?'
   r'(min|s|h|j|sem\.|minutes?|secondes?|heures?|jours?|semaines?'
   // DUREE-INSECABLE-4 : unites hors duree (age, taille de fichier, pourcentage).
   r'|ans?|o|Ko|Mo|Go|%)'

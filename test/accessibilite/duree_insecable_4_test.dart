@@ -176,10 +176,8 @@ Widget seule(int n) => Text(LibellesGroupe.dureeSeule(Duration(minutes: n)));
         libellesAUnite(),
         containsAll(<String>[
           'foyer.ajout.erreurs.ageHorsBornes',
-          'kyc.tropVolumineux',
-          'ficheEleve.informations.tropLourde',
           'salle.seance.zoomValeur',
-          'classe.entree.progressionValeur',
+          'tc.coran.zoom.valeur',
         ]),
       );
     });
