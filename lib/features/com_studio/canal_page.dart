@@ -249,6 +249,11 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
     DestinationVocal.canal(widget.canal.id),
   );
 
+  /// Les vocaux confirmes depuis l'ouverture du canal (COM-FUS, revue) : la
+  /// page ne relit que la liste apres un envoi, le canal ouvert les montre
+  /// donc lui-meme, apres les messages connus.
+  final List<VocalConfirme> _vocauxConfirmes = <VocalConfirme>[];
+
   /// La hauteur du clavier logiciel au dernier releve, en points logiques.
   double _clavier = 0;
 
@@ -379,6 +384,20 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
     _cles.remove(idLocal);
   }
 
+  /// Envoie [vocal] par [envoi] sous sa cle ; a l'accuse, sa bulle entre
+  /// dans le canal. Un echec remonte au composer (« Reessayer »), sans bulle.
+  Future<void> _envoyerVocal(
+    EnregistrementVocal vocal,
+    Future<void> Function(EnregistrementVocal, String) envoi,
+  ) async {
+    final String cle = await _clesVocales.envoyer(
+      vocal,
+      (String cle) => envoi(vocal, cle),
+    );
+    if (!mounted) return;
+    setState(() => _vocauxConfirmes.add((cle: cle, duree: vocal.duree)));
+  }
+
   /// L'en-tete du canal ; avec [restaure], la phrase « Brouillon
   /// restaure » dessous. Hors Focus, « Mode focus » au bout de la ligne ; en
   /// Focus, l'en-tete minimal (la sortie est dans le bandeau du Focus).
@@ -435,11 +454,11 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
           ? null
           : ComposerVocal(
               key: CanalStudio.cleComposerVocal,
-              onEnvoyer: (EnregistrementVocal v) =>
-                  _clesVocales.envoyer(v, (String cle) => vocal(v, cle)),
+              onEnvoyer: (EnregistrementVocal v) => _envoyerVocal(v, vocal),
             ),
     );
     final String soi = t.com.socle.composants.composer.auteurSoi;
+    final TextesFilDiscussion textes = textesCanal(canal.resume);
     // Le texte du champ est garde comme brouillon (memoire de session,
     // spec section 8.2) et remis a la reouverture du canal (COM-STU-2).
     return PersistanceBrouillonCanal(
@@ -459,8 +478,17 @@ class _CanalStudioState extends State<CanalStudio> with WidgetsBindingObserver {
               horodatage: horodatageCanal(m.envoyeLe),
               deSoi: m.deSoi,
             ),
+          for (final VocalConfirme v in _vocauxConfirmes)
+            bulleVocalConfirme(
+              v,
+              auteurSoi: soi,
+              ligneVocal: (Duration d) => t.com.studio.canal.vocal(
+                duree: CartePieceJointe.libelleDuree(d),
+              ),
+              envoye: textes.envoye,
+            ),
         ],
-        textes: textesCanal(canal.resume),
+        textes: textes,
         onEnvoyerMessage: _envoyer,
         emplacementPieceJointe: composer.emplacementPieceJointe(focus: focus),
         emplacementVocal: composer.emplacementVocal(focus: focus),

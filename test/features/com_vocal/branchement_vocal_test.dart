@@ -170,6 +170,73 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('revue COM-FUS : le vocal confirme entre dans le fil ouvert, '
+        'sans relecture du fil', (WidgetTester tester) async {
+      final HorlogeManuelle horloge = HorlogeManuelle();
+      final _EnvoiCompte envoi = _EnvoiCompte();
+      final msg.FauxMessagesMetier port = msg.FauxMessagesMetier(
+        fils: <FilMetier>[msg.filSimple()],
+      );
+      await msg.monterMessages(
+        tester,
+        port: port,
+        depart: msg.cheminFilTest('fil-1'),
+        // Les capacites viennent de `_vocal`, pas du support.
+        ecritureOuverte: false,
+        surcharges: _vocal(horloge, envoi),
+      );
+      final String ligne = t.com.messages.fil.vocal(
+        duree: CartePieceJointe.libelleDuree(const Duration(seconds: 6)),
+      );
+      final Finder bulle = find.descendant(
+        of: find.byType(FilDiscussion),
+        matching: find.text(ligne),
+      );
+      expect(bulle, findsNothing);
+      await _enregistrerPuisArreter(tester, horloge);
+      await _toucher(tester, ComposerVocal.cleEnvoyer);
+      await tester.pump();
+      expect(envoi.envois, hasLength(1));
+      expect(bulle, findsOneWidget, reason: 'la bulle du vocal confirme');
+      expect(
+        find.descendant(
+          of: find.byType(FilDiscussion),
+          matching: find.text(t.com.socle.composants.composer.envoye),
+        ),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('revue COM-FUS : un vocal non confirme n entre pas dans le '
+        'fil', (WidgetTester tester) async {
+      final HorlogeManuelle horloge = HorlogeManuelle();
+      final _EnvoiCompte envoi = _EnvoiCompte()..echecsRestants = 1;
+      await msg.monterMessages(
+        tester,
+        port: msg.FauxMessagesMetier(fils: <FilMetier>[msg.filSimple()]),
+        depart: msg.cheminFilTest('fil-1'),
+        // Les capacites viennent de `_vocal`, pas du support.
+        ecritureOuverte: false,
+        surcharges: _vocal(horloge, envoi),
+      );
+      await _enregistrerPuisArreter(tester, horloge);
+      await _toucher(tester, ComposerVocal.cleEnvoyer);
+      await tester.pump();
+      expect(find.byKey(ComposerVocal.cleReessayer), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(FilDiscussion),
+          matching: find.text(
+            t.com.messages.fil.vocal(
+              duree: CartePieceJointe.libelleDuree(const Duration(seconds: 6)),
+            ),
+          ),
+        ),
+        findsNothing,
+      );
+    });
+
     testWidgets('envoi non confirme puis « Reessayer » : la meme cle', (
       WidgetTester tester,
     ) async {
@@ -306,6 +373,90 @@ void main() {
       expect(envoi.envois.single.$1, const DestinationVocal.canal('c1'));
       expect(tester.takeException(), isNull);
     });
+
+    testWidgets('revue COM-FUS : le vocal confirme entre dans le canal '
+        'ouvert', (WidgetTester tester) async {
+      final HorlogeManuelle horloge = HorlogeManuelle();
+      final _EnvoiCompte envoi = _EnvoiCompte();
+      await studio.monterStudio(
+        tester,
+        port: studio.FauxStudio(canaux: <Canal>[studio.canalSimple()]),
+        depart: cheminCanalStudio('c1'),
+        surcharges: _vocal(horloge, envoi),
+      );
+      final Finder bulle = find.descendant(
+        of: find.byType(FilDiscussion),
+        matching: find.text(
+          t.com.studio.canal.vocal(
+            duree: CartePieceJointe.libelleDuree(const Duration(seconds: 6)),
+          ),
+        ),
+      );
+      expect(bulle, findsNothing);
+      await _enregistrerPuisArreter(tester, horloge);
+      await _toucher(tester, ComposerVocal.cleEnvoyer);
+      await tester.pump();
+      expect(envoi.envois, hasLength(1));
+      expect(bulle, findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    for (final (Size taille, AppLocale langue) in <(Size, AppLocale)>[
+      (const Size(390, 844), AppLocale.fr),
+      (const Size(390, 844), AppLocale.ar),
+      (const Size(1440, 900), AppLocale.fr),
+      (const Size(1440, 900), AppLocale.ar),
+    ]) {
+      testWidgets('revue COM-FUS : une bulle qui ne porte qu un vocal, '
+          '${taille.width.toInt()} ${langue.languageCode} : le lecteur, sans '
+          'ligne de texte vide', (WidgetTester tester) async {
+        final Canal base = studio.canalSimple();
+        await studio.monterStudio(
+          tester,
+          port: studio.FauxStudio(
+            canaux: <Canal>[
+              Canal(
+                resume: base.resume,
+                membres: base.membres,
+                messages: <MessageCommunication>[
+                  MessageCommunication(
+                    id: 'c1-vocal',
+                    auteur: base.membres.last,
+                    texte: '',
+                    envoyeLe: studio.maintenantTest,
+                    piecesJointes: <PieceJointe>[_vocalRecu],
+                  ),
+                ],
+                capacites: base.capacites,
+              ),
+            ],
+          ),
+          depart: cheminCanalStudio('c1'),
+          taille: taille,
+          langue: langue,
+        );
+        final Finder lecteur = find.descendant(
+          of: find.byType(FilDiscussion),
+          matching: find.byType(LecteurVocalRecu),
+        );
+        expect(lecteur, findsOneWidget);
+        // Aucun texte vide dans le fil : la bulle va de l'auteur au lecteur.
+        expect(
+          find.descendant(
+            of: find.byType(FilDiscussion),
+            matching: find.byWidgetPredicate(
+              (Widget w) => w is Text && (w.data?.isEmpty ?? false),
+            ),
+          ),
+          findsNothing,
+        );
+        final Rect cadre = tester.getRect(lecteur);
+        expect(cadre.width, greaterThan(0));
+        expect(cadre.right, lessThanOrEqualTo(taille.width));
+        expect(cadre.left, greaterThanOrEqualTo(0));
+        expect(tester.takeException(), isNull);
+      });
+    }
 
     testWidgets('un vocal recu se lit dans la bulle du canal', (
       WidgetTester tester,

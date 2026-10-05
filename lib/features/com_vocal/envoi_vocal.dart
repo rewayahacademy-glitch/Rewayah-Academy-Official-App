@@ -27,6 +27,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/capacites_communication.dart';
+import '../../core/widgets/fil_discussion.dart';
 import 'port_enregistreur_vocal.dart';
 
 /// Ou part un message vocal.
@@ -133,12 +134,39 @@ class ClesVocales {
   void oublier(EnregistrementVocal vocal) => _cles.remove(vocal);
 
   /// Envoie [vocal] par [envoi] sous sa cle ; la cle est oubliee apres
-  /// l'accuse, gardee pour le nouvel essai sinon.
-  Future<void> envoyer(
+  /// l'accuse, gardee pour le nouvel essai sinon. Rend la cle confirmee :
+  /// l'ecran en fait l'identifiant de la bulle du vocal confirme
+  /// ([bulleVocalConfirme]).
+  Future<String> envoyer(
     EnregistrementVocal vocal,
     Future<void> Function(String cleIdempotence) envoi,
   ) async {
-    await envoi(cle(vocal));
+    final String confirmee = cle(vocal);
+    await envoi(confirmee);
     oublier(vocal);
+    return confirmee;
   }
 }
+
+/// Un vocal confirme par le serveur pendant que le fil ou le canal est
+/// ouvert : sa cle d'idempotence et sa duree. Rien d'autre (ni chemin, ni
+/// adresse).
+typedef VocalConfirme = ({String cle, Duration duree});
+
+/// La bulle d'un vocal confirme (COM-FUS, revue) : le fil ouvert montre le
+/// vocal envoye sans attendre sa relecture. Tant que le serveur n'a pas rendu
+/// le message (COM-BR-03), la bulle n'a pas de lecteur : elle dit le vocal
+/// par sa duree ([ligneVocal], « Message vocal de 0:06 ») et son etat
+/// [envoye] (« Envoye »), annonce comme toute bulle arrivee.
+MessageFil bulleVocalConfirme(
+  VocalConfirme vocal, {
+  required String auteurSoi,
+  required String Function(Duration duree) ligneVocal,
+  required String envoye,
+}) => MessageFil(
+  id: 'vocal-confirme-${vocal.cle}',
+  auteur: auteurSoi,
+  texte: ligneVocal(vocal.duree),
+  horodatage: envoye,
+  deSoi: true,
+);

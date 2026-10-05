@@ -134,6 +134,11 @@ class _FilContextuelState extends State<FilContextuel>
     DestinationVocal.fil(widget.fil.id),
   );
 
+  /// Les vocaux confirmes depuis l'ouverture du fil (COM-FUS, revue) : la
+  /// page ne relit que la liste apres un envoi, le fil ouvert les montre donc
+  /// lui-meme, apres les messages connus.
+  final List<VocalConfirme> _vocauxConfirmes = <VocalConfirme>[];
+
   /// La hauteur du clavier logiciel au dernier releve, en points logiques.
   double _clavier = 0;
 
@@ -213,6 +218,20 @@ class _FilContextuelState extends State<FilContextuel>
     _cles.remove(idLocal);
   }
 
+  /// Envoie [vocal] par [envoi] sous sa cle ; a l'accuse, sa bulle entre
+  /// dans le fil. Un echec remonte au composer (« Reessayer »), sans bulle.
+  Future<void> _envoyerVocal(
+    EnregistrementVocal vocal,
+    Future<void> Function(EnregistrementVocal, String) envoi,
+  ) async {
+    final String cle = await _clesVocales.envoyer(
+      vocal,
+      (String cle) => envoi(vocal, cle),
+    );
+    if (!mounted) return;
+    setState(() => _vocauxConfirmes.add((cle: cle, duree: vocal.duree)));
+  }
+
   @override
   Widget build(BuildContext context) {
     final FilMetier fil = widget.fil;
@@ -226,6 +245,7 @@ class _FilContextuelState extends State<FilContextuel>
     final String soi = t.com.socle.composants.composer.auteurSoi;
     final Future<void> Function(EnregistrementVocal, String)? vocal =
         widget.onEnvoyerVocal;
+    final TextesFilDiscussion textes = textesFilCommunication();
     return FilDiscussion(
       key: ValueKey<String>('fil-metier-${fil.id}'),
       entete: entete,
@@ -240,15 +260,23 @@ class _FilContextuelState extends State<FilContextuel>
             horodatage: horodatageMessage(m.envoyeLe),
             deSoi: m.deSoi,
           ),
+        for (final VocalConfirme v in _vocauxConfirmes)
+          bulleVocalConfirme(
+            v,
+            auteurSoi: soi,
+            ligneVocal: (Duration d) => t.com.messages.fil.vocal(
+              duree: CartePieceJointe.libelleDuree(d),
+            ),
+            envoye: textes.envoye,
+          ),
       ],
-      textes: textesFilCommunication(),
+      textes: textes,
       onEnvoyerMessage: _envoyer,
       emplacementVocal: vocal == null
           ? null
           : ComposerVocal(
               key: FilContextuel.cleComposerVocal,
-              onEnvoyer: (EnregistrementVocal v) =>
-                  _clesVocales.envoyer(v, (String cle) => vocal(v, cle)),
+              onEnvoyer: (EnregistrementVocal v) => _envoyerVocal(v, vocal),
             ),
     );
   }
