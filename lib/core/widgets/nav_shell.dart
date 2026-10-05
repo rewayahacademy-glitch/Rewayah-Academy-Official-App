@@ -1258,10 +1258,11 @@ extension on _Colonne {
       : textes.labelMedium ?? const TextStyle();
 
   /// La largeur de la colonne. Rail replie a libelles : sa largeur de base,
-  /// elargie quand le mot le plus long, a l'[commune] (jamais sous 0,85),
-  /// n'y tient pas : le conteneur s'elargit au lieu de reduire le texte
-  /// davantage ou de le couper. En vraies polices, francais, le rail garde
-  /// sa largeur de base (80, 96 en guide).
+  /// elargie quand le mot le plus long, a l'[commune] (jamais sous 0,85 ;
+  /// jamais sous 1 quand le texte est agrandi), n'y tient pas : le
+  /// conteneur s'elargit au lieu de reduire le texte davantage ou de le
+  /// couper. En vraies polices, francais, a 100 %, le rail garde sa largeur
+  /// de base (80, 96 en guide) ; texte agrandi, il s'elargit.
   double _largeur(BuildContext context, TextScaler? commune) {
     if (!repliee) return AppGabarit.largeurBarreLaterale;
     final double base = _largeurRailDeBase;
@@ -1291,8 +1292,9 @@ extension on _Colonne {
   /// - Rail a libelles (80, ou 96 en guide) : le plafond de la barre basse
   ///   (1,5 ; 1,3 en guide), puis l'echelle qui fait tenir le mot le plus
   ///   long de tous (« Disponibilites », « Historique »), jamais sous
-  ///   [echelleMinimaleLisible] (0,85) ; au-dela, le rail s'elargit ([_largeur]) plutot que de tronquer
-  ///   « Contr... Histori... » ou de couper « Disponibilit / es ».
+  ///   [echelleMinimaleLisible] (0,85) a 100 %, ni sous 1 quand le texte
+  ///   est agrandi ; au-dela, le rail s'elargit ([_largeur]) plutot que de
+  ///   tronquer « Contr... Histori... » ou de couper « Disponibilit / es ».
   /// - Barre laterale depliee : l'echelle de l'appareil, reduite au besoin
   ///   pour tous les libelles a la fois, jamais sous 1.
   TextScaler? _echelleLibelles(BuildContext context) {
@@ -1315,9 +1317,13 @@ extension on _Colonne {
         MediaQuery.textScalerOf(context).clamp(maxScaleFactor: plafond),
         _largeurRailDeBase - _retraitLibelleRail,
         _styleLibelleRail(textes),
-        // Reduction bornee : jamais sous 85 % du theme ; au-dela, le rail
-        // s'elargit ([_largeur]).
-        plancher: echelleMinimaleLisible,
+        // Reduction bornee : jamais sous 85 % du theme a 100 % ; quand
+        // l'utilisateur agrandit le texte (facteur > 1), jamais sous la
+        // taille du theme (WCAG 1.4.4, revue COUPE-MOTS-1-R M1). Au-dela,
+        // le rail s'elargit ([_largeur]).
+        plancher: MediaQuery.textScalerOf(context).scale(1) > 1
+            ? 1
+            : echelleMinimaleLisible,
       );
     }
     // Depliee : 12 (ou 8) de chaque cote de l'item, 12 dans la pastille,

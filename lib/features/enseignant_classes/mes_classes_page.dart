@@ -254,33 +254,55 @@ LigneRubrique _ligne(ClasseListee l, VoidCallback? onPress) {
           ),
   );
 
-  final List<Widget> marques = <Widget>[
-    if (l.cahierAValider) const _CahierAValider(),
-    if (l.detail.remplacement)
-      StatusPill(
-        libelle: t.enseignant.classes.remplacement,
-        ton: TonEtat.accent,
-      ),
-  ];
-
   return LigneRubrique(
     libelle: l.groupe.libelle,
     icone: AppIcons.classes,
     legende: '$contexte\n$quand',
     onPress: onPress,
+    marque: l.cahierAValider || l.detail.remplacement
+        ? MarquesClasse(
+            cahierAValider: l.cahierAValider,
+            remplacement: l.detail.remplacement,
+          )
+        : null,
+  );
+}
+
+/// Les marques d'une ligne de Mes Classes : le rappel « Cahier de
+/// transmission a valider » et la pastille « Remplacement ». Public pour que
+/// la galerie montre le composant reel (revue COUPE-MOTS-1-R, m7).
+class MarquesClasse extends StatelessWidget {
+  /// Cree les marques ; au moins l'une des deux est vraie.
+  const MarquesClasse({
+    required this.cahierAValider,
+    required this.remplacement,
+    super.key,
+  });
+
+  /// Un cahier de la Classe attend sa validation (K-45).
+  final bool cahierAValider;
+
+  /// La Classe est assuree en remplacement.
+  final bool remplacement;
+
+  @override
+  Widget build(BuildContext context) => Wrap(
     // Wrap, jamais Row : le mot « Cahier de transmission a valider »
     // (LIB-CAHIER-1) passe a la ligne et la pastille passe sous lui, au lieu
     // de deborder a 320 px ou a 200 % (lecon 8, K-41.6). La borne vient de
     // `LigneRubrique`, qui mesure sa ligne (CORR-SUITE-2) : plus de largeur
     // fixe de 200, qui repliait la marque meme a 1280 px.
-    marque: marques.isEmpty
-        ? null
-        : Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.xs,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: marques,
-          ),
+    spacing: AppSpacing.sm,
+    runSpacing: AppSpacing.xs,
+    crossAxisAlignment: WrapCrossAlignment.center,
+    children: <Widget>[
+      if (cahierAValider) const _CahierAValider(),
+      if (remplacement)
+        StatusPill(
+          libelle: t.enseignant.classes.remplacement,
+          ton: TonEtat.accent,
+        ),
+    ],
   );
 }
 

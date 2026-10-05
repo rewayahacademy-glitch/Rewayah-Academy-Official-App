@@ -322,9 +322,23 @@ void main() {
   // la legende « Niveau 2 · Français · 3 élèves » se lisait « élèves 3 » :
   // chaque segment garde son propre sens de lecture, seul leur ordre suit
   // celui de l'ecran.
+  //
+  // Revue COUPE-MOTS-1-R (m6) : le cas « ar » tourne aussi dans la vraie
+  // locale arabe (libelles en repli francais, sens fixe par la locale), et
+  // pas seulement avec des chaines francaises dans un sens force.
   group('COUPE-MOTS-2 : la legende garde « 3 élèves » en arabe', () {
-    for (final TextDirection sens in TextDirection.values) {
-      testWidgets(sens.name, (WidgetTester tester) async {
+    for (final (String nom, TextDirection sens, AppLocale locale)
+        in <(String, TextDirection, AppLocale)>[
+          ('ltr', TextDirection.ltr, AppLocale.fr),
+          ('rtl', TextDirection.rtl, AppLocale.fr),
+          ('locale ar', TextDirection.rtl, AppLocale.ar),
+        ]) {
+      testWidgets(nom, (WidgetTester tester) async {
+        // L'arabe est charge en differe : chargement reel, hors horloge
+        // simulee.
+        await tester.runAsync(() => LocaleSettings.setLocale(locale));
+        expect(LocaleSettings.currentLocale, locale);
+        addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
         _fenetre(tester, const Size(1280, 1600));
         final GroupeEnseignant nour = DonneesEnseignantDemo.groupes()
             .firstWhere((GroupeEnseignant g) => g.libelle == 'An-Nour');

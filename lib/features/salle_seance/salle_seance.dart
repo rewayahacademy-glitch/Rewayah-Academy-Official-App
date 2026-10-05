@@ -1373,21 +1373,6 @@ class _BarreBasse extends StatelessWidget {
   }
 }
 
-/// Les etats de connexion sous l'en-tete de la salle (lot CL-7, P05, P06) :
-/// le bandeau non bloquant (reseau faible, reconnexion), puis le retour bref
-/// « Connexion retablie. ». Tout vient de [VueSeance.connexion] : la salle ne
-/// detecte rien elle-meme (BR-1).
-///
-/// Bandeau, retour bref et bloc d'erreur suivent les marges de la page
-/// (contrat A : gouttiere 16 / 32 du gabarit), au-dessus du support et
-/// jamais sous le rail enseignant. [espaceApres] : l'ecart du gabarit entre
-/// l'etat et le support quand le gabarit n'en pose pas lui-meme (eleve
-/// desktop), pour que rien ne touche le support. Apparition en
-/// `AppMouvement.apparition`, zero sous reduction du mouvement.
-///
-/// Reconnexion impossible ou hors ligne confirme (T-S3) : `EtatSysteme` en
-/// bloc a la place du bandeau, la salle reste montee ; largeur bornee
-/// (contrat D), alignee au bord start du support.
 /// La tete de la salle au telephone et en web etroit (en-tete, bandeau de
 /// secours, appel), bornee a [part] de la hauteur de l'ecran. Le titre ne
 /// tronque plus et ne se reduit plus sous son sous-titre (COUPE-MOTS-1) : a
@@ -1425,6 +1410,21 @@ class TeteSalleBornee extends StatelessWidget {
   );
 }
 
+/// Les etats de connexion sous l'en-tete de la salle (lot CL-7, P05, P06) :
+/// le bandeau non bloquant (reseau faible, reconnexion), puis le retour bref
+/// « Connexion retablie. ». Tout vient de [VueSeance.connexion] : la salle ne
+/// detecte rien elle-meme (BR-1).
+///
+/// Bandeau, retour bref et bloc d'erreur suivent les marges de la page
+/// (contrat A : gouttiere 16 / 32 du gabarit), au-dessus du support et
+/// jamais sous le rail enseignant. [espaceApres] : l'ecart du gabarit entre
+/// l'etat et le support quand le gabarit n'en pose pas lui-meme (eleve
+/// desktop), pour que rien ne touche le support. Apparition en
+/// `AppMouvement.apparition`, zero sous reduction du mouvement.
+///
+/// Reconnexion impossible ou hors ligne confirme (T-S3) : `EtatSysteme` en
+/// bloc a la place du bandeau, la salle reste montee ; largeur bornee
+/// (contrat D), alignee au bord start du support.
 class BandeauSecours extends StatelessWidget {
   const BandeauSecours({
     required this.vue,
