@@ -13,13 +13,28 @@ import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 /// Ce qui dit l'absence de reseau, sous toutes les formes rencontrees dans le
 /// catalogue (revue EA-HL-DOUBLE-1 : « Sans reseau », « Connexion
 /// interrompue » passaient au travers ; EA-HL-DOUBLE-1c : « demande une
-/// connexion internet » aussi). Partage avec la garde du catalogue
+/// connexion internet » aussi ; EA-HL-DOUBLE-1d : les formulations en
+/// « connexion » et « reseau » qui redisent le bandeau sans ses mots,
+/// « Verifiez votre connexion », « Connexion impossible », « sans doute a
+/// cause de la connexion », « la connexion ou le serveur n'a pas repondu »,
+/// « a besoin d'Internet »). Partage avec la garde du catalogue
 /// (`test/core/reseau/etat_sans_donnees_test.dart`).
+///
+/// Reste permise la forme que `03` donne en exemple : ce qui ne peut pas se
+/// faire et quand ce sera possible (« quand la connexion reviendra », « des
+/// le retour du reseau »).
 final RegExp motifHorsLigne = RegExp(
   r'hors ligne|hors-ligne|pas de réseau|sans réseau|pas de connexion|'
   r'sans connexion|connexion (est |a été )?(interrompue|perdue|coupée)|'
   r'réseau (est |a été )?(coupé|perdu)|vous êtes déconnecté|'
-  r'(demande|nécessite|exige) une connexion',
+  r'(demande|nécessite|exige) une connexion|'
+  r'vérifi(ez|e|er) (votre |ta |la )?(connexion|réseau)|'
+  r'(connexion|réseau) impossible|'
+  r'(connexion|réseau) ne (marche|fonctionne|revient) (pas|plus)|'
+  r'(à cause|en raison) (de la connexion|du réseau|d.une coupure)|'
+  r'coupure (de|du) (la )?(connexion|réseau)|'
+  r'(connexion|réseau) ou (le serveur|d.un service)|'
+  r'besoin d.(internet|une connexion|un réseau)|reconnectez cet appareil',
   caseSensitive: false,
 );
 

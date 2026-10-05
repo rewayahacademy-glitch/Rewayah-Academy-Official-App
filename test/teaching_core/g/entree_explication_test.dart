@@ -694,6 +694,34 @@ void main() {
       expect(find.byType(PanneauObservationTuteur), findsOneWidget);
     });
 
+    // EA-HL-DOUBLE-1d : le reseau tombe apres la verification prealable.
+    // L'echec de l'entree, pose sous le bandeau, dit ce qui manque ; ni
+    // « Connexion impossible », ni « Verifiez votre connexion ».
+    testWidgets('hors ligne pendant l\'entree : l\'echec ne redit pas le '
+        'reseau sous le bandeau', (WidgetTester tester) async {
+      final FauxPortVisite visites = FauxPortVisite(
+        echecEntree: const EchecObservation(MotifEchecObservation.reseau),
+      );
+      final FauxPortPolitique politique = FauxPortPolitique();
+      addTearDown(politique.fermer);
+      await _monter(
+        tester,
+        taille: _tailleSalle,
+        visites: visites,
+        politique: politique,
+        horsLigne: true,
+      );
+
+      await _presser(tester, find.text(t.classe.observer));
+      await _presser(tester, _observerMaintenant);
+
+      final c = t.tc.observation.connexion;
+      expect(find.text(c.impossibleTitre), findsOneWidget);
+      expect(find.text(c.impossible), findsOneWidget);
+      expect(visites.rolesDemandes, hasLength(1));
+      expectHorsLigneUneFois();
+    });
+
     testWidgets('un refus du serveur a l\'entree se dit par son motif', (
       WidgetTester tester,
     ) async {

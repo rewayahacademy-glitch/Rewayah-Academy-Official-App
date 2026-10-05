@@ -774,9 +774,11 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     );
   }
 
-  /// L'entree a echoue avant la salle : « Connexion impossible » pour une
-  /// panne, le motif sinon. Reessayer revient a la verification prealable :
-  /// les visites restantes sont relues, jamais supposees.
+  /// L'entree a echoue avant la salle : « Entree impossible » pour une
+  /// panne, le motif sinon. Hors ligne, le bandeau de `PageShell` dit le
+  /// reseau ; le bloc dit ce qui manque, sans « Verifiez votre connexion »
+  /// (EA-HL-DOUBLE-1d). Reessayer revient a la verification prealable : les
+  /// visites restantes sont relues, jamais supposees.
   Widget _echecEntree(EchecObservation? echec, DemandeVerification demande) {
     final MotifIndisponibilite motif = echec == null
         ? MotifIndisponibilite.capaciteAbsente
