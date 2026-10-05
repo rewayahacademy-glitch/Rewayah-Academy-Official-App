@@ -228,3 +228,80 @@ E = écart de composition. « RAS » : rien à relever.
 - Administration : la pastille « Démonstration » est répétée quatre fois (repris en R-15).
 - RTL, hors périmètre COM : la navigation des coquilles tuteur et enseignant, et le champ
   « Rechercher un écran » de la coquille admin, restent en français.
+
+## Après COM-RC
+
+Date : 5 octobre 2026. Captures refaites sur `ui/communications-v1` @ `1aa1ffd6` (COM-RC lots A,
+B et C, plus un état ajouté au test de capture : `communaute_reponse_bloquee`, la réponse
+retenue par la garde, R-01). **180 captures** dans `com-v1/`, qui remplacent les 176 de
+`de2bdb64`. **Aucun débordement de rendu** n'est relevé : `com_debordements.txt` n'est plus
+produit (il en comptait cinq à 320×2). Chaque PNG cité ci-dessous a été lu.
+
+Statut de preuve : `présent dans le code` et `testé localement` (rendu d'un état de
+démonstration). Rien n'est branché, rien n'est testé sur staging, rien n'est déployé.
+
+### Défauts de la revue COM-R, à l'image
+
+| Défaut | Verdict | Capture qui le prouve |
+| :--- | :--- | :--- |
+| R-01 Réponse hors garde anti-promotion | corrigé : « Réponse bloquée », motif « Lien affilié », lien marqué « Lien commercial interdit » sous « Envoyer la réponse » | `com_communaute_reponse_bloquee_390_clair.png`, `..._1440_clair.png` |
+| R-02 Fil à 320×2 sans message ni composer | corrigé pour Messages tuteur et enseignant : l'en-tête du fil défile, messages et champ « Message » visibles | `com_messages_fil_tuteur_320x2_clair.png`, `com_messages_fil_contexte_enseignant_320x2_clair.png` |
+| R-02 (suite) Canal du Studio à 320×2 | **restant** : les messages sont visibles, mais la tête de page « Le Studio / Espace de travail de l'équipe » reste fixe et occupe ~60 % de l'écran ; le composer n'est pas visible au premier écran | `com_studio_canal_320x2_clair.png` |
+| R-02 (suite) Messages admin à 320×2 | **restant, partiel** : un message est visible, le composer n'apparaît qu'en bord bas ; le titre de page et le menu d'onglets prennent la moitié de l'écran | `com_admin_messages_320x2_clair.png` |
+| R-02 (suite) Liste à 390 et 320 en texte ×1 | corrigé : à 320, l'en-tête défile et le fil garde ~500 pt ; à 390, ~350 pt même avec le panneau vocal | `com_messages_fil_tuteur_320_clair.png`, `com_vocal_pre_ecoute_tuteur_390_clair.png` |
+| R-03 Double bandeau hors ligne | **restant** (attend D-FUS-3) : « Pas de réseau… l'envoi attendra » et « Vous êtes hors ligne… » ensemble | `com_messages_hors_ligne_tuteur_390_clair.png`, `com_studio_hors_ligne_390_clair.png` |
+| R-04 Vocal à 390, deux « Envoyer » | corrigé : en pré-écoute, le panneau vocal remplace la rangée texte, un seul « Envoyer » | `com_vocal_pre_ecoute_tuteur_390_clair.png`, `..._1440_clair.png` |
+| R-04 (suite) Vocal reçu illisible en démo | corrigé : le vocal reçu porte « Écouter » (Messages et canal) | `com_messages_fil_tuteur_1440_clair.png`, `com_studio_canal_1440_clair.png` |
+| R-05 Studio sans identité, cloche ni bascule | corrigé : cloche, « Mon compte », bascule clair / sombre (≥ 600) et « Administrateur » dans la navigation | `com_studio_aujourdhui_1440_clair.png`, `com_studio_aujourdhui_390_clair.png`, `com_studio_canal_768_sombre.png` |
+| R-06 Notification inerte, « Action requise » sans action | corrigé : « Message de la famille de Yasmine » et « Votre planning… a changé » ont leur chevron | `com_notifications_enseignant_390_clair.png` |
+| R-08 Dates en français en arabe, mal ordonnées | **restant** (attend D-FUS-1) : « Dimanche 4 octobre » dans les bulles, « oct. 4 2026 » dans les notifications | `com_messages_fil_tuteur_390_rtl_clair.png`, `com_notifications_tuteur_390_rtl_clair.png` |
+| R-09 Mots coupés à 320×2 | corrigé pour les notifications (date au-dessus du titre) et les indicateurs (un par rangée) | `com_notifications_tuteur_320x2_clair.png`, `com_studio_aujourdhui_320x2_clair.png` |
+| R-09 (suite) Titre de l'administration à 320×2 | **restant** : « communication/s » coupé au milieu du mot ; le repli sur l'onglet ne se déclenche pas | `com_admin_annonces_320x2_clair.png`, `com_admin_moderation_320x2_clair.png`, `com_admin_messages_320x2_clair.png` |
+| R-10 Colonnes à 256 px, pas de gouttière | corrigé : liste à ~336 px à 1440 (« Rechercher une conversation » entier), file de modération ~326 px, retrait après le filet | `com_messages_liste_tuteur_1440_clair.png`, `com_messages_fil_tuteur_1440_clair.png`, `com_admin_moderation_1440_clair.png` |
+| R-10 (suite) Champs de recherche | **restant, mineur** : « Rechercher une public… » (Communauté, 1440) et « Rechercher une conve… », « Rechercher dans Le St… » (768) restent tronqués | `com_communaute_flux_1440_clair.png`, `com_messages_fil_tuteur_768_clair.png`, `com_studio_canal_768_sombre.png` |
+| R-11 Pièce jointe en texte | corrigé : carte PDF (nom, taille, « Envoyé ») dans la bulle | `com_messages_fil_tuteur_1440_clair.png`, `com_studio_focus_1440_clair.png` |
+| R-12 Focus à 1440 mal aligné | **corrigé en partie** : le bandeau « Le Studio, Focus activé » est aligné sur le fil ; « Quitter le focus » reste centré (Center d'ActionPrincipale non touché, à valider) et la rangée du composer (« Envoyer ») dépasse encore le fil d'environ 110 px | `com_studio_focus_1440_clair.png` |
+| R-12 (suite) « Mode focus » en lien centré | **restant** (même cause) | `com_studio_canal_1440_clair.png`, `com_studio_canal_320_clair.png` |
+| R-13 Menu « … » collé au nom, double état vide | corrigé : menu au bord de fin ; un seul état vide (« Aucune publication ») | `com_communaute_publication_390_clair.png`, `com_communaute_vide_1440_clair.png` |
+| R-14 Majuscules en milieu de phrase | corrigé : « Enseignante, Classe An-Nour · Il y a 2 h », « Échéance le mardi 6 octobre » | `com_communaute_flux_1440_clair.png`, `com_studio_aujourdhui_1440_clair.png` |
+| R-15 Titre « Communications », pastille ×4 | corrigé : « Administration des communications », une seule pastille « Démonstration » | `com_admin_annonces_1440_clair.png` |
+| R-16 Annonce avant la séance | **restant** (arbitrage du directeur) | `com_annonce_classe_tuteur_390_clair.png` |
+
+Les constats R-17 à R-26 (hors R-24 pour le fil) ne se voient pas sur une capture : ils sont
+couverts par les tests de contre-preuve de COM-RC, et non par cette recette.
+
+### Défauts COM-CAPT d'origine, hors revue
+
+- Garde à 390 : (i) et (×) restent empilés au-dessus de « Nouvelle publication » : **restant**
+  (`com_communaute_garde_bloque_390_clair.png`).
+- « Politique anti-/promotion » à 1440 : coupure au trait d'union, légitime : **inchangé**
+  (`com_admin_moderation_1440_clair.png`).
+- Vocal ouvert par un lien sous le champ, et non par un bouton micro : **restant**
+  (`com_messages_fil_tuteur_1440_clair.png`).
+- Navigation des coquilles en français en RTL : **restant**, hors périmètre COM
+  (`com_messages_fil_tuteur_390_rtl_clair.png`).
+
+### Défauts nouveaux
+
+1. **Studio, Aujourd'hui à 320×2** : le titre est coupé au milieu du mot (« Aujourd'hu/i »).
+   Le bouton « Mon compte », ajouté par R-05, réduit la largeur du titre
+   (`com_studio_aujourdhui_320x2_clair.png`).
+2. **Publication de la Communauté à 320×2** : tête de page, (i) et ligne auteur restent fixes et
+   remplissent l'écran. Ni le texte de la publication ni le composer de réponse ne sont visibles
+   au premier écran (`com_communaute_publication_320x2_clair.png`). À 390, le composer de
+   réponse et la garde restent fixes sous la publication et ne lui laissent qu'environ 230 pt
+   (`com_communaute_publication_390_clair.png`).
+3. **Nom de fichier coupé dans la carte** : « Devoir_semaine_3.pd/f » à 768
+   (`com_messages_fil_tuteur_768_clair.png`), « Devoir_semaine/_3.pdf » à 320. Préférer une
+   ellipse au milieu du nom ou une coupure avant l'extension.
+4. **Réponse bloquée à 1440** : le haut du composer de réponse sort de la vue au profit du
+   verdict, et le lien « Enregistrer la publication » flotte au-dessus du champ
+   (`com_communaute_reponse_bloquee_1440_clair.png`).
+
+### Bilan
+
+- Corrigés à l'image : R-01, R-04, R-05, R-06, R-11, R-13, R-14, R-15, R-02 (Messages tuteur et
+  enseignant), R-09 (notifications et indicateurs), R-10 (colonnes et gouttière).
+- Restants : R-02 (canal du Studio et Messages admin à 320×2), R-03 (D-FUS-3), R-08 (D-FUS-1),
+  R-09 (titre de l'administration), R-12 (en partie), R-16 (arbitrage), recherches tronquées.
+- Nouveaux : 4 (ci-dessus).
