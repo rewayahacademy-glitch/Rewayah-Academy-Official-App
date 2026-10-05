@@ -115,7 +115,14 @@ class _BlocCartesClasseEtat extends ConsumerState<BlocCartesClasse> {
       context,
       titre: carte == null
           ? t.classe.cartes.feuille.titreNouvelle
-          : t.classe.cartes.feuille.titreModifier(titre: carte.titre),
+          // Le titre de la feuille, isole avec le titre de la carte dedans :
+          // en arabe, « Modifier la carte « « Récitation modèle » se lisait
+          // dans le desordre (revue CARTES-PERSO-1, deuxieme passe).
+          : isolerSens(
+              t.classe.cartes.feuille.titreModifier(
+                titre: isolerSens(carte.titre),
+              ),
+            ),
       constructeur: (BuildContext _) => UncontrolledProviderScope(
         container: conteneur,
         child: FeuilleCarteClasse(

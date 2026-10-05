@@ -755,7 +755,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(FeuilleCarteClasse), findsOneWidget);
       expect(
-        find.text(t.classe.cartes.feuille.defauts.titreVide),
+        find.text(isolerSens(t.classe.cartes.feuille.defauts.titreVide)),
         findsOneWidget,
       );
       await tester.enterText(
@@ -764,7 +764,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(
-        find.text(t.classe.cartes.feuille.defauts.lienInvalide),
+        find.text(isolerSens(t.classe.cartes.feuille.defauts.lienInvalide)),
         findsOneWidget,
       );
     });
@@ -1015,6 +1015,100 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(t.classe.cartes.feuille.contexte), findsNothing);
+    });
+
+    // Revue CARTES-PERSO-1, deuxieme passe : en RTL, les aides des champs
+    // (« caracteres au plus 60 »), les erreurs (« par .//:https ») et les
+    // descriptions des modeles (« .classe ») se lisaient a rebours.
+    testWidgets('feuille, rtl : aides, erreurs et descriptions des modeles '
+        'isolees', (WidgetTester tester) async {
+      _taille(tester, const Size(390, 3200));
+      await tester.pumpWidget(
+        _hote(
+          const FeuilleCarteClasse(groupeId: _id),
+          surcharges: _demo(peutModifier: true),
+          sens: TextDirection.rtl,
+        ),
+      );
+      await tester.pumpAndSettle();
+      final f = t.classe.cartes.feuille;
+      final List<String> aides = <String>[
+        f.aideLongueur(max: BornesCarteClasse.titreMax),
+        f.aideLongueur(max: BornesCarteClasse.texteMax),
+        f.aideLien,
+      ];
+      final List<String> descriptions = <String>[
+        t.classe.cartes.typesDetail.annonce,
+        t.classe.cartes.typesDetail.devoir,
+        t.classe.cartes.typesDetail.lien,
+        t.classe.cartes.typesDetail.rappel,
+      ];
+      for (final String phrase in <String>[...aides, ...descriptions]) {
+        expect(find.text(isolerSens(phrase)), findsOneWidget, reason: phrase);
+        expect(find.text(phrase), findsNothing, reason: phrase);
+      }
+      // Les erreurs : titre vide, lien invalide.
+      await tester.enterText(find.byKey(FeuilleCarteClasse.titreKey), '');
+      await tester.enterText(find.byKey(FeuilleCarteClasse.lienKey), 'www');
+      await tester.ensureVisible(find.byKey(FeuilleCarteClasse.enregistrerKey));
+      await tester.tap(find.byKey(FeuilleCarteClasse.enregistrerKey));
+      await tester.pumpAndSettle();
+      for (final String erreur in <String>[
+        f.defauts.titreVide,
+        f.defauts.lienInvalide,
+      ]) {
+        expect(find.text(isolerSens(erreur)), findsOneWidget, reason: erreur);
+        expect(find.text(erreur), findsNothing, reason: erreur);
+      }
+    });
+
+    test('sensDeLaSaisie : la premiere lettre decide, sans lettre rien', () {
+      expect(sensDeLaSaisie('Lire la sourate.'), TextDirection.ltr);
+      expect(sensDeLaSaisie('« 3 » Réviser'), TextDirection.ltr);
+      expect(sensDeLaSaisie('اقرأ السورة.'), TextDirection.rtl);
+      expect(sensDeLaSaisie('12 — اقرأ'), TextDirection.rtl);
+      expect(sensDeLaSaisie(''), isNull);
+      expect(sensDeLaSaisie('12 : ...'), isNull);
+    });
+
+    // Revue CARTES-PERSO-1, deuxieme passe (capture arabe de la vraie
+    // feuille) : le titre de la feuille se lisait « Modifier la carte « «
+    // Récitation modèle », le texte saisi « .L'enregistrement ... lundi ».
+    testWidgets('modification, rtl : titre de la feuille isole, champs dans '
+        'le sens de leur texte, lien de gauche a droite', (
+      WidgetTester tester,
+    ) async {
+      _taille(tester, const Size(390, 3200));
+      await tester.pumpWidget(
+        _hote(
+          const BlocCartesClasse(groupeId: _id),
+          surcharges: _demo(peutModifier: true),
+          sens: TextDirection.rtl,
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(texteAffiche('Récitation modèle')));
+      await tester.pumpAndSettle();
+      expect(find.byType(FeuilleCarteClasse), findsOneWidget);
+      final String titre = isolerSens(
+        t.classe.cartes.feuille.titreModifier(
+          titre: isolerSens('Récitation modèle'),
+        ),
+      );
+      expect(find.text(titre), findsOneWidget);
+      TextDirection? sensDe(Key cle) =>
+          tester.widget<TextField>(find.byKey(cle)).textDirection;
+      expect(sensDe(FeuilleCarteClasse.titreKey), TextDirection.ltr);
+      expect(sensDe(FeuilleCarteClasse.texteKey), TextDirection.ltr);
+      expect(sensDe(FeuilleCarteClasse.lienKey), TextDirection.ltr);
+      // Un texte arabe saisi passe le champ de droite a gauche ; vide, il
+      // suit l'interface.
+      await tester.enterText(find.byKey(FeuilleCarteClasse.texteKey), 'اقرأ');
+      await tester.pump();
+      expect(sensDe(FeuilleCarteClasse.texteKey), TextDirection.rtl);
+      await tester.enterText(find.byKey(FeuilleCarteClasse.texteKey), '');
+      await tester.pump();
+      expect(sensDe(FeuilleCarteClasse.texteKey), isNull);
     });
   });
 

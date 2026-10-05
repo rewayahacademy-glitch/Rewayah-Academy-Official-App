@@ -41,6 +41,24 @@ String _quandChoisir(TypeCarteClasse type) => switch (type) {
   TypeCarteClasse.rappel => t.classe.cartes.typesDetail.rappel,
 };
 
+/// Le sens de lecture d'une saisie de l'enseignant : celui de sa premiere
+/// lettre (arabe, hebreu : droite a gauche ; une autre lettre : gauche a
+/// droite), ou `null` sans lettre, et le champ suit alors l'interface. En
+/// arabe, « Lire la sourate. » saisi en francais s'affichait « .Lire la
+/// sourate » (revue CARTES-PERSO-1, deuxieme passe).
+TextDirection? sensDeLaSaisie(String texte) {
+  final RegExpMatch? lettre = _lettre.firstMatch(texte);
+  if (lettre == null) return null;
+  return _lettreDroiteAGauche.hasMatch(lettre[0]!)
+      ? TextDirection.rtl
+      : TextDirection.ltr;
+}
+
+final RegExp _lettre = RegExp(r'\p{L}', unicode: true);
+final RegExp _lettreDroiteAGauche = RegExp(
+  '[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]',
+);
+
 /// Le message d'un defaut, qui dit ce qui manque et quoi faire (K-59).
 String messageDefaut(DefautCarte defaut) {
   final d = t.classe.cartes.feuille.defauts;
@@ -137,8 +155,12 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
     lien: _lien.text,
   );
 
+  /// Apres chaque frappe : le sens de lecture des champs suit leur texte,
+  /// et les defauts se relisent apres une premiere tentative.
   void _revalider() {
-    if (_tente) setState(() => _defauts = defautsCarte(_saisi));
+    setState(() {
+      if (_tente) _defauts = defautsCarte(_saisi);
+    });
   }
 
   void _changerType(TypeCarteClasse type) {
@@ -218,8 +240,10 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
     if (carte == null || _envoi || _retrait) return;
     final bool confirme = await ConfirmDestructive.demander(
       context,
-      question: t.classe.cartes.feuille.retirerQuestion(titre: carte.titre),
-      consequence: t.classe.cartes.feuille.retirerConsequence,
+      question: isolerSens(
+        t.classe.cartes.feuille.retirerQuestion(titre: isolerSens(carte.titre)),
+      ),
+      consequence: isolerSens(t.classe.cartes.feuille.retirerConsequence),
       libelleConfirmer: t.classe.cartes.feuille.retirerConfirmer,
     );
     if (!confirme || !mounted) return;
@@ -242,9 +266,11 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
     }
   }
 
+  /// Le message du premier defaut concerne, isole dans son sens de lecture
+  /// (en RTL, « par .//:https » se lisait a rebours, revue CARTES-PERSO-1).
   String? _erreur(Iterable<DefautCarte> concernes) {
     for (final DefautCarte d in concernes) {
-      if (_defauts.contains(d)) return messageDefaut(d);
+      if (_defauts.contains(d)) return isolerSens(messageDefaut(d));
     }
     return null;
   }
@@ -261,11 +287,13 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
     final TextStyle alerte = palette.inkAlert.applyTo(
       textes.bodyMedium ?? const TextStyle(),
     );
-    final String aideLongueurTitre = t.classe.cartes.feuille.aideLongueur(
-      max: BornesCarteClasse.titreMax,
+    // Les aides des champs, isolees : en RTL, « 60 caracteres au plus » se
+    // lisait « caracteres au plus 60 » (revue CARTES-PERSO-1).
+    final String aideLongueurTitre = isolerSens(
+      t.classe.cartes.feuille.aideLongueur(max: BornesCarteClasse.titreMax),
     );
-    final String aideLongueurTexte = t.classe.cartes.feuille.aideLongueur(
-      max: BornesCarteClasse.texteMax,
+    final String aideLongueurTexte = isolerSens(
+      t.classe.cartes.feuille.aideLongueur(max: BornesCarteClasse.texteMax),
     );
 
     return Column(
@@ -288,7 +316,9 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
                 valeur: type.name,
                 libelle: libelleTypeCarte(type),
                 icone: iconeTypeCarte(type),
-                description: _quandChoisir(type),
+                // Une phrase de l'interface : isolee, son point reste a la
+                // fin en RTL (« .classe » a 320 px x2, revue CARTES-PERSO-1).
+                description: isolerSens(_quandChoisir(type)),
                 cle: ValueKey<String>('classe.cartes.modele.${type.name}'),
               ),
           ],
@@ -303,6 +333,7 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
         TextField(
           key: FeuilleCarteClasse.titreKey,
           controller: _titre,
+          textDirection: sensDeLaSaisie(_titre.text),
           onChanged: (String _) => _revalider(),
           textInputAction: TextInputAction.next,
           // Le titre se relit en entier, meme a 320 px et texte x2.
@@ -324,6 +355,7 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
         TextField(
           key: FeuilleCarteClasse.texteKey,
           controller: _texte,
+          textDirection: sensDeLaSaisie(_texte.text),
           onChanged: (String _) => _revalider(),
           minLines: 3,
           maxLines: 6,
@@ -340,10 +372,12 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
         TextField(
           key: FeuilleCarteClasse.lienKey,
           controller: _lien,
+          // Une adresse se lit toujours de gauche a droite.
+          textDirection: TextDirection.ltr,
           onChanged: (String _) => _revalider(),
           keyboardType: TextInputType.url,
           decoration: InputDecoration(
-            helperText: t.classe.cartes.feuille.aideLien,
+            helperText: isolerSens(t.classe.cartes.feuille.aideLien),
             helperMaxLines: 6,
             errorMaxLines: 8,
             errorText: _erreur(const <DefautCarte>[DefautCarte.lienInvalide]),
@@ -358,7 +392,7 @@ class _FeuilleCarteClasseEtat extends ConsumerState<FeuilleCarteClasse> {
         ),
         if (erreurEcheance != null) ...<Widget>[
           Ecart.vXs,
-          Text(isolerSens(erreurEcheance), style: alerte),
+          Text(erreurEcheance, style: alerte),
         ],
         Align(
           alignment: AlignmentDirectional.centerStart,
