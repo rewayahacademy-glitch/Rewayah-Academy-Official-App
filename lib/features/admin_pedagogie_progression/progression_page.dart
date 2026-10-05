@@ -48,7 +48,10 @@ class _ProgressionPageEtat extends ConsumerState<ProgressionPage> {
     return PageShell(
       titre: t.admin.progression.titre,
       entete: SousNavigationDomaine(onglets: ongletsPedagogie(), indexActif: 1),
-      defilante: false,
+      // ONGLETS-COUPE-1 : en cartes (telephone, tablette), l'introduction,
+      // les filtres et la liste defilent ensemble ; en tableau, la liste
+      // defile seule sous son en-tete colle.
+      defilante: !DataCollection.enTableau(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -63,7 +66,7 @@ class _ProgressionPageEtat extends ConsumerState<ProgressionPage> {
                       icone: AppIcons.rienAAfficher,
                       registre: RegistreVide.subi,
                     )
-                  : Expanded(
+                  : PlaceCollection(
                       child: _Corps(
                         eleves: eleves.requireValue,
                         cycle: _cycle,
@@ -147,8 +150,9 @@ class _Corps extends StatelessWidget {
           ],
         ),
         Ecart.vLg,
-        Expanded(
+        PlaceCollection(
           child: DataCollection<EleveProgression>(
+            defileAvecLaPage: !DataCollection.enTableau(context),
             lignes: visibles,
             cle: (EleveProgression e) => ValueKey<String>(e.studentId),
             colonnes: <ColonneDonnees<EleveProgression>>[

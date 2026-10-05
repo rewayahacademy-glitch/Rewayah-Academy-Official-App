@@ -49,7 +49,10 @@ class _EvaluationsPageEtat extends ConsumerState<EvaluationsPage> {
     return PageShell(
       titre: t.admin.evaluations.titre,
       entete: SousNavigationDomaine(onglets: ongletsPedagogie(), indexActif: 2),
-      defilante: false,
+      // ONGLETS-COUPE-1 : en cartes (telephone, tablette), l'introduction,
+      // les filtres et la liste defilent ensemble ; en tableau, la liste
+      // defile seule sous son en-tete colle.
+      defilante: !DataCollection.enTableau(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -63,7 +66,7 @@ class _EvaluationsPageEtat extends ConsumerState<EvaluationsPage> {
           ),
           Ecart.vXl,
           switch (evaluations) {
-            AsyncValue<List<EvaluationAdmin>>(hasValue: true) => Expanded(
+            AsyncValue<List<EvaluationAdmin>>(hasValue: true) => PlaceCollection(
               child: _Corps(
                 evaluations: evaluations.requireValue,
                 filtre: _filtre,
@@ -156,8 +159,9 @@ class _Corps extends StatelessWidget {
             icone: AppIcons.rienAAfficher,
           )
         else
-          Expanded(
+          PlaceCollection(
             child: DataCollection<EvaluationAdmin>(
+              defileAvecLaPage: !DataCollection.enTableau(context),
               lignes: visibles,
               cle: (EvaluationAdmin e) => ValueKey<String>(e.id),
               colonnes: <ColonneDonnees<EvaluationAdmin>>[

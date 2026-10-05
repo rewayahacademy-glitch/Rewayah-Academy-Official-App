@@ -53,7 +53,10 @@ class _QualitePageEtat extends ConsumerState<QualitePage> {
     return PageShell(
       titre: t.admin.qualite.titre,
       entete: SousNavigationDomaine(onglets: ongletsPedagogie(), indexActif: 4),
-      defilante: false,
+      // ONGLETS-COUPE-1 : en cartes (telephone, tablette), l'introduction,
+      // les filtres et la liste defilent ensemble ; en tableau, la liste
+      // defile seule sous son en-tete colle.
+      defilante: !DataCollection.enTableau(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -68,7 +71,7 @@ class _QualitePageEtat extends ConsumerState<QualitePage> {
                       icone: AppIcons.succes,
                       registre: RegistreVide.bonneNouvelle,
                     )
-                  : Expanded(
+                  : PlaceCollection(
                       child: _Corps(
                         anomalies: anomalies.requireValue,
                         filtre: _filtre,
@@ -156,8 +159,14 @@ class _Corps extends StatelessWidget {
             registre: RegistreVide.subi,
           )
         else
-          Expanded(
+          PlaceCollection(
             child: ListView(
+              // En cartes, la liste defile avec la page (ONGLETS-COUPE-1).
+              shrinkWrap: !DataCollection.enTableau(context),
+              primary: DataCollection.enTableau(context) ? null : false,
+              physics: DataCollection.enTableau(context)
+                  ? null
+                  : const NeverScrollableScrollPhysics(),
               children: <Widget>[
                 for (final TypeAnomalieQualite type in TypeAnomalieQualite.values)
                   if (visibles.any((AnomalieQualite a) => a.type == type)) ...<Widget>[
@@ -193,6 +202,9 @@ class _GroupeAnomalies extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DataCollection<AnomalieQualite>(
+      // Toujours pose dans la liste des groupes, qui defile pour lui : en
+      // tableau comme en cartes, il prend la hauteur de ses lignes.
+      defileAvecLaPage: true,
       lignes: anomalies,
       cle: (AnomalieQualite a) => ValueKey<String>('${a.type.valeurSql}-${a.refId}'),
       colonnes: <ColonneDonnees<AnomalieQualite>>[
