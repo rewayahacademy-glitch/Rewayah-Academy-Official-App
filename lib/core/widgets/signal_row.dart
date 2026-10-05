@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_palette.dart';
@@ -71,7 +72,10 @@ class SignalRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text(
+                // Lecon 8 : la phrase passe a la ligne entre ses mots, jamais
+                // dans un mot ; un mot trop long se reduit (ALERTE-1, 320 px
+                // a texte x2).
+                TexteSansCoupure(
                   phrase,
                   style: paire.applyTo(textes.titleSmall ?? const TextStyle()),
                 ),

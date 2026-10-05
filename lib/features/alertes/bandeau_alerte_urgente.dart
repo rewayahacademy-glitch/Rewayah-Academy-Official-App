@@ -50,10 +50,10 @@ class BandeauAlerteUrgente extends ConsumerWidget {
     // Triees : la premiere urgente est la plus recente.
     final Alerte premiere = urgentes.first;
     final String phrase = urgentes.length == 1
-        ? t.alertes.bandeauUne(titre: premiere.titre)
+        ? t.alertes.bandeauUne(titre: titreAffiche(premiere.titre))
         : t.alertes.bandeauPlusieurs(
             nombre: urgentes.length,
-            titre: premiere.titre,
+            titre: titreAffiche(premiere.titre),
           );
     // Pose par `PageShell` en tete de page, dans la gouttiere de la page :
     // 16 au-dessus ; l'espace du titre d'ecran suit.

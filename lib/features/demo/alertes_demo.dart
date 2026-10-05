@@ -83,10 +83,12 @@ class AlertesDemo implements PortAlertes {
         }
       },
       // Quitter la demonstration annule l'arrivee : aucune minuterie ne
-      // survit a l'ecran.
+      // survit a l'ecran. La fermeture n'est pas attendue : rendre
+      // `flux.close()` ferait attendre l'annulation sur la fin du flux, qui
+      // attend l'annulation.
       onCancel: () {
         minuterie?.cancel();
-        return flux.close();
+        unawaited(flux.close());
       },
     );
     return flux.stream;

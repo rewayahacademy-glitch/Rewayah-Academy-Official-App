@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/alertes/alerte.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -26,6 +27,12 @@ TonEtat tonGravite(GraviteAlerte gravite) => switch (gravite) {
   GraviteAlerte.important => TonEtat.avertissement,
   GraviteAlerte.info => TonEtat.neutre,
 };
+
+/// Le titre d'une alerte tel qu'il s'affiche : un nom compose (« An-Nour »,
+/// « Al-Falaq ») garde son trait d'union insecable et ne passe jamais a la
+/// ligne en son milieu (lecon 8, COUPE-MOTS-1). Le lecteur d'ecran lit le
+/// titre d'origine.
+String titreAffiche(String titre) => titre.replaceAll('-', '\u2011');
 
 /// « Le 5 oct. 2026 à 17:35 », en heure locale.
 String quandAlerte(Alerte alerte) {
@@ -134,8 +141,10 @@ class LigneAlerte extends StatelessWidget {
                         ton: tonGravite(alerte.gravite),
                       ),
                       Ecart.vSm,
-                      Text(
-                        alerte.titre,
+                      // Un mot trop long pour la place se reduit, jamais
+                      // coupe (« Remplacem / ent » a 320 px, texte x2).
+                      TexteSansCoupure(
+                        titreAffiche(alerte.titre),
                         style: palette.inkStrong.applyTo(
                           textes.titleSmall ?? const TextStyle(),
                         ),
