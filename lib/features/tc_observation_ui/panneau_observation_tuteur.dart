@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart' show SliverConstraints;
+import 'package:flutter/rendering.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
@@ -107,6 +107,10 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
   /// Vrai quand le support occupe toute la salle. Etat d'ecran seulement.
   bool _agrandi = false;
 
+  /// PAGESHELL-200-1c : la fin du minimum utile de la salle du telephone :
+  /// l'en-tete et le support a sa hauteur lisible.
+  final GlobalKey _repereSupport = GlobalKey(debugLabel: 'salle.repere');
+
   bool get _lienVivant => switch (widget.etatSalle) {
     EtatSalle.connecte || EtatSalle.retabli || EtatSalle.instable => true,
     _ => false,
@@ -135,12 +139,16 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
       // qui leur manque. A 200 % sous une tete qui defile (320x568, telephone
       // en paysage sous les barres du systeme), le bandeau et la barre
       // agrandis ne tiennent plus dans la hauteur laissee : la page defile
-      // d'autant, et la barre se rejoint au lieu d'etre coupee. La zone du
-      // support ne descend pas sous une cible tactile, ou elle ne se saisit
-      // plus pour defiler.
+      // d'autant, et la barre se rejoint au lieu d'etre coupee.
+      // PAGESHELL-200-1c : le minimum utile de la zone du support n'est plus
+      // une cible tactile (une fenetre de 48 px ou l'on ne voyait que le
+      // haut de l'en-tete). Le support ne descend jamais sous sa hauteur
+      // lisible ; son defileur ([DefileurCorps]) dit a la page ce qu'il
+      // cache de l'en-tete et du support, et la page, tete fixe ou non, lui
+      // donne cette hauteur et defile pour le reste.
       if (!large) {
         return ColonneCorps(
-          minimumEtire: AppTouchTarget.standard,
+          minimumEtire: _hauteurMinSupport,
           children: <Widget>[
             bandeau,
             Ecart.vMd,
@@ -166,7 +174,7 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
               child: Padding(
                 padding: const EdgeInsets.all(AppSpacing.lg),
                 child: ColonneCorps(
-                  minimumEtire: AppTouchTarget.standard,
+                  minimumEtire: _hauteurMinSupport,
                   children: <Widget>[
                     Expanded(child: _corpsLarge()),
                     Ecart.vMd,
@@ -183,68 +191,53 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
   );
 
   /// Telephone (M4) : en-tete, support, deux vignettes cote a cote. Le support
-  /// remplit la hauteur restante ; quand la hauteur manque (telephone en
-  /// paysage, texte agrandi), la salle defile avec un support de hauteur
-  /// fixe : jamais un debordement.
+  /// remplit la hauteur restante, jamais moins que [_hauteurMinSupport] :
+  /// quand la hauteur manque (telephone en paysage, texte agrandi, Interface
+  /// guidee), la salle defile et la page lui donne de quoi montrer l'en-tete
+  /// et le support entiers (PAGESHELL-200-1c) ; jamais un debordement.
   Widget _corpsTelephone() => LayoutBuilder(
     builder: (BuildContext context, BoxConstraints cadre) {
-      final List<Widget> vignettes = <Widget>[
-        Ecart.vMd,
-        Row(
-          children: <Widget>[
-            Expanded(child: _vignetteEnseignant()),
-            Ecart.hMd,
-            Expanded(child: _vignetteEnfant()),
-          ],
-        ),
-      ];
-      final bool texteAgrandi =
-          MediaQuery.textScalerOf(context).scale(AppSpacing.lg) /
-              AppSpacing.lg >
-          seuilTexteEmpile;
-      if (_agrandi || (cadre.maxHeight >= _hauteurMinCorps && !texteAgrandi)) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            if (!_agrandi) ...<Widget>[_entete(), Ecart.vMd],
-            Expanded(child: _support()),
-            if (!_agrandi) ...vignettes,
-          ],
-        );
+      if (_agrandi) {
+        return _support();
       }
-      return SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            _entete(),
-            Ecart.vMd,
-            // OBS-COUPE-1b : sans support partage, la ligne d'attente prend
-            // la hauteur qu'il lui faut (a 320 px et 200 %, « s'affiche ici »
-            // etait rogne a mi-texte dans 200 points) ; un support reel garde
-            // sa hauteur fixe, il ne sait pas se mesurer seul.
-            if (widget.supportPartage == null)
-              ConstrainedBox(
-                constraints: const BoxConstraints(
-                  minHeight: _hauteurMinSupport,
-                ),
-                child: _support(),
-              )
-            else
-              SizedBox(height: _hauteurMinSupport, child: _support()),
-            ...vignettes,
-          ],
-        ),
+      return DefileurCorps(
+        repere: _repereSupport,
+        builder: (BuildContext context, ScrollController defileur) =>
+            SingleChildScrollView(
+              controller: defileur,
+              child: _PileTelephone(
+                hauteur: cadre.maxHeight,
+                // OBS-COUPE-1b : sans support partage, la ligne d'attente
+                // prend la hauteur qu'il lui faut (a 320 px et 200 %,
+                // « s'affiche ici » etait rogne a mi-texte dans 200
+                // points) ; un support reel recoit une hauteur fixe, il ne
+                // sait pas se mesurer seul.
+                supportExtensible: widget.supportPartage == null,
+                children: <Widget>[
+                  _entete(),
+                  _support(),
+                  // Le bas du minimum utile : l'en-tete et le support.
+                  // Les vignettes peuvent defiler.
+                  SizedBox(key: _repereSupport),
+                  Row(
+                    children: <Widget>[
+                      Expanded(child: _vignetteEnseignant()),
+                      Ecart.hMd,
+                      Expanded(child: _vignetteEnfant()),
+                    ],
+                  ),
+                ],
+              ),
+            ),
       );
     },
   );
 
-  /// En deca, la salle du telephone defile plutot que d'ecraser le support.
-  static const double _hauteurMinCorps = 300;
-
   /// Des la tablette (D1) : en-tete, puis le support a environ trois
-  /// quarts de la largeur et la colonne des vignettes a droite. Quand la hauteur manque (texte a 300 % sur une tablette, la
-  /// barre en deux rangees), la salle defile avec un support de hauteur
-  /// minimale, comme sur telephone : jamais un debordement (PAGESHELL-200-1).
+  /// quarts de la largeur et la colonne des vignettes a droite. Quand la
+  /// hauteur manque (texte a 300 % sur une tablette, la barre en deux
+  /// rangees), la salle defile avec un support de hauteur minimale, comme
+  /// sur telephone : jamais un debordement (PAGESHELL-200-1).
   Widget _corpsLarge() => Builder(
     builder: (BuildContext context) {
       final Widget salle = Row(
@@ -275,33 +268,37 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
       // Le support prend la hauteur que l'en-tete laisse, jamais moins que
       // [_hauteurMinSupport] : quand l'en-tete agrandi n'en laisse pas
       // assez, la salle defile au lieu de deborder.
-      return CustomScrollView(
-        slivers: <Widget>[
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[_entete(), Ecart.vMd],
-            ),
-          ),
-          SliverLayoutBuilder(
-            builder: (BuildContext context, SliverConstraints place) =>
+      return DefileurCorps(
+        builder: (BuildContext context, ScrollController defileur) =>
+            CustomScrollView(
+              controller: defileur,
+              slivers: <Widget>[
                 SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: math.max(
-                      _hauteurMinSupport,
-                      place.viewportMainAxisExtent -
-                          place.precedingScrollExtent,
-                    ),
-                    child: salle,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[_entete(), Ecart.vMd],
                   ),
                 ),
-          ),
-        ],
+                SliverLayoutBuilder(
+                  builder: (BuildContext context, SliverConstraints place) =>
+                      SliverToBoxAdapter(
+                        child: SizedBox(
+                          height: math.max(
+                            _hauteurMinSupport,
+                            place.viewportMainAxisExtent -
+                                place.precedingScrollExtent,
+                          ),
+                          child: salle,
+                        ),
+                      ),
+                ),
+              ],
+            ),
       );
     },
   );
 
-  /// Le plus petit support qui reste lisible quand la page defile.
+  /// Le plus petit support qui reste lisible : en deca, la salle defile.
   static const double _hauteurMinSupport = 200;
 
   Widget _entete() {
@@ -406,31 +403,38 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
             widget.supportPartage ??
             // Aucun support partage : une ligne discrete au centre, pas un
             // etat vide de page (le support reste la zone dominante).
+            // PAGESHELL-200-1c : quand la page defile de toute facon, elle
+            // donne a la ligne la hauteur qu'il lui faut (Interface guidee a
+            // 200 % en paysage : « s'affiche ici » etait rogne a mi-ligne).
             Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    ExcludeSemantics(
-                      child: IconTheme(
-                        data: palette.inkFaint.asIconTheme(
-                          size: AppSpacing.xxxl,
-                        ),
-                        child: Icon(AppIcons.bibliotheque.repos),
+              child: DefileurCorps(
+                builder: (BuildContext _, ScrollController defileur) =>
+                    SingleChildScrollView(
+                      controller: defileur,
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          ExcludeSemantics(
+                            child: IconTheme(
+                              data: palette.inkFaint.asIconTheme(
+                                size: AppSpacing.xxxl,
+                              ),
+                              child: Icon(AppIcons.bibliotheque.repos),
+                            ),
+                          ),
+                          Ecart.vSm,
+                          Text(
+                            t.tc.observation.visite.supportIndisponible,
+                            textAlign: TextAlign.center,
+                            style: palette.inkMuted.applyTo(
+                              Theme.of(context).textTheme.bodyMedium ??
+                                  const TextStyle(),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Ecart.vSm,
-                    Text(
-                      t.tc.observation.visite.supportIndisponible,
-                      textAlign: TextAlign.center,
-                      style: palette.inkMuted.applyTo(
-                        Theme.of(context).textTheme.bodyMedium ??
-                            const TextStyle(),
-                      ),
-                    ),
-                  ],
-                ),
               ),
             ),
       ),
@@ -667,4 +671,177 @@ class _Etiquette extends StatelessWidget {
       ),
     );
   }
+}
+
+/// La salle du telephone dans son defileur (PAGESHELL-200-1c) : l'en-tete,
+/// le support, le repere du minimum utile, les vignettes.
+///
+/// L'en-tete et les vignettes gardent leur hauteur naturelle ; le support
+/// prend ce qu'ils laissent de [hauteur] (celle du defileur), jamais moins
+/// que [_PanneauObservationTuteurEtat._hauteurMinSupport]. Quand la salle
+/// tient, rien ne defile ; sinon, le support garde sa hauteur lisible au
+/// lieu d'etre ecrase (102 px en Interface guidee a 390x844, avant).
+class _PileTelephone extends MultiChildRenderObjectWidget {
+  const _PileTelephone({
+    required this.hauteur,
+    required this.supportExtensible,
+    required super.children,
+  }) : assert(children.length == 4, 'en-tete, support, repere, vignettes');
+
+  /// La hauteur du defileur.
+  final double hauteur;
+
+  /// Vrai quand le support peut depasser la hauteur donnee pour montrer son
+  /// contenu (la ligne d'attente) ; faux pour un support reel, de hauteur
+  /// fixe.
+  final bool supportExtensible;
+
+  @override
+  _RenduPileTelephone createRenderObject(BuildContext context) =>
+      _RenduPileTelephone(hauteur, supportExtensible);
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    _RenduPileTelephone renderObject,
+  ) {
+    renderObject
+      ..hauteur = hauteur
+      ..supportExtensible = supportExtensible;
+  }
+}
+
+class _DonneesPile extends ContainerBoxParentData<RenderBox> {}
+
+class _RenduPileTelephone extends RenderBox
+    with
+        ContainerRenderObjectMixin<RenderBox, _DonneesPile>,
+        RenderBoxContainerDefaultsMixin<RenderBox, _DonneesPile> {
+  _RenduPileTelephone(this._hauteur, this._supportExtensible);
+
+  double _hauteur;
+  set hauteur(double valeur) {
+    if (valeur == _hauteur) {
+      return;
+    }
+    _hauteur = valeur;
+    markNeedsLayout();
+  }
+
+  bool _supportExtensible;
+  set supportExtensible(bool valeur) {
+    if (valeur == _supportExtensible) {
+      return;
+    }
+    _supportExtensible = valeur;
+    markNeedsLayout();
+  }
+
+  static const double _ecart = AppSpacing.md;
+  static const double _minimum =
+      _PanneauObservationTuteurEtat._hauteurMinSupport;
+
+  List<RenderBox> get _enfants => getChildrenAsList();
+
+  @override
+  void setupParentData(RenderBox child) {
+    if (child.parentData is! _DonneesPile) {
+      child.parentData = _DonneesPile();
+    }
+  }
+
+  /// La hauteur du support, l'en-tete et les vignettes mesures.
+  double _support(double entete, double vignettes) {
+    final double reste = _hauteur.isFinite
+        ? _hauteur - entete - vignettes - 2 * _ecart
+        : 0;
+    return math.max(_minimum, reste);
+  }
+
+  double _intrinseque(double largeur, {required bool max}) {
+    final List<RenderBox> e = _enfants;
+    double h(RenderBox b) => max
+        ? b.getMaxIntrinsicHeight(largeur)
+        : b.getMinIntrinsicHeight(largeur);
+    final double entete = h(e[0]);
+    final double vignettes = h(e[3]);
+    return entete + _support(entete, vignettes) + vignettes + 2 * _ecart;
+  }
+
+  @override
+  double computeMinIntrinsicWidth(double height) => _enfants.fold(
+    0,
+    (double m, RenderBox b) => math.max(m, b.getMinIntrinsicWidth(height)),
+  );
+
+  @override
+  double computeMaxIntrinsicWidth(double height) => _enfants.fold(
+    0,
+    (double m, RenderBox b) => math.max(m, b.getMaxIntrinsicWidth(height)),
+  );
+
+  @override
+  double computeMinIntrinsicHeight(double width) =>
+      _intrinseque(width, max: false);
+
+  @override
+  double computeMaxIntrinsicHeight(double width) =>
+      _intrinseque(width, max: true);
+
+  @override
+  Size computeDryLayout(covariant BoxConstraints constraints) {
+    final List<RenderBox> e = _enfants;
+    final BoxConstraints largeur = BoxConstraints.tightFor(
+      width: constraints.maxWidth,
+    );
+    final double entete = e[0].getDryLayout(largeur).height;
+    final double vignettes = e[3].getDryLayout(largeur).height;
+    return constraints.constrain(
+      Size(
+        constraints.maxWidth,
+        entete + _support(entete, vignettes) + vignettes + 2 * _ecart,
+      ),
+    );
+  }
+
+  @override
+  void performLayout() {
+    final List<RenderBox> e = _enfants;
+    final double largeur = constraints.maxWidth;
+    final BoxConstraints pleine = BoxConstraints.tightFor(width: largeur);
+    e[0].layout(pleine, parentUsesSize: true);
+    e[3].layout(pleine, parentUsesSize: true);
+    final double entete = e[0].size.height;
+    final double vignettes = e[3].size.height;
+    final double hauteurSupport = _support(entete, vignettes);
+    e[1].layout(
+      _supportExtensible
+          ? BoxConstraints(
+              minWidth: largeur,
+              maxWidth: largeur,
+              minHeight: hauteurSupport,
+            )
+          : BoxConstraints.tight(Size(largeur, hauteurSupport)),
+      parentUsesSize: true,
+    );
+    e[2].layout(BoxConstraints.tight(Size(largeur, 0)));
+    double y = 0;
+    (e[0].parentData! as _DonneesPile).offset = Offset.zero;
+    y += entete + _ecart;
+    (e[1].parentData! as _DonneesPile).offset = Offset(0, y);
+    y += e[1].size.height;
+    (e[2].parentData! as _DonneesPile).offset = Offset(0, y);
+    y += _ecart;
+    (e[3].parentData! as _DonneesPile).offset = Offset(0, y);
+    y += vignettes;
+    size = constraints.constrain(Size(largeur, y));
+  }
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) =>
+      defaultHitTestChildren(result, position: position);
+
+  @override
+  void paint(PaintingContext context, Offset offset) =>
+      defaultPaint(context, offset);
 }

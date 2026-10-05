@@ -624,16 +624,17 @@ void main() {
   // toute la hauteur de la vue sous elle ; la salle depassait de la hauteur
   // de la tete et le bas de sa barre passait sous la zone sure au premier
   // affichage (390x844 : bas du panneau a 834 pour une zone sure a 810).
+  // PAGESHELL-200-1c : la regle vaut pour une salle qui tient avec son
+  // support a hauteur lisible. A 200 %, la salle ne tenait qu'en ecrasant le
+  // support (13 px visibles en Interface guidee a 390x844) : elle defile
+  // maintenant (groupe « support visible » plus bas).
   group('PAGESHELL-200-1 : barre entiere au premier affichage', () {
     const EdgeInsets zoneSure = EdgeInsets.only(top: 47, bottom: 34);
     for (final (Size, double, TextDirection) cas
         in const <(Size, double, TextDirection)>[
-          (Size(390, 844), 2, TextDirection.ltr),
-          (Size(320, 844), 2, TextDirection.ltr),
-          (Size(390, 844), 2, TextDirection.rtl),
-          (Size(320, 844), 2, TextDirection.rtl),
           (Size(390, 844), 1, TextDirection.ltr),
-          (Size(360, 800), 2, TextDirection.ltr),
+          (Size(390, 844), 1, TextDirection.rtl),
+          (Size(414, 896), 1, TextDirection.ltr),
         ]) {
       testWidgets('${cas.$1.width.toInt()}x${cas.$1.height.toInt()}, texte '
           'x${cas.$2.toInt()}, ${cas.$3.name}', (WidgetTester tester) async {
@@ -942,31 +943,37 @@ void main() {
             TextDirection.ltr,
             false,
           ),
-          // Non-regression : ce qui tenait tient toujours, sans defiler.
+          // PAGESHELL-200-1c : ces vues tenaient sans defiler, mais la zone
+          // du support n'y etait qu'une fenetre de 60, 139, 48 et 65 px ou
+          // l'on ne voyait que le haut de l'en-tete. Elles defilent
+          // maintenant, et la page montre l'en-tete et le support entiers.
           (
             Size(360, 640),
             EdgeInsets.only(top: 24, bottom: 48),
             TextDirection.ltr,
-            true,
+            false,
           ),
-          (Size(375, 667), EdgeInsets.only(top: 20), TextDirection.ltr, true),
-          (
-            Size(414, 896),
-            EdgeInsets.only(top: 44, bottom: 34),
-            TextDirection.rtl,
-            true,
-          ),
+          (Size(375, 667), EdgeInsets.only(top: 20), TextDirection.ltr, false),
           (
             Size(844, 390),
             EdgeInsets.only(left: 47, right: 47, bottom: 21),
             TextDirection.ltr,
-            true,
+            false,
           ),
           (
             Size(932, 430),
             EdgeInsets.only(left: 59, right: 59, bottom: 21),
             TextDirection.rtl,
-            true,
+            false,
+          ),
+          // PAGESHELL-200-1c (revue adverse) : tenait sans defiler, mais
+          // avec un support dont le bas sortait de la zone (en-tete et
+          // support ne tenaient pas ensemble). Defile aussi.
+          (
+            Size(414, 896),
+            EdgeInsets.only(top: 44, bottom: 34),
+            TextDirection.rtl,
+            false,
           ),
         ]) {
       final Size taille = cas.$1;
@@ -1038,9 +1045,215 @@ void main() {
               2 * AppSpacing.md;
           expect(support, greaterThanOrEqualTo(AppTouchTarget.standard));
         }
+        // PAGESHELL-200-1c : une salle qui ne tient pas fait defiler la
+        // page, et sa zone du support montre l'en-tete et le support
+        // entiers, sans defilement imbrique.
+        if (!cas.$4) {
+          expect(position?.maxScrollExtent ?? 0, greaterThan(0));
+          await _verifierSupportVisible(tester);
+        }
       });
     }
   });
+  // PAGESHELL-200-1c (reserve 2 de la revue PAGESHELL-200-1b) : 667x375 sans
+  // zone sure, a 200 %, la tete restait fixe (vue de 375, gabarit tablette)
+  // et la colonne de la salle debordait de 45 px, de 213 en Interface
+  // guidee, la barre hors d'atteinte. La page passe en defilement global.
+  // PAGESHELL-200-1c (revue adverse, majeur 2) : a 100 %, en paysage, la
+  // tete restait fixe et la zone du support n'etait qu'une fenetre (39 px en
+  // Interface guidee a 667x375, ou le support n'etait meme pas construit ;
+  // 101 px de support en standard). Le support garde sa hauteur lisible, la
+  // page passe en defilement global et la barre se rejoint en defilant.
+  group('PAGESHELL-200-1c : paysage a 100 %, support lisible', () {
+    for (final InterfaceMode interface in InterfaceMode.values) {
+      for (final (Size, EdgeInsets) cas in const <(Size, EdgeInsets)>[
+        (Size(667, 375), EdgeInsets.zero),
+        (Size(844, 390), EdgeInsets.only(left: 47, right: 47, bottom: 21)),
+        (Size(800, 400), EdgeInsets.only(top: 24, bottom: 16)),
+      ]) {
+        testWidgets('${cas.$1.width.toInt()}x${cas.$1.height.toInt()}, '
+            '${interface.name}', (WidgetTester tester) async {
+          final _Salle salle = await _entrerEnSalle(
+            tester,
+            taille: cas.$1,
+            zoneSure: cas.$2,
+            interface: interface,
+          );
+          _publierParticipants(salle.moteur);
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          await _verifierSupportVisible(tester);
+          await _verifierBarreAtteignable(tester, cas.$1, cas.$2);
+        });
+      }
+    }
+  });
+  // PAGESHELL-200-1c (revue adverse, majeur 1) : quand la salle « tenait »
+  // dans la vue, le minimum utile ne s'appliquait qu'a la zone etiree (en-tete
+  // compris), pas au support : 13 px de support visibles a 390x844 en
+  // Interface guidee a 200 %, 58 a 414x896, 82 sur 312 a 360x800 en standard ;
+  // a 100 % en Interface guidee, un support ecrase a 102 px. Le support est
+  // maintenant entier dans sa zone, a sa hauteur lisible, et la page defile
+  // pour le reste.
+  group('PAGESHELL-200-1c : support visible quand la salle tient', () {
+    for (final (Size, double, InterfaceMode) cas
+        in const <(Size, double, InterfaceMode)>[
+          (Size(390, 844), 2, InterfaceMode.enfant),
+          (Size(414, 896), 2, InterfaceMode.enfant),
+          (Size(360, 800), 2, InterfaceMode.standard),
+          (Size(390, 844), 1, InterfaceMode.enfant),
+          (Size(360, 800), 1, InterfaceMode.standard),
+        ]) {
+      for (final TextDirection sens in TextDirection.values) {
+        testWidgets('${cas.$1.width.toInt()}x${cas.$1.height.toInt()}, '
+            'texte x${cas.$2}, ${cas.$3.name}, ${sens.name}', (
+          WidgetTester tester,
+        ) async {
+          final _Salle salle = await _entrerEnSalle(
+            tester,
+            taille: cas.$1,
+            echelleTexte: cas.$2,
+            interface: cas.$3,
+            sens: sens,
+          );
+          _publierParticipants(salle.moteur);
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          await _verifierSupportVisible(tester);
+          await _verifierBarreAtteignable(tester, cas.$1, EdgeInsets.zero);
+        });
+      }
+    }
+  });
+  // PAGESHELL-200-1c (revue adverse, mineur 3) : la ligne du bandeau (icone,
+  // decompte, visites) debordait de 6 px a 320x568 a 100 %, de 1,3 px a
+  // 390x844 a 130 % en Interface guidee, et de 71 px a 320x568 a 130 %, ou
+  // les visites s'ecrasaient a une lettre par ligne (bandeau de 696 px).
+  group('PAGESHELL-200-1c : bandeau du decompte sans debordement', () {
+    for (final (Size, double, InterfaceMode) cas
+        in const <(Size, double, InterfaceMode)>[
+          (Size(320, 568), 1, InterfaceMode.standard),
+          (Size(320, 568), 1, InterfaceMode.enfant),
+          (Size(320, 568), 1.3, InterfaceMode.standard),
+          (Size(390, 844), 1.3, InterfaceMode.enfant),
+          (Size(360, 800), 1.3, InterfaceMode.standard),
+        ]) {
+      testWidgets('${cas.$1.width.toInt()}x${cas.$1.height.toInt()}, texte '
+          'x${cas.$2}, ${cas.$3.name}', (WidgetTester tester) async {
+        final _Salle salle = await _entrerEnSalle(
+          tester,
+          taille: cas.$1,
+          echelleTexte: cas.$2,
+          interface: cas.$3,
+        );
+        _publierParticipants(salle.moteur);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        final Finder bandeau = find.byType(BandeauDecompteVisite);
+        // Ni lettre par ligne : le bandeau garde une hauteur de bandeau.
+        expect(tester.getSize(bandeau).height, lessThan(cas.$1.height / 2));
+        verifierAucunMotCoupe(tester, bandeau);
+      });
+    }
+  });
+  group('PAGESHELL-200-1c : 667x375 sans zone sure, a 200 %', () {
+    for (final InterfaceMode interface in InterfaceMode.values) {
+      for (final TextDirection sens in TextDirection.values) {
+        testWidgets('${interface.name}, ${sens.name}', (
+          WidgetTester tester,
+        ) async {
+          final _Salle salle = await _entrerEnSalle(
+            tester,
+            taille: const Size(667, 375),
+            echelleTexte: 2,
+            sens: sens,
+            interface: interface,
+          );
+          _publierParticipants(salle.moteur);
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          final ScrollPosition page = tester
+              .stateList<ScrollableState>(
+                find.ancestor(
+                  of: find.byType(PanneauObservationTuteur),
+                  matching: find.byType(Scrollable),
+                ),
+              )
+              .last
+              .position;
+          expect(page.maxScrollExtent, greaterThan(0));
+          page.jumpTo(page.maxScrollExtent);
+          await tester.pump();
+          expect(tester.takeException(), isNull);
+          for (final String libelle in <String>[
+            v.sonRecu,
+            v.agrandir,
+            v.quitter,
+          ]) {
+            final Rect r = tester.getRect(find.text(libelle));
+            expect(r.top, greaterThanOrEqualTo(-0.5));
+            expect(r.bottom, lessThanOrEqualTo(375 + 0.5));
+          }
+          page.jumpTo(0);
+          await tester.pump();
+          await _verifierSupportVisible(tester);
+        });
+      }
+    }
+  });
+}
+
+/// PAGESHELL-200-1c : la barre entiere se rejoint dans la zone sure, en
+/// defilant la page jusqu'au bout quand elle defile.
+Future<void> _verifierBarreAtteignable(
+  WidgetTester tester,
+  Size taille,
+  EdgeInsets zoneSure,
+) async {
+  final List<ScrollableState> page = tester
+      .stateList<ScrollableState>(
+        find.ancestor(
+          of: find.byType(PanneauObservationTuteur),
+          matching: find.byType(Scrollable),
+        ),
+      )
+      .toList();
+  if (page.isNotEmpty) {
+    page.last.position.jumpTo(page.last.position.maxScrollExtent);
+    await tester.pump();
+  }
+  expect(tester.takeException(), isNull);
+  for (final String libelle in <String>[v.sonRecu, v.agrandir, v.quitter]) {
+    final Rect r = tester.getRect(find.text(libelle));
+    expect(r.top, greaterThanOrEqualTo(zoneSure.top - 0.5));
+    expect(r.bottom, lessThanOrEqualTo(taille.height - zoneSure.bottom + 0.5));
+  }
+}
+
+/// PAGESHELL-200-1c : la zone du support (le defileur imbrique de la salle)
+/// montre, sans defiler, l'en-tete et le support a sa hauteur lisible. Avant,
+/// elle pouvait n'etre qu'une fenetre de 48 px sur le haut de l'en-tete.
+Future<void> _verifierSupportVisible(WidgetTester tester) async {
+  final Finder support = find.byKey(
+    const ValueKey<String>('support-observation'),
+  );
+  final Finder zone = find
+      .ancestor(of: support, matching: find.byType(Scrollable))
+      .first;
+  final ScrollPosition imbrique = tester.state<ScrollableState>(zone).position;
+  imbrique.jumpTo(imbrique.minScrollExtent);
+  await tester.pump();
+  final Rect cadre = tester.getRect(zone);
+  final Rect r = tester.getRect(support);
+  expect(r.height, greaterThanOrEqualTo(200 - 0.5));
+  expect(r.top, greaterThanOrEqualTo(cadre.top - 0.5));
+  expect(r.bottom, lessThanOrEqualTo(cadre.bottom + 0.5));
+  // L'en-tete aussi, pastille du direct comprise.
+  final Rect pastille = tester.getRect(
+    find.descendant(of: zone, matching: find.text(v.enDirect)),
+  );
+  expect(pastille.top, greaterThanOrEqualTo(cadre.top - 0.5));
+  expect(pastille.bottom, lessThanOrEqualTo(cadre.bottom + 0.5));
 }
 
 /// Le nombre de noeuds semantiques, sous [cadre] compris, dont le libelle

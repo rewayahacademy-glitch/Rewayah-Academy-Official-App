@@ -150,19 +150,31 @@ class BandeauDecompteVisite extends StatelessWidget {
                   children: <Widget>[
                     icone,
                     Ecart.hSm,
-                    decompte,
-                    if (visites != null) ...<Widget>[
-                      Ecart.hMd,
-                      Expanded(
-                        child: Text(
-                          visites,
-                          textAlign: TextAlign.end,
-                          style: paire.applyTo(
-                            textes.bodySmall ?? const TextStyle(),
-                          ),
-                        ),
+                    // PAGESHELL-200-1c : le decompte et les visites
+                    // partagent la largeur. Quand ils ne tiennent pas cote a
+                    // cote (320 px a 100 %, 130 % sur telephone), les
+                    // visites passent sous le decompte au lieu d'etre
+                    // ecrasees a une lettre par ligne (bandeau de 696 px a
+                    // 320x568 et 130 %) et de faire deborder la ligne.
+                    Expanded(
+                      child: Wrap(
+                        alignment: WrapAlignment.spaceBetween,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: AppSpacing.md,
+                        runSpacing: AppSpacing.xs,
+                        children: <Widget>[
+                          decompte,
+                          if (visites != null)
+                            Text(
+                              visites,
+                              textAlign: TextAlign.end,
+                              style: paire.applyTo(
+                                textes.bodySmall ?? const TextStyle(),
+                              ),
+                            ),
+                        ],
                       ),
-                    ],
+                    ),
                   ],
                 ),
               if (budgetIncertain || b == null) ...<Widget>[
