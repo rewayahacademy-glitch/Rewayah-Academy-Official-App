@@ -198,6 +198,7 @@ class _Ecran {
     this.surcharges, {
     this.geste,
     this.principal = false,
+    this.variantes,
   });
 
   final String nom;
@@ -205,6 +206,9 @@ class _Ecran {
   final List<Override> Function() surcharges;
   final Future<void> Function(WidgetTester tester)? geste;
   final bool principal;
+
+  /// Variantes propres a cet ecran ; sinon celles de `principal`.
+  final List<_Variante>? variantes;
 }
 
 // --- Coquilles des roles ----------------------------------------------------
@@ -409,6 +413,13 @@ Future<void> _repondreMarque(WidgetTester tester) async {
   }
 }
 
+/// Fait defiler la publication jusqu'au composer de reponse, place apres
+/// les reponses depuis COM-RC tour 2 (lot E).
+Future<void> _allerAuComposerReponse(WidgetTester tester) async {
+  await tester.ensureVisible(find.byKey(ComposerReponse.cleEnvoyer));
+  await _stabiliser(tester);
+}
+
 Future<void> _focus(WidgetTester tester) =>
     _toucher(tester, find.byKey(BasculeFocus.cleEntrer));
 
@@ -559,6 +570,15 @@ List<_Ecran> _ecrans() {
       ),
       () => communaute(SituationDemoCommunaute.nominal),
       geste: _repondreMarque,
+    ),
+    _Ecran(
+      'communaute_publication_composer',
+      Routes.enseignantPublicationPour(
+        DonneesCommunauteDemo.publicationOuverte,
+      ),
+      () => communaute(SituationDemoCommunaute.nominal),
+      geste: _allerAuComposerReponse,
+      variantes: <_Variante>[..._accessibilite, ..._etats],
     ),
     _Ecran(
       'communaute_vide',
@@ -771,9 +791,11 @@ void main() {
     });
 
     for (final _Ecran ecran in _ecrans()) {
-      final List<_Variante> variantes = ecran.principal
-          ? <_Variante>[..._completes, ..._accessibilite]
-          : _etats;
+      final List<_Variante> variantes =
+          ecran.variantes ??
+          (ecran.principal
+              ? <_Variante>[..._completes, ..._accessibilite]
+              : _etats);
       for (final _Variante v in variantes) {
         _capturerEcran(ecran, v);
       }
