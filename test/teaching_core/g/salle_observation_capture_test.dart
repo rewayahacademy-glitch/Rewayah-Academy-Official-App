@@ -86,6 +86,7 @@ Future<FauxMoteurClasse> _monterSalle(
   double echelleTexte = 1,
   bool sansImage = false,
   TextDirection? sens,
+  InterfaceMode interface = InterfaceMode.standard,
 }) async {
   final FauxPortPolitique politique = FauxPortPolitique();
   addTearDown(politique.fermer);
@@ -128,8 +129,8 @@ Future<FauxMoteurClasse> _monterSalle(
           child: Builder(
             builder: (BuildContext context) => MaterialApp.router(
               debugShowCheckedModeBanner: false,
-              theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
-              darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+              theme: AppTheme.pour(interface, Brightness.light),
+              darkTheme: AppTheme.pour(interface, Brightness.dark),
               themeMode: mode,
               locale: TranslationProvider.of(context).flutterLocale,
               supportedLocales: AppLocaleUtils.supportedLocales,
@@ -205,6 +206,26 @@ Future<(int, int)> _taillePx(WidgetTester tester, String chemin) async {
 
 Future<void> _capturer(WidgetTester tester, String nom) async =>
     debugPrint('PNG ${await capturer(tester, nom)}');
+
+/// PAGESHELL-200-1b : fait defiler la page de la salle tout en haut, ou
+/// tout au bout (la barre). Sans defileur de page (tete fixe), ne fait rien.
+Future<void> _defilerPage(WidgetTester tester, {required bool bout}) async {
+  final List<ScrollableState> page = tester
+      .stateList<ScrollableState>(
+        find.ancestor(
+          of: find.byType(BarreCommandesObservation),
+          matching: find.byType(Scrollable),
+        ),
+      )
+      .where((ScrollableState d) => d.position.axis == Axis.vertical)
+      .toList();
+  if (page.isEmpty) {
+    return;
+  }
+  final ScrollPosition position = page.last.position;
+  position.jumpTo(bout ? position.maxScrollExtent : 0);
+  await stabiliser(tester);
+}
 
 Future<void> _presser(WidgetTester tester, String texte) async {
   await tester.tap(find.text(texte));
@@ -437,6 +458,104 @@ void main() {
       await _monterSalle(tester, echelleTexte: 2);
       await _capturer(tester, 'o2_large_texte200_768x900@1_light');
     });
+
+    // PAGESHELL-200-1b : a 200 % sous une tete qui defile, le corps recoit
+    // max(minimum utile, vue - tete). Portrait a hauteur atypique et
+    // telephone en paysage sous les barres d'Android : en haut de la page,
+    // le bandeau ; au bout, la barre entiere dans la zone sure. Sombre, 1440
+    // et Interface guidee en non-regression.
+    for (final (String, Size, EdgeInsets, ThemeMode, InterfaceMode) cas
+        in const <(String, Size, EdgeInsets, ThemeMode, InterfaceMode)>[
+          (
+            '320x568',
+            Size(320, 568),
+            _zoneSure,
+            ThemeMode.light,
+            InterfaceMode.standard,
+          ),
+          (
+            '320x568',
+            Size(320, 568),
+            _zoneSure,
+            ThemeMode.dark,
+            InterfaceMode.standard,
+          ),
+          (
+            '320x480',
+            Size(320, 480),
+            EdgeInsets.only(top: 20),
+            ThemeMode.light,
+            InterfaceMode.standard,
+          ),
+          (
+            '800x360',
+            Size(800, 360),
+            EdgeInsets.only(top: 24, bottom: 48),
+            ThemeMode.light,
+            InterfaceMode.standard,
+          ),
+          (
+            '800x360',
+            Size(800, 360),
+            EdgeInsets.only(top: 24, bottom: 48),
+            ThemeMode.dark,
+            InterfaceMode.standard,
+          ),
+          (
+            '320x568',
+            Size(320, 568),
+            _zoneSure,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+          ),
+          (
+            '320x844',
+            Size(320, 844),
+            _zoneSure,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+          ),
+          (
+            '390x844',
+            Size(390, 844),
+            _zoneSure,
+            ThemeMode.light,
+            InterfaceMode.enfant,
+          ),
+          (
+            '1440x900',
+            Size(1440, 900),
+            EdgeInsets.zero,
+            ThemeMode.light,
+            InterfaceMode.standard,
+          ),
+          (
+            '1440x900',
+            Size(1440, 900),
+            EdgeInsets.zero,
+            ThemeMode.dark,
+            InterfaceMode.standard,
+          ),
+        ]) {
+      final double densite = cas.$2.width >= 1440 ? 1 : 2;
+      final String guidee = cas.$5 == InterfaceMode.enfant ? '_guidee' : '';
+      for (final bool bout in <bool>[false, true]) {
+        final String nom =
+            'pageshell200_1b_${cas.$1}@${densite.toInt()}_texte200_'
+            '${cas.$4.name}${guidee}_${bout ? 'bout' : 'haut'}';
+        testWidgets(nom, (WidgetTester tester) async {
+          fixerVueCapture(tester, cas.$2, densite, zoneSure: cas.$3);
+          await _monterSalle(
+            tester,
+            echelleTexte: 2,
+            mode: cas.$4,
+            interface: cas.$5,
+          );
+          await _defilerPage(tester, bout: bout);
+          await _capturer(tester, nom);
+        });
+      }
+    }
 
     // PAGESHELL-200-1 (reserve 2) : la barre large seule, la ou l'ancienne
     // coupait « Quitter » (440 px de barre, texte a 300 %).

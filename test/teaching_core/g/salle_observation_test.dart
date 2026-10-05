@@ -124,6 +124,7 @@ Future<_Salle> _entrerEnSalle(
   bool horsLigne = false,
   TextDirection? sens,
   EdgeInsets zoneSure = EdgeInsets.zero,
+  InterfaceMode interface = InterfaceMode.standard,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -160,8 +161,8 @@ Future<_Salle> _entrerEnSalle(
       ),
       child: TranslationProvider(
         child: MaterialApp.router(
-          theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
-          darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+          theme: AppTheme.pour(interface, Brightness.light),
+          darkTheme: AppTheme.pour(interface, Brightness.dark),
           themeMode: mode,
           builder: (BuildContext context, Widget? enfant) => MediaQuery(
             data: MediaQuery.of(context)
@@ -839,6 +840,42 @@ void main() {
           '${v.parle(nom: 'Mariam')}, ${v.cameraFermee}',
         );
       });
+    }
+  });
+  // PAGESHELL-200-1b : en Interface guidee a 320 px et 200 %, le titre de
+  // la salle, serre contre la pastille du direct, se coupait dans un mot
+  // (« Class / e »). La pastille passe sous le titre.
+  group('PAGESHELL-200-1b : en-tete sans mot coupe', () {
+    for (final InterfaceMode interface in InterfaceMode.values) {
+      for (final TextDirection sens in TextDirection.values) {
+        testWidgets('320x844, texte x2, ${interface.name}, ${sens.name}', (
+          WidgetTester tester,
+        ) async {
+          final _Salle salle = await _entrerEnSalle(
+            tester,
+            taille: const Size(320, 844),
+            echelleTexte: 2,
+            sens: sens,
+            interface: interface,
+            zoneSure: const EdgeInsets.only(top: 47, bottom: 34),
+            classes: FauxClassesFoyer(
+              classes: <ClasseFoyer>[
+                ClasseFoyer(
+                  eleveId: 'enfant-1',
+                  classe: classeFictive(groupeId: 'c1'),
+                ),
+              ],
+            ),
+          );
+          _publierParticipants(salle.moteur);
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          final Finder titre = find.text(classeFictive(groupeId: 'c1').libelle);
+          expect(titre, findsOneWidget);
+          verifierAucunMotCoupe(tester, titre);
+          verifierAucunMotCoupe(tester, find.text(v.enDirect));
+        });
+      }
     }
   });
   // PAGESHELL-200-1b (reserves 1 et 2 de la revue PAGESHELL-200-1) : a 200 %

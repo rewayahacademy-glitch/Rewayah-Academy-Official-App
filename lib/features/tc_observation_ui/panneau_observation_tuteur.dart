@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show SliverConstraints;
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -319,32 +320,38 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Row(
+        // PAGESHELL-200-1b : en Interface guidee a 320 px et 200 %, le titre
+        // serre contre la pastille se coupait dans un mot (« Class / e »).
+        // La pastille passe sous le titre quand les deux ne tiennent pas sur
+        // une ligne ; le titre garde toute la largeur, et un mot trop long
+        // pour elle se reduit (borne de lisibilite) au lieu d'etre coupe.
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
           children: <Widget>[
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Semantics(
-                    header: true,
-                    child: Text(
-                      widget.titre ?? v.titre,
-                      style: palette.inkStrong.applyTo(
-                        textes.titleMedium ?? const TextStyle(),
-                      ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Semantics(
+                  header: true,
+                  child: TexteSansCoupure(
+                    widget.titre ?? v.titre,
+                    style: palette.inkStrong.applyTo(
+                      textes.titleMedium ?? const TextStyle(),
                     ),
                   ),
-                  if (sousTitre != null)
-                    Text(
-                      sousTitre,
-                      style: palette.inkMuted.applyTo(
-                        textes.bodySmall ?? const TextStyle(),
-                      ),
+                ),
+                if (sousTitre != null)
+                  TexteSansCoupure(
+                    sousTitre,
+                    style: palette.inkMuted.applyTo(
+                      textes.bodySmall ?? const TextStyle(),
                     ),
-                ],
-              ),
+                  ),
+              ],
             ),
-            Ecart.hSm,
             _pastilleDirect(),
           ],
         ),
