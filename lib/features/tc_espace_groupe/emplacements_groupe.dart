@@ -155,13 +155,13 @@ class BlocBibliotheque extends ConsumerWidget {
         // bureau : `IntrinsicWidth` donne au lien sa largeur naturelle,
         // bornee par la place restante.
         if (empile) ...<Widget>[
-          // Un seul mot plus large que l'ecran a 200 % : il se resserre au lieu
-          // d'etre coupe (aucun mot coupe, MA-4).
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: AlignmentDirectional.centerStart,
-            child: IntrinsicWidth(child: entete),
-          ),
+          // Le titre garde la taille des autres titres de section et passe a
+          // la ligne entre les mots : `SectionHeader` le rend en
+          // `TexteSansCoupure` des que le texte est agrandi, et seul un mot
+          // plus large que la place se resserre (aucun mot coupe, MA-4).
+          // Jamais la phrase entiere reduite en bloc (BLOC-BIB-1, revue
+          // BENTO-3b-R C5) : meme rendu que `EnteteVoirTout`.
+          entete,
           if (voirTout != null) ...<Widget>[
             Ecart.vSm,
             Align(alignment: AlignmentDirectional.centerStart, child: voirTout),
