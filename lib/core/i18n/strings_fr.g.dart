@@ -12670,6 +12670,225 @@ class Traductions$comptable$contractuels$fr {
 
 	// Translations
 
+	/// fr: 'Obligations'
+	String get ongletObligations => 'Obligations';
+
+	/// fr: 'À approuver'
+	String get ongletAApprouver => 'À approuver';
+
+	/// fr: 'À payer'
+	String get ongletAPayer => 'À payer';
+
+	/// fr: 'Historique'
+	String get ongletHistorique => 'Historique';
+
+	/// fr: 'Vue des obligations'
+	String get ongletsLecteur => 'Vue des obligations';
+
+	/// fr: 'Bénéficiaire'
+	String get colonneBeneficiaire => 'Bénéficiaire';
+
+	/// fr: 'Objet'
+	String get colonneObjet => 'Objet';
+
+	/// fr: 'Montant'
+	String get colonneMontant => 'Montant';
+
+	/// fr: 'Échéance'
+	String get colonneEcheance => 'Échéance';
+
+	/// fr: 'Statut'
+	String get colonneStatut => 'Statut';
+
+	/// fr: 'Récurrente'
+	String get typeRecurrente => 'Récurrente';
+
+	/// fr: 'Ponctuelle'
+	String get typePonctuelle => 'Ponctuelle';
+
+	/// fr: 'Échéance : {date}'
+	String echeanceLe({required Object date}) => 'Échéance : ${date}';
+
+	/// fr: 'Payer'
+	String get payer => 'Payer';
+
+	/// fr: 'Payer l'obligation {objet}'
+	String payerLecteur({required Object objet}) => 'Payer l\'obligation ${objet}';
+
+	/// fr: 'Approuver'
+	String get approuver => 'Approuver';
+
+	/// fr: 'Ouvrir l'obligation {objet}'
+	String ouvrirLecteur({required Object objet}) => 'Ouvrir l\'obligation ${objet}';
+
+	/// fr: 'Nouvelle obligation indisponible : {raison}.'
+	String creationBloquee({required Object raison}) => 'Nouvelle obligation indisponible : ${raison}.';
+
+	/// fr: 'Aucune obligation en cours'
+	String get videObligations => 'Aucune obligation en cours';
+
+	/// fr: 'Les obligations créées apparaissent ici, avec leur échéance et leur statut.'
+	String get videObligationsDetail => 'Les obligations créées apparaissent ici, avec leur échéance et leur statut.';
+
+	/// fr: 'Rien à approuver'
+	String get videAApprouver => 'Rien à approuver';
+
+	/// fr: 'Les obligations en attente d'une approbation apparaissent ici.'
+	String get videAApprouverDetail => 'Les obligations en attente d\'une approbation apparaissent ici.';
+
+	/// fr: 'Rien à payer'
+	String get videAPayer => 'Rien à payer';
+
+	/// fr: 'Une obligation approuvée apparaît ici, prête à être payée.'
+	String get videAPayerDetail => 'Une obligation approuvée apparaît ici, prête à être payée.';
+
+	/// fr: 'Aucune obligation terminée'
+	String get videHistorique => 'Aucune obligation terminée';
+
+	/// fr: 'Les obligations payées, refusées ou annulées apparaissent ici.'
+	String get videHistoriqueDetail => 'Les obligations payées, refusées ou annulées apparaissent ici.';
+
+	/// fr: 'Montant défini à la création, figé après approbation.'
+	String get montantDefini => 'Montant défini à la création, figé après approbation.';
+
+	/// fr: 'Montant figé à l'approbation : il ne se modifie plus.'
+	String get montantFige => 'Montant figé à l\'approbation : il ne se modifie plus.';
+
+	/// fr: 'Montant'
+	String get montantTitre => 'Montant';
+
+	/// fr: 'Détail du montant'
+	String get sectionLignes => 'Détail du montant';
+
+	/// fr: 'Informations'
+	String get sectionInfos => 'Informations';
+
+	/// fr: 'Historique de l'obligation'
+	String get sectionHistorique => 'Historique de l\'obligation';
+
+	/// fr: 'Aucune opération enregistrée pour cette obligation.'
+	String get historiqueVide => 'Aucune opération enregistrée pour cette obligation.';
+
+	/// fr: 'Bénéficiaire'
+	String get champBeneficiaire => 'Bénéficiaire';
+
+	/// fr: 'Type'
+	String get champType => 'Type';
+
+	/// fr: 'Échéance'
+	String get champEcheance => 'Échéance';
+
+	/// fr: 'Justificatif'
+	String get champJustificatif => 'Justificatif';
+
+	/// fr: 'Centre de coût'
+	String get champCentreCout => 'Centre de coût';
+
+	/// fr: 'Auteur'
+	String get champAuteur => 'Auteur';
+
+	/// fr: 'Approbateur'
+	String get champApprobateur => 'Approbateur';
+
+	/// fr: 'Paiement du bénéficiaire'
+	String get champProfilPaiement => 'Paiement du bénéficiaire';
+
+	/// fr: 'Motif du refus'
+	String get champMotifRefus => 'Motif du refus';
+
+	/// fr: 'Aucun justificatif joint'
+	String get aucunJustificatif => 'Aucun justificatif joint';
+
+	/// fr: 'Non renseigné'
+	String get nonRenseigne => 'Non renseigné';
+
+	/// fr: 'Source : {source}'
+	String ligneSource({required Object source}) => 'Source : ${source}';
+
+	/// fr: 'Ajouté par {auteur}'
+	String ligneAuteur({required Object auteur}) => 'Ajouté par ${auteur}';
+
+	/// fr: 'Validation : {validation}'
+	String ligneValidation({required Object validation}) => 'Validation : ${validation}';
+
+	/// fr: 'Le paiement s'ouvre dans le détail du paiement, avec le montant exact.'
+	String get payerAide => 'Le paiement s\'ouvre dans le détail du paiement, avec le montant exact.';
+
+	/// fr: 'Après l'approbation, le montant est figé et l'obligation devient payable.'
+	String get approuverAide => 'Après l\'approbation, le montant est figé et l\'obligation devient payable.';
+
+	/// fr: 'Renvoyer l'invitation'
+	String get renvoyerInvitation => 'Renvoyer l\'invitation';
+
+	/// fr: 'Ce bénéficiaire externe saisit lui-même sa méthode de paiement, depuis son invitation sécurisée.'
+	String get invitationAide => 'Ce bénéficiaire externe saisit lui-même sa méthode de paiement, depuis son invitation sécurisée.';
+
+	/// fr: 'Invitation renvoyée'
+	String get invitationRenvoyee => 'Invitation renvoyée';
+
+	/// fr: 'Nous ne savons pas si l'approbation a été prise en compte. Actualisez l'obligation avant de réessayer.'
+	String get erreurApprobation => 'Nous ne savons pas si l\'approbation a été prise en compte. Actualisez l\'obligation avant de réessayer.';
+
+	/// fr: 'Nous ne savons pas si l'invitation est repartie. Actualisez l'obligation avant de réessayer.'
+	String get erreurInvitation => 'Nous ne savons pas si l\'invitation est repartie. Actualisez l\'obligation avant de réessayer.';
+
+	/// fr: 'Le bénéficiaire, l'échéance et le centre de coût sont proposés : changez-les si besoin, puis saisissez l'objet et le montant.'
+	String get formIntro => 'Le bénéficiaire, l\'échéance et le centre de coût sont proposés : changez-les si besoin, puis saisissez l\'objet et le montant.';
+
+	/// fr: 'Nouveau bénéficiaire externe'
+	String get beneficiaireExterne => 'Nouveau bénéficiaire externe';
+
+	/// fr: 'Il reçoit une invitation sécurisée pour saisir lui-même sa méthode de paiement.'
+	String get beneficiaireExterneAide => 'Il reçoit une invitation sécurisée pour saisir lui-même sa méthode de paiement.';
+
+	/// fr: 'Nom du bénéficiaire externe'
+	String get champNomExterne => 'Nom du bénéficiaire externe';
+
+	/// fr: 'Changer l'échéance'
+	String get changerEcheance => 'Changer l\'échéance';
+
+	/// fr: 'Devise : {devise}'
+	String deviseDe({required Object devise}) => 'Devise : ${devise}';
+
+	/// fr: 'Objet de l'obligation'
+	String get champObjet => 'Objet de l\'obligation';
+
+	/// fr: 'Par exemple : Facture #024'
+	String get aideObjet => 'Par exemple : Facture #024';
+
+	/// fr: 'Référence du justificatif (facultatif)'
+	String get champRefJustificatif => 'Référence du justificatif (facultatif)';
+
+	/// fr: 'Montant'
+	String get champMontantSaisi => 'Montant';
+
+	/// fr: 'Saisi une seule fois : il ne se modifie plus après l'approbation.'
+	String get aideMontant => 'Saisi une seule fois : il ne se modifie plus après l\'approbation.';
+
+	/// fr: 'Créer l'obligation'
+	String get creer => 'Créer l\'obligation';
+
+	/// fr: 'Vous êtes hors ligne. Reconnectez-vous pour créer l'obligation.'
+	String get horsLigneCreation => 'Vous êtes hors ligne. Reconnectez-vous pour créer l\'obligation.';
+
+	/// fr: 'Saisissez l'objet de l'obligation.'
+	String get erreurObjet => 'Saisissez l\'objet de l\'obligation.';
+
+	/// fr: 'Saisissez un montant supérieur à zéro, par exemple 350 ou 350,50.'
+	String get erreurMontant => 'Saisissez un montant supérieur à zéro, par exemple 350 ou 350,50.';
+
+	/// fr: 'Saisissez le nom du bénéficiaire externe.'
+	String get erreurNomExterne => 'Saisissez le nom du bénéficiaire externe.';
+
+	/// fr: 'Nous ne savons pas si l'obligation a été créée. Actualisez la liste avant de réessayer.'
+	String get erreurCreation => 'Nous ne savons pas si l\'obligation a été créée. Actualisez la liste avant de réessayer.';
+
+	/// fr: 'Votre compte ne peut pas créer d'obligation.'
+	String get creationIndisponible => 'Votre compte ne peut pas créer d\'obligation.';
+
+	/// fr: 'Retour aux contractuels'
+	String get retourListe => 'Retour aux contractuels';
+
 	/// fr: 'Contractuels et obligations'
 	String get titre => 'Contractuels et obligations';
 
@@ -24400,6 +24619,79 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.sousTitre' => 'Vos coordonnées de paiement, modifiables par vous seul.',
 			'comptable.beneficiaires.recevoir.notice' => 'Informations de paiement à compléter',
 			'comptable.beneficiaires.recevoir.configurer' => 'Configurer mes paiements',
+			'comptable.contractuels.ongletObligations' => 'Obligations',
+			'comptable.contractuels.ongletAApprouver' => 'À approuver',
+			'comptable.contractuels.ongletAPayer' => 'À payer',
+			'comptable.contractuels.ongletHistorique' => 'Historique',
+			'comptable.contractuels.ongletsLecteur' => 'Vue des obligations',
+			'comptable.contractuels.colonneBeneficiaire' => 'Bénéficiaire',
+			'comptable.contractuels.colonneObjet' => 'Objet',
+			'comptable.contractuels.colonneMontant' => 'Montant',
+			'comptable.contractuels.colonneEcheance' => 'Échéance',
+			'comptable.contractuels.colonneStatut' => 'Statut',
+			'comptable.contractuels.typeRecurrente' => 'Récurrente',
+			'comptable.contractuels.typePonctuelle' => 'Ponctuelle',
+			'comptable.contractuels.echeanceLe' => ({required Object date}) => 'Échéance : ${date}',
+			'comptable.contractuels.payer' => 'Payer',
+			'comptable.contractuels.payerLecteur' => ({required Object objet}) => 'Payer l\'obligation ${objet}',
+			'comptable.contractuels.approuver' => 'Approuver',
+			'comptable.contractuels.ouvrirLecteur' => ({required Object objet}) => 'Ouvrir l\'obligation ${objet}',
+			'comptable.contractuels.creationBloquee' => ({required Object raison}) => 'Nouvelle obligation indisponible : ${raison}.',
+			'comptable.contractuels.videObligations' => 'Aucune obligation en cours',
+			'comptable.contractuels.videObligationsDetail' => 'Les obligations créées apparaissent ici, avec leur échéance et leur statut.',
+			'comptable.contractuels.videAApprouver' => 'Rien à approuver',
+			'comptable.contractuels.videAApprouverDetail' => 'Les obligations en attente d\'une approbation apparaissent ici.',
+			'comptable.contractuels.videAPayer' => 'Rien à payer',
+			'comptable.contractuels.videAPayerDetail' => 'Une obligation approuvée apparaît ici, prête à être payée.',
+			'comptable.contractuels.videHistorique' => 'Aucune obligation terminée',
+			'comptable.contractuels.videHistoriqueDetail' => 'Les obligations payées, refusées ou annulées apparaissent ici.',
+			'comptable.contractuels.montantDefini' => 'Montant défini à la création, figé après approbation.',
+			'comptable.contractuels.montantFige' => 'Montant figé à l\'approbation : il ne se modifie plus.',
+			'comptable.contractuels.montantTitre' => 'Montant',
+			'comptable.contractuels.sectionLignes' => 'Détail du montant',
+			'comptable.contractuels.sectionInfos' => 'Informations',
+			'comptable.contractuels.sectionHistorique' => 'Historique de l\'obligation',
+			'comptable.contractuels.historiqueVide' => 'Aucune opération enregistrée pour cette obligation.',
+			'comptable.contractuels.champBeneficiaire' => 'Bénéficiaire',
+			'comptable.contractuels.champType' => 'Type',
+			'comptable.contractuels.champEcheance' => 'Échéance',
+			'comptable.contractuels.champJustificatif' => 'Justificatif',
+			'comptable.contractuels.champCentreCout' => 'Centre de coût',
+			'comptable.contractuels.champAuteur' => 'Auteur',
+			'comptable.contractuels.champApprobateur' => 'Approbateur',
+			'comptable.contractuels.champProfilPaiement' => 'Paiement du bénéficiaire',
+			'comptable.contractuels.champMotifRefus' => 'Motif du refus',
+			'comptable.contractuels.aucunJustificatif' => 'Aucun justificatif joint',
+			'comptable.contractuels.nonRenseigne' => 'Non renseigné',
+			'comptable.contractuels.ligneSource' => ({required Object source}) => 'Source : ${source}',
+			'comptable.contractuels.ligneAuteur' => ({required Object auteur}) => 'Ajouté par ${auteur}',
+			'comptable.contractuels.ligneValidation' => ({required Object validation}) => 'Validation : ${validation}',
+			'comptable.contractuels.payerAide' => 'Le paiement s\'ouvre dans le détail du paiement, avec le montant exact.',
+			'comptable.contractuels.approuverAide' => 'Après l\'approbation, le montant est figé et l\'obligation devient payable.',
+			'comptable.contractuels.renvoyerInvitation' => 'Renvoyer l\'invitation',
+			'comptable.contractuels.invitationAide' => 'Ce bénéficiaire externe saisit lui-même sa méthode de paiement, depuis son invitation sécurisée.',
+			'comptable.contractuels.invitationRenvoyee' => 'Invitation renvoyée',
+			'comptable.contractuels.erreurApprobation' => 'Nous ne savons pas si l\'approbation a été prise en compte. Actualisez l\'obligation avant de réessayer.',
+			'comptable.contractuels.erreurInvitation' => 'Nous ne savons pas si l\'invitation est repartie. Actualisez l\'obligation avant de réessayer.',
+			'comptable.contractuels.formIntro' => 'Le bénéficiaire, l\'échéance et le centre de coût sont proposés : changez-les si besoin, puis saisissez l\'objet et le montant.',
+			'comptable.contractuels.beneficiaireExterne' => 'Nouveau bénéficiaire externe',
+			'comptable.contractuels.beneficiaireExterneAide' => 'Il reçoit une invitation sécurisée pour saisir lui-même sa méthode de paiement.',
+			'comptable.contractuels.champNomExterne' => 'Nom du bénéficiaire externe',
+			'comptable.contractuels.changerEcheance' => 'Changer l\'échéance',
+			'comptable.contractuels.deviseDe' => ({required Object devise}) => 'Devise : ${devise}',
+			'comptable.contractuels.champObjet' => 'Objet de l\'obligation',
+			'comptable.contractuels.aideObjet' => 'Par exemple : Facture #024',
+			'comptable.contractuels.champRefJustificatif' => 'Référence du justificatif (facultatif)',
+			'comptable.contractuels.champMontantSaisi' => 'Montant',
+			'comptable.contractuels.aideMontant' => 'Saisi une seule fois : il ne se modifie plus après l\'approbation.',
+			'comptable.contractuels.creer' => 'Créer l\'obligation',
+			'comptable.contractuels.horsLigneCreation' => 'Vous êtes hors ligne. Reconnectez-vous pour créer l\'obligation.',
+			'comptable.contractuels.erreurObjet' => 'Saisissez l\'objet de l\'obligation.',
+			'comptable.contractuels.erreurMontant' => 'Saisissez un montant supérieur à zéro, par exemple 350 ou 350,50.',
+			'comptable.contractuels.erreurNomExterne' => 'Saisissez le nom du bénéficiaire externe.',
+			'comptable.contractuels.erreurCreation' => 'Nous ne savons pas si l\'obligation a été créée. Actualisez la liste avant de réessayer.',
+			'comptable.contractuels.creationIndisponible' => 'Votre compte ne peut pas créer d\'obligation.',
+			'comptable.contractuels.retourListe' => 'Retour aux contractuels',
 			'comptable.contractuels.titre' => 'Contractuels et obligations',
 			'comptable.contractuels.sousTitre' => 'Les montants sont définis à la création de l\'obligation, figés après approbation.',
 			'comptable.contractuels.nouvelle' => 'Nouvelle obligation',

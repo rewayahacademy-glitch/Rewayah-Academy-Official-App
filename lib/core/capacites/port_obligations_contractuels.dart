@@ -35,6 +35,8 @@ class ObligationContractuel {
     this.approbateur,
     this.obligationPayableId,
     this.profilBeneficiaire,
+    this.lignes = const <LigneCalcul>[],
+    this.motifRefus,
     this.permissions = PermissionsFinance.lectureSeule,
   });
 
@@ -79,8 +81,61 @@ class ObligationContractuel {
   /// envoyee » pour un externe).
   final EtatProfilPaiement? profilBeneficiaire;
 
+  /// Les lignes du montant, chacune avec sa source, son auteur et sa
+  /// validation (§13.3, §23) : une obligation recurrente calculee en a
+  /// plusieurs, une ponctuelle une seule (le montant saisi a la creation).
+  /// Le Comptable n'en invente aucune.
+  final List<LigneCalcul> lignes;
+
+  /// Le motif d'un refus, rendu par la source.
+  final String? motifRefus;
+
   /// Ce que la source permet (`approuver`, `payer`...).
   final PermissionsFinance permissions;
+}
+
+/// Ce dont le formulaire « Nouvelle obligation » part (K-57 : on preremplit
+/// ce que la source sait, on propose ce qui se choisit, on ne laisse a
+/// saisir que l'objet et le montant). Rendu par la source avec la capacite
+/// `creerObligation` : un Comptable peut ne pas etre autorise a creer selon
+/// la delegation (§34).
+@immutable
+class ContexteCreationObligation {
+  /// Cree le contexte.
+  const ContexteCreationObligation({
+    required this.permissions,
+    this.beneficiaires = const <IdentiteBeneficiaire>[],
+    this.beneficiairePropose,
+    this.centresCout = const <String>[],
+    this.centreCoutPropose,
+    this.devise = 'USD',
+    this.echeanceProposee,
+  });
+
+  /// Ce que la source permet : `creerObligation` ou, a defaut, la raison
+  /// rendue (`horsDelegation`...).
+  final PermissionsFinance permissions;
+
+  /// Les contractuels connus, proposes au choix.
+  final List<IdentiteBeneficiaire> beneficiaires;
+
+  /// Le beneficiaire preselectionne, quand la source en propose un.
+  final String? beneficiairePropose;
+
+  /// Les centres de cout proposes.
+  final List<String> centresCout;
+
+  /// Le centre de cout preselectionne.
+  final String? centreCoutPropose;
+
+  /// La devise de l'obligation, rendue par la source.
+  final String devise;
+
+  /// L'echeance proposee.
+  final DateTime? echeanceProposee;
+
+  /// Vrai quand la source permet de creer une obligation.
+  bool get peutCreer => permissions.permet(ActionFinance.creerObligation);
 }
 
 /// Le brouillon d'une nouvelle obligation ponctuelle (K-57 : le beneficiaire,
@@ -150,6 +205,9 @@ abstract interface class PortObligationsContractuels {
     FiltreObligationsContractuels filtre,
   );
 
+  /// Ce dont part le formulaire de creation, et si le compte peut creer.
+  Future<ContexteCreationObligation> contexteCreation();
+
   /// Le detail d'une obligation.
   Future<ObligationContractuel> detail(String obligationId);
 
@@ -183,6 +241,10 @@ class ObligationsContractuelsIndisponibles
   Future<List<ObligationContractuel>> liste(
     FiltreObligationsContractuels filtre,
   ) => Future<List<ObligationContractuel>>.error(_manque);
+
+  @override
+  Future<ContexteCreationObligation> contexteCreation() =>
+      Future<ContexteCreationObligation>.error(_manque);
 
   @override
   Future<ObligationContractuel> detail(String obligationId) =>
