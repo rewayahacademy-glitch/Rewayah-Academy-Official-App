@@ -330,7 +330,7 @@
           "communauteDetail": "ستصل مساحة التبادل بين المعلّمين إلى هنا قريبًا.",
           "studioTitre": "@:com.socle.lexique.studio",
           "studioDetail": "ستصل مساحة عمل الفريق إلى هنا قريبًا.",
-          "administrationTitre": "الاتصالات",
+          "administrationTitre": "إدارة الاتصالات",
           "administrationDetail": "ستُدار الإعلانات والإشراف والرسائل من هنا قريبًا.",
           "publierAnnonceTitre": "نشر إعلان",
           "publierAnnonceDetail": "سيصل نشر إعلان لفصل ما إلى هنا قريبًا."
@@ -518,7 +518,15 @@
         "titreBlocage": "منشور محظور",
         "motif": "السبب: {motif}",
         "liensTitre": "روابط المنشور",
-        "consigneBlocage": "عدِّل المنشور ثم انشره من جديد."
+        "consigneBlocage": "عدِّل المنشور ثم انشره من جديد.",
+        "panne": "تعذّر على سياسة المجتمع مراجعة هذا المحتوى، فلم يُرسَل شيء. تحقّق من الاتصال ثم أعد المحاولة.",
+        "reponse": {
+          "titreAvertissement": "ردّ يحتاج إلى مراجعة",
+          "titreBlocage": "ردّ محظور",
+          "avertissement": "يبدو أن هذا الرد يتضمن ترويجًا تجاريًا. احذف الرابط أو الرمز أو العرض قبل الإرسال.",
+          "liensTitre": "روابط الرد",
+          "consigneBlocage": "عدِّل الرد ثم أرسله من جديد."
+        }
       },
       "lien": {
         "interne": "رابط داخلي في رواية",
@@ -555,7 +563,7 @@
         "date": "في {jour}/{mois}"
       },
       "publication": {
-        "auteur": "{fonction}، {moment}",
+        "auteur": "{fonction} · {moment}",
         "enregistrer": "حفظ المنشور",
         "enregistree": "منشور محفوظ",
         "retirer": "إزالة من العناصر المحفوظة",
@@ -889,7 +897,9 @@
           "horsLigne": "أنت غير متصل : لم يُؤكَّد هذا الإعلان بعد. أعد الاتصال ثم أعد المحاولة.",
           "indisponible": "نشر الإعلانات غير متاح بعد. عد لاحقًا.",
           "aucuneCibleTitre": "لا يوجد جمهور متاح",
-          "aucuneCible": "لا يمكنك النشر لأي جمهور حاليًا. اطلب الإذن من الإدارة."
+          "aucuneCible": "لا يمكنك النشر لأي جمهور حاليًا. اطلب الإذن من الإدارة.",
+          "classeRefuseeTitre": "النشر مقصور",
+          "classeRefusee": "لا يمكنك نشر إعلان لهذا الفصل. اطلب الإذن من الإدارة."
         },
         "administration": {
           "nouvelle": "إعلان جديد",

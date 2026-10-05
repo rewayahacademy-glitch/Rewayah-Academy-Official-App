@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/i18n/strings.g.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
@@ -71,6 +72,7 @@ class MatriceAudience extends ConsumerWidget {
     final m = t.com.annonces.administration.matrice;
     final AsyncValue<ReglesAudience> lue = ref.watch(reglesAudienceProvider);
     final ReglesAudience? vue = lue.value;
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     String ouiNon(bool v) => v ? m.oui : m.non;
     return Column(
       key: cle,
@@ -79,7 +81,7 @@ class MatriceAudience extends ConsumerWidget {
         EnTeteSectionAdministration(
           titre: m.titre,
           compteur: lue.hasError ? null : vue?.regles.length,
-          demonstration: vue?.demonstration ?? false,
+          // Une seule pastille « Démonstration » par page (R-15).
           detail: m.detail,
         ),
         Ecart.vMd,
@@ -88,7 +90,7 @@ class MatriceAudience extends ConsumerWidget {
           squelette: const Skeleton.liste(lignes: 3),
           onReessayer: () => ref.invalidate(reglesAudienceProvider),
           erreurVersEtat: (Object e, VoidCallback? r) =>
-              etatErreurAdministration(ref, e, r),
+              etatErreurAdministration(horsLigne, e, r),
           estVide: (ReglesAudience v) => v.regles.isEmpty,
           vide: EtatSysteme(
             nature: NatureEtat.aucunResultat,

@@ -8,6 +8,14 @@
 // l'accuse du serveur, puis rejoint la liste lue ; un echec dit « pas encore
 // confirmee » et propose de la renvoyer avec la meme cle (COM-BR-02).
 //
+// Garde anti-promotion (revue COM-R, R-01 ; COM-BR-07) : une reponse passe
+// par `PortGardePromotion.verifierReponse` AVANT l'envoi, comme une
+// publication. Un verdict qui retient la reponse la garde dans le champ et
+// le dit sous le composer (`GardePromotion`, qui rappelle aussi la
+// politique) ; rien ne part. Un garde sans contrat laisse partir la reponse
+// (le serveur reste seul juge) ; un garde en panne la retient et propose
+// « Réessayer » (R-17).
+//
 // Le texte en cours est un brouillon de session (`PortBrouillons`, spec
 // section 8.2), range sous l'identifiant de la publication : changer de
 // publication ne melange jamais deux reponses.
@@ -28,7 +36,9 @@ import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/carte_groupee.dart';
 import '../../core/widgets/menu_actions.dart';
 import 'flux_publications.dart';
+import 'garde_promotion.dart';
 import 'port_communaute.dart';
+import 'port_garde_promotion.dart';
 
 /// Une reponse ecrite ici, en attente de l'accuse du serveur.
 @immutable
@@ -153,22 +163,30 @@ class _LigneReponse extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        AvatarNom.enLigne(
-          prenom: reponse.auteur.nomAffiche,
-          role: ligneAuteurCommunaute(
-            reponse.auteur.fonction,
-            momentCommunaute(reponse.publieeLe, maintenant),
-          ),
-          diametre: AppAvatar.petit,
-          fin: signaler == null
-              ? null
-              : MenuActions(
-                  points: true,
-                  tooltip: r.menu(nom: reponse.auteur.nomAffiche),
-                  actions: <EntreeAction>[
-                    EntreeAction(libelle: r.signaler, onChoix: signaler),
-                  ],
+        // Le menu « ... » au bord de fin de la ligne (revue COM-R, R-13).
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: AvatarNom.enLigne(
+                prenom: reponse.auteur.nomAffiche,
+                role: ligneAuteurCommunaute(
+                  reponse.auteur.fonction,
+                  momentCommunaute(reponse.publieeLe, maintenant),
                 ),
+                diametre: AppAvatar.petit,
+              ),
+            ),
+            if (signaler != null) ...<Widget>[
+              Ecart.hSm,
+              MenuActions(
+                points: true,
+                tooltip: r.menu(nom: reponse.auteur.nomAffiche),
+                actions: <EntreeAction>[
+                  EntreeAction(libelle: r.signaler, onChoix: signaler),
+                ],
+              ),
+            ],
+          ],
         ),
         Ecart.vSm,
         Text(
@@ -269,6 +287,21 @@ class ComposerReponse extends ConsumerStatefulWidget {
     'communaute-reponse-envoyer',
   );
 
+  /// La cle du garde rendu sous le composer, pour les tests.
+  static const ValueKey<String> cleGarde = ValueKey<String>(
+    'communaute-reponse-garde',
+  );
+
+  /// La cle du message de panne du garde, pour les tests.
+  static const ValueKey<String> clePanne = ValueKey<String>(
+    'communaute-reponse-garde-panne',
+  );
+
+  /// La cle de « Réessayer » apres une panne du garde, pour les tests.
+  static const ValueKey<String> cleReessayerGarde = ValueKey<String>(
+    'communaute-reponse-garde-reessayer',
+  );
+
   @override
   ConsumerState<ComposerReponse> createState() => _ComposerReponseState();
 }
@@ -276,6 +309,13 @@ class ComposerReponse extends ConsumerStatefulWidget {
 class _ComposerReponseState extends ConsumerState<ComposerReponse> {
   final TextEditingController _texte = TextEditingController();
   bool _videSignale = false;
+  bool _enCours = false;
+
+  /// Le verdict du garde qui retient la reponse ; nul sinon.
+  VerificationPromotion? _verdict;
+
+  /// Vrai quand le garde est en panne : la reponse est retenue (R-17).
+  bool _gardeEnPanne = false;
   late final PortBrouillons _brouillons = ref.read(portBrouillonsProvider);
 
   CleBrouillon get _cle => CleBrouillon(
@@ -307,10 +347,50 @@ class _ComposerReponseState extends ConsumerState<ComposerReponse> {
       setState(() => _videSignale = true);
       return;
     }
+    if (_enCours) return;
+    setState(() {
+      _videSignale = false;
+      _enCours = true;
+      _gardeEnPanne = false;
+    });
+    final VerificationPromotion? verification;
+    try {
+      verification = await relireParLeGarde(
+        () => ref
+            .read(portGardePromotionProvider)
+            .verifierReponse(
+              BrouillonReponse(
+                publicationId: widget.publicationId,
+                texte: texte,
+              ),
+            ),
+      );
+    } on Object {
+      // Le garde est en panne : rien ne part (R-17).
+      if (mounted) {
+        setState(() {
+          _enCours = false;
+          _gardeEnPanne = true;
+        });
+      }
+      return;
+    }
+    if (!mounted) return;
+    if (verification != null && verification.verdict.retient) {
+      // Le garde retient la reponse : elle reste dans le champ, rien ne part.
+      setState(() {
+        _enCours = false;
+        _verdict = verification;
+      });
+      return;
+    }
     // Le champ se vide tout de suite : la reponse apparait dans le fil, en
     // attente de l'accuse. Le brouillon n'est efface qu'apres l'accuse.
     _texte.clear();
-    setState(() => _videSignale = false);
+    setState(() {
+      _enCours = false;
+      _verdict = null;
+    });
     final bool confirme = await widget.onEnvoyer(texte);
     if (confirme) await _brouillons.effacer(_cle);
   }
@@ -330,6 +410,14 @@ class _ComposerReponseState extends ConsumerState<ComposerReponse> {
         if (_videSignale && texte.trim().isNotEmpty) {
           setState(() => _videSignale = false);
         }
+        // Un texte modifie est une autre reponse : le verdict et la panne
+        // portaient sur l'ancien, ils disparaissent.
+        if (_verdict != null || _gardeEnPanne) {
+          setState(() {
+            _verdict = null;
+            _gardeEnPanne = false;
+          });
+        }
       },
       decoration: InputDecoration(
         labelText: r.champ,
@@ -343,11 +431,53 @@ class _ComposerReponseState extends ConsumerState<ComposerReponse> {
       libelle: r.envoyer,
       niveau: NiveauAction.secondaire,
       pleineLargeur: false,
+      enCours: _enCours,
       onPress: _envoyer,
+    );
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    // Sous le composer : la panne du garde, puis le garde (la politique, ou
+    // le verdict qui retient la reponse).
+    final Widget garde = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        if (_gardeEnPanne) ...<Widget>[
+          Ecart.vSm,
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              t.com.communaute.garde.panne,
+              key: ComposerReponse.clePanne,
+              style: palette.inkAlert.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+          Ecart.vSm,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: ActionPrincipale(
+              key: ComposerReponse.cleReessayerGarde,
+              libelle: t.commun.etats.actions.reessayer,
+              niveau: NiveauAction.tertiaire,
+              pleineLargeur: false,
+              compacte: true,
+              enCours: _enCours,
+              onPress: _envoyer,
+            ),
+          ),
+        ],
+        Ecart.vMd,
+        KeyedSubtree(
+          key: ComposerReponse.cleGarde,
+          child: GardePromotion(verification: _verdict, pourReponse: true),
+        ),
+      ],
     );
     // Etroit (telephone, colonne de bureau) : le bouton passe sous le champ,
     // au bord de fin, pour laisser au champ toute la largeur.
-    return LayoutBuilder(
+    final Widget composer = LayoutBuilder(
       builder: (BuildContext _, BoxConstraints contraintes) =>
           AppGabarit.classe(contraintes.maxWidth) == ClasseLargeur.compacte
           ? Column(
@@ -369,6 +499,11 @@ class _ComposerReponseState extends ConsumerState<ComposerReponse> {
                 envoyer,
               ],
             ),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[composer, garde],
     );
   }
 }

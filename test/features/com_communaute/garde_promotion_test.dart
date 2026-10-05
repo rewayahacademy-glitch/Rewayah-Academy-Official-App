@@ -338,8 +338,10 @@ void main() {
       await demonter(tester);
     });
 
-    testWidgets('garde injoignable : rien n est affirme, le serveur reste '
-        'seul juge', (WidgetTester tester) async {
+    testWidgets('garde en panne (revue COM-R, R-17) : la publication est '
+        'retenue, « Réessayer » relance le garde', (WidgetTester tester) async {
+      // Contre-preuve : avant R-17, toute erreur du garde laissait partir la
+      // publication (`publicationsAcceptees` valait 1).
       final GardePromotionFixtures garde = DonneesCommunauteDemo.garde()
         ..echec = true;
       final BancCommunaute banc = await monterCommunaute(
@@ -348,7 +350,17 @@ void main() {
       );
       await _publierMarque(tester, DonneesCommunauteDemo.brouillonVente);
       expect(find.byKey(ComposerPublication.cleVerdict), findsNothing);
-      expect(banc.memoire.publicationsAcceptees, 1);
+      expect(banc.memoire.publicationsAcceptees, 0);
+      expect(find.text(g.panne), findsOneWidget);
+      expect(find.byKey(ComposerPublication.cleReessayerGarde), findsOneWidget);
+      verifierUnSeulBoutonPlein(tester);
+
+      // Le garde revient : « Réessayer » le relance, il bloque la vente.
+      garde.echec = false;
+      await taper(tester, find.byKey(ComposerPublication.cleReessayerGarde));
+      expect(find.byKey(GardePromotion.cleBlocage), findsOneWidget);
+      expect(find.text(g.panne), findsNothing);
+      expect(banc.memoire.publicationsAcceptees, 0);
       await tester.pump(const Duration(seconds: 4));
       await demonter(tester);
     });

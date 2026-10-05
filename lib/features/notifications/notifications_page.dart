@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_notifications.dart';
 import '../../core/communications/modeles_communication.dart'
     show IndicateurAttention;
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -26,6 +28,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/skeleton.dart';
+import '../../core/widgets/vue_etat_communication.dart';
 import '../com_annonces/port_annonces.dart';
 import '../suivi_foyer/composants_historique.dart';
 import '../suivi_foyer/filtres_historique.dart';
@@ -52,10 +55,9 @@ import 'detail_notification.dart';
 /// - **ordinateur** (au moins `AppGabarit.seuilEtendu` de large recus) :
 ///   la liste et le detail cote a cote, dans la coquille du role ;
 /// - **telephone et tablette etroite** : une surface a la fois. Une annonce
-///   de Classe ou une notification a texte s'ouvre en detail (le retour
-///   ramene a la liste) ; une notification a destination l'ouvre
-///   directement, comme avant ; sans rien a montrer, la ligne n'est pas une
-///   cible.
+///   de Classe ou une notification sans destination s'ouvre en detail (le
+///   retour ramene a la liste) ; une notification a destination l'ouvre
+///   directement. Aucune ligne n'est inerte (revue COM-R, R-06).
 ///
 /// Une notification d'annonce ouvre l'annonce, puis sa Classe (R-COM-12).
 /// Ouvrir une notification enregistre sa lecture si le port le sait
@@ -169,28 +171,27 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     }
   }
 
-  /// Vrai si la notification a quelque chose a montrer en detail sur
-  /// telephone : une annonce, ou un texte sans destination.
+  /// Vrai si la notification s'ouvre en detail sur telephone : une
+  /// annonce, ou toute notification sans destination. Le detail dit au
+  /// moins le titre, la date, le type et le niveau : aucune ligne n'est
+  /// inerte (revue COM-R, R-06).
   static bool _aUnDetail(NotificationTuteur n) =>
-      n.annonceId != null || (n.destination == null && n.texte != null);
+      n.annonceId != null || n.destination == null;
 
-  /// L'action d'une ligne, ou `null` quand elle ne mene a rien (la ligne
-  /// n'est alors pas une cible).
-  VoidCallback? _actionLigne(NotificationTuteur n, {required bool deux}) {
+  /// L'action d'une ligne : son detail, ou sa destination. Toute ligne est
+  /// une cible (R-06).
+  VoidCallback _actionLigne(NotificationTuteur n, {required bool deux}) {
     final String? destination = n.destination;
-    if (deux || _aUnDetail(n)) {
+    if (deux || _aUnDetail(n) || destination == null) {
       return () {
         unawaited(_marquerLue(n));
         setState(() => _selection = n.id);
       };
     }
-    if (destination != null) {
-      return () {
-        unawaited(_marquerLue(n));
-        GoRouter.of(context).go(destination);
-      };
-    }
-    return null;
+    return () {
+      unawaited(_marquerLue(n));
+      GoRouter.of(context).go(destination);
+    };
   }
 
   /// Enregistre la lecture de [n] (et de son annonce), puis relit la liste.
@@ -243,6 +244,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     final AsyncValue<List<NotificationTuteur>> valeur = ref.watch(
       notificationsTuteurProvider,
     );
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     return PopScope(
       // Telephone, detail ouvert : le retour systeme ramene a la liste.
       canPop: !_detailSeul,
@@ -268,6 +270,16 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   child: Skeleton.liste(lignes: 4),
                 ),
                 onReessayer: () => ref.invalidate(notificationsTuteurProvider),
+                // Hors ligne (suivi), l'echec se dit comme tel, avec
+                // « Réessayer » (revue COM-R, R-24).
+                erreurVersEtat: (Object _, VoidCallback? reessayer) => horsLigne
+                    ? ColonneHistorique(
+                        child: VueEtatCommunication(
+                          etat: EtatCommunication.horsLigne,
+                          onReessayer: reessayer,
+                        ),
+                      )
+                    : null,
                 vide: ColonneHistorique(
                   child: EtatSysteme(
                     nature: NatureEtat.aucunResultat,
@@ -460,6 +472,20 @@ class LigneNotification extends StatelessWidget {
   /// Vrai quand son detail est ouvert a cote (ordinateur).
   final bool selectionnee;
 
+  /// La cle de la ligne dont la date est au-dessus du titre, pour les tests.
+  static const ValueKey<String> cleDateAuDessus = ValueKey<String>(
+    'notification-date-au-dessus',
+  );
+
+  /// Vrai a texte agrandi (1,5 et plus) : la date passe au-dessus du titre.
+  static bool dateAuDessus(BuildContext context) =>
+      MediaQuery.textScalerOf(context).scale(1) >= 1.5;
+
+  /// La part de la largeur que prend la colonne de la date : 30 % des la
+  /// largeur d'un dialogue, un quart en dessous (telephone, R-09).
+  static double largeurDateNotification(double largeur) =>
+      largeur >= AppPage.largeurDialogue ? 0.3 : 0.25;
+
   /// La phrase lue par le lecteur d'ecran : titre, date, type, non lue,
   /// niveau (« Information » compris) et mention.
   static String phraseSemantique(NotificationTuteur notification) {
@@ -534,79 +560,98 @@ class LigneNotification extends StatelessWidget {
           ),
           child: ExcludeSemantics(
             child: LayoutBuilder(
-              builder: (BuildContext _, BoxConstraints contraintes) => Row(
-                children: <Widget>[
-                  // Largeur proportionnelle et commune : les filets verticaux
-                  // s'alignent d'une ligne a l'autre, comme dans l'Historique.
-                  SizedBox(
-                    width:
-                        contraintes.maxWidth *
-                        (contraintes.maxWidth >= AppPage.largeurDialogue
-                            ? 0.3
-                            : 0.38),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(dateCourte(quand), style: fort),
-                        Ecart.vXs,
-                        Text(
-                          heureMinute(quand),
-                          style: AppTypography.tabulaire(doux),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: AppSpacing.section,
-                    child: VerticalDivider(
-                      width: AppSpacing.xxl,
-                      thickness: palette.contourCarte.asBorderSide().width,
-                      color: palette.contourCarte.asBorderSide().color,
-                    ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(
-                          notification.titre,
-                          // Non lue : le titre au rang du nom de carte, plus
-                          // gras ; le mot « Non lue » le dit aussi.
-                          style: nonLue
-                              ? fort
-                              : palette.inkStrong.applyTo(
-                                  textes.bodyMedium ?? const TextStyle(),
-                                ),
-                        ),
-                        if (avecType || nonLue) ...<Widget>[
-                          Ecart.vXs,
-                          Text(
-                            <String>[
-                              if (avecType)
-                                libelleTypeNotification(notification.type),
-                              if (nonLue) t.notifications.nonLue,
-                            ].join(' · '),
-                            style: doux,
-                          ),
-                        ],
-                        if (indicateur.estVisible) ...<Widget>[
-                          Ecart.vSm,
-                          BadgeNonLu(indicateur: indicateur),
-                        ],
-                      ],
-                    ),
-                  ),
-                  if (onPress != null) ...<Widget>[
-                    Ecart.hXs,
-                    IconTheme(
-                      data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
-                      child: Icon(AppIcons.chevron.repos),
+              builder: (BuildContext _, BoxConstraints contraintes) {
+                final Widget date = Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(dateCourte(quand), style: fort),
+                    Ecart.vXs,
+                    Text(
+                      heureMinute(quand),
+                      style: AppTypography.tabulaire(doux),
                     ),
                   ],
-                ],
-              ),
+                );
+                final Widget corps = Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    // Un mot trop long se reduit, jamais coupe (R-09).
+                    TexteSansCoupure(
+                      notification.titre,
+                      // Non lue : le titre au rang du nom de carte, plus
+                      // gras ; le mot « Non lue » le dit aussi.
+                      style: nonLue
+                          ? fort
+                          : palette.inkStrong.applyTo(
+                              textes.bodyMedium ?? const TextStyle(),
+                            ),
+                    ),
+                    if (avecType || nonLue) ...<Widget>[
+                      Ecart.vXs,
+                      TexteSansCoupure(
+                        <String>[
+                          if (avecType)
+                            libelleTypeNotification(notification.type),
+                          if (nonLue) t.notifications.nonLue,
+                        ].join(' · '),
+                        style: doux,
+                      ),
+                    ],
+                    if (indicateur.estVisible) ...<Widget>[
+                      Ecart.vSm,
+                      BadgeNonLu(indicateur: indicateur),
+                    ],
+                  ],
+                );
+                final Widget? chevron = onPress == null
+                    ? null
+                    : IconTheme(
+                        data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
+                        child: Icon(AppIcons.chevron.repos),
+                      );
+                // Texte agrandi (1,5 et plus) : la date passe au-dessus du
+                // titre, qui garde toute la largeur (revue COM-R, R-09).
+                if (dateAuDessus(context)) {
+                  return Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Column(
+                          key: LigneNotification.cleDateAuDessus,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[date, Ecart.vSm, corps],
+                        ),
+                      ),
+                      if (chevron != null) ...<Widget>[Ecart.hXs, chevron],
+                    ],
+                  );
+                }
+                return Row(
+                  children: <Widget>[
+                    // Largeur proportionnelle et commune : les filets
+                    // verticaux s'alignent d'une ligne a l'autre, comme dans
+                    // l'Historique. Un quart sur telephone (R-09).
+                    SizedBox(
+                      width:
+                          contraintes.maxWidth *
+                          largeurDateNotification(contraintes.maxWidth),
+                      child: date,
+                    ),
+                    SizedBox(
+                      height: AppSpacing.section,
+                      child: VerticalDivider(
+                        width: AppSpacing.xxl,
+                        thickness: palette.contourCarte.asBorderSide().width,
+                        color: palette.contourCarte.asBorderSide().color,
+                      ),
+                    ),
+                    Expanded(child: corps),
+                    if (chevron != null) ...<Widget>[Ecart.hXs, chevron],
+                  ],
+                );
+              },
             ),
           ),
         ),

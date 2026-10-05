@@ -58,6 +58,13 @@ AppIcon iconeActivite(ActiviteStudio activite) => switch (activite.module) {
   },
 };
 
+/// [texte] pose au milieu d'une phrase : sa premiere lettre en minuscule
+/// (« Échéance le mardi 6 octobre », jamais « le Mardi » ; revue COM-R,
+/// R-14). Sans effet sur une ecriture sans casse (arabe).
+String dansPhrase(String texte) => texte.isEmpty
+    ? texte
+    : texte.substring(0, 1).toLowerCase() + texte.substring(1);
+
 /// La legende d'une ligne : l'echeance s'il y en a une, la source (le canal
 /// pour le Studio, le module sinon), l'auteur s'il est autorise, l'instant ;
 /// et, sans destination, ou elle se traite.
@@ -68,7 +75,8 @@ String legendeActivite(ActiviteStudio activite) {
       ? a.dansCanal(nom: activite.objet.libelle)
       : libelleModule(activite.module);
   final List<String> morceaux = <String>[
-    if (echeance != null) a.echeance(date: dateDeLAppareil(echeance.toLocal())),
+    if (echeance != null)
+      a.echeance(date: dansPhrase(dateDeLAppareil(echeance.toLocal()))),
     source,
     ?activite.auteur?.nomAffiche,
     horodatageCanal(activite.survenueLe),

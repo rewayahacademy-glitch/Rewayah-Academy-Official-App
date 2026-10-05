@@ -1,5 +1,8 @@
 // Le signalement d'un contenu de la Communaute (spec section 5.5 ; COM-BR-06).
 //
+// Chaque signalement porte une cle d'idempotence, rejouee a chaque renvoi,
+// et le serveur dit quand le contenu etait deja signale (revue COM-R, R-18).
+//
 // Les huit motifs viennent du socle (`MotifSignalement`), dans l'ordre de la
 // spec ; le signalement part par `PortModeration`, sans le modifier. La
 // confirmation ne s'affiche qu'apres l'accuse du serveur : un echec dit « pas
@@ -100,6 +103,12 @@ abstract final class FeuilleSignalementCommunaute {
   }) async {
     final _Signalement etat = _Signalement();
     final s = t.com.socle.signalement;
+    // Une cle par signalement, tiree a l'ouverture et rejouee a chaque
+    // renvoi apres un echec : le serveur ne cree jamais deux signalements
+    // (R-18, COM-BR-06).
+    final String cle =
+        'sig-${objet.type.name}-${objet.id}-'
+        '${DateTime.now().microsecondsSinceEpoch}';
 
     Future<void> envoyer(BuildContext contexte) async {
       final MotifSignalement? motif = etat.motif;
@@ -113,9 +122,12 @@ abstract final class FeuilleSignalementCommunaute {
       etat.etat(enCours: true);
       try {
         final String precision = etat.precision.trim();
+        // « Deja signale » est aussi un accuse : le contenu est signale,
+        // rien de neuf n'est cree.
         await moderation.signaler(
           objet: objet,
           motif: motif,
+          cleIdempotence: cle,
           precision: precision.isEmpty ? null : precision,
         );
         if (contexte.mounted) Navigator.of(contexte).pop(true);

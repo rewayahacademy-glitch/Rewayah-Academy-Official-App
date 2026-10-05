@@ -35,7 +35,9 @@ import '../../core/admin/admin_domaine.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/capacites_communication.dart';
 import '../../core/communications/moderation.dart';
+import '../../core/communications/titre_administration.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -131,28 +133,39 @@ class _AdministrationCommunicationsPageState
         onQuitter: () => setState(() => _publication = false),
       );
     }
-    final n = t.com.socle.navigation.provisoire;
-    return PageShell(
-      titre: n.administrationTitre,
-      entete: SousNavigationDomaine(
-        onglets: _onglets,
-        indexActif: widget.onglet.index,
-      ),
-      // La file de moderation et ses colonnes defilent elles-memes.
-      defilante: widget.onglet != OngletCommunications.moderation,
-      child: switch (widget.onglet) {
-        OngletCommunications.annonces => _OngletAnnonces(
-          retourLocal: _retourLocal,
-          cheminModeration:
-              _onglets[OngletCommunications.moderation.index].chemin,
-          onNouvelle: () => setState(() {
-            _retourLocal = null;
-            _publication = true;
-          }),
+    // Le titre de la spec, replie sur le nom de l'onglet quand un mot ne
+    // tiendrait pas (320, texte x2 : revue COM-R, R-09 et R-15).
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints contraintes) => PageShell(
+        titre: titreAdministrationCommunications(
+          contexte,
+          largeurPage: contraintes.maxWidth,
+          repli: _onglets[widget.onglet.index].libelle,
         ),
-        OngletCommunications.moderation => const FileModeration(),
-      },
+        entete: SousNavigationDomaine(
+          onglets: _onglets,
+          indexActif: widget.onglet.index,
+        ),
+        // La file de moderation et ses colonnes defilent elles-memes.
+        defilante: widget.onglet != OngletCommunications.moderation,
+        child: _onglet(),
+      ),
     );
+  }
+
+  Widget _onglet() {
+    return switch (widget.onglet) {
+      OngletCommunications.annonces => _OngletAnnonces(
+        retourLocal: _retourLocal,
+        cheminModeration:
+            _onglets[OngletCommunications.moderation.index].chemin,
+        onNouvelle: () => setState(() {
+          _retourLocal = null;
+          _publication = true;
+        }),
+      ),
+      OngletCommunications.moderation => const FileModeration(),
+    };
   }
 }
 
@@ -356,7 +369,14 @@ class _Indicateurs extends ConsumerWidget {
         LayoutBuilder(
           builder: (BuildContext context, BoxConstraints c) {
             // Quatre de front des la classe moyenne, deux par deux sur
-            // telephone : jamais une tuile ecrasee.
+            // telephone, une par rangee a texte agrandi (1,5 et plus, revue
+            // COM-R, R-09) : jamais une tuile ecrasee ni un mot coupe.
+            final bool texteAgrandi =
+                MediaQuery.textScalerOf(context).scale(1) >= 1.5;
+            if (AppGabarit.classe(c.maxWidth) == ClasseLargeur.compacte &&
+                texteAgrandi) {
+              return PileCartes(children: tuiles);
+            }
             if (AppGabarit.classe(c.maxWidth) != ClasseLargeur.compacte) {
               return IntrinsicHeight(
                 child: Row(
@@ -544,6 +564,7 @@ class ChargementPublieur extends ConsumerWidget {
       );
     }
     final Object? erreur = cibles.error ?? capacites.error;
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final Widget corps;
     if (erreur is CapaciteIndisponible) {
       corps = EtatSysteme(
@@ -554,7 +575,7 @@ class ChargementPublieur extends ConsumerWidget {
       );
     } else if (erreur != null) {
       corps =
-          etatErreurAdministration(ref, erreur, () => _relire(ref)) ??
+          etatErreurAdministration(horsLigne, erreur, () => _relire(ref)) ??
           VueEtatCommunication(
             etat: EtatCommunication.erreur,
             onReessayer: () => _relire(ref),

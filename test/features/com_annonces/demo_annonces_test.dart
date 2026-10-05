@@ -76,8 +76,18 @@ void main() {
         expect(liste, isNotEmpty, reason: role.name);
         for (final NotificationTuteur n in liste) {
           expect(n.type, isNot(TypeNotification.autre), reason: n.id);
-          // Aucune destination vers une page a session.
-          expect(n.destination, isNull, reason: n.id);
+          // Aucune destination vers une page a session : une destination
+          // reste dans les adresses de demonstration.
+          final String? destination = n.destination;
+          if (destination != null) {
+            expect(destination, startsWith('/demo/'), reason: n.id);
+          }
+          // Revue COM-R, R-06 : jamais une « Action requise » sans
+          // destination (contre-preuve : « Votre planning de la semaine
+          // prochaine a changé » n'en avait pas).
+          if (n.niveau == NiveauAttention.actionRequise) {
+            expect(destination, isNotNull, reason: n.id);
+          }
         }
       }
       final List<NotificationTuteur> famille = notificationsDemo(

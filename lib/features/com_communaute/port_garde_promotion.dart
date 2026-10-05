@@ -10,7 +10,8 @@
 // Production : `GardePromotionIndisponible`, chaque appel echoue avec
 // `CapaciteIndisponible('COM-BR-07')`. Le composer le dit honnetement : il
 // ne pretend pas avoir relu la publication, il la transmet au serveur, qui
-// reste seul juge (COM-BR-05, COM-BR-07). `GardePromotionFixtures` est un
+// reste seul juge (COM-BR-05, COM-BR-07). Toute AUTRE erreur retient le
+// contenu (revue COM-R, R-17) : voir le contrat sur `PortGardePromotion`. `GardePromotionFixtures` est un
 // double de demonstration et de test : une TABLE de contenus marques
 // d'avance (spec section 26), jamais une analyse du texte.
 
@@ -73,10 +74,37 @@ class VerificationPromotion {
   final List<LienAnalyse> liens;
 }
 
+/// Le brouillon d'une reponse a une publication, tel que le garde le lit
+/// avant l'envoi (COM-BR-07, revue COM-R, R-01).
+@immutable
+class BrouillonReponse {
+  /// Cree le brouillon.
+  const BrouillonReponse({required this.publicationId, required this.texte});
+
+  /// La publication a laquelle la reponse s'adresse.
+  final String publicationId;
+
+  /// Le texte de la reponse.
+  final String texte;
+}
+
 /// Le garde anti-promotion (COM-BR-07).
+///
+/// Contrat propose a COM-BR-07 (revue COM-R, R-01 et R-17) : le garde lit
+/// AVANT envoi tout contenu qu'une personne ecrit dans la Communaute, une
+/// publication ([verifier]) comme une reponse ([verifierReponse]) ; aucune
+/// reponse n'echappe a la politique (spec section 5.1 et 5.2). Le verdict
+/// et les etats de lien ont la meme forme pour les deux. Un garde sans
+/// contrat leve `CapaciteIndisponible('COM-BR-07')` : le contenu part et le
+/// serveur reste seul juge. Toute autre erreur (reseau, panne du garde)
+/// RETIENT le contenu : l'ecran propose « Réessayer », jamais un envoi qui
+/// contournerait la politique.
 abstract interface class PortGardePromotion {
   /// Le verdict du serveur sur [brouillon], avant sa publication.
   Future<VerificationPromotion> verifier(BrouillonPublication brouillon);
+
+  /// Le verdict du serveur sur la reponse [brouillon], avant son envoi.
+  Future<VerificationPromotion> verifierReponse(BrouillonReponse brouillon);
 
   /// L'etat d'un lien isole ; [EtatLien.nonVerifie] si le serveur ne le
   /// qualifie pas.
@@ -96,6 +124,10 @@ class GardePromotionIndisponible implements PortGardePromotion {
       Future<VerificationPromotion>.error(_manque);
 
   @override
+  Future<VerificationPromotion> verifierReponse(BrouillonReponse brouillon) =>
+      Future<VerificationPromotion>.error(_manque);
+
+  @override
   Future<EtatLien> etatLien(String adresse) => Future<EtatLien>.error(_manque);
 }
 
@@ -107,7 +139,8 @@ typedef ContenuMarque = ({String titre, String texte});
 /// branche en production.
 ///
 /// Un brouillon dont le titre ET le texte sont exactement ceux d'une fixture
-/// recoit son verdict ; tout autre brouillon est normal. C'est une table de
+/// recoit son verdict ; une reponse dont le texte est exactement celui d'une
+/// fixture de reponse aussi ; tout autre brouillon est normal. C'est une table de
 /// contenus marques d'avance, pas une detection : modifier un seul mot rend
 /// le brouillon normal. [echec] fait echouer chaque appel comme un reseau
 /// coupe.
@@ -116,10 +149,17 @@ class GardePromotionFixtures implements PortGardePromotion {
   GardePromotionFixtures({
     Map<ContenuMarque, VerificationPromotion> verdicts =
         const <ContenuMarque, VerificationPromotion>{},
+    Map<String, VerificationPromotion> verdictsReponses =
+        const <String, VerificationPromotion>{},
     Map<String, EtatLien> liens = const <String, EtatLien>{},
     this.echec = false,
     this.attente = Duration.zero,
-  }) : _verdicts = <ContenuMarque, VerificationPromotion>{
+  }) : _verdictsReponses = <String, VerificationPromotion>{
+         for (final MapEntry<String, VerificationPromotion> e
+             in verdictsReponses.entries)
+           e.key.trim(): e.value,
+       },
+       _verdicts = <ContenuMarque, VerificationPromotion>{
          for (final MapEntry<ContenuMarque, VerificationPromotion> e
              in verdicts.entries)
            (titre: e.key.titre.trim(), texte: e.key.texte.trim()): e.value,
@@ -127,6 +167,7 @@ class GardePromotionFixtures implements PortGardePromotion {
        _liens = Map<String, EtatLien>.of(liens);
 
   final Map<ContenuMarque, VerificationPromotion> _verdicts;
+  final Map<String, VerificationPromotion> _verdictsReponses;
   final Map<String, EtatLien> _liens;
 
   /// Vrai : chaque appel echoue (reseau coupe).
@@ -137,6 +178,9 @@ class GardePromotionFixtures implements PortGardePromotion {
 
   /// Les brouillons verifies (tests).
   final List<BrouillonPublication> verifies = <BrouillonPublication>[];
+
+  /// Les reponses verifiees (tests).
+  final List<BrouillonReponse> reponsesVerifiees = <BrouillonReponse>[];
 
   Future<void> _attendre() async {
     if (attente > Duration.zero) await Future<void>.delayed(attente);
@@ -155,9 +199,33 @@ class GardePromotionFixtures implements PortGardePromotion {
   }
 
   @override
+  Future<VerificationPromotion> verifierReponse(
+    BrouillonReponse brouillon,
+  ) async {
+    await _attendre();
+    reponsesVerifiees.add(brouillon);
+    return _verdictsReponses[brouillon.texte.trim()] ??
+        VerificationPromotion.normale;
+  }
+
+  @override
   Future<EtatLien> etatLien(String adresse) async {
     await _attendre();
     return _liens[adresse.trim()] ?? EtatLien.nonVerifie;
+  }
+}
+
+/// Relit un contenu par le garde (revue COM-R, R-17) : rend le verdict, ou
+/// `null` quand le garde n'a pas de contrat (`CapaciteIndisponible`,
+/// COM-BR-07), et le contenu part au serveur, seul juge. Toute autre erreur
+/// est relancee : l'appelant retient le contenu et propose « Réessayer ».
+Future<VerificationPromotion?> relireParLeGarde(
+  Future<VerificationPromotion> Function() verifier,
+) async {
+  try {
+    return await verifier();
+  } on CapaciteIndisponible {
+    return null;
   }
 }
 

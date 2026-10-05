@@ -36,10 +36,18 @@ import 'regles_communaute.dart';
 /// Le garde anti-promotion (`CommunityPromotionGuard`).
 class GardePromotion extends StatelessWidget {
   /// Cree le garde. [verification] nulle ou normale : l'aide.
-  const GardePromotion({super.key, this.verification});
+  const GardePromotion({
+    super.key,
+    this.verification,
+    this.pourReponse = false,
+  });
 
   /// Le verdict rendu par le port, s'il y en a un.
   final VerificationPromotion? verification;
+
+  /// Vrai sous le composer d'une reponse (revue COM-R, R-01) : les titres
+  /// et consignes parlent de la reponse, la politique reste la meme.
+  final bool pourReponse;
 
   /// La cle de l'aide, pour les tests.
   static const ValueKey<String> cleAide = ValueKey<String>(
@@ -68,11 +76,12 @@ class GardePromotion extends StatelessWidget {
 
   /// Le texte canonique d'un verdict qui retient la publication (spec
   /// section 5.2 et section 22) ; nul pour un verdict normal.
-  static String? texteDe(VerdictPromotion verdict) {
+  static String? texteDe(VerdictPromotion verdict, {bool pourReponse = false}) {
     final g = t.com.communaute.garde;
     return switch (verdict) {
       VerdictPromotion.normal => null,
-      VerdictPromotion.avertissement => g.avertissement,
+      VerdictPromotion.avertissement =>
+        pourReponse ? g.reponse.avertissement : g.avertissement,
       VerdictPromotion.lienAffilie => g.bloqueAffilie,
       VerdictPromotion.vente => g.bloqueVente,
     };
@@ -82,7 +91,7 @@ class GardePromotion extends StatelessWidget {
   Widget build(BuildContext context) {
     final VerificationPromotion? v = verification;
     if (v == null || !v.verdict.retient) return const _Aide();
-    return _Verdict(verification: v);
+    return _Verdict(verification: v, pourReponse: pourReponse);
   }
 }
 
@@ -142,9 +151,10 @@ class _Aide extends StatelessWidget {
 
 /// Un verdict qui retient la publication : avertissement ou blocage.
 class _Verdict extends StatelessWidget {
-  const _Verdict({required this.verification});
+  const _Verdict({required this.verification, required this.pourReponse});
 
   final VerificationPromotion verification;
+  final bool pourReponse;
 
   @override
   Widget build(BuildContext context) {
@@ -154,8 +164,11 @@ class _Verdict extends StatelessWidget {
     final VerdictPromotion verdict = verification.verdict;
     final bool bloque = verdict.bloque;
     final AppColorPair paire = bloque ? palette.washAlert : palette.washWarning;
-    final String titre = bloque ? g.titreBlocage : g.titreAvertissement;
-    final String texte = GardePromotion.texteDe(verdict) ?? '';
+    final String titre = pourReponse
+        ? (bloque ? g.reponse.titreBlocage : g.reponse.titreAvertissement)
+        : (bloque ? g.titreBlocage : g.titreAvertissement);
+    final String texte =
+        GardePromotion.texteDe(verdict, pourReponse: pourReponse) ?? '';
     final String? motif = verification.motif?.libelle;
 
     return Semantics(
@@ -217,7 +230,7 @@ class _Verdict extends StatelessWidget {
               Semantics(
                 header: true,
                 child: Text(
-                  g.liensTitre,
+                  pourReponse ? g.reponse.liensTitre : g.liensTitre,
                   style: paire.applyTo(textes.labelLarge ?? const TextStyle()),
                 ),
               ),
@@ -232,7 +245,7 @@ class _Verdict extends StatelessWidget {
             if (bloque) ...<Widget>[
               Ecart.vSm,
               Text(
-                g.consigneBlocage,
+                pourReponse ? g.reponse.consigneBlocage : g.consigneBlocage,
                 style: paire.applyTo(textes.bodySmall ?? const TextStyle()),
               ),
             ],

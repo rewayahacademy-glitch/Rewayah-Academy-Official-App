@@ -507,11 +507,16 @@ class _Indicateurs extends StatelessWidget {
         for (final Widget enfant in enfants) Expanded(child: enfant),
       ],
     );
+    // Texte agrandi (1,5 et plus) sur une colonne : une tuile par rangee,
+    // jamais un mot coupe dans une demi-largeur (revue COM-R, R-09).
+    final bool texteAgrandi = MediaQuery.textScalerOf(context).scale(1) >= 1.5;
     return Semantics(
       key: TableauAujourdhui.cleIndicateurs,
       container: true,
       label: i.titre,
-      child: colonnes == 1
+      child: colonnes == 1 && texteAgrandi
+          ? PileCartes(children: tuiles)
+          : colonnes == 1
           ? PileCartes(
               children: <Widget>[
                 rangee(tuiles.sublist(0, 2)),

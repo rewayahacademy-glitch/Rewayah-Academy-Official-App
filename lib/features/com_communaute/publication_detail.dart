@@ -51,6 +51,23 @@ capacitesModerationCommunauteProvider =
       dependencies: <ProviderOrFamily>[portModerationProvider],
     );
 
+/// Les contenus que la personne a deja signales, rendus par le serveur
+/// (revue COM-R, R-18) : un signalement fait avant la visite (autre page,
+/// autre appareil) se dit aussi, et « Signaler » n'est pas repropose. Une
+/// lecture en echec ou sans contrat ne cache rien : l'ensemble est vide.
+final FutureProvider<Set<ObjetLie>> mesSignalementsProvider =
+    FutureProvider.autoDispose<Set<ObjetLie>>(
+      (Ref ref) async {
+        try {
+          return await ref.watch(portModerationProvider).mesSignalements();
+        } on Object {
+          return <ObjetLie>{};
+        }
+      },
+      retry: _sansRetentative,
+      dependencies: <ProviderOrFamily>[portModerationProvider],
+    );
+
 /// Vrai si un objet est dans les elements enregistres.
 final estEnregistreProvider = FutureProvider.autoDispose.family<bool, ObjetLie>(
   (Ref ref, ObjetLie objet) =>
@@ -123,6 +140,7 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
   static int _compteur = 0;
 
   Set<ObjetLie> get _signales => <ObjetLie>{
+    ...?ref.watch(mesSignalementsProvider).value,
     ...widget.signales,
     ..._signalesLocaux,
   };
@@ -256,7 +274,17 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
         ),
         if (widget.peutRepondre && lue.hasValue && !lue.hasError) ...<Widget>[
           Ecart.vMd,
-          ComposerReponse(publicationId: _id, onEnvoyer: _repondre),
+          // Le composer et son garde (R-01) restent bornes : au-dela d'un
+          // peu moins de la moitie de la hauteur, ils defilent eux-memes et
+          // la publication reste lisible (texte agrandi, petit ecran).
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.sizeOf(context).height * 0.45,
+            ),
+            child: SingleChildScrollView(
+              child: ComposerReponse(publicationId: _id, onEnvoyer: _repondre),
+            ),
+          ),
           Ecart.vLg,
         ],
       ],
@@ -290,26 +318,35 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        AvatarNom.enLigne(
-          prenom: publication.auteur.nomAffiche,
-          role: ligneAuteurCommunaute(
-            publication.auteur.fonction,
-            momentCommunaute(publication.publieeLe, maintenant),
-          ),
-          diametre: AppAvatar.petit,
-          fin: peutSignaler && !signalee
-              ? MenuActions(
-                  key: PublicationDetail.cleMenu,
-                  points: true,
-                  tooltip: p.menu(titre: publication.titre),
-                  actions: <EntreeAction>[
-                    EntreeAction(
-                      libelle: p.signaler,
-                      onChoix: () => unawaited(_signaler(objet)),
-                    ),
-                  ],
-                )
-              : null,
+        // Le menu « ... » au bord de fin de la carte, jamais colle au nom
+        // (revue COM-R, R-13).
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: AvatarNom.enLigne(
+                prenom: publication.auteur.nomAffiche,
+                role: ligneAuteurCommunaute(
+                  publication.auteur.fonction,
+                  momentCommunaute(publication.publieeLe, maintenant),
+                ),
+                diametre: AppAvatar.petit,
+              ),
+            ),
+            if (peutSignaler && !signalee) ...<Widget>[
+              Ecart.hSm,
+              MenuActions(
+                key: PublicationDetail.cleMenu,
+                points: true,
+                tooltip: p.menu(titre: publication.titre),
+                actions: <EntreeAction>[
+                  EntreeAction(
+                    libelle: p.signaler,
+                    onChoix: () => unawaited(_signaler(objet)),
+                  ),
+                ],
+              ),
+            ],
+          ],
         ),
         Ecart.vLg,
         Semantics(

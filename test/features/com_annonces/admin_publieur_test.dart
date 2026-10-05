@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/widgets/choice_card_group.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/features/com_annonces/administration_communications_page.dart';
 import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
+import 'package:rewayah_academy/features/com_annonces/publier_annonce_classe_page.dart';
 import 'package:rewayah_academy/features/com_annonces/publieur_annonce.dart';
 import 'package:rewayah_academy/features/demo/communications/com_annonces_demo.dart';
 
@@ -147,12 +148,17 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('une autre Classe : aucune audience, rien a saisir', (
+    testWidgets('une autre Classe, ouverte par URL : sans la capacite de '
+        'publier, aucun publieur (revue COM-R, R-20)', (
       WidgetTester tester,
     ) async {
+      // Contre-preuve : avant R-20, l'adresse directe rendait le chargement
+      // du publieur sans lire `CapaciteAnnonces.publier`.
       await monterPublierClasse(tester, classeId: 'classe-d-un-autre');
       final p = t.com.annonces.publieur;
-      expect(find.text(p.aucuneCibleTitre), findsOneWidget);
+      expect(find.byKey(PublierAnnonceClassePage.cleRefusee), findsOneWidget);
+      expect(find.text(p.classeRefuseeTitre), findsOneWidget);
+      expect(find.text(p.aucuneCibleTitre), findsNothing);
       expect(find.byType(TextField), findsNothing);
       expect(_action, findsNothing);
     });
@@ -162,14 +168,17 @@ void main() {
     ) async {
       // Le serveur rendrait par erreur une audience globale sous le meme
       // identifiant : l'ecran de l'enseignant ne la retient pas.
-      final FauxAnnonces faux = FauxAnnonces()
-        ..cibles = const <CibleAnnonce>[
-          CibleAnnonce(
-            id: ClassesDemoAnnonces.nour,
-            libelle: 'Toute l ecole',
-            nature: NatureCible.toutes,
-          ),
-        ];
+      final FauxAnnonces faux =
+          FauxAnnonces(
+              capacites: const <CapaciteAnnonces>{CapaciteAnnonces.publier},
+            )
+            ..cibles = const <CibleAnnonce>[
+              CibleAnnonce(
+                id: ClassesDemoAnnonces.nour,
+                libelle: 'Toute l ecole',
+                nature: NatureCible.toutes,
+              ),
+            ];
       await monterPublierClasse(tester, surcharges: _surFaux(faux));
       expect(
         find.text(t.com.annonces.publieur.aucuneCibleTitre),
@@ -190,9 +199,12 @@ void main() {
     testWidgets('echec : pas encore confirmee, meme cle au nouvel essai', (
       WidgetTester tester,
     ) async {
-      final FauxAnnonces faux = FauxAnnonces()
-        ..cibles = const <CibleAnnonce>[_nour]
-        ..erreurPublication = Exception('accuse perdu');
+      final FauxAnnonces faux =
+          FauxAnnonces(
+              capacites: const <CapaciteAnnonces>{CapaciteAnnonces.publier},
+            )
+            ..cibles = const <CibleAnnonce>[_nour]
+            ..erreurPublication = Exception('accuse perdu');
       await monterPublierClasse(tester, surcharges: _surFaux(faux));
       final p = t.com.annonces.publieur;
       await _ecrire(tester, 'Titre', 'Texte');
@@ -215,8 +227,9 @@ void main() {
     testWidgets('audience a identifiant propre : retenue par sa Classe', (
       WidgetTester tester,
     ) async {
-      final FauxAnnonces faux = FauxAnnonces()
-        ..cibles = const <CibleAnnonce>[_nour];
+      final FauxAnnonces faux = FauxAnnonces(
+        capacites: const <CapaciteAnnonces>{CapaciteAnnonces.publier},
+      )..cibles = const <CibleAnnonce>[_nour];
       await monterPublierClasse(tester, surcharges: _surFaux(faux));
       final p = t.com.annonces.publieur;
       expect(find.text(p.aucuneCibleTitre), findsNothing);
@@ -233,15 +246,18 @@ void main() {
     ) async {
       // Le serveur rendrait par erreur la Classe d'un autre sous l'identifiant
       // de cette Classe : `classeId` ne correspond pas, rien n'est propose.
-      final FauxAnnonces faux = FauxAnnonces()
-        ..cibles = const <CibleAnnonce>[
-          CibleAnnonce(
-            id: ClassesDemoAnnonces.nour,
-            libelle: 'Classe Al-Fajr',
-            nature: NatureCible.classe,
-            classeId: ClassesDemoAnnonces.fajr,
-          ),
-        ];
+      final FauxAnnonces faux =
+          FauxAnnonces(
+              capacites: const <CapaciteAnnonces>{CapaciteAnnonces.publier},
+            )
+            ..cibles = const <CibleAnnonce>[
+              CibleAnnonce(
+                id: ClassesDemoAnnonces.nour,
+                libelle: 'Classe Al-Fajr',
+                nature: NatureCible.classe,
+                classeId: ClassesDemoAnnonces.fajr,
+              ),
+            ];
       await monterPublierClasse(tester, surcharges: _surFaux(faux));
       expect(
         find.text(t.com.annonces.publieur.aucuneCibleTitre),
@@ -253,9 +269,12 @@ void main() {
       WidgetTester tester,
     ) async {
       final Completer<void> accuse = Completer<void>();
-      final FauxAnnonces faux = FauxAnnonces()
-        ..cibles = const <CibleAnnonce>[_nour]
-        ..attente = accuse.future;
+      final FauxAnnonces faux =
+          FauxAnnonces(
+              capacites: const <CapaciteAnnonces>{CapaciteAnnonces.publier},
+            )
+            ..cibles = const <CibleAnnonce>[_nour]
+            ..attente = accuse.future;
       await monterPublierClasse(tester, surcharges: _surFaux(faux));
       await _ecrire(tester, 'Titre', 'Texte');
       for (int i = 0; i < 3; i++) {
@@ -277,9 +296,12 @@ void main() {
     testWidgets('apres un envoi non confirme, le retour sort sans republier', (
       WidgetTester tester,
     ) async {
-      final FauxAnnonces faux = FauxAnnonces()
-        ..cibles = const <CibleAnnonce>[_nour]
-        ..erreurPublication = Exception('accuse perdu');
+      final FauxAnnonces faux =
+          FauxAnnonces(
+              capacites: const <CapaciteAnnonces>{CapaciteAnnonces.publier},
+            )
+            ..cibles = const <CibleAnnonce>[_nour]
+            ..erreurPublication = Exception('accuse perdu');
       await monterPublierClasse(tester, surcharges: _surFaux(faux));
       await _ecrire(tester, 'Titre', 'Texte');
       for (int i = 0; i < 4; i++) {
@@ -297,9 +319,12 @@ void main() {
     testWidgets('publication sans contrat : rien a reessayer, Terminer', (
       WidgetTester tester,
     ) async {
-      final FauxAnnonces faux = FauxAnnonces()
-        ..cibles = const <CibleAnnonce>[_nour]
-        ..erreurPublication = const CapaciteIndisponible('COM-BR-10');
+      final FauxAnnonces faux =
+          FauxAnnonces(
+              capacites: const <CapaciteAnnonces>{CapaciteAnnonces.publier},
+            )
+            ..cibles = const <CibleAnnonce>[_nour]
+            ..erreurPublication = const CapaciteIndisponible('COM-BR-10');
       await monterPublierClasse(tester, surcharges: _surFaux(faux));
       await _ecrire(tester, 'Titre', 'Texte');
       for (int i = 0; i < 4; i++) {
@@ -316,9 +341,12 @@ void main() {
     testWidgets('hors ligne : la phrase dit de se reconnecter', (
       WidgetTester tester,
     ) async {
-      final FauxAnnonces faux = FauxAnnonces()
-        ..cibles = const <CibleAnnonce>[_nour]
-        ..erreurPublication = Exception('reseau');
+      final FauxAnnonces faux =
+          FauxAnnonces(
+              capacites: const <CapaciteAnnonces>{CapaciteAnnonces.publier},
+            )
+            ..cibles = const <CibleAnnonce>[_nour]
+            ..erreurPublication = Exception('reseau');
       await monterPublierClasse(
         tester,
         surcharges: _surFaux(faux),

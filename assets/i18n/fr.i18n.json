@@ -4834,7 +4834,7 @@
           "communauteDetail": "L'espace d'échange entre enseignants arrivera bientôt ici.",
           "studioTitre": "@:com.socle.lexique.studio",
           "studioDetail": "L'espace de travail de l'équipe arrivera bientôt ici.",
-          "administrationTitre": "Communications",
+          "administrationTitre": "Administration des communications",
           "administrationDetail": "Les annonces, la modération et les messages se géreront bientôt ici.",
           "publierAnnonceTitre": "Publier une annonce",
           "publierAnnonceDetail": "La publication d'une annonce pour une Classe arrivera bientôt ici."
@@ -5022,7 +5022,15 @@
         "titreBlocage": "Publication bloquée",
         "motif": "Motif : {motif}",
         "liensTitre": "Liens de la publication",
-        "consigneBlocage": "Modifiez la publication, puis publiez-la de nouveau."
+        "consigneBlocage": "Modifiez la publication, puis publiez-la de nouveau.",
+        "panne": "La politique de la Communauté n'a pas pu relire ce contenu : rien n'est parti. Vérifiez la connexion, puis réessayez.",
+        "reponse": {
+          "titreAvertissement": "Réponse à revoir",
+          "titreBlocage": "Réponse bloquée",
+          "avertissement": "Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l'offre avant d'envoyer.",
+          "liensTitre": "Liens de la réponse",
+          "consigneBlocage": "Modifiez la réponse, puis envoyez-la de nouveau."
+        }
       },
       "lien": {
         "interne": "Lien interne Rewayah",
@@ -5059,7 +5067,7 @@
         "date": "Le {jour}/{mois}"
       },
       "publication": {
-        "auteur": "{fonction}, {moment}",
+        "auteur": "{fonction} · {moment}",
         "enregistrer": "Enregistrer la publication",
         "enregistree": "Publication enregistrée",
         "retirer": "Retirer des éléments enregistrés",
@@ -5393,7 +5401,9 @@
           "horsLigne": "Vous êtes hors ligne : cette annonce n'est pas encore confirmée. Reconnectez-vous, puis réessayez.",
           "indisponible": "La publication des annonces n'est pas encore disponible. Revenez plus tard.",
           "aucuneCibleTitre": "Aucune audience ouverte",
-          "aucuneCible": "Vous ne pouvez publier vers aucune audience pour le moment. Demandez l'accès à la direction."
+          "aucuneCible": "Vous ne pouvez publier vers aucune audience pour le moment. Demandez l'accès à la direction.",
+          "classeRefuseeTitre": "Publication réservée",
+          "classeRefusee": "Vous ne pouvez pas publier d'annonce pour cette Classe. Demandez l'accès à la direction."
         },
         "administration": {
           "nouvelle": "Nouvelle annonce",

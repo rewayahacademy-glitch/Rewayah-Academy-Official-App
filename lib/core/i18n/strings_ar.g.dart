@@ -933,6 +933,8 @@ class _Traductions$com$communaute$garde$ar extends Traductions$com$communaute$ga
 	@override String motif({required Object motif}) => 'السبب: ${motif}';
 	@override String get liensTitre => 'روابط المنشور';
 	@override String get consigneBlocage => 'عدِّل المنشور ثم انشره من جديد.';
+	@override String get panne => 'تعذّر على سياسة المجتمع مراجعة هذا المحتوى، فلم يُرسَل شيء. تحقّق من الاتصال ثم أعد المحاولة.';
+	@override late final _Traductions$com$communaute$garde$reponse$ar reponse = _Traductions$com$communaute$garde$reponse$ar._(_root);
 }
 
 // Path: com.communaute.lien
@@ -997,7 +999,7 @@ class _Traductions$com$communaute$publication$ar extends Traductions$com$communa
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String auteur({required Object fonction, required Object moment}) => '${fonction}، ${moment}';
+	@override String auteur({required Object fonction, required Object moment}) => '${fonction} · ${moment}';
 	@override String get enregistrer => 'حفظ المنشور';
 	@override String get enregistree => 'منشور محفوظ';
 	@override String get retirer => 'إزالة من العناصر المحفوظة';
@@ -1378,6 +1380,8 @@ class _Traductions$com$annonces$publieur$ar extends Traductions$com$annonces$pub
 	@override String get indisponible => 'نشر الإعلانات غير متاح بعد. عد لاحقًا.';
 	@override String get aucuneCibleTitre => 'لا يوجد جمهور متاح';
 	@override String get aucuneCible => 'لا يمكنك النشر لأي جمهور حاليًا. اطلب الإذن من الإدارة.';
+	@override String get classeRefuseeTitre => 'النشر مقصور';
+	@override String get classeRefusee => 'لا يمكنك نشر إعلان لهذا الفصل. اطلب الإذن من الإدارة.';
 }
 
 // Path: com.annonces.administration
@@ -1560,7 +1564,7 @@ class _Traductions$com$socle$navigation$provisoire$ar extends Traductions$com$so
 	@override String get communauteDetail => 'ستصل مساحة التبادل بين المعلّمين إلى هنا قريبًا.';
 	@override String get studioTitre => _root.com.socle.lexique.studio;
 	@override String get studioDetail => 'ستصل مساحة عمل الفريق إلى هنا قريبًا.';
-	@override String get administrationTitre => 'الاتصالات';
+	@override String get administrationTitre => 'إدارة الاتصالات';
 	@override String get administrationDetail => 'ستُدار الإعلانات والإشراف والرسائل من هنا قريبًا.';
 	@override String get publierAnnonceTitre => 'نشر إعلان';
 	@override String get publierAnnonceDetail => 'سيصل نشر إعلان لفصل ما إلى هنا قريبًا.';
@@ -1590,6 +1594,20 @@ class _Traductions$com$messages$demo$roles$ar extends Traductions$com$messages$d
 	@override String get adulte => 'طالب بالغ';
 	@override String get admin => 'الإدارة';
 	@override String get controleur => 'المراقب';
+}
+
+// Path: com.communaute.garde.reponse
+class _Traductions$com$communaute$garde$reponse$ar extends Traductions$com$communaute$garde$reponse$fr {
+	_Traductions$com$communaute$garde$reponse$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titreAvertissement => 'ردّ يحتاج إلى مراجعة';
+	@override String get titreBlocage => 'ردّ محظور';
+	@override String get avertissement => 'يبدو أن هذا الرد يتضمن ترويجًا تجاريًا. احذف الرابط أو الرمز أو العرض قبل الإرسال.';
+	@override String get liensTitre => 'روابط الرد';
+	@override String get consigneBlocage => 'عدِّل الرد ثم أرسله من جديد.';
 }
 
 // Path: com.communaute.signalement.politique
@@ -2218,7 +2236,7 @@ extension on TraductionsAr {
 			'com.socle.navigation.provisoire.communauteDetail' => 'ستصل مساحة التبادل بين المعلّمين إلى هنا قريبًا.',
 			'com.socle.navigation.provisoire.studioTitre' => _root.com.socle.lexique.studio,
 			'com.socle.navigation.provisoire.studioDetail' => 'ستصل مساحة عمل الفريق إلى هنا قريبًا.',
-			'com.socle.navigation.provisoire.administrationTitre' => 'الاتصالات',
+			'com.socle.navigation.provisoire.administrationTitre' => 'إدارة الاتصالات',
 			'com.socle.navigation.provisoire.administrationDetail' => 'ستُدار الإعلانات والإشراف والرسائل من هنا قريبًا.',
 			'com.socle.navigation.provisoire.publierAnnonceTitre' => 'نشر إعلان',
 			'com.socle.navigation.provisoire.publierAnnonceDetail' => 'سيصل نشر إعلان لفصل ما إلى هنا قريبًا.',
@@ -2370,6 +2388,12 @@ extension on TraductionsAr {
 			'com.communaute.garde.motif' => ({required Object motif}) => 'السبب: ${motif}',
 			'com.communaute.garde.liensTitre' => 'روابط المنشور',
 			'com.communaute.garde.consigneBlocage' => 'عدِّل المنشور ثم انشره من جديد.',
+			'com.communaute.garde.panne' => 'تعذّر على سياسة المجتمع مراجعة هذا المحتوى، فلم يُرسَل شيء. تحقّق من الاتصال ثم أعد المحاولة.',
+			'com.communaute.garde.reponse.titreAvertissement' => 'ردّ يحتاج إلى مراجعة',
+			'com.communaute.garde.reponse.titreBlocage' => 'ردّ محظور',
+			'com.communaute.garde.reponse.avertissement' => 'يبدو أن هذا الرد يتضمن ترويجًا تجاريًا. احذف الرابط أو الرمز أو العرض قبل الإرسال.',
+			'com.communaute.garde.reponse.liensTitre' => 'روابط الرد',
+			'com.communaute.garde.reponse.consigneBlocage' => 'عدِّل الرد ثم أرسله من جديد.',
 			'com.communaute.lien.interne' => 'رابط داخلي في رواية',
 			'com.communaute.lien.ressourceExterne' => 'مورد تعليمي خارجي',
 			'com.communaute.lien.commercialInterdit' => 'رابط تجاري ممنوع',
@@ -2396,7 +2420,7 @@ extension on TraductionsAr {
 			'com.communaute.moment.heures' => ({required Object nombre}) => 'منذ ${nombre} ساعة',
 			'com.communaute.moment.jours' => ({required Object nombre}) => 'منذ ${nombre} يوم',
 			'com.communaute.moment.date' => ({required Object jour, required Object mois}) => 'في ${jour}/${mois}',
-			'com.communaute.publication.auteur' => ({required Object fonction, required Object moment}) => '${fonction}، ${moment}',
+			'com.communaute.publication.auteur' => ({required Object fonction, required Object moment}) => '${fonction} · ${moment}',
 			'com.communaute.publication.enregistrer' => 'حفظ المنشور',
 			'com.communaute.publication.enregistree' => 'منشور محفوظ',
 			'com.communaute.publication.retirer' => 'إزالة من العناصر المحفوظة',
@@ -2463,14 +2487,14 @@ extension on TraductionsAr {
 			'com.communaute.demo.vente' => 'بيع محظور',
 			'com.communaute.demo.signalementNonConfirme' => 'إبلاغ غير مؤكَّد',
 			'com.communaute.demo.choisir' => 'اختر حالة لتجربتها داخل واجهة المعلّم.',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.demo.aujourdhui' => 'اليوم، مع الاختصار',
 			'com.communaute.demo.nominal' => 'ستة منشورات',
 			'com.communaute.demo.publication' => 'منشور مفتوح',
 			'com.communaute.demo.vide' => 'لا توجد منشورات',
 			'com.communaute.demo.lectureEchouee' => 'فشل القراءة',
 			'com.communaute.demo.indisponible' => 'الخدمة غير متاحة بعد',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.demo.horsLigne' => 'غير متصل',
 			'com.communaute.demo.envoiNonConfirme' => 'إرسال غير مؤكَّد',
 			'com.communaute.demo.moderationIndisponible' => 'الإشراف غير متاح',
@@ -2667,6 +2691,8 @@ extension on TraductionsAr {
 			'com.annonces.publieur.indisponible' => 'نشر الإعلانات غير متاح بعد. عد لاحقًا.',
 			'com.annonces.publieur.aucuneCibleTitre' => 'لا يوجد جمهور متاح',
 			'com.annonces.publieur.aucuneCible' => 'لا يمكنك النشر لأي جمهور حاليًا. اطلب الإذن من الإدارة.',
+			'com.annonces.publieur.classeRefuseeTitre' => 'النشر مقصور',
+			'com.annonces.publieur.classeRefusee' => 'لا يمكنك نشر إعلان لهذا الفصل. اطلب الإذن من الإدارة.',
 			'com.annonces.administration.nouvelle' => 'إعلان جديد',
 			'com.annonces.administration.demo' => 'عرض تجريبي',
 			'com.annonces.administration.demoDetail' => 'بيانات تجريبية : لا رقم حقيقي.',

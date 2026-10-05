@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -14,6 +15,7 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/section_header.dart';
+import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/vue_etat_communication.dart';
 import 'carte_annonce_classe.dart';
 import 'port_annonces.dart';
@@ -30,12 +32,13 @@ import 'port_annonces.dart';
 ///
 /// **Ce que l'emplacement rend, etat par etat** (COM-ANN-1) :
 ///
-/// - chargement : rien. La page hote a deja son squelette ; un second
-///   squelette qui disparaitrait aussitot ferait sauter la page ;
+/// - chargement : la section et un squelette d'une carte (revue COM-R,
+///   R-24) : l'emplacement ne surgit pas d'un coup quand la lecture arrive ;
 /// - capacite indisponible (port neutre de production, COM-BR-10) : rien.
 ///   Aucune source d'annonces n'existe avant BR-1 : l'Espace Classe ne
 ///   promet pas d'annonces et ne montre pas de faux vide ;
-/// - echec de lecture : la section et son erreur, avec « Reessayer » ;
+/// - echec de lecture : la section et son erreur, avec « Reessayer » ; hors
+///   ligne (`horsLigneProvider`, suivi), l'etat hors ligne a la place ;
 /// - aucune annonce : rien pour qui ne peut que lire ; pour qui peut publier,
 ///   la section, la phrase du vide et « Publier une annonce » ;
 /// - des annonces : la section et une carte par annonce
@@ -71,6 +74,11 @@ class AnnoncesDeClasse extends ConsumerStatefulWidget {
   /// La cle de la section, pour les tests.
   static const ValueKey<String> cleSection = ValueKey<String>(
     'annonces-de-classe',
+  );
+
+  /// La cle du squelette de chargement, pour les tests.
+  static const ValueKey<String> cleChargement = ValueKey<String>(
+    'annonces-de-classe-chargement',
   );
 
   /// La cle du lien « Publier une annonce ».
@@ -158,6 +166,7 @@ class _AnnoncesDeClasseState extends ConsumerState<AnnoncesDeClasse> {
     if (v.hasError) {
       final Object erreur = v.error!;
       if (erreur is CapaciteIndisponible) return null;
+      final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
@@ -165,14 +174,29 @@ class _AnnoncesDeClasseState extends ConsumerState<AnnoncesDeClasse> {
           SectionHeader(titre: a.section),
           Ecart.vMd,
           VueEtatCommunication(
-            etat: EtatCommunication.erreur,
+            etat: horsLigne
+                ? EtatCommunication.horsLigne
+                : EtatCommunication.erreur,
             onReessayer: () =>
                 ref.invalidate(annoncesDeClasseProvider(widget.classeId)),
           ),
         ],
       );
     }
-    return null;
+    // Chargement : la section et la forme d'une carte.
+    return Column(
+      key: AnnoncesDeClasse.cleChargement,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        SectionHeader(titre: a.section),
+        Ecart.vMd,
+        Semantics(
+          label: t.com.socle.composants.etats.chargement,
+          child: const ExcludeSemantics(child: Skeleton.liste(lignes: 1)),
+        ),
+      ],
+    );
   }
 
   Widget? _annonces(BuildContext context, AnnoncesDeLaClasse vue) {

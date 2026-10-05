@@ -52,7 +52,8 @@ String momentCommunaute(DateTime instant, DateTime maintenant) {
 }
 
 /// La ligne de role d'un auteur : sa fonction autorisee et le moment
-/// (« Enseignante, Classe An-Nour, Il y a 2 h ») ; le moment seul si le
+/// separes par « · » (« Enseignante, Classe An-Nour · Il y a 2 h », jamais
+/// une majuscule au milieu d'une phrase, revue COM-R, R-14) ; le moment seul si le
 /// serveur ne donne pas de fonction.
 String ligneAuteurCommunaute(String? fonction, String moment) =>
     fonction == null || fonction.isEmpty

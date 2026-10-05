@@ -16064,6 +16064,11 @@ class Traductions$com$communaute$garde$fr {
 
 	/// fr: 'Modifiez la publication, puis publiez-la de nouveau.'
 	String get consigneBlocage => 'Modifiez la publication, puis publiez-la de nouveau.';
+
+	/// fr: 'La politique de la Communauté n'a pas pu relire ce contenu : rien n'est parti. Vérifiez la connexion, puis réessayez.'
+	String get panne => 'La politique de la Communauté n\'a pas pu relire ce contenu : rien n\'est parti. Vérifiez la connexion, puis réessayez.';
+
+	late final Traductions$com$communaute$garde$reponse$fr reponse = Traductions$com$communaute$garde$reponse$fr.internal(_root);
 }
 
 // Path: com.communaute.lien
@@ -16167,8 +16172,8 @@ class Traductions$com$communaute$publication$fr {
 
 	// Translations
 
-	/// fr: '{fonction}, {moment}'
-	String auteur({required Object fonction, required Object moment}) => '${fonction}, ${moment}';
+	/// fr: '{fonction} · {moment}'
+	String auteur({required Object fonction, required Object moment}) => '${fonction} · ${moment}';
 
 	/// fr: 'Enregistrer la publication'
 	String get enregistrer => 'Enregistrer la publication';
@@ -16948,6 +16953,12 @@ class Traductions$com$annonces$publieur$fr {
 
 	/// fr: 'Vous ne pouvez publier vers aucune audience pour le moment. Demandez l'accès à la direction.'
 	String get aucuneCible => 'Vous ne pouvez publier vers aucune audience pour le moment. Demandez l\'accès à la direction.';
+
+	/// fr: 'Publication réservée'
+	String get classeRefuseeTitre => 'Publication réservée';
+
+	/// fr: 'Vous ne pouvez pas publier d'annonce pour cette Classe. Demandez l'accès à la direction.'
+	String get classeRefusee => 'Vous ne pouvez pas publier d\'annonce pour cette Classe. Demandez l\'accès à la direction.';
 }
 
 // Path: com.annonces.administration
@@ -17733,8 +17744,8 @@ class Traductions$com$socle$navigation$provisoire$fr {
 	/// fr: 'L'espace de travail de l'équipe arrivera bientôt ici.'
 	String get studioDetail => 'L\'espace de travail de l\'équipe arrivera bientôt ici.';
 
-	/// fr: 'Communications'
-	String get administrationTitre => 'Communications';
+	/// fr: 'Administration des communications'
+	String get administrationTitre => 'Administration des communications';
 
 	/// fr: 'Les annonces, la modération et les messages se géreront bientôt ici.'
 	String get administrationDetail => 'Les annonces, la modération et les messages se géreront bientôt ici.';
@@ -17786,6 +17797,30 @@ class Traductions$com$messages$demo$roles$fr {
 
 	/// fr: 'Contrôleur'
 	String get controleur => 'Contrôleur';
+}
+
+// Path: com.communaute.garde.reponse
+class Traductions$com$communaute$garde$reponse$fr {
+	Traductions$com$communaute$garde$reponse$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Réponse à revoir'
+	String get titreAvertissement => 'Réponse à revoir';
+
+	/// fr: 'Réponse bloquée'
+	String get titreBlocage => 'Réponse bloquée';
+
+	/// fr: 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l'offre avant d'envoyer.'
+	String get avertissement => 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant d\'envoyer.';
+
+	/// fr: 'Liens de la réponse'
+	String get liensTitre => 'Liens de la réponse';
+
+	/// fr: 'Modifiez la réponse, puis envoyez-la de nouveau.'
+	String get consigneBlocage => 'Modifiez la réponse, puis envoyez-la de nouveau.';
 }
 
 // Path: com.communaute.signalement.politique
@@ -22570,7 +22605,7 @@ extension on Traductions {
 			'com.socle.navigation.provisoire.communauteDetail' => 'L\'espace d\'échange entre enseignants arrivera bientôt ici.',
 			'com.socle.navigation.provisoire.studioTitre' => _root.com.socle.lexique.studio,
 			'com.socle.navigation.provisoire.studioDetail' => 'L\'espace de travail de l\'équipe arrivera bientôt ici.',
-			'com.socle.navigation.provisoire.administrationTitre' => 'Communications',
+			'com.socle.navigation.provisoire.administrationTitre' => 'Administration des communications',
 			'com.socle.navigation.provisoire.administrationDetail' => 'Les annonces, la modération et les messages se géreront bientôt ici.',
 			'com.socle.navigation.provisoire.publierAnnonceTitre' => 'Publier une annonce',
 			'com.socle.navigation.provisoire.publierAnnonceDetail' => 'La publication d\'une annonce pour une Classe arrivera bientôt ici.',
@@ -22724,6 +22759,12 @@ extension on Traductions {
 			'com.communaute.garde.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'com.communaute.garde.liensTitre' => 'Liens de la publication',
 			'com.communaute.garde.consigneBlocage' => 'Modifiez la publication, puis publiez-la de nouveau.',
+			'com.communaute.garde.panne' => 'La politique de la Communauté n\'a pas pu relire ce contenu : rien n\'est parti. Vérifiez la connexion, puis réessayez.',
+			'com.communaute.garde.reponse.titreAvertissement' => 'Réponse à revoir',
+			'com.communaute.garde.reponse.titreBlocage' => 'Réponse bloquée',
+			'com.communaute.garde.reponse.avertissement' => 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant d\'envoyer.',
+			'com.communaute.garde.reponse.liensTitre' => 'Liens de la réponse',
+			'com.communaute.garde.reponse.consigneBlocage' => 'Modifiez la réponse, puis envoyez-la de nouveau.',
 			'com.communaute.lien.interne' => 'Lien interne Rewayah',
 			'com.communaute.lien.ressourceExterne' => 'Ressource pédagogique externe',
 			'com.communaute.lien.commercialInterdit' => 'Lien commercial interdit',
@@ -22750,7 +22791,7 @@ extension on Traductions {
 			'com.communaute.moment.heures' => ({required Object nombre}) => 'Il y a ${nombre} h',
 			'com.communaute.moment.jours' => ({required Object nombre}) => 'Il y a ${nombre} j',
 			'com.communaute.moment.date' => ({required Object jour, required Object mois}) => 'Le ${jour}/${mois}',
-			'com.communaute.publication.auteur' => ({required Object fonction, required Object moment}) => '${fonction}, ${moment}',
+			'com.communaute.publication.auteur' => ({required Object fonction, required Object moment}) => '${fonction} · ${moment}',
 			'com.communaute.publication.enregistrer' => 'Enregistrer la publication',
 			'com.communaute.publication.enregistree' => 'Publication enregistrée',
 			'com.communaute.publication.retirer' => 'Retirer des éléments enregistrés',
@@ -23019,6 +23060,8 @@ extension on Traductions {
 			'com.annonces.publieur.indisponible' => 'La publication des annonces n\'est pas encore disponible. Revenez plus tard.',
 			'com.annonces.publieur.aucuneCibleTitre' => 'Aucune audience ouverte',
 			'com.annonces.publieur.aucuneCible' => 'Vous ne pouvez publier vers aucune audience pour le moment. Demandez l\'accès à la direction.',
+			'com.annonces.publieur.classeRefuseeTitre' => 'Publication réservée',
+			'com.annonces.publieur.classeRefusee' => 'Vous ne pouvez pas publier d\'annonce pour cette Classe. Demandez l\'accès à la direction.',
 			'com.annonces.administration.nouvelle' => 'Nouvelle annonce',
 			'com.annonces.administration.demo' => 'Démonstration',
 			'com.annonces.administration.demoDetail' => 'Données de démonstration : aucun chiffre réel.',
@@ -23102,6 +23145,8 @@ extension on Traductions {
 			'com.annonces.demoPublication.vacancesTexte' => 'Les cours s\'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.',
 			'com.annonces.demoPublication.reunionTitre' => 'Réunion des enseignants de jeudi',
 			'com.annonces.demoPublication.reunionTexte' => 'La réunion pédagogique de jeudi commence à 18 h, en visio. L\'ordre du jour est dans Le Studio.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demoPublication.recitationTitre' => 'Récitation de fin de trimestre',
 			'com.annonces.demoPublication.recitationTexte' => 'La Classe An-Nour présentera sa récitation de fin de trimestre samedi à 10 h, en visio.',
 			'com.annonces.demoPublication.rentreeTitre' => 'Reprise des cours après les vacances',
@@ -23110,8 +23155,6 @@ extension on Traductions {
 			'com.annonces.demoPublication.extraitAffilie' => 'Retrouvez mes fiches avec ce lien partenaire, remise de 20 % avec mon code.',
 			'com.annonces.demoPublication.signalementVente' => 'Publication « Cours particuliers disponibles »',
 			'com.annonces.demoPublication.extraitVente' => 'Je propose des cours particuliers payants le week-end, écrivez-moi.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demoPublication.signalementHorsSujet' => 'Réponse sous « Organiser une révision collective »',
 			'com.annonces.section' => 'Annonces de la Classe',
 			'com.annonces.annonce' => 'Annonce',

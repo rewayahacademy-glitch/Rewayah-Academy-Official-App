@@ -817,5 +817,13 @@
   "com.annonces.demoPublication.extraitAffilie": "spec Communications V1 du directeur (04/10), sections 13.4 et 26, donnees de demonstration fictives hors production ; texte propose par un agent (COM-ANN-2), a valider par le directeur",
   "com.annonces.demoPublication.signalementVente": "spec Communications V1 du directeur (04/10), sections 13.4 et 26, donnees de demonstration fictives hors production ; texte propose par un agent (COM-ANN-2), a valider par le directeur",
   "com.annonces.demoPublication.extraitVente": "spec Communications V1 du directeur (04/10), sections 13.4 et 26, donnees de demonstration fictives hors production ; texte propose par un agent (COM-ANN-2), a valider par le directeur",
-  "com.annonces.demoPublication.signalementHorsSujet": "spec Communications V1 du directeur (04/10), sections 13.4 et 26, donnees de demonstration fictives hors production ; texte propose par un agent (COM-ANN-2), a valider par le directeur"
+  "com.annonces.demoPublication.signalementHorsSujet": "spec Communications V1 du directeur (04/10), sections 13.4 et 26, donnees de demonstration fictives hors production ; texte propose par un agent (COM-ANN-2), a valider par le directeur",
+  "com.communaute.garde.panne": "revue croisee COM-R du 05/10 (R-17, K-59 : dire ce qui manque et quoi faire) ; libelle propose par un agent (COM-RC), a valider par le directeur",
+  "com.communaute.garde.reponse.titreAvertissement": "revue croisee COM-R du 05/10 (R-01) ; libelle propose par un agent (COM-RC), a valider par le directeur",
+  "com.communaute.garde.reponse.titreBlocage": "revue croisee COM-R du 05/10 (R-01) ; libelle propose par un agent (COM-RC), a valider par le directeur",
+  "com.communaute.garde.reponse.avertissement": "revue croisee COM-R du 05/10 (R-01, spec section 5.2 adaptee a une reponse) ; libelle propose par un agent (COM-RC), a valider par le directeur",
+  "com.communaute.garde.reponse.liensTitre": "revue croisee COM-R du 05/10 (R-01) ; libelle propose par un agent (COM-RC), a valider par le directeur",
+  "com.communaute.garde.reponse.consigneBlocage": "revue croisee COM-R du 05/10 (R-01, K-59) ; libelle propose par un agent (COM-RC), a valider par le directeur",
+  "com.annonces.publieur.classeRefuseeTitre": "revue croisee COM-R du 05/10 (R-20) ; libelle propose par un agent (COM-RC), a valider par le directeur",
+  "com.annonces.publieur.classeRefusee": "revue croisee COM-R du 05/10 (R-20, K-59) ; libelle propose par un agent (COM-RC), a valider par le directeur"
 }

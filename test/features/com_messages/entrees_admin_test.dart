@@ -164,7 +164,16 @@ Future<void> _ouvrirOngletMessages(WidgetTester tester) async {
   // sur la section courante.
   final Finder onglet = find.text(t.com.socle.navigation.ongletMessages);
   if (onglet.evaluate().isEmpty) {
-    await tester.tap(find.text(t.com.socle.navigation.ongletAnnonces).first);
+    // Le menu de la sous-navigation, pas le titre de la page (qui peut se
+    // replier sur le nom de l'onglet, revue COM-R R-15).
+    await tester.tap(
+      find
+          .descendant(
+            of: find.byType(SousNavigationDomaine),
+            matching: find.text(t.com.socle.navigation.ongletAnnonces),
+          )
+          .first,
+    );
     await _stabiliser(tester);
   }
   await tester.tap(onglet.last);
@@ -213,87 +222,80 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets(
-      '1440 : tableau de bord, Communications, Messages ; le fil '
-      'du controleur sur sa mission s ouvre dans la coquille',
-      (WidgetTester tester) async {
-        final GoRouter routeur = await _monter(tester);
-        await _ouvrirOngletMessages(tester);
-        expect(_chemin(routeur), Routes.adminCommunicationsMessages);
-        expect(find.byType(MessagesAdminPage), findsOneWidget);
-        expect(find.byType(SousNavigationDomaine), findsOneWidget);
-        expect(find.byType(ListeFils), findsOneWidget);
-        expect(find.byKey(ListeFils.cleLigne('fil-mission')), findsOneWidget);
-        expect(
-          find.byKey(ListeFils.cleLigne('fil-dossier-omar')),
-          findsOneWidget,
-        );
+    testWidgets('1440 : tableau de bord, Communications, Messages ; le fil '
+        'du controleur sur sa mission s ouvre dans la coquille', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monter(tester);
+      await _ouvrirOngletMessages(tester);
+      expect(_chemin(routeur), Routes.adminCommunicationsMessages);
+      expect(find.byType(MessagesAdminPage), findsOneWidget);
+      expect(find.byType(SousNavigationDomaine), findsOneWidget);
+      expect(find.byType(ListeFils), findsOneWidget);
+      expect(find.byKey(ListeFils.cleLigne('fil-mission')), findsOneWidget);
+      expect(
+        find.byKey(ListeFils.cleLigne('fil-dossier-omar')),
+        findsOneWidget,
+      );
 
-        await tester.tap(find.byKey(ListeFils.cleLigne('fil-mission')));
-        await _stabiliser(tester);
-        expect(_chemin(routeur), Routes.adminFilPour('fil-mission'));
-        expect(find.byType(FilDiscussion), findsOneWidget);
-        expect(
-          find.descendant(
-            of: find.byType(EnteteFilContexte),
-            matching: find.text('Visite de contrôle, Classe An-Nour'),
-          ),
-          findsOneWidget,
-        );
-        // Toujours la coquille admin, Operations allume.
-        expect(find.byType(AdminShell), findsOneWidget);
-        final NavigationDrawer tiroir = tester.widget<NavigationDrawer>(
-          find.descendant(
-            of: find.byKey(AdminShell.barreLateraleKey),
-            matching: find.byType(NavigationDrawer),
-          ),
-        );
-        expect(
-          tiroir.selectedIndex,
-          domainesAdmin(voitDirection: false).indexOf(AdminDomaine.operations),
-        );
-        expect(tester.takeException(), isNull);
-      },
-    );
+      await tester.tap(find.byKey(ListeFils.cleLigne('fil-mission')));
+      await _stabiliser(tester);
+      expect(_chemin(routeur), Routes.adminFilPour('fil-mission'));
+      expect(find.byType(FilDiscussion), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(EnteteFilContexte),
+          matching: find.text('Visite de contrôle, Classe An-Nour'),
+        ),
+        findsOneWidget,
+      );
+      // Toujours la coquille admin, Operations allume.
+      expect(find.byType(AdminShell), findsOneWidget);
+      final NavigationDrawer tiroir = tester.widget<NavigationDrawer>(
+        find.descendant(
+          of: find.byKey(AdminShell.barreLateraleKey),
+          matching: find.byType(NavigationDrawer),
+        ),
+      );
+      expect(
+        tiroir.selectedIndex,
+        domainesAdmin(voitDirection: false).indexOf(AdminDomaine.operations),
+      );
+      expect(tester.takeException(), isNull);
+    });
 
-    testWidgets(
-      '390 : une surface a la fois, le retour du fil ramene a la '
-      'liste de l onglet',
-      (WidgetTester tester) async {
-        final GoRouter routeur = await _monter(
-          tester,
-          taille: const Size(390, 844),
-        );
-        await _ouvrirOngletMessages(tester);
-        expect(find.byType(ListeFils), findsOneWidget);
-        await tester.tap(find.byKey(ListeFils.cleLigne('fil-dossier-omar')));
-        await _stabiliser(tester);
-        expect(_chemin(routeur), Routes.adminFilPour('fil-dossier-omar'));
-        expect(find.byType(FilDiscussion), findsOneWidget);
-        expect(find.byType(ListeFils), findsNothing);
+    testWidgets('390 : une surface a la fois, le retour du fil ramene a la '
+        'liste de l onglet', (WidgetTester tester) async {
+      final GoRouter routeur = await _monter(
+        tester,
+        taille: const Size(390, 844),
+      );
+      await _ouvrirOngletMessages(tester);
+      expect(find.byType(ListeFils), findsOneWidget);
+      await tester.tap(find.byKey(ListeFils.cleLigne('fil-dossier-omar')));
+      await _stabiliser(tester);
+      expect(_chemin(routeur), Routes.adminFilPour('fil-dossier-omar'));
+      expect(find.byType(FilDiscussion), findsOneWidget);
+      expect(find.byType(ListeFils), findsNothing);
 
-        await tester.tap(find.byType(DisqueRetour));
-        await _stabiliser(tester);
-        expect(_chemin(routeur), Routes.adminCommunicationsMessages);
-        expect(find.byType(ListeFils), findsOneWidget);
-        expect(tester.takeException(), isNull);
-      },
-    );
+      await tester.tap(find.byType(DisqueRetour));
+      await _stabiliser(tester);
+      expect(_chemin(routeur), Routes.adminCommunicationsMessages);
+      expect(find.byType(ListeFils), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
 
-    testWidgets(
-      'production (port neutre) : pas encore disponible, sans '
-      '« Reessayer »',
-      (WidgetTester tester) async {
-        await _monter(tester, port: const MessagesMetierIndisponibles());
-        await _ouvrirOngletMessages(tester);
-        expect(find.byType(MessagesAdminPage), findsOneWidget);
-        expect(
-          find.text(t.com.socle.composants.etats.indisponibleTitre),
-          findsWidgets,
-        );
-        expect(find.text(t.com.socle.composants.etats.reessayer), findsNothing);
-      },
-    );
+    testWidgets('production (port neutre) : pas encore disponible, sans '
+        '« Reessayer »', (WidgetTester tester) async {
+      await _monter(tester, port: const MessagesMetierIndisponibles());
+      await _ouvrirOngletMessages(tester);
+      expect(find.byType(MessagesAdminPage), findsOneWidget);
+      expect(
+        find.text(t.com.socle.composants.etats.indisponibleTitre),
+        findsWidgets,
+      );
+      expect(find.text(t.com.socle.composants.etats.reessayer), findsNothing);
+    });
   });
 
   group('Detail d un dossier : ecrire a la personne du dossier', () {

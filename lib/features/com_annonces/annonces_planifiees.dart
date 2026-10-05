@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_palette.dart';
@@ -35,12 +36,17 @@ import 'port_annonces.dart';
 /// communications : hors ligne, la phrase de la spec section 22 ; sinon le
 /// traitement par defaut de `BlocAsynchrone` (capacite absente sans
 /// « Reessayer », echec avec « Reessayer »).
+///
+/// [horsLigne] est SUIVI par l'appelant (`ref.watch(horsLigneProvider)`
+/// dans son `build`, revue COM-R, R-24) : la connexion qui tombe ou revient
+/// change l'etat affiche sans attendre une autre relecture.
 Widget? etatErreurAdministration(
-  WidgetRef ref,
+  bool horsLigne,
   Object erreur,
   VoidCallback? reessayer,
 ) {
-  if (ref.read(horsLigneProvider).value ?? false) {
+  if (erreur is CapaciteIndisponible) return null;
+  if (horsLigne) {
     return VueEtatCommunication(
       etat: EtatCommunication.horsLigne,
       onReessayer: reessayer,
@@ -146,6 +152,7 @@ class SectionAnnoncesAdministration extends ConsumerWidget {
     final AsyncValue<AnnoncesAdministration> lue = ref.watch(
       annoncesAdministrationProvider,
     );
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final AnnoncesAdministration? vue = lue.value;
     final List<AnnonceAdministration>? liste = vue == null ? null : _liste(vue);
     return Column(
@@ -155,7 +162,8 @@ class SectionAnnoncesAdministration extends ConsumerWidget {
         EnTeteSectionAdministration(
           titre: titre,
           compteur: lue.hasError ? null : liste?.length,
-          demonstration: vue?.demonstration ?? false,
+          // La pastille « Démonstration » est dite une fois en tete de page
+          // (indicateurs), jamais a chaque section (revue COM-R, R-15).
         ),
         Ecart.vMd,
         BlocAsynchrone<AnnoncesAdministration>(
@@ -163,7 +171,7 @@ class SectionAnnoncesAdministration extends ConsumerWidget {
           squelette: const Skeleton.liste(lignes: 2),
           onReessayer: () => ref.invalidate(annoncesAdministrationProvider),
           erreurVersEtat: (Object e, VoidCallback? r) =>
-              etatErreurAdministration(ref, e, r),
+              etatErreurAdministration(horsLigne, e, r),
           estVide: (AnnoncesAdministration v) => _liste(v).isEmpty,
           vide: EtatSysteme(
             nature: NatureEtat.aucunResultat,

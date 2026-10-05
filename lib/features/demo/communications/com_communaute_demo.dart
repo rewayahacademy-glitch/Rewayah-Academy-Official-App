@@ -440,12 +440,34 @@ abstract final class DonneesCommunauteDemo {
         brouillonPublicite,
       ];
 
-  /// Le garde des fixtures : les trois brouillons marques et les quatre
-  /// etats de lien. Tout autre contenu est normal.
+  /// Une reponse marquee (revue COM-R, R-01) : un lien affilie poste en
+  /// reponse est retenu comme une publication.
+  static const String reponseAffilie =
+      'Pour la révision, je conseille ce lecteur, en réduction avec mon '
+      'lien : $lienAffilieDemo';
+
+  /// Le verdict de [reponseAffilie].
+  static const VerificationPromotion verdictReponseAffilie =
+      VerificationPromotion(
+        verdict: VerdictPromotion.lienAffilie,
+        motif: MotifSignalement.lienAffilie,
+        liens: <LienAnalyse>[
+          LienAnalyse(
+            adresse: lienAffilieDemo,
+            etat: EtatLien.commercialInterdit,
+          ),
+        ],
+      );
+
+  /// Le garde des fixtures : les trois brouillons marques, la reponse
+  /// marquee et les quatre etats de lien. Tout autre contenu est normal.
   static GardePromotionFixtures garde() => GardePromotionFixtures(
     verdicts: <ContenuMarque, VerificationPromotion>{
       for (final BrouillonMarqueDemo b in brouillonsMarques)
         (titre: b.titre, texte: b.texte): b.verdict,
+    },
+    verdictsReponses: const <String, VerificationPromotion>{
+      reponseAffilie: verdictReponseAffilie,
     },
     liens: etatsLiens,
   );
@@ -511,14 +533,25 @@ abstract final class DonneesCommunauteDemo {
 /// est accuse, ou la moderation ne repond pas ([indisponible]). Rien ne
 /// quitte l'appareil.
 class ModerationDemo implements PortModeration {
-  /// Cree la moderation.
-  ModerationDemo({this.indisponible = false, this.nonConfirme = false});
+  /// Cree la moderation. [dejaSignales] : les contenus que la personne
+  /// avait signales avant la visite, rendus par [mesSignalements].
+  ModerationDemo({
+    this.indisponible = false,
+    this.nonConfirme = false,
+    Set<ObjetLie> dejaSignales = const <ObjetLie>{},
+  }) : _dejaSignales = Set<ObjetLie>.of(dejaSignales);
 
   /// Vrai : chaque signalement echoue comme un port sans contrat.
   final bool indisponible;
 
   /// Vrai : l'accuse ne revient pas (reseau coupe) ; rien n'est garde.
   final bool nonConfirme;
+
+  final Set<ObjetLie> _dejaSignales;
+
+  /// Les cles d'idempotence deja accusees (tests) : un renvoi avec la meme
+  /// cle ne cree rien.
+  final Set<String> cles = <String>{};
 
   /// Les signalements accuses (tests).
   final List<(ObjetLie, MotifSignalement)> signalements =
@@ -529,14 +562,26 @@ class ModerationDemo implements PortModeration {
       CapacitesModeration(peutSignaler: true);
 
   @override
-  Future<void> signaler({
+  Future<ResultatSignalement> signaler({
     required ObjetLie objet,
     required MotifSignalement motif,
+    required String cleIdempotence,
     String? precision,
   }) async {
     if (indisponible) throw const CapaciteIndisponible('COM-BR-06');
     if (nonConfirme) throw StateError('accuse de signalement non recu');
+    if (cles.contains(cleIdempotence)) return ResultatSignalement.enregistre;
+    if (_dejaSignales.contains(objet)) return ResultatSignalement.dejaSignale;
+    cles.add(cleIdempotence);
+    _dejaSignales.add(objet);
     signalements.add((objet, motif));
+    return ResultatSignalement.enregistre;
+  }
+
+  @override
+  Future<Set<ObjetLie>> mesSignalements() async {
+    if (indisponible) throw const CapaciteIndisponible('COM-BR-06');
+    return Set<ObjetLie>.unmodifiable(_dejaSignales);
   }
 
   @override

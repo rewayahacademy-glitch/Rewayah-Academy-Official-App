@@ -3,9 +3,14 @@
 // COM-BR-A01).
 //
 // **Un widget lit une capacite, jamais un role** (CLAUDE.md). Publier une
-// annonce, la programmer, moderer, ouvrir les parametres d'un canal, ecrire
-// dans un fil : chacune de ces actions n'est rendue que si la capacite est
-// donnee ici. Une capacite absente n'est pas rendue (jamais grisee) ; le
+// annonce, la programmer, ecrire dans un fil, envoyer un vocal : chacune de
+// ces actions n'est rendue que si la capacite est donnee ici.
+//
+// Moderer et ouvrir les parametres d'un canal NE sont PAS ici (revue COM-R,
+// R-21) : leur source unique est portee par leur domaine,
+// `CapacitesModeration` (`core/communications/moderation.dart`, COM-BR-06)
+// et `CapaciteCanal.parametres` (port du Studio). Deux sources pour la meme
+// action finiraient par diverger. Une capacite absente n'est pas rendue (jamais grisee) ; le
 // serveur refuse quand meme (COM-BR-A01).
 //
 // **Source unique** : [capacitesCommunicationProvider], lu par toutes les
@@ -34,12 +39,6 @@ enum CapaciteCommunication {
 
   /// Programmer une annonce a une date future.
   programmer,
-
-  /// Moderer : ouvrir la file, masquer, restaurer, rejeter, approuver.
-  moderer,
-
-  /// Ouvrir les parametres d'un canal du Studio.
-  parametresCanal,
 
   /// Ecrire dans un fil.
   ecrireDansFil,

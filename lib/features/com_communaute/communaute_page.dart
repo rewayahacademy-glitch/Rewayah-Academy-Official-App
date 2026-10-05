@@ -379,6 +379,20 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
     }
     final String? selection = _selection;
     if (selection == null) {
+      // Le flux est vide (aucune publication, ou aucune pour ce filtre) : il
+      // dit deja son etat vide, le centre n'en ajoute pas un second a cote
+      // (revue COM-R, R-13).
+      final AsyncValue<List<PublicationCommunaute>> lues = ref.watch(
+        publicationsCommunauteProvider((
+          categorieId: _filtre.categorieId,
+          recherche: '',
+        )),
+      );
+      if (lues.hasValue &&
+          !lues.hasError &&
+          filtrerPublications(lues.requireValue, _filtre.recherche).isEmpty) {
+        return const SizedBox.shrink(key: CommunautePage.cleAucuneSelection);
+      }
       final c = t.com.communaute.publication;
       return SingleChildScrollView(
         key: CommunautePage.cleAucuneSelection,

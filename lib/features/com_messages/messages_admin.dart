@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/admin/admin_domaine.dart';
+import '../../core/communications/titre_administration.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
 import '../../core/widgets/page_shell.dart';
@@ -45,8 +46,21 @@ class MessagesAdminPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (BuildContext contexte, BoxConstraints contraintes) =>
+          _page(contexte, contraintes.maxWidth),
+    );
+  }
+
+  Widget _page(BuildContext context, double largeur) {
     return PageShell(
-      titre: t.com.socle.navigation.provisoire.administrationTitre,
+      // Le titre de la spec, replie sur « Messages » quand un mot ne
+      // tiendrait pas (revue COM-R, R-09 et R-15).
+      titre: titreAdministrationCommunications(
+        context,
+        largeurPage: largeur,
+        repli: t.com.socle.navigation.ongletMessages,
+      ),
       entete: SousNavigationDomaine(
         onglets: ongletsCommunications(),
         indexActif: indexOnglet,

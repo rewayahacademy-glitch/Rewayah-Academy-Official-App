@@ -25,8 +25,10 @@
 // le garde le dit en bas du formulaire, pres de « Publier », avec son motif
 // et l'etat des liens ; rien ne part, aucun succes n'est affiche (R-COM-05,
 // R-COM-06). Le garde ne detecte rien lui-meme. Sans contrat (COM-BR-07,
-// port neutre) ou s'il ne repond pas, le composer ne pretend pas avoir relu
-// la publication : il la transmet, et le serveur reste seul juge.
+// port neutre), le composer ne pretend pas avoir relu la publication : il la
+// transmet, et le serveur reste seul juge. S'il est en panne (toute autre
+// erreur), la publication est RETENUE et « Réessayer » relance le garde
+// (revue COM-R, R-17) : une panne ne contourne jamais la politique.
 
 import 'dart:async';
 
@@ -100,6 +102,11 @@ class ComposerPublication extends ConsumerStatefulWidget {
     'communaute-composer-erreur',
   );
 
+  /// La cle de l'action « Réessayer » apres une panne du garde.
+  static const ValueKey<String> cleReessayerGarde = ValueKey<String>(
+    'communaute-composer-garde-reessayer',
+  );
+
   /// La cle de l'emplacement du verdict du garde, pres de « Publier ».
   static const ValueKey<String> cleVerdict = ValueKey<String>(
     'communaute-composer-verdict',
@@ -136,6 +143,9 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
   bool _enCours = false;
   bool _restaure = false;
   String? _erreur;
+
+  /// Vrai quand le garde est en panne : la publication est retenue.
+  bool _gardeEnPanne = false;
   String? _cle;
   int _numeroPiece = 0;
 
@@ -219,6 +229,7 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
     setState(() {
       _verifier = true;
       _erreur = null;
+      _gardeEnPanne = false;
     });
     if (categorie == null ||
         titre.isEmpty ||
@@ -236,7 +247,21 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
       piecesJointes: List<PieceJointe>.unmodifiable(_pieces),
     );
     setState(() => _enCours = true);
-    final VerificationPromotion? verification = await _relireGarde(brouillon);
+    final VerificationPromotion? verification;
+    try {
+      verification = await relireParLeGarde(
+        () => ref.read(portGardePromotionProvider).verifier(brouillon),
+      );
+    } on Object {
+      // Le garde est en panne : rien ne part (R-17).
+      if (!mounted) return;
+      setState(() {
+        _enCours = false;
+        _gardeEnPanne = true;
+        _erreur = t.com.communaute.garde.panne;
+      });
+      return;
+    }
     if (!mounted) return;
     if (verification != null && verification.verdict.retient) {
       // Le garde retient la publication : rien ne part, aucun succes.
@@ -268,19 +293,6 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
     }
   }
 
-  /// Le verdict du garde sur [brouillon] ; nul si le garde n'a pas de
-  /// contrat (COM-BR-07) ou ne repond pas. Dans ce cas, rien n'est affirme :
-  /// la publication part au serveur, seul juge.
-  Future<VerificationPromotion?> _relireGarde(
-    BrouillonPublication brouillon,
-  ) async {
-    try {
-      return await ref.read(portGardePromotionProvider).verifier(brouillon);
-    } on Object {
-      return null;
-    }
-  }
-
   /// Amene le verdict a l'ecran : il s'affiche pres de « Publier », mais un
   /// long texte peut l'avoir pousse hors de la vue.
   void _montrerVerdict() {
@@ -300,6 +312,7 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
     if (_erreur != null || _verdict != null) {
       setState(() {
         _erreur = null;
+        _gardeEnPanne = false;
         _verdict = null;
       });
     }
@@ -489,6 +502,21 @@ class _ComposerPublicationState extends ConsumerState<ComposerPublication> {
               ),
             ),
           ),
+          if (_gardeEnPanne) ...<Widget>[
+            Ecart.vSm,
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: ActionPrincipale(
+                key: ComposerPublication.cleReessayerGarde,
+                libelle: t.commun.etats.actions.reessayer,
+                niveau: NiveauAction.tertiaire,
+                pleineLargeur: false,
+                compacte: true,
+                enCours: _enCours,
+                onPress: _publier,
+              ),
+            ),
+          ],
         ],
       ],
     );

@@ -127,6 +127,15 @@ class ElementModeration {
   final String? extrait;
 }
 
+/// Ce que le serveur rend pour un signalement (revue COM-R, R-18).
+enum ResultatSignalement {
+  /// Le signalement est enregistre (ou rejoue avec la meme cle).
+  enregistre,
+
+  /// La personne avait deja signale ce contenu : rien de neuf n'est cree.
+  dejaSignale,
+}
+
 /// La moderation des contenus de communication.
 ///
 /// Chaque action porte l'identifiant de son objet ou de son signalement,
@@ -138,11 +147,23 @@ abstract interface class PortModeration {
   Future<CapacitesModeration> capacites();
 
   /// Signale [objet] pour [motif]. [precision] est un texte libre facultatif.
-  Future<void> signaler({
+  ///
+  /// Contrat propose a COM-BR-06 (revue COM-R, R-18) : [cleIdempotence] est
+  /// tiree une fois par signalement et rejouee telle quelle a chaque
+  /// renvoi ; le serveur ne cree jamais deux signalements pour la meme cle,
+  /// et rend [ResultatSignalement.dejaSignale] quand la personne avait deja
+  /// signale [objet] (sur cet appareil ou un autre).
+  Future<ResultatSignalement> signaler({
     required ObjetLie objet,
     required MotifSignalement motif,
+    required String cleIdempotence,
     String? precision,
   });
+
+  /// Les contenus que la personne connectee a deja signales, rendus par le
+  /// serveur (R-18) : l'ecran ne repropose pas « Signaler » et le dit, meme
+  /// apres un rechargement de page.
+  Future<Set<ObjetLie>> mesSignalements();
 
   /// La file des contenus signales, le plus ancien d'abord.
   Future<List<ElementModeration>> file();
@@ -168,11 +189,16 @@ class ModerationIndisponible implements PortModeration {
       Future<CapacitesModeration>.error(_manque);
 
   @override
-  Future<void> signaler({
+  Future<ResultatSignalement> signaler({
     required ObjetLie objet,
     required MotifSignalement motif,
+    required String cleIdempotence,
     String? precision,
-  }) => Future<void>.error(_manque);
+  }) => Future<ResultatSignalement>.error(_manque);
+
+  @override
+  Future<Set<ObjetLie>> mesSignalements() =>
+      Future<Set<ObjetLie>>.error(_manque);
 
   @override
   Future<List<ElementModeration>> file() =>

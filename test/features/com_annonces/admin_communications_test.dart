@@ -268,7 +268,9 @@ void main() {
     ) async {
       await monterAdministration(
         tester,
-        capacites: const <CapaciteCommunication>{CapaciteCommunication.moderer},
+        capacites: const <CapaciteCommunication>{
+          CapaciteCommunication.programmer,
+        },
       );
       expect(find.byType(StatTile), findsNWidgets(4));
       expect(

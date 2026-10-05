@@ -280,9 +280,11 @@ void main() {
         port.signaler(
           objet: _publication('p1'),
           motif: MotifSignalement.publicite,
+          cleIdempotence: 'sig-1',
         ),
         _indisponible('COM-BR-06'),
       );
+      expect(port.mesSignalements(), _indisponible('COM-BR-06'));
       expect(port.file(), _indisponible('COM-BR-06'));
       expect(
         port.appliquer(signalementId: 's1', action: ActionModeration.masquer),

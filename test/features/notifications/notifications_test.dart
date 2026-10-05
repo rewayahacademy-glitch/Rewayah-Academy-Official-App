@@ -151,8 +151,10 @@ void main() {
       expect(tester.getTopLeft(n1).dy, lessThan(tester.getTopLeft(n2).dy));
       expect(find.text('Compte rendu de la séance disponible'), findsOneWidget);
       expect(find.text(t.historique.fuseauListe), findsOneWidget);
-      // La ligne sans destination (lien externe rejete) n'est pas un bouton.
-      expect(tester.widget<LigneNotification>(n2).onPress, isNull);
+      // La ligne sans destination (lien externe rejete) ouvre son detail :
+      // aucune ligne inerte (revue COM-R, R-06 ; contre-preuve : elle
+      // n'etait pas une cible).
+      expect(tester.widget<LigneNotification>(n2).onPress, isNotNull);
 
       await tester.tap(n1);
       await stabiliser(tester);

@@ -38,6 +38,7 @@ import '../../core/widgets/fil_discussion.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/vue_etat_communication.dart';
+import 'activite.dart' show dansPhrase;
 import 'canal_page.dart' show horodatageCanal;
 import 'port_activite_studio.dart';
 import 'port_studio.dart';
@@ -168,7 +169,7 @@ LigneRubrique ligneBrouillon(
   final x = t.com.studio.brouillons;
   final String legende = <String>[
     extraitBrouillon(b.brouillon.texte),
-    x.modifie(moment: horodatageCanal(b.brouillon.modifieLe)),
+    x.modifie(moment: dansPhrase(horodatageCanal(b.brouillon.modifieLe))),
   ].join('\n');
   final String libelle = switch (b.canal) {
     CanalDuBrouillon.connu => x.dansCanal(nom: b.nomCanal ?? ''),

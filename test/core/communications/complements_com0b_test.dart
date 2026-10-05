@@ -103,9 +103,8 @@ void main() {
       );
       expect(lues.peut(CapaciteCommunication.publierAnnonce), isTrue);
       expect(lues.peut(CapaciteCommunication.ecrireDansFil), isTrue);
-      expect(lues.peut(CapaciteCommunication.moderer), isFalse);
       expect(lues.peut(CapaciteCommunication.programmer), isFalse);
-      expect(lues.peut(CapaciteCommunication.parametresCanal), isFalse);
+      expect(lues.peut(CapaciteCommunication.envoyerVocal), isFalse);
     });
 
     test(
@@ -126,13 +125,12 @@ void main() {
       },
     );
 
-    test('les six capacites de COM-BR-16, dans cet ordre (envoyerVocal '
-        'ajoutee a COM-FUS)', () {
+    test('les quatre capacites de COM-BR-16, dans cet ordre (envoyerVocal '
+        'ajoutee a COM-FUS ; moderer et parametresCanal retirees, sources '
+        'uniques dans leur domaine, revue COM-R R-21)', () {
       expect(CapaciteCommunication.values, <CapaciteCommunication>[
         CapaciteCommunication.publierAnnonce,
         CapaciteCommunication.programmer,
-        CapaciteCommunication.moderer,
-        CapaciteCommunication.parametresCanal,
         CapaciteCommunication.ecrireDansFil,
         CapaciteCommunication.envoyerVocal,
       ]);

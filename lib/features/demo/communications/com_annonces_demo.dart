@@ -161,8 +161,11 @@ Map<String, List<AnnonceClasse>> annoncesDemo(
 
 /// Le catalogue de demonstration de [role] (spec section 13.2), la plus
 /// recente d'abord. Aucune destination vers une page a session : une
-/// notification de demonstration ouvre son detail, une annonce ouvre
-/// l'Espace Classe de demonstration.
+/// destination de demonstration reste dans les adresses de demonstration
+/// (le fil des Messages, la Journee de demonstration de l'enseignant...),
+/// une notification sans destination ouvre son detail, une annonce ouvre
+/// l'Espace Classe de demonstration. Une « Action requise » a toujours une
+/// destination (revue COM-R, R-06).
 List<NotificationTuteur> notificationsDemo(
   RoleDemoCommunications role,
   DateTime maintenant,
@@ -178,6 +181,7 @@ List<NotificationTuteur> notificationsDemo(
     bool mention = false,
     String? texte,
     String? annonceId,
+    String? destination,
   }) => NotificationTuteur(
     id: id,
     titre: titre,
@@ -188,6 +192,7 @@ List<NotificationTuteur> notificationsDemo(
     mention: mention,
     texte: texte,
     annonceId: annonceId,
+    destination: destination,
   );
   const Duration h1 = Duration(hours: 1);
   const Duration h3 = Duration(hours: 3);
@@ -224,6 +229,10 @@ List<NotificationTuteur> notificationsDemo(
         TypeNotification.reponseAttendue,
         NiveauAttention.actionRequise,
         texte: f.tuteurReponseTexte,
+        destination: adresseDemoCommunications(
+          VoieDemoCommunications.messages,
+          role: RoleDemoCommunications.tuteur,
+        ),
       ),
       n(
         'demo-t-message',
@@ -232,6 +241,10 @@ List<NotificationTuteur> notificationsDemo(
         TypeNotification.messageMetier,
         NiveauAttention.aLire,
         mention: true,
+        destination: adresseDemoCommunications(
+          VoieDemoCommunications.messages,
+          role: RoleDemoCommunications.tuteur,
+        ),
       ),
       n(
         'demo-t-dossier',
@@ -257,6 +270,7 @@ List<NotificationTuteur> notificationsDemo(
         j1,
         TypeNotification.changementSeance,
         NiveauAttention.actionRequise,
+        destination: Routes.demoAdulte,
       ),
       n(
         'demo-a-message',
@@ -274,6 +288,10 @@ List<NotificationTuteur> notificationsDemo(
         h1,
         TypeNotification.messageMetier,
         NiveauAttention.aLire,
+        destination: adresseDemoCommunications(
+          VoieDemoCommunications.messages,
+          role: RoleDemoCommunications.enseignant,
+        ),
       ),
       n(
         'demo-e-direction',
@@ -289,6 +307,7 @@ List<NotificationTuteur> notificationsDemo(
         h5,
         TypeNotification.changementPlanning,
         NiveauAttention.actionRequise,
+        destination: Routes.demoEnseignant,
       ),
       n(
         'demo-e-mention',
@@ -297,6 +316,10 @@ List<NotificationTuteur> notificationsDemo(
         TypeNotification.mentionCommunaute,
         NiveauAttention.aLire,
         mention: true,
+        destination: adresseDemoCommunications(
+          VoieDemoCommunications.communaute,
+          role: RoleDemoCommunications.enseignant,
+        ),
       ),
       n(
         'demo-e-reponse',
@@ -322,13 +345,19 @@ List<NotificationTuteur> notificationsDemo(
         h1,
         TypeNotification.signalementCommunaute,
         NiveauAttention.urgent,
+        destination: adresseDemoCommunications(
+          VoieDemoCommunications.annonces,
+          role: RoleDemoCommunications.admin,
+        ),
       ),
       n(
         'demo-d-dossiers',
         f.adminDossiers,
         h3,
         TypeNotification.dossierATraiter,
-        NiveauAttention.actionRequise,
+        // Les dossiers n'ont pas de demonstration ou se traiter : la
+        // notification se lit, elle ne promet pas d'action (R-06).
+        NiveauAttention.aLire,
       ),
       n(
         'demo-d-planifiee',
@@ -336,6 +365,10 @@ List<NotificationTuteur> notificationsDemo(
         h5,
         TypeNotification.annoncePlanifiee,
         NiveauAttention.actionRequise,
+        destination: adresseDemoCommunications(
+          VoieDemoCommunications.annonces,
+          role: RoleDemoCommunications.admin,
+        ),
       ),
       n(
         'demo-d-reponse',
@@ -362,6 +395,10 @@ List<NotificationTuteur> notificationsDemo(
         h2,
         TypeNotification.decisionDemandee,
         NiveauAttention.actionRequise,
+        destination: adresseDemoCommunications(
+          VoieDemoCommunications.studio,
+          role: RoleDemoCommunications.admin,
+        ),
       ),
       n(
         'demo-d-studio-mention',
@@ -377,6 +414,10 @@ List<NotificationTuteur> notificationsDemo(
         h6,
         TypeNotification.elementAssigne,
         NiveauAttention.actionRequise,
+        destination: adresseDemoCommunications(
+          VoieDemoCommunications.studio,
+          role: RoleDemoCommunications.admin,
+        ),
       ),
       n(
         'demo-d-studio-reponse',
@@ -415,6 +456,7 @@ List<NotificationTuteur> notificationsDemo(
         j1,
         TypeNotification.changementMission,
         NiveauAttention.actionRequise,
+        destination: Routes.demoControleur,
       ),
       n(
         'demo-c-reponse',
@@ -509,6 +551,9 @@ class AnnoncesDemonstration implements PortAnnonces {
         )
       : a;
 
+  /// La capacite de publier pour une Classe suit l'audience ouverte par le
+  /// serveur : une Classe dont l'audience est dans [cibles] peut recevoir
+  /// une annonce (revue COM-R, R-20 : le publieur lit cette capacite).
   @override
   Future<AnnoncesDeLaClasse> annoncesDeClasse(String classeId) async =>
       AnnoncesDeLaClasse(
@@ -517,6 +562,13 @@ class AnnoncesDemonstration implements PortAnnonces {
               in parClasse[classeId] ?? const <AnnonceClasse>[])
             _vue(a),
         ],
+        capacites: <CapaciteAnnonces>{
+          if (cibles.any(
+            (CibleAnnonce c) =>
+                c.nature == NatureCible.classe && c.classeId == classeId,
+          ))
+            CapaciteAnnonces.publier,
+        },
       );
 
   @override
@@ -793,11 +845,15 @@ class ModerationAdministrationDemo implements PortModeration {
       CapacitesModeration(peutSignaler: true, actions: actions);
 
   @override
-  Future<void> signaler({
+  Future<ResultatSignalement> signaler({
     required ObjetLie objet,
     required MotifSignalement motif,
+    required String cleIdempotence,
     String? precision,
-  }) async {}
+  }) async => ResultatSignalement.enregistre;
+
+  @override
+  Future<Set<ObjetLie>> mesSignalements() async => <ObjetLie>{};
 
   @override
   Future<List<ElementModeration>> file() async {
@@ -854,12 +910,11 @@ class ModerationAdministrationDemo implements PortModeration {
 }
 
 /// Les capacites Communications ouvertes en demonstration : publier,
-/// programmer, moderer.
+/// programmer (moderer est lu dans `CapacitesModeration`, R-21).
 const Set<CapaciteCommunication> capacitesDemoAdministration =
     <CapaciteCommunication>{
       CapaciteCommunication.publierAnnonce,
       CapaciteCommunication.programmer,
-      CapaciteCommunication.moderer,
     };
 
 /// Les surcharges de l'Administration des communications et du publieur en
