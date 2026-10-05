@@ -361,9 +361,18 @@ final FutureProviderFamily<List<Creneau>, String> disponibilitesProvider =
     );
 
 /// Les seances de l'appelant.
+///
+/// **Aucune retentative silencieuse** (DASH-ELV-ERR-b, revue DASH-ELV-ERR-R
+/// m1). Riverpod relance par defaut dix fois, de 200 ms a 6,4 s, toute erreur
+/// qui n'etend pas `Error` : une vraie panne (`SocketException`,
+/// `PostgrestException`) laissait l'accueil eleve sur son squelette pendant
+/// pres de 40 s avant de dire que les cours manquent. Le bouton « Reessayer »
+/// de l'ecran est la retentative explicite, comme pour
+/// `dossiersEnAttenteProvider` (`service_validation.dart`).
 final FutureProvider<List<Seance>> seancesProvider =
     FutureProvider<List<Seance>>(
       (Ref ref) => ref.watch(servicePlanningProvider).seances(),
+      retry: (int retryCount, Object error) => null,
     );
 
 /// Les affectations qui concernent l'appelant.

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart' show SemanticsAction, SemanticsNode;
 import 'package:flutter/services.dart' show LogicalKeyboardKey;
+import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -703,6 +704,154 @@ void main() {
       expect(find.text(t.eleve.accueil.erreurCours), findsNothing);
       expect(find.text(t.eleve.accueil.aucunCours), findsOneWidget);
     });
+
+    // DASH-ELV-ERR-b, m1 et i1 : une vraie panne leve une `Exception`
+    // (`SocketException`, `PostgrestException`), que Riverpod relancait dix
+    // fois en silence (pres de 40 s de squelette). L'erreur doit se dire tout
+    // de suite, une seule lecture, et rester affichee pendant la relecture.
+    testWidgets(
+      'une panne reseau (Exception) se dit sans attente, et la relecture '
+      'garde le message et le Coran',
+      (WidgetTester tester) async {
+        int lectures = 0;
+        final Completer<List<Seance>> seconde = Completer<List<Seance>>();
+        await tester.pumpWidget(
+          hote(
+            _ecran(),
+            surcharges: <Override>[
+              ..._surcharges(planning: FauxServicePlanning()),
+              seancesProvider.overrideWith((_) {
+                lectures++;
+                if (lectures == 1) {
+                  return Future<List<Seance>>.error(Exception('reseau'));
+                }
+                return seconde.future;
+              }),
+            ],
+          ),
+        );
+        // Quelques images, jamais `pumpAndSettle` : il avancerait l'horloge
+        // jusqu'au bout des retentatives et masquerait l'attente.
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
+
+        expect(lectures, 1);
+        expect(find.byType(Skeleton), findsNothing);
+        expect(find.text(t.eleve.accueil.erreurCours), findsOneWidget);
+        expect(find.text(t.eleve.accueil.coran), findsOneWidget);
+        expect(find.text(t.eleve.accueil.aucunCours), findsNothing);
+        expect(
+          tester
+              .widget<EtatSysteme>(
+                find.byKey(const ValueKey<String>('accueil-eleve-erreur')),
+              )
+              .nature,
+          NatureEtat.echecServeur,
+        );
+
+        // Aucune retentative cachee derriere le bouton.
+        await tester.pump(const Duration(seconds: 60));
+        expect(lectures, 1);
+
+        await tester.tap(
+          find.text(EtatSysteme.libelleActionPar(NatureEtat.echecServeur)),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
+
+        // Pendant la relecture : ni squelette, ni « aucun cours » ; le
+        // message, le Coran et le bouton qui travaille restent.
+        expect(lectures, 2);
+        expect(find.byType(Skeleton), findsNothing);
+        expect(find.text(t.eleve.accueil.erreurCours), findsOneWidget);
+        expect(find.text(t.eleve.accueil.coran), findsOneWidget);
+        expect(
+          tester
+              .widget<EtatSysteme>(
+                find.byKey(const ValueKey<String>('accueil-eleve-erreur')),
+              )
+              .actionEnCours,
+          isTrue,
+        );
+
+        seconde.complete(const <Seance>[]);
+        await tester.pumpAndSettle();
+        expect(find.text(t.eleve.accueil.erreurCours), findsNothing);
+        expect(find.text(t.eleve.accueil.aucunCours), findsOneWidget);
+      },
+    );
+
+    // DASH-ELV-ERR-b, m2 : hors ligne, la cause probable est l'absence de
+    // reseau, et le bloc la porte par sa nature (K-59).
+    testWidgets('hors ligne, l echec porte la nature hors ligne', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        hote(
+          _ecran(),
+          surcharges: <Override>[
+            ..._surcharges(planning: FauxServicePlanning(), horsLigne: true),
+            seancesProvider.overrideWith(
+              (_) => Future<List<Seance>>.error(Exception('reseau')),
+            ),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final EtatSysteme bloc = tester.widget<EtatSysteme>(
+        find.byKey(const ValueKey<String>('accueil-eleve-erreur')),
+      );
+      expect(bloc.nature, NatureEtat.horsLigne);
+      expect(find.text(t.eleve.accueil.erreurCours), findsOneWidget);
+      // Au tutoiement, comme tout l'accueil eleve : jamais le titre commun
+      // « Vous etes hors ligne ».
+      expect(
+        find.text(t.eleve.accueil.erreurCoursHorsLigneTitre),
+        findsOneWidget,
+      );
+      expect(
+        find.text(EtatSysteme.textesPar(NatureEtat.horsLigne).titre),
+        findsNothing,
+      );
+      expect(find.text(t.eleve.accueil.coran), findsOneWidget);
+    });
+
+    // DASH-ELV-ERR-b, m3 : une erreur apres une valeur deja lue garde la
+    // valeur. Le choix fige ici : l'eleve voit encore son etat precedent,
+    // jamais un message qui le remplacerait.
+    testWidgets('un echec apres une premiere lecture garde l etat deja lu', (
+      WidgetTester tester,
+    ) async {
+      int lectures = 0;
+      await tester.pumpWidget(
+        hote(
+          _ecran(),
+          surcharges: <Override>[
+            ..._surcharges(planning: FauxServicePlanning()),
+            seancesProvider.overrideWith((_) async {
+              lectures++;
+              if (lectures == 1) {
+                return const <Seance>[];
+              }
+              throw Exception('reseau');
+            }),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(t.eleve.accueil.aucunCours), findsOneWidget);
+
+      ProviderScope.containerOf(tester.element(find.byType(AccueilElevePage)))
+          .invalidate(seancesProvider);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 100));
+
+      expect(lectures, 2);
+      expect(find.text(t.eleve.accueil.erreurCours), findsNothing);
+      expect(find.text(t.eleve.accueil.aucunCours), findsOneWidget);
+      expect(find.text(t.eleve.accueil.coran), findsOneWidget);
+    });
   });
   // CORAN-CARTE-1 (demande du directeur du 04/10/2026) : la carte du Coran
   // separe ses elements. Le livre et le haut-parleur aux deux bouts d'un
@@ -727,6 +876,7 @@ void main() {
       double echelle = 1,
       TextDirection sens = TextDirection.ltr,
       InterfaceMode mode = InterfaceMode.standard,
+      List<Override> surchargesEnPlus = const <Override>[],
     }) async {
       tester.view.physicalSize = Size(largeur, 1400);
       tester.view.devicePixelRatio = 1;
@@ -750,7 +900,10 @@ void main() {
                   const Text('ELV-04'),
             ),
           ],
-          surcharges: _surcharges(planning: FauxServicePlanning()),
+          surcharges: <Override>[
+            ..._surcharges(planning: FauxServicePlanning()),
+            ...surchargesEnPlus,
+          ],
         ),
       );
       await tester.pumpAndSettle();
@@ -1173,6 +1326,30 @@ void main() {
           verifierEcranSansMotCoupe(tester);
           verifierAucunMotCoupe(tester, carte());
           verifierSepares(tester);
+        },
+      );
+    }
+
+    // DASH-ELV-ERR-b, m2 : le libelle d'echec s'allonge de sa cause probable.
+    // A 320 px et texte x2, dans les deux sens, aucun mot ne se coupe.
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets(
+        'echec de lecture, 320 px, texte x2, ${sens.name} : aucun mot coupe',
+        (WidgetTester tester) async {
+          await monter(
+            tester,
+            largeur: 320,
+            echelle: 2,
+            sens: sens,
+            surchargesEnPlus: <Override>[
+              seancesProvider.overrideWith(
+                (_) => Future<List<Seance>>.error(Exception('reseau')),
+              ),
+            ],
+          );
+          expect(tester.takeException(), isNull);
+          expect(find.text(t.eleve.accueil.erreurCours), findsOneWidget);
+          verifierEcranSansMotCoupe(tester);
         },
       );
     }

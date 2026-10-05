@@ -7258,8 +7258,11 @@ class Traductions$eleve$accueil$fr {
 	/// fr: 'Ton enseignant prépare le prochain.'
 	String get aucunCoursDetail => 'Ton enseignant prépare le prochain.';
 
-	/// fr: 'Tes cours n'ont pas pu être lus. Réessaie dans un instant.'
-	String get erreurCours => 'Tes cours n\'ont pas pu être lus. Réessaie dans un instant.';
+	/// fr: 'Tes cours n'ont pas pu être lus : la connexion ou le serveur n'a pas répondu. Réessaie dans un instant.'
+	String get erreurCours => 'Tes cours n\'ont pas pu être lus : la connexion ou le serveur n\'a pas répondu. Réessaie dans un instant.';
+
+	/// fr: 'Tu es hors ligne'
+	String get erreurCoursHorsLigneTitre => 'Tu es hors ligne';
 
 	/// fr: 'Ton prochain cours est plus tard aujourd'hui.'
 	String get prochainAujourdhui => 'Ton prochain cours est plus tard aujourd\'hui.';
@@ -17621,7 +17624,8 @@ extension on Traductions {
 			'eleve.accueil.imminent' => 'C\'est presque l\'heure',
 			'eleve.accueil.aucunCours' => 'Pas de cours aujourd\'hui',
 			'eleve.accueil.aucunCoursDetail' => 'Ton enseignant prépare le prochain.',
-			'eleve.accueil.erreurCours' => 'Tes cours n\'ont pas pu être lus. Réessaie dans un instant.',
+			'eleve.accueil.erreurCours' => 'Tes cours n\'ont pas pu être lus : la connexion ou le serveur n\'a pas répondu. Réessaie dans un instant.',
+			'eleve.accueil.erreurCoursHorsLigneTitre' => 'Tu es hors ligne',
 			'eleve.accueil.prochainAujourdhui' => 'Ton prochain cours est plus tard aujourd\'hui.',
 			'eleve.accueil.prochainDemain' => 'Ton prochain cours est demain.',
 			'eleve.accueil.prochainDansJours' => ({required Object jours}) => 'Ton prochain cours est dans ${jours} jours.',
@@ -18000,9 +18004,9 @@ extension on Traductions {
 			'enseignant.bienvenue.dossierValide' => 'Votre dossier est validé.',
 			'enseignant.bienvenue.sousTitre' => 'Préparez votre espace avant votre première Classe.',
 			'enseignant.bienvenue.aCompleter' => 'À compléter',
-			'enseignant.bienvenue.compteur' => ({required Object fait, required Object total}) => '${fait} sur ${total}',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.bienvenue.compteur' => ({required Object fait, required Object total}) => '${fait} sur ${total}',
 			'enseignant.bienvenue.prerequisPhoto' => 'Ajouter ma photo professionnelle',
 			'enseignant.bienvenue.prerequisLangues' => 'Vérifier mes langues d\'enseignement',
 			'enseignant.bienvenue.prerequisFuseau' => 'Vérifier mon fuseau horaire',
@@ -18514,9 +18518,9 @@ extension on Traductions {
 			'controleur.observation.echec' => 'L\'envoi n\'est pas confirmé : la connexion ou le serveur n\'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.titre' => 'Échanges',
 			'controleur.echanges.titreFil' => ({required Object classe, required Object date}) => '${classe} · ${date}',
-			'controleur.echanges.derniereActivite' => ({required Object date}) => 'Dernière activité : ${date}',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.echanges.derniereActivite' => ({required Object date}) => 'Dernière activité : ${date}',
 			'controleur.echanges.reponseRecue' => 'Réponse reçue',
 			'controleur.echanges.enAttente' => 'En attente',
 			'controleur.echanges.vide' => 'Aucun échange avec l\'administration pour le moment.',
@@ -19028,9 +19032,9 @@ extension on Traductions {
 			'tc.parcours.feedback.technique.difficile' => 'Gênants',
 			'tc.parcours.feedback.technique.bien' => 'Corrects',
 			'tc.parcours.feedback.technique.tresBien' => 'Très bons',
-			'tc.parcours.feedback.confiance.intitule' => 'Vous sentez-vous prêt pour le prochain cours ?',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.feedback.confiance.intitule' => 'Vous sentez-vous prêt pour le prochain cours ?',
 			'tc.parcours.feedback.confiance.difficile' => 'Pas encore',
 			'tc.parcours.feedback.confiance.bien' => 'Plutôt',
 			'tc.parcours.feedback.confiance.tresBien' => 'Tout à fait',
