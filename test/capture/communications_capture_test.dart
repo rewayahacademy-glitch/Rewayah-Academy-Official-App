@@ -7,7 +7,8 @@
 // Ecrans principaux : 320, 390, 768 et 1440, clair et sombre, plus le texte
 // double a 320 (vrai `textScaler` 2, par la plateforme) et l'arabe (RTL) a
 // 390. Etats cles (hors ligne, vide, vocal, garde anti-promotion,
-// signalement, Focus) : 390 et 1440, clair et sombre.
+// signalement, reponse retenue par la garde, Focus) : 390 et 1440, clair
+// et sombre.
 //
 // Les debordements (`RenderFlex overflowed`) ne font pas echouer la
 // capture : ils sont relevés dans `CAPTURE_DIR/com_debordements.txt`, pour
@@ -44,6 +45,7 @@ import 'package:rewayah_academy/features/com_communaute/composer_publication.dar
 import 'package:rewayah_academy/features/com_communaute/feuille_signalement_communaute.dart';
 import 'package:rewayah_academy/features/com_communaute/flux_publications.dart';
 import 'package:rewayah_academy/features/com_communaute/publication_detail.dart';
+import 'package:rewayah_academy/features/com_communaute/reponses.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 import 'package:rewayah_academy/features/com_studio/focus/bascule_focus.dart';
 import 'package:rewayah_academy/features/com_studio/port_activite_studio.dart';
@@ -389,6 +391,24 @@ Future<void> _signaler(WidgetTester tester) async {
   );
 }
 
+/// Ecrit une reponse marquee (lien affilie) et touche « Envoyer » : la
+/// garde retient la reponse (revue COM-R, R-01).
+Future<void> _repondreMarque(WidgetTester tester) async {
+  await tester.ensureVisible(find.byKey(ComposerReponse.cleChamp));
+  await _stabiliser(tester);
+  await tester.enterText(
+    find.byKey(ComposerReponse.cleChamp),
+    DonneesCommunauteDemo.reponseAffilie,
+  );
+  await _stabiliser(tester);
+  await _toucher(tester, find.byKey(ComposerReponse.cleEnvoyer));
+  final Finder garde = find.byKey(ComposerReponse.cleGarde);
+  if (garde.evaluate().isNotEmpty) {
+    await tester.ensureVisible(garde.first);
+    await _stabiliser(tester);
+  }
+}
+
 Future<void> _focus(WidgetTester tester) =>
     _toucher(tester, find.byKey(BasculeFocus.cleEntrer));
 
@@ -531,6 +551,14 @@ List<_Ecran> _ecrans() {
       ),
       () => communaute(SituationDemoCommunaute.nominal),
       geste: _signaler,
+    ),
+    _Ecran(
+      'communaute_reponse_bloquee',
+      Routes.enseignantPublicationPour(
+        DonneesCommunauteDemo.publicationOuverte,
+      ),
+      () => communaute(SituationDemoCommunaute.nominal),
+      geste: _repondreMarque,
     ),
     _Ecran(
       'communaute_vide',
