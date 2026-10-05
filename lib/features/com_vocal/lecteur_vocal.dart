@@ -334,27 +334,6 @@ class LecteurVocalRecu extends ConsumerWidget {
   }
 }
 
-/// Les lecteurs des vocaux recus d'un message, a poser dans sa bulle
-/// (`MessageFil.complement`, COM-FUS) a la place de la ligne « Message vocal
-/// de 0:28 » ; `null` si le message ne porte aucun vocal. L'auteur est deja
-/// dit par la bulle : le lecteur ne le repete pas.
-Widget? lecteursVocauxDuMessage(List<PieceJointe> pieces) {
-  final List<PieceJointe> vocaux = <PieceJointe>[
-    for (final PieceJointe p in pieces)
-      if (p.nature == NaturePieceJointe.vocal) p,
-  ];
-  if (vocaux.isEmpty) return null;
-  if (vocaux.length == 1) return LecteurVocalRecu(vocal: vocaux.single);
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    mainAxisSize: MainAxisSize.min,
-    spacing: AppSpacing.md,
-    children: <Widget>[
-      for (final PieceJointe v in vocaux) LecteurVocalRecu(vocal: v),
-    ],
-  );
-}
-
 /// Les pieces d'un message, a poser dans sa bulle (`MessageFil.complement`,
 /// COM-RC, R-11) : la carte de chaque piece non vocale (`CartePieceJointe` :
 /// nom, type, taille, etat, jamais une adresse) et le lecteur de chaque

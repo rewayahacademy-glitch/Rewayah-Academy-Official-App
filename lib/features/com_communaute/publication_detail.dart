@@ -17,6 +17,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 
 import '../../core/accessibilite/sens_du_contenu.dart';
+import '../../core/accessibilite/texte_agrandi.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/modeles_communication.dart';
@@ -357,8 +358,7 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
     // fonction et de moment (« Il y a 2 / h », 30 % de l'ecran a 320 et
     // texte x2). La ligne passe sous la rangee, sur toute la largeur.
     final bool compacte =
-        MediaQuery.textScalerOf(context).scale(1) >=
-            FluxPublications.echelleSerree &&
+        SeuilsTexteAgrandi.texteAgrandi(context) &&
         MediaQuery.sizeOf(context).width < AppGabarit.seuilTablette;
 
     return Column(

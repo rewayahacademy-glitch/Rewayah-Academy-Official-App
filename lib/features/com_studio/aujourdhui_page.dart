@@ -37,6 +37,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/accessibilite/texte_agrandi.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/port_brouillons.dart';
 import '../../core/i18n/strings.g.dart';
@@ -509,7 +510,7 @@ class _Indicateurs extends StatelessWidget {
     );
     // Texte agrandi (1,5 et plus) sur une colonne : une tuile par rangee,
     // jamais un mot coupe dans une demi-largeur (revue COM-R, R-09).
-    final bool texteAgrandi = MediaQuery.textScalerOf(context).scale(1) >= 1.5;
+    final bool texteAgrandi = SeuilsTexteAgrandi.texteAgrandi(context);
     return Semantics(
       key: TableauAujourdhui.cleIndicateurs,
       container: true,

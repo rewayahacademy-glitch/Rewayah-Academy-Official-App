@@ -31,6 +31,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accessibilite/texte_agrandi.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/modeles_communication.dart';
 import '../../core/communications/port_brouillons.dart';
@@ -220,9 +221,7 @@ class _CommunautePageState extends ConsumerState<CommunautePage> {
     // aussi sur le flux. A 320 et texte x2, elle prenait quatre lignes a
     // cote du retour et aucune publication n'etait au premier ecran ; le
     // bandeau des regles dit deja ce qu'est l'espace.
-    final bool texteAgrandi =
-        MediaQuery.textScalerOf(context).scale(1) >=
-        FluxPublications.echelleSerree;
+    final bool texteAgrandi = SeuilsTexteAgrandi.texteAgrandi(context);
     final bool phraseRepliee = surfacePrincipale || (telephone && texteAgrandi);
     return PageShell(
       titre: c.titre,

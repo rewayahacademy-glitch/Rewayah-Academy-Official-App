@@ -106,6 +106,12 @@ AppIcon iconeTypeObjet(TypeObjetLie type) => switch (type) {
 /// quelque chose a dire. Le lecteur d'ecran l'entend d'un bloc, comme un
 /// titre : « Conversation avec Ahmed, parent d'Adam, a propos de Classe
 /// An-Nour · Adam ».
+///
+/// [compacte] (COM-RC tour 4, N-1) : la ligne fixe qui garde le contexte a
+/// l'ecran quand le reste de l'en-tete defile (texte agrandi, vue basse) :
+/// les noms et les objets, une ligne chacun, sans cercle ni badge ; le badge
+/// defile sous elle ([badgeDuFil]). Le lecteur d'ecran entend la phrase
+/// entiere, badge compris ; le panneau (i) dit le contexte en entier.
 class EnteteFilContexte extends StatelessWidget {
   /// Cree l'en-tete.
   const EnteteFilContexte({
@@ -113,12 +119,14 @@ class EnteteFilContexte extends StatelessWidget {
     required this.objets,
     super.key,
     this.attention = IndicateurAttention.aucun,
+    this.compacte = false,
   });
 
   /// Construit l'en-tete d'un fil ouvert.
-  EnteteFilContexte.duFil(FilMetier fil, {Key? key})
+  EnteteFilContexte.duFil(FilMetier fil, {Key? key, bool compacte = false})
     : this(
         key: key,
+        compacte: compacte,
         interlocuteurs: fil.interlocuteurs,
         objets: <ObjetLie>[
           for (final ElementContexteFil e in fil.contexte) e.objet,
@@ -135,6 +143,34 @@ class EnteteFilContexte extends StatelessWidget {
   /// Ce que le badge doit dire.
   final IndicateurAttention attention;
 
+  /// Vrai pour la ligne compacte, fixe au-dessus du fil (N-1).
+  final bool compacte;
+
+  /// Le badge d'attention d'un fil ouvert, pose sous la ligne compacte et
+  /// qui defile avec les messages, ou `null` s'il n'a rien a dire. Il est
+  /// deja lu avec la ligne compacte : le lecteur d'ecran ne le relit pas.
+  static Widget? badgeDuFil(FilMetier fil) {
+    final IndicateurAttention reste = _resteOuvert(fil.attention);
+    if (!reste.estVisible) return null;
+    return ExcludeSemantics(
+      child: Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: BadgeNonLu(indicateur: reste),
+      ),
+    );
+  }
+
+  /// Le fil ouvert est en train d'etre lu : l'en-tete ne recompte pas ses
+  /// non-lus, il garde ce qui demande encore quelque chose (action requise,
+  /// urgence, mention).
+  static IndicateurAttention _resteOuvert(IndicateurAttention attention) =>
+      IndicateurAttention(
+        niveau: attention.niveau.estAuMoins(NiveauAttention.actionRequise)
+            ? attention.niveau
+            : NiveauAttention.information,
+        mention: attention.mention,
+      );
+
   /// La cle de l'en-tete, pour les tests.
   static const ValueKey<String> cle = ValueKey<String>('entete-fil-contexte');
 
@@ -147,15 +183,7 @@ class EnteteFilContexte extends StatelessWidget {
     final String prenom = interlocuteurs.isEmpty
         ? ligneObjets
         : interlocuteurs.first.nomAffiche;
-    // Le fil ouvert est en train d'etre lu : l'en-tete ne recompte pas ses
-    // non-lus, il garde ce qui demande encore quelque chose (action requise,
-    // urgence, mention).
-    final IndicateurAttention reste = IndicateurAttention(
-      niveau: attention.niveau.estAuMoins(NiveauAttention.actionRequise)
-          ? attention.niveau
-          : NiveauAttention.information,
-      mention: attention.mention,
-    );
+    final IndicateurAttention reste = _resteOuvert(attention);
     final String? phraseAttention = BadgeNonLu.phraseSemantique(reste);
     // Sans interlocuteur nomme, la phrase ne dit pas « avec » un nom vide.
     final String phrase = switch ((interlocuteurs.isEmpty, ligneObjets)) {
@@ -180,27 +208,60 @@ class EnteteFilContexte extends StatelessWidget {
               attention: phraseAttention,
             ),
       child: ExcludeSemantics(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            AvatarNom.enLigne(
-              prenom: prenom,
-              nom: noms,
-              role: ligneObjets,
-              styleNom: palette.inkStrong.applyTo(
-                textes.titleMedium ?? const TextStyle(),
+        child: compacte
+            ? _ligneCompacte(palette, textes, noms, ligneObjets)
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  AvatarNom.enLigne(
+                    prenom: prenom,
+                    nom: noms,
+                    role: ligneObjets,
+                    styleNom: palette.inkStrong.applyTo(
+                      textes.titleMedium ?? const TextStyle(),
+                    ),
+                  ),
+                  // Sous l'identite, jamais a cote : a texte agrandi, le badge ne
+                  // reduit pas la colonne des noms a un mot par ligne.
+                  if (reste.estVisible) ...<Widget>[
+                    Ecart.vSm,
+                    BadgeNonLu(indicateur: reste),
+                  ],
+                ],
               ),
-            ),
-            // Sous l'identite, jamais a cote : a texte agrandi, le badge ne
-            // reduit pas la colonne des noms a un mot par ligne.
-            if (reste.estVisible) ...<Widget>[
-              Ecart.vSm,
-              BadgeNonLu(indicateur: reste),
-            ],
-          ],
-        ),
       ),
     );
   }
+
+  /// La ligne compacte : les noms, puis les objets s'ils ne sont pas deja
+  /// le titre (fil sans interlocuteur nomme).
+  Widget _ligneCompacte(
+    AppPalette palette,
+    TextTheme textes,
+    String noms,
+    String ligneObjets,
+  ) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisSize: MainAxisSize.min,
+    children: <Widget>[
+      Text(
+        noms,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: palette.inkStrong.applyTo(
+          textes.titleSmall ?? const TextStyle(),
+        ),
+      ),
+      if (interlocuteurs.isNotEmpty && ligneObjets.isNotEmpty)
+        Text(
+          ligneObjets,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: palette.inkMuted.applyTo(
+            textes.bodySmall ?? const TextStyle(),
+          ),
+        ),
+    ],
+  );
 }

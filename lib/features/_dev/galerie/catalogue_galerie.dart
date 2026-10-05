@@ -1425,6 +1425,36 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           ),
         ),
       ),
+      // COM-RC tour 4 (N-1) : sous 480 points, la ligne compacte du contexte
+      // reste fixe au-dessus de la liste ; l'en-tete complet n'est plus la.
+      EtatGalerie(
+        'vue basse : la ligne de contexte reste fixe',
+        (BuildContext _) => SizedBox(
+          height: _hauteurCollection * 2,
+          child: Material(
+            type: MaterialType.transparency,
+            child: FilDiscussion(
+              entete: const Text('M. Rachid, Controleur pedagogique'),
+              enteteCompacte: const Text(
+                'M. Rachid · Visite de controle',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              messages: const <MessageFil>[
+                MessageFil(
+                  id: 'g3',
+                  auteur: 'M. Rachid',
+                  texte: 'Le compte rendu est depose.',
+                  horodatage: 'Jeudi 1 octobre, 12:00',
+                  deSoi: false,
+                ),
+              ],
+              textes: _textesFil,
+              onEnvoyer: (String _) async {},
+            ),
+          ),
+        ),
+      ),
     ],
   ),
   // EN-3 : le rappel des cahiers non valides (K-45). Il pulse trois fois
