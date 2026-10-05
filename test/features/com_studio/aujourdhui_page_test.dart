@@ -375,11 +375,20 @@ void main() {
         attente: Completer<void>(),
       );
       await _monterAujourdhui(tester, activite: port, stabiliser: false);
-      expect(find.byKey(VueEtatCommunication.cleChargement), findsOneWidget);
+      // COM-RC tour 6 (UX_REVIEW_COM-STU-2 point 14) : le squelette a la
+      // forme d'Aujourd'hui, plus `Skeleton.liste()` ; il parait apres son
+      // delai (200 ms).
+      await tester.pump(const Duration(milliseconds: 250));
+      expect(find.byKey(TableauAujourdhui.cleSquelette), findsOneWidget);
+      expect(
+        find.byKey(TableauAujourdhui.cleSqueletteIndicateurs),
+        findsOneWidget,
+      );
+      expect(find.byKey(VueEtatCommunication.cleChargement), findsNothing);
       expect(find.byKey(TableauAujourdhui.cleIndicateurs), findsNothing);
       port.attente!.complete();
       await tester.pumpAndSettle();
-      expect(find.byKey(VueEtatCommunication.cleChargement), findsNothing);
+      expect(find.byKey(TableauAujourdhui.cleSquelette), findsNothing);
       expect(find.byKey(TableauAujourdhui.cleIndicateurs), findsOneWidget);
     });
 

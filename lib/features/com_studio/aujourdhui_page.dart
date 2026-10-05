@@ -44,10 +44,12 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/espace_travail_adaptatif.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/pile_cartes.dart';
+import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/stat_tile.dart';
 import '../../core/widgets/vue_etat_communication.dart';
 import 'activite.dart';
@@ -195,6 +197,20 @@ class TableauAujourdhui extends ConsumerStatefulWidget {
   static ValueKey<String> cleBloc(RubriqueAujourdhui r) =>
       ValueKey<String>('studio-aujourdhui-bloc-${r.name}');
 
+  /// La cle du squelette des blocs d'activite (chargement), pour les tests.
+  static const ValueKey<String> cleSquelette = ValueKey<String>(
+    'studio-aujourdhui-squelette',
+  );
+
+  /// La cle du squelette des indicateurs (chargement), pour les tests.
+  static const ValueKey<String> cleSqueletteIndicateurs = ValueKey<String>(
+    'studio-aujourdhui-squelette-indicateurs',
+  );
+
+  /// La cle du squelette d'un groupe (bloc d'activite), pour les tests.
+  static ValueKey<String> cleSqueletteGroupe(int i) =>
+      ValueKey<String>('studio-aujourdhui-squelette-groupe-$i');
+
   /// La cle du bloc des brouillons, pour les tests.
   static const ValueKey<String> cleBrouillons = ValueKey<String>(
     'studio-aujourdhui-brouillons',
@@ -312,6 +328,13 @@ class _TableauAujourdhuiState extends ConsumerState<TableauAujourdhui> {
             ? _activites.value
             : null;
         final bool contenu = activites != null && activites.isNotEmpty;
+        final bool chargement = _activites.isLoading;
+        // UX_REVIEW_COM-STU-2 point 4 (COM-R-4 8.3-3) : section vers section,
+        // 24 sur telephone, 32 a partir de 600 (contrat A).
+        final Widget ecartSection =
+            contraintes.maxWidth >= AppGabarit.seuilTablette
+            ? Ecart.vXxxl
+            : Ecart.vXxl;
         return ListView(
           padding: const EdgeInsets.only(bottom: AppSpacing.lg),
           children: <Widget>[
@@ -325,12 +348,16 @@ class _TableauAujourdhuiState extends ConsumerState<TableauAujourdhui> {
                 nonLus: activites.where((ActiviteStudio a) => !a.lu).length,
                 colonnes: colonnes,
               ),
-              Ecart.vXxl,
+              ecartSection,
+            ] else if (chargement) ...<Widget>[
+              // Point 14 : le squelette a la forme d'Aujourd'hui.
+              _SqueletteIndicateurs(colonnes: colonnes),
+              ecartSection,
             ],
             _disposer(
               colonnes,
               contenu ? _blocs(activites) : null,
-              _etatActivite(horsLigne),
+              _etatActivite(horsLigne, colonnes),
             ),
           ],
         );
@@ -381,13 +408,10 @@ class _TableauAujourdhuiState extends ConsumerState<TableauAujourdhui> {
   }
 
   /// L'etat de l'activite quand elle n'a pas de contenu a montrer.
-  Widget _etatActivite(bool horsLigne) {
+  Widget _etatActivite(bool horsLigne, int colonnes) {
     final a = t.com.studio.aujourdhui;
     if (_activites.isLoading) {
-      return const VueEtatCommunication(
-        key: TableauAujourdhui.cleEtat,
-        etat: EtatCommunication.chargement,
-      );
+      return _SqueletteBlocs(colonnes: colonnes);
     }
     final Object? erreur = _activites.error;
     if (erreur != null) {
@@ -525,6 +549,86 @@ class _Indicateurs extends StatelessWidget {
               ],
             )
           : rangee(tuiles),
+    );
+  }
+}
+
+/// Le squelette des indicateurs (UX_REVIEW_COM-STU-2 point 14) : la rangee
+/// de quatre tuiles, rangee comme `_Indicateurs` (deux par deux sur une
+/// colonne, une par rangee a texte agrandi).
+class _SqueletteIndicateurs extends StatelessWidget {
+  const _SqueletteIndicateurs({required this.colonnes});
+
+  final int colonnes;
+
+  /// La hauteur d'une `StatTile` (chiffre et libelle dans leur carte).
+  static const double _hauteurTuile = AppSpacing.respiration + AppSpacing.xxxl;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget tuile() => const Skeleton.tuileBento(hauteur: _hauteurTuile);
+    Widget rangee(int n) => PileCartes(
+      axe: Axis.horizontal,
+      alignement: CrossAxisAlignment.start,
+      children: <Widget>[for (int i = 0; i < n; i++) Expanded(child: tuile())],
+    );
+    final bool texteAgrandi = SeuilsTexteAgrandi.texteAgrandi(context);
+    return KeyedSubtree(
+      key: TableauAujourdhui.cleSqueletteIndicateurs,
+      child: ExcludeSemantics(
+        child: colonnes == 1 && texteAgrandi
+            ? PileCartes(
+                children: <Widget>[for (int i = 0; i < 4; i++) tuile()],
+              )
+            : colonnes == 1
+            ? PileCartes(children: <Widget>[rangee(2), rangee(2)])
+            : rangee(4),
+      ),
+    );
+  }
+}
+
+/// Le squelette des cinq blocs d'activite (point 14) : des groupes (titre,
+/// puis une carte a lignes), ranges comme les blocs dans la place de
+/// l'activite (une colonne ; trois blocs sur deux colonnes ; deux
+/// sous-colonnes de deux et trois blocs sur trois colonnes). Le chargement
+/// s'annonce une fois.
+class _SqueletteBlocs extends StatelessWidget {
+  const _SqueletteBlocs({required this.colonnes});
+
+  final int colonnes;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget groupe(int i) => Column(
+      key: TableauAujourdhui.cleSqueletteGroupe(i),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: const <Widget>[
+        Skeleton.texte(lignes: 1),
+        Ecart.vSm,
+        Skeleton(hauteur: AppPage.hauteurReglage * 2),
+      ],
+    );
+    Widget pile(Iterable<int> rangs) =>
+        PileCartes(children: <Widget>[for (final int i in rangs) groupe(i)]);
+    final Widget forme = switch (colonnes) {
+      1 => pile(<int>[0, 1, 2, 3, 4]),
+      2 => pile(<int>[0, 1, 2]),
+      _ => PileCartes(
+        axe: Axis.horizontal,
+        alignement: CrossAxisAlignment.start,
+        children: <Widget>[
+          Expanded(child: pile(<int>[0, 1])),
+          Expanded(child: pile(<int>[2, 3, 4])),
+        ],
+      ),
+    };
+    return Semantics(
+      key: TableauAujourdhui.cleSquelette,
+      label: t.com.socle.composants.etats.chargement,
+      liveRegion: true,
+      child: ExcludeSemantics(child: forme),
     );
   }
 }

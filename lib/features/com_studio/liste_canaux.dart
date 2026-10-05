@@ -6,7 +6,9 @@
 // section 9.1). Une section sans canal autorise n'est pas rendue, et un
 // canal absent n'est jamais rendu : ni ligne, ni cadenas (R-COM-08). Chaque
 // section est UNE surface a filets (`GroupeReglages`), jamais une carte par
-// canal (K-55) ; deux sections sont detachees par un ecart de 24.
+// canal (K-55) ; deux sections sont detachees par l'ecart de section du
+// contrat A : 24 sur telephone, 32 a partir de 600 (UX_REVIEW_COM-STU-1
+// point 6, COM-R-4 8.3-3).
 //
 // Une ligne dit le nom du canal, son statut s'il est restreint ou prive (en
 // toutes lettres, `MarqueVisibiliteCanal`) et ce qui attend (badge
@@ -18,6 +20,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/badge_non_lu.dart';
 import '../../core/widgets/groupe_reglages.dart';
@@ -106,6 +109,9 @@ class ListeCanaux extends StatelessWidget {
       canaux,
     );
     final Widget? entete = this.entete;
+    // La largeur de la fenetre, pas celle de la colonne : la liste garde
+    // 256 a 336 sur tablette et ordinateur, ou l'ecart reste de 32.
+    final bool telephone = AppGabarit.de(context) == Gabarit.mobile;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -119,7 +125,10 @@ class ListeCanaux extends StatelessWidget {
             children: <Widget>[
               for (final (int i, (SectionStudio, List<ResumeCanal>) s)
                   in sections.indexed) ...<Widget>[
-                if (i > 0) Ecart.vXl,
+                // 24 sur telephone, 32 au-dela (deux lignes : la revue des cartes
+                // lit chaque ecart comme un jeton).
+                if (i > 0 && telephone) Ecart.vXxl,
+                if (i > 0 && !telephone) Ecart.vXxxl,
                 GroupeReglages(
                   key: cleSection(s.$1),
                   titre: libelleSection(s.$1),
