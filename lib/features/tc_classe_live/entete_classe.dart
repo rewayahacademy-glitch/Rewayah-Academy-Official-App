@@ -119,6 +119,16 @@ class EnteteClasse extends StatelessWidget {
     final VoidCallback? voirRoster = onVoirRoster;
     final String? mot = _motDuLien(vue.motLien);
     final String? photoEnseignant = session.enseignant.photoCleOuUrl;
+    // L'en-tete est pose sur le fond inverse de la salle (`PageImmersive`),
+    // qui donne son encre par `DefaultTextStyle`. Les styles du theme portent
+    // l'encre du fond clair : on leur rend celle de la paire, sinon le nom
+    // s'ecrit en encre sombre sur fond sombre (releve ENS-PAYS-1, capture
+    // 320 x2 de la classe en direct).
+    final Color? encre = DefaultTextStyle.of(context).style.color;
+    final TextStyle styleNom = (textes.titleSmall ?? const TextStyle())
+        .copyWith(color: encre);
+    final TextStyle styleLigne = (textes.labelMedium ?? const TextStyle())
+        .copyWith(color: encre);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -143,8 +153,9 @@ class EnteteClasse extends StatelessWidget {
                         role: session.libelleGroupe,
                         diametre: AppAvatar.petit,
                         ecart: AppSpacing.sm,
-                        styleNom: textes.titleSmall,
-                        styleRole: textes.labelMedium,
+                        styleNom: styleNom,
+                        styleRole: styleLigne,
+                        stylePays: styleLigne,
                       )
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,18 +164,21 @@ class EnteteClasse extends StatelessWidget {
                           Text(
                             session.libelleGroupe,
                             overflow: TextOverflow.ellipsis,
-                            style: textes.titleSmall ?? const TextStyle(),
+                            style: styleNom,
                           ),
                           Text(
                             nomAvecTitre(session.enseignant),
                             overflow: TextOverflow.ellipsis,
-                            style: textes.labelMedium ?? const TextStyle(),
+                            style: styleLigne,
                           ),
                           // ENS-PAYS-1 : la meme ligne que sous l'avatar,
                           // sous un prenom connu seulement (identite
                           // masquee : rien).
                           if (session.enseignant.nomAffichage.trim().isNotEmpty)
-                            ?PaysEnseignant.siDeclare(session.enseignant.pays),
+                            ?PaysEnseignant.siDeclare(
+                              session.enseignant.pays,
+                              style: styleLigne,
+                            ),
                         ],
                       ),
               ),

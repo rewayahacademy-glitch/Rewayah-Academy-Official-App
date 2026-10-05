@@ -64,6 +64,7 @@ class AvatarNom extends StatelessWidget {
     this.ajuste = false,
     this.roleWidget,
     this.pays,
+    this.stylePays,
   });
 
   /// Avatar centre, nom centre dessous.
@@ -80,11 +81,13 @@ class AvatarNom extends StatelessWidget {
     TextStyle? styleRole,
     bool afficherNom = true,
     String? pays,
+    TextStyle? stylePays,
   }) : this(
          prenom: prenom,
          disposition: DispositionAvatar.vertical,
          afficherNom: afficherNom,
          pays: pays,
+         stylePays: stylePays,
          key: key,
          nom: nom,
          role: role,
@@ -113,10 +116,12 @@ class AvatarNom extends StatelessWidget {
     bool ajuste = false,
     Widget? roleWidget,
     String? pays,
+    TextStyle? stylePays,
   }) : this(
          prenom: prenom,
          disposition: DispositionAvatar.enLigne,
          pays: pays,
+         stylePays: stylePays,
          key: key,
          nom: nom,
          role: role,
@@ -157,6 +162,10 @@ class AvatarNom extends StatelessWidget {
   /// ni quand le [prenom] est vide (identite masquee) : un pays seul, sous un
   /// enseignant sans nom, suffirait parfois a le reconnaitre.
   final String? pays;
+
+  /// Le style de la ligne du pays ; par defaut celui de [PaysEnseignant]
+  /// (`bodySmall`, encre attenuee). Un fond inverse (salle) passe le sien.
+  final TextStyle? stylePays;
 
   /// Vrai quand la ligne du pays s'ecrit : un pays declare, sous un prenom
   /// connu.
@@ -243,7 +252,7 @@ class AvatarNom extends StatelessWidget {
               style: styleDuNom,
             ),
           if (afficherNom && _paysVisible)
-            PaysEnseignant(pays: pays, centre: true),
+            PaysEnseignant(pays: pays, centre: true, style: stylePays),
           if (ligneRole != null)
             TexteSansCoupure(
               ligneRole,
@@ -264,7 +273,7 @@ class AvatarNom extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 TexteSansCoupure(affiche, style: styleDuNom),
-                if (_paysVisible) PaysEnseignant(pays: pays),
+                if (_paysVisible) PaysEnseignant(pays: pays, style: stylePays),
                 if (roleWidget != null)
                   roleWidget!
                 else if (ligneRole != null)

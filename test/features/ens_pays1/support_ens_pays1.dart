@@ -375,7 +375,6 @@ List<EcranPays> ecransPays() => <EcranPays>[
       ),
     ],
     pays: const <String>['Mali'],
-    hauteur320: 2400,
   ),
   EcranPays(
     role: 'tuteur',
