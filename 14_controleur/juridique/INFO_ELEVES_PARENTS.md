@@ -64,7 +64,7 @@
 >
 > Ce compte rendu n'est jamais publié et il est effacé après 12 mois. Il sert seulement à l'académie pour prendre les bonnes décisions.
 >
-> Le bandeau en haut de la salle te rappelle qu'une visite est possible. Si tu as une question, ou si quelque chose te dérange, parle à tes parents ou écris à {contact_confidentialite}.
+> Le bandeau en haut de la salle te rappelle qu'une visite est possible. Si tu as une question, ou si quelque chose te dérange, parle à tes parents ou écris à support@rewayahacademy.com.
 
 ### English
 
@@ -76,7 +76,7 @@
 >
 > The report is never published and it is deleted after 12 months. The academy only uses it to make the right decisions.
 >
-> The banner at the top of the classroom reminds you that a visit is possible. If you have a question, or if something bothers you, talk to your parents or write to {contact_confidentialite}.
+> The banner at the top of the classroom reminds you that a visit is possible. If you have a question, or if something bothers you, talk to your parents or write to support@rewayahacademy.com.
 
 ---
 
@@ -98,13 +98,13 @@ Version pour l'élève adulte : mêmes phrases, en remplaçant « votre enfant �
 >
 > **Combien de temps.** 12 mois, puis effacement. Plus longtemps seulement si un dossier est en cours, jusqu'à sa fin.
 >
-> **Vos droits.** Vous pouvez demander ce que nous savons sur votre enfant, faire corriger une erreur, ou vous opposer : Compte, Mes accords, ou {contact_confidentialite}. Nous répondons sous un mois. Nous ne pouvons pas retirer un seul enfant des visites dans une Classe de groupe ; si vous vous opposez, nous chercherons une solution avec vous, sinon vous pourrez arrêter sans frais pour les cours pas encore suivis. Vous pouvez aussi vous plaindre auprès de l'autorité de protection des données de votre pays ou de l'ICO au Royaume-Uni.
+> **Vos droits.** Vous pouvez demander ce que nous savons sur votre enfant, faire corriger une erreur, ou vous opposer : Compte, Mes accords, ou support@rewayahacademy.com. Nous répondons sous un mois. Nous ne pouvons pas retirer un seul enfant des visites dans une Classe de groupe ; si vous vous opposez, nous chercherons une solution avec vous, sinon vous pourrez arrêter sans frais pour les cours pas encore suivis. Vous pouvez aussi vous plaindre auprès de l'autorité de protection des données de votre pays ou de l'ICO au Royaume-Uni.
 >
 > **Base légale.** Intérêt légitime : protéger les enfants et garantir la qualité des cours (UK GDPR art. 6(1)(f) ; RGPD art. 6(1)(f) dans l'Union européenne).
 >
 > **Ce que votre enfant voit.** Un bandeau permanent dans la salle : « visite de contrôle possible ». Il ne dit pas quand une personne observe. Nous vous invitons à expliquer à votre enfant pourquoi : c'est pour le protéger.
 >
-> **Responsable.** Rewayah Academy Ltd, {numero_societe}, {adresse_siege}. Représentant dans l'UE : {representant_ue}.
+> **Responsable.** Rewayah Academy Ltd, société n° 16624644 immatriculée en Angleterre et au pays de Galles, 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni. Représentant dans l'UE : pas encore désigné ; l'application ne s'ouvre pas aux familles de l'Union européenne avant sa désignation.
 
 ### English
 
@@ -120,13 +120,13 @@ Version pour l'élève adulte : mêmes phrases, en remplaçant « votre enfant �
 >
 > **How long.** 12 months, then it is deleted. Longer only if a case is open, until it is closed.
 >
-> **Your rights.** You can ask what we hold about your child, have a mistake corrected, or object: Account, My agreements, or {contact_confidentialite}. We reply within one month. We cannot remove a single child from visits in a group class; if you object, we will look for a solution with you, and if there is none you can stop at no cost for classes not yet taken. You can also complain to the data protection authority in your country, or to the ICO in the United Kingdom.
+> **Your rights.** You can ask what we hold about your child, have a mistake corrected, or object: Account, My agreements, or support@rewayahacademy.com. We reply within one month. We cannot remove a single child from visits in a group class; if you object, we will look for a solution with you, and if there is none you can stop at no cost for classes not yet taken. You can also complain to the data protection authority in your country, or to the ICO in the United Kingdom.
 >
 > **Legal basis.** Legitimate interests: protecting children and ensuring the quality of classes (UK GDPR Article 6(1)(f); EU GDPR Article 6(1)(f) in the European Union).
 >
 > **What your child sees.** A permanent banner in the classroom: "inspection visit possible". It does not say when someone is watching. We invite you to explain to your child why: it is there to protect them.
 >
-> **Controller.** Rewayah Academy Ltd, {numero_societe}, {adresse_siege}. EU representative: {representant_ue}.
+> **Controller.** Rewayah Academy Ltd, company number 16624644, registered in England and Wales, 71-75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom. EU representative: not yet appointed; the app does not open to families in the European Union before one is appointed.
 
 ---
 

@@ -1,6 +1,8 @@
 # Politique de contrôle des enseignants (validée le 02/10/2026) et clause du contrat
 
 > **Statut mis à jour le 04/10/2026.** Le directeur a écrit « je valide » le 02/10/2026 (`SIGNATURES_2026-10-02.md:11`). La pièce est donc **adoptée** (signée), et non plus à l'état de projet. Le texte ci-dessous n'a pas été modifié (K-26) : les mentions « projet », « à signer » ou « à valider » qui y restent sont celles d'avant la signature.
+>
+> **05/10/2026 (ASSETS-DIR-1).** Les quatre champs de la section 10 sont remplis, par délégation, avec les valeurs de `COORDONNEES_LEGALES.md`. Le reste du texte n'est pas modifié.
 
 **Statut.** Projet rédigé par un agent juriste, 02/10/2026, à valider par le directeur. Ce texte est publié aux enseignants **avant la première visite réelle** (doc 08 §14.1, ICO-MW). Il reprend les décisions B1 à B15 du 02/10 (`../BLOQUANTS_ET_IMPACTS.md` §1 bis). Version française pour le directeur ; la version anglaise, qui fera foi dans l'application, sera faite à LG-1 sur ce texte validé.
 
@@ -90,7 +92,7 @@ Intérêt légitime de l'académie et des élèves : protéger des enfants et ga
 
 ### 10. Contact
 
-Responsable : Rewayah Academy Ltd, {numero_societe}, {adresse_siege}. Contact confidentialité : {contact_confidentialite}. Représentant dans l'UE : {representant_ue} (voir `RGPD_UE.md`).
+Responsable : Rewayah Academy Ltd, société n° 16624644 immatriculée en Angleterre et au pays de Galles, 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni. Contact confidentialité : support@rewayahacademy.com. Représentant dans l'UE : pas encore désigné ; l'application ne s'ouvre pas aux familles de l'Union européenne avant sa désignation (voir `RGPD_UE.md`).
 
 ---
 
