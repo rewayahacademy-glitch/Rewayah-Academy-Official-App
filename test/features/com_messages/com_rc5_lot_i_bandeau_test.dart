@@ -16,10 +16,18 @@ import '../com_studio/support_studio.dart' as studio;
 import '../historique/support_historique.dart' as historique;
 import 'support_messages.dart' as messages;
 
-void _unSeulBandeau() {
+/// Un seul bandeau, avec [phrase] (par defaut celle des messages).
+///
+/// COM-RC tour 6 (COM-R-4 8.3-2) : les pages d'annonces portent leur propre
+/// phrase, jamais celle des « nouveaux messages ».
+void _unSeulBandeau({String? phrase}) {
+  final String attendue = phrase ?? t.com.socle.composants.etats.horsLigne;
   expect(find.byType(OfflineBanner), findsOneWidget);
   expect(find.text(t.reseau.horsLigne), findsNothing);
-  expect(find.text(t.com.socle.composants.etats.horsLigne), findsOneWidget);
+  expect(find.text(attendue), findsOneWidget);
+  if (phrase != null) {
+    expect(find.text(t.com.socle.composants.etats.horsLigne), findsNothing);
+  }
 }
 
 void main() {
@@ -52,12 +60,12 @@ void main() {
       WidgetTester tester,
     ) async {
       await annonces.monterAdministration(tester, horsLigne: true);
-      _unSeulBandeau();
+      _unSeulBandeau(phrase: t.com.annonces.administration.horsLigne);
     });
 
     testWidgets('Publier une annonce de Classe', (WidgetTester tester) async {
       await annonces.monterPublierClasse(tester, horsLigne: true);
-      _unSeulBandeau();
+      _unSeulBandeau(phrase: t.com.annonces.administration.horsLigne);
     });
 
     testWidgets('hors des Communications, le bandeau generique reste', (
