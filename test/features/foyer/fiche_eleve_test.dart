@@ -52,8 +52,10 @@ import '../../fixtures/tuteur/faux_classes_foyer.dart';
 import '../../fixtures/tuteur/foyers.dart';
 import '../../parcours/faux_service_offres.dart';
 import '../../router/support_routeur.dart';
+import '../../support/aucun_mot_coupe.dart';
 import '../../support/harnais.dart';
 import '../../support/hors_ligne_une_fois.dart';
+import '../../support/sens_et_echelle.dart';
 
 /// L'instant fixe des tests : le 24 septembre 2026 a midi.
 final DateTime _maintenant = DateTime(2026, 9, 24, 12);
@@ -119,6 +121,8 @@ Future<GoRouter> _monter(
   Size taille = const Size(390, 844),
   ThemeMode mode = ThemeMode.light,
   InterfaceMode interface = InterfaceMode.standard,
+  TextDirection? direction,
+  double echelle = 1,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -142,6 +146,7 @@ Future<GoRouter> _monter(
               theme: AppTheme.pour(interface, Brightness.light),
               darkTheme: AppTheme.pour(interface, Brightness.dark),
               themeMode: mode,
+              builder: sensEtEchelle(direction: direction, echelle: echelle),
               routerConfig: routeur,
             );
           },
@@ -1036,6 +1041,47 @@ void main() {
 
   // EA-HL-DOUBLE-1c : sombre, Interface guidee et texte x2 de la fiche
   // eleve hors ligne (revue EA-HL-DOUBLE-1-R, m4). Sautees sans CAPTURE_DIR.
+  // EA-HL-DOUBLE-1d : 320 texte x2 en LTR et RTL de la fiche eleve hors
+  // ligne, sans et avec donnees (revue EA-HL-DOUBLE-1c-R, mineur 2).
+  // Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1d', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, TextDirection) cas in <(String, TextDirection)>[
+      ('320x2_clair', TextDirection.ltr),
+      ('320x2_rtl_clair', TextDirection.rtl),
+    ]) {
+      for (final bool sans in <bool>[true, false]) {
+        final String etat = sans ? 'sans_donnees' : 'avec_donnees';
+        testWidgets('$etat ${cas.$1}', (WidgetTester tester) async {
+          await _monter(
+            tester,
+            appairage: _foyerA()..echoue = sans,
+            depart: Routes.ficheEleveSousPage(a1, 'informations'),
+            taille: const Size(320, 1800),
+            direction: cas.$2,
+            echelle: 2,
+            autres: <Override>[
+              horsLigneProvider.overrideWith(
+                (Ref ref) => Stream<bool>.value(true),
+              ),
+            ],
+          );
+          expect(tester.takeException(), isNull);
+          if (sans) {
+            expectSansDonnees(t.ficheEleve.sansDonnees);
+          } else {
+            expectAvecDonnees();
+          }
+          verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'ea_hl_double1d_fiche_eleve_${etat}_${cas.$1}')}',
+          );
+        });
+      }
+    }
+  });
+
   group('Capture EA-HL-DOUBLE-1c', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
     setUp(masquerRubanDebug);

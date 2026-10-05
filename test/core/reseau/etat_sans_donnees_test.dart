@@ -26,6 +26,7 @@ import '../../support/hors_ligne_une_fois.dart';
 const Set<String> _permises = <String>{
   'reseau.horsLigne',
   'commun.etats.horsLigne.titre',
+  'commun.etats.horsLigne.phrase',
   'salle.secours.horsLigne',
   'salle.preparation.eleve.demo.horsLigne',
   'salle.seance.demo.etats.horsLigne',
@@ -43,6 +44,10 @@ const Set<String> _permises = <String>{
   'tc.classe.reseau.perdu',
   'tc.classe.lien.echec',
   'tc.observation.visite.reconnexionDetail',
+  'salle.refusReseauDetail',
+  'salle.preparation.eleve.guidee.horsLigne',
+  'salle.secours.echecGuidee',
+  'salle.seance.demo.etats.echec',
   // Une cause passee, pas l'etat de l'appareil qui lit : la visite a pris
   // fin, ou le releve d'une seance terminee manque.
   'tc.observation.fin.deconnexion',

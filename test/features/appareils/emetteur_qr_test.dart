@@ -29,8 +29,10 @@ import 'package:rewayah_academy/features/appareils/emetteur_qr.dart';
 import '../../capture/outil_capture.dart'
     show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../../router/support_routeur.dart';
+import '../../support/aucun_mot_coupe.dart';
 import '../../support/harnais.dart';
 import '../../support/hors_ligne_une_fois.dart';
+import '../../support/sens_et_echelle.dart';
 import 'faux_statut_code.dart';
 
 final DateTime _depart = DateTime(2026, 9, 24, 18);
@@ -62,6 +64,9 @@ Future<void> _monter(
   ThemeMode mode = ThemeMode.light,
   String depart = '/tuteur/foyer/appairer/e1',
   Size taille = const Size(390, 844),
+  InterfaceMode interface = InterfaceMode.standard,
+  TextDirection? direction,
+  double echelle = 1,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -77,9 +82,10 @@ Future<void> _monter(
       ],
       child: TranslationProvider(
         child: MaterialApp.router(
-          theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
-          darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+          theme: AppTheme.pour(interface, Brightness.light),
+          darkTheme: AppTheme.pour(interface, Brightness.dark),
           themeMode: mode,
+          builder: sensEtEchelle(direction: direction, echelle: echelle),
           routerConfig: GoRouter(
             initialLocation: depart,
             routes: <RouteBase>[
@@ -823,6 +829,65 @@ void main() {
         'PNG ${await capturerVue(tester, 'ea_hl_double1_appairage_sans_code_390_clair')}',
       );
     });
+  });
+
+  // EA-HL-DOUBLE-1d : Interface guidee et 320 texte x2 en LTR et RTL de
+  // l'appairage hors ligne (revue EA-HL-DOUBLE-1c-R, mineur 2). Sautees
+  // sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1d', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, ThemeMode, InterfaceMode, TextDirection, double)
+        cas
+        in <(String, Size, ThemeMode, InterfaceMode, TextDirection, double)>[
+          (
+            '390_guidee',
+            const Size(390, 844),
+            ThemeMode.light,
+            InterfaceMode.enfant,
+            TextDirection.ltr,
+            1,
+          ),
+          (
+            '320x2_clair',
+            const Size(320, 1800),
+            ThemeMode.light,
+            InterfaceMode.standard,
+            TextDirection.ltr,
+            2,
+          ),
+          (
+            '320x2_rtl_clair',
+            const Size(320, 1800),
+            ThemeMode.light,
+            InterfaceMode.standard,
+            TextDirection.rtl,
+            2,
+          ),
+        ]) {
+      testWidgets('avec_code_${cas.$1}', (WidgetTester tester) async {
+        final ReseauPilote reseau = ReseauPilote();
+        await _monter(
+          tester,
+          service: _service(),
+          statut: FauxStatutCode(),
+          reseau: reseau,
+          taille: cas.$2,
+          mode: cas.$3,
+          interface: cas.$4,
+          direction: cas.$5,
+          echelle: cas.$6,
+        );
+        reseau.poser(horsLigne: true);
+        await stabiliser(tester);
+        expect(tester.takeException(), isNull);
+        expectHorsLigneUneFois();
+        verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1d_appairage_avec_code_${cas.$1}')}',
+        );
+      });
+    }
   });
 }
 

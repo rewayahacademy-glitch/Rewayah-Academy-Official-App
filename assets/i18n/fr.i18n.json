@@ -70,7 +70,7 @@
       },
       "reessaisEpuises": "Toujours sans réponse. Réessayez un peu plus tard.",
       "horsLigneDemarrageTitre": "Votre compte n'a pas pu être vérifié",
-      "horsLigneDemarrage": "Rewayah a besoin d'Internet pour vérifier votre compte. Reconnectez cet appareil, puis réessayez.",
+      "horsLigneDemarrage": "Il pourra l'être quand la connexion reviendra. Réessayez à ce moment-là.",
       "actions": {
         "reessayer": "Réessayer",
         "retourAccueil": "Retour à l'accueil",
@@ -657,7 +657,7 @@
       "lireCoranDetail": "Accéder au Mushaf",
       "aide": "Besoin d'aide ?",
       "erreurTitre": "Prochaine séance non chargée",
-      "erreurPhrase": "La séance et le travail à faire n'ont pas pu être lus, souvent à cause de la connexion. Il suffit de réessayer dans un instant.",
+      "erreurPhrase": "La séance et le travail à faire n'ont pas pu être lus. Il suffit de réessayer dans un instant.",
       "indisponibleTitre": "Prochaine séance pas encore affichée ici",
       "indisponiblePhrase": "L'Accueil ne reçoit pas encore la séance de la Classe. Elle se lit dans Ma classe.",
       "videTitre": "Pas encore de Classe",
@@ -671,8 +671,8 @@
       "reprendreDetailVous": "Vous en étiez page {page}.",
       "repriseRecherche": "Recherche de ta dernière page…",
       "repriseRechercheVous": "Recherche de votre dernière page…",
-      "repriseErreur": "Ta dernière page n'a pas pu être retrouvée, sans doute à cause de la connexion. Ouvre le Coran et choisis ta page dans le lecteur. Tes réglages de lecture restent enregistrés.",
-      "repriseErreurVous": "Votre dernière page n'a pas pu être retrouvée, sans doute à cause de la connexion. Ouvrez le Coran et choisissez votre page dans le lecteur. Vos réglages de lecture restent enregistrés.",
+      "repriseErreur": "Ta dernière page n'a pas pu être retrouvée. Ouvre le Coran et choisis ta page dans le lecteur. Tes réglages de lecture restent enregistrés.",
+      "repriseErreurVous": "Votre dernière page n'a pas pu être retrouvée. Ouvrez le Coran et choisissez votre page dans le lecteur. Vos réglages de lecture restent enregistrés.",
       "lectureGrande": "Le Coran s'ouvre en lecture agrandie, verset par verset.",
       "retour": "Retour à l'entrée du Coran",
       "demoSansTexte": "Le texte du Coran n'est pas chargé dans la démonstration",
@@ -707,7 +707,7 @@
       "demanderDetail": "Demande à ton tuteur de passer à la présentation standard.",
       "demandeEnCours": "Ta demande est en cours d'envoi.",
       "demandeEnvoyee": "Ta demande a été envoyée à ton tuteur.",
-      "demandeNonConfirmee": "L'envoi n'a pas été confirmé, sans doute à cause de la connexion. Vérifie ta connexion, puis touche la ligne pour réessayer. Rien n'a changé en attendant : ta présentation reste la même."
+      "demandeNonConfirmee": "L'envoi n'a pas été confirmé. Touche la ligne pour réessayer. Rien n'a changé en attendant : ta présentation reste la même."
     }
   },
   "accuse": {
@@ -1059,7 +1059,7 @@
       "application": "Le changement s'applique à la prochaine ouverture de Rewayah sur l'appareil de {prenom}.",
       "demandeEleve": "La demande de changement par l'élève lui-même n'est pas encore proposée.",
       "enCours": "Enregistrement en cours",
-      "echec": "Le changement n'a pas été enregistré, probablement à cause d'une coupure de connexion avec Rewayah. Vérifiez votre connexion, puis touchez de nouveau votre choix. La présentation actuelle de {prenom} reste inchangée sur son appareil.",
+      "echec": "Le changement n'a pas été enregistré : Rewayah n'a pas répondu. Touchez de nouveau votre choix. La présentation actuelle de {prenom} reste inchangée sur son appareil.",
       "horsLigne": "La présentation pourra être changée quand la connexion reviendra."
     },
     "camera": {
@@ -1237,7 +1237,7 @@
       "tropDEssaisTitre": "Trop d'essais",
       "tropDEssais": "Patientez un instant avant de réessayer.",
       "horsLigneTitre": "Code pas encore vérifié",
-      "horsLigne": "Vérifiez la connexion internet, puis réessayez.",
+      "horsLigne": "Il pourra l'être quand la connexion reviendra. Réessayez à ce moment-là.",
       "nonEnregistreTitre": "Connexion non enregistrée",
       "nonEnregistre": "Cet appareil n'a pas pu garder la connexion. Le code a sans doute déjà servi : affichez un nouveau code sur l'appareil du tuteur, puis recommencez.",
       "generiqueTitre": "Connexion non aboutie",
@@ -2073,7 +2073,7 @@
     "indisponibleTitre": "Le questionnaire n'est pas encore disponible",
     "indisponibleDetail": "Cette étape n'est pas encore ouverte par l'académie. Vous n'avez rien à faire pour l'instant : rien n'est perdu, et vous pourrez la remplir dès qu'elle sera ouverte.",
     "horsLigneTitre": "Le parcours n'a pas pu être chargé",
-    "horsLigneDetail": "Vérifiez votre connexion, puis réessayez. Vos réponses sont gardées.",
+    "horsLigneDetail": "Vous pourrez réessayer quand la connexion sera revenue. Vos réponses sont gardées.",
     "erreurChargement": "Le questionnaire n'a pas pu s'afficher",
     "erreurChargementDetail": "Une erreur est survenue de notre côté. Réessayez dans un instant ; vos réponses sont gardées.",
     "introuvableTitre": "Ce profil élève est introuvable",
@@ -2364,7 +2364,7 @@
         "question": "Se déconnecter de Rewayah ?",
         "consequence": "Vous devrez vous reconnecter pour revenir sur cet appareil. Vos autres appareils restent connectés.",
         "confirmer": "Me déconnecter",
-        "echec": "La déconnexion n'a pas abouti. Vérifiez votre connexion, puis réessayez."
+        "echec": "La déconnexion n'a pas abouti. Réessayez dans un instant."
       },
       "pageInformations": {
         "titre": "Informations personnelles",
@@ -2577,7 +2577,7 @@
       "imminent": "C'est presque l'heure",
       "aucunCours": "Pas de cours aujourd'hui",
       "aucunCoursDetail": "Ton enseignant prépare le prochain.",
-      "erreurCours": "Tes cours n'ont pas pu être lus : la connexion ou le serveur n'a pas répondu. Réessaie dans un instant.",
+      "erreurCours": "Tes cours n'ont pas pu être lus. Réessaie dans un instant.",
       "erreurCoursHorsLigneTitre": "Tes cours ne sont pas disponibles",
       "prochainAujourdhui": "Ton prochain cours est plus tard aujourd'hui.",
       "prochainDemain": "Ton prochain cours est demain.",
@@ -3107,7 +3107,7 @@
       "alertesUtiles": "Alertes utiles",
       "alertesVide": "Aucune alerte utile en ce moment.",
       "alertesSansDonnees": "Les alertes de présence n'ont pas pu être lues",
-      "alertesErreur": "Les alertes de présence n'ont pas pu être lues : la connexion ou le serveur n'a pas répondu. Réessayez dans un instant.",
+      "alertesErreur": "Les alertes de présence n'ont pas pu être lues. Réessayez dans un instant.",
       "voirAutreAlerte": "Voir l'autre alerte",
       "voirAutresAlertes": "Voir les {nombre} autres alertes",
       "remplacementsTitre": "Remplacements confirmés",
@@ -3463,7 +3463,7 @@
       "sansMotif": "Aucun motif",
       "cleTexte": "Complément",
       "envoyer": "Envoyer le complément",
-      "echec": "L'envoi n'est pas confirmé : la connexion ou le serveur n'a pas répondu. Votre texte est gardé ici, réessayez dans un instant. Le rapport d'origine reste intact.",
+      "echec": "L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre texte est gardé ici, réessayez dans un instant. Le rapport d'origine reste intact.",
       "envoyeTitre": "Complément ajouté",
       "envoyePhrase": "Il s'affiche sous le rapport d'origine, qui reste inchangé.",
       "revenir": "Revenir au rapport"
@@ -3499,14 +3499,14 @@
       "envoyer": "Envoyer le compte rendu",
       "plusTard": "Plus tard",
       "notice": "Ce compte rendu est transmis automatiquement à l'administration.",
-      "echec": "L'envoi n'est pas confirmé : la connexion ou le serveur n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.",
-      "echecRien": "L'envoi n'est pas confirmé : la connexion ou le serveur n'a pas répondu. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.",
+      "echec": "L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.",
+      "echecRien": "L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.",
       "envoyeTitre": "Compte rendu envoyé",
       "envoyePhrase": "Il est transmis à l'administration. Pour y revenir, ouvrez-le dans l'Historique et choisissez « Ajouter un complément ».",
       "ecrireAdmin": "Écrire à l'administration",
       "visiteEnCours": "Transmission de la visite à l'administration en cours.",
       "visiteTransmise": "La visite et son relevé automatique sont transmis à l'administration.",
-      "visiteEchec": "La transmission de la visite n'est pas confirmée : la connexion ou le serveur n'a pas répondu. Réessayez ; le relevé de la visite reste enregistré sur le serveur.",
+      "visiteEchec": "La transmission de la visite n'est pas confirmée : Rewayah n'a pas répondu. Réessayez ; le relevé de la visite reste enregistré sur le serveur.",
       "aTerminer": "Compte rendu à terminer",
       "reprendre": "Reprendre le compte rendu"
     },
@@ -3546,7 +3546,7 @@
       "aucunAide": "Quand elle ne vise personne en particulier, par exemple le déroulement",
       "questionEleve": "Choisissez l'élève dans la liste de la Classe.",
       "rosterChargement": "Lecture de la liste des élèves présents.",
-      "rosterIndisponible": "La liste des élèves présents n'est pas reçue, sans doute à cause de la connexion. Réessayez, ou choisissez « Classe entière » ou « Aucun participant précis ». Vos autres réponses sont gardées.",
+      "rosterIndisponible": "La liste des élèves présents n'est pas reçue. Réessayez, ou choisissez « Classe entière » ou « Aucun participant précis ». Vos autres réponses sont gardées.",
       "rosterVide": "Aucun élève présent n'apparaît dans la liste de cette visite. Choisissez « Classe entière » ou « Aucun participant précis ».",
       "questionTexte": "Qu'avez-vous observé ?",
       "texteObligatoire": "Votre texte est nécessaire pour cette observation.",
@@ -3560,7 +3560,7 @@
       "clePersonne": "Personne concernée",
       "cleTexte": "Remarque",
       "sansTexte": "Aucun texte",
-      "echec": "L'envoi n'est pas confirmé : la connexion ou le serveur n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration."
+      "echec": "L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration."
     },
     "echanges": {
       "titre": "Échanges",
@@ -3581,7 +3581,7 @@
       "champVide": "Écrivez un message pour pouvoir l'envoyer.",
       "enCours": "Envoi en cours.",
       "envoye": "Envoyé.",
-      "echec": "L'envoi n'est pas confirmé : la connexion ou le serveur n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.",
+      "echec": "L'envoi n'est pas confirmé : Rewayah n'a pas répondu. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l'administration.",
       "reessayer": "Réessayer",
       "nouveauMessage": "Nouveau message de {auteur} : {texte}"
     },
@@ -3628,7 +3628,7 @@
         "other": "{n} élèves"
       },
       "chargement": "Lecture de votre prochaine visite.",
-      "erreur": "Votre prochaine visite n'a pas pu être lue, sans doute à cause de la connexion ou d'un service momentanément indisponible. Réessayez dans un instant."
+      "erreur": "Votre prochaine visite n'a pas pu être lue. Réessayez dans un instant."
     }
   },
   "aConstruire": {
@@ -4114,8 +4114,8 @@
         "phrase": "Vos visites restantes sont vérifiées. La visite commence dès que l'entrée est acceptée, connexion vidéo comprise.",
         "enCours": "Connexion et vérification en cours",
         "prolongee": "Restez sur cette page : la vérification continue.",
-        "impossibleTitre": "Connexion impossible",
-        "impossible": "L'entrée dans la séance n'a pas abouti. Vérifiez votre connexion, puis réessayez : vos visites restantes seront vérifiées à nouveau."
+        "impossibleTitre": "Entrée impossible",
+        "impossible": "L'entrée dans la séance n'a pas abouti. Réessayez : vos visites restantes seront vérifiées à nouveau."
       },
       "duree": {
         "secondeUne": "{n} seconde",

@@ -17,6 +17,7 @@ import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 
 import '../capture/outil_capture.dart'
     show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
+import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
 import '../support/hors_ligne_une_fois.dart';
 import 'support_routeur.dart';
@@ -272,6 +273,80 @@ void main() {
           expectHorsLigneUneFois();
           debugPrint(
             'PNG ${await capturerVue(tester, 'ea_hl_double1_demarrage_${cas.$1}_clair')}',
+          );
+        });
+      }
+    });
+
+    // EA-HL-DOUBLE-1d : sombre, Interface guidee et 320 texte x2 en LTR et
+    // RTL du demarrage hors ligne (revue EA-HL-DOUBLE-1c-R, mineur 2).
+    // Sautees sans CAPTURE_DIR.
+    group('Capture EA-HL-DOUBLE-1d', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final (String, Size, ThemeMode, InterfaceMode, TextDirection, double)
+          cas
+          in <(String, Size, ThemeMode, InterfaceMode, TextDirection, double)>[
+            (
+              '390_sombre',
+              const Size(390, 844),
+              ThemeMode.dark,
+              InterfaceMode.standard,
+              TextDirection.ltr,
+              1,
+            ),
+            (
+              '390_guidee',
+              const Size(390, 844),
+              ThemeMode.light,
+              InterfaceMode.enfant,
+              TextDirection.ltr,
+              1,
+            ),
+            (
+              '320x2_clair',
+              const Size(320, 1800),
+              ThemeMode.light,
+              InterfaceMode.standard,
+              TextDirection.ltr,
+              2,
+            ),
+            (
+              '320x2_rtl_clair',
+              const Size(320, 1800),
+              ThemeMode.light,
+              InterfaceMode.standard,
+              TextDirection.rtl,
+              2,
+            ),
+          ]) {
+        testWidgets(cas.$1, (WidgetTester tester) async {
+          final SourcePilotee source = SourcePilotee(injoignable);
+          addTearDown(source.fermer);
+          await monterRouteur(
+            tester,
+            Routes.tuteurAccueil,
+            source: source,
+            taille: cas.$2,
+            themeMode: cas.$3,
+            interface: cas.$4,
+            direction: cas.$5,
+            echelle: cas.$6,
+            surcharges: <Override>[
+              horsLigneProvider.overrideWith(
+                (Ref _) => Stream<bool>.value(true),
+              ),
+            ],
+          );
+          expect(tester.takeException(), isNull);
+          expect(
+            find.text(t.commun.etats.horsLigneDemarrageTitre),
+            findsOneWidget,
+          );
+          expectHorsLigneUneFois();
+          verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'ea_hl_double1d_demarrage_${cas.$1}')}',
           );
         });
       }

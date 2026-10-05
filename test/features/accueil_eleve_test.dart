@@ -823,6 +823,10 @@ void main() {
         findsNothing,
       );
       expect(find.text(t.eleve.accueil.coran), findsOneWidget);
+      // EA-HL-DOUBLE-1d : le bandeau seul porte le « wifi barre » ; le bloc
+      // d'echec, pose dessous, prend le sablier.
+      expectHorsLigneUneFois();
+      expect(bloc.icone, AppIcons.attente);
     });
 
     // DASH-ELV-ERR-b, m3 : une erreur apres une valeur deja lue garde la

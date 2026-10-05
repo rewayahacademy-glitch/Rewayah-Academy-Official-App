@@ -242,6 +242,10 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage> {
                     nature: horsLigne
                         ? NatureEtat.horsLigne
                         : NatureEtat.echecServeur,
+                    // Hors ligne se dit une fois (EA-HL-DOUBLE-1d) : le
+                    // « wifi barre » est celui du bandeau de `PageShell` ;
+                    // sous lui, le bloc prend l'attente (sablier).
+                    icone: horsLigne ? AppIcons.attente : null,
                     // Le titre commun hors ligne vouvoie ; l'accueil eleve
                     // tutoie.
                     titre: horsLigne
