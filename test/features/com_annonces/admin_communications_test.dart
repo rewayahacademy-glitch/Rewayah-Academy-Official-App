@@ -304,9 +304,12 @@ void main() {
         surcharges: surFaux(faux),
         horsLigne: true,
       );
+      // D-FUS-3 : le bandeau des Communications en tete de page (plus le
+      // bandeau generique), puis l'etat hors ligne des deux blocs en echec.
+      expect(find.text(t.reseau.horsLigne), findsNothing);
       expect(
         find.text(t.com.socle.composants.etats.horsLigne),
-        findsNWidgets(2),
+        findsNWidgets(3),
       );
       expect(find.text(i.echec(libelle: i.publiees)), findsOneWidget);
       expect(tester.takeException(), isNull);

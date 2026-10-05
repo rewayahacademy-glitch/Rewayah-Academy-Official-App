@@ -439,7 +439,13 @@ void main() {
         surcharges: surchargesDemoSansAnnonces(moderation: _FileEnPanne()),
         horsLigne: true,
       );
-      expect(find.text(t.com.socle.composants.etats.horsLigne), findsOneWidget);
+      // D-FUS-3 : le bandeau des Communications (plus le generique), puis
+      // l'etat hors ligne de la file.
+      expect(find.text(t.reseau.horsLigne), findsNothing);
+      expect(
+        find.text(t.com.socle.composants.etats.horsLigne),
+        findsNWidgets(2),
+      );
     });
   });
 }

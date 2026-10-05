@@ -12,12 +12,14 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
+import 'package:rewayah_academy/core/seance_famille/seance_famille.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 
 import '../../router/support_routeur.dart';
 import '../classe_tuteur/support_classe.dart';
 
-export '../classe_tuteur/support_classe.dart' show classeA, eleveA1;
+export '../classe_tuteur/support_classe.dart'
+    show classeA, eleveA1, seanceSalleOuverte;
 
 /// Monte le routeur du tuteur a [depart], a la taille [taille].
 Future<GoRouter> monterTuteurAnnonces(
@@ -25,6 +27,7 @@ Future<GoRouter> monterTuteurAnnonces(
   required String depart,
   Size taille = const Size(390, 844),
   List<Override> autres = const <Override>[],
+  List<SeanceFamille>? seances,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -32,7 +35,10 @@ Future<GoRouter> monterTuteurAnnonces(
   late GoRouter routeur;
   await tester.pumpWidget(
     ProviderScope(
-      overrides: <Override>[...surchargesClasse(), ...autres],
+      overrides: <Override>[
+        ...surchargesClasse(seances: seances),
+        ...autres,
+      ],
       child: TranslationProvider(
         child: Consumer(
           builder: (BuildContext context, WidgetRef ref, Widget? _) {
