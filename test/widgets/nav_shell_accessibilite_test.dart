@@ -582,9 +582,12 @@ void main() {
           echelle: 2,
         );
         expect(find.byKey(NavShell.railKey), findsOneWidget);
+        // A texte x2, le rail part de sa largeur de base (96 en guide) et
+        // s'elargit quand un nom n'y tient pas entier (CPT-F-CORR,
+        // COUPE-MOTS-1 : le conteneur s'elargit plutot que de couper).
         expect(
           tester.getSize(find.byKey(NavShell.railKey)).width,
-          AppGabarit.largeurRail + AppSpacing.lg,
+          greaterThanOrEqualTo(AppGabarit.largeurRail + AppSpacing.lg),
         );
         for (final Destination x in d) {
           // Le nom est rendu (jamais l'infobulle seule), sous l'icone.

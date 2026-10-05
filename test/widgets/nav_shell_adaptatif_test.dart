@@ -239,9 +239,13 @@ void main() {
         await tester.pump();
 
         expect(find.byKey(NavShell.railKey), findsOneWidget);
+        // Le rail part de sa largeur de base et s'elargit quand un nom n'y
+        // tient pas entier (CPT-F-CORR, COUPE-MOTS-1). La police de test
+        // (glyphes carres) rend « Reglages » plus large que la vraie police :
+        // le rail s'elargit deja a 100 % ici.
         expect(
           tester.getSize(find.byKey(NavShell.railKey)).width,
-          AppGabarit.largeurRail,
+          greaterThanOrEqualTo(AppGabarit.largeurRail),
         );
         for (final Destination d in _destinations) {
           expect(

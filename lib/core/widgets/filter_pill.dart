@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
@@ -96,7 +97,9 @@ class FilterPill extends StatelessWidget {
                   runSpacing: AppSpacing.xs,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: <Widget>[
-                    Text(
+                    // COUPE-MOTS-1 : « Remboursements et avoirs » a 320 px,
+                    // texte x2, passe a la ligne entre les mots (CPT-FUS).
+                    TexteSansCoupure(
                       libelle,
                       textAlign: TextAlign.center,
                       style: fond.applyTo(

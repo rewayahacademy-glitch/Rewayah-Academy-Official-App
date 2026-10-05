@@ -201,6 +201,9 @@ class ChampPolitique extends StatelessWidget {
             decoration: InputDecoration(
               suffixText: suffixe,
               hintText: indice,
+              // 320 px, texte x2 : l'indice passe a la ligne au lieu d'une
+              // ellipse (CPT-FUS).
+              hintMaxLines: 3,
               errorText: erreur,
               errorMaxLines: 4,
             ),

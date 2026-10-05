@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
@@ -107,7 +108,9 @@ class LigneCleValeur extends StatelessWidget {
           );
     final Widget texteValeur = annulee
         ? TexteHeureSeance(heure: valeur, annulee: true, style: styleValeur)
-        : Text(
+        // COUPE-MOTS-1 : une valeur (« facture-024.pdf ») ne se coupe pas
+        // dans un mot a 320 px, texte x2 (CPT-FUS).
+        : TexteSansCoupure(
             valeur,
             style: styleValeur,
             textAlign: valeurEnFin ? TextAlign.end : null,

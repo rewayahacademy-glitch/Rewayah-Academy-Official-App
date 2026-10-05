@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../mouvement/mouvement.dart';
@@ -349,7 +350,9 @@ class _Carte extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
-                                Text(
+                                // COUPE-MOTS-1 : « Maintenance Salam » a
+                                // 320 px, texte x2 (CPT-FUS).
+                                TexteSansCoupure(
                                   libelle,
                                   style: _disponible
                                       ? paire.applyTo(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../comptable/modeles_comptable.dart';
 import '../../finance/montant.dart';
 import '../../i18n/strings.g.dart';
+import '../../theme/app_gabarit.dart';
 import '../../theme/app_palette.dart';
 import '../../theme/app_spacing.dart';
 import '../montant_argent.dart';
@@ -27,7 +28,8 @@ String dateComptable(DateTime date) {
 /// champs du journal. Le frontend n'invente rien : chaque champ absent de la
 /// source n'est simplement pas rendu. Utilisee par W01, W03, W04, W05.
 ///
-/// **Fichier gele apres CPT-F** (`20_comptable/02_DECOUPAGE.md`, liste A).
+/// **Fichier gele apres CPT-F** (`20_comptable/02_DECOUPAGE.md`, liste A) ;
+/// rouvert par la fusion CPT-FUS pour le texte agrandi.
 class LigneActivite extends StatelessWidget {
   /// Cree la ligne.
   const LigneActivite(this.entree, {super.key});
@@ -52,52 +54,62 @@ class LigneActivite extends StatelessWidget {
         : apres ?? avant;
     final String? reference = entree.reference;
     final Montant? montant = entree.montant;
+    final Widget textesLigne = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Text(entree.objet, style: fort),
+        Ecart.vXs,
+        Text(
+          t.comptable.commun.activiteInitiateurDate(
+            initiateur: entree.initiateur,
+            date: dateComptable(entree.date),
+          ),
+          style: attenue,
+        ),
+        if (transition != null) ...<Widget>[
+          Ecart.vXs,
+          Text(transition, style: attenue),
+        ],
+        if (reference != null) ...<Widget>[
+          Ecart.vXs,
+          Text(
+            t.comptable.commun.activiteReference(reference: reference),
+            style: attenue,
+          ),
+        ],
+      ],
+    );
+    // Texte agrandi (`AppGabarit.seuilTexteColonne`, meme seuil que
+    // `LigneCleValeur`) : a cote du montant, la colonne des textes tombait a
+    // 72 px a 320 px, texte x2, et coupait chaque mot (CPT-FUS). Le montant
+    // passe sous les textes, au bord de debut ; l'ordre de lecture ne change
+    // pas.
+    final bool empiler =
+        MediaQuery.textScalerOf(context).scale(AppSpacing.lg) / AppSpacing.lg >=
+        AppGabarit.seuilTexteColonne;
+    final Widget? valeur = montant == null
+        ? null
+        : MontantSensible(montant, signe: true, taille: TailleMontant.corps);
     return MergeSemantics(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              child: Column(
+        child: empiler
+            ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text(entree.objet, style: fort),
-                  Ecart.vXs,
-                  Text(
-                    t.comptable.commun.activiteInitiateurDate(
-                      initiateur: entree.initiateur,
-                      date: dateComptable(entree.date),
-                    ),
-                    style: attenue,
-                  ),
-                  if (transition != null) ...<Widget>[
-                    Ecart.vXs,
-                    Text(transition, style: attenue),
-                  ],
-                  if (reference != null) ...<Widget>[
-                    Ecart.vXs,
-                    Text(
-                      t.comptable.commun.activiteReference(
-                        reference: reference,
-                      ),
-                      style: attenue,
-                    ),
-                  ],
+                  textesLigne,
+                  if (valeur != null) ...<Widget>[Ecart.vXs, valeur],
+                ],
+              )
+            : Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Expanded(child: textesLigne),
+                  if (valeur != null) ...<Widget>[Ecart.hLg, valeur],
                 ],
               ),
-            ),
-            if (montant != null) ...<Widget>[
-              Ecart.hLg,
-              MontantSensible(
-                montant,
-                signe: true,
-                taille: TailleMontant.corps,
-              ),
-            ],
-          ],
-        ),
       ),
     );
   }

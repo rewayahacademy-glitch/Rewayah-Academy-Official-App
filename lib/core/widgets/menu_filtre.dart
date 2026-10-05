@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accessibilite/texte_sans_coupure.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
@@ -197,19 +198,24 @@ class MenuFiltre<T> extends StatelessWidget {
                   : MainAxisAlignment.center,
               children: <Widget>[
                 Flexible(
-                  child: Text(
-                    texte,
-                    textAlign: selecteurDeSection
-                        ? TextAlign.start
-                        : TextAlign.center,
-                    // Un nom de section n'est jamais tronque : il passe a la
-                    // ligne (texte agrandi, 320 px).
-                    overflow: selecteurDeSection
-                        ? TextOverflow.visible
-                        : TextOverflow.ellipsis,
-                    style: (actif ? palette.inkAccent : palette.inkStrong)
-                        .applyTo(textes.labelLarge ?? const TextStyle()),
-                  ),
+                  // Un nom de section n'est jamais tronque ni coupe dans un
+                  // mot : il passe a la ligne entre les mots, un mot trop
+                  // long se reduit (COUPE-MOTS-1 ; « Rapprochement » a
+                  // 320 px, texte x2, CPT-FUS).
+                  child: selecteurDeSection
+                      ? TexteSansCoupure(
+                          texte,
+                          textAlign: TextAlign.start,
+                          style: (actif ? palette.inkAccent : palette.inkStrong)
+                              .applyTo(textes.labelLarge ?? const TextStyle()),
+                        )
+                      : Text(
+                          texte,
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                          style: (actif ? palette.inkAccent : palette.inkStrong)
+                              .applyTo(textes.labelLarge ?? const TextStyle()),
+                        ),
                 ),
                 Ecart.hXs,
                 Icon(

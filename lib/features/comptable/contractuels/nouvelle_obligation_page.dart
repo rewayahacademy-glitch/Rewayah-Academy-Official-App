@@ -442,6 +442,9 @@ class _Formulaire extends StatelessWidget {
           decoration: InputDecoration(
             labelText: c.champObjet,
             hintText: c.aideObjet,
+            // 320 px, texte x2 : l'aide passe a la ligne au lieu d'une
+            // ellipse (CPT-FUS).
+            hintMaxLines: 3,
             floatingLabelBehavior: FloatingLabelBehavior.always,
             errorText: erreurObjet ? c.erreurObjet : null,
             errorMaxLines: 3,
@@ -451,7 +454,10 @@ class _Formulaire extends StatelessWidget {
         TextField(
           key: const ValueKey<String>('champ-justificatif'),
           controller: justificatif,
-          decoration: InputDecoration(labelText: c.champRefJustificatif),
+          // Un libelle compose (et non `labelText`, une seule ligne) : a
+          // 320 px, texte x2, il passe a la ligne au lieu d'une ellipse
+          // (CPT-FUS).
+          decoration: InputDecoration(label: Text(c.champRefJustificatif)),
         ),
         Ecart.vLg,
         Text(c.deviseDe(devise: contexte.devise), style: attenue),

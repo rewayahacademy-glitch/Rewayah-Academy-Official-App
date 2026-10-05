@@ -71,6 +71,11 @@ void main() {
 
   testWidgets('R-FIN-02 : apres « Afficher les montants », les montants '
       'exacts apparaissent, puis se remasquent', (WidgetTester tester) async {
+    // Le mot d'etat n'est ecrit qu'au bureau (CPT-F-CORR : au telephone et
+    // a la tablette etroite, la bascule est le bouton seul).
+    tester.view.physicalSize = const Size(1440, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
     await _monter(
       tester,
       const Column(

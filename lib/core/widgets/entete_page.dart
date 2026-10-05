@@ -65,46 +65,92 @@ class EntetePage extends StatelessWidget {
         (mobile ? textes.headlineSmall : textes.headlineMedium) ??
         const TextStyle();
 
-    return Row(
+    final Widget blocTitre = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        if (onRetour != null) ...<Widget>[
-          DisqueRetour(onPress: onRetour!),
-          Ecart.hMd,
-        ],
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              titreFocalisable(
-                focusTitre,
-                // COUPE-MOTS-1 : entre les mots, jamais dans un mot
-                // (« Centre de com / mande », « Cahier de trans / mission »).
-                Semantics(
-                  header: true,
-                  child: TexteSansCoupure(
-                    titre,
-                    style: palette.inkStrong.applyTo(styleTitre),
-                  ),
-                ),
-              ),
-              if (ligneSousTitre case final Widget ligne) ...<Widget>[
-                Ecart.vXs,
-                ligne,
-              ] else if (sousTitre != null) ...<Widget>[
-                Ecart.vXs,
-                TexteSansCoupure(
-                  sousTitre!,
-                  style: palette.inkMuted.applyTo(
-                    textes.bodyLarge ?? const TextStyle(),
-                  ),
-                ),
-              ],
-            ],
+        titreFocalisable(
+          focusTitre,
+          // COUPE-MOTS-1 : entre les mots, jamais dans un mot
+          // (« Centre de com / mande », « Cahier de trans / mission »).
+          Semantics(
+            header: true,
+            child: TexteSansCoupure(
+              titre,
+              style: palette.inkStrong.applyTo(styleTitre),
+            ),
           ),
         ),
-        for (final Widget action in actions) ...<Widget>[Ecart.hXs, action],
+        if (ligneSousTitre case final Widget ligne) ...<Widget>[
+          Ecart.vXs,
+          ligne,
+        ] else if (sousTitre != null) ...<Widget>[
+          Ecart.vXs,
+          TexteSansCoupure(
+            sousTitre!,
+            style: palette.inkMuted.applyTo(
+              textes.bodyLarge ?? const TextStyle(),
+            ),
+          ),
+        ],
       ],
+    );
+
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) {
+        // Le mot le plus long du titre, a l'echelle la plus basse que
+        // `TexteSansCoupure` s'autorise : s'il ne tient pas a cote du retour
+        // et des actions (« Rapprochement » a 320 px, texte x2, CPT-FUS),
+        // retour et actions passent au-dessus et le titre prend toute la
+        // largeur. Sinon, la rangee habituelle.
+        final double largeurMot = largeurMotLePlusLong(
+          context,
+          titre,
+          palette.inkStrong.applyTo(styleTitre),
+          TextScaler.linear(
+            echelleMinimaleLisible < MediaQuery.textScalerOf(context).scale(1)
+                ? echelleMinimaleLisible
+                : MediaQuery.textScalerOf(context).scale(1),
+          ),
+        );
+        final double reserve =
+            (onRetour != null ? AppTouchTarget.standard + AppSpacing.md : 0) +
+            actions.length * (AppTouchTarget.standard + AppSpacing.xs);
+        final bool empiler =
+            (onRetour != null || actions.isNotEmpty) &&
+            contraintes.maxWidth.isFinite &&
+            largeurMot > contraintes.maxWidth - reserve;
+        if (empiler) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  if (onRetour != null) DisqueRetour(onPress: onRetour!),
+                  const Spacer(),
+                  for (final Widget action in actions) ...<Widget>[
+                    Ecart.hXs,
+                    action,
+                  ],
+                ],
+              ),
+              Ecart.vSm,
+              blocTitre,
+            ],
+          );
+        }
+        return Row(
+          children: <Widget>[
+            if (onRetour != null) ...<Widget>[
+              DisqueRetour(onPress: onRetour!),
+              Ecart.hMd,
+            ],
+            Expanded(child: blocTitre),
+            for (final Widget action in actions) ...<Widget>[Ecart.hXs, action],
+          ],
+        );
+      },
     );
   }
 }
