@@ -68,8 +68,10 @@ void main() {
       expect(deDevant('Yvette'), "d'Yvette");
     });
 
-    test('hors du francais, le nom reste seul', () {
-      LocaleSettings.setLocaleSync(AppLocale.ar);
+    test('hors du francais, le nom reste seul', () async {
+      // L'arabe est charge a la demande (import differe) : setLocale attend.
+      await LocaleSettings.setLocale(AppLocale.ar);
+      expect(LocaleSettings.currentLocale, AppLocale.ar);
       expect(deDevant('Aïcha'), 'Aïcha');
       expect(queDevant('Nour'), 'Nour');
     });

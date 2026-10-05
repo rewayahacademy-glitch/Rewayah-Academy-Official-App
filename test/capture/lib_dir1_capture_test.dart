@@ -90,6 +90,7 @@ List<Override> _surchargesJournee(List<CahierEnRetard> retards) => <Override>[
   servicePresenceProvider.overrideWithValue(FauxServicePresence()),
   serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
   maintenantJourneeProvider.overrideWithValue(() => DateTime(2026, 9, 28, 16)),
+  depotRapportsProvider.overrideWithValue(FauxDepotRapports()),
 ];
 
 class _Comptes implements ServiceComptes {
@@ -212,6 +213,9 @@ void main() {
             ecran: EcranDemoEnseignant.aujourdhui,
             etat: EtatDemoEnseignant.nominal,
           ),
+          surcharges: <Override>[
+            depotRapportsProvider.overrideWithValue(FauxDepotRapports()),
+          ],
           echelleTexte: 2,
         ),
       );
@@ -273,7 +277,11 @@ void main() {
       );
       await stabiliser(tester);
       expect(tester.takeException(), isNull);
-      final Finder titre = find.text(t.enseignant.cahier.titre);
+      // Le titre est « Cahier de transmission {deClasse} » (cahierLigne).
+      final Finder titre = find.textContaining(
+        t.enseignant.cahier.titre,
+        findRichText: true,
+      );
       expect(titre, findsWidgets);
       _sansCoupure(tester, titre.first);
       debugPrint('PNG ${await capturer(tester, 'cahier_titre_320x2')}');
