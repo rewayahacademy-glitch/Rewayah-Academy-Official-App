@@ -368,8 +368,14 @@ class Traductions$salle$fr {
 	/// fr: 'Vous assistez au cours. Vous n'êtes pas entendu.'
 	String get observationMuette => 'Vous assistez au cours. Vous n\'êtes pas entendu.';
 
+	/// fr: 'Vous assistez au cours.'
+	String get observationMuetteTitre => 'Vous assistez au cours.';
+
 	/// fr: 'Visite de contrôle. Vous n'êtes ni vu ni entendu, et votre passage est inscrit au journal.'
 	String get bandeauControle => 'Visite de contrôle. Vous n\'êtes ni vu ni entendu, et votre passage est inscrit au journal.';
+
+	/// fr: 'Visite de contrôle.'
+	String get bandeauControleTitre => 'Visite de contrôle.';
 
 	late final Traductions$salle$visiteControle$fr visiteControle = Traductions$salle$visiteControle$fr.internal(_root);
 }
@@ -16000,7 +16006,9 @@ extension on Traductions {
 			'salle.roleTuteur' => 'Tuteur, en observation',
 			'salle.roleAdministration' => 'Administration Rewayah',
 			'salle.observationMuette' => 'Vous assistez au cours. Vous n\'êtes pas entendu.',
+			'salle.observationMuetteTitre' => 'Vous assistez au cours.',
 			'salle.bandeauControle' => 'Visite de contrôle. Vous n\'êtes ni vu ni entendu, et votre passage est inscrit au journal.',
+			'salle.bandeauControleTitre' => 'Visite de contrôle.',
 			'salle.visiteControle.titre' => 'Contrôle Rewayah',
 			'salle.visiteControle.sonRecu' => 'Son reçu',
 			'salle.visiteControle.sonCoupe' => 'Son coupé',
@@ -16152,10 +16160,10 @@ extension on Traductions {
 			'inscription.erreurActualisation' => 'Votre compte est créé, mais la connexion n\'a pas pu être actualisée. Réessayez, ou déconnectez-vous puis reconnectez-vous.',
 			'inscription.usage.question' => 'Quel type de compte souhaitez-vous créer ?',
 			'inscription.usage.moiTitre' => 'Moi uniquement',
-			'inscription.usage.moiDescription' => 'Je souhaite suivre les cours avec mon propre profil élève.',
-			'inscription.usage.familleTitre' => 'Moi et ma famille',
 			_ => null,
 		} ?? switch (path) {
+			'inscription.usage.moiDescription' => 'Je souhaite suivre les cours avec mon propre profil élève.',
+			'inscription.usage.familleTitre' => 'Moi et ma famille',
 			'inscription.usage.familleDescription' => 'Inscrivez vos enfants ou vos proches, avec ou sans vous. Vous pourrez créer votre propre profil élève à tout moment.',
 			'inscription.usage.enseignant' => 'Je suis enseignant',
 			'inscription.recap.usage' => 'Type de compte',
@@ -16666,10 +16674,10 @@ extension on Traductions {
 			'eleveConnexion.refus.revoqueTitre' => 'Appareil retiré',
 			'eleveConnexion.refus.revoque' => 'Le tuteur a retiré cet appareil. Demandez-lui d\'afficher un nouveau code.',
 			'eleveConnexion.refus.plafondTitre' => 'Limite d\'appareils atteinte',
-			'eleveConnexion.refus.plafond' => 'Ce profil élève a atteint le nombre d\'appareils autorisés. Le tuteur peut en retirer un dans Foyer, puis afficher un nouveau code.',
-			'eleveConnexion.refus.tropDEssaisTitre' => 'Trop d\'essais',
 			_ => null,
 		} ?? switch (path) {
+			'eleveConnexion.refus.plafond' => 'Ce profil élève a atteint le nombre d\'appareils autorisés. Le tuteur peut en retirer un dans Foyer, puis afficher un nouveau code.',
+			'eleveConnexion.refus.tropDEssaisTitre' => 'Trop d\'essais',
 			'eleveConnexion.refus.tropDEssais' => 'Patientez un instant avant de réessayer.',
 			'eleveConnexion.refus.horsLigneTitre' => 'Code pas encore vérifié',
 			'eleveConnexion.refus.horsLigne' => 'Vérifiez la connexion internet, puis réessayez.',
@@ -17180,10 +17188,10 @@ extension on Traductions {
 			'admin.programmes.publierVersionTitre' => ({required Object version}) => 'Publier ${version}',
 			'admin.programmes.publierVersionDetail' => 'Une fois publiée, cette version ne pourra plus être modifiée. Toute évolution académique en créera une nouvelle.',
 			'admin.programmes.publierVersionEnvoyer' => 'Publier',
-			'admin.programmes.publierVersionErreur' => ({required Object message}) => 'La publication n\'a pas abouti : ${message}',
-			'admin.programmes.champCodeTechnique' => 'Code technique (usage interne, jamais affiché à l\'élève)',
 			_ => null,
 		} ?? switch (path) {
+			'admin.programmes.publierVersionErreur' => ({required Object message}) => 'La publication n\'a pas abouti : ${message}',
+			'admin.programmes.champCodeTechnique' => 'Code technique (usage interne, jamais affiché à l\'élève)',
 			'admin.programmes.champNomHumain' => 'Nom affiché',
 			'admin.programmes.champCycle' => 'Cycle',
 			'admin.programmes.champOrdre' => 'Ordre',
@@ -17694,10 +17702,10 @@ extension on Traductions {
 			'compte.tuteur.pageInformations.langue' => 'Langue de l\'interface',
 			'compte.tuteur.pageInformations.fuseau' => 'Fuseau des séances',
 			'compte.tuteur.pageInformations.fuseauIndisponible' => 'Non disponible pour le moment',
-			'compte.tuteur.pageInformations.note' => 'Ces informations sont tenues par l\'académie. Elles ne se modifient pas encore depuis l\'application.',
-			'compte.tuteur.pageSecurite.titre' => 'Connexion et sécurité',
 			_ => null,
 		} ?? switch (path) {
+			'compte.tuteur.pageInformations.note' => 'Ces informations sont tenues par l\'académie. Elles ne se modifient pas encore depuis l\'application.',
+			'compte.tuteur.pageSecurite.titre' => 'Connexion et sécurité',
 			'compte.tuteur.pageSecurite.sousTitre' => 'Comment vous accédez à votre compte.',
 			'compte.tuteur.pageSecurite.methode' => 'Méthode de connexion',
 			'compte.tuteur.pageSecurite.adresse' => 'Adresse de connexion',
@@ -18208,10 +18216,10 @@ extension on Traductions {
 			'enseignant.eleve.identifiant' => ({required Object id}) => 'Identifiant Académie : ${id}',
 			'enseignant.eleve.photo' => ({required Object prenom}) => 'Photo de ${prenom}',
 			'enseignant.eleve.niveau' => 'Niveau',
-			'enseignant.eleve.objectif' => 'Objectif',
-			'enseignant.eleve.presence' => 'Présence récente',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.eleve.objectif' => 'Objectif',
+			'enseignant.eleve.presence' => 'Présence récente',
 			'enseignant.eleve.travail' => 'Travail',
 			'enseignant.eleve.travailReprise' => ({required Object page}) => 'Reprise à la ${page}',
 			'enseignant.eleve.derniereSeance' => 'Dernière séance',
@@ -18722,10 +18730,10 @@ extension on Traductions {
 			'controleur.observation.aSuivreAide' => 'Quand un point devra être revu lors d\'une prochaine visite · il figure au rapport comme point à suivre',
 			'controleur.observation.interventionAdmin' => 'Intervention de l\'administration souhaitée',
 			'controleur.observation.interventionAdminAide' => 'Quand l\'administration doit agir · votre texte sera demandé, elle le reçoit avec le rapport',
-			'controleur.observation.questionDomaine' => 'Quel domaine concerne-t-elle ?',
-			'controleur.observation.contexteDomaine' => 'Le domaine aide l\'administration à lire votre observation.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.observation.questionDomaine' => 'Quel domaine concerne-t-elle ?',
+			'controleur.observation.contexteDomaine' => 'Le domaine aide l\'administration à lire votre observation.',
 			'controleur.observation.pedagogie' => 'Pédagogie',
 			'controleur.observation.pedagogieAide' => 'Quand il s\'agit de l\'enseignement : explications, progression, supports',
 			'controleur.observation.interaction' => 'Interaction avec les élèves',
@@ -19236,10 +19244,10 @@ extension on Traductions {
 			'tc.observation.reglages.plafondVisite' => 'Durée maximale d\'une visite',
 			'tc.observation.reglages.diminuer' => 'Diminuer',
 			'tc.observation.reglages.augmenter' => 'Augmenter',
-			'tc.observation.reglages.enregistrer' => 'Enregistrer',
-			'tc.observation.reglages.invalideVisites' => 'Au moins une visite par séance.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.reglages.enregistrer' => 'Enregistrer',
+			'tc.observation.reglages.invalideVisites' => 'Au moins une visite par séance.',
 			'tc.observation.reglages.invalideTemps' => 'Au moins trente secondes par séance.',
 			'tc.observation.reglages.valeurHeritee' => ({required Object valeur}) => 'Académie : ${valeur}',
 			'tc.observation.reglages.uniteVisiteUne' => ({required Object n}) => '${n} visite',

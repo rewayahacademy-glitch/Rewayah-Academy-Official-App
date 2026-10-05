@@ -1,4 +1,6 @@
 {
+  "salle.observationMuetteTitre": "releve VERIF-CORR-2, etape SALLE-CORR-3 : titre du rappel du tuteur en texte tres agrandi (premiere phrase de salle.observationMuette), a valider par le directeur",
+  "salle.bandeauControleTitre": "releve VERIF-CORR-2, etape SALLE-CORR-3 : titre du rappel du controleur en texte tres agrandi (premiere phrase de salle.bandeauControle), a valider par le directeur",
   "compte.themeContexte": "phrase de contexte K-58 ajoutee par la relecture, a valider par le directeur",
   "compte.themeClairDetail": "commentaire du directeur 01-02/10, etape THEME-SW-1",
   "compte.themeSombreDetail": "commentaire du directeur 01-02/10, etape THEME-SW-1",

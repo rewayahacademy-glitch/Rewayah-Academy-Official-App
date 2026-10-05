@@ -293,7 +293,7 @@ class _Corps extends ConsumerWidget {
                   ? alertes.length - maximumAlertes
                   : 0,
               offres: offres,
-              coursAnnule: annulee,
+              coursAnnule: _retrouverParId(toutes, annulee),
               onReessayerPartiel: partielle
                   ? () {
                       ref
@@ -336,6 +336,16 @@ SeanceEnseignant? _seanceDominante(
     toutes.map(_versSeance).toList(growable: false),
     maintenant,
   );
+  return _retrouverParId(toutes, relais);
+}
+
+/// La seance riche (Classe, groupe) qui porte le meme identifiant que
+/// [relais], lue dans le pont vers la journee partagee. La carte du cours
+/// annule en a besoin pour nommer sa Classe et y mener (SALLE-CORR-3).
+SeanceEnseignant? _retrouverParId(
+  List<SeanceEnseignant> toutes,
+  Seance? relais,
+) {
   if (relais == null) return null;
   for (final SeanceEnseignant seance in toutes) {
     if (seance.id == relais.id) return seance;
@@ -1187,7 +1197,7 @@ class ListeAlertesPage extends ConsumerWidget {
                 entete: false,
                 alertes: alertes,
                 offres: offres,
-                coursAnnule: annulee,
+                coursAnnule: _retrouverParId(toutes, annulee),
               );
       }
     }
@@ -1331,7 +1341,7 @@ class _AlertesUtiles extends ConsumerWidget {
   /// Le cours annule du jour : une carte attenuee avant toute autre alerte,
   /// avec la pastille « Annulee », l'horaire barre et la ligne « pourquoi »
   /// (ANNUL-VIS-1).
-  final Seance? coursAnnule;
+  final SeanceEnseignant? coursAnnule;
   final List<String> alertes;
   final List<OffreRemplacement> offres;
 
@@ -1433,15 +1443,20 @@ class _AlertesUtiles extends ConsumerWidget {
 /// Le serveur ne rend pas encore le motif de l'annulation : la ligne le dit
 /// (« Motif non communique ») plutot que d'en inventer un. La suite (« seance
 /// non facturee », remplacant) viendra avec la donnee (BR-1).
+///
+/// SALLE-CORR-3 (releve VERIF-CORR-2) : comme la carte de seance, elle nomme
+/// sa Classe et y mene par « Voir la Classe » (un lien, K-56 : le seul
+/// bouton plein de la page reste celui de la carte de seance).
 class _CarteCoursAnnule extends StatelessWidget {
   const _CarteCoursAnnule({required this.cours});
 
-  final Seance cours;
+  final SeanceEnseignant cours;
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
+    final String nom = _nomClasse(cours.groupeLibelle);
     return AppCard(
       key: const ValueKey<String>('journee-cours-annule'),
       surface: surfaceCarteSeance(palette, annulee: true),
@@ -1451,6 +1466,16 @@ class _CarteCoursAnnule extends StatelessWidget {
         children: <Widget>[
           const PastilleEtatSeance(etat: EtatPastilleSeance.annulee),
           Ecart.vMd,
+          Semantics(
+            header: true,
+            child: Text(
+              nom,
+              style: palette.inkStrong.applyTo(
+                textes.titleMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+          Ecart.vXs,
           TexteHeureSeance(
             heure: t.enseignant.journee.plage(
               debut: _hhmm(cours.debut),
@@ -1465,6 +1490,26 @@ class _CarteCoursAnnule extends StatelessWidget {
           ),
           Ecart.vXs,
           LigneRaisonSeance(raison: t.etat.motifNonCommunique),
+          Ecart.vMd,
+          LienFleche(
+            key: const ValueKey<String>('journee-cours-annule-classe'),
+            libelle: t.enseignant.journee.voirClasse,
+            libelleSemantique: t.enseignant.journee.voirClasseLecteur(
+              classe: nom,
+            ),
+            onPress: () {
+              final String? idGroupe = cours.groupeId;
+              if (idGroupe == null) {
+                GoRouter.of(context).go(Routes.enseignantClasses);
+                return;
+              }
+              // `push` : le retour de l'Espace Classe se referme sur
+              // Aujourd'hui (R1), comme la carte de seance.
+              unawaited(
+                GoRouter.of(context).push<void>(Routes.groupePour(idGroupe)),
+              );
+            },
+          ),
         ],
       ),
     );
