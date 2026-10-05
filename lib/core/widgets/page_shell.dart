@@ -224,7 +224,9 @@ class PageShell extends StatelessWidget {
                 // (PAGESHELL-200-1), ou, si la tete en laisse moins de la
                 // moitie, la hauteur de la vue : la tete defile, puis la
                 // liste occupe tout l'ecran. Jamais moins que ce qu'il
-                // signale lui manquer (`ColonneCorps`, PAGESHELL-200-1b).
+                // signale lui manquer (`ColonneCorps`, PAGESHELL-200-1b) ;
+                // une colonne qui deborde sous une tete fixe fait passer la
+                // page en defilement global (PAGESHELL-200-1c).
                 // Meme regle sur mobile a 200 % de texte : la tete (titre,
                 // sous-titre, onglets) y prend presque toute la hauteur et
                 // ne laissait au corps qu'une bande (390x844, 44 de
@@ -338,6 +340,34 @@ class _BasculeState extends State<_Bascule> {
   /// (PAGESHELL-200-1b).
   final _ManqueCorps _manque = _ManqueCorps();
 
+  /// PAGESHELL-200-1c : la vue (contraintes et echelle du texte) pour
+  /// laquelle le corps non defilant a signale, en tete fixe, une colonne
+  /// qui deborde. La page y passe en defilement global : la tete defile et
+  /// le corps recoit la hauteur qui lui manque (667x375 sans zone sure, a
+  /// 200 % : 45 px de debordement, 213 en Interface guidee). Une autre vue
+  /// reessaie la tete fixe.
+  (BoxConstraints, double)? _vueForcee;
+
+  /// La vue du dernier rendu.
+  (BoxConstraints, double)? _vueCourante;
+
+  @override
+  void initState() {
+    super.initState();
+    _manque.surManqueTeteFixe = _forcerDefilement;
+  }
+
+  void _forcerDefilement() {
+    final (BoxConstraints, double)? courante = _vueCourante;
+    if (!mounted ||
+        widget.defilante ||
+        courante == null ||
+        courante == _vueForcee) {
+      return;
+    }
+    setState(() => _vueForcee = courante);
+  }
+
   /// AD-M4-DEFIL : le defileur d'une page defilante, recree a chaque bascule
   /// avec la position de l'ancien. Le meme decalage garde le meme contenu
   /// sous la tete dans les deux branches : en tete fixe, le haut du corps
@@ -368,6 +398,7 @@ class _BasculeState extends State<_Bascule> {
 
   @override
   void dispose() {
+    _manque.surManqueTeteFixe = null;
     _defileur?.dispose();
     super.dispose();
   }
@@ -390,9 +421,15 @@ class _BasculeState extends State<_Bascule> {
       child: _PorteeManque(manque: _manque, child: widget.corps),
     );
 
+    final double echelle = MediaQuery.textScalerOf(context).scale(1);
+    _manque.texteAgrandi = echelle > 1.3;
     return LayoutBuilder(
       builder: (BuildContext _, BoxConstraints contraintes) {
-        final bool teteDefile = widget.teteDefilante(contraintes.maxHeight);
+        final (BoxConstraints, double) vue = (contraintes, echelle);
+        _vueCourante = vue;
+        final bool teteDefile =
+            widget.teteDefilante(contraintes.maxHeight) ||
+            (!widget.defilante && vue == _vueForcee);
         final ScrollController? defileur = widget.defilante
             ? _defileurPour(teteDefile)
             : null;
@@ -457,6 +494,10 @@ class _BasculeState extends State<_Bascule> {
 ///   dans `vue - tete` (telephone en paysage a 200 % sous les barres du
 ///   systeme, 320x568 a 200 %) recoit la hauteur qui lui manque : la page
 ///   defile d'autant, la barre se rejoint au lieu de deborder hors d'atteinte.
+///   Quand la page defile de toute facon, s'y ajoute ce que ses
+///   [DefileurCorps] cachent de leur minimum utile (PAGESHELL-200-1c) : la
+///   salle montre son en-tete et son support entiers, pas une fenetre de
+///   48 px.
 ///
 /// La hauteur de la tete n'est connue qu'a sa mise en page, et le manque du
 /// corps qu'a la sienne : un `Column` ne sait faire ni l'un ni l'autre dans
@@ -499,7 +540,7 @@ class _RenduTeteEtCorps extends RenderBox
 
   /// Au plus ce nombre de mises en page du corps par passe : une colonne
   /// signale son manque, une colonne imbriquee le sien a la passe suivante.
-  static const int _passesMax = 4;
+  static const int _passesMax = 6;
 
   double _hauteurVue;
   set hauteurVue(double valeur) {
@@ -602,15 +643,22 @@ class _RenduTeteEtCorps extends RenderBox
     final double tete = _tete.size.height;
     final double base = _hauteurCorps(tete);
     double corps = base;
+    // PAGESHELL-200-1c : le minimum utile d'un defileur imbrique
+    // (`DefileurCorps`) ne compte que si la page defile de toute facon. Une
+    // salle qui tient dans la vue garde sa barre au premier affichage
+    // (PAGESHELL-200-1) ; une salle qui deborde deja montre, en defilant,
+    // son en-tete et son support entiers au lieu d'une fenetre de 48 px.
+    bool pageDefile = tete + base > _hauteurVue + _ManqueCorps.tolerance;
     _manque.enMiseEnPage = true;
     try {
       for (int passe = 1; ; passe++) {
         _corps.layout(BoxConstraints.tight(Size(largeur, corps)));
-        final double manque = _manque.valeur;
+        final double manque = _manque.valeur(souples: pageDefile);
         if (manque <= _ManqueCorps.tolerance || passe == _passesMax) {
           break;
         }
         corps += manque;
+        pageDefile = true;
       }
     } finally {
       _manque
@@ -653,8 +701,32 @@ class _ManqueCorps {
   /// mise en page.
   double supplement = 0;
 
-  /// Le plus grand manque signale : la hauteur a ajouter au corps.
-  double get valeur => _ecarts.values.fold<double>(0, math.max);
+  /// Appele a la fin de l'image quand une colonne deborde en tete fixe : la
+  /// page passe en defilement global (PAGESHELL-200-1c).
+  VoidCallback? surManqueTeteFixe;
+
+  /// Vrai quand ce passage est deja demande pour cette image.
+  bool _basculeDemandee = false;
+
+  /// Vrai au-dela de 130 % de texte, le seuil ou la tete d'une page
+  /// defilante defile deja (MA15).
+  bool texteAgrandi = false;
+
+  /// Les sources dont le manque ne compte que si la page defile de toute
+  /// facon : les defileurs imbriques ([DefileurCorps]).
+  final Set<RenderObject> _souples = <RenderObject>{};
+
+  /// Le plus grand manque signale : la hauteur a ajouter au corps. Celui
+  /// des defileurs imbriques seulement si [souples].
+  double valeur({required bool souples}) {
+    double plus = 0;
+    _ecarts.forEach((RenderObject source, double ecart) {
+      if (souples || !_souples.contains(source)) {
+        plus = math.max(plus, ecart);
+      }
+    });
+    return plus;
+  }
 
   /// Enregistre l'[ecart] de [source] entre son besoin et sa hauteur.
   ///
@@ -663,9 +735,31 @@ class _ManqueCorps {
   /// pendant la sienne : la page est relancee a la fin de l'image, quand il
   /// manque de la hauteur ou qu'un supplement donne n'est peut-etre plus
   /// utile. Rend vrai quand cette relance doit combler un manque.
-  bool signaler(RenderObject source, double ecart) {
+  ///
+  /// En tete fixe, une colonne dont les enfants sans flex debordent
+  /// ([debordement] positif) fait passer la page en defilement global. Une
+  /// zone etiree sous son minimum ne le fait qu'a texte agrandi
+  /// ([texteAgrandi]) : a 100 %, la barre de la salle reste au premier
+  /// affichage ; a 200 %, la zone du support n'est plus une fenetre de 48 px
+  /// sous une tete fixe. Un defileur imbrique n'y compte pas.
+  bool signaler(
+    RenderObject source,
+    double ecart, {
+    bool coupe = true,
+    double debordement = 0,
+  }) {
     final double ancien = _ecarts[source] ?? 0;
     _ecarts[source] = ecart;
+    if (coupe) {
+      _souples.remove(source);
+    } else {
+      _souples.add(source);
+    }
+    if (rendu == null) {
+      return coupe &&
+          (debordement > tolerance || (texteAgrandi && ecart > tolerance)) &&
+          _basculer();
+    }
     if (enMiseEnPage ||
         (ecart - ancien).abs() <= tolerance ||
         (ecart <= tolerance && supplement <= tolerance)) {
@@ -677,9 +771,27 @@ class _ManqueCorps {
   /// [source] quitte l'arbre : son manque ne compte plus.
   void oublier(RenderObject source) {
     final double? ancien = _ecarts.remove(source);
+    _souples.remove(source);
     if (ancien != null && !enMiseEnPage && supplement > tolerance) {
       _relancer();
     }
+  }
+
+  /// Demande le defilement global a la fin de l'image. Faux hors
+  /// `PageShell`.
+  bool _basculer() {
+    final VoidCallback? rappel = surManqueTeteFixe;
+    if (rappel == null) {
+      return false;
+    }
+    if (!_basculeDemandee) {
+      _basculeDemandee = true;
+      SchedulerBinding.instance.addPostFrameCallback((Duration _) {
+        _basculeDemandee = false;
+        surManqueTeteFixe?.call();
+      });
+    }
+    return true;
   }
 
   /// Redemande la mise en page de [rendu] a la fin de l'image. Faux s'il
@@ -719,7 +831,9 @@ class _PorteeManque extends InheritedWidget {
 /// tete defile avec le corps, donne au corps cette hauteur en plus : la page
 /// defile au lieu de couper le bas de la colonne.
 ///
-/// Hors `PageShell`, ou en tete fixe, c'est un `Column` ordinaire.
+/// En tete fixe, une colonne qui deborde fait passer la page en defilement
+/// global, ou elle recoit ce qui lui manque (PAGESHELL-200-1c). Hors
+/// `PageShell`, c'est un `Column` ordinaire.
 class ColonneCorps extends Column {
   /// Cree la colonne.
   const ColonneCorps({
@@ -811,13 +925,15 @@ class _RenduColonneCorps extends RenderFlex {
       enfants++;
       enfant = donnees.nextSibling;
     }
-    if (flexible) {
-      besoin += _minimumEtire;
-    }
     if (enfants > 1) {
       besoin += spacing * (enfants - 1);
     }
-    _relancePrevue = manque.signaler(this, besoin - size.height);
+    final double minimum = flexible ? _minimumEtire : 0;
+    _relancePrevue = manque.signaler(
+      this,
+      besoin + minimum - size.height,
+      debordement: besoin - size.height,
+    );
   }
 
   @override
@@ -827,6 +943,182 @@ class _RenduColonneCorps extends RenderFlex {
       return;
     }
     super.paint(context, offset);
+  }
+
+  // Deplacee d'une branche a l'autre (tete fixe, defilement global), la
+  // source a oublie son manque en quittant l'arbre : elle le redit meme
+  // quand ses contraintes n'ont pas change (PAGESHELL-200-1c).
+  @override
+  void attach(PipelineOwner owner) {
+    super.attach(owner);
+    markNeedsLayout();
+  }
+
+  @override
+  void detach() {
+    _manque?.oublier(this);
+    super.detach();
+  }
+}
+
+/// Un defileur imbrique dans un corps non defilant, qui dit a `PageShell`
+/// ce qu'il cache de son minimum utile (PAGESHELL-200-1c).
+///
+/// Le minimum utile est le contenu du defileur jusqu'a [repere] (tout son
+/// contenu sans repere). Sous une tete qui defile, la page donne au corps la
+/// hauteur qu'il faut pour que ce minimum tienne dans le defileur : une
+/// salle montre son en-tete et son support a hauteur lisible, et c'est la
+/// page qui defile pour le reste. Avant, ce minimum etait une cible tactile :
+/// une fenetre de 48 px ou l'on ne voyait que le haut de l'en-tete.
+///
+/// [builder] recoit le controleur a donner au **seul** defileur vertical
+/// qu'il construit. En tete fixe, ou hors `PageShell`, c'est un defileur
+/// ordinaire.
+class DefileurCorps extends StatefulWidget {
+  /// Cree le defileur.
+  const DefileurCorps({required this.builder, super.key, this.repere});
+
+  /// Construit le defileur avec le controleur donne.
+  final Widget Function(BuildContext context, ScrollController defileur)
+  builder;
+
+  /// La cle d'une boite de hauteur nulle posee dans le contenu, juste apres
+  /// le minimum utile. Nul : tout le contenu.
+  final GlobalKey? repere;
+
+  @override
+  State<DefileurCorps> createState() => _DefileurCorpsEtat();
+}
+
+class _DefileurCorpsEtat extends State<DefileurCorps> {
+  final ScrollController _defileur = ScrollController();
+  final GlobalKey _cleSignal = GlobalKey(debugLabel: 'DefileurCorps.signal');
+
+  @override
+  void dispose() {
+    _defileur.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      NotificationListener<ScrollMetricsNotification>(
+        // Le contenu change de hauteur sans que la page bouge (une ligne
+        // d'etat apparait) : le defileur se remet en page seul, la mesure
+        // est relue a la fin de l'image.
+        onNotification: (ScrollMetricsNotification avis) {
+          if (avis.depth == 0) {
+            (_cleSignal.currentContext?.findRenderObject()
+                    as _RenduSignalDefileur?)
+                ?.signaler();
+          }
+          return false;
+        },
+        child: _SignalDefileur(
+          key: _cleSignal,
+          manque: context
+              .dependOnInheritedWidgetOfExactType<_PorteeManque>()
+              ?.manque,
+          defileur: _defileur,
+          repere: widget.repere,
+          child: widget.builder(context, _defileur),
+        ),
+      );
+}
+
+class _SignalDefileur extends SingleChildRenderObjectWidget {
+  const _SignalDefileur({
+    required this.manque,
+    required this.defileur,
+    required this.repere,
+    required super.child,
+    super.key,
+  });
+
+  final _ManqueCorps? manque;
+  final ScrollController defileur;
+  final GlobalKey? repere;
+
+  @override
+  _RenduSignalDefileur createRenderObject(BuildContext context) =>
+      _RenduSignalDefileur(manque, defileur, repere);
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    _RenduSignalDefileur renderObject,
+  ) {
+    renderObject
+      ..manque = manque
+      ..defileur = defileur
+      ..repere = repere;
+  }
+}
+
+class _RenduSignalDefileur extends RenderProxyBox {
+  _RenduSignalDefileur(this._manque, this.defileur, this.repere);
+
+  ScrollController defileur;
+  GlobalKey? repere;
+
+  _ManqueCorps? _manque;
+  set manque(_ManqueCorps? valeur) {
+    if (identical(valeur, _manque)) {
+      return;
+    }
+    _manque?.oublier(this);
+    _manque = valeur;
+    markNeedsLayout();
+  }
+
+  /// Ce que le defileur cache de son minimum utile.
+  double get _cache {
+    if (!defileur.hasClients || defileur.positions.length != 1) {
+      return 0;
+    }
+    final ScrollPosition position = defileur.position;
+    if (!position.hasContentDimensions || !position.hasViewportDimension) {
+      return 0;
+    }
+    final double tout = position.maxScrollExtent - position.minScrollExtent;
+    final RenderObject? cible = repere?.currentContext?.findRenderObject();
+    final RenderObject? vue = cible == null
+        ? null
+        : RenderAbstractViewport.maybeOf(cible);
+    if (cible is! RenderBox || vue == null || !cible.attached) {
+      return tout;
+    }
+    // Le bas du minimum dans le contenu : sa position dans la vue du
+    // defileur, plus ce qui a deja defile. Seules les positions servent :
+    // la taille d'une boite ne se lit pas pendant la mise en page d'un
+    // ancetre.
+    final double dansVue = MatrixUtils.transformPoint(
+      cible.getTransformTo(vue),
+      Offset.zero,
+    ).dy;
+    final double bas = dansVue + position.pixels - position.minScrollExtent;
+    return (bas - position.viewportDimension).clamp(0, tout);
+  }
+
+  void signaler() {
+    if (attached) {
+      _manque?.signaler(this, _cache, coupe: false);
+    }
+  }
+
+  @override
+  void performLayout() {
+    super.performLayout();
+    signaler();
+  }
+
+  // Deplacee d'une branche a l'autre (tete fixe, defilement global), la
+  // source a oublie son manque en quittant l'arbre : elle le redit meme
+  // quand ses contraintes n'ont pas change (PAGESHELL-200-1c).
+  @override
+  void attach(PipelineOwner owner) {
+    super.attach(owner);
+    markNeedsLayout();
   }
 
   @override

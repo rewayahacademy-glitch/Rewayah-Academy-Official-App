@@ -107,6 +107,10 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
   /// Vrai quand le support occupe toute la salle. Etat d'ecran seulement.
   bool _agrandi = false;
 
+  /// PAGESHELL-200-1c : la fin du minimum utile de la salle du telephone
+  /// qui defile : l'en-tete et le support a sa hauteur lisible.
+  final GlobalKey _repereSupport = GlobalKey(debugLabel: 'salle.repere');
+
   bool get _lienVivant => switch (widget.etatSalle) {
     EtatSalle.connecte || EtatSalle.retabli || EtatSalle.instable => true,
     _ => false,
@@ -135,12 +139,16 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
       // qui leur manque. A 200 % sous une tete qui defile (320x568, telephone
       // en paysage sous les barres du systeme), le bandeau et la barre
       // agrandis ne tiennent plus dans la hauteur laissee : la page defile
-      // d'autant, et la barre se rejoint au lieu d'etre coupee. La zone du
-      // support ne descend pas sous une cible tactile, ou elle ne se saisit
-      // plus pour defiler.
+      // d'autant, et la barre se rejoint au lieu d'etre coupee.
+      // PAGESHELL-200-1c : le minimum utile de la zone du support n'est plus
+      // une cible tactile (une fenetre de 48 px ou l'on ne voyait que le
+      // haut de l'en-tete). C'est l'en-tete et le support a sa hauteur
+      // lisible, que son defileur ([DefileurCorps]) garde visibles, et,
+      // support agrandi, le support a sa hauteur lisible. La page defile
+      // pour le reste.
       if (!large) {
         return ColonneCorps(
-          minimumEtire: AppTouchTarget.standard,
+          minimumEtire: _hauteurMinSupport,
           children: <Widget>[
             bandeau,
             Ecart.vMd,
@@ -166,7 +174,7 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
               child: Padding(
                 padding: const EdgeInsets.all(AppSpacing.lg),
                 child: ColonneCorps(
-                  minimumEtire: AppTouchTarget.standard,
+                  minimumEtire: _hauteurMinSupport,
                   children: <Widget>[
                     Expanded(child: _corpsLarge()),
                     Ecart.vMd,
@@ -212,28 +220,37 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
           ],
         );
       }
-      return SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            _entete(),
-            Ecart.vMd,
-            // OBS-COUPE-1b : sans support partage, la ligne d'attente prend
-            // la hauteur qu'il lui faut (a 320 px et 200 %, « s'affiche ici »
-            // etait rogne a mi-texte dans 200 points) ; un support reel garde
-            // sa hauteur fixe, il ne sait pas se mesurer seul.
-            if (widget.supportPartage == null)
-              ConstrainedBox(
-                constraints: const BoxConstraints(
-                  minHeight: _hauteurMinSupport,
-                ),
-                child: _support(),
-              )
-            else
-              SizedBox(height: _hauteurMinSupport, child: _support()),
-            ...vignettes,
-          ],
-        ),
+      return DefileurCorps(
+        repere: _repereSupport,
+        builder: (BuildContext context, ScrollController defileur) =>
+            SingleChildScrollView(
+              controller: defileur,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  _entete(),
+                  Ecart.vMd,
+                  // OBS-COUPE-1b : sans support partage, la ligne d'attente
+                  // prend la hauteur qu'il lui faut (a 320 px et 200 %,
+                  // « s'affiche ici » etait rogne a mi-texte dans 200
+                  // points) ; un support reel garde sa hauteur fixe, il ne
+                  // sait pas se mesurer seul.
+                  if (widget.supportPartage == null)
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minHeight: _hauteurMinSupport,
+                      ),
+                      child: _support(),
+                    )
+                  else
+                    SizedBox(height: _hauteurMinSupport, child: _support()),
+                  // Sous une tete qui defile, la page garde visible tout ce
+                  // qui precede ce repere ; les vignettes peuvent defiler.
+                  SizedBox(key: _repereSupport),
+                  ...vignettes,
+                ],
+              ),
+            ),
       );
     },
   );
@@ -242,9 +259,10 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
   static const double _hauteurMinCorps = 300;
 
   /// Des la tablette (D1) : en-tete, puis le support a environ trois
-  /// quarts de la largeur et la colonne des vignettes a droite. Quand la hauteur manque (texte a 300 % sur une tablette, la
-  /// barre en deux rangees), la salle defile avec un support de hauteur
-  /// minimale, comme sur telephone : jamais un debordement (PAGESHELL-200-1).
+  /// quarts de la largeur et la colonne des vignettes a droite. Quand la
+  /// hauteur manque (texte a 300 % sur une tablette, la barre en deux
+  /// rangees), la salle defile avec un support de hauteur minimale, comme
+  /// sur telephone : jamais un debordement (PAGESHELL-200-1).
   Widget _corpsLarge() => Builder(
     builder: (BuildContext context) {
       final Widget salle = Row(
@@ -275,28 +293,32 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
       // Le support prend la hauteur que l'en-tete laisse, jamais moins que
       // [_hauteurMinSupport] : quand l'en-tete agrandi n'en laisse pas
       // assez, la salle defile au lieu de deborder.
-      return CustomScrollView(
-        slivers: <Widget>[
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[_entete(), Ecart.vMd],
-            ),
-          ),
-          SliverLayoutBuilder(
-            builder: (BuildContext context, SliverConstraints place) =>
+      return DefileurCorps(
+        builder: (BuildContext context, ScrollController defileur) =>
+            CustomScrollView(
+              controller: defileur,
+              slivers: <Widget>[
                 SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: math.max(
-                      _hauteurMinSupport,
-                      place.viewportMainAxisExtent -
-                          place.precedingScrollExtent,
-                    ),
-                    child: salle,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[_entete(), Ecart.vMd],
                   ),
                 ),
-          ),
-        ],
+                SliverLayoutBuilder(
+                  builder: (BuildContext context, SliverConstraints place) =>
+                      SliverToBoxAdapter(
+                        child: SizedBox(
+                          height: math.max(
+                            _hauteurMinSupport,
+                            place.viewportMainAxisExtent -
+                                place.precedingScrollExtent,
+                          ),
+                          child: salle,
+                        ),
+                      ),
+                ),
+              ],
+            ),
       );
     },
   );
@@ -406,31 +428,38 @@ class _PanneauObservationTuteurEtat extends State<PanneauObservationTuteur> {
             widget.supportPartage ??
             // Aucun support partage : une ligne discrete au centre, pas un
             // etat vide de page (le support reste la zone dominante).
+            // PAGESHELL-200-1c : quand la page defile de toute facon, elle
+            // donne a la ligne la hauteur qu'il lui faut (Interface guidee a
+            // 200 % en paysage : « s'affiche ici » etait rogne a mi-ligne).
             Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    ExcludeSemantics(
-                      child: IconTheme(
-                        data: palette.inkFaint.asIconTheme(
-                          size: AppSpacing.xxxl,
-                        ),
-                        child: Icon(AppIcons.bibliotheque.repos),
+              child: DefileurCorps(
+                builder: (BuildContext _, ScrollController defileur) =>
+                    SingleChildScrollView(
+                      controller: defileur,
+                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          ExcludeSemantics(
+                            child: IconTheme(
+                              data: palette.inkFaint.asIconTheme(
+                                size: AppSpacing.xxxl,
+                              ),
+                              child: Icon(AppIcons.bibliotheque.repos),
+                            ),
+                          ),
+                          Ecart.vSm,
+                          Text(
+                            t.tc.observation.visite.supportIndisponible,
+                            textAlign: TextAlign.center,
+                            style: palette.inkMuted.applyTo(
+                              Theme.of(context).textTheme.bodyMedium ??
+                                  const TextStyle(),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Ecart.vSm,
-                    Text(
-                      t.tc.observation.visite.supportIndisponible,
-                      textAlign: TextAlign.center,
-                      style: palette.inkMuted.applyTo(
-                        Theme.of(context).textTheme.bodyMedium ??
-                            const TextStyle(),
-                      ),
-                    ),
-                  ],
-                ),
               ),
             ),
       ),

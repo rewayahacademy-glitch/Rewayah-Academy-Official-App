@@ -942,29 +942,34 @@ void main() {
             TextDirection.ltr,
             false,
           ),
-          // Non-regression : ce qui tenait tient toujours, sans defiler.
+          // PAGESHELL-200-1c : ces vues tenaient sans defiler, mais la zone
+          // du support n'y etait qu'une fenetre de 60, 139, 48 et 65 px ou
+          // l'on ne voyait que le haut de l'en-tete. Elles defilent
+          // maintenant, et la page montre l'en-tete et le support entiers.
           (
             Size(360, 640),
             EdgeInsets.only(top: 24, bottom: 48),
             TextDirection.ltr,
-            true,
+            false,
           ),
-          (Size(375, 667), EdgeInsets.only(top: 20), TextDirection.ltr, true),
-          (
-            Size(414, 896),
-            EdgeInsets.only(top: 44, bottom: 34),
-            TextDirection.rtl,
-            true,
-          ),
+          (Size(375, 667), EdgeInsets.only(top: 20), TextDirection.ltr, false),
           (
             Size(844, 390),
             EdgeInsets.only(left: 47, right: 47, bottom: 21),
             TextDirection.ltr,
-            true,
+            false,
           ),
           (
             Size(932, 430),
             EdgeInsets.only(left: 59, right: 59, bottom: 21),
+            TextDirection.rtl,
+            false,
+          ),
+          // Non-regression : ce qui tenait avec une zone du support d'au
+          // moins sa hauteur lisible tient toujours, sans defiler.
+          (
+            Size(414, 896),
+            EdgeInsets.only(top: 44, bottom: 34),
             TextDirection.rtl,
             true,
           ),
@@ -1038,9 +1043,125 @@ void main() {
               2 * AppSpacing.md;
           expect(support, greaterThanOrEqualTo(AppTouchTarget.standard));
         }
+        // PAGESHELL-200-1c : une salle qui ne tient pas fait defiler la
+        // page, et sa zone du support montre l'en-tete et le support
+        // entiers, sans defilement imbrique.
+        if (!cas.$4) {
+          expect(position?.maxScrollExtent ?? 0, greaterThan(0));
+          await _verifierSupportVisible(tester);
+        }
       });
     }
   });
+  // PAGESHELL-200-1c (reserve 2 de la revue PAGESHELL-200-1b) : 667x375 sans
+  // zone sure, a 200 %, la tete restait fixe (vue de 375, gabarit tablette)
+  // et la colonne de la salle debordait de 45 px, de 213 en Interface
+  // guidee, la barre hors d'atteinte. La page passe en defilement global.
+  // PAGESHELL-200-1c, non-regression : a 100 %, un telephone en paysage
+  // garde sa tete fixe et sa barre au premier affichage ; le minimum utile
+  // du support ne fait pas defiler une salle qui tient.
+  group('PAGESHELL-200-1c : paysage a 100 %, barre au premier affichage', () {
+    for (final (Size, EdgeInsets) cas in const <(Size, EdgeInsets)>[
+      (Size(667, 375), EdgeInsets.zero),
+      (Size(844, 390), EdgeInsets.only(left: 47, right: 47, bottom: 21)),
+      (Size(800, 400), EdgeInsets.only(top: 24, bottom: 16)),
+    ]) {
+      testWidgets('${cas.$1.width.toInt()}x${cas.$1.height.toInt()}', (
+        WidgetTester tester,
+      ) async {
+        final _Salle salle = await _entrerEnSalle(
+          tester,
+          taille: cas.$1,
+          zoneSure: cas.$2,
+        );
+        _publierParticipants(salle.moteur);
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        final double bas = cas.$1.height - cas.$2.bottom;
+        for (final String libelle in <String>[
+          v.sonRecu,
+          v.agrandir,
+          v.quitter,
+        ]) {
+          expect(
+            tester.getRect(find.text(libelle)).bottom,
+            lessThanOrEqualTo(bas + 0.5),
+          );
+        }
+      });
+    }
+  });
+  group('PAGESHELL-200-1c : 667x375 sans zone sure, a 200 %', () {
+    for (final InterfaceMode interface in InterfaceMode.values) {
+      for (final TextDirection sens in TextDirection.values) {
+        testWidgets('${interface.name}, ${sens.name}', (
+          WidgetTester tester,
+        ) async {
+          final _Salle salle = await _entrerEnSalle(
+            tester,
+            taille: const Size(667, 375),
+            echelleTexte: 2,
+            sens: sens,
+            interface: interface,
+          );
+          _publierParticipants(salle.moteur);
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          final ScrollPosition page = tester
+              .stateList<ScrollableState>(
+                find.ancestor(
+                  of: find.byType(PanneauObservationTuteur),
+                  matching: find.byType(Scrollable),
+                ),
+              )
+              .last
+              .position;
+          expect(page.maxScrollExtent, greaterThan(0));
+          page.jumpTo(page.maxScrollExtent);
+          await tester.pump();
+          expect(tester.takeException(), isNull);
+          for (final String libelle in <String>[
+            v.sonRecu,
+            v.agrandir,
+            v.quitter,
+          ]) {
+            final Rect r = tester.getRect(find.text(libelle));
+            expect(r.top, greaterThanOrEqualTo(-0.5));
+            expect(r.bottom, lessThanOrEqualTo(375 + 0.5));
+          }
+          page.jumpTo(0);
+          await tester.pump();
+          await _verifierSupportVisible(tester);
+        });
+      }
+    }
+  });
+}
+
+/// PAGESHELL-200-1c : la zone du support (le defileur imbrique de la salle)
+/// montre, sans defiler, l'en-tete et le support a sa hauteur lisible. Avant,
+/// elle pouvait n'etre qu'une fenetre de 48 px sur le haut de l'en-tete.
+Future<void> _verifierSupportVisible(WidgetTester tester) async {
+  final Finder support = find.byKey(
+    const ValueKey<String>('support-observation'),
+  );
+  final Finder zone = find
+      .ancestor(of: support, matching: find.byType(Scrollable))
+      .first;
+  final ScrollPosition imbrique = tester.state<ScrollableState>(zone).position;
+  imbrique.jumpTo(imbrique.minScrollExtent);
+  await tester.pump();
+  final Rect cadre = tester.getRect(zone);
+  final Rect r = tester.getRect(support);
+  expect(r.height, greaterThanOrEqualTo(200 - 0.5));
+  expect(r.top, greaterThanOrEqualTo(cadre.top - 0.5));
+  expect(r.bottom, lessThanOrEqualTo(cadre.bottom + 0.5));
+  // L'en-tete aussi, pastille du direct comprise.
+  final Rect pastille = tester.getRect(
+    find.descendant(of: zone, matching: find.text(v.enDirect)),
+  );
+  expect(pastille.top, greaterThanOrEqualTo(cadre.top - 0.5));
+  expect(pastille.bottom, lessThanOrEqualTo(cadre.bottom + 0.5));
 }
 
 /// Le nombre de noeuds semantiques, sous [cadre] compris, dont le libelle

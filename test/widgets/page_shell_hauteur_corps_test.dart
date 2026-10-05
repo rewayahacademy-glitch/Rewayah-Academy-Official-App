@@ -319,4 +319,135 @@ void main() {
       expect(defileurPage(tester).maxScrollExtent, 0);
     });
   });
+
+  // PAGESHELL-200-1c (reserves de la revue PAGESHELL-200-1b).
+  group('PAGESHELL-200-1c', () {
+    const ValueKey<String> cleSupport = ValueKey<String>('support');
+    final GlobalKey repere = GlobalKey(debugLabel: 'repere');
+
+    Future<void> monter(
+      WidgetTester tester,
+      Widget corps,
+      Size taille, {
+      TextDirection sens = TextDirection.ltr,
+    }) async {
+      vue(tester, taille, zoneSure);
+      tester.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await tester.pumpWidget(
+        hotePage(
+          Directionality(
+            textDirection: sens,
+            child: PageShell(titre: 'Salle', defilante: false, child: corps),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    /// Une salle : un bandeau, une zone qui defile (en-tete, support, repere,
+    /// vignettes), une barre.
+    Widget salle({required double bandeau}) => ColonneCorps(
+      key: cleCorps,
+      minimumEtire: 48,
+      children: <Widget>[
+        SizedBox(height: bandeau, child: const Text('bandeau')),
+        Expanded(
+          child: DefileurCorps(
+            repere: repere,
+            builder: (BuildContext _, ScrollController defileur) =>
+                SingleChildScrollView(
+                  controller: defileur,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      const SizedBox(height: 150, child: Text('en-tete')),
+                      const SizedBox(
+                        key: cleSupport,
+                        height: 200,
+                        child: Text('support'),
+                      ),
+                      SizedBox(key: repere),
+                      const SizedBox(height: 300, child: Text('vignettes')),
+                    ],
+                  ),
+                ),
+          ),
+        ),
+        const SizedBox(key: cleBarre, height: 96, child: Text('barre')),
+      ],
+    );
+
+    /// Le defileur imbrique de la salle.
+    Finder zone() => find
+        .ancestor(of: find.byKey(cleSupport), matching: find.byType(Scrollable))
+        .first;
+
+    for (final TextDirection sens in TextDirection.values) {
+      testWidgets('page qui defile de toute facon, ${sens.name} : la zone '
+          'montre l\'en-tete et le support entiers', (
+        WidgetTester tester,
+      ) async {
+        await monter(tester, salle(bandeau: 300), const Size(320, 568));
+        expect(tester.takeException(), isNull);
+        expect(defileurPage(tester).maxScrollExtent, greaterThan(0));
+        // En-tete et support : 350 ; les vignettes restent dans la zone.
+        expect(tester.getSize(zone()).height, closeTo(350, 0.5));
+        expect(
+          tester.state<ScrollableState>(zone()).position.maxScrollExtent,
+          closeTo(300, 0.5),
+        );
+        final ScrollPosition page = defileurPage(tester);
+        page.jumpTo(page.maxScrollExtent);
+        await tester.pump();
+        expect(
+          tester.getRect(find.byKey(cleBarre)).bottom,
+          lessThanOrEqualTo(568 - zoneSure.bottom + 0.5),
+        );
+      });
+    }
+
+    testWidgets('salle qui tient : la page ne defile pas pour la zone, la '
+        'barre reste au premier affichage', (WidgetTester tester) async {
+      // La zone (environ 200) ne montre pas en-tete et support (350) : elle
+      // defile seule, la page ne s'allonge pas pour elle.
+      await monter(tester, salle(bandeau: 300), const Size(390, 844));
+      expect(tester.takeException(), isNull);
+      expect(defileurPage(tester).maxScrollExtent, 0);
+      expect(tester.getSize(zone()).height, lessThan(350));
+      expect(
+        tester.getRect(find.byKey(cleBarre)).bottom,
+        lessThanOrEqualTo(844 - zoneSure.bottom + 0.5),
+      );
+    });
+
+    testWidgets('tete fixe et colonne qui deborde : la page passe en '
+        'defilement global, puis revient a la tete fixe quand tout tient', (
+      WidgetTester tester,
+    ) async {
+      // Tablette a 200 % : la tete reste fixe (vue haute, gabarit large).
+      await monter(tester, salle(bandeau: 500), const Size(800, 600));
+      expect(tester.takeException(), isNull);
+      final ScrollPosition page = defileurPage(tester);
+      expect(page.maxScrollExtent, greaterThan(0));
+      page.jumpTo(page.maxScrollExtent);
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+      final Rect barre = tester.getRect(find.byKey(cleBarre));
+      expect(barre.top, greaterThanOrEqualTo(zoneSure.top - 0.5));
+      expect(barre.bottom, lessThanOrEqualTo(600 - zoneSure.bottom + 0.5));
+
+      // Une vue ou la salle tient : la tete redevient fixe.
+      vue(tester, const Size(800, 1600), zoneSure);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(
+        find.ancestor(
+          of: find.byKey(cleCorps),
+          matching: find.byType(Scrollable),
+        ),
+        findsNothing,
+      );
+    });
+  });
 }
