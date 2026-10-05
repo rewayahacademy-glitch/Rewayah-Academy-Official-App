@@ -34,7 +34,8 @@ import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 
-import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../support/aucun_mot_coupe.dart';
 import '../support/garde_interface.dart';
 import '../support/harnais.dart';
@@ -1198,6 +1199,94 @@ void main() {
         } else {
           expect(signauxHorsLigne(), findsNothing);
         }
+      });
+    }
+  });
+
+  // EA-HL-DOUBLE-1e : captures de preuve de l'echec partiel de la Journee,
+  // hors ligne (sous le bandeau) et en ligne, 390, 1440, sombre, 320 texte
+  // x2 en LTR et RTL. Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1e', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size, Brightness, double, TextDirection, bool) cas
+        in <(String, Size, Brightness, double, TextDirection, bool)>[
+          (
+            '390_clair',
+            const Size(390, 1400),
+            Brightness.light,
+            1,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '390_sombre',
+            const Size(390, 1400),
+            Brightness.dark,
+            1,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '320x2_clair',
+            const Size(320, 2600),
+            Brightness.light,
+            2,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '320x2_rtl_clair',
+            const Size(320, 2600),
+            Brightness.light,
+            2,
+            TextDirection.rtl,
+            true,
+          ),
+          (
+            '1440_clair',
+            const Size(1440, 1000),
+            Brightness.light,
+            1,
+            TextDirection.ltr,
+            true,
+          ),
+          (
+            '390_en_ligne_clair',
+            const Size(390, 1400),
+            Brightness.light,
+            1,
+            TextDirection.ltr,
+            false,
+          ),
+        ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        _fenetre(tester, cas.$2);
+        await tester.pumpWidget(
+          _hoteCarte(
+            luminosite: cas.$3,
+            echelleTexte: cas.$4,
+            direction: cas.$5,
+            surcharges: _surcharges(
+              priere: _PriereEnPanne(),
+              reseau: FauxServiceReseau(horsLigneRendu: cas.$6),
+              enseignant: FauxServiceEnseignant()
+                ..seancesRendues = <SeanceEnseignant>[_anNour()],
+            ),
+          ),
+        );
+        for (int i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(tester.takeException(), isNull);
+        expect(find.text(t.enseignant.journee.erreurPartielle), findsOneWidget);
+        if (cas.$6) {
+          expectHorsLigneUneFois();
+        }
+        verifierAucunMotCoupe(tester, find.byType(MaterialApp));
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1e_journee_partielle_${cas.$1}')}',
+        );
       });
     }
   });

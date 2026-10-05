@@ -8608,8 +8608,8 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Le cours pourra être lancé quand la connexion reviendra.'
 	String get lancerHorsLigne => 'Le cours pourra être lancé quand la connexion reviendra.';
 
-	/// fr: 'Les horaires de prière et vos pauses n'ont pas pu être chargés : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour : vous pouvez les lancer normalement.'
-	String get erreurPartielle => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : vous pouvez les lancer normalement.';
+	/// fr: 'Les horaires de prière et vos pauses n'ont pas pu être chargés : la demande n'est peut-être pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour : elles n'en dépendent pas.'
+	String get erreurPartielle => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas.';
 
 	/// fr: '{eleve} n'est pas entré en salle.'
 	String absenceDetectee({required Object eleve}) => '${eleve} n\'est pas entré en salle.';
@@ -18224,7 +18224,7 @@ extension on Traductions {
 			'enseignant.journee.preflightSansMicro' => 'Aucun micro n\'est détecté. Branchez-en un pour lancer le cours.',
 			'enseignant.journee.preflightIndisponible' => 'La vérification du matériel n\'a pas abouti. Réessayez avant de lancer le cours.',
 			'enseignant.journee.lancerHorsLigne' => 'Le cours pourra être lancé quand la connexion reviendra.',
-			'enseignant.journee.erreurPartielle' => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : vous pouvez les lancer normalement.',
+			'enseignant.journee.erreurPartielle' => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas.',
 			'enseignant.journee.absenceDetectee' => ({required Object eleve}) => '${eleve} n\'est pas entré en salle.',
 			'enseignant.journee.coupureDetectee' => ({required Object eleve}) => '${eleve} a perdu la connexion.',
 			'enseignant.journee.coursAnnule' => ({required Object heure}) => 'Le cours de ${heure} est annulé.',
