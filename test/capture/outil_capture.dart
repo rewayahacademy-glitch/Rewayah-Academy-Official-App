@@ -200,6 +200,37 @@ Future<String> capturer(WidgetTester tester, String nom) async {
   return chemin;
 }
 
+/// A appeler dans le `setUp` d'un groupe qui capture un ecran monte par le
+/// harnais d'un test : masque le ruban « DEBUG » de `MaterialApp`, puis le
+/// rend a la fin du test.
+void masquerRubanDebug() {
+  WidgetsApp.debugAllowBannerOverride = false;
+  addTearDown(() => WidgetsApp.debugAllowBannerOverride = true);
+}
+
+/// Ecrit TOUTE la vue en PNG, sans cadre [cadreCapture] : pour capturer un
+/// ecran monte par le harnais d'un test existant (EA-HL-DOUBLE-1, reprise).
+/// La vue doit etre a la densite 1 : la couche racine porte deja la mise a
+/// l'echelle de la densite.
+Future<String> capturerVue(WidgetTester tester, String nom) async {
+  assert(tester.view.devicePixelRatio == 1, 'capturerVue : densite 1 seule');
+  final OffsetLayer couche =
+      tester.binding.renderViews.first.debugLayer! as OffsetLayer;
+  final Size taille = tester.view.physicalSize;
+  final String chemin = cheminSortie(nom);
+  await tester.runAsync(() async {
+    final ui.Image image = await couche.toImage(Offset.zero & taille);
+    final ByteData? png = await image.toByteData(
+      format: ui.ImageByteFormat.png,
+    );
+    image.dispose();
+    final File fichier = File(chemin);
+    await fichier.parent.create(recursive: true);
+    await fichier.writeAsBytes(png!.buffer.asUint8List());
+  });
+  return chemin;
+}
+
 /// Capture le cadre, puis compose la planche **maquette | capture**, cote a
 /// cote, a la taille de la capture ; ecrit aussi la capture seule
 /// (`<nom>_capture.png`). Tout en `dart:ui`, sans dependance.

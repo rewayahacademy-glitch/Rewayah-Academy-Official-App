@@ -675,6 +675,12 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
         : NatureEtat.echecServeur;
   }
 
+  /// Hors ligne se dit une fois (EA-HL-DOUBLE-1) : le « wifi barre » est
+  /// celui du bandeau de `PageShell` ; le bloc dit l'attente de la
+  /// verification. Sinon, l'icone de la nature.
+  AppIcon? _iconeHorsLigne(MotifIndisponibilite motif) =>
+      _natureDe(motif) == NatureEtat.horsLigne ? AppIcons.attente : null;
+
   /// Le titre et la phrase d'un motif. Hors ligne aussi, ceux du motif
   /// (« Verification impossible ») : le bandeau de `PageShell` dit deja
   /// l'absence de reseau, le bloc dit ce qui manque (EA-HL-DOUBLE-1) ; seuls
@@ -704,6 +710,7 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     final bool reverifier = _seReverifie(motif);
     return EtatSysteme(
       nature: _natureDe(motif),
+      icone: _iconeHorsLigne(motif),
       titre: textes.titre,
       phrase: textes.phrase,
       onAction: reverifier ? () => _reverifier(demande) : null,
@@ -755,6 +762,7 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     }
     return EtatSysteme(
       nature: _natureDe(motif),
+      icone: _iconeHorsLigne(motif),
       portee: PorteeEtat.page,
       titre: textes.titre,
       phrase: textes.phrase,
@@ -779,6 +787,7 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
     final c = t.tc.observation.connexion;
     return EtatSysteme(
       nature: _natureDe(motif),
+      icone: _iconeHorsLigne(motif),
       portee: PorteeEtat.page,
       titre: c.impossibleTitre,
       phrase: c.impossible,

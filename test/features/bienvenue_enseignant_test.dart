@@ -15,7 +15,10 @@ import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/bienvenue_enseignant/bienvenue_page.dart';
 import 'package:rewayah_academy/features/disponibilites/grille_semaine.dart';
 
+import '../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../support/harnais.dart';
+import '../support/hors_ligne_une_fois.dart';
 
 /// Une destination-temoin, pour mesurer ou une action mene vraiment.
 GoRoute _temoin(String chemin, String texte) => GoRoute(
@@ -361,7 +364,35 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(t.enseignant.bienvenue.horsLigne), findsOneWidget);
+      // EA-HL-DOUBLE-1 (reprise) : la note dit ce qui ne peut pas se faire ;
+      // le bandeau seul dit « hors ligne ».
+      expectHorsLigneUneFois();
       expect(find.text(t.enseignant.bienvenue.declarer), findsOneWidget);
     });
+  });
+
+  // EA-HL-DOUBLE-1 (reprise) : captures de preuve, hors ligne, la note dit
+  // ce qui ne peut pas se faire, le bandeau seul dit le reseau. Sautees sans
+  // CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, Size) cas in <(String, Size)>[
+      ('390_clair', const Size(390, 844)),
+      ('320_clair', const Size(320, 900)),
+      ('1440_clair', const Size(1440, 900)),
+    ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        await _monter(tester, horsLigne: true);
+        tester.view.physicalSize = cas.$2;
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+        expect(find.text(t.enseignant.bienvenue.horsLigne), findsOneWidget);
+        expectHorsLigneUneFois();
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_bienvenue_${cas.$1}')}',
+        );
+      });
+    }
   });
 }

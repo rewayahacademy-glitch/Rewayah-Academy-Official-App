@@ -574,6 +574,28 @@ void main() {
       expectSansDonnees(t.adulte.recharge.sansDonnees);
     });
 
+    // Revue EA-HL-DOUBLE-1 (m1) : des beneficiaires deja lus, relus en
+    // echec hors ligne, restent affiches ; le bandeau seul dit le reseau.
+    testWidgets('hors ligne, beneficiaires deja lus puis relus en echec : ils '
+        'restent', (WidgetTester tester) async {
+      final _Port port = _Port(liste: exemple);
+      await monter(tester, port: port, horsLigne: Stream<bool>.value(true));
+      await tester.pumpAndSettle();
+      port.erreurLecture = StateError('coupure');
+      final ProviderContainer conteneur = ProviderScope.containerOf(
+        tester.element(find.byType(RechargeFoyerPage)),
+      )..invalidate(beneficiairesRechargeProvider);
+      await tester.pumpAndSettle();
+      expect(port.lectures, greaterThanOrEqualTo(2));
+      final AsyncValue<List<BeneficiaireRecharge>> lus = conteneur.read(
+        beneficiairesRechargeProvider,
+      );
+      expect(lus.hasError && lus.hasValue, isTrue);
+      expect(find.text('Yusuf'), findsWidgets);
+      expect(etat(tester), isNull);
+      expectAvecDonnees();
+    });
+
     testWidgets('indisponible : le port reel, la dependance EA-BR-24', (
       WidgetTester tester,
     ) async {
@@ -766,7 +788,7 @@ class _Port implements PortRechargeFoyer {
 
   final List<BeneficiaireRecharge> liste;
   final Completer<List<BeneficiaireRecharge>>? lecture;
-  final Error? erreurLecture;
+  Error? erreurLecture;
   final bool erreurVerification;
   final bool remise;
   bool paiementSuspendu;

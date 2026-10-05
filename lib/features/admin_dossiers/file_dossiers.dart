@@ -69,6 +69,8 @@ Widget? etatErreurDossiers(
   if (ref.read(horsLigneProvider).value ?? false) {
     return EtatSysteme(
       nature: NatureEtat.horsLigne,
+      // Le « wifi barre » est celui du bandeau (EA-HL-DOUBLE-1).
+      icone: AppIcons.attente,
       titre: t.dossiers.file.horsLigne,
       phrase: '',
       libelleAction: t.commun.etats.actions.reessayer,

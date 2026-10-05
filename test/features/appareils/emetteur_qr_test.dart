@@ -26,8 +26,11 @@ import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/appareils/appairage_page.dart';
 import 'package:rewayah_academy/features/appareils/emetteur_qr.dart';
 
+import '../../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../../router/support_routeur.dart';
 import '../../support/harnais.dart';
+import '../../support/hors_ligne_une_fois.dart';
 import 'faux_statut_code.dart';
 
 final DateTime _depart = DateTime(2026, 9, 24, 18);
@@ -464,7 +467,10 @@ void main() {
 
       reseau.poser(horsLigne: true);
       await stabiliser(tester);
-      expect(find.text(t.appareils.emetteur.horsLigne.titre), findsOneWidget);
+      expect(
+        find.text(t.appareils.emetteur.horsLigne.titreAvecCode),
+        findsOneWidget,
+      );
       expect(
         find.text(
           t.appareils.emetteur.horsLigne.phraseAvecCode(heure: '18:10'),
@@ -473,6 +479,9 @@ void main() {
       );
       expect(find.byType(EmetteurQr), findsNothing);
       expect(find.text(_codeLisible), findsNothing);
+      // EA-HL-DOUBLE-1 (reprise) : le bandeau seul dit « hors ligne », en
+      // mots et en icone ; la carte dit ce qui manque.
+      expectHorsLigneUneFois();
 
       final int avant = statut.lectures;
       reseau.poser(horsLigne: false);
@@ -494,10 +503,16 @@ void main() {
         reseau: reseau,
       );
       expect(
+        find.text(t.appareils.emetteur.horsLigne.titreSansCode),
+        findsOneWidget,
+      );
+      expect(
         find.text(t.appareils.emetteur.horsLigne.phraseSansCode),
         findsOneWidget,
       );
       expect(find.byType(EmetteurQr), findsNothing);
+      // EA-HL-DOUBLE-1 (reprise) : le bandeau seul dit « hors ligne ».
+      expectHorsLigneUneFois();
     });
 
     testWidgets(
@@ -608,7 +623,7 @@ void main() {
           final Opacity opacite = tester.widget<Opacity>(
             find
                 .ancestor(
-                  of: find.text(t.appareils.emetteur.horsLigne.titre),
+                  of: find.text(t.appareils.emetteur.horsLigne.titreAvecCode),
                   matching: find.byType(Opacity),
                 )
                 .first,
@@ -762,6 +777,50 @@ void main() {
       expect(
         MotifErreurEmetteur.depuis(Exception('autre')),
         MotifErreurEmetteur.generique,
+      );
+    });
+  });
+
+  // EA-HL-DOUBLE-1 (reprise) : captures de preuve, hors ligne avec et sans
+  // code. Sautees sans CAPTURE_DIR.
+  group('Capture EA-HL-DOUBLE-1', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String, ThemeMode, Size) cas in <(String, ThemeMode, Size)>[
+      ('avec_code_390_clair', ThemeMode.light, const Size(390, 844)),
+      ('avec_code_390_sombre', ThemeMode.dark, const Size(390, 844)),
+      ('avec_code_320_clair', ThemeMode.light, const Size(320, 900)),
+      ('avec_code_1440_clair', ThemeMode.light, const Size(1440, 900)),
+    ]) {
+      testWidgets(cas.$1, (WidgetTester tester) async {
+        final ReseauPilote reseau = ReseauPilote();
+        await _monter(
+          tester,
+          service: _service(),
+          statut: FauxStatutCode(),
+          reseau: reseau,
+          mode: cas.$2,
+          taille: cas.$3,
+        );
+        reseau.poser(horsLigne: true);
+        await stabiliser(tester);
+        expectHorsLigneUneFois();
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'ea_hl_double1_appairage_${cas.$1}')}',
+        );
+      });
+    }
+    testWidgets('sans_code_390_clair', (WidgetTester tester) async {
+      final ReseauPilote reseau = ReseauPilote()..poser(horsLigne: true);
+      await _monter(
+        tester,
+        service: _service()..erreurAJeter = StateError('reseau'),
+        statut: FauxStatutCode(),
+        reseau: reseau,
+      );
+      expectHorsLigneUneFois();
+      debugPrint(
+        'PNG ${await capturerVue(tester, 'ea_hl_double1_appairage_sans_code_390_clair')}',
       );
     });
   });

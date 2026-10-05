@@ -412,6 +412,30 @@ void main() {
       expectSansDonnees(t.adulte.paiements.soldesSansDonnees, bandeau: false);
     });
 
+    // Revue EA-HL-DOUBLE-1 (m1) : des soldes deja lus, relus en echec hors
+    // ligne, restent affiches, sans bloc ni echec.
+    testWidgets('hors ligne, soldes deja lus puis relus en echec : ils '
+        'restent', (WidgetTester tester) async {
+      int lectures = 0;
+      await monter(
+        tester,
+        () => ++lectures == 1
+            ? Future<SoldesFoyer>.value(exemple)
+            : Future<SoldesFoyer>.error(StateError('coupure')),
+        horsLigne: true,
+      );
+      await tester.pumpAndSettle();
+      final ProviderContainer conteneur = ProviderScope.containerOf(
+        tester.element(find.byType(SoldesFoyerSection)),
+      )..invalidate(soldesFoyerProvider);
+      await tester.pumpAndSettle();
+      final AsyncValue<SoldesFoyer> lus = conteneur.read(soldesFoyerProvider);
+      expect(lus.hasError && lus.hasValue, isTrue);
+      expect(find.text('valeur rendue'), findsOneWidget);
+      expect(etat(tester), isNull);
+      expectHorsLigneUneFois(bandeau: false);
+    });
+
     testWidgets('indisponible : la dependance EA-BR-23, sans « Reessayer »', (
       WidgetTester tester,
     ) async {

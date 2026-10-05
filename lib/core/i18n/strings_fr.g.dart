@@ -3590,8 +3590,8 @@ class Traductions$appareils$eleve$fr {
 	/// fr: 'Retirer {appareil}'
 	String retirerLibelle({required Object appareil}) => 'Retirer ${appareil}';
 
-	/// fr: 'Retirer ou connecter un appareil demande une connexion internet.'
-	String get horsLigne => 'Retirer ou connecter un appareil demande une connexion internet.';
+	/// fr: 'Vous pourrez retirer ou connecter un appareil quand la connexion reviendra.'
+	String get horsLigne => 'Vous pourrez retirer ou connecter un appareil quand la connexion reviendra.';
 
 	/// fr: 'Choix du profil et code personnel'
 	String get partageTitre => 'Choix du profil et code personnel';
@@ -8356,8 +8356,8 @@ class Traductions$enseignant$bienvenue$fr {
 	/// fr: 'Aller à ma journée'
 	String get versJournee => 'Aller à ma journée';
 
-	/// fr: 'Sans réseau, vos créneaux ne pourront pas être enregistrés.'
-	String get horsLigne => 'Sans réseau, vos créneaux ne pourront pas être enregistrés.';
+	/// fr: 'Vos créneaux pourront être enregistrés quand la connexion reviendra.'
+	String get horsLigne => 'Vos créneaux pourront être enregistrés quand la connexion reviendra.';
 
 	/// fr: 'Votre dossier n'est pas encore validé.'
 	String get dossierIncomplet => 'Votre dossier n\'est pas encore validé.';
@@ -8527,8 +8527,8 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'La vérification du matériel n'a pas abouti. Réessayez avant de lancer le cours.'
 	String get preflightIndisponible => 'La vérification du matériel n\'a pas abouti. Réessayez avant de lancer le cours.';
 
-	/// fr: 'Sans réseau, la salle ne peut pas s'ouvrir. Reconnectez-vous pour lancer le cours.'
-	String get lancerHorsLigne => 'Sans réseau, la salle ne peut pas s\'ouvrir. Reconnectez-vous pour lancer le cours.';
+	/// fr: 'Le cours pourra être lancé quand la connexion reviendra.'
+	String get lancerHorsLigne => 'Le cours pourra être lancé quand la connexion reviendra.';
 
 	/// fr: 'Les horaires de prière et vos pauses n'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.'
 	String get erreurPartielle => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.';
@@ -9244,8 +9244,8 @@ class Traductions$enseignant$creneaux$fr {
 	/// fr: 'Les heures que vous avez déjà posées ne sont pas perdues.'
 	String get grilleErreurDetail => 'Les heures que vous avez déjà posées ne sont pas perdues.';
 
-	/// fr: 'Sans réseau, vos heures restent consultables mais ne peuvent pas être modifiées.'
-	String get horsLigneGrille => 'Sans réseau, vos heures restent consultables mais ne peuvent pas être modifiées.';
+	/// fr: 'Vos heures restent consultables. Elles pourront être modifiées quand la connexion reviendra.'
+	String get horsLigneGrille => 'Vos heures restent consultables. Elles pourront être modifiées quand la connexion reviendra.';
 
 	/// fr: 'Vous avez déjà une Classe sur {heures}. Retirer cette heure ne met pas fin à la séance : il faut une réaffectation.'
 	String heureEngagee({required Object heures}) => 'Vous avez déjà une Classe sur ${heures}. Retirer cette heure ne met pas fin à la séance : il faut une réaffectation.';
@@ -9259,11 +9259,11 @@ class Traductions$enseignant$creneaux$fr {
 	/// fr: 'Rien n'est perdu : personne n'a été pris, et vos heures restent posées.'
 	String get feedErreurDetail => 'Rien n\'est perdu : personne n\'a été pris, et vos heures restent posées.';
 
-	/// fr: 'Sans réseau, vous ne pouvez pas prendre d'élève. Les demandes ci-dessous restent consultables.'
-	String get horsLignePrise => 'Sans réseau, vous ne pouvez pas prendre d\'élève. Les demandes ci-dessous restent consultables.';
+	/// fr: 'Vous pourrez prendre un élève quand la connexion reviendra. Les demandes ci-dessous restent consultables.'
+	String get horsLignePrise => 'Vous pourrez prendre un élève quand la connexion reviendra. Les demandes ci-dessous restent consultables.';
 
-	/// fr: 'Sans réseau, cette demande ne partirait pas. Réessayez au retour de la connexion.'
-	String get horsLigneDemande => 'Sans réseau, cette demande ne partirait pas. Réessayez au retour de la connexion.';
+	/// fr: 'Cette demande pourra être envoyée quand la connexion reviendra.'
+	String get horsLigneDemande => 'Cette demande pourra être envoyée quand la connexion reviendra.';
 
 	/// fr: 'Cet élève vient d'être pris par un autre enseignant. La liste ci-dessous est à jour.'
 	String get refusDejaPris => 'Cet élève vient d\'être pris par un autre enseignant. La liste ci-dessous est à jour.';
@@ -11681,14 +11681,17 @@ class Traductions$appareils$emetteur$horsLigne$fr {
 
 	// Translations
 
-	/// fr: 'Connexion interrompue'
-	String get titre => 'Connexion interrompue';
+	/// fr: 'Code masqué pour l'instant'
+	String get titreAvecCode => 'Code masqué pour l\'instant';
 
-	/// fr: 'Le code est masqué jusqu'au retour de la connexion. Il reste valable jusqu'à {heure}.'
-	String phraseAvecCode({required Object heure}) => 'Le code est masqué jusqu\'au retour de la connexion. Il reste valable jusqu\'à ${heure}.';
+	/// fr: 'Le code n'a pas pu être préparé'
+	String get titreSansCode => 'Le code n\'a pas pu être préparé';
 
-	/// fr: 'Le code n'a pas pu être préparé. Il le sera dès le retour de la connexion.'
-	String get phraseSansCode => 'Le code n\'a pas pu être préparé. Il le sera dès le retour de la connexion.';
+	/// fr: 'Il réapparaîtra quand la connexion reviendra. Il reste valable jusqu'à {heure}.'
+	String phraseAvecCode({required Object heure}) => 'Il réapparaîtra quand la connexion reviendra. Il reste valable jusqu\'à ${heure}.';
+
+	/// fr: 'Il le sera quand la connexion reviendra.'
+	String get phraseSansCode => 'Il le sera quand la connexion reviendra.';
 }
 
 // Path: appareils.emetteur.erreur
@@ -16134,7 +16137,7 @@ extension on Traductions {
 			'appareils.eleve.utiliseLe' => ({required Object date}) => 'Dernière utilisation : ${date}',
 			'appareils.eleve.jamaisUtilise' => 'Pas encore utilisé',
 			'appareils.eleve.retirerLibelle' => ({required Object appareil}) => 'Retirer ${appareil}',
-			'appareils.eleve.horsLigne' => 'Retirer ou connecter un appareil demande une connexion internet.',
+			'appareils.eleve.horsLigne' => 'Vous pourrez retirer ou connecter un appareil quand la connexion reviendra.',
 			'appareils.eleve.partageTitre' => 'Choix du profil et code personnel',
 			'appareils.eleve.partage' => 'Sur un appareil partagé, chaque élève choisit son profil puis saisit son propre code personnel, gardé sur cet appareil.',
 			'appareils.eleve.retraitTitre' => 'Retirer un appareil',
@@ -16175,9 +16178,10 @@ extension on Traductions {
 			'appareils.emetteur.remplace.phrase' => 'Un nouveau code a été demandé pour cet élève, ici ou sur un autre appareil. Celui-ci ne marche plus.',
 			'appareils.emetteur.dejaActif.titre' => 'Un code est déjà valable',
 			'appareils.emetteur.dejaActif.phrase' => ({required Object heure}) => 'Un code créé pour cet élève vaut jusqu\'à ${heure}. Il ne peut pas être réaffiché : en générer un nouveau rendra l\'ancien inutilisable.',
-			'appareils.emetteur.horsLigne.titre' => 'Connexion interrompue',
-			'appareils.emetteur.horsLigne.phraseAvecCode' => ({required Object heure}) => 'Le code est masqué jusqu\'au retour de la connexion. Il reste valable jusqu\'à ${heure}.',
-			'appareils.emetteur.horsLigne.phraseSansCode' => 'Le code n\'a pas pu être préparé. Il le sera dès le retour de la connexion.',
+			'appareils.emetteur.horsLigne.titreAvecCode' => 'Code masqué pour l\'instant',
+			'appareils.emetteur.horsLigne.titreSansCode' => 'Le code n\'a pas pu être préparé',
+			'appareils.emetteur.horsLigne.phraseAvecCode' => ({required Object heure}) => 'Il réapparaîtra quand la connexion reviendra. Il reste valable jusqu\'à ${heure}.',
+			'appareils.emetteur.horsLigne.phraseSansCode' => 'Il le sera quand la connexion reviendra.',
 			'appareils.emetteur.erreur.plafondTitre' => 'Limite d\'appareils atteinte',
 			'appareils.emetteur.erreur.plafondPhrase' => 'Cet élève a déjà le nombre maximal d\'appareils. Retirez-en un pour en connecter un autre.',
 			'appareils.emetteur.erreur.plafondAction' => 'Voir les appareils',
@@ -16509,9 +16513,9 @@ extension on Traductions {
 			'dossiers.file.dateHeure' => ({required Object date, required Object heure, required Object zone}) => '${date} à ${heure} (${zone})',
 			'dossiers.file.dateChiffres' => ({required Object jour, required Object mois, required Object annee}) => '${jour}/${mois}/${annee}',
 			'dossiers.file.heureChiffres' => ({required Object heures, required Object minutes}) => '${heures}:${minutes}',
-			'dossiers.file.zoneUtc' => 'UTC',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.file.zoneUtc' => 'UTC',
 			'dossiers.file.suivantAnnonce' => ({required Object nom}) => 'Dossier suivant : ${nom}',
 			'dossiers.detail.titreDe' => ({required Object nom}) => 'Dossier de ${nom}',
 			'dossiers.detail.titreElide' => ({required Object nom}) => 'Dossier d\'${nom}',
@@ -17023,9 +17027,9 @@ extension on Traductions {
 			'admin.journal.horodatage' => ({required Object date, required Object heure}) => '${date} à ${heure}',
 			'admin.journal.acteurSysteme' => 'Le système',
 			'admin.journal.acteurInconnu' => 'Compte supprimé',
-			'admin.journal.roleAdmin' => 'Administration',
 			_ => null,
 		} ?? switch (path) {
+			'admin.journal.roleAdmin' => 'Administration',
 			'admin.journal.roleEnseignant' => 'Enseignant',
 			'admin.journal.roleTuteur' => 'Tuteur',
 			'admin.journal.roleEleve' => 'Élève',
@@ -17537,9 +17541,9 @@ extension on Traductions {
 			'compte.tuteur.pagePreferences.notificationsDetail' => 'Pas encore disponibles dans l\'application',
 			'compte.tuteur.pageApparence.titre' => 'Apparence',
 			'compte.tuteur.pageApparence.sousTitre' => 'Appliqué sur cet appareil.',
-			'compte.tuteur.pageApparence.theme' => 'Thème de l\'application',
 			_ => null,
 		} ?? switch (path) {
+			'compte.tuteur.pageApparence.theme' => 'Thème de l\'application',
 			'compte.tuteur.pageApparence.themeDetail' => 'Personnalisez l\'apparence de Rewayah.',
 			'compte.tuteur.pageApparence.confort' => 'Confort visuel',
 			'compte.tuteur.pageApparence.animations' => 'Animations',
@@ -18051,9 +18055,9 @@ extension on Traductions {
 			'enseignant.demo.ecrans' => 'Écrans',
 			'enseignant.demo.etats' => 'Situations',
 			'enseignant.demo.etatNominal' => 'Journée ordinaire',
-			'enseignant.demo.etatVide' => 'Aucune séance',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.demo.etatVide' => 'Aucune séance',
 			'enseignant.demo.etatHorsLigne' => 'Hors ligne',
 			'enseignant.bienvenue.titre' => 'Premiers pas',
 			'enseignant.bienvenue.salutation' => ({required Object prenom}) => 'Bienvenue, ${prenom}.',
@@ -18071,7 +18075,7 @@ extension on Traductions {
 			'enseignant.bienvenue.rappels' => 'Deux choses à ne pas découvrir en cours de route',
 			'enseignant.bienvenue.declarer' => 'Déclarer mes disponibilités',
 			'enseignant.bienvenue.versJournee' => 'Aller à ma journée',
-			'enseignant.bienvenue.horsLigne' => 'Sans réseau, vos créneaux ne pourront pas être enregistrés.',
+			'enseignant.bienvenue.horsLigne' => 'Vos créneaux pourront être enregistrés quand la connexion reviendra.',
 			'enseignant.bienvenue.dossierIncomplet' => 'Votre dossier n\'est pas encore validé.',
 			'enseignant.bienvenue.dossierIncompletDetail' => 'Le portail d\'attente vous dit ce qu\'il reste à fournir.',
 			'enseignant.bienvenue.versAttente' => 'Voir mon dossier',
@@ -18122,7 +18126,7 @@ extension on Traductions {
 			'enseignant.journee.preflightBloque' => 'Le micro est bloqué par votre navigateur. Autorisez-le pour lancer le cours.',
 			'enseignant.journee.preflightSansMicro' => 'Aucun micro n\'est détecté. Branchez-en un pour lancer le cours.',
 			'enseignant.journee.preflightIndisponible' => 'La vérification du matériel n\'a pas abouti. Réessayez avant de lancer le cours.',
-			'enseignant.journee.lancerHorsLigne' => 'Sans réseau, la salle ne peut pas s\'ouvrir. Reconnectez-vous pour lancer le cours.',
+			'enseignant.journee.lancerHorsLigne' => 'Le cours pourra être lancé quand la connexion reviendra.',
 			'enseignant.journee.erreurPartielle' => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés (connexion instable ou service momentanément indisponible). Vos séances affichées sont à jour : vous pouvez les lancer normalement.',
 			'enseignant.journee.absenceDetectee' => ({required Object eleve}) => '${eleve} n\'est pas entré en salle.',
 			'enseignant.journee.coupureDetectee' => ({required Object eleve}) => '${eleve} a perdu la connexion.',
@@ -18364,13 +18368,13 @@ extension on Traductions {
 			'enseignant.creneaux.retraitEngage' => ({required Object heure}) => '${heure} retiré. La séance déjà attribuée sur cette heure continue : demandez une réaffectation pour l\'arrêter.',
 			'enseignant.creneaux.grilleErreur' => 'Vos heures n\'ont pas pu être lues',
 			'enseignant.creneaux.grilleErreurDetail' => 'Les heures que vous avez déjà posées ne sont pas perdues.',
-			'enseignant.creneaux.horsLigneGrille' => 'Sans réseau, vos heures restent consultables mais ne peuvent pas être modifiées.',
+			'enseignant.creneaux.horsLigneGrille' => 'Vos heures restent consultables. Elles pourront être modifiées quand la connexion reviendra.',
 			'enseignant.creneaux.heureEngagee' => ({required Object heures}) => 'Vous avez déjà une Classe sur ${heures}. Retirer cette heure ne met pas fin à la séance : il faut une réaffectation.',
 			'enseignant.creneaux.heuresEngagees' => ({required Object heures}) => 'Vous avez déjà une Classe sur ${heures}. Retirer ces heures ne met pas fin aux séances : il faut une réaffectation.',
 			'enseignant.creneaux.feedErreur' => 'Les familles en attente n\'ont pas pu être lues',
 			'enseignant.creneaux.feedErreurDetail' => 'Rien n\'est perdu : personne n\'a été pris, et vos heures restent posées.',
-			'enseignant.creneaux.horsLignePrise' => 'Sans réseau, vous ne pouvez pas prendre d\'élève. Les demandes ci-dessous restent consultables.',
-			'enseignant.creneaux.horsLigneDemande' => 'Sans réseau, cette demande ne partirait pas. Réessayez au retour de la connexion.',
+			'enseignant.creneaux.horsLignePrise' => 'Vous pourrez prendre un élève quand la connexion reviendra. Les demandes ci-dessous restent consultables.',
+			'enseignant.creneaux.horsLigneDemande' => 'Cette demande pourra être envoyée quand la connexion reviendra.',
 			'enseignant.creneaux.refusDejaPris' => 'Cet élève vient d\'être pris par un autre enseignant. La liste ci-dessous est à jour.',
 			'enseignant.creneaux.refusDejaSuivi' => 'Cet élève a déjà un enseignant. La liste ci-dessous est à jour.',
 			'enseignant.creneaux.refusCreneauRetire' => 'Cette famille ne propose plus ce créneau. La liste ci-dessous est à jour.',
@@ -18565,9 +18569,9 @@ extension on Traductions {
 			'controleur.observation.texteFacultatif' => 'Ce texte est facultatif.',
 			'controleur.observation.libelleTexte' => 'Votre remarque',
 			'controleur.observation.aideTexte' => 'Décrivez seulement ce que vous avez observé.',
-			'controleur.observation.texteRequis' => 'Écrivez ce que vous avez observé pour continuer.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.observation.texteRequis' => 'Écrivez ce que vous avez observé pour continuer.',
 			'controleur.observation.questionRecap' => 'Vérifiez votre observation avant l\'envoi.',
 			'controleur.observation.cleNature' => 'Nature',
 			'controleur.observation.cleDomaine' => 'Domaine',
@@ -19079,9 +19083,9 @@ extension on Traductions {
 			'tc.parcours.feedback.cours.tresBien' => 'Très bien',
 			'tc.parcours.feedback.comprehension.intitule' => 'Avez-vous compris ce qui a été travaillé ?',
 			'tc.parcours.feedback.comprehension.difficile' => 'Pas vraiment',
-			'tc.parcours.feedback.comprehension.bien' => 'Plutôt oui',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.feedback.comprehension.bien' => 'Plutôt oui',
 			'tc.parcours.feedback.comprehension.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.rythme.intitule' => 'Le rythme du cours vous a-t-il convenu ?',
 			'tc.parcours.feedback.rythme.difficile' => 'Trop rapide',
