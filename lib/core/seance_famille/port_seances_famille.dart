@@ -104,7 +104,10 @@ SeanceFamille seanceFamilleDepuis(Seance seance) => SeanceFamille(
   debutUtc: seance.debut.toUtc(),
   finPrevueUtc: seance.fin.toUtc(),
   statutServeur: seance.statut,
-  enseignant: EnseignantSeance(prenom: seance.enseignantPrenom),
+  enseignant: EnseignantSeance(
+    prenom: seance.enseignantPrenom,
+    pays: seance.enseignantPays,
+  ),
   minutesInterruption: seance.minutesInterruption,
 );
 

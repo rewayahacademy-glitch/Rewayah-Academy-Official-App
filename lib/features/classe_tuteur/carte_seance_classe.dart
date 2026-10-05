@@ -272,6 +272,7 @@ class _Enseignant extends StatelessWidget {
           AvatarNom.enLigne(
             prenom: classe.enseignant.nomAffichage,
             nom: LibellesGroupe.enseignantNomme(classe.enseignant),
+            pays: classe.enseignant.pays,
             role: parcours.isEmpty ? null : parcours,
             diametre: SelecteurProfils.diametreLarge,
             styleNom: palette.inkMuted.applyTo(

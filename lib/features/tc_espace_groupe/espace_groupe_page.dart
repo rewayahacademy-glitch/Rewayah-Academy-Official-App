@@ -656,6 +656,7 @@ class IdentiteGroupe extends StatelessWidget {
                 child: AvatarNom.vertical(
                   prenom: groupe.enseignant.nomAffichage,
                   nom: nomEnseignant,
+                  pays: groupe.enseignant.pays,
                   role: role,
                   diametre: AppAvatar.grand,
                   avatar: photo,
@@ -679,6 +680,7 @@ class IdentiteGroupe extends StatelessWidget {
               AvatarNom.enLigne(
                 prenom: groupe.enseignant.nomAffichage,
                 nom: nomEnseignant,
+                pays: groupe.enseignant.pays,
                 role: role,
                 diametre: AppAvatar.grand,
                 ecart: AppSpacing.lg,

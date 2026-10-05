@@ -51,7 +51,12 @@ enum EtatSeanceFamille {
 @immutable
 class EnseignantSeance {
   /// Cree l'enseignant d'une seance.
-  const EnseignantSeance({required this.prenom, this.titre, this.clePhoto});
+  const EnseignantSeance({
+    required this.prenom,
+    this.titre,
+    this.clePhoto,
+    this.pays,
+  });
 
   /// Prenom, jamais le nom de famille (ADR-008).
   final String prenom;
@@ -62,15 +67,22 @@ class EnseignantSeance {
   /// Cle de stockage de la photo, jamais une URL signee. `null` : initiales.
   final String? clePhoto;
 
+  /// Le pays declare par l'enseignant (ENS-PAYS-1), lu dans la cle
+  /// `teacher_country` de la projection ; `null` tant qu'elle manque (BR-1,
+  /// `docs/current/ENS-PAYS-1_BR.md`) ou sous identite masquee : rien ne
+  /// s'affiche.
+  final String? pays;
+
   @override
   bool operator ==(Object other) =>
       other is EnseignantSeance &&
       other.prenom == prenom &&
       other.titre == titre &&
-      other.clePhoto == clePhoto;
+      other.clePhoto == clePhoto &&
+      other.pays == pays;
 
   @override
-  int get hashCode => Object.hash(prenom, titre, clePhoto);
+  int get hashCode => Object.hash(prenom, titre, clePhoto, pays);
 }
 
 /// Une seance vue par la famille, pour **un** eleve.

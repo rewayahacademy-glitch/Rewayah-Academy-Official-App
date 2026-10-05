@@ -20,6 +20,7 @@ class EnseignantDeClasse {
     required this.nomAffichage,
     this.titre,
     this.photoCleOuUrl,
+    this.pays,
   });
 
   /// Le nom d'affichage autorise. Prenom, ou prenom et nom d'affichage.
@@ -30,6 +31,11 @@ class EnseignantDeClasse {
 
   /// La photo professionnelle publique. `null` = manquante, a signaler.
   final String? photoCleOuUrl;
+
+  /// Le pays declare par l'enseignant (ENS-PAYS-1), repris de la carte du
+  /// groupe (`EnseignantVM.pays`, cle `teacher_country`). `null` : rien
+  /// n'est affiche.
+  final String? pays;
 }
 
 /// La seance live, telle que la coque de classe et ses invites la lisent.

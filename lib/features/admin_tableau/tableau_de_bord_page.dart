@@ -103,6 +103,15 @@ class TableauDeBordPage extends ConsumerWidget {
               apercuErreur: dossiers.hasError
                   ? t.admin.tableau.apercuErreur
                   : null,
+              // m1 (AD-NETTOYAGE) : la tuile compte comme la liste « A
+              // traiter » (enseignants seulement, meme cache). Tant que la
+              // liste n'est pas lue, le compteur serveur reste la valeur
+              // (il compte encore les tuteurs : BR-1.c).
+              dossiersEnAttente: dossiers.hasValue
+                  ? RevueDossiersDepuisValidation.enseignantsSeulement(
+                      dossiers.requireValue,
+                    ).length
+                  : null,
             )
           else if (indicateurs.hasError)
             // Une seule source pour les six chiffres : une phrase a la place
@@ -224,9 +233,15 @@ class _Compteurs extends StatelessWidget {
     required this.indicateurs,
     this.apercu = const <LigneApercu>[],
     this.apercuErreur,
+    this.dossiersEnAttente,
   });
 
   final IndicateursAdmin indicateurs;
+
+  /// Le nombre de dossiers de la tuile, quand la liste est lue (enseignants
+  /// seulement, comme la liste « A traiter », m1 d'AD-NETTOYAGE) ; sinon le
+  /// compteur du serveur.
+  final int? dossiersEnAttente;
 
   /// Les plus anciens dossiers, nom et delai, chacun vers son dossier.
   final List<LigneApercu> apercu;
@@ -240,7 +255,7 @@ class _Compteurs extends StatelessWidget {
       // Le plus urgent : la grande tuile. Le chiffre mene a la file, chaque
       // nom a son dossier.
       TuileCompteur(
-        valeur: indicateurs.dossiersEnAttente,
+        valeur: dossiersEnAttente ?? indicateurs.dossiersEnAttente,
         libelle: t.admin.tableau.dossiers,
         detail: t.admin.tableau.dossiersDetail,
         apercu: apercu,

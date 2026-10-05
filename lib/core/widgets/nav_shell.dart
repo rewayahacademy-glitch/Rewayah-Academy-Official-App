@@ -573,23 +573,18 @@ class _BarreFlottante extends StatelessWidget {
       child: SafeArea(
         top: false,
         minimum: const EdgeInsets.only(bottom: AppSpacing.md),
-        child: LayoutBuilder(
-          builder: (BuildContext contexte, BoxConstraints c) {
-            // INTEG-RC-1 : quatre onglets a 320 dont chaque mot garde ses 4
-            // de chaque cote (MA-NAV-1) ne laissent plus de place a la marge
-            // laterale ; elle tombe alors a zero, et seulement alors.
-            double margeGuide = serre ? AppSpacing.xs : AppSpacing.sm;
-            if (guide && serre && c.maxWidth.isFinite) {
-              final double besoin =
-                  _minimumsOnglets(
-                    contexte,
-                    metriques,
-                  ).fold<double>(0, (double a, double b) => a + b) +
-                  ecart * (destinations.length - 1);
-              if (c.maxWidth - 2 * margeGuide < besoin) margeGuide = 0;
-            }
-            return _cadre(contexte, palette, metriques, margeGuide, ecart);
-          },
+        // INTEG-MINEURS-1 : la marge laterale ne tombe jamais a zero (la barre
+        // touchait les deux bords a 320). Quand les minimums des onglets ne
+        // tiennent plus dans ce qui reste, ce sont les onglets qui prennent des
+        // parts egales (`_largeursOnglets` rend nul), pas la marge qui cede.
+        child: Builder(
+          builder: (BuildContext contexte) => _cadre(
+            contexte,
+            palette,
+            metriques,
+            serre ? AppSpacing.xs : AppSpacing.sm,
+            ecart,
+          ),
         ),
       ),
     );

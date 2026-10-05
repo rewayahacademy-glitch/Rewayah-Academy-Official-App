@@ -40,7 +40,7 @@ class _FauxServiceComptes implements ServiceComptes {
 CompteAdmin _compte({
   required String identifiant,
   required AccountStatus etat,
-  AppRole role = AppRole.teacher,
+  AppRole? role = AppRole.teacher,
   EtatPiece piece = EtatPiece.aucune,
   String? prenom = 'Aicha',
   int joursDepuisInscription = 7,
@@ -68,6 +68,11 @@ void main() {
     ServiceComptes service, {
     bool echusSeulement = false,
   }) async {
+    // Une surface haute : la liste est paresseuse, et le tri place les lignes
+    // sans decision en dernier, hors d'une surface de test courte.
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = const Size(800, 2400);
+    addTearDown(tester.view.reset);
     await tester.pumpWidget(
       hote(
         ComptesPage(echusSeulement: echusSeulement),
@@ -215,6 +220,87 @@ void main() {
       findsNothing,
     );
     expect(find.textContaining('Sans objet'), findsOneWidget);
+  });
+
+  // AD-NETTOYAGE (mineur AD-RC) : la base rend les tuteurs `pending_kyc` en
+  // tete. Le tri stable cote client remet devant ce qui attend une decision.
+  testWidgets(
+    'les enseignants en attente passent devant les lignes sans decision',
+    (WidgetTester tester) async {
+      await monter(
+        tester,
+        _FauxServiceComptes(<CompteAdmin>[
+          _compte(
+            identifiant: 'GUARDIAN-SR-000003',
+            etat: AccountStatus.pendingKyc,
+            role: AppRole.guardian,
+            prenom: 'Mariam',
+          ),
+          _compte(
+            identifiant: 'TEACHER-AS-000001',
+            etat: AccountStatus.pendingKyc,
+          ),
+        ]),
+      );
+
+      expect(tester.takeException(), isNull);
+      final double enseignant = tester
+          .getTopLeft(find.textContaining('TEACHER-AS-000001').first)
+          .dy;
+      final double tuteur = tester
+          .getTopLeft(find.textContaining('GUARDIAN-SR-000003').first)
+          .dy;
+      expect(enseignant, lessThan(tuteur));
+    },
+  );
+
+  testWidgets('seul l enseignant sans piece voit « Aucune pièce déposée »', (
+    WidgetTester tester,
+  ) async {
+    await monter(
+      tester,
+      _FauxServiceComptes(<CompteAdmin>[
+        _compte(
+          identifiant: 'STUDENT-LI-000001',
+          etat: AccountStatus.active,
+          role: AppRole.student,
+          prenom: 'Lina',
+        ),
+        _compte(
+          identifiant: 'ADMIN-NA-000001',
+          etat: AccountStatus.active,
+          role: AppRole.admin,
+          prenom: 'Nadir',
+        ),
+      ]),
+    );
+
+    expect(tester.takeException(), isNull);
+    expect(find.textContaining('Sans objet'), findsNWidgets(2));
+    expect(find.textContaining('Aucune pièce déposée'), findsNothing);
+  });
+
+  testWidgets('un compte en attente au role illisible est signale', (
+    WidgetTester tester,
+  ) async {
+    await monter(
+      tester,
+      _FauxServiceComptes(<CompteAdmin>[
+        _compte(
+          identifiant: 'UNKNOWN-XX-000001',
+          etat: AccountStatus.pendingKyc,
+          role: null,
+        ),
+      ]),
+    );
+
+    expect(tester.takeException(), isNull);
+    expect(
+      find.textContaining("Le rôle d'un compte en attente n'a pas pu être lu"),
+      findsOneWidget,
+    );
+    // Il n'est pas compte comme attendant une decision : la phrase le dit.
+    expect(find.textContaining('attend une décision'), findsNothing);
   });
 
   testWidgets('une lecture en echec le dit et laisse reessayer', (

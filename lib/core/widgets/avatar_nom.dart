@@ -5,6 +5,7 @@ import '../icons/app_icons.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
 import 'avatar_tile.dart';
+import 'pays_enseignant.dart';
 
 export 'avatar_tile.dart' show AppAvatar;
 
@@ -62,6 +63,8 @@ class AvatarNom extends StatelessWidget {
     this.afficherNom = true,
     this.ajuste = false,
     this.roleWidget,
+    this.pays,
+    this.stylePays,
   });
 
   /// Avatar centre, nom centre dessous.
@@ -77,10 +80,14 @@ class AvatarNom extends StatelessWidget {
     TextStyle? styleNom,
     TextStyle? styleRole,
     bool afficherNom = true,
+    String? pays,
+    TextStyle? stylePays,
   }) : this(
          prenom: prenom,
          disposition: DispositionAvatar.vertical,
          afficherNom: afficherNom,
+         pays: pays,
+         stylePays: stylePays,
          key: key,
          nom: nom,
          role: role,
@@ -108,9 +115,13 @@ class AvatarNom extends StatelessWidget {
     double? ecart,
     bool ajuste = false,
     Widget? roleWidget,
+    String? pays,
+    TextStyle? stylePays,
   }) : this(
          prenom: prenom,
          disposition: DispositionAvatar.enLigne,
+         pays: pays,
+         stylePays: stylePays,
          key: key,
          nom: nom,
          role: role,
@@ -142,6 +153,24 @@ class AvatarNom extends StatelessWidget {
   /// A la place de [role] : l'unique ligne de role quand elle porte un signe
   /// (point de statut) en plus du texte. Compte comme la ligne de role.
   final Widget? roleWidget;
+
+  /// Le pays d'un enseignant (ENS-PAYS-1), lu sous son nom par tous les roles
+  /// ([PaysEnseignant]) ; nul ou vide : rien n'est rendu. Il ne compte pas
+  /// comme la ligne de role : c'est une donnee de l'identite publique de
+  /// l'enseignant, demandee par le directeur le 04/10/2026, au meme titre que
+  /// son nom. Il n'est pas ecrit quand le nom ne l'est pas ([afficherNom]),
+  /// ni quand le [prenom] est vide (identite masquee) : un pays seul, sous un
+  /// enseignant sans nom, suffirait parfois a le reconnaitre.
+  final String? pays;
+
+  /// Le style de la ligne du pays ; par defaut celui de [PaysEnseignant]
+  /// (`bodySmall`, encre attenuee). Un fond inverse (salle) passe le sien.
+  final TextStyle? stylePays;
+
+  /// Vrai quand la ligne du pays s'ecrit : un pays declare, sous un prenom
+  /// connu.
+  bool get _paysVisible =>
+      prenom.trim().isNotEmpty && PaysEnseignant.nomAffichable(pays) != null;
 
   /// URL signee de la photo, quand l'ecran en a une.
   final String? urlSignee;
@@ -222,6 +251,8 @@ class AvatarNom extends StatelessWidget {
               textAlign: TextAlign.center,
               style: styleDuNom,
             ),
+          if (afficherNom && _paysVisible)
+            PaysEnseignant(pays: pays, centre: true, style: stylePays),
           if (ligneRole != null)
             TexteSansCoupure(
               ligneRole,
@@ -242,6 +273,7 @@ class AvatarNom extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 TexteSansCoupure(affiche, style: styleDuNom),
+                if (_paysVisible) PaysEnseignant(pays: pays, style: stylePays),
                 if (roleWidget != null)
                   roleWidget!
                 else if (ligneRole != null)

@@ -139,6 +139,12 @@ const List<String> composantsDuCatalogue = <String>[
   'FilDiscussion',
   // ON-AIR-1, ANNUL-VIS-1 : la pastille d'etat de seance.
   'PastilleEtatSeance',
+  // FORM-L2 : le choix d'une personne dans une liste cherchable (K-57).
+  'SelecteurPersonne',
+  // FORM-L4 : le champ date a choisir dans un calendrier, jamais a taper.
+  'ChampDate',
+  // ENS-PAYS-1 : le pays de l'enseignant sur sa carte, pour tous les roles.
+  'PaysEnseignant',
 ];
 
 /// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.

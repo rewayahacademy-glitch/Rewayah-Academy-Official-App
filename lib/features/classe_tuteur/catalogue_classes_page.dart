@@ -419,6 +419,7 @@ class CarteClasseOuverte extends StatelessWidget {
                 AvatarNom.enLigne(
                   prenom: classe.enseignant.prenom,
                   nom: enseignantCatalogue(classe.enseignant),
+                  pays: classe.enseignant.pays,
                   role: switch (parcoursCatalogue(classe)) {
                     final String p when p.isNotEmpty => p,
                     _ => null,

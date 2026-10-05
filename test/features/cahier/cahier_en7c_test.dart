@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/app_bottom_sheet.dart';
 import 'package:rewayah_academy/core/widgets/choice_card_group.dart';
@@ -182,11 +183,13 @@ void main() {
         // Le titre nomme chaque champ une seule fois : pas de label flottant
         // repete, qui se coupait a 320 (« Objectif de No… »).
         expect(
-          find.text(t.enseignant.cahier.objectif(eleve: 'Nour')),
+          find.text(t.enseignant.cahier.objectif(deEleve: deDevant('Nour'))),
           findsOneWidget,
         );
         expect(
-          find.text(t.enseignant.cahier.travailMaison(eleve: 'Nour')),
+          find.text(
+            t.enseignant.cahier.travailMaison(deEleve: deDevant('Nour')),
+          ),
           findsOneWidget,
         );
         // Le devoir saisi se lit en entier : le champ grandit avec son texte
@@ -339,8 +342,14 @@ void main() {
     await _monter(tester);
     await _toucher(tester, find.text('Nour'));
     for (final (String cle, String nom) in <(String, String)>[
-      ('cahier-objectif', t.enseignant.cahier.objectif(eleve: 'Nour')),
-      ('cahier-devoir', t.enseignant.cahier.travailMaison(eleve: 'Nour')),
+      (
+        'cahier-objectif',
+        t.enseignant.cahier.objectif(deEleve: deDevant('Nour')),
+      ),
+      (
+        'cahier-devoir',
+        t.enseignant.cahier.travailMaison(deEleve: deDevant('Nour')),
+      ),
     ]) {
       final SemanticsNode noeud = tester.getSemantics(
         find.descendant(of: _cle(cle), matching: find.byType(EditableText)),

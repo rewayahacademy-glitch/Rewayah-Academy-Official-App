@@ -51,6 +51,8 @@ GroupSummaryVM groupeDepuisLigne(Map<String, dynamic> ligne) {
       // Prenom nul quand l'identite est masquee a un agent (`agent_identite_masquee()`).
       nomAffichage: prenom ?? '',
       photoUrlOuCle: ligne['teacher_photo_cle'] as String?,
+      // ENS-PAYS-1 : lu des que la vue l'expose (BR-1), nul avant.
+      pays: ligne['teacher_country'] as String?,
     ),
     nomCours: ligne['nom_cours'] as String?,
     nombreMembres: nbMembres is int ? nbMembres : 0,

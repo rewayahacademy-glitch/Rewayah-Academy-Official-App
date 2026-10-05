@@ -17,6 +17,7 @@ import '../../core/theme/app_typography.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
+import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/status_pill.dart';
@@ -291,7 +292,12 @@ class LigneHistorique extends StatelessWidget {
     required this.onPress,
     super.key,
     this.annulee = false,
+    this.pays,
   });
+
+  /// Le pays de l'enseignant nomme en [sousTitre] (ENS-PAYS-1), sous son nom.
+  /// Nul (observations, pays non declare) : rien n'est rendu.
+  final String? pays;
 
   /// Vrai quand la seance est annulee : pastille « Annulee » et horaire barre
   /// (ANNUL-VIS-1).
@@ -363,6 +369,8 @@ class LigneHistorique extends StatelessWidget {
         Text(titre, style: fort),
         Ecart.vXs,
         Text(sousTitre, style: doux),
+        if (PaysEnseignant.nomAffichable(pays) != null)
+          PaysEnseignant(pays: pays, style: doux),
       ],
     );
     final Widget pastille = annulee

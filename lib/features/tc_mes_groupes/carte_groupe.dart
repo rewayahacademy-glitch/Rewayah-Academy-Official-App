@@ -206,6 +206,7 @@ class _Enseignant extends StatelessWidget {
         AvatarNom.enLigne(
           prenom: enseignant.nomAffichage,
           nom: LibellesGroupe.enseignantNomme(enseignant),
+          pays: enseignant.pays,
           role: coursEtNiveau.isEmpty ? null : coursEtNiveau,
           ecart: AppSpacing.lg,
           styleNom: textes.titleSmall,

@@ -15,6 +15,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
+import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/foyer/port_creation_profil_eleve.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -28,6 +29,8 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/appareils/ajouter_enfant_page.dart';
+import 'package:rewayah_academy/features/compte/donnees_compte.dart'
+    show identiteTitulaireProvider;
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/formulaire_profil_eleve.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
@@ -157,7 +160,10 @@ Future<void> _remplir(
 }) async {
   await tester.enterText(find.byKey(FormulaireProfilEleve.prenomKey), prenom);
   await tester.enterText(find.byKey(FormulaireProfilEleve.nomKey), nom);
-  await tester.enterText(find.byKey(FormulaireProfilEleve.ageKey), age);
+  await _toucher(
+    tester,
+    find.byKey(FormulaireProfilEleve.ageChoixKey(int.parse(age))),
+  );
   await stabiliser(tester);
 }
 
@@ -277,25 +283,105 @@ void main() {
       expect(service.enfantsCrees, isEmpty);
     });
 
-    testWidgets('age hors bornes : erreur sous l age, aucun envoi', (
+    testWidgets('FORM-L6 : l age se choisit dans les bornes (3 a 18), il ne se '
+        'tape pas ; sans choix, l erreur dit quoi faire', (
       WidgetTester tester,
     ) async {
       final _AppairageCreant service = _AppairageCreant();
       await _monter(tester, appairage: service);
       await _ouvrirAjout(tester);
       await _choisirEnfantPuisSuivant(tester);
-      await _remplir(tester, age: '25');
 
-      await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
+      // Aucun champ de saisie pour l'age : une puce par age des bornes.
       expect(
-        find.text(t.foyer.ajout.erreurs.ageHorsBornes(min: 3, max: 18)),
-        findsOneWidget,
+        find.descendant(
+          of: find.byKey(FormulaireProfilEleve.ageKey),
+          matching: find.byType(TextField),
+        ),
+        findsNothing,
       );
+      for (int age = 3; age <= 18; age++) {
+        expect(
+          find.byKey(FormulaireProfilEleve.ageChoixKey(age)),
+          findsOneWidget,
+          reason: 'puce $age',
+        );
+      }
+      expect(find.byKey(FormulaireProfilEleve.ageChoixKey(2)), findsNothing);
+      expect(find.byKey(FormulaireProfilEleve.ageChoixKey(19)), findsNothing);
+
+      await tester.enterText(
+        find.byKey(FormulaireProfilEleve.prenomKey),
+        'Aya',
+      );
+      await tester.enterText(find.byKey(FormulaireProfilEleve.nomKey), 'Ba');
+      await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
+      expect(find.text(t.foyer.ajout.erreurs.ageRequis), findsOneWidget);
       expect(service.enfantsCrees, isEmpty);
-      // Le champ n'accepte que des chiffres.
-      await tester.enterText(find.byKey(FormulaireProfilEleve.ageKey), '9a');
-      await stabiliser(tester);
-      expect(find.text('9'), findsOneWidget);
+
+      // Choisir une puce leve l'erreur et part tel quel.
+      await _toucher(tester, find.byKey(FormulaireProfilEleve.ageChoixKey(18)));
+      expect(find.text(t.foyer.ajout.erreurs.ageRequis), findsNothing);
+      await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
+      expect(service.enfantsCrees.single.age, 18);
+    });
+
+    testWidgets('FORM-L6 : le nom de famille est prerempli avec celui du '
+        'titulaire, reste modifiable et part tel que modifie', (
+      WidgetTester tester,
+    ) async {
+      final _AppairageCreant service = _AppairageCreant();
+      await _monter(
+        tester,
+        appairage: service,
+        autres: <Override>[
+          identiteTitulaireProvider.overrideWith(
+            (Ref _) async => const IdentiteTitulaire(
+              prenom: 'Awa',
+              nom: ' Diallo ',
+              methodeConnexion: MethodeConnexion.lienCourriel,
+            ),
+          ),
+        ],
+      );
+      await _ouvrirAjout(tester);
+      await _choisirEnfantPuisSuivant(tester);
+
+      TextField nom() =>
+          tester.widget<TextField>(find.byKey(FormulaireProfilEleve.nomKey));
+      expect(nom().controller!.text, 'Diallo');
+      expect(find.text(t.foyer.ajout.identite.nomAidePrerempli), findsOne);
+
+      // Modifiable : une autre saisie remplace le prerempli.
+      await tester.enterText(
+        find.byKey(FormulaireProfilEleve.nomKey),
+        'Ndiaye',
+      );
+      await tester.enterText(
+        find.byKey(FormulaireProfilEleve.prenomKey),
+        'Aya',
+      );
+      await _toucher(tester, find.byKey(FormulaireProfilEleve.ageChoixKey(7)));
+      await _toucher(tester, find.byKey(FormulaireProfilEleve.actionKey));
+      expect(service.enfantsCrees.single.nom, 'Ndiaye');
+      expect(service.enfantsCrees.single.age, 7);
+    });
+
+    testWidgets('FORM-L6 : compte illisible, le nom reste vide et le serveur '
+        'garde la main', (WidgetTester tester) async {
+      await _monter(tester, appairage: _AppairageCreant());
+      await _ouvrirAjout(tester);
+      await _choisirEnfantPuisSuivant(tester);
+
+      expect(
+        tester
+            .widget<TextField>(find.byKey(FormulaireProfilEleve.nomKey))
+            .controller!
+            .text,
+        isEmpty,
+      );
+      expect(find.text(t.foyer.ajout.identite.nomAide), findsOne);
+      expect(find.text(t.foyer.ajout.identite.nomAidePrerempli), findsNothing);
     });
   });
 

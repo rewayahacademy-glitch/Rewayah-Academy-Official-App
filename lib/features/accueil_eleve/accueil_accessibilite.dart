@@ -527,6 +527,7 @@ class _IdentiteClasse extends StatelessWidget {
             nom: t.accessibilite.accueil.avec(
               nomme: LibellesGroupe.enseignantNomme(identite.enseignant),
             ),
+            pays: identite.enseignant.pays,
             ecart: AppSpacing.lg,
             styleNom: palette.inkMuted.applyTo(
               textes.bodyMedium ?? const TextStyle(),

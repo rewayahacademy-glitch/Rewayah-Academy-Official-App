@@ -13,6 +13,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
@@ -190,7 +191,16 @@ class _Corps extends StatelessWidget {
         .where((CompteAdmin c) => c.attendUneDecision)
         .toList(growable: false);
 
-    final List<CompteAdmin> visibles = comptes
+    // Un compte en attente dont le role est illisible n'attend « une decision »
+    // que dans le doute : il n'est compte nulle part, donc l'ecran le dit.
+    final int roleIllisible = comptes
+        .where(
+          (CompteAdmin c) =>
+              c.etat == AccountStatus.pendingKyc && c.role == null,
+        )
+        .length;
+
+    final List<CompteAdmin> filtres = comptes
         .where(
           (CompteAdmin c) =>
               (etat == null || c.etat == etat) &&
@@ -198,6 +208,13 @@ class _Corps extends StatelessWidget {
               (!echus || c.accesEchu(maintenant)),
         )
         .toList(growable: false);
+    // Tri stable cote client : ce qui attend une decision d'abord, le reste
+    // dans l'ordre rendu par la base. La base met les tuteurs `pending_kyc` en
+    // tete, ce qui repoussait les enseignants sous des lignes sans decision.
+    final List<CompteAdmin> visibles = <CompteAdmin>[
+      ...filtres.where((CompteAdmin c) => c.attendUneDecision),
+      ...filtres.where((CompteAdmin c) => !c.attendUneDecision),
+    ];
 
     // Les etats et les roles **presents dans les donnees**, avec leur compte.
     // Rendre les quatre etats et les six roles produisait onze pastilles qui
@@ -242,6 +259,17 @@ class _Corps extends StatelessWidget {
                     nombre: '${attendent.length}',
                   ),
             style: Theme.of(context).textTheme.titleMedium,
+          ),
+          Ecart.vLg,
+        ],
+        if (roleIllisible > 0) ...<Widget>[
+          Text(
+            roleIllisible == 1
+                ? t.admin.comptes.roleIllisibleUn
+                : t.admin.comptes.roleIllisiblePlusieurs(
+                    nombre: '$roleIllisible',
+                  ),
+            style: Theme.of(context).textTheme.bodyMedium,
           ),
           Ecart.vLg,
         ],
@@ -337,6 +365,24 @@ class _Corps extends StatelessWidget {
                     titre: t.admin.comptes.colonneIdentifiant,
                     texte: (CompteAdmin c) => c.identifiant,
                   ),
+                // ENS-PAYS-1 : le pays des comptes enseignants, seulement
+                // quand une ligne au moins le porte (pas de colonne vide).
+                if (visibles.any(
+                  (CompteAdmin c) =>
+                      PaysEnseignant.nomAffichable(c.paysEnseignant) != null,
+                ))
+                  ColonneDonnees<CompteAdmin>(
+                    // « Pays » : la colonne ne porte que des comptes enseignants, et
+                    // « Pays de l'enseignant » se tronquait a 1440.
+                    titre: t.enseignant.profil.pays,
+                    // Sa propre ligne en carte (sous 1200), avec le drapeau :
+                    // la ligne secondaire jointe ne rendrait que du texte.
+                    role: RoleColonne.aPart,
+                    texte: (CompteAdmin c) =>
+                        PaysEnseignant.nomAffichable(c.paysEnseignant) ?? '',
+                    rendu: (BuildContext _, CompteAdmin c) =>
+                        PaysEnseignant(pays: c.paysEnseignant),
+                  ),
                 ColonneDonnees<CompteAdmin>(
                   titre: t.admin.comptes.colonneRole,
                   texte: (CompteAdmin c) => c.role == null
@@ -357,9 +403,11 @@ class _Corps extends StatelessWidget {
                 ),
                 ColonneDonnees<CompteAdmin>(
                   titre: t.admin.comptes.colonnePiece,
-                  // K-47 : un tuteur ne depose aucune piece. « Aucune piece
-                  // deposee » lui preterait un manque qui n'existe pas.
-                  texte: (CompteAdmin c) => c.role == AppRole.guardian
+                  // K-47 : seul l'enseignant depose une piece. « Aucune piece
+                  // deposee » preterait un manque qui n'existe pas au tuteur,
+                  // a l'eleve et au personnel. Un role illisible garde le
+                  // texte reel : on ne sait pas s'il en doit une.
+                  texte: (CompteAdmin c) => _pieceSansObjet(c)
                       ? t.admin.comptes.pieceSansObjet
                       : _nomPiece(c.piece),
                 ),
@@ -388,6 +436,14 @@ class _Corps extends StatelessWidget {
     _ => t.admin.comptes.attendJours(jours: '$jours'),
   };
 }
+
+/// Vrai quand la piece d'identite n'a pas de sens pour ce compte : le tuteur
+/// (toujours) et les autres roles lisibles tant qu'ils n'en ont depose aucune.
+bool _pieceSansObjet(CompteAdmin c) =>
+    c.role == AppRole.guardian ||
+    (c.role != null &&
+        c.role != AppRole.teacher &&
+        c.piece == EtatPiece.aucune);
 
 String _nomEtat(AccountStatus etat) => switch (etat) {
   AccountStatus.pendingKyc => t.admin.comptes.etatEnAttente,

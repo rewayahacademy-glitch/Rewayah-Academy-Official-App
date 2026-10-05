@@ -37,6 +37,7 @@ import '../salle_seance/actions_seance.dart';
 import '../salle_seance/depuis_classe_live.dart';
 import '../salle_seance/salle_seance.dart';
 import '../salle_seance/vue_seance.dart';
+import 'encre_salle.dart';
 import 'entete_classe.dart';
 import 'fiche_seance.dart';
 import 'pre_vol_classe.dart';
@@ -712,7 +713,9 @@ class _ClasseLivePageEtat extends ConsumerState<ClasseLivePage> {
             ? () => unawaited(_voirRoster(roster))
             : null,
       ),
-      bandeau: enImpasse ? null : const PermanentNotice(),
+      bandeau: enImpasse
+          ? null
+          : const EncreDeLaSalle(child: PermanentNotice()),
       commandes: enImpasse || enAttente
           ? null
           : _Commandes(
@@ -816,8 +819,10 @@ class _Attente extends StatelessWidget {
             Text(
               mot,
               textAlign: TextAlign.center,
-              style:
-                  Theme.of(context).textTheme.titleMedium ?? const TextStyle(),
+              style: styleDuFond(
+                context,
+                Theme.of(context).textTheme.titleMedium,
+              ),
             ),
             if (phase == PhaseSalle.refus) ...<Widget>[
               Ecart.vLg,

@@ -8,6 +8,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/video/livekit_session_provider.dart';
 import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/avatar_nom.dart';
+import 'encre_salle.dart';
 import 'vue_classe_live.dart';
 
 /// La scene video de la Classe Live.
@@ -52,7 +53,7 @@ class SceneClasse extends StatelessWidget {
         child: Text(
           t.tc.classe.scene.vide,
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+          style: styleDuFond(context, Theme.of(context).textTheme.bodyMedium),
         ),
       );
     }

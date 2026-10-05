@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/admin/personnes_proposables.dart';
+import '../../core/admin/service_comptes.dart';
 import '../../core/admin/service_groupes.dart';
+import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
@@ -13,6 +16,8 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/pays_enseignant.dart';
+import '../../core/widgets/selecteur_personne.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import 'feuille_observation_groupe.dart';
@@ -67,7 +72,8 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
               child: _Corps(
                 groupes: groupes.requireValue,
                 type: _type,
-                onType: (TypePublicGroupe? type) => setState(() => _type = type),
+                onType: (TypePublicGroupe? type) =>
+                    setState(() => _type = type),
                 onSelectionner: (GroupeAdmin groupe) =>
                     _ouvrirDetail(context, ref, groupe),
                 onAjouter: (GroupeAdmin groupe) =>
@@ -138,7 +144,9 @@ class _Corps extends StatelessWidget {
             for (final TypePublicGroupe valeur in TypePublicGroupe.values)
               FilterPill(
                 libelle: _nomType(valeur),
-                compteur: groupes.where((GroupeAdmin g) => g.type == valeur).length,
+                compteur: groupes
+                    .where((GroupeAdmin g) => g.type == valeur)
+                    .length,
                 retenue: type == valeur,
                 onPress: () => onType(valeur),
               ),
@@ -173,6 +181,22 @@ class _Corps extends StatelessWidget {
                   titre: t.admin.groupes.colonneEnseignant,
                   texte: (GroupeAdmin g) => g.teacherLibelle,
                 ),
+                // ENS-PAYS-1 : le pays de l'enseignant, seulement quand une
+                // ligne au moins le porte (pas de colonne vide avant BR-1).
+                if (visibles.any(
+                  (GroupeAdmin g) =>
+                      PaysEnseignant.nomAffichable(g.teacherPays) != null,
+                ))
+                  ColonneDonnees<GroupeAdmin>(
+                    titre: t.admin.groupes.colonnePays,
+                    // Sa propre ligne en carte (sous 1200), avec le drapeau :
+                    // la ligne secondaire jointe ne rendrait que du texte.
+                    role: RoleColonne.aPart,
+                    texte: (GroupeAdmin g) =>
+                        PaysEnseignant.nomAffichable(g.teacherPays) ?? '',
+                    rendu: (BuildContext _, GroupeAdmin g) =>
+                        PaysEnseignant(pays: g.teacherPays),
+                  ),
                 ColonneDonnees<GroupeAdmin>(
                   titre: t.admin.groupes.colonneType,
                   texte: (GroupeAdmin g) => _nomType(g.type),
@@ -191,8 +215,9 @@ class _Corps extends StatelessWidget {
                 ),
                 ColonneDonnees<GroupeAdmin>(
                   titre: t.admin.groupes.colonneEtat,
-                  texte: (GroupeAdmin g) =>
-                      g.actif ? t.admin.groupes.etatActif : t.admin.groupes.etatCloture,
+                  texte: (GroupeAdmin g) => g.actif
+                      ? t.admin.groupes.etatActif
+                      : t.admin.groupes.etatCloture,
                   rendu: (BuildContext _, GroupeAdmin g) => StatusPill(
                     libelle: g.actif
                         ? t.admin.groupes.etatActif
@@ -308,12 +333,19 @@ void _ouvrirRetrait(
 ) {
   AppBottomSheet.ouvrir<void>(
     context,
-    titre: t.admin.groupes.retirerTitre(prenom: prenom, libelle: groupe.libelle),
+    titre: t.admin.groupes.retirerTitre(
+      prenom: prenom,
+      libelle: groupe.libelle,
+    ),
     constructeur: (BuildContext contexte) => _FeuilleMotif(
       libelleEnvoyer: t.admin.groupes.retirerEnvoyer,
       onEnvoyer: (String motif) => ref
           .read(serviceGroupesProvider)
-          .retirerEleve(groupeId: groupe.id, studentId: studentId, motif: motif),
+          .retirerEleve(
+            groupeId: groupe.id,
+            studentId: studentId,
+            motif: motif,
+          ),
       messageErreur: t.admin.groupes.retirerErreur,
       onSucces: () {
         ref.invalidate(groupesProvider);
@@ -331,8 +363,10 @@ void _ouvrirModifierSeuil(
   AppBottomSheet.ouvrir<void>(
     context,
     titre: t.admin.groupes.modifierSeuilTitre(libelle: groupe.libelle),
-    constructeur: (BuildContext contexte) =>
-        _FeuilleSeuil(groupe: groupe, onModifie: () => ref.invalidate(groupesProvider)),
+    constructeur: (BuildContext contexte) => _FeuilleSeuil(
+      groupe: groupe,
+      onModifie: () => ref.invalidate(groupesProvider),
+    ),
   );
 }
 
@@ -365,8 +399,9 @@ void _ouvrirCloture(BuildContext context, WidgetRef ref, GroupeAdmin groupe) {
     constructeur: (BuildContext contexte) => _FeuilleMotif(
       libelleEnvoyer: t.admin.groupes.cloturerEnvoyer,
       detail: t.admin.groupes.cloturerDetail,
-      onEnvoyer: (String motif) =>
-          ref.read(serviceGroupesProvider).cloturer(groupeId: groupe.id, motif: motif),
+      onEnvoyer: (String motif) => ref
+          .read(serviceGroupesProvider)
+          .cloturer(groupeId: groupe.id, motif: motif),
       messageErreur: t.admin.groupes.cloturerErreur,
       onSucces: () => ref.invalidate(groupesProvider),
     ),
@@ -385,10 +420,12 @@ class _FeuilleCreation extends StatefulWidget {
 
 class _FeuilleCreationEtat extends State<_FeuilleCreation> {
   final TextEditingController _libelle = TextEditingController();
-  final TextEditingController _enseignantId = TextEditingController();
   final TextEditingController _jour = TextEditingController(text: '1');
   final TextEditingController _heure = TextEditingController(text: '16');
   final TextEditingController _seuil = TextEditingController();
+
+  /// L'enseignant choisi dans la liste (FORM-L2) : plus d'identifiant tape.
+  String? _enseignantId;
   TypePublicGroupe _type = TypePublicGroupe.enfant;
   bool _envoi = false;
   String? _erreur;
@@ -396,14 +433,26 @@ class _FeuilleCreationEtat extends State<_FeuilleCreation> {
   @override
   void dispose() {
     _libelle.dispose();
-    _enseignantId.dispose();
     _jour.dispose();
     _heure.dispose();
     _seuil.dispose();
     super.dispose();
   }
 
+  /// Ce qui manque encore, nul quand tout est la. Le bouton ne se grise
+  /// jamais (K-56) : le presser trop tot dit ce qui manque.
+  String? get _manque => _libelle.text.trim().isEmpty
+      ? t.admin.groupes.manqueNom
+      : _enseignantId == null
+      ? t.admin.groupes.manqueEnseignant
+      : null;
+
   Future<void> _creer(WidgetRef ref) async {
+    final String? enseignantId = _enseignantId;
+    if (_manque != null || enseignantId == null) {
+      setState(() => _erreur = _manque);
+      return;
+    }
     setState(() {
       _envoi = true;
       _erreur = null;
@@ -412,7 +461,7 @@ class _FeuilleCreationEtat extends State<_FeuilleCreation> {
       await ref
           .read(serviceGroupesProvider)
           .creer(
-            teacherId: _enseignantId.text.trim(),
+            teacherId: enseignantId,
             type: _type,
             libelle: _libelle.text.trim(),
             creneau: Creneau(
@@ -442,15 +491,20 @@ class _FeuilleCreationEtat extends State<_FeuilleCreation> {
           TextField(
             controller: _libelle,
             onChanged: (String _) => setState(() {}),
-            decoration: InputDecoration(labelText: t.admin.groupes.champLibelle),
-          ),
-          Ecart.vMd,
-          TextField(
-            controller: _enseignantId,
-            onChanged: (String _) => setState(() {}),
             decoration: InputDecoration(
-              labelText: t.admin.groupes.champEnseignantId,
+              labelText: t.admin.groupes.champLibelle,
             ),
+          ),
+          Ecart.vLg,
+          SelecteurPersonne(
+            sorte: SortePersonne.enseignant,
+            personnes: ref.watch(personnesProposablesProvider(AppRole.teacher)),
+            choisie: _enseignantId,
+            onChoix: (PersonneProposee p) => setState(() {
+              _enseignantId = p.id;
+              _erreur = null;
+            }),
+            onReessayer: () => ref.invalidate(comptesProvider),
           ),
           Ecart.vMd,
           Wrap(
@@ -496,15 +550,16 @@ class _FeuilleCreationEtat extends State<_FeuilleCreation> {
           ),
           if (_erreur != null) ...<Widget>[
             Ecart.vMd,
-            Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            Text(
+              _erreur!,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
           ],
           Ecart.vLg,
           ActionPrincipale(
             libelle: t.admin.groupes.creerEnvoyer,
             enCours: _envoi,
-            onPress: _libelle.text.trim().isEmpty || _enseignantId.text.trim().isEmpty
-                ? null
-                : () => _creer(ref),
+            onPress: () => _creer(ref),
           ),
           Ecart.vMd,
           Text(
@@ -534,7 +589,10 @@ class _FeuilleDetail extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Text(t.admin.groupes.detailMembres, style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          t.admin.groupes.detailMembres,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         Ecart.vMd,
         switch (membres) {
           AsyncValue<List<MembreGroupe>>(hasValue: true) =>
@@ -582,19 +640,32 @@ class _FeuilleAjout extends StatefulWidget {
 }
 
 class _FeuilleAjoutEtat extends State<_FeuilleAjout> {
-  final TextEditingController _eleveId = TextEditingController();
   final TextEditingController _motif = TextEditingController();
+
+  /// L'eleve choisi dans la liste (FORM-L2) : plus d'identifiant tape.
+  String? _eleveId;
   bool _envoi = false;
   String? _erreur;
 
   @override
   void dispose() {
-    _eleveId.dispose();
     _motif.dispose();
     super.dispose();
   }
 
+  /// Ce qui manque encore, nul quand tout est la (bouton jamais grise, K-56).
+  String? get _manque => _eleveId == null
+      ? t.admin.groupes.manqueEleve
+      : _motif.text.trim().isEmpty
+      ? t.admin.groupes.manqueMotif
+      : null;
+
   Future<void> _ajouter(WidgetRef ref) async {
+    final String? eleveId = _eleveId;
+    if (_manque != null || eleveId == null) {
+      setState(() => _erreur = _manque);
+      return;
+    }
     setState(() {
       _envoi = true;
       _erreur = null;
@@ -604,14 +675,15 @@ class _FeuilleAjoutEtat extends State<_FeuilleAjout> {
           .read(serviceGroupesProvider)
           .ajouterEleve(
             groupeId: widget.groupe.id,
-            studentId: _eleveId.text.trim(),
+            studentId: eleveId,
             motif: _motif.text.trim(),
           );
       widget.onAjoute();
       if (mounted) Navigator.of(context).pop();
     } catch (erreur) {
       setState(
-        () => _erreur = t.admin.groupes.ajouterErreur(message: _message(erreur)),
+        () =>
+            _erreur = t.admin.groupes.ajouterErreur(message: _message(erreur)),
       );
     } finally {
       if (mounted) setState(() => _envoi = false);
@@ -624,13 +696,21 @@ class _FeuilleAjoutEtat extends State<_FeuilleAjout> {
       builder: (BuildContext context, WidgetRef ref, Widget? _) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          TextField(
-            controller: _eleveId,
-            onChanged: (String _) => setState(() {}),
-            decoration: InputDecoration(labelText: t.admin.groupes.champEleveId),
+          SelecteurPersonne(
+            sorte: SortePersonne.eleve,
+            personnes: ref.watch(personnesProposablesProvider(AppRole.student)),
+            choisie: _eleveId,
+            onChoix: (PersonneProposee p) => setState(() {
+              _eleveId = p.id;
+              _erreur = null;
+            }),
+            onReessayer: () => ref.invalidate(comptesProvider),
           ),
-          Ecart.vMd,
-          Text(t.admin.groupes.motifRequis, style: Theme.of(context).textTheme.bodySmall),
+          Ecart.vLg,
+          Text(
+            t.admin.groupes.motifRequis,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
           Ecart.vSm,
           TextField(
             controller: _motif,
@@ -640,15 +720,16 @@ class _FeuilleAjoutEtat extends State<_FeuilleAjout> {
           ),
           if (_erreur != null) ...<Widget>[
             Ecart.vMd,
-            Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            Text(
+              _erreur!,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
           ],
           Ecart.vLg,
           ActionPrincipale(
             libelle: t.admin.groupes.ajouterEnvoyer,
             enCours: _envoi,
-            onPress: _eleveId.text.trim().isEmpty || _motif.text.trim().isEmpty
-                ? null
-                : () => _ajouter(ref),
+            onPress: () => _ajouter(ref),
           ),
           Ecart.vMd,
           Text(
@@ -703,8 +784,9 @@ class _FeuilleSeuilEtat extends State<_FeuilleSeuil> {
       if (mounted) Navigator.of(context).pop();
     } catch (erreur) {
       setState(
-        () =>
-            _erreur = t.admin.groupes.modifierSeuilErreur(message: _message(erreur)),
+        () => _erreur = t.admin.groupes.modifierSeuilErreur(
+          message: _message(erreur),
+        ),
       );
     } finally {
       if (mounted) setState(() => _envoi = false);
@@ -725,7 +807,10 @@ class _FeuilleSeuilEtat extends State<_FeuilleSeuil> {
           ),
           if (_erreur != null) ...<Widget>[
             Ecart.vMd,
-            Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            Text(
+              _erreur!,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
           ],
           Ecart.vLg,
           ActionPrincipale(
@@ -782,9 +867,7 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
       widget.onSucces();
       if (mounted) Navigator.of(context).pop();
     } catch (erreur) {
-      setState(
-        () => _erreur = widget.messageErreur(message: _message(erreur)),
-      );
+      setState(() => _erreur = widget.messageErreur(message: _message(erreur)));
     } finally {
       if (mounted) setState(() => _envoi = false);
     }
@@ -799,7 +882,10 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
           Text(widget.detail!, style: Theme.of(context).textTheme.bodyMedium),
           Ecart.vMd,
         ],
-        Text(t.admin.groupes.motifRequis, style: Theme.of(context).textTheme.bodySmall),
+        Text(
+          t.admin.groupes.motifRequis,
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
         Ecart.vSm,
         TextField(
           controller: _motif,
@@ -809,7 +895,10 @@ class _FeuilleMotifEtat extends State<_FeuilleMotif> {
         ),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
-          Text(_erreur!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          Text(
+            _erreur!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
         ],
         Ecart.vLg,
         ActionPrincipale(
